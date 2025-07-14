@@ -7,9 +7,9 @@ import Common
 
 /// Action types for authentication state changes
 public enum EcosiaAuthActionType: String, CaseIterable {
-    case authStateLoaded = "authStateLoaded"
-    case userLoggedIn = "userLoggedIn"
-    case userLoggedOut = "userLoggedOut"
+    case authStateLoaded
+    case userLoggedIn
+    case userLoggedOut
 }
 
 /// Action structure for authentication state changes
@@ -18,8 +18,8 @@ public struct AuthStateAction {
     public let windowUUID: WindowUUID
     public let isLoggedIn: Bool?
     public let timestamp: Date
-    
-    public init(type: EcosiaAuthActionType, 
+
+    public init(type: EcosiaAuthActionType,
                 windowUUID: WindowUUID,
                 isLoggedIn: Bool? = nil,
                 timestamp: Date = Date()) {
@@ -36,9 +36,9 @@ public struct AuthWindowState: Equatable {
     public let isLoggedIn: Bool
     public let authStateLoaded: Bool
     public let lastUpdated: Date
-    
-    public init(windowUUID: WindowUUID, 
-                isLoggedIn: Bool, 
+
+    public init(windowUUID: WindowUUID,
+                isLoggedIn: Bool,
                 authStateLoaded: Bool,
                 lastUpdated: Date = Date()) {
         self.windowUUID = windowUUID
@@ -46,4 +46,4 @@ public struct AuthWindowState: Equatable {
         self.authStateLoaded = authStateLoaded
         self.lastUpdated = lastUpdated
     }
-} 
+}

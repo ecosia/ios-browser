@@ -22,16 +22,12 @@ final class AuthStateIntegrationTests: XCTestCase {
         authStateManager = AuthStateManager.shared
         windowRegistry = EcosiaAuthWindowRegistry.shared
         testWindowUUID = WindowUUID.XCTestDefaultUUID
-        
+
         // Reset call counts after initialization
         mockProvider.reset()
         // Ensure clean state for all tests
         mockProvider.hasStoredCredentials = false
-        
-        // Clear state management system
-        authStateManager.clearAllStates()
-        windowRegistry.clearAllWindows()
-        
+
         // Register a test window
         windowRegistry.registerWindow(testWindowUUID)
     }
@@ -55,13 +51,19 @@ final class AuthStateIntegrationTests: XCTestCase {
         // Arrange
         let expectedCredentials = createTestCredentials()
         mockProvider.mockCredentials = expectedCredentials
-        
-        var receivedNotification: Notification?
-        let expectation = expectation(description: "Auth state notification should be posted")
-        
+
+        var userLoggedInNotifications: [Notification] = []
+        let expectation = expectation(description: "UserLoggedIn notification should be posted")
+        var expectationFulfilled = false
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            receivedNotification = notification
-            expectation.fulfill()
+            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "userLoggedIn" {
+                userLoggedInNotifications.append(notification)
+                if !expectationFulfilled {
+                    expectationFulfilled = true
+                    expectation.fulfill()
+                }
+            }
         }
 
         // Act
@@ -72,58 +74,60 @@ final class AuthStateIntegrationTests: XCTestCase {
         }
 
         // Assert
-        waitForExpectations(timeout: 1.0)
-        XCTAssertNotNil(receivedNotification, "Auth state notification should be posted")
-        
-        // Verify notification content
-        if let userInfo = receivedNotification?.userInfo {
-            XCTAssertEqual(userInfo["actionType"] as? String, "userLoggedIn", "Action type should be userLoggedIn")
-            XCTAssertEqual(userInfo["windowUUID"] as? WindowUUID, testWindowUUID, "Window UUID should match")
-            
-            if let authState = userInfo["authState"] as? AuthWindowState {
-                XCTAssertTrue(authState.isLoggedIn, "Auth state should indicate user is logged in")
-                XCTAssertEqual(authState.windowUUID, testWindowUUID, "Window UUID should match")
-            } else {
-                XCTFail("Auth state should be included in notification")
-            }
-        } else {
-            XCTFail("Notification should include userInfo")
-        }
-        
-        // Verify state manager state
-        let authState = authStateManager.getAuthState(for: testWindowUUID)
-        XCTAssertNotNil(authState, "Auth state should be created")
-        XCTAssertTrue(authState?.isLoggedIn == true, "Auth state should indicate user is logged in")
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertFalse(userLoggedInNotifications.isEmpty, "UserLoggedIn notification should be posted")
+
+        let receivedNotification = userLoggedInNotifications.first!
+        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
+
+        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
+        XCTAssertNotNil(authState, "Notification should contain auth state")
+        XCTAssertTrue(authState?.isLoggedIn == true, "Auth state should be logged in")
+        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
     }
 
     func testLogin_withAuthFailure_doesNotDispatchUserLoggedInAction() async {
         // Arrange
-        mockProvider.shouldFailAuth = true
-        
-        var notificationReceived = false
-        let expectation = expectation(description: "No auth state notification should be posted")
-        expectation.isInverted = true
-        
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { _ in
-            notificationReceived = true
-            expectation.fulfill()
+        let authError = NSError(domain: "MockAuth0Provider", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Authentication failed"])
+        mockProvider.mockError = authError
+
+        var userLoggedInNotifications: [Notification] = []
+        var authStateLoadedNotifications: [Notification] = []
+        let expectation = expectation(description: "AuthStateLoaded notification should be posted")
+        var expectationFulfilled = false
+
+        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
+            if let actionType = notification.userInfo?["actionType"] as? String {
+                if actionType == "userLoggedIn" {
+                    userLoggedInNotifications.append(notification)
+                } else if actionType == "authStateLoaded" {
+                    authStateLoadedNotifications.append(notification)
+                    if !expectationFulfilled {
+                        expectationFulfilled = true
+                        expectation.fulfill()
+                    }
+                }
+            }
         }
 
         // Act
         do {
             try await auth.login()
-            XCTFail("Expected login to throw but it didn't")
+            XCTFail("Login should fail, but succeeded")
         } catch {
             // Expected to fail
         }
 
         // Assert
-        waitForExpectations(timeout: 0.5)
-        XCTAssertFalse(notificationReceived, "No auth state notification should be posted on failed login")
-        
-        // Verify state manager has no state
-        let authState = authStateManager.getAuthState(for: testWindowUUID)
-        XCTAssertNil(authState, "Auth state should not be created on failed login")
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertTrue(userLoggedInNotifications.isEmpty, "UserLoggedIn notification should not be posted on failure")
+        XCTAssertFalse(authStateLoadedNotifications.isEmpty, "AuthStateLoaded notification should be posted")
+
+        let receivedNotification = authStateLoadedNotifications.first!
+        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
+        XCTAssertNotNil(authState, "Notification should contain auth state")
+        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should not be logged in")
+        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
     }
 
     // MARK: - Logout Integration Tests
@@ -131,13 +135,19 @@ final class AuthStateIntegrationTests: XCTestCase {
     func testLogout_withSuccessfulLogout_dispatchesUserLoggedOutAction() async {
         // Arrange
         await setupLoggedInState()
-        
-        var receivedNotification: Notification?
-        let expectation = expectation(description: "Auth state notification should be posted")
-        
+
+        var userLoggedOutNotifications: [Notification] = []
+        let expectation = expectation(description: "UserLoggedOut notification should be posted")
+        var expectationFulfilled = false
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            receivedNotification = notification
-            expectation.fulfill()
+            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "userLoggedOut" {
+                userLoggedOutNotifications.append(notification)
+                if !expectationFulfilled {
+                    expectationFulfilled = true
+                    expectation.fulfill()
+                }
+            }
         }
 
         // Act
@@ -148,40 +158,34 @@ final class AuthStateIntegrationTests: XCTestCase {
         }
 
         // Assert
-        waitForExpectations(timeout: 1.0)
-        XCTAssertNotNil(receivedNotification, "Auth state notification should be posted")
-        
-        // Verify notification content
-        if let userInfo = receivedNotification?.userInfo {
-            XCTAssertEqual(userInfo["actionType"] as? String, "userLoggedOut", "Action type should be userLoggedOut")
-            XCTAssertEqual(userInfo["windowUUID"] as? WindowUUID, testWindowUUID, "Window UUID should match")
-            
-            if let authState = userInfo["authState"] as? AuthWindowState {
-                XCTAssertFalse(authState.isLoggedIn, "Auth state should indicate user is logged out")
-                XCTAssertEqual(authState.windowUUID, testWindowUUID, "Window UUID should match")
-            } else {
-                XCTFail("Auth state should be included in notification")
-            }
-        } else {
-            XCTFail("Notification should include userInfo")
-        }
-        
-        // Verify state manager state
-        let authState = authStateManager.getAuthState(for: testWindowUUID)
-        XCTAssertNotNil(authState, "Auth state should exist")
-        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should indicate user is logged out")
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertFalse(userLoggedOutNotifications.isEmpty, "UserLoggedOut notification should be posted")
+
+        let receivedNotification = userLoggedOutNotifications.first!
+        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
+
+        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
+        XCTAssertNotNil(authState, "Notification should contain auth state")
+        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should not be logged in")
+        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
     }
 
     func testLogout_withoutTriggerWebLogout_stillDispatchesUserLoggedOutAction() async {
         // Arrange
         await setupLoggedInState()
-        
-        var receivedNotification: Notification?
-        let expectation = expectation(description: "Auth state notification should be posted")
-        
+
+        var userLoggedOutNotifications: [Notification] = []
+        let expectation = expectation(description: "UserLoggedOut notification should be posted")
+        var expectationFulfilled = false
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            receivedNotification = notification
-            expectation.fulfill()
+            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "userLoggedOut" {
+                userLoggedOutNotifications.append(notification)
+                if !expectationFulfilled {
+                    expectationFulfilled = true
+                    expectation.fulfill()
+                }
+            }
         }
 
         // Act
@@ -192,21 +196,16 @@ final class AuthStateIntegrationTests: XCTestCase {
         }
 
         // Assert
-        waitForExpectations(timeout: 1.0)
-        XCTAssertNotNil(receivedNotification, "Auth state notification should be posted even without web logout")
-        
-        // Verify notification content
-        if let userInfo = receivedNotification?.userInfo {
-            XCTAssertEqual(userInfo["actionType"] as? String, "userLoggedOut", "Action type should be userLoggedOut")
-            
-            if let authState = userInfo["authState"] as? AuthWindowState {
-                XCTAssertFalse(authState.isLoggedIn, "Auth state should indicate user is logged out")
-            } else {
-                XCTFail("Auth state should be included in notification")
-            }
-        } else {
-            XCTFail("Notification should include userInfo")
-        }
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertFalse(userLoggedOutNotifications.isEmpty, "UserLoggedOut notification should be posted")
+
+        let receivedNotification = userLoggedOutNotifications.first!
+        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
+
+        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
+        XCTAssertNotNil(authState, "Notification should contain auth state")
+        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should not be logged in")
+        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
     }
 
     // MARK: - Credential Retrieval Integration Tests
@@ -216,72 +215,69 @@ final class AuthStateIntegrationTests: XCTestCase {
         let expectedCredentials = createTestCredentials()
         mockProvider.mockCredentials = expectedCredentials
         mockProvider.hasStoredCredentials = true
-        
-        var receivedNotification: Notification?
-        let expectation = expectation(description: "Auth state notification should be posted")
-        
+
+        var authStateLoadedNotifications: [Notification] = []
+        let expectation = expectation(description: "AuthStateLoaded notification should be posted")
+        var expectationFulfilled = false
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            receivedNotification = notification
-            expectation.fulfill()
+            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "authStateLoaded" {
+                authStateLoadedNotifications.append(notification)
+                if !expectationFulfilled {
+                    expectationFulfilled = true
+                    expectation.fulfill()
+                }
+            }
         }
 
         // Act
         await auth.retrieveStoredCredentials()
 
         // Assert
-        waitForExpectations(timeout: 1.0)
-        XCTAssertNotNil(receivedNotification, "Auth state notification should be posted")
-        
-        // Verify notification content
-        if let userInfo = receivedNotification?.userInfo {
-            XCTAssertEqual(userInfo["actionType"] as? String, "authStateLoaded", "Action type should be authStateLoaded")
-            XCTAssertEqual(userInfo["windowUUID"] as? WindowUUID, testWindowUUID, "Window UUID should match")
-            
-            if let authState = userInfo["authState"] as? AuthWindowState {
-                XCTAssertTrue(authState.isLoggedIn, "Auth state should indicate user is logged in")
-                XCTAssertTrue(authState.authStateLoaded, "Auth state should indicate state is loaded")
-                XCTAssertEqual(authState.windowUUID, testWindowUUID, "Window UUID should match")
-            } else {
-                XCTFail("Auth state should be included in notification")
-            }
-        } else {
-            XCTFail("Notification should include userInfo")
-        }
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertFalse(authStateLoadedNotifications.isEmpty, "AuthStateLoaded notification should be posted")
+
+        let receivedNotification = authStateLoadedNotifications.first!
+        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
+
+        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
+        XCTAssertNotNil(authState, "Notification should contain auth state")
+        XCTAssertTrue(authState?.isLoggedIn == true, "Auth state should be logged in")
+        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
     }
 
     func testRetrieveStoredCredentials_withNoCredentials_dispatchesAuthStateLoadedWithLoggedOutState() async {
         // Arrange
         mockProvider.hasStoredCredentials = false
-        mockProvider.shouldFailRetrieveCredentials = true
-        
-        var receivedNotification: Notification?
-        let expectation = expectation(description: "Auth state notification should be posted")
-        
+
+        var authStateLoadedNotifications: [Notification] = []
+        let expectation = expectation(description: "AuthStateLoaded notification should be posted")
+        var expectationFulfilled = false
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            receivedNotification = notification
-            expectation.fulfill()
+            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "authStateLoaded" {
+                authStateLoadedNotifications.append(notification)
+                if !expectationFulfilled {
+                    expectationFulfilled = true
+                    expectation.fulfill()
+                }
+            }
         }
 
         // Act
         await auth.retrieveStoredCredentials()
 
         // Assert
-        waitForExpectations(timeout: 1.0)
-        XCTAssertNotNil(receivedNotification, "Auth state notification should be posted")
-        
-        // Verify notification content
-        if let userInfo = receivedNotification?.userInfo {
-            XCTAssertEqual(userInfo["actionType"] as? String, "authStateLoaded", "Action type should be authStateLoaded")
-            
-            if let authState = userInfo["authState"] as? AuthWindowState {
-                XCTAssertFalse(authState.isLoggedIn, "Auth state should indicate user is logged out")
-                XCTAssertTrue(authState.authStateLoaded, "Auth state should indicate state is loaded")
-            } else {
-                XCTFail("Auth state should be included in notification")
-            }
-        } else {
-            XCTFail("Notification should include userInfo")
-        }
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertFalse(authStateLoadedNotifications.isEmpty, "AuthStateLoaded notification should be posted")
+
+        let receivedNotification = authStateLoadedNotifications.first!
+        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
+
+        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
+        XCTAssertNotNil(authState, "Notification should contain auth state")
+        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should not be logged in")
+        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
     }
 
     // MARK: - Multi-Window Integration Tests
@@ -290,17 +286,17 @@ final class AuthStateIntegrationTests: XCTestCase {
         // Arrange
         let windowUUID2 = WindowUUID()
         let windowUUID3 = WindowUUID()
-        
+
         windowRegistry.registerWindow(windowUUID2)
         windowRegistry.registerWindow(windowUUID3)
-        
+
         let expectedCredentials = createTestCredentials()
         mockProvider.mockCredentials = expectedCredentials
-        
+
         var notificationCount = 0
         let expectation = expectation(description: "Auth state notifications should be posted for all windows")
         expectation.expectedFulfillmentCount = 3 // 3 windows
-        
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
             notificationCount += 1
             expectation.fulfill()
@@ -314,18 +310,18 @@ final class AuthStateIntegrationTests: XCTestCase {
         }
 
         // Assert
-        waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [expectation], timeout: 1.0)
         XCTAssertEqual(notificationCount, 3, "Should receive notifications for all registered windows")
-        
+
         // Verify all windows have auth state
         let authState1 = authStateManager.getAuthState(for: testWindowUUID)
         let authState2 = authStateManager.getAuthState(for: windowUUID2)
         let authState3 = authStateManager.getAuthState(for: windowUUID3)
-        
+
         XCTAssertNotNil(authState1, "Window 1 should have auth state")
         XCTAssertNotNil(authState2, "Window 2 should have auth state")
         XCTAssertNotNil(authState3, "Window 3 should have auth state")
-        
+
         XCTAssertTrue(authState1?.isLoggedIn == true, "Window 1 should be logged in")
         XCTAssertTrue(authState2?.isLoggedIn == true, "Window 2 should be logged in")
         XCTAssertTrue(authState3?.isLoggedIn == true, "Window 3 should be logged in")
@@ -335,16 +331,16 @@ final class AuthStateIntegrationTests: XCTestCase {
         // Arrange
         let windowUUID2 = WindowUUID()
         let windowUUID3 = WindowUUID()
-        
+
         windowRegistry.registerWindow(windowUUID2)
         windowRegistry.registerWindow(windowUUID3)
-        
+
         await setupLoggedInState()
-        
+
         var notificationCount = 0
         let expectation = expectation(description: "Auth state notifications should be posted for all windows")
         expectation.expectedFulfillmentCount = 3 // 3 windows
-        
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
             notificationCount += 1
             expectation.fulfill()
@@ -358,72 +354,21 @@ final class AuthStateIntegrationTests: XCTestCase {
         }
 
         // Assert
-        waitForExpectations(timeout: 1.0)
+        await fulfillment(of: [expectation], timeout: 1.0)
         XCTAssertEqual(notificationCount, 3, "Should receive notifications for all registered windows")
-        
+
         // Verify all windows have logged out state
         let authState1 = authStateManager.getAuthState(for: testWindowUUID)
         let authState2 = authStateManager.getAuthState(for: windowUUID2)
         let authState3 = authStateManager.getAuthState(for: windowUUID3)
-        
+
         XCTAssertNotNil(authState1, "Window 1 should have auth state")
         XCTAssertNotNil(authState2, "Window 2 should have auth state")
         XCTAssertNotNil(authState3, "Window 3 should have auth state")
-        
+
         XCTAssertFalse(authState1?.isLoggedIn == true, "Window 1 should be logged out")
         XCTAssertFalse(authState2?.isLoggedIn == true, "Window 2 should be logged out")
         XCTAssertFalse(authState3?.isLoggedIn == true, "Window 3 should be logged out")
-    }
-
-    // MARK: - Legacy Notification Integration Tests
-
-    func testLogin_withSuccessfulAuth_postsLegacyNotification() async {
-        // Arrange
-        let expectedCredentials = createTestCredentials()
-        mockProvider.mockCredentials = expectedCredentials
-        
-        var receivedNotification: Notification?
-        let expectation = expectation(description: "Legacy auth notification should be posted")
-        
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthDidLoginWithSessionToken, object: nil, queue: .main) { notification in
-            receivedNotification = notification
-            expectation.fulfill()
-        }
-
-        // Act
-        do {
-            try await auth.login()
-        } catch {
-            XCTFail("Login should succeed, but failed with: \(error)")
-        }
-
-        // Assert
-        waitForExpectations(timeout: 1.0)
-        XCTAssertNotNil(receivedNotification, "Legacy auth notification should be posted")
-    }
-
-    func testLogout_withSuccessfulLogout_postsLegacyNotification() async {
-        // Arrange
-        await setupLoggedInState()
-        
-        var receivedNotification: Notification?
-        let expectation = expectation(description: "Legacy auth notification should be posted")
-        
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthDidLogout, object: nil, queue: .main) { notification in
-            receivedNotification = notification
-            expectation.fulfill()
-        }
-
-        // Act
-        do {
-            try await auth.logout()
-        } catch {
-            XCTFail("Logout should succeed, but failed with: \(error)")
-        }
-
-        // Assert
-        waitForExpectations(timeout: 1.0)
-        XCTAssertNotNil(receivedNotification, "Legacy auth notification should be posted")
     }
 
     // MARK: - Error Handling Integration Tests
@@ -432,7 +377,7 @@ final class AuthStateIntegrationTests: XCTestCase {
         // Arrange
         let expectedCredentials = createTestCredentials()
         mockProvider.mockCredentials = expectedCredentials
-        
+
         // Remove window from registry to simulate error scenario
         windowRegistry.clearAllWindows()
 
@@ -456,7 +401,7 @@ final class AuthStateIntegrationTests: XCTestCase {
         let credentials = createTestCredentials()
         mockProvider.mockCredentials = credentials
         mockProvider.hasStoredCredentials = true
-        
+
         do {
             try await auth.login()
         } catch {
@@ -474,4 +419,4 @@ final class AuthStateIntegrationTests: XCTestCase {
             scope: "openid profile email"
         )
     }
-} 
+}

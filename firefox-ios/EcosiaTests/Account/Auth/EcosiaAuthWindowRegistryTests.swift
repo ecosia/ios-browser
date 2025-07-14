@@ -19,7 +19,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         testWindowUUID1 = WindowUUID.XCTestDefaultUUID
         testWindowUUID2 = WindowUUID()
         testWindowUUID3 = WindowUUID()
-        
+
         // Clear all existing windows for clean tests
         windowRegistry.clearAllWindows()
     }
@@ -86,7 +86,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         XCTAssertTrue(windowRegistry.isWindowRegistered(windowUUID2), "Window 2 should be registered")
         XCTAssertTrue(windowRegistry.isWindowRegistered(windowUUID3), "Window 3 should be registered")
         XCTAssertEqual(windowRegistry.windowCount, 3, "Window count should be 3")
-        
+
         let registeredWindows = windowRegistry.registeredWindows
         XCTAssertTrue(registeredWindows.contains(windowUUID1), "Should contain window 1")
         XCTAssertTrue(registeredWindows.contains(windowUUID2), "Should contain window 2")
@@ -128,7 +128,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         let windowUUID1 = testWindowUUID1!
         let windowUUID2 = testWindowUUID2!
         let unregisteredWindowUUID = testWindowUUID3!
-        
+
         windowRegistry.registerWindow(windowUUID1)
         windowRegistry.registerWindow(windowUUID2)
 
@@ -147,7 +147,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         let windowUUID1 = testWindowUUID1!
         let windowUUID2 = testWindowUUID2!
         let windowUUID3 = testWindowUUID3!
-        
+
         windowRegistry.registerWindow(windowUUID1)
         windowRegistry.registerWindow(windowUUID2)
         windowRegistry.registerWindow(windowUUID3)
@@ -193,7 +193,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         let windowUUID1 = testWindowUUID1!
         let windowUUID2 = testWindowUUID2!
         let windowUUID3 = testWindowUUID3!
-        
+
         windowRegistry.registerWindow(windowUUID1)
         windowRegistry.registerWindow(windowUUID2)
         windowRegistry.registerWindow(windowUUID3)
@@ -236,7 +236,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         let windowUUID1 = testWindowUUID1!
         let windowUUID2 = testWindowUUID2!
         let windowUUID3 = testWindowUUID3!
-        
+
         windowRegistry.registerWindow(windowUUID1)
         windowRegistry.registerWindow(windowUUID2)
         windowRegistry.registerWindow(windowUUID3)
@@ -282,7 +282,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         // Assert
         waitForExpectations(timeout: 5.0)
         XCTAssertEqual(windowRegistry.windowCount, 50, "All concurrent registrations should complete successfully")
-        
+
         // Verify all windows are actually registered
         for windowUUID in windowUUIDs {
             XCTAssertTrue(windowRegistry.isWindowRegistered(windowUUID), "Window \(windowUUID) should be registered")
@@ -301,17 +301,17 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
                 self.windowRegistry.registerWindow(windowUUID)
                 expectation.fulfill()
             }
-            
+
             DispatchQueue.global().async {
                 self.windowRegistry.unregisterWindow(windowUUID)
                 expectation.fulfill()
             }
-            
+
             DispatchQueue.global().async {
                 self.windowRegistry.registerWindow(windowUUID)
                 expectation.fulfill()
             }
-            
+
             DispatchQueue.global().async {
                 _ = self.windowRegistry.isWindowRegistered(windowUUID)
                 expectation.fulfill()
@@ -330,7 +330,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         let expectation = expectation(description: "Concurrent queries should complete")
         expectation.expectedFulfillmentCount = 100
         let windowUUIDs = (0..<10).map { _ in WindowUUID() }
-        
+
         // Register some windows first
         for windowUUID in windowUUIDs {
             windowRegistry.registerWindow(windowUUID)
@@ -371,4 +371,4 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         windowRegistry.clearAllWindows()
         XCTAssertEqual(windowRegistry.windowCount, 0, "Should clean up properly")
     }
-} 
+}

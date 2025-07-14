@@ -8,23 +8,23 @@ import Common
 /// Main authentication state manager that provides Redux-like state management
 /// This system manages authentication state for multiple browser windows independently
 public class AuthStateManager {
-    
+
     /// Shared instance for global access
     public static let shared = AuthStateManager()
-    
+
     /// Thread-safe storage for window-specific authentication states
     private let queue = DispatchQueue(label: "ecosia.auth.state.manager", attributes: .concurrent)
     private var _windowStates: [WindowUUID: AuthWindowState] = [:]
-    
+
     /// Notification center for broadcasting state changes
     private let notificationCenter = NotificationCenter.default
-    
+
     private init() {
         print("🔓 AuthStateManager - Initialized")
     }
-    
+
     // MARK: - State Management
-    
+
     /// Get current authentication state for a specific window
     /// - Parameter windowUUID: The window UUID to get state for
     /// - Returns: AuthWindowState if available, nil otherwise
@@ -33,7 +33,7 @@ public class AuthStateManager {
             _windowStates[windowUUID]
         }
     }
-    
+
     /// Get authentication states for all windows
     /// - Returns: Dictionary of window UUIDs to their auth states
     public func getAllAuthStates() -> [WindowUUID: AuthWindowState] {
@@ -41,18 +41,18 @@ public class AuthStateManager {
             _windowStates
         }
     }
-    
+
     /// Dispatch an authentication action for a specific window
     /// - Parameters:
     ///   - action: The authentication action to dispatch
     ///   - windowUUID: The window UUID to dispatch the action for
     public func dispatch(action: AuthStateAction, for windowUUID: WindowUUID) {
         let newState = reduce(currentState: getAuthState(for: windowUUID), action: action)
-        
+
         queue.async(flags: .barrier) { [weak self] in
             self?._windowStates[windowUUID] = newState
         }
-        
+
         // Broadcast state change
         notificationCenter.post(
             name: .EcosiaAuthStateChanged,
@@ -63,17 +63,17 @@ public class AuthStateManager {
                 "actionType": action.type.rawValue
             ]
         )
-        
+
         print("🔓 AuthStateManager - Dispatched \(action.type) for window \(windowUUID)")
     }
-    
+
     /// Dispatch authentication state changes to all registered windows
     /// - Parameters:
     ///   - isLoggedIn: Current login status
     ///   - actionType: Type of authentication action
     public func dispatchAuthState(isLoggedIn: Bool, actionType: EcosiaAuthActionType) {
         let windowUUIDs = EcosiaAuthWindowRegistry.shared.registeredWindows
-        
+
         for windowUUID in windowUUIDs {
             let action = AuthStateAction(
                 type: actionType,
@@ -82,12 +82,12 @@ public class AuthStateManager {
             )
             dispatch(action: action, for: windowUUID)
         }
-        
+
         print("🔓 AuthStateManager - Dispatched \(actionType) to \(windowUUIDs.count) windows")
     }
-    
+
     // MARK: - State Reduction
-    
+
     /// Reduce current state with an action to produce new state
     /// - Parameters:
     ///   - currentState: Current authentication state (can be nil)
@@ -99,7 +99,7 @@ public class AuthStateManager {
             isLoggedIn: false,
             authStateLoaded: false
         )
-        
+
         switch action.type {
         case .authStateLoaded:
             return AuthWindowState(
@@ -108,7 +108,7 @@ public class AuthStateManager {
                 authStateLoaded: true,
                 lastUpdated: action.timestamp
             )
-            
+
         case .userLoggedIn:
             return AuthWindowState(
                 windowUUID: action.windowUUID,
@@ -116,7 +116,7 @@ public class AuthStateManager {
                 authStateLoaded: existingState.authStateLoaded,
                 lastUpdated: action.timestamp
             )
-            
+
         case .userLoggedOut:
             return AuthWindowState(
                 windowUUID: action.windowUUID,
@@ -126,9 +126,9 @@ public class AuthStateManager {
             )
         }
     }
-    
+
     // MARK: - State Subscription
-    
+
     /// Subscribe to authentication state changes
     /// - Parameters:
     ///   - observer: Object that will observe the changes
@@ -141,15 +141,15 @@ public class AuthStateManager {
             object: self
         )
     }
-    
+
     /// Unsubscribe from authentication state changes
     /// - Parameter observer: Object to remove from observations
     public func unsubscribe(observer: AnyObject) {
         notificationCenter.removeObserver(observer, name: .EcosiaAuthStateChanged, object: self)
     }
-    
+
     // MARK: - Cleanup
-    
+
     /// Remove state for a specific window
     /// - Parameter windowUUID: Window UUID to remove state for
     public func removeWindowState(for windowUUID: WindowUUID) {
@@ -158,7 +158,7 @@ public class AuthStateManager {
         }
         print("🔓 AuthStateManager - Removed state for window \(windowUUID)")
     }
-    
+
     /// Clear all window states (for testing/cleanup)
     public func clearAllStates() {
         queue.async(flags: .barrier) { [weak self] in
@@ -166,4 +166,4 @@ public class AuthStateManager {
         }
         print("🔓 AuthStateManager - Cleared all states")
     }
-} 
+}

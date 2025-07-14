@@ -8,16 +8,16 @@ import Common
 /// Registry for tracking active browser windows that should receive auth state updates
 /// This provides minimal external integration point for the authentication system
 public class EcosiaAuthWindowRegistry {
-    
+
     /// Shared instance for global access
     public static let shared = EcosiaAuthWindowRegistry()
-    
+
     /// Thread-safe storage for window UUIDs
     private let queue = DispatchQueue(label: "ecosia.auth.window.registry", attributes: .concurrent)
     private var _windows: Set<WindowUUID> = []
-    
+
     private init() {}
-    
+
     /// Register a window to receive auth state updates
     /// - Parameter windowUUID: The window UUID to register
     public func registerWindow(_ windowUUID: WindowUUID) {
@@ -26,7 +26,7 @@ public class EcosiaAuthWindowRegistry {
         }
         print("🔓 EcosiaAuthWindowRegistry - Registered window: \(windowUUID)")
     }
-    
+
     /// Unregister a window from receiving auth state updates
     /// - Parameter windowUUID: The window UUID to unregister
     public func unregisterWindow(_ windowUUID: WindowUUID) {
@@ -35,7 +35,7 @@ public class EcosiaAuthWindowRegistry {
         }
         print("🔓 EcosiaAuthWindowRegistry - Unregistered window: \(windowUUID)")
     }
-    
+
     /// Get all registered windows
     /// - Returns: Array of registered window UUIDs
     public var registeredWindows: [WindowUUID] {
@@ -43,7 +43,7 @@ public class EcosiaAuthWindowRegistry {
             Array(_windows)
         }
     }
-    
+
     /// Get count of registered windows
     /// - Returns: Number of registered windows
     public var windowCount: Int {
@@ -51,7 +51,7 @@ public class EcosiaAuthWindowRegistry {
             _windows.count
         }
     }
-    
+
     /// Check if a specific window is registered
     /// - Parameter windowUUID: The window UUID to check
     /// - Returns: True if the window is registered
@@ -60,7 +60,7 @@ public class EcosiaAuthWindowRegistry {
             _windows.contains(windowUUID)
         }
     }
-    
+
     /// Clear all registered windows (for testing/cleanup)
     public func clearAllWindows() {
         queue.async(flags: .barrier) { [weak self] in
@@ -68,4 +68,4 @@ public class EcosiaAuthWindowRegistry {
         }
         print("🔓 EcosiaAuthWindowRegistry - Cleared all windows")
     }
-} 
+}

@@ -19,7 +19,7 @@ final class AuthStateManagerTests: XCTestCase {
         windowRegistry = EcosiaAuthWindowRegistry.shared
         testWindowUUID1 = WindowUUID.XCTestDefaultUUID
         testWindowUUID2 = WindowUUID()
-        
+
         // Clear all existing state for clean tests
         authStateManager.clearAllStates()
         windowRegistry.clearAllWindows()
@@ -83,7 +83,7 @@ final class AuthStateManagerTests: XCTestCase {
     func testDispatch_withUserLoggedIn_updatesExistingState() {
         // Arrange
         let windowUUID = testWindowUUID1!
-        
+
         // Create initial state
         let initialAction = AuthStateAction(
             type: .authStateLoaded,
@@ -91,7 +91,7 @@ final class AuthStateManagerTests: XCTestCase {
             isLoggedIn: false
         )
         authStateManager.dispatch(action: initialAction, for: windowUUID)
-        
+
         // Act - Update with login
         let loginAction = AuthStateAction(
             type: .userLoggedIn,
@@ -109,7 +109,7 @@ final class AuthStateManagerTests: XCTestCase {
     func testDispatch_withUserLoggedOut_updatesExistingState() {
         // Arrange
         let windowUUID = testWindowUUID1!
-        
+
         // Create initial logged in state
         let initialAction = AuthStateAction(
             type: .userLoggedIn,
@@ -117,7 +117,7 @@ final class AuthStateManagerTests: XCTestCase {
             isLoggedIn: true
         )
         authStateManager.dispatch(action: initialAction, for: windowUUID)
-        
+
         // Act - Log out
         let logoutAction = AuthStateAction(
             type: .userLoggedOut,
@@ -171,7 +171,7 @@ final class AuthStateManagerTests: XCTestCase {
         // Assert
         let state1 = authStateManager.getAuthState(for: testWindowUUID1)
         let state2 = authStateManager.getAuthState(for: testWindowUUID2)
-        
+
         XCTAssertNotNil(state1, "State should be created for registered window 1")
         XCTAssertNotNil(state2, "State should be created for registered window 2")
         XCTAssertTrue(state1?.isLoggedIn == true)
@@ -199,10 +199,10 @@ final class AuthStateManagerTests: XCTestCase {
             windowUUID: windowUUID,
             isLoggedIn: true
         )
-        
+
         var receivedNotification: Notification?
         let expectation = expectation(description: "Notification should be posted")
-        
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
             receivedNotification = notification
             expectation.fulfill()
@@ -214,11 +214,11 @@ final class AuthStateManagerTests: XCTestCase {
         // Assert
         waitForExpectations(timeout: 1.0)
         XCTAssertNotNil(receivedNotification)
-        
+
         if let userInfo = receivedNotification?.userInfo {
             XCTAssertEqual(userInfo["windowUUID"] as? WindowUUID, windowUUID)
             XCTAssertEqual(userInfo["actionType"] as? String, "userLoggedIn")
-            
+
             if let authState = userInfo["authState"] as? AuthWindowState {
                 XCTAssertEqual(authState.windowUUID, windowUUID)
                 XCTAssertTrue(authState.isLoggedIn)
@@ -235,10 +235,10 @@ final class AuthStateManagerTests: XCTestCase {
         let windowUUID = testWindowUUID1!
         var notificationReceived = false
         let expectation = expectation(description: "Observer should receive notification")
-        
+
         let observer = NSObject()
         authStateManager.subscribe(observer: observer, selector: #selector(NSObject.init))
-        
+
         NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { _ in
             notificationReceived = true
             expectation.fulfill()
@@ -259,7 +259,7 @@ final class AuthStateManagerTests: XCTestCase {
         // Arrange
         let action1 = AuthStateAction(type: .authStateLoaded, windowUUID: testWindowUUID1, isLoggedIn: true)
         let action2 = AuthStateAction(type: .authStateLoaded, windowUUID: testWindowUUID2, isLoggedIn: false)
-        
+
         authStateManager.dispatch(action: action1, for: testWindowUUID1)
         authStateManager.dispatch(action: action2, for: testWindowUUID2)
 
@@ -275,7 +275,7 @@ final class AuthStateManagerTests: XCTestCase {
         // Arrange
         let action1 = AuthStateAction(type: .authStateLoaded, windowUUID: testWindowUUID1, isLoggedIn: true)
         let action2 = AuthStateAction(type: .authStateLoaded, windowUUID: testWindowUUID2, isLoggedIn: false)
-        
+
         authStateManager.dispatch(action: action1, for: testWindowUUID1)
         authStateManager.dispatch(action: action2, for: testWindowUUID2)
 
@@ -293,7 +293,7 @@ final class AuthStateManagerTests: XCTestCase {
         // Arrange
         let expectation = expectation(description: "Concurrent operations should complete")
         expectation.expectedFulfillmentCount = 10
-        
+
         // Act - Perform concurrent operations
         for i in 0..<10 {
             DispatchQueue.global().async {
@@ -317,17 +317,17 @@ final class AuthStateManagerTests: XCTestCase {
 
 // MARK: - Mock Classes
 
-fileprivate class MockNotificationCenter: NotificationCenter, @unchecked Sendable {
+private class MockNotificationCenter: NotificationCenter, @unchecked Sendable {
     var postedNotifications: [Notification] = []
-    
+
     override func post(_ notification: Notification) {
         postedNotifications.append(notification)
         super.post(notification)
     }
-    
-    override func post(name aName: NSNotification.Name, object anObject: Any?, userInfo aUserInfo: [AnyHashable : Any]? = nil) {
+
+    override func post(name aName: NSNotification.Name, object anObject: Any?, userInfo aUserInfo: [AnyHashable: Any]? = nil) {
         let notification = Notification(name: aName, object: anObject, userInfo: aUserInfo)
         postedNotifications.append(notification)
         super.post(name: aName, object: anObject, userInfo: aUserInfo)
     }
-} 
+}

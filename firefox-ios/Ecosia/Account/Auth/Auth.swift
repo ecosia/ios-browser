@@ -178,7 +178,7 @@ public class Auth {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
             print("\(#file).\(#function) - 👤 Auth - Retrieved credentials: \(credentials)")
-            
+
             // Dispatch state loaded with current authentication status
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
         } catch {
@@ -227,7 +227,7 @@ public class Auth {
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
         self.isLoggedIn = isLoggedIn
-        
+
         // Dispatch state change to the new state management system
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
@@ -296,10 +296,10 @@ extension Auth {
      (specifically `NativeToWebSSOAuth0Provider`) and requests the session transfer token.
      
      - Returns: `SSOCredentials` containing the session transfer token and expiration information,
-       or `nil` if the provider doesn't support SSO or if the request fails.
+     or `nil` if the provider doesn't support SSO or if the request fails.
      
      - Note: This method performs a type check to ensure the provider supports SSO operations
-       before attempting to retrieve credentials.
+     before attempting to retrieve credentials.
      */
     private func retrieveSSOCredentials() async -> SSOCredentials? {
         if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
@@ -345,13 +345,13 @@ extension Auth {
             .secure: true
         ])
     }
-    
+
     // MARK: - State Management Integration
 
     /**
      Dispatches authentication state changes to the new state management system
      and posts legacy notifications for backward compatibility.
-
+     
      - Parameters:
      -   isLoggedIn: Current authentication status
      -   fromCredentialRetrieval: Whether this is from credential retrieval (for state loaded)
@@ -369,41 +369,5 @@ extension Auth {
 
         // Dispatch to the new state management system
         AuthStateManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType)
-
-        // Post legacy notifications for backward compatibility
-        await postLegacyNotifications(isLoggedIn: isLoggedIn, actionType: actionType)
-    }
-
-    /**
-     Posts legacy notifications for backward compatibility with existing code.
-
-     - Parameters:
-     -   isLoggedIn: Current authentication status
-     -   actionType: The type of auth action that occurred
-     */
-    private func postLegacyNotifications(isLoggedIn: Bool, actionType: EcosiaAuthActionType) async {
-        await MainActor.run {
-            switch actionType {
-            case .authStateLoaded:
-                NotificationCenter.default.post(name: .EcosiaAuthStateReady, object: nil)
-                if isLoggedIn {
-                    NotificationCenter.default.post(
-                        name: .EcosiaAuthDidLoginWithSessionToken,
-                        object: nil,
-                        userInfo: ["sessionToken": accessToken as Any]
-                    )
-                }
-
-            case .userLoggedIn:
-                NotificationCenter.default.post(
-                    name: .EcosiaAuthDidLoginWithSessionToken,
-                    object: nil,
-                    userInfo: ["sessionToken": accessToken as Any]
-                )
-
-            case .userLoggedOut:
-                NotificationCenter.default.post(name: .EcosiaAuthDidLogout, object: nil)
-            }
-        }
     }
 }
