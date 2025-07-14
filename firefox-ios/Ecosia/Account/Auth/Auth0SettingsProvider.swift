@@ -8,26 +8,28 @@ public protocol Auth0SettingsProviderProtocol {
     var cookieDomain: String { get }
 }
 
-struct DefaultAuth0SettingsProvider: Auth0SettingsProviderProtocol {
+public struct DefaultAuth0SettingsProvider: Auth0SettingsProviderProtocol {
 
-    var id: String {
+    public var id: String {
         guard let clientId = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_CLIENT_ID") else {
             fatalError("AUTH0_CLIENT_ID not found")
         }
         return clientId
     }
 
-    var domain: String {
+    public var domain: String {
         guard let domain = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_DOMAIN") else {
             fatalError("AUTH0_DOMAIN not found")
         }
         return domain
     }
 
-    var cookieDomain: String {
+    public var cookieDomain: String {
         guard let cookieDomain = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_COOKIE_DOMAIN") else {
             fatalError("AUTH0_COOKIE_DOMAIN not found")
         }
         return cookieDomain
     }
+
+    public init() {}
 }
