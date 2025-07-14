@@ -180,7 +180,6 @@ public class Auth {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-            print("\(#file).\(#function) - 👤 Auth - Retrieved credentials: \(credentials)")
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Failed to retrieve credentials: \(error)")
         }
@@ -250,7 +249,6 @@ public class Auth {
             return
         }
         ssoCredentials = await retrieveSSOCredentials()
-        print("\(#file).\(#function) - 👤 Auth - Retrieved sessionToken \(ssoCredentials?.sessionTransferToken ?? "nil")")
     }
 
     /**
