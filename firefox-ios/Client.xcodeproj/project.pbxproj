@@ -322,6 +322,7 @@
 		2C69DA7D2C6244BE00D7F69F /* MockTabDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A475E8C29DB888E009C13FD /* MockTabDataStore.swift */; };
 		2C69DA7E2C6244C400D7F69F /* MockThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA75A622A46272000533F8D /* MockThemeManager.swift */; };
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
+		2C7B86EE2E1328FB00A86119 /* Auth0 in Frameworks */ = {isa = PBXBuildFile; productRef = 2C7B86ED2E1328FB00A86119 /* Auth0 */; };
 		2C7DC2402B1648BA00C049C8 /* LegacyTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9A179A20E69A7E00B12184 /* LegacyTheme.swift */; };
 		2C7DC2462B16493C00C049C8 /* UIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2816EFFF1B33E05400522243 /* UIConstants.swift */; };
 		2CB5C33F2E45F02D00B1048F /* SearchViewController+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB5C33E2E45F02D00B1048F /* SearchViewController+Ecosia.swift */; };
@@ -9711,6 +9712,7 @@
 				2CFE9FCE2D45363500B25CE0 /* BrazeUI in Frameworks */,
 				2CFE9FD22D45364600B25CE0 /* Common in Frameworks */,
 				2CFE9FEA2D45404800B25CE0 /* SwiftSoup in Frameworks */,
+				2C7B86EE2E1328FB00A86119 /* Auth0 in Frameworks */,
 				2C2EA77F2DA3F2990085F5BC /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -14922,6 +14924,7 @@
 				2CFE9FD12D45364600B25CE0 /* Common */,
 				2CFE9FE92D45404800B25CE0 /* SwiftSoup */,
 				2C2EA77E2DA3F2990085F5BC /* Lottie */,
+				2C7B86ED2E1328FB00A86119 /* Auth0 */,
 			);
 			productName = Ecosia;
 			productReference = 2CFE99662D45329200B25CE0 /* Ecosia.framework */;
@@ -15495,6 +15498,7 @@
 				12C25BEB2D27EBFF0048BADA /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */,
 				2CFE9FE82D453F9600B25CE0 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				2CC0C2A72DA802CD006FE9B7 /* XCRemoteSwiftPackageReference "ViewInspector" */,
+				2C7B86EC2E1328FB00A86119 /* XCRemoteSwiftPackageReference "Auth0" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -27306,6 +27310,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2CB172802C612D68008551E2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		2C7B86ED2E1328FB00A86119 /* Auth0 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C7B86EC2E1328FB00A86119 /* XCRemoteSwiftPackageReference "Auth0" */;
+			productName = Auth0;
 		};
 		2CABD7152C11C9CC00A0750F /* MozillaAppServices */ = {
 			isa = XCSwiftPackageProductDependency;
