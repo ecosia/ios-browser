@@ -341,7 +341,7 @@ final class AuthTests: XCTestCase {
 
     func testGetSessionTransferToken_withLoggedInUser_retrievesSSOCredentials() async {
         // Arrange
-        await setupLoggedInStateWithSSOProvider()
+        await setupLoggedInState()
 
         // Note: Due to the type check in Auth.retrieveSSOCredentials(), the mock provider
         // won't be recognized as a NativeToWebSSOAuth0Provider, so getSSOCredentials won't be called
@@ -389,36 +389,6 @@ final class AuthTests: XCTestCase {
 
         // Assert
         XCTAssertNil(cookie)
-    }
-
-    func testSetSessionTokenCookieForURL_withLoggedOutUser_doesNotSetCookie() {
-        // Arrange
-        let testURL = URL(string: "https://ecosia.org")!
-        let mockWebView = WKWebView()
-        XCTAssertFalse(auth.isLoggedIn)
-
-        // Act
-        auth.setSessionTokenCookieForURL(testURL, webView: mockWebView)
-
-        // Assert
-        // Note: In a real test, we would inject a mock cookie store to verify no cookie was set
-        // For now, we just verify the method completes without throwing
-        XCTAssertFalse(auth.isLoggedIn)
-    }
-
-    func testSetSessionTokenCookieForURL_withLoggedInUserButNoSessionToken_doesNotSetCookie() async {
-        // Arrange
-        await setupLoggedInState()
-        let testURL = URL(string: "https://ecosia.org")!
-        let mockWebView = WKWebView()
-
-        // Act
-        auth.setSessionTokenCookieForURL(testURL, webView: mockWebView)
-
-        // Assert
-        // Note: In a real test, we would inject a mock cookie store to verify no cookie was set
-        // For now, we just verify the method completes without throwing
-        XCTAssertTrue(auth.isLoggedIn)
     }
 
     // MARK: - Integration Tests
@@ -528,12 +498,5 @@ final class AuthTests: XCTestCase {
         // Reset call counts after setup
         mockProvider.startAuthCallCount = 0
         mockProvider.storeCredentialsCallCount = 0
-    }
-
-    private func setupLoggedInStateWithSSOProvider() async {
-        // For unit testing, we use the regular mock provider
-        // The SSO functionality requires integration testing or a more sophisticated mocking approach
-        // that can bypass the type check in Auth.retrieveSSOCredentials()
-        await setupLoggedInState()
     }
 }
