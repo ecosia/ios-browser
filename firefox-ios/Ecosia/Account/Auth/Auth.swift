@@ -345,4 +345,65 @@ extension Auth {
             .secure: true
         ])
     }
+    
+    // MARK: - State Management Integration
+
+    /**
+     Dispatches authentication state changes to the new state management system
+     and posts legacy notifications for backward compatibility.
+
+     - Parameters:
+     -   isLoggedIn: Current authentication status
+     -   fromCredentialRetrieval: Whether this is from credential retrieval (for state loaded)
+     */
+    private func dispatchAuthStateChange(isLoggedIn: Bool, fromCredentialRetrieval: Bool) async {
+        // Determine the correct action type
+        let actionType: EcosiaAuthActionType
+        if fromCredentialRetrieval {
+            actionType = .authStateLoaded
+        } else if isLoggedIn {
+            actionType = .userLoggedIn
+        } else {
+            actionType = .userLoggedOut
+        }
+
+        // Dispatch to the new state management system
+        AuthStateManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType)
+
+        // Post legacy notifications for backward compatibility
+        await postLegacyNotifications(isLoggedIn: isLoggedIn, actionType: actionType)
+    }
+
+    /**
+     Posts legacy notifications for backward compatibility with existing code.
+
+     - Parameters:
+     -   isLoggedIn: Current authentication status
+     -   actionType: The type of auth action that occurred
+     */
+    private func postLegacyNotifications(isLoggedIn: Bool, actionType: EcosiaAuthActionType) async {
+        await MainActor.run {
+            switch actionType {
+            case .authStateLoaded:
+                NotificationCenter.default.post(name: .EcosiaAuthStateReady, object: nil)
+                if isLoggedIn {
+                    NotificationCenter.default.post(
+                        name: .EcosiaAuthDidLoginWithSessionToken,
+                        object: nil,
+                        userInfo: ["sessionToken": accessToken as Any]
+                    )
+                }
+
+            case .userLoggedIn:
+                NotificationCenter.default.post(
+                    name: .EcosiaAuthDidLoginWithSessionToken,
+                    object: nil,
+                    userInfo: ["sessionToken": accessToken as Any]
+                )
+
+            case .userLoggedOut:
+                NotificationCenter.default.post(name: .EcosiaAuthDidLogout, object: nil)
+            }
+        }
+    }
 }
