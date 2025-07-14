@@ -678,7 +678,7 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable {
             // return webView.load(request)
             var ecosiaUpdatedRequest = request
             // Inject auth parameters if needed
-            ecosiaUpdatedRequest = ecosiaUpdatedRequest.withAuthParameters()
+            ecosiaUpdatedRequest = ecosiaUpdatedRequest.withCloudFlareAuthParameters()
             // Enriching the search request (showing SERP page) with a language region header for market selection options
             if ecosiaUpdatedRequest.url?.isEcosiaSearchQuery() == true {
                 ecosiaUpdatedRequest.addLanguageRegionHeader()
