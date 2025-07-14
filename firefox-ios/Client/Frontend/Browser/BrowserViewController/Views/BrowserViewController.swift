@@ -301,6 +301,10 @@ class BrowserViewController: UIViewController,
 
     deinit {
         logger.log("BVC deallocating", level: .info, category: .lifecycle)
+
+        // Ecosia: Unregister window from auth state management
+        EcosiaAuthWindowRegistry.shared.unregisterWindow(windowUUID)
+
         unsubscribeFromRedux()
         observedWebViews.forEach({ stopObserving(webView: $0) })
     }
@@ -737,6 +741,10 @@ class BrowserViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Ecosia: Register window for auth state management
+        EcosiaAuthWindowRegistry.shared.registerWindow(windowUUID)
+
         KeyboardHelper.defaultHelper.addDelegate(self)
         trackTelemetry()
         setupNotifications()
