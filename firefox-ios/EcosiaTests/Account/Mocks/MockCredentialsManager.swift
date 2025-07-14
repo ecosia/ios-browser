@@ -6,7 +6,7 @@ import Foundation
 import Auth0
 @testable import Ecosia
 
-class MockCredentialsManager: CredentialsManagerProtocol {
+final class MockCredentialsManager: CredentialsManagerProtocol {
 
     // MARK: - Test Control Properties
     var shouldFailCredentials = false
@@ -26,9 +26,6 @@ class MockCredentialsManager: CredentialsManagerProtocol {
     var storeCallCount = 0
     var clearCallCount = 0
     var canRenewCallCount = 0
-
-    // MARK: - Protocol Requirements
-    var auth0SettingsProvider: Auth0SettingsProviderProtocol = MockAuth0SettingsProvider()
 
     // MARK: - Mock Implementations
     func credentials() async throws -> Credentials {
