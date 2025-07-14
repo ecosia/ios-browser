@@ -7,6 +7,9 @@ import Auth0
 /// Protocol defining authentication operations for Auth0.
 public protocol Auth0ProviderProtocol {
 
+    /// The Auth0 configuration settings provider
+    var settings: Auth0SettingsProviderProtocol { get }
+
     /// The `CredentialsManager` final concrete type conforming to the protocol `CredentialsManaging` to use for storing and retrieving credentials.
     var credentialsManager: CredentialsManagerProtocol { get }
 
@@ -64,8 +67,8 @@ extension Auth0ProviderProtocol {
         let configuration: URLSessionConfiguration = .default
         let ecosiaAuth0Session = URLSession(configuration: configuration.withCloudFlareAuthParameters())
         return Auth0
-            .webAuth(clientId: credentialsManager.auth0SettingsProvider.id,
-                     domain: credentialsManager.auth0SettingsProvider.domain,
+            .webAuth(clientId: settings.id,
+                     domain: settings.domain,
                      session: ecosiaAuth0Session)
             .useHTTPS()
     }
@@ -73,6 +76,8 @@ extension Auth0ProviderProtocol {
 
 /// Default Protocol Implementation
 extension Auth0ProviderProtocol {
+
+    public var settings: Auth0SettingsProviderProtocol { DefaultAuth0SettingsProvider() }
 
     public var credentialsManager: CredentialsManagerProtocol { Auth.defaultCredentialsManager }
 
