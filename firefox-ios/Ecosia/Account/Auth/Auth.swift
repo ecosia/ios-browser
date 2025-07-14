@@ -138,9 +138,6 @@ public class Auth {
             }
         }
 
-        // Then, try to clear stored credentials
-        let credentialsCleared = auth0Provider.clearCredentials()
-
         if credentialsCleared {
             setupTokensWithCredentials(nil)
             print("\(#file).\(#function) - 👤 Auth - Credentials cleared successfully.")
