@@ -285,7 +285,6 @@ final class AuthWorkflowTests: XCTestCase {
         // Assert - Should be logged in only once
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertNotNil(auth.idToken)
-        // Note: Call count might be 3 depending on how concurrent operations are handled
         XCTAssertGreaterThanOrEqual(mockProvider.startAuthCallCount, 1)
     }
 
