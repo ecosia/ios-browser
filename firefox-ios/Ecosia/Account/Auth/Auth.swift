@@ -339,39 +339,4 @@ extension Auth {
             .secure: true
         ])
     }
-
-    /**
-     Sets the session token cookie for a specific URL in the provided web view.
-     
-     This method configures the web view's cookie store with the session transfer token,
-     enabling automatic authentication for web requests to the specified URL.
-     
-     - Parameters:
-     -   url: The URL for which to set the session token cookie
-     -   webView: The `WKWebView` instance that will receive the cookie
-     
-     - Note: This method only sets the cookie if the user is logged in and a valid session token is available.
-     
-     ## Usage
-     
-     Call this method before loading a URL that requires authentication:
-     
-     ```swift
-     auth.setSessionTokenCookieForURL(url, webView: webView)
-     webView.load(URLRequest(url: url))
-     ```
-     */
-    public func setSessionTokenCookieForURL(_ url: URL, webView: WKWebView) {
-        guard Auth.shared.isLoggedIn,
-              let sessionTokenCookie = getSessionTokenCookie() else {
-            print("No session token available or user not logged in")
-            return
-        }
-
-        print("Setting session token cookie for URL: \(url.absoluteString)")
-
-        // Set the session token cookie
-        webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
-        print("Session token cookie set successfully")
-    }
 }
