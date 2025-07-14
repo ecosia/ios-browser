@@ -177,8 +177,14 @@ public class Auth {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            print("\(#file).\(#function) - 👤 Auth - Retrieved credentials: \(credentials)")
+
+            // Dispatch state loaded with current authentication status
+            await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Failed to retrieve credentials: \(error)")
+            // Even if retrieval fails, dispatch state loaded as false
+            await dispatchAuthStateChange(isLoggedIn: false, fromCredentialRetrieval: true)
         }
     }
 
@@ -221,6 +227,11 @@ public class Auth {
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
         self.isLoggedIn = isLoggedIn
+
+        // Dispatch state change to the new state management system
+        Task {
+            await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
+        }
     }
 
     // MARK: - SSO Methods
@@ -285,10 +296,10 @@ extension Auth {
      (specifically `NativeToWebSSOAuth0Provider`) and requests the session transfer token.
      
      - Returns: `SSOCredentials` containing the session transfer token and expiration information,
-       or `nil` if the provider doesn't support SSO or if the request fails.
+     or `nil` if the provider doesn't support SSO or if the request fails.
      
      - Note: This method performs a type check to ensure the provider supports SSO operations
-       before attempting to retrieve credentials.
+     before attempting to retrieve credentials.
      */
     private func retrieveSSOCredentials() async -> SSOCredentials? {
         if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
@@ -333,5 +344,30 @@ extension Auth {
             .expires: ssoCredentials.expiresIn,
             .secure: true
         ])
+    }
+
+    // MARK: - State Management Integration
+
+    /**
+     Dispatches authentication state changes to the new state management system
+     and posts legacy notifications for backward compatibility.
+     
+     - Parameters:
+     -   isLoggedIn: Current authentication status
+     -   fromCredentialRetrieval: Whether this is from credential retrieval (for state loaded)
+     */
+    private func dispatchAuthStateChange(isLoggedIn: Bool, fromCredentialRetrieval: Bool) async {
+        // Determine the correct action type
+        let actionType: EcosiaAuthActionType
+        if fromCredentialRetrieval {
+            actionType = .authStateLoaded
+        } else if isLoggedIn {
+            actionType = .userLoggedIn
+        } else {
+            actionType = .userLoggedOut
+        }
+
+        // Dispatch to the new state management system
+        AuthStateManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType)
     }
 }
