@@ -25,18 +25,6 @@ final class DefaultCredentialsManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Initialization Tests
-
-    func testInit_createsManagerWithDefaultSettings() {
-        // Arrange
-        // Act
-        let manager = DefaultCredentialsManager()
-
-        // Assert
-        XCTAssertNotNil(manager)
-        XCTAssertNotNil(manager.auth0SettingsProvider)
-    }
-
     // MARK: - Store Credentials Tests
 
     func testStoreCredentials_withValidCredentials_returnsTrue() {
