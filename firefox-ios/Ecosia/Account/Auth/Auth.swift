@@ -32,11 +32,11 @@ public class Auth {
 
     /// The current ID token for the authenticated user.
     /// This token contains user identity information and is used for authentication.
-    private(set) var idToken: String?
+    public private(set) var idToken: String?
 
     /// The current access token for the authenticated user.
     /// This token is used to access protected resources.
-    private(set) var accessToken: String?
+    public private(set) var accessToken: String?
 
     /// The current refresh token for the authenticated user.
     /// This token is used to obtain new access tokens when they expire.
