@@ -97,7 +97,7 @@ final class InvisibleTabAPI {
         }
 
         let actualTimeout = timeout ?? TabAutoCloseConfig.fallbackTimeout
-        let actualNotification = notification ?? .EcosiaAuthDidLoginWithSessionToken
+        let actualNotification = notification ?? .EcosiaAuthStateChanged
 
         TabAutoCloseManager.shared.setupAutoCloseForTab(tab,
                                                         on: actualNotification,
@@ -117,7 +117,7 @@ final class InvisibleTabAPI {
         }
 
         let actualTimeout = timeout ?? TabAutoCloseConfig.fallbackTimeout
-        let actualNotification = notification ?? .EcosiaAuthDidLoginWithSessionToken
+        let actualNotification = notification ?? .EcosiaAuthStateChanged
 
         TabAutoCloseManager.shared.setupAutoCloseForTabs(tabs,
                                                          on: actualNotification,
@@ -522,7 +522,7 @@ public class InvisibleTabConfiguration {
     public var fallbackTimeout: TimeInterval = 10.0
 
     /// The notification name to listen for when authentication completes
-    public var authCompleteNotification: Notification.Name = .EcosiaAuthDidLoginWithSessionToken
+    public var authCompleteNotification: Notification.Name = .EcosiaAuthStateChanged
 
     /// Maximum number of tabs that can be tracked for auto-close simultaneously
     public var maxConcurrentAutoCloseTabs: Int = 5
@@ -536,7 +536,7 @@ public class InvisibleTabConfiguration {
     public init() {
         // Use default values
         fallbackTimeout = 10.0
-        authCompleteNotification = .EcosiaAuthDidLoginWithSessionToken
+        authCompleteNotification = .EcosiaAuthStateChanged
         maxConcurrentAutoCloseTabs = 5
         debounceInterval = 0.5
     }
@@ -549,7 +549,7 @@ public class InvisibleTabConfiguration {
     ///   - debounceInterval: Debounce interval for notifications
     public init(
         fallbackTimeout: TimeInterval = 10.0,
-        authCompleteNotification: Notification.Name = .EcosiaAuthDidLoginWithSessionToken,
+        authCompleteNotification: Notification.Name = .EcosiaAuthStateChanged,
         maxConcurrentAutoCloseTabs: Int = 5,
         debounceInterval: TimeInterval = 0.5
     ) {
@@ -589,7 +589,7 @@ public extension InvisibleTabConfiguration {
     static var testing: InvisibleTabConfiguration {
         return InvisibleTabConfiguration(
             fallbackTimeout: 1.0,
-            authCompleteNotification: .EcosiaAuthDidLoginWithSessionToken,
+            authCompleteNotification: .EcosiaAuthStateChanged,
             maxConcurrentAutoCloseTabs: 3,
             debounceInterval: 0.1
         )
@@ -599,7 +599,7 @@ public extension InvisibleTabConfiguration {
     static var development: InvisibleTabConfiguration {
         return InvisibleTabConfiguration(
             fallbackTimeout: 5.0,
-            authCompleteNotification: .EcosiaAuthDidLoginWithSessionToken,
+            authCompleteNotification: .EcosiaAuthStateChanged,
             maxConcurrentAutoCloseTabs: 5,
             debounceInterval: 0.3
         )
