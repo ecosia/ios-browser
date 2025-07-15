@@ -3,7 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import UIKit
+import Ecosia
+import Shared
 
 /// Internal API for invisible tab management
 /// Provides a clean interface for creating and managing invisible tabs across the app
@@ -17,7 +18,7 @@ final class InvisibleTabAPI {
     // MARK: - Properties
 
     /// Weak reference to browser view controller for tab operations
-    private static weak var browserViewController: BrowserViewController?
+    private weak var browserViewController: BrowserViewController?
 
     /// Weak reference to tab manager for tab operations
     private weak var tabManager: TabManager?
@@ -31,7 +32,7 @@ final class InvisibleTabAPI {
         static var maxConcurrentTabs: Int = TabAutoCloseConfig.maxConcurrentAutoCloseTabs
 
         /// Whether to enable debug logging
-        static var debugLogging: Bool = true
+        static var debugLogging = AppConstants.buildChannel == .developer
     }
 
     // MARK: - Initialization
@@ -41,11 +42,9 @@ final class InvisibleTabAPI {
 
     /// Initializes the API with a browser view controller
     /// - Parameter browserViewController: The browser view controller to use for tab operations
-    static func initialize(with browserViewController: BrowserViewController) {
+    func initialize(with browserViewController: BrowserViewController) {
         self.browserViewController = browserViewController
-
-        // Initialize shared instance
-        shared.tabManager = browserViewController.tabManager
+        self.tabManager = browserViewController.tabManager
 
         // Initialize auto-close manager with tab manager
         TabAutoCloseManager.shared.setTabManager(browserViewController.tabManager)
@@ -55,7 +54,7 @@ final class InvisibleTabAPI {
         }
     }
 
-    // MARK: - Instance Methods for Testing
+    // MARK: - Instance Methods
 
     /// Sets the tab manager for instance operations
     /// - Parameter tabManager: The tab manager to use, or nil to clear
@@ -66,16 +65,15 @@ final class InvisibleTabAPI {
         }
     }
 
-    /// Marks a tab as invisible (instance method)
+    /// Marks a tab as invisible
     /// - Parameter tab: The tab to mark as invisible
     /// - Returns: True if successful, false otherwise
     func markTabAsInvisible(_ tab: Tab) -> Bool {
-        // For now, always enabled - can be made configurable later
         InvisibleTabManager.shared.markTabAsInvisible(tab)
         return true
     }
 
-    /// Marks a tab as visible (instance method)
+    /// Marks a tab as visible
     /// - Parameter tab: The tab to mark as visible
     /// - Returns: True if successful, false otherwise
     func markTabAsVisible(_ tab: Tab) -> Bool {
@@ -91,58 +89,13 @@ final class InvisibleTabAPI {
     ///   - timeout: Optional timeout override
     ///   - notification: Optional notification name override
     /// - Returns: True if successful, false otherwise
-    func setupAutoCloseForTab(_ tab: Tab, timeout: TimeInterval? = nil, on notification: Notification.Name? = nil) -> Bool {
-        guard let tabManager = tabManager else {
-            return false
-        }
-
-        let actualTimeout = timeout ?? TabAutoCloseConfig.fallbackTimeout
-        let actualNotification = notification ?? .EcosiaAuthStateChanged
-
-        TabAutoCloseManager.shared.setupAutoCloseForTab(tab,
-                                                        on: actualNotification,
-                                                        timeout: actualTimeout)
-        return true
-    }
-
-    /// Sets up auto-close for multiple tabs
-    /// - Parameters:
-    ///   - tabs: The tabs to set up auto-close for
-    ///   - timeout: Optional timeout override
-    ///   - notification: Optional notification name override
-    /// - Returns: True if successful, false otherwise
-    func setupAutoCloseForTabs(_ tabs: [Tab], timeout: TimeInterval? = nil, on notification: Notification.Name? = nil) -> Bool {
-        guard let tabManager = tabManager else {
-            return false
-        }
-
-        let actualTimeout = timeout ?? TabAutoCloseConfig.fallbackTimeout
-        let actualNotification = notification ?? .EcosiaAuthStateChanged
-
-        TabAutoCloseManager.shared.setupAutoCloseForTabs(tabs,
-                                                         on: actualNotification,
-                                                         timeout: actualTimeout)
-        return true
-    }
-
-    /// Sets up auto-close for a tab with configuration object
-    /// - Parameters:
-    ///   - tab: The tab to setup auto-close for
-    ///   - config: Configuration object with timeout and notification settings
-    /// - Returns: True if successful, false otherwise
-    func setupAutoCloseForTab(_ tab: Tab, config: InvisibleTabConfiguration) -> Bool {
-        guard let tabManager = tabManager else {
-            return false
-        }
-
-        guard config.isValid() else {
-            return false
-        }
-
+    func setupAutoCloseForTab(_ tab: Tab,
+                              timeout: TimeInterval = Configuration.defaultTimeout,
+                              notification: Notification.Name = .EcosiaAuthStateChanged) -> Bool {
         TabAutoCloseManager.shared.setupAutoCloseForTab(
             tab,
-            on: config.authCompleteNotification,
-            timeout: config.fallbackTimeout
+            on: notification,
+            timeout: timeout
         )
         return true
     }
@@ -246,10 +199,10 @@ final class InvisibleTabAPI {
     ///   - completion: Optional completion handler with the created tab
     /// - Returns: The created invisible tab, or nil if creation failed
     @discardableResult
-    static func createInvisibleTab(for url: URL,
-                                         isPrivate: Bool = false,
-                                         autoClose: Bool = true,
-                                         completion: ((Tab?) -> Void)? = nil) -> Tab? {
+    func createInvisibleTab(for url: URL,
+                            isPrivate: Bool = false,
+                            autoClose: Bool = true,
+                            completion: ((Tab?) -> Void)? = nil) -> Tab? {
 
         guard let browserViewController = browserViewController else {
             print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
@@ -274,9 +227,9 @@ final class InvisibleTabAPI {
     ///   - completion: Optional completion handler with the created tab
     /// - Returns: The created invisible authentication tab, or nil if creation failed
     @discardableResult
-    static func createInvisibleAuthTab(for url: URL,
-                                             isPrivate: Bool = false,
-                                             completion: ((Tab?) -> Void)? = nil) -> Tab? {
+    func createInvisibleAuthTab(for url: URL,
+                                isPrivate: Bool = false,
+                                completion: ((Tab?) -> Void)? = nil) -> Tab? {
 
         guard let browserViewController = browserViewController else {
             print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
@@ -302,10 +255,10 @@ final class InvisibleTabAPI {
     ///   - completion: Optional completion handler with the created tabs
     /// - Returns: Array of created invisible tabs (may be empty if creation failed)
     @discardableResult
-    static func createInvisibleTabs(for urls: [URL],
-                                          isPrivate: Bool = false,
-                                          autoClose: Bool = true,
-                                          completion: (([Tab]) -> Void)? = nil) -> [Tab] {
+    func createInvisibleTabs(for urls: [URL],
+                             isPrivate: Bool = false,
+                             autoClose: Bool = true,
+                             completion: (([Tab]) -> Void)? = nil) -> [Tab] {
 
         guard let browserViewController = browserViewController else {
             print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
@@ -332,7 +285,7 @@ final class InvisibleTabAPI {
     // MARK: - Tab Management
 
     /// Returns the count of visible tabs (excludes invisible tabs)
-    static func getVisibleTabCount() -> Int {
+    func getVisibleTabCount() -> Int {
         guard let browserViewController = browserViewController else {
             print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
             return 0
@@ -342,7 +295,7 @@ final class InvisibleTabAPI {
     }
 
     /// Returns the count of invisible tabs
-    static func getInvisibleTabCount() -> Int {
+    func getInvisibleTabCount() -> Int {
         guard let browserViewController = browserViewController else {
             print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
             return 0
@@ -351,29 +304,9 @@ final class InvisibleTabAPI {
         return browserViewController.invisibleTabCount
     }
 
-    /// Returns all invisible tabs
-    static func getInvisibleTabs() -> [Tab] {
-        guard let browserViewController = browserViewController else {
-            print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
-            return []
-        }
-
-        return browserViewController.invisibleTabs
-    }
-
-    /// Returns all visible tabs
-    static func getVisibleTabs() -> [Tab] {
-        guard let browserViewController = browserViewController else {
-            print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
-            return []
-        }
-
-        return browserViewController.tabManager.visibleTabs
-    }
-
     /// Closes all invisible tabs
     /// - Parameter completion: Optional completion handler
-    static func closeAllInvisibleTabs(completion: (() -> Void)? = nil) {
+    func closeAllInvisibleTabs(completion: (() -> Void)? = nil) {
         guard let browserViewController = browserViewController else {
             print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
             completion?()
@@ -391,7 +324,7 @@ final class InvisibleTabAPI {
     /// - Parameters:
     ///   - condition: The condition to match
     ///   - completion: Optional completion handler
-    static func closeInvisibleTabs(where condition: @escaping (Tab) -> Bool, completion: (() -> Void)? = nil) {
+    func closeInvisibleTabs(where condition: @escaping (Tab) -> Bool, completion: (() -> Void)? = nil) {
         guard let browserViewController = browserViewController else {
             print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
             completion?()
@@ -407,19 +340,9 @@ final class InvisibleTabAPI {
 
     // MARK: - Auto-Close Management
 
-    /// Cancels auto-close for a specific tab
-    /// - Parameter tabUUID: UUID of the tab to cancel auto-close for
-    static func cancelAutoCloseForTab(_ tabUUID: String) {
-        TabAutoCloseManager.shared.cancelAutoCloseForTab(tabUUID)
-
-        if Configuration.debugLogging {
-            print("🚫 InvisibleTabAPI - Cancelled auto-close for tab: \(tabUUID)")
-        }
-    }
-
     /// Cancels auto-close for multiple tabs
     /// - Parameter tabUUIDs: Array of tab UUIDs to cancel auto-close for
-    static func cancelAutoCloseForTabs(_ tabUUIDs: [String]) {
+    func cancelAutoCloseForTabs(_ tabUUIDs: [String]) {
         TabAutoCloseManager.shared.cancelAutoCloseForTabs(tabUUIDs)
 
         if Configuration.debugLogging {
@@ -428,12 +351,12 @@ final class InvisibleTabAPI {
     }
 
     /// Returns the number of tabs currently tracked for auto-close
-    static func getTrackedTabCount() -> Int {
+    func getTrackedTabCount() -> Int {
         return TabAutoCloseManager.shared.trackedTabCount
     }
 
     /// Returns the UUIDs of all tabs currently tracked for auto-close
-    static func getTrackedTabUUIDs() -> [String] {
+    func getTrackedTabUUIDs() -> [String] {
         return TabAutoCloseManager.shared.trackedTabUUIDs
     }
 
@@ -442,32 +365,12 @@ final class InvisibleTabAPI {
     /// Checks if a specific tab is invisible
     /// - Parameter tab: The tab to check
     /// - Returns: True if the tab is invisible, false otherwise
-    static func isTabInvisible(_ tab: Tab) -> Bool {
+    func isTabInvisible(_ tab: Tab) -> Bool {
         return tab.isInvisible
     }
 
-    /// Marks a tab as invisible
-    /// - Parameter tab: The tab to mark as invisible
-    static func markTabAsInvisible(_ tab: Tab) {
-        tab.isInvisible = true
-
-        if Configuration.debugLogging {
-            print("👻 InvisibleTabAPI - Marked tab as invisible: \(tab.tabUUID)")
-        }
-    }
-
-    /// Marks a tab as visible
-    /// - Parameter tab: The tab to mark as visible
-    static func markTabAsVisible(_ tab: Tab) {
-        tab.isInvisible = false
-
-        if Configuration.debugLogging {
-            print("👁️ InvisibleTabAPI - Marked tab as visible: \(tab.tabUUID)")
-        }
-    }
-
     /// Returns a summary of invisible tab state for debugging
-    static func getInvisibleTabSummary() -> String {
+    func getInvisibleTabSummary() -> String {
         guard let browserViewController = browserViewController else {
             return "InvisibleTabAPI - BrowserViewController not initialized"
         }
@@ -476,7 +379,7 @@ final class InvisibleTabAPI {
     }
 
     /// Prints invisible tab summary to console
-    static func printInvisibleTabSummary() {
+    func printInvisibleTabSummary() {
         print("🔍 " + getInvisibleTabSummary())
     }
 
@@ -484,7 +387,7 @@ final class InvisibleTabAPI {
 
     /// Cleans up all invisible tab resources
     /// Should be called during app termination or when resetting tab state
-    static func cleanup() {
+    func cleanup() {
         guard let browserViewController = browserViewController else {
             print("⚠️ InvisibleTabAPI - BrowserViewController not initialized")
             return
@@ -498,10 +401,9 @@ final class InvisibleTabAPI {
     }
 
     /// Resets the API (primarily for testing)
-    static func reset() {
+    func reset() {
         browserViewController = nil
-        TabAutoCloseManager.shared.cleanupAllObservers()
-        InvisibleTabManager.shared.clearAllInvisibleTabs()
+        tabManager = nil
 
         if Configuration.debugLogging {
             print("🔄 InvisibleTabAPI - Reset completed")
