@@ -19192,6 +19192,7 @@
 				C88E7A572A0553360072E638 /* OnboardingButtonInfoModel.swift in Sources */,
 				AB9A0C012C6CBC9100BFA22A /* TrackingProtectionDetailsViewController.swift in Sources */,
 				21B548952B1E5F1400DC1DF8 /* InactiveTabsManager.swift in Sources */,
+				2C0174972E26E5DA00136A6F /* EcosiaAuth.swift in Sources */,
 				12AEB1292D3A9AE70035D7D8 /* CreditCardPayload.swift in Sources */,
 				C8F457A81F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift in Sources */,
 				964FA97728A2A55C0024BB3B /* ContextualHintPrefsKeysProvider.swift in Sources */,
