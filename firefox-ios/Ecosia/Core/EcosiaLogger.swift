@@ -5,41 +5,43 @@
 import Foundation
 import OSLog
 
+// MARK: - Logger Extension
+
+extension Logger {
+    /// Using bundle identifier ensures a unique identifier for Ecosia logs
+    private static var subsystem = "org.mozilla.ios.Ecosia"
+
+    /// Authentication-related logs (login, logout, credentials)
+    static let auth = Logger(subsystem: subsystem, category: "auth")
+
+    /// Invisible tab management logs
+    static let invisibleTabs = Logger(subsystem: subsystem, category: "invisibleTabs")
+
+    /// Tab auto-close management logs
+    static let tabAutoClose = Logger(subsystem: subsystem, category: "tabAutoClose")
+
+    /// Session management logs (tokens, SSO)
+    static let session = Logger(subsystem: subsystem, category: "session")
+
+    /// Cookie injection and management logs
+    static let cookies = Logger(subsystem: subsystem, category: "cookies")
+
+    /// General Ecosia functionality logs
+    static let general = Logger(subsystem: subsystem, category: "general")
+}
+
+// MARK: - EcosiaLogger Compatibility Layer
+
 /// Centralized logging utility for Ecosia-specific functionality using OSLog
-/// Available to both Ecosia framework and Client module code
+/// Provides backward compatibility while leveraging modern OSLog structured logging
 public enum EcosiaLogger {
-
-    // MARK: - OSLog Loggers
-
-    /// Main subsystem identifier for Ecosia logs
-    private static let subsystem = "org.mozilla.ios.Ecosia"
-
-    /// Authentication-related logger
-    private static let authLogger = Logger(subsystem: subsystem, category: "Auth")
-
-    /// Invisible tab management logger
-    private static let invisibleTabsLogger = Logger(subsystem: subsystem, category: "InvisibleTabs")
-
-    /// Tab auto-close management logger
-    private static let tabAutoCloseLogger = Logger(subsystem: subsystem, category: "TabAutoClose")
-
-    /// Session management logger
-    private static let sessionLogger = Logger(subsystem: subsystem, category: "Session")
-
-    /// Cookie injection and management logger
-    private static let cookiesLogger = Logger(subsystem: subsystem, category: "Cookies")
-
-    /// Generic Ecosia functionality logger
-    private static let generalLogger = Logger(subsystem: subsystem, category: "General")
-
-    // MARK: - Logging Methods
 
     /// Logs authentication-related events
     /// - Parameters:
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func auth(_ message: String, level: LogLevel = .info) {
-        log(message: message, logger: authLogger, level: level)
+        level.log(message, using: .auth)
     }
 
     /// Logs invisible tab management events
@@ -47,7 +49,7 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func invisibleTabs(_ message: String, level: LogLevel = .info) {
-        log(message: message, logger: invisibleTabsLogger, level: level)
+        level.log(message, using: .invisibleTabs)
     }
 
     /// Logs tab auto-close management events
@@ -55,7 +57,7 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func tabAutoClose(_ message: String, level: LogLevel = .info) {
-        log(message: message, logger: tabAutoCloseLogger, level: level)
+        level.log(message, using: .tabAutoClose)
     }
 
     /// Logs session management events
@@ -63,7 +65,7 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func session(_ message: String, level: LogLevel = .info) {
-        log(message: message, logger: sessionLogger, level: level)
+        level.log(message, using: .session)
     }
 
     /// Logs cookie injection and management events
@@ -71,7 +73,7 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func cookies(_ message: String, level: LogLevel = .info) {
-        log(message: message, logger: cookiesLogger, level: level)
+        level.log(message, using: .cookies)
     }
 
     /// Generic logging method for other Ecosia functionality
@@ -80,27 +82,7 @@ public enum EcosiaLogger {
     ///   - category: Log category/prefix (legacy parameter, not used with OSLog)
     ///   - level: Log level (info, debug, warning, error)
     public static func log(_ message: String, category: String = "General", level: LogLevel = .info) {
-        log(message: message, logger: generalLogger, level: level)
-    }
-
-    // MARK: - Private Implementation
-
-    /// Internal logging method that maps to OSLog levels
-    /// - Parameters:
-    ///   - message: The log message
-    ///   - logger: The OSLog Logger instance to use
-    ///   - level: The log level
-    private static func log(message: String, logger: Logger, level: LogLevel) {
-        switch level {
-        case .debug:
-            logger.debug("\(message, privacy: .public)")
-        case .info:
-            logger.info("\(message, privacy: .public)")
-        case .warning:
-            logger.notice("\(message, privacy: .public)")
-        case .error:
-            logger.error("\(message, privacy: .public)")
-        }
+        level.log(message, using: .general)
     }
 }
 
@@ -112,6 +94,23 @@ public enum LogLevel {
     case info     // Maps to OSLog.info
     case warning  // Maps to OSLog.notice
     case error    // Maps to OSLog.error
+
+    /// Logs a message using the specified Logger at the appropriate OSLog level
+    /// - Parameters:
+    ///   - message: The message to log
+    ///   - logger: The Logger instance to use
+    func log(_ message: String, using logger: Logger) {
+        switch self {
+        case .debug:
+            logger.debug("\(message, privacy: .public)")
+        case .info:
+            logger.info("\(message, privacy: .public)")
+        case .warning:
+            logger.notice("\(message, privacy: .public)")
+        case .error:
+            logger.error("\(message, privacy: .public)")
+        }
+    }
 
     /// Visual indicator for the log level (legacy support)
     var indicator: String {
