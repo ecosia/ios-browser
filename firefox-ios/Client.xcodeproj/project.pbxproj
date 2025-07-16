@@ -11689,6 +11689,7 @@
 		2C3982862E200C1100AB8035 /* API */ = {
 			isa = PBXGroup;
 			children = (
+				2C00D6822E27EC9C00811A76 /* InvisibleTabAPIProtocol.swift */,
 				2C39828D2E201ECA00AB8035 /* InvisibleTabAPI.swift */,
 			);
 			path = API;
@@ -18821,6 +18822,7 @@
 				8AF347DE2CADD1B200624036 /* HomepageState.swift in Sources */,
 				C8DC90C92A0675E70008832B /* MarkupParsingUtility.swift in Sources */,
 				CA03B26A247F1D9E00382B62 /* BreachAlertsClient.swift in Sources */,
+				2C00D6832E27EC9C00811A76 /* InvisibleTabAPIProtocol.swift in Sources */,
 				8A3EF8072A2FCFF700796E3A /* SentryIDSetting.swift in Sources */,
 				8A03294E288F1F0800AD9B89 /* TopSitesDimension.swift in Sources */,
 				E1516A3E2A7BC07E007819A4 /* ReliabilityGrade.swift in Sources */,

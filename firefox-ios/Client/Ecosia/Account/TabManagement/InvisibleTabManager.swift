@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Ecosia
 
 /// Centralized manager for invisible tab state and operations
 /// Handles tracking invisible tabs and provides filtering capabilities
@@ -64,7 +65,7 @@ final class InvisibleTabManager: InvisibleTabManaging {
                         userInfo: ["tabUUID": tab.tabUUID]
                     )
                 }
-                print("🔍 InvisibleTabManager - Tab marked as invisible: \(tab.tabUUID)")
+                EcosiaLogger.invisibleTabs("Tab marked as invisible: \(tab.tabUUID)")
             }
         }
     }
@@ -85,7 +86,7 @@ final class InvisibleTabManager: InvisibleTabManaging {
                         userInfo: ["tabUUID": tab.tabUUID]
                     )
                 }
-                print("🔍 InvisibleTabManager - Tab marked as visible: \(tab.tabUUID)")
+                EcosiaLogger.invisibleTabs("Tab marked as visible: \(tab.tabUUID)")
             }
         }
     }
@@ -126,7 +127,7 @@ final class InvisibleTabManager: InvisibleTabManaging {
                         )
                     }
                 }
-                print("🔍 InvisibleTabManager - Cleaned up \(removedTabs.count) removed tabs")
+                EcosiaLogger.invisibleTabs("Cleaned up \(removedTabs.count) removed tabs")
             }
         }
     }
@@ -146,7 +147,7 @@ final class InvisibleTabManager: InvisibleTabManaging {
                     userInfo: ["clearedCount": clearedTabs.count]
                 )
             }
-            print("🔍 InvisibleTabManager - Cleared all invisible tabs (\(clearedTabs.count) tabs)")
+            EcosiaLogger.invisibleTabs("Cleared all invisible tabs (\(clearedTabs.count) tabs)")
         }
     }
 }
