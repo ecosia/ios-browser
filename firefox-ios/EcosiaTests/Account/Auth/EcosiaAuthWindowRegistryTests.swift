@@ -24,16 +24,6 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         windowRegistry.clearAllWindows()
     }
 
-    override func tearDown() {
-        // Clean up after each test
-        windowRegistry.clearAllWindows()
-        windowRegistry = nil
-        testWindowUUID1 = nil
-        testWindowUUID2 = nil
-        testWindowUUID3 = nil
-        super.tearDown()
-    }
-
     // MARK: - Initialization Tests
 
     func testSharedInstance_returnsSameInstance() {

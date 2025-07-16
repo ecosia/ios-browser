@@ -1016,6 +1016,23 @@ class BrowserViewController: UIViewController,
 
         browserDelegate?.browserHasLoaded()
         AppEventQueue.signal(event: .browserIsReady)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            /* Ecosia: Create invisible tab API and start authentication flow */
+            let invisibleTabAPI = InvisibleTabAPI(browserViewController: self)
+            let ecosiaAuth = EcosiaAuth(invisibleTabAPI: invisibleTabAPI)
+            
+            ecosiaAuth.login()
+                .onNativeAuthCompleted {
+                    EcosiaLogger.log("Ecosia native auth completed")
+                }
+                .onAuthFlowCompleted { success in
+                    EcosiaLogger.log("Ecosia auth flow completed: \(success)")
+                }
+                .onError { error in
+                    EcosiaLogger.log(error.localizedDescription)
+                }
+        }
     }
 
     private func prepareURLOnboardingContextualHint() {

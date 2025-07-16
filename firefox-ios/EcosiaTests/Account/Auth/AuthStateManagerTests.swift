@@ -202,8 +202,9 @@ final class AuthStateManagerTests: XCTestCase {
 
         var receivedNotification: Notification?
         let expectation = expectation(description: "Notification should be posted")
+        var observer: NSObjectProtocol?
 
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
+        observer = NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
             receivedNotification = notification
             expectation.fulfill()
         }
@@ -213,6 +214,12 @@ final class AuthStateManagerTests: XCTestCase {
 
         // Assert
         waitForExpectations(timeout: 1.0)
+
+        // Clean up observer
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
+
         XCTAssertNotNil(receivedNotification)
 
         if let userInfo = receivedNotification?.userInfo {
@@ -239,7 +246,8 @@ final class AuthStateManagerTests: XCTestCase {
         let observer = NSObject()
         authStateManager.subscribe(observer: observer, selector: #selector(NSObject.init))
 
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { _ in
+        var notificationObserver: NSObjectProtocol?
+        notificationObserver = NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { _ in
             notificationReceived = true
             expectation.fulfill()
         }
@@ -250,6 +258,12 @@ final class AuthStateManagerTests: XCTestCase {
 
         // Assert
         waitForExpectations(timeout: 1.0)
+
+        // Clean up observer
+        if let notificationObserver = notificationObserver {
+            NotificationCenter.default.removeObserver(notificationObserver)
+        }
+
         XCTAssertTrue(notificationReceived)
     }
 
@@ -317,7 +331,7 @@ final class AuthStateManagerTests: XCTestCase {
 
 // MARK: - Mock Classes
 
-private class MockNotificationCenter: NotificationCenter, @unchecked Sendable {
+private class AuthStateManagerMockNotificationCenter: NotificationCenter, @unchecked Sendable {
     var postedNotifications: [Notification] = []
 
     override func post(_ notification: Notification) {

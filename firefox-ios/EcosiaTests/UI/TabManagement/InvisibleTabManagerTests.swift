@@ -12,14 +12,14 @@ final class InvisibleTabManagerTests: XCTestCase {
     // MARK: - Properties
 
     private var manager: InvisibleTabManager!
-    private var mockNotificationCenter: MockNotificationCenter!
+    private var mockNotificationCenter: InvisibleTabManagerMockNotificationCenter!
     private var testTab: Tab!
 
     // MARK: - Setup and Teardown
 
     override func setUp() {
         super.setUp()
-        mockNotificationCenter = MockNotificationCenter()
+        mockNotificationCenter = InvisibleTabManagerMockNotificationCenter()
 
         // Use reflection to inject mock notification center for testing
         // Note: In production, this uses NotificationCenter.default
@@ -68,6 +68,7 @@ final class InvisibleTabManagerTests: XCTestCase {
         // Given
         manager.markTabAsInvisible(testTab)
         XCTAssertTrue(manager.isTabInvisible(testTab))
+        XCTAssertEqual(manager.invisibleTabCount, 1)
 
         // When
         manager.markTabAsVisible(testTab)
@@ -78,270 +79,441 @@ final class InvisibleTabManagerTests: XCTestCase {
         XCTAssertFalse(manager.invisibleTabUUIDs.contains(testTab.tabUUID))
     }
 
-    func testToggleTabVisibilityMultipleTimes() {
+    func testMarkSameTabAsInvisibleMultipleTimes() {
         // Given
-        let tab = testTab!
-
-        // When/Then - Multiple toggles
-        manager.markTabAsInvisible(tab)
-        XCTAssertTrue(manager.isTabInvisible(tab))
-
-        manager.markTabAsVisible(tab)
-        XCTAssertFalse(manager.isTabInvisible(tab))
-
-        manager.markTabAsInvisible(tab)
-        XCTAssertTrue(manager.isTabInvisible(tab))
-
-        manager.markTabAsVisible(tab)
-        XCTAssertFalse(manager.isTabInvisible(tab))
-    }
-
-    func testMarkSameTabInvisibleMultipleTimes() {
-        // Given
-        let tab = testTab!
+        XCTAssertFalse(manager.isTabInvisible(testTab))
 
         // When
-        manager.markTabAsInvisible(tab)
-        manager.markTabAsInvisible(tab)
-        manager.markTabAsInvisible(tab)
+        manager.markTabAsInvisible(testTab)
+        manager.markTabAsInvisible(testTab)
+        manager.markTabAsInvisible(testTab)
 
         // Then
-        XCTAssertTrue(manager.isTabInvisible(tab))
-        XCTAssertEqual(manager.invisibleTabCount, 1, "Should not duplicate invisible tabs")
+        XCTAssertTrue(manager.isTabInvisible(testTab))
+        XCTAssertEqual(manager.invisibleTabCount, 1, "Should only count the tab once")
     }
 
-    // MARK: - Tab Collection Filtering Tests
-
-    func testGetVisibleTabsFromMixedCollection() {
+    func testMarkVisibleTabAsVisible() {
         // Given
-        let visibleTab1 = createMockTab(uuid: "visible-1")
-        let visibleTab2 = createMockTab(uuid: "visible-2")
-        let invisibleTab1 = createMockTab(uuid: "invisible-1")
-        let invisibleTab2 = createMockTab(uuid: "invisible-2")
+        XCTAssertFalse(manager.isTabInvisible(testTab))
 
-        manager.markTabAsInvisible(invisibleTab1)
-        manager.markTabAsInvisible(invisibleTab2)
+        // When
+        manager.markTabAsVisible(testTab)
 
-        let allTabs = [visibleTab1, invisibleTab1, visibleTab2, invisibleTab2]
+        // Then
+        XCTAssertFalse(manager.isTabInvisible(testTab))
+        XCTAssertEqual(manager.invisibleTabCount, 0)
+    }
+
+    // MARK: - Multiple Tab Tests
+
+    func testMultipleTabsInvisible() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+
+        // When
+        manager.markTabAsInvisible(tab1)
+        manager.markTabAsInvisible(tab2)
+        manager.markTabAsInvisible(tab3)
+
+        // Then
+        XCTAssertEqual(manager.invisibleTabCount, 3)
+        XCTAssertTrue(manager.isTabInvisible(tab1))
+        XCTAssertTrue(manager.isTabInvisible(tab2))
+        XCTAssertTrue(manager.isTabInvisible(tab3))
+    }
+
+    func testMixedVisibilityTabs() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+
+        // When
+        manager.markTabAsInvisible(tab1)
+        manager.markTabAsInvisible(tab3)
+        // tab2 remains visible
+
+        // Then
+        XCTAssertEqual(manager.invisibleTabCount, 2)
+        XCTAssertTrue(manager.isTabInvisible(tab1))
+        XCTAssertFalse(manager.isTabInvisible(tab2))
+        XCTAssertTrue(manager.isTabInvisible(tab3))
+    }
+
+    // MARK: - Tab Filtering Tests
+
+    func testGetVisibleTabsFromArray() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+        let allTabs = [tab1, tab2, tab3]
+
+        manager.markTabAsInvisible(tab1)
+        manager.markTabAsInvisible(tab3)
 
         // When
         let visibleTabs = manager.getVisibleTabs(from: allTabs)
 
         // Then
-        XCTAssertEqual(visibleTabs.count, 2)
-        XCTAssertTrue(visibleTabs.contains(visibleTab1))
-        XCTAssertTrue(visibleTabs.contains(visibleTab2))
-        XCTAssertFalse(visibleTabs.contains(invisibleTab1))
-        XCTAssertFalse(visibleTabs.contains(invisibleTab2))
+        XCTAssertEqual(visibleTabs.count, 1)
+        XCTAssertTrue(visibleTabs.contains(tab2))
+        XCTAssertFalse(visibleTabs.contains(tab1))
+        XCTAssertFalse(visibleTabs.contains(tab3))
     }
 
-    func testGetInvisibleTabsFromMixedCollection() {
+    func testGetInvisibleTabsFromArray() {
         // Given
-        let visibleTab1 = createMockTab(uuid: "visible-1")
-        let visibleTab2 = createMockTab(uuid: "visible-2")
-        let invisibleTab1 = createMockTab(uuid: "invisible-1")
-        let invisibleTab2 = createMockTab(uuid: "invisible-2")
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+        let allTabs = [tab1, tab2, tab3]
 
-        manager.markTabAsInvisible(invisibleTab1)
-        manager.markTabAsInvisible(invisibleTab2)
-
-        let allTabs = [visibleTab1, invisibleTab1, visibleTab2, invisibleTab2]
+        manager.markTabAsInvisible(tab1)
+        manager.markTabAsInvisible(tab3)
 
         // When
         let invisibleTabs = manager.getInvisibleTabs(from: allTabs)
 
         // Then
         XCTAssertEqual(invisibleTabs.count, 2)
-        XCTAssertTrue(invisibleTabs.contains(invisibleTab1))
-        XCTAssertTrue(invisibleTabs.contains(invisibleTab2))
-        XCTAssertFalse(invisibleTabs.contains(visibleTab1))
-        XCTAssertFalse(invisibleTabs.contains(visibleTab2))
+        XCTAssertTrue(invisibleTabs.contains(tab1))
+        XCTAssertFalse(invisibleTabs.contains(tab2))
+        XCTAssertTrue(invisibleTabs.contains(tab3))
     }
 
-    func testFilteringWithEmptyTabCollection() {
+    func testGetVisibleTabsWhenAllVisible() {
         // Given
-        let emptyTabs: [Tab] = []
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+        let allTabs = [tab1, tab2, tab3]
 
         // When
-        let visibleTabs = manager.getVisibleTabs(from: emptyTabs)
-        let invisibleTabs = manager.getInvisibleTabs(from: emptyTabs)
+        let visibleTabs = manager.getVisibleTabs(from: allTabs)
 
         // Then
-        XCTAssertTrue(visibleTabs.isEmpty)
-        XCTAssertTrue(invisibleTabs.isEmpty)
+        XCTAssertEqual(visibleTabs.count, 3)
+        XCTAssertEqual(visibleTabs, allTabs)
+    }
+
+    func testGetInvisibleTabsWhenAllVisible() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+        let allTabs = [tab1, tab2, tab3]
+
+        // When
+        let invisibleTabs = manager.getInvisibleTabs(from: allTabs)
+
+        // Then
+        XCTAssertEqual(invisibleTabs.count, 0)
+    }
+
+    func testGetVisibleTabsWhenAllInvisible() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+        let allTabs = [tab1, tab2, tab3]
+
+        manager.markTabAsInvisible(tab1)
+        manager.markTabAsInvisible(tab2)
+        manager.markTabAsInvisible(tab3)
+
+        // When
+        let visibleTabs = manager.getVisibleTabs(from: allTabs)
+
+        // Then
+        XCTAssertEqual(visibleTabs.count, 0)
+    }
+
+    func testGetInvisibleTabsWhenAllInvisible() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+        let allTabs = [tab1, tab2, tab3]
+
+        manager.markTabAsInvisible(tab1)
+        manager.markTabAsInvisible(tab2)
+        manager.markTabAsInvisible(tab3)
+
+        // When
+        let invisibleTabs = manager.getInvisibleTabs(from: allTabs)
+
+        // Then
+        XCTAssertEqual(invisibleTabs.count, 3)
+        XCTAssertEqual(Set(invisibleTabs), Set(allTabs))
+    }
+
+    // MARK: - Tab Count Tests
+
+    func testInvisibleTabCount() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+
+        XCTAssertEqual(manager.invisibleTabCount, 0)
+
+        // When
+        manager.markTabAsInvisible(tab1)
+        XCTAssertEqual(manager.invisibleTabCount, 1)
+
+        manager.markTabAsInvisible(tab2)
+        XCTAssertEqual(manager.invisibleTabCount, 2)
+
+        manager.markTabAsInvisible(tab3)
+        XCTAssertEqual(manager.invisibleTabCount, 3)
+
+        manager.markTabAsVisible(tab2)
+        XCTAssertEqual(manager.invisibleTabCount, 2)
+
+        manager.markTabAsVisible(tab1)
+        manager.markTabAsVisible(tab3)
+        XCTAssertEqual(manager.invisibleTabCount, 0)
+    }
+
+    func testVisibleTabCountWithoutTabManager() {
+        // Given/When
+        let visibleCount = manager.visibleTabCount
+
+        // Then
+        XCTAssertEqual(visibleCount, 0, "Should return 0 when no tab manager is available")
+    }
+
+    // MARK: - UUID Management Tests
+
+    func testInvisibleTabUUIDs() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+
+        // When
+        manager.markTabAsInvisible(tab1)
+        manager.markTabAsInvisible(tab3)
+
+        // Then
+        let invisibleUUIDs = manager.invisibleTabUUIDs
+        XCTAssertEqual(invisibleUUIDs.count, 2)
+        XCTAssertTrue(invisibleUUIDs.contains(tab1.tabUUID))
+        XCTAssertFalse(invisibleUUIDs.contains(tab2.tabUUID))
+        XCTAssertTrue(invisibleUUIDs.contains(tab3.tabUUID))
+    }
+
+    func testInvisibleTabUUIDsConsistency() {
+        // Given
+        let tabs = (0..<10).map { createMockTab(uuid: "tab-\($0)") }
+
+        // When
+        tabs.enumerated().forEach { index, tab in
+            if index % 2 == 0 {
+                manager.markTabAsInvisible(tab)
+            }
+        }
+
+        // Then
+        let invisibleUUIDs = manager.invisibleTabUUIDs
+        XCTAssertEqual(invisibleUUIDs.count, manager.invisibleTabCount)
+        tabs.enumerated().forEach { index, tab in
+            if index % 2 == 0 {
+                XCTAssertTrue(invisibleUUIDs.contains(tab.tabUUID))
+            } else {
+                XCTAssertFalse(invisibleUUIDs.contains(tab.tabUUID))
+            }
+        }
     }
 
     // MARK: - Cleanup Tests
 
-    func testCleanupRemovedTabs() {
-        // Given
-        let keepTab = createMockTab(uuid: "keep-tab")
-        let removeTab = createMockTab(uuid: "remove-tab")
-
-        manager.markTabAsInvisible(keepTab)
-        manager.markTabAsInvisible(removeTab)
-        XCTAssertEqual(manager.invisibleTabCount, 2)
-
-        // When - Only keep one tab
-        let existingTabUUIDs: Set<String> = [keepTab.tabUUID]
-        manager.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs)
-
-        // Then
-        XCTAssertEqual(manager.invisibleTabCount, 1)
-        XCTAssertTrue(manager.isTabInvisible(keepTab))
-        XCTAssertFalse(manager.isTabInvisible(removeTab))
-    }
-
-    func testCleanupWithNoRemovedTabs() {
-        // Given
-        let tab1 = createMockTab(uuid: "tab-1")
-        let tab2 = createMockTab(uuid: "tab-2")
-
-        manager.markTabAsInvisible(tab1)
-        manager.markTabAsInvisible(tab2)
-        let originalCount = manager.invisibleTabCount
-
-        // When - All tabs still exist
-        let existingTabUUIDs: Set<String> = [tab1.tabUUID, tab2.tabUUID]
-        manager.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs)
-
-        // Then
-        XCTAssertEqual(manager.invisibleTabCount, originalCount)
-        XCTAssertTrue(manager.isTabInvisible(tab1))
-        XCTAssertTrue(manager.isTabInvisible(tab2))
-    }
-
     func testClearAllInvisibleTabs() {
         // Given
-        let tab1 = createMockTab(uuid: "tab-1")
-        let tab2 = createMockTab(uuid: "tab-2")
-
-        manager.markTabAsInvisible(tab1)
-        manager.markTabAsInvisible(tab2)
-        XCTAssertEqual(manager.invisibleTabCount, 2)
+        let tabs = (0..<5).map { createMockTab(uuid: "tab-\($0)") }
+        tabs.forEach { manager.markTabAsInvisible($0) }
+        XCTAssertEqual(manager.invisibleTabCount, 5)
 
         // When
         manager.clearAllInvisibleTabs()
 
         // Then
         XCTAssertEqual(manager.invisibleTabCount, 0)
-        XCTAssertFalse(manager.isTabInvisible(tab1))
-        XCTAssertFalse(manager.isTabInvisible(tab2))
-        XCTAssertTrue(manager.invisibleTabUUIDs.isEmpty)
+        tabs.forEach { tab in
+            XCTAssertFalse(manager.isTabInvisible(tab))
+        }
+    }
+
+    func testClearAllInvisibleTabsWhenNoneExist() {
+        // Given
+        XCTAssertEqual(manager.invisibleTabCount, 0)
+
+        // When/Then - Should not crash
+        manager.clearAllInvisibleTabs()
+        XCTAssertEqual(manager.invisibleTabCount, 0)
+    }
+
+    func testCleanupRemovedTabs() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab-1")
+        let tab2 = createMockTab(uuid: "tab-2")
+        let tab3 = createMockTab(uuid: "tab-3")
+        let removedTab = createMockTab(uuid: "removed-tab")
+
+        manager.markTabAsInvisible(tab1)
+        manager.markTabAsInvisible(tab2)
+        manager.markTabAsInvisible(tab3)
+        manager.markTabAsInvisible(removedTab)
+        XCTAssertEqual(manager.invisibleTabCount, 4)
+
+        let existingTabUUIDs = Set([tab1.tabUUID, tab2.tabUUID, tab3.tabUUID])
+
+        // When
+        manager.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs)
+
+        // Then
+        XCTAssertEqual(manager.invisibleTabCount, 3)
+        XCTAssertTrue(manager.isTabInvisible(tab1))
+        XCTAssertTrue(manager.isTabInvisible(tab2))
+        XCTAssertTrue(manager.isTabInvisible(tab3))
+        XCTAssertFalse(manager.isTabInvisible(removedTab))
     }
 
     // MARK: - Thread Safety Tests
 
-    func testConcurrentTabManagement() {
+    func testConcurrentOperations() {
         // Given
-        let expectation = XCTestExpectation(description: "Concurrent operations complete")
-        let iterationCount = 100
-        var completedOperations = 0
-        let operationQueue = OperationQueue()
-        operationQueue.maxConcurrentOperationCount = 10
-
-        // When - Perform concurrent operations
-        for i in 0..<iterationCount {
-            operationQueue.addOperation {
-                let tab = self.createMockTab(uuid: "concurrent-tab-\(i)")
-
-                // Random operations
-                self.manager.markTabAsInvisible(tab)
-                let isInvisible1 = self.manager.isTabInvisible(tab)
-                self.manager.markTabAsVisible(tab)
-                let isInvisible2 = self.manager.isTabInvisible(tab)
-
-                // Verify state consistency
-                XCTAssertTrue(isInvisible1)
-                XCTAssertFalse(isInvisible2)
-
-                DispatchQueue.main.async {
-                    completedOperations += 1
-                    if completedOperations == iterationCount {
-                        expectation.fulfill()
-                    }
-                }
-            }
-        }
-
-        // Then
-        wait(for: [expectation], timeout: 10.0)
-
-        // Verify final state is consistent
-        XCTAssertEqual(manager.invisibleTabCount, 0, "All tabs should be visible after operations")
-    }
-
-    func testConcurrentCleanupOperations() {
-        // Given
-        let tabs = (0..<50).map { createMockTab(uuid: "cleanup-tab-\($0)") }
-        tabs.forEach { manager.markTabAsInvisible($0) }
-
-        let expectation = XCTestExpectation(description: "Concurrent cleanup operations complete")
-        let operationQueue = OperationQueue()
-        operationQueue.maxConcurrentOperationCount = 5
-        var completedOperations = 0
-
-        // When - Perform concurrent cleanup operations
-        for i in 0..<10 {
-            operationQueue.addOperation {
-                let keepTabs = Array(tabs.prefix(10 + i * 2))
-                let existingUUIDs = Set(keepTabs.map { $0.tabUUID })
-                self.manager.cleanupRemovedTabs(existingTabUUIDs: existingUUIDs)
-
-                DispatchQueue.main.async {
-                    completedOperations += 1
-                    if completedOperations == 10 {
-                        expectation.fulfill()
-                    }
-                }
-            }
-        }
-
-        // Then
-        wait(for: [expectation], timeout: 10.0)
-
-        // Verify consistency - the exact count may vary due to race conditions,
-        // but it should be within reasonable bounds
-        let finalCount = manager.invisibleTabCount
-        XCTAssertGreaterThanOrEqual(finalCount, 0)
-        XCTAssertLessThanOrEqual(finalCount, tabs.count)
-    }
-
-    // MARK: - Edge Cases
-
-    func testIsTabInvisibleWithNilTab() {
-        // This test would need to be adjusted based on how Tab objects are created
-        // and whether nil tabs are possible in the actual implementation
-    }
-
-    func testLargeNumberOfInvisibleTabs() {
-        // Given
-        let tabCount = 1000
-        let tabs = (0..<tabCount).map { createMockTab(uuid: "bulk-tab-\($0)") }
+        let tabs = (0..<100).map { createMockTab(uuid: "tab-\($0)") }
+        let expectation = XCTestExpectation(description: "Concurrent operations completed")
+        expectation.expectedFulfillmentCount = tabs.count
 
         // When
-        tabs.forEach { manager.markTabAsInvisible($0) }
+        tabs.forEach { tab in
+            DispatchQueue.global(qos: .background).async {
+                self.manager.markTabAsInvisible(tab)
+                        expectation.fulfill()
+            }
+        }
+
+        wait(for: [expectation], timeout: 5.0)
 
         // Then
-        XCTAssertEqual(manager.invisibleTabCount, tabCount)
-
-        // Verify all tabs are tracked correctly
+        XCTAssertEqual(manager.invisibleTabCount, 100)
         tabs.forEach { tab in
             XCTAssertTrue(manager.isTabInvisible(tab))
         }
+    }
 
-        // Test bulk cleanup
-        let keepTabs = Array(tabs.prefix(500))
-        let existingUUIDs = Set(keepTabs.map { $0.tabUUID })
-        manager.cleanupRemovedTabs(existingTabUUIDs: existingUUIDs)
+    func testConcurrentMarkAndClear() {
+        // Given
+        let tabs = (0..<50).map { createMockTab(uuid: "tab-\($0)") }
+        let markExpectation = XCTestExpectation(description: "Mark operations completed")
+        markExpectation.expectedFulfillmentCount = tabs.count
 
-        XCTAssertEqual(manager.invisibleTabCount, 500)
+        // When
+        tabs.forEach { tab in
+            DispatchQueue.global(qos: .background).async {
+                self.manager.markTabAsInvisible(tab)
+                markExpectation.fulfill()
+            }
+        }
+
+        // Clear after some marking has started
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.1) {
+            self.manager.clearAllInvisibleTabs()
+        }
+
+        wait(for: [markExpectation], timeout: 5.0)
+
+        // Allow clear operation to complete
+        let clearExpectation = XCTestExpectation(description: "Clear operation completed")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            clearExpectation.fulfill()
+        }
+        wait(for: [clearExpectation], timeout: 1.0)
+
+        // Then - Final state should be consistent
+        let finalCount = manager.invisibleTabCount
+        XCTAssertTrue(finalCount >= 0, "Count should be non-negative")
+        XCTAssertLessThanOrEqual(finalCount, tabs.count, "Count should not exceed number of tabs")
+    }
+
+    // MARK: - Performance Tests
+
+    func testPerformanceWithManyTabs() {
+        // Given
+        let manyTabs = (0..<1000).map { createMockTab(uuid: "tab-\($0)") }
+
+        // When
+        let startTime = CFAbsoluteTimeGetCurrent()
+        manyTabs.forEach { manager.markTabAsInvisible($0) }
+        let endTime = CFAbsoluteTimeGetCurrent()
+
+        // Then
+        let executionTime = endTime - startTime
+        XCTAssertLessThan(executionTime, 1.0, "Should handle 1000 tabs in under 1 second")
+        XCTAssertEqual(manager.invisibleTabCount, 1000)
+    }
+
+    func testPerformanceOfFiltering() {
+        // Given
+        let manyTabs = (0..<1000).map { createMockTab(uuid: "tab-\($0)") }
+        manyTabs.enumerated().forEach { index, tab in
+            if index % 2 == 0 {
+                manager.markTabAsInvisible(tab)
+            }
+        }
+
+        // When
+        let startTime = CFAbsoluteTimeGetCurrent()
+        let visibleTabs = manager.getVisibleTabs(from: manyTabs)
+        let invisibleTabs = manager.getInvisibleTabs(from: manyTabs)
+        let endTime = CFAbsoluteTimeGetCurrent()
+
+        // Then
+        let executionTime = endTime - startTime
+        XCTAssertLessThan(executionTime, 0.1, "Should filter 1000 tabs in under 0.1 seconds")
+        XCTAssertEqual(visibleTabs.count, 500)
+        XCTAssertEqual(invisibleTabs.count, 500)
+    }
+
+    // MARK: - Edge Case Tests
+
+    func testTabWithEmptyUUID() {
+        // Given
+        let tabWithEmptyUUID = createMockTab(uuid: "")
+
+        // When
+        manager.markTabAsInvisible(tabWithEmptyUUID)
+
+        // Then
+        XCTAssertTrue(manager.isTabInvisible(tabWithEmptyUUID))
+        XCTAssertEqual(manager.invisibleTabCount, 1)
+        XCTAssertTrue(manager.invisibleTabUUIDs.contains(""))
+    }
+
+    func testTabWithSameUUIDDifferentInstances() {
+        // Given
+        let uuid = "same-uuid"
+        let tab1 = createMockTab(uuid: uuid)
+        let tab2 = createMockTab(uuid: uuid)
+
+        // When
+        manager.markTabAsInvisible(tab1)
+
+        // Then
+        XCTAssertTrue(manager.isTabInvisible(tab1))
+        XCTAssertTrue(manager.isTabInvisible(tab2), "Should consider tab2 invisible due to same UUID")
+        XCTAssertEqual(manager.invisibleTabCount, 1, "Should only count once for same UUID")
     }
 
     // MARK: - Helper Methods
 
     private func createMockTab(uuid: String) -> Tab {
-        // Create a minimal mock tab for testing using existing mock infrastructure
         let profile = MockProfile()
         let tab = Tab(profile: profile, isPrivate: false, windowUUID: WindowUUID())
         tab.tabUUID = uuid
@@ -349,13 +521,30 @@ final class InvisibleTabManagerTests: XCTestCase {
     }
 }
 
-// MARK: - Mock Classes
+// MARK: - Mock Notification Center
 
-private class MockNotificationCenter: NotificationCenter {
-    var postedNotifications: [(name: Notification.Name, object: Any?, userInfo: [AnyHashable: Any]?)] = []
+class InvisibleTabManagerMockNotificationCenter: NotificationCenter, @unchecked Sendable {
+    private var observers: [(name: Notification.Name, observer: Any, selector: Selector)] = []
 
-    override func post(name aName: NSNotification.Name, object anObject: Any?, userInfo aUserInfo: [AnyHashable: Any]? = nil) {
-        postedNotifications.append((name: aName, object: anObject, userInfo: aUserInfo))
-        super.post(name: aName, object: anObject, userInfo: aUserInfo)
+    override func addObserver(_ observer: Any, selector aSelector: Selector, name aName: NSNotification.Name?, object anObject: Any?) {
+        if let name = aName {
+            observers.append((name: name, observer: observer, selector: aSelector))
+        }
+    }
+
+    override func removeObserver(_ observer: Any, name aName: NSNotification.Name?, object anObject: Any?) {
+        observers.removeAll { (_, obs, _) in
+            return (obs as AnyObject) === (observer as AnyObject)
+        }
+    }
+
+    func simulateNotification(name: Notification.Name, object: Any? = nil, userInfo: [AnyHashable: Any]? = nil) {
+        let notification = Notification(name: name, object: object, userInfo: userInfo)
+
+        for (notificationName, observer, selector) in observers {
+            if notificationName == name {
+                _ = (observer as AnyObject).perform(selector, with: notification)
+            }
+        }
     }
 }
