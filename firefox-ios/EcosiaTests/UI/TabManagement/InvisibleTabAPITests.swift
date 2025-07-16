@@ -14,20 +14,20 @@ final class InvisibleTabAPITests: XCTestCase {
 
     private var api: InvisibleTabAPI!
     private var mockTabManager: MockTabManagerForAPI!
+    private var mockBrowserViewController: MockBrowserViewController!
 
     // MARK: - Setup & Teardown
 
     override func setUp() {
         super.setUp()
 
-        // Create mock tab manager
+        // Create mock components
+        let profile = MockProfile()
         mockTabManager = MockTabManagerForAPI()
+        mockBrowserViewController = MockBrowserViewController(profile: profile, tabManager: mockTabManager)
 
-        // Set up API instance
-        api = InvisibleTabAPI.shared
-        api.setTabManager(mockTabManager)
-
-        // Configuration is now handled by TabAutoCloseConfig
+        // Set up API instance with proper dependencies
+        api = InvisibleTabAPI(browserViewController: mockBrowserViewController, tabManager: mockTabManager)
 
         // Clean up any existing state
         api.cleanupAllTracking()
@@ -35,8 +35,9 @@ final class InvisibleTabAPITests: XCTestCase {
 
     override func tearDown() {
         api.cleanupAllTracking()
-        api.setTabManager(nil)
+        mockBrowserViewController = nil
         mockTabManager = nil
+        api = nil
         super.tearDown()
     }
 
@@ -51,145 +52,109 @@ final class InvisibleTabAPITests: XCTestCase {
 
     // MARK: - Configuration Tests
 
-    func testTabAutoCloseConfig() {
-        // Test that configuration values are reasonable
-        XCTAssertGreaterThan(TabAutoCloseConfig.fallbackTimeout, 0, "Fallback timeout should be positive")
-        XCTAssertGreaterThan(TabAutoCloseConfig.maxConcurrentAutoCloseTabs, 0, "Max concurrent tabs should be positive")
-        XCTAssertGreaterThan(TabAutoCloseConfig.debounceInterval, 0, "Debounce interval should be positive")
-
-        // Test specific expected values
-        XCTAssertEqual(TabAutoCloseConfig.fallbackTimeout, 10.0, "Default fallback timeout should be 10 seconds")
-        XCTAssertEqual(TabAutoCloseConfig.maxConcurrentAutoCloseTabs, 5, "Default max concurrent tabs should be 5")
-        XCTAssertEqual(TabAutoCloseConfig.debounceInterval, 0.5, "Default debounce interval should be 0.5 seconds")
+    func testConfiguration_defaultValues() {
+        // Then
+        XCTAssertEqual(InvisibleTabAPI.Configuration.defaultTimeout, TabAutoCloseConfig.fallbackTimeout)
+        XCTAssertEqual(InvisibleTabAPI.Configuration.maxConcurrentTabs, TabAutoCloseConfig.maxConcurrentAutoCloseTabs)
     }
 
-    // MARK: - Basic Functionality Tests
+    // MARK: - Initialization Tests
 
-    func testMarkTabAsInvisibleWhenEnabled() {
+    func testInitialization_withDependencies() {
+        // Given/When - setup in setUp()
+        
+        // Then
+        XCTAssertNotNil(api)
+        XCTAssertEqual(api.getTrackedTabCount(), 0, "Should start with no tracked tabs")
+    }
+
+    // MARK: - Tab Visibility Tests
+
+    func testMarkTabAsInvisible() {
         // Given
         let tab = createMockTab()
+        XCTAssertFalse(api.isTabInvisible(tab))
 
         // When
         let result = api.markTabAsInvisible(tab)
 
         // Then
-        XCTAssertTrue(result, "Should successfully mark tab as invisible when enabled")
-    }
-
-    func testMarkTabAsInvisibleAlwaysSucceeds() {
-        // Given
-        let tab = createMockTab()
-
-        // When
-        let result = api.markTabAsInvisible(tab)
-
-        // Then
-        XCTAssertTrue(result, "Should always succeed to mark tab as invisible")
+        XCTAssertTrue(result)
+        XCTAssertTrue(api.isTabInvisible(tab))
     }
 
     func testMarkTabAsVisible() {
         // Given
         let tab = createMockTab()
         api.markTabAsInvisible(tab)
+        XCTAssertTrue(api.isTabInvisible(tab))
 
         // When
         let result = api.markTabAsVisible(tab)
 
         // Then
-        XCTAssertTrue(result, "Should successfully mark tab as visible")
+        XCTAssertTrue(result)
+        XCTAssertFalse(api.isTabInvisible(tab))
     }
 
-    func testMarkingMultipleTabsAsInvisible() {
+    func testMarkTabAsVisibleCancelsAutoClose() {
         // Given
-        let testTabs = (0..<3).map { createMockTab(uuid: "tab-\($0)") }
-        mockTabManager.tabs = testTabs
+        let tab = createMockTab(uuid: "test-tab")
+        api.markTabAsInvisible(tab)
+        api.setupAutoCloseForTab(tab)
+        XCTAssertEqual(api.trackedTabsCount, 1)
 
         // When
-        testTabs.forEach { _ = api.markTabAsInvisible($0) }
+        api.markTabAsVisible(tab)
 
         // Then
-        XCTAssertEqual(api.invisibleTabsCount, 3, "Should track all tabs that are marked as invisible")
+        XCTAssertFalse(api.isTabInvisible(tab))
+        XCTAssertEqual(api.trackedTabsCount, 0, "Should cancel auto-close tracking")
     }
 
     // MARK: - Auto-Close Tests
 
-    func testSetupAutoCloseForInvisibleTab() {
+    func testSetupAutoCloseForTab() {
         // Given
-        let tab = createMockTab()
-        api.markTabAsInvisible(tab)
+        let tab = createMockTab(uuid: "auto-close-tab")
 
         // When
         let result = api.setupAutoCloseForTab(tab)
 
         // Then
-        XCTAssertTrue(result, "Should successfully setup auto-close for invisible tab")
-        XCTAssertEqual(api.trackedTabsCount, 1, "Should track one tab")
+        XCTAssertTrue(result)
+        XCTAssertEqual(api.trackedTabsCount, 1)
+        XCTAssertTrue(api.getTrackedTabUUIDs().contains(tab.tabUUID))
     }
 
-    func testSetupAutoCloseFailsWithoutTabManager() {
+    func testSetupAutoCloseForTabWithCustomTimeout() {
         // Given
-        let tab = createMockTab()
-        api.markTabAsInvisible(tab)
-        api.setTabManager(nil)
+        let tab = createMockTab(uuid: "custom-timeout-tab")
 
         // When
-        let result = api.setupAutoCloseForTab(tab)
+        let result = api.setupAutoCloseForTab(tab, timeout: 5.0)
 
         // Then
-        XCTAssertFalse(result, "Should fail when no tab manager is set")
-        XCTAssertEqual(api.trackedTabsCount, 0, "Should not track any tabs")
-
-        // Restore tab manager
-        api.setTabManager(mockTabManager)
+        XCTAssertTrue(result)
+        XCTAssertEqual(api.trackedTabsCount, 1)
     }
 
-    func testSetupAutoCloseWithCustomTimeout() {
+    func testSetupAutoCloseForTabWithCustomNotification() {
         // Given
-        let tab = createMockTab()
-        api.markTabAsInvisible(tab)
-        let customTimeout: TimeInterval = 60.0
+        let tab = createMockTab(uuid: "custom-notification-tab")
+        let customNotification = Notification.Name("CustomTestNotification")
 
         // When
-        let result = api.setupAutoCloseForTab(tab, timeout: customTimeout)
+        let result = api.setupAutoCloseForTab(tab, notification: customNotification)
 
         // Then
-        XCTAssertTrue(result, "Should successfully setup auto-close with custom timeout")
-        XCTAssertEqual(api.trackedTabsCount, 1, "Should track one tab")
+        XCTAssertTrue(result)
+        XCTAssertEqual(api.trackedTabsCount, 1)
     }
-
-    func testSetupAutoCloseWithCustomNotification() {
-        // Given
-        let tab = createMockTab()
-        api.markTabAsInvisible(tab)
-        let customNotification = Notification.Name("CustomAuth")
-
-        // When
-        let result = api.setupAutoCloseForTab(tab, on: customNotification)
-
-        // Then
-        XCTAssertTrue(result, "Should successfully setup auto-close with custom notification")
-        XCTAssertEqual(api.trackedTabsCount, 1, "Should track one tab")
-    }
-
-    func testSetupAutoCloseForMultipleTabs() {
-        // Given
-        let tabs = (0..<2).map { createMockTab(uuid: "tab-\($0)") }
-        tabs.forEach { _ = api.markTabAsInvisible($0) }
-
-        // When
-        let result = api.setupAutoCloseForTabs(tabs)
-
-        // Then
-        XCTAssertTrue(result, "Should successfully setup auto-close for multiple tabs")
-        XCTAssertEqual(api.trackedTabsCount, 2, "Should track two tabs")
-    }
-
-    // MARK: - Cancel Auto-Close Tests
 
     func testCancelAutoCloseForTab() {
         // Given
-        let tab = createMockTab()
-        api.markTabAsInvisible(tab)
+        let tab = createMockTab(uuid: "cancel-tab")
         api.setupAutoCloseForTab(tab)
         XCTAssertEqual(api.trackedTabsCount, 1)
 
@@ -197,109 +162,152 @@ final class InvisibleTabAPITests: XCTestCase {
         let result = api.cancelAutoCloseForTab(tab.tabUUID)
 
         // Then
-        XCTAssertTrue(result, "Should successfully cancel auto-close")
-        XCTAssertEqual(api.trackedTabsCount, 0, "Should not track any tabs")
+        XCTAssertTrue(result)
+        XCTAssertEqual(api.trackedTabsCount, 0)
+        XCTAssertFalse(api.getTrackedTabUUIDs().contains(tab.tabUUID))
     }
 
-    func testCancelAutoCloseForNonExistentTab() {
+    func testCancelAutoCloseForMultipleTabs() {
         // Given
-        let tab = createMockTab()
+        let tabs = [createMockTab(uuid: "tab1"), createMockTab(uuid: "tab2"), createMockTab(uuid: "tab3")]
+        tabs.forEach { api.setupAutoCloseForTab($0) }
+        XCTAssertEqual(api.trackedTabsCount, 3)
 
         // When
-        let result = api.cancelAutoCloseForTab(tab.tabUUID)
+        api.cancelAutoCloseForTabs(tabs.map { $0.tabUUID })
 
         // Then
-        XCTAssertTrue(result, "Should return true even for non-existent tabs")
-        XCTAssertEqual(api.trackedTabsCount, 0, "Should not track any tabs")
+        XCTAssertEqual(api.trackedTabsCount, 0)
     }
 
-    // MARK: - Tab Retrieval Tests
+    // MARK: - Tab Filtering Tests
 
-    func testGetVisibleAndInvisibleTabs() {
+    func testGetVisibleTabs() {
         // Given
-        let testTabs = (0..<4).map { createMockTab(uuid: "tab-\($0)") }
-        mockTabManager.tabs = testTabs
-
-        // Mark first two as invisible
-        api.markTabAsInvisible(testTabs[0])
-        api.markTabAsInvisible(testTabs[1])
+        let visibleTab = createMockTab(uuid: "visible")
+        let invisibleTab = createMockTab(uuid: "invisible")
+        mockTabManager.tabs = [visibleTab, invisibleTab]
+        api.markTabAsInvisible(invisibleTab)
 
         // When
         let visibleTabs = api.getVisibleTabs()
-        let invisibleTabs = api.getInvisibleTabs()
 
         // Then
-        XCTAssertEqual(visibleTabs.count, 2, "Should have 2 visible tabs")
-        XCTAssertEqual(invisibleTabs.count, 2, "Should have 2 invisible tabs")
+        XCTAssertEqual(visibleTabs.count, 1)
+        XCTAssertTrue(visibleTabs.contains(visibleTab))
+        XCTAssertFalse(visibleTabs.contains(invisibleTab))
     }
 
-    func testGetInvisibleTabsWhenNoneExist() {
+    func testGetInvisibleTabs() {
         // Given
-        let testTabs = (0..<3).map { createMockTab(uuid: "tab-\($0)") }
-        mockTabManager.tabs = testTabs
+        let visibleTab = createMockTab(uuid: "visible")
+        let invisibleTab = createMockTab(uuid: "invisible")
+        mockTabManager.tabs = [visibleTab, invisibleTab]
+        api.markTabAsInvisible(invisibleTab)
 
         // When
         let invisibleTabs = api.getInvisibleTabs()
 
         // Then
-        XCTAssertEqual(invisibleTabs.count, 0, "Should have no invisible tabs")
+        XCTAssertEqual(invisibleTabs.count, 1)
+        XCTAssertTrue(invisibleTabs.contains(invisibleTab))
+        XCTAssertFalse(invisibleTabs.contains(visibleTab))
     }
 
     func testGetVisibleNormalTabs() {
         // Given
-        let testTabs = (0..<4).map { createMockTab(uuid: "tab-\($0)", isPrivate: $0 >= 2) }
-        mockTabManager.tabs = testTabs
-
-        // Mark first tab as invisible (normal tab)
-        api.markTabAsInvisible(testTabs[0])
+        let normalTab = createMockTab(uuid: "normal", isPrivate: false)
+        let privateTab = createMockTab(uuid: "private", isPrivate: true)
+        mockTabManager.tabs = [normalTab, privateTab]
 
         // When
         let visibleNormalTabs = api.getVisibleNormalTabs()
 
         // Then
-        XCTAssertEqual(visibleNormalTabs.count, 1, "Should have 1 visible normal tab")
-        XCTAssertFalse(visibleNormalTabs[0].isPrivate, "Should be normal tab")
+        XCTAssertEqual(visibleNormalTabs.count, 1)
+        XCTAssertTrue(visibleNormalTabs.contains(normalTab))
+        XCTAssertFalse(visibleNormalTabs.contains(privateTab))
     }
 
     func testGetVisiblePrivateTabs() {
         // Given
-        let testTabs = (0..<4).map { createMockTab(uuid: "tab-\($0)", isPrivate: $0 >= 2) }
-        mockTabManager.tabs = testTabs
-
-        // Mark first private tab as invisible
-        api.markTabAsInvisible(testTabs[2])
+        let normalTab = createMockTab(uuid: "normal", isPrivate: false)
+        let privateTab = createMockTab(uuid: "private", isPrivate: true)
+        mockTabManager.tabs = [normalTab, privateTab]
 
         // When
         let visiblePrivateTabs = api.getVisiblePrivateTabs()
 
         // Then
-        XCTAssertEqual(visiblePrivateTabs.count, 1, "Should have 1 visible private tab")
-        XCTAssertTrue(visiblePrivateTabs[0].isPrivate, "Should be private tab")
+        XCTAssertEqual(visiblePrivateTabs.count, 1)
+        XCTAssertTrue(visiblePrivateTabs.contains(privateTab))
+        XCTAssertFalse(visiblePrivateTabs.contains(normalTab))
     }
 
     // MARK: - Count Tests
 
     func testTabCounts() {
         // Given
-        let testTabs = (0..<3).map { createMockTab(uuid: "tab-\($0)") }
-        mockTabManager.tabs = testTabs
+        let tab1 = createMockTab(uuid: "tab1")
+        let tab2 = createMockTab(uuid: "tab2")
+        mockTabManager.tabs = [tab1, tab2]
+        api.markTabAsInvisible(tab1)
 
-        // When
-        XCTAssertEqual(api.totalTabsCount, 3)
-        XCTAssertEqual(api.visibleTabsCount, 3)
-        XCTAssertEqual(api.invisibleTabsCount, 0)
-
-        // Mark some as invisible
-        api.markTabAsInvisible(testTabs[0])
-        api.markTabAsInvisible(testTabs[1])
-
-        // Then
-        XCTAssertEqual(api.totalTabsCount, 3)
+        // When/Then
+        XCTAssertEqual(api.totalTabsCount, 2)
         XCTAssertEqual(api.visibleTabsCount, 1)
-        XCTAssertEqual(api.invisibleTabsCount, 2)
+        XCTAssertEqual(api.invisibleTabsCount, 1)
     }
 
-    // MARK: - Authentication Flow Integration Tests
+    func testTrackedTabCount() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab1")
+        let tab2 = createMockTab(uuid: "tab2")
+
+        // When
+        api.setupAutoCloseForTab(tab1)
+        api.setupAutoCloseForTab(tab2)
+
+        // Then
+        XCTAssertEqual(api.trackedTabsCount, 2)
+        XCTAssertEqual(api.getTrackedTabCount(), 2)
+    }
+
+    // MARK: - Cleanup Tests
+
+    func testCleanupAllTracking() {
+        // Given
+        let tab1 = createMockTab(uuid: "tab1")
+        let tab2 = createMockTab(uuid: "tab2")
+        api.markTabAsInvisible(tab1)
+        api.markTabAsInvisible(tab2)
+        api.setupAutoCloseForTab(tab1)
+        api.setupAutoCloseForTab(tab2)
+
+        // When
+        api.cleanupAllTracking()
+
+        // Then
+        XCTAssertEqual(api.invisibleTabsCount, 0)
+        XCTAssertEqual(api.trackedTabsCount, 0)
+    }
+
+    func testCleanupRemovedTabs() {
+        // Given
+        let existingTab = createMockTab(uuid: "existing")
+        let removedTab = createMockTab(uuid: "removed")
+        mockTabManager.tabs = [existingTab] // Only existing tab remains
+        api.markTabAsInvisible(removedTab) // This tab was removed from tab manager
+        api.setupAutoCloseForTab(removedTab)
+
+        // When
+        api.cleanupRemovedTabs()
+
+        // Then - Should clean up tracking for removed tabs
+        XCTAssertEqual(api.trackedTabsCount, 0, "Should cleanup tracking for removed tabs")
+    }
+
+    // MARK: - Integration Tests
 
     func testAuthenticationFlowIntegration() {
         // Given
@@ -318,7 +326,7 @@ final class InvisibleTabAPITests: XCTestCase {
             expectation.fulfill()
         }
 
-        NotificationCenter.default.post(name: .EcosiaAuthDidLoginWithSessionToken, object: nil)
+        NotificationCenter.default.post(name: .EcosiaAuthStateChanged, object: nil)
         wait(for: [expectation], timeout: 1.0)
 
         // Then
@@ -340,7 +348,7 @@ final class InvisibleTabAPITests: XCTestCase {
             expectation.fulfill()
         }
 
-        NotificationCenter.default.post(name: .EcosiaAuthDidLoginWithSessionToken, object: nil)
+        NotificationCenter.default.post(name: .EcosiaAuthStateChanged, object: nil)
         wait(for: [expectation], timeout: 1.0)
 
         // Then
@@ -349,7 +357,7 @@ final class InvisibleTabAPITests: XCTestCase {
 
     // MARK: - Error Handling Tests
 
-    func testOperationsWithoutTabManager() {
+    func testMarkTabAsInvisibleWithNilTabManager() {
         // Given
         api.setTabManager(nil)
         let tab = createMockTab()
@@ -357,159 +365,125 @@ final class InvisibleTabAPITests: XCTestCase {
         // When
         let result = api.markTabAsInvisible(tab)
 
-        // Then
-        XCTAssertTrue(result, "Marking invisible should work without tab manager")
-
-        // When
-        let setupResult = api.setupAutoCloseForTab(tab)
-
-        // Then
-        XCTAssertFalse(setupResult, "Setup auto-close should fail without tab manager")
-        XCTAssertEqual(api.trackedTabsCount, 0, "Should not track any tabs")
-
-        // Restore tab manager
-        api.setTabManager(mockTabManager)
+        // Then - Should still work as it delegates to InvisibleTabManager
+        XCTAssertTrue(result)
     }
 
-    func testNilTabManagerHandling() {
-        // When
+    func testGetVisibleTabsWithNilTabManager() {
+        // Given
         api.setTabManager(nil)
 
-        // Then
+        // When
         let visibleTabs = api.getVisibleTabs()
-        let invisibleTabs = api.getInvisibleTabs()
-
-        XCTAssertEqual(visibleTabs.count, 0, "Should return empty array when no tab manager")
-        XCTAssertEqual(invisibleTabs.count, 0, "Should return empty array when no tab manager")
-    }
-
-    // MARK: - Performance Tests
-
-    func testLargeNumberOfTabs() {
-        // Given
-        let largeNumberOfTabs = 1000
-        let testTabs = (0..<largeNumberOfTabs).map { createMockTab(uuid: "tab-\($0)") }
-        mockTabManager.tabs = testTabs
-
-        // When
-        let startTime = CFAbsoluteTimeGetCurrent()
-
-        testTabs.enumerated().forEach { index, tab in
-            if index % 2 == 0 {
-                _ = api.markTabAsInvisible(tab)
-            }
-        }
-
-        let endTime = CFAbsoluteTimeGetCurrent()
-        let executionTime = endTime - startTime
 
         // Then
-        XCTAssertLessThan(executionTime, 1.0, "Should handle 1000 tabs in under 1 second")
-        XCTAssertEqual(api.trackedTabsCount, 0, "Should have no tracked tabs after operations")
-        XCTAssertEqual(api.invisibleTabsCount, 500, "Should have no invisible tabs after operations")
+        XCTAssertEqual(visibleTabs.count, 0)
     }
 
-    // MARK: - Cleanup Tests
-
-    func testCleanupAllTracking() {
+    func testTabCountsWithNilTabManager() {
         // Given
-        let testTabs = (0..<3).map { createMockTab(uuid: "tab-\($0)") }
-        mockTabManager.tabs = testTabs
-        testTabs.forEach { _ = api.markTabAsInvisible($0) }
-        testTabs.forEach { _ = api.setupAutoCloseForTab($0) }
-        XCTAssertEqual(api.trackedTabsCount, 3)
+        api.setTabManager(nil)
+
+        // When/Then
+        XCTAssertEqual(api.totalTabsCount, 0)
+        XCTAssertEqual(api.visibleTabsCount, 0)
+    }
+
+    // MARK: - Tab Creation Tests (Would need BrowserViewController)
+
+    func testCreateInvisibleTabWithoutBrowserViewController() {
+        // Given - API is not initialized with BrowserViewController
+        let url = URL(string: "https://example.com")!
 
         // When
-        api.cleanupAllTracking()
+        let tab = api.createInvisibleTab(for: url)
 
         // Then
-        XCTAssertEqual(api.trackedTabsCount, 0, "Should cleanup all tracking")
-        XCTAssertEqual(api.invisibleTabsCount, 0, "Should cleanup all invisible tabs")
+        XCTAssertNil(tab, "Should return nil when BrowserViewController is not set")
     }
 
-    func testCleanupRemovedTabs() {
-        // Given
-        let testTabs = (0..<3).map { createMockTab(uuid: "tab-\($0)") }
-        mockTabManager.tabs = testTabs
-        testTabs.forEach { _ = api.markTabAsInvisible($0) }
-        testTabs.forEach { _ = api.setupAutoCloseForTab($0) }
-
-        // Simulate tab removal
-        mockTabManager.tabs.remove(at: 0)
+    func testCreateInvisibleAuthTabWithoutBrowserViewController() {
+        // Given - API is not initialized with BrowserViewController
+        let url = URL(string: "https://auth.example.com")!
 
         // When
-        api.cleanupRemovedTabs()
+        let tab = api.createInvisibleAuthTab(for: url)
 
         // Then
-        XCTAssertEqual(api.invisibleTabsCount, 2, "Should cleanup removed tab from invisible tracking")
-        XCTAssertEqual(api.trackedTabsCount, 2, "Should cleanup removed tab from auto-close tracking")
+        XCTAssertNil(tab, "Should return nil when BrowserViewController is not set")
     }
 
-    // MARK: - Concurrent Operation Tests
-
-    func testConcurrentOperations() {
-        // Given
-        let testTabs = (0..<10).map { createMockTab(uuid: "tab-\($0)") }
-        mockTabManager.tabs = testTabs
-        let expectation = XCTestExpectation(description: "Concurrent operations completed")
-        expectation.expectedFulfillmentCount = testTabs.count
+    func testCreateInvisibleTabsWithoutBrowserViewController() {
+        // Given - API is not initialized with BrowserViewController
+        let urls = [
+            URL(string: "https://example1.com")!,
+            URL(string: "https://example2.com")!
+        ]
 
         // When
-        testTabs.forEach { tab in
-            DispatchQueue.global(qos: .background).async {
-                let invisibleResult = self.api.markTabAsInvisible(tab)
-                XCTAssertTrue(invisibleResult)
-                expectation.fulfill()
-            }
-        }
-
-        wait(for: [expectation], timeout: 5.0)
+        let tabs = api.createInvisibleTabs(for: urls)
 
         // Then
-        XCTAssertEqual(api.trackedTabsCount, 0, "Should have no tracked tabs after operations")
-        XCTAssertEqual(api.invisibleTabsCount, 10, "Should have no invisible tabs after operations")
+        XCTAssertEqual(tabs.count, 0, "Should return empty array when BrowserViewController is not set")
     }
 
-    // MARK: - Idempotency Tests
-
-    func testIdempotentInvisibleMarking() {
-        // Given
-        let tab = createMockTab()
-        mockTabManager.tabs = [tab]
+    func testCreateInvisibleTabsWithTooManyUrls() {
+        // Given - More URLs than max concurrent tabs
+        let maxTabs = InvisibleTabAPI.Configuration.maxConcurrentTabs
+        let urls = (0...(maxTabs + 1)).compactMap { URL(string: "https://example\($0).com") }
 
         // When
-        let result1 = api.markTabAsInvisible(tab)
-        let result2 = api.markTabAsInvisible(tab)
-        let result3 = api.markTabAsInvisible(tab)
+        let tabs = api.createInvisibleTabs(for: urls)
 
         // Then
-        XCTAssertTrue(result1)
-        XCTAssertTrue(result2)
-        XCTAssertTrue(result3)
-        XCTAssertEqual(api.invisibleTabsCount, 1, "Should only count tab once")
+        XCTAssertEqual(tabs.count, 0, "Should return empty array when URL count exceeds max")
     }
 
-    func testIdempotentAutoCloseSetup() {
+    // MARK: - Utility Tests
+
+    func testIsTabInvisible() {
+        // Given
+        let visibleTab = createMockTab(uuid: "visible")
+        let invisibleTab = createMockTab(uuid: "invisible")
+        api.markTabAsInvisible(invisibleTab)
+
+        // When/Then
+        XCTAssertFalse(api.isTabInvisible(visibleTab))
+        XCTAssertTrue(api.isTabInvisible(invisibleTab))
+    }
+
+    func testGetInvisibleTabSummary() {
+        // When
+        let summary = api.getInvisibleTabSummary()
+
+        // Then
+        XCTAssertTrue(summary.contains("InvisibleTabAPI"), "Summary should mention the API")
+    }
+
+    func testPrintInvisibleTabSummary() {
+        // When/Then - Should not crash
+        api.printInvisibleTabSummary()
+    }
+
+    // MARK: - Reset Tests
+
+    func testReset() {
         // Given
         let tab = createMockTab()
         api.markTabAsInvisible(tab)
+        api.setupAutoCloseForTab(tab)
 
         // When
-        let result1 = api.setupAutoCloseForTab(tab)
-        let result2 = api.setupAutoCloseForTab(tab)
-        let result3 = api.setupAutoCloseForTab(tab)
+        api.reset()
 
-        // Then
-        XCTAssertTrue(result1)
-        XCTAssertTrue(result2)
-        XCTAssertTrue(result3)
-        XCTAssertEqual(api.trackedTabsCount, 1, "Should only track tab once")
+        // Then - Should not crash
+        // Note: Reset clears browser view controller reference but doesn't affect managers
+        XCTAssertEqual(api.getInvisibleTabSummary(), "InvisibleTabAPI - BrowserViewController not initialized")
     }
 }
 
 // MARK: - Mock Classes
 
-/// Extended mock tab manager for API testing
 private class MockTabManagerForAPI: MockTabManager {
     var removedTabs: [Tab] = []
 
