@@ -31,7 +31,7 @@ final class AuthIntegrationTests: XCTestCase {
 
     // MARK: - Full Authentication Lifecycle Tests
 
-    func testCompleteAuthenticationLifecycle_loginLogout_worksEndToEnd() async {
+    func testCompleteAuthenticationLifecycle_loginLogout_worksEndToEnd() async throws {
         // Arrange
         let testCredentials = createTestCredentials()
         mockProvider.mockCredentials = testCredentials
@@ -40,7 +40,7 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn, "Should start logged out")
 
         // Act - Login
-        await auth.login()
+        try await auth.login()
 
         // Assert - Logged in state
         XCTAssertTrue(auth.isLoggedIn, "Should be logged in after successful login")
@@ -51,7 +51,7 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertEqual(mockProvider.storeCredentialsCallCount, 1)
 
         // Act - Logout
-        await auth.logout()
+        try await auth.logout()
 
         // Assert - Logged out state
         XCTAssertFalse(auth.isLoggedIn, "Should be logged out after logout")
@@ -62,7 +62,7 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
     }
 
-    func testCompleteAuthenticationLifecycle_loginRenewLogout_worksEndToEnd() async {
+    func testCompleteAuthenticationLifecycle_loginRenewLogout_worksEndToEnd() async throws {
         // Arrange
         let originalCredentials = createTestCredentials()
         let renewedCredentials = Credentials(
@@ -79,7 +79,7 @@ final class AuthIntegrationTests: XCTestCase {
         mockProvider.canRenewCredentialsResult = true
 
         // Act - Login
-        await auth.login()
+        try await auth.login()
         let originalIdToken = auth.idToken
 
         // Assert - Logged in
@@ -89,7 +89,7 @@ final class AuthIntegrationTests: XCTestCase {
         // Act - Renew credentials
         mockProvider.mockCredentials = renewedCredentials
         mockCredentialsManager.storedCredentials = renewedCredentials
-        await auth.renewCredentialsIfNeeded()
+        try await auth.renewCredentialsIfNeeded()
 
         // Assert - Credentials renewed
         XCTAssertTrue(auth.isLoggedIn)
@@ -99,7 +99,7 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertEqual(mockProvider.renewCredentialsCallCount, 1)
 
         // Act - Logout
-        await auth.logout()
+        try await auth.logout()
 
         // Assert - Logged out
         XCTAssertFalse(auth.isLoggedIn)
@@ -108,14 +108,14 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertNil(auth.refreshToken)
     }
 
-    func testCompleteAuthenticationLifecycle_persistenceAfterRestart_worksEndToEnd() async {
+    func testCompleteAuthenticationLifecycle_persistenceAfterRestart_worksEndToEnd() async throws {
         // Arrange
         let testCredentials = createTestCredentials()
         mockProvider.mockCredentials = testCredentials
         mockCredentialsManager.storedCredentials = testCredentials
 
         // Act - Login
-        await auth.login()
+        try await auth.login()
 
         // Assert - Logged in
         XCTAssertTrue(auth.isLoggedIn)
@@ -136,12 +136,17 @@ final class AuthIntegrationTests: XCTestCase {
 
     // MARK: - Error Recovery Tests
 
-    func testAuthenticationErrorRecovery_loginFailureRecovery_handlesGracefully() async {
+    func testAuthenticationErrorRecovery_loginFailureRecovery_handlesGracefully() async throws {
         // Arrange
         mockProvider.shouldFailAuth = true
 
         // Act - First login attempt (fails)
-        await auth.login()
+        do {
+            try await auth.login()
+            XCTFail("Expected login to fail")
+        } catch {
+            // Expected failure
+        }
 
         // Assert - Should remain logged out
         XCTAssertFalse(auth.isLoggedIn)
@@ -152,7 +157,7 @@ final class AuthIntegrationTests: XCTestCase {
         // Act - Second login attempt (succeeds)
         mockProvider.shouldFailAuth = false
         mockProvider.mockCredentials = createTestCredentials()
-        await auth.login()
+        try await auth.login()
 
         // Assert - Should now be logged in
         XCTAssertTrue(auth.isLoggedIn)
@@ -161,14 +166,14 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertEqual(mockProvider.storeCredentialsCallCount, 1)
     }
 
-    func testAuthenticationErrorRecovery_renewFailureHandling_maintainsState() async {
+    func testAuthenticationErrorRecovery_renewFailureHandling_maintainsState() async throws {
         // Arrange
         let testCredentials = createTestCredentials()
         mockProvider.mockCredentials = testCredentials
         mockCredentialsManager.storedCredentials = testCredentials
 
         // Login first
-        await auth.login()
+        try await auth.login()
         let originalIdToken = auth.idToken
         let originalAccessToken = auth.accessToken
 
@@ -177,7 +182,12 @@ final class AuthIntegrationTests: XCTestCase {
         mockProvider.shouldFailRenewCredentials = true
 
         // Act - Attempt to renew (fails)
-        await auth.renewCredentialsIfNeeded()
+        do {
+            try await auth.renewCredentialsIfNeeded()
+            XCTFail("Expected renew to fail")
+        } catch {
+            // Expected failure
+        }
 
         // Assert - Should maintain original state
         XCTAssertTrue(auth.isLoggedIn)
@@ -187,21 +197,25 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertEqual(mockProvider.renewCredentialsCallCount, 1)
     }
 
-    func testAuthenticationErrorRecovery_logoutFailureHandling_clearsCredentials() async {
+    func testAuthenticationErrorRecovery_logoutFailureHandling_clearsCredentials() async throws {
         // Arrange
         let testCredentials = createTestCredentials()
         mockProvider.mockCredentials = testCredentials
         mockCredentialsManager.storedCredentials = testCredentials
 
         // Login first
-        await auth.login()
+        try await auth.login()
         XCTAssertTrue(auth.isLoggedIn)
 
         // Setup logout session failure
         mockProvider.shouldFailClearSession = true
 
         // Act - Logout (session clear fails, but credential clear succeeds)
-        await auth.logout()
+        do {
+            try await auth.logout()
+        } catch {
+            // Logout may throw due to session clear failure, but credentials should still be cleared
+        }
 
         // Assert - Should still clear credentials despite session clear failure
         XCTAssertFalse(auth.isLoggedIn)
@@ -214,7 +228,7 @@ final class AuthIntegrationTests: XCTestCase {
 
     // MARK: - Concurrent Operations Tests
 
-    func testConcurrentOperations_multipleLoginAttempts_handledCorrectly() async {
+    func testConcurrentOperations_multipleLoginAttempts_handledCorrectly() async throws {
         // Arrange
         let testCredentials = createTestCredentials()
         mockProvider.mockCredentials = testCredentials
@@ -224,7 +238,11 @@ final class AuthIntegrationTests: XCTestCase {
         await withTaskGroup(of: Void.self) { group in
             for _ in 0..<3 {
                 group.addTask {
-                    await self.auth.login()
+                    do {
+                        try await self.auth.login()
+                    } catch {
+                        // Some concurrent login attempts may fail, which is expected
+                    }
                 }
             }
         }
@@ -236,7 +254,7 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(mockProvider.startAuthCallCount, 1)
     }
 
-    func testConcurrentOperations_loginAndRenew_handledCorrectly() async {
+    func testConcurrentOperations_loginAndRenew_handledCorrectly() async throws {
         // Arrange
         let testCredentials = createTestCredentials()
         let renewedCredentials = createTestCredentials()
@@ -245,16 +263,24 @@ final class AuthIntegrationTests: XCTestCase {
         mockProvider.canRenewCredentialsResult = true
 
         // Act - Login first
-        await auth.login()
+        try await auth.login()
 
         // Act - Concurrent login and renew
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
-                await self.auth.login()
+                do {
+                    try await self.auth.login()
+                } catch {
+                    // Concurrent login may fail, which is expected
+                }
             }
             group.addTask {
                 self.mockProvider.mockCredentials = renewedCredentials
-                await self.auth.renewCredentialsIfNeeded()
+                do {
+                    try await self.auth.renewCredentialsIfNeeded()
+                } catch {
+                    // Concurrent renew may fail, which is expected
+                }
             }
         }
 
@@ -267,12 +293,12 @@ final class AuthIntegrationTests: XCTestCase {
 
     // MARK: - Edge Cases Tests
 
-    func testEdgeCase_logoutWithoutLogin_handledGracefully() async {
+    func testEdgeCase_logoutWithoutLogin_handledGracefully() async throws {
         // Arrange
         XCTAssertFalse(auth.isLoggedIn)
 
         // Act - Logout without being logged in
-        await auth.logout()
+        try await auth.logout()
 
         // Assert - Should handle gracefully
         XCTAssertFalse(auth.isLoggedIn)
@@ -281,13 +307,13 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
     }
 
-    func testEdgeCase_renewWithoutLogin_handledGracefully() async {
+    func testEdgeCase_renewWithoutLogin_handledGracefully() async throws {
         // Arrange
         XCTAssertFalse(auth.isLoggedIn)
         mockProvider.canRenewCredentialsResult = false
 
         // Act - Attempt to renew without being logged in
-        await auth.renewCredentialsIfNeeded()
+        try await auth.renewCredentialsIfNeeded()
 
         // Assert - Should handle gracefully
         XCTAssertFalse(auth.isLoggedIn)
@@ -296,18 +322,18 @@ final class AuthIntegrationTests: XCTestCase {
         XCTAssertEqual(mockProvider.renewCredentialsCallCount, 0)
     }
 
-    func testEdgeCase_webInitiatedLogout_skipsWebLogout() async {
+    func testEdgeCase_webInitiatedLogout_skipsWebLogout() async throws {
         // Arrange
         let testCredentials = createTestCredentials()
         mockProvider.mockCredentials = testCredentials
         mockCredentialsManager.storedCredentials = testCredentials
 
         // Login first
-        await auth.login()
+        try await auth.login()
         XCTAssertTrue(auth.isLoggedIn)
 
         // Act - Web-initiated logout (skip web logout)
-        await auth.logout(triggerWebLogout: false)
+        try await auth.logout(triggerWebLogout: false)
 
         // Assert - Should clear credentials but not call clearSession
         XCTAssertFalse(auth.isLoggedIn)
@@ -318,7 +344,7 @@ final class AuthIntegrationTests: XCTestCase {
 
     // MARK: - Memory Management Tests
 
-    func testMemoryManagement_authInstanceDeallocation_cleansUpCorrectly() async {
+    func testMemoryManagement_authInstanceDeallocation_cleansUpCorrectly() async throws {
         // Arrange
         weak var weakAuth: Auth?
 
@@ -335,7 +361,7 @@ final class AuthIntegrationTests: XCTestCase {
 
     // MARK: - Integration with Real Components
 
-    func testIntegrationWithRealCredentialsManager_basicFlow_worksCorrectly() async {
+    func testIntegrationWithRealCredentialsManager_basicFlow_worksCorrectly() async throws {
         // Arrange
         let realCredentialsManager = DefaultCredentialsManager()
         mockProvider.credentialsManager = realCredentialsManager
@@ -346,7 +372,7 @@ final class AuthIntegrationTests: XCTestCase {
         _ = realCredentialsManager.clear()
 
         // Act - Login
-        await auth.login()
+        try await auth.login()
 
         // Assert - Should use real credentials manager
         XCTAssertTrue(auth.isLoggedIn)
