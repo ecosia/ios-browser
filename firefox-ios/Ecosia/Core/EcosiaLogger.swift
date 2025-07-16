@@ -3,20 +3,34 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import OSLog
 
-/// Centralized logging utility for Ecosia-specific functionality
+/// Centralized logging utility for Ecosia-specific functionality using OSLog
 /// Available to both Ecosia framework and Client module code
 public enum EcosiaLogger {
 
-    /// Controls whether debug logging is enabled
-    /// Only enabled for debug builds to avoid noise in production
-    private static var debugLogging: Bool {
-        #if DEBUG
-        return true
-        #else
-        return false
-        #endif
-    }
+    // MARK: - OSLog Loggers
+
+    /// Main subsystem identifier for Ecosia logs
+    private static let subsystem = "org.mozilla.ios.Ecosia"
+
+    /// Authentication-related logger
+    private static let authLogger = Logger(subsystem: subsystem, category: "Auth")
+
+    /// Invisible tab management logger
+    private static let invisibleTabsLogger = Logger(subsystem: subsystem, category: "InvisibleTabs")
+
+    /// Tab auto-close management logger
+    private static let tabAutoCloseLogger = Logger(subsystem: subsystem, category: "TabAutoClose")
+
+    /// Session management logger
+    private static let sessionLogger = Logger(subsystem: subsystem, category: "Session")
+
+    /// Cookie injection and management logger
+    private static let cookiesLogger = Logger(subsystem: subsystem, category: "Cookies")
+
+    /// Generic Ecosia functionality logger
+    private static let generalLogger = Logger(subsystem: subsystem, category: "General")
 
     // MARK: - Logging Methods
 
@@ -25,7 +39,7 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func auth(_ message: String, level: LogLevel = .info) {
-        log(message, category: "🔐 Auth", level: level)
+        log(message: message, logger: authLogger, level: level)
     }
 
     /// Logs invisible tab management events
@@ -33,7 +47,7 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func invisibleTabs(_ message: String, level: LogLevel = .info) {
-        log(message, category: "👻 InvisibleTabs", level: level)
+        log(message: message, logger: invisibleTabsLogger, level: level)
     }
 
     /// Logs tab auto-close management events
@@ -41,7 +55,7 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func tabAutoClose(_ message: String, level: LogLevel = .info) {
-        log(message, category: "⏱️  TabAutoClose", level: level)
+        log(message: message, logger: tabAutoCloseLogger, level: level)
     }
 
     /// Logs session management events
@@ -49,7 +63,7 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func session(_ message: String, level: LogLevel = .info) {
-        log(message, category: "🎫 Session", level: level)
+        log(message: message, logger: sessionLogger, level: level)
     }
 
     /// Logs cookie injection and management events
@@ -57,34 +71,49 @@ public enum EcosiaLogger {
     ///   - message: The log message
     ///   - level: Log level (info, debug, warning, error)
     public static func cookies(_ message: String, level: LogLevel = .info) {
-        log(message, category: "🍪 Cookies", level: level)
+        log(message: message, logger: cookiesLogger, level: level)
     }
 
     /// Generic logging method for other Ecosia functionality
     /// - Parameters:
     ///   - message: The log message
-    ///   - category: Log category/prefix
+    ///   - category: Log category/prefix (legacy parameter, not used with OSLog)
     ///   - level: Log level (info, debug, warning, error)
-    public static func log(_ message: String, category: String = "🌳 Ecosia", level: LogLevel = .info) {
-        // Only log if debug logging is enabled or if it's a warning/error
-        guard debugLogging || level.shouldAlwaysLog else { return }
+    public static func log(_ message: String, category: String = "General", level: LogLevel = .info) {
+        log(message: message, logger: generalLogger, level: level)
+    }
 
-        let timestamp = DateFormatter.logTimestamp.string(from: Date())
-        let levelIndicator = level.indicator
-        print("Ecosia Logging: \(timestamp) \(levelIndicator) \(category) - \(message)")
+    // MARK: - Private Implementation
+
+    /// Internal logging method that maps to OSLog levels
+    /// - Parameters:
+    ///   - message: The log message
+    ///   - logger: The OSLog Logger instance to use
+    ///   - level: The log level
+    private static func log(message: String, logger: Logger, level: LogLevel) {
+        switch level {
+        case .debug:
+            logger.debug("\(message, privacy: .public)")
+        case .info:
+            logger.info("\(message, privacy: .public)")
+        case .warning:
+            logger.notice("\(message, privacy: .public)")
+        case .error:
+            logger.error("\(message, privacy: .public)")
+        }
     }
 }
 
 // MARK: - Log Level
 
-/// Log levels for Ecosia logging
+/// Log levels for Ecosia logging mapped to OSLog levels
 public enum LogLevel {
-    case debug
-    case info
-    case warning
-    case error
+    case debug    // Maps to OSLog.debug
+    case info     // Maps to OSLog.info
+    case warning  // Maps to OSLog.notice
+    case error    // Maps to OSLog.error
 
-    /// Visual indicator for the log level
+    /// Visual indicator for the log level (legacy support)
     var indicator: String {
         switch self {
         case .debug: return "🔍"
@@ -94,21 +123,11 @@ public enum LogLevel {
         }
     }
 
-    /// Whether this log level should always be shown regardless of debug settings
+    /// Whether this log level should always be shown (legacy support)
     var shouldAlwaysLog: Bool {
         switch self {
         case .debug, .info: return false
         case .warning, .error: return true
         }
     }
-}
-
-// MARK: - Extensions
-
-private extension DateFormatter {
-    static let logTimestamp: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm:ss.SSS"
-        return formatter
-    }()
 }
