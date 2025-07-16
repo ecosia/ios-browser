@@ -157,7 +157,7 @@ class CookiesClearable: Clearable {
         
         // Ecosia: Trigger native logout when cookies are cleared
         Task {
-            await triggerNativeLogoutOnCookieClearing()
+            await DataClearingIntegration.handleCookieClearing()
         }
         
         WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: .distantPast, completionHandler: {})
@@ -166,24 +166,6 @@ class CookiesClearable: Clearable {
                    level: .debug,
                    category: .storage)
         return succeed()
-    }
-    
-    // Ecosia: Handle native logout when cookies are cleared
-    private func triggerNativeLogoutOnCookieClearing() async {
-        guard Auth.shared.isLoggedIn else {
-            EcosiaLogger.auth("User not logged in - skipping logout on cookie clearing")
-            return
-        }
-        
-        EcosiaLogger.auth("Triggering native logout due to cookie clearing")
-        
-        do {
-            // Perform logout without triggering web logout since cookies are already being cleared
-            try await Auth.shared.logout(triggerWebLogout: false)
-            EcosiaLogger.auth("Native logout completed successfully during cookie clearing")
-        } catch {
-            EcosiaLogger.auth("Failed to perform native logout during cookie clearing: \(error)", level: .error)
-        }
     }
 }
 
