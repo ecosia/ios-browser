@@ -31,8 +31,8 @@ public final class EcosiaAuthRefactored {
     // MARK: - Dependencies
 
     private let authProvider: Ecosia.Auth
-    private let tabLifecycleManager: TabLifecycleManaging
     private let authStateManager: AuthStateManager
+    private weak var browserViewController: BrowserViewController?
 
     // MARK: - Current Flow Tracking
 
@@ -41,21 +41,21 @@ public final class EcosiaAuthRefactored {
 
     // MARK: - Initialization
 
-    /// Initializes EcosiaAuth with required dependencies
+    /// Initializes EcosiaAuth with required dependencies (LEAN VERSION)
     /// - Parameters:
-    ///   - tabLifecycleManager: The tab lifecycle manager for tab operations
+    ///   - browserViewController: The browser view controller for tab operations
     ///   - authProvider: The auth provider for authentication operations (defaults to Ecosia.Auth.shared)
     ///   - authStateManager: The auth state manager for state coordination (defaults to new instance)
-    public init(
-        tabLifecycleManager: TabLifecycleManaging,
+    internal init(
+        browserViewController: BrowserViewController,
         authProvider: Ecosia.Auth = Ecosia.Auth.shared,
-        authStateManager: AuthStateManager? = nil
+        authStateManager: AuthStateManager = AuthStateManager()
     ) {
         self.authProvider = authProvider
-        self.tabLifecycleManager = tabLifecycleManager
-        self.authStateManager = authStateManager ?? AuthStateManager()
-        
-        EcosiaLogger.auth.info("EcosiaAuthRefactored initialized")
+        self.authStateManager = authStateManager
+        self.browserViewController = browserViewController
+
+        EcosiaLogger.auth.info("EcosiaAuthRefactored initialized (lean version)")
     }
 
     // MARK: - Public API
@@ -63,11 +63,15 @@ public final class EcosiaAuthRefactored {
     /// Starts the login authentication flow
     /// - Returns: AuthenticationFlow for chaining callbacks
     public func login() -> AuthenticationFlowRefactored {
+        guard let browserViewController = browserViewController else {
+            fatalError("BrowserViewController not available for auth flow")
+        }
+        
         let flow = AuthenticationFlowRefactored(
             type: .login,
             authProvider: authProvider,
-            tabLifecycleManager: tabLifecycleManager,
-            authStateManager: authStateManager
+            authStateManager: authStateManager,
+            browserViewController: browserViewController
         )
         currentLoginFlow = flow
         return flow
@@ -76,11 +80,15 @@ public final class EcosiaAuthRefactored {
     /// Starts the logout authentication flow
     /// - Returns: AuthenticationFlow for chaining callbacks  
     public func logout() -> AuthenticationFlowRefactored {
+        guard let browserViewController = browserViewController else {
+            fatalError("BrowserViewController not available for auth flow")
+        }
+        
         let flow = AuthenticationFlowRefactored(
             type: .logout,
             authProvider: authProvider,
-            tabLifecycleManager: tabLifecycleManager,
-            authStateManager: authStateManager
+            authStateManager: authStateManager,
+            browserViewController: browserViewController
         )
         currentLogoutFlow = flow
         return flow
@@ -121,9 +129,7 @@ public final class AuthenticationFlowRefactored {
     // MARK: - Properties
 
     private let type: FlowType
-    private let authProvider: Ecosia.Auth
-    private let tabLifecycleManager: TabLifecycleManaging
-    private let authStateManager: AuthStateManager
+    private let authFlow: AuthFlow
 
     // MARK: - Callbacks
 
@@ -140,13 +146,15 @@ public final class AuthenticationFlowRefactored {
     internal init(
         type: FlowType,
         authProvider: Ecosia.Auth,
-        tabLifecycleManager: TabLifecycleManaging,
-        authStateManager: AuthStateManager
+        authStateManager: AuthStateManager,
+        browserViewController: BrowserViewController
     ) {
         self.type = type
-        self.authProvider = authProvider
-        self.tabLifecycleManager = tabLifecycleManager
-        self.authStateManager = authStateManager
+        self.authFlow = AuthFlow(
+            authProvider: authProvider,
+            authStateManager: authStateManager,
+            browserViewController: browserViewController
+        )
 
         // Start the authentication process
         startAuthentication()
@@ -180,7 +188,7 @@ public final class AuthenticationFlowRefactored {
         onErrorCallback = callback
         return self
     }
-    
+
     /// Sets the delay before firing the onNativeAuthCompleted callback
     /// - Parameter delay: Delay in seconds before calling onNativeAuthCompleted
     /// - Returns: Self for chaining
@@ -204,45 +212,33 @@ public final class AuthenticationFlowRefactored {
     }
 
     private func performLogin() async {
-        let coordinator = LoginCoordinator(
-            authProvider: authProvider,
-            tabLifecycleManager: tabLifecycleManager,
-            authStateManager: authStateManager,
-            delayedCompletionTime: delayedCompletionTime
-        )
-
-        let callbacks = LoginCallbacks(
-            onNativeAuthCompleted: onNativeAuthCompletedCallback,
-            onFlowCompleted: onAuthFlowCompletedCallback,
-            onError: onErrorCallback
-        )
-
-        let result = await coordinator.startLogin(callbacks: callbacks)
-        
-        switch result {
-        case .success(let user):
-            EcosiaLogger.auth.info("Login flow completed successfully for user")
-        case .failure(let error):
-            EcosiaLogger.auth.error("Login flow failed: \(error)")
+        // Use the new lean AuthFlow - no coordinators, no complexity
+        Task {
+            let result = await authFlow.startLogin(
+                delayedCompletion: delayedCompletionTime,
+                onNativeAuthCompleted: onNativeAuthCompletedCallback,
+                onFlowCompleted: onAuthFlowCompletedCallback,
+                onError: onErrorCallback
+            )
+            
+            switch result {
+            case .success:
+                EcosiaLogger.auth.debug("Login flow completed successfully")
+            case .failure(let error):
+                EcosiaLogger.auth.error("Login flow failed: \(error)")
+            }
         }
     }
 
     private func performLogout() async {
-        let coordinator = LogoutCoordinator(
-            authProvider: authProvider,
-            tabLifecycleManager: tabLifecycleManager,
-            authStateManager: authStateManager,
-            delayedCompletionTime: delayedCompletionTime
-        )
-
-        let callbacks = LogoutCallbacks(
+        // Use the new lean AuthFlow - no coordinators, no complexity
+        let result = await authFlow.startLogout(
+            delayedCompletion: delayedCompletionTime,
             onNativeAuthCompleted: onNativeAuthCompletedCallback,
             onFlowCompleted: onAuthFlowCompletedCallback,
             onError: onErrorCallback
         )
 
-        let result = await coordinator.startLogout(callbacks: callbacks)
-        
         switch result {
         case .success:
             EcosiaLogger.auth.info("Logout flow completed successfully")
@@ -250,4 +246,4 @@ public final class AuthenticationFlowRefactored {
             EcosiaLogger.auth.error("Logout flow failed: \(error)")
         }
     }
-} 
+}
