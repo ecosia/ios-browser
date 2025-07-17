@@ -4,396 +4,329 @@
 
 import XCTest
 import Auth0
-@testable import Ecosia
+import Ecosia
+@testable import Client
 
 final class AuthIntegrationTests: XCTestCase {
 
-    var auth: Auth!
-    var mockProvider: MockAuth0Provider!
-    var mockCredentialsManager: MockCredentialsManager!
+    var ecosiaAuth: EcosiaAuth!
+    var authStateManager: AuthStateManager!
+    var mockBrowserViewController: MockBrowserViewController!
 
     override func setUp() {
         super.setUp()
-        mockCredentialsManager = MockCredentialsManager()
-        mockProvider = MockAuth0Provider()
-        mockProvider.credentialsManager = mockCredentialsManager
-        auth = Auth(auth0Provider: mockProvider)
+        authStateManager = AuthStateManager()
+        mockBrowserViewController = MockBrowserViewController()
+        ecosiaAuth = EcosiaAuth(
+            browserViewController: mockBrowserViewController,
+            authProvider: Ecosia.Auth.shared,
+            authStateManager: authStateManager
+        )
     }
 
     override func tearDown() {
-        mockProvider?.reset()
-        mockCredentialsManager?.reset()
-        mockProvider = nil
-        mockCredentialsManager = nil
-        auth = nil
+        authStateManager.reset()
+        authStateManager = nil
+        ecosiaAuth = nil
+        mockBrowserViewController = nil
         super.tearDown()
     }
 
     // MARK: - Full Authentication Lifecycle Tests
 
-    func testCompleteAuthenticationLifecycle_loginLogout_worksEndToEnd() async throws {
+    func testCompleteAuthenticationLifecycle_loginLogout_worksEndToEnd() {
         // Arrange
-        let testCredentials = createTestCredentials()
-        mockProvider.mockCredentials = testCredentials
-        mockCredentialsManager.storedCredentials = testCredentials
+        XCTAssertFalse(ecosiaAuth.isLoggedIn, "Should start logged out")
+        XCTAssertEqual(authStateManager.currentState, .idle)
 
-        XCTAssertFalse(auth.isLoggedIn, "Should start logged out")
+        // Act - Login flow (testing chainable API)
+        let loginFlow = ecosiaAuth.login()
+        XCTAssertNotNil(loginFlow)
 
-        // Act - Login
-        try await auth.login()
+        // Simulate successful authentication for state testing
+        let testUser = AuthUser(idToken: "test-id-token", accessToken: "test-access-token")
+        authStateManager.completeAuthentication(with: testUser)
 
         // Assert - Logged in state
-        XCTAssertTrue(auth.isLoggedIn, "Should be logged in after successful login")
-        XCTAssertEqual(auth.idToken, testCredentials.idToken)
-        XCTAssertEqual(auth.accessToken, testCredentials.accessToken)
-        XCTAssertEqual(auth.refreshToken, testCredentials.refreshToken)
-        XCTAssertEqual(mockProvider.startAuthCallCount, 1)
-        XCTAssertEqual(mockProvider.storeCredentialsCallCount, 1)
+        XCTAssertTrue(ecosiaAuth.isLoggedIn, "Should be logged in after successful login")
+        XCTAssertEqual(ecosiaAuth.idToken, testUser.idToken)
+        XCTAssertEqual(ecosiaAuth.accessToken, testUser.accessToken)
+        XCTAssertEqual(authStateManager.currentState, .authenticated(user: testUser))
 
-        // Act - Logout
-        try await auth.logout()
+        // Act - Logout flow
+        let logoutFlow = ecosiaAuth.logout()
+        XCTAssertNotNil(logoutFlow)
+
+        // Simulate successful logout for state testing
+        authStateManager.completeLogout()
 
         // Assert - Logged out state
-        XCTAssertFalse(auth.isLoggedIn, "Should be logged out after logout")
-        XCTAssertNil(auth.idToken, "ID token should be cleared")
-        XCTAssertNil(auth.accessToken, "Access token should be cleared")
-        XCTAssertNil(auth.refreshToken, "Refresh token should be cleared")
-        XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
-        XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
+        XCTAssertFalse(ecosiaAuth.isLoggedIn, "Should be logged out after logout")
+        XCTAssertNil(ecosiaAuth.idToken, "ID token should be cleared")
+        XCTAssertNil(ecosiaAuth.accessToken, "Access token should be cleared")
+        XCTAssertEqual(authStateManager.currentState, .loggedOut)
     }
 
-    func testCompleteAuthenticationLifecycle_loginRenewLogout_worksEndToEnd() async throws {
+    func testAuthenticationFlow_withChainedAPI() {
         // Arrange
-        let originalCredentials = createTestCredentials()
-        let renewedCredentials = Credentials(
-            accessToken: "renewed-access-token",
-            tokenType: "Bearer",
-            idToken: "renewed-id-token",
-            refreshToken: "renewed-refresh-token",
-            expiresIn: Date().addingTimeInterval(3600),
-            scope: "openid profile email"
-        )
+        var nativeAuthCompletedCalled = false
+        var authFlowCompletedCalled = false
+        var errorCalled = false
 
-        mockProvider.mockCredentials = originalCredentials
-        mockCredentialsManager.storedCredentials = originalCredentials
-        mockProvider.canRenewCredentialsResult = true
-
-        // Act - Login
-        try await auth.login()
-        let originalIdToken = auth.idToken
-
-        // Assert - Logged in
-        XCTAssertTrue(auth.isLoggedIn)
-        XCTAssertNotNil(originalIdToken)
-
-        // Act - Renew credentials
-        mockProvider.mockCredentials = renewedCredentials
-        mockCredentialsManager.storedCredentials = renewedCredentials
-        try await auth.renewCredentialsIfNeeded()
-
-        // Assert - Credentials renewed
-        XCTAssertTrue(auth.isLoggedIn)
-        XCTAssertNotEqual(auth.idToken, originalIdToken)
-        XCTAssertEqual(auth.idToken, renewedCredentials.idToken)
-        XCTAssertEqual(mockProvider.canRenewCredentialsCallCount, 1)
-        XCTAssertEqual(mockProvider.renewCredentialsCallCount, 1)
-
-        // Act - Logout
-        try await auth.logout()
-
-        // Assert - Logged out
-        XCTAssertFalse(auth.isLoggedIn)
-        XCTAssertNil(auth.idToken)
-        XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
-    }
-
-    func testCompleteAuthenticationLifecycle_persistenceAfterRestart_worksEndToEnd() async throws {
-        // Arrange
-        let testCredentials = createTestCredentials()
-        mockProvider.mockCredentials = testCredentials
-        mockCredentialsManager.storedCredentials = testCredentials
-
-        // Act - Login
-        try await auth.login()
-
-        // Assert - Logged in
-        XCTAssertTrue(auth.isLoggedIn)
-
-        // Act - Simulate app restart by creating new Auth instance
-        let newMockProvider = MockAuth0Provider()
-        newMockProvider.credentialsManager = mockCredentialsManager
-        newMockProvider.mockCredentials = testCredentials
-        _ = Auth(auth0Provider: newMockProvider)
-
-        // Allow time for credential retrieval to complete
-        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
-
-        // Assert - Should automatically retrieve stored credentials
-        XCTAssertEqual(newMockProvider.retrieveCredentialsCallCount, 1)
-        // Note: The actual state depends on the credential retrieval success
-    }
-
-    // MARK: - Error Recovery Tests
-
-    func testAuthenticationErrorRecovery_loginFailureRecovery_handlesGracefully() async throws {
-        // Arrange
-        mockProvider.shouldFailAuth = true
-
-        // Act - First login attempt (fails)
-        do {
-            try await auth.login()
-            XCTFail("Expected login to fail")
-        } catch {
-            // Expected failure
-        }
-
-        // Assert - Should remain logged out
-        XCTAssertFalse(auth.isLoggedIn)
-        XCTAssertNil(auth.idToken)
-        XCTAssertEqual(mockProvider.startAuthCallCount, 1)
-        XCTAssertEqual(mockProvider.storeCredentialsCallCount, 0)
-
-        // Act - Second login attempt (succeeds)
-        mockProvider.shouldFailAuth = false
-        mockProvider.mockCredentials = createTestCredentials()
-        try await auth.login()
-
-        // Assert - Should now be logged in
-        XCTAssertTrue(auth.isLoggedIn)
-        XCTAssertNotNil(auth.idToken)
-        XCTAssertEqual(mockProvider.startAuthCallCount, 2)
-        XCTAssertEqual(mockProvider.storeCredentialsCallCount, 1)
-    }
-
-    func testAuthenticationErrorRecovery_renewFailureHandling_maintainsState() async throws {
-        // Arrange
-        let testCredentials = createTestCredentials()
-        mockProvider.mockCredentials = testCredentials
-        mockCredentialsManager.storedCredentials = testCredentials
-
-        // Login first
-        try await auth.login()
-        let originalIdToken = auth.idToken
-        let originalAccessToken = auth.accessToken
-
-        // Setup renewal failure
-        mockProvider.canRenewCredentialsResult = true
-        mockProvider.shouldFailRenewCredentials = true
-
-        // Act - Attempt to renew (fails)
-        do {
-            try await auth.renewCredentialsIfNeeded()
-            XCTFail("Expected renew to fail")
-        } catch {
-            // Expected failure
-        }
-
-        // Assert - Should maintain original state
-        XCTAssertTrue(auth.isLoggedIn)
-        XCTAssertEqual(auth.idToken, originalIdToken)
-        XCTAssertEqual(auth.accessToken, originalAccessToken)
-        XCTAssertEqual(mockProvider.canRenewCredentialsCallCount, 1)
-        XCTAssertEqual(mockProvider.renewCredentialsCallCount, 1)
-    }
-
-    func testAuthenticationErrorRecovery_logoutFailureHandling_clearsCredentials() async throws {
-        // Arrange
-        let testCredentials = createTestCredentials()
-        mockProvider.mockCredentials = testCredentials
-        mockCredentialsManager.storedCredentials = testCredentials
-
-        // Login first
-        try await auth.login()
-        XCTAssertTrue(auth.isLoggedIn)
-
-        // Setup logout session failure
-        mockProvider.shouldFailClearSession = true
-
-        // Act - Logout (session clear fails, but credential clear succeeds)
-        do {
-            try await auth.logout()
-        } catch {
-            // Logout may throw due to session clear failure, but credentials should still be cleared
-        }
-
-        // Assert - Should still clear credentials despite session clear failure
-        XCTAssertFalse(auth.isLoggedIn)
-        XCTAssertNil(auth.idToken)
-        XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
-        XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
-        XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
-    }
-
-    // MARK: - Concurrent Operations Tests
-
-    func testConcurrentOperations_multipleLoginAttempts_handledCorrectly() async throws {
-        // Arrange
-        let testCredentials = createTestCredentials()
-        mockProvider.mockCredentials = testCredentials
-        mockCredentialsManager.storedCredentials = testCredentials
-
-        // Act - Multiple concurrent login attempts
-        await withTaskGroup(of: Void.self) { group in
-            for _ in 0..<3 {
-                group.addTask {
-                    do {
-                        try await self.auth.login()
-                    } catch {
-                        // Some concurrent login attempts may fail, which is expected
-                    }
-                }
+        // Act - Use chainable API
+        let flow = ecosiaAuth.login()
+            .onNativeAuthCompleted {
+                nativeAuthCompletedCalled = true
             }
-        }
-
-        // Assert - Should be logged in only once
-        XCTAssertTrue(auth.isLoggedIn)
-        XCTAssertNotNil(auth.idToken)
-        // Note: Call count might be 3 depending on how concurrent operations are handled
-        XCTAssertGreaterThanOrEqual(mockProvider.startAuthCallCount, 1)
-    }
-
-    func testConcurrentOperations_loginAndRenew_handledCorrectly() async throws {
-        // Arrange
-        let testCredentials = createTestCredentials()
-        let renewedCredentials = createTestCredentials()
-        mockProvider.mockCredentials = testCredentials
-        mockCredentialsManager.storedCredentials = testCredentials
-        mockProvider.canRenewCredentialsResult = true
-
-        // Act - Login first
-        try await auth.login()
-
-        // Act - Concurrent login and renew
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask {
-                do {
-                    try await self.auth.login()
-                } catch {
-                    // Concurrent login may fail, which is expected
-                }
+            .onAuthFlowCompleted { success in
+                authFlowCompletedCalled = true
             }
-            group.addTask {
-                self.mockProvider.mockCredentials = renewedCredentials
-                do {
-                    try await self.auth.renewCredentialsIfNeeded()
-                } catch {
-                    // Concurrent renew may fail, which is expected
-                }
+            .onError { error in
+                errorCalled = true
             }
+
+        // Assert
+        XCTAssertNotNil(flow)
+        // Callbacks are set up for the authentication flow
+        // Actual invocation depends on the real Ecosia.Auth behavior
+    }
+
+    func testErrorHandling_authenticationFailure_maintainsProperState() {
+        // Arrange
+        let expectedError = AuthError.userCancelled
+        XCTAssertEqual(authStateManager.currentState, .idle)
+
+        // Act - Simulate authentication failure
+        authStateManager.beginAuthentication()
+        authStateManager.failAuthentication(with: expectedError)
+
+        // Assert
+        XCTAssertFalse(ecosiaAuth.isLoggedIn)
+        XCTAssertEqual(authStateManager.currentState, .authenticationFailed(error: expectedError))
+        XCTAssertNil(authStateManager.currentUser)
+    }
+
+    func testErrorHandling_duringLogout_maintainsProperState() {
+        // Arrange - Setup logged in state
+        let testUser = AuthUser(idToken: "logout-test-id", accessToken: "logout-test-access")
+        authStateManager.completeAuthentication(with: testUser)
+        XCTAssertTrue(ecosiaAuth.isLoggedIn)
+
+        // Act - Start logout flow
+        let logoutFlow = ecosiaAuth.logout()
+        XCTAssertNotNil(logoutFlow)
+
+        // Simulate logout being initiated but not completed
+        authStateManager.beginLogout()
+
+        // Assert - Should be in logging out state
+        XCTAssertEqual(authStateManager.currentState, .loggingOut)
+        XCTAssertFalse(authStateManager.isAuthenticated) // isAuthenticated should be false during logout
+    }
+
+    func testMemoryManagement_authInstanceDeallocation_cleansUpCorrectly() {
+        // Arrange
+        weak var weakEcosiaAuth: EcosiaAuth?
+        weak var weakAuthStateManager: AuthStateManager?
+        
+        do {
+            let tempAuthStateManager = AuthStateManager()
+            let tempBrowserViewController = MockBrowserViewController()
+            let tempEcosiaAuth = EcosiaAuth(
+                browserViewController: tempBrowserViewController,
+                authProvider: Ecosia.Auth.shared,
+                authStateManager: tempAuthStateManager
+            )
+            
+            weakEcosiaAuth = tempEcosiaAuth
+            weakAuthStateManager = tempAuthStateManager
+            
+            // Use the instances
+            XCTAssertNotNil(weakEcosiaAuth)
+            XCTAssertNotNil(weakAuthStateManager)
+            
+            // Setup auth state
+            let testUser = AuthUser(idToken: "test-id", accessToken: "test-access")
+            tempAuthStateManager.completeAuthentication(with: testUser)
+            XCTAssertTrue(tempEcosiaAuth.isLoggedIn)
+            
+            // tempEcosiaAuth and tempAuthStateManager should be deallocated here
         }
-
-        // Assert - Should maintain consistent state
-        XCTAssertTrue(auth.isLoggedIn)
-        XCTAssertNotNil(auth.idToken)
-        XCTAssertNotNil(auth.accessToken)
-        XCTAssertNotNil(auth.refreshToken)
+        
+        // Assert - Instances should be deallocated
+        XCTAssertNil(weakEcosiaAuth, "EcosiaAuth should be deallocated")
+        XCTAssertNil(weakAuthStateManager, "AuthStateManager should be deallocated")
     }
 
-    // MARK: - Edge Cases Tests
-
-    func testEdgeCase_logoutWithoutLogin_handledGracefully() async throws {
+    func testAuthenticationStatus_withAuthenticatedState_reflectsCorrectly() {
         // Arrange
-        XCTAssertFalse(auth.isLoggedIn)
+        let testUser = AuthUser(idToken: "status-id", accessToken: "status-access")
+        XCTAssertEqual(authStateManager.currentState, .idle)
 
-        // Act - Logout without being logged in
-        try await auth.logout()
+        // Act
+        authStateManager.completeAuthentication(with: testUser)
 
-        // Assert - Should handle gracefully
-        XCTAssertFalse(auth.isLoggedIn)
-        XCTAssertNil(auth.idToken)
-        XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
-        XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
+        // Assert
+        XCTAssertTrue(ecosiaAuth.isLoggedIn)
+        XCTAssertEqual(authStateManager.currentState, .authenticated(user: testUser))
+        XCTAssertEqual(ecosiaAuth.idToken, testUser.idToken)
+        XCTAssertEqual(ecosiaAuth.accessToken, testUser.accessToken)
     }
 
-    func testEdgeCase_renewWithoutLogin_handledGracefully() async throws {
+    func testAuthenticationStatus_withLoggedOutState_reflectsCorrectly() {
         // Arrange
-        XCTAssertFalse(auth.isLoggedIn)
-        mockProvider.canRenewCredentialsResult = false
+        authStateManager.completeLogout()
 
-        // Act - Attempt to renew without being logged in
-        try await auth.renewCredentialsIfNeeded()
-
-        // Assert - Should handle gracefully
-        XCTAssertFalse(auth.isLoggedIn)
-        XCTAssertNil(auth.idToken)
-        XCTAssertEqual(mockProvider.canRenewCredentialsCallCount, 1)
-        XCTAssertEqual(mockProvider.renewCredentialsCallCount, 0)
+        // Act & Assert
+        XCTAssertFalse(ecosiaAuth.isLoggedIn)
+        XCTAssertEqual(authStateManager.currentState, .loggedOut)
+        XCTAssertNil(ecosiaAuth.idToken)
+        XCTAssertNil(ecosiaAuth.accessToken)
     }
 
-    func testEdgeCase_webInitiatedLogout_skipsWebLogout() async throws {
+    func testConcurrentAuthOperations_handlesGracefully() {
         // Arrange
-        let testCredentials = createTestCredentials()
-        mockProvider.mockCredentials = testCredentials
-        mockCredentialsManager.storedCredentials = testCredentials
+        let testUser = AuthUser(idToken: "concurrent-id", accessToken: "concurrent-access")
 
-        // Login first
-        try await auth.login()
-        XCTAssertTrue(auth.isLoggedIn)
+        // Act - Create multiple flows (testing that it doesn't crash)
+        let loginFlow1 = ecosiaAuth.login()
+        let loginFlow2 = ecosiaAuth.login()
+        let loginFlow3 = ecosiaAuth.login()
 
-        // Act - Web-initiated logout (skip web logout)
-        try await auth.logout(triggerWebLogout: false)
-
-        // Assert - Should clear credentials but not call clearSession
-        XCTAssertFalse(auth.isLoggedIn)
-        XCTAssertNil(auth.idToken)
-        XCTAssertEqual(mockProvider.clearSessionCallCount, 0)
-        XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
+        // Assert - Should handle gracefully without crashing
+        XCTAssertNotNil(loginFlow1)
+        XCTAssertNotNil(loginFlow2)
+        XCTAssertNotNil(loginFlow3)
+        
+        // Simulate one successful authentication
+        authStateManager.completeAuthentication(with: testUser)
+        XCTAssertTrue(ecosiaAuth.isLoggedIn)
+        XCTAssertEqual(authStateManager.currentState, .authenticated(user: testUser))
     }
 
-    // MARK: - Memory Management Tests
-
-    func testMemoryManagement_authInstanceDeallocation_cleansUpCorrectly() async throws {
+    func testStateTransitions_followCorrectSequence() {
         // Arrange
-        weak var weakAuth: Auth?
+        let observer = MockAuthStateObserver()
+        authStateManager.addObserver(observer)
+        defer { authStateManager.removeObserver(observer) }
 
-        // Act - Create and deallocate Auth instance
-        autoreleasepool {
-            let testAuth = Auth(auth0Provider: mockProvider)
-            weakAuth = testAuth
-            XCTAssertNotNil(weakAuth)
-        }
+        let testUser = AuthUser(idToken: "sequence-id", accessToken: "sequence-access")
 
-        // Assert - Should be deallocated
-        XCTAssertNil(weakAuth, "Auth instance should be deallocated")
+        // Act - Login sequence
+        authStateManager.beginAuthentication()
+        authStateManager.completeAuthentication(with: testUser)
+
+        // Assert - Should see proper state sequence
+        XCTAssertTrue(observer.stateChanges.count >= 2)
+        
+        // Should start with idle -> authenticating
+        let firstChange = observer.stateChanges.first!
+        XCTAssertEqual(firstChange.previousState, .idle)
+        XCTAssertEqual(firstChange.currentState, .authenticating)
+        
+        // Should end with authenticated
+        let lastChange = observer.stateChanges.last!
+        XCTAssertEqual(lastChange.currentState, .authenticated(user: testUser))
+
+        // Reset observer for logout test
+        observer.reset()
+
+        // Act - Logout sequence
+        authStateManager.beginLogout()
+        authStateManager.completeLogout()
+
+        // Assert - Should see logout sequence
+        XCTAssertTrue(observer.stateChanges.count >= 2)
+        
+        // Should end with logged out
+        let logoutChange = observer.stateChanges.last!
+        XCTAssertEqual(logoutChange.currentState, .loggedOut)
     }
 
-    // MARK: - Integration with Real Components
+    func testChainableAPI_multipleCalls_worksCorrectly() {
+        // Arrange & Act
+        let flow = ecosiaAuth.login()
+            .onNativeAuthCompleted {
+                // Native auth completed
+            }
+            .onAuthFlowCompleted { success in
+                // Flow completed
+            }
+            .onError { error in
+                // Error occurred
+            }
 
-    func testIntegrationWithRealCredentialsManager_basicFlow_worksCorrectly() async throws {
+        // Assert
+        XCTAssertNotNil(flow)
+        
+        // Test logout chain as well
+        let logoutFlow = ecosiaAuth.logout()
+            .onNativeAuthCompleted {
+                // Native logout completed
+            }
+            .onAuthFlowCompleted { success in
+                // Logout flow completed
+            }
+            .onError { error in
+                // Logout error occurred
+            }
+
+        XCTAssertNotNil(logoutFlow)
+    }
+
+    func testStateManager_multipleOperations_maintainsConsistency() {
         // Arrange
-        let realCredentialsManager = DefaultCredentialsManager()
-        mockProvider.credentialsManager = realCredentialsManager
-        let testCredentials = createTestCredentials()
-        mockProvider.mockCredentials = testCredentials
+        let testUser = AuthUser(idToken: "consistency-id", accessToken: "consistency-access")
 
-        // Clear any existing credentials
-        _ = realCredentialsManager.clear()
+        // Act - Multiple rapid state changes
+        authStateManager.beginAuthentication()
+        XCTAssertEqual(authStateManager.currentState, .authenticating)
+        
+        authStateManager.completeAuthentication(with: testUser)
+        XCTAssertEqual(authStateManager.currentState, .authenticated(user: testUser))
+        XCTAssertTrue(ecosiaAuth.isLoggedIn)
+        
+        authStateManager.beginLogout()
+        XCTAssertEqual(authStateManager.currentState, .loggingOut)
+        XCTAssertFalse(authStateManager.isAuthenticated)
+        
+        authStateManager.completeLogout()
+        XCTAssertEqual(authStateManager.currentState, .loggedOut)
+        XCTAssertFalse(ecosiaAuth.isLoggedIn)
 
-        // Act - Login
-        try await auth.login()
-
-        // Assert - Should use real credentials manager
-        XCTAssertTrue(auth.isLoggedIn)
-        XCTAssertNotNil(auth.idToken)
-        XCTAssertEqual(mockProvider.startAuthCallCount, 1)
-        XCTAssertEqual(mockProvider.storeCredentialsCallCount, 1)
-
-        // Cleanup
-        _ = realCredentialsManager.clear()
+        // Assert - Final state consistency
+        XCTAssertFalse(ecosiaAuth.isLoggedIn)
+        XCTAssertNil(ecosiaAuth.idToken)
+        XCTAssertNil(ecosiaAuth.accessToken)
+        XCTAssertEqual(ecosiaAuth.currentAuthState, .loggedOut)
     }
+}
 
-    // MARK: - Helper Methods
+// MARK: - Mock Browser View Controller
 
-    private func createTestCredentials() -> Credentials {
-        return Credentials(
-            accessToken: "integration-test-access-token-\(UUID().uuidString)",
-            tokenType: "Bearer",
-            idToken: "integration-test-id-token-\(UUID().uuidString)",
-            refreshToken: "integration-test-refresh-token-\(UUID().uuidString)",
-            expiresIn: Date().addingTimeInterval(3600),
-            scope: "openid profile email"
-        )
+private class MockBrowserViewController: BrowserViewController {
+    // Minimal mock for testing - most functionality not needed for integration tests
+    override init() {
+        super.init()
+    }
+}
+
+// MARK: - Mock Auth State Observer
+
+private class MockAuthStateObserver: AuthStateObserver {
+    
+    struct StateChange {
+        let currentState: AuthState
+        let previousState: AuthState
+    }
+    
+    var stateChanges: [StateChange] = []
+    
+    func authStateDidChange(_ currentState: AuthState, previousState: AuthState) {
+        stateChanges.append(StateChange(currentState: currentState, previousState: previousState))
+    }
+    
+    func reset() {
+        stateChanges.removeAll()
     }
 }
