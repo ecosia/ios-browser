@@ -294,6 +294,11 @@
 		28E91E751B443AD5009DF274 /* SyncConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E91E741B443AD5009DF274 /* SyncConstants.swift */; };
 		28ECD9BF1BA1F19900D829DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C001B90A44F005ABB0D /* libz.tbd */; };
 		2C00D6832E27EC9C00811A76 /* InvisibleTabAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00D6822E27EC9C00811A76 /* InvisibleTabAPIProtocol.swift */; };
+		2C00E14F2E2927BE00811A76 /* TabLifecycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E14E2E2927BE00811A76 /* TabLifecycleManager.swift */; };
+		2C00E1542E2927D300811A76 /* EcosiaAuthRefactored.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E1512E2927D300811A76 /* EcosiaAuthRefactored.swift */; };
+		2C00E1552E2927D300811A76 /* LogoutCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E1532E2927D300811A76 /* LogoutCoordinator.swift */; };
+		2C00E1562E2927D300811A76 /* AuthStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E1502E2927D300811A76 /* AuthStateManager.swift */; };
+		2C00E1572E2927D300811A76 /* LoginCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E1522E2927D300811A76 /* LoginCoordinator.swift */; };
 		2C0174972E26E5DA00136A6F /* EcosiaAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0174942E26E5DA00136A6F /* EcosiaAuth.swift */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
 		2C2EA77F2DA3F2990085F5BC /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 2C2EA77E2DA3F2990085F5BC /* Lottie */; };
@@ -2756,6 +2761,11 @@
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2C00D6822E27EC9C00811A76 /* InvisibleTabAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvisibleTabAPIProtocol.swift; sourceTree = "<group>"; };
+		2C00E14E2E2927BE00811A76 /* TabLifecycleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabLifecycleManager.swift; sourceTree = "<group>"; };
+		2C00E1502E2927D300811A76 /* AuthStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStateManager.swift; sourceTree = "<group>"; };
+		2C00E1512E2927D300811A76 /* EcosiaAuthRefactored.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaAuthRefactored.swift; sourceTree = "<group>"; };
+		2C00E1522E2927D300811A76 /* LoginCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCoordinator.swift; sourceTree = "<group>"; };
+		2C00E1532E2927D300811A76 /* LogoutCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutCoordinator.swift; sourceTree = "<group>"; };
 		2C0174942E26E5DA00136A6F /* EcosiaAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaAuth.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
@@ -10396,6 +10406,10 @@
 		2C0174952E26E5DA00136A6F /* Auth */ = {
 			isa = PBXGroup;
 			children = (
+				2C00E1502E2927D300811A76 /* AuthStateManager.swift */,
+				2C00E1512E2927D300811A76 /* EcosiaAuthRefactored.swift */,
+				2C00E1522E2927D300811A76 /* LoginCoordinator.swift */,
+				2C00E1532E2927D300811A76 /* LogoutCoordinator.swift */,
 				2C0174942E26E5DA00136A6F /* EcosiaAuth.swift */,
 			);
 			path = Auth;
@@ -10449,6 +10463,7 @@
 		2C3982882E200C1100AB8035 /* TabManagement */ = {
 			isa = PBXGroup;
 			children = (
+				2C00E14E2E2927BE00811A76 /* TabLifecycleManager.swift */,
 				2C3982912E201EDC00AB8035 /* InvisibleTabManager.swift */,
 				2C3982922E201EDC00AB8035 /* InvisibleTabManaging.swift */,
 				2C3982932E201EDC00AB8035 /* TabAutoCloseManager.swift */,
@@ -16610,6 +16625,7 @@
 				B2999FF72B194ADE00F0FEC1 /* FormAutofillPayloadType.swift in Sources */,
 				8A285B08294A5D4C00149B0F /* HomepageHeroImageViewModel.swift in Sources */,
 				8C92DE8B2A711ED60090BD28 /* FakespotClient.swift in Sources */,
+				2C00E14F2E2927BE00811A76 /* TabLifecycleManager.swift in Sources */,
 				8AC1065F28D0CD700013263A /* OpenQLPreviewHelper.swift in Sources */,
 				EBA3B2C32268F16300728BDB /* PhotonActionSheetView.swift in Sources */,
 				E18EA56F28AD3279003F97FC /* UIDevice+Extension.swift in Sources */,
@@ -17041,6 +17057,10 @@
 				C84655E42887394B00861B4A /* WallpaperMetadata.swift in Sources */,
 				8AB8572E27D94A1A0075C173 /* UXSizeClass.swift in Sources */,
 				965C3C8F29313A1B006499ED /* AppSessionManager.swift in Sources */,
+				2C00E1542E2927D300811A76 /* EcosiaAuthRefactored.swift in Sources */,
+				2C00E1552E2927D300811A76 /* LogoutCoordinator.swift in Sources */,
+				2C00E1562E2927D300811A76 /* AuthStateManager.swift in Sources */,
+				2C00E1572E2927D300811A76 /* LoginCoordinator.swift in Sources */,
 				ED07C0EF2CCAE856006C0627 /* SearchEngineSelectionMiddleware.swift in Sources */,
 				45D5EDA729269F7500311934 /* DataObserver.swift in Sources */,
 				81A3F6F02C2DAEE200BDD86B /* MainMenuCoordinator.swift in Sources */,
