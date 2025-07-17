@@ -169,10 +169,7 @@ final class AuthFlow {
         }
 
         // Get session transfer URL
-        let signUpURL = URL(string: "\(Environment.current.urlProvider.root)/accounts/sign-up")
-        guard let signUpURL = signUpURL else {
-            throw AuthError.authFlowConfigurationError("No session management URL available")
-        }
+        let signUpURL = Environment.current.urlProvider.loginURL
 
         EcosiaLogger.session.info("Retrieving session transfer token for SSO")
         await Auth.shared.getSessionTransferToken()
@@ -216,10 +213,7 @@ final class AuthFlow {
         }
 
         // Get logout URL
-        let logoutURL = URL(string: "\(Environment.current.urlProvider.root)/accounts/sign-out")
-        guard let logoutURL = logoutURL else {
-            throw AuthError.authFlowConfigurationError("No logout URL available")
-        }
+        let logoutURL = Environment.current.urlProvider.logoutURL
 
         // Create invisible tab session for logout (must be on main thread for UI operations)
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for logout")
