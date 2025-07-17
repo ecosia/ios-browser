@@ -65,7 +65,7 @@ final class InvisibleTabManager: InvisibleTabManaging {
                         userInfo: ["tabUUID": tab.tabUUID]
                     )
                 }
-                EcosiaLogger.invisibleTabs("Tab marked as invisible: \(tab.tabUUID)")
+                EcosiaLogger.invisibleTabs.info("Tab marked as invisible: \(tab.tabUUID)")
             }
         }
     }
@@ -86,7 +86,7 @@ final class InvisibleTabManager: InvisibleTabManaging {
                         userInfo: ["tabUUID": tab.tabUUID]
                     )
                 }
-                EcosiaLogger.invisibleTabs("Tab marked as visible: \(tab.tabUUID)")
+                EcosiaLogger.invisibleTabs.info("Tab marked as visible: \(tab.tabUUID)")
             }
         }
     }
@@ -127,7 +127,7 @@ final class InvisibleTabManager: InvisibleTabManaging {
                         )
                     }
                 }
-                EcosiaLogger.invisibleTabs("Cleaned up \(removedTabs.count) removed tabs")
+                EcosiaLogger.invisibleTabs.info("Cleaned up \(removedTabs.count) removed tabs")
             }
         }
     }
@@ -147,7 +147,7 @@ final class InvisibleTabManager: InvisibleTabManaging {
                     userInfo: ["clearedCount": clearedTabs.count]
                 )
             }
-            EcosiaLogger.invisibleTabs("Cleared all invisible tabs (\(clearedTabs.count) tabs)")
+            EcosiaLogger.invisibleTabs.info("Cleared all invisible tabs (\(clearedTabs.count) tabs)")
         }
     }
 }

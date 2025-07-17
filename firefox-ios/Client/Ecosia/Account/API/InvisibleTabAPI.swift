@@ -40,7 +40,7 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
         // Initialize auto-close manager with tab manager
         TabAutoCloseManager.shared.setTabManager(self.tabManager)
 
-        EcosiaLogger.invisibleTabs("Initialized with BrowserViewController")
+        EcosiaLogger.invisibleTabs.info("Initialized with BrowserViewController")
     }
 
     // MARK: - Instance Methods
@@ -100,7 +100,7 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
     /// Gets all visible tabs
     func getVisibleTabs() -> [Client.Tab] {
         guard let tabManager = tabManager else {
-            EcosiaLogger.invisibleTabs("TabManager not available", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("TabManager not available")
             return []
         }
 
@@ -110,7 +110,7 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
     /// Gets all invisible tabs
     func getInvisibleTabs() -> [Client.Tab] {
         guard let tabManager = tabManager else {
-            EcosiaLogger.invisibleTabs("TabManager not available", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("TabManager not available")
             return []
         }
 
@@ -148,14 +148,14 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
                             completion: ((Tab?) -> Void)? = nil) -> Tab? {
 
         guard let browserViewController = browserViewController else {
-            EcosiaLogger.invisibleTabs("BrowserViewController not available", level: .error)
+            EcosiaLogger.invisibleTabs.error("BrowserViewController not available")
             completion?(nil)
             return nil
         }
 
         let tab = browserViewController.createInvisibleTab(for: url, isPrivate: isPrivate, autoClose: autoClose)
 
-        EcosiaLogger.invisibleTabs("Created invisible tab for: \(url.absoluteString)")
+        EcosiaLogger.invisibleTabs.info("Created invisible tab for: \(url.absoluteString)")
 
         completion?(tab)
         return tab
@@ -173,14 +173,14 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
                                 completion: ((Tab?) -> Void)? = nil) -> Tab? {
 
         guard let browserViewController = browserViewController else {
-            EcosiaLogger.invisibleTabs("BrowserViewController not available", level: .error)
+            EcosiaLogger.invisibleTabs.error("BrowserViewController not available")
             completion?(nil)
             return nil
         }
 
         let tab = browserViewController.createInvisibleAuthTab(for: url, isPrivate: isPrivate)
 
-        EcosiaLogger.invisibleTabs("Created invisible auth tab for: \(url.absoluteString)")
+        EcosiaLogger.invisibleTabs.info("Created invisible auth tab for: \(url.absoluteString)")
 
         completion?(tab)
         return tab
@@ -200,20 +200,20 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
                              completion: (([Client.Tab]) -> Void)? = nil) -> [Client.Tab] {
 
         guard let browserViewController = browserViewController else {
-            EcosiaLogger.invisibleTabs("BrowserViewController not available", level: .error)
+            EcosiaLogger.invisibleTabs.error("BrowserViewController not available")
             completion?([])
             return []
         }
 
         guard urls.count <= Configuration.maxConcurrentTabs else {
-            EcosiaLogger.invisibleTabs("Too many URLs for concurrent invisible tabs: \(urls.count)", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("Too many URLs for concurrent invisible tabs: \(urls.count)")
             completion?([])
             return []
         }
 
         let tabs = browserViewController.createInvisibleTabs(for: urls, isPrivate: isPrivate, autoClose: autoClose)
 
-        EcosiaLogger.invisibleTabs("Created \(tabs.count) invisible tabs")
+        EcosiaLogger.invisibleTabs.info("Created \(tabs.count) invisible tabs")
 
         completion?(tabs)
         return tabs
@@ -224,7 +224,7 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
     /// Returns the count of visible tabs (excludes invisible tabs)
     func getVisibleTabCount() -> Int {
         guard let browserViewController = browserViewController else {
-            EcosiaLogger.invisibleTabs("BrowserViewController not available", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("BrowserViewController not available")
             return 0
         }
 
@@ -234,7 +234,7 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
     /// Returns the count of invisible tabs
     func getInvisibleTabCount() -> Int {
         guard let browserViewController = browserViewController else {
-            EcosiaLogger.invisibleTabs("BrowserViewController not available", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("BrowserViewController not available")
             return 0
         }
 
@@ -245,14 +245,14 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
     /// - Parameter completion: Optional completion handler
     func closeAllInvisibleTabs(completion: (() -> Void)? = nil) {
         guard let browserViewController = browserViewController else {
-            EcosiaLogger.invisibleTabs("BrowserViewController not available", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("BrowserViewController not available")
             completion?()
             return
         }
 
         browserViewController.closeAllInvisibleTabs(completion: completion)
 
-        EcosiaLogger.invisibleTabs("Closed all invisible tabs")
+        EcosiaLogger.invisibleTabs.info("Closed all invisible tabs")
     }
 
     /// Closes invisible tabs matching a condition
@@ -261,14 +261,14 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
     ///   - completion: Optional completion handler
     func closeInvisibleTabs(where condition: @escaping (Tab) -> Bool, completion: (() -> Void)? = nil) {
         guard let browserViewController = browserViewController else {
-            EcosiaLogger.invisibleTabs("BrowserViewController not available", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("BrowserViewController not available")
             completion?()
             return
         }
 
         browserViewController.closeInvisibleTabs(where: condition, completion: completion)
 
-        EcosiaLogger.invisibleTabs("Closed matching invisible tabs")
+        EcosiaLogger.invisibleTabs.info("Closed matching invisible tabs")
     }
 
     // MARK: - Auto-Close Management
@@ -278,7 +278,7 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
     func cancelAutoCloseForTabs(_ tabUUIDs: [String]) {
         TabAutoCloseManager.shared.cancelAutoCloseForTabs(tabUUIDs)
 
-        EcosiaLogger.invisibleTabs("Cancelled auto-close for \(tabUUIDs.count) tabs")
+        EcosiaLogger.invisibleTabs.info("Cancelled auto-close for \(tabUUIDs.count) tabs")
     }
 
     /// Returns the number of tabs currently tracked for auto-close
@@ -311,7 +311,7 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
 
     /// Prints invisible tab summary to console
     func printInvisibleTabSummary() {
-        EcosiaLogger.invisibleTabs(getInvisibleTabSummary())
+        EcosiaLogger.invisibleTabs.info("\(getInvisibleTabSummary())")
     }
 
     // MARK: - Cleanup
@@ -321,7 +321,7 @@ final class InvisibleTabAPI: InvisibleTabAPIProtocol {
 //        InvisibleTabManager.shared.cleanupAllTracking()
 //        TabAutoCloseManager.shared.cleanupAllTracking()
 
-        EcosiaLogger.invisibleTabs("Cleaned up all tracking state")
+        EcosiaLogger.invisibleTabs.info("Cleaned up all tracking state")
     }
 }
 

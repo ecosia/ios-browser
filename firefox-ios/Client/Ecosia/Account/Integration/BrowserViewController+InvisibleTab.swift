@@ -24,7 +24,7 @@ extension BrowserViewController {
                             isPrivate: Bool = false,
                             autoClose: Bool = true) -> Tab {
 
-        EcosiaLogger.invisibleTabs("Creating invisible tab for: \(url.absoluteString)")
+        EcosiaLogger.invisibleTabs.info("Creating invisible tab for: \(url.absoluteString)")
 
         // Create the tab
         var newTab = Tab(profile: profile,
@@ -38,12 +38,12 @@ extension BrowserViewController {
                                           afterTab: nil,
                                           flushToDisk: true,
                                           zombie: false)
-            EcosiaLogger.invisibleTabs("Tab added to LegacyTabManager, isInvisible: \(newTab.isInvisible)")
+            EcosiaLogger.invisibleTabs.info("Tab added to LegacyTabManager, isInvisible: \(newTab.isInvisible)")
         } else {
             // Fallback for non-legacy tab managers - this shouldn't happen in current architecture
             newTab = tabManager.addTab(URLRequest(url: url), isPrivate: false)
             newTab.isInvisible = true
-            EcosiaLogger.invisibleTabs("Tab added via fallback method, isInvisible: \(newTab.isInvisible)")
+            EcosiaLogger.invisibleTabs.info("Tab added via fallback method, isInvisible: \(newTab.isInvisible)")
         }
 
         // Set up auto-close if requested
@@ -81,7 +81,7 @@ extension BrowserViewController {
                             autoClose: Bool = true) -> [Tab] {
 
         guard urls.count <= TabAutoCloseConfig.maxConcurrentAutoCloseTabs else {
-            EcosiaLogger.invisibleTabs("Too many URLs for concurrent invisible tabs: \(urls.count)", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("Too many URLs for concurrent invisible tabs: \(urls.count)")
             return []
         }
 
@@ -92,7 +92,7 @@ extension BrowserViewController {
             createdTabs.append(tab)
         }
 
-        EcosiaLogger.invisibleTabs("Created \(createdTabs.count) invisible tabs")
+        EcosiaLogger.invisibleTabs.info("Created \(createdTabs.count) invisible tabs")
         return createdTabs
     }
 
@@ -102,14 +102,14 @@ extension BrowserViewController {
     /// - Parameter tab: The invisible tab to setup auto-close for
     private func setupAutoCloseForInvisibleTab(_ tab: Tab) {
         guard tab.isInvisible else {
-            EcosiaLogger.invisibleTabs("Attempted to setup auto-close for visible tab", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("Attempted to setup auto-close for visible tab")
             return
         }
 
         // Setup auto-close with authentication completion notification
         TabAutoCloseManager.shared.setupAutoCloseForTab(tab)
 
-        EcosiaLogger.invisibleTabs("Auto-close setup for invisible tab: \(tab.tabUUID)")
+        EcosiaLogger.invisibleTabs.info("Auto-close setup for invisible tab: \(tab.tabUUID)")
     }
 
     /// Sets up authentication-specific behavior for invisible tabs
@@ -124,7 +124,7 @@ extension BrowserViewController {
         */
 
         // Additional auth-specific setup can be added here
-        EcosiaLogger.invisibleTabs("Authentication behavior setup for tab: \(tab.tabUUID)")
+        EcosiaLogger.invisibleTabs.info("Authentication behavior setup for tab: \(tab.tabUUID)")
     }
 
     // MARK: - Invisible Tab Management
@@ -145,12 +145,12 @@ extension BrowserViewController {
         let invisibleTabs = self.invisibleTabs
 
         guard !invisibleTabs.isEmpty else {
-            EcosiaLogger.invisibleTabs("No invisible tabs to close")
+            EcosiaLogger.invisibleTabs.info("No invisible tabs to close")
             completion?()
             return
         }
 
-        EcosiaLogger.invisibleTabs("Closing \(invisibleTabs.count) invisible tabs")
+        EcosiaLogger.invisibleTabs.info("Closing \(invisibleTabs.count) invisible tabs")
 
         // Cancel auto-close for all tabs
         let tabUUIDs = invisibleTabs.map { $0.tabUUID }
@@ -164,7 +164,7 @@ extension BrowserViewController {
         // Clean up tracking
         tabManager.cleanupInvisibleTabTracking()
 
-                    EcosiaLogger.invisibleTabs("All invisible tabs closed")
+                    EcosiaLogger.invisibleTabs.info("All invisible tabs closed")
         completion?()
     }
 
@@ -183,12 +183,12 @@ extension BrowserViewController {
         let tabsToClose = findInvisibleTabs(where: condition)
 
         guard !tabsToClose.isEmpty else {
-            EcosiaLogger.invisibleTabs("No invisible tabs match the condition")
+            EcosiaLogger.invisibleTabs.info("No invisible tabs match the condition")
             completion?()
             return
         }
 
-        EcosiaLogger.invisibleTabs("Closing \(tabsToClose.count) matching invisible tabs")
+        EcosiaLogger.invisibleTabs.info("Closing \(tabsToClose.count) matching invisible tabs")
 
         // Cancel auto-close for matching tabs
         let tabUUIDs = tabsToClose.map { $0.tabUUID }
@@ -202,7 +202,7 @@ extension BrowserViewController {
         // Clean up tracking
         tabManager.cleanupInvisibleTabTracking()
 
-                    EcosiaLogger.invisibleTabs("Matching invisible tabs closed")
+                    EcosiaLogger.invisibleTabs.info("Matching invisible tabs closed")
         completion?()
     }
 
@@ -217,7 +217,7 @@ extension BrowserViewController {
         // Clean up invisible tab tracking
         tabManager.cleanupInvisibleTabTracking()
 
-        EcosiaLogger.invisibleTabs("Invisible tab resources cleaned up")
+        EcosiaLogger.invisibleTabs.info("Invisible tab resources cleaned up")
     }
 
     // MARK: - Debugging
@@ -237,6 +237,6 @@ extension BrowserViewController {
 
     /// Prints invisible tab summary to console
     func printInvisibleTabSummary() {
-        EcosiaLogger.invisibleTabs(invisibleTabSummary)
+        EcosiaLogger.invisibleTabs.info("\(self.invisibleTabSummary)")
     }
 }
