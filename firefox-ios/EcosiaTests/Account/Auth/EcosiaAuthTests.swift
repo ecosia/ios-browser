@@ -436,3 +436,4 @@ private class MockInvisibleTabAPI: InvisibleTabAPIProtocol {
 
     func cancelAutoCloseForTabs(_ tabUUIDs: [String]) {}
 }
+ 
