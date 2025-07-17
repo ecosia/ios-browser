@@ -11668,6 +11668,7 @@
 		2C3982882E200C1100AB8035 /* TabManagement */ = {
 			isa = PBXGroup;
 			children = (
+				2C00E14E2E2927BE00811A76 /* TabLifecycleManager.swift */,
 				2C3982912E201EDC00AB8035 /* InvisibleTabManager.swift */,
 				2C3982922E201EDC00AB8035 /* InvisibleTabManaging.swift */,
 				2C3982932E201EDC00AB8035 /* TabAutoCloseManager.swift */,
@@ -19011,6 +19012,7 @@
 				B2999FF72B194ADE00F0FEC1 /* FormAutofillPayloadType.swift in Sources */,
 				8A285B08294A5D4C00149B0F /* HomepageHeroImageViewModel.swift in Sources */,
 				8C92DE8B2A711ED60090BD28 /* FakespotClient.swift in Sources */,
+				2C00E14F2E2927BE00811A76 /* TabLifecycleManager.swift in Sources */,
 				8AC1065F28D0CD700013263A /* OpenQLPreviewHelper.swift in Sources */,
 				EBA3B2C32268F16300728BDB /* PhotonActionSheetView.swift in Sources */,
 				E18EA56F28AD3279003F97FC /* UIDevice+Extension.swift in Sources */,
