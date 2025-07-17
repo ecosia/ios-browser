@@ -4,6 +4,7 @@
 
 import XCTest
 import Common
+import WebKit
 @testable import Client
 
 /// Test suite for InvisibleTabManager functionality
@@ -43,9 +44,8 @@ final class InvisibleTabManagerTests: XCTestCase {
     // MARK: - Helper Methods
 
     private func createTestTab(url: URL? = URL(string: "https://example.com")) -> Tab {
-        let configuration = WKWebViewConfiguration()
         let profile = MockProfile()  // Use existing MockProfile from test suite
-        return Tab(profile: profile, configuration: configuration, windowUUID: windowUUID)
+        return Tab(profile: profile, isPrivate: false, windowUUID: windowUUID)
     }
 
     // MARK: - Tab Visibility Management Tests

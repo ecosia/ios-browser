@@ -9,7 +9,7 @@ import Foundation
 final class AuthStateManagerTests: XCTestCase {
 
     var authStateManager: AuthStateManager!
-    var mockNotificationCenter: MockNotificationCenter!
+    fileprivate var mockNotificationCenter: MockNotificationCenter!
 
     override func setUp() {
         super.setUp()
@@ -271,7 +271,7 @@ private class MockAuthStateObserver: AuthStateObserver {
     }
 }
 
-private class MockNotificationCenter: NotificationCenter {
+fileprivate class MockNotificationCenter: NotificationCenter, @unchecked Sendable {
     struct PostedNotification {
         let name: Notification.Name
         let object: Any?
