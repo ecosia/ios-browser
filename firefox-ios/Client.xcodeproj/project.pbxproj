@@ -11706,6 +11706,7 @@
 		2C3982882E200C1100AB8035 /* TabManagement */ = {
 			isa = PBXGroup;
 			children = (
+				2C00E14E2E2927BE00811A76 /* TabLifecycleManager.swift */,
 				2C3982912E201EDC00AB8035 /* InvisibleTabManager.swift */,
 				2C3982922E201EDC00AB8035 /* InvisibleTabManaging.swift */,
 				2C3982932E201EDC00AB8035 /* TabAutoCloseManager.swift */,
@@ -19104,6 +19105,7 @@
 				B2999FF72B194ADE00F0FEC1 /* FormAutofillPayloadType.swift in Sources */,
 				8A285B08294A5D4C00149B0F /* HomepageHeroImageViewModel.swift in Sources */,
 				8C92DE8B2A711ED60090BD28 /* FakespotClient.swift in Sources */,
+				2C00E14F2E2927BE00811A76 /* TabLifecycleManager.swift in Sources */,
 				8AC1065F28D0CD700013263A /* OpenQLPreviewHelper.swift in Sources */,
 				EBA3B2C32268F16300728BDB /* PhotonActionSheetView.swift in Sources */,
 				E18EA56F28AD3279003F97FC /* UIDevice+Extension.swift in Sources */,
@@ -19536,6 +19538,10 @@
 				C84655E42887394B00861B4A /* WallpaperMetadata.swift in Sources */,
 				8AB8572E27D94A1A0075C173 /* UXSizeClass.swift in Sources */,
 				965C3C8F29313A1B006499ED /* AppSessionManager.swift in Sources */,
+				2C00E1542E2927D300811A76 /* EcosiaAuthRefactored.swift in Sources */,
+				2C00E1552E2927D300811A76 /* LogoutCoordinator.swift in Sources */,
+				2C00E1562E2927D300811A76 /* AuthStateManager.swift in Sources */,
+				2C00E1572E2927D300811A76 /* LoginCoordinator.swift in Sources */,
 				ED07C0EF2CCAE856006C0627 /* SearchEngineSelectionMiddleware.swift in Sources */,
 				45D5EDA729269F7500311934 /* DataObserver.swift in Sources */,
 				81A3F6F02C2DAEE200BDD86B /* MainMenuCoordinator.swift in Sources */,
