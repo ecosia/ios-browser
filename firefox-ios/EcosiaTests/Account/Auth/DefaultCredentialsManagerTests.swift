@@ -5,6 +5,7 @@
 import XCTest
 import Auth0
 @testable import Ecosia
+@testable import Client
 
 final class DefaultCredentialsManagerTests: XCTestCase {
 
