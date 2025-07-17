@@ -39,9 +39,6 @@ public final class EcosiaAuth {
     private var currentLoginFlow: AuthenticationFlow?
     private var currentLogoutFlow: AuthenticationFlow?
     
-    // Web URL detection for automatic authentication triggers
-    private var webAuthURLDetector: WebAuthURLDetector?
-
     // MARK: - Initialization
 
     /// Initializes EcosiaAuth with required dependencies
@@ -57,9 +54,6 @@ public final class EcosiaAuth {
         self.authProvider = authProvider
         self.authStateManager = authStateManager
         self.browserViewController = browserViewController
-
-        // Setup web URL detection for automatic authentication triggers
-        self.webAuthURLDetector = WebAuthURLDetector(authManager: self)
 
         EcosiaLogger.auth.info("EcosiaAuth initialized")
     }

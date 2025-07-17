@@ -132,6 +132,9 @@ class BrowserViewController: UIViewController,
     let profile: Profile
     let tabManager: TabManager
     let ratingPromptManager: RatingPromptManager
+    
+    // Ecosia: Authentication manager for handling login/logout flows
+    internal var ecosiaAuth: EcosiaAuth?
     lazy var isTabTrayRefactorEnabled: Bool = TabTrayFlagManager.isRefactorEnabled
     var isToolbarRefactorEnabled: Bool {
         return featureFlags.isFeatureEnabled(.toolbarRefactor, checking: .buildOnly)
@@ -1018,11 +1021,10 @@ class BrowserViewController: UIViewController,
         AppEventQueue.signal(event: .browserIsReady)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            /* Ecosia: Create lean authentication flow */
-            let ecosiaAuth = EcosiaAuth(browserViewController: self)
-//            let ecosiaAuth = EcosiaAuth(invisibleTabAPI: invisibleTabAPI)
+            /* Ecosia: Create authentication manager and keep strong reference for URL detection */
+            self.ecosiaAuth = EcosiaAuth(browserViewController: self)
 
-            ecosiaAuth.login()
+            self.ecosiaAuth?.login()
                 .onNativeAuthCompleted {
                     EcosiaLogger.auth.info("Ecosia native auth completed")
                 }
