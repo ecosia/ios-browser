@@ -67,11 +67,11 @@ final class TabAutoCloseManager {
                              timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
 
         guard tab.isInvisible else {
-            EcosiaLogger.invisibleTabs("Attempted to setup auto-close for visible tab: \(tab.tabUUID)", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("Attempted to setup auto-close for visible tab: \(tab.tabUUID)")
             return
         }
 
-        EcosiaLogger.invisibleTabs("Setting up auto-close for tab: \(tab.tabUUID)")
+        EcosiaLogger.invisibleTabs.info("Setting up auto-close for tab: \(tab.tabUUID)")
 
         observerQueue.async(flags: .barrier) { [weak self] in
             self?.cleanupExistingObserver(for: tab.tabUUID)
@@ -91,7 +91,7 @@ final class TabAutoCloseManager {
         let invisibleTabs = tabs.filter { $0.isInvisible }
 
         guard invisibleTabs.count <= TabAutoCloseConfig.maxConcurrentAutoCloseTabs else {
-            EcosiaLogger.invisibleTabs("Too many tabs for concurrent auto-close: \(invisibleTabs.count)", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("Too many tabs for concurrent auto-close: \(invisibleTabs.count)")
             return
         }
 
@@ -130,7 +130,7 @@ final class TabAutoCloseManager {
 
         // Create fallback timeout
         let fallbackWorkItem = DispatchWorkItem { [weak self] in
-            EcosiaLogger.invisibleTabs("Fallback timeout reached for tab: \(tabUUID)")
+            EcosiaLogger.invisibleTabs.info("Fallback timeout reached for tab: \(tabUUID)")
             self?.handleAuthenticationCompletion(for: tabUUID, isFallback: true)
         }
 
@@ -139,7 +139,7 @@ final class TabAutoCloseManager {
         // Schedule fallback timeout
         DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: fallbackWorkItem)
 
-        EcosiaLogger.invisibleTabs("Auto-close setup completed for tab: \(tabUUID)")
+        EcosiaLogger.invisibleTabs.info("Auto-close setup completed for tab: \(tabUUID)")
     }
 
     /// Sets up page load monitoring for an invisible tab
@@ -150,13 +150,15 @@ final class TabAutoCloseManager {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            self?.handlePageLoadCompletion(notification, for: tab)
+            self?.observerQueue.asyncAfter(deadline: .now() + 0.5) {
+                self?.handlePageLoadCompletion(notification, for: tab)
+            }
         }
 
         // Store with a different key pattern to distinguish from auth observers
         authTabObservers["\(tab.tabUUID)_pageload"] = pageLoadObserver
 
-        EcosiaLogger.invisibleTabs("Page load monitoring setup for tab: \(tab.tabUUID)")
+        EcosiaLogger.invisibleTabs.info("Page load monitoring setup for tab: \(tab.tabUUID)")
     }
 
     /// Handles page load completion for invisible tabs
@@ -170,7 +172,7 @@ final class TabAutoCloseManager {
             return
         }
 
-        EcosiaLogger.invisibleTabs("Page load completed for invisible tab: \(url)")
+        EcosiaLogger.invisibleTabs.info("Page load completed for invisible tab: \(url)")
         handleAuthenticationCompletion(for: tab.tabUUID)
     }
 
@@ -198,23 +200,22 @@ final class TabAutoCloseManager {
     ///   - isFallback: Whether this was triggered by fallback timeout
     private func closeTab(with tabUUID: String, isFallback: Bool) {
         guard let tabManager = tabManager else {
-            EcosiaLogger.invisibleTabs("No tab manager available for closing tab: \(tabUUID)", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("No tab manager available for closing tab: \(tabUUID)")
             return
         }
 
         guard let tab = tabManager.tabs.first(where: { $0.tabUUID == tabUUID }) else {
-            EcosiaLogger.invisibleTabs("Tab not found for closing: \(tabUUID)", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("Tab not found for closing: \(tabUUID)")
             return
         }
 
         // Only close if tab is still invisible
         guard tab.isInvisible else {
-            EcosiaLogger.invisibleTabs("Tab is no longer invisible, skipping close: \(tabUUID)", level: .warning)
+            EcosiaLogger.invisibleTabs.notice("Tab is no longer invisible, skipping close: \(tabUUID)")
             return
         }
 
-        let logPrefix = isFallback ? "⏰ [FALLBACK]" : "🔄 [AUTH_COMPLETE]"
-        EcosiaLogger.invisibleTabs("Closing tab: \(tabUUID) \(isFallback ? "(fallback)" : "")")
+        EcosiaLogger.invisibleTabs.info("Closing tab: \(tabUUID) \(isFallback ? "(fallback)" : "")")
 
         // Remove the tab
         tabManager.removeTab(tab) { [weak self] in
@@ -224,7 +225,7 @@ final class TabAutoCloseManager {
             // Clean up invisible tab tracking
             tabManager.cleanupInvisibleTabTracking()
 
-            EcosiaLogger.invisibleTabs("Tab closed successfully: \(tabUUID)")
+            EcosiaLogger.invisibleTabs.info("Tab closed successfully: \(tabUUID)")
         }
     }
 
@@ -236,10 +237,10 @@ final class TabAutoCloseManager {
         // Try to select the last visible normal tab
         if let lastVisibleTab = tabManager.visibleNormalTabs.last {
             tabManager.selectTab(lastVisibleTab)
-                            EcosiaLogger.invisibleTabs("Selected last visible normal tab")
+                            EcosiaLogger.invisibleTabs.info("Selected last visible normal tab")
         } else if let lastVisibleTab = tabManager.visibleTabs.last {
             tabManager.selectTab(lastVisibleTab)
-                            EcosiaLogger.invisibleTabs("Selected last visible tab")
+                            EcosiaLogger.invisibleTabs.info("Selected last visible tab")
         }
     }
 
@@ -278,7 +279,7 @@ final class TabAutoCloseManager {
     func cancelAutoCloseForTab(_ tabUUID: String) {
         observerQueue.async(flags: .barrier) { [weak self] in
             self?.cleanupObserver(for: tabUUID)
-            EcosiaLogger.invisibleTabs("Cancelled auto-close for tab: \(tabUUID)")
+            EcosiaLogger.invisibleTabs.info("Cancelled auto-close for tab: \(tabUUID)")
         }
     }
 
@@ -298,20 +299,20 @@ final class TabAutoCloseManager {
             // Clean up all observers
             for (tabUUID, observer) in self.authTabObservers {
                 self.notificationCenter.removeObserver(observer)
-                EcosiaLogger.invisibleTabs("Cleaned up observer for tab: \(tabUUID)")
+                EcosiaLogger.invisibleTabs.info("Cleaned up observer for tab: \(tabUUID)")
             }
 
             // Cancel all timeouts
             for (tabUUID, timeout) in self.fallbackTimeouts {
                 timeout.cancel()
-                EcosiaLogger.invisibleTabs("Cancelled timeout for tab: \(tabUUID)")
+                EcosiaLogger.invisibleTabs.info("Cancelled timeout for tab: \(tabUUID)")
             }
 
             // Clear dictionaries
             self.authTabObservers.removeAll()
             self.fallbackTimeouts.removeAll()
 
-            EcosiaLogger.invisibleTabs("All observers and timeouts cleaned up")
+            EcosiaLogger.invisibleTabs.info("All observers and timeouts cleaned up")
         }
     }
 
