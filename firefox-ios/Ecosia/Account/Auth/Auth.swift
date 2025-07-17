@@ -75,9 +75,9 @@ public final class Auth {
         let credentials: Credentials
         do {
             credentials = try await auth0Provider.startAuth()
-            EcosiaLogger.auth("Authentication successful")
+            EcosiaLogger.auth.info("Authentication successful")
         } catch {
-            EcosiaLogger.auth("Authentication failed: \(error)", level: .error)
+            EcosiaLogger.auth.error("Authentication failed: \(error)")
             throw AuthError.authenticationFailed(error)
         }
 
@@ -86,13 +86,13 @@ public final class Auth {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
                 setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-                EcosiaLogger.auth("Login completed successfully")
+                EcosiaLogger.auth.info("Login completed successfully")
             } else {
-                EcosiaLogger.auth("Credential storage failed (returned false)", level: .error)
+                EcosiaLogger.auth.error("Credential storage failed (returned false)")
                 throw AuthError.credentialsStorageFailed
             }
         } catch {
-            EcosiaLogger.auth("Credential storage error: \(error)", level: .error)
+            EcosiaLogger.auth.error("Credential storage error: \(error)")
             throw AuthError.credentialsStorageError(error)
         }
     }
@@ -108,10 +108,10 @@ public final class Auth {
         if triggerWebLogout {
             do {
                 try await auth0Provider.clearSession()
-                EcosiaLogger.auth("Web session cleared successfully")
+                EcosiaLogger.auth.info("Web session cleared successfully")
             } catch {
                 sessionClearingError = error
-                EcosiaLogger.auth("Failed to clear web session: \(error)", level: .error)
+                EcosiaLogger.auth.error("Failed to clear web session: \(error)")
             }
         }
 
@@ -120,12 +120,12 @@ public final class Auth {
 
         if credentialsCleared {
             setupTokensWithCredentials(nil)
-            EcosiaLogger.auth("Credentials cleared successfully")
+            EcosiaLogger.auth.info("Credentials cleared successfully")
 
             // If we had a session clearing error but credentials cleared successfully,
             // we still consider the logout successful since the user is logged out locally
             if let sessionError = sessionClearingError {
-                EcosiaLogger.auth("Logout completed with web session clearing warning: \(sessionError)", level: .warning)
+                EcosiaLogger.auth.notice("Logout completed with web session clearing warning: \(sessionError)")
             }
         } else {
             // If credentials clearing failed, throw appropriate error
@@ -157,12 +157,12 @@ public final class Auth {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-            EcosiaLogger.auth("Retrieved stored credentials successfully")
+            EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
             // Dispatch state loaded with current authentication status
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
         } catch {
-            EcosiaLogger.auth("Failed to retrieve credentials: \(error)", level: .error)
+            EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
             // Even if retrieval fails, dispatch state loaded as false
             await dispatchAuthStateChange(isLoggedIn: false, fromCredentialRetrieval: true)
         }
@@ -186,16 +186,16 @@ public final class Auth {
      */
     public func renewCredentialsIfNeeded() async throws {
         guard auth0Provider.canRenewCredentials() else {
-            EcosiaLogger.auth("No renewable credentials available")
+            EcosiaLogger.auth.info("No renewable credentials available")
             return
         }
 
         do {
             let credentials = try await auth0Provider.renewCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-            EcosiaLogger.auth("Renewed credentials successfully")
+            EcosiaLogger.auth.info("Renewed credentials successfully")
         } catch {
-            EcosiaLogger.auth("Failed to renew credentials: \(error)", level: .error)
+            EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
             throw AuthError.credentialsRenewalFailed(error)
         }
     }
@@ -236,12 +236,12 @@ extension Auth {
      */
     public func getSessionTransferToken() async {
         guard isLoggedIn else {
-            EcosiaLogger.auth("Cannot get session transfer token - user not logged in", level: .warning)
+            EcosiaLogger.auth.notice("Cannot get session transfer token - user not logged in")
             return
         }
         ssoCredentials = await retrieveSSOCredentials()
         if ssoCredentials != nil {
-            EcosiaLogger.session("Retrieved session transfer token for SSO")
+            EcosiaLogger.session.info("Retrieved session transfer token for SSO")
         }
     }
 
@@ -264,7 +264,7 @@ extension Auth {
      */
     public func getSessionTokenCookie() -> HTTPCookie? {
         guard isLoggedIn else {
-            EcosiaLogger.auth("Cannot create session cookie - user not logged in", level: .warning)
+            EcosiaLogger.auth.notice("Cannot create session cookie - user not logged in")
             return nil
         }
         return makeSessionTokenCookieWithSSOCredentials(ssoCredentials)
@@ -287,7 +287,7 @@ extension Auth {
             do {
                 return try await authProvider.getSSOCredentials()
             } catch {
-                EcosiaLogger.auth("Failed to retrieve SSO credentials: \(error)", level: .error)
+                EcosiaLogger.auth.error("Failed to retrieve SSO credentials: \(error)")
             }
         }
         return nil
@@ -314,7 +314,7 @@ extension Auth {
      */
     private func makeSessionTokenCookieWithSSOCredentials(_ ssoCredentials: SSOCredentials?) -> HTTPCookie? {
         guard let ssoCredentials else {
-            EcosiaLogger.auth("No SSO credentials available to create session cookie", level: .warning)
+            EcosiaLogger.auth.notice("No SSO credentials available to create session cookie")
             return nil
         }
         return HTTPCookie(properties: [

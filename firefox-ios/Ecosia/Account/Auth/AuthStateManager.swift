@@ -19,8 +19,8 @@ public final class AuthStateManager {
     /// Notification center for broadcasting state changes
     private let notificationCenter = NotificationCenter.default
 
-    private init() {
-        EcosiaLogger.auth("AuthStateManager initialized")
+    private     init() {
+        EcosiaLogger.auth.info("AuthStateManager initialized")
     }
 
     // MARK: - State Management
@@ -64,7 +64,7 @@ public final class AuthStateManager {
             ]
         )
 
-        EcosiaLogger.auth("Dispatched \(action.type) for window \(windowUUID)")
+        EcosiaLogger.auth.debug("Dispatched \(action.type.rawValue) for window \(windowUUID)")
     }
 
     /// Dispatch authentication state changes to all registered windows
@@ -83,7 +83,7 @@ public final class AuthStateManager {
             dispatch(action: action, for: windowUUID)
         }
 
-        EcosiaLogger.auth("Dispatched \(actionType) to \(windowUUIDs.count) windows")
+        EcosiaLogger.auth.debug("Dispatched \(actionType.rawValue) to \(windowUUIDs.count) windows")
     }
 
     // MARK: - State Reduction
@@ -156,7 +156,7 @@ public final class AuthStateManager {
         queue.async(flags: .barrier) { [weak self] in
             self?._windowStates.removeValue(forKey: windowUUID)
         }
-        EcosiaLogger.auth("Removed state for window \(windowUUID)")
+        EcosiaLogger.auth.debug("Removed state for window \(windowUUID)")
     }
 
     /// Clear all window states (for testing/cleanup)
@@ -164,6 +164,6 @@ public final class AuthStateManager {
         queue.async(flags: .barrier) { [weak self] in
             self?._windowStates.removeAll()
         }
-        EcosiaLogger.auth("Cleared all states")
+        EcosiaLogger.auth.debug("Cleared all states")
     }
 }

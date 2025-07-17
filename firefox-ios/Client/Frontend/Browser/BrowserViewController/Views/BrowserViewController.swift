@@ -1024,13 +1024,13 @@ class BrowserViewController: UIViewController,
             
             ecosiaAuth.login()
                 .onNativeAuthCompleted {
-                    EcosiaLogger.log("Ecosia native auth completed")
+                    EcosiaLogger.auth.info("Ecosia native auth completed")
                 }
                 .onAuthFlowCompleted { success in
-                    EcosiaLogger.log("Ecosia auth flow completed: \(success)")
+                    EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
                 }
                 .onError { error in
-                    EcosiaLogger.log(error.localizedDescription)
+                    EcosiaLogger.auth.error("\(error.localizedDescription)")
                 }
         }
     }

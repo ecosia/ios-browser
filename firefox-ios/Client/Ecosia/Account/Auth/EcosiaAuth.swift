@@ -241,14 +241,14 @@ public final class AuthenticationFlow {
                 // Native auth completed successfully
                     handleNativeAuthCompletion()
             } catch {
-                EcosiaLogger.auth("Authentication failed: \(error)", level: .error)
+                EcosiaLogger.auth.error("Authentication failed: \(error)")
                 handleFlowError(error)
             }
         }
     }
 
     private func handleNativeAuthCompletion() {
-        EcosiaLogger.auth("Native Auth0 authentication completed")
+        EcosiaLogger.auth.info("Native Auth0 authentication completed")
 
         isNativeAuthCompleted = true
         
@@ -284,7 +284,7 @@ public final class AuthenticationFlow {
     }
 
     private func performWebSideLogoutCleanup() async {
-        EcosiaLogger.auth("Starting web-side logout cleanup")
+        EcosiaLogger.auth.info("Starting web-side logout cleanup")
         await cleanupExistingInvisibleTabs()
         await createLogoutTabs()
     }
@@ -295,7 +295,7 @@ public final class AuthenticationFlow {
         // If no session management needed, this is a configuration error for login
         guard let signUpURL else {
             let error = AuthError.authFlowConfigurationError("No session management URL available")
-            EcosiaLogger.auth("No session management URL available, cleaning up credentials", level: .error)
+            EcosiaLogger.auth.error("No session management URL available, cleaning up credentials")
 
             // Clean up credentials since login partially succeeded but flow failed
             Task {
@@ -305,19 +305,14 @@ public final class AuthenticationFlow {
             return
         }
 
-        EcosiaLogger.invisibleTabs("Creating invisible tabs for session management")
-
-        // Create invisible tabs for session management
-        // Note: Session transfer token is already available in Auth.shared.ssoCredentials
-        // Cookie injection will be handled by the webview when loading authentication URLs
-        EcosiaLogger.invisibleTabs("Creating invisible tabs for session management with SSO support")
+        EcosiaLogger.invisibleTabs.info("Creating invisible tabs for session management with SSO support")
 
         invisibleTabs = invisibleTabAPI.createInvisibleTabs(
             for: [signUpURL],
             isPrivate: false,
             autoClose: true
         ) { (tabs: [Client.Tab]) in
-            EcosiaLogger.invisibleTabs("Created \(tabs.count) invisible tabs for session management")
+            EcosiaLogger.invisibleTabs.info("Created \(tabs.count) invisible tabs for session management")
              if let sessionCookie = Auth.shared.getSessionTokenCookie() {
                  tabs.forEach { tab in
                      tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
@@ -328,7 +323,7 @@ public final class AuthenticationFlow {
         // Check if tab creation failed
         guard !invisibleTabs.isEmpty else {
             let error = AuthError.authFlowInvisibleTabCreationFailed
-            EcosiaLogger.auth("Invisible tab creation failed, cleaning up credentials", level: .error)
+            EcosiaLogger.auth.error("Invisible tab creation failed, cleaning up credentials")
             Task {
                 await cleanupLoginCredentialsOnError()
                 handleFlowError(error)
@@ -349,7 +344,7 @@ public final class AuthenticationFlow {
             self?.handleAuthStateChange(notification)
         }
 
-        EcosiaLogger.tabAutoClose("Monitoring invisible tab completion")
+        EcosiaLogger.tabAutoClose.info("Monitoring invisible tab completion")
     }
 
     private func handleAuthStateChange(_ notification: Notification) {
@@ -384,23 +379,23 @@ public final class AuthenticationFlow {
         let existingTabs = invisibleTabAPI.getInvisibleTabs()
 
         guard !existingTabs.isEmpty else {
-            EcosiaLogger.invisibleTabs("No existing invisible tabs to clean up")
+            EcosiaLogger.invisibleTabs.info("No existing invisible tabs to clean up")
             return
         }
 
         // Log unexpected leftover tabs - this should rarely happen if auto-close works properly
-        EcosiaLogger.auth("⚠️ Found \(existingTabs.count) leftover invisible tabs during logout - investigating auto-close behavior")
+        EcosiaLogger.auth.info("⚠️ Found \(existingTabs.count) leftover invisible tabs during logout - investigating auto-close behavior")
 
         // Log details about leftover tabs for debugging
         for (index, tab) in existingTabs.enumerated() {
-            EcosiaLogger.invisibleTabs("Leftover tab \(index + 1): \(tab.tabUUID) - URL: \(tab.url?.absoluteString ?? "nil")")
+            EcosiaLogger.invisibleTabs.info("Leftover tab \(index + 1): \(tab.tabUUID) - URL: \(tab.url?.absoluteString ?? "nil")")
         }
 
         // Check if TabAutoCloseManager is still tracking any of these tabs
         let trackedCount = invisibleTabAPI.getTrackedTabCount()
-        EcosiaLogger.invisibleTabs("TabAutoCloseManager currently tracking \(trackedCount) tabs")
+        EcosiaLogger.invisibleTabs.info("TabAutoCloseManager currently tracking \(trackedCount) tabs")
 
-        EcosiaLogger.invisibleTabs("Starting cleanup of \(existingTabs.count) existing invisible tabs")
+        EcosiaLogger.invisibleTabs.info("Starting cleanup of \(existingTabs.count) existing invisible tabs")
 
         // Remove session cookies from existing tabs
         if let sessionCookie = Auth.shared.getSessionTokenCookie() {
@@ -408,7 +403,7 @@ public final class AuthenticationFlow {
                 await withCheckedContinuation { continuation in
                     Task { @MainActor in
                         tab.webView?.configuration.websiteDataStore.httpCookieStore.delete(sessionCookie) {
-                            EcosiaLogger.cookies("Removed session cookie from tab \(tab.tabUUID)")
+                            EcosiaLogger.cookies.info("Removed session cookie from tab \(tab.tabUUID)")
                             continuation.resume()
                         }
                     }
@@ -420,7 +415,7 @@ public final class AuthenticationFlow {
         let tabUUIDs = existingTabs.map { $0.tabUUID }
         invisibleTabAPI.cancelAutoCloseForTabs(tabUUIDs)
 
-        EcosiaLogger.invisibleTabs("Completed cleanup of existing invisible tabs")
+        EcosiaLogger.invisibleTabs.info("Completed cleanup of existing invisible tabs")
     }
 
     private func createLogoutTabs() async {
@@ -428,12 +423,12 @@ public final class AuthenticationFlow {
 
         guard let logoutURL else {
             let error = AuthError.authFlowConfigurationError("No logout URL available")
-            EcosiaLogger.auth("No logout URL available, skipping logout tabs")
+            EcosiaLogger.auth.info("No logout URL available, skipping logout tabs")
             handleFlowError(error)
             return
         }
 
-        EcosiaLogger.invisibleTabs("Creating logout tabs with auto-close integration")
+        EcosiaLogger.invisibleTabs.info("Creating logout tabs with auto-close integration")
 
         // Create logout tabs that will auto-close via TabAutoCloseManager
         invisibleTabs = invisibleTabAPI.createInvisibleTabs(
@@ -441,7 +436,7 @@ public final class AuthenticationFlow {
             isPrivate: false,
             autoClose: true
         ) { (tabs: [Client.Tab]) in
-            EcosiaLogger.invisibleTabs("Created \(tabs.count) logout tabs with auto-close tracking")
+            EcosiaLogger.invisibleTabs.info("Created \(tabs.count) logout tabs with auto-close tracking")
 
             // Setup custom notification observer for logout completion
             Task { [weak self] in
@@ -465,7 +460,7 @@ public final class AuthenticationFlow {
                let authState = userInfo[EcosiaAuthConstants.Keys.authState] as? String,
                authState == EcosiaAuthConstants.State.userLoggedOut.rawValue {
 
-                EcosiaLogger.auth("Logout state change detected - completing logout flow")
+                EcosiaLogger.auth.info("Logout state change detected - completing logout flow")
                 self?.handleLogoutCompletion()
             }
         }
@@ -478,11 +473,11 @@ public final class AuthenticationFlow {
             self?.handleLogoutTimeout()
         }
 
-        EcosiaLogger.tabAutoClose("Setup logout completion observer with TabAutoCloseManager integration")
+        EcosiaLogger.tabAutoClose.info("Setup logout completion observer with TabAutoCloseManager integration")
     }
 
     private func handleLogoutCompletion() {
-        EcosiaLogger.auth("Logout completed successfully via notification")
+        EcosiaLogger.auth.info("Logout completed successfully via notification")
         handleFlowCompletion(success: true)
     }
 
@@ -491,20 +486,20 @@ public final class AuthenticationFlow {
         let tabUUIDs = invisibleTabs.map { $0.tabUUID }
         invisibleTabAPI.cancelAutoCloseForTabs(tabUUIDs)
 
-        EcosiaLogger.auth("Logout completed after fallback timeout")
+        EcosiaLogger.auth.info("Logout completed after fallback timeout")
         handleFlowCompletion(success: true)
     }
 
     /// Cleans up stored credentials and session when login flow fails after Auth0 authentication succeeds
     private func cleanupLoginCredentialsOnError() async {
-        EcosiaLogger.auth("Cleaning up credentials due to login flow error", level: .warning)
+        EcosiaLogger.auth.notice("Cleaning up credentials due to login flow error")
 
         do {
             // Clear both session and credentials to restore clean state
             try await ecosiaAuth.performLogout()
-            EcosiaLogger.auth("Successfully cleaned up credentials after login error")
+            EcosiaLogger.auth.info("Successfully cleaned up credentials after login error")
         } catch {
-            EcosiaLogger.auth("Failed to clean up credentials after login error: \(error)", level: .error)
+            EcosiaLogger.auth.error("Failed to clean up credentials after login error: \(error)")
             // Even if cleanup fails, we still want to report the original error
         }
     }
@@ -520,7 +515,7 @@ public final class AuthenticationFlow {
             authStateObserver = nil
         }
 
-        EcosiaLogger.auth("Authentication flow completed with success: \(success)")
+        EcosiaLogger.auth.info("Authentication flow completed with success: \(success)")
         onAuthFlowCompletedCallback?(success)
     }
 
@@ -535,7 +530,7 @@ public final class AuthenticationFlow {
             authStateObserver = nil
         }
 
-        EcosiaLogger.auth("Authentication flow failed with error: \(error)", level: .error)
+        EcosiaLogger.auth.error("Authentication flow failed with error: \(error)")
         onErrorCallback?(error)
     }
 

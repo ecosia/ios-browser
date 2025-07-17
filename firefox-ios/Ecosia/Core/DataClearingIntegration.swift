@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import OSLog
 
 /// Utility for integrating native authentication with browser data clearing operations
 /// Ensures authentication state remains consistent when user data is cleared
@@ -13,18 +12,18 @@ public enum DataClearingIntegration {
     /// Should be called whenever cookies are cleared to maintain auth state consistency
     public static func handleCookieClearing() async {
         guard Auth.shared.isLoggedIn else {
-            Logger.auth.info("User not logged in - skipping logout on cookie clearing")
+            EcosiaLogger.auth.info("User not logged in - skipping logout on cookie clearing")
             return
         }
         
-        Logger.auth.info("Triggering native logout due to cookie clearing")
+        EcosiaLogger.auth.info("Triggering native logout due to cookie clearing")
         
         do {
             // Perform logout without triggering web logout since cookies are already being cleared
             try await Auth.shared.logout(triggerWebLogout: false)
-            Logger.auth.info("Native logout completed successfully during cookie clearing")
+            EcosiaLogger.auth.info("Native logout completed successfully during cookie clearing")
         } catch {
-            Logger.auth.error("Failed to perform native logout during cookie clearing: \(error, privacy: .public)")
+            EcosiaLogger.auth.error("Failed to perform native logout during cookie clearing: \(error)")
         }
     }
 } 
