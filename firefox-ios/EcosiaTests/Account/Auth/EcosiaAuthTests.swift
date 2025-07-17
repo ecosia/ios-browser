@@ -4,6 +4,7 @@
 
 import XCTest
 import Ecosia
+import Common
 @testable import Client
 
 final class EcosiaAuthTests: XCTestCase {
@@ -366,12 +367,12 @@ class MockAuthStateManager {
 class MockBrowserViewController {
     
     var setupCallCount = 0
-    var tabManager: MockTabManager?
-    var profile: MockProfile?
+    var tabManager: EcosiaAuthMockTabManager?
+    var profile: EcosiaAuthMockProfile?
     
     init() {
-        self.profile = MockProfile()
-        self.tabManager = MockTabManager()
+        self.profile = EcosiaAuthMockProfile()
+        self.tabManager = EcosiaAuthMockTabManager()
     }
     
     func reset() {
@@ -379,15 +380,15 @@ class MockBrowserViewController {
     }
 }
 
-class MockTabManager {
-    var tabs: [MockTab] = []
+class EcosiaAuthMockTabManager {
+    var tabs: [EcosiaAuthMockTab] = []
     var windowUUID = WindowUUID()
     
-    func configureTab(_ tab: MockTab, request: URLRequest, afterTab: MockTab?, flushToDisk: Bool, zombie: Bool) {
+    func configureTab(_ tab: EcosiaAuthMockTab, request: URLRequest, afterTab: EcosiaAuthMockTab?, flushToDisk: Bool, zombie: Bool) {
         tabs.append(tab)
     }
     
-    func removeTab(_ tab: MockTab, completion: (() -> Void)? = nil) {
+    func removeTab(_ tab: EcosiaAuthMockTab, completion: (() -> Void)? = nil) {
         if let index = tabs.firstIndex(where: { $0.tabUUID == tab.tabUUID }) {
             tabs.remove(at: index)
         }
@@ -395,35 +396,35 @@ class MockTabManager {
     }
 }
 
-class MockTab {
+class EcosiaAuthMockTab {
     var tabUUID: String = UUID().uuidString
     var url: URL?
     var isInvisible: Bool = false
-    var webView: MockWebView?
+    var webView: EcosiaAuthMockWebView?
     
-    init(profile: MockProfile, isPrivate: Bool, windowUUID: WindowUUID) {
-        self.webView = MockWebView()
+    init(profile: EcosiaAuthMockProfile, isPrivate: Bool, windowUUID: WindowUUID) {
+        self.webView = EcosiaAuthMockWebView()
     }
 }
 
-class MockWebView {
-    var configuration: MockWebViewConfiguration = MockWebViewConfiguration()
+class EcosiaAuthMockWebView {
+    var configuration: EcosiaAuthMockWebViewConfiguration = EcosiaAuthMockWebViewConfiguration()
 }
 
-class MockWebViewConfiguration {
-    var websiteDataStore: MockWebsiteDataStore = MockWebsiteDataStore()
+class EcosiaAuthMockWebViewConfiguration {
+    var websiteDataStore: EcosiaAuthMockWebsiteDataStore = EcosiaAuthMockWebsiteDataStore()
 }
 
-class MockWebsiteDataStore {
-    var httpCookieStore: MockHTTPCookieStore = MockHTTPCookieStore()
+class EcosiaAuthMockWebsiteDataStore {
+    var httpCookieStore: EcosiaAuthMockHTTPCookieStore = EcosiaAuthMockHTTPCookieStore()
 }
 
-class MockHTTPCookieStore {
+class EcosiaAuthMockHTTPCookieStore {
     func setCookie(_ cookie: HTTPCookie) {
         // Mock implementation
     }
 }
 
-class MockProfile {
+class EcosiaAuthMockProfile {
     // Mock implementation
 } 
