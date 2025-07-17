@@ -1019,7 +1019,7 @@ class BrowserViewController: UIViewController,
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             /* Ecosia: Create lean authentication flow */
-            let ecosiaAuth = EcosiaAuthRefactored(browserViewController: self)
+            let ecosiaAuth = EcosiaAuth(browserViewController: self)
 //            let ecosiaAuth = EcosiaAuth(invisibleTabAPI: invisibleTabAPI)
 
             ecosiaAuth.login()

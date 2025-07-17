@@ -6,9 +6,9 @@ import Foundation
 import Ecosia
 
 /**
- Refactored EcosiaAuth that maintains API compatibility while using the new coordinator architecture.
+ EcosiaAuth provides authentication management for the Ecosia browser.
  
- This class provides the same chainable API as before but delegates to specialized coordinators
+ This class provides a clean chainable API and delegates to specialized components
  for improved maintainability and testability.
  
  ## Usage
@@ -26,7 +26,7 @@ import Ecosia
      }
  ```
  */
-public final class EcosiaAuthRefactored {
+public final class EcosiaAuth {
 
     // MARK: - Dependencies
 
@@ -36,12 +36,15 @@ public final class EcosiaAuthRefactored {
 
     // MARK: - Current Flow Tracking
 
-    private var currentLoginFlow: AuthenticationFlowRefactored?
-    private var currentLogoutFlow: AuthenticationFlowRefactored?
+    private var currentLoginFlow: AuthenticationFlow?
+    private var currentLogoutFlow: AuthenticationFlow?
+    
+    // Web URL detection for automatic authentication triggers
+    private var webAuthURLDetector: WebAuthURLDetector?
 
     // MARK: - Initialization
 
-    /// Initializes EcosiaAuth with required dependencies (LEAN VERSION)
+    /// Initializes EcosiaAuth with required dependencies
     /// - Parameters:
     ///   - browserViewController: The browser view controller for tab operations
     ///   - authProvider: The auth provider for authentication operations (defaults to Ecosia.Auth.shared)
@@ -55,19 +58,22 @@ public final class EcosiaAuthRefactored {
         self.authStateManager = authStateManager
         self.browserViewController = browserViewController
 
-        EcosiaLogger.auth.info("EcosiaAuthRefactored initialized (lean version)")
+        // Setup web URL detection for automatic authentication triggers
+        self.webAuthURLDetector = WebAuthURLDetector(authManager: self)
+
+        EcosiaLogger.auth.info("EcosiaAuth initialized")
     }
 
     // MARK: - Public API
 
     /// Starts the login authentication flow
     /// - Returns: AuthenticationFlow for chaining callbacks
-    public func login() -> AuthenticationFlowRefactored {
+    public func login() -> AuthenticationFlow {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
         
-        let flow = AuthenticationFlowRefactored(
+        let flow = AuthenticationFlow(
             type: .login,
             authProvider: authProvider,
             authStateManager: authStateManager,
@@ -79,12 +85,12 @@ public final class EcosiaAuthRefactored {
 
     /// Starts the logout authentication flow
     /// - Returns: AuthenticationFlow for chaining callbacks  
-    public func logout() -> AuthenticationFlowRefactored {
+    public func logout() -> AuthenticationFlow {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
         
-        let flow = AuthenticationFlowRefactored(
+        let flow = AuthenticationFlow(
             type: .logout,
             authProvider: authProvider,
             authStateManager: authStateManager,
@@ -113,13 +119,13 @@ public final class EcosiaAuthRefactored {
     }
 }
 
-// MARK: - AuthenticationFlowRefactored
+// MARK: - AuthenticationFlow
 
 /**
- Refactored authentication flow that maintains the same chainable API
- but uses the new coordinator architecture under the hood.
+ Authentication flow that provides a clean chainable API
+ for both login and logout operations.
  */
-public final class AuthenticationFlowRefactored {
+public final class AuthenticationFlow {
 
     public enum FlowType {
         case login
@@ -166,7 +172,7 @@ public final class AuthenticationFlowRefactored {
     /// - Parameter callback: Closure called when Auth0 authentication finishes
     /// - Returns: Self for chaining
     @discardableResult
-    public func onNativeAuthCompleted(_ callback: @escaping () -> Void) -> AuthenticationFlowRefactored {
+    public func onNativeAuthCompleted(_ callback: @escaping () -> Void) -> AuthenticationFlow {
         onNativeAuthCompletedCallback = callback
         return self
     }
@@ -175,7 +181,7 @@ public final class AuthenticationFlowRefactored {
     /// - Parameter callback: Closure called with success status when entire flow completes
     /// - Returns: Self for chaining
     @discardableResult
-    public func onAuthFlowCompleted(_ callback: @escaping (Bool) -> Void) -> AuthenticationFlowRefactored {
+    public func onAuthFlowCompleted(_ callback: @escaping (Bool) -> Void) -> AuthenticationFlow {
         onAuthFlowCompletedCallback = callback
         return self
     }
@@ -184,7 +190,7 @@ public final class AuthenticationFlowRefactored {
     /// - Parameter callback: Closure called with the error when authentication fails
     /// - Returns: Self for chaining
     @discardableResult
-    public func onError(_ callback: @escaping (AuthError) -> Void) -> AuthenticationFlowRefactored {
+    public func onError(_ callback: @escaping (AuthError) -> Void) -> AuthenticationFlow {
         onErrorCallback = callback
         return self
     }
@@ -193,7 +199,7 @@ public final class AuthenticationFlowRefactored {
     /// - Parameter delay: Delay in seconds before calling onNativeAuthCompleted
     /// - Returns: Self for chaining
     @discardableResult
-    public func withDelayedCompletion(_ delay: TimeInterval) -> AuthenticationFlowRefactored {
+    public func withDelayedCompletion(_ delay: TimeInterval) -> AuthenticationFlow {
         delayedCompletionTime = delay
         return self
     }
@@ -212,7 +218,7 @@ public final class AuthenticationFlowRefactored {
     }
 
     private func performLogin() async {
-        // Use the new lean AuthFlow - no coordinators, no complexity
+        // Use the lean AuthFlow for streamlined authentication
         Task {
             let result = await authFlow.startLogin(
                 delayedCompletion: delayedCompletionTime,
@@ -231,7 +237,7 @@ public final class AuthenticationFlowRefactored {
     }
 
     private func performLogout() async {
-        // Use the new lean AuthFlow - no coordinators, no complexity
+        // Use the lean AuthFlow for streamlined authentication
         let result = await authFlow.startLogout(
             delayedCompletion: delayedCompletionTime,
             onNativeAuthCompleted: onNativeAuthCompletedCallback,
@@ -247,3 +253,4 @@ public final class AuthenticationFlowRefactored {
         }
     }
 }
+ 
