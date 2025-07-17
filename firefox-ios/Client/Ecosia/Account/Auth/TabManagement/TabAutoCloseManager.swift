@@ -145,14 +145,17 @@ final class TabAutoCloseManager {
     /// Sets up page load monitoring for an invisible tab
     /// - Parameter tab: The tab to monitor
     private func setupPageLoadMonitoring(for tab: Tab) {
+        EcosiaLogger.invisibleTabs.debug("Setting up page load monitoring for tab: \(tab.tabUUID)")
+        EcosiaLogger.invisibleTabs.debug("Tab URL: \(tab.url?.absoluteString ?? "nil")")
+        EcosiaLogger.invisibleTabs.debug("WebView URL: \(tab.webView?.url?.absoluteString ?? "nil")")
+        
         let pageLoadObserver = notificationCenter.addObserver(
             forName: .OnLocationChange,
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            self?.observerQueue.asyncAfter(deadline: .now() + 0.5) {
-                self?.handlePageLoadCompletion(notification, for: tab)
-            }
+            // Process immediately without delay to catch all events
+            self?.handlePageLoadCompletion(notification, for: tab)
         }
 
         // Store with a different key pattern to distinguish from auth observers
@@ -167,13 +170,24 @@ final class TabAutoCloseManager {
     ///   - tab: The tab being monitored
     private func handlePageLoadCompletion(_ notification: Notification, for tab: Tab) {
         guard let userInfo = notification.userInfo,
-              let url = userInfo["url"] as? URL,
-              tab.url?.absoluteString == url.absoluteString else {
+              let url = userInfo["url"] as? URL else {
             return
         }
 
-        EcosiaLogger.invisibleTabs.info("Page load completed for invisible tab: \(url)")
-        handleAuthenticationCompletion(for: tab.tabUUID)
+        // Always log OnLocationChange events for debugging
+        EcosiaLogger.invisibleTabs.debug("OnLocationChange: \(url) (isPrivate: \(userInfo["isPrivate"] ?? "unknown"))")
+        
+        // Check if this is for our invisible tab by comparing webView
+        guard let tabWebView = tab.webView else {
+            EcosiaLogger.invisibleTabs.debug("Tab \(tab.tabUUID) has no webView")
+            return
+        }
+        
+        EcosiaLogger.invisibleTabs.info("Ecosia page load detected for invisible tab: \(url)")
+        // Wait a moment for any final redirects/auth to complete
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.handleAuthenticationCompletion(for: tab.tabUUID)
+        }
     }
 
     /// Handles authentication completion by closing the tab

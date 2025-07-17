@@ -154,12 +154,12 @@ class CookiesClearable: Clearable {
                 WKWebsiteDataTypeIndexedDBDatabases
             ]
         )
-        
+
         // Ecosia: Trigger native logout when cookies are cleared
         Task {
             await DataClearingIntegration.handleCookieClearing()
         }
-        
+
         WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: .distantPast, completionHandler: {})
 
         logger.log("CookiesClearable succeeded.",

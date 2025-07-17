@@ -1018,10 +1018,10 @@ class BrowserViewController: UIViewController,
         AppEventQueue.signal(event: .browserIsReady)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            /* Ecosia: Create invisible tab API and start authentication flow */
-            let invisibleTabAPI = InvisibleTabAPI(browserViewController: self)
-            let ecosiaAuth = EcosiaAuth(invisibleTabAPI: invisibleTabAPI)
-            
+            /* Ecosia: Create lean authentication flow */
+            let ecosiaAuth = EcosiaAuthRefactored(browserViewController: self)
+//            let ecosiaAuth = EcosiaAuth(invisibleTabAPI: invisibleTabAPI)
+
             ecosiaAuth.login()
                 .onNativeAuthCompleted {
                     EcosiaLogger.auth.info("Ecosia native auth completed")

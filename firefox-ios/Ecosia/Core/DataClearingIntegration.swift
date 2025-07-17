@@ -7,7 +7,7 @@ import Foundation
 /// Utility for integrating native authentication with browser data clearing operations
 /// Ensures authentication state remains consistent when user data is cleared
 public enum DataClearingIntegration {
-    
+
     /// Handles native logout when cookies are cleared through browser settings
     /// Should be called whenever cookies are cleared to maintain auth state consistency
     public static func handleCookieClearing() async {
@@ -15,9 +15,9 @@ public enum DataClearingIntegration {
             EcosiaLogger.auth.info("User not logged in - skipping logout on cookie clearing")
             return
         }
-        
+
         EcosiaLogger.auth.info("Triggering native logout due to cookie clearing")
-        
+
         do {
             // Perform logout without triggering web logout since cookies are already being cleared
             try await Auth.shared.logout(triggerWebLogout: false)
@@ -26,4 +26,4 @@ public enum DataClearingIntegration {
             EcosiaLogger.auth.error("Failed to perform native logout during cookie clearing: \(error)")
         }
     }
-} 
+}
