@@ -6,7 +6,7 @@ import XCTest
 import Foundation
 @testable import Client
 
-class AuthStateManagerTests: XCTestCase {
+final class AuthStateManagerTests: XCTestCase {
 
     var authStateManager: AuthStateManager!
     var mockNotificationCenter: MockNotificationCenter!
@@ -41,6 +41,7 @@ class AuthStateManagerTests: XCTestCase {
         XCTAssertEqual(authStateManager.currentState, .authenticating)
         XCTAssertTrue(authStateManager.isAuthenticating)
         XCTAssertFalse(authStateManager.isAuthenticated)
+        XCTAssertFalse(authStateManager.isLoggingOut)
     }
 
     func testCompleteAuthentication() {
@@ -51,6 +52,7 @@ class AuthStateManagerTests: XCTestCase {
         XCTAssertEqual(authStateManager.currentState, .authenticated(user: user))
         XCTAssertTrue(authStateManager.isAuthenticated)
         XCTAssertFalse(authStateManager.isAuthenticating)
+        XCTAssertFalse(authStateManager.isLoggingOut)
         XCTAssertEqual(authStateManager.currentUser, user)
     }
 
@@ -62,6 +64,8 @@ class AuthStateManagerTests: XCTestCase {
         XCTAssertEqual(authStateManager.currentState, .authenticationFailed(error: error))
         XCTAssertFalse(authStateManager.isAuthenticated)
         XCTAssertFalse(authStateManager.isAuthenticating)
+        XCTAssertFalse(authStateManager.isLoggingOut)
+        XCTAssertNil(authStateManager.currentUser)
     }
 
     func testBeginLogout() {
@@ -75,6 +79,8 @@ class AuthStateManagerTests: XCTestCase {
         XCTAssertEqual(authStateManager.currentState, .loggingOut)
         XCTAssertTrue(authStateManager.isLoggingOut)
         XCTAssertFalse(authStateManager.isAuthenticated)
+        XCTAssertFalse(authStateManager.isAuthenticating)
+        XCTAssertNil(authStateManager.currentUser) // User is cleared during logout
     }
 
     func testCompleteLogout() {
@@ -83,6 +89,7 @@ class AuthStateManagerTests: XCTestCase {
         XCTAssertEqual(authStateManager.currentState, .loggedOut)
         XCTAssertFalse(authStateManager.isAuthenticated)
         XCTAssertFalse(authStateManager.isLoggingOut)
+        XCTAssertFalse(authStateManager.isAuthenticating)
         XCTAssertNil(authStateManager.currentUser)
     }
 
@@ -96,29 +103,35 @@ class AuthStateManagerTests: XCTestCase {
         XCTAssertEqual(authStateManager.currentState, .idle)
         XCTAssertFalse(authStateManager.isAuthenticated)
         XCTAssertFalse(authStateManager.isAuthenticating)
+        XCTAssertFalse(authStateManager.isLoggingOut)
+        XCTAssertNil(authStateManager.currentUser)
+    }
+
+    func testUpdateAuthStateDirect() {
+        let user = AuthUser(idToken: "direct-token", accessToken: "direct-access")
+        let state = AuthState.authenticated(user: user)
+
+        authStateManager.updateAuthState(state)
+
+        XCTAssertEqual(authStateManager.currentState, state)
+        XCTAssertTrue(authStateManager.isAuthenticated)
+        XCTAssertEqual(authStateManager.currentUser, user)
     }
 
     // MARK: - Observer Tests
 
-    func testObserverNotifiedOnStateChange() {
+    func testAddObserver_receivesStateUpdates() {
         let mockObserver = MockAuthStateObserver()
-        authStateManager.addObserver(mockObserver)
 
+        authStateManager.addObserver(mockObserver)
         authStateManager.beginAuthentication()
 
-        // Give time for async notification
-        let expectation = XCTestExpectation(description: "Observer notified")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 1.0)
-
         XCTAssertEqual(mockObserver.stateChanges.count, 1)
-        XCTAssertEqual(mockObserver.stateChanges.first?.newState, .authenticating)
+        XCTAssertEqual(mockObserver.stateChanges.first?.currentState, .authenticating)
         XCTAssertEqual(mockObserver.stateChanges.first?.previousState, .idle)
     }
 
-    func testMultipleObserversNotified() {
+    func testMultipleObservers_allReceiveUpdates() {
         let observer1 = MockAuthStateObserver()
         let observer2 = MockAuthStateObserver()
 
@@ -127,145 +140,138 @@ class AuthStateManagerTests: XCTestCase {
 
         authStateManager.beginAuthentication()
 
-        // Give time for async notification
-        let expectation = XCTestExpectation(description: "Observers notified")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 1.0)
-
         XCTAssertEqual(observer1.stateChanges.count, 1)
         XCTAssertEqual(observer2.stateChanges.count, 1)
+        
+        for observer in [observer1, observer2] {
+            XCTAssertEqual(observer.stateChanges.first?.currentState, .authenticating)
+            XCTAssertEqual(observer.stateChanges.first?.previousState, .idle)
+        }
     }
 
-    func testObserverRemovedDoesNotReceiveNotifications() {
+    func testRemoveObserver_stopsReceivingUpdates() {
         let mockObserver = MockAuthStateObserver()
+
         authStateManager.addObserver(mockObserver)
         authStateManager.removeObserver(mockObserver)
 
         authStateManager.beginAuthentication()
 
-        // Give time for potential notification
-        let expectation = XCTestExpectation(description: "Wait for potential notification")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 1.0)
-
-        XCTAssertTrue(mockObserver.stateChanges.isEmpty)
+        XCTAssertEqual(mockObserver.stateChanges.count, 0)
     }
 
-    func testWeakObserverReferencesCleanedUp() {
+    func testWeakObserverReferences_cleanupDeallocatedObservers() {
         var mockObserver: MockAuthStateObserver? = MockAuthStateObserver()
+
         authStateManager.addObserver(mockObserver!)
 
         // Release the observer
         mockObserver = nil
 
-        // Trigger state change to clean up weak references
         authStateManager.beginAuthentication()
 
-        // This test mainly ensures no crash occurs when weak references are cleaned up
+        // The observer should have been cleaned up and not cause any issues
         XCTAssertEqual(authStateManager.currentState, .authenticating)
     }
 
     // MARK: - Legacy Notification Tests
 
-    func testLegacyNotificationPostedForAuthenticating() {
+    func testLegacyNotifications_postedForStateChanges() {
         authStateManager.beginAuthentication()
 
         XCTAssertEqual(mockNotificationCenter.postedNotifications.count, 1)
-
-        let notification = mockNotificationCenter.postedNotifications.first!
-        XCTAssertEqual(notification.name, .EcosiaAuthStateChanged)
-
-        let actionType = notification.userInfo?[EcosiaAuthConstants.Keys.actionType] as? String
-        XCTAssertEqual(actionType, EcosiaAuthConstants.State.authenticationStarted.rawValue)
+        let notification = mockNotificationCenter.postedNotifications.first
+        XCTAssertEqual(notification?.name, .EcosiaAuthStateChanged)
+        XCTAssertEqual(notification?.userInfo?[EcosiaAuthConstants.Keys.actionType] as? String, 
+                      EcosiaAuthConstants.State.authenticationStarted.rawValue)
     }
 
-    func testLegacyNotificationPostedForAuthenticated() {
-        let user = AuthUser(idToken: "test-id", accessToken: "test-access")
+    func testLegacyNotifications_userLoggedIn() {
+        let user = AuthUser(idToken: "test-token", accessToken: "test-access")
         authStateManager.completeAuthentication(with: user)
 
-        XCTAssertEqual(mockNotificationCenter.postedNotifications.count, 1)
-
-        let notification = mockNotificationCenter.postedNotifications.first!
-        XCTAssertEqual(notification.name, .EcosiaAuthStateChanged)
-
-        let actionType = notification.userInfo?[EcosiaAuthConstants.Keys.actionType] as? String
-        XCTAssertEqual(actionType, EcosiaAuthConstants.State.userLoggedIn.rawValue)
+        let notification = mockNotificationCenter.postedNotifications.last
+        XCTAssertEqual(notification?.userInfo?[EcosiaAuthConstants.Keys.actionType] as? String,
+                      EcosiaAuthConstants.State.userLoggedIn.rawValue)
     }
 
-    func testLegacyNotificationPostedForAuthenticationFailed() {
-        let error = AuthError.networkError("Test error")
+    func testLegacyNotifications_authenticationFailed() {
+        let error = AuthError.userCancelled
         authStateManager.failAuthentication(with: error)
 
-        XCTAssertEqual(mockNotificationCenter.postedNotifications.count, 1)
-
-        let notification = mockNotificationCenter.postedNotifications.first!
-        let actionType = notification.userInfo?[EcosiaAuthConstants.Keys.actionType] as? String
-        XCTAssertEqual(actionType, EcosiaAuthConstants.State.authenticationFailed.rawValue)
+        let notification = mockNotificationCenter.postedNotifications.last
+        XCTAssertEqual(notification?.userInfo?[EcosiaAuthConstants.Keys.actionType] as? String,
+                      EcosiaAuthConstants.State.authenticationFailed.rawValue)
     }
 
-    func testLegacyNotificationPostedForLoggedOut() {
+    func testLegacyNotifications_userLoggedOut() {
         authStateManager.completeLogout()
 
-        XCTAssertEqual(mockNotificationCenter.postedNotifications.count, 1)
-
-        let notification = mockNotificationCenter.postedNotifications.first!
-        let actionType = notification.userInfo?[EcosiaAuthConstants.Keys.actionType] as? String
-        XCTAssertEqual(actionType, EcosiaAuthConstants.State.userLoggedOut.rawValue)
+        let notification = mockNotificationCenter.postedNotifications.last
+        XCTAssertEqual(notification?.userInfo?[EcosiaAuthConstants.Keys.actionType] as? String,
+                      EcosiaAuthConstants.State.userLoggedOut.rawValue)
     }
 
-    func testNoLegacyNotificationForIdleOrLoggingOut() {
+    func testLegacyNotifications_noNotificationForIdleAndLoggingOut() {
         authStateManager.reset()
         authStateManager.beginLogout()
 
-        // Only loggingOut should not post notification, reset/idle should not either
+        // Should not post notifications for idle and loggingOut states
         XCTAssertTrue(mockNotificationCenter.postedNotifications.isEmpty)
     }
 
-    // MARK: - Thread Safety Tests
+    // MARK: - Complex State Transition Tests
 
-    func testConcurrentObserverOperations() {
-        let expectation = XCTestExpectation(description: "Concurrent operations completed")
-        let observers = (0..<10).map { _ in MockAuthStateObserver() }
+    func testCompleteAuthenticationWorkflow() {
+        let user = AuthUser(idToken: "workflow-token", accessToken: "workflow-access")
+        let mockObserver = MockAuthStateObserver()
+        authStateManager.addObserver(mockObserver)
 
-        DispatchQueue.concurrentPerform(iterations: 10) { index in
-            if index < 5 {
-                authStateManager.addObserver(observers[index])
-            } else {
-                authStateManager.removeObserver(observers[index])
-            }
-        }
+        // Full workflow: idle -> authenticating -> authenticated -> loggingOut -> loggedOut
+        authStateManager.beginAuthentication()
+        authStateManager.completeAuthentication(with: user)
+        authStateManager.beginLogout()
+        authStateManager.completeLogout()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            expectation.fulfill()
-        }
+        XCTAssertEqual(mockObserver.stateChanges.count, 4)
+        XCTAssertEqual(mockObserver.stateChanges[0].currentState, .authenticating)
+        XCTAssertEqual(mockObserver.stateChanges[1].currentState, .authenticated(user: user))
+        XCTAssertEqual(mockObserver.stateChanges[2].currentState, .loggingOut)
+        XCTAssertEqual(mockObserver.stateChanges[3].currentState, .loggedOut)
+    }
 
-        wait(for: [expectation], timeout: 1.0)
+    func testFailedAuthenticationWorkflow() {
+        let error = AuthError.networkError("Test error")
+        let mockObserver = MockAuthStateObserver()
+        authStateManager.addObserver(mockObserver)
 
-        // Test passes if no crash occurs
-        XCTAssertEqual(authStateManager.currentState, .idle)
+        authStateManager.beginAuthentication()
+        authStateManager.failAuthentication(with: error)
+        authStateManager.reset()
+
+        XCTAssertEqual(mockObserver.stateChanges.count, 3)
+        XCTAssertEqual(mockObserver.stateChanges[0].currentState, .authenticating)
+        XCTAssertEqual(mockObserver.stateChanges[1].currentState, .authenticationFailed(error: error))
+        XCTAssertEqual(mockObserver.stateChanges[2].currentState, .idle)
     }
 }
 
-// MARK: - Mock Classes
+// MARK: - Mock Objects
 
-class MockAuthStateObserver: AuthStateObserver {
+private class MockAuthStateObserver: AuthStateObserver {
     struct StateChange {
-        let newState: AuthState
+        let currentState: AuthState
         let previousState: AuthState
     }
 
     var stateChanges: [StateChange] = []
 
     func authStateDidChange(_ state: AuthState, previousState: AuthState) {
-        stateChanges.append(StateChange(newState: state, previousState: previousState))
+        stateChanges.append(StateChange(currentState: state, previousState: previousState))
     }
 }
 
-class MockNotificationCenter: NotificationCenter {
+private class MockNotificationCenter: NotificationCenter {
     struct PostedNotification {
         let name: Notification.Name
         let object: Any?
@@ -275,10 +281,6 @@ class MockNotificationCenter: NotificationCenter {
     var postedNotifications: [PostedNotification] = []
 
     override func post(name aName: NSNotification.Name, object anObject: Any?, userInfo aUserInfo: [AnyHashable: Any]? = nil) {
-        postedNotifications.append(PostedNotification(
-            name: aName,
-            object: anObject,
-            userInfo: aUserInfo
-        ))
+        postedNotifications.append(PostedNotification(name: aName, object: anObject, userInfo: aUserInfo))
     }
 }

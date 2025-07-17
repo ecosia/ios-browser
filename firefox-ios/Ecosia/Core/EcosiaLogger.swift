@@ -36,26 +36,31 @@ public extension EcosiaLoggerCategory {
 }
 
 /// Ecosia-specific logger that avoids conflicts with Firefox's logging system
+/// Debug and info logs are stripped out in release builds for performance and security
 public enum EcosiaLogger {
 
     static let prefix: String = "Ecosia Logger"
 
-    /// Log a debug message
+    /// Log a debug message (only available in DEBUG builds)
     public static func debug(_ message: String) {
+        #if DEBUG
         print("\(prefix): 🔍 [DEBUG] \(message)")
+        #endif
     }
 
-    /// Log an info message  
+    /// Log an info message (only available in DEBUG builds)
     public static func info(_ message: String) {
+        #if DEBUG
         print("\(prefix): ℹ️ [INFO] \(message)")
+        #endif
     }
 
-    /// Log a warning message
+    /// Log a warning message (available in all builds)
     public static func warning(_ message: String) {
         print("\(prefix): ⚠️ [WARNING] \(message)")
     }
 
-    /// Log an error message
+    /// Log an error message (available in all builds)
     public static func error(_ message: String) {
         print("\(prefix): ❌ [ERROR] \(message)")
     }
