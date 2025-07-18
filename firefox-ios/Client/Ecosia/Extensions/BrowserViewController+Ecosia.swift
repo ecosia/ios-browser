@@ -113,35 +113,40 @@ extension BrowserViewController {
 // MARK: Authentication URL Detection
 extension BrowserViewController {
     /// Detects authentication URLs and triggers native auth flows.
-    /// This is simpler than the WebAuthURLDetector as it's called directly from navigation delegate
-    func detectAndHandleAuthURL(_ url: URL) {
-        guard url.isEcosia() else { return }
-        
+    /// - Returns: `true` if the URL was handled and navigation should be cancelled, `false` otherwise
+    func detectAndHandleAuthURL(_ url: URL, for tab: Tab) -> Bool {
+        guard !tab.isInvisible else { return false }
+        guard url.isEcosia() else { return false }
+
         let path = url.path.lowercased()
         let urlProvider = Environment.current.urlProvider
-        
-        if urlProvider.signInPaths.contains(where: { path.contains($0) }) {
+
+        if urlProvider.signUpPaths.contains(where: { path.contains($0) }) {
             handleSignInDetection(url)
+            return true
         } else if urlProvider.signOutPaths.contains(where: { path.contains($0) }) {
             handleSignOutDetection(url)
+            return true
         }
+
+        return false
     }
-    
+
     private func handleSignInDetection(_ url: URL) {
         guard let ecosiaAuth = ecosiaAuth else {
             EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-in detection")
             return
         }
-        
+
         // Only trigger if user is not already logged in
         guard !ecosiaAuth.isLoggedIn else {
             EcosiaLogger.auth.debug("User already logged in, skipping sign-in detection for: \(url)")
             return
         }
-        
+
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-in URL detected in navigation: \(url)")
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
-        
+
         ecosiaAuth.login()
             .onNativeAuthCompleted {
                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
@@ -157,22 +162,22 @@ extension BrowserViewController {
                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Authentication failed from navigation: \(error)")
             }
     }
-    
+
     private func handleSignOutDetection(_ url: URL) {
         guard let ecosiaAuth = ecosiaAuth else {
             EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-out detection")
             return
         }
-        
+
         // Only trigger if user is currently logged in
         guard ecosiaAuth.isLoggedIn else {
             EcosiaLogger.auth.debug("User not logged in, skipping sign-out detection for: \(url)")
             return
         }
-        
+
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-out URL detected in navigation: \(url)")
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native logout flow")
-        
+
         ecosiaAuth.logout()
             .onNativeAuthCompleted {
                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native logout completed from navigation detection")
