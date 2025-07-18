@@ -295,7 +295,7 @@
 		28ECD9BF1BA1F19900D829DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C001B90A44F005ABB0D /* libz.tbd */; };
 		2C00E15F2E299AE800811A76 /* InvisibleTabSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */; };
 		2C00E1642E29A70500811A76 /* InvisibleTabManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */; };
-		2C00E3922E29B0E700811A76 /* AuthStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E3902E29B0E700811A76 /* AuthStateManager.swift */; };
+
 		2C00E3942E29B0E700811A76 /* AuthFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E38F2E29B0E700811A76 /* AuthFlow.swift */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
 		2C2EA77F2DA3F2990085F5BC /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 2C2EA77E2DA3F2990085F5BC /* Lottie */; };
@@ -2756,7 +2756,7 @@
 		2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvisibleTabSession.swift; sourceTree = "<group>"; };
 		2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvisibleTabManager.swift; sourceTree = "<group>"; };
 		2C00E38F2E29B0E700811A76 /* AuthFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlow.swift; sourceTree = "<group>"; };
-		2C00E3902E29B0E700811A76 /* AuthStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStateManager.swift; sourceTree = "<group>"; };
+
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
 		2C2A91281FA2410D002E36BD /* HistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTests.swift; sourceTree = "<group>"; };
@@ -10403,7 +10403,7 @@
 			children = (
 				2CE48ED92E29B5C400CE84CE /* EcosiaAuth.swift */,
 				2C00E38F2E29B0E700811A76 /* AuthFlow.swift */,
-				2C00E3902E29B0E700811A76 /* AuthStateManager.swift */,
+
 				2C00E1632E29A70500811A76 /* TabManagement */,
 				2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */,
 			);
@@ -16724,7 +16724,7 @@
 				0BDDB3412CA6B23300D501DF /* EditFolderCell.swift in Sources */,
 				8A7653BD28A2C61D00924ABF /* PocketDataAdaptor.swift in Sources */,
 				12AEB1232D37CC4A0035D7D8 /* LegacyTabTrayViewController.swift in Sources */,
-				2C00E3922E29B0E700811A76 /* AuthStateManager.swift in Sources */,
+
 				2C00E3942E29B0E700811A76 /* AuthFlow.swift in Sources */,
 				8A093D7D2A4B3E4F0099ABA5 /* DebugSettingsDelegate.swift in Sources */,
 				96EA9454293655BF00123345 /* AppSession+Enums.swift in Sources */,

@@ -4,6 +4,7 @@
 
 import Foundation
 import Ecosia
+import Common
 
 /**
  EcosiaAuth provides authentication management for the Ecosia browser.
@@ -31,28 +32,24 @@ public final class EcosiaAuth {
     // MARK: - Dependencies
 
     private let authProvider: Ecosia.Auth
-    private let authStateManager: AuthStateManager
     private weak var browserViewController: BrowserViewController?
 
     // MARK: - Current Flow Tracking
 
     private var currentLoginFlow: AuthenticationFlow?
     private var currentLogoutFlow: AuthenticationFlow?
-    
+
     // MARK: - Initialization
 
     /// Initializes EcosiaAuth with required dependencies
     /// - Parameters:
     ///   - browserViewController: The browser view controller for tab operations
     ///   - authProvider: The auth provider for authentication operations (defaults to Ecosia.Auth.shared)
-    ///   - authStateManager: The auth state manager for state coordination (defaults to new instance)
     internal init(
         browserViewController: BrowserViewController,
-        authProvider: Ecosia.Auth = Ecosia.Auth.shared,
-        authStateManager: AuthStateManager = AuthStateManager()
+        authProvider: Ecosia.Auth = Ecosia.Auth.shared
     ) {
         self.authProvider = authProvider
-        self.authStateManager = authStateManager
         self.browserViewController = browserViewController
 
         EcosiaLogger.auth.info("EcosiaAuth initialized")
@@ -66,11 +63,10 @@ public final class EcosiaAuth {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
-        
+
         let flow = AuthenticationFlow(
             type: .login,
             authProvider: authProvider,
-            authStateManager: authStateManager,
             browserViewController: browserViewController
         )
         currentLoginFlow = flow
@@ -83,11 +79,10 @@ public final class EcosiaAuth {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
-        
+
         let flow = AuthenticationFlow(
             type: .logout,
             authProvider: authProvider,
-            authStateManager: authStateManager,
             browserViewController: browserViewController
         )
         currentLogoutFlow = flow
@@ -97,19 +92,21 @@ public final class EcosiaAuth {
     // MARK: - State Queries
 
     public var isLoggedIn: Bool {
-        return authStateManager.isAuthenticated
+        if let windowUUID = browserViewController?.windowUUID,
+           let authState = Ecosia.AuthStateManager.shared.getAuthState(for: windowUUID) {
+            return authState.isLoggedIn
+        }
+
+        let allStates = Ecosia.AuthStateManager.shared.getAllAuthStates()
+        return allStates.values.contains { $0.isLoggedIn }
     }
 
     public var idToken: String? {
-        return authStateManager.currentUser?.idToken
+        return authProvider.idToken
     }
 
     public var accessToken: String? {
-        return authStateManager.currentUser?.accessToken
-    }
-
-    public var currentAuthState: AuthState {
-        return authStateManager.currentState
+        return authProvider.accessToken
     }
 }
 
@@ -146,13 +143,11 @@ public final class AuthenticationFlow {
     internal init(
         type: FlowType,
         authProvider: Ecosia.Auth,
-        authStateManager: AuthStateManager,
         browserViewController: BrowserViewController
     ) {
         self.type = type
         self.authFlow = AuthFlow(
             authProvider: authProvider,
-            authStateManager: authStateManager,
             browserViewController: browserViewController
         )
 
@@ -220,7 +215,7 @@ public final class AuthenticationFlow {
                 onFlowCompleted: onAuthFlowCompletedCallback,
                 onError: onErrorCallback
             )
-            
+
             switch result {
             case .success:
                 EcosiaLogger.auth.debug("Login flow completed successfully")
@@ -247,4 +242,3 @@ public final class AuthenticationFlow {
         }
     }
 }
- 

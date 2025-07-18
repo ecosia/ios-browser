@@ -7,7 +7,7 @@ import Ecosia
 
 /// Result of authentication flow operations
 public enum AuthFlowResult {
-    case success(user: AuthUser?)
+    case success
     case failure(error: AuthError)
 }
 
@@ -18,9 +18,8 @@ final class AuthFlow {
     // MARK: - Properties
 
     private let authProvider: Ecosia.Auth
-    private let authStateManager: AuthStateManager
     private weak var browserViewController: BrowserViewController?
-    
+
     // Active session (retained until completion)
     private var activeSession: InvisibleTabSession?
 
@@ -29,17 +28,14 @@ final class AuthFlow {
     /// Initializes the auth flow coordinator
     /// - Parameters:
     ///   - authProvider: Auth provider for authentication operations
-    ///   - authStateManager: Manager for auth state coordination
     ///   - browserViewController: Browser view controller for tab operations
     init(
         authProvider: Ecosia.Auth,
-        authStateManager: AuthStateManager,
         browserViewController: BrowserViewController
     ) {
         self.authProvider = authProvider
-        self.authStateManager = authStateManager
         self.browserViewController = browserViewController
-        
+
         EcosiaLogger.auth.info("AuthFlow initialized")
     }
 
@@ -57,18 +53,12 @@ final class AuthFlow {
         onFlowCompleted: ((Bool) -> Void)? = nil,
         onError: ((AuthError) -> Void)? = nil
     ) async -> AuthFlowResult {
-        
+
         EcosiaLogger.auth.info("Starting login flow")
-        authStateManager.beginAuthentication()
 
         do {
             // Step 1: Native Auth0 authentication
             try await performNativeAuthentication()
-            
-            let user = AuthUser(
-                idToken: authProvider.idToken,
-                accessToken: authProvider.accessToken
-            )
 
             // Step 2: Handle native auth completion callback
             await handleNativeAuthCompleted(
@@ -77,13 +67,9 @@ final class AuthFlow {
             )
 
             // Step 3: Session transfer and invisible tab flow
-            try await performSessionTransfer(
-                user: user,
-                onFlowCompleted: onFlowCompleted
-            )
+            try await performSessionTransfer(onFlowCompleted: onFlowCompleted)
 
-            return .success(user: user)
-            
+            return .success
         } catch {
             let authError = mapToAuthError(error)
             await handleAuthFailure(authError, onError: onError)
@@ -105,9 +91,8 @@ final class AuthFlow {
         onFlowCompleted: ((Bool) -> Void)? = nil,
         onError: ((AuthError) -> Void)? = nil
     ) async -> AuthFlowResult {
-        
+
         EcosiaLogger.auth.info("Starting logout flow")
-        authStateManager.beginLogout()
 
         do {
             // Step 1: Native Auth0 logout
@@ -122,8 +107,7 @@ final class AuthFlow {
             // Step 3: Session cleanup and invisible tab flow
             try await performSessionCleanup(onFlowCompleted: onFlowCompleted)
 
-            return .success(user: nil)
-            
+            return .success
         } catch {
             let authError = mapToAuthError(error)
             await handleAuthFailure(authError, onError: onError)
@@ -160,10 +144,9 @@ final class AuthFlow {
     }
 
     private func performSessionTransfer(
-        user: AuthUser,
         onFlowCompleted: ((Bool) -> Void)?
     ) async throws {
-        
+
         guard let browserViewController = browserViewController else {
             throw AuthError.authFlowConfigurationError("BrowserViewController not available")
         }
@@ -183,15 +166,12 @@ final class AuthFlow {
                 timeout: 10.0
             )
         }
-        
+
         // Retain session until completion
         activeSession = session
 
         // Set up session cookies
-        session.setupSessionCookies()
-
-        // Complete authentication state (triggers notifications)
-        authStateManager.completeAuthentication(with: user)
+                session.setupSessionCookies()
 
         // Wait for session completion
         await withCheckedContinuation { continuation in
@@ -207,7 +187,7 @@ final class AuthFlow {
     private func performSessionCleanup(
         onFlowCompleted: ((Bool) -> Void)?
     ) async throws {
-        
+
         guard let browserViewController = browserViewController else {
             throw AuthError.authFlowConfigurationError("BrowserViewController not available")
         }
@@ -224,12 +204,9 @@ final class AuthFlow {
                 timeout: 10.0
             )
         }
-        
-        // Retain session until completion
-        activeSession = session
 
-        // Complete logout state
-        authStateManager.completeLogout()
+        // Retain session until completion
+                activeSession = session
 
         // Wait for session completion
         await withCheckedContinuation { continuation in
@@ -247,11 +224,8 @@ final class AuthFlow {
         _ error: AuthError,
         onError: ((AuthError) -> Void)?
     ) async {
-        // Clean up any active session
         activeSession = nil
-        
-        authStateManager.updateAuthState(.idle)
-        
+
         EcosiaLogger.auth.error("Auth flow failed: \(error)")
         onError?(error)
     }
@@ -260,7 +234,7 @@ final class AuthFlow {
         if let authError = error as? AuthError {
             return authError
         }
-        return .unknown(error.localizedDescription)
+        return .authFlowConfigurationError(error.localizedDescription)
     }
 
     // MARK: - Cleanup
@@ -269,4 +243,4 @@ final class AuthFlow {
         activeSession = nil
         EcosiaLogger.auth.debug("AuthFlow deallocated")
     }
-} 
+}
