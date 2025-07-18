@@ -20,7 +20,6 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         testWindowUUID2 = WindowUUID()
         testWindowUUID3 = WindowUUID()
 
-        // Clear all existing windows for clean tests
         windowRegistry.clearAllWindows()
     }
 
@@ -32,7 +31,7 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         let instance2 = EcosiaAuthWindowRegistry.shared
 
         // Assert
-        XCTAssertTrue(instance1 === instance2, "Shared instance should return the same object")
+        XCTAssertTrue(instance1 === instance2)
     }
 
     func testInitialState_isEmpty() {
@@ -41,8 +40,8 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         let windowCount = windowRegistry.windowCount
 
         // Assert
-        XCTAssertTrue(registeredWindows.isEmpty, "Initial state should have no registered windows")
-        XCTAssertEqual(windowCount, 0, "Initial window count should be 0")
+        XCTAssertTrue(registeredWindows.isEmpty)
+        XCTAssertEqual(windowCount, 0)
     }
 
     // MARK: - Window Registration Tests
@@ -55,8 +54,8 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         windowRegistry.registerWindow(windowUUID)
 
         // Assert
-        XCTAssertTrue(windowRegistry.isWindowRegistered(windowUUID), "Window should be registered")
-        XCTAssertEqual(windowRegistry.windowCount, 1, "Window count should be 1")
+        XCTAssertTrue(windowRegistry.isWindowRegistered(windowUUID))
+        XCTAssertEqual(windowRegistry.windowCount, 1)
         XCTAssertTrue(windowRegistry.registeredWindows.contains(windowUUID), "Registered windows should contain the window")
     }
 
