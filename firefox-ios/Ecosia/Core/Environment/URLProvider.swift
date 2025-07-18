@@ -162,26 +162,26 @@ public enum URLProvider {
         ]
         return components.url!
     }
-    
+
     // MARK: - Authentication URL Patterns
-    
-    /// URL paths that indicate user sign-in flows
-    public var signInPaths: [String] {
+
+    /// URL paths that indicate user sign-up/sign-in flows
+    public var signUpPaths: [String] {
         ["/accounts/sign-up"]
     }
-    
+
     /// URL paths that indicate user sign-out flows
     public var signOutPaths: [String] {
         ["/accounts/sign-out"]
     }
-    
+
     // MARK: - Authentication URLs
-    
+
     /// Complete URL for user login/sign-up flow
     public var loginURL: URL {
         root.appendingPathComponent("accounts/sign-up")
     }
-    
+
     /// Complete URL for user logout/sign-out flow
     public var logoutURL: URL {
         root.appendingPathComponent("accounts/sign-out")
