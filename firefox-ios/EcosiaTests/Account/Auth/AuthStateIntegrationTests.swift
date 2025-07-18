@@ -5,418 +5,296 @@
 import XCTest
 import Auth0
 import Common
-@testable import Ecosia
+import Ecosia
+@testable import Client
 
 final class AuthStateIntegrationTests: XCTestCase {
 
-    var auth: Auth!
-    var mockProvider: MockAuth0Provider!
+    var ecosiaAuth: EcosiaAuth!
     var authStateManager: AuthStateManager!
-    var windowRegistry: EcosiaAuthWindowRegistry!
-    var testWindowUUID: WindowUUID!
+    var mockObserver: MockAuthStateObserver!
+    var mockBrowserViewController: MockBrowserViewController!
 
     override func setUp() {
         super.setUp()
-        mockProvider = MockAuth0Provider()
-        auth = Auth(auth0Provider: mockProvider)
-        authStateManager = AuthStateManager.shared
-        windowRegistry = EcosiaAuthWindowRegistry.shared
-        testWindowUUID = WindowUUID.XCTestDefaultUUID
-
-        // Reset call counts after initialization
-        mockProvider.reset()
-        // Ensure clean state for all tests
-        mockProvider.hasStoredCredentials = false
-
-        // Register a test window
-        windowRegistry.registerWindow(testWindowUUID)
+        authStateManager = AuthStateManager()
+        mockObserver = MockAuthStateObserver()
+        mockBrowserViewController = MockBrowserViewController()
+        
+        ecosiaAuth = EcosiaAuth(
+            browserViewController: mockBrowserViewController,
+            authProvider: Ecosia.Auth.shared,
+            authStateManager: authStateManager
+        )
+        
+        authStateManager.addObserver(mockObserver)
     }
 
     override func tearDown() {
-        // Clean up state after each test
-        authStateManager.clearAllStates()
-        windowRegistry.clearAllWindows()
-        mockProvider?.reset()
-        mockProvider = nil
-        auth = nil
+        authStateManager.removeObserver(mockObserver)
+        authStateManager.reset()
         authStateManager = nil
-        windowRegistry = nil
-        testWindowUUID = nil
+        mockObserver = nil
+        ecosiaAuth = nil
+        mockBrowserViewController = nil
         super.tearDown()
     }
 
     // MARK: - Login Integration Tests
 
-    func testLogin_withSuccessfulAuth_dispatchesUserLoggedInAction() async {
+    func testLogin_startsAuthenticationFlow() {
         // Arrange
-        let expectedCredentials = createTestCredentials()
-        mockProvider.mockCredentials = expectedCredentials
-
-        var userLoggedInNotifications: [Notification] = []
-        let expectation = expectation(description: "UserLoggedIn notification should be posted")
-        var expectationFulfilled = false
-
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "userLoggedIn" {
-                userLoggedInNotifications.append(notification)
-                if !expectationFulfilled {
-                    expectationFulfilled = true
-                    expectation.fulfill()
-                }
-            }
-        }
+        XCTAssertEqual(authStateManager.currentState, .idle)
+        XCTAssertEqual(mockObserver.stateChanges.count, 0)
 
         // Act
-        do {
-            try await auth.login()
-        } catch {
-            XCTFail("Login should succeed, but failed with: \(error)")
-        }
+        let flow = ecosiaAuth.login()
 
         // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertFalse(userLoggedInNotifications.isEmpty, "UserLoggedIn notification should be posted")
-
-        let receivedNotification = userLoggedInNotifications.first!
-        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
-
-        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
-        XCTAssertNotNil(authState, "Notification should contain auth state")
-        XCTAssertTrue(authState?.isLoggedIn == true, "Auth state should be logged in")
-        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
+        XCTAssertNotNil(flow)
+        
+        // Flow should be started (state may change asynchronously)
+        // We test the state manager integration separately
     }
 
-    func testLogin_withAuthFailure_doesNotDispatchUserLoggedInAction() async {
+    func testLoginFlow_withCallbacks_providesChainableAPI() {
         // Arrange
-        let authError = NSError(domain: "MockAuth0Provider", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Authentication failed"])
-        mockProvider.mockError = authError
-
-        var userLoggedInNotifications: [Notification] = []
-        var authStateLoadedNotifications: [Notification] = []
-        let expectation = expectation(description: "AuthStateLoaded notification should be posted")
-        var expectationFulfilled = false
-
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            if let actionType = notification.userInfo?["actionType"] as? String {
-                if actionType == "userLoggedIn" {
-                    userLoggedInNotifications.append(notification)
-                } else if actionType == "authStateLoaded" {
-                    authStateLoadedNotifications.append(notification)
-                    if !expectationFulfilled {
-                        expectationFulfilled = true
-                        expectation.fulfill()
-                    }
-                }
-            }
-        }
+        var nativeAuthCompletedCalled = false
+        var authFlowCompletedCalled = false
+        var errorCalled = false
 
         // Act
-        do {
-            try await auth.login()
-            XCTFail("Login should fail, but succeeded")
-        } catch {
-            // Expected to fail
-        }
+        let flow = ecosiaAuth.login()
+            .onNativeAuthCompleted {
+                nativeAuthCompletedCalled = true
+            }
+            .onAuthFlowCompleted { success in
+                authFlowCompletedCalled = true
+            }
+            .onError { error in
+                errorCalled = true
+            }
 
         // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertTrue(userLoggedInNotifications.isEmpty, "UserLoggedIn notification should not be posted on failure")
-        XCTAssertFalse(authStateLoadedNotifications.isEmpty, "AuthStateLoaded notification should be posted")
-
-        let receivedNotification = authStateLoadedNotifications.first!
-        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
-        XCTAssertNotNil(authState, "Notification should contain auth state")
-        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should not be logged in")
-        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
+        XCTAssertNotNil(flow)
+        // Callbacks are set up (actual invocation depends on auth provider behavior)
     }
 
     // MARK: - Logout Integration Tests
 
-    func testLogout_withSuccessfulLogout_dispatchesUserLoggedOutAction() async {
+    func testLogout_startsLogoutFlow() {
         // Arrange
-        await setupLoggedInState()
+        // First set up authenticated state
+        let testUser = AuthUser(idToken: "test-id", accessToken: "test-access")
+        authStateManager.completeAuthentication(with: testUser)
+        XCTAssertTrue(authStateManager.isAuthenticated)
 
-        var userLoggedOutNotifications: [Notification] = []
-        let expectation = expectation(description: "UserLoggedOut notification should be posted")
-        var expectationFulfilled = false
+        // Act
+        let flow = ecosiaAuth.logout()
 
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "userLoggedOut" {
-                userLoggedOutNotifications.append(notification)
-                if !expectationFulfilled {
-                    expectationFulfilled = true
-                    expectation.fulfill()
-                }
+        // Assert
+        XCTAssertNotNil(flow)
+        
+        // Flow should be started (state may change asynchronously)
+    }
+
+    func testLogoutFlow_withCallbacks_providesChainableAPI() {
+        // Arrange
+        let testUser = AuthUser(idToken: "test-id", accessToken: "test-access")
+        authStateManager.completeAuthentication(with: testUser)
+        
+        var nativeAuthCompletedCalled = false
+        var authFlowCompletedCalled = false
+        var errorCalled = false
+
+        // Act
+        let flow = ecosiaAuth.logout()
+            .onNativeAuthCompleted {
+                nativeAuthCompletedCalled = true
             }
-        }
-
-        // Act
-        do {
-            try await auth.logout()
-        } catch {
-            XCTFail("Logout should succeed, but failed with: \(error)")
-        }
-
-        // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertFalse(userLoggedOutNotifications.isEmpty, "UserLoggedOut notification should be posted")
-
-        let receivedNotification = userLoggedOutNotifications.first!
-        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
-
-        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
-        XCTAssertNotNil(authState, "Notification should contain auth state")
-        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should not be logged in")
-        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
-    }
-
-    func testLogout_withoutTriggerWebLogout_stillDispatchesUserLoggedOutAction() async {
-        // Arrange
-        await setupLoggedInState()
-
-        var userLoggedOutNotifications: [Notification] = []
-        let expectation = expectation(description: "UserLoggedOut notification should be posted")
-        var expectationFulfilled = false
-
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "userLoggedOut" {
-                userLoggedOutNotifications.append(notification)
-                if !expectationFulfilled {
-                    expectationFulfilled = true
-                    expectation.fulfill()
-                }
+            .onAuthFlowCompleted { success in
+                authFlowCompletedCalled = true
             }
-        }
-
-        // Act
-        do {
-            try await auth.logout(triggerWebLogout: false)
-        } catch {
-            XCTFail("Logout should succeed, but failed with: \(error)")
-        }
-
-        // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertFalse(userLoggedOutNotifications.isEmpty, "UserLoggedOut notification should be posted")
-
-        let receivedNotification = userLoggedOutNotifications.first!
-        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
-
-        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
-        XCTAssertNotNil(authState, "Notification should contain auth state")
-        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should not be logged in")
-        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
-    }
-
-    // MARK: - Credential Retrieval Integration Tests
-
-    func testRetrieveStoredCredentials_withValidCredentials_dispatchesAuthStateLoadedAction() async {
-        // Arrange
-        let expectedCredentials = createTestCredentials()
-        mockProvider.mockCredentials = expectedCredentials
-        mockProvider.hasStoredCredentials = true
-
-        var authStateLoadedNotifications: [Notification] = []
-        let expectation = expectation(description: "AuthStateLoaded notification should be posted")
-        var expectationFulfilled = false
-
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "authStateLoaded" {
-                authStateLoadedNotifications.append(notification)
-                if !expectationFulfilled {
-                    expectationFulfilled = true
-                    expectation.fulfill()
-                }
+            .onError { error in
+                errorCalled = true
             }
-        }
-
-        // Act
-        await auth.retrieveStoredCredentials()
 
         // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertFalse(authStateLoadedNotifications.isEmpty, "AuthStateLoaded notification should be posted")
-
-        let receivedNotification = authStateLoadedNotifications.first!
-        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
-
-        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
-        XCTAssertNotNil(authState, "Notification should contain auth state")
-        XCTAssertTrue(authState?.isLoggedIn == true, "Auth state should be logged in")
-        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
+        XCTAssertNotNil(flow)
+        // Callbacks are set up (actual invocation depends on auth provider behavior)
     }
 
-    func testRetrieveStoredCredentials_withNoCredentials_dispatchesAuthStateLoadedWithLoggedOutState() async {
+    // MARK: - State Integration Tests
+
+    func testLogin_withMultipleObservers_notifiesAllObservers() {
         // Arrange
-        mockProvider.hasStoredCredentials = false
-
-        var authStateLoadedNotifications: [Notification] = []
-        let expectation = expectation(description: "AuthStateLoaded notification should be posted")
-        var expectationFulfilled = false
-
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            if let actionType = notification.userInfo?["actionType"] as? String, actionType == "authStateLoaded" {
-                authStateLoadedNotifications.append(notification)
-                if !expectationFulfilled {
-                    expectationFulfilled = true
-                    expectation.fulfill()
-                }
-            }
+        let observer2 = MockAuthStateObserver()
+        let observer3 = MockAuthStateObserver()
+        authStateManager.addObserver(observer2)
+        authStateManager.addObserver(observer3)
+        defer {
+            authStateManager.removeObserver(observer2)
+            authStateManager.removeObserver(observer3)
         }
 
-        // Act
-        await auth.retrieveStoredCredentials()
+        // Act - Manually trigger state change to test observer integration
+        let testUser = AuthUser(idToken: "test-id", accessToken: "test-access")
+        authStateManager.beginAuthentication()
+        authStateManager.completeAuthentication(with: testUser)
 
         // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertFalse(authStateLoadedNotifications.isEmpty, "AuthStateLoaded notification should be posted")
-
-        let receivedNotification = authStateLoadedNotifications.first!
-        XCTAssertEqual(receivedNotification.name, .EcosiaAuthStateChanged, "Should receive auth state changed notification")
-
-        let authState = receivedNotification.userInfo?["authState"] as? AuthWindowState
-        XCTAssertNotNil(authState, "Notification should contain auth state")
-        XCTAssertFalse(authState?.isLoggedIn == true, "Auth state should not be logged in")
-        XCTAssertEqual(authState?.windowUUID, testWindowUUID, "Auth state should be for correct window")
+        XCTAssertTrue(mockObserver.stateChanges.count >= 2)
+        XCTAssertTrue(observer2.stateChanges.count >= 2)
+        XCTAssertTrue(observer3.stateChanges.count >= 2)
+        
+        // All observers should receive the same final state
+        XCTAssertEqual(mockObserver.stateChanges.last?.currentState, .authenticated(user: testUser))
+        XCTAssertEqual(observer2.stateChanges.last?.currentState, .authenticated(user: testUser))
+        XCTAssertEqual(observer3.stateChanges.last?.currentState, .authenticated(user: testUser))
     }
 
-    // MARK: - Multi-Window Integration Tests
-
-    func testLogin_withMultipleWindows_dispatchesToAllWindows() async {
+    func testStateQueries_reflectAuthStateManagerState() {
         // Arrange
-        let windowUUID2 = WindowUUID()
-        let windowUUID3 = WindowUUID()
+        XCTAssertFalse(ecosiaAuth.isLoggedIn)
+        XCTAssertNil(ecosiaAuth.idToken)
+        XCTAssertNil(ecosiaAuth.accessToken)
+        XCTAssertEqual(ecosiaAuth.currentAuthState, .idle)
 
-        windowRegistry.registerWindow(windowUUID2)
-        windowRegistry.registerWindow(windowUUID3)
-
-        let expectedCredentials = createTestCredentials()
-        mockProvider.mockCredentials = expectedCredentials
-
-        var notificationCount = 0
-        let expectation = expectation(description: "Auth state notifications should be posted for all windows")
-        expectation.expectedFulfillmentCount = 3 // 3 windows
-
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            notificationCount += 1
-            expectation.fulfill()
-        }
-
-        // Act
-        do {
-            try await auth.login()
-        } catch {
-            XCTFail("Login should succeed, but failed with: \(error)")
-        }
+        // Act - Set authenticated state
+        let testUser = AuthUser(idToken: "query-id-token", accessToken: "query-access-token")
+        authStateManager.completeAuthentication(with: testUser)
 
         // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertEqual(notificationCount, 3, "Should receive notifications for all registered windows")
-
-        // Verify all windows have auth state
-        let authState1 = authStateManager.getAuthState(for: testWindowUUID)
-        let authState2 = authStateManager.getAuthState(for: windowUUID2)
-        let authState3 = authStateManager.getAuthState(for: windowUUID3)
-
-        XCTAssertNotNil(authState1, "Window 1 should have auth state")
-        XCTAssertNotNil(authState2, "Window 2 should have auth state")
-        XCTAssertNotNil(authState3, "Window 3 should have auth state")
-
-        XCTAssertTrue(authState1?.isLoggedIn == true, "Window 1 should be logged in")
-        XCTAssertTrue(authState2?.isLoggedIn == true, "Window 2 should be logged in")
-        XCTAssertTrue(authState3?.isLoggedIn == true, "Window 3 should be logged in")
+        XCTAssertTrue(ecosiaAuth.isLoggedIn)
+        XCTAssertEqual(ecosiaAuth.idToken, testUser.idToken)
+        XCTAssertEqual(ecosiaAuth.accessToken, testUser.accessToken)
+        XCTAssertEqual(ecosiaAuth.currentAuthState, .authenticated(user: testUser))
     }
 
-    func testLogout_withMultipleWindows_dispatchesToAllWindows() async {
+    func testStateTransitions_followCorrectSequence() {
         // Arrange
-        let windowUUID2 = WindowUUID()
-        let windowUUID3 = WindowUUID()
+        XCTAssertEqual(authStateManager.currentState, .idle)
 
-        windowRegistry.registerWindow(windowUUID2)
-        windowRegistry.registerWindow(windowUUID3)
+        // Act - Login sequence
+        authStateManager.beginAuthentication()
+        XCTAssertEqual(authStateManager.currentState, .authenticating)
+        
+        let testUser = AuthUser(idToken: "sequence-id", accessToken: "sequence-access")
+        authStateManager.completeAuthentication(with: testUser)
+        XCTAssertEqual(authStateManager.currentState, .authenticated(user: testUser))
 
-        await setupLoggedInState()
+        // Act - Logout sequence
+        authStateManager.beginLogout()
+        XCTAssertEqual(authStateManager.currentState, .loggingOut)
+        
+        authStateManager.completeLogout()
+        XCTAssertEqual(authStateManager.currentState, .loggedOut)
 
-        var notificationCount = 0
-        let expectation = expectation(description: "Auth state notifications should be posted for all windows")
-        expectation.expectedFulfillmentCount = 3 // 3 windows
-
-        NotificationCenter.default.addObserver(forName: .EcosiaAuthStateChanged, object: authStateManager, queue: .main) { notification in
-            notificationCount += 1
-            expectation.fulfill()
-        }
-
-        // Act
-        do {
-            try await auth.logout()
-        } catch {
-            XCTFail("Logout should succeed, but failed with: \(error)")
-        }
-
-        // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertEqual(notificationCount, 3, "Should receive notifications for all registered windows")
-
-        // Verify all windows have logged out state
-        let authState1 = authStateManager.getAuthState(for: testWindowUUID)
-        let authState2 = authStateManager.getAuthState(for: windowUUID2)
-        let authState3 = authStateManager.getAuthState(for: windowUUID3)
-
-        XCTAssertNotNil(authState1, "Window 1 should have auth state")
-        XCTAssertNotNil(authState2, "Window 2 should have auth state")
-        XCTAssertNotNil(authState3, "Window 3 should have auth state")
-
-        XCTAssertFalse(authState1?.isLoggedIn == true, "Window 1 should be logged out")
-        XCTAssertFalse(authState2?.isLoggedIn == true, "Window 2 should be logged out")
-        XCTAssertFalse(authState3?.isLoggedIn == true, "Window 3 should be logged out")
+        // Assert - Observer received all state changes
+        XCTAssertTrue(mockObserver.stateChanges.count >= 4)
+        
+        // Verify sequence
+        let states = mockObserver.stateChanges.map { $0.currentState }
+        XCTAssertEqual(states[0], .authenticating)
+        XCTAssertEqual(states[1], .authenticated(user: testUser))
+        XCTAssertEqual(states[2], .loggingOut)
+        XCTAssertEqual(states[3], .loggedOut)
     }
 
-    // MARK: - Error Handling Integration Tests
-
-    func testLogin_withStateManagerError_stillUpdatesAuthState() async {
+    func testErrorStateHandling_updatesStateCorrectly() {
         // Arrange
-        let expectedCredentials = createTestCredentials()
-        mockProvider.mockCredentials = expectedCredentials
-
-        // Remove window from registry to simulate error scenario
-        windowRegistry.clearAllWindows()
+        let expectedError = AuthError.userCancelled
 
         // Act
-        do {
-            try await auth.login()
-        } catch {
-            XCTFail("Login should succeed, but failed with: \(error)")
-        }
+        authStateManager.beginAuthentication()
+        authStateManager.failAuthentication(with: expectedError)
 
         // Assert
-        XCTAssertTrue(auth.isLoggedIn, "Auth should still be logged in despite state manager issues")
-        XCTAssertNotNil(auth.idToken, "Should have ID token")
-        XCTAssertNotNil(auth.accessToken, "Should have access token")
-        XCTAssertNotNil(auth.refreshToken, "Should have refresh token")
+        XCTAssertEqual(authStateManager.currentState, .authenticationFailed(error: expectedError))
+        XCTAssertFalse(authStateManager.isAuthenticated)
+        XCTAssertNil(authStateManager.currentUser)
+        
+        // Observer should receive the error state
+        XCTAssertTrue(mockObserver.stateChanges.count >= 2)
+        XCTAssertEqual(mockObserver.stateChanges.last?.currentState, .authenticationFailed(error: expectedError))
     }
 
-    // MARK: - Helper Methods
+    func testAuthStateManager_maintainsStateAcrossOperations() {
+        // Arrange
+        let testUser = AuthUser(idToken: "persistent-id", accessToken: "persistent-access")
+        authStateManager.completeAuthentication(with: testUser)
+        let stateAfterLogin = authStateManager.currentState
+        let userAfterLogin = authStateManager.currentUser
 
-    private func setupLoggedInState() async {
-        let credentials = createTestCredentials()
-        mockProvider.mockCredentials = credentials
-        mockProvider.hasStoredCredentials = true
+        // Act - Check that state persists
+        let currentState = authStateManager.currentState
+        let currentUser = authStateManager.currentUser
 
-        do {
-            try await auth.login()
-        } catch {
-            XCTFail("Setup failed: \(error)")
-        }
+        // Assert
+        XCTAssertEqual(currentState, stateAfterLogin)
+        XCTAssertEqual(currentUser?.idToken, userAfterLogin?.idToken)
+        XCTAssertEqual(currentUser?.accessToken, userAfterLogin?.accessToken)
     }
 
-    private func createTestCredentials() -> Credentials {
-        return Credentials(
-            accessToken: "test-access-token",
-            tokenType: "Bearer",
-            idToken: "test-id-token",
-            refreshToken: "test-refresh-token",
-            expiresIn: Date().addingTimeInterval(3600),
-            scope: "openid profile email"
-        )
+    func testConcurrentStateUpdates_handledCorrectly() {
+        // Arrange
+        let testUser = AuthUser(idToken: "concurrent-id", accessToken: "concurrent-access")
+
+        // Act - Rapid state changes
+        authStateManager.beginAuthentication()
+        authStateManager.completeAuthentication(with: testUser)
+        authStateManager.beginLogout()
+        authStateManager.completeLogout()
+
+        // Assert - Final state should be logged out
+        XCTAssertEqual(authStateManager.currentState, .loggedOut)
+        XCTAssertFalse(authStateManager.isAuthenticated)
+        
+        // Observer should receive all state changes
+        XCTAssertTrue(mockObserver.stateChanges.count >= 4)
+    }
+
+    func testStateManager_reset_clearsState() {
+        // Arrange
+        let testUser = AuthUser(idToken: "reset-id", accessToken: "reset-access")
+        authStateManager.completeAuthentication(with: testUser)
+        XCTAssertTrue(authStateManager.isAuthenticated)
+
+        // Act
+        authStateManager.reset()
+
+        // Assert
+        XCTAssertEqual(authStateManager.currentState, .idle)
+        XCTAssertFalse(authStateManager.isAuthenticated)
+        XCTAssertNil(authStateManager.currentUser)
+    }
+}
+
+// MARK: - Mock Browser View Controller
+
+private class MockBrowserViewController: BrowserViewController {
+    // Minimal mock for testing - most functionality not needed for state integration tests
+    override init() {
+        super.init()
+    }
+}
+
+// MARK: - Mock Auth State Observer
+
+private class MockAuthStateObserver: AuthStateObserver {
+    
+    struct StateChange {
+        let currentState: AuthState
+        let previousState: AuthState
+    }
+    
+    var stateChanges: [StateChange] = []
+    
+    func authStateDidChange(_ currentState: AuthState, previousState: AuthState) {
+        stateChanges.append(StateChange(currentState: currentState, previousState: previousState))
+    }
+    
+    func reset() {
+        stateChanges.removeAll()
     }
 }

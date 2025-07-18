@@ -132,6 +132,9 @@ class BrowserViewController: UIViewController,
     let profile: Profile
     let tabManager: TabManager
     let ratingPromptManager: RatingPromptManager
+    
+    // Ecosia: Authentication manager for handling login/logout flows
+    internal var ecosiaAuth: EcosiaAuth?
     lazy var isTabTrayRefactorEnabled: Bool = TabTrayFlagManager.isRefactorEnabled
     var isToolbarRefactorEnabled: Bool {
         return featureFlags.isFeatureEnabled(.toolbarRefactor, checking: .buildOnly)
@@ -1016,6 +1019,22 @@ class BrowserViewController: UIViewController,
 
         browserDelegate?.browserHasLoaded()
         AppEventQueue.signal(event: .browserIsReady)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            /* Ecosia: Create authentication manager and keep strong reference for URL detection */
+            self.ecosiaAuth = EcosiaAuth(browserViewController: self)
+
+            self.ecosiaAuth?.login()
+                .onNativeAuthCompleted {
+                    EcosiaLogger.auth.info("Ecosia native auth completed")
+                }
+                .onAuthFlowCompleted { success in
+                    EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+                }
+                .onError { error in
+                    EcosiaLogger.auth.error("\(error.localizedDescription)")
+                }
+        }
     }
 
     private func prepareURLOnboardingContextualHint() {
