@@ -20,14 +20,14 @@ final class InvisibleTabManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        
+
         // Create a window UUID for testing
         windowUUID = WindowUUID()
-        
+
         // Get the shared manager instance and clear any existing state
         manager = InvisibleTabManager.shared
         manager.clearAllInvisibleTabs()
-        
+
         // Create a test tab
         testTab = createTestTab()
     }
@@ -204,7 +204,7 @@ final class InvisibleTabManagerTests: XCTestCase {
         let expectation = self.expectation(description: "Concurrent operations should complete")
         let concurrentQueue = DispatchQueue(label: "test.concurrent", attributes: .concurrent)
         let group = DispatchGroup()
-        
+
         // Create multiple tabs for testing
         var tabs: [Tab] = []
         for i in 0..<100 {
@@ -270,4 +270,4 @@ final class InvisibleTabManagerTests: XCTestCase {
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 1, "Should only count once for same UUID")
         XCTAssertTrue(manager.isTabInvisible(testTab))
     }
-} 
+}
