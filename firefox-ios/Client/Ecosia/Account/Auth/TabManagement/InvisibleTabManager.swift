@@ -6,29 +6,29 @@ import Foundation
 import Common
 
 final class InvisibleTabManager {
-    
+
     // MARK: - Singleton
-    
+
     static let shared = InvisibleTabManager()
-    
+
     // MARK: - Private Properties
-    
+
     private let queue = DispatchQueue(label: "ecosia.invisible.tabs", attributes: .concurrent)
     private var _invisibleTabUUIDs: Set<TabUUID> = []
-    
+
     // MARK: - Initialization
-    
+
     private init() {}
-    
+
     // MARK: - Public Interface
-    
+
     /// Array of invisible tab UUIDs
     var invisibleTabUUIDs: [TabUUID] {
         return queue.sync {
             Array(_invisibleTabUUIDs)
         }
     }
-    
+
     /// Check if a tab is invisible
     /// - Parameter tab: The tab to check
     /// - Returns: True if the tab is invisible
@@ -37,7 +37,7 @@ final class InvisibleTabManager {
             _invisibleTabUUIDs.contains(tab.tabUUID)
         }
     }
-    
+
     /// Mark a tab as invisible
     /// - Parameter tab: The tab to mark as invisible
     func markTabAsInvisible(_ tab: Tab) {
@@ -45,7 +45,7 @@ final class InvisibleTabManager {
             self?._invisibleTabUUIDs.insert(tab.tabUUID)
         }
     }
-    
+
     /// Mark a tab as visible
     /// - Parameter tab: The tab to mark as visible
     func markTabAsVisible(_ tab: Tab) {
@@ -53,7 +53,7 @@ final class InvisibleTabManager {
             self?._invisibleTabUUIDs.remove(tab.tabUUID)
         }
     }
-    
+
     /// Get visible tabs from a collection
     /// - Parameter tabs: Collection of tabs to filter
     /// - Returns: Array of visible tabs
@@ -62,7 +62,7 @@ final class InvisibleTabManager {
             tabs.filter { !_invisibleTabUUIDs.contains($0.tabUUID) }
         }
     }
-    
+
     /// Get invisible tabs from a collection
     /// - Parameter tabs: Collection of tabs to filter
     /// - Returns: Array of invisible tabs
@@ -71,7 +71,7 @@ final class InvisibleTabManager {
             tabs.filter { _invisibleTabUUIDs.contains($0.tabUUID) }
         }
     }
-    
+
     /// Clean up tracking for removed tabs
     /// - Parameter existingTabUUIDs: Set of tab UUIDs that still exist
     func cleanupRemovedTabs(existingTabUUIDs: Set<TabUUID>) {
@@ -80,11 +80,11 @@ final class InvisibleTabManager {
             self._invisibleTabUUIDs = self._invisibleTabUUIDs.intersection(existingTabUUIDs)
         }
     }
-    
+
     /// Clear all invisible tabs (useful for testing)
     func clearAllInvisibleTabs() {
         queue.async(flags: .barrier) { [weak self] in
             self?._invisibleTabUUIDs.removeAll()
         }
     }
-} 
+}

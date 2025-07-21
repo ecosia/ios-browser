@@ -16,7 +16,7 @@ final class InvisibleTabSession: TabEventHandler {
     private let url: URL
     private let timeout: TimeInterval
     private weak var browserViewController: BrowserViewController?
-    
+
     // State
     private var isCompleted = false
     private var completion: ((Bool) -> Void)?
@@ -32,10 +32,10 @@ final class InvisibleTabSession: TabEventHandler {
         self.url = url
         self.browserViewController = browserViewController
         self.timeout = timeout
-        
+
         // Create the tab immediately
         self.tab = try Self.createInvisibleTab(url: url, browserViewController: browserViewController)
-        
+
         EcosiaLogger.invisibleTabs.info("InvisibleTabSession created for: \(url)")
     }
 
@@ -47,7 +47,7 @@ final class InvisibleTabSession: TabEventHandler {
             EcosiaLogger.cookies.notice("No session cookie available for tab")
             return
         }
-        
+
         tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
         EcosiaLogger.cookies.info("Session cookie set for tab: \(tab.tabUUID)")
     }
@@ -56,9 +56,9 @@ final class InvisibleTabSession: TabEventHandler {
     /// - Parameter completion: Called when session completes or times out
     func waitForCompletion(_ completion: @escaping (Bool) -> Void) {
         self.completion = completion
-        
+
         setupTabAutoCloseManager()
-        
+
         EcosiaLogger.invisibleTabs.info("Waiting for session completion: \(tab.tabUUID)")
     }
 
@@ -66,25 +66,25 @@ final class InvisibleTabSession: TabEventHandler {
 
     private static func createInvisibleTab(url: URL, browserViewController: BrowserViewController) throws -> Tab {
         let profile = browserViewController.profile
-        
+
         guard let tabManager = browserViewController.tabManager as? LegacyTabManager else {
             throw AuthError.authFlowConfigurationError("TabManager not available")
         }
-        
+
         // Create invisible tab
         let newTab = Tab(profile: profile, isPrivate: false, windowUUID: tabManager.windowUUID)
         newTab.url = url
         newTab.isInvisible = true
-        
+
         tabManager.configureTab(newTab,
                                request: URLRequest(url: url),
                                afterTab: nil,
                                flushToDisk: true,
                                zombie: false)
-        
+
         // Mark as invisible in the manager
         InvisibleTabManager.shared.markTabAsInvisible(newTab)
-        
+
         EcosiaLogger.invisibleTabs.info("Invisible tab created: \(newTab.tabUUID)")
         return newTab
     }
@@ -94,14 +94,14 @@ final class InvisibleTabSession: TabEventHandler {
         if let tabManager = browserViewController?.tabManager {
             TabAutoCloseManager.shared.setTabManager(tabManager)
         }
-        
+
         // Setup auto-close monitoring
         TabAutoCloseManager.shared.setupAutoCloseForTab(
             tab,
             on: .EcosiaAuthStateChanged,
             timeout: timeout
         )
-        
+
         // Register for tab close events
         register(self, forTabEvents: .didClose)
     }
@@ -109,9 +109,9 @@ final class InvisibleTabSession: TabEventHandler {
     private func handleTabClosed() {
         guard !isCompleted else { return }
         isCompleted = true
-        
+
         cleanup()
-        
+
         EcosiaLogger.invisibleTabs.info("Session completed for tab: \(tab.tabUUID), success: true")
         completion?(true)
     }
@@ -119,10 +119,10 @@ final class InvisibleTabSession: TabEventHandler {
     private func completeSession(success: Bool) {
         guard !isCompleted else { return }
         isCompleted = true
-        
+
         cleanup()
         closeTab()
-        
+
         EcosiaLogger.invisibleTabs.info("Session completed for tab: \(tab.tabUUID), success: \(success)")
         completion?(success)
     }
@@ -136,12 +136,12 @@ final class InvisibleTabSession: TabEventHandler {
         guard let browserViewController = browserViewController else {
             return
         }
-        
+
         let tabManager = browserViewController.tabManager
-        
+
         // Remove from invisible tracking
         InvisibleTabManager.shared.markTabAsVisible(tab)
-        
+
         // Remove the tab
         tabManager.removeTab(tab) {
             EcosiaLogger.invisibleTabs.info("Tab closed: \(self.tab.tabUUID)")
@@ -167,4 +167,4 @@ final class InvisibleTabSession: TabEventHandler {
         cleanup()
         EcosiaLogger.invisibleTabs.debug("InvisibleTabSession deallocated")
     }
-} 
+}

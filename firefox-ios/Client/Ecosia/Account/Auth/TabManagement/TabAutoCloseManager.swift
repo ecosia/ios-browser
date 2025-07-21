@@ -148,7 +148,7 @@ final class TabAutoCloseManager {
         EcosiaLogger.invisibleTabs.debug("Setting up page load monitoring for tab: \(tab.tabUUID)")
         EcosiaLogger.invisibleTabs.debug("Tab URL: \(tab.url?.absoluteString ?? "nil")")
         EcosiaLogger.invisibleTabs.debug("WebView URL: \(tab.webView?.url?.absoluteString ?? "nil")")
-        
+
         let pageLoadObserver = notificationCenter.addObserver(
             forName: .OnLocationChange,
             object: nil,
@@ -176,13 +176,13 @@ final class TabAutoCloseManager {
 
         // Always log OnLocationChange events for debugging
         EcosiaLogger.invisibleTabs.debug("OnLocationChange: \(url) (isPrivate: \(userInfo["isPrivate"] ?? "unknown"))")
-        
+
         // Check if this is for our invisible tab by comparing webView
         guard let tabWebView = tab.webView else {
             EcosiaLogger.invisibleTabs.debug("Tab \(tab.tabUUID) has no webView")
             return
         }
-        
+
         EcosiaLogger.invisibleTabs.info("Ecosia page load detected for invisible tab: \(url)")
         // Wait a moment for any final redirects/auth to complete
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
