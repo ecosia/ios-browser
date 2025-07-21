@@ -7,6 +7,7 @@ import Foundation
 public enum Environment: Equatable {
     case production
     case staging
+    case debug
 }
 
 extension Environment {
@@ -28,6 +29,8 @@ extension Environment {
             return .production
         case .staging:
             return .staging
+        case .debug:
+            return .debug
         }
     }
 }
