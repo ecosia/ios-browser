@@ -132,7 +132,7 @@ class BrowserViewController: UIViewController,
     let profile: Profile
     let tabManager: TabManager
     let ratingPromptManager: RatingPromptManager
-    
+
     // Ecosia: Authentication manager for handling login/logout flows
     internal var ecosiaAuth: EcosiaAuth?
     lazy var isTabTrayRefactorEnabled: Bool = TabTrayFlagManager.isRefactorEnabled
@@ -1020,20 +1020,45 @@ class BrowserViewController: UIViewController,
         browserDelegate?.browserHasLoaded()
         AppEventQueue.signal(event: .browserIsReady)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            /* Ecosia: Create authentication manager and keep strong reference for URL detection */
-            self.ecosiaAuth = EcosiaAuth(browserViewController: self)
+        // TODO: Remove this temporary auth state observer when no longer needed
+        self.ecosiaAuth = EcosiaAuth(browserViewController: self)
+        var authStateObserver: NSObjectProtocol?
+        authStateObserver = NotificationCenter.default.addObserver(
+            forName: .EcosiaAuthStateChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self,
+                  let ecosiaAuth = self.ecosiaAuth,
+                  let userInfo = notification.userInfo,
+                  let actionType = userInfo["actionType"] as? String else { return }
 
-            self.ecosiaAuth?.login()
-                .onNativeAuthCompleted {
-                    EcosiaLogger.auth.info("Ecosia native auth completed")
-                }
-                .onAuthFlowCompleted { success in
-                    EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                }
-                .onError { error in
-                    EcosiaLogger.auth.error("\(error.localizedDescription)")
-                }
+            // Only act on authStateLoaded to ensure credentials are properly restored
+            guard actionType == "authStateLoaded",
+                  let authState = userInfo["authState"] as? AuthWindowState,
+                  authState.windowUUID == self.windowUUID else { return } // Only handle our window's auth state
+
+            // Remove observer immediately to prevent multiple calls
+            if let observer = authStateObserver {
+                NotificationCenter.default.removeObserver(observer)
+            }
+
+            // Now check login status and act accordingly
+            if !authState.isLoggedIn {
+                EcosiaLogger.auth.info("User not logged in after state restoration, starting login flow")
+                ecosiaAuth.login()
+                    .onNativeAuthCompleted {
+                        EcosiaLogger.auth.info("Ecosia native auth completed")
+                    }
+                    .onAuthFlowCompleted { success in
+                        EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+                    }
+                    .onError { error in
+                        EcosiaLogger.auth.error("\(error.localizedDescription)")
+                    }
+            } else {
+                EcosiaLogger.auth.info("User already logged in after state restoration, skipping login")
+            }
         }
     }
 
