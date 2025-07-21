@@ -177,7 +177,7 @@ final class AuthFlow {
         await withCheckedContinuation { continuation in
             session.waitForCompletion { [weak self] success in
                 self?.activeSession = nil // Release session
-                EcosiaLogger.auth.info("🔐 [AUTH] Ecosia auth flow completed: \(success)")
+                EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
                 onFlowCompleted?(success)
                 continuation.resume()
             }
@@ -212,7 +212,7 @@ final class AuthFlow {
         await withCheckedContinuation { continuation in
             session.waitForCompletion { [weak self] success in
                 self?.activeSession = nil // Release session
-                EcosiaLogger.auth.info("🔐 [AUTH] Ecosia logout flow completed: \(success)")
+                EcosiaLogger.auth.info("Ecosia logout flow completed: \(success)")
                 onFlowCompleted?(success)
                 continuation.resume()
             }
