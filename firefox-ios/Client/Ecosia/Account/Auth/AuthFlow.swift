@@ -29,10 +29,8 @@ final class AuthFlow {
     /// - Parameters:
     ///   - authProvider: Auth provider for authentication operations
     ///   - browserViewController: Browser view controller for tab operations
-    init(
-        authProvider: Ecosia.Auth,
-        browserViewController: BrowserViewController
-    ) {
+    init(authProvider: Ecosia.Auth,
+         browserViewController: BrowserViewController) {
         self.authProvider = authProvider
         self.browserViewController = browserViewController
 
@@ -47,11 +45,10 @@ final class AuthFlow {
     ///   - onNativeAuthCompleted: Called when native Auth0 completes
     ///   - onFlowCompleted: Called when entire flow completes
     ///   - onError: Called if flow fails
-    func startLogin(
-        delayedCompletion: TimeInterval = 0.0,
-        onNativeAuthCompleted: (() -> Void)? = nil,
-        onFlowCompleted: ((Bool) -> Void)? = nil,
-        onError: ((AuthError) -> Void)? = nil
+    func startLogin(delayedCompletion: TimeInterval = 0.0,
+                    onNativeAuthCompleted: (() -> Void)? = nil,
+                    onFlowCompleted: ((Bool) -> Void)? = nil,
+                    onError: ((AuthError) -> Void)? = nil
     ) async -> AuthFlowResult {
 
         EcosiaLogger.auth.info("Starting login flow")
@@ -85,11 +82,10 @@ final class AuthFlow {
     ///   - onNativeAuthCompleted: Called when native logout completes
     ///   - onFlowCompleted: Called when entire flow completes
     ///   - onError: Called if flow fails
-    func startLogout(
-        delayedCompletion: TimeInterval = 0.0,
-        onNativeAuthCompleted: (() -> Void)? = nil,
-        onFlowCompleted: ((Bool) -> Void)? = nil,
-        onError: ((AuthError) -> Void)? = nil
+    func startLogout(delayedCompletion: TimeInterval = 0.0,
+                     onNativeAuthCompleted: (() -> Void)? = nil,
+                     onFlowCompleted: ((Bool) -> Void)? = nil,
+                     onError: ((AuthError) -> Void)? = nil
     ) async -> AuthFlowResult {
 
         EcosiaLogger.auth.info("Starting logout flow")
@@ -130,10 +126,8 @@ final class AuthFlow {
     }
 
     @MainActor
-    private func handleNativeAuthCompleted(
-        delayedCompletion: TimeInterval,
-        onNativeAuthCompleted: (() -> Void)?
-    ) async {
+    private func handleNativeAuthCompleted(delayedCompletion: TimeInterval,
+                                           onNativeAuthCompleted: (() -> Void)?) async {
         if delayedCompletion > 0 {
             DispatchQueue.main.asyncAfter(deadline: .now() + delayedCompletion) {
                 onNativeAuthCompleted?()
@@ -143,9 +137,7 @@ final class AuthFlow {
         }
     }
 
-    private func performSessionTransfer(
-        onFlowCompleted: ((Bool) -> Void)?
-    ) async throws {
+    private func performSessionTransfer(onFlowCompleted: ((Bool) -> Void)?) async throws {
 
         guard let browserViewController = browserViewController else {
             throw AuthError.authFlowConfigurationError("BrowserViewController not available")
@@ -184,9 +176,7 @@ final class AuthFlow {
         }
     }
 
-    private func performSessionCleanup(
-        onFlowCompleted: ((Bool) -> Void)?
-    ) async throws {
+    private func performSessionCleanup(onFlowCompleted: ((Bool) -> Void)?) async throws {
 
         guard let browserViewController = browserViewController else {
             throw AuthError.authFlowConfigurationError("BrowserViewController not available")
@@ -220,10 +210,8 @@ final class AuthFlow {
     }
 
     @MainActor
-    private func handleAuthFailure(
-        _ error: AuthError,
-        onError: ((AuthError) -> Void)?
-    ) async {
+    private func handleAuthFailure(_ error: AuthError,
+                                   onError: ((AuthError) -> Void)?) async {
         activeSession = nil
 
         EcosiaLogger.auth.error("Auth flow failed: \(error)")
