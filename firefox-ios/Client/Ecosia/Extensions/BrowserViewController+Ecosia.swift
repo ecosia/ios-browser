@@ -115,8 +115,7 @@ extension BrowserViewController {
     /// Detects authentication URLs and triggers native auth flows.
     /// - Returns: `true` if the URL was handled and navigation should be cancelled, `false` otherwise
     func detectAndHandleAuthURL(_ url: URL, for tab: Tab) -> Bool {
-        guard !tab.isInvisible else { return false }
-        guard url.isEcosia() else { return false }
+        guard !tab.isInvisible && url.isEcosia() else { return false }
 
         let path = url.path.lowercased()
         let urlProvider = Environment.current.urlProvider
