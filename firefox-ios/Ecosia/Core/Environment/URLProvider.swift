@@ -202,10 +202,8 @@ public enum URLProvider {
         switch self {
         case .production:
             return "ecosia.eu.auth0.com"
-        case .staging:
+        case .staging, .debug:
             return "ecosia-staging.eu.auth0.com"
-        case .debug:
-            return "ecosia-dev.eu.auth0.com"
         }
     }
 
@@ -214,10 +212,8 @@ public enum URLProvider {
         switch self {
         case .production:
             return ".ecosia.org"
-        case .staging:
+        case .staging, .debug:
             return "login.ecosia-staging.xyz"
-        case .debug:
-            return "login.ecosia-dev.xyz"
         }
     }
 }
