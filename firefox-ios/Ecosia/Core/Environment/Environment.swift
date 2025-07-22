@@ -15,6 +15,8 @@ extension Environment {
     public static var current: Environment {
         #if MOZ_CHANNEL_RELEASE
         return .production
+        #elseif DEBUG
+        return .debug
         #else
         return .staging
         #endif

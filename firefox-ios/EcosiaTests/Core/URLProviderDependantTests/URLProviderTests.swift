@@ -97,7 +97,7 @@ final class URLProviderTests: XCTestCase {
     func testDebugFollowsProductionConfiguration() {
         let debugProvider = URLProvider.debug
         let productionProvider = URLProvider.production
-        
+
         // Debug should follow production for these properties
         XCTAssertEqual(debugProvider.root, productionProvider.root)
         XCTAssertEqual(debugProvider.apiRoot, productionProvider.apiRoot)
@@ -110,7 +110,7 @@ final class URLProviderTests: XCTestCase {
     func testDebugSnowplowFollowsStaging() {
         let debugProvider = URLProvider.debug
         let stagingProvider = URLProvider.staging
-        
+
         // Debug should follow staging only for snowplow
         XCTAssertEqual(debugProvider.snowplow, stagingProvider.snowplow)
         XCTAssertEqual(debugProvider.snowplow, "org-ecosia-prod1.mini.snplow.net")
