@@ -206,4 +206,3 @@ extension Notification.Name {
     static let EcosiaAuthDidFailWithError = Notification.Name("EcosiaAuthDidFailWithError")
     static let EcosiaAuthStateChanged = Notification.Name("EcosiaAuthStateChanged")
 }
-
