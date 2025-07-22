@@ -21,15 +21,15 @@ extension Environment {
          * 
          * Solution: Bundle ID detection is more reliable than build config inheritance
          */
-        
+
         // Determine environment: staging has "firefox" in bundle ID, others use compilation flags
         guard let bundleId = Bundle.main.bundleIdentifier else { return .production }
-        
+
         // Staging always has "firefox" in bundle ID (e.g., com.ecosia.ecosiaapp.firefox)
         if bundleId.contains("firefox") {
             return .staging
         }
-        
+
         // For production vs debug (both use com.ecosia.ecosiaapp), use compilation flags
         #if MOZ_CHANNEL_RELEASE
         return .production
@@ -37,13 +37,13 @@ extension Environment {
         return .debug
         #endif
     }
-    
+
     // Alternative: Bundle ID based detection
     public static var currentFromBundleId: Environment {
         guard let bundleId = Bundle.main.bundleIdentifier else {
             return .debug
         }
-        
+
         switch bundleId {
         case "com.ecosia.ecosiaapp":
             return .production
@@ -76,7 +76,7 @@ extension Environment {
               let envString = plist["EcosiaEnvironment"] as? String else {
             return .debug
         }
-        
+
         switch envString.lowercased() {
         case "production":
             return .production
