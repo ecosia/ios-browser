@@ -65,18 +65,4 @@ extension TabManager {
         let existingTabUUIDs = Set(tabs.map { $0.tabUUID })
         InvisibleTabManager.shared.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs)
     }
-
-    /// Finds the first visible tab matching the given predicate
-    /// - Parameter predicate: The condition to match
-    /// - Returns: The first visible tab matching the predicate, or nil if none found
-    func firstVisibleTab(where predicate: (Tab) -> Bool) -> Tab? {
-        return visibleTabs.first(where: predicate)
-    }
-
-    /// Finds all visible tabs matching the given predicate
-    /// - Parameter predicate: The condition to match
-    /// - Returns: All visible tabs matching the predicate
-    func visibleTabs(where predicate: (Tab) -> Bool) -> [Tab] {
-        return visibleTabs.filter(predicate)
-    }
 }
