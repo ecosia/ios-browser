@@ -10,7 +10,7 @@ public enum DataClearingIntegration {
 
     /// Handles native logout when cookies are cleared through browser settings
     /// Should be called whenever cookies are cleared to maintain auth state consistency
-    public static func handleCookieClearing() async {
+    public static func handleEcosiaAuthCookieClearing() async {
         guard Auth.shared.isLoggedIn else {
             EcosiaLogger.auth.info("User not logged in - skipping logout on cookie clearing")
             return
