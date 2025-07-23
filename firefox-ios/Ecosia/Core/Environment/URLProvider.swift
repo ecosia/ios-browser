@@ -175,6 +175,11 @@ public enum URLProvider {
         ["/accounts/sign-out"]
     }
 
+    /// URL paths that indicate errors in either the signUp or signOut flow
+    public var errorPaths: [String] {
+        ["/accounts/error"]
+    }
+
     // MARK: - Authentication URLs
 
     /// Complete URL for user login/sign-up flow
