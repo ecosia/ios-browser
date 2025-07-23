@@ -74,7 +74,7 @@ final class TabAutoCloseManager {
         EcosiaLogger.invisibleTabs.info("Setting up auto-close for tab: \(tab.tabUUID)")
 
         observerQueue.async(flags: .barrier) { [weak self] in
-            self?.cleanupExistingObserver(for: tab.tabUUID)
+            self?.cleanupObserver(for: tab.tabUUID)
             self?.createObserver(for: tab, notification: notification, timeout: timeout)
         }
     }
@@ -256,12 +256,6 @@ final class TabAutoCloseManager {
             tabManager.selectTab(lastVisibleTab)
                             EcosiaLogger.invisibleTabs.info("Selected last visible tab")
         }
-    }
-
-    /// Cleans up existing observer for a tab UUID
-    /// - Parameter tabUUID: UUID of the tab to clean up
-    private func cleanupExistingObserver(for tabUUID: String) {
-        cleanupObserver(for: tabUUID)
     }
 
     /// Cleans up observer and timeout for a tab UUID
