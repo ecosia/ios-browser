@@ -116,17 +116,6 @@ final class InvisibleTabSession: TabEventHandler {
         completion?(true)
     }
 
-    private func completeSession(success: Bool) {
-        guard !isCompleted else { return }
-        isCompleted = true
-
-        cleanup()
-        closeTab()
-
-        EcosiaLogger.invisibleTabs.info("Session completed for tab: \(tab.tabUUID), success: \(success)")
-        completion?(success)
-    }
-
     private func cleanup() {
         // Cancel auto-close monitoring in TabAutoCloseManager
         TabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
