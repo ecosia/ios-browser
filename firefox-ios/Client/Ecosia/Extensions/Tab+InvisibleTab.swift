@@ -42,10 +42,4 @@ extension Tab {
     func markAsVisible() {
         isInvisible = false
     }
-
-    /// Convenience method to toggle the visibility state
-    /// If currently invisible, makes it visible and vice versa
-    func toggleVisibility() {
-        isInvisible = !isInvisible
-    }
 }
