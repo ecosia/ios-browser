@@ -36,8 +36,8 @@ public final class EcosiaAuth {
 
     // MARK: - Current Flow Tracking
 
-    private var currentLoginFlow: AuthenticationFlow?
-    private var currentLogoutFlow: AuthenticationFlow?
+    private var currentLoginFlow: AuthFlowWrapper?
+    private var currentLogoutFlow: AuthFlowWrapper?
 
     // MARK: - Initialization
 
@@ -58,13 +58,13 @@ public final class EcosiaAuth {
     // MARK: - Public API
 
     /// Starts the login authentication flow
-    /// - Returns: AuthenticationFlow for chaining callbacks
-    public func login() -> AuthenticationFlow {
+    /// - Returns: AuthFlowWrapper for chaining callbacks
+    public func login() -> AuthFlowWrapper {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
 
-        let flow = AuthenticationFlow(
+        let flow = AuthFlowWrapper(
             type: .login,
             authProvider: authProvider,
             browserViewController: browserViewController
@@ -74,13 +74,13 @@ public final class EcosiaAuth {
     }
 
     /// Starts the logout authentication flow
-    /// - Returns: AuthenticationFlow for chaining callbacks  
-    public func logout() -> AuthenticationFlow {
+    /// - Returns: AuthFlowWrapper for chaining callbacks  
+    public func logout() -> AuthFlowWrapper {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
 
-        let flow = AuthenticationFlow(
+        let flow = AuthFlowWrapper(
             type: .logout,
             authProvider: authProvider,
             browserViewController: browserViewController
@@ -110,13 +110,13 @@ public final class EcosiaAuth {
     }
 }
 
-// MARK: - AuthenticationFlow
+// MARK: - AuthFlowWrapper
 
 /**
- Authentication flow that provides a clean chainable API
+ Authentication flow wrapper that provides a clean chainable API
  for both login and logout operations.
  */
-public final class AuthenticationFlow {
+public final class AuthFlowWrapper {
 
     public enum FlowType {
         case login
@@ -150,9 +150,6 @@ public final class AuthenticationFlow {
             authProvider: authProvider,
             browserViewController: browserViewController
         )
-
-        // Start the authentication process
-        startAuthentication()
     }
 
     // MARK: - Public Chainable API
@@ -161,7 +158,7 @@ public final class AuthenticationFlow {
     /// - Parameter callback: Closure called when Auth0 authentication finishes
     /// - Returns: Self for chaining
     @discardableResult
-    public func onNativeAuthCompleted(_ callback: @escaping () -> Void) -> AuthenticationFlow {
+    public func onNativeAuthCompleted(_ callback: @escaping () -> Void) -> AuthFlowWrapper {
         onNativeAuthCompletedCallback = callback
         return self
     }
@@ -170,7 +167,7 @@ public final class AuthenticationFlow {
     /// - Parameter callback: Closure called with success status when entire flow completes
     /// - Returns: Self for chaining
     @discardableResult
-    public func onAuthFlowCompleted(_ callback: @escaping (Bool) -> Void) -> AuthenticationFlow {
+    public func onAuthFlowCompleted(_ callback: @escaping (Bool) -> Void) -> AuthFlowWrapper {
         onAuthFlowCompletedCallback = callback
         return self
     }
@@ -179,7 +176,7 @@ public final class AuthenticationFlow {
     /// - Parameter callback: Closure called with the error when authentication fails
     /// - Returns: Self for chaining
     @discardableResult
-    public func onError(_ callback: @escaping (AuthError) -> Void) -> AuthenticationFlow {
+    public func onError(_ callback: @escaping (AuthError) -> Void) -> AuthFlowWrapper {
         onErrorCallback = callback
         return self
     }
@@ -188,14 +185,15 @@ public final class AuthenticationFlow {
     /// - Parameter delay: Delay in seconds before calling onNativeAuthCompleted
     /// - Returns: Self for chaining
     @discardableResult
-    public func withDelayedCompletion(_ delay: TimeInterval) -> AuthenticationFlow {
+    public func withDelayedCompletion(_ delay: TimeInterval) -> AuthFlowWrapper {
         delayedCompletionTime = delay
         return self
     }
 
-    // MARK: - Private Implementation
-
-    private func startAuthentication() {
+    /// Starts the authentication process after configuration
+    /// - Returns: Self for chaining
+    @discardableResult
+    public func startAuthentication() -> AuthFlowWrapper {
         Task {
             switch type {
             case .login:
@@ -204,7 +202,10 @@ public final class AuthenticationFlow {
                 await performLogout()
             }
         }
+        return self
     }
+
+    // MARK: - Private Implementation
 
     private func performLogin() async {
         // Use the lean AuthFlow for streamlined authentication
@@ -216,12 +217,14 @@ public final class AuthenticationFlow {
                 onError: onErrorCallback
             )
 
-            switch result {
-            case .success:
-                EcosiaLogger.auth.debug("Login flow completed successfully")
-            case .failure(let error):
-                EcosiaLogger.auth.error("Login flow failed: \(error)")
-            }
+                    switch result {
+        case .success:
+            EcosiaLogger.auth.debug("Login flow completed successfully")
+        case .failure(let error):
+            EcosiaLogger.auth.error("Login flow failed: \(error)")
+            // TODO: Error handling should be moved to EcosiaAuth to be handled with BrowserViewController
+            // This will be implemented as part of the error states design work
+        }
         }
     }
 
@@ -239,6 +242,8 @@ public final class AuthenticationFlow {
             EcosiaLogger.auth.info("Logout flow completed successfully")
         case .failure(let error):
             EcosiaLogger.auth.error("Logout flow failed: \(error)")
+            // TODO: Error handling should be moved to EcosiaAuth to be handled with BrowserViewController
+            // This will be implemented as part of the error states design work
         }
     }
 }
