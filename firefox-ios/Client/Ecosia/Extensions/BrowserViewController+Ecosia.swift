@@ -137,29 +137,53 @@ extension BrowserViewController {
             return
         }
 
-        // Only trigger if user is not already logged in
-        guard !ecosiaAuth.isLoggedIn else {
-            EcosiaLogger.auth.debug("User already logged in, skipping sign-in detection for: \(url)")
-            return
-        }
+        // Check for inconsistency: if web thinks user is logged out but native doesn't
+        // In this case, we should fail the entire process to avoid user getting "locked"
+        if !ecosiaAuth.isLoggedIn {
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-in URL detected in navigation: \(url)")
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
 
-        EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-in URL detected in navigation: \(url)")
-        EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
-
-        ecosiaAuth.login()
-            .onNativeAuthCompleted {
-                EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
-            }
-            .onAuthFlowCompleted { success in
-                if success {
-                    EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete authentication flow successful from navigation")
-                } else {
-                    EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Authentication flow completed with issues from navigation")
+            ecosiaAuth.login()
+                .onNativeAuthCompleted {
+                    EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
                 }
-            }
-            .onError { error in
-                EcosiaLogger.auth.error("🔐 [WEB-AUTH] Authentication failed from navigation: \(error)")
-            }
+                .onAuthFlowCompleted { success in
+                    if success {
+                        EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete authentication flow successful from navigation")
+                    } else {
+                        EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Authentication flow completed with issues from navigation")
+                    }
+                }
+                .onError { error in
+                    EcosiaLogger.auth.error("🔐 [WEB-AUTH] Authentication failed from navigation: \(error)")
+                }
+        } else {
+            // Inconsistent state detected: web thinks user is logged out but native doesn't
+            // Fail the entire process to avoid user getting "locked"
+            EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Inconsistent state detected: web thinks user is logged out but native doesn't")
+            EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Failing entire process to avoid user getting locked")
+
+            // Trigger a complete re-authentication to resolve the inconsistency
+            ecosiaAuth.logout()
+                .onAuthFlowCompleted { _ in
+                    EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
+                    // After logout, trigger login again
+                    ecosiaAuth.login()
+                        .onAuthFlowCompleted { success in
+                            if success {
+                                EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
+                            } else {
+                                EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication failed after resolving inconsistency")
+                            }
+                        }
+                        .onError { error in
+                            EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication error after resolving inconsistency: \(error)")
+                        }
+                }
+                .onError { error in
+                    EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed while resolving inconsistency: \(error)")
+                }
+        }
     }
 
     private func handleSignOutDetection(_ url: URL) {
