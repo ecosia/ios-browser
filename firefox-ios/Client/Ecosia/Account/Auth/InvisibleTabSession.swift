@@ -52,14 +52,14 @@ final class InvisibleTabSession: TabEventHandler {
         EcosiaLogger.cookies.info("Session cookie set for tab: \(tab.tabUUID)")
     }
 
-    /// Waits for the session to complete (page load + auth)
+    /// Starts monitoring for session completion (page load + auth)
     /// - Parameter completion: Called when session completes or times out
-    func waitForCompletion(_ completion: @escaping (Bool) -> Void) {
+    func startMonitoring(_ completion: @escaping (Bool) -> Void) {
         self.completion = completion
 
         setupTabAutoCloseManager()
 
-        EcosiaLogger.invisibleTabs.info("Waiting for session completion: \(tab.tabUUID)")
+        EcosiaLogger.invisibleTabs.info("Starting session monitoring: \(tab.tabUUID)")
     }
 
     // MARK: - Private Implementation
@@ -90,13 +90,13 @@ final class InvisibleTabSession: TabEventHandler {
     }
 
     private func setupTabAutoCloseManager() {
-        // Ensure TabAutoCloseManager has the TabManager reference
+        // Ensure InvisibleTabAutoCloseManager has the TabManager reference
         if let tabManager = browserViewController?.tabManager {
-            TabAutoCloseManager.shared.setTabManager(tabManager)
+            InvisibleTabAutoCloseManager.shared.setTabManager(tabManager)
         }
 
         // Setup auto-close monitoring
-        TabAutoCloseManager.shared.setupAutoCloseForTab(
+        InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
             tab,
             on: .EcosiaAuthStateChanged,
             timeout: timeout
@@ -117,8 +117,8 @@ final class InvisibleTabSession: TabEventHandler {
     }
 
     private func cleanup() {
-        // Cancel auto-close monitoring in TabAutoCloseManager
-        TabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
+        // Cancel auto-close monitoring in InvisibleTabAutoCloseManager
+        InvisibleTabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
     }
 
     private func closeTab() {
