@@ -7,11 +7,11 @@ import WebKit
 import Common
 @testable import Client
 
-final class TabAutoCloseManagerTests: XCTestCase {
+final class InvisibleTabAutoCloseManagerTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var manager: TabAutoCloseManager!
+    private var manager: InvisibleTabAutoCloseManager!
     private var mockTabManager: MockTabManager!
     private var mockNotificationCenter: TabAutoCloseManagerMockNotificationCenter!
 
@@ -23,7 +23,7 @@ final class TabAutoCloseManagerTests: XCTestCase {
         mockNotificationCenter = TabAutoCloseManagerMockNotificationCenter()
 
         // Set up manager with injected dependencies
-        manager = TabAutoCloseManager.shared
+        manager = InvisibleTabAutoCloseManager.shared
         manager.setTabManager(mockTabManager)
 
         // Clean up any existing state
@@ -51,11 +51,11 @@ final class TabAutoCloseManagerTests: XCTestCase {
 
     func testSingletonInstance() {
         // Given/When
-        let instance1 = TabAutoCloseManager.shared
-        let instance2 = TabAutoCloseManager.shared
+        let instance1 = InvisibleTabAutoCloseManager.shared
+        let instance2 = InvisibleTabAutoCloseManager.shared
 
         // Then
-        XCTAssertTrue(instance1 === instance2, "TabAutoCloseManager should be a singleton")
+        XCTAssertTrue(instance1 === instance2, "InvisibleTabAutoCloseManager should be a singleton")
     }
 
     // MARK: - Basic Setup Tests

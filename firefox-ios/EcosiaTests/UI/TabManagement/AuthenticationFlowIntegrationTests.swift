@@ -26,12 +26,12 @@ final class AuthenticationFlowIntegrationTests: XCTestCase {
         testTabs = []
 
         // Clean up any existing state
-        TabAutoCloseManager.shared.cleanupAllObservers()
+        InvisibleTabAutoCloseManager.shared.cleanupAllObservers()
         InvisibleTabManager.shared.clearAllInvisibleTabs()
     }
 
     override func tearDown() {
-        TabAutoCloseManager.shared.cleanupAllObservers()
+        InvisibleTabAutoCloseManager.shared.cleanupAllObservers()
         InvisibleTabManager.shared.clearAllInvisibleTabs()
 
         mockProfile = nil
@@ -132,7 +132,7 @@ final class AuthenticationFlowIntegrationTests: XCTestCase {
     }
 
     private func setupAutoCloseForTab(_ tab: Tab, timeout: TimeInterval = 10.0) {
-        TabAutoCloseManager.shared.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: timeout)
+        InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: timeout)
     }
 
     private func triggerAuthCompletion() {
@@ -153,12 +153,12 @@ final class AuthenticationFlowIntegrationTests: XCTestCase {
         if let index = testTabs.firstIndex(where: { $0.tabUUID == tab.tabUUID }) {
             testTabs.remove(at: index)
         }
-        TabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
+        InvisibleTabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
     }
 
     private func simulateTabBecomesVisible(_ tab: Tab) {
         tab.isInvisible = false
-        TabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
+        InvisibleTabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
     }
 
     private func waitForAsyncOperations() {
@@ -180,7 +180,7 @@ final class AuthenticationFlowIntegrationTests: XCTestCase {
     }
 
     private func isTabTracked(_ tab: Tab) -> Bool {
-        return TabAutoCloseManager.shared.trackedTabUUIDs.contains(tab.tabUUID)
+        return InvisibleTabAutoCloseManager.shared.trackedTabUUIDs.contains(tab.tabUUID)
     }
 }
 

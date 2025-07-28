@@ -19,12 +19,12 @@ struct TabAutoCloseConfig {
 
 /// Manager for automatic closing of invisible tabs based on notifications
 /// Handles authentication completion notifications and fallback timeouts
-final class TabAutoCloseManager {
+final class InvisibleTabAutoCloseManager {
 
     // MARK: - Properties
 
     /// Singleton instance for app-wide auto-close management
-    static let shared = TabAutoCloseManager()
+    static let shared = InvisibleTabAutoCloseManager()
 
     /// Dictionary mapping tab UUIDs to their notification observers
     private var authTabObservers: [String: NSObjectProtocol] = [:]
