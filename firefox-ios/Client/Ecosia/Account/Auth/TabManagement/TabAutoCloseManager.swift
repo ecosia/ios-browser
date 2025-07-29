@@ -125,7 +125,7 @@ final class InvisibleTabAutoCloseManager {
         // Store observer
         authTabObservers[tabUUID] = observer
 
-        // Set up page load monitoring for invisible tabs
+        // Set up page load monitoring for invisible tabs (this will handle main thread access internally)
         setupPageLoadMonitoring(for: tab)
 
         // Create fallback timeout
@@ -145,23 +145,28 @@ final class InvisibleTabAutoCloseManager {
     /// Sets up page load monitoring for an invisible tab
     /// - Parameter tab: The tab to monitor
     private func setupPageLoadMonitoring(for tab: Tab) {
-        EcosiaLogger.invisibleTabs.debug("Setting up page load monitoring for tab: \(tab.tabUUID)")
-        EcosiaLogger.invisibleTabs.debug("Tab URL: \(tab.url?.absoluteString ?? "nil")")
-        EcosiaLogger.invisibleTabs.debug("WebView URL: \(tab.webView?.url?.absoluteString ?? "nil")")
+        // Access UI properties on main thread
+        DispatchQueue.main.async { [weak self] in
+            EcosiaLogger.invisibleTabs.debug("Setting up page load monitoring for tab: \(tab.tabUUID)")
+            EcosiaLogger.invisibleTabs.debug("Tab URL: \(tab.url?.absoluteString ?? "nil")")
+            EcosiaLogger.invisibleTabs.debug("WebView URL: \(tab.webView?.url?.absoluteString ?? "nil")")
 
-        let pageLoadObserver = notificationCenter.addObserver(
-            forName: .OnLocationChange,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            // Process immediately without delay to catch all events
-            self?.handlePageLoadCompletion(notification, for: tab)
+            let pageLoadObserver = self?.notificationCenter.addObserver(
+                forName: .OnLocationChange,
+                object: nil,
+                queue: .main
+            ) { [weak self] notification in
+                // Process immediately without delay to catch all events
+                self?.handlePageLoadCompletion(notification, for: tab)
+            }
+
+            // Store with a different key pattern to distinguish from auth observers
+            if let observer = pageLoadObserver {
+                self?.authTabObservers["\(tab.tabUUID)_pageload"] = observer
+            }
+
+            EcosiaLogger.invisibleTabs.info("Page load monitoring setup for tab: \(tab.tabUUID)")
         }
-
-        // Store with a different key pattern to distinguish from auth observers
-        authTabObservers["\(tab.tabUUID)_pageload"] = pageLoadObserver
-
-        EcosiaLogger.invisibleTabs.info("Page load monitoring setup for tab: \(tab.tabUUID)")
     }
 
     /// Handles page load completion for invisible tabs
