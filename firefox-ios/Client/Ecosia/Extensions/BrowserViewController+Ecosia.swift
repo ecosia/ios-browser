@@ -143,7 +143,7 @@ extension BrowserViewController {
             EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-in URL detected in navigation: \(url)")
             EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
 
-            ecosiaAuth.login()
+            ecosiaAuth
                 .onNativeAuthCompleted {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
                 }
@@ -157,6 +157,7 @@ extension BrowserViewController {
                 .onError { error in
                     EcosiaLogger.auth.error("🔐 [WEB-AUTH] Authentication failed from navigation: \(error)")
                 }
+                .login()
         } else {
             // Inconsistent state detected: web thinks user is logged out but native doesn't
             // Fail the entire process to avoid user getting "locked"
@@ -164,11 +165,11 @@ extension BrowserViewController {
             EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Failing entire process to avoid user getting locked")
 
             // Trigger a complete re-authentication to resolve the inconsistency
-            ecosiaAuth.logout()
+            ecosiaAuth
                 .onAuthFlowCompleted { _ in
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
                     // After logout, trigger login again
-                    ecosiaAuth.login()
+                    ecosiaAuth
                         .onAuthFlowCompleted { success in
                             if success {
                                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
@@ -179,10 +180,12 @@ extension BrowserViewController {
                         .onError { error in
                             EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication error after resolving inconsistency: \(error)")
                         }
+                        .login()
                 }
                 .onError { error in
                     EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed while resolving inconsistency: \(error)")
                 }
+                .logout()
         }
     }
 
@@ -201,7 +204,7 @@ extension BrowserViewController {
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-out URL detected in navigation: \(url)")
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native logout flow")
 
-        ecosiaAuth.logout()
+        ecosiaAuth
             .onNativeAuthCompleted {
                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native logout completed from navigation detection")
             }
@@ -215,5 +218,6 @@ extension BrowserViewController {
             .onError { error in
                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed from navigation: \(error)")
             }
+            .logout()
     }
 }
