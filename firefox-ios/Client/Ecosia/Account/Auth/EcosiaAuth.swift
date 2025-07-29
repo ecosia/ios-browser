@@ -83,7 +83,6 @@ final class EcosiaAuth {
         EcosiaLogger.auth.info("EcosiaAuth initialized")
     }
 
-// MARK: - AuthenticationFlow
     // MARK: - Chainable API
 
     /// Sets callback for when native Auth0 authentication completes
