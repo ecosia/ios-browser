@@ -12,13 +12,19 @@ public enum AuthFlowResult {
 }
 
 /// Orchestrates complete authentication flows with invisible tab sessions
-/// Single responsibility: coordinate auth provider + session transfer
+/// Provides core functionality for authentication operations
 final class AuthFlow {
 
-    // MARK: - Properties
+    public enum FlowType {
+        case login
+        case logout
+    }
+
+    // MARK: - Core Properties
 
     private let authProvider: Ecosia.Auth
     private weak var browserViewController: BrowserViewController?
+    private let type: FlowType
 
     // Active session (retained until completion)
     private var activeSession: InvisibleTabSession?
@@ -27,91 +33,112 @@ final class AuthFlow {
 
     /// Initializes the auth flow coordinator
     /// - Parameters:
+    ///   - type: Type of authentication flow (login or logout)
     ///   - authProvider: Auth provider for authentication operations
     ///   - browserViewController: Browser view controller for tab operations
-    init(authProvider: Ecosia.Auth,
+    init(type: FlowType,
+         authProvider: Ecosia.Auth,
          browserViewController: BrowserViewController) {
+        self.type = type
         self.authProvider = authProvider
         self.browserViewController = browserViewController
 
-        EcosiaLogger.auth.info("AuthFlow initialized")
+        EcosiaLogger.auth.info("AuthFlow initialized for \(type)")
     }
 
-    // MARK: - Login Flow
+    // MARK: - Public Core API
 
-    /// Performs complete login flow
+    /// Starts the login authentication flow
     /// - Parameters:
-    ///   - delayedCompletion: Optional delay for native auth callback
-    ///   - onNativeAuthCompleted: Called when native Auth0 completes
-    ///   - onFlowCompleted: Called when entire flow completes
-    ///   - onError: Called if flow fails
-    func startLogin(delayedCompletion: TimeInterval = 0.0,
-                    onNativeAuthCompleted: (() -> Void)? = nil,
-                    onFlowCompleted: ((Bool) -> Void)? = nil,
-                    onError: ((AuthError) -> Void)? = nil
+    ///   - delayedCompletion: Delay before calling onNativeAuthCompleted
+    ///   - onNativeAuthCompleted: Callback when Auth0 authentication completes
+    ///   - onFlowCompleted: Callback when entire flow completes
+    ///   - onError: Callback when authentication fails
+    /// - Returns: Result of the authentication operation
+    public func startLogin(
+        delayedCompletion: TimeInterval = 0.0,
+        onNativeAuthCompleted: (() -> Void)? = nil,
+        onFlowCompleted: ((Bool) -> Void)? = nil,
+        onError: ((AuthError) -> Void)? = nil
     ) async -> AuthFlowResult {
-
-        EcosiaLogger.auth.info("Starting login flow")
-
-        do {
-            // Step 1: Native Auth0 authentication
-            try await performNativeAuthentication()
-
-            // Step 2: Handle native auth completion callback
-            await handleNativeAuthCompleted(
-                delayedCompletion: delayedCompletion,
-                onNativeAuthCompleted: onNativeAuthCompleted
-            )
-
-            // Step 3: Session transfer and invisible tab flow
-            try await performSessionTransfer(onFlowCompleted: onFlowCompleted)
-
-            return .success
-        } catch {
-            let authError = mapToAuthError(error)
-            await handleAuthFailure(authError, onError: onError)
-            return .failure(error: authError)
-        }
+        return await performAuthentication(
+            type: .login,
+            delayedCompletion: delayedCompletion,
+            onNativeAuthCompleted: onNativeAuthCompleted,
+            onFlowCompleted: onFlowCompleted,
+            onError: onError
+        )
     }
 
-    // MARK: - Logout Flow
-
-    /// Performs complete logout flow
+    /// Starts the logout authentication flow
     /// - Parameters:
-    ///   - delayedCompletion: Optional delay for native auth callback
-    ///   - onNativeAuthCompleted: Called when native logout completes
-    ///   - onFlowCompleted: Called when entire flow completes
-    ///   - onError: Called if flow fails
-    func startLogout(delayedCompletion: TimeInterval = 0.0,
-                     onNativeAuthCompleted: (() -> Void)? = nil,
-                     onFlowCompleted: ((Bool) -> Void)? = nil,
-                     onError: ((AuthError) -> Void)? = nil
+    ///   - delayedCompletion: Delay before calling onNativeAuthCompleted
+    ///   - onNativeAuthCompleted: Callback when Auth0 authentication completes
+    ///   - onFlowCompleted: Callback when entire flow completes
+    ///   - onError: Callback when authentication fails
+    /// - Returns: Result of the authentication operation
+    public func startLogout(
+        delayedCompletion: TimeInterval = 0.0,
+        onNativeAuthCompleted: (() -> Void)? = nil,
+        onFlowCompleted: ((Bool) -> Void)? = nil,
+        onError: ((AuthError) -> Void)? = nil
     ) async -> AuthFlowResult {
-
-        EcosiaLogger.auth.info("Starting logout flow")
-
-        do {
-            // Step 1: Native Auth0 logout
-            try await performNativeLogout()
-
-            // Step 2: Handle native logout completion callback
-            await handleNativeAuthCompleted(
-                delayedCompletion: delayedCompletion,
-                onNativeAuthCompleted: onNativeAuthCompleted
-            )
-
-            // Step 3: Session cleanup and invisible tab flow
-            try await performSessionCleanup(onFlowCompleted: onFlowCompleted)
-
-            return .success
-        } catch {
-            let authError = mapToAuthError(error)
-            await handleAuthFailure(authError, onError: onError)
-            return .failure(error: authError)
-        }
+        return await performAuthentication(
+            type: .logout,
+            delayedCompletion: delayedCompletion,
+            onNativeAuthCompleted: onNativeAuthCompleted,
+            onFlowCompleted: onFlowCompleted,
+            onError: onError
+        )
     }
 
     // MARK: - Private Implementation
+
+    private func performAuthentication(type: FlowType,
+                                         delayedCompletion: TimeInterval = 0.0,
+                                         onNativeAuthCompleted: (() -> Void)? = nil,
+                                         onFlowCompleted: ((Bool) -> Void)? = nil,
+                                         onError: ((AuthError) -> Void)? = nil
+    ) async -> AuthFlowResult {
+
+        EcosiaLogger.auth.info("Starting \(type) flow")
+
+        do {
+            switch type {
+            case .login:
+                // Step 1: Native Auth0 authentication
+                try await performNativeAuthentication()
+
+                // Step 2: Handle native auth completion callback
+                await handleNativeAuthCompleted(
+                    delayedCompletion: delayedCompletion,
+                    onNativeAuthCompleted: onNativeAuthCompleted
+                )
+
+                // Step 3: Session transfer and invisible tab flow
+                try await performSessionTransfer(onFlowCompleted: onFlowCompleted)
+
+            case .logout:
+                // Step 1: Native Auth0 logout
+                try await performNativeLogout()
+
+                // Step 2: Handle native logout completion callback
+                await handleNativeAuthCompleted(
+                    delayedCompletion: delayedCompletion,
+                    onNativeAuthCompleted: onNativeAuthCompleted
+                )
+
+                // Step 3: Session cleanup and invisible tab flow
+                try await performSessionCleanup(onFlowCompleted: onFlowCompleted)
+            }
+
+            return .success
+        } catch {
+            let authError = mapToAuthError(error)
+            await handleAuthFailure(authError, onError: onError)
+            return .failure(error: authError)
+        }
+    }
 
     private func performNativeAuthentication() async throws {
         EcosiaLogger.auth.info("Performing native Auth0 authentication")
@@ -163,7 +190,7 @@ final class AuthFlow {
         activeSession = session
 
         // Set up session cookies
-                session.setupSessionCookies()
+        session.setupSessionCookies()
 
         // Wait for session completion
         await withCheckedContinuation { continuation in
@@ -202,7 +229,7 @@ final class AuthFlow {
         }
 
         // Retain session until completion
-                activeSession = session
+        activeSession = session
 
         // Wait for session completion
         await withCheckedContinuation { continuation in
@@ -228,13 +255,6 @@ final class AuthFlow {
         if let authError = error as? AuthError {
             return authError
         }
-        return .authFlowConfigurationError(error.localizedDescription)
-    }
-
-    // MARK: - Cleanup
-
-    deinit {
-        activeSession = nil
-        EcosiaLogger.auth.debug("AuthFlow deallocated")
+        return AuthError.authFlowConfigurationError(error.localizedDescription)
     }
 }
