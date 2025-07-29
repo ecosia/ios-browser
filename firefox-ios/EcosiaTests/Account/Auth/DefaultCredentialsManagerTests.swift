@@ -5,6 +5,7 @@
 import XCTest
 import Auth0
 @testable import Ecosia
+@testable import Client
 
 final class DefaultCredentialsManagerTests: XCTestCase {
 
@@ -18,7 +19,6 @@ final class DefaultCredentialsManagerTests: XCTestCase {
     }
 
     override func tearDown() {
-        // Clear any stored credentials after each test
         _ = credentialsManager.clear()
         credentialsManager = nil
         testCredentials = nil
@@ -35,7 +35,7 @@ final class DefaultCredentialsManagerTests: XCTestCase {
         let result = credentialsManager.store(credentials: credentials)
 
         // Assert
-        XCTAssertTrue(result, "Storing valid credentials should return true")
+        XCTAssertTrue(result)
     }
 
     // MARK: - Retrieve Credentials Tests
@@ -93,10 +93,10 @@ final class DefaultCredentialsManagerTests: XCTestCase {
         let result = credentialsManager.clear()
 
         // Assert
-        XCTAssertTrue(result, "Clearing stored credentials should return true")
+        XCTAssertTrue(result)
     }
 
-    func testClear_withNoStoredCredentials_returnsTrue() {
+    func testClear_withNoStoredCredentials_returnsFalse() {
         // Arrange
         // No credentials stored
 
@@ -104,7 +104,8 @@ final class DefaultCredentialsManagerTests: XCTestCase {
         let result = credentialsManager.clear()
 
         // Assert
-        XCTAssertTrue(result, "Clearing when no credentials exist should return true")
+        // Auth0's CredentialsManager returns false when there are no credentials to clear
+        XCTAssertFalse(result, "Clearing when no credentials exist returns false per Auth0 implementation")
     }
 
     func testClear_actuallyRemovesCredentials() async {
