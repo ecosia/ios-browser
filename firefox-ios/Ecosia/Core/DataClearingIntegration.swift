@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import OSLog
 
 /// Utility for integrating native authentication with browser data clearing operations
 /// Ensures authentication state remains consistent when user data is cleared
