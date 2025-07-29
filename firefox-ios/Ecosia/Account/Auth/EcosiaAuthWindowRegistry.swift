@@ -7,7 +7,7 @@ import Common
 
 /// Registry for tracking active browser windows that should receive auth state updates
 /// This provides minimal external integration point for the authentication system
-public class EcosiaAuthWindowRegistry {
+public final class EcosiaAuthWindowRegistry {
 
     /// Shared instance for global access
     public static let shared = EcosiaAuthWindowRegistry()
@@ -24,7 +24,7 @@ public class EcosiaAuthWindowRegistry {
         queue.async(flags: .barrier) { [weak self] in
             self?._windows.insert(windowUUID)
         }
-        print("🔓 EcosiaAuthWindowRegistry - Registered window: \(windowUUID)")
+        EcosiaLogger.auth.info("Registered window: \(windowUUID)")
     }
 
     /// Unregister a window from receiving auth state updates
@@ -33,7 +33,7 @@ public class EcosiaAuthWindowRegistry {
         queue.async(flags: .barrier) { [weak self] in
             self?._windows.remove(windowUUID)
         }
-        print("🔓 EcosiaAuthWindowRegistry - Unregistered window: \(windowUUID)")
+        EcosiaLogger.auth.info("Unregistered window: \(windowUUID)")
     }
 
     /// Get all registered windows
@@ -66,6 +66,6 @@ public class EcosiaAuthWindowRegistry {
         queue.async(flags: .barrier) { [weak self] in
             self?._windows.removeAll()
         }
-        print("🔓 EcosiaAuthWindowRegistry - Cleared all windows")
+        EcosiaLogger.auth.info("Cleared all windows")
     }
 }

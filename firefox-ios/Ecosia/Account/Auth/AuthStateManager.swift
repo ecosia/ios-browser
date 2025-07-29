@@ -7,7 +7,7 @@ import Common
 
 /// Main authentication state manager that provides Redux-like state management
 /// This system manages authentication state for multiple browser windows independently
-public class AuthStateManager {
+public final class AuthStateManager {
 
     /// Shared instance for global access
     public static let shared = AuthStateManager()
@@ -19,8 +19,8 @@ public class AuthStateManager {
     /// Notification center for broadcasting state changes
     private let notificationCenter = NotificationCenter.default
 
-    private init() {
-        print("🔓 AuthStateManager - Initialized")
+    private     init() {
+        EcosiaLogger.auth.info("AuthStateManager initialized")
     }
 
     // MARK: - State Management
@@ -64,7 +64,7 @@ public class AuthStateManager {
             ]
         )
 
-        print("🔓 AuthStateManager - Dispatched \(action.type) for window \(windowUUID)")
+        EcosiaLogger.auth.debug("Dispatched \(action.type.rawValue) for window \(windowUUID)")
     }
 
     /// Dispatch authentication state changes to all registered windows
@@ -83,7 +83,7 @@ public class AuthStateManager {
             dispatch(action: action, for: windowUUID)
         }
 
-        print("🔓 AuthStateManager - Dispatched \(actionType) to \(windowUUIDs.count) windows")
+        EcosiaLogger.auth.debug("Dispatched \(actionType.rawValue) to \(windowUUIDs.count) windows")
     }
 
     // MARK: - State Reduction
@@ -156,7 +156,7 @@ public class AuthStateManager {
         queue.async(flags: .barrier) { [weak self] in
             self?._windowStates.removeValue(forKey: windowUUID)
         }
-        print("🔓 AuthStateManager - Removed state for window \(windowUUID)")
+        EcosiaLogger.auth.debug("Removed state for window \(windowUUID)")
     }
 
     /// Clear all window states (for testing/cleanup)
@@ -164,6 +164,6 @@ public class AuthStateManager {
         queue.async(flags: .barrier) { [weak self] in
             self?._windowStates.removeAll()
         }
-        print("🔓 AuthStateManager - Cleared all states")
+        EcosiaLogger.auth.debug("Cleared all states")
     }
 }

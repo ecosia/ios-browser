@@ -37,7 +37,7 @@ final class AuthWorkflowTests: XCTestCase {
         mockProvider.mockCredentials = testCredentials
         mockCredentialsManager.storedCredentials = testCredentials
 
-        XCTAssertFalse(auth.isLoggedIn, "Should start logged out")
+        XCTAssertFalse(auth.isLoggedIn)
 
         // Act - Login
         do {
@@ -47,7 +47,7 @@ final class AuthWorkflowTests: XCTestCase {
         }
 
         // Assert - Logged in state
-        XCTAssertTrue(auth.isLoggedIn, "Should be logged in after successful login")
+        XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, testCredentials.idToken)
         XCTAssertEqual(auth.accessToken, testCredentials.accessToken)
         XCTAssertEqual(auth.refreshToken, testCredentials.refreshToken)
@@ -62,7 +62,7 @@ final class AuthWorkflowTests: XCTestCase {
         }
 
         // Assert - Logged out state
-        XCTAssertFalse(auth.isLoggedIn, "Should be logged out after logout")
+        XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken, "ID token should be cleared")
         XCTAssertNil(auth.accessToken, "Access token should be cleared")
         XCTAssertNil(auth.refreshToken, "Refresh token should be cleared")
@@ -209,7 +209,6 @@ final class AuthWorkflowTests: XCTestCase {
         let originalIdToken = auth.idToken
         let originalAccessToken = auth.accessToken
 
-        // Setup renewal failure
         mockProvider.canRenewCredentialsResult = true
         mockProvider.shouldFailRenewCredentials = true
 
@@ -242,7 +241,6 @@ final class AuthWorkflowTests: XCTestCase {
         }
         XCTAssertTrue(auth.isLoggedIn)
 
-        // Setup logout session failure
         mockProvider.shouldFailClearSession = true
 
         // Act - Logout (session clear fails, but credential clear succeeds)
@@ -422,7 +420,6 @@ final class AuthWorkflowTests: XCTestCase {
         let testCredentials = createTestCredentials()
         mockProvider.mockCredentials = testCredentials
 
-        // Clear any existing credentials
         _ = realCredentialsManager.clear()
 
         // Act - Login

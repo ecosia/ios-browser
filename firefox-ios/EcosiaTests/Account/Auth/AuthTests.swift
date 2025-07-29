@@ -16,9 +16,7 @@ final class AuthTests: XCTestCase {
         super.setUp()
         mockProvider = MockAuth0Provider()
         auth = Auth(auth0Provider: mockProvider)
-        // Reset call counts after initialization (which calls retrieveStoredCredentials)
         mockProvider.reset()
-        // Ensure clean state for all tests
         mockProvider.hasStoredCredentials = false
     }
 
@@ -210,7 +208,7 @@ final class AuthTests: XCTestCase {
         // Assert
         XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
         XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
-        XCTAssertTrue(auth.isLoggedIn) // Should remain logged in if credentials couldn't be cleared
+        XCTAssertTrue(auth.isLoggedIn)
         XCTAssertNotNil(auth.idToken)
         XCTAssertNotNil(auth.accessToken)
         XCTAssertNotNil(auth.refreshToken)
@@ -495,7 +493,6 @@ final class AuthTests: XCTestCase {
             XCTFail("Login should not fail in test setup: \(error)")
         }
 
-        // Reset call counts after setup
         mockProvider.startAuthCallCount = 0
         mockProvider.storeCredentialsCallCount = 0
     }
