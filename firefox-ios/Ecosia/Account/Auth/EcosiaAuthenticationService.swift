@@ -238,6 +238,9 @@ public final class EcosiaAuthenticationService {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
         }
     }
+}
+
+extension Auth {
 
     /// Fetches detailed user information from Auth0's userInfo endpoint
     private func fetchUserInfoFromAuth0(accessToken: String) async {
