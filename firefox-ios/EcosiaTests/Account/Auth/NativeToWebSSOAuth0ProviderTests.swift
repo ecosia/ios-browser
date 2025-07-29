@@ -22,13 +22,6 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         )
     }
 
-    override func tearDown() {
-        provider = nil
-        mockSettings = nil
-        mockCredentialsManager = nil
-        super.tearDown()
-    }
-
     // MARK: - Initialization Tests
 
     func testInit_withDefaultParameters_createsProvider() {
