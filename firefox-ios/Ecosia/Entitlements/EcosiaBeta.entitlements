@@ -28,5 +28,9 @@
 	<string>development</string>
 	<key>com.apple.developer.browser.app-installation</key>
 	<true/>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>webcredentials:ecosia-staging.eu.auth0.com</string>
+	</array>
 </dict>
 </plist>
