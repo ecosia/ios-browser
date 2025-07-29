@@ -1046,7 +1046,7 @@ class BrowserViewController: UIViewController,
             // Now check login status and act accordingly
             if !authState.isLoggedIn {
                 EcosiaLogger.auth.info("User not logged in after state restoration, starting login flow")
-                ecosiaAuth.login()
+                ecosiaAuth
                     .onNativeAuthCompleted {
                         EcosiaLogger.auth.info("Ecosia native auth completed")
                     }
@@ -1056,6 +1056,7 @@ class BrowserViewController: UIViewController,
                     .onError { error in
                         EcosiaLogger.auth.error("\(error.localizedDescription)")
                     }
+                    .login()
             } else {
                 EcosiaLogger.auth.info("User already logged in after state restoration, skipping login")
             }

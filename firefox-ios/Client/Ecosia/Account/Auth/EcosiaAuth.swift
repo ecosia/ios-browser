@@ -102,9 +102,7 @@ final class EcosiaAuth {
     }
 
     /// Starts the login authentication flow
-    /// - Returns: Self for chaining
-    @discardableResult
-    func login() -> EcosiaAuth {
+    func login() {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
@@ -119,14 +117,10 @@ final class EcosiaAuth {
         Task {
             await performLogin(flow)
         }
-
-        return self
     }
 
     /// Starts the logout authentication flow
-    /// - Returns: Self for chaining
-    @discardableResult
-    func logout() -> EcosiaAuth {
+    func logout() {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
@@ -141,8 +135,6 @@ final class EcosiaAuth {
         Task {
             await performLogout(flow)
         }
-
-        return self
     }
 
     // MARK: - Private Implementation
