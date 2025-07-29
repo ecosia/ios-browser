@@ -11670,28 +11670,37 @@
 		2C4417B32E859380000420EE /* TabManagement */ = {
 			isa = PBXGroup;
 			children = (
+				2C0174952E26E5DA00136A6F /* Auth */,
 				2C4417B12E859380000420EE /* InvisibleTabManager.swift */,
 				2C4417B22E859380000420EE /* TabAutoCloseManager.swift */,
 			);
+			path = Account;
 			path = TabManagement;
 			sourceTree = "<group>";
 		};
+		2C1296EC2B0BA5FC00FC0A04 /* Frontend */ = {
 		2C4417B72E859380000420EE /* Auth */ = {
 			isa = PBXGroup;
 			children = (
+				2C1296ED2B0BA60400FC0A04 /* Home */,
 				2C4417B32E859380000420EE /* TabManagement */,
 				2C4417B42E859380000420EE /* AuthFlow.swift */,
 				2C4417B52E859380000420EE /* EcosiaAuth.swift */,
 				2C4417B62E859380000420EE /* InvisibleTabSession.swift */,
 			);
+			path = Frontend;
 			path = Auth;
 			sourceTree = "<group>";
 		};
+		2C1296ED2B0BA60400FC0A04 /* Home */ = {
 		2C4417B82E859380000420EE /* Account */ = {
 			isa = PBXGroup;
 			children = (
+				12C11E212D281B7200E4DDBF /* EcosiaHomepageSectionType.swift */,
+				2C7DC2342B15F6C700C049C8 /* TopSites */,
 				2C4417B72E859380000420EE /* Auth */,
 			);
+			path = Home;
 			path = Account;
 			sourceTree = "<group>";
 		};
@@ -19123,7 +19132,6 @@
 				C88E7A572A0553360072E638 /* OnboardingButtonInfoModel.swift in Sources */,
 				AB9A0C012C6CBC9100BFA22A /* TrackingProtectionDetailsViewController.swift in Sources */,
 				21B548952B1E5F1400DC1DF8 /* InactiveTabsManager.swift in Sources */,
-				2C0174972E26E5DA00136A6F /* EcosiaAuth.swift in Sources */,
 				12AEB1292D3A9AE70035D7D8 /* CreditCardPayload.swift in Sources */,
 				C8F457A81F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift in Sources */,
 				2CE48EDA2E29B5C400CE84CE /* EcosiaAuth.swift in Sources */,
