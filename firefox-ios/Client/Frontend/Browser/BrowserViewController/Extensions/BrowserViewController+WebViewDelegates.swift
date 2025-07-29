@@ -454,6 +454,12 @@ extension BrowserViewController: WKNavigationDelegate {
             }
         }
 
+        // Ecosia: Detect authentication URLs and trigger native auth flows
+        if detectAndHandleAuthURL(url, for: tab) {
+            decisionHandler(.cancel)
+            return
+        }
+
         if InternalURL.isValid(url: url) {
             if navigationAction.navigationType != .backForward,
                navigationAction.isInternalUnprivileged,

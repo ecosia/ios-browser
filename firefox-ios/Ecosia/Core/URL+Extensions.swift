@@ -117,7 +117,7 @@ extension URL {
         components?.queryItems?.first { $0.name == itemName.rawValue }?.value
     }
 
-    private func isEcosia(_ urlProvider: URLProvider = Environment.current.urlProvider) -> Bool {
+    public func isEcosia(_ urlProvider: URLProvider = Environment.current.urlProvider) -> Bool {
         guard let domain = urlProvider.domain else { return false }
         let isBrowser = scheme.flatMap(Scheme.init(rawValue:))?.isBrowser == true
         let hasURLProviderDomainSuffix = host?.hasSuffix(domain) == true

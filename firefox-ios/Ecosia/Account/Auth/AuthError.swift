@@ -10,6 +10,9 @@ public enum AuthError: Error, LocalizedError {
     case credentialsClearingFailed
     case credentialsRenewalFailed(Error)
     case sessionClearingFailed(Error)
+    case authFlowConfigurationError(String)
+    case authFlowSessionManagementFailed(String)
+    case authFlowInvisibleTabCreationFailed
 
     public var errorDescription: String? {
         switch self {
@@ -25,6 +28,12 @@ public enum AuthError: Error, LocalizedError {
             return "Failed to renew credentials: \(error.localizedDescription)"
         case .sessionClearingFailed(let error):
             return "Failed to clear web session and credentials: \(error.localizedDescription)"
+        case .authFlowConfigurationError(let message):
+            return "Authentication flow configuration error: \(message)"
+        case .authFlowSessionManagementFailed(let message):
+            return "Authentication flow session management failed: \(message)"
+        case .authFlowInvisibleTabCreationFailed:
+            return "Authentication flow failed to create required background tabs"
         }
     }
 }
