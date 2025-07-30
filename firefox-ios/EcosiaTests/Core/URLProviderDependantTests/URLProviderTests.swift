@@ -43,6 +43,79 @@ final class URLProviderTests: XCTestCase {
         Language.current = def
     }
 
+    // MARK: - Auth0 Configuration Tests
+
+    func testAuth0Domain_production() {
+        let provider = URLProvider.production
+        XCTAssertEqual(provider.auth0Domain, "ecosia.eu.auth0.com")
+    }
+
+    func testAuth0Domain_staging() {
+        let provider = URLProvider.staging
+        XCTAssertEqual(provider.auth0Domain, "ecosia-staging.eu.auth0.com")
+    }
+
+    func testAuth0Domain_debug() {
+        let provider = URLProvider.debug
+        XCTAssertEqual(provider.auth0Domain, "ecosia-dev.eu.auth0.com")
+    }
+
+    func testAuth0CookieDomain_production() {
+        let provider = URLProvider.production
+        XCTAssertEqual(provider.auth0CookieDomain, ".ecosia.org")
+    }
+
+    func testAuth0CookieDomain_staging() {
+        let provider = URLProvider.staging
+        XCTAssertEqual(provider.auth0CookieDomain, "login.ecosia-staging.xyz")
+    }
+
+    func testAuth0CookieDomain_debug() {
+        let provider = URLProvider.debug
+        XCTAssertEqual(provider.auth0CookieDomain, "login.ecosia-dev.xyz")
+    }
+
+    // MARK: - Environment to URLProvider Mapping Tests
+
+    func testEnvironmentDebugMapsToURLProviderDebug() {
+        let environment = Environment.debug
+        XCTAssertEqual(environment.urlProvider, URLProvider.debug)
+    }
+
+    func testEnvironmentProductionMapsToURLProviderProduction() {
+        let environment = Environment.production
+        XCTAssertEqual(environment.urlProvider, URLProvider.production)
+    }
+
+    func testEnvironmentStagingMapsToURLProviderStaging() {
+        let environment = Environment.staging
+        XCTAssertEqual(environment.urlProvider, URLProvider.staging)
+    }
+
+    // MARK: - Debug Configuration Tests
+
+    func testDebugFollowsProductionConfiguration() {
+        let debugProvider = URLProvider.debug
+        let productionProvider = URLProvider.production
+
+        // Debug should follow production for these properties
+        XCTAssertEqual(debugProvider.root, productionProvider.root)
+        XCTAssertEqual(debugProvider.apiRoot, productionProvider.apiRoot)
+        XCTAssertEqual(debugProvider.snowplowMicro, productionProvider.snowplowMicro)
+        XCTAssertEqual(debugProvider.unleash, productionProvider.unleash)
+        XCTAssertEqual(debugProvider.brazeEndpoint, productionProvider.brazeEndpoint)
+        XCTAssertEqual(debugProvider.statistics, productionProvider.statistics)
+    }
+
+    func testDebugSnowplowFollowsStaging() {
+        let debugProvider = URLProvider.debug
+        let stagingProvider = URLProvider.staging
+
+        // Debug should follow staging only for snowplow
+        XCTAssertEqual(debugProvider.snowplow, stagingProvider.snowplow)
+        XCTAssertEqual(debugProvider.snowplow, "org-ecosia-prod1.mini.snplow.net")
+    }
+
     func testTrees() {
         let def = Language.current
         Language.current = .en
