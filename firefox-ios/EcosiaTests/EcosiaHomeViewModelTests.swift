@@ -21,7 +21,7 @@ class EcosiaHomeViewModelTests: XCTestCase {
         tabManager = MockTabManager()
         referrals = Referrals()
         theme = LightTheme()
-        
+
         User.shared = User()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         // Clean user defaults to avoid having flaky test changing the section count
