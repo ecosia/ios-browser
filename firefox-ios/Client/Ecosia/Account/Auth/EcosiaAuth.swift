@@ -59,7 +59,7 @@ final class EcosiaAuth {
          authProvider: Ecosia.Auth = Ecosia.Auth.shared) {
         self.authProvider = authProvider
         self.browserViewController = browserViewController
-
+        self.browserViewController?.ecosiaAuth = self
         EcosiaLogger.auth.info("EcosiaAuth initialized")
     }
 
@@ -193,5 +193,9 @@ final class EcosiaAuth {
 
     var accessToken: String? {
         return authProvider.accessToken
+    }
+
+    var userProfile: UserProfile? {
+        return authProvider.userProfile
     }
 }
