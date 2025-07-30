@@ -10,11 +10,18 @@ import Common
 class EcosiaHomeViewModelTests: XCTestCase {
 
     var profile: MockProfile!
+    var tabManager: MockTabManager!
+    var referrals: Referrals!
+    var theme: Theme!
 
     override func setUp() {
         super.setUp()
 
         profile = MockProfile()
+        tabManager = MockTabManager()
+        referrals = Referrals()
+        theme = LightTheme()
+        
         User.shared = User()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         // Clean user defaults to avoid having flaky test changing the section count
@@ -34,9 +41,11 @@ class EcosiaHomeViewModelTests: XCTestCase {
 
     func testNumberOfSection_withoutUpdatingData_has4Sections() {
         let viewModel = HomepageViewModel(profile: profile,
-                                          isPrivate: false,
-                                          tabManager: MockTabManager(),
-                                          theme: EcosiaLightTheme())
+                                           isPrivate: false,
+                                           tabManager: tabManager,
+                                           referrals: referrals,
+                                           theme: theme,
+                                           ecosiaAuth: EcosiaAuth(browserViewController: nil))
         User.shared.showClimateImpact = true
 
         XCTAssertEqual(viewModel.shownSections.count, 4)
