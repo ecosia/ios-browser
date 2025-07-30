@@ -137,7 +137,8 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
     var newsViewModel: NTPNewsCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
     var climateImpactCounterViewModel: NTPSeedCounterViewModel
-    /* 
+    var accountLoginViewModel: NTPAccountLoginViewModel
+    /*
      Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
      The earlier a section type appears in the array, the higher its priority.
      */
@@ -152,7 +153,9 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
          isZeroSearch: Bool = false,
          theme: Theme,
          wallpaperManager: WallpaperManager = WallpaperManager(),
-         logger: Logger = DefaultLogger.shared) {
+         logger: Logger = DefaultLogger.shared,
+         // Ecosia: Add EcosiaAuth
+         auth: EcosiaAuth) {
         self.profile = profile
         self.isZeroSearch = isZeroSearch
         self.theme = theme
@@ -174,6 +177,10 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
         self.climateImpactCounterViewModel = NTPSeedCounterViewModel(profile: profile, theme: theme)
+        self.accountLoginViewModel = NTPAccountLoginViewModel(profile: profile,
+                                                              theme: theme,
+                                                              auth: auth,
+                                                              windowUUID: windowUUID)
 
         self.wallpaperManager = wallpaperManager
         /* Ecosia: Remove `jumpBackIn` section reference
@@ -228,7 +235,8 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
         ]
          */
         // Ecosia: Those models needs to follow strictly the order defined in `enum HomepageSectionType`
-        self.childViewModels = [climateImpactCounterViewModel,
+        self.childViewModels = [accountLoginViewModel,
+                                climateImpactCounterViewModel,
                                 headerViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,
