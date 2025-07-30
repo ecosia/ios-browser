@@ -14,7 +14,7 @@ import Common
 
  ## Usage
 
- ```swift 
+ ```swift
  ecosiaAuth
      .onNativeAuthCompleted {
          // Called when Auth0 authentication completes
