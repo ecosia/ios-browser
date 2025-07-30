@@ -17,7 +17,7 @@ final class NTPAccountLoginCellTests: SnapshotBaseTests {
     func testNTPAccountLoginCell() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPAccountLoginCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
-            
+
             // Create a test view model with proper EcosiaAuth
             let testAuth = EcosiaAuth(browserViewController: nil)
             let testViewModel = NTPAccountLoginViewModel(
@@ -26,14 +26,14 @@ final class NTPAccountLoginCellTests: SnapshotBaseTests {
                 auth: testAuth,
                 windowUUID: .snapshotTestDefaultUUID
             )
-            
+
             // Configure the cell
             cell.configure(with: testViewModel, windowUUID: .snapshotTestDefaultUUID)
-            
+
             return cell
         })
     }
-    
+
     func testNTPAccountLoginCellSwiftUIView() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             // Create a test view model with proper EcosiaAuth
@@ -44,18 +44,18 @@ final class NTPAccountLoginCellTests: SnapshotBaseTests {
                 auth: testAuth,
                 windowUUID: .snapshotTestDefaultUUID
             )
-            
+
             // Create the SwiftUI view
             let swiftUIView = NTPAccountLoginCellView(
                 viewModel: testViewModel,
                 windowUUID: .snapshotTestDefaultUUID
             )
-            
+
             // Wrap in a hosting controller for snapshot testing
             let hostingController = UIHostingController(rootView: swiftUIView)
             hostingController.view.frame = CGRect(x: 0, y: 0, width: self.commonWidth, height: 100)
-            
+
             return hostingController.view
         })
     }
-} 
+}
