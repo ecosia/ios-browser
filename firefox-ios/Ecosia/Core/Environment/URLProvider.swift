@@ -210,6 +210,30 @@ public enum URLProvider {
         root.appendingPathComponent("accounts/sign-out")
     }
 
+    // MARK: - Auth0 Configuration
+
+    /// Auth0 domain for authentication
+    public var auth0Domain: String {
+        switch self {
+        case .production:
+            return "ecosia.eu.auth0.com"
+        case .staging:
+            return "ecosia-staging.eu.auth0.com"
+        case .debug:
+            return "ecosia-dev.eu.auth0.com"
+        }
+    }
+
+    /// Auth0 cookie domain for session management
+    public var auth0CookieDomain: String {
+        switch self {
+        case .production:
+            return ".ecosia.org"
+        case .staging:
+            return "login.ecosia-staging.xyz"
+        case .debug:
+            return "login.ecosia-dev.xyz"
+        }
     public var storeWriteReviewPage: URL {
         URL(string: "https://itunes.apple.com/app/id1474845552/action=write-review")!
 	}
