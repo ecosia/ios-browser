@@ -9,4 +9,8 @@ extension Notification.Name {
     /// Posted when authentication state changes for any window
     /// UserInfo contains: windowUUID, authState, actionType
     public static let EcosiaAuthStateChanged = Notification.Name("EcosiaAuthStateChanged")
+
+    /// Posted when user profile information is updated from Auth0
+    /// This includes user name, email, and profile picture URL
+    public static let EcosiaUserProfileUpdated = Notification.Name("EcosiaUserProfileUpdated")
 }

@@ -6,6 +6,7 @@ import Common
 import Foundation
 import Shared
 import SwiftUI
+import Ecosia
 
 final class NTPAccountLoginViewModel: ObservableObject {
     struct UX {
@@ -16,16 +17,17 @@ final class NTPAccountLoginViewModel: ObservableObject {
     @Published var seedCount: Int = 1
     @Published var isLoggedIn: Bool = false
     @Published var userAvatarURL: URL?
-    
+
     // MARK: - Private Properties
     private let profile: Profile
     private(set) var auth: EcosiaAuth
     private let windowUUID: WindowUUID
     private var authStateObserver: NSObjectProtocol?
+    private var userProfileObserver: NSObjectProtocol?
     weak var delegate: NTPSeedCounterDelegate?
     var onTapAction: ((UIButton) -> Void)?
     var theme: Theme
-    
+
     // MARK: - Initialization
     init(profile: Profile,
          theme: Theme,
@@ -35,52 +37,80 @@ final class NTPAccountLoginViewModel: ObservableObject {
         self.auth = auth
         self.theme = theme
         self.windowUUID = windowUUID
-        
+
         // Initialize auth state
         updateAuthState()
-        
+
         // Set up auth state monitoring
         setupAuthStateMonitoring()
     }
-    
+
     deinit {
-        // Remove notification observer
+        // Remove notification observers
         if let observer = authStateObserver {
             NotificationCenter.default.removeObserver(observer)
         }
+        if let observer = userProfileObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
-    
+
     // MARK: - Public Methods
-    
+
     func updateSeedCount(_ count: Int) {
         seedCount = count
     }
-    
-    func performLogin() {
-        auth.login()
+
+        func performLogin() {
+        Task {
+            await auth.login()
+        }
     }
-    
+
     func performLogout() {
-        auth.logout()
+        Task {
+            await auth.logout()
+        }
     }
-    
+
     // MARK: - Private Methods
-    
-    private func updateAuthState() {
+
+        private func updateAuthState() {
         isLoggedIn = auth.isLoggedIn
-        
-        // TODO: Get user avatar URL from EcosiaAuth when available
-        // For now, using placeholder
-        userAvatarURL = nil
+
+        // Update user avatar URL from auth profile
+        updateUserAvatar()
+
+        // Update seed count from User.shared if needed
+        // Note: This is commented out as seedCount is managed separately
+        // seedCount = Ecosia.User.shared.searchCount
     }
-    
+
+    private func updateUserAvatar() {
+        userAvatarURL = auth.userProfile?.pictureURL
+    }
+
     private func setupAuthStateMonitoring() {
-        NotificationCenter.default.addObserver(
+        // Listen for auth state changes
+        authStateObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaAuthStateChanged,
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.updateAuthState()
+            DispatchQueue.main.async {
+                self?.updateAuthState()
+            }
+        }
+
+        // Listen for user profile updates
+        userProfileObserver = NotificationCenter.default.addObserver(
+            forName: .EcosiaUserProfileUpdated,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.updateUserAvatar()
+            }
         }
     }
 }
