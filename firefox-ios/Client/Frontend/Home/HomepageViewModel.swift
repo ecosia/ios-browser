@@ -138,7 +138,8 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
     var newsViewModel: NTPNewsCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
     var climateImpactCounterViewModel: NTPSeedCounterViewModel
-    /* 
+    var accountLoginViewModel: NTPAccountLoginViewModel
+    /*
      Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
      The earlier a section type appears in the array, the higher its priority.
      */
@@ -154,6 +155,8 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
          theme: Theme,
          wallpaperManager: WallpaperManager = WallpaperManager(),
          logger: Logger = DefaultLogger.shared,
+         // Ecosia: Add EcosiaAuth
+         auth: EcosiaAuth,
          // Ecosia: Add delegate for multi-purpose header actions
          multiPurposeEcosiaHeaderDelegate: NTPHeaderDelegate? = nil) {
         self.profile = profile
@@ -178,6 +181,10 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
         self.climateImpactCounterViewModel = NTPSeedCounterViewModel(profile: profile, theme: theme)
+        self.accountLoginViewModel = NTPAccountLoginViewModel(profile: profile,
+                                                              theme: theme,
+                                                              auth: auth,
+                                                              windowUUID: windowUUID)
 
         self.wallpaperManager = wallpaperManager
         /* Ecosia: Remove `jumpBackIn` section reference
