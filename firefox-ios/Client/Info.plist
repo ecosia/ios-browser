@@ -4,10 +4,6 @@
 <dict>
 	<key>AUTH0_CLIENT_ID</key>
 	<string>$(AUTH0_CLIENT_ID)</string>
-	<key>AUTH0_COOKIE_DOMAIN</key>
-	<string>$(AUTH0_COOKIE_DOMAIN)</string>
-	<key>AUTH0_DOMAIN</key>
-	<string>$(AUTH0_DOMAIN)</string>
 	<key>AdjustAppToken</key>
 	<string>$(ADJUST_APP_TOKEN)</string>
 	<key>AppIdentifierPrefix</key>

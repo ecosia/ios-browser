@@ -18,17 +18,11 @@ public struct DefaultAuth0SettingsProvider: Auth0SettingsProviderProtocol {
     }
 
     public var domain: String {
-        guard let domain = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_DOMAIN") else {
-            fatalError("AUTH0_DOMAIN not found")
-        }
-        return domain
+        return Environment.current.urlProvider.auth0Domain
     }
 
     public var cookieDomain: String {
-        guard let cookieDomain = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_COOKIE_DOMAIN") else {
-            fatalError("AUTH0_COOKIE_DOMAIN not found")
-        }
-        return cookieDomain
+        return Environment.current.urlProvider.auth0CookieDomain
     }
 
     public init() {}

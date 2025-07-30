@@ -8,10 +8,11 @@ public enum URLProvider {
 
     case production
     case staging
+    case debug
 
     public var root: URL {
         switch self {
-        case .production:
+        case .production, .debug:
             return URL(string: "https://www.ecosia.org")!
         case .staging:
             return URL(string: "https://www.ecosia-staging.xyz")!
@@ -30,7 +31,7 @@ public enum URLProvider {
 
     public var apiRoot: URL {
         switch self {
-        case .production:
+        case .production, .debug:
             return URL(string: "https://api.ecosia.org")!
         case .staging:
             return URL(string: "https://api.ecosia-staging.xyz")!
@@ -38,24 +39,26 @@ public enum URLProvider {
     }
 
     public var snowplowMicro: String? {
-        if case .staging = self {
+        switch self {
+        case .staging:
             return "https://www.ecosia-staging.xyz/analytics-test-micro"
+        case .production, .debug:
+            return nil
         }
-        return nil
     }
 
     public var snowplow: String {
         switch self {
         case .production:
             return "sp.ecosia.org"
-        case .staging:
+        case .staging, .debug:
             return "org-ecosia-prod1.mini.snplow.net"
         }
     }
 
     var unleash: String {
         switch self {
-        case .production:
+        case .production, .debug:
             return "prod"
         case .staging:
             return "staging"
@@ -209,5 +212,31 @@ public enum URLProvider {
     /// Complete URL for user logout/sign-out flow
     public var logoutURL: URL {
         root.appendingPathComponent("accounts/sign-out")
+    }
+
+    // MARK: - Auth0 Configuration
+
+    /// Auth0 domain for authentication
+    public var auth0Domain: String {
+        switch self {
+        case .production:
+            return "ecosia.eu.auth0.com"
+        case .staging:
+            return "ecosia-staging.eu.auth0.com"
+        case .debug:
+            return "ecosia-dev.eu.auth0.com"
+        }
+    }
+
+    /// Auth0 cookie domain for session management
+    public var auth0CookieDomain: String {
+        switch self {
+        case .production:
+            return ".ecosia.org"
+        case .staging:
+            return "login.ecosia-staging.xyz"
+        case .debug:
+            return "login.ecosia-dev.xyz"
+        }
     }
 }
