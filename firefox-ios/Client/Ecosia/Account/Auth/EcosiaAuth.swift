@@ -6,26 +6,6 @@ import Foundation
 import Ecosia
 import Common
 
-// MARK: - Constants
-
-/// Constants for authentication flow notifications and userInfo keys
-public enum EcosiaAuthConstants {
-
-    enum Keys {
-        /// Notification userInfo keys
-        public static let windowUUID = "windowUUID"
-        public static let authState = "authState"
-        public static let actionType = "actionType"
-    }
-
-    enum State: String, CaseIterable {
-        case userLoggedIn
-        case userLoggedOut
-        case authenticationStarted
-        case authenticationFailed
-    }
-}
-
 /**
  EcosiaAuth provides authentication management for the Ecosia browser.
 
@@ -121,24 +101,6 @@ final class EcosiaAuth {
         return self
     }
 
-    /// Sets callback for when an error occurs during the authentication flow
-    /// - Parameter callback: Closure called with the error when authentication fails
-    /// - Returns: Self for chaining
-    @discardableResult
-    public func onError(_ callback: @escaping (Error) -> Void) -> AuthenticationFlow {
-        onErrorCallback = callback
-        return self
-    }
-    
-    /// Sets the delay before firing the onNativeAuthCompleted callback
-    /// - Parameter delay: Delay in seconds before calling onNativeAuthCompleted
-    /// - Returns: Self for chaining
-    @discardableResult
-    public func withDelayedCompletion(_ delay: TimeInterval) -> AuthenticationFlow {
-        delayedCompletionTime = delay
-        return self
-    }
-
     /// Starts the login authentication flow
     func login() {
         guard let browserViewController = browserViewController else {
@@ -213,8 +175,6 @@ final class EcosiaAuth {
         }
     }
 
-    private func handleNativeAuthCompletion() {
-        EcosiaLogger.auth("Native Auth0 authentication completed")
     // MARK: - State Queries
 
     var isLoggedIn: Bool {
