@@ -49,6 +49,10 @@ public final class Auth {
     /// This property is automatically updated when login/logout operations complete successfully.
     public private(set) var isLoggedIn: Bool = false
 
+    /// The current user's profile information from Auth0.
+    /// This includes name, email, profile picture URL, etc.
+    public private(set) var userProfile: UserProfile?
+
     // MARK: - Initialization
 
     /**
@@ -86,6 +90,7 @@ public final class Auth {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
                 setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+                await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
                 EcosiaLogger.auth.info("Login completed successfully")
             } else {
                 EcosiaLogger.auth.error("Credential storage failed (returned false)")
@@ -120,6 +125,8 @@ public final class Auth {
 
         if credentialsCleared {
             setupTokensWithCredentials(nil)
+            // Clear user profile on logout
+            userProfile = nil
             EcosiaLogger.auth.info("Credentials cleared successfully")
 
             // If we had a session clearing error but credentials cleared successfully,
@@ -157,6 +164,7 @@ public final class Auth {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
             // Dispatch state loaded with current authentication status
@@ -211,6 +219,34 @@ public final class Auth {
         // Dispatch state change to the new state management system
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
+        }
+    }
+
+    /// Fetches detailed user information from Auth0's userInfo endpoint
+    private func fetchUserInfoFromAuth0(accessToken: String) async {
+        do {
+            let userInfo = try await Auth0
+                .authentication(clientId: auth0Provider.settings.id,
+                                domain: auth0Provider.settings.domain)
+                .userInfo(withAccessToken: accessToken)
+                .start()
+
+            // Update user profile with actual data from Auth0
+            self.userProfile = UserProfile(
+                name: userInfo.name ?? userInfo.nickname,
+                email: userInfo.email,
+                picture: userInfo.picture?.absoluteString,
+                sub: userInfo.sub
+            )
+
+            EcosiaLogger.auth.info("Updated user profile with Auth0 data: name=\(userInfo.name ?? "nil"), email=\(userInfo.email ?? "nil"), picture=\(userInfo.picture?.absoluteString ?? "nil")")
+
+            // Notify UI that profile was updated
+            await MainActor.run {
+                NotificationCenter.default.post(name: .EcosiaUserProfileUpdated, object: nil)
+            }
+        } catch {
+            EcosiaLogger.auth.error("Failed to fetch user info from Auth0: \(error)")
         }
     }
 }

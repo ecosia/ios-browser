@@ -40,11 +40,11 @@ enum HomepageSectionType: Int, CaseIterable {
 
     static var cellTypes: [ReusableCell.Type] {
         var types: [ReusableCell.Type] = []
-        
+
         if #available(iOS 16.0, *) {
             types.append(NTPAccountLoginCell.self)
         }
-        
+
         types.append(contentsOf: [
             NTPSeedCounterCell.self,
             NTPLogoCell.self,
@@ -55,7 +55,7 @@ enum HomepageSectionType: Int, CaseIterable {
             NTPNewsCell.self,
             NTPCustomizationCell.self
         ])
-        
+
         return types
     }
 
