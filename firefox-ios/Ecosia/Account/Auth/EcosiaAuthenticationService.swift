@@ -238,6 +238,34 @@ public final class EcosiaAuthenticationService {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
         }
     }
+
+    /// Fetches detailed user information from Auth0's userInfo endpoint
+    private func fetchUserInfoFromAuth0(accessToken: String) async {
+        do {
+            let userInfo = try await Auth0
+                .authentication(clientId: auth0Provider.settings.id,
+                                domain: auth0Provider.settings.domain)
+                .userInfo(withAccessToken: accessToken)
+                .start()
+
+            // Update user profile with actual data from Auth0
+            self.userProfile = UserProfile(
+                name: userInfo.name ?? userInfo.nickname,
+                email: userInfo.email,
+                picture: userInfo.picture?.absoluteString,
+                sub: userInfo.sub
+            )
+
+            EcosiaLogger.auth.info("Updated user profile with Auth0 data: name=\(userInfo.name ?? "nil"), email=\(userInfo.email ?? "nil"), picture=\(userInfo.picture?.absoluteString ?? "nil")")
+
+            // Notify UI that profile was updated
+            await MainActor.run {
+                NotificationCenter.default.post(name: .EcosiaUserProfileUpdated, object: nil)
+            }
+        } catch {
+            EcosiaLogger.auth.error("Failed to fetch user info from Auth0: \(error)")
+        }
+    }
 }
 
 extension Auth {

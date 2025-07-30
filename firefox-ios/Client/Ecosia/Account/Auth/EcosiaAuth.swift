@@ -208,4 +208,8 @@ final class EcosiaAuth {
     func renewCredentialsIfNeeded() async throws {
         try await authService.renewCredentialsIfNeeded()
     }
+
+    var userProfile: UserProfile? {
+        return authProvider.userProfile
+    }
 }
