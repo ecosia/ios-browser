@@ -25,27 +25,29 @@ final class DefaultAuth0SettingsProviderTests: XCTestCase {
 
     // MARK: - Domain Tests
 
-    func testDomain_withValidEnvironmentVariable_returnsCorrectValue() {
+    func testDomain_returnsValueFromURLProvider() {
         // Arrange
-        // Build Settings variables should be set up in the test scheme
+        let expectedDomain = Environment.current.urlProvider.auth0Domain
 
         // Act
         let domain = settingsProvider.domain
 
         // Assert
+        XCTAssertEqual(domain, expectedDomain, "Domain should match the URLProvider auth0Domain")
         XCTAssertFalse(domain.isEmpty, "Domain should not be empty")
     }
 
     // MARK: - Cookie Domain Tests
 
-    func testCookieDomain_withValidEnvironmentVariable_returnsCorrectValue() {
+    func testCookieDomain_returnsValueFromURLProvider() {
         // Arrange
-        // Build Settings variables should be set up in the test scheme
+        let expectedCookieDomain = Environment.current.urlProvider.auth0CookieDomain
 
         // Act
         let cookieDomain = settingsProvider.cookieDomain
 
         // Assert
+        XCTAssertEqual(cookieDomain, expectedCookieDomain, "Cookie domain should match the URLProvider auth0CookieDomain")
         XCTAssertFalse(cookieDomain.isEmpty, "Cookie domain should not be empty")
     }
 
