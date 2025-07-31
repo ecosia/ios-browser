@@ -18,76 +18,20 @@ struct NTPAccountLoginCellView: View {
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
 
-    private enum UX {
-        static let seedIconSize: CGFloat = 24
-        static let avatarSize: CGFloat = 32
-        static let height: CGFloat = 40
-        static let minWidth: CGFloat = 88
-        // Using Ecosia design system values
-        static let gap: CGFloat = .ecosia.space._1s // space-1s = 8pt
-        static let paddingVertical: CGFloat = .ecosia.space._2s // space-2s = 4pt
-        static let paddingHorizontal: CGFloat = .ecosia.space._2s // space-2s = 4pt
-        static let paddingLeft: CGFloat = .ecosia.space._1s // space-1s = 8pt
-        static let cornerRadius: CGFloat = 20 // border-radius-full (height/2)
-    }
-
     var body: some View {
         HStack {
-            Spacer() // Push content to the right
+            Spacer()
 
-            Button(action: handleTap) {
-                HStack(spacing: UX.gap) {
-                    // Seed icon from Ecosia framework
-                    Image("seed", bundle: .ecosia)
-                        .resizable()
-                        .frame(width: UX.seedIconSize, height: UX.seedIconSize)
-
-                    // Animated seed count
-                    Text("\(viewModel.seedCount)")
-                        .font(.headline)
-                        .foregroundColor(Color(themeManager.getCurrentTheme(for: windowUUID).colors.textPrimary))
-                        .contentTransition(.numericText())
-                        .animation(reduceMotion ? nil : .easeInOut(duration: 0.3), value: viewModel.seedCount)
-
-                    // Avatar - real user image or placeholder
-                    Group {
-                        if let avatarURL = viewModel.userAvatarURL {
-                            AsyncImage(url: avatarURL) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                            } placeholder: {
-                                // Show loading placeholder
-                                Circle()
-                                    .fill(Color(themeManager.getCurrentTheme(for: windowUUID).colors.iconSecondary))
-                            }
-                            .frame(width: UX.avatarSize, height: UX.avatarSize)
-                            .clipShape(Circle())
-                        } else {
-                            // Fallback to Ecosia avatar placeholder
-                            Circle()
-                                .fill(Color(themeManager.getCurrentTheme(for: windowUUID).colors.iconSecondary))
-                                .frame(width: UX.avatarSize, height: UX.avatarSize)
-                                .overlay(
-                                    Image("avatar", bundle: .ecosia)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding(6)
-                                        .foregroundColor(Color(themeManager.getCurrentTheme(for: windowUUID).colors.iconPrimary))
-                                )
-                        }
-                    }
-                }
-                .padding(.top, UX.paddingVertical)
-                .padding(.bottom, UX.paddingVertical)
-                .padding(.leading, UX.paddingLeft)
-                .padding(.trailing, UX.paddingHorizontal)
-                .frame(minWidth: UX.minWidth, minHeight: UX.height, maxHeight: UX.height)
-                .background(Color(themeManager.getCurrentTheme(for: windowUUID).colors.layer1))
-                .cornerRadius(UX.cornerRadius)
-            }
-            .buttonStyle(PlainButtonStyle())
+            EcosiaAccountNavButton(
+                seedCount: viewModel.seedCount,
+                avatarURL: viewModel.userAvatarURL,
+                backgroundColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundElevation1),
+                textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary),
+                enableAnimation: !reduceMotion,
+                onTap: handleTap
+            )
         }
+        .padding(.trailing, .ecosia.space._m)
     }
 
     private func handleTap() {
@@ -97,24 +41,12 @@ struct NTPAccountLoginCellView: View {
             viewModel.performLogin()
         }
     }
-
-    private func applyTheme() {
-        // Theme is already applied through environment
-    }
 }
 
 // MARK: - UIKit Wrapper for Collection View Cell
 
 @available(iOS 16.0, *)
 final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
-
-    // MARK: - UX Constants
-    private enum UX {
-        static let containerHeight: CGFloat = 64
-        static let insetMargin: CGFloat = 16
-        static let avatarSize: CGFloat = 32
-        static let stackSpacing: CGFloat = 4
-    }
 
     // MARK: - Properties
     private var hostingController: UIHostingController<AnyView>?
