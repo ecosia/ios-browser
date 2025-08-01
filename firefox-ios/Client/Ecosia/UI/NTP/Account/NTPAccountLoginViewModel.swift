@@ -17,6 +17,7 @@ final class NTPAccountLoginViewModel: ObservableObject {
     @Published var seedCount: Int = 1
     @Published var isLoggedIn: Bool = false
     @Published var userAvatarURL: URL?
+    @Published var balanceIncrement: Int?
 
     // MARK: - Private Properties
     private let profile: Profile
@@ -27,16 +28,19 @@ final class NTPAccountLoginViewModel: ObservableObject {
     weak var delegate: NTPSeedCounterDelegate?
     var onTapAction: ((UIButton) -> Void)?
     var theme: Theme
+    private let accountsProvider: AccountsProvider
 
     // MARK: - Initialization
     init(profile: Profile,
          theme: Theme,
          auth: EcosiaAuth,
-         windowUUID: WindowUUID) {
+         windowUUID: WindowUUID,
+         accountsProvider: AccountsProvider = AccountsProvider()) {
         self.profile = profile
         self.auth = auth
         self.theme = theme
         self.windowUUID = windowUUID
+        self.accountsProvider = accountsProvider
 
         // Initialize auth state
         updateAuthState()
@@ -61,29 +65,98 @@ final class NTPAccountLoginViewModel: ObservableObject {
         seedCount = count
     }
 
-        func performLogin() {
-        Task {
-            await auth.login()
-        }
+    func performLogin() {
+        auth.login()
     }
 
     func performLogout() {
+        auth.logout()
+    }
+
+    func registerVisitIfNeeded() {
         Task {
-            await auth.logout()
+            do {
+                // Step 2: Get access token after refresh
+                guard let accessToken = auth.accessToken, !accessToken.isEmpty else {
+                    EcosiaLogger.accounts.debug("No access token available - user not logged in")
+                    return
+                }
+                
+                // Step 3: Make API call (or use mock for testing)
+                EcosiaLogger.accounts.info("Registering user visit for balance update")
+                let response = try await getMockOrRealResponse(accessToken: accessToken)
+                await updateBalance(response)
+                
+            } catch {
+                EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    // MARK: - API Response (Mock for Testing)
+    
+    private func getMockOrRealResponse(accessToken: String) async throws -> AccountBalanceResponse {
+        // TODO: Switch between mock and real API for testing
+        let useMockData = true // Set to false for real API calls
+        
+        if useMockData {
+            EcosiaLogger.accounts.info("Using mock response for testing")
+            return createMockResponse()
+        } else {
+            return try await accountsProvider.registerVisit(accessToken: accessToken)
+        }
+    }
+    
+    private func createMockResponse() -> AccountBalanceResponse {
+        let currentBalance = seedCount
+        let increment = Int.random(in: 1...3) // Random increment for testing
+        
+        return AccountBalanceResponse(
+            balance: AccountBalanceResponse.Balance(
+                amount: currentBalance + increment,
+                updatedAt: ISO8601DateFormatter().string(from: Date()),
+                isModified: true
+            ),
+            previousBalance: AccountBalanceResponse.PreviousBalance(
+                amount: currentBalance
+            )
+        )
+    }
+
+    // MARK: - Auth State Synchronization
+
+
+
+    @MainActor
+    private func updateBalance(_ response: AccountBalanceResponse) {
+        let newSeedCount = response.balance.amount
+
+        if let increment = response.balanceIncrement {
+            EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment))")
+            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
+        } else {
+            EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount)")
+            seedCount = newSeedCount
+        }
+    }
+
+    @MainActor
+    private func animateBalanceChange(from oldValue: Int, to newValue: Int, increment: Int) {
+        seedCount = newValue
+        balanceIncrement = increment
+
+        // Clear the increment after animation duration
+        Task {
+            try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+            balanceIncrement = nil
         }
     }
 
     // MARK: - Private Methods
 
-        private func updateAuthState() {
+    private func updateAuthState() {
         isLoggedIn = auth.isLoggedIn
-
-        // Update user avatar URL from auth profile
         updateUserAvatar()
-
-        // Update seed count from User.shared if needed
-        // Note: This is commented out as seedCount is managed separately
-        // seedCount = Ecosia.User.shared.searchCount
     }
 
     private func updateUserAvatar() {
@@ -96,9 +169,16 @@ final class NTPAccountLoginViewModel: ObservableObject {
             forName: .EcosiaAuthStateChanged,
             object: nil,
             queue: .main
-        ) { [weak self] _ in
+        ) { [weak self] notification in
             DispatchQueue.main.async {
                 self?.updateAuthState()
+
+                // Register visit when user logs in (same simple flow)
+                if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType,
+                   actionType == .userLoggedIn {
+                    EcosiaLogger.accounts.info("User logged in - registering visit")
+                    self?.registerVisitIfNeeded()
+                }
             }
         }
 
@@ -113,6 +193,8 @@ final class NTPAccountLoginViewModel: ObservableObject {
             }
         }
     }
+
+
 }
 
 // MARK: HomeViewModelProtocol
