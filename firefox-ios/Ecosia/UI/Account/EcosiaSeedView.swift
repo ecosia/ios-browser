@@ -34,12 +34,26 @@ public struct EcosiaSeedView: View {
                 .resizable()
                 .frame(width: iconSize, height: iconSize)
 
-            Text("\(seedCount)")
-                .font(.headline)
-                .foregroundColor(textColor)
-                .contentTransition(.numericText())
-                .animation(enableAnimation ? .easeInOut(duration: 0.3) : nil, value: seedCount)
+            seedCountText
         }
+    }
+    
+    private var seedCountText: some View {
+        let duration = 0.3
+        let delay = 0.3
+        let animation: Animation? = enableAnimation ? .easeInOut(duration: duration).delay(delay) : nil
+        
+        return Group {
+            if #available(iOS 17.0, *) {
+                Text("\(seedCount)")
+                    .contentTransition(.numericText(value: Double(seedCount)))
+            } else {
+                Text("\(seedCount)")
+            }
+        }
+        .font(.headline)
+        .foregroundColor(textColor)
+        .animation(animation, value: seedCount)
     }
 }
 

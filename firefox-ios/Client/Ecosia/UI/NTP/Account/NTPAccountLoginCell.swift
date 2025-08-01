@@ -22,16 +22,30 @@ struct NTPAccountLoginCellView: View {
         HStack {
             Spacer()
 
-            EcosiaAccountNavButton(
-                seedCount: viewModel.seedCount,
-                avatarURL: viewModel.userAvatarURL,
-                backgroundColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundElevation1),
-                textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary),
-                enableAnimation: !reduceMotion,
-                onTap: handleTap
-            )
+            ZStack(alignment: .topTrailing) {
+                EcosiaAccountNavButton(
+                    seedCount: viewModel.seedCount,
+                    avatarURL: viewModel.userAvatarURL,
+                    backgroundColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundElevation1),
+                    textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary),
+                    enableAnimation: !reduceMotion,
+                    onTap: handleTap
+                )
+
+                // Balance increment animation overlay
+                if let increment = viewModel.balanceIncrement {
+                    BalanceIncrementAnimationView(
+                        increment: increment,
+                        textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary)
+                    )
+                    .offset(x: -50, y: 0) // Position relative to button top-right
+                }
+            }
         }
         .padding(.trailing, .ecosia.space._m)
+        .onAppear {
+            viewModel.registerVisitIfNeeded()
+        }
     }
 
     private func handleTap() {
