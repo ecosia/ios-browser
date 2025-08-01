@@ -60,7 +60,7 @@ public final class AuthStateManager {
             userInfo: [
                 "windowUUID": windowUUID,
                 "authState": newState,
-                "actionType": action.type.rawValue
+                "actionType": action.type
             ]
         )
 
