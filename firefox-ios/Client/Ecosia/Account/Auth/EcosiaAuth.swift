@@ -178,24 +178,22 @@ final class EcosiaAuth {
     // MARK: - State Queries
 
     var isLoggedIn: Bool {
-        if let windowUUID = browserViewController?.windowUUID,
-           let authState = Ecosia.AuthStateManager.shared.getAuthState(for: windowUUID) {
-            return authState.isLoggedIn
-        }
-
-        let allStates = Ecosia.AuthStateManager.shared.getAllAuthStates()
-        return allStates.values.contains { $0.isLoggedIn }
+        authProvider.isLoggedIn
     }
 
     var idToken: String? {
-        return authProvider.idToken
+        authProvider.idToken
     }
 
     var accessToken: String? {
-        return authProvider.accessToken
+        authProvider.accessToken
     }
 
     var userProfile: UserProfile? {
-        return authProvider.userProfile
+        authProvider.userProfile
+    }
+
+    func renewCredentialsIfNeeded() async throws {
+        try await authProvider.renewCredentialsIfNeeded()
     }
 }
