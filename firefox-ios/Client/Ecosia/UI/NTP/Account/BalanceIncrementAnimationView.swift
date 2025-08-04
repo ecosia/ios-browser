@@ -12,7 +12,7 @@ struct BalanceIncrementAnimationView: View {
 
     var body: some View {
         Text("+\(increment)")
-            .font(.system(size: 16, weight: .bold)) // 16-18pt as specified
+            .font(.caption.weight(.bold)) // Back to original font size
             .foregroundColor(textColor)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
