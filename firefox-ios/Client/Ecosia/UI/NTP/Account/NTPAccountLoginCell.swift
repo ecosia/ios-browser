@@ -22,7 +22,7 @@ struct NTPAccountLoginCellView: View {
         HStack {
             Spacer()
 
-            ZStack(alignment: .topTrailing) {
+            ZStack(alignment: .topLeading) {
                 EcosiaAccountNavButton(
                     seedCount: viewModel.seedCount,
                     avatarURL: viewModel.userAvatarURL,
@@ -32,13 +32,10 @@ struct NTPAccountLoginCellView: View {
                     onTap: handleTap
                 )
 
-                // Balance increment animation overlay
+                // Balance increment indicator positioned above-left of counter
                 if let increment = viewModel.balanceIncrement {
-                    BalanceIncrementAnimationView(
-                        increment: increment,
-                        textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary)
-                    )
-                    .offset(x: -50, y: 0) // Position relative to button top-right
+                    BalanceIncrementAnimationView(increment: increment)
+                        .offset(x: 20, y: -10) // Position above-left of the counter number
                 }
             }
         }
