@@ -34,8 +34,11 @@ struct NTPAccountLoginCellView: View {
 
                 // Balance increment indicator positioned above-left of counter
                 if let increment = viewModel.balanceIncrement {
-                    BalanceIncrementAnimationView(increment: increment)
-                        .offset(x: 20, y: -10) // Position above-left of the counter number
+                    BalanceIncrementAnimationView(
+                        increment: increment,
+                        textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary)
+                    )
+                    .offset(x: 20, y: -10) // Position above-left of the counter number
                 }
             }
         }
