@@ -79,6 +79,13 @@ struct EcosiaSeedViewTheme: EcosiaThemeable {
     mutating func applyTheme(theme: Theme) {
         textColor = Color(theme.colors.ecosia.textPrimary)
     }
+    
+    private func triggerBounce() {
+        bounceScale = 1.15
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            bounceScale = 1.0
+        }
+    }
 }
 
 #if DEBUG
