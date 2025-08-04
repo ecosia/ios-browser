@@ -63,6 +63,7 @@ public struct EcosiaSeedView: View {
             bounceScale = UX.bounceScaleMin
         }
 
+            seedCountText
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.bounceAnimationDuration) {
             withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDamping, blendDuration: 0)) {
                 bounceScale = 1.0
