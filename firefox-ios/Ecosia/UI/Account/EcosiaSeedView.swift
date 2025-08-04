@@ -12,6 +12,7 @@ public struct EcosiaSeedView: View {
     private let textColor: Color
     private let spacing: CGFloat
     private let enableAnimation: Bool
+    @State private var bounceScale: CGFloat = 1.0
 
     public init(
         seedCount: Int,
@@ -33,8 +34,15 @@ public struct EcosiaSeedView: View {
             Image("seed", bundle: .ecosia)
                 .resizable()
                 .frame(width: iconSize, height: iconSize)
+                .scaleEffect(enableAnimation ? bounceScale : 1.0)
+                .animation(enableAnimation ? .spring(response: 0.5, dampingFraction: 0.6) : nil, value: bounceScale)
 
             seedCountText
+        }
+        .onChange(of: seedCount) { _ in
+            if enableAnimation {
+                triggerBounce()
+            }
         }
     }
     
@@ -47,8 +55,15 @@ public struct EcosiaSeedView: View {
                 Text("\(seedCount)")
             }
         }
-        .font(.system(size: 24, weight: .bold)) // 24-28pt as specified
+        .font(.headline) // Back to original font size
         .foregroundColor(textColor)
+    }
+    
+    private func triggerBounce() {
+        bounceScale = 1.15
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            bounceScale = 1.0
+        }
     }
 }
 
