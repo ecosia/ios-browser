@@ -33,12 +33,11 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     }
     
     /// Custom clearSession implementation that bypasses Auth0's default logout alert
-    /// Since we handle logout confirmation in our custom UI, we skip the native webAuth.clearSession()
-    /// and only clear the stored credentials locally
+    /// We provide immediate logout without any confirmation popups for better UX
     public func clearSession() async throws {
         // Skip calling webAuth.clearSession() to avoid Auth0's native logout alert
-        // Instead, we only clear local credentials since our app handles logout confirmation
-        EcosiaLogger.auth.info("Skipping Auth0 native logout alert - using custom confirmation flow")
+        // Logout happens immediately without any confirmation dialogs
+        EcosiaLogger.auth.info("Skipping Auth0 native logout alert - immediate logout without confirmation")
         
         // Note: This means the Auth0 session cookie won't be cleared from the browser
         // but the user will be logged out locally. For full logout including browser session,
