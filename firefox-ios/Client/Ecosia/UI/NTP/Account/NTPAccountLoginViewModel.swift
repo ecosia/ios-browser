@@ -6,7 +6,6 @@ import Common
 import Foundation
 import Shared
 import SwiftUI
-import UIKit
 import Ecosia
 
 final class NTPAccountLoginViewModel: ObservableObject {
@@ -71,68 +70,8 @@ final class NTPAccountLoginViewModel: ObservableObject {
     }
 
     func performLogout() {
-        showCustomLogoutConfirmation()
-    }
-    
-    private func showCustomLogoutConfirmation() {
-        guard let topViewController = getTopMostViewController() else {
-            // Fallback to direct logout if we can't get the view controller
-            auth.logout()
-            return
-        }
-        
-        let alertController = UIAlertController(
-            title: "Sign Out",
-            message: "Are you sure you want to sign out of your Ecosia account?",
-            preferredStyle: .alert
-        )
-        
-        alertController.addAction(
-            UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                // User cancelled - do nothing
-                EcosiaLogger.auth.info("User cancelled logout from custom dialog")
-            }
-        )
-        
-        alertController.addAction(
-            UIAlertAction(title: "Sign Out", style: .destructive) { [weak self] _ in
-                // User confirmed - proceed with logout
-                EcosiaLogger.auth.info("User confirmed logout from custom dialog")
-                self?.auth.logout()
-            }
-        )
-        
-        topViewController.present(alertController, animated: true)
-    }
-    
-    private func getTopMostViewController() -> UIViewController? {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first,
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }),
-              let rootViewController = window.rootViewController else {
-            return nil
-        }
-        
-        return findTopMostViewController(from: rootViewController)
-    }
-    
-    private func findTopMostViewController(from viewController: UIViewController) -> UIViewController {
-        if let presentedVC = viewController.presentedViewController {
-            return findTopMostViewController(from: presentedVC)
-        }
-        
-        if let navigationController = viewController as? UINavigationController,
-           let topVC = navigationController.topViewController {
-            return findTopMostViewController(from: topVC)
-        }
-        
-        if let tabBarController = viewController as? UITabBarController,
-           let selectedVC = tabBarController.selectedViewController {
-            return findTopMostViewController(from: selectedVC)
-        }
-        
-        return viewController
+        EcosiaLogger.auth.info("Performing immediate logout without confirmation")
+        auth.logout()
     }
 
     func registerVisitIfNeeded() {
