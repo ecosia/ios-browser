@@ -143,13 +143,25 @@ final class NTPAccountLoginViewModel: ObservableObject {
 
     @MainActor
     private func animateBalanceChange(from oldValue: Int, to newValue: Int, increment: Int) {
-        seedCount = newValue
+        // Store increment for display
         balanceIncrement = increment
-
-        // Clear the increment after animation duration
-        Task {
-            try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-            balanceIncrement = nil
+        
+        // 0.33 second delay before animation starts
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
+            // PHASE 1 & 2 (simultaneous): Show +{amount} and update counter
+            // Phase 1: "+{amount}" appears with ease-in over ~0.07 seconds
+            // Phase 2: Counter updates with contentTransition(.numericText())
+            withAnimation(.easeIn(duration: 0.07)) {
+                // Trigger counter update with numericText transition
+                self.seedCount = newValue
+            }
+            
+            // PHASE 3: Keep visible for 0.2s, then linear fade out over 0.57s
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.27) { // 0.07 + 0.2 = 0.27
+                withAnimation(.linear(duration: 0.57)) {
+                    self.balanceIncrement = nil
+                }
+            }
         }
     }
 

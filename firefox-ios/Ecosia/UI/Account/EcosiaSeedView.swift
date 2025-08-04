@@ -39,11 +39,7 @@ public struct EcosiaSeedView: View {
     }
     
     private var seedCountText: some View {
-        let duration = 0.3
-        let delay = 0.3
-        let animation: Animation? = enableAnimation ? .easeInOut(duration: duration).delay(delay) : nil
-        
-        return Group {
+        Group {
             if #available(iOS 17.0, *) {
                 Text("\(seedCount)")
                     .contentTransition(.numericText(value: Double(seedCount)))
@@ -51,9 +47,8 @@ public struct EcosiaSeedView: View {
                 Text("\(seedCount)")
             }
         }
-        .font(.headline)
+        .font(.system(size: 24, weight: .bold)) // 24-28pt as specified
         .foregroundColor(textColor)
-        .animation(animation, value: seedCount)
     }
 }
 
