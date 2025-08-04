@@ -8,15 +8,16 @@ import SwiftUI
 @available(iOS 16.0, *)
 struct BalanceIncrementAnimationView: View {
     let increment: Int
+    let textColor: Color
 
     var body: some View {
         Text("+\(increment)")
             .font(.system(size: 16, weight: .bold)) // 16-18pt as specified
-            .foregroundColor(.primary)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(Color(red: 0.96, green: 0.96, blue: 0.86)) // Light cream/beige #F5F5DC
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .foregroundColor(textColor)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color(EcosiaColor.Peach100)) // Original Ecosia peach color
+            .clipShape(Circle()) // Original circular shape
     }
 }
 
@@ -26,9 +27,9 @@ struct BalanceIncrementAnimationView: View {
 struct BalanceIncrementAnimationView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
-            BalanceIncrementAnimationView(increment: 1)
-            BalanceIncrementAnimationView(increment: 3)
-            BalanceIncrementAnimationView(increment: 10)
+            BalanceIncrementAnimationView(increment: 1, textColor: .primary)
+            BalanceIncrementAnimationView(increment: 3, textColor: .primary)
+            BalanceIncrementAnimationView(increment: 10, textColor: .primary)
         }
         .padding()
         .previewLayout(.sizeThatFits)
