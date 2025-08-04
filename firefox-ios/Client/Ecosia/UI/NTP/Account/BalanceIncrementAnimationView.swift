@@ -4,51 +4,19 @@
 
 import SwiftUI
 
-/// A view that displays a balance increment animation with a circled number and + prefix
+/// A view that displays a balance increment indicator with precise timing
 @available(iOS 16.0, *)
 struct BalanceIncrementAnimationView: View {
     let increment: Int
-    let textColor: Color
-    @State private var isAnimating = false
-    @State private var opacity: Double = 0
 
     var body: some View {
-        HStack(spacing: 4) {
-            Text("+\(increment)")
-                .font(.caption.weight(.bold))
-                .foregroundColor(textColor)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color(EcosiaColor.Peach100))
-        .clipShape(Circle())
-        .scaleEffect(isAnimating ? 1.2 : 1.0)
-        .opacity(opacity)
-        .offset(y: isAnimating ? -50 : 0)
-        .animation(.easeOut(duration: 1.5), value: isAnimating)
-        .animation(.easeInOut(duration: 0.7), value: opacity)
-        .onAppear {
-            // Start animation sequence after seed count animation finishes
-            let delayBeforeStart = 0.5 // Start shortly before the seedCountText animation (0.6 delay)
-            let animationDuration = 1.5 // Much slower than seedCountText (0.3)
-            let fadeOutDuration = 0.7
-            let totalDisplayTime = 3.5
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + delayBeforeStart) {
-                opacity = 1.0
-                
-                withAnimation(.easeOut(duration: animationDuration)) {
-                    isAnimating = true
-                }
-                
-                // Fade out after total display time
-                DispatchQueue.main.asyncAfter(deadline: .now() + totalDisplayTime) {
-                    withAnimation(.easeInOut(duration: fadeOutDuration)) {
-                        opacity = 0
-                    }
-                }
-            }
-        }
+        Text("+\(increment)")
+            .font(.system(size: 16, weight: .bold)) // 16-18pt as specified
+            .foregroundColor(.primary)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background(Color(red: 0.96, green: 0.96, blue: 0.86)) // Light cream/beige #F5F5DC
+            .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
@@ -58,9 +26,9 @@ struct BalanceIncrementAnimationView: View {
 struct BalanceIncrementAnimationView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
-            BalanceIncrementAnimationView(increment: 1, textColor: .primary)
-            BalanceIncrementAnimationView(increment: 3, textColor: .green)
-            BalanceIncrementAnimationView(increment: 10, textColor: .blue)
+            BalanceIncrementAnimationView(increment: 1)
+            BalanceIncrementAnimationView(increment: 3)
+            BalanceIncrementAnimationView(increment: 10)
         }
         .padding()
         .previewLayout(.sizeThatFits)
