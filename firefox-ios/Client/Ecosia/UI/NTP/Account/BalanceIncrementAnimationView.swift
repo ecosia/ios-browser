@@ -21,16 +21,11 @@ struct BalanceIncrementAnimationView: View {
             .clipShape(Circle())
             .opacity(opacity)
             .onAppear {
-                // Start simultaneously with seed compression animation
-                // Ease in smoothly at the same time as seed compression
                 withAnimation(.easeIn(duration: 0.2)) {
                     opacity = 1.0
                 }
                 
-                // Stay visible for a while, then fade out smoothly
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { // Stay visible for 2 seconds
-                    
-                    // Fade out smoothly without any movement
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     withAnimation(.easeOut(duration: 0.5)) {
                         opacity = 0.0
                     }
