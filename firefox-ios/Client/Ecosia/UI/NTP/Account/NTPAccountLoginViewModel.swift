@@ -47,6 +47,9 @@ final class NTPAccountLoginViewModel: ObservableObject {
 
         // Set up auth state monitoring
         setupAuthStateMonitoring()
+
+        // Initialize seed count based on auth state
+        initializeSeedCount()
     }
 
     deinit {
@@ -72,6 +75,9 @@ final class NTPAccountLoginViewModel: ObservableObject {
     func performLogout() {
         EcosiaLogger.auth.info("Performing immediate logout without confirmation")
         auth.logout()
+
+        // Reset to local seed collection system
+        resetToLocalSeedCollection()
     }
 
     func registerVisitIfNeeded() {
@@ -80,14 +86,17 @@ final class NTPAccountLoginViewModel: ObservableObject {
                 // Step 2: Get access token after refresh
                 guard let accessToken = auth.accessToken, !accessToken.isEmpty else {
                     EcosiaLogger.accounts.debug("No access token available - user not logged in")
+
+                    // Use local seed collection when not logged in
+                    await handleLocalSeedCollection()
                     return
                 }
-                
+
                 // Step 3: Make API call (or use mock for testing)
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
                 let response = try await getMockOrRealResponse(accessToken: accessToken)
                 await updateBalance(response)
-                
+
             } catch {
                 EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
             }
@@ -95,11 +104,11 @@ final class NTPAccountLoginViewModel: ObservableObject {
     }
 
     // MARK: - API Response (Mock for Testing)
-    
+
     private func getMockOrRealResponse(accessToken: String) async throws -> AccountBalanceResponse {
         // TODO: Switch between mock and real API for testing
         let useMockData = true // Set to false for real API calls
-        
+
         if useMockData {
             EcosiaLogger.accounts.info("Using mock response for testing")
             return createMockResponse()
@@ -107,11 +116,11 @@ final class NTPAccountLoginViewModel: ObservableObject {
             return try await accountsProvider.registerVisit(accessToken: accessToken)
         }
     }
-    
+
     private func createMockResponse() -> AccountBalanceResponse {
         let currentBalance = seedCount
         let increment = Int.random(in: 1...3) // Random increment for testing
-        
+
         return AccountBalanceResponse(
             balance: AccountBalanceResponse.Balance(
                 amount: currentBalance + increment,
@@ -125,8 +134,6 @@ final class NTPAccountLoginViewModel: ObservableObject {
     }
 
     // MARK: - Auth State Synchronization
-
-
 
     @MainActor
     private func updateBalance(_ response: AccountBalanceResponse) {
@@ -145,11 +152,11 @@ final class NTPAccountLoginViewModel: ObservableObject {
     private func animateBalanceChange(from oldValue: Int, to newValue: Int, increment: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.balanceIncrement = increment
-            
+
             withAnimation(.easeIn(duration: 0.3)) {
                 self.seedCount = newValue
             }
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 withAnimation(.linear(duration: 0.57)) {
                     self.balanceIncrement = nil
@@ -200,7 +207,6 @@ final class NTPAccountLoginViewModel: ObservableObject {
         }
     }
 
-
 }
 
 // MARK: HomeViewModelProtocol
@@ -243,6 +249,39 @@ extension NTPAccountLoginViewModel: HomepageViewModelProtocol, FeatureFlaggable 
 
     func setTheme(theme: Theme) {
         self.theme = theme
+    }
+
+    // MARK: - Local Seed Collection
+
+    private func initializeSeedCount() {
+        if auth.isLoggedIn {
+            EcosiaLogger.accounts.info("User logged in at startup - will load from backend")
+            registerVisitIfNeeded()
+        } else {
+            EcosiaLogger.accounts.info("User logged out at startup - using local seed collection")
+            seedCount = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        }
+    }
+
+    @MainActor
+    private func resetToLocalSeedCollection() {
+        EcosiaLogger.accounts.info("Resetting to local seed collection system")
+        UserDefaultsSeedProgressManager.resetCounter()
+        seedCount = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+    }
+
+    @MainActor
+    private func handleLocalSeedCollection() {
+        EcosiaLogger.accounts.info("Handling local seed collection for logged-out user")
+        UserDefaultsSeedProgressManager.collectDailySeed()
+        let newSeedCount = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+
+        if newSeedCount > seedCount {
+            let increment = newSeedCount - seedCount
+            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
+        } else {
+            seedCount = newSeedCount
+        }
     }
 }
 
