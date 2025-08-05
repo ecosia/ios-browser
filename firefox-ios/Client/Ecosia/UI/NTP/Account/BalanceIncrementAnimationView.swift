@@ -4,12 +4,11 @@
 
 import SwiftUI
 
-/// A view that displays a balance increment with web-style upward slide animation
+/// A view that displays a balance increment with fade in/out animation
 @available(iOS 16.0, *)
 struct BalanceIncrementAnimationView: View {
     let increment: Int
     let textColor: Color
-    @State private var yOffset: CGFloat = 0
     @State private var opacity: Double = 0.0
 
     var body: some View {
@@ -21,7 +20,6 @@ struct BalanceIncrementAnimationView: View {
             .background(Color(EcosiaColor.Peach100))
             .clipShape(Circle())
             .opacity(opacity)
-            .offset(y: yOffset)
             .onAppear {
                 // Start simultaneously with seed compression animation
                 // Ease in smoothly at the same time as seed compression
@@ -29,13 +27,12 @@ struct BalanceIncrementAnimationView: View {
                     opacity = 1.0
                 }
                 
-                // Stay in place for 15% of animation time (like web's 0%-15%)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.275) { // 0.2 ease in + 0.075 pause
+                // Stay visible for a while, then fade out smoothly
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { // Stay visible for 2 seconds
                     
-                    // Web's bouncy slide up animation: translateY(-100%)
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 0)) {
-                        yOffset = -40 // Slide up (equivalent to -100% of its height)
-                        opacity = 0.0 // Ease out as it slides up
+                    // Fade out smoothly without any movement
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        opacity = 0.0
                     }
                 }
             }
