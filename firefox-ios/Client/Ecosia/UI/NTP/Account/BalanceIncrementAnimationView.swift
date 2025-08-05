@@ -23,8 +23,8 @@ struct BalanceIncrementAnimationView: View {
             .opacity(opacity)
             .offset(y: yOffset)
             .onAppear {
-                // Ease in when seed reaches maximum compression (0.3s)
-                let seedCompressionDuration = 0.3
+                // Ease in slightly before seed reaches maximum compression 
+                let seedCompressionDuration = 0.2  // Start earlier (was 0.3s)
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + seedCompressionDuration) {
                     // Ease in smoothly when seed is at max squeeze
