@@ -77,7 +77,9 @@ final class NTPAccountLoginViewModel: ObservableObject {
         auth.logout()
 
         // Reset to local seed collection system
-        resetToLocalSeedCollection()
+        Task { @MainActor in
+            resetToLocalSeedCollection()
+        }
     }
 
     func registerVisitIfNeeded() {
@@ -96,7 +98,6 @@ final class NTPAccountLoginViewModel: ObservableObject {
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
                 let response = try await getMockOrRealResponse(accessToken: accessToken)
                 await updateBalance(response)
-
             } catch {
                 EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
             }
@@ -206,7 +207,6 @@ final class NTPAccountLoginViewModel: ObservableObject {
             }
         }
     }
-
 }
 
 // MARK: HomeViewModelProtocol
