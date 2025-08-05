@@ -27,8 +27,8 @@ struct BalanceIncrementAnimationView: View {
         .animation(.easeOut(duration: 1.5), value: isAnimating)
         .animation(.easeInOut(duration: 0.7), value: opacity)
         .onAppear {
-            // Start animation sequence after seed count animation finishes
-            let delayBeforeStart = 0.5 // Start shortly before the seedCountText animation (0.6 delay)
+            // Start animation sequence after seed animation has more time to complete
+            let delayBeforeStart = 1.0 // Start after seed compression and bounce (now ~1.0s total)
             let animationDuration = 1.5 // Much slower than seedCountText (0.3)
             let fadeOutDuration = 0.7
             let totalDisplayTime = 3.5
