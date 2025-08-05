@@ -81,16 +81,13 @@ struct EcosiaSeedViewTheme: EcosiaThemeable {
     }
     
     private func triggerBounce() {
-        // Adapted web timing for seed compression - squeeze needs to be visible
-        // Phase 1: Hold compressed state longer (like web's 0-15% pause) 
         withAnimation(.easeOut(duration: 0.3)) {
-            bounceScale = 0.75  // Compress down and hold
+            bounceScale = 0.75
         }
         
-        // Phase 2: Web's bouncy spring recovery - overshoot and settle
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 0)) {
-                bounceScale = 1.0  // Bouncy overshoot like cubic-bezier(.19,0,.65,1.19)
+                bounceScale = 1.0
             }
         }
     }

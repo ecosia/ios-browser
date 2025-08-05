@@ -143,19 +143,14 @@ final class NTPAccountLoginViewModel: ObservableObject {
 
     @MainActor
     private func animateBalanceChange(from oldValue: Int, to newValue: Int, increment: Int) {
-        // 1 second delay before animation starts - gives user time to see the view
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            // PHASE 1 & 2 (simultaneous): Show +{amount} and update counter at the same time
-            // Both animations start together for perfect synchronization
-            self.balanceIncrement = increment  // This triggers +{number} animation
+            self.balanceIncrement = increment
             
-            // Update seedCount with animation to trigger contentTransition(.numericText())
             withAnimation(.easeIn(duration: 0.3)) {
-                self.seedCount = newValue      // This triggers seed animation AND numeric transition
+                self.seedCount = newValue
             }
             
-            // PHASE 3: Keep +{number} visible, then fade out
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { // Let animations complete
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 withAnimation(.linear(duration: 0.57)) {
                     self.balanceIncrement = nil
                 }
