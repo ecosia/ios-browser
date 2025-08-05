@@ -10,7 +10,7 @@ struct BalanceIncrementAnimationView: View {
     let increment: Int
     let textColor: Color
     @State private var yOffset: CGFloat = 0
-    @State private var opacity: Double = 1.0
+    @State private var opacity: Double = 0.0
 
     var body: some View {
         Text("+\(increment)")
@@ -23,17 +23,22 @@ struct BalanceIncrementAnimationView: View {
             .opacity(opacity)
             .offset(y: yOffset)
             .onAppear {
-                // Appear when seed reaches maximum compression (0.3s)
+                // Ease in when seed reaches maximum compression (0.3s)
                 let seedCompressionDuration = 0.3
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + seedCompressionDuration) {
+                    // Ease in smoothly when seed is at max squeeze
+                    withAnimation(.easeIn(duration: 0.2)) {
+                        opacity = 1.0
+                    }
+                    
                     // Stay in place for 15% of animation time (like web's 0%-15%)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.075) { // 0.075 = 15% of 0.5s
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.275) { // 0.2 ease in + 0.075 pause
                         
                         // Web's bouncy slide up animation: translateY(-100%)
                         withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 0)) {
                             yOffset = -40 // Slide up (equivalent to -100% of its height)
-                            opacity = 0.0 // Fade out as it slides up
+                            opacity = 0.0 // Ease out as it slides up
                         }
                     }
                 }
