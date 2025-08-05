@@ -59,14 +59,14 @@ public struct EcosiaSeedView: View {
     }
     
     private func triggerBounce() {
-        // Prominent squeeze down (compress/absorb feeling)
-        withAnimation(.easeOut(duration: 0.2)) {
+        // Prominent squeeze down (compress/absorb feeling) - longer duration
+        withAnimation(.easeOut(duration: 0.4)) {
             bounceScale = 0.75  // 25% smaller - more prominent compression
         }
         
-        // Gentle elastic bounce back to normal after longer compression
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+        // Extended elastic bounce back to normal after longer compression
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
                 bounceScale = 1.0  // Back to normal size
             }
         }
