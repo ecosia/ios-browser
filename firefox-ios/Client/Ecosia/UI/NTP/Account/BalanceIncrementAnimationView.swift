@@ -23,10 +23,10 @@ struct BalanceIncrementAnimationView: View {
             .opacity(opacity)
             .offset(y: yOffset)
             .onAppear {
-                // Web timing: 1.35s delay like isAnimationDelayed
-                let delayBeforeStart = 1.35
+                // Appear when seed reaches maximum compression (0.3s)
+                let seedCompressionDuration = 0.3
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + delayBeforeStart) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + seedCompressionDuration) {
                     // Stay in place for 15% of animation time (like web's 0%-15%)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.075) { // 0.075 = 15% of 0.5s
                         
