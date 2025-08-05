@@ -146,8 +146,8 @@ final class NTPAccountLoginViewModel: ObservableObject {
         // Store increment for display
         balanceIncrement = increment
         
-        // 0.33 second delay before animation starts
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
+        // 1 second delay before animation starts - gives user time to see the view
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             // PHASE 1 & 2 (simultaneous): Show +{amount} and update counter
             // Phase 1: "+{amount}" appears with ease-in over ~0.07 seconds
             // Phase 2: Counter updates with contentTransition(.numericText())

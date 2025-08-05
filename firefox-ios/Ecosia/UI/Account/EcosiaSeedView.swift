@@ -35,7 +35,6 @@ public struct EcosiaSeedView: View {
                 .resizable()
                 .frame(width: iconSize, height: iconSize)
                 .scaleEffect(enableAnimation ? bounceScale : 1.0)
-                .animation(enableAnimation ? .spring(response: 0.5, dampingFraction: 0.6) : nil, value: bounceScale)
 
             seedCountText
         }
@@ -60,9 +59,16 @@ public struct EcosiaSeedView: View {
     }
     
     private func triggerBounce() {
-        bounceScale = 1.15
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            bounceScale = 1.0
+        // Quick squeeze down (compress/absorb feeling)
+        withAnimation(.easeOut(duration: 0.1)) {
+            bounceScale = 0.85  // 15% smaller - being "pressed"
+        }
+        
+        // Gentle elastic bounce back to normal
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                bounceScale = 1.0  // Back to normal size
+            }
         }
     }
 }
