@@ -59,16 +59,16 @@ public struct EcosiaSeedView: View {
     }
     
     private func triggerBounce() {
-        // Web-inspired bouncy animation matching cubic-bezier(.19,0,.65,1.19)
-        // Single animation with bouncy spring that overshoots and settles
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.55, blendDuration: 0)) {
-            bounceScale = 0.75  // Compress down
+        // Adapted web timing for seed compression - squeeze needs to be visible
+        // Phase 1: Hold compressed state longer (like web's 0-15% pause) 
+        withAnimation(.easeOut(duration: 0.3)) {
+            bounceScale = 0.75  // Compress down and hold
         }
         
-        // Quick bounce back with web's bouncy feel (0.5s total like web)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.075) {
-            withAnimation(.spring(response: 0.425, dampingFraction: 0.45, blendDuration: 0)) {
-                bounceScale = 1.0  // Bouncy return to normal
+        // Phase 2: Web's bouncy spring recovery - overshoot and settle
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 0)) {
+                bounceScale = 1.0  // Bouncy overshoot like cubic-bezier(.19,0,.65,1.19)
             }
         }
     }
