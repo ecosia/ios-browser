@@ -147,9 +147,15 @@ extension BrowserViewController {
                 .onNativeAuthCompleted {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
                 }
-                .onAuthFlowCompleted { success in
+                .onAuthFlowCompleted { [weak self] success in
                     if success {
                         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete authentication flow successful from navigation")
+
+                        // Refresh the current page to reflect auth state changes
+                        DispatchQueue.main.async {
+                            self?.tabManager.selectedTab?.reload()
+                            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful sign-in")
+                        }
                     } else {
                         EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Authentication flow completed with issues from navigation")
                     }
@@ -170,9 +176,15 @@ extension BrowserViewController {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
                     // After logout, trigger login again
                     ecosiaAuth
-                        .onAuthFlowCompleted { success in
+                        .onAuthFlowCompleted { [weak self] success in
                             if success {
                                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
+
+                                // Refresh the current page to reflect auth state changes
+                                DispatchQueue.main.async {
+                                    self?.tabManager.selectedTab?.reload()
+                                    EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after inconsistency resolution")
+                                }
                             } else {
                                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication failed after resolving inconsistency")
                             }
@@ -208,9 +220,15 @@ extension BrowserViewController {
             .onNativeAuthCompleted {
                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native logout completed from navigation detection")
             }
-            .onAuthFlowCompleted { success in
+            .onAuthFlowCompleted { [weak self] success in
                 if success {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete logout flow successful from navigation")
+
+                    // Refresh the current page to reflect auth state changes
+                    DispatchQueue.main.async {
+                        self?.tabManager.selectedTab?.reload()
+                        EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful sign-out")
+                    }
                 } else {
                     EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Logout flow completed with issues from navigation")
                 }
