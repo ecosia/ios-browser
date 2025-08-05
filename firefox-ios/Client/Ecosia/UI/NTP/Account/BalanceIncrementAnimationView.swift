@@ -4,12 +4,13 @@
 
 import SwiftUI
 
-/// A view that displays a balance increment indicator with simple fade animation
+/// A view that displays a balance increment with web-style upward slide animation
 @available(iOS 16.0, *)
 struct BalanceIncrementAnimationView: View {
     let increment: Int
     let textColor: Color
-    @State private var opacity: Double = 0
+    @State private var yOffset: CGFloat = 0
+    @State private var opacity: Double = 1.0
 
     var body: some View {
         Text("+\(increment)")
@@ -20,23 +21,19 @@ struct BalanceIncrementAnimationView: View {
             .background(Color(EcosiaColor.Peach100))
             .clipShape(Circle())
             .opacity(opacity)
+            .offset(y: yOffset)
             .onAppear {
-                // Start after seed animation completes
-                let delayBeforeStart = 1.0
-                let fadeInDuration = 0.3
-                let visibleDuration = 2.0
-                let fadeOutDuration = 0.5
+                // Web timing: 1.35s delay like isAnimationDelayed
+                let delayBeforeStart = 1.35
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + delayBeforeStart) {
-                    // Fade in
-                    withAnimation(.easeIn(duration: fadeInDuration)) {
-                        opacity = 1.0
-                    }
-                    
-                    // Fade out after being visible
-                    DispatchQueue.main.asyncAfter(deadline: .now() + visibleDuration) {
-                        withAnimation(.easeOut(duration: fadeOutDuration)) {
-                            opacity = 0
+                    // Stay in place for 15% of animation time (like web's 0%-15%)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.075) { // 0.075 = 15% of 0.5s
+                        
+                        // Web's bouncy slide up animation: translateY(-100%)
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 0)) {
+                            yOffset = -40 // Slide up (equivalent to -100% of its height)
+                            opacity = 0.0 // Fade out as it slides up
                         }
                     }
                 }
