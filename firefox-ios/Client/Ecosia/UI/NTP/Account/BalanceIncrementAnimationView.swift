@@ -24,7 +24,6 @@ struct BalanceIncrementAnimationView: View {
         .clipShape(Circle())
         .scaleEffect(isAnimating ? 1.2 : 1.0)
         .opacity(opacity)
-        .offset(y: isAnimating ? -50 : 0)
         .animation(.easeOut(duration: 1.5), value: isAnimating)
         .animation(.easeInOut(duration: 0.7), value: opacity)
         .onAppear {
