@@ -81,14 +81,14 @@ struct EcosiaSeedViewTheme: EcosiaThemeable {
     }
     
     private func triggerBounce() {
-        // Quick squeeze down (compress/absorb feeling)
-        withAnimation(.easeOut(duration: 0.1)) {
-            bounceScale = 0.85  // 15% smaller - being "pressed"
+        // Prominent squeeze down (compress/absorb feeling)
+        withAnimation(.easeOut(duration: 0.2)) {
+            bounceScale = 0.75  // 25% smaller - more prominent compression
         }
         
-        // Gentle elastic bounce back to normal
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+        // Gentle elastic bounce back to normal after longer compression
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                 bounceScale = 1.0  // Back to normal size
             }
         }
