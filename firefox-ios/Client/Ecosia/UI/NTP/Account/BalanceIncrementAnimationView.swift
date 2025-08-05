@@ -4,50 +4,43 @@
 
 import SwiftUI
 
-/// A view that displays a balance increment animation with a circled number and + prefix
+/// A view that displays a balance increment indicator with simple fade animation
 @available(iOS 16.0, *)
 struct BalanceIncrementAnimationView: View {
     let increment: Int
     let textColor: Color
-    @State private var isAnimating = false
     @State private var opacity: Double = 0
 
     var body: some View {
-        HStack(spacing: 4) {
-            Text("+\(increment)")
-                .font(.caption.weight(.bold))
-                .foregroundColor(textColor)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color(EcosiaColor.Peach100))
-        .clipShape(Circle())
-        .scaleEffect(isAnimating ? 1.2 : 1.0)
-        .opacity(opacity)
-        .animation(.easeOut(duration: 1.5), value: isAnimating)
-        .animation(.easeInOut(duration: 0.7), value: opacity)
-        .onAppear {
-            // Start animation sequence after seed animation has more time to complete
-            let delayBeforeStart = 1.0 // Start after seed compression and bounce (now ~1.0s total)
-            let animationDuration = 1.5 // Much slower than seedCountText (0.3)
-            let fadeOutDuration = 0.7
-            let totalDisplayTime = 3.5
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + delayBeforeStart) {
-                opacity = 1.0
+        Text("+\(increment)")
+            .font(.caption.weight(.bold))
+            .foregroundColor(textColor)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color(EcosiaColor.Peach100))
+            .clipShape(Circle())
+            .opacity(opacity)
+            .onAppear {
+                // Start after seed animation completes
+                let delayBeforeStart = 1.0
+                let fadeInDuration = 0.3
+                let visibleDuration = 2.0
+                let fadeOutDuration = 0.5
                 
-                withAnimation(.easeOut(duration: animationDuration)) {
-                    isAnimating = true
-                }
-                
-                // Fade out after total display time
-                DispatchQueue.main.asyncAfter(deadline: .now() + totalDisplayTime) {
-                    withAnimation(.easeInOut(duration: fadeOutDuration)) {
-                        opacity = 0
+                DispatchQueue.main.asyncAfter(deadline: .now() + delayBeforeStart) {
+                    // Fade in
+                    withAnimation(.easeIn(duration: fadeInDuration)) {
+                        opacity = 1.0
+                    }
+                    
+                    // Fade out after being visible
+                    DispatchQueue.main.asyncAfter(deadline: .now() + visibleDuration) {
+                        withAnimation(.easeOut(duration: fadeOutDuration)) {
+                            opacity = 0
+                        }
                     }
                 }
             }
-        }
     }
 }
 
