@@ -90,9 +90,9 @@ extension HomepageSectionType {
             var horizontal: CGFloat = traits.horizontalSizeClass == .regular ? 100 : 0
             let safeAreaInsets = window.safeAreaInsets.left
             horizontal += MinimumInsets + safeAreaInsets
-
+            
             let orientation: UIInterfaceOrientation = window.windowScene?.interfaceOrientation ?? .portrait
-
+            
             /* Ecosia: center layout in iphone landscape or regular size class */
             if traits.horizontalSizeClass == .regular || (orientation.isLandscape && traits.userInterfaceIdiom == .phone) {
                 horizontal = window.bounds.width / 4
@@ -101,7 +101,7 @@ extension HomepageSectionType {
                                            leading: horizontal,
                                            bottom: bottomSpacing,
                                            trailing: horizontal)
-        case .homepageHeader, .climateImpactCounter:
+        case .homepageHeader, .climateImpactCounter, .multiPurposeEcosiaHeader:
             return .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         }
     }

@@ -97,7 +97,7 @@ class LegacyHomepageViewController:
                                            tabManager: tabManager,
                                            referrals: referrals, // Ecosia: Add referrals
                                            theme: themeManager.getCurrentTheme(for: tabManager.windowUUID),
-                                           multiPurposeEcosiaHeaderDelegate: self) // Ecosia: Set multi-purpose header delegate
+                                           multiPurposeEcosiaHeaderDelegate: nil) // Ecosia: Will be set after super.init
 
         let jumpBackInContextualViewProvider = ContextualHintViewProvider(forHintType: .jumpBackIn,
                                                                           with: viewModel.profile)
@@ -120,6 +120,10 @@ class LegacyHomepageViewController:
         // Ecosia: Add HomePageViewControllerDelegate
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
+
+        // Ecosia: Set multi-purpose header delegate after super.init
+        viewModel.multiPurposeEcosiaHeaderViewModel.delegate = self
+
         updateHeaderToShowPrivateModeToggle()
         viewModel.isZeroSearch = isZeroSearch
 

@@ -13,10 +13,10 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
         static let topInset: CGFloat = 24
     }
 
-    // MARK: - Private Properties
+    // MARK: - Properties
     private let windowUUID: WindowUUID
-    private weak var delegate: NTPMultiPurposeEcosiaHeaderDelegate?
-    private var theme: Theme
+    internal weak var delegate: NTPMultiPurposeEcosiaHeaderDelegate?
+    internal var theme: Theme
 
     // MARK: - Initialization
     init(theme: Theme,
@@ -31,10 +31,6 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
 
     func openAISearch() {
         delegate?.multiPurposeEcosiaHeaderDidRequestAISearch()
-        
-        // Ecosia: Log AI search button tap
-        EcosiaLogger.general.info("AI search button tapped from multi-purpose header")
-        
         // TODO: Add analytics tracking for AI search button tap
         // Analytics.shared.aiSearchButtonTapped()
     }

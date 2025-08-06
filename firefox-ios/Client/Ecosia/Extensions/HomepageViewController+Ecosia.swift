@@ -125,8 +125,5 @@ extension LegacyHomepageViewController: NTPMultiPurposeEcosiaHeaderDelegate {
     func multiPurposeEcosiaHeaderDidRequestAISearch() {
         let aiSearchURL = Environment.current.urlProvider.ai.search
         openLink(url: aiSearchURL)
-        
-        // TODO: Add analytics tracking
-        // Analytics.shared.aiSearchOpened()
     }
 }
