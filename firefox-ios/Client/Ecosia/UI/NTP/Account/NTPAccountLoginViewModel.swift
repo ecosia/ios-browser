@@ -70,7 +70,19 @@ final class NTPAccountLoginViewModel: ObservableObject {
 
     func performLogin() {
         Analytics.shared.accountSignInTriggered()
-        auth.login()
+        
+        auth
+            .onAuthFlowCompleted { [weak self] success in
+                if success {
+                    Analytics.shared.accountSignInConfirmed()
+                } else {
+                    Analytics.shared.accountSignInCancelled()
+                }
+            }
+            .onError { [weak self] error in
+                Analytics.shared.accountSignInCancelled()
+            }
+            .login()
     }
 
     func performLogout() {
