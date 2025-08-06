@@ -197,12 +197,6 @@ final class AuthFlow {
             session.startMonitoring { [weak self] success in
                 self?.activeSession = nil // Release session
                 EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                
-                // Track successful sign-in completion
-                if success && self?.type == .login {
-                    Analytics.shared.accountSignInConfirmed()
-                }
-                
                 onFlowCompleted?(success)
                 continuation.resume()
             }
