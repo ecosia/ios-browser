@@ -208,7 +208,6 @@ extension Analytics {
     public enum Property: String {
         case
         cancel,
-        continue,
         enable,
         disable,
         home,
