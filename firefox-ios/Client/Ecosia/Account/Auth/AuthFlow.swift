@@ -253,11 +253,6 @@ final class AuthFlow {
                                    onError: ((AuthError) -> Void)?) async {
         activeSession = nil
 
-        // Track auth cancellation/failure for login flows
-        if type == .login {
-            Analytics.shared.accountSignInCancelled()
-        }
-
         EcosiaLogger.auth.error("Auth flow failed: \(error)")
         onError?(error)
     }
