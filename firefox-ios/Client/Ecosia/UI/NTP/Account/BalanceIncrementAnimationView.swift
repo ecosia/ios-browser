@@ -24,7 +24,7 @@ struct BalanceIncrementAnimationView: View {
                 withAnimation(.easeIn(duration: 0.2)) {
                     opacity = 1.0
                 }
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     withAnimation(.easeOut(duration: 0.5)) {
                         opacity = 0.0
