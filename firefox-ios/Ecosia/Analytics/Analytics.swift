@@ -379,14 +379,6 @@ open class Analytics {
             .property(Property.cancel.rawValue)
         track(event)
     }
-
-    public func accountSignInConfirmed() {
-        let event = Structured(category: Category.account.rawValue,
-                               action: Action.click.rawValue)
-            .label(Label.signIn.rawValue)
-            .property(Property.continue.rawValue)
-        track(event)
-    }
 }
 
 extension Analytics {
