@@ -7,6 +7,7 @@ import Foundation
 extension Analytics {
     public enum Category: String {
         case
+        account,
         activity,
         bookmarks,
         brazeIAM = "braze_iam",
@@ -28,6 +29,7 @@ extension Analytics {
         analytics,
         clear,
         market,
+        signIn = "sign_in",
         toolbar
 
         public enum Bookmarks: String {
@@ -205,6 +207,8 @@ extension Analytics {
 
     public enum Property: String {
         case
+        cancel,
+        continue,
         enable,
         disable,
         home,

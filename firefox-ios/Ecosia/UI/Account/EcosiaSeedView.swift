@@ -44,7 +44,7 @@ public struct EcosiaSeedView: View {
             }
         }
     }
-    
+
     private var seedCountText: some View {
         Group {
             if #available(iOS 17.0, *) {
@@ -57,12 +57,12 @@ public struct EcosiaSeedView: View {
         .font(.headline)
         .foregroundColor(textColor)
     }
-    
+
     private func triggerBounce() {
         withAnimation(.easeOut(duration: 0.3)) {
             bounceScale = 0.75
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 0)) {
                 bounceScale = 1.0

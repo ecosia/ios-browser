@@ -197,6 +197,12 @@ final class AuthFlow {
             session.startMonitoring { [weak self] success in
                 self?.activeSession = nil // Release session
                 EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+                
+                // Track successful sign-in completion
+                if success && self?.type == .login {
+                    Analytics.shared.accountSignInConfirmed()
+                }
+                
                 onFlowCompleted?(success)
                 continuation.resume()
             }
@@ -246,6 +252,11 @@ final class AuthFlow {
     private func handleAuthFailure(_ error: AuthError,
                                    onError: ((AuthError) -> Void)?) async {
         activeSession = nil
+
+        // Track auth cancellation/failure for login flows
+        if type == .login {
+            Analytics.shared.accountSignInCancelled()
+        }
 
         EcosiaLogger.auth.error("Auth flow failed: \(error)")
         onError?(error)

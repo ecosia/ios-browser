@@ -69,6 +69,7 @@ final class NTPAccountLoginViewModel: ObservableObject {
     }
 
     func performLogin() {
+        Analytics.shared.accountSignInTriggered()
         auth.login()
     }
 
