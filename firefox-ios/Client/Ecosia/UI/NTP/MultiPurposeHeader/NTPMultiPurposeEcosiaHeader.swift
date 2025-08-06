@@ -75,22 +75,26 @@ struct NTPMultiPurposeEcosiaHeaderView: View {
     @ObservedObject var viewModel: NTPMultiPurposeEcosiaHeaderViewModel
     let windowUUID: WindowUUID
 
-    // Use explicit SwiftUI.Environment to avoid ambiguity
-    @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
-
     var body: some View {
         HStack {
             Spacer()
             
             // AI Search Button positioned on the right
+            // Ecosia: Use theme colors from view model (following FeedbackView pattern)
             EcosiaAISearchButton(
-                backgroundColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundElevation1),
-                iconColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary),
+                backgroundColor: viewModel.buttonBackgroundColor,
+                iconColor: viewModel.buttonIconColor,
                 onTap: handleAISearchTap
             )
         }
         .padding(.leading, .ecosia.space._m)
         .padding(.trailing, .ecosia.space._m)
+        .onReceive(NotificationCenter.default.publisher(for: .ThemeDidChange)) { notification in
+            // Ecosia: Listen to theme changes (following FeedbackView pattern)
+            guard let uuid = notification.windowUUID, uuid == windowUUID else { return }
+            let themeManager = AppContainer.shared.resolve() as ThemeManager
+            viewModel.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        }
     }
     
     private func handleAISearchTap() {
