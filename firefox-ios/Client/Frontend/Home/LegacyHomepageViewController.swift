@@ -96,8 +96,7 @@ class LegacyHomepageViewController:
                                            isPrivate: isPrivate,
                                            tabManager: tabManager,
                                            referrals: referrals, // Ecosia: Add referrals
-                                           theme: themeManager.getCurrentTheme(for: tabManager.windowUUID),
-                                           multiPurposeEcosiaHeaderDelegate: nil) // Ecosia: Will be set after super.init
+                                           theme: themeManager.getCurrentTheme(for: tabManager.windowUUID))
 
         let jumpBackInContextualViewProvider = ContextualHintViewProvider(forHintType: .jumpBackIn,
                                                                           with: viewModel.profile)
