@@ -119,3 +119,14 @@ extension LegacyHomepageViewController: NTPSeedCounterDelegate {
         SeedCounterNTPExperiment.trackTapOnSeedCounter()
     }
 }
+
+// Ecosia: AI Actions Cell Delegate
+extension LegacyHomepageViewController: NTPAIActionsCellDelegate {
+    func aiActionsCellDidRequestAISearch() {
+        let aiSearchURL = Environment.current.urlProvider.ai.search
+        openLink(url: aiSearchURL)
+        
+        // TODO: Add analytics tracking
+        // Analytics.shared.aiSearchOpened()
+    }
+}
