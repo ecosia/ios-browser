@@ -8,20 +8,20 @@ import Shared
 import SwiftUI
 import Ecosia
 
-final class NTPAIActionsCellViewModel: ObservableObject {
+final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
     struct UX {
         static let topInset: CGFloat = 24
     }
 
     // MARK: - Private Properties
     private let windowUUID: WindowUUID
-    private weak var delegate: NTPAIActionsCellDelegate?
+    private weak var delegate: NTPMultiPurposeEcosiaHeaderDelegate?
     private var theme: Theme
 
     // MARK: - Initialization
     init(theme: Theme,
          windowUUID: WindowUUID,
-         delegate: NTPAIActionsCellDelegate? = nil) {
+         delegate: NTPMultiPurposeEcosiaHeaderDelegate? = nil) {
         self.theme = theme
         self.windowUUID = windowUUID
         self.delegate = delegate
@@ -30,10 +30,10 @@ final class NTPAIActionsCellViewModel: ObservableObject {
     // MARK: - Public Methods
 
     func openAISearch() {
-        delegate?.aiActionsCellDidRequestAISearch()
+        delegate?.multiPurposeEcosiaHeaderDidRequestAISearch()
         
         // Ecosia: Log AI search button tap
-        EcosiaLogger.general.info("AI search button tapped")
+        EcosiaLogger.general.info("AI search button tapped from multi-purpose header")
         
         // TODO: Add analytics tracking for AI search button tap
         // Analytics.shared.aiSearchButtonTapped()
@@ -41,9 +41,9 @@ final class NTPAIActionsCellViewModel: ObservableObject {
 }
 
 // MARK: HomeViewModelProtocol
-extension NTPAIActionsCellViewModel: HomepageViewModelProtocol, FeatureFlaggable {
+extension NTPMultiPurposeEcosiaHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     var sectionType: HomepageSectionType {
-        return .aiActions
+        return .multiPurposeEcosiaHeader
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
@@ -83,17 +83,17 @@ extension NTPAIActionsCellViewModel: HomepageViewModelProtocol, FeatureFlaggable
     }
 
     func refreshData(for traitCollection: UITraitCollection, size: CGSize, isPortrait: Bool, device: UIUserInterfaceIdiom) {
-        // No data refresh needed for AI actions
+        // No data refresh needed for multi-purpose header
     }
 }
 
-extension NTPAIActionsCellViewModel: HomepageSectionHandler {
+extension NTPMultiPurposeEcosiaHeaderViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         if #available(iOS 16.0, *) {
-            guard let aiActionsCell = cell as? NTPAIActionsCell else { return cell }
-            aiActionsCell.configure(with: self, windowUUID: windowUUID)
-            return aiActionsCell
+            guard let multiPurposeHeaderCell = cell as? NTPMultiPurposeEcosiaHeader else { return cell }
+            multiPurposeHeaderCell.configure(with: self, windowUUID: windowUUID)
+            return multiPurposeHeaderCell
         }
         return cell
     }

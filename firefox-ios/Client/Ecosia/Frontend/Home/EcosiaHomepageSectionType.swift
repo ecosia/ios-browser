@@ -11,7 +11,7 @@ import Foundation
 import Common
 
 enum HomepageSectionType: Int, CaseIterable {
-    case aiActions // Ecosia: AI search and related actions
+    case multiPurposeEcosiaHeader // Ecosia: Multi-purpose header with AI search and other actions
     case climateImpactCounter
     case homepageHeader
     case libraryShortcuts
@@ -22,9 +22,9 @@ enum HomepageSectionType: Int, CaseIterable {
 
     var cellIdentifier: String {
         switch self {
-        case .aiActions:
+        case .multiPurposeEcosiaHeader:
             if #available(iOS 16.0, *) {
-                return NTPAIActionsCell.cellIdentifier
+                return NTPMultiPurposeEcosiaHeader.cellIdentifier
             } else {
                 return "" // Fallback for iOS < 16.0
             }
@@ -42,7 +42,7 @@ enum HomepageSectionType: Int, CaseIterable {
         var types: [ReusableCell.Type] = []
 
         if #available(iOS 16.0, *) {
-            types.append(NTPAIActionsCell.self)
+            types.append(NTPMultiPurposeEcosiaHeader.self)
         }
 
         types.append(contentsOf: [
@@ -69,7 +69,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .aiActions, .homepageHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
+        case .multiPurposeEcosiaHeader, .homepageHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .news: return .ecosiaNews

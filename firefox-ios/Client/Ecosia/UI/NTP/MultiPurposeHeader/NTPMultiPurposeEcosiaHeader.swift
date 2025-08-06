@@ -7,17 +7,17 @@ import SwiftUI
 import Common
 import Ecosia
 
-protocol NTPAIActionsCellDelegate: AnyObject {
-    func aiActionsCellDidRequestAISearch()
+protocol NTPMultiPurposeEcosiaHeaderDelegate: AnyObject {
+    func multiPurposeEcosiaHeaderDidRequestAISearch()
 }
 
-/// NTP cell containing AI-related actions like AI search
+/// NTP header cell containing multiple Ecosia-specific actions like AI search
 @available(iOS 16.0, *)
-final class NTPAIActionsCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
+final class NTPMultiPurposeEcosiaHeader: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     // MARK: - Properties
     private var hostingController: UIHostingController<AnyView>?
-    private var viewModel: NTPAIActionsCellViewModel?
+    private var viewModel: NTPMultiPurposeEcosiaHeaderViewModel?
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -51,11 +51,11 @@ final class NTPAIActionsCell: UICollectionViewCell, ThemeApplicable, ReusableCel
 
     // MARK: - Public Methods
 
-    func configure(with viewModel: NTPAIActionsCellViewModel, windowUUID: WindowUUID) {
+    func configure(with viewModel: NTPMultiPurposeEcosiaHeaderViewModel, windowUUID: WindowUUID) {
         self.viewModel = viewModel
 
         // Update the SwiftUI view with the new view model
-        let swiftUIView = NTPAIActionsCellView(
+        let swiftUIView = NTPMultiPurposeEcosiaHeaderView(
             viewModel: viewModel,
             windowUUID: windowUUID
         )
@@ -69,10 +69,10 @@ final class NTPAIActionsCell: UICollectionViewCell, ThemeApplicable, ReusableCel
     }
 }
 
-// MARK: - SwiftUI AI Actions Cell View
+// MARK: - SwiftUI Multi-Purpose Header View
 @available(iOS 16.0, *)
-struct NTPAIActionsCellView: View {
-    @ObservedObject var viewModel: NTPAIActionsCellViewModel
+struct NTPMultiPurposeEcosiaHeaderView: View {
+    @ObservedObject var viewModel: NTPMultiPurposeEcosiaHeaderViewModel
     let windowUUID: WindowUUID
 
     // Use explicit SwiftUI.Environment to avoid ambiguity
