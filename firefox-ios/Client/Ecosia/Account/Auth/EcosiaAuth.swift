@@ -106,6 +106,8 @@ final class EcosiaAuth {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
+        
+        Analytics.shared.accountSignInTriggered()
 
         let flow = AuthFlow(
             type: .login,
@@ -152,6 +154,9 @@ final class EcosiaAuth {
             EcosiaLogger.auth.debug("Login flow completed successfully")
         case .failure(let error):
             EcosiaLogger.auth.error("Login flow failed: \(error)")
+            if case .userCancelled = error {
+                Analytics.shared.accountSignInCancelled()
+            }
             // TODO: Error handling should be moved to EcosiaAuth to be handled with BrowserViewController
             // This will be implemented as part of the error states design work
         }
