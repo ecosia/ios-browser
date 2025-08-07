@@ -78,7 +78,7 @@ struct NTPMultiPurposeEcosiaHeaderView: View {
     var body: some View {
         HStack {
             Spacer()
-            
+
             // AI Search Button positioned on the right
             // Ecosia: Use theme colors from view model (following FeedbackView pattern)
             EcosiaAISearchButton(
@@ -96,7 +96,7 @@ struct NTPMultiPurposeEcosiaHeaderView: View {
             viewModel.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         }
     }
-    
+
     private func handleAISearchTap() {
         viewModel.openAISearch()
     }

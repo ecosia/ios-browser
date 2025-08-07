@@ -10,7 +10,7 @@ public struct EcosiaAISearchButton: View {
     private let backgroundColor: Color
     private let iconColor: Color
     private let onTap: () -> Void
-    
+
     public init(
         backgroundColor: Color = .gray.opacity(0.2),
         iconColor: Color = .primary,
@@ -20,7 +20,7 @@ public struct EcosiaAISearchButton: View {
         self.iconColor = iconColor
         self.onTap = onTap
     }
-    
+
     public var body: some View {
         Button(action: onTap) {
             Image("twinkle", bundle: .ecosia)
@@ -51,14 +51,14 @@ struct EcosiaAISearchButton_Previews: PreviewProvider {
                 iconColor: .primary,
                 onTap: {}
             )
-            
+
             // Dark theme
             EcosiaAISearchButton(
                 backgroundColor: .black.opacity(0.8),
                 iconColor: .white,
                 onTap: {}
             )
-            
+
             // Green theme
             EcosiaAISearchButton(
                 backgroundColor: .green.opacity(0.2),

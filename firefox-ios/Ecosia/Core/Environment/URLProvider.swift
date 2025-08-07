@@ -172,11 +172,11 @@ public enum URLProvider {
 /// Container for AI search related URLs
 public struct AISearchURLs {
     private let provider: URLProvider
-    
+
     init(provider: URLProvider) {
         self.provider = provider
     }
-    
+
     /// Main AI search page URL
     public var search: URL {
         switch provider {
