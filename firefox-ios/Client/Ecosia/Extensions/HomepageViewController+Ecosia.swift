@@ -120,10 +120,9 @@ extension LegacyHomepageViewController: NTPSeedCounterDelegate {
     }
 }
 
-// Ecosia: Multi-Purpose Header Delegate
 extension LegacyHomepageViewController: NTPMultiPurposeEcosiaHeaderDelegate {
     func multiPurposeEcosiaHeaderDidRequestAISearch() {
-        let aiSearchURL = Environment.current.urlProvider.ai.search
+        let aiSearchURL = Environment.current.urlProvider.aiSearch
         openLink(url: aiSearchURL)
     }
 }

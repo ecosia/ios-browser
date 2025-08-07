@@ -164,26 +164,12 @@ public enum URLProvider {
     }
 
     /// AI search URLs for different environments
-    public var ai: AISearchURLs {
-        return AISearchURLs(provider: self)
-    }
-}
-
-/// Container for AI search related URLs
-public struct AISearchURLs {
-    private let provider: URLProvider
-
-    init(provider: URLProvider) {
-        self.provider = provider
-    }
-
-    /// Main AI search page URL
-    public var search: URL {
-        switch provider {
+    public var aiSearch: URL {
+        switch self {
         case .staging:
-            return provider.root.appendingPathComponent("ai-search")
+            return root.appendingPathComponent("ai-search")
         case .production:
-            var components = URLComponents(url: provider.root.appendingPathComponent("ai-search"), resolvingAgainstBaseURL: false)!
+            var components = URLComponents(url: root.appendingPathComponent("ai-search"), resolvingAgainstBaseURL: false)!
             components.queryItems = [URLQueryItem(name: "feature-ai2-67-ai-search-mvp", value: "enabled")]
             return components.url!
         }
