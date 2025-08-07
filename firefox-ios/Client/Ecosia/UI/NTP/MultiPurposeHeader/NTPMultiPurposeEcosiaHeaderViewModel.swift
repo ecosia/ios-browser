@@ -17,7 +17,7 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
     private let windowUUID: WindowUUID
     internal weak var delegate: NTPMultiPurposeEcosiaHeaderDelegate?
     internal var theme: Theme
-    
+
     // MARK: - Theme Properties (following FeedbackView pattern)
     @Published var buttonBackgroundColor = Color.gray.opacity(0.2)
     @Published var buttonIconColor = Color.primary
@@ -29,11 +29,11 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
         self.theme = theme
         self.windowUUID = windowUUID
         self.delegate = delegate
-        
+
         // Apply initial theme
         applyTheme(theme: theme)
     }
-    
+
     // MARK: - Theme Handling
     func applyTheme(theme: Theme) {
         self.theme = theme
@@ -85,7 +85,7 @@ extension NTPMultiPurposeEcosiaHeaderViewModel: HomepageViewModelProtocol, Featu
     }
 
     var isEnabled: Bool {
-        true
+        AISearchMVPExperiment.isEnabled
     }
 
     func setTheme(theme: Theme) {
@@ -108,7 +108,7 @@ extension NTPMultiPurposeEcosiaHeaderViewModel: HomepageSectionHandler {
         }
         return cell
     }
-    
+
     func didSelectItem(at indexPath: IndexPath, homePanelDelegate: HomePanelDelegate?, libraryPanelDelegate: LibraryPanelDelegate?) {
         // This cell handles its own button actions, no cell selection needed
     }
