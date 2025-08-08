@@ -35,7 +35,7 @@ extension SearchViewController {
 
     /// Handle AI Search navigation when item is selected
     func handleAISearchSelection(_ indexPath: IndexPath) {
-        let aiSearchURL = Environment.current.urlProvider.aiSearch
+        let aiSearchURL = AISearchProductionUrlSetting.getAISearchURL(for: Environment.current)
         var components = URLComponents(url: aiSearchURL, resolvingAgainstBaseURL: false)!
 
         var queryItems = components.queryItems ?? []
@@ -82,7 +82,7 @@ extension SearchViewController {
 
         let twinkleSize: CGFloat = 16
         let internalPadding: CGFloat = 8
-        let spacing: CGFloat = 6
+        let spacing: CGFloat = 2
 
         // Create the actual pill container matching titleLabel height
         let pillContainer = UIView()
