@@ -369,6 +369,7 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
+                - dc-ai-shortcut-mvp
           context: napps
 
       # Check if version was bumped and conditionally continue to release pipeline
