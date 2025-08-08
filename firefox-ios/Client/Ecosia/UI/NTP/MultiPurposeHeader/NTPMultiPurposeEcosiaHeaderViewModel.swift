@@ -45,8 +45,7 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
 
     func openAISearch() {
         delegate?.multiPurposeEcosiaHeaderDidRequestAISearch()
-        // TODO: Add analytics tracking for AI search button tap
-        // Analytics.shared.aiSearchButtonTapped()
+        Analytics.shared.aiSearchNTPButtonTapped()
     }
 }
 
