@@ -114,10 +114,11 @@ extension Analytics {
             linkCopying = "link_copying",
             promo
         }
-        
+
         public enum AISearch: String {
             case
-            ntpShortcut = "ntp_shortcut"
+            ntpShortcut = "ntp_shortcut",
+            autocompleteShortcut = "autocomplete_shortcut"
         }
     }
 
