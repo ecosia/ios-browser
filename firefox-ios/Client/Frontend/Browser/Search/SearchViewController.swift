@@ -452,7 +452,7 @@ class SearchViewController: SiteTableViewController,
                 handleAISearchSelection(indexPath)
                 return
             }
-            
+
             /* Ecosia: Modified to handle AI Search item with proper bounds checking
             guard let defaultEngine = viewModel.searchEnginesManager?.defaultEngine else { return }
 
@@ -692,7 +692,7 @@ class SearchViewController: SiteTableViewController,
                 handleAISearchHighlight(indexPath)
                 return
             }
-            
+
             /* Ecosia: Modified to handle AI Search item and use safe array access
             let suggestion = viewModel.suggestions?[indexPath.item] ?? ""
             searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)
