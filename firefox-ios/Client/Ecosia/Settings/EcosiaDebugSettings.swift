@@ -332,3 +332,33 @@ final class AnalyticsStagingUrlSetting: HiddenSetting {
         settings.tableView.reloadData()
     }
 }
+
+final class AISearchProductionUrlSetting: HiddenSetting {
+
+    private static var useOverriddenURL: Bool = false
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Use Production AI Search URL", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let currentUrl = AISearchProductionUrlSetting.useOverriddenURL ? "Production" : "Staging"
+        return NSAttributedString(string: "\(currentUrl) AI Search URL (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        AISearchProductionUrlSetting.useOverriddenURL.toggle()
+        settings.tableView.reloadData()
+    }
+
+    /// Returns the appropriate AI Search URL based on debug setting
+    static func getAISearchURL(for environment: Environment) -> URL {
+        if useOverriddenURL {
+            // Use production URL when debug setting is enabled in non-production builds
+            return URLProvider.production.aiSearch
+        }
+
+        // Default behavior - use environment's URL provider
+        return environment.urlProvider.aiSearch
+    }
+}

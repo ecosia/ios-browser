@@ -347,6 +347,13 @@ open class Analytics {
                          action: Action.click.rawValue)
             .label(Analytics.Label.AISearch.ntpShortcut.rawValue))
     }
+
+    public func aiSearchAutocompleteForQuery(_ text: String) {
+        track(Structured(category: Category.aiSearch.rawValue,
+                         action: Action.click.rawValue)
+            .label(Analytics.Label.AISearch.autocompleteShortcut.rawValue)
+            .property(text))
+    }
 }
 
 extension Analytics {
