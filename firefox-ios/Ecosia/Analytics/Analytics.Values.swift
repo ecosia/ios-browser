@@ -8,6 +8,7 @@ extension Analytics {
     public enum Category: String {
         case
         activity,
+        aiSearch = "ai_search",
         bookmarks,
         brazeIAM = "braze_iam",
         browser,
@@ -112,6 +113,11 @@ extension Analytics {
             learnMore = "learn_more",
             linkCopying = "link_copying",
             promo
+        }
+
+        public enum AISearch: String {
+            case
+            ntpShortcut = "ntp_shortcut"
         }
     }
 

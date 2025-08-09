@@ -285,6 +285,20 @@ final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "AI Search MVP"
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Is enabled: \(Unleash.isEnabled(.aiSearchMVP).description)", attributes: [:])
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.aiSearchMVP)
+    }
+}
+
 final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [:])
