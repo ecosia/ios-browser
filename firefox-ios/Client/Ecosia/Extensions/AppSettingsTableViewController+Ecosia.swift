@@ -164,10 +164,16 @@ extension AppSettingsTableViewController {
             UnleashAPNConsent(settings: self),
             AnalyticsIdentifierSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
+            UnleashAISearchMVPSetting(settings: self)
         ]
 
         if Environment.current == .staging {
             hiddenDebugSettings.append(AnalyticsStagingUrlSetting(settings: self))
+        }
+
+        if AISearchMVPExperiment.isEnabled,
+           Environment.current == .staging {
+            hiddenDebugSettings.append(AISearchProductionUrlSetting(settings: self))
         }
 
         if SeedCounterNTPExperiment.isEnabled {
