@@ -339,6 +339,14 @@ open class Analytics {
         track(SelfDescribing(schema: Self.feedbackSchema,
                              payload: payload))
     }
+
+    // MARK: AI Search MVP
+
+    public func aiSearchNTPButtonTapped() {
+        track(Structured(category: Category.aiSearch.rawValue,
+                         action: Action.click.rawValue)
+            .label(Analytics.Label.AISearch.ntpShortcut.rawValue))
+    }
 }
 
 extension Analytics {

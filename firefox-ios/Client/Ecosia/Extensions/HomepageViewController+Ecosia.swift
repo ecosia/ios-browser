@@ -119,3 +119,10 @@ extension LegacyHomepageViewController: NTPSeedCounterDelegate {
         SeedCounterNTPExperiment.trackTapOnSeedCounter()
     }
 }
+
+extension LegacyHomepageViewController: NTPMultiPurposeEcosiaHeaderDelegate {
+    func multiPurposeEcosiaHeaderDidRequestAISearch() {
+        let aiSearchURL = Environment.current.urlProvider.aiSearch
+        openLink(url: aiSearchURL)
+    }
+}
