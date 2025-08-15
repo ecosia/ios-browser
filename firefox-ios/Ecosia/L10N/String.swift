@@ -19,6 +19,7 @@ extension String {
 
     public enum Key: String {
         case addMoreDetailAboutYourFeedback = "Add more detail about your feedback..."
+        case aiSearch = "AI Search"
         case allRegions = "All regions"
         case autocomplete = "Autocomplete"
         case climateImpact = "Climate Impact"
