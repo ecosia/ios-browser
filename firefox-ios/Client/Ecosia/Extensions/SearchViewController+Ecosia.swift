@@ -89,6 +89,8 @@ extension SearchViewController {
         pillContainer.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimary
 
         let pillWidth = internalPadding + twinkleSize + spacing + aiSearchLabel.frame.width + internalPadding
+        // Ensure layout is up-to-date before reading frames
+        cell.layoutIfNeeded()
         let pillHeight = cell.titleLabel.frame.height + internalPadding / 2
 
         // Calculate Y position to center pill with leftImageView
