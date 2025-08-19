@@ -343,15 +343,16 @@ open class Analytics {
     // MARK: AI Search MVP
 
     public func aiSearchNTPButtonTapped() {
-        track(Structured(category: Category.aiSearch.rawValue,
+        track(Structured(category: Category.ntp.rawValue,
                          action: Action.click.rawValue)
-            .label(Analytics.Label.AISearch.ntpShortcut.rawValue))
+            .label(Analytics.Label.AISearch.cta.rawValue)
+            .property(Analytics.Property.header.rawValue))
     }
 
     public func aiSearchAutocompleteForQuery(_ text: String) {
-        track(Structured(category: Category.aiSearch.rawValue,
+        track(Structured(category: Category.autocomplete.rawValue,
                          action: Action.click.rawValue)
-            .label(Analytics.Label.AISearch.autocompleteShortcut.rawValue)
+            .label(Analytics.Label.AISearch.cta.rawValue)
             .property(text))
     }
 }

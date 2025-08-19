@@ -8,7 +8,7 @@ extension Analytics {
     public enum Category: String {
         case
         activity,
-        aiSearch = "ai_search",
+        autocomplete = "autocomplete_suggestion",
         bookmarks,
         brazeIAM = "braze_iam",
         browser,
@@ -117,8 +117,7 @@ extension Analytics {
 
         public enum AISearch: String {
             case
-            ntpShortcut = "ntp_shortcut",
-            autocompleteShortcut = "autocomplete_shortcut"
+            cta = "ai_search_cta"
         }
     }
 
@@ -214,6 +213,7 @@ extension Analytics {
         case
         enable,
         disable,
+        header,
         home,
         detail,
         nativeSettings = "native_settings"
