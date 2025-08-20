@@ -8,9 +8,9 @@ import Common
 @testable import Ecosia
 
 final class ThemeableSwiftUIViewTests: XCTestCase {
-    
+
     // MARK: - Unit Tests
-    
+
     func testThemeUpdatesCorrectly() {
         // Given
         let mockThemeManager = ThemeableMockThemeManager()
@@ -32,7 +32,7 @@ final class ThemeableSwiftUIViewTests: XCTestCase {
         XCTAssertEqual(testTheme.backgroundColor, Color.black)
         XCTAssertEqual(testTheme.textColor, Color.white)
     }
-    
+
     func testNilWindowUUID() {
         // Given
         var testTheme = TestTheme()
@@ -49,7 +49,7 @@ final class ThemeableSwiftUIViewTests: XCTestCase {
     }
 
     // MARK: - Integration Tests
-    
+
     @available(iOS 16.0, *)
     func testThemeModifierWithMockView() {
         // Given
@@ -63,7 +63,7 @@ final class ThemeableSwiftUIViewTests: XCTestCase {
 }
 
 extension ThemeableSwiftUIViewTests {
-    
+
     struct TestTheme: EcosiaThemeable {
         var backgroundColor = Color.white
         var textColor = Color.black
@@ -82,7 +82,7 @@ extension ThemeableSwiftUIViewTests {
         @StateObject private var themeContainer = ThemeContainer()
         let initialTheme: TestTheme
         let windowUUID: WindowUUID
-        
+
         init(theme: TestTheme, windowUUID: WindowUUID) {
             self.initialTheme = theme
             self.windowUUID = windowUUID
@@ -96,7 +96,7 @@ extension ThemeableSwiftUIViewTests {
                 .ecosiaThemed(windowUUID, $themeContainer.theme)
         }
     }
-    
+
     // Helper class to hold our theme in an ObservableObject
     class ThemeContainer: ObservableObject {
         @Published var theme = TestTheme()

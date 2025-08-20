@@ -59,7 +59,7 @@ final class ThemeableSwiftUIViewTests: XCTestCase {
         @StateObject private var themeContainer = ThemeContainer()
         let initialTheme: TestTheme
         let windowUUID: WindowUUID
-        
+
         init(theme: TestTheme, windowUUID: WindowUUID) {
             self.initialTheme = theme
             self.windowUUID = windowUUID
@@ -73,7 +73,7 @@ final class ThemeableSwiftUIViewTests: XCTestCase {
                 .ecosiaThemed(windowUUID, $themeContainer.theme)
         }
     }
-    
+
     // Helper class to hold our theme in an ObservableObject
     class ThemeContainer: ObservableObject {
         @Published var theme = TestTheme()
@@ -111,7 +111,7 @@ final class ThemeableSwiftUIViewTests: XCTestCase {
         XCTAssertEqual(testTheme.backgroundColor, Color.black)
         XCTAssertEqual(testTheme.textColor, Color.white)
     }
-    
+
     func testNilWindowUUID() {
         // Given
         var testTheme = TestTheme()
