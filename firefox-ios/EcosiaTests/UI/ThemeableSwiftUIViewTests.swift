@@ -7,29 +7,27 @@ import SwiftUI
 import Common
 @testable import Ecosia
 
-class ThemeableSwiftUIViewTests: XCTestCase {
-    
+final class ThemeableSwiftUIViewTests: XCTestCase {
+
     // MARK: - Test Mocks
-    
-    // Mock theme manager for testing
-    class MockThemeManager: ThemeManager {
+
+    class ThemeableMockThemeManager: ThemeManager {
         var currentTheme: Theme = LightTheme()
         var themeChangeHandler: ((Theme) -> Void)?
-        
+
         func getCurrentTheme(for window: WindowUUID?) -> Theme {
             return currentTheme
         }
-        
+
         func setCurrentTheme(_ theme: Theme) {
             currentTheme = theme
             themeChangeHandler?(theme)
         }
-        
-        // Stub implementations for required protocol methods
+
         var systemThemeIsOn: Bool = false
         var automaticBrightnessIsOn: Bool = false
         var automaticBrightnessValue: Float = 0.5
-        
+
         func setSystemTheme(isOn: Bool) {}
         func setManualTheme(to newTheme: ThemeType) {}
         func getUserManualTheme() -> ThemeType { return .light }
@@ -42,53 +40,101 @@ class ThemeableSwiftUIViewTests: XCTestCase {
         func windowDidClose(uuid: WindowUUID) {}
         func windowNonspecificTheme() -> Theme { return currentTheme }
     }
-    
-    // Test theme container
+
     struct TestTheme: EcosiaThemeable {
         var backgroundColor = Color.white
         var textColor = Color.black
-        
+        var themeApplied = false
+
         mutating func applyTheme(theme: Theme) {
             backgroundColor = theme.type == .dark ? Color.black : Color.white
             textColor = theme.type == .dark ? Color.white : Color.black
+            themeApplied = true
+        }
+    }
+
+    @available(iOS 16.0, *)
+    struct MockView: View {
+        // Using StateObject instead of State to avoid "Accessing State's value outside of being installed on a View" warning
+        @StateObject private var themeContainer = ThemeContainer()
+        let initialTheme: TestTheme
+        let windowUUID: WindowUUID
+        
+        init(theme: TestTheme, windowUUID: WindowUUID) {
+            self.initialTheme = theme
+            self.windowUUID = windowUUID
+            self.themeContainer.theme = theme
+        }
+
+        var body: some View {
+            Text("Test")
+                .foregroundColor(themeContainer.theme.textColor)
+                .background(themeContainer.theme.backgroundColor)
+                .ecosiaThemed(windowUUID, $themeContainer.theme)
         }
     }
     
+    // Helper class to hold our theme in an ObservableObject
+    class ThemeContainer: ObservableObject {
+        @Published var theme = TestTheme()
+    }
+
+    class TestNotificationCenter: NotificationCenter, @unchecked Sendable {
+        var postedNotifications: [Notification.Name] = []
+
+        override func post(name: Notification.Name, object: Any?, userInfo: [AnyHashable: Any]? = nil) {
+            postedNotifications.append(name)
+            super.post(name: name, object: object, userInfo: userInfo)
+        }
+    }
+
     // MARK: - Tests
-    
-    func testThemeInitialApplication() {
+
+    func testThemeUpdatesCorrectly() {
         // Given
-        let mockThemeManager = MockThemeManager()
-        mockThemeManager.currentTheme = DarkTheme()
-        
+        let mockThemeManager = ThemeableMockThemeManager()
+        mockThemeManager.currentTheme = LightTheme()
+
         // When
         var testTheme = TestTheme()
         testTheme.applyTheme(theme: mockThemeManager.getCurrentTheme(for: .XCTestDefaultUUID))
-        
+
+        // Then
+        XCTAssertEqual(testTheme.backgroundColor, Color.white)
+        XCTAssertEqual(testTheme.textColor, Color.black)
+
+        // When theme changes
+        mockThemeManager.currentTheme = DarkTheme()
+        testTheme.applyTheme(theme: mockThemeManager.getCurrentTheme(for: .XCTestDefaultUUID))
+
         // Then
         XCTAssertEqual(testTheme.backgroundColor, Color.black)
         XCTAssertEqual(testTheme.textColor, Color.white)
     }
     
-    func testThemeUpdatesCorrectly() {
+    func testNilWindowUUID() {
         // Given
-        let mockThemeManager = MockThemeManager()
-        mockThemeManager.currentTheme = LightTheme()
-        
-        // When
         var testTheme = TestTheme()
-        testTheme.applyTheme(theme: mockThemeManager.getCurrentTheme(for: .XCTestDefaultUUID))
-        
-        // Then
-        XCTAssertEqual(testTheme.backgroundColor, Color.white)
-        XCTAssertEqual(testTheme.textColor, Color.black)
-        
-        // When theme changes
-        mockThemeManager.currentTheme = DarkTheme()
-        testTheme.applyTheme(theme: mockThemeManager.getCurrentTheme(for: .XCTestDefaultUUID))
-        
-        // Then
-        XCTAssertEqual(testTheme.backgroundColor, Color.black)
-        XCTAssertEqual(testTheme.textColor, Color.white)
+        let windowUUID: WindowUUID? = nil
+        let themeBinding = Binding<TestTheme>(
+            get: { testTheme },
+            set: { testTheme = $0 }
+        )
+
+        // When/Then
+        let view = Text("Test").ecosiaThemed(windowUUID, themeBinding)
+        let viewMirror = Mirror(reflecting: view)
+        XCTAssertTrue(viewMirror.description.contains("ThemeModifier"))
+    }
+
+    @available(iOS 16.0, *)
+    func testThemeModifierWithMockView() {
+        // Given
+        let initialTheme = TestTheme()
+        let mockView = MockView(theme: initialTheme, windowUUID: .XCTestDefaultUUID)
+
+        // When/Then
+        let mirror = Mirror(reflecting: mockView.body)
+        XCTAssertTrue(mirror.description.contains("ThemeModifier"))
     }
 }

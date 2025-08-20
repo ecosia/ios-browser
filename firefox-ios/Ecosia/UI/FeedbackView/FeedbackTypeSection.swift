@@ -47,6 +47,6 @@ struct FeedbackTypeSection: View {
         .background(theme.sectionBackgroundColor)
         .cornerRadius(.ecosia.borderRadius._l)
         .padding(.horizontal, .ecosia.space._m)
-        .ecosiaThemed(windowUUID: windowUUID, theme: $theme)
+        .ecosiaThemed(windowUUID, $theme)
     }
 }

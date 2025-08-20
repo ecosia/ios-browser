@@ -35,7 +35,7 @@ public struct EcosiaAISearchButton: View {
         .buttonStyle(PlainButtonStyle())
         .accessibilityLabel("AI Search")
         .accessibilityHint("Opens AI search functionality")
-        .ecosiaThemed(windowUUID: windowUUID, theme: $theme)
+        .ecosiaThemed(windowUUID, $theme)
     }
 }
 

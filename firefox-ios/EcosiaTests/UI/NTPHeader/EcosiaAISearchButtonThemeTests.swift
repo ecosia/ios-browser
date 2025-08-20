@@ -8,21 +8,22 @@ import Common
 @testable import Client
 @testable import Ecosia
 
-final class FeedbackThemeTests: XCTestCase {
+final class EcosiaAISearchButtonThemeTests: XCTestCase {
 
     // MARK: - Integration Tests
 
-    func testIntegrationWithFeedbackView() {
+    @available(iOS 16.0, *)
+    func testIntegrationWithButton() {
         // Given
         let windowUUID: WindowUUID = .XCTestDefaultUUID
-        let feedbackView = FeedbackView(windowUUID: windowUUID)
+        let button = EcosiaAISearchButton(windowUUID: windowUUID, onTap: {})
 
         // When/Then
-        let viewMirror = Mirror(reflecting: feedbackView)
-        XCTAssertNotNil(viewMirror.descendant("_theme"))
+        let buttonMirror = Mirror(reflecting: button)
+        XCTAssertNotNil(buttonMirror.descendant("_theme"))
 
         // Also verify that the body contains our ThemeModifier (the Ecosia one we made)
-        let bodyMirror = Mirror(reflecting: feedbackView.body)
+        let bodyMirror = Mirror(reflecting: button.body)
         XCTAssertTrue(bodyMirror.description.contains("ThemeModifier"))
     }
 }

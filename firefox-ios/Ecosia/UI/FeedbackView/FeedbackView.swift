@@ -67,7 +67,7 @@ public struct FeedbackView: View {
                     }
                 }
             }
-            .ecosiaThemed(windowUUID: windowUUID, theme: $theme)
+            .ecosiaThemed(windowUUID, $theme)
         }
     }
 

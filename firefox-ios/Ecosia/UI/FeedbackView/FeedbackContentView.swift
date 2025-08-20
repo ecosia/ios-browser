@@ -81,7 +81,7 @@ struct FeedbackContentView: View {
                 .padding(.horizontal, .ecosia.space._m)
             }
             .background(theme.backgroundColor)
-            .ecosiaThemed(windowUUID: windowUUID, theme: $theme)
+            .ecosiaThemed(windowUUID, $theme)
         }
     }
 }

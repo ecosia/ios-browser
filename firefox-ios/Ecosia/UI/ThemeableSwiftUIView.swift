@@ -30,7 +30,7 @@ import Common
 ///        var body: some View {
 ///            Text("Hello")
 ///                .foregroundColor(theme.textColor)
-///                .ecosiaThemed(windowUUID: windowUUID, theme: $theme)
+///                .ecosiaThemed(windowUUID, $theme)
 ///        }
 ///    }
 ///    ```
@@ -44,6 +44,27 @@ public protocol EcosiaThemeable {
     mutating func applyTheme(theme: Theme)
 }
 
+// MARK: - Theme Modifier
+
+/// ViewModifier for applying theme updates automatically
+struct ThemeModifier<T: EcosiaThemeable>: ViewModifier {
+    let windowUUID: WindowUUID?
+    @Binding var theme: T
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                let themeManager = AppContainer.shared.resolve() as ThemeManager
+                theme.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .ThemeDidChange)) { notification in
+                guard let uuid = notification.windowUUID, uuid == windowUUID else { return }
+                let themeManager = AppContainer.shared.resolve() as ThemeManager
+                theme.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+            }
+    }
+}
+
 // MARK: - View Extension for Theme Handling
 
 public extension View {
@@ -52,16 +73,7 @@ public extension View {
     ///   - windowUUID: The window UUID for theme management
     ///   - theme: A binding to the themeable object
     /// - Returns: A view that automatically updates when theme changes
-    func ecosiaThemed<T: EcosiaThemeable>(windowUUID: WindowUUID?, theme: Binding<T>) -> some View {
-        self
-            .onAppear {
-                let themeManager = AppContainer.shared.resolve() as ThemeManager
-                theme.wrappedValue.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .ThemeDidChange)) { notification in
-                guard let uuid = notification.windowUUID, uuid == windowUUID else { return }
-                let themeManager = AppContainer.shared.resolve() as ThemeManager
-                theme.wrappedValue.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
-            }
+    func ecosiaThemed<T: EcosiaThemeable>(_ windowUUID: WindowUUID?, _ theme: Binding<T>) -> some View {
+        modifier(ThemeModifier(windowUUID: windowUUID, theme: theme))
     }
 }
