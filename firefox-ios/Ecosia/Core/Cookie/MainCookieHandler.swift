@@ -19,9 +19,9 @@ class MainCookieHandler: BaseCookieHandler {
         return makeCookie(for: mode)
     }
 
-    func makeCookie(for mode: CookieMode) -> HTTPCookie {
+    func makeCookie(for mode: CookieMode) -> HTTPCookie? {
         let value = cookieValues(for: mode).map { $0.key + "=" + $0.value }.joined(separator: ":")
-        return createHTTPCookie(value: value)!
+        return createHTTPCookie(value: value)
     }
 
     override func extractValue(_ value: String) {
