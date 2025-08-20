@@ -192,8 +192,14 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         searchSettingsObserver = NotificationCenter.default
             .publisher(for: .searchSettingsChanged)
             .sink { [privateConfiguration, configuration] _ in
-                configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeStandardMain())
-                privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognitoMain())
+                if let standardMainCookie = Cookie.makeMain(mode: .standard) {
+                    configuration.websiteDataStore.httpCookieStore
+                        .setCookie(standardMainCookie)
+                }
+                if let incognitoMainCookie = Cookie.makeMain(mode: .incognito) {
+                    privateConfiguration.websiteDataStore.httpCookieStore
+                        .setCookie(incognitoMainCookie)
+                }
             }
     }
 
@@ -255,16 +261,13 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
                 configuration.websiteDataStore = WKWebsiteDataStore.default()
             }
         configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
-        // Ecosia: inject cookie when config is created to make sure they are present
-        let cookie = isPrivate ? Cookie.makeIncognitoMain() : Cookie.makeStandardMain()
-        configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
-        // Ecosia: inject consent cookie when config is created to make sure they are present
-        if let consentCookie = Cookie.makeConsent() {
-            configuration.websiteDataStore.httpCookieStore.setCookie(consentCookie)
+
+        // Ecosia: inject all required cookies when config is created to make sure they are present
+        let cookies = Cookie.makeRequiredCookies(isPrivate: isPrivate)
+        for cookie in cookies {
+            configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
         }
-        if let unleashCookie = Cookie.makeUnleash() {
-            configuration.websiteDataStore.httpCookieStore.setCookie(unleashCookie)
-        }
+
         return configuration
     }
 
