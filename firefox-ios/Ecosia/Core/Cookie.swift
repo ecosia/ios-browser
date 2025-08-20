@@ -5,11 +5,18 @@
 import Foundation
 
 public enum Cookie: String {
+    // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECFG
     case main = "ECFG"
+    // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECCC
     case consent = "ECCC"
-    case unleashUserId = "ECUNL"
+    // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECUNL
+    case unleash = "ECUNL"
 
     // MARK: - Init
+    /// Initialized enum using HTTPCookie object's name. Also checks domain matches Ecosia.
+    /// - Parameters:
+    ///   - cookie: HTTPCookie
+    ///   - urlProvider: Provides the URL information. Default: Current environment
     init?(_ cookie: HTTPCookie, urlProvider: URLProvider = Environment.current.urlProvider) {
         let ecosiaDomain = urlProvider.domain ?? ""
         guard cookie.domain.contains("/\(ecosiaDomain)") else {
@@ -31,7 +38,7 @@ public enum Cookie: String {
     /// Processes received cookies.
     /// - Parameters:
     ///   - cookies: An array of HTTPCookie objects.
-    ///   - urlProvider: Provides the URL information.
+    ///   - urlProvider: Provides the URL information. Default: Current environment
     public static func received(_ cookies: [HTTPCookie], urlProvider: URLProvider = Environment.current.urlProvider) {
         cookies.forEach { cookie in
             guard let cookieType = Cookie(cookie, urlProvider: urlProvider) else { return }
@@ -50,11 +57,11 @@ public enum Cookie: String {
                 .reduce(into: [:]) { result, item in
                     result[item[0]] = item[1]
                 }
-            extractECFG(properties)
+            extractMain(properties)
         case .consent:
-            extractECCC(cookie.value)
-        case .unleashUserId:
-            extractUnleashUserId(cookie.value)
+            extractConsent(cookie.value)
+        case .unleash:
+            extractUnleash(cookie.value)
         }
     }
 
@@ -76,26 +83,26 @@ public enum Cookie: String {
         static let addon = "a"
     }
 
-    /// Values for standard mode cookies.
-    private static var standardValues: [String: String] {
-        var values = incognitoValues
+    /// Values for standard Main Cookie.
+    private static var standardMainValues: [String: String] {
+        var values = incognitoMainValues
         values[MainCookieProperties.userId] = User.shared.id
         values[MainCookieProperties.treeCount] = .init(User.shared.searchCount)
         return values
     }
 
-    /// Creates a standard mode ECFG cookie.
+    /// Creates a standard Main Cookie.
     /// - Parameter urlProvider: Provides the URL information.
     /// - Returns: An HTTPCookie configured for standard mode.
-    public static func makeStandardCookie(_ urlProvider: URLProvider = Environment.current.urlProvider) -> HTTPCookie {
+    public static func makeStandardMain(_ urlProvider: URLProvider = Environment.current.urlProvider) -> HTTPCookie {
         HTTPCookie(properties: [.name: Cookie.main.name,
                                 .domain: ".\(urlProvider.domain ?? "")",
                                 .path: "/",
-                                .value: Cookie.standardValues.map { $0.0 + "=" + $0.1 }.joined(separator: ":")])!
+                                .value: Cookie.standardMainValues.map { $0.0 + "=" + $0.1 }.joined(separator: ":")])!
     }
 
-    /// Values for incognito mode cookies.
-    private static var incognitoValues: [String: String] {
+    /// Values for incognito Main Cookie.
+    private static var incognitoMainValues: [String: String] {
         var values = [String: String]()
         values[MainCookieProperties.adultFilter] = User.shared.adultFilter.rawValue
         values[MainCookieProperties.marketCode] = User.shared.marketCode.rawValue
@@ -110,19 +117,19 @@ public enum Cookie: String {
         return values
     }
 
-    /// Creates an incognito mode ECFG cookie.
-    /// - Parameter urlProvider: Provides the URL information.
+    /// Creates an incognito Main Cookie.
+    /// - Parameter urlProvider: Provides the URL information. Default: Current environment
     /// - Returns: An HTTPCookie configured for incognito mode.
-    public static func makeIncognitoCookie(_ urlProvider: URLProvider = Environment.current.urlProvider) -> HTTPCookie {
+    public static func makeIncognitoMain(_ urlProvider: URLProvider = Environment.current.urlProvider) -> HTTPCookie {
         HTTPCookie(properties: [.name: Cookie.main.name,
                                 .domain: ".\(urlProvider.domain ?? "")",
                                 .path: "/",
-                                .value: Cookie.incognitoValues.map { $0.0 + "=" + $0.1 }.joined(separator: ":")])!
+                                .value: Cookie.incognitoMainValues.map { $0.0 + "=" + $0.1 }.joined(separator: ":")])!
     }
 
-    /// Extracts and handles ECFG specific properties.
+    /// Extracts and handles Main Cookie specific properties.
     /// - Parameter properties: A dictionary of cookie properties.
-    private func extractECFG(_ properties: [String: String]) {
+    private func extractMain(_ properties: [String: String]) {
         var user = User.shared
 
         properties[MainCookieProperties.userId].map {
@@ -156,8 +163,11 @@ public enum Cookie: String {
     }
 
     // MARK: - Consent Cookie helpers
-
-    public static func makeConsentCookie(_ urlProvider: URLProvider = Environment.current.urlProvider) -> HTTPCookie? {
+    
+    /// Creates a Consent Cookie.
+    /// - Parameter urlProvider: Provides the URL information. Default: Current environment
+    /// - Returns: An HTTPCookie with the consent value.
+    public static func makeConsent(_ urlProvider: URLProvider = Environment.current.urlProvider) -> HTTPCookie? {
         guard let cookieConsentValue = User.shared.cookieConsentValue else { return nil }
         return HTTPCookie(properties: [.name: Cookie.consent.name,
                                        .domain: ".\(urlProvider.domain ?? "")",
@@ -165,18 +175,21 @@ public enum Cookie: String {
                                        .value: cookieConsentValue])
     }
 
-    /// Extracts and handles ECCC specific properties.
+    /// Extracts and handles Consent Cookie.
     /// - Parameter value: A string of cookie values expressed by a sequence of letters (e.g. `eampg`)
-    private func extractECCC(_ value: String) {
+    private func extractConsent(_ value: String) {
         User.shared.cookieConsentValue = value
     }
 
     // MARK: - Unleash Cookie helpers
-
-    public static func makeUnleashCookie(_ urlProvider: URLProvider = Environment.current.urlProvider) -> HTTPCookie? {
+    
+    /// Creates a Consent Cookie.
+    /// - Parameter urlProvider: Provides the URL information. Default: Current environment
+    /// - Returns: An HTTPCookie with the consent value.
+    public static func makeUnleash(_ urlProvider: URLProvider = Environment.current.urlProvider) -> HTTPCookie? {
         // TODO: Ensure Unleash has been loaded when getting id
         let unleashUserId = Unleash.model.id.uuidString.lowercased()
-        return HTTPCookie(properties: [.name: Cookie.unleashUserId.name,
+        return HTTPCookie(properties: [.name: Cookie.unleash.name,
                                        .domain: ".\(urlProvider.domain ?? "")",
                                        .path: "/",
                                        .value: unleashUserId])
@@ -184,7 +197,7 @@ public enum Cookie: String {
 
     /// Extracts and handles Unleash Cookie.
     /// - Parameter value: A string with the cookie value representing the user Id
-    private func extractUnleashUserId(_ value: String) {
+    private func extractUnleash(_ value: String) {
         // No need to extract since we override the value
         // TODO: Do we need to force override again here if changed? Or is the one on `LegacyTabManager.makeWebViewConfig` enough?
     }

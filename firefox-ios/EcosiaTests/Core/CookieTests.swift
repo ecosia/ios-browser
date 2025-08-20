@@ -18,23 +18,23 @@ final class CookieTests: XCTestCase {
     }
 
     func testDefaults() {
-        XCTAssertEqual("ECFG", Cookie.makeStandardCookie(urlProvider).name)
-        XCTAssertEqual(".ecosia.org", Cookie.makeStandardCookie(urlProvider).domain)
-        XCTAssertEqual("/", Cookie.makeStandardCookie(urlProvider).path)
+        XCTAssertEqual("ECFG", Cookie.makeStandardMain(urlProvider).name)
+        XCTAssertEqual(".ecosia.org", Cookie.makeStandardMain(urlProvider).domain)
+        XCTAssertEqual("/", Cookie.makeStandardMain(urlProvider).path)
     }
 
     func testIncognitoValuesNoPersonalData() {
         User.shared.searchCount = 1234
         User.shared.id = "neverland"
 
-        let incognitoDict = Cookie.makeIncognitoCookie(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
+        let incognitoDict = Cookie.makeIncognitoMain(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
             guard $1.count == 2 else { return }
             $0[$1[0]] = $1[1]
         }
         XCTAssertNil(incognitoDict["cid"])
         XCTAssertNil(incognitoDict["t"])
 
-        let standardDict = Cookie.makeStandardCookie(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
+        let standardDict = Cookie.makeStandardMain(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
             guard $1.count == 2 else { return }
             $0[$1[0]] = $1[1]
         }
@@ -45,14 +45,14 @@ final class CookieTests: XCTestCase {
     func testMakeConsentCookieReturnsCookieWhenValueStoredInUser() {
         User.shared.cookieConsentValue = "eampg"
 
-        XCTAssertNotNil(Cookie.makeConsentCookie(urlProvider))
-        XCTAssertEqual(Cookie.makeConsentCookie(urlProvider)?.name, Cookie.consent.name)
+        XCTAssertNotNil(Cookie.makeConsent(urlProvider))
+        XCTAssertEqual(Cookie.makeConsent(urlProvider)?.name, Cookie.consent.name)
     }
 
     func testMakeConsentCookieDoesNotReturnCookieWhenValueNotStoredInUser() {
         User.shared.cookieConsentValue = nil
 
-        XCTAssertNil(Cookie.makeConsentCookie(urlProvider))
+        XCTAssertNil(Cookie.makeConsent(urlProvider))
     }
 
     func testDefaultsAddingUser() {
@@ -63,7 +63,7 @@ final class CookieTests: XCTestCase {
         User.shared.id = "neverland"
         User.shared.personalized = true
 
-        let dictionary = Cookie.makeStandardCookie(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
+        let dictionary = Cookie.makeStandardMain(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
             guard $1.count == 2 else { return }
             $0[$1[0]] = $1[1]
         }
@@ -84,7 +84,7 @@ final class CookieTests: XCTestCase {
     func testDefaultsNoUserId() {
         User.shared.id = nil
 
-        let dictionary = Cookie.makeStandardCookie(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
+        let dictionary = Cookie.makeStandardMain(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
             guard $1.count == 2 else { return }
             $0[$1[0]] = $1[1]
         }
@@ -96,7 +96,7 @@ final class CookieTests: XCTestCase {
         User.shared.searchCount = 3
         extractReceivedCookies([HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.it", .path: "/", .value: "as=0:f=s:mc=en-uk:t=9999"])!])
 
-        let dictionary = Cookie.makeStandardCookie(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
+        let dictionary = Cookie.makeStandardMain(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
             guard $1.count == 2 else { return }
             $0[$1[0]] = $1[1]
         }
@@ -107,7 +107,7 @@ final class CookieTests: XCTestCase {
         User.shared.searchCount = 0
         extractReceivedCookies([HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.org", .path: "/", .value: "as=0:f=s:mc=en-uk:t=9999:cid=loremipsum"])!])
 
-        let dictionary = Cookie.makeStandardCookie(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
+        let dictionary = Cookie.makeStandardMain(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
             guard $1.count == 2 else { return }
             $0[$1[0]] = $1[1]
         }
@@ -203,7 +203,7 @@ final class CookieTests: XCTestCase {
     func testRemoveUnknownProperties() {
         extractReceivedCookies([HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.org", .path: "/", .value: "as=0:name=test"])!])
 
-        let dictionary = Cookie.makeStandardCookie(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
+        let dictionary = Cookie.makeStandardMain(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
             guard $1.count == 2 else { return }
             $0[$1[0]] = $1[1]
         }
@@ -221,7 +221,7 @@ final class CookieTests: XCTestCase {
         User.shared.searchCount = 3
         extractReceivedCookies([HTTPCookie(properties: [.name: "Facebook", .domain: ".ecosia.org", .path: "/", .value: "as=0:f=s:mc=en-uk:t=9999"])!])
 
-        let dictionary = Cookie.makeStandardCookie(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
+        let dictionary = Cookie.makeStandardMain(urlProvider).value.components(separatedBy: ":").map { $0.components(separatedBy: "=") }.reduce(into: [String: String]()) {
             guard $1.count == 2 else { return }
             $0[$1[0]] = $1[1]
         }
