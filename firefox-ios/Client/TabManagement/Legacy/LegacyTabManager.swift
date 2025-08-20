@@ -262,6 +262,9 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         if let consentCookie = Cookie.makeConsentCookie() {
             configuration.websiteDataStore.httpCookieStore.setCookie(consentCookie)
         }
+        if let unleashCookie = Cookie.makeUnleashCookie() {
+            configuration.websiteDataStore.httpCookieStore.setCookie(unleashCookie)
+        }
         return configuration
     }
 
