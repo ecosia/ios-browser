@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import WebKit
+
 class ConsentCookieHandler: BaseCookieHandler {
 
     init() {
@@ -12,7 +14,7 @@ class ConsentCookieHandler: BaseCookieHandler {
         return User.shared.cookieConsentValue
     }
 
-    override func extractValue(_ value: String) {
-        User.shared.cookieConsentValue = value
+    override func received(_ cookie: HTTPCookie, in cookieStore: WKHTTPCookieStore) {
+        User.shared.cookieConsentValue = cookie.value
     }
 }

@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import WebKit
+
 public enum CookieMode {
     case standard
     case incognito
@@ -23,8 +25,9 @@ class MainCookieHandler: BaseCookieHandler {
         let value = cookieValues(for: mode).map { $0.key + "=" + $0.value }.joined(separator: ":")
         return createHTTPCookie(value: value)
     }
-
-    override func extractValue(_ value: String) {
+    
+    override func received(_ cookie: HTTPCookie, in cookieStore: WKHTTPCookieStore) {
+        let value = cookie.value
         let properties = value.components(separatedBy: ":")
             .map { $0.components(separatedBy: "=") }
             .filter { $0.count == 2 }

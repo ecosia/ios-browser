@@ -1133,7 +1133,7 @@ extension LegacyTabManager: WKHTTPCookieStoreObserver {
     func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
         cookieStore.getAllCookies { cookies in
             DispatchQueue.main.async {
-                Cookie.received(cookies)
+                Cookie.received(cookies, in: cookieStore)
             }
         }
     }

@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import WebKit
 
 // MARK: - Cookie Types
 
@@ -72,10 +73,10 @@ public enum Cookie: String, CaseIterable {
     /// Processes received cookies.
     /// - Parameters:
     ///   - cookies: An array of HTTPCookie objects.
-    public static func received(_ cookies: [HTTPCookie]) {
+    public static func received(_ cookies: [HTTPCookie], in cookieStore: WKHTTPCookieStore) {
         cookies.forEach { cookie in
             guard let cookieType = Cookie(cookie) else { return }
-            cookieType.handler.extractValue(cookie.value)
+            cookieType.handler.received(cookie, in: cookieStore)
         }
     }
 
