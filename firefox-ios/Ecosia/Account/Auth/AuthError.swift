@@ -10,6 +10,7 @@ public enum AuthError: Error, LocalizedError {
     case credentialsClearingFailed
     case credentialsRenewalFailed(Error)
     case sessionClearingFailed(Error)
+    case userCancelled
     case authFlowConfigurationError(String)
     case authFlowSessionManagementFailed(String)
     case authFlowInvisibleTabCreationFailed
@@ -28,6 +29,8 @@ public enum AuthError: Error, LocalizedError {
             return "Failed to renew credentials: \(error.localizedDescription)"
         case .sessionClearingFailed(let error):
             return "Failed to clear web session and credentials: \(error.localizedDescription)"
+        case .userCancelled:
+            return "User cancelled the authentication operation"
         case .authFlowConfigurationError(let message):
             return "Authentication flow configuration error: \(message)"
         case .authFlowSessionManagementFailed(let message):

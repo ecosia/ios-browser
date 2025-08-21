@@ -59,7 +59,7 @@ final class EcosiaAuth {
          authProvider: Ecosia.Auth = Ecosia.Auth.shared) {
         self.authProvider = authProvider
         self.browserViewController = browserViewController
-
+        self.browserViewController?.ecosiaAuth = self
         EcosiaLogger.auth.info("EcosiaAuth initialized")
     }
 
@@ -106,6 +106,8 @@ final class EcosiaAuth {
         guard let browserViewController = browserViewController else {
             fatalError("BrowserViewController not available for auth flow")
         }
+        
+        Analytics.shared.accountSignInTriggered()
 
         let flow = AuthFlow(
             type: .login,
@@ -152,6 +154,9 @@ final class EcosiaAuth {
             EcosiaLogger.auth.debug("Login flow completed successfully")
         case .failure(let error):
             EcosiaLogger.auth.error("Login flow failed: \(error)")
+            if case .userCancelled = error {
+                Analytics.shared.accountSignInCancelled()
+            }
             // TODO: Error handling should be moved to EcosiaAuth to be handled with BrowserViewController
             // This will be implemented as part of the error states design work
         }
@@ -178,20 +183,22 @@ final class EcosiaAuth {
     // MARK: - State Queries
 
     var isLoggedIn: Bool {
-        if let windowUUID = browserViewController?.windowUUID,
-           let authState = Ecosia.AuthStateManager.shared.getAuthState(for: windowUUID) {
-            return authState.isLoggedIn
-        }
-
-        let allStates = Ecosia.AuthStateManager.shared.getAllAuthStates()
-        return allStates.values.contains { $0.isLoggedIn }
+        authProvider.isLoggedIn
     }
 
     var idToken: String? {
-        return authProvider.idToken
+        authProvider.idToken
     }
 
     var accessToken: String? {
-        return authProvider.accessToken
+        authProvider.accessToken
+    }
+
+    var userProfile: UserProfile? {
+        authProvider.userProfile
+    }
+
+    func renewCredentialsIfNeeded() async throws {
+        try await authProvider.renewCredentialsIfNeeded()
     }
 }
