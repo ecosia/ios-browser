@@ -4,8 +4,11 @@
 
 @testable import Ecosia
 import XCTest
+import WebKit
 
 final class MainCookieHandlerTests: XCTestCase {
+
+    var mockCookieStore: WKHTTPCookieStore!
 
     override func setUp() {
         super.setUp()
@@ -17,6 +20,10 @@ final class MainCookieHandlerTests: XCTestCase {
         User.shared.adultFilter = .off
         User.shared.autoComplete = true
         User.shared.personalized = false
+
+        // Create a mock cookie store for testing
+        let webView = WKWebView()
+        mockCookieStore = webView.configuration.websiteDataStore.httpCookieStore
     }
 
     override func tearDown() {
@@ -136,11 +143,16 @@ final class MainCookieHandlerTests: XCTestCase {
 
     // MARK: - Extract Value Tests
 
-    func testExtractValueUpdatesUser() {
+    func testReceivedMethodUpdatesUser() {
         let handler = MainCookieHandler()
-        let cookieValue = "cid=new-user-id:t=100:mc=fr-fr:f=y:as=1:pz=0"
+        let cookie = HTTPCookie(properties: [
+            .name: "ECFG",
+            .domain: ".ecosia.org",
+            .path: "/",
+            .value: "cid=new-user-id:t=100:mc=fr-fr:f=y:as=1:pz=0"
+        ])!
 
-        handler.extractValue(cookieValue)
+        handler.received(cookie, in: mockCookieStore)
 
         XCTAssertEqual(User.shared.id, "new-user-id")
         XCTAssertEqual(User.shared.searchCount, 100)
@@ -150,15 +162,20 @@ final class MainCookieHandlerTests: XCTestCase {
         XCTAssertFalse(User.shared.personalized)
     }
 
-    func testExtractValueWithInvalidValues() {
+    func testReceivedMethodWithInvalidValues() {
         User.shared.searchCount = 50
         User.shared.marketCode = .en_us
         User.shared.adultFilter = .off
 
         let handler = MainCookieHandler()
-        let cookieValue = "t=invalid:mc=invalid-market:f=invalid-filter"
+        let cookie = HTTPCookie(properties: [
+            .name: "ECFG",
+            .domain: ".ecosia.org",
+            .path: "/",
+            .value: "t=invalid:mc=invalid-market:f=invalid-filter"
+        ])!
 
-        handler.extractValue(cookieValue)
+        handler.received(cookie, in: mockCookieStore)
 
         // Should maintain existing values when invalid data is received
         XCTAssertEqual(User.shared.searchCount, 50)
@@ -166,21 +183,39 @@ final class MainCookieHandlerTests: XCTestCase {
         XCTAssertEqual(User.shared.adultFilter, .off)
     }
 
-    func testExtractValueTreeCountOnlyIncreasesOrResetsToZero() {
+    func testReceivedMethodTreeCountOnlyIncreasesOrResetsToZero() {
         User.shared.searchCount = 50
 
         let handler = MainCookieHandler()
 
         // Should not decrease
-        handler.extractValue("t=30")
+        let decreaseCookie = HTTPCookie(properties: [
+            .name: "ECFG",
+            .domain: ".ecosia.org",
+            .path: "/",
+            .value: "t=30"
+        ])!
+        handler.received(decreaseCookie, in: mockCookieStore)
         XCTAssertEqual(User.shared.searchCount, 50)
 
         // Should increase
-        handler.extractValue("t=75")
+        let increaseCookie = HTTPCookie(properties: [
+            .name: "ECFG",
+            .domain: ".ecosia.org",
+            .path: "/",
+            .value: "t=75"
+        ])!
+        handler.received(increaseCookie, in: mockCookieStore)
         XCTAssertEqual(User.shared.searchCount, 75)
 
         // Should reset to zero
-        handler.extractValue("t=0")
+        let resetCookie = HTTPCookie(properties: [
+            .name: "ECFG",
+            .domain: ".ecosia.org",
+            .path: "/",
+            .value: "t=0"
+        ])!
+        handler.received(resetCookie, in: mockCookieStore)
         XCTAssertEqual(User.shared.searchCount, 0)
     }
 }

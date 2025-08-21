@@ -4,13 +4,20 @@
 
 @testable import Ecosia
 import XCTest
+import WebKit
 
 final class UnleashCookieHandlerTests: XCTestCase {
+
+    var mockCookieStore: WKHTTPCookieStore!
 
     override func setUp() {
         super.setUp()
         Cookie.setURLProvider(.production)
         MockUnleash.setLoaded(true)
+
+        // Create a mock cookie store for testing
+        let webView = WKWebView()
+        mockCookieStore = webView.configuration.websiteDataStore.httpCookieStore
     }
 
     override func tearDown() {
@@ -51,16 +58,22 @@ final class UnleashCookieHandlerTests: XCTestCase {
         XCTAssertEqual(cookie1?.value, cookie2?.value)
     }
 
-    // MARK: - Extract Value Tests
+    // MARK: - Received Value Tests
 
-    func testExtractValueDoesNotModifyAnything() {
+    func testReceivedMethodOverridesCookieAgain() async {
         let handler = UnleashCookieHandler(unleash: MockUnleash.self)
+        guard let existingCookie = handler.makeCookie() else {
+            XCTFail("Failed to create unleash cookie when mock is loaded")
+            return
+        }
+        await mockCookieStore.setCookie(existingCookie)
 
-        handler.extractValue("some-random-value")
-        handler.extractValue("")
-        handler.extractValue("invalid-uuid")
+        let webCookie = HTTPCookie(properties: [.name: "ECUNL", .domain: ".ecosia.org", .path: "/", .value: "some-random-value"])!
+        handler.received(webCookie, in: mockCookieStore)
 
-        // TODO: Check Unleash cookie is reset and overriden again
+        let cookies = await mockCookieStore.allCookies()
+        let receivedWebCookie = cookies.first { $0.name == "ECUNL" }
+        XCTAssertEqual(receivedWebCookie?.value, existingCookie.value)
     }
 
     // MARK: - Cookie Properties Tests
@@ -74,7 +87,7 @@ final class UnleashCookieHandlerTests: XCTestCase {
 // MARK: - Integration Tests
 
 extension UnleashCookieHandlerTests {
-    
+
     func testMakeCookieCreatesValidCookieAfterUnleashStart() async {
         _ = try? await Unleash.start(appVersion: "1.0.0")
 

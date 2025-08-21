@@ -4,14 +4,21 @@
 
 @testable import Ecosia
 import XCTest
+import WebKit
 
 final class ConsentCookieHandlerTests: XCTestCase {
+
+    var mockCookieStore: WKHTTPCookieStore!
 
     override func setUp() {
         super.setUp()
         Cookie.setURLProvider(.production)
 
         User.shared.cookieConsentValue = nil
+
+        // Create a mock cookie store for testing
+        let webView = WKWebView()
+        mockCookieStore = webView.configuration.websiteDataStore.httpCookieStore
     }
 
     override func tearDown() {
@@ -53,7 +60,7 @@ final class ConsentCookieHandlerTests: XCTestCase {
         XCTAssertEqual(cookie?.value, "")
     }
 
-    func testExtractValueWithVariousConsentStrings() {
+    func testReceivedMethodWithVariousConsentStrings() {
         let handler = ConsentCookieHandler()
         let testValues = [
             "e",
@@ -64,7 +71,14 @@ final class ConsentCookieHandlerTests: XCTestCase {
         ]
 
         for value in testValues {
-            handler.extractValue(value)
+            let cookie = HTTPCookie(properties: [
+                .name: "ECCC",
+                .domain: ".ecosia.org",
+                .path: "/",
+                .value: value
+            ])!
+
+            handler.received(cookie, in: mockCookieStore)
             XCTAssertEqual(User.shared.cookieConsentValue, value)
         }
     }
@@ -113,23 +127,29 @@ final class ConsentCookieHandlerTests: XCTestCase {
         let handler = ConsentCookieHandler()
 
         // Test values that should indicate analytics consent
-        handler.extractValue("eampg")
+        let eampgCookie = HTTPCookie(properties: [.name: "ECCC", .domain: ".ecosia.org", .path: "/", .value: "eampg"])!
+        handler.received(eampgCookie, in: mockCookieStore)
         XCTAssertTrue(User.shared.hasAnalyticsCookieConsent)
 
-        handler.extractValue("eamp")
+        let eampCookie = HTTPCookie(properties: [.name: "ECCC", .domain: ".ecosia.org", .path: "/", .value: "eamp"])!
+        handler.received(eampCookie, in: mockCookieStore)
         XCTAssertTrue(User.shared.hasAnalyticsCookieConsent)
 
-        handler.extractValue("ea")
+        let eaCookie = HTTPCookie(properties: [.name: "ECCC", .domain: ".ecosia.org", .path: "/", .value: "ea"])!
+        handler.received(eaCookie, in: mockCookieStore)
         XCTAssertTrue(User.shared.hasAnalyticsCookieConsent)
 
         // Test values that should NOT indicate analytics consent
-        handler.extractValue("e")
+        let eCookie = HTTPCookie(properties: [.name: "ECCC", .domain: ".ecosia.org", .path: "/", .value: "e"])!
+        handler.received(eCookie, in: mockCookieStore)
         XCTAssertFalse(User.shared.hasAnalyticsCookieConsent)
 
-        handler.extractValue("empg")
+        let empgCookie = HTTPCookie(properties: [.name: "ECCC", .domain: ".ecosia.org", .path: "/", .value: "empg"])!
+        handler.received(empgCookie, in: mockCookieStore)
         XCTAssertFalse(User.shared.hasAnalyticsCookieConsent)
 
-        handler.extractValue("")
+        let emptyCookie = HTTPCookie(properties: [.name: "ECCC", .domain: ".ecosia.org", .path: "/", .value: ""])!
+        handler.received(emptyCookie, in: mockCookieStore)
         XCTAssertFalse(User.shared.hasAnalyticsCookieConsent)
     }
 }

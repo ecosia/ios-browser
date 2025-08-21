@@ -4,15 +4,21 @@
 
 @testable import Ecosia
 import XCTest
+import WebKit
 
 final class CookieTests: XCTestCase {
 
     var urlProvider: URLProvider = .production
+    var mockCookieStore: WKHTTPCookieStore!
 
     override func setUp() {
         super.setUp()
         try? FileManager.default.removeItem(at: FileManager.user)
         Cookie.setURLProvider(urlProvider)
+
+        // Create a mock cookie store for testing
+        let webView = WKWebView()
+        mockCookieStore = webView.configuration.websiteDataStore.httpCookieStore
     }
 
     override func tearDown() {
@@ -71,7 +77,7 @@ final class CookieTests: XCTestCase {
             HTTPCookie(properties: [.name: "ECUNL", .domain: ".ecosia.org", .path: "/", .value: "test-unleash-id"])!
         ]
 
-        Cookie.received(cookies)
+        Cookie.received(cookies, in: mockCookieStore)
 
         XCTAssertEqual(User.shared.searchCount, 100)
         XCTAssertEqual(User.shared.id, "test-user")
@@ -84,7 +90,7 @@ final class CookieTests: XCTestCase {
     func testReceivedInvalidDomainCookies() {
         User.shared.searchCount = 3
 
-        Cookie.received([HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.it", .path: "/", .value: "t=9999"])!])
+        Cookie.received([HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.it", .path: "/", .value: "t=9999"])!], in: mockCookieStore)
 
         XCTAssertEqual(User.shared.searchCount, 3)
     }
@@ -92,7 +98,7 @@ final class CookieTests: XCTestCase {
     func testReceivedInvalidNameCookies() {
         User.shared.searchCount = 3
 
-        Cookie.received([HTTPCookie(properties: [.name: "Unknown", .domain: ".ecosia.org", .path: "/", .value: "t=9999"])!])
+        Cookie.received([HTTPCookie(properties: [.name: "Unknown", .domain: ".ecosia.org", .path: "/", .value: "t=9999"])!], in: mockCookieStore)
 
         XCTAssertEqual(User.shared.searchCount, 3)
     }
