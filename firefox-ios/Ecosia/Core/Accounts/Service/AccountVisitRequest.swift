@@ -26,7 +26,8 @@ struct AccountVisitRequest: BaseRequest {
 
     init(accessToken: String) {
         self.additionalHeaders = [
-            "Authorization": "Bearer \(accessToken)"
+            "Authorization": "Bearer \(accessToken)",
+            "E-Device-Type-Id": "2" // iOS Device Type ID
         ]
     }
 }
