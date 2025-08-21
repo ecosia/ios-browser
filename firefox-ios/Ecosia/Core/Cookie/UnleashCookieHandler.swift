@@ -4,12 +4,17 @@
 
 class UnleashCookieHandler: BaseCookieHandler {
 
-    init() {
+    private let unleash: UnleashProtocol.Type
+
+    init(unleash: UnleashProtocol.Type = Unleash.self) {
+        self.unleash = unleash
         super.init(cookieName: Cookie.unleash.rawValue)
     }
 
     override func getCookieValue() -> String? {
-        // TODO: Ensure Unleash has been loaded when getting id
+        guard unleash.isLoaded else {
+            return nil
+        }
         return Unleash.model.id.uuidString.lowercased()
     }
 
