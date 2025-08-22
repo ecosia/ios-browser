@@ -264,7 +264,7 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
 
         // Ecosia: inject all required cookies when config is created to make sure they are present
         let cookies = Cookie.makeRequiredCookies(isPrivate: isPrivate)
-        for cookie in cookies {
+        cookies.forEach { cookie in
             configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
         }
 
