@@ -12,23 +12,28 @@ extension SearchViewController {
 
     // MARK: - Helper Methods
 
+    func suggestionsCount() -> Int? {
+        let max = 4 // Taken from Firefox code (it was hardcoded there)
+        guard let count = viewModel.suggestions?.count else {
+            return nil
+        }
+        return min(count, max)
+    }
+
     /// Check if current row is the AI Search item
     func isAISearchRow(_ indexPath: IndexPath) -> Bool {
         guard SearchListSection(rawValue: indexPath.section) == .searchSuggestions else { return false }
         let shouldShowAISearch = AISearchMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
         guard shouldShowAISearch else { return false }
 
-        let count = viewModel.suggestions?.count ?? 0
-        let maxSuggestions = count < 4 ? count : 4
-        return indexPath.row == maxSuggestions
+        return indexPath.row == suggestionsCount() // Item after last suggestion (0-based index)
     }
 
     /// Calculate number of rows including AI Search item if enabled
     func numberOfRowsForSearchSuggestions() -> Int {
-        guard let count = viewModel.suggestions?.count else { return 0 }
-        let maxSuggestions = count < 4 ? count : 4
+        guard let count = suggestionsCount() else { return 0 }
         let shouldShowAISearch = AISearchMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
-        return shouldShowAISearch ? maxSuggestions + 1 : maxSuggestions
+        return shouldShowAISearch ? count + 1 : count
     }
 
     // MARK: - AI Search Navigation
