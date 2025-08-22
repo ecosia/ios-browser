@@ -7,17 +7,17 @@ import SwiftUI
 import Common
 import Ecosia
 
-protocol NTPMultiPurposeEcosiaHeaderDelegate: AnyObject {
-    func multiPurposeEcosiaHeaderDidRequestAISearch()
+protocol NTPHeaderDelegate: AnyObject {
+    func headerOpenAISearch()
 }
 
 /// NTP header cell containing multiple Ecosia-specific actions like AI search
 @available(iOS 16.0, *)
-final class NTPMultiPurposeEcosiaHeader: UICollectionViewCell, ReusableCell {
+final class NTPHeader: UICollectionViewCell, ReusableCell {
     
     // MARK: - Properties
     private var hostingController: UIHostingController<AnyView>?
-    private var viewModel: NTPMultiPurposeEcosiaHeaderViewModel?
+    private var viewModel: NTPHeaderViewModel?
     
     // MARK: - Init
     override init(frame: CGRect) {
@@ -51,14 +51,14 @@ final class NTPMultiPurposeEcosiaHeader: UICollectionViewCell, ReusableCell {
     
     // MARK: - Public Methods
     
-    func configure(with viewModel: NTPMultiPurposeEcosiaHeaderViewModel,
+    func configure(with viewModel: NTPHeaderViewModel,
                    windowUUID: WindowUUID) {
         self.viewModel = viewModel
         
         // Update the SwiftUI view with the new view model
-        let swiftUIView = NTPMultiPurposeEcosiaHeaderView(
+        let swiftUIView = NTPHeaderView(
             viewModel: viewModel,
-            windowUUID: windowUUID,
+            windowUUID: windowUUID
         )
         
         hostingController?.rootView = AnyView(swiftUIView)
@@ -67,8 +67,8 @@ final class NTPMultiPurposeEcosiaHeader: UICollectionViewCell, ReusableCell {
 
 // MARK: - SwiftUI Multi-Purpose Header View
 @available(iOS 16.0, *)
-struct NTPMultiPurposeEcosiaHeaderView: View {
-    @ObservedObject var viewModel: NTPMultiPurposeEcosiaHeaderViewModel
+struct NTPHeaderView: View {
+    @ObservedObject var viewModel: NTPHeaderViewModel
     let windowUUID: WindowUUID
 
     var body: some View {
