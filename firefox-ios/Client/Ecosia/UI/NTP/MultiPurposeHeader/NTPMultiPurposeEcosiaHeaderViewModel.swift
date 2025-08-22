@@ -17,7 +17,6 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
     private let windowUUID: WindowUUID
     internal weak var delegate: NTPMultiPurposeEcosiaHeaderDelegate?
     internal var theme: Theme
-    @SwiftUICore.Environment(\.themeManager) var themeManager
 
     // MARK: - Initialization
     init(theme: Theme,
