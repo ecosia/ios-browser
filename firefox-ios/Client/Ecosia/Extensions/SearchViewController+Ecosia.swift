@@ -24,9 +24,8 @@ extension SearchViewController {
     func isAISearchRow(_ indexPath: IndexPath) -> Bool {
         guard SearchListSection(rawValue: indexPath.section) == .searchSuggestions else { return false }
         let shouldShowAISearch = AISearchMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
-        guard shouldShowAISearch else { return false }
-
-        return indexPath.row == suggestionsCount() // Item after last suggestion (0-based index)
+        guard shouldShowAISearch, let lastIndex = suggestionsCount() else { return false }
+        return indexPath.row == lastIndex // Item after last suggestion (0-based index)
     }
 
     /// Calculate number of rows including AI Search item if enabled
