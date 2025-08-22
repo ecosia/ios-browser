@@ -685,7 +685,6 @@ class SearchViewController: SiteTableViewController,
 
             /* Ecosia: Modified to handle AI Search item and use safe array access
             let suggestion = viewModel.suggestions?[indexPath.item] ?? ""
-            searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)
             */
             guard let suggestion = safeSuggestion(at: indexPath.item) else { return }
             searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)
