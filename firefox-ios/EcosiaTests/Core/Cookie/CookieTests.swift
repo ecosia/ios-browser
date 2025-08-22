@@ -48,7 +48,8 @@ final class CookieTests: XCTestCase {
         XCTAssertNil(Cookie("INVALID"))
     }
 
-    func testMakeRequiredCookies() {
+    func testMakeRequiredCookies() async {
+        _ = try? await Unleash.start(appVersion: "1.0.0") // Pre-requirement for ECUNL
         User.shared.cookieConsentValue = "eampg"
 
         let standardCookies = Cookie.makeRequiredCookies(isPrivate: false)
@@ -105,7 +106,8 @@ final class CookieTests: XCTestCase {
 
     // MARK: - Cookie Type API Tests
 
-    func testCookieTypeBasicCreation() {
+    func testCookieTypeBasicCreation() async {
+        _ = try? await Unleash.start(appVersion: "1.0.0") // Pre-requirement for ECUNL
         User.shared.cookieConsentValue = "notnull"
         let mainCookie = Cookie.main.makeCookie()
         let consentCookie = Cookie.consent.makeCookie()
