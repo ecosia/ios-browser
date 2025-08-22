@@ -9,7 +9,7 @@ public enum CookieMode {
     case incognito
 }
 
-class MainCookieHandler: BaseCookieHandler {
+final class MainCookieHandler: BaseCookieHandler {
     private let mode: CookieMode
 
     init(mode: CookieMode = .standard) {

@@ -4,7 +4,7 @@
 
 import WebKit
 
-class UnleashCookieHandler: BaseCookieHandler {
+final class UnleashCookieHandler: BaseCookieHandler {
 
     private let unleash: UnleashProtocol.Type
 

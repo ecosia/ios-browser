@@ -4,7 +4,7 @@
 
 import WebKit
 
-class ConsentCookieHandler: BaseCookieHandler {
+final class ConsentCookieHandler: BaseCookieHandler {
 
     init() {
         super.init(cookieName: Cookie.consent.rawValue)
