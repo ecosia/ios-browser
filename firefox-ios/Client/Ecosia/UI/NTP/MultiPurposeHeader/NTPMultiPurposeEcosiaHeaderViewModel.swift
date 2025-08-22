@@ -18,10 +18,6 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
     internal weak var delegate: NTPMultiPurposeEcosiaHeaderDelegate?
     internal var theme: Theme
 
-    // MARK: - Theme Properties (following FeedbackView pattern)
-    @Published var buttonBackgroundColor = Color.gray.opacity(0.2)
-    @Published var buttonIconColor = Color.primary
-
     // MARK: - Initialization
     init(theme: Theme,
          windowUUID: WindowUUID,
@@ -29,16 +25,6 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
         self.theme = theme
         self.windowUUID = windowUUID
         self.delegate = delegate
-
-        // Apply initial theme
-        applyTheme(theme: theme)
-    }
-
-    // MARK: - Theme Handling
-    func applyTheme(theme: Theme) {
-        self.theme = theme
-        buttonBackgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
-        buttonIconColor = Color(theme.colors.ecosia.textPrimary)
     }
 
     // MARK: - Public Methods
@@ -88,8 +74,7 @@ extension NTPMultiPurposeEcosiaHeaderViewModel: HomepageViewModelProtocol, Featu
     }
 
     func setTheme(theme: Theme) {
-        // Ecosia: Use applyTheme for consistency (following FeedbackView pattern)
-        applyTheme(theme: theme)
+        self.theme = theme
     }
 
     func refreshData(for traitCollection: UITraitCollection, size: CGSize, isPortrait: Bool, device: UIUserInterfaceIdiom) {
