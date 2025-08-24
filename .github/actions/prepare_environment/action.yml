@@ -12,7 +12,7 @@ runs:
     - name: Xcode Select Version
       uses: mobiledevops/xcode-select-version-action@v1
       with:
-        xcode-select-version: 16.4
+        xcode-select-version: 16.2
 
     - name: Fix-up private Github URLs
       shell: bash
