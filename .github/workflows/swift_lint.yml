@@ -13,4 +13,4 @@ jobs:
 
       - name: SwiftLint
         run: |
-          swiftlint lint --reporter github-actions-logging --strict --config ".swiftlint.yml"
+          swiftlint --reporter github-actions-logging --strict
