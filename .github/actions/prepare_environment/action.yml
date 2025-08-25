@@ -13,39 +13,43 @@ runs:
     - name: Xcode Select Version
       uses: mobiledevops/xcode-select-version-action@v1
       with:
-        xcode-select-version: 16.4
+        xcode-select-version: 16.2
         
-    - name: Clear Swift Module Cache and Fix Toolchain
+    - name: Check Xcode and Swift Version
       shell: bash
       run: |
-        echo "Clearing Swift module cache to prevent redefinition errors"
-        rm -rf ~/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/
-        rm -rf ~/Library/Caches/org.swift.swiftpm/
-        mkdir -p ~/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/
-        
         echo "Checking Xcode and Swift version"
         xcodebuild -version
         swift --version
         
-        echo "Fixing potential toolchain issues"
-        sudo xcode-select -r
-        sudo xcode-select -s /Applications/Xcode_16.4.app
-        
-    - name: Fix SwiftBridging Module Redefinition
+    - name: List Available Simulator Runtimes
       shell: bash
       run: |
-        echo "Checking for duplicate SwiftBridging module"
-        BRIDGING_MODULEMAP="/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/swift/bridging.modulemap"
-        if [ -f "$BRIDGING_MODULEMAP" ]; then
-          echo "Backing up and fixing bridging.modulemap"
-          sudo cp "$BRIDGING_MODULEMAP" "${BRIDGING_MODULEMAP}.bak"
-          # Comment out the SwiftBridging module definition to prevent redefinition
-          sudo sed -i.tmp 's/^module SwiftBridging {/\/\* module SwiftBridging {/g' "$BRIDGING_MODULEMAP"
-          sudo sed -i.tmp 's/^}/} \*\//g' "$BRIDGING_MODULEMAP"
-          cat "$BRIDGING_MODULEMAP"
+        echo "Available simulator runtimes:"
+        xcrun simctl list runtimes
+        
+    - name: List Available Device Types
+      shell: bash
+      run: |
+        echo "Available device types:"
+        xcrun simctl list devicetypes | grep -i iPhone
+        
+    - name: Create iPhone 16 iOS 18.2 Simulator
+      shell: bash
+      run: |
+        # Check if simulator already exists
+        if xcrun simctl list devices | grep -q "iPhone16-iOS18.2"; then
+          echo "Simulator already exists"
         else
-          echo "bridging.modulemap not found at expected location"
+          echo "Creating iPhone 16 iOS 18.2 simulator"
+          xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
         fi
+        
+    - name: List Available Simulators
+      shell: bash
+      run: |
+        echo "Available simulators:"
+        xcrun simctl list devices
 
     - name: Fix-up private Github URLs
       shell: bash
