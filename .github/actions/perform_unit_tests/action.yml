@@ -14,7 +14,12 @@ runs:
       shell: bash
       run: |
         echo "Checking simulator status..."
-        xcrun simctl list devices | grep -A 5 "iPhone16-iOS18.2"
+        xcrun simctl list devices | grep -A 5 "iPhone16-iOS18.2" || {
+          echo "Error: iPhone16-iOS18.2 simulator not found"
+          echo "Available devices:"
+          xcrun simctl list devices
+          exit 1
+        }
         
     - name: Run Unit Tests
       shell: bash

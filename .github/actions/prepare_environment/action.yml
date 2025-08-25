@@ -79,9 +79,7 @@ runs:
           xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
         fi
         
-        # Boot the simulator to ensure it works
-        echo "Booting simulator..."
-        xcrun simctl boot "iPhone16-iOS18.2" || echo "Note: Simulator may already be booted"
+        # Don't boot the simulator here - let fastlane handle it during test execution
         
     - name: List Available Simulators
       shell: bash
