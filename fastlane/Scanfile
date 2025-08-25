@@ -1,7 +1,6 @@
 scheme("Ecosia")
 configuration("Testing")
 project("firefox-ios/Client.xcodeproj")
-skip_testing(["ClientTests", "EcosiaTests"])
 device("iPhone16-iOS18.2")
 output_types("junit")
 output_directory("test_output/xml")
