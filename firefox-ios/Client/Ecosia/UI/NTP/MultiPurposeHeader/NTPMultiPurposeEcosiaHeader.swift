@@ -58,7 +58,7 @@ final class NTPMultiPurposeEcosiaHeader: UICollectionViewCell, ReusableCell {
         // Update the SwiftUI view with the new view model
         let swiftUIView = NTPMultiPurposeEcosiaHeaderView(
             viewModel: viewModel,
-            windowUUID: windowUUID,
+            windowUUID: windowUUID
         )
         
         hostingController?.rootView = AnyView(swiftUIView)
