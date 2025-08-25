@@ -9,10 +9,85 @@ inputs:
 runs:
   using: "composite"
   steps:
+
     - name: Xcode Select Version
       uses: mobiledevops/xcode-select-version-action@v1
       with:
         xcode-select-version: 16.2
+        
+    - name: Check Xcode and Swift Version
+      shell: bash
+      run: |
+        echo "Checking Xcode and Swift version"
+        xcodebuild -version
+        swift --version
+        
+    - name: List Available Simulator Runtimes Before Download
+      shell: bash
+      run: |
+        echo "Available simulator runtimes before download:"
+        xcrun simctl list runtimes
+        
+    - name: Download iOS 18.2 Platform
+      shell: bash
+      run: |
+        echo "Downloading iOS 18.2 platform..."
+        # Use perl to implement a timeout since 'timeout' command isn't available on macOS
+        perl -e '
+          eval {
+            local $SIG{ALRM} = sub { die "timeout\n" };
+            alarm 3600;
+            system("xcodebuild -downloadPlatform iOS -buildVersion 18.2");
+            alarm 0;
+          };
+          if ($@ eq "timeout\n") {
+            print "Error: Download timed out after 3600 seconds\n";
+            exit 1;
+          }
+          exit $? >> 8;
+        '
+        
+    - name: List Available Simulator Runtimes After Download
+      shell: bash
+      run: |
+        echo "Available simulator runtimes after download:"
+        xcrun simctl list runtimes
+        
+    - name: List Available Device Types
+      shell: bash
+      run: |
+        echo "Available device types:"
+        xcrun simctl list devicetypes | grep -i iPhone
+        
+    - name: Create iPhone 16 iOS 18.2 Simulator
+      shell: bash
+      run: |
+        # Check if simulator already exists
+        if xcrun simctl list devices | grep -q "iPhone16-iOS18.2"; then
+          echo "Simulator already exists"
+        else
+          echo "Creating iPhone 16 iOS 18.2 simulator"
+          # Verify runtime is available
+          if ! xcrun simctl list runtimes | grep -q "iOS 18.2"; then
+            echo "Error: iOS 18.2 runtime is not available after download"
+            echo "Available runtimes:"
+            xcrun simctl list runtimes
+            exit 1
+          fi
+          
+          # Create simulator
+          xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
+        fi
+        
+        # Boot the simulator to ensure it works
+        echo "Booting simulator..."
+        xcrun simctl boot "iPhone16-iOS18.2" || echo "Note: Simulator may already be booted"
+        
+    - name: List Available Simulators
+      shell: bash
+      run: |
+        echo "Available simulators:"
+        xcrun simctl list devices
 
     - name: Fix-up private Github URLs
       shell: bash
@@ -33,12 +108,6 @@ runs:
 
     - name: Install npm
       uses: bahmutov/npm-install@v1
-
-    # lot of people are experiencing the same issue apparently
-    # found a workaround here https://github.com/actions/runner-images/issues/9577
-    - name: Delete Xcode.app
-      shell: bash
-      run: sudo rm -rf /Applications/Xcode.app
       
     - name: Restore SPM Cache
       id: restore-spm-cache
