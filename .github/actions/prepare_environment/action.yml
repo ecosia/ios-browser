@@ -32,13 +32,20 @@ runs:
       shell: bash
       run: |
         echo "Downloading iOS 18.2 platform..."
-        # Set a longer timeout for the download
-        export TIMEOUT=3600
-        # Start the download with a timeout
-        timeout $TIMEOUT xcodebuild -downloadPlatform iOS -buildVersion 18.2 || {
-          echo "Error: Download timed out after $TIMEOUT seconds"
-          exit 1
-        }
+        # Use perl to implement a timeout since 'timeout' command isn't available on macOS
+        perl -e '
+          eval {
+            local $SIG{ALRM} = sub { die "timeout\n" };
+            alarm 3600;
+            system("xcodebuild -downloadPlatform iOS -buildVersion 18.2");
+            alarm 0;
+          };
+          if ($@ eq "timeout\n") {
+            print "Error: Download timed out after 3600 seconds\n";
+            exit 1;
+          }
+          exit $? >> 8;
+        '
         
     - name: List Available Simulator Runtimes After Download
       shell: bash
