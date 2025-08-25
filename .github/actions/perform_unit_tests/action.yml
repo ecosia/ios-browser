@@ -32,8 +32,8 @@ runs:
         export OTHER_SWIFT_FLAGS="-suppress-warnings"
         export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
         export SWIFT_STRICT_CONCURRENCY=minimal
-        # Run the tests with explicit test targets
-        bundle exec fastlane run run_tests prelaunch_simulator:true skip_package_dependencies_resolution:true skip_build:false test_without_building:false skip_testing:"BrowserKit/TabDataStoreTests,TabDataStoreTests" only_testing:"ClientTests,EcosiaTests,AccountTests,SyncTests,StorageTests,SharedTests,BrowserKit/CommonTests,BrowserKit/WebEngineTests"
+        # Run the tests
+        bundle exec fastlane run run_tests prelaunch_simulator:true
 
     - name: Publish Test Report
       if: always()
