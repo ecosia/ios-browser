@@ -4,7 +4,7 @@
 
 import SwiftUI
 import Common
-
+// swiftlint:disable orphaned_doc_comment
 /// Ecosia SwiftUI Theming Architecture
 ///
 /// Usage:
@@ -77,3 +77,4 @@ public extension View {
         modifier(ThemeModifier(windowUUID: windowUUID, theme: theme))
     }
 }
+// swiftlint:enable orphaned_doc_comment

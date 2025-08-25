@@ -14,33 +14,33 @@ protocol NTPMultiPurposeEcosiaHeaderDelegate: AnyObject {
 /// NTP header cell containing multiple Ecosia-specific actions like AI search
 @available(iOS 16.0, *)
 final class NTPMultiPurposeEcosiaHeader: UICollectionViewCell, ReusableCell {
-    
+
     // MARK: - Properties
     private var hostingController: UIHostingController<AnyView>?
     private var viewModel: NTPMultiPurposeEcosiaHeaderViewModel?
-    
+
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
     }
-    
+
     // MARK: - Setup
-    
+
     private func setup() {
         // Create a placeholder hosting controller - will be configured later
         let hostingController = UIHostingController(rootView: AnyView(EmptyView()))
         hostingController.view.backgroundColor = UIColor.clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         contentView.addSubview(hostingController.view)
         self.hostingController = hostingController
-        
+
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
             hostingController.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -48,19 +48,19 @@ final class NTPMultiPurposeEcosiaHeader: UICollectionViewCell, ReusableCell {
             hostingController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-    
+
     // MARK: - Public Methods
-    
+
     func configure(with viewModel: NTPMultiPurposeEcosiaHeaderViewModel,
                    windowUUID: WindowUUID) {
         self.viewModel = viewModel
-        
+
         // Update the SwiftUI view with the new view model
         let swiftUIView = NTPMultiPurposeEcosiaHeaderView(
             viewModel: viewModel,
             windowUUID: windowUUID
         )
-        
+
         hostingController?.rootView = AnyView(swiftUIView)
     }
 }
