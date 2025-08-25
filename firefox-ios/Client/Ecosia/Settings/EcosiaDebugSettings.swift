@@ -285,6 +285,35 @@ final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "AI Search MVP"
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Is enabled: \(Unleash.isEnabled(.aiSearchMVP).description)", attributes: [:])
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.aiSearchMVP)
+    }
+}
+
+// TODO: Remove after QA performed
+final class UnleashSpeechToTextSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Speech to Text"
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Is enabled: \(Unleash.isEnabled(.speechToText).description)", attributes: [:])
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.speechToText)
+    }
+}
+
 final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [:])
@@ -316,5 +345,35 @@ final class AnalyticsStagingUrlSetting: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         Analytics.shouldUseMicroInstance.toggle()
         settings.tableView.reloadData()
+    }
+}
+
+final class AISearchProductionUrlSetting: HiddenSetting {
+
+    private static var useOverriddenURL: Bool = false
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Use Production AI Search URL", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let currentUrl = AISearchProductionUrlSetting.useOverriddenURL ? "Production" : "Staging"
+        return NSAttributedString(string: "\(currentUrl) AI Search URL (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        AISearchProductionUrlSetting.useOverriddenURL.toggle()
+        settings.tableView.reloadData()
+    }
+
+    /// Returns the appropriate AI Search URL based on debug setting
+    static func getAISearchURL(for environment: Environment) -> URL {
+        if useOverriddenURL {
+            // Use production URL when debug setting is enabled in non-production builds
+            return URLProvider.production.aiSearch
+        }
+
+        // Default behavior - use environment's URL provider
+        return environment.urlProvider.aiSearch
     }
 }

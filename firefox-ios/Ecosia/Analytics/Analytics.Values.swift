@@ -8,6 +8,7 @@ extension Analytics {
     public enum Category: String {
         case
         activity,
+        autocomplete = "autocomplete_suggestion",
         bookmarks,
         brazeIAM = "braze_iam",
         browser,
@@ -113,6 +114,11 @@ extension Analytics {
             linkCopying = "link_copying",
             promo
         }
+
+        public enum AISearch: String {
+            case
+            cta = "ai_search_cta"
+        }
     }
 
     public enum Action: String {
@@ -207,6 +213,7 @@ extension Analytics {
         case
         enable,
         disable,
+        header,
         home,
         detail,
         nativeSettings = "native_settings"

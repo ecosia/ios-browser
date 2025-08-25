@@ -192,8 +192,14 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         searchSettingsObserver = NotificationCenter.default
             .publisher(for: .searchSettingsChanged)
             .sink { [privateConfiguration, configuration] _ in
-                configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeStandardCookie())
-                privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognitoCookie())
+                if let standardMainCookie = Cookie.makeMain(mode: .standard) {
+                    configuration.websiteDataStore.httpCookieStore
+                        .setCookie(standardMainCookie)
+                }
+                if let incognitoMainCookie = Cookie.makeMain(mode: .incognito) {
+                    privateConfiguration.websiteDataStore.httpCookieStore
+                        .setCookie(incognitoMainCookie)
+                }
             }
     }
 
@@ -255,13 +261,13 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
                 configuration.websiteDataStore = WKWebsiteDataStore.default()
             }
         configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
-        // Ecosia: inject cookie when config is created to make sure they are present
-        let cookie = isPrivate ? Cookie.makeIncognitoCookie() : Cookie.makeStandardCookie()
-        configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
-        // Ecosia: inject consent cookie when config is created to make sure they are present
-        if let consentCookie = Cookie.makeConsentCookie() {
-            configuration.websiteDataStore.httpCookieStore.setCookie(consentCookie)
+
+        // Ecosia: inject all required cookies when config is created to make sure they are present
+        let cookies = Cookie.makeRequiredCookies(isPrivate: isPrivate)
+        cookies.forEach { cookie in
+            configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
         }
+
         return configuration
     }
 
@@ -1127,7 +1133,7 @@ extension LegacyTabManager: WKHTTPCookieStoreObserver {
     func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
         cookieStore.getAllCookies { cookies in
             DispatchQueue.main.async {
-                Cookie.received(cookies)
+                Cookie.received(cookies, in: cookieStore)
             }
         }
     }
