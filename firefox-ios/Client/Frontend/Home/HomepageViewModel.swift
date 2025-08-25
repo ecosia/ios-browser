@@ -132,7 +132,7 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
     }
 
     // Ecosia: Add Ecosia's ViewModels
-    var multiPurposeEcosiaHeaderViewModel: NTPMultiPurposeEcosiaHeaderViewModel
+    var multiPurposeEcosiaHeaderViewModel: NTPHeaderViewModel
     var libraryViewModel: NTPLibraryCellViewModel
     var impactViewModel: NTPImpactCellViewModel
     var newsViewModel: NTPNewsCellViewModel
@@ -155,7 +155,7 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
          wallpaperManager: WallpaperManager = WallpaperManager(),
          logger: Logger = DefaultLogger.shared,
          // Ecosia: Add delegate for multi-purpose header actions
-         multiPurposeEcosiaHeaderDelegate: NTPMultiPurposeEcosiaHeaderDelegate? = nil) {
+         multiPurposeEcosiaHeaderDelegate: NTPHeaderDelegate? = nil) {
         self.profile = profile
         self.isZeroSearch = isZeroSearch
         self.theme = theme
@@ -172,7 +172,7 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
                                                   theme: theme,
                                                   wallpaperManager: wallpaperManager)
         // Ecosia: Add Ecosia's ViewModels
-        self.multiPurposeEcosiaHeaderViewModel = NTPMultiPurposeEcosiaHeaderViewModel(theme: theme, windowUUID: tabManager.windowUUID, delegate: multiPurposeEcosiaHeaderDelegate)
+        self.multiPurposeEcosiaHeaderViewModel = NTPHeaderViewModel(theme: theme, windowUUID: tabManager.windowUUID, delegate: multiPurposeEcosiaHeaderDelegate)
         self.libraryViewModel = NTPLibraryCellViewModel(theme: theme)
         self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)

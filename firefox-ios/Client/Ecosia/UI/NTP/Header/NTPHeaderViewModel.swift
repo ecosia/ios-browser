@@ -8,20 +8,20 @@ import Shared
 import SwiftUI
 import Ecosia
 
-final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
+final class NTPHeaderViewModel: ObservableObject {
     struct UX {
         static let topInset: CGFloat = 24
     }
 
     // MARK: - Properties
     private let windowUUID: WindowUUID
-    internal weak var delegate: NTPMultiPurposeEcosiaHeaderDelegate?
+    internal weak var delegate: NTPHeaderDelegate?
     internal var theme: Theme
 
     // MARK: - Initialization
     init(theme: Theme,
          windowUUID: WindowUUID,
-         delegate: NTPMultiPurposeEcosiaHeaderDelegate? = nil) {
+         delegate: NTPHeaderDelegate? = nil) {
         self.theme = theme
         self.windowUUID = windowUUID
         self.delegate = delegate
@@ -30,15 +30,15 @@ final class NTPMultiPurposeEcosiaHeaderViewModel: ObservableObject {
     // MARK: - Public Methods
 
     func openAISearch() {
-        delegate?.multiPurposeEcosiaHeaderDidRequestAISearch()
+        delegate?.headerOpenAISearch()
         Analytics.shared.aiSearchNTPButtonTapped()
     }
 }
 
 // MARK: HomeViewModelProtocol
-extension NTPMultiPurposeEcosiaHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
+extension NTPHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     var sectionType: HomepageSectionType {
-        return .multiPurposeEcosiaHeader
+        return .header
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
@@ -82,13 +82,13 @@ extension NTPMultiPurposeEcosiaHeaderViewModel: HomepageViewModelProtocol, Featu
     }
 }
 
-extension NTPMultiPurposeEcosiaHeaderViewModel: HomepageSectionHandler {
+extension NTPHeaderViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         if #available(iOS 16.0, *) {
-            guard let multiPurposeHeaderCell = cell as? NTPMultiPurposeEcosiaHeader else { return cell }
-            multiPurposeHeaderCell.configure(with: self, windowUUID: windowUUID)
-            return multiPurposeHeaderCell
+            guard let headerCell = cell as? NTPHeader else { return cell }
+            headerCell.configure(with: self, windowUUID: windowUUID)
+            return headerCell
         }
         return cell
     }
