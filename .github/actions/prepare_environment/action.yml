@@ -9,11 +9,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Xcode Select Version
-      uses: mobiledevops/xcode-select-version-action@v1
-      with:
-        xcode-select-version: 16.2
-
     - name: Fix-up private Github URLs
       shell: bash
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
@@ -33,12 +28,6 @@ runs:
 
     - name: Install npm
       uses: bahmutov/npm-install@v1
-
-    # lot of people are experiencing the same issue apparently
-    # found a workaround here https://github.com/actions/runner-images/issues/9577
-    - name: Delete Xcode.app
-      shell: bash
-      run: sudo rm -rf /Applications/Xcode.app
       
     - name: Restore SPM Cache
       id: restore-spm-cache
