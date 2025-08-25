@@ -10,11 +10,19 @@ runs:
   using: "composite"
   steps:
 
+    - name: Verify Simulator Status
+      shell: bash
+      run: |
+        echo "Checking simulator status..."
+        xcrun simctl list devices | grep -A 5 "iPhone16-iOS18.2"
+        
     - name: Run Unit Tests
       shell: bash
       run: |
         # Increase test timeout
         export FASTLANE_XCODEBUILD_TEST_TIMEOUT=600
+        # Set simulator as environment variable
+        export FASTLANE_IOS_SIMULATOR_DEVICE="iPhone16-iOS18.2"
         # Run the tests
         bundle exec fastlane run run_tests prelaunch_simulator:true
 

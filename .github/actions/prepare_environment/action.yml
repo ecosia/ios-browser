@@ -32,7 +32,13 @@ runs:
       shell: bash
       run: |
         echo "Downloading iOS 18.2 platform..."
-        xcodebuild -downloadPlatform iOS -buildVersion 18.2
+        # Set a longer timeout for the download
+        export TIMEOUT=3600
+        # Start the download with a timeout
+        timeout $TIMEOUT xcodebuild -downloadPlatform iOS -buildVersion 18.2 || {
+          echo "Error: Download timed out after $TIMEOUT seconds"
+          exit 1
+        }
         
     - name: List Available Simulator Runtimes After Download
       shell: bash
@@ -54,8 +60,21 @@ runs:
           echo "Simulator already exists"
         else
           echo "Creating iPhone 16 iOS 18.2 simulator"
+          # Verify runtime is available
+          if ! xcrun simctl list runtimes | grep -q "iOS 18.2"; then
+            echo "Error: iOS 18.2 runtime is not available after download"
+            echo "Available runtimes:"
+            xcrun simctl list runtimes
+            exit 1
+          fi
+          
+          # Create simulator
           xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
         fi
+        
+        # Boot the simulator to ensure it works
+        echo "Booting simulator..."
+        xcrun simctl boot "iPhone16-iOS18.2" || echo "Note: Simulator may already be booted"
         
     - name: List Available Simulators
       shell: bash
