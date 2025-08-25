@@ -20,10 +20,14 @@ final class UnleashCookieHandler: BaseCookieHandler {
         return Unleash.model.id.uuidString.lowercased()
     }
 
-    override func received(_ cookie: HTTPCookie, in cookieStore: WKHTTPCookieStore) {
+    override func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol) {
         if let nativeIdCooke = makeCookie() {
             // Force override Unleash cookie with native Id when it changes
-            cookieStore.setCookie(nativeIdCooke)
+            if cookie.value != nativeIdCooke.value {
+                Task {
+                    await cookieStore.setCookie(nativeIdCooke)
+                }
+            }
         }
     }
 }

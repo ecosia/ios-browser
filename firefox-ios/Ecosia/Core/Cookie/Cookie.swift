@@ -73,7 +73,7 @@ public enum Cookie: String, CaseIterable {
     /// Processes received cookies.
     /// - Parameters:
     ///   - cookies: An array of HTTPCookie objects.
-    public static func received(_ cookies: [HTTPCookie], in cookieStore: WKHTTPCookieStore) {
+    public static func received(_ cookies: [HTTPCookie], in cookieStore: CookieStoreProtocol) {
         cookies.forEach { cookie in
             guard let cookieType = Cookie(cookie) else { return }
             cookieType.handler.received(cookie, in: cookieStore)

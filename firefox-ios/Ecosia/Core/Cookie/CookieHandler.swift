@@ -9,7 +9,7 @@ import WebKit
 protocol CookieHandler {
     var cookieName: String { get }
     func makeCookie() -> HTTPCookie?
-    func received(_ cookie: HTTPCookie, in cookieStore: WKHTTPCookieStore)
+    func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol)
 }
 
 // MARK: - Base Cookie Handler
@@ -26,7 +26,7 @@ class BaseCookieHandler: CookieHandler {
         return createHTTPCookie(value: value)
     }
 
-    func received(_ cookie: HTTPCookie, in cookieStore: WKHTTPCookieStore) {
+    func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol) {
         // Override in subclasses
     }
 

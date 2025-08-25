@@ -8,8 +8,6 @@ import WebKit
 
 final class MainCookieHandlerTests: XCTestCase {
 
-    var mockCookieStore: WKHTTPCookieStore!
-
     override func setUp() {
         super.setUp()
         Cookie.setURLProvider(.production)
@@ -20,10 +18,6 @@ final class MainCookieHandlerTests: XCTestCase {
         User.shared.adultFilter = .off
         User.shared.autoComplete = true
         User.shared.personalized = false
-
-        // Create a mock cookie store for testing
-        let webView = WKWebView()
-        mockCookieStore = webView.configuration.websiteDataStore.httpCookieStore
     }
 
     override func tearDown() {
@@ -152,7 +146,7 @@ final class MainCookieHandlerTests: XCTestCase {
             .value: "cid=new-user-id:t=100:mc=fr-fr:f=y:as=1:pz=0"
         ])!
 
-        handler.received(cookie, in: mockCookieStore)
+        handler.received(cookie, in: MockHTTPCookieStore())
 
         XCTAssertEqual(User.shared.id, "new-user-id")
         XCTAssertEqual(User.shared.searchCount, 100)
@@ -175,7 +169,7 @@ final class MainCookieHandlerTests: XCTestCase {
             .value: "t=invalid:mc=invalid-market:f=invalid-filter"
         ])!
 
-        handler.received(cookie, in: mockCookieStore)
+        handler.received(cookie, in: MockHTTPCookieStore())
 
         // Should maintain existing values when invalid data is received
         XCTAssertEqual(User.shared.searchCount, 50)
@@ -195,7 +189,7 @@ final class MainCookieHandlerTests: XCTestCase {
             .path: "/",
             .value: "t=30"
         ])!
-        handler.received(decreaseCookie, in: mockCookieStore)
+        handler.received(decreaseCookie, in: MockHTTPCookieStore())
         XCTAssertEqual(User.shared.searchCount, 50)
 
         // Should increase
@@ -205,7 +199,7 @@ final class MainCookieHandlerTests: XCTestCase {
             .path: "/",
             .value: "t=75"
         ])!
-        handler.received(increaseCookie, in: mockCookieStore)
+        handler.received(increaseCookie, in: MockHTTPCookieStore())
         XCTAssertEqual(User.shared.searchCount, 75)
 
         // Should reset to zero
@@ -215,7 +209,7 @@ final class MainCookieHandlerTests: XCTestCase {
             .path: "/",
             .value: "t=0"
         ])!
-        handler.received(resetCookie, in: mockCookieStore)
+        handler.received(resetCookie, in: MockHTTPCookieStore())
         XCTAssertEqual(User.shared.searchCount, 0)
     }
 }

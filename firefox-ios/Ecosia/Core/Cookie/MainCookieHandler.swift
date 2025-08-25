@@ -26,7 +26,7 @@ final class MainCookieHandler: BaseCookieHandler {
         return createHTTPCookie(value: value)
     }
 
-    override func received(_ cookie: HTTPCookie, in cookieStore: WKHTTPCookieStore) {
+    override func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol) {
         let value = cookie.value
         let properties = value.components(separatedBy: ":")
             .map { $0.components(separatedBy: "=") }
