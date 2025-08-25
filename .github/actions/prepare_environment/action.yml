@@ -14,9 +14,17 @@ runs:
       with:
         xcode-select-version: 16.2
 
+    - name: Install iOS 18.2 Simulator Runtime
+      shell: bash
+      run: xcodebuild -downloadPlatform iOS -buildVersion 18.2
+      
     - name: Create iOS 18.2 Simulator
       shell: bash
       run: xcrun simctl create "iPhone 16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
+      
+    - name: List Available Simulators
+      shell: bash
+      run: xcrun simctl list devices
 
     - name: Fix-up private Github URLs
       shell: bash
