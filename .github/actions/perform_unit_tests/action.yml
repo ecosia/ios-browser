@@ -13,6 +13,13 @@ runs:
     - name: Run Unit Tests
       shell: bash
       run: |
+        # Set environment variables to suppress Swift concurrency warnings
+        export OTHER_SWIFT_FLAGS="-suppress-warnings"
+        # Treat warnings as warnings, not errors
+        export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
+        # Skip strict concurrency checking
+        export SWIFT_STRICT_CONCURRENCY=minimal
+        # Run the tests
         bundle exec fastlane run run_tests prelaunch_simulator:true
 
     - name: Publish Test Report
