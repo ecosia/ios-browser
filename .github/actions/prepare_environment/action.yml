@@ -34,15 +34,15 @@ runs:
         echo "Available device types:"
         xcrun simctl list devicetypes | grep -i iPhone
         
-    - name: Create iPhone 16 iOS 18.2 Simulator
+    - name: Create iPhone 16 iOS 18.4 Simulator
       shell: bash
       run: |
         # Check if simulator already exists
-        if xcrun simctl list devices | grep -q "iPhone16-iOS18.2"; then
+        if xcrun simctl list devices | grep -q "iPhone16-iOS18.4"; then
           echo "Simulator already exists"
         else
-          echo "Creating iPhone 16 iOS 18.2 simulator"
-          xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
+          echo "Creating iPhone 16 iOS 18.4 simulator"
+          xcrun simctl create "iPhone16-iOS18.4" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-4"
         fi
         
     - name: List Available Simulators
