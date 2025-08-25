@@ -34,10 +34,37 @@ runs:
           echo "simulator_exists=false" >> $GITHUB_OUTPUT
         fi
         
+    - name: Find Available Runtimes
+      shell: bash
+      run: |
+        echo "Available runtimes:"
+        xcrun simctl list runtimes
+        
+    - name: Find Available Device Types
+      shell: bash
+      run: |
+        echo "Available device types:"
+        xcrun simctl list devicetypes | grep -i iPhone
+        
     - name: Create iOS 18.2 Simulator
       if: steps.check-simulator.outputs.simulator_exists != 'true'
       shell: bash
-      run: xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
+      run: |
+        # Try to find the correct runtime identifier
+        RUNTIME_ID=$(xcrun simctl list runtimes | grep -i "iOS 18.2" | awk -F ' - ' '{print $2}')
+        if [ -z "$RUNTIME_ID" ]; then
+          echo "iOS 18.2 runtime not found, trying to install it"
+          xcodebuild -downloadPlatform iOS -buildVersion 18.2
+          RUNTIME_ID=$(xcrun simctl list runtimes | grep -i "iOS 18.2" | awk -F ' - ' '{print $2}')
+        fi
+        
+        if [ -z "$RUNTIME_ID" ]; then
+          echo "Failed to find or install iOS 18.2 runtime"
+          exit 1
+        fi
+        
+        echo "Using runtime identifier: $RUNTIME_ID"
+        xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "$RUNTIME_ID"
       
     - name: List Available Simulators
       shell: bash
