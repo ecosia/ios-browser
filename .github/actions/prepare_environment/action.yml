@@ -22,6 +22,22 @@ runs:
         xcodebuild -version
         swift --version
         
+    - name: Fix SwiftBridging Module Redefinition
+      shell: bash
+      run: |
+        echo "Checking for duplicate SwiftBridging module"
+        BRIDGING_MODULEMAP="/Applications/Xcode_16.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/swift/bridging.modulemap"
+        if [ -f "$BRIDGING_MODULEMAP" ]; then
+          echo "Backing up and fixing bridging.modulemap"
+          sudo cp "$BRIDGING_MODULEMAP" "${BRIDGING_MODULEMAP}.bak"
+          # Comment out the SwiftBridging module definition to prevent redefinition
+          sudo sed -i.tmp 's/^module SwiftBridging {/\/\* module SwiftBridging {/g' "$BRIDGING_MODULEMAP"
+          sudo sed -i.tmp 's/^}/} \*\//g' "$BRIDGING_MODULEMAP"
+          cat "$BRIDGING_MODULEMAP"
+        else
+          echo "bridging.modulemap not found at expected location"
+        fi
+        
     - name: List Available Simulator Runtimes Before Download
       shell: bash
       run: |

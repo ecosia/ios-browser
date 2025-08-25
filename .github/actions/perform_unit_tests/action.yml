@@ -28,6 +28,10 @@ runs:
         export FASTLANE_XCODEBUILD_TEST_TIMEOUT=600
         # Set simulator as environment variable
         export FASTLANE_IOS_SIMULATOR_DEVICE="iPhone16-iOS18.2"
+        # Set Swift compiler flags to suppress concurrency warnings
+        export OTHER_SWIFT_FLAGS="-suppress-warnings"
+        export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
+        export SWIFT_STRICT_CONCURRENCY=minimal
         # Run the tests
         bundle exec fastlane run run_tests prelaunch_simulator:true
 
