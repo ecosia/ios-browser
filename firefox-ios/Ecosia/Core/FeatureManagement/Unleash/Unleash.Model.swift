@@ -27,6 +27,8 @@ extension Unleash {
             case nativeSRPVAnalytics = "mob_ios_native_srpv_analytics"
             case newsletterCard = "mob_ios_newsletter_card"
             case aiSearchMVP = "ai2-67-ai-search-mvp"
+            // TODO: Remove after QA performed
+            case speechToText = "napps-speech-to-text"
         }
 
         public let name: String

@@ -164,7 +164,9 @@ extension AppSettingsTableViewController {
             UnleashAPNConsent(settings: self),
             AnalyticsIdentifierSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
-            UnleashAISearchMVPSetting(settings: self)
+            UnleashAISearchMVPSetting(settings: self),
+            // TODO: Remove after QA performed
+            UnleashSpeechToTextSetting(settings: self)
         ]
 
         if Environment.current == .staging {
