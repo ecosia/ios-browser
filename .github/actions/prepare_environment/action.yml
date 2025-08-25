@@ -38,9 +38,22 @@ runs:
       shell: bash
       run: xcodebuild -downloadPlatform iOS -buildVersion 18.2
       
-    - name: Create iOS 18.2 Simulator
+    - name: Check if iPhone 16 iOS 18.2 Simulator Exists
+      id: check-simulator
       shell: bash
-      run: xcrun simctl create "iPhone 16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
+      run: |
+        if xcrun simctl list devices | grep -q "iPhone 16 (iOS 18.2)"; then
+          echo "Simulator already exists."
+          echo "simulator_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "Simulator not found. Will create it."
+          echo "simulator_exists=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Create iOS 18.2 Simulator
+      if: steps.check-simulator.outputs.simulator_exists != 'true'
+      shell: bash
+      run: xcrun simctl create "iPhone 16 (iOS 18.2)" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
       
     - name: List Available Simulators
       shell: bash
