@@ -1,7 +1,6 @@
 scheme("Ecosia")
 configuration("Testing")
 project("firefox-ios/Client.xcodeproj")
-
 output_types("junit")
 output_directory("test_output/xml")
 cloned_source_packages_path("firefox-ios/SourcePackages")
