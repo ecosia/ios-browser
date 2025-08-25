@@ -39,8 +39,7 @@ extension SearchViewController {
 
     /// Handle AI Search navigation when item is selected
     func handleAISearchSelection(_ indexPath: IndexPath) {
-        let aiSearchURL = AISearchProductionUrlSetting.getAISearchURL(for: Environment.current)
-        var components = URLComponents(url: aiSearchURL, resolvingAgainstBaseURL: false)!
+        var components = URLComponents(url: Environment.current.urlProvider.aiSearch, resolvingAgainstBaseURL: false)!
 
         var queryItems = components.queryItems ?? []
         queryItems.append(URLQueryItem(name: "q", value: viewModel.searchQuery))

@@ -122,7 +122,6 @@ extension LegacyHomepageViewController: NTPSeedCounterDelegate {
 
 extension LegacyHomepageViewController: NTPHeaderDelegate {
     func headerOpenAISearch() {
-        let aiSearchURL = AISearchProductionUrlSetting.getAISearchURL(for: Environment.current)
-        openLink(url: aiSearchURL)
+        openLink(url: Environment.current.urlProvider.aiSearch)
     }
 }

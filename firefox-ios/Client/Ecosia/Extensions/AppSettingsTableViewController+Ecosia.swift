@@ -173,11 +173,6 @@ extension AppSettingsTableViewController {
             hiddenDebugSettings.append(AnalyticsStagingUrlSetting(settings: self))
         }
 
-        if AISearchMVPExperiment.isEnabled,
-           Environment.current == .staging {
-            hiddenDebugSettings.append(AISearchProductionUrlSetting(settings: self))
-        }
-
         if SeedCounterNTPExperiment.isEnabled {
             hiddenDebugSettings.append(AddOneSeedSetting(settings: self,
                                                          progressManagerType: UserDefaultsSeedProgressManager.self))
