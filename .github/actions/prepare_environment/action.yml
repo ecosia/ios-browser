@@ -22,10 +22,22 @@ runs:
         xcodebuild -version
         swift --version
         
-    - name: List Available Simulator Runtimes
+    - name: List Available Simulator Runtimes Before Download
       shell: bash
       run: |
-        echo "Available simulator runtimes:"
+        echo "Available simulator runtimes before download:"
+        xcrun simctl list runtimes
+        
+    - name: Download iOS 18.2 Platform
+      shell: bash
+      run: |
+        echo "Downloading iOS 18.2 platform..."
+        xcodebuild -downloadPlatform iOS -buildVersion 18.2
+        
+    - name: List Available Simulator Runtimes After Download
+      shell: bash
+      run: |
+        echo "Available simulator runtimes after download:"
         xcrun simctl list runtimes
         
     - name: List Available Device Types
@@ -34,15 +46,15 @@ runs:
         echo "Available device types:"
         xcrun simctl list devicetypes | grep -i iPhone
         
-    - name: Create iPhone 16 iOS 18.4 Simulator
+    - name: Create iPhone 16 iOS 18.2 Simulator
       shell: bash
       run: |
         # Check if simulator already exists
-        if xcrun simctl list devices | grep -q "iPhone16-iOS18.4"; then
+        if xcrun simctl list devices | grep -q "iPhone16-iOS18.2"; then
           echo "Simulator already exists"
         else
-          echo "Creating iPhone 16 iOS 18.4 simulator"
-          xcrun simctl create "iPhone16-iOS18.4" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-4"
+          echo "Creating iPhone 16 iOS 18.2 simulator"
+          xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
         fi
         
     - name: List Available Simulators
