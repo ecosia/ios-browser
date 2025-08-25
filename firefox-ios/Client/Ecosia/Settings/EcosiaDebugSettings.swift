@@ -299,6 +299,21 @@ final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
     }
 }
 
+// TODO: Remove after QA performed
+final class UnleashSpeechToTextSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Speech to Text"
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Is enabled: \(Unleash.isEnabled(.speechToText).description)", attributes: [:])
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.speechToText)
+    }
+}
+
 final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [:])
