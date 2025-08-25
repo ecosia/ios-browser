@@ -14,29 +14,13 @@ runs:
       with:
         xcode-select-version: 16.2
 
-    - name: Cache iOS 18.2 Simulator Runtime
-      id: cache-ios-simulator
-      uses: actions/cache@v3
-      with:
-        path: /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 18.2.simruntime
-        key: ios-18.2-simruntime-${{ runner.os }}
-        
-    - name: Check iOS 18.2 Runtime Availability
-      id: check-runtime
+    - name: List Available Simulator Runtimes
       shell: bash
-      run: |
-        if xcrun simctl list runtimes | grep -q "iOS 18.2"; then
-          echo "iOS 18.2 runtime is already installed."
-          echo "runtime_installed=true" >> $GITHUB_OUTPUT
-        else
-          echo "iOS 18.2 runtime not found. Will install."
-          echo "runtime_installed=false" >> $GITHUB_OUTPUT
-        fi
-        
-    - name: Install iOS 18.2 Simulator Runtime
-      if: steps.cache-ios-simulator.outputs.cache-hit != 'true' && steps.check-runtime.outputs.runtime_installed != 'true'
+      run: xcrun simctl list runtimes
+      
+    - name: Show iOS Simulator SDK Version
       shell: bash
-      run: xcodebuild -downloadPlatform iOS -buildVersion 18.2
+      run: xcrun --sdk iphonesimulator --show-sdk-version
       
     - name: Check if iPhone 16 iOS 18.2 Simulator Exists
       id: check-simulator
