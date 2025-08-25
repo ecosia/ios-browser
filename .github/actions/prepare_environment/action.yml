@@ -14,6 +14,10 @@ runs:
       with:
         xcode-select-version: 16.2
 
+    - name: Create iOS 18.2 Simulator
+      shell: bash
+      run: xcrun simctl create "iPhone 16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
+
     - name: Fix-up private Github URLs
       shell: bash
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
