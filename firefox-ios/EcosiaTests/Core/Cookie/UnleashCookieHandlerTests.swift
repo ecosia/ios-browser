@@ -8,16 +8,14 @@ import WebKit
 
 final class UnleashCookieHandlerTests: XCTestCase {
 
-    var mockCookieStore: WKHTTPCookieStore!
+    var mockCookieStore: MockHTTPCookieStore!
 
     override func setUp() {
         super.setUp()
         Cookie.setURLProvider(.production)
         MockUnleash.setLoaded(true)
 
-        // Create a mock cookie store for testing
-        let webView = WKWebView()
-        mockCookieStore = webView.configuration.websiteDataStore.httpCookieStore
+        mockCookieStore = MockHTTPCookieStore()
     }
 
     override func tearDown() {
@@ -60,7 +58,8 @@ final class UnleashCookieHandlerTests: XCTestCase {
 
     // MARK: - Received Value Tests
 
-    func testReceivedMethodOverridesCookieAgain() async {
+    func testReceivedMethodOverridesCookieButOnlyIfDifferent() async {
+        // First case: Received random web value but keep native one
         let handler = UnleashCookieHandler(unleash: MockUnleash.self)
         guard let existingCookie = handler.makeCookie() else {
             XCTFail("Failed to create unleash cookie when mock is loaded")
@@ -70,10 +69,26 @@ final class UnleashCookieHandlerTests: XCTestCase {
 
         let webCookie = HTTPCookie(properties: [.name: "ECUNL", .domain: ".ecosia.org", .path: "/", .value: "some-random-value"])!
         handler.received(webCookie, in: mockCookieStore)
+        try? await Task.sleep(nanoseconds: 100_000_000) // Make sure aync setCookie inside received is done
 
-        let cookies = await mockCookieStore.allCookies()
-        let receivedWebCookie = cookies.first { $0.name == "ECUNL" }
+        var cookies = await mockCookieStore.allCookies()
+        var receivedWebCookie = cookies.first { $0.name == "ECUNL" }
         XCTAssertEqual(receivedWebCookie?.value, existingCookie.value)
+
+        // Second case: Received native web value so did not change cookie store
+        let fakeCookie = HTTPCookie(properties: [.name: "ECUNL", .domain: ".ecosia.org", .path: "/", .value: "some-unchanged-value"])!
+        await mockCookieStore.setCookie(fakeCookie)
+
+        guard let nativeIdCookie = handler.makeCookie() else {
+            XCTFail("Failed to create unleash cookie when mock is loaded")
+            return
+        }
+        handler.received(nativeIdCookie, in: mockCookieStore)
+        try? await Task.sleep(nanoseconds: 100_000_000) // Make sure aync setCookie inside received is done
+
+        cookies = await mockCookieStore.allCookies()
+        receivedWebCookie = cookies.first { $0.name == "ECUNL" }
+        XCTAssertEqual(receivedWebCookie?.value, fakeCookie.value, "When received cookie is the same as the native one, no cookie should be changed on store")
     }
 
     // MARK: - Cookie Properties Tests
