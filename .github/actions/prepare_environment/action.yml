@@ -42,7 +42,7 @@ runs:
       id: check-simulator
       shell: bash
       run: |
-        if xcrun simctl list devices | grep -q "iPhone 16 (iOS 18.2)"; then
+        if xcrun simctl list devices | grep -q "iPhone16-iOS18.2"; then
           echo "Simulator already exists."
           echo "simulator_exists=true" >> $GITHUB_OUTPUT
         else
@@ -53,7 +53,7 @@ runs:
     - name: Create iOS 18.2 Simulator
       if: steps.check-simulator.outputs.simulator_exists != 'true'
       shell: bash
-      run: xcrun simctl create "iPhone 16 (iOS 18.2)" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
+      run: xcrun simctl create "iPhone16-iOS18.2" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-18-2"
       
     - name: List Available Simulators
       shell: bash
