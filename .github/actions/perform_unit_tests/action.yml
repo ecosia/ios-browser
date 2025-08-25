@@ -13,42 +13,10 @@ runs:
     - name: Run Unit Tests
       shell: bash
       run: |
-        # Set environment variables to suppress Swift concurrency warnings
-        export OTHER_SWIFT_FLAGS="-suppress-warnings"
-        # Treat warnings as warnings, not errors
-        export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
-        # Skip strict concurrency checking
-        export SWIFT_STRICT_CONCURRENCY=minimal
         # Increase test timeout
         export FASTLANE_XCODEBUILD_TEST_TIMEOUT=600
-        # Run the tests with retry logic
-        set +e
-        MAX_ATTEMPTS=3
-        ATTEMPT=1
-        SUCCESS=false
-        
-        while [ $ATTEMPT -le $MAX_ATTEMPTS ] && [ "$SUCCESS" = false ]; do
-          echo "Test attempt $ATTEMPT of $MAX_ATTEMPTS"
-          bundle exec fastlane run run_tests prelaunch_simulator:true
-          if [ $? -eq 0 ]; then
-            SUCCESS=true
-            echo "Tests passed on attempt $ATTEMPT"
-          else
-            echo "Tests failed on attempt $ATTEMPT"
-            ATTEMPT=$((ATTEMPT+1))
-            if [ $ATTEMPT -le $MAX_ATTEMPTS ]; then
-              echo "Waiting 30 seconds before retrying..."
-              sleep 30
-            fi
-          fi
-        done
-        
-        if [ "$SUCCESS" = true ]; then
-          exit 0
-        else
-          echo "Tests failed after $MAX_ATTEMPTS attempts"
-          exit 1
-        fi
+        # Run the tests
+        bundle exec fastlane run run_tests prelaunch_simulator:true
 
     - name: Publish Test Report
       if: always()
