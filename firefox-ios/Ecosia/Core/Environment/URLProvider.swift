@@ -163,15 +163,7 @@ public enum URLProvider {
         return components.url!
     }
 
-    /// AI search URLs for different environments
     public var aiSearch: URL {
-        switch self {
-        case .staging:
-            return root.appendingPathComponent("ai-search")
-        case .production:
-            var components = URLComponents(url: root.appendingPathComponent("ai-search"), resolvingAgainstBaseURL: false)!
-            components.queryItems = [URLQueryItem(name: "feature-ai2-67-ai-search-mvp", value: "enabled")]
-            return components.url!
-        }
+        root.appendingPathComponent("ai-search")
     }
 }

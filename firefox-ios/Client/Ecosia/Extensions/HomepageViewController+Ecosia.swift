@@ -120,9 +120,8 @@ extension LegacyHomepageViewController: NTPSeedCounterDelegate {
     }
 }
 
-extension LegacyHomepageViewController: NTPMultiPurposeEcosiaHeaderDelegate {
-    func multiPurposeEcosiaHeaderDidRequestAISearch() {
-        let aiSearchURL = AISearchProductionUrlSetting.getAISearchURL(for: Environment.current)
-        openLink(url: aiSearchURL)
+extension LegacyHomepageViewController: NTPHeaderDelegate {
+    func headerOpenAISearch() {
+        openLink(url: Environment.current.urlProvider.aiSearch)
     }
 }

@@ -453,7 +453,6 @@ class SearchViewController: SiteTableViewController,
                 return
             }
 
-            /* Ecosia: Modified to handle AI Search item with proper bounds checking
             guard let defaultEngine = viewModel.searchEnginesManager?.defaultEngine else { return }
 
             searchTelemetry?.selectedResult = .searchSuggest
@@ -462,15 +461,6 @@ class SearchViewController: SiteTableViewController,
                   let suggestion = suggestions[safe: indexPath.row],
                   let url = defaultEngine.searchURLForQuery(suggestion)
             else { return }
-            */
-            guard let defaultEngine = viewModel.searchEnginesManager?.defaultEngine else { return }
-
-            searchTelemetry?.selectedResult = .searchSuggest
-            // Assume that only the default search engine can provide search suggestions.
-            guard let suggestions = viewModel.suggestions,
-                  indexPath.row < min(suggestions.count, 4) else { return }
-            let suggestion = suggestions[indexPath.row]
-            guard let url = defaultEngine.searchURLForQuery(suggestion) else { return }
 
             let extras = [
                 ExtraKey.recordSearchLocation.rawValue: SearchLocation.suggestion,
@@ -695,7 +685,6 @@ class SearchViewController: SiteTableViewController,
 
             /* Ecosia: Modified to handle AI Search item and use safe array access
             let suggestion = viewModel.suggestions?[indexPath.item] ?? ""
-            searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)
             */
             guard let suggestion = safeSuggestion(at: indexPath.item) else { return }
             searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)

@@ -11,7 +11,7 @@ import Foundation
 import Common
 
 enum HomepageSectionType: Int, CaseIterable {
-    case multiPurposeEcosiaHeader // Ecosia: Multi-purpose header with AI search and other actions
+    case header
     case climateImpactCounter
     case homepageHeader
     case libraryShortcuts
@@ -22,9 +22,9 @@ enum HomepageSectionType: Int, CaseIterable {
 
     var cellIdentifier: String {
         switch self {
-        case .multiPurposeEcosiaHeader:
+        case .header:
             if #available(iOS 16.0, *) {
-                return NTPMultiPurposeEcosiaHeader.cellIdentifier
+                return NTPHeader.cellIdentifier
             } else {
                 return "" // Fallback for iOS < 16.0
             }
@@ -42,7 +42,7 @@ enum HomepageSectionType: Int, CaseIterable {
         var types: [ReusableCell.Type] = []
 
         if #available(iOS 16.0, *) {
-            types.append(NTPMultiPurposeEcosiaHeader.self)
+            types.append(NTPHeader.self)
         }
 
         types.append(contentsOf: [
@@ -69,7 +69,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .multiPurposeEcosiaHeader, .homepageHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
+        case .header, .homepageHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .news: return .ecosiaNews
@@ -101,7 +101,7 @@ extension HomepageSectionType {
                                            leading: horizontal,
                                            bottom: bottomSpacing,
                                            trailing: horizontal)
-        case .homepageHeader, .climateImpactCounter, .multiPurposeEcosiaHeader:
+        case .homepageHeader, .climateImpactCounter, .header:
             return .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         }
     }
