@@ -24,7 +24,18 @@ runs:
     - name: Run Unit Tests
       shell: bash
       run: |
-        bundle exec fastlane run run_tests
+        # Set environment variables for the test run
+        export FASTLANE_XCODEBUILD_TEST_TIMEOUT=600
+        export FASTLANE_IOS_SIMULATOR_DEVICE="iPhone16-iOS18.2"
+        export OTHER_SWIFT_FLAGS="-suppress-warnings"
+        export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
+        export SWIFT_STRICT_CONCURRENCY=minimal
+        
+        # First build the tests
+        bundle exec fastlane run run_tests build_for_testing:true
+        
+        # Then run the tests using the build
+        bundle exec fastlane run run_tests test_without_building:true
 
     - name: Publish Test Report
       if: always()
