@@ -14,10 +14,6 @@ runs:
       shell: bash
       run: bundle exec fastlane run run_tests build_for_testing:true
 
-    - name: Check simulators
-      shell: bash
-      run: xcrun simctl bootstatus
-
     - name: Run the tests
       shell: bash
       run: bundle exec fastlane run run_tests test_without_building:true        
