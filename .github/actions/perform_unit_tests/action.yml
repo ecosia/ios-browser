@@ -12,18 +12,17 @@ runs:
         
     - name: Build the app for testing
       shell: bash
-      run: bundle exec fastlane run run_tests clean:true build_for_testing:true
-
-    - name: Run the tests
-      shell: bash
       run: |
-        # Set environment variables to suppress warnings and errors
+        # Set environment variables to suppress warnings and errors during compilation
         export OTHER_SWIFT_FLAGS="-suppress-warnings"
         export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
         export SWIFT_STRICT_CONCURRENCY=minimal
         
-        # Skip BrazeServiceTests to avoid dependency issues
-        bundle exec fastlane run run_tests test_without_building:true skip_testing:"EcosiaTests/BrazeServiceTests"
+        bundle exec fastlane run run_tests clean:true build_for_testing:true
+
+    - name: Run the tests
+      shell: bash
+      run: bundle exec fastlane run run_tests test_without_building:true
 
     - name: Publish Test Report
       if: always()
