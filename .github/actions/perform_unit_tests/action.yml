@@ -9,33 +9,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-
-    - name: Verify Simulator Status
-      shell: bash
-      run: |
-        echo "Checking simulator status..."
-        xcrun simctl list devices | grep -A 5 "iPhone16-iOS18.6" || {
-          echo "Error: iPhone16-iOS18.6 simulator not found"
-          echo "Available devices:"
-          xcrun simctl list devices
-          exit 1
-        }
         
     - name: Run Unit Tests
       shell: bash
       run: |
-        # Set environment variables for the test run
-        export FASTLANE_XCODEBUILD_TEST_TIMEOUT=600
-        export FASTLANE_IOS_SIMULATOR_DEVICE="iPhone16-iOS18.6"
-        export OTHER_SWIFT_FLAGS="-suppress-warnings"
-        export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
-        export SWIFT_STRICT_CONCURRENCY=minimal
-        
-        # First build the tests
-        bundle exec fastlane run run_tests build_for_testing:true
-        
-        # Then run the tests using the build
-        bundle exec fastlane run run_tests test_without_building:true
+        bundle exec fastlane run run_tests
 
     - name: Publish Test Report
       if: always()
