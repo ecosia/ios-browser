@@ -14,8 +14,8 @@ runs:
       shell: bash
       run: |
         echo "Checking simulator status..."
-        xcrun simctl list devices | grep -A 5 "iPhone16-iOS18.2" || {
-          echo "Error: iPhone16-iOS18.2 simulator not found"
+        xcrun simctl list devices | grep -A 5 "iPhone16-iOS18.6" || {
+          echo "Error: iPhone16-iOS18.6 simulator not found"
           echo "Available devices:"
           xcrun simctl list devices
           exit 1
@@ -26,7 +26,7 @@ runs:
       run: |
         # Set environment variables for the test run
         export FASTLANE_XCODEBUILD_TEST_TIMEOUT=600
-        export FASTLANE_IOS_SIMULATOR_DEVICE="iPhone16-iOS18.2"
+        export FASTLANE_IOS_SIMULATOR_DEVICE="iPhone16-iOS18.6"
         export OTHER_SWIFT_FLAGS="-suppress-warnings"
         export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
         export SWIFT_STRICT_CONCURRENCY=minimal
