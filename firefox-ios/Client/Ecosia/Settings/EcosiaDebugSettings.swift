@@ -290,8 +290,8 @@ final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
         "AI Search MVP"
     }
 
-    override var status: NSAttributedString? {
-        return NSAttributedString(string: "Is enabled: \(Unleash.isEnabled(.aiSearchMVP).description)", attributes: [:])
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.aiSearchMVP)
     }
 
     override var unleashEnabled: Bool? {
@@ -303,10 +303,6 @@ final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
 final class UnleashSpeechToTextSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "Speech to Text"
-    }
-
-    override var status: NSAttributedString? {
-        return NSAttributedString(string: "Is enabled: \(Unleash.isEnabled(.speechToText).description)", attributes: [:])
     }
 
     override var unleashEnabled: Bool? {
