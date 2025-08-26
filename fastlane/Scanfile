@@ -1,23 +1,13 @@
+# This Scanfile is kept for reference but not used directly.
+# We're using direct xcodebuild command in perform_unit_tests/action.yml instead.
 scheme("Ecosia")
 configuration("Testing")
 project("firefox-ios/Client.xcodeproj")
 device("iPhone 16")
 prelaunch_simulator(true)
-# Skip problematic tests and tests that use dependencies with compilation issues
-skip_testing([
-  "ClientTests", 
-  "EcosiaTests/BrazeServiceTests", 
-  "SiteImageViewTests",
-  "SharedTests" # Contains SwiftSoup dependency
-])
 output_types("junit")
 output_directory("test_output/xml")
 testplan("UnitTest")
-cloned_source_packages_path("firefox-ios/SourcePackages")
-disable_package_automatic_updates(true)
-derived_data_path("DerivedData")
 code_coverage(false)
 result_bundle(true)
 fail_build(false)
-# Compiler flags to suppress warnings and handle dependency issues
-xcargs("OTHER_SWIFT_FLAGS='-suppress-warnings' SWIFT_TREAT_WARNINGS_AS_ERRORS=NO SWIFT_STRICT_CONCURRENCY=minimal SWIFT_DISABLE_SAFETY_CHECKS=YES")

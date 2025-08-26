@@ -10,15 +10,32 @@ runs:
   using: "composite"
   steps:
         
-    - name: Build the app for testing
+    - name: Run tests with xcodebuild
       shell: bash
-      run: bundle exec fastlane run run_tests clean:true build_for_testing:true
-
-    - name: Run the tests
+      run: |
+        xcodebuild -scheme Ecosia \
+          -project firefox-ios/Client.xcodeproj \
+          -configuration Testing \
+          -enableCodeCoverage NO \
+          -testPlan UnitTest \
+          -destination 'platform=iOS Simulator,name=iPhone 16' \
+          -resultBundlePath TestResults.xcresult \
+          clean build test
+        
+    - name: Convert xcresult to JUnit format
+      if: always()
       shell: bash
-      run: bundle exec fastlane run run_tests test_without_building:true
-
-
+      run: |
+        # Create output directory
+        mkdir -p test_output/xml
+        
+        # Install xcresultparser if needed
+        if ! command -v xcresultparser &> /dev/null; then
+          brew install chargepoint/xcparse/xcparse
+        fi
+        
+        # Convert xcresult to JUnit format
+        xcparse exportJUnit TestResults.xcresult test_output/xml/report.junit
         
     - name: Publish Test Report
       if: always()
