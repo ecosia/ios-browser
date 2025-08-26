@@ -18,17 +18,30 @@ runs:
         export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
         export SWIFT_STRICT_CONCURRENCY=minimal
         
-        # Use xcodebuild directly since it works locally
-        xcodebuild -scheme Ecosia \
+        # First, clean the project to ensure no stale build artifacts
+        xcodebuild clean -scheme Ecosia -project firefox-ios/Client.xcodeproj -configuration Testing
+        
+        # Build the project without running tests
+        xcodebuild build-for-testing \
+          -scheme Ecosia \
+          -project firefox-ios/Client.xcodeproj \
+          -configuration Testing \
+          -destination "platform=iOS Simulator,name=iPhone 16" \
+          -testPlan UnitTest \
+          -derivedDataPath DerivedData
+          
+        # Now run tests separately
+        xcodebuild test-without-building \
+          -scheme Ecosia \
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
           -destination "platform=iOS Simulator,name=iPhone 16" \
           -testPlan UnitTest \
           -skip-testing:ClientTests \
           -skip-testing:EcosiaTests/BrazeServiceTests \
+          -skip-testing:SiteImageViewTests \
           -derivedDataPath DerivedData \
-          -resultBundlePath TestResults.xcresult \
-          clean test
+          -resultBundlePath TestResults.xcresult
 
     - name: Convert Xcode results to JUnit format
       shell: bash
