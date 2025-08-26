@@ -1,7 +1,7 @@
 scheme("Ecosia")
 configuration("Testing")
 project("firefox-ios/Client.xcodeproj")
-destination("platform=iOS Simulator,name=iPhone 16")
+device("iPhone 16")
 output_types("junit")
 output_directory("test_output/xml")
 testplan("UnitTest")
