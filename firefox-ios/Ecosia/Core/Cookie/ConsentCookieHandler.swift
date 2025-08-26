@@ -14,7 +14,7 @@ final class ConsentCookieHandler: BaseCookieHandler {
         return User.shared.cookieConsentValue
     }
 
-    override func received(_ cookie: HTTPCookie, in cookieStore: WKHTTPCookieStore) {
+    override func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol) {
         User.shared.cookieConsentValue = cookie.value
     }
 }
