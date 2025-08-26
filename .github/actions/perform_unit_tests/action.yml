@@ -14,7 +14,7 @@ runs:
       shell: bash
       run: |
         # Skip tests that require BrazeKit to avoid dependency issues
-        bundle exec fastlane run run_tests skip_testing:"EcosiaTests/BrazeServiceTests"
+        bundle exec fastlane run run_tests
 
     - name: Publish Test Report
       if: always()
