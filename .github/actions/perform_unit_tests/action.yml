@@ -10,103 +10,15 @@ runs:
   using: "composite"
   steps:
         
-    - name: Run tests directly with xcodebuild
+    - name: Build the app for testing
       shell: bash
-      run: |
-        # Set environment variables to suppress warnings and errors during compilation
-        export OTHER_SWIFT_FLAGS="-suppress-warnings"
-        export SWIFT_TREAT_WARNINGS_AS_ERRORS=NO
-        export SWIFT_STRICT_CONCURRENCY=minimal
-        
-        # First, clean the project to ensure no stale build artifacts
-        xcodebuild clean -scheme Ecosia -project firefox-ios/Client.xcodeproj -configuration Testing
-        
-        # Build the project without running tests
-        xcodebuild build-for-testing \
-          -scheme Ecosia \
-          -project firefox-ios/Client.xcodeproj \
-          -configuration Testing \
-          -destination "platform=iOS Simulator,name=iPhone 16" \
-          -testPlan UnitTest \
-          -derivedDataPath DerivedData
-          
-        # Now run tests separately
-        xcodebuild test-without-building \
-          -scheme Ecosia \
-          -project firefox-ios/Client.xcodeproj \
-          -configuration Testing \
-          -destination "platform=iOS Simulator,name=iPhone 16" \
-          -testPlan UnitTest \
-          -skip-testing:ClientTests \
-          -skip-testing:EcosiaTests/BrazeServiceTests \
-          -skip-testing:SiteImageViewTests \
-          -derivedDataPath DerivedData \
-          -resultBundlePath TestResults.xcresult
+      run: bundle exec fastlane run run_tests clean:true build_for_testing:true
 
-    - name: Convert Xcode results to JUnit format
+    - name: Run the tests
       shell: bash
-      if: always()
-      run: |
-        # Install xcresult tool if needed
-        if ! command -v xcresulttool &> /dev/null; then
-          brew install xcbeautify
-        fi
-        
-        # Create output directory
-        mkdir -p test_output/xml
-        
-        # Convert xcresult to junit format
-        xcrun xcresulttool get --format json --path TestResults.xcresult > TestResults.json
-        python3 -c '
-import json
-import sys
-import os
-from xml.etree.ElementTree import Element, SubElement, tostring
-from xml.dom import minidom
+      run: bundle exec fastlane run run_tests test_without_building:true
 
-def prettify(elem):
-    rough_string = tostring(elem, "utf-8")
-    reparsed = minidom.parseString(rough_string)
-    return reparsed.toprettyxml(indent="  ")
 
-with open("TestResults.json") as f:
-    data = json.load(f)
-
-# Create root element
-testsuite = Element("testsuite")
-testsuite.set("name", "XcodebuildTests")
-
-# Extract test results
-actions = data.get("actions", {}).get("_values", [])
-for action in actions:
-    if action.get("actionResult", {}).get("testsRef", {}).get("id", {}).get("_value"):
-        test_ref = action.get("actionResult", {}).get("testsRef", {}).get("id", {}).get("_value")
-        # Get test results
-        os.system(f"xcrun xcresulttool get --format json --path TestResults.xcresult --id {test_ref} > TestDetails.json")
-        with open("TestDetails.json") as f:
-            test_data = json.load(f)
-        
-        summaries = test_data.get("summaries", {}).get("_values", [])
-        for summary in summaries:
-            testableSummaries = summary.get("testableSummaries", {}).get("_values", [])
-            for testable in testableSummaries:
-                tests = testable.get("tests", {}).get("_values", [])
-                for test_suite in tests:
-                    for test_class in test_suite.get("subtests", {}).get("_values", []):
-                        for test in test_class.get("subtests", {}).get("_values", []):
-                            testcase = SubElement(testsuite, "testcase")
-                            testcase.set("classname", test_class.get("name", {}).get("_value", "Unknown"))
-                            testcase.set("name", test.get("name", {}).get("_value", "Unknown"))
-                            
-                            # Check if test failed
-                            if test.get("testStatus", {}).get("_value") != "Success":
-                                failure = SubElement(testcase, "failure")
-                                failure.set("message", "Test failed")
-                                failure.text = str(test)
-
-with open("test_output/xml/report.junit", "w") as f:
-    f.write(prettify(testsuite))
-        '
         
     - name: Publish Test Report
       if: always()
