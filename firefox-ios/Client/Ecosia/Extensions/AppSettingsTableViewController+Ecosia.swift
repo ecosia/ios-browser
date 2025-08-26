@@ -162,11 +162,12 @@ extension AppSettingsTableViewController {
             UnleashSeedCounterNTPSetting(settings: self),
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashAPNConsent(settings: self),
-            AnalyticsIdentifierSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
             // TODO: Remove after QA performed
-            UnleashSpeechToTextSetting(settings: self)
+            UnleashSpeechToTextSetting(settings: self),
+            UnleashIdentifierSetting(settings: self),
+            AnalyticsIdentifierSetting(settings: self)
         ]
 
         if Environment.current == .staging {

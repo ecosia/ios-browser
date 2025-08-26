@@ -330,6 +330,22 @@ final class AnalyticsIdentifierSetting: HiddenSetting {
     }
 }
 
+final class UnleashIdentifierSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Unleash Identifier", attributes: [:])
+    }
+
+    var analyticsIdentifier: String { Unleash.userId.uuidString }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(Unleash.userId.uuidString) (Click to copy)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        UIPasteboard.general.string = Unleash.userId.uuidString
+    }
+}
+
 final class AnalyticsStagingUrlSetting: HiddenSetting {
 
     override var title: NSAttributedString? {

@@ -17,7 +17,7 @@ final class UnleashCookieHandler: BaseCookieHandler {
         guard unleash.isLoaded else {
             return nil
         }
-        return Unleash.model.id.uuidString.lowercased()
+        return Unleash.userId.uuidString.lowercased()
     }
 
     override func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol) {

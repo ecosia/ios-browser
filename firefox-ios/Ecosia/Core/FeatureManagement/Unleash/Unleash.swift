@@ -19,6 +19,7 @@ public enum Unleash: UnleashProtocol {
     public typealias Context = [String: String]
 
     static var model = Model()
+    public static var userId: UUID { model.id }
     private static let queue = DispatchQueue(label: "com.ecosia.ModelManagerQueue")
     static var rules: [RefreshingRule] = []
     private static var _isLoaded = false
@@ -33,7 +34,7 @@ public enum Unleash: UnleashProtocol {
     }
 
     public static func queryParameters(appVersion: String) -> Context {
-        ["userId": model.id.uuidString,
+        ["userId": userId.uuidString,
          "appName": "iOS",
          "appVersion": appVersion,
          "versionOnInstall": User.shared.versionOnInstall,
