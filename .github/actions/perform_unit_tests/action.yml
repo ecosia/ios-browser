@@ -12,11 +12,11 @@ runs:
         
     - name: Build the app for testing
       shell: bash
-      run: bundle exec fastlane run run_tests build_for_testing:true
+      run: bundle exec fastlane run run_tests clean:true build_for_testing:true
 
     - name: Run the tests
       shell: bash
-      run: bundle exec fastlane run run_tests test_without_building:true        
+      run: bundle exec fastlane run run_tests test_without_building:true
 
     - name: Publish Test Report
       if: always()
