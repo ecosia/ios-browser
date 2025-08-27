@@ -339,6 +339,23 @@ open class Analytics {
         track(SelfDescribing(schema: Self.feedbackSchema,
                              payload: payload))
     }
+
+    // MARK: Account Authentication
+
+    public func accountSignInTriggered() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+        track(event)
+    }
+
+    public func accountSignInCancelled() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.cancel.rawValue)
+        track(event)
+    }
 }
 
 extension Analytics {

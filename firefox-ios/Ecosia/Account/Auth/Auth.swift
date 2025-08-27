@@ -49,6 +49,10 @@ public final class Auth {
     /// This property is automatically updated when login/logout operations complete successfully.
     public private(set) var isLoggedIn: Bool = false
 
+    /// The current user's profile information from Auth0.
+    /// This includes name, email, profile picture URL, etc.
+    public private(set) var userProfile: UserProfile?
+
     // MARK: - Initialization
 
     /**
@@ -67,9 +71,10 @@ public final class Auth {
     }
 
     /// Logs in the user asynchronously and stores credentials if successful.
-    /// - Throws: `LoginError.authenticationFailed` if Auth0 authentication fails,
-    ///           `LoginError.credentialStorageError` if credential storage throws an error,
-    ///           `LoginError.credentialStorageFailed` if credential storage returns false.
+    /// - Throws: `AuthError.userCancelled` if user cancels the authentication,
+    ///           `AuthError.authenticationFailed` if Auth0 authentication fails,
+    ///           `AuthError.credentialStorageError` if credential storage throws an error,
+    ///           `AuthError.credentialStorageFailed` if credential storage returns false.
     public func login() async throws {
         // First, attempt authentication
         let credentials: Credentials
@@ -78,6 +83,14 @@ public final class Auth {
             EcosiaLogger.auth.info("Authentication successful")
         } catch {
             EcosiaLogger.auth.error("Authentication failed: \(error)")
+
+            // Check if user cancelled the login operation
+            if let webAuthError = error as? WebAuthError,
+               case .userCancelled = webAuthError {
+                EcosiaLogger.auth.info("User cancelled login operation")
+                throw AuthError.userCancelled
+            }
+
             throw AuthError.authenticationFailed(error)
         }
 
@@ -86,6 +99,7 @@ public final class Auth {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
                 setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+                await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
                 EcosiaLogger.auth.info("Login completed successfully")
             } else {
                 EcosiaLogger.auth.error("Credential storage failed (returned false)")
@@ -99,8 +113,9 @@ public final class Auth {
 
     /// Logs out the user with option to skip web logout (for web-initiated logout)
     /// - Parameter triggerWebLogout: Whether to clear the web session. Defaults to true.
-    /// - Throws: `LogoutError.sessionClearingFailed` if both web session and credential clearing fail,
-    ///           `LogoutError.credentialsClearingFailed` if only credential clearing fails.
+    /// - Throws: `AuthError.userCancelled` if user cancels the logout web session,
+    ///           `AuthError.sessionClearingFailed` if both web session and credential clearing fail,
+    ///           `AuthError.credentialsClearingFailed` if only credential clearing fails.
     public func logout(triggerWebLogout: Bool = true) async throws {
         var sessionClearingError: Error?
 
@@ -112,6 +127,13 @@ public final class Auth {
             } catch {
                 sessionClearingError = error
                 EcosiaLogger.auth.error("Failed to clear web session: \(error)")
+
+                // Check if user cancelled the logout operation
+                if let webAuthError = error as? WebAuthError,
+                   case .userCancelled = webAuthError {
+                    EcosiaLogger.auth.info("User cancelled logout operation")
+                    throw AuthError.userCancelled
+                }
             }
         }
 
@@ -120,6 +142,8 @@ public final class Auth {
 
         if credentialsCleared {
             setupTokensWithCredentials(nil)
+            // Clear user profile on logout
+            userProfile = nil
             EcosiaLogger.auth.info("Credentials cleared successfully")
 
             // If we had a session clearing error but credentials cleared successfully,
@@ -157,6 +181,7 @@ public final class Auth {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
             // Dispatch state loaded with current authentication status
@@ -211,6 +236,34 @@ public final class Auth {
         // Dispatch state change to the new state management system
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
+        }
+    }
+
+    /// Fetches detailed user information from Auth0's userInfo endpoint
+    private func fetchUserInfoFromAuth0(accessToken: String) async {
+        do {
+            let userInfo = try await Auth0
+                .authentication(clientId: auth0Provider.settings.id,
+                                domain: auth0Provider.settings.domain)
+                .userInfo(withAccessToken: accessToken)
+                .start()
+
+            // Update user profile with actual data from Auth0
+            self.userProfile = UserProfile(
+                name: userInfo.name ?? userInfo.nickname,
+                email: userInfo.email,
+                picture: userInfo.picture?.absoluteString,
+                sub: userInfo.sub
+            )
+
+            EcosiaLogger.auth.info("Updated user profile with Auth0 data: name=\(userInfo.name ?? "nil"), email=\(userInfo.email ?? "nil"), picture=\(userInfo.picture?.absoluteString ?? "nil")")
+
+            // Notify UI that profile was updated
+            await MainActor.run {
+                NotificationCenter.default.post(name: .EcosiaUserProfileUpdated, object: nil)
+            }
+        } catch {
+            EcosiaLogger.auth.error("Failed to fetch user info from Auth0: \(error)")
         }
     }
 }
