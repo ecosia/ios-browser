@@ -36,13 +36,6 @@ runs:
           -destination 'platform=iOS Simulator,name=iPhone 16' \
           -resultBundlePath TestResults.xcresult \
           -derivedDataPath DerivedData \
-          -skip-testing:TabManagerNavDelegateTests \
-          -skip-testing:ContentBlockerTests/testCompileListsNotInStore_callsCompletionHandlerSuccessfully \
-          -skip-testing:GeneralizedImageFetcherTests/testBadStatusCode \
-          -skip-testing:GeneralizedImageFetcherTests/testErrorResponse \
-          -skip-testing:GeneralizedImageFetcherTests/testNilData \
-          -skip-testing:TabLocationViewTests/testDelegateMemoryLeak \
-          -skip-testing:AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions \
           test-without-building | xcpretty --color --report junit --output test_output/xml/report.junit || true
         
     - name: Publish Test Report
