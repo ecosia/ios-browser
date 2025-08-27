@@ -23,9 +23,7 @@ runs:
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
           -enableCodeCoverage NO \
-          -testPlan UnitTest \
           -destination 'platform=iOS Simulator,name=iPhone 16' \
-          -resultBundlePath TestResults.xcresult \
           -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
           -derivedDataPath DerivedData \
           build-for-testing | xcpretty --color
