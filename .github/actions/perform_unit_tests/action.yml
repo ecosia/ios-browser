@@ -27,7 +27,18 @@ runs:
           -destination 'platform=iOS Simulator,name=iPhone 16' \
           -resultBundlePath TestResults.xcresult \
           -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
-          build test | xcpretty --color --report junit --output test_output/xml/report.junit
+          -derivedDataPath DerivedData \
+          build-for-testing | xcpretty --color
+          
+        set -o pipefail && xcodebuild -scheme Ecosia \
+          -project firefox-ios/Client.xcodeproj \
+          -configuration Testing \
+          -enableCodeCoverage NO \
+          -testPlan UnitTest \
+          -destination 'platform=iOS Simulator,name=iPhone 16' \
+          -resultBundlePath TestResults.xcresult \
+          -derivedDataPath DerivedData \
+          test-without-building | xcpretty --color --report junit --output test_output/xml/report.junit
         
     - name: Publish Test Report
       if: always()
