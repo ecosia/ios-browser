@@ -23,6 +23,15 @@ runs:
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
           -enableCodeCoverage NO \
+          -destination 'platform=iOS Simulator,name=iPhone 16' \
+          -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
+          -derivedDataPath DerivedData \
+          build-for-testing | xcpretty --color
+          
+        set -o pipefail && xcodebuild -scheme Ecosia \
+          -project firefox-ios/Client.xcodeproj \
+          -configuration Testing \
+          -enableCodeCoverage NO \
           -testPlan UnitTest \
           -destination 'platform=iOS Simulator,name=iPhone 16' \
           -resultBundlePath TestResults.xcresult \
@@ -34,7 +43,7 @@ runs:
           -skip-testing:GeneralizedImageFetcherTests/testNilData \
           -skip-testing:TabLocationViewTests/testDelegateMemoryLeak \
           -skip-testing:AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions \
-          build test | xcpretty --color --report junit --output test_output/xml/report.junit || true
+          test-without-building | xcpretty --color --report junit --output test_output/xml/report.junit || true
         
     - name: Publish Test Report
       if: always()
