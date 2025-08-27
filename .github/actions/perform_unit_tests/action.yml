@@ -34,7 +34,7 @@ runs:
           -skip-testing:GeneralizedImageFetcherTests/testNilData \
           -skip-testing:TabLocationViewTests/testDelegateMemoryLeak \
           -skip-testing:AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions \
-          build test || true | xcpretty --color --report junit --output test_output/xml/report.junit
+          build test | xcpretty --color --report junit --output test_output/xml/report.junit || true
         
     - name: Publish Test Report
       if: always()
