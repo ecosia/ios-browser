@@ -108,7 +108,7 @@ final class NTPAccountLoginViewModel: ObservableObject {
 
     private func getMockOrRealResponse(accessToken: String) async throws -> AccountBalanceResponse {
         // TODO: Switch between mock and real API for testing
-        let useMockData = true // Set to false for real API calls
+        let useMockData = false // Set to false for real API calls
 
         if useMockData {
             EcosiaLogger.accounts.info("Using mock response for testing")
