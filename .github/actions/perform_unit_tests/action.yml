@@ -19,15 +19,7 @@ runs:
     - name: Run tests with xcodebuild and xcpretty
       shell: bash
       run: |
-        set -o pipefail && xcodebuild -scheme Ecosia \
-          -project firefox-ios/Client.xcodeproj \
-          -configuration Testing \
-          -enableCodeCoverage NO \
-          -destination 'platform=iOS Simulator,name=iPhone 16' \
-          -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
-          -derivedDataPath DerivedData \
-          build-for-testing | xcpretty --color
-          
+
         set -o pipefail && xcodebuild -scheme Ecosia \
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
@@ -38,7 +30,7 @@ runs:
           -derivedDataPath DerivedData \
           -skip-testing:TabManagerNavDelegateTests \
           -skip-testing:AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions \
-          test-without-building | xcpretty --color --report junit --output test_output/xml/report.junit
+          build test | xcpretty --color --report junit --output test_output/xml/report.junit
         
     - name: Publish Test Report
       if: always()
