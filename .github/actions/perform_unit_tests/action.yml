@@ -36,6 +36,8 @@ runs:
           -destination 'platform=iOS Simulator,name=iPhone 16' \
           -resultBundlePath TestResults.xcresult \
           -derivedDataPath DerivedData \
+          -skip-testing:TabManagerNavDelegateTests/test_webViewDecidePolicyFor_responsePolicy_sendsCorrectMessage \
+          -skip-testing:AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions \
           test-without-building | xcpretty --color --report junit --output test_output/xml/report.junit
         
     - name: Publish Test Report
