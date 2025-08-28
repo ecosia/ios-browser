@@ -11,11 +11,13 @@ final class UnleashTests: XCTestCase {
     static let appVersion = "0.0.0"
 
     override func setUp() {
+        Unleash.clearInstanceModel()
         Unleash.rules = []
         try? FileManager.default.removeItem(at: FileManager.unleash)
     }
 
     override func tearDown() {
+        Unleash.clearInstanceModel()
         Unleash.rules = []
         try? FileManager.default.removeItem(at: FileManager.unleash)
     }
