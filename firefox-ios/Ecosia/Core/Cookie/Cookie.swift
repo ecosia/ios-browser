@@ -14,6 +14,8 @@ public enum Cookie: String, CaseIterable {
     case consent = "ECCC"
     // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECUNL
     case unleash = "ECUNL"
+    // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECAIO
+    case aiOverviews = "ECAIO"
 
     // MARK: - URLProvider Management
 
@@ -65,7 +67,17 @@ public enum Cookie: String, CaseIterable {
             return ConsentCookieHandler()
         case .unleash:
             return UnleashCookieHandler()
+        case .aiOverviews:
+            return AIOverviewsCookieHandler()
         }
+    }
+
+    /// Creates a Main Cookie for the specified mode.
+    /// - Parameters:
+    ///   - mode: The cookie mode (standard or incognito)
+    /// - Returns: An HTTPCookie configured for the specified mode.
+    private static func makeMain(withMode mode: CookieMode) -> HTTPCookie? {
+        return MainCookieHandler(mode: mode).makeCookie()
     }
 
     // MARK: - Public Interface
@@ -73,25 +85,12 @@ public enum Cookie: String, CaseIterable {
     /// Processes received cookies.
     /// - Parameters:
     ///   - cookies: An array of HTTPCookie objects.
+    ///   - cookieStore: WKHTTPCookieStore where cookies are set. Used when cookies need to be overwritten.
     public static func received(_ cookies: [HTTPCookie], in cookieStore: CookieStoreProtocol) {
         cookies.forEach { cookie in
             guard let cookieType = Cookie(cookie) else { return }
             cookieType.handler.received(cookie, in: cookieStore)
         }
-    }
-
-    /// Creates a cookie for the specified type.
-    /// - Returns: An HTTPCookie for this cookie type.
-    public func makeCookie() -> HTTPCookie? {
-        return handler.makeCookie()
-    }
-
-    /// Creates a Main Cookie for the specified mode.
-    /// - Parameters:
-    ///   - mode: The cookie mode (standard or incognito)
-    /// - Returns: An HTTPCookie configured for the specified mode.
-    public static func makeMain(mode: CookieMode) -> HTTPCookie? {
-        return MainCookieHandler(mode: mode).makeCookie()
     }
 
     /// Creates cookies for all required types for web view configuration.
@@ -101,16 +100,42 @@ public enum Cookie: String, CaseIterable {
     public static func makeRequiredCookies(isPrivate: Bool) -> [HTTPCookie] {
         var cookies: [HTTPCookie] = []
 
-        // Main cookie (standard or incognito based on isPrivate flag)
-        let mainMode: CookieMode = isPrivate ? .incognito : .standard
-        if let cookie = makeMain(mode: mainMode) {
-            cookies.append(cookie)
+        Cookie.allCases.forEach { cookieType in
+            switch cookieType {
+            case .main:
+                let mainMode: CookieMode = isPrivate ? .incognito : .standard
+                if let cookie = makeMain(withMode: mainMode) {
+                    cookies.append(cookie)
+                }
+            default:
+                if let cookie = cookieType.handler.makeCookie() {
+                    cookies.append(cookie)
+                }
+            }
         }
 
-        // Add consent and unleash cookies if they can be created
-        for cookieType in [Cookie.consent, Cookie.unleash] {
-            if let cookie = cookieType.makeCookie() {
-                cookies.append(cookie)
+        return cookies
+    }
+
+    /// Creates cookies related to search settings for `searchSettingsChanged` notification.
+    /// - Parameter isPrivate: Whether to create cookies for private browsing mode
+    /// - Returns: An array of HTTPCookie for all search setting specific types
+    public static func makeSearchSettingsObserverCookies(isPrivate: Bool) -> [HTTPCookie] {
+        var cookies: [HTTPCookie] = []
+
+        Cookie.allCases.forEach { cookieType in
+            switch cookieType {
+            case .main:
+                let mainMode: CookieMode = isPrivate ? .incognito : .standard
+                if let cookie = makeMain(withMode: mainMode) {
+                    cookies.append(cookie)
+                }
+            case .aiOverviews:
+                if let cookie = cookieType.handler.makeCookie() {
+                    cookies.append(cookie)
+                }
+            default:
+                break
             }
         }
 
