@@ -139,6 +139,28 @@ final class PersonalSearchSettings: BoolSetting {
     }
 }
 
+final class AIOverviewsSearchSettings: BoolSetting {
+    convenience init(prefs: Prefs, theme: Theme) {
+        self.init(prefs: prefs,
+                  theme: theme,
+                  prefKey: "",
+                  defaultValue: false,
+                  titleText: .localized(.aiOverviewsTitle),
+                  statusText: .localized(.aiOverviewsDescription),
+                  settingDidChange: { value in
+            User.shared.aiOverviews = value
+        })
+    }
+
+    override func displayBool(_ control: UISwitch) {
+        control.isOn = User.shared.aiOverviews
+    }
+
+    override func writeBool(_ control: UISwitch) {
+        User.shared.aiOverviews = control.isOn
+    }
+}
+
 final class EcosiaPrivacyPolicySetting: Setting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: .localized(.privacy), attributes: [:])
