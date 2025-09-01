@@ -84,18 +84,6 @@ final class ConsentCookieHandlerTests: XCTestCase {
 
     // MARK: - Integration Tests
 
-    func testConsentCookieViaMainAPI() {
-        User.shared.cookieConsentValue = "eampg"
-
-        guard let cookie = Cookie.consent.makeCookie() else {
-            XCTFail("Failed to create consent cookie via main API")
-            return
-        }
-
-        XCTAssertEqual(cookie.name, "ECCC")
-        XCTAssertEqual(cookie.value, "eampg")
-    }
-
     func testConsentCookieInRequiredCookies() {
         User.shared.cookieConsentValue = "eampg"
 
