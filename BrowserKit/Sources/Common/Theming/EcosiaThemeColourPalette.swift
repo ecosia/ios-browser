@@ -10,6 +10,7 @@ import UIKit
 // They are adopted by `EcosiaLightTheme` and `EcosiaDarkTheme` and should use `EcosiaColorPrimitive`.
 public protocol EcosiaSemanticColors {
     // MARK: - Background
+    var backgroundFeatured: UIColor { get }
     var backgroundPrimary: UIColor { get }
     var backgroundPrimaryDecorative: UIColor { get }
     var backgroundSecondary: UIColor { get }
@@ -23,9 +24,13 @@ public protocol EcosiaSemanticColors {
     var borderDecorative: UIColor { get }
 
     // MARK: - Brand
+    var brandFeatured: UIColor { get }
     var brandPrimary: UIColor { get }
 
     // MARK: - Button
+    var buttonBackgroundFeatured: UIColor { get }
+    var buttonBackgroundFeaturedActive: UIColor { get }
+    var buttonBackgroundFeaturedHover: UIColor { get }
     var buttonBackgroundPrimary: UIColor { get }
     var buttonBackgroundPrimaryActive: UIColor { get }
     var buttonBackgroundSecondary: UIColor { get }
@@ -60,6 +65,7 @@ public protocol EcosiaThemeColourPalette: ThemeColourPalette {
 /// Serves to make Firefox themes conform the new protocol.
 /// Should never end up in production UI!
 class FakeEcosiaSemanticColors: EcosiaSemanticColors {
+    var backgroundFeatured: UIColor = .systemGray
     var backgroundPrimary: UIColor = .systemGray
     var backgroundPrimaryDecorative: UIColor = .systemGray
     var backgroundSecondary: UIColor = .systemGray
@@ -69,7 +75,11 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundElevation2: UIColor = .systemGray
     var backgroundBrandSecondaryAlt: UIColor = .systemGray
     var borderDecorative: UIColor = .systemGray
+    var brandFeatured: UIColor = .systemGray
     var brandPrimary: UIColor = .systemGray
+    var buttonBackgroundFeatured: UIColor = .systemGray
+    var buttonBackgroundFeaturedActive: UIColor = .systemGray
+    var buttonBackgroundFeaturedHover: UIColor = .systemGray
     var buttonBackgroundPrimary: UIColor = .systemGray
     var buttonBackgroundPrimaryActive: UIColor = .systemGray
     var buttonBackgroundSecondary: UIColor = .systemGray
