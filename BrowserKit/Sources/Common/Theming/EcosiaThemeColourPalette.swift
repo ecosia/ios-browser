@@ -10,6 +10,7 @@ import UIKit
 // They are adopted by `EcosiaLightTheme` and `EcosiaDarkTheme` and should use `EcosiaColorPrimitive`.
 public protocol EcosiaSemanticColors {
     // MARK: - Background
+    var backgroundNeutralInverse: UIColor { get }
     var backgroundFeatured: UIColor { get }
     var backgroundPrimary: UIColor { get }
     var backgroundPrimaryDecorative: UIColor { get }
@@ -34,12 +35,11 @@ public protocol EcosiaSemanticColors {
     var buttonBackgroundPrimary: UIColor { get }
     var buttonBackgroundPrimaryActive: UIColor { get }
     var buttonBackgroundSecondary: UIColor { get }
+    var buttonBackgroundSecondaryActive: UIColor { get }
     var buttonBackgroundSecondaryHover: UIColor { get }
     var buttonContentSecondary: UIColor { get }
-    var buttonBackgroundTransparentActive: UIColor { get }
 
     // MARK: - Icon
-    var iconSecondary: UIColor { get }
     var iconDecorative: UIColor { get }
     var iconInverseStrong: UIColor { get }
 
@@ -65,6 +65,7 @@ public protocol EcosiaThemeColourPalette: ThemeColourPalette {
 /// Serves to make Firefox themes conform the new protocol.
 /// Should never end up in production UI!
 class FakeEcosiaSemanticColors: EcosiaSemanticColors {
+    var backgroundNeutralInverse: UIColor = .systemGray
     var backgroundFeatured: UIColor = .systemGray
     var backgroundPrimary: UIColor = .systemGray
     var backgroundPrimaryDecorative: UIColor = .systemGray
@@ -83,10 +84,9 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundPrimary: UIColor = .systemGray
     var buttonBackgroundPrimaryActive: UIColor = .systemGray
     var buttonBackgroundSecondary: UIColor = .systemGray
+    var buttonBackgroundSecondaryActive: UIColor = .systemGray
     var buttonBackgroundSecondaryHover: UIColor = .systemGray
     var buttonContentSecondary: UIColor = .systemGray
-    var buttonBackgroundTransparentActive: UIColor = .systemGray
-    var iconSecondary: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
     var iconInverseStrong: UIColor = .systemGray
     var segmentedControlBackgroundActive: UIColor = .systemGray
