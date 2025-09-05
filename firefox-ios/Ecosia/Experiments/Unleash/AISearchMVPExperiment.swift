@@ -9,6 +9,16 @@ public struct AISearchMVPExperiment {
     private init() {}
 
     public static var isEnabled: Bool {
-        Unleash.isEnabled(.aiSearchMVP)
+        Unleash.isEnabled(.aiSearchMVP) && !isControl
+    }
+
+    private static var variant: Unleash.Variant {
+        Unleash.getVariant(.aiSearchMVP)
+    }
+
+    // More variants might be introduced, but control should remain the same
+    private static let controlVariantName: String = "st_3000_0"
+    public static var isControl: Bool {
+        variant.name == controlVariantName
     }
 }
