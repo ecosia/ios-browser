@@ -45,7 +45,8 @@ extension AppSettingsTableViewController {
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID)),
-            PersonalSearchSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID))
+            PersonalSearchSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID)),
+            AIOverviewsSearchSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID))
         ]
 
         return .init(title: .init(string: .localized(.search)),

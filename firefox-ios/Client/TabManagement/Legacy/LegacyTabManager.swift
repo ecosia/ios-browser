@@ -192,13 +192,11 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         searchSettingsObserver = NotificationCenter.default
             .publisher(for: .searchSettingsChanged)
             .sink { [privateConfiguration, configuration] _ in
-                if let standardMainCookie = Cookie.makeMain(mode: .standard) {
-                    configuration.websiteDataStore.httpCookieStore
-                        .setCookie(standardMainCookie)
+                Cookie.makeSearchSettingsObserverCookies(isPrivate: false).forEach { cookie in
+                    configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
                 }
-                if let incognitoMainCookie = Cookie.makeMain(mode: .incognito) {
-                    privateConfiguration.websiteDataStore.httpCookieStore
-                        .setCookie(incognitoMainCookie)
+                Cookie.makeSearchSettingsObserverCookies(isPrivate: true).forEach { cookie in
+                    privateConfiguration.websiteDataStore.httpCookieStore.setCookie(cookie)
                 }
             }
     }

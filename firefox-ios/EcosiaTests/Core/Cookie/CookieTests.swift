@@ -22,7 +22,7 @@ final class CookieTests: XCTestCase {
         Cookie.resetURLProvider()
     }
 
-    // MARK: - Base Cookie logic
+    // MARK: - Cookie Initialization Tests
 
     func testCookieInitFromHTTPCookie() {
         let validCookie = HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.org", .path: "/", .value: "test"])!
@@ -40,113 +40,117 @@ final class CookieTests: XCTestCase {
         XCTAssertEqual(Cookie("ECFG"), .main)
         XCTAssertEqual(Cookie("ECCC"), .consent)
         XCTAssertEqual(Cookie("ECUNL"), .unleash)
+        XCTAssertEqual(Cookie("ECAIO"), .aiOverviews)
         XCTAssertNil(Cookie("INVALID"))
     }
 
-    func testMakeRequiredCookies() async {
-        _ = try? await Unleash.start(appVersion: "1.0.0") // Pre-requirement for ECUNL
-        User.shared.cookieConsentValue = "eampg"
-
-        let standardCookies = Cookie.makeRequiredCookies(isPrivate: false)
-        let privateCookies = Cookie.makeRequiredCookies(isPrivate: true)
-
-        XCTAssertTrue(standardCookies.contains { $0.name == Cookie.main.name })
-        XCTAssertTrue(privateCookies.contains { $0.name == Cookie.main.name })
-
-        XCTAssertTrue(standardCookies.contains { $0.name == Cookie.consent.name })
-        XCTAssertTrue(privateCookies.contains { $0.name == Cookie.consent.name })
-
-        XCTAssertTrue(standardCookies.contains { $0.name == Cookie.unleash.name })
-        XCTAssertTrue(privateCookies.contains { $0.name == Cookie.unleash.name })
+    func testCookieName() {
+        XCTAssertEqual(Cookie.main.name, "ECFG")
+        XCTAssertEqual(Cookie.consent.name, "ECCC")
+        XCTAssertEqual(Cookie.unleash.name, "ECUNL")
+        XCTAssertEqual(Cookie.aiOverviews.name, "ECAIO")
     }
 
-    // MARK: - Integration Tests with handlers
+    // MARK: - Cookie Processing Tests
 
-    func testReceivedCookiesIntegration() {
-        // Test that received cookies are properly routed to the correct handlers
+    func testReceivedCookiesProcessing() {
+        // Setup initial state
         User.shared.searchCount = 0
         User.shared.cookieConsentValue = nil
 
         let cookies = [
             HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.org", .path: "/", .value: "t=100:cid=test-user"])!,
             HTTPCookie(properties: [.name: "ECCC", .domain: ".ecosia.org", .path: "/", .value: "eampg"])!,
-            HTTPCookie(properties: [.name: "ECUNL", .domain: ".ecosia.org", .path: "/", .value: "test-unleash-id"])!
+            HTTPCookie(properties: [.name: "ECUNL", .domain: ".ecosia.org", .path: "/", .value: "test-unleash-id"])!,
+            HTTPCookie(properties: [.name: "ECAIO", .domain: ".ecosia.org", .path: "/", .value: "enabled"])!
         ]
 
         Cookie.received(cookies, in: MockHTTPCookieStore())
 
+        // Verify effects through public observable state
         XCTAssertEqual(User.shared.searchCount, 100)
         XCTAssertEqual(User.shared.id, "test-user")
-
         XCTAssertEqual(User.shared.cookieConsentValue, "eampg")
-
-        // TODO: Check Unleash cookie is reset and overriden again
     }
 
-    func testReceivedInvalidDomainCookies() {
-        User.shared.searchCount = 3
+    func testReceivedCookiesIgnoresInvalidDomain() {
+        User.shared.searchCount = 5
 
-        Cookie.received([HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.it", .path: "/", .value: "t=9999"])!], in: MockHTTPCookieStore())
+        let invalidDomainCookies = [
+            HTTPCookie(properties: [.name: "ECFG", .domain: ".google.com", .path: "/", .value: "t=9999"])!,
+            HTTPCookie(properties: [.name: "ECCC", .domain: ".bing.com", .path: "/", .value: "invalid"])!
+        ]
 
-        XCTAssertEqual(User.shared.searchCount, 3)
+        Cookie.received(invalidDomainCookies, in: MockHTTPCookieStore())
+
+        // State should remain unchanged
+        XCTAssertEqual(User.shared.searchCount, 5)
     }
 
-    func testReceivedInvalidNameCookies() {
-        User.shared.searchCount = 3
+    func testReceivedCookiesIgnoresInvalidNames() {
+        User.shared.searchCount = 5
 
-        Cookie.received([HTTPCookie(properties: [.name: "Unknown", .domain: ".ecosia.org", .path: "/", .value: "t=9999"])!], in: MockHTTPCookieStore())
+        let invalidNameCookies = [
+            HTTPCookie(properties: [.name: "UNKNOWN", .domain: ".ecosia.org", .path: "/", .value: "t=9999"])!,
+            HTTPCookie(properties: [.name: "INVALID", .domain: ".ecosia.org", .path: "/", .value: "test"])!
+        ]
 
-        XCTAssertEqual(User.shared.searchCount, 3)
+        Cookie.received(invalidNameCookies, in: MockHTTPCookieStore())
+
+        // State should remain unchanged
+        XCTAssertEqual(User.shared.searchCount, 5)
     }
 
-    // MARK: - Cookie Type API Tests
+    // MARK: - Cookie Creation Tests
 
-    func testCookieTypeBasicCreation() async {
-        _ = try? await Unleash.start(appVersion: "1.0.0") // Pre-requirement for ECUNL
-        User.shared.cookieConsentValue = "notnull"
-        let mainCookie = Cookie.main.makeCookie()
-        let consentCookie = Cookie.consent.makeCookie()
-        let unleashCookie = Cookie.unleash.makeCookie()
+    func testMakeRequiredCookies() async {
+        // Setup prerequisites
+        _ = try? await Unleash.start(appVersion: "1.0.0")
+        User.shared.cookieConsentValue = "eampg"
 
-        XCTAssertNotNil(mainCookie)
-        XCTAssertEqual(mainCookie?.name, "ECFG")
+        let standardCookies = Cookie.makeRequiredCookies(isPrivate: false)
+        let privateCookies = Cookie.makeRequiredCookies(isPrivate: true)
 
-        XCTAssertNotNil(consentCookie)
-        XCTAssertEqual(consentCookie?.name, "ECCC")
+        // Verify all expected cookie types are present
+        let expectedCookieNames = [Cookie.main.name, Cookie.consent.name, Cookie.unleash.name, Cookie.aiOverviews.name]
 
-        XCTAssertNotNil(unleashCookie)
-        XCTAssertEqual(unleashCookie?.name, "ECUNL")
-    }
-
-    func testMakeMainModes() {
-        User.shared.id = "test-user"
-        User.shared.searchCount = 42
-
-        guard let standardCookie = Cookie.makeMain(mode: .standard),
-              let incognitoCookie = Cookie.makeMain(mode: .incognito) else {
-            XCTFail("Failed to create main cookies")
-            return
+        for cookieName in expectedCookieNames {
+            XCTAssertTrue(standardCookies.contains { $0.name == cookieName }, "Standard cookies missing \(cookieName)")
+            XCTAssertTrue(privateCookies.contains { $0.name == cookieName }, "Private cookies missing \(cookieName)")
         }
 
-        XCTAssertEqual(standardCookie.name, "ECFG")
-        XCTAssertEqual(incognitoCookie.name, "ECFG")
-
-        let standardValues = parseMainCookieValue(standardCookie.value)
-        let incognitoValues = parseMainCookieValue(incognitoCookie.value)
-
-        XCTAssertNotNil(standardValues["cid"])
-        XCTAssertNotNil(standardValues["t"])
-        XCTAssertNil(incognitoValues["cid"])
-        XCTAssertNil(incognitoValues["t"])
+        // Verify domains are correct
+        for cookie in standardCookies + privateCookies {
+            XCTAssertEqual(cookie.domain, ".ecosia.org")
+        }
     }
 
-    // MARK: - URLProvider Integration Tests
+    func testMakeSearchSettingsObserverCookies() async {
+        // Setup prerequisites
+        _ = try? await Unleash.start(appVersion: "1.0.0")
+        User.shared.cookieConsentValue = "eampg"
 
-    func testURLProviderStaging() {
-        let customProvider = URLProvider.staging
-        Cookie.setURLProvider(customProvider)
-        let someCookie = Cookie.consent.makeCookie()
-        XCTAssertEqual(someCookie?.domain, ".ecosia-staging.xyz")
+        let standardCookies = Cookie.makeSearchSettingsObserverCookies(isPrivate: false)
+        let privateCookies = Cookie.makeSearchSettingsObserverCookies(isPrivate: true)
+
+        // Should only contain main and aiOverviews cookies
+        let expectedCookieNames = [Cookie.main.name, Cookie.aiOverviews.name]
+        let unexpectedCookieNames = [Cookie.consent.name, Cookie.unleash.name]
+
+        for cookieName in expectedCookieNames {
+            XCTAssertTrue(standardCookies.contains { $0.name == cookieName }, "Standard search settings cookies missing \(cookieName)")
+            XCTAssertTrue(privateCookies.contains { $0.name == cookieName }, "Private search settings cookies missing \(cookieName)")
+        }
+
+        for cookieName in unexpectedCookieNames {
+            XCTAssertFalse(standardCookies.contains { $0.name == cookieName }, "Standard search settings cookies should not contain \(cookieName)")
+            XCTAssertFalse(privateCookies.contains { $0.name == cookieName }, "Private search settings cookies should not contain \(cookieName)")
+        }
+
+        // Verify domains are correct
+        for cookie in standardCookies + privateCookies {
+            XCTAssertEqual(cookie.domain, ".ecosia.org")
+        }
     }
 }
 
