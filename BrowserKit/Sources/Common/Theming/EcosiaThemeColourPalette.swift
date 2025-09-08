@@ -48,9 +48,9 @@ public protocol EcosiaSemanticColors {
     var segmentedControlBackgroundRest: UIColor { get }
 
     // MARK: - State
+    var highlighter: UIColor { get }
     var stateDisabled: UIColor { get }
     var stateError: UIColor { get }
-    var stateLoading: UIColor { get }
 
     // MARK: - Switch
     var switchKnobActive: UIColor { get }
@@ -91,13 +91,13 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondaryActive: UIColor = .systemGray
     var buttonBackgroundSecondaryHover: UIColor = .systemGray
     var buttonContentSecondary: UIColor = .systemGray
+    var highlighter: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
     var iconInverseStrong: UIColor = .systemGray
     var segmentedControlBackgroundActive: UIColor = .systemGray
     var segmentedControlBackgroundRest: UIColor = .systemGray
     var stateDisabled: UIColor = .systemGray
     var stateError: UIColor = .systemGray
-    var stateLoading: UIColor = .systemGray
     var switchKnobActive: UIColor = .systemGray
     var switchKnobDisabled: UIColor = .systemGray
     var textPrimary: UIColor = .systemGray
