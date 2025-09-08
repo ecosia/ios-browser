@@ -140,6 +140,8 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var stateDisabled: UIColor = EcosiaColor.Gray30
     var stateError: UIColor = EcosiaColor.Red50
     var stateLoading: UIColor = EcosiaColor.Green10
+    var switchKnobActive: UIColor = EcosiaColor.White
+    var switchKnobDisabled: UIColor = EcosiaColor.White
     var textPrimary: UIColor = EcosiaColor.Gray70
     var textInversePrimary: UIColor = EcosiaColor.White
     var textSecondary: UIColor = EcosiaColor.Gray50

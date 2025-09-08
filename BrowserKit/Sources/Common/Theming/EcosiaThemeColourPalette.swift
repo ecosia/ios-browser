@@ -52,6 +52,10 @@ public protocol EcosiaSemanticColors {
     var stateError: UIColor { get }
     var stateLoading: UIColor { get }
 
+    // MARK: - Switch
+    var switchKnobActive: UIColor { get }
+    var switchKnobDisabled: UIColor { get }
+
     // MARK: - Text
     var textPrimary: UIColor { get }
     var textInversePrimary: UIColor { get }
@@ -94,6 +98,8 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var stateDisabled: UIColor = .systemGray
     var stateError: UIColor = .systemGray
     var stateLoading: UIColor = .systemGray
+    var switchKnobActive: UIColor = .systemGray
+    var switchKnobDisabled: UIColor = .systemGray
     var textPrimary: UIColor = .systemGray
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
