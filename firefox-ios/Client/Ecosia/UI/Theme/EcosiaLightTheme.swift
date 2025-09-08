@@ -56,7 +56,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerRatingFSubdued: UIColor { fallbackTheme.colors.layerRatingFSubdued }
 
     // MARK: - Actions
-    var actionPrimary: UIColor { ecosia.buttonBackgroundPrimary } // Review for buttonContentSecondary
+    var actionPrimary: UIColor { ecosia.buttonBackgroundPrimary }
     var actionPrimaryHover: UIColor { ecosia.buttonBackgroundPrimaryActive }
     var actionPrimaryDisabled: UIColor { fallbackTheme.colors.actionPrimaryDisabled }
     var actionSecondary: UIColor { ecosia.buttonBackgroundSecondary }
@@ -120,7 +120,7 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundQuaternary: UIColor = EcosiaColor.Gray20
     var backgroundElevation1: UIColor = EcosiaColor.White
     var backgroundElevation2: UIColor = EcosiaColor.White
-    var backgroundBrandSecondaryAlt: UIColor = EcosiaColor.DarkGreen50 // To be removed?
+    var backgroundBrandSecondaryAlt: UIColor = EcosiaColor.DarkGreen50
     var borderDecorative: UIColor = EcosiaColor.Gray30
     var brandFeatured: UIColor = EcosiaColor.Grellow100
     var brandPrimary: UIColor = EcosiaColor.Gray70
