@@ -369,7 +369,6 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
-                - mob-3505-ai-access-points
           context: napps
 
       # Check if version was bumped and conditionally continue to release pipeline
