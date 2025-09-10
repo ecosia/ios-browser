@@ -26,7 +26,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     public var webAuth: WebAuth {
         makeHttpsWebAuth()
             .audience("https://auth0.api.ecosia.org/v1/accounts/web")
-            .scope("openid profile email offline_access read:sync-data write:sync-data read:impact write:impact")
+            .scope("openid profile email offline_access read:impact write:impact")
     }
 
     public func startAuth() async throws -> Credentials {
