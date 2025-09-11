@@ -369,6 +369,7 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
+                - ls-mob-3597-braze-push-delegate
           context: napps
 
       # Check if version was bumped and conditionally continue to release pipeline
