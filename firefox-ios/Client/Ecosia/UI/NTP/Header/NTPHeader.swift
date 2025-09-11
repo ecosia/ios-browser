@@ -70,20 +70,53 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
     let windowUUID: WindowUUID
+    // Use explicit SwiftUI.Environment to avoid ambiguity
+    @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
+    @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
 
     var body: some View {
-        HStack {
+        HStack(spacing: .ecosia.space._1s) {
             Spacer()
             EcosiaAISearchButton(
                 windowUUID: windowUUID,
                 onTap: handleAISearchTap
             )
+            ZStack(alignment: .topLeading) {
+                EcosiaAccountNavButton(
+                    seedCount: viewModel.seedCount,
+                    avatarURL: viewModel.userAvatarURL,
+                    backgroundColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundElevation1),
+                    textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary),
+                    enableAnimation: !reduceMotion,
+                    onTap: handleTap
+                )
+
+                // Balance increment indicator positioned above-left of counter
+                if let increment = viewModel.balanceIncrement {
+                    BalanceIncrementAnimationView(
+                        increment: increment,
+                        textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary), backgroundColor: Color(EcosiaColor.Peach100)
+                    )
+                    .offset(x: 20, y: -10) // Position above-left of the counter number
+                }
+            }
         }
         .padding(.leading, .ecosia.space._m)
         .padding(.trailing, .ecosia.space._m)
+        .onAppear {
+            viewModel.registerVisitIfNeeded()
+        }
     }
 
     private func handleAISearchTap() {
         viewModel.openAISearch()
+    }
+
+    private func handleTap() {
+        if viewModel.isLoggedIn {
+            viewModel.performLogout()
+        } else {
+            viewModel.performLogin()
+        }
     }
 }
