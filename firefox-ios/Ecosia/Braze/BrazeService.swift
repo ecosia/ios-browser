@@ -174,8 +174,7 @@ extension BrazeService: UNUserNotificationCenterDelegate {
         if let braze = braze {
             braze.notifications.handleForegroundNotification(notification: notification)
         }
-
-        completionHandler([.list, .banner])
+        completionHandler([.list, .banner, .sound, .badge])
     }
 }
 
