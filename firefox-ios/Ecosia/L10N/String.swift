@@ -245,5 +245,11 @@ extension String {
         case send = "Send"
         case close = "Close"
         case thankYouForYourFeedback = "Thank you for your feedback!"
+        
+        // MARK: Rating Dialog
+        
+        case settingsRatingPromptYes = "Yes"
+        case settingsRatingPromptNo = "No"
+        case settingsRatingPromptTitle = "Do you enjoy Ecosia?"
     }
 }
