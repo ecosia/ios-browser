@@ -6,18 +6,29 @@ import SwiftUI
 
 /// A view that displays a balance increment with fade in/out animation
 @available(iOS 16.0, *)
-struct BalanceIncrementAnimationView: View {
+public struct BalanceIncrementAnimationView: View {
     let increment: Int
     let textColor: Color
-    @State private var opacity: Double = 0.0
+    let backgroundColor: Color
+    @State private var opacity: Double
 
-    var body: some View {
+    public init(increment: Int,
+                textColor: Color,
+                backgroundColor: Color,
+                opacity: Double = 0.0) {
+        self.increment = increment
+        self.textColor = textColor
+        self.backgroundColor = backgroundColor
+        self.opacity = opacity
+    }
+
+    public var body: some View {
         Text("+\(increment)")
             .font(.caption.weight(.bold))
             .foregroundColor(textColor)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(Color(EcosiaColor.Peach100))
+            .background(backgroundColor)
             .clipShape(Circle())
             .opacity(opacity)
             .onAppear {
@@ -40,9 +51,15 @@ struct BalanceIncrementAnimationView: View {
 struct BalanceIncrementAnimationView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
-            BalanceIncrementAnimationView(increment: 1, textColor: .primary)
-            BalanceIncrementAnimationView(increment: 3, textColor: .primary)
-            BalanceIncrementAnimationView(increment: 10, textColor: .primary)
+            BalanceIncrementAnimationView(increment: 1,
+                                          textColor: .primary,
+                                          backgroundColor: .secondary)
+            BalanceIncrementAnimationView(increment: 3,
+                                          textColor: .primary,
+                                          backgroundColor: .secondary)
+            BalanceIncrementAnimationView(increment: 10,
+                                          textColor: .primary,
+                                          backgroundColor: .secondary)
         }
         .padding()
         .previewLayout(.sizeThatFits)
