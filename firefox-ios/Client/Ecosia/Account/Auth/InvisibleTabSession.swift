@@ -77,10 +77,10 @@ final class InvisibleTabSession: TabEventHandler {
         newTab.isInvisible = true
 
         tabManager.configureTab(newTab,
-                               request: URLRequest(url: url),
-                               afterTab: nil,
-                               flushToDisk: true,
-                               zombie: false)
+                                request: URLRequest(url: url),
+                                afterTab: nil,
+                                flushToDisk: true,
+                                zombie: false)
 
         // Mark as invisible in the manager
         InvisibleTabManager.shared.markTabAsInvisible(newTab)
