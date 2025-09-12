@@ -4,55 +4,44 @@
 
 import SwiftUI
 
+/// A sparkle animation component that displays animated sparkles around content
 @available(iOS 16.0, *)
 public struct EcosiaSparkleAnimation: View {
     private let isVisible: Bool
     private let containerSize: CGFloat
     private let sparkleSize: CGFloat
     private let animationDuration: Double
-
+    
     @State private var sparkles: [SparkleData] = []
-
-    private struct UX {
-        static let numberOfSparkles = 6
-        static let minSparkleSize: CGFloat = 10
-        static let maxSparkleSize: CGFloat = 24
-        static let radiusMultiplierMin: CGFloat = 0.4
-        static let radiusMultiplierMax: CGFloat = 1.2
-        static let animationDelayMax = 1.0
-        static let sparkleLifetimeMin = 1.0
-        static let sparkleLifetimeMax = 2.0
-        static let opacityMin = 0.8
-        static let opacityMax = 1.0
-        static let fadeOutDuration = 0.4
-    }
-
+    @State private var animationOffset: CGFloat = 0
+    @State private var opacity: Double = 0
+    
     public init(
         isVisible: Bool,
         containerSize: CGFloat = .ecosia.space._6l,
-        sparkleSize: CGFloat = 24,
-        animationDuration: Double = 6.0
+        sparkleSize: CGFloat = .ecosia.space._1l,
+        animationDuration: Double = 2.0
     ) {
         self.isVisible = isVisible
         self.containerSize = containerSize
         self.sparkleSize = sparkleSize
         self.animationDuration = animationDuration
     }
-
+    
     public var body: some View {
         ZStack {
-            if isVisible {
-                ForEach(sparkles) { sparkle in
-                    Image("highlight-star", bundle: .ecosia)
-                        .resizable()
-                        .frame(width: sparkle.size, height: sparkle.size)
-                        .position(sparkle.position)
-                        .opacity(sparkle.opacity)
-                        .accessibilityHidden(true)
-                }
+            ForEach(sparkles) { sparkle in
+                Image("highlight-star", bundle: .ecosia)
+                    .resizable()
+                    .frame(width: sparkleSize, height: sparkleSize)
+                    .offset(x: sparkle.position.x, y: sparkle.position.y)
+                    .scaleEffect(sparkle.scale)
+                    .opacity(sparkle.opacity)
+                    .rotationEffect(.degrees(sparkle.rotation))
             }
         }
         .frame(width: containerSize, height: containerSize)
+        .opacity(opacity)
         .onChange(of: isVisible) { visible in
             if visible {
                 startSparkleAnimation()
@@ -60,68 +49,70 @@ public struct EcosiaSparkleAnimation: View {
                 stopSparkleAnimation()
             }
         }
-        .onAppear {
-            if isVisible {
-                startSparkleAnimation()
-            }
-        }
     }
-
+    
     private func startSparkleAnimation() {
         generateSparkles()
-        animateSparkles()
-    }
-
-    private func stopSparkleAnimation() {
-        withAnimation(.easeOut(duration: UX.fadeOutDuration)) {
-            for i in sparkles.indices {
-                sparkles[i].opacity = 0
-            }
+        
+        withAnimation(.easeIn(duration: 0.2)) {
+            opacity = 1.0
         }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.fadeOutDuration) {
+        
+        animateSparkles()
+        
+        // Auto-hide after animation duration
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+            stopSparkleAnimation()
+        }
+    }
+    
+    private func stopSparkleAnimation() {
+        withAnimation(.easeOut(duration: 0.3)) {
+            opacity = 0.0
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             sparkles.removeAll()
         }
     }
-
+    
     private func generateSparkles() {
         sparkles.removeAll()
-
-        for _ in 0..<UX.numberOfSparkles {
-            let radius = min(containerSize, containerSize) / 2.0
-            let radiusMultiplier = CGFloat.random(in: UX.radiusMultiplierMin...UX.radiusMultiplierMax)
-            let drawnRadius = (radius - sparkleSize / 2) * radiusMultiplier
-            let angle = Double.random(in: 0...(2 * .pi))
-
-            let x = containerSize * 0.5 + drawnRadius * cos(angle)
-            let y = containerSize * 0.5 + drawnRadius * sin(angle)
-
+        let numberOfSparkles = 6
+        let radius = containerSize / 2 + sparkleSize / 2
+        
+        for i in 0..<numberOfSparkles {
+            let angle = (Double(i) / Double(numberOfSparkles)) * 2 * .pi
+            let x = cos(angle) * Double(radius)
+            let y = sin(angle) * Double(radius)
+            
             let sparkle = SparkleData(
                 position: CGPoint(x: x, y: y),
-                size: CGFloat.random(in: UX.minSparkleSize...UX.maxSparkleSize),
-                opacity: 0.0
+                scale: Double.random(in: 0.5...1.0),
+                opacity: Double.random(in: 0.7...1.0),
+                rotation: Double.random(in: 0...360)
             )
             sparkles.append(sparkle)
         }
     }
-
+    
     private func animateSparkles() {
         for i in sparkles.indices {
-            let delay = Double.random(in: 0...UX.animationDelayMax)
-            let sparkleLifetime = Double.random(in: UX.sparkleLifetimeMin...UX.sparkleLifetimeMax)
-            let finalOpacity = Double.random(in: UX.opacityMin...UX.opacityMax)
-
+            let delay = Double(i) * 0.1
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                let halfLifetime = sparkleLifetime / 2.0
-
-                withAnimation(.easeIn(duration: halfLifetime)) {
-                    sparkles[i].opacity = finalOpacity
+                withAnimation(
+                    .spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0)
+                    .repeatCount(3, autoreverses: true)
+                ) {
+                    sparkles[i].scale *= 1.2
+                    sparkles[i].opacity *= 0.8
                 }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + halfLifetime) {
-                    withAnimation(.easeOut(duration: halfLifetime)) {
-                        sparkles[i].opacity = 0
-                    }
+                
+                withAnimation(
+                    .linear(duration: animationDuration - delay)
+                ) {
+                    sparkles[i].rotation += 180
                 }
             }
         }
@@ -132,8 +123,9 @@ public struct EcosiaSparkleAnimation: View {
 private struct SparkleData: Identifiable {
     let id = UUID()
     let position: CGPoint
-    let size: CGFloat
+    var scale: Double
     var opacity: Double
+    var rotation: Double
 }
 
 #if DEBUG
@@ -147,16 +139,16 @@ struct EcosiaSparkleAnimation_Previews: PreviewProvider {
                 Circle()
                     .fill(Color.gray.opacity(0.3))
                     .frame(width: .ecosia.space._6l, height: .ecosia.space._6l)
-
+                
                 EcosiaSparkleAnimation(isVisible: true)
             }
-
+            
             // Different sizes
             ZStack {
                 Circle()
                     .fill(Color.blue.opacity(0.3))
                     .frame(width: .ecosia.space._8l, height: .ecosia.space._8l)
-
+                
                 EcosiaSparkleAnimation(
                     isVisible: true,
                     containerSize: .ecosia.space._8l,
