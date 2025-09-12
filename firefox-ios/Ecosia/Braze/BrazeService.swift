@@ -161,7 +161,7 @@ extension BrazeService: BrazeInAppMessageUIDelegate {
 
 extension BrazeService: UNUserNotificationCenterDelegate {
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        if let braze = braze, braze.notifications.handleUserNotification(
+        if let braze, braze.notifications.handleUserNotification(
             response: response,
             withCompletionHandler: completionHandler
         ) {
@@ -171,7 +171,7 @@ extension BrazeService: UNUserNotificationCenterDelegate {
     }
 
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        if let braze = braze {
+        if let braze {
             braze.notifications.handleForegroundNotification(notification: notification)
         }
         completionHandler([.list, .banner, .sound, .badge])
@@ -181,7 +181,7 @@ extension BrazeService: UNUserNotificationCenterDelegate {
 // Exposing Braze logic to be used inside `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`
 extension BrazeService {
     public func handleBackgroundNotification(userInfo: [AnyHashable: Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) -> Bool {
-        guard let braze = braze else { return false }
+        guard let braze else { return false }
         return braze.notifications.handleBackgroundNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
     }
 }
