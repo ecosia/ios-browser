@@ -63,8 +63,8 @@ final class InvisibleTabAutoCloseManager {
     ///   - notification: The notification name to observe for completion
     ///   - timeout: Custom timeout for fallback closure, defaults to config value
     func setupAutoCloseForTab(_ tab: Tab,
-                             on notification: Notification.Name = .EcosiaAuthStateChanged,
-                             timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
+                              on notification: Notification.Name = .EcosiaAuthStateChanged,
+                              timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
 
         guard tab.isInvisible else {
             EcosiaLogger.invisibleTabs.notice("Attempted to setup auto-close for visible tab: \(tab.tabUUID)")
@@ -85,8 +85,8 @@ final class InvisibleTabAutoCloseManager {
     ///   - notification: The notification name to observe for completion
     ///   - timeout: Custom timeout for fallback closure
     func setupAutoCloseForTabs(_ tabs: [Tab],
-                              on notification: Notification.Name = .EcosiaAuthStateChanged,
-                              timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
+                               on notification: Notification.Name = .EcosiaAuthStateChanged,
+                               timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
 
         let invisibleTabs = tabs.filter { $0.isInvisible }
 
