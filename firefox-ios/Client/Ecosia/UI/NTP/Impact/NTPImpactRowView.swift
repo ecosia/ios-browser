@@ -64,7 +64,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private lazy var actionButton: ResizableButton = {
         let button = ResizableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        button.customFont = .preferredFont(forTextStyle: .footnote).semibold()
         button.titleLabel?.textAlignment = .right
         button.contentHorizontalAlignment = .right
         button.contentVerticalAlignment = .center
