@@ -5,6 +5,7 @@
 import Foundation
 import Common
 import ComponentLibrary
+import Ecosia
 
 /// A view representing an individual impact row, used in the New Tab Page to display environmental impact information.
 final class NTPImpactRowView: UIView, ThemeApplicable {
@@ -13,7 +14,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     /// Contains constants used for layout and sizing within the `NTPImpactRowView`.
     struct UX {
-        static let cornerRadius: CGFloat = 10
         static let horizontalSpacing: CGFloat = 8
         static let padding: CGFloat = 16
         static let imageHeight: CGFloat = 24
@@ -45,7 +45,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     /// A label for displaying the title of the row.
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title2).bold()
+        label.font = .ecosiaFamilyBrand(size: .ecosia.font._3l)
         label.adjustsFontSizeToFitWidth = true
         label.adjustsFontForContentSizeCategory = true
         return label
@@ -142,7 +142,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     /// Configures and adds subviews to the view.
     private func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
-        layer.cornerRadius = UX.cornerRadius
+        layer.cornerRadius = .ecosia.borderRadius._l
 
         mainContainerView.translatesAutoresizingMaskIntoConstraints = false
         mainContainerView.axis = .horizontal
