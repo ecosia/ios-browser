@@ -16,11 +16,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         static let cornerRadius: CGFloat = 10
         static let horizontalSpacing: CGFloat = 8
         static let padding: CGFloat = 16
-        static let imageHeight: CGFloat = 48
-        static let imageHeightWithProgress: CGFloat = 26
-        static let progressWidth: CGFloat = 48
-        static let progressHeight: CGFloat = 30
-        static let progressLineWidth: CGFloat = 2
+        static let imageHeight: CGFloat = 24
     }
 
     // MARK: - UI Elements
