@@ -102,7 +102,7 @@ enum QuickLink: Int {
             return [Color("TertiaryBackground")]
         }
          */
-        return [.ecosiaBundledColorWithName("PrimaryBrand")]
+        return [.ecosiaBundledColorWithName("TertiaryBackground")]
     }
 
     public var textColor: Color {
