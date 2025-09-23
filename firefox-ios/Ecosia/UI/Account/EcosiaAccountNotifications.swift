@@ -9,7 +9,7 @@ extension Notification.Name {
     /// Posted when account progress is updated
     /// UserInfo may contain: progress (Double), level (Int)
     public static let EcosiaAccountProgressUpdated = Notification.Name("EcosiaAccountProgressUpdated")
-    
+
     /// Posted when user levels up
     /// UserInfo may contain: newLevel (Int), newProgress (Double)
     public static let EcosiaAccountLevelUp = Notification.Name("EcosiaAccountLevelUp")
@@ -25,7 +25,7 @@ public struct EcosiaAccountNotificationKeys {
 
 /// Helper class for posting account progress notifications
 public final class EcosiaAccountNotificationCenter {
-    
+
     /// Posts a progress updated notification
     /// - Parameters:
     ///   - progress: The new progress value (0.0 to 1.0)
@@ -35,7 +35,7 @@ public final class EcosiaAccountNotificationCenter {
         if let level = level {
             userInfo[EcosiaAccountNotificationKeys.level] = level
         }
-        
+
         DispatchQueue.main.async {
             NotificationCenter.default.post(
                 name: .EcosiaAccountProgressUpdated,
@@ -44,7 +44,7 @@ public final class EcosiaAccountNotificationCenter {
             )
         }
     }
-    
+
     /// Posts a level up notification
     /// - Parameters:
     ///   - newLevel: The new level reached
@@ -54,7 +54,7 @@ public final class EcosiaAccountNotificationCenter {
             EcosiaAccountNotificationKeys.newLevel: newLevel,
             EcosiaAccountNotificationKeys.newProgress: newProgress
         ]
-        
+
         DispatchQueue.main.async {
             NotificationCenter.default.post(
                 name: .EcosiaAccountLevelUp,
