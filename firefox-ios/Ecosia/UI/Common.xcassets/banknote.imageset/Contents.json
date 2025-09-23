@@ -3,6 +3,16 @@
     {
       "filename" : "banknote.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "banknote-dark.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {

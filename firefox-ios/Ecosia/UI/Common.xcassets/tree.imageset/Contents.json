@@ -3,6 +3,16 @@
     {
       "filename" : "tree.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "tree-dark.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
