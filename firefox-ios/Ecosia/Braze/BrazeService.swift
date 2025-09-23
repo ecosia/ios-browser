@@ -5,9 +5,6 @@
 import Foundation
 import UIKit
 import UserNotifications
-
-// Conditional compilation - only import BrazeKit when available
-#if canImport(BrazeKit)
 import BrazeKit
 import BrazeUI
 
@@ -188,4 +185,3 @@ extension BrazeService {
         return braze.notifications.handleBackgroundNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
     }
 }
-#endif
