@@ -10,71 +10,75 @@ import Common
 @available(iOS 16.0, *)
 @MainActor
 public final class EcosiaAccountAvatarViewModel: ObservableObject {
-    
+
     // MARK: - Published Properties
-    
+
     @Published public var avatarURL: URL?
     @Published public var progress: Double
     @Published public var showSparkles = false
-    
+
     // MARK: - Private Properties
-    
+
     private var authStateObserver: NSObjectProtocol?
     private var userProfileObserver: NSObjectProtocol?
     private var progressObserver: NSObjectProtocol?
     private var levelUpObserver: NSObjectProtocol?
-    
+
     // MARK: - Initialization
-    
+
     public init(
         avatarURL: URL? = nil,
         progress: Double = 0.25
     ) {
         self.avatarURL = avatarURL
         self.progress = max(0.0, min(1.0, progress)) // Clamp between 0.0 and 1.0
-        
+
         setupInitialState()
         setupObservers()
     }
-    
+
     deinit {
-        removeObservers()
+        [authStateObserver, userProfileObserver, progressObserver, levelUpObserver].forEach {
+            if let observer = $0 {
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Manually update the avatar URL
     /// - Parameter url: The new avatar URL
     public func updateAvatarURL(_ url: URL?) {
         avatarURL = url
     }
-    
+
     /// Manually update the progress
     /// - Parameter newProgress: The new progress value (0.0 to 1.0)
     public func updateProgress(_ newProgress: Double) {
         progress = max(0.0, min(1.0, newProgress))
     }
-    
+
     /// Trigger sparkle animation manually
     /// - Parameter duration: Duration to show sparkles (default: 2.0 seconds)
     public func triggerSparkles(duration: TimeInterval = 2.0) {
         showSparkles = true
-        
+
         Task {
             try await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
             showSparkles = false
         }
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func setupInitialState() {
         // Set initial avatar URL if user is logged in
         if Auth.shared.isLoggedIn {
             avatarURL = Auth.shared.userProfile?.pictureURL
         }
     }
-    
+
     private func setupObservers() {
         // Listen for auth state changes
         authStateObserver = NotificationCenter.default.addObserver(
@@ -84,7 +88,7 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         ) { [weak self] _ in
             self?.handleAuthStateChange()
         }
-        
+
         // Listen for user profile updates (avatar changes)
         userProfileObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaUserProfileUpdated,
@@ -93,7 +97,7 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         ) { [weak self] _ in
             self?.handleUserProfileUpdate()
         }
-        
+
         // Listen for progress updates
         progressObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaAccountProgressUpdated,
@@ -102,7 +106,7 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         ) { [weak self] notification in
             self?.handleProgressUpdate(notification)
         }
-        
+
         // Listen for level up events
         levelUpObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaAccountLevelUp,
@@ -112,46 +116,48 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
             self?.handleLevelUp(notification)
         }
     }
-    
-    private func removeObservers() {
-        [authStateObserver, userProfileObserver, progressObserver, levelUpObserver].forEach {
-            if let observer = $0 {
-                NotificationCenter.default.removeObserver(observer)
+
+    nonisolated private func handleAuthStateChange() {
+        let newAvatarURL = Auth.shared.isLoggedIn ? Auth.shared.userProfile?.pictureURL : nil
+        let shouldResetProgress = !Auth.shared.isLoggedIn
+
+        Task { @MainActor in
+            avatarURL = newAvatarURL
+            if shouldResetProgress {
+                progress = 0.25
             }
         }
     }
-    
-    private func handleAuthStateChange() {
-        avatarURL = Auth.shared.isLoggedIn ? Auth.shared.userProfile?.pictureURL : nil
-        
-        // Reset to default progress if user logs out
-        if !Auth.shared.isLoggedIn {
-            progress = 0.25
+
+    nonisolated private func handleUserProfileUpdate() {
+        let newAvatarURL = Auth.shared.userProfile?.pictureURL
+
+        Task { @MainActor in
+            avatarURL = newAvatarURL
         }
     }
-    
-    private func handleUserProfileUpdate() {
-        avatarURL = Auth.shared.userProfile?.pictureURL
-    }
-    
-    private func handleProgressUpdate(_ notification: Notification) {
+
+    nonisolated private func handleProgressUpdate(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let newProgress = userInfo[EcosiaAccountNotificationKeys.progress] as? Double else {
             return
         }
-        
-        updateProgress(newProgress)
+
+        Task { @MainActor in
+            updateProgress(newProgress)
+        }
     }
-    
-    private func handleLevelUp(_ notification: Notification) {
+
+    nonisolated private func handleLevelUp(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let newProgress = userInfo[EcosiaAccountNotificationKeys.newProgress] as? Double else {
             return
         }
-        
-        // Update progress and trigger sparkles
-        updateProgress(newProgress)
-        triggerSparkles()
+
+        Task { @MainActor in
+            updateProgress(newProgress)
+            triggerSparkles()
+        }
     }
 }
 
@@ -169,11 +175,11 @@ extension EcosiaAccountAvatarViewModel {
             avatarURL: avatarURL,
             progress: progress
         )
-        
+
         if showSparkles {
             viewModel.showSparkles = true
         }
-        
+
         return viewModel
     }
 }

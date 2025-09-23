@@ -13,7 +13,7 @@ public struct EcosiaAccountAvatar: View {
     private let showSparkles: Bool
     private let size: CGFloat
     private let windowUUID: WindowUUID
-    
+
     public init(
         avatarURL: URL?,
         progress: Double,
@@ -27,7 +27,7 @@ public struct EcosiaAccountAvatar: View {
         self.size = size
         self.windowUUID = windowUUID
     }
-    
+
     public var body: some View {
         ZStack {
             // Progress ring (outermost layer)
@@ -37,13 +37,13 @@ public struct EcosiaAccountAvatar: View {
                 strokeWidth: strokeWidth,
                 windowUUID: windowUUID
             )
-            
+
             // Avatar (center)
             EcosiaAvatar(
                 avatarURL: avatarURL,
                 size: avatarSize
             )
-            
+
             // Sparkle animation (overlay)
             if showSparkles {
                 EcosiaSparkleAnimation(
@@ -55,28 +55,28 @@ public struct EcosiaAccountAvatar: View {
         }
         .frame(width: progressRingSize, height: progressRingSize)
     }
-    
+
     // MARK: - Computed Properties
-    
+
     private var strokeWidth: CGFloat {
         // Scale stroke width based on size
         size * 0.06 // 6% of size
     }
-    
+
     private var avatarSize: CGFloat {
         // Avatar size with spacing from progress ring
         size - (strokeWidth * 2) - (.ecosia.space._1s * 2)
     }
-    
+
     private var progressRingSize: CGFloat {
         size
     }
-    
+
     private var sparkleContainerSize: CGFloat {
         // Sparkles appear outside the progress ring
         size + .ecosia.space._s
     }
-    
+
     private var sparkleSize: CGFloat {
         // Scale sparkle size based on avatar size
         size * 0.2
@@ -89,7 +89,7 @@ public struct EcosiaAccountAvatar: View {
 struct EcosiaAccountAvatar_Previews: PreviewProvider {
     static var previews: some View {
         let windowUUID = WindowUUID()
-        
+
         VStack(spacing: .ecosia.space._2l) {
             // With avatar URL and progress
             EcosiaAccountAvatar(
@@ -97,7 +97,7 @@ struct EcosiaAccountAvatar_Previews: PreviewProvider {
                 progress: 0.75,
                 windowUUID: windowUUID
             )
-            
+
             // Without avatar URL (placeholder) and with sparkles
             EcosiaAccountAvatar(
                 avatarURL: nil,
@@ -105,7 +105,7 @@ struct EcosiaAccountAvatar_Previews: PreviewProvider {
                 showSparkles: true,
                 windowUUID: windowUUID
             )
-            
+
             // Different sizes
             HStack(spacing: .ecosia.space._l) {
                 EcosiaAccountAvatar(
@@ -114,7 +114,7 @@ struct EcosiaAccountAvatar_Previews: PreviewProvider {
                     size: .ecosia.space._4l,
                     windowUUID: windowUUID
                 )
-                
+
                 EcosiaAccountAvatar(
                     avatarURL: nil,
                     progress: 1.0,
@@ -122,7 +122,7 @@ struct EcosiaAccountAvatar_Previews: PreviewProvider {
                     windowUUID: windowUUID
                 )
             }
-            
+
             // With sparkles
             EcosiaAccountAvatar(
                 avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),

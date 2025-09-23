@@ -11,11 +11,11 @@ public struct EcosiaSparkleAnimation: View {
     private let containerSize: CGFloat
     private let sparkleSize: CGFloat
     private let animationDuration: Double
-    
+
     @State private var sparkles: [SparkleData] = []
     @State private var animationOffset: CGFloat = 0
     @State private var opacity: Double = 0
-    
+
     public init(
         isVisible: Bool,
         containerSize: CGFloat = .ecosia.space._6l,
@@ -27,7 +27,7 @@ public struct EcosiaSparkleAnimation: View {
         self.sparkleSize = sparkleSize
         self.animationDuration = animationDuration
     }
-    
+
     public var body: some View {
         ZStack {
             ForEach(sparkles) { sparkle in
@@ -50,42 +50,42 @@ public struct EcosiaSparkleAnimation: View {
             }
         }
     }
-    
+
     private func startSparkleAnimation() {
         generateSparkles()
-        
+
         withAnimation(.easeIn(duration: 0.2)) {
             opacity = 1.0
         }
-        
+
         animateSparkles()
-        
+
         // Auto-hide after animation duration
         DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
             stopSparkleAnimation()
         }
     }
-    
+
     private func stopSparkleAnimation() {
         withAnimation(.easeOut(duration: 0.3)) {
             opacity = 0.0
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             sparkles.removeAll()
         }
     }
-    
+
     private func generateSparkles() {
         sparkles.removeAll()
         let numberOfSparkles = 6
         let radius = containerSize / 2 + sparkleSize / 2
-        
+
         for i in 0..<numberOfSparkles {
             let angle = (Double(i) / Double(numberOfSparkles)) * 2 * .pi
             let x = cos(angle) * Double(radius)
             let y = sin(angle) * Double(radius)
-            
+
             let sparkle = SparkleData(
                 position: CGPoint(x: x, y: y),
                 scale: Double.random(in: 0.5...1.0),
@@ -95,11 +95,11 @@ public struct EcosiaSparkleAnimation: View {
             sparkles.append(sparkle)
         }
     }
-    
+
     private func animateSparkles() {
         for i in sparkles.indices {
             let delay = Double(i) * 0.1
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 withAnimation(
                     .spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0)
@@ -108,7 +108,7 @@ public struct EcosiaSparkleAnimation: View {
                     sparkles[i].scale *= 1.2
                     sparkles[i].opacity *= 0.8
                 }
-                
+
                 withAnimation(
                     .linear(duration: animationDuration - delay)
                 ) {
@@ -139,16 +139,16 @@ struct EcosiaSparkleAnimation_Previews: PreviewProvider {
                 Circle()
                     .fill(Color.gray.opacity(0.3))
                     .frame(width: .ecosia.space._6l, height: .ecosia.space._6l)
-                
+
                 EcosiaSparkleAnimation(isVisible: true)
             }
-            
+
             // Different sizes
             ZStack {
                 Circle()
                     .fill(Color.blue.opacity(0.3))
                     .frame(width: .ecosia.space._8l, height: .ecosia.space._8l)
-                
+
                 EcosiaSparkleAnimation(
                     isVisible: true,
                     containerSize: .ecosia.space._8l,
