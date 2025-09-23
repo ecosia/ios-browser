@@ -11,7 +11,7 @@ public struct EcosiaAccountAvatarView: View {
     @StateObject private var viewModel: EcosiaAccountAvatarViewModel
     private let windowUUID: WindowUUID
     private let size: CGFloat
-    
+
     public init(
         avatarURL: URL? = nil,
         progress: Double = 0.25,
@@ -25,7 +25,7 @@ public struct EcosiaAccountAvatarView: View {
         self.size = size
         self.windowUUID = windowUUID
     }
-    
+
     public var body: some View {
         EcosiaAccountAvatar(
             avatarURL: viewModel.avatarURL,
@@ -43,14 +43,14 @@ public struct EcosiaAccountAvatarView: View {
 struct EcosiaAccountAvatarView_Previews: PreviewProvider {
     static var previews: some View {
         let windowUUID = WindowUUID()
-        
+
         VStack(spacing: .ecosia.space._2l) {
             // Default state (signed out)
             EcosiaAccountAvatarView(
                 windowUUID: windowUUID
             )
             .previewDisplayName("Signed Out (25%)")
-            
+
             // Signed in with avatar
             EcosiaAccountAvatarView(
                 avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
@@ -58,7 +58,7 @@ struct EcosiaAccountAvatarView_Previews: PreviewProvider {
                 windowUUID: windowUUID
             )
             .previewDisplayName("Signed In (75%)")
-            
+
             // Different sizes
             HStack(spacing: .ecosia.space._l) {
                 EcosiaAccountAvatarView(
@@ -66,7 +66,7 @@ struct EcosiaAccountAvatarView_Previews: PreviewProvider {
                     size: .ecosia.space._4l,
                     windowUUID: windowUUID
                 )
-                
+
                 EcosiaAccountAvatarView(
                     progress: 1.0,
                     size: .ecosia.space._8l,
@@ -84,19 +84,19 @@ struct EcosiaAccountAvatarView_Previews: PreviewProvider {
 @available(iOS 16.0, *)
 struct EcosiaAccountAvatarUsageExamples: View {
     let windowUUID = WindowUUID()
-    
+
     var body: some View {
         VStack(spacing: .ecosia.space._2l) {
             // Example 1: Simple usage
             EcosiaAccountAvatarView(windowUUID: windowUUID)
-            
+
             // Example 2: With data
             EcosiaAccountAvatarView(
                 avatarURL: URL(string: "https://example.com/avatar.jpg"),
                 progress: 0.6,
                 windowUUID: windowUUID
             )
-            
+
             // Example 3: Manual control
             ManualControlExample()
         }
@@ -109,7 +109,7 @@ private struct ManualControlExample: View {
         progress: 0.3
     )
     let windowUUID = WindowUUID()
-    
+
     var body: some View {
         VStack {
             EcosiaAccountAvatar(
@@ -118,17 +118,17 @@ private struct ManualControlExample: View {
                 showSparkles: viewModel.showSparkles,
                 windowUUID: windowUUID
             )
-            
+
             HStack {
                 Button("Add Progress") {
                     let newProgress = min(1.0, viewModel.progress + 0.1)
                     viewModel.updateProgress(newProgress)
                 }
-                
+
                 Button("Level Up!") {
                     viewModel.triggerSparkles()
                 }
-                
+
                 Button("Reset") {
                     viewModel.updateProgress(0.25)
                 }
