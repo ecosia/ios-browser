@@ -293,9 +293,6 @@
 		28E08C9A1AF44F00009BA2FA /* BrowserSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282915E51AF1A7920006EEB5 /* BrowserSchema.swift */; };
 		28E91E751B443AD5009DF274 /* SyncConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E91E741B443AD5009DF274 /* SyncConstants.swift */; };
 		28ECD9BF1BA1F19900D829DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C001B90A44F005ABB0D /* libz.tbd */; };
-		2C00E15F2E299AE800811A76 /* InvisibleTabSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */; };
-		2C00E1642E29A70500811A76 /* InvisibleTabManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */; };
-		2C00E3942E29B0E700811A76 /* AuthFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E38F2E29B0E700811A76 /* AuthFlow.swift */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
 		2C2EA77F2DA3F2990085F5BC /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 2C2EA77E2DA3F2990085F5BC /* Lottie */; };
 		2C2F31F52D46612F00977F55 /* TopSitesHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5BD9582878871B000FE773 /* TopSitesHelperTests.swift */; };
@@ -308,9 +305,6 @@
 		2C2F31FC2D46942A00977F55 /* MockMicrosurveySurfaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A827E312C20C8AE008D5E3C /* MockMicrosurveySurfaceManager.swift */; };
 		2C2F31FD2D46942A00977F55 /* MockMicrosurveySurfaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A827E312C20C8AE008D5E3C /* MockMicrosurveySurfaceManager.swift */; };
 		2C2F31FE2D46961000977F55 /* MockablePinnedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D5EDBF292D619000311934 /* MockablePinnedSites.swift */; };
-		2C39828B2E200C1900AB8035 /* TabManager+InvisibleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C39828A2E200C1900AB8035 /* TabManager+InvisibleTab.swift */; };
-		2C39828C2E200C1900AB8035 /* Tab+InvisibleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3982892E200C1900AB8035 /* Tab+InvisibleTab.swift */; };
-		2C3982982E201EDC00AB8035 /* TabAutoCloseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3982932E201EDC00AB8035 /* TabAutoCloseManager.swift */; };
 		2C4065C42E82D0C60067303E /* PinnedSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5BD95B2878AA74000FE773 /* PinnedSite.swift */; };
 		2C4065C52E82D0C60067303E /* URLSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4AC0EA28C929D700439F83 /* URLSessionProtocol.swift */; };
 		2C4065C62E82D0C60067303E /* DownloadsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A72A662A76938C002ACCE2 /* DownloadsCoordinator.swift */; };
@@ -353,7 +347,6 @@
 		2C4065EB2E82D0C60067303E /* LibraryPanelCoordinatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7AE4432BAB510B0072DAEC /* LibraryPanelCoordinatorDelegate.swift */; };
 		2C4065EC2E82D0C60067303E /* SelfSizingHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C19532D2B85E7AE00761B20 /* SelfSizingHostingController.swift */; };
 		2C4065ED2E82D0C60067303E /* ReaderModeStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4CD9F6C1A77DD2800318571 /* ReaderModeStyleViewController.swift */; };
-		2C4065EE2E82D0C60067303E /* InvisibleTabSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */; };
 		2C4065EF2E82D0C60067303E /* MainMenuAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F617C82C8755AB003799BF /* MainMenuAction.swift */; };
 		2C4065F02E82D0C60067303E /* FakespotViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13E9AB22AAB0FB4001A0E9D /* FakespotViewModel.swift */; };
 		2C4065F12E82D0C60067303E /* AccountStatusSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1CBC2A30DC4E005AD35C /* AccountStatusSetting.swift */; };
@@ -690,7 +683,6 @@
 		2C40673C2E82D0C60067303E /* PasswordManagerListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63ED8E01BFD25580097D08E /* PasswordManagerListViewController.swift */; };
 		2C40673D2E82D0C60067303E /* UrlToOpenModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADC2A152A33765E00543DAA /* UrlToOpenModel.swift */; };
 		2C40673E2E82D0C60067303E /* BrowserViewController+DownloadQueueDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0625CA7208FC47A0081F3B2 /* BrowserViewController+DownloadQueueDelegate.swift */; };
-		2C40673F2E82D0C60067303E /* InvisibleTabManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */; };
 		2C4067402E82D0C60067303E /* WebsiteDataManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C227533F2A3C9E1300B9C0D1 /* WebsiteDataManagementViewModel.swift */; };
 		2C4067412E82D0C60067303E /* SearchSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F44FCC61A9E8CF500FD20CC /* SearchSettingsTableViewController.swift */; };
 		2C4067422E82D0C60067303E /* CertificatesHeaderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFF7F672C78989000265214 /* CertificatesHeaderItem.swift */; };
@@ -759,7 +751,6 @@
 		2C4067812E82D0C60067303E /* InactiveTabsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B548942B1E5F1400DC1DF8 /* InactiveTabsManager.swift */; };
 		2C4067822E82D0C60067303E /* CreditCardPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2999FF02B194A5800F0FEC1 /* CreditCardPayload.swift */; };
 		2C4067832E82D0C60067303E /* BrowserViewController+WebViewDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F457A71F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift */; };
-		2C4067842E82D0C60067303E /* EcosiaAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE48ED92E29B5C400CE84CE /* EcosiaAuth.swift */; };
 		2C4067852E82D0C60067303E /* ContextualHintPrefsKeysProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964FA97628A2A55C0024BB3B /* ContextualHintPrefsKeysProvider.swift */; };
 		2C4067862E82D0C60067303E /* SponsoredContentFilterUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1E3BDE28CBA81E003388C4 /* SponsoredContentFilterUtility.swift */; };
 		2C4067872E82D0C60067303E /* ProductAnalyzeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBDE8E22AB09804001985BF /* ProductAnalyzeResponse.swift */; };
@@ -807,7 +798,6 @@
 		2C4067B12E82D0C60067303E /* EditFolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDDB3402CA6B23300D501DF /* EditFolderCell.swift */; };
 		2C4067B22E82D0C60067303E /* PocketDataAdaptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7653BC28A2C61D00924ABF /* PocketDataAdaptor.swift */; };
 		2C4067B32E82D0C60067303E /* LegacyTabTrayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA52E1D925F5961F0092204C /* LegacyTabTrayViewController.swift */; };
-		2C4067B42E82D0C60067303E /* AuthFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E38F2E29B0E700811A76 /* AuthFlow.swift */; };
 		2C4067B52E82D0C60067303E /* DebugSettingsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A093D7C2A4B3E4F0099ABA5 /* DebugSettingsDelegate.swift */; };
 		2C4067B62E82D0C60067303E /* AppSession+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA9453293655BF00123345 /* AppSession+Enums.swift */; };
 		2C4067B72E82D0C60067303E /* PocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B0F5EF283B7CCE007AE65D /* PocketProvider.swift */; };
@@ -987,8 +977,6 @@
 		2C4068652E82D0C60067303E /* ExperimentsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D0532D2645B3A700759F85 /* ExperimentsTableView.swift */; };
 		2C4068662E82D0C60067303E /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A832A8F29DC96C50025D5DD /* LaunchScreenView.swift */; };
 		2C4068672E82D0C60067303E /* ClientTabsSearchWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAAB05A2C1B7268008830B3 /* ClientTabsSearchWrapper.swift */; };
-		2C4068682E82D0C60067303E /* TabManager+InvisibleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C39828A2E200C1900AB8035 /* TabManager+InvisibleTab.swift */; };
-		2C4068692E82D0C60067303E /* Tab+InvisibleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3982892E200C1900AB8035 /* Tab+InvisibleTab.swift */; };
 		2C40686A2E82D0C60067303E /* TabDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214EF4142AC5D5D0005BCCDA /* TabDisplayView.swift */; };
 		2C40686B2E82D0C60067303E /* AdjustTelemetryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2165B2C12860C2F4004C0786 /* AdjustTelemetryHelper.swift */; };
 		2C40686C2E82D0C60067303E /* TopSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2D593D27DC0AA100713EC9 /* TopSite.swift */; };
@@ -1016,7 +1004,6 @@
 		2C4068822E82D0C60067303E /* UpdatableAddressFields+Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B0F5C2C076B12008B3E74 /* UpdatableAddressFields+Decodable.swift */; };
 		2C4068832E82D0C60067303E /* PocketStory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B0F5F2283B7CCE007AE65D /* PocketStory.swift */; };
 		2C4068842E82D0C60067303E /* LegacyTabTrayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C81AC6B526160091007800C5 /* LegacyTabTrayViewModel.swift */; };
-		2C4068852E82D0C60067303E /* TabAutoCloseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3982932E201EDC00AB8035 /* TabAutoCloseManager.swift */; };
 		2C4068862E82D0C60067303E /* SendAnonymousUsageDataSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAE4212A33A113007BF926 /* SendAnonymousUsageDataSetting.swift */; };
 		2C4068872E82D0C60067303E /* FakespotActionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170CA532B72C07A0082EFC5 /* FakespotActionFooterView.swift */; };
 		2C4068882E82D0C60067303E /* URLScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8EDDBF129DF1159003A4C07 /* URLScanner.swift */; };
@@ -1474,7 +1461,6 @@
 		2C69DA7D2C6244BE00D7F69F /* MockTabDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A475E8C29DB888E009C13FD /* MockTabDataStore.swift */; };
 		2C69DA7E2C6244C400D7F69F /* MockThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA75A622A46272000533F8D /* MockThemeManager.swift */; };
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
-		2C7B86EE2E1328FB00A86119 /* Auth0 in Frameworks */ = {isa = PBXBuildFile; productRef = 2C7B86ED2E1328FB00A86119 /* Auth0 */; };
 		2C7DC2402B1648BA00C049C8 /* LegacyTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9A179A20E69A7E00B12184 /* LegacyTheme.swift */; };
 		2C7DC2462B16493C00C049C8 /* UIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2816EFFF1B33E05400522243 /* UIConstants.swift */; };
 		2CB5C33F2E45F02D00B1048F /* SearchViewController+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB5C33E2E45F02D00B1048F /* SearchViewController+Ecosia.swift */; };
@@ -1489,7 +1475,6 @@
 		2CC246692D520EF90098467A /* EcosiaColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465C2D520EF90098467A /* EcosiaColor.swift */; };
 		2CC2466B2D520EF90098467A /* EcosiaDarkTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465D2D520EF90098467A /* EcosiaDarkTheme.swift */; };
 		2CC24C752D52478E0098467A /* MockTabManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A36AC2B2886F27F00CDC0AD /* MockTabManager.swift */; };
-		2CE48EDA2E29B5C400CE84CE /* EcosiaAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE48ED92E29B5C400CE84CE /* EcosiaAuth.swift */; };
 		2CE9E8072E43927000141C6D /* NTPHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE9E8052E43927000141C6D /* NTPHeaderViewModel.swift */; };
 		2CE9E8082E43927000141C6D /* NTPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE9E8042E43927000141C6D /* NTPHeader.swift */; };
 		2CFE9FBF2D45348200B25CE0 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2CFE9FBE2D45348200B25CE0 /* SnowplowTracker */; };
@@ -3958,9 +3943,6 @@
 		2B31494CBFF9DF6FA41953B2 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvisibleTabSession.swift; sourceTree = "<group>"; };
-		2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvisibleTabManager.swift; sourceTree = "<group>"; };
-		2C00E38F2E29B0E700811A76 /* AuthFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlow.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
 		2C2A91281FA2410D002E36BD /* HistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTests.swift; sourceTree = "<group>"; };
@@ -3971,9 +3953,6 @@
 		2C31A8461E8D447F00DAC646 /* HomePageSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomePageSettingsUITest.swift; sourceTree = "<group>"; };
 		2C33410CB7E921A125379D7C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2C3406C71E719F00000FD889 /* SettingsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
-		2C3982892E200C1900AB8035 /* Tab+InvisibleTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tab+InvisibleTab.swift"; sourceTree = "<group>"; };
-		2C39828A2E200C1900AB8035 /* TabManager+InvisibleTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TabManager+InvisibleTab.swift"; sourceTree = "<group>"; };
-		2C3982932E201EDC00AB8035 /* TabAutoCloseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabAutoCloseManager.swift; sourceTree = "<group>"; };
 		2C406A4D2E82D0C60067303E /* ClientPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClientPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C406F052E82D1880067303E /* EcosiaPreview.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaPreview.xcconfig; path = Configuration/EcosiaPreview.xcconfig; sourceTree = "<group>"; };
 		2C406F062E82D1880067303E /* EcosiaPreview.ShareTo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaPreview.ShareTo.xcconfig; path = Configuration/EcosiaPreview.ShareTo.xcconfig; sourceTree = "<group>"; };
@@ -4027,7 +4006,6 @@
 		2CC2465E2D520EF90098467A /* EcosiaLightTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaLightTheme.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
-		2CE48ED92E29B5C400CE84CE /* EcosiaAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaAuth.swift; sourceTree = "<group>"; };
 		2CE9E8042E43927000141C6D /* NTPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPHeader.swift; sourceTree = "<group>"; };
 		2CE9E8052E43927000141C6D /* NTPHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPHeaderViewModel.swift; sourceTree = "<group>"; };
 		2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchSettingsUITest.swift; sourceTree = "<group>"; };
@@ -10975,7 +10953,6 @@
 				2CFE9FCE2D45363500B25CE0 /* BrazeUI in Frameworks */,
 				2CFE9FD22D45364600B25CE0 /* Common in Frameworks */,
 				2CFE9FEA2D45404800B25CE0 /* SwiftSoup in Frameworks */,
-				2C7B86EE2E1328FB00A86119 /* Auth0 in Frameworks */,
 				2C2EA77F2DA3F2990085F5BC /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11638,34 +11615,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		2C00E1632E29A70500811A76 /* TabManagement */ = {
-			isa = PBXGroup;
-			children = (
-				2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */,
-				2C3982932E201EDC00AB8035 /* TabAutoCloseManager.swift */,
-			);
-			path = TabManagement;
-			sourceTree = "<group>";
-		};
-		2C0174952E26E5DA00136A6F /* Auth */ = {
-			isa = PBXGroup;
-			children = (
-				2CE48ED92E29B5C400CE84CE /* EcosiaAuth.swift */,
-				2C00E38F2E29B0E700811A76 /* AuthFlow.swift */,
-				2C00E1632E29A70500811A76 /* TabManagement */,
-				2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */,
-			);
-			path = Auth;
-			sourceTree = "<group>";
-		};
-		2C0174962E26E5DA00136A6F /* Account */ = {
-			isa = PBXGroup;
-			children = (
-				2C0174952E26E5DA00136A6F /* Auth */,
-			);
-			path = Account;
-			sourceTree = "<group>";
-		};
 		2C1296EC2B0BA5FC00FC0A04 /* Frontend */ = {
 			isa = PBXGroup;
 			children = (
@@ -11702,7 +11651,6 @@
 		2CB288D92B07C8EF00A8FCB3 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
-				2C0174962E26E5DA00136A6F /* Account */,
 				2CFE9FEF2D4557EF00B25CE0 /* PersistedGenerated */,
 				124DAE782D2FD0C90050104C /* RecoveredFromUpgrade */,
 				2CB288DC2B07C8EF00A8FCB3 /* UI */,
@@ -11780,8 +11728,6 @@
 		2CB289432B07C8F000A8FCB3 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				2C3982892E200C1900AB8035 /* Tab+InvisibleTab.swift */,
-				2C39828A2E200C1900AB8035 /* TabManager+InvisibleTab.swift */,
 				2CB5C33E2E45F02D00B1048F /* SearchViewController+Ecosia.swift */,
 				2CB289442B07C8F000A8FCB3 /* BrowserViewController+Ecosia.swift */,
 				12C11E9C2D28289900E4DDBF /* UIButton+Ecosia.swift */,
@@ -16259,7 +16205,6 @@
 				2CFE9FD12D45364600B25CE0 /* Common */,
 				2CFE9FE92D45404800B25CE0 /* SwiftSoup */,
 				2C2EA77E2DA3F2990085F5BC /* Lottie */,
-				2C7B86ED2E1328FB00A86119 /* Auth0 */,
 			);
 			productName = Ecosia;
 			productReference = 2CFE99662D45329200B25CE0 /* Ecosia.framework */;
@@ -16833,7 +16778,6 @@
 				12C25BEB2D27EBFF0048BADA /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */,
 				2CFE9FE82D453F9600B25CE0 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				2CC0C2A72DA802CD006FE9B7 /* XCRemoteSwiftPackageReference "ViewInspector" */,
-				2C7B86EC2E1328FB00A86119 /* XCRemoteSwiftPackageReference "Auth0" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -17516,7 +17460,6 @@
 				2C4065EB2E82D0C60067303E /* LibraryPanelCoordinatorDelegate.swift in Sources */,
 				2C4065EC2E82D0C60067303E /* SelfSizingHostingController.swift in Sources */,
 				2C4065ED2E82D0C60067303E /* ReaderModeStyleViewController.swift in Sources */,
-				2C4065EE2E82D0C60067303E /* InvisibleTabSession.swift in Sources */,
 				2C4065EF2E82D0C60067303E /* MainMenuAction.swift in Sources */,
 				2C4065F02E82D0C60067303E /* FakespotViewModel.swift in Sources */,
 				2C4065F12E82D0C60067303E /* AccountStatusSetting.swift in Sources */,
@@ -17853,7 +17796,6 @@
 				2C40673C2E82D0C60067303E /* PasswordManagerListViewController.swift in Sources */,
 				2C40673D2E82D0C60067303E /* UrlToOpenModel.swift in Sources */,
 				2C40673E2E82D0C60067303E /* BrowserViewController+DownloadQueueDelegate.swift in Sources */,
-				2C40673F2E82D0C60067303E /* InvisibleTabManager.swift in Sources */,
 				2C4067402E82D0C60067303E /* WebsiteDataManagementViewModel.swift in Sources */,
 				2C4067412E82D0C60067303E /* SearchSettingsTableViewController.swift in Sources */,
 				2C4067422E82D0C60067303E /* CertificatesHeaderItem.swift in Sources */,
@@ -17922,7 +17864,6 @@
 				2C4067812E82D0C60067303E /* InactiveTabsManager.swift in Sources */,
 				2C4067822E82D0C60067303E /* CreditCardPayload.swift in Sources */,
 				2C4067832E82D0C60067303E /* BrowserViewController+WebViewDelegates.swift in Sources */,
-				2C4067842E82D0C60067303E /* EcosiaAuth.swift in Sources */,
 				2C4067852E82D0C60067303E /* ContextualHintPrefsKeysProvider.swift in Sources */,
 				2C4067862E82D0C60067303E /* SponsoredContentFilterUtility.swift in Sources */,
 				2C4067872E82D0C60067303E /* ProductAnalyzeResponse.swift in Sources */,
@@ -17970,7 +17911,6 @@
 				2C4067B12E82D0C60067303E /* EditFolderCell.swift in Sources */,
 				2C4067B22E82D0C60067303E /* PocketDataAdaptor.swift in Sources */,
 				2C4067B32E82D0C60067303E /* LegacyTabTrayViewController.swift in Sources */,
-				2C4067B42E82D0C60067303E /* AuthFlow.swift in Sources */,
 				2C4067B52E82D0C60067303E /* DebugSettingsDelegate.swift in Sources */,
 				2C4067B62E82D0C60067303E /* AppSession+Enums.swift in Sources */,
 				2C4067B72E82D0C60067303E /* PocketProvider.swift in Sources */,
@@ -18150,8 +18090,6 @@
 				2C4068652E82D0C60067303E /* ExperimentsTableView.swift in Sources */,
 				2C4068662E82D0C60067303E /* LaunchScreenView.swift in Sources */,
 				2C4068672E82D0C60067303E /* ClientTabsSearchWrapper.swift in Sources */,
-				2C4068682E82D0C60067303E /* TabManager+InvisibleTab.swift in Sources */,
-				2C4068692E82D0C60067303E /* Tab+InvisibleTab.swift in Sources */,
 				2C40686A2E82D0C60067303E /* TabDisplayView.swift in Sources */,
 				2C40686B2E82D0C60067303E /* AdjustTelemetryHelper.swift in Sources */,
 				2C40686C2E82D0C60067303E /* TopSite.swift in Sources */,
@@ -18179,7 +18117,6 @@
 				2C4068822E82D0C60067303E /* UpdatableAddressFields+Decodable.swift in Sources */,
 				2C4068832E82D0C60067303E /* PocketStory.swift in Sources */,
 				2C4068842E82D0C60067303E /* LegacyTabTrayViewModel.swift in Sources */,
-				2C4068852E82D0C60067303E /* TabAutoCloseManager.swift in Sources */,
 				2C4068862E82D0C60067303E /* SendAnonymousUsageDataSetting.swift in Sources */,
 				2C4068872E82D0C60067303E /* FakespotActionFooterView.swift in Sources */,
 				2C4068882E82D0C60067303E /* URLScanner.swift in Sources */,
@@ -18757,7 +18694,6 @@
 				8A7AE4442BAB510B0072DAEC /* LibraryPanelCoordinatorDelegate.swift in Sources */,
 				8C19532E2B85E7AE00761B20 /* SelfSizingHostingController.swift in Sources */,
 				E4CD9F6D1A77DD2800318571 /* ReaderModeStyleViewController.swift in Sources */,
-				2C00E15F2E299AE800811A76 /* InvisibleTabSession.swift in Sources */,
 				81F617C92C8755AB003799BF /* MainMenuAction.swift in Sources */,
 				E13E9AB52AAB0FB5001A0E9D /* FakespotViewModel.swift in Sources */,
 				8A5D1CBD2A30DC4E005AD35C /* AccountStatusSetting.swift in Sources */,
@@ -19094,7 +19030,6 @@
 				E63ED8E11BFD25580097D08E /* PasswordManagerListViewController.swift in Sources */,
 				8ADC2A162A33765E00543DAA /* UrlToOpenModel.swift in Sources */,
 				D0625CA8208FC47A0081F3B2 /* BrowserViewController+DownloadQueueDelegate.swift in Sources */,
-				2C00E1642E29A70500811A76 /* InvisibleTabManager.swift in Sources */,
 				C22753402A3C9E1300B9C0D1 /* WebsiteDataManagementViewModel.swift in Sources */,
 				2F44FCC71A9E8CF500FD20CC /* SearchSettingsTableViewController.swift in Sources */,
 				0AFF7F682C78989000265214 /* CertificatesHeaderItem.swift in Sources */,
@@ -19163,7 +19098,6 @@
 				21B548952B1E5F1400DC1DF8 /* InactiveTabsManager.swift in Sources */,
 				12AEB1292D3A9AE70035D7D8 /* CreditCardPayload.swift in Sources */,
 				C8F457A81F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift in Sources */,
-				2CE48EDA2E29B5C400CE84CE /* EcosiaAuth.swift in Sources */,
 				964FA97728A2A55C0024BB3B /* ContextualHintPrefsKeysProvider.swift in Sources */,
 				8A1E3BDF28CBA81E003388C4 /* SponsoredContentFilterUtility.swift in Sources */,
 				8CBDE8E32AB09804001985BF /* ProductAnalyzeResponse.swift in Sources */,
@@ -19211,7 +19145,6 @@
 				0BDDB3412CA6B23300D501DF /* EditFolderCell.swift in Sources */,
 				8A7653BD28A2C61D00924ABF /* PocketDataAdaptor.swift in Sources */,
 				12AEB1232D37CC4A0035D7D8 /* LegacyTabTrayViewController.swift in Sources */,
-				2C00E3942E29B0E700811A76 /* AuthFlow.swift in Sources */,
 				8A093D7D2A4B3E4F0099ABA5 /* DebugSettingsDelegate.swift in Sources */,
 				96EA9454293655BF00123345 /* AppSession+Enums.swift in Sources */,
 				C8B0F5F4283B7CCE007AE65D /* PocketProvider.swift in Sources */,
@@ -19391,8 +19324,6 @@
 				D5D0532E2645B3A700759F85 /* ExperimentsTableView.swift in Sources */,
 				8A832A9029DC96C50025D5DD /* LaunchScreenView.swift in Sources */,
 				8AAAB05B2C1B7268008830B3 /* ClientTabsSearchWrapper.swift in Sources */,
-				2C39828B2E200C1900AB8035 /* TabManager+InvisibleTab.swift in Sources */,
-				2C39828C2E200C1900AB8035 /* Tab+InvisibleTab.swift in Sources */,
 				214EF4152AC5D5D0005BCCDA /* TabDisplayView.swift in Sources */,
 				2165B2C22860C2F4004C0786 /* AdjustTelemetryHelper.swift in Sources */,
 				8A2D593E27DC0AA100713EC9 /* TopSite.swift in Sources */,
@@ -19420,7 +19351,6 @@
 				8C4B0F5D2C076B12008B3E74 /* UpdatableAddressFields+Decodable.swift in Sources */,
 				C8B0F5F6283B7CCE007AE65D /* PocketStory.swift in Sources */,
 				C81AC6B626160091007800C5 /* LegacyTabTrayViewModel.swift in Sources */,
-				2C3982982E201EDC00AB8035 /* TabAutoCloseManager.swift in Sources */,
 				8ADAE4222A33A113007BF926 /* SendAnonymousUsageDataSetting.swift in Sources */,
 				E170CA542B72C07A0082EFC5 /* FakespotActionFooterView.swift in Sources */,
 				C8EDDBF229DF1159003A4C07 /* URLScanner.swift in Sources */,
@@ -30540,14 +30470,6 @@
 				minimumVersion = 6.0.9;
 			};
 		};
-		2C7B86EC2E1328FB00A86119 /* XCRemoteSwiftPackageReference "Auth0" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/auth0/Auth0.swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.13.0;
-			};
-		};
 		2CB172802C612D68008551E2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
@@ -30796,11 +30718,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2CB172802C612D68008551E2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
-		};
-		2C7B86ED2E1328FB00A86119 /* Auth0 */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2C7B86EC2E1328FB00A86119 /* XCRemoteSwiftPackageReference "Auth0" */;
-			productName = Auth0;
 		};
 		2CABD7152C11C9CC00A0750F /* MozillaAppServices */ = {
 			isa = XCSwiftPackageProductDependency;
