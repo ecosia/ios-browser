@@ -14,5 +14,4 @@ MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox
 CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_BETA
 MOZ_INTERNAL_URL_SCHEME = ecosia
-OTHER_LDFLAGS = $(inherited)
 DEVELOPMENT_TEAM = 33YMRSYD2L
