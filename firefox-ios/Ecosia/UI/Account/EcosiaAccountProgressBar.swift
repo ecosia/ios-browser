@@ -13,7 +13,7 @@ public struct EcosiaAccountProgressBar: View {
     private let strokeWidth: CGFloat
     private let windowUUID: WindowUUID
     @State private var theme = EcosiaAccountProgressBarTheme()
-    
+
     public init(
         progress: Double,
         size: CGFloat = .ecosia.space._6l,
@@ -25,7 +25,7 @@ public struct EcosiaAccountProgressBar: View {
         self.strokeWidth = strokeWidth
         self.windowUUID = windowUUID
     }
-    
+
     public var body: some View {
         ZStack {
             // Background ring (unfilled)
@@ -37,7 +37,7 @@ public struct EcosiaAccountProgressBar: View {
                         lineCap: .round
                     )
                 )
-            
+
             // Progress ring (filled)
             Circle()
                 .trim(from: 0.0, to: progress)
@@ -60,7 +60,7 @@ public struct EcosiaAccountProgressBar: View {
 struct EcosiaAccountProgressBarTheme: EcosiaThemeable {
     var progressColor = Color.primary
     var backgroundColor = Color.secondary
-    
+
     mutating func applyTheme(theme: Theme) {
         progressColor = Color(theme.colors.ecosia.brandImpact)
         backgroundColor = Color(theme.colors.ecosia.borderDecorative)
@@ -73,24 +73,24 @@ struct EcosiaAccountProgressBarTheme: EcosiaThemeable {
 struct EcosiaAccountProgressBar_Previews: PreviewProvider {
     static var previews: some View {
         let windowUUID = WindowUUID()
-        
+
         VStack(spacing: .ecosia.space._l) {
             // Different progress values
             EcosiaAccountProgressBar(
                 progress: 0.25,
                 windowUUID: windowUUID
             )
-            
+
             EcosiaAccountProgressBar(
                 progress: 0.75,
                 windowUUID: windowUUID
             )
-            
+
             EcosiaAccountProgressBar(
                 progress: 1.0,
                 windowUUID: windowUUID
             )
-            
+
             // Different sizes
             EcosiaAccountProgressBar(
                 progress: 0.5,
