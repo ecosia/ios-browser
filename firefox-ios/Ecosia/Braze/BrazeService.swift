@@ -5,13 +5,21 @@
 import Foundation
 import UIKit
 import UserNotifications
+
+// Conditional compilation - only import BrazeKit when not building for previews
+#if !SWIFTUI_PREVIEW
 import BrazeKit
 import BrazeUI
+#endif
+
+#if !SWIFTUI_PREVIEW
 
 public final class BrazeService: NSObject {
     override private init() {}
 
+    #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
     private var braze: Braze?
+    #endif
     private var userId: String {
         User.shared.analyticsId.uuidString
     }
@@ -29,36 +37,58 @@ public final class BrazeService: NSObject {
     }
 
     public func initialize() async {
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         do {
             try await initBraze(userId: userId)
             await refreshAPNRegistrationIfNeeded()
         } catch {
             debugPrint(error)
         }
+        #else
+        // Stub implementation for debug builds (includes SwiftUI previews)
+        print("🚫 BrazeService.initialize() - Braze excluded from debug builds")
+        #endif
     }
 
     public func registerDeviceToken(_ deviceToken: Data) {
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         braze?.notifications.register(deviceToken: deviceToken)
         Task.detached(priority: .medium) { [weak self] in
             await self?.updateID(self?.userId)
         }
+        #else
+        // Stub implementation for debug builds (includes SwiftUI previews)
+        print("🚫 BrazeService.registerDeviceToken() - Braze excluded from debug builds")
+        #endif
     }
 
     public func logCustomEvent(_ event: CustomEvent) {
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         self.braze?.logCustomEvent(name: event.rawValue)
+        #else
+        // Stub implementation for debug builds (includes SwiftUI previews)
+        print("🚫 BrazeService.logCustomEvent(\(event.rawValue)) - Braze excluded from debug builds")
+        #endif
     }
 
     // MARK: - APN Consent
 
     func requestAPNConsent() async throws -> Bool {
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         await UIApplication.shared.registerForRemoteNotifications()
         let notificationCenter = makeNotificationCenter()
         let granted = try await notificationCenter.requestAuthorization(options: [.badge, .sound, .alert])
         await retrieveUserCurrentNotificationAuthStatus() // Make sure status is always updated
         return granted
+        #else
+        // Stub implementation for debug builds (includes SwiftUI previews)
+        print("🚫 BrazeService.requestAPNConsent() - Braze excluded from debug builds")
+        return false
+        #endif
     }
 
     func refreshAPNRegistrationIfNeeded() async {
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         await retrieveUserCurrentNotificationAuthStatus()
         switch notificationAuthorizationStatus {
         case .authorized, .ephemeral, .provisional:
@@ -66,9 +96,14 @@ public final class BrazeService: NSObject {
         default:
             break
         }
+        #else
+        // Stub implementation for debug builds (includes SwiftUI previews)
+        print("🚫 BrazeService.refreshAPNRegistrationIfNeeded() - Braze excluded from debug builds")
+        #endif
     }
 }
 
+#if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
 extension BrazeService {
     // MARK: - Init Braze
 
@@ -83,14 +118,17 @@ extension BrazeService {
         }
     }
 }
+#endif
 
 extension BrazeService {
     // MARK: - Notification Center
 
     private func makeNotificationCenter() -> UNUserNotificationCenter {
         let center = UNUserNotificationCenter.current()
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         center.setNotificationCategories(BrazeKit.Braze.Notifications.categories)
         center.delegate = self
+        #endif
         return center
     }
 
@@ -101,6 +139,7 @@ extension BrazeService {
     }
 }
 
+#if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
 extension BrazeService {
     // MARK: - ID Update
 
@@ -114,7 +153,9 @@ extension BrazeService {
         braze?.changeUser(userId: id)
     }
 }
+#endif
 
+#if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
 extension BrazeService {
     // MARK: - Environment Configuration
 
@@ -142,7 +183,9 @@ extension BrazeService {
         return brazeConfiguration
     }
 }
+#endif
 
+#if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
 extension BrazeService: BrazeInAppMessageUIDelegate {
 
     public func inAppMessage(_ ui: BrazeInAppMessageUI, didPresent message: Braze.InAppMessage, view: any InAppMessageView) {
@@ -158,22 +201,27 @@ extension BrazeService: BrazeInAppMessageUIDelegate {
         return true
     }
 }
+#endif
 
 extension BrazeService: UNUserNotificationCenterDelegate {
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         if let braze, braze.notifications.handleUserNotification(
             response: response,
             withCompletionHandler: completionHandler
         ) {
             return
         }
+        #endif
         completionHandler()
     }
 
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         if let braze {
             braze.notifications.handleForegroundNotification(notification: notification)
         }
+        #endif
         completionHandler([.list, .banner, .sound, .badge])
     }
 }
@@ -181,7 +229,15 @@ extension BrazeService: UNUserNotificationCenterDelegate {
 // Exposing Braze logic to be used inside `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`
 extension BrazeService {
     public func handleBackgroundNotification(userInfo: [AnyHashable: Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) -> Bool {
+        #if !EXCLUDE_BRAZE && !SWIFTUI_PREVIEW
         guard let braze else { return false }
         return braze.notifications.handleBackgroundNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
+        #else
+        // Stub implementation for debug builds (includes SwiftUI previews)
+        print("🚫 BrazeService.handleBackgroundNotification() - Braze excluded from debug builds")
+        return false
+        #endif
     }
 }
+
+#endif
