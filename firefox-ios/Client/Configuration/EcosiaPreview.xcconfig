@@ -12,8 +12,8 @@ MOZ_PRODUCT_NAME = EcosiaPreview
 // Include Settings.bundle for previews (symlink created at ClientPreview/Application -> Client/Application)
 INCLUDE_SETTINGS_BUNDLE = YES
 
-// Compilation conditions for preview target (no inheritance to avoid BrazeKit)
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG SWIFTUI_PREVIEW EXCLUDE_BRAZE
+// Compilation conditions for preview target
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG
 
 // Optimize for fast compilation and previews
 SWIFT_COMPILATION_MODE = singlefile
