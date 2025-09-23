@@ -6,9 +6,9 @@ import Foundation
 import UIKit
 import UserNotifications
 
-#if SWIFTUI_PREVIEW
+#if !canImport(BrazeKit)
 
-/// Stub implementation of BrazeService for SwiftUI previews
+/// Stub implementation of BrazeService when BrazeKit is not available
 /// This completely avoids BrazeKit dependencies for faster preview builds
 public final class BrazeService: NSObject {
     override private init() {}
