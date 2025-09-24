@@ -14,6 +14,13 @@ public struct EcosiaSeedView: View {
     private let enableAnimation: Bool
     @State private var bounceScale: CGFloat = 1.0
 
+    private struct UX {
+        static let bounceScaleMin: CGFloat = 0.75
+        static let bounceAnimationDuration: TimeInterval = 0.3
+        static let springResponse: Double = 0.5
+        static let springDamping: Double = 0.45
+    }
+
     public init(
         seedCount: Int,
         iconSize: CGFloat = .ecosia.space._1l,
@@ -30,13 +37,16 @@ public struct EcosiaSeedView: View {
 
     public var body: some View {
         HStack(spacing: spacing) {
-
             Image("seed", bundle: .ecosia)
                 .resizable()
                 .frame(width: iconSize, height: iconSize)
                 .scaleEffect(enableAnimation ? bounceScale : 1.0)
+                .accessibilityLabel("Seed icon")
 
-            seedCountText
+            Text("\(seedCount)")
+                .font(.headline)
+                .foregroundColor(textColor)
+                .animatedText(numericValue: seedCount, reduceMotionEnabled: !enableAnimation)
         }
         .onChange(of: seedCount) { _ in
             if enableAnimation {
@@ -45,26 +55,13 @@ public struct EcosiaSeedView: View {
         }
     }
 
-    private var seedCountText: some View {
-        Group {
-            if #available(iOS 17.0, *) {
-                Text("\(seedCount)")
-                    .contentTransition(.numericText(value: Double(seedCount)))
-            } else {
-                Text("\(seedCount)")
-            }
-        }
-        .font(.headline)
-        .foregroundColor(textColor)
-    }
-
     private func triggerBounce() {
-        withAnimation(.easeOut(duration: 0.3)) {
-            bounceScale = 0.75
+        withAnimation(.easeOut(duration: UX.bounceAnimationDuration)) {
+            bounceScale = UX.bounceScaleMin
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 0)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.bounceAnimationDuration) {
+            withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDamping, blendDuration: 0)) {
                 bounceScale = 1.0
             }
         }
@@ -72,28 +69,58 @@ public struct EcosiaSeedView: View {
 }
 
 #if DEBUG
-// MARK: - Preview
 @available(iOS 16.0, *)
 struct EcosiaSeedView_Previews: PreviewProvider {
     static var previews: some View {
+        EcosiaSeedViewInteractivePreview()
+    }
+}
+
+@available(iOS 16.0, *)
+private struct EcosiaSeedViewInteractivePreview: View {
+    @State private var seedCount = 42
+
+    var body: some View {
         VStack(spacing: .ecosia.space._l) {
-            EcosiaSeedView(seedCount: 42)
-            EcosiaSeedView(
-                seedCount: 100,
-                iconSize: .ecosia.space._2l,
-                spacing: .ecosia.space._s
-            )
-            EcosiaSeedView(
-                seedCount: 5,
-                textColor: .blue
-            )
-            EcosiaSeedView(
-                seedCount: 1,
-                enableAnimation: false
-            )
+            Text("Interactive Seed Animation Test")
+                .font(.title2.bold())
+
+            EcosiaSeedView(seedCount: seedCount)
+
+            HStack {
+                Button("Add Seeds") {
+                    seedCount += Int.random(in: 1...5)
+                }
+                .buttonStyle(.bordered)
+
+                Button("Reset") {
+                    seedCount = 42
+                }
+                .buttonStyle(.bordered)
+            }
+
+            Divider()
+
+            Text("Static Examples")
+                .font(.title3.bold())
+
+            VStack(spacing: .ecosia.space._l) {
+                EcosiaSeedView(
+                    seedCount: 100,
+                    iconSize: .ecosia.space._2l,
+                    spacing: .ecosia.space._s
+                )
+                EcosiaSeedView(
+                    seedCount: 5,
+                    textColor: .blue
+                )
+                EcosiaSeedView(
+                    seedCount: 1,
+                    enableAnimation: false
+                )
+            }
         }
         .padding()
-        .previewLayout(.sizeThatFits)
     }
 }
 #endif
