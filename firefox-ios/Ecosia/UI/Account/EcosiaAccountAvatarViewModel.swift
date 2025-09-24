@@ -66,11 +66,11 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         }
     }
 
-    public func triggerSparkles(duration: TimeInterval = 2.0) {
+    public func triggerSparkles(duration: TimeInterval = 4.0) {
         showSparkles = true
 
         Task {
-            try await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+            try await Task.sleep(for: .seconds(duration))
             showSparkles = false
         }
     }
