@@ -23,6 +23,13 @@ public struct EcosiaSeedView: View {
         static let springDamping: Double = 0.45
     }
 
+    private struct UX {
+        static let bounceScaleMin: CGFloat = 0.75
+        static let bounceAnimationDuration: TimeInterval = 0.3
+        static let springResponse: Double = 0.5
+        static let springDamping: Double = 0.45
+    }
+
     public init(
         seedCount: Int,
         iconSize: CGFloat = .ecosia.space._1l,
@@ -81,12 +88,12 @@ struct EcosiaSeedViewTheme: EcosiaThemeable {
     }
 
     private func triggerBounce() {
-        withAnimation(.easeOut(duration: 0.3)) {
-            bounceScale = 0.75
+        withAnimation(.easeOut(duration: UX.bounceAnimationDuration)) {
+            bounceScale = UX.bounceScaleMin
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 0)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.bounceAnimationDuration) {
+            withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDamping, blendDuration: 0)) {
                 bounceScale = 1.0
             }
         }
