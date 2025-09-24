@@ -160,6 +160,11 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                         }
                         .buttonStyle(.bordered)
                     }
+                    
+                    // Debug info
+                    Text("Sparkles: \(viewModel.showSparkles ? "ON" : "OFF")")
+                        .font(.caption)
+                        .foregroundColor(viewModel.showSparkles ? .green : .red)
                 }
 
                 Divider()
@@ -191,11 +196,11 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                     }
 
                     VStack {
-                        Text("With Sparkles")
+                        Text("With Sparkles (Always ON)")
                             .font(.caption)
                         EcosiaAccountAvatar(
                             avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                            progress: 0.9,
+                            progress: 1.0,
                             showSparkles: true,
                             windowUUID: windowUUID
                         )
