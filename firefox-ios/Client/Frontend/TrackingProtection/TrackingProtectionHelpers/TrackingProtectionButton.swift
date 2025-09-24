@@ -96,10 +96,7 @@ class TrackingProtectionButton: ResizableButton, ThemeApplicable {
     // MARK: ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        /* Ecosia: Update background color
         self.backgroundColor = theme.colors.layer2
-         */
-        self.backgroundColor = theme.colors.ecosia.backgroundElevation1
         foregroundColor = theme.colors.textPrimary
         borderColor = theme.colors.borderPrimary
         setNeedsUpdateConfiguration()

@@ -170,10 +170,7 @@ final class TrackingProtectionBlockedTrackersView: UIView, ThemeApplicable {
     }
 
     func applyTheme(theme: Theme) {
-        /* Ecosia: Update background color
         self.backgroundColor = theme.colors.layer2
-         */
-        self.backgroundColor = theme.colors.ecosia.backgroundElevation1
         trackersDetailArrow.tintColor = theme.colors.iconSecondary
         shieldImage.tintColor = theme.colors.iconPrimary
         trackersHorizontalLine.backgroundColor = theme.colors.borderPrimary
