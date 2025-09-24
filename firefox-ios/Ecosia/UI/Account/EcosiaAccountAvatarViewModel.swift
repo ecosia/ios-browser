@@ -56,7 +56,25 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     /// Manually update the progress
     /// - Parameter newProgress: The new progress value (0.0 to 1.0)
     public func updateProgress(_ newProgress: Double) {
-        progress = max(0.0, min(1.0, newProgress))
+        let clampedProgress = max(0.0, min(1.0, newProgress))
+        progress = clampedProgress
+        
+        // Check if progress reaches 1.0 (level up condition)
+        if clampedProgress >= 1.0 {
+            levelUp()
+        }
+    }
+    
+    /// Trigger level up sequence: complete progress, show sparkles, then reset
+    public func levelUp() {
+        progress = 1.0
+        triggerSparkles(duration: 2.0)
+        
+        // Reset progress to 0 after sparkles animation completes
+        Task {
+            try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+            progress = 0.0
+        }
     }
 
     /// Trigger sparkle animation manually
@@ -149,14 +167,8 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     nonisolated private func handleLevelUp(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let newProgress = userInfo[EcosiaAccountNotificationKeys.newProgress] as? Double else {
-            return
-        }
-
         Task { @MainActor in
-            updateProgress(newProgress)
-            triggerSparkles()
+            levelUp()
         }
     }
 }
