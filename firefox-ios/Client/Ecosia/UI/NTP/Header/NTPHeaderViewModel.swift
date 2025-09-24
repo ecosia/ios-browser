@@ -23,7 +23,7 @@ final class NTPHeaderViewModel: ObservableObject {
     private var userProfileObserver: NSObjectProtocol?
     var onTapAction: ((UIButton) -> Void)?
     private let accountsProvider: AccountsProvider
-
+    private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
     @Published var seedCount: Int = 1
     @Published var isLoggedIn: Bool = false
     @Published var userAvatarURL: URL?
@@ -225,22 +225,22 @@ extension NTPHeaderViewModel {
             registerVisitIfNeeded()
         } else {
             EcosiaLogger.accounts.info("User logged out at startup - using local seed collection")
-            seedCount = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+            seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
         }
     }
 
     @MainActor
     private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
-        UserDefaultsSeedProgressManager.resetCounter()
-        seedCount = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        Self.seedProgressManagerType.resetCounter()
+        seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
     }
 
     @MainActor
     private func handleLocalSeedCollection() {
         EcosiaLogger.accounts.info("Handling local seed collection for logged-out user")
-        UserDefaultsSeedProgressManager.collectDailySeed()
-        let newSeedCount = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        Self.seedProgressManagerType.collectDailySeed()
+        let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
 
         if newSeedCount > seedCount {
             let increment = newSeedCount - seedCount
