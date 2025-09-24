@@ -246,7 +246,7 @@ extension String {
         case close = "Close"
         case thankYouForYourFeedback = "Thank you for your feedback!"
 
-        // MARK: Rating Dialog
+        // MARK: Rating Prompt Dialog
 
         case settingsRatingPromptYes = "Yes"
         case settingsRatingPromptNo = "No"
