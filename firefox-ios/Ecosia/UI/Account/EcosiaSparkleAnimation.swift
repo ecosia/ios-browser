@@ -42,6 +42,11 @@ public struct EcosiaSparkleAnimation: View {
         }
         .frame(width: containerSize, height: containerSize)
         .opacity(opacity)
+        .onAppear {
+            if isVisible {
+                startSparkleAnimation()
+            }
+        }
         .onChange(of: isVisible) { visible in
             if visible {
                 startSparkleAnimation()
