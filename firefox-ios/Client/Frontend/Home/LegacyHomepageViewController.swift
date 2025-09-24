@@ -139,8 +139,6 @@ class LegacyHomepageViewController:
                            observing: [.HomePanelPrefsChanged,
                                        .TabsPrivacyModeChanged,
                                        .WallpaperDidChange,
-                                       // Ecosia: Seed Counter Experiment
-                                       SeedCounterNTPExperiment.progressManagerType.levelUpNotification,
                                        UIApplication.didBecomeActiveNotification])
     }
 
@@ -868,7 +866,6 @@ private extension LegacyHomepageViewController {
         viewModel.impactViewModel.delegate = self
         viewModel.newsViewModel.delegate = self
         viewModel.ntpCustomizationViewModel.delegate = self
-        viewModel.climateImpactCounterViewModel.delegate = self
     }
 
     private func openHistoryHighlightsSearchGroup(item: HighlightItem) {
@@ -1066,13 +1063,6 @@ extension LegacyHomepageViewController: Notifiable {
             case .HomePanelPrefsChanged,
                     .WallpaperDidChange:
                 self.reloadView()
-
-            // Ecosia: Seed Counter Experiment
-            case SeedCounterNTPExperiment.progressManagerType.levelUpNotification:
-                SeedCounterNTPExperiment.trackSeedLevellingUp()
-            case UIApplication.didBecomeActiveNotification:
-                SeedCounterNTPExperiment.trackSeedCollectionIfNewDayAppOpening()
-                SeedCounterNTPExperiment.progressManagerType.collectDailySeed()
             default: break
             }
         }
