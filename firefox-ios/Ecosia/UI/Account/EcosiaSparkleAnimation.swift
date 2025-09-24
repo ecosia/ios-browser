@@ -5,7 +5,7 @@
 import SwiftUI
 
 /// A sparkle animation component that displays animated sparkles around content
-/// Based on TwinkleView approach with TimelineView for smooth continuous animation
+/// Simplified approach to avoid freezing issues
 @available(iOS 16.0, *)
 public struct EcosiaSparkleAnimation: View {
     private let isVisible: Bool
@@ -13,7 +13,8 @@ public struct EcosiaSparkleAnimation: View {
     private let sparkleSize: CGFloat
     private let animationDuration: Double
 
-    @StateObject private var sparkleManager = SparkleManager()
+    @State private var sparkles: [SparkleData] = []
+    @State private var animationTrigger = false
 
     public init(
         isVisible: Bool,
@@ -28,140 +29,117 @@ public struct EcosiaSparkleAnimation: View {
     }
 
     public var body: some View {
-        if isVisible {
-            GeometryReader { geometry in
-                ZStack {
-                    TimelineView(.animation) { context in
-                        let _ = sparkleManager.update(date: context.date, duration: animationDuration)
-                        ForEach(sparkleManager.sparkles) { sparkle in
-                            Image("highlight-star", bundle: .ecosia)
-                                .resizable()
-                                .frame(width: sparkleSize, height: sparkleSize)
-                                .scaleEffect(scaleFor(date: context.date, sparkle: sparkle))
-                                .position(position(in: geometry, sparkle: sparkle))
-                                .opacity(opacityFor(date: context.date, sparkle: sparkle))
-                                .rotationEffect(.degrees(rotationFor(date: context.date, sparkle: sparkle)))
-                        }
+        ZStack {
+            if isVisible {
+                ForEach(sparkles) { sparkle in
+                    Image("highlight-star", bundle: .ecosia)
+                        .resizable()
+                        .frame(width: sparkleSize, height: sparkleSize)
+                        .position(sparkle.position)
+                        .scaleEffect(sparkle.scale)
+                        .opacity(sparkle.opacity)
+                        .rotationEffect(.degrees(sparkle.rotation))
+                }
+            }
+        }
+        .frame(width: containerSize, height: containerSize)
+        .onChange(of: isVisible) { visible in
+            if visible {
+                startSparkleAnimation()
+            } else {
+                stopSparkleAnimation()
+            }
+        }
+        .onAppear {
+            if isVisible {
+                startSparkleAnimation()
+            }
+        }
+    }
+
+    private func startSparkleAnimation() {
+        generateSparkles()
+        animateSparkles()
+    }
+
+    private func stopSparkleAnimation() {
+        withAnimation(.easeOut(duration: 0.3)) {
+            for i in sparkles.indices {
+                sparkles[i].opacity = 0
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            sparkles.removeAll()
+        }
+    }
+
+    private func generateSparkles() {
+        sparkles.removeAll()
+        let numberOfSparkles = 8
+        let radius = containerSize / 2 - sparkleSize / 2
+
+        for i in 0..<numberOfSparkles {
+            let angle = (Double(i) / Double(numberOfSparkles)) * 2 * .pi
+            let radiusVariation = CGFloat.random(in: 0.8...1.2)
+            let actualRadius = radius * radiusVariation
+            
+            let x = containerSize / 2 + actualRadius * cos(angle)
+            let y = containerSize / 2 + actualRadius * sin(angle)
+
+            let sparkle = SparkleData(
+                position: CGPoint(x: x, y: y),
+                scale: 0.1,
+                opacity: 0.0,
+                rotation: Double.random(in: 0...360)
+            )
+            sparkles.append(sparkle)
+        }
+    }
+
+    private func animateSparkles() {
+        for i in sparkles.indices {
+            let delay = Double(i) * 0.1
+            let finalScale = CGFloat.random(in: 0.8...1.4)
+            let finalOpacity = Double.random(in: 0.7...1.0)
+            let rotationAmount = Double.random(in: 180...540)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                // Fade in and scale up
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    sparkles[i].scale = finalScale
+                    sparkles[i].opacity = finalOpacity
+                }
+                
+                // Continuous rotation
+                withAnimation(.linear(duration: animationDuration - delay).repeatForever(autoreverses: false)) {
+                    sparkles[i].rotation += rotationAmount
+                }
+                
+                // Pulse effect
+                withAnimation(.easeInOut(duration: 0.6).repeatCount(3, autoreverses: true)) {
+                    sparkles[i].scale *= 1.2
+                }
+                
+                // Fade out at the end
+                DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration - delay - 0.4) {
+                    withAnimation(.easeOut(duration: 0.4)) {
+                        sparkles[i].opacity = 0
+                        sparkles[i].scale *= 0.5
                     }
                 }
             }
-            .frame(width: containerSize, height: containerSize)
-            .onAppear {
-                sparkleManager.start(duration: animationDuration)
-            }
-        } else {
-            EmptyView()
         }
-    }
-    
-    private func position(in proxy: GeometryProxy, sparkle: SparkleData) -> CGPoint {
-        let radius = min(proxy.size.width, proxy.size.height) / 2.0
-        let drawnRadius = (radius - sparkleSize / 2) * sparkle.radiusMultiplier
-        let angle = sparkle.angle
-        
-        let x = proxy.size.width * 0.5 + drawnRadius * cos(angle)
-        let y = proxy.size.height * 0.5 + drawnRadius * sin(angle)
-        
-        return CGPoint(x: x, y: y)
-    }
-    
-    private func scaleFor(date: Date, sparkle: SparkleData) -> CGFloat {
-        var offset = date.timeIntervalSince(sparkle.startDate)
-        offset = max(offset, 0)
-        offset = min(offset, animationDuration)
-        let halfDuration = animationDuration * 0.5
-        
-        let baseScale: CGFloat
-        if offset < halfDuration {
-            baseScale = offset / halfDuration
-        } else {
-            baseScale = 1.0 - ((offset - halfDuration) / halfDuration)
-        }
-        
-        // Apply sparkle-specific scale multiplier
-        return max(0.1, baseScale * sparkle.scaleMultiplier)
-    }
-    
-    private func opacityFor(date: Date, sparkle: SparkleData) -> Double {
-        var offset = date.timeIntervalSince(sparkle.startDate)
-        offset = max(offset, 0)
-        offset = min(offset, animationDuration)
-        let halfDuration = animationDuration * 0.5
-        
-        let baseOpacity: Double
-        if offset < halfDuration {
-            baseOpacity = offset / halfDuration
-        } else {
-            baseOpacity = 1.0 - ((offset - halfDuration) / halfDuration)
-        }
-        
-        return max(0.0, baseOpacity * sparkle.opacityMultiplier)
-    }
-    
-    private func rotationFor(date: Date, sparkle: SparkleData) -> Double {
-        let offset = date.timeIntervalSince(sparkle.startDate)
-        let progress = offset / animationDuration
-        return sparkle.initialRotation + (progress * sparkle.rotationSpeed)
     }
 }
 
 // MARK: - Supporting Types
 private struct SparkleData: Identifiable {
     let id = UUID()
-    let angle: Double
-    let radiusMultiplier: CGFloat
-    let startDate: Date
-    let scaleMultiplier: CGFloat
-    let opacityMultiplier: Double
-    let initialRotation: Double
-    let rotationSpeed: Double
-}
-
-private class SparkleManager: ObservableObject {
-    @Published var sparkles: [SparkleData] = []
-    
-    func start(duration: Double) {
-        let anchor = Date()
-        var result: [SparkleData] = []
-        
-        // Create 8-12 sparkles with random properties
-        let numberOfSparkles = Int.random(in: 8...12)
-        for _ in 0..<numberOfSparkles {
-            result.append(SparkleData(
-                angle: Double.random(in: 0...(2 * .pi)),
-                radiusMultiplier: CGFloat.random(in: 0.8...1.2),
-                startDate: anchor.addingTimeInterval(Double.random(in: 0...duration)),
-                scaleMultiplier: CGFloat.random(in: 0.6...1.4),
-                opacityMultiplier: Double.random(in: 0.7...1.0),
-                initialRotation: Double.random(in: 0...360),
-                rotationSpeed: Double.random(in: 180...720) // 0.5 to 2 full rotations
-            ))
-        }
-        self.sparkles = result
-    }
-    
-    func update(date: Date, duration: Double) {
-        let anchor = Date()
-        var result: [SparkleData] = []
-        
-        for sparkle in sparkles {
-            if anchor.timeIntervalSince(sparkle.startDate) > duration {
-                // Replace expired sparkle with a new one
-                result.append(SparkleData(
-                    angle: Double.random(in: 0...(2 * .pi)),
-                    radiusMultiplier: CGFloat.random(in: 0.8...1.2),
-                    startDate: anchor.addingTimeInterval(Double.random(in: 0...duration)),
-                    scaleMultiplier: CGFloat.random(in: 0.6...1.4),
-                    opacityMultiplier: Double.random(in: 0.7...1.0),
-                    initialRotation: Double.random(in: 0...360),
-                    rotationSpeed: Double.random(in: 180...720)
-                ))
-            } else {
-                result.append(sparkle)
-            }
-        }
-        self.sparkles = result
-    }
+    let position: CGPoint
+    var scale: CGFloat
+    var opacity: Double
+    var rotation: Double
 }
 
 #if DEBUG
