@@ -148,6 +148,18 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                         }
                         .buttonStyle(.bordered)
                     }
+                    
+                    HStack {
+                        Button("Test Sparkles") {
+                            viewModel.triggerSparkles()
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Button("Complete Progress") {
+                            viewModel.updateProgress(1.0)
+                        }
+                        .buttonStyle(.bordered)
+                    }
                 }
 
                 Divider()
