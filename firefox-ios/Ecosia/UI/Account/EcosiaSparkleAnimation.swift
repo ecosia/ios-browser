@@ -19,7 +19,7 @@ public struct EcosiaSparkleAnimation: View {
     public init(
         isVisible: Bool,
         containerSize: CGFloat = .ecosia.space._6l,
-        sparkleSize: CGFloat = .ecosia.space._2l, // Much larger sparkles
+        sparkleSize: CGFloat = 17, // Between 10-24 (average)
         animationDuration: Double = 2.0
     ) {
         self.isVisible = isVisible
@@ -34,11 +34,9 @@ public struct EcosiaSparkleAnimation: View {
                 ForEach(sparkles) { sparkle in
                     Image("highlight-star", bundle: .ecosia)
                         .resizable()
-                        .frame(width: sparkleSize, height: sparkleSize)
+                        .frame(width: sparkle.size, height: sparkle.size)
                         .position(sparkle.position)
-                        .scaleEffect(sparkle.scale)
                         .opacity(sparkle.opacity)
-                        .rotationEffect(.degrees(sparkle.rotation))
                 }
             }
         }
@@ -90,9 +88,8 @@ public struct EcosiaSparkleAnimation: View {
 
             let sparkle = SparkleData(
                 position: CGPoint(x: x, y: y),
-                scale: 0.1,
-                opacity: 0.0,
-                rotation: Double.random(in: 0...360)
+                size: CGFloat.random(in: 10...24), // Random size between 10-24
+                opacity: 0.0
             )
             sparkles.append(sparkle)
         }
@@ -100,32 +97,24 @@ public struct EcosiaSparkleAnimation: View {
 
     private func animateSparkles() {
         for i in sparkles.indices {
-            // Random start time like TwinkleView (some sparkles appear later)
-            let delay = Double.random(in: 0...0.8)
-            let sparkleLifetime = Double.random(in: 1.2...2.0) // Individual lifetimes
-            let finalScale = CGFloat.random(in: 0.8...1.2)
+            // Random start time for each sparkle
+            let delay = Double.random(in: 0...1.0)
+            let sparkleLifetime = Double.random(in: 1.0...2.0) // Individual lifetimes
             let finalOpacity = Double.random(in: 0.8...1.0)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                // TwinkleView-style fade in/out cycle
+                // Simple fade in/out cycle - no rotation, no scaling
                 let halfLifetime = sparkleLifetime / 2.0
                 
                 // Fade in (first half of lifetime)
                 withAnimation(.easeIn(duration: halfLifetime)) {
-                    sparkles[i].scale = finalScale
                     sparkles[i].opacity = finalOpacity
-                }
-                
-                // Gentle rotation throughout lifetime
-                withAnimation(.linear(duration: sparkleLifetime)) {
-                    sparkles[i].rotation += Double.random(in: 90...270)
                 }
                 
                 // Fade out (second half of lifetime)
                 DispatchQueue.main.asyncAfter(deadline: .now() + halfLifetime) {
                     withAnimation(.easeOut(duration: halfLifetime)) {
                         sparkles[i].opacity = 0
-                        sparkles[i].scale *= 0.3
                     }
                 }
             }
@@ -137,9 +126,8 @@ public struct EcosiaSparkleAnimation: View {
 private struct SparkleData: Identifiable {
     let id = UUID()
     let position: CGPoint
-    var scale: CGFloat
+    let size: CGFloat
     var opacity: Double
-    var rotation: Double
 }
 
 #if DEBUG
