@@ -247,7 +247,6 @@ extension String {
         case thankYouForYourFeedback = "Thank you for your feedback!"
 
         // MARK: Rating Prompt Dialog
-
         case settingsRatingPromptYes = "Yes"
         case settingsRatingPromptNo = "No"
         case settingsRatingPromptTitle = "Do you enjoy Ecosia?"
