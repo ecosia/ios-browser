@@ -21,7 +21,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
 
     // MARK: - Layers
     var layer1: UIColor { ecosia.backgroundPrimaryDecorative }
-    var layer2: UIColor { fallbackTheme.colors.layer2 }
+    var layer2: UIColor { ecosia.backgroundElevation1 }
     var layer3: UIColor { ecosia.backgroundPrimaryDecorative }
     var layer4: UIColor { fallbackTheme.colors.layer4 }
     var layer5: UIColor { ecosia.backgroundSecondary }
