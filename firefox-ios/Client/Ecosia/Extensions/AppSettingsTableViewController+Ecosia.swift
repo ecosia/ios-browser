@@ -160,7 +160,6 @@ extension AppSettingsTableViewController {
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
-            UnleashSeedCounterNTPSetting(settings: self),
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
@@ -170,15 +169,6 @@ extension AppSettingsTableViewController {
 
         if Environment.current == .staging {
             hiddenDebugSettings.append(AnalyticsStagingUrlSetting(settings: self))
-        }
-
-        if SeedCounterNTPExperiment.isEnabled {
-            hiddenDebugSettings.append(AddOneSeedSetting(settings: self,
-                                                         progressManagerType: UserDefaultsSeedProgressManager.self))
-            hiddenDebugSettings.append(AddFiveSeedsSetting(settings: self,
-                                                           progressManagerType: UserDefaultsSeedProgressManager.self))
-            hiddenDebugSettings.append(ResetSeedCounterSetting(settings: self,
-                                                               progressManagerType: UserDefaultsSeedProgressManager.self))
         }
 
         return SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugSettings)
