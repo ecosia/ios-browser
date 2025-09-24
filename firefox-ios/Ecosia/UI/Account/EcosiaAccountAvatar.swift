@@ -154,17 +154,7 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                             viewModel.triggerSparkles()
                         }
                         .buttonStyle(.bordered)
-                        
-                        Button("Complete Progress") {
-                            viewModel.updateProgress(1.0)
-                        }
-                        .buttonStyle(.bordered)
                     }
-                    
-                    // Debug info
-                    Text("Sparkles: \(viewModel.showSparkles ? "ON" : "OFF")")
-                        .font(.caption)
-                        .foregroundColor(viewModel.showSparkles ? .green : .red)
                 }
 
                 Divider()
@@ -196,22 +186,22 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                     }
 
                     VStack {
-                        Text("With Sparkles (Always ON)")
-                            .font(.caption)
-                        EcosiaAccountAvatar(
-                            avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                            progress: 1.0,
-                            showSparkles: true,
-                            windowUUID: windowUUID
-                        )
-                    }
-
-                    VStack {
                         Text("Complete (100%)")
                             .font(.caption)
                         EcosiaAccountAvatar(
                             avatarURL: nil,
                             progress: 1.0,
+                            windowUUID: windowUUID
+                        )
+                    }
+
+                    VStack {
+                        Text("Large Size")
+                            .font(.caption)
+                        EcosiaAccountAvatar(
+                            avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
+                            progress: 0.6,
+                            size: .ecosia.space._8l,
                             windowUUID: windowUUID
                         )
                     }
