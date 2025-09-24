@@ -94,9 +94,11 @@ struct ExampleProfileIntegration: View {
 }
 
 /// Example: Quick Test Button (Add anywhere for testing)
+/// Note: Interactive testing is now available directly in EcosiaAccountAvatar SwiftUI previews
 @available(iOS 16.0, *)
 struct QuickTestButton: View {
     @State private var showTestView = false
+    let windowUUID = WindowUUID()
 
     var body: some View {
         Button("🧪 Test EcosiaAccountAvatar") {
@@ -104,7 +106,7 @@ struct QuickTestButton: View {
         }
         .sheet(isPresented: $showTestView) {
             NavigationView {
-                EcosiaAccountAvatarTestView()
+                EcosiaAccountAvatarInteractiveDemo()
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
@@ -115,6 +117,67 @@ struct QuickTestButton: View {
                     }
             }
         }
+    }
+}
+
+/// Interactive demo view for testing EcosiaAccountAvatar functionality
+@available(iOS 16.0, *)
+private struct EcosiaAccountAvatarInteractiveDemo: View {
+    @StateObject private var viewModel = EcosiaAccountAvatarViewModel(progress: 0.3)
+    let windowUUID = WindowUUID()
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: .ecosia.space._2l) {
+                Text("EcosiaAccountAvatar Interactive Demo")
+                    .font(.title2.bold())
+
+                EcosiaAccountAvatar(
+                    avatarURL: viewModel.avatarURL,
+                    progress: viewModel.progress,
+                    showSparkles: viewModel.showSparkles,
+                    size: .ecosia.space._7l,
+                    windowUUID: windowUUID
+                )
+
+                Text("Progress: \(Int(viewModel.progress * 100))%")
+                    .font(.caption)
+
+                VStack(spacing: .ecosia.space._s) {
+                    HStack {
+                        Button("Add Progress") {
+                            let newProgress = min(1.0, viewModel.progress + 0.1)
+                            viewModel.updateProgress(newProgress)
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button("Level Up!") {
+                            viewModel.levelUp()
+                        }
+                        .buttonStyle(.borderedProminent)
+
+                        Button("Reset") {
+                            viewModel.updateProgress(0.25)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+
+                    HStack {
+                        Button("Test Sparkles") {
+                            viewModel.triggerSparkles()
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Button("Complete Progress") {
+                            viewModel.updateProgress(1.0)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("Avatar Test")
     }
 }
 
