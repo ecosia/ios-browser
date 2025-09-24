@@ -65,7 +65,7 @@ public struct EcosiaAccountAvatar: View {
 
     private var avatarSize: CGFloat {
         // Avatar size with spacing from progress ring
-        size - (strokeWidth * 2) - (.ecosia.space._1s * 2)
+        size - (strokeWidth * 2)
     }
 
     private var progressRingSize: CGFloat {
@@ -84,55 +84,167 @@ public struct EcosiaAccountAvatar: View {
 }
 
 #if DEBUG
-// MARK: - Preview
+// MARK: - Interactive Preview for Testing
 @available(iOS 16.0, *)
 struct EcosiaAccountAvatar_Previews: PreviewProvider {
     static var previews: some View {
-        let windowUUID = WindowUUID()
+        EcosiaAccountAvatarInteractivePreview()
+    }
+}
 
-        VStack(spacing: .ecosia.space._2l) {
-            // With avatar URL and progress
-            EcosiaAccountAvatar(
-                avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                progress: 0.75,
-                windowUUID: windowUUID
-            )
+/// Interactive preview for manually testing EcosiaAccountAvatar functionality
+@available(iOS 16.0, *)
+private struct EcosiaAccountAvatarInteractivePreview: View {
+    @StateObject private var viewModel = EcosiaAccountAvatarViewModel(progress: 0.3)
+    let windowUUID = WindowUUID()
 
-            // Without avatar URL (placeholder) and with sparkles
-            EcosiaAccountAvatar(
-                avatarURL: nil,
-                progress: 0.25,
-                showSparkles: true,
-                windowUUID: windowUUID
-            )
+    var body: some View {
+        ScrollView {
+            VStack(spacing: .ecosia.space._2l) {
 
-            // Different sizes
-            HStack(spacing: .ecosia.space._l) {
+                // MARK: - Interactive Testing
+                Text("Interactive Testing")
+                    .font(.title2.bold())
+
                 EcosiaAccountAvatar(
-                    avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                    progress: 0.5,
-                    size: .ecosia.space._4l,
+                    avatarURL: viewModel.avatarURL,
+                    progress: viewModel.progress,
+                    showSparkles: viewModel.showSparkles,
+                    size: .ecosia.space._7l,
                     windowUUID: windowUUID
                 )
 
-                EcosiaAccountAvatar(
-                    avatarURL: nil,
-                    progress: 1.0,
-                    size: .ecosia.space._8l,
-                    windowUUID: windowUUID
-                )
+                Text("Progress: \(Int(viewModel.progress * 100))%")
+                    .font(.caption)
+
+                // Control buttons
+                VStack(spacing: .ecosia.space._s) {
+                    HStack {
+                        Button("Add Progress") {
+                            let newProgress = min(1.0, viewModel.progress + 0.1)
+                            viewModel.updateProgress(newProgress)
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button("Level Up!") {
+                            viewModel.updateProgress(min(1.0, viewModel.progress + 0.2))
+                            viewModel.triggerSparkles()
+                        }
+                        .buttonStyle(.borderedProminent)
+
+                        Button("Reset") {
+                            viewModel.updateProgress(0.25)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+
+                    HStack {
+                        Button("Add Avatar") {
+                            viewModel.updateAvatarURL(URL(string: "https://avatars.githubusercontent.com/u/1?v=4"))
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button("Remove Avatar") {
+                            viewModel.updateAvatarURL(nil)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+
+                Divider()
+
+                // MARK: - State Variations
+                Text("State Variations")
+                    .font(.title2.bold())
+
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: .ecosia.space._l) {
+
+                    VStack {
+                        Text("Signed Out (25%)")
+                            .font(.caption)
+                        EcosiaAccountAvatar(
+                            avatarURL: nil,
+                            progress: 0.25,
+                            windowUUID: windowUUID
+                        )
+                    }
+
+                    VStack {
+                        Text("Signed In (75%)")
+                            .font(.caption)
+                        EcosiaAccountAvatar(
+                            avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
+                            progress: 0.75,
+                            windowUUID: windowUUID
+                        )
+                    }
+
+                    VStack {
+                        Text("With Sparkles")
+                            .font(.caption)
+                        EcosiaAccountAvatar(
+                            avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
+                            progress: 0.9,
+                            showSparkles: true,
+                            windowUUID: windowUUID
+                        )
+                    }
+
+                    VStack {
+                        Text("Complete (100%)")
+                            .font(.caption)
+                        EcosiaAccountAvatar(
+                            avatarURL: nil,
+                            progress: 1.0,
+                            windowUUID: windowUUID
+                        )
+                    }
+                }
+
+                Divider()
+
+                // MARK: - Size Variations
+                Text("Size Variations")
+                    .font(.title2.bold())
+
+                HStack(spacing: .ecosia.space._l) {
+                    VStack {
+                        Text("Small")
+                            .font(.caption)
+                        EcosiaAccountAvatar(
+                            avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
+                            progress: 0.6,
+                            size: .ecosia.space._4l,
+                            windowUUID: windowUUID
+                        )
+                    }
+
+                    VStack {
+                        Text("Medium")
+                            .font(.caption)
+                        EcosiaAccountAvatar(
+                            avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
+                            progress: 0.6,
+                            size: .ecosia.space._6l,
+                            windowUUID: windowUUID
+                        )
+                    }
+
+                    VStack {
+                        Text("Large")
+                            .font(.caption)
+                        EcosiaAccountAvatar(
+                            avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
+                            progress: 0.6,
+                            size: .ecosia.space._8l,
+                            windowUUID: windowUUID
+                        )
+                    }
+                }
             }
-
-            // With sparkles
-            EcosiaAccountAvatar(
-                avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                progress: 0.9,
-                showSparkles: true,
-                windowUUID: windowUUID
-            )
+            .padding()
         }
-        .padding()
-        .previewLayout(.sizeThatFits)
+        .navigationTitle("EcosiaAccountAvatar")
     }
 }
 #endif
