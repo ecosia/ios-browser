@@ -48,7 +48,7 @@ public struct EcosiaAccountProgressBar: View {
                         lineCap: .round
                     )
                 )
-                .rotationEffect(.degrees(-90)) // Start from bottom-center (270°)
+                .rotationEffect(.degrees(90))
                 .animation(.easeInOut(duration: 0.5), value: progress)
         }
         .frame(width: size, height: size)
