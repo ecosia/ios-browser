@@ -5,7 +5,6 @@
 import SwiftUI
 import Common
 
-/// A reusable account avatar component that displays user avatars with progress ring and sparkle animations
 @available(iOS 16.0, *)
 public struct EcosiaAccountAvatar: View {
     private let avatarURL: URL?
@@ -22,7 +21,7 @@ public struct EcosiaAccountAvatar: View {
         windowUUID: WindowUUID
     ) {
         self.avatarURL = avatarURL
-        self.progress = max(0.0, min(1.0, progress)) // Clamp between 0.0 and 1.0
+        self.progress = max(0.0, min(1.0, progress))
         self.showSparkles = showSparkles
         self.size = size
         self.windowUUID = windowUUID
@@ -30,7 +29,6 @@ public struct EcosiaAccountAvatar: View {
 
     public var body: some View {
         ZStack {
-            // Progress ring (outermost layer)
             EcosiaAccountProgressBar(
                 progress: progress,
                 size: progressRingSize,
@@ -38,13 +36,11 @@ public struct EcosiaAccountAvatar: View {
                 windowUUID: windowUUID
             )
 
-            // Avatar (center)
             EcosiaAvatar(
                 avatarURL: avatarURL,
                 size: avatarSize
             )
 
-            // Sparkle animation (overlay)
             if showSparkles {
                 EcosiaSparkleAnimation(
                     isVisible: showSparkles,
@@ -56,15 +52,17 @@ public struct EcosiaAccountAvatar: View {
         .frame(width: progressRingSize, height: progressRingSize)
     }
 
-    // MARK: - Computed Properties
+    private struct UX {
+        static let strokeWidthRatio: CGFloat = 0.06
+        static let sparkleContainerPadding: CGFloat = .ecosia.space._s
+        static let sparkleSizeRatio: CGFloat = 0.2
+    }
 
     private var strokeWidth: CGFloat {
-        // Scale stroke width based on size
-        size * 0.06 // 6% of size
+        size * UX.strokeWidthRatio
     }
 
     private var avatarSize: CGFloat {
-        // Avatar size with spacing from progress ring
         size - (strokeWidth * 2)
     }
 
@@ -73,18 +71,15 @@ public struct EcosiaAccountAvatar: View {
     }
 
     private var sparkleContainerSize: CGFloat {
-        // Sparkles appear outside the progress ring
-        size + .ecosia.space._s
+        size + UX.sparkleContainerPadding
     }
 
     private var sparkleSize: CGFloat {
-        // Scale sparkle size based on avatar size
-        size * 0.2
+        size * UX.sparkleSizeRatio
     }
 }
 
 #if DEBUG
-// MARK: - Interactive Preview for Testing
 @available(iOS 16.0, *)
 struct EcosiaAccountAvatar_Previews: PreviewProvider {
     static var previews: some View {
@@ -92,7 +87,6 @@ struct EcosiaAccountAvatar_Previews: PreviewProvider {
     }
 }
 
-/// Interactive preview for manually testing EcosiaAccountAvatar functionality
 @available(iOS 16.0, *)
 private struct EcosiaAccountAvatarInteractivePreview: View {
     @StateObject private var viewModel = EcosiaAccountAvatarViewModel(progress: 0.3)
@@ -101,8 +95,6 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
     var body: some View {
         ScrollView {
             VStack(spacing: .ecosia.space._2l) {
-
-                // MARK: - Interactive Testing
                 Text("Interactive Testing")
                     .font(.title2.bold())
 
@@ -117,7 +109,6 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                 Text("Progress: \(Int(viewModel.progress * 100))%")
                     .font(.caption)
 
-                // Control buttons
                 VStack(spacing: .ecosia.space._s) {
                     HStack {
                         Button("Add Progress") {
@@ -148,7 +139,7 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                         }
                         .buttonStyle(.bordered)
                     }
-                    
+
                     HStack {
                         Button("Test Sparkles") {
                             viewModel.triggerSparkles()
@@ -159,7 +150,6 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
 
                 Divider()
 
-                // MARK: - State Variations
                 Text("State Variations")
                     .font(.title2.bold())
 
@@ -209,7 +199,6 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
 
                 Divider()
 
-                // MARK: - Size Variations
                 Text("Size Variations")
                     .font(.title2.bold())
 
