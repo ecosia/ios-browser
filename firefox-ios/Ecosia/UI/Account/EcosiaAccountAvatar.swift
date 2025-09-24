@@ -127,8 +127,7 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                         .buttonStyle(.bordered)
 
                         Button("Level Up!") {
-                            viewModel.updateProgress(min(1.0, viewModel.progress + 0.2))
-                            viewModel.triggerSparkles()
+                            viewModel.levelUp()
                         }
                         .buttonStyle(.borderedProminent)
 
