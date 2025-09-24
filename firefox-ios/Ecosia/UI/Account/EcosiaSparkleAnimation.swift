@@ -19,7 +19,7 @@ public struct EcosiaSparkleAnimation: View {
     public init(
         isVisible: Bool,
         containerSize: CGFloat = .ecosia.space._6l,
-        sparkleSize: CGFloat = .ecosia.space._1l,
+        sparkleSize: CGFloat = .ecosia.space._2l, // Much larger sparkles
         animationDuration: Double = 2.0
     ) {
         self.isVisible = isVisible
@@ -76,16 +76,17 @@ public struct EcosiaSparkleAnimation: View {
 
     private func generateSparkles() {
         sparkles.removeAll()
-        let numberOfSparkles = 8
-        let radius = containerSize / 2 - sparkleSize / 2
-
-        for i in 0..<numberOfSparkles {
-            let angle = (Double(i) / Double(numberOfSparkles)) * 2 * .pi
-            let radiusVariation = CGFloat.random(in: 0.8...1.2)
-            let actualRadius = radius * radiusVariation
+        let numberOfSparkles = 6 // Like in the image
+        
+        for _ in 0..<numberOfSparkles {
+            // Generate random position using TwinkleView approach
+            let radius = min(containerSize, containerSize) / 2.0
+            let radiusMultiplier = CGFloat.random(in: 0.4...1.2) // Random distance from center
+            let drawnRadius = (radius - sparkleSize / 2) * radiusMultiplier
+            let angle = Double.random(in: 0...(2 * .pi)) // Random angle
             
-            let x = containerSize / 2 + actualRadius * cos(angle)
-            let y = containerSize / 2 + actualRadius * sin(angle)
+            let x = containerSize * 0.5 + drawnRadius * cos(angle)
+            let y = containerSize * 0.5 + drawnRadius * sin(angle)
 
             let sparkle = SparkleData(
                 position: CGPoint(x: x, y: y),
@@ -99,33 +100,32 @@ public struct EcosiaSparkleAnimation: View {
 
     private func animateSparkles() {
         for i in sparkles.indices {
-            let delay = Double(i) * 0.1
-            let finalScale = CGFloat.random(in: 0.8...1.4)
-            let finalOpacity = Double.random(in: 0.7...1.0)
-            let rotationAmount = Double.random(in: 180...540)
+            // Random start time like TwinkleView (some sparkles appear later)
+            let delay = Double.random(in: 0...0.8)
+            let sparkleLifetime = Double.random(in: 1.2...2.0) // Individual lifetimes
+            let finalScale = CGFloat.random(in: 0.8...1.2)
+            let finalOpacity = Double.random(in: 0.8...1.0)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                // Fade in and scale up
-                withAnimation(.easeInOut(duration: 0.4)) {
+                // TwinkleView-style fade in/out cycle
+                let halfLifetime = sparkleLifetime / 2.0
+                
+                // Fade in (first half of lifetime)
+                withAnimation(.easeIn(duration: halfLifetime)) {
                     sparkles[i].scale = finalScale
                     sparkles[i].opacity = finalOpacity
                 }
                 
-                // Continuous rotation
-                withAnimation(.linear(duration: animationDuration - delay).repeatForever(autoreverses: false)) {
-                    sparkles[i].rotation += rotationAmount
+                // Gentle rotation throughout lifetime
+                withAnimation(.linear(duration: sparkleLifetime)) {
+                    sparkles[i].rotation += Double.random(in: 90...270)
                 }
                 
-                // Pulse effect
-                withAnimation(.easeInOut(duration: 0.6).repeatCount(3, autoreverses: true)) {
-                    sparkles[i].scale *= 1.2
-                }
-                
-                // Fade out at the end
-                DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration - delay - 0.4) {
-                    withAnimation(.easeOut(duration: 0.4)) {
+                // Fade out (second half of lifetime)
+                DispatchQueue.main.asyncAfter(deadline: .now() + halfLifetime) {
+                    withAnimation(.easeOut(duration: halfLifetime)) {
                         sparkles[i].opacity = 0
-                        sparkles[i].scale *= 0.5
+                        sparkles[i].scale *= 0.3
                     }
                 }
             }
