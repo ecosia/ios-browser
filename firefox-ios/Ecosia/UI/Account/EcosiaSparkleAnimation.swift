@@ -4,8 +4,6 @@
 
 import SwiftUI
 
-/// A sparkle animation component that displays animated sparkles around content
-/// Simplified approach to avoid freezing issues
 @available(iOS 16.0, *)
 public struct EcosiaSparkleAnimation: View {
     private let isVisible: Bool
@@ -14,13 +12,26 @@ public struct EcosiaSparkleAnimation: View {
     private let animationDuration: Double
 
     @State private var sparkles: [SparkleData] = []
-    @State private var animationTrigger = false
+
+    private struct UX {
+        static let numberOfSparkles = 6
+        static let minSparkleSize: CGFloat = 10
+        static let maxSparkleSize: CGFloat = 24
+        static let radiusMultiplierMin: CGFloat = 0.4
+        static let radiusMultiplierMax: CGFloat = 1.2
+        static let animationDelayMax = 1.0
+        static let sparkleLifetimeMin = 1.0
+        static let sparkleLifetimeMax = 2.0
+        static let opacityMin = 0.8
+        static let opacityMax = 1.0
+        static let fadeOutDuration = 0.4
+    }
 
     public init(
         isVisible: Bool,
         containerSize: CGFloat = .ecosia.space._6l,
-        sparkleSize: CGFloat = 17, // Between 10-24 (average)
-        animationDuration: Double = 2.0
+        sparkleSize: CGFloat = 24,
+        animationDuration: Double = 6.0
     ) {
         self.isVisible = isVisible
         self.containerSize = containerSize
@@ -37,6 +48,7 @@ public struct EcosiaSparkleAnimation: View {
                         .frame(width: sparkle.size, height: sparkle.size)
                         .position(sparkle.position)
                         .opacity(sparkle.opacity)
+                        .accessibilityHidden(true)
                 }
             }
         }
@@ -61,34 +73,32 @@ public struct EcosiaSparkleAnimation: View {
     }
 
     private func stopSparkleAnimation() {
-        withAnimation(.easeOut(duration: 0.3)) {
+        withAnimation(.easeOut(duration: UX.fadeOutDuration)) {
             for i in sparkles.indices {
                 sparkles[i].opacity = 0
             }
         }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.fadeOutDuration) {
             sparkles.removeAll()
         }
     }
 
     private func generateSparkles() {
         sparkles.removeAll()
-        let numberOfSparkles = 6 // Like in the image
-        
-        for _ in 0..<numberOfSparkles {
-            // Generate random position using TwinkleView approach
+
+        for _ in 0..<UX.numberOfSparkles {
             let radius = min(containerSize, containerSize) / 2.0
-            let radiusMultiplier = CGFloat.random(in: 0.4...1.2) // Random distance from center
+            let radiusMultiplier = CGFloat.random(in: UX.radiusMultiplierMin...UX.radiusMultiplierMax)
             let drawnRadius = (radius - sparkleSize / 2) * radiusMultiplier
-            let angle = Double.random(in: 0...(2 * .pi)) // Random angle
-            
+            let angle = Double.random(in: 0...(2 * .pi))
+
             let x = containerSize * 0.5 + drawnRadius * cos(angle)
             let y = containerSize * 0.5 + drawnRadius * sin(angle)
 
             let sparkle = SparkleData(
                 position: CGPoint(x: x, y: y),
-                size: CGFloat.random(in: 10...24), // Random size between 10-24
+                size: CGFloat.random(in: UX.minSparkleSize...UX.maxSparkleSize),
                 opacity: 0.0
             )
             sparkles.append(sparkle)
@@ -97,21 +107,17 @@ public struct EcosiaSparkleAnimation: View {
 
     private func animateSparkles() {
         for i in sparkles.indices {
-            // Random start time for each sparkle
-            let delay = Double.random(in: 0...1.0)
-            let sparkleLifetime = Double.random(in: 1.0...2.0) // Individual lifetimes
-            let finalOpacity = Double.random(in: 0.8...1.0)
+            let delay = Double.random(in: 0...UX.animationDelayMax)
+            let sparkleLifetime = Double.random(in: UX.sparkleLifetimeMin...UX.sparkleLifetimeMax)
+            let finalOpacity = Double.random(in: UX.opacityMin...UX.opacityMax)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                // Simple fade in/out cycle - no rotation, no scaling
                 let halfLifetime = sparkleLifetime / 2.0
-                
-                // Fade in (first half of lifetime)
+
                 withAnimation(.easeIn(duration: halfLifetime)) {
                     sparkles[i].opacity = finalOpacity
                 }
-                
-                // Fade out (second half of lifetime)
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + halfLifetime) {
                     withAnimation(.easeOut(duration: halfLifetime)) {
                         sparkles[i].opacity = 0
