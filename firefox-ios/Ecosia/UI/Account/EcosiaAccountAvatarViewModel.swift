@@ -50,10 +50,7 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     public func updateProgress(_ newProgress: Double) {
         let clampedProgress = max(0.0, min(1.0, newProgress))
         progress = clampedProgress
-
-        if clampedProgress >= 1.0 {
-            levelUp()
-        }
+        // Note: Level up is now handled by backend via EcosiaAccountLevelUp notification
     }
 
     public func levelUp() {
@@ -73,6 +70,21 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
             try await Task.sleep(for: .seconds(duration))
             showSparkles = false
         }
+    }
+    
+    /// Updates avatar progress based on AccountBalanceResponse
+    /// This method should be called when balance data is received from the backend
+    public func updateFromBalanceResponse(_ response: AccountBalanceResponse) {
+        // Backend should provide level progress information in future API response
+        // For now, this is a placeholder for when that data becomes available
+        
+        // Example of how it might work when backend provides level progress:
+        // if let levelProgress = response.levelProgress {
+        //     updateProgress(levelProgress)
+        // }
+        
+        // The backend will handle level up logic and send EcosiaAccountLevelUp notification
+        // when a user levels up, rather than calculating it client-side
     }
 
     private func setupInitialState() {
