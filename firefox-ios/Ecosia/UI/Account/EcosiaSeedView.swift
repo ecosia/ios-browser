@@ -100,6 +100,15 @@ struct EcosiaSeedViewTheme: EcosiaThemeable {
     }
 }
 
+// MARK: - Theme
+struct EcosiaSeedViewTheme: EcosiaThemeable {
+    var textColor = Color.primary
+
+    mutating func applyTheme(theme: Theme) {
+        textColor = Color(theme.colors.ecosia.textPrimary)
+    }
+}
+
 #if DEBUG
 @available(iOS 16.0, *)
 struct EcosiaSeedView_Previews: PreviewProvider {
