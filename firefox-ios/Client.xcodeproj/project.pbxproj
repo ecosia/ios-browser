@@ -101,7 +101,6 @@
 		12C11E8D2D2826A600E4DDBF /* EcosiaDebugSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289252B07C8F000A8FCB3 /* EcosiaDebugSettings.swift */; };
 		12C11E8E2D2826A600E4DDBF /* NTPCustomizationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289272B07C8F000A8FCB3 /* NTPCustomizationSettingsViewController.swift */; };
 		12C11E8F2D2826A600E4DDBF /* EcosiaSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289262B07C8F000A8FCB3 /* EcosiaSettings.swift */; };
-		12C11E992D28279C00E4DDBF /* SeedCounterNTPExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E962D28279C00E4DDBF /* SeedCounterNTPExperiment.swift */; };
 		12C11E9A2D28281100E4DDBF /* WebsiteConnectionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289422B07C8F000A8FCB3 /* WebsiteConnectionStatus.swift */; };
 		12C11EA12D28291300E4DDBF /* (null) in Sources */ = {isa = PBXBuildFile; };
 		12C11EA42D28291300E4DDBF /* URL+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB2894D2B07C8F000A8FCB3 /* URL+Ecosia.swift */; };
@@ -1131,7 +1130,6 @@
 		2C4068F62E82D0C60067303E /* CreditCardInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D16B7F29831DC5009F8279 /* CreditCardInputView.swift */; };
 		2C4068F72E82D0C60067303E /* MockCreditCardProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB893A22C73AF5200DAEED7 /* MockCreditCardProvider.swift */; };
 		2C4068F82E82D0C60067303E /* DevicePickerTableViewHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD81BD290C5C7500124B27 /* DevicePickerTableViewHeaderCell.swift */; };
-		2C4068F92E82D0C60067303E /* SeedCounterNTPExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E962D28279C00E4DDBF /* SeedCounterNTPExperiment.swift */; };
 		2C4068FA2E82D0C60067303E /* AddressAutofillSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2FEA68A2B460D1D0058E616 /* AddressAutofillSettingsView.swift */; };
 		2C4068FB2E82D0C60067303E /* BeforeOrAfterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */; };
 		2C4068FC2E82D0C60067303E /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12BD0AB28AC37F00029AAF0 /* UIColor+Extension.swift */; };
@@ -1212,17 +1210,12 @@
 		2C4069472E82D0C60067303E /* NTPTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0352D455BD500B25CE0 /* NTPTooltip.swift */; };
 		2C4069482E82D0C60067303E /* NTPLibraryShortcutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0272D455BD500B25CE0 /* NTPLibraryShortcutView.swift */; };
 		2C4069492E82D0C60067303E /* MultiplyImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0072D455BD500B25CE0 /* MultiplyImpact.swift */; };
-		2C40694A2E82D0C60067303E /* SeedProgressManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA00E2D455BD500B25CE0 /* SeedProgressManagerProtocol.swift */; };
 		2C40694B2E82D0C60067303E /* PageActionsShortcutsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0452D455BD500B25CE0 /* PageActionsShortcutsHeader.swift */; };
 		2C40694C2E82D0C60067303E /* NTPImpactDividerFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0212D455BD500B25CE0 /* NTPImpactDividerFooter.swift */; };
 		2C40694D2E82D0C60067303E /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE9FFD2D455BD500B25CE0 /* EmptyBookmarksView.swift */; };
 		2C40694E2E82D0C60067303E /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0392D455BD500B25CE0 /* Welcome.swift */; };
-		2C40694F2E82D0C60067303E /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0112D455BD500B25CE0 /* ArcProgressView.swift */; };
-		2C4069502E82D0C60067303E /* Sparkle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0182D455BD500B25CE0 /* Sparkle.swift */; };
 		2C4069512E82D0C60067303E /* CircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0322D455BD500B25CE0 /* CircleButton.swift */; };
 		2C4069522E82D0C60067303E /* WhatsNewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0512D455BD500B25CE0 /* WhatsNewViewController.swift */; };
-		2C4069532E82D0C60067303E /* UserDefaultsSeedProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA00F2D455BD500B25CE0 /* UserDefaultsSeedProgressManager.swift */; };
-		2C4069542E82D0C60067303E /* NTPSeedCounterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0122D455BD500B25CE0 /* NTPSeedCounterCell.swift */; };
 		2C4069552E82D0C60067303E /* WelcomeTourGreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA03E2D455BD500B25CE0 /* WelcomeTourGreen.swift */; };
 		2C4069562E82D0C60067303E /* WhatsNewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0522D455BD500B25CE0 /* WhatsNewViewModel.swift */; };
 		2C4069572E82D0C60067303E /* WelcomeTour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA03B2D455BD500B25CE0 /* WelcomeTour.swift */; };
@@ -1237,7 +1230,6 @@
 		2C4069602E82D0C60067303E /* EmptyBookmarksViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE9FFE2D455BD500B25CE0 /* EmptyBookmarksViewDelegate.swift */; };
 		2C4069612E82D0C60067303E /* WelcomeTour.Step.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA03C2D455BD500B25CE0 /* WelcomeTour.Step.swift */; };
 		2C4069622E82D0C60067303E /* DefaultBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0332D455BD500B25CE0 /* DefaultBrowserViewController.swift */; };
-		2C4069632E82D0C60067303E /* SeedCounterHiddenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0152D455BD500B25CE0 /* SeedCounterHiddenSettings.swift */; };
 		2C4069642E82D0C60067303E /* WhatsNewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0502D455BD500B25CE0 /* WhatsNewItem.swift */; };
 		2C4069652E82D0C60067303E /* NTPLibaryCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0252D455BD500B25CE0 /* NTPLibaryCellViewModel.swift */; };
 		2C4069662E82D0C60067303E /* NTPConfigurableNudgeCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA02F2D455BD500B25CE0 /* NTPConfigurableNudgeCardCell.swift */; };
@@ -1245,16 +1237,12 @@
 		2C4069682E82D0C60067303E /* NTPCustomizationCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA01C2D455BD500B25CE0 /* NTPCustomizationCellViewModel.swift */; };
 		2C4069692E82D0C60067303E /* WelcomeTourTransparent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0412D455BD500B25CE0 /* WelcomeTourTransparent.swift */; };
 		2C40696A2E82D0C60067303E /* NTPCustomizationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA01B2D455BD500B25CE0 /* NTPCustomizationCell.swift */; };
-		2C40696B2E82D0C60067303E /* SeedCounterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0142D455BD500B25CE0 /* SeedCounterConfig.swift */; };
-		2C40696C2E82D0C60067303E /* NTPSeedCounterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0132D455BD500B25CE0 /* NTPSeedCounterViewModel.swift */; };
 		2C40696D2E82D0C60067303E /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0082D455BD500B25CE0 /* MultiplyImpactStep.swift */; };
 		2C40696E2E82D0C60067303E /* EcosiaFindInPageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE9FFA2D455BD500B25CE0 /* EcosiaFindInPageBar.swift */; };
 		2C40696F2E82D0C60067303E /* CustomizableNTPSettingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA01A2D455BD500B25CE0 /* CustomizableNTPSettingConfig.swift */; };
 		2C4069702E82D0C60067303E /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0232D455BD500B25CE0 /* ProgressView.swift */; };
-		2C4069712E82D0C60067303E /* SeedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0172D455BD500B25CE0 /* SeedProgressView.swift */; };
 		2C4069722E82D0C60067303E /* NTPConfigurableNudgeCardCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0302D455BD500B25CE0 /* NTPConfigurableNudgeCardCellViewModel.swift */; };
 		2C4069732E82D0C60067303E /* ClimateImpactInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA01E2D455BD500B25CE0 /* ClimateImpactInfo.swift */; };
-		2C4069742E82D0C60067303E /* SeedCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0162D455BD500B25CE0 /* SeedCounterView.swift */; };
 		2C4069752E82D0C60067303E /* NTPLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0342D455BD500B25CE0 /* NTPLayout.swift */; };
 		2C4069762E82D0C60067303E /* PageActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0432D455BD500B25CE0 /* PageActionMenu.swift */; };
 		2C4069772E82D0C60067303E /* NTPLibraryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0262D455BD500B25CE0 /* NTPLibraryCell.swift */; };
@@ -1516,17 +1504,12 @@
 		2CFEA0622D455BD500B25CE0 /* NTPTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0352D455BD500B25CE0 /* NTPTooltip.swift */; };
 		2CFEA0632D455BD500B25CE0 /* NTPLibraryShortcutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0272D455BD500B25CE0 /* NTPLibraryShortcutView.swift */; };
 		2CFEA0642D455BD500B25CE0 /* MultiplyImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0072D455BD500B25CE0 /* MultiplyImpact.swift */; };
-		2CFEA0652D455BD500B25CE0 /* SeedProgressManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA00E2D455BD500B25CE0 /* SeedProgressManagerProtocol.swift */; };
 		2CFEA0672D455BD500B25CE0 /* PageActionsShortcutsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0452D455BD500B25CE0 /* PageActionsShortcutsHeader.swift */; };
 		2CFEA0682D455BD500B25CE0 /* NTPImpactDividerFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0212D455BD500B25CE0 /* NTPImpactDividerFooter.swift */; };
 		2CFEA0692D455BD500B25CE0 /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE9FFD2D455BD500B25CE0 /* EmptyBookmarksView.swift */; };
 		2CFEA06B2D455BD500B25CE0 /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0392D455BD500B25CE0 /* Welcome.swift */; };
-		2CFEA06C2D455BD500B25CE0 /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0112D455BD500B25CE0 /* ArcProgressView.swift */; };
-		2CFEA06D2D455BD500B25CE0 /* Sparkle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0182D455BD500B25CE0 /* Sparkle.swift */; };
 		2CFEA06E2D455BD500B25CE0 /* CircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0322D455BD500B25CE0 /* CircleButton.swift */; };
 		2CFEA06F2D455BD500B25CE0 /* WhatsNewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0512D455BD500B25CE0 /* WhatsNewViewController.swift */; };
-		2CFEA0702D455BD500B25CE0 /* UserDefaultsSeedProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA00F2D455BD500B25CE0 /* UserDefaultsSeedProgressManager.swift */; };
-		2CFEA0712D455BD500B25CE0 /* NTPSeedCounterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0122D455BD500B25CE0 /* NTPSeedCounterCell.swift */; };
 		2CFEA0722D455BD500B25CE0 /* WelcomeTourGreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA03E2D455BD500B25CE0 /* WelcomeTourGreen.swift */; };
 		2CFEA0732D455BD500B25CE0 /* WhatsNewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0522D455BD500B25CE0 /* WhatsNewViewModel.swift */; };
 		2CFEA0742D455BD500B25CE0 /* WelcomeTour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA03B2D455BD500B25CE0 /* WelcomeTour.swift */; };
@@ -1541,7 +1524,6 @@
 		2CFEA07D2D455BD500B25CE0 /* EmptyBookmarksViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE9FFE2D455BD500B25CE0 /* EmptyBookmarksViewDelegate.swift */; };
 		2CFEA07E2D455BD500B25CE0 /* WelcomeTour.Step.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA03C2D455BD500B25CE0 /* WelcomeTour.Step.swift */; };
 		2CFEA07F2D455BD500B25CE0 /* DefaultBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0332D455BD500B25CE0 /* DefaultBrowserViewController.swift */; };
-		2CFEA0802D455BD500B25CE0 /* SeedCounterHiddenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0152D455BD500B25CE0 /* SeedCounterHiddenSettings.swift */; };
 		2CFEA0812D455BD500B25CE0 /* WhatsNewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0502D455BD500B25CE0 /* WhatsNewItem.swift */; };
 		2CFEA0822D455BD500B25CE0 /* NTPLibaryCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0252D455BD500B25CE0 /* NTPLibaryCellViewModel.swift */; };
 		2CFEA0832D455BD500B25CE0 /* NTPConfigurableNudgeCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA02F2D455BD500B25CE0 /* NTPConfigurableNudgeCardCell.swift */; };
@@ -1549,16 +1531,12 @@
 		2CFEA0852D455BD500B25CE0 /* NTPCustomizationCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA01C2D455BD500B25CE0 /* NTPCustomizationCellViewModel.swift */; };
 		2CFEA0862D455BD500B25CE0 /* WelcomeTourTransparent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0412D455BD500B25CE0 /* WelcomeTourTransparent.swift */; };
 		2CFEA0872D455BD500B25CE0 /* NTPCustomizationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA01B2D455BD500B25CE0 /* NTPCustomizationCell.swift */; };
-		2CFEA0882D455BD500B25CE0 /* SeedCounterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0142D455BD500B25CE0 /* SeedCounterConfig.swift */; };
-		2CFEA0892D455BD500B25CE0 /* NTPSeedCounterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0132D455BD500B25CE0 /* NTPSeedCounterViewModel.swift */; };
 		2CFEA08A2D455BD500B25CE0 /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0082D455BD500B25CE0 /* MultiplyImpactStep.swift */; };
 		2CFEA08B2D455BD500B25CE0 /* EcosiaFindInPageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE9FFA2D455BD500B25CE0 /* EcosiaFindInPageBar.swift */; };
 		2CFEA08C2D455BD500B25CE0 /* CustomizableNTPSettingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA01A2D455BD500B25CE0 /* CustomizableNTPSettingConfig.swift */; };
 		2CFEA08D2D455BD500B25CE0 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0232D455BD500B25CE0 /* ProgressView.swift */; };
-		2CFEA08E2D455BD500B25CE0 /* SeedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0172D455BD500B25CE0 /* SeedProgressView.swift */; };
 		2CFEA08F2D455BD500B25CE0 /* NTPConfigurableNudgeCardCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0302D455BD500B25CE0 /* NTPConfigurableNudgeCardCellViewModel.swift */; };
 		2CFEA0912D455BD500B25CE0 /* ClimateImpactInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA01E2D455BD500B25CE0 /* ClimateImpactInfo.swift */; };
-		2CFEA0922D455BD500B25CE0 /* SeedCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0162D455BD500B25CE0 /* SeedCounterView.swift */; };
 		2CFEA0942D455BD500B25CE0 /* NTPLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0342D455BD500B25CE0 /* NTPLayout.swift */; };
 		2CFEA0952D455BD500B25CE0 /* PageActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0432D455BD500B25CE0 /* PageActionMenu.swift */; };
 		2CFEA0972D455BD500B25CE0 /* NTPLibraryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0262D455BD500B25CE0 /* NTPLibraryCell.swift */; };
@@ -3610,7 +3588,6 @@
 		12C11E202D2812B200E4DDBF /* Staging.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Staging.xcconfig; path = Configuration/Staging.xcconfig; sourceTree = "<group>"; };
 		12C11E212D281B7200E4DDBF /* EcosiaHomepageSectionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomepageSectionType.swift; sourceTree = "<group>"; };
 		12C11E222D281B7A00E4DDBF /* EcosiaTopSiteItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaTopSiteItemCell.swift; sourceTree = "<group>"; };
-		12C11E962D28279C00E4DDBF /* SeedCounterNTPExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterNTPExperiment.swift; sourceTree = "<group>"; };
 		12C11E9C2D28289900E4DDBF /* UIButton+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Ecosia.swift"; sourceTree = "<group>"; };
 		12C11E9D2D2828AA00E4DDBF /* SimpleToast+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SimpleToast+Ecosia.swift"; sourceTree = "<group>"; };
 		12C11EA02D2828EA00E4DDBF /* DispatchQueueHelper+BuildChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueueHelper+BuildChannel.swift"; sourceTree = "<group>"; };
@@ -4052,16 +4029,6 @@
 		2CFEA0062D455BD500B25CE0 /* MarketsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketsController.swift; sourceTree = "<group>"; };
 		2CFEA0072D455BD500B25CE0 /* MultiplyImpact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpact.swift; sourceTree = "<group>"; };
 		2CFEA0082D455BD500B25CE0 /* MultiplyImpactStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactStep.swift; sourceTree = "<group>"; };
-		2CFEA00E2D455BD500B25CE0 /* SeedProgressManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressManagerProtocol.swift; sourceTree = "<group>"; };
-		2CFEA00F2D455BD500B25CE0 /* UserDefaultsSeedProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSeedProgressManager.swift; sourceTree = "<group>"; };
-		2CFEA0112D455BD500B25CE0 /* ArcProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcProgressView.swift; sourceTree = "<group>"; };
-		2CFEA0122D455BD500B25CE0 /* NTPSeedCounterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPSeedCounterCell.swift; sourceTree = "<group>"; };
-		2CFEA0132D455BD500B25CE0 /* NTPSeedCounterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPSeedCounterViewModel.swift; sourceTree = "<group>"; };
-		2CFEA0142D455BD500B25CE0 /* SeedCounterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterConfig.swift; sourceTree = "<group>"; };
-		2CFEA0152D455BD500B25CE0 /* SeedCounterHiddenSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterHiddenSettings.swift; sourceTree = "<group>"; };
-		2CFEA0162D455BD500B25CE0 /* SeedCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterView.swift; sourceTree = "<group>"; };
-		2CFEA0172D455BD500B25CE0 /* SeedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressView.swift; sourceTree = "<group>"; };
-		2CFEA0182D455BD500B25CE0 /* Sparkle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sparkle.swift; sourceTree = "<group>"; };
 		2CFEA01A2D455BD500B25CE0 /* CustomizableNTPSettingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizableNTPSettingConfig.swift; sourceTree = "<group>"; };
 		2CFEA01B2D455BD500B25CE0 /* NTPCustomizationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPCustomizationCell.swift; sourceTree = "<group>"; };
 		2CFEA01C2D455BD500B25CE0 /* NTPCustomizationCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPCustomizationCellViewModel.swift; sourceTree = "<group>"; };
@@ -11703,7 +11670,6 @@
 				2CB288DC2B07C8EF00A8FCB3 /* UI */,
 				2CB289242B07C8F000A8FCB3 /* Settings */,
 				2C1296EC2B0BA5FC00FC0A04 /* Frontend */,
-				2CB2893D2B07C8F000A8FCB3 /* Experiments */,
 				2CB289412B07C8F000A8FCB3 /* Network */,
 				2CB289432B07C8F000A8FCB3 /* Extensions */,
 				2CB289532B07C8F000A8FCB3 /* Bookmarks */,
@@ -11746,22 +11712,6 @@
 				2CB289272B07C8F000A8FCB3 /* NTPCustomizationSettingsViewController.swift */,
 			);
 			path = Settings;
-			sourceTree = "<group>";
-		};
-		2CB2893D2B07C8F000A8FCB3 /* Experiments */ = {
-			isa = PBXGroup;
-			children = (
-				2CB2893E2B07C8F000A8FCB3 /* Unleash */,
-			);
-			path = Experiments;
-			sourceTree = "<group>";
-		};
-		2CB2893E2B07C8F000A8FCB3 /* Unleash */ = {
-			isa = PBXGroup;
-			children = (
-				12C11E962D28279C00E4DDBF /* SeedCounterNTPExperiment.swift */,
-			);
-			path = Unleash;
 			sourceTree = "<group>";
 		};
 		2CB289412B07C8F000A8FCB3 /* Network */ = {
@@ -11855,31 +11805,6 @@
 			path = MultiplyImpact;
 			sourceTree = "<group>";
 		};
-		2CFEA0102D455BD500B25CE0 /* SeedProgressManager */ = {
-			isa = PBXGroup;
-			children = (
-				2CFEA00E2D455BD500B25CE0 /* SeedProgressManagerProtocol.swift */,
-				2CFEA00F2D455BD500B25CE0 /* UserDefaultsSeedProgressManager.swift */,
-			);
-			path = SeedProgressManager;
-			sourceTree = "<group>";
-		};
-		2CFEA0192D455BD500B25CE0 /* ClimateImpactCounter */ = {
-			isa = PBXGroup;
-			children = (
-				2CFEA0102D455BD500B25CE0 /* SeedProgressManager */,
-				2CFEA0112D455BD500B25CE0 /* ArcProgressView.swift */,
-				2CFEA0122D455BD500B25CE0 /* NTPSeedCounterCell.swift */,
-				2CFEA0132D455BD500B25CE0 /* NTPSeedCounterViewModel.swift */,
-				2CFEA0142D455BD500B25CE0 /* SeedCounterConfig.swift */,
-				2CFEA0152D455BD500B25CE0 /* SeedCounterHiddenSettings.swift */,
-				2CFEA0162D455BD500B25CE0 /* SeedCounterView.swift */,
-				2CFEA0172D455BD500B25CE0 /* SeedProgressView.swift */,
-				2CFEA0182D455BD500B25CE0 /* Sparkle.swift */,
-			);
-			path = ClimateImpactCounter;
-			sourceTree = "<group>";
-		};
 		2CFEA01D2D455BD500B25CE0 /* Customization */ = {
 			isa = PBXGroup;
 			children = (
@@ -11944,7 +11869,6 @@
 			isa = PBXGroup;
 			children = (
 				2CE9E8062E43927000141C6D /* Header */,
-				2CFEA0192D455BD500B25CE0 /* ClimateImpactCounter */,
 				2CFEA01D2D455BD500B25CE0 /* Customization */,
 				2CFEA0242D455BD500B25CE0 /* Impact */,
 				2CFEA0282D455BD500B25CE0 /* Library */,
@@ -18285,7 +18209,6 @@
 				2C4068F62E82D0C60067303E /* CreditCardInputView.swift in Sources */,
 				2C4068F72E82D0C60067303E /* MockCreditCardProvider.swift in Sources */,
 				2C4068F82E82D0C60067303E /* DevicePickerTableViewHeaderCell.swift in Sources */,
-				2C4068F92E82D0C60067303E /* SeedCounterNTPExperiment.swift in Sources */,
 				2C4068FA2E82D0C60067303E /* AddressAutofillSettingsView.swift in Sources */,
 				2C4068FB2E82D0C60067303E /* BeforeOrAfterView.swift in Sources */,
 				2C4068FC2E82D0C60067303E /* UIColor+Extension.swift in Sources */,
@@ -18366,17 +18289,12 @@
 				2C4069472E82D0C60067303E /* NTPTooltip.swift in Sources */,
 				2C4069482E82D0C60067303E /* NTPLibraryShortcutView.swift in Sources */,
 				2C4069492E82D0C60067303E /* MultiplyImpact.swift in Sources */,
-				2C40694A2E82D0C60067303E /* SeedProgressManagerProtocol.swift in Sources */,
 				2C40694B2E82D0C60067303E /* PageActionsShortcutsHeader.swift in Sources */,
 				2C40694C2E82D0C60067303E /* NTPImpactDividerFooter.swift in Sources */,
 				2C40694D2E82D0C60067303E /* EmptyBookmarksView.swift in Sources */,
 				2C40694E2E82D0C60067303E /* Welcome.swift in Sources */,
-				2C40694F2E82D0C60067303E /* ArcProgressView.swift in Sources */,
-				2C4069502E82D0C60067303E /* Sparkle.swift in Sources */,
 				2C4069512E82D0C60067303E /* CircleButton.swift in Sources */,
 				2C4069522E82D0C60067303E /* WhatsNewViewController.swift in Sources */,
-				2C4069532E82D0C60067303E /* UserDefaultsSeedProgressManager.swift in Sources */,
-				2C4069542E82D0C60067303E /* NTPSeedCounterCell.swift in Sources */,
 				2C4069552E82D0C60067303E /* WelcomeTourGreen.swift in Sources */,
 				2C4069562E82D0C60067303E /* WhatsNewViewModel.swift in Sources */,
 				2C4069572E82D0C60067303E /* WelcomeTour.swift in Sources */,
@@ -18391,7 +18309,6 @@
 				2C4069602E82D0C60067303E /* EmptyBookmarksViewDelegate.swift in Sources */,
 				2C4069612E82D0C60067303E /* WelcomeTour.Step.swift in Sources */,
 				2C4069622E82D0C60067303E /* DefaultBrowserViewController.swift in Sources */,
-				2C4069632E82D0C60067303E /* SeedCounterHiddenSettings.swift in Sources */,
 				2C4069642E82D0C60067303E /* WhatsNewItem.swift in Sources */,
 				2C4069652E82D0C60067303E /* NTPLibaryCellViewModel.swift in Sources */,
 				2C4069662E82D0C60067303E /* NTPConfigurableNudgeCardCell.swift in Sources */,
@@ -18399,16 +18316,12 @@
 				2C4069682E82D0C60067303E /* NTPCustomizationCellViewModel.swift in Sources */,
 				2C4069692E82D0C60067303E /* WelcomeTourTransparent.swift in Sources */,
 				2C40696A2E82D0C60067303E /* NTPCustomizationCell.swift in Sources */,
-				2C40696B2E82D0C60067303E /* SeedCounterConfig.swift in Sources */,
-				2C40696C2E82D0C60067303E /* NTPSeedCounterViewModel.swift in Sources */,
 				2C40696D2E82D0C60067303E /* MultiplyImpactStep.swift in Sources */,
 				2C40696E2E82D0C60067303E /* EcosiaFindInPageBar.swift in Sources */,
 				2C40696F2E82D0C60067303E /* CustomizableNTPSettingConfig.swift in Sources */,
 				2C4069702E82D0C60067303E /* ProgressView.swift in Sources */,
-				2C4069712E82D0C60067303E /* SeedProgressView.swift in Sources */,
 				2C4069722E82D0C60067303E /* NTPConfigurableNudgeCardCellViewModel.swift in Sources */,
 				2C4069732E82D0C60067303E /* ClimateImpactInfo.swift in Sources */,
-				2C4069742E82D0C60067303E /* SeedCounterView.swift in Sources */,
 				2C4069752E82D0C60067303E /* NTPLayout.swift in Sources */,
 				2C4069762E82D0C60067303E /* PageActionMenu.swift in Sources */,
 				2C4069772E82D0C60067303E /* NTPLibraryCell.swift in Sources */,
@@ -19525,7 +19438,6 @@
 				43D16B8029831DC5009F8279 /* CreditCardInputView.swift in Sources */,
 				8AB893A32C73AF5200DAEED7 /* MockCreditCardProvider.swift in Sources */,
 				E1CD81BE290C5C7500124B27 /* DevicePickerTableViewHeaderCell.swift in Sources */,
-				12C11E992D28279C00E4DDBF /* SeedCounterNTPExperiment.swift in Sources */,
 				B2FEA68B2B460D1D0058E616 /* AddressAutofillSettingsView.swift in Sources */,
 				123475CC2DA7D6620017B0C2 /* BeforeOrAfterView.swift in Sources */,
 				E12BD0AC28AC37F00029AAF0 /* UIColor+Extension.swift in Sources */,
@@ -19606,17 +19518,12 @@
 				2CFEA0622D455BD500B25CE0 /* NTPTooltip.swift in Sources */,
 				2CFEA0632D455BD500B25CE0 /* NTPLibraryShortcutView.swift in Sources */,
 				2CFEA0642D455BD500B25CE0 /* MultiplyImpact.swift in Sources */,
-				2CFEA0652D455BD500B25CE0 /* SeedProgressManagerProtocol.swift in Sources */,
 				2CFEA0672D455BD500B25CE0 /* PageActionsShortcutsHeader.swift in Sources */,
 				2CFEA0682D455BD500B25CE0 /* NTPImpactDividerFooter.swift in Sources */,
 				2CFEA0692D455BD500B25CE0 /* EmptyBookmarksView.swift in Sources */,
 				2CFEA06B2D455BD500B25CE0 /* Welcome.swift in Sources */,
-				2CFEA06C2D455BD500B25CE0 /* ArcProgressView.swift in Sources */,
-				2CFEA06D2D455BD500B25CE0 /* Sparkle.swift in Sources */,
 				2CFEA06E2D455BD500B25CE0 /* CircleButton.swift in Sources */,
 				2CFEA06F2D455BD500B25CE0 /* WhatsNewViewController.swift in Sources */,
-				2CFEA0702D455BD500B25CE0 /* UserDefaultsSeedProgressManager.swift in Sources */,
-				2CFEA0712D455BD500B25CE0 /* NTPSeedCounterCell.swift in Sources */,
 				2CFEA0722D455BD500B25CE0 /* WelcomeTourGreen.swift in Sources */,
 				2CFEA0732D455BD500B25CE0 /* WhatsNewViewModel.swift in Sources */,
 				2CFEA0742D455BD500B25CE0 /* WelcomeTour.swift in Sources */,
@@ -19631,7 +19538,6 @@
 				2CFEA07D2D455BD500B25CE0 /* EmptyBookmarksViewDelegate.swift in Sources */,
 				2CFEA07E2D455BD500B25CE0 /* WelcomeTour.Step.swift in Sources */,
 				2CFEA07F2D455BD500B25CE0 /* DefaultBrowserViewController.swift in Sources */,
-				2CFEA0802D455BD500B25CE0 /* SeedCounterHiddenSettings.swift in Sources */,
 				2CFEA0812D455BD500B25CE0 /* WhatsNewItem.swift in Sources */,
 				2CFEA0822D455BD500B25CE0 /* NTPLibaryCellViewModel.swift in Sources */,
 				2CFEA0832D455BD500B25CE0 /* NTPConfigurableNudgeCardCell.swift in Sources */,
@@ -19639,16 +19545,12 @@
 				2CFEA0852D455BD500B25CE0 /* NTPCustomizationCellViewModel.swift in Sources */,
 				2CFEA0862D455BD500B25CE0 /* WelcomeTourTransparent.swift in Sources */,
 				2CFEA0872D455BD500B25CE0 /* NTPCustomizationCell.swift in Sources */,
-				2CFEA0882D455BD500B25CE0 /* SeedCounterConfig.swift in Sources */,
-				2CFEA0892D455BD500B25CE0 /* NTPSeedCounterViewModel.swift in Sources */,
 				2CFEA08A2D455BD500B25CE0 /* MultiplyImpactStep.swift in Sources */,
 				2CFEA08B2D455BD500B25CE0 /* EcosiaFindInPageBar.swift in Sources */,
 				2CFEA08C2D455BD500B25CE0 /* CustomizableNTPSettingConfig.swift in Sources */,
 				2CFEA08D2D455BD500B25CE0 /* ProgressView.swift in Sources */,
-				2CFEA08E2D455BD500B25CE0 /* SeedProgressView.swift in Sources */,
 				2CFEA08F2D455BD500B25CE0 /* NTPConfigurableNudgeCardCellViewModel.swift in Sources */,
 				2CFEA0912D455BD500B25CE0 /* ClimateImpactInfo.swift in Sources */,
-				2CFEA0922D455BD500B25CE0 /* SeedCounterView.swift in Sources */,
 				2CFEA0942D455BD500B25CE0 /* NTPLayout.swift in Sources */,
 				2CFEA0952D455BD500B25CE0 /* PageActionMenu.swift in Sources */,
 				2CFEA0972D455BD500B25CE0 /* NTPLibraryCell.swift in Sources */,
@@ -26384,7 +26286,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = Sync/Info.plist;
@@ -26413,7 +26314,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
@@ -26984,7 +26884,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
@@ -27003,7 +26902,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = WidgetKit/Info.plist;
 				OTHER_LDFLAGS = (
@@ -27146,7 +27044,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -27168,7 +27065,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -27189,7 +27085,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = Sync/Info.plist;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -27236,7 +27131,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -27308,7 +27202,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -28172,7 +28065,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -28242,7 +28134,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -28321,7 +28212,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -29199,7 +29089,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = WidgetKit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -29218,7 +29107,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = WidgetKit/Info.plist;
 				OTHER_LDFLAGS = (
@@ -29275,7 +29163,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -29297,7 +29184,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -29665,7 +29551,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
@@ -29684,7 +29569,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -29737,7 +29621,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = Sync/Info.plist;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -30097,7 +29980,6 @@
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
