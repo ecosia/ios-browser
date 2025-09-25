@@ -11685,7 +11685,6 @@
 				2CB288DC2B07C8EF00A8FCB3 /* UI */,
 				2CB289242B07C8F000A8FCB3 /* Settings */,
 				2C1296EC2B0BA5FC00FC0A04 /* Frontend */,
-				2CB2893D2B07C8F000A8FCB3 /* Experiments */,
 				2CB289412B07C8F000A8FCB3 /* Network */,
 				2CB289432B07C8F000A8FCB3 /* Extensions */,
 				2CB289532B07C8F000A8FCB3 /* Bookmarks */,
@@ -11728,21 +11727,6 @@
 				2CB289272B07C8F000A8FCB3 /* NTPCustomizationSettingsViewController.swift */,
 			);
 			path = Settings;
-			sourceTree = "<group>";
-		};
-		2CB2893D2B07C8F000A8FCB3 /* Experiments */ = {
-			isa = PBXGroup;
-			children = (
-				2CB2893E2B07C8F000A8FCB3 /* Unleash */,
-			);
-			path = Experiments;
-			sourceTree = "<group>";
-		};
-		2CB2893E2B07C8F000A8FCB3 /* Unleash */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Unleash;
 			sourceTree = "<group>";
 		};
 		2CB289412B07C8F000A8FCB3 /* Network */ = {
