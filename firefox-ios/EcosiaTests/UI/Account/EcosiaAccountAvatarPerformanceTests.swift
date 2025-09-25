@@ -156,6 +156,7 @@ final class EcosiaAccountAvatarIntegrationTests: XCTestCase {
         wait(for: [expectation], timeout: 3.0)
     }
 
+    @MainActor
     func testNotificationIntegration() {
         // Test that notifications properly update the ViewModel
         let viewModel = EcosiaAccountAvatarViewModel()

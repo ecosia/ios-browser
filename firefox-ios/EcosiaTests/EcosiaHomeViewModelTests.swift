@@ -41,11 +41,11 @@ class EcosiaHomeViewModelTests: XCTestCase {
 
     func testNumberOfSection_withoutUpdatingData_has4Sections() {
         let viewModel = HomepageViewModel(profile: profile,
-                                           isPrivate: false,
-                                           tabManager: tabManager,
-                                           referrals: referrals,
-                                           theme: theme,
-                                           ecosiaAuth: EcosiaAuth(browserViewController: nil))
+                                          isPrivate: false,
+                                          tabManager: tabManager,
+                                          referrals: referrals,
+                                          theme: theme,
+                                          auth: EcosiaAuth(browserViewController: BrowserViewController(profile: profile, tabManager: tabManager)))
         User.shared.showClimateImpact = true
 
         XCTAssertEqual(viewModel.shownSections.count, 4)
