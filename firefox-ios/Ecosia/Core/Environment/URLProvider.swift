@@ -180,65 +180,12 @@ public enum URLProvider {
     public var aiSearch: URL {
         root.appendingPathComponent("ai-search")
 	}
-
-    // MARK: - Authentication URL Patterns
-
-    /// URL paths that indicate user sign-up/sign-in flows
-    public var signUpPaths: [String] {
-        ["/accounts/sign-up"]
-    }
-
-    /// URL paths that indicate user sign-out flows
-    public var signOutPaths: [String] {
-        ["/accounts/sign-out"]
-    }
-
-    /// URL paths that indicate errors in either the signUp or signOut flow
-    public var errorPaths: [String] {
-        ["/accounts/error"]
-    }
-
-    // MARK: - Authentication URLs
-
-    /// Complete URL for user login/sign-up flow
-    public var loginURL: URL {
-        root.appendingPathComponent("accounts/sign-up")
-    }
-
-    /// Complete URL for user logout/sign-out flow
-    public var logoutURL: URL {
-        root.appendingPathComponent("accounts/sign-out")
-    }
-
-    // MARK: - Auth0 Configuration
-
-    /// Auth0 domain for authentication
-    public var auth0Domain: String {
-        switch self {
-        case .production:
-            return "ecosia.eu.auth0.com"
-        case .staging:
-            return "ecosia-staging.eu.auth0.com"
-        case .debug:
-            return "ecosia-dev.eu.auth0.com"
-        }
-    }
-
-    /// Auth0 cookie domain for session management
-    public var auth0CookieDomain: String {
-        switch self {
-        case .production:
-            return ".ecosia.org"
-        case .staging:
-            return "login.ecosia-staging.xyz"
-        case .debug:
-            return "login.ecosia-dev.xyz"
-        }
+    
     public var storeWriteReviewPage: URL {
         URL(string: "https://itunes.apple.com/app/id1474845552/action=write-review")!
-	}
+    }
 
- 	// MARK: - Authentication URL Patterns
+    // MARK: - Authentication URL Patterns
 
     /// URL paths that indicate user sign-up/sign-in flows
     public var signUpPaths: [String] {
