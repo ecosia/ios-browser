@@ -5,7 +5,7 @@
 import Foundation
 
 public protocol AccountsServiceProtocol {
-    func registerVisit(accessToken: String) async throws -> AccountBalanceResponse
+    func registerVisit(accessToken: String) async throws -> AccountVisitResponse
 }
 
 public final class AccountsService: AccountsServiceProtocol {
@@ -24,7 +24,7 @@ public final class AccountsService: AccountsServiceProtocol {
         self.client = client
     }
 
-    public func registerVisit(accessToken: String) async throws -> AccountBalanceResponse {
+    public func registerVisit(accessToken: String) async throws -> AccountVisitResponse {
         let request = AccountVisitRequest(accessToken: accessToken)
 
         EcosiaLogger.network.info("Making accounts visit request to: \(request.baseURL.absoluteString)\(request.path)")
@@ -53,7 +53,7 @@ public final class AccountsService: AccountsServiceProtocol {
         }
 
         do {
-            let decodedResponse = try JSONDecoder().decode(AccountBalanceResponse.self, from: data)
+            let decodedResponse = try JSONDecoder().decode(AccountVisitResponse.self, from: data)
             EcosiaLogger.network.info("Accounts visit successful: balance=\(decodedResponse.balance.amount), isModified=\(decodedResponse.balance.isModified), increment=\(decodedResponse.balanceIncrement ?? 0)")
             return decodedResponse
         } catch {
