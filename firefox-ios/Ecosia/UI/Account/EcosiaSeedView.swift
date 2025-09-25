@@ -3,16 +3,18 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import SwiftUI
+import Common
 
 /// A reusable seed count component that displays the seed icon and animated count
 @available(iOS 16.0, *)
 public struct EcosiaSeedView: View {
     private let seedCount: Int
     private let iconSize: CGFloat
-    private let textColor: Color
     private let spacing: CGFloat
     private let enableAnimation: Bool
+    private let windowUUID: WindowUUID
     @State private var bounceScale: CGFloat = 1.0
+    @State private var theme = EcosiaSeedViewTheme()
 
     private struct UX {
         static let bounceScaleMin: CGFloat = 0.75
@@ -24,15 +26,15 @@ public struct EcosiaSeedView: View {
     public init(
         seedCount: Int,
         iconSize: CGFloat = .ecosia.space._1l,
-        textColor: Color = .primary,
         spacing: CGFloat = .ecosia.space._1s,
-        enableAnimation: Bool = true
+        enableAnimation: Bool = true,
+        windowUUID: WindowUUID
     ) {
         self.seedCount = seedCount
         self.iconSize = iconSize
-        self.textColor = textColor
         self.spacing = spacing
         self.enableAnimation = enableAnimation
+        self.windowUUID = windowUUID
     }
 
     public var body: some View {
@@ -45,7 +47,7 @@ public struct EcosiaSeedView: View {
 
             Text("\(seedCount)")
                 .font(.headline)
-                .foregroundColor(textColor)
+                .foregroundColor(theme.textColor)
                 .animatedText(numericValue: seedCount, reduceMotionEnabled: !enableAnimation)
         }
         .onChange(of: seedCount) { _ in
@@ -53,6 +55,7 @@ public struct EcosiaSeedView: View {
                 triggerBounce()
             }
         }
+        .ecosiaThemed(windowUUID, $theme)
     }
 
     private func triggerBounce() {
@@ -65,6 +68,15 @@ public struct EcosiaSeedView: View {
                 bounceScale = 1.0
             }
         }
+    }
+}
+
+// MARK: - Theme
+struct EcosiaSeedViewTheme: EcosiaThemeable {
+    var textColor = Color.primary
+
+    mutating func applyTheme(theme: Theme) {
+        textColor = Color(theme.colors.ecosia.textPrimary)
     }
 }
 
@@ -85,7 +97,7 @@ private struct EcosiaSeedViewInteractivePreview: View {
             Text("Interactive Seed Animation Test")
                 .font(.title2.bold())
 
-            EcosiaSeedView(seedCount: seedCount)
+            EcosiaSeedView(seedCount: seedCount, windowUUID: .XCTestDefaultUUID)
 
             HStack {
                 Button("Add Seeds") {
@@ -108,15 +120,17 @@ private struct EcosiaSeedViewInteractivePreview: View {
                 EcosiaSeedView(
                     seedCount: 100,
                     iconSize: .ecosia.space._2l,
-                    spacing: .ecosia.space._s
+                    spacing: .ecosia.space._s,
+                    windowUUID: .XCTestDefaultUUID
                 )
                 EcosiaSeedView(
                     seedCount: 5,
-                    textColor: .blue
+                    windowUUID: .XCTestDefaultUUID
                 )
                 EcosiaSeedView(
                     seedCount: 1,
-                    enableAnimation: false
+                    enableAnimation: false,
+                    windowUUID: .XCTestDefaultUUID
                 )
             }
         }

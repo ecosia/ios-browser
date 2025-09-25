@@ -26,9 +26,8 @@ struct NTPAccountLoginCellView: View {
                 EcosiaAccountNavButton(
                     seedCount: viewModel.seedCount,
                     avatarURL: viewModel.userAvatarURL,
-                    backgroundColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundElevation1),
-                    textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary),
                     enableAnimation: !reduceMotion,
+                    windowUUID: windowUUID,
                     onTap: handleTap
                 )
 
@@ -36,7 +35,7 @@ struct NTPAccountLoginCellView: View {
                 if let increment = viewModel.balanceIncrement {
                     BalanceIncrementAnimationView(
                         increment: increment,
-                        textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary)
+                        windowUUID: windowUUID
                     )
                     .offset(x: 20, y: -10) // Position above-left of the counter number
                 }
