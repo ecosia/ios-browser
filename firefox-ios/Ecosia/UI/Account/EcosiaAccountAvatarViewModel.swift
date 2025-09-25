@@ -53,15 +53,18 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         // Note: Level up is now handled by backend via EcosiaAccountLevelUp notification
     }
 
+#if DEBUG
+    /// Manual level up for testing/previews only
     public func levelUp() {
         progress = 1.0
         triggerSparkles(duration: UX.levelUpDuration)
-        
+
         Task {
             try await Task.sleep(for: .seconds(UX.levelUpDuration))
             progress = 0.0
         }
     }
+#endif
 
     public func triggerSparkles(duration: TimeInterval = 4.0) {
         showSparkles = true
@@ -71,20 +74,21 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
             showSparkles = false
         }
     }
-    
-    /// Updates avatar progress based on AccountBalanceResponse
+
+    /// Updates avatar progress based on AccountVisitResponse
     /// This method should be called when balance data is received from the backend
-    public func updateFromBalanceResponse(_ response: AccountBalanceResponse) {
-        // Backend should provide level progress information in future API response
-        // For now, this is a placeholder for when that data becomes available
-        
-        // Example of how it might work when backend provides level progress:
-        // if let levelProgress = response.levelProgress {
-        //     updateProgress(levelProgress)
-        // }
-        
+    public func updateFromBalanceResponse(_ response: AccountVisitResponse) {
+        // TODO: Backend should provide level progress information in future API response
+        // For now, we could calculate basic progress from balance if needed:
+
+        // Example temporary logic (remove when backend provides level progress):
+        // let balanceProgress = Double(response.balance.amount % 100) / 100.0
+        // updateProgress(balanceProgress)
+
         // The backend will handle level up logic and send EcosiaAccountLevelUp notification
         // when a user levels up, rather than calculating it client-side
+
+        EcosiaLogger.accounts.info("Avatar received balance update: \(response.balance.amount), isModified: \(response.balance.isModified)")
     }
 
     private func setupInitialState() {
