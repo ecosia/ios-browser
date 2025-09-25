@@ -4,6 +4,7 @@
 
 import Common
 import UIKit
+import Ecosia
 
 struct EcosiaLightTheme: Theme {
     public var type: ThemeType = .light
