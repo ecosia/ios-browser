@@ -171,7 +171,7 @@ public enum URLProvider {
     public var aiSearch: URL {
         root.appendingPathComponent("ai-search")
 	}
-    
+
     public var storeWriteReviewPage: URL {
         URL(string: "https://itunes.apple.com/app/id1474845552/action=write-review")!
     }
