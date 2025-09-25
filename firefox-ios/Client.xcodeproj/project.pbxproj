@@ -805,7 +805,6 @@
 		2C4067BA2E82D0C60067303E /* TitleActivityItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3972BF21C22412B00035B87 /* TitleActivityItemProvider.swift */; };
 		2C4067BB2E82D0C60067303E /* SiteTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38A1BEC1A9FA2CA00F6A386 /* SiteTableViewController.swift */; };
 		2C4067BC2E82D0C60067303E /* EcosiaLightTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465E2D520EF90098467A /* EcosiaLightTheme.swift */; };
-		2C4067BD2E82D0C60067303E /* EcosiaColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465C2D520EF90098467A /* EcosiaColor.swift */; };
 		2C4067BE2E82D0C60067303E /* EcosiaDarkTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465D2D520EF90098467A /* EcosiaDarkTheme.swift */; };
 		2C4067BF2E82D0C60067303E /* LegacyTabPeekViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA0601A1C0F4DE200DFADB6 /* LegacyTabPeekViewController.swift */; };
 		2C4067C02E82D0C60067303E /* ScreenState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212985E32A6F078800546684 /* ScreenState.swift */; };
@@ -1472,13 +1471,10 @@
 		2CB5C33F2E45F02D00B1048F /* SearchViewController+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB5C33E2E45F02D00B1048F /* SearchViewController+Ecosia.swift */; };
 		2CC0C2AD2DA804EA006FE9B7 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 2CC0C2AC2DA804EA006FE9B7 /* ViewInspector */; };
 		2CC246602D520EF90098467A /* EcosiaLightTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465E2D520EF90098467A /* EcosiaLightTheme.swift */; };
-		2CC246612D520EF90098467A /* EcosiaColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465C2D520EF90098467A /* EcosiaColor.swift */; };
 		2CC246632D520EF90098467A /* EcosiaDarkTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465D2D520EF90098467A /* EcosiaDarkTheme.swift */; };
 		2CC246642D520EF90098467A /* EcosiaLightTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465E2D520EF90098467A /* EcosiaLightTheme.swift */; };
-		2CC246652D520EF90098467A /* EcosiaColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465C2D520EF90098467A /* EcosiaColor.swift */; };
 		2CC246672D520EF90098467A /* EcosiaDarkTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465D2D520EF90098467A /* EcosiaDarkTheme.swift */; };
 		2CC246682D520EF90098467A /* EcosiaLightTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465E2D520EF90098467A /* EcosiaLightTheme.swift */; };
-		2CC246692D520EF90098467A /* EcosiaColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465C2D520EF90098467A /* EcosiaColor.swift */; };
 		2CC2466B2D520EF90098467A /* EcosiaDarkTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2465D2D520EF90098467A /* EcosiaDarkTheme.swift */; };
 		2CC24C752D52478E0098467A /* MockTabManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A36AC2B2886F27F00CDC0AD /* MockTabManager.swift */; };
 		2CE9E8072E43927000141C6D /* NTPHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE9E8052E43927000141C6D /* NTPHeaderViewModel.swift */; };
@@ -4003,7 +3999,6 @@
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
 		2CB5C33E2E45F02D00B1048F /* SearchViewController+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchViewController+Ecosia.swift"; sourceTree = "<group>"; };
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTests.swift; sourceTree = "<group>"; };
-		2CC2465C2D520EF90098467A /* EcosiaColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaColor.swift; sourceTree = "<group>"; };
 		2CC2465D2D520EF90098467A /* EcosiaDarkTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaDarkTheme.swift; sourceTree = "<group>"; };
 		2CC2465E2D520EF90098467A /* EcosiaLightTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaLightTheme.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
@@ -11950,7 +11945,6 @@
 		2CFEA04B2D455BD500B25CE0 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
-				2CC2465C2D520EF90098467A /* EcosiaColor.swift */,
 				2CC2465D2D520EF90098467A /* EcosiaDarkTheme.swift */,
 				2CC2465E2D520EF90098467A /* EcosiaLightTheme.swift */,
 				2CFEA04A2D455BD500B25CE0 /* EcosiaThemeManager.swift */,
@@ -17327,7 +17321,6 @@
 				E18BAB0128E4AEF300098AE2 /* ImageIdentifiers.swift in Sources */,
 				4392FB48252EC50400AD3D23 /* InternalSchemeHandler.swift in Sources */,
 				2CC246602D520EF90098467A /* EcosiaLightTheme.swift in Sources */,
-				2CC246612D520EF90098467A /* EcosiaColor.swift in Sources */,
 				2CC246632D520EF90098467A /* EcosiaDarkTheme.swift in Sources */,
 				2CFEA0A42D455EB200B25CE0 /* EcosiaThemeManager.swift in Sources */,
 				435E34B3254A6A6000406D92 /* TimeConstants.swift in Sources */,
@@ -17936,7 +17929,6 @@
 				2C4067BA2E82D0C60067303E /* TitleActivityItemProvider.swift in Sources */,
 				2C4067BB2E82D0C60067303E /* SiteTableViewController.swift in Sources */,
 				2C4067BC2E82D0C60067303E /* EcosiaLightTheme.swift in Sources */,
-				2C4067BD2E82D0C60067303E /* EcosiaColor.swift in Sources */,
 				2C4067BE2E82D0C60067303E /* EcosiaDarkTheme.swift in Sources */,
 				2C4067BF2E82D0C60067303E /* LegacyTabPeekViewController.swift in Sources */,
 				2C4067C02E82D0C60067303E /* ScreenState.swift in Sources */,
@@ -19166,7 +19158,6 @@
 				D3972BF41C22412B00035B87 /* TitleActivityItemProvider.swift in Sources */,
 				D38A1BEE1A9FA2CA00F6A386 /* SiteTableViewController.swift in Sources */,
 				2CC246682D520EF90098467A /* EcosiaLightTheme.swift in Sources */,
-				2CC246692D520EF90098467A /* EcosiaColor.swift in Sources */,
 				2CC2466B2D520EF90098467A /* EcosiaDarkTheme.swift in Sources */,
 				7BA0601B1C0F4DE200DFADB6 /* LegacyTabPeekViewController.swift in Sources */,
 				212985E42A6F078800546684 /* ScreenState.swift in Sources */,
@@ -20036,7 +20027,6 @@
 				E1CD81C0290C5C9800124B27 /* DevicePickerTableViewCell.swift in Sources */,
 				E1CD81BF290C5C9500124B27 /* DevicePickerTableViewHeaderCell.swift in Sources */,
 				2CC246642D520EF90098467A /* EcosiaLightTheme.swift in Sources */,
-				2CC246652D520EF90098467A /* EcosiaColor.swift in Sources */,
 				2CC246672D520EF90098467A /* EcosiaDarkTheme.swift in Sources */,
 				1D1933782AF2C8CE005089C9 /* AppEvent.swift in Sources */,
 				1D1933752AF2C8C9005089C9 /* EventQueue.swift in Sources */,
