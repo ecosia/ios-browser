@@ -6,10 +6,11 @@ import SwiftUI
 import Common
 
 @available(iOS 16.0, *)
-public struct EcosiaAccountAvatar: View {
+public struct EcosiaAccountProgressAvatar: View {
     private let avatarURL: URL?
     private let progress: Double
     private let showSparkles: Bool
+    private let showProgress: Bool
     private let size: CGFloat
     private let windowUUID: WindowUUID
 
@@ -17,31 +18,37 @@ public struct EcosiaAccountAvatar: View {
         avatarURL: URL?,
         progress: Double,
         showSparkles: Bool = false,
+        showProgress: Bool = false,
         size: CGFloat = .ecosia.space._6l,
         windowUUID: WindowUUID
     ) {
         self.avatarURL = avatarURL
         self.progress = max(0.0, min(1.0, progress))
-        self.showSparkles = showSparkles
+        self.showSparkles = showSparkles && showProgress // Only show sparkles if progress is visible
+        self.showProgress = showProgress
         self.size = size
         self.windowUUID = windowUUID
     }
 
     public var body: some View {
         ZStack {
-            EcosiaAccountProgressBar(
-                progress: progress,
-                size: progressRingSize,
-                strokeWidth: strokeWidth,
-                windowUUID: windowUUID
-            )
+            // Progress ring (outermost layer) - only shown if showProgress is true
+            if showProgress {
+                EcosiaAccountProgressBar(
+                    progress: progress,
+                    size: progressRingSize,
+                    strokeWidth: strokeWidth,
+                    windowUUID: windowUUID
+                )
+            }
 
             EcosiaAvatar(
                 avatarURL: avatarURL,
                 size: avatarSize
             )
 
-            if showSparkles {
+            // Sparkles animation (overlay) - only shown if both showSparkles and showProgress are true
+            if showSparkles && showProgress {
                 EcosiaSparkleAnimation(
                     isVisible: showSparkles,
                     containerSize: sparkleContainerSize,
@@ -81,14 +88,14 @@ public struct EcosiaAccountAvatar: View {
 
 #if DEBUG
 @available(iOS 16.0, *)
-struct EcosiaAccountAvatar_Previews: PreviewProvider {
+struct EcosiaAccountProgressAvatar_Previews: PreviewProvider {
     static var previews: some View {
-        EcosiaAccountAvatarInteractivePreview()
+        EcosiaAccountProgressAvatarInteractivePreview()
     }
 }
 
 @available(iOS 16.0, *)
-private struct EcosiaAccountAvatarInteractivePreview: View {
+private struct EcosiaAccountProgressAvatarInteractivePreview: View {
     @StateObject private var viewModel = EcosiaAccountAvatarViewModel(progress: 0.3)
     let windowUUID = WindowUUID()
 
@@ -98,10 +105,11 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                 Text("Interactive Testing")
                     .font(.title2.bold())
 
-                EcosiaAccountAvatar(
+                EcosiaAccountProgressAvatar(
                     avatarURL: viewModel.avatarURL,
                     progress: viewModel.progress,
                     showSparkles: viewModel.showSparkles,
+                    showProgress: true, // Enable progress in preview
                     size: .ecosia.space._7l,
                     windowUUID: windowUUID
                 )
@@ -156,11 +164,12 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: .ecosia.space._l) {
 
                     VStack {
-                        Text("Signed Out (25%)")
+                        Text("Hidden Progress")
                             .font(.caption)
-                        EcosiaAccountAvatar(
+                        EcosiaAccountProgressAvatar(
                             avatarURL: nil,
                             progress: 0.25,
+                            showProgress: false,
                             windowUUID: windowUUID
                         )
                     }
@@ -168,9 +177,10 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                     VStack {
                         Text("Signed In (75%)")
                             .font(.caption)
-                        EcosiaAccountAvatar(
+                        EcosiaAccountProgressAvatar(
                             avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
                             progress: 0.75,
+                            showProgress: true,
                             windowUUID: windowUUID
                         )
                     }
@@ -178,9 +188,10 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                     VStack {
                         Text("Complete (100%)")
                             .font(.caption)
-                        EcosiaAccountAvatar(
+                        EcosiaAccountProgressAvatar(
                             avatarURL: nil,
                             progress: 1.0,
+                            showProgress: true,
                             windowUUID: windowUUID
                         )
                     }
@@ -188,9 +199,10 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                     VStack {
                         Text("Large Size")
                             .font(.caption)
-                        EcosiaAccountAvatar(
+                        EcosiaAccountProgressAvatar(
                             avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
                             progress: 0.6,
+                            showProgress: true,
                             size: .ecosia.space._8l,
                             windowUUID: windowUUID
                         )
@@ -206,7 +218,7 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                     VStack {
                         Text("Small")
                             .font(.caption)
-                        EcosiaAccountAvatar(
+                        EcosiaAccountProgressAvatar(
                             avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
                             progress: 0.6,
                             size: .ecosia.space._4l,
@@ -217,7 +229,7 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                     VStack {
                         Text("Medium")
                             .font(.caption)
-                        EcosiaAccountAvatar(
+                        EcosiaAccountProgressAvatar(
                             avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
                             progress: 0.6,
                             size: .ecosia.space._6l,
@@ -228,7 +240,7 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
                     VStack {
                         Text("Large")
                             .font(.caption)
-                        EcosiaAccountAvatar(
+                        EcosiaAccountProgressAvatar(
                             avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
                             progress: 0.6,
                             size: .ecosia.space._8l,
@@ -239,7 +251,7 @@ private struct EcosiaAccountAvatarInteractivePreview: View {
             }
             .padding()
         }
-        .navigationTitle("EcosiaAccountAvatar")
+        .navigationTitle("EcosiaAccountProgressAvatar")
     }
 }
 #endif
