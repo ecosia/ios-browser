@@ -3,30 +3,29 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import SwiftUI
+import Common
 
 /// A complete account navigation button component that combines seed view and avatar
 @available(iOS 16.0, *)
 public struct EcosiaAccountNavButton: View {
     private let seedCount: Int
     private let avatarURL: URL?
-    private let backgroundColor: Color
-    private let textColor: Color
     private let onTap: () -> Void
     private let enableAnimation: Bool
+    private let windowUUID: WindowUUID
+    @State private var theme = EcosiaAccountNavButtonTheme()
 
     public init(
         seedCount: Int,
         avatarURL: URL? = nil,
-        backgroundColor: Color = .gray.opacity(0.2),
-        textColor: Color = .primary,
         enableAnimation: Bool = true,
+        windowUUID: WindowUUID,
         onTap: @escaping () -> Void
     ) {
         self.seedCount = seedCount
         self.avatarURL = avatarURL
-        self.backgroundColor = backgroundColor
-        self.textColor = textColor
         self.enableAnimation = enableAnimation
+        self.windowUUID = windowUUID
         self.onTap = onTap
     }
 
@@ -36,9 +35,9 @@ public struct EcosiaAccountNavButton: View {
                 EcosiaSeedView(
                     seedCount: seedCount,
                     iconSize: .ecosia.space._1l,
-                    textColor: textColor,
                     spacing: .ecosia.space._1s,
-                    enableAnimation: enableAnimation
+                    enableAnimation: enableAnimation,
+                    windowUUID: windowUUID
                 )
 
                 EcosiaAvatar(
@@ -51,10 +50,20 @@ public struct EcosiaAccountNavButton: View {
             .padding(.leading, .ecosia.space._1s)
             .padding(.trailing, .ecosia.space._2s)
             .frame(minWidth: .ecosia.space._8l, minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
-            .background(backgroundColor)
+            .background(theme.backgroundColor)
             .cornerRadius(.ecosia.borderRadius._1l)
         }
         .buttonStyle(PlainButtonStyle())
+        .ecosiaThemed(windowUUID, $theme)
+    }
+}
+
+// MARK: - Theme
+struct EcosiaAccountNavButtonTheme: EcosiaThemeable {
+    var backgroundColor = Color.gray.opacity(0.2)
+
+    mutating func applyTheme(theme: Theme) {
+        backgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
     }
 }
 
@@ -68,7 +77,7 @@ struct EcosiaAccountNavButton_Previews: PreviewProvider {
             // Logged out state
             EcosiaAccountNavButton(
                 seedCount: 1,
-                backgroundColor: .gray.opacity(0.2),
+                windowUUID: .XCTestDefaultUUID,
                 onTap: {}
             )
 
@@ -76,24 +85,22 @@ struct EcosiaAccountNavButton_Previews: PreviewProvider {
             EcosiaAccountNavButton(
                 seedCount: 42,
                 avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                backgroundColor: .blue.opacity(0.2),
+                windowUUID: .XCTestDefaultUUID,
                 onTap: {}
             )
 
             // High seed count
             EcosiaAccountNavButton(
                 seedCount: 999,
-                backgroundColor: .green.opacity(0.2),
-                textColor: .green,
+                windowUUID: .XCTestDefaultUUID,
                 onTap: {}
             )
 
-            // Dark background
+            // Different avatar
             EcosiaAccountNavButton(
                 seedCount: 25,
                 avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                backgroundColor: .black.opacity(0.8),
-                textColor: .white,
+                windowUUID: .XCTestDefaultUUID,
                 onTap: {}
             )
         }
