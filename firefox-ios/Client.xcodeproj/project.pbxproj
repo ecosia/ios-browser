@@ -26326,7 +26326,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = Sync/Info.plist;
@@ -26355,7 +26354,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
@@ -26617,7 +26615,6 @@
 			baseConfigurationReference = 2CB288D02B07C6F300A8FCB3 /* EcosiaBeta.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -26872,7 +26869,6 @@
 			baseConfigurationReference = 2C2F32012D46A53000977F55 /* EcosiaTesting.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -26926,7 +26922,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
@@ -26945,7 +26940,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = WidgetKit/Info.plist;
 				OTHER_LDFLAGS = (
@@ -27088,7 +27082,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -27110,7 +27103,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -27131,7 +27123,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = Sync/Info.plist;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -27178,7 +27169,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -27250,7 +27240,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -27600,7 +27589,6 @@
 			baseConfigurationReference = 2C406F052E82D1880067303E /* EcosiaPreview.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -27681,7 +27669,6 @@
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
@@ -27700,7 +27687,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = WidgetKit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -27838,7 +27824,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -27861,7 +27846,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
@@ -27884,7 +27868,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = Sync/Info.plist;
@@ -28114,7 +28097,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -28184,7 +28166,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -28263,7 +28244,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -29141,7 +29121,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = WidgetKit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -29160,7 +29139,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = WidgetKit/Info.plist;
 				OTHER_LDFLAGS = (
@@ -29217,7 +29195,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -29239,7 +29216,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -29552,7 +29528,6 @@
 			baseConfigurationReference = 2CB288D12B07C6F300A8FCB3 /* EcosiaBetaDebug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -29606,7 +29581,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
@@ -29625,7 +29599,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -29678,7 +29651,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = Sync/Info.plist;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -29787,7 +29759,6 @@
 			baseConfigurationReference = 2CB288D02B07C6F300A8FCB3 /* EcosiaBeta.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -29977,7 +29948,6 @@
 			baseConfigurationReference = 2CB288CF2B07C6F300A8FCB3 /* EcosiaDebug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -30038,7 +30008,6 @@
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
