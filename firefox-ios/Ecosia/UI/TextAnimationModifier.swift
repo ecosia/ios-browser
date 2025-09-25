@@ -9,16 +9,16 @@ import SwiftUI
 public struct TextAnimationModifier: ViewModifier {
     let numericValue: Int
     let reduceMotionEnabled: Bool
-    
+
     private struct UX {
         static let fallbackAnimationDuration: TimeInterval = 0.3
     }
-    
+
     public init(numericValue: Int, reduceMotionEnabled: Bool = UIAccessibility.isReduceMotionEnabled) {
         self.numericValue = numericValue
         self.reduceMotionEnabled = reduceMotionEnabled
     }
-    
+
     public func body(content: Content) -> some View {
         if #available(iOS 17.0, *) {
             if reduceMotionEnabled {
