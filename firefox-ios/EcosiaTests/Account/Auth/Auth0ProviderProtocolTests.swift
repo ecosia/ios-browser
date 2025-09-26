@@ -38,14 +38,15 @@ final class Auth0ProviderProtocolTests: XCTestCase {
     func testDefaultWebAuth_returnsAuth0WebAuth() {
         // Arrange
         let provider: Auth0ProviderProtocol = WebAuth0Provider()
+        let expectedSettings = DefaultAuth0SettingsProvider()
 
         // Act
         let webAuth = provider.webAuth
 
         // Assert
         XCTAssertNotNil(webAuth)
-        XCTAssertEqual(webAuth.clientId, "zNU6cgqji5cE9qPkkXIlqMJbIwTPShdU")
-        XCTAssertEqual(webAuth.url.absoluteString, "https://ecosia-staging.eu.auth0.com/")
+        XCTAssertEqual(webAuth.clientId, expectedSettings.id, "WebAuth client ID should match settings provider")
+        XCTAssertEqual(webAuth.url.absoluteString, "https://\(expectedSettings.domain)/", "WebAuth URL should match settings domain")
     }
 
     // MARK: - State Management Tests (Protocol Default Implementation Verification)
