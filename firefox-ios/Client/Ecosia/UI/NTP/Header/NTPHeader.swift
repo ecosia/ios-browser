@@ -73,6 +73,7 @@ struct NTPHeaderView: View {
     // Use explicit SwiftUI.Environment to avoid ambiguity
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
+    @State private var showAccountImpactView = false
     
     var body: some View {
         HStack(spacing: .ecosia.space._1s) {
@@ -92,13 +93,12 @@ struct NTPHeaderView: View {
                     onTap: handleTap
                 )
                 
-                // Balance increment indicator positioned above-left of counter
                 if let increment = viewModel.balanceIncrement {
                     BalanceIncrementAnimationView(
                         increment: increment,
                         windowUUID: windowUUID
                     )
-                    .offset(x: 20, y: -10) // Position above-left of the counter number
+                    .offset(x: 20, y: -10)
                 }
             }
         }
@@ -107,6 +107,31 @@ struct NTPHeaderView: View {
         .onAppear {
             viewModel.registerVisitIfNeeded()
         }
+        .sheet(isPresented: $showAccountImpactView) {
+            let isLoggedIn = viewModel.isLoggedIn
+            let username: String? = nil // Username not available in NTPHeaderViewModel
+            let avatarURL = viewModel.userAvatarURL
+            let seedCount = viewModel.seedCount
+            let currentLevel = isLoggedIn ? "Level 1 - \(String.localized(.ecocurious))" : nil
+            
+            EcosiaAccountImpactView(
+                viewModel: EcosiaAccountImpactViewModel(
+                    isLoggedIn: isLoggedIn,
+                    username: username,
+                    currentLevel: currentLevel,
+                    avatarURL: avatarURL,
+                    seedCount: seedCount,
+                    onLogin: {
+                        viewModel.performLogin()
+                    },
+                    onDismiss: {
+                        showAccountImpactView = false
+                    }
+                ),
+                windowUUID: windowUUID
+            )
+            .presentationDetents([.medium])
+        }
     }
     
     private func handleAISearchTap() {
@@ -114,10 +139,6 @@ struct NTPHeaderView: View {
     }
     
     private func handleTap() {
-        if viewModel.isLoggedIn {
-            viewModel.performLogout()
-        } else {
-            viewModel.performLogin()
-        }
+        showAccountImpactView = true
     }
 }
