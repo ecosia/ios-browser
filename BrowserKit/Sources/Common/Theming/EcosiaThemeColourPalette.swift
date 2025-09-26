@@ -18,6 +18,7 @@ public protocol EcosiaSemanticColors {
     var backgroundElevation1: UIColor { get }
     var backgroundElevation2: UIColor { get }
     var backgroundBrandSecondaryAlt: UIColor { get }
+    var backgroundInverseNeutral: UIColor { get }
 
     // MARK: - Border
     var borderDecorative: UIColor { get }
@@ -51,6 +52,7 @@ public protocol EcosiaSemanticColors {
     var textPrimary: UIColor { get }
     var textInversePrimary: UIColor { get }
     var textSecondary: UIColor { get }
+    var textLinkPrimary: UIColor { get }
     var brandImpact: UIColor { get }
 }
 
@@ -70,6 +72,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundElevation2: UIColor = .systemGray
     var backgroundBrandSecondaryAlt: UIColor = .systemGray
     var borderDecorative: UIColor = .systemGray
+    var backgroundInverseNeutral: UIColor = .systemGray
     var brandPrimary: UIColor = .systemGray
     var buttonBackgroundPrimary: UIColor = .systemGray
     var buttonBackgroundPrimaryActive: UIColor = .systemGray
@@ -88,5 +91,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textPrimary: UIColor = .systemGray
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
+    var textLinkPrimary: UIColor = .systemGray
     var brandImpact: UIColor = .systemGray
 }
