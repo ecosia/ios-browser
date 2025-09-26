@@ -248,6 +248,7 @@
 "Do you enjoy Ecosia?" = "Do you enjoy Ecosia?";
 
 // Level System
+"Level" = "Level";
 "Ecocurious" = "Ecocurious";
 "Green explorer" = "Green explorer";
 "Planet pal" = "Planet pal";
@@ -268,3 +269,9 @@
 "Sustainability sage" = "Sustainability sage";
 "Earth advocate" = "Earth advocate";
 "Seed superstar" = "Seed superstar";
+
+// Account Impact View. "Sign up" already managed above in the Newsletter section
+"Guest user" = "Guest user";
+"Seeds symbolize your own impact" = "Seeds symbolize your own impact";
+"Collect seeds every day you use Ecosia and see the climate impact you're having." = "Collect seeds every day you use Ecosia and see the climate impact you're having.";
+"Learn more about seeds" = "Learn more about seeds";
