@@ -54,5 +54,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var textPrimary: UIColor = EcosiaColor.White
     var textInversePrimary: UIColor = EcosiaColor.Gray90
     var textSecondary: UIColor = EcosiaColor.Gray30
+    var textLinkPrimary: UIColor = EcosiaColor.White
     var brandImpact: UIColor = EcosiaColor.Yellow40
+    var backgroundInverseNeutral: UIColor = EcosiaColor.White
 }
