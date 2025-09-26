@@ -120,6 +120,31 @@ struct NTPHeaderView: View {
             .padding(.horizontal, .ecosia.space._m)
             .dynamicHeightPresentationDetent()
         }
+        .sheet(isPresented: $showAccountImpactView) {
+            let isLoggedIn = viewModel.isLoggedIn
+            let username: String? = nil // Username not available in NTPHeaderViewModel
+            let avatarURL = viewModel.userAvatarURL
+            let seedCount = viewModel.seedCount
+            let currentLevel = isLoggedIn ? "Level 1 - \(String.localized(.ecocurious))" : nil
+            
+            EcosiaAccountImpactView(
+                viewModel: EcosiaAccountImpactViewModel(
+                    isLoggedIn: isLoggedIn,
+                    username: username,
+                    currentLevel: currentLevel,
+                    avatarURL: avatarURL,
+                    seedCount: seedCount,
+                    onLogin: {
+                        viewModel.performLogin()
+                    },
+                    onDismiss: {
+                        showAccountImpactView = false
+                    }
+                ),
+                windowUUID: windowUUID
+            )
+            .presentationDetents([.medium])
+        }
     }
     
     private func handleAISearchTap() {
