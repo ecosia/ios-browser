@@ -28,9 +28,12 @@ extension Analytics {
     public enum Label: String {
         case
         analytics,
+        cardCta = "card_cta",
         clear,
+        close,
         market,
         signIn = "sign_in",
+        signUp = "sign_up",
         toolbar
 
         public enum Bookmarks: String {
@@ -228,6 +231,7 @@ extension Analytics {
         header,
         home,
         detail,
+        menu,
         nativeSettings = "native_settings"
 
         public enum APNConsent: String {
