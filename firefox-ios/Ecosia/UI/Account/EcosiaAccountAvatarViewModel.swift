@@ -13,11 +13,14 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     @Published public var avatarURL: URL?
     @Published public var progress: Double
     @Published public var showSparkles = false
+    @Published public var currentLevel: AccountSeedLevel
+    @Published public var seedCount: Int = 0
 
     private var authStateObserver: NSObjectProtocol?
     private var userProfileObserver: NSObjectProtocol?
     private var progressObserver: NSObjectProtocol?
     private var levelUpObserver: NSObjectProtocol?
+    private var previousSeedCount: Int = 0
 
     private struct UX {
         static let defaultProgress: Double = 0.25
@@ -26,10 +29,14 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
 
     public init(
         avatarURL: URL? = nil,
-        progress: Double = 0.25
+        progress: Double = 0.25,
+        seedCount: Int = 0
     ) {
         self.avatarURL = avatarURL
         self.progress = max(0.0, min(1.0, progress))
+        self.seedCount = seedCount
+        self.previousSeedCount = seedCount
+        self.currentLevel = AccountSeedLevelSystem.currentLevel(for: seedCount)
 
         setupInitialState()
         setupObservers()
@@ -50,8 +57,7 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     public func updateProgress(_ newProgress: Double) {
         let clampedProgress = max(0.0, min(1.0, newProgress))
         progress = clampedProgress
-        // Note: Level up is now handled by backend via EcosiaAccountLevelUp notification
-    }
+        }
 
 #if DEBUG
     /// Manual level up for testing/previews only
@@ -76,19 +82,43 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     /// Updates avatar progress based on AccountVisitResponse
-    /// This method should be called when balance data is received from the backend
     public func updateFromBalanceResponse(_ response: AccountVisitResponse) {
-        // TODO: Backend should provide level progress information in future API response
-        // For now, we could calculate basic progress from balance if needed:
-
-        // Example temporary logic (remove when backend provides level progress):
-        // let balanceProgress = Double(response.balance.amount % 100) / 100.0
-        // updateProgress(balanceProgress)
-
-        // The backend will handle level up logic and send EcosiaAccountLevelUp notification
-        // when a user levels up, rather than calculating it client-side
-
+        let newSeedCount = response.balance.amount
+        updateSeedCount(newSeedCount)
+        
         EcosiaLogger.accounts.info("Avatar received balance update: \(response.balance.amount), isModified: \(response.balance.isModified)")
+    }
+    
+    /// Updates seed count and handles level progression
+    public func updateSeedCount(_ newSeedCount: Int) {
+        previousSeedCount = seedCount
+        seedCount = newSeedCount
+        
+        let newLevel = AccountSeedLevelSystem.currentLevel(for: seedCount)
+        let newProgress = AccountSeedLevelSystem.progressToNextLevel(for: seedCount)
+        
+        if let leveledUp = AccountSeedLevelSystem.checkLevelUp(from: previousSeedCount, to: seedCount) {
+            currentLevel = leveledUp
+            progress = newProgress
+            
+            triggerLevelUpAnimation()
+            
+            EcosiaLogger.accounts.info("User leveled up to \(leveledUp.level): \(leveledUp.localizedName)")
+        } else {
+            currentLevel = newLevel
+            progress = newProgress
+        }
+    }
+    
+    private func triggerLevelUpAnimation() {
+        progress = 1.0
+        triggerSparkles(duration: UX.levelUpDuration)
+        
+        Task {
+            try await Task.sleep(for: .seconds(UX.levelUpDuration))
+            let actualProgress = AccountSeedLevelSystem.progressToNextLevel(for: seedCount)
+            progress = actualProgress
+        }
     }
 
     private func setupInitialState() {
