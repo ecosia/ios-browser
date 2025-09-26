@@ -126,7 +126,7 @@ struct NTPHeaderView: View {
             let avatarURL = viewModel.userAvatarURL
             let seedCount = viewModel.seedCount
             let currentLevel = isLoggedIn ? "Level 1 - \(String.localized(.ecocurious))" : nil
-            
+
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
                     isLoggedIn: isLoggedIn,
@@ -143,14 +143,15 @@ struct NTPHeaderView: View {
                 ),
                 windowUUID: windowUUID
             )
+            .padding(.horizontal, .ecosia.space._m)
             .presentationDetents([.medium])
         }
     }
-    
+
     private func handleAISearchTap() {
         viewModel.openAISearch()
     }
-    
+
     private func handleTap() {
         showAccountImpactView = true
         Analytics.shared.accountHeaderClicked()
