@@ -84,7 +84,7 @@ final class Welcome: UIViewController {
         overlay.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
 
-        let overlayLogo = UIImageView(image: .init(named: "ecosiaLogoLaunch")?.withRenderingMode(.alwaysTemplate))
+        let overlayLogo = UIImageView(image: .init(named: "ecosiaLogoLaunch"))
         overlayLogo.translatesAutoresizingMaskIntoConstraints = false
         overlayLogo.contentMode = .scaleAspectFit
         overlay.addSubview(overlayLogo)
