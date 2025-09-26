@@ -121,130 +121,13 @@ struct NTPHeaderView: View {
             .dynamicHeightPresentationDetent()
         }
     }
-
+    
     private func handleAISearchTap() {
         viewModel.openAISearch()
     }
-
+    
     private func handleTap() {
         showAccountImpactView = true
         Analytics.shared.accountHeaderClicked()
     }
 }
-
-#if DEBUG
-// MARK: - Preview
-@available(iOS 16.0, *)
-struct NTPHeaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // Logged out state
-            NTPHeaderView(
-                viewModel: createMockViewModel(isLoggedIn: false, seedCount: 42),
-                windowUUID: .XCTestDefaultUUID
-            )
-            .previewDisplayName("Logged Out")
-
-            // Logged in state
-            NTPHeaderView(
-                viewModel: createMockViewModel(
-                    isLoggedIn: true,
-                    seedCount: 1247,
-                    avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4")
-                ),
-                windowUUID: .XCTestDefaultUUID
-            )
-            .previewDisplayName("Logged In")
-
-            // With balance increment animation
-            NTPHeaderView(
-                viewModel: createMockViewModelWithIncrement(seedCount: 856, increment: 3),
-                windowUUID: .XCTestDefaultUUID
-            )
-            .previewDisplayName("With Balance Increment")
-        }
-        .padding()
-        .previewLayout(.sizeThatFits)
-    }
-
-    private static func createMockViewModel(
-        isLoggedIn: Bool = false,
-        seedCount: Int = 42,
-        avatarURL: URL? = nil
-    ) -> NTPHeaderViewModel {
-        let mockAuth = MockAuth(isLoggedIn: isLoggedIn, avatarURL: avatarURL)
-        let mockAccountsProvider = MockAccountsProvider()
-        let mockDelegate = MockNTPHeaderDelegate()
-
-        return NTPHeaderViewModel(
-            profile: Profile(localName: "test"),
-            theme: LightTheme(),
-            windowUUID: .XCTestDefaultUUID,
-            accountsProvider: mockAccountsProvider,
-            auth: mockAuth,
-            delegate: mockDelegate
-        )
-    }
-
-    private static func createMockViewModelWithIncrement(
-        seedCount: Int = 100,
-        increment: Int = 5
-    ) -> NTPHeaderViewModel {
-        let viewModel = createMockViewModel(isLoggedIn: true, seedCount: seedCount)
-        // Simulate balance increment
-        DispatchQueue.main.async {
-            viewModel.updateSeedCount(seedCount)
-            // Mock the increment animation
-            // viewModel.balanceIncrement = increment
-        }
-        return viewModel
-    }
-}
-
-// MARK: - Mock Objects for Preview
-private class MockAuth: AuthInterface {
-    let isLoggedIn: Bool
-    let avatarURL: URL?
-
-    init(isLoggedIn: Bool, avatarURL: URL? = nil) {
-        self.isLoggedIn = isLoggedIn
-        self.avatarURL = avatarURL
-    }
-
-    var accessToken: String? { isLoggedIn ? "mock-token" : nil }
-    var userProfile: UserProfile? {
-        isLoggedIn ? UserProfile(id: "1", name: "Test User", pictureURL: avatarURL) : nil
-    }
-
-    func login() {}
-    func logout() {}
-    func refreshToken() async throws {}
-}
-
-private class MockAccountsProvider: AccountsProviderProtocol {
-    func registerVisit(accessToken: String) async throws -> AccountVisitResponse {
-        return AccountVisitResponse(
-            balance: AccountVisitResponse.Balance(
-                amount: 100,
-                updatedAt: ISO8601DateFormatter().string(from: Date()),
-                isModified: true
-            ),
-            previousBalance: AccountVisitResponse.PreviousBalance(amount: 97)
-        )
-    }
-}
-
-private class MockNTPHeaderDelegate: NTPHeaderDelegate {
-    func headerOpenAISearch() {}
-}
-
-private class MockSeedProgressManager: SeedProgressManagerProtocol {
-    static var progressUpdatedNotification: Notification.Name { .init("Mock.SeedProgressUpdated") }
-    static var levelUpNotification: Notification.Name { .init("Mock.SeedLevelUp") }
-
-    static func loadTotalSeedsCollected() -> Int { 42 }
-    static func loadCurrentLevel() -> Int { 1 }
-    static func collectDailySeed() {}
-    static func resetCounter() {}
-}
-#endif
