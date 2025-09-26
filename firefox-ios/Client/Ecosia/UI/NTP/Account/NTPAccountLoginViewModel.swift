@@ -28,14 +28,14 @@ final class NTPAccountLoginViewModel: ObservableObject {
     weak var delegate: NTPSeedCounterDelegate?
     var onTapAction: ((UIButton) -> Void)?
     var theme: Theme
-    private let accountsProvider: AccountsProvider
+    private let accountsProvider: AccountsProviderProtocol
 
     // MARK: - Initialization
     init(profile: Profile,
          theme: Theme,
          auth: EcosiaAuth,
          windowUUID: WindowUUID,
-         accountsProvider: AccountsProvider = AccountsProvider()) {
+         accountsProvider: AccountsProviderProtocol = AccountsProvider()) {
         self.profile = profile
         self.auth = auth
         self.theme = theme
@@ -94,9 +94,9 @@ final class NTPAccountLoginViewModel: ObservableObject {
                     return
                 }
 
-                // Step 3: Make API call (or use mock for testing)
+                // Step 3: Make API call
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
-                let response = try await getMockOrRealResponse(accessToken: accessToken)
+                let response = try await accountsProvider.registerVisit(accessToken: accessToken)
                 await updateBalance(response)
             } catch {
                 EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
@@ -104,40 +104,10 @@ final class NTPAccountLoginViewModel: ObservableObject {
         }
     }
 
-    // MARK: - API Response (Mock for Testing)
-
-    private func getMockOrRealResponse(accessToken: String) async throws -> AccountBalanceResponse {
-        // TODO: Switch between mock and real API for testing
-        let useMockData = false // Set to false for real API calls
-
-        if useMockData {
-            EcosiaLogger.accounts.info("Using mock response for testing")
-            return createMockResponse()
-        } else {
-            return try await accountsProvider.registerVisit(accessToken: accessToken)
-        }
-    }
-
-    private func createMockResponse() -> AccountBalanceResponse {
-        let currentBalance = seedCount
-        let increment = Int.random(in: 1...3) // Random increment for testing
-
-        return AccountBalanceResponse(
-            balance: AccountBalanceResponse.Balance(
-                amount: currentBalance + increment,
-                updatedAt: ISO8601DateFormatter().string(from: Date()),
-                isModified: true
-            ),
-            previousBalance: AccountBalanceResponse.PreviousBalance(
-                amount: currentBalance
-            )
-        )
-    }
-
     // MARK: - Auth State Synchronization
 
     @MainActor
-    private func updateBalance(_ response: AccountBalanceResponse) {
+    private func updateBalance(_ response: AccountVisitResponse) {
         let newSeedCount = response.balance.amount
 
         if let increment = response.balanceIncrement {

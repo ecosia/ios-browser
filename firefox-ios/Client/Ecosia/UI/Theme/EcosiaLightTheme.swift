@@ -4,6 +4,7 @@
 
 import Common
 import UIKit
+import Ecosia
 
 struct EcosiaLightTheme: Theme {
     public var type: ThemeType = .light
@@ -138,4 +139,5 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textPrimary: UIColor = EcosiaColor.Gray70
     var textInversePrimary: UIColor = EcosiaColor.White
     var textSecondary: UIColor = EcosiaColor.Gray50
+    var brandImpact: UIColor = EcosiaColor.Yellow40
 }

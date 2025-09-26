@@ -73,7 +73,7 @@ struct NTPHeaderView: View {
     // Use explicit SwiftUI.Environment to avoid ambiguity
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
-
+    
     var body: some View {
         HStack(spacing: .ecosia.space._1s) {
             Spacer()
@@ -85,18 +85,16 @@ struct NTPHeaderView: View {
                 EcosiaAccountNavButton(
                     seedCount: viewModel.seedCount,
                     avatarURL: viewModel.userAvatarURL,
-                    backgroundColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundElevation1),
-                    textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary),
                     enableAnimation: !reduceMotion,
+                    windowUUID: windowUUID,
                     onTap: handleTap
                 )
-
+                
                 // Balance increment indicator positioned above-left of counter
                 if let increment = viewModel.balanceIncrement {
                     BalanceIncrementAnimationView(
                         increment: increment,
-                        textColor: Color(themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textPrimary),
-                        backgroundColor: Color(EcosiaColor.Peach100)
+                        windowUUID: windowUUID
                     )
                     .offset(x: 20, y: -10) // Position above-left of the counter number
                 }
@@ -108,11 +106,11 @@ struct NTPHeaderView: View {
             viewModel.registerVisitIfNeeded()
         }
     }
-
+    
     private func handleAISearchTap() {
         viewModel.openAISearch()
     }
-
+    
     private func handleTap() {
         if viewModel.isLoggedIn {
             viewModel.performLogout()
