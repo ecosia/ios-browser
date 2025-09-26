@@ -14,7 +14,7 @@ public enum URLProvider {
         case .production:
             return URL(string: "https://www.ecosia.org")!
         case .staging:
-            return URL(string: "https://www.ecosia-staging.xyz")!
+            return URL(string: "https://core-25620.www.ecosia-dev.xyz/")!
         }
     }
 
