@@ -114,24 +114,46 @@ private struct EcosiaAccountProgressAvatarInteractivePreview: View {
                     windowUUID: windowUUID
                 )
 
-                Text("Progress: \(Int(viewModel.progress * 100))%")
-                    .font(.caption)
+                VStack(spacing: .ecosia.space._s) {
+                    Text("Level \(viewModel.currentLevel.level): \(viewModel.currentLevel.localizedName)")
+                        .font(.headline)
+
+                    Text("Seeds: \(viewModel.seedCount)")
+                        .font(.subheadline)
+
+                    Text("Progress: \(Int(viewModel.progress * 100))%")
+                        .font(.caption)
+
+                    if let nextLevel = AccountSeedLevelSystem.nextLevel(for: viewModel.seedCount) {
+                        Text("Next: Level \(nextLevel.level) (\(nextLevel.seedsRequired - viewModel.seedCount) seeds needed)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Max Level Reached!")
+                            .font(.caption2)
+                            .foregroundColor(.green)
+                    }
+                }
 
                 VStack(spacing: .ecosia.space._s) {
                     HStack {
-                        Button("Add Progress") {
-                            let newProgress = min(1.0, viewModel.progress + 0.1)
-                            viewModel.updateProgress(newProgress)
+                        Button("Add Seed") {
+                            viewModel.updateSeedCount(viewModel.seedCount + 1)
                         }
                         .buttonStyle(.bordered)
 
-                        Button("Level Up!") {
-                            viewModel.levelUp()
+                        Button("Add 10 Seeds") {
+                            viewModel.updateSeedCount(viewModel.seedCount + 10)
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.bordered)
+                        
+                        Button("Add 100 Seeds") {
+                            viewModel.updateSeedCount(viewModel.seedCount + 100)
+                        }
+                        .buttonStyle(.bordered)
 
                         Button("Reset") {
-                            viewModel.updateProgress(0.25)
+                            viewModel.updateSeedCount(0)
                         }
                         .buttonStyle(.bordered)
                     }
@@ -144,6 +166,23 @@ private struct EcosiaAccountProgressAvatarInteractivePreview: View {
 
                         Button("Remove Avatar") {
                             viewModel.updateAvatarURL(nil)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+
+                    HStack {
+                        Button("Level 5") {
+                            viewModel.updateSeedCount(30)
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button("Level 10") {
+                            viewModel.updateSeedCount(200)
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button("Level 20") {
+                            viewModel.updateSeedCount(1200)
                         }
                         .buttonStyle(.bordered)
                     }
