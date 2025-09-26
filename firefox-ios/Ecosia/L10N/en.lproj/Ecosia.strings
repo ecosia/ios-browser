@@ -249,6 +249,10 @@
 
 // Level System
 "Level" = "Level";
+
+// WebView Modal
+"Failed to load page" = "Failed to load page";
+"Try Again" = "Try Again";
 "Ecocurious" = "Ecocurious";
 "Green explorer" = "Green explorer";
 "Planet pal" = "Planet pal";

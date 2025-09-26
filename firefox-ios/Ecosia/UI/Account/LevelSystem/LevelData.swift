@@ -9,13 +9,13 @@ public struct AccountSeedLevel {
     public let level: Int
     public let nameKey: String
     public let seedsRequired: Int
-    
+
     public init(level: Int, nameKey: String, seedsRequired: Int) {
         self.level = level
         self.nameKey = nameKey
         self.seedsRequired = seedsRequired
     }
-    
+
     /// Localized name for the level
     public var localizedName: String {
         return String.localized(.init(rawValue: nameKey) ?? .ecocurious)
@@ -23,7 +23,7 @@ public struct AccountSeedLevel {
 }
 
 public struct AccountSeedLevelSystem {
-    
+
     /// All available levels in ascending order
     public static let levels: [AccountSeedLevel] = [
         AccountSeedLevel(level: 1, nameKey: "ecocurious", seedsRequired: 0),

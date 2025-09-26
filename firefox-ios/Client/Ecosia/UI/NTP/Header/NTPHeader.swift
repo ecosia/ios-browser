@@ -74,7 +74,7 @@ struct NTPHeaderView: View {
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
     @State private var showAccountImpactView = false
-    
+
     var body: some View {
         HStack(spacing: .ecosia.space._1s) {
             Spacer()
@@ -90,7 +90,7 @@ struct NTPHeaderView: View {
                     windowUUID: windowUUID,
                     onTap: handleTap
                 )
-                
+
                 if let increment = viewModel.balanceIncrement {
                     BalanceIncrementAnimationView(
                         increment: increment,
@@ -111,7 +111,7 @@ struct NTPHeaderView: View {
             let avatarURL = viewModel.userAvatarURL
             let seedCount = viewModel.seedCount
             let currentLevel = isLoggedIn ? "Level 1 - \(String.localized(.ecocurious))" : nil
-            
+
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
                     isLoggedIn: isLoggedIn,
@@ -128,14 +128,15 @@ struct NTPHeaderView: View {
                 ),
                 windowUUID: windowUUID
             )
+            .padding(.horizontal, .ecosia.space._m)
             .presentationDetents([.medium])
         }
     }
-    
+
     private func handleAISearchTap() {
         viewModel.openAISearch()
     }
-    
+
     private func handleTap() {
         showAccountImpactView = true
     }
