@@ -16,6 +16,8 @@ public struct EcosiaWebViewModal: View {
     @State private var webView: WKWebView?
     @State private var isLoading = true
     @State private var pageTitle = ""
+    @State private var hasError = false
+    @State private var errorMessage = ""
 
     public init(url: URL, windowUUID: WindowUUID) {
         self.url = url
@@ -26,22 +28,54 @@ public struct EcosiaWebViewModal: View {
         NavigationView {
             ZStack {
                 theme.backgroundColor.ignoresSafeArea()
-                
+
                 VStack(spacing: 0) {
-                    if isLoading {
-                        ProgressView()
+                    ZStack {
+                        if hasError {
+                            VStack(spacing: 16) {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .font(.system(size: 48))
+                                    .foregroundColor(theme.brandPrimaryColor)
+
+                                Text(String.localized(.failedToLoadPage))
+                                    .font(.headline)
+                                    .foregroundColor(theme.brandPrimaryColor)
+
+                                Text(errorMessage)
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+
+                                Button(String.localized(.tryAgain)) {
+                                    hasError = false
+                                    isLoading = true
+                                    let request = URLRequest(url: url)
+                                    webView?.load(request)
+                                }
+                                .foregroundColor(theme.brandPrimaryColor)
+                            }
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else {
-                        WebViewRepresentable(
-                            url: url,
-                            webView: $webView,
-                            isLoading: $isLoading,
-                            pageTitle: $pageTitle
-                        )
+                        } else {
+                            WebViewRepresentable(
+                                url: url,
+                                webView: $webView,
+                                isLoading: $isLoading,
+                                pageTitle: $pageTitle,
+                                hasError: $hasError,
+                                errorMessage: $errorMessage
+                            )
+
+                            if isLoading {
+                                theme.backgroundColor
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                ProgressView()
+                                    .scaleEffect(1.2)
+                            }
+                        }
                     }
                 }
             }
-            .navigationTitle(pageTitle.isEmpty ? "Loading..." : pageTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -64,15 +98,23 @@ private struct WebViewRepresentable: UIViewRepresentable {
     @Binding var webView: WKWebView?
     @Binding var isLoading: Bool
     @Binding var pageTitle: String
+    @Binding var hasError: Bool
+    @Binding var errorMessage: String
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        let configuration = WKWebViewConfiguration()
+        configuration.allowsInlineMediaPlayback = true
+        configuration.mediaTypesRequiringUserActionForPlayback = []
+
+        let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
+        webView.allowsBackForwardNavigationGestures = true
         self.webView = webView
-        
-        let request = URLRequest(url: url)
+
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 30.0 // 30 second timeout
         webView.load(request)
-        
+
         return webView
     }
 
@@ -93,6 +135,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
             parent.isLoading = true
+            parent.hasError = false
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -102,6 +145,14 @@ private struct WebViewRepresentable: UIViewRepresentable {
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
             parent.isLoading = false
+            parent.hasError = true
+            parent.errorMessage = error.localizedDescription
+        }
+
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            parent.isLoading = false
+            parent.hasError = true
+            parent.errorMessage = error.localizedDescription
         }
     }
 }

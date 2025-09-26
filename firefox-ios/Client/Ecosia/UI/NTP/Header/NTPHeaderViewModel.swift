@@ -17,7 +17,7 @@ final class NTPHeaderViewModel: ObservableObject {
     internal weak var delegate: NTPHeaderDelegate?
     internal var theme: Theme
     private let windowUUID: WindowUUID
-    private let profile: Profile
+    let profile: Profile
     private(set) var auth: EcosiaAuth
     private var authStateObserver: NSObjectProtocol?
     private var userProfileObserver: NSObjectProtocol?

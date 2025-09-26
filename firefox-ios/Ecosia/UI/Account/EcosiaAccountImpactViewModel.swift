@@ -17,12 +17,12 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
     @Published public var seedCount: Int
     @Published public var isLoading: Bool = false
     @Published public var shouldShowLevelUpAnimation: Bool = false
-    
+
     // MARK: - Private Properties
     private let onLoginAction: () -> Void
     private let onDismissAction: () -> Void
     private var previousSeedCount: Int = 0
-    
+
     // MARK: - Initialization
     public init(
         isLoggedIn: Bool,
@@ -42,13 +42,13 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         self.onLoginAction = onLogin
         self.onDismissAction = onDismiss
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Handles the main CTA button tap (login for guests, or custom action for logged-in users)
     public func handleMainCTATap() {
         Analytics.shared.accountImpactSignUpClicked()
-        
+
         if isLoggedIn {
             // For logged-in users, this could be a different action
             // For now, we'll just dismiss
@@ -57,30 +57,30 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
             handleLogin()
         }
     }
-    
+
     /// Handles the login action
     public func handleLogin() {
         isLoading = true
         onLoginAction()
         // Note: The loading state will be updated when the parent view updates the auth state
     }
-    
+
     /// Handles dismissing the view
     public func handleDismiss() {
         Analytics.shared.accountImpactCloseClicked()
         onDismissAction()
     }
-    
+
     /// Resets the level up animation state
     public func resetLevelUpAnimation() {
         shouldShowLevelUpAnimation = false
     }
-    
+
     /// Handles the "Learn more about seeds" link tap
     public func handleLearnMoreTap() {
         Analytics.shared.accountImpactCardCtaClicked()
     }
-    
+
     /// Updates the view model state
     public func updateState(
         isLoggedIn: Bool,
@@ -94,7 +94,7 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
             let levelUpResult = AccountSeedLevelSystem.checkLevelUp(from: self.seedCount, to: seedCount)
             self.shouldShowLevelUpAnimation = levelUpResult != nil
         }
-        
+
         self.isLoggedIn = isLoggedIn
         self.username = username
         self.currentLevel = currentLevel
@@ -108,24 +108,24 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
 // MARK: - Computed Properties
 @available(iOS 16.0, *)
 extension EcosiaAccountImpactViewModel {
-    
+
     /// The text to display for the user section
     public var userDisplayText: String {
         username ?? String.localized(.guestUser)
     }
-    
+
     /// The text for the main CTA button
     public var mainCTAText: String {
         String.localized(.signUp)
     }
-        
+
     /// The level text to display - always shows the level based on seed count
     public var levelDisplayText: String {
         let level = AccountSeedLevelSystem.currentLevel(for: seedCount)
         let levelName = String.localized(.init(rawValue: level.nameKey) ?? .ecocurious)
         return "\(String.localized(.level)) \(level.level) - \(levelName)"
     }
-        
+
     /// Progress for the avatar (0.0 to 1.0)
     public var levelProgress: Double {
         if isLoggedIn {

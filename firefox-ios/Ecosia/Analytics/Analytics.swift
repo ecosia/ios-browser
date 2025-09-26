@@ -379,7 +379,7 @@ open class Analytics {
             .property(Property.cancel.rawValue)
         track(event)
     }
-    
+
     public func accountImpactSignUpClicked() {
         let event = Structured(category: Category.account.rawValue,
                                action: Action.click.rawValue)
@@ -387,7 +387,7 @@ open class Analytics {
             .property(Property.menu.rawValue)
         track(event)
     }
-    
+
     public func accountImpactCloseClicked() {
         let event = Structured(category: Category.account.rawValue,
                                action: Action.click.rawValue)
@@ -395,7 +395,7 @@ open class Analytics {
             .property(Property.menu.rawValue)
         track(event)
     }
-    
+
     public func accountImpactCardCtaClicked() {
         let event = Structured(category: Category.account.rawValue,
                                action: Action.click.rawValue)

@@ -146,7 +146,7 @@ private struct EcosiaAccountProgressAvatarInteractivePreview: View {
                             viewModel.updateSeedCount(viewModel.seedCount + 10)
                         }
                         .buttonStyle(.bordered)
-                        
+
                         Button("Add 100 Seeds") {
                             viewModel.updateSeedCount(viewModel.seedCount + 100)
                         }
