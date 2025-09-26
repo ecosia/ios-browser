@@ -19,12 +19,12 @@ public struct EcosiaAccountProgressAvatar: View {
         progress: Double,
         showSparkles: Bool = false,
         showProgress: Bool = false,
-        size: CGFloat = .ecosia.space._6l,
+        size: CGFloat = .ecosia.space._7l,
         windowUUID: WindowUUID
     ) {
         self.avatarURL = avatarURL
         self.progress = max(0.0, min(1.0, progress))
-        self.showSparkles = showSparkles && showProgress // Only show sparkles if progress is visible
+        self.showSparkles = showSparkles
         self.showProgress = showProgress
         self.size = size
         self.windowUUID = windowUUID
