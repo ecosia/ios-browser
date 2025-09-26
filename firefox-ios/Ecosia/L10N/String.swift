@@ -88,6 +88,7 @@ extension String {
         case searchRegion = "Search region"
         case sendFeedback = "Send feedback"
         case shownUnderSearchField = "Shown under the search field"
+        case signUp = "Sign up"
         case showOnHomepage = "Show on homepage"
         case startPlanting = "Plant your first tree"
         case strict = "Strict"
@@ -227,7 +228,6 @@ extension String {
         case configurableNudgeCardCloseButtonAccessibilityLabel = "Close card button"
         case newsletterNTPCardExperimentTitle = "Be the first to know"
         case newsletterNTPCardExperimentDescription = "Subscribe to our monthly newsletter for updates on your climate impact."
-        case newsletterNTPCardExperimentButton = "Sign up"
         case defaultBrowserSettingTitle = "Default browser"
         case defaultBrowserCardTitle = "Make Ecosia your default browser app"
         case defaultBrowserCardDescription = "Safely open all links from other apps in Ecosia"
@@ -252,6 +252,7 @@ extension String {
         case settingsRatingPromptTitle = "Do you enjoy Ecosia?"
 
         // MARK: - Level System
+        case level = "Level"
         case ecocurious = "Ecocurious"
         case greenExplorer = "Green explorer"
         case planetPal = "Planet pal"
@@ -269,6 +270,12 @@ extension String {
         case carbonCutter = "Carbon cutter"
         case seedSower = "Seed sower"
         case emissionEliminator = "Emission eliminator"
+        
+        // MARK: - Account Impact View
+        case guestUser = "Guest user"
+        case seedsSymbolizeYourOwnImpact = "Seeds symbolize your own impact"
+        case collectSeedsEveryDayYouUse = "Collect seeds every day you use Ecosia and see the climate impact you're having."
+        case learnMoreAboutSeeds = "Learn more about seeds"
         case sustainabilitySage = "Sustainability sage"
         case earthAdvocate = "Earth advocate"
         case seedSuperstar = "Seed superstar"
