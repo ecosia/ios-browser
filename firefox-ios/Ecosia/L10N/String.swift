@@ -251,6 +251,10 @@ extension String {
         case settingsRatingPromptNo = "No"
         case settingsRatingPromptTitle = "Do you enjoy Ecosia?"
 
+        // MARK: - WebView Modal
+        case failedToLoadPage = "Failed to load page"
+        case tryAgain = "Try Again"
+
         // MARK: - Level System
         case level = "Level"
         case ecocurious = "Ecocurious"
@@ -270,7 +274,7 @@ extension String {
         case carbonCutter = "Carbon cutter"
         case seedSower = "Seed sower"
         case emissionEliminator = "Emission eliminator"
-        
+
         // MARK: - Account Impact View
         case guestUser = "Guest user"
         case seedsSymbolizeYourOwnImpact = "Seeds symbolize your own impact"
