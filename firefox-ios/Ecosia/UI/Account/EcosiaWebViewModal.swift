@@ -36,6 +36,7 @@ public struct EcosiaWebViewModal: View {
                                 Image(systemName: "exclamationmark.triangle")
                                     .font(.system(size: 48))
                                     .foregroundColor(theme.brandPrimaryColor)
+                                    .accessibilityLabel(String.localized(.errorIcon))
 
                                 Text(String.localized(.failedToLoadPage))
                                     .font(.headline)

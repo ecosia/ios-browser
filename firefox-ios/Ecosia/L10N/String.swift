@@ -254,6 +254,7 @@ extension String {
         // MARK: - WebView Modal
         case failedToLoadPage = "Failed to load page"
         case tryAgain = "Try Again"
+        case errorIcon = "Error"
 
         // MARK: - Level System
         case level = "Level"
