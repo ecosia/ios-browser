@@ -3,32 +3,31 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import SwiftUI
+import Common
 
 /// A view that displays a balance increment with fade in/out animation
 @available(iOS 16.0, *)
 public struct BalanceIncrementAnimationView: View {
     let increment: Int
-    let textColor: Color
-    let backgroundColor: Color
+    let windowUUID: WindowUUID
     @State private var opacity: Double
+    @State private var theme = BalanceIncrementAnimationViewTheme()
 
     public init(increment: Int,
-                textColor: Color,
-                backgroundColor: Color,
+                windowUUID: WindowUUID,
                 opacity: Double = 0.0) {
         self.increment = increment
-        self.textColor = textColor
-        self.backgroundColor = backgroundColor
+        self.windowUUID = windowUUID
         self.opacity = opacity
     }
 
     public var body: some View {
         Text("+\(increment)")
             .font(.caption.weight(.bold))
-            .foregroundColor(textColor)
+            .foregroundColor(theme.textColor)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(backgroundColor)
+            .background(theme.backgroundColor)
             .clipShape(Circle())
             .opacity(opacity)
             .onAppear {
@@ -42,6 +41,18 @@ public struct BalanceIncrementAnimationView: View {
                     }
                 }
             }
+            .ecosiaThemed(windowUUID, $theme)
+    }
+}
+
+// MARK: - Theme
+struct BalanceIncrementAnimationViewTheme: EcosiaThemeable {
+    var textColor = Color.primary
+    var backgroundColor = Color.secondary
+
+    mutating func applyTheme(theme: Theme) {
+        textColor = Color(EcosiaColor.Peach100)
+        backgroundColor = Color(theme.colors.ecosia.brandImpact)
     }
 }
 
@@ -51,15 +62,9 @@ public struct BalanceIncrementAnimationView: View {
 struct BalanceIncrementAnimationView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
-            BalanceIncrementAnimationView(increment: 1,
-                                          textColor: .primary,
-                                          backgroundColor: .secondary)
-            BalanceIncrementAnimationView(increment: 3,
-                                          textColor: .primary,
-                                          backgroundColor: .secondary)
-            BalanceIncrementAnimationView(increment: 10,
-                                          textColor: .primary,
-                                          backgroundColor: .secondary)
+            BalanceIncrementAnimationView(increment: 1, windowUUID: .XCTestDefaultUUID)
+            BalanceIncrementAnimationView(increment: 3, windowUUID: .XCTestDefaultUUID)
+            BalanceIncrementAnimationView(increment: 10, windowUUID: .XCTestDefaultUUID)
         }
         .padding()
         .previewLayout(.sizeThatFits)

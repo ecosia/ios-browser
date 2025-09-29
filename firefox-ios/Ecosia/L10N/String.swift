@@ -250,5 +250,27 @@ extension String {
         case settingsRatingPromptYes = "Yes"
         case settingsRatingPromptNo = "No"
         case settingsRatingPromptTitle = "Do you enjoy Ecosia?"
+
+        // MARK: - Level System
+        case ecocurious = "Ecocurious"
+        case greenExplorer = "Green explorer"
+        case planetPal = "Planet pal"
+        case seedlingSupporter = "Seedling supporter"
+        case biodiversityBeetle = "Biodiversity beetle"
+        case forestFriend = "Forest friend"
+        case wildlifeProtector = "Wildlife protector"
+        case ecoExplorer = "Eco explorer"
+        case rainforestReviver = "Rainforest reviver"
+        case planetProtector = "Planet protector"
+        case carbonNeutralizer = "Carbon neutralizer"
+        case seekerOfSustainability = "Seeker of sustainability"
+        case branchBuilder = "Branch builder"
+        case ecoEnthusiast = "Eco enthusiast"
+        case carbonCutter = "Carbon cutter"
+        case seedSower = "Seed sower"
+        case emissionEliminator = "Emission eliminator"
+        case sustainabilitySage = "Sustainability sage"
+        case earthAdvocate = "Earth advocate"
+        case seedSuperstar = "Seed superstar"
     }
 }

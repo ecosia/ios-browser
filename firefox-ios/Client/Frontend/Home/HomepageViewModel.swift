@@ -137,7 +137,6 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
     var impactViewModel: NTPImpactCellViewModel
     var newsViewModel: NTPNewsCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
-    var climateImpactCounterViewModel: NTPSeedCounterViewModel
 
     /*
      Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
@@ -184,7 +183,6 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
         self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
-        self.climateImpactCounterViewModel = NTPSeedCounterViewModel(profile: profile, theme: theme)
         self.wallpaperManager = wallpaperManager
         /* Ecosia: Remove `jumpBackIn` section reference
         let jumpBackInAdaptor = JumpBackInDataAdaptorImplementation(profile: profile,
@@ -239,7 +237,6 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
          */
         // Ecosia: Those models needs to follow strictly the order defined in `enum HomepageSectionType`
         self.childViewModels = [multiPurposeEcosiaHeaderViewModel,
-                                climateImpactCounterViewModel,
                                 headerViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,

@@ -32,6 +32,7 @@ public struct EcosiaAvatar: View {
                 }
                 .frame(width: size, height: size)
                 .clipShape(Circle())
+                .accessibilityLabel("User avatar")
             } else {
                 placeholderView
             }
@@ -44,6 +45,7 @@ public struct EcosiaAvatar: View {
             .scaledToFit()
             .frame(width: size, height: size)
             .clipShape(Circle())
+            .accessibilityLabel("Default avatar")
     }
 }
 

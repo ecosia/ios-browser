@@ -18,13 +18,13 @@ final class AccountsServiceTests: XCTestCase {
 
     func testRegisterVisit_Success() async throws {
         // Arrange
-        let expectedResponse = AccountBalanceResponse(
-            balance: AccountBalanceResponse.Balance(
+        let expectedResponse = AccountVisitResponse(
+            balance: AccountVisitResponse.Balance(
                 amount: 5,
                 updatedAt: "2024-12-07T10:50:26Z",
                 isModified: true
             ),
-            previousBalance: AccountBalanceResponse.PreviousBalance(amount: 4)
+            previousBalance: AccountVisitResponse.PreviousBalance(amount: 4)
         )
         let responseData = try JSONEncoder().encode(expectedResponse)
         mockHTTPClient.data = responseData
@@ -72,13 +72,13 @@ final class AccountsServiceTests: XCTestCase {
 
     func testBalanceIncrement_NoChange() {
         // Arrange
-        let response = AccountBalanceResponse(
-            balance: AccountBalanceResponse.Balance(
+        let response = AccountVisitResponse(
+            balance: AccountVisitResponse.Balance(
                 amount: 5,
                 updatedAt: "2024-12-07T10:50:26Z",
                 isModified: false
             ),
-            previousBalance: AccountBalanceResponse.PreviousBalance(amount: 5)
+            previousBalance: AccountVisitResponse.PreviousBalance(amount: 5)
         )
 
         // Act & Assert
@@ -87,13 +87,13 @@ final class AccountsServiceTests: XCTestCase {
 
     func testBalanceIncrement_WithChange() {
         // Arrange
-        let response = AccountBalanceResponse(
-            balance: AccountBalanceResponse.Balance(
+        let response = AccountVisitResponse(
+            balance: AccountVisitResponse.Balance(
                 amount: 8,
                 updatedAt: "2024-12-07T10:50:26Z",
                 isModified: true
             ),
-            previousBalance: AccountBalanceResponse.PreviousBalance(amount: 5)
+            previousBalance: AccountVisitResponse.PreviousBalance(amount: 5)
         )
 
         // Act & Assert
