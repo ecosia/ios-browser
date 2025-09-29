@@ -171,25 +171,13 @@ public enum URLProvider {
     public var aiSearch: URL {
         root.appendingPathComponent("ai-search")
 	}
-    
+
     public var storeWriteReviewPage: URL {
         URL(string: "https://itunes.apple.com/app/id1474845552/action=write-review")!
     }
 
     public var seedCounterInfo: URL {
         URL(string: "https://support.ecosia.org/article/844-seed-counter?_sp=F7CC2AA5-430D-465E-8B8B-9A81054B465A")!
-    }
-
-    public var storeWriteReviewPage: URL {
-        URL(string: "https://itunes.apple.com/app/id1474845552/action=write-review")!
-    }
-
-    public var storeWriteReviewPage: URL {
-        URL(string: "https://itunes.apple.com/app/id670881887?action=write-review")!
-	}
-
-    public var seedCounterInfo: URL {
-        URL(string: "https://support.ecosia.org/article/844-seed-counter")!
     }
 
     // MARK: - Authentication URL Patterns
