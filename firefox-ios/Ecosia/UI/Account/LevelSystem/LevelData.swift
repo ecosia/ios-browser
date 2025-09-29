@@ -18,7 +18,10 @@ public struct AccountSeedLevel {
 
     /// Localized name for the level
     public var localizedName: String {
-        return String.localized(.init(rawValue: nameKey) ?? .ecocurious)
+        let matchingKey = String.Key.allCases.first {
+            String(describing: $0) == nameKey
+        }
+        return String.localized(matchingKey ?? .ecocurious)
     }
 }
 
