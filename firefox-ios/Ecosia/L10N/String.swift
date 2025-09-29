@@ -17,7 +17,7 @@ extension String {
         String(format: Bundle.ecosia.localizedString(forKey: key.rawValue, value: "", table: "Plurals"), num)
     }
 
-    public enum Key: String {
+    public enum Key: String, CaseIterable {
         case addMoreDetailAboutYourFeedback = "Add more detail about your feedback..."
         case aiSearch = "AI Search"
         case aiOverviewsTitle = "Overviews"
