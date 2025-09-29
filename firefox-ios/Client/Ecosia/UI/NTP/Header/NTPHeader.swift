@@ -77,10 +77,12 @@ struct NTPHeaderView: View {
     var body: some View {
         HStack(spacing: .ecosia.space._1s) {
             Spacer()
-            EcosiaAISearchButton(
-                windowUUID: windowUUID,
-                onTap: handleAISearchTap
-            )
+            if AISearchMVPExperiment.isEnabled {
+                EcosiaAISearchButton(
+                    windowUUID: windowUUID,
+                    onTap: handleAISearchTap
+                )
+            }
             ZStack(alignment: .topLeading) {
                 EcosiaAccountNavButton(
                     seedCount: viewModel.seedCount,
