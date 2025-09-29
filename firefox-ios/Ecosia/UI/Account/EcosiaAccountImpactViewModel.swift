@@ -122,7 +122,7 @@ extension EcosiaAccountImpactViewModel {
     /// The level text to display - always shows the level based on seed count
     public var levelDisplayText: String {
         let level = AccountSeedLevelSystem.currentLevel(for: seedCount)
-        let levelName = String.localized(.init(rawValue: level.nameKey) ?? .ecocurious)
+        let levelName = level.localizedName
         return "\(String.localized(.level)) \(level.level) - \(levelName)"
     }
 
