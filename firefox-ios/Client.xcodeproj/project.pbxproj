@@ -293,9 +293,6 @@
 		28E08C9A1AF44F00009BA2FA /* BrowserSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282915E51AF1A7920006EEB5 /* BrowserSchema.swift */; };
 		28E91E751B443AD5009DF274 /* SyncConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E91E741B443AD5009DF274 /* SyncConstants.swift */; };
 		28ECD9BF1BA1F19900D829DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C001B90A44F005ABB0D /* libz.tbd */; };
-		2C00E15F2E299AE800811A76 /* InvisibleTabSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */; };
-		2C00E1642E29A70500811A76 /* InvisibleTabManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */; };
-		2C00E3942E29B0E700811A76 /* AuthFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00E38F2E29B0E700811A76 /* AuthFlow.swift */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
 		2C2EA77F2DA3F2990085F5BC /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 2C2EA77E2DA3F2990085F5BC /* Lottie */; };
 		2C2F31F52D46612F00977F55 /* TopSitesHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5BD9582878871B000FE773 /* TopSitesHelperTests.swift */; };
@@ -1472,17 +1469,8 @@
 		2C4BFFD12D470E4100707D2F /* disconnect-block-cryptomining.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C4BFFC72D470E4100707D2F /* disconnect-block-cryptomining.json */; };
 		2C4BFFD22D470E4100707D2F /* disconnect-block-fingerprinting.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C4BFFC82D470E4100707D2F /* disconnect-block-fingerprinting.json */; };
 		2C4BFFD32D470E4100707D2F /* disconnect-block-content.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C4BFFC22D470E4100707D2F /* disconnect-block-content.json */; };
-		2C649AD62E8ACE12008D3710 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4065BD2E82D0C60067303E /* BrazeKit */; };
-		2C649AD72E8ACE12008D3710 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4065BF2E82D0C60067303E /* BrazeUI */; };
-		2C649F572E8ACE6F008D3710 /* Auth0 in Frameworks */ = {isa = PBXBuildFile; productRef = 2C649F562E8ACE6F008D3710 /* Auth0 */; };
-		2C649F5A2E8ACF6E008D3710 /* TabManager+InvisibleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C649F592E8ACF6E008D3710 /* TabManager+InvisibleTab.swift */; };
-		2C649F5B2E8ACF6E008D3710 /* Tab+InvisibleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C649F582E8ACF6E008D3710 /* Tab+InvisibleTab.swift */; };
-		2C649F5C2E8ACF6E008D3710 /* TabManager+InvisibleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C649F592E8ACF6E008D3710 /* TabManager+InvisibleTab.swift */; };
-		2C649F5D2E8ACF6E008D3710 /* Tab+InvisibleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C649F582E8ACF6E008D3710 /* Tab+InvisibleTab.swift */; };
-		2C649F5F2E8ACF9C008D3710 /* EcosiaAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C649F5E2E8ACF9C008D3710 /* EcosiaAuth.swift */; };
-		2C649F602E8ACF9C008D3710 /* EcosiaAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C649F5E2E8ACF9C008D3710 /* EcosiaAuth.swift */; };
-		2C649F622E8ACFF6008D3710 /* TabAutoCloseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C649F612E8ACFF6008D3710 /* TabAutoCloseManager.swift */; };
-		2C649F632E8ACFF6008D3710 /* TabAutoCloseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C649F612E8ACFF6008D3710 /* TabAutoCloseManager.swift */; };
+		2C649AD62E8ACE12008D3710 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		2C649AD72E8ACE12008D3710 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		2C69DA782C62259D00D7F69F /* MockProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281B2BE91ADF4D90002917DC /* MockProfile.swift */; };
 		2C69DA792C6225AE00D7F69F /* DependencyHelperMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A70EF18295E2E1600790249 /* DependencyHelperMock.swift */; };
 		2C69DA7B2C6225C400D7F69F /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 2C69DA7A2C6225C400D7F69F /* Common */; };
@@ -3973,9 +3961,6 @@
 		2B31494CBFF9DF6FA41953B2 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvisibleTabSession.swift; sourceTree = "<group>"; };
-		2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvisibleTabManager.swift; sourceTree = "<group>"; };
-		2C00E38F2E29B0E700811A76 /* AuthFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlow.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
 		2C2A91281FA2410D002E36BD /* HistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTests.swift; sourceTree = "<group>"; };
@@ -4012,10 +3997,6 @@
 		2C4BFFC82D470E4100707D2F /* disconnect-block-fingerprinting.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "disconnect-block-fingerprinting.json"; path = "../ContentBlockingLists/disconnect-block-fingerprinting.json"; sourceTree = SOURCE_ROOT; };
 		2C4BFFC92D470E4100707D2F /* disconnect-block-social.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "disconnect-block-social.json"; path = "../ContentBlockingLists/disconnect-block-social.json"; sourceTree = SOURCE_ROOT; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
-		2C649F582E8ACF6E008D3710 /* Tab+InvisibleTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tab+InvisibleTab.swift"; sourceTree = "<group>"; };
-		2C649F592E8ACF6E008D3710 /* TabManager+InvisibleTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TabManager+InvisibleTab.swift"; sourceTree = "<group>"; };
-		2C649F5E2E8ACF9C008D3710 /* EcosiaAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaAuth.swift; sourceTree = "<group>"; };
-		2C649F612E8ACFF6008D3710 /* TabAutoCloseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabAutoCloseManager.swift; sourceTree = "<group>"; };
 		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C7518AA2D8F025800B12F1F /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Production.xcconfig; path = Configuration/Production.xcconfig; sourceTree = "<group>"; };
@@ -10943,8 +10924,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C649AD72E8ACE12008D3710 /* BrazeUI in Frameworks */,
-				2C649AD62E8ACE12008D3710 /* BrazeKit in Frameworks */,
+				2C649AD72E8ACE12008D3710 /* (null) in Frameworks */,
+				2C649AD62E8ACE12008D3710 /* (null) in Frameworks */,
 				2C406A1A2E82D0C60067303E /* Common in Frameworks */,
 				2C406A1B2E82D0C60067303E /* AdServices.framework in Frameworks */,
 				2C406A1C2E82D0C60067303E /* iAd.framework in Frameworks */,
@@ -11661,34 +11642,6 @@
 				ED07C0E52CCACD7E006C0627 /* Locale+possibilitiesForLanguageIdentifier.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		2C00E1632E29A70500811A76 /* TabManagement */ = {
-			isa = PBXGroup;
-			children = (
-				2C649F612E8ACFF6008D3710 /* TabAutoCloseManager.swift */,
-				2C00E1622E29A70500811A76 /* InvisibleTabManager.swift */,
-			);
-			path = TabManagement;
-			sourceTree = "<group>";
-		};
-		2C0174952E26E5DA00136A6F /* Auth */ = {
-			isa = PBXGroup;
-			children = (
-				2C649F5E2E8ACF9C008D3710 /* EcosiaAuth.swift */,
-				2C00E38F2E29B0E700811A76 /* AuthFlow.swift */,
-				2C00E1632E29A70500811A76 /* TabManagement */,
-				2C00E15D2E299AE800811A76 /* InvisibleTabSession.swift */,
-			);
-			path = Auth;
-			sourceTree = "<group>";
-		};
-		2C0174962E26E5DA00136A6F /* Account */ = {
-			isa = PBXGroup;
-			children = (
-				2C0174952E26E5DA00136A6F /* Auth */,
-			);
-			path = Account;
 			sourceTree = "<group>";
 		};
 		2C1296EC2B0BA5FC00FC0A04 /* Frontend */ = {
@@ -17880,8 +17833,6 @@
 				2C4067222E82D0C60067303E /* BackForwardTableViewCell.swift in Sources */,
 				2C4067232E82D0C60067303E /* UIView+Constraints.swift in Sources */,
 				2C4067242E82D0C60067303E /* UnitTestSceneDelegate.swift in Sources */,
-				2C649F5C2E8ACF6E008D3710 /* TabManager+InvisibleTab.swift in Sources */,
-				2C649F5D2E8ACF6E008D3710 /* Tab+InvisibleTab.swift in Sources */,
 				2C4067252E82D0C60067303E /* photon-colors.swift in Sources */,
 				2C4067262E82D0C60067303E /* FormAutofillPayloadType.swift in Sources */,
 				2C4067272E82D0C60067303E /* HomepageHeroImageViewModel.swift in Sources */,
@@ -18383,7 +18334,6 @@
 				2C4069182E82D0C60067303E /* SidebarEnabledView.swift in Sources */,
 				2C4069192E82D0C60067303E /* DownloadQueue.swift in Sources */,
 				2C40691A2E82D0C60067303E /* GleanPlumbMessage.swift in Sources */,
-				2C649F622E8ACFF6008D3710 /* TabAutoCloseManager.swift in Sources */,
 				2C40691B2E82D0C60067303E /* AdvancedAccountSettingViewController.swift in Sources */,
 				2C40691C2E82D0C60067303E /* AccessoryViewProvider.swift in Sources */,
 				2C40691D2E82D0C60067303E /* CreditCardBottomSheetFooterView.swift in Sources */,
@@ -18543,7 +18493,6 @@
 				2C4069B72E82D0C60067303E /* UIResponder+Extensions.swift in Sources */,
 				2C4069B82E82D0C60067303E /* MainMenuViewController.swift in Sources */,
 				2C4069B92E82D0C60067303E /* SiteTableViewHeader.swift in Sources */,
-				2C649F5F2E8ACF9C008D3710 /* EcosiaAuth.swift in Sources */,
 				2C4069BA2E82D0C60067303E /* AnyHashable.swift in Sources */,
 				2C4069BB2E82D0C60067303E /* SearchEngineSelectionCoordinator.swift in Sources */,
 				2C4069BC2E82D0C60067303E /* ToolbarMiddleware.swift in Sources */,
@@ -18813,7 +18762,6 @@
 				8A7AE4442BAB510B0072DAEC /* LibraryPanelCoordinatorDelegate.swift in Sources */,
 				8C19532E2B85E7AE00761B20 /* SelfSizingHostingController.swift in Sources */,
 				E4CD9F6D1A77DD2800318571 /* ReaderModeStyleViewController.swift in Sources */,
-				2C00E15F2E299AE800811A76 /* InvisibleTabSession.swift in Sources */,
 				81F617C92C8755AB003799BF /* MainMenuAction.swift in Sources */,
 				E13E9AB52AAB0FB5001A0E9D /* FakespotViewModel.swift in Sources */,
 				8A5D1CBD2A30DC4E005AD35C /* AccountStatusSetting.swift in Sources */,
@@ -18950,7 +18898,6 @@
 				E174963C2992B6A60096900A /* HostingTableViewSectionHeader.swift in Sources */,
 				5A2918CD2B522381002B197E /* ToastType.swift in Sources */,
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
-				2C649F632E8ACFF6008D3710 /* TabAutoCloseManager.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* LegacyGridTabViewController.swift in Sources */,
 				EBFDB790211C83A5005CCA2F /* BrowserViewController+FindInPage.swift in Sources */,
 				21B359C62AEAC20300FF09E3 /* TabsSectionManager.swift in Sources */,
@@ -19153,7 +19100,6 @@
 				E63ED8E11BFD25580097D08E /* PasswordManagerListViewController.swift in Sources */,
 				8ADC2A162A33765E00543DAA /* UrlToOpenModel.swift in Sources */,
 				D0625CA8208FC47A0081F3B2 /* BrowserViewController+DownloadQueueDelegate.swift in Sources */,
-				2C00E1642E29A70500811A76 /* InvisibleTabManager.swift in Sources */,
 				C22753402A3C9E1300B9C0D1 /* WebsiteDataManagementViewModel.swift in Sources */,
 				2F44FCC71A9E8CF500FD20CC /* SearchSettingsTableViewController.swift in Sources */,
 				0AFF7F682C78989000265214 /* CertificatesHeaderItem.swift in Sources */,
@@ -19216,7 +19162,6 @@
 				8A4EA0DD2C0117F200E4E4F1 /* MicrosurveyModel.swift in Sources */,
 				8C44A9D22A6A99FE009A1AA7 /* ShoppingProduct.swift in Sources */,
 				63F7A9AA2C7529ED005846F5 /* NativeErrorPageModel.swift in Sources */,
-				2C649F602E8ACF9C008D3710 /* EcosiaAuth.swift in Sources */,
 				63F7A9AC2C752BB0005846F5 /* NativeErrorPageViewController.swift in Sources */,
 				C88E7A572A0553360072E638 /* OnboardingButtonInfoModel.swift in Sources */,
 				AB9A0C012C6CBC9100BFA22A /* TrackingProtectionDetailsViewController.swift in Sources */,
@@ -19275,7 +19220,6 @@
 				0BDDB3412CA6B23300D501DF /* EditFolderCell.swift in Sources */,
 				8A7653BD28A2C61D00924ABF /* PocketDataAdaptor.swift in Sources */,
 				12AEB1232D37CC4A0035D7D8 /* LegacyTabTrayViewController.swift in Sources */,
-				2C00E3942E29B0E700811A76 /* AuthFlow.swift in Sources */,
 				8A093D7D2A4B3E4F0099ABA5 /* DebugSettingsDelegate.swift in Sources */,
 				96EA9454293655BF00123345 /* AppSession+Enums.swift in Sources */,
 				C8B0F5F4283B7CCE007AE65D /* PocketProvider.swift in Sources */,
@@ -19432,8 +19376,6 @@
 				8A46F5AC2C9E4389005B6422 /* RemoteDataType.swift in Sources */,
 				8C1953302B85E7EC00761B20 /* AutofillFooterView.swift in Sources */,
 				C82CDD47233E8996002E2743 /* Tab+ChangeUserAgent.swift in Sources */,
-				2C649F5A2E8ACF6E008D3710 /* TabManager+InvisibleTab.swift in Sources */,
-				2C649F5B2E8ACF6E008D3710 /* Tab+InvisibleTab.swift in Sources */,
 				81122E212B221AC0003DD9F8 /* SearchScreenState.swift in Sources */,
 				8A4490952BF3C42B00E7E682 /* MicrosurveyConfirmationView.swift in Sources */,
 				1DA6F6512B48B42900BB5AD6 /* WindowEventCoordinator.swift in Sources */,
