@@ -403,6 +403,22 @@ open class Analytics {
             .property(Property.menu.rawValue)
         track(event)
     }
+
+    public func accountProfileClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountSignOutClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.signOut.rawValue)
+        track(event)
+    }
 }
 
 extension Analytics {

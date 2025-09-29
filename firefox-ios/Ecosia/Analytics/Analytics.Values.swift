@@ -32,6 +32,7 @@ extension Analytics {
         clear,
         close,
         market,
+        profile,
         signIn = "sign_in",
         signUp = "sign_up",
         toolbar
@@ -232,7 +233,8 @@ extension Analytics {
         home,
         detail,
         menu,
-        nativeSettings = "native_settings"
+        nativeSettings = "native_settings",
+        signOut = "sign_out"
 
         public enum APNConsent: String {
             case
