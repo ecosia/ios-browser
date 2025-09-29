@@ -86,7 +86,9 @@ class LegacyHomepageViewController:
          // Ecosia: Add Referrals
          referrals: Referrals,
          // Ecosia: Add HomePageViewControllerDelegate
-         delegate: HomepageViewControllerDelegate?
+         delegate: HomepageViewControllerDelegate?,
+         // Ecosia: Add EcosiaAuth
+         auth: EcosiaAuth
     ) {
         self.overlayManager = overlayManager
         self.tabManager = tabManager
@@ -96,7 +98,8 @@ class LegacyHomepageViewController:
                                            isPrivate: isPrivate,
                                            tabManager: tabManager,
                                            referrals: referrals, // Ecosia: Add referrals
-                                           theme: themeManager.getCurrentTheme(for: tabManager.windowUUID))
+                                           theme: themeManager.getCurrentTheme(for: tabManager.windowUUID),
+                                           auth: auth) // Ecosia: Add EcosiaAuth
 
         let jumpBackInContextualViewProvider = ContextualHintViewProvider(forHintType: .jumpBackIn,
                                                                           with: viewModel.profile)

@@ -95,10 +95,10 @@ final class AuthFlow {
     // MARK: - Private Implementation
 
     private func performAuthentication(type: FlowType,
-                                         delayedCompletion: TimeInterval = 0.0,
-                                         onNativeAuthCompleted: (() -> Void)? = nil,
-                                         onFlowCompleted: ((Bool) -> Void)? = nil,
-                                         onError: ((AuthError) -> Void)? = nil
+                                       delayedCompletion: TimeInterval = 0.0,
+                                       onNativeAuthCompleted: (() -> Void)? = nil,
+                                       onFlowCompleted: ((Bool) -> Void)? = nil,
+                                       onError: ((AuthError) -> Void)? = nil
     ) async -> AuthFlowResult {
 
         EcosiaLogger.auth.info("Starting \(type) flow")

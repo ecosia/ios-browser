@@ -361,6 +361,23 @@ open class Analytics {
                          action: Action.click.rawValue)
             .label(Analytics.Label.AISearch.cta.rawValue)
             .property(text))
+	}
+
+    // MARK: Account Authentication
+
+    public func accountSignInTriggered() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+        track(event)
+    }
+
+    public func accountSignInCancelled() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.cancel.rawValue)
+        track(event)
     }
 }
 

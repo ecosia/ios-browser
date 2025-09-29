@@ -138,7 +138,8 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
     var newsViewModel: NTPNewsCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
     var climateImpactCounterViewModel: NTPSeedCounterViewModel
-    /* 
+
+    /*
      Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
      The earlier a section type appears in the array, the higher its priority.
      */
@@ -154,6 +155,8 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
          theme: Theme,
          wallpaperManager: WallpaperManager = WallpaperManager(),
          logger: Logger = DefaultLogger.shared,
+         // Ecosia: Add EcosiaAuth
+         auth: EcosiaAuth,
          // Ecosia: Add delegate for multi-purpose header actions
          multiPurposeEcosiaHeaderDelegate: NTPHeaderDelegate? = nil) {
         self.profile = profile
@@ -172,13 +175,16 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
                                                   theme: theme,
                                                   wallpaperManager: wallpaperManager)
         // Ecosia: Add Ecosia's ViewModels
-        self.multiPurposeEcosiaHeaderViewModel = NTPHeaderViewModel(theme: theme, windowUUID: tabManager.windowUUID, delegate: multiPurposeEcosiaHeaderDelegate)
+        self.multiPurposeEcosiaHeaderViewModel = NTPHeaderViewModel(profile: profile,
+                                                                    theme: theme,
+                                                                    windowUUID: tabManager.windowUUID,
+                                                                    auth: auth,
+                                                                    delegate: multiPurposeEcosiaHeaderDelegate)
         self.libraryViewModel = NTPLibraryCellViewModel(theme: theme)
         self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
         self.climateImpactCounterViewModel = NTPSeedCounterViewModel(profile: profile, theme: theme)
-
         self.wallpaperManager = wallpaperManager
         /* Ecosia: Remove `jumpBackIn` section reference
         let jumpBackInAdaptor = JumpBackInDataAdaptorImplementation(profile: profile,
