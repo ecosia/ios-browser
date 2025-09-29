@@ -85,35 +85,35 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     public func updateFromBalanceResponse(_ response: AccountVisitResponse) {
         let newSeedCount = response.balance.amount
         updateSeedCount(newSeedCount)
-        
+
         EcosiaLogger.accounts.info("Avatar received balance update: \(response.balance.amount), isModified: \(response.balance.isModified)")
     }
-    
+
     /// Updates seed count and handles level progression
     public func updateSeedCount(_ newSeedCount: Int) {
         previousSeedCount = seedCount
         seedCount = newSeedCount
-        
+
         let newLevel = AccountSeedLevelSystem.currentLevel(for: seedCount)
         let newProgress = AccountSeedLevelSystem.progressToNextLevel(for: seedCount)
-        
+
         if let leveledUp = AccountSeedLevelSystem.checkLevelUp(from: previousSeedCount, to: seedCount) {
             currentLevel = leveledUp
             progress = newProgress
-            
+
             triggerLevelUpAnimation()
-            
+
             EcosiaLogger.accounts.info("User leveled up to \(leveledUp.level): \(leveledUp.localizedName)")
         } else {
             currentLevel = newLevel
             progress = newProgress
         }
     }
-    
+
     private func triggerLevelUpAnimation() {
         progress = 1.0
         triggerSparkles(duration: UX.levelUpDuration)
-        
+
         Task {
             try await Task.sleep(for: .seconds(UX.levelUpDuration))
             let actualProgress = AccountSeedLevelSystem.progressToNextLevel(for: seedCount)
