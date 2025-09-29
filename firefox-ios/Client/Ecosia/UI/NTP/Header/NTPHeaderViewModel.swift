@@ -287,7 +287,6 @@ extension NTPHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
     var isEnabled: Bool {
         return true
-        AISearchMVPExperiment.isEnabled
     }
 
     func setTheme(theme: Theme) {
