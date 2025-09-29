@@ -284,5 +284,8 @@ extension String {
         case sustainabilitySage = "Sustainability sage"
         case earthAdvocate = "Earth advocate"
         case seedSuperstar = "Seed superstar"
+        case yourEcosia = "Your Ecosia"
+        case yourProfile = "Your profile"
+        case signOut = "Sign out"
     }
 }
