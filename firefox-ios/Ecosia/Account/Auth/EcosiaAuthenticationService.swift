@@ -268,7 +268,7 @@ public final class EcosiaAuthenticationService {
     }
 }
 
-extension Auth {
+extension EcosiaAuthenticationService {
 
     /// Fetches detailed user information from Auth0's userInfo endpoint
     private func fetchUserInfoFromAuth0(accessToken: String) async {

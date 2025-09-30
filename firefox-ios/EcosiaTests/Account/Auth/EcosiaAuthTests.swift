@@ -32,7 +32,7 @@ final class EcosiaAuthTests: XCTestCase {
     func testLogin_createsFlowWithCorrectType() {
         // Given
         let ecosiaAuth = EcosiaAuth(
-            authProvider: mockAuth,
+            authService: mockAuth,
             invisibleTabAPI: mockInvisibleTabAPI,
             notificationCenter: mockNotificationCenter
         )
@@ -48,7 +48,7 @@ final class EcosiaAuthTests: XCTestCase {
     func testLogin_onNativeAuthCompleted_triggersCallback() {
         // Given
         let ecosiaAuth = EcosiaAuth(
-            authProvider: mockAuth,
+            authService: mockAuth,
             invisibleTabAPI: mockInvisibleTabAPI,
             notificationCenter: mockNotificationCenter
         )
@@ -71,7 +71,7 @@ final class EcosiaAuthTests: XCTestCase {
     func testLogin_onAuthFlowCompleted_triggersAfterTabsClose() {
         // Given
         let ecosiaAuth = EcosiaAuth(
-            authProvider: mockAuth,
+            authService: mockAuth,
             invisibleTabAPI: mockInvisibleTabAPI,
             notificationCenter: mockNotificationCenter
         )
@@ -105,7 +105,7 @@ final class EcosiaAuthTests: XCTestCase {
     func testLogout_createsFlowWithCorrectType() {
         // Given
         let ecosiaAuth = EcosiaAuth(
-            authProvider: mockAuth,
+            authService: mockAuth,
             invisibleTabAPI: mockInvisibleTabAPI,
             notificationCenter: mockNotificationCenter
         )
@@ -121,7 +121,7 @@ final class EcosiaAuthTests: XCTestCase {
     func testLogout_onNativeAuthCompleted_triggersCallback() {
         // Given
         let ecosiaAuth = EcosiaAuth(
-            authProvider: mockAuth,
+            authService: mockAuth,
             invisibleTabAPI: mockInvisibleTabAPI,
             notificationCenter: mockNotificationCenter
         )
@@ -173,7 +173,7 @@ final class EcosiaAuthTests: XCTestCase {
     func testLogin_authFailure_doesNotTriggerInvisibleTabs() {
         // Given
         let ecosiaAuth = EcosiaAuth(
-            authProvider: mockAuth,
+            authService: mockAuth,
             invisibleTabAPI: mockInvisibleTabAPI,
             notificationCenter: mockNotificationCenter
         )
