@@ -106,13 +106,13 @@ public struct EcosiaAccountImpactView: View {
                     viewModel: viewModel,
                     windowUUID: windowUUID,
                     onLearnMoreTap: {
-                        showSeedsCounterInfoWebView = true
+                        showWebViewModal = true
                     }
                 )
             }
         }
         .ecosiaThemed(windowUUID, $theme)
-        .sheet(isPresented: $showSeedsCounterInfoWebView) {
+        .sheet(isPresented: $showWebViewModal) {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.seedCounterInfo,
                 windowUUID: windowUUID
@@ -173,7 +173,7 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
         avatarPlaceholderColor = Color(theme.colors.layer3)
         avatarIconColor = Color(theme.colors.iconSecondary)
         levelTextColor = Color(theme.colors.ecosia.textInversePrimary)
-        levelBackgroundColor = Color(theme.colors.ecosia.backgroundNeutralInverse)
+        levelBackgroundColor = Color(theme.colors.ecosia.backgroundInverseNeutral)
     }
 }
 
@@ -196,6 +196,7 @@ struct EcosiaAccountImpactView_Previews: PreviewProvider {
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
                     onLogin: {},
+                    onLogout: {},
                     onDismiss: {}
                 ),
                 windowUUID: .XCTestDefaultUUID
