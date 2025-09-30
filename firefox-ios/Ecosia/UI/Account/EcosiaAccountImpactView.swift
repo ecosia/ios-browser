@@ -206,7 +206,6 @@ struct EcosiaAccountImpactView_Previews: PreviewProvider {
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
                     onLogin: {},
-                    onLogout: {},
                     onDismiss: {}
                 ),
                 windowUUID: .XCTestDefaultUUID
