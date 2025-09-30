@@ -13,7 +13,7 @@ public struct EcosiaAccountImpactView: View {
 
     @State private var theme = EcosiaAccountImpactViewTheme()
     @State private var showWebViewModal = false
-    @StateObject private var nudgeCardDelegate = NudgeCardActionHandler()
+    @State private var showProfileWebView = false
 
     /// Layout configuration optimized for account impact cards
     private var impactCardLayout: NudgeCardLayout {
@@ -54,9 +54,8 @@ public struct EcosiaAccountImpactView: View {
             .accessibilityIdentifier("account_impact_close_button")
             .accessibilityAddTraits(.isButton)
 
-            // User info section
+            // User info section with avatar (always present)
             HStack(alignment: .center, spacing: .ecosia.space._m) {
-
                 EcosiaAccountProgressAvatar(
                     avatarURL: viewModel.avatarURL,
                     progress: viewModel.levelProgress,
@@ -87,51 +86,40 @@ public struct EcosiaAccountImpactView: View {
             .padding(.horizontal, .ecosia.space._m)
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Impact card
-            ConfigurableNudgeCardView(
-                viewModel: NudgeCardViewModel(
-                    title: String.localized(.seedsSymbolizeYourOwnImpact),
-                    description: String.localized(.collectSeedsEveryDayYouUse),
-                    buttonText: String.localized(.learnMoreAboutSeeds),
-                    image: UIImage(named: "account-menu-impact-flag", in: .ecosia, with: nil),
-                    showsCloseButton: false,
-                    style: NudgeCardStyle(
-                        backgroundColor: theme.cardBackgroundColor,
-                        textPrimaryColor: theme.textPrimaryColor,
-                        textSecondaryColor: theme.textSecondaryColor,
-                        closeButtonTextColor: theme.closeButtonColor,
-                        actionButtonTextColor: theme.actionButtonTextColor
-                    ),
-                    layout: impactCardLayout
-                ),
-                delegate: nudgeCardDelegate
-            )
-
-            // Main CTA button
-            Button(action: viewModel.handleMainCTATap) {
-                Text(viewModel.mainCTAText)
-                    .font(.body.bold())
-                    .frame(maxWidth: .infinity)
-                    .padding(.ecosia.space._m)
-                    .foregroundColor(.white)
-                    .background(theme.ctaButtonBackgroundColor)
-                    .cornerRadius(.ecosia.borderRadius._m)
+            // Conditional content based on login state
+            if viewModel.isLoggedIn {
+                EcosiaAccountSignedInView(
+                    viewModel: viewModel,
+                    windowUUID: windowUUID,
+                    onProfileTap: {
+                        showProfileWebView = true
+                    },
+                    onSignOutTap: {
+                        Task {
+                            await viewModel.handleLogout()
+                        }
+                    }
+                )
+            } else {
+                EcosiaAccountSignedOutView(
+                    viewModel: viewModel,
+                    windowUUID: windowUUID,
+                    onLearnMoreTap: {
+                        showWebViewModal = true
+                    }
+                )
             }
-            .clipShape(Capsule())
-            .accessibilityIdentifier("account_impact_cta_button")
-            .accessibilityLabel(viewModel.mainCTAText)
-            .accessibilityAddTraits(.isButton)
         }
         .ecosiaThemed(windowUUID, $theme)
-        .onAppear {
-            nudgeCardDelegate.onActionTap = {
-                viewModel.handleLearnMoreTap()
-                showWebViewModal = true
-            }
-        }
         .sheet(isPresented: $showWebViewModal) {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.seedCounterInfo,
+                windowUUID: windowUUID
+            )
+        }
+        .sheet(isPresented: $showProfileWebView) {
+            EcosiaWebViewModal(
+                url: EcosiaEnvironment.current.urlProvider.accountProfile,
                 windowUUID: windowUUID
             )
         }
@@ -182,25 +170,6 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
     }
 }
 
-// MARK: - Nudge Card Action Handler
-
-@available(iOS 16.0, *)
-private class NudgeCardActionHandler: ObservableObject, ConfigurableNudgeCardActionDelegate {
-    var onActionTap: (() -> Void)?
-
-    func nudgeCardRequestToPerformAction() {
-        onActionTap?()
-    }
-
-    func nudgeCardRequestToDimiss() {
-        // Impact card doesn't have a close button, so this won't be called
-    }
-
-    func nudgeCardTapped() {
-        // Optional: Handle card tap if needed
-    }
-}
-
 #if DEBUG
 @available(iOS 16.0, *)
 struct EcosiaAccountImpactView_Previews: PreviewProvider {
@@ -226,6 +195,7 @@ struct EcosiaAccountImpactView_Previews: PreviewProvider {
                     avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
                     seedCount: 247,
                     onLogin: {},
+                    onLogout: {},
                     onDismiss: {}
                 ),
                 windowUUID: .XCTestDefaultUUID
