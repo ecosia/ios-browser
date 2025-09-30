@@ -188,6 +188,10 @@ public enum URLProvider {
     public var seedCounterInfo: URL {
         URL(string: "https://support.ecosia.org/article/844-seed-counter?_sp=F7CC2AA5-430D-465E-8B8B-9A81054B465A")!
     }
+    
+    public var accountProfile: URL {
+        root.appendingPathComponent("accounts/profile")
+    }
 
     // MARK: - Authentication URL Patterns
 
