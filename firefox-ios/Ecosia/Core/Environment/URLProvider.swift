@@ -183,7 +183,7 @@ public enum URLProvider {
     public var accountProfile: URL {
         root.appendingPathComponent("accounts/profile")
     }
-    
+
     public var accountProfile: URL {
         root.appendingPathComponent("accounts/profile")
     }
