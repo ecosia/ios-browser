@@ -15,20 +15,17 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
 
     // MARK: - Private Properties
     private let onLoginAction: () -> Void
-    private let onLogoutAction: (() -> Void)?
     private let onDismissAction: () -> Void
-    private let authStateProvider: EcosiaAuthUIStateProvider
+    private let authStateProvider: EcosiaAuthStateProvider
 
     // MARK: - Initialization
     public init(
         onLogin: @escaping () -> Void,
-        onLogout: (() -> Void)? = nil,
         onDismiss: @escaping () -> Void
     ) {
         self.onLoginAction = onLogin
-        self.onLogoutAction = onLogout
         self.onDismissAction = onDismiss
-        self.authStateProvider = EcosiaAuthUIStateProvider.shared
+        self.authStateProvider = EcosiaAuthStateProvider.shared
     }
 
     // MARK: - Computed Properties
@@ -99,53 +96,6 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
             EcosiaLogger.auth.error("Failed to logout: \(error)")
         }
     }
-    
-    // MARK: - Auth State Monitoring
-    
-    private func setupAuthStateMonitoring() {
-        // Listen for auth state changes
-        authStateObserver = NotificationCenter.default.addObserver(
-            forName: .EcosiaAuthStateChanged,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            self?.handleAuthStateChange(notification)
-        }
-        
-        // Listen for user profile updates
-        userProfileObserver = NotificationCenter.default.addObserver(
-            forName: .EcosiaUserProfileUpdated,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.handleUserProfileUpdate()
-        }
-    }
-    
-    private func handleAuthStateChange(_ notification: Notification) {
-        // Update auth state from the global Auth singleton
-        let newIsLoggedIn = Auth.shared.isLoggedIn
-        let newUsername = Auth.shared.userProfile?.name
-        let newAvatarURL = Auth.shared.userProfile?.pictureURL
-        
-        // Only update if state actually changed to avoid unnecessary UI updates
-        if newIsLoggedIn != isLoggedIn {
-            updateState(
-                isLoggedIn: newIsLoggedIn,
-                username: newUsername,
-                currentLevel: newIsLoggedIn ? currentLevel : nil,
-                avatarURL: newAvatarURL,
-                seedCount: newIsLoggedIn ? seedCount : 1 // Reset to 1 for guest users
-            )
-        }
-    }
-    
-    private func handleUserProfileUpdate() {
-        if isLoggedIn {
-            username = Auth.shared.userProfile?.name
-            avatarURL = Auth.shared.userProfile?.pictureURL
-        }
-    }
 }
 
 // MARK: - Computed Properties
@@ -162,7 +112,7 @@ extension EcosiaAccountImpactViewModel {
         String.localized(.signUp)
     }
 
-    /// The level text to display - shows level for logged in users, ecocurious for guests
+    /// The level text to display - always shows the level based on seed count
     public var levelDisplayText: String {
         authStateProvider.levelDisplayText
     }
