@@ -13,7 +13,8 @@ public struct EcosiaAccountImpactView: View {
     private let windowUUID: WindowUUID
 
     @State private var theme = EcosiaAccountImpactViewTheme()
-    @State private var showSeedsCounterInfoWebView = false
+    @State private var showWebViewModal = false
+    @State private var showProfileWebView = false
 
     /// Layout configuration optimized for account impact cards
     private var impactCardLayout: NudgeCardLayout {
@@ -92,7 +93,7 @@ public struct EcosiaAccountImpactView: View {
                     viewModel: viewModel,
                     windowUUID: windowUUID,
                     onProfileTap: {
-                        // TODO: trigger the profile showing
+                        showProfileWebView = true
                     },
                     onSignOutTap: {
                         Task {
@@ -105,15 +106,21 @@ public struct EcosiaAccountImpactView: View {
                     viewModel: viewModel,
                     windowUUID: windowUUID,
                     onLearnMoreTap: {
-                        showSeedsCounterInfoWebView = true
+                        showWebViewModal = true
                     }
                 )
             }
         }
         .ecosiaThemed(windowUUID, $theme)
-        .sheet(isPresented: $showSeedsCounterInfoWebView) {
+        .sheet(isPresented: $showWebViewModal) {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.seedCounterInfo,
+                windowUUID: windowUUID
+            )
+        }
+        .sheet(isPresented: $showProfileWebView) {
+            EcosiaWebViewModal(
+                url: EcosiaEnvironment.current.urlProvider.accountProfile,
                 windowUUID: windowUUID
             )
         }
@@ -160,7 +167,7 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
         avatarPlaceholderColor = Color(theme.colors.layer3)
         avatarIconColor = Color(theme.colors.iconSecondary)
         levelTextColor = Color(theme.colors.ecosia.textInversePrimary)
-        levelBackgroundColor = Color(theme.colors.ecosia.backgroundNeutralInverse)
+        levelBackgroundColor = Color(theme.colors.ecosia.backgroundInverseNeutral)
     }
 }
 
@@ -183,6 +190,7 @@ struct EcosiaAccountImpactView_Previews: PreviewProvider {
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
                     onLogin: {},
+                    onLogout: {},
                     onDismiss: {}
                 ),
                 windowUUID: .XCTestDefaultUUID
