@@ -8,7 +8,7 @@ import Auth0
 
 final class AuthWorkflowTests: XCTestCase {
 
-    var auth: Auth!
+    var auth: EcosiaAuthenticationService!
     var mockProvider: MockAuth0Provider!
     var mockCredentialsManager: MockCredentialsManager!
 
@@ -17,7 +17,7 @@ final class AuthWorkflowTests: XCTestCase {
         mockCredentialsManager = MockCredentialsManager()
         mockProvider = MockAuth0Provider()
         mockProvider.credentialsManager = mockCredentialsManager
-        auth = Auth(auth0Provider: mockProvider)
+        auth = EcosiaAuthenticationService(auth0Provider: mockProvider)
     }
 
     override func tearDown() {

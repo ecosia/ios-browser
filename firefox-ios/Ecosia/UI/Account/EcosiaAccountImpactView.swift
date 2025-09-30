@@ -9,7 +9,7 @@ import Common
 @available(iOS 16.0, *)
 public struct EcosiaAccountImpactView: View {
     @ObservedObject private var viewModel: EcosiaAccountImpactViewModel
-    @ObservedObject private var authStateProvider = EcosiaAuthStateProvider.shared
+    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
     private let windowUUID: WindowUUID
 
     @State private var theme = EcosiaAccountImpactViewTheme()

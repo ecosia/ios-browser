@@ -7,10 +7,10 @@ import Common
 
 /// Main authentication state manager that provides Redux-like state management
 /// This system manages authentication state for multiple browser windows independently
-public final class AuthStateManager {
+public final class EcosiaBrowserWindowAuthManager {
 
     /// Shared instance for global access
-    public static let shared = AuthStateManager()
+    public static let shared = EcosiaBrowserWindowAuthManager()
 
     /// Thread-safe storage for window-specific authentication states
     private let queue = DispatchQueue(label: "ecosia.auth.state.manager", attributes: .concurrent)
@@ -20,7 +20,7 @@ public final class AuthStateManager {
     private let notificationCenter = NotificationCenter.default
 
     private     init() {
-        EcosiaLogger.auth.info("AuthStateManager initialized")
+        EcosiaLogger.auth.info("EcosiaBrowserWindowAuthManager initialized")
     }
 
     // MARK: - State Management

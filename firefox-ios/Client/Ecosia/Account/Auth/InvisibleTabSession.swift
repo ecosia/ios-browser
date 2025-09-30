@@ -43,7 +43,7 @@ final class InvisibleTabSession: TabEventHandler {
 
     /// Sets up session cookies for the tab
     func setupSessionCookies() {
-        guard let sessionCookie = Auth.shared.getSessionTokenCookie() else {
+        guard let sessionCookie = EcosiaAuthenticationService.shared.getSessionTokenCookie() else {
             EcosiaLogger.cookies.notice("No session cookie available for tab")
             return
         }

@@ -8,17 +8,17 @@ import WebKit
 import Common
 
 /**
- The `Auth` class manages user authentication, credential storage, and session management using Auth0.
+ The `EcosiaAuthenticationService` class manages user authentication, credential storage, and session management using Auth0.
  
  This class provides a centralized interface for all authentication operations in the Ecosia app,
  including login, logout, credential renewal, and session token management for web-to-native SSO..
  */
-public final class Auth {
+public final class EcosiaAuthenticationService {
 
     // MARK: - Public Properties
 
-    /// The shared singleton instance of the Auth class.
-    public static let shared = Auth()
+    /// The shared singleton instance of the EcosiaAuthenticationService class.
+    public static let shared = EcosiaAuthenticationService()
 
     /// The default credentials manager used across the application.
     /// This is a static property to ensure consistent credential storage.
@@ -268,7 +268,7 @@ public final class Auth {
     }
 }
 
-extension Auth {
+extension EcosiaAuthenticationService {
 
     // MARK: - SSO Methods
 
@@ -381,7 +381,7 @@ extension Auth {
     }
 }
 
-extension Auth {
+extension EcosiaAuthenticationService {
 
     // MARK: - State Management Integration
 
@@ -405,6 +405,6 @@ extension Auth {
         }
 
         // Dispatch to the new state management system
-        AuthStateManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType)
+        EcosiaBrowserWindowAuthManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType)
     }
 }

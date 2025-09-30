@@ -8,14 +8,14 @@ import Common
 
 final class AuthNotificationSystemTests: XCTestCase {
 
-    var authStateManager: AuthStateManager!
+    var authStateManager: EcosiaBrowserWindowAuthManager!
     var windowRegistry: EcosiaAuthWindowRegistry!
     var testWindowUUID: WindowUUID!
     fileprivate var notificationObserver: NotificationObserver!
 
     override func setUp() {
         super.setUp()
-        authStateManager = AuthStateManager.shared
+        authStateManager = EcosiaBrowserWindowAuthManager.shared
         windowRegistry = EcosiaAuthWindowRegistry.shared
         testWindowUUID = WindowUUID.XCTestDefaultUUID
         notificationObserver = NotificationObserver()

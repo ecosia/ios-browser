@@ -8,7 +8,7 @@ import Common
 
 /// Centralized, reactive authentication state provider for consistent UI state across all components
 /// This eliminates the need for individual components to manage their own auth state observers
-public final class EcosiaAuthStateProvider: ObservableObject {
+public final class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Published Properties
 
@@ -40,7 +40,7 @@ public final class EcosiaAuthStateProvider: ObservableObject {
     // MARK: - Singleton
 
     /// Shared instance for app-wide auth state
-    public static let shared = EcosiaAuthStateProvider()
+    public static let shared = EcosiaAuthUIStateProvider()
 
     private init(accountsProvider: AccountsProviderProtocol = AccountsProvider(useMockData: true)) {
         self.accountsProvider = accountsProvider
@@ -108,11 +108,11 @@ public final class EcosiaAuthStateProvider: ObservableObject {
 
     private func initializeState() {
         Task {
-            // Initialize from Auth.shared
+            // Initialize from EcosiaAuthenticationService.shared
             await updateFromAuthShared()
 
             // Initialize seed count based on auth state
-            if Auth.shared.isLoggedIn {
+            if EcosiaAuthenticationService.shared.isLoggedIn {
                 EcosiaLogger.accounts.info("User logged in at startup - will load from backend")
                 registerVisitIfNeeded()
             } else {
@@ -126,8 +126,8 @@ public final class EcosiaAuthStateProvider: ObservableObject {
 
     private func updateFromAuthShared() async {
         await MainActor.run {
-            isLoggedIn = Auth.shared.isLoggedIn
-            userProfile = Auth.shared.userProfile
+            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+            userProfile = EcosiaAuthenticationService.shared.userProfile
             avatarURL = userProfile?.pictureURL
             username = userProfile?.name
         }
@@ -155,7 +155,7 @@ public final class EcosiaAuthStateProvider: ObservableObject {
     private func handleUserProfileUpdate() async {
         await MainActor.run {
             if isLoggedIn {
-                userProfile = Auth.shared.userProfile
+                userProfile = EcosiaAuthenticationService.shared.userProfile
                 username = userProfile?.name
                 avatarURL = userProfile?.pictureURL
             }
@@ -167,7 +167,7 @@ public final class EcosiaAuthStateProvider: ObservableObject {
     private func registerVisitIfNeeded() {
         Task {
             do {
-                guard let accessToken = Auth.shared.accessToken, !accessToken.isEmpty else {
+                guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
                     EcosiaLogger.accounts.debug("No access token available - user not logged in")
                     await handleLocalSeedCollection()
                     return

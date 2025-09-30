@@ -9,12 +9,12 @@ import Common
 
 final class AuthStateManagerTests: XCTestCase {
 
-    var authStateManager: AuthStateManager!
+    var authStateManager: EcosiaBrowserWindowAuthManager!
     var testWindowUUID: WindowUUID!
 
     override func setUp() {
         super.setUp()
-        authStateManager = AuthStateManager.shared
+        authStateManager = EcosiaBrowserWindowAuthManager.shared
         testWindowUUID = WindowUUID.XCTestDefaultUUID
 
         // Clean state before each test

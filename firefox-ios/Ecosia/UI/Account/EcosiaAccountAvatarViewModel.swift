@@ -122,8 +122,8 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     private func setupInitialState() {
-        if Auth.shared.isLoggedIn {
-            avatarURL = Auth.shared.userProfile?.pictureURL
+        if EcosiaAuthenticationService.shared.isLoggedIn {
+            avatarURL = EcosiaAuthenticationService.shared.userProfile?.pictureURL
         }
     }
 
@@ -162,8 +162,8 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     nonisolated private func handleAuthStateChange() {
-        let newAvatarURL = Auth.shared.isLoggedIn ? Auth.shared.userProfile?.pictureURL : nil
-        let shouldResetProgress = !Auth.shared.isLoggedIn
+        let newAvatarURL = EcosiaAuthenticationService.shared.isLoggedIn ? EcosiaAuthenticationService.shared.userProfile?.pictureURL : nil
+        let shouldResetProgress = !EcosiaAuthenticationService.shared.isLoggedIn
 
         Task { @MainActor in
             avatarURL = newAvatarURL
@@ -174,7 +174,7 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     nonisolated private func handleUserProfileUpdate() {
-        let newAvatarURL = Auth.shared.userProfile?.pictureURL
+        let newAvatarURL = EcosiaAuthenticationService.shared.userProfile?.pictureURL
 
         Task { @MainActor in
             avatarURL = newAvatarURL

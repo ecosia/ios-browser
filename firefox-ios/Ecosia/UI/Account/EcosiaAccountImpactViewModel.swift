@@ -16,7 +16,7 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
     // MARK: - Private Properties
     private let onLoginAction: () -> Void
     private let onDismissAction: () -> Void
-    private let authStateProvider: EcosiaAuthStateProvider
+    private let authStateProvider: EcosiaAuthUIStateProvider
 
     // MARK: - Initialization
     public init(
@@ -25,7 +25,7 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
     ) {
         self.onLoginAction = onLogin
         self.onDismissAction = onDismiss
-        self.authStateProvider = EcosiaAuthStateProvider.shared
+        self.authStateProvider = EcosiaAuthUIStateProvider.shared
     }
 
     // MARK: - Computed Properties
@@ -91,7 +91,7 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
     /// Handles the logout action by delegating to Auth.shared
     public func handleLogout() async {
         do {
-            try await Auth.shared.logout()
+            try await EcosiaAuthenticationService.shared.logout()
         } catch {
             EcosiaLogger.auth.error("Failed to logout: \(error)")
         }

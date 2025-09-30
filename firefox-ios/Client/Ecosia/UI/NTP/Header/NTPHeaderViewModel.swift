@@ -22,7 +22,7 @@ final class NTPHeaderViewModel: ObservableObject {
     var onTapAction: ((UIButton) -> Void)?
 
     // Use centralized auth state provider for consistency
-    private let authStateProvider = EcosiaAuthStateProvider.shared
+    private let authStateProvider = EcosiaAuthUIStateProvider.shared
 
     // Computed properties that delegate to the centralized provider
     var seedCount: Int { authStateProvider.seedCount }

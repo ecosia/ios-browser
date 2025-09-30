@@ -59,7 +59,7 @@ final class EcosiaAuth {
 
     // MARK: - Dependencies
 
-    private let authProvider: Ecosia.Auth
+    private let authService: Ecosia.EcosiaAuthenticationService
     private weak var browserViewController: BrowserViewController?
 
     // MARK: - Chainable API Properties
@@ -74,10 +74,10 @@ final class EcosiaAuth {
     /// Initializes EcosiaAuth with required dependencies
     /// - Parameters:
     ///   - browserViewController: The browser view controller for tab operations
-    ///   - authProvider: The auth provider for authentication operations (defaults to Ecosia.Auth.shared)
+    ///   - authService: The authentication service for auth operations (defaults to Ecosia.EcosiaAuthenticationService.shared)
     init(browserViewController: BrowserViewController,
-         authProvider: Ecosia.Auth = Ecosia.Auth.shared) {
-        self.authProvider = authProvider
+         authService: Ecosia.EcosiaAuthenticationService = Ecosia.EcosiaAuthenticationService.shared) {
+        self.authService = authService
         self.browserViewController = browserViewController
         self.browserViewController?.ecosiaAuth = self
         EcosiaLogger.auth.info("EcosiaAuth initialized")
@@ -130,9 +130,9 @@ final class EcosiaAuth {
 
         Analytics.shared.accountSignInTriggered()
 
-        let flow = AuthFlow(
+        let flow = EcosiaAuthFlow(
             type: .login,
-            authProvider: authProvider,
+            authService: authService,
             browserViewController: browserViewController
         )
 
@@ -148,9 +148,9 @@ final class EcosiaAuth {
             fatalError("BrowserViewController not available for auth flow")
         }
 
-        let flow = AuthFlow(
+        let flow = EcosiaAuthFlow(
             type: .logout,
-            authProvider: authProvider,
+            authService: authService,
             browserViewController: browserViewController
         )
 
@@ -162,7 +162,7 @@ final class EcosiaAuth {
 
     // MARK: - Private Implementation
 
-    private func performLogin(_ flow: AuthFlow) async {
+    private func performLogin(_ flow: EcosiaAuthFlow) async {
         let result = await flow.startLogin(
             delayedCompletion: delayedCompletionTime,
             onNativeAuthCompleted: onNativeAuthCompletedCallback,
@@ -183,7 +183,7 @@ final class EcosiaAuth {
         }
     }
 
-    private func performLogout(_ flow: AuthFlow) async {
+    private func performLogout(_ flow: EcosiaAuthFlow) async {
         let result = await flow.startLogout(
             delayedCompletion: delayedCompletionTime,
             onNativeAuthCompleted: onNativeAuthCompletedCallback,
@@ -204,22 +204,22 @@ final class EcosiaAuth {
     // MARK: - State Queries
 
     var isLoggedIn: Bool {
-        authProvider.isLoggedIn
+        authService.isLoggedIn
     }
 
     var idToken: String? {
-        authProvider.idToken
+        authService.idToken
     }
 
     var accessToken: String? {
-        authProvider.accessToken
+        authService.accessToken
     }
 
     var userProfile: UserProfile? {
-        authProvider.userProfile
+        authService.userProfile
     }
 
     func renewCredentialsIfNeeded() async throws {
-        try await authProvider.renewCredentialsIfNeeded()
+        try await authService.renewCredentialsIfNeeded()
     }
 }
