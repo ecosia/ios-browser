@@ -69,6 +69,7 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 @available(iOS 16.0, *)
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
+    @ObservedObject private var authStateProvider = EcosiaAuthStateProvider.shared
     let windowUUID: WindowUUID
     // Use explicit SwiftUI.Environment to avoid ambiguity
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
@@ -108,24 +109,10 @@ struct NTPHeaderView: View {
             viewModel.registerVisitIfNeeded()
         }
         .sheet(isPresented: $showAccountImpactView) {
-            let isLoggedIn = viewModel.isLoggedIn
-            let username: String? = nil // Username not available in NTPHeaderViewModel
-            let avatarURL = viewModel.userAvatarURL
-            let seedCount = viewModel.seedCount
-            let currentLevel = isLoggedIn ? "Level 1 - \(String.localized(.ecocurious))" : nil
-
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
-                    isLoggedIn: isLoggedIn,
-                    username: username,
-                    currentLevel: currentLevel,
-                    avatarURL: avatarURL,
-                    seedCount: seedCount,
                     onLogin: {
                         viewModel.performLogin()
-                    },
-                    onLogout: {
-                        viewModel.performLogout()
                     },
                     onDismiss: {
                         showAccountImpactView = false

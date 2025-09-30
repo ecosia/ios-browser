@@ -19,48 +19,28 @@ final class NTPHeaderViewModel: ObservableObject {
     private let windowUUID: WindowUUID
     let profile: Profile
     private(set) var auth: EcosiaAuth
-    private var authStateObserver: NSObjectProtocol?
-    private var userProfileObserver: NSObjectProtocol?
     var onTapAction: ((UIButton) -> Void)?
-    private let accountsProvider: AccountsProviderProtocol
-    private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
-    @Published var seedCount: Int = 1
-    @Published var isLoggedIn: Bool = false
-    @Published var userAvatarURL: URL?
-    @Published var balanceIncrement: Int?
+
+    // Use centralized auth state provider for consistency
+    private let authStateProvider = EcosiaAuthStateProvider.shared
+
+    // Computed properties that delegate to the centralized provider
+    var seedCount: Int { authStateProvider.seedCount }
+    var isLoggedIn: Bool { authStateProvider.isLoggedIn }
+    var userAvatarURL: URL? { authStateProvider.avatarURL }
+    var balanceIncrement: Int? { authStateProvider.balanceIncrement }
 
     // MARK: - Initialization
     init(profile: Profile,
          theme: Theme,
          windowUUID: WindowUUID,
-         accountsProvider: AccountsProviderProtocol = AccountsProvider(useMockData: true),
          auth: EcosiaAuth,
          delegate: NTPHeaderDelegate? = nil) {
         self.profile = profile
         self.theme = theme
         self.windowUUID = windowUUID
-        self.accountsProvider = accountsProvider
         self.auth = auth
         self.delegate = delegate
-
-        // Initialize auth state
-        updateAuthState()
-
-        // Set up auth state monitoring
-        setupAuthStateMonitoring()
-
-        // Initialize seed count based on auth state
-        initializeSeedCount()
-    }
-
-    deinit {
-        // Remove notification observers
-        if let observer = authStateObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-        if let observer = userProfileObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
     }
 
     // MARK: - Public Methods
@@ -71,7 +51,8 @@ final class NTPHeaderViewModel: ObservableObject {
     }
 
     func updateSeedCount(_ count: Int) {
-        seedCount = count
+        // Seed count is now managed by the centralized auth state provider
+        // This method is kept for backward compatibility but does nothing
     }
 
     func performLogin() {
@@ -81,150 +62,15 @@ final class NTPHeaderViewModel: ObservableObject {
     func performLogout() {
         EcosiaLogger.auth.info("Performing immediate logout without confirmation")
         auth.logout()
-
-        // Reset to local seed collection system
-        Task { @MainActor in
-            resetToLocalSeedCollection()
-        }
     }
 }
 
 extension NTPHeaderViewModel {
 
+    /// Delegates to the centralized auth state provider
     func registerVisitIfNeeded() {
-        Task {
-            do {
-                // Step 2: Get access token after refresh
-                guard let accessToken = auth.accessToken, !accessToken.isEmpty else {
-                    EcosiaLogger.accounts.debug("No access token available - user not logged in")
-
-                    // Use local seed collection when not logged in
-                    await handleLocalSeedCollection()
-                    return
-                }
-
-                // Step 3: Make API call
-                EcosiaLogger.accounts.info("Registering user visit for balance update")
-                let response = try await accountsProvider.registerVisit(accessToken: accessToken)
-                await updateBalance(response)
-            } catch {
-                EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
-            }
-        }
-    }
-
-    // MARK: - Auth State Synchronization
-
-    @MainActor
-    private func updateBalance(_ response: AccountVisitResponse) {
-        let newSeedCount = response.balance.amount
-
-        if let increment = response.balanceIncrement {
-            EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment))")
-            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
-        } else {
-            EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount)")
-            seedCount = newSeedCount
-        }
-    }
-
-    @MainActor
-    private func animateBalanceChange(from oldValue: Int, to newValue: Int, increment: Int) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.balanceIncrement = increment
-
-            withAnimation(.easeIn(duration: 0.3)) {
-                self.seedCount = newValue
-            }
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                withAnimation(.linear(duration: 0.57)) {
-                    self.balanceIncrement = nil
-                }
-            }
-        }
-    }
-
-    // MARK: - Private Methods
-
-    private func updateAuthState() {
-        isLoggedIn = auth.isLoggedIn
-        updateUserAvatar()
-    }
-
-    private func updateUserAvatar() {
-        userAvatarURL = auth.userProfile?.pictureURL
-    }
-
-    private func setupAuthStateMonitoring() {
-        // Listen for auth state changes
-        authStateObserver = NotificationCenter.default.addObserver(
-            forName: .EcosiaAuthStateChanged,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            DispatchQueue.main.async {
-                self?.updateAuthState()
-
-                // Handle auth state changes
-                if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType {
-                    switch actionType {
-                    case .userLoggedIn:
-                        EcosiaLogger.accounts.info("User logged in - registering visit")
-                        self?.registerVisitIfNeeded()
-                    case .userLoggedOut:
-                        EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
-                        self?.resetToLocalSeedCollection()
-                    case .authStateLoaded:
-                        break // No specific action needed
-                    }
-                }
-            }
-        }
-
-        // Listen for user profile updates
-        userProfileObserver = NotificationCenter.default.addObserver(
-            forName: .EcosiaUserProfileUpdated,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.updateUserAvatar()
-            }
-        }
-    }
-
-    // MARK: - Local Seed Collection
-
-    private func initializeSeedCount() {
-        if auth.isLoggedIn {
-            EcosiaLogger.accounts.info("User logged in at startup - will load from backend")
-            registerVisitIfNeeded()
-        } else {
-            EcosiaLogger.accounts.info("User logged out at startup - using local seed collection")
-            seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-        }
-    }
-
-    @MainActor
-    private func resetToLocalSeedCollection() {
-        EcosiaLogger.accounts.info("Resetting to local seed collection system")
-        Self.seedProgressManagerType.resetCounter()
-        seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-    }
-
-    @MainActor
-    private func handleLocalSeedCollection() {
-        EcosiaLogger.accounts.info("Handling local seed collection for logged-out user")
-        Self.seedProgressManagerType.collectDailySeed()
-        let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-
-        if newSeedCount > seedCount {
-            let increment = newSeedCount - seedCount
-            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
-        } else {
-            seedCount = newSeedCount
-        }
+        // The centralized provider handles this automatically on login
+        // This method is kept for backward compatibility but does nothing
     }
 }
 

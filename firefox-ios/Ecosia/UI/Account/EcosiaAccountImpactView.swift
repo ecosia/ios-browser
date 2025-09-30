@@ -9,6 +9,7 @@ import Common
 @available(iOS 16.0, *)
 public struct EcosiaAccountImpactView: View {
     @ObservedObject private var viewModel: EcosiaAccountImpactViewModel
+    @ObservedObject private var authStateProvider = EcosiaAuthStateProvider.shared
     private let windowUUID: WindowUUID
 
     @State private var theme = EcosiaAccountImpactViewTheme()
@@ -178,7 +179,6 @@ struct EcosiaAccountImpactView_Previews: PreviewProvider {
             // Guest user state
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
-                    isLoggedIn: false,
                     onLogin: {},
                     onDismiss: {}
                 ),
@@ -189,13 +189,7 @@ struct EcosiaAccountImpactView_Previews: PreviewProvider {
             // Logged in user state
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
-                    isLoggedIn: true,
-                    username: "EcoUser",
-                    currentLevel: "Level 3 - Forest Friend",
-                    avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                    seedCount: 247,
                     onLogin: {},
-                    onLogout: {},
                     onDismiss: {}
                 ),
                 windowUUID: .XCTestDefaultUUID

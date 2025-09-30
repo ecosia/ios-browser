@@ -11,10 +11,10 @@ public struct EcosiaAccountSignedOutView: View {
     @ObservedObject private var viewModel: EcosiaAccountImpactViewModel
     private let windowUUID: WindowUUID
     private let onLearnMoreTap: () -> Void
-    
+
     @State private var theme = EcosiaAccountSignedOutViewTheme()
     @StateObject private var nudgeCardDelegate = NudgeCardActionHandler()
-    
+
     /// Layout configuration optimized for account impact cards
     private var impactCardLayout: NudgeCardLayout {
         NudgeCardLayout(
@@ -24,7 +24,7 @@ public struct EcosiaAccountSignedOutView: View {
             borderWidth: UX.borderWidth
         )
     }
-    
+
     public init(
         viewModel: EcosiaAccountImpactViewModel,
         windowUUID: WindowUUID,
@@ -34,7 +34,7 @@ public struct EcosiaAccountSignedOutView: View {
         self.windowUUID = windowUUID
         self.onLearnMoreTap = onLearnMoreTap
     }
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: .ecosia.space._l) {
             // Impact card
@@ -80,7 +80,7 @@ public struct EcosiaAccountSignedOutView: View {
             }
         }
     }
-    
+
     // MARK: - UX Constants
     private enum UX {
         static let closeButtonSize: CGFloat = 15
@@ -100,9 +100,9 @@ public struct EcosiaAccountSignedOutViewTheme: EcosiaThemeable {
     public var ctaButtonBackgroundColor = Color.green
     public var levelTextColor = Color.white
     public var levelBackgroundColor = Color.black
-    
+
     public init() {}
-    
+
     public mutating func applyTheme(theme: Theme) {
         cardBackgroundColor = Color(theme.colors.layer2)
         textPrimaryColor = Color(theme.colors.textPrimary)
@@ -140,7 +140,6 @@ struct EcosiaAccountSignedOutView_Previews: PreviewProvider {
     static var previews: some View {
         EcosiaAccountSignedOutView(
             viewModel: EcosiaAccountImpactViewModel(
-                isLoggedIn: false,
                 onLogin: {},
                 onDismiss: {}
             ),
@@ -152,4 +151,3 @@ struct EcosiaAccountSignedOutView_Previews: PreviewProvider {
     }
 }
 #endif
-

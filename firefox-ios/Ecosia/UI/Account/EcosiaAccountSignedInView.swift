@@ -12,9 +12,9 @@ public struct EcosiaAccountSignedInView: View {
     private let windowUUID: WindowUUID
     private let onProfileTap: () -> Void
     private let onSignOutTap: () -> Void
-    
+
     @State private var theme = EcosiaAccountSignedInViewTheme()
-    
+
     public init(
         viewModel: EcosiaAccountImpactViewModel,
         windowUUID: WindowUUID,
@@ -26,7 +26,7 @@ public struct EcosiaAccountSignedInView: View {
         self.onProfileTap = onProfileTap
         self.onSignOutTap = onSignOutTap
     }
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: .ecosia.space._m) {
             VStack(alignment: .leading, spacing: 0) {
@@ -74,7 +74,7 @@ public struct EcosiaAccountSignedInView: View {
                         .resizable()
                         .frame(width: 16, height: 16)
                         .foregroundColor(theme.signOutIconColor)
-                    
+
                     Text(String.localized(.signOut))
                         .font(.title3)
                         .foregroundColor(theme.signOutTextColor)
@@ -101,9 +101,9 @@ public struct EcosiaAccountSignedInViewTheme: EcosiaThemeable {
     public var chevronColor = Color.gray
     public var signOutTextColor = Color.red
     public var signOutIconColor = Color.red
-    
+
     public init() {}
-    
+
     public mutating func applyTheme(theme: Theme) {
         titleColor = Color(theme.colors.ecosia.textSecondary)
         menuBackgroundColor = Color(theme.colors.layer2)
@@ -121,13 +121,7 @@ struct EcosiaAccountSignedInView_Previews: PreviewProvider {
     static var previews: some View {
         EcosiaAccountSignedInView(
             viewModel: EcosiaAccountImpactViewModel(
-                isLoggedIn: true,
-                username: "EcoUser",
-                currentLevel: "Level 3 - Forest Friend",
-                avatarURL: URL(string: "https://avatars.githubusercontent.com/u/1?v=4"),
-                seedCount: 247,
                 onLogin: {},
-                onLogout: {},
                 onDismiss: {}
             ),
             windowUUID: .XCTestDefaultUUID,
@@ -139,4 +133,3 @@ struct EcosiaAccountSignedInView_Previews: PreviewProvider {
     }
 }
 #endif
-

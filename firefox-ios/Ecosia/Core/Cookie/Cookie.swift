@@ -16,6 +16,8 @@ public enum Cookie: String, CaseIterable {
     case unleash = "ECUNL"
     // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECAIO
     case aiOverviews = "ECAIO"
+    // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#EASC
+    case authSession = "EASC"
 
     // MARK: - URLProvider Management
 
@@ -69,6 +71,8 @@ public enum Cookie: String, CaseIterable {
             return UnleashCookieHandler()
         case .aiOverviews:
             return AIOverviewsCookieHandler()
+        case .authSession:
+            return AuthSessionCookieHandler()
         }
     }
 

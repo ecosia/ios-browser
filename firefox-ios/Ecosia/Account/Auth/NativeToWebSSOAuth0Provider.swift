@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Auth0
+import WebKit
 
 /// Native to Web SSO implementation of `Auth0ProviderProtocol` using Auth0's SDK and performing Native to Web SSO via REST API to perform the session token exchange.
 public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
@@ -37,12 +38,16 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     /// We provide immediate logout without any confirmation popups for better UX
     public func clearSession() async throws {
         // Skip calling webAuth.clearSession() to avoid Auth0's native logout alert
-        // Logout happens immediately without any confirmation dialogs
-        EcosiaLogger.auth.info("Skipping Auth0 native logout alert - immediate logout without confirmation")
-
-        // Note: This means the Auth0 session cookie won't be cleared from the browser
-        // but the user will be logged out locally. For full logout including browser session,
-        // the web logout flow in the invisible tab should handle the session clearing.
+        // Logout happens immediately without any confirmation dialogs by clearing the auth session cookie
+        await clearWebSessionCookies()
+        EcosiaLogger.auth.info("\(Cookie.authSession.name) cookie cleared successfully")
+    }
+    
+    /// Clears EASC (Ecosia Auth Session Cookie) cookies from the default web data store
+    private func clearWebSessionCookies() async {
+        let cookieStore = await WKWebsiteDataStore.default().httpCookieStore
+        guard let sessionCookie = await cookieStore.allCookies().first(where: { $0.name == Cookie.authSession.name }) else { return }
+        await cookieStore.deleteCookie(sessionCookie)
     }
 }
 
