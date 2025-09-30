@@ -166,11 +166,18 @@ extension NTPHeaderViewModel {
             DispatchQueue.main.async {
                 self?.updateAuthState()
 
-                // Register visit when user logs in (same simple flow)
-                if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType,
-                   actionType == .userLoggedIn {
-                    EcosiaLogger.accounts.info("User logged in - registering visit")
-                    self?.registerVisitIfNeeded()
+                // Handle auth state changes
+                if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType {
+                    switch actionType {
+                    case .userLoggedIn:
+                        EcosiaLogger.accounts.info("User logged in - registering visit")
+                        self?.registerVisitIfNeeded()
+                    case .userLoggedOut:
+                        EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
+                        self?.resetToLocalSeedCollection()
+                    case .authStateLoaded:
+                        break // No specific action needed
+                    }
                 }
             }
         }

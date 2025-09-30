@@ -124,6 +124,9 @@ struct NTPHeaderView: View {
                     onLogin: {
                         viewModel.performLogin()
                     },
+                    onLogout: {
+                        viewModel.performLogout()
+                    },
                     onDismiss: {
                         showAccountImpactView = false
                     }
