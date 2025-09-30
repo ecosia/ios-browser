@@ -42,7 +42,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         await clearWebSessionCookies()
         EcosiaLogger.auth.info("\(Cookie.authSession.name) cookie cleared successfully")
     }
-    
+
     /// Clears EASC (Ecosia Auth Session Cookie) cookies from the default web data store
     private func clearWebSessionCookies() async {
         let cookieStore = await WKWebsiteDataStore.default().httpCookieStore
