@@ -20,8 +20,11 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
 
     // MARK: - Private Properties
     private let onLoginAction: () -> Void
+    private let onLogoutAction: (() -> Void)?
     private let onDismissAction: () -> Void
     private var previousSeedCount: Int = 0
+    private var authStateObserver: NSObjectProtocol?
+    private var userProfileObserver: NSObjectProtocol?
 
     // MARK: - Initialization
     public init(
@@ -31,6 +34,7 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         avatarURL: URL? = nil,
         seedCount: Int = 0,
         onLogin: @escaping () -> Void,
+        onLogout: (() -> Void)? = nil,
         onDismiss: @escaping () -> Void
     ) {
         self.isLoggedIn = isLoggedIn
@@ -40,7 +44,21 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         self.seedCount = seedCount
         self.previousSeedCount = seedCount
         self.onLoginAction = onLogin
+        self.onLogoutAction = onLogout
         self.onDismissAction = onDismiss
+        
+        // Set up auth state monitoring
+        setupAuthStateMonitoring()
+    }
+    
+    deinit {
+        // Remove notification observers
+        if let observer = authStateObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = userProfileObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     // MARK: - Public Methods
@@ -81,6 +99,30 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         Analytics.shared.accountImpactCardCtaClicked()
     }
 
+    /// Handles the logout action
+    public func handleLogout() async {
+        if let onLogoutAction = onLogoutAction {
+            // Use the provided logout callback for proper web session clearing
+            onLogoutAction()
+        } else {
+            // Fallback to direct Auth.shared.logout() if no callback provided
+            do {
+                try await Auth.shared.logout()
+                // Update state to logged out immediately with reset values
+                updateState(
+                    isLoggedIn: false,
+                    username: nil,
+                    currentLevel: nil,
+                    avatarURL: nil,
+                    seedCount: 1
+                )
+            } catch {
+                EcosiaLogger.auth.error("Failed to logout: \(error)")
+                // Handle logout error if needed
+            }
+        }
+    }
+
     /// Updates the view model state
     public func updateState(
         isLoggedIn: Bool,
@@ -103,6 +145,53 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         self.seedCount = seedCount
         self.isLoading = false
     }
+    
+    // MARK: - Auth State Monitoring
+    
+    private func setupAuthStateMonitoring() {
+        // Listen for auth state changes
+        authStateObserver = NotificationCenter.default.addObserver(
+            forName: .EcosiaAuthStateChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            self?.handleAuthStateChange(notification)
+        }
+        
+        // Listen for user profile updates
+        userProfileObserver = NotificationCenter.default.addObserver(
+            forName: .EcosiaUserProfileUpdated,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.handleUserProfileUpdate()
+        }
+    }
+    
+    private func handleAuthStateChange(_ notification: Notification) {
+        // Update auth state from the global Auth singleton
+        let newIsLoggedIn = Auth.shared.isLoggedIn
+        let newUsername = Auth.shared.userProfile?.name
+        let newAvatarURL = Auth.shared.userProfile?.pictureURL
+        
+        // Only update if state actually changed to avoid unnecessary UI updates
+        if newIsLoggedIn != isLoggedIn {
+            updateState(
+                isLoggedIn: newIsLoggedIn,
+                username: newUsername,
+                currentLevel: newIsLoggedIn ? currentLevel : nil,
+                avatarURL: newAvatarURL,
+                seedCount: newIsLoggedIn ? seedCount : 1 // Reset to 1 for guest users
+            )
+        }
+    }
+    
+    private func handleUserProfileUpdate() {
+        if isLoggedIn {
+            username = Auth.shared.userProfile?.name
+            avatarURL = Auth.shared.userProfile?.pictureURL
+        }
+    }
 }
 
 // MARK: - Computed Properties
@@ -119,11 +208,15 @@ extension EcosiaAccountImpactViewModel {
         String.localized(.signUp)
     }
 
-    /// The level text to display - always shows the level based on seed count
+    /// The level text to display - shows level for logged in users, ecocurious for guests
     public var levelDisplayText: String {
-        let level = AccountSeedLevelSystem.currentLevel(for: seedCount)
-        let levelName = level.localizedName
-        return "\(String.localized(.level)) \(level.level) - \(levelName)"
+        if isLoggedIn {
+            let level = AccountSeedLevelSystem.currentLevel(for: seedCount)
+            let levelName = level.localizedName
+            return "\(String.localized(.level)) \(level.level) - \(levelName)"
+        } else {
+            return "\(String.localized(.level)) 1 - \(String.localized(.ecocurious))"
+        }
     }
 
     /// Progress for the avatar (0.0 to 1.0)
