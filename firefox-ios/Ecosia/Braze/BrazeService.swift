@@ -8,6 +8,10 @@ import UserNotifications
 import BrazeKit
 import BrazeUI
 
+public protocol BrazeBrowserDelegate: AnyObject {
+    func openBrazeURLInNewTab(_ url: URL?)
+}
+
 public final class BrazeService: NSObject {
     override private init() {}
 
@@ -18,6 +22,7 @@ public final class BrazeService: NSObject {
     private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
     private static var apiKey = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "BRAZE_API_KEY") ?? ""
     public static let shared = BrazeService()
+    public weak var browserDelegate: BrazeBrowserDelegate?
 
     enum Error: Swift.Error {
         case invalidConfiguration
@@ -75,6 +80,7 @@ extension BrazeService {
     @MainActor
     private func initBraze(userId: String) throws {
         self.braze = Braze(configuration: try getBrazeConfiguration())
+        self.braze?.delegate = self
         let inAppMessageUI = BrazeInAppMessageUI()
         inAppMessageUI.delegate = self
         self.braze?.inAppMessagePresenter = inAppMessageUI
@@ -156,6 +162,26 @@ extension BrazeService: BrazeInAppMessageUIDelegate {
     public func inAppMessage(_ ui: BrazeInAppMessageUI, shouldProcess clickAction: Braze.InAppMessage.ClickAction, buttonId: String?, message: Braze.InAppMessage, view: any InAppMessageView) -> Bool {
         Analytics.shared.brazeIAM(action: .click, messageOrButtonId: buttonId)
         return true
+    }
+}
+
+extension BrazeService: BrazeDelegate {
+    public func braze(_ braze: Braze, shouldOpenURL context: Braze.URLContext) -> Bool {
+        let isInternal: Bool = {
+            let contextUrl = context.url
+            let rootUrl = Environment.current.urlProvider.root
+            if #available(iOS 16.0, *) {
+                return contextUrl.host() == rootUrl.host()
+            } else {
+                return contextUrl.host == rootUrl.host
+            }
+        }()
+
+        // Braze should handle external URLs (or as a fallback with no delegate)
+        guard isInternal, let browserDelegate = self.browserDelegate else { return true }
+
+        browserDelegate.openBrazeURLInNewTab(context.url)
+        return false
     }
 }
 

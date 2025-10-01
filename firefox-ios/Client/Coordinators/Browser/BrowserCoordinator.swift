@@ -1114,3 +1114,10 @@ extension BrowserCoordinator {
         return true
     }
 }
+
+// Ecosia: Set BrowserCoordinator as Braze's browserDelegate to handle push urls
+extension BrowserCoordinator: BrazeBrowserDelegate {
+    func openBrazeURLInNewTab(_ url: URL?) {
+        openURLInNewTab(url)
+    }
+}
