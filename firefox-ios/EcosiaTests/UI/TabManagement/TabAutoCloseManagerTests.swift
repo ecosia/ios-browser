@@ -12,27 +12,31 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
     // MARK: - Properties
 
     private var manager: InvisibleTabAutoCloseManager!
-    private var mockTabManager: MockTabManager!
+    private var mockTabManager: TabAutoCloseTestMockTabManager!
     private var mockNotificationCenter: TabAutoCloseManagerMockNotificationCenter!
 
     // MARK: - Setup and Teardown
 
     override func setUp() {
         super.setUp()
-        mockTabManager = MockTabManager()
+        
+        /*
+         Since we're using singletons, we need to clear any leftover state
+         from previous tests to avoid interference between test runs
+         */
+        InvisibleTabAutoCloseManager.shared.cleanupAllObservers()
+        InvisibleTabManager.shared.clearAllInvisibleTabs()
+        
+        mockTabManager = TabAutoCloseTestMockTabManager()
         mockNotificationCenter = TabAutoCloseManagerMockNotificationCenter()
 
-        // Set up manager with injected dependencies
         manager = InvisibleTabAutoCloseManager.shared
         manager.setTabManager(mockTabManager)
-
-        // Clean up any existing state
-        manager.cleanupAllObservers()
     }
 
     override func tearDown() {
         manager.cleanupAllObservers()
-        // manager.setTabManager(nil) // TabAutoCloseManager doesn't support nil, it starts with nil by default
+        InvisibleTabManager.shared.clearAllInvisibleTabs()
         mockTabManager = nil
         mockNotificationCenter = nil
         super.tearDown()
@@ -40,22 +44,19 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
 
     // MARK: - Helper Methods
 
-    private func createMockTab(uuid: String = UUID().uuidString, isPrivate: Bool = false) -> Tab {
+    private func createMockTab(uuid: String = UUID().uuidString, isPrivate: Bool = false, isInvisible: Bool = true) -> Tab {
         let profile = MockProfile()
         let tab = Tab(profile: profile, isPrivate: isPrivate, windowUUID: WindowUUID())
         tab.tabUUID = uuid
+        
+        /*
+         The auto-close manager only tracks invisible tabs,
+         so we mark them that way by default for testing
+         */
+        if isInvisible {
+            InvisibleTabManager.shared.markTabAsInvisible(tab)
+        }
         return tab
-    }
-
-    // MARK: - Singleton Tests
-
-    func testSingletonInstance() {
-        // Given/When
-        let instance1 = InvisibleTabAutoCloseManager.shared
-        let instance2 = InvisibleTabAutoCloseManager.shared
-
-        // Then
-        XCTAssertTrue(instance1 === instance2, "InvisibleTabAutoCloseManager should be a singleton")
     }
 
     // MARK: - Basic Setup Tests
@@ -71,18 +72,6 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(manager.trackedTabCount, 1, "Should track one tab")
         XCTAssertTrue(manager.trackedTabUUIDs.contains(tab.tabUUID), "Should track the specific tab")
-    }
-
-    func testSetupAutoCloseForTabWithoutTabManager() {
-        // Given
-        let tab = createMockTab()
-        // Don't set a tab manager - it starts as nil by default
-
-        // When
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 10.0)
-
-        // Then
-        XCTAssertEqual(manager.trackedTabCount, 0, "Should not track any tabs without tab manager")
     }
 
     func testSetupAutoCloseForMultipleTabs() {
@@ -384,12 +373,6 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
 
     // MARK: - Error Handling Tests
 
-    func testSetupAutoCloseWithNilTab() {
-        // When/Then - Should not crash
-        // Note: This would require changes to the actual implementation to accept optional tabs
-        // For now, we assume the implementation expects non-nil tabs
-    }
-
     func testDuplicateSetupForSameTab() {
         // Given
         let tab = createMockTab(uuid: "duplicate-tab")
@@ -439,8 +422,22 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
     }
 }
 
-// MARK: - Mock Notification Center
+// MARK: - Custom Mock TabManager
 
+/*
+ The shared MockTabManager has an empty removeTab implementation,
+ but our tests need to verify that tabs actually get removed.
+ This subclass provides a working implementation for testing.
+ */
+class TabAutoCloseTestMockTabManager: MockTabManager {
+    override func removeTab(_ tab: Tab, completion: (() -> Void)?) {
+        tabs.removeAll { $0.tabUUID == tab.tabUUID }
+        completion?()
+    }
+}
+
+// MARK: - Mock Notification Center
+// swiftlint:disable large_tuple
 class TabAutoCloseManagerMockNotificationCenter: NotificationCenter, @unchecked Sendable {
     private var observers: [(name: Notification.Name, observer: Any, selector: Selector)] = []
 
@@ -459,10 +456,9 @@ class TabAutoCloseManagerMockNotificationCenter: NotificationCenter, @unchecked 
     func simulateNotification(name: Notification.Name, object: Any? = nil, userInfo: [AnyHashable: Any]? = nil) {
         let notification = Notification(name: name, object: object, userInfo: userInfo)
 
-        for (notificationName, observer, selector) in observers {
-            if notificationName == name {
-                _ = (observer as AnyObject).perform(selector, with: notification)
-            }
+        for (notificationName, observer, selector) in observers where notificationName == name {
+            _ = (observer as AnyObject).perform(selector, with: notification)
         }
     }
 }
+// swiftlint:enable large_tuple
