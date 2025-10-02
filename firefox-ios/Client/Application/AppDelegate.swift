@@ -12,6 +12,8 @@ import Glean
  */
 import TabDataStore
 import Ecosia
+// Ecosia: Import Braze
+import BrazeKit
 
 import class MozillaAppServices.Viaduct
 
@@ -116,6 +118,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                    level: .info,
                    category: .lifecycle)
 
+        // Ecosia: Allow Braze to be initialized after feature management
+        Braze.prepareForDelayedInitialization()
+
         // Ecosia: pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()
         /* Ecosia: Do not intialize Background sync
@@ -145,8 +150,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         Task {
             await FeatureManagement.fetchConfiguration()
-            // Ecosia: Braze Service Initialization helper
-            await BrazeService.shared.initialize()
+            // Ecosia: Braze Service Initialization after feature flags are fetched
+            BrazeService.shared.initialize()
             // Ecosia: Directly ask for consent
             await APNConsent.requestIfNeeded()
             // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.

@@ -33,10 +33,12 @@ public final class BrazeService: NSObject {
         case empty = ""
     }
 
-    public func initialize() async {
+    public func initialize() {
         do {
-            try await initBraze(userId: userId)
-            await refreshAPNRegistrationIfNeeded()
+            try initBraze(userId: userId)
+            Task {
+                await refreshAPNRegistrationIfNeeded()
+            }
         } catch {
             debugPrint(error)
         }
@@ -44,9 +46,7 @@ public final class BrazeService: NSObject {
 
     public func registerDeviceToken(_ deviceToken: Data) {
         braze?.notifications.register(deviceToken: deviceToken)
-        Task.detached(priority: .medium) { [weak self] in
-            await self?.updateID(self?.userId)
-        }
+        updateID(userId)
     }
 
     public func logCustomEvent(_ event: CustomEvent) {
@@ -77,16 +77,15 @@ public final class BrazeService: NSObject {
 extension BrazeService {
     // MARK: - Init Braze
 
-    @MainActor
     private func initBraze(userId: String) throws {
-        self.braze = Braze(configuration: try getBrazeConfiguration())
-        self.braze?.delegate = self
-        let inAppMessageUI = BrazeInAppMessageUI()
-        inAppMessageUI.delegate = self
-        self.braze?.inAppMessagePresenter = inAppMessageUI
-        Task.detached(priority: .medium) { [weak self] in
-            await self?.updateID(self?.userId)
+        braze = Braze(configuration: try getBrazeConfiguration())
+        braze?.delegate = self
+        Task { @MainActor in
+            let inAppMessageUI = BrazeInAppMessageUI()
+            inAppMessageUI.delegate = self
+            braze?.inAppMessagePresenter = inAppMessageUI
         }
+        updateID(userId)
     }
 }
 
@@ -110,12 +109,12 @@ extension BrazeService {
 extension BrazeService {
     // MARK: - ID Update
 
-    private func updateID(_ id: String?) async {
+    private func updateID(_ id: String?) {
         guard let id else { return }
         #if MOZ_CHANNEL_FENNEC
         print("📣🆔 Braze Identifier Updating To: \(id)")
         #endif
-        let brazeID = await braze?.user.id()
+        let brazeID = braze?.user.id
         guard id != brazeID else { return }
         braze?.changeUser(userId: id)
     }
