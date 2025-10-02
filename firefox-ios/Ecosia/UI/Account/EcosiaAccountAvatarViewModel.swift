@@ -193,8 +193,24 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     nonisolated private func handleLevelUp(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let newLevel = userInfo[EcosiaAccountNotificationKeys.newLevel] as? Int,
+              let newProgress = userInfo[EcosiaAccountNotificationKeys.newProgress] as? Double else {
+            return
+        }
+
         Task { @MainActor in
-            levelUp()
+            // Find the level that matches the new level number
+            if let level = AccountSeedLevelSystem.levels.first(where: { $0.level == newLevel }) {
+                currentLevel = level
+            }
+            progress = newProgress
+            triggerSparkles(duration: UX.levelUpDuration)
+            
+            Task {
+                try await Task.sleep(for: .seconds(UX.levelUpDuration))
+                progress = newProgress
+            }
         }
     }
 }
