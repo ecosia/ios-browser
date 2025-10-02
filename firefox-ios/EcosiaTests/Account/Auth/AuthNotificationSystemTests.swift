@@ -68,7 +68,7 @@ final class AuthNotificationSystemTests: XCTestCase {
         let receivedNotification = notificationObserver.receivedNotifications.first
         XCTAssertNotNil(receivedNotification, "Should receive notification")
         XCTAssertEqual(receivedNotification?.name, .EcosiaAuthStateChanged, "Should have correct notification name")
-        XCTAssertTrue(receivedNotification?.object is AuthStateManager, "Should have correct object")
+        XCTAssertTrue(receivedNotification?.object is EcosiaBrowserWindowAuthManager, "Should have correct object")
 
         // Verify userInfo content
         if let userInfo = receivedNotification?.userInfo {
@@ -229,7 +229,7 @@ final class AuthNotificationSystemTests: XCTestCase {
 
         if let notification = observer.receivedNotifications.first {
             XCTAssertEqual(notification.name, .EcosiaAuthStateChanged, "Should have correct notification name")
-            XCTAssertTrue(notification.object is AuthStateManager, "Should have correct object")
+            XCTAssertTrue(notification.object is EcosiaBrowserWindowAuthManager, "Should have correct object")
         }
     }
 

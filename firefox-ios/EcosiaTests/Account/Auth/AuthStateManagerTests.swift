@@ -118,7 +118,7 @@ final class AuthStateManagerTests: XCTestCase {
             // Verify notification contains expected data
             let userInfo = notification.userInfo
             XCTAssertEqual(userInfo?["windowUUID"] as? WindowUUID, self.testWindowUUID)
-            XCTAssertEqual(userInfo?["actionType"] as? String, "authStateLoaded")
+            XCTAssertEqual(userInfo?["actionType"] as? EcosiaAuthActionType, .authStateLoaded)
             XCTAssertNotNil(userInfo?["authState"] as? AuthWindowState)
 
             expectation.fulfill()
