@@ -30,6 +30,12 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
     /// Balance increment for animations (temporary state)
     @Published public private(set) var balanceIncrement: Int?
 
+    /// Current level number (from API for logged-in users, 1 for logged-out)
+    @Published private var currentLevelNumber: Int = 1
+
+    /// Current progress towards next level (from API for logged-in users, default 0.25 for initial state)
+    @Published private var currentProgress: Double = 0.25
+
     // MARK: - Private Properties
 
     private var authStateObserver: NSObjectProtocol?
@@ -65,19 +71,20 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
     }
 
     /// Computed property for level display text
+    /// Returns level number and name for logged-in users, empty string for logged-out users
     public var levelDisplayText: String {
-        let level = AccountSeedLevelSystem.currentLevel(for: seedCount)
-        let levelName = level.localizedName
-        return "\(String.localized(.level)) \(level.level) - \(levelName)"
+        let levelNumber = currentLevelNumber
+        let levelName = GrowthPointsLevelSystem.levelName(for: levelNumber)
+        return "\(String.localized(.level)) \(levelNumber) - \(levelName)"
     }
 
     /// Computed property for level progress (0.0 to 1.0)
+    /// Returns progress from API for logged-in users, 0.25 default for initial/logged-out state
     public var levelProgress: Double {
-        if isLoggedIn {
-            return AccountSeedLevelSystem.progressToNextLevel(for: seedCount)
-        } else {
-            return 0.25 // Default progress for guest users
+        guard isLoggedIn else {
+            return 0.25 // Default progress for logged-out users
         }
+        return currentProgress
     }
 
     // MARK: - Private Methods
@@ -183,14 +190,20 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
     }
 
     private func updateBalance(_ response: AccountVisitResponse) async {
-        let newSeedCount = response.balance.amount
+        let newSeedCount = response.seeds.totalAmount
+        let newLevelNumber = response.growthPoints.level.number
+        let newProgress = response.progressToNextLevel
 
         await MainActor.run {
-            if let increment = response.balanceIncrement {
-                EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment))")
+            // Update level and progress from API
+            currentLevelNumber = newLevelNumber
+            currentProgress = newProgress
+
+            if let increment = response.seedsIncrement {
+                EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment)), level=\(newLevelNumber), progress=\(newProgress)")
                 animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
             } else {
-                EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount)")
+                EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
                 seedCount = newSeedCount
             }
         }
@@ -219,6 +232,9 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
 
         await MainActor.run {
             seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
+            // Clear level data when logging out
+            currentLevelNumber = 1
+            currentProgress = 0.25 // Reset to default progress
         }
     }
 

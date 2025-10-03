@@ -115,7 +115,7 @@ private struct EcosiaAccountProgressAvatarInteractivePreview: View {
                 )
 
                 VStack(spacing: .ecosia.space._s) {
-                    Text("Level \(viewModel.currentLevel.level): \(viewModel.currentLevel.localizedName)")
+                    Text("Level \(viewModel.currentLevelNumber)")
                         .font(.headline)
 
                     Text("Seeds: \(viewModel.seedCount)")
@@ -124,15 +124,9 @@ private struct EcosiaAccountProgressAvatarInteractivePreview: View {
                     Text("Progress: \(Int(viewModel.progress * 100))%")
                         .font(.caption)
 
-                    if let nextLevel = AccountSeedLevelSystem.nextLevel(for: viewModel.seedCount) {
-                        Text("Next: Level \(nextLevel.level) (\(nextLevel.seedsRequired - viewModel.seedCount) seeds needed)")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    } else {
-                        Text("Max Level Reached!")
-                            .font(.caption2)
-                            .foregroundColor(.green)
-                    }
+                    Text("Levels from API (sign in to see real data)")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
                 }
 
                 VStack(spacing: .ecosia.space._s) {

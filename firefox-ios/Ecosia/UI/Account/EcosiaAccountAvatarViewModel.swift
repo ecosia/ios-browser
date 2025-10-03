@@ -13,7 +13,7 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     @Published public var avatarURL: URL?
     @Published public var progress: Double
     @Published public var showSparkles = false
-    @Published public var currentLevel: AccountSeedLevel
+    @Published public var currentLevelNumber: Int
     @Published public var seedCount: Int = 0
 
     private var authStateObserver: NSObjectProtocol?
@@ -24,19 +24,21 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
 
     private struct UX {
         static let defaultProgress: Double = 0.25
+        static let defaultLevel: Int = 1
         static let levelUpDuration: TimeInterval = 2.0
     }
 
     public init(
         avatarURL: URL? = nil,
         progress: Double = 0.25,
-        seedCount: Int = 0
+        seedCount: Int = 0,
+        levelNumber: Int = 1
     ) {
         self.avatarURL = avatarURL
         self.progress = max(0.0, min(1.0, progress))
         self.seedCount = seedCount
         self.previousSeedCount = seedCount
-        self.currentLevel = AccountSeedLevelSystem.currentLevel(for: seedCount)
+        self.currentLevelNumber = levelNumber
 
         setupInitialState()
         setupObservers()
@@ -83,41 +85,43 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
 
     /// Updates avatar progress based on AccountVisitResponse
     public func updateFromBalanceResponse(_ response: AccountVisitResponse) {
-        let newSeedCount = response.balance.amount
-        updateSeedCount(newSeedCount)
+        let newSeedCount = response.seeds.totalAmount
+        let newLevelNumber = response.growthPoints.level.number
+        let newProgress = response.progressToNextLevel
 
-        EcosiaLogger.accounts.info("Avatar received balance update: \(response.balance.amount), isModified: \(response.balance.isModified)")
-    }
-
-    /// Updates seed count and handles level progression
-    public func updateSeedCount(_ newSeedCount: Int) {
+        // Update seed count
         previousSeedCount = seedCount
         seedCount = newSeedCount
 
-        let newLevel = AccountSeedLevelSystem.currentLevel(for: seedCount)
-        let newProgress = AccountSeedLevelSystem.progressToNextLevel(for: seedCount)
+        // Update level and progress from API
+        currentLevelNumber = newLevelNumber
+        progress = newProgress
 
-        if let leveledUp = AccountSeedLevelSystem.checkLevelUp(from: previousSeedCount, to: seedCount) {
-            currentLevel = leveledUp
-            progress = newProgress
-
-            triggerLevelUpAnimation()
-
-            EcosiaLogger.accounts.info("User leveled up to \(leveledUp.level): \(leveledUp.localizedName)")
-        } else {
-            currentLevel = newLevel
-            progress = newProgress
+        // Check for level up using growth points
+        if response.didLevelUp {
+            triggerLevelUpAnimation(targetProgress: newProgress)
+            EcosiaLogger.accounts.info("User leveled up to level \(newLevelNumber) via growth points")
         }
+
+        EcosiaLogger.accounts.info("Avatar received balance update: seeds=\(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
     }
 
-    private func triggerLevelUpAnimation() {
+    /// Updates seed count manually (for local/offline scenarios - logged-out users)
+    /// Note: Logged-out users collect seeds but cannot level up. Leveling requires authentication.
+    public func updateSeedCount(_ newSeedCount: Int) {
+        previousSeedCount = seedCount
+        seedCount = newSeedCount
+        // No level calculation for logged-out users - they don't participate in the leveling system
+        EcosiaLogger.accounts.info("Seed count updated to \(newSeedCount) (logged-out, no leveling)")
+    }
+
+    private func triggerLevelUpAnimation(targetProgress: Double) {
         progress = 1.0
         triggerSparkles(duration: UX.levelUpDuration)
 
         Task {
             try await Task.sleep(for: .seconds(UX.levelUpDuration))
-            let actualProgress = AccountSeedLevelSystem.progressToNextLevel(for: seedCount)
-            progress = actualProgress
+            progress = targetProgress
         }
     }
 
@@ -200,17 +204,8 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         }
 
         Task { @MainActor in
-            // Find the level that matches the new level number
-            if let level = AccountSeedLevelSystem.levels.first(where: { $0.level == newLevel }) {
-                currentLevel = level
-            }
-            progress = newProgress
-            triggerSparkles(duration: UX.levelUpDuration)
-            
-            Task {
-                try await Task.sleep(for: .seconds(UX.levelUpDuration))
-                progress = newProgress
-            }
+            currentLevelNumber = newLevel
+            triggerLevelUpAnimation(targetProgress: newProgress)
         }
     }
 }
