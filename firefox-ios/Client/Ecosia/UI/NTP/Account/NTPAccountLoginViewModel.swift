@@ -108,9 +108,9 @@ final class NTPAccountLoginViewModel: ObservableObject {
 
     @MainActor
     private func updateBalance(_ response: AccountVisitResponse) {
-        let newSeedCount = response.balance.amount
+        let newSeedCount = response.seeds.totalAmount
 
-        if let increment = response.balanceIncrement {
+        if let increment = response.seedsIncrement {
             EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment))")
             animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
         } else {
