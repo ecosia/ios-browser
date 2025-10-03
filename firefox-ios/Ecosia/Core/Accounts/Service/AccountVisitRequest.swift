@@ -11,7 +11,7 @@ struct AccountVisitRequest: BaseRequest {
     }
 
     var path: String {
-        "/api/v2/accounts/impact/visit"
+        "/api/v2/accounts/impact/visits"
     }
 
     var queryParameters: [String: String]?
