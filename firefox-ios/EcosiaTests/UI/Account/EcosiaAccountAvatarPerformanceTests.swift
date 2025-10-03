@@ -37,7 +37,6 @@ final class EcosiaAccountAvatarPerformanceTests: XCTestCase {
         }
     }
 
-
     @MainActor
     func testSparkleAnimationTriggerPerformance() {
         // Test that sparkle animation triggering is responsive
