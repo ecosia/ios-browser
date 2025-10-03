@@ -19,14 +19,14 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        
+
         /*
          Since we're using singletons, we need to clear any leftover state
          from previous tests to avoid interference between test runs
          */
         InvisibleTabAutoCloseManager.shared.cleanupAllObservers()
         InvisibleTabManager.shared.clearAllInvisibleTabs()
-        
+
         mockTabManager = TabAutoCloseTestMockTabManager()
         mockNotificationCenter = TabAutoCloseManagerMockNotificationCenter()
 
@@ -48,7 +48,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         let profile = MockProfile()
         let tab = Tab(profile: profile, isPrivate: isPrivate, windowUUID: WindowUUID())
         tab.tabUUID = uuid
-        
+
         /*
          The auto-close manager only tracks invisible tabs,
          so we mark them that way by default for testing

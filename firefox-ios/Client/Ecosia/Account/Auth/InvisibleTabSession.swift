@@ -48,8 +48,10 @@ final class InvisibleTabSession: TabEventHandler {
             return
         }
 
-        tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
-        EcosiaLogger.cookies.info("Session cookie set for tab: \(tab.tabUUID)")
+        Task { @MainActor in
+            tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
+            EcosiaLogger.cookies.info("Session cookie set for tab: \(self.tab.tabUUID)")
+        }
     }
 
     /// Starts monitoring for session completion (page load + auth)
@@ -95,15 +97,17 @@ final class InvisibleTabSession: TabEventHandler {
             InvisibleTabAutoCloseManager.shared.setTabManager(tabManager)
         }
 
-        // Setup auto-close monitoring
-        InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
-            tab,
-            on: .EcosiaAuthStateChanged,
-            timeout: timeout
-        )
+        Task { @MainActor in
+            // Setup auto-close monitoring
+            InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
+                self.tab,
+                on: .EcosiaAuthStateChanged,
+                timeout: self.timeout
+            )
 
-        // Register for tab close events
-        register(self, forTabEvents: .didClose)
+            // Register for tab close events
+            register(self, forTabEvents: .didClose)
+        }
     }
 
     private func handleTabClosed() {
