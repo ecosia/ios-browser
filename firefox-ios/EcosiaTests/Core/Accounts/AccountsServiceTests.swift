@@ -18,13 +18,38 @@ final class AccountsServiceTests: XCTestCase {
 
     func testRegisterVisit_Success() async throws {
         // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
         let expectedResponse = AccountVisitResponse(
-            balance: AccountVisitResponse.Balance(
-                amount: 5,
-                updatedAt: "2024-12-07T10:50:26Z",
-                isModified: true
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 5,
+                totalAmount: 5,
+                previousTotalAmount: 4,
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
             ),
-            previousBalance: AccountVisitResponse.PreviousBalance(amount: 4)
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 100,
+                totalAmount: 100,
+                previousTotalAmount: 75,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 25
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 1,
+                    totalGrowthPointsRequired: 0,
+                    seedsRewardedForLevelUp: 1,
+                    growthPointsToUnlockNextLevel: 75,
+                    growthPointsEarnedTowardsNextLevel: 75
+                ),
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
         )
         let responseData = try JSONEncoder().encode(expectedResponse)
         mockHTTPClient.data = responseData
@@ -39,10 +64,12 @@ final class AccountsServiceTests: XCTestCase {
         let response = try await accountsService.registerVisit(accessToken: "test-access-token")
 
         // Assert
-        XCTAssertEqual(response.balance.amount, 5)
-        XCTAssertEqual(response.balance.isModified, true)
-        XCTAssertEqual(response.previousBalance?.amount, 4)
-        XCTAssertEqual(response.balanceIncrement, 1)
+        XCTAssertEqual(response.seeds.totalAmount, 5)
+        XCTAssertEqual(response.seeds.isModified, true)
+        XCTAssertEqual(response.seeds.previousTotalAmount, 4)
+        XCTAssertEqual(response.seedsIncrement, 1)
+        XCTAssertEqual(response.growthPoints.level.number, 2)
+        XCTAssertTrue(response.didLevelUp)
         XCTAssertEqual(mockHTTPClient.requests.count, 1)
 
         let request = mockHTTPClient.requests.first as? AccountVisitRequest
@@ -70,34 +97,84 @@ final class AccountsServiceTests: XCTestCase {
         }
     }
 
-    func testBalanceIncrement_NoChange() {
+    func testSeedsIncrement_NoChange() {
         // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
         let response = AccountVisitResponse(
-            balance: AccountVisitResponse.Balance(
-                amount: 5,
-                updatedAt: "2024-12-07T10:50:26Z",
-                isModified: false
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 5,
+                totalAmount: 5,
+                previousTotalAmount: 5,
+                isModified: false,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
             ),
-            previousBalance: AccountVisitResponse.PreviousBalance(amount: 5)
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 100,
+                totalAmount: 100,
+                previousTotalAmount: 100,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 25
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 25
+                ),
+                isModified: false,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
         )
 
         // Act & Assert
-        XCTAssertNil(response.balanceIncrement)
+        XCTAssertNil(response.seedsIncrement)
     }
 
-    func testBalanceIncrement_WithChange() {
+    func testSeedsIncrement_WithChange() {
         // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
         let response = AccountVisitResponse(
-            balance: AccountVisitResponse.Balance(
-                amount: 8,
-                updatedAt: "2024-12-07T10:50:26Z",
-                isModified: true
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 8,
+                totalAmount: 8,
+                previousTotalAmount: 5,
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
             ),
-            previousBalance: AccountVisitResponse.PreviousBalance(amount: 5)
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 100,
+                totalAmount: 100,
+                previousTotalAmount: 75,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 25
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 0
+                ),
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
         )
 
         // Act & Assert
-        XCTAssertEqual(response.balanceIncrement, 3)
+        XCTAssertEqual(response.seedsIncrement, 3)
     }
 
     func testRegisterVisit_UnauthorizedError() async throws {
@@ -118,5 +195,308 @@ final class AccountsServiceTests: XCTestCase {
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
+    }
+
+    func testGrowthPointsIncrement() {
+        // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
+        let response = AccountVisitResponse(
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 5,
+                totalAmount: 5,
+                previousTotalAmount: 4,
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            ),
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 200,
+                totalAmount: 200,
+                previousTotalAmount: 175,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 125
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 100
+                ),
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
+        )
+
+        // Act & Assert
+        XCTAssertEqual(response.growthPointsIncrement, 25)
+    }
+
+    func testLevelUp_Detection() {
+        // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
+        let response = AccountVisitResponse(
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 10,
+                totalAmount: 10,
+                previousTotalAmount: 8,
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            ),
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 200,
+                totalAmount: 200,
+                previousTotalAmount: 175,
+                level: AccountVisitResponse.Level(
+                    number: 3,
+                    totalGrowthPointsRequired: 150,
+                    seedsRewardedForLevelUp: 3,
+                    growthPointsToUnlockNextLevel: 250,
+                    growthPointsEarnedTowardsNextLevel: 50
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 100
+                ),
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
+        )
+
+        // Act & Assert
+        XCTAssertTrue(response.didLevelUp)
+        XCTAssertEqual(response.growthPoints.level.number, 3)
+        XCTAssertEqual(response.growthPoints.previousLevel.number, 2)
+    }
+
+    func testProgressToNextLevel_Calculation() {
+        // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
+        let response = AccountVisitResponse(
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 5,
+                totalAmount: 5,
+                previousTotalAmount: 5,
+                isModified: false,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            ),
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 100,
+                totalAmount: 100,
+                previousTotalAmount: 100,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 125
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 125
+                ),
+                isModified: false,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
+        )
+
+        // Act
+        let progress = response.progressToNextLevel
+
+        // Assert
+        XCTAssertEqual(progress, 125.0 / 175.0, accuracy: 0.01)
+    }
+
+    func testGrowthPointsIncrement_NoChange() {
+        // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
+        let response = AccountVisitResponse(
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 5,
+                totalAmount: 5,
+                previousTotalAmount: 5,
+                isModified: false,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            ),
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 100,
+                totalAmount: 100,
+                previousTotalAmount: 100,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 125
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 125
+                ),
+                isModified: false,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
+        )
+
+        // Act & Assert
+        XCTAssertNil(response.growthPointsIncrement)
+    }
+
+    // MARK: - Legacy Compatibility Tests
+
+    func testLegacyBalance_MapsToSeeds() {
+        // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
+        let response = AccountVisitResponse(
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 42,
+                totalAmount: 42,
+                previousTotalAmount: 40,
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            ),
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 100,
+                totalAmount: 100,
+                previousTotalAmount: 75,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 25
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 0
+                ),
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
+        )
+
+        // Act
+        let legacyBalance = response.balance
+
+        // Assert
+        XCTAssertEqual(legacyBalance.amount, 42)
+        XCTAssertEqual(legacyBalance.amount, response.seeds.totalAmount)
+        XCTAssertEqual(legacyBalance.isModified, response.seeds.isModified)
+        XCTAssertEqual(legacyBalance.updatedAt, response.seeds.updatedAt)
+    }
+
+    func testLegacyPreviousBalance_MapsToSeeds() {
+        // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
+        let response = AccountVisitResponse(
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 42,
+                totalAmount: 42,
+                previousTotalAmount: 40,
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            ),
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 100,
+                totalAmount: 100,
+                previousTotalAmount: 75,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 25
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 0
+                ),
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
+        )
+
+        // Act
+        let legacyPreviousBalance = response.previousBalance
+
+        // Assert
+        XCTAssertNotNil(legacyPreviousBalance)
+        XCTAssertEqual(legacyPreviousBalance?.amount, 40)
+        XCTAssertEqual(legacyPreviousBalance?.amount, response.seeds.previousTotalAmount)
+    }
+
+    func testLegacyBalanceIncrement_MapsToSeedsIncrement() {
+        // Arrange
+        let timestamp = "2024-12-07T10:50:26Z"
+        let response = AccountVisitResponse(
+            seeds: AccountVisitResponse.Seeds(
+                balanceAmount: 42,
+                totalAmount: 42,
+                previousTotalAmount: 40,
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            ),
+            growthPoints: AccountVisitResponse.GrowthPoints(
+                balanceAmount: 100,
+                totalAmount: 100,
+                previousTotalAmount: 75,
+                level: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 25
+                ),
+                previousLevel: AccountVisitResponse.Level(
+                    number: 2,
+                    totalGrowthPointsRequired: 75,
+                    seedsRewardedForLevelUp: 2,
+                    growthPointsToUnlockNextLevel: 175,
+                    growthPointsEarnedTowardsNextLevel: 0
+                ),
+                isModified: true,
+                lastVisitAt: timestamp,
+                updatedAt: timestamp
+            )
+        )
+
+        // Act
+        let legacyIncrement = response.balanceIncrement
+        let newIncrement = response.seedsIncrement
+
+        // Assert
+        XCTAssertEqual(legacyIncrement, 2)
+        XCTAssertEqual(legacyIncrement, newIncrement)
     }
 }
