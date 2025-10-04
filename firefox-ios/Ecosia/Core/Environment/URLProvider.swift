@@ -224,15 +224,15 @@ public enum URLProvider {
 
     // MARK: - Auth0 Configuration
 
-    /// Auth0 domain for authentication
+    /// Auth0 domain for authentication (custom domain)
     public var auth0Domain: String {
         switch self {
         case .production:
-            return "ecosia.eu.auth0.com"
+            return "login.ecosia.org"
         case .staging:
-            return "ecosia-staging.eu.auth0.com"
+            return "login.ecosia-staging.xyz"
         case .debug:
-            return "ecosia-dev.eu.auth0.com"
+            return "login.ecosia-dev.xyz"
         }
     }
 
@@ -240,7 +240,7 @@ public enum URLProvider {
     public var auth0CookieDomain: String {
         switch self {
         case .production:
-            return ".ecosia.org"
+            return "login.ecosia.org"
         case .staging:
             return "login.ecosia-staging.xyz"
         case .debug:
