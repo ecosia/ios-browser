@@ -237,14 +237,8 @@ public enum URLProvider {
     }
 
     /// Auth0 cookie domain for session management
+    /// Returns the same value as `auth0Domain` since they must match for custom domain authentication
     public var auth0CookieDomain: String {
-        switch self {
-        case .production:
-            return "login.ecosia.org"
-        case .staging:
-            return "login.ecosia-staging.xyz"
-        case .debug:
-            return "login.ecosia-dev.xyz"
-        }
+        auth0Domain
     }
 }
