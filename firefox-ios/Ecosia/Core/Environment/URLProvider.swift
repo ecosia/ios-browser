@@ -10,38 +10,36 @@ public enum URLProvider {
     case staging
     case debug
 
-    public var root: URL {
+    // MARK: - Private Helpers
+
+    /// Base domain for the current environment
+    private var baseDomain: String {
         switch self {
         case .production, .debug:
-            return URL(string: "https://www.ecosia.org")!
+            return "ecosia.org"
         case .staging:
-            return URL(string: "https://www.ecosia-staging.xyz")!
+            return "ecosia-staging.xyz"
         }
+    }
+
+    // MARK: - Public Properties
+
+    public var root: URL {
+        URL(string: "https://www.\(baseDomain)")!
     }
 
     public var domain: String? {
-        if let urlComponents = URLComponents(string: root.absoluteString) {
-            if let host = urlComponents.host {
-                let domain = host.replacingOccurrences(of: "www.", with: "")
-                return domain
-            }
-        }
-        return nil
+        baseDomain
     }
 
     public var apiRoot: URL {
-        switch self {
-        case .production, .debug:
-            return URL(string: "https://api.ecosia.org")!
-        case .staging:
-            return URL(string: "https://api.ecosia-staging.xyz")!
-        }
+        URL(string: "https://api.\(baseDomain)")!
     }
 
     public var snowplowMicro: String? {
         switch self {
         case .staging:
-            return "https://www.ecosia-staging.xyz/analytics-test-micro"
+            return "https://www.\(baseDomain)/analytics-test-micro"
         case .production, .debug:
             return nil
         }
@@ -226,14 +224,7 @@ public enum URLProvider {
 
     /// Auth0 domain for authentication (custom domain)
     public var auth0Domain: String {
-        switch self {
-        case .production:
-            return "login.ecosia.org"
-        case .staging:
-            return "login.ecosia-staging.xyz"
-        case .debug:
-            return "login.ecosia-dev.xyz"
-        }
+        "login.\(baseDomain)"
     }
 
     /// Auth0 cookie domain for session management
