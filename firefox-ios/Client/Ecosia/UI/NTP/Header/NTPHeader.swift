@@ -133,7 +133,7 @@ struct NTPHeaderView: View {
                 windowUUID: windowUUID
             )
             .padding(.horizontal, .ecosia.space._m)
-            .presentationDetents([.medium])
+            .dynamicHeightPresentationDetent()
         }
     }
 
