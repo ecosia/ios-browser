@@ -93,7 +93,7 @@ public struct EcosiaAccountImpactView: View {
                     viewModel: viewModel,
                     windowUUID: windowUUID,
                     onProfileTap: {
-                        // TODO: trigger the profile showing
+                        showProfileWebView = true
                     },
                     onSignOutTap: {
                         Task {
