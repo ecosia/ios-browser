@@ -48,7 +48,7 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
     /// Shared instance for app-wide auth state
     public static let shared = EcosiaAuthUIStateProvider()
 
-    private init(accountsProvider: AccountsProviderProtocol = AccountsProvider(useMockData: true)) {
+    private init(accountsProvider: AccountsProviderProtocol = AccountsProvider()) {
         self.accountsProvider = accountsProvider
         setupAuthStateMonitoring()
         initializeState()
