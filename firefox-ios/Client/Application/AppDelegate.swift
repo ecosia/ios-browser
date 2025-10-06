@@ -12,8 +12,6 @@ import Glean
  */
 import TabDataStore
 import Ecosia
-// Ecosia: Import Braze
-import BrazeKit
 
 import class MozillaAppServices.Viaduct
 
@@ -119,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                    category: .lifecycle)
 
         // Ecosia: Allow Braze to be initialized after feature management
-        Braze.prepareForDelayedInitialization()
+        BrazeService.prepareForDelayedInitialization()
 
         // Ecosia: pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()

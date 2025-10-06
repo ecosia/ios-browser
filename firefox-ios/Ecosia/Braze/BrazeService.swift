@@ -92,6 +92,14 @@ extension BrazeService {
 }
 
 extension BrazeService {
+    // MARK: - Braze proxy function
+
+    public static func prepareForDelayedInitialization() {
+        Braze.prepareForDelayedInitialization()
+    }
+}
+
+extension BrazeService {
     // MARK: - Notification Center
 
     private func makeNotificationCenter() -> UNUserNotificationCenter {
