@@ -28,7 +28,7 @@ extension Analytics {
     public enum Label: String {
         case
         analytics,
-        cardCta = "card_cta",
+        accountNudgeCard = "account_nudge_card",
         clear,
         close,
         market,

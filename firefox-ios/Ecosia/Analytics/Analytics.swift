@@ -399,7 +399,15 @@ open class Analytics {
     public func accountImpactCardCtaClicked() {
         let event = Structured(category: Category.account.rawValue,
                                action: Action.click.rawValue)
-            .label(Label.cardCta.rawValue)
+            .label(Label.accountNudgeCard.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+    
+    public func accountImpactCardDismissClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.accountNudgeCard.rawValue)
             .property(Property.menu.rawValue)
         track(event)
     }
