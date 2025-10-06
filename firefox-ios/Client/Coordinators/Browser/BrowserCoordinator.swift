@@ -1123,7 +1123,7 @@ extension BrowserCoordinator: BrazeBrowserDelegate {
         if tabManager.isRestoringTabs {
             // On cold start we need to wait for tab restoration to finish
             AppEventQueue.wait(for: .tabRestoration(windowUUID)) { [weak self] in
-                self?.openURLinNewTab(url)
+                self?.openURLInNewTab(url)
             }
         } else {
             openURLInNewTab(url)
