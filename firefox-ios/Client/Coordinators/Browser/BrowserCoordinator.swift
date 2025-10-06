@@ -1118,8 +1118,15 @@ extension BrowserCoordinator {
 // Ecosia: Set BrowserCoordinator as Braze's browserDelegate to handle push urls
 extension BrowserCoordinator: BrazeBrowserDelegate {
     func openBrazeURLInNewTab(_ url: URL?) {
-        // TODO: Check why from Cold start this results in an additional blank tab in focus (besides the one with the url)
-        // Probably has to do with out Tab setup from cold start creating this new tab after we execute this method
-        openURLInNewTab(url)
+        guard let url = url else { return }
+
+        if tabManager.isRestoringTabs {
+            // On cold start we need to wait for tab restoration to finish
+            AppEventQueue.wait(for: .tabRestoration(windowUUID)) { [weak self] in
+                self?.openURLinNewTab(url)
+            }
+        } else {
+            openURLInNewTab(url)
+        }
     }
 }
