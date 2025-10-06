@@ -230,7 +230,7 @@ extension User {
     public var shouldShowAccountImpactNudgeCard: Bool {
         state[Key.isAccountImpactNudgeCardDismissed.rawValue].map(Bool.init) != true
     }
-    
+
     public mutating func showAccountImpactNudgeCard() {
         state[Key.isAccountImpactNudgeCardDismissed.rawValue] = "\(false)"
     }

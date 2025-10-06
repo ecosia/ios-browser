@@ -74,7 +74,7 @@ final class URLProviderTests: XCTestCase {
         let provider = URLProvider.debug
         XCTAssertEqual(provider.auth0CookieDomain, "login.ecosia-dev.xyz")
     }
-    
+
     func testAuth0CookieDomainMatchesAuth0Domain() {
         // Verify that cookie domain always matches auth0Domain for all environments
         XCTAssertEqual(URLProvider.production.auth0CookieDomain, URLProvider.production.auth0Domain)

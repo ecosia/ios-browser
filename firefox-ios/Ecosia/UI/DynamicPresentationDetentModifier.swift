@@ -10,15 +10,15 @@ public struct DynamicPresentationDetentModifier: ViewModifier {
     @State private var contentHeight: CGFloat = 0
     let minHeight: CGFloat
     let padding: CGFloat
-    
+
     public init(minHeight: CGFloat, padding: CGFloat) {
         self.minHeight = minHeight
         self.padding = padding
     }
-    
+
     public func body(content: Content) -> some View {
         let calculatedHeight = contentHeight > 0 ? max(contentHeight + padding, minHeight) : minHeight
-        
+
         content
             .overlay(
                 GeometryReader { geometry in
@@ -43,7 +43,7 @@ public struct DynamicPresentationDetentModifier: ViewModifier {
 @available(iOS 16.0, *)
 private struct HeightPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
-    
+
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }

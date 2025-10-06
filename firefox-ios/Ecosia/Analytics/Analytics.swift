@@ -403,7 +403,7 @@ open class Analytics {
             .property(Property.menu.rawValue)
         track(event)
     }
-    
+
     public func accountImpactCardDismissClicked() {
         let event = Structured(category: Category.account.rawValue,
                                action: Action.dismiss.rawValue)
