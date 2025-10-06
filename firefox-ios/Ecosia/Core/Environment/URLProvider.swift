@@ -184,10 +184,6 @@ public enum URLProvider {
         root.appendingPathComponent("accounts/profile")
     }
 
-    public var accountProfile: URL {
-        root.appendingPathComponent("accounts/profile")
-    }
-
     // MARK: - Authentication URL Patterns
 
     /// URL paths that indicate user sign-up/sign-in flows

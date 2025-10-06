@@ -93,7 +93,7 @@ public struct EcosiaAccountImpactView: View {
                     viewModel: viewModel,
                     windowUUID: windowUUID,
                     onProfileTap: {
-                        showProfileWebView = true
+                        // TODO: trigger the profile showing
                     },
                     onSignOutTap: {
                         Task {
@@ -106,13 +106,13 @@ public struct EcosiaAccountImpactView: View {
                     viewModel: viewModel,
                     windowUUID: windowUUID,
                     onLearnMoreTap: {
-                        showWebViewModal = true
+                        showSeedsCounterInfoWebView = true
                     }
                 )
             }
         }
         .ecosiaThemed(windowUUID, $theme)
-        .sheet(isPresented: $showWebViewModal) {
+        .sheet(isPresented: $showSeedsCounterInfoWebView) {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.seedCounterInfo,
                 windowUUID: windowUUID
