@@ -13,6 +13,7 @@ public struct EcosiaAccountSignedOutView: View {
     private let onLearnMoreTap: () -> Void
 
     @State private var theme = EcosiaAccountSignedOutViewTheme()
+    @State private var isCardDismissed: Bool
     @StateObject private var nudgeCardDelegate = NudgeCardActionHandler()
 
     /// Layout configuration optimized for account impact cards
@@ -33,18 +34,20 @@ public struct EcosiaAccountSignedOutView: View {
         self.viewModel = viewModel
         self.windowUUID = windowUUID
         self.onLearnMoreTap = onLearnMoreTap
+        self._isCardDismissed = State(initialValue: !User.shared.shouldShowAccountImpactNudgeCard)
     }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: .ecosia.space._l) {
-            // Impact card
-            ConfigurableNudgeCardView(
+            // Impact card - only show if not dismissed
+            if !isCardDismissed {
+                ConfigurableNudgeCardView(
                 viewModel: NudgeCardViewModel(
                     title: String.localized(.seedsSymbolizeYourOwnImpact),
                     description: String.localized(.collectSeedsEveryDayYouUse),
                     buttonText: String.localized(.learnMoreAboutSeeds),
                     image: UIImage(named: "account-menu-impact-flag", in: .ecosia, with: nil),
-                    showsCloseButton: false,
+                    showsCloseButton: true,
                     style: NudgeCardStyle(
                         backgroundColor: theme.cardBackgroundColor,
                         textPrimaryColor: theme.textPrimaryColor,
@@ -56,6 +59,7 @@ public struct EcosiaAccountSignedOutView: View {
                 ),
                 delegate: nudgeCardDelegate
             )
+            }
 
             // Sign Up CTA button
             Button(action: viewModel.handleMainCTATap) {
@@ -77,6 +81,13 @@ public struct EcosiaAccountSignedOutView: View {
             nudgeCardDelegate.onActionTap = {
                 viewModel.handleLearnMoreTap()
                 onLearnMoreTap()
+            }
+            nudgeCardDelegate.onDismissTap = {
+                User.shared.hideAccountImpactNudgeCard()
+                Analytics.shared.accountImpactCardDismissClicked()
+                withAnimation {
+                    isCardDismissed = true
+                }
             }
         }
     }
@@ -120,13 +131,14 @@ public struct EcosiaAccountSignedOutViewTheme: EcosiaThemeable {
 @available(iOS 16.0, *)
 private class NudgeCardActionHandler: ObservableObject, ConfigurableNudgeCardActionDelegate {
     var onActionTap: (() -> Void)?
+    var onDismissTap: (() -> Void)?
 
     func nudgeCardRequestToPerformAction() {
         onActionTap?()
     }
 
     func nudgeCardRequestToDimiss() {
-        // Impact card doesn't have a close button, so this won't be called
+        onDismissTap?()
     }
 
     func nudgeCardTapped() {
