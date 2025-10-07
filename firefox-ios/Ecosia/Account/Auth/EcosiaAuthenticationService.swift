@@ -156,8 +156,8 @@ public final class EcosiaAuthenticationService {
             if let sessionError = sessionClearingError {
                 // Both session and credentials clearing failed
                 throw AuthError.sessionClearingFailed(sessionError)
-            } else {
-                // Only credentials clearing failed
+            } else if auth0Provider.canRenewCredentials() {
+                // Only credentials clearing failed, as we can still renew them
                 throw AuthError.credentialsClearingFailed
             }
         }

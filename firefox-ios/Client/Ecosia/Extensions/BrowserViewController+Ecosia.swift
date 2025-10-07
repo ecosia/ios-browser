@@ -207,10 +207,9 @@ extension BrowserViewController {
             return
         }
 
-        // Only trigger if user is currently logged in
-        guard ecosiaAuth.isLoggedIn else {
-            EcosiaLogger.auth.debug("User not logged in, skipping sign-out detection for: \(url)")
-            return
+        // Always perform logout on web-triggered sign-out to clear inconsistent state
+        if !ecosiaAuth.isLoggedIn {
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] User already logged out, but we perform logout anyways to clear inconsistent state for: \(url) as if it's triggered, it means the User sees the page and clicks logout. It may happen sometimes. Noticed especially on iPad.")
         }
 
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-out URL detected in navigation: \(url)")
