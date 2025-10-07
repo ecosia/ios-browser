@@ -23,12 +23,36 @@ public struct EcosiaAvatar: View {
     public var body: some View {
         Group {
             if let avatarURL = avatarURL {
-                AsyncImage(url: avatarURL) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    placeholderView
+                AsyncImage(url: avatarURL) { phase in
+                    switch phase {
+                    case .empty:
+                        placeholderView
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure(let error):
+                        let nsError = error as NSError
+                        /*
+                         Workaround for iOS AsyncImage bug (error -999 cancellation).
+                         Retry once on cancellation: https://developer.apple.com/forums/thread/682498
+                         */
+                        if nsError.code == NSURLErrorCancelled {
+                            AsyncImage(url: avatarURL) { retryPhase in
+                                if let image = retryPhase.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                } else {
+                                    placeholderView
+                                }
+                            }
+                        } else {
+                            placeholderView
+                        }
+                    @unknown default:
+                        placeholderView
+                    }
                 }
                 .frame(width: size, height: size)
                 .clipShape(Circle())
