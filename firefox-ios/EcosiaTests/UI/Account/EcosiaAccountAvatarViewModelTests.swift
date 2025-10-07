@@ -155,7 +155,7 @@ final class EcosiaAccountAvatarViewModelTests: XCTestCase {
         viewModel.$progress
             .dropFirst()
             .sink { progress in
-                XCTAssertEqual(progress, 0.9)
+                XCTAssertEqual(progress, 1.0)
                 progressExpectation.fulfill()
             }
             .store(in: &cancellables)
