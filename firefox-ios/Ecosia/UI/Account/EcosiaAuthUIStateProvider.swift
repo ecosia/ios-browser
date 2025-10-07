@@ -8,7 +8,7 @@ import Common
 
 /// Centralized, reactive authentication state provider for consistent UI state across all components
 /// This eliminates the need for individual components to manage their own auth state observers
-public final class EcosiaAuthUIStateProvider: ObservableObject {
+public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Published Properties
 
@@ -36,6 +36,9 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
     /// Current progress towards next level (from API for logged-in users, default 0.25 for initial state)
     @Published private var currentProgress: Double = 0.25
 
+    /// Error state for register visit failures (read-only externally, set only by this class)
+    @Published public private(set) var hasRegisterVisitError: Bool = false
+
     // MARK: - Private Properties
 
     private var authStateObserver: NSObjectProtocol?
@@ -48,7 +51,7 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
     /// Shared instance for app-wide auth state
     public static let shared = EcosiaAuthUIStateProvider()
 
-    private init(accountsProvider: AccountsProviderProtocol = AccountsProvider()) {
+    public init(accountsProvider: AccountsProviderProtocol = AccountsProvider()) {
         self.accountsProvider = accountsProvider
         setupAuthStateMonitoring()
         initializeState()
@@ -181,8 +184,18 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
                 let response = try await accountsProvider.registerVisit(accessToken: accessToken)
                 await updateBalance(response)
+
+                // Clear error on success
+                await MainActor.run {
+                    hasRegisterVisitError = false
+                }
             } catch {
                 EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
+
+                // Set error state
+                await MainActor.run {
+                    hasRegisterVisitError = true
+                }
             }
         }
     }
