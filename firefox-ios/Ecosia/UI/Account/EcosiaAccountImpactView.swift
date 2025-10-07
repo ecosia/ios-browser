@@ -121,7 +121,13 @@ public struct EcosiaAccountImpactView: View {
         .sheet(isPresented: $showProfileWebView) {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.accountProfile,
-                windowUUID: windowUUID
+                windowUUID: windowUUID,
+                onLoadComplete: {
+                    Analytics.shared.accountProfileViewed()
+                },
+                onDismiss: {
+                    Analytics.shared.accountProfileDismissed()
+                }
             )
         }
     }

@@ -428,6 +428,22 @@ open class Analytics {
             .property(Property.signOut.rawValue)
         track(event)
     }
+
+    public func accountProfileViewed() {
+        let event = Structured(category: Category.menu.rawValue,
+                               action: Action.view.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.account.rawValue)
+        track(event)
+    }
+
+    public func accountProfileDismissed() {
+        let event = Structured(category: Category.menu.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.account.rawValue)
+        track(event)
+    }
 }
 
 extension Analytics {
