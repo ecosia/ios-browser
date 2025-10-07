@@ -32,6 +32,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var backgroundBrandSecondaryAlt: UIColor = EcosiaColor.Gray80
     var backgroundNeutralInverse: UIColor = EcosiaColor.White
     var borderDecorative: UIColor = EcosiaColor.Gray60
+    var borderNegative: UIColor = EcosiaColor.Pink50
     var brandPrimary: UIColor = EcosiaColor.Green30
     var brandImpact: UIColor = EcosiaColor.Yellow40
     var buttonBackgroundPrimary: UIColor = EcosiaColor.Green30
@@ -49,6 +50,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var stateDisabled: UIColor = EcosiaColor.Gray50
     var stateError: UIColor = EcosiaColor.Red30
     var stateLoading: UIColor = EcosiaColor.DarkGreen30
+    var backgroundNegative: UIColor = EcosiaColor.Peach100
     var textPrimary: UIColor = EcosiaColor.White
     var textInversePrimary: UIColor = EcosiaColor.Gray90
     var textSecondary: UIColor = EcosiaColor.Gray30
