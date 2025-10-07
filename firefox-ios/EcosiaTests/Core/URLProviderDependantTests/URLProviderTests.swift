@@ -57,7 +57,7 @@ final class URLProviderTests: XCTestCase {
 
     func testAuth0Domain_debug() {
         let provider = URLProvider.debug
-        XCTAssertEqual(provider.auth0Domain, "login.ecosia-dev.xyz")
+        XCTAssertEqual(provider.auth0Domain, "login.ecosia.org")
     }
 
     func testAuth0CookieDomain_production() {
@@ -72,7 +72,7 @@ final class URLProviderTests: XCTestCase {
 
     func testAuth0CookieDomain_debug() {
         let provider = URLProvider.debug
-        XCTAssertEqual(provider.auth0CookieDomain, "login.ecosia-dev.xyz")
+        XCTAssertEqual(provider.auth0CookieDomain, "login.ecosia.org")
     }
 
     func testAuth0CookieDomainMatchesAuth0Domain() {
