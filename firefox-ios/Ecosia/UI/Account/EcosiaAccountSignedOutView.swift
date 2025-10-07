@@ -14,6 +14,7 @@ public struct EcosiaAccountSignedOutView: View {
 
     @State private var theme = EcosiaAccountSignedOutViewTheme()
     @State private var isCardDismissed: Bool
+    @State private var cardHeight: CGFloat?
     @StateObject private var nudgeCardDelegate = NudgeCardActionHandler()
 
     /// Layout configuration optimized for account impact cards
@@ -39,9 +40,8 @@ public struct EcosiaAccountSignedOutView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: .ecosia.space._l) {
-            // Impact card - only show if not dismissed
-            if !isCardDismissed {
-                ConfigurableNudgeCardView(
+            // Impact card - with height animation to make sure the dismissal is as smooth as possible
+            ConfigurableNudgeCardView(
                 viewModel: NudgeCardViewModel(
                     title: String.localized(.seedsSymbolizeYourOwnImpact),
                     description: String.localized(.collectSeedsEveryDayYouUse),
@@ -59,7 +59,22 @@ public struct EcosiaAccountSignedOutView: View {
                 ),
                 delegate: nudgeCardDelegate
             )
+            .background(
+                GeometryReader { geometry in
+                    Color.clear.preference(
+                        key: CardHeightPreferenceKey.self,
+                        value: geometry.size.height
+                    )
+                }
+            )
+            .onPreferenceChange(CardHeightPreferenceKey.self) { height in
+                if cardHeight == nil && height > 0 {
+                    cardHeight = height
+                }
             }
+            .frame(height: isCardDismissed ? 0 : cardHeight)
+            .opacity(isCardDismissed ? 0 : 1)
+            .clipped()
 
             // Sign Up CTA button
             Button(action: viewModel.handleMainCTATap) {
@@ -85,7 +100,7 @@ public struct EcosiaAccountSignedOutView: View {
             nudgeCardDelegate.onDismissTap = {
                 User.shared.hideAccountImpactNudgeCard()
                 Analytics.shared.accountImpactCardDismissClicked()
-                withAnimation {
+                withAnimation(.easeOut(duration: 0.4)) {
                     isCardDismissed = true
                 }
             }
@@ -123,6 +138,17 @@ public struct EcosiaAccountSignedOutViewTheme: EcosiaThemeable {
         ctaButtonBackgroundColor = Color(theme.colors.ecosia.brandPrimary)
         levelTextColor = Color(theme.colors.textInverted)
         levelBackgroundColor = Color(theme.colors.textPrimary)
+    }
+}
+
+// MARK: - Card Height Preference Key
+
+@available(iOS 16.0, *)
+private struct CardHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
