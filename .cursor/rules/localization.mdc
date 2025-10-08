@@ -30,5 +30,11 @@ Then in `firefox-ios/Ecosia/L10N/en.lproj/Ecosia.strings` add:
 
 Then reference when being used in code with:
 
-`String.localized(.addMoreDetailAboutYourFeedback)` for SwiftUI
-`label.text = .localized(.addMoreDetailAboutYourFeedback` for UIKit
+`String.localized(.addMoreDetailAboutYourFeedback)` for UIKit
+`EcosiaText(.addMoreDetailAboutYourFeedback)` for SwiftUI
+
+## Advanced Usage
+
+- Support markdown in localized strings via `EcosiaText` component
+- Use `String.localizedPlural(.key, num: count)` for pluralization
+- `EcosiaText` automatically handles markdown parsing for rich text

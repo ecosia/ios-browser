@@ -1,0 +1,37 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Error Handling and Logging
+
+## Logging Standards
+
+- Use `.error` log level instead of `.warning` for error conditions
+- Use `EcosiaLogger` for consistent logging patterns across the app
+- Include relevant context information in log messages
+- Avoid logging sensitive user data (passwords, personal information)
+- Use appropriate log levels: `.debug`, `.info`, `.warning`, `.error`
+
+## Error Handling Patterns
+
+- Implement proper error handling with `Result` type for operations that can fail
+- Use `async/await` with proper error propagation using `throws`
+- Handle network errors gracefully with user-friendly messages
+- Provide fallback behavior for non-critical failures
+- Log errors at appropriate levels with sufficient context for debugging
+
+## User-Facing Error Messages
+
+- Display clear, actionable error messages to users
+- Avoid technical jargon in user-facing messages
+- Provide retry mechanisms where appropriate
+- Use localized error messages via the established localization system
+- Consider user experience when handling edge cases and error states
+
+## Network Error Handling
+
+- Handle common network scenarios (no connection, timeouts, server errors)
+- Implement appropriate retry logic with exponential backoff
+- Cache responses where appropriate to handle offline scenarios
+- Provide meaningful feedback during network operations

@@ -8,6 +8,7 @@ alwaysApply: true
 ## SwiftUI First Approach
 
 - Use SwiftUI for new UI components
+- Always create a SwiftUI preview to test the View's behaviour 
 - Only use UIKit when SwiftUI is insufficient
 - Implement theming through the `Theme` system
 - Support all accessibility features:
@@ -23,6 +24,20 @@ alwaysApply: true
 - Implement proper keyboard handling and dismissal
 - Follow Apple's Human Interface Guidelines
 - Use consistent spacing and design tokens from the design system
+
+## SwiftUI Theming
+
+- Use `EcosiaThemeable` protocol for theme-aware components
+- Apply themes with `.ecosiaThemed(windowUUID, $theme)` modifier
+- Create theme containers following the established pattern:
+```swift
+struct MyComponentTheme: EcosiaThemeable {
+    var backgroundColor = Color.white
+    mutating func applyTheme(theme: Theme) {
+        backgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
+    }
+}
+```
 
 ## Performance
 

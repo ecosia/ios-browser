@@ -13,21 +13,29 @@ alwaysApply: true
 - Maintain separation between Firefox base and Ecosia customizations
 - Follow the Framework approach for Ecosia-specific code
 
-## Analytics and Features
+## Analytics Implementation
 
-- Use proper analytics tracking through `Analytics.shared` (avoid reassignment)
+- **ALL** analytics instrumentation must be implemented at the UI/ViewModel layer
+- Use `Analytics.shared` (never reassign the shared instance)
+- Follow established event patterns in `Analytics.Values.swift`
+- Track user actions, not internal system events
+- Example: `Analytics.shared.activity(.homePageViewed)`
 - Implement proper feature flagging for A/B testing
 - Handle market-specific configurations via `markets.json`
 
-## Testing
+## Testing Requirements
 
+- **MANDATORY**: Include tests when writing new code or implementing features
+- Use Given/When/Then structure with minimal, relevant comments only
+- For protocol default implementations: verify actual dependencies are called, not mock call counts
+- Create testable implementations with injectable dependencies
+- Snapshot tests: Use `SnapshotBaseTests` base class with proper theme setup
+- Unit tests: Place in `EcosiaTests/` with clear file organization
 - Write unit tests using XCTest for business logic
 - Implement UI tests using XCUITest for critical user flows
 - Test all accessibility features and edge cases
 - Use mocks and dependency injection for testable code
-- Organize tests in `EcosiaTests/` with clear structure
 - Test performance scenarios and memory usage
-- Implement snapshot tests for UI components
 - Follow TDD principles where appropriate
 
 ## Security

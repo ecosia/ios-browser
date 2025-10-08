@@ -33,3 +33,13 @@ alwaysApply: true
 - Booleans: Use `is`/`has`/`should` prefixes (e.g., `isLoading`, `hasContent`, `shouldDisplay`)
 - Enums: `PascalCase` with descriptive cases
 - Clear, descriptive names following Apple's API Design Guidelines
+
+## Code Review and Build Standards
+
+- Explain proposed changes before implementation
+- Verify project builds successfully before committing
+- Address linter errors (max 3 iterations per file)
+- Use SwiftLint rules defined in `.swiftlint.yml`
+- Ensure code is immediately runnable by users
+- Follow established coding patterns and architecture decisions
+- Maintain consistency with existing codebase conventions
