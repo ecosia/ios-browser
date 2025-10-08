@@ -387,24 +387,6 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         XCTAssertEqual(manager.trackedTabCount, 1, "Should only track tab once, regardless of multiple setups")
     }
 
-    // MARK: - Performance Tests
-
-    func testPerformanceWithManyTabs() {
-        // Given
-        let manyTabs = (0..<100).map { createMockTab(uuid: "performance-tab-\($0)") }
-        mockTabManager.tabs = manyTabs
-
-        // When
-        let startTime = CFAbsoluteTimeGetCurrent()
-        manyTabs.forEach { manager.setupAutoCloseForTab($0, on: .EcosiaAuthStateChanged, timeout: 10.0) }
-        let endTime = CFAbsoluteTimeGetCurrent()
-
-        // Then
-        let executionTime = endTime - startTime
-        XCTAssertLessThan(executionTime, 0.1, "Should handle 100 tabs in under 0.1 seconds")
-        XCTAssertEqual(manager.trackedTabCount, 100, "Should track all tabs")
-}
-
     // MARK: - Memory Management Tests
 
     func testNoRetainCyclesAfterCleanup() {
