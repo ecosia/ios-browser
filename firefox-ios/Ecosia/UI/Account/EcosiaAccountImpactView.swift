@@ -87,6 +87,16 @@ public struct EcosiaAccountImpactView: View {
             .padding(.horizontal, .ecosia.space._m)
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            // Show error view if register visit failed
+            if authStateProvider.hasRegisterVisitError {
+                EcosiaAccountErrorView(
+                    title: "Could not load seed counter",
+                    subtitle: "Something went wrong with displaying your seeds. Please try again later.",
+                    windowUUID: windowUUID
+                )
+                .padding(.horizontal, .ecosia.space._m)
+            }
+
             // Conditional content based on login state
             if viewModel.isLoggedIn {
                 EcosiaAccountSignedInView(
