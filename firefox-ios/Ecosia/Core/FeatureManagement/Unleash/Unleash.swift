@@ -33,6 +33,10 @@ public enum Unleash: UnleashProtocol {
         Locale.current.regionIdentifierLowercasedWithFallbackValue
     }
 
+    static var englishCountryName: String? {
+        Locale.current.englishLocalizedCountryName
+    }
+
     public static func queryParameters(appVersion: String) -> Context {
         ["userId": userId.uuidString,
          "appName": "iOS",
@@ -41,6 +45,8 @@ public enum Unleash: UnleashProtocol {
          "environment": Environment.current.urlProvider.unleash,
          "market": User.shared.marketCode.rawValue,
          "deviceRegion": currentDeviceRegion,
+         // Mapped from device region to enabled Web flags with geo-ip based context field
+         "country": englishCountryName ?? "Unknown",
          "personalCounterSearches": "\(User.shared.searchCount)"]
     }
 
