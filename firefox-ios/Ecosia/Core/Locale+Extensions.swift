@@ -22,7 +22,7 @@ extension Locale {
         regionIdentifier?.lowercased() ?? "us"
     }
 
-    var englishLocalizedCountryName: String? {
+    public var englishLocalizedCountryName: String? {
         guard let regionIdentifier = regionIdentifier else { return nil }
         return Locale(identifier: "en_US").localizedString(forRegionCode: regionIdentifier)
     }

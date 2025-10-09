@@ -29,12 +29,15 @@ public enum Unleash: UnleashProtocol {
         return queue.sync { _isLoaded }
     }
 
+    /// Locale source for dependency injection (for testing purposes)
+    static var localeSource: RegionLocatable = Locale.current
+
     static var currentDeviceRegion: String {
-        Locale.current.regionIdentifierLowercasedWithFallbackValue
+        localeSource.regionIdentifierLowercasedWithFallbackValue
     }
 
     static var englishCountryName: String? {
-        Locale.current.englishLocalizedCountryName
+        localeSource.englishLocalizedCountryName
     }
 
     public static func queryParameters(appVersion: String) -> Context {
