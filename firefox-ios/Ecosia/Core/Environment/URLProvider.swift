@@ -200,6 +200,11 @@ public enum URLProvider {
         ["/accounts/sign-out"]
     }
 
+    /// URL paths that indicate profile page access
+    public var profilePaths: [String] {
+        ["/accounts/profile"]
+    }
+
     /// URL paths that indicate errors in either the signUp or signOut flow
     public var errorPaths: [String] {
         ["/accounts/error"]
