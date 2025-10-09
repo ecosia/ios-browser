@@ -83,8 +83,6 @@
 		124DAE8A2D3512FA0050104C /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		1251623C2D59FB30005CB958 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFE99662D45329200B25CE0 /* Ecosia.framework */; };
 		1251623D2D59FB31005CB958 /* Ecosia.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFE99662D45329200B25CE0 /* Ecosia.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		126509852CD925B40011BA36 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
-		126509872CD925B40011BA36 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
 		12A536342D3E637800924CB0 /* DownloadHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8D1C61BA037F500C8AE9E /* DownloadHelper.swift */; };
 		12A536352D3E63A200924CB0 /* GlobalTabEventHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F819C51FD70F5D009E31E4 /* GlobalTabEventHandlers.swift */; };
 		12A536372D3E89BF00924CB0 /* GCDWebServers in Frameworks */ = {isa = PBXBuildFile; productRef = 12A536362D3E89BF00924CB0 /* GCDWebServers */; };
@@ -1476,6 +1474,10 @@
 		2CE48EDA2E29B5C400CE84CE /* EcosiaAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE48ED92E29B5C400CE84CE /* EcosiaAuth.swift */; };
 		2CE9E8072E43927000141C6D /* NTPHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE9E8052E43927000141C6D /* NTPHeaderViewModel.swift */; };
 		2CE9E8082E43927000141C6D /* NTPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE9E8042E43927000141C6D /* NTPHeader.swift */; };
+		2CFE4FF12E980235001573DA /* BrowserViewController+EcosiaErrorHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE4FF02E980235001573DA /* BrowserViewController+EcosiaErrorHandling.swift */; };
+		2CFE4FF22E980235001573DA /* BrowserViewController+EcosiaErrorHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE4FF02E980235001573DA /* BrowserViewController+EcosiaErrorHandling.swift */; };
+		2CFE4FF32E98DEEE001573DA /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
+		2CFE4FF42E98DEEE001573DA /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
 		2CFE9FBF2D45348200B25CE0 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2CFE9FBE2D45348200B25CE0 /* SnowplowTracker */; };
 		2CFE9FC02D45348700B25CE0 /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
 		2CFE9FC22D4535FD00B25CE0 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFE99662D45329200B25CE0 /* Ecosia.framework */; };
@@ -4008,6 +4010,7 @@
 		2CF2206E2B72B0530038157D /* AppSettingsTableViewController+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettingsTableViewController+Ecosia.swift"; sourceTree = "<group>"; };
 		2CF449A41E7BFE2C00FD7595 /* NavigationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationTest.swift; sourceTree = "<group>"; };
 		2CF9D9A920067FA10083DF2A /* BrowsingPDFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowsingPDFTests.swift; sourceTree = "<group>"; };
+		2CFE4FF02E980235001573DA /* BrowserViewController+EcosiaErrorHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+EcosiaErrorHandling.swift"; sourceTree = "<group>"; };
 		2CFE99662D45329200B25CE0 /* Ecosia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Ecosia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CFE996F2D45329300B25CE0 /* EcosiaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CFE9FEB2D4557EF00B25CE0 /* Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metrics.swift; sourceTree = "<group>"; };
@@ -10843,6 +10846,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CFE4FF42E98DEEE001573DA /* BrazeUI in Frameworks */,
+				2CFE4FF32E98DEEE001573DA /* BrazeKit in Frameworks */,
 				5A70EF0E295DFCCF00790249 /* Common in Frameworks */,
 				8A08EC6427EBDCAD00E119C7 /* AdServices.framework in Frameworks */,
 				8A08EC6227EBDCA400E119C7 /* iAd.framework in Frameworks */,
@@ -10863,11 +10868,9 @@
 				819656172C80C6F300E62323 /* MenuKit in Frameworks */,
 				1251623C2D59FB30005CB958 /* Ecosia.framework in Frameworks */,
 				8AB30EC82B6C038600BD9A9B /* Lottie in Frameworks */,
-				126509852CD925B40011BA36 /* BrazeKit in Frameworks */,
 				5A871488292EA1440039A5BD /* Fuzi in Frameworks */,
 				432BD0242790EBD000A0F3C3 /* Adjust in Frameworks */,
 				0B8E0FF41A932BD500161DC3 /* ImageIO.framework in Frameworks */,
-				126509872CD925B40011BA36 /* BrazeUI in Frameworks */,
 				435C85F02788F4D00072B526 /* Glean in Frameworks */,
 				AB2AC6632BCFD0A200022AAB /* X509 in Frameworks */,
 				433F87CE2788EAB600693368 /* GCDWebServers in Frameworks */,
@@ -11725,6 +11728,7 @@
 		2CB289432B07C8F000A8FCB3 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				2CFE4FF02E980235001573DA /* BrowserViewController+EcosiaErrorHandling.swift */,
 				2C3982892E200C1900AB8035 /* Tab+InvisibleTab.swift */,
 				2C39828A2E200C1900AB8035 /* TabManager+InvisibleTab.swift */,
 				2CB5C33E2E45F02D00B1048F /* SearchViewController+Ecosia.swift */,
@@ -17850,6 +17854,7 @@
 				2C40678E2E82D0C60067303E /* CreditCardSettingsViewModel.swift in Sources */,
 				2C40678F2E82D0C60067303E /* LegacyInactiveTabModel.swift in Sources */,
 				2C4067902E82D0C60067303E /* FakespotReliabilityScoreView.swift in Sources */,
+				2CFE4FF12E980235001573DA /* BrowserViewController+EcosiaErrorHandling.swift in Sources */,
 				2C4067912E82D0C60067303E /* NimbusMessagingEvaluationUtility.swift in Sources */,
 				2C4067922E82D0C60067303E /* WallpaperSettingsHeaderView.swift in Sources */,
 				2C4067932E82D0C60067303E /* BookmarksRefactorFeatureFlagProvider.swift in Sources */,
@@ -19079,6 +19084,7 @@
 				43D4BCBA2972082400775FB5 /* CreditCardSettingsViewModel.swift in Sources */,
 				21583E422B1A3703009D084D /* LegacyInactiveTabModel.swift in Sources */,
 				DF529EA12AB1B421003C5373 /* FakespotReliabilityScoreView.swift in Sources */,
+				2CFE4FF22E980235001573DA /* BrowserViewController+EcosiaErrorHandling.swift in Sources */,
 				9636D92A27F767EC00771F5E /* NimbusMessagingEvaluationUtility.swift in Sources */,
 				E127313F28B6C194006F39D2 /* WallpaperSettingsHeaderView.swift in Sources */,
 				0BBC50952CA1F7F900CB7248 /* BookmarksRefactorFeatureFlagProvider.swift in Sources */,
