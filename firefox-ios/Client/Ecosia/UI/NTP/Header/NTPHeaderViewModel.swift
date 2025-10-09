@@ -60,15 +60,6 @@ final class NTPHeaderViewModel: ObservableObject {
     }
 }
 
-extension NTPHeaderViewModel {
-
-    /// Delegates to the centralized auth state provider
-    func registerVisitIfNeeded() {
-        // The centralized provider handles this automatically on login
-        // This method is kept for backward compatibility but does nothing
-    }
-}
-
 // MARK: HomeViewModelProtocol
 extension NTPHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     var sectionType: HomepageSectionType {
