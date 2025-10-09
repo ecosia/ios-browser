@@ -105,9 +105,6 @@ struct NTPHeaderView: View {
         }
         .padding(.leading, .ecosia.space._m)
         .padding(.trailing, .ecosia.space._m)
-        .onAppear {
-            viewModel.registerVisitIfNeeded()
-        }
         .sheet(isPresented: $showAccountImpactView) {
             EcosiaAccountImpactView(
                 viewModel: EcosiaAccountImpactViewModel(
