@@ -69,8 +69,8 @@ extension BrowserViewController {
             .forEach { $0.removeFromSuperview() }
 
         let subtitle = isLogin
-            ? "Something went wrong. Please sign in again."
-            : "Something went wrong. Please sign out again."
+            ? String.localized(.signInErrorMessage)
+            : String.localized(.signOutErrorMessage)
 
         let container = EcosiaErrorToastContainerView()
         container.translatesAutoresizingMaskIntoConstraints = false
