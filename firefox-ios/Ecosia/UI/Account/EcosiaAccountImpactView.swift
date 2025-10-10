@@ -89,9 +89,9 @@ public struct EcosiaAccountImpactView: View {
 
             // Show error view if register visit failed
             if authStateProvider.hasRegisterVisitError {
-                EcosiaAccountErrorView(
-                    title: "Could not load seed counter",
-                    subtitle: "Something went wrong with displaying your seeds. Please try again later.",
+                EcosiaErrorView(
+                    title: String.localized(.couldNotLoadSeedCounter),
+                    subtitle: String.localized(.couldNotLoadSeedCounterMessage),
                     windowUUID: windowUUID
                 )
                 .padding(.horizontal, .ecosia.space._m)
