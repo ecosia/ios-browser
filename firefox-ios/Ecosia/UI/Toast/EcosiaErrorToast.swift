@@ -31,26 +31,29 @@ public struct EcosiaErrorToast: View {
     }
 
     public var body: some View {
-        EcosiaErrorView(subtitle: subtitle, windowUUID: windowUUID)
-            .frame(minHeight: UX.toastMinHeight)
-            .padding(.horizontal, .ecosia.space._m)
-            .offset(y: isVisible ? 0 : UX.toastMinHeight + .ecosia.space._m)
-            .opacity(isVisible ? 1 : 0)
-            .onAppear {
-                // Animate in
-                withAnimation(.easeOut(duration: UX.animationDuration)) {
-                    isVisible = true
-                }
-
-                // Auto-dismiss after duration
-                DispatchQueue.main.asyncAfter(deadline: .now() + UX.displayDuration) {
-                    dismiss()
-                }
-            }
-            .onTapGesture {
+        EcosiaErrorView(
+            subtitle: subtitle,
+            windowUUID: windowUUID,
+            onCloseTapped: { 
+                // User tapped close button - start dismissal
                 dismiss()
             }
-            .accessibilityAddTraits(.isButton)
+        )
+        .frame(minHeight: UX.toastMinHeight)
+        .padding(.horizontal, .ecosia.space._m)
+        .offset(y: isVisible ? 0 : UX.toastMinHeight + .ecosia.space._m)
+        .opacity(isVisible ? 1 : 0)
+        .onAppear {
+            // Animate in
+            withAnimation(.easeOut(duration: UX.animationDuration)) {
+                isVisible = true
+            }
+
+            // Auto-dismiss after duration
+            DispatchQueue.main.asyncAfter(deadline: .now() + UX.displayDuration) {
+                dismiss()
+            }
+        }
     }
 
     private func dismiss() {
