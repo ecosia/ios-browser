@@ -6,13 +6,14 @@ import SwiftUI
 import Common
 
 /// A generic error view component that displays error messages with optional title and subtitle
-/// Can be used standalone or wrapped within EcosiaErrorToast for toast functionality
+/// Optionally includes a close button and dismissal callback
 @available(iOS 16.0, *)
 public struct EcosiaErrorView: View {
     private let title: String?
     private let subtitle: String
     private let windowUUID: WindowUUID
-    private let onClose: (() -> Void)?
+    private let onCloseTapped: (() -> Void)?
+    private let onDismiss: (() -> Void)?
 
     @State private var theme = EcosiaErrorViewTheme()
 
@@ -26,12 +27,22 @@ public struct EcosiaErrorView: View {
     ///   - title: Optional bold title text. If nil, only subtitle is shown
     ///   - subtitle: Main error message text
     ///   - windowUUID: Window UUID for theming
-    ///   - onClose: Optional closure called when close button is tapped. If nil, no close button is shown
-    public init(title: String? = nil, subtitle: String, windowUUID: WindowUUID, onClose: (() -> Void)? = nil) {
+    ///   - onCloseTapped: Optional closure called when close button is tapped. If nil, close button is hidden.
+    ///                    This closure should handle initiating dismissal (e.g., starting animations)
+    ///   - onDismiss: Optional closure called when view dismissal is complete (e.g., after animations finish).
+    ///                The caller is responsible for calling this at the appropriate time.
+    public init(
+        title: String? = nil,
+        subtitle: String,
+        windowUUID: WindowUUID,
+        onCloseTapped: (() -> Void)? = nil,
+        onDismiss: (() -> Void)? = nil
+    ) {
         self.title = title
         self.subtitle = subtitle
         self.windowUUID = windowUUID
-        self.onClose = onClose
+        self.onCloseTapped = onCloseTapped
+        self.onDismiss = onDismiss
     }
 
     public var body: some View {
@@ -56,9 +67,11 @@ public struct EcosiaErrorView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Optional close button
-            if let onClose = onClose {
-                Button(action: onClose) {
+            // Close button (conditionally shown)
+            if let onCloseTapped = onCloseTapped {
+                Button(action: {
+                    onCloseTapped()
+                }) {
                     Image("close", bundle: .ecosia)
                         .renderingMode(.template)
                         .resizable()
@@ -108,32 +121,37 @@ struct EcosiaErrorViewTheme: EcosiaThemeable {
 struct EcosiaErrorView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: .ecosia.space._l) {
-            // With title and subtitle
+            // With title, subtitle, and close button
             EcosiaErrorView(
                 title: String.localized(.couldNotLoadSeedCounter),
                 subtitle: String.localized(.couldNotLoadSeedCounterMessage),
-                windowUUID: .XCTestDefaultUUID
-            )
-
-            // Subtitle only (for toasts)
-            EcosiaErrorView(
-                subtitle: String.localized(.signInErrorMessage),
-                windowUUID: .XCTestDefaultUUID
-            )
-
-            // With close button
-            EcosiaErrorView(
-                title: "Error Title",
-                subtitle: "This is a longer error message that should wrap to multiple lines to show how the component handles longer text content.",
                 windowUUID: .XCTestDefaultUUID,
-                onClose: { print("Close tapped") }
+                onCloseTapped: { print("Close tapped") },
+                onDismiss: { print("Dismissed") }
             )
 
             // Subtitle only with close button
             EcosiaErrorView(
                 subtitle: String.localized(.signInErrorMessage),
                 windowUUID: .XCTestDefaultUUID,
-                onClose: { print("Close tapped") }
+                onCloseTapped: { print("Close tapped") }
+            )
+
+            // Without close button but with dismiss callback
+            EcosiaErrorView(
+                title: "Error Title",
+                subtitle: "This error view has no close button",
+                windowUUID: .XCTestDefaultUUID,
+                onDismiss: { print("Dismissed externally") }
+            )
+
+            // Long text example with close button
+            EcosiaErrorView(
+                title: "Error Title",
+                subtitle: "This is a longer error message that should wrap to multiple lines to show how the component handles longer text content.",
+                windowUUID: .XCTestDefaultUUID,
+                onCloseTapped: { print("Close tapped") },
+                onDismiss: { print("Dismissed") }
             )
         }
         .padding()
