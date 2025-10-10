@@ -357,3 +357,79 @@ final class AnalyticsStagingUrlSetting: HiddenSetting {
         settings.tableView.reloadData()
     }
 }
+
+final class SimulateAuthErrorSetting: HiddenSetting {
+    /// UserDefaults key for storing auth error simulation state
+    /// Note: Persists across app restarts - toggle again to disable
+    public static let debugKey = "DebugSimulateAuthError"
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Simulate Auth Error", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let isEnabled = Self.isEnabled
+        let status = isEnabled ? "ON (Auth will fail)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? "Auth Error Enabled ✅" : "Auth Error Disabled ✅",
+            message: !currentValue ? "Next login/logout will fail with an error." : "Auth errors disabled.",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+
+    /// Check if auth error simulation is enabled
+    public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+final class SimulateImpactAPIErrorSetting: HiddenSetting {
+    /// UserDefaults key for storing impact API error simulation state
+    /// Note: Persists across app restarts - toggle again to disable
+    public static let debugKey = "DebugSimulateImpactAPIError"
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Simulate Impact API Error", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let isEnabled = Self.isEnabled
+        let status = isEnabled ? "ON (API will fail)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? "Impact API Error Enabled ✅" : "Impact API Error Disabled ✅",
+            message: !currentValue ? "Next impact API call will fail." : "Impact API errors disabled.",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+
+    /// Check if impact API error simulation is enabled
+    public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
