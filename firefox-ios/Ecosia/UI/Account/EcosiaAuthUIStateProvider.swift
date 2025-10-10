@@ -48,10 +48,13 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Singleton
 
-    /// Shared instance for app-wide auth state
-    public static let shared = EcosiaAuthUIStateProvider()
+    /// Factory for creating accounts provider - can be configured before first access
+    public static var accountsProviderFactory: () -> AccountsProviderProtocol = { AccountsProvider() }
 
-    public init(accountsProvider: AccountsProviderProtocol = AccountsProvider()) {
+    /// Shared instance for app-wide auth state
+    public static let shared = EcosiaAuthUIStateProvider(accountsProvider: accountsProviderFactory())
+
+    public init(accountsProvider: AccountsProviderProtocol) {
         self.accountsProvider = accountsProvider
         setupAuthStateMonitoring()
         initializeState()
