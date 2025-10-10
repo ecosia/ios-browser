@@ -61,7 +61,7 @@ public struct EcosiaAccountImpactView: View {
                     avatarURL: viewModel.avatarURL,
                     progress: viewModel.levelProgress,
                     showSparkles: viewModel.shouldShowLevelUpAnimation,
-                    showProgress: true,
+                    showProgress: !authStateProvider.hasRegisterVisitError,
                     windowUUID: windowUUID
                 )
 
