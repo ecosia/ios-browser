@@ -128,5 +128,6 @@ struct NTPHeaderView: View {
 
     private func handleTap() {
         showAccountImpactView = true
+        Analytics.shared.accountHeaderClicked()
     }
 }

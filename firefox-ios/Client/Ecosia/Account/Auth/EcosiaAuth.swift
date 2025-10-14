@@ -107,8 +107,6 @@ final class EcosiaAuth {
             fatalError("BrowserViewController not available for auth flow")
         }
 
-        Analytics.shared.accountSignInTriggered()
-
         let flow = EcosiaAuthFlow(
             type: .login,
             authService: authService,

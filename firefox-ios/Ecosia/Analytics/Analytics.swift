@@ -365,10 +365,11 @@ open class Analytics {
 
     // MARK: Account Authentication
 
-    public func accountSignInTriggered() {
+    public func accountHeaderClicked() {
         let event = Structured(category: Category.account.rawValue,
                                action: Action.click.rawValue)
             .label(Label.signIn.rawValue)
+            .property(Property.header.rawValue)
         track(event)
     }
 
