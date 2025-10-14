@@ -3,4 +3,4 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 // Type alias to avoid conflict with SwiftUI's Environment
-typealias EcosiaEnvironment = Environment
+public typealias EcosiaEnvironment = Environment

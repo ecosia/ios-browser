@@ -118,7 +118,7 @@ extension BrowserViewController {
         guard !tab.isInvisible && url.isEcosia() else { return false }
 
         let path = url.path.lowercased()
-        let urlProvider = Environment.current.urlProvider
+        let urlProvider = EcosiaEnvironment.current.urlProvider
 
         if urlProvider.signUpPaths.contains(where: { path.contains($0) }) {
             handleSignInDetection(url)

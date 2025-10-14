@@ -154,13 +154,13 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
         textSecondaryColor = Color(theme.colors.textSecondary)
         closeButtonColor = Color(theme.colors.iconPrimary)
         closeButtonBackgroundColor = Color(theme.colors.actionSecondary)
-        actionButtonTextColor = Color(theme.colors.ecosia.textLinkPrimary)
+        actionButtonTextColor = Color(theme.colors.ecosia.linkPrimary)
         ctaButtonBackgroundColor = Color(theme.colors.ecosia.brandPrimary)
         borderColor = Color(theme.colors.borderPrimary)
         avatarPlaceholderColor = Color(theme.colors.layer3)
         avatarIconColor = Color(theme.colors.iconSecondary)
         levelTextColor = Color(theme.colors.ecosia.textInversePrimary)
-        levelBackgroundColor = Color(theme.colors.ecosia.backgroundInverseNeutral)
+        levelBackgroundColor = Color(theme.colors.ecosia.backgroundNeutralInverse)
     }
 }
 

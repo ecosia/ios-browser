@@ -171,10 +171,10 @@ final class EcosiaAuthFlow {
         }
 
         // Get session transfer URL
-        let signUpURL = Environment.current.urlProvider.loginURL
+        let signUpURL = EcosiaEnvironment.current.urlProvider.loginURL
 
         EcosiaLogger.session.info("Retrieving session transfer token for SSO")
-        await EcosiaAuthenticationService.shared.getSessionTransferToken()
+        await authService.getSessionTransferToken()
 
         // Create invisible tab session (must be on main thread for UI operations)
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for login")
@@ -182,6 +182,7 @@ final class EcosiaAuthFlow {
             try InvisibleTabSession(
                 url: signUpURL,
                 browserViewController: browserViewController,
+                authService: authService,
                 timeout: 10.0
             )
         }
@@ -210,7 +211,7 @@ final class EcosiaAuthFlow {
         }
 
         // Get logout URL
-        let logoutURL = Environment.current.urlProvider.logoutURL
+        let logoutURL = EcosiaEnvironment.current.urlProvider.logoutURL
 
         // TODO: Handle web errors during logout process
         // Web errors are not currently caught in this process, only native ones.
@@ -224,6 +225,7 @@ final class EcosiaAuthFlow {
             try InvisibleTabSession(
                 url: logoutURL,
                 browserViewController: browserViewController,
+                authService: authService,
                 timeout: 10.0
             )
         }

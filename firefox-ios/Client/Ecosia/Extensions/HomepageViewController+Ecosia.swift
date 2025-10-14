@@ -116,6 +116,6 @@ extension LegacyHomepageViewController: NTPCustomizationCellDelegate {
 
 extension LegacyHomepageViewController: NTPHeaderDelegate {
     func headerOpenAISearch() {
-        openLink(url: Environment.current.urlProvider.aiSearch)
+        openLink(url: EcosiaEnvironment.current.urlProvider.aiSearch)
     }
 }

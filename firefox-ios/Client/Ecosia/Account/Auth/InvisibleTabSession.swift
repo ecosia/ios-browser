@@ -16,6 +16,7 @@ final class InvisibleTabSession: TabEventHandler {
     private let url: URL
     private let timeout: TimeInterval
     private weak var browserViewController: BrowserViewController?
+    private let authService: Ecosia.EcosiaAuthenticationService
 
     // State
     private var isCompleted = false
@@ -27,10 +28,15 @@ final class InvisibleTabSession: TabEventHandler {
     /// - Parameters:
     ///   - url: URL to load in the tab
     ///   - browserViewController: Browser view controller for tab operations
+    ///   - authService: Authentication service for session operations
     ///   - timeout: Fallback timeout for completion
-    init(url: URL, browserViewController: BrowserViewController, timeout: TimeInterval = 10.0) throws {
+    init(url: URL, 
+         browserViewController: BrowserViewController,
+         authService: Ecosia.EcosiaAuthenticationService,
+         timeout: TimeInterval = 10.0) throws {
         self.url = url
         self.browserViewController = browserViewController
+        self.authService = authService
         self.timeout = timeout
 
         // Create the tab immediately
@@ -43,7 +49,7 @@ final class InvisibleTabSession: TabEventHandler {
 
     /// Sets up session cookies for the tab
     func setupSessionCookies() {
-        guard let sessionCookie = EcosiaAuthenticationService.shared.getSessionTokenCookie() else {
+        guard let sessionCookie = authService.getSessionTokenCookie() else {
             EcosiaLogger.cookies.notice("No session cookie available for tab")
             return
         }

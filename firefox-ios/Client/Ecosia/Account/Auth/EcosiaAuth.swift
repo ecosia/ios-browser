@@ -6,26 +6,6 @@ import Foundation
 import Ecosia
 import Common
 
-// MARK: - Constants
-
-/// Constants for authentication flow notifications and userInfo keys
-public enum EcosiaAuthConstants {
-
-    enum Keys {
-        /// Notification userInfo keys
-        public static let windowUUID = "windowUUID"
-        public static let authState = "authState"
-        public static let actionType = "actionType"
-    }
-
-    enum State: String, CaseIterable {
-        case userLoggedIn
-        case userLoggedOut
-        case authenticationStarted
-        case authenticationFailed
-    }
-}
-
 /**
  EcosiaAuth provides authentication management for the Ecosia browser.
 
@@ -62,7 +42,7 @@ final class EcosiaAuth {
     private let authService: Ecosia.EcosiaAuthenticationService
     private weak var browserViewController: BrowserViewController?
 
-    // MARK: - Chainable API Properties
+    // MARK: - Authentication Flow Properties
 
     private var onNativeAuthCompletedCallback: (() -> Void)?
     private var onAuthFlowCompletedCallback: ((Bool) -> Void)?
@@ -83,8 +63,7 @@ final class EcosiaAuth {
         EcosiaLogger.auth.info("EcosiaAuth initialized")
     }
 
-// MARK: - AuthenticationFlow
-    // MARK: - Chainable API
+    // MARK: - Authentication Flow
 
     /// Sets callback for when native Auth0 authentication completes
     /// - Parameter callback: Closure called when Auth0 authentication finishes

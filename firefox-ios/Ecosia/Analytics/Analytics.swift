@@ -487,12 +487,12 @@ extension Analytics {
     /// - Returns: A configured `NetworkConfiguration` object.
     /// - Parameters:
     ///   - urlProvider: The urlProvider in use. Useful for testing purposes.
-    static func makeNetworkConfig(urlProvider: URLProvider = Environment.current.urlProvider) -> NetworkConfiguration {
+    static func makeNetworkConfig(urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> NetworkConfiguration {
         let endpoint = shouldUseMicroInstance ? urlProvider.snowplowMicro : urlProvider.snowplow
         var networkConfig = NetworkConfiguration(endpoint: endpoint!)
 
         if shouldUseMicroInstance,
-           let auth = Environment.current.cloudFlareAuth {
+           let auth = EcosiaEnvironment.current.cloudFlareAuth {
             networkConfig = networkConfig
                 .requestHeaders([
                     CloudflareKeyProvider.clientId: auth.id,

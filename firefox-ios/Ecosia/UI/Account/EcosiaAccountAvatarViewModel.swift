@@ -16,8 +16,8 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     @Published public var currentLevelNumber: Int
     @Published public var seedCount: Int = 0
 
-    private var authStateObserver: NSObjectProtocol?
-    private var userProfileObserver: NSObjectProtocol?
+    private let authStateProvider: EcosiaAuthUIStateProvider
+    private var cancellables = Set<AnyCancellable>()
     private var progressObserver: NSObjectProtocol?
     private var levelUpObserver: NSObjectProtocol?
     private var previousSeedCount: Int = 0
@@ -32,8 +32,10 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         avatarURL: URL? = nil,
         progress: Double = 0.25,
         seedCount: Int = 0,
-        levelNumber: Int = 1
+        levelNumber: Int = 1,
+        authStateProvider: EcosiaAuthUIStateProvider = .shared
     ) {
+        self.authStateProvider = authStateProvider
         self.avatarURL = avatarURL
         self.progress = max(0.0, min(1.0, progress))
         self.seedCount = seedCount
@@ -45,11 +47,12 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     deinit {
-        [authStateObserver, userProfileObserver, progressObserver, levelUpObserver].forEach {
+        [progressObserver, levelUpObserver].forEach {
             if let observer = $0 {
                 NotificationCenter.default.removeObserver(observer)
             }
         }
+        cancellables.removeAll()
     }
 
     public func updateAvatarURL(_ url: URL?) {
@@ -126,28 +129,30 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     private func setupInitialState() {
-        if EcosiaAuthenticationService.shared.isLoggedIn {
-            avatarURL = EcosiaAuthenticationService.shared.userProfile?.pictureURL
-        }
+        avatarURL = authStateProvider.avatarURL
     }
 
     private func setupObservers() {
-        authStateObserver = NotificationCenter.default.addObserver(
-            forName: .EcosiaAuthStateChanged,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.handleAuthStateChange()
-        }
+        // Subscribe to avatarURL changes from centralized provider
+        authStateProvider.$avatarURL
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newAvatarURL in
+                self?.avatarURL = newAvatarURL
+            }
+            .store(in: &cancellables)
 
-        userProfileObserver = NotificationCenter.default.addObserver(
-            forName: .EcosiaUserProfileUpdated,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.handleUserProfileUpdate()
-        }
+        // Subscribe to isLoggedIn changes to reset progress when logging out
+        authStateProvider.$isLoggedIn
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoggedIn in
+                guard let self = self else { return }
+                if !isLoggedIn {
+                    self.progress = UX.defaultProgress
+                }
+            }
+            .store(in: &cancellables)
 
+        // Keep existing notification-based observers for progress and level-up
         progressObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaAccountProgressUpdated,
             object: nil,
@@ -162,26 +167,6 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
             queue: .main
         ) { [weak self] notification in
             self?.handleLevelUp(notification)
-        }
-    }
-
-    nonisolated private func handleAuthStateChange() {
-        let newAvatarURL = EcosiaAuthenticationService.shared.isLoggedIn ? EcosiaAuthenticationService.shared.userProfile?.pictureURL : nil
-        let shouldResetProgress = !EcosiaAuthenticationService.shared.isLoggedIn
-
-        Task { @MainActor in
-            avatarURL = newAvatarURL
-            if shouldResetProgress {
-                progress = UX.defaultProgress
-            }
-        }
-    }
-
-    nonisolated private func handleUserProfileUpdate() {
-        let newAvatarURL = EcosiaAuthenticationService.shared.userProfile?.pictureURL
-
-        Task { @MainActor in
-            avatarURL = newAvatarURL
         }
     }
 

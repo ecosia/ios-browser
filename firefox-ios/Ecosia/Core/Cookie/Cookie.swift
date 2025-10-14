@@ -24,19 +24,19 @@ public enum Cookie: String, CaseIterable {
     private static var _urlProvider: URLProvider?
 
     /// Sets the URLProvider for all cookie operations. Primarily used for testing.
-    /// If not set, defaults to Environment.current.urlProvider
+    /// If not set, defaults to EcosiaEnvironment.current.urlProvider
     public static func setURLProvider(_ provider: URLProvider) {
         _urlProvider = provider
     }
 
-    /// Resets the URLProvider to use the default Environment.current.urlProvider
+    /// Resets the URLProvider to use the default EcosiaEnvironment.current.urlProvider
     public static func resetURLProvider() {
         _urlProvider = nil
     }
 
-    /// Gets the current URLProvider, defaulting to Environment.current.urlProvider if not explicitly set
+    /// Gets the current URLProvider, defaulting to EcosiaEnvironment.current.urlProvider if not explicitly set
     static var urlProvider: URLProvider {
-        return _urlProvider ?? Environment.current.urlProvider
+        return _urlProvider ?? EcosiaEnvironment.current.urlProvider
     }
 
     // MARK: - Init

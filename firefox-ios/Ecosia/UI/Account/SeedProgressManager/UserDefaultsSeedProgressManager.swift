@@ -4,6 +4,29 @@
 
 import Foundation
 
+/// Manages local seed collection and progression for logged-out users.
+///
+/// This manager persists seed progress locally using `UserDefaults` and is intended
+/// exclusively for tracking seeds collected by users who are not logged in. When users
+/// log in, their seed progress is managed server-side through the account system.
+///
+/// ## Local Storage
+///
+/// The manager stores three key values in `UserDefaults`:
+/// - Total seeds collected since first app launch
+/// - Current level based on seed thresholds
+/// - Last app open date for daily seed collection
+///
+/// ## Level Progression
+///
+/// Seed levels and thresholds are configured via `SeedCounterConfig`, which can be
+/// remotely configured. The manager automatically handles level-up transitions when
+/// seed thresholds are met and posts notifications for UI updates.
+///
+/// ## Important
+///
+/// This manager should only be used for logged-out users. Server-based seed management
+/// takes precedence for authenticated users.
 public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
 
     private static let className = String(describing: UserDefaultsSeedProgressManager.self)

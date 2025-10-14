@@ -168,7 +168,7 @@ extension AppSettingsTableViewController {
             AnalyticsIdentifierSetting(settings: self)
         ]
 
-        if Environment.current == .staging {
+        if EcosiaEnvironment.current == .staging {
             hiddenDebugSettings.append(AnalyticsStagingUrlSetting(settings: self))
         }
 

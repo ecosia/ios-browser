@@ -11,6 +11,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     public let settings: Auth0SettingsProviderProtocol
     public let credentialsManager: CredentialsManagerProtocol
     public typealias SessionToken = String
+    private let environment: Environment
 
     enum NativeToWebSSOError: Error, Equatable {
         case invalidResponse
@@ -19,14 +20,16 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     }
 
     public init(settings: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider(),
-                credentialsManager: CredentialsManagerProtocol? = nil) {
+                credentialsManager: CredentialsManagerProtocol? = nil,
+                environment: Environment = .current) {
         self.settings = settings
         self.credentialsManager = credentialsManager ?? DefaultCredentialsManager(auth0SettingsProvider: settings)
+        self.environment = environment
     }
 
     public var webAuth: WebAuth {
         makeHttpsWebAuth()
-            .audience("https://auth0.api.ecosia.org/v1/accounts/web")
+            .audience(environment.urlProvider.authApiAudience.absoluteString)
             .scope("openid profile email offline_access read:impact write:impact")
     }
 

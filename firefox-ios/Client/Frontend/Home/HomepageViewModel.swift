@@ -235,9 +235,6 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
                                 customizeButtonViewModel
         ]
          */
-        self.isPrivate = isPrivate
-        self.nimbus = nimbus
-
         // Ecosia: Those models needs to follow strictly the order defined in `enum HomepageSectionType`
         self.childViewModels = [multiPurposeEcosiaHeaderViewModel,
                                 headerViewModel,
@@ -246,6 +243,9 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
                                 impactViewModel,
                                 newsViewModel,
                                 ntpCustomizationViewModel]
+        self.isPrivate = isPrivate
+        
+        self.nimbus = nimbus
         // Ecosia: Add Ecosia's ViewModels delegates
         newsViewModel.dataModelDelegate = self
         topSiteViewModel.delegate = self

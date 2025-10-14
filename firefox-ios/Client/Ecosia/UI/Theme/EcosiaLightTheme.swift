@@ -120,14 +120,17 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundElevation1: UIColor = EcosiaColor.White
     var backgroundElevation2: UIColor = EcosiaColor.White
     var backgroundBrandSecondaryAlt: UIColor = EcosiaColor.DarkGreen50
+    var backgroundNeutralInverse: UIColor = EcosiaColor.Gray80
     var borderDecorative: UIColor = EcosiaColor.Gray30
     var brandPrimary: UIColor = EcosiaColor.Green50
+    var brandImpact: UIColor = EcosiaColor.Yellow40
     var buttonBackgroundPrimary: UIColor = EcosiaColor.Green50
     var buttonBackgroundPrimaryActive: UIColor = EcosiaColor.DarkGreen50
     var buttonBackgroundSecondary: UIColor = EcosiaColor.White
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColor.Gray30
     var buttonContentSecondary: UIColor = EcosiaColor.Gray70
     var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Green70.withAlphaComponent(0.24)
+    var linkPrimary: UIColor = EcosiaColor.Gray70
     var iconSecondary: UIColor = EcosiaColor.Green50
     var iconDecorative: UIColor = EcosiaColor.Gray50
     var iconInverseStrong: UIColor = EcosiaColor.White
@@ -139,7 +142,4 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textPrimary: UIColor = EcosiaColor.Gray70
     var textInversePrimary: UIColor = EcosiaColor.White
     var textSecondary: UIColor = EcosiaColor.Gray50
-    var textLinkPrimary: UIColor = EcosiaColor.Gray70
-    var brandImpact: UIColor = EcosiaColor.Yellow40
-    var backgroundInverseNeutral: UIColor = EcosiaColor.Gray80
 }

@@ -131,13 +131,12 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
-    private func updateFromAuthShared() async {
-        await MainActor.run {
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-            userProfile = EcosiaAuthenticationService.shared.userProfile
-            avatarURL = userProfile?.pictureURL
-            username = userProfile?.name
-        }
+    @MainActor
+    private func updateFromAuthShared() {
+        isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+        userProfile = EcosiaAuthenticationService.shared.userProfile
+        avatarURL = userProfile?.pictureURL
+        username = userProfile?.name
     }
 
     private func handleAuthStateChange(_ notification: Notification) async {
@@ -159,13 +158,12 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
-    private func handleUserProfileUpdate() async {
-        await MainActor.run {
-            if isLoggedIn {
-                userProfile = EcosiaAuthenticationService.shared.userProfile
-                username = userProfile?.name
-                avatarURL = userProfile?.pictureURL
-            }
+    @MainActor
+    private func handleUserProfileUpdate() {
+        if isLoggedIn {
+            userProfile = EcosiaAuthenticationService.shared.userProfile
+            username = userProfile?.name
+            avatarURL = userProfile?.pictureURL
         }
     }
 
@@ -189,23 +187,22 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
-    private func updateBalance(_ response: AccountVisitResponse) async {
+    @MainActor
+    private func updateBalance(_ response: AccountVisitResponse) {
         let newSeedCount = response.seeds.totalAmount
         let newLevelNumber = response.growthPoints.level.number
         let newProgress = response.progressToNextLevel
 
-        await MainActor.run {
-            // Update level and progress from API
-            currentLevelNumber = newLevelNumber
-            currentProgress = newProgress
+        // Update level and progress from API
+        currentLevelNumber = newLevelNumber
+        currentProgress = newProgress
 
-            if let increment = response.seedsIncrement {
-                EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment)), level=\(newLevelNumber), progress=\(newProgress)")
-                animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
-            } else {
-                EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
-                seedCount = newSeedCount
-            }
+        if let increment = response.seedsIncrement {
+            EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment)), level=\(newLevelNumber), progress=\(newProgress)")
+            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
+        } else {
+            EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
+            seedCount = newSeedCount
         }
     }
 
@@ -226,30 +223,28 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
-    private func resetToLocalSeedCollection() async {
+    @MainActor
+    private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
         Self.seedProgressManagerType.resetCounter()
 
-        await MainActor.run {
-            seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-            // Clear level data when logging out
-            currentLevelNumber = 1
-            currentProgress = 0.25 // Reset to default progress
-        }
+        seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
+        // Clear level data when logging out
+        currentLevelNumber = 1
+        currentProgress = 0.25 // Reset to default progress
     }
 
-    private func handleLocalSeedCollection() async {
+    @MainActor
+    private func handleLocalSeedCollection() {
         EcosiaLogger.accounts.info("Handling local seed collection for logged-out user")
         Self.seedProgressManagerType.collectDailySeed()
         let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
 
-        await MainActor.run {
-            if newSeedCount > seedCount {
-                let increment = newSeedCount - seedCount
-                animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
-            } else {
-                seedCount = newSeedCount
-            }
+        if newSeedCount > seedCount {
+            let increment = newSeedCount - seedCount
+            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
+        } else {
+            seedCount = newSeedCount
         }
     }
 }

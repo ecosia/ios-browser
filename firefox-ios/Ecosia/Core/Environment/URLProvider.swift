@@ -10,10 +10,9 @@ public enum URLProvider {
     case staging
     case debug
 
-    // MARK: - Private Helpers
-
-    /// Base domain for the current environment
-    private var baseDomain: String {
+    // MARK: - Public Properties
+    
+    public var domain: String {
         switch self {
         case .production, .debug:
             return "ecosia.org"
@@ -22,24 +21,18 @@ public enum URLProvider {
         }
     }
 
-    // MARK: - Public Properties
-
     public var root: URL {
-        URL(string: "https://www.\(baseDomain)")!
-    }
-
-    public var domain: String? {
-        baseDomain
+        URL(string: "https://www.\(domain)")!
     }
 
     public var apiRoot: URL {
-        URL(string: "https://api.\(baseDomain)")!
+        URL(string: "https://api.\(domain)")!
     }
 
     public var snowplowMicro: String? {
         switch self {
         case .staging:
-            return "https://www.\(baseDomain)/analytics-test-micro"
+            return "https://www.\(domain)/analytics-test-micro"
         case .production, .debug:
             return nil
         }
@@ -215,12 +208,17 @@ public enum URLProvider {
     public var logoutURL: URL {
         root.appendingPathComponent("accounts/sign-out")
     }
+    
+    /// The API Identifier matching the `audience` parameter used by Auth0 when creating the `WebAuth`
+    public var authApiAudience: URL {
+        URL(string: "https://auth0.api.ecosia.org/v1/accounts/web")!
+    }
 
     // MARK: - Auth0 Configuration
 
     /// Auth0 domain for authentication (custom domain)
     public var auth0Domain: String {
-        "login.\(baseDomain)"
+        "login.\(domain)"
     }
 
     /// Auth0 cookie domain for session management

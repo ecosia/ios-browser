@@ -66,24 +66,6 @@ extension Environment {
         }
         return .debug
     }
-
-    // Alternative: Info.plist based detection
-    public static var currentFromInfoPlist: Environment {
-        guard let path = Bundle.main.path(forResource: "Info", ofType: "plist"),
-              let plist = NSDictionary(contentsOfFile: path),
-              let envString = plist["EcosiaEnvironment"] as? String else {
-            return .debug
-        }
-
-        switch envString.lowercased() {
-        case "production":
-            return .production
-        case "staging", "beta":
-            return .staging
-        default:
-            return .debug
-        }
-    }
 }
 
 extension Environment {

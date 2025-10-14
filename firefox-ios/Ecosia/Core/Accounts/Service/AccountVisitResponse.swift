@@ -95,49 +95,4 @@ public struct AccountVisitResponse: Codable {
         guard required > 0 else { return 0.0 }
         return Double(earned) / Double(required)
     }
-
-    // MARK: - Legacy Support
-
-    /// Legacy balance amount for backward compatibility
-    @available(*, deprecated, message: "Use seeds.totalAmount instead")
-    public var balance: Balance {
-        return Balance(
-            amount: seeds.totalAmount,
-            updatedAt: seeds.updatedAt,
-            isModified: seeds.isModified
-        )
-    }
-
-    /// Legacy previous balance for backward compatibility
-    @available(*, deprecated, message: "Use seeds.previousTotalAmount instead")
-    public var previousBalance: PreviousBalance? {
-        return PreviousBalance(amount: seeds.previousTotalAmount)
-    }
-
-    /// Legacy balance increment for backward compatibility
-    @available(*, deprecated, message: "Use seedsIncrement instead")
-    public var balanceIncrement: Int? {
-        return seedsIncrement
-    }
-
-    // Legacy structs for backward compatibility
-    public struct Balance: Codable {
-        public let amount: Int
-        public let isModified: Bool
-        let updatedAt: String
-
-        public init(amount: Int, updatedAt: String, isModified: Bool) {
-            self.amount = amount
-            self.updatedAt = updatedAt
-            self.isModified = isModified
-        }
-    }
-
-    public struct PreviousBalance: Codable {
-        public let amount: Int
-
-        public init(amount: Int) {
-            self.amount = amount
-        }
-    }
 }
