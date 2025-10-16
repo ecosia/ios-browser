@@ -30,7 +30,7 @@ final class InvisibleTabSession: TabEventHandler {
     ///   - browserViewController: Browser view controller for tab operations
     ///   - authService: Authentication service for session operations
     ///   - timeout: Fallback timeout for completion
-    init(url: URL, 
+    init(url: URL,
          browserViewController: BrowserViewController,
          authService: Ecosia.EcosiaAuthenticationService,
          timeout: TimeInterval = 10.0) throws {

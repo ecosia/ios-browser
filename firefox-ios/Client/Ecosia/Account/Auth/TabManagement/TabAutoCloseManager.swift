@@ -108,8 +108,8 @@ final class InvisibleTabAutoCloseManager {
     ///   - notification: The notification name to observe
     ///   - timeout: Fallback timeout interval
     private func createObserver(for tab: Tab,
-                               notification: Notification.Name,
-                               timeout: TimeInterval) {
+                                notification: Notification.Name,
+                                timeout: TimeInterval) {
 
         let tabUUID = tab.tabUUID
 

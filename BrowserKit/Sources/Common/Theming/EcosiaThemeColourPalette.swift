@@ -34,7 +34,7 @@ public protocol EcosiaSemanticColors {
     var buttonBackgroundSecondaryHover: UIColor { get }
     var buttonContentSecondary: UIColor { get }
     var buttonBackgroundTransparentActive: UIColor { get }
-    
+
     // MARK: - Link
     var linkPrimary: UIColor { get }
 

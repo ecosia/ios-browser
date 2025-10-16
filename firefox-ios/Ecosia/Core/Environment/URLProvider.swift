@@ -11,7 +11,7 @@ public enum URLProvider {
     case debug
 
     // MARK: - Public Properties
-    
+
     public var domain: String {
         switch self {
         case .production, .debug:
@@ -177,7 +177,7 @@ public enum URLProvider {
     }
 
     public var seedCounterInfo: URL {
-        URL(string: "https://support.ecosia.org/article/844-seed-counter?_sp=F7CC2AA5-430D-465E-8B8B-9A81054B465A")!
+        URL(string: "https://support.ecosia.org/article/844-seed-counter")!
     }
 
     // MARK: - Authentication URL Patterns
@@ -208,7 +208,7 @@ public enum URLProvider {
     public var logoutURL: URL {
         root.appendingPathComponent("accounts/sign-out")
     }
-    
+
     /// The API Identifier matching the `audience` parameter used by Auth0 when creating the `WebAuth`
     public var authApiAudience: URL {
         URL(string: "https://auth0.api.ecosia.org/v1/accounts/web")!

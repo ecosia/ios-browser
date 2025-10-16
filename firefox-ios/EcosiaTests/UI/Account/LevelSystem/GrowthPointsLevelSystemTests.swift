@@ -226,6 +226,7 @@ final class GrowthPointsLevelSystemTests: XCTestCase {
     // MARK: - Level Thresholds Tests
 
     func testLevelThresholds_MatchBackendSpecification() {
+        // swiftlint:disable large_tuple
         // Given
         let expectedLevels: [(number: Int, totalGrowthPointsRequired: Int, seedsRewardedForLevelUp: Int)] = [
             (1, 0, 0),
@@ -249,7 +250,7 @@ final class GrowthPointsLevelSystemTests: XCTestCase {
             (19, 26250, 200),
             (20, 30000, 220)
         ]
-
+        // swiftlint:enable large_tuple
         let timestamp = "2024-12-07T10:50:26Z"
 
         // When/Then

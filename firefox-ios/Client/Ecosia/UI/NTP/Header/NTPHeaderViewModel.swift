@@ -50,11 +50,6 @@ final class NTPHeaderViewModel: ObservableObject {
         Analytics.shared.aiSearchNTPButtonTapped()
     }
 
-    func updateSeedCount(_ count: Int) {
-        // Seed count is now managed by the centralized auth state provider
-        // This method is kept for backward compatibility but does nothing
-    }
-
     func performLogin() {
         auth.login()
     }

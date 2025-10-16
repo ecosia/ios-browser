@@ -244,7 +244,7 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
                                 newsViewModel,
                                 ntpCustomizationViewModel]
         self.isPrivate = isPrivate
-        
+
         self.nimbus = nimbus
         // Ecosia: Add Ecosia's ViewModels delegates
         newsViewModel.dataModelDelegate = self
