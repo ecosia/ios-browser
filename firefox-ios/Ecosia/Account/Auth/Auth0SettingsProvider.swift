@@ -18,11 +18,11 @@ public struct DefaultAuth0SettingsProvider: Auth0SettingsProviderProtocol {
     }
 
     public var domain: String {
-        return Environment.current.urlProvider.auth0Domain
+        return EcosiaEnvironment.current.urlProvider.auth0Domain
     }
 
     public var cookieDomain: String {
-        return Environment.current.urlProvider.auth0CookieDomain
+        return EcosiaEnvironment.current.urlProvider.auth0CookieDomain
     }
 
     public init() {}
