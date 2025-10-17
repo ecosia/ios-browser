@@ -9,13 +9,13 @@ import WebKit
 
 final class AuthTests: XCTestCase {
 
-    var auth: Auth!
+    var auth: EcosiaAuthenticationService!
     var mockProvider: MockAuth0Provider!
 
     override func setUp() {
         super.setUp()
         mockProvider = MockAuth0Provider()
-        auth = Auth(auth0Provider: mockProvider)
+        auth = EcosiaAuthenticationService(auth0Provider: mockProvider)
         mockProvider.reset()
         mockProvider.hasStoredCredentials = false
     }
@@ -32,7 +32,7 @@ final class AuthTests: XCTestCase {
     func testInit_withDefaultProvider_createsAuthInstance() {
         // Arrange
         // Act
-        let auth = Auth()
+        let auth = EcosiaAuthenticationService()
 
         // Assert
         XCTAssertNotNil(auth)
@@ -48,7 +48,7 @@ final class AuthTests: XCTestCase {
         let customProvider = MockAuth0Provider()
 
         // Act
-        let auth = Auth(auth0Provider: customProvider)
+        let auth = EcosiaAuthenticationService(auth0Provider: customProvider)
 
         // Assert
         XCTAssertNotNil(auth)

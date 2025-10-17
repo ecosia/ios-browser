@@ -219,6 +219,25 @@ final class ResetDefaultBrowserNudgeCard: HiddenSetting {
     }
 }
 
+final class ResetAccountImpactNudgeCard: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Makes the Account Impact nudge card visible again", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = "\(User.shared.shouldShowAccountImpactNudgeCard)"
+        let suggestion = User.shared.shouldShowAccountImpactNudgeCard ? "" : " (Click to show)"
+        return NSAttributedString(string: "Card visible: \(status)\(suggestion)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard !User.shared.shouldShowAccountImpactNudgeCard else { return }
+        User.shared.showAccountImpactNudgeCard()
+        self.settings.settings = self.settings.generateSettings()
+        self.settings.tableView.reloadData()
+    }
+}
+
 class UnleashVariantResetSetting: HiddenSetting {
     var titleName: String? { return nil }
     var variant: Unleash.Variant? { return nil }

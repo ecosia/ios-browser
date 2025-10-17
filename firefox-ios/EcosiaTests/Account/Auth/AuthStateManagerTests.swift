@@ -9,12 +9,12 @@ import Common
 
 final class AuthStateManagerTests: XCTestCase {
 
-    var authStateManager: AuthStateManager!
+    var authStateManager: EcosiaBrowserWindowAuthManager!
     var testWindowUUID: WindowUUID!
 
     override func setUp() {
         super.setUp()
-        authStateManager = AuthStateManager.shared
+        authStateManager = EcosiaBrowserWindowAuthManager.shared
         testWindowUUID = WindowUUID.XCTestDefaultUUID
 
         // Clean state before each test
@@ -118,7 +118,7 @@ final class AuthStateManagerTests: XCTestCase {
             // Verify notification contains expected data
             let userInfo = notification.userInfo
             XCTAssertEqual(userInfo?["windowUUID"] as? WindowUUID, self.testWindowUUID)
-            XCTAssertEqual(userInfo?["actionType"] as? String, "authStateLoaded")
+            XCTAssertEqual(userInfo?["actionType"] as? EcosiaAuthActionType, .authStateLoaded)
             XCTAssertNotNil(userInfo?["authState"] as? AuthWindowState)
 
             expectation.fulfill()

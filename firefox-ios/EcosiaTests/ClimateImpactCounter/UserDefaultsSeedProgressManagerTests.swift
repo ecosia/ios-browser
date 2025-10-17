@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+@testable import Ecosia
 @testable import Client
 
 /// Remember that we always start from 1 seed and level 1 every time.

@@ -8,14 +8,14 @@ import Common
 
 final class AuthNotificationSystemTests: XCTestCase {
 
-    var authStateManager: AuthStateManager!
+    var authStateManager: EcosiaBrowserWindowAuthManager!
     var windowRegistry: EcosiaAuthWindowRegistry!
     var testWindowUUID: WindowUUID!
     fileprivate var notificationObserver: NotificationObserver!
 
     override func setUp() {
         super.setUp()
-        authStateManager = AuthStateManager.shared
+        authStateManager = EcosiaBrowserWindowAuthManager.shared
         windowRegistry = EcosiaAuthWindowRegistry.shared
         testWindowUUID = WindowUUID.XCTestDefaultUUID
         notificationObserver = NotificationObserver()
@@ -68,12 +68,12 @@ final class AuthNotificationSystemTests: XCTestCase {
         let receivedNotification = notificationObserver.receivedNotifications.first
         XCTAssertNotNil(receivedNotification, "Should receive notification")
         XCTAssertEqual(receivedNotification?.name, .EcosiaAuthStateChanged, "Should have correct notification name")
-        XCTAssertTrue(receivedNotification?.object is AuthStateManager, "Should have correct object")
+        XCTAssertTrue(receivedNotification?.object is EcosiaBrowserWindowAuthManager, "Should have correct object")
 
         // Verify userInfo content
         if let userInfo = receivedNotification?.userInfo {
             XCTAssertEqual(userInfo["windowUUID"] as? WindowUUID, testWindowUUID, "Should include window UUID")
-            XCTAssertEqual(userInfo["actionType"] as? String, "userLoggedIn", "Should include action type")
+            XCTAssertEqual(userInfo["actionType"] as? EcosiaAuthActionType, .userLoggedIn, "Should include action type")
 
             if let authState = userInfo["authState"] as? AuthWindowState {
                 XCTAssertEqual(authState.windowUUID, testWindowUUID, "Auth state should have correct window UUID")
@@ -111,7 +111,7 @@ final class AuthNotificationSystemTests: XCTestCase {
 
         // Verify userInfo content
         if let userInfo = receivedNotification?.userInfo {
-            XCTAssertEqual(userInfo["actionType"] as? String, "userLoggedOut", "Should include action type")
+            XCTAssertEqual(userInfo["actionType"] as? EcosiaAuthActionType, .userLoggedOut, "Should include action type")
 
             if let authState = userInfo["authState"] as? AuthWindowState {
                 XCTAssertFalse(authState.isLoggedIn, "Auth state should indicate user is logged out")
@@ -148,7 +148,7 @@ final class AuthNotificationSystemTests: XCTestCase {
 
         // Verify userInfo content
         if let userInfo = receivedNotification?.userInfo {
-            XCTAssertEqual(userInfo["actionType"] as? String, "authStateLoaded", "Should include action type")
+            XCTAssertEqual(userInfo["actionType"] as? EcosiaAuthActionType, .authStateLoaded, "Should include action type")
 
             if let authState = userInfo["authState"] as? AuthWindowState {
                 XCTAssertTrue(authState.isLoggedIn, "Auth state should indicate user is logged in")
@@ -195,7 +195,7 @@ final class AuthNotificationSystemTests: XCTestCase {
             if let userInfo = notification.userInfo,
                let windowUUID = userInfo["windowUUID"] as? WindowUUID {
                 receivedWindowUUIDs.insert(windowUUID)
-                XCTAssertEqual(userInfo["actionType"] as? String, "userLoggedIn", "Should have correct action type")
+                XCTAssertEqual(userInfo["actionType"] as? EcosiaAuthActionType, .userLoggedIn, "Should have correct action type")
             } else {
                 XCTFail("Should include window UUID in userInfo")
             }
@@ -229,7 +229,7 @@ final class AuthNotificationSystemTests: XCTestCase {
 
         if let notification = observer.receivedNotifications.first {
             XCTAssertEqual(notification.name, .EcosiaAuthStateChanged, "Should have correct notification name")
-            XCTAssertTrue(notification.object is AuthStateManager, "Should have correct object")
+            XCTAssertTrue(notification.object is EcosiaBrowserWindowAuthManager, "Should have correct object")
         }
     }
 
@@ -298,8 +298,8 @@ final class AuthNotificationSystemTests: XCTestCase {
         // Verify alternating login/logout pattern
         for i in 0..<observer.receivedNotifications.count {
             let notification = observer.receivedNotifications[i]
-            let expectedActionType = i % 2 == 0 ? "userLoggedIn" : "userLoggedOut"
-            let actualActionType = notification.userInfo?["actionType"] as? String
+            let expectedActionType: EcosiaAuthActionType = i % 2 == 0 ? .userLoggedIn : .userLoggedOut
+            let actualActionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType
             XCTAssertEqual(actualActionType, expectedActionType, "Action type should match expected pattern at index \(i)")
         }
     }
@@ -329,7 +329,7 @@ final class AuthNotificationSystemTests: XCTestCase {
             XCTAssertEqual(observer.receivedNotifications.count, 1, "Observer \(index) should receive exactly 1 notification")
 
             let notification = observer.receivedNotifications.first!
-            XCTAssertEqual(notification.userInfo?["actionType"] as? String, "userLoggedIn", "Observer \(index) should receive correct action type")
+            XCTAssertEqual(notification.userInfo?["actionType"] as? EcosiaAuthActionType, .userLoggedIn, "Observer \(index) should receive correct action type")
             XCTAssertEqual(notification.userInfo?["windowUUID"] as? WindowUUID, testWindowUUID, "Observer \(index) should receive correct window UUID")
         }
     }

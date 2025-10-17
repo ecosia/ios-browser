@@ -10,7 +10,6 @@ import UIKit
 // They are adopted by `EcosiaLightTheme` and `EcosiaDarkTheme` and should use `EcosiaColorPrimitive`.
 public protocol EcosiaSemanticColors {
     // MARK: - Background
-    var backgroundNeutralInverse: UIColor { get }
     var backgroundFeatured: UIColor { get }
     var backgroundPrimary: UIColor { get }
     var backgroundPrimaryDecorative: UIColor { get }
@@ -26,6 +25,7 @@ public protocol EcosiaSemanticColors {
     // MARK: - Brand
     var brandFeatured: UIColor { get }
     var brandPrimary: UIColor { get }
+    var brandImpact: UIColor { get }
 
     // MARK: - Button
     var buttonBackgroundFeatured: UIColor { get }
@@ -38,6 +38,9 @@ public protocol EcosiaSemanticColors {
     var buttonBackgroundSecondaryHover: UIColor { get }
     var buttonContentSecondary: UIColor { get }
     var buttonContentSecondaryStatic: UIColor { get }
+
+    // MARK: - Link
+    var linkPrimary: UIColor { get }
 
     // MARK: - Icon
     var iconDecorative: UIColor { get }

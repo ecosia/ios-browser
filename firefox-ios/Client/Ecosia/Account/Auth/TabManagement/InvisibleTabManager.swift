@@ -41,16 +41,16 @@ final class InvisibleTabManager {
     /// Mark a tab as invisible
     /// - Parameter tab: The tab to mark as invisible
     func markTabAsInvisible(_ tab: Tab) {
-        queue.async(flags: .barrier) { [weak self] in
-            self?._invisibleTabUUIDs.insert(tab.tabUUID)
+        queue.sync(flags: .barrier) {
+            _invisibleTabUUIDs.insert(tab.tabUUID)
         }
     }
 
     /// Mark a tab as visible
     /// - Parameter tab: The tab to mark as visible
     func markTabAsVisible(_ tab: Tab) {
-        queue.async(flags: .barrier) { [weak self] in
-            self?._invisibleTabUUIDs.remove(tab.tabUUID)
+        queue.sync(flags: .barrier) {
+            _invisibleTabUUIDs.remove(tab.tabUUID)
         }
     }
 
@@ -75,16 +75,15 @@ final class InvisibleTabManager {
     /// Clean up tracking for removed tabs
     /// - Parameter existingTabUUIDs: Set of tab UUIDs that still exist
     func cleanupRemovedTabs(existingTabUUIDs: Set<TabUUID>) {
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-            self._invisibleTabUUIDs = self._invisibleTabUUIDs.intersection(existingTabUUIDs)
+        queue.sync(flags: .barrier) {
+            _invisibleTabUUIDs = _invisibleTabUUIDs.intersection(existingTabUUIDs)
         }
     }
 
     /// Clear all invisible tabs (useful for testing)
     func clearAllInvisibleTabs() {
-        queue.async(flags: .barrier) { [weak self] in
-            self?._invisibleTabUUIDs.removeAll()
+        queue.sync(flags: .barrier) {
+            _invisibleTabUUIDs.removeAll()
         }
     }
 }

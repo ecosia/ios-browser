@@ -370,7 +370,7 @@ final class AnalyticsSpyTests: XCTestCase {
                 Analytics.shared = analyticsSpy
                 tabManagerMock.selectedTab?.url = URL(string: "https://example.com")
 
-                // Set expectation
+                let semaphore = DispatchSemaphore(value: 0)
                 let expectation = self.expectation(description: "menuStatus called for \(testCase.label.rawValue) to \(testCase.value)")
                 analyticsSpy.menuStatusExpectation = expectation
 
@@ -379,15 +379,18 @@ final class AnalyticsSpyTests: XCTestCase {
                     let flatItems = actions.flatMap { $0 }.flatMap { $0.items }
                     guard let action = flatItems.first(where: { $0.title == testCase.title }) else {
                         XCTFail("No action with title \(testCase.title) found")
+                        semaphore.signal()
                         return
                     }
 
                     action.tapHandler?(action)
+                    semaphore.signal()
                 }
 
+                // Wait for async completion
+                _ = semaphore.wait(timeout: .now() + 2)
                 wait(for: [expectation], timeout: 2)
 
-                // Assert
                 XCTAssertEqual(analyticsSpy.menuStatusItemCalled, testCase.label, "Expected menu status label to be \(testCase.label.rawValue)")
                 XCTAssertEqual(analyticsSpy.menuStatusItemChangedTo, testCase.value, "Expected menu status value to be \(testCase.value)")
             }
@@ -746,7 +749,7 @@ final class AnalyticsSpyTests: XCTestCase {
     func testWebViewDelegateTracksSearchEventOnEcosiaVerticalURLChange() {
         let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
 
-        let rootURL = Environment.current.urlProvider.root
+        let rootURL = EcosiaEnvironment.current.urlProvider.root
         let testCases = [
             ("https://www.example.org", false, "Does not track external URLs"),
             ("\(rootURL)", false, "Does not track index page"),
@@ -785,7 +788,7 @@ final class AnalyticsSpyTests: XCTestCase {
     func testWebViewDelegateTracksSearchEventBasedOnNavigationType() {
         let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
 
-        let rootURL = Environment.current.urlProvider.root
+        let rootURL = EcosiaEnvironment.current.urlProvider.root
         let testCases = [
             (WKNavigationType.other, "\(rootURL)/search?q=test", true, "Tracks regular navigation"),
             (WKNavigationType.reload, "\(rootURL)/search?q=test", true, "Tracks reload (with unchanged url)"),

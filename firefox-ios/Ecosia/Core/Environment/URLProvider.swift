@@ -10,38 +10,29 @@ public enum URLProvider {
     case staging
     case debug
 
-    public var root: URL {
+    // MARK: - Public Properties
+
+    public var domain: String {
         switch self {
         case .production, .debug:
-            return URL(string: "https://www.ecosia.org")!
+            return "ecosia.org"
         case .staging:
-            return URL(string: "https://www.ecosia-staging.xyz")!
+            return "ecosia-staging.xyz"
         }
     }
 
-    public var domain: String? {
-        if let urlComponents = URLComponents(string: root.absoluteString) {
-            if let host = urlComponents.host {
-                let domain = host.replacingOccurrences(of: "www.", with: "")
-                return domain
-            }
-        }
-        return nil
+    public var root: URL {
+        URL(string: "https://www.\(domain)")!
     }
 
     public var apiRoot: URL {
-        switch self {
-        case .production, .debug:
-            return URL(string: "https://api.ecosia.org")!
-        case .staging:
-            return URL(string: "https://api.ecosia-staging.xyz")!
-        }
+        URL(string: "https://api.\(domain)")!
     }
 
     public var snowplowMicro: String? {
         switch self {
         case .staging:
-            return "https://www.ecosia-staging.xyz/analytics-test-micro"
+            return "https://www.\(domain)/analytics-test-micro"
         case .production, .debug:
             return nil
         }
@@ -179,13 +170,17 @@ public enum URLProvider {
 
     public var aiSearch: URL {
         root.appendingPathComponent("ai-search")
-    }
+	}
 
     public var storeWriteReviewPage: URL {
         URL(string: "https://itunes.apple.com/app/id670881887?action=write-review")!
 	}
 
- 	// MARK: - Authentication URL Patterns
+    public var seedCounterInfo: URL {
+        URL(string: "https://support.ecosia.org/article/844-seed-counter")!
+    }
+
+    // MARK: - Authentication URL Patterns
 
     /// URL paths that indicate user sign-up/sign-in flows
     public var signUpPaths: [String] {
@@ -214,29 +209,21 @@ public enum URLProvider {
         root.appendingPathComponent("accounts/sign-out")
     }
 
+    /// The API Identifier matching the `audience` parameter used by Auth0 when creating the `WebAuth`
+    public var authApiAudience: URL {
+        URL(string: "https://auth0.api.ecosia.org/v1/accounts/web")!
+    }
+
     // MARK: - Auth0 Configuration
 
-    /// Auth0 domain for authentication
+    /// Auth0 domain for authentication (custom domain)
     public var auth0Domain: String {
-        switch self {
-        case .production:
-            return "ecosia.eu.auth0.com"
-        case .staging:
-            return "ecosia-staging.eu.auth0.com"
-        case .debug:
-            return "ecosia-dev.eu.auth0.com"
-        }
+        "login.\(domain)"
     }
 
     /// Auth0 cookie domain for session management
+    /// Returns the same value as `auth0Domain` since they must match for custom domain authentication
     public var auth0CookieDomain: String {
-        switch self {
-        case .production:
-            return ".ecosia.org"
-        case .staging:
-            return "login.ecosia-staging.xyz"
-        case .debug:
-            return "login.ecosia-dev.xyz"
-        }
+        auth0Domain
     }
 }
