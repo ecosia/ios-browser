@@ -177,11 +177,11 @@ public extension DefaultSuggestedSites {
         var url: String {
             switch self {
             case .financialReports:
-                return Ecosia.Environment.current.urlProvider.financialReports.absoluteString
+                return EcosiaEnvironment.current.urlProvider.financialReports.absoluteString
             case .privacy:
-                return Ecosia.Environment.current.urlProvider.privacy.absoluteString
+                return EcosiaEnvironment.current.urlProvider.privacy.absoluteString
             case .treesUpdate:
-                return Ecosia.Environment.current.urlProvider.trees.absoluteString
+                return EcosiaEnvironment.current.urlProvider.trees.absoluteString
             }
         }
 

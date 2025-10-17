@@ -4,6 +4,7 @@
 
 import Common
 import UIKit
+import Ecosia
 
 public struct EcosiaDarkTheme: Theme {
     public var type: ThemeType = .dark
@@ -29,14 +30,17 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var backgroundElevation1: UIColor = EcosiaColor.Gray80
     var backgroundElevation2: UIColor = EcosiaColor.Gray70
     var backgroundBrandSecondaryAlt: UIColor = EcosiaColor.Gray80
+    var backgroundNeutralInverse: UIColor = EcosiaColor.White
     var borderDecorative: UIColor = EcosiaColor.Gray60
     var brandPrimary: UIColor = EcosiaColor.Green30
+    var brandImpact: UIColor = EcosiaColor.Yellow40
     var buttonBackgroundPrimary: UIColor = EcosiaColor.Green30
     var buttonBackgroundPrimaryActive: UIColor = EcosiaColor.Green20
     var buttonBackgroundSecondary: UIColor = EcosiaColor.Gray90
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColor.Gray70
     var buttonContentSecondary: UIColor = EcosiaColor.White
     var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Gray30.withAlphaComponent(0.32)
+    var linkPrimary: UIColor = EcosiaColor.White
     var iconSecondary: UIColor = EcosiaColor.Green30
     var iconDecorative: UIColor = EcosiaColor.White
     var iconInverseStrong: UIColor = EcosiaColor.Black

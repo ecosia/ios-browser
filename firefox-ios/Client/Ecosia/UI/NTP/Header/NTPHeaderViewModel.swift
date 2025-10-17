@@ -14,16 +14,32 @@ final class NTPHeaderViewModel: ObservableObject {
     }
 
     // MARK: - Properties
-    private let windowUUID: WindowUUID
     internal weak var delegate: NTPHeaderDelegate?
     internal var theme: Theme
+    private let windowUUID: WindowUUID
+    let profile: Profile
+    private(set) var auth: EcosiaAuth
+    var onTapAction: ((UIButton) -> Void)?
+
+    // Use centralized auth state provider for consistency
+    private let authStateProvider = EcosiaAuthUIStateProvider.shared
+
+    // Computed properties that delegate to the centralized provider
+    var seedCount: Int { authStateProvider.seedCount }
+    var isLoggedIn: Bool { authStateProvider.isLoggedIn }
+    var userAvatarURL: URL? { authStateProvider.avatarURL }
+    var balanceIncrement: Int? { authStateProvider.balanceIncrement }
 
     // MARK: - Initialization
-    init(theme: Theme,
+    init(profile: Profile,
+         theme: Theme,
          windowUUID: WindowUUID,
+         auth: EcosiaAuth,
          delegate: NTPHeaderDelegate? = nil) {
+        self.profile = profile
         self.theme = theme
         self.windowUUID = windowUUID
+        self.auth = auth
         self.delegate = delegate
     }
 
@@ -32,6 +48,15 @@ final class NTPHeaderViewModel: ObservableObject {
     func openAISearch() {
         delegate?.headerOpenAISearch()
         Analytics.shared.aiSearchNTPButtonTapped()
+    }
+
+    func performLogin() {
+        auth.login()
+    }
+
+    func performLogout() {
+        EcosiaLogger.auth.info("Performing immediate logout without confirmation")
+        auth.logout()
     }
 }
 
@@ -70,7 +95,7 @@ extension NTPHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        AISearchMVPExperiment.isEnabled
+        return true
     }
 
     func setTheme(theme: Theme) {

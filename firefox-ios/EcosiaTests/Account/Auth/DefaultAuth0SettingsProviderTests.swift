@@ -27,7 +27,7 @@ final class DefaultAuth0SettingsProviderTests: XCTestCase {
 
     func testDomain_returnsValueFromURLProvider() {
         // Arrange
-        let expectedDomain = Environment.current.urlProvider.auth0Domain
+        let expectedDomain = EcosiaEnvironment.current.urlProvider.auth0Domain
 
         // Act
         let domain = settingsProvider.domain
@@ -41,7 +41,7 @@ final class DefaultAuth0SettingsProviderTests: XCTestCase {
 
     func testCookieDomain_returnsValueFromURLProvider() {
         // Arrange
-        let expectedCookieDomain = Environment.current.urlProvider.auth0CookieDomain
+        let expectedCookieDomain = EcosiaEnvironment.current.urlProvider.auth0CookieDomain
 
         // Act
         let cookieDomain = settingsProvider.cookieDomain

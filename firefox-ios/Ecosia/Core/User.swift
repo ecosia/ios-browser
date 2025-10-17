@@ -227,6 +227,18 @@ extension User {
         state[Key.isDefaultBrowserSettingNudgeCardShown.rawValue] = "\(true)"
     }
 
+    public var shouldShowAccountImpactNudgeCard: Bool {
+        state[Key.isAccountImpactNudgeCardDismissed.rawValue].map(Bool.init) != true
+    }
+
+    public mutating func showAccountImpactNudgeCard() {
+        state[Key.isAccountImpactNudgeCardDismissed.rawValue] = "\(false)"
+    }
+
+    public mutating func hideAccountImpactNudgeCard() {
+        state[Key.isAccountImpactNudgeCardDismissed.rawValue] = "\(true)"
+    }
+
     enum Key: String {
         case
         referralSpotlight,
@@ -234,7 +246,8 @@ extension User {
         inactiveTabsTooltip,
         bookmarksImportExportTooltipShown,
         isNewUserSinceBookmarksImportExportHasBeenShipped,
-        isDefaultBrowserSettingNudgeCardShown
+        isDefaultBrowserSettingNudgeCardShown,
+        isAccountImpactNudgeCardDismissed
     }
 }
 

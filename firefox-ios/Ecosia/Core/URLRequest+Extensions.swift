@@ -6,7 +6,7 @@ import Foundation
 
 extension URLRequest {
 
-    public mutating func withCloudFlareAuthParameters(environment: Environment = Environment.current) -> URLRequest {
+    public mutating func withCloudFlareAuthParameters(environment: Environment = EcosiaEnvironment.current) -> URLRequest {
         if let auth = environment.cloudFlareAuth {
             setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
             setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)

@@ -69,21 +69,65 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 @available(iOS 16.0, *)
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
+    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
     let windowUUID: WindowUUID
+    // Use explicit SwiftUI.Environment to avoid ambiguity
+    @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
+    @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
+    @State private var showAccountImpactView = false
 
     var body: some View {
-        HStack {
+        HStack(spacing: .ecosia.space._1s) {
             Spacer()
-            EcosiaAISearchButton(
-                windowUUID: windowUUID,
-                onTap: handleAISearchTap
-            )
+            if AISearchMVPExperiment.isEnabled {
+                EcosiaAISearchButton(
+                    windowUUID: windowUUID,
+                    onTap: handleAISearchTap
+                )
+            }
+            ZStack(alignment: .topLeading) {
+                EcosiaAccountNavButton(
+                    seedCount: viewModel.seedCount,
+                    avatarURL: viewModel.userAvatarURL,
+                    enableAnimation: !reduceMotion,
+                    windowUUID: windowUUID,
+                    onTap: handleTap
+                )
+
+                if let increment = viewModel.balanceIncrement {
+                    BalanceIncrementAnimationView(
+                        increment: increment,
+                        windowUUID: windowUUID
+                    )
+                    .offset(x: 20, y: -10)
+                }
+            }
         }
         .padding(.leading, .ecosia.space._m)
         .padding(.trailing, .ecosia.space._m)
+        .sheet(isPresented: $showAccountImpactView) {
+            EcosiaAccountImpactView(
+                viewModel: EcosiaAccountImpactViewModel(
+                    onLogin: {
+                        viewModel.performLogin()
+                    },
+                    onDismiss: {
+                        showAccountImpactView = false
+                    }
+                ),
+                windowUUID: windowUUID
+            )
+            .padding(.horizontal, .ecosia.space._m)
+            .dynamicHeightPresentationDetent()
+        }
     }
 
     private func handleAISearchTap() {
         viewModel.openAISearch()
+    }
+
+    private func handleTap() {
+        showAccountImpactView = true
+        Analytics.shared.accountHeaderClicked()
     }
 }
