@@ -39,10 +39,10 @@ final class EcosiaAuth {
 
     // MARK: - Dependencies
 
-    private let authProvider: Ecosia.Auth
+    private let authService: Ecosia.EcosiaAuthenticationService
     private weak var browserViewController: BrowserViewController?
 
-    // MARK: - Chainable API Properties
+    // MARK: - Authentication Flow Properties
 
     private var onNativeAuthCompletedCallback: (() -> Void)?
     private var onAuthFlowCompletedCallback: ((Bool) -> Void)?
@@ -54,16 +54,16 @@ final class EcosiaAuth {
     /// Initializes EcosiaAuth with required dependencies
     /// - Parameters:
     ///   - browserViewController: The browser view controller for tab operations
-    ///   - authProvider: The auth provider for authentication operations (defaults to Ecosia.Auth.shared)
+    ///   - authService: The authentication service for auth operations (defaults to Ecosia.EcosiaAuthenticationService.shared)
     init(browserViewController: BrowserViewController,
-         authProvider: Ecosia.Auth = Ecosia.Auth.shared) {
-        self.authProvider = authProvider
+         authService: Ecosia.EcosiaAuthenticationService = Ecosia.EcosiaAuthenticationService.shared) {
+        self.authService = authService
         self.browserViewController = browserViewController
-
+        self.browserViewController?.ecosiaAuth = self
         EcosiaLogger.auth.info("EcosiaAuth initialized")
     }
 
-    // MARK: - Chainable API
+    // MARK: - Authentication Flow
 
     /// Sets callback for when native Auth0 authentication completes
     /// - Parameter callback: Closure called when Auth0 authentication finishes
@@ -107,9 +107,9 @@ final class EcosiaAuth {
             fatalError("BrowserViewController not available for auth flow")
         }
 
-        let flow = AuthFlow(
+        let flow = EcosiaAuthFlow(
             type: .login,
-            authProvider: authProvider,
+            authService: authService,
             browserViewController: browserViewController
         )
 
@@ -125,9 +125,9 @@ final class EcosiaAuth {
             fatalError("BrowserViewController not available for auth flow")
         }
 
-        let flow = AuthFlow(
+        let flow = EcosiaAuthFlow(
             type: .logout,
-            authProvider: authProvider,
+            authService: authService,
             browserViewController: browserViewController
         )
 
@@ -139,7 +139,7 @@ final class EcosiaAuth {
 
     // MARK: - Private Implementation
 
-    private func performLogin(_ flow: AuthFlow) async {
+    private func performLogin(_ flow: EcosiaAuthFlow) async {
         let result = await flow.startLogin(
             delayedCompletion: delayedCompletionTime,
             onNativeAuthCompleted: onNativeAuthCompletedCallback,
@@ -152,12 +152,15 @@ final class EcosiaAuth {
             EcosiaLogger.auth.debug("Login flow completed successfully")
         case .failure(let error):
             EcosiaLogger.auth.error("Login flow failed: \(error)")
+            if case .userCancelled = error {
+                Analytics.shared.accountSignInCancelled()
+            }
             // TODO: Error handling should be moved to EcosiaAuth to be handled with BrowserViewController
             // This will be implemented as part of the error states design work
         }
     }
 
-    private func performLogout(_ flow: AuthFlow) async {
+    private func performLogout(_ flow: EcosiaAuthFlow) async {
         let result = await flow.startLogout(
             delayedCompletion: delayedCompletionTime,
             onNativeAuthCompleted: onNativeAuthCompletedCallback,
@@ -178,20 +181,22 @@ final class EcosiaAuth {
     // MARK: - State Queries
 
     var isLoggedIn: Bool {
-        if let windowUUID = browserViewController?.windowUUID,
-           let authState = Ecosia.AuthStateManager.shared.getAuthState(for: windowUUID) {
-            return authState.isLoggedIn
-        }
-
-        let allStates = Ecosia.AuthStateManager.shared.getAllAuthStates()
-        return allStates.values.contains { $0.isLoggedIn }
+        authService.isLoggedIn
     }
 
     var idToken: String? {
-        return authProvider.idToken
+        authService.idToken
     }
 
     var accessToken: String? {
-        return authProvider.accessToken
+        authService.accessToken
+    }
+
+    var userProfile: UserProfile? {
+        authService.userProfile
+    }
+
+    func renewCredentialsIfNeeded() async throws {
+        try await authService.renewCredentialsIfNeeded()
     }
 }

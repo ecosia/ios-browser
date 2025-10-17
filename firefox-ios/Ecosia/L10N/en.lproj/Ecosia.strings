@@ -246,3 +246,42 @@
 "Yes" = "Yes";
 "No" = "No";
 "Do you enjoy Ecosia?" = "Do you enjoy Ecosia?";
+
+// Level System
+"Level" = "Level";
+
+// WebView Modal
+"Failed to load page" = "Failed to load page";
+"Try Again" = "Try Again";
+"Error" = "Error";
+
+// Level System
+"Ecocurious" = "Ecocurious";
+"Green explorer" = "Green explorer";
+"Planet pal" = "Planet pal";
+"Seedling supporter" = "Seedling supporter";
+"Biodiversity beetle" = "Biodiversity beetle";
+"Forest friend" = "Forest friend";
+"Wildlife protector" = "Wildlife protector";
+"Eco explorer" = "Eco explorer";
+"Rainforest reviver" = "Rainforest reviver";
+"Planet protector" = "Planet protector";
+"Carbon neutralizer" = "Carbon neutralizer";
+"Seeker of sustainability" = "Seeker of sustainability";
+"Branch builder" = "Branch builder";
+"Eco enthusiast" = "Eco enthusiast";
+"Carbon cutter" = "Carbon cutter";
+"Seed sower" = "Seed sower";
+"Emission eliminator" = "Emission eliminator";
+"Sustainability sage" = "Sustainability sage";
+"Earth advocate" = "Earth advocate";
+"Seed superstar" = "Seed superstar";
+
+// Account Impact View. "Sign up" already managed above in the Newsletter section
+"Guest user" = "Guest user";
+"Seeds symbolize your own impact" = "Seeds symbolize your own impact";
+"Collect seeds every day you use Ecosia and see the climate impact you're having." = "Collect seeds every day you use Ecosia and see the climate impact you're having.";
+"Learn more about seeds" = "Learn more about seeds";
+"Your Ecosia" = "Your Ecosia";
+"Your profile" = "Your profile";
+"Sign out" = "Sign out";

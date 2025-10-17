@@ -30,7 +30,7 @@
 	<true/>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>webcredentials:ecosia-staging.eu.auth0.com</string>
+		<string>webcredentials:login.ecosia-staging.xyz</string>
 	</array>
 </dict>
 </plist>

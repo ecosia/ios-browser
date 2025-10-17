@@ -4,7 +4,7 @@
 
 extension URLSessionConfiguration {
 
-    public func withCloudFlareAuthParameters(environment: Environment = Environment.current) -> URLSessionConfiguration {
+    public func withCloudFlareAuthParameters(environment: Environment = EcosiaEnvironment.current) -> URLSessionConfiguration {
         if let auth = environment.cloudFlareAuth {
             httpAdditionalHeaders?[CloudflareKeyProvider.clientId] = auth.secret
             httpAdditionalHeaders?[CloudflareKeyProvider.clientSecret] = auth.id

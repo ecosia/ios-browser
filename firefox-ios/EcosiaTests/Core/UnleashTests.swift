@@ -198,7 +198,7 @@ extension UnleashTests {
         request.setValue(etag, forHTTPHeaderField: "If-None-Match")
         request.cachePolicy = .reloadIgnoringLocalCacheData
         request.httpBody = body
-        return request.withCloudFlareAuthParameters()
+        return request.withCloudFlareAuthParameters(environment: environment)
     }
 
     struct MockStagingUnleashRequest: BaseRequest {

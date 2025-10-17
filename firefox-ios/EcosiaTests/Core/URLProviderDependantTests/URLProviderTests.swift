@@ -47,22 +47,22 @@ final class URLProviderTests: XCTestCase {
 
     func testAuth0Domain_production() {
         let provider = URLProvider.production
-        XCTAssertEqual(provider.auth0Domain, "ecosia.eu.auth0.com")
+        XCTAssertEqual(provider.auth0Domain, "login.ecosia.org")
     }
 
     func testAuth0Domain_staging() {
         let provider = URLProvider.staging
-        XCTAssertEqual(provider.auth0Domain, "ecosia-staging.eu.auth0.com")
+        XCTAssertEqual(provider.auth0Domain, "login.ecosia-staging.xyz")
     }
 
     func testAuth0Domain_debug() {
         let provider = URLProvider.debug
-        XCTAssertEqual(provider.auth0Domain, "ecosia-dev.eu.auth0.com")
+        XCTAssertEqual(provider.auth0Domain, "login.ecosia.org")
     }
 
     func testAuth0CookieDomain_production() {
         let provider = URLProvider.production
-        XCTAssertEqual(provider.auth0CookieDomain, ".ecosia.org")
+        XCTAssertEqual(provider.auth0CookieDomain, "login.ecosia.org")
     }
 
     func testAuth0CookieDomain_staging() {
@@ -72,7 +72,14 @@ final class URLProviderTests: XCTestCase {
 
     func testAuth0CookieDomain_debug() {
         let provider = URLProvider.debug
-        XCTAssertEqual(provider.auth0CookieDomain, "login.ecosia-dev.xyz")
+        XCTAssertEqual(provider.auth0CookieDomain, "login.ecosia.org")
+    }
+
+    func testAuth0CookieDomainMatchesAuth0Domain() {
+        // Verify that cookie domain always matches auth0Domain for all environments
+        XCTAssertEqual(URLProvider.production.auth0CookieDomain, URLProvider.production.auth0Domain)
+        XCTAssertEqual(URLProvider.staging.auth0CookieDomain, URLProvider.staging.auth0Domain)
+        XCTAssertEqual(URLProvider.debug.auth0CookieDomain, URLProvider.debug.auth0Domain)
     }
 
     // MARK: - Environment to URLProvider Mapping Tests

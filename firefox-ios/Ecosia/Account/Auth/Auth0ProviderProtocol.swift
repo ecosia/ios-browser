@@ -79,7 +79,7 @@ extension Auth0ProviderProtocol {
 
     public var settings: Auth0SettingsProviderProtocol { DefaultAuth0SettingsProvider() }
 
-    public var credentialsManager: CredentialsManagerProtocol { Auth.defaultCredentialsManager }
+    public var credentialsManager: CredentialsManagerProtocol { EcosiaAuthenticationService.defaultCredentialsManager }
 
     public func startAuth() async throws -> Credentials {
         return try await webAuth.start()

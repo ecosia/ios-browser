@@ -18,12 +18,14 @@ public protocol EcosiaSemanticColors {
     var backgroundElevation1: UIColor { get }
     var backgroundElevation2: UIColor { get }
     var backgroundBrandSecondaryAlt: UIColor { get }
+    var backgroundNeutralInverse: UIColor { get }
 
     // MARK: - Border
     var borderDecorative: UIColor { get }
 
     // MARK: - Brand
     var brandPrimary: UIColor { get }
+    var brandImpact: UIColor { get }
 
     // MARK: - Button
     var buttonBackgroundPrimary: UIColor { get }
@@ -32,6 +34,9 @@ public protocol EcosiaSemanticColors {
     var buttonBackgroundSecondaryHover: UIColor { get }
     var buttonContentSecondary: UIColor { get }
     var buttonBackgroundTransparentActive: UIColor { get }
+
+    // MARK: - Link
+    var linkPrimary: UIColor { get }
 
     // MARK: - Icon
     var iconSecondary: UIColor { get }
@@ -69,13 +74,16 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundElevation2: UIColor = .systemGray
     var backgroundBrandSecondaryAlt: UIColor = .systemGray
     var borderDecorative: UIColor = .systemGray
+    var backgroundNeutralInverse: UIColor = .systemGray
     var brandPrimary: UIColor = .systemGray
+    var brandImpact: UIColor = .systemGray
     var buttonBackgroundPrimary: UIColor = .systemGray
     var buttonBackgroundPrimaryActive: UIColor = .systemGray
     var buttonBackgroundSecondary: UIColor = .systemGray
     var buttonBackgroundSecondaryHover: UIColor = .systemGray
     var buttonContentSecondary: UIColor = .systemGray
     var buttonBackgroundTransparentActive: UIColor = .systemGray
+    var linkPrimary: UIColor = .systemGray
     var iconSecondary: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
     var iconInverseStrong: UIColor = .systemGray
