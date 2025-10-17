@@ -361,6 +361,72 @@ open class Analytics {
                          action: Action.click.rawValue)
             .label(Analytics.Label.AISearch.cta.rawValue)
             .property(text))
+	}
+
+    // MARK: Account Authentication
+
+    public func accountHeaderClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.header.rawValue)
+        track(event)
+    }
+
+    public func accountSignInCancelled() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.cancel.rawValue)
+        track(event)
+    }
+
+    public func accountImpactSignUpClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signUp.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountImpactCloseClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.close.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountImpactCardCtaClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.accountNudgeCard.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountImpactCardDismissClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.accountNudgeCard.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountProfileClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountSignOutClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.signOut.rawValue)
+        track(event)
     }
 }
 
@@ -422,12 +488,12 @@ extension Analytics {
     /// - Returns: A configured `NetworkConfiguration` object.
     /// - Parameters:
     ///   - urlProvider: The urlProvider in use. Useful for testing purposes.
-    static func makeNetworkConfig(urlProvider: URLProvider = Environment.current.urlProvider) -> NetworkConfiguration {
+    static func makeNetworkConfig(urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> NetworkConfiguration {
         let endpoint = shouldUseMicroInstance ? urlProvider.snowplowMicro : urlProvider.snowplow
         var networkConfig = NetworkConfiguration(endpoint: endpoint!)
 
         if shouldUseMicroInstance,
-           let auth = Environment.current.cloudFlareAuth {
+           let auth = EcosiaEnvironment.current.cloudFlareAuth {
             networkConfig = networkConfig
                 .requestHeaders([
                     CloudflareKeyProvider.clientId: auth.id,

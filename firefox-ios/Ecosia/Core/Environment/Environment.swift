@@ -21,7 +21,6 @@ extension Environment {
          * 
          * Solution: Bundle ID detection is more reliable than build config inheritance
          */
-
         guard let bundleId = Bundle.main.bundleIdentifier else {
             return .production
         }

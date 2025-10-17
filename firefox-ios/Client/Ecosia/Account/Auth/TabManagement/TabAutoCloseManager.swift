@@ -63,8 +63,8 @@ final class InvisibleTabAutoCloseManager {
     ///   - notification: The notification name to observe for completion
     ///   - timeout: Custom timeout for fallback closure, defaults to config value
     func setupAutoCloseForTab(_ tab: Tab,
-                             on notification: Notification.Name = .EcosiaAuthStateChanged,
-                             timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
+                              on notification: Notification.Name = .EcosiaAuthStateChanged,
+                              timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
 
         guard tab.isInvisible else {
             EcosiaLogger.invisibleTabs.notice("Attempted to setup auto-close for visible tab: \(tab.tabUUID)")
@@ -73,9 +73,9 @@ final class InvisibleTabAutoCloseManager {
 
         EcosiaLogger.invisibleTabs.info("Setting up auto-close for tab: \(tab.tabUUID)")
 
-        observerQueue.async(flags: .barrier) { [weak self] in
-            self?.cleanupObserver(for: tab.tabUUID)
-            self?.createObserver(for: tab, notification: notification, timeout: timeout)
+        observerQueue.sync(flags: .barrier) {
+            cleanupObserver(for: tab.tabUUID)
+            createObserver(for: tab, notification: notification, timeout: timeout)
         }
     }
 
@@ -85,8 +85,8 @@ final class InvisibleTabAutoCloseManager {
     ///   - notification: The notification name to observe for completion
     ///   - timeout: Custom timeout for fallback closure
     func setupAutoCloseForTabs(_ tabs: [Tab],
-                              on notification: Notification.Name = .EcosiaAuthStateChanged,
-                              timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
+                               on notification: Notification.Name = .EcosiaAuthStateChanged,
+                               timeout: TimeInterval = TabAutoCloseConfig.fallbackTimeout) {
 
         let invisibleTabs = tabs.filter { $0.isInvisible }
 
@@ -108,8 +108,8 @@ final class InvisibleTabAutoCloseManager {
     ///   - notification: The notification name to observe
     ///   - timeout: Fallback timeout interval
     private func createObserver(for tab: Tab,
-                               notification: Notification.Name,
-                               timeout: TimeInterval) {
+                                notification: Notification.Name,
+                                timeout: TimeInterval) {
 
         let tabUUID = tab.tabUUID
 
@@ -158,7 +158,11 @@ final class InvisibleTabAutoCloseManager {
             self?.handlePageLoadCompletion(notification, for: tab)
         }
 
-        // Store with a different key pattern to distinguish from auth observers
+        /*
+         We need to track both auth and pageload observers for each tab.
+         Using "_pageload" suffix lets us distinguish between the two types
+         when counting or cleaning up later.
+         */
         authTabObservers["\(tab.tabUUID)_pageload"] = pageLoadObserver
 
         EcosiaLogger.invisibleTabs.info("Page load monitoring setup for tab: \(tab.tabUUID)")
@@ -198,7 +202,6 @@ final class InvisibleTabAutoCloseManager {
         observerQueue.async(flags: .barrier) { [weak self] in
             guard let self = self else { return }
 
-            // Clean up observer and timeout
             self.cleanupObserver(for: tabUUID)
 
             // Close the tab on main queue
@@ -285,8 +288,8 @@ final class InvisibleTabAutoCloseManager {
     /// Cancels auto-close for a specific tab
     /// - Parameter tabUUID: UUID of the tab to cancel auto-close for
     func cancelAutoCloseForTab(_ tabUUID: String) {
-        observerQueue.async(flags: .barrier) { [weak self] in
-            self?.cleanupObserver(for: tabUUID)
+        observerQueue.sync(flags: .barrier) {
+            cleanupObserver(for: tabUUID)
             EcosiaLogger.invisibleTabs.info("Cancelled auto-close for tab: \(tabUUID)")
         }
     }
@@ -301,24 +304,22 @@ final class InvisibleTabAutoCloseManager {
 
     /// Cleans up all observers and timeouts
     func cleanupAllObservers() {
-        observerQueue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-
+        observerQueue.sync(flags: .barrier) {
             // Clean up all observers
-            for (tabUUID, observer) in self.authTabObservers {
-                self.notificationCenter.removeObserver(observer)
+            for (tabUUID, observer) in authTabObservers {
+                notificationCenter.removeObserver(observer)
                 EcosiaLogger.invisibleTabs.info("Cleaned up observer for tab: \(tabUUID)")
             }
 
             // Cancel all timeouts
-            for (tabUUID, timeout) in self.fallbackTimeouts {
+            for (tabUUID, timeout) in fallbackTimeouts {
                 timeout.cancel()
                 EcosiaLogger.invisibleTabs.info("Cancelled timeout for tab: \(tabUUID)")
             }
 
             // Clear dictionaries
-            self.authTabObservers.removeAll()
-            self.fallbackTimeouts.removeAll()
+            authTabObservers.removeAll()
+            fallbackTimeouts.removeAll()
 
             EcosiaLogger.invisibleTabs.info("All observers and timeouts cleaned up")
         }
@@ -326,11 +327,22 @@ final class InvisibleTabAutoCloseManager {
 
     /// Returns the current number of tabs being tracked for auto-close
     var trackedTabCount: Int {
-        return observerQueue.sync { authTabObservers.count }
+        return observerQueue.sync {
+            /*
+             Each tab has two observers (auth + pageload), but we only want
+             to count tabs, not individual observers
+             */
+            authTabObservers.keys.filter { !$0.contains("_pageload") }.count
+        }
     }
 
     /// Returns the UUIDs of all tabs currently being tracked for auto-close
     var trackedTabUUIDs: [String] {
-        return observerQueue.sync { Array(authTabObservers.keys) }
+        return observerQueue.sync {
+            /*
+             Filter out the pageload observer keys to get just the tab UUIDs
+             */
+            Array(authTabObservers.keys.filter { !$0.contains("_pageload") })
+        }
     }
 }

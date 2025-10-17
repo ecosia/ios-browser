@@ -84,10 +84,10 @@ final class InvisibleTabManagerTests: XCTestCase {
         manager.markTabAsInvisible(testTab)
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 1)
 
-        // When - mark the same tab invisible again
+        // When
         manager.markTabAsInvisible(testTab)
 
-        // Then - should still only count once
+        // Then
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 1, "Should only count the tab once")
         XCTAssertTrue(manager.isTabInvisible(testTab))
     }
@@ -122,7 +122,7 @@ final class InvisibleTabManagerTests: XCTestCase {
         XCTAssertTrue(manager.isTabInvisible(tab2))
         XCTAssertTrue(manager.isTabInvisible(tab3))
 
-        // When - mark one as visible
+        // When
         manager.markTabAsVisible(tab2)
 
         // Then
@@ -181,17 +181,16 @@ final class InvisibleTabManagerTests: XCTestCase {
         let tab2 = createTestTab(url: URL(string: "https://tab2.com"))
         let tab3 = createTestTab(url: URL(string: "https://tab3.com"))
 
-        // Mark all as invisible
         manager.markTabAsInvisible(tab1)
         manager.markTabAsInvisible(tab2)
         manager.markTabAsInvisible(tab3)
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 3)
 
-        // When - simulate tab2 being removed (only tab1 and tab3 exist)
+        // When
         let existingTabUUIDs: Set<TabUUID> = [tab1.tabUUID, tab3.tabUUID]
         manager.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs)
 
-        // Then - tab2 should be cleaned up
+        // Then
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 2)
         XCTAssertTrue(manager.isTabInvisible(tab1))
         XCTAssertFalse(manager.isTabInvisible(tab2))
@@ -243,7 +242,7 @@ final class InvisibleTabManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 1000)
 
-        // When - clear all
+        // When
         manager.clearAllInvisibleTabs()
 
         // Then
@@ -263,10 +262,10 @@ final class InvisibleTabManagerTests: XCTestCase {
         manager.markTabAsInvisible(testTab)
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 1)
 
-        // When - mark the same tab invisible again
+        // When
         manager.markTabAsInvisible(testTab)
 
-        // Then - should still only count once
+        // Then
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 1, "Should only count once for same UUID")
         XCTAssertTrue(manager.isTabInvisible(testTab))
     }

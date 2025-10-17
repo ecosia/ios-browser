@@ -41,28 +41,41 @@ public enum EcosiaLogger {
 
     static let prefix: String = "Ecosia Logger"
 
+    /// Centralized timestamp formatter for consistent log formatting
+    private static let timestampFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+        formatter.timeZone = TimeZone.current
+        return formatter
+    }()
+
+    /// Generate a timestamp string for log entries
+    private static var timestamp: String {
+        return timestampFormatter.string(from: Date())
+    }
+
     /// Log a debug message (only available in DEBUG builds)
     public static func debug(_ message: String) {
         #if DEBUG
-        print("\(prefix): 🔍 [DEBUG] \(message)")
+        print("[\(timestamp)] \(prefix): 🔍 [DEBUG] \(message)")
         #endif
     }
 
     /// Log an info message (only available in DEBUG builds)
     public static func info(_ message: String) {
         #if DEBUG
-        print("\(prefix): ℹ️ [INFO] \(message)")
+        print("[\(timestamp)] \(prefix): ℹ️ [INFO] \(message)")
         #endif
     }
 
     /// Log a warning message (available in all builds)
     public static func warning(_ message: String) {
-        print("\(prefix): ⚠️ [WARNING] \(message)")
+        print("[\(timestamp)] \(prefix): ⚠️ [WARNING] \(message)")
     }
 
     /// Log an error message (available in all builds)
     public static func error(_ message: String) {
-        print("\(prefix): ❌ [ERROR] \(message)")
+        print("[\(timestamp)] \(prefix): ❌ [ERROR] \(message)")
     }
 
     /// Generic log method with level
@@ -102,5 +115,13 @@ public enum EcosiaLogger {
 
     public enum general: EcosiaLoggerCategory {
         public static let prefix = "🌱 [GENERAL]"
+    }
+
+    public enum network: EcosiaLoggerCategory {
+        public static let prefix = "🌐 [NETWORK]"
+    }
+
+    public enum accounts: EcosiaLoggerCategory {
+        public static let prefix = "👤 [ACCOUNTS]"
     }
 }
