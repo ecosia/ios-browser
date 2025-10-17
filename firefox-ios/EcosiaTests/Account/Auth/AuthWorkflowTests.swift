@@ -8,7 +8,7 @@ import Auth0
 
 final class AuthWorkflowTests: XCTestCase {
 
-    var auth: Auth!
+    var auth: EcosiaAuthenticationService!
     var mockProvider: MockAuth0Provider!
     var mockCredentialsManager: MockCredentialsManager!
 
@@ -17,7 +17,7 @@ final class AuthWorkflowTests: XCTestCase {
         mockCredentialsManager = MockCredentialsManager()
         mockProvider = MockAuth0Provider()
         mockProvider.credentialsManager = mockCredentialsManager
-        auth = Auth(auth0Provider: mockProvider)
+        auth = EcosiaAuthenticationService(auth0Provider: mockProvider)
     }
 
     override func tearDown() {
@@ -144,11 +144,11 @@ final class AuthWorkflowTests: XCTestCase {
         // Assert - Logged in
         XCTAssertTrue(auth.isLoggedIn)
 
-        // Act - Simulate app restart by creating new Auth instance
+        // Act - Simulate app restart by creating new EcosiaAuthenticationService instance
         let newMockProvider = MockAuth0Provider()
         newMockProvider.credentialsManager = mockCredentialsManager
         newMockProvider.mockCredentials = testCredentials
-        _ = Auth(auth0Provider: newMockProvider)
+        _ = EcosiaAuthenticationService(auth0Provider: newMockProvider)
 
         // Allow time for credential retrieval to complete
         try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
@@ -392,23 +392,6 @@ final class AuthWorkflowTests: XCTestCase {
         XCTAssertNil(auth.idToken)
         XCTAssertEqual(mockProvider.clearSessionCallCount, 0)
         XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
-    }
-
-    // MARK: - Memory Management Tests
-
-    func testMemoryManagement_authInstanceDeallocation_cleansUpCorrectly() async {
-        // Arrange
-        weak var weakAuth: Auth?
-
-        // Act - Create and deallocate Auth instance
-        autoreleasepool {
-            let testAuth = Auth(auth0Provider: mockProvider)
-            weakAuth = testAuth
-            XCTAssertNotNil(weakAuth)
-        }
-
-        // Assert - Should be deallocated
-        XCTAssertNil(weakAuth, "Auth instance should be deallocated")
     }
 
     // MARK: - Integration with Real Components

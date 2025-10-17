@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Auth0
+import WebKit
 
 /// Native to Web SSO implementation of `Auth0ProviderProtocol` using Auth0's SDK and performing Native to Web SSO via REST API to perform the session token exchange.
 public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
@@ -10,6 +11,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     public let settings: Auth0SettingsProviderProtocol
     public let credentialsManager: CredentialsManagerProtocol
     public typealias SessionToken = String
+    private let environment: Environment
 
     enum NativeToWebSSOError: Error, Equatable {
         case invalidResponse
@@ -18,18 +20,37 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     }
 
     public init(settings: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider(),
-                credentialsManager: CredentialsManagerProtocol? = nil) {
+                credentialsManager: CredentialsManagerProtocol? = nil,
+                environment: Environment = .current) {
         self.settings = settings
         self.credentialsManager = credentialsManager ?? DefaultCredentialsManager(auth0SettingsProvider: settings)
+        self.environment = environment
     }
 
     public var webAuth: WebAuth {
         makeHttpsWebAuth()
-            .scope("openid profile email offline_access")
+            .audience(environment.urlProvider.authApiAudience.absoluteString)
+            .scope("openid profile email offline_access read:impact write:impact")
     }
 
     public func startAuth() async throws -> Credentials {
         return try await webAuth.start()
+    }
+
+    /// Custom clearSession implementation that bypasses Auth0's default logout alert
+    /// We provide immediate logout without any confirmation popups for better UX
+    public func clearSession() async throws {
+        // Skip calling webAuth.clearSession() to avoid Auth0's native logout alert
+        // Logout happens immediately without any confirmation dialogs by clearing the auth session cookie
+        await clearWebSessionCookies()
+        EcosiaLogger.auth.info("\(Cookie.authSession.name) cookie cleared successfully")
+    }
+
+    /// Clears EASC (Ecosia Auth Session Cookie) cookies from the default web data store
+    private func clearWebSessionCookies() async {
+        let cookieStore = await WKWebsiteDataStore.default().httpCookieStore
+        guard let sessionCookie = await cookieStore.allCookies().first(where: { $0.name == Cookie.authSession.name }) else { return }
+        await cookieStore.deleteCookie(sessionCookie)
     }
 }
 

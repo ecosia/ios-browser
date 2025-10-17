@@ -118,7 +118,7 @@ extension BrowserViewController {
         guard !tab.isInvisible && url.isEcosia() else { return false }
 
         let path = url.path.lowercased()
-        let urlProvider = Environment.current.urlProvider
+        let urlProvider = EcosiaEnvironment.current.urlProvider
 
         if urlProvider.signUpPaths.contains(where: { path.contains($0) }) {
             handleSignInDetection(url)
@@ -147,9 +147,15 @@ extension BrowserViewController {
                 .onNativeAuthCompleted {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
                 }
-                .onAuthFlowCompleted { success in
+                .onAuthFlowCompleted { [weak self] success in
                     if success {
                         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete authentication flow successful from navigation")
+
+                        // Refresh the current page to reflect auth state changes
+                        DispatchQueue.main.async {
+                            self?.tabManager.selectedTab?.reload()
+                            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful sign-in")
+                        }
                     } else {
                         EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Authentication flow completed with issues from navigation")
                     }
@@ -170,9 +176,15 @@ extension BrowserViewController {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
                     // After logout, trigger login again
                     ecosiaAuth
-                        .onAuthFlowCompleted { success in
+                        .onAuthFlowCompleted { [weak self] success in
                             if success {
                                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
+
+                                // Refresh the current page to reflect auth state changes
+                                DispatchQueue.main.async {
+                                    self?.tabManager.selectedTab?.reload()
+                                    EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after inconsistency resolution")
+                                }
                             } else {
                                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication failed after resolving inconsistency")
                             }
@@ -195,10 +207,9 @@ extension BrowserViewController {
             return
         }
 
-        // Only trigger if user is currently logged in
-        guard ecosiaAuth.isLoggedIn else {
-            EcosiaLogger.auth.debug("User not logged in, skipping sign-out detection for: \(url)")
-            return
+        // Always perform logout on web-triggered sign-out to clear inconsistent state
+        if !ecosiaAuth.isLoggedIn {
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] User already logged out, but we perform logout anyways to clear inconsistent state for: \(url) as if it's triggered, it means the User sees the page and clicks logout. It may happen sometimes. Noticed especially on iPad.")
         }
 
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-out URL detected in navigation: \(url)")
@@ -208,9 +219,15 @@ extension BrowserViewController {
             .onNativeAuthCompleted {
                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native logout completed from navigation detection")
             }
-            .onAuthFlowCompleted { success in
+            .onAuthFlowCompleted { [weak self] success in
                 if success {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete logout flow successful from navigation")
+
+                    // Refresh the current page to reflect auth state changes
+                    DispatchQueue.main.async {
+                        self?.tabManager.selectedTab?.reload()
+                        EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful sign-out")
+                    }
                 } else {
                     EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Logout flow completed with issues from navigation")
                 }

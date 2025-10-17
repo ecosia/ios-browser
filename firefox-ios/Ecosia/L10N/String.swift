@@ -17,7 +17,7 @@ extension String {
         String(format: Bundle.ecosia.localizedString(forKey: key.rawValue, value: "", table: "Plurals"), num)
     }
 
-    public enum Key: String {
+    public enum Key: String, CaseIterable {
         case addMoreDetailAboutYourFeedback = "Add more detail about your feedback..."
         case aiSearch = "AI Search"
         case aiOverviewsTitle = "Overviews"
@@ -88,6 +88,7 @@ extension String {
         case searchRegion = "Search region"
         case sendFeedback = "Send feedback"
         case shownUnderSearchField = "Shown under the search field"
+        case signUp = "Sign up"
         case showOnHomepage = "Show on homepage"
         case startPlanting = "Plant your first tree"
         case strict = "Strict"
@@ -227,7 +228,6 @@ extension String {
         case configurableNudgeCardCloseButtonAccessibilityLabel = "Close card button"
         case newsletterNTPCardExperimentTitle = "Be the first to know"
         case newsletterNTPCardExperimentDescription = "Subscribe to our monthly newsletter for updates on your climate impact."
-        case newsletterNTPCardExperimentButton = "Sign up"
         case defaultBrowserSettingTitle = "Default browser"
         case defaultBrowserCardTitle = "Make Ecosia your default browser app"
         case defaultBrowserCardDescription = "Safely open all links from other apps in Ecosia"
@@ -250,5 +250,42 @@ extension String {
         case settingsRatingPromptYes = "Yes"
         case settingsRatingPromptNo = "No"
         case settingsRatingPromptTitle = "Do you enjoy Ecosia?"
+
+        // MARK: - WebView Modal
+        case failedToLoadPage = "Failed to load page"
+        case tryAgain = "Try Again"
+        case errorIcon = "Error"
+
+        // MARK: - Level System
+        case level = "Level"
+        case ecocurious = "Ecocurious"
+        case greenExplorer = "Green explorer"
+        case planetPal = "Planet pal"
+        case seedlingSupporter = "Seedling supporter"
+        case biodiversityBeetle = "Biodiversity beetle"
+        case forestFriend = "Forest friend"
+        case wildlifeProtector = "Wildlife protector"
+        case ecoExplorer = "Eco explorer"
+        case rainforestReviver = "Rainforest reviver"
+        case planetProtector = "Planet protector"
+        case carbonNeutralizer = "Carbon neutralizer"
+        case seekerOfSustainability = "Seeker of sustainability"
+        case branchBuilder = "Branch builder"
+        case ecoEnthusiast = "Eco enthusiast"
+        case carbonCutter = "Carbon cutter"
+        case seedSower = "Seed sower"
+        case emissionEliminator = "Emission eliminator"
+
+        // MARK: - Account Impact View
+        case guestUser = "Guest user"
+        case seedsSymbolizeYourOwnImpact = "Seeds symbolize your own impact"
+        case collectSeedsEveryDayYouUse = "Collect seeds every day you use Ecosia and see the climate impact you're having."
+        case learnMoreAboutSeeds = "Learn more about seeds"
+        case sustainabilitySage = "Sustainability sage"
+        case earthAdvocate = "Earth advocate"
+        case seedSuperstar = "Seed superstar"
+        case yourEcosia = "Your Ecosia"
+        case yourProfile = "Your profile"
+        case signOut = "Sign out"
     }
 }

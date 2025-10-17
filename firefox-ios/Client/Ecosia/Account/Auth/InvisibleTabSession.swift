@@ -16,6 +16,7 @@ final class InvisibleTabSession: TabEventHandler {
     private let url: URL
     private let timeout: TimeInterval
     private weak var browserViewController: BrowserViewController?
+    private let authService: Ecosia.EcosiaAuthenticationService
 
     // State
     private var isCompleted = false
@@ -27,10 +28,15 @@ final class InvisibleTabSession: TabEventHandler {
     /// - Parameters:
     ///   - url: URL to load in the tab
     ///   - browserViewController: Browser view controller for tab operations
+    ///   - authService: Authentication service for session operations
     ///   - timeout: Fallback timeout for completion
-    init(url: URL, browserViewController: BrowserViewController, timeout: TimeInterval = 10.0) throws {
+    init(url: URL,
+         browserViewController: BrowserViewController,
+         authService: Ecosia.EcosiaAuthenticationService,
+         timeout: TimeInterval = 10.0) throws {
         self.url = url
         self.browserViewController = browserViewController
+        self.authService = authService
         self.timeout = timeout
 
         // Create the tab immediately
@@ -43,13 +49,15 @@ final class InvisibleTabSession: TabEventHandler {
 
     /// Sets up session cookies for the tab
     func setupSessionCookies() {
-        guard let sessionCookie = Auth.shared.getSessionTokenCookie() else {
+        guard let sessionCookie = authService.getSessionTokenCookie() else {
             EcosiaLogger.cookies.notice("No session cookie available for tab")
             return
         }
 
-        tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
-        EcosiaLogger.cookies.info("Session cookie set for tab: \(tab.tabUUID)")
+        Task { @MainActor in
+            tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
+            EcosiaLogger.cookies.info("Session cookie set for tab: \(self.tab.tabUUID)")
+        }
     }
 
     /// Starts monitoring for session completion (page load + auth)
@@ -77,10 +85,10 @@ final class InvisibleTabSession: TabEventHandler {
         newTab.isInvisible = true
 
         tabManager.configureTab(newTab,
-                               request: URLRequest(url: url),
-                               afterTab: nil,
-                               flushToDisk: true,
-                               zombie: false)
+                                request: URLRequest(url: url),
+                                afterTab: nil,
+                                flushToDisk: true,
+                                zombie: false)
 
         // Mark as invisible in the manager
         InvisibleTabManager.shared.markTabAsInvisible(newTab)
@@ -95,15 +103,17 @@ final class InvisibleTabSession: TabEventHandler {
             InvisibleTabAutoCloseManager.shared.setTabManager(tabManager)
         }
 
-        // Setup auto-close monitoring
-        InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
-            tab,
-            on: .EcosiaAuthStateChanged,
-            timeout: timeout
-        )
+        Task { @MainActor in
+            // Setup auto-close monitoring
+            InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
+                self.tab,
+                on: .EcosiaAuthStateChanged,
+                timeout: self.timeout
+            )
 
-        // Register for tab close events
-        register(self, forTabEvents: .didClose)
+            // Register for tab close events
+            register(self, forTabEvents: .didClose)
+        }
     }
 
     private func handleTabClosed() {
