@@ -18,19 +18,16 @@ public struct AccountVisitResponse: Codable {
         public let totalAmount: Int
         public let previousTotalAmount: Int
         public let isModified: Bool
-
-            self.updatedAt = updatedAt
-            self.isModified = isModified
-        }
-    }
         public let lastVisitAt: String
         public let updatedAt: String
+
         public init(balanceAmount: Int, totalAmount: Int, previousTotalAmount: Int, isModified: Bool, lastVisitAt: String, updatedAt: String) {
             self.balanceAmount = balanceAmount
             self.totalAmount = totalAmount
             self.previousTotalAmount = previousTotalAmount
             self.isModified = isModified
             self.lastVisitAt = lastVisitAt
+            self.updatedAt = updatedAt
         }
     }
 
@@ -50,11 +47,12 @@ public struct AccountVisitResponse: Codable {
             self.previousTotalAmount = previousTotalAmount
             self.level = level
             self.previousLevel = previousLevel
+            self.isModified = isModified
             self.lastVisitAt = lastVisitAt
             self.updatedAt = updatedAt
+        }
+    }
 
-    public struct PreviousBalance: Codable {
-        public let amount: Int
     public struct Level: Codable {
         public let number: Int
         public let totalGrowthPointsRequired: Int
@@ -62,8 +60,6 @@ public struct AccountVisitResponse: Codable {
         public let growthPointsToUnlockNextLevel: Int
         public let growthPointsEarnedTowardsNextLevel: Int
 
-        public init(amount: Int) {
-            self.amount = amount
         public init(number: Int, totalGrowthPointsRequired: Int, seedsRewardedForLevelUp: Int, growthPointsToUnlockNextLevel: Int, growthPointsEarnedTowardsNextLevel: Int) {
             self.number = number
             self.totalGrowthPointsRequired = totalGrowthPointsRequired

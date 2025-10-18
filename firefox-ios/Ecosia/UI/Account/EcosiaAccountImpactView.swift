@@ -173,7 +173,7 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
         avatarPlaceholderColor = Color(theme.colors.layer3)
         avatarIconColor = Color(theme.colors.iconSecondary)
         levelTextColor = Color(theme.colors.ecosia.textInversePrimary)
-        levelBackgroundColor = Color(theme.colors.ecosia.backgroundInverseNeutral)
+        levelBackgroundColor = Color(theme.colors.ecosia.backgroundNeutralInverse)
     }
 }
 

@@ -23,13 +23,6 @@ public struct EcosiaSeedView: View {
         static let springDamping: Double = 0.45
     }
 
-    private struct UX {
-        static let bounceScaleMin: CGFloat = 0.75
-        static let bounceAnimationDuration: TimeInterval = 0.3
-        static let springResponse: Double = 0.5
-        static let springDamping: Double = 0.45
-    }
-
     public init(
         seedCount: Int,
         iconSize: CGFloat = .ecosia.space._1l,
@@ -63,28 +56,6 @@ public struct EcosiaSeedView: View {
             }
         }
         .ecosiaThemed(windowUUID, $theme)
-    }
-
-    private func triggerBounce() {
-        withAnimation(.easeOut(duration: UX.bounceAnimationDuration)) {
-            bounceScale = UX.bounceScaleMin
-        }
-
-            seedCountText
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.bounceAnimationDuration) {
-            withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDamping, blendDuration: 0)) {
-                bounceScale = 1.0
-            }
-        }
-    }
-}
-
-// MARK: - Theme
-struct EcosiaSeedViewTheme: EcosiaThemeable {
-    var textColor = Color.primary
-
-    mutating func applyTheme(theme: Theme) {
-        textColor = Color(theme.colors.ecosia.textPrimary)
     }
 
     private func triggerBounce() {
