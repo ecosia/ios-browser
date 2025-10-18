@@ -127,8 +127,6 @@ final class EcosiaAuth {
             fatalError("BrowserViewController not available for auth flow")
         }
 
-        Analytics.shared.accountSignInTriggered()
-
         let flow = EcosiaAuthFlow(
             type: .login,
             authService: authService,
@@ -229,9 +227,5 @@ final class EcosiaAuth {
 
     func renewCredentialsIfNeeded() async throws {
         try await authService.renewCredentialsIfNeeded()
-    }
-
-    var userProfile: UserProfile? {
-        return authProvider.userProfile
     }
 }
