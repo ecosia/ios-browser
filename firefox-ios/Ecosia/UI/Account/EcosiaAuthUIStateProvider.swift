@@ -8,7 +8,7 @@ import Common
 
 /// Centralized, reactive authentication state provider for consistent UI state across all components
 /// This eliminates the need for individual components to manage their own auth state observers
-public final class EcosiaAuthUIStateProvider: ObservableObject {
+public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Published Properties
 
@@ -36,6 +36,9 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
     /// Current progress towards next level (from API for logged-in users, default 0.25 for initial state)
     @Published private var currentProgress: Double = 0.25
 
+    /// Error state for register visit failures (read-only externally, set only by this class)
+    @Published public private(set) var hasRegisterVisitError: Bool = false
+
     // MARK: - Private Properties
 
     private var authStateObserver: NSObjectProtocol?
@@ -45,10 +48,13 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Singleton
 
-    /// Shared instance for app-wide auth state
-    public static let shared = EcosiaAuthUIStateProvider()
+    /// Factory for creating accounts provider - can be configured before first access
+    public static var accountsProviderFactory: () -> AccountsProviderProtocol = { AccountsProvider() }
 
-    private init(accountsProvider: AccountsProviderProtocol = AccountsProvider()) {
+    /// Shared instance for app-wide auth state
+    public static let shared = EcosiaAuthUIStateProvider(accountsProvider: accountsProviderFactory())
+
+    public init(accountsProvider: AccountsProviderProtocol) {
         self.accountsProvider = accountsProvider
         setupAuthStateMonitoring()
         initializeState()
@@ -171,7 +177,7 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
 
     private func registerVisitIfNeeded() {
         Task {
-            do {
+            do {                
                 guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
                     EcosiaLogger.accounts.debug("No access token available - user not logged in")
                     await handleLocalSeedCollection()
@@ -181,8 +187,18 @@ public final class EcosiaAuthUIStateProvider: ObservableObject {
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
                 let response = try await accountsProvider.registerVisit(accessToken: accessToken)
                 await updateBalance(response)
+
+                // Clear error on success
+                await MainActor.run {
+                    hasRegisterVisitError = false
+                }
             } catch {
                 EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
+
+                // Set error state
+                await MainActor.run {
+                    hasRegisterVisitError = true
+                }
             }
         }
     }

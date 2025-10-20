@@ -141,12 +141,24 @@ final class EcosiaAuthFlow {
     }
 
     private func performNativeAuthentication() async throws {
+        // Debug: Simulate auth error if enabled
+        if UserDefaults.standard.bool(forKey: SimulateAuthErrorSetting.debugKey) {
+            EcosiaLogger.auth.info("🐛 [DEBUG] Simulating login error")
+            throw AuthError.authenticationFailed(NSError(domain: "EcosiaDebug", code: -1, userInfo: [NSLocalizedDescriptionKey: "Debug: Simulated authentication error"]))
+        }
+
         EcosiaLogger.auth.info("Performing native Auth0 authentication")
         try await authService.login()
         EcosiaLogger.auth.info("Native Auth0 authentication completed")
     }
 
     private func performNativeLogout() async throws {
+        // Debug: Simulate auth error if enabled
+        if UserDefaults.standard.bool(forKey: SimulateAuthErrorSetting.debugKey) {
+            EcosiaLogger.auth.info("🐛 [DEBUG] Simulating logout error")
+            throw AuthError.sessionClearingFailed(NSError(domain: "EcosiaDebug", code: -1, userInfo: [NSLocalizedDescriptionKey: "Debug: Simulated logout error"]))
+        }
+
         EcosiaLogger.auth.info("Performing native Auth0 logout")
         try await authService.logout()
         EcosiaLogger.auth.info("Native Auth0 logout completed")

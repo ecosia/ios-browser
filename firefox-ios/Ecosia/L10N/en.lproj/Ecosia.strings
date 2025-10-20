@@ -242,6 +242,12 @@
 "Help Center" = "Help Center";
 "Thank you for your feedback!" = "Thank you for your feedback!";
 
+// Error Messages
+"Could not load seed counter" = "Could not load seed counter";
+"Something went wrong with displaying your seeds. Please try again later." = "Something went wrong with displaying your seeds. Please try again later.";
+"Something went wrong. Please sign in again." = "Something went wrong. Please sign in again.";
+"Something went wrong. Please sign out again." = "Something went wrong. Please sign out again.";
+
 // Rating Prompt Dialog
 "Yes" = "Yes";
 "No" = "No";
