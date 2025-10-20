@@ -348,11 +348,6 @@ final class AnalyticsSpyTests: XCTestCase {
         }
     }
 
-    /*
-     Menu structure keeps changing as we add or move features around.
-     This makes the test break often since it looks for specific menu items by name.
-     Will be skipped until the menu stabilizes or we find a better way to test this.
-     */
     func testTrackMenuStatus() {
         struct MenuStatusTestCase {
             let label: Analytics.Label.MenuStatus
