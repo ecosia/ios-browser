@@ -20,11 +20,7 @@ final class NTPHeaderViewModel: ObservableObject {
     let profile: Profile
     private(set) var auth: EcosiaAuth
     var onTapAction: ((UIButton) -> Void)?
-
-    // Use centralized auth state provider for consistency
     private let authStateProvider = EcosiaAuthUIStateProvider.shared
-
-    // Computed properties that delegate to the centralized provider
     var seedCount: Int { authStateProvider.seedCount }
     var isLoggedIn: Bool { authStateProvider.isLoggedIn }
     var userAvatarURL: URL? { authStateProvider.avatarURL }

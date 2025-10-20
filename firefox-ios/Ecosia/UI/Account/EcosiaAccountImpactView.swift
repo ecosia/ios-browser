@@ -61,7 +61,7 @@ public struct EcosiaAccountImpactView: View {
                     avatarURL: viewModel.avatarURL,
                     progress: viewModel.levelProgress,
                     showSparkles: viewModel.shouldShowLevelUpAnimation,
-                    showProgress: true,
+                    showProgress: !authStateProvider.hasRegisterVisitError,
                     windowUUID: windowUUID
                 )
 
@@ -86,6 +86,16 @@ public struct EcosiaAccountImpactView: View {
             }
             .padding(.horizontal, .ecosia.space._m)
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Show error view if register visit failed
+            if authStateProvider.hasRegisterVisitError {
+                EcosiaErrorView(
+                    title: String.localized(.couldNotLoadSeedCounter),
+                    subtitle: String.localized(.couldNotLoadSeedCounterMessage),
+                    windowUUID: windowUUID
+                )
+                .padding(.horizontal, .ecosia.space._m)
+            }
 
             // Conditional content based on login state
             if viewModel.isLoggedIn {
