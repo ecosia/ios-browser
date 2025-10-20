@@ -19,9 +19,11 @@ public protocol EcosiaSemanticColors {
     var backgroundElevation2: UIColor { get }
     var backgroundBrandSecondaryAlt: UIColor { get }
     var backgroundNeutralInverse: UIColor { get }
+    var backgroundRoleNegative: UIColor { get }
 
     // MARK: - Border
     var borderDecorative: UIColor { get }
+    var borderNegative: UIColor { get }
 
     // MARK: - Brand
     var brandPrimary: UIColor { get }
@@ -75,6 +77,8 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundBrandSecondaryAlt: UIColor = .systemGray
     var borderDecorative: UIColor = .systemGray
     var backgroundNeutralInverse: UIColor = .systemGray
+    var backgroundRoleNegative: UIColor = .systemGray
+    var borderNegative: UIColor = .systemGray
     var brandPrimary: UIColor = .systemGray
     var brandImpact: UIColor = .systemGray
     var buttonBackgroundPrimary: UIColor = .systemGray

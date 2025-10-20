@@ -14,6 +14,7 @@ public struct EcosiaAccountNavButton: View {
     private let enableAnimation: Bool
     private let windowUUID: WindowUUID
     @State private var theme = EcosiaAccountNavButtonTheme()
+    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
 
     public init(
         seedCount: Int,
@@ -32,13 +33,16 @@ public struct EcosiaAccountNavButton: View {
     public var body: some View {
         Button(action: onTap) {
             HStack(spacing: .ecosia.space._1s) {
-                EcosiaSeedView(
-                    seedCount: seedCount,
-                    iconSize: .ecosia.space._1l,
-                    spacing: .ecosia.space._1s,
-                    enableAnimation: enableAnimation,
-                    windowUUID: windowUUID
-                )
+                // Only show seeds if no register visit error
+                if !authStateProvider.hasRegisterVisitError {
+                    EcosiaSeedView(
+                        seedCount: seedCount,
+                        iconSize: .ecosia.space._1l,
+                        spacing: .ecosia.space._1s,
+                        enableAnimation: enableAnimation,
+                        windowUUID: windowUUID
+                    )
+                }
 
                 EcosiaAvatar(
                     avatarURL: avatarURL,
@@ -47,11 +51,12 @@ public struct EcosiaAccountNavButton: View {
             }
             .padding(.top, .ecosia.space._2s)
             .padding(.bottom, .ecosia.space._2s)
-            .padding(.leading, .ecosia.space._1s)
+            .padding(.leading, authStateProvider.hasRegisterVisitError ? .ecosia.space._2s : .ecosia.space._1s)
             .padding(.trailing, .ecosia.space._2s)
-            .frame(minWidth: .ecosia.space._8l, minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
+            .frame(minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
             .background(theme.backgroundColor)
             .cornerRadius(.ecosia.borderRadius._1l)
+            .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
         }
         .buttonStyle(PlainButtonStyle())
         .ecosiaThemed(windowUUID, $theme)
