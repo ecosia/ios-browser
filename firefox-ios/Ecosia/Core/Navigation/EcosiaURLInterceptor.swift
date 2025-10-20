@@ -16,11 +16,11 @@ public enum EcosiaInterceptedURLType {
     ///   - path: The URL path (lowercased recommended)
     ///   - urlProvider: The URL provider containing path patterns
     public init(path: String, urlProvider: URLProvider) {
-        if urlProvider.signUpPaths.contains(where: { path.contains($0) }) {
+        if urlProvider.loginURL.absoluteString.contains(where: { path.contains($0) }) {
             self = .signIn
-        } else if urlProvider.signOutPaths.contains(where: { path.contains($0) }) {
+        } else if urlProvider.logoutURL.absoluteString.contains(where: { path.contains($0) }) {
             self = .signOut
-        } else if urlProvider.profilePaths.contains(where: { path.contains($0) }) {
+        } else if urlProvider.profileURL.absoluteString.contains(where: { path.contains($0) }) {
             self = .profile
         } else {
             self = .none
