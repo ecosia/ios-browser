@@ -56,4 +56,3 @@ public struct EcosiaURLInterceptor {
         interceptedType(for: url) != .none
     }
 }
-

@@ -129,12 +129,12 @@ private struct WebViewRepresentable: UIViewRepresentable {
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
-        
+
         // Set custom user agent if provided, otherwise use default WKWebView UA
         if let userAgent = userAgent {
             webView.customUserAgent = userAgent
         }
-        
+
         self.webView = webView
 
         var request = URLRequest(url: url)
