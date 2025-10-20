@@ -21,6 +21,7 @@ public protocol EcosiaSemanticColors {
 
     // MARK: - Border
     var borderDecorative: UIColor { get }
+    var borderNegative: UIColor { get }
 
     // MARK: - Brand
     var brandFeatured: UIColor { get }
