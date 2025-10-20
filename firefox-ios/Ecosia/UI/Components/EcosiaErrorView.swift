@@ -107,7 +107,7 @@ struct EcosiaErrorViewTheme: EcosiaThemeable {
     var closeButtonColor = Color.gray
 
     mutating func applyTheme(theme: Theme) {
-        backgroundColor = Color(theme.colors.ecosia.backgroundNegative)
+        backgroundColor = Color(theme.colors.ecosia.backgroundRoleNegative)
         borderColor = Color(theme.colors.ecosia.borderNegative)
         textPrimaryColor = Color(theme.colors.ecosia.textPrimary)
         textSecondaryColor = Color(theme.colors.ecosia.textSecondary)
