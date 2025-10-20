@@ -226,6 +226,7 @@ extension Analytics {
 
     public enum Property: String {
         case
+        account,
         cancel,
         enable,
         disable,
