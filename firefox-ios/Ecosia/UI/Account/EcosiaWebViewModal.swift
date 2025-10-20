@@ -11,6 +11,8 @@ import Common
 public struct EcosiaWebViewModal: View {
     private let url: URL
     private let windowUUID: WindowUUID
+    private let onLoadComplete: (() -> Void)?
+    private let onDismiss: (() -> Void)?
     @SwiftUI.Environment(\.dismiss) private var dismiss: DismissAction
     @State private var theme = EcosiaWebViewModalTheme()
     @State private var webView: WKWebView?
@@ -19,9 +21,16 @@ public struct EcosiaWebViewModal: View {
     @State private var hasError = false
     @State private var errorMessage = ""
 
-    public init(url: URL, windowUUID: WindowUUID) {
+    public init(
+        url: URL,
+        windowUUID: WindowUUID,
+        onLoadComplete: (() -> Void)? = nil,
+        onDismiss: (() -> Void)? = nil
+    ) {
         self.url = url
         self.windowUUID = windowUUID
+        self.onLoadComplete = onLoadComplete
+        self.onDismiss = onDismiss
     }
 
     public var body: some View {
@@ -64,7 +73,8 @@ public struct EcosiaWebViewModal: View {
                                 isLoading: $isLoading,
                                 pageTitle: $pageTitle,
                                 hasError: $hasError,
-                                errorMessage: $errorMessage
+                                errorMessage: $errorMessage,
+                                onLoadComplete: onLoadComplete
                             )
 
                             if isLoading {
@@ -89,6 +99,9 @@ public struct EcosiaWebViewModal: View {
             }
         }
         .ecosiaThemed(windowUUID, $theme)
+        .onDisappear {
+            onDismiss?()
+        }
     }
 }
 
@@ -101,6 +114,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
     @Binding var pageTitle: String
     @Binding var hasError: Bool
     @Binding var errorMessage: String
+    let onLoadComplete: (() -> Void)?
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -142,6 +156,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             parent.isLoading = false
             parent.pageTitle = webView.title ?? ""
+            parent.onLoadComplete?()
         }
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

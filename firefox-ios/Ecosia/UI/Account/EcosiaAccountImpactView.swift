@@ -14,6 +14,7 @@ public struct EcosiaAccountImpactView: View {
 
     @State private var theme = EcosiaAccountImpactViewTheme()
     @State private var showSeedsCounterInfoWebView = false
+    @State private var showProfileWebView = false
 
     /// Layout configuration optimized for account impact cards
     private var impactCardLayout: NudgeCardLayout {
@@ -92,7 +93,7 @@ public struct EcosiaAccountImpactView: View {
                     viewModel: viewModel,
                     windowUUID: windowUUID,
                     onProfileTap: {
-                        // TODO: trigger the profile showing
+                        showProfileWebView = true
                     },
                     onSignOutTap: {
                         Task {
@@ -115,6 +116,18 @@ public struct EcosiaAccountImpactView: View {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.seedCounterInfo,
                 windowUUID: windowUUID
+            )
+        }
+        .sheet(isPresented: $showProfileWebView) {
+            EcosiaWebViewModal(
+                url: EcosiaEnvironment.current.urlProvider.accountProfile,
+                windowUUID: windowUUID,
+                onLoadComplete: {
+                    Analytics.shared.accountProfileViewed()
+                },
+                onDismiss: {
+                    Analytics.shared.accountProfileDismissed()
+                }
             )
         }
     }
