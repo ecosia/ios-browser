@@ -34,7 +34,7 @@ public struct EcosiaErrorToast: View {
         EcosiaErrorView(
             subtitle: subtitle,
             windowUUID: windowUUID,
-            onCloseTapped: { 
+            onCloseTapped: {
                 // User tapped close button - start dismissal
                 dismiss()
             }
