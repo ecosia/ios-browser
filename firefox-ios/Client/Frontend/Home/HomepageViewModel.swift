@@ -235,7 +235,6 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
                                 customizeButtonViewModel
         ]
          */
-
         // Ecosia: Those models needs to follow strictly the order defined in `enum HomepageSectionType`
         self.childViewModels = [multiPurposeEcosiaHeaderViewModel,
                                 headerViewModel,
