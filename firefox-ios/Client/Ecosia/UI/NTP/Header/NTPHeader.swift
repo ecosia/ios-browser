@@ -120,21 +120,6 @@ struct NTPHeaderView: View {
             .padding(.horizontal, .ecosia.space._m)
             .dynamicHeightPresentationDetent()
         }
-        .sheet(isPresented: $showAccountImpactView) {
-            EcosiaAccountImpactView(
-                viewModel: EcosiaAccountImpactViewModel(
-                    onLogin: {
-                        viewModel.performLogin()
-                    },
-                    onDismiss: {
-                        showAccountImpactView = false
-                    }
-                ),
-                windowUUID: windowUUID
-            )
-            .padding(.horizontal, .ecosia.space._m)
-            .dynamicHeightPresentationDetent()
-        }
     }
 
     private func handleAISearchTap() {
