@@ -154,9 +154,14 @@ final class EcosiaAuth {
             EcosiaLogger.auth.error("Login flow failed: \(error)")
             if case .userCancelled = error {
                 Analytics.shared.accountSignInCancelled()
+            } else {
+                // Show error toast for non-cancellation errors
+                await MainActor.run {
+                    if #available(iOS 16.0, *) {
+                        browserViewController?.showAuthFlowErrorToast(isLogin: true)
+                    }
+                }
             }
-            // TODO: Error handling should be moved to EcosiaAuth to be handled with BrowserViewController
-            // This will be implemented as part of the error states design work
         }
     }
 
@@ -173,8 +178,12 @@ final class EcosiaAuth {
             EcosiaLogger.auth.info("Logout flow completed successfully")
         case .failure(let error):
             EcosiaLogger.auth.error("Logout flow failed: \(error)")
-            // TODO: Error handling should be moved to EcosiaAuth to be handled with BrowserViewController
-            // This will be implemented as part of the error states design work
+            // Show error toast for logout errors
+            await MainActor.run {
+                if #available(iOS 16.0, *) {
+                    browserViewController?.showAuthFlowErrorToast(isLogin: false)
+                }
+            }
         }
     }
 

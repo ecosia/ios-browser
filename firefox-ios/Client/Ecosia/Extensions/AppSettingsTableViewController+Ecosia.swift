@@ -165,7 +165,9 @@ extension AppSettingsTableViewController {
             UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
             UnleashIdentifierSetting(settings: self),
-            AnalyticsIdentifierSetting(settings: self)
+            AnalyticsIdentifierSetting(settings: self),
+            SimulateAuthErrorSetting(settings: self),
+            SimulateImpactAPIErrorSetting(settings: self)
         ]
 
         if EcosiaEnvironment.current == .staging {

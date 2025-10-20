@@ -69,4 +69,9 @@ public struct EcosiaColor {
     public static let Peach40 = UIColor(rgb: 0xFFAF87)
     public static let Peach50 = UIColor(rgb: 0xCA8461)
     public static let Peach100 = UIColor(rgb: 0xFCDBCC)
+
+    // MARK: - Claret
+    public static let Claret300 = UIColor(rgb: 0xD89AA6)
+    public static let Claret600 = UIColor(rgb: 0x8F4759)
+    public static let Claret800 = UIColor(rgb: 0x4C232D)
 }
