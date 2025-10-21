@@ -11,6 +11,7 @@ import Common
 public struct EcosiaWebViewModal: View {
     private let url: URL
     private let windowUUID: WindowUUID
+    private let userAgent: String?
     private let onLoadComplete: (() -> Void)?
     private let onDismiss: (() -> Void)?
     @SwiftUI.Environment(\.dismiss) private var dismiss: DismissAction
@@ -24,11 +25,13 @@ public struct EcosiaWebViewModal: View {
     public init(
         url: URL,
         windowUUID: WindowUUID,
+        userAgent: String? = nil,
         onLoadComplete: (() -> Void)? = nil,
         onDismiss: (() -> Void)? = nil
     ) {
         self.url = url
         self.windowUUID = windowUUID
+        self.userAgent = userAgent
         self.onLoadComplete = onLoadComplete
         self.onDismiss = onDismiss
     }
@@ -74,6 +77,7 @@ public struct EcosiaWebViewModal: View {
                                 pageTitle: $pageTitle,
                                 hasError: $hasError,
                                 errorMessage: $errorMessage,
+                                userAgent: userAgent,
                                 onLoadComplete: onLoadComplete
                             )
 
@@ -114,6 +118,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
     @Binding var pageTitle: String
     @Binding var hasError: Bool
     @Binding var errorMessage: String
+    let userAgent: String?
     let onLoadComplete: (() -> Void)?
 
     func makeUIView(context: Context) -> WKWebView {
@@ -124,6 +129,12 @@ private struct WebViewRepresentable: UIViewRepresentable {
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
+
+        // Set custom user agent if provided, otherwise use default WKWebView UA
+        if let userAgent = userAgent {
+            webView.customUserAgent = userAgent
+        }
+
         self.webView = webView
 
         var request = URLRequest(url: url)

@@ -454,8 +454,8 @@ extension BrowserViewController: WKNavigationDelegate {
             }
         }
 
-        // Ecosia: Detect authentication URLs and trigger native auth flows
-        if detectAndHandleAuthURL(url, for: tab) {
+        // Ecosia: Detect Ecosia-specific URLs (auth, profile, etc.) and trigger native flows
+        if detectAndHandleEcosiaURL(url, for: tab) {
             decisionHandler(.cancel)
             return
         }

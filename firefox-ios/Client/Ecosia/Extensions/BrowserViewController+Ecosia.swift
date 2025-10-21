@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import SwiftUI
 import Shared
 import Ecosia
 
@@ -110,25 +111,30 @@ extension BrowserViewController {
     }
 }
 
-// MARK: Authentication URL Detection
+// MARK: Ecosia URL Detection and Handling
+
 extension BrowserViewController {
-    /// Detects authentication URLs and triggers native auth flows.
+    /// Detects Ecosia-specific URLs (auth, profile, etc.) and triggers native flows.
     /// - Returns: `true` if the URL was handled and navigation should be cancelled, `false` otherwise
-    func detectAndHandleAuthURL(_ url: URL, for tab: Tab) -> Bool {
-        guard !tab.isInvisible && url.isEcosia() else { return false }
+    func detectAndHandleEcosiaURL(_ url: URL, for tab: Tab) -> Bool {
+        guard !tab.isInvisible else { return false }
 
-        let path = url.path.lowercased()
-        let urlProvider = EcosiaEnvironment.current.urlProvider
+        let interceptor = EcosiaURLInterceptor()
+        let interceptedType = interceptor.interceptedType(for: url)
 
-        if urlProvider.signUpPaths.contains(where: { path.contains($0) }) {
+        switch interceptedType {
+        case .signIn:
             handleSignInDetection(url)
             return true
-        } else if urlProvider.signOutPaths.contains(where: { path.contains($0) }) {
+        case .signOut:
             handleSignOutDetection(url)
             return true
+        case .profile:
+            handleProfilePageDetection(url)
+            return true
+        case .none:
+            return false
         }
-
-        return false
     }
 
     private func handleSignInDetection(_ url: URL) {
@@ -236,5 +242,49 @@ extension BrowserViewController {
                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed from navigation: \(error)")
             }
             .logout()
+    }
+
+    private func handleProfilePageDetection(_ url: URL) {
+        EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Profile URL detected in navigation: \(url)")
+        EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Opening native profile modal")
+
+        DispatchQueue.main.async { [weak self] in
+            self?.presentProfileModal()
+        }
+    }
+}
+
+// MARK: Profile Modal Presentation
+extension BrowserViewController {
+    /// Presents the profile page as a modal, similar to EcosiaAccountImpactView
+    func presentProfileModal() {
+        guard #available(iOS 16.0, *) else {
+            EcosiaLogger.auth.notice("Profile modal requires iOS 16.0+")
+            return
+        }
+
+        let profileView = EcosiaWebViewModal(
+            url: Environment.current.urlProvider.profileURL,
+            windowUUID: windowUUID,
+            userAgent: UserAgentBuilder.ecosiaMobileUserAgent().userAgent(),
+            onLoadComplete: {
+                Analytics.shared.accountProfileViewed()
+            },
+            onDismiss: {
+                Analytics.shared.accountProfileDismissed()
+            }
+        )
+
+        let hostingController = UIHostingController(rootView: profileView)
+        hostingController.modalPresentationStyle = .pageSheet
+
+        if let sheet = hostingController.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+
+        present(hostingController, animated: true) {
+            EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Profile modal presented successfully")
+        }
     }
 }

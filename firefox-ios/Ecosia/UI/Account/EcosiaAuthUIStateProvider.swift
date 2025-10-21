@@ -177,7 +177,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     private func registerVisitIfNeeded() {
         Task {
-            do {                
+            do {
                 guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
                     EcosiaLogger.accounts.debug("No access token available - user not logged in")
                     await handleLocalSeedCollection()
