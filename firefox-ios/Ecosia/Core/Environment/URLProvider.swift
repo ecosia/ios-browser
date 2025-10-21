@@ -180,21 +180,11 @@ public enum URLProvider {
         URL(string: "https://support.ecosia.org/article/844-seed-counter")!
     }
 
-    public var accountProfile: URL {
+    public var profileURL: URL {
         root.appendingPathComponent("accounts/profile")
     }
 
     // MARK: - Authentication URL Patterns
-
-    /// URL paths that indicate user sign-up/sign-in flows
-    public var signUpPaths: [String] {
-        ["/accounts/sign-up"]
-    }
-
-    /// URL paths that indicate user sign-out flows
-    public var signOutPaths: [String] {
-        ["/accounts/sign-out"]
-    }
 
     /// URL paths that indicate errors in either the signUp or signOut flow
     public var errorPaths: [String] {
