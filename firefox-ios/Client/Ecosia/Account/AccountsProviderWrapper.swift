@@ -10,21 +10,20 @@ import Ecosia
 ///
 /// This wrapper is configured in AppDelegate and used throughout the app via dependency injection.
 final class AccountsProviderWrapper: AccountsProviderProtocol {
-    
+
     private let wrapped: AccountsProviderProtocol
-    
+
     init(wrapped: AccountsProviderProtocol = AccountsProvider()) {
         self.wrapped = wrapped
     }
-    
+
     func registerVisit(accessToken: String) async throws -> AccountVisitResponse {
         // Debug: Simulate impact API error if enabled
         if UserDefaults.standard.bool(forKey: SimulateImpactAPIErrorSetting.debugKey) {
             EcosiaLogger.accounts.info("🐛 [DEBUG] Simulating impact API error")
             throw NSError(domain: "EcosiaDebug", code: -1, userInfo: [NSLocalizedDescriptionKey: "Debug: Simulated impact API error"])
         }
-        
+
         return try await wrapped.registerVisit(accessToken: accessToken)
     }
 }
-
