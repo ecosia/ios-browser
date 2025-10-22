@@ -24881,448 +24881,6 @@
 			};
 			name = Testing;
 		};
-		2C406F082E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C406F052E82D1880067303E /* EcosiaPreview.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements;
-				INFOPLIST_FILE = Client/Info.plist;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Xlinker",
-					"-no_application_extension",
-				);
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
-				VALIDATE_WORKSPACE = YES;
-			};
-			name = PreviewDebug;
-		};
-		2C406F092E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Developer;
-				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-ld_classic",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
-				PRODUCT_MODULE_NAME = Client;
-				PRODUCT_NAME = Client;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.ecosia.ecosiaapp";
-				SKIP_INSTALL = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
-				VALIDATE_WORKSPACE = YES;
-			};
-			name = PreviewDebug;
-		};
-		2C406F0B2E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C406F062E82D1880067303E /* EcosiaPreview.ShareTo.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
-				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.ecosia.ecosiaapp.ShareTo";
-				SKIP_INSTALL = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
-			};
-			name = PreviewDebug;
-		};
-		2C406F0C2E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C406F072E82D1880067303E /* EcosiaPreview.WidgetKit.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
-				INFOPLIST_FILE = WidgetKit/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.ecosia.ecosiaapp.WidgetKit";
-				SKIP_INSTALL = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
-			};
-			name = PreviewDebug;
-		};
-		2C406F0D2E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
-				DEFINES_MODULE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)\"",
-					"\"$(SDKROOT)/usr/include/libxml2\"",
-					"\"$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)/include/**\"",
-					"ThirdParty/ecec/include/**",
-					FxA/FxA/include,
-				);
-				INFOPLIST_FILE = Account/Info.plist;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/FxA/FxA/lib",
-				);
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Account/Account-Bridging-Header.h";
-			};
-			name = PreviewDebug;
-		};
-		2C406F0E2E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEFINES_MODULE = YES;
-				INFOPLIST_FILE = Storage/Info.plist;
-				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Storage/Storage-Bridging-Header.h";
-				VALIDATE_WORKSPACE = YES;
-			};
-			name = PreviewDebug;
-		};
-		2C406F0F2E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				INFOPLIST_FILE = "firefox-ios-tests/Tests/AccountTests/Info.plist";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Account/Account-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
-			};
-			name = PreviewDebug;
-		};
-		2C406F102E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				INFOPLIST_FILE = "firefox-ios-tests/Tests/ClientTests/Info.plist";
-				LOCALIZATION_EXPORT_SUPPORTED = NO;
-				PRODUCT_NAME = ClientTests;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
-			};
-			name = PreviewDebug;
-		};
-		2C406F112E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "";
-				ENABLE_TESTABILITY = YES;
-				INFOPLIST_FILE = "firefox-ios-tests/Tests/StoragePerfTests/Info.plist";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
-			};
-			name = PreviewDebug;
-		};
-		2C406F122E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				INFOPLIST_FILE = "firefox-ios-tests/Tests/StorageTests/Info.plist";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Storage/Storage-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
-			};
-			name = PreviewDebug;
-		};
-		2C406F132E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				INFOPLIST_FILE = "firefox-ios-tests/Tests/SharedTests/Info.plist";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
-			};
-			name = PreviewDebug;
-		};
-		2C406F142E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				INFOPLIST_FILE = "firefox-ios-tests/Tests/SyncTelemetryTests/Info.plist";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
-			};
-			name = PreviewDebug;
-		};
-		2C406F152E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				INFOPLIST_FILE = "firefox-ios-tests/Tests/SyncTests/Info.plist";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/firefox-ios-tests/Tests/SyncTests/SyncTests-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
-			};
-			name = PreviewDebug;
-		};
-		2C406F162E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
-				PRODUCT_NAME = L10nSnapshotTests;
-				TEST_TARGET_NAME = Client;
-				USES_XCTRUNNER = YES;
-			};
-			name = PreviewDebug;
-		};
-		2C406F172E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
-				LOCALIZED_STRING_MACRO_NAMES = (
-					MZLocalizedString,
-					NSLocalizedString,
-					CFCopyLocalizedString,
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
-			};
-			name = PreviewDebug;
-		};
-		2C406F182E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
-				LOCALIZED_STRING_MACRO_NAMES = (
-					MZLocalizedString,
-					NSLocalizedString,
-					CFCopyLocalizedString,
-				);
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
-			};
-			name = PreviewDebug;
-		};
-		2C406F192E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = Sync/Info.plist;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Sync/Sync-Bridging-Header.h";
-			};
-			name = PreviewDebug;
-		};
-		2C406F1A2E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "";
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
-				PRODUCT_NAME = EcosiaSnapshotTests;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
-			};
-			name = PreviewDebug;
-		};
-		2C406F1B2E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Mozilla. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.framework.Ecosia;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = PreviewDebug;
-		};
-		2C406F1C2E82D57E0067303E /* PreviewDebug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.framework.EcosiaTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
-			};
-			name = PreviewDebug;
-		};
 		2C6C908A2C614A17007D9B43 /* BetaDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -27292,7 +26850,6 @@
 				4354D3E224EEEEC5001184F6 /* BetaDebug */,
 				2C2F32052D46A5CC00977F55 /* Testing */,
 				4354D3E124EEEEC5001184F6 /* Debug */,
-				2C406F0C2E82D57E0067303E /* PreviewDebug */,
 				4354D3E324EEEEC5001184F6 /* Release */,
 				4354D3E424EEEEC5001184F6 /* Development_TestFlight */,
 				2C02BE3D2B0E31B100FE80C2 /* Development_Firebase */,
@@ -27306,7 +26863,6 @@
 				E6DCC20E1DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32122D46A5CC00977F55 /* Testing */,
 				282731771ABC9BE800AA1954 /* Debug */,
-				2C406F192E82D57E0067303E /* PreviewDebug */,
 				2C02BE382B0E319400FE80C2 /* BetaDebug */,
 				E448FCA81AEE7A6000869B6C /* Release */,
 				E6FCC4361C40562400DF6113 /* Development_TestFlight */,
@@ -27321,7 +26877,6 @@
 				E6DCC2151DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F320E2D46A5CC00977F55 /* Testing */,
 				2827317A1ABC9BE800AA1954 /* Debug */,
-				2C406F152E82D57E0067303E /* PreviewDebug */,
 				2C02BE322B0E319400FE80C2 /* BetaDebug */,
 				E448FCA91AEE7A6000869B6C /* Release */,
 				E6FCC4371C40562400DF6113 /* Development_TestFlight */,
@@ -27336,7 +26891,6 @@
 				E6DCC20B1DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32112D46A5CC00977F55 /* Testing */,
 				288A2DA01AB8B3260023ABC3 /* Debug */,
-				2C406F182E82D57E0067303E /* PreviewDebug */,
 				2C02BE372B0E319400FE80C2 /* BetaDebug */,
 				E448FCA31AEE7A6000869B6C /* Release */,
 				E6FCC4311C40562400DF6113 /* Development_TestFlight */,
@@ -27352,7 +26906,6 @@
 				2C2F32132D46A5CC00977F55 /* Testing */,
 				2C6C908D2C614A17007D9B43 /* Development_Firebase */,
 				12C11FF02D2C2D5B00E4DDBF /* Debug */,
-				2C406F1A2E82D57E0067303E /* PreviewDebug */,
 				12C11FF12D2C2D5B00E4DDBF /* Release */,
 				12C11FF22D2C2D5B00E4DDBF /* Development_TestFlight */,
 			);
@@ -27365,7 +26918,6 @@
 				2CFE997F2D45329500B25CE0 /* BetaDebug */,
 				2C2F32142D46A5CC00977F55 /* Testing */,
 				2CFE99802D45329500B25CE0 /* Debug */,
-				2C406F1B2E82D57E0067303E /* PreviewDebug */,
 				2CFE99812D45329500B25CE0 /* Release */,
 				2CFE99822D45329500B25CE0 /* Development_TestFlight */,
 				2CFE99832D45329500B25CE0 /* Development_Firebase */,
@@ -27379,7 +26931,6 @@
 				2CFE99852D45329500B25CE0 /* BetaDebug */,
 				2C2F32152D46A5CC00977F55 /* Testing */,
 				2CFE99862D45329500B25CE0 /* Debug */,
-				2C406F1C2E82D57E0067303E /* PreviewDebug */,
 				2CFE99872D45329500B25CE0 /* Release */,
 				2CFE99882D45329500B25CE0 /* Development_TestFlight */,
 				2CFE99892D45329500B25CE0 /* Development_Firebase */,
@@ -27393,7 +26944,6 @@
 				E6DCC20D1DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32062D46A5CC00977F55 /* Testing */,
 				2FA436151ABB83B4008031D1 /* Debug */,
-				2C406F0D2E82D57E0067303E /* PreviewDebug */,
 				2C02BE2A2B0E319400FE80C2 /* BetaDebug */,
 				E448FCA61AEE7A6000869B6C /* Release */,
 				E6FCC4341C40562400DF6113 /* Development_TestFlight */,
@@ -27408,7 +26958,6 @@
 				E6DCC2141DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32082D46A5CC00977F55 /* Testing */,
 				2FA436191ABB83B4008031D1 /* Debug */,
-				2C406F0F2E82D57E0067303E /* PreviewDebug */,
 				2C02BE2C2B0E319400FE80C2 /* BetaDebug */,
 				E448FCA71AEE7A6000869B6C /* Release */,
 				E6FCC4351C40562400DF6113 /* Development_TestFlight */,
@@ -27423,7 +26972,6 @@
 				E6DCC20C1DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32072D46A5CC00977F55 /* Testing */,
 				2FCAE2341ABB51F900877008 /* Debug */,
-				2C406F0E2E82D57E0067303E /* PreviewDebug */,
 				2C02BE2B2B0E319400FE80C2 /* BetaDebug */,
 				E448FCA41AEE7A6000869B6C /* Release */,
 				E6FCC4321C40562400DF6113 /* Development_TestFlight */,
@@ -27438,7 +26986,6 @@
 				E6DCC2131DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F320B2D46A5CC00977F55 /* Testing */,
 				2FCAE2381ABB51F900877008 /* Debug */,
-				2C406F122E82D57E0067303E /* PreviewDebug */,
 				2C02BE2F2B0E319400FE80C2 /* BetaDebug */,
 				E448FCA51AEE7A6000869B6C /* Release */,
 				E6FCC4331C40562400DF6113 /* Development_TestFlight */,
@@ -27453,7 +27000,6 @@
 				E6DCC21B1DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F320A2D46A5CC00977F55 /* Testing */,
 				3B43E3D71D95C48E00BBA9DB /* Debug */,
-				2C406F112E82D57E0067303E /* PreviewDebug */,
 				2C02BE2E2B0E319400FE80C2 /* BetaDebug */,
 				3B43E3D81D95C48E00BBA9DB /* Release */,
 				3B43E3D91D95C48E00BBA9DB /* Development_TestFlight */,
@@ -27468,7 +27014,6 @@
 				43BE5787278BA4D900491291 /* BetaDebug */,
 				2C2F32102D46A5CC00977F55 /* Testing */,
 				43BE5786278BA4D900491291 /* Debug */,
-				2C406F172E82D57E0067303E /* PreviewDebug */,
 				2C02BE362B0E319400FE80C2 /* BetaDebug */,
 				43BE5788278BA4D900491291 /* Release */,
 				43BE5789278BA4D900491291 /* Development_TestFlight */,
@@ -27483,7 +27028,6 @@
 				E6DCC2181DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F320F2D46A5CC00977F55 /* Testing */,
 				E601384C1C89EAE600DF9756 /* Debug */,
-				2C406F162E82D57E0067303E /* PreviewDebug */,
 				2C02BE342B0E319400FE80C2 /* BetaDebug */,
 				E601384D1C89EAE600DF9756 /* Release */,
 				E601384E1C89EAE600DF9756 /* Development_TestFlight */,
@@ -27498,7 +27042,6 @@
 				E69DB0941E97DEAA008A67E6 /* BetaDebug */,
 				2C2F320D2D46A5CC00977F55 /* Testing */,
 				E69DB0931E97DEAA008A67E6 /* Debug */,
-				2C406F142E82D57E0067303E /* PreviewDebug */,
 				2C02BE312B0E319400FE80C2 /* BetaDebug */,
 				E69DB0951E97DEAA008A67E6 /* Release */,
 				E69DB0961E97DEAA008A67E6 /* Development_TestFlight */,
@@ -27513,7 +27056,6 @@
 				E6DCC2171DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F320C2D46A5CC00977F55 /* Testing */,
 				E6F965151B2F1CF20034B023 /* Debug */,
-				2C406F132E82D57E0067303E /* PreviewDebug */,
 				2C02BE302B0E319400FE80C2 /* BetaDebug */,
 				E6F965171B2F1CF20034B023 /* Release */,
 				E6FCC43A1C40562400DF6113 /* Development_TestFlight */,
@@ -27528,7 +27070,6 @@
 				E6DCC2051DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32022D46A5CC00977F55 /* Testing */,
 				F84B21DB1A090F8100AAB793 /* Debug */,
-				2C406F082E82D57E0067303E /* PreviewDebug */,
 				E448FC9D1AEE7A6000869B6C /* Release */,
 				E6FCC4291C40562400DF6113 /* Development_TestFlight */,
 				2C02BE392B0E31B100FE80C2 /* Development_Firebase */,
@@ -27542,7 +27083,6 @@
 				E6DCC2061DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32032D46A5CC00977F55 /* Testing */,
 				F84B21DE1A090F8100AAB793 /* Debug */,
-				2C406F092E82D57E0067303E /* PreviewDebug */,
 				2C02BE252B0E319400FE80C2 /* BetaDebug */,
 				E448FC9E1AEE7A6000869B6C /* Release */,
 				E6FCC42A1C40562400DF6113 /* Development_TestFlight */,
@@ -27557,7 +27097,6 @@
 				E6DCC2101DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32092D46A5CC00977F55 /* Testing */,
 				F84B21E11A090F8100AAB793 /* Debug */,
-				2C406F102E82D57E0067303E /* PreviewDebug */,
 				2C02BE2D2B0E319400FE80C2 /* BetaDebug */,
 				E448FC9F1AEE7A6000869B6C /* Release */,
 				E6FCC42B1C40562400DF6113 /* Development_TestFlight */,
@@ -27572,7 +27111,6 @@
 				E6DCC2081DCBB6F100CEC4B7 /* BetaDebug */,
 				2C2F32042D46A5CC00977F55 /* Testing */,
 				F84B22561A0920C600AAB793 /* Debug */,
-				2C406F0B2E82D57E0067303E /* PreviewDebug */,
 				2C02BE272B0E319400FE80C2 /* BetaDebug */,
 				E448FCA01AEE7A6000869B6C /* Release */,
 				E6FCC42D1C40562400DF6113 /* Development_TestFlight */,
