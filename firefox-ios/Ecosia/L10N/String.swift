@@ -139,7 +139,6 @@ extension String {
         case tapLinkToConfirm = "If you’re using an iPhone or iPad, tap here to confirm you’ve joined:"
         case seeTheCollectiveImpact  = "See the collective impact you are having with the Ecosia community"
         case theSimplestWay = "The simplest way to be \n climate-active every day while \n browsing the web"
-        case skipWelcomeTour = "Skip welcome tour"
         case grennestWayToSearch = "The greenest way to search"
         case planetFriendlySearch = "Ecosia is the world's most planet-friendly way to search - and it's free."
         case hundredPercentOfProfits = "100% of profits for the planet"

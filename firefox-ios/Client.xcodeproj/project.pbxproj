@@ -95,6 +95,10 @@
 		12AEB1282D3A568D0035D7D8 /* SessionRestoreHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12AEB1272D3A568D0035D7D8 /* SessionRestoreHandler.swift */; };
 		12AEB1292D3A9AE70035D7D8 /* CreditCardPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2999FF02B194A5800F0FEC1 /* CreditCardPayload.swift */; };
 		12AEB12A2D3A9AEB0035D7D8 /* FillCreditCardForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2999FF22B194A8300F0FEC1 /* FillCreditCardForm.swift */; };
+		12B0D53B2EA7821C0022FECA /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4065BD2E82D0C60067303E /* BrazeKit */; };
+		12B0D53C2EA7821C0022FECA /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4065BF2E82D0C60067303E /* BrazeUI */; };
+		12B0D7942EA789B00022FECA /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B0D7932EA789B00022FECA /* WelcomeView.swift */; };
+		12B0D7952EA789B00022FECA /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B0D7932EA789B00022FECA /* WelcomeView.swift */; };
 		12C11E272D281BCC00E4DDBF /* EcosiaHomepageSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E212D281B7200E4DDBF /* EcosiaHomepageSectionType.swift */; };
 		12C11E282D281BD100E4DDBF /* EcosiaTopSiteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E222D281B7A00E4DDBF /* EcosiaTopSiteItemCell.swift */; };
 		12C11E8D2D2826A600E4DDBF /* EcosiaDebugSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289252B07C8F000A8FCB3 /* EcosiaDebugSettings.swift */; };
@@ -370,7 +374,7 @@
 		2CFEA0672D455BD500B25CE0 /* PageActionsShortcutsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0452D455BD500B25CE0 /* PageActionsShortcutsHeader.swift */; };
 		2CFEA0682D455BD500B25CE0 /* NTPImpactDividerFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0212D455BD500B25CE0 /* NTPImpactDividerFooter.swift */; };
 		2CFEA0692D455BD500B25CE0 /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE9FFD2D455BD500B25CE0 /* EmptyBookmarksView.swift */; };
-		2CFEA06B2D455BD500B25CE0 /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0392D455BD500B25CE0 /* Welcome.swift */; };
+		2CFEA06B2D455BD500B25CE0 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0392D455BD500B25CE0 /* WelcomeViewController.swift */; };
 		2CFEA06C2D455BD500B25CE0 /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0112D455BD500B25CE0 /* ArcProgressView.swift */; };
 		2CFEA06D2D455BD500B25CE0 /* Sparkle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0182D455BD500B25CE0 /* Sparkle.swift */; };
 		2CFEA06E2D455BD500B25CE0 /* CircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEA0322D455BD500B25CE0 /* CircleButton.swift */; };
@@ -2383,6 +2387,7 @@
 		126F44CCB14373DC7813DE1F /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		12AEB1252D3A51670035D7D8 /* LegacySessionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacySessionData.swift; sourceTree = "<group>"; };
 		12AEB1272D3A568D0035D7D8 /* SessionRestoreHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRestoreHandler.swift; sourceTree = "<group>"; };
+		12B0D7932EA789B00022FECA /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		12C11E132D28128000E4DDBF /* Common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Common.xcconfig; path = Configuration/Common.xcconfig; sourceTree = "<group>"; };
 		12C11E142D2812B200E4DDBF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
 		12C11E152D2812B200E4DDBF /* EcosiaBeta.ShareTo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.ShareTo.xcconfig; path = Configuration/EcosiaBeta.ShareTo.xcconfig; sourceTree = "<group>"; };
@@ -2867,7 +2872,7 @@
 		2CFEA0352D455BD500B25CE0 /* NTPTooltip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTooltip.swift; sourceTree = "<group>"; };
 		2CFEA0362D455BD500B25CE0 /* NTPTooltip.Highlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTooltip.Highlight.swift; sourceTree = "<group>"; };
 		2CFEA0372D455BD500B25CE0 /* NTPTooltipDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTooltipDelegate.swift; sourceTree = "<group>"; };
-		2CFEA0392D455BD500B25CE0 /* Welcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
+		2CFEA0392D455BD500B25CE0 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		2CFEA03A2D455BD500B25CE0 /* WelcomeNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeNavigation.swift; sourceTree = "<group>"; };
 		2CFEA03B2D455BD500B25CE0 /* WelcomeTour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTour.swift; sourceTree = "<group>"; };
 		2CFEA03C2D455BD500B25CE0 /* WelcomeTour.Step.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTour.Step.swift; sourceTree = "<group>"; };
@@ -10681,7 +10686,7 @@
 		2CFEA0422D455BD500B25CE0 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
-				2CFEA0392D455BD500B25CE0 /* Welcome.swift */,
+				2CFEA0392D455BD500B25CE0 /* WelcomeViewController.swift */,
 				2CFEA03A2D455BD500B25CE0 /* WelcomeNavigation.swift */,
 				2CFEA03B2D455BD500B25CE0 /* WelcomeTour.swift */,
 				2CFEA03C2D455BD500B25CE0 /* WelcomeTour.Step.swift */,
@@ -10690,6 +10695,7 @@
 				2CFEA03F2D455BD500B25CE0 /* WelcomeTourProfit.swift */,
 				2CFEA0402D455BD500B25CE0 /* WelcomeTourRow.swift */,
 				2CFEA0412D455BD500B25CE0 /* WelcomeTourTransparent.swift */,
+				12B0D7932EA789B00022FECA /* WelcomeView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -16365,6 +16371,7 @@
 				8A0727462B4890B50071BB9F /* WebviewTelemetry.swift in Sources */,
 				8ADC2A212A3399DC00543DAA /* YourRightsSetting.swift in Sources */,
 				DF529E9F2AA86FF4003C5373 /* FakespotReviewQualityCardView.swift in Sources */,
+				12B0D7952EA789B00022FECA /* WelcomeView.swift in Sources */,
 				1D0BA05C24F46A0400D731B5 /* TopSitesProvider.swift in Sources */,
 				0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */,
 				DFACBF7F277B5F7B003D5F41 /* WallpaperBackgroundView.swift in Sources */,
@@ -17099,7 +17106,7 @@
 				2CFEA0672D455BD500B25CE0 /* PageActionsShortcutsHeader.swift in Sources */,
 				2CFEA0682D455BD500B25CE0 /* NTPImpactDividerFooter.swift in Sources */,
 				2CFEA0692D455BD500B25CE0 /* EmptyBookmarksView.swift in Sources */,
-				2CFEA06B2D455BD500B25CE0 /* Welcome.swift in Sources */,
+				2CFEA06B2D455BD500B25CE0 /* WelcomeViewController.swift in Sources */,
 				2CFEA06C2D455BD500B25CE0 /* ArcProgressView.swift in Sources */,
 				2CFEA06D2D455BD500B25CE0 /* Sparkle.swift in Sources */,
 				2CFEA06E2D455BD500B25CE0 /* CircleButton.swift in Sources */,

@@ -62,9 +62,9 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
     }
 }
 
-final class ShowTour: HiddenSetting, WelcomeDelegate {
+final class ShowWelcomeScreen: HiddenSetting, WelcomeDelegate {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Show Intro", attributes: [:])
+        return NSAttributedString(string: "Debug: Show Welcome Screen", attributes: [:])
     }
 
     let windowUUID: WindowUUID
@@ -75,7 +75,7 @@ final class ShowTour: HiddenSetting, WelcomeDelegate {
 
     var parentPresenter: UIViewController?
     override func onClick(_ navigationController: UINavigationController?) {
-        let welcome = Welcome(delegate: self, windowUUID: windowUUID)
+        let welcome = WelcomeViewController(delegate: self, windowUUID: windowUUID)
         welcome.modalPresentationStyle = .fullScreen
         welcome.modalTransitionStyle = .coverVertical
         let presentingViewController = navigationController?.presentingViewController
@@ -84,7 +84,7 @@ final class ShowTour: HiddenSetting, WelcomeDelegate {
         }
     }
 
-    func welcomeDidFinish(_ welcome: Welcome) {
+    func welcomeDidFinish(_ welcome: WelcomeViewController) {
         if let presentedTour = welcome.presentedViewController {
             presentedTour.dismiss(animated: true) {
                 welcome.dismiss(animated: true)

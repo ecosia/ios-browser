@@ -152,7 +152,7 @@ extension AppSettingsTableViewController {
             OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
             ToggleDefaultBrowserPromo(settings: self),
             ToggleImpactIntro(settings: self),
-            ShowTour(settings: self, windowUUID: windowUUID),
+            ShowWelcomeScreen(settings: self, windowUUID: windowUUID),
             CreateReferralCode(settings: self),
             AddReferral(settings: self),
             AddClaim(settings: self),

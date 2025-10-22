@@ -6,6 +6,6 @@ import UIKit
 
 final class WelcomeNavigation: UINavigationController {
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        topViewController is Welcome ? .portrait : .all
+        topViewController is WelcomeViewController ? .portrait : .all
     }
 }

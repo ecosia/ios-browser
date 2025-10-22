@@ -46,8 +46,6 @@ class LaunchCoordinator: BaseCoordinator,
     // MARK: - Intro
     private func presentIntroOnboarding(with manager: IntroScreenManager,
                                         isFullScreen: Bool) {
-        /* Ecosia: Disable old onboarding since outdated. Remove and clean up once properly updated.
-        
         let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
         let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
         let introViewModel = IntroViewModel(introScreenManager: manager,
@@ -62,7 +60,7 @@ class LaunchCoordinator: BaseCoordinator,
             self.parentCoordinator?.didFinishLaunch(from: self)
         }
          */
-        let introViewController = WelcomeNavigation(rootViewController: Welcome(delegate: self, windowUUID: windowUUID))
+        let introViewController = WelcomeNavigation(rootViewController: WelcomeViewController(delegate: self, windowUUID: windowUUID))
         introViewController.isNavigationBarHidden = true
         introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         if isFullScreen {
@@ -85,9 +83,6 @@ class LaunchCoordinator: BaseCoordinator,
              */
             router.present(introViewController, animated: true)
         }
-        
-        */
-        parentCoordinator?.didFinishLaunch(from: self)
     }
 
     // MARK: - Update
@@ -186,7 +181,7 @@ class LaunchCoordinator: BaseCoordinator,
 
 // Ecosia: custom onboarding
 extension LaunchCoordinator: WelcomeDelegate {
-    func welcomeDidFinish(_ welcome: Welcome) {
+    func welcomeDidFinish(_ welcome: WelcomeViewController) {
         self.parentCoordinator?.didFinishLaunch(from: self)
     }
 }
