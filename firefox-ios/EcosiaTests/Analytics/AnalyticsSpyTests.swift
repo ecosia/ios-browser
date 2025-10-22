@@ -439,81 +439,9 @@ final class AnalyticsSpyTests: XCTestCase {
 
     // MARK: - Onboarding / Welcome Tour Tests
 
-    func testWelcomeTourViewDidAppearTracksIntroDisplaying() {
-        // Arrange
-        let welcomeTour = makeWelcomeTour()
-        XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
 
-        // Act
-        welcomeTour.loadViewIfNeeded()
-        welcomeTour.viewDidAppear(false)
 
-        // Assert
-        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .greenSearch, "Analytics should track intro displaying page as .greenSearch.")
-    }
 
-    func testWelcomeTourNextTracksIntroClickNext() {
-        // Arrange
-        let welcomeTour = makeWelcomeTour()
-        XCTAssertNil(analyticsSpy.introClickLabelCalled)
-        XCTAssertNil(analyticsSpy.introClickPageCalled)
-
-        // Act
-        welcomeTour.loadViewIfNeeded()
-        welcomeTour.viewDidAppear(false)
-        welcomeTour.forward()
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next, "Analytics should track intro click label as .next.")
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch, "Analytics should track intro click page as .greenSearch.")
-    }
-
-    func testWelcomeTourSkipTracksIntroClickSkip() {
-        // Arrange
-        let welcomeTour = makeWelcomeTour()
-        XCTAssertNil(analyticsSpy.introClickLabelCalled)
-        XCTAssertNil(analyticsSpy.introClickPageCalled)
-
-        // Act
-        welcomeTour.loadViewIfNeeded()
-        welcomeTour.viewDidAppear(false)
-        welcomeTour.skip()
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip, "Analytics should track intro click label as .skip.")
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch, "Analytics should track intro click page as .greenSearch.")
-    }
-
-    func testWelcomeTourTracksAnalyticsForAllPages() {
-        // Arrange
-        let welcomeTour = makeWelcomeTour()
-        let pages: [Analytics.Property.OnboardingPage] = [
-            .greenSearch,
-            .profits,
-            .action,
-            .transparentFinances
-        ]
-        welcomeTour.loadViewIfNeeded()
-        welcomeTour.viewDidAppear(false)
-
-        for (index, page) in pages.enumerated() {
-            // Reset analyticsSpy properties
-            analyticsSpy.introDisplayingPageCalled = nil
-
-            if index < pages.count - 1 {
-                // Act
-                welcomeTour.forward()
-
-                // Assert
-                XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next, "Analytics should track intro click label as .next.")
-                XCTAssertEqual(analyticsSpy.introClickPageCalled, page, "Analytics should track intro click page as \(page).")
-            }
-
-            // Reset analyticsSpy properties
-            analyticsSpy.introClickLabelCalled = nil
-            analyticsSpy.introClickPageCalled = nil
-        }
-    }
 
     // MARK: - News Detail Tests
 
@@ -960,10 +888,6 @@ extension AnalyticsSpyTests {
         let mockNotificationCenter = MockAnalyticsUserNotificationCenter(mockSettings: mockSettings)
         let analyticsSpy = AnalyticsSpy(notificationCenter: mockNotificationCenter)
         return analyticsSpy
-    }
-
-    func makeWelcomeTour() -> WelcomeTour {
-        WelcomeTour(delegate: MockWelcomeTourDelegate(), windowUUID: .XCTestDefaultUUID)
     }
 
     func makeWelcome() -> Welcome {

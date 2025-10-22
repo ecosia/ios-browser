@@ -8,6 +8,3 @@ final class MockWelcomeDelegate: WelcomeDelegate {
     func welcomeDidFinish(_ welcome: Welcome) {}
 }
 
-final class MockWelcomeTourDelegate: WelcomeTourDelegate {
-    func welcomeTourDidFinish(_ tour: WelcomeTour) {}
-}

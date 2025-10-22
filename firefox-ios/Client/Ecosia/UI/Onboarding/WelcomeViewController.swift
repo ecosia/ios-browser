@@ -55,9 +55,3 @@ final class WelcomeViewController: UIViewController {
         ])
     }
 }
-
-extension WelcomeViewController: WelcomeTourDelegate {
-    func welcomeTourDidFinish(_ tour: WelcomeTour) {
-        delegate?.welcomeDidFinish(self)
-    }
-}
