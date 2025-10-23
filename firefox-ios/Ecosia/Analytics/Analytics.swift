@@ -76,7 +76,7 @@ open class Analytics {
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
 
-        appendTestContextIfNeeded(action, event) { [weak self] in
+        appendContextIfNeeded(action, event) { [weak self] in
             self?.track(event)
         }
     }
@@ -448,7 +448,7 @@ open class Analytics {
 }
 
 extension Analytics {
-    func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
+    func appendContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
             addABTestContexts(to: event, toggles: [.brazeIntegration])

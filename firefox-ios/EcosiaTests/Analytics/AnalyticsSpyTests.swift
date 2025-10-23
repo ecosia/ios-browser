@@ -846,7 +846,7 @@ final class AnalyticsSpyTests: XCTestCase {
                                action: Analytics.Action.Activity.resume.rawValue)
 
         // Act
-        analyticsSpy.appendTestContextIfNeeded(.resume, event) {
+        analyticsSpy.appendContextIfNeeded(.resume, event) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 1.0, handler: nil)
@@ -867,7 +867,7 @@ final class AnalyticsSpyTests: XCTestCase {
                                action: Analytics.Action.Activity.launch.rawValue)
 
         // Act
-        analyticsSpy.appendTestContextIfNeeded(.resume, event) {
+        analyticsSpy.appendContextIfNeeded(.resume, event) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 1.0, handler: nil)
