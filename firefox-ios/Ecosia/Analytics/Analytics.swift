@@ -42,9 +42,14 @@ open class Analytics {
         self.notificationCenter = notificationCenter
     }
 
-    private func track(_ event: SnowplowTracker.Event) {
+    internal func track(_ event: SnowplowTracker.Event) {
         guard User.shared.sendAnonymousUsageData else { return }
+        if let structuredEvent = event as? Structured {
+            appendContextIfNeeded(to: structuredEvent)
+        }
+#if !TESTING
         _ = tracker.track(event)
+#endif
     }
 
     private static func updateTrackerController() {
@@ -76,7 +81,7 @@ open class Analytics {
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
 
-        appendContextIfNeeded(action, event) { [weak self] in
+        appendActivityContextIfNeeded(action, event) { [weak self] in
             self?.track(event)
         }
     }
@@ -448,14 +453,20 @@ open class Analytics {
 }
 
 extension Analytics {
-    func appendContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
+
+    /// Appends common context to all structured events
+    func appendContextIfNeeded(to event: Structured) {
+        addUserSeedCountContext(to: event)
+    }
+
+    /// Appends activity-specific context for launch/resume events
+    func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
             addABTestContexts(to: event, toggles: [.brazeIntegration])
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
-        addUserSeedCountContext(to: event)
     }
 
     private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {
@@ -483,7 +494,7 @@ extension Analytics {
             completion()
         }
     }
-    
+
     private func addUserSeedCountContext(to event: Structured) {
         let consentContext = SelfDescribingJson(schema: Self.impactBalanceSchema,
                                                 andDictionary: ["impact-balance": User.shared.seedCount])
