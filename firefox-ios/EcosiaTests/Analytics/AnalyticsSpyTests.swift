@@ -880,6 +880,48 @@ final class AnalyticsSpyTests: XCTestCase {
         }
     }
 
+    func testAddUserSeedCountContextOnResumeEvent() {
+        // Arrange
+        let analyticsSpy = makeAnalyticsSpyContextSUT()
+        let expectation = self.expectation(description: "Event tracked")
+        let event = Structured(category: "",
+                               action: Analytics.Action.Activity.resume.rawValue)
+
+        // Act
+        analyticsSpy.appendContextIfNeeded(.resume, event) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+
+        // Assert
+        let seedCountContext = event.entities.first { $0.schema == Analytics.impactBalanceSchema }
+        XCTAssertNotNil(seedCountContext, "User seed count context not found in event entities")
+        if let seedCountContext = seedCountContext {
+            XCTAssertEqual(seedCountContext.data["impact-balance"] as? Int, User.shared.seedCount)
+        }
+    }
+
+    func testAddUserSeedCountContextOnLaunchEvent() {
+        // Arrange
+        let analyticsSpy = makeAnalyticsSpyContextSUT()
+        let expectation = self.expectation(description: "Event tracked")
+        let event = Structured(category: "",
+                               action: Analytics.Action.Activity.launch.rawValue)
+
+        // Act
+        analyticsSpy.appendContextIfNeeded(.launch, event) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+
+        // Assert
+        let seedCountContext = event.entities.first { $0.schema == Analytics.impactBalanceSchema }
+        XCTAssertNotNil(seedCountContext, "User seed count context not found in event entities")
+        if let seedCountContext = seedCountContext {
+            XCTAssertEqual(seedCountContext.data["impact-balance"] as? Int, User.shared.seedCount)
+        }
+    }
+
     // MARK: Analytics Private Data clearance
 
     func testClearPrivateDataTracksEvent() {
