@@ -44,7 +44,7 @@ public enum Cookie: String, CaseIterable {
     /// - Parameters:
     ///   - cookie: HTTPCookie
     init?(_ cookie: HTTPCookie) {
-        let ecosiaDomain = Cookie.urlProvider.domain ?? ""
+        let ecosiaDomain = Cookie.urlProvider.domain
         guard cookie.domain == ".\(ecosiaDomain)" else {
             return nil
         }
