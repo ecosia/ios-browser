@@ -903,7 +903,7 @@ final class AnalyticsSpyTests: XCTestCase {
         let seedCountContext = event.entities.first { $0.schema == Analytics.impactBalanceSchema }
         XCTAssertNotNil(seedCountContext, "User seed count context must be added to the structured event")
         if let seedCountContext = seedCountContext {
-            XCTAssertEqual(seedCountContext.data["impact-balance"] as? Int, User.shared.seedCount)
+            XCTAssertEqual(seedCountContext.data["amount"] as? Int, User.shared.seedCount)
         }
     }
 
@@ -928,7 +928,7 @@ final class AnalyticsSpyTests: XCTestCase {
             let seedCountContext = structuredEvent.entities.first { $0.schema == Analytics.impactBalanceSchema }
             XCTAssertNotNil(seedCountContext, "User seed count context must be added to resume event")
             if let seedCountContext = seedCountContext {
-                XCTAssertEqual(seedCountContext.data["impact-balance"] as? Int, User.shared.seedCount)
+                XCTAssertEqual(seedCountContext.data["amount"] as? Int, User.shared.seedCount)
             }
         } else {
             XCTFail("Tracked event should be a Structured event")

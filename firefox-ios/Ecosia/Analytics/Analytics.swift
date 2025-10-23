@@ -497,7 +497,7 @@ extension Analytics {
 
     private func addUserSeedCountContext(to event: Structured) {
         let consentContext = SelfDescribingJson(schema: Self.impactBalanceSchema,
-                                                andDictionary: ["impact-balance": User.shared.seedCount])
+                                                andDictionary: ["amount": User.shared.seedCount])
         event.entities.append(consentContext)
     }
 }
