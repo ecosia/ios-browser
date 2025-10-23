@@ -924,7 +924,7 @@ final class AnalyticsSpyTests: XCTestCase {
         XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
         XCTAssertEqual(analyticsSpy.trackedEvents.count, 1, "Should have tracked one resume event")
 
-        if let structuredEvent = analyticsSpy.trackedEvents.first as? Structured {
+        if let structuredEvent = analyticsSpy.trackedEvents.first(where: { ($0 as? Structured)?.action == Analytics.Action.Activity.resume.rawValue }) {
             let seedCountContext = structuredEvent.entities.first { $0.schema == Analytics.impactBalanceSchema }
             XCTAssertNotNil(seedCountContext, "User seed count context must be added to resume event")
             if let seedCountContext = seedCountContext {
