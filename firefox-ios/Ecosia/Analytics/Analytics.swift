@@ -455,6 +455,7 @@ extension Analytics {
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
+        addUserSeedCountContext(to: event)
     }
 
     private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {
@@ -481,6 +482,12 @@ extension Analytics {
             event.entities.append(userContext)
             completion()
         }
+    }
+    
+    private func addUserSeedCountContext(to event: Structured) {
+        let consentContext = SelfDescribingJson(schema: Self.impactBalanceSchema,
+                                                andDictionary: ["impact-balance": User.shared.seedCount])
+        event.entities.append(consentContext)
     }
 }
 
