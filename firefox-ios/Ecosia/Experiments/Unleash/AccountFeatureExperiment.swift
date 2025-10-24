@@ -17,7 +17,7 @@ public struct AccountFeatureExperiment {
     }
 
     private static let controlVariantName: String = "st_accounts_features_holdout"
-    public static var isControl: Bool {
+    private static var isControl: Bool {
         variant.name == controlVariantName
     }
 }
