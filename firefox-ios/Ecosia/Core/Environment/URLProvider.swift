@@ -83,7 +83,7 @@ public enum URLProvider {
     }
 
     public var terms: URL {
-        URL(string: "https://www.ecosia.org/terms-of-service ")!
+        URL(string: "https://www.ecosia.org/terms-of-service")!
     }
 
     public var aboutCounter: URL {
