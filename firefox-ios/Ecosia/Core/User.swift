@@ -58,6 +58,9 @@ public struct User: Codable, Equatable {
     public var news = Date.distantPast
     public var migrated = false
     public var referrals = Referrals.Model()
+    public var seedCount: Int {
+        EcosiaAuthUIStateProvider.shared.seedCount
+    }
     public internal(set) var id: String?
     public var whatsNewItemsVersionsShown = Set<String>()
     public internal(set) var analyticsUserState = AnalyticsStateContext()

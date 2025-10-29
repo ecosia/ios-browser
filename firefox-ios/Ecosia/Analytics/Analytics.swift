@@ -10,6 +10,7 @@ open class Analytics {
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
     private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
     private static let feedbackSchema = "iglu:org.ecosia/ios_feedback_event/jsonschema/1-0-0"
+    static let impactBalanceSchema = "iglu:org.ecosia/impact_balance/jsonschema/1-0-0"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
@@ -41,9 +42,14 @@ open class Analytics {
         self.notificationCenter = notificationCenter
     }
 
-    private func track(_ event: SnowplowTracker.Event) {
+    internal func track(_ event: SnowplowTracker.Event) {
         guard User.shared.sendAnonymousUsageData else { return }
+        if let structuredEvent = event as? Structured {
+            appendContextIfNeeded(to: structuredEvent)
+        }
+#if !TESTING
         _ = tracker.track(event)
+#endif
     }
 
     private static func updateTrackerController() {
@@ -75,7 +81,7 @@ open class Analytics {
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
 
-        appendTestContextIfNeeded(action, event) { [weak self] in
+        appendActivityContextIfNeeded(action, event) { [weak self] in
             self?.track(event)
         }
     }
@@ -447,7 +453,14 @@ open class Analytics {
 }
 
 extension Analytics {
-    func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
+
+    /// Appends common context to all structured events
+    func appendContextIfNeeded(to event: Structured) {
+        addUserSeedCountContext(to: event)
+    }
+
+    /// Appends activity-specific context for launch/resume events
+    func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
             addABTestContexts(to: event, toggles: [.brazeIntegration])
@@ -480,6 +493,12 @@ extension Analytics {
             event.entities.append(userContext)
             completion()
         }
+    }
+
+    private func addUserSeedCountContext(to event: Structured) {
+        let consentContext = SelfDescribingJson(schema: Self.impactBalanceSchema,
+                                                andDictionary: ["amount": User.shared.seedCount])
+        event.entities.append(consentContext)
     }
 }
 
