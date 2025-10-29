@@ -18,6 +18,13 @@ final class AnalyticsSpy: Analytics {
 
     // MARK: - AnalyticsSpy Properties to Capture Calls
 
+    var trackedEvents: [SnowplowTracker.Event] = []
+
+    override func track(_ event: SnowplowTracker.Event) {
+        super.track(event)
+        trackedEvents.append(event)
+    }
+
     var installCalled = false
     override func install() {
         installCalled = true
@@ -26,6 +33,7 @@ final class AnalyticsSpy: Analytics {
     var activityActionCalled: Analytics.Action.Activity?
     override func activity(_ action: Analytics.Action.Activity) {
         activityActionCalled = action
+        super.activity(action)
     }
 
     var bookmarksImportExportPropertyCalled: Analytics.Property.Bookmarks?
@@ -828,7 +836,7 @@ final class AnalyticsSpyTests: XCTestCase {
                                action: Analytics.Action.Activity.resume.rawValue)
 
         // Act
-        analyticsSpy.appendTestContextIfNeeded(.resume, event) {
+        analyticsSpy.appendActivityContextIfNeeded(.resume, event) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 1.0, handler: nil)
@@ -849,7 +857,7 @@ final class AnalyticsSpyTests: XCTestCase {
                                action: Analytics.Action.Activity.launch.rawValue)
 
         // Act
-        analyticsSpy.appendTestContextIfNeeded(.resume, event) {
+        analyticsSpy.appendActivityContextIfNeeded(.resume, event) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 1.0, handler: nil)
@@ -859,6 +867,53 @@ final class AnalyticsSpyTests: XCTestCase {
         XCTAssertNotNil(userContext, "User state context not found in event entities")
         if let userContext = userContext {
             XCTAssertEqual(userContext.data["push_notification_state"] as? String, "disabled")
+        }
+    }
+
+    func testAddUserSeedCountContextToAllEvents() {
+        // Arrange
+        let analyticsSpy = makeAnalyticsSpyContextSUT()
+        User.shared.sendAnonymousUsageData = true
+        let event = Structured(category: Analytics.Category.bookmarks.rawValue,
+                               action: Analytics.Action.click.rawValue)
+
+        // Act
+        analyticsSpy.track(event)
+
+        // Assert
+        XCTAssertEqual(analyticsSpy.trackedEvents.count, 1, "Should have tracked one event")
+        let seedCountContext = event.entities.first { $0.schema == Analytics.impactBalanceSchema }
+        XCTAssertNotNil(seedCountContext, "User seed count context must be added to the structured event")
+        if let seedCountContext = seedCountContext {
+            XCTAssertEqual(seedCountContext.data["amount"] as? Int, User.shared.seedCount)
+        }
+    }
+
+    func testAddUserSeedCountContextToResumeEventOnDidBecomeActive() async {
+        // Arrange
+        User.shared.sendAnonymousUsageData = true
+        XCTAssertNil(analyticsSpy.activityActionCalled)
+        let application = await UIApplication.shared
+
+        // Act
+        _ = await appDelegate.applicationDidBecomeActive(application)
+
+        waitForCondition(timeout: 2) { // Wait detached tasks until resume is called
+            analyticsSpy.activityActionCalled == .resume
+        }
+
+        // Assert
+        XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
+        XCTAssertEqual(analyticsSpy.trackedEvents.count, 1, "Should have tracked one resume event")
+
+        if let structuredEvent = analyticsSpy.trackedEvents.first(where: { ($0 as? Structured)?.action == Analytics.Action.Activity.resume.rawValue }) {
+            let seedCountContext = structuredEvent.entities.first { $0.schema == Analytics.impactBalanceSchema }
+            XCTAssertNotNil(seedCountContext, "User seed count context must be added to resume event")
+            if let seedCountContext = seedCountContext {
+                XCTAssertEqual(seedCountContext.data["amount"] as? Int, User.shared.seedCount)
+            }
+        } else {
+            XCTFail("Tracked event should be a Structured event")
         }
     }
 
