@@ -73,7 +73,7 @@ extension SearchViewController {
         cell.leftImageView.heightAnchor.constraint(equalToConstant: dynamicImageSize).isActive = true
 
         let twinkleImageView = UIImageView()
-        twinkleImageView.image = UIImage(named: "twinkle", in: .ecosia, with: nil)?.withRenderingMode(.alwaysTemplate)
+        twinkleImageView.image = UIImage(named: "ai-sparkle", in: .ecosia, with: nil)?.withRenderingMode(.alwaysTemplate)
         twinkleImageView.tintColor = theme.colors.ecosia.textInversePrimary
         twinkleImageView.contentMode = .scaleAspectFit
 
