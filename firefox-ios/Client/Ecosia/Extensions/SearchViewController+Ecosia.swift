@@ -60,7 +60,7 @@ extension SearchViewController {
 
         cell.titleLabel.text = viewModel.searchQuery
 
-        let aiSearchImage = UIImage(named: "ai-search", in: .ecosia, with: nil)?.withRenderingMode(.alwaysTemplate)
+        let aiSearchImage = UIImage(named: "searchLarge")?.withRenderingMode(.alwaysTemplate)
         cell.leftImageView.contentMode = .center
         cell.leftImageView.layer.borderWidth = 0
         cell.leftImageView.manuallySetImage(aiSearchImage ?? UIImage())
