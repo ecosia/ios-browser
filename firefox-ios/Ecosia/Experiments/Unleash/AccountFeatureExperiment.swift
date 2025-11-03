@@ -9,7 +9,7 @@ public struct AccountFeatureExperiment {
     private init() {}
 
     public static var isEnabled: Bool {
-        Unleash.isEnabled(.accountsFeaturesHoldoutGroup) && !isControl
+        Unleash.isEnabled(.accountsFeaturesHoldoutGroup) && !isHoldout
     }
 
     private static var variant: Unleash.Variant {
@@ -17,7 +17,7 @@ public struct AccountFeatureExperiment {
     }
 
     private static let controlVariantName: String = "st_accounts_features_holdout"
-    private static var isControl: Bool {
+    private static var isHoldout: Bool {
         variant.name == controlVariantName
     }
 }
