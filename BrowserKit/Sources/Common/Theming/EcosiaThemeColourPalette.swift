@@ -10,6 +10,7 @@ import UIKit
 // They are adopted by `EcosiaLightTheme` and `EcosiaDarkTheme` and should use `EcosiaColorPrimitive`.
 public protocol EcosiaSemanticColors {
     // MARK: - Background
+    var backgroundNeutralInverse: UIColor { get }
     var backgroundFeatured: UIColor { get }
     var backgroundPrimary: UIColor { get }
     var backgroundPrimaryDecorative: UIColor { get }
@@ -18,6 +19,7 @@ public protocol EcosiaSemanticColors {
     var backgroundQuaternary: UIColor { get }
     var backgroundElevation1: UIColor { get }
     var backgroundElevation2: UIColor { get }
+    var backgroundRoleNegative: UIColor { get }
 
     // MARK: - Border
     var borderDecorative: UIColor { get }
@@ -82,7 +84,9 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundQuaternary: UIColor = .systemGray
     var backgroundElevation1: UIColor = .systemGray
     var backgroundElevation2: UIColor = .systemGray
+    var backgroundRoleNegative: UIColor = .systemGray
     var borderDecorative: UIColor = .systemGray
+    var brandImpact: UIColor = .systemGray
     var brandFeatured: UIColor = .systemGray
     var brandPrimary: UIColor = .systemGray
     var buttonBackgroundFeatured: UIColor = .systemGray
@@ -95,7 +99,9 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondaryHover: UIColor = .systemGray
     var buttonContentSecondary: UIColor = .systemGray
     var buttonContentSecondaryStatic: UIColor = .systemGray
+    var borderNegative: UIColor = .systemGray
     var highlighter: UIColor = .systemGray
+    var linkPrimary: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
     var iconInverseStrong: UIColor = .systemGray
     var segmentedControlBackgroundActive: UIColor = .systemGray
