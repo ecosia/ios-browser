@@ -24,6 +24,17 @@ public struct EcosiaColor {
     public static let Gray80 = UIColor(rgb: 0x252525)
     public static let Gray90 = UIColor(rgb: 0x1A1A1A)
 
+    // MARK: - Grellow
+    public static let Grellow100 = UIColor(rgb: 0xD7EB80)
+    public static let Grellow200 = UIColor(rgb: 0xBBCF65)
+    public static let Grellow300 = UIColor(rgb: 0xA1B353)
+    public static let Grellow400 = UIColor(rgb: 0x889745)
+    public static let Grellow500 = UIColor(rgb: 0x6F7D38)
+    public static let Grellow600 = UIColor(rgb: 0x58632B)
+    public static let Grellow700 = UIColor(rgb: 0x424A1E)
+    public static let Grellow800 = UIColor(rgb: 0x2D3315)
+    public static let Grellow900 = UIColor(rgb: 0x1B1D0F)
+
     // MARK: - Green
     public static let Green10 = UIColor(rgb: 0xCFF2D0)
     public static let Green20 = UIColor(rgb: 0xAFE9B0)
