@@ -26,6 +26,7 @@ extension Unleash {
             case nativeSRPVAnalytics = "mob_ios_native_srpv_analytics"
             case newsletterCard = "mob_ios_newsletter_card"
             case aiSearchMVP = "ai2-67-ai-search-mvp"
+            case accountsFeaturesHoldoutGroup = "accounts_features_holdout_group"
         }
 
         public let name: String

@@ -85,21 +85,23 @@ struct NTPHeaderView: View {
                     onTap: handleAISearchTap
                 )
             }
-            ZStack(alignment: .topLeading) {
-                EcosiaAccountNavButton(
-                    seedCount: viewModel.seedCount,
-                    avatarURL: viewModel.userAvatarURL,
-                    enableAnimation: !reduceMotion,
-                    windowUUID: windowUUID,
-                    onTap: handleTap
-                )
-
-                if let increment = viewModel.balanceIncrement {
-                    BalanceIncrementAnimationView(
-                        increment: increment,
-                        windowUUID: windowUUID
+            if AccountFeatureExperiment.isEnabled {
+                ZStack(alignment: .topLeading) {
+                    EcosiaAccountNavButton(
+                        seedCount: viewModel.seedCount,
+                        avatarURL: viewModel.userAvatarURL,
+                        enableAnimation: !reduceMotion,
+                        windowUUID: windowUUID,
+                        onTap: handleTap
                     )
-                    .offset(x: 20, y: -10)
+
+                    if let increment = viewModel.balanceIncrement {
+                        BalanceIncrementAnimationView(
+                            increment: increment,
+                            windowUUID: windowUUID
+                        )
+                        .offset(x: 20, y: -10)
+                    }
                 }
             }
         }
