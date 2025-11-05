@@ -433,3 +433,220 @@ final class SimulateImpactAPIErrorSetting: HiddenSetting {
         UserDefaults.standard.bool(forKey: debugKey)
     }
 }
+
+// MARK: - Seed & Level Debug Settings
+
+final class DebugAddSeedsLoggedOut: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add 1 Seed (Logged Out) - 10s delay", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let maxSeeds = UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
+        let currentSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        let remaining = max(0, maxSeeds - currentSeeds)
+        return NSAttributedString(string: "\(currentSeeds)/\(maxSeeds) seeds | \(remaining) remaining (cap always ON)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let currentSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        let maxSeeds = UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
+        
+        // Check if already at cap
+        if currentSeeds >= maxSeeds {
+            let alert = AlertController(
+                title: "Seed Cap Reached",
+                message: "Already at maximum (\(maxSeeds) seeds) for logged-out users",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(alert, animated: true)
+            return
+        }
+        
+        let alert = AlertController(
+            title: "Seed Queued ✅",
+            message: "Navigate to home or open Account Impact within 10 seconds to see animation",
+            preferredStyle: .alert
+        )
+
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Dismiss alert after 2 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                alert.dismiss(animated: true)
+            }
+
+            // Add seed after 10 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                UserDefaultsSeedProgressManager.addSeeds(1)
+                EcosiaLogger.accounts.info("Debug: Added 1 seed for logged-out user")
+            }
+        }
+    }
+}
+
+final class DebugAddSeedsLoggedIn: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add 5 Seeds (Logged In) - 10s delay", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let currentSeeds = EcosiaAuthUIStateProvider.shared.seedCount
+        return NSAttributedString(string: "Current: \(currentSeeds) seeds", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard EcosiaAuthenticationService.shared.isLoggedIn else {
+            let errorAlert = AlertController(
+                title: "Not Logged In",
+                message: "Please log in first to use this feature",
+                preferredStyle: .alert
+            )
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(errorAlert, animated: true)
+            return
+        }
+
+        let alert = AlertController(
+            title: "Seeds Queued ✅",
+            message: "Navigate to home or open Account Impact within 10 seconds to see animation",
+            preferredStyle: .alert
+        )
+
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Dismiss alert after 2 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                alert.dismiss(animated: true)
+            }
+
+            // Add seeds after 10 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                Task { @MainActor in
+                    EcosiaAuthUIStateProvider.shared.debugAddSeeds(5)
+                }
+            }
+        }
+    }
+}
+
+final class DebugForceLevelUp: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Force Level Up (Logged In) - 10s delay", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Triggers sparkle animation", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard EcosiaAuthenticationService.shared.isLoggedIn else {
+            let errorAlert = AlertController(
+                title: "Not Logged In",
+                message: "Please log in first to use this feature",
+                preferredStyle: .alert
+            )
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(errorAlert, animated: true)
+            return
+        }
+
+        let alert = AlertController(
+            title: "Level Up Queued ✅",
+            message: "Navigate to Account Impact within 10 seconds to see level-up animation",
+            preferredStyle: .alert
+        )
+
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Dismiss alert after 2 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                alert.dismiss(animated: true)
+            }
+
+            // Trigger level-up animation after 10 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                Task { @MainActor in
+                    EcosiaAuthUIStateProvider.shared.debugTriggerLevelUpAnimation()
+                }
+            }
+        }
+    }
+}
+
+final class DebugAddCustomSeeds: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add Custom Seeds (Logged In)", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let currentSeeds = EcosiaAuthUIStateProvider.shared.seedCount
+        return NSAttributedString(string: "Current: \(currentSeeds) seeds | Input custom amount", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard EcosiaAuthenticationService.shared.isLoggedIn else {
+            let errorAlert = AlertController(
+                title: "Not Logged In",
+                message: "Please log in first to use this feature",
+                preferredStyle: .alert
+            )
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(errorAlert, animated: true)
+            return
+        }
+
+        let alert = AlertController(
+            title: "Add Custom Seeds",
+            message: "Enter the number of seeds to add (1-999)",
+            preferredStyle: .alert
+        )
+
+        alert.addTextField { textField in
+            textField.placeholder = "Number of seeds"
+            textField.keyboardType = .numberPad
+        }
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        alert.addAction(UIAlertAction(title: "Add", style: .default) { [weak self] _ in
+            guard let textField = alert.textFields?.first,
+                  let text = textField.text,
+                  let seedCount = Int(text),
+                  seedCount > 0 && seedCount <= 999 else {
+                let errorAlert = AlertController(
+                    title: "Invalid Input",
+                    message: "Please enter a number between 1 and 999",
+                    preferredStyle: .alert
+                )
+                errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                navigationController?.topViewController?.present(errorAlert, animated: true)
+                return
+            }
+
+            self?.addCustomSeeds(count: seedCount, navigationController: navigationController)
+        })
+
+        navigationController?.topViewController?.present(alert, animated: true)
+    }
+
+    private func addCustomSeeds(count: Int, navigationController: UINavigationController?) {
+        let confirmAlert = AlertController(
+            title: "Seeds Queued ✅",
+            message: "Adding \(count) seeds in 10 seconds. Navigate to home or open Account Impact to see animation.",
+            preferredStyle: .alert
+        )
+
+        navigationController?.topViewController?.present(confirmAlert, animated: true) {
+            // Dismiss alert after 2 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                confirmAlert.dismiss(animated: true)
+            }
+
+            // Add seeds after 10 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                Task { @MainActor in
+                    EcosiaAuthUIStateProvider.shared.debugAddSeeds(count)
+                }
+            }
+        }
+    }
+}

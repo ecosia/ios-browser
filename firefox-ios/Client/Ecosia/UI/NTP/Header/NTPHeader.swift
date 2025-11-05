@@ -69,7 +69,6 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 @available(iOS 16.0, *)
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
-    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
     let windowUUID: WindowUUID
     // Use explicit SwiftUI.Environment to avoid ambiguity
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager

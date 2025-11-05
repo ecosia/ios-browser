@@ -30,6 +30,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// Balance increment for animations (temporary state)
     @Published public private(set) var balanceIncrement: Int?
 
+    /// Level-up animation trigger (temporary state, auto-resets)
+    @Published public private(set) var shouldShowLevelUpAnimation: Bool = false
+
     /// Current level number (from API for logged-in users, 1 for logged-out)
     @Published private var currentLevelNumber: Int = 1
 
@@ -43,6 +46,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     private var authStateObserver: NSObjectProtocol?
     private var userProfileObserver: NSObjectProtocol?
+    private var seedProgressObserver: NSObjectProtocol?
     private let accountsProvider: AccountsProviderProtocol
     private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
 
@@ -65,6 +69,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             NotificationCenter.default.removeObserver(observer)
         }
         if let observer = userProfileObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = seedProgressObserver {
             NotificationCenter.default.removeObserver(observer)
         }
     }
@@ -115,6 +122,17 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         ) { [weak self] _ in
             Task {
                 await self?.handleUserProfileUpdate()
+            }
+        }
+
+        // Listen for seed progress updates (for logged-out users)
+        seedProgressObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaultsSeedProgressManager.progressUpdatedNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task {
+                await self?.handleSeedProgressUpdate()
             }
         }
     }
@@ -173,6 +191,23 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
+    @MainActor
+    private func handleSeedProgressUpdate() {
+        // Only handle for logged-out users
+        guard !isLoggedIn else { return }
+
+        let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
+
+        // If seed count increased, show animation
+        if newSeedCount > seedCount {
+            let increment = newSeedCount - seedCount
+            EcosiaLogger.accounts.info("Seed progress updated for logged-out user: \(seedCount) → \(newSeedCount) (+\(increment))")
+            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
+        } else {
+            seedCount = newSeedCount
+        }
+    }
+
     // MARK: - Seed Count Management
 
     private func registerVisitIfNeeded() {
@@ -213,6 +248,12 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         currentLevelNumber = newLevelNumber
         currentProgress = newProgress
 
+        // Trigger level-up animation if user leveled up
+        if response.didLevelUp {
+            EcosiaLogger.accounts.info("Level up detected: triggering animation for level \(newLevelNumber)")
+            triggerLevelUpAnimation()
+        }
+
         if let increment = response.seedsIncrement {
             EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment)), level=\(newLevelNumber), progress=\(newProgress)")
             animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
@@ -240,6 +281,16 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     }
 
     @MainActor
+    private func triggerLevelUpAnimation() {
+        shouldShowLevelUpAnimation = true
+        
+        // Auto-reset after animation completes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.shouldShowLevelUpAnimation = false
+        }
+    }
+
+    @MainActor
     private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
         Self.seedProgressManagerType.resetCounter()
@@ -262,5 +313,36 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         } else {
             seedCount = newSeedCount
         }
+    }
+
+    // MARK: - Debug Methods
+
+    /// Debug method to simulate balance updates for testing animations
+    /// This allows QA to test seed addition and level-up animations without server calls
+    /// Available in all builds, accessible through hidden debug menu
+    @MainActor
+    public func debugUpdateBalance(_ response: AccountVisitResponse) {
+        updateBalance(response)
+        EcosiaLogger.accounts.info("Debug: Balance updated via debug method")
+    }
+    
+    /// Debug method to directly trigger level-up animation without mock data
+    /// This allows QA to test the level-up sparkle animation independently
+    /// Available in all builds, accessible through hidden debug menu
+    @MainActor
+    public func debugTriggerLevelUpAnimation() {
+        triggerLevelUpAnimation()
+        EcosiaLogger.accounts.info("Debug: Level-up animation triggered directly")
+    }
+    
+    /// Debug method to directly add seeds with animation for logged-in users
+    /// This allows QA to test seed increment animations without mock responses
+    /// Available in all builds, accessible through hidden debug menu
+    @MainActor
+    public func debugAddSeeds(_ count: Int) {
+        let currentSeeds = seedCount
+        let newSeeds = currentSeeds + count
+        animateBalanceChange(from: currentSeeds, to: newSeeds, increment: count)
+        EcosiaLogger.accounts.info("Debug: Added \(count) seeds for logged-in user (\(currentSeeds) → \(newSeeds))")
     }
 }

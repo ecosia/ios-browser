@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+import Combine
 
 /// ViewModel for the EcosiaAccountImpactView that uses centralized auth state
 @available(iOS 16.0, *)
@@ -11,12 +12,12 @@ import Common
 public class EcosiaAccountImpactViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published public var isLoading: Bool = false
-    @Published public var shouldShowLevelUpAnimation: Bool = false
 
     // MARK: - Private Properties
     private let onLoginAction: () -> Void
     private let onDismissAction: () -> Void
     private let authStateProvider: EcosiaAuthUIStateProvider
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
     public init(
@@ -26,6 +27,14 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         self.onLoginAction = onLogin
         self.onDismissAction = onDismiss
         self.authStateProvider = EcosiaAuthUIStateProvider.shared
+        
+        // Forward objectWillChange notifications from authStateProvider
+        // This ensures SwiftUI knows to update the view when auth state changes
+        authStateProvider.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Computed Properties
@@ -78,11 +87,6 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         onDismissAction()
     }
 
-    /// Resets the level up animation state
-    public func resetLevelUpAnimation() {
-        shouldShowLevelUpAnimation = false
-    }
-
     /// Handles the "Learn more about seeds" link tap
     public func handleLearnMoreTap() {
         Analytics.shared.accountImpactCardCtaClicked()
@@ -120,5 +124,10 @@ extension EcosiaAccountImpactViewModel {
     /// Progress for the avatar (0.0 to 1.0)
     public var levelProgress: Double {
         authStateProvider.levelProgress
+    }
+
+    /// Whether to show level-up animation (from centralized provider)
+    public var shouldShowLevelUpAnimation: Bool {
+        authStateProvider.shouldShowLevelUpAnimation
     }
 }

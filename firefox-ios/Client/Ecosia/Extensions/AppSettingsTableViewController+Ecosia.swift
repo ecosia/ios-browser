@@ -170,6 +170,13 @@ extension AppSettingsTableViewController {
             SimulateImpactAPIErrorSetting(settings: self)
         ]
 
+        hiddenDebugSettings.append(contentsOf: [
+            DebugAddSeedsLoggedOut(settings: self),
+            DebugAddSeedsLoggedIn(settings: self),
+            DebugForceLevelUp(settings: self),
+            DebugAddCustomSeeds(settings: self)
+        ])
+
         if EcosiaEnvironment.current == .staging {
             hiddenDebugSettings.append(AnalyticsStagingUrlSetting(settings: self))
         }

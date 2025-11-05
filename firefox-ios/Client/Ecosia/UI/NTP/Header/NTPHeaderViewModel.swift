@@ -7,6 +7,7 @@ import Foundation
 import Shared
 import SwiftUI
 import Ecosia
+import Combine
 
 final class NTPHeaderViewModel: ObservableObject {
     struct UX {
@@ -21,6 +22,8 @@ final class NTPHeaderViewModel: ObservableObject {
     private(set) var auth: EcosiaAuth
     var onTapAction: ((UIButton) -> Void)?
     private let authStateProvider = EcosiaAuthUIStateProvider.shared
+    private var cancellables = Set<AnyCancellable>()
+    
     var seedCount: Int { authStateProvider.seedCount }
     var isLoggedIn: Bool { authStateProvider.isLoggedIn }
     var userAvatarURL: URL? { authStateProvider.avatarURL }
@@ -37,6 +40,14 @@ final class NTPHeaderViewModel: ObservableObject {
         self.windowUUID = windowUUID
         self.auth = auth
         self.delegate = delegate
+        
+        // Forward objectWillChange notifications from authStateProvider
+        // This ensures SwiftUI knows to update the view when auth state changes
+        authStateProvider.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Public Methods

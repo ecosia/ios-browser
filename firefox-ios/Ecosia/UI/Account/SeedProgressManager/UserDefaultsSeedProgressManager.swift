@@ -33,6 +33,7 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
     public static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
     public static var levelUpNotification: Notification.Name { .init("\(className).SeedLevelUp") }
     private static let numberOfSeedsAtStart = 1
+    public static let maxSeedsForLoggedOutUsers = 3
 
     // UserDefaults keys
     private static let totalSeedsCollectedKey = "TotalSeedsCollected"
@@ -106,7 +107,7 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
     }
 
     // Add seeds to the counter and handle level progression
-    static func addSeeds(_ count: Int) {
+    public static func addSeeds(_ count: Int) {
         addSeeds(count, relativeToDate: loadLastAppOpenDate())
     }
 
@@ -120,7 +121,12 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
 
         // Determine the effective max seeds and level to enforce (capped or classic)
         let effectiveMaxLevel = maxCappedLevel ?? seedLevels.count
-        let effectiveMaxRequiredSeeds = maxCappedSeeds ?? standardMaxRequiredSeeds
+        var effectiveMaxRequiredSeeds = maxCappedSeeds ?? standardMaxRequiredSeeds
+
+        // Apply seed cap for logged-out users (permanent rule)
+        // Logged-out users can only collect a maximum of maxSeedsForLoggedOutUsers seeds
+        effectiveMaxRequiredSeeds = maxSeedsForLoggedOutUsers
+        EcosiaLogger.accounts.info("Seed cap enforced for logged-out user: max \(maxSeedsForLoggedOutUsers) seeds")
 
         // Early exit if the maximum number of seeds is already collected
         if totalSeeds >= effectiveMaxRequiredSeeds {
