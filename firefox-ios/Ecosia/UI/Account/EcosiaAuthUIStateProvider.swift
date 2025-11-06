@@ -19,7 +19,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     @Published public private(set) var userProfile: UserProfile?
 
     /// Current seed count (server-based for logged in users, local for guests)
-    @Published public private(set) var seedCount: Int = 1
+    /// Initialized with local storage value to prevent flickering on app launch
+    @Published public private(set) var seedCount: Int = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
 
     /// Current user avatar URL
     @Published public private(set) var avatarURL: URL?
@@ -31,10 +32,10 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     @Published public private(set) var balanceIncrement: Int?
 
     /// Current level number (from API for logged-in users, 1 for logged-out)
-    @Published private var currentLevelNumber: Int = 1
+    @Published public private(set) var currentLevelNumber: Int = 1
 
     /// Current progress towards next level (from API for logged-in users, default 0.25 for initial state)
-    @Published private var currentProgress: Double = 0.25
+    @Published public private(set) var currentProgress: Double = 0.25
 
     /// Error state for register visit failures (read-only externally, set only by this class)
     @Published public private(set) var hasRegisterVisitError: Bool = false
@@ -57,6 +58,16 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     public init(accountsProvider: AccountsProviderProtocol) {
         self.accountsProvider = accountsProvider
+
+        // Initialize state synchronously to prevent flickering
+        self.isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+        self.userProfile = EcosiaAuthenticationService.shared.userProfile
+        self.avatarURL = userProfile?.pictureURL
+        self.username = userProfile?.name
+
+        // If logged out, ensure seed count is loaded (already done in property initializer)
+        // If logged in, seed count will be updated from API in initializeState()
+
         setupAuthStateMonitoring()
         initializeState()
     }
@@ -134,20 +145,18 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
+    /// Initializes the state based on authentication status.
+    ///
+    /// For logged-in users, registers a visit to fetch the latest balance from the API.
+    /// For logged-out users, handles local seed collection to update the count.
     private func initializeState() {
-        Task {
-            // Initialize from EcosiaAuthenticationService.shared
-            await updateFromAuthShared()
-
-            // Initialize seed count based on auth state
-            if EcosiaAuthenticationService.shared.isLoggedIn {
-                EcosiaLogger.accounts.info("User logged in at startup - will load from backend")
-                registerVisitIfNeeded()
-            } else {
-                EcosiaLogger.accounts.info("User logged out at startup - using local seed collection")
-                await MainActor.run {
-                    seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-                }
+        if isLoggedIn {
+            EcosiaLogger.accounts.info("User logged in at startup - will load from backend")
+            registerVisitIfNeeded()
+        } else {
+            EcosiaLogger.accounts.info("User logged out at startup - using local seed collection")
+            Task {
+                await handleLocalSeedCollection()
             }
         }
     }
@@ -207,12 +216,16 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Seed Count Management
 
+    /// Registers a user visit to fetch the latest balance from the backend.
+    ///
+    /// Only proceeds if a valid access token is available (user is logged in).
+    /// Updates the balance and level information on success.
+    /// Sets `hasRegisterVisitError` to `true` on failure.
     private func registerVisitIfNeeded() {
         Task {
             do {
                 guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
-                    EcosiaLogger.accounts.debug("No access token available - user not logged in")
-                    await handleLocalSeedCollection()
+                    EcosiaLogger.accounts.notice("Cannot register visit - no access token available")
                     return
                 }
 
@@ -285,17 +298,23 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         )
     }
 
+    /// Resets to local seed collection system after logout.
+    ///
+    /// Resets seeds to 0, level to 1, and progress to default state.
     @MainActor
     private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
-        Self.seedProgressManagerType.resetCounter()
+
+        UserDefaultsSeedProgressManager.saveProgress(totalSeeds: 0, currentLevel: 1, lastAppOpenDate: .now)
 
         seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-        // Clear level data when logging out
         currentLevelNumber = 1
-        currentProgress = 0.25 // Reset to default progress
+        currentProgress = 0.25
     }
 
+    /// Handles daily seed collection for logged-out users.
+    ///
+    /// Collects one seed per day and animates the increment if a new seed was collected.
     @MainActor
     private func handleLocalSeedCollection() {
         EcosiaLogger.accounts.info("Handling local seed collection for logged-out user")

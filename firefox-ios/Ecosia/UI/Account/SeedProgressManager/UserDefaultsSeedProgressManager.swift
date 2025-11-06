@@ -30,7 +30,6 @@ import Foundation
 public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
 
     private static let className = String(describing: UserDefaultsSeedProgressManager.self)
-    private static let numberOfSeedsAtStart = 1
     public static let maxSeedsForLoggedOutUsers = 3
     public static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
     public static var levelUpNotification: Notification.Name { .init("\(className).SeedLevelUp") }
@@ -51,24 +50,36 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
 
     // MARK: - Static Methods
 
-    // Load the current level from UserDefaults
+    /// Loads the current level from UserDefaults.
+    ///
+    /// - Returns: The current level, defaulting to 1 if not set.
     public static func loadCurrentLevel() -> Int {
         let currentLevel = UserDefaults.standard.integer(forKey: currentLevelKey)
         return currentLevel == 0 ? 1 : currentLevel
     }
 
-    // Load the total seeds collected from UserDefaults
+    /// Loads the total seeds collected from UserDefaults.
+    ///
+    /// - Returns: The total number of seeds collected. Returns 0 for first-time users.
     public static func loadTotalSeedsCollected() -> Int {
-        let seedsCollected = UserDefaults.standard.integer(forKey: totalSeedsCollectedKey)
-        return seedsCollected == 0 ? numberOfSeedsAtStart : seedsCollected
+        return UserDefaults.standard.integer(forKey: totalSeedsCollectedKey)
     }
 
-    // Load the last app open date from UserDefaults
-    public static func loadLastAppOpenDate() -> Date {
-        return UserDefaults.standard.object(forKey: lastAppOpenDateKey) as? Date ?? .now
+    /// Loads the last app open date from UserDefaults.
+    ///
+    /// - Returns: The last date the app was opened and a seed was collected, or `nil` if this is the first launch.
+    public static func loadLastAppOpenDate() -> Date? {
+        return UserDefaults.standard.object(forKey: lastAppOpenDateKey) as? Date
     }
 
-    // Save the seed progress and level to UserDefaults
+    /// Saves the seed progress and level to UserDefaults.
+    ///
+    /// Posts a `progressUpdatedNotification` after saving.
+    ///
+    /// - Parameters:
+    ///   - totalSeeds: The total number of seeds to save.
+    ///   - currentLevel: The current level to save.
+    ///   - lastAppOpenDate: The date to record as the last app open.
     public static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date) {
         let defaults = UserDefaults.standard
         defaults.set(totalSeeds, forKey: totalSeedsCollectedKey)
@@ -77,7 +88,10 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
-    // Helper method to get the seed threshold for the current level
+    /// Returns the seed threshold required for a specific level.
+    ///
+    /// - Parameter level: The level to query.
+    /// - Returns: The number of seeds required for the level, or 0 if not found.
     private static func requiredSeedsForLevel(_ level: Int) -> Int {
         if let seedLevel = seedLevels.first(where: { $0.level == level }) {
             return seedLevel.requiredSeeds
@@ -85,7 +99,9 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
         return seedLevels.first?.requiredSeeds ?? 0  // If the is no level matching, use the first one
     }
 
-    // Calculate the inner progress for the current level (0 to 1)
+    /// Calculates the inner progress for the current level as a fraction from 0 to 1.
+    ///
+    /// - Returns: A value between 0.0 and 1.0 representing progress within the current level.
     public static func calculateInnerProgress() -> CGFloat {
         let totalSeeds = loadTotalSeedsCollected()
 
@@ -106,12 +122,23 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
         return CGFloat(progressInCurrentLevel) / CGFloat(requiredSeedsForCurrentLevel)
     }
 
-    // Add seeds to the counter and handle level progression
+    /// Adds seeds to the counter, using the current date.
+    ///
+    /// Enforces the maximum seed cap for logged-out users.
+    ///
+    /// - Parameter count: The number of seeds to add.
     public static func addSeeds(_ count: Int) {
-        addSeeds(count, relativeToDate: loadLastAppOpenDate())
+        addSeeds(count, relativeToDate: .now)
     }
 
-    // Add seeds to the counter with a specific date
+    /// Adds seeds to the counter with a specific date.
+    ///
+    /// Enforces the maximum seed cap for logged-out users (3 seeds).
+    /// Posts a `progressUpdatedNotification` after adding seeds.
+    ///
+    /// - Parameters:
+    ///   - count: The number of seeds to add.
+    ///   - date: The date to record as the last app open.
     public static func addSeeds(_ count: Int, relativeToDate date: Date) {
         // Load total seeds
         var totalSeeds = loadTotalSeedsCollected()
@@ -132,24 +159,34 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
-    // Reset the counter to the initial state
+    /// Resets the counter to the initial state.
+    ///
+    /// Sets seeds to 0, level to 1, and updates the last app open date to now.
     public static func resetCounter() {
-        saveProgress(totalSeeds: numberOfSeedsAtStart,
+        saveProgress(totalSeeds: 0,
                      currentLevel: 1,
                      lastAppOpenDate: .now)
     }
 
-    // Collect a seed once per day
+    /// Collects a seed once per day for logged-out users.
+    ///
+    /// On first launch (no previous date saved), always collects a seed.
+    /// On subsequent launches, only collects if a new day has started since the last collection.
     public static func collectDailySeed() {
         let currentDate = Date()
         let lastOpenDate = loadLastAppOpenDate()
         let calendar = Calendar.current
 
+        guard let lastOpenDate = lastOpenDate else {
+            EcosiaLogger.accounts.info("First seed collection for new user")
+            addSeeds(1, relativeToDate: currentDate)
+            return
+        }
+
         if calendar.isDateInToday(lastOpenDate) {
             return // Seed already collected today
         }
 
-        // Add 1 seed and save the last open date as today
         addSeeds(1, relativeToDate: currentDate)
     }
 }

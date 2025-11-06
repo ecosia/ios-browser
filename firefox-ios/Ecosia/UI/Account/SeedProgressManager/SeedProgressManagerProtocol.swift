@@ -11,7 +11,7 @@ public protocol SeedProgressManagerProtocol {
 
     static func loadCurrentLevel() -> Int
     static func loadTotalSeedsCollected() -> Int
-    static func loadLastAppOpenDate() -> Date
+    static func loadLastAppOpenDate() -> Date?
 
     static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date)
 
