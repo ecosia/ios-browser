@@ -4,6 +4,7 @@
 
 import SwiftUI
 import AVKit
+import Combine
 import Common
 import Ecosia
 
@@ -11,16 +12,16 @@ struct WelcomeView: View {
     @State private var showContent = false
     @State private var logoScale: CGFloat = 1.0
     @State private var logoOpacity: Double = 1.0
-    
+
     let windowUUID: WindowUUID
     let onFinish: () -> Void
-    
+
     var body: some View {
         ZStack {
             // Video background
             LoopingVideoPlayer(videoName: "welcome_background")
                 .ignoresSafeArea()
-            
+
             // Logo
             VStack {
                 if showContent {
@@ -32,11 +33,11 @@ struct WelcomeView: View {
                         .foregroundColor(.white)
                         .accessibilityIdentifier(AccessibilityIdentifiers.Ecosia.logo)
                         .padding(.top, 24)
-                    
+
                     Spacer()
                 } else {
                     Spacer()
-                    
+
                     Image("ecosiaLogoLaunch")
                         .renderingMode(.template)
                         .resizable()
@@ -45,22 +46,22 @@ struct WelcomeView: View {
                         .foregroundColor(.white)
                         .scaleEffect(logoScale)
                         .opacity(logoOpacity)
-                    
+
                     Spacer()
                 }
             }
-            
+
             // Content
             if showContent {
                 VStack(spacing: 10) {
                     Spacer()
-                    
+
                     IntroTextView(text: simplestWayString)
                         .accessibilityLabel(simplestWayString.replacingOccurrences(of: "\n", with: ""))
-                    
+
                     Spacer()
                         .frame(height: 20)
-                    
+
                     Button(action: {
                         // TODO: Update event
                         Analytics.shared.introClick(.next, page: .start)
@@ -85,7 +86,7 @@ struct WelcomeView: View {
         .onAppear {
             // TODO: Update event
             Analytics.shared.introDisplaying(page: .start)
-            
+
             // Animate content appearance
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 withAnimation(.easeInOut(duration: 0.6)) {
@@ -93,7 +94,7 @@ struct WelcomeView: View {
                     logoOpacity = 0
                 }
             }
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
                 withAnimation(.easeInOut(duration: 0.4)) {
                     showContent = true
@@ -101,7 +102,7 @@ struct WelcomeView: View {
             }
         }
     }
-    
+
     private var simplestWayString: String {
         .localized(.theSimplestWay)
     }
@@ -111,10 +112,10 @@ struct WelcomeView: View {
 
 struct IntroTextView: View {
     let text: String
-    
+
     var body: some View {
         let splits = text.components(separatedBy: .newlines)
-        
+
         if splits.count == 3 {
             Text(splits[0])
                 .font(.largeTitle.bold())
@@ -141,14 +142,30 @@ struct IntroTextView: View {
 
 // MARK: - Looping Video Player
 
+// MARK: - Custom Video View
+
+class VideoPlayerView: UIView {
+    let playerLayer = AVPlayerLayer()
+
+    override class var layerClass: AnyClass {
+        return AVPlayerLayer.self
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if let playerLayer = layer as? AVPlayerLayer {
+            playerLayer.videoGravity = .resizeAspectFill
+        }
+    }
+}
+
 struct LoopingVideoPlayer: UIViewRepresentable {
     let videoName: String
-    
+
     func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        
-        // TODO: Add video file
-        guard let videoURL = Bundle.main.url(forResource: videoName, withExtension: "mp4") else {
+        let view = VideoPlayerView()
+
+        guard let videoURL = Bundle.main.url(forResource: videoName, withExtension: "mov") else {
             // Fallback to static image if video not found
             let imageView = UIImageView(image: UIImage(named: "forest"))
             imageView.contentMode = .scaleAspectFill
@@ -157,49 +174,81 @@ struct LoopingVideoPlayer: UIViewRepresentable {
             view.addSubview(imageView)
             return view
         }
-        
-        let player = AVPlayer(url: videoURL)
-        let playerLayer = AVPlayerLayer(player: player)
-        
-        playerLayer.videoGravity = .resizeAspectFill
-        playerLayer.frame = view.bounds
-        view.layer.addSublayer(playerLayer)
-        
-        // Loop video
-        NotificationCenter.default.addObserver(
+
+        let playerItem = AVPlayerItem(url: videoURL)
+        let player = AVPlayer(playerItem: playerItem)
+
+        if let playerLayer = view.layer as? AVPlayerLayer {
+            playerLayer.player = player
+            playerLayer.videoGravity = .resizeAspectFill
+        }
+
+        // Store references in coordinator
+        context.coordinator.player = player
+        context.coordinator.view = view
+
+        // Monitor player status
+        let statusObserver = playerItem.publisher(for: \.status)
+            .receive(on: DispatchQueue.main)
+            .sink { status in
+                switch status {
+                case .readyToPlay:
+                    player.play()
+                case .failed:
+                    break
+                case .unknown:
+                    break
+                @unknown default:
+                    break
+                }
+            }
+
+        context.coordinator.statusObserver = statusObserver
+
+        // Monitor buffer status
+        let bufferObserver = playerItem.publisher(for: \.isPlaybackBufferFull)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                // Buffer monitoring
+            }
+
+        context.coordinator.bufferObserver = bufferObserver
+
+        // Loop video when it ends
+        context.coordinator.loopObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
-            object: player.currentItem,
+            object: playerItem,
             queue: .main
         ) { _ in
             player.seek(to: .zero)
             player.play()
         }
-        
-        player.play()
-        
-        context.coordinator.player = player
-        context.coordinator.playerLayer = playerLayer
-        
+
         return view
     }
-    
+
     func updateUIView(_ uiView: UIView, context: Context) {
-        if let playerLayer = context.coordinator.playerLayer {
-            playerLayer.frame = uiView.bounds
-        }
+        // View updates handled by layoutSubviews
     }
-    
+
     func makeCoordinator() -> Coordinator {
         Coordinator()
     }
-    
+
     class Coordinator {
         var player: AVPlayer?
-        var playerLayer: AVPlayerLayer?
-        
+        var view: UIView?
+        var loopObserver: NSObjectProtocol?
+        var statusObserver: AnyCancellable?
+        var bufferObserver: AnyCancellable?
+
         deinit {
             player?.pause()
-            NotificationCenter.default.removeObserver(self)
+            if let observer = loopObserver {
+                NotificationCenter.default.removeObserver(observer)
+            }
+            statusObserver?.cancel()
+            bufferObserver?.cancel()
         }
     }
 }

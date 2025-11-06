@@ -76,6 +76,9 @@
 		1214167C2D6375960097788B /* MainFrameAtDocumentEnd.js in Resources */ = {isa = PBXBuildFile; fileRef = 121416792D6375960097788B /* MainFrameAtDocumentEnd.js */; };
 		12141E6C2D6877EB0097788B /* EcosiaNetError.html in Resources */ = {isa = PBXBuildFile; fileRef = 12141E682D686C030097788B /* EcosiaNetError.html */; };
 		12141E6D2D6877F00097788B /* EcosiaNetError.css in Resources */ = {isa = PBXBuildFile; fileRef = 12141E6A2D686C1C0097788B /* EcosiaNetError.css */; };
+		1230CFF22EBB990900D7AC00 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
+		1230CFF32EBB990900D7AC00 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
+		1230D24D2EBCEE9B00D7AC00 /* welcome_background.mov in Resources */ = {isa = PBXBuildFile; fileRef = 1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */; };
 		123475C32DA6730A0017B0C2 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A6AB4528CA6A4C00EBEBDD /* String+Extension.swift */; };
 		123475CC2DA7D6620017B0C2 /* BeforeOrAfterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */; };
 		12348FFA2DB8D2D40017B0C2 /* PrefsKeys+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12348FF92DB8D2CC0017B0C2 /* PrefsKeys+Ecosia.swift */; };
@@ -95,9 +98,6 @@
 		12AEB1282D3A568D0035D7D8 /* SessionRestoreHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12AEB1272D3A568D0035D7D8 /* SessionRestoreHandler.swift */; };
 		12AEB1292D3A9AE70035D7D8 /* CreditCardPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2999FF02B194A5800F0FEC1 /* CreditCardPayload.swift */; };
 		12AEB12A2D3A9AEB0035D7D8 /* FillCreditCardForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2999FF22B194A8300F0FEC1 /* FillCreditCardForm.swift */; };
-		12B0D53B2EA7821C0022FECA /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4065BD2E82D0C60067303E /* BrazeKit */; };
-		12B0D53C2EA7821C0022FECA /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4065BF2E82D0C60067303E /* BrazeUI */; };
-		12B0D7942EA789B00022FECA /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B0D7932EA789B00022FECA /* WelcomeView.swift */; };
 		12B0D7952EA789B00022FECA /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B0D7932EA789B00022FECA /* WelcomeView.swift */; };
 		12C11E272D281BCC00E4DDBF /* EcosiaHomepageSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E212D281B7200E4DDBF /* EcosiaHomepageSectionType.swift */; };
 		12C11E282D281BD100E4DDBF /* EcosiaTopSiteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E222D281B7A00E4DDBF /* EcosiaTopSiteItemCell.swift */; };
@@ -2372,6 +2372,7 @@
 		12141E682D686C030097788B /* EcosiaNetError.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = EcosiaNetError.html; sourceTree = "<group>"; };
 		12141E6A2D686C1C0097788B /* EcosiaNetError.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = EcosiaNetError.css; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
+		1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */ = {isa = PBXFileReference; lastKnownFileType = file; path = welcome_background.mov; sourceTree = "<group>"; };
 		123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeOrAfterView.swift; sourceTree = "<group>"; };
 		12348FF92DB8D2CC0017B0C2 /* PrefsKeys+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrefsKeys+Ecosia.swift"; sourceTree = "<group>"; };
 		123CEC4B2E7814A2009EB379 /* FoundersGroteskCondensed-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FoundersGroteskCondensed-Semibold.ttf"; sourceTree = "<group>"; };
@@ -9648,6 +9649,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1230CFF32EBB990900D7AC00 /* BrazeUI in Frameworks */,
+				1230CFF22EBB990900D7AC00 /* BrazeKit in Frameworks */,
 				5A70EF0E295DFCCF00790249 /* Common in Frameworks */,
 				8A08EC6427EBDCAD00E119C7 /* AdServices.framework in Frameworks */,
 				8A08EC6227EBDCA400E119C7 /* iAd.framework in Frameworks */,
@@ -10672,6 +10675,7 @@
 		2CFEA0422D455BD500B25CE0 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */,
 				2CFEA0392D455BD500B25CE0 /* WelcomeViewController.swift */,
 				2CFEA03A2D455BD500B25CE0 /* WelcomeNavigation.swift */,
 				12B0D7932EA789B00022FECA /* WelcomeView.swift */,
@@ -15696,6 +15700,7 @@
 				8A5CDEED27E510F500CC60FF /* pocketglobalfeed.json in Resources */,
 				8A1A93582B757C7C0069C190 /* gradient.json in Resources */,
 				74821FFE1DB6D3AC00EEEA72 /* MailSchemes.plist in Resources */,
+				1230D24D2EBCEE9B00D7AC00 /* welcome_background.mov in Resources */,
 				D308EE561CBF0BF5006843F2 /* CertError.css in Resources */,
 				E1AF3566286DE5F800960045 /* Smoketest1.xctestplan in Resources */,
 				121416752D6373BA0097788B /* AllFramesAtDocumentEnd.js in Resources */,
