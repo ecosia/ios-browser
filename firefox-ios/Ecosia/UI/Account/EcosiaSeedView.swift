@@ -5,7 +5,9 @@
 import SwiftUI
 import Common
 
-/// A reusable seed count component that displays the seed icon and animated count
+/// A reusable seed count component that displays the seed icon and animated count.
+/// Displays counts 0-999 normally, and "999+" for counts of 1000 or more.
+/// Screen readers always receive the actual count for accessibility.
 @available(iOS 16.0, *)
 public struct EcosiaSeedView: View {
     private let seedCount: Int
@@ -37,19 +39,33 @@ public struct EcosiaSeedView: View {
         self.windowUUID = windowUUID
     }
 
+    private var displayedSeedCount: String {
+        if seedCount > 999 {
+            return String(format: .localized(.numberAsStringWithPlusSymbol), "999")
+        }
+        return "\(seedCount)"
+    }
+
+    private var accessibilityLabel: String {
+        String(format: .localized(.seedCountAccessibilityLabel), seedCount)
+    }
+
     public var body: some View {
         HStack(spacing: spacing) {
             Image("seed", bundle: .ecosia)
                 .resizable()
                 .frame(width: iconSize, height: iconSize)
                 .scaleEffect(enableAnimation ? bounceScale : 1.0)
-                .accessibilityLabel("Seed icon")
+                .accessibilityHidden(true)
 
-            Text("\(seedCount)")
+            Text(displayedSeedCount)
                 .font(.headline)
                 .foregroundColor(theme.textColor)
                 .animatedText(numericValue: seedCount, reduceMotionEnabled: !enableAnimation)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityIdentifier("seed_count_view")
         .onChange(of: seedCount) { _ in
             if enableAnimation {
                 triggerBounce()
@@ -105,6 +121,11 @@ private struct EcosiaSeedViewInteractivePreview: View {
                 }
                 .buttonStyle(.bordered)
 
+                Button("Add 100") {
+                    seedCount += 100
+                }
+                .buttonStyle(.bordered)
+
                 Button("Reset") {
                     seedCount = 42
                 }
@@ -118,17 +139,21 @@ private struct EcosiaSeedViewInteractivePreview: View {
 
             VStack(spacing: .ecosia.space._l) {
                 EcosiaSeedView(
-                    seedCount: 100,
+                    seedCount: 999,
                     iconSize: .ecosia.space._2l,
                     spacing: .ecosia.space._s,
                     windowUUID: .XCTestDefaultUUID
                 )
                 EcosiaSeedView(
-                    seedCount: 5,
+                    seedCount: 1000,
                     windowUUID: .XCTestDefaultUUID
                 )
                 EcosiaSeedView(
-                    seedCount: 1,
+                    seedCount: 5432,
+                    windowUUID: .XCTestDefaultUUID
+                )
+                EcosiaSeedView(
+                    seedCount: 5,
                     enableAnimation: false,
                     windowUUID: .XCTestDefaultUUID
                 )
