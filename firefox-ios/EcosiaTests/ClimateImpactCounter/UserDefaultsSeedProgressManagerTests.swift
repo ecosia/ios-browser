@@ -45,7 +45,7 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         // When / Then
         var level = UserDefaultsSeedProgressManager.loadCurrentLevel()
         var totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        
+
         XCTAssertEqual(level, 1)
         XCTAssertEqual(totalSeedsCollected, 3)
 
@@ -55,7 +55,7 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         // Then: Level remains 1, seeds capped at 3
         level = UserDefaultsSeedProgressManager.loadCurrentLevel()
         totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        
+
         XCTAssertEqual(level, 1)
         XCTAssertEqual(totalSeedsCollected, 3)
     }
@@ -64,7 +64,7 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
     func test_reset_counter() {
         // Given
         UserDefaultsSeedProgressManager.addSeeds(2)
-        
+
         // When
         UserDefaultsSeedProgressManager.resetCounter()
 
@@ -102,7 +102,7 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         // Then
         let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
         let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        
+
         XCTAssertEqual(totalSeedsCollected, 2)
         XCTAssertEqual(level, 1)
     }

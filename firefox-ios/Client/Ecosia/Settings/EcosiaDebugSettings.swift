@@ -451,7 +451,7 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         let currentSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
         let maxSeeds = UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
-        
+
         // Check if already at cap
         if currentSeeds >= maxSeeds {
             let alert = AlertController(
@@ -463,7 +463,7 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
             navigationController?.topViewController?.present(alert, animated: true)
             return
         }
-        
+
         let alert = AlertController(
             title: "Seed Queued ✅",
             message: "Navigate to home or open Account Impact within 10 seconds to see animation",
