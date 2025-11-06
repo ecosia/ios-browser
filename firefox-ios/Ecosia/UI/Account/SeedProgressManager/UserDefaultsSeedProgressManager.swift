@@ -30,9 +30,10 @@ import Foundation
 public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
 
     private static let className = String(describing: UserDefaultsSeedProgressManager.self)
+    private static let numberOfSeedsAtStart = 1
+    public static let maxSeedsForLoggedOutUsers = 3
     public static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
     public static var levelUpNotification: Notification.Name { .init("\(className).SeedLevelUp") }
-    private static let numberOfSeedsAtStart = 1
 
     // UserDefaults keys
     private static let totalSeedsCollectedKey = "TotalSeedsCollected"
@@ -106,56 +107,29 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
     }
 
     // Add seeds to the counter and handle level progression
-    static func addSeeds(_ count: Int) {
+    public static func addSeeds(_ count: Int) {
         addSeeds(count, relativeToDate: loadLastAppOpenDate())
     }
 
     // Add seeds to the counter with a specific date
     public static func addSeeds(_ count: Int, relativeToDate date: Date) {
-        // Load total seeds and current level from User Defaults
+        // Load total seeds
         var totalSeeds = loadTotalSeedsCollected()
 
-        // Fetch the maximum seeds required for the current progression context
-        let standardMaxRequiredSeeds = seedLevels.last?.requiredSeeds ?? 0
+        EcosiaLogger.accounts.info("Seed cap enforced for logged-out user: max \(maxSeedsForLoggedOutUsers) seeds")
 
-        // Determine the effective max seeds and level to enforce (capped or classic)
-        let effectiveMaxLevel = maxCappedLevel ?? seedLevels.count
-        let effectiveMaxRequiredSeeds = maxCappedSeeds ?? standardMaxRequiredSeeds
-
-        // Early exit if the maximum number of seeds is already collected
-        if totalSeeds >= effectiveMaxRequiredSeeds {
+        if totalSeeds >= maxSeedsForLoggedOutUsers {
             return
         }
 
-        var currentLevel = loadCurrentLevel()
-
-        let thresholdForNextLevel = requiredSeedsForLevel(currentLevel + 1)
-
         totalSeeds += count
 
-        /* 
-         If the number of seeds being added (e.g. via "add 5 seeds" debug function) exceeds the max required seeds
-         cap the totalSeeds to the maximum required.
-         This is useful in case of a seeds multiplier when the configuration has the `maxCappedSeeds` evaluted.
-         */
-        if totalSeeds >= effectiveMaxRequiredSeeds {
-            totalSeeds = effectiveMaxRequiredSeeds
+        if totalSeeds >= maxSeedsForLoggedOutUsers {
+            totalSeeds = maxSeedsForLoggedOutUsers
         }
 
-        var leveledUp = false
-        // Only level up if the total seeds is equal or exceed the threshold for the level we are reaching to
-        if totalSeeds >= thresholdForNextLevel && currentLevel < effectiveMaxLevel {
-                currentLevel += 1
-                leveledUp = true
-        }
-
-        // Save progress with updated total seeds and current level
-        saveProgress(totalSeeds: totalSeeds, currentLevel: currentLevel, lastAppOpenDate: date)
-
-        // Notify listeners if leveled up
-        if leveledUp {
-            NotificationCenter.default.post(name: levelUpNotification, object: nil)
-        }
+        saveProgress(totalSeeds: totalSeeds, currentLevel: 1, lastAppOpenDate: date)
+        NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
     // Reset the counter to the initial state
