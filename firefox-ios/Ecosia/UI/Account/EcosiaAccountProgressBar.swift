@@ -14,6 +14,10 @@ public struct EcosiaAccountProgressBar: View {
     private let windowUUID: WindowUUID
     @State private var theme = EcosiaAccountProgressBarTheme()
 
+    private struct UX {
+        static let minimumVisibleProgress: Double = 0.1 // 10% minimum display
+    }
+
     public init(
         progress: Double,
         size: CGFloat = .ecosia.space._6l,
@@ -24,6 +28,14 @@ public struct EcosiaAccountProgressBar: View {
         self.size = size
         self.strokeWidth = strokeWidth
         self.windowUUID = windowUUID
+    }
+
+    /// Ensures a minimum of 10% progress is shown when progress is at 0%
+    private var displayProgress: Double {
+        guard progress > 0.0 else {
+            return UX.minimumVisibleProgress
+        }
+        return progress
     }
 
     public var body: some View {
@@ -40,7 +52,7 @@ public struct EcosiaAccountProgressBar: View {
 
             // Progress ring (filled)
             Circle()
-                .trim(from: 0.0, to: progress)
+                .trim(from: 0.0, to: displayProgress)
                 .stroke(
                     theme.progressColor,
                     style: StrokeStyle(
@@ -49,7 +61,7 @@ public struct EcosiaAccountProgressBar: View {
                     )
                 )
                 .rotationEffect(.degrees(90))
-                .animation(.easeInOut(duration: 0.5), value: progress)
+                .animation(.easeInOut(duration: 0.5), value: displayProgress)
         }
         .frame(width: size, height: size)
         .ecosiaThemed(windowUUID, $theme)
@@ -75,29 +87,64 @@ struct EcosiaAccountProgressBar_Previews: PreviewProvider {
         let windowUUID = WindowUUID()
 
         VStack(spacing: .ecosia.space._l) {
-            // Different progress values
-            EcosiaAccountProgressBar(
-                progress: 0.25,
-                windowUUID: windowUUID
-            )
+            // 0% progress - Shows minimum 10% display
+            VStack(spacing: .ecosia.space._2s) {
+                EcosiaAccountProgressBar(
+                    progress: 0.0,
+                    windowUUID: windowUUID
+                )
+                Text("0% (shows 10% minimum)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
-            EcosiaAccountProgressBar(
-                progress: 0.75,
-                windowUUID: windowUUID
-            )
+            // 25% progress
+            VStack(spacing: .ecosia.space._2s) {
+                EcosiaAccountProgressBar(
+                    progress: 0.25,
+                    windowUUID: windowUUID
+                )
+                Text("25% progress")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
-            EcosiaAccountProgressBar(
-                progress: 1.0,
-                windowUUID: windowUUID
-            )
+            // 75% progress
+            VStack(spacing: .ecosia.space._2s) {
+                EcosiaAccountProgressBar(
+                    progress: 0.75,
+                    windowUUID: windowUUID
+                )
+                Text("75% progress")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
-            // Different sizes
-            EcosiaAccountProgressBar(
-                progress: 0.5,
-                size: .ecosia.space._8l,
-                strokeWidth: 6,
-                windowUUID: windowUUID
-            )
+            // 100% progress (complete)
+            VStack(spacing: .ecosia.space._2s) {
+                EcosiaAccountProgressBar(
+                    progress: 1.0,
+                    windowUUID: windowUUID
+                )
+                Text("100% (complete)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Divider()
+
+            // Large size example
+            VStack(spacing: .ecosia.space._2s) {
+                EcosiaAccountProgressBar(
+                    progress: 0.5,
+                    size: .ecosia.space._8l,
+                    strokeWidth: 6,
+                    windowUUID: windowUUID
+                )
+                Text("50% (larger size)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
         .padding()
         .previewLayout(.sizeThatFits)
