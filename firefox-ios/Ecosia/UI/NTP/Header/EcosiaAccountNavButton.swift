@@ -30,6 +30,11 @@ public struct EcosiaAccountNavButton: View {
         self.onTap = onTap
     }
 
+    private var accessibilityLabel: String {
+        let seedCountLabel = String(format: .localized(.seedCountAccessibilityLabel), seedCount)
+        return String(format: .localized(.accountButtonAccessibilityLabel), seedCountLabel)
+    }
+
     public var body: some View {
         Button(action: onTap) {
             HStack(spacing: .ecosia.space._1s) {
@@ -59,6 +64,11 @@ public struct EcosiaAccountNavButton: View {
             .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityHint(String.localized(.accountButtonAccessibilityHint))
+        .accessibilityIdentifier("account_nav_button")
+        .accessibilityAddTraits(.isButton)
         .ecosiaThemed(windowUUID, $theme)
     }
 }
