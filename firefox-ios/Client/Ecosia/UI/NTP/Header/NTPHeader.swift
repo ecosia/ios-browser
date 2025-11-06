@@ -70,7 +70,6 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
     let windowUUID: WindowUUID
-    // Use explicit SwiftUI.Environment to avoid ambiguity
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
     @State private var showAccountImpactView = false
@@ -84,41 +83,41 @@ struct NTPHeaderView: View {
                     onTap: handleAISearchTap
                 )
             }
-            ZStack(alignment: .topLeading) {
-                EcosiaAccountNavButton(
-                    seedCount: viewModel.seedCount,
-                    avatarURL: viewModel.userAvatarURL,
-                    enableAnimation: !reduceMotion,
-                    windowUUID: windowUUID,
-                    onTap: handleTap
-                )
-
-                if let increment = viewModel.balanceIncrement {
-                    BalanceIncrementAnimationView(
-                        increment: increment,
-                        windowUUID: windowUUID
+                ZStack(alignment: .topLeading) {
+                    EcosiaAccountNavButton(
+                        seedCount: viewModel.seedCount,
+                        avatarURL: viewModel.userAvatarURL,
+                        enableAnimation: !reduceMotion,
+                        windowUUID: windowUUID,
+                        onTap: handleTap
                     )
-                    .offset(x: 20, y: -10)
-                }
+                    .sheet(isPresented: $showAccountImpactView) {
+                        EcosiaAccountImpactView(
+                            viewModel: EcosiaAccountImpactViewModel(
+                                onLogin: {
+                                    viewModel.performLogin()
+                                },
+                                onDismiss: {
+                                    showAccountImpactView = false
+                                }
+                            ),
+                            windowUUID: windowUUID
+                        )
+                        .padding(.horizontal, .ecosia.space._m)
+                        .dynamicHeightPresentationDetent()
+                    }
+                    if let increment = viewModel.balanceIncrement {
+                        BalanceIncrementAnimationView(
+                            increment: increment,
+                            windowUUID: windowUUID
+                        )
+                        .offset(x: 20, y: -10)
+                    }
+
             }
         }
         .padding(.leading, .ecosia.space._m)
         .padding(.trailing, .ecosia.space._m)
-        .sheet(isPresented: $showAccountImpactView) {
-            EcosiaAccountImpactView(
-                viewModel: EcosiaAccountImpactViewModel(
-                    onLogin: {
-                        viewModel.performLogin()
-                    },
-                    onDismiss: {
-                        showAccountImpactView = false
-                    }
-                ),
-                windowUUID: windowUUID
-            )
-            .padding(.horizontal, .ecosia.space._m)
-            .dynamicHeightPresentationDetent()
-        }
     }
 
     private func handleAISearchTap() {
