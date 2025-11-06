@@ -25,6 +25,8 @@ extension AppSettingsTableViewController {
 
         if isDebugSectionEnabled {
             sections.append(getEcosiaDebugSupportSection())
+            sections.append(getEcosiaDebugUnleashSection())
+            sections.append(getEcosiaDebugAccountsSection())
         }
 
         return sections
@@ -144,8 +146,7 @@ extension AppSettingsTableViewController {
     }
 
     private func getEcosiaDebugSupportSection() -> SettingSection {
-
-        var hiddenDebugSettings = [
+        var hiddenDebugSettings: [Setting] = [
             ExportBrowserDataSetting(settings: self),
             ForceCrashSetting(settings: self),
             PushBackInstallation(settings: self),
@@ -159,15 +160,8 @@ extension AppSettingsTableViewController {
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),
-            ResetAccountImpactNudgeCard(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
-            UnleashBrazeIntegrationSetting(settings: self),
-            UnleashNativeSRPVAnalyticsSetting(settings: self),
-            UnleashAISearchMVPSetting(settings: self),
-            UnleashIdentifierSetting(settings: self),
             AnalyticsIdentifierSetting(settings: self),
-            SimulateAuthErrorSetting(settings: self),
-            SimulateImpactAPIErrorSetting(settings: self)
         ]
 
         if EcosiaEnvironment.current == .staging {
@@ -175,6 +169,31 @@ extension AppSettingsTableViewController {
         }
 
         return SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugSettings)
+    }
+
+    private func getEcosiaDebugUnleashSection() -> SettingSection {
+        let unleashSettings: [Setting] = [
+            UnleashBrazeIntegrationSetting(settings: self),
+            UnleashNativeSRPVAnalyticsSetting(settings: self),
+            UnleashAISearchMVPSetting(settings: self),
+            UnleashIdentifierSetting(settings: self)
+        ]
+
+        return SettingSection(title: NSAttributedString(string: "Debug - Unleash"), children: unleashSettings)
+    }
+
+    private func getEcosiaDebugAccountsSection() -> SettingSection {
+        let accountSettings: [Setting] = [
+            ResetAccountImpactNudgeCard(settings: self),
+            DebugAddSeedsLoggedOut(settings: self),
+            DebugAddSeedsLoggedIn(settings: self),
+            DebugAddCustomSeeds(settings: self),
+            DebugForceLevelUp(settings: self),
+            SimulateAuthErrorSetting(settings: self),
+            SimulateImpactAPIErrorSetting(settings: self)
+        ]
+
+        return SettingSection(title: NSAttributedString(string: "Debug - Accounts"), children: accountSettings)
     }
 }
 

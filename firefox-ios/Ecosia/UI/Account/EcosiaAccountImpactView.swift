@@ -15,6 +15,7 @@ public struct EcosiaAccountImpactView: View {
     @State private var theme = EcosiaAccountImpactViewTheme()
     @State private var showSeedsCounterInfoWebView = false
     @State private var showProfileWebView = false
+    @State private var showSparkles = false
 
     /// Layout configuration optimized for account impact cards
     private var impactCardLayout: NudgeCardLayout {
@@ -60,9 +61,12 @@ public struct EcosiaAccountImpactView: View {
                 EcosiaAccountProgressAvatar(
                     avatarURL: viewModel.avatarURL,
                     progress: viewModel.levelProgress,
-                    showSparkles: viewModel.shouldShowLevelUpAnimation,
+                    showSparkles: showSparkles,
                     showProgress: !authStateProvider.hasRegisterVisitError,
-                    windowUUID: windowUUID
+                    windowUUID: windowUUID,
+                    onLevelUpAnimationComplete: {
+                        showSparkles = false
+                    }
                 )
 
                 VStack(alignment: .leading, spacing: .ecosia.space._1s) {
@@ -122,6 +126,9 @@ public struct EcosiaAccountImpactView: View {
             }
         }
         .ecosiaThemed(windowUUID, $theme)
+        .onReceive(NotificationCenter.default.publisher(for: .EcosiaAccountLevelUp)) { _ in
+            showSparkles = true
+        }
         .sheet(isPresented: $showSeedsCounterInfoWebView) {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.seedCounterInfo,

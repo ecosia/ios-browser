@@ -10,6 +10,7 @@ public struct EcosiaSparkleAnimation: View {
     private let containerSize: CGFloat
     private let sparkleSize: CGFloat
     private let animationDuration: Double
+    private let onComplete: (() -> Void)?
 
     @State private var sparkles: [SparkleData] = []
 
@@ -31,12 +32,14 @@ public struct EcosiaSparkleAnimation: View {
         isVisible: Bool,
         containerSize: CGFloat = .ecosia.space._6l,
         sparkleSize: CGFloat = 24,
-        animationDuration: Double = 6.0
+        animationDuration: Double = 6.0,
+        onComplete: (() -> Void)? = nil
     ) {
         self.isVisible = isVisible
         self.containerSize = containerSize
         self.sparkleSize = sparkleSize
         self.animationDuration = animationDuration
+        self.onComplete = onComplete
     }
 
     public var body: some View {
@@ -70,6 +73,11 @@ public struct EcosiaSparkleAnimation: View {
     private func startSparkleAnimation() {
         generateSparkles()
         animateSparkles()
+
+        // Run for animationDuration, then gracefully fade out
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+            stopSparkleAnimation()
+        }
     }
 
     private func stopSparkleAnimation() {
@@ -81,6 +89,7 @@ public struct EcosiaSparkleAnimation: View {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.fadeOutDuration) {
             sparkles.removeAll()
+            onComplete?()
         }
     }
 
