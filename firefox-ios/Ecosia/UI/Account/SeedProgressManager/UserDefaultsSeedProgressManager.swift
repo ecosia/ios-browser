@@ -113,27 +113,19 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
 
     // Add seeds to the counter with a specific date
     public static func addSeeds(_ count: Int, relativeToDate date: Date) {
-        // Load total seeds and current level from User Defaults
+        // Load total seeds
         var totalSeeds = loadTotalSeedsCollected()
 
-        // Fetch the maximum seeds required for the current progression context
-        let standardMaxRequiredSeeds = seedLevels.last?.requiredSeeds ?? 0
-
-        // Determine the effective max seeds and level to enforce (capped or classic)
-        let effectiveMaxLevel = maxCappedLevel ?? seedLevels.count
-        var effectiveMaxRequiredSeeds = maxCappedSeeds ?? standardMaxRequiredSeeds
-
-        effectiveMaxRequiredSeeds = maxSeedsForLoggedOutUsers
         EcosiaLogger.accounts.info("Seed cap enforced for logged-out user: max \(maxSeedsForLoggedOutUsers) seeds")
 
-        if totalSeeds >= effectiveMaxRequiredSeeds {
+        if totalSeeds >= maxSeedsForLoggedOutUsers {
             return
         }
 
         totalSeeds += count
 
-        if totalSeeds >= effectiveMaxRequiredSeeds {
-            totalSeeds = effectiveMaxRequiredSeeds
+        if totalSeeds >= maxSeedsForLoggedOutUsers {
+            totalSeeds = maxSeedsForLoggedOutUsers
         }
 
         saveProgress(totalSeeds: totalSeeds, currentLevel: 1, lastAppOpenDate: date)
