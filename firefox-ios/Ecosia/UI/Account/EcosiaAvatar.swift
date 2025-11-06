@@ -4,72 +4,52 @@
 
 import SwiftUI
 
-/// A reusable avatar component that displays user avatars with remote image loading
+/// A reusable avatar component that displays user avatars with cached remote image loading
+@available(iOS 16.0, *)
 public struct EcosiaAvatar: View {
     private let avatarURL: URL?
     private let size: CGFloat
-    private let placeholderImage: String
+    private let signedOutPlaceholderImageName: String
+    private let signedInPlaceholderImageName: String
 
-    public init(
-        avatarURL: URL?,
-        size: CGFloat = .ecosia.space._2l,
-        placeholderImage: String = "avatar"
-    ) {
+    public init(avatarURL: URL?,
+                size: CGFloat = .ecosia.space._2l,
+                signedOutPlaceholderImageName: String = "avatar",
+                signedInPlaceholderImageName: String = "placeholder-trees") {
         self.avatarURL = avatarURL
         self.size = size
-        self.placeholderImage = placeholderImage
+        self.signedOutPlaceholderImageName = signedOutPlaceholderImageName
+        self.signedInPlaceholderImageName = signedInPlaceholderImageName
     }
 
     public var body: some View {
         Group {
             if let avatarURL = avatarURL {
-                AsyncImage(url: avatarURL) { phase in
-                    switch phase {
-                    case .empty:
-                        placeholderView
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure(let error):
-                        let nsError = error as NSError
-                        /*
-                         Workaround for iOS AsyncImage bug (error -999 cancellation).
-                         Retry once on cancellation: https://developer.apple.com/forums/thread/682498
-                         */
-                        if nsError.code == NSURLErrorCancelled {
-                            AsyncImage(url: avatarURL) { retryPhase in
-                                if let image = retryPhase.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                } else {
-                                    placeholderView
-                                }
-                            }
-                        } else {
-                            placeholderView
-                        }
-                    @unknown default:
-                        placeholderView
-                    }
+                EcosiaCachedAsyncImage(url: avatarURL) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    placeholderView(imageName: signedInPlaceholderImageName)
                 }
                 .frame(width: size, height: size)
                 .clipShape(Circle())
-                .accessibilityLabel("User avatar")
+                .accessibilityLabel(String.localized(.userAvatarAccessibilityLabel))
+                .accessibilityIdentifier("user_avatar")
             } else {
-                placeholderView
+                placeholderView(imageName: signedOutPlaceholderImageName)
             }
         }
     }
 
-    private var placeholderView: some View {
-        Image(placeholderImage, bundle: .ecosia)
+    private func placeholderView(imageName: String) -> some View {
+        Image(imageName, bundle: .ecosia)
             .resizable()
             .scaledToFit()
             .frame(width: size, height: size)
             .clipShape(Circle())
-            .accessibilityLabel("Default avatar")
+            .accessibilityLabel(String.localized(.defaultAvatarAccessibilityLabel))
+            .accessibilityIdentifier("default_avatar")
     }
 }
 
