@@ -23,7 +23,7 @@ final class NTPHeaderViewModel: ObservableObject {
     var onTapAction: ((UIButton) -> Void)?
     private let authStateProvider = EcosiaAuthUIStateProvider.shared
     private var cancellables = Set<AnyCancellable>()
-    
+
     var seedCount: Int { authStateProvider.seedCount }
     var isLoggedIn: Bool { authStateProvider.isLoggedIn }
     var userAvatarURL: URL? { authStateProvider.avatarURL }
@@ -40,7 +40,7 @@ final class NTPHeaderViewModel: ObservableObject {
         self.windowUUID = windowUUID
         self.auth = auth
         self.delegate = delegate
-        
+
         // Forward objectWillChange notifications from authStateProvider
         // This ensures SwiftUI knows to update the view when auth state changes
         authStateProvider.objectWillChange

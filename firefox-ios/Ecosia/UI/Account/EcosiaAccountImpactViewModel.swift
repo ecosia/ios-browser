@@ -27,7 +27,7 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         self.onLoginAction = onLogin
         self.onDismissAction = onDismiss
         self.authStateProvider = EcosiaAuthUIStateProvider.shared
-        
+
         // Forward objectWillChange notifications from authStateProvider
         // This ensures SwiftUI knows to update the view when auth state changes
         authStateProvider.objectWillChange
@@ -124,10 +124,5 @@ extension EcosiaAccountImpactViewModel {
     /// Progress for the avatar (0.0 to 1.0)
     public var levelProgress: Double {
         authStateProvider.levelProgress
-    }
-
-    /// Whether to show level-up animation (from centralized provider)
-    public var shouldShowLevelUpAnimation: Bool {
-        authStateProvider.shouldShowLevelUpAnimation
     }
 }

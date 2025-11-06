@@ -30,9 +30,6 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// Balance increment for animations (temporary state)
     @Published public private(set) var balanceIncrement: Int?
 
-    /// Level-up animation trigger (temporary state, auto-resets)
-    @Published public private(set) var shouldShowLevelUpAnimation: Bool = false
-
     /// Current level number (from API for logged-in users, 1 for logged-out)
     @Published private var currentLevelNumber: Int = 1
 
@@ -282,12 +279,10 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     @MainActor
     private func triggerLevelUpAnimation() {
-        shouldShowLevelUpAnimation = true
-        
-        // Auto-reset after animation completes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.shouldShowLevelUpAnimation = false
-        }
+        EcosiaAccountNotificationCenter.postLevelUp(
+            newLevel: currentLevelNumber,
+            newProgress: currentProgress
+        )
     }
 
     @MainActor
@@ -325,7 +320,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         updateBalance(response)
         EcosiaLogger.accounts.info("Debug: Balance updated via debug method")
     }
-    
+
     /// Debug method to directly trigger level-up animation without mock data
     /// This allows QA to test the level-up sparkle animation independently
     /// Available in all builds, accessible through hidden debug menu
@@ -334,7 +329,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         triggerLevelUpAnimation()
         EcosiaLogger.accounts.info("Debug: Level-up animation triggered directly")
     }
-    
+
     /// Debug method to directly add seeds with animation for logged-in users
     /// This allows QA to test seed increment animations without mock responses
     /// Available in all builds, accessible through hidden debug menu

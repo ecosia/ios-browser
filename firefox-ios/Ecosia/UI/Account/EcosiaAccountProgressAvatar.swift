@@ -13,6 +13,7 @@ public struct EcosiaAccountProgressAvatar: View {
     private let showProgress: Bool
     private let size: CGFloat
     private let windowUUID: WindowUUID
+    private let onLevelUpAnimationComplete: (() -> Void)?
 
     public init(
         avatarURL: URL?,
@@ -20,7 +21,8 @@ public struct EcosiaAccountProgressAvatar: View {
         showSparkles: Bool = false,
         showProgress: Bool = false,
         size: CGFloat = .ecosia.space._7l,
-        windowUUID: WindowUUID
+        windowUUID: WindowUUID,
+        onLevelUpAnimationComplete: (() -> Void)? = nil
     ) {
         self.avatarURL = avatarURL
         self.progress = max(0.0, min(1.0, progress))
@@ -28,6 +30,7 @@ public struct EcosiaAccountProgressAvatar: View {
         self.showProgress = showProgress
         self.size = size
         self.windowUUID = windowUUID
+        self.onLevelUpAnimationComplete = onLevelUpAnimationComplete
     }
 
     public var body: some View {
@@ -52,7 +55,8 @@ public struct EcosiaAccountProgressAvatar: View {
                 EcosiaSparkleAnimation(
                     isVisible: showSparkles,
                     containerSize: sparkleContainerSize,
-                    sparkleSize: sparkleSize
+                    sparkleSize: sparkleSize,
+                    onComplete: onLevelUpAnimationComplete
                 )
             }
         }
