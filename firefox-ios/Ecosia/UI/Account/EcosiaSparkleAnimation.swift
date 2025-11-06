@@ -73,7 +73,7 @@ public struct EcosiaSparkleAnimation: View {
     private func startSparkleAnimation() {
         generateSparkles()
         animateSparkles()
-        
+
         // Run for animationDuration, then gracefully fade out
         DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
             stopSparkleAnimation()
