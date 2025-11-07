@@ -9,58 +9,87 @@ import Common
 import Ecosia
 
 struct WelcomeView: View {
-    @State private var showContent = false
-    @State private var logoScale: CGFloat = 1.0
-    @State private var logoOpacity: Double = 1.0
+    @State private var animationPhase: AnimationPhase = .initial
+    @State private var transitionMaskScale: CGFloat = 0.0
+    @State private var transitionMaskHeight: CGFloat = 200.0
+    @State private var transitionMaskWidth: CGFloat = 200.0
+    @State private var welcomeTextOpacity: Double = 0.0
+    @State private var logoOffset: CGFloat = 0.0
+    @State private var welcomeTextOffset: CGFloat = 0.0
+    @State private var bodyOpacity: Double = 0.0
+    @State private var showRoundedBackground: Bool = false
+    @State private var backgroundOpacity: Double = 1.0
+    @State private var theme = WelcomeViewTheme()
 
     let windowUUID: WindowUUID
     let onFinish: () -> Void
 
+    enum AnimationPhase {
+        case initial
+        case phase1Complete
+        case phase2Complete
+        case phase3Complete
+    }
+
     var body: some View {
-        ZStack {
-            // Video background
-            LoopingVideoPlayer(videoName: "welcome_background")
+        ZStack(alignment: .center) {
+            // Matching Launch Screen background
+            Color(.systemBackground)
                 .ignoresSafeArea()
+                .opacity(backgroundOpacity)
 
-            // Logo
-            VStack {
-                if showContent {
-                    Image("ecosiaLogoLaunch")
-                        .renderingMode(.template)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 48)
-                        .foregroundColor(.white)
-                        .accessibilityIdentifier(AccessibilityIdentifiers.Ecosia.logo)
-                        .padding(.top, 24)
-
-                    Spacer()
-                } else {
-                    Spacer()
-
-                    Image("ecosiaLogoLaunch")
-                        .renderingMode(.template)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 72)
-                        .foregroundColor(.white)
-                        .scaleEffect(logoScale)
-                        .opacity(logoOpacity)
-
-                    Spacer()
-                }
+            // Video background (clipped to transition mask)
+            if showRoundedBackground {
+                LoopingVideoPlayer(videoName: "welcome_background")
+                    .ignoresSafeArea()
+                    .mask(
+                        RoundedRectangle(cornerRadius: 16)
+                            .frame(height: transitionMaskHeight)
+                            .frame(maxWidth: transitionMaskWidth)
+                            .scaleEffect(transitionMaskScale, anchor: .center)
+                    )
             }
 
+            // Logo container
+            VStack(spacing: 12) {
+                Text("Welcome to")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundColor(theme.contentTextColor)
+                    .multilineTextAlignment(.center)
+                    .opacity(welcomeTextOpacity)
+                    .offset(y: welcomeTextOffset)
+
+                Image("ecosiaLogoLaunch")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 112, height: 28)
+                    .offset(y: logoOffset)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Ecosia.logo)
+            }
+            // TODO: Make sure logo matches launch screen exactly
+            .frame(maxWidth: transitionMaskWidth)
+            .ignoresSafeArea(edges: .vertical)
+
             // Content
-            if showContent {
-                VStack(spacing: 10) {
+            if animationPhase.isPhase3 {
+                VStack {
                     Spacer()
 
-                    IntroTextView(text: simplestWayString)
-                        .accessibilityLabel(simplestWayString.replacingOccurrences(of: "\n", with: ""))
+                    Text("Real change at your fingertips")
+                        .font(.ecosiaFamilyBrand(size: .ecosia.font._6l))
+                        .foregroundStyle(theme.contentTextColor)
+                        .multilineTextAlignment(.center)
 
                     Spacer()
                         .frame(height: 20)
+
+                    Text("Join 20 million people making a difference every day")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(theme.contentTextColor)
+                        .multilineTextAlignment(.center)
+
+                    Spacer()
+                        .frame(height: 36)
 
                     Button(action: {
                         // TODO: Update event
@@ -68,37 +97,62 @@ struct WelcomeView: View {
                         onFinish()
                     }) {
                         Text(verbatim: .localized(.getStarted))
-                            .font(.callout)
-                            .foregroundColor(Color(EcosiaLightTheme().colors.ecosia.textPrimary))
+                            .font(.body)
+                            .foregroundColor(theme.buttonTextColor)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(Color(EcosiaLightTheme().colors.ecosia.buttonBackgroundSecondary))
-                            .cornerRadius(25)
+                            .frame(height: 48)
+                            .background(theme.buttonBackgroundColor)
+                            .cornerRadius(24)
                     }
                 }
                 .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 112 : 16)
                 .padding(.bottom, 16)
                 .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 544 : .infinity)
-                .transition(.opacity.combined(with: .move(edge: .bottom)))
+                .opacity(bodyOpacity)
             }
         }
-        .preferredColorScheme(.dark)
         .onAppear {
             // TODO: Update event
             Analytics.shared.introDisplaying(page: .start)
 
-            // Animate content appearance
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                withAnimation(.easeInOut(duration: 0.6)) {
-                    logoScale = 0.8
-                    logoOpacity = 0
-                }
-            }
+            startAnimationSequence()
+        }
+        .ecosiaThemed(windowUUID, $theme)
+    }
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
-                withAnimation(.easeInOut(duration: 0.4)) {
-                    showContent = true
-                }
+    private func startAnimationSequence() {
+        let screenWidth = UIScreen.main.bounds.width - 32
+
+        // Phase 1: Show centered rounded square mask with logo (500ms delay, 500ms duration)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            showRoundedBackground = true
+            transitionMaskWidth = screenWidth
+            withAnimation(.easeInOut(duration: 0.5)) {
+                transitionMaskScale = 1.0
+            }
+        }
+
+        // Phase 2: Animate in welcome text, move logo down (350ms duration)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            withAnimation(.easeInOut(duration: 0.35)) {
+                welcomeTextOpacity = 1.0
+                welcomeTextOffset = -23.0
+                logoOffset = 14.0
+                animationPhase = .phase1Complete
+            }
+        }
+
+        // Phase 3: Grow window to full screen, move logo to final position, show body (500ms delay, 350ms duration)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.85) {
+            withAnimation(.easeInOut(duration: 0.35)) {
+                transitionMaskScale = 1.0 // Already at full scale from phase 1
+                transitionMaskHeight = UIScreen.main.bounds.height
+                transitionMaskWidth = UIScreen.main.bounds.width
+                logoOffset = -282.0
+                welcomeTextOffset = -305.0
+                bodyOpacity = 1.0
+                backgroundOpacity = 0.0
+                animationPhase = .phase3Complete
             }
         }
     }
@@ -108,41 +162,27 @@ struct WelcomeView: View {
     }
 }
 
-// MARK: - Intro Text View with Inline Images
+extension WelcomeView.AnimationPhase {
+    var isPhase3: Bool {
+        self == .phase3Complete
+    }
+}
 
-struct IntroTextView: View {
-    let text: String
+// MARK: - WelcomeViewTheme
 
-    var body: some View {
-        let splits = text.components(separatedBy: .newlines)
+struct WelcomeViewTheme: EcosiaThemeable {
+    var contentTextColor = Color.white
+    var buttonTextColor = Color.white
+    var buttonBackgroundColor = Color.green
 
-        if splits.count == 3 {
-            Text(splits[0])
-                .font(.largeTitle.bold())
-                .foregroundColor(.white)
-            + Text(" ")
-            + Text(Image("splashTree1"))
-                .baselineOffset(-2)
-            + Text(splits[1])
-                .font(.largeTitle.bold())
-                .foregroundColor(.white)
-            + Text(" ")
-            + Text(Image("splashTree2"))
-                .baselineOffset(-2)
-            + Text(splits[2])
-                .font(.largeTitle.bold())
-                .foregroundColor(.white)
-        } else {
-            Text(text)
-                .font(.largeTitle.bold())
-                .foregroundColor(.white)
-        }
+    mutating func applyTheme(theme: Theme) {
+        contentTextColor = Color(theme.colors.ecosia.textStaticLight)
+        buttonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
+        buttonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)
     }
 }
 
 // MARK: - Looping Video Player
-
-// MARK: - Custom Video View
 
 class VideoPlayerView: UIView {
     let playerLayer = AVPlayerLayer()
