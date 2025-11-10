@@ -84,8 +84,8 @@ public struct EcosiaAccountSignedInView: View {
                         .font(.ecosia(size: .ecosia.font._l, weight: .regular))
                         .foregroundColor(theme.ctaButtonTextColor)
                         .frame(height: UX.ctaButtonHeight)
-                        .frame(maxWidth: .infinity)
                 }
+                .frame(maxWidth: .infinity)
             }
             .accessibilityIdentifier("account_sign_out_button")
             .accessibilityLabel(String.localized(.signOut))
