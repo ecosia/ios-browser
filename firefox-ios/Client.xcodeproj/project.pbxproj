@@ -76,6 +76,7 @@
 		1214167C2D6375960097788B /* MainFrameAtDocumentEnd.js in Resources */ = {isa = PBXBuildFile; fileRef = 121416792D6375960097788B /* MainFrameAtDocumentEnd.js */; };
 		12141E6C2D6877EB0097788B /* EcosiaNetError.html in Resources */ = {isa = PBXBuildFile; fileRef = 12141E682D686C030097788B /* EcosiaNetError.html */; };
 		12141E6D2D6877F00097788B /* EcosiaNetError.css in Resources */ = {isa = PBXBuildFile; fileRef = 12141E6A2D686C1C0097788B /* EcosiaNetError.css */; };
+		121C6E182EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */; };
 		1230CFF22EBB990900D7AC00 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
 		1230CFF32EBB990900D7AC00 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
 		1230D24D2EBCEE9B00D7AC00 /* welcome_background.mov in Resources */ = {isa = PBXBuildFile; fileRef = 1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */; };
@@ -2371,8 +2372,9 @@
 		1214167A2D6375960097788B /* MainFrameAtDocumentStart.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = MainFrameAtDocumentStart.js; sourceTree = "<group>"; };
 		12141E682D686C030097788B /* EcosiaNetError.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = EcosiaNetError.html; sourceTree = "<group>"; };
 		12141E6A2D686C1C0097788B /* EcosiaNetError.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = EcosiaNetError.css; sourceTree = "<group>"; };
+		121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+WelcomeTransition.swift"; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
-		1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */ = {isa = PBXFileReference; lastKnownFileType = file; path = welcome_background.mov; sourceTree = "<group>"; };
+		1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = welcome_background.mov; sourceTree = "<group>"; };
 		123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeOrAfterView.swift; sourceTree = "<group>"; };
 		12348FF92DB8D2CC0017B0C2 /* PrefsKeys+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrefsKeys+Ecosia.swift"; sourceTree = "<group>"; };
 		123CEC4B2E7814A2009EB379 /* FoundersGroteskCondensed-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FoundersGroteskCondensed-Semibold.ttf"; sourceTree = "<group>"; };
@@ -10675,10 +10677,11 @@
 		2CFEA0422D455BD500B25CE0 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */,
 				1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */,
-				2CFEA0392D455BD500B25CE0 /* WelcomeViewController.swift */,
 				2CFEA03A2D455BD500B25CE0 /* WelcomeNavigation.swift */,
 				12B0D7932EA789B00022FECA /* WelcomeView.swift */,
+				2CFEA0392D455BD500B25CE0 /* WelcomeViewController.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -16828,6 +16831,7 @@
 				A5519CF52B5D57560062BECB /* SearchSettingsState.swift in Sources */,
 				AB936A692C05F2B100600F82 /* TrackingProtectionButton.swift in Sources */,
 				74F80D342A0A52D700013C3D /* PrivacyPolicyViewController.swift in Sources */,
+				121C6E182EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift in Sources */,
 				274A36CE239EB9EC00A21587 /* LibraryViewController+LibraryPanelDelegate.swift in Sources */,
 				C869912D28917688007ACC5C /* WallpaperImageLoader.swift in Sources */,
 				96A5F73829928B3700234E5F /* GeneralizedImageFetcher.swift in Sources */,

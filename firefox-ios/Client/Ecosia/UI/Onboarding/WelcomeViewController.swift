@@ -14,9 +14,9 @@ protocol WelcomeDelegate: AnyObject {
 final class WelcomeViewController: UIViewController {
     private weak var delegate: WelcomeDelegate?
     let windowUUID: WindowUUID
-    
+
     required init?(coder: NSCoder) { nil }
-    
+
     init(delegate: WelcomeDelegate, windowUUID: WindowUUID) {
         self.delegate = delegate
         self.windowUUID = windowUUID
@@ -24,14 +24,14 @@ final class WelcomeViewController: UIViewController {
         modalPresentationCapturesStatusBarAppearance = true
         definesPresentationContext = true
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         let swiftUIView = WelcomeView(
             windowUUID: windowUUID,
             onFinish: { [weak self] in
@@ -39,14 +39,14 @@ final class WelcomeViewController: UIViewController {
                 self.delegate?.welcomeDidFinish(self)
             }
         )
-        
+
         let hostingController = UIHostingController(rootView: swiftUIView)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         addChild(hostingController)
         view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
-        
+
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
             hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),

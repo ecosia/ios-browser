@@ -147,8 +147,18 @@ class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinish
     // MARK: - LaunchCoordinatorDelegate
 
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
-        router.dismiss(animated: true)
-        remove(child: coordinator)
         startBrowser(with: nil)
+
+        guard let browserCoordinator = childCoordinators.first(where: { $0 is BrowserCoordinator }) as? BrowserCoordinator else {
+            router.dismiss(animated: true)
+            remove(child: coordinator)
+            return
+        }
+
+        browserCoordinator.browserViewController.prepareToolbarsForWelcomeTransition()
+        router.dismiss(animated: true) {
+            browserCoordinator.browserViewController.animateToolbarsIn()
+        }
+        remove(child: coordinator)
     }
 }
