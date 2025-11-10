@@ -85,28 +85,39 @@ public struct EcosiaAccountImpactView: View {
             }
 
             // Conditional content based on login state
-            if viewModel.isLoggedIn {
-                EcosiaAccountSignedInView(
-                    viewModel: viewModel,
-                    windowUUID: windowUUID,
-                    onProfileTap: {
-                        showProfileWebView = true
-                    },
-                    onSignOutTap: {
-                        Task {
-                            await viewModel.handleLogout()
+            ZStack(alignment: .top) {
+                if !viewModel.isLoggedIn {
+                    EcosiaAccountSignedOutView(
+                        viewModel: viewModel,
+                        windowUUID: windowUUID,
+                        theme: theme,
+                        onLearnMoreTap: {
+                            showSeedsCounterInfoWebView = true
                         }
-                    }
-                )
-            } else {
-                EcosiaAccountSignedOutView(
-                    viewModel: viewModel,
-                    windowUUID: windowUUID,
-                    onLearnMoreTap: {
-                        showSeedsCounterInfoWebView = true
-                    }
-                )
+                    )
+                    .transition(.opacity)
+                    .zIndex(0)
+                }
+                
+                if viewModel.isLoggedIn {
+                    EcosiaAccountSignedInView(
+                        viewModel: viewModel,
+                        windowUUID: windowUUID,
+                        theme: theme,
+                        onProfileTap: {
+                            showProfileWebView = true
+                        },
+                        onSignOutTap: {
+                            Task {
+                                await viewModel.handleLogout()
+                            }
+                        }
+                    )
+                    .transition(.opacity)
+                    .zIndex(1)
+                }
             }
+            .animation(.easeInOut(duration: 0.3), value: viewModel.isLoggedIn)
         }
         .ecosiaThemed(windowUUID, $theme)
         .onChange(of: authStateProvider.currentLevelNumber) { _ in
