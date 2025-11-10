@@ -16,6 +16,7 @@ struct WelcomeView: View {
     @State private var welcomeTextOpacity: Double = 0.0
     @State private var logoOpacity: Double = 1.0
     @State private var logoOffset: CGFloat = 0.0
+    @State private var logoColor = Color(uiColor: UIColor.systemBackground) // Will be brandPrimary
     @State private var welcomeTextOffset: CGFloat = 0.0
     @State private var bodyOpacity: Double = 0.0
     @State private var bodyOffset: CGFloat = 0.0
@@ -69,11 +70,14 @@ struct WelcomeView: View {
             // Can the animation be done without hardcoded offsets? Maybe start and end position?
 
                 Image("ecosiaLogoLaunch")
+                    .renderingMode(.template)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .foregroundColor(logoColor)
                     .frame(width: 112, height: 28)
                     .offset(y: logoOffset)
                     .opacity(logoOpacity)
+                    .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
                     .accessibilityIdentifier(AccessibilityIdentifiers.Ecosia.logo)
             }
             // TODO: Make sure logo matches launch screen exactly
@@ -123,13 +127,15 @@ struct WelcomeView: View {
                 .offset(y: bodyOffset)
             }
         }
+        // Theme has to be applied before onAppear for logo color
+        .ecosiaThemed(windowUUID, $theme)
         .onAppear {
             // TODO: Update event
             Analytics.shared.introDisplaying(page: .start)
 
+            logoColor = theme.brandPrimaryColor
             startAnimationSequence()
         }
-        .ecosiaThemed(windowUUID, $theme)
     }
 
     private func startAnimationSequence() {
@@ -141,6 +147,7 @@ struct WelcomeView: View {
             transitionMaskWidth = screenWidth
             withAnimation(.easeInOut(duration: 0.5)) {
                 transitionMaskScale = 1.0
+                logoColor = theme.contentTextColor
             }
         }
 
@@ -205,11 +212,13 @@ struct WelcomeViewTheme: EcosiaThemeable {
     var contentTextColor = Color.white
     var buttonTextColor = Color.white
     var buttonBackgroundColor = Color.green
+    var brandPrimaryColor = Color.green
 
     mutating func applyTheme(theme: Theme) {
         contentTextColor = Color(theme.colors.ecosia.textStaticLight)
         buttonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
         buttonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)
+        brandPrimaryColor = Color(theme.colors.ecosia.brandPrimary)
     }
 }
 
