@@ -14,7 +14,7 @@ struct EcosiaCachedAsyncImage<Content: View, Placeholder: View>: View {
     private let placeholder: () -> Placeholder
     private let transition: AnyTransition
 
-    @StateObject private var loader = ImageCacheLoader()
+    @StateObject private var loader: ImageCacheLoader
 
     init(
         url: URL?,
@@ -26,6 +26,9 @@ struct EcosiaCachedAsyncImage<Content: View, Placeholder: View>: View {
         self.transition = transition
         self.content = content
         self.placeholder = placeholder
+        
+        // Initialize loader with cached image if available
+        _loader = StateObject(wrappedValue: ImageCacheLoader(url: url))
     }
 
     var body: some View {
@@ -51,13 +54,27 @@ struct EcosiaCachedAsyncImage<Content: View, Placeholder: View>: View {
     }
 }
 
-/// Image cache loader with NSCache-based memory caching
+/// Image cache loader with URLCache-based persistent caching
 @MainActor
 final class ImageCacheLoader: ObservableObject {
     @Published var image: UIImage?
 
-    private static let cache = NSCache<NSURL, UIImage>()
+    private static let cache: URLCache = {
+        // 100MB memory, 500MB disk - persists across app restarts
+        URLCache(memoryCapacity: 100_000_000, diskCapacity: 500_000_000)
+    }()
+    
     private var currentTask: Task<Void, Never>?
+    
+    /// Initialize with URL and immediately check cache to prevent flicker
+    init(url: URL?) {
+        // Check cache synchronously during initialization
+        if let url = url,
+           let cachedResponse = Self.cache.cachedResponse(for: URLRequest(url: url)),
+           let cachedImage = UIImage(data: cachedResponse.data) {
+            self.image = cachedImage
+        }
+    }
 
     deinit {
         currentTask?.cancel()
@@ -67,27 +84,33 @@ final class ImageCacheLoader: ObservableObject {
         // Cancel any existing task
         currentTask?.cancel()
 
-        // Check cache first
-        if let cachedImage = Self.cache.object(forKey: url as NSURL) {
+        let request = URLRequest(url: url)
+        
+        // Check URLCache first (disk + memory)
+        if let cachedResponse = Self.cache.cachedResponse(for: request),
+           let cachedImage = UIImage(data: cachedResponse.data) {
             self.image = cachedImage
             return
         }
 
         // Load from network with retry on cancellation
-        await loadImageWithRetry(from: url)
+        await loadImageWithRetry(from: url, request: request)
     }
 
-    private func loadImageWithRetry(from url: URL, isRetry: Bool = false) async {
+    private func loadImageWithRetry(from url: URL, request: URLRequest, isRetry: Bool = false) async {
         currentTask = Task {
             do {
-                let (data, _) = try await URLSession.shared.data(from: url)
+                let (data, response) = try await URLSession.shared.data(from: url)
 
                 // Check if task was cancelled
                 guard !Task.isCancelled else { return }
 
                 if let loadedImage = UIImage(data: data) {
-                    // Cache the image
-                    Self.cache.setObject(loadedImage, forKey: url as NSURL)
+                    // Cache the response with URLCache (persists to disk)
+                    if let httpResponse = response as? HTTPURLResponse {
+                        let cachedResponse = CachedURLResponse(response: httpResponse, data: data)
+                        Self.cache.storeCachedResponse(cachedResponse, for: request)
+                    }
                     self.image = loadedImage
                 }
             } catch {
@@ -99,7 +122,7 @@ final class ImageCacheLoader: ObservableObject {
                  */
                 if nsError.code == NSURLErrorCancelled && !isRetry {
                     EcosiaLogger.accounts.debug("Image load cancelled, retrying once")
-                    await loadImageWithRetry(from: url, isRetry: true)
+                    await loadImageWithRetry(from: url, request: request, isRetry: true)
                 } else if !Task.isCancelled {
                     EcosiaLogger.accounts.debug("Failed to load avatar image: \(error.localizedDescription)")
                 }

@@ -36,10 +36,13 @@ public struct EcosiaAvatar: View {
                 .clipShape(Circle())
                 .accessibilityLabel(String.localized(.userAvatarAccessibilityLabel))
                 .accessibilityIdentifier("user_avatar")
+                .transition(.opacity)
             } else {
                 placeholderView(imageName: signedOutPlaceholderImageName)
+                    .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: avatarURL)
     }
 
     private func placeholderView(imageName: String) -> some View {
