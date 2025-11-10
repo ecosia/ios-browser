@@ -65,6 +65,11 @@ final class NTPHeaderViewModel: ObservableObject {
         EcosiaLogger.auth.info("Performing immediate logout without confirmation")
         auth.logout()
     }
+
+    @MainActor
+    func checkDailySeedCollection() {
+        authStateProvider.checkDailySeedCollection()
+    }
 }
 
 // MARK: HomeViewModelProtocol

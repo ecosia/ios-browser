@@ -330,6 +330,23 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
+    // MARK: - Public Methods
+
+    /// Triggers daily seed collection check for logged-out users.
+    ///
+    /// Should be called when the NTP is displayed to ensure users receive their daily seed.
+    /// For logged-in users, this is a no-op as their seed collection is handled server-side.
+    @MainActor
+    public func checkDailySeedCollection() {
+        guard !isLoggedIn else {
+            EcosiaLogger.accounts.debug("Skipping daily seed check - user is logged in (handled server-side)")
+            return
+        }
+        
+        EcosiaLogger.accounts.debug("Checking daily seed collection for logged-out user")
+        handleLocalSeedCollection()
+    }
+
     // MARK: - Debug Methods
 
     /// Debug method to simulate balance updates for testing animations
