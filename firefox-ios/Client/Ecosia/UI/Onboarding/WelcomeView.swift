@@ -49,6 +49,8 @@ struct WelcomeView: View {
                             .scaleEffect(transitionMaskScale, anchor: .center)
                     )
             }
+            
+            // TODO: Add black gradient behind logo and body for readibility
 
             // Logo container
             VStack(spacing: 12) {
@@ -58,6 +60,10 @@ struct WelcomeView: View {
                     .multilineTextAlignment(.center)
                     .opacity(welcomeTextOpacity)
                     .offset(y: welcomeTextOffset)
+                
+            // TODO: Adjust spacing with offsets
+            // TODO: Make dynamic offsets depending on screen size
+            // Can the animation be done without hardcoded offsets? Maybe start and end position?
 
                 Image("ecosiaLogoLaunch")
                     .resizable()
@@ -105,6 +111,7 @@ struct WelcomeView: View {
                             .cornerRadius(24)
                     }
                 }
+                // TODO: Max 479 width for content on iPad
                 .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 112 : 16)
                 .padding(.bottom, 16)
                 .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 544 : .infinity)
