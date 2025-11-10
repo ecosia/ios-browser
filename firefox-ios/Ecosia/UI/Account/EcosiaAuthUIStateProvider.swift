@@ -306,7 +306,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
 
-        Self.seedProgressManagerType.resetToFirstLaunch()
+        Self.seedProgressManagerType.resetLocalSeedProgress()
 
         seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
         currentLevelNumber = 1

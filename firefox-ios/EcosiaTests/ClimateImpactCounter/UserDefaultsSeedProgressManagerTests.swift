@@ -63,12 +63,12 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
     }
 
     // Test resetting the progress to first-launch state
-    func test_reset_to_first_launch() {
+    func test_reset_local_seed_progress() {
         // Given
         UserDefaultsSeedProgressManager.addSeeds(2)
 
         // When
-        UserDefaultsSeedProgressManager.resetToFirstLaunch()
+        UserDefaultsSeedProgressManager.resetLocalSeedProgress()
 
         // Then
         let level = UserDefaultsSeedProgressManager.loadCurrentLevel()

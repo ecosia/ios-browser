@@ -159,12 +159,11 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
-    /// Resets to first-launch state for seed collection.
+    /// Resets the local seed progress to initial state (0 seeds, level 1, no last open date).
     ///
-    /// Sets seeds to 0, level to 1, and clears the last app open date.
-    /// This allows `collectDailySeed()` to treat the next call as a first launch,
-    /// ensuring a seed is collected immediately (e.g., after logout or reset).
-    public static func resetToFirstLaunch() {
+    /// Clears the last app open date to allow immediate seed collection.
+    /// Used on logout to prepare for fresh local seed collection.
+    public static func resetLocalSeedProgress() {
         UserDefaults.standard.set(0, forKey: totalSeedsCollectedKey)
         UserDefaults.standard.set(1, forKey: currentLevelKey)
         UserDefaults.standard.removeObject(forKey: lastAppOpenDateKey)

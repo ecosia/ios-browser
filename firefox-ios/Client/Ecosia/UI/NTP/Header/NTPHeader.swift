@@ -111,7 +111,7 @@ struct NTPHeaderView: View {
                             increment: increment,
                             windowUUID: windowUUID
                         )
-                        .offset(x: 20, y: -10)
+                        .offset(x: 18, y: -8)
                     }
 
             }
@@ -119,6 +119,9 @@ struct NTPHeaderView: View {
         .padding(.leading, .ecosia.space._m)
         .padding(.trailing, .ecosia.space._m)
         .onAppear {
+            viewModel.checkDailySeedCollection()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
             viewModel.checkDailySeedCollection()
         }
     }
