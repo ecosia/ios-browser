@@ -45,13 +45,13 @@ struct WelcomeView: View {
             // Video background (clipped to transition mask)
             if showRoundedBackground {
                 LoopingVideoPlayer(videoName: "welcome_background")
-                    .ignoresSafeArea()
                     .mask(
                         RoundedRectangle(cornerRadius: 16)
                             .frame(height: transitionMaskHeight)
                             .frame(maxWidth: transitionMaskWidth)
                             .scaleEffect(transitionMaskScale, anchor: .center)
                     )
+                    .ignoresSafeArea(edges: .all)
             }
 
             // TODO: Add black gradient behind logo and body for readibility
@@ -235,6 +235,7 @@ class VideoPlayerView: UIView {
         super.layoutSubviews()
         if let playerLayer = layer as? AVPlayerLayer {
             playerLayer.videoGravity = .resizeAspectFill
+            playerLayer.frame = bounds
         }
     }
 }
@@ -249,7 +250,6 @@ struct LoopingVideoPlayer: UIViewRepresentable {
             // Fallback to static image if video not found
             let imageView = UIImageView(image: UIImage(named: "forest"))
             imageView.contentMode = .scaleAspectFill
-            imageView.frame = view.bounds
             imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             view.addSubview(imageView)
             return view
