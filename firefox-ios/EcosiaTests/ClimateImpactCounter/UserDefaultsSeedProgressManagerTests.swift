@@ -62,20 +62,22 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         XCTAssertEqual(totalSeedsCollected, 3)
     }
 
-    // Test resetting the progress to the initial state
-    func test_reset_counter() {
+    // Test resetting the progress to first-launch state
+    func test_reset_to_first_launch() {
         // Given
         UserDefaultsSeedProgressManager.addSeeds(2)
 
         // When
-        UserDefaultsSeedProgressManager.resetCounter()
+        UserDefaultsSeedProgressManager.resetToFirstLaunch()
 
         // Then
         let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
         let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        let lastAppOpenDate = UserDefaultsSeedProgressManager.loadLastAppOpenDate()
 
         XCTAssertEqual(level, 1)
         XCTAssertEqual(totalSeedsCollected, 0)
+        XCTAssertNil(lastAppOpenDate, "Last app open date should be cleared to allow immediate seed collection")
     }
 
     // Test collecting a seed once per day

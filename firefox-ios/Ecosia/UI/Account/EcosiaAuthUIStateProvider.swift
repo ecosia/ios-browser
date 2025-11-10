@@ -306,10 +306,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
 
-        // Reset seeds and level, but clear lastAppOpenDate so collectDailySeed() treats it as first launch
-        UserDefaults.standard.set(0, forKey: "TotalSeedsCollected")
-        UserDefaults.standard.set(1, forKey: "CurrentLevel")
-        UserDefaults.standard.removeObject(forKey: "LastAppOpenDate")
+        Self.seedProgressManagerType.resetToFirstLaunch()
 
         seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
         currentLevelNumber = 1
