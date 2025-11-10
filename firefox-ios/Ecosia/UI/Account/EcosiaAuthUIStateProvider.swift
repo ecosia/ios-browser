@@ -182,6 +182,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             case .userLoggedOut:
                 EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
                 await resetToLocalSeedCollection()
+                await handleLocalSeedCollection()
             case .authStateLoaded:
                 break // State already updated above
             }
@@ -300,12 +301,15 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     /// Resets to local seed collection system after logout.
     ///
-    /// Resets seeds to 0, level to 1, and progress to default state.
+    /// Resets seeds to 0, level to 1, and clears lastAppOpenDate to allow immediate seed collection.
     @MainActor
     private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
 
-        UserDefaultsSeedProgressManager.saveProgress(totalSeeds: 0, currentLevel: 1, lastAppOpenDate: .now)
+        // Reset seeds and level, but clear lastAppOpenDate so collectDailySeed() treats it as first launch
+        UserDefaults.standard.set(0, forKey: "TotalSeedsCollected")
+        UserDefaults.standard.set(1, forKey: "CurrentLevel")
+        UserDefaults.standard.removeObject(forKey: "LastAppOpenDate")
 
         seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
         currentLevelNumber = 1
