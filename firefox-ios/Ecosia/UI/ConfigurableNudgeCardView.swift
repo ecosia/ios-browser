@@ -37,6 +37,10 @@ public struct NudgeCardStyle {
 public struct NudgeCardLayout {
     let imageSize: CGFloat
     let closeButtonSize: CGFloat
+    let closeButtonPaddingTop: CGFloat
+    let closeButtonPaddingLeading: CGFloat
+    let closeButtonPaddingBottom: CGFloat
+    let closeButtonPaddingTrailing: CGFloat
     let horizontalSpacing: CGFloat
     let verticalSpacing: CGFloat
     let contentPadding: CGFloat
@@ -49,17 +53,25 @@ public struct NudgeCardLayout {
 
     public init(imageSize: CGFloat = 48,
                 closeButtonSize: CGFloat = 15,
+                closeButtonPaddingTop: CGFloat = 0,
+                closeButtonPaddingLeading: CGFloat = 0,
+                closeButtonPaddingBottom: CGFloat = 0,
+                closeButtonPaddingTrailing: CGFloat = 0,
                 horizontalSpacing: CGFloat = .ecosia.space._2s,
                 verticalSpacing: CGFloat = .ecosia.space._2s,
                 contentPadding: CGFloat = .ecosia.space._m,
                 cornerRadius: CGFloat = .ecosia.borderRadius._l,
                 borderWidth: CGFloat = 1,
-                titleFont: Font = .headline.bold(),
-                descriptionFont: Font = .subheadline,
-                buttonFont: Font = .subheadline,
+                titleFont: Font = .ecosia(size: .ecosia.font._l, weight: .bold),
+                descriptionFont: Font = .ecosia(size: .ecosia.font._m),
+                buttonFont: Font = .ecosia(size: .ecosia.font._m),
                 buttonTopPadding: CGFloat = .ecosia.space._1s) {
         self.imageSize = imageSize
         self.closeButtonSize = closeButtonSize
+        self.closeButtonPaddingTop = closeButtonPaddingTop
+        self.closeButtonPaddingLeading = closeButtonPaddingLeading
+        self.closeButtonPaddingBottom = closeButtonPaddingBottom
+        self.closeButtonPaddingTrailing = closeButtonPaddingTrailing
         self.horizontalSpacing = horizontalSpacing
         self.verticalSpacing = verticalSpacing
         self.contentPadding = contentPadding
@@ -130,7 +142,8 @@ public struct ConfigurableNudgeCardView: View {
             }
 
             // Text and Action Stack
-            VStack(alignment: .leading, spacing: viewModel?.layout.verticalSpacing ?? .ecosia.space._2s) {
+            VStack(alignment: .leading,
+                   spacing: viewModel?.layout.verticalSpacing ?? .ecosia.space._2s) {
                 if let title = viewModel?.title {
                     Text(title)
                         .font(viewModel?.layout.titleFont ?? .headline.bold())
@@ -179,6 +192,10 @@ public struct ConfigurableNudgeCardView: View {
                         .accessibilityIdentifier("nudge_card_close_button")
                         .accessibilityAddTraits(.isButton)
                 }
+                .padding(.top, viewModel?.layout.closeButtonPaddingTop ?? 0)
+                .padding(.leading, viewModel?.layout.closeButtonPaddingLeading ?? 0)
+                .padding(.bottom, viewModel?.layout.closeButtonPaddingBottom ?? 0)
+                .padding(.trailing, viewModel?.layout.closeButtonPaddingTrailing ?? 0)
             }
         }
         .onTapGesture {
