@@ -34,7 +34,7 @@ public struct DynamicPresentationDetentModifier: ViewModifier {
                 }
             }
             .presentationDetents([.height(calculatedHeight)])
-            .presentationDragIndicator(.visible)
+            .presentationDragIndicator(.automatic)
     }
 }
 
