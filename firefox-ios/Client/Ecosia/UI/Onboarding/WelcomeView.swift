@@ -14,9 +14,11 @@ struct WelcomeView: View {
     @State private var transitionMaskHeight: CGFloat = 200.0
     @State private var transitionMaskWidth: CGFloat = 200.0
     @State private var welcomeTextOpacity: Double = 0.0
+    @State private var logoOpacity: Double = 1.0
     @State private var logoOffset: CGFloat = 0.0
     @State private var welcomeTextOffset: CGFloat = 0.0
     @State private var bodyOpacity: Double = 0.0
+    @State private var bodyOffset: CGFloat = 0.0
     @State private var showRoundedBackground: Bool = false
     @State private var backgroundOpacity: Double = 1.0
     @State private var theme = WelcomeViewTheme()
@@ -29,6 +31,7 @@ struct WelcomeView: View {
         case phase1Complete
         case phase2Complete
         case phase3Complete
+        case final
     }
 
     var body: some View {
@@ -49,7 +52,7 @@ struct WelcomeView: View {
                             .scaleEffect(transitionMaskScale, anchor: .center)
                     )
             }
-            
+
             // TODO: Add black gradient behind logo and body for readibility
 
             // Logo container
@@ -60,7 +63,7 @@ struct WelcomeView: View {
                     .multilineTextAlignment(.center)
                     .opacity(welcomeTextOpacity)
                     .offset(y: welcomeTextOffset)
-                
+
             // TODO: Adjust spacing with offsets
             // TODO: Make dynamic offsets depending on screen size
             // Can the animation be done without hardcoded offsets? Maybe start and end position?
@@ -70,6 +73,7 @@ struct WelcomeView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 112, height: 28)
                     .offset(y: logoOffset)
+                    .opacity(logoOpacity)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Ecosia.logo)
             }
             // TODO: Make sure logo matches launch screen exactly
@@ -100,7 +104,7 @@ struct WelcomeView: View {
                     Button(action: {
                         // TODO: Update event
                         Analytics.shared.introClick(.next, page: .start)
-                        onFinish()
+                        startExitAnimation()
                     }) {
                         Text(verbatim: .localized(.getStarted))
                             .font(.body)
@@ -116,6 +120,7 @@ struct WelcomeView: View {
                 .padding(.bottom, 16)
                 .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 544 : .infinity)
                 .opacity(bodyOpacity)
+                .offset(y: bodyOffset)
             }
         }
         .onAppear {
@@ -161,6 +166,25 @@ struct WelcomeView: View {
                 backgroundOpacity = 0.0
                 animationPhase = .phase3Complete
             }
+        }
+    }
+
+    private func startExitAnimation() {
+        // Phase 4: Exit transition - move content out while fading
+        withAnimation(.easeInOut(duration: 0.35)) {
+            logoOffset = -332.0
+            logoOpacity = 0.0
+            welcomeTextOffset = -355.0
+            bodyOffset = 50.0
+            bodyOpacity = 0.0
+            welcomeTextOpacity = 0.0
+            backgroundOpacity = 1.0
+            animationPhase = .final
+        }
+
+        // Dismiss after animation completes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            onFinish()
         }
     }
 
