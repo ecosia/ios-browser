@@ -85,7 +85,7 @@ struct WelcomeView: View {
             .ignoresSafeArea(edges: .vertical)
 
             // Content
-            if animationPhase.isPhase3 {
+            if animationPhase == .phase3Complete {
                 VStack {
                     Spacer()
 
@@ -197,12 +197,6 @@ struct WelcomeView: View {
 
     private var simplestWayString: String {
         .localized(.theSimplestWay)
-    }
-}
-
-extension WelcomeView.AnimationPhase {
-    var isPhase3: Bool {
-        self == .phase3Complete
     }
 }
 
