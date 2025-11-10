@@ -37,25 +37,6 @@ public struct EcosiaAccountImpactView: View {
 
     public var body: some View {
         VStack(spacing: .ecosia.space._l) {
-            // Close button
-            Button(action: viewModel.handleDismiss) {
-                Image("close", bundle: .ecosia)
-                    .renderingMode(.template)
-                    .resizable()
-                    .frame(width: UX.closeButtonSize, height: UX.closeButtonSize)
-                    .foregroundStyle(theme.closeButtonColor)
-                    .background(
-                        Circle()
-                            .fill(theme.closeButtonBackgroundColor)
-                            .frame(width: UX.closeButtonBackgroundSize, height: UX.closeButtonBackgroundSize)
-                    )
-            }
-            .padding(.horizontal, .ecosia.space._l)
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .accessibilityLabel(String.localized(.close))
-            .accessibilityIdentifier("account_impact_close_button")
-            .accessibilityAddTraits(.isButton)
-
             // User info section with avatar (always present)
             HStack(alignment: .center, spacing: .ecosia.space._m) {
                 EcosiaAccountProgressAvatar(
@@ -70,26 +51,28 @@ public struct EcosiaAccountImpactView: View {
                 )
 
                 VStack(alignment: .leading, spacing: .ecosia.space._1s) {
-                     Text(viewModel.userDisplayText)
-                        .font(.title3.bold())
+                    Text(viewModel.userDisplayText)
+                        .font(.ecosia(size: .ecosia.font._2l, weight: .bold))
                         .foregroundColor(theme.textPrimaryColor)
                         .accessibilityIdentifier("account_impact_username")
                         .frame(minHeight: 25)
 
-                     Text(viewModel.levelDisplayText)
-                         .font(.body)
-                         .foregroundColor(theme.levelTextColor)
-                         .padding(.horizontal, 8)
-                         .padding(.vertical, 2)
-                         .background(
-                             Capsule()
-                                 .fill(theme.levelBackgroundColor)
-                         )
-                     .accessibilityIdentifier("account_impact_level")
+                    Text(viewModel.levelDisplayText)
+                        .font(.ecosia(size: .ecosia.font._s, weight: .medium))
+                        .foregroundColor(theme.levelTextColor)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(theme.levelBackgroundColor)
+                        )
+                        .accessibilityLabel(String(format: .localized(.userLevelAccessibilityLabel), viewModel.levelDisplayText))
+                        .accessibilityIdentifier("account_impact_level")
                 }
             }
             .padding(.horizontal, .ecosia.space._m)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
 
             // Show error view if register visit failed
             if authStateProvider.hasRegisterVisitError {
@@ -126,6 +109,10 @@ public struct EcosiaAccountImpactView: View {
             }
         }
         .ecosiaThemed(windowUUID, $theme)
+        .onChange(of: authStateProvider.currentLevelNumber) { _ in
+            let themeManager = AppContainer.shared.resolve() as ThemeManager
+            theme.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        }
         .onReceive(NotificationCenter.default.publisher(for: .EcosiaAccountLevelUp)) { _ in
             showSparkles = true
         }
@@ -165,10 +152,12 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
     public var cardBackgroundColor = Color.white
     public var textPrimaryColor = Color.black
     public var textSecondaryColor = Color.gray
-    public var closeButtonColor = Color.black
-    public var closeButtonBackgroundColor = Color.gray.opacity(0.2)
-    public var actionButtonTextColor = Color.blue
-    public var ctaButtonBackgroundColor = Color.green
+    public var cardActionButtonTextColor = Color.blue
+    public var cardCloseButtonColor = Color.gray.opacity(0.3)
+    public var signInButtonBackgroundColor = Color.green
+    public var signInButtonTextColor = Color.green
+    public var signOutImageTintColor = Color.green
+    public var signOutButtonTextColor = Color.green
     public var borderColor = Color.gray.opacity(0.2)
     public var avatarPlaceholderColor = Color.gray.opacity(0.3)
     public var avatarIconColor = Color.gray
@@ -178,19 +167,27 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
     public init() {}
 
     public mutating func applyTheme(theme: Theme) {
-        backgroundColor = Color(theme.colors.layer1)
-        cardBackgroundColor = Color(theme.colors.layer2)
-        textPrimaryColor = Color(theme.colors.textPrimary)
-        textSecondaryColor = Color(theme.colors.textSecondary)
-        closeButtonColor = Color(theme.colors.iconPrimary)
-        closeButtonBackgroundColor = Color(theme.colors.actionSecondary)
-        actionButtonTextColor = Color(theme.colors.ecosia.linkPrimary)
-        ctaButtonBackgroundColor = Color(theme.colors.ecosia.brandPrimary)
-        borderColor = Color(theme.colors.borderPrimary)
-        avatarPlaceholderColor = Color(theme.colors.layer3)
-        avatarIconColor = Color(theme.colors.iconSecondary)
-        levelTextColor = Color(theme.colors.ecosia.textInversePrimary)
-        levelBackgroundColor = Color(theme.colors.ecosia.backgroundNeutralInverse)
+        backgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
+        cardBackgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
+        cardActionButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondary)
+        cardCloseButtonColor = Color(theme.colors.ecosia.buttonContentSecondary)
+        textPrimaryColor = Color(theme.colors.ecosia.textPrimary)
+        textSecondaryColor = Color(theme.colors.ecosia.textSecondary)
+        signInButtonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)
+        signInButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
+        signOutImageTintColor = Color(theme.colors.ecosia.buttonContentSecondary)
+        signOutButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondary)
+        borderColor = Color(theme.colors.ecosia.borderDecorative)
+        avatarPlaceholderColor = Color(theme.colors.ecosia.backgroundTertiary)
+        avatarIconColor = Color(theme.colors.ecosia.backgroundPrimary)
+
+        if EcosiaAuthUIStateProvider.shared.currentLevelNumber > 1 {
+            levelTextColor = Color(theme.colors.ecosia.textStaticDark)
+            levelBackgroundColor = Color(theme.colors.ecosia.brandImpact)
+        } else {
+            levelTextColor = Color(theme.colors.ecosia.textInversePrimary)
+            levelBackgroundColor = Color(theme.colors.ecosia.backgroundNeutralInverse)
+        }
     }
 }
 

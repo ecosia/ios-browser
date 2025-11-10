@@ -11,7 +11,6 @@ public struct EcosiaAccountSignedOutView: View {
     @ObservedObject private var viewModel: EcosiaAccountImpactViewModel
     private let windowUUID: WindowUUID
     private let onLearnMoreTap: () -> Void
-
     @State private var theme = EcosiaAccountSignedOutViewTheme()
     @State private var isCardDismissed: Bool
     @State private var cardHeight: CGFloat?
@@ -22,6 +21,10 @@ public struct EcosiaAccountSignedOutView: View {
         NudgeCardLayout(
             imageSize: UX.imageImpactWidthHeight,
             closeButtonSize: UX.closeButtonSize,
+            closeButtonPaddingTop: .ecosia.space._s,
+            closeButtonPaddingLeading: .ecosia.space._s,
+            closeButtonPaddingBottom: .ecosia.space._s,
+            closeButtonPaddingTrailing: .ecosia.space._s,
             horizontalSpacing: .ecosia.space._m,
             borderWidth: UX.borderWidth
         )
@@ -30,12 +33,17 @@ public struct EcosiaAccountSignedOutView: View {
     public init(
         viewModel: EcosiaAccountImpactViewModel,
         windowUUID: WindowUUID,
+        theme: EcosiaAccountImpactViewTheme? = nil,
         onLearnMoreTap: @escaping () -> Void
     ) {
         self.viewModel = viewModel
         self.windowUUID = windowUUID
         self.onLearnMoreTap = onLearnMoreTap
         self._isCardDismissed = State(initialValue: !User.shared.shouldShowAccountImpactNudgeCard)
+
+        if let theme = theme {
+            self._theme = State(initialValue: EcosiaAccountSignedOutViewTheme(from: theme))
+        }
     }
 
     public var body: some View {
@@ -50,10 +58,10 @@ public struct EcosiaAccountSignedOutView: View {
                     showsCloseButton: true,
                     style: NudgeCardStyle(
                         backgroundColor: theme.cardBackgroundColor,
-                        textPrimaryColor: theme.textPrimaryColor,
-                        textSecondaryColor: theme.textSecondaryColor,
-                        closeButtonTextColor: theme.closeButtonColor,
-                        actionButtonTextColor: theme.actionButtonTextColor
+                        textPrimaryColor: theme.cardTextPrimaryColor,
+                        textSecondaryColor: theme.cardTextSecondaryColor,
+                        closeButtonTextColor: theme.cardCloseButtonColor,
+                        actionButtonTextColor: theme.cardActionButtonTextColor
                     ),
                     layout: impactCardLayout
                 ),
@@ -79,12 +87,13 @@ public struct EcosiaAccountSignedOutView: View {
             // Sign Up CTA button
             Button(action: viewModel.handleMainCTATap) {
                 Text(viewModel.mainCTAText)
-                    .font(.body.bold())
-                    .frame(maxWidth: .infinity)
+                    .font(.ecosia(size: .ecosia.font._l, weight: .regular))
                     .padding(.ecosia.space._m)
-                    .foregroundColor(.white)
-                    .background(theme.ctaButtonBackgroundColor)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: UX.ctaButtonHeight)
                     .cornerRadius(.ecosia.borderRadius._m)
+                    .background(theme.ctaButtonBackgroundColor)
+                    .foregroundColor(theme.ctaButtonTextColor)
             }
             .clipShape(Capsule())
             .accessibilityIdentifier("account_impact_cta_button")
@@ -112,6 +121,7 @@ public struct EcosiaAccountSignedOutView: View {
         static let closeButtonSize: CGFloat = 15
         static let imageImpactWidthHeight: CGFloat = 80
         static let borderWidth: CGFloat = 1
+        static let ctaButtonHeight: CGFloat = 40
     }
 }
 
@@ -119,25 +129,37 @@ public struct EcosiaAccountSignedOutView: View {
 @available(iOS 16.0, *)
 public struct EcosiaAccountSignedOutViewTheme: EcosiaThemeable {
     public var cardBackgroundColor = Color.white
-    public var textPrimaryColor = Color.black
-    public var textSecondaryColor = Color.gray
-    public var closeButtonColor = Color.black
-    public var actionButtonTextColor = Color.blue
+    public var cardTextPrimaryColor = Color.black
+    public var cardTextSecondaryColor = Color.gray
+    public var cardCloseButtonColor = Color.black
+    public var cardActionButtonTextColor = Color.blue
+    public var ctaButtonTextColor = Color.green
     public var ctaButtonBackgroundColor = Color.green
-    public var levelTextColor = Color.white
-    public var levelBackgroundColor = Color.black
 
     public init() {}
 
     public mutating func applyTheme(theme: Theme) {
-        cardBackgroundColor = Color(theme.colors.layer2)
-        textPrimaryColor = Color(theme.colors.textPrimary)
-        textSecondaryColor = Color(theme.colors.textSecondary)
-        closeButtonColor = Color(theme.colors.iconPrimary)
-        actionButtonTextColor = Color(theme.colors.ecosia.brandPrimary)
-        ctaButtonBackgroundColor = Color(theme.colors.ecosia.brandPrimary)
-        levelTextColor = Color(theme.colors.textInverted)
-        levelBackgroundColor = Color(theme.colors.textPrimary)
+        cardBackgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
+        cardTextPrimaryColor = Color(theme.colors.ecosia.textPrimary)
+        cardTextSecondaryColor = Color(theme.colors.ecosia.textSecondary)
+        cardActionButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondary)
+        cardCloseButtonColor = Color(theme.colors.ecosia.buttonContentSecondary)
+        ctaButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
+        ctaButtonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)
+    }
+}
+
+@available(iOS 16.0, *)
+extension EcosiaAccountSignedOutViewTheme {
+
+    public init(from parentTheme: EcosiaAccountImpactViewTheme) {
+        self.cardBackgroundColor = parentTheme.cardBackgroundColor
+        self.cardTextPrimaryColor = parentTheme.textPrimaryColor
+        self.cardTextSecondaryColor = parentTheme.textSecondaryColor
+        self.cardCloseButtonColor = parentTheme.cardCloseButtonColor
+        self.cardActionButtonTextColor = parentTheme.cardActionButtonTextColor
+        self.ctaButtonTextColor = parentTheme.signInButtonTextColor
+        self.ctaButtonBackgroundColor = parentTheme.signInButtonBackgroundColor
     }
 }
 
