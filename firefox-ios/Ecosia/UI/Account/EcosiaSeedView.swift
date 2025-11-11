@@ -15,14 +15,22 @@ public struct EcosiaSeedView: View {
     private let spacing: CGFloat
     private let enableAnimation: Bool
     private let windowUUID: WindowUUID
-    @State private var bounceScale: CGFloat = 1.0
+    @State private var animationScale: CGFloat = 1.0
+    @State private var animationOffsetY: CGFloat = 0
+    @State private var animationRotation: Double = 0
+    @State private var animationOffsetX: CGFloat = 0
+    @State private var previousSeedCount: Int = 0
     @State private var theme = EcosiaSeedViewTheme()
 
     private struct UX {
-        static let bounceScaleMin: CGFloat = 0.75
-        static let bounceAnimationDuration: TimeInterval = 0.3
-        static let springResponse: Double = 0.5
-        static let springDamping: Double = 0.45
+        static let springResponse: Double = 0.6
+        static let springDampingFraction: Double = 0.5
+        static let squeezeScale: CGFloat = 0.5
+        static let squeezeOffsetX: CGFloat = -5
+        static let squeezeOffsetY: CGFloat = -5
+        static let squeezeRotation: Double = -10.0
+        static let squeezeDuration: TimeInterval = 0.2
+        static let bounceDelay: TimeInterval = 0.15
     }
 
     public init(
@@ -55,7 +63,9 @@ public struct EcosiaSeedView: View {
             Image("seed", bundle: .ecosia)
                 .resizable()
                 .frame(width: iconSize, height: iconSize)
-                .scaleEffect(enableAnimation ? bounceScale : 1.0)
+                .scaleEffect(enableAnimation ? animationScale : 1.0)
+                .rotationEffect(.degrees(enableAnimation ? animationRotation : 0))
+                .offset(x: enableAnimation ? animationOffsetX : 0, y: enableAnimation ? animationOffsetY : 0)
                 .accessibilityHidden(true)
 
             Text(displayedSeedCount)
@@ -66,22 +76,38 @@ public struct EcosiaSeedView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityIdentifier("seed_count_view")
-        .onChange(of: seedCount) { _ in
-            if enableAnimation {
-                triggerBounce()
+        .onChange(of: seedCount) { newValue in
+            // Only animate on increases, not on decreases or resets
+            if enableAnimation && newValue > previousSeedCount {
+                triggerSeedAnimation()
             }
+            previousSeedCount = newValue
         }
         .ecosiaThemed(windowUUID, $theme)
     }
 
-    private func triggerBounce() {
-        withAnimation(.easeOut(duration: UX.bounceAnimationDuration)) {
-            bounceScale = UX.bounceScaleMin
+    private func triggerSeedAnimation() {
+        // Start at normal state
+        animationScale = 1.0
+        animationRotation = 0
+        animationOffsetY = 0
+        animationOffsetX = 0
+        
+        // Quick squeeze toward upper-left
+        withAnimation(.easeIn(duration: UX.squeezeDuration)) {
+            animationScale = UX.squeezeScale
+            animationRotation = UX.squeezeRotation
+            animationOffsetX = UX.squeezeOffsetX
+            animationOffsetY = UX.squeezeOffsetY
         }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.bounceAnimationDuration) {
-            withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDamping, blendDuration: 0)) {
-                bounceScale = 1.0
+        
+        // Spring back to normal with bounce
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.squeezeDuration + UX.bounceDelay) {
+            withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDampingFraction)) {
+                animationScale = 1.0
+                animationRotation = 0
+                animationOffsetX = 0
+                animationOffsetY = 0
             }
         }
     }
