@@ -14,6 +14,7 @@ public struct EcosiaSeedView: View {
     private let iconSize: CGFloat
     private let spacing: CGFloat
     private let enableAnimation: Bool
+    private let showSparkles: Bool
     private let windowUUID: WindowUUID
     @State private var animationScale: CGFloat = 1.0
     @State private var animationOffsetY: CGFloat = 0
@@ -38,12 +39,14 @@ public struct EcosiaSeedView: View {
         iconSize: CGFloat = .ecosia.space._1l,
         spacing: CGFloat = .ecosia.space._1s,
         enableAnimation: Bool = true,
+        showSparkles: Bool = false,
         windowUUID: WindowUUID
     ) {
         self.seedCount = seedCount
         self.iconSize = iconSize
         self.spacing = spacing
         self.enableAnimation = enableAnimation
+        self.showSparkles = showSparkles
         self.windowUUID = windowUUID
     }
 
@@ -67,6 +70,20 @@ public struct EcosiaSeedView: View {
                 .rotationEffect(.degrees(enableAnimation ? animationRotation : 0))
                 .offset(x: enableAnimation ? animationOffsetX : 0, y: enableAnimation ? animationOffsetY : 0)
                 .accessibilityHidden(true)
+                .overlay(
+                    GeometryReader { geometry in
+                        if showSparkles {
+                            EcosiaSparkleAnimation(
+                                isVisible: showSparkles,
+                                containerSize: iconSize * 2.5,
+                                sparkleSize: iconSize * 0.4
+                            )
+                            .frame(width: iconSize * 2.5, height: iconSize * 2.5)
+                            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                            .allowsHitTesting(false)
+                        }
+                    }
+                )
 
             Text(displayedSeedCount)
                 .font(.headline)
@@ -77,7 +94,6 @@ public struct EcosiaSeedView: View {
         .accessibilityLabel(accessibilityLabel)
         .accessibilityIdentifier("seed_count_view")
         .onChange(of: seedCount) { newValue in
-            // Only animate on increases, not on decreases or resets
             if enableAnimation && newValue > previousSeedCount {
                 triggerSeedAnimation()
             }
@@ -87,13 +103,11 @@ public struct EcosiaSeedView: View {
     }
 
     private func triggerSeedAnimation() {
-        // Start at normal state
         animationScale = 1.0
         animationRotation = 0
         animationOffsetY = 0
         animationOffsetX = 0
         
-        // Quick squeeze toward upper-left
         withAnimation(.easeIn(duration: UX.squeezeDuration)) {
             animationScale = UX.squeezeScale
             animationRotation = UX.squeezeRotation
@@ -101,7 +115,6 @@ public struct EcosiaSeedView: View {
             animationOffsetY = UX.squeezeOffsetY
         }
         
-        // Spring back to normal with bounce
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.squeezeDuration + UX.bounceDelay) {
             withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDampingFraction)) {
                 animationScale = 1.0

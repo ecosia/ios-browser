@@ -12,20 +12,77 @@ public struct EcosiaSparkleAnimation: View {
     private let animationDuration: Double
     private let onComplete: (() -> Void)?
 
-    @State private var sparkles: [SparkleData] = []
+    @State private var sparkles: [SparkleState] = []
 
-    private struct UX {
-        static let numberOfSparkles = 6
-        static let minSparkleSize: CGFloat = 10
-        static let maxSparkleSize: CGFloat = 24
-        static let radiusMultiplierMin: CGFloat = 0.4
-        static let radiusMultiplierMax: CGFloat = 1.2
-        static let animationDelayMax = 1.0
-        static let sparkleLifetimeMin = 1.0
-        static let sparkleLifetimeMax = 2.0
-        static let opacityMin = 0.8
-        static let opacityMax = 1.0
-        static let fadeOutDuration = 0.4
+    /// Choreography phase definition
+    private struct SparklePhase {
+        let positionX: CGFloat
+        let positionY: CGFloat
+        let startSize: CGFloat
+        let endSize: CGFloat
+        let startRotation: Double
+        let endRotation: Double
+        let startOpacity: Double
+        let endOpacity: Double
+        let duration: TimeInterval
+        let delay: TimeInterval
+        let timing: AnimationTiming
+        
+        enum AnimationTiming {
+            case easeIn
+            case easeOut
+            case linear
+        }
+    }
+    
+    /// Corner position for sparkles
+    private enum SparkleCorner {
+        case topLeft
+        case bottomLeft
+        case topRight
+        
+        func offset(for containerSize: CGFloat) -> (x: CGFloat, y: CGFloat) {
+            let cornerOffset = (containerSize / 2) * 0.5  // 50% of the way to the corner
+            switch self {
+            case .topLeft:
+                return (-cornerOffset, -cornerOffset)
+            case .bottomLeft:
+                return (-cornerOffset, cornerOffset)
+            case .topRight:
+                return (cornerOffset, -cornerOffset)
+            }
+        }
+    }
+    
+    /// Generates sparkle phases for a given corner position
+    private func createSparklePhases(
+        corner: SparkleCorner,
+        containerSize: CGFloat,
+        appearSize: CGFloat,
+        appearDelay: TimeInterval,
+        appearTiming: SparklePhase.AnimationTiming,
+        disappearRotation: Double
+    ) -> [SparklePhase] {
+        let position = corner.offset(for: containerSize)
+        
+        return [
+            SparklePhase(
+                positionX: position.x, positionY: position.y,
+                startSize: 8, endSize: appearSize,
+                startRotation: -45, endRotation: 0,
+                startOpacity: 0, endOpacity: 1,
+                duration: 0.2, delay: appearDelay,
+                timing: appearTiming
+            ),
+            SparklePhase(
+                positionX: position.x, positionY: position.y,
+                startSize: appearSize, endSize: 8,
+                startRotation: 0, endRotation: disappearRotation,
+                startOpacity: 1, endOpacity: 0,
+                duration: 0.2, delay: appearDelay + 0.2,
+                timing: .linear
+            )
+        ]
     }
 
     public init(
@@ -49,8 +106,9 @@ public struct EcosiaSparkleAnimation: View {
                     Image("highlight-star", bundle: .ecosia)
                         .resizable()
                         .frame(width: sparkle.size, height: sparkle.size)
-                        .position(sparkle.position)
+                        .rotationEffect(.degrees(sparkle.rotation))
                         .opacity(sparkle.opacity)
+                        .offset(x: sparkle.offsetX, y: sparkle.offsetY)
                         .accessibilityHidden(true)
                 }
             }
@@ -58,79 +116,104 @@ public struct EcosiaSparkleAnimation: View {
         .frame(width: containerSize, height: containerSize)
         .onChange(of: isVisible) { visible in
             if visible {
-                startSparkleAnimation()
+                triggerAnimation()
             } else {
-                stopSparkleAnimation()
+                sparkles.removeAll()
             }
         }
         .onAppear {
             if isVisible {
-                startSparkleAnimation()
+                triggerAnimation()
             }
         }
     }
 
-    private func startSparkleAnimation() {
-        generateSparkles()
-        animateSparkles()
-
-        // Run for animationDuration, then gracefully fade out
-        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
-            stopSparkleAnimation()
+    private func triggerAnimation() {
+        runBurst(burstIndex: 0)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            self.runBurst(burstIndex: 1)
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            self.sparkles.removeAll()
+            self.onComplete?()
         }
     }
-
-    private func stopSparkleAnimation() {
-        withAnimation(.easeOut(duration: UX.fadeOutDuration)) {
-            for i in sparkles.indices {
-                sparkles[i].opacity = 0
-            }
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.fadeOutDuration) {
-            sparkles.removeAll()
-            onComplete?()
-        }
-    }
-
-    private func generateSparkles() {
-        sparkles.removeAll()
-
-        for _ in 0..<UX.numberOfSparkles {
-            let radius = min(containerSize, containerSize) / 2.0
-            let radiusMultiplier = CGFloat.random(in: UX.radiusMultiplierMin...UX.radiusMultiplierMax)
-            let drawnRadius = (radius - sparkleSize / 2) * radiusMultiplier
-            let angle = Double.random(in: 0...(2 * .pi))
-
-            let x = containerSize * 0.5 + drawnRadius * cos(angle)
-            let y = containerSize * 0.5 + drawnRadius * sin(angle)
-
-            let sparkle = SparkleData(
-                position: CGPoint(x: x, y: y),
-                size: CGFloat.random(in: UX.minSparkleSize...UX.maxSparkleSize),
-                opacity: 0.0
+    
+    private func runBurst(burstIndex: Int) {
+        let offset = burstIndex * 3
+        
+        animateSparkle(
+            id: offset + 0,
+            phases: createSparklePhases(
+                corner: .topLeft,
+                containerSize: containerSize,
+                appearSize: 28,
+                appearDelay: 0.0,
+                appearTiming: .easeIn,
+                disappearRotation: 45
             )
-            sparkles.append(sparkle)
-        }
+        )
+        
+        animateSparkle(
+            id: offset + 1,
+            phases: createSparklePhases(
+                corner: .bottomLeft,
+                containerSize: containerSize,
+                appearSize: 20,
+                appearDelay: 0.4,
+                appearTiming: .linear,
+                disappearRotation: -45
+            )
+        )
+        
+        animateSparkle(
+            id: offset + 2,
+            phases: createSparklePhases(
+                corner: .topRight,
+                containerSize: containerSize,
+                appearSize: 20,
+                appearDelay: 0.8,
+                appearTiming: .linear,
+                disappearRotation: 45
+            )
+        )
     }
-
-    private func animateSparkles() {
-        for i in sparkles.indices {
-            let delay = Double.random(in: 0...UX.animationDelayMax)
-            let sparkleLifetime = Double.random(in: UX.sparkleLifetimeMin...UX.sparkleLifetimeMax)
-            let finalOpacity = Double.random(in: UX.opacityMin...UX.opacityMax)
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                let halfLifetime = sparkleLifetime / 2.0
-
-                withAnimation(.easeIn(duration: halfLifetime)) {
-                    sparkles[i].opacity = finalOpacity
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + halfLifetime) {
-                    withAnimation(.easeOut(duration: halfLifetime)) {
-                        sparkles[i].opacity = 0
+    
+    private func animateSparkle(id: Int, phases: [SparklePhase]) {
+        guard let firstPhase = phases.first else { return }
+        
+        let sparkle = SparkleState(
+            id: UUID(),
+            sparkleID: id,
+            offsetX: firstPhase.positionX,
+            offsetY: firstPhase.positionY,
+            size: firstPhase.startSize,
+            rotation: firstPhase.startRotation,
+            opacity: firstPhase.startOpacity
+        )
+        sparkles.append(sparkle)
+        
+        for phase in phases {
+            DispatchQueue.main.asyncAfter(deadline: .now() + phase.delay) {
+                guard let index = self.sparkles.firstIndex(where: { $0.sparkleID == id }) else { return }
+                
+                let animation: Animation = {
+                    switch phase.timing {
+                    case .easeIn:
+                        return .easeIn(duration: phase.duration)
+                    case .easeOut:
+                        return .easeOut(duration: phase.duration)
+                    case .linear:
+                        return .linear(duration: phase.duration)
                     }
+                }()
+                
+                withAnimation(animation) {
+                    self.sparkles[index].size = phase.endSize
+                    self.sparkles[index].rotation = phase.endRotation
+                    self.sparkles[index].opacity = phase.endOpacity
                 }
             }
         }
@@ -138,10 +221,13 @@ public struct EcosiaSparkleAnimation: View {
 }
 
 // MARK: - Supporting Types
-private struct SparkleData: Identifiable {
-    let id = UUID()
-    let position: CGPoint
-    let size: CGFloat
+private struct SparkleState: Identifiable {
+    let id: UUID
+    let sparkleID: Int
+    let offsetX: CGFloat
+    let offsetY: CGFloat
+    var size: CGFloat
+    var rotation: Double
     var opacity: Double
 }
 
@@ -151,7 +237,6 @@ private struct SparkleData: Identifiable {
 struct EcosiaSparkleAnimation_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: .ecosia.space._2l) {
-            // Sparkles visible
             ZStack {
                 Circle()
                     .fill(Color.gray.opacity(0.3))
@@ -160,7 +245,6 @@ struct EcosiaSparkleAnimation_Previews: PreviewProvider {
                 EcosiaSparkleAnimation(isVisible: true)
             }
 
-            // Different sizes
             ZStack {
                 Circle()
                     .fill(Color.blue.opacity(0.3))
@@ -178,3 +262,4 @@ struct EcosiaSparkleAnimation_Previews: PreviewProvider {
     }
 }
 #endif
+

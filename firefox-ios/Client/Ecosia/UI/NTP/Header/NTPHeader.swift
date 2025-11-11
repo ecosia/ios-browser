@@ -88,6 +88,7 @@ struct NTPHeaderView: View {
                         seedCount: viewModel.seedCount,
                         avatarURL: viewModel.userAvatarURL,
                         enableAnimation: !reduceMotion,
+                        showSeedSparkles: viewModel.showSeedSparkles,
                         windowUUID: windowUUID,
                         onTap: handleTap
                     )
