@@ -289,6 +289,20 @@ final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashOnboardingSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Onboarding Product Tour"
+    }
+
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.onboardingProductTour)
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.onboardingProductTour)
+    }
+}
+
 final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [:])

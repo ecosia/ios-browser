@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Ecosia
 
 protocol LaunchCoordinatorDelegate: AnyObject {
     func didFinishLaunch(from coordinator: LaunchCoordinator)
@@ -46,6 +47,12 @@ class LaunchCoordinator: BaseCoordinator,
     // MARK: - Intro
     private func presentIntroOnboarding(with manager: IntroScreenManager,
                                         isFullScreen: Bool) {
+        // Ecosia: Hide onboarding out of experiment
+        guard OnboardingProductTourExperiment.isEnabled else {
+            parentCoordinator?.didFinishLaunch(from: self)
+            return
+        }
+
         let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
         let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
         let introViewModel = IntroViewModel(introScreenManager: manager,
