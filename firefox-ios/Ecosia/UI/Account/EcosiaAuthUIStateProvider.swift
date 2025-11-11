@@ -146,18 +146,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     }
 
     /// Initializes the state based on authentication status.
-    ///
-    /// For logged-in users, registers a visit to fetch the latest balance from the API.
-    /// For logged-out users, handles local seed collection to update the count.
     private func initializeState() {
-        if isLoggedIn {
-            EcosiaLogger.accounts.info("User logged in at startup - will load from backend")
-            registerVisitIfNeeded()
-        } else {
-            EcosiaLogger.accounts.info("User logged out at startup - using local seed collection")
-            Task {
-                await handleLocalSeedCollection()
-            }
+        Task {
+            await refreshSeedState()
         }
     }
 
@@ -332,19 +323,20 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Public Methods
 
-    /// Triggers daily seed collection check for logged-out users.
+    /// Refreshes seed state based on authentication status.
     ///
-    /// Should be called when the NTP is displayed to ensure users receive their daily seed.
-    /// For logged-in users, this is a no-op as their seed collection is handled server-side.
+    /// Should be called when the NTP appears or app returns from background.
+    /// - For logged-in users: Registers a visit to fetch latest balance from server
+    /// - For logged-out users: Checks and collects daily seed
     @MainActor
-    public func checkDailySeedCollection() {
-        guard !isLoggedIn else {
-            EcosiaLogger.accounts.debug("Skipping daily seed check - user is logged in (handled server-side)")
-            return
+    public func refreshSeedState() {
+        if isLoggedIn {
+            EcosiaLogger.accounts.debug("Refreshing seed state for logged-in user (server fetch)")
+            registerVisitIfNeeded()
+        } else {
+            EcosiaLogger.accounts.debug("Refreshing seed state for logged-out user (daily seed check)")
+            handleLocalSeedCollection()
         }
-        
-        EcosiaLogger.accounts.debug("Checking daily seed collection for logged-out user")
-        handleLocalSeedCollection()
     }
 
     // MARK: - Debug Methods

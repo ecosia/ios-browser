@@ -29,7 +29,7 @@ final class NTPHeaderViewModel: ObservableObject {
     var userAvatarURL: URL? { authStateProvider.avatarURL }
     var balanceIncrement: Int? { authStateProvider.balanceIncrement }
     @Published var showSeedSparkles: Bool = false
-    
+
     private var levelUpObserver: NSObjectProtocol?
 
     // MARK: - Initialization
@@ -51,16 +51,16 @@ final class NTPHeaderViewModel: ObservableObject {
                 self?.objectWillChange.send()
             }
             .store(in: &cancellables)
-        
+
         setupLevelUpObserver()
     }
-    
+
     deinit {
         if let observer = levelUpObserver {
             NotificationCenter.default.removeObserver(observer)
         }
     }
-    
+
     private func setupLevelUpObserver() {
         levelUpObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaAccountLevelUp,
@@ -70,10 +70,10 @@ final class NTPHeaderViewModel: ObservableObject {
             self?.triggerSeedSparkles()
         }
     }
-    
+
     private func triggerSeedSparkles() {
         showSeedSparkles = true
-        
+
         // Turn off sparkles after animation completes
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             self.showSeedSparkles = false
@@ -97,8 +97,8 @@ final class NTPHeaderViewModel: ObservableObject {
     }
 
     @MainActor
-    func checkDailySeedCollection() {
-        authStateProvider.checkDailySeedCollection()
+    func refreshSeedState() {
+        authStateProvider.refreshSeedState()
     }
 }
 

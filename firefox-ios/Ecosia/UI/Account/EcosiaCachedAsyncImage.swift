@@ -26,7 +26,7 @@ struct EcosiaCachedAsyncImage<Content: View, Placeholder: View>: View {
         self.transition = transition
         self.content = content
         self.placeholder = placeholder
-        
+
         // Initialize loader with cached image if available
         _loader = StateObject(wrappedValue: ImageCacheLoader(url: url))
     }
@@ -63,9 +63,9 @@ final class ImageCacheLoader: ObservableObject {
         // 100MB memory, 500MB disk - persists across app restarts
         URLCache(memoryCapacity: 100_000_000, diskCapacity: 500_000_000)
     }()
-    
+
     private var currentTask: Task<Void, Never>?
-    
+
     /// Initialize with URL and immediately check cache to prevent flicker
     init(url: URL?) {
         // Check cache synchronously during initialization
@@ -85,7 +85,7 @@ final class ImageCacheLoader: ObservableObject {
         currentTask?.cancel()
 
         let request = URLRequest(url: url)
-        
+
         // Check URLCache first (disk + memory)
         if let cachedResponse = Self.cache.cachedResponse(for: request),
            let cachedImage = UIImage(data: cachedResponse.data) {

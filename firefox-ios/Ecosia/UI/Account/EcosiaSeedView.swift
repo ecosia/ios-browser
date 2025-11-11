@@ -107,14 +107,14 @@ public struct EcosiaSeedView: View {
         animationRotation = 0
         animationOffsetY = 0
         animationOffsetX = 0
-        
+
         withAnimation(.easeIn(duration: UX.squeezeDuration)) {
             animationScale = UX.squeezeScale
             animationRotation = UX.squeezeRotation
             animationOffsetX = UX.squeezeOffsetX
             animationOffsetY = UX.squeezeOffsetY
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.squeezeDuration + UX.bounceDelay) {
             withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDampingFraction)) {
                 animationScale = 1.0

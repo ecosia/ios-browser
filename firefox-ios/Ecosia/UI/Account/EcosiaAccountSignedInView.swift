@@ -96,7 +96,7 @@ public struct EcosiaAccountSignedInView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .ecosiaThemed(windowUUID, $theme)
     }
-    
+
     // MARK: - UX Constants
     private enum UX {
         static let ctaImageSize: CGFloat = 16

@@ -120,10 +120,10 @@ struct NTPHeaderView: View {
         .padding(.leading, .ecosia.space._m)
         .padding(.trailing, .ecosia.space._m)
         .onAppear {
-            viewModel.checkDailySeedCollection()
+            viewModel.refreshSeedState()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
-            viewModel.checkDailySeedCollection()
+            viewModel.refreshSeedState()
         }
     }
 

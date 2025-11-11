@@ -27,20 +27,20 @@ public struct EcosiaSparkleAnimation: View {
         let duration: TimeInterval
         let delay: TimeInterval
         let timing: AnimationTiming
-        
+
         enum AnimationTiming {
             case easeIn
             case easeOut
             case linear
         }
     }
-    
+
     /// Corner position for sparkles
     private enum SparkleCorner {
         case topLeft
         case bottomLeft
         case topRight
-        
+
         func offset(for containerSize: CGFloat) -> (x: CGFloat, y: CGFloat) {
             let cornerOffset = (containerSize / 2) * 0.5  // 50% of the way to the corner
             switch self {
@@ -53,7 +53,7 @@ public struct EcosiaSparkleAnimation: View {
             }
         }
     }
-    
+
     /// Generates sparkle phases for a given corner position
     private func createSparklePhases(
         corner: SparkleCorner,
@@ -64,7 +64,7 @@ public struct EcosiaSparkleAnimation: View {
         disappearRotation: Double
     ) -> [SparklePhase] {
         let position = corner.offset(for: containerSize)
-        
+
         return [
             SparklePhase(
                 positionX: position.x, positionY: position.y,
@@ -130,20 +130,20 @@ public struct EcosiaSparkleAnimation: View {
 
     private func triggerAnimation() {
         runBurst(burstIndex: 0)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
             self.runBurst(burstIndex: 1)
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             self.sparkles.removeAll()
             self.onComplete?()
         }
     }
-    
+
     private func runBurst(burstIndex: Int) {
         let offset = burstIndex * 3
-        
+
         animateSparkle(
             id: offset + 0,
             phases: createSparklePhases(
@@ -155,7 +155,7 @@ public struct EcosiaSparkleAnimation: View {
                 disappearRotation: 45
             )
         )
-        
+
         animateSparkle(
             id: offset + 1,
             phases: createSparklePhases(
@@ -167,7 +167,7 @@ public struct EcosiaSparkleAnimation: View {
                 disappearRotation: -45
             )
         )
-        
+
         animateSparkle(
             id: offset + 2,
             phases: createSparklePhases(
@@ -180,10 +180,10 @@ public struct EcosiaSparkleAnimation: View {
             )
         )
     }
-    
+
     private func animateSparkle(id: Int, phases: [SparklePhase]) {
         guard let firstPhase = phases.first else { return }
-        
+
         let sparkle = SparkleState(
             id: UUID(),
             sparkleID: id,
@@ -194,11 +194,11 @@ public struct EcosiaSparkleAnimation: View {
             opacity: firstPhase.startOpacity
         )
         sparkles.append(sparkle)
-        
+
         for phase in phases {
             DispatchQueue.main.asyncAfter(deadline: .now() + phase.delay) {
                 guard let index = self.sparkles.firstIndex(where: { $0.sparkleID == id }) else { return }
-                
+
                 let animation: Animation = {
                     switch phase.timing {
                     case .easeIn:
@@ -209,7 +209,7 @@ public struct EcosiaSparkleAnimation: View {
                         return .linear(duration: phase.duration)
                     }
                 }()
-                
+
                 withAnimation(animation) {
                     self.sparkles[index].size = phase.endSize
                     self.sparkles[index].rotation = phase.endRotation
@@ -262,4 +262,3 @@ struct EcosiaSparkleAnimation_Previews: PreviewProvider {
     }
 }
 #endif
-

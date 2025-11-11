@@ -13,7 +13,7 @@ public struct BalanceIncrementAnimationView: View {
     @State private var opacity: Double = 0.0
     @State private var scale: CGFloat = 0.5
     @State private var theme = BalanceIncrementAnimationViewTheme()
-    
+
     private struct UX {
         static let springResponse: Double = 0.5
         static let springDampingFraction: Double = 0.6
@@ -42,12 +42,12 @@ public struct BalanceIncrementAnimationView: View {
             }
             .ecosiaThemed(windowUUID, $theme)
     }
-    
+
     private func triggerAnimation() {
         // Start small and invisible
         scale = 0.5
         opacity = 0.0
-        
+
         // Pop in with spring
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.appearDelay) {
             withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDampingFraction)) {
@@ -55,7 +55,7 @@ public struct BalanceIncrementAnimationView: View {
                 opacity = 1.0
             }
         }
-        
+
         // Fade out after holding
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.appearDelay + UX.holdDuration) {
             withAnimation(.easeOut(duration: UX.fadeOutDuration)) {

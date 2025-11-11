@@ -98,7 +98,7 @@ public struct EcosiaAccountImpactView: View {
                     .transition(.opacity)
                     .zIndex(0)
                 }
-                
+
                 if viewModel.isLoggedIn {
                     EcosiaAccountSignedInView(
                         viewModel: viewModel,
