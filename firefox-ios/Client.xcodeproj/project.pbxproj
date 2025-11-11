@@ -77,6 +77,7 @@
 		12141E6C2D6877EB0097788B /* EcosiaNetError.html in Resources */ = {isa = PBXBuildFile; fileRef = 12141E682D686C030097788B /* EcosiaNetError.html */; };
 		12141E6D2D6877F00097788B /* EcosiaNetError.css in Resources */ = {isa = PBXBuildFile; fileRef = 12141E6A2D686C1C0097788B /* EcosiaNetError.css */; };
 		121C6E182EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */; };
+		121C6E1C2EC38B600060319A /* FadeTransitionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 121C6E1B2EC38B600060319A /* FadeTransitionDelegate.swift */; };
 		1230CFF22EBB990900D7AC00 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
 		1230CFF32EBB990900D7AC00 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
 		1230D24D2EBCEE9B00D7AC00 /* welcome_background.mov in Resources */ = {isa = PBXBuildFile; fileRef = 1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */; };
@@ -2373,6 +2374,7 @@
 		12141E682D686C030097788B /* EcosiaNetError.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = EcosiaNetError.html; sourceTree = "<group>"; };
 		12141E6A2D686C1C0097788B /* EcosiaNetError.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = EcosiaNetError.css; sourceTree = "<group>"; };
 		121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+WelcomeTransition.swift"; sourceTree = "<group>"; };
+		121C6E1B2EC38B600060319A /* FadeTransitionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FadeTransitionDelegate.swift; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = welcome_background.mov; sourceTree = "<group>"; };
 		123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeOrAfterView.swift; sourceTree = "<group>"; };
@@ -10678,6 +10680,7 @@
 			isa = PBXGroup;
 			children = (
 				121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */,
+				121C6E1B2EC38B600060319A /* FadeTransitionDelegate.swift */,
 				1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */,
 				2CFEA03A2D455BD500B25CE0 /* WelcomeNavigation.swift */,
 				12B0D7932EA789B00022FECA /* WelcomeView.swift */,
@@ -16723,6 +16726,7 @@
 				E14F7DF2288F3F9F00E3722C /* ThemedTableSectionHeaderFooterView.swift in Sources */,
 				8A3EF7F22A2FCF4000796E3A /* DeleteExportedDataSetting.swift in Sources */,
 				8ADC2A142A33762900543DAA /* ReferringPage.swift in Sources */,
+				121C6E1C2EC38B600060319A /* FadeTransitionDelegate.swift in Sources */,
 				0E6C1E212C909AD7001A43BB /* PasswordGeneratorAction.swift in Sources */,
 				E1442FBF294782B6003680B0 /* CGRect+Extension.swift in Sources */,
 				96F8DA49280452CA00E53239 /* GleanPlumbContextProvider.swift in Sources */,

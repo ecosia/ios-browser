@@ -5,6 +5,18 @@
 import UIKit
 
 final class WelcomeNavigation: UINavigationController {
+    private let fadeTransitionDelegate = FadeTransitionDelegate()
+
+    override init(rootViewController: UIViewController) {
+        super.init(rootViewController: rootViewController)
+        transitioningDelegate = fadeTransitionDelegate
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        transitioningDelegate = fadeTransitionDelegate
+    }
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         topViewController is WelcomeViewController ? .portrait : .all
     }
