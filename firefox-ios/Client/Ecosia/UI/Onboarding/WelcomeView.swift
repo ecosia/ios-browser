@@ -15,7 +15,7 @@ struct WelcomeView: View {
         static let logoWidth: CGFloat = 112
         static let logoHeight: CGFloat = 28
         static let logoContainerSpacing: CGFloat = 12
-        static let welcomeTextHeight: CGFloat = 22 // ~17pt font + line height
+        static let welcomeTextFontSize: CGFloat = 17
         static let logoTopOffset: CGFloat = 46
         static let maskInitialHeight: CGFloat = 384
         static let maskInitialWidthMargin: CGFloat = 384
@@ -46,8 +46,8 @@ struct WelcomeView: View {
     @State private var transitionMaskWidth: CGFloat = 0.0
     @State private var welcomeTextOpacity: Double = 0.0
     @State private var logoOpacity: Double = 1.0
-    @State private var logoOffset: CGFloat = 0.0
     @State private var logoColor = Color(uiColor: UIColor.systemBackground) // Will be brandPrimary
+    @State private var logoOffset: CGFloat = 0.0
     @State private var welcomeTextOffset: CGFloat = 0.0
     @State private var bodyOpacity: Double = 0.0
     @State private var bodyOffset: CGFloat = 0.0
@@ -89,7 +89,7 @@ struct WelcomeView: View {
 
             // Welcome text
             Text("Welcome to")
-                .font(.system(size: 17, weight: .semibold))
+                .font(.system(size: UX.welcomeTextFontSize, weight: .semibold))
                 .foregroundColor(theme.contentTextColor)
                 .multilineTextAlignment(.center)
                 .opacity(welcomeTextOpacity)
@@ -235,38 +235,45 @@ extension WelcomeView {
         UIDevice.current.userInterfaceIdiom == .pad
     }
 
+    private var welcomeTextHeight: CGFloat {
+        let font = UIFont.systemFont(ofSize: UX.welcomeTextFontSize, weight: .semibold)
+        return font.lineHeight
+    }
+
     private var logoContainerHeight: CGFloat {
-        UX.welcomeTextHeight + UX.logoContainerSpacing + UX.logoHeight
+        welcomeTextHeight + UX.logoContainerSpacing + UX.logoHeight
+    }
+
+    private var safeAreaTop: CGFloat {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            return window.safeAreaInsets.top
+        }
+        return 0
     }
 
     // Logo moves down to make room for welcome text
     private var phase2LogoOffset: CGFloat {
-        (UX.welcomeTextHeight + UX.logoContainerSpacing) / 2
+        (welcomeTextHeight + UX.logoContainerSpacing) / 2
     }
 
     // Welcome text appears above the logo, maintaining spacing
     private var phase2WelcomeTextOffset: CGFloat {
-        phase2LogoOffset - (UX.logoHeight / 2) - UX.logoContainerSpacing - (UX.welcomeTextHeight / 2)
+        phase2LogoOffset - (UX.logoHeight / 2) - UX.logoContainerSpacing - (welcomeTextHeight / 2)
     }
 
-    // Logo moves to top
-    private var phase3LogoOffset: CGFloat {
-        let safeAreaTop: CGFloat = {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                return window.safeAreaInsets.top
-            }
-            return 0
-        }()
-        return -(screenHeight / 2) + safeAreaTop + UX.logoTopOffset + (UX.logoHeight / 2)
-    }
-
-    // Welcome text stays spaced above logo
+    // Position welcome text at specified offset from top
     private var phase3WelcomeTextOffset: CGFloat {
-        phase3LogoOffset - (UX.logoHeight / 2) - UX.logoContainerSpacing - (UX.welcomeTextHeight / 2)
+        let distanceFromTop = safeAreaTop + UX.logoTopOffset + (welcomeTextHeight / 2)
+        return distanceFromTop - (screenHeight / 2)
     }
 
-    // Move elements slightly further off screen
+    // Logo positioned below welcome text
+    private var phase3LogoOffset: CGFloat {
+        phase3WelcomeTextOffset + (welcomeTextHeight / 2) + UX.logoContainerSpacing + (UX.logoHeight / 2)
+    }
+
+    // Move further up by the exit offset
     private var exitLogoOffset: CGFloat {
         phase3LogoOffset - UX.exitOffset
     }
