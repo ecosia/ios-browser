@@ -3,19 +3,25 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Common
 
 final class WelcomeNavigation: UINavigationController {
-    private let fadeTransitionDelegate = FadeTransitionDelegate()
+    private var fadeTransitionDelegate: FadeTransitionDelegate {
+        let transition = FadeTransitionDelegate()
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        // Matches NTP background
+        transition.dismissalBackgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
+        return transition
+    }
 
-    override init(rootViewController: UIViewController) {
+    let windowUUID: WindowUUID
+    init(rootViewController: UIViewController, windowUUID: WindowUUID) {
+        self.windowUUID = windowUUID
         super.init(rootViewController: rootViewController)
         transitioningDelegate = fadeTransitionDelegate
     }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        transitioningDelegate = fadeTransitionDelegate
-    }
+    required init?(coder: NSCoder) { nil }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         topViewController is WelcomeViewController ? .portrait : .all

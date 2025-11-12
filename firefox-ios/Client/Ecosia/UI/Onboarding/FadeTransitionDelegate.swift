@@ -7,22 +7,27 @@ import UIKit
 /// A custom transition delegate that provides a fade animation for modal presentation and dismissal
 final class FadeTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
 
+    /// The background color to apply to the underlying view when dismissing. Defaults to nil (no change).
+    var dismissalBackgroundColor: UIColor?
+
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return FadeAnimator(isPresenting: false)
+        return FadeAnimator(isPresenting: false, dismissalBackgroundColor: dismissalBackgroundColor)
     }
 
     func animationController(forPresented presented: UIViewController,
-                           presenting: UIViewController,
-                           source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return FadeAnimator(isPresenting: true)
+                             presenting: UIViewController,
+                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return FadeAnimator(isPresenting: true, dismissalBackgroundColor: nil)
     }
 }
 
 private final class FadeAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     private let isPresenting: Bool
+    private let dismissalBackgroundColor: UIColor?
 
-    init(isPresenting: Bool) {
+    init(isPresenting: Bool, dismissalBackgroundColor: UIColor?) {
         self.isPresenting = isPresenting
+        self.dismissalBackgroundColor = dismissalBackgroundColor
         super.init()
     }
 
@@ -43,8 +48,9 @@ private final class FadeAnimator: NSObject, UIViewControllerAnimatedTransitionin
         if isPresenting {
             containerView.addSubview(toView)
             toView.alpha = 0
-            
-            UIView.animate(withDuration: duration, animations: {
+
+            UIView.animate(withDuration: duration,
+                           animations: {
                 toView.alpha = 1
             }, completion: { finished in
                 transitionContext.completeTransition(finished)
@@ -52,7 +58,13 @@ private final class FadeAnimator: NSObject, UIViewControllerAnimatedTransitionin
         } else {
             containerView.insertSubview(toView, at: 0)
             toView.alpha = 1
-            UIView.animate(withDuration: duration, animations: {
+
+            if let dismissalBackgroundColor = dismissalBackgroundColor {
+                toView.backgroundColor = dismissalBackgroundColor
+            }
+
+            UIView.animate(withDuration: duration,
+                           animations: {
                 fromView.alpha = 0
             }, completion: { finished in
                 fromView.removeFromSuperview()
