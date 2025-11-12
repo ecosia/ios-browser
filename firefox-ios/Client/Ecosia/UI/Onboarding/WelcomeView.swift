@@ -16,7 +16,8 @@ struct WelcomeView: View {
         static let logoHeight: CGFloat = 28
         static let logoContainerSpacing: CGFloat = 12
         static let welcomeTextFontSize: CGFloat = 17
-        static let logoTopOffset: CGFloat = 46
+        static let logoTopOffsetIPhone: CGFloat = 46
+        static let logoTopOffsetIPad: CGFloat = 66
         static let maskInitialHeight: CGFloat = 384
         static let maskInitialWidthMargin: CGFloat = 384
         static let maskCornerRadius: CGFloat = 16
@@ -235,6 +236,10 @@ extension WelcomeView {
         UIDevice.current.userInterfaceIdiom == .pad
     }
 
+    private var logoTopOffset: CGFloat {
+        isIPad ? UX.logoTopOffsetIPad : UX.logoTopOffsetIPhone
+    }
+
     private var welcomeTextHeight: CGFloat {
         let font = UIFont.systemFont(ofSize: UX.welcomeTextFontSize, weight: .semibold)
         return font.lineHeight
@@ -264,7 +269,7 @@ extension WelcomeView {
 
     // Position welcome text at specified offset from top
     private var phase3WelcomeTextOffset: CGFloat {
-        let distanceFromTop = safeAreaTop + UX.logoTopOffset + (welcomeTextHeight / 2)
+        let distanceFromTop = safeAreaTop + logoTopOffset + (welcomeTextHeight / 2)
         return distanceFromTop - (screenHeight / 2)
     }
 
