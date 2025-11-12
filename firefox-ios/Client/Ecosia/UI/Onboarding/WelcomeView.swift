@@ -106,8 +106,7 @@ struct WelcomeView: View {
                         .frame(height: 36)
 
                     Button(action: {
-                        // TODO: Update event
-                        Analytics.shared.introClick(.next, page: .start)
+                        Analytics.shared.introWelcome(action: .click)
                         startExitAnimation()
                     }) {
                         Text(verbatim: .localized(.getStarted))
@@ -130,8 +129,7 @@ struct WelcomeView: View {
         // Theme has to be applied before onAppear for logo color
         .ecosiaThemed(windowUUID, $theme)
         .onAppear {
-            // TODO: Update event
-            Analytics.shared.introDisplaying(page: .start)
+            Analytics.shared.introWelcome(action: .display)
 
             logoColor = theme.brandPrimaryColor
             startAnimationSequence()
