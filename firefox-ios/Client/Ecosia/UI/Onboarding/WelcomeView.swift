@@ -19,7 +19,7 @@ struct WelcomeView: View {
         static let logoTopOffsetIPhone: CGFloat = 46
         static let logoTopOffsetIPad: CGFloat = 66
         static let maskInitialHeight: CGFloat = 384
-        static let maskInitialWidthMargin: CGFloat = 384
+        static let maskInitialWidthMargin: CGFloat = 8
         static let maskCornerRadius: CGFloat = 16
         static let contentMaxWidthIPad: CGFloat = 479
         static let contentPadding: CGFloat = 16
@@ -115,7 +115,7 @@ struct WelcomeView: View {
                 VStack {
                     Spacer()
 
-                    Text("Real change at your fingertips")
+                    Text("Real change\nat your fingertips")
                         .font(.ecosiaFamilyBrand(size: .ecosia.font._6l))
                         .foregroundStyle(theme.contentTextColor)
                         .multilineTextAlignment(.center)
@@ -164,7 +164,7 @@ struct WelcomeView: View {
         // Phase 1: Show centered rounded square mask with logo
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase1Delay) {
             showRoundedBackground = true
-            transitionMaskWidth = UX.maskInitialWidthMargin * 2
+            transitionMaskWidth = screenWidth - UX.maskInitialWidthMargin * 2
             withAnimation(.easeInOut(duration: UX.phase1Duration)) {
                 transitionMaskScale = 1.0
                 logoColor = theme.contentTextColor
