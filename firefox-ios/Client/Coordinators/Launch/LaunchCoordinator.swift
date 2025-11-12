@@ -53,23 +53,21 @@ class LaunchCoordinator: BaseCoordinator,
             return
         }
 
+        /* Ecosia: custom onboarding
         let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
         let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
         let introViewModel = IntroViewModel(introScreenManager: manager,
                                             profile: profile,
                                             model: onboardingModel,
                                             telemetryUtility: telemetryUtility)
-        /* Ecosia: custom onboarding
+
         let introViewController = IntroViewController(viewModel: introViewModel, windowUUID: windowUUID)
         introViewController.qrCodeNavigationHandler = self
         introViewController.didFinishFlow = { [weak self] in
             guard let self = self else { return }
             self.parentCoordinator?.didFinishLaunch(from: self)
         }
-         */
-        let introViewController = WelcomeNavigation(rootViewController: WelcomeViewController(delegate: self, windowUUID: windowUUID))
-        introViewController.isNavigationBarHidden = true
-        introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+
         if isFullScreen {
             introViewController.modalPresentationStyle = .fullScreen
             router.present(introViewController, animated: false)
@@ -85,6 +83,12 @@ class LaunchCoordinator: BaseCoordinator,
             }
             router.present(introViewController, animated: true)
         }
+        */
+        let introViewController = WelcomeNavigation(rootViewController: WelcomeViewController(delegate: self, windowUUID: windowUUID))
+        introViewController.isNavigationBarHidden = true
+        introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+        introViewController.modalPresentationStyle = .fullScreen
+        router.present(introViewController, animated: false)
     }
 
     // MARK: - Update
