@@ -41,8 +41,10 @@ struct EcosiaCachedAsyncImage<Content: View, Placeholder: View>: View {
 
             // Loaded image layer
             if let uiImage = loader.image {
+                // swiftlint:disable accessibility_label_for_image
                 content(Image(uiImage: uiImage))
                     .transition(transition)
+                // swiftlint:enable accessibility_label_for_image
             }
         }
         .animation(.easeInOut(duration: 0.3), value: loader.image != nil)

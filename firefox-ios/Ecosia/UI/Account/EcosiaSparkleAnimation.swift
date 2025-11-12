@@ -64,7 +64,7 @@ public struct EcosiaSparkleAnimation: View {
         disappearRotation: Double
     ) -> [SparklePhase] {
         let position = corner.offset(for: containerSize)
-
+        // swiftlint:disable multiline_arguments
         return [
             SparklePhase(
                 positionX: position.x, positionY: position.y,
@@ -83,6 +83,7 @@ public struct EcosiaSparkleAnimation: View {
                 timing: .linear
             )
         ]
+        // swiftlint:enable multiline_arguments
     }
 
     public init(

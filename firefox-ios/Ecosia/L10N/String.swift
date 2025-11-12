@@ -39,6 +39,7 @@ extension String {
         case ecosiaRecommends = "Ecosia recommends"
         case estimatedImpact = "Estimated impact"
         case estimatedTrees = "Estimated trees"
+        case ecosiaErrorViewAccessibilityImageLabel = "Image associated to the error, showing a warning signal"
         case exploreEcosia = "Explore Ecosia"
         case financialReports = "Financial reports"
         case forceDarkMode = "Force Dark Mode"
