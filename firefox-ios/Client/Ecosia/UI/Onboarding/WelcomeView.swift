@@ -144,12 +144,16 @@ struct WelcomeView: View {
                             .cornerRadius(UX.buttonCornerRadius)
                     }
                 }
-                .padding(.all, UX.contentPadding)
+                .padding(.horizontal, UX.contentPadding)
+                .padding(.top, UX.contentPadding)
+                .padding(.bottom, UX.contentPadding + safeAreaBottom)
                 .frame(maxWidth: contentMaxWidth)
                 .opacity(bodyOpacity)
                 .offset(y: bodyOffset)
             }
         }
+        // Needed so initial state matches launch screen
+        .ignoresSafeArea()
         // Theme has to be applied before onAppear for logo color
         .ecosiaThemed(windowUUID, $theme)
         .onAppear {
@@ -253,6 +257,14 @@ extension WelcomeView {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first {
             return window.safeAreaInsets.top
+        }
+        return 0
+    }
+
+    private var safeAreaBottom: CGFloat {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            return window.safeAreaInsets.bottom
         }
         return 0
     }

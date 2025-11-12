@@ -19,6 +19,7 @@ extension BrowserViewController {
         // Hide content and set background color to match NTP
         contentStackView.alpha = 0
         let theme = themeManager.getCurrentTheme(for: windowUUID)
+        // TODO: Investigate colors behind toolbars before transition
         view.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
     }
 
