@@ -29,6 +29,12 @@ struct WelcomeView: View {
         static let buttonCornerRadius: CGFloat = 24
         static let exitOffset: CGFloat = 50
 
+        // Gradient dimensions
+        static let centeredGradientSize: CGFloat = 210
+        static let topGradientBottomOffset: CGFloat = 19
+        static let bodyGradientTopOffset: CGFloat = 20
+        static let bodyGradientBottomOffset: CGFloat = 24
+
         // Animation timings
         static let phase1Delay: TimeInterval = 0.5
         static let phase1Duration: TimeInterval = 0.5
@@ -54,6 +60,9 @@ struct WelcomeView: View {
     @State private var bodyOffset: CGFloat = 0.0
     @State private var showRoundedBackground: Bool = false
     @State private var backgroundOpacity: Double = 1.0
+    @State private var centeredGradientOpacity: Double = 0.0
+    @State private var topGradientOpacity: Double = 0.0
+    @State private var bodyGradientOpacity: Double = 0.0
     @State private var theme = WelcomeViewTheme()
 
     let windowUUID: WindowUUID
@@ -76,17 +85,48 @@ struct WelcomeView: View {
 
             // Video background (clipped to transition mask)
             if showRoundedBackground {
-                LoopingVideoPlayer(videoName: "welcome_background")
-                    .mask(
-                        RoundedRectangle(cornerRadius: UX.maskCornerRadius)
-                            .frame(height: transitionMaskHeight)
-                            .frame(maxWidth: transitionMaskWidth)
-                            .scaleEffect(transitionMaskScale, anchor: .center)
+                ZStack {
+                    LoopingVideoPlayer(videoName: "welcome_background")
+
+                    // Centered radial gradient behind logo
+                    RadialGradient(
+                        gradient: Gradient(colors: [
+                            Color.black.opacity(0.55),
+                            Color.black.opacity(0)
+                        ]),
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: UX.centeredGradientSize / 2
                     )
-                    .ignoresSafeArea(edges: .all)
+                    .opacity(centeredGradientOpacity)
+                }
+                .mask(
+                    RoundedRectangle(cornerRadius: UX.maskCornerRadius)
+                        .frame(height: transitionMaskHeight)
+                        .frame(maxWidth: transitionMaskWidth)
+                        .scaleEffect(transitionMaskScale, anchor: .center)
+                )
+                .ignoresSafeArea(edges: .all)
             }
 
-            // TODO: Add black gradient behind logo and body for readibility
+            // Top vertical gradient behind logo
+            if animationPhase == .phase3Complete {
+                VStack(spacing: 0) {
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.black.opacity(0.38),
+                            Color.black.opacity(0)
+                        ]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: topGradientHeight)
+
+                    Spacer()
+                }
+                .ignoresSafeArea()
+                .opacity(topGradientOpacity)
+            }
 
             // Welcome text
             Text("Welcome to")
@@ -115,21 +155,33 @@ struct WelcomeView: View {
                 VStack {
                     Spacer()
 
-                    Text("Real change\nat your fingertips")
-                        .font(.ecosiaFamilyBrand(size: .ecosia.font._6l))
-                        .foregroundStyle(theme.contentTextColor)
-                        .multilineTextAlignment(.center)
+                    VStack(spacing: UX.bodyTitleBottomSpacing) {
+                        Text("Real change\nat your fingertips")
+                            .font(.ecosiaFamilyBrand(size: .ecosia.font._6l))
+                            .foregroundStyle(theme.contentTextColor)
+                            .multilineTextAlignment(.center)
 
-                    Spacer()
-                        .frame(height: UX.bodyTitleBottomSpacing)
-
-                    Text("Join 20 million people making a difference every day")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(theme.contentTextColor)
-                        .multilineTextAlignment(.center)
-
-                    Spacer()
-                        .frame(height: UX.bodySubtitleBottomSpacing)
+                        Text("Join 20 million people making a difference every day")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(theme.contentTextColor)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.top, UX.bodyGradientTopOffset)
+                    .padding(.bottom, UX.bodySubtitleBottomSpacing)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(stops: [
+                                .init(color: Color.black.opacity(0), location: 0.0),
+                                .init(color: Color.black.opacity(0.35), location: 0.3),
+                                .init(color: Color.black.opacity(0.24), location: 0.6),
+                                .init(color: Color.black.opacity(0), location: 1.0)
+                            ]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(width: screenWidth)
+                        .opacity(bodyGradientOpacity)
+                    )
 
                     Button(action: {
                         Analytics.shared.introWelcome(action: .click)
@@ -165,6 +217,7 @@ struct WelcomeView: View {
     }
 
     private func startAnimationSequence() {
+        // TODO: Wait for video to be ready before starting?
         // Phase 1: Show centered rounded square mask with logo
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase1Delay) {
             showRoundedBackground = true
@@ -172,6 +225,13 @@ struct WelcomeView: View {
             withAnimation(.easeInOut(duration: UX.phase1Duration)) {
                 transitionMaskScale = 1.0
                 logoColor = theme.contentTextColor
+            }
+        }
+
+        // Fade in centered gradient directly after phase 1 ends
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase1Delay + UX.phase1Duration) {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                centeredGradientOpacity = 1.0
             }
         }
 
@@ -194,6 +254,9 @@ struct WelcomeView: View {
                 logoOffset = phase3LogoOffset
                 welcomeTextOffset = phase3WelcomeTextOffset
                 bodyOpacity = 1.0
+                topGradientOpacity = 1.0
+                bodyGradientOpacity = 1.0
+                centeredGradientOpacity = 0.0
                 backgroundOpacity = 0.0
                 animationPhase = .phase3Complete
             }
@@ -302,6 +365,12 @@ extension WelcomeView {
     private var contentMaxWidth: CGFloat {
         isIPad ? UX.contentMaxWidthIPad : .infinity
     }
+
+    // Top gradient extends from top of screen to some points below logo
+    private var topGradientHeight: CGFloat {
+        let logoBottomY = screenHeight / 2 + phase3LogoOffset + (UX.logoHeight / 2)
+        return logoBottomY + UX.topGradientBottomOffset
+    }
 }
 
 // MARK: - WelcomeViewTheme
@@ -322,6 +391,7 @@ struct WelcomeViewTheme: EcosiaThemeable {
 
 // MARK: - Looping Video Player
 
+// TODO: Move to separate file
 class VideoPlayerView: UIView {
     let playerLayer = AVPlayerLayer()
 
@@ -344,6 +414,7 @@ struct LoopingVideoPlayer: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let view = VideoPlayerView()
 
+        // TODO: Check effect on app size and reduce the video
         guard let videoURL = Bundle.main.url(forResource: videoName, withExtension: "mov") else {
             // Fallback to static image if video not found
             let imageView = UIImageView(image: UIImage(named: "forest"))
