@@ -14,33 +14,33 @@ protocol NTPHeaderDelegate: AnyObject {
 /// NTP header cell containing multiple Ecosia-specific actions like AI search
 @available(iOS 16.0, *)
 final class NTPHeader: UICollectionViewCell, ReusableCell {
-    
+
     // MARK: - Properties
     private var hostingController: UIHostingController<AnyView>?
     private var viewModel: NTPHeaderViewModel?
-    
+
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
     }
-    
+
     // MARK: - Setup
-    
+
     private func setup() {
         // Create a placeholder hosting controller - will be configured later
         let hostingController = UIHostingController(rootView: AnyView(EmptyView()))
         hostingController.view.backgroundColor = UIColor.clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         contentView.addSubview(hostingController.view)
         self.hostingController = hostingController
-        
+
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
             hostingController.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -48,19 +48,19 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
             hostingController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-    
+
     // MARK: - Public Methods
-    
+
     func configure(with viewModel: NTPHeaderViewModel,
                    windowUUID: WindowUUID) {
         self.viewModel = viewModel
-        
+
         // Update the SwiftUI view with the new view model
         let swiftUIView = NTPHeaderView(
             viewModel: viewModel,
             windowUUID: windowUUID
         )
-        
+
         hostingController?.rootView = AnyView(swiftUIView)
     }
 }
@@ -74,7 +74,7 @@ struct NTPHeaderView: View {
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
     @State private var showAccountImpactView = false
-    
+
     var body: some View {
         HStack(spacing: .ecosia.space._1s) {
             Spacer()
@@ -92,7 +92,7 @@ struct NTPHeaderView: View {
                     windowUUID: windowUUID,
                     onTap: handleTap
                 )
-                
+
                 if let increment = viewModel.balanceIncrement {
                     BalanceIncrementAnimationView(
                         increment: increment,
@@ -120,11 +120,11 @@ struct NTPHeaderView: View {
             .dynamicHeightPresentationDetent()
         }
     }
-    
+
     private func handleAISearchTap() {
         viewModel.openAISearch()
     }
-    
+
     private func handleTap() {
         showAccountImpactView = true
         Analytics.shared.accountHeaderClicked()
