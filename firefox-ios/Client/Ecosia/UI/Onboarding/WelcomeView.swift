@@ -9,10 +9,41 @@ import Common
 import Ecosia
 
 struct WelcomeView: View {
+
+    // MARK: - UX Constants
+    private struct UX {
+        static let logoWidth: CGFloat = 112
+        static let logoHeight: CGFloat = 28
+        static let logoContainerSpacing: CGFloat = 12
+        static let welcomeTextHeight: CGFloat = 22 // ~17pt font + line height
+        static let logoTopOffset: CGFloat = 46
+        static let maskInitialHeight: CGFloat = 384
+        static let maskInitialWidthMargin: CGFloat = 384
+        static let maskCornerRadius: CGFloat = 16
+        static let contentMaxWidthIPad: CGFloat = 479
+        static let contentPadding: CGFloat = 16
+        static let bodyTitleBottomSpacing: CGFloat = 20
+        static let bodySubtitleBottomSpacing: CGFloat = 36
+        static let buttonHeight: CGFloat = 48
+        static let buttonCornerRadius: CGFloat = 24
+        static let exitOffset: CGFloat = 50
+
+        // Animation timings
+        static let phase1Delay: TimeInterval = 0.5
+        static let phase1Duration: TimeInterval = 0.5
+        static let phase2Delay: TimeInterval = 1.0
+        static let phase2Duration: TimeInterval = 0.35
+        static let phase3Delay: TimeInterval = 1.85
+        static let phase3Duration: TimeInterval = 0.35
+        static let exitDuration: TimeInterval = 0.35
+    }
+
+    // MARK: - State
+
     @State private var animationPhase: AnimationPhase = .initial
     @State private var transitionMaskScale: CGFloat = 0.0
-    @State private var transitionMaskHeight: CGFloat = 200.0
-    @State private var transitionMaskWidth: CGFloat = 200.0
+    @State private var transitionMaskHeight: CGFloat = UX.maskInitialHeight
+    @State private var transitionMaskWidth: CGFloat = 0.0
     @State private var welcomeTextOpacity: Double = 0.0
     @State private var logoOpacity: Double = 1.0
     @State private var logoOffset: CGFloat = 0.0
@@ -46,7 +77,7 @@ struct WelcomeView: View {
             if showRoundedBackground {
                 LoopingVideoPlayer(videoName: "welcome_background")
                     .mask(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: UX.maskCornerRadius)
                             .frame(height: transitionMaskHeight)
                             .frame(maxWidth: transitionMaskWidth)
                             .scaleEffect(transitionMaskScale, anchor: .center)
@@ -56,33 +87,27 @@ struct WelcomeView: View {
 
             // TODO: Add black gradient behind logo and body for readibility
 
-            // Logo container
-            VStack(spacing: 12) {
-                Text("Welcome to")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(theme.contentTextColor)
-                    .multilineTextAlignment(.center)
-                    .opacity(welcomeTextOpacity)
-                    .offset(y: welcomeTextOffset)
+            // Welcome text
+            Text("Welcome to")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundColor(theme.contentTextColor)
+                .multilineTextAlignment(.center)
+                .opacity(welcomeTextOpacity)
+                .offset(y: welcomeTextOffset)
+                .frame(maxWidth: transitionMaskWidth)
 
-            // TODO: Adjust spacing with offsets
-            // TODO: Make dynamic offsets depending on screen size
-            // Can the animation be done without hardcoded offsets? Maybe start and end position?
-
-                Image("ecosiaLogoLaunch")
-                    .renderingMode(.template)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(logoColor)
-                    .frame(width: 112, height: 28)
-                    .offset(y: logoOffset)
-                    .opacity(logoOpacity)
-                    .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
-                    .accessibilityIdentifier(AccessibilityIdentifiers.Ecosia.logo)
-            }
-            // TODO: Make sure logo matches launch screen exactly
-            .frame(maxWidth: transitionMaskWidth)
-            .ignoresSafeArea(edges: .vertical)
+            // Logo
+            Image("ecosiaLogoLaunch")
+                .renderingMode(.template)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(logoColor)
+                .frame(width: UX.logoWidth, height: UX.logoHeight)
+                .opacity(logoOpacity)
+                .offset(y: logoOffset)
+                .frame(maxWidth: transitionMaskWidth)
+                .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
+                .accessibilityIdentifier(AccessibilityIdentifiers.Ecosia.logo)
 
             // Content
             if animationPhase == .phase3Complete {
@@ -95,7 +120,7 @@ struct WelcomeView: View {
                         .multilineTextAlignment(.center)
 
                     Spacer()
-                        .frame(height: 20)
+                        .frame(height: UX.bodyTitleBottomSpacing)
 
                     Text("Join 20 million people making a difference every day")
                         .font(.system(size: 17, weight: .semibold))
@@ -103,7 +128,7 @@ struct WelcomeView: View {
                         .multilineTextAlignment(.center)
 
                     Spacer()
-                        .frame(height: 36)
+                        .frame(height: UX.bodySubtitleBottomSpacing)
 
                     Button(action: {
                         Analytics.shared.introWelcome(action: .click)
@@ -113,15 +138,13 @@ struct WelcomeView: View {
                             .font(.body)
                             .foregroundColor(theme.buttonTextColor)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 48)
+                            .frame(height: UX.buttonHeight)
                             .background(theme.buttonBackgroundColor)
-                            .cornerRadius(24)
+                            .cornerRadius(UX.buttonCornerRadius)
                     }
                 }
-                // TODO: Max 479 width for content on iPad
-                .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 112 : 16)
-                .padding(.bottom, 16)
-                .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 544 : .infinity)
+                .padding(.all, UX.contentPadding)
+                .frame(maxWidth: contentMaxWidth)
                 .opacity(bodyOpacity)
                 .offset(y: bodyOffset)
             }
@@ -137,36 +160,34 @@ struct WelcomeView: View {
     }
 
     private func startAnimationSequence() {
-        let screenWidth = UIScreen.main.bounds.width - 32
-
-        // Phase 1: Show centered rounded square mask with logo (500ms delay, 500ms duration)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        // Phase 1: Show centered rounded square mask with logo
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase1Delay) {
             showRoundedBackground = true
-            transitionMaskWidth = screenWidth
-            withAnimation(.easeInOut(duration: 0.5)) {
+            transitionMaskWidth = UX.maskInitialWidthMargin * 2
+            withAnimation(.easeInOut(duration: UX.phase1Duration)) {
                 transitionMaskScale = 1.0
                 logoColor = theme.contentTextColor
             }
         }
 
-        // Phase 2: Animate in welcome text, move logo down (350ms duration)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            withAnimation(.easeInOut(duration: 0.35)) {
+        // Phase 2: Animate in welcome text above, move logo down
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase2Delay) {
+            withAnimation(.easeInOut(duration: UX.phase2Duration)) {
                 welcomeTextOpacity = 1.0
-                welcomeTextOffset = -23.0
-                logoOffset = 14.0
+                welcomeTextOffset = phase2WelcomeTextOffset
+                logoOffset = phase2LogoOffset
                 animationPhase = .phase1Complete
             }
         }
 
-        // Phase 3: Grow window to full screen, move logo to final position, show body (500ms delay, 350ms duration)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.85) {
-            withAnimation(.easeInOut(duration: 0.35)) {
+        // Phase 3: Grow window to full screen, move both to final position, show body
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase3Delay) {
+            withAnimation(.easeInOut(duration: UX.phase3Duration)) {
                 transitionMaskScale = 1.0 // Already at full scale from phase 1
-                transitionMaskHeight = UIScreen.main.bounds.height
-                transitionMaskWidth = UIScreen.main.bounds.width
-                logoOffset = -282.0
-                welcomeTextOffset = -305.0
+                transitionMaskHeight = screenHeight
+                transitionMaskWidth = screenWidth
+                logoOffset = phase3LogoOffset
+                welcomeTextOffset = phase3WelcomeTextOffset
                 bodyOpacity = 1.0
                 backgroundOpacity = 0.0
                 animationPhase = .phase3Complete
@@ -176,11 +197,11 @@ struct WelcomeView: View {
 
     private func startExitAnimation() {
         // Phase 4: Exit transition - move content out while fading
-        withAnimation(.easeInOut(duration: 0.35)) {
-            logoOffset = -332.0
+        withAnimation(.easeInOut(duration: UX.exitDuration)) {
+            logoOffset = exitLogoOffset
+            welcomeTextOffset = exitWelcomeTextOffset
             logoOpacity = 0.0
-            welcomeTextOffset = -355.0
-            bodyOffset = 50.0
+            bodyOffset = UX.exitOffset
             bodyOpacity = 0.0
             welcomeTextOpacity = 0.0
             backgroundOpacity = 1.0
@@ -188,13 +209,74 @@ struct WelcomeView: View {
         }
 
         // Dismiss after animation completes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.exitDuration) {
             onFinish()
         }
     }
 
     private var simplestWayString: String {
         .localized(.theSimplestWay)
+    }
+}
+
+// MARK: - Dynamic Layout Calculations
+
+extension WelcomeView {
+
+    private var screenHeight: CGFloat {
+        UIScreen.main.bounds.height
+    }
+
+    private var screenWidth: CGFloat {
+        UIScreen.main.bounds.width
+    }
+
+    private var isIPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+
+    private var logoContainerHeight: CGFloat {
+        UX.welcomeTextHeight + UX.logoContainerSpacing + UX.logoHeight
+    }
+
+    // Logo moves down to make room for welcome text
+    private var phase2LogoOffset: CGFloat {
+        (UX.welcomeTextHeight + UX.logoContainerSpacing) / 2
+    }
+
+    // Welcome text appears above the logo, maintaining spacing
+    private var phase2WelcomeTextOffset: CGFloat {
+        phase2LogoOffset - (UX.logoHeight / 2) - UX.logoContainerSpacing - (UX.welcomeTextHeight / 2)
+    }
+
+    // Logo moves to top
+    private var phase3LogoOffset: CGFloat {
+        let safeAreaTop: CGFloat = {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                return window.safeAreaInsets.top
+            }
+            return 0
+        }()
+        return -(screenHeight / 2) + safeAreaTop + UX.logoTopOffset + (UX.logoHeight / 2)
+    }
+
+    // Welcome text stays spaced above logo
+    private var phase3WelcomeTextOffset: CGFloat {
+        phase3LogoOffset - (UX.logoHeight / 2) - UX.logoContainerSpacing - (UX.welcomeTextHeight / 2)
+    }
+
+    // Move elements slightly further off screen
+    private var exitLogoOffset: CGFloat {
+        phase3LogoOffset - UX.exitOffset
+    }
+
+    private var exitWelcomeTextOffset: CGFloat {
+        phase3WelcomeTextOffset - UX.exitOffset
+    }
+
+    private var contentMaxWidth: CGFloat {
+        isIPad ? UX.contentMaxWidthIPad : .infinity
     }
 }
 
