@@ -26,11 +26,11 @@ public struct EcosiaAvatar: View {
         Group {
             if let avatarURL = avatarURL {
                 EcosiaCachedAsyncImage(url: avatarURL) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
+                        image
+                            .resizable()
+                            .scaledToFill()
                 } placeholder: {
-                    placeholderView(imageName: signedInPlaceholderImageName)
+                        placeholderView(imageName: signedInPlaceholderImageName)
                 }
                 .frame(width: size, height: size)
                 .clipShape(Circle())

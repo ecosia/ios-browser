@@ -132,7 +132,7 @@ final class EcosiaAccountAvatarViewModelTests: XCTestCase {
             .dropFirst()
             .sink { progress in
                 if progress == 0.6 {
-                    expectation.fulfill()
+                expectation.fulfill()
                 }
             }
             .store(in: &cancellables)
@@ -154,7 +154,7 @@ final class EcosiaAccountAvatarViewModelTests: XCTestCase {
             .dropFirst()
             .sink { showSparkles in
                 if showSparkles {
-                    sparklesExpectation.fulfill()
+                sparklesExpectation.fulfill()
                 }
             }
             .store(in: &cancellables)

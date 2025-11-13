@@ -64,7 +64,7 @@ public struct EcosiaAccountNavButton: View {
             .frame(minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
             .background(
                 theme.backgroundColor
-                    .cornerRadius(.ecosia.borderRadius._1l)
+            .cornerRadius(.ecosia.borderRadius._1l)
             )
             .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
         }

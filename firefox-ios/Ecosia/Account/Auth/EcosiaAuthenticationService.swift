@@ -53,6 +53,9 @@ public final class EcosiaAuthenticationService {
     /// This includes name, email, profile picture URL, etc.
     public private(set) var userProfile: UserProfile?
 
+    /// For testing: Skip fetching user info from Auth0 to avoid HTTP calls
+    var skipUserInfoFetch: Bool = false
+
     // MARK: - Initialization
 
     /**
@@ -99,7 +102,9 @@ public final class EcosiaAuthenticationService {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
                 setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-                await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
+                if !skipUserInfoFetch {
+                    await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
+                }
                 EcosiaLogger.auth.info("Login completed successfully")
             } else {
                 EcosiaLogger.auth.error("Credential storage failed (returned false)")
@@ -181,7 +186,9 @@ public final class EcosiaAuthenticationService {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-            await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
+            if !skipUserInfoFetch {
+                await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
+            }
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
             // Dispatch state loaded with current authentication status

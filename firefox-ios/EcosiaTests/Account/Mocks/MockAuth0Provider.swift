@@ -35,7 +35,7 @@ class MockAuth0Provider: Auth0ProviderProtocol {
     // MARK: - Protocol Requirements
     var settings: Auth0SettingsProviderProtocol = MockAuth0SettingsProvider()
     var credentialsManager: CredentialsManagerProtocol = MockCredentialsManager()
-    var webAuth: WebAuth = Auth0.webAuth(clientId: "test-client", domain: "test.auth0.com")
+    lazy var webAuth: WebAuth = Auth0.webAuth(clientId: "test-client", domain: "test.auth0.com")
 
     // MARK: - Mock Implementations
     func startAuth() async throws -> Credentials {
