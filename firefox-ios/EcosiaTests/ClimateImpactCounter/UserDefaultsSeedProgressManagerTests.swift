@@ -101,15 +101,17 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
 
     // Test that a seed can be collected the next day but stays at level 1
     func test_collect_seed_next_day_stays_level_1() {
-        // Given
+        // Given / When
+        UserDefaultsSeedProgressManager.collectDailySeed()
+        var totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        XCTAssertEqual(totalSeedsCollected, 1)
+
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())
         UserDefaults.standard.set(yesterday, forKey: "LastAppOpenDate")
-
-        // When
         UserDefaultsSeedProgressManager.collectDailySeed()
 
         // Then
-        let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
         let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
 
         XCTAssertEqual(totalSeedsCollected, 2)

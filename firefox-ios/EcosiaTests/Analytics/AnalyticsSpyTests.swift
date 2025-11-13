@@ -898,17 +898,17 @@ final class AnalyticsSpyTests: XCTestCase {
         // Act
         _ = await appDelegate.applicationDidBecomeActive(application)
 
-        waitForCondition(timeout: 2) { // Wait detached tasks until resume is called
-            analyticsSpy.activityActionCalled == .resume
+        waitForCondition(timeout: 2) {
+            analyticsSpy.trackedEvents.count > 0 && analyticsSpy.activityActionCalled == .resume
         }
 
         // Assert
         XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
-        XCTAssertEqual(analyticsSpy.trackedEvents.count, 1, "Should have tracked one resume event")
+        XCTAssertEqual(analyticsSpy.trackedEvents.count, 1)
 
         if let structuredEvent = analyticsSpy.trackedEvents.first(where: { ($0 as? Structured)?.action == Analytics.Action.Activity.resume.rawValue }) {
             let seedCountContext = structuredEvent.entities.first { $0.schema == Analytics.impactBalanceSchema }
-            XCTAssertNotNil(seedCountContext, "User seed count context must be added to resume event")
+            XCTAssertNotNil(seedCountContext)
             if let seedCountContext = seedCountContext {
                 XCTAssertEqual(seedCountContext.data["amount"] as? Int, User.shared.seedCount)
             }
