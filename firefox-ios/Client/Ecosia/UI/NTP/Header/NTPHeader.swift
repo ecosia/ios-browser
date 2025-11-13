@@ -83,38 +83,37 @@ struct NTPHeaderView: View {
                     onTap: handleAISearchTap
                 )
             }
-                ZStack(alignment: .topLeading) {
-                    EcosiaAccountNavButton(
-                        seedCount: viewModel.seedCount,
-                        avatarURL: viewModel.userAvatarURL,
-                        enableAnimation: !reduceMotion,
-                        showSeedSparkles: viewModel.showSeedSparkles,
-                        windowUUID: windowUUID,
-                        onTap: handleTap
+            ZStack(alignment: .topLeading) {
+                EcosiaAccountNavButton(
+                    seedCount: viewModel.seedCount,
+                    avatarURL: viewModel.userAvatarURL,
+                    enableAnimation: !reduceMotion,
+                    showSeedSparkles: viewModel.showSeedSparkles,
+                    windowUUID: windowUUID,
+                    onTap: handleTap
+                )
+                .sheet(isPresented: $showAccountImpactView) {
+                    EcosiaAccountImpactView(
+                        viewModel: EcosiaAccountImpactViewModel(
+                            onLogin: {
+                                viewModel.performLogin()
+                            },
+                            onDismiss: {
+                                showAccountImpactView = false
+                            }
+                        ),
+                        windowUUID: windowUUID
                     )
-                    .sheet(isPresented: $showAccountImpactView) {
-                        EcosiaAccountImpactView(
-                            viewModel: EcosiaAccountImpactViewModel(
-                                onLogin: {
-                                    viewModel.performLogin()
-                                },
-                                onDismiss: {
-                                    showAccountImpactView = false
-                                }
-                            ),
-                            windowUUID: windowUUID
-                        )
-                        .padding(.horizontal, .ecosia.space._m)
-                        .dynamicHeightPresentationDetent()
-                    }
-                    if let increment = viewModel.balanceIncrement {
-                        BalanceIncrementAnimationView(
-                            increment: increment,
-                            windowUUID: windowUUID
-                        )
-                        .offset(x: 18, y: -8)
-                    }
-
+                    .padding(.horizontal, .ecosia.space._m)
+                    .dynamicHeightPresentationDetent()
+                }
+                if let increment = viewModel.balanceIncrement {
+                    BalanceIncrementAnimationView(
+                        increment: increment,
+                        windowUUID: windowUUID
+                    )
+                    .offset(x: 18, y: -8)
+                }
             }
         }
         .padding(.leading, .ecosia.space._m)
