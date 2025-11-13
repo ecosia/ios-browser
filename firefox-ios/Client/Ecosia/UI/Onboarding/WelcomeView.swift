@@ -33,12 +33,13 @@ struct WelcomeView: View {
         static let bodyGradientTopOffset: CGFloat = 20
         static let bodyGradientBottomOffset: CGFloat = 24
 
-        // Animation timings
-        static let phase1Delay: TimeInterval = 0.5
+        // Animation timings (relative delays between phases)
+        static let initialDelay: TimeInterval = 0.5
         static let phase1Duration: TimeInterval = 0.5
-        static let phase2Delay: TimeInterval = 1.0
+        static let gradientFadeDuration: TimeInterval = 0.2
+        static let phase2Delay: TimeInterval = 0.15
         static let phase2Duration: TimeInterval = 0.35
-        static let phase3Delay: TimeInterval = 1.85
+        static let phase3Delay: TimeInterval = 0.5
         static let phase3Duration: TimeInterval = 0.35
         static let exitDuration: TimeInterval = 0.35
     }
@@ -63,6 +64,7 @@ struct WelcomeView: View {
     @State private var bodyGradientOpacity: Double = 0.0
     @State private var theme = WelcomeViewTheme()
     @State private var isVideoReady = false
+    @State private var animationTask: Task<Void, Never>?
 
     private let reduceMotionEnabled = UIAccessibility.isReduceMotionEnabled
 
@@ -248,36 +250,47 @@ struct WelcomeView: View {
     }
 
     private func startAnimationSequence() {
-        // Phase 1: Show centered rounded square mask with logo
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase1Delay) {
+        animationTask?.cancel()
+        animationTask = Task { @MainActor in
+            // Phase 1: Show centered rounded square mask with logo
+            try? await Task.sleep(duration: UX.initialDelay)
+            guard !Task.isCancelled else { return }
+
             showVideoBackground = true
             transitionMaskWidth = screenWidth - UX.maskInitialWidthMargin * 2
-            withAnimation(.easeInOut(duration: UX.phase1Duration)) {
+
+            await animate(duration: UX.phase1Duration) {
                 transitionMaskScale = 1.0
                 logoColor = theme.contentTextColor
             }
-        }
 
-        // Fade in centered gradient directly after phase 1 ends
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase1Delay + UX.phase1Duration) {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            guard !Task.isCancelled else { return }
+
+            // Fade in centered gradient directly after phase 1 ends
+            await animate(duration: UX.gradientFadeDuration) {
                 centeredGradientOpacity = 1.0
             }
-        }
 
-        // Phase 2: Animate in welcome text above, move logo down
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase2Delay) {
-            withAnimation(.easeInOut(duration: UX.phase2Duration)) {
+            guard !Task.isCancelled else { return }
+
+            // Phase 2: Animate in welcome text above, move logo down
+            try? await Task.sleep(duration: UX.phase2Delay)
+            guard !Task.isCancelled else { return }
+
+            await animate(duration: UX.phase2Duration) {
                 welcomeTextOpacity = 1.0
                 welcomeTextOffset = phase2WelcomeTextOffset
                 logoOffset = phase2LogoOffset
                 animationPhase = .phase1Complete
             }
-        }
 
-        // Phase 3: Grow window to full screen, move both to final position, show body
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase3Delay) {
-            withAnimation(.easeInOut(duration: UX.phase3Duration)) {
+            guard !Task.isCancelled else { return }
+
+            // Phase 3: Grow window to full screen, move both to final position, show body
+            try? await Task.sleep(duration: UX.phase3Delay)
+            guard !Task.isCancelled else { return }
+
+            await animate(duration: UX.phase3Duration) {
                 transitionMaskScale = 1.0 // Already at full scale from phase 1
                 transitionMaskHeight = screenHeight
                 transitionMaskWidth = screenWidth
@@ -293,21 +306,31 @@ struct WelcomeView: View {
         }
     }
 
-    private func startExitAnimation() {
-        // Phase 4: Exit transition - move content out while fading
-        withAnimation(.easeInOut(duration: UX.exitDuration)) {
-            logoOffset = exitLogoOffset
-            welcomeTextOffset = exitWelcomeTextOffset
-            logoOpacity = 0.0
-            bodyOffset = UX.exitOffset
-            bodyOpacity = 0.0
-            welcomeTextOpacity = 0.0
-            backgroundOpacity = 1.0
-            animationPhase = .final
+    @MainActor
+    private func animate(duration: TimeInterval, _ updates: @escaping () -> Void) async {
+        withAnimation(.easeInOut(duration: duration)) {
+            updates()
         }
+        try? await Task.sleep(duration: duration)
+    }
 
-        // Dismiss after animation completes
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.exitDuration) {
+    private func startExitAnimation() {
+        animationTask?.cancel()
+
+        // Phase 4: Exit transition - move content out while fading
+        animationTask = Task { @MainActor in
+            await animate(duration: UX.exitDuration) {
+                logoOffset = exitLogoOffset
+                welcomeTextOffset = exitWelcomeTextOffset
+                logoOpacity = 0.0
+                bodyOffset = UX.exitOffset
+                bodyOpacity = 0.0
+                welcomeTextOpacity = 0.0
+                backgroundOpacity = 1.0
+                animationPhase = .final
+            }
+
+            guard !Task.isCancelled else { return }
             onFinish()
         }
     }
