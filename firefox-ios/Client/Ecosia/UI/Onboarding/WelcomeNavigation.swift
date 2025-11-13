@@ -6,18 +6,20 @@ import UIKit
 import Common
 
 final class WelcomeNavigation: UINavigationController {
-    private var fadeTransitionDelegate: FadeTransitionDelegate {
+    private let fadeTransitionDelegate: FadeTransitionDelegate
+    let windowUUID: WindowUUID
+
+    init(rootViewController: UIViewController, windowUUID: WindowUUID) {
+        self.windowUUID = windowUUID
+
+        // Transition delegate for fade dismissal
         let transition = FadeTransitionDelegate()
         let themeManager: ThemeManager = AppContainer.shared.resolve()
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         // Matches NTP background
         transition.dismissalBackgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
-        return transition
-    }
+        self.fadeTransitionDelegate = transition
 
-    let windowUUID: WindowUUID
-    init(rootViewController: UIViewController, windowUUID: WindowUUID) {
-        self.windowUUID = windowUUID
         super.init(rootViewController: rootViewController)
         transitioningDelegate = fadeTransitionDelegate
     }
