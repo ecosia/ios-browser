@@ -65,6 +65,7 @@ struct WelcomeView: View {
     @State private var theme = WelcomeViewTheme()
     @State private var isVideoReady = false
     @State private var animationTask: Task<Void, Never>?
+    @State private var hasAppeared = false
 
     private let reduceMotionEnabled = UIAccessibility.isReduceMotionEnabled
 
@@ -213,6 +214,9 @@ struct WelcomeView: View {
         // Theme has to be applied before onAppear for logo color
         .ecosiaThemed(windowUUID, $theme)
         .onAppear {
+            guard !hasAppeared else { return }
+            hasAppeared = true
+
             Analytics.shared.introWelcome(action: .display)
 
             logoColor = theme.brandPrimaryColor
@@ -224,7 +228,7 @@ struct WelcomeView: View {
             }
         }
         .onChange(of: isVideoReady) { ready in
-            if ready && !reduceMotionEnabled {
+            if ready && !reduceMotionEnabled && hasAppeared {
                 startAnimationSequence()
             }
         }
