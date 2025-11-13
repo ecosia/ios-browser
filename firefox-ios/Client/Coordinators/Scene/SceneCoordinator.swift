@@ -147,8 +147,13 @@ class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinish
     // MARK: - LaunchCoordinatorDelegate
 
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
+        /* Ecosia: Custom transition
+        router.dismiss(animated: true)
+        remove(child: coordinator)
+        */
         startBrowser(with: nil)
 
+        // Ecosia: Animate transition from welcome screen
         guard let browserCoordinator = childCoordinators.first(where: { $0 is BrowserCoordinator }) as? BrowserCoordinator else {
             router.dismiss(animated: true)
             remove(child: coordinator)
