@@ -81,6 +81,7 @@
 		1230CFF22EBB990900D7AC00 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
 		1230CFF32EBB990900D7AC00 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
 		1230D24D2EBCEE9B00D7AC00 /* welcome_background.mov in Resources */ = {isa = PBXBuildFile; fileRef = 1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */; };
+		123297FC2EC5E6AD004564E9 /* LoopingVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123297FB2EC5E6A5004564E9 /* LoopingVideoPlayer.swift */; };
 		123475C32DA6730A0017B0C2 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A6AB4528CA6A4C00EBEBDD /* String+Extension.swift */; };
 		123475CC2DA7D6620017B0C2 /* BeforeOrAfterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */; };
 		12348FFA2DB8D2D40017B0C2 /* PrefsKeys+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12348FF92DB8D2CC0017B0C2 /* PrefsKeys+Ecosia.swift */; };
@@ -2377,6 +2378,7 @@
 		121C6E1B2EC38B600060319A /* FadeTransitionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FadeTransitionDelegate.swift; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = welcome_background.mov; sourceTree = "<group>"; };
+		123297FB2EC5E6A5004564E9 /* LoopingVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopingVideoPlayer.swift; sourceTree = "<group>"; };
 		123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeOrAfterView.swift; sourceTree = "<group>"; };
 		12348FF92DB8D2CC0017B0C2 /* PrefsKeys+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrefsKeys+Ecosia.swift"; sourceTree = "<group>"; };
 		123CEC4B2E7814A2009EB379 /* FoundersGroteskCondensed-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FoundersGroteskCondensed-Semibold.ttf"; sourceTree = "<group>"; };
@@ -10679,6 +10681,7 @@
 		2CFEA0422D455BD500B25CE0 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				123297FB2EC5E6A5004564E9 /* LoopingVideoPlayer.swift */,
 				121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */,
 				121C6E1B2EC38B600060319A /* FadeTransitionDelegate.swift */,
 				1230D24C2EBCEE9B00D7AC00 /* welcome_background.mov */,
@@ -16213,6 +16216,7 @@
 				8AABBCFC2A0010900089941E /* GleanWrapper.swift in Sources */,
 				8C92DE912A7128CB0090BD28 /* ProductAnalysisResponse.swift in Sources */,
 				12C11E282D281BD100E4DDBF /* EcosiaTopSiteItemCell.swift in Sources */,
+				123297FC2EC5E6AD004564E9 /* LoopingVideoPlayer.swift in Sources */,
 				F85C7F0F271DD154004BDBA4 /* AppAuthenticator.swift in Sources */,
 				D029A04920A62DB0001DB72F /* TemporaryDocument.swift in Sources */,
 				2CB5C33F2E45F02D00B1048F /* SearchViewController+Ecosia.swift in Sources */,
