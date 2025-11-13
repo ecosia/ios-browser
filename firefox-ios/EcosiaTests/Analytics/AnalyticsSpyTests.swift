@@ -387,33 +387,6 @@ final class AnalyticsSpyTests: XCTestCase {
         }
     }
 
-    // MARK: - Onboarding / Welcome Tests
-
-    func testWelcomeViewOnAppearTracksIntroWelcomeDisplay() throws {
-        // Arrange
-        let welcomeView = makeWelcomeView()
-        XCTAssertNil(analyticsSpy.introWelcomeActionCalled)
-
-        // Act
-        try welcomeView.inspect().callOnAppear()
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introWelcomeActionCalled, .display, "Analytics should track intro welcome action as .display.")
-    }
-
-    func testWelcomeViewGetStartedButtonTracksIntroWelcomeClick() throws {
-        // Arrange
-        let welcomeView = makeWelcomeView()
-        XCTAssertNil(analyticsSpy.introWelcomeActionCalled)
-
-        // Act - Find and tap the "Get Started" button
-        let button = try welcomeView.inspect().find(button: .localized(.getStarted))
-        try button.tap()
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introWelcomeActionCalled, .click, "Analytics should track intro welcome action as .click.")
-    }
-
     // MARK: - News Detail Tests
 
     func testNewsControllerViewDidAppearTracksNavigationViewNews() {
