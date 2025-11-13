@@ -46,7 +46,7 @@ extension BrowserViewController {
                 self?.header.transform = .identity
                 self?.bottomContainer.transform = .identity
                 self?.contentStackView.alpha = 1
-            },
+            }
         )
     }
 

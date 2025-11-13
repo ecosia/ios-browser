@@ -133,7 +133,7 @@ struct WelcomeView: View {
             }
 
             // Welcome text
-            Text("Welcome to")
+            Text(verbatim: .localized(.welcomeTo))
                 .font(.system(size: UX.welcomeTextFontSize, weight: .semibold))
                 .foregroundColor(theme.contentTextColor)
                 .multilineTextAlignment(.center)
@@ -160,12 +160,12 @@ struct WelcomeView: View {
                     Spacer()
 
                     VStack(spacing: UX.bodyTitleBottomSpacing) {
-                        Text("Real change\nat your fingertips")
+                        Text(verbatim: .localized(.realChangeAtYourFingertips))
                             .font(.ecosiaFamilyBrand(size: .ecosia.font._6l))
                             .foregroundStyle(theme.contentTextColor)
                             .multilineTextAlignment(.center)
 
-                        Text("Join 20 million people making a difference every day")
+                        Text(verbatim: .localized(.joinMillionsPeople))
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundStyle(theme.contentTextColor)
                             .multilineTextAlignment(.center)
