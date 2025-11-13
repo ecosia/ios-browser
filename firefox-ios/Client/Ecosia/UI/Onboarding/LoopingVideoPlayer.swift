@@ -24,6 +24,7 @@ class VideoPlayerView: UIView {
 
 struct LoopingVideoPlayer: UIViewRepresentable {
     let videoName: String
+    var onReady: (() -> Void)?
 
     func makeUIView(context: Context) -> UIView {
         let view = VideoPlayerView()
@@ -35,6 +36,10 @@ struct LoopingVideoPlayer: UIViewRepresentable {
             imageView.contentMode = .scaleAspectFill
             imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             view.addSubview(imageView)
+            // Trigger onReady immediately for fallback
+            DispatchQueue.main.async {
+                onReady?()
+            }
             return view
         }
 
@@ -49,24 +54,25 @@ struct LoopingVideoPlayer: UIViewRepresentable {
         // Store references in coordinator
         context.coordinator.player = player
         context.coordinator.view = view
+        context.coordinator.onReady = onReady
 
         // Monitor player status
-        let statusObserver = playerItem.publisher(for: \.status)
+        context.coordinator.statusObserver = playerItem.publisher(for: \.status)
             .receive(on: DispatchQueue.main)
             .sink { status in
                 switch status {
                 case .readyToPlay:
                     player.play()
+                    context.coordinator.onReady?()
                 case .failed:
-                    break
+                    // Call onReady even on failure to prevent animations from never starting
+                    context.coordinator.onReady?()
                 case .unknown:
                     break
                 @unknown default:
                     break
                 }
             }
-
-        context.coordinator.statusObserver = statusObserver
 
         // Monitor buffer status
         let bufferObserver = playerItem.publisher(for: \.isPlaybackBufferFull)
@@ -104,6 +110,7 @@ struct LoopingVideoPlayer: UIViewRepresentable {
         var loopObserver: NSObjectProtocol?
         var statusObserver: AnyCancellable?
         var bufferObserver: AnyCancellable?
+        var onReady: (() -> Void)?
 
         deinit {
             player?.pause()

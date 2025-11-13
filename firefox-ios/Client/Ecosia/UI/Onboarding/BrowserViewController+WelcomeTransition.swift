@@ -20,6 +20,7 @@ extension BrowserViewController {
         contentStackView.alpha = 0
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         // TODO: Investigate colors behind toolbars before transition
+        // TODO: Smooth out color transitions
         view.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
     }
 

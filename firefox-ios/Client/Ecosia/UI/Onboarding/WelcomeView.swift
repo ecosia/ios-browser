@@ -56,12 +56,15 @@ struct WelcomeView: View {
     @State private var welcomeTextOffset: CGFloat = 0.0
     @State private var bodyOpacity: Double = 0.0
     @State private var bodyOffset: CGFloat = 0.0
-    @State private var showRoundedBackground: Bool = false
+    @State private var showVideoBackground: Bool = false
     @State private var backgroundOpacity: Double = 1.0
     @State private var centeredGradientOpacity: Double = 0.0
     @State private var topGradientOpacity: Double = 0.0
     @State private var bodyGradientOpacity: Double = 0.0
     @State private var theme = WelcomeViewTheme()
+    @State private var isVideoReady = false
+
+    private let reduceMotionEnabled = UIAccessibility.isReduceMotionEnabled
 
     let windowUUID: WindowUUID
     let onFinish: () -> Void
@@ -82,30 +85,31 @@ struct WelcomeView: View {
                 .opacity(backgroundOpacity)
 
             // Video background (clipped to transition mask)
-            if showRoundedBackground {
-                ZStack {
-                    LoopingVideoPlayer(videoName: "welcome_background")
-
-                    // Centered radial gradient behind logo
-                    RadialGradient(
-                        gradient: Gradient(colors: [
-                            Color.black.opacity(0.55),
-                            Color.black.opacity(0)
-                        ]),
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: UX.centeredGradientSize / 2
-                    )
-                    .opacity(centeredGradientOpacity)
+            ZStack {
+                LoopingVideoPlayer(videoName: "welcome_background") {
+                    isVideoReady = true
                 }
-                .mask(
-                    RoundedRectangle(cornerRadius: UX.maskCornerRadius)
-                        .frame(height: transitionMaskHeight)
-                        .frame(maxWidth: transitionMaskWidth)
-                        .scaleEffect(transitionMaskScale, anchor: .center)
+
+                // Centered radial gradient behind logo
+                RadialGradient(
+                    gradient: Gradient(colors: [
+                        Color.black.opacity(0.55),
+                        Color.black.opacity(0)
+                    ]),
+                    center: .center,
+                    startRadius: 0,
+                    endRadius: UX.centeredGradientSize / 2
                 )
-                .ignoresSafeArea(edges: .all)
+                .opacity(centeredGradientOpacity)
             }
+            .mask(
+                RoundedRectangle(cornerRadius: UX.maskCornerRadius)
+                    .frame(height: transitionMaskHeight)
+                    .frame(maxWidth: transitionMaskWidth)
+                    .scaleEffect(transitionMaskScale, anchor: .center)
+            )
+            .ignoresSafeArea(edges: .all)
+            .opacity(showVideoBackground ? 1 : 0)
 
             // Top vertical gradient behind logo
             if animationPhase == .phase3Complete {
@@ -210,15 +214,43 @@ struct WelcomeView: View {
             Analytics.shared.introWelcome(action: .display)
 
             logoColor = theme.brandPrimaryColor
-            startAnimationSequence()
+
+            if reduceMotionEnabled {
+                skipToFinalState()
+            } else {
+                // Animation will start when video is ready
+            }
+        }
+        .onChange(of: isVideoReady) { ready in
+            if ready && !reduceMotionEnabled {
+                startAnimationSequence()
+            }
         }
     }
 
+    private func skipToFinalState() {
+        // For reduced motion: skip animations and go directly to final state
+        showVideoBackground = true
+        transitionMaskScale = 1.0
+        transitionMaskHeight = screenHeight
+        transitionMaskWidth = screenWidth
+        logoColor = theme.contentTextColor
+        welcomeTextOpacity = 1.0
+        logoOpacity = 1.0
+        logoOffset = phase3LogoOffset
+        welcomeTextOffset = phase3WelcomeTextOffset
+        bodyOpacity = 1.0
+        topGradientOpacity = 1.0
+        bodyGradientOpacity = 1.0
+        centeredGradientOpacity = 0.0
+        backgroundOpacity = 0.0
+        animationPhase = .phase3Complete
+    }
+
     private func startAnimationSequence() {
-        // TODO: Wait for video to be ready before starting?
         // Phase 1: Show centered rounded square mask with logo
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.phase1Delay) {
-            showRoundedBackground = true
+            showVideoBackground = true
             transitionMaskWidth = screenWidth - UX.maskInitialWidthMargin * 2
             withAnimation(.easeInOut(duration: UX.phase1Duration)) {
                 transitionMaskScale = 1.0
