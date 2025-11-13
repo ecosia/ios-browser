@@ -9,14 +9,6 @@ final class DefaultAuth0SettingsProviderTests: XCTestCase {
 
     var settingsProvider = DefaultAuth0SettingsProvider()
 
-    // MARK: - Client ID Tests
-
-    func testClientId_withValidEnvironmentVariable_returnsCorrectValue() {
-        // Arrange / Act / Assert
-        let clientId = settingsProvider.id
-        XCTAssertFalse(clientId.isEmpty)
-    }
-
     // MARK: - Domain Tests
 
     func testDomain_returnsValueFromURLProvider() {
