@@ -16,12 +16,6 @@ public enum EcosiaInterceptedURLType {
     ///   - path: The URL path (lowercased recommended)
     ///   - urlProvider: The URL provider containing path patterns
     public init(path: String, urlProvider: URLProvider) {
-#if !TESTING
-        if AccountFeatureExperiment.isEnabled {
-            self = .none
-            return
-        }
-#endif
         if urlProvider.loginURL.relativePath == path {
             self = .signIn
         } else if urlProvider.logoutURL.relativePath == path {
