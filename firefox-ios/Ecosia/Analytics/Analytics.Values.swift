@@ -98,8 +98,7 @@ extension Analytics {
 
         public enum Onboarding: String {
             case
-            next,
-            skip
+            welcome = "welcome_screen"
         }
 
         public enum Referral: String {
@@ -211,6 +210,12 @@ extension Analytics {
             remove,
             unpin
 		}
+
+        public enum Welcome: String {
+            case
+            click,
+            display
+        }
     }
 
     public enum Property: String {

@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Ecosia
 
 protocol LaunchCoordinatorDelegate: AnyObject {
     func didFinishLaunch(from coordinator: LaunchCoordinator)
@@ -46,48 +47,56 @@ class LaunchCoordinator: BaseCoordinator,
     // MARK: - Intro
     private func presentIntroOnboarding(with manager: IntroScreenManager,
                                         isFullScreen: Bool) {
-        /* Ecosia: Disable old onboarding since outdated. Remove and clean up once properly updated.
-        
-        let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
-        let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
-        let introViewModel = IntroViewModel(introScreenManager: manager,
-                                            profile: profile,
-                                            model: onboardingModel,
-                                            telemetryUtility: telemetryUtility)
-        /* Ecosia: custom onboarding
-        let introViewController = IntroViewController(viewModel: introViewModel, windowUUID: windowUUID)
-        introViewController.qrCodeNavigationHandler = self
-        introViewController.didFinishFlow = { [weak self] in
+        // Wait for feature flags to be available since Onboarding is behind an experiment
+        AppEventQueue.wait(for: .featureManagementInitialized) { [weak self] in
             guard let self = self else { return }
-            self.parentCoordinator?.didFinishLaunch(from: self)
-        }
-         */
-        let introViewController = WelcomeNavigation(rootViewController: Welcome(delegate: self, windowUUID: windowUUID))
-        introViewController.isNavigationBarHidden = true
-        introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-        if isFullScreen {
+
+            // Ecosia: Hide onboarding out of experiment
+            guard OnboardingProductTourExperiment.isEnabled else {
+                self.parentCoordinator?.didFinishLaunch(from: self)
+                return
+            }
+
+            /* Ecosia: custom onboarding
+            let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
+            let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
+            let introViewModel = IntroViewModel(introScreenManager: manager,
+                                                profile: profile,
+                                                model: onboardingModel,
+                                                telemetryUtility: telemetryUtility)
+
+            let introViewController = IntroViewController(viewModel: introViewModel, windowUUID: windowUUID)
+            introViewController.qrCodeNavigationHandler = self
+            introViewController.didFinishFlow = { [weak self] in
+                guard let self = self else { return }
+                self.parentCoordinator?.didFinishLaunch(from: self)
+            }
+
+            if isFullScreen {
+                introViewController.modalPresentationStyle = .fullScreen
+                router.present(introViewController, animated: false)
+            } else {
+                introViewController.preferredContentSize = CGSize(
+                    width: ViewControllerConsts.PreferredSize.IntroViewController.width,
+                    height: ViewControllerConsts.PreferredSize.IntroViewController.height)
+                introViewController.modalPresentationStyle = .formSheet
+                // Disables dismissing the view by tapping outside the view, based on
+                // Nimbus's configuration
+                if !introViewModel.isDismissable {
+                    introViewController.isModalInPresentation = true
+                }
+                router.present(introViewController, animated: true)
+            }
+            */
+            let introViewController = WelcomeNavigation(
+                rootViewController: WelcomeViewController(delegate: self, windowUUID: self.windowUUID),
+                windowUUID: self.windowUUID
+            )
+            introViewController.isNavigationBarHidden = true
+            introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
             introViewController.modalPresentationStyle = .fullScreen
-            router.present(introViewController, animated: false)
-        } else {
-            introViewController.preferredContentSize = CGSize(
-                width: ViewControllerConsts.PreferredSize.IntroViewController.width,
-                height: ViewControllerConsts.PreferredSize.IntroViewController.height)
-            introViewController.modalPresentationStyle = .formSheet
-            // Disables dismissing the view by tapping outside the view, based on
-            // Nimbus's configuration
-            if !introViewModel.isDismissable {
-                introViewController.isModalInPresentation = true
-            }
-            /* Ecosia: Remove completion
-            router.present(introViewController, animated: true) {
-                introViewController.closeOnboarding()
-            }
-             */
-            router.present(introViewController, animated: true)
+            self.router.present(introViewController, animated: false)
         }
-        
-        */
-        parentCoordinator?.didFinishLaunch(from: self)
     }
 
     // MARK: - Update
@@ -186,7 +195,7 @@ class LaunchCoordinator: BaseCoordinator,
 
 // Ecosia: custom onboarding
 extension LaunchCoordinator: WelcomeDelegate {
-    func welcomeDidFinish(_ welcome: Welcome) {
+    func welcomeDidFinish(_ welcome: WelcomeViewController) {
         self.parentCoordinator?.didFinishLaunch(from: self)
     }
 }

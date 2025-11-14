@@ -5,9 +5,6 @@
 @testable import Client
 
 final class MockWelcomeDelegate: WelcomeDelegate {
-    func welcomeDidFinish(_ welcome: Welcome) {}
+    func welcomeDidFinish(_ welcome: WelcomeViewController) {}
 }
 
-final class MockWelcomeTourDelegate: WelcomeTourDelegate {
-    func welcomeTourDidFinish(_ tour: WelcomeTour) {}
-}

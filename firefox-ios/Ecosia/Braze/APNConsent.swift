@@ -8,6 +8,10 @@ public struct APNConsent {
     private init() {}
 
     public static func requestIfNeeded() async {
+        // Do not ask for push consent during Onboarding experiment
+        guard !OnboardingProductTourExperiment.isEnabled else {
+            return
+        }
         guard BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
             return
         }

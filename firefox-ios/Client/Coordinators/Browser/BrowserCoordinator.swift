@@ -98,7 +98,12 @@ class BrowserCoordinator: BaseCoordinator,
     // MARK: - LaunchCoordinatorDelegate
 
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
+        /* Ecosia: Animate transition from welcome screen
         router.dismiss(animated: true, completion: nil)
+        */
+        router.dismiss(animated: true) { [weak self] in
+            self?.browserViewController.animateToolbarsIn()
+        }
         remove(child: coordinator)
 
         // Once launch is done, we check for any saved Route

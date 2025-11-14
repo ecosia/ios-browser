@@ -84,7 +84,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .preLaunchDependenciesComplete,
             .postLaunchDependenciesComplete,
             .accountManagerInitialized,
-            .browserIsReady
+            .browserIsReady,
+            // Ecosia: Add Feature Management dependency
+            .featureManagementInitialized
         ])
 
         // Then setup dependency container as it's needed for everything else
@@ -135,7 +137,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         EcosiaInstallType.evaluateCurrentEcosiaInstallType()
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
 
-        /* 
+        /*
          Ecosia: Feature Management fetch
          We perform the same configuration retrieval in
          `applicationDidBecomeActive(:)` and sounds redundant;
@@ -148,6 +150,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         Task {
             await FeatureManagement.fetchConfiguration()
+            // Signal that feature management initialization is complete on main thread
+            AppEventQueue.signal(event: .featureManagementInitialized)
             // Ecosia: Braze Service Initialization after feature flags are fetched for conditional initialization
             BrazeService.shared.initialize()
             // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
