@@ -30,7 +30,7 @@ public struct EcosiaAvatar: View {
                             .resizable()
                             .scaledToFill()
                 } placeholder: {
-                        placeholderView(imageName: signedOutPlaceholderImageName)
+                        placeholderView(imageName: signedInPlaceholderImageName)
                 }
                 .frame(width: size, height: size)
                 .clipShape(Circle())
@@ -38,7 +38,7 @@ public struct EcosiaAvatar: View {
                 .accessibilityIdentifier("user_avatar")
                 .transition(.opacity)
             } else {
-                placeholderView(imageName: signedInPlaceholderImageName)
+                placeholderView(imageName: signedOutPlaceholderImageName)
                     .transition(.opacity)
             }
         }
