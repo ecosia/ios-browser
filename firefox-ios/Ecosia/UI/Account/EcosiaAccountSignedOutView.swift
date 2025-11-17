@@ -190,7 +190,7 @@ private class NudgeCardActionHandler: ObservableObject, ConfigurableNudgeCardAct
     }
 
     func nudgeCardTapped() {
-        // Optional: Handle card tap if needed
+        onActionTap?()
     }
 }
 
