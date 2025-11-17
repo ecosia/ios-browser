@@ -71,8 +71,8 @@ struct BalanceIncrementAnimationViewTheme: EcosiaThemeable {
     var backgroundColor = Color.secondary
 
     mutating func applyTheme(theme: Theme) {
-        textColor = Color(theme.colors.ecosia.textPrimary)
-        backgroundColor = Color(theme.colors.ecosia.brandImpact)
+        textColor = Color(EcosiaColor.Peach700)
+        backgroundColor = Color(EcosiaColor.Peach100)
     }
 }
 
