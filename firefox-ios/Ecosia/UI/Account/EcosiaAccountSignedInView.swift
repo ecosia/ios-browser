@@ -40,7 +40,7 @@ public struct EcosiaAccountSignedInView: View {
                         .fill(.clear)
                         .frame(height: UX.yourEcosiaSectionHeight)
                     Text(String.localized(.yourEcosia))
-                        .font(.ecosia(size: .ecosia.font._1l, weight: .regular))
+                        .font(.footnote)
                         .foregroundColor(theme.yourEcosiaTextColor)
                         .padding(.leading, .ecosia.space._s)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -56,7 +56,7 @@ public struct EcosiaAccountSignedInView: View {
                             .fill(theme.yourProfileBackground)
                             .frame(height: UX.yourProfileButtonHeight)
                         Text(String.localized(.yourProfile))
-                                .font(.ecosia(size: .ecosia.font._2l, weight: .regular))
+                                .font(.subheadline)
                                 .foregroundColor(theme.yourProfileTextColor)
                                 .padding(.leading, .ecosia.space._s)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -81,7 +81,7 @@ public struct EcosiaAccountSignedInView: View {
                         .foregroundColor(theme.ctaButtonImageTintColor)
 
                     Text(String.localized(.signOut))
-                        .font(.ecosia(size: .ecosia.font._l, weight: .regular))
+                        .font(.subheadline)
                         .foregroundColor(theme.ctaButtonTextColor)
                         .frame(height: UX.ctaButtonHeight)
                 }

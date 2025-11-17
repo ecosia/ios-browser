@@ -87,7 +87,7 @@ public struct EcosiaAccountSignedOutView: View {
             // Sign Up CTA button
             Button(action: viewModel.handleMainCTATap) {
                 Text(viewModel.mainCTAText)
-                    .font(.ecosia(size: .ecosia.font._l, weight: .regular))
+                    .font(.subheadline)
                     .padding(.ecosia.space._m)
                     .frame(maxWidth: .infinity)
                     .frame(height: UX.ctaButtonHeight)
