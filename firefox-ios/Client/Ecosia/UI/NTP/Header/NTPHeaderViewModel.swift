@@ -28,6 +28,7 @@ final class NTPHeaderViewModel: ObservableObject {
     var isLoggedIn: Bool { authStateProvider.isLoggedIn }
     var userAvatarURL: URL? { authStateProvider.avatarURL }
     var balanceIncrement: Int? { authStateProvider.balanceIncrement }
+    var shouldAnimateSeed: Bool { balanceIncrement != nil }
     @Published var showSeedSparkles: Bool = false
 
     private var levelUpObserver: NSObjectProtocol?

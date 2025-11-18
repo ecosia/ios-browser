@@ -50,7 +50,7 @@ public struct BalanceIncrementAnimationView: View {
 
         // Pop in with spring
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.appearDelay) {
-            withAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDampingFraction)) {
+            withOptionalAnimation(.spring(response: UX.springResponse, dampingFraction: UX.springDampingFraction)) {
                 scale = 1.0
                 opacity = 1.0
             }

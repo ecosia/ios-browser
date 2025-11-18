@@ -87,7 +87,7 @@ struct NTPHeaderView: View {
                 EcosiaAccountNavButton(
                     seedCount: viewModel.seedCount,
                     avatarURL: viewModel.userAvatarURL,
-                    enableAnimation: !reduceMotion,
+                    enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
                     showSeedSparkles: viewModel.showSeedSparkles,
                     windowUUID: windowUUID,
                     onTap: handleTap
