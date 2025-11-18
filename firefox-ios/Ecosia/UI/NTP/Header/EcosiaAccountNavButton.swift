@@ -13,6 +13,10 @@ public struct EcosiaAccountNavButton: View {
     private let onTap: () -> Void
     private let enableAnimation: Bool
     private let showSeedSparkles: Bool
+    private var showSeedCoundLock: Bool {
+        !authStateProvider.isLoggedIn &&
+        seedCount == UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
+    }
     private let windowUUID: WindowUUID
     @State private var theme = EcosiaAccountNavButtonTheme()
     @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
@@ -44,10 +48,11 @@ public struct EcosiaAccountNavButton: View {
                 if !authStateProvider.hasRegisterVisitError {
                     EcosiaSeedView(
                         seedCount: seedCount,
-                        iconSize: .ecosia.space._1l,
-                        spacing: .ecosia.space._1s,
+                        seedIconSize: .ecosia.space._1l,
+                        spacing: .ecosia.space._2s,
                         enableAnimation: enableAnimation,
                         showSparkles: showSeedSparkles,
+                        showLock: showSeedCoundLock,
                         windowUUID: windowUUID
                     )
                 }

@@ -11,10 +11,11 @@ import Common
 @available(iOS 16.0, *)
 public struct EcosiaSeedView: View {
     private let seedCount: Int
-    private let iconSize: CGFloat
+    private let seedIconSize: CGFloat
     private let spacing: CGFloat
     private let enableAnimation: Bool
     private let showSparkles: Bool
+    private let showLock: Bool
     private let windowUUID: WindowUUID
     @State private var animationScale: CGFloat = 1.0
     @State private var animationOffsetY: CGFloat = 0
@@ -31,22 +32,25 @@ public struct EcosiaSeedView: View {
         static let squeezeOffsetY: CGFloat = -5
         static let squeezeRotation: Double = -10.0
         static let squeezeDuration: TimeInterval = 0.2
+        static let lockSize: CGFloat = 16
         static let bounceDelay: TimeInterval = 0.15
     }
 
     public init(
         seedCount: Int,
-        iconSize: CGFloat = .ecosia.space._1l,
+        seedIconSize: CGFloat = .ecosia.space._1l,
         spacing: CGFloat = .ecosia.space._1s,
         enableAnimation: Bool = true,
         showSparkles: Bool = false,
+        showLock: Bool = false,
         windowUUID: WindowUUID
     ) {
         self.seedCount = seedCount
-        self.iconSize = iconSize
+        self.seedIconSize = seedIconSize
         self.spacing = spacing
         self.enableAnimation = enableAnimation
         self.showSparkles = showSparkles
+        self.showLock = showLock
         self.windowUUID = windowUUID
     }
 
@@ -62,10 +66,10 @@ public struct EcosiaSeedView: View {
     }
 
     public var body: some View {
-        HStack(spacing: spacing) {
+        HStack(alignment: .center, spacing: spacing) {
             Image("seed", bundle: .ecosia)
                 .resizable()
-                .frame(width: iconSize, height: iconSize)
+                .frame(width: seedIconSize, height: seedIconSize)
                 .scaleEffect(enableAnimation ? animationScale : 1.0)
                 .rotationEffect(.degrees(enableAnimation ? animationRotation : 0))
                 .offset(x: enableAnimation ? animationOffsetX : 0, y: enableAnimation ? animationOffsetY : 0)
@@ -75,10 +79,10 @@ public struct EcosiaSeedView: View {
                         if showSparkles {
                             EcosiaSparkleAnimation(
                                 isVisible: showSparkles,
-                                containerSize: iconSize * 2.5,
-                                sparkleSize: iconSize * 0.4
+                                containerSize: seedIconSize * 2.5,
+                                sparkleSize: seedIconSize * 0.4
                             )
-                            .frame(width: iconSize * 2.5, height: iconSize * 2.5)
+                            .frame(width: seedIconSize * 2.5, height: seedIconSize * 2.5)
                             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                             .allowsHitTesting(false)
                         }
@@ -89,6 +93,14 @@ public struct EcosiaSeedView: View {
                 .font(.headline)
                 .foregroundColor(theme.textColor)
                 .animatedText(numericValue: seedCount, reduceMotionEnabled: !enableAnimation)
+
+            if showLock {
+                Image("lock", bundle: .ecosia)
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: UX.lockSize, height: UX.lockSize)
+                    .foregroundColor(theme.lockColor)
+            }
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
@@ -129,9 +141,11 @@ public struct EcosiaSeedView: View {
 // MARK: - Theme
 struct EcosiaSeedViewTheme: EcosiaThemeable {
     var textColor = Color.primary
+    var lockColor = Color.primary
 
     mutating func applyTheme(theme: Theme) {
         textColor = Color(theme.colors.ecosia.textPrimary)
+        lockColor = Color(theme.colors.ecosia.iconDecorative)
     }
 }
 
@@ -179,7 +193,7 @@ private struct EcosiaSeedViewInteractivePreview: View {
             VStack(spacing: .ecosia.space._l) {
                 EcosiaSeedView(
                     seedCount: 999,
-                    iconSize: .ecosia.space._2l,
+                    seedIconSize: .ecosia.space._2l,
                     spacing: .ecosia.space._s,
                     windowUUID: .XCTestDefaultUUID
                 )
@@ -194,6 +208,13 @@ private struct EcosiaSeedViewInteractivePreview: View {
                 EcosiaSeedView(
                     seedCount: 5,
                     enableAnimation: false,
+                    windowUUID: .XCTestDefaultUUID
+                )
+
+                EcosiaSeedView(
+                    seedCount: 3,
+                    enableAnimation: false,
+                    showLock: true,
                     windowUUID: .XCTestDefaultUUID
                 )
             }
