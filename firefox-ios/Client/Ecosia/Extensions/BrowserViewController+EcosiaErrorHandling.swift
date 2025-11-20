@@ -72,7 +72,7 @@ extension BrowserViewController {
             ? String.localized(.signInErrorMessage)
             : String.localized(.signOutErrorMessage)
 
-        #if !MOZ_CHANNEL_RELEASE
+        #if MOZ_CHANNEL_BETA
         if let errorMessage {
             subtitle += "Additional details: \(errorMessage)"
         }
