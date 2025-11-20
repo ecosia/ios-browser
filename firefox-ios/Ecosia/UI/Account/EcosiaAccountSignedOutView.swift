@@ -14,6 +14,7 @@ public struct EcosiaAccountSignedOutView: View {
     @State private var theme = EcosiaAccountSignedOutViewTheme()
     @State private var isCardDismissed: Bool
     @State private var cardHeight: CGFloat?
+    @State private var opacity: Double = 1
     @StateObject private var nudgeCardDelegate = NudgeCardActionHandler()
 
     /// Layout configuration optimized for account impact cards
@@ -83,6 +84,7 @@ public struct EcosiaAccountSignedOutView: View {
             .frame(height: isCardDismissed ? 0 : cardHeight)
             .opacity(isCardDismissed ? 0 : 1)
             .clipped()
+            .opacity(opacity)
 
             // Sign Up CTA button
             Button(action: viewModel.handleMainCTATap) {
@@ -109,7 +111,12 @@ public struct EcosiaAccountSignedOutView: View {
             nudgeCardDelegate.onDismissTap = {
                 User.shared.hideAccountImpactNudgeCard()
                 Analytics.shared.accountImpactCardDismissClicked()
-                isCardDismissed = true
+                withAnimation(.easeOut(duration: UX.nudgeCardFadeOutAnimationDuration)) {
+                    opacity = 0
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + UX.nudgeCardFadeOutAnimationDuration) {
+                    isCardDismissed = true
+                }
             }
         }
     }
@@ -120,6 +127,7 @@ public struct EcosiaAccountSignedOutView: View {
         static let imageImpactWidthHeight: CGFloat = 80
         static let borderWidth: CGFloat = 1
         static let ctaButtonHeight: CGFloat = 40
+        static let nudgeCardFadeOutAnimationDuration: TimeInterval = 0.4
     }
 }
 
