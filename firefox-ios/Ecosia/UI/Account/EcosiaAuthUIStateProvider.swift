@@ -10,6 +10,10 @@ import Common
 /// This eliminates the need for individual components to manage their own auth state observers
 public class EcosiaAuthUIStateProvider: ObservableObject {
 
+    /// Auth0 gives us back a Gravatar URL when no profile picture URL is provided from a resource (e.g. Sign In with Apple)
+    /// We want to strip it, therefore we track the URL
+    private let gravatarURL = URL(string: "https://s.gravatar.com/avatar/")
+
     // MARK: - Published Properties
 
     /// Current authentication status
@@ -46,6 +50,10 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private var userProfileObserver: NSObjectProtocol?
     private var seedProgressObserver: NSObjectProtocol?
     private let accountsProvider: AccountsProviderProtocol
+    private var normalizedAvatarURL: URL? {
+        guard userProfile?.pictureURL?.baseDomain != gravatarURL?.baseDomain else { return nil }
+        return userProfile?.pictureURL
+    }
     private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
 
     // MARK: - Singleton
@@ -62,7 +70,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         // Initialize state synchronously to prevent flickering
         self.isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
         self.userProfile = EcosiaAuthenticationService.shared.userProfile
-        self.avatarURL = userProfile?.pictureURL
+        self.avatarURL = normalizedAvatarURL
         self.username = userProfile?.name
 
         // If logged out, ensure seed count is loaded (already done in property initializer)
@@ -152,18 +160,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
-    @MainActor
-    private func updateFromAuthShared() {
-        isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        userProfile = EcosiaAuthenticationService.shared.userProfile
-        avatarURL = userProfile?.pictureURL
-        username = userProfile?.name
-    }
-
     private func handleAuthStateChange(_ notification: Notification) async {
-        // Update UI properties on main actor
-        await updateFromAuthShared()
-
         // Handle specific auth actions (business logic can be nonisolated)
         if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType {
             switch actionType {
@@ -182,11 +179,12 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     @MainActor
     private func handleUserProfileUpdate() {
-        if isLoggedIn {
-            userProfile = EcosiaAuthenticationService.shared.userProfile
-            username = userProfile?.name
-            avatarURL = userProfile?.pictureURL
+        Task { @MainActor in
+            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
         }
+        userProfile = EcosiaAuthenticationService.shared.userProfile
+        username = userProfile?.name
+        avatarURL = normalizedAvatarURL
     }
 
     @MainActor

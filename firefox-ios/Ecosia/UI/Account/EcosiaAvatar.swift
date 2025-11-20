@@ -11,6 +11,7 @@ public struct EcosiaAvatar: View {
     private let size: CGFloat
     private let signedOutPlaceholderImageName: String
     private let signedInPlaceholderImageName: String
+    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
 
     public init(avatarURL: URL?,
                 size: CGFloat = .ecosia.space._2l,
@@ -24,23 +25,20 @@ public struct EcosiaAvatar: View {
 
     public var body: some View {
         Group {
-            if let avatarURL = avatarURL {
-                EcosiaCachedAsyncImage(url: avatarURL) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                } placeholder: {
-                        placeholderView(imageName: signedInPlaceholderImageName)
-                }
-                .frame(width: size, height: size)
-                .clipShape(Circle())
-                .accessibilityLabel(String.localized(.userAvatarAccessibilityLabel))
-                .accessibilityIdentifier("user_avatar")
-                .transition(.opacity)
-            } else {
-                placeholderView(imageName: signedOutPlaceholderImageName)
+            EcosiaCachedAsyncImage(url: avatarURL) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+            } placeholder: {
+                let shouldShowSignedInPlaceholder: Bool = authStateProvider.isLoggedIn && avatarURL == nil
+                placeholderView(imageName: shouldShowSignedInPlaceholder ? signedInPlaceholderImageName : signedOutPlaceholderImageName)
                     .transition(.opacity)
             }
+            .frame(width: size, height: size)
+            .clipShape(Circle())
+            .accessibilityLabel(String.localized(.userAvatarAccessibilityLabel))
+            .accessibilityIdentifier("user_avatar")
+            .transition(.opacity)
         }
         .animation(.easeInOut(duration: 0.3), value: avatarURL)
     }

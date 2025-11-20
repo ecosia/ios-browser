@@ -34,13 +34,10 @@ struct EcosiaCachedAsyncImage<Content: View, Placeholder: View>: View {
     var body: some View {
         ZStack {
             // Placeholder layer
-            if loader.image == nil {
+            if url == nil {
                 placeholder()
                     .transition(transition)
-            }
-
-            // Loaded image layer
-            if let uiImage = loader.image {
+            } else if let uiImage = loader.image {
                 // swiftlint:disable accessibility_label_for_image
                 content(Image(uiImage: uiImage))
                     .transition(transition)
@@ -58,7 +55,7 @@ struct EcosiaCachedAsyncImage<Content: View, Placeholder: View>: View {
 
 /// Image cache loader with URLCache-based persistent caching
 @MainActor
-final class ImageCacheLoader: ObservableObject {
+public final class ImageCacheLoader: ObservableObject {
     @Published var image: UIImage?
 
     private static let cache: URLCache = {
@@ -132,5 +129,13 @@ final class ImageCacheLoader: ObservableObject {
         }
 
         await currentTask?.value
+    }
+}
+
+extension ImageCacheLoader {
+    
+    public static func clearCache(for url: URL?) async throws {
+        guard let url else { return }
+        ImageCacheLoader.cache.removeCachedResponse(for: URLRequest(url: url))
     }
 }
