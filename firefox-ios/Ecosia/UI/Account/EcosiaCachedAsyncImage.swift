@@ -133,7 +133,7 @@ public final class ImageCacheLoader: ObservableObject {
 }
 
 extension ImageCacheLoader {
-    
+
     public static func clearCache(for url: URL?) async throws {
         guard let url else { return }
         ImageCacheLoader.cache.removeCachedResponse(for: URLRequest(url: url))

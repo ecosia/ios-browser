@@ -899,7 +899,7 @@ final class AnalyticsSpyTests: XCTestCase {
         _ = await appDelegate.applicationDidBecomeActive(application)
 
         waitForCondition(timeout: 2) {
-            analyticsSpy.trackedEvents.count > 0 && analyticsSpy.activityActionCalled == .resume
+            !analyticsSpy.trackedEvents.isEmpty && analyticsSpy.activityActionCalled == .resume
         }
 
         // Assert

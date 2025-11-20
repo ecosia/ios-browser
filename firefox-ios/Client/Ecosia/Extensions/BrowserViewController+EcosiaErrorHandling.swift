@@ -71,7 +71,7 @@ extension BrowserViewController {
         var subtitle = isLogin
             ? String.localized(.signInErrorMessage)
             : String.localized(.signOutErrorMessage)
-        
+
         #if !MOZ_CHANNEL_RELEASE
         if let errorMessage {
             subtitle += "Additional details: \(errorMessage)"
