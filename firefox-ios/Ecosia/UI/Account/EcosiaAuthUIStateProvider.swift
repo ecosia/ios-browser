@@ -50,6 +50,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private var userProfileObserver: NSObjectProtocol?
     private var seedProgressObserver: NSObjectProtocol?
     private let accountsProvider: AccountsProviderProtocol
+    /// Normalizing the avatar to match Web's Product behaviour.
+    /// Our Auth Provider (Auth0) sends us a Gravatar URL when no profile image is retrieved from a user
+    /// (e.g. Apple Sign In). As of now, we replace it with our tree-image in `EcosiaAvatar` by not setting any URL
     private var normalizedAvatarURL: URL? {
         guard userProfile?.pictureURL?.baseDomain != gravatarURL?.baseDomain else { return nil }
         return userProfile?.pictureURL
