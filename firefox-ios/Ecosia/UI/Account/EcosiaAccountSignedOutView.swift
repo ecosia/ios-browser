@@ -109,9 +109,7 @@ public struct EcosiaAccountSignedOutView: View {
             nudgeCardDelegate.onDismissTap = {
                 User.shared.hideAccountImpactNudgeCard()
                 Analytics.shared.accountImpactCardDismissClicked()
-                withAnimation(.easeOut(duration: 0.4)) {
-                    isCardDismissed = true
-                }
+                isCardDismissed = true
             }
         }
     }
