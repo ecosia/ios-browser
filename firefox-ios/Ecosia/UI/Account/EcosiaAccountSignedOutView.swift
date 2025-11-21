@@ -111,12 +111,7 @@ public struct EcosiaAccountSignedOutView: View {
             nudgeCardDelegate.onDismissTap = {
                 User.shared.hideAccountImpactNudgeCard()
                 Analytics.shared.accountImpactCardDismissClicked()
-                withAnimation(.easeOut(duration: UX.nudgeCardFadeOutAnimationDuration)) {
-                    opacity = 0
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + UX.nudgeCardFadeOutAnimationDuration) {
-                    isCardDismissed = true
-                }
+                isCardDismissed = true
             }
         }
     }
@@ -127,7 +122,6 @@ public struct EcosiaAccountSignedOutView: View {
         static let imageImpactWidthHeight: CGFloat = 80
         static let borderWidth: CGFloat = 1
         static let ctaButtonHeight: CGFloat = 40
-        static let nudgeCardFadeOutAnimationDuration: TimeInterval = 0.4
     }
 }
 
