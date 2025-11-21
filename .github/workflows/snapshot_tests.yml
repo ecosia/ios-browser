@@ -1,6 +1,9 @@
 name: Snapshot Tests
 
 on:
+  push:
+    branches:
+      - dc-mob-3926-fix-snapshot-tests
   pull_request:
     paths:
       - 'firefox-ios/Client/Configuration/Common.xcconfig'
@@ -21,13 +24,13 @@ jobs:
         run: sh ./check_marketing_version.sh
 
       - name: Prepare environment
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
+        # if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
         uses: ./.github/actions/prepare_environment
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
       - name: Perform Snapshot Tests and Publish Test reports
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
+        # if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
         id: perform-snapshot-tests
         uses: ./.github/actions/perform_snapshot_tests
         with:
