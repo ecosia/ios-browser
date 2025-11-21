@@ -28,6 +28,10 @@ final class NTPHeaderViewModel: ObservableObject {
     var isLoggedIn: Bool { authStateProvider.isLoggedIn }
     var userAvatarURL: URL? { authStateProvider.avatarURL }
     var balanceIncrement: Int? { authStateProvider.balanceIncrement }
+    var shouldAnimateSeed: Bool { balanceIncrement != nil }
+    @Published var showSeedSparkles: Bool = false
+
+    private var levelUpObserver: NSObjectProtocol?
 
     // MARK: - Initialization
     init(profile: Profile,
@@ -48,6 +52,33 @@ final class NTPHeaderViewModel: ObservableObject {
                 self?.objectWillChange.send()
             }
             .store(in: &cancellables)
+
+        setupLevelUpObserver()
+    }
+
+    deinit {
+        if let observer = levelUpObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+    private func setupLevelUpObserver() {
+        levelUpObserver = NotificationCenter.default.addObserver(
+            forName: .EcosiaAccountLevelUp,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.triggerSeedSparkles()
+        }
+    }
+
+    private func triggerSeedSparkles() {
+        showSeedSparkles = true
+
+        // Turn off sparkles after animation completes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            self.showSeedSparkles = false
+        }
     }
 
     // MARK: - Public Methods
@@ -64,6 +95,11 @@ final class NTPHeaderViewModel: ObservableObject {
     func performLogout() {
         EcosiaLogger.auth.info("Performing immediate logout without confirmation")
         auth.logout()
+    }
+
+    @MainActor
+    func refreshSeedState() {
+        authStateProvider.refreshSeedState()
     }
 }
 

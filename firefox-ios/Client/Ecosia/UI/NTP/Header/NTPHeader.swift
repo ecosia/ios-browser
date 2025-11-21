@@ -70,7 +70,6 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
     let windowUUID: WindowUUID
-    // Use explicit SwiftUI.Environment to avoid ambiguity
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
     @State private var showAccountImpactView = false
@@ -88,36 +87,42 @@ struct NTPHeaderView: View {
                 EcosiaAccountNavButton(
                     seedCount: viewModel.seedCount,
                     avatarURL: viewModel.userAvatarURL,
-                    enableAnimation: !reduceMotion,
+                    enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
+                    showSeedSparkles: viewModel.showSeedSparkles,
                     windowUUID: windowUUID,
                     onTap: handleTap
                 )
-
+                .sheet(isPresented: $showAccountImpactView) {
+                    EcosiaAccountImpactView(
+                        viewModel: EcosiaAccountImpactViewModel(
+                            onLogin: {
+                                viewModel.performLogin()
+                            },
+                            onDismiss: {
+                                showAccountImpactView = false
+                            }
+                        ),
+                        windowUUID: windowUUID
+                    )
+                    .padding(.horizontal, .ecosia.space._m)
+                    .dynamicHeightPresentationDetent()
+                }
                 if let increment = viewModel.balanceIncrement {
                     BalanceIncrementAnimationView(
                         increment: increment,
                         windowUUID: windowUUID
                     )
-                    .offset(x: 20, y: -10)
+                    .offset(x: 18, y: -8)
                 }
             }
         }
         .padding(.leading, .ecosia.space._m)
         .padding(.trailing, .ecosia.space._m)
-        .sheet(isPresented: $showAccountImpactView) {
-            EcosiaAccountImpactView(
-                viewModel: EcosiaAccountImpactViewModel(
-                    onLogin: {
-                        viewModel.performLogin()
-                    },
-                    onDismiss: {
-                        showAccountImpactView = false
-                    }
-                ),
-                windowUUID: windowUUID
-            )
-            .padding(.horizontal, .ecosia.space._m)
-            .dynamicHeightPresentationDetent()
+        .onAppear {
+            viewModel.refreshSeedState()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
+            viewModel.refreshSeedState()
         }
     }
 

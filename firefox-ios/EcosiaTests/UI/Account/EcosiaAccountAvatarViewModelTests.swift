@@ -38,19 +38,17 @@ final class EcosiaAccountAvatarViewModelTests: XCTestCase {
 
     @MainActor
     func testInitialization_withCustomValues() {
-        // Given
-        let avatarURL = URL(string: "https://example.com/avatar.jpg")
-        let progress = 0.75
-
-        // When
+        // Given / When
         viewModel = EcosiaAccountAvatarViewModel(
-            avatarURL: avatarURL,
-            progress: progress
+            progress: 0.75,
+            seedCount: 10,
+            levelNumber: 3
         )
 
         // Then
-        XCTAssertEqual(viewModel.avatarURL, avatarURL)
-        XCTAssertEqual(viewModel.progress, progress)
+        XCTAssertEqual(viewModel.progress, 0.75)
+        XCTAssertEqual(viewModel.seedCount, 10)
+        XCTAssertEqual(viewModel.currentLevelNumber, 3)
         XCTAssertFalse(viewModel.showSparkles)
     }
 
@@ -126,19 +124,19 @@ final class EcosiaAccountAvatarViewModelTests: XCTestCase {
 
     @MainActor
     func testProgressUpdateNotification() {
-        // Given
+        // Given / When
         viewModel = EcosiaAccountAvatarViewModel()
-        let expectation = XCTestExpectation(description: "Progress updated")
+        let expectation = XCTestExpectation(description: "Progress updated to 0.6")
 
         viewModel.$progress
-            .dropFirst() // Skip initial value
+            .dropFirst()
             .sink { progress in
-                XCTAssertEqual(progress, 0.6)
+                if progress == 0.6 {
                 expectation.fulfill()
+                }
             }
             .store(in: &cancellables)
 
-        // When
         EcosiaAccountNotificationCenter.postProgressUpdated(progress: 0.6)
 
         // Then
@@ -147,32 +145,33 @@ final class EcosiaAccountAvatarViewModelTests: XCTestCase {
 
     @MainActor
     func testLevelUpNotification() {
-        // Given
+        // Given / When
         viewModel = EcosiaAccountAvatarViewModel()
-        let progressExpectation = XCTestExpectation(description: "Progress updated")
         let sparklesExpectation = XCTestExpectation(description: "Sparkles triggered")
-
-        viewModel.$progress
-            .dropFirst()
-            .sink { progress in
-                XCTAssertEqual(progress, 1.0)
-                progressExpectation.fulfill()
-            }
-            .store(in: &cancellables)
+        let levelExpectation = XCTestExpectation(description: "Level updated")
 
         viewModel.$showSparkles
             .dropFirst()
             .sink { showSparkles in
-                XCTAssertTrue(showSparkles)
+                if showSparkles {
                 sparklesExpectation.fulfill()
+                }
             }
             .store(in: &cancellables)
 
-        // When
+        viewModel.$currentLevelNumber
+            .dropFirst()
+            .sink { level in
+                if level == 3 {
+                    levelExpectation.fulfill()
+                }
+            }
+            .store(in: &cancellables)
+
         EcosiaAccountNotificationCenter.postLevelUp(newLevel: 3, newProgress: 0.9)
 
         // Then
-        wait(for: [progressExpectation, sparklesExpectation], timeout: 1.0)
+        wait(for: [sparklesExpectation, levelExpectation], timeout: 1.0)
     }
 }
 
