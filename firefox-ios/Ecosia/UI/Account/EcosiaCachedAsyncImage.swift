@@ -38,6 +38,10 @@ struct EcosiaCachedAsyncImage<Content: View, Placeholder: View>: View {
                 placeholder()
                     .transition(transition)
             } else if let uiImage = loader.image {
+                /*
+                 We disabled swiftlint here to let each single
+                 copy of this struct define their own accessibility label
+                 */
                 // swiftlint:disable accessibility_label_for_image
                 content(Image(uiImage: uiImage))
                     .transition(transition)
