@@ -68,6 +68,7 @@
 "Show AI-generated overviews at the top of search results" = "Show AI-generated overviews at the top of search results";
 "Top Sites" = "Top Sites";
 "Not now" = "Not now";
+"Image associated to the error, showing a warning signal" = "Image associated to the error, showing a warning signal";
 
 // Impact
 "A friend accepted your invitation and each of you will help plant 1 tree!" = "A friend has accepted your invite! You have each helped plant 1 extra tree.";
@@ -291,3 +292,11 @@
 "Your Ecosia" = "Your Ecosia";
 "Your profile" = "Your profile";
 "Sign out" = "Sign out";
+"%d seeds" = "%d seeds";
+"User avatar" = "User avatar";
+"Default avatar" = "Default avatar";
+"Account: %@" = "Account: %@";
+"Opens your account and impact details" = "Opens your account and impact details";
+"Level: %@" = "Level: %@";
+"Opens your profile page" = "Opens your profile page";
+"Sign out of your account" = "Sign out of your account";

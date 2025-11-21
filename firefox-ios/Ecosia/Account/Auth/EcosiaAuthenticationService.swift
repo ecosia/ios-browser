@@ -51,7 +51,14 @@ public final class EcosiaAuthenticationService {
 
     /// The current user's profile information from Auth0.
     /// This includes name, email, profile picture URL, etc.
-    public private(set) var userProfile: UserProfile?
+    public private(set) var userProfile: UserProfile? {
+        didSet {
+            NotificationCenter.default.post(name: .EcosiaUserProfileUpdated, object: nil)
+        }
+    }
+
+    /// For testing: Skip fetching user info from Auth0 to avoid HTTP calls
+    var skipUserInfoFetch: Bool = false
 
     // MARK: - Initialization
 
@@ -99,7 +106,9 @@ public final class EcosiaAuthenticationService {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
                 setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-                await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
+                if !skipUserInfoFetch {
+                    await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
+                }
                 EcosiaLogger.auth.info("Login completed successfully")
             } else {
                 EcosiaLogger.auth.error("Credential storage failed (returned false)")
@@ -143,6 +152,7 @@ public final class EcosiaAuthenticationService {
         if credentialsCleared {
             setupTokensWithCredentials(nil)
             // Clear user profile on logout
+            try await ImageCacheLoader.clearCache(for: userProfile?.pictureURL)
             userProfile = nil
             EcosiaLogger.auth.info("Credentials cleared successfully")
 
@@ -181,7 +191,9 @@ public final class EcosiaAuthenticationService {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-            await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
+            if !skipUserInfoFetch {
+                await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
+            }
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
             // Dispatch state loaded with current authentication status
@@ -257,11 +269,6 @@ public final class EcosiaAuthenticationService {
             )
 
             EcosiaLogger.auth.info("Updated user profile with Auth0 data: name=\(userInfo.name ?? "nil"), email=\(userInfo.email ?? "nil"), picture=\(userInfo.picture?.absoluteString ?? "nil")")
-
-            // Notify UI that profile was updated
-            await MainActor.run {
-                NotificationCenter.default.post(name: .EcosiaUserProfileUpdated, object: nil)
-            }
         } catch {
             EcosiaLogger.auth.error("Failed to fetch user info from Auth0: \(error)")
         }

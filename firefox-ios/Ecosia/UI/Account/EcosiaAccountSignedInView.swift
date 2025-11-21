@@ -9,15 +9,15 @@ import Common
 @available(iOS 16.0, *)
 public struct EcosiaAccountSignedInView: View {
     @ObservedObject private var viewModel: EcosiaAccountImpactViewModel
+    @State private var theme = EcosiaAccountSignedInViewTheme()
     private let windowUUID: WindowUUID
     private let onProfileTap: () -> Void
     private let onSignOutTap: () -> Void
 
-    @State private var theme = EcosiaAccountSignedInViewTheme()
-
     public init(
         viewModel: EcosiaAccountImpactViewModel,
         windowUUID: WindowUUID,
+        theme: EcosiaAccountImpactViewTheme? = nil,
         onProfileTap: @escaping () -> Void,
         onSignOutTap: @escaping () -> Void
     ) {
@@ -25,6 +25,10 @@ public struct EcosiaAccountSignedInView: View {
         self.windowUUID = windowUUID
         self.onProfileTap = onProfileTap
         self.onSignOutTap = onSignOutTap
+
+        if let theme = theme {
+            self._theme = State(initialValue: EcosiaAccountSignedInViewTheme(from: theme))
+        }
     }
 
     public var body: some View {
@@ -34,10 +38,10 @@ public struct EcosiaAccountSignedInView: View {
                 ZStack {
                     Rectangle()
                         .fill(.clear)
-                        .frame(height: 40)
+                        .frame(height: UX.yourEcosiaSectionHeight)
                     Text(String.localized(.yourEcosia))
-                        .font(.body)
-                        .foregroundColor(theme.titleColor)
+                        .font(.footnote)
+                        .foregroundColor(theme.yourEcosiaTextColor)
                         .padding(.leading, .ecosia.space._s)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityIdentifier("account_signed_in_title")
@@ -49,17 +53,18 @@ public struct EcosiaAccountSignedInView: View {
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
-                            .fill(theme.menuItemBackgroundColor)
-                            .frame(height: 40)
+                            .fill(theme.yourProfileBackground)
+                            .frame(height: UX.yourProfileButtonHeight)
                         Text(String.localized(.yourProfile))
-                                .font(.title3)
-                                .foregroundColor(theme.menuItemTextColor)
+                                .font(.subheadline)
+                                .foregroundColor(theme.yourProfileTextColor)
                                 .padding(.leading, .ecosia.space._s)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
                 .accessibilityIdentifier("account_profile_button")
                 .accessibilityLabel(String.localized(.yourProfile))
+                .accessibilityHint(String.localized(.profileButtonAccessibilityHint))
                 .accessibilityAddTraits(.isButton)
             }
 
@@ -72,46 +77,64 @@ public struct EcosiaAccountSignedInView: View {
                     Image("sign-out", bundle: .ecosia)
                         .renderingMode(.template)
                         .resizable()
-                        .frame(width: 16, height: 16)
-                        .foregroundColor(theme.signOutIconColor)
+                        .frame(width: UX.ctaImageSize, height: UX.ctaImageSize)
+                        .foregroundColor(theme.ctaButtonImageTintColor)
 
                     Text(String.localized(.signOut))
-                        .font(.title3)
-                        .foregroundColor(theme.signOutTextColor)
+                        .font(.subheadline)
+                        .foregroundColor(theme.ctaButtonTextColor)
+                        .frame(height: UX.ctaButtonHeight)
                 }
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity, minHeight: 40)
             .accessibilityIdentifier("account_sign_out_button")
             .accessibilityLabel(String.localized(.signOut))
+            .accessibilityHint(String.localized(.signOutButtonAccessibilityHint))
             .accessibilityAddTraits(.isButton)
         }
         .padding(.horizontal, .ecosia.space._m)
         .frame(maxWidth: .infinity, alignment: .leading)
         .ecosiaThemed(windowUUID, $theme)
     }
+
+    // MARK: - UX Constants
+    private enum UX {
+        static let ctaImageSize: CGFloat = 16
+        static let yourEcosiaSectionHeight: CGFloat = 40
+        static let yourProfileButtonHeight: CGFloat = 40
+        static let ctaButtonHeight: CGFloat = 40
+    }
 }
 
 /// Theme configuration for EcosiaAccountSignedInView
 @available(iOS 16.0, *)
 public struct EcosiaAccountSignedInViewTheme: EcosiaThemeable {
-    public var titleColor = Color.black
-    public var menuBackgroundColor = Color.white
-    public var menuItemBackgroundColor = Color.clear
-    public var menuItemTextColor = Color.black
-    public var chevronColor = Color.gray
-    public var signOutTextColor = Color.red
-    public var signOutIconColor = Color.red
+    public var yourProfileTextColor = Color.black
+    public var yourEcosiaTextColor = Color.gray
+    public var yourProfileBackground = Color.white
+    public var ctaButtonTextColor = Color.blue
+    public var ctaButtonImageTintColor = Color.blue
 
     public init() {}
 
     public mutating func applyTheme(theme: Theme) {
-        titleColor = Color(theme.colors.ecosia.textSecondary)
-        menuBackgroundColor = Color(theme.colors.layer2)
-        menuItemBackgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
-        menuItemTextColor = Color(theme.colors.textPrimary)
-        chevronColor = Color(theme.colors.textSecondary)
-        signOutTextColor = Color(theme.colors.ecosia.buttonContentSecondary)
-        signOutIconColor = Color(theme.colors.ecosia.buttonContentSecondary)
+        yourProfileTextColor = Color(theme.colors.ecosia.textPrimary)
+        yourEcosiaTextColor = Color(theme.colors.ecosia.textSecondary)
+        yourProfileBackground = Color(theme.colors.ecosia.backgroundElevation1)
+        ctaButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondary)
+        ctaButtonImageTintColor = Color(theme.colors.ecosia.buttonContentSecondary)
+    }
+}
+
+@available(iOS 16.0, *)
+extension EcosiaAccountSignedInViewTheme {
+
+    public init(from parentTheme: EcosiaAccountImpactViewTheme) {
+        self.yourProfileTextColor = parentTheme.textPrimaryColor
+        self.yourEcosiaTextColor = parentTheme.textSecondaryColor
+        self.yourProfileBackground = parentTheme.cardBackgroundColor
+        self.ctaButtonTextColor = parentTheme.cardActionButtonTextColor
+        self.ctaButtonImageTintColor = parentTheme.cardActionButtonTextColor
     }
 }
 
