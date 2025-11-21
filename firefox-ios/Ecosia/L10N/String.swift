@@ -39,6 +39,7 @@ extension String {
         case ecosiaRecommends = "Ecosia recommends"
         case estimatedImpact = "Estimated impact"
         case estimatedTrees = "Estimated trees"
+        case ecosiaErrorViewAccessibilityImageLabel = "Image associated to the error, showing a warning signal"
         case exploreEcosia = "Explore Ecosia"
         case financialReports = "Financial reports"
         case forceDarkMode = "Force Dark Mode"
@@ -291,5 +292,13 @@ extension String {
         case yourEcosia = "Your Ecosia"
         case yourProfile = "Your profile"
         case signOut = "Sign out"
+        case seedCountAccessibilityLabel = "%d seeds"
+        case userAvatarAccessibilityLabel = "User avatar"
+        case defaultAvatarAccessibilityLabel = "Default avatar"
+        case accountButtonAccessibilityLabel = "Account: %@"
+        case accountButtonAccessibilityHint = "Opens your account and impact details"
+        case userLevelAccessibilityLabel = "Level: %@"
+        case profileButtonAccessibilityHint = "Opens your profile page"
+        case signOutButtonAccessibilityHint = "Sign out of your account"
     }
 }

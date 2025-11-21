@@ -449,6 +449,18 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
+        // Check if user is logged in
+        guard !EcosiaAuthenticationService.shared.isLoggedIn else {
+            let errorAlert = AlertController(
+                title: "Already Logged In",
+                message: "This feature is for logged-out users only. Please use the logged-in debug options instead.",
+                preferredStyle: .alert
+            )
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(errorAlert, animated: true)
+            return
+        }
+
         let currentSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
         let maxSeeds = UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
 
@@ -596,7 +608,7 @@ final class DebugAddCustomSeeds: HiddenSetting {
 
         let alert = AlertController(
             title: "Add Custom Seeds",
-            message: "Enter the number of seeds to add (1-999)",
+            message: "Enter the number of seeds to add (1-1000)",
             preferredStyle: .alert
         )
 
@@ -611,10 +623,10 @@ final class DebugAddCustomSeeds: HiddenSetting {
             guard let textField = alert.textFields?.first,
                   let text = textField.text,
                   let seedCount = Int(text),
-                  seedCount > 0 && seedCount <= 999 else {
+                  seedCount > 0 && seedCount <= 1000 else {
                 let errorAlert = AlertController(
                     title: "Invalid Input",
-                    message: "Please enter a number between 1 and 999",
+                    message: "Please enter a number between 1 and 1000",
                     preferredStyle: .alert
                 )
                 errorAlert.addAction(UIAlertAction(title: "OK", style: .default))

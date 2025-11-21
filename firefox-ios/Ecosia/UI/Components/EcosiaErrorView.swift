@@ -52,6 +52,8 @@ public struct EcosiaErrorView: View {
                 .resizable()
                 .frame(width: .ecosia.space._1l, height: .ecosia.space._1l)
                 .foregroundColor(theme.iconColor)
+                .accessibilityLabel(String.localized(.ecosiaErrorViewAccessibilityImageLabel))
+                .accessibilityIdentifier("error_view_image")
 
             // Text content
             VStack(alignment: .leading, spacing: .ecosia.space._1s) {

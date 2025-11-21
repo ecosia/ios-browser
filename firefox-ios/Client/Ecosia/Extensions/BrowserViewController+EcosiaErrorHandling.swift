@@ -62,15 +62,21 @@ extension BrowserViewController {
     /// Shows an error toast for auth flow failures
     /// - Parameters:
     ///   - isLogin: Whether this was a login (true) or logout (false) error
-    func showAuthFlowErrorToast(isLogin: Bool) {
+    func showAuthFlowErrorToast(isLogin: Bool, errorMessage: String? = nil) {
         // Remove any existing error toast
         view.subviews
             .compactMap { $0 as? EcosiaErrorToastContainerView }
             .forEach { $0.removeFromSuperview() }
 
-        let subtitle = isLogin
+        var subtitle = isLogin
             ? String.localized(.signInErrorMessage)
             : String.localized(.signOutErrorMessage)
+
+        #if MOZ_CHANNEL_BETA
+        if let errorMessage {
+            subtitle += "Additional details: \(errorMessage)"
+        }
+        #endif
 
         let container = EcosiaErrorToastContainerView()
         container.translatesAutoresizingMaskIntoConstraints = false

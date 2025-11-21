@@ -16,6 +16,7 @@ final class AuthTests: XCTestCase {
         super.setUp()
         mockProvider = MockAuth0Provider()
         auth = EcosiaAuthenticationService(auth0Provider: mockProvider)
+        auth.skipUserInfoFetch = true
         mockProvider.reset()
         mockProvider.hasStoredCredentials = false
     }

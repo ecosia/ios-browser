@@ -18,6 +18,7 @@ final class AuthWorkflowTests: XCTestCase {
         mockProvider = MockAuth0Provider()
         mockProvider.credentialsManager = mockCredentialsManager
         auth = EcosiaAuthenticationService(auth0Provider: mockProvider)
+        auth.skipUserInfoFetch = true
     }
 
     override func tearDown() {

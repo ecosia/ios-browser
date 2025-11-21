@@ -11,12 +11,12 @@ public protocol SeedProgressManagerProtocol {
 
     static func loadCurrentLevel() -> Int
     static func loadTotalSeedsCollected() -> Int
-    static func loadLastAppOpenDate() -> Date
+    static func loadLastAppOpenDate() -> Date?
 
     static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date)
 
     static func addSeeds(_ count: Int, relativeToDate date: Date)
-    static func resetCounter()
+    static func resetLocalSeedProgress()
 
     static func calculateInnerProgress() -> CGFloat
     static func collectDailySeed()
