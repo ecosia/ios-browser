@@ -453,7 +453,6 @@ workflows:
     jobs:
       - build-and-deploy-testflight-beta:
           name: Manual Deploy beta version over Testflight
-          context: napps
 
   manual-firebase-deploy:
     when: 
@@ -463,7 +462,6 @@ workflows:
     jobs:
       - build-and-deploy-firebase:
           name: Manual Deploy ad-hoc version over Firebase
-          context: napps
 
   manual-browserstack-tests:
     when: 
@@ -473,7 +471,6 @@ workflows:
     jobs:
       - build-and-deploy-browserstack:
           name: Manual Upload to Browserstack
-          context: napps
 
   manual-release-deploy:
     when: 
@@ -483,7 +480,6 @@ workflows:
     jobs:
       - manual-build-testflight-deploy:
           name: Manual Deploy release version to TestFlight
-          context: napps
 
   # Manual full workflow for testing
   manual-full-workflow:
