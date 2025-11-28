@@ -23805,6 +23805,8 @@
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = EcosiaSnapshotTests;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
@@ -26031,6 +26033,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = NO;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "RustMozillaAppServices-Info.plist";
 				LOCALIZED_STRING_MACRO_NAMES = (
@@ -26251,6 +26255,8 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				ENABLE_TESTABILITY = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = Sync/Info.plist;
