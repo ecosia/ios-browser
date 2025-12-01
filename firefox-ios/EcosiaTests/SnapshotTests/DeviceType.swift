@@ -62,13 +62,13 @@ enum DeviceType: String, CaseIterable {
             return .iPhoneSE_Portrait
         case ("iPhone SE (3rd generation)", "landscape"):
             return .iPhoneSE_Landscape
-        case ("iPhone 15 Pro", "portrait"):
+        case ("iPhone 16 Pro", "portrait"):
             return .iPhone15Pro_Portrait
-        case ("iPhone 15 Pro", "landscape"):
+        case ("iPhone 16 Pro", "landscape"):
             return .iPhone15Pro_Landscape
-        case ("iPhone 15 Pro Max", "portrait"):
+        case ("iPhone 16 Pro Max", "portrait"):
             return .iPhone15ProMax_Portrait
-        case ("iPhone 15 Pro Max", "landscape"):
+        case ("iPhone 16 Pro Max", "landscape"):
             return .iPhone15ProMax_Landscape
         case ("iPad Pro 11-inch (M4)", "portrait"):
             return .iPadPro_Portrait
