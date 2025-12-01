@@ -434,7 +434,7 @@ combined_result_path="$results_dir/all_tests.xcresult"
 
 # Define the Xcode path based on the CI environment variable
 if [ "${CI:-false}" = "true" ]; then
-    xcresulttool_path="/Applications/Xcode_15.4.app/Contents/Developer/usr/bin/xcresulttool"
+    xcresulttool_path="/Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcresulttool"
 else
     xcresulttool_path="/Applications/Xcode.app/Contents/Developer/usr/bin/xcresulttool"
 fi
