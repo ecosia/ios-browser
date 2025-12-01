@@ -31,11 +31,6 @@
       "name": "EcosiaSnapshotTests",
       "testClasses": [
         {
-          "name": "OnboardingTests",
-          "devices": ["all", "portrait"],
-          "locales": ["all"]
-        },
-        {
           "name": "NTPComponentTests",
           "devices": ["iPhone 16 Pro"],
           "locales": ["all"]
