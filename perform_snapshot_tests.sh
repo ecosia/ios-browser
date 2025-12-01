@@ -454,6 +454,14 @@ if [ "${#xcresult_files[@]}" -eq 0 ]; then
   exit 1
 fi
 
+# Check if xcresult is one
+if [ "${#xcresult_files[@]}" -eq 1 ]; then
+  echo "Only one xcresult file found. Copying to combined result path."
+  cp -R "${xcresult_files[0]}" "$combined_result_path"
+  echo "Combined xcresult created at: $combined_result_path"
+  exit 0
+fi
+
 # Merge the xcresult files into one
 $xcresulttool_path merge "${xcresult_files[@]}" --output-path "$combined_result_path"
 
