@@ -29,6 +29,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
 
     public var webAuth: WebAuth {
         makeHttpsWebAuth()
+            .useEphemeralSession()
             .audience(environment.urlProvider.authApiAudience.absoluteString)
             .scope("openid profile email offline_access read:impact write:impact")
     }
