@@ -103,7 +103,6 @@ extension URL {
                                     !User.shared.sendAnonymousUsageData
         let userId = shouldAnonymizeUserId ? UUID(uuid: UUID_NULL).uuidString : User.shared.analyticsId.uuidString
 
-        // Use the version-safe appendingQueryItems utility
         guard let urlWithoutUserId = components.url else { return self }
         return urlWithoutUserId.appendingQueryItems([Self.item(name: .userId, value: userId)])
     }
@@ -144,12 +143,14 @@ extension URL {
             url.append(queryItems: queryItems)
             return url
         } else {
-            var components = URLComponents(url: self, resolvingAgainstBaseURL: false)!
+            guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
+                return self
+            }
             if components.queryItems == nil {
                 components.queryItems = []
             }
             components.queryItems?.append(contentsOf: queryItems)
-            return components.url!
+            return components.url ?? self
         }
     }
 }
