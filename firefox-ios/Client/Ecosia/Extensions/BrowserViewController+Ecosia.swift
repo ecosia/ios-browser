@@ -123,7 +123,7 @@ extension BrowserViewController {
         let interceptedType = interceptor.interceptedType(for: url)
 
         switch interceptedType {
-        case .signIn:
+        case .signUp:
             handleSignInDetection(url)
             return true
         case .signOut:

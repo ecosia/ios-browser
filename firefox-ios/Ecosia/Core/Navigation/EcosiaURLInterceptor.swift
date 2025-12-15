@@ -6,7 +6,7 @@ import Foundation
 
 /// Represents types of Ecosia URLs that are intercepted for native handling
 public enum EcosiaInterceptedURLType {
-    case signIn
+    case signUp
     case signOut
     case profile
     case none
@@ -17,7 +17,7 @@ public enum EcosiaInterceptedURLType {
     ///   - urlProvider: The URL provider containing path patterns
     public init(path: String, urlProvider: URLProvider) {
         if urlProvider.loginURL.relativePath == path {
-            self = .signIn
+            self = .signUp
         } else if urlProvider.logoutURL.relativePath == path {
             self = .signOut
         } else if urlProvider.profileURL.relativePath == path {
