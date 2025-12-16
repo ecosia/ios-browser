@@ -206,6 +206,11 @@ public enum URLProvider {
         root.appendingPathComponent("accounts/sign-up")
     }
 
+    /// Complete URL for user sign-in flow
+    public var signInURL: URL {
+        root.appendingPathComponent("accounts/sign-in")
+    }
+
     /// Complete URL for user logout/sign-out flow
     public var logoutURL: URL {
         root.appendingPathComponent("accounts/sign-out")

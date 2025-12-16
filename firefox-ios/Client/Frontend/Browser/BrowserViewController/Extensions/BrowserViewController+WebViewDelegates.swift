@@ -947,6 +947,8 @@ extension BrowserViewController: WKNavigationDelegate {
                                                         isPrivate: tab.isPrivate)
             }
 
+            restorePostAuthSearchIfNeeded(for: webView.url, tab: tab)
+
             // If this tab had previously crashed, wait 5 seconds before resetting
             // the consecutive crash counter. This allows a successful webpage load
             // without a crash to reset the consecutive crash counter in the event

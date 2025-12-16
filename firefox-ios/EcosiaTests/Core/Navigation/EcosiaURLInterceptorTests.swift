@@ -18,9 +18,9 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Sign In Detection Tests
+    // MARK: - Sign Up Detection Tests
 
-    func testInterceptedType_whenSignInURL_returnsSignUp() {
+    func testInterceptedType_whenSignUpURL_returnsSignUp() {
         // Given
         let url = URL(string: "https://www.ecosia.org/accounts/sign-up")!
 
@@ -31,7 +31,7 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         XCTAssertEqual(result, .signUp)
     }
 
-    func testInterceptedType_whenSignInURLWithQueryParams_returnsSignUp() {
+    func testInterceptedType_whenSignUpURLWithQueryParams_returnsSignUp() {
         // Given
         let url = URL(string: "https://www.ecosia.org/accounts/sign-up?redirect=/search")!
 
@@ -42,7 +42,7 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         XCTAssertEqual(result, .signUp)
     }
 
-    func testInterceptedType_whenSignInURLWithMixedCase_returnsSignUp() {
+    func testInterceptedType_whenSignUpURLWithMixedCase_returnsSignUp() {
         // Given
         let url = URL(string: "https://www.ecosia.org/Accounts/Sign-Up")!
 
@@ -53,9 +53,55 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         XCTAssertEqual(result, .signUp)
     }
 
-    func testShouldIntercept_whenSignInURL_returnsTrue() {
+    func testShouldIntercept_whenSignUpURL_returnsTrue() {
         // Given
         let url = URL(string: "https://www.ecosia.org/accounts/sign-up")!
+    // MARK: - Sign In Detection Tests
+
+    func testInterceptedType_whenSignInURL_returnsSignIn() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
+
+        // When
+        let result = sut.interceptedType(for: url)
+
+        // Then
+        XCTAssertEqual(result, .signIn)
+    }
+
+    func testInterceptedType_whenSignInURLWithQueryParams_returnsSignIn() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in?redirect=/")!
+
+        // When
+        let result = sut.interceptedType(for: url)
+
+        // Then
+        XCTAssertEqual(result, .signIn)
+    }
+
+    func testInterceptedType_whenSignInURLWithMixedCase_returnsSignIn() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/Accounts/Sign-In")!
+
+        // When
+        let result = sut.interceptedType(for: url)
+
+        // Then
+        XCTAssertEqual(result, .signIn)
+    }
+
+    func testShouldIntercept_whenSignInURL_returnsTrue() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
+
+        // When
+        let result = sut.shouldIntercept(url)
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
 
         // When
         let result = sut.shouldIntercept(url)

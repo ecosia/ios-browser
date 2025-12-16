@@ -6,6 +6,7 @@ import UIKit
 import SwiftUI
 import Shared
 import Ecosia
+import ObjectiveC
 
 // MARK: HomepageViewControllerDelegate
 extension BrowserViewController: HomepageViewControllerDelegate {
@@ -124,8 +125,11 @@ extension BrowserViewController {
 
         switch interceptedType {
         case .signUp:
-            handleSignInDetection(url)
+            handleSignUpDetection(url, tab: tab)
             return true
+        case .signIn:
+            handleSignInDetection(url, tab: tab)
+            return false
         case .signOut:
             handleSignOutDetection(url)
             return true
@@ -137,16 +141,26 @@ extension BrowserViewController {
         }
     }
 
-    private func handleSignInDetection(_ url: URL) {
+    private func handleSignUpDetection(_ url: URL, tab: Tab) {
+        handleAuthenticationDetection(url: url, tab: tab, flowName: "sign-up")
+    }
+
+    private func handleSignInDetection(_ url: URL, tab: Tab) {
+        capturePostAuthSearchURL(from: tab)
+    }
+
+    private func handleAuthenticationDetection(url: URL, tab: Tab, flowName: String) {
         guard let ecosiaAuth = ecosiaAuth else {
-            EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-in detection")
+            EcosiaLogger.auth.notice("No EcosiaAuth instance available for \(flowName) detection")
             return
         }
+        capturePostAuthSearchURL(from: tab)
 
-        // Check for inconsistency: if web thinks user is logged out but native doesn't
-        // In this case, we should fail the entire process to avoid user getting "locked"
+        let flowLabel = flowName.capitalized
+        let successDescription = flowName == "sign-in" ? "sign-in" : "sign-up"
+
         if !ecosiaAuth.isLoggedIn {
-            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-in URL detected in navigation: \(url)")
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] \(flowLabel) URL detected in navigation: \(url)")
             EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
 
             ecosiaAuth
@@ -157,45 +171,43 @@ extension BrowserViewController {
                     if success {
                         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete authentication flow successful from navigation")
 
-                        // Refresh the current page to reflect auth state changes
                         DispatchQueue.main.async {
-                            self?.tabManager.selectedTab?.reload()
-                            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful sign-in")
+                            self?.loadPendingSearchURLOrReloadCurrentTab()
+                            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful \(successDescription)")
                         }
                     } else {
                         EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Authentication flow completed with issues from navigation")
+                        self?.resetPendingSearchURL()
                     }
                 }
-                .onError { error in
+                .onError { [weak self] error in
+                    self?.resetPendingSearchURL()
                     EcosiaLogger.auth.error("🔐 [WEB-AUTH] Authentication failed from navigation: \(error)")
                 }
                 .login()
         } else {
-            // Inconsistent state detected: web thinks user is logged out but native doesn't
-            // Fail the entire process to avoid user getting "locked"
             EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Inconsistent state detected: web thinks user is logged out but native doesn't")
             EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Failing entire process to avoid user getting locked")
 
-            // Trigger a complete re-authentication to resolve the inconsistency
             ecosiaAuth
                 .onAuthFlowCompleted { _ in
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
-                    // After logout, trigger login again
                     ecosiaAuth
                         .onAuthFlowCompleted { [weak self] success in
                             if success {
                                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
 
-                                // Refresh the current page to reflect auth state changes
                                 DispatchQueue.main.async {
-                                    self?.tabManager.selectedTab?.reload()
+                                    self?.loadPendingSearchURLOrReloadCurrentTab()
                                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after inconsistency resolution")
                                 }
                             } else {
                                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication failed after resolving inconsistency")
+                                self?.resetPendingSearchURL()
                             }
                         }
-                        .onError { error in
+                        .onError { [weak self] error in
+                            self?.resetPendingSearchURL()
                             EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication error after resolving inconsistency: \(error)")
                         }
                         .login()
@@ -251,6 +263,58 @@ extension BrowserViewController {
         DispatchQueue.main.async { [weak self] in
             self?.presentProfileModal()
         }
+    }
+}
+
+// MARK: Post-auth search helpers
+
+private var postAuthSearchRedirectStateKey: UInt8 = 0
+
+extension BrowserViewController {
+    private var postAuthSearchRedirectState: PostAuthSearchRedirectState {
+        if let state = objc_getAssociatedObject(self, &postAuthSearchRedirectStateKey) as? PostAuthSearchRedirectState {
+            return state
+        }
+        let state = PostAuthSearchRedirectState()
+        objc_setAssociatedObject(self, &postAuthSearchRedirectStateKey, state, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return state
+    }
+
+    func capturePostAuthSearchURL(from tab: Tab) {
+        let searchURLString = tab.metadataManager?.tabGroupData.tabAssociatedSearchUrl
+        postAuthSearchRedirectState.capture(searchURLString: searchURLString)
+    }
+
+    func loadPendingSearchURLOrReloadCurrentTab() {
+        guard let tab = tabManager.selectedTab else { return }
+        if let url = postAuthSearchRedirectState.consumePendingURL() {
+            tab.loadRequest(URLRequest(url: url))
+        } else {
+            tab.reload()
+        }
+    }
+
+    func resetPendingSearchURL() {
+        postAuthSearchRedirectState.reset()
+    }
+
+    func restorePostAuthSearchIfNeeded(for currentURL: URL?, tab: Tab) {
+        guard postAuthSearchRedirectState.hasPendingURL,
+              shouldRestorePostAuthSearch(for: currentURL)
+        else {
+            return
+        }
+
+        loadPendingSearchURLOrReloadCurrentTab()
+    }
+
+    private func shouldRestorePostAuthSearch(for currentURL: URL?) -> Bool {
+        guard let url = currentURL else { return false }
+        let rootURL = Environment.current.urlProvider.root
+        guard url.host == rootURL.host else { return false }
+
+        let normalizedPath = url.path.isEmpty ? "/" : url.path
+        return normalizedPath == "/"
     }
 }
 
