@@ -14,6 +14,7 @@ public struct EcosiaWebViewModal: View {
     private let userAgent: String?
     private let onLoadComplete: (() -> Void)?
     private let onDismiss: (() -> Void)?
+    private let redirectURLString: String?
     @SwiftUI.Environment(\.dismiss) private var dismiss: DismissAction
     @State private var theme = EcosiaWebViewModalTheme()
     @State private var webView: WKWebView?
@@ -34,6 +35,7 @@ public struct EcosiaWebViewModal: View {
         self.userAgent = userAgent
         self.onLoadComplete = onLoadComplete
         self.onDismiss = onDismiss
+        self.redirectURLString = url.absoluteString
     }
 
     public var body: some View {
@@ -78,7 +80,8 @@ public struct EcosiaWebViewModal: View {
                                 hasError: $hasError,
                                 errorMessage: $errorMessage,
                                 userAgent: userAgent,
-                                onLoadComplete: onLoadComplete
+                                onLoadComplete: onLoadComplete,
+                redirectURLString: redirectURLString
                             )
 
                             if isLoading {
@@ -120,6 +123,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
     @Binding var errorMessage: String
     let userAgent: String?
     let onLoadComplete: (() -> Void)?
+    let redirectURLString: String?
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -130,7 +134,6 @@ private struct WebViewRepresentable: UIViewRepresentable {
         webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
 
-        // Set custom user agent if provided, otherwise use default WKWebView UA
         if let userAgent = userAgent {
             webView.customUserAgent = userAgent
         }
@@ -168,6 +171,28 @@ private struct WebViewRepresentable: UIViewRepresentable {
             parent.isLoading = false
             parent.pageTitle = webView.title ?? ""
             parent.onLoadComplete?()
+        }
+
+        func webView(_ webView: WKWebView,
+                     decidePolicyFor navigationAction: WKNavigationAction,
+                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            
+            print("OUR BELOVED URL FLOW FOR PROFILE: \(navigationAction.request.url!.absoluteString)")
+            
+            guard let url = navigationAction.request.url else {
+                decisionHandler(.allow)
+                return
+            }
+
+            let interceptor = EcosiaURLInterceptor()
+            if interceptor.interceptedType(for: url) == .signIn,
+               let redirectURL = EcosiaAuthRedirector.redirectURLForSignIn(url, redirectURLString: parent.redirectURLString) {
+                decisionHandler(.cancel)
+                webView.load(URLRequest(url: redirectURL))
+                return
+            }
+
+            decisionHandler(.allow)
         }
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

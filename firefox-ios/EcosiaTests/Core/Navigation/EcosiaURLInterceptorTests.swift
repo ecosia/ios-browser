@@ -102,7 +102,6 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         XCTAssertTrue(result)
     }
 
-
         // When
         let result = sut.shouldIntercept(url)
 
