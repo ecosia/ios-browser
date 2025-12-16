@@ -128,8 +128,7 @@ extension BrowserViewController {
             handleSignUpDetection(url, tab: tab)
             return true
         case .signIn:
-            handleSignInDetection(url, tab: tab)
-            return false
+            return handleSignInDetection(url, tab: tab)
         case .signOut:
             handleSignOutDetection(url)
             return true
@@ -145,8 +144,12 @@ extension BrowserViewController {
         handleAuthenticationDetection(url: url, tab: tab, flowName: "sign-up")
     }
 
-    private func handleSignInDetection(_ url: URL, tab: Tab) {
-        capturePostAuthSearchURL(from: tab)
+    private func handleSignInDetection(_ url: URL, tab: Tab) -> Bool {
+        guard let redirectedSignInURL = redirectURLIfNeeded(from: url, tab: tab) else {
+            return false
+        }
+        tab.loadRequest(URLRequest(url: redirectedSignInURL))
+        return true
     }
 
     private func handleAuthenticationDetection(url: URL, tab: Tab, flowName: String) {
@@ -154,10 +157,8 @@ extension BrowserViewController {
             EcosiaLogger.auth.notice("No EcosiaAuth instance available for \(flowName) detection")
             return
         }
-        capturePostAuthSearchURL(from: tab)
 
         let flowLabel = flowName.capitalized
-        let successDescription = flowName == "sign-in" ? "sign-in" : "sign-up"
 
         if !ecosiaAuth.isLoggedIn {
             EcosiaLogger.auth.info("🔐 [WEB-AUTH] \(flowLabel) URL detected in navigation: \(url)")
@@ -167,21 +168,14 @@ extension BrowserViewController {
                 .onNativeAuthCompleted {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
                 }
-                .onAuthFlowCompleted { [weak self] success in
+                .onAuthFlowCompleted { success in
                     if success {
                         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete authentication flow successful from navigation")
-
-                        DispatchQueue.main.async {
-                            self?.loadPendingSearchURLOrReloadCurrentTab()
-                            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful \(successDescription)")
-                        }
                     } else {
                         EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Authentication flow completed with issues from navigation")
-                        self?.resetPendingSearchURL()
                     }
                 }
-                .onError { [weak self] error in
-                    self?.resetPendingSearchURL()
+                .onError { error in
                     EcosiaLogger.auth.error("🔐 [WEB-AUTH] Authentication failed from navigation: \(error)")
                 }
                 .login()
@@ -193,21 +187,14 @@ extension BrowserViewController {
                 .onAuthFlowCompleted { _ in
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
                     ecosiaAuth
-                        .onAuthFlowCompleted { [weak self] success in
+                        .onAuthFlowCompleted { success in
                             if success {
                                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
-
-                                DispatchQueue.main.async {
-                                    self?.loadPendingSearchURLOrReloadCurrentTab()
-                                    EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after inconsistency resolution")
-                                }
                             } else {
                                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication failed after resolving inconsistency")
-                                self?.resetPendingSearchURL()
                             }
                         }
-                        .onError { [weak self] error in
-                            self?.resetPendingSearchURL()
+                        .onError { error in
                             EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication error after resolving inconsistency: \(error)")
                         }
                         .login()
@@ -266,56 +253,36 @@ extension BrowserViewController {
     }
 }
 
-// MARK: Post-auth search helpers
+private func urlWithRedirectParameter(_ url: URL, redirectURL: URL?) -> URL {
+    guard let redirectURL else { return url }
 
-private var postAuthSearchRedirectStateKey: UInt8 = 0
-
-extension BrowserViewController {
-    private var postAuthSearchRedirectState: PostAuthSearchRedirectState {
-        if let state = objc_getAssociatedObject(self, &postAuthSearchRedirectStateKey) as? PostAuthSearchRedirectState {
-            return state
-        }
-        let state = PostAuthSearchRedirectState()
-        objc_setAssociatedObject(self, &postAuthSearchRedirectStateKey, state, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        return state
+    var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+    if components == nil {
+        return url
     }
 
-    func capturePostAuthSearchURL(from tab: Tab) {
-        let searchURLString = tab.metadataManager?.tabGroupData.tabAssociatedSearchUrl
-        postAuthSearchRedirectState.capture(searchURLString: searchURLString)
+    var queryItems = components?.queryItems ?? []
+    let redirectItem = URLQueryItem(name: "returnTo", value: redirectURL.absoluteString)
+    queryItems.append(redirectItem)
+    components?.queryItems = queryItems
+
+    return components?.url ?? url
+}
+
+private func redirectURLIfNeeded(from url: URL, tab: Tab) -> URL? {
+    let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+    if let existing = components?.queryItems?.first(where: { $0.name == "returnTo" }), existing.value != nil {
+        return nil
     }
 
-    func loadPendingSearchURLOrReloadCurrentTab() {
-        guard let tab = tabManager.selectedTab else { return }
-        if let url = postAuthSearchRedirectState.consumePendingURL() {
-            tab.loadRequest(URLRequest(url: url))
-        } else {
-            tab.reload()
-        }
+    guard let searchURLString = tab.metadataManager?.tabGroupData.tabAssociatedSearchUrl,
+          let searchURL = URL(string: searchURLString),
+          searchURL.isEcosiaSearchQuery()
+    else {
+        return nil
     }
 
-    func resetPendingSearchURL() {
-        postAuthSearchRedirectState.reset()
-    }
-
-    func restorePostAuthSearchIfNeeded(for currentURL: URL?, tab: Tab) {
-        guard postAuthSearchRedirectState.hasPendingURL,
-              shouldRestorePostAuthSearch(for: currentURL)
-        else {
-            return
-        }
-
-        loadPendingSearchURLOrReloadCurrentTab()
-    }
-
-    private func shouldRestorePostAuthSearch(for currentURL: URL?) -> Bool {
-        guard let url = currentURL else { return false }
-        let rootURL = Environment.current.urlProvider.root
-        guard url.host == rootURL.host else { return false }
-
-        let normalizedPath = url.path.isEmpty ? "/" : url.path
-        return normalizedPath == "/"
-    }
+    return urlWithRedirectParameter(url, redirectURL: searchURL)
 }
 
 // MARK: Profile Modal Presentation

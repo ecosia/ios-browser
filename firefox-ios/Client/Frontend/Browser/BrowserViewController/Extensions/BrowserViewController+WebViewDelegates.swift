@@ -432,6 +432,9 @@ extension BrowserViewController: WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
+        
+        print("OUR BELOVED URL FLOW: \(navigationAction.request.url!.absoluteString)")
+        
         guard let url = navigationAction.request.url,
               let tab = tabManager[webView]
         else {
@@ -946,8 +949,6 @@ extension BrowserViewController: WKNavigationDelegate {
                                                         tabTitle: webView.title,
                                                         isPrivate: tab.isPrivate)
             }
-
-            restorePostAuthSearchIfNeeded(for: webView.url, tab: tab)
 
             // If this tab had previously crashed, wait 5 seconds before resetting
             // the consecutive crash counter. This allows a successful webpage load
