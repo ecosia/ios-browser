@@ -125,43 +125,26 @@ extension BrowserViewController {
 
         switch interceptedType {
         case .signUp:
-            handleSignUpDetection(url, tab: tab)
-            return true
+            return handleSignUpDetection(url, tab: tab)
         case .signIn:
             return handleSignInDetection(url, tab: tab)
         case .signOut:
-            handleSignOutDetection(url)
-            return true
+            return handleSignOutDetection(url)
         case .profile:
-            handleProfilePageDetection(url)
-            return true
+            return handleProfilePageDetection(url)
         case .none:
             return false
         }
     }
 
-    private func handleSignUpDetection(_ url: URL, tab: Tab) {
-        handleAuthenticationDetection(url: url, tab: tab, flowName: "sign-up")
-    }
-
-    private func handleSignInDetection(_ url: URL, tab: Tab) -> Bool {
-        guard let redirectedSignInURL = redirectURLIfNeeded(from: url, tab: tab) else {
+    private func handleSignUpDetection(_ url: URL, tab: Tab) -> Bool {
+        guard let ecosiaAuth = ecosiaAuth else {
+            EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-up detection")
             return false
         }
-        tab.loadRequest(URLRequest(url: redirectedSignInURL))
-        return true
-    }
-
-    private func handleAuthenticationDetection(url: URL, tab: Tab, flowName: String) {
-        guard let ecosiaAuth = ecosiaAuth else {
-            EcosiaLogger.auth.notice("No EcosiaAuth instance available for \(flowName) detection")
-            return
-        }
-
-        let flowLabel = flowName.capitalized
 
         if !ecosiaAuth.isLoggedIn {
-            EcosiaLogger.auth.info("🔐 [WEB-AUTH] \(flowLabel) URL detected in navigation: \(url)")
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-up URL detected in navigation: \(url)")
             EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
 
             ecosiaAuth
@@ -204,12 +187,22 @@ extension BrowserViewController {
                 }
                 .logout()
         }
+
+        return true
     }
 
-    private func handleSignOutDetection(_ url: URL) {
+    private func handleSignInDetection(_ url: URL, tab: Tab) -> Bool {
+        guard let redirectedSignInURL = redirectURLIfNeeded(from: url, tab: tab) else {
+            return false
+        }
+        tab.loadRequest(URLRequest(url: redirectedSignInURL))
+        return true
+    }
+
+    private func handleSignOutDetection(_ url: URL) -> Bool {
         guard let ecosiaAuth = ecosiaAuth else {
             EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-out detection")
-            return
+            return false
         }
 
         // Always perform logout on web-triggered sign-out to clear inconsistent state
@@ -241,15 +234,19 @@ extension BrowserViewController {
                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed from navigation: \(error)")
             }
             .logout()
+        
+        return true
     }
 
-    private func handleProfilePageDetection(_ url: URL) {
+    private func handleProfilePageDetection(_ url: URL) -> Bool {
         EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Profile URL detected in navigation: \(url)")
         EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Opening native profile modal")
 
         DispatchQueue.main.async { [weak self] in
             self?.presentProfileModal()
         }
+        
+        return true
     }
 }
 
