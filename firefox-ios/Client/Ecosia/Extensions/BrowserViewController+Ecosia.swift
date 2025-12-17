@@ -123,30 +123,27 @@ extension BrowserViewController {
         let interceptedType = interceptor.interceptedType(for: url)
 
         switch interceptedType {
+        case .signUp:
+            return handleSignUpDetection(url, tab: tab)
         case .signIn:
-            handleSignInDetection(url)
-            return true
+            return handleSignInDetection(url, tab: tab)
         case .signOut:
-            handleSignOutDetection(url)
-            return true
+            return handleSignOutDetection(url)
         case .profile:
-            handleProfilePageDetection(url)
-            return true
+            return handleProfilePageDetection(url)
         case .none:
             return false
         }
     }
 
-    private func handleSignInDetection(_ url: URL) {
+    private func handleSignUpDetection(_ url: URL, tab: Tab) -> Bool {
         guard let ecosiaAuth = ecosiaAuth else {
-            EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-in detection")
-            return
+            EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-up detection")
+            return false
         }
 
-        // Check for inconsistency: if web thinks user is logged out but native doesn't
-        // In this case, we should fail the entire process to avoid user getting "locked"
         if !ecosiaAuth.isLoggedIn {
-            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-in URL detected in navigation: \(url)")
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-up URL detected in navigation: \(url)")
             EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
 
             ecosiaAuth
@@ -156,7 +153,6 @@ extension BrowserViewController {
                 .onAuthFlowCompleted { [weak self] success in
                     if success {
                         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete authentication flow successful from navigation")
-
                         // Refresh the current page to reflect auth state changes
                         DispatchQueue.main.async {
                             self?.tabManager.selectedTab?.reload()
@@ -171,21 +167,16 @@ extension BrowserViewController {
                 }
                 .login()
         } else {
-            // Inconsistent state detected: web thinks user is logged out but native doesn't
-            // Fail the entire process to avoid user getting "locked"
             EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Inconsistent state detected: web thinks user is logged out but native doesn't")
             EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Failing entire process to avoid user getting locked")
 
-            // Trigger a complete re-authentication to resolve the inconsistency
             ecosiaAuth
                 .onAuthFlowCompleted { _ in
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
-                    // After logout, trigger login again
                     ecosiaAuth
                         .onAuthFlowCompleted { [weak self] success in
                             if success {
                                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
-
                                 // Refresh the current page to reflect auth state changes
                                 DispatchQueue.main.async {
                                     self?.tabManager.selectedTab?.reload()
@@ -205,12 +196,22 @@ extension BrowserViewController {
                 }
                 .logout()
         }
+
+        return true
     }
 
-    private func handleSignOutDetection(_ url: URL) {
+    private func handleSignInDetection(_ url: URL, tab: Tab) -> Bool {
+        guard let redirectedSignInURL = EcosiaAuthRedirector.redirectURLForSignIn(url, redirectURLString: tab.metadataManager?.tabGroupData.tabAssociatedSearchUrl) else {
+            return false
+        }
+        tab.loadRequest(URLRequest(url: redirectedSignInURL))
+        return true
+    }
+
+    private func handleSignOutDetection(_ url: URL) -> Bool {
         guard let ecosiaAuth = ecosiaAuth else {
             EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-out detection")
-            return
+            return false
         }
 
         // Always perform logout on web-triggered sign-out to clear inconsistent state
@@ -242,15 +243,19 @@ extension BrowserViewController {
                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed from navigation: \(error)")
             }
             .logout()
+
+        return true
     }
 
-    private func handleProfilePageDetection(_ url: URL) {
+    private func handleProfilePageDetection(_ url: URL) -> Bool {
         EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Profile URL detected in navigation: \(url)")
         EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Opening native profile modal")
 
         DispatchQueue.main.async { [weak self] in
             self?.presentProfileModal()
         }
+
+        return true
     }
 }
 

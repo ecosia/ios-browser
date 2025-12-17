@@ -190,7 +190,7 @@ final class AccountsServiceTests: XCTestCase {
         do {
             _ = try await accountsService.registerVisit(accessToken: "invalid-token")
             XCTFail("Expected unauthorized error")
-        } catch AccountsService.Error.unauthorized {
+        } catch AccountsService.Error.authenticationRequired {
             // Expected error
         } catch {
             XCTFail("Unexpected error: \(error)")

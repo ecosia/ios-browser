@@ -14,6 +14,8 @@ public struct EcosiaWebViewModal: View {
     private let userAgent: String?
     private let onLoadComplete: (() -> Void)?
     private let onDismiss: (() -> Void)?
+    private let redirectURLString: String?
+    private let retryCount: Int
     @SwiftUI.Environment(\.dismiss) private var dismiss: DismissAction
     @State private var theme = EcosiaWebViewModalTheme()
     @State private var webView: WKWebView?
@@ -27,13 +29,16 @@ public struct EcosiaWebViewModal: View {
         windowUUID: WindowUUID,
         userAgent: String? = nil,
         onLoadComplete: (() -> Void)? = nil,
-        onDismiss: (() -> Void)? = nil
+        onDismiss: (() -> Void)? = nil,
+        retryCount: Int = 1
     ) {
         self.url = url
         self.windowUUID = windowUUID
         self.userAgent = userAgent
         self.onLoadComplete = onLoadComplete
         self.onDismiss = onDismiss
+        self.redirectURLString = url.absoluteString
+        self.retryCount = retryCount
     }
 
     public var body: some View {
@@ -78,7 +83,9 @@ public struct EcosiaWebViewModal: View {
                                 hasError: $hasError,
                                 errorMessage: $errorMessage,
                                 userAgent: userAgent,
-                                onLoadComplete: onLoadComplete
+                                onLoadComplete: onLoadComplete,
+                                redirectURLString: redirectURLString,
+                                retryCount: retryCount
                             )
 
                             if isLoading {
@@ -120,6 +127,8 @@ private struct WebViewRepresentable: UIViewRepresentable {
     @Binding var errorMessage: String
     let userAgent: String?
     let onLoadComplete: (() -> Void)?
+    let redirectURLString: String?
+    let retryCount: Int
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -130,7 +139,6 @@ private struct WebViewRepresentable: UIViewRepresentable {
         webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
 
-        // Set custom user agent if provided, otherwise use default WKWebView UA
         if let userAgent = userAgent {
             webView.customUserAgent = userAgent
         }
@@ -149,14 +157,18 @@ private struct WebViewRepresentable: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(self, retryCount: retryCount)
     }
 
     class Coordinator: NSObject, WKNavigationDelegate {
         let parent: WebViewRepresentable
+        private let retryCount: Int
+        private var remainingRetries = 0
 
-        init(_ parent: WebViewRepresentable) {
+        init(_ parent: WebViewRepresentable, retryCount: Int) {
             self.parent = parent
+            self.retryCount = retryCount
+            remainingRetries = retryCount
         }
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -170,13 +182,38 @@ private struct WebViewRepresentable: UIViewRepresentable {
             parent.onLoadComplete?()
         }
 
+        func webView(_ webView: WKWebView,
+                     decidePolicyFor navigationAction: WKNavigationAction,
+                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            guard let url = navigationAction.request.url else {
+                decisionHandler(.allow)
+                return
+            }
+
+            let interceptor = EcosiaURLInterceptor()
+            if interceptor.interceptedType(for: url) == .signIn,
+               let redirectURL = EcosiaAuthRedirector.redirectURLForSignIn(url, redirectURLString: parent.redirectURLString) {
+                decisionHandler(.cancel)
+                webView.load(URLRequest(url: redirectURL))
+                return
+            }
+
+            decisionHandler(.allow)
+        }
+
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-            parent.isLoading = false
-            parent.hasError = true
-            parent.errorMessage = error.localizedDescription
+            handleFailure(error)
         }
 
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            handleFailure(error)
+        }
+
+        private func handleFailure(_ error: Error) {
+            guard remainingRetries == 0 else {
+                remainingRetries -= 1
+                return
+            }
             parent.isLoading = false
             parent.hasError = true
             parent.errorMessage = error.localizedDescription

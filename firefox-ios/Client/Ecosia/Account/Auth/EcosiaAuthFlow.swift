@@ -183,7 +183,7 @@ final class EcosiaAuthFlow {
         }
 
         // Get session transfer URL
-        let signUpURL = EcosiaEnvironment.current.urlProvider.loginURL
+        let signUpURL = EcosiaEnvironment.current.urlProvider.signUpURL
 
         EcosiaLogger.session.info("Retrieving session transfer token for SSO")
         await authService.getSessionTransferToken()

@@ -202,8 +202,13 @@ public enum URLProvider {
     // MARK: - Authentication URLs
 
     /// Complete URL for user login/sign-up flow
-    public var loginURL: URL {
+    public var signUpURL: URL {
         root.appendingPathComponent("accounts/sign-up")
+    }
+
+    /// Complete URL for user sign-in flow
+    public var signInURL: URL {
+        root.appendingPathComponent("accounts/sign-in")
     }
 
     /// Complete URL for user logout/sign-out flow
