@@ -8,8 +8,8 @@ public struct EcosiaAuthRedirector {
 
     private static let returnToParameterName = "returnTo"
 
-    public static func redirectURLForSignIn(_ url: URL, redirectURLString: String?) -> URL? {
-        guard isSignInURL(url) else { return nil }
+    public static func redirectURLForSignIn(_ url: URL, redirectURLString: String?, urlProvider: URLProvider = Environment.current.urlProvider) -> URL? {
+        guard isSignInURL(url, urlProvider: urlProvider) else { return nil }
         return redirectURL(for: url, redirectURLString: redirectURLString)
     }
 
@@ -24,15 +24,18 @@ public struct EcosiaAuthRedirector {
         return urlWithRedirectParameter(url, redirectURL: redirectURL)
     }
 
-    private static func isSignInURL(_ url: URL) -> Bool {
-        url == Environment.current.urlProvider.signInURL
+    private static func isSignInURL(_ url: URL, urlProvider: URLProvider = Environment.current.urlProvider) -> Bool {
+        url.isEcosia(urlProvider) && url.relativePath == urlProvider.signInURL.relativePath
     }
 
     private static func shouldRewrite(_ url: URL) -> Bool {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return false
         }
-        return components.queryItems?.contains(where: { $0.name == returnToParameterName }) == nil
+        guard let queryItems = components.queryItems else {
+            return true
+        }
+        return !queryItems.contains(where: { $0.name == returnToParameterName })
     }
 
     private static func urlWithRedirectParameter(_ url: URL, redirectURL: URL) -> URL {
