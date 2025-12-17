@@ -6,7 +6,6 @@ import UIKit
 import SwiftUI
 import Shared
 import Ecosia
-import ObjectiveC
 
 // MARK: HomepageViewControllerDelegate
 extension BrowserViewController: HomepageViewControllerDelegate {

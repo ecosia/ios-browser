@@ -39,10 +39,7 @@ public struct EcosiaAuthRedirector {
     }
 
     private static func urlWithRedirectParameter(_ url: URL, redirectURL: URL) -> URL {
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: false) ?? URLComponents()
-        var queryItems = components.queryItems ?? []
-        queryItems.append(URLQueryItem(name: returnToParameterName, value: redirectURL.absoluteString))
-        components.queryItems = queryItems
-        return components.url ?? url
+        let redirectItem = URLQueryItem(name: returnToParameterName, value: redirectURL.absoluteString)
+        return url.appendingQueryItems([redirectItem])
     }
 }
