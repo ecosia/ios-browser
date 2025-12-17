@@ -244,7 +244,7 @@ extension BrowserViewController {
                 EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed from navigation: \(error)")
             }
             .logout()
-        
+
         return true
     }
 
@@ -255,7 +255,7 @@ extension BrowserViewController {
         DispatchQueue.main.async { [weak self] in
             self?.presentProfileModal()
         }
-        
+
         return true
     }
 }

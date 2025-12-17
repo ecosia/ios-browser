@@ -432,7 +432,7 @@ extension BrowserViewController: WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-                
+
         guard let url = navigationAction.request.url,
               let tab = tabManager[webView]
         else {

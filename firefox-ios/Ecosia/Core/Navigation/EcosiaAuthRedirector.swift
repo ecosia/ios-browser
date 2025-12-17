@@ -5,9 +5,9 @@
 import Foundation
 
 public struct EcosiaAuthRedirector {
-    
+
     private static let returnToParameterName = "returnTo"
-    
+
     public static func redirectURLForSignIn(_ url: URL, redirectURLString: String?) -> URL? {
         guard isSignInURL(url) else { return nil }
         return redirectURL(for: url, redirectURLString: redirectURLString)
@@ -32,7 +32,7 @@ public struct EcosiaAuthRedirector {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return false
         }
-        return components.queryItems?.first(where: { $0.name == returnToParameterName }) == nil
+        return components.queryItems?.contains(where: { $0.name == returnToParameterName }) == nil
     }
 
     private static func urlWithRedirectParameter(_ url: URL, redirectURL: URL) -> URL {
