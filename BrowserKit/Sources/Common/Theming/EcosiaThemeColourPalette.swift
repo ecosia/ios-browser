@@ -10,6 +10,7 @@ import UIKit
 // They are adopted by `EcosiaLightTheme` and `EcosiaDarkTheme` and should use `EcosiaColorPrimitive`.
 public protocol EcosiaSemanticColors {
     // MARK: - Background
+    var backgroundNeutralInverse: UIColor { get }
     var backgroundFeatured: UIColor { get }
     var backgroundPrimary: UIColor { get }
     var backgroundPrimaryDecorative: UIColor { get }
