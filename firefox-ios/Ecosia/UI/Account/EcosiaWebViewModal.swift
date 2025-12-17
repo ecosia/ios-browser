@@ -15,6 +15,7 @@ public struct EcosiaWebViewModal: View {
     private let onLoadComplete: (() -> Void)?
     private let onDismiss: (() -> Void)?
     private let redirectURLString: String?
+    private let retryCount: Int
     @SwiftUI.Environment(\.dismiss) private var dismiss: DismissAction
     @State private var theme = EcosiaWebViewModalTheme()
     @State private var webView: WKWebView?
@@ -28,7 +29,8 @@ public struct EcosiaWebViewModal: View {
         windowUUID: WindowUUID,
         userAgent: String? = nil,
         onLoadComplete: (() -> Void)? = nil,
-        onDismiss: (() -> Void)? = nil
+        onDismiss: (() -> Void)? = nil,
+        retryCount: Int = 1
     ) {
         self.url = url
         self.windowUUID = windowUUID
@@ -36,6 +38,7 @@ public struct EcosiaWebViewModal: View {
         self.onLoadComplete = onLoadComplete
         self.onDismiss = onDismiss
         self.redirectURLString = url.absoluteString
+        self.retryCount = retryCount
     }
 
     public var body: some View {
@@ -81,7 +84,8 @@ public struct EcosiaWebViewModal: View {
                                 errorMessage: $errorMessage,
                                 userAgent: userAgent,
                                 onLoadComplete: onLoadComplete,
-                redirectURLString: redirectURLString
+                                redirectURLString: redirectURLString,
+                                retryCount: retryCount
                             )
 
                             if isLoading {
@@ -124,6 +128,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
     let userAgent: String?
     let onLoadComplete: (() -> Void)?
     let redirectURLString: String?
+    let retryCount: Int
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -152,14 +157,18 @@ private struct WebViewRepresentable: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(self, retryCount: retryCount)
     }
 
     class Coordinator: NSObject, WKNavigationDelegate {
         let parent: WebViewRepresentable
+        private let retryCount: Int
+        private var remainingRetries = 0
 
-        init(_ parent: WebViewRepresentable) {
+        init(_ parent: WebViewRepresentable, retryCount: Int) {
             self.parent = parent
+            self.retryCount = retryCount
+            remainingRetries = retryCount
         }
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -176,9 +185,6 @@ private struct WebViewRepresentable: UIViewRepresentable {
         func webView(_ webView: WKWebView,
                      decidePolicyFor navigationAction: WKNavigationAction,
                      decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-            
-            print("OUR BELOVED URL FLOW FOR PROFILE: \(navigationAction.request.url!.absoluteString)")
-            
             guard let url = navigationAction.request.url else {
                 decisionHandler(.allow)
                 return
@@ -196,12 +202,18 @@ private struct WebViewRepresentable: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-            parent.isLoading = false
-            parent.hasError = true
-            parent.errorMessage = error.localizedDescription
+            handleFailure(error)
         }
 
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            handleFailure(error)
+        }
+
+        private func handleFailure(_ error: Error) {
+            guard remainingRetries == 0 else {
+                remainingRetries -= 1
+                return
+            }
             parent.isLoading = false
             parent.hasError = true
             parent.errorMessage = error.localizedDescription

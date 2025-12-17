@@ -432,9 +432,7 @@ extension BrowserViewController: WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        
-        print("OUR BELOVED URL FLOW: \(navigationAction.request.url!.absoluteString)")
-        
+                
         guard let url = navigationAction.request.url,
               let tab = tabManager[webView]
         else {
