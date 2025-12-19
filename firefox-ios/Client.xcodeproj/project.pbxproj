@@ -24120,7 +24120,6 @@
 			baseConfigurationReference = 2CB288D02B07C6F300A8FCB3 /* EcosiaBeta.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

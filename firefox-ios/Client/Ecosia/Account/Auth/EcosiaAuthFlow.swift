@@ -224,13 +224,7 @@ final class EcosiaAuthFlow {
 
         // Get logout URL
         let logoutURL = EcosiaEnvironment.current.urlProvider.logoutURL
-
-        // TODO: Handle web errors during logout process
-        // Web errors are not currently caught in this process, only native ones.
-        // If the URL fails to complete sign-out within 10 seconds timeout,
-        // we could end up in an inconsistent state. Consider implementing
-        // web error handling and cookie clearing as fallback mechanism.
-
+        
         // Create invisible tab session for logout (must be on main thread for UI operations)
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for logout")
         let session = try await MainActor.run {
