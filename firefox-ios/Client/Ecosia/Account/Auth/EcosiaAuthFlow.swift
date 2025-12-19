@@ -224,7 +224,7 @@ final class EcosiaAuthFlow {
 
         // Get logout URL
         let logoutURL = EcosiaEnvironment.current.urlProvider.logoutURL
-        
+
         // Create invisible tab session for logout (must be on main thread for UI operations)
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for logout")
         let session = try await MainActor.run {
