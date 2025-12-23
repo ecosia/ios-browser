@@ -70,7 +70,10 @@ extension NTPHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        AISearchMVPExperiment.isEnabled
+        if #available(iOS 16.0, *) {
+            return AISearchMVPExperiment.isEnabled
+        }
+        return false
     }
 
     func setTheme(theme: Theme) {
