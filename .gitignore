@@ -156,13 +156,13 @@ firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts/*
 firefox-ios/TestResults.xcresult
 
 # Tuist generated files
-firefox-ios/Client.xcodeproj/
-firefox-ios/Client.xcworkspace/
-firefox-ios/Derived/
-Derived/
-*.xcworkspace/
-Tuist/Dependencies/
-.tuist-cache/
+firefox-ios/Client.xcodeproj
+firefox-ios/Client.xcworkspace
+firefox-ios/Derived
+Derived
+*.xcworkspace
+Tuist/Dependencies
+.tuist-cache
 
 # Keep Tuist manifests (exceptions to the above)
 !firefox-ios/Project.swift
