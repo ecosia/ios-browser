@@ -51,7 +51,8 @@ let project = Project(
     name: "Client",
     organizationName: "com.ecosia",
     options: .options(
-        automaticSchemesOptions: .disabled
+        automaticSchemesOptions: .disabled,
+        disableSynthesizedResourceAccessors: true
     ),
     packages: packages,
     settings: .settings(configurations: buildConfigurations),
