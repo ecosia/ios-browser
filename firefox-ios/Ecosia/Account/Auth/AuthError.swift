@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Foundation
+
 /// Errors that can occur during login and logout operations.
 public enum AuthError: Error, LocalizedError {
     case authenticationFailed(Error)

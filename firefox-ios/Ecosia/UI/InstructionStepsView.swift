@@ -185,16 +185,16 @@ struct InstructionStep {
         buttonTitle: .defaultBrowserCardDetailButton,
         onButtonTap: {},
         style: InstructionStepsViewStyle(
-            backgroundPrimaryColor: .tertiaryBackground,
+            backgroundPrimaryColor: .clear,
             topContentBackgroundColor: Color(UIColor(rgb: 0x275243)),
-            stepsBackgroundColor: .primaryBackground,
-            textPrimaryColor: .primaryText,
-            textSecondaryColor: .primaryText,
-            buttonBackgroundColor: .primaryBrand,
-            buttonTextColor: .primaryBackground,
+            stepsBackgroundColor: .secondary,
+            textPrimaryColor: .primary,
+            textSecondaryColor: .secondary,
+            buttonBackgroundColor: .gray,
+            buttonTextColor: .primary,
             stepRowStyle: StepRowStyle(stepNumberColor: .primary,
                                        stepNumberBackgroundColor: .secondary,
-                                       stepTextColor: .primaryText)
+                                       stepTextColor: .secondary)
         )
     ) {
         GeometryReader { geometry in

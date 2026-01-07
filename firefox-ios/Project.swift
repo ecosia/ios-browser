@@ -64,7 +64,25 @@ let project = Project(
             product: .app,
             bundleId: "$(MOZ_BUNDLE_ID)",
             infoPlist: .file(path: "Client/Info.plist"),
-            sources: ["Client/**/*.swift"],
+            sources: [
+                .glob("Client/**/*.swift", excluding: [
+                    "Client/Assets/Search/get_supported_locales.swift",
+                    "Client/Frontend/Browser/FaviconManager.swift",
+                    "Client/Frontend/Browser/TranslationToastHandler.swift",
+                    "Client/Frontend/Login/LoginViewController.swift",
+                    "Client/Frontend/Strings.swift"
+                ]),
+                "Providers/**/*.swift",
+                "Account/FxAPushMessageHandler.swift",
+                "RustFxA/FirefoxAccountSignInViewController.swift",
+                "RustFxA/FxAEntryPoint.swift",
+                "RustFxA/FxALaunchParams.swift",
+                "RustFxA/FxASignInViewParameters.swift",
+                "RustFxA/FxAWebViewController.swift",
+                "RustFxA/FxAWebViewModel.swift",
+                "RustFxA/FxAWebViewTelemetry.swift",
+                "Client/Frontend/Strings.swift"
+            ],
             resources: [
                 "Client/Assets/**/*.{js,css,html,png,jpg,jpeg,pdf,otf,ttf}",
                 "Client/Assets/**/*.xcassets",
@@ -72,44 +90,48 @@ let project = Project(
                 "Client/*.lproj/**",
             ],
             dependencies: [
-                .target(name: "Account"),
-                .target(name: "Shared"),
-                .target(name: "Storage"),
+                // Target Dependencies
                 .target(name: "Sync"),
-                .target(name: "Ecosia", condition: .when([.ios])),
-                .target(name: "RustMozillaAppServices", condition: .when([.ios])),
+                .target(name: "Shared"),
                 .target(name: "ShareTo"),
                 .target(name: "WidgetKitExtension"),
-                .package(product: "Adjust"),
-                .package(product: "BrazeKit"),
+                .target(name: "Ecosia"),
+                
+                // Link Binary With Libraries
                 .package(product: "BrazeUI"),
+                .package(product: "BrazeKit"),
                 .package(product: "Common"),
+                .sdk(name: "AdServices", type: .framework, status: .optional),
+                .sdk(name: "iAd", type: .framework),
                 .package(product: "ComponentLibrary"),
-                .package(product: "Fuzi"),
-                .package(product: "GCDWebServers"),
-                .package(product: "Glean"),
-                .package(product: "Kingfisher"),
-                .package(product: "Lottie"),
-                .package(product: "MenuKit"),
-                .package(product: "Redux"),
-                .package(product: "Sentry-Dynamic"),
                 .package(product: "SiteImageView"),
-                .package(product: "TabDataStore"),
-                .package(product: "ToolbarKit"),
-                .package(product: "WebEngine"),
-                .package(product: "X509"),
-                .sdk(name: "Accelerate", type: .framework),
-                .sdk(name: "AdServices", type: .framework),
-                .sdk(name: "AdSupport", type: .framework),
-                .sdk(name: "AuthenticationServices", type: .framework),
-                .sdk(name: "ImageIO", type: .framework),
-                .sdk(name: "PassKit", type: .framework),
                 .sdk(name: "SafariServices", type: .framework),
+                .sdk(name: "Accelerate", type: .framework),
+                .sdk(name: "AuthenticationServices", type: .framework),
                 .sdk(name: "libxml2.2", type: .library),
+                .package(product: "ToolbarKit"),
                 .sdk(name: "libz", type: .library),
+                .sdk(name: "AdSupport", type: .framework),
+                .package(product: "Sentry-Dynamic"),
+                .package(product: "Kingfisher"),
+                .package(product: "MenuKit"),
+                .package(product: "Lottie"),
+                .package(product: "Fuzi"),
+                .package(product: "Adjust"),
+                .sdk(name: "ImageIO", type: .framework),
+                .package(product: "Glean"),
+                .package(product: "X509"),
+                .package(product: "GCDWebServers"),
+                .package(product: "TabDataStore"),
+                .package(product: "Redux"),
+                .package(product: "SnowplowTracker"),
+                .sdk(name: "PassKit", type: .framework),
+                .package(product: "SnapKit"),
             ],
             settings: .settings(
-                base: baseSettings,
+                base: baseSettings.merging([
+                    "SWIFT_OBJC_BRIDGING_HEADER": "$(PROJECT_DIR)/Client/Client-Bridging-Header.h"
+                ], uniquingKeysWith: { _, new in new }),
                 configurations: [
                     .debug(name: "Debug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp"
@@ -138,23 +160,63 @@ let project = Project(
             name: "ShareTo",
             destinations: [.iPhone, .iPad],
             product: .appExtension,
-            bundleId: "com.ecosia.ecosiaapp.ShareTo",
+            bundleId: "$(MOZ_BUNDLE_ID).ShareTo",
             infoPlist: .file(path: "Extensions/ShareTo/Info.plist"),
-            sources: ["Extensions/ShareTo/**/*.swift"],
+            sources: [
+                "Extensions/ShareTo/**/*.swift",
+                "Providers/Profile.swift",
+                "Providers/RustErrors.swift",
+                "Providers/RustSyncManager.swift",
+                "Providers/SyncDisplayState.swift",
+                "Providers/LoginRecordExtension.swift",
+                "Push/Autopush.swift",
+                "Push/PushConfiguration.swift",
+                "Client/Frontend/Extensions/DevicePickerViewController.swift",
+                "Client/Frontend/DevicePickerTableViewCell.swift",
+                "Client/Frontend/DevicePickerTableViewHeaderCell.swift",
+                "Client/Frontend/HostingTableViewCell.swift",
+                "Client/Frontend/InstructionsView.swift",
+                "Client/Frontend/HelpView.swift",
+                "Client/Frontend/Share/SendToDeviceHelper.swift",
+                "Client/Application/AccessibilityIdentifiers.swift",
+                "Client/Frontend/Browser/Event Queue/EventQueue.swift",
+                "Client/Frontend/Browser/Event Queue/AppEvent.swift",
+                "Client/Frontend/Browser/URIFixup.swift",
+                "Client/Frontend/Browser/SearchEngines/DefaultSearchEngineProvider.swift",
+                "Client/Frontend/Browser/SearchEngines/OpenSearchEngine.swift",
+                "Client/Frontend/Browser/SearchEngines/OpenSearchParser.swift",
+                "Client/Frontend/Browser/DefaultSearchPrefs.swift",
+                "Client/Frontend/Browser/String+Punycode.swift",
+                "Client/Extensions/Locale+possibilitiesForLanguageIdentifier.swift",
+                "Client/Frontend/Theme/LegacyThemeManager/LegacyTheme.swift",
+                "Client/Frontend/Theme/LegacyThemeManager/photon-colors.swift",
+                "Client/Utils/DispatchQueueHelper.swift",
+                "Client/Application/UIConstants.swift",
+                "Client/ImageIdentifiers.swift",
+                "Client/Extensions/AnyHashable.swift",
+                "Client/Ecosia/UI/Theme/EcosiaThemeManager.swift",
+                "Client/Ecosia/UI/Theme/EcosiaLightTheme.swift",
+                "Client/Ecosia/UI/Theme/EcosiaDarkTheme.swift"
+            ],
             resources: ["Extensions/ShareTo/**/*.{xcassets,strings,stringsdict}"],
             dependencies: [
+                // Target Dependencies
                 .target(name: "Shared"),
                 .target(name: "Sync"),
-                .package(product: "Common"),
+                .target(name: "Storage"),
+                
+                // Link Binary With Libraries
                 .package(product: "Fuzi"),
-                .package(product: "GCDWebServers"),
-                .package(product: "SiteImageView"),
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "SnapKit"),
-                .package(product: "TabDataStore"),
+                .package(product: "Common"),
                 .sdk(name: "ImageIO", type: .framework),
             ],
             settings: .settings(
-                base: baseSettings.merging(["APPLICATION_EXTENSION_API_ONLY": "YES"], uniquingKeysWith: { _, new in new }),
+                base: baseSettings.merging([
+                    "APPLICATION_EXTENSION_API_ONLY": "YES",
+                    "OTHER_SWIFT_FLAGS": "$(inherited) -DMOZ_TARGET_SHARETO"
+                ], uniquingKeysWith: { _, new in new }),
                 configurations: [
                     .debug(name: "Debug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.ShareTo"
@@ -183,19 +245,44 @@ let project = Project(
             name: "WidgetKitExtension",
             destinations: [.iPhone, .iPad],
             product: .appExtension,
-            bundleId: "com.ecosia.ecosiaapp.WidgetKit",
+            bundleId: "$(MOZ_BUNDLE_ID).WidgetKit",
             infoPlist: .file(path: "WidgetKit/Info.plist"),
-            sources: ["WidgetKit/**/*.swift"],
-            resources: ["WidgetKit/**/*.{xcassets,strings,stringsdict,intentdefinition}"],
+            sources: [
+                "WidgetKit/**/*.swift",
+                "WidgetKit/**/*.intentdefinition",
+                "Client/TabManagement/Legacy/LegacyTabDataRetriever.swift",
+                "Client/TabManagement/Legacy/LegacyTabFileManager.swift",
+                "Client/TabManagement/Legacy/LegacyTabGroupData.swift",
+                "Client/TabManagement/Legacy/LegacySavedTab.swift",
+                "Client/Frontend/Browser/PrivilegedRequest.swift",
+                "Client/ImageIdentifiers.swift",
+                "Client/Frontend/InternalSchemeHandler/InternalSchemeHandler.swift",
+                "Client/Frontend/Theme/LegacyThemeManager/photon-colors.swift",
+                "Client/Ecosia/UI/Theme/EcosiaThemeManager.swift",
+                "Client/Ecosia/UI/Theme/EcosiaLightTheme.swift",
+                "Client/Ecosia/UI/Theme/EcosiaDarkTheme.swift",
+                "Client/Utils/DispatchQueueHelper.swift",
+                "Shared/TimeConstants.swift",
+                "Shared/AppInfo.swift"
+            ],
+            resources: [
+                "WidgetKit/**/*.{xcassets,strings,stringsdict}",
+                "WidgetKit/PrivacyInfo.xcprivacy"
+            ],
             dependencies: [
+                // Target Dependencies
+                .target(name: "Shared"),
+                
+                // Link Binary With Libraries
                 .target(name: "Storage"),
-                .package(product: "Common"),
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
-                .package(product: "SiteImageView"),
+                .package(product: "Common"),
                 .package(product: "TabDataStore"),
-                .sdk(name: "SwiftUI", type: .framework),
                 .sdk(name: "WidgetKit", type: .framework),
+                .package(product: "SiteImageView"),
+                .sdk(name: "SwiftUI", type: .framework),
             ],
             settings: .settings(
                 base: baseSettings.merging(["APPLICATION_EXTENSION_API_ONLY": "YES"], uniquingKeysWith: { _, new in new }),
@@ -227,17 +314,42 @@ let project = Project(
             name: "Account",
             destinations: .iOS,
             product: .staticLibrary,
-            bundleId: "com.ecosia.framework.Account",
+            bundleId: "org.mozilla.ios.Account",
             infoPlist: .file(path: "Account/Info.plist"),
-            sources: ["Account/**/*.swift"],
-            dependencies: [
-                .package(product: "Common"),
-                .package(product: "Fuzi"),
-                .package(product: "GCDWebServers"),
-                .package(product: "SiteImageView"),
-                .package(product: "TabDataStore"),
+            sources: [
+                "RustFxA/Avatar.swift",
+                "RustFxA/PushNotificationSetup.swift",
+                "RustFxA/RustFirefoxAccounts.swift",
+                "Client/GeneralizedImageFetcher.swift",
+                "Client/ImageIdentifiers.swift",
+                "Push/Autopush.swift",
+                "Push/PushConfiguration.swift",
+                "Client/Telemetry/ReferringPage.swift"
             ],
-            settings: .settings(base: baseSettings)
+            dependencies: [
+                // Target Dependencies
+                .target(name: "Storage"),
+                .target(name: "Shared"),
+                
+                // Link Binary With Libraries
+                .package(product: "GCDWebServers"),
+            ],
+            settings: .settings(base: baseSettings.merging([
+                "ALWAYS_SEARCH_USER_PATHS": "YES",
+                "DEFINES_MODULE": "YES",
+                "HEADER_SEARCH_PATHS": [
+                    "$(inherited)",
+                    "$(SRCROOT)",
+                    "$(SDKROOT)/usr/include/libxml2",
+                    "ThirdParty/ecec/include/**",
+                    "FxA/FxA/include"
+                ],
+                "LIBRARY_SEARCH_PATHS": [
+                    "$(inherited)",
+                    "$(PROJECT_DIR)/FxA/FxA/lib"
+                ],
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Account/Account-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
         ),
         
         // MARK: - Storage Framework
@@ -245,18 +357,36 @@ let project = Project(
             name: "Storage",
             destinations: .iOS,
             product: .staticLibrary,
-            bundleId: "com.ecosia.framework.Storage",
+            bundleId: "org.mozilla.ios.Storage",
             infoPlist: .file(path: "Storage/Info.plist"),
             sources: ["Storage/**/*.swift"],
             resources: ["Storage/**/*.{xcdatamodeld,sql,html,js}"],
             dependencies: [
-                .package(product: "Common"),
-                .package(product: "Fuzi"),
-                .package(product: "GCDWebServers"),
+                // Target Dependencies
+                .target(name: "Shared"),
+                .target(name: "Ecosia"),
+                
+                // Link Binary With Libraries
                 .package(product: "SiteImageView"),
-                .package(product: "TabDataStore"),
+                .package(product: "GCDWebServers"),
+                .package(product: "Common"),
+                .package(product: "Kingfisher"),
             ],
-            settings: .settings(base: baseSettings)
+            settings: .settings(base: baseSettings.merging([
+                "DEFINES_MODULE": "YES",
+                "SKIP_INSTALL": "YES",
+                "VALIDATE_WORKSPACE": "YES",
+                "HEADER_SEARCH_PATHS": [
+                    "$(inherited)",
+                    "$(SRCROOT)/Shared",
+                    "$(SRCROOT)/Client",
+                    "$(SRCROOT)/Client/Frontend/Reader/Resources",
+                    "$(SRCROOT)/ThirdParty/Apple",
+                    "$(SRCROOT)/Account",
+                    "$(SRCROOT)/Storage"
+                ],
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
         ),
         
         // MARK: - Shared Framework
@@ -264,21 +394,33 @@ let project = Project(
             name: "Shared",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.ecosia.framework.Shared",
-            infoPlist: .default,
-            sources: ["Shared/**/*.swift"],
+            bundleId: "org.mozilla.ios.Shared",
+            infoPlist: .file(path: "Shared/Supporting Files/Info.plist"),
+            sources: [
+                "Shared/**/*.swift",
+                "Client/Frontend/Strings.swift",
+                "ThirdParty/Deferred/Deferred/*.swift",
+                "ThirdParty/Reachability.swift",
+                "ThirdParty/Result/*.swift"
+            ],
             resources: ["Shared/**/*.{strings,stringsdict}"],
             dependencies: [
-                .package(product: "Common"),
-                .package(product: "Fuzi"),
+                // Target Dependencies
+                .target(name: "Ecosia"),
+                
+                // Link Binary With Libraries
+                .package(product: "WebEngine"),
                 .package(product: "GCDWebServers"),
-                .package(product: "SiteImageView"),
-                .package(product: "TabDataStore"),
+                .package(product: "Common"),
             ],
             settings: .settings(
                 base: baseSettings.merging([
+                    "APPLICATION_EXTENSION_API_ONLY": "YES",
                     "DEFINES_MODULE": "YES",
-                    "CLANG_ENABLE_MODULES": "YES"
+                    "CLANG_ENABLE_MODULES": "YES",
+                    "GCC_TREAT_WARNINGS_AS_ERRORS": "NO",
+                    "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
+                    "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
                 ], uniquingKeysWith: { _, new in new })
             )
         ),
@@ -288,19 +430,27 @@ let project = Project(
             name: "Sync",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.ecosia.framework.Sync",
+            bundleId: "org.mozilla.ios.Sync",
             infoPlist: .file(path: "Sync/Info.plist"),
             sources: ["Sync/**/*.swift"],
             dependencies: [
+                // Target Dependencies
                 .target(name: "Account"),
+                .target(name: "Shared"),
+                
+                // Link Binary With Libraries
+                .package(product: "Fuzi"),
+                .package(product: "SiteImageView"),
                 .target(name: "Storage"),
                 .package(product: "Common"),
-                .package(product: "Fuzi"),
-                .package(product: "GCDWebServers"),
-                .package(product: "SiteImageView"),
-                .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: baseSettings)
+            settings: .settings(base: baseSettings.merging([
+                "APPLICATION_EXTENSION_API_ONLY": "YES",
+                "DEFINES_MODULE": "YES",
+                "GCC_TREAT_WARNINGS_AS_ERRORS": "NO",
+                "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Sync/Sync-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
         ),
         
         // MARK: - Ecosia Framework
@@ -321,18 +471,26 @@ let project = Project(
                 "Ecosia/Ecosia.docc/**",
             ],
             dependencies: [
-                .package(product: "Auth0"),
+                // Link Binary With Libraries
+                .package(product: "SnowplowTracker"),
                 .package(product: "BrazeKit"),
                 .package(product: "BrazeUI"),
                 .package(product: "Common"),
-                .package(product: "Lottie"),
                 .package(product: "SwiftSoup"),
-                .package(product: "SnowplowTracker")
+                .package(product: "Auth0"),
+                .package(product: "Lottie"),
+                .sdk(name: "Foundation", type: .framework),
+                .sdk(name: "UIKit", type: .framework),
+                .sdk(name: "SwiftUI", type: .framework)
             ],
             settings: .settings(
                 base: baseSettings.merging([
                     "DEFINES_MODULE": "YES",
-                    "CLANG_ENABLE_MODULES": "YES"
+                    "CLANG_ENABLE_MODULES": "YES",
+                    "SKIP_INSTALL": "YES",
+                    "SWIFT_EMIT_LOC_STRINGS": "YES",
+                    "SWIFT_INSTALL_OBJC_HEADER": "NO",
+                    "SWIFT_VERSION": "5.0"
                 ], uniquingKeysWith: { _, new in new })
             )
         ),
@@ -342,13 +500,22 @@ let project = Project(
             name: "RustMozillaAppServices",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.ecosia.framework.RustMozillaAppServices",
+            bundleId: "org.mozilla.ios.RustMozillaAppServices",
             infoPlist: .file(path: "RustMozillaAppServices-Info.plist"),
-            sources: ["RustFxA/**/*.swift"],
             dependencies: [
+                // Link Binary With Libraries
                 .package(product: "MozillaAppServices"),
+                .package(product: "Common"),
+                .package(product: "ComponentLibrary"),
+                .target(name: "Shared"),
+                .target(name: "Account"),
             ],
-            settings: .settings(base: baseSettings)
+            settings: .settings(base: baseSettings.merging([
+                "APPLICATION_EXTENSION_API_ONLY": "YES",
+                "DEFINES_MODULE": "NO",
+                "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
         ),
         
         // MARK: - AccountTests
@@ -356,7 +523,7 @@ let project = Project(
             name: "AccountTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.ecosia.tests.Account",
+            bundleId: "org.mozilla.ios.AccountTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/AccountTests/**/*.swift"],
             dependencies: [
@@ -367,7 +534,9 @@ let project = Project(
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: baseSettings)
+            settings: .settings(base: baseSettings.merging([
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Account/Account-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
         ),
         
         // MARK: - ClientTests
@@ -375,7 +544,7 @@ let project = Project(
             name: "ClientTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.ecosia.tests.Client",
+            bundleId: "org.mozilla.ios.ClientTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/ClientTests/**/*.swift"],
             dependencies: [
@@ -394,7 +563,7 @@ let project = Project(
             name: "StoragePerfTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.ecosia.tests.StoragePerf",
+            bundleId: "org.mozilla.ios.StoragePerfTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/StoragePerfTests/**/*.swift"],
             dependencies: [
@@ -413,7 +582,7 @@ let project = Project(
             name: "StorageTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.ecosia.tests.Storage",
+            bundleId: "org.mozilla.ios.StorageTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/StorageTests/**/*.swift"],
             dependencies: [
@@ -424,7 +593,9 @@ let project = Project(
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: baseSettings)
+            settings: .settings(base: baseSettings.merging([
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
         ),
         
         // MARK: - SharedTests
@@ -432,10 +603,12 @@ let project = Project(
             name: "SharedTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.ecosia.tests.Shared",
+            bundleId: "org.mozilla.ios.SharedTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/SharedTests/**/*.swift"],
-            settings: .settings(base: baseSettings)
+            settings: .settings(base: baseSettings.merging([
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
         ),
         
         // MARK: - SyncTelemetryTests
@@ -443,7 +616,7 @@ let project = Project(
             name: "SyncTelemetryTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.ecosia.tests.SyncTelemetry",
+            bundleId: "org.mozilla.ios.SyncTelemetryTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/SyncTelemetryTests/**/*.swift"],
             dependencies: [
@@ -457,7 +630,7 @@ let project = Project(
             name: "SyncTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.ecosia.tests.Sync",
+            bundleId: "org.mozilla.ios.SyncTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/SyncTests/**/*.swift"],
             dependencies: [
@@ -468,7 +641,9 @@ let project = Project(
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: baseSettings)
+            settings: .settings(base: baseSettings.merging([
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/firefox-ios-tests/Tests/SyncTests/SyncTests-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
         ),
         
         // MARK: - L10nSnapshotTests
@@ -476,7 +651,7 @@ let project = Project(
             name: "L10nSnapshotTests",
             destinations: .iOS,
             product: .uiTests,
-            bundleId: "com.ecosia.tests.L10nSnapshot",
+            bundleId: "org.mozilla.ios.L10nSnapshotTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/L10nSnapshotTests/**/*.swift"],
             dependencies: [

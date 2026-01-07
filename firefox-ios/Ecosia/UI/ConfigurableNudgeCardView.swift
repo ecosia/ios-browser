@@ -221,11 +221,11 @@ public struct ConfigurableNudgeCardView: View {
         image: .init(named: "default-browser-card-side-image-koto-illustrations",
                      in: .ecosia,
                      with: nil),
-        style: NudgeCardStyle(backgroundColor: .primaryBackground,
-                              textPrimaryColor: .primaryText,
-                              textSecondaryColor: .primaryText,
-                              closeButtonTextColor: .primaryText,
-                              actionButtonTextColor: .primaryBrand),
+        style: NudgeCardStyle(backgroundColor: .clear,
+                              textPrimaryColor: .primary,
+                              textSecondaryColor: .secondary,
+                              closeButtonTextColor: .green,
+                              actionButtonTextColor: .gray),
         layout: .default
     )
 
