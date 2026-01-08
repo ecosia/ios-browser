@@ -321,7 +321,7 @@ private class MockCoordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
 
 @available(iOS 16.0, *)
 private class MockWebViewRepresentable {
-    var mockURL: URL = URL(string: "https://example.com")!
+    var mockURL = URL(string: "https://example.com")!
 }
 
 @available(iOS 16.0, *)
@@ -393,4 +393,3 @@ private class MockFrameInfo: WKFrameInfo {
         return true
     }
 }
-
