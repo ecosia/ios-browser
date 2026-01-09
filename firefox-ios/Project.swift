@@ -583,13 +583,15 @@ let allTargets: [Target] = [
         ),
 
         // MARK: - RustMozillaAppServices Framework
+        // Ecosia: Wrapper framework to re-export MozillaAppServices and avoid direct linking
+        // from multiple targets (which would embed MozillaRustComponents multiple times)
         .target(
             name: "RustMozillaAppServices",
             destinations: .iOS,
             product: .framework,
             bundleId: "org.mozilla.ios.RustMozillaAppServices",
             infoPlist: .file(path: "RustMozillaAppServices-Info.plist"),
-            sources: ["RustMozillaAppServices/**/*.swift"],
+            sources: ["Tuist/RustMozillaAppServices.swift"],
             dependencies: [
                 // Link Binary With Libraries
                 .package(product: "MozillaAppServices"),

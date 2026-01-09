@@ -607,6 +607,7 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable {
         debugTabCount -= 1
 
 #if DEBUG
+/* Ecosia: This code is never executed in the original Firefox implementation, not even in Debug configurations (Debug, EcosiaBetaDebug, EcosiaDebug)
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         func checkTabCount(failures: Int) {
             // Need delay for pool to drain.
@@ -621,6 +622,7 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable {
             }
         }
         checkTabCount(failures: 0)
+*/
 #endif
     }
 
