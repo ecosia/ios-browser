@@ -131,85 +131,117 @@ public struct ConfigurableNudgeCardView: View {
     }
 
     public var body: some View {
+        mainContent
+            .onTapGesture {
+                delegate?.nudgeCardTapped()
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isButton)
+            .padding(viewModel?.layout.contentPadding ?? .ecosia.space._m)
+            .background(viewModel?.style.backgroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: viewModel?.layout.cornerRadius ?? .ecosia.borderRadius._l))
+            .overlay(
+                RoundedRectangle(cornerRadius: viewModel?.layout.cornerRadius ?? .ecosia.borderRadius._l)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: viewModel?.layout.borderWidth ?? 1)
+            )
+    }
+
+    @ViewBuilder
+    private var mainContent: some View {
         HStack(alignment: .top, spacing: viewModel?.layout.horizontalSpacing ?? .ecosia.space._2s) {
-            // Image
-            if let image = viewModel?.image {
-                Image(uiImage: image)
-                    .resizable()
-                    .frame(width: viewModel?.layout.imageSize ?? 48,
-                           height: viewModel?.layout.imageSize ?? 48)
-                    .accessibilityHidden(true)
-            }
-
-            // Text and Action Stack
-            VStack(alignment: .leading,
-                   spacing: viewModel?.layout.verticalSpacing ?? .ecosia.space._2s) {
-                if let title = viewModel?.title {
-                    Text(title)
-                        .font(viewModel?.layout.titleFont ?? .headline.bold())
-                        .foregroundColor(viewModel?.style.textPrimaryColor)
-                        .multilineTextAlignment(.leading)
-                        .accessibilityLabel(title)
-                        .accessibilityIdentifier("nudge_card_title")
-                }
-
-                if let description = viewModel?.description {
-                    Text(description)
-                        .font(viewModel?.layout.descriptionFont ?? .subheadline)
-                        .foregroundColor(viewModel?.style.textSecondaryColor)
-                        .multilineTextAlignment(.leading)
-                        .accessibilityLabel(description)
-                        .accessibilityIdentifier("nudge_card_description")
-                }
-
-                if let buttonText = viewModel?.buttonText {
-                    Button(action: {
-                        delegate?.nudgeCardRequestToPerformAction()
-                    }) {
-                        Text(buttonText)
-                            .font(viewModel?.layout.buttonFont ?? .subheadline)
-                            .foregroundColor(viewModel?.style.actionButtonTextColor)
-                    }
-                    .padding(.top, viewModel?.layout.buttonTopPadding ?? .ecosia.space._1s)
-                    .accessibilityLabel(buttonText)
-                    .accessibilityIdentifier("nudge_card_cta_button")
-                    .accessibilityAddTraits(.isButton)
-                }
-            }
-
-            // Close button
-            if viewModel?.showsCloseButton == true {
-                Button(action: {
-                    delegate?.nudgeCardRequestToDimiss()
-                }) {
-                    Image("close", bundle: .ecosia)
-                        .renderingMode(.template)
-                        .resizable()
-                        .frame(width: viewModel?.layout.closeButtonSize ?? 15,
-                               height: viewModel?.layout.closeButtonSize ?? 15)
-                        .foregroundStyle(viewModel?.style.closeButtonTextColor ?? .primaryText)
-                        .accessibilityLabel(String.localized(.configurableNudgeCardCloseButtonAccessibilityLabel))
-                        .accessibilityIdentifier("nudge_card_close_button")
-                        .accessibilityAddTraits(.isButton)
-                }
-                .padding(.top, viewModel?.layout.closeButtonPaddingTop ?? 0)
-                .padding(.leading, viewModel?.layout.closeButtonPaddingLeading ?? 0)
-                .padding(.bottom, viewModel?.layout.closeButtonPaddingBottom ?? 0)
-                .padding(.trailing, viewModel?.layout.closeButtonPaddingTrailing ?? 0)
-            }
+            imageSection
+            contentSection
+            closeButtonSection
         }
-        .onTapGesture {
-            delegate?.nudgeCardTapped()
+    }
+
+    @ViewBuilder
+    private var imageSection: some View {
+        if let image = viewModel?.image {
+            Image(uiImage: image)
+                .resizable()
+                .frame(width: viewModel?.layout.imageSize ?? 48,
+                       height: viewModel?.layout.imageSize ?? 48)
+                .accessibilityHidden(true)
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isButton)
-        .padding(viewModel?.layout.contentPadding ?? .ecosia.space._m)
-        .background(viewModel?.style.backgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: viewModel?.layout.cornerRadius ?? .ecosia.borderRadius._l))
-        .overlay(
-            RoundedRectangle(cornerRadius: viewModel?.layout.cornerRadius ?? .ecosia.borderRadius._l)
-                .stroke(.border, lineWidth: viewModel?.layout.borderWidth ?? 1)
-        )
+    }
+
+    @ViewBuilder
+    private var contentSection: some View {
+        VStack(alignment: .leading,
+               spacing: viewModel?.layout.verticalSpacing ?? .ecosia.space._2s) {
+            titleView
+            descriptionView
+            actionButton
+        }
+    }
+
+    @ViewBuilder
+    private var titleView: some View {
+        if let title = viewModel?.title {
+            Text(title)
+                .font(viewModel?.layout.titleFont ?? .headline.bold())
+                .foregroundColor(viewModel?.style.textPrimaryColor)
+                .multilineTextAlignment(.leading)
+                .accessibilityLabel(title)
+                .accessibilityIdentifier("nudge_card_title")
+        }
+    }
+
+    @ViewBuilder
+    private var descriptionView: some View {
+        if let description = viewModel?.description {
+            Text(description)
+                .font(viewModel?.layout.descriptionFont ?? .subheadline)
+                .foregroundColor(viewModel?.style.textSecondaryColor)
+                .multilineTextAlignment(.leading)
+                .accessibilityLabel(description)
+                .accessibilityIdentifier("nudge_card_description")
+        }
+    }
+
+    @ViewBuilder
+    private var actionButton: some View {
+        if let buttonText = viewModel?.buttonText {
+            Button(action: {
+                delegate?.nudgeCardRequestToPerformAction()
+            }) {
+                Text(buttonText)
+                    .font(viewModel?.layout.buttonFont ?? .subheadline)
+                    .foregroundColor(viewModel?.style.actionButtonTextColor)
+            }
+            .padding(.top, viewModel?.layout.buttonTopPadding ?? .ecosia.space._1s)
+            .accessibilityLabel(buttonText)
+            .accessibilityIdentifier("nudge_card_cta_button")
+            .accessibilityAddTraits(.isButton)
+        }
+    }
+
+    @ViewBuilder
+    private var closeButtonSection: some View {
+        if viewModel?.showsCloseButton == true {
+            Button(action: {
+                delegate?.nudgeCardRequestToDimiss()
+            }) {
+                closeButtonImage
+            }
+            .padding(.top, viewModel?.layout.closeButtonPaddingTop ?? 0)
+            .padding(.leading, viewModel?.layout.closeButtonPaddingLeading ?? 0)
+            .padding(.bottom, viewModel?.layout.closeButtonPaddingBottom ?? 0)
+            .padding(.trailing, viewModel?.layout.closeButtonPaddingTrailing ?? 0)
+        }
+    }
+
+    private var closeButtonImage: some View {
+        Image("close", bundle: .ecosia)
+            .renderingMode(.template)
+            .resizable()
+            .frame(width: viewModel?.layout.closeButtonSize ?? 15,
+                   height: viewModel?.layout.closeButtonSize ?? 15)
+            .foregroundStyle(viewModel?.style.closeButtonTextColor ?? Color.gray)
+            .accessibilityLabel(String.localized(.configurableNudgeCardCloseButtonAccessibilityLabel))
+            .accessibilityIdentifier("nudge_card_close_button")
+            .accessibilityAddTraits(.isButton)
     }
 }
 

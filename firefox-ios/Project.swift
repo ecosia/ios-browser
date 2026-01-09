@@ -45,18 +45,63 @@ private let packages: [Package] = [
     .remote(url: "https://github.com/ecosia/rust-components-swift.git", requirement: .branch("133.0.0_Glean_removed")),
 ]
 
-// MARK: - Project
+// MARK: - Build Scripts
 
-let project = Project(
-    name: "Client",
-    organizationName: "com.ecosia",
-    options: .options(
-        automaticSchemesOptions: .disabled,
-        disableSynthesizedResourceAccessors: true
-    ),
-    packages: packages,
-    settings: .settings(configurations: buildConfigurations),
-    targets: [
+/// Workaround for Xcode validating `MozillaRustComponents.framework` (from SwiftPM) and failing
+/// because the embedded framework is missing `Info.plist`.
+///
+/// We do two things on every build:
+/// - Delete any previously embedded `MozillaRustComponents.framework` from the app bundle output,
+///   forcing Xcode to re-embed it.
+/// - Ensure the SwiftPM artifact slices contain an `Info.plist`, so the re-embedded framework
+///   includes it and validation passes (clean + incremental builds).
+private let fixMozillaRustComponentsEmbeddingScript: [TargetScript] = [
+    .pre(
+        script: """
+        set -eu
+
+        EMBEDDED_FW="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/MozillaRustComponents.framework"
+        if [ -d "${EMBEDDED_FW}" ]; then
+            echo "[Ecosia/Tuist] Removing stale embedded MozillaRustComponents.framework"
+            rm -rf "${EMBEDDED_FW}"
+        fi
+
+        DERIVED_DATA_DIR="$(dirname "$(dirname "${BUILD_DIR}")")"
+        ARTIFACTS_DIR="${DERIVED_DATA_DIR}/SourcePackages/artifacts"
+        TEMPLATE_PLIST="${SRCROOT}/Tuist/MozillaRustComponents-Info.plist"
+
+        if [ ! -d "${ARTIFACTS_DIR}" ]; then
+            echo "[Ecosia/Tuist] No SwiftPM artifacts dir at ${ARTIFACTS_DIR} (ok)"
+            exit 0
+        fi
+        if [ ! -f "${TEMPLATE_PLIST}" ]; then
+            echo "[Ecosia/Tuist] Missing template plist at ${TEMPLATE_PLIST}"
+            exit 1
+        fi
+
+        FRAMEWORK_DIRS="$(find "${ARTIFACTS_DIR}" -type d -name "MozillaRustComponents.framework" 2>/dev/null || true)"
+        if [ -z "${FRAMEWORK_DIRS}" ]; then
+            echo "[Ecosia/Tuist] MozillaRustComponents.framework not found in artifacts (ok)"
+            exit 0
+        fi
+
+        echo "${FRAMEWORK_DIRS}" | while IFS= read -r FRAMEWORK_DIR; do
+            INFO_PLIST="${FRAMEWORK_DIR}/Info.plist"
+            if [ -f "${INFO_PLIST}" ]; then
+                continue
+            fi
+            echo "[Ecosia/Tuist] Adding Info.plist to artifact slice: ${FRAMEWORK_DIR}"
+            cp "${TEMPLATE_PLIST}" "${INFO_PLIST}"
+        done
+        """,
+        name: "Fix MozillaRustComponents embedding",
+        basedOnDependencyAnalysis: false
+    )
+]
+
+// MARK: - Targets
+
+let allTargets: [Target] = [
         // MARK: - Client App
         .target(
             name: "Client",
@@ -70,9 +115,30 @@ let project = Project(
                     "Client/Frontend/Browser/FaviconManager.swift",
                     "Client/Frontend/Browser/TranslationToastHandler.swift",
                     "Client/Frontend/Login/LoginViewController.swift",
-                    "Client/Frontend/Strings.swift"
+                    "Client/Frontend/Strings.swift",
+                    // Ecosia: Exclude original Firefox files that are replaced by Ecosia versions
+                    "Client/Frontend/Home/HomepageSectionType.swift",
+                    "Client/Frontend/Home/TopSites/Cell/TopSiteItemCell.swift",
+                    "Client/Ecosia/UI/NTP/DefaultBrowser.swift",
+                    // Ecosia: Exclude Ecosia override files that are not currently used
+                    "Client/Frontend/Widgets/EcosiaTabTrayButtonExtensions.swift",
+                    // Ecosia: Exclude outdated color definitions (use Ecosia framework version)
+                    "Client/Ecosia/UI/Theme/EcosiaColor.swift",
+                    // Exclude new Redux tab management files not yet integrated
+                    "Client/Frontend/Browser/Tabs/Action/TabManagerAction.swift",
+                    "Client/Frontend/Browser/Tabs/State/TabViewState.swift",
+                    // Exclude only PocketViewModel from old Pocket (unused, new one might exist elsewhere)
+                    "Client/Frontend/Home/Pocket/PocketViewModel.swift",
+                    // Exclude features not yet integrated (Bookmarks, MessageCard, and JumpBackInViewModel)
+                    "Client/Frontend/Home/Bookmarks/**",
+                    "Client/Frontend/Home/JumpBackIn/JumpBackInViewModel.swift",
+                    "Client/Frontend/Home/MessageCard/**",
+                    // Exclude unused AppDelegate extension
+                    "Client/Application/AppDelegate+PushNotifications.swift"
                 ]),
                 "Providers/**/*.swift",
+                "Extensions/NotificationService/NotificationPayloads.swift",
+                "WidgetKit/OpenTabs/SimpleTab.swift",
                 "Account/FxAPushMessageHandler.swift",
                 "RustFxA/FirefoxAccountSignInViewController.swift",
                 "RustFxA/FxAEntryPoint.swift",
@@ -81,14 +147,19 @@ let project = Project(
                 "RustFxA/FxAWebViewController.swift",
                 "RustFxA/FxAWebViewModel.swift",
                 "RustFxA/FxAWebViewTelemetry.swift",
-                "Client/Frontend/Strings.swift"
+                "Client/**/*.m",
+                "Client/**/*.h"
             ],
             resources: [
                 "Client/Assets/**/*.{js,css,html,png,jpg,jpeg,pdf,otf,ttf}",
                 "Client/Assets/**/*.xcassets",
+                .folderReference(path: "Client/Assets/Search/SearchPlugins"),
                 "Client/Frontend/**/*.{storyboard,xib,xcassets,strings,stringsdict}",
+                "Client/Ecosia/**/*.{xib,xcassets,strings,stringsdict}",
                 "Client/*.lproj/**",
+                "../ContentBlockingLists/*.json",
             ],
+            scripts: fixMozillaRustComponentsEmbeddingScript,
             dependencies: [
                 // Target Dependencies
                 .target(name: "Sync"),
@@ -96,8 +167,10 @@ let project = Project(
                 .target(name: "ShareTo"),
                 .target(name: "WidgetKitExtension"),
                 .target(name: "Ecosia"),
-                
+                .target(name: "RustMozillaAppServices"),
+
                 // Link Binary With Libraries
+                .package(product: "MozillaAppServices"),
                 .package(product: "BrazeUI"),
                 .package(product: "BrazeKit"),
                 .package(product: "Common"),
@@ -108,9 +181,9 @@ let project = Project(
                 .sdk(name: "SafariServices", type: .framework),
                 .sdk(name: "Accelerate", type: .framework),
                 .sdk(name: "AuthenticationServices", type: .framework),
-                .sdk(name: "libxml2.2", type: .library),
+                .sdk(name: "xml2", type: .library),
                 .package(product: "ToolbarKit"),
-                .sdk(name: "libz", type: .library),
+                .sdk(name: "z", type: .library),
                 .sdk(name: "AdSupport", type: .framework),
                 .package(product: "Sentry-Dynamic"),
                 .package(product: "Kingfisher"),
@@ -130,23 +203,27 @@ let project = Project(
             ],
             settings: .settings(
                 base: baseSettings.merging([
-                    "SWIFT_OBJC_BRIDGING_HEADER": "$(PROJECT_DIR)/Client/Client-Bridging-Header.h"
+                    "SWIFT_OBJC_BRIDGING_HEADER": "$(PROJECT_DIR)/Client/Client-Bridging-Header.h",
+                    "HEADER_SEARCH_PATHS": ["$(inherited)", "$(SRCROOT)", "$(SRCROOT)/Client", "$(SRCROOT)/Client/Utils"]
                 ], uniquingKeysWith: { _, new in new }),
                 configurations: [
                     .debug(name: "Debug", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp"
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp",
                     ], xcconfig: "Client/Configuration/EcosiaDebug.xcconfig"),
                     .debug(name: "BetaDebug", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox"
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox",
+                        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "",
                     ], xcconfig: "Client/Configuration/EcosiaBetaDebug.xcconfig"),
                     .debug(name: "Testing", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox"
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox",
                     ], xcconfig: "Client/Configuration/EcosiaTesting.xcconfig"),
                     .release(name: "Release", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp"
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp",
+                        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
                     ], xcconfig: "Client/Configuration/Ecosia.xcconfig"),
                     .release(name: "Development_TestFlight", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox"
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox",
+                        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
                     ], xcconfig: "Client/Configuration/Staging.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox"
@@ -154,7 +231,7 @@ let project = Project(
                 ]
             )
         ),
-        
+
         // MARK: - ShareTo Extension
         .target(
             name: "ShareTo",
@@ -204,13 +281,17 @@ let project = Project(
                 .target(name: "Shared"),
                 .target(name: "Sync"),
                 .target(name: "Storage"),
-                
+
                 // Link Binary With Libraries
                 .package(product: "Fuzi"),
                 .target(name: "RustMozillaAppServices"),
                 .package(product: "SnapKit"),
                 .package(product: "Common"),
                 .sdk(name: "ImageIO", type: .framework),
+                .package(product: "MozillaAppServices"),
+                .package(product: "SiteImageView"),
+                .package(product: "GCDWebServers"),
+                .package(product: "Kingfisher"),
             ],
             settings: .settings(
                 base: baseSettings.merging([
@@ -239,7 +320,7 @@ let project = Project(
                 ]
             )
         ),
-        
+
         // MARK: - WidgetKitExtension
         .target(
             name: "WidgetKitExtension",
@@ -267,12 +348,12 @@ let project = Project(
             ],
             resources: [
                 "WidgetKit/**/*.{xcassets,strings,stringsdict}",
-                "WidgetKit/PrivacyInfo.xcprivacy"
+                "PrivacyInfo.xcprivacy"
             ],
             dependencies: [
                 // Target Dependencies
                 .target(name: "Shared"),
-                
+
                 // Link Binary With Libraries
                 .target(name: "Storage"),
                 .target(name: "RustMozillaAppServices"),
@@ -283,6 +364,7 @@ let project = Project(
                 .sdk(name: "WidgetKit", type: .framework),
                 .package(product: "SiteImageView"),
                 .sdk(name: "SwiftUI", type: .framework),
+                .package(product: "MozillaAppServices"),
             ],
             settings: .settings(
                 base: baseSettings.merging(["APPLICATION_EXTENSION_API_ONLY": "YES"], uniquingKeysWith: { _, new in new }),
@@ -308,7 +390,7 @@ let project = Project(
                 ]
             )
         ),
-        
+
         // MARK: - Account Framework
         .target(
             name: "Account",
@@ -330,7 +412,7 @@ let project = Project(
                 // Target Dependencies
                 .target(name: "Storage"),
                 .target(name: "Shared"),
-                
+
                 // Link Binary With Libraries
                 .package(product: "GCDWebServers"),
             ],
@@ -351,7 +433,7 @@ let project = Project(
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Account/Account-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
-        
+
         // MARK: - Storage Framework
         .target(
             name: "Storage",
@@ -365,7 +447,7 @@ let project = Project(
                 // Target Dependencies
                 .target(name: "Shared"),
                 .target(name: "Ecosia"),
-                
+
                 // Link Binary With Libraries
                 .package(product: "SiteImageView"),
                 .package(product: "GCDWebServers"),
@@ -388,7 +470,7 @@ let project = Project(
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
-        
+
         // MARK: - Shared Framework
         .target(
             name: "Shared",
@@ -398,6 +480,7 @@ let project = Project(
             infoPlist: .file(path: "Shared/Supporting Files/Info.plist"),
             sources: [
                 "Shared/**/*.swift",
+                "Shared/**/*.m",
                 "Client/Frontend/Strings.swift",
                 "ThirdParty/Deferred/Deferred/*.swift",
                 "ThirdParty/Reachability.swift",
@@ -407,11 +490,13 @@ let project = Project(
             dependencies: [
                 // Target Dependencies
                 .target(name: "Ecosia"),
-                
+                .target(name: "RustMozillaAppServices"),
+
                 // Link Binary With Libraries
                 .package(product: "WebEngine"),
                 .package(product: "GCDWebServers"),
                 .package(product: "Common"),
+                .package(product: "MozillaAppServices"),
             ],
             settings: .settings(
                 base: baseSettings.merging([
@@ -424,7 +509,7 @@ let project = Project(
                 ], uniquingKeysWith: { _, new in new })
             )
         ),
-        
+
         // MARK: - Sync Framework
         .target(
             name: "Sync",
@@ -437,12 +522,14 @@ let project = Project(
                 // Target Dependencies
                 .target(name: "Account"),
                 .target(name: "Shared"),
-                
+                .target(name: "RustMozillaAppServices"),
+
                 // Link Binary With Libraries
                 .package(product: "Fuzi"),
                 .package(product: "SiteImageView"),
                 .target(name: "Storage"),
                 .package(product: "Common"),
+                .package(product: "MozillaAppServices"),
             ],
             settings: .settings(base: baseSettings.merging([
                 "APPLICATION_EXTENSION_API_ONLY": "YES",
@@ -452,7 +539,7 @@ let project = Project(
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Sync/Sync-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
-        
+
         // MARK: - Ecosia Framework
         .target(
             name: "Ecosia",
@@ -465,7 +552,7 @@ let project = Project(
                 "Ecosia/**/*.h",
             ],
             resources: [
-                "Ecosia/L10N/**",
+                "Ecosia/L10N/**/*.{strings,stringsdict}",
                 "Ecosia/UI/**/*.{xcassets,lottie}",
                 "Ecosia/markets.json",
                 "Ecosia/Ecosia.docc/**",
@@ -494,7 +581,7 @@ let project = Project(
                 ], uniquingKeysWith: { _, new in new })
             )
         ),
-        
+
         // MARK: - RustMozillaAppServices Framework
         .target(
             name: "RustMozillaAppServices",
@@ -502,22 +589,18 @@ let project = Project(
             product: .framework,
             bundleId: "org.mozilla.ios.RustMozillaAppServices",
             infoPlist: .file(path: "RustMozillaAppServices-Info.plist"),
+            sources: ["RustMozillaAppServices/**/*.swift"],
             dependencies: [
                 // Link Binary With Libraries
                 .package(product: "MozillaAppServices"),
-                .package(product: "Common"),
-                .package(product: "ComponentLibrary"),
-                .target(name: "Shared"),
-                .target(name: "Account"),
             ],
             settings: .settings(base: baseSettings.merging([
                 "APPLICATION_EXTENSION_API_ONLY": "YES",
-                "DEFINES_MODULE": "NO",
-                "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
-                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
+                "DEFINES_MODULE": "YES",
+                "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES"
             ], uniquingKeysWith: { _, new in new }))
         ),
-        
+
         // MARK: - AccountTests
         .target(
             name: "AccountTests",
@@ -538,7 +621,7 @@ let project = Project(
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Account/Account-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
-        
+
         // MARK: - ClientTests
         .target(
             name: "ClientTests",
@@ -557,7 +640,7 @@ let project = Project(
             ],
             settings: .settings(base: baseSettings)
         ),
-        
+
         // MARK: - StoragePerfTests
         .target(
             name: "StoragePerfTests",
@@ -576,7 +659,7 @@ let project = Project(
             ],
             settings: .settings(base: baseSettings)
         ),
-        
+
         // MARK: - StorageTests
         .target(
             name: "StorageTests",
@@ -597,7 +680,7 @@ let project = Project(
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
-        
+
         // MARK: - SharedTests
         .target(
             name: "SharedTests",
@@ -610,7 +693,7 @@ let project = Project(
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
-        
+
         // MARK: - SyncTelemetryTests
         .target(
             name: "SyncTelemetryTests",
@@ -624,7 +707,7 @@ let project = Project(
             ],
             settings: .settings(base: baseSettings)
         ),
-        
+
         // MARK: - SyncTests
         .target(
             name: "SyncTests",
@@ -645,7 +728,7 @@ let project = Project(
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/firefox-ios-tests/Tests/SyncTests/SyncTests-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
-        
+
         // MARK: - L10nSnapshotTests
         .target(
             name: "L10nSnapshotTests",
@@ -665,7 +748,7 @@ let project = Project(
             ],
             settings: .settings(base: baseSettings)
         ),
-        
+
         // MARK: - EcosiaSnapshotTests
         .target(
             name: "EcosiaSnapshotTests",
@@ -684,7 +767,7 @@ let project = Project(
             ],
             settings: .settings(base: baseSettings)
         ),
-        
+
         // MARK: - EcosiaTests
         .target(
             name: "EcosiaTests",
@@ -711,8 +794,11 @@ let project = Project(
             ],
             settings: .settings(base: baseSettings)
         ),
-    ],
-    schemes: [
+]
+
+// MARK: - Schemes
+
+let allSchemes: [Scheme] = [
         .scheme(
             name: "Ecosia",
             buildAction: .buildAction(targets: ["Client"]),
@@ -728,6 +814,7 @@ let project = Project(
             name: "EcosiaBeta",
             buildAction: .buildAction(targets: ["Client"]),
             runAction: .runAction(
+                configuration: "BetaDebug",
                 executable: "Client",
                 arguments: .arguments(environmentVariables: [
                     "OS_ACTIVITY_MODE": .environmentVariable(value: "${DEBUG_ACTIVITY_MODE}", isEnabled: true)
@@ -743,5 +830,19 @@ let project = Project(
             ),
             runAction: .runAction(executable: "Client")
         ),
-    ]
+]
+
+// MARK: - Project
+
+let project = Project(
+    name: "Client",
+    organizationName: "com.ecosia",
+    options: .options(
+        automaticSchemesOptions: .disabled,
+        disableSynthesizedResourceAccessors: true
+    ),
+    packages: packages,
+    settings: .settings(configurations: buildConfigurations),
+    targets: allTargets,
+    schemes: allSchemes
 )

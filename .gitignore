@@ -167,3 +167,6 @@ Tuist/Dependencies
 # Keep Tuist manifests (exceptions to the above)
 !firefox-ios/Project.swift
 !firefox-ios/Tuist/Tuist.swift
+firefox-ios/Client.xcodeproj/xcshareddata/xcschemes
+firefox-ios/Client.xcodeproj/project.pbxproj
+BrowserKit/Package.resolved

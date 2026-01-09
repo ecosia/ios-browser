@@ -38,19 +38,42 @@ if [ "$1" == "--importLocales" ]; then
 fi
 
 # Download the nimbus-fml.sh script from application-services.
+# // Ecosia: Skip if already present to speed up repeated setup runs
 NIMBUS_FML_FILE=./firefox-ios/nimbus.fml.yaml
-curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/components/nimbus/ios/scripts/bootstrap.sh | bash -s -- --directory ./firefox-ios/bin $NIMBUS_FML_FILE
+NIMBUS_FML_SCRIPT=./firefox-ios/bin/nimbus-fml.sh
+if [ ! -f "$NIMBUS_FML_SCRIPT" ]; then
+    echo "Downloading Nimbus FML tools..."
+    curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/components/nimbus/ios/scripts/bootstrap.sh | bash -s -- --directory ./firefox-ios/bin $NIMBUS_FML_FILE
+else
+    # // Ecosia:
+    echo "Nimbus FML tools already present, skipping download"
+fi
 
 # Move hooks from .githooks to .git/hooks
-cp -r .githooks/* .git/hooks/
-
-# Make the hooks are executable
-chmod +x .git/hooks/*
+# // Ecosia: Skip if already set up to speed up repeated setup runs
+HOOK_FILE=.git/hooks/prepare-commit-msg
+if [ ! -f "$HOOK_FILE" ] || ! cmp -s .githooks/prepare-commit-msg "$HOOK_FILE"; then
+    echo "Setting up git hooks..."
+    cp -r .githooks/* .git/hooks/
+    # Make the hooks are executable
+    chmod +x .git/hooks/*
+else
+    # // Ecosia:
+    echo "Git hooks already set up, skipping"
+fi
 
 # Run and update content blocker
-./content_blocker_update.sh
+# // Ecosia: Skip if lists are recent (< 24h) to speed up repeated setup runs
+BLOCKLIST_FILE=./ContentBlockingLists/disconnect-block-advertising.json
+if [ ! -f "$BLOCKLIST_FILE" ] || [ "$(find "$BLOCKLIST_FILE" -mmin +1440 2>/dev/null)" ]; then
+    echo "Updating content blocker lists..."
+    ./content_blocker_update.sh
+else
+    # // Ecosia:
+    echo "Content blocker lists are recent (< 24h), skipping update"
+fi
 
-# Ecosia: Create Staging.xcconfig if not existing
+# // Ecosia: Create Staging.xcconfig if not existing
 file_path="firefox-ios/Client/Configuration/Staging.xcconfig"
 
 # Check if the file exists
