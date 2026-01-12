@@ -43,7 +43,7 @@ platform :ios do
     gym(
       scheme: "Ecosia",
       project: project_path,
-      export_method: "ad-hoc",
+      export_method: "adhoc",
       configuration: "Development_Firebase",
       export_options: {iCloudContainerEnvironment: 'Development'}
     )
