@@ -218,14 +218,17 @@ let allTargets: [Target] = [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox",
                     ], xcconfig: "Client/Configuration/EcosiaTesting.xcconfig"),
                     .release(name: "Release", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp",
                         "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
                     ], xcconfig: "Client/Configuration/Ecosia.xcconfig"),
                     .release(name: "Development_TestFlight", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.firefox",
                         "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
                     ], xcconfig: "Client/Configuration/Staging.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox"
                     ], xcconfig: "Client/Configuration/Staging.xcconfig"),
                 ]
@@ -309,12 +312,15 @@ let allTargets: [Target] = [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.ShareTo"
                     ], xcconfig: "Client/Configuration/EcosiaTesting.ShareTo.xcconfig"),
                     .release(name: "Release", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.ShareTo"
                     ], xcconfig: "Client/Configuration/Ecosia.ShareTo.xcconfig"),
                     .release(name: "Development_TestFlight", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.firefox.ShareTo"
                     ], xcconfig: "Client/Configuration/EcosiaBeta.ShareTo.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox.ShareTo"
                     ], xcconfig: "Client/Configuration/EcosiaBeta.ShareTo.xcconfig"),
                 ]
@@ -379,12 +385,15 @@ let allTargets: [Target] = [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.WidgetKit"
                     ], xcconfig: "Client/Configuration/EcosiaTesting.WidgetKit.xcconfig"),
                     .release(name: "Release", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.WidgetKit"
                     ], xcconfig: "Client/Configuration/Ecosia.WidgetKit.xcconfig"),
                     .release(name: "Development_TestFlight", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.firefox.WidgetKit"
                     ], xcconfig: "Client/Configuration/EcosiaBeta.WidgetKit.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit"
                     ], xcconfig: "Client/Configuration/EcosiaBeta.WidgetKit.xcconfig"),
                 ]
