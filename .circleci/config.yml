@@ -156,8 +156,8 @@ jobs:
           name: extract Production XCConfig
           command: echo "$PRODUCTION_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Production.xcconfig
       - run:
-          name: Execute bootstrap
-          command: ./bootstrap.sh
+          name: Setup environment and generate Xcode project with Tuist
+          command: ./tuist-setup.sh --no-open
       - run:
           name: Build and deploy to Testflight (with dry-run support)
           no_output_timeout: 35m
@@ -194,8 +194,8 @@ jobs:
           name: extract Staging XCConfig
           command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
       - run:
-          name: Execute bootstrap
-          command: ./bootstrap.sh
+          name: Setup environment and generate Xcode project with Tuist
+          command: ./tuist-setup.sh --no-open
       - run:
           name: Build and deploy to Testflight
           command: bundle exec fastlane testflight_beta
@@ -233,8 +233,8 @@ jobs:
           name: Extract Staging XCConfig
           command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
       - run:
-          name: Execute bootstrap
-          command: ./bootstrap.sh
+          name: Setup environment and generate Xcode project with Tuist
+          command: ./tuist-setup.sh --no-open
       - run:
           name: Build the Ecosia app (with dry-run support)
           command: |
@@ -309,8 +309,8 @@ jobs:
           name: Extract Staging XCConfig
           command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
       - run:
-          name: Execute bootstrap
-          command: ./bootstrap.sh
+          name: Setup environment and generate Xcode project with Tuist
+          command: ./tuist-setup.sh --no-open
       - run:
           name: Build the Ecosia app (with dry-run support)
           command: |
@@ -365,8 +365,8 @@ jobs:
           name: Extract Staging XCConfig
           command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
       - run:
-          name: Execute bootstrap
-          command: ./bootstrap.sh
+          name: Setup environment and generate Xcode project with Tuist
+          command: ./tuist-setup.sh --no-open
       - run:
           name: Build the Ecosia app (with dry-run support)
           command: |
@@ -409,7 +409,7 @@ workflows:
   setup-workflow:
     unless: << pipeline.parameters.is-release-pipeline >>
     jobs:
-      # Always run on main branch merges and patch branches
+      # Always run on main branch merges, patch branches, and tuist-implementation
       - build-and-deploy-firebase-and-browserstack:
           name: Deploy ad-hoc version over Firebase + Upload to Browserstack
           filters:
@@ -418,6 +418,7 @@ workflows:
                 - main
                 - /^main-\d+$/
                 - /^patch\/.+$/
+                - tuist-implementation
           context: napps
 
       # Check if version was bumped and conditionally continue to release pipeline
@@ -431,6 +432,7 @@ workflows:
                 - main
                 - /^main-\d+$/
                 - /^patch\/.+$/
+                - tuist-implementation
           context: napps
 
   # Beta deployment triggered by tags

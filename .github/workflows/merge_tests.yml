@@ -3,6 +3,8 @@ name: Merge Unit Tests
 on:
   pull_request:
     branches: [main, 'patch/**']
+  push:
+    branches: [tuist-implementation]
 
 jobs:
   execute_merge_tests:

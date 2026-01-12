@@ -111,6 +111,6 @@ runs:
         # Boot the simulator
         xcrun simctl boot "iPhone 16" || echo "Simulator may already be booted"
         
-    - name: Run bootstrap script
+    - name: Setup environment and generate Xcode project with Tuist
       shell: bash
-      run: ./bootstrap.sh
+      run: ./tuist-setup.sh --no-open

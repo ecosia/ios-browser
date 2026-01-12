@@ -2,6 +2,8 @@ name: SwiftLint
 on:
   pull_request:
     branches: [main, 'patch/**']
+  push:
+    branches: [tuist-implementation]
 jobs:
   build:
     runs-on: ubuntu-latest
