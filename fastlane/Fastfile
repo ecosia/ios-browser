@@ -12,7 +12,6 @@ default_platform :ios
 target_name = "Client"
 target_folder_path = "firefox-ios/#{target_name}"
 project_path = "#{target_folder_path}.xcodeproj"
-workspace_path = "#{target_folder_path}.xcworkspace"
 pbx_project_file = "#{project_path}/project.pbxproj"
 testflight_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' VERSIONING_SYSTEM='apple-generic' CURRENT_PROJECT_VERSION='0' FUSE_BUILD_SCRIPT_PHASES='NO'"
 
@@ -43,7 +42,7 @@ platform :ios do
     )
     gym(
       scheme: "Ecosia",
-      workspace: workspace_path,
+      project: project_path,
       export_method: "ad-hoc",
       configuration: "Development_Firebase",
       export_options: {iCloudContainerEnvironment: 'Development'}
@@ -103,7 +102,6 @@ platform :ios do
     )
     gym(
       scheme: "Ecosia",
-      workspace: workspace_path,
       export_method: "app-store",
       configuration: "Development_TestFlight"
     )
@@ -148,7 +146,7 @@ platform :ios do
 
     build_app(
       scheme: "Ecosia",
-      workspace: workspace_path,
+      project: project_path,
       configuration: "Release",
       export_method: "app-store",
       xcargs: testflight_archive_args,
@@ -157,7 +155,7 @@ platform :ios do
 
     gym(
       scheme: "Ecosia",
-      workspace: workspace_path,      
+      project: project_path,      
       export_method: "app-store",
       configuration: "Release",
       xcargs: testflight_archive_args
