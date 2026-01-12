@@ -514,6 +514,7 @@ let allTargets: [Target] = [
                     "CLANG_ENABLE_MODULES": "YES",
                     "GCC_TREAT_WARNINGS_AS_ERRORS": "NO",
                     "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
+                    "SKIP_INSTALL": "YES",
                     "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
                 ], uniquingKeysWith: { _, new in new })
             )
@@ -545,6 +546,7 @@ let allTargets: [Target] = [
                 "DEFINES_MODULE": "YES",
                 "GCC_TREAT_WARNINGS_AS_ERRORS": "NO",
                 "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
+                "SKIP_INSTALL": "YES",
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Sync/Sync-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
@@ -608,7 +610,8 @@ let allTargets: [Target] = [
             settings: .settings(base: baseSettings.merging([
                 "APPLICATION_EXTENSION_API_ONLY": "YES",
                 "DEFINES_MODULE": "YES",
-                "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES"
+                "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
+                "SKIP_INSTALL": "YES"
             ], uniquingKeysWith: { _, new in new }))
         ),
 
