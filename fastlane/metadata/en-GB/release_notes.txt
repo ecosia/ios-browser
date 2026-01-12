@@ -1,1 +1,1 @@
-We've got a new look! We are excited to introduce our new brand identity - from a new logo to updated colors - that still reflects our mission! We worked to improve your browser experiencing with a fresher look.
+We fixed some bugs and added some stability improvements.
