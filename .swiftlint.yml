@@ -166,6 +166,10 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - firefox-ios/SourcePackages
   # Ecosia: Remove Metrics.swift as part of Glean
   - Storage/Generated/Metrics.swift
+  # Ecosia: Exclude Tuist-generated files and Tuist configuration
+  - firefox-ios/Derived/
+  - firefox-ios/Project.swift
+  - firefox-ios/Tuist/
   
 included:
   - /Users/vagrant/git
