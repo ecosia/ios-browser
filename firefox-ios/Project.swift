@@ -226,7 +226,7 @@ let allTargets: [Target] = [
                         "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
                     ], xcconfig: "Client/Configuration/Staging.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox"
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox"
                     ], xcconfig: "Client/Configuration/Staging.xcconfig"),
                 ]
             )
@@ -315,7 +315,7 @@ let allTargets: [Target] = [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.ShareTo"
                     ], xcconfig: "Client/Configuration/EcosiaBeta.ShareTo.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.ShareTo"
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox.ShareTo"
                     ], xcconfig: "Client/Configuration/EcosiaBeta.ShareTo.xcconfig"),
                 ]
             )
@@ -385,7 +385,7 @@ let allTargets: [Target] = [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.WidgetKit"
                     ], xcconfig: "Client/Configuration/EcosiaBeta.WidgetKit.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.WidgetKit"
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit"
                     ], xcconfig: "Client/Configuration/EcosiaBeta.WidgetKit.xcconfig"),
                 ]
             )
