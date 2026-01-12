@@ -2,6 +2,7 @@ name: Snapshot Tests
 
 on:
   pull_request:
+    branches: [main, 'patch/**']
     paths:
       - 'firefox-ios/Client/Configuration/Common.xcconfig'
 
@@ -14,6 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          lfs: true
           submodules: true    
 
       - name: Check for MARKETING_VERSION change
