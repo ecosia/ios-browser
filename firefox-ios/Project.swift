@@ -465,7 +465,6 @@ let allTargets: [Target] = [
             ],
             settings: .settings(base: baseSettings.merging([
                 "DEFINES_MODULE": "YES",
-                "SKIP_INSTALL": "YES",
                 "VALIDATE_WORKSPACE": "YES",
                 "HEADER_SEARCH_PATHS": [
                     "$(inherited)",
@@ -514,7 +513,6 @@ let allTargets: [Target] = [
                     "CLANG_ENABLE_MODULES": "YES",
                     "GCC_TREAT_WARNINGS_AS_ERRORS": "NO",
                     "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
-                    "SKIP_INSTALL": "YES",
                     "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
                 ], uniquingKeysWith: { _, new in new })
             )
@@ -546,7 +544,6 @@ let allTargets: [Target] = [
                 "DEFINES_MODULE": "YES",
                 "GCC_TREAT_WARNINGS_AS_ERRORS": "NO",
                 "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
-                "SKIP_INSTALL": "YES",
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Sync/Sync-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         ),
@@ -585,7 +582,6 @@ let allTargets: [Target] = [
                 base: baseSettings.merging([
                     "DEFINES_MODULE": "YES",
                     "CLANG_ENABLE_MODULES": "YES",
-                    "SKIP_INSTALL": "YES",
                     "SWIFT_EMIT_LOC_STRINGS": "YES",
                     "SWIFT_INSTALL_OBJC_HEADER": "NO",
                     "SWIFT_VERSION": "5.0"
@@ -610,8 +606,7 @@ let allTargets: [Target] = [
             settings: .settings(base: baseSettings.merging([
                 "APPLICATION_EXTENSION_API_ONLY": "YES",
                 "DEFINES_MODULE": "YES",
-                "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
-                "SKIP_INSTALL": "YES"
+                "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES"
             ], uniquingKeysWith: { _, new in new }))
         ),
 
