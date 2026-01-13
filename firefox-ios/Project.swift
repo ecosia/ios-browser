@@ -60,10 +60,15 @@ private let fixMozillaRustComponentsEmbeddingScript: [TargetScript] = [
         script: """
         set -eu
 
-        EMBEDDED_FW="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/MozillaRustComponents.framework"
-        if [ -d "${EMBEDDED_FW}" ]; then
-            echo "[Ecosia/Tuist] Removing stale embedded MozillaRustComponents.framework"
-            rm -rf "${EMBEDDED_FW}"
+        # Skip deletion during archive to avoid code signing issues
+        if [ "${ACTION}" = "install" ]; then
+            echo "[Ecosia/Tuist] Skipping MozillaRustComponents cleanup during archive install"
+        else
+            EMBEDDED_FW="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/MozillaRustComponents.framework"
+            if [ -d "${EMBEDDED_FW}" ]; then
+                echo "[Ecosia/Tuist] Removing stale embedded MozillaRustComponents.framework"
+                rm -rf "${EMBEDDED_FW}"
+            fi
         fi
 
         DERIVED_DATA_DIR="$(dirname "$(dirname "${BUILD_DIR}")")"
@@ -203,6 +208,7 @@ let allTargets: [Target] = [
             ],
             settings: .settings(
                 base: baseSettings.merging([
+                    "SKIP_INSTALL": "NO",
                     "SWIFT_OBJC_BRIDGING_HEADER": "$(PROJECT_DIR)/Client/Client-Bridging-Header.h",
                     "HEADER_SEARCH_PATHS": ["$(inherited)", "$(SRCROOT)", "$(SRCROOT)/Client", "$(SRCROOT)/Client/Utils"]
                 ], uniquingKeysWith: { _, new in new }),
@@ -298,6 +304,7 @@ let allTargets: [Target] = [
             ],
             settings: .settings(
                 base: baseSettings.merging([
+                    "SKIP_INSTALL": "NO",
                     "APPLICATION_EXTENSION_API_ONLY": "YES",
                     "OTHER_SWIFT_FLAGS": "$(inherited) -DMOZ_TARGET_SHARETO"
                 ], uniquingKeysWith: { _, new in new }),
@@ -373,7 +380,10 @@ let allTargets: [Target] = [
                 .package(product: "MozillaAppServices"),
             ],
             settings: .settings(
-                base: baseSettings.merging(["APPLICATION_EXTENSION_API_ONLY": "YES"], uniquingKeysWith: { _, new in new }),
+                base: baseSettings.merging([
+                    "SKIP_INSTALL": "NO",
+                    "APPLICATION_EXTENSION_API_ONLY": "YES"
+                ], uniquingKeysWith: { _, new in new }),
                 configurations: [
                     .debug(name: "Debug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.WidgetKit"
