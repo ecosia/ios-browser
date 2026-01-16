@@ -5,6 +5,7 @@
 import UIKit
 import Shared
 import Common
+import Ecosia
 
 class CircleButton: ToolbarButton {
     enum Config {
@@ -62,7 +63,7 @@ class CircleButton: ToolbarButton {
         addSubview(circle)
         sendSubviewToBack(circle)
         accessibilityLabel = config.accessibilityLabel
-        accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.TabToolbar.circleButton
+        accessibilityIdentifier = EcosiaAccessibilityIdentifiers.TabToolbar.circleButton
     }
 
     override func layoutSubviews() {

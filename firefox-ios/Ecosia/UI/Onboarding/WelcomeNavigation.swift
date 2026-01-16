@@ -5,11 +5,11 @@
 import UIKit
 import Common
 
-final class WelcomeNavigation: UINavigationController {
+public final class WelcomeNavigation: UINavigationController {
     private let fadeTransitionDelegate: FadeTransitionDelegate
     let windowUUID: WindowUUID
 
-    init(rootViewController: UIViewController, windowUUID: WindowUUID) {
+    public init(rootViewController: UIViewController, windowUUID: WindowUUID) {
         self.windowUUID = windowUUID
 
         // Transition delegate for fade dismissal
@@ -25,7 +25,7 @@ final class WelcomeNavigation: UINavigationController {
     }
     required init?(coder: NSCoder) { nil }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         topViewController is WelcomeViewController ? .portrait : .all
     }
 }

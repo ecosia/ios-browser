@@ -30,9 +30,9 @@ struct LoopingVideoPlayer: UIViewRepresentable {
         let view = VideoPlayerView()
 
         // TODO: Check effect on app size and reduce the video
-        guard let videoURL = Bundle.main.url(forResource: videoName, withExtension: "mov") else {
+        guard let videoURL = Bundle.ecosia.url(forResource: videoName, withExtension: "mov") else {
             // Fallback to static image if video not found
-            let imageView = UIImageView(image: UIImage(named: "forest"))
+            let imageView = UIImageView(image: .init(named: "forest", in: .ecosia, with: nil))
             imageView.contentMode = .scaleAspectFill
             imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             view.addSubview(imageView)

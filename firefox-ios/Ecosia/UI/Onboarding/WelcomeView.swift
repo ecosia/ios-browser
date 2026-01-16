@@ -4,9 +4,8 @@
 
 import SwiftUI
 import Common
-import Ecosia
 
-struct WelcomeView: View {
+public struct WelcomeView: View {
 
     // MARK: - UX Constants
     private struct UX {
@@ -71,6 +70,11 @@ struct WelcomeView: View {
 
     let windowUUID: WindowUUID
     let onFinish: () -> Void
+    
+    public init(windowUUID: WindowUUID, onFinish: @escaping () -> Void) {
+        self.windowUUID = windowUUID
+        self.onFinish = onFinish
+    }
 
     enum AnimationPhase {
         case initial
@@ -80,7 +84,7 @@ struct WelcomeView: View {
         case final
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack(alignment: .center) {
             // Matching Launch Screen background
             Color(.systemBackground)
@@ -153,7 +157,7 @@ struct WelcomeView: View {
                 .offset(y: logoOffset)
                 .frame(maxWidth: transitionMaskWidth)
                 .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
-                .accessibilityIdentifier(AccessibilityIdentifiers.Ecosia.logo)
+                .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.logo)
 
             // Content
             if animationPhase == .phase3Complete {
@@ -432,13 +436,13 @@ extension WelcomeView {
 
 // MARK: - WelcomeViewTheme
 
-struct WelcomeViewTheme: EcosiaThemeable {
+public struct WelcomeViewTheme: EcosiaThemeable {
     var contentTextColor = Color.white
     var buttonTextColor = Color.white
     var buttonBackgroundColor = Color.green
     var brandPrimaryColor = Color.green
 
-    mutating func applyTheme(theme: Theme) {
+    public mutating func applyTheme(theme: Theme) {
         contentTextColor = Color(theme.colors.ecosia.textStaticLight)
         buttonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
         buttonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)

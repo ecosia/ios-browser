@@ -5,16 +5,16 @@
 import UIKit
 
 /// A custom transition delegate that provides a fade animation for modal presentation and dismissal
-final class FadeTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
+public final class FadeTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
 
     /// The background color to apply to the underlying view when dismissing. Defaults to nil (no change).
-    var dismissalBackgroundColor: UIColor?
+    public var dismissalBackgroundColor: UIColor?
 
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return FadeAnimator(isPresenting: false, dismissalBackgroundColor: dismissalBackgroundColor)
     }
 
-    func animationController(forPresented presented: UIViewController,
+    public func animationController(forPresented presented: UIViewController,
                              presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return FadeAnimator(isPresenting: true, dismissalBackgroundColor: nil)

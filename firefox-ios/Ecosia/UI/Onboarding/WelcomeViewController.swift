@@ -4,20 +4,19 @@
 
 import UIKit
 import Common
-import Ecosia
 import SwiftUI
 
-protocol WelcomeDelegate: AnyObject {
+public protocol WelcomeDelegate: AnyObject {
     func welcomeDidFinish(_ welcome: WelcomeViewController)
 }
 
-final class WelcomeViewController: UIViewController {
+public final class WelcomeViewController: UIViewController {
     private weak var delegate: WelcomeDelegate?
     let windowUUID: WindowUUID
 
     required init?(coder: NSCoder) { nil }
 
-    init(delegate: WelcomeDelegate, windowUUID: WindowUUID) {
+    public init(delegate: WelcomeDelegate, windowUUID: WindowUUID) {
         self.delegate = delegate
         self.windowUUID = windowUUID
         super.init(nibName: nil, bundle: nil)
@@ -25,11 +24,11 @@ final class WelcomeViewController: UIViewController {
         definesPresentationContext = true
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
+    public override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         let swiftUIView = WelcomeView(
