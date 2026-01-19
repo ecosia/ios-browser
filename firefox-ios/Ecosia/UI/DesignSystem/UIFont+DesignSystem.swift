@@ -28,10 +28,3 @@ extension Font {
         Font.system(size: size, weight: weight)
     }
 }
-
-extension Font {
-
-    public static func ecosiaFamilyBrand(size: CGFloat) -> Font {
-        return .custom(familyBrandFontName, size: size)
-    }
-}
