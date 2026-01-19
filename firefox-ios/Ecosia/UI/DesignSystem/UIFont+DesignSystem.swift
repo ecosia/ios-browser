@@ -5,7 +5,7 @@
 import UIKit
 import SwiftUI
 
-private let familyBrandFontName = "FoundersGroteskCond-SmBd"
+fileprivate let familyBrandFontName = "FoundersGroteskCond-SmBd"
 
 extension UIFont {
 
@@ -26,5 +26,12 @@ extension Font {
 
     public static func ecosia(size: CGFloat, weight: Font.Weight = .regular) -> Font {
         Font.system(size: size, weight: weight)
+    }
+}
+
+extension Font {
+
+    public static func ecosiaFamilyBrand(size: CGFloat) -> Font {
+        return .custom(familyBrandFontName, size: size)
     }
 }

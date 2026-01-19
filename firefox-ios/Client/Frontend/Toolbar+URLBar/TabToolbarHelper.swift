@@ -5,6 +5,7 @@
 import UIKit
 import Shared
 import Common
+import Ecosia
 
 protocol TabToolbarProtocol: AnyObject {
     var tabToolbarDelegate: TabToolbarDelegate? { get set }
@@ -161,7 +162,7 @@ open class TabToolbarHelper: NSObject {
          */
         toolbar.circleButton.accessibilityLabel = .AddTabAccessibilityLabel
         toolbar.circleButton.addTarget(self, action: #selector(didClickCircleButton), for: .touchUpInside)
-        toolbar.circleButton.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.TabToolbar.circleButton
+        toolbar.circleButton.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.TabToolbar.circleButton
 
         let appMenuImage = UIImage.templateImageNamed(StandardImageIdentifiers.Large.appMenu)
         toolbar.appMenuButton.contentMode = .center
