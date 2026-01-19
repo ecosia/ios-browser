@@ -21,6 +21,8 @@ public enum AppEvent: AppEventType {
     case postLaunchDependenciesComplete
     case accountManagerInitialized
     case browserIsReady
+    // Ecosia: Add Feature Management event
+    case featureManagementInitialized
 
     // Activities: Profile Syncing
     case profileSyncing
