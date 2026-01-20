@@ -15,8 +15,8 @@ public final class FadeTransitionDelegate: NSObject, UIViewControllerTransitioni
     }
 
     public func animationController(forPresented presented: UIViewController,
-                             presenting: UIViewController,
-                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+                                    presenting: UIViewController,
+                                    source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return FadeAnimator(isPresenting: true, dismissalBackgroundColor: nil)
     }
 }

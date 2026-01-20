@@ -70,7 +70,7 @@ public struct WelcomeView: View {
 
     let windowUUID: WindowUUID
     let onFinish: () -> Void
-    
+
     public init(windowUUID: WindowUUID, onFinish: @escaping () -> Void) {
         self.windowUUID = windowUUID
         self.onFinish = onFinish
