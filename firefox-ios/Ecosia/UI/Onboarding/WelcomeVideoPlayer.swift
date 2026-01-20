@@ -108,11 +108,11 @@ struct WelcomeVideoPlayer: UIViewRepresentable {
         var statusObserver: AnyCancellable?
         var bufferObserver: AnyCancellable?
         var onReady: (() -> Void)?
-        
+
         func startPlayback() {
             player?.play()
         }
-        
+
         func pausePlayback() {
             player?.pause()
         }
