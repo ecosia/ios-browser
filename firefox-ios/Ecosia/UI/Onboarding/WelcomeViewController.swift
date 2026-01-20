@@ -24,11 +24,11 @@ public final class WelcomeViewController: UIViewController {
         definesPresentationContext = true
     }
 
-    public override var preferredStatusBarStyle: UIStatusBarStyle {
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         let swiftUIView = WelcomeView(

@@ -25,7 +25,7 @@ public final class WelcomeNavigation: UINavigationController {
     }
     required init?(coder: NSCoder) { nil }
 
-    public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         topViewController is WelcomeViewController ? .portrait : .all
     }
 }

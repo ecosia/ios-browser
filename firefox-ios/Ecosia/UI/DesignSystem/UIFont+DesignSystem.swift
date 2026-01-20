@@ -5,7 +5,7 @@
 import UIKit
 import SwiftUI
 
-fileprivate let familyBrandFontName = "FoundersGroteskCond-SmBd"
+private let familyBrandFontName = "FoundersGroteskCond-SmBd"
 
 extension UIFont {
 
