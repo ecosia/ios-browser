@@ -57,6 +57,7 @@ public struct WelcomeView: View {
     @State private var bodyOpacity: Double = 0.0
     @State private var bodyOffset: CGFloat = 0.0
     @State private var showVideoBackground: Bool = false
+    @State private var shouldPlayVideo: Bool = false
     @State private var backgroundOpacity: Double = 1.0
     @State private var centeredGradientOpacity: Double = 0.0
     @State private var topGradientOpacity: Double = 0.0
@@ -93,9 +94,13 @@ public struct WelcomeView: View {
 
             // Video background (clipped to transition mask)
             ZStack {
-                LoopingVideoPlayer(videoName: "welcome_background") {
-                    isVideoReady = true
-                }
+                WelcomeVideoPlayer(
+                    videoName: "welcome_background",
+                    onReady: {
+                        isVideoReady = true
+                    },
+                    shouldPlay: shouldPlayVideo
+                )
 
                 // Centered radial gradient behind logo
                 RadialGradient(
@@ -241,6 +246,7 @@ public struct WelcomeView: View {
     private func skipToFinalState() {
         // For reduced motion: skip animations and go directly to final state
         showVideoBackground = true
+        shouldPlayVideo = true
         transitionMaskScale = 1.0
         transitionMaskHeight = screenHeight
         transitionMaskWidth = screenWidth
@@ -297,6 +303,13 @@ public struct WelcomeView: View {
             // Phase 3: Grow window to full screen, move both to final position, show body
             try? await Task.sleep(duration: UX.phase3Delay)
             guard !Task.isCancelled else { return }
+
+            // Start video playback with a slight delay to overlap with phase 3
+            Task {
+                try? await Task.sleep(duration: UX.phase3Duration * 0.3) // Start video 30% into phase 3
+                guard !Task.isCancelled else { return }
+                shouldPlayVideo = true
+            }
 
             await animate(duration: UX.phase3Duration) {
                 transitionMaskScale = 1.0 // Already at full scale from phase 1
