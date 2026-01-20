@@ -147,7 +147,7 @@ public struct WelcomeView: View {
                 .frame(maxWidth: transitionMaskWidth)
 
             // Logo
-            Image("ecosiaLogoLaunch")
+            Image("ecosiaLogoLaunch", bundle: .main)
                 .renderingMode(.template)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
