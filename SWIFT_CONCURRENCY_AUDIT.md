@@ -9,10 +9,10 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 
 ---
 
-## ✅ Already Fixed (22 files)
+## ✅ Already Fixed (23 files)
 
-- ✅ Publisher.swift - @MainActor + @Sendable closures
-- ✅ Images.swift - Actor with async/await
+- ✅ Publisher.swift - @MainActor protocol with Sendable constraints
+- ✅ Images.swift - @MainActor with async/await
 - ✅ News.swift - @MainActor with async file I/O
 - ✅ EcosiaBrowserWindowAuthManager.swift - Actor isolation
 - ✅ EcosiaAuthWindowRegistry.swift - Actor isolation
@@ -28,7 +28,8 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ Language.swift - NSLock for thread-safe static var
 - ✅ FinancialReports.swift - Actor isolation
 - ✅ TabAutoCloseManager.swift - Actor + iOS 15 Task.sleep
-- ✅ NewsModel, Tab, Page, AuthStateAction, AuthWindowState, Report - Sendable
+- ✅ Referrals.swift - @MainActor for Publisher conformance
+- ✅ NewsModel, Tab, Page, AuthStateAction, AuthWindowState, Report, Referrals.Model - Sendable
 
 ---
 
@@ -131,11 +132,11 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 
 | Priority | Count | Status |
 |----------|-------|--------|
-| ✅ Fixed | 28 | **Complete** ✅ |
+| ✅ Fixed | 29 | **Complete** ✅ |
 | 🔴 Critical | 0 | **ALL RESOLVED** 🎉 |
 | 🟡 Medium | 3 | Should fix (non-critical) |
 | 🟢 Low | 3 | Optional |
-| **Total** | **34** | **~98% done** |
+| **Total** | **35** | **~98% done** |
 
 ---
 
@@ -172,6 +173,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ [SWIFT-CONCURRENCY] Fix InvestmentsProjection and TreesProjection (2 files + tests)
 - ✅ [SWIFT-CONCURRENCY] Fix Language.swift thread-safety (1 file)
 - ✅ [SWIFT-CONCURRENCY] Fix FinancialReports actor + iOS 15 compatibility (5 files)
+- ✅ [SWIFT-CONCURRENCY] Fix Publisher protocol conformance crossing MainActor (4 files)
 
 ---
 
