@@ -232,11 +232,11 @@ let allTargets: [Target] = [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.firefox",
                         "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
-                    ], xcconfig: "Client/Configuration/Staging.xcconfig"),
+                    ], xcconfig: "Client/Configuration/EcosiaBeta.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox"
-                    ], xcconfig: "Client/Configuration/Staging.xcconfig"),
+                    ], xcconfig: "Client/Configuration/EcosiaBeta.xcconfig"),
                 ]
             )
         ),
