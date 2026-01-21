@@ -9,7 +9,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 
 ---
 
-## ✅ Already Fixed (18 files)
+## ✅ Already Fixed (20 files)
 
 - ✅ Publisher.swift - @MainActor + @Sendable closures
 - ✅ Images.swift - Actor with async/await
@@ -23,6 +23,8 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ EcosiaErrorToast.swift - Task.sleep
 - ✅ EcosiaAuthUIStateProvider.swift - @MainActor
 - ✅ EcosiaAccountAvatarViewModel.swift - @MainActor
+- ✅ InvestmentsProjection.swift - @MainActor with Task-based timer
+- ✅ TreesProjection.swift - @MainActor with Task-based timer
 - ✅ NewsModel, Tab, Page, AuthStateAction, AuthWindowState - Sendable
 
 ---
@@ -126,11 +128,11 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 
 | Priority | Count | Status |
 |----------|-------|--------|
-| ✅ Fixed | 24 | **Complete** ✅ |
+| ✅ Fixed | 26 | **Complete** ✅ |
 | 🔴 Critical | 0 | **ALL RESOLVED** 🎉 |
 | 🟡 Medium | 3 | Should fix (non-critical) |
 | 🟢 Low | 3 | Optional |
-| **Total** | **30** | **~95% done** |
+| **Total** | **32** | **~97% done** |
 
 ---
 
@@ -163,6 +165,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 **Commits:**
 - ✅ [SWIFT-CONCURRENCY] Fix all concurrency issues in Ecosia framework (18 files)
 - ✅ [SWIFT-CONCURRENCY] Fix all critical thread-safety issues (6 files)
+- ✅ [SWIFT-CONCURRENCY] Fix InvestmentsProjection and TreesProjection (2 files + tests)
 
 ---
 
