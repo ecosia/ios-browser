@@ -10,7 +10,7 @@ extension Analytics {
     /// Configuration for the Snowplow tracker.
     /// - Includes settings such as application ID, session context, application context, platform context, and geolocation context.
     /// - This configuration also enables tracking of minimal device properties like Apple ID for vendors (IDFV).
-    static let trackerConfiguration = TrackerConfiguration()
+    nonisolated(unsafe) static let trackerConfiguration = TrackerConfiguration()
         .appId(Bundle.version)
         .sessionContext(true)
         .applicationContext(true)
@@ -22,7 +22,7 @@ extension Analytics {
 
     /// Configuration for the Snowplow subject.
     /// - Sets the user ID using the unique analytics ID associated with the user.
-    static let subjectConfiguration = SubjectConfiguration()
+    nonisolated(unsafe) static let subjectConfiguration = SubjectConfiguration()
         .userId(User.shared.analyticsId.uuidString)
 
     /// Configuration for the daily tracking plugin.

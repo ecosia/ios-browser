@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct NewsModel: Codable, Hashable {
+public struct NewsModel: Codable, Hashable, Sendable {
     let id: Int
     public internal(set) var text: String
     public let language: Language

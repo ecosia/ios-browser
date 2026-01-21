@@ -27,7 +27,7 @@ open class Analytics {
         }
     }
 
-    public static var shared = Analytics()
+    public nonisolated(unsafe) static var shared = Analytics()
     private var tracker: TrackerController
     private let notificationCenter: AnalyticsUserNotificationCenterProtocol
 

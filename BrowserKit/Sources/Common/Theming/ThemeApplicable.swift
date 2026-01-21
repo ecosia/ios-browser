@@ -5,6 +5,7 @@
 import Foundation
 
 // Used to pass in a theme to a view or cell to apply a theme
+@MainActor
 public protocol ThemeApplicable {
     func applyTheme(theme: Theme)
 }

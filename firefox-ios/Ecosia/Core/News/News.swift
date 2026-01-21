@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 public final class News: StatePublisher {
     public var subscriptions = [Subscription<[NewsModel]>]()
     public var state: [NewsModel]? {

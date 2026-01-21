@@ -10,7 +10,7 @@ import Common
 public final class EcosiaBrowserWindowAuthManager {
 
     /// Shared instance for global access
-    public static let shared = EcosiaBrowserWindowAuthManager()
+    public nonisolated(unsafe) static let shared = EcosiaBrowserWindowAuthManager()
 
     /// Thread-safe storage for window-specific authentication states
     private let queue = DispatchQueue(label: "ecosia.auth.state.manager", attributes: .concurrent)

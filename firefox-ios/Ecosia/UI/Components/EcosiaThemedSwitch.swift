@@ -5,6 +5,7 @@
 import Common
 import UIKit
 
+@MainActor
 public class EcosiaThemedSwitch: UISwitch, ThemeApplicable {
     private var enabledThumbColor: UIColor?
     private var disabledThumbColor: UIColor?

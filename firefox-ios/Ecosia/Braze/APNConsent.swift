@@ -8,7 +8,7 @@ public struct APNConsent {
     private init() {}
 
     public static func requestIfNeeded() async {
-        guard BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
+        guard await BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
             return
         }
         Analytics.shared.apnConsent(.view)

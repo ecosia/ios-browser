@@ -10,7 +10,7 @@ import Common
 public final class EcosiaAuthWindowRegistry {
 
     /// Shared instance for global access
-    public static let shared = EcosiaAuthWindowRegistry()
+    public nonisolated(unsafe) static let shared = EcosiaAuthWindowRegistry()
 
     /// Thread-safe storage for window UUIDs
     private let queue = DispatchQueue(label: "ecosia.auth.window.registry", attributes: .concurrent)

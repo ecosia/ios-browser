@@ -57,15 +57,15 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         guard userProfile?.pictureURL?.baseDomain != gravatarURL?.baseDomain else { return nil }
         return userProfile?.pictureURL
     }
-    private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
+    private nonisolated(unsafe) static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
 
     // MARK: - Singleton
 
     /// Factory for creating accounts provider - can be configured before first access
-    public static var accountsProviderFactory: () -> AccountsProviderProtocol = { AccountsProvider() }
+    public nonisolated(unsafe) static var accountsProviderFactory: () -> AccountsProviderProtocol = { AccountsProvider() }
 
     /// Shared instance for app-wide auth state
-    public static let shared = EcosiaAuthUIStateProvider(accountsProvider: accountsProviderFactory())
+    public nonisolated(unsafe) static let shared = EcosiaAuthUIStateProvider(accountsProvider: accountsProviderFactory())
 
     public init(accountsProvider: AccountsProviderProtocol) {
         self.accountsProvider = accountsProvider

@@ -6,6 +6,7 @@ import SwiftUI
 import Common
 
 /// A protocol defining actions that can be triggered from a Nudge Card.
+@MainActor
 public protocol ConfigurableNudgeCardActionDelegate: AnyObject {
     func nudgeCardRequestToPerformAction()
     func nudgeCardRequestToDimiss()
@@ -34,7 +35,7 @@ public struct NudgeCardStyle {
 }
 
 /// Layout configuration for `ConfigurableNudgeCardView`.
-public struct NudgeCardLayout {
+public struct NudgeCardLayout: Sendable {
     let imageSize: CGFloat
     let closeButtonSize: CGFloat
     let closeButtonPaddingTop: CGFloat

@@ -198,7 +198,7 @@ extension BrazeService: BrazeDelegate {
 
 extension BrazeService: UNUserNotificationCenterDelegate {
     nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        Task { @MainActor in
+        Task { @MainActor [response, completionHandler] in
             if let braze, braze.notifications.handleUserNotification(
                 response: response,
                 withCompletionHandler: completionHandler
@@ -210,7 +210,7 @@ extension BrazeService: UNUserNotificationCenterDelegate {
     }
 
     nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        Task { @MainActor in
+        Task { @MainActor [notification, completionHandler] in
             if let braze {
                 braze.notifications.handleForegroundNotification(notification: notification)
             }

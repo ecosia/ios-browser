@@ -7,6 +7,7 @@ import SwiftUI
 import Common
 
 /// Reusable Nudge Card Header View that can be configured with any view model.
+@MainActor
 public final class DefaultBrowserSettingsNudgeCardHeaderView: UITableViewHeaderFooterView, ThemeApplicable, ReusableCell {
 
     // MARK: - Properties

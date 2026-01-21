@@ -4,7 +4,7 @@
 
 import UIKit
 
-public struct EcosiaTypography {
+public struct EcosiaTypography: Sendable {
     public let _1s: CGFloat = 10
     public let _s: CGFloat = 12
     public let _m: CGFloat = 14
