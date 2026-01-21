@@ -11,6 +11,9 @@ extension Notification.Name {
     public static let searchSettingsChanged = Notification.Name("searchSettingsChanged")
 }
 
+/// Core user settings and state
+/// **Thread Safety:** Access to `User.shared` should be done from @MainActor contexts when possible
+/// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill) best practices
 public struct User: Codable, Equatable {
     public static var shared = User() {
         didSet {
@@ -18,7 +21,8 @@ public struct User: Codable, Equatable {
             shared.save()
 
             if shared.hasNewSearchSetting(compared: oldValue) {
-                DispatchQueue.main.async {
+                // Post notification on main thread for UI observers
+                Task { @MainActor in
                     NotificationCenter.default.post(name: .searchSettingsChanged, object: nil)
                 }
             }
@@ -68,7 +72,8 @@ public struct User: Codable, Equatable {
     public var searchCount = 0 {
         didSet {
             guard oldValue != searchCount else { return }
-            DispatchQueue.main.async {
+            // Post notification on main thread for UI observers
+            Task { @MainActor in
                 NotificationCenter.default.post(name: .searchesCounterChanged, object: nil)
             }
         }
@@ -165,10 +170,10 @@ public struct User: Codable, Equatable {
         try? JSONDecoder().decode(User.self, from: .init(contentsOf: FileManager.user))
     }
 
-    static let queue = DispatchQueue(label: "", qos: .utility)
     private func save() {
         let user = self
-        User.queue.async {
+        // Perform file I/O on background using Task.detached
+        Task.detached {
             try? JSONEncoder().encode(user).write(to: FileManager.user, options: .atomic)
         }
     }

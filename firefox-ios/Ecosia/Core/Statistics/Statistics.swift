@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 public final class Statistics {
     public struct Response: Decodable {
         var results: [Result]
@@ -48,32 +49,35 @@ public final class Statistics {
 
     init() { }
 
-    public func fetchAndUpdate(urlSession: URLSessionProtocol = URLSession.shared) async throws {
+    nonisolated public func fetchAndUpdate(urlSession: URLSessionProtocol = URLSession.shared) async throws {
         let (data, _) = try await urlSession.data(from: EcosiaEnvironment.current.urlProvider.statistics)
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let response = try decoder.decode(Response.self, from: data)
-        response.results.forEach { statistic in
-            switch statistic.statisticName() {
-            case .treesPlanted:
-                if let value = statistic.doubleValue(),
-                    let date = statistic.lastUpdatedDate() {
-                    treesPlanted = value
-                    treesPlantedLastUpdated = date
+        await MainActor.run {
+            response.results.forEach { statistic in
+                switch statistic.statisticName() {
+                case .treesPlanted:
+                    if let value = statistic.doubleValue(),
+                       let date = statistic.lastUpdatedDate() {
+                        treesPlanted = value
+                        treesPlantedLastUpdated = date
+                    }
+                case .timePerTree: timePerTree = statistic.doubleValue() ?? timePerTree
+                case .searchesPerTree: searchesPerTree = statistic.doubleValue() ?? searchesPerTree
+                case .activeUsers: activeUsers = statistic.doubleValue() ?? activeUsers
+                case .eurToUsdMultiplier: eurToUsdMultiplier = statistic.doubleValue() ?? eurToUsdMultiplier
+                case .investmentPerSecond: investmentPerSecond = statistic.doubleValue() ?? investmentPerSecond
+                case .totalInvestments:
+                    if let value = statistic.doubleValue(),
+                       let date = statistic.lastUpdatedDate() {
+                        totalInvestments = value
+                        totalInvestmentsLastUpdated = date
+                    }
+                case nil: break
                 }
-            case .timePerTree: timePerTree = statistic.doubleValue() ?? timePerTree
-            case .searchesPerTree: searchesPerTree = statistic.doubleValue() ?? searchesPerTree
-            case .activeUsers: activeUsers = statistic.doubleValue() ?? activeUsers
-            case .eurToUsdMultiplier: eurToUsdMultiplier = statistic.doubleValue() ?? eurToUsdMultiplier
-            case .investmentPerSecond: investmentPerSecond = statistic.doubleValue() ?? investmentPerSecond
-            case .totalInvestments:
-                if let value = statistic.doubleValue(),
-                    let date = statistic.lastUpdatedDate() {
-                    totalInvestments = value
-                    totalInvestmentsLastUpdated = date
-                }
-            case nil: break
             }
         }
     }
 }
+

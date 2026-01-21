@@ -12,6 +12,10 @@ public protocol BrazeBrowserDelegate: AnyObject {
     func openBrazeURLInNewTab(_ url: URL?)
 }
 
+/// Braze integration service with @MainActor isolation for UI delegate callbacks
+/// NSObject subclass requirement for Braze SDK delegates necessitates @MainActor (not actor)
+/// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill) patterns
+@MainActor
 public final class BrazeService: NSObject {
     override private init() {}
 
@@ -21,7 +25,7 @@ public final class BrazeService: NSObject {
     }
     private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
     private static var apiKey = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "BRAZE_API_KEY") ?? ""
-    public static let shared = BrazeService()
+    public nonisolated static let shared = BrazeService()
     public weak var browserDelegate: BrazeBrowserDelegate?
 
     enum Error: Swift.Error {
@@ -38,7 +42,7 @@ public final class BrazeService: NSObject {
 
         do {
             try initBraze(userId: userId)
-            Task {
+            Task { @MainActor in
                 await refreshAPNRegistrationIfNeeded()
                 await APNConsent.requestIfNeeded()
             }
@@ -83,11 +87,9 @@ extension BrazeService {
     private func initBraze(userId: String) throws {
         braze = Braze(configuration: try getBrazeConfiguration())
         braze?.delegate = self
-        Task { @MainActor in
-            let inAppMessageUI = BrazeInAppMessageUI()
-            inAppMessageUI.delegate = self
-            braze?.inAppMessagePresenter = inAppMessageUI
-        }
+        let inAppMessageUI = BrazeInAppMessageUI()
+        inAppMessageUI.delegate = self
+        braze?.inAppMessagePresenter = inAppMessageUI
         updateID(userId)
     }
 }
@@ -95,7 +97,7 @@ extension BrazeService {
 extension BrazeService {
     // MARK: - Braze proxy function
 
-    public static func prepareForDelayedInitialization() {
+    public nonisolated static func prepareForDelayedInitialization() {
         Braze.prepareForDelayedInitialization()
     }
 }

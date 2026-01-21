@@ -4,7 +4,9 @@
 
 import Foundation
 
-public final class Statistics {
+/// Thread-safe statistics manager using actor isolation
+/// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill) actor patterns
+public actor Statistics {
     public struct Response: Decodable {
         var results: [Result]
     }

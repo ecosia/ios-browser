@@ -8,12 +8,16 @@ import WebKit
 import Common
 
 /**
- The `EcosiaAuthenticationService` class manages user authentication, credential storage, and session management using Auth0.
+ The `EcosiaAuthenticationService` actor manages user authentication, credential storage, and session management using Auth0.
  
- This class provides a centralized interface for all authentication operations in the Ecosia app,
- including login, logout, credential renewal, and session token management for web-to-native SSO..
+ This actor provides thread-safe, centralized authentication operations for the Ecosia app,
+ including login, logout, credential renewal, and session token management for web-to-native SSO.
+ 
+ **Thread Safety:** All credential access is protected by actor isolation, preventing data races on sensitive authentication state.
+ 
+ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill) actor patterns.
  */
-public final class EcosiaAuthenticationService {
+public actor EcosiaAuthenticationService {
 
     // MARK: - Public Properties
 
@@ -53,7 +57,10 @@ public final class EcosiaAuthenticationService {
     /// This includes name, email, profile picture URL, etc.
     public private(set) var userProfile: UserProfile? {
         didSet {
-            NotificationCenter.default.post(name: .EcosiaUserProfileUpdated, object: nil)
+            // Post notification on main thread for UI updates
+            Task { @MainActor in
+                NotificationCenter.default.post(name: .EcosiaUserProfileUpdated, object: nil)
+            }
         }
     }
 

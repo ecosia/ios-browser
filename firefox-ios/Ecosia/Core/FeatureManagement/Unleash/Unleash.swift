@@ -18,11 +18,11 @@ public enum Unleash: UnleashProtocol {
 
     public typealias Context = [String: String]
 
-    static var model = Model()
+    nonisolated(unsafe) static var model = Model()
     public static var userId: UUID { model.id }
     private static let queue = DispatchQueue(label: "com.ecosia.ModelManagerQueue")
-    static var rules: [RefreshingRule] = []
-    private static var _isLoaded = false
+    nonisolated(unsafe) static var rules: [RefreshingRule] = []
+    nonisolated(unsafe) private static var _isLoaded = false
 
     /// Indicates whether Unleash has been loaded from filesystem or network
     public static var isLoaded: Bool {
@@ -30,7 +30,7 @@ public enum Unleash: UnleashProtocol {
     }
 
     /// Locale source for dependency injection (for testing purposes)
-    static var localeSource: RegionLocatable = Locale.current
+    nonisolated(unsafe) static var localeSource: RegionLocatable = Locale.current
 
     static var currentDeviceRegion: String {
         localeSource.regionIdentifierLowercasedWithFallbackValue
@@ -184,3 +184,4 @@ public enum Unleash: UnleashProtocol {
         return rules.contains(where: { $0.shouldRefresh })
     }
 }
+
