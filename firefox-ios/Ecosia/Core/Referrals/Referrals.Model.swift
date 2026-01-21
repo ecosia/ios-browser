@@ -14,7 +14,7 @@ extension Referrals {
         case genericError = 500
     }
 
-    public struct Model: Codable, Equatable {
+    public struct Model: Codable, Equatable, Sendable {
         public static let treesPerReferred = 1
         public var code: String?
         public var claims = 0

@@ -5,7 +5,7 @@
 @testable import Ecosia
 import XCTest
 
-final class PublishersTests: XCTestCase {
+@MainActor final class PublishersTests: XCTestCase {
     func testNotifySubscriber() {
         let publisher = ExamplePublisher()
         let subscriber = ExampleSubscriber(expectation(description: ""), publisher: publisher)
@@ -41,7 +41,7 @@ final class PublishersTests: XCTestCase {
     }
 }
 
-private final class ExamplePublisher: Publisher {
+@MainActor private final class ExamplePublisher: Publisher {
     var subscriptions = [Subscription<[String]>]()
 
     func eventHappened(_ messages: [String]) {

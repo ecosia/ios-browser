@@ -4,38 +4,40 @@
 
 import Foundation
 
+/// Publisher protocol for thread-safe UI updates
+/// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill) MainActor patterns
 public protocol Publisher: AnyObject {
-    associatedtype Input
-    var subscriptions: [Subscription<Input>] { get set }
+    associatedtype Input: Sendable
+    @MainActor var subscriptions: [Subscription<Input>] { get set }
 }
 
 public extension Publisher {
-    func send(_ input: Input) {
+    @MainActor func send(_ input: Input) {
         subscriptions.removeAll { $0.subscriber == nil }
         subscriptions.forEach { $0.closure(input) }
     }
 
-    func subscribe(_ subscriber: AnyObject, closure: @escaping (Input) -> Void) {
+    @MainActor func subscribe(_ subscriber: AnyObject, closure: @escaping @Sendable (Input) -> Void) {
         guard !subscriptions.contains(where: { $0.subscriber === subscriber }) else { return }
         subscriptions.append(.init(subscriber: subscriber, closure: closure))
     }
 
-    func unsubscribe(_ subscriber: AnyObject) {
+    @MainActor func unsubscribe(_ subscriber: AnyObject) {
         subscriptions.removeAll { $0.subscriber === subscriber }
     }
 }
 
-public struct Subscription<Input> {
+public struct Subscription<Input: Sendable>: @unchecked Sendable {
     weak var subscriber: AnyObject?
-    let closure: (Input) -> Void
+    let closure: @Sendable (Input) -> Void
 }
 
 public protocol StatePublisher: Publisher {
-    var state: Input? { get }
+    @MainActor var state: Input? { get }
 }
 
 public extension StatePublisher {
-    func subscribeAndReceive(_ subscriber: AnyObject, closure: @escaping (Input) -> Void) {
+    @MainActor func subscribeAndReceive(_ subscriber: AnyObject, closure: @escaping @Sendable (Input) -> Void) {
         subscribe(subscriber, closure: closure)
         state.map(closure)
     }

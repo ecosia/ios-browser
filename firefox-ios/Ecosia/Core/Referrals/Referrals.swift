@@ -6,7 +6,8 @@ import Foundation
 
 /// The `Referrals` class is responsible for handling referral-related operations,
 /// including refreshing referral codes, creating new codes, and claiming referrals.
-public class Referrals: Publisher {
+/// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill) MainActor patterns
+@MainActor public class Referrals: Publisher {
 
     /// Subscriptions to the referral model updates.
     public var subscriptions = [Subscription<Referrals.Model>]()
@@ -153,14 +154,12 @@ public class Referrals: Publisher {
     }
 
     /// Updates the date on error to refresh the cooldown period.
-    @MainActor
     private func updateErrorDate() {
         User.shared.referrals.updated = Date()
     }
 
     /// Updates the referral information.
     /// - Parameter info: The referral code information to update.
-    @MainActor
     private func update(_ info: CodeInfo) {
         var referrals = User.shared.referrals
         referrals.code = info.code
@@ -171,7 +170,6 @@ public class Referrals: Publisher {
     }
 
     /// Stores the claim information and updates the referral state.
-    @MainActor
     private func storeClaim() {
         var referrals = User.shared.referrals
         referrals.isClaimed = true
