@@ -137,6 +137,7 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
     var impactViewModel: NTPImpactCellViewModel
     var newsViewModel: NTPNewsCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
+    var productTourNTPViewModel: NTPFirstSearchViewModel
 
     /*
      Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
@@ -183,6 +184,7 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
         self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
+        self.productTourNTPViewModel = NTPFirstSearchViewModel(theme: theme)
         self.wallpaperManager = wallpaperManager
         /* Ecosia: Remove `jumpBackIn` section reference
         let jumpBackInAdaptor = JumpBackInDataAdaptorImplementation(profile: profile,
@@ -242,12 +244,14 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
                                 topSiteViewModel,
                                 impactViewModel,
                                 newsViewModel,
-                                ntpCustomizationViewModel]
+                                ntpCustomizationViewModel,
+                                productTourNTPViewModel]
         self.isPrivate = isPrivate
 
         self.nimbus = nimbus
         // Ecosia: Add Ecosia's ViewModels delegates
         newsViewModel.dataModelDelegate = self
+        productTourNTPViewModel.delegate = self
         topSiteViewModel.delegate = self
         /* Ecosia Remove bookmarks section
         bookmarksViewModel.delegate = self
@@ -324,6 +328,14 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
 
     func updateEnabledSections() {
         shownSections.removeAll()
+
+        // Ecosia: Check if we should show product tour layout instead
+        if ProductTourManager.shared.shouldShowProductTourHomepage {
+            childViewModels.filter({ $0.sectionType.isProductTourSection }).forEach {
+                if $0.shouldShow { shownSections.append($0.sectionType) }
+            }
+            return
+        }
 
         /* Ecosia: Handle priority of cards view models
          childViewModels.forEach {

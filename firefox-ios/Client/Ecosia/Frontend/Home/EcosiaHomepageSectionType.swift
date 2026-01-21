@@ -18,6 +18,7 @@ enum HomepageSectionType: Int, CaseIterable {
     case impact
     case news
     case ntpCustomization
+    case firstSearch
 
     var cellIdentifier: String {
         switch self {
@@ -33,6 +34,7 @@ enum HomepageSectionType: Int, CaseIterable {
         case .impact: return NTPImpactCell.cellIdentifier
         case .news: return NTPNewsCell.cellIdentifier
         case .ntpCustomization: return NTPCustomizationCell.cellIdentifier
+        case .firstSearch: return NTPFirstSearchCell.cellIdentifier
         }
     }
 
@@ -50,7 +52,8 @@ enum HomepageSectionType: Int, CaseIterable {
             NTPLibraryCell.self,
             NTPImpactCell.self,
             NTPNewsCell.self,
-            NTPCustomizationCell.self
+            NTPCustomizationCell.self,
+            NTPFirstSearchCell.self
         ])
 
         return types
@@ -66,7 +69,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .header, .homepageHeader, .libraryShortcuts, .ntpCustomization: return nil
+        case .header, .homepageHeader, .libraryShortcuts, .ntpCustomization, .firstSearch: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .news: return .ecosiaNews
@@ -77,7 +80,7 @@ extension HomepageSectionType {
                        topSpacing: CGFloat = 0,
                        bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news, .ntpCustomization:
+        case .libraryShortcuts, .topSites, .impact, .news, .ntpCustomization, .firstSearch:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
                 return NSDirectionalEdgeInsets(top: 0,
                                                leading: MinimumInsets,
@@ -100,6 +103,16 @@ extension HomepageSectionType {
                                            trailing: horizontal)
         case .homepageHeader, .header:
             return .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+        }
+    }
+}
+
+// Ecosia Product Tour
+extension HomepageSectionType {
+    var isProductTourSection: Bool {
+        switch self {
+        case .homepageHeader, .firstSearch: true
+        case .header, .libraryShortcuts, .topSites, .impact, .news, .ntpCustomization: false
         }
     }
 }
