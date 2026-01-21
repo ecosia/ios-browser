@@ -125,10 +125,10 @@ actor InvisibleTabAutoCloseManager {
         // Set up page load monitoring for invisible tabs
         setupPageLoadMonitoring(for: tab)
 
-        // Create fallback timeout using Task.sleep
+        // Create fallback timeout using Task.sleep (nanoseconds API for iOS 15 compatibility)
         let fallbackTask = Task { [weak self] in
             do {
-                try await Task.sleep(for: .seconds(timeout))
+                try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
                 EcosiaLogger.invisibleTabs.info("Fallback timeout reached for tab: \(tabUUID)")
                 await self?.handleAuthenticationCompletion(for: tabUUID, isFallback: true)
             } catch {
@@ -187,9 +187,9 @@ actor InvisibleTabAutoCloseManager {
         }
 
         EcosiaLogger.invisibleTabs.info("Ecosia page load detected for invisible tab: \(url)")
-        // Wait a moment for any final redirects/auth to complete
+        // Wait a moment for any final redirects/auth to complete (nanoseconds API for iOS 15 compatibility)
         Task { [weak self] in
-            try? await Task.sleep(for: .seconds(0.5))
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
             await self?.handleAuthenticationCompletion(for: tab.tabUUID)
         }
     }

@@ -25,7 +25,8 @@ import Foundation
                 
                 // Get updated interval (in case Statistics changed)
                 let interval = await Statistics.shared.timePerTree
-                try? await Task.sleep(for: .seconds(interval))
+                // Use nanoseconds API for iOS 15 compatibility
+                try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
             }
         }
     }

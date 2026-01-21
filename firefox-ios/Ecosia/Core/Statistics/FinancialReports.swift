@@ -4,8 +4,10 @@
 
 import Foundation
 
-public final class FinancialReports {
-    public struct Report: Decodable, Equatable {
+/// Thread-safe financial reports manager using actor isolation
+/// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill) actor patterns
+public actor FinancialReports {
+    public struct Report: Decodable, Equatable, Sendable {
         public internal(set) var totalIncome: Double
         public internal(set) var numberOfTreesFinanced: Double
     }

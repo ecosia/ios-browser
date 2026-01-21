@@ -71,7 +71,8 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         triggerSparkles(duration: UX.levelUpDuration)
 
         Task {
-            try await Task.sleep(for: .seconds(UX.levelUpDuration))
+            // Use nanoseconds API for iOS 15 compatibility
+            try await Task.sleep(nanoseconds: UInt64(UX.levelUpDuration * 1_000_000_000))
             progress = 0.0
         }
     }
@@ -81,7 +82,8 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         showSparkles = true
 
         Task {
-            try await Task.sleep(for: .seconds(duration))
+            // Use nanoseconds API for iOS 15 compatibility
+            try await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
             showSparkles = false
         }
     }
@@ -123,7 +125,8 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
         triggerSparkles(duration: UX.levelUpDuration)
 
         Task {
-            try await Task.sleep(for: .seconds(UX.levelUpDuration))
+            // Use nanoseconds API for iOS 15 compatibility
+            try await Task.sleep(nanoseconds: UInt64(UX.levelUpDuration * 1_000_000_000))
             progress = targetProgress
         }
     }
