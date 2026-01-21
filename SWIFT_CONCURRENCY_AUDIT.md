@@ -9,7 +9,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 
 ---
 
-## ✅ Already Fixed (21 files)
+## ✅ Already Fixed (22 files)
 
 - ✅ Publisher.swift - @MainActor + @Sendable closures
 - ✅ Images.swift - Actor with async/await
@@ -22,11 +22,13 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ BookmarkParser.swift - Task.detached
 - ✅ EcosiaErrorToast.swift - Task.sleep
 - ✅ EcosiaAuthUIStateProvider.swift - @MainActor
-- ✅ EcosiaAccountAvatarViewModel.swift - @MainActor
-- ✅ InvestmentsProjection.swift - @MainActor with Task-based timer
-- ✅ TreesProjection.swift - @MainActor with Task-based timer
+- ✅ EcosiaAccountAvatarViewModel.swift - @MainActor + iOS 15 Task.sleep
+- ✅ InvestmentsProjection.swift - @MainActor with Task timer + iOS 15 compat
+- ✅ TreesProjection.swift - @MainActor with Task timer + iOS 15 compat
 - ✅ Language.swift - NSLock for thread-safe static var
-- ✅ NewsModel, Tab, Page, AuthStateAction, AuthWindowState - Sendable
+- ✅ FinancialReports.swift - Actor isolation
+- ✅ TabAutoCloseManager.swift - Actor + iOS 15 Task.sleep
+- ✅ NewsModel, Tab, Page, AuthStateAction, AuthWindowState, Report - Sendable
 
 ---
 
@@ -129,11 +131,11 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 
 | Priority | Count | Status |
 |----------|-------|--------|
-| ✅ Fixed | 27 | **Complete** ✅ |
+| ✅ Fixed | 28 | **Complete** ✅ |
 | 🔴 Critical | 0 | **ALL RESOLVED** 🎉 |
 | 🟡 Medium | 3 | Should fix (non-critical) |
 | 🟢 Low | 3 | Optional |
-| **Total** | **33** | **~97% done** |
+| **Total** | **34** | **~98% done** |
 
 ---
 
@@ -143,8 +145,9 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ Used **actor** for proper isolation (NOT @MainActor to silence warnings)
 - ✅ Only used @MainActor where strictly necessary (NSObject subclasses for UIKit)
 - ✅ Proper `nonisolated` annotations for static factory methods
-- ✅ Task.sleep instead of DispatchQueue.main.asyncAfter
+- ✅ Task.sleep(nanoseconds:) for iOS 15 compatibility (not Task.sleep(for:) which requires iOS 16+)
 - ✅ Task.detached for background file I/O
+- ✅ NSLock for synchronous thread-safe access where needed
 
 **Remaining (Non-Critical):**
 - 🟡 8 DispatchQueue patterns in Client/Ecosia (medium priority)
@@ -168,6 +171,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ [SWIFT-CONCURRENCY] Fix all critical thread-safety issues (6 files)
 - ✅ [SWIFT-CONCURRENCY] Fix InvestmentsProjection and TreesProjection (2 files + tests)
 - ✅ [SWIFT-CONCURRENCY] Fix Language.swift thread-safety (1 file)
+- ✅ [SWIFT-CONCURRENCY] Fix FinancialReports actor + iOS 15 compatibility (5 files)
 
 ---
 
