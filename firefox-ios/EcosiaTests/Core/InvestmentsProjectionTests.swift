@@ -5,34 +5,45 @@
 @testable import Ecosia
 import XCTest
 
-final class InvestmentsProjectionTests: XCTestCase {
+@MainActor final class InvestmentsProjectionTests: XCTestCase {
     private var investmentsProjection: InvestmentsProjection!
 
     override func setUp() {
         investmentsProjection = InvestmentsProjection.shared
     }
 
-    func testTotalInvestedAt() {
+    func testTotalInvestedAt() async {
+        // Arrange
         let date = Date()
-        Statistics.shared.totalInvestments = 123456789
-        Statistics.shared.totalInvestmentsLastUpdated = date.addingTimeInterval(-100)
-        Statistics.shared.investmentPerSecond = 0.5
-        XCTAssertEqual(Int(100*0.5 + 123456789), investmentsProjection.totalInvestedAt(date))
+        let statistics = Statistics.shared
+        await statistics.setTotalInvestments(123456789)
+        await statistics.setTotalInvestmentsLastUpdated(date.addingTimeInterval(-100))
+        await statistics.setInvestmentPerSecond(0.5)
+        
+        // Act
+        let result = await investmentsProjection.totalInvestedAt(date)
+        
+        // Assert
+        XCTAssertEqual(Int(100*0.5 + 123456789), result)
     }
 
-    func testTimerIsActive() {
+    func testTimerIsActive() async {
+        // Arrange
         let investmentPerSecond = 1.0
-        Statistics.shared.investmentPerSecond = investmentPerSecond
+        await Statistics.shared.setInvestmentPerSecond(investmentPerSecond)
 
         let exp = XCTestExpectation(description: "Wait for timer")
         let projection = InvestmentsProjection()
         var receivedAmount: Int?
+        
+        // Act
         projection.subscribe(self) { amount in
             receivedAmount = amount
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 1)
+        await fulfillment(of: [exp], timeout: 2)
 
+        // Assert
         XCTAssertNotNil(receivedAmount)
     }
 }

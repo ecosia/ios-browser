@@ -50,6 +50,32 @@ public actor Statistics {
 
     init() { }
 
+    // MARK: - Test Helpers
+    // Internal setters for testing purposes
+    internal func setTotalInvestments(_ value: Double) {
+        totalInvestments = value
+    }
+    
+    internal func setTotalInvestmentsLastUpdated(_ date: Date) {
+        totalInvestmentsLastUpdated = date
+    }
+    
+    internal func setInvestmentPerSecond(_ value: Double) {
+        investmentPerSecond = value
+    }
+    
+    internal func setTreesPlanted(_ value: Double) {
+        treesPlanted = value
+    }
+    
+    internal func setTreesPlantedLastUpdated(_ date: Date) {
+        treesPlantedLastUpdated = date
+    }
+    
+    internal func setTimePerTree(_ value: Double) {
+        timePerTree = value
+    }
+
     public func fetchAndUpdate(urlSession: URLSessionProtocol = URLSession.shared) async throws {
         let (data, _) = try await urlSession.data(from: EcosiaEnvironment.current.urlProvider.statistics)
         let decoder = JSONDecoder()

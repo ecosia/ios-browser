@@ -5,34 +5,45 @@
 @testable import Ecosia
 import XCTest
 
-final class TreesProjectionTests: XCTestCase {
+@MainActor final class TreesProjectionTests: XCTestCase {
     private var treesProjection: TreesProjection!
 
     override func setUp() {
         treesProjection = TreesProjection.shared
     }
 
-    func testTreesAt() {
+    func testTreesAt() async {
+        // Arrange
         let date = Date()
-        Statistics.shared.treesPlanted = 10
-        Statistics.shared.treesPlantedLastUpdated = date.addingTimeInterval(-100)
-        Statistics.shared.timePerTree = 2
-        XCTAssertEqual(Int(100/2 + 10-1), treesProjection.treesAt(date))
+        let statistics = Statistics.shared
+        await statistics.setTreesPlanted(10)
+        await statistics.setTreesPlantedLastUpdated(date.addingTimeInterval(-100))
+        await statistics.setTimePerTree(2)
+        
+        // Act
+        let result = await treesProjection.treesAt(date)
+        
+        // Assert
+        XCTAssertEqual(Int(100/2 + 10-1), result)
     }
 
-    func testTimerIsActive() {
+    func testTimerIsActive() async {
+        // Arrange
         let timePerTree = 0.1
-        Statistics.shared.timePerTree = timePerTree
+        await Statistics.shared.setTimePerTree(timePerTree)
 
         let exp = XCTestExpectation(description: "Wait for timer")
         let projection = TreesProjection()
         var receivedCount: Int?
+        
+        // Act
         projection.subscribe(self) { count in
             receivedCount = count
             exp.fulfill()
         }
-        wait(for: [exp], timeout: timePerTree)
+        await fulfillment(of: [exp], timeout: 1)
 
+        // Assert
         XCTAssertNotNil(receivedCount)
     }
 }

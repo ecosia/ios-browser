@@ -11,8 +11,13 @@ protocol NTPImpactCellDelegate: AnyObject {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo)
 }
 
-final class NTPImpactCellViewModel {
+@MainActor final class NTPImpactCellViewModel {
     weak var delegate: NTPImpactCellDelegate?
+    
+    // Cache for async-computed values
+    private var cachedTotalInvested: Int = 0
+    private var cachedTotalTrees: Int = 0
+    
     var infoItemSections: [[ClimateImpactInfo]] {
         let firstSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
         let secondSection: [ClimateImpactInfo] = [referralInfo]
@@ -22,10 +27,22 @@ final class NTPImpactCellViewModel {
         .referral(value: User.shared.referrals.count)
     }
     var totalTreesInfo: ClimateImpactInfo {
-        .totalTrees(value: TreesProjection.shared.treesAt(.init()))
+        .totalTrees(value: cachedTotalTrees)
     }
     var totalInvestedInfo: ClimateImpactInfo {
-        .totalInvested(value: InvestmentsProjection.shared.totalInvestedAt(.init()))
+        .totalInvested(value: cachedTotalInvested)
+    }
+    
+    private func updateCachedTotalTrees() {
+        Task { @MainActor in
+            self.cachedTotalTrees = await TreesProjection.shared.treesAt(.init())
+        }
+    }
+    
+    private func updateCachedTotalInvested() {
+        Task { @MainActor in
+            self.cachedTotalInvested = await InvestmentsProjection.shared.totalInvestedAt(.init())
+        }
     }
 
     private var cells = [Int: NTPImpactCell]()
@@ -48,6 +65,10 @@ final class NTPImpactCellViewModel {
     }
 
     func subscribeToProjections() {
+        // Initial cache updates
+        updateCachedTotalTrees()
+        updateCachedTotalInvested()
+        
         guard !UIAccessibility.isReduceMotionEnabled else {
             refreshCell(withInfo: totalTreesInfo)
             refreshCell(withInfo: totalInvestedInfo)
@@ -56,11 +77,13 @@ final class NTPImpactCellViewModel {
 
         TreesProjection.shared.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
+            self.updateCachedTotalTrees()
             self.refreshCell(withInfo: self.totalTreesInfo)
         }
 
         InvestmentsProjection.shared.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
+            self.updateCachedTotalInvested()
             self.refreshCell(withInfo: self.totalInvestedInfo)
         }
     }

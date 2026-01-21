@@ -4,24 +4,47 @@
 
 import Foundation
 
-public final class InvestmentsProjection: Publisher {
+@MainActor public final class InvestmentsProjection: Publisher {
     public static let shared = InvestmentsProjection()
     public var subscriptions = [Subscription<Int>]()
-    let timer = DispatchSource.makeTimerSource(queue: .main)
+    private var timerTask: Task<Void, Never>?
 
     init() {
-        timer.activate()
-        timer.setEventHandler { [weak self] in
-            guard let count = self?.totalInvestedAt(Date()) else { return }
-            self?.send(count)
-        }
-        let secondsToOneEuro = max(1/Statistics.shared.investmentPerSecond, 1)
-        timer.schedule(deadline: .now(), repeating: secondsToOneEuro)
+        startTimer()
     }
 
-    public func totalInvestedAt(_ date: Date) -> Int {
-        let statistics = Statistics.shared
-        let deltaTimeInSeconds = date.timeIntervalSince(statistics.totalInvestmentsLastUpdated)
-        return .init(deltaTimeInSeconds * statistics.investmentPerSecond + statistics.totalInvestments)
+    private func startTimer() {
+        timerTask = Task { [weak self] in
+            guard let self = self else { return }
+            // Get initial interval from Statistics actor
+            let initialInterval = await self.getTimerInterval()
+            
+            while !Task.isCancelled {
+                let count = await self.totalInvestedAt(Date())
+                self.send(count)
+                
+                // Get updated interval (in case Statistics changed)
+                let interval = await self.getTimerInterval()
+                try? await Task.sleep(for: .seconds(interval))
+            }
+        }
+    }
+
+    private func getTimerInterval() async -> Double {
+        let investmentPerSecond = await Statistics.shared.investmentPerSecond
+        return max(1.0 / investmentPerSecond, 1.0)
+    }
+
+    public func totalInvestedAt(_ date: Date) async -> Int {
+        let investmentPerSecond = await Statistics.shared.investmentPerSecond
+        let totalInvestments = await Statistics.shared.totalInvestments
+        let totalInvestmentsLastUpdated = await Statistics.shared.totalInvestmentsLastUpdated
+        
+        let deltaTimeInSeconds = date.timeIntervalSince(totalInvestmentsLastUpdated)
+        return .init(deltaTimeInSeconds * investmentPerSecond + totalInvestments)
+    }
+
+    deinit {
+        timerTask?.cancel()
     }
 }

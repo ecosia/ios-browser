@@ -4,23 +4,42 @@
 
 import Foundation
 
-public final class TreesProjection: Publisher {
+@MainActor public final class TreesProjection: Publisher {
     public static let shared = TreesProjection()
     public var subscriptions = [Subscription<Int>]()
-    let timer = DispatchSource.makeTimerSource(queue: .main)
+    private var timerTask: Task<Void, Never>?
 
     init() {
-        timer.activate()
-        timer.setEventHandler { [weak self] in
-            guard let count = self?.treesAt(Date()) else { return }
-            self?.send(count)
-        }
-        timer.schedule(deadline: .now(), repeating: Statistics.shared.timePerTree)
+        startTimer()
     }
 
-    public func treesAt(_ date: Date) -> Int {
-        let statistics = Statistics.shared
-        let timeSinceLastUpdate = date.timeIntervalSince(statistics.treesPlantedLastUpdated)
-        return .init(timeSinceLastUpdate / statistics.timePerTree + statistics.treesPlanted - 1)
+    private func startTimer() {
+        timerTask = Task { [weak self] in
+            guard let self = self else { return }
+            // Get initial interval from Statistics actor
+            let initialInterval = await Statistics.shared.timePerTree
+            
+            while !Task.isCancelled {
+                let count = await self.treesAt(Date())
+                self.send(count)
+                
+                // Get updated interval (in case Statistics changed)
+                let interval = await Statistics.shared.timePerTree
+                try? await Task.sleep(for: .seconds(interval))
+            }
+        }
+    }
+
+    public func treesAt(_ date: Date) async -> Int {
+        let timePerTree = await Statistics.shared.timePerTree
+        let treesPlanted = await Statistics.shared.treesPlanted
+        let treesPlantedLastUpdated = await Statistics.shared.treesPlantedLastUpdated
+        
+        let timeSinceLastUpdate = date.timeIntervalSince(treesPlantedLastUpdated)
+        return .init(timeSinceLastUpdate / timePerTree + treesPlanted - 1)
+    }
+
+    deinit {
+        timerTask?.cancel()
     }
 }
