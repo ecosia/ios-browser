@@ -9,10 +9,10 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 
 ---
 
-## ✅ Already Fixed (23 files)
+## ✅ Already Fixed (29 files)
 
 - ✅ Publisher.swift - @MainActor protocol with Sendable constraints
-- ✅ Images.swift - @MainActor with async/await
+- ✅ Images.swift - @MainActor with async/await + Sendable Item
 - ✅ News.swift - @MainActor with async file I/O
 - ✅ EcosiaBrowserWindowAuthManager.swift - Actor isolation
 - ✅ EcosiaAuthWindowRegistry.swift - Actor isolation
@@ -29,6 +29,10 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ FinancialReports.swift - Actor isolation
 - ✅ TabAutoCloseManager.swift - Actor + iOS 15 Task.sleep
 - ✅ Referrals.swift - @MainActor for Publisher conformance
+- ✅ HTTPClient.swift - Sendable protocol
+- ✅ BaseRequest.swift - Sendable protocol
+- ✅ Requestable.swift - Sendable protocol
+- ✅ Environment.swift - Sendable enum
 - ✅ NewsModel, Tab, Page, AuthStateAction, AuthWindowState, Report, Referrals.Model - Sendable
 
 ---
@@ -174,6 +178,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ [SWIFT-CONCURRENCY] Fix Language.swift thread-safety (1 file)
 - ✅ [SWIFT-CONCURRENCY] Fix FinancialReports actor + iOS 15 compatibility (5 files)
 - ✅ [SWIFT-CONCURRENCY] Fix Publisher protocol conformance crossing MainActor (4 files)
+- ✅ [SWIFT-CONCURRENCY] Fix protocol Sendable conformance (HTTPClient, BaseRequest, Requestable, Environment, Images.Item) (6 files)
 
 ---
 

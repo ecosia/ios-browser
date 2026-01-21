@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol Requestable {
+public protocol Requestable: Sendable {
 
     var method: HTTPMethod { get }
 

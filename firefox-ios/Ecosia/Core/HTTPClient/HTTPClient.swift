@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol HTTPClient {
+public protocol HTTPClient: Sendable {
 
     typealias Result = (Data, HTTPURLResponse?)
 

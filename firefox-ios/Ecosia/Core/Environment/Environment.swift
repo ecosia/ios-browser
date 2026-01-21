@@ -4,7 +4,7 @@
 
 import Foundation
 
-public enum Environment: Equatable {
+public enum Environment: Equatable, Sendable {
     case production
     case staging
     case debug

@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol BaseRequest: Requestable {}
+public protocol BaseRequest: Requestable, Sendable {}
 
 enum RequestError: Error {
     case invalidBaseURL

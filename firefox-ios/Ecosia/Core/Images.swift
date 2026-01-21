@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 public final class Images: Publisher {
     public var subscriptions = [Subscription<Item>]()
     var items = Set<Item>()
@@ -13,7 +14,7 @@ public final class Images: Publisher {
         self.session = session
     }
 
-    public func load(_ subscriber: AnyObject, url: URL, closure: @escaping (Input) -> Void) {
+    public func load(_ subscriber: AnyObject, url: URL, closure: @escaping @Sendable (Input) -> Void) {
         subscribe(subscriber, closure: closure)
         guard let item = items.first(where: { $0.url == url })
         else {
@@ -47,7 +48,7 @@ public final class Images: Publisher {
         }.resume()
     }
 
-    public struct Item: Hashable {
+    public struct Item: Hashable, Sendable {
         public let url: URL
         public let data: Data
 
