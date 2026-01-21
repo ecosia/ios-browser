@@ -426,7 +426,8 @@ let allTargets: [Target] = [
                 .target(name: "Shared"),
                 .target(name: "ShareTo"),
                 .target(name: "WidgetKitExtension"),
-                .target(name: "CredentialProvider"),
+                // Temporarily disabled during Firefox 147.2 upgrade - provisioning profile issues
+                // .target(name: "CredentialProvider"),
                 // .target(name: "ActionExtension"),
                 .target(name: "Ecosia"),
                 .target(name: "RustMozillaAppServices"),
@@ -669,6 +670,9 @@ let allTargets: [Target] = [
             )
         ),
         // MARK: - CredentialProvider Extension
+        // Temporarily disabled during Firefox 147.2 upgrade - provisioning profile issues
+        // TODO: Re-enable after upgrade complete and provisioning profiles are set up
+        /*
         .target(
             name: "CredentialProvider",
             destinations: [.iPhone, .iPad],
@@ -718,6 +722,7 @@ let allTargets: [Target] = [
                 ]
             )
         ),
+        */
 
         // // MARK: - ActionExtension Extension
         // .target(
