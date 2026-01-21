@@ -15,7 +15,9 @@ private let buildConfigurations: [Configuration] = [
 // Note: Most settings are defined in xcconfig files (source of truth)
 // Only minimal settings that can't be in xcconfig are defined here
 
-private let baseSettings: SettingsDictionary = [:]
+private let baseSettings: SettingsDictionary = [
+    "SWIFT_VERSION": "6.2"
+]
 
 // MARK: - Swift Package Dependencies
 
@@ -949,8 +951,7 @@ let allTargets: [Target] = [
                     "DEFINES_MODULE": "YES",
                     "CLANG_ENABLE_MODULES": "YES",
                     "SWIFT_EMIT_LOC_STRINGS": "YES",
-                    "SWIFT_INSTALL_OBJC_HEADER": "NO",
-                    "SWIFT_VERSION": "5.0"
+                    "SWIFT_INSTALL_OBJC_HEADER": "NO"
                 ], uniquingKeysWith: { _, new in new })
             )
         ),
