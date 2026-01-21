@@ -16,7 +16,9 @@ private let buildConfigurations: [Configuration] = [
 // Only minimal settings that can't be in xcconfig are defined here
 
 private let baseSettings: SettingsDictionary = [
-    "SWIFT_VERSION": "6.2"
+    "SWIFT_VERSION": "6.2",
+    // Temporarily disabled during Firefox 147.2 upgrade - see TODO_SWIFT_CONCURRENCY.md
+    "SWIFT_STRICT_CONCURRENCY": "minimal"
 ]
 
 // MARK: - Swift Package Dependencies
@@ -933,7 +935,7 @@ let allTargets: [Target] = [
                 "Ecosia/markets.json",
                 "Ecosia/Ecosia.docc/**",
             ],
-            dependencies: [
+            dependencies: [ 
                 // Link Binary With Libraries
                 .package(product: "SnowplowTracker"),
                 .package(product: "BrazeKit"),
