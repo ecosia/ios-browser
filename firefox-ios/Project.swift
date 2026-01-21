@@ -3,12 +3,12 @@ import ProjectDescription
 // MARK: - Build Configurations
 
 private let buildConfigurations: [Configuration] = [
-    .debug(name: "Debug", xcconfig: "Client/Configuration/EcosiaDebug.xcconfig"),
-    .debug(name: "BetaDebug", xcconfig: "Client/Configuration/EcosiaBetaDebug.xcconfig"),
-    .debug(name: "Testing", xcconfig: "Client/Configuration/EcosiaTesting.xcconfig"),
-    .release(name: "Release", xcconfig: "Client/Configuration/Ecosia.xcconfig"),
-    .release(name: "Development_TestFlight", xcconfig: "Client/Configuration/EcosiaBeta.xcconfig"),
-    .release(name: "Development_Firebase", xcconfig: "Client/Configuration/EcosiaBeta.xcconfig"),
+    .debug(name: "Debug", xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaDebug.xcconfig"),
+    .debug(name: "BetaDebug", xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBetaDebug.xcconfig"),
+    .debug(name: "Testing", xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaTesting.xcconfig"),
+    .release(name: "Release", xcconfig: "Client/Ecosia/BuildSettingsConfigurations/Ecosia.xcconfig"),
+    .release(name: "Development_TestFlight", xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
+    .release(name: "Development_Firebase", xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
 ]
 
 // MARK: - Base Settings
@@ -46,6 +46,214 @@ private let packages: [Package] = [
 ]
 
 // MARK: - Build Scripts
+
+/// SwiftLint - Lint modified Swift files
+private let swiftlintScript: [TargetScript] = [
+    .pre(
+        script: """
+        if [[ "$(uname -m)" == arm64 ]]; then
+            export PATH="/opt/homebrew/bin:$PATH"
+        fi
+
+        MODIFIED_FILES=$(git diff --name-only --diff-filter=ACM | grep -e '\\.swift$')
+
+        SWIFTLINT_ROOT="${SRCROOT}/.."
+
+        if which swiftlint > /dev/null; then
+            # Move to the location of the root Swiftlint config file in
+            # order to use nested configurations
+            cd ${SWIFTLINT_ROOT}
+
+            swiftlint lint ${MODIFIED_FILES}
+        else
+            echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
+        fi
+        """,
+        name: "Swiftlint",
+        basedOnDependencyAnalysis: false
+    )
+]
+
+/// Update Version - Read version from version.txt and update version.xcconfig
+private let updateVersionScript: [TargetScript] = [
+    .pre(
+        script: """
+        #!/bin/sh
+
+        VERSION_FILE="${SRCROOT}/../version.txt"
+        XCCONFIG_FILE="${SRCROOT}/Client/Configuration/version.xcconfig"
+
+        # Read version from file
+        if [ -f "$VERSION_FILE" ]; then
+            FULL_VERSION=$(tr -d '[:space:]' < "$VERSION_FILE")
+        else
+            echo "Error: version.txt not found!"
+            exit 1
+        fi
+
+        # Extract only numeric parts (e.g., "123.0" from "123.0b2")
+        VERSION_NUMBER=$(echo "$FULL_VERSION" | sed -E 's/^([0-9]+(\\.[0-9]+)*).*/\\1/')
+
+        # Update the xcconfig file with the version number
+        echo "APP_VERSION = $VERSION_NUMBER" > "$XCCONFIG_FILE"
+
+        echo "Updated Version.xcconfig with version: $VERSION_NUMBER"
+        """,
+        name: "Update Version",
+        basedOnDependencyAnalysis: false
+    )
+]
+
+/// Move Nested Frameworks - Flatten nested frameworks to avoid code signing issues
+private let moveNestedFrameworksScript: [TargetScript] = [
+    .post(
+        script: """
+        movedFrameworks=()
+        cd "${CODESIGNING_FOLDER_PATH}/Frameworks/"
+        for framework in *; do
+            if [ -d "$framework" ]; then
+                if [ -d "${framework}/Frameworks" ]; then
+                    echo "Moving nested frameworks from ${framework}/Frameworks/ to ${PRODUCT_NAME}.app/Frameworks/"
+        
+                    cd "${framework}/Frameworks/"
+                    for nestedFramework in *; do
+                        echo "- nested: ${nestedFramework}"
+                        movedFrameworks+=("${nestedFramework}")
+                    done
+                    cd ..
+                    cd ..
+        
+                    cp -R "${framework}/Frameworks/" .
+                    rm -rf "${framework}/Frameworks"
+                fi
+            fi
+        done
+        
+        if [ "${CONFIGURATION}" == "Debug" ] & [ "${PLATFORM_NAME}" != "iphonesimulator" ] ; then
+            for movedFramework in "${movedFrameworks[@]}"
+            do
+                codesign --force --deep --sign "${EXPANDED_CODE_SIGN_IDENTITY}" --preserve-metadata=identifier,entitlements --timestamp=none "${movedFramework}"
+            done
+        else
+            echo "Info: CODESIGNING is only needed for Debug on device (will be re-signed anyway when archiving) "
+        fi
+        """,
+        name: "Move Nested Frameworks",
+        basedOnDependencyAnalysis: false
+    )
+]
+
+/// Conditionally Add Optional Resources - Add settings bundle and debug files
+private let addOptionalResourcesScript: [TargetScript] = [
+    .post(
+        script: """
+        ## Add setting bundle to app bundle
+        if [ "${INCLUDE_SETTINGS_BUNDLE}" = "YES" ]; then
+            cp -r "${PROJECT_DIR}/${TARGET_NAME}/Application/Settings.bundle" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app"
+        fi
+
+        ## copy debug files to app bundle
+        if [ "$CONFIGURATION" = "Fennec" ]; then
+            cp -R "${PROJECT_DIR}/${TARGET_NAME}/Assets/Debug/" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/"
+        fi
+        """,
+        name: "Conditionally Add Optional Resources",
+        basedOnDependencyAnalysis: false
+    )
+]
+
+/// Populate test-fixtures - Copy test fixtures to app bundle for testing
+private let populateTestFixturesScript: [TargetScript] = [
+    .post(
+        script: """
+        # Skip copying test-fixtures for any Firefox build configuration
+        if [[ "$CONFIGURATION" == Firefox* ]]; then
+          echo "Populate test-fixtures: skipping for $CONFIGURATION"
+          exit 0
+        fi
+
+        fixtures="${SRCROOT}/../test-fixtures"
+        [[ -e $fixtures ]] || exit 1
+
+        outpath="${TARGET_BUILD_DIR}/Client.app"
+        rsync -zvrt --update "$fixtures" "$outpath"
+        """,
+        name: "Populate test-fixtures script",
+        basedOnDependencyAnalysis: false
+    )
+]
+
+/// Strip Symbols - Strip debugging symbols from Firefox configuration builds
+private let stripSymbolsScript: [TargetScript] = [
+    .post(
+        script: """
+        #!/bin/bash
+        set -e
+
+        if [ "Firefox" = "${CONFIGURATION}" ]; then
+          # Path to the app directory
+          APP_DIR_PATH="${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}"
+          # Strip main binary
+          strip -rSTx "${APP_DIR_PATH}/${EXECUTABLE_NAME}"
+          # Path to the Frameworks directory
+          APP_FRAMEWORKS_DIR="${APP_DIR_PATH}/Frameworks"
+
+          # Strip symbols from frameworks, if Frameworks/ exists at all
+          # ... as long as the framework is NOT signed by Apple
+          if [ -d "${APP_FRAMEWORKS_DIR}" ]
+          then
+            find "${APP_FRAMEWORKS_DIR}" -type f -perm +111 -maxdepth 2 -mindepth 2 -exec bash -c '
+            codesign -v -R="anchor apple" "{}" &> /dev/null ||
+            (
+                echo "Stripping {}" &&
+                if [ -w "{}" ]; then
+                    strip -rSTx "{}"
+                else
+                    echo "Warning: No write permission for {}"
+                fi
+            )
+            ' \\;
+          fi
+
+          # Path to the PlugIns directory
+          APP_PLUGINS_DIR="${APP_DIR_PATH}/PlugIns"
+
+          # Strip symbols from plugins, if PlugIns/ exists at all
+          # ... as long as the plugin is NOT signed by Apple
+          if [ -d "${APP_PLUGINS_DIR}" ]
+          then
+            find "${APP_PLUGINS_DIR}" -type f -perm +111 -maxdepth 2 -mindepth 2 -exec bash -c '
+            codesign -v -R="anchor apple" "{}" &> /dev/null ||
+            (
+                echo "Stripping {}" &&
+                if [ -w "{}" ]; then
+                    strip -rSTx "{}"
+                else
+                    echo "Warning: No write permission for {}"
+                fi
+            )
+            ' \\;
+          fi
+        fi
+        """,
+        name: "Strip Symbols",
+        basedOnDependencyAnalysis: false
+    )
+]
+
+/// Remove Frameworks - Clean up frameworks folder
+private let removeFrameworksScript: [TargetScript] = [
+    .post(
+        script: """
+        cd "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
+        if [[ -d "Frameworks" ]]; then
+            rm -fr Frameworks
+        fi
+        """,
+        name: "Remove Frameworks",
+        basedOnDependencyAnalysis: false
+    )
+]
 
 /// Workaround for Xcode validating `MozillaRustComponents.framework` (from SwiftPM) and failing
 /// because the embedded framework is missing `Info.plist`.
@@ -104,6 +312,17 @@ private let fixMozillaRustComponentsEmbeddingScript: [TargetScript] = [
     )
 ]
 
+/// All Client target build scripts in execution order
+private let clientBuildScripts: [TargetScript] = 
+    swiftlintScript +
+    updateVersionScript +
+    fixMozillaRustComponentsEmbeddingScript +
+    moveNestedFrameworksScript +
+    addOptionalResourcesScript +
+    populateTestFixturesScript +
+    stripSymbolsScript +
+    removeFrameworksScript
+
 // MARK: - Targets
 
 let allTargets: [Target] = [
@@ -156,21 +375,55 @@ let allTargets: [Target] = [
                 "Client/**/*.h"
             ],
             resources: [
-                "Client/Assets/**/*.{js,css,html,png,jpg,jpeg,pdf,otf,ttf}",
-                "Client/Assets/**/*.xcassets",
+                // Ecosia: Explicitly list CC_Script files (autofill, credit card, form handling)
+                "Client/Assets/CC_Script/CC_Python_Update.py",
+                "Client/Assets/CC_Script/Constants.ios.mjs",
+                "Client/Assets/CC_Script/CreditCard.sys.mjs",
+                "Client/Assets/CC_Script/CreditCardRuleset.sys.mjs",
+                "Client/Assets/CC_Script/fathom.mjs",
+                "Client/Assets/CC_Script/FieldScanner.sys.mjs",
+                "Client/Assets/CC_Script/FormAutofill.ios.sys.mjs",
+                "Client/Assets/CC_Script/FormAutofill.sys.mjs",
+                "Client/Assets/CC_Script/FormAutofillChild.ios.sys.mjs",
+                "Client/Assets/CC_Script/FormAutofillHandler.sys.mjs",
+                "Client/Assets/CC_Script/FormAutofillHeuristics.sys.mjs",
+                "Client/Assets/CC_Script/FormAutofillNameUtils.sys.mjs",
+                "Client/Assets/CC_Script/FormAutofillSection.sys.mjs",
+                "Client/Assets/CC_Script/FormAutofillUtils.sys.mjs",
+                "Client/Assets/CC_Script/FormLikeFactory.sys.mjs",
+                "Client/Assets/CC_Script/FormStateManager.sys.mjs",
+                "Client/Assets/CC_Script/Helpers.ios.mjs",
+                "Client/Assets/CC_Script/HeuristicsRegExp.sys.mjs",
+                "Client/Assets/CC_Script/LabelUtils.sys.mjs",
+                "Client/Assets/CC_Script/LoginManager.shared.sys.mjs",
+                "Client/Assets/CC_Script/Overrides.ios.js",
+                
+                // Other Client/Assets files
+                "Client/Assets/**/*.{css,html,png,jpg,jpeg,pdf,otf,ttf}",
+                "Client/Assets/FxASignIn.js",
+                "Client/Assets/SpotlightHelper.js",
+                
+                // Ecosia: Exclude ALL Firefox AppIcons (we use Ecosia's from Client/Ecosia/UI/Ecosia.xcassets)
+                .glob(pattern: "Client/Assets/**/*.xcassets", excluding: [
+                    "Client/Assets/Images.xcassets/AppIcon.appiconset",
+                    "Client/Assets/Images.xcassets/AppIcon_Beta.appiconset",
+                    "Client/Assets/Images.xcassets/AppIcon_Developer.appiconset"
+                ]),
                 .folderReference(path: "Client/Assets/Search/SearchPlugins"),
                 "Client/Frontend/**/*.{storyboard,xib,xcassets,strings,stringsdict}",
                 "Client/Ecosia/**/*.{xib,xcassets,strings,stringsdict}",
                 "Client/*.lproj/**",
                 "../ContentBlockingLists/*.json",
             ],
-            scripts: fixMozillaRustComponentsEmbeddingScript,
+            scripts: clientBuildScripts,
             dependencies: [
                 // Target Dependencies
                 .target(name: "Sync"),
                 .target(name: "Shared"),
                 .target(name: "ShareTo"),
                 .target(name: "WidgetKitExtension"),
+                .target(name: "CredentialProvider"),
+                // .target(name: "ActionExtension"),
                 .target(name: "Ecosia"),
                 .target(name: "RustMozillaAppServices"),
 
@@ -210,33 +463,35 @@ let allTargets: [Target] = [
                 base: baseSettings.merging([
                     "SKIP_INSTALL": "NO",
                     "SWIFT_OBJC_BRIDGING_HEADER": "$(PROJECT_DIR)/Client/Client-Bridging-Header.h",
-                    "HEADER_SEARCH_PATHS": ["$(inherited)", "$(SRCROOT)", "$(SRCROOT)/Client", "$(SRCROOT)/Client/Utils"]
+                    "HEADER_SEARCH_PATHS": ["$(inherited)", "$(SRCROOT)", "$(SRCROOT)/Client", "$(SRCROOT)/Client/Utils"],
+                    // Ecosia: Use custom AppIcon from Client/Ecosia/UI/Ecosia.xcassets
+                    "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon"
                 ], uniquingKeysWith: { _, new in new }),
                 configurations: [
                     .debug(name: "Debug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp",
-                    ], xcconfig: "Client/Configuration/EcosiaDebug.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaDebug.xcconfig"),
                     .debug(name: "BetaDebug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox",
                         "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "",
-                    ], xcconfig: "Client/Configuration/EcosiaBetaDebug.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBetaDebug.xcconfig"),
                     .debug(name: "Testing", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox",
-                    ], xcconfig: "Client/Configuration/EcosiaTesting.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaTesting.xcconfig"),
                     .release(name: "Release", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp",
                         "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
-                    ], xcconfig: "Client/Configuration/Ecosia.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/Ecosia.xcconfig"),
                     .release(name: "Development_TestFlight", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.firefox",
                         "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
-                    ], xcconfig: "Client/Configuration/EcosiaBeta.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox"
-                    ], xcconfig: "Client/Configuration/EcosiaBeta.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
                 ]
             )
         ),
@@ -311,25 +566,25 @@ let allTargets: [Target] = [
                 configurations: [
                     .debug(name: "Debug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.ShareTo"
-                    ], xcconfig: "Client/Configuration/EcosiaDebug.ShareTo.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaDebug.ShareTo.xcconfig"),
                     .debug(name: "BetaDebug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.ShareTo"
-                    ], xcconfig: "Client/Configuration/EcosiaBetaDebug.ShareTo.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBetaDebug.ShareTo.xcconfig"),
                     .debug(name: "Testing", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.ShareTo"
-                    ], xcconfig: "Client/Configuration/EcosiaTesting.ShareTo.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaTesting.ShareTo.xcconfig"),
                     .release(name: "Release", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.ShareTo"
-                    ], xcconfig: "Client/Configuration/Ecosia.ShareTo.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/Ecosia.ShareTo.xcconfig"),
                     .release(name: "Development_TestFlight", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.firefox.ShareTo"
-                    ], xcconfig: "Client/Configuration/EcosiaBeta.ShareTo.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.ShareTo.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox.ShareTo"
-                    ], xcconfig: "Client/Configuration/EcosiaBeta.ShareTo.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.ShareTo.xcconfig"),
                 ]
             )
         ),
@@ -387,28 +642,129 @@ let allTargets: [Target] = [
                 configurations: [
                     .debug(name: "Debug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.WidgetKit"
-                    ], xcconfig: "Client/Configuration/EcosiaDebug.WidgetKit.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaDebug.WidgetKit.xcconfig"),
                     .debug(name: "BetaDebug", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.WidgetKit"
-                    ], xcconfig: "Client/Configuration/EcosiaBetaDebug.WidgetKit.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBetaDebug.WidgetKit.xcconfig"),
                     .debug(name: "Testing", settings: [
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.WidgetKit"
-                    ], xcconfig: "Client/Configuration/EcosiaTesting.WidgetKit.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaTesting.WidgetKit.xcconfig"),
                     .release(name: "Release", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.WidgetKit"
-                    ], xcconfig: "Client/Configuration/Ecosia.WidgetKit.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/Ecosia.WidgetKit.xcconfig"),
                     .release(name: "Development_TestFlight", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.firefox.WidgetKit"
-                    ], xcconfig: "Client/Configuration/EcosiaBeta.WidgetKit.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.WidgetKit.xcconfig"),
                     .release(name: "Development_Firebase", settings: [
                         "CODE_SIGN_IDENTITY": "iPhone Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit"
-                    ], xcconfig: "Client/Configuration/EcosiaBeta.WidgetKit.xcconfig"),
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.WidgetKit.xcconfig"),
                 ]
             )
         ),
+        // MARK: - CredentialProvider Extension
+        .target(
+            name: "CredentialProvider",
+            destinations: [.iPhone, .iPad],
+            product: .appExtension,
+            bundleId: "$(MOZ_BUNDLE_ID).CredentialProvider",
+            infoPlist: .file(path: "CredentialProvider/Info.plist"),
+            sources: [
+                "CredentialProvider/**/*.swift"
+            ],
+            resources: [
+                "CredentialProvider/**/*.{xcassets,strings,stringsdict}"
+            ],
+            dependencies: [
+                // Target Dependencies
+                .target(name: "Shared"),
+                .target(name: "Storage"),
+
+                // Link Binary With Libraries
+                .package(product: "Common"),
+            ],
+            settings: .settings(
+                base: baseSettings.merging([
+                    "APPLICATION_EXTENSION_API_ONLY": "YES"
+                ], uniquingKeysWith: { _, new in new }),
+                configurations: [
+                    .debug(name: "Debug", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development $(MOZ_BUNDLE_ID).CredentialProvider"
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaDebug.xcconfig"),
+                    .debug(name: "BetaDebug", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development $(MOZ_BUNDLE_ID).CredentialProvider"
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBetaDebug.xcconfig"),
+                    .debug(name: "Testing", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development $(MOZ_BUNDLE_ID).CredentialProvider"
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaTesting.xcconfig"),
+                    .release(name: "Release", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore $(MOZ_BUNDLE_ID).CredentialProvider"
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/Ecosia.xcconfig"),
+                    .release(name: "Development_TestFlight", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore $(MOZ_BUNDLE_ID).CredentialProvider"
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
+                    .release(name: "Development_Firebase", settings: [
+                        "CODE_SIGN_IDENTITY": "iPhone Distribution",
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc $(MOZ_BUNDLE_ID).CredentialProvider"
+                    ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
+                ]
+            )
+        ),
+
+        // // MARK: - ActionExtension Extension
+        // .target(
+        //     name: "ActionExtension",
+        //     destinations: [.iPhone, .iPad],
+        //     product: .appExtension,
+        //     bundleId: "$(MOZ_BUNDLE_ID).ShareTo.ActionExtension",
+        //     infoPlist: .file(path: "Extensions/ActionExtension/Info.plist"),
+        //     sources: [
+        //         "Extensions/ActionExtension/**/*.swift"
+        //     ],
+        //     resources: [
+        //         "Extensions/ActionExtension/**/*.{xcassets,strings}"
+        //     ],
+        //     dependencies: [
+        //         // Target Dependencies
+        //         .target(name: "Shared"),
+        //         .target(name: "Storage"),
+
+        //         // Link Binary With Libraries
+        //         .package(product: "Common"),
+        //     ],
+        //     settings: .settings(
+        //         base: baseSettings.merging([
+        //             "APPLICATION_EXTENSION_API_ONLY": "YES"
+        //         ], uniquingKeysWith: { _, new in new }),
+        //         configurations: [
+        //             .debug(name: "Debug", settings: [
+        //                 "PROVISIONING_PROFILE_SPECIFIER": "match Development $(MOZ_BUNDLE_ID).ShareTo.ActionExtension"
+        //             ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaDebug.xcconfig"),
+        //             .debug(name: "BetaDebug", settings: [
+        //                 "PROVISIONING_PROFILE_SPECIFIER": "match Development $(MOZ_BUNDLE_ID).ShareTo.ActionExtension"
+        //             ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBetaDebug.xcconfig"),
+        //             .debug(name: "Testing", settings: [
+        //                 "PROVISIONING_PROFILE_SPECIFIER": "match Development $(MOZ_BUNDLE_ID).ShareTo.ActionExtension"
+        //             ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaTesting.xcconfig"),
+        //             .release(name: "Release", settings: [
+        //                 "CODE_SIGN_IDENTITY": "iPhone Distribution",
+        //                 "PROVISIONING_PROFILE_SPECIFIER": "match AppStore $(MOZ_BUNDLE_ID).ShareTo.ActionExtension"
+        //             ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/Ecosia.xcconfig"),
+        //             .release(name: "Development_TestFlight", settings: [
+        //                 "CODE_SIGN_IDENTITY": "iPhone Distribution",
+        //                 "PROVISIONING_PROFILE_SPECIFIER": "match AppStore $(MOZ_BUNDLE_ID).ShareTo.ActionExtension"
+        //             ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
+        //             .release(name: "Development_Firebase", settings: [
+        //                 "CODE_SIGN_IDENTITY": "iPhone Distribution",
+        //                 "PROVISIONING_PROFILE_SPECIFIER": "match AdHoc $(MOZ_BUNDLE_ID).ShareTo.ActionExtension"
+        //             ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
+        //         ]
+        //     )
+        // ),
 
         // MARK: - Account Framework
         .target(

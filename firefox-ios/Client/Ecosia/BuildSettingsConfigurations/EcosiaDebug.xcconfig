@@ -5,8 +5,8 @@
 // This is a debuggable version of the Ecosia config with the same Bundle ID and setup utilized in production.
 // Points to Production as only the `Release` configuration sets the Environment to be PRODUCTION.
 
-#include "Common.xcconfig"
-#include "Debug.xcconfig"
+#include "../../Configuration/Common.xcconfig"
+#include "../../Configuration/Debug.xcconfig"
 #include "Staging.xcconfig"
 
 INFOPLIST_FILE = Client/Info.plist
