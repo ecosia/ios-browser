@@ -4,7 +4,7 @@
 
 import Foundation
 
-public enum Language: String, Codable, CaseIterable {
+public enum Language: String, Codable, CaseIterable, Sendable {
     case
     de,
     en,
@@ -14,7 +14,13 @@ public enum Language: String, Codable, CaseIterable {
     nl,
     sv
 
-    public internal(set) static var current = make(for: .current)
+    /// Thread-safe access to current language
+    /// Note: Since Language is Sendable (simple enum), direct static var access is safe
+    /// The actor provides thread-safe access for mutable state
+    public static var current: Language {
+        get { LanguageManager.shared.unsafeCurrent }
+        set { LanguageManager.shared.unsafeCurrent = newValue }
+    }
 
     var locale: Local {
         switch self {
@@ -28,10 +34,34 @@ public enum Language: String, Codable, CaseIterable {
         }
     }
 
-    private static let queue = DispatchQueue(label: "\(Bundle.ecosia.bundleIdentifier!).LanguageQueue")
     static func make(for locale: Locale) -> Self {
-        return queue.sync {
-            locale.withLanguage ?? .en
+        locale.withLanguage ?? .en
+    }
+}
+
+/// Thread-safe language manager
+/// Note: Using a simple class with @unchecked Sendable since Language enum is Sendable
+/// and we're replacing DispatchQueue pattern with simpler direct access
+private final class LanguageManager: @unchecked Sendable {
+    static let shared = LanguageManager()
+    
+    private let lock = NSLock()
+    private var _current: Language
+    
+    init() {
+        self._current = Language.make(for: .current)
+    }
+    
+    var unsafeCurrent: Language {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return _current
+        }
+        set {
+            lock.lock()
+            defer { lock.unlock() }
+            _current = newValue
         }
     }
 }
