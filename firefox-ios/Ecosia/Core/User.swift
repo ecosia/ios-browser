@@ -12,7 +12,9 @@ extension Notification.Name {
 }
 
 public struct User: Codable, Equatable {
-    public static var shared = User() {
+    /// Mutable static shared instance - marked nonisolated(unsafe) as access is synchronized via DispatchQueue.main
+    /// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill)
+    public nonisolated(unsafe) static var shared = User() {
         didSet {
             guard shared != oldValue else { return }
             shared.save()

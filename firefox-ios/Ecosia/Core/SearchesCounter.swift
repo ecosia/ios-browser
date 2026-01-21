@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 public final class SearchesCounter: StatePublisher {
     public var subscriptions = [Subscription<Int>]()
     public var state: Int? {

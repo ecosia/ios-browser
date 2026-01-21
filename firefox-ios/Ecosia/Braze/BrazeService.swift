@@ -12,6 +12,7 @@ public protocol BrazeBrowserDelegate: AnyObject {
     func openBrazeURLInNewTab(_ url: URL?)
 }
 
+@MainActor
 public final class BrazeService: NSObject {
     override private init() {}
 
@@ -196,21 +197,25 @@ extension BrazeService: BrazeDelegate {
 }
 
 extension BrazeService: UNUserNotificationCenterDelegate {
-    public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        if let braze, braze.notifications.handleUserNotification(
-            response: response,
-            withCompletionHandler: completionHandler
-        ) {
-            return
+    nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        Task { @MainActor in
+            if let braze, braze.notifications.handleUserNotification(
+                response: response,
+                withCompletionHandler: completionHandler
+            ) {
+                return
+            }
+            completionHandler()
         }
-        completionHandler()
     }
 
-    public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        if let braze {
-            braze.notifications.handleForegroundNotification(notification: notification)
+    nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        Task { @MainActor in
+            if let braze {
+                braze.notifications.handleForegroundNotification(notification: notification)
+            }
+            completionHandler([.list, .banner, .sound, .badge])
         }
-        completionHandler([.list, .banner, .sound, .badge])
     }
 }
 

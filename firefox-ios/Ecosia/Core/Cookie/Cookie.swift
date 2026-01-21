@@ -21,7 +21,9 @@ public enum Cookie: String, CaseIterable {
 
     // MARK: - URLProvider Management
 
-    private static var _urlProvider: URLProvider?
+    /// Mutable static for testing purposes - marked nonisolated(unsafe) as it's only modified in test setup
+    /// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill)
+    private nonisolated(unsafe) static var _urlProvider: URLProvider?
 
     /// Sets the URLProvider for all cookie operations. Primarily used for testing.
     /// If not set, defaults to EcosiaEnvironment.current.urlProvider
