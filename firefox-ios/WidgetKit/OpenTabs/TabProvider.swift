@@ -17,7 +17,7 @@ struct TabProvider: TimelineProvider {
         OpenTabsEntry(date: Date(), favicons: [String: Image](), tabs: [])
     }
 
-    func getSnapshot(in context: Context, completion: @escaping @Sendable (OpenTabsEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping (OpenTabsEntry) -> Void) {
         let openTabs = SimpleTab.getSimpleTabs().values.filter {
             !$0.isPrivate
         }
@@ -33,13 +33,12 @@ struct TabProvider: TimelineProvider {
                         continue
                     }
 
-                    let imageKey = tab.imageKey
                     let siteImageModel = SiteImageModel(id: UUID(),
                                                         imageType: .favicon,
                                                         siteURL: siteURL)
                     group.addTask {
                         let image = await siteImageFetcher.getImage(model: siteImageModel)
-                        return (imageKey, image)
+                        return (tab.imageKey, image)
                     }
                 }
 
@@ -51,7 +50,7 @@ struct TabProvider: TimelineProvider {
         }
     }
 
-    func getTimeline(in context: Context, completion: @Sendable @escaping (Timeline<OpenTabsEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<OpenTabsEntry>) -> Void) {
         getSnapshot(in: context, completion: { openTabsEntry in
             let timeline = Timeline(entries: [openTabsEntry], policy: .atEnd)
             completion(timeline)

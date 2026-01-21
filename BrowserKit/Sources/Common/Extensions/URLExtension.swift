@@ -5,9 +5,16 @@
 import Foundation
 
 extension URL {
+    /// Temporary init that will be removed with the update to XCode 15 where this URL API is available
+    public init?(string: String, invalidCharacters: Bool) {
+        // FXIOS-8107: Removed 'encodingInvalidCharacters' init for
+        // compatibility reasons that is available for iOS 17+ only
+        self.init(string: string)
+    }
+
     /// Returns a shorter displayable string for a domain
-    /// E.g., https://m.foo.com/bar/baz?no=abc#123  => foo
-    /// https://accounts.foo.com/bar/baz?no=abc#123  => accounts.foo
+    /// E.g., https://m.foo.com/bar/baz?noo=abc#123  => foo
+    /// https://accounts.foo.com/bar/baz?noo=abc#123  => accounts.foo
     public var shortDisplayString: String {
         guard let publicSuffix = self.publicSuffix, let baseDomain = self.normalizedHost else {
             return self.normalizedHost ?? self.absoluteString
@@ -16,7 +23,7 @@ extension URL {
     }
 
     /// Returns just the domain, but with the same scheme, and a trailing '/'.
-    /// E.g., https://m.foo.com/bar/baz?no=abc#123  => https://foo.com/
+    /// E.g., https://m.foo.com/bar/baz?noo=abc#123  => https://foo.com/
     /// Any failure? Return this URL.
     public var domainURL: URL {
         if let normalized = self.normalizedHost {
@@ -71,14 +78,16 @@ extension URL {
         return host
     }
 
-    var normalizedHostAndPath: String? {
+    // Ecosia: Make it public
+    // var normalizedHostAndPath: String? {
+    public var normalizedHostAndPath: String? {
         return normalizedHost.flatMap { $0 + self.path }
     }
 
     /// Extracts the subdomain and host from a given URL string and appends a dot to the subdomain.
     ///
     /// This function takes a URL string as input and returns a tuple containing the subdomain and the normalized host.
-    /// If the URL string does not contain a subdomain, the function returns `nil` for the subdomain.
+    /// If the URL string does not contain a subdomain, the function returns `nil` for the subdomain. 
     /// If a subdomain is present, it is returned with a trailing dot.
     ///
     /// - Parameter urlString: The URL string to extract the subdomain and host from.
@@ -299,76 +308,13 @@ extension URL {
         return scheme.map { schemes.contains($0) } ?? false
     }
 
-    /// Returns the standard location of the website's favicon. (This is the base directory path with
+    /// Returns the standard location of the website's favicon. (This is the base directoy path with
     /// favicon.ico appended).
     public func faviconUrl() -> URL? {
         if let host = host, let rootDirectoryURL = URL(string: (scheme ?? "https") + "://" + host) {
             return rootDirectoryURL.appendingPathComponent("favicon.ico")
         }
         return nil
-    }
-
-    // MARK: Reader mode
-
-    public var isReaderModeURL: Bool {
-        let scheme = self.scheme, host = self.host, path = self.path
-        return scheme == "http" && host == "localhost" && path == "/reader-mode/page"
-    }
-
-    public var decodeReaderModeURL: URL? {
-        if self.isReaderModeURL || self.isSyncedReaderModeURL {
-            if let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
-               let queryItems = components.queryItems {
-                if let queryItem = queryItems.first(where: { $0.name == "url" }),
-                   let value = queryItem.value {
-                    return URL(string: value)?.safeEncodedUrl
-                }
-            }
-        }
-        return nil
-    }
-
-    public var isSyncedReaderModeURL: Bool {
-        return absoluteString.hasPrefix("about:reader?url=")
-    }
-
-    public var safeEncodedUrl: URL? {
-        var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
-
-        // HTML-encode scheme, host, and path
-        guard let host = components?.host?.htmlEntityEncodedString,
-              let scheme = components?.scheme?.htmlEntityEncodedString,
-              let path = components?.path.htmlEntityEncodedString else {
-            return nil
-        }
-
-        components?.path = path
-        components?.scheme = scheme
-        components?.host = host
-
-        // sanitize query items
-        if let queryItems = components?.queryItems {
-            var safeQueryItems: [URLQueryItem] = []
-
-            for item in queryItems {
-                // percent-encoded characters
-                guard let decodedValue = item.value?.removingPercentEncoding else {
-                    return nil
-                }
-
-                // HTML special characters
-                let htmlEncodedValue = decodedValue.htmlEntityEncodedString
-
-                // New query item with the HTML-encoded value
-                let safeItem = URLQueryItem(name: item.name, value: htmlEncodedValue)
-                safeQueryItems.append(safeItem)
-            }
-
-            // Replace the original query items with the "safe" ones
-            components?.queryItems = safeQueryItems
-        }
-
-        return components?.url
     }
 }
 
@@ -411,6 +357,6 @@ private func loadEntries() -> TLDEntryMap? {
     return entries
 }
 
-private let etldEntries: TLDEntryMap? = {
+private var etldEntries: TLDEntryMap? = {
     return loadEntries()
 }()

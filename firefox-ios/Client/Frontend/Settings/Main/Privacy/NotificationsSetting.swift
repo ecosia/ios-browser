@@ -4,13 +4,13 @@
 
 import Common
 import Foundation
+import Shared
 
 class NotificationsSetting: Setting {
     private weak var settingsDelegate: PrivacySettingsDelegate?
     private let profile: Profile
 
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
 

@@ -6,7 +6,7 @@ import UIKit
 import Combine
 import UIComponents
 
-final class TrackingHeaderView: UIView {
+class TrackingHeaderView: UIView {
     private lazy var faviImageView: AsyncImageView = {
         let image = AsyncImageView()
         image.translatesAutoresizingMaskIntoConstraints = false

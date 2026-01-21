@@ -12,7 +12,7 @@ var phases = { "phase1": "profile1", "phase2": "profile1" };
 
 
 var tabs1 = [
-    { uri: "https://example.com/",
+    { uri: "http://example.com/",
       profile: "Fennec on iOS"
     }
 ];

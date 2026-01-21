@@ -5,15 +5,9 @@
 import Common
 import UIKit
 
-public final class SecondaryRoundedButton: ResizableButton, ThemeApplicable {
+public class SecondaryRoundedButton: ResizableButton, ThemeApplicable {
     private struct UX {
-        static var buttonCornerRadius: CGFloat {
-            if #available(iOS 26.0, *) {
-                return 32
-            } else {
-                return 12
-            }
-        }
+        static let buttonCornerRadius: CGFloat = 12
         static let buttonVerticalInset: CGFloat = 12
         static let buttonHorizontalInset: CGFloat = 16
 
@@ -25,9 +19,9 @@ public final class SecondaryRoundedButton: ResizableButton, ThemeApplicable {
         )
     }
 
-    private var highlightedBackgroundColor: UIColor?
-    private var normalBackgroundColor: UIColor?
-    private var foregroundColor: UIColor?
+    private var highlightedBackgroundColor: UIColor!
+    private var normalBackgroundColor: UIColor!
+    private var foregroundColor: UIColor!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -91,7 +85,6 @@ public final class SecondaryRoundedButton: ResizableButton, ThemeApplicable {
 
         isUserInteractionEnabled = false
         isAccessibilityElement = false
-        accessibilityElementsHidden = true
         normalBackgroundColor = .clear
         highlightedBackgroundColor = .clear
         foregroundColor = .clear

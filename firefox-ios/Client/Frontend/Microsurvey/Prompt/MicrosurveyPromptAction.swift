@@ -6,20 +6,13 @@ import Foundation
 import Redux
 import Common
 
-struct MicrosurveyPromptAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
-}
+final class MicrosurveyPromptAction: Action { }
 
-struct MicrosurveyPromptMiddlewareAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+final class MicrosurveyPromptMiddlewareAction: Action {
     let microsurveyModel: MicrosurveyModel?
-
     init(microsurveyModel: MicrosurveyModel? = nil, windowUUID: WindowUUID, actionType: any ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.microsurveyModel = microsurveyModel
+        super.init(windowUUID: windowUUID, actionType: actionType)
     }
 }
 

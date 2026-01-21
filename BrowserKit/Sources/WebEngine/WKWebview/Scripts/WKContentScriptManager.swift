@@ -6,7 +6,6 @@ import Foundation
 import WebKit
 
 /// Manager used to add and remove scripts inside a WKEngineSession
-@MainActor
 protocol WKContentScriptManager: WKScriptMessageHandler {
     var scripts: [String: WKContentScript] { get }
 
@@ -18,14 +17,10 @@ protocol WKContentScriptManager: WKScriptMessageHandler {
                                 name: String,
                                 forSession session: WKEngineSession)
 
-    func addContentScriptToCustomWorld(_ script: WKContentScript,
-                                       name: String,
-                                       forSession session: WKEngineSession)
-
     func uninstall(session: WKEngineSession)
 }
 
-final class DefaultContentScriptManager: NSObject, WKContentScriptManager {
+class DefaultContentScriptManager: NSObject, WKContentScriptManager {
     private(set) var scripts = [String: WKContentScript]()
 
     func addContentScript(_ script: WKContentScript,
@@ -58,23 +53,6 @@ final class DefaultContentScriptManager: NSObject, WKContentScriptManager {
             session.webView.engineConfiguration.addInPageContentWorld(
                 scriptMessageHandler: self,
                 name: scriptMessageHandlerName
-            )
-        }
-    }
-
-    func addContentScriptToCustomWorld(_ script: WKContentScript,
-                                       name: String,
-                                       forSession session: WKEngineSession) {
-        // If a script already exists on the page, skip adding this duplicate.
-        guard scripts[name] == nil else { return }
-
-        scripts[name] = script
-
-        // If this helper handles script messages, then get the handlers names and register them
-        script.scriptMessageHandlerNames().forEach { scriptMessageHandlerName in
-            session.webView.engineConfiguration.addInCustomContentWorld(
-                scriptMessageHandler: self,
-                name: name
             )
         }
     }

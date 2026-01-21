@@ -6,7 +6,6 @@ import XCTest
 @testable import Client
 
 final class TrackingProtectionModelTests: XCTestCase {
-    @MainActor
     func testClearCookiesAndSiteData() {
         let cookiesClearable = MockCookiesClearable()
         let siteDataClearable = MockSiteDataClearable()
@@ -18,9 +17,8 @@ final class TrackingProtectionModelTests: XCTestCase {
                                                               contentBlockerStatus: .disabled,
                                                               contentBlockerStats: nil,
                                                               selectedTab: nil)
-        _ = cookiesClearable.clear()
-        _ = siteDataClearable.clear()
-        trackingProtectionModel.clearCookiesAndSiteData()
+        trackingProtectionModel.clearCookiesAndSiteData(cookiesClearable: cookiesClearable,
+                                                        siteDataClearable: siteDataClearable)
         XCTAssertNotNil(cookiesClearable.isSucceed)
         XCTAssertNotNil(siteDataClearable.isSucceed)
     }

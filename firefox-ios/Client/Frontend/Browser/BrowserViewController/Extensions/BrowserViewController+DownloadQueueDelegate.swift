@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Shared
 
 extension BrowserViewController: DownloadQueueDelegate {
     func downloadQueue(_ downloadQueue: DownloadQueue, didStartDownload download: Download) {
@@ -11,60 +12,31 @@ extension BrowserViewController: DownloadQueueDelegate {
         let uuid = windowUUID
         guard download.originWindow == uuid else { return }
 
-        // Do not need toast message for Passbook Passes since we don't save the download
-        guard download.mimeType != MIMEType.Passbook else { return }
+        // If no other download toast is shown, create a new download toast and show it.
+        guard let downloadToast = self.downloadToast else {
+            let downloadToast = DownloadToast(download: download,
+                                              theme: currentTheme(),
+                                              completion: { buttonPressed in
+                // When this toast is dismissed, be sure to clear this so that any
+                // subsequent downloads cause a new toast to be created.
+                self.downloadToast = nil
 
-        if let downloadProgressManager = self.downloadProgressManager {
-            if tabManager.selectedTab?.isPrivate == true {
-                dismissDownloadLiveActivity()
-            }
-            downloadProgressManager.addDownload(download)
+                // Handle download cancellation
+                if buttonPressed, !downloadQueue.isEmpty {
+                    downloadQueue.cancelAll(for: uuid)
+
+                    SimpleToast().showAlertWithText(.DownloadCancelledToastLabelText,
+                                                    bottomContainer: self.contentContainer,
+                                                    theme: self.currentTheme())
+                }
+            })
+
+            show(toast: downloadToast, duration: nil)
             return
         }
 
-        let downloadProgressManager = DownloadProgressManager(downloads: [download])
-        self.downloadProgressManager = downloadProgressManager
-
-        if #available(iOS 17, *),
-            featureFlags.isFeatureEnabled(.downloadLiveActivities, checking: .buildOnly),
-            tabManager.selectedTab?.isPrivate == false {
-            let downloadLiveActivityWrapper = DownloadLiveActivityWrapper(
-                downloadProgressManager: downloadProgressManager,
-                windowUUID: windowUUID.uuidString)
-            downloadProgressManager.addDelegate(delegate: downloadLiveActivityWrapper)
-            self.downloadLiveActivityWrapper = downloadLiveActivityWrapper
-            guard downloadLiveActivityWrapper.start() else {
-                self.downloadLiveActivityWrapper = nil
-                return
-            }
-        }
-        presentDownloadProgressToast(download: download, windowUUID: uuid)
-    }
-
-    private func dismissDownloadLiveActivity() {
-        if #available(iOS 17, *),
-           featureFlags.isFeatureEnabled(.downloadLiveActivities, checking: .buildOnly),
-            let downloadLiveActivityWrapper = self.downloadLiveActivityWrapper {
-            downloadLiveActivityWrapper.end(durationToDismissal: .none)
-            self.downloadLiveActivityWrapper = nil
-        }
-    }
-
-    func stopDownload(buttonPressed: Bool) {
-        // When this toast is dismissed, be sure to clear this so that any
-        // subsequent downloads cause a new toast to be created.
-        self.downloadToast = nil
-        dismissDownloadLiveActivity()
-        self.downloadProgressManager = nil
-
-        // Handle download cancellation
-        if buttonPressed, !downloadQueue.isEmpty {
-            downloadQueue.cancelAll(for: windowUUID)
-
-            SimpleToast().showAlertWithText(.DownloadCancelledToastLabelText,
-                                            bottomContainer: self.contentContainer,
-                                            theme: self.currentTheme())
-        }
+        // Otherwise, just add this download to the existing download toast.
+        downloadToast.addDownload(download)
     }
 
     func downloadQueue(
@@ -72,92 +44,45 @@ extension BrowserViewController: DownloadQueueDelegate {
         didDownloadCombinedBytes combinedBytesDownloaded: Int64,
         combinedTotalBytesExpected: Int64?
     ) {
-        downloadProgressManager?.combinedBytesDownloaded = combinedBytesDownloaded
+        downloadToast?.combinedBytesDownloaded = combinedBytesDownloaded
     }
 
-    func downloadQueue(_ downloadQueue: DownloadQueue, download: Download, didFinishDownloadingTo location: URL) {
-        Task { @MainActor in
-            // Handle Passbook Pass downloads
-            if let download = (download as? BlobDownload),
-               OpenPassBookHelper.shouldOpenWithPassBook(mimeType: download.mimeType) {
-                let passBookHelper = OpenPassBookHelper(presenter: self)
-                passBookHelper.open(data: download.data)
-            }
-
-            // Handle toast notification
-            guard let downloadToast = self.downloadToast,
-                  let downloadProgressManager = self.downloadProgressManager,
-                  let download = downloadProgressManager.downloads.first,
-                  download.originWindow == windowUUID, downloadQueue.isEmpty
-            else { return }
-
-            downloadToast.dismiss(false)
-            if #available(iOS 17, *), let downloadLiveActivityWrapper = downloadLiveActivityWrapper {
-                downloadLiveActivityWrapper.end(durationToDismissal: .delayed)
-                self.downloadLiveActivityWrapper = nil
-            }
-            self.downloadProgressManager = nil
-            presentDownloadCompletedToast(filename: download.filename)
-        }
-    }
+    func downloadQueue(_ downloadQueue: DownloadQueue, download: Download, didFinishDownloadingTo location: URL) {}
 
     func downloadQueue(_ downloadQueue: DownloadQueue, didCompleteWithError error: Error?) {
         guard let downloadToast = self.downloadToast,
-              let downloadProgressManager = self.downloadProgressManager,
-              let download = downloadProgressManager.downloads.first,
+              let download = downloadToast.downloads.first,
               download.originWindow == windowUUID
         else { return }
 
-        // We only care about download errors specific to our window's downloads
         DispatchQueue.main.async {
             downloadToast.dismiss(false)
-            if #available(iOS 17, *),
-               let downloadLiveActivityWrapper = self.downloadLiveActivityWrapper {
-                downloadLiveActivityWrapper.end(durationToDismissal: .delayed)
-                self.downloadLiveActivityWrapper = nil
-            }
-            self.downloadProgressManager = nil
 
-            if error != nil {
+            // We only care about download errors specific to our window's downloads
+            if error == nil {
+                let viewModel = ButtonToastViewModel(labelText: download.filename,
+                                                     imageName: StandardImageIdentifiers.Large.checkmark,
+                                                     buttonText: .DownloadsButtonTitle)
+                let downloadCompleteToast = ButtonToast(viewModel: viewModel,
+                                                        theme: self.currentTheme(),
+                                                        completion: { buttonPressed in
+                    guard buttonPressed else { return }
+
+                    self.showLibrary(panel: .downloads)
+                    TelemetryWrapper.recordEvent(
+                        category: .action,
+                        method: .view,
+                        object: .downloadsPanel,
+                        value: .downloadCompleteToast
+                    )
+                })
+
+                self.show(toast: downloadCompleteToast, duration: DispatchTimeInterval.seconds(8))
+            } else {
                 SimpleToast().showAlertWithText(.DownloadCancelledToastLabelText,
                                                 bottomContainer: self.contentContainer,
                                                 theme: self.currentTheme())
             }
         }
-    }
-
-    func presentDownloadProgressToast(download: Download, windowUUID: WindowUUID) {
-        guard let downloadProgressManager = self.downloadProgressManager else {return}
-        let downloadToast = DownloadToast(downloadProgressManager: downloadProgressManager,
-                                          theme: currentTheme(),
-                                          completion: { buttonPressed in
-            self.stopDownload(buttonPressed: buttonPressed)})
-
-        downloadProgressManager.addDelegate(delegate: downloadToast)
-
-        show(toast: downloadToast, duration: nil)
-    }
-
-    func presentDownloadCompletedToast(filename: String) {
-        let viewModel = ButtonToastViewModel(labelText: filename,
-                                             imageName: StandardImageIdentifiers.Large.checkmark,
-                                             buttonText: .DownloadsButtonTitle)
-        let downloadCompleteToast = ButtonToast(viewModel: viewModel,
-                                                theme: self.currentTheme(),
-                                                completion: { buttonPressed in
-            guard buttonPressed else { return }
-
-            self.showLibrary(panel: .downloads)
-            TelemetryWrapper.recordEvent(
-                category: .action,
-                method: .view,
-                object: .downloadsPanel,
-                value: .downloadCompleteToast
-            )
-        })
-
-        self.show(toast: downloadCompleteToast,
-                  afterWaiting: UX.downloadToastDelay,
-                  duration: UX.downloadToastDuration)
     }
 }

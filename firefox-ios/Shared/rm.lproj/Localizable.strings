@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. %@ is the hostname of the site. */
+/* Authentication prompt message with no realm. Parameter is the hostname of the site */
 "A username and password are being requested by %@." = "La pagina %@ dumonda in num d'utilisader ed in pled-clav.";
 
-/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
+/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
 "A username and password are being requested by %@. The site says: %@" = "La pagina %1$@ dumonda in num d'utilisader ed in pled-clav. La pagina di: %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -28,7 +28,7 @@
 /* Title for the Jump Back In section. This section allows users to jump back in to a recently viewed tab */
 "ActivityStream.JumpBackIn.SectionTitle" = "Returnar tar";
 
-/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. %d is the number of tabs. It will read 'Tabs: 5' or similar. */
+/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. The placeholder is for a number. It will read 'Tabs: 5' or similar. */
 "ActivityStream.JumpBackIn.TabGroup.SiteCount" = "Tabs: %d";
 
 /* A string used to signify the start of the Recently Saved section in Home Screen. */
@@ -36,6 +36,9 @@
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "Visità dacurt";
+
+/* Section title label for Shortcuts */
+"ActivityStream.Shortcuts.SectionTitle" = "Scursanidas";
 
 /* The title for the setting page which lets you select the number of top site rows */
 "ActivityStream.TopSites.RowSettingFooter" = "Definir il dumber da lingias";
@@ -277,13 +280,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "Telechargiadas";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "1 da %d datotecas";
 
-/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
+/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -307,8 +310,8 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "Eventualmain sa tracti d'ina configuraziun mala u da l'emprova dad in attatgader. Cuntinuescha sche ti acceptas il ristg potenzial.";
 
-/* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "Il possessur da %@ ha configurà mal sia website. Per proteger tias infurmaziuns dad enguladitschs n'ha Firefox betg stabilì ina connexiun cun questa website.";
+/* Warning text on the certificate error page */
+"ErrorPages.CertWarning.Description" = "Il possessur da %@ ha configurà mal sia website. Per proteger tias infurmaziuns dad enguladitschs n'ha Ecosia betg stabilì ina connexiun cun questa website.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "Questa connexiun n'è betg segira";
@@ -329,7 +332,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Pagina da partenza da Firefox";
+"Firefox.HomePage.Title" = "Pagina da partenza da Ecosia";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "Persunalisar la pagina da partenza";
@@ -345,9 +348,6 @@
 
 /* When a user taps and holds on an item from the Recently Visited section, this label will appear indicating the option to remove that item. */
 "FirefoxHome.RecentHistory.Remove" = "Allontanar";
-
-/* On each Story on the Firefox Homepage, this label appears and indicates the number of minutes to read an article. Minutes should be abbreviated due to space constraints. %d represents the number of minutes */
-"FirefoxHome.Stories.Minutes.v140" = "min: %d";
 
 /* Label showing how many pages there is in a search group. %d represents a number */
 "FirefoxHomepage.Common.PagesCount.v112" = "Paginas: %d";
@@ -373,14 +373,11 @@
 /* This string will show under a shortcuts tile on the firefox home page, indicating that the tile is a sponsored tile. Space is limited, please keep as short as possible. */
 "FirefoxHomepage.Shortcuts.Sponsored.v100" = "Sponsurisà";
 
-/* This string will show under the description on pocket story, indicating that the story is sponsored. */
-"FirefoxHomepage.Stories.Sponsored.v140" = "Sponsurisà";
-
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "Renviar";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Conto da Firefox";
+"FxA.FirefoxAccount" = "Conto da Ecosia";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Administrar il conto ed ils apparats";
@@ -392,7 +389,7 @@
 "fxa.signin.camera-signin" = "T'annunzia cun tia camera";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "Avra Firefox sin tes computer e visita firefox.com/pair";
+"fxa.signin.qr-link-instruction" = "Avra Ecosia sin tes computer e visita ecosia.org/pair";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "Pront per scannar";
@@ -404,7 +401,7 @@
 "FxA.SyncNow" = "Sincronisar ussa";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Firefox Sync è connectà cun %@";
+"FxAPush_DeviceConnected_body" = "Ecosia Sync è connectà cun %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Sync è connectà";
@@ -413,7 +410,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ è vegnì deconnetà cun success.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Quest apparat è vegnì deconnectà cun success da Firefox Sync.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Quest apparat è vegnì deconnectà cun success da Ecosia Sync.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Sync è deconnectà";
@@ -422,10 +419,10 @@
 "FxAPush_DeviceDisconnected_title" = "Sync è deconnectà";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "In apparat è vegnì deconnectà da Firefox Sync";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "In apparat è vegnì deconnectà da Ecosia Sync";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Logo da Firefox, midar il maletg dal fund davos.";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Logo da Ecosia, midar il maletg dal fund davos.";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Agid";
@@ -458,7 +455,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "T'annunzia per vesair ina glista dals tabs da tes auters apparats.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Cronologia";
@@ -656,13 +653,13 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "Ulteriuras infurmaziuns";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "Per utilisar la funcziun d'endataziun automatica per Firefox, stos ti activar in code-clav per l'apparat.";
+"Logins.PasscodeRequirement.Warning" = "Per utilisar la funcziun d'endataziun automatica per Ecosia, stos ti activar in code-clav per l'apparat.";
 
 /* Label displaying welcome view tagline under the title */
 "Logins.WelcomeView.Tagline" = "Prenda tes pleds-clav adina cun tai";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "Endataziun automatica da pleds-clav en Firefox";
+"Logins.WelcomeView.Title2" = "Endataziun automatica da pleds-clav en Ecosia";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "Activar l'endataziun automatica";
@@ -672,6 +669,18 @@
 
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "Betg actualisar";
+
+/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
+"LoginsHelper.PromptSaveLogin.Title" = "Memorisar las datas d'annunzia %1$@ per %2$@?";
+
+/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
+"LoginsHelper.PromptSavePassword.Title" = "Memorisar il pled-clav per %@?";
+
+/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "Actualisar las datas d'annunzia per %@?";
+
+/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "Actualisar las datas d'annunzia da %1$@ per %2$@?";
 
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "Memorisar";
@@ -695,7 +704,7 @@
 "LoginsList.Title" = "INFURMAZIUNS D'ANNUNZIA MEMORISADAS";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "I para che Firefox saja collabà dacurt. Vuls ti restaurar tes tabs?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "I para che Ecosia saja collabà dacurt. Vuls ti restaurar tes tabs?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Marcar sco legì";
@@ -811,7 +820,7 @@
 /* Accessibility label for the Home button on the toolbar. Pressing this button brings the user to the home page. */
 "Menu.Toolbar.Home.AccessibilityLabel.v99" = "Pagina da partenza";
 
-/* String to let users know the site verifier, where %@ represents the SSL certificate signer. */
+/* String to let users know the site verifier, where the placeholder represents the SSL certificate signer. */
 "Menu.TrackingProtection.Details.Verifier" = "Verifitgà da %@";
 
 /* The title for tracking protection settings */
@@ -850,7 +859,7 @@
 /* The title for the option to view the What's new page. */
 "Menu.WhatsNew.Title" = "Novaziuns";
 
-/* Label for the zoom page button in the menu, used to show the Zoom Page bar. %@ shows the current zoom level in percent. */
+/* Label for the zoom page button in the menu, used to show the Zoom Page bar. The placeholder shows the current zoom level in percent. */
 "Menu.ZoomPage.Title.v113" = "Zoom (%@)";
 
 /* Accessibility label for Mobile Device image in remote tabs list */
@@ -884,7 +893,7 @@
 "Onboarding.WhatsNew.Button.Title" = "Cumenzar a navigar";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Oha! Firefox è collabà";
+"Oops! Firefox crashed" = "Oha! Ecosia è collabà";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Avra artitgels en la vista da lectura cun smatgar sin l'icona da cudesch sch'ella cumpara en la trav dal titel.";
@@ -896,7 +905,7 @@
 "Open Tabs" = "Tabs averts";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Firefox na po betg avrir la pagina perquai ch'ella ha ina adressa nunvalida.";
+"OpenURL.Error.Message" = "Ecosia na po betg avrir la pagina perquai ch'ella ha ina adressa nunvalida.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "Impussibel d'avrir la pagina";
@@ -908,7 +917,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "Quai ta lubescha da memorisar il maletg en «Camera Roll» (Aufnahmen).";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox dumonda l'access a tias fotografias";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia dumonda l'access a tias fotografias";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Serrar";
@@ -995,7 +1004,7 @@
 "ScanQRCode.InvalidDataError.Message" = "Las datas èn nunvalidas";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "Ir als parameters da l'apparat > «Firefox». Permetter a Firefox dad acceder a la camera.";
+"ScanQRCode.PermissionError.Message.v100" = "Ir als parameters da l'apparat > «Ecosia». Permetter a Ecosia dad acceder a la camera.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "Scannar in code QR";
@@ -1010,7 +1019,7 @@
 "Search.Awesomebar.SwitchToTab" = "Midar al tab";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "Firefox propona";
+"Search.SuggestSectionTitle.v102" = "Ecosia propona";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "La nova maschina da tschertgar cumpara en la trav per la tschertga svelta.";
@@ -1025,7 +1034,7 @@
 "Search.ThirdPartyEngines.Cancel" = "Interrumper";
 
 /* A message explaining fault in custom search engine form. */
-"Search.ThirdPartyEngines.DuplicateErrorMessage" = "Ina maschina da tschertgar cun quest titel u quest URL è gia vegnida agiuntada.";
+"Search.ThirdPartyEngines.DuplicateErrorMessage" = "Ina maschina da tschertgar cun quest titel u questa URL è gia vegnida agiuntada.";
 
 /* A title stating that we failed to add custom search engine. */
 "Search.ThirdPartyEngines.DuplicateErrorTitle" = "Betg reussì";
@@ -1046,7 +1055,7 @@
 "Search.ThirdPartyEngines.OK" = "OK";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Trametter in rapport da collaps per che Mozilla possia schliar il problem?";
+"Send a crash report so Mozilla can fix the problem?" = "Trametter in rapport da collaps per che Ecosia possia schliar il problem?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Trametter in resun";
@@ -1076,13 +1085,13 @@
 "SendTo.NavBar.Title" = "Trametter il tab";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Ti n'has betg connectà auters apparats cun quest conto da Firefox che pudessan vegnir sincronisads.";
+"SendTo.NoDevicesFound.Message" = "Ti n'has betg connectà auters apparats cun quest conto da Ecosia che pudessan vegnir sincronisads.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Avra p.pl. Firefox, va en las preferenzas e t'annunzia per cuntinuar.";
+"SendTo.NotSignedIn.Message" = "Avra p.pl. Ecosia, va en las preferenzas e t'annunzia per cuntinuar.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Ti n'es betg annunzià cun tes conto da Firefox.";
+"SendTo.NotSignedIn.Title" = "Ti n'es betg annunzià cun tes conto da Ecosia.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Trametter";
@@ -1103,7 +1112,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Smatgar per cumenzar";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Mussar";
@@ -1138,33 +1147,6 @@
 /* The placeholder for URL Field when saving a custom search engine */
 "Settings.AddCustomEngine.URLPlaceholder" = "URL (remplazzar il term da tschertga cun %s)";
 
-/* In the settings menu, in the Address Bar customization section, this label indicates that selecting this will make the address bar appear at the bottom of the screen. */
-"Settings.AddressBar.Bottom.v138" = "Sut";
-
-/* In the settings menu, in the Address Bar customization menu, this is the title of the section where the user can toggle the address bar position. */
-"Settings.AddressBar.SectionTitle.v138" = "Posiziun da la trav d’adressas";
-
-/* In the settings menu, this label indicates that there is an option of customizing the Address Bar position. */
-"Settings.AddressBar.SettingsTitle.v138" = "Trav d’adressas";
-
-/* In the settings menu, in the Address Bar customization section, this label indicates that selecting this will make the address bar appear at the top of the screen. */
-"Settings.AddressBar.Top.v138" = "Sura";
-
-/* Browser theme settings section title in Appearance settings */
-"Settings.Appearance.BrowserTheme.SectionHeader.v137" = "Theme dal navigatur";
-
-/* Title in main app settings for Appearance settings */
-"Settings.Appearance.Title.v137" = "Apparientscha";
-
-/* Website Appearance settings section title in Appearance settings */
-"Settings.Appearance.WebsiteAppearance.SectionHeader.v137" = "Apparientscha da websites";
-
-/* Under Website Appearance section in Appearance menu, this is the text under the toggle describing the dark mode feature. */
-"Settings.Appearance.WebsiteDarkMode.Description.v137" = "Dat a websites in’apparientscha stgira. Tschertas websites na vegnan eventualmain betg visualisadas correctamain.";
-
-/* Under Website Appearance section in Appearance menu, this is the title of the toggle to switch dark theme on/off. */
-"Settings.Appearance.WebsiteDarkModeToggle.Title.v137" = "Modus stgir da la website";
-
 /* Title of setting to block opening external apps when pressing links. */
 "Settings.BlockOpeningExternalApps.Title" = "Bloccar l’avertura dad apps externas";
 
@@ -1177,7 +1159,7 @@
 /* Label used as an item in Settings. When touched it will open a dialog prompting the user to make sure they want to clear all of their private data. */
 "Settings.ClearPrivateData.SectionName" = "Stizzar las datas privatas";
 
-/* Button in Data Management that clears private data for the selected items. %1$@ is the number of items to be cleared. */
+/* Button in Data Management that clears private data for the selected items. Parameter is the number of items to be cleared */
 "Settings.ClearSelectedWebsiteData.ClearSelected.Button" = "Stizzar elements: %1$@";
 
 /* Copy app version alert shown in settings. */
@@ -1193,7 +1175,7 @@
 "Settings.DataManagement.Title" = "Administraziun da datas";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Firefox chala da sincronisar tes conto, ma las datas da navigaziun restan sin quest apparat.";
+"Settings.Disconnect.Body" = "Ecosia chala da sincronisar tes conto, ma las datas da navigaziun restan sin quest apparat.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Deconnectar Sync";
@@ -1259,7 +1241,7 @@
 "Settings.FxA.Sync.SectionName" = "Parameters da Sync";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Conto da Firefox";
+"Settings.FxA.Title" = "Conto da Ecosia";
 
 /* General settings section title */
 "Settings.General.SectionName" = "General";
@@ -1268,7 +1250,7 @@
 "Settings.Home.Current.Description.v101" = "Tscherna tge che vegn mussà sco pagina da partenza.";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "Tscherna il cuntegn da la pagina da partenza da Firefox.";
+"Settings.Home.Option.Description.v101" = "Tscherna il cuntegn da la pagina da partenza da Ecosia.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "Returnar nà qua";
@@ -1292,7 +1274,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "Pagina da partenza";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "Tscherna tge mussar cura che ti turnas tar Firefox.";
+"Settings.Home.Option.StartAtHome.Description" = "Tscherna tge mussar cura che ti turnas tar Ecosia.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "Ultim tab";
@@ -1307,25 +1289,25 @@
 "Settings.Home.Option.Wallpaper" = "Maletg dal fund davos";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Fund davos da Firefox, motiv cun ametist.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Fund davos da Ecosia, motiv cun ametist.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Fund davos da Firefox, motiv cun dunas e riva.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Fund davos da Ecosia, motiv cun dunas e riva.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Fund davos da Firefox, motiv azur.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Fund davos da Ecosia, motiv azur.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "Fund davos cler predefinì.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Fund davos da Firefox, motiv cun aurora.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Fund davos da Ecosia, motiv cun aurora.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "Buttun per activar/deactivar il ciclus dal maletg dal fund davos da la pagina da partenza";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Fund davos da Firefox, motiv cun collinas tranter di e notg.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Fund davos da Ecosia, motiv cun collinas tranter di e notg.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "%@ classic";
@@ -1346,7 +1328,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "Ediziun limitada";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Mida il maletg dal fund davos cun tutgar il logo da Firefox sin la pagina da partenza";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Mida il maletg dal fund davos cun tutgar il logo da Ecosia sin la pagina da partenza";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "Maletg dal fund davos";
@@ -1400,7 +1382,7 @@
 "Settings.NewTab.Option.Custom" = "Persunalisà";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Pagina da partenza da Firefox";
+"Settings.NewTab.Option.FirefoxHome" = "Pagina da partenza da Ecosia";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Pagina da partenza";
@@ -1421,10 +1403,13 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "Bloccar las graficas";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "Cun avrir Firefox";
+"Settings.OfferClipboardBar.Status" = "Cun avrir Ecosia";
 
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
+/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. Placeholder is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "Cun avrir %@";
+
+/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
+"Settings.OfferClipboardBar.StatusV2" = "Cun avrir Ecosia";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "Proponer d'avrir las colliaziuns copiadas";
@@ -1460,7 +1445,7 @@
 "Settings.SendUsage.Link" = "Ulteriuras infurmaziuns.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla vul mo rimnar las datas necessarias per porscher e meglierar Firefox per in e scadin.";
+"Settings.SendUsage.Message" = "Ecosia vul mo rimnar las datas necessarias per porscher e meglierar Ecosia per in e scadin.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Trametter datas davart l'utilisaziun";
@@ -1481,7 +1466,7 @@
 "Settings.Siri.OpenTabShortcut" = "Avrir in nov tab";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Utilisar scursanidas da Siri per avrir pli spert Firefox";
+"Settings.Siri.SectionDescription" = "Utilisar scursanidas da Siri per avrir pli spert Ecosia";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Scursanidas da Siri";
@@ -1490,7 +1475,7 @@
 "Settings.Studies.Toggle.Link" = "Ulteriuras infurmaziuns.";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Firefox po installar e lantschar studis da temp en temp.";
+"Settings.Studies.Toggle.Message" = "Ecosia po installar e lantschar studis da temp en temp.";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "Studis";
@@ -1607,13 +1592,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Chargiar davos las culissas";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Chargiar en Firefox";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Chargiar en Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Avrir en Firefox";
+"ShareExtension.OpenInFirefoxAction.Title" = "Avrir en Ecosia";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Tschertgar en Firefox";
+"ShareExtension.SeachInFirefoxAction.Title" = "Tschertgar en Ecosia";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "Copiar";
@@ -1645,13 +1630,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "Sync è offline";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "Tab %1$@ da %2$@";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "Mussar tut ils tabs";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "Tabs %1$@ fin %2$@ da %3$@";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1659,6 +1644,9 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Revocar";
+
+/* The label indicating that all the tabs were closed */
+"Tabs.DeleteAllUndo.Title" = "serrà %d tab(s)";
 
 /* Accessibility title for the inactive tabs section button when section is closed. This section groups all tabs that haven't been used in a while. */
 "TabsTray.InactiveTabs.SectionTitle.Closed.Accessibility.v103" = "Mussar ils tabs inactivs";
@@ -1678,7 +1666,7 @@
 /* Accessibility label for the currently selected tab. */
 "TabTray.CurrentSelectedTab.A11Y" = "Il tab actualmain tschernì.";
 
-/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as “Others”. */
+/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as \"Others\" */
 "TabTray.Header.FilteredTabs.SectionHeader" = "Auters";
 
 /* Title for the inactive tabs section. This section groups all tabs that haven't been used in a while. */
@@ -1729,7 +1717,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "Oz";
 
-/* Relative date for date older than a minute. %@ is the time. */
+/* Relative date for date older than a minute. */
 "today at %@" = "oz a las %@";
 
 /* Accessibility label for the Menu button. */
@@ -1738,7 +1726,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "Serrar tut ils tabs";
 
-/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
+/* Button shown in editing mode to remove this site from the top sites panel. */
 "TopSites.RemovePage.Button" = "Allontanar la pagina - %@";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1747,7 +1735,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "Gea";
 
-/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
+/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "Questa pagina para dad esser scritta en %1$@. La vuls ti laschar translatar en %2$@ cun agid da %3$@?";
 
 /* Tile title for Twitter */
@@ -1757,7 +1745,7 @@
 "UIMenuItem.PasteGo" = "Encollar & dai";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Tschertgar cun Firefox";
+"UIMenuItem.SearchWithFirefox" = "Tschertgar cun Ecosia";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "nunlegì";
@@ -1805,7 +1793,7 @@
 "Yesterday" = "Ier";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "Ti n'has nagins tabs da Firefox averts sin auters apparats.";
+"You don’t have any tabs open in Firefox on your other devices." = "Ti n'has nagins tabs da Ecosia averts sin auters apparats.";
 
 /* Your Rights settings section title */
 "Your Rights" = "Tes dretgs";

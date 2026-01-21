@@ -2,30 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import CoreSpotlight
 import Foundation
-import Glean
+import CoreSpotlight
 import Shared
-import Common
+import Ecosia
 
-// TODO: FXIOS-14155 - RouteBuilder should not be @unchecked Sendable due to shouldOpenNewTab usage
-final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
+final class RouteBuilder {
     private var isPrivate = false
     private var prefs: Prefs?
-    private var mainQueue: DispatchQueueInterface
-    private let actionExtensionTelemetry: ActionExtensionTelemetry
-    private let shareExtensionTelemetry: ShareExtensionTelemetry
-    var shouldOpenNewTab = true
-
-    init(
-        mainQueue: DispatchQueueInterface = DispatchQueue.main,
-        actionExtensionTelemetry: ActionExtensionTelemetry = ActionExtensionTelemetry(),
-        shareExtensionTelemetry: ShareExtensionTelemetry = ShareExtensionTelemetry()
-    ) {
-        self.mainQueue = mainQueue
-        self.actionExtensionTelemetry = actionExtensionTelemetry
-        self.shareExtensionTelemetry = shareExtensionTelemetry
-    }
 
     func configure(isPrivate: Bool,
                    prefs: Prefs) {
@@ -38,13 +22,11 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
         return DeeplinkInput.Host(rawValue: urlScanner.host.lowercased())
     }
 
-    @MainActor
     func makeRoute(url: URL) -> Route? {
         guard let urlScanner = URLScanner(url: url) else { return nil }
 
         if let host = parseURLHost(url) {
             let urlQuery = urlScanner.fullURLQueryItem()?.asURL
-            guard host.isValidURL(urlQuery: urlQuery) else { return nil }
             // Unless the `open-url` URL specifies a `private` parameter,
             // use the last browsing mode the user was in.
             let isPrivate = Bool(urlScanner.value(query: "private") ?? "") ?? isPrivate
@@ -80,21 +62,15 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
                 )
 
             case .openUrl:
-                let isOpeningWithFirefoxExtension = Bool(urlScanner.value(query: "openWithFirefox") ?? "") ?? false
-                if isOpeningWithFirefoxExtension {
-                    actionExtensionTelemetry.shareURL()
+                // If we have a URL query, then make sure to check its a webpage
+                if urlQuery == nil || urlQuery?.isWebPage() ?? false {
+                    return .search(url: urlQuery, isPrivate: isPrivate)
+                } else {
+                    return nil
                 }
-                return .search(url: urlQuery, isPrivate: isPrivate)
 
             case .openText:
-                let queryValue = urlScanner.value(query: "text") ?? ""
-                let queryURL = URIFixup.getURL(queryValue)
-                let safeQuery = queryURL != nil ? queryValue.replacingOccurrences(of: "://", with: "%3A%2F%2F") : queryValue
-                let isOpeningWithFirefoxExtension = Bool(urlScanner.value(query: "openWithFirefox") ?? "") ?? false
-                if isOpeningWithFirefoxExtension {
-                    actionExtensionTelemetry.shareText()
-                }
-                return .searchQuery(query: safeQuery, isPrivate: isPrivate)
+                return .searchQuery(query: urlScanner.value(query: "text") ?? "", isPrivate: isPrivate)
 
             case .glean:
                 return .glean(url: url)
@@ -105,19 +81,19 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
 
             case .widgetSmallQuickLinkOpenUrl:
                 // Widget Quick links - small - open url private or regular
-                return getWidgetRoute(urlQuery: urlQuery, isPrivate: isPrivate)
+                return .search(url: urlQuery, isPrivate: isPrivate, options: [.focusLocationField])
 
             case .widgetMediumQuickLinkOpenUrl:
                 // Widget Quick Actions - medium - open url private or regular
-                return getWidgetRoute(urlQuery: urlQuery, isPrivate: isPrivate)
+                return .search(url: urlQuery, isPrivate: isPrivate, options: [.focusLocationField])
 
             case .widgetSmallQuickLinkOpenCopied, .widgetMediumQuickLinkOpenCopied:
                 // Widget Quick links - medium - open copied url
-                if !UIPasteboard.general.hasURLs, let searchText = UIPasteboard.general.string {
+                if !UIPasteboard.general.hasURLs {
+                    let searchText = UIPasteboard.general.string ?? ""
                     return .searchQuery(query: searchText, isPrivate: isPrivate)
                 } else {
                     let url = UIPasteboard.general.url
-                    guard host.isValidURL(urlQuery: url) else { return nil }
                     return .search(url: url, isPrivate: isPrivate)
                 }
 
@@ -146,32 +122,22 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
 
             case .fxaSignIn:
                 return nil
-
-            case .sharesheet:
-                guard let shareURLString = urlScanner.value(query: "url"),
-                      let shareURL = URL(string: shareURLString) else {
-                    assertionFailure("Should not be trying to share a bad URL")
-                    return nil
-                }
-
-                // Pass optional share message and subtitle here
-                var shareMessage: ShareMessage?
-                if let titleText = urlScanner.value(query: "title") {
-                    let subtitleText: String? = urlScanner.value(query: "subtitle")
-
-                    shareMessage = ShareMessage(message: titleText, subtitle: subtitleText)
-                }
-
-                // Deeplinks cannot have an associated tab or file, so this must be a website URL `.site` share
-                return .sharesheet(shareType: .site(url: shareURL), shareMessage: shareMessage)
             }
         } else if urlScanner.isHTTPScheme {
             TelemetryWrapper.gleanRecordEvent(category: .action, method: .open, object: .asDefaultBrowser)
-            prefs?.setTimestamp(Date.now(), forKey: PrefsKeys.LastOpenedAsDefaultBrowser)
-            GleanMetrics.App.lastOpenedAsDefaultBrowser.set(Date())
-            DefaultBrowserUtility().isDefaultBrowser = true
+
+            // Ecosia: Track app open as default browser
+            Analytics.shared.appOpenAsDefaultBrowser()
+
+            RatingPromptManager.isBrowserDefault = true
             // Use the last browsing mode the user was in
             return .search(url: url, isPrivate: isPrivate, options: [.focusLocationField])
+
+        // Ecosia: Referral deeplink
+        } else if urlScanner.scheme == "ecosia", urlScanner.host == "invite" {
+            let paths = url.absoluteString.split(separator: "/")
+            guard let componentPath = paths[safe: 2] else { return nil }
+            return .referrals(code: String(componentPath))
         } else {
             return nil
         }
@@ -179,12 +145,7 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
 
     func makeRoute(userActivity: NSUserActivity) -> Route? {
         // If the user activity is a Siri shortcut to open the app, show a new search tab.
-        // By using shouldOpenNewTab we avoid duplicated user activities, from Siri, for new tab.
-        if userActivity.activityType == SiriShortcuts.activityType.openURL.rawValue && shouldOpenNewTab {
-            shouldOpenNewTab = false
-            mainQueue.asyncAfter(deadline: .now() + 1) { [weak self] in
-                self?.shouldOpenNewTab = true
-            }
+        if userActivity.activityType == SiriShortcuts.activityType.openURL.rawValue {
             return .search(url: nil, isPrivate: false)
         }
 
@@ -199,7 +160,7 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
         if userActivity.activityType == CSSearchableItemActionType {
             guard let userInfo = userActivity.userInfo,
                   let urlString = userInfo[CSSearchableItemActivityIdentifier] as? String,
-                  let url = URL(string: urlString)
+                  let url = URL(string: urlString, invalidCharacters: false)
             else {
                 return nil
             }
@@ -233,19 +194,16 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
             } else {
                 return nil
             }
+        case .qrCode:
+            return .action(action: .showQRCode)
         }
-    }
-
-    private func getWidgetRoute(urlQuery: URL?, isPrivate: Bool) -> Route? {
-        let isCustomLink = prefs?.stringForKey(NewTabAccessors.NewTabPrefKey) == NewTabPage.homePage.rawValue
-        return .search(url: urlQuery, isPrivate: isPrivate, options: isCustomLink ? [] : [.focusLocationField])
     }
 
     // MARK: - Telemetry
 
     private func recordTelemetry(input: DeeplinkInput.Host, isPrivate: Bool) {
         switch input {
-        case .deepLink, .fxaSignIn, .glean, .sharesheet:
+        case .deepLink, .fxaSignIn, .glean:
             return
         case .widgetMediumTopSitesOpenUrl:
             TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumTopSitesWidget)
@@ -279,14 +237,9 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
     private func sendAppExtensionTelemetry(object: TelemetryWrapper.EventObject) {
         if prefs?.boolForKey(PrefsKeys.AppExtensionTelemetryOpenUrl) != nil {
             prefs?.removeObjectForKey(PrefsKeys.AppExtensionTelemetryOpenUrl)
-            switch object {
-            case .url:
-                shareExtensionTelemetry.shareURL()
-            case .searchText:
-                shareExtensionTelemetry.shareText()
-            default:
-                break
-            }
+            TelemetryWrapper.recordEvent(category: .appExtensionAction,
+                                         method: .applicationOpenUrl,
+                                         object: object)
         }
     }
 }

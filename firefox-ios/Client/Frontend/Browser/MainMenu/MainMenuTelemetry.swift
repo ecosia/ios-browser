@@ -3,27 +3,43 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+/* Ecosia: Remove Glean
 import Glean
+ */
 
 struct MainMenuTelemetry {
-    private let gleanWrapper: GleanWrapper
-
-    init(gleanWrapper: GleanWrapper = DefaultGleanWrapper()) {
-        self.gleanWrapper = gleanWrapper
+    func mainMenuOptionTapped(with isHomepage: Bool, and option: String) {
+        /* Ecosia: Remove Glean
+        let extra = GleanMetrics.AppMenu.MainMenuOptionSelectedExtra(isHomepage: isHomepage, option: option)
+        GleanMetrics.AppMenu.mainMenuOptionSelected.record(extra)
+         */
     }
 
-    func mainMenuOptionTapped(with isHomepage: Bool, and option: String) {
-        let extra = GleanMetrics.AppMenu.MainMenuOptionSelectedExtra(isHomepage: isHomepage, option: option)
-        gleanWrapper.recordEvent(for: GleanMetrics.AppMenu.mainMenuOptionSelected, extras: extra)
+    func saveSubmenuOptionTapped(with isHomepage: Bool, and option: String) {
+        /* Ecosia: Remove Glean
+        let extra = GleanMetrics.AppMenu.SaveMenuOptionSelectedExtra(isHomepage: isHomepage, option: option)
+        GleanMetrics.AppMenu.saveMenuOptionSelected.record(extra)
+         */
+    }
+
+    func toolsSubmenuOptionTapped(with isHomepage: Bool, and option: String) {
+        /* Ecosia: Remove Glean
+        let extra = GleanMetrics.AppMenu.ToolsMenuOptionSelectedExtra(isHomepage: isHomepage, option: option)
+        GleanMetrics.AppMenu.toolsMenuOptionSelected.record(extra)
+         */
     }
 
     func closeButtonTapped(isHomepage: Bool) {
+        /* Ecosia: Remove Glean
         let extra = GleanMetrics.AppMenu.CloseButtonExtra(isHomepage: isHomepage)
-        gleanWrapper.recordEvent(for: GleanMetrics.AppMenu.closeButton, extras: extra)
+        GleanMetrics.AppMenu.closeButton.record(extra)
+         */
     }
 
     func menuDismissed(isHomepage: Bool) {
+        /* Ecosia: Remove Glean
         let extra = GleanMetrics.AppMenu.MenuDismissedExtra(isHomepage: isHomepage)
-        gleanWrapper.recordEvent(for: GleanMetrics.AppMenu.menuDismissed, extras: extra)
+        GleanMetrics.AppMenu.menuDismissed.record(extra)
+         */
     }
 }

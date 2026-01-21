@@ -15,7 +15,6 @@ class ResetWallpaperOnboardingPage: HiddenSetting {
     }
 
     override var title: NSAttributedString? {
-        guard let theme else { return nil }
         let seenStatus = UserDefaults.standard.bool(forKey: PrefsKeys.Wallpapers.OnboardingSeenKey) ? "seen" : "unseen"
         return NSAttributedString(string: "Reset wallpaper onboarding sheet (\(seenStatus))",
                                   attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary])

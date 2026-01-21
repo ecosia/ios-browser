@@ -9,7 +9,7 @@ import Common
 class NewTabContentSettingsViewController: SettingsTableViewController {
     /* variables for checkmark settings */
     let prefs: Prefs
-    var currentChoice: NewTabPage?
+    var currentChoice: NewTabPage!
     var hasHomePage = false
     init(prefs: Prefs, windowUUID: WindowUUID) {
         self.prefs = prefs
@@ -27,8 +27,7 @@ class NewTabContentSettingsViewController: SettingsTableViewController {
         self.hasHomePage = NewTabHomePageAccessors.getHomePage(self.prefs) != nil
 
         let onFinished = {
-            guard let currentChoice = self.currentChoice else { return }
-            self.prefs.setString(currentChoice.rawValue, forKey: NewTabAccessors.NewTabPrefKey)
+            self.prefs.setString(self.currentChoice.rawValue, forKey: NewTabAccessors.NewTabPrefKey)
             self.tableView.reloadData()
         }
 
@@ -63,7 +62,8 @@ class NewTabContentSettingsViewController: SettingsTableViewController {
             isChecked: { return !showTopSites.isChecked() && !showBlankPage.isChecked() },
             settingDidChange: { (string) in
                 self.currentChoice = NewTabPage.homePage
-                onFinished()
+                self.prefs.setString(self.currentChoice.rawValue, forKey: NewTabAccessors.NewTabPrefKey)
+                self.tableView.reloadData()
             }
         )
 

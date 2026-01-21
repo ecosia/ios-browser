@@ -5,7 +5,7 @@
 import UIKit
 import Common
 
-protocol ImageHandler: Sendable {
+protocol ImageHandler {
     /// The ImageHandler will fetch the favicon with the following precedence:
     ///     1. Tries to fetch from the cache.
     ///     2. If there is a URL, tries to fetch from the web.
@@ -34,12 +34,12 @@ protocol ImageHandler: Sendable {
     func clearCache()
 }
 
-final class DefaultImageHandler: ImageHandler {
+class DefaultImageHandler: ImageHandler {
     private let imageCache: SiteImageCache
     private let faviconFetcher: FaviconFetcher
     private let letterImageGenerator: LetterImageGenerator
     private let heroImageFetcher: HeroImageFetcher
-    private let logger: Logger = DefaultLogger.shared
+    private var logger: Logger = DefaultLogger.shared
 
     init(imageCache: SiteImageCache = DefaultSiteImageCache(),
          faviconFetcher: FaviconFetcher = DefaultFaviconFetcher(),
@@ -96,7 +96,7 @@ final class DefaultImageHandler: ImageHandler {
         }
     }
 
-    // MARK: - Private
+    // MARK: Private
 
     private func fetchFaviconFromFetcher(imageModel: SiteImageModel) async -> UIImage {
         do {
@@ -141,9 +141,9 @@ final class DefaultImageHandler: ImageHandler {
             }
 
             let image = try await letterImageGenerator.generateLetterImage(siteString: siteString)
-
+            // FIXME Do we really want to cache letter icons and never attempt to get a favicon again?
+            //       We can drop into here on a network timeout.
             await imageCache.cacheImage(image: image, cacheKey: imageModel.cacheKey, type: imageModel.imageType)
-
             return image
         } catch {
             return UIImage(named: "globeLarge")?.withRenderingMode(.alwaysTemplate) ?? UIImage()

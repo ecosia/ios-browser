@@ -6,12 +6,10 @@ import UIKit
 import Common
 
 /// A wrapped UIImageView which displays a plain search engine icon with no tapping features.
-final class PlainSearchEngineView: UIView,
-                                   SearchEngineView,
-                                   ThemeApplicable {
+final class PlainSearchEngineView: UIView, SearchEngineView, ThemeApplicable {
     // MARK: - Properties
     private enum UX {
-        static let cornerRadius: CGFloat = if #available(iOS 26.0, *) { 12 } else { 4 }
+        static let cornerRadius: CGFloat = 4
         static let imageViewSize = CGSize(width: 24, height: 24)
     }
 
@@ -20,15 +18,6 @@ final class PlainSearchEngineView: UIView,
         imageView.layer.cornerRadius = UX.cornerRadius
         imageView.isAccessibilityElement = true
         imageView.clipsToBounds = true
-    }
-
-    private var theme: Theme?
-    private var isURLTextFieldCentered = false {
-        didSet {
-            // We need to call applyTheme to ensure the colors are updated in sync whenever the layout changes.
-            guard let theme, isURLTextFieldCentered != oldValue else { return }
-            applyTheme(theme: theme)
-        }
     }
 
     // MARK: - Init
@@ -41,10 +30,9 @@ final class PlainSearchEngineView: UIView,
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(_ config: LocationViewConfiguration, isLocationTextCentered: Bool, delegate: LocationViewDelegate) {
-        isURLTextFieldCentered = isLocationTextCentered
-        searchEngineImageView.image = config.searchEngineImage
-        configureA11y(config)
+    func configure(_ state: LocationViewState, delegate: LocationViewDelegate) {
+        searchEngineImageView.image = state.searchEngineImage
+        configureA11y(state)
     }
 
     // MARK: - Layout
@@ -67,10 +55,10 @@ final class PlainSearchEngineView: UIView,
 
     // MARK: - Accessibility
 
-    private func configureA11y(_ config: LocationViewConfiguration) {
-        searchEngineImageView.accessibilityIdentifier = config.searchEngineImageViewA11yId
-        searchEngineImageView.accessibilityLabel = config.searchEngineImageViewA11yLabel
-        searchEngineImageView.largeContentTitle = config.searchEngineImageViewA11yLabel
+    private func configureA11y(_ state: LocationViewState) {
+        searchEngineImageView.accessibilityIdentifier = state.searchEngineImageViewA11yId
+        searchEngineImageView.accessibilityLabel = state.searchEngineImageViewA11yLabel
+        searchEngineImageView.largeContentTitle = state.searchEngineImageViewA11yLabel
         searchEngineImageView.largeContentImage = nil
     }
 
@@ -78,7 +66,6 @@ final class PlainSearchEngineView: UIView,
 
     func applyTheme(theme: Theme) {
         let colors = theme.colors
-        searchEngineImageView.backgroundColor = isURLTextFieldCentered ? colors.layerSurfaceLow : colors.layer2
-        self.theme = theme
+        searchEngineImageView.backgroundColor = colors.layer2
     }
 }

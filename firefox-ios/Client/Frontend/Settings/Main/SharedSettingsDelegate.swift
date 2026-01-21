@@ -7,8 +7,6 @@ import Shared
 
 /// The actions used by multiple child settings
 protocol SharedSettingsDelegate: AnyObject {
-    @MainActor
     func askedToReload()
-    @MainActor
     func askedToShow(alert: AlertController)
 }

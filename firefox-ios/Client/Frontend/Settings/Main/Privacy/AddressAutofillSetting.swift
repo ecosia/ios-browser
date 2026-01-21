@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Shared
 
 // MARK: - AddressAutofillSetting
 class AddressAutofillSetting: Setting {
@@ -19,7 +20,6 @@ class AddressAutofillSetting: Setting {
 
     /// The accessory view for the setting, indicating it has additional details.
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
 

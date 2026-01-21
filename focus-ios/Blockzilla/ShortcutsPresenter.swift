@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ShortcutsPresenter {
+class ShortcutsPresenter {
     public enum ShortcutsState {
         case createShortcutViews
         case onHomeView

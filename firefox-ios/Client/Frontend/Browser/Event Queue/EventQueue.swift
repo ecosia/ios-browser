@@ -6,10 +6,10 @@ import Foundation
 import Common
 
 /// The default app-wide queue for Firefox iOS.
-let AppEventQueue = EventQueue<AppEvent>()
+public let AppEventQueue = EventQueue<AppEvent>()
 
 /// Action taken when an event's dependencies are completed.
-typealias EventQueueAction = (@Sendable () -> Void)
+typealias EventQueueAction = (() -> Void)
 /// Unique ID associated with an enqueued action.
 typealias ActionToken = UUID
 
@@ -19,17 +19,16 @@ typealias ActionToken = UUID
 ///
 /// (Note: there is an additional implicit state, "not started", which is indicated
 /// by the event being absent from the event queue altogether.)
-enum QueueEventState: Int {
+public enum QueueEventState: Int {
     case inProgress
     case completed
     case failed
 }
 
-// TODO: FXIOS-14149 - EventQueue shouldn't be @unchecked Sendable
 /// A queue that provides synchronization between different areas of the codebase and coordinates
 /// actions that depend on one or more events or app states. For example events see: AppEvent.swift.
-final class EventQueue<QueueEventType: Hashable & Sendable>: @unchecked Sendable {
-    struct EnqueuedAction {
+public final class EventQueue<QueueEventType: Hashable> {
+    public struct EnqueuedAction {
         let token: ActionToken
         let action: EventQueueAction
         let dependencies: [QueueEventType]
@@ -59,7 +58,7 @@ final class EventQueue<QueueEventType: Hashable & Sendable>: @unchecked Sendable
     /// particular action; if so, any subsequent calls to this function will _not_ enqueue
     /// that action again if it is already pending execution. This provides a convenience
     /// for de-duplicating calls that might accidentally enqueue the same action twice.
-    ///
+    /// 
     /// - Parameters:
     ///   - events: the dependent events.
     ///   - token: an optional UUID that identifies the specific work being enqueued. If
@@ -81,6 +80,7 @@ final class EventQueue<QueueEventType: Hashable & Sendable>: @unchecked Sendable
               then action: @escaping EventQueueAction) -> ActionToken {
         mainQueue.ensureMainThread { [weak self] in
             guard let self else { return }
+
             // If a specific ID has been provided for this action, ensure
             guard !actions.contains(where: { $0.token == token }) else {
                 logger.log("Ignoring duplicate action (ID: \(token))", level: .info, category: .library)

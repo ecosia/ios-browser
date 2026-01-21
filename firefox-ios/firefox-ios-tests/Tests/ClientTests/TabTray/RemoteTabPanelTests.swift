@@ -4,38 +4,37 @@
 
 import Common
 import Storage
+import Shared
 import XCTest
 
 @testable import Client
 
 final class RemoteTabPanelTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
-    @MainActor
     func testTableView_emptyStateNoRows() {
         let remotePanel = createSubject(state: generateEmptyState())
-        let tableView = remotePanel.tabsDisplayViewController.tableView
+        let tableView = remotePanel.tableViewController.tableView
 
         XCTAssertNotNil(tableView)
-        XCTAssertEqual(tableView.numberOfSections, 0)
+        XCTAssertEqual(tableView!.numberOfSections, 0)
     }
 
-    @MainActor
     func testTableView_oneClientTwoRows() {
         let remotePanel = createSubject(state: generateStateOneClientTwoTabs())
-        let tableView = remotePanel.tabsDisplayViewController.tableView
+        let tableView = remotePanel.tableViewController.tableView
 
         XCTAssertNotNil(tableView)
-        XCTAssertEqual(tableView.numberOfSections, 1)
-        XCTAssertEqual(tableView.numberOfRows(inSection: 0), 2)
+        XCTAssertEqual(tableView!.numberOfSections, 1)
+        XCTAssertEqual(tableView!.numberOfRows(inSection: 0), 2)
     }
 
     // MARK: - Private
@@ -50,13 +49,15 @@ final class RemoteTabPanelTests: XCTestCase {
                              title: "Mozilla Homepage",
                              history: [],
                              lastUsed: 0,
-                             icon: nil)
+                             icon: nil,
+                             inactive: false)
         let tab2 = RemoteTab(clientGUID: "123",
                              URL: URL(string: "https://google.com")!,
                              title: "Google Homepage",
                              history: [],
                              lastUsed: 0,
-                             icon: nil)
+                             icon: nil,
+                             inactive: false)
         let fakeTabs: [RemoteTab] = [tab1, tab2]
         let client = RemoteClient(guid: "123",
                                   name: "Client",
@@ -71,13 +72,11 @@ final class RemoteTabPanelTests: XCTestCase {
                                     refreshState: .idle,
                                     allowsRefresh: true,
                                     clientAndTabs: fakeData,
-                                    showingEmptyState: nil,
-                                    devices: [])
+                                    showingEmptyState: nil)
     }
 
-    @MainActor
     private func createSubject(state: RemoteTabsPanelState,
-                               file: StaticString = #filePath,
+                               file: StaticString = #file,
                                line: UInt = #line) -> RemoteTabsPanel {
         let subject = RemoteTabsPanel(windowUUID: .XCTestDefaultUUID)
         subject.newState(state: state)

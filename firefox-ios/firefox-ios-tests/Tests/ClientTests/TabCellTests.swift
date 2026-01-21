@@ -5,23 +5,20 @@
 import XCTest
 
 @testable import Client
-
-@MainActor
 class TabCellTests: XCTestCase {
     var cellDelegate: MockTabCellDelegate!
     var profile: MockProfile!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         cellDelegate = MockTabCellDelegate()
         profile = MockProfile()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         cellDelegate = nil
         profile = nil
-
-        try await super.tearDown()
     }
 
     func testTabCellDeinit() {
@@ -32,22 +29,22 @@ class TabCellTests: XCTestCase {
     func testConfigureTabAXLabel() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "")
+        cell.configure(with: state, theme: nil, delegate: cellDelegate)
         XCTAssert(cell.accessibilityLabel!.contains(state.tabTitle))
     }
 
     func testConfigureTabAXHint() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "")
+        cell.configure(with: state, theme: nil, delegate: cellDelegate)
         XCTAssertEqual(cell.accessibilityHint!,
-                       .TabsTray.TabTraySwipeToCloseAccessibilityHint)
+                       String.TabTraySwipeToCloseAccessibilityHint)
     }
 
     func testConfigureTabSelectedState() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "")
+        cell.configure(with: state, theme: nil, delegate: cellDelegate)
         XCTAssertEqual(cell.isSelectedTab,
                        state.isSelected)
     }

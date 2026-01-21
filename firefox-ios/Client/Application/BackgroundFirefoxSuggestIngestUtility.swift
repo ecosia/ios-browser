@@ -2,15 +2,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-// TODO: FXIOS-14194 - @preconcurrency on BackgroundTasks
-@preconcurrency import BackgroundTasks
+import BackgroundTasks
 import Common
 import Foundation
+import Shared
 import Storage
 
 /// A background utility that downloads and stores new Firefox Suggest
 /// suggestions when the device is online and connected to power.
-final class BackgroundFirefoxSuggestIngestUtility: BackgroundUtilityProtocol, FeatureFlaggable, @unchecked Sendable {
+class BackgroundFirefoxSuggestIngestUtility: BackgroundUtilityProtocol, FeatureFlaggable {
     static let taskIdentifier = "org.mozilla.ios.firefox.suggest.ingest"
 
     let firefoxSuggest: RustFirefoxSuggestProtocol
@@ -55,7 +55,7 @@ final class BackgroundFirefoxSuggestIngestUtility: BackgroundUtilityProtocol, Fe
                    level: .debug,
                    category: .storage)
         do {
-            try await firefoxSuggest.ingest(emptyOnly: false)
+            try await firefoxSuggest.ingest()
             logger.log("Successfully ingested new suggestions",
                        level: .debug,
                        category: .storage)

@@ -3,16 +3,11 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import UIKit
-import Foundation
+import Shared
 
 class MockThemeManager: ThemeManager {
-    var isNewAppearanceMenuOn = true
-
     var getCurrentThemeCallCount = 0
     private var currentThemeStorage: Theme = LightTheme()
-
-    var resolvedThemeCalledCount = 0
 
     func getCurrentTheme(for window: UUID?) -> Theme {
         getCurrentThemeCallCount += 1
@@ -27,11 +22,6 @@ class MockThemeManager: ThemeManager {
     var automaticBrightnessIsOn: Bool { return false}
 
     var automaticBrightnessValue: Float { return 0.4}
-
-    func resolvedTheme(with shouldShowPrivateTheme: Bool) -> Theme {
-        resolvedThemeCalledCount += 1
-        return currentThemeStorage
-    }
 
     func getInterfaceStyle() -> UIUserInterfaceStyle {
         return .light

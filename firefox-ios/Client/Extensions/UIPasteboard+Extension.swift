@@ -24,16 +24,25 @@ extension UIPasteboard {
 
     private var syncURL: URL? {
         return UIPasteboard.general.string.flatMap {
-            guard let url = URL(string: $0),
-                  url.isWebPage()
+            guard let url = URL(string: $0, invalidCharacters: false),
+                    url.isWebPage()
             else { return nil }
             return url
         }
     }
 
+    /// Preferred method to get strings out of the clipboard.
+    /// When iCloud pasteboards are enabled, the usually fast, synchronous calls
+    /// become slow and synchronous causing very slow start up times.
+    func asyncString(completionHandler: @escaping (String?) -> Void) {
+        DispatchQueue.global().async {
+            completionHandler(UIPasteboard.general.string)
+        }
+    }
+
     /// Preferred method to get URLs out of the clipboard.
-    func asyncURL(completionHandler: @Sendable @escaping (URL?) -> Void) {
-        Task {
+    func asyncURL(completionHandler: @escaping (URL?) -> Void) {
+        DispatchQueue.global().async {
             completionHandler(self.syncURL)
         }
     }

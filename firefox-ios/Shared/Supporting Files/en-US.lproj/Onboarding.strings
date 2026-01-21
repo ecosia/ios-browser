@@ -1,7 +1,7 @@
 /* The title of the button on the Default Browser Popup, which is a card with instructions telling the user how to set Firefox as their default browser. */
 "DefaultBrowserPopup.ButtonTitle.v114" = "Go to Settings";
 
-/* The footer label on the Default Browser Popup, which is below all the instructions asking the users if their browser is the default browser. %@ is the app name (e.g. Firefox). If it is then close this message and tap skip. The *text inside asterisks* denotes part of the string to bold, please leave the text inside the '*' so that it is bolded correctly. */
+/* The footer label on the Default Browser Popup, which is below all the instructions asking the users if their Firefox browser is the default browser. If it is then close this message and tap skip. The *text inside asterisks* denotes part of the string to bold, please leave the text inside the '*' so that it is bolded correctly. */
 "DefaultBrowserPopup.DescriptionFooter.v124" = "*Is %@ already your default?* Close this message and tap Skip.";
 
 /* The first label on the Default Browser Popup, which is a card with instructions telling the user how to set Firefox as their default browser. The *text inside asterisks* denotes part of the string to bold, please leave the text inside the '*' so that it is bolded correctly. */
@@ -10,13 +10,13 @@
 /* The second label on the Default Browser Popup, which is a card with instructions telling the user how to set Firefox as their default browser. The *text inside asterisks* denotes part of the string to bold, please leave the text inside the '*' so that it is bolded correctly. */
 "DefaultBrowserPopup.SecondLabel.v114" = "2. Tap *Default Browser App*";
 
-/* The third label on the Default Browser Popup, which is a card with instructions telling the user how to set Firefox as their default browser. %@ is the app name (e.g. Firefox). The *text inside asterisks* denotes part of the string to bold, please leave the text inside the '*' so that it is bolded correctly. */
+/* The third label on the Default Browser Popup, which is a card with instructions telling the user how to set Firefox as their default browser. Placeholder is the app name. The *text inside asterisks* denotes part of the string to bold, please leave the text inside the '*' so that it is bolded correctly. */
 "DefaultBrowserPopup.ThirdLabel.v114" = "3. Select *%@*";
 
 /* The title on the Default Browser Popup, which is a card with instructions telling the user how to set Firefox as their default browser. */
 "DefaultBrowserPopup.Title.v114" = "Switch Your Default Browser";
 
-/* String used to describe the option to continue to the next onboarding card in Firefox Onboarding screens. %@ is the app name (e.g. Firefox). */
+/* String used to describe the option to continue to the next onboarding card in Firefox Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Customization.Intro.Continue.Action.v123" = "Customize %@";
 
 /* String used to describe the description label of the customization onboarding page in our Onboarding screens. */
@@ -25,7 +25,7 @@
 /* String used to describe the option to skip the customization cards in Firefox Onboarding screens and start browsing. */
 "Onboarding.Customization.Intro.Skip.Action.v123" = "Start Browsing";
 
-/* String used to describe the title of the customization onboarding page in our Onboarding screens. %@ is the app name (e.g. Firefox). */
+/* String used to describe the title of the customization onboarding page in our Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Customization.Intro.Title.v123" = "%@ puts you in control";
 
 /* String used to describe the option to save the user setting and continue to the next onboarding in Firefox Onboarding screens. */
@@ -79,19 +79,22 @@
 /* String used to describe the option to continue to ask for the notification permission in Firefox Onboarding screens. */
 "Onboarding.Notification.Continue.Action.v114" = "Continue";
 
-/* String used to describe the description of the notification onboarding page in our Onboarding screens. %@ is the app name (e.g. Firefox). */
+/* String used to describe the description of the notification onboarding page in our Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Notification.Description.v120" = "Securely send tabs between your devices and discover other privacy features in %@.";
 
 /* String used to describe the option to skip the notification permission in Firefox Onboarding screens. */
 "Onboarding.Notification.Skip.Action.v115" = "Skip";
 
-/* String used to describe the title of the notification onboarding page in our Onboarding screens. %@ is the app name (e.g. Firefox). */
+/* String used to describe the title of the notification onboarding page in our Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Notification.Title.v120" = "Notifications help you stay safer with %@";
 
 /* String used to describe the option to continue to ask for the notification permission in Firefox Onboarding screens. */
 "Onboarding.Notification.TurnOnNotifications.Action.v114" = "Turn On Notifications";
 
-/* String used to describes the description of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. %@ is the app name (e.g. Firefox). */
+/* String used to describes the description of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. Placeholder is for the app name. */
+"Onboarding.Sync.Description.v120" = "When you’re signed in and synced, you’re safer. %@ encrypts your passwords, bookmarks, and more.";
+
+/* String used to describes the description of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Sync.Description.v123" = "%@ encrypts your passwords, bookmarks, and more when you’re synced.";
 
 /* String used to describes the option to skip the Sync sign in during onboarding for the current version in Firefox Onboarding screens. */
@@ -118,7 +121,7 @@
 /* Title for the wallpaper onboarding modal displayed on top of the homepage. This describes to the user that they can choose different wallpapers. */
 "Onboarding.Wallpaper.SelectorTitle.v114" = "Try a splash of color";
 
-/* Title for the wallpaper onboarding page in our Onboarding screens. This describes to the user that they can choose different wallpapers. %@ is the app name (e.g. Firefox). */
+/* Title for the wallpaper onboarding page in our Onboarding screens. This describes to the user that they can choose different wallpapers. Placeholder is for app name. */
 "Onboarding.Wallpaper.Title.v114" = "Choose a %@ Wallpaper";
 
 /* Describes the action on the first onboarding page in our Onboarding screen. This string will be on a button so user can continue the onboarding. */
@@ -127,13 +130,13 @@
 /* Describes the action on the first onboarding page in our Onboarding screen. This indicates that the user will set their default browser to Firefox. */
 "Onboarding.Welcome.ActionTreatementA.v114" = "Set as Default Browser";
 
-/* Accessibility label for close button that dismisses the welcome onboarding screen. %@ is the app name (e.g. Firefox). */
+/* Accessibility label for close button that dismisses the welcome onboarding screen. Placeholder is for the app name. */
 "Onboarding.Welcome.Close.AccessibilityLabel.v121" = "Close and exit %@ onboarding";
 
 /* String used to describes the description of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. */
 "Onboarding.Welcome.Description.TreatementA.v120" = "Our non-profit backed browser helps stop companies from secretly following you around the web.";
 
-/* String used to describes the description of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. %@ is the app name (e.g. Firefox). */
+/* String used to describes the description of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Welcome.Description.v120" = "Our non-profit backed browser helps stop companies from secretly following you around the web.";
 
 /* String used to describe the title of link button is on the welcome onboarding page for current version in our Onboarding screens. */
@@ -148,278 +151,3 @@
 /* String used to describes the title of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. */
 "Onboarding.Welcome.Title.v114" = "Welcome to an independent internet";
 
-/* String used to describe the option to save the user setting and continue to the next onboarding in Firefox Onboarding screens. */
-"Onboarding.Modern.Customization.Theme.Continue.Action.v140" = "Continue";
-
-/* On the toolbar customization onboarding card, the string used to describe the option to set the toolbar at the bottom of the screen. */
-"Onboarding.Modern.Customization.Toolbar.Bottom.Action.v140" = "Bottom";
-
-/* String used to describe the title of the toolbar customization onboarding page in our Onboarding screens. */
-"Onboarding.Modern.Customization.Toolbar.Title.v140" = "Choose where to put your address bar";
-
-/* On the toolbar customization onboarding card, the string used to describe the option to set the toolbar at the top of the screen. */
-"Onboarding.Modern.Customization.Toolbar.Top.Action.v140" = "Top";
-
-/* String used to describe Firefox on the Sync onboarding page for the current version of our onboarding screens. */
-"Onboarding.Modern.Sync.Description.v140" = "Get your bookmarks, history, and passwords on any device.";
-
-/* String used to describes the option to skip the Sync sign in during onboarding for the current version in Firefox Onboarding screens. */
-"Onboarding.Modern.Sync.SignIn.Action.v140" = "Start Syncing";
-
-/* String used to describes the option to skip the Sync sign in during onboarding for the current version in Firefox Onboarding screens. */
-"Onboarding.Modern.Sync.Skip.Action.v140" = "Not now";
-
-/* String used to describes the title of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. */
-"Onboarding.Modern.Sync.Title.v140" = "Instantly pick up where you left off";
-
-/* Title for the confirmation button for Terms of Service agreement, in the Terms of Service screen. */
-"Onboarding.Modern.TermsOfService.AgreementButtonTitle.v140" = "Continue";
-
-/* Title for the Manage button link, in the Terms of Service screen for redirecting the user to the Manage data collection preferences screen. */
-"Onboarding.Modern.TermsOfService.ManageLink.v140" = "Manage";
-
-/* Agreement text for sending diagnostic and interaction data to Mozilla in the Terms of Service screen. %1$@ is the app name (e.g. Firefox), %2$@ is company name (e.g. Mozilla), %3$@ is a Manage link button which redirect the user to another screen in order to manage the data collection preferences. */
-"Onboarding.Modern.TermsOfService.ManagePreferenceAgreement.v140" = "To help improve the browser, %1$@ sends diagnostic and interaction data to %2$@. %3$@";
-
-/* Agreement text for Privacy Notice in the Terms of Service screen. %1$@ is the app name (e.g. Firefox), %2$@ is for the Privacy Notice link button that redirect the user to the Privacy Notice page. */
-"Onboarding.Modern.TermsOfService.PrivacyNoticeAgreement.v140" = "%1$@ cares about your privacy. Read more in our %2$@";
-
-/* Title for the Privacy Notice button link, in the Terms of Service screen for redirecting the user to the Privacy Notice page. */
-"Onboarding.Modern.TermsOfService.PrivacyNoticeLink.v140" = "Privacy Notice.";
-
-/* A text that indicate to the user, a link button is available to be clicked for reading more information about the option that is going to choose in Manage Privacy Preferences screen, where user can choose from the option to send data to Firefox or not. */
-"Onboarding.Modern.TermsOfService.PrivacyPreferences.LearnMore.v140" = "Learn more";
-
-/* Description for the send crash reports switch option in Manage Privacy Preferences screen, where user can choose from the option to send data to Firefox or not. %@ is for the Learn more button link, to open a link where user can find more information about this send crash reports option. */
-"Onboarding.Modern.TermsOfService.PrivacyPreferences.SendCrashReportsDescription.v140" = "Crash reports allow us to diagnose and fix issues with the browser. %@";
-
-/* Title for the send crash reports switch option in Manage Privacy Preferences screen, where user can choose from the option to send data to Firefox or not. */
-"Onboarding.Modern.TermsOfService.PrivacyPreferences.SendCrashReportsTitle.v140" = "Automatically send crash reports";
-
-/* Description for the technical and interaction data switch option in Manage Privacy Preferences screen, where user can choose from the option to send data to Firefox or not. %1$@ is the app name (e.g. Firefox), %2$@ is for the Learn more button link, to open a link where user can find more information about this send technical and interaction data option. */
-"Onboarding.Modern.TermsOfService.PrivacyPreferences.SendTechnicalDataDescription.v140" = "Data about your device, hardware configuration, and how you use %1$@ helps improve features, performance, and stability for everyone. %2$@";
-
-/* Title for the send technical and interaction data switch option in Manage Privacy Preferences screen, where user can choose from the option to send data to Firefox or not. %@ is the company name (e.g. Mozilla). */
-"Onboarding.Modern.TermsOfService.PrivacyPreferences.SendTechnicalDataTitle.v140" = "Send technical and interaction data to %@";
-
-/* Title for the Manage Privacy Preferences screen, where user can choose from the option to send data to Firefox or not. Data like crash reports or technical and interaction data. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.TermsOfService.PrivacyPreferences.Title.v140" = "Help us make %@ better";
-
-/* Subtitle for the Terms of Service screen in the onboarding process. The '\n' symbols denote empty lines separating the first link parameter from the rest of the text. */
-"Onboarding.Modern.TermsOfService.Subtitle.v140" = "Load sites lightning fast\nAutomatic tracking protection\nSync on all your devices";
-
-/* Agreement text for Terms of Service in the Terms of Service screen. %@ is the Terms of Service link button that redirect the user to the Terms of Service page. */
-"Onboarding.Modern.TermsOfService.TermsOfServiceAgreement.v140" = "By continuing, you agree to the %@";
-
-/* Title for the Terms of Service screen in the onboarding process. */
-"Onboarding.Modern.TermsOfService.Title.v140" = "Upgrade your browsing";
-
-/* Title for the Terms of Use button link, in the Terms of Use screen for redirecting the user to the Terms of Use page. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.TermsOfUse.TermsOfUseLink.v140" = "%@ Terms of Use.";
-
-/* Describes the action on the first onboarding page in our Onboarding screen. This indicates that the user will set their default browser to Firefox. */
-"Onboarding.Modern.Welcome.ActionTreatementA.v140" = "Set as Default Browser";
-
-/* String used to describe Firefox on the welcome onboarding page for the current version of our onboarding screens. */
-"Onboarding.Modern.Welcome.Description.v140" = "One choice protects you everywhere you go on the web. You can always change it later.";
-
-/* Describes the action on the first onboarding page in our Onboarding screen. This string will be on a button so user can skip this onboarding card. */
-"Onboarding.Modern.Welcome.Skip.v140" = "Not Now";
-
-/* String used to describes the title of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. */
-"Onboarding.Modern.Welcome.Title.v140" = "Say goodbye to creepy ads";
-
-/* String used to describe the title of the theme customization onboarding page in our Onboarding screens. */
-"Onboarding.Customization.Theme.Title.v143" = "Choose your theme";
-
-/* Button to skip the entire onboarding flow. */
-"Onboarding.Modern.General.Skip.v145" = "Skip";
-
-/* Title for the welcome card in the v2 onboarding flow. */
-"Onboarding.Modern.Welcome.Title.v145" = "Say goodbye to creepy trackers";
-
-/* Description for the welcome card in the v2 onboarding flow. */
-"Onboarding.Modern.Welcome.Description.v145" = "One choice protects you everywhere you go on the web. You can always change it later.";
-
-/* Action button to set the app as the default browser. */
-"Onboarding.Modern.Welcome.ActionTreatmentA.v145" = "Set as Default Browser";
-
-/* Button to skip the welcome card. */
-"Onboarding.Modern.Welcome.Skip.v145" = "Not Now";
-
-/* Title for the toolbar customization card. */
-"Onboarding.Modern.Customization.Toolbar.Title.v145" = "Choose your address bar";
-
-/* Action to set the toolbar to the bottom. */
-"Onboarding.Modern.Customization.Toolbar.Bottom.Action.v145" = "Bottom";
-
-/* Action to set the toolbar to the top. */
-"Onboarding.Modern.Customization.Toolbar.Top.Action.v145" = "Top";
-
-/* Description for the toolbar customization card. */
-"Onboarding.Modern.Customization.Toolbar.Description.v145" = "Start typing to get search suggestions, your top sites, bookmarks, history and search engines – all in one place.";
-
-/* Continue button on the toolbar customization card. */
-"Onboarding.Modern.Customization.Toolbar.Continue.Action.v145" = "Continue";
-
-/* Title for the theme selection card. */
-"Onboarding.Modern.Customization.Theme.Title.v145" = "Pick your theme";
-
-/* Option for the automatic theme. */
-"Onboarding.Modern.Customization.Theme.Automatic.v145" = "Automatic";
-
-/* Option for the light theme. */
-"Onboarding.Modern.Customization.Theme.Light.v145" = "Light";
-
-/* Option for the dark theme. */
-"Onboarding.Modern.Customization.Theme.Dark.v145" = "Dark";
-
-/* Description for the theme selection card. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.Customization.Theme.Description.v145" = "Pick your favorite theme or have %@ match your device, putting you in control.";
-
-/* Title for the Sync card in the v2 onboarding flow. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.Sync.Title.v145" = "Take %@ on all your browsing adventures";
-
-/* Description for the Sync card in the v2 onboarding flow. */
-"Onboarding.Modern.Sync.Description.v145" = "Your bookmarks, passwords, and more sync on any device. Everything’s protected with encryption, so only you can access it.";
-
-/* Button to start the Sync setup process. */
-"Onboarding.Modern.Sync.SignIn.Action.v145" = "Start Syncing";
-
-/* Button to skip the Sync setup during onboarding. */
-"Onboarding.Modern.Sync.Skip.Action.v145" = "Not now";
-
-/* Title for the Terms of Service screen in the v2 onboarding flow. */
-"Onboarding.Modern.TermsOfService.Title.v145" = "Take charge of the internet";
-
-/* Description for the Terms of Service screen in the v2 onboarding flow. The '\n' symbols denote line breaks. %@ is the company name (e.g. Mozilla)*/
-"Onboarding.Modern.TermsOfService.Description.v145" = "Automatic protection of your personal info\nLoad sites fast and search smarter\nBrought to you by the non-profit %@, trusted for over 20 years";
-
-/* Title for the confirmation button on the Terms of Service screen. */
-"Onboarding.Modern.TermsOfService.AgreementButtonTitle.v145" = "Continue";
-
-/* Agreement text for Terms of Service. %@ is the placeholder for the Terms of Use link. */
-"Onboarding.Modern.TermsOfService.TermsOfServiceAgreement.v145" = "By continuing, you agree to the %@";
-
-/* The text for the Terms of Use link button. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.TermsOfService.TermsOfUseLink.v145" = "%@ Terms of Use.";
-
-/* Agreement text for Privacy Notice. %1$@ is the app name (e.g. Firefox), %2$@ is the placeholder for the Privacy Notice link. */
-"Onboarding.Modern.TermsOfService.PrivacyNoticeAgreement.v145" = "%1$@ cares about your privacy. Read more in our %2$@";
-
-/* The text for the Privacy Notice link button. */
-"Onboarding.Modern.TermsOfService.PrivacyNoticeLink.v145" = "Privacy Notice.";
-
-/* Agreement text for sending data. %1$@ is the app name, %2$@ is the company name, %3$@ is the placeholder for the Manage settings link. */
-"Onboarding.Modern.TermsOfService.ManagePreferenceAgreement.v145" = "To help improve the browser, %1$@ sends diagnostic and interaction data to %2$@. %3$@";
-
-/* The text for the Manage settings link button. */
-"Onboarding.Modern.TermsOfService.ManageLink.v145" = "Manage settings";
-
-/* Title for the Terms of Use card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.Title.v148" = "Get ready to run free";
-
-/* Description for the Terms of Use card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.Description.v148" = "Speedy, safe, and won’t sell you out. Browsing just got better.";
-
-/* Agreement text for Terms of Use in the v148 brand refresh onboarding flow. %@ is the Terms of Use link button that redirects the user to the Terms of Use page. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.TermsOfUseAgreement.v148" = "By continuing, you agree to the %@";
-
-/* Agreement text for Privacy Notice in the v148 brand refresh onboarding flow. %1$@ is the app name (e.g. Firefox), %2$@ is the Privacy Notice link button that redirects the user to the Privacy Notice page. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.PrivacyNoticeAgreement.v148" = "%1$@ cares about your privacy. Read more in our %2$@";
-
-/* Agreement text for sending diagnostic and interaction data in the v148 brand refresh onboarding flow. %1$@ is the app name (e.g. Firefox), %2$@ is the company name (e.g. Mozilla), %3$@ is the manage settings link button that redirects the user to manage data collection preferences. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.ManagePreferenceAgreement.v148" = "To help improve the browser, %1$@ sends diagnostic and interaction data to %2$@. %3$@";
-
-/* Button title for agreeing to Terms of Use in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.AgreementButtonTitle.v148" = "Agree and continue";
-
-/* Button title for agreeing to Terms of Use in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.AgreementButtonTitle.v148.v2" = "Continue";
-
-/* The text for the Terms of Use link button in the v148 brand refresh onboarding flow. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.TermsOfUseLink.v148" = "%@ Terms of Use";
-
-/* The text for the Privacy Notice link button in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.PrivacyNoticeLink.v148" = "Privacy Notice";
-
-/* The text for the manage settings link button in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.ManageLink.v148" = "Manage settings";
-
-/* Title for the welcome card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Welcome.Title.v148" = "Say goodbye to creepy trackers";
-
-/* Title for the welcome card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Welcome.Title.v148.v2" = "Open your links with built-in privacy";
-
-/* Description for the welcome card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Welcome.Description.v148" = "We protect your data and automatically block companies from spying on your clicks.";
-
-/* Action button to set the app as the default browser in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Welcome.ActionTreatmentA.v148" = "Set as Default Browser";
-
-/* Button to skip the welcome card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Welcome.Skip.v148" = "Not Now";
-
-/* Title for the toolbar customization card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Customization.Toolbar.Title.v148" = "Choose your address bar";
-
-/* Description for the toolbar customization card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Customization.Toolbar.Description.v148" = "Start typing to get search suggestions, your top sites, bookmarks, history and search engines – all in one place.";
-
-/* Continue button on the toolbar customization card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Customization.Toolbar.Continue.Action.v148" = "Continue";
-
-/* Title for the theme selection card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Customization.Theme.Title.v148" = "Pick your theme";
-
-/* Option for the automatic theme in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Customization.Theme.Automatic.v148" = "Automatic";
-
-/* Option for the light theme in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Customization.Theme.Light.v148" = "Light";
-
-/* Option for the dark theme in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Customization.Theme.Dark.v148" = "Dark";
-
-/* Description for the theme selection card in the v148 brand refresh onboarding flow. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.BrandRefresh.Customization.Theme.Description.v148" = "Pick your favorite theme or have %@ match your device, putting you in control.";
-
-/* Continue button on the theme selection card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Customization.Theme.Continue.Action.v148" = "Continue";
-
-/* Title for the sync card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Sync.Title.v148" = "Instantly pick up where you left off";
-
-/* Description for the sync card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Sync.Description.v148" = "Grab bookmarks, passwords, and more on any device in a snap. Your personal data stays safe and secure with encryption.";
-
-/* Button to start the sync setup process in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Sync.SignIn.Action.v148" = "Start Syncing";
-
-/* Button to skip the sync setup during onboarding in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Sync.Skip.Action.v148" = "Not Now";
-
-/* Title for the marketing data sharing card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Marketing.Title.v148" = "Help us build a better internet";
-
-/* Description for the marketing data sharing card in the v148 brand refresh onboarding flow. %1$@ is the app name (e.g. Firefox), %2$@ is the company name (e.g. Mozilla). */
-"Onboarding.Modern.BrandRefresh.Marketing.Description.v148" = "Share how you discovered %1$@, and that you use it, with %2$@’s marketing partners. This data is never sold.";
-
-/* Link text for learning more about how marketing data is used in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Marketing.LearnMoreLink.v148" = "How we use the data";
-
-/* Button to skip the marketing data sharing card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Marketing.Skip.Action.v148" = "Not Now";
-
-/* Title for the notification card in the v148 brand refresh onboarding flow. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.BrandRefresh.Notification.Title.v148" = "Notifications help you stay safer with %@";
-
-/* Description for the notification card in the v148 brand refresh onboarding flow. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.BrandRefresh.Notification.Description.v148" = "Discover privacy features in %@ and securely send tabs between your devices.";
-
-/* Button to turn on notifications in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Notification.TurnOn.Action.v148" = "Turn on notifications";
-
-/* Button to skip the notification card in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.Notification.Skip.Action.v148" = "Not Now";

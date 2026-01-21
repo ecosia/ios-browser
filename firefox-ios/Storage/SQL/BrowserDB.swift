@@ -8,9 +8,9 @@ import Shared
 
 public typealias Args = [Any?]
 
-public final class BrowserDB: Sendable {
+open class BrowserDB {
     fileprivate let db: SwiftData
-    private let logger: Logger
+    private var logger: Logger
 
     public let databasePath: String
 
@@ -107,15 +107,14 @@ public final class BrowserDB: Sendable {
     }
 
     func queryReturnsResults(_ sql: String, args: Args? = nil) -> Deferred<Maybe<Bool>> {
-        return chainDeferred(runQuery(sql, args: args, factory: { _ in true })) { cursor in
-            return deferMaybe(cursor[0] ?? false)
-        }
+        return runQuery(sql, args: args, factory: { _ in true })
+         >>== { deferMaybe($0[0] ?? false) }
     }
 }
 
 /// The sqlite-backed implementation of the history protocol.
 /// Currently only supports pinned sites and favicons
-public final class BrowserDBSQLite: Sendable {
+open class BrowserDBSQLite {
     let database: BrowserDB
     let prefs: Prefs
     let notificationCenter: NotificationCenter

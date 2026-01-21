@@ -17,15 +17,8 @@ class MetricKitWrapper: NSObject, MXMetricManagerSubscriber {
         self.measurementFormatter.unitOptions = .providedUnit
 
         super.init()
-    }
-
-    // MARK: - Public API
-
-    func beginObservingMXPayloads() {
         MXMetricManager.shared.add(self)
     }
-
-    // MARK: - MXMetricManagerSubscriber
 
     func didReceive(_ payloads: [MXDiagnosticPayload]) {
         payloads.forEach { payload in
@@ -40,8 +33,6 @@ class MetricKitWrapper: NSObject, MXMetricManagerSubscriber {
             })
         }
     }
-
-    // MARK: - Private Telemetry Handlers
 
     private func handleDiskWriteException(_ exception: MXDiskWriteExceptionDiagnostic) {
         let size = Int32(measurementFormatter.string(from: exception.totalWritesCaused)) ?? -1

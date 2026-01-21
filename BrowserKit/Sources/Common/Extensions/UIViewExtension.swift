@@ -10,30 +10,17 @@ extension UIView {
     /// Calling this function creates a new view with `translatesAutoresizingMaskIntoConstraints`
     /// set to false. Passing in an optional closure to do further configuration of the view.
     ///
-    /// - Parameters:
-    ///   - builder: A function that takes the newly created view.
-    ///   - initializer: An optional closure that returns a custom instance of the view.
-    ///   If not provided, the default initializer of `T` is used.
-    /// - Returns: A newly created and configured view of type `T`.
+    /// - Parameter builder: A function that takes the newly created view.
     ///
     /// Usage:
-    /// ```swift
+    /// ```
     ///    private let button: UIButton = .build { button in
     ///        button.setTitle("Tap me!", for state: .normal)
     ///        button.backgroundColor = .systemPink
     ///    }
     /// ```
-    /// You can also provide a custom initializer:
-    /// ```swift
-    /// private let customView: CustomView = .build(nil) {
-    ///     CustomView(customParameter: "value")
-    /// }
-    /// ```
-    public static func build<T: UIView>(
-        _ builder: ((T) -> Void)? = nil,
-        _ initializer: (() -> T)? = nil
-    ) -> T {
-        let view: T = initializer?() ?? T()
+    public static func build<T: UIView>(_ builder: ((T) -> Void)? = nil) -> T {
+        let view = T()
         view.translatesAutoresizingMaskIntoConstraints = false
         builder?(view)
 
@@ -49,37 +36,5 @@ extension UIView {
     /// ```
     public func addSubviews(_ views: UIView...) {
         views.forEach(addSubview)
-    }
-
-    /// Convenience utility for pinning a subview to the bounds of its superview.
-    public func pinToSuperview() {
-        guard let parentView = superview else { return }
-        NSLayoutConstraint.activate([
-            topAnchor.constraint(equalTo: parentView.topAnchor),
-            leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
-            trailingAnchor.constraint(equalTo: parentView.trailingAnchor),
-            bottomAnchor.constraint(equalTo: parentView.bottomAnchor)
-        ])
-        translatesAutoresizingMaskIntoConstraints = false
-    }
-
-    /// Applies a shadow configuration to the view's layer. The shadow color is determined based on the current theme
-    /// *Note: Figma's shadow "blur" value is roughly double UIKit's shadowRadius,
-    /// so we divide by 2 to visually match Figma's shadow.
-    /// *Note: A UIView layers `shadowPath` should be applied separately after it's bounds have been computed
-    /// - Parameter shadow: The FxShadow configuration to apply
-    ///
-    /// Usage:
-    /// ```
-    ///    view.applyShadow(FxShadow.shadow200)
-    /// ```
-    public func applyShadow(_ shadow: FxShadow, theme: Theme) {
-        let shadowColor = shadow.colorProvider(theme)
-
-        // Apply shadow properties to the layer
-        layer.shadowColor = shadowColor.cgColor
-        layer.shadowOffset = shadow.offset
-        layer.shadowRadius = shadow.blurRadius / 2
-        layer.shadowOpacity = shadow.opacity
     }
 }

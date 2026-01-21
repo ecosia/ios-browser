@@ -3,11 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import WebKit
 @testable import WebEngine
 
 struct MockWKEngineConfigurationProvider: WKEngineConfigurationProvider {
-    func createConfiguration(parameters: WKWebViewParameters) -> WKEngineConfiguration {
-        return MockWKEngineConfiguration(webViewConfiguration: WKWebViewConfiguration())
+    func createConfiguration() -> WKEngineConfiguration {
+        return MockWKEngineConfiguration()
     }
 }

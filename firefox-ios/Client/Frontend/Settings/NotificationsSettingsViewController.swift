@@ -6,7 +6,7 @@ import Foundation
 import Shared
 import Common
 
-final class NotificationsSettingsViewController: SettingsTableViewController, FeatureFlaggable {
+class NotificationsSettingsViewController: SettingsTableViewController, FeatureFlaggable {
     private lazy var syncNotifications: BoolNotificationSetting = {
         return BoolNotificationSetting(
             title: .Settings.Notifications.SyncNotificationsTitle,
@@ -15,14 +15,12 @@ final class NotificationsSettingsViewController: SettingsTableViewController, Fe
             prefKey: PrefsKeys.Notifications.SyncNotifications,
             enabled: true
         ) { [weak self] value in
-            guard let self else { return }
+            guard let self = self else { return }
 
             Task {
                 let shouldEnable = await self.notificationsChanged(value)
-                await MainActor.run {
-                    self.syncNotifications.control.switchView.setOn(shouldEnable, animated: true)
-                    self.syncNotifications.writeBool(self.syncNotifications.control.switchView)
-                }
+                self.syncNotifications.control.switchView.setOn(shouldEnable, animated: true)
+                self.syncNotifications.writeBool(self.syncNotifications.control.switchView)
 
                 // enable/disable sync notifications
                 NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
@@ -41,14 +39,12 @@ final class NotificationsSettingsViewController: SettingsTableViewController, Fe
             prefKey: PrefsKeys.Notifications.TipsAndFeaturesNotifications,
             enabled: true
         ) { [weak self] value in
-            guard let self else { return }
+            guard let self = self else { return }
 
             Task {
                 let shouldEnable = await self.notificationsChanged(value)
-                await MainActor.run {
-                    self.tipsAndFeaturesNotifications.control.switchView.setOn(shouldEnable, animated: true)
-                    self.tipsAndFeaturesNotifications.writeBool(self.tipsAndFeaturesNotifications.control.switchView)
-                }
+                self.tipsAndFeaturesNotifications.control.switchView.setOn(shouldEnable, animated: true)
+                self.tipsAndFeaturesNotifications.writeBool(self.tipsAndFeaturesNotifications.control.switchView)
             }
         }
     }()
@@ -56,8 +52,7 @@ final class NotificationsSettingsViewController: SettingsTableViewController, Fe
     private let prefs: Prefs
     private let hasAccount: Bool
     private var footerTitle = ""
-    // TODO: FXIOS-13584 - NotificationsSettingsViewController sending notificationManager risks causing data races
-    nonisolated(unsafe) private var notificationManager: NotificationManagerProtocol
+    private var notificationManager: NotificationManagerProtocol
 
     init(prefs: Prefs,
          hasAccount: Bool,
@@ -158,19 +153,14 @@ final class NotificationsSettingsViewController: SettingsTableViewController, Fe
         accessDenied.addAction(settingsAction)
         return accessDenied
     }
+}
 
-    // MARK: Notifiable
+extension NotificationsSettingsViewController: Notifiable {
     func addObservers() {
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [UIApplication.willEnterForegroundNotification]
-        )
+        setupNotifications(forObserver: self, observing: [UIApplication.willEnterForegroundNotification])
     }
 
-    override func handleNotifications(_ notification: Notification) {
-        super.handleNotifications(notification)
-
+    func handleNotifications(_ notification: Notification) {
         switch notification.name {
         case UIApplication.willEnterForegroundNotification:
             Task {

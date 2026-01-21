@@ -7,11 +7,11 @@ import Foundation
 @testable import Redux
 
 struct FakeReduxState: StateType, Equatable {
-    var counter = 0
+    var counter: Int = 0
     var isInPrivateMode = false
 
     static let reducer: Reducer<Self> = { state, action in
-        guard let action = action as? FakeReduxAction else { return defaultState(from: state) }
+        guard let action = action as? FakeReduxAction else { return state }
 
         switch action.actionType {
         case FakeReduxActionType.initialValueLoaded,
@@ -19,16 +19,11 @@ struct FakeReduxState: StateType, Equatable {
             FakeReduxActionType.counterDecreased:
             return FakeReduxState(counter: action.counterValue ?? state.counter,
                                   isInPrivateMode: state.isInPrivateMode)
-
         case FakeReduxActionType.setPrivateModeTo:
             return FakeReduxState(counter: state.counter,
                                   isInPrivateMode: action.privateMode ?? state.isInPrivateMode)
         default:
-            return defaultState(from: state)
+            return state
         }
-    }
-
-    static func defaultState(from state: FakeReduxState) -> FakeReduxState {
-        return state
     }
 }

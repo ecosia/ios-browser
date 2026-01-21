@@ -13,6 +13,7 @@ class SiteLoadTest: BaseTestCase {
         let futureDate = Date().addingTimeInterval(TimeInterval(60 * 60 * durationInHrs))
         var counter = 0
         while Date() < futureDate {
+            navigator.goto(URLBarOpen)
             navigator.openURL(site[counter % 5])
             sleep(5)
 
@@ -20,16 +21,15 @@ class SiteLoadTest: BaseTestCase {
             navigator.goto(TabTray)
 
             navigator.performAction(Action.AcceptRemovingAllTabs)
-            navigator.nowAt(HomePanelsScreen)
-            navigator.goto(BrowserTabMenu)
+            navigator.goto(BrowserTab)
             mozWaitForElementToNotExist(app.staticTexts["1 tab(s) closed"])
 
             // clear the cache
             navigator.goto(ClearPrivateDataSettings)
-            app.tables.staticTexts["Clear Private Data"].waitAndTap()
+            app.tables.staticTexts["Clear Private Data"].tap()
             app.alerts.buttons["OK"].waitAndTap()
             navigator.goto(BrowserTab)
-            mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField])
+            mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url])
             counter += 1
         }
     }

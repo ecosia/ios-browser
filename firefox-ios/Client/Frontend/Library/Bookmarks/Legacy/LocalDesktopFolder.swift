@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Storage
 import Common
 
 import enum MozillaAppServices.BookmarkNodeType
@@ -12,7 +13,7 @@ import struct MozillaAppServices.Guid
 /// - Have the menu, unfiled and toolbar folders all under a desktop folder that doesn't exists in the backend
 /// - Present the menu, unfiled and toolbar folders to the users without making a backend call.
 /// Desktop folder content is fetched when folder is selected.
-final class LocalDesktopFolder: FxBookmarkNode {
+class LocalDesktopFolder: FxBookmarkNode {
     // Guid used locally, but never synced to Firefox Sync accounts
     static let localDesktopFolderGuid = "localDesktopFolder"
 
@@ -52,15 +53,26 @@ final class LocalDesktopFolder: FxBookmarkNode {
 
 extension LocalDesktopFolder: BookmarksFolderCell {
     func getViewModel() -> OneLineTableViewCellViewModel {
-        let image = UIImage(named: StandardImageIdentifiers.Large.chevronRight)?
-            .withRenderingMode(.alwaysTemplate)
-            .imageFlippedForRightToLeftLayoutDirection()
-        let accessoryView = UIImageView(image: image)
-
         return OneLineTableViewCellViewModel(title: LocalizedRootBookmarkFolderStrings[guid],
                                              leftImageView: leftImageView,
-                                             accessoryView: accessoryView,
-                                             accessoryType: .disclosureIndicator,
-                                             editingAccessoryView: nil)
+                                             accessoryView: nil,
+                                             accessoryType: .disclosureIndicator)
+    }
+
+    func didSelect(profile: Profile,
+                   windowUUID: WindowUUID,
+                   libraryPanelDelegate: LibraryPanelDelegate?,
+                   navigationController: UINavigationController?,
+                   logger: Logger) {
+        let viewModel = BookmarksPanelViewModel(profile: profile,
+                                                bookmarksHandler: profile.places,
+                                                bookmarkFolderGUID: guid)
+        let nextController = LegacyBookmarksPanel(viewModel: viewModel, windowUUID: windowUUID)
+        nextController.title = .Bookmarks.Menu.DesktopBookmarks
+        if let localizedString = LocalizedRootBookmarkFolderStrings[guid] {
+            nextController.title = localizedString
+        }
+        nextController.libraryPanelDelegate = libraryPanelDelegate
+        navigationController?.pushViewController(nextController, animated: true)
     }
 }

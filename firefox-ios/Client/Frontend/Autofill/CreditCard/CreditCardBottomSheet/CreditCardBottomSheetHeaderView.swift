@@ -8,9 +8,7 @@ import Common
 import Shared
 
 // MARK: Header View
-class CreditCardBottomSheetHeaderView: UITableViewHeaderFooterView,
-                                       ReusableCell,
-                                       ThemeApplicable {
+class CreditCardBottomSheetHeaderView: UITableViewHeaderFooterView, ReusableCell, ThemeApplicable {
     // MARK: UX
     struct UX {
         static let headerElementsSpacing: CGFloat = 7.0
@@ -19,7 +17,7 @@ class CreditCardBottomSheetHeaderView: UITableViewHeaderFooterView,
         static let logoSize: CGFloat = 36.0
         static let closeButtonMarginAndWidth: CGFloat = 46.0
     }
-    public var titleLabelTrailingConstraint: NSLayoutConstraint?
+    public var titleLabelTrailingConstraint: NSLayoutConstraint!
 
     // MARK: Views
     public var viewModel: CreditCardBottomSheetViewModel? {
@@ -90,11 +88,10 @@ class CreditCardBottomSheetHeaderView: UITableViewHeaderFooterView,
 
         addSubview(mainContainerStackView)
         let isCloseButtonOverlapping = traitCollection.horizontalSizeClass != .regular
-        let titleLabelTrailingConstraint = titleLabel.trailingAnchor.constraint(
+        titleLabelTrailingConstraint = titleLabel.trailingAnchor.constraint(
             equalTo: firstRowContainerView.trailingAnchor,
             constant: isCloseButtonOverlapping ? -UX.closeButtonMarginAndWidth : 0
         )
-        self.titleLabelTrailingConstraint = titleLabelTrailingConstraint
 
         NSLayoutConstraint.activate(
             [

@@ -17,28 +17,19 @@ struct TPMenuUX {
         static let headerLabelDistance: CGFloat = 2.0
         static let iconSize: CGFloat = 24
         static let connectionDetailsHeaderMargins: CGFloat = 8
-        static let faviconCornerRadius: CGFloat = 16
-        static let clearDataButtonTopDistance: CGFloat = 32
-        static let clearDataButtonBorderWidth: CGFloat = 0
-        static let settingsLinkButtonBottomSpacing: CGFloat = 16
+        static let faviconCornerRadius: CGFloat = 5
+        static let clearDataButtonCornerRadius: CGFloat = 12
+        static let clearDataButtonBorderWidth: CGFloat = 1
+        static let settingsLinkButtonBottomSpacing: CGFloat = 32
         static let modalMenuCornerRadius: CGFloat = 12
-        static let newStyleCornerRadius: CGFloat = if #available(iOS 26.0, *) {
-            24
-        } else {
-            viewCornerRadius
-        }
-        static let backgroundAlpha: CGFloat = 0.80
         struct Line {
-            static let height: CGFloat = 0.5
+            static let height: CGFloat = 1
         }
     }
 }
 
 protocol TrackingProtectionMenuDelegate: AnyObject {
-    @MainActor
     func settingsOpenPage(settings: Route.SettingsSection)
-
-    @MainActor
     func didFinish()
 }
 
@@ -49,11 +40,10 @@ class TrackingProtectionViewController: UIViewController,
                                         UIScrollViewDelegate {
     var themeManager: ThemeManager
     var profile: Profile?
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
-    private let logger: Logger
 
     weak var enhancedTrackingProtectionMenuDelegate: TrackingProtectionMenuDelegate?
 
@@ -68,8 +58,10 @@ class TrackingProtectionViewController: UIViewController,
     // MARK: UI components Header View
     private var headerContainer: HeaderView = .build()
 
+    /* Ecosia: Remove Firefox branded header view
     // MARK: Connection Details View
     private var connectionDetailsHeaderView: TrackingProtectionConnectionDetailsView = .build()
+     */
 
     // MARK: Blocked Trackers View
     private var trackersView: TrackingProtectionBlockedTrackersView = .build()
@@ -78,6 +70,11 @@ class TrackingProtectionViewController: UIViewController,
         stack.distribution = .fillProportionally
         stack.alignment = .leading
         stack.axis = .vertical
+
+        // Ecosia: Remove Firefox branded header view (had to move corner radius to this view)
+        stack.layer.cornerRadius = TPMenuUX.UX.viewCornerRadius
+        stack.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        stack.layer.masksToBounds = true
     }
 
     // MARK: Connection Status View
@@ -85,15 +82,13 @@ class TrackingProtectionViewController: UIViewController,
     private let connectionHorizontalLine: UIView = .build()
 
     // MARK: Toggle View
-    private lazy var toggleView: TrackingProtectionToggleView = .build { [weak self] view in
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.openSettingsTapped))
-        view.addGestureRecognizer(tapGesture)
-    }
+    private let toggleView: TrackingProtectionToggleView = .build()
 
     // MARK: Clear Cookies View
     private lazy var clearCookiesButton: TrackingProtectionButton = .build { button in
         button.titleLabel?.textAlignment = .left
         button.titleLabel?.numberOfLines = 0
+        button.layer.cornerRadius = TPMenuUX.UX.clearDataButtonCornerRadius
         button.layer.borderWidth = TPMenuUX.UX.clearDataButtonBorderWidth
         button.addTarget(self, action: #selector(self.didTapClearCookiesAndSiteData), for: .touchUpInside)
     }
@@ -128,34 +123,19 @@ class TrackingProtectionViewController: UIViewController,
          profile: Profile,
          windowUUID: WindowUUID,
          themeManager: ThemeManager = AppContainer.shared.resolve(),
-         notificationCenter: NotificationProtocol = NotificationCenter.default,
-         logger: Logger = DefaultLogger.shared) {
+         notificationCenter: NotificationProtocol = NotificationCenter.default) {
         self.model = viewModel
         self.profile = profile
         self.windowUUID = windowUUID
         self.themeManager = themeManager
         self.notificationCenter = notificationCenter
-        self.logger = logger
         trackingProtectionState = TrackingProtectionState(windowUUID: windowUUID)
         super.init(nibName: nil, bundle: nil)
         subscribeToRedux()
     }
 
     deinit {
-        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
-        guard Thread.isMainThread else {
-            logger.log(
-                "TrackingProtectionViewController was not deallocated on the main thread. Redux was not cleaned up.",
-                level: .fatal,
-                category: .lifecycle
-            )
-            assertionFailure("The view controller was not deallocated on the main thread. Redux was not cleaned up.")
-            return
-        }
-
-        MainActor.assumeIsolated {
-            unsubscribeFromRedux()
-        }
+        unsubscribeFromRedux()
     }
 
     @available(*, unavailable)
@@ -169,23 +149,15 @@ class TrackingProtectionViewController: UIViewController,
             addGestureRecognizer()
         }
         setupView()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
-        applyTheme()
-
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [UIContentSizeCategory.didChangeNotification,
-                        UIAccessibility.reduceTransparencyStatusDidChangeNotification]
-        )
+        listenForThemeChange(view)
+        setupNotifications(forObserver: self,
+                           observing: [.DynamicFontChanged])
         scrollView.delegate = self
-        updateViewDetails()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.view.invalidateIntrinsicContentSize()
+        self.view.invalidateIntrinsicContentSize() // Adjusts size based on content.
         if !hasSetPointOrigin {
             hasSetPointOrigin = true
             pointOrigin = self.view.frame.origin
@@ -194,16 +166,16 @@ class TrackingProtectionViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateBlockedTrackersCount()
-        updateConnectionStatus()
+        updateViewDetails()
         applyTheme()
-        getCertificates(for: model.url) { certificates in
+        getCertificates(for: model.url) { [weak self] certificates in
             if let certificates {
-                ensureMainThread { [weak self] in
+                ensureMainThread {
                     self?.model.certificates = certificates
                 }
             }
         }
+        resetReduxStoreState()
     }
 
     private func setupView() {
@@ -225,36 +197,20 @@ class TrackingProtectionViewController: UIViewController,
     // MARK: Redux
     func newState(state: TrackingProtectionState) {
         trackingProtectionState = state
-        if let navDestination = state.navigateTo {
-            switch navDestination {
-            case .home:
-                navigationController?.popToRootViewController(animated: true)
-            case .back:
-                navigationController?.popViewController(animated: true)
-            case .close:
-                enhancedTrackingProtectionMenuDelegate?.didFinish()
-            case .settings:
-                showSettings()
-            }
-        }
-        if let displayView = state.displayView {
-            switch displayView {
-            case .blockedTrackersDetails:
-                showBlockedTrackersController()
-            case .trackingProtectionDetails:
-                showTrackersDetailsController()
-            case .certificatesDetails:
-                break
-            case .clearCookiesAlert:
-                onTapClearCookiesAndSiteData()
-            }
-        }
-        if trackingProtectionState.shouldClearCookies {
+        if trackingProtectionState.showTrackingProtectionSettings {
+            enhancedTrackingProtectionMenuDelegate?.settingsOpenPage(settings: .contentBlocker)
+        } else if trackingProtectionState.showDetails {
+            showTrackersDetailsController()
+        } else if trackingProtectionState.showBlockedTrackers {
+            showBlockedTrackersController()
+        } else if trackingProtectionState.showsClearCookiesAlert {
+            onTapClearCookiesAndSiteData()
+        } else if trackingProtectionState.shouldClearCookies {
             clearCookies()
         } else if trackingProtectionState.shouldUpdateBlockedTrackerStats {
             updateBlockedTrackersCount()
-        } else if trackingProtectionState.shouldUpdateConnectionStatus {
-            updateConnectionStatus()
+        } else if trackingProtectionState.shouldDismiss {
+            enhancedTrackingProtectionMenuDelegate?.didFinish()
         }
     }
 
@@ -271,8 +227,15 @@ class TrackingProtectionViewController: UIViewController,
         })
     }
 
+    func resetReduxStoreState() {
+        store.dispatch(
+            TrackingProtectionAction(windowUUID: windowUUID,
+                                     actionType: TrackingProtectionActionType.goBack)
+        )
+    }
+
     func unsubscribeFromRedux() {
-        let action = ScreenAction(windowUUID: self.windowUUID,
+        let action = ScreenAction(windowUUID: windowUUID,
                                   actionType: ScreenActionType.closeScreen,
                                   screen: .trackingProtection)
         store.dispatch(action)
@@ -318,15 +281,11 @@ class TrackingProtectionViewController: UIViewController,
         headerContainer.closeButtonCallback = { [weak self] in
             self?.enhancedTrackingProtectionMenuDelegate?.didFinish()
         }
-        headerContainer.setupAccessibility(
-            closeButtonA11yLabel: model.closeButtonA11yLabel,
-            closeButtonA11yId: model.closeButtonA11yId
-        )
-        headerContainer.updateHeaderLineView(isHidden: true)
     }
 
     // MARK: Connection Status Header Setup
     private func setupConnectionHeaderView() {
+        /* Ecosia: Remove Firefox branded header view
         baseView.addSubviews(connectionDetailsHeaderView)
         let connectionHeaderConstraints = [
             connectionDetailsHeaderView.leadingAnchor.constraint(
@@ -341,10 +300,8 @@ class TrackingProtectionViewController: UIViewController,
                 equalTo: baseView.topAnchor,
                 constant: TPMenuUX.UX.connectionDetailsHeaderMargins),
         ]
-        if #available(iOS 26.0, *) {
-            connectionDetailsHeaderView.layer.cornerRadius = TPMenuUX.UX.newStyleCornerRadius
-        }
         constraints.append(contentsOf: connectionHeaderConstraints)
+         */
     }
 
     // MARK: Trackers Connection Setup
@@ -364,7 +321,10 @@ class TrackingProtectionViewController: UIViewController,
                 equalTo: view.trailingAnchor,
                 constant: -TPMenuUX.UX.horizontalMargin
             ),
+            /* Ecosia: Remove Firefox branded header view
             trackersConnectionContainer.topAnchor.constraint(equalTo: connectionDetailsHeaderView.bottomAnchor),
+             */
+            trackersConnectionContainer.topAnchor.constraint(equalTo: baseView.topAnchor),
             connectionHorizontalLine.topAnchor.constraint(equalTo: trackersConnectionContainer.bottomAnchor),
             connectionHorizontalLine.leadingAnchor.constraint(equalTo: trackersConnectionContainer.leadingAnchor),
             connectionHorizontalLine.trailingAnchor.constraint(equalTo: trackersConnectionContainer.trailingAnchor),
@@ -374,20 +334,15 @@ class TrackingProtectionViewController: UIViewController,
         trackersView.trackersButtonCallback = { [weak self] in
             guard let self else { return }
             store.dispatch(
-                TrackingProtectionAction(
-                    windowUUID: self.windowUUID,
-                    actionType: TrackingProtectionActionType.tappedShowBlockedTrackers
-                )
+                TrackingProtectionAction(windowUUID: windowUUID,
+                                         actionType: TrackingProtectionActionType.tappedShowBlockedTrackers)
             )
         }
         connectionStatusView.connectionStatusButtonCallback = { [weak self] in
             guard let self, model.connectionSecure else { return }
-
             store.dispatch(
-                TrackingProtectionAction(
-                    windowUUID: self.windowUUID,
-                    actionType: TrackingProtectionActionType.tappedShowTrackingProtectionDetails
-                )
+                TrackingProtectionAction(windowUUID: windowUUID,
+                                         actionType: TrackingProtectionActionType.tappedShowTrackingProtectionDetails)
             )
         }
     }
@@ -411,9 +366,6 @@ class TrackingProtectionViewController: UIViewController,
             self?.model.toggleSiteSafelistStatus()
             self?.updateProtectionViewStatus()
         }
-        if #available(iOS 26.0, *) {
-            toggleView.layer.cornerRadius = TPMenuUX.UX.newStyleCornerRadius
-        }
     }
 
     // MARK: Clear Cookies Button Setup
@@ -434,7 +386,7 @@ class TrackingProtectionViewController: UIViewController,
             ),
             clearCookiesButton.topAnchor.constraint(
                 equalTo: toggleView.bottomAnchor,
-                constant: TPMenuUX.UX.clearDataButtonTopDistance
+                constant: TPMenuUX.UX.horizontalMargin
             )
         ]
         constraints.append(contentsOf: clearCookiesButtonConstraints)
@@ -442,13 +394,9 @@ class TrackingProtectionViewController: UIViewController,
 
     // MARK: Settings View Setup
     private func configureProtectionSettingsView() {
-        let settingsButtonViewModel = LinkButtonViewModel(
-            title: model.settingsButtonTitle,
-            a11yIdentifier: model.settingsA11yId,
-            font: FXFontStyles.Regular.footnote.scaledFont()
-        )
+        let settingsButtonViewModel = LinkButtonViewModel(title: model.settingsButtonTitle,
+                                                          a11yIdentifier: model.settingsA11yId)
         settingsLinkButton.configure(viewModel: settingsButtonViewModel)
-        settingsLinkButton.applyUnderline(underlinedText: model.settingsButtonTitle)
     }
 
     private func setupProtectionSettingsView() {
@@ -456,17 +404,10 @@ class TrackingProtectionViewController: UIViewController,
         baseView.addSubviews(settingsLinkButton)
 
         let protectionConstraints = [
-            settingsLinkButton.leadingAnchor.constraint(
-                equalTo: baseView.leadingAnchor,
-                constant: TPMenuUX.UX.horizontalMargin
-            ),
-            settingsLinkButton.trailingAnchor.constraint(
-                equalTo: baseView.trailingAnchor
-            ),
-            settingsLinkButton.topAnchor.constraint(
-                equalTo: clearCookiesButton.bottomAnchor,
-                constant: TPMenuUX.UX.horizontalMargin
-            ),
+            settingsLinkButton.leadingAnchor.constraint(equalTo: baseView.leadingAnchor),
+            settingsLinkButton.trailingAnchor.constraint(equalTo: baseView.trailingAnchor),
+            settingsLinkButton.topAnchor.constraint(equalTo: clearCookiesButton.bottomAnchor,
+                                                    constant: TPMenuUX.UX.horizontalMargin),
             settingsLinkButton.bottomAnchor.constraint(
                 equalTo: baseView.bottomAnchor,
                 constant: -TPMenuUX.UX.settingsLinkButtonBottomSpacing
@@ -483,6 +424,16 @@ class TrackingProtectionViewController: UIViewController,
                                      title: model.displayTitle,
                                      icon: headerIcon)
 
+        /* Ecosia: Remove Firefox branded header view
+        connectionDetailsHeaderView.setupDetails(title: model.connectionDetailsTitle,
+                                                 status: model.connectionDetailsHeader,
+                                                 image: model.connectionDetailsImage)
+         */
+
+        updateBlockedTrackersCount()
+        connectionStatusView.setupDetails(image: model.getConnectionStatusImage(themeType: currentTheme().type),
+                                          text: model.connectionStatusString)
+
         toggleView.setupDetails(isOn: !model.isURLSafelisted())
         model.isProtectionEnabled = toggleView.toggleIsOn
         updateProtectionViewStatus()
@@ -493,18 +444,6 @@ class TrackingProtectionViewController: UIViewController,
         blockedTrackersVC?.model.contentBlockerStats = model.selectedTab?.contentBlocker?.stats
         blockedTrackersVC?.applySnapshot()
         trackersView.setupDetails(for: model.contentBlockerStats?.total)
-        updateConnectionStatus()
-    }
-
-    private func updateConnectionStatus() {
-        model.connectionSecure = model.selectedTab?.webView?.hasOnlySecureContent ?? false
-        connectionStatusView.setConnectionStatus(image: model.getConnectionStatusImage(themeType: currentTheme().type),
-                                                 text: model.connectionStatusString,
-                                                 isConnectionSecure: model.connectionSecure,
-                                                 theme: currentTheme())
-        connectionDetailsHeaderView.setupDetails(title: model.connectionDetailsTitle,
-                                                 status: model.connectionDetailsHeader,
-                                                 image: model.connectionDetailsImage)
     }
 
     private func setupViewActions() {
@@ -513,22 +452,16 @@ class TrackingProtectionViewController: UIViewController,
         toggleView.setupActions()
     }
 
-    // - MARK: Notifications
+    // MARK: Notifications
     func handleNotifications(_ notification: Notification) {
         switch notification.name {
-        case UIContentSizeCategory.didChangeNotification:
-            ensureMainThread {
-                self.adjustLayout()
-            }
-        case UIAccessibility.reduceTransparencyStatusDidChangeNotification:
-            ensureMainThread {
-                self.applyTheme()
-            }
+        case .DynamicFontChanged:
+            adjustLayout()
         default: break
         }
     }
 
-    // MARK: - View Transitions
+    // MARK: View Transitions
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         adjustLayout()
@@ -541,18 +474,21 @@ class TrackingProtectionViewController: UIViewController,
         }, completion: nil)
     }
 
-    // MARK: - Accessibility
+    // MARK: Accessibility
     private func setupAccessibilityIdentifiers() {
+        /* Ecosia: Remove Firefox branded header view
         connectionDetailsHeaderView.setupAccessibilityIdentifiers(foxImageA11yId: model.foxImageA11yId)
+         */
         trackersView.setupAccessibilityIdentifiers(
             arrowImageA11yId: model.arrowImageA11yId,
-            trackersBlockedButtonA11yId: model.trackersBlockedButtonA11yId,
+            trackersBlockedLabelA11yId: model.trackersBlockedLabelA11yId,
             shieldImageA11yId: model.settingsA11yId)
         connectionStatusView.setupAccessibilityIdentifiers(
             arrowImageA11yId: model.arrowImageA11yId,
-            securityStatusButtonA11yId: model.securityStatusButtonA11yId)
+            securityStatusLabelA11yId: model.securityStatusLabelA11yId)
         toggleView.setupAccessibilityIdentifiers(
-            toggleViewLabelsContainerA11yId: model.toggleViewContainerA11yId)
+            toggleViewTitleLabelA11yId: model.toggleViewTitleLabelA11yId,
+            toggleViewBodyLabelA11yId: model.toggleViewBodyLabelA11yId)
         headerContainer.setupAccessibility(closeButtonA11yLabel: model.closeButtonA11yLabel,
                                            closeButtonA11yId: model.closeButtonA11yId)
         clearCookiesButton.accessibilityIdentifier = model.clearCookiesButtonA11yId
@@ -563,7 +499,9 @@ class TrackingProtectionViewController: UIViewController,
         headerContainer.adjustLayout(isWebsiteIcon: true)
         trackersView.adjustLayout()
         connectionStatusView.adjustLayout()
+        /* Ecosia: Remove Firefox branded header view
         connectionDetailsHeaderView.adjustLayout()
+         */
         toggleView.adjustLayout()
         configureProtectionSettingsView()
 
@@ -593,7 +531,7 @@ class TrackingProtectionViewController: UIViewController,
     @objc
     private func didTapClearCookiesAndSiteData() {
         store.dispatch(
-            TrackingProtectionAction(windowUUID: self.windowUUID,
+            TrackingProtectionAction(windowUUID: windowUUID,
                                      actionType: TrackingProtectionActionType.tappedShowClearCookiesAlert)
         )
     }
@@ -601,20 +539,9 @@ class TrackingProtectionViewController: UIViewController,
     @objc
     func protectionSettingsTapped() {
         store.dispatch(
-            TrackingProtectionAction(windowUUID: self.windowUUID,
+            TrackingProtectionAction(windowUUID: windowUUID,
                                      actionType: TrackingProtectionActionType.tappedShowSettings)
         )
-    }
-
-    @objc
-    func openSettingsTapped() {
-        let isContentBlockingConfigEnabled = profile?.prefs.boolForKey(ContentBlockingConfig.Prefs.EnabledKey) ?? true
-        if !isContentBlockingConfigEnabled {
-            store.dispatch(
-                TrackingProtectionAction(windowUUID: self.windowUUID,
-                                         actionType: TrackingProtectionActionType.tappedShowSettings)
-            )
-        }
     }
 
     private func showBlockedTrackersController() {
@@ -629,18 +556,9 @@ class TrackingProtectionViewController: UIViewController,
         self.navigationController?.pushViewController(detailsVC, animated: true)
     }
 
-    private func showSettings() {
-        store.dispatch(
-            NavigationBrowserAction(
-                navigationDestination: NavigationDestination(.trackingProtectionSettings),
-                windowUUID: self.windowUUID,
-                actionType: NavigationBrowserActionType.tapOnTrackingProtection
-            )
-        )
-    }
-
     // MARK: Clear Cookies Alert
     func onTapClearCookiesAndSiteData() {
+        resetReduxStoreState()
         model.onTapClearCookiesAndSiteData(controller: self)
     }
 
@@ -687,49 +605,45 @@ class TrackingProtectionViewController: UIViewController,
     private func updateProtectionViewStatus() {
         let isContentBlockingConfigEnabled = profile?.prefs.boolForKey(ContentBlockingConfig.Prefs.EnabledKey) ?? true
         if toggleView.toggleIsOn, isContentBlockingConfigEnabled {
-            toggleView.setStatusLabelText(with: .Menu.EnhancedTrackingProtection.switchOnText,
-                                          and: !isContentBlockingConfigEnabled)
+            toggleView.setStatusLabelText(with: .Menu.EnhancedTrackingProtection.switchOnText)
             trackersView.setVisibility(isHidden: false)
             model.isProtectionEnabled = true
         } else {
-            toggleView.setStatusLabelText(with: .Menu.EnhancedTrackingProtection.switchOffText,
-                                          and: !isContentBlockingConfigEnabled)
+            toggleView.setStatusLabelText(with: .Menu.EnhancedTrackingProtection.switchOffText)
             trackersView.setVisibility(isHidden: true)
             model.isProtectionEnabled = false
         }
         toggleView.setToggleSwitchVisibility(with: !isContentBlockingConfigEnabled)
+        /* Ecosia: Remove Firefox branded header view
         connectionDetailsHeaderView.setupDetails(color: model.getConnectionDetailsBackgroundColor(theme: currentTheme()),
                                                  title: model.connectionDetailsTitle,
                                                  status: model.connectionDetailsHeader,
                                                  image: model.connectionDetailsImage)
+         */
         adjustLayout()
     }
+}
 
-    // MARK: - Themable
+// MARK: - Themable
+extension TrackingProtectionViewController {
     func applyTheme() {
         let theme = currentTheme()
         overrideUserInterfaceStyle = theme.type.getInterfaceStyle()
-        view.backgroundColor = theme.colors.layer3.withAlphaComponent(backgroundAlpha)
+        view.backgroundColor = theme.colors.layer1
         headerContainer.applyTheme(theme: theme)
-        connectionDetailsHeaderView.applyTheme(theme: theme)
+        /* Ecosia: Remove Firefox branded header view
+        connectionDetailsHeaderView.backgroundColor = theme.colors.layer2
+         */
         trackersView.applyTheme(theme: theme)
         connectionStatusView.applyTheme(theme: theme)
+        connectionStatusView.setConnectionStatus(image: model.getConnectionStatusImage(themeType: theme.type),
+                                                 isConnectionSecure: model.connectionSecure,
+                                                 theme: theme)
         connectionHorizontalLine.backgroundColor = theme.colors.borderPrimary
         toggleView.applyTheme(theme: theme)
         clearCookiesButton.applyTheme(theme: theme)
+        clearCookiesButton.layer.borderColor = theme.colors.borderPrimary.cgColor
         settingsLinkButton.applyTheme(theme: theme)
         setNeedsStatusBarAppearanceUpdate()
-    }
-
-    private var backgroundAlpha: CGFloat {
-        guard !UIAccessibility.isReduceTransparencyEnabled else {
-            return 1.0
-        }
-
-        if #available(iOS 26.0, *) {
-            return TPMenuUX.UX.backgroundAlpha
-        }
-
-        return 1.0
     }
 }

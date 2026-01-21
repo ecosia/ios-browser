@@ -4,11 +4,12 @@
 
 import Common
 import Foundation
+import Shared
 import UIKit
 
 /// A view controller that manages the hidden Firefox Suggest debug settings.
 class FirefoxSuggestSettingsViewController: SettingsTableViewController, FeatureFlaggable {
-    init(profile: Profile?, windowUUID: WindowUUID) {
+    init(profile: Profile, windowUUID: WindowUUID) {
         super.init(style: .grouped, windowUUID: windowUUID)
         self.profile = profile
         self.title = "Firefox Suggest"
@@ -47,17 +48,16 @@ class FirefoxSuggestSettingsViewController: SettingsTableViewController, Feature
 /// A Firefox Suggest debug setting that downloads and stores new suggestions
 /// immediately, without waiting for the background ingestion task to run.
 class ForceFirefoxSuggestIngestSetting: Setting {
-    let profile: Profile?
+    let profile: Profile
     let logger: Logger
 
-    init(profile: Profile?, logger: Logger = DefaultLogger.shared) {
+    init(profile: Profile, logger: Logger = DefaultLogger.shared) {
         self.profile = profile
         self.logger = logger
         super.init()
     }
 
     override var title: NSAttributedString? {
-        guard let theme else { return nil }
         return NSAttributedString(string: "Ingest new suggestions now",
                                   attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary])
     }
@@ -69,7 +69,7 @@ class ForceFirefoxSuggestIngestSetting: Setting {
                        level: .info,
                        category: .storage)
             do {
-                try await self.profile?.firefoxSuggest?.ingest(emptyOnly: false)
+                try await self.profile.firefoxSuggest?.ingest()
                 logger.log("Successfully ingested new suggestions",
                            level: .info,
                            category: .storage)

@@ -6,17 +6,15 @@ import Foundation
 import Redux
 import Common
 
-struct PrivateModeAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+class PrivateModeAction: Action {
     let isPrivate: Bool?
 
     init(isPrivate: Bool? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.isPrivate = isPrivate
+        super.init(windowUUID: windowUUID,
+                   actionType: actionType)
     }
 }
 

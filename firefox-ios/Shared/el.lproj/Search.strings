@@ -1,5 +1,5 @@
-/* Label for search engine buttons. %@ is the name of the search engine. */
-"%@ search" = "Αναζήτηση %@";
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@ αναζήτηση";
 
 /* Label for search settings button. */
 "Search Settings" = "Ρυθμίσεις αναζήτησης";

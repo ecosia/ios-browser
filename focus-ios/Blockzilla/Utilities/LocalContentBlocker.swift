@@ -6,7 +6,7 @@ import Foundation
 import WebKit
 import CryptoKit
 
-final class ContentBlockerHelper {
+class ContentBlockerHelper {
     static let shared = ContentBlockerHelper()
 
     var handler: (([WKContentRuleList]) -> Void)?

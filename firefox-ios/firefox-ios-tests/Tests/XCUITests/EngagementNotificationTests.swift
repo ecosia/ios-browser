@@ -5,14 +5,14 @@
 import XCTest
 
 class EngagementNotificationTests: BaseTestCase {
-    override func setUp() async throws {
+    override func setUp() {
         // Fresh install the app
         // removeApp() does not work on iOS 15 and 16 intermittently
         if #available(iOS 17, *) {
             removeApp()
         }
         // The app is correctly installed
-        try await super.setUp()
+        super.setUp()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307101
@@ -28,13 +28,13 @@ class EngagementNotificationTests: BaseTestCase {
         navigator.goto(NotificationsSettings)
         let tipsSwitch = app.switches["TipsAndFeaturesNotificationsUserPrefsKey"]
         mozWaitForElementToExist(tipsSwitch)
-        app.switches["TipsAndFeaturesNotificationsUserPrefsKey"].waitAndTap()
+        app.switches["TipsAndFeaturesNotificationsUserPrefsKey"].tap()
         let springBoard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let popUpTitle = "Would Like to Send You Notifications"
         // Validate pop-up
         mozWaitForElementToExist(springBoard.alerts.elementContainingText(popUpTitle))
         // Choose "Don't allow"
-        springBoard.buttons["Don’t Allow"].waitAndTap()
+        springBoard.buttons["Don’t Allow"].tap()
         // Toggle moves back to the "Off" position
         mozWaitForValueContains(tipsSwitch, value: "0")
         // Validate You turned off all Firefox notifications message

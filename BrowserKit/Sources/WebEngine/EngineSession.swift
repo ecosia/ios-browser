@@ -3,30 +3,27 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import UIKit
 
 /// Protocol representing a single engine session. In browsers usually a session corresponds to a tab.
-@MainActor
-public protocol EngineSession: NSObject {
+public protocol EngineSession {
     /// Engine session delegate
     var delegate: EngineSessionDelegate? { get set }
 
     /// Proxy object for handling telemetry events.
-    nonisolated var telemetryProxy: EngineTelemetryProxy? { get set }
+    var telemetryProxy: EngineTelemetryProxy? { get set }
 
-    /// Whether the engine session is currently being rendered
-    var isActive: Bool { get set }
+    /// Find in page delegate.
+    var findInPageDelegate: FindInPageHelperDelegate? { get set }
 
     /// The engine received a request to load a URL.
-    /// - Parameter browserURL: The BrowserURL that is requested to load
-    func load(browserURL: BrowserURL)
+    /// - Parameter url: The URL string that is requested
+    func load(url: String)
 
     /// Stops loading the current session.
     func stopLoading()
 
     /// Reloads the current URL.
-    /// - Parameter bypassCache: Bypass the cache and fully reload from the origin
-    func reload(bypassCache: Bool)
+    func reload()
 
     /// Navigates back in the history of this session.
     func goBack()
@@ -37,25 +34,20 @@ public protocol EngineSession: NSObject {
     /// Scroll the session to the top.
     func scrollToTop()
 
-    /// Show the web view's built-in find interaction.
-    /// The find interactions close themselves.
-    /// - Parameter searchText: The optional text to search with in the find in page bar.
-    @available(iOS 16.0, *)
-    func showFindInPage(withSearchText searchText: String?)
+    /// Find a text selection in this session.
+    /// - Parameters:
+    ///   - text: The text to search
+    ///   - function: The functionality the find in page should search with
+    func findInPage(text: String, function: FindInPageFunction)
 
-    /// Navigates to the specified history item
-    /// - Parameter item: EngineSessionBackForwardListItem in the back forward list that
-    /// you would like to navigate to.
-    func goToHistory(item: EngineSessionBackForwardListItem)
+    /// Called whenever the find in page session should be ended.
+    func findInPageDone()
 
-    /// Returns the current EngineSessionBackForwardListItem
-    func currentHistoryItem() -> EngineSessionBackForwardListItem?
-
-    /// Returns the history backlist as a list of EngineSessionBackForwardListItems
-    func getBackListItems() -> [EngineSessionBackForwardListItem]
-
-    /// Returns the history forwardlist as a list of EngineSessionBackForwardListItems
-    func getForwardListItems() -> [EngineSessionBackForwardListItem]
+    /// Navigates to the specified index in the history of this session. The current index of
+    /// this session's history  will be updated but the items within it will be unchanged.
+    /// Invalid index values are ignored.
+    /// - Parameter index: index the index of the session's history to navigate to
+    func goToHistory(index: Int)
 
     /// Restore a saved state; only data that is saved (history, scroll position, zoom, and form data)
     /// will be restored.
@@ -79,15 +71,4 @@ public protocol EngineSession: NSObject {
 
     /// Change the page zoom scale.
     func updatePageZoom(_ change: ZoomChangeValue)
-}
-
-public extension EngineSession {
-    func reload(bypassCache: Bool = false) {
-        reload(bypassCache: bypassCache)
-    }
-
-    @available(iOS 16.0, *)
-    func showFindInPage(withSearchText searchText: String? = nil) {
-        showFindInPage(withSearchText: searchText)
-    }
 }

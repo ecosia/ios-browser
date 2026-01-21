@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class SearchEngine: NSObject, NSCoding {
+class SearchEngine: NSObject, NSCoding {
     let name: String
     let image: UIImage?
     var isCustom = false

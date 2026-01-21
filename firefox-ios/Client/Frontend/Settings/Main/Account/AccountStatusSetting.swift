@@ -8,8 +8,7 @@ import Foundation
 import Shared
 
 // Sync setting that shows the current Firefox Account status.
-class AccountStatusSetting: WithAccountSetting,
-                            Notifiable {
+class AccountStatusSetting: WithAccountSetting {
     private weak var settingsDelegate: AccountSettingsDelegate?
     private var notificationCenter: NotificationProtocol
 
@@ -20,31 +19,29 @@ class AccountStatusSetting: WithAccountSetting,
         self.settingsDelegate = settingsDelegate
         super.init(settings: settings)
 
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [
-                .FirefoxAccountProfileChanged
-            ]
-        )
+        notificationCenter.addObserver(self,
+                                       selector: #selector(updateAccount),
+                                       name: .FirefoxAccountProfileChanged,
+                                       object: nil)
     }
 
-    // MARK: Notifiable
-    func handleNotifications(_ notification: Notification) {
-        guard notification.name == .FirefoxAccountProfileChanged else { return }
+    deinit {
+        notificationCenter.removeObserver(self)
+    }
 
-        ensureMainThread {
+    @objc
+    func updateAccount(notification: Notification) {
+        DispatchQueue.main.async {
             self.settings.tableView.reloadData()
         }
     }
 
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
 
     override var title: NSAttributedString? {
-        guard let profile = RustFirefoxAccounts.shared.userProfile, let theme else { return nil }
+        guard let profile = RustFirefoxAccounts.shared.userProfile else { return nil }
 
         let string = profile.displayName ?? profile.email
 
@@ -57,18 +54,20 @@ class AccountStatusSetting: WithAccountSetting,
     }
 
     override var status: NSAttributedString? {
-        guard RustFirefoxAccounts.shared.isActionNeeded, let theme else { return nil }
-        let string: String = .FxAAccountVerifyPassword
-        let color = theme.colors.textCritical
-        let range = NSRange(location: 0, length: string.count)
-        let attrs = [NSAttributedString.Key.foregroundColor: color]
-        let res = NSMutableAttributedString(string: string)
-        res.setAttributes(attrs, range: range)
-        return res
+        if RustFirefoxAccounts.shared.isActionNeeded {
+            let string: String = .FxAAccountVerifyPassword
+            let color = theme.colors.textCritical
+            let range = NSRange(location: 0, length: string.count)
+            let attrs = [NSAttributedString.Key.foregroundColor: color]
+            let res = NSMutableAttributedString(string: string)
+            res.setAttributes(attrs, range: range)
+            return res
+        }
+        return nil
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        guard let profile, !profile.rustFxA.accountNeedsReauth() else {
+        guard !profile.rustFxA.accountNeedsReauth() else {
             TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: .settings)
             settingsDelegate?.pressedToShowFirefoxAccount()
             return
@@ -90,16 +89,14 @@ class AccountStatusSetting: WithAccountSetting,
                 .tinted(withColor: theme.colors.iconPrimary)
 
             guard let str = RustFirefoxAccounts.shared.userProfile?.avatarUrl,
-                  let actionIconUrl = URL(string: str)
+                  let actionIconUrl = URL(string: str, invalidCharacters: false)
             else { return }
 
             GeneralizedImageFetcher().getImageFor(url: actionIconUrl) { image in
                 guard let avatar = image else { return }
 
-                DispatchQueue.main.async {
-                    imageView.image = avatar.createScaled(CGSize(width: 30, height: 30))
-                        .withRenderingMode(.alwaysOriginal)
-                }
+                imageView.image = avatar.createScaled(CGSize(width: 30, height: 30))
+                    .withRenderingMode(.alwaysOriginal)
             }
         }
     }

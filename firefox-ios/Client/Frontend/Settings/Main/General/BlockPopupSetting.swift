@@ -6,15 +6,15 @@ import Foundation
 import Shared
 
 class BlockPopupSetting: BoolSetting {
-    init(prefs: Prefs) {
-        let currentValue = prefs.boolForKey(PrefsKeys.KeyBlockPopups)
+    init(settings: SettingsTableViewController) {
+        let currentValue = settings.profile.prefs.boolForKey(PrefsKeys.KeyBlockPopups)
         let didChange = { (isEnabled: Bool) in
             NotificationCenter.default.post(name: .BlockPopup,
                                             object: nil)
         }
 
         super.init(title: .AppSettingsBlockPopups,
-                   prefs: prefs,
+                   prefs: settings.profile.prefs,
                    prefKey: PrefsKeys.KeyBlockPopups,
                    defaultValue: currentValue ?? true) { isEnabled in
             didChange(isEnabled)

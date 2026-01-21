@@ -8,19 +8,19 @@ import Foundation
 public protocol MenuHelperLoginInterface {
     /// Used to add the copy menu option on the login detail screen
     @objc
-    nonisolated optional func menuHelperCopy()
+    optional func menuHelperCopy()
 
     /// Used to add the copy and fille menu option on the login detail screen
     @objc
-    nonisolated optional func menuHelperOpenAndFill()
+    optional func menuHelperOpenAndFill()
 
     /// Used to add a reveal password menu option on the login detail screen
     @objc
-    nonisolated optional func menuHelperReveal()
+    optional func menuHelperReveal()
 
     /// Used to add a reveal password menu option on the login detail screen
     @objc
-    nonisolated optional func menuHelperSecure()
+    optional func menuHelperSecure()
 }
 
 /// Used to pass in the Client strings for the Login menu options

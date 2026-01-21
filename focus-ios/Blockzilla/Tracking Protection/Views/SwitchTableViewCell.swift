@@ -5,7 +5,7 @@
 import UIKit
 import Combine
 
-final class SwitchTableViewCell: UITableViewCell {
+class SwitchTableViewCell: UITableViewCell {
     private lazy var toggle: UISwitch = {
         let toggle = UISwitch()
         toggle.onTintColor = .accent

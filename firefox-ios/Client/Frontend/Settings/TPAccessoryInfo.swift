@@ -19,9 +19,8 @@ class TPAccessoryInfo: ThemedTableViewController {
 
         tableView.sectionHeaderHeight = 0
         tableView.sectionFooterHeight = 0
-
-        listenForThemeChanges(withNotificationCenter: NotificationCenter.default)
         applyTheme()
+        listenForThemeChange(view)
     }
 
     func currentTheme() -> Theme {

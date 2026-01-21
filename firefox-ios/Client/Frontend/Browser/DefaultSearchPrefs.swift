@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Shared
 
 /*
  This only makes sense if you look at the structure of List.json
@@ -71,6 +72,13 @@ final class DefaultSearchPrefs {
         if let overrides = regionOverrides?[region] as? [String: Any] {
             usersEngineList = usersEngineList.map({ overrides[$0] as? String ?? $0 })
         }
+
+        // Ecosia: Guarantee the global default engine is included
+        // This enables ecosia to be set as default even in locales where it normally is not listed
+        if !usersEngineList.contains(globalDefaultEngine) {
+            usersEngineList.append(globalDefaultEngine)
+        }
+
         return usersEngineList
     }
 

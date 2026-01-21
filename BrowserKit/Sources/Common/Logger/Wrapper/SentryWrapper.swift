@@ -5,7 +5,7 @@
 import Foundation
 import Sentry
 
-public protocol SentryWrapper: Sendable {
+public protocol SentryWrapper {
     var crashedInLastRun: Bool { get }
     var dsn: String? { get }
 
@@ -16,7 +16,7 @@ public protocol SentryWrapper: Sendable {
     func configureScope(scope: @escaping (Scope) -> Void)
 }
 
-public final class DefaultSentry: SentryWrapper {
+public class DefaultSentry: SentryWrapper {
     private let dsnKey = "SentryCloudDSN"
     public init() {}
 

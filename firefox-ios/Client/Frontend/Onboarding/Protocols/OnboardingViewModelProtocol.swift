@@ -6,12 +6,11 @@ import Foundation
 import Common
 
 protocol OnboardingViewModelProtocol {
-    var availableCards: [OnboardingCardViewController<OnboardingKitCardInfoModel>] { get }
-    var isDismissible: Bool { get }
+    var availableCards: [OnboardingCardViewController] { get }
+    var isDismissable: Bool { get }
     var profile: Profile { get }
     var telemetryUtility: OnboardingTelemetryProtocol { get }
 
-    @MainActor
     func setupViewControllerDelegates(with delegate: OnboardingCardDelegate, for window: WindowUUID)
 }
 

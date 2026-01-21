@@ -23,54 +23,42 @@ struct InternalExperimentDetailView {
 extension InternalExperimentDetailView: View {
     var body: some View {
         Form {
-            descriptionSection
-            availableBranchesSection
-            activeBranchSection
-        }.navigationBarTitle(Text(verbatim: experiment.userFacingName))
-    }
-
-    private var descriptionSection: some View {
-        SwiftUI.Section {
-            Text(verbatim: experiment.userFacingDescription)
-        }
-    }
-
-    private var availableBranchesSection: some View {
-        SwiftUI.Section(header: Text(verbatim: "Available Branches")) {
-            ForEach(experiment.branches, id: \.slug) { branch in
-                HStack {
-                    Text(verbatim: branch.slug)
-                    Spacer()
-                    Text(verbatim: "\(branch.ratio)")
-                }
+            SwiftUI.Section {
+                Text(verbatim: experiment.userFacingDescription)
             }
-        }
-    }
-
-    private var activeBranchSection: some View {
-        SwiftUI.Section {
-            Picker(selection: $selectedBranchSlug, label: Text(verbatim: "Active Branch")) {
-                ForEach(pickerBranches, id: \.self) { branch in
-                    if branch == notEnrolledBranchSlug {
-                        Text(verbatim: "Not Enrolled")
-                    } else {
-                        Text(verbatim: branch)
+            SwiftUI.Section(header: Text(verbatim: "Available Branches")) {
+                ForEach(experiment.branches, id: \.slug) { branch in
+                    HStack {
+                        Text(verbatim: branch.slug)
+                        Spacer()
+                        Text(verbatim: "\(branch.ratio)")
                     }
                 }
-            }.onReceive(Just(selectedBranchSlug)) { newValue in
-                if newValue != notEnrolledBranchSlug {
-                    if NimbusWrapper.shared.getEnrolledBranchSlug(forExperiment: experiment) != newValue {
-                        if let branch = experiment.branches.first(where: { $0.slug == newValue }) {
-                            NimbusWrapper.shared.optIn(toExperiment: experiment, withBranch: branch)
+            }
+            SwiftUI.Section {
+                Picker(selection: $selectedBranchSlug, label: Text(verbatim: "Active Branch")) {
+                    ForEach(pickerBranches, id: \.self) { branch in
+                        if branch == notEnrolledBranchSlug {
+                            Text(verbatim: "Not Enrolled")
+                        } else {
+                            Text(verbatim: branch)
                         }
                     }
-                } else {
-                    if NimbusWrapper.shared.getEnrolledBranchSlug(forExperiment: experiment) != nil {
-                        NimbusWrapper.shared.optOut(ofExperiment: experiment)
+                }.onReceive(Just(selectedBranchSlug)) { newValue in
+                    if newValue != notEnrolledBranchSlug {
+                        if NimbusWrapper.shared.getEnrolledBranchSlug(forExperiment: experiment) != newValue {
+                            if let branch = experiment.branches.first(where: { $0.slug == newValue }) {
+                                NimbusWrapper.shared.optIn(toExperiment: experiment, withBranch: branch)
+                            }
+                        }
+                    } else {
+                        if NimbusWrapper.shared.getEnrolledBranchSlug(forExperiment: experiment) != nil {
+                            NimbusWrapper.shared.optOut(ofExperiment: experiment)
+                        }
                     }
                 }
             }
-        }
+        }.navigationBarTitle(Text(verbatim: experiment.userFacingName))
     }
 }
 

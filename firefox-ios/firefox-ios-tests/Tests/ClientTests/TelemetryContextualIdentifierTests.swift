@@ -8,15 +8,14 @@ import Glean
 import XCTest
 
 class TelemetryContextualIdentifierTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
         clearTest()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         clearTest()
-        try await super.tearDown()
     }
 
     // MARK: Context id
@@ -37,12 +36,6 @@ class TelemetryContextualIdentifierTests: XCTestCase {
         XCTAssertEqual(contextId, TelemetryContextualIdentifier.contextId)
     }
 
-    func testContextId_noGleanMetricsSetsContextId() {
-        TelemetryContextualIdentifier.setupContextId(isGleanMetricsAllowed: false)
-        XCTAssertNotNil(TelemetryContextualIdentifier.contextId)
-    }
-
-    @MainActor
     func testTelemetryWrapper_setsContextId() {
         TelemetryWrapper.shared.setup(profile: MockProfile())
         XCTAssertNotNil(TelemetryContextualIdentifier.contextId)
@@ -50,6 +43,7 @@ class TelemetryContextualIdentifierTests: XCTestCase {
 
     // MARK: Helper methods
     func clearTest() {
+        Glean.shared.resetGlean(clearStores: true)
         TelemetryContextualIdentifier.clearUserDefaults()
     }
 }

@@ -6,21 +6,18 @@ import Foundation
 import Common
 import Storage
 import Shared
+import Ecosia
 
+/* Ecosia: Import all of MozillaAppServices for legacy code usage
 import class MozillaAppServices.BookmarkFolderData
-import class MozillaAppServices.BookmarkItemData
 import enum MozillaAppServices.BookmarkRoots
+ */
+import MozillaAppServices
 
-let LocalizedRootBookmarkFolderStrings = [
-    BookmarkRoots.MenuFolderGUID: String.BookmarksFolderTitleMenu,
-    BookmarkRoots.ToolbarFolderGUID: String.BookmarksFolderTitleToolbar,
-    BookmarkRoots.UnfiledFolderGUID: String.BookmarksFolderTitleUnsorted,
-    BookmarkRoots.MobileFolderGUID: String.BookmarksFolderTitleMobile,
-    LocalDesktopFolder.localDesktopFolderGuid: String.Bookmarks.Menu.DesktopBookmarks
-]
-
-// FIXME: FXIOS-14162 Make BookmarksPanelViewModel actually Sendable
-final class BookmarksPanelViewModel: @unchecked Sendable {
+/* Ecosia: Inherit NSObject so it can extend UIDocumentPickerDelegate
+class BookmarksPanelViewModel {
+ */
+class BookmarksPanelViewModel: NSObject {
     enum BookmarksSection: Int, CaseIterable {
         case bookmarks
     }
@@ -33,23 +30,26 @@ final class BookmarksPanelViewModel: @unchecked Sendable {
     let bookmarkFolderGUID: GUID
     var bookmarkFolder: FxBookmarkNode?
     var bookmarkNodes = [FxBookmarkNode]()
-    private var hasDesktopFolders = false
     private var bookmarksHandler: BookmarksHandler
     private var flashLastRowOnNextReload = false
-    private var mainQueue: DispatchQueueInterface
     private var logger: Logger
+    // Ecosia: Import Bookmarks Helper
+    private let bookmarksExchange: BookmarksExchangable
+    private var documentPickerPresentingViewController: UIViewController?
+    private var onImportDoneHandler: ((URL?, Error?) -> Void)?
+    private var onExportDoneHandler: ((Error?) -> Void)?
 
     /// By default our root folder is the mobile folder. Desktop folders are shown in the local desktop folders.
     init(profile: Profile,
          bookmarksHandler: BookmarksHandler,
          bookmarkFolderGUID: GUID = BookmarkRoots.MobileFolderGUID,
-         mainQueue: DispatchQueueInterface = DispatchQueue.main,
          logger: Logger = DefaultLogger.shared) {
         self.profile = profile
         self.bookmarksHandler = bookmarksHandler
         self.bookmarkFolderGUID = bookmarkFolderGUID
-        self.mainQueue = mainQueue
         self.logger = logger
+        // Ecosia: BookmarksExchange
+        self.bookmarksExchange = BookmarksExchange(profile: profile)
     }
 
     var shouldFlashRow: Bool {
@@ -59,7 +59,7 @@ final class BookmarksPanelViewModel: @unchecked Sendable {
         return true
     }
 
-    func reloadData(completion: @escaping @Sendable () -> Void) {
+    func reloadData(completion: @escaping () -> Void) {
         // Can be called while app backgrounded and the db closed, don't try to reload the data source in this case
         if profile.isShutdown {
             completion()
@@ -98,69 +98,21 @@ final class BookmarksPanelViewModel: @unchecked Sendable {
         bookmarkNodes.insert(bookmarkNode, at: destinationIndexPath.row)
     }
 
-    func getSiteDetails(for indexPath: IndexPath, completion: @escaping @Sendable (Site?) -> Void) {
-        guard let bookmarkNode = bookmarkNodes[safe: indexPath.row],
-              let bookmarkItem = bookmarkNode as? BookmarkItemData
-        else {
-            logger.log("Could not get site details for indexPath \(indexPath)",
-                       level: .debug,
-                       category: .library)
-            completion(nil)
-            return
-        }
-
-        checkIfPinnedURL(bookmarkItem.url) { [weak self] isPinned in
-            guard let site = self?.createSite(isPinned: isPinned, bookmarkItem: bookmarkItem) else { return }
-            completion(site)
-        }
-    }
-
-    func createPinUnpinAction(
-        for site: Site,
-        isPinned: Bool,
-        successHandler: @MainActor @escaping (String) -> Void
-    ) -> PhotonRowActions {
-        return SingleActionViewModel(
-            title: isPinned ? .Bookmarks.Menu.RemoveFromShortcutsTitle : .AddToShortcutsActionTitle,
-            iconString: isPinned ? StandardImageIdentifiers.Large.pinSlash : StandardImageIdentifiers.Large.pin,
-            tapHandler: { [weak self] _ in
-                guard let profile = self?.profile, let logger = self?.logger else { return }
-                let action = isPinned
-                ? profile.pinnedSites.removeFromPinnedTopSites(site)
-                : profile.pinnedSites.addPinnedTopSite(site)
-
-                action.uponQueue(.main) { result in
-                    MainActor.assumeIsolated {
-                        if result.isSuccess {
-                            let message: String = isPinned
-                            ? .LegacyAppMenu.RemovePinFromShortcutsConfirmMessage
-                            : .LegacyAppMenu.AddPinToShortcutsConfirmMessage
-                            successHandler(message)
-                        } else {
-                            let logMessage = isPinned ? "Could not remove pinned site" : "Could not add pinne site"
-                            logger.log(logMessage, level: .debug, category: .library)
-                        }
-                    }
-                }
-            }
-        ).items
-    }
-
     // MARK: - Private
 
     /// Since we have a Local Desktop folder that isn't referenced in A-S under the mobile folder,
     /// we need to account for this when saving bookmark index in A-S. This is done by subtracting
     /// the Local Desktop Folder number of rows it takes to the actual index.
     func getNewIndex(from index: Int) -> Int {
-        guard bookmarkFolderGUID == BookmarkRoots.MobileFolderGUID, hasDesktopFolders else {
-            return max(index, 0)
+        guard bookmarkFolderGUID == BookmarkRoots.MobileFolderGUID else {
+            return index
         }
 
         // Ensure we don't return lower than 0
         return max(index - LocalDesktopFolder.numberOfRowsTaken, 0)
     }
 
-    private func setupMobileFolderData(completion: @escaping @Sendable () -> Void) {
+    private func setupMobileFolderData(completion: @escaping () -> Void) {
         bookmarksHandler
             .getBookmarksTree(rootGUID: BookmarkRoots.MobileFolderGUID, recursive: false)
             .uponQueue(.main) { result in
@@ -176,7 +128,11 @@ final class BookmarksPanelViewModel: @unchecked Sendable {
                 self.bookmarkFolder = mobileFolder
                 self.bookmarkNodes = mobileFolder.fxChildren ?? []
 
-                self.createDesktopBookmarksFolder(completion: completion)
+                /* Ecosia: remove desktop folder
+                let desktopFolder = LocalDesktopFolder()
+                self.bookmarkNodes.insert(desktopFolder, at: 0)
+                 */
+                completion()
             }
     }
 
@@ -193,7 +149,7 @@ final class BookmarksPanelViewModel: @unchecked Sendable {
     }
 
     /// Subfolder data case happens when we select a folder created by a user
-    private func setupSubfolderData(completion: @escaping @Sendable () -> Void) {
+    private func setupSubfolderData(completion: @escaping () -> Void) {
         bookmarksHandler.getBookmarksTree(rootGUID: bookmarkFolderGUID,
                                           recursive: false).uponQueue(.main) { result in
             guard let folder = result.successValue as? BookmarkFolderData else {
@@ -217,52 +173,122 @@ final class BookmarksPanelViewModel: @unchecked Sendable {
         self.bookmarkFolder = nil
         self.bookmarkNodes = []
     }
+}
 
-    // Create a local "Desktop bookmarks" folder only if there exists a bookmark in one of it's nested
-    // subfolders
-    private func createDesktopBookmarksFolder(completion: @escaping @Sendable () -> Void) {
-        bookmarksHandler.countBookmarksInTrees(folderGuids: BookmarkRoots.DesktopRoots.map { $0 }) { result in
-            switch result {
-            case .success(let bookmarkCount):
-                if bookmarkCount > 0 {
-                    self.hasDesktopFolders = true
-                    let desktopFolder = LocalDesktopFolder()
-                    self.mainQueue.async {
-                        self.bookmarkNodes.insert(desktopFolder, at: 0)
+// Ecosia: Import Bookmarks Helper
+extension BookmarksPanelViewModel {
+
+    func bookmarkExportSelected(in viewController: LegacyBookmarksPanel, onDone: @escaping (Error?) -> Void) {
+        Task {
+            self.onExportDoneHandler = onDone
+            do {
+                let bookmarks = try await getBookmarksForExport()
+                try await bookmarksExchange.export(bookmarks: bookmarks, in: viewController, barButtonItem: viewController.moreButton)
+                await notifyExportDone(nil)
+            } catch {
+                await notifyExportDone(error)
+            }
+        }
+    }
+
+    func bookmarkImportSelected(in viewController: UIViewController, onDone: @escaping (URL?, Error?) -> Void) {
+        self.documentPickerPresentingViewController = viewController
+        self.onImportDoneHandler = onDone
+        let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.html"], in: .open)
+        documentPicker.allowsMultipleSelection = false
+        // Ecosia: Theming
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
+        let theme = themeManager.getCurrentTheme(for: viewController.view.currentWindowUUID)
+        documentPicker.view.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
+        documentPicker.delegate = self
+        viewController.present(documentPicker, animated: true)
+    }
+
+    // MARK: - Private
+    private func getBookmarksForExport() async throws -> [Ecosia.BookmarkItem] {
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            guard let self = self else {
+                return continuation.resume(returning: [])
+            }
+
+            profile.places
+                .getBookmarksTree(rootGUID: BookmarkRoots.MobileFolderGUID, recursive: true)
+                .uponQueue(.main) { result in
+                    guard let mobileFolder = result.successValue as? BookmarkFolderData else {
+                        self.setErrorCase()
+                        return
                     }
-                } else {
-                    self.hasDesktopFolders = false
+
+                    self.bookmarkFolder = mobileFolder
+                    let bookmarkNodes = mobileFolder.fxChildren ?? []
+
+                    let items: [Ecosia.BookmarkItem] = bookmarkNodes
+                        .compactMap { $0 as? BookmarkNodeData }
+                        .compactMap { bookmarkNode in
+                            self.exportNode(bookmarkNode)
+                        }
+
+                    continuation.resume(returning: items)
                 }
-            case .failure(let error):
-                self.logger.log("Error counting bookmarks: \(error)", level: .debug, category: .library)
-            }
-            completion()
         }
     }
 
-    private func checkIfPinnedURL(
-        _ url: String,
-        queue: DispatchQueue = .main,
-        completion: @escaping @Sendable  (Bool) -> Void
-    ) {
-        profile.pinnedSites.isPinnedTopSite(url)
-            .uponQueue(queue) { result in
-                completion(result.successValue ?? false)
-            }
+    private func exportNode(_ node: BookmarkNodeData) -> Ecosia.BookmarkItem? {
+        if let folder = node as? BookmarkFolderData {
+            return .folder(folder.title, folder.children?.compactMap { exportNode($0) } ?? [], .empty)
+        } else if let bookmark = node as? BookmarkItemData {
+            return .bookmark(bookmark.title, bookmark.url, .empty)
+        }
+        assertionFailure("This should not happen")
+        return nil
     }
 
-    private func createSite(isPinned: Bool, bookmarkItem: BookmarkItemData) -> Site {
-        guard isPinned else {
-            return Site.createBasicSite(
-                url: bookmarkItem.url,
-                title: bookmarkItem.title,
-                isBookmarked: true
-            )
+    @MainActor
+    private func notifyExportDone(_ error: Error?) {
+        onExportDoneHandler?(error)
+    }
+}
+
+extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        self.onImportDoneHandler?(nil, nil)
+    }
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard
+            let firstHtmlUrl = urls.first,
+            let viewController = documentPickerPresentingViewController
+        else { return }
+        handlePickedUrl(firstHtmlUrl, in: viewController)
+    }
+
+    func handlePickedUrl(_ url: URL, in viewController: UIViewController) {
+        let scopedResourceAccess = url.startAccessingSecurityScopedResource()
+        var error: NSError?
+        NSFileCoordinator().coordinate(readingItemAt: url, error: &error) { url in
+            Task {
+                defer {
+                    if scopedResourceAccess {
+                        url.stopAccessingSecurityScopedResource()
+                    }
+                }
+                do {
+                    try await bookmarksExchange.import(from: url, in: viewController)
+                    await notifyImportDone(url, nil)
+                } catch {
+                    await notifyImportDone(url, error)
+                }
+            }
         }
-        return Site.createPinnedSite(
-            url: bookmarkItem.url,
-            title: bookmarkItem.title,
-            isGooglePinnedTile: false
-        )
+        if let error = error {
+            Task {
+                await notifyImportDone(url, error)
+            }
+        }
+    }
+
+    @MainActor
+    private func notifyImportDone(_ url: URL, _ error: Error?) {
+        onImportDoneHandler?(url, error)
     }
 }

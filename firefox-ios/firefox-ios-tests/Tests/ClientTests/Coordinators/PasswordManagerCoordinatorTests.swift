@@ -7,24 +7,23 @@ import Storage
 import Common
 @testable import Client
 
-@MainActor
 final class PasswordManagerCoordinatorTests: XCTestCase {
     private var mockRouter: MockRouter!
     private var mockParentCoordinator: PasswordManagerCoordinatorDelegateMock!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         self.mockRouter = MockRouter(navigationController: MockNavigationController())
         self.mockParentCoordinator = PasswordManagerCoordinatorDelegateMock()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         self.mockRouter = nil
         self.mockParentCoordinator = nil
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     func testStart_withShowOnboarding() {

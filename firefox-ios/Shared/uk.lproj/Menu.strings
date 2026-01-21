@@ -10,9 +10,6 @@
 /* Label for the button, displayed in the menu, downloads a pdf when pressed. */
 "Menu.DownloadPDF.Label.v129" = "Завантажити PDF";
 
-/* Label for the edit bookmark button in the legacy menu. Pressing this button opens the bookmark editing screen for the current page's bookmark. Please keep the text as short as possible for this label. */
-"Menu.EditBookmark.Label.v135" = "Редагувати";
-
 /* Label for the button, displayed in the menu, used to open the toolbar to search for text within the current page. */
 "Menu.FindInPageAction.Title" = "Знайти на сторінці";
 
@@ -22,22 +19,22 @@
 /* Label for the button, displayed in the menu, used to open a new tab */
 "Menu.NewTabAction.Title" = "Нова вкладка";
 
-/* Accessibility label for the button, displayed in the menu, used to open the Bookmarks home panel. */
+/* Accessibility label for the button, displayed in the menu, used to open the Bookmarks home panel. Please keep as short as possible, <15 chars of space available. */
 "Menu.OpenBookmarksAction.AccessibilityLabel.v2" = "Закладки";
 
-/* Accessibility label for the button, displayed in the menu, used to open the Downloads home panel. */
+/* Accessibility label for the button, displayed in the menu, used to open the Downloads home panel. Please keep as short as possible, <15 chars of space available. */
 "Menu.OpenDownloadsAction.AccessibilityLabel.v2" = "Завантаження";
 
-/* Accessibility label for the button, displayed in the menu, used to open the History home panel. */
+/* Accessibility label for the button, displayed in the menu, used to open the History home panel. Please keep as short as possible, <15 chars of space available. */
 "Menu.OpenHistoryAction.AccessibilityLabel.v2" = "Історія";
 
-/* Accessibility label for the button, displayed in the menu, used to open the Reading list home panel. */
+/* Accessibility label for the button, displayed in the menu, used to open the Reading list home panel. Please keep as short as possible, <15 chars of space available. */
 "Menu.OpenReadingListAction.AccessibilityLabel.v2" = "Список читання";
 
 /* Label for the button, displayed in the menu, used to open the Settings menu. */
 "Menu.OpenSettingsAction.Title" = "Параметри";
 
-/* Accessibility label for the button, displayed in the menu, used to open the Synced Tabs home panel. */
+/* Accessibility label for the button, displayed in the menu, used to open the Synced Tabs home panel. Please keep as short as possible, <15 chars of space available. */
 "Menu.OpenSyncedTabsAction.AccessibilityLabel.v2" = "Вкладки";
 
 /* Label for the button, displayed in the menu, used to report a compatibility issue with the current page. */

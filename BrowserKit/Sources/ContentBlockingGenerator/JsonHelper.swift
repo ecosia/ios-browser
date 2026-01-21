@@ -10,10 +10,7 @@ struct JsonHelper {
 
         do {
             let data = try Data(contentsOf: file)
-            guard let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                fatalError("Invalid JSON format: expected [String: Any] in \(filename)")
-            }
-            return jsonObject
+            return try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
         } catch {
             fatalError("Could not find entity file \(filename) at file \(file)")
         }
@@ -24,10 +21,7 @@ struct JsonHelper {
 
         do {
             let data = try Data(contentsOf: file)
-            guard let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String] else {
-                fatalError("Invalid JSON format: expected [String] in \(filename)")
-            }
-            return jsonObject
+            return try JSONSerialization.jsonObject(with: data, options: []) as! [String]
         } catch {
             fatalError("Could not find list file \(filename) at file \(file)")
         }

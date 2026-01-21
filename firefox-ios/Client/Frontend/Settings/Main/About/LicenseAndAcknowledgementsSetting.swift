@@ -8,7 +8,6 @@ import Shared
 /// Opens the license page in a new tab
 class LicenseAndAcknowledgementsSetting: Setting {
     override var title: NSAttributedString? {
-        guard let theme else { return nil }
         return NSAttributedString(string: .AppSettingsLicenses,
                                   attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary])
     }

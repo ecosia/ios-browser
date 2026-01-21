@@ -6,9 +6,10 @@ import UIKit
 
 /// A scroll view that adds a fade at top or bottom when it scroll
 /// to indicate more content is available to user
-public final class FadeScrollView: UIScrollView, UIScrollViewDelegate {
-    private let fadePercentage = 0.1
+public class FadeScrollView: UIScrollView, UIScrollViewDelegate {
+    private let fadePercentage: Double = 0.1
     private let gradientLayer = CAGradientLayer()
+    private let transparentColor = UIColor.clear.cgColor
     private let opaqueColor = UIColor.black.cgColor
 
     private var needsToScroll: Bool {

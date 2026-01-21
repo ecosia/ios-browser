@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol UserDefaultsInterface: Sendable {
+public protocol UserDefaultsInterface {
     func set(_ value: Any?, forKey defaultName: String)
     func object(forKey defaultName: String) -> Any?
 

@@ -5,15 +5,14 @@
 import Common
 import Foundation
 import Shared
-import Localizations
 
-import struct MozillaAppServices.NimbusAppSettings
 import class MozillaAppServices.NimbusBuilder
 import class MozillaAppServices.NimbusDisabled
-import typealias MozillaAppServices.NimbusErrorReporter
 import protocol MozillaAppServices.NimbusEventStore
 import protocol MozillaAppServices.NimbusInterface
 import protocol MozillaAppServices.NimbusMessagingHelperProtocol
+import struct MozillaAppServices.NimbusAppSettings
+import typealias MozillaAppServices.NimbusErrorReporter
 
 private let nimbusAppName = "firefox_ios"
 private let NIMBUS_URL_KEY = "NimbusURL"
@@ -53,14 +52,12 @@ private let NIMBUS_IS_FIRST_RUN_KEY = "NimbusFirstRun"
 ///
 /// Rust errors are not expected, but will be reported via logger.
 enum Experiments {
-    // TODO: FXIOS-12587 This global property is not concurrency safe
-    nonisolated(unsafe) private static var studiesSetting: Bool?
-    nonisolated(unsafe) private static var telemetrySetting: Bool?
-    nonisolated(unsafe) private static var rolloutsSetting: Bool?
+    private static var studiesSetting: Bool?
+    private static var telemetrySetting: Bool?
 
     static func setStudiesSetting(_ setting: Bool) {
         studiesSetting = setting
-        updateExperimentParticipation()
+        updateGlobalUserParticipation()
     }
 
     static func setTelemetrySetting(_ setting: Bool) {
@@ -68,32 +65,19 @@ enum Experiments {
         if !setting {
             shared.resetTelemetryIdentifiers()
         }
-        updateExperimentParticipation()
+        updateGlobalUserParticipation()
     }
 
-    static func setRolloutsSetting(_ setting: Bool) {
-        rolloutsSetting = setting
-        updateRolloutParticipation()
-    }
-
-    private static func updateExperimentParticipation() {
-        // we only want to reset the experiment participation flag if both settings have been
+    private static func updateGlobalUserParticipation() {
+        // we only want to reset the globalUserParticipation flag if both settings have been
         // initialized.
         if let studiesSetting = studiesSetting, let telemetrySetting = telemetrySetting {
             // we only enable experiments if users are opting in BOTH
             // telemetry and studies. If either is opted-out, we make
             // sure users are not enrolled in any experiments
-            shared.experimentParticipation = studiesSetting && telemetrySetting
+            shared.globalUserParticipation = studiesSetting && telemetrySetting
         }
     }
-
-    private static func updateRolloutParticipation() {
-        // Rollout participation is controlled independently by its own toggle
-        if let rolloutsSetting = rolloutsSetting {
-            shared.rolloutParticipation = rolloutsSetting
-        }
-    }
-
     static func setLocalExperimentData(payload: String?, storage: UserDefaults = .standard) {
         guard let payload = payload else {
             storage.removeObject(forKey: NIMBUS_LOCAL_DATA_KEY)
@@ -110,7 +94,7 @@ enum Experiments {
     static var dbPath: String? {
         let profilePath: String?
         if AppConstants.isRunningUITests || AppConstants.isRunningPerfTests {
-            profilePath = UITestAppDelegate.dirForTestProfile
+            profilePath = (UIApplication.shared.delegate as? UITestAppDelegate)?.dirForTestProfile
         } else if AppConstants.isRunningUnitTest {
             let dir = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             profilePath = dir.path
@@ -150,8 +134,7 @@ enum Experiments {
     }
 
     /// The `NimbusApi` object. This is the entry point to do anything with the Nimbus SDK on device.
-    /// TODO FXIOS-12602 This global property is not concurrency safe
-    nonisolated(unsafe) static var shared: NimbusInterface = {
+    public static var shared: NimbusInterface = {
         let defaults = UserDefaults.standard
         let isFirstRun: Bool = defaults.object(forKey: NIMBUS_IS_FIRST_RUN_KEY) == nil
         if isFirstRun {
@@ -181,12 +164,13 @@ enum Experiments {
     }()
 
     private static func getAppSettings(isFirstRun: Bool) -> NimbusAppSettings {
-        let isPhone = UIDeviceDetails.userInterfaceIdiom == .phone
+        let isPhone = UIDevice.current.userInterfaceIdiom == .phone
 
-        let customTargetingAttributes: [String: Any] = [
+        let customTargetingAttributes: [String: Any] =  [
             "isFirstRun": "\(isFirstRun)",
             "is_first_run": isFirstRun,
-            "is_phone": isPhone
+            "is_phone": isPhone,
+            "is_review_checker_enabled": isReviewCheckerEnabled()
         ]
 
         // App settings, to allow experiments to target the app name and the
@@ -199,46 +183,12 @@ enum Experiments {
         )
     }
 
-    private static func isDefaultBrowser() -> Bool {
-        return UserDefaults.standard.bool(forKey: PrefsKeys.AppleConfirmedUserIsDefaultBrowser)
-    }
-
-    private static func isBottomToolbarUser() -> Bool {
-        let prefsReader = ProfilePrefsReader()
-        return prefsReader.isBottomToolbarUser()
-    }
-
-    private static func hasEnabledTipsNotifications() -> Bool {
-        let prefsReader = ProfilePrefsReader()
-        return prefsReader.hasEnabledTipsNotifications()
-    }
-
-    private static func hasAcceptedTermsOfUse() -> Bool {
-        let prefsReader = ProfilePrefsReader()
-        return prefsReader.hasAcceptedTermsOfUse()
-    }
-
-    static func touExperiencePoints(region: String?) -> Int32 {
-        let prefsReader = ProfilePrefsReader()
-        return prefsReader.getTouExperiencePoints(region: region)
-    }
-
-    private static func isAppleIntelligenceAvailable() -> Bool {
-        guard #available(iOS 26, *) else { return false }
-        #if canImport(FoundationModels)
-            return AppleIntelligenceUtil().isAppleIntelligenceAvailable
-        #else
-            return false
-        #endif
-    }
-
-    private static func cannotUseAppleIntelligence() -> Bool {
-        guard #available(iOS 26, *) else { return true }
-        #if canImport(FoundationModels)
-            return AppleIntelligenceUtil().cannotUseAppleIntelligence
-        #else
-            return true
-        #endif
+    private static func isReviewCheckerEnabled() -> Bool {
+        var isReviewCheckerEnabled = false
+        if let prefs = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier) {
+            isReviewCheckerEnabled = prefs.bool(forKey: "profile." + PrefsKeys.Shopping2023OptIn)
+        }
+        return isReviewCheckerEnabled
     }
 
     private static func buildNimbus(dbPath: String,
@@ -248,23 +198,11 @@ enum Experiments {
         let bundles = [
             Bundle.main,
             Strings.bundle,
-            Strings.bundle.fallbackTranslationBundle(language: "en-US"),
+            Strings.bundle.fallbackTranslationBundle(language: "en-US")
         ].compactMap { $0 }
 
-        let nimbusRecordedContext = RecordedNimbusContext(
-            isFirstRun: isFirstRun,
-            isDefaultBrowser: isDefaultBrowser(),
-            isBottomToolbarUser: isBottomToolbarUser(),
-            hasEnabledTipsNotifications: hasEnabledTipsNotifications(),
-            hasAcceptedTermsOfUse: hasAcceptedTermsOfUse(),
-            isAppleIntelligenceAvailable: isAppleIntelligenceAvailable(),
-            cannotUseAppleIntelligence: cannotUseAppleIntelligence()
-        )
-
-        let profile: Profile = AppContainer.shared.resolve()
-        let remoteSettingsService = profile.remoteSettingsService
-
         return NimbusBuilder(dbPath: dbPath)
+            .with(url: remoteSettingsURL)
             .using(previewCollection: usePreviewCollection())
             .with(errorReporter: errorReporter)
             .with(initialExperiments: initialExperiments)
@@ -272,32 +210,7 @@ enum Experiments {
             .with(bundles: bundles)
             .with(featureManifest: FxNimbus.shared)
             .with(commandLineArgs: CommandLine.arguments)
-            .with(recordedContext: nimbusRecordedContext)
-            .onCreate(callback: { _ in
-                    DefaultLogger.shared.log(
-                        "Nimbus is ready",
-                        level: .info,
-                        category: .experiments
-                    )
-            })
-            .onApply(callback: { _ in
-                    DefaultLogger.shared.log(
-                        "Nimbus enrollment and experiments application complete",
-                        level: .info,
-                        category: .experiments
-                    )
-            })
-            .onFetch(callback: { _ in
-                DefaultLogger.shared.log(
-                    "Nimbus fetch of new experiments has completed",
-                    level: .info,
-                    category: .experiments
-                )
-            })
-            .build(
-                appInfo: getAppSettings(isFirstRun: isFirstRun),
-                remoteSettingsService: remoteSettingsService
-            )
+            .build(appInfo: getAppSettings(isFirstRun: isFirstRun))
     }
 
     /// A convenience method to initialize the `NimbusApi` object at startup.
@@ -310,11 +223,11 @@ enum Experiments {
     /// - Parameters:
     ///     - fireURL: an optional file URL that stores the initial experiments document.
     ///     - firstRun: a flag indicating that this is the first time that the app has been run.
-    static func initialize() {
+    public static func intialize() {
         // Getting the singleton first time initializes it.
         let nimbus = Experiments.shared
 
-        DefaultLogger.shared.log("Nimbus singleton initialized successfully",
+        DefaultLogger.shared.log("Nimbus is ready!",
                                  level: .info,
                                  category: .experiments)
 
@@ -331,11 +244,15 @@ extension Experiments {
         return try? sdk.createMessageHelper(additionalContext: context)
     }
 
-    public static let messaging: GleanPlumbMessageManagerProtocol = GleanPlumbMessageManager()
+    public static var messaging: GleanPlumbMessageManagerProtocol = {
+        GleanPlumbMessageManager()
+    }()
 
-    public static let events: NimbusEventStore = sdk.events
+    public static var events: NimbusEventStore = {
+        sdk.events
+    }()
 
-    public static let sdk: NimbusInterface = shared
+    public static var sdk: NimbusInterface = shared
 }
 
 private extension AppBuildChannel {

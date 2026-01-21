@@ -74,7 +74,7 @@ class OnboardingMultipleChoiceButtonView: UIView, Themeable {
     let windowUUID: WindowUUID
     var viewModel: OnboardingMultipleChoiceButtonViewModel
     var themeManager: Common.ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: Common.NotificationProtocol
     weak var buttonActionDelegate: OnboardingCardDelegate?
     weak var stateUpdateDelegate: OnboardingMultipleChoiceSelectionDelegate?
@@ -99,10 +99,6 @@ class OnboardingMultipleChoiceButtonView: UIView, Themeable {
 
         setupLayout()
         updateUIForState()
-        handleButtonTapIfSelected()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
-        applyTheme()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -173,14 +169,6 @@ class OnboardingMultipleChoiceButtonView: UIView, Themeable {
             from: viewModel.presentingCardName
         )
         stateUpdateDelegate?.updateSelectedButton(to: viewModel.info.title)
-    }
-
-    private func handleButtonTapIfSelected() {
-        guard viewModel.isSelected else { return }
-        // Call `buttonTapped` immediately if the button is selected to ensure the user preference is saved.
-        // This avoids having two default cases between experiments, preventing scenarios where the toolbar
-        // is initially set to the bottom and then changes to the top after an experiment update.
-        buttonTapped()
     }
 
     // MARK: - Theme

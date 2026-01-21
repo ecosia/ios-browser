@@ -17,7 +17,6 @@ class ShadowCardViewViewController: UIViewController, Themeable {
     """
 
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
@@ -41,7 +40,7 @@ class ShadowCardViewViewController: UIViewController, Themeable {
         super.viewDidLoad()
         setupView()
 
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
 
         contentLabel.text = loremIpsum

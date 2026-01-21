@@ -4,28 +4,23 @@
 
 import Foundation
 import UIKit
+import Common
 
 /// The view model used to configure a `BottomSheetViewController`
 public struct BottomSheetViewModel {
     public struct UX {
-        public static var cornerRadius: CGFloat {
-            if #available(iOS 26.0, *) {
-                return 24
-            } else {
-                return 8
-            }
-        }
+        public static let cornerRadius: CGFloat = 8
         public static let animationTransitionDuration: CGFloat = 0.3
         public static let shadowOpacity: Float = 0.3
     }
 
-    let cornerRadius: CGFloat
-    let backgroundColor: UIColor
-    let animationTransitionDuration: TimeInterval
-    let shouldDismissForTapOutside: Bool
-    let shadowOpacity: Float
-    let closeButtonA11yLabel: String
-    let closeButtonA11yIdentifier: String
+    public var cornerRadius: CGFloat
+    public var animationTransitionDuration: TimeInterval
+    public var backgroundColor: UIColor
+    public var shouldDismissForTapOutside: Bool
+    public var shadowOpacity: Float
+    public var closeButtonA11yLabel: String
+    public var closeButtonA11yIdentifier: String
 
     public init(
         cornerRadius: CGFloat = BottomSheetViewModel.UX.cornerRadius,

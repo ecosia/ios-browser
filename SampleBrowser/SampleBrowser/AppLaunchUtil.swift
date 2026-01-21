@@ -6,7 +6,6 @@ import Foundation
 import Common
 
 class AppLaunchUtil {
-    @MainActor
     func setUpPreLaunchDependencies() {
         let webViewModel = MenuHelperWebViewModel(searchTitle: "Search with Sample Browser",
                                                   findInPageTitle: "Find in page")

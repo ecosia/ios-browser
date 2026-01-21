@@ -19,7 +19,6 @@ protocol WebViewNavigationHandler {
     ///   - url: url to filter the navigation action on
     ///   - navigationAction: The navigation action that happened on that url, contains information
     ///                       about an action that may cause a navigation, used for making policy decisions.
-    @MainActor
     func filterDataScheme(url: URL, navigationAction: WKNavigationAction)
 }
 
@@ -44,20 +43,11 @@ struct WebViewNavigationHandlerImplementation: WebViewNavigationHandler {
         return url.scheme == WebViewNavigationHandlerImplementation.Scheme.data.rawValue
     }
 
-    @MainActor
     func filterDataScheme(url: URL,
                           navigationAction: WKNavigationAction) {
         // Only filter top-level navigation, not on data URL subframes.
         // If target frame is nil, we filter as well.
-        let isMainFrame = navigationAction.targetFrame?.isMainFrame
-        filterDataScheme(url: url, isMainFrame: isMainFrame)
-    }
-
-    @MainActor
-    func filterDataScheme(url: URL, isMainFrame: Bool?) {
-        let shouldFilter = isMainFrame ?? true
-
-        if !shouldFilter {
+        guard navigationAction.targetFrame?.isMainFrame ?? true else {
             decisionHandler(.allow)
             return
         }

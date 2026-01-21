@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class InsetTextField: UITextField {
+class InsetTextField: UITextField {
     private let insetBy: CGFloat
 
     init(insetBy: CGFloat) {

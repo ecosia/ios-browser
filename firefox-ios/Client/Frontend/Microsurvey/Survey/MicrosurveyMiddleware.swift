@@ -4,15 +4,11 @@
 
 import Foundation
 import Redux
+import Shared
 import Common
 
-@MainActor
 final class MicrosurveyMiddleware {
-    private let microsurveyTelemetry: MicrosurveyTelemetryProtocol
-
-    init(microsurveyTelemetry: MicrosurveyTelemetryProtocol = MicrosurveyTelemetry()) {
-        self.microsurveyTelemetry = microsurveyTelemetry
-    }
+    private let microsurveyTelemetry = MicrosurveyTelemetry()
 
     lazy var microsurveyProvider: Middleware<AppState> = { state, action in
         let windowUUID = action.windowUUID
@@ -21,7 +17,7 @@ final class MicrosurveyMiddleware {
         case MicrosurveyActionType.closeSurvey:
             self.dismissSurvey(windowUUID: windowUUID, surveyId: surveyId)
         case MicrosurveyActionType.tapPrivacyNotice:
-            self.sendTelemetryForNavigatingToPrivacyNotice(surveyId: surveyId)
+            self.sendTelemtryForNavigatingToPrivacyNotice(surveyId: surveyId)
         case MicrosurveyActionType.submitSurvey:
             self.sendTelemetryAndClosePrompt(windowUUID: windowUUID, action: action, surveyId: surveyId)
         case MicrosurveyActionType.surveyDidAppear:
@@ -38,7 +34,7 @@ final class MicrosurveyMiddleware {
         closeMicrosurveyPrompt(windowUUID: windowUUID)
     }
 
-    private func sendTelemetryForNavigatingToPrivacyNotice(surveyId: String) {
+    private func sendTelemtryForNavigatingToPrivacyNotice(surveyId: String) {
         microsurveyTelemetry.privacyNoticeTapped(surveyId: surveyId)
     }
 

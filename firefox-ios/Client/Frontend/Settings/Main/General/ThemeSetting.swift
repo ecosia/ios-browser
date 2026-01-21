@@ -7,10 +7,10 @@ import Common
 
 class ThemeSetting: Setting {
     private weak var settingsDelegate: GeneralSettingsDelegate?
+    private let profile: Profile
     private let themeManager: ThemeManager
 
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
     override var style: UITableViewCell.CellStyle { return .value1 }
@@ -20,9 +20,7 @@ class ThemeSetting: Setting {
     }
 
     override var status: NSAttributedString {
-        if themeManager.isNewAppearanceMenuOn {
-            return NSAttributedString(string: "")
-        } else if themeManager.systemThemeIsOn {
+        if themeManager.systemThemeIsOn {
             return NSAttributedString(string: .SystemThemeSectionHeader)
         } else if !themeManager.automaticBrightnessIsOn {
             return NSAttributedString(string: .DisplayThemeManualStatusLabel)
@@ -37,15 +35,14 @@ class ThemeSetting: Setting {
          settingsDelegate: GeneralSettingsDelegate?,
          themeManager: ThemeManager = AppContainer.shared.resolve()
     ) {
+        self.profile = settings.profile
         self.settingsDelegate = settingsDelegate
         self.themeManager = themeManager
 
         let theme = settings.currentTheme()
         super.init(
             title: NSAttributedString(
-                string: themeManager.isNewAppearanceMenuOn
-                            ? .SettingsAppearanceTitle
-                            : .SettingsDisplayThemeTitle,
+                string: .SettingsDisplayThemeTitle,
                 attributes: [
                     NSAttributedString.Key.foregroundColor: theme.colors.textPrimary
                 ]

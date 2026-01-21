@@ -11,8 +11,8 @@ import XCTest
 @testable import Client
 
 class CreditCardBottomSheetViewModelTests: XCTestCase {
-    private var autofill: MockCreditCardProvider!
-    private var dispatchQueue: MockDispatchQueue!
+    private var viewModel: CreditCardBottomSheetViewModel?
+    private var mockAutofill: MockCreditCardProvider?
     private var samplePlainTextCard = UnencryptedCreditCardFields(ccName: "Allen Burges",
                                                                   ccNumber: "4111111111111111",
                                                                   ccNumberLast4: "1111",
@@ -38,63 +38,65 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
                                               timeLastModified: 123123,
                                               timesUsed: 123123)
 
-    override func setUp() {
-        super.setUp()
-        autofill = MockCreditCardProvider()
-        dispatchQueue = MockDispatchQueue()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        mockAutofill = MockCreditCardProvider()
+        let autofill = try XCTUnwrap(mockAutofill)
+        viewModel = CreditCardBottomSheetViewModel(
+            creditCardProvider: autofill,
+            creditCard: sampleCreditCard,
+            decryptedCreditCard: samplePlainTextCard,
+            state: CreditCardBottomSheetState.save
+        )
     }
 
     override func tearDown() {
-        autofill = nil
-        dispatchQueue = nil
+        mockAutofill = nil
+        viewModel = nil
         super.tearDown()
     }
 
     // MARK: - Test Cases
-    @MainActor
     func test_saveCreditCard_callsAddCreditCard() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
+        let autofill = try XCTUnwrap(mockAutofill)
 
         let expectation = expectation(description: "wait for credit card fields to be saved")
         let decryptedCreditCard = try XCTUnwrap(subject.getPlainCreditCardValues(bottomSheetState: .save))
         // Make sure the year saved is a 4 digit year and not 2 digit
         // 2000 because that is our current period
         XCTAssertTrue(decryptedCreditCard.ccExpYear > 2000)
-        subject.saveCreditCard(with: decryptedCreditCard) { [autofill] creditCard, error in
-            XCTAssertEqual(autofill?.addCreditCardCalledCount, 1)
+        subject.saveCreditCard(with: decryptedCreditCard) { creditCard, error in
+            XCTAssertEqual(autofill.addCreditCardCalledCount, 1)
             expectation.fulfill()
         }
         waitForExpectations(timeout: 1.0)
     }
 
-    @MainActor
     func test_saveAndUpdateCreditCard_callsProperAutofillMethods() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
+        let autofill = try XCTUnwrap(mockAutofill)
 
         subject.state = .save
         let expectationSave = expectation(description: "wait for credit card fields to be saved")
         let expectationUpdate = expectation(description: "wait for credit card fields to be updated")
 
-        subject.saveCreditCard(with: samplePlainTextCard) {  [autofill, samplePlainTextCard] creditCard, error in
-            DispatchQueue.main.async {
-                XCTAssertEqual(autofill.addCreditCardCalledCount, 1)
-                expectationSave.fulfill()
-                subject.state = .update
-
-                subject.updateCreditCard(for: creditCard?.guid,
-                                         with: samplePlainTextCard
-                ) { didUpdate, error in
-                    XCTAssertEqual(autofill.updateCreditCardCalledCount, 1)
-                    expectationUpdate.fulfill()
-                }
+        subject.saveCreditCard(with: samplePlainTextCard) { creditCard, error in
+            XCTAssertEqual(autofill.addCreditCardCalledCount, 1)
+            expectationSave.fulfill()
+            subject.state = .update
+            subject.updateCreditCard(for: creditCard?.guid,
+                                     with: self.samplePlainTextCard
+            ) { didUpdate, error in
+                XCTAssertEqual(autofill.updateCreditCardCalledCount, 1)
+                expectationUpdate.fulfill()
             }
         }
         waitForExpectations(timeout: 6.0)
     }
 
-    @MainActor
     func testViewSetupForRememberCreditCard() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .save
         XCTAssertTrue(subject.state.yesButtonTitle == .CreditCard.RememberCreditCard.MainButtonTitle)
@@ -105,9 +107,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertTrue(subject.state.title == .CreditCard.RememberCreditCard.MainTitle)
     }
 
-    @MainActor
     func testViewSetupForUpdateCreditCard() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .update
         XCTAssertTrue(subject.state.yesButtonTitle == .CreditCard.UpdateCreditCard.MainButtonTitle)
@@ -117,9 +118,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
 
     // Update the test to also account for save and selected card flow
     // Ticket: FXIOS-6719
-    @MainActor
     func test_save_getPlainCreditCardValues() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .save
         let value = try XCTUnwrap(subject.getPlainCreditCardValues(bottomSheetState: .save))
@@ -132,9 +132,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertTrue(value.ccExpYear > 2000)
     }
 
-    @MainActor
     func test_getPlainCreditCardValues_NilDecryptedCard() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .save
         subject.decryptedCreditCard = nil
@@ -142,9 +141,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertNil(value)
     }
 
-    @MainActor
     func test_getConvertedCreditCardValues_MasterCard() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .save
         let masterCard = UnencryptedCreditCardFields(ccName: "John Doe",
@@ -162,9 +160,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertEqual(cardValue.ccType, "MasterCard")
     }
 
-    @MainActor
     func test_getPlainCreditCardValues_InvalidMonth() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .save
         let invalidCard = UnencryptedCreditCardFields(ccName: "Jane Smith",
@@ -178,9 +175,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertNotNil(value)
     }
 
-    @MainActor
     func test_getConvertedCreditCardValues_UpcomingExpiry() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .save
         let currentDate = Date()
@@ -202,9 +198,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertEqual(value.ccExpYear, Int64(upcomingYear))
     }
 
-    @MainActor
     func test_getConvertedCreditCardValues_WhenStateIsSelectAndRowIsOutOfBounds() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .selectSavedCard
         let result = subject.getConvertedCreditCardValues(bottomSheetState: .selectSavedCard,
@@ -213,9 +208,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertNil(result)
     }
 
-    @MainActor
     func test_select_PlainCreditCard_WithNegativeRow() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .selectSavedCard
         subject.creditCards = [sampleCreditCard]
@@ -223,9 +217,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertNil(value)
     }
 
-    @MainActor
     func test_save_getConvertedCreditCardValues() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.state = .save
         let value = try XCTUnwrap(
@@ -241,9 +234,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertEqual(value.ccType, samplePlainTextCard.ccType)
     }
 
-    @MainActor
     func test_update_getConvertedCreditCardValues() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.creditCard = sampleCreditCard
         subject.decryptedCreditCard = samplePlainTextCard
@@ -262,9 +254,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertEqual(value.ccType, self.samplePlainTextCard.ccType)
     }
 
-    @MainActor
     func test_update_selectConvertedCreditCardValues_ForSpecificRow() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.creditCards = [sampleCreditCard]
 
@@ -281,9 +272,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertEqual(value.ccType, self.samplePlainTextCard.ccType)
     }
 
-    @MainActor
     func test_update_selectConvertedCreditCardValues_ForInvalidRow() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.creditCards = [sampleCreditCard]
 
@@ -294,9 +284,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertNil(value)
     }
 
-    @MainActor
     func test_update_selectConvertedCreditCardValues_ForMinusRow() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.creditCards = [sampleCreditCard]
 
@@ -308,9 +297,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertNil(value)
     }
 
-    @MainActor
     func test_update_selectConvertedCreditCardValues_ForEmptyCreditCards() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         subject.creditCards = []
 
@@ -322,9 +310,8 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertNil(value)
     }
 
-    @MainActor
     func test_updateDecryptedCreditCard() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         let sampleCreditCardVal = sampleCreditCard
         let updatedName = "Red Dragon"
@@ -349,95 +336,78 @@ class CreditCardBottomSheetViewModelTests: XCTestCase {
         XCTAssertEqual(value.ccNumber, sampleCreditCardVal.ccNumberEnc)
     }
 
-    @MainActor
     func test_didTapMainButton_withSaveState_callsAddCreditCard() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
+        let autofill = try XCTUnwrap(mockAutofill)
 
         subject.state = .save
         subject.decryptedCreditCard = samplePlainTextCard
         let expectation = expectation(description: "wait for credit card fields to be saved")
 
-        subject.didTapMainButton(queue: dispatchQueue) { [autofill] error in
+        subject.didTapMainButton { error in
             guard error == nil else {
                 XCTFail("Should not have received error: \(String(describing: error?.localizedDescription))")
                 return
             }
 
-            XCTAssertEqual(autofill?.addCreditCardCalledCount, 1)
+            XCTAssertEqual(autofill.addCreditCardCalledCount, 1)
             expectation.fulfill()
         }
 
         waitForExpectations(timeout: 5.0)
     }
 
-    @MainActor
     func test_didTapMainButton_withUpdateState_callsAddCreditCard() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
+        let autofill = try XCTUnwrap(mockAutofill)
 
         subject.state = .update
         subject.decryptedCreditCard = samplePlainTextCard
         let expectation = expectation(description: "wait for credit card fields to be updated")
 
-        subject.didTapMainButton(queue: dispatchQueue) { [autofill] error in
+        subject.didTapMainButton { error in
             guard error == nil else {
                 XCTFail("Should not have received error: \(String(describing: error?.localizedDescription))")
                 return
             }
-            XCTAssertEqual(autofill?.updateCreditCardCalledCount, 1)
+            XCTAssertEqual(autofill.updateCreditCardCalledCount, 1)
             expectation.fulfill()
         }
 
         waitForExpectations(timeout: 5.0)
     }
 
-    @MainActor
     func test_updateCreditCardList_callsListCreditCards() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
+        let autofill = try XCTUnwrap(mockAutofill)
 
         let expectation = expectation(description: "wait for credit card to be added")
         subject.creditCard = nil
         subject.decryptedCreditCard = nil
         subject.state = .selectSavedCard
 
-        subject.updateCreditCardList { [autofill] cards in
-            DispatchQueue.main.async {
-                XCTAssertEqual(subject.creditCards, cards)
-                XCTAssertEqual(cards?.count, 1)
-                XCTAssertEqual(cards?.first?.guid, "1")
-                XCTAssertEqual(cards?.first?.ccName, "Allen Burges")
-                XCTAssertEqual(autofill.listCreditCardsCalledCount, 1)
-                expectation.fulfill()
-            }
-        }
+        subject.updateCreditCardList({ cards in
+            XCTAssertEqual(subject.creditCards, cards)
+            XCTAssertEqual(cards?.count, 1)
+            XCTAssertEqual(cards?.first?.guid, "1")
+            XCTAssertEqual(cards?.first?.ccName, "Allen Burges")
+            XCTAssertEqual(autofill.listCreditCardsCalledCount, 1)
+            expectation.fulfill()
+        })
         waitForExpectations(timeout: 5.0)
     }
 
-    @MainActor
     func test_updateCreditCardList_withoutSelectedSavedCardState_doesNotCallListCreditCards() throws {
-        let subject = createSubject()
+        let subject = try XCTUnwrap(viewModel)
 
         let expectation = expectation(description: "wait for credit card to be added")
+        expectation.isInverted = true
         subject.creditCard = nil
         subject.decryptedCreditCard = nil
 
-        subject.updateCreditCardList { cards in
-            XCTAssertNil(cards)
+        subject.updateCreditCardList({ cards in
             expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 1.0)
-    }
-
-    // MARK: Helper methods
-
-    @MainActor
-    private func createSubject() -> CreditCardBottomSheetViewModel {
-        let subject = CreditCardBottomSheetViewModel(
-            creditCardProvider: autofill,
-            creditCard: sampleCreditCard,
-            decryptedCreditCard: samplePlainTextCard,
-            state: CreditCardBottomSheetState.save
-        )
-        trackForMemoryLeaks(subject)
-        return subject
+        })
+        waitForExpectations(timeout: 1.0)
     }
 }

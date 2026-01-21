@@ -9,8 +9,11 @@ import TabDataStore
 import WidgetKit
 
 /// Defines various actions in the app which are performed for all open iPad
-/// windows. These can be routed through the WindowManager
+/// windows. These can be routed through the WindowManager 
 enum MultiWindowAction {
+    /// Signals that we should store tabs (for all windows) on the default Profile.
+    case storeTabs
+
     /// Signals that we should save Simple Tabs for all windows (used by our widgets).
     case saveSimpleTabs
 
@@ -44,7 +47,6 @@ protocol WindowManager {
 
     /// Signals the WindowManager that a window was closed.
     /// - Parameter uuid: the ID of the window.
-    @MainActor
     func windowWillClose(uuid: WindowUUID)
 
     /// Supplies the UUID for the next window the iOS app should open. This
@@ -58,26 +60,19 @@ protocol WindowManager {
 
     /// Signals the WindowManager that a window event has occurred. Window events
     /// are communicated to any interested Coordinators for _all_ windows, but
-    /// any one event is always associated with one window in specific.
+    /// any one event is always associated with one window in specific. 
     /// - Parameter event: the event that occurred and any associated metadata.
     /// - Parameter windowUUID: the UUID of the window triggering the event.
-    @MainActor
     func postWindowEvent(event: WindowEvent, windowUUID: WindowUUID)
 
     /// Performs a MultiWindowAction.
     /// - Parameter action: the action to perform.
-    @MainActor
     func performMultiWindowAction(_ action: MultiWindowAction)
 
     /// Returns the current window (if available) which hosts a specific tab.
     /// - Parameter tab: the UUID of the tab.
     /// - Returns: the UUID of the window hosting it (if available and open).
-    @MainActor
     func window(for tab: TabUUID) -> WindowUUID?
-
-    /// Convenience. Provides opportunity for safety checks or window validation.
-    @MainActor
-    func windowExists(uuid: WindowUUID) -> Bool
 }
 
 /// Captures state and coordinator references specific to one particular app window.
@@ -86,7 +81,7 @@ struct AppWindowInfo {
     weak var sceneCoordinator: SceneCoordinator?
 }
 
-final class WindowManagerImplementation: WindowManager {
+final class WindowManagerImplementation: WindowManager, WindowTabsSyncCoordinatorDelegate {
     enum WindowPrefKeys {
         static let windowOrdering = "windowOrdering"
     }
@@ -102,6 +97,7 @@ final class WindowManagerImplementation: WindowManager {
     private let logger: Logger
     private let tabDataStore: TabDataStore
     private let defaults: UserDefaultsInterface
+    private let tabSyncCoordinator = WindowTabsSyncCoordinator()
     private let widgetSimpleTabsCoordinator = WindowSimpleTabsCoordinator()
 
     // Ordered set of UUIDs which determines the order that windows are re-opened on iPad
@@ -126,6 +122,7 @@ final class WindowManagerImplementation: WindowManager {
         self.tabDataStore = tabDataStore ?? DefaultTabDataStore(logger: logger, fileManager: DefaultTabFileManager())
         self.logger = logger
         self.defaults = userDefaults
+        tabSyncCoordinator.delegate = self
     }
 
     // MARK: - Public API
@@ -136,27 +133,13 @@ final class WindowManagerImplementation: WindowManager {
     }
 
     func tabManager(for windowUUID: WindowUUID) -> TabManager {
-        func unsafeAnyTabManager() -> TabManager {
-            // This is unsafe, but is the best fallback we have to try to handle non-fatally (but may crash anyway)
-            if let tabManager = windows.first?.value.tabManager {
-                logger.log("Unsafe tab manager with windowUUID: \(tabManager.windowUUID)", level: .fatal, category: .window)
-            }
+        guard let tabManager = window(for: windowUUID)?.tabManager else {
+            assertionFailure("Tab Manager unavailable for requested UUID: \(windowUUID). This is a client error.")
+            logger.log("No tab manager for window UUID.", level: .fatal, category: .window)
             return windows.first!.value.tabManager!
         }
 
-        guard let window = window(for: windowUUID) else {
-            assertionFailure("No window for UUID: \(windowUUID). This is a client error.")
-            logger.log("No window for UUID: \(windowUUID)", level: .fatal, category: .window)
-            return unsafeAnyTabManager()
-        }
-
-        guard let manager = window.tabManager else {
-            assertionFailure("Window alive, but no TabManager for UUID: \(windowUUID). This is a client error.")
-            logger.log("Window alive, but no TabManager for UUID: \(windowUUID)", level: .fatal, category: .window)
-            return unsafeAnyTabManager()
-        }
-
-        return manager
+        return tabManager
     }
 
     func allWindowTabManagers() -> [TabManager] {
@@ -231,9 +214,7 @@ final class WindowManagerImplementation: WindowManager {
                                level: .fatal,
                                category: .window)
                     let uuidsToDelete = Array(onDiskUUIDs.dropFirst())
-                    Task { [tabDataStore] in
-                        await tabDataStore.removeWindowData(forUUIDs: uuidsToDelete)
-                    }
+                    Task { await tabDataStore.removeWindowData(forUUIDs: uuidsToDelete) }
                 }
             }
         } else {
@@ -280,6 +261,8 @@ final class WindowManagerImplementation: WindowManager {
                     .childCoordinators.first(where: { $0 is BrowserCoordinator }) as? BrowserCoordinator else { return }
                 browserCoordinator.browserViewController.closeAllPrivateTabs()
             }
+        case .storeTabs:
+            storeTabs()
         case .saveSimpleTabs:
             saveSimpleTabs()
         }
@@ -289,9 +272,14 @@ final class WindowManagerImplementation: WindowManager {
         return allWindowTabManagers().first(where: { $0.tabs.contains(where: { $0.tabUUID == tab }) })?.windowUUID
     }
 
-    func windowExists(uuid: WindowUUID) -> Bool {
-        guard uuid != .unavailable else { return false }
-        return windows[uuid] != nil
+    // MARK: - WindowTabSyncCoordinatorDelegate
+
+    private func storeTabs() {
+        tabSyncCoordinator.syncTabsToProfile()
+    }
+
+    func tabManagers() -> [TabManager] {
+        return allWindowTabManagers()
     }
 
     // MARK: - Internal Utilities
@@ -301,7 +289,6 @@ final class WindowManagerImplementation: WindowManager {
         reservedUUIDs.remove(at: reservedUUIDIdx)
     }
 
-    @MainActor
     private func saveSimpleTabs() {
         let providers = allWindowTabManagers() as? [WindowSimpleTabsProvider] ?? []
         widgetSimpleTabsCoordinator.saveSimpleTabs(for: providers)
@@ -351,7 +338,6 @@ final class WindowManagerImplementation: WindowManager {
     private func window(for windowUUID: WindowUUID, createIfNeeded: Bool = false) -> AppWindowInfo? {
         let windowInfo = windows[windowUUID]
         if windowInfo == nil && createIfNeeded {
-            logger.log("Created new app window info for window UUID: \(windowUUID)", level: .info, category: .window)
             return AppWindowInfo(tabManager: nil)
         }
         return windowInfo

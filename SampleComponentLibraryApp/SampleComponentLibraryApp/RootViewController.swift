@@ -8,7 +8,6 @@ import ComponentLibrary
 
 class RootViewController: UIViewController, Presenter, Themeable {
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
@@ -38,7 +37,7 @@ class RootViewController: UIViewController, Presenter, Themeable {
         super.viewDidLoad()
         setupTableView()
 
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
     }
 

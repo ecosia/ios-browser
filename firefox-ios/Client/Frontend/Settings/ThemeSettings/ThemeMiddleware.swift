@@ -6,30 +6,16 @@ import Common
 import Redux
 
 protocol ThemeManagerProvider {
-    @MainActor
     func getCurrentThemeManagerState(windowUUID: WindowUUID) -> ThemeSettingsState
-
-    @MainActor
     func updateManualTheme(with action: ThemeSettingsViewAction)
-
-    @MainActor
     func updateSystemTheme(with action: ThemeSettingsViewAction)
-
-    @MainActor
     func updateAutomaticBrightness(with action: ThemeSettingsViewAction)
-
-    @MainActor
     func updateAutomaticBrightnessValue(with action: ThemeSettingsViewAction)
-
-    @MainActor
     func updateThemeFromSystemBrightnessChange(with action: ThemeSettingsViewAction)
-
-    @MainActor
     func updatePrivateMode(with action: PrivateModeAction)
 }
 
-@MainActor
-final class ThemeManagerMiddleware: ThemeManagerProvider {
+class ThemeManagerMiddleware: ThemeManagerProvider {
     var themeManager: ThemeManager
 
     init(themeManager: ThemeManager = AppContainer.shared.resolve()) {
@@ -58,7 +44,7 @@ final class ThemeManagerMiddleware: ThemeManagerProvider {
 
     private func resolveMainMenuAction(action: MainMenuAction) {
         switch action.actionType {
-        case MainMenuActionType.tapToggleNightMode:
+        case MainMenuDetailsActionType.tapToggleNightMode:
             updateNightMode()
         default:
             break
@@ -140,10 +126,7 @@ final class ThemeManagerMiddleware: ThemeManagerProvider {
 
     func updateNightMode() {
         NightModeHelper.toggle()
-        // When the new appearance menu experiment is on, toggling night mode does not update the app theme.
-        if !themeManager.isNewAppearanceMenuOn {
-            themeManager.applyThemeUpdatesToWindows()
-        }
+        themeManager.applyThemeUpdatesToWindows()
     }
 
     private func dispatchMiddlewareAction(

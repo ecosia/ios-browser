@@ -12,26 +12,29 @@ class NotificationManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         center = MockUserNotificationCenter()
-        let telemetry = NotificationManagerTelemetry(gleanWrapper: MockGleanWrapper())
-        notificationManager = NotificationManager(center: center, telemetry: telemetry)
+        notificationManager = NotificationManager(center: center)
     }
 
     override func tearDown() {
+        super.tearDown()
         center = nil
         notificationManager = nil
-        super.tearDown()
     }
 
     func testRequestAuthorization() {
-        notificationManager.requestAuthorization { [center] (granted, error) in
+        notificationManager.requestAuthorization { (granted, error) in
             XCTAssertTrue(granted)
-            XCTAssertTrue(center?.requestAuthorizationWasCalled ?? false)
+            XCTAssertTrue(self.center.requestAuthorizationWasCalled)
         }
     }
 
-    func testGetNotificationSettings() async {
-        _ = await notificationManager.getNotificationSettings()
-        XCTAssertTrue(self.center.getSettingsWasCalled)
+    func testGetNotificationSettings() {
+        let expectation = self.expectation(description: "notification manager")
+        notificationManager.getNotificationSettings { settings in
+            XCTAssertTrue(self.center.getSettingsWasCalled)
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5)
     }
 
     func testScheduleDate() {
@@ -50,14 +53,16 @@ class NotificationManagerTests: XCTestCase {
         XCTAssertTrue(center.addWasCalled)
     }
 
-    func testFindDeliveredNotifications() async {
-        _ = await notificationManager.findDeliveredNotifications()
-        XCTAssertTrue(self.center.getDeliveredWasCalled)
+    func testFindDeliveredNotifications() {
+        notificationManager.findDeliveredNotifications { notifications in
+            XCTAssertTrue(self.center.getDeliveredWasCalled)
+        }
     }
 
-    func testFindDeliveredNotificationForId() async {
-        _ = await notificationManager.findDeliveredNotificationForId(id: "id1")
-        XCTAssertTrue(self.center.getDeliveredWasCalled)
+    func testFindDeliveredNotificationForId() {
+        notificationManager.findDeliveredNotificationForId(id: "id1") { notifications in
+            XCTAssertTrue(self.center.getDeliveredWasCalled)
+        }
     }
 
     func testRemoveAllPendingNotifications() {

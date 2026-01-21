@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import Foundation
+import UIKit
 import SwiftUI
 
 public extension UIColor {
@@ -11,7 +13,6 @@ public extension UIColor {
 }
 
 public extension UIColor {
-    // swiftlint:disable force_unwrapping
     static let above = UIColor(named: "Above")!
     static let accent = UIColor(named: "Accent")!
     static let defaultFont = UIColor(named: "DefaultFont")!
@@ -50,7 +51,6 @@ public extension UIColor {
     static let searchSuggestionButtonHighlight = UIColor(named: "SearchSuggestionButtonHighlight")!
     static let extensionNotEnabled = UIColor(named: "ExtensionNotEnabled")!
     static let actionButton = UIColor(named: "ActionButton")!
-    // swiftlint:enable force_unwrapping
 
     /**
      * Initializes and returns a color object for the given RGB hex integer.

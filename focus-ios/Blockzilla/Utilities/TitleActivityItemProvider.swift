@@ -11,7 +11,7 @@ import UIKit
 ///
 /// Note that not all applications use the Subject. For example OmniFocus ignores it, so we need to do both.
 
-final class TitleActivityItemProvider: UIActivityItemProvider {
+class TitleActivityItemProvider: UIActivityItemProvider {
     static let activityTypesToIgnore = [UIActivity.ActivityType.copyToPasteboard, UIActivity.ActivityType.message, UIActivity.ActivityType.mail]
 
     init(title: String) {

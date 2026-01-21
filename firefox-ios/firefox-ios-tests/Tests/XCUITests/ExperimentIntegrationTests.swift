@@ -10,19 +10,12 @@ final class ExperimentIntegrationTests: BaseTestCase {
 
     override func setUpApp() {
         app.activate()
-
         let closeButton = app.buttons["CloseButton"]
-        let menuPromoBox = app.buttons["Close"]
-
         if closeButton.waitForExistence(timeout: TIMEOUT) {
-            closeButton.waitAndTap()
+            closeButton.tap()
         }
         super.setUpScreenGraph()
         UIView.setAnimationsEnabled(false) // IMPORTANT
-
-        if menuPromoBox.waitForExistence(timeout: TIMEOUT) {
-            menuPromoBox.waitAndTap()
-        }
     }
 
     func enableSecretMenu() {
@@ -30,7 +23,7 @@ final class ExperimentIntegrationTests: BaseTestCase {
             NSPredicate(format: "identifier CONTAINS 'FxVersion'")
         )
         for _ in 0...5 {
-            element.element.waitAndTap()
+            element.element.tap()
         }
         secretMenu = true
     }
@@ -42,12 +35,12 @@ final class ExperimentIntegrationTests: BaseTestCase {
             enableSecretMenu()
         }
         let experiments = app.tables.cells.containing(NSPredicate(format: "label CONTAINS 'Experiments'"))
-        experiments.element.waitAndTap()
+        experiments.element.tap()
 
         let experiment = app.tables.cells.containing(NSPredicate(format: "label CONTAINS '\(experimentName)'"))
         XCTAssertNotNil(experiment)
 
-        experiment.element.waitAndTap()
+        experiment.element.tap()
 
         let checkmark = app.buttons.matching(
             NSPredicate(format: "label CONTAINS 'checkmark'")
@@ -74,9 +67,8 @@ final class ExperimentIntegrationTests: BaseTestCase {
         )
 
         wait(forElement: surveyLink.element, timeout: TIMEOUT_LONG)
-        surveyLink.element.waitAndTap()
-        mozWaitForValueContains(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField],
-                                value: "survey")
+        surveyLink.element.tap()
+        mozWaitForValueContains(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url], value: "survey")
     }
 
     func testMessageNoThanksNavigatesCorrectly() throws {
@@ -85,12 +77,12 @@ final class ExperimentIntegrationTests: BaseTestCase {
         )
 
         wait(forElement: dismissLink.element, timeout: TIMEOUT_LONG)
-        dismissLink.element.waitAndTap()
+        dismissLink.element.tap()
 
         navigator.goto(NewTabScreen)
         waitForTabsButton()
 
-        let tabsOpen = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton].value
+        let tabsOpen = app.buttons["Show Tabs"].value
         XCTAssertEqual("1", tabsOpen as? String)
     }
 
@@ -105,9 +97,8 @@ final class ExperimentIntegrationTests: BaseTestCase {
         )
 
         wait(forElement: surveyLink.element, timeout: TIMEOUT_LONG)
-        surveyLink.element.waitAndTap()
-        mozWaitForValueContains(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField],
-                                value: "survey")
+        surveyLink.element.tap()
+        mozWaitForValueContains(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url], value: "survey")
     }
 
     func testHomeScreenMessageNavigatesCorrectly() throws {
@@ -116,9 +107,8 @@ final class ExperimentIntegrationTests: BaseTestCase {
         )
 
         wait(forElement: surveyLink.element, timeout: TIMEOUT_LONG)
-        surveyLink.element.waitAndTap()
-        mozWaitForValueContains(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField],
-                                value: "survey")
+        surveyLink.element.tap()
+        mozWaitForValueContains(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url], value: "survey")
     }
 
     func testHomeScreenMessageDismissesCorrectly() throws {
@@ -127,12 +117,12 @@ final class ExperimentIntegrationTests: BaseTestCase {
         )
 
         wait(forElement: surveyLink.element, timeout: TIMEOUT_LONG)
-        surveyLink.element.waitAndTap()
+        surveyLink.element.tap()
 
         navigator.goto(NewTabScreen)
         waitForTabsButton()
 
-        let tabsOpen = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton].value
+        let tabsOpen = app.buttons["Show Tabs"].value
         XCTAssertEqual("1", tabsOpen as? String)
     }
 
@@ -143,7 +133,7 @@ final class ExperimentIntegrationTests: BaseTestCase {
         )
         wait(forElement: studiesToggle.element, timeout: TIMEOUT)
         XCTAssertEqual(studiesToggle.element.value as? String, "1")
-        studiesToggle.element.waitAndTap()
+        studiesToggle.element.tap()
         XCTAssertEqual(studiesToggle.element.value as? String, "0")
         XCTAssertFalse(checkExperimentEnrollment(experimentName: experimentName))
     }

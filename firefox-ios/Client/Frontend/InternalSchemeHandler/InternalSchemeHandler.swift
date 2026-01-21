@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import WebKit
-import WebEngine
+import Shared
 
 enum InternalPageSchemeHandlerError: Error {
     case badURL
@@ -13,14 +13,10 @@ enum InternalPageSchemeHandlerError: Error {
 }
 
 protocol InternalSchemeResponse {
-    @MainActor
-    func response(forRequest: URLRequest, useOldErrorPage: Bool) -> (URLResponse, Data)?
+    func response(forRequest: URLRequest) -> (URLResponse, Data)?
 }
 
-class InternalSchemeHandler: NSObject, SchemeHandler {
-    public let scheme = "internal"
-    private var shouldUseOldErrorPage = false
-
+class InternalSchemeHandler: NSObject, WKURLSchemeHandler {
     static func response(forUrl url: URL) -> URLResponse {
         return URLResponse(url: url, mimeType: "text/html", expectedContentLength: -1, textEncodingName: "utf-8")
     }
@@ -28,10 +24,6 @@ class InternalSchemeHandler: NSObject, SchemeHandler {
     // Responders are looked up based on the path component, for instance
     // responder["about/license"] is used for 'internal://local/about/license'
     static var responders = [String: InternalSchemeResponse]()
-
-    init(shouldUseOldErrorPage: Bool = false) {
-        self.shouldUseOldErrorPage = shouldUseOldErrorPage
-    }
 
     // Unprivileged internal:// urls might be internal resources in the
     // app bundle ( i.e. <link href="errorpage-resource/NetError.css"> )
@@ -41,6 +33,9 @@ class InternalSchemeHandler: NSObject, SchemeHandler {
         let allowedInternalResources = [
             "/errorpage-resource/NetError.css",
             "/errorpage-resource/CertError.css",
+            // Ecosia: Allow EcosiaNetError resources
+            "/errorpage-resource/EcosiaNetError.css",
+            "/errorpage-resource/EcosiaErrorPlaceholderPath.png",
            // "/reader-mode/..."
         ]
 
@@ -59,6 +54,13 @@ class InternalSchemeHandler: NSObject, SchemeHandler {
                         textEncodingName: nil
                     )
                 )
+                urlSchemeTask.didReceive(data)
+                urlSchemeTask.didFinish()
+                return true
+            // Ecosia: Replace placeholder error image
+            } else if path.hasSuffix("EcosiaErrorPlaceholderPath.png"),
+                      let data = UIImage(named: "noInternet")?.pngData() {
+                urlSchemeTask.didReceive(URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil))
                 urlSchemeTask.didReceive(data)
                 urlSchemeTask.didFinish()
                 return true
@@ -93,8 +95,7 @@ class InternalSchemeHandler: NSObject, SchemeHandler {
             return
         }
 
-        guard let (urlResponse, data) = responder.response(forRequest: urlSchemeTask.request,
-                                                           useOldErrorPage: shouldUseOldErrorPage) else {
+        guard let (urlResponse, data) = responder.response(forRequest: urlSchemeTask.request) else {
             urlSchemeTask.didFailWithError(InternalPageSchemeHandlerError.responderUnableToHandle)
             return
         }

@@ -10,12 +10,8 @@ struct NavigationToolbarContainerModel {
     let actions: [ToolbarElement]
     var manager: ToolbarManager = DefaultToolbarManager()
 
-    var state: NavigationToolbarConfiguration {
-        return NavigationToolbarConfiguration(
-            actions: actions,
-            shouldDisplayBorder: shouldDisplayBorder,
-            isTranslucencyEnabled: true
-        )
+    var state: NavigationToolbarState {
+        return NavigationToolbarState(actions: actions, shouldDisplayBorder: shouldDisplayBorder)
     }
 
     private var shouldDisplayBorder: Bool {

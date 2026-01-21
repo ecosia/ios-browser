@@ -6,18 +6,19 @@ import XCTest
 
 import Common
 import Foundation
+import Shared
 
 @testable import Client
 
 final class NimbusMessagingMessageTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
-        DependencyHelperMock().reset()
-        try await super.tearDown()
+    override func tearDown() {
+        super.tearDown()
+        AppContainer.shared.reset()
     }
 
     lazy var feature = {

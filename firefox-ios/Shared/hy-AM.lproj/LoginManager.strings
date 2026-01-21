@@ -10,7 +10,7 @@
 /* Copy password text selection menu item */
 "Copy" = "Պատճենել";
 
-/* Label describing when the current login was created. %@ is the timestamp. */
+/* Label describing when the current login was created with the timestamp as the parameter. */
 "Created %@" = "Ստեղծվել է %@";
 
 /* Label for the button used to delete the current login. */
@@ -40,16 +40,13 @@
 /* Hide password text selection menu item */
 "Hide" = "Թաքցնել";
 
-/* This message appears briefly as a notification (toast) to inform the user that a password has been successfully removed. */
-"LoginList.DeleteToast.v135" = "Գաղտնաբառը հեռացվեց";
-
 /* Prompt message warning the user that deleting non-synced logins will permanently remove them */
 "Logins will be permanently removed." = "Մուտքագրումները վերջնականապես կհեռացվեն:";
 
 /* Prompt message warning the user that deleted logins will remove logins from all connected devices */
 "Logins will be removed from all connected devices." = "Մուտքագրումները կհեռացվեն կապակցված բոլոր սարքերից:";
 
-/* Label describing when the current login was last modified. %@ is the timestamp. */
+/* Label describing when the current login was last modified with the timestamp as the parameter. */
 "Modified %@" = "Փոփոխված է %@";
 
 /* Label displayed when no logins are found after searching. */
@@ -59,7 +56,7 @@
 "NoLoginsFound.Title.v122" = "Գաղտնաբառեր չեն գտնվել";
 
 /* Open and Fill website text selection menu item */
-"Open & Fill" = "Բացել և լրացնել";
+"Open & Fill" = "Բացել և լցնել";
 
 /* Label displayed above the password row in Login Detail View. */
 "Password" = "Գաղտնաբառ";
@@ -80,7 +77,7 @@
 "Select All" = "Ընտրել բոլորը";
 
 /* Label displayed above the username row in Login Detail View. */
-"Username" = "Օգտանուն";
+"Username" = "Օգտվողի անուն";
 
 /* Label displayed above the website row in Login Detail View. */
 "Website" = "Կայք";

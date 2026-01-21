@@ -6,20 +6,18 @@ import Foundation
 
 class ContentBlockerSetting: Setting {
     private weak var settingsDelegate: PrivacySettingsDelegate?
-    private let profile: Profile?
-    private var tabManager: TabManager?
+    private let profile: Profile
+    private var tabManager: TabManager!
 
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
 
     override var accessibilityIdentifier: String? {
         return AccessibilityIdentifiers.Settings.ContentBlocker.title
     }
-
+/* Ecosia: Remove `status` as there is a UI issue in showing the content in e.g. German
     override var status: NSAttributedString? {
-        guard let profile else { return nil }
         let defaultValue = ContentBlockingConfig.Defaults.NormalBrowsing
         let isOn = profile.prefs.boolForKey(ContentBlockingConfig.Prefs.EnabledKey) ?? defaultValue
 
@@ -33,6 +31,7 @@ class ContentBlockerSetting: Setting {
             return NSAttributedString(string: .Settings.Homepage.Shortcuts.ToggleOff)
         }
     }
+    */
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 

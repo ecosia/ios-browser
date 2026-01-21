@@ -81,7 +81,7 @@ class LoginListViewModelTests: XCTestCase {
         )
 
         // Simulate tapping a login cell
-        viewModel.onLoginCellTap(Login(
+        viewModel.onLoginCellTap(EncryptedLogin(
             credentials: URLCredential(
                 user: "test",
                 password: "doubletest",

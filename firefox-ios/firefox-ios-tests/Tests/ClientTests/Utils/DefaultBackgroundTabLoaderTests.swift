@@ -6,34 +6,26 @@ import Storage
 import XCTest
 @testable import Client
 
-@MainActor
-final class DefaultBackgroundTabLoaderTests: XCTestCase {
+class DefaultBackgroundTabLoaderTests: XCTestCase {
     private var applicationHelper: MockApplicationHelper!
     private var tabQueue: MockTabQueue!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         self.applicationHelper = MockApplicationHelper()
         self.tabQueue = MockTabQueue()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         self.applicationHelper = nil
         self.tabQueue = nil
-        try await super.tearDown()
     }
 
     func testLoadBackgroundTabs_noTabs_doesntLoad() {
         let subject = createSubject()
 
         subject.loadBackgroundTabs()
-
-        let predicate = NSPredicate { _, _ in
-            return self.tabQueue.getQueuedTabsCalled == 1
-        }
-        let exp = XCTNSPredicateExpectation(predicate: predicate, object: .none)
-
-        wait(for: [exp], timeout: 3.0)
 
         XCTAssertEqual(tabQueue.getQueuedTabsCalled, 1)
         XCTAssertEqual(applicationHelper.openURLCalled, 0)
@@ -47,13 +39,6 @@ final class DefaultBackgroundTabLoaderTests: XCTestCase {
         let subject = createSubject()
 
         subject.loadBackgroundTabs()
-
-        let predicate = NSPredicate { _, _ in
-            return self.tabQueue.getQueuedTabsCalled == 1
-        }
-        let exp = XCTNSPredicateExpectation(predicate: predicate, object: .none)
-
-        wait(for: [exp], timeout: 3.0)
 
         XCTAssertEqual(tabQueue.getQueuedTabsCalled, 1)
         XCTAssertEqual(applicationHelper.openURLCalled, 3)

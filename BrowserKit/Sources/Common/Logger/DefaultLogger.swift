@@ -4,27 +4,29 @@
 
 import Foundation
 
-public struct DefaultLogger: Logger {
+public class DefaultLogger: Logger {
     public static let shared = DefaultLogger()
 
-    private let logger: SwiftyBeaverWrapper.Type
-    private let crashManager: CrashManager
-    private let fileManager: LoggerFileManager
+    private var logger: SwiftyBeaverWrapper.Type
+    private var crashManager: CrashManager?
+    private var fileManager: LoggerFileManager
 
     public var crashedLastLaunch: Bool {
-        return crashManager.crashedLastLaunch
+        return crashManager?.crashedLastLaunch ?? false
     }
 
     init(swiftyBeaverBuilder: SwiftyBeaverBuilder = DefaultSwiftyBeaverBuilder(),
-         fileManager: LoggerFileManager = DefaultLoggerFileManager(),
-         crashManager: CrashManager = DefaultCrashManager()) {
-        self.logger = swiftyBeaverBuilder.setup(with: fileManager.getLogDestination())
+         fileManager: LoggerFileManager = DefaultLoggerFileManager()) {
         self.fileManager = fileManager
+        self.logger = swiftyBeaverBuilder.setup(with: fileManager.getLogDestination())
+    }
+
+    public func configure(crashManager: CrashManager) {
         self.crashManager = crashManager
     }
 
-    public func setup(sendCrashReports: Bool) {
-        crashManager.setup(sendCrashReports: sendCrashReports)
+    public func setup(sendUsageData: Bool) {
+        crashManager?.setup(sendUsageData: sendUsageData)
     }
 
     // TODO: FXIOS-7819 need to rethink if this should go to Sentry
@@ -35,7 +37,7 @@ public struct DefaultLogger: Logger {
                     category: LoggerCategory,
                     extra: [String: String]? = nil,
                     description: String? = nil,
-                    file: String = #filePath,
+                    file: String = #file,
                     function: String = #function,
                     line: Int = #line) {
         // Prepare messages
@@ -65,10 +67,10 @@ public struct DefaultLogger: Logger {
         // Log to sentry
         let extraEvents = bundleExtraEvents(extra: extra,
                                             description: description)
-        crashManager.send(message: message,
-                          category: category,
-                          level: level,
-                          extraEvents: extraEvents)
+        crashManager?.send(message: message,
+                           category: category,
+                           level: level,
+                           extraEvents: extraEvents)
     }
 
     public func copyLogsToDocuments() {

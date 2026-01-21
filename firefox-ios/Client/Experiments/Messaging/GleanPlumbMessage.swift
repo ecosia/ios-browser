@@ -31,7 +31,7 @@ struct GleanPlumbMessage {
     ///
     /// This is corresponds to a MessageKey string from Nimbus.
     ///
-    let id: String
+    public let id: String
 
     /// The underlying MessageData from Nimbus.
     ///

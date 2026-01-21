@@ -34,7 +34,7 @@ class URLCacheFileManagerTests: XCTestCase {
     }
 }
 
-final class MockFileManager: FileManagerProtocol, @unchecked Sendable {
+class MockFileManager: FileManagerProtocol {
     var urls = [URL(string: "firefox")!]
     var fileExists = true
     var fileExistsCalledCount = 0
@@ -57,44 +57,15 @@ final class MockFileManager: FileManagerProtocol, @unchecked Sendable {
         return []
     }
 
-    func moveItem(at: URL, to: URL) throws {}
-
     func removeItem(atPath path: String) throws {}
-
-    func removeItem(at url: URL) throws {}
 
     func copyItem(at srcURL: URL, to dstURL: URL) throws {}
 
-    func createDirectory(
-        atPath path: String,
-        withIntermediateDirectories createIntermediates: Bool,
-        attributes: [FileAttributeKey: Any]?
-    ) throws {}
+    func createDirectory(atPath path: String,
+                         withIntermediateDirectories createIntermediates: Bool,
+                         attributes: [FileAttributeKey: Any]?) throws {}
 
-    func contentsOfDirectoryAtPath(
-        _ path: String,
-        withFilenamePrefix prefix: String
-    ) throws -> [String] {
+    func contentsOfDirectoryAtPath(_ path: String, withFilenamePrefix prefix: String) throws -> [String] {
         return []
-    }
-
-    func contents(atPath path: String) -> Data? {
-        return nil
-    }
-
-    func contentsOfDirectory(
-        at url: URL,
-        includingPropertiesForKeys keys: [URLResourceKey]?,
-        options mask: FileManager.DirectoryEnumerationOptions
-    ) throws -> [URL] {
-        return []
-    }
-
-    func createFile(
-        atPath path: String,
-        contents data: Data?,
-        attributes attr: [FileAttributeKey: Any]?
-    ) -> Bool {
-        return true
     }
 }

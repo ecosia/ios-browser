@@ -16,15 +16,16 @@ class DownloadQueueTests: XCTestCase {
     var download: MockDownload!
 
     override func setUp() {
-        super.setUp()
         queue = DownloadQueue()
-        download = MockDownload()
+        download = MockDownload(originWindow: .XCTestDefaultUUID)
+
+        super.setUp()
     }
 
     override func tearDown() {
+        super.tearDown()
         queue = nil
         download = nil
-        super.tearDown()
     }
 
     func testDownloadQueueIsEmpty() {
@@ -36,13 +37,11 @@ class DownloadQueueTests: XCTestCase {
         XCTAssertTrue(!queue.isEmpty)
     }
 
-    @MainActor
     func testEnqueueDownloadShouldAppendDownloadAndTriggerResume() {
         queue.enqueue(download)
         XCTAssertTrue(download.downloadTriggered)
     }
 
-    @MainActor
     func testEnqueueDownloadShouldCallDownloadQueueDidStartDownload() {
         let mockQueueDelegate = MockDownloadQueueDelegate()
         queue.addDelegate(mockQueueDelegate)
@@ -56,7 +55,6 @@ class DownloadQueueTests: XCTestCase {
         XCTAssertTrue(download.downloadCanceled)
     }
 
-    @MainActor
     func testDidDownloadBytes() {
         let mockQueueDelegate = MockDownloadQueueDelegate()
         queue.addDelegate(mockQueueDelegate)
@@ -65,7 +63,6 @@ class DownloadQueueTests: XCTestCase {
         XCTAssertEqual(mockQueueDelegate.methodCalled, didDownloadCombinedBytes)
     }
 
-    @MainActor
     func testDidFinishDownloadingToWithOneElementsInQueue() {
         let mockQueueDelegate = MockDownloadQueueDelegate()
         queue.addDelegate(mockQueueDelegate)
@@ -74,16 +71,14 @@ class DownloadQueueTests: XCTestCase {
         XCTAssertEqual(mockQueueDelegate.methodCalled, didCompleteWithError)
     }
 
-    @MainActor
     func testDidFinishDownloadingToWithTwoElementsInQueue() {
         let mockQueueDelegate = MockDownloadQueueDelegate()
         queue.addDelegate(mockQueueDelegate)
-        queue.downloads = [download, MockDownload(originWindow: WindowUUID.XCTestDefaultUUID)]
+        queue.downloads = [download, MockDownload(originWindow: .XCTestDefaultUUID)]
         queue.download(download, didFinishDownloadingTo: url)
         XCTAssertEqual(mockQueueDelegate.methodCalled, didFinishDownloadingTo)
     }
 
-    @MainActor
     func testDidFinishDownloadingToWithNoElementsInQueue() {
         let mockQueueDelegate = MockDownloadQueueDelegate()
         queue.addDelegate(mockQueueDelegate)
@@ -91,7 +86,6 @@ class DownloadQueueTests: XCTestCase {
         XCTAssertEqual(mockQueueDelegate.methodCalled, "noneOfMethodWasCalled")
     }
 
-    @MainActor
     func testDidCompleteWithError() {
         let mockQueueDelegate = MockDownloadQueueDelegate()
         queue.addDelegate(mockQueueDelegate)
@@ -100,7 +94,6 @@ class DownloadQueueTests: XCTestCase {
         XCTAssertEqual(mockQueueDelegate.methodCalled, didCompleteWithError)
     }
 
-    @MainActor
     func testDelegateMemoryLeak() {
         let mockQueueDelegate = MockDownloadQueueDelegate()
         queue.addDelegate(mockQueueDelegate)
@@ -115,10 +108,23 @@ private enum DownloadTestError: Error {
 
 private let url = URL(string: "http://mozilla.org")!
 
+class MockDownload: Download {
+    var downloadTriggered = false
+    var downloadCanceled = false
+
+    override func resume() {
+        downloadTriggered = true
+    }
+
+    override func cancel() {
+        downloadCanceled = true
+    }
+}
+
 class MockDownloadQueueDelegate: DownloadQueueDelegate {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    var methodCalled = "noneOfMethodWasCalled"
+    var methodCalled: String = "noneOfMethodWasCalled"
 
     func downloadQueue(_ downloadQueue: DownloadQueue, didStartDownload download: Download) {
         methodCalled = #function

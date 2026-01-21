@@ -7,12 +7,11 @@ import Shared
 import Common
 
 class OpenWithSetting: Setting {
-    private weak var settingsDelegate: BrowsingSettingsDelegate?
-    private let profile: Profile?
+    private weak var settingsDelegate: GeneralSettingsDelegate?
+    private let profile: Profile
     private let windowUUID: WindowUUID
 
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
 
@@ -21,7 +20,7 @@ class OpenWithSetting: Setting {
     }
 
     override var status: NSAttributedString {
-        guard let provider = self.profile?.prefs.stringForKey(PrefsKeys.KeyMailToOption) else {
+        guard let provider = self.profile.prefs.stringForKey(PrefsKeys.KeyMailToOption) else {
             return NSAttributedString(string: "")
         }
         if let path = Bundle.main.path(forResource: "MailSchemes", ofType: "plist"),
@@ -37,7 +36,7 @@ class OpenWithSetting: Setting {
     override var style: UITableViewCell.CellStyle { return .value1 }
 
     init(settings: SettingsTableViewController,
-         settingsDelegate: BrowsingSettingsDelegate?) {
+         settingsDelegate: GeneralSettingsDelegate?) {
         self.profile = settings.profile
         self.windowUUID = settings.windowUUID
         self.settingsDelegate = settingsDelegate

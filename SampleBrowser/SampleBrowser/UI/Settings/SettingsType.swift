@@ -16,6 +16,4 @@ public enum SettingsType: String {
     case zoomDecrease
     case zoomReset
     case zoomSet
-    case loadPopWebSource
-    case loadPrintWebSource
 }

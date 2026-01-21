@@ -6,15 +6,14 @@ import Foundation
 
 import struct MozillaAppServices.CreditCard
 
-// TODO: FXIOS-13161 - refactor this to ensure it's actually thread safe and remove @unchecked Sendable
 // Note: This was created in lieu of a view model
-public struct UnencryptedCreditCardFields: @unchecked Sendable {
-    public var ccName = ""
-    public var ccNumber = ""
-    public var ccNumberLast4 = ""
+public struct UnencryptedCreditCardFields {
+    public var ccName: String = ""
+    public var ccNumber: String = ""
+    public var ccNumberLast4: String = ""
     public var ccExpMonth: Int64 = 0
     public var ccExpYear: Int64 = 0
-    public var ccType = ""
+    public var ccType: String = ""
 
     public init() { }
 

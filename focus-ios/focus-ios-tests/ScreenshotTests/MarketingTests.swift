@@ -5,15 +5,6 @@
 import XCTest
 
 class MarketingTests: BaseTestCaseL10n {
-    @MainActor
-    func testDummy() {
-        // This test without taking any screenshot is a workaround so that the
-        // simulator is warmed up before testPinTopSites(). Without warming up
-        // the simulator, testPinTopSites() fails intermittently.
-        waitForExistence(app.buttons["URLBar.cancelButton"], timeout: 60)
-    }
-
-    @MainActor
     func testSettingsView() {
         if iPad() {
             app.windows.element(boundBy: 0).tap()
@@ -24,10 +15,9 @@ class MarketingTests: BaseTestCaseL10n {
 
         snapshot("Home")
         // Go to ETP Menu
-        waitForExistence(app.buttons["HomeView.settingsButton"])
         app.buttons["HomeView.settingsButton"].tap()
-        app.images["icon_settings"].tap()
-        waitForExistence(app.tables.cells["settingsViewController.defaultBrowserCell"])
+        waitForExistence(app.tables.cells["Settings"])
+        app.tables.cells["Settings"].tap()
         waitForExistence(app.cells["settingsViewController.trackingCell"])
         app.cells["settingsViewController.trackingCell"].tap()
         snapshot("Settings-TP")
@@ -44,21 +34,19 @@ class MarketingTests: BaseTestCaseL10n {
         waitForExistence(app.cells["DuckDuckGo"])
     }
 
-    @MainActor
     func testVisitSite() {
         if iPad() {
             app.windows.element(boundBy: 0).tap()
         } else {
             waitForExistence(app.buttons["URLBar.cancelButton"], timeout: 15)
         }
-        waitForExistence(app.textFields.firstMatch)
         app.textFields.firstMatch.tap()
         app.textFields.firstMatch.typeText("https://www.mozilla.org/de/firefox/browsers/mobile/focus\n")
-        waitForNoExistence(app.progressIndicators.firstMatch, timeoutValue: 45)
+        waitForExistence(app.webViews.buttons["Close"])
+        app.webViews.buttons["Close"].tap()
         snapshot("Website-Focus")
     }
 
-    @MainActor
     func testPinTopSites() {
         if iPad() {
             app.windows.element(boundBy: 0).tap()
@@ -67,8 +55,8 @@ class MarketingTests: BaseTestCaseL10n {
         }
         saveTopSite(TopSite: "mozilla.org")
         saveTopSite(TopSite: "pocket.com")
-        saveTopSite(TopSite: "relay.firefox.com")
-        saveTopSite(TopSite: "monitor.mozilla.org")
+        saveTopSite(TopSite: "relay.com")
+        saveTopSite(TopSite: "monitor.com")
 
         app.buttons["URLBar.deleteButton"].tap()
         waitForExistence(app.buttons["URLBar.cancelButton"], timeout: 15)
@@ -80,11 +68,9 @@ class MarketingTests: BaseTestCaseL10n {
         app.textFields.firstMatch.tap()
         app.textFields.firstMatch.typeText(TopSite)
         app.textFields.firstMatch.typeText("\n")
-        waitForNoExistence(app.progressIndicators.firstMatch, timeoutValue: 60)
         waitForExistence(app.buttons["HomeView.settingsButton"])
         app.buttons["HomeView.settingsButton"].tap()
-        waitForExistence(app.collectionViews.images["icon_settings"])
-        waitForExistence(app.collectionViews.images["icon_shortcuts_add"])
-        app.collectionViews.images["icon_shortcuts_add"].tap()
+        waitForExistence(app.cells["icon_shortcuts_add"])
+        app.tables.cells["icon_shortcuts_add"].tap()
     }
 }

@@ -4,6 +4,9 @@
 
 import Foundation
 import Storage
+import Shared
+
+import struct MozillaAppServices.HistoryHighlight
 
 // Utility to filter sponsored content out of certain data type
 struct SponsoredContentFilterUtility {
@@ -25,8 +28,13 @@ struct SponsoredContentFilterUtility {
         return url.query?.split(separator: "&").contains { $0 == hideWithSearchParam } ?? false
     }
 
-    @MainActor
     func filterSponsoredTabs(from tabs: [Tab]) -> [Tab] {
         return tabs.filter { !($0.lastKnownUrl?.absoluteString.contains(hideWithSearchParam) ?? false) }
+    }
+
+    func filterSponsoredHighlights(from items: [HistoryHighlight]) -> [HistoryHighlight] {
+        return items.filter {
+            return !$0.url.contains(hideWithSearchParam)
+        }
     }
 }

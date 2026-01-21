@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Shared
 
 struct BlockedTrackersTableModel {
     let topLevelDomain: String
@@ -64,6 +65,6 @@ struct BlockedTrackersTableModel {
         let totalTrackerBlocked = String(contentBlockerStats?.total ?? 0)
         let trackersText = String(format: .Menu.EnhancedTrackingProtection.trackersBlockedLabel,
                                   totalTrackerBlocked)
-        return trackersText.uppercased()
+        return trackersText
     }
 }

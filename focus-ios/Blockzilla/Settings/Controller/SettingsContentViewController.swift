@@ -4,7 +4,7 @@
 
 import Foundation
 import UIKit
-@preconcurrency import WebKit
+import WebKit
 
 let DefaultTimeoutTimeInterval = 10.0 // Seconds.  We'll want some telemetry on load times in the wild.
 
@@ -12,7 +12,7 @@ let DefaultTimeoutTimeInterval = 10.0 // Seconds.  We'll want some telemetry on 
  * A controller that manages a single web view and provides a way for
  * the user to navigate back to Settings.
  */
-final class SettingsContentViewController: UIViewController, WKNavigationDelegate {
+class SettingsContentViewController: UIViewController, WKNavigationDelegate {
     let interstitialBackgroundColor: UIColor
     var url: URL
     var timer: Timer?

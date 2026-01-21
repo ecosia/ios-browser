@@ -4,6 +4,7 @@
 
 @testable import Client
 import Sync
+import Storage
 import Shared
 import XCTest
 
@@ -26,41 +27,38 @@ class RustSyncManagerTests: XCTestCase {
     private var rustSyncManager: RustSyncManager!
     private var profile: MockBrowserProfile!
 
-    private var logins: MockLoginProvider!
-    private var autofill: MockAutofill!
-    private var places: MockPlaces!
-    private var tabs: MockRemoteTabs!
-
     override func setUp() {
         super.setUp()
-        logins = MockLoginProvider()
-        autofill = MockAutofill()
-        places = MockPlaces()
-        tabs = MockRemoteTabs()
-
         profile = MockBrowserProfile(localName: "RustSyncManagerTests")
         rustSyncManager = RustSyncManager(profile: profile,
                                           creditCardAutofillEnabled: true,
                                           logger: MockLogger(),
-                                          logins: logins,
-                                          autofill: autofill,
-                                          places: places,
-                                          tabs: tabs,
                                           notificationCenter: MockNotificationCenter())
-        rustSyncManager.syncManagerAPI = RustSyncManagerAPI(dispatchQueue: MockDispatchQueue())
+        rustSyncManager.syncManagerAPI = RustSyncManagerAPI()
         profile.syncManager = rustSyncManager
     }
 
     override func tearDown() {
+        super.tearDown()
         rustSyncManager = nil
         UserDefaults.standard.removeObject(forKey: "fxa.cwts.declinedSyncEngines")
-        profile.prefs.clearAll()
+        profile.prefs.removeObjectForKey(Keys.bookmarksStateChangedPrefKey)
+        profile.prefs.removeObjectForKey(Keys.bookmarksEnabledPrefKey)
+        profile.prefs.removeObjectForKey(Keys.creditcardsStateChangedPrefKey)
+        profile.prefs.removeObjectForKey(Keys.creditcardsEnabledPrefKey)
+        profile.prefs.removeObjectForKey(Keys.historyStateChangedPrefKey)
+        profile.prefs.removeObjectForKey(Keys.historyEnabledPrefKey)
+        profile.prefs.removeObjectForKey(Keys.passwordsStateChangedPrefKey)
+        profile.prefs.removeObjectForKey(Keys.passwordsEnabledPrefKey)
+        profile.prefs.removeObjectForKey(Keys.tabsStateChangedPrefKey)
+        profile.prefs.removeObjectForKey(Keys.tabsEnabledPrefKey)
+        profile.prefs.removeObjectForKey(Keys.addressesEnabledPrefKey)
+        profile.prefs.removeObjectForKey(Keys.addressesStateChangedPrefKey)
+
         profile = nil
-        super.tearDown()
     }
 
-    func testGetEnginesAndKeys_withLoginsVerified() {
-        logins.loginsVerified = true
+    func testGetEnginesAndKeys() {
         let engines: [RustSyncManagerAPI.TogglableEngine] = [
             .bookmarks,
             .creditcards,
@@ -70,85 +68,19 @@ class RustSyncManagerTests: XCTestCase {
             .addresses
         ]
 
-        rustSyncManager.getEnginesAndKeys(engines: engines) { [tabs, logins, autofill, places] (engines, keys) in
+        rustSyncManager.getEnginesAndKeys(engines: engines) { (engines, keys) in
             XCTAssertEqual(engines.count, 6)
 
-            XCTAssertEqual(engines[safe: 0], "bookmarks")
-            XCTAssertEqual(engines[safe: 1], "creditcards")
-            XCTAssertEqual(engines[safe: 2], "history")
-            XCTAssertEqual(engines[safe: 3], "passwords")
-            XCTAssertEqual(engines[safe: 4], "tabs")
-            XCTAssertEqual(engines[safe: 5], "addresses")
+            XCTAssertTrue(engines.contains("bookmarks"))
+            XCTAssertTrue(engines.contains("history"))
+            XCTAssertTrue(engines.contains("passwords"))
+            XCTAssertTrue(engines.contains("tabs"))
+            XCTAssertTrue(engines.contains("addresses"))
             XCTAssertFalse(keys.isEmpty)
 
+            XCTAssertEqual(keys.count, 2)
             XCTAssertNotNil(keys["creditcards"])
-
-            XCTAssertEqual(tabs?.registerWithSyncManagerCalled, 1)
-            XCTAssertEqual(logins?.registerWithSyncManagerCalled, 1)
-            XCTAssertEqual(autofill?.registerWithSyncManagerCalled, 1)
-            XCTAssertEqual(places?.registerWithSyncManagerCalled, 1)
-        }
-    }
-
-    func testGetEnginesWithRetrievedKeys() {
-        let enginesToSync = rustSyncManager
-            .getEnginesWithRetrievedKeys("testCCKey",
-                                         "testLoginsKey",
-                                         rustSyncManager.syncManagerAPI.rustTogglableEngines)
-        XCTAssertEqual(enginesToSync.count, 6)
-        XCTAssertTrue(enginesToSync.contains(.creditcards))
-        XCTAssertTrue(enginesToSync.contains(.passwords))
-
-        let enginesToSync2 = rustSyncManager
-            .getEnginesWithRetrievedKeys(nil, nil, rustSyncManager.syncManagerAPI.rustTogglableEngines)
-        XCTAssertEqual(enginesToSync2.count, 4)
-        XCTAssertFalse(enginesToSync2.contains(.creditcards))
-        XCTAssertFalse(enginesToSync2.contains(.passwords))
-
-        let enginesToSync3 = rustSyncManager
-            .getEnginesWithRetrievedKeys("testCCKey",
-                                         nil,
-                                         rustSyncManager.syncManagerAPI.rustTogglableEngines)
-        XCTAssertEqual(enginesToSync3.count, 5)
-        XCTAssertTrue(enginesToSync3.contains(.creditcards))
-        XCTAssertFalse(enginesToSync3.contains(.passwords))
-
-        let enginesToSync4 = rustSyncManager
-            .getEnginesWithRetrievedKeys(nil,
-                                         "testLoginsKey",
-                                         rustSyncManager.syncManagerAPI.rustTogglableEngines)
-        XCTAssertEqual(enginesToSync4.count, 5)
-        XCTAssertFalse(enginesToSync4.contains(.creditcards))
-        XCTAssertTrue(enginesToSync4.contains(.passwords))
-    }
-
-    func testGetEnginesAndKeys_withOutLoginsVerified() {
-        logins.loginsVerified = false
-        let engines: [RustSyncManagerAPI.TogglableEngine] = [
-            .bookmarks,
-            .creditcards,
-            .history,
-            .passwords,
-            .tabs,
-            .addresses
-        ]
-
-        rustSyncManager.getEnginesAndKeys(engines: engines) { [tabs, logins, autofill, places] (engines, keys) in
-            XCTAssertEqual(engines.count, 5)
-
-            XCTAssertEqual(engines[safe: 0], "bookmarks")
-            XCTAssertEqual(engines[safe: 1], "creditcards")
-            XCTAssertEqual(engines[safe: 2], "history")
-            XCTAssertEqual(engines[safe: 3], "tabs")
-            XCTAssertEqual(engines[safe: 4], "addresses")
-            XCTAssertFalse(keys.isEmpty)
-
-            XCTAssertNotNil(keys["creditcards"])
-
-            XCTAssertEqual(tabs?.registerWithSyncManagerCalled, 1)
-            XCTAssertEqual(logins?.registerWithSyncManagerCalled, 0)
-            XCTAssertEqual(autofill?.registerWithSyncManagerCalled, 1)
-            XCTAssertEqual(places?.registerWithSyncManagerCalled, 1)
+            XCTAssertNotNil(keys["passwords"])
         }
     }
 

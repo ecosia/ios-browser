@@ -5,6 +5,7 @@
 @testable import Client
 
 import Common
+import Shared
 import XCTest
 import WebKit
 
@@ -15,19 +16,19 @@ class TabWebViewTests: XCTestCaseRootViewController, UIGestureRecognizerDelegate
     private let sleepTime: UInt64 = 1 * NSEC_PER_SEC
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         navigationDelegate = MockNavigationDelegate()
         tabWebViewDelegate = MockTabWebViewDelegate()
         DependencyHelperMock().bootstrapDependencies()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         navigationDelegate = nil
         tabWebViewDelegate = nil
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     func testBasicTabWebView_doesntLeak() async throws {
@@ -37,22 +38,6 @@ class TabWebViewTests: XCTestCaseRootViewController, UIGestureRecognizerDelegate
     func testSavedCardsClosure_doesntLeak() async throws {
         let subject = try await createSubject()
         subject.accessoryView.savedCardsClosure = {}
-    }
-
-    func testAddPullRefresh() async throws {
-        let subject = try await createSubject()
-        subject.addPullRefresh {}
-
-        XCTAssertNotNil(subject.scrollView.subviews.first(where: { $0 is PullRefreshView }))
-    }
-
-    func testRemovePullRefresh() async throws {
-        let subject = try await createSubject()
-
-        subject.addPullRefresh {}
-        subject.removePullRefresh()
-
-        XCTAssertNil(subject.subviews.first(where: { $0 is PullRefreshView }))
     }
 
     func testTabWebView_doesntLeak() {
@@ -93,23 +78,11 @@ class TabWebViewTests: XCTestCaseRootViewController, UIGestureRecognizerDelegate
         trackForMemoryLeaks(tab)
     }
 
-    func testHasOnlySecureContent_returnsTrue_ForLocalPDFFile() throws {
-        let tab = Tab(profile: MockProfile(), windowUUID: windowUUID)
-        tab.url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("test.pdf")
-        tab.createWebview(configuration: configuration)
-
-        let tabWebView = try XCTUnwrap(tab.webView)
-
-        XCTAssertTrue(tabWebView.hasOnlySecureContent)
-    }
-
     // MARK: - Helper methods
 
-    func createSubject(file: StaticString = #filePath,
+    func createSubject(file: StaticString = #file,
                        line: UInt = #line) async throws -> TabWebView {
-        let subject = TabWebView(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)),
-                                 configuration: .init(),
-                                 windowUUID: windowUUID)
+        let subject = TabWebView(frame: .zero, configuration: .init(), windowUUID: windowUUID)
         try await Task.sleep(nanoseconds: sleepTime)
         subject.configure(delegate: tabWebViewDelegate, navigationDelegate: navigationDelegate)
         trackForMemoryLeaks(subject)

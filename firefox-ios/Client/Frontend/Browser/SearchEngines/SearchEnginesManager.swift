@@ -7,23 +7,8 @@ import Common
 import Shared
 import Storage
 
-protocol SearchEnginesManagerProvider: AnyObject, Sendable {
-    @MainActor
-    var defaultEngine: OpenSearchEngine? { get }
-    @MainActor
-    var orderedEngines: [OpenSearchEngine] { get }
-    @MainActor
-    var delegate: SearchEngineDelegate? { get set }
-    @MainActor
-    func getOrderedEngines(completion: @escaping SearchEngineCompletion)
-}
-
 protocol SearchEngineDelegate: AnyObject {
     func searchEnginesDidUpdate()
-}
-
-struct SearchEngineProviderFactory {
-    static let defaultSearchEngineProvider: SearchEngineProvider = ASSearchEngineProvider()
 }
 
 /// Manages a set of `OpenSearchEngine`s.
@@ -31,10 +16,8 @@ struct SearchEngineProviderFactory {
 /// The search engines are ordered and can be enabled and disabled by the user. Order and disabled state are backed by a
 /// write-through cache into a Prefs instance (i.e. UserDefaults).
 ///
-/// Originally, default search engines were localized and given by the `SearchEngineProvider` (from list.json). With the
-/// forthcoming updates for Search Consolidation (FXIOS-8469) this will be changing, and the engines will be vended via
-/// Application Services. The user may add additional custom search engines. Custom search engines entered by the user are
-/// saved to a file.
+/// Default search engines are localized and given by the `SearchEngineProvider` (from list.json). The user may add
+/// additional custom search engines. Custom search engines entered by the user are saved to a file.
 ///
 /// The first search engine is distinguished and labeled the "default" search engine; it can never be disabled.
 /// [FIXME FXIOS-10187 this will change soon ->] Search suggestions should always be sourced from the default search engine
@@ -47,47 +30,27 @@ struct SearchEngineProviderFactory {
 /// enabled quick search engines, and it is possible to disable every non-default quick search engine).
 ///
 /// This class is not thread-safe -- you should only access it on a single thread (usually, the main thread)!
-@MainActor
-class SearchEnginesManager: SearchEnginesManagerProvider {
+class SearchEnginesManager {
     private let prefs: Prefs
     private let fileAccessor: FileAccessor
-
-    // Preference keys for old (pre-bundled XML-based) search engines
-    private let legacy_orderedEngineNamesPrefsKey = "search.orderedEngineNames"
-    private let legacy_disabledEngineNamesPrefsKey = "search.disabledEngineNames"
-
-    // Preference keys for new Application Services based search engines
-    private let orderedEngineIDsPrefsKey = "search.sec.orderedEngineIDs"
-    private let disabledEngineIDsPrefsKey = "search.sec.disabledEngineIDs"
-
+    private let orderedEngineNames = "search.orderedEngineNames"
+    private let disabledEngineNames = "search.disabledEngineNames"
     private let customSearchEnginesFileName = "customEngines.plist"
     private var engineProvider: SearchEngineProvider
 
     weak var delegate: SearchEngineDelegate?
     private var logger: Logger = DefaultLogger.shared
 
-    init(prefs: Prefs,
-         files: FileAccessor,
-         engineProvider: SearchEngineProvider = SearchEngineProviderFactory.defaultSearchEngineProvider) {
+    init(prefs: Prefs, files: FileAccessor, engineProvider: SearchEngineProvider = DefaultSearchEngineProvider()) {
         self.prefs = prefs
         self.fileAccessor = files
         self.engineProvider = engineProvider
         self.orderedEngines = []
+        self.disabledEngines = getDisabledEngines()
         initPrefBasedSuggestions()
 
-        logger.log("[SEC] Search engine provider: \(String(describing: type(of: engineProvider)))",
-                   level: .info,
-                   category: .remoteSettings)
-
-        getOrderedEngines { preferences, orderedEngines in
+        getOrderedEngines { orderedEngines in
             self.orderedEngines = orderedEngines
-
-            // Our preferences may have been migrated as part of fetching our engines
-            // Make sure we update our disabled engine list. We only need to do this
-            // explicitly for disabled engines, the engine ordering will be updated
-            // by the setter for the orderedEngines property.
-            self.disabledEngines = preferences.disabledEngines ?? []
-
             self.delegate?.searchEnginesDidUpdate()
         }
     }
@@ -117,12 +80,6 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
         shouldShowPrivateModeSearchSuggestions = prefs.boolForKey(
             PrefsKeys.SearchSettings.showPrivateModeSearchSuggestions
         ) ?? false
-        shouldShowTrendingSearches = prefs.boolForKey(
-            PrefsKeys.SearchSettings.showTrendingSearches
-        ) ?? true
-        shouldShowRecentSearches = prefs.boolForKey(
-            PrefsKeys.SearchSettings.showRecentSearches
-        ) ?? true
     }
 
     var defaultEngine: OpenSearchEngine? {
@@ -147,23 +104,23 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
     }
 
     // The keys of this dictionary are used as a set.
-    private lazy var disabledEngines: [String] = getDisabledEngines() {
+    private var disabledEngines: [String: Bool]! {
         didSet {
-            prefs.setObject(Array(disabledEngines), forKey: disabledEngineIDsPrefsKey)
+            self.prefs.setObject(Array(self.disabledEngines.keys), forKey: disabledEngineNames)
         }
     }
 
-    var orderedEngines: [OpenSearchEngine] {
+    var orderedEngines: [OpenSearchEngine]! {
         didSet {
-            prefs.setObject(orderedEngines.map { $0.engineID }, forKey: orderedEngineIDsPrefsKey)
+            self.prefs.setObject(self.orderedEngines.map { $0.shortName }, forKey: orderedEngineNames)
         }
     }
 
     /// The subset of search engines that are enabled and not the default search engine.
     ///
     /// The results can be empty if the user disables all search engines besides the default (which can't be disabled).
-    var quickSearchEngines: [OpenSearchEngine] {
-        return orderedEngines.filter({ (engine) in !self.isEngineDefault(engine) && self.isEngineEnabled(engine) })
+    var quickSearchEngines: [OpenSearchEngine]! {
+        return self.orderedEngines.filter({ (engine) in !self.isEngineDefault(engine) && self.isEngineEnabled(engine) })
     }
 
     var shouldShowSearchSuggestions = true {
@@ -238,30 +195,12 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
         }
     }
 
-    var shouldShowTrendingSearches = true {
-        didSet {
-            prefs.setBool(
-                shouldShowTrendingSearches,
-                forKey: PrefsKeys.SearchSettings.showTrendingSearches
-            )
-        }
-    }
-
-    var shouldShowRecentSearches = true {
-        didSet {
-            prefs.setBool(
-                shouldShowRecentSearches,
-                forKey: PrefsKeys.SearchSettings.showRecentSearches
-            )
-        }
-    }
-
     func isEngineEnabled(_ engine: OpenSearchEngine) -> Bool {
-        return !disabledEngines.contains(engine.engineID)
+        return disabledEngines.index(forKey: engine.shortName) == nil
     }
 
     func enableEngine(_ engine: OpenSearchEngine) {
-        disabledEngines.removeAll { $0 == engine.engineID }
+        disabledEngines.removeValue(forKey: engine.shortName)
     }
 
     func disableEngine(_ engine: OpenSearchEngine) {
@@ -269,23 +208,22 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
             // Can't disable default engine.
             return
         }
-        let engineKey = engine.engineID
-        if !disabledEngines.contains(engineKey) {
-            disabledEngines.append(engineKey)
-        }
+        disabledEngines[engine.shortName] = true
     }
 
-    func deleteCustomEngine(_ engine: OpenSearchEngine, completion: @MainActor @escaping () -> Void) {
+    func deleteCustomEngine(_ engine: OpenSearchEngine, completion: @escaping () -> Void) {
         // We can't delete a preinstalled engine or an engine that is currently the default.
-        guard engine.isCustomEngine && !isEngineDefault(engine) else { return }
+        guard engine.isCustomEngine || isEngineDefault(engine) else { return }
 
         customEngines.remove(at: customEngines.firstIndex(of: engine)!)
         saveCustomEngines()
 
-        orderedEngines.removeAll(where: { $0.engineID == engine.engineID })
-        delegate?.searchEnginesDidUpdate()
+        getOrderedEngines { orderedEngines in
+            self.orderedEngines = orderedEngines
+            self.delegate?.searchEnginesDidUpdate()
 
-        completion()
+            completion()
+        }
     }
 
     /// Adds an engine to the front of the search engines list.
@@ -303,68 +241,24 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
         return nil
     }
 
-    func resetPrefs() {
-        let keys = [orderedEngineIDsPrefsKey,
-                    legacy_orderedEngineNamesPrefsKey,
-                    disabledEngineIDsPrefsKey,
-                    legacy_disabledEngineNamesPrefsKey]
-        keys.forEach { prefs.removeObjectForKey($0) }
-        resetCustomEngines()
-    }
-
     // MARK: - Private
 
-    private func getDisabledEngines() -> [String] {
-        let prefsKey = disabledEngineIDsPrefsKey
-        return prefs.stringArrayForKey(prefsKey) ?? []
-    }
-
-    func getOrderedEngines(completion: @escaping SearchEngineCompletion) {
-        let enginePrefs = getSearchPrefs()
-        engineProvider.getOrderedEngines(customEngines: customEngines,
-                                         engineOrderingPrefs: enginePrefs,
-                                         prefsMigrator: DefaultSearchEnginePrefsMigrator(),
-                                         completion: completion)
-        // After decoding our engines, ensure we save them back to disk, to ensure any
-        // defaults generated during decoding (e.g. UUIDs for custom engines) are re-saved
-        saveCustomEngines()
-    }
-
-    private func getSearchPrefs() -> SearchEnginePrefs {
-        let enginePrefs: SearchEnginePrefs
-
-        // TODO: [FXIOS-11403] This code can be cleaned up significantly once we have fully enabled SEC for all users.
-        let v2PrefsKey = orderedEngineIDsPrefsKey
-        let v1PrefsKey = legacy_orderedEngineNamesPrefsKey
-        let v2DisabledKey = disabledEngineIDsPrefsKey
-        let v1DisabledKey = legacy_disabledEngineNamesPrefsKey
-
-        func fetchPrefs(_ version: SearchEngineOrderingPrefsVersion) -> SearchEnginePrefs {
-            switch version {
-            case .v2:
-                let engineStrings = prefs.stringArrayForKey(v2PrefsKey)
-                let disabled = prefs.stringArrayForKey(v2DisabledKey)
-                return SearchEnginePrefs(engineIdentifiers: engineStrings, disabledEngines: disabled, version: .v2)
-            case .v1:
-                let engineStrings = prefs.stringArrayForKey(v1PrefsKey)
-                let disabled = prefs.stringArrayForKey(v1DisabledKey)
-                return SearchEnginePrefs(engineIdentifiers: engineStrings, disabledEngines: disabled, version: .v1)
+    private func getDisabledEngines() -> [String: Bool] {
+        if let disabledEngines = prefs.stringArrayForKey(disabledEngineNames) {
+            var disabledEnginesDict = [String: Bool]()
+            for engine in disabledEngines {
+                disabledEnginesDict[engine] = true
             }
-        }
-
-        if prefs.hasObjectForKey(v2PrefsKey) {
-            // v2 (SEC) preferences are available on-disk
-            enginePrefs = fetchPrefs(.v2)
-        } else if prefs.hasObjectForKey(v1PrefsKey) {
-            // We're running for the first time with SEC enabled but haven't yet saved ordering
-            // prefs for those engines. We send the v1 preferences which will be migrated.
-            enginePrefs = fetchPrefs(.v1)
+            return disabledEnginesDict
         } else {
-            // Fresh install. No v2 or v1 preferences.
-            enginePrefs = SearchEnginePrefs(engineIdentifiers: nil, disabledEngines: nil, version: .v2)
+            return [String: Bool]()
         }
+    }
 
-        return enginePrefs
+    func getOrderedEngines(completion: @escaping ([OpenSearchEngine]) -> Void) {
+        engineProvider.getOrderedEngines(customEngines: customEngines,
+                                         orderedEngineNames: prefs.stringArrayForKey(self.orderedEngineNames),
+                                         completion: completion)
     }
 
     private var customEngineFilePath: String {
@@ -392,12 +286,6 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
             return []
         }
     }()
-
-    private func resetCustomEngines() {
-        guard let customEngineFilePath = try? customEngineFilePath else { return }
-        let url = URL(fileURLWithPath: customEngineFilePath)
-        try? FileManager.default.removeItem(at: url)
-    }
 
     private func saveCustomEngines() {
         do {

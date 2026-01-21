@@ -9,14 +9,14 @@ import XCTest
 final class LaunchTypeTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
-        DependencyHelperMock().reset()
-        try await super.tearDown()
+    override func tearDown() {
+        super.tearDown()
+        AppContainer.shared.reset()
     }
 
     func testCanLaunch_surveyFromBrowserCoordinator() {
@@ -41,18 +41,6 @@ final class LaunchTypeTests: XCTestCase {
         let launchType = LaunchType.defaultBrowser
         XCTAssertFalse(launchType.canLaunch(fromType: .SceneCoordinator, isIphone: true))
         XCTAssertFalse(launchType.canLaunch(fromType: .SceneCoordinator, isIphone: false))
-    }
-
-    func testCanLaunch_termsOfServiceFromBrowserCoordinator() {
-        let launchType = LaunchType.termsOfService(manager: TermsOfServiceManager(prefs: MockProfile().prefs))
-        XCTAssertFalse(launchType.canLaunch(fromType: .BrowserCoordinator, isIphone: true))
-        XCTAssertFalse(launchType.canLaunch(fromType: .BrowserCoordinator, isIphone: false))
-    }
-
-    func testCanLaunch_termsOfServiceFromSceneCoordinator() {
-        let launchType = LaunchType.termsOfService(manager: TermsOfServiceManager(prefs: MockProfile().prefs))
-        XCTAssertTrue(launchType.canLaunch(fromType: .SceneCoordinator, isIphone: true))
-        XCTAssertTrue(launchType.canLaunch(fromType: .SceneCoordinator, isIphone: false))
     }
 
     func testCanLaunch_introFromBrowserCoordinator() {

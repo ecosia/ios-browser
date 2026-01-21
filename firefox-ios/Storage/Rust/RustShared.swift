@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Shared
 
 public class RustShared {
     static func moveDatabaseFileToBackupLocation(databasePath: String,

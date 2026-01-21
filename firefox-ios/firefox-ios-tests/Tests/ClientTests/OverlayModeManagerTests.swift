@@ -16,13 +16,12 @@ class OverlayModeManagerTests: XCTestCase {
     }
 
     override func tearDown() {
+        super.tearDown()
         urlBar = nil
         subject = nil
-        super.tearDown()
     }
 
     // MARK: - Test URLBarView nil
-    @MainActor
     func testOverlayMode_ForNilURLBar() {
         urlBar = nil
         subject.openSearch(with: "search")
@@ -30,26 +29,30 @@ class OverlayModeManagerTests: XCTestCase {
     }
 
     // MARK: - Test EnterOverlay for New tab
-    @MainActor
-    func testEnterOverlayMode_ForNewTabHome_WithNilURL() {
+    // Ecosia: Update test name according to the expected behaviour
+    // func testEnterOverlayMode_ForNewTabHome_WithNilURL() {
+    func testDoesNotEnterOverlayMode_ForNewTabHome_WithNilURL() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openNewTab(url: nil, newTabSettings: .topSites)
-
-        XCTAssertTrue(subject.inOverlayMode)
+        // Ecosia: Update with the new Ecosia's behaviour where overlay mode is OFF for New Tab
+        // XCTAssertTrue(subject.inOverlayMode)
+        XCTAssertFalse(subject.inOverlayMode)
         XCTAssertEqual(subject.enterOverlayModeCallCount, 1)
     }
 
-    @MainActor
-    func testEnterOverlayMode_ForNewTabHome_WithHomeURL() {
+    // Ecosia: Update test name according to the expected behaviour
+    // func testEnterOverlayMode_ForNewTabHome_WithHomeURL() {
+    func testDoesNotEnterOverlayMode_ForNewTabHome_WithHomeURL() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openNewTab(url: URL(string: "internal://local/about/home"),
                            newTabSettings: .topSites)
 
-        XCTAssertTrue(subject.inOverlayMode)
+        // Ecosia: Update with the new Ecosia's behaviour where overlay mode is OFF for New Tab
+        // XCTAssertTrue(subject.inOverlayMode)
+        XCTAssertFalse(subject.inOverlayMode)
         XCTAssertEqual(subject.enterOverlayModeCallCount, 1)
     }
 
-    @MainActor
     func testEnterOverlayMode_ForNewTabHome_WithURL() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openNewTab(url: URL(string: "https://test.com"),
@@ -59,7 +62,6 @@ class OverlayModeManagerTests: XCTestCase {
         XCTAssertEqual(subject.enterOverlayModeCallCount, 1)
     }
 
-    @MainActor
     func testEnterOverlayMode_ForBlankPage_WithNilURL() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openNewTab(url: nil, newTabSettings: .blankPage)
@@ -68,7 +70,6 @@ class OverlayModeManagerTests: XCTestCase {
         XCTAssertEqual(subject.enterOverlayModeCallCount, 1)
     }
 
-    @MainActor
     func testEnterOverlayMode_ForBlankPage_WithURL() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openNewTab(url: URL(string: "https://test.com"),
@@ -78,7 +79,6 @@ class OverlayModeManagerTests: XCTestCase {
         XCTAssertEqual(subject.enterOverlayModeCallCount, 1)
     }
 
-    @MainActor
     func testNotEnterOverlayMode_ForCustomUrl() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openNewTab(url: URL(string: "https://test.com"),
@@ -87,7 +87,6 @@ class OverlayModeManagerTests: XCTestCase {
         XCTAssertFalse(subject.inOverlayMode)
     }
 
-    @MainActor
     func testNotEnterOverlayMode_ForCustomUrl_WithNilURL() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openNewTab(url: nil,
@@ -98,7 +97,6 @@ class OverlayModeManagerTests: XCTestCase {
 
     // MARK: - Test EnterOverlay for paste action
 
-    @MainActor
     func testEnterOverlayMode_ForPasteContent() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openSearch(with: "paste")
@@ -109,7 +107,6 @@ class OverlayModeManagerTests: XCTestCase {
 
     // MARK: - Test EnterOverlay for finish editing
 
-    @MainActor
     func testLeaveOverlayMode_ForFinishEditing() {
         subject.setURLBar(urlBarView: urlBar)
         subject.finishEditing(shouldCancelLoading: true)
@@ -119,7 +116,6 @@ class OverlayModeManagerTests: XCTestCase {
     }
 
     // MARK: - Test EnterOverlay for Tab change
-    @MainActor
     func testLeaveOverlayMode_ForSwitchTab() {
         subject.setURLBar(urlBarView: urlBar)
         subject.switchTab(shouldCancelLoading: true)
@@ -128,7 +124,6 @@ class OverlayModeManagerTests: XCTestCase {
         XCTAssertEqual(subject.leaveOverlayModeCallCount, 1)
     }
 
-    @MainActor
     func testLeaveOverlayMode_ForSwitchTabInOverlayMode() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openSearch(with: "")

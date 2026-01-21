@@ -7,9 +7,8 @@ import UIKit
 final class PrivacyWindowHelper {
     private var privacyWindow: UIWindow?
 
-    @MainActor
-    func showWindow(windowScene: UIWindowScene?, withThemedColor color: UIColor) {
-        guard let windowScene else { return }
+    func showWindow(withThemedColor color: UIColor) {
+        guard let windowScene = UIWindow.attachedKeyWindow?.windowScene else { return }
 
         privacyWindow = UIWindow(windowScene: windowScene)
         privacyWindow?.rootViewController = UIViewController()
@@ -19,7 +18,6 @@ final class PrivacyWindowHelper {
         privacyWindow?.makeKeyAndVisible()
     }
 
-    @MainActor
     func removeWindow() {
         privacyWindow?.isHidden = true
         privacyWindow = nil

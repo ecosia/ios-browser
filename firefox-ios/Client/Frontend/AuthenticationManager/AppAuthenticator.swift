@@ -7,7 +7,7 @@ import WebKit
 
 enum AuthenticationError: Error {
     case failedEvaluation(message: String)
-    case failedAuthentication(message: String)
+    case failedAutentication(message: String)
 }
 
 enum AuthenticationState {
@@ -19,34 +19,28 @@ enum AuthenticationState {
 protocol AppAuthenticationProtocol {
     var canAuthenticateDeviceOwner: Bool { get }
 
-    func getAuthenticationState(completion: @MainActor @escaping (AuthenticationState) -> Void)
-    func authenticateWithDeviceOwnerAuthentication(
-        _ completion: @MainActor @escaping (Result<Void, AuthenticationError>) -> Void
-    )
+    func getAuthenticationState(completion: @escaping (AuthenticationState) -> Void)
+    func authenticateWithDeviceOwnerAuthentication(_ completion: @escaping (Result<Void, AuthenticationError>) -> Void)
 }
 
 class AppAuthenticator: AppAuthenticationProtocol {
-    func getAuthenticationState(completion: @MainActor @escaping (AuthenticationState) -> Void) {
+    func getAuthenticationState(completion: @escaping (AuthenticationState) -> Void) {
         if canAuthenticateDeviceOwner {
             authenticateWithDeviceOwnerAuthentication { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success:
-                        completion(.deviceOwnerAuthenticated)
-                    case .failure:
-                        completion(.deviceOwnerFailed)
-                    }
+                switch result {
+                case .success:
+                    completion(.deviceOwnerAuthenticated)
+                case .failure:
+                    completion(.deviceOwnerFailed)
                 }
             }
         } else {
-            DispatchQueue.main.async {
-                completion(.passCodeRequired)
-            }
+            completion(.passCodeRequired)
         }
     }
 
     func authenticateWithDeviceOwnerAuthentication(
-        _ completion: @MainActor @escaping (Result<Void, AuthenticationError>) -> Void
+        _ completion: @escaping (Result<Void, AuthenticationError>) -> Void
     ) {
         // Get a fresh context for each login. If you use the same context on multiple attempts
         //  (by commenting out the next line), then a previously successful authentication
@@ -70,20 +64,15 @@ class AppAuthenticator: AppAuthenticationProtocol {
                     DispatchQueue.main.async {
                         completion(
                             .failure(
-                                .failedAuthentication(message: error?.localizedDescription ?? "Failed to authenticate")
+                                .failedAutentication(message: error?.localizedDescription ?? "Failed to authenticate")
                             )
                         )
                     }
                 }
             }
         } else {
-            let failureError = error
             DispatchQueue.main.async {
-                completion(.failure(
-                    .failedEvaluation(
-                        message: failureError?.localizedDescription ?? "Can't evaluate policy"
-                    )
-                ))
+                completion(.failure(.failedEvaluation(message: error?.localizedDescription ?? "Can't evaluate policy")))
             }
         }
     }

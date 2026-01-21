@@ -5,6 +5,8 @@
 import Foundation
 import XCTest
 
+@testable import Client
+
 class WallpaperNetworkingTests: XCTestCase {
     var networking: NetworkingMock!
 
@@ -14,8 +16,8 @@ class WallpaperNetworkingTests: XCTestCase {
     }
 
     override func tearDown() {
-        networking = nil
         super.tearDown()
+        networking = nil
     }
 
     func testSetupWorksAsExpected() async {

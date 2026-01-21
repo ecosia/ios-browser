@@ -3,35 +3,32 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Storage
 @testable import Client
 
-@MainActor
 final class BookmarksCoordinatorTests: XCTestCase {
     private var router: MockRouter!
     private var profile: MockProfile!
     private var parentCoordinator: MockLibraryCoordinatorDelegate!
     private var navigationHandler: MockLibraryNavigationHandler!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         router = MockRouter(navigationController: UINavigationController())
         profile = MockProfile()
         parentCoordinator = MockLibraryCoordinatorDelegate()
         navigationHandler = MockLibraryNavigationHandler()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
         router = nil
         profile = nil
         parentCoordinator = nil
         navigationHandler = nil
-        try await super.tearDown()
     }
-
-    // MARK: Bookmarks
 
     func testStart() {
         let subject = createSubject()
@@ -39,7 +36,7 @@ final class BookmarksCoordinatorTests: XCTestCase {
 
         subject.start(from: folder)
 
-        XCTAssertTrue(router.pushedViewController is BookmarksViewController)
+        XCTAssertTrue(router.pushedViewController is LegacyBookmarksPanel)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
@@ -49,7 +46,7 @@ final class BookmarksCoordinatorTests: XCTestCase {
 
         subject.showBookmarkDetail(for: folder, folder: folder)
 
-        XCTAssertTrue(router.pushedViewController is EditFolderViewController)
+        XCTAssertTrue(router.pushedViewController is LegacyBookmarkDetailPanel)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
@@ -58,7 +55,7 @@ final class BookmarksCoordinatorTests: XCTestCase {
 
         subject.showBookmarkDetail(bookmarkType: .bookmark, parentBookmarkFolder: LocalDesktopFolder())
 
-        XCTAssertTrue(router.pushedViewController is EditBookmarkViewController)
+        XCTAssertTrue(router.pushedViewController is LegacyBookmarkDetailPanel)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
@@ -67,62 +64,11 @@ final class BookmarksCoordinatorTests: XCTestCase {
 
         subject.showBookmarkDetail(bookmarkType: .folder, parentBookmarkFolder: LocalDesktopFolder())
 
-        XCTAssertTrue(router.pushedViewController is EditFolderViewController)
+        XCTAssertTrue(router.pushedViewController is LegacyBookmarkDetailPanel)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
-    // MARK: Sign in
-
-    func testShowSignInViewController() {
-        let subject = createSubject()
-
-        subject.showSignIn()
-        let presentedViewController = router.presentedViewController as? UINavigationController
-        XCTAssertTrue(presentedViewController?.visibleViewController is FirefoxAccountSignInViewController)
-        XCTAssertEqual(router.presentCalled, 1)
-    }
-
-    func testShowQRCode_addsQRCodeChildCoordinator() {
-        let subject = createSubject()
-        let delegate = MockQRCodeViewControllerDelegate()
-
-        subject.showQRCode(delegate: delegate)
-
-        XCTAssertEqual(subject.childCoordinators.count, 1)
-        XCTAssertTrue(subject.childCoordinators.first is QRCodeCoordinator)
-    }
-
-    func testShowQRCode_presentsQRCodeNavigationController() {
-        let subject = createSubject()
-        let delegate = MockQRCodeViewControllerDelegate()
-
-        subject.showQRCode(delegate: delegate)
-
-        XCTAssertEqual(router.presentCalled, 1)
-        XCTAssertTrue(router.presentedViewController is QRCodeNavigationController)
-    }
-
-    // MARK: Did finish
-
-    func testDidFinishCalled() {
-        let subject = createSubject()
-        let delegate = MockQRCodeViewControllerDelegate()
-        subject.showQRCode(delegate: delegate)
-
-        guard let qrCodeCoordinator = subject.childCoordinators.first(where: {
-            $0 is QRCodeCoordinator
-        }) as? QRCodeCoordinator else {
-            XCTFail("QRCodeCoordinator expected to be found")
-            return
-        }
-
-        subject.didFinish(from: qrCodeCoordinator)
-        XCTAssertEqual(subject.childCoordinators.count, 0)
-    }
-
-    // MARK: Share sheet
-
-    func testShowShareSheet_callsNavigationHandlerShareFunction() {
+    func testShowShareExtension_callsNavigationHandlerShareFunction() {
         let subject = createSubject()
 
         subject.shareLibraryItem(
@@ -135,15 +81,13 @@ final class BookmarksCoordinatorTests: XCTestCase {
         XCTAssertEqual(navigationHandler.didShareLibraryItemCalled, 1)
     }
 
-    // MARK: Helper methods
-
     private func createSubject() -> BookmarksCoordinator {
         let subject = BookmarksCoordinator(
             router: router,
             profile: profile,
             windowUUID: .XCTestDefaultUUID,
-            libraryCoordinator: parentCoordinator,
-            libraryNavigationHandler: navigationHandler
+            parentCoordinator: parentCoordinator,
+            navigationHandler: navigationHandler
         )
         trackForMemoryLeaks(subject)
         return subject

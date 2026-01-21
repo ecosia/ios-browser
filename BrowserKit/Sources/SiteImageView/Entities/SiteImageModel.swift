@@ -5,7 +5,7 @@
 import UIKit
 
 /// Stores information related to an image request inside SiteImageView.
-public struct SiteImageModel: Sendable {
+public struct SiteImageModel {
     // A unique ID to tie the request to a certain image view
     let id: UUID
 
@@ -18,14 +18,17 @@ public struct SiteImageModel: Sendable {
     // Used to cache any resources related to this request
     let cacheKey: String
 
-    // The bundled resource or remote URL (e.g. faviconURL, preferably high resolution) for this image.
-    // FIXME: FXIOS-14017 This property prevents SiteImageModel from being truly Sendable
-    nonisolated(unsafe) var siteResource: SiteResource?
+    // The bundled resource or remote URL (e.g. faviconURL, preferrably high resolution) for this image.
+    var siteResource: SiteResource?
+
+    // Loaded image asset
+    public var image: UIImage?
 
     public init(id: UUID,
                 imageType: SiteImageType,
                 siteURL: URL,
-                siteResource: SiteResource? = nil) {
+                siteResource: SiteResource? = nil,
+                image: UIImage? = nil) {
         self.id = id
         self.imageType = imageType
         self.siteURL = siteURL
@@ -38,6 +41,7 @@ public struct SiteImageModel: Sendable {
             self.cacheKey = SiteImageModel.generateCacheKey(siteURL: siteURL, type: imageType)
         }
         self.siteResource = siteResource
+        self.image = image
     }
 
     /// Generates a cache key for the given image type by using its associated site URL.

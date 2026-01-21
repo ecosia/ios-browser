@@ -8,7 +8,7 @@ import Shared
 import Account
 
 private class CustomFxAContentServerEnableSetting: BoolSetting {
-      init(prefs: Prefs, settingDidChange: (@MainActor  (Bool?) -> Void)? = nil) {
+      init(prefs: Prefs, settingDidChange: ((Bool?) -> Void)? = nil) {
           super.init(
               prefs: prefs,
               prefKey: PrefsKeys.KeyUseCustomFxAContentServer,
@@ -22,7 +22,7 @@ private class CustomFxAContentServerEnableSetting: BoolSetting {
   }
 
   private class CustomSyncTokenServerEnableSetting: BoolSetting {
-      init(prefs: Prefs, settingDidChange: (@MainActor (Bool?) -> Void)? = nil) {
+      init(prefs: Prefs, settingDidChange: ((Bool?) -> Void)? = nil) {
           super.init(
               prefs: prefs,
               prefKey: PrefsKeys.KeyUseCustomSyncTokenServerOverride,
@@ -41,7 +41,7 @@ private class CustomFxAContentServerEnableSetting: BoolSetting {
         placeholder: String,
         accessibilityIdentifier: String,
         isChecked: @escaping () -> Bool = { return false },
-        settingDidChange: (@MainActor (String?) -> Void)? = nil
+        settingDidChange: ((String?) -> Void)? = nil
       ) {
           super.init(prefs: prefs,
                      prefKey: prefKey,
@@ -60,21 +60,17 @@ class AdvancedAccountSettingViewController: SettingsTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = .SettingsAdvancedAccountTitle
-        customFxAContentURI = self.profile?.prefs.stringForKey(PrefsKeys.KeyCustomFxAContentServer)
-        customSyncTokenServerURI = self.profile?.prefs.stringForKey(PrefsKeys.KeyCustomSyncTokenServerOverride)
+        self.customFxAContentURI = self.profile.prefs.stringForKey(PrefsKeys.KeyCustomFxAContentServer)
+        self.customSyncTokenServerURI = self.profile.prefs.stringForKey(PrefsKeys.KeyCustomSyncTokenServerOverride)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if let profile {
-            RustFirefoxAccounts.reconfig(prefs: profile.prefs) { _ in }
-        }
+        RustFirefoxAccounts.reconfig(prefs: profile.prefs) { _ in }
     }
 
     override func generateSettings() -> [SettingSection] {
-        guard let prefs = profile?.prefs else {
-            return []
-        }
+        let prefs = profile.prefs
 
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary]

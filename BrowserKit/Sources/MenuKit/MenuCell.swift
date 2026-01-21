@@ -6,14 +6,17 @@ import Foundation
 import Common
 import UIKit
 
-final class MenuCell: UITableViewCell, ReusableCell, ThemeApplicable {
+public class MenuCell: UITableViewCell, ReusableCell, ThemeApplicable {
     private struct UX {
-        static let contentMargin: CGFloat = 16
-        static let horizontalMargin: CGFloat = 24
+        static let contentMargin: CGFloat = 12
         static let iconSize: CGFloat = 24
+        static let largeIconSize: CGFloat = 48
         static let contentSpacing: CGFloat = 3
         static let noDescriptionContentSpacing: CGFloat = 0
-        static let cornerRadius: CGFloat = 16
+    }
+
+    private var separatorInsetSize: CGFloat {
+        return UX.contentMargin * 2 + UX.iconSize
     }
 
     // MARK: - UI Elements
@@ -23,130 +26,101 @@ final class MenuCell: UITableViewCell, ReusableCell, ThemeApplicable {
     }
 
     private var descriptionLabel: UILabel = .build { label in
-        label.font = FXFontStyles.Regular.footnote.scaledFont()
-        label.numberOfLines = 0
+        label.font = FXFontStyles.Regular.caption1.scaledFont()
     }
+
+    private var icon: UIImageView = .build()
 
     private var contentStackView: UIStackView = .build { stackView in
         stackView.axis = .vertical
-        stackView.distribution = .fill
+        stackView.distribution = .fillProportionally
     }
 
-    private var iconImageView: UIImageView = .build()
-
-    private var horizontalMargin: CGFloat {
-        if #available(iOS 26.0, *) {
-            return UX.horizontalMargin
-        } else {
-            return UX.contentMargin
-        }
-    }
+    private var accessoryArrowView: UIImageView = .build()
 
     // MARK: - Properties
-    var model: MenuElement?
-
-    private var isFirstCell = false
-    private var isLastCell = false
-
-    private var mainMenuHelper: MainMenuInterface?
+    public var model: MenuElement?
 
     // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupView()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        configureCornerRadiusForCellPosition()
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        iconImageView.image = nil
-        isFirstCell = false
-        isLastCell = false
-    }
-
-    func configureCellWith(
-        model: MenuElement,
-        theme: Theme,
-        isFirstCell: Bool,
-        isLastCell: Bool,
-        mainMenuHelper: MainMenuInterface = MainMenuHelper()
-    ) {
+    public func configureCellWith(model: MenuElement) {
         self.model = model
-        self.mainMenuHelper = mainMenuHelper
-        self.isFirstCell = isFirstCell
-        self.isLastCell = isLastCell
         self.titleLabel.text = model.title
         self.descriptionLabel.text = model.description
         self.contentStackView.spacing = model.description != nil ? UX.contentSpacing : UX.noDescriptionContentSpacing
-        self.iconImageView.image = UIImage(named: model.iconName)?
-            .withRenderingMode(.alwaysTemplate)
-            .imageFlippedForRightToLeftLayoutDirection()
+        self.icon.image = UIImage(named: model.iconName)?.withRenderingMode(.alwaysTemplate)
+        self.accessoryArrowView.image =
+        UIImage(named: StandardImageIdentifiers.Large.chevronRight)?.withRenderingMode(.alwaysTemplate)
         self.isAccessibilityElement = true
         self.isUserInteractionEnabled = !model.isEnabled ? false : true
         self.accessibilityIdentifier = model.a11yId
         self.accessibilityLabel = model.a11yLabel
         self.accessibilityHint = model.a11yHint
-        self.accessibilityTraits = .button
-        self.separatorInset = .zero
+        self.separatorInset = UIEdgeInsets(top: 0, left: separatorInsetSize, bottom: 0, right: 0)
+        setupView()
     }
 
     private func setupView() {
+        self.addSubview(icon)
         self.addSubview(contentStackView)
-        self.addSubview(iconImageView)
+        self.addSubview(accessoryArrowView)
         contentStackView.addArrangedSubview(titleLabel)
         contentStackView.addArrangedSubview(descriptionLabel)
         NSLayoutConstraint.activate([
-            contentStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
+            icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.contentMargin),
+            icon.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            contentStackView.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: UX.contentMargin),
             contentStackView.topAnchor.constraint(equalTo: topAnchor, constant: UX.contentMargin),
             contentStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.contentMargin),
 
-            iconImageView.leadingAnchor.constraint(equalTo: contentStackView.trailingAnchor,
-                                                   constant: UX.contentMargin),
-            iconImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalMargin),
-            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: UX.iconSize),
-            iconImageView.heightAnchor.constraint(equalToConstant: UX.iconSize)
+            accessoryArrowView.leadingAnchor.constraint(equalTo: contentStackView.trailingAnchor,
+                                                        constant: UX.contentMargin),
+            accessoryArrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.contentMargin),
+            accessoryArrowView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            accessoryArrowView.widthAnchor.constraint(equalToConstant: UX.iconSize),
+            accessoryArrowView.heightAnchor.constraint(equalToConstant: UX.iconSize)
         ])
+        adjustLayout(isAccessibilityCategory: UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory)
     }
 
-    private func configureCornerRadiusForCellPosition() {
-        if #unavailable(iOS 26.0) {
-            guard isFirstCell || isLastCell else { return }
-            self.clipsToBounds = true
-            layer.cornerRadius = UX.cornerRadius
-            layer.maskedCorners = {
-                var corners: CACornerMask = []
-                if isFirstCell { corners.formUnion([.layerMinXMinYCorner, .layerMaxXMinYCorner]) }
-                if isLastCell { corners.formUnion([.layerMinXMaxYCorner, .layerMaxXMaxYCorner]) }
-                return corners
-            }()
-        }
+    private func adjustLayout(isAccessibilityCategory: Bool) {
+        let iconSize = isAccessibilityCategory ? UX.largeIconSize : UX.iconSize
+        icon.widthAnchor.constraint(equalToConstant: iconSize).isActive = true
+        icon.heightAnchor.constraint(equalToConstant: iconSize).isActive = true
+    }
+
+    func performAction() {
+        guard let action = model?.action else { return }
+        action()
     }
 
     // MARK: - Theme Applicable
-    func applyTheme(theme: Theme) {
+    public func applyTheme(theme: Theme) {
         guard let model else { return }
-        backgroundColor = theme.colors.layerSurfaceMedium.withAlphaComponent(mainMenuHelper?.backgroundAlpha() ?? 1.0)
+        backgroundColor = theme.colors.layer2
+        accessoryArrowView.isHidden = !model.hasSubmenu || model.isActive ? true : false
         if model.isActive {
             titleLabel.textColor = theme.colors.textAccent
             descriptionLabel.textColor = theme.colors.textSecondary
-            iconImageView.tintColor = theme.colors.iconAccentBlue
+            icon.tintColor = theme.colors.iconAccentBlue
         } else if !model.isEnabled {
             titleLabel.textColor = theme.colors.textDisabled
             descriptionLabel.textColor = theme.colors.textDisabled
-            iconImageView.tintColor = theme.colors.iconDisabled
+            icon.tintColor = theme.colors.iconDisabled
+            accessoryArrowView.tintColor = theme.colors.iconDisabled
         } else {
             titleLabel.textColor = theme.colors.textPrimary
             descriptionLabel.textColor = theme.colors.textSecondary
-            iconImageView.tintColor = theme.colors.iconPrimary
+            icon.tintColor = theme.colors.iconSecondary
+            accessoryArrowView.tintColor = theme.colors.iconSecondary
         }
     }
 }

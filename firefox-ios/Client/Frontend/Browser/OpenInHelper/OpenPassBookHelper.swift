@@ -7,7 +7,7 @@ import Shared
 import WebKit
 import Common
 
-final class OpenPassBookHelper: @unchecked Sendable {
+class OpenPassBookHelper {
     private enum InvalidPassError: Error {
         case contentsOfURL
         case dataTaskURL
@@ -25,104 +25,108 @@ final class OpenPassBookHelper: @unchecked Sendable {
         }
     }
 
+    private var response: URLResponse
+    private var url: URL?
     private let presenter: Presenter
-    private lazy var session = makeURLSession(
-        userAgent: UserAgent.fxaUserAgent,
-        configuration: .ephemeralMPTCP
-    )
+    private let cookieStore: WKHTTPCookieStore
+    private lazy var session = makeURLSession(userAgent: UserAgent.fxaUserAgent,
+                                              configuration: .ephemeralMPTCP)
     private let logger: Logger
 
-    init(presenter: Presenter,
+    init(response: URLResponse,
+         cookieStore: WKHTTPCookieStore,
+         presenter: Presenter,
          logger: Logger = DefaultLogger.shared) {
+        self.response = response
+        self.url = response.url
+        self.cookieStore = cookieStore
         self.presenter = presenter
         self.logger = logger
     }
 
-    @MainActor
-    static func shouldOpenWithPassBook(mimeType: String, forceDownload: Bool = false) -> Bool {
+    static func shouldOpenWithPassBook(response: URLResponse,
+                                       forceDownload: Bool) -> Bool {
+        guard let mimeType = response.mimeType, response.url != nil else { return false }
+
         return mimeType == MIMEType.Passbook && PKAddPassesViewController.canAddPasses() && !forceDownload
     }
 
-    @MainActor
-    func open(data: Data) {
+    func open(completion: @escaping () -> Void) {
         do {
-            try open(passData: data)
-        } catch {
-            sendLogError(with: error.localizedDescription)
-            presentErrorAlert()
-        }
-    }
-
-    func open(response: URLResponse, cookieStore: WKHTTPCookieStore) async {
-        do {
-            try await openPassWithContentsOfURL(url: response.url)
+            try openPassWithContentsOfURL()
+            completion()
         } catch let error as InvalidPassError {
             sendLogError(with: error.description)
-            let error = await openPassWithCookies(url: response.url, cookieStore: cookieStore)
-            if error != nil {
-                await presentErrorAlert()
+            openPassWithCookies { error in
+                if error != nil {
+                    self.presentErrorAlert(completion: completion)
+                } else {
+                    completion()
+                }
             }
         } catch {
             sendLogError(with: error.localizedDescription)
-            await presentErrorAlert()
+            presentErrorAlert(completion: completion)
         }
     }
 
-    private func openPassWithCookies(
-        url: URL?,
-        cookieStore: WKHTTPCookieStore) async -> InvalidPassError? {
-            await configureCookies(cookieStore: cookieStore)
-            return await openPassFromDataTask(url: url)
-    }
-
-    @MainActor
-    private func openPassFromDataTask(url: URL?) async -> InvalidPassError? {
-        let data = await getData(url: url)
-        guard let data = data else {
-            return InvalidPassError.dataTaskURL
-        }
-
-        do {
-            try self.open(passData: data)
-            return nil
-        } catch {
-            self.sendLogError(with: error.localizedDescription)
-            return InvalidPassError.dataTaskURL
+    private func openPassWithCookies(completion: @escaping (InvalidPassError?) -> Void) {
+        configureCookies { [weak self] in
+            self?.openPassFromDataTask(completion: completion)
         }
     }
 
-    private func getData(url: URL?) async -> Data? {
-        guard let url = url else {
-            return nil
-        }
-        do {
-            let (data, response) = try await session.data(from: url)
-            if validatedHTTPResponse(response, statusCode: 200..<300) != nil {
-                return data
-            } else {
-                return nil
+    private func openPassFromDataTask(completion: @escaping (InvalidPassError?) -> Void) {
+        getData(completion: { data in
+            guard let data = data else {
+                completion(InvalidPassError.dataTaskURL)
+                return
             }
-        } catch {
-            return nil
+
+            do {
+                try self.open(passData: data)
+            } catch {
+                self.sendLogError(with: error.localizedDescription)
+                completion(InvalidPassError.dataTaskURL)
+            }
+        })
+    }
+
+    private func getData(completion: @escaping (Data?) -> Void) {
+        guard let url = url else {
+            completion(nil)
+            return
         }
+
+        session.dataTask(with: url) { (data, response, error) in
+            guard validatedHTTPResponse(response, statusCode: 200..<300) != nil,
+                  let data = data
+            else {
+                completion(nil)
+                return
+            }
+
+            completion(data)
+        }.resume()
     }
 
     /// Get webview cookies to add onto download session
-    private func configureCookies(cookieStore: WKHTTPCookieStore) async {
-        let cookies = await cookieStore.allCookies()
-        for cookie in cookies {
-            session.configuration.httpCookieStorage?.setCookie(cookie)
+    private func configureCookies(completion: @escaping () -> Void) {
+        cookieStore.getAllCookies { [weak self] cookies in
+            for cookie in cookies {
+                self?.session.configuration.httpCookieStorage?.setCookie(cookie)
+            }
+
+            completion()
         }
     }
 
-    @MainActor
-    private func openPassWithContentsOfURL(url: URL?) async throws {
-        guard let url = url else {
+    private func openPassWithContentsOfURL() throws {
+        guard let url = url, let passData = try? Data(contentsOf: url) else {
             throw InvalidPassError.contentsOfURL
         }
 
         do {
-            let (passData, _) = try await URLSession.shared.data(from: url)
             try open(passData: passData)
         } catch {
             sendLogError(with: error.localizedDescription)
@@ -130,7 +134,6 @@ final class OpenPassBookHelper: @unchecked Sendable {
         }
     }
 
-    @MainActor
     private func open(passData: Data) throws {
         do {
             let pass = try PKPass(data: passData)
@@ -141,9 +144,7 @@ final class OpenPassBookHelper: @unchecked Sendable {
                 guard let addController = PKAddPassesViewController(pass: pass) else {
                     throw InvalidPassError.openError
                 }
-                Task { @MainActor in
-                    presenter.present(addController, animated: true, completion: nil)
-                }
+                presenter.present(addController, animated: true, completion: nil)
             }
         } catch {
             sendLogError(with: error.localizedDescription)
@@ -151,15 +152,16 @@ final class OpenPassBookHelper: @unchecked Sendable {
         }
     }
 
-    @MainActor
-    private func presentErrorAlert() {
+    private func presentErrorAlert(completion: @escaping () -> Void) {
         let alertController = UIAlertController(title: .UnableToAddPassErrorTitle,
                                                 message: .UnableToAddPassErrorMessage,
                                                 preferredStyle: .alert)
 
         alertController.addAction(UIAlertAction(title: .UnableToAddPassErrorDismiss,
                                                 style: .cancel) { (action) in })
-        presenter.present(alertController, animated: true, completion: nil)
+        presenter.present(alertController, animated: true, completion: {
+            completion()
+        })
     }
 
     private func sendLogError(with errorDescription: String) {

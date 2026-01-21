@@ -6,8 +6,6 @@ import Foundation
 
 /// Child settings pages support actions
 protocol SupportSettingsDelegate: AnyObject {
-    @MainActor
     func pressedOpenSupportPage(url: URL)
-    @MainActor
     func askedToOpen(url: URL?, withTitle title: NSAttributedString?)
 }

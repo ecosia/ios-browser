@@ -4,7 +4,6 @@
 
 import Foundation
 
-@MainActor
 protocol NavigationController {
     var viewControllers: [UIViewController] { get }
     var delegate: UINavigationControllerDelegate? { get set }
@@ -12,14 +11,12 @@ protocol NavigationController {
     var transitionCoordinator: UIViewControllerTransitionCoordinator? { get }
     var fromViewController: UIViewController? { get }
     var presentedViewController: UIViewController? { get }
-    var topViewController: UIViewController? { get }
 
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
     func dismiss(animated flag: Bool, completion: (() -> Void)?)
     func pushViewController(_ viewController: UIViewController, animated: Bool)
     func popViewController(animated: Bool) -> UIViewController?
     func setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
-    func popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]?
 }
 
 extension UINavigationController: NavigationController {

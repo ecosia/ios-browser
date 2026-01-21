@@ -5,15 +5,12 @@
 import Foundation
 
 /// Protocol representing an address toolbar.
-@MainActor
 public protocol AddressToolbar {
-    func configure(config: AddressToolbarConfiguration,
-                   toolbarPosition: AddressToolbarPosition,
+    func configure(state: AddressToolbarState,
                    toolbarDelegate: AddressToolbarDelegate,
                    leadingSpace: CGFloat,
                    trailingSpace: CGFloat,
-                   isUnifiedSearchEnabled: Bool,
-                   animated: Bool)
+                   isUnifiedSearchEnabled: Bool)
 
     func setAutocompleteSuggestion(_ suggestion: String?)
 }

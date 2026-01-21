@@ -6,7 +6,7 @@ import Foundation
 import SwiftyBeaver
 
 // MARK: - SwiftyBeaverWrapper
-protocol SwiftyBeaverWrapper: Sendable {
+protocol SwiftyBeaverWrapper {
     static func debug(_ message: @autoclosure () -> Any,
                       file: String,
                       function: String,
@@ -32,7 +32,7 @@ protocol SwiftyBeaverWrapper: Sendable {
                       context: Any?)
 }
 
-extension SwiftyBeaver: SwiftyBeaverWrapper, @retroactive @unchecked Sendable {}
+extension SwiftyBeaver: SwiftyBeaverWrapper {}
 
 // MARK: - SwiftyBeaverBuilder
 protocol SwiftyBeaverBuilder {

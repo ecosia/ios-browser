@@ -6,39 +6,33 @@ import XCTest
 import Common
 @testable import Client
 
-@MainActor
 class AppSettingsTableViewControllerTests: XCTestCase {
     private var profile: Profile!
-    private var tabManager: MockTabManager!
+    private var tabManager: TabManager!
     private var appAuthenticator: MockAppAuthenticator!
     private var delegate: MockSettingsFlowDelegate!
     private var applicationHelper: MockApplicationHelper!
-    private var mockSettingsDelegate: MockSettingsDelegate!
-    private var mockParentCoordinator: MockSettingsFlowDelegate!
-    private var mockGleanUsageReportingMetricsService: MockGleanUsageReportingMetricsService!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         self.profile = MockProfile()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
-        self.tabManager = MockTabManager()
+        self.tabManager = TabManagerImplementation(profile: profile,
+                                                   uuid: ReservedWindowUUID(uuid: .XCTestDefaultUUID, isNew: false))
         self.appAuthenticator = MockAppAuthenticator()
         self.delegate = MockSettingsFlowDelegate()
         self.applicationHelper = MockApplicationHelper()
-        self.mockSettingsDelegate = MockSettingsDelegate()
-        self.mockParentCoordinator = MockSettingsFlowDelegate()
-        self.mockGleanUsageReportingMetricsService = MockGleanUsageReportingMetricsService(profile: MockProfile())
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
         self.profile = nil
         self.tabManager = nil
         self.appAuthenticator = nil
         self.delegate = nil
         self.applicationHelper = nil
-        try await super.tearDown()
     }
 
     func testRouteNotHandled_delegatesArentCalled() {
@@ -110,8 +104,12 @@ class AppSettingsTableViewControllerTests: XCTestCase {
         subject.pressedShowTour()
 
         XCTAssertEqual(delegate.didFinishShowingSettingsCalled, 1)
+        /* Ecosia: Update deeplink
         XCTAssertEqual(applicationHelper.lastOpenURL,
                        URL(string: "fennec://deep-link?url=/action/show-intro-onboarding")!)
+         */
+        XCTAssertEqual(applicationHelper.lastOpenURL,
+                       URL(string: "ecosia://deep-link?url=/action/show-intro-onboarding")!)
     }
 
     func testShowExperiments_openExperiments() {
@@ -123,26 +121,12 @@ class AppSettingsTableViewControllerTests: XCTestCase {
         XCTAssertEqual(delegate.showExperimentsCalled, 1)
     }
 
-    func testDelegatesAreSet() {
-        let subject = createSubject()
-
-        // NOTE: The subject holds a weak reference to these delegates, so we have to store them for the length of the test
-        // duration, or else they will deallocate before the following assertion checks.
-        XCTAssertNotNil(subject.settingsDelegate)
-        XCTAssertNotNil(subject.parentCoordinator)
-    }
-
     // MARK: - Helper
     private func createSubject() -> AppSettingsTableViewController {
-        let subject = AppSettingsTableViewController(
-            with: profile,
-            and: tabManager,
-            settingsDelegate: mockSettingsDelegate,
-            parentCoordinator: mockParentCoordinator,
-            gleanUsageReportingMetricsService: mockGleanUsageReportingMetricsService,
-            appAuthenticator: appAuthenticator,
-            applicationHelper: applicationHelper
-        )
+        let subject = AppSettingsTableViewController(with: profile,
+                                                     and: tabManager,
+                                                     appAuthenticator: appAuthenticator,
+                                                     applicationHelper: applicationHelper)
         trackForMemoryLeaks(subject)
         return subject
     }

@@ -7,7 +7,7 @@ import Shared
 
 import struct MozillaAppServices.RemoteTabRecord
 
-public struct ClientAndTabs: Equatable, CustomStringConvertible, Sendable {
+public struct ClientAndTabs: Equatable, CustomStringConvertible {
     public let client: RemoteClient
     public let tabs: [RemoteTab]
 
@@ -26,13 +26,14 @@ public func == (lhs: ClientAndTabs, rhs: ClientAndTabs) -> Bool {
            (lhs.tabs == rhs.tabs)
 }
 
-public struct RemoteTab: Equatable, Sendable {
+public struct RemoteTab: Equatable {
     public let clientGUID: String?
     public let URL: Foundation.URL
     public let title: String
     public let history: [Foundation.URL]
     public let lastUsed: Timestamp
     public let icon: Foundation.URL?
+    public let inactive: Bool
 
     public static func shouldIncludeURL(_ url: Foundation.URL) -> Bool {
         if InternalURL(url) != nil {
@@ -52,7 +53,8 @@ public struct RemoteTab: Equatable, Sendable {
         title: String,
         history: [Foundation.URL],
         lastUsed: Timestamp,
-        icon: Foundation.URL?
+        icon: Foundation.URL?,
+        inactive: Bool
     ) {
         self.clientGUID = clientGUID
         self.URL = URL
@@ -60,6 +62,7 @@ public struct RemoteTab: Equatable, Sendable {
         self.history = history
         self.lastUsed = lastUsed
         self.icon = icon
+        self.inactive = inactive
     }
 
     public func withClientGUID(_ clientGUID: String?) -> RemoteTab {
@@ -69,7 +72,8 @@ public struct RemoteTab: Equatable, Sendable {
             title: title,
             history: history,
             lastUsed: lastUsed,
-            icon: icon
+            icon: icon,
+            inactive: inactive
         )
     }
 
@@ -83,7 +87,8 @@ public struct RemoteTab: Equatable, Sendable {
             title: self.title,
             urlHistory: history,
             icon: icon,
-            lastUsed: Int64(self.lastUsed)
+            lastUsed: Int64(self.lastUsed),
+            inactive: self.inactive
         )
     }
 }
@@ -94,5 +99,6 @@ public func == (lhs: RemoteTab, rhs: RemoteTab) -> Bool {
         lhs.title == rhs.title &&
         lhs.history == rhs.history &&
         lhs.lastUsed == rhs.lastUsed &&
-        lhs.icon == rhs.icon
+        lhs.icon == rhs.icon &&
+        lhs.inactive == rhs.inactive
 }

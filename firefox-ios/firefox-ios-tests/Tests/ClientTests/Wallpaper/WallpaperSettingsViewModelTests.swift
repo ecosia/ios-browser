@@ -3,26 +3,30 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+/* Ecosia: Remove Glean
 import Glean
+ */
 import Shared
 import XCTest
 
 @testable import Client
 
-@MainActor
-final class WallpaperSettingsViewModelTests: XCTestCase {
+class WallpaperSettingsViewModelTests: XCTestCase {
     private var wallpaperManager: WallpaperManagerInterface!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
 
         wallpaperManager = WallpaperManagerMock()
         addWallpaperCollections()
+
+        // Ecosia: remove Glean dependency
+        // Glean.shared.resetGlean(clearStores: true)
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         wallpaperManager = nil
-        try await super.tearDown()
+        super.tearDown()
     }
 
     func testInit_hasDefaultLayout() {
@@ -103,12 +107,9 @@ final class WallpaperSettingsViewModelTests: XCTestCase {
 //    }
 
     func createSubject() -> WallpaperSettingsViewModel {
-        let subject = WallpaperSettingsViewModel(
-            wallpaperManager: wallpaperManager,
-            tabManager: MockTabManager(),
-            theme: LightTheme(),
-            windowUUID: .XCTestDefaultUUID
-        )
+        let subject = WallpaperSettingsViewModel(wallpaperManager: wallpaperManager,
+                                                 tabManager: MockTabManager(),
+                                                 theme: LightTheme())
         trackForMemoryLeaks(subject)
         return subject
     }

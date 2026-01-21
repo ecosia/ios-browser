@@ -8,17 +8,15 @@ export const HeuristicsRegExp = {
   RULES: {
     email: undefined,
     tel: undefined,
-    "tel-country-code" : undefined,
-    "address-housenumber": undefined,
     "street-address": undefined,
     "address-line1": undefined,
+    "address-housenumber": undefined,
     "address-line2": undefined,
     "address-line3": undefined,
-    "postal-code": undefined,
-    "address-level3": undefined,
     "address-level2": undefined,
     "address-level1": undefined,
-    // Note: We place the `organization` field after the `address` fields, to
+    "postal-code": undefined,
+    // Note: We place the `organization` field after the `address` fields, to 
     // ensure that all address-related fields that might contain organization 
     // info are matched as address fields first.
     organization: undefined,
@@ -50,16 +48,9 @@ export const HeuristicsRegExp = {
     // Firefox-specific rules
     {
       "address-line1": "addrline1|address_1|addl1",
-      "address-line2":
-        "addrline2|address_2|addl2" +
-        "|landmark", // common in IN
+      "address-line2": "addrline2|address_2|addl2",
       "address-line3": "addrline3|address_3|addl3",
-      "address-level2": "città", // it-IT
-      "address-housenumber":
-        "house\\s*number|hausnummer|haus|house[a-z\-]*n(r|o)",
-      "address-level3":
-        "(^address-?level-?3$)" +
-        "|neighbou*rhood|barrio|bairro|colonia|suburb", // en/es/pt/mx/au/nz
+      "country": "land", // de-DE
       "postal-code": "^PLZ(\\b|\\*)", // de-DE
       "additional-name": "apellido.?materno|lastlastname",
       "cc-name":
@@ -92,9 +83,6 @@ export const HeuristicsRegExp = {
         "|typ.*karty",       // pl-PL
       "cc-csc":
         "(\\bcvn\\b|\\bcvv\\b|\\bcvc\\b|\\bcsc\\b|\\bcvd\\b|\\bcid\\b|\\bccv\\b)",
-      "tel-country-code":
-        "phone.*country|country.*phone" +
-        "tel.*country|country.*tel",
     },
 
     //=========================================================================
@@ -478,6 +466,9 @@ export const HeuristicsRegExp = {
         "|राज्य" + // hi
         "|((\\b|_|\\*)(eyalet|[şs]ehir|[İii̇]l(imiz)?|kent)(\\b|_|\\*))" + // tr
         "|^시[·・]?도", // ko-KR
+
+      "address-housenumber":
+        "housenumber|hausnummer|haus",
 
       "postal-code":
         "zip|postal|post.*code|pcode" +

@@ -31,7 +31,7 @@
 /* Title label for when there are no credit cards shown in credit card list in autofill settings screen. %@ is the product name and should not be altered. */
 "CreditCard.Settings.EmptyListTitle.v122" = "บันทึกบัตรลงใน %@";
 
-/* Accessibility label for a credit card list item in autofill settings screen. %1$@ is the credit card issuer (e.g. Visa), %2$@ is the name of the credit card holder, %3$@ is the last 4 digits of the credit card, %4$@ is the card's expiration date. */
+/* Accessibility label for a credit card list item in autofill settings screen. The first parameter is the credit card issuer (e.g. Visa). The second parameter is the name of the credit card holder. The third parameter is the last 4 digits of the credit card. The fourth parameter is the card's expiration date. */
 "CreditCard.Settings.ListItemA11y.v118" = "%1$@, ออกให้กับ %2$@, ลงท้ายด้วย %3$@, หมดอายุ %4$@";
 
 /* When a user is in the process or has finished making a purchase with a card not saved in Firefox's list of stored cards, we ask the user if they would like to save this card for future purchases. This string indicates to users that they can deny Firefox from remembering the card that is being used. */
@@ -62,85 +62,13 @@
 "FxA.FirefoxAccount.v119" = "บัญชี";
 
 /* Label used as an item in Settings screen. When touched, it will take user to address autofill settings page to that will allow user to add or modify saved addresses to allow for autofill in a webpage. */
+"Settings.AddressAutofill.Title.v124" = "เติมที่อยู่อัตโนมัติ";
+
+/* Label used as an item in Settings screen. When touched, it will take user to address autofill settings page to that will allow user to add or modify saved addresses to allow for autofill in a webpage. */
 "Settings.AddressAutofill.Title.v126" = "ที่อยู่";
-
-/* Section description in Appearance settings for middle button configuration of the bottom toolbar. */
-"Settings.Appearance.NavigationToolbar.Description.v145" = "แก้ไขปุ่มกลางแถบเครื่องมือ";
-
-/* Section header title in Appearance settings that configures the middle button of the bottom toolbar. */
-"Settings.Appearance.NavigationToolbar.SectionHeader.v145" = "ปุ่มแถบเครื่องมือ";
-
-/* Default section header title under page zoom settings. Indicates the default value for all websites */
-"Settings.Appearance.Zoom.Default.Title.v140" = "ค่าเริ่มต้น";
-
-/* Button to reset specific zoom site levels back to default */
-"Settings.Appearance.Zoom.Reset.Button.v140" = "คืนค่าการตั้งค่าเว็บไซต์";
-
-/* Page zoom section header title in Appearance settings */
-"Settings.Appearance.Zoom.SectionHeader.v140" = "ตั้งค่าการซูม";
-
-/* Specific site settings section footer title under page zoom settings. Explain how to add elements to the list */
-"Settings.Appearance.Zoom.SpecificSiteZoom.Footer.v140" = "ในการเพิ่มลงในรายการนี้ ให้ไปที่เว็บไซต์และปรับการซูมหน้าเว็บจากเมนู";
-
-/* Specific site settings section header title under page zoom settings. List all websites with custom zoom level */
-"Settings.Appearance.Zoom.SpecificSiteZoom.Title.v140" = "การตั้งค่าเฉพาะไซต์";
-
-/* Page zoom settings title in Appearance settings */
-"Settings.Appearance.Zoom.Title.v140" = "ซูมหน้าเว็บ";
-
-/* Zoom level title under page zoom settings to select the default zoom level for all websites */
-"Settings.Appearance.Zoom.ZoomLevelTitle.v140" = "ระดับการซูม";
-
-/* In the settings menu, in the General section, this is the title for Autofills & Passwords customization section. */
-"Settings.AutofillAndPassword.Title.v137" = "การกรอกอัตโนมัติและรหัสผ่าน";
 
 /* Label used as an item in Settings screen. When touched, it will take user to credit card settings page to that will allows to add or modify saved credit cards to allow for autofill in a webpage. */
 "Settings.AutofillCreditCard.Title.v122" = "วิธีการชำระเงิน";
-
-/* In the settings menu, in the Autoplay customization section, this label indicates that selecting this will allow audio and video content to autoplay. */
-"Settings.Autoplay.AllowAudioAndVideo.v137" = "อนุญาตเสียงและวิดีโอ";
-
-/* In the settings menu, in the Autoplay customization section, this label indicates that selecting this will block audio from autoplaying. */
-"Settings.Autoplay.BlockAudio.v137" = "ปิดกั้นเสียง";
-
-/* In the settings menu, in the Autoplay customization section, this label indicates that selecting this will block audio and video content from autoplaying. */
-"Settings.Autoplay.BlockAudioAndVideo.v137" = "ปิดกั้นเสียงและวิดีโอ";
-
-/* In the settings menu, in the Autoplay customization section, this label indicates that selecting this will block audio and video content from autoplaying. */
-"Settings.Autoplay.Footer.v137" = "การตั้งค่าการเล่นอัตโนมัติจะใช้ได้กับแท็บที่เพิ่งเปิดใหม่เท่านั้น การเปลี่ยนแปลงไม่สามารถใช้ได้กับแท็บที่มีอยู่ เว้นแต่จะเริ่มแอปพลิเคชันใหม่";
-
-/* In the settings menu, this label indicates that there is an option of customizing the Autoplay behaviour. */
-"Settings.Autoplay.SettingsTitle.v137" = "เล่นอัตโนมัติ";
-
-/* This is the title for Links customization under the Browsing settings section. */
-"Settings.Browsing.Links.v137" = "ลิงก์";
-
-/* This is the title for Media customization under the Browsing settings section. */
-"Settings.Browsing.Media.v137" = "สื่อ";
-
-/* This is the title for Tabs customization under the Browsing settings section. */
-"Settings.Browsing.Tabs.v137" = "แท็บ";
-
-/* In the settings menu, in the General section, this is the title for Browsing customization section. */
-"Settings.Browsing.Title.v137" = "การเรียกดู";
-
-/* Title for a link that explains how Mozilla send crash reports. */
-"Settings.CrashReports.Link.v136" = "เรียนรู้เพิ่มเติม";
-
-/* On the Settings screen, this is the subtitle text for a toggle which controls automatically sending crash reports. */
-"Settings.CrashReports.Message.v136" = "สิ่งนี้ช่วยให้เราวินิจฉัยและแก้ไขปัญหาที่เกิดกับเบราว์เซอร์ได้";
-
-/* On the Settings screen, this is the title text for a toggle which controls automatically sending crash reports. */
-"Settings.CrashReports.Title.v135" = "ส่งรายงานข้อขัดข้องโดยอัตโนมัติ";
-
-/* Title for a link that explains how Mozilla send daily usage ping. */
-"Settings.DailyUsagePing.Link.v136" = "เรียนรู้เพิ่มเติม";
-
-/* On the Settings screen, this is the subtitle text for a toggle which controls sending daily usage ping. %@ is the company name (e.g. Mozilla). */
-"Settings.DailyUsagePing.Message.v135" = "ตัวเลือกนี้ช่วยให้ %@ ประเมินจำนวนผู้ใช้ที่มีความเคลื่อนไหวได้";
-
-/* On the Settings screen, this is the title text for a toggle which controls automatically sending daily usage ping. */
-"Settings.DailyUsagePing.Title.v135" = "พิงการใช้งานรายวัน";
 
 /* Title displayed in header of the FxA settings panel. */
 "Settings.FxA.Title.v119" = "บัญชี";
@@ -151,10 +79,10 @@
 /* This is the title for the setting that toggles Sync related notifications in the settings menu under the Notifications section. */
 "Settings.Notifications.SyncNotificationsTitle.v112" = "Sync";
 
-/* This is the footer title informing the user needs to turn on notifications in iOS Settings. Both %1$@ and %2$@ are the app name (e.g. Firefox). */
+/* This is the footer title informing the user needs to turn on notifications in iOS Settings. Both placeholders will be replaced with the app name. */
 "Settings.Notifications.SystemNotificationsDisabledMessage.v112" = "คุณได้ปิด %1$@ การแจ้งเตือนทั้งหมดแล้ว เปิดการแจ้งเตือนเหล่านั้นได้โดยไปที่การตั้งค่าอุปกรณ์ > การแจ้งเตือน > %2$@";
 
-/* This is the description for the setting that toggles Tips and Features feature in the settings menu under the Notifications section. %@ is the app name (e.g. Firefox). */
+/* This is the description for the setting that toggles Tips and Features feature in the settings menu under the Notifications section. The placeholder will be replaced with the app name. */
 "Settings.Notifications.TipsAndFeaturesNotificationsStatus.v112" = "ศึกษาเกี่ยวกับคุณลักษณะที่เป็นประโยชน์และวิธีใช้ประโยชน์สูงสุดจาก %@";
 
 /* This is the title for the setting that toggles Tips and Features feature in the settings menu under the Notifications section. */
@@ -163,35 +91,23 @@
 /* In the settings menu, in the Privacy section, this is the title for Notifications customization section. */
 "Settings.Notifications.Title.v112" = "การแจ้งเตือน";
 
-/* This is the title informing the user that they need to turn on notifications in iOS Settings. %@ is the app name (e.g. Firefox). */
+/* This is the title informing the user needs to turn on notifications in iOS Settings. The placeholder will be replaced with the app name. */
 "Settings.Notifications.TurnOnNotificationsMessage.v112" = "ไปที่การตั้งค่าอุปกรณ์ของคุณเพื่อเปิดการแจ้งเตือนใน %@";
 
-/* This is the title informing the user that they need to turn on notifications in iOS Settings. */
+/* This is the title informing the user needs to turn on notifications in iOS Settings. */
 "Settings.Notifications.TurnOnNotificationsTitle.v112" = "เปิดการแจ้งเตือน";
-
-/* Show Firefox Browser Privacy Notice page from the Privacy section in the settings. See https://www.mozilla.org/privacy/firefox/ */
-"Settings.PrivacyNotice.Title.v137" = "ประกาศความเป็นส่วนตัว";
-
-/* Title for a link that explains what Mozilla means by Rollouts */
-"Settings.Rollouts.Link.v148" = "เรียนรู้เพิ่มเติม";
-
-/* A short description that explains that Mozilla may change features remotely. %@ is the app name (e.g. Firefox). */
-"Settings.Rollouts.Message.v148" = "ระหว่างการอัปเดต %@ จะปรับปรุงฟีเจอร์ การตอบสนอง และความเสถียร โดยการเปลี่ยนแปลงสามารถนำไปใช้จากระยะไกลได้";
-
-/* Label used as a toggle item in Settings. When this is off, the user is opting out of all rollouts. */
-"Settings.Rollouts.Title.v148" = "อนุญาตการปรับปรุงทางไกล";
-
-/* In the settings menu, in the General section, this is the title for the option that allows user to disable the autohide feature of the tab and address bar. */
-"Settings.ScrollToHideTabAndAddressBar.Title.v138" = "เลื่อนหน้าจอเพื่อซ่อนแท็บและแถบที่อยู่";
 
 /* Accessibility label for default search engine setting. */
 "Settings.Search.Accessibility.DefaultSearchEngine.v121" = "เครื่องมือค้นหาเริ่มต้น";
 
 /* Accessibility label for Learn more about Firefox Suggest. */
-"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "เรียนรู้เพิ่มเติมเกี่ยวกับ Firefox Suggest";
+"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "เรียนรู้เพิ่มเติมเกี่ยวกับ Ecosia Suggest";
 
 /* Title for alternate search engines settings section in the Search page in the Settings menu. */
 "Settings.Search.AlternateSearchEngines.Title.v124.v2" = "เครื่องมือค้นหาทดแทน";
+
+/* Footer for the `default search engine` settings section in the Search Settings page, which explains in more details what the `Show Search Suggestions` setting includes. */
+"Settings.Search.DefaultSearchEngine.Footer.v122" = "ผลลัพธ์จากการค้นหา ประวัติ ที่คั่นหน้า และอื่นๆ";
 
 /* Title for the `default search engine` settings section in the Search page in the Settings menu. */
 "Settings.Search.DefaultSearchEngine.Title.v121" = "เครื่องมือค้นหาเริ่มต้น";
@@ -205,20 +121,29 @@
 /* Description for `Show in Private Sessions` toggle, located in `Suggestions from Search Engines` section in the Search page in the Settings menu. */
 "Settings.Search.PrivateSession.Description.v125" = "แสดงคำแนะนำจากเครื่องมือค้นหาในวาระส่วนตัว";
 
+/* Label for toggle. Explains that in private browsing mode, the search suggestions which appears at the top of the search bar, can be toggled on or off. Located in the Private Session section in the Search page in the Settings menu. */
+"Settings.Search.PrivateSession.Setting.v122" = "แสดงคำแนะนำในการเรียกดูแบบส่วนตัว";
+
 /* Label for toggle. Explains that in private browsing mode, the search suggestions which appears at the top of the search bar, can be toggled on or off. Located in `Suggestions from Search Engines` and `Address Bar - Firefox Suggest` sections in the Search page in the Settings menu. */
 "Settings.Search.PrivateSession.Setting.v124" = "แสดงในวาระส่วนตัว";
+
+/* Title for the `Private Browsing` settings section in the Search page in the Settings menu. */
+"Settings.Search.PrivateSession.Title.v122" = "การท่องเว็บแบบส่วนตัว";
+
+/* Title for quick-search engines settings section in the Search page in the Settings menu. */
+"Settings.Search.QuickEnginesTitle.v121" = "เครื่องมือค้นหาด่วน";
 
 /* Label for the `show search suggestions` setting, in the Search Settings page. */
 "Settings.Search.ShowSuggestions.v121" = "แสดงข้อเสนอแนะการค้นหา";
 
 /* In the Search page of the Settings menu, the title for the Firefox Suggest settings section. */
-"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "แถบที่อยู่ - Firefox Suggest";
+"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "แถบที่อยู่ - Ecosia Suggest";
 
 /* In the search page of the Settings menu, the title for the link to the SUMO Page about Firefox Suggest. */
-"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "เรียนรู้เพิ่มเติมเกี่ยวกับ Firefox Suggest";
+"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "เรียนรู้เพิ่มเติมเกี่ยวกับ Ecosia Suggest";
 
 /* Description for `Show in Private Sessions` toggle, located in `Address Bar - Firefox Suggest` section in the Search page in the Settings menu. */
-"Settings.Search.Suggest.PrivateSession.Description.v125" = "แสดงคำแนะนำจาก Firefox Suggest ในวาระส่วนตัว";
+"Settings.Search.Suggest.PrivateSession.Description.v125" = "แสดงคำแนะนำจาก Ecosia Suggest ในวาระส่วนตัว";
 
 /* In the Search page of the Settings menu, the title for the setting to enable search browsing history. */
 "Settings.Search.Suggest.SearchBrowsingHistory.Title.v124" = "ค้นหาประวัติการเรียกดู";
@@ -229,84 +154,21 @@
 /* In the Search page of the Settings menu, the title for the setting to enable synced tabs. */
 "Settings.Search.Suggest.SearchSyncedTabs.Title.v124" = "ค้นหาแท็บที่ซิงค์";
 
-/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from Firefox. %@ is the app name (e.g. Firefox). - Firefox. */
+/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from Firefox. */
+"Settings.Search.Suggest.ShowNonSponsoredSuggestions.Description.v124" = "รับคำแนะนำจากเว็บที่เกี่ยวข้องกับการค้นหาของคุณ";
+
+/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from Firefox. Placeholder is for the app name - Firefox. */
 "Settings.Search.Suggest.ShowNonSponsoredSuggestions.Description.v124.v2" = "รับคำแนะนำจาก %@ ที่เกี่ยวข้องกับการค้นหาของคุณ";
+
+/* In the Search page of the Settings menu, the title for setting to enable Suggestions from Firefox. Placeholder is for the app name - Firefox. */
+"Settings.Search.Suggest.ShowNonSponsoredSuggestions.Title.v124" = "คำแนะนำจาก %@";
 
 /* In the Search page of the Settings menu, the title for setting to enable Suggestions from the web in Firefox. */
 "Settings.Search.Suggest.ShowNonSponsoredSuggestions.Title.v124.v2" = "คำแนะนำจากเว็บ";
 
-/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from sponsors. %@ is the app name (e.g. Firefox). - Firefox. */
+/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from sponsors. Placeholder is for the app name - Firefox. */
 "Settings.Search.Suggest.ShowSponsoredSuggestions.Description.v124" = "สนับสนุน %@ ด้วยคำแนะนำจากผู้สนับสนุนซึ่งแสดงเป็นครั้งคราว";
 
 /* In the Search page of the Settings menu, the title for the setting to enable Suggestions from sponsors. */
 "Settings.Search.Suggest.ShowSponsoredSuggestions.Title.v124" = "คำแนะนำจากผู้สนับสนุน";
-
-/* Title for a link that explains what Mozilla means by Studies */
-"Settings.Studies.Link.v136" = "เรียนรู้เพิ่มเติม";
-
-/* Title for a link that explains what Mozilla means by Studies */
-"Settings.Studies.Link.v148" = "เรียนรู้เพิ่มเติม";
-
-/* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Message.v136" = "ทดลองใช้คุณสมบัติและไอเดียต่างๆ ก่อนที่จะเผยแพร่ให้ทุกคนได้ใช้งานจริง";
-
-/* A short description that explains that Mozilla is running studies. %@ is the app name (e.g. Firefox). */
-"Settings.Studies.Message.v148" = "%@ จะสุ่มผู้ใช้งานเพื่อทดลองฟีเจอร์ ซึ่งช่วยยกระดับคุณภาพให้กับผู้ใช้ทุกคน";
-
-/* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
-"Settings.Studies.Title.v136" = "ติดตั้งและเรียกใช้การศึกษา";
-
-/* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
-"Settings.Studies.Title.v148" = "อนุญาตให้ทำการทดสอบคุณสมบัติ";
-
-/* This is the footer text for the setting that toggles the Summarize feature under the Summarize settings section. */
-"Settings.Summarize.FooterTitle.v142" = "ช่วยให้เข้าถึงการสรุปเนื้อหาในหน้าเว็บ";
-
-/* This is the footer text for the gestures features under the Summarize settings section. */
-"Settings.Summarize.GesturesSection.FooterTitle.v142" = "เขย่าเครื่องเพื่อสรุปหน้าเว็บ";
-
-/* This is the title for the setting that toggles the Shake Gesture feature under the Summarize settings section. */
-"Settings.Summarize.GesturesSection.ShakeGestureTitle.v142" = "เขย่าเพื่อสรุป";
-
-/* This is the section title for the gestures features under the Summarize settings section. */
-"Settings.Summarize.GesturesSection.Title.v142" = "ท่าทาง";
-
-/* This is the title for the setting that toggles the Summarize feature under the Summarize settings section. */
-"Settings.Summarize.SummarizePagesTitle.v142" = "สรุปหน้า";
-
-/* In the settings menu, in the General section, this is the title for the Summarize settings section. */
-"Settings.Summarize.Title.v142" = "สรุปเนื้อหาเว็บ";
-
-/* Title for a link that explains how Mozilla send technical and interaction data. */
-"Settings.TechnicalData.Link.v136" = "เรียนรู้เพิ่มเติม";
-
-/* On the Settings screen, this is the subtitle text for a toggle which controls sending technical and interaction data. %@ is the app name (e.g. Firefox). */
-"Settings.TechnicalData.Message.v136" = "ข้อมูลเกี่ยวกับอุปกรณ์ของคุณ การกำหนดค่าฮาร์ดแวร์ และการใช้งานของคุณช่วยปรับปรุงคุณลักษณะ ประสิทธิภาพ และเสถียรภาพของ %@";
-
-/* On the Settings screen, this is the title text for a toggle which controls sending technical and interaction data. */
-"Settings.TechnicalData.Title.v136" = "ส่งข้อมูลทางเทคนิคและการโต้ตอบ";
-
-/* Terms of Use settings section title */
-"Settings.TermsOfUse.Title.v137" = "เงื่อนไขการใช้งาน";
-
-/* In the Appearance settings menu, in the Toolbar Button section, this label indicates that selecting this will make the home button appear in the middle of the navigation toolbar. */
-"Settings.Toolbar.Navigation.MiddleButton.Home.v145" = "หน้าแรก";
-
-/* In the Appearance settings menu, in the Toolbar Button section, this label indicates that selecting this will make the New Tab button appear in the middle of the navigation toolbar. */
-"Settings.Toolbar.Navigation.MiddleButton.NewTab.v145" = "แท็บใหม่";
-
-/* This is the section title text for the the Translation feature under the Translation settings section. */
-"Settings.Translation.SectionTitle.v145" = "ค่ากำหนดการแปล";
-
-/* In the settings menu, in the General section, this is the text to show next to the Translation setting title and indicates if the translation feature has been disabled. */
-"Settings.Translation.SettingOff.v145" = "ปิด";
-
-/* In the settings menu, in the General section, this is the text to show next to the Translation setting title and indicates if the translation feature has been enabled. */
-"Settings.Translation.SettingOn.v145" = "เปิด";
-
-/* In the settings menu, in the General section, this is the title for the Translation settings section. */
-"Settings.Translation.Title.v145" = "การแปล";
-
-/* This is the title for the setting that toggles the Translation feature that allows users to translate web pages under the Translation settings section. */
-"Settings.Translation.ToggleTitle.v145" = "เปิดใช้งานการแปล";
 

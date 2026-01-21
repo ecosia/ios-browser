@@ -12,7 +12,6 @@ enum CredentialState {
     case displayItem(ASPasswordCredentialIdentity)
 }
 
-@MainActor
 class CredentialListPresenter {
     weak var view: CredentialListViewProtocol?
     var loginsData = [(ASPasswordCredentialIdentity, ASPasswordCredential)]()

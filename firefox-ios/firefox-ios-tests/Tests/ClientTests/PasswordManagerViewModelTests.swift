@@ -4,23 +4,25 @@
 
 import Common
 import MozillaAppServices
+import Shared
 import Storage
 import XCTest
+/* Ecosia: Remove Glean
 import Glean
+ */
 
 @testable import Client
 
-@MainActor
 class PasswordManagerViewModelTests: XCTestCase {
     var viewModel: PasswordManagerViewModel!
     var dataSource: LoginDataSource!
     var mockDelegate: MockLoginViewModelDelegate!
     var mockLoginProvider: MockLoginProvider!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
         let mockProfile = MockProfile()
-        Self.setupTelemetry(with: mockProfile)
         self.mockLoginProvider = MockLoginProvider()
         let searchController = UISearchController()
         self.viewModel = PasswordManagerViewModel(
@@ -32,18 +34,20 @@ class PasswordManagerViewModelTests: XCTestCase {
         self.mockDelegate = MockLoginViewModelDelegate()
         self.viewModel.delegate = mockDelegate
         self.viewModel.setBreachAlertsManager(MockBreachAlertsClient())
+        /* Ecosia: Remove Glean
+        Glean.shared.resetGlean(clearStores: true)
+         */
     }
 
-    override func tearDown() async throws {
-        Self.tearDownTelemetry()
+    override func tearDown() {
         viewModel = nil
         mockLoginProvider = nil
         mockDelegate = nil
-        try await super.tearDown()
+        DependencyHelperMock().reset()
+        super.tearDown()
     }
 
-    @MainActor
-    func testAddLoginWithEmptyString() async {
+    func testaddLoginWithEmptyString() {
         let login = LoginEntry(fromJSONDict: [
                         "hostname": "https://example.com",
                         "formSubmitUrl": "https://example.com",
@@ -55,12 +59,13 @@ class PasswordManagerViewModelTests: XCTestCase {
             XCTAssertEqual(self.mockLoginProvider.addLoginCalledCount, 1)
             expectation.fulfill()
         }
-        await fulfillment(of: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 1)
+        /* Ecosia: Remove Glean
         testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
+         */
     }
 
-    @MainActor
-    func testAddLoginWithString() async {
+    func testaddLoginWithString() {
         let login = LoginEntry(fromJSONDict: [
                         "hostname": "https://example.com",
                         "formSubmitUrl": "https://example.com",
@@ -72,8 +77,10 @@ class PasswordManagerViewModelTests: XCTestCase {
             XCTAssertEqual(self.mockLoginProvider.addLoginCalledCount, 1)
             expectation.fulfill()
         }
-        await fulfillment(of: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 1)
+        /* Ecosia: Remove Glean
         testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
+         */
     }
 
     func testQueryLoginsWithEmptyString() {

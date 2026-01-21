@@ -11,23 +11,19 @@ extension Notification.Name {
 }
 
 protocol ContentBlockerTab: AnyObject {
-    @MainActor
     func currentURL() -> URL?
-    @MainActor
     func currentWebView() -> WKWebView?
-    @MainActor
     func imageContentBlockingEnabled() -> Bool
 }
 
-@MainActor
-class TabContentBlocker: Notifiable {
+class TabContentBlocker {
     weak var tab: ContentBlockerTab?
     let logger: Logger
-
     var isEnabled: Bool {
         return false
     }
 
+    @objc
     func notifiedTabSetupRequired() {}
 
     func currentlyEnabledLists() -> [String] {
@@ -59,12 +55,11 @@ class TabContentBlocker: Notifiable {
     init(tab: ContentBlockerTab, logger: Logger = DefaultLogger.shared) {
         self.tab = tab
         self.logger = logger
-        startObservingNotifications(
-            withNotificationCenter: NotificationCenter.default,
-            forObserver: self,
-            observing: [
-                .contentBlockerTabSetupRequired
-            ]
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(notifiedTabSetupRequired),
+            name: .contentBlockerTabSetupRequired,
+            object: nil
         )
     }
 
@@ -79,18 +74,5 @@ class TabContentBlocker: Notifiable {
 
     deinit {
         NotificationCenter.default.removeObserver(self)
-    }
-
-    // MARK: - Notifiable
-
-    public func handleNotifications(_ notification: Notification) {
-        switch notification.name {
-        case .contentBlockerTabSetupRequired:
-            ensureMainThread {
-                self.notifiedTabSetupRequired
-            }
-        default:
-            return
-        }
     }
 }

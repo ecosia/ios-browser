@@ -10,7 +10,6 @@ struct ScreenshotData {
 }
 
 /// A protocol to get PDF data for the fullscreen screenshot feature
-@MainActor
 protocol ScreenshotableView: UIViewController {
     func getScreenshotData(completionHandler: @escaping (ScreenshotData?) -> Void)
 }

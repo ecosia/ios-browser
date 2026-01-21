@@ -6,6 +6,7 @@ import Shared
 import UIKit
 import Common
 import SiteImageView
+import Ecosia
 
 struct ETPMenuUX {
     struct Fonts {
@@ -47,16 +48,13 @@ class ETPSectionView: UIView {
 }
 
 protocol EnhancedTrackingProtectionMenuDelegate: AnyObject {
-    @MainActor
     func settingsOpenPage(settings: Route.SettingsSection)
-
-    @MainActor
     func didFinish()
 }
 
 class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
@@ -126,7 +124,10 @@ class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
         label.adjustsFontForContentSizeCategory = true
     }
 
+    /* Ecosia: Use themed Switch
     private let toggleSwitch: UISwitch = .build { toggleSwitch in
+     */
+    private let toggleSwitch: EcosiaThemedSwitch = .build { toggleSwitch in
         toggleSwitch.isEnabled = true
     }
 
@@ -185,9 +186,7 @@ class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
             addGestureRecognizer()
         }
         setupView()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
-        applyTheme()
+        listenForThemeChange(view)
     }
 
     override func viewDidLayoutSubviews() {
@@ -279,7 +278,6 @@ class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
     private func setupConnectionStatusView() {
         connectionView.addSubviews(connectionImage, connectionLabel, connectionDetailArrow, connectionButton)
         view.addSubview(connectionView)
-        setupConnectionAccessibilityConfiguration()
 
         let connectionConstraints = [
             connectionView.leadingAnchor.constraint(
@@ -434,7 +432,6 @@ class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
 
         siteDomainLabel.text = viewModel.websiteTitle
         connectionLabel.text = viewModel.connectionStatusString
-        connectionButton.accessibilityLabel = viewModel.connectionStatusString
         toggleSwitch.isOn = viewModel.isSiteETPEnabled
         toggleLabel.text = .TrackingProtectionEnableTitle
         toggleStatusLabel.text = toggleSwitch.isOn ? .ETPOn : .ETPOff
@@ -507,15 +504,6 @@ class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
         }
     }
 
-    private func setupConnectionAccessibilityConfiguration() {
-        connectionView.isAccessibilityElement = false
-        connectionImage.isAccessibilityElement = false
-        connectionLabel.isAccessibilityElement = false
-        connectionDetailArrow.isAccessibilityElement = false
-        connectionButton.isAccessibilityElement = true
-        connectionButton.accessibilityTraits = .button
-    }
-
     private func currentTheme() -> Theme {
         return themeManager.getCurrentTheme(for: windowUUID)
     }
@@ -539,8 +527,11 @@ extension EnhancedTrackingProtectionMenuVC {
             connectionImage.tintColor = theme.colors.iconPrimary
         }
         toggleView.backgroundColor = theme.colors.layer2
+        /* Ecosia: Use applyTheme from EcosiaThemedSwitch
         toggleSwitch.tintColor = theme.colors.actionPrimary
         toggleSwitch.onTintColor = theme.colors.actionPrimary
+         */
+        toggleSwitch.applyTheme(theme: theme)
         toggleStatusLabel.textColor = theme.colors.textSecondary
         protectionView.backgroundColor = theme.colors.layer2
         protectionButton.setTitleColor(theme.colors.textAccent, for: .normal)

@@ -5,54 +5,30 @@
 ---
 $schema: moz://mozilla.org/schemas/glean/pings/2-0-0
 
-usage-reporting:
+dau-reporting:
   description: |
-    Minimal ping to measure the usage frequency of Focus.
+    Minimal ping to measure DAU.
     Sent on the baseline schedule.
-  include_client_id: false
+  include_client_id: true
   send_if_empty: true
   bugs:
-    - https://bugzilla.mozilla.org/show_bug.cgi?id=1921440
-    - https://bugzilla.mozilla.org/show_bug.cgi?id=1929832
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1925211
   data_reviews:
-    - https://bugzilla.mozilla.org/show_bug.cgi?id=1921440
+    - https://github.com/mozilla-mobile/firefox-ios/pull/22609#issuecomment-2419002541
   notification_emails:
     - glean-team@mozilla.com
     - jrediger@mozilla.com
-    - loines@mozilla.com
-  metadata:
-    follows_collection_enabled: false
-    include_info_sections: false
+    - fbertsch@mozilla.com
   reasons:
     dirty_startup: |
-      Defined to avoid error logging.
-      *Note*: this ping will not actually send a ping reason.
+      The ping was submitted at startup, because the application process was
+      killed before the Glean SDK had the chance to generate this ping, before
+      becoming inactive, in the last session.
     inactive: |
-      Defined to avoid error logging.
-      *Note*: this ping will not actually send a ping reason.
+      The ping was submitted when becoming inactive.
     active: |
-      Defined to avoid error logging.
-      *Note*: this ping will not actually send a ping reason.
-
-usage-deletion-request:
-  description: |
-    This ping is submitted when a user opts out of sending usage
-    frequency of Firefox to Mozilla.
-    Sent in response to user action.
-  include_client_id: false
-  send_if_empty: true
-  bugs:
-    - https://mozilla-hub.atlassian.net/browse/FXIOS-10904
-  data_reviews:
-    - https://github.com/mozilla-mobile/firefox-ios/pull/24339
-  notification_emails:
-    - glean-team@mozilla.com
-    - jrediger@mozilla.com
-    - loines@mozilla.com
+      The ping was submitted when the application became active again,
+      which includes when the application starts.
   metadata:
-    follows_collection_enabled: false
-    include_info_sections: false
-  reasons:
-    set_upload_enabled: |
-      The ping was submitted due to the usage-reporting data preference changing from
-      enabled to disabled.
+    ping_schedule:
+      - baseline

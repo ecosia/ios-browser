@@ -5,37 +5,33 @@
 import UIKit
 import Common
 import ComponentLibrary
-import OnboardingKit
+import Shared
 
-// MARK: - Basic Card UX Constants
-private typealias UX = OnboardingBasicCardViewControllerUX
-private typealias SharedUX = OnboardingCardViewControllerSharedUX
-struct OnboardingBasicCardViewControllerUX {
-    static let stackViewSpacingWithLink: CGFloat = 15
-    static let stackViewSpacingWithoutLink: CGFloat = 24
-    static let stackViewSpacingButtons: CGFloat = 16
-    static let topStackViewPaddingPad: CGFloat = 70
-    static let topStackViewPaddingPhone: CGFloat = 90
-    static let bottomStackViewPaddingPad: CGFloat = 32
-    static let bottomStackViewPaddingPhone: CGFloat = 0
-    static let horizontalTopStackViewPaddingPad: CGFloat = 100
-    static let horizontalTopStackViewPaddingPhone: CGFloat = 24
-    static let scrollViewVerticalPadding: CGFloat = 62
-    static let descriptionBoldFontSize: CGFloat = 20
-    static let imageViewSize = CGSize(width: 240, height: 300)
+class OnboardingBasicCardViewController: OnboardingCardViewController {
+    struct UX {
+        static let stackViewSpacingWithLink: CGFloat = 15
+        static let stackViewSpacingWithoutLink: CGFloat = 24
+        static let stackViewSpacingButtons: CGFloat = 16
+        static let topStackViewPaddingPad: CGFloat = 70
+        static let topStackViewPaddingPhone: CGFloat = 90
+        static let bottomStackViewPaddingPad: CGFloat = 32
+        static let bottomStackViewPaddingPhone: CGFloat = 0
+        static let horizontalTopStackViewPaddingPad: CGFloat = 100
+        static let horizontalTopStackViewPaddingPhone: CGFloat = 24
+        static let scrollViewVerticalPadding: CGFloat = 62
+        static let descriptionBoldFontSize: CGFloat = 20
+        static let imageViewSize = CGSize(width: 240, height: 300)
 
-    // small device
-    static let smallImageViewSize = CGSize(width: 240, height: 280)
-    static let smallTopStackViewPadding: CGFloat = 40
+        // small device
+        static let smallImageViewSize = CGSize(width: 240, height: 280)
+        static let smallTopStackViewPadding: CGFloat = 40
 
-    // tiny device (SE 1st gen)
-    static let tinyImageViewSize = CGSize(width: 144, height: 180)
+        // tiny device (SE 1st gen)
+        static let tinyImageViewSize = CGSize(width: 144, height: 180)
 
-    static let baseImageHeight: CGFloat = 211
-}
+        static let baseImageHeight: CGFloat = 211
+    }
 
-class OnboardingBasicCardViewController<CardModel: OnboardingCardInfoModelProtocol>:
-    OnboardingCardViewController<CardModel> where CardModel.OnboardingActionType == OnboardingActions {
     // MARK: - Properties
     weak var delegate: OnboardingCardDelegate?
 
@@ -69,7 +65,7 @@ class OnboardingBasicCardViewController<CardModel: OnboardingCardInfoModelProtoc
 
     // MARK: - Initializers
     init(
-        viewModel: CardModel,
+        viewModel: OnboardingCardInfoModelProtocol,
         delegate: OnboardingCardDelegate?,
         windowUUID: WindowUUID
     ) {
@@ -88,9 +84,8 @@ class OnboardingBasicCardViewController<CardModel: OnboardingCardInfoModelProtoc
 
         setupView()
         updateLayout()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
+        listenForThemeChange(view)
     }
 
     override func viewWillAppear(_ animated: Bool) {

@@ -5,7 +5,7 @@
 import XCTest
 import AppShortcuts
 
-final class MockPersister: ShortcutsPersister {
+class MockPersister: ShortcutsPersister {
     var savedShortcuts: [Shortcut] = []
 
     init(savedShortcuts: [Shortcut] = []) {
@@ -21,7 +21,7 @@ final class MockPersister: ShortcutsPersister {
     }
 }
 
-final class AppShortcutsTests: XCTestCase {
+class AppShortcutsTests: XCTestCase {
     var sut: ShortcutsManager!
 
     override func setUp() {

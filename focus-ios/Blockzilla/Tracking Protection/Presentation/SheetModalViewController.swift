@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class SheetModalViewController: UIViewController {
+class SheetModalViewController: UIViewController {
     private lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGroupedBackground

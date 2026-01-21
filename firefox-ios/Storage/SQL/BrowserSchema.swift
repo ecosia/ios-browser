@@ -741,7 +741,6 @@ open class BrowserSchema: Schema {
         )
         """
 
-    // swiftlint:disable:next function_body_length
     public func create(_ db: SQLiteDBConnection) -> Bool {
         let favicons = """
             CREATE TABLE IF NOT EXISTS favicons (
@@ -965,7 +964,6 @@ open class BrowserSchema: Schema {
                self.prepopulateRootFolders(db)
     }
 
-    // swiftlint:disable:next function_body_length
     public func update(_ db: SQLiteDBConnection, from: Int) -> Bool {
         let to = self.version
         if from == to {
@@ -1034,16 +1032,7 @@ open class BrowserSchema: Schema {
             }
 
             let urls = db.executeQuery("SELECT DISTINCT url FROM history WHERE url IS NOT NULL",
-                                       factory: { row in
-                if let url = row["url"] as? String {
-                    return url
-                } else {
-                    self.logger.log("Unexpected value for 'url'. Expected a String but got \(type(of: row["url"]))",
-                                    level: .warning,
-                                    category: .storage)
-                    return ""
-                }
-            })
+                                       factory: { $0["url"] as! String })
             if !fillDomainNamesFromCursor(urls, db: db) {
                 return false
             }

@@ -5,7 +5,7 @@
 import Foundation
 import TabDataStore
 
-final class MockTabSessionStore: TabSessionStore, @unchecked Sendable {
+class MockTabSessionStore: TabSessionStore {
     var saveTabSessionCallCount = 0
     var tabID: UUID?
     var sessionData: Data?

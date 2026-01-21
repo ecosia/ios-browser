@@ -5,7 +5,7 @@
 import Foundation
 
 protocol UIDeviceInterface {
-    @MainActor var userInterfaceIdiom: UIUserInterfaceIdiom { get }
+    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
 }
 
 extension UIDevice: UIDeviceInterface {}

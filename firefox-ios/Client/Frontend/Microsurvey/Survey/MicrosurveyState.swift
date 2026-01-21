@@ -3,15 +3,16 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Redux
+import Shared
 import Common
 
-struct MicrosurveyState: ScreenState {
+struct MicrosurveyState: ScreenState, Equatable {
     var windowUUID: WindowUUID
     var shouldDismiss: Bool
     var showPrivacy: Bool
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let microsurveyState = appState.screenState(
+        guard let microsurveyState = store.state.screenState(
             MicrosurveyState.self,
             for: .microsurvey,
             window: uuid
@@ -44,10 +45,7 @@ struct MicrosurveyState: ScreenState {
     }
 
     static let reducer: Reducer<Self> = { state, action in
-        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
-        else {
-            return defaultState(from: state)
-        }
+        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else { return state }
 
         switch action.actionType {
         case MicrosurveyActionType.closeSurvey:
@@ -63,15 +61,11 @@ struct MicrosurveyState: ScreenState {
                 showPrivacy: true
             )
         default:
-            return defaultState(from: state)
+            return MicrosurveyState(
+                windowUUID: state.windowUUID,
+                shouldDismiss: false,
+                showPrivacy: false
+            )
         }
-    }
-
-    static func defaultState(from state: MicrosurveyState) -> MicrosurveyState {
-        return MicrosurveyState(
-            windowUUID: state.windowUUID,
-            shouldDismiss: false,
-            showPrivacy: false
-        )
     }
 }

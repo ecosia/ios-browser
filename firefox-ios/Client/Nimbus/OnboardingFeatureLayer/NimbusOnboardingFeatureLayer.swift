@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Shared
-import OnboardingKit
 
 import protocol MozillaAppServices.NimbusMessagingHelperProtocol
 
@@ -23,7 +22,7 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
     func getOnboardingModel(
         for onboardingType: OnboardingType,
         from nimbus: FxNimbus = FxNimbus.shared
-    ) -> OnboardingKitViewModel {
+    ) -> OnboardingViewModel {
         let framework = nimbus.features.onboardingFrameworkFeature.value()
 
         let cards = getOrderedOnboardingCards(
@@ -31,28 +30,28 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
             from: framework.cards,
             withConditions: framework.conditions)
 
-        return OnboardingKitViewModel(
+        return OnboardingViewModel(
             cards: cards,
-            isDismissible: framework.dismissable)
+            isDismissable: framework.dismissable)
     }
 
     private func getOrderedOnboardingCards(
         for onboardingType: OnboardingType,
         from cardData: [String: NimbusOnboardingCardData],
         withConditions conditionTable: [String: String]
-    ) -> [OnboardingKitCardInfoModel] {
+    ) -> [OnboardingCardInfoModel] {
         // Sorting the cards this way, instead of a simple sort, to account for human
         // error in the order naming. If a card name is misspelled, it will be ignored
         // and not included in the list of cards.
         return getOnboardingCards(
-            from: cardData.filter { $0.value.onboardingType == onboardingType && $0.value.uiVariant == nil },
+            from: cardData.filter { $0.value.onboardingType == onboardingType },
             withConditions: conditionTable
         )
         .sorted(by: { $0.order < $1.order })
         // We have to update the a11yIdRoot using the correct order of the cards
         .enumerated()
         .map { index, card in
-            return OnboardingKitCardInfoModel(
+            return OnboardingCardInfoModel(
                 cardType: card.cardType,
                 name: card.name,
                 order: card.order,
@@ -64,15 +63,14 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
                 onboardingType: card.onboardingType,
                 a11yIdRoot: "\(card.a11yIdRoot)\(index)",
                 imageID: card.imageID,
-                instructionsPopup: card.instructionsPopup,
-                embededLinkText: card.embededLinkText)
+                instructionsPopup: card.instructionsPopup)
         }
     }
 
     private func getOnboardingCards(
         from cardData: [String: NimbusOnboardingCardData],
         withConditions conditionTable: [String: String]
-    ) -> [OnboardingKitCardInfoModel] {
+    ) -> [OnboardingCardInfoModel] {
         let a11yOnboarding = AccessibilityIdentifiers.Onboarding.onboarding
         let a11yUpgrade = AccessibilityIdentifiers.Upgrade.upgrade
 
@@ -83,8 +81,8 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
 
         return cardData.compactMap { cardName, cardData in
             if cardIsValid(with: cardData, using: conditionTable, and: helper) {
-                return OnboardingKitCardInfoModel(
-                    cardType: OnboardingKit.OnboardingCardType(rawValue: cardData.cardType.rawValue) ?? .basic,
+                return OnboardingCardInfoModel(
+                    cardType: cardData.cardType,
                     name: cardName,
                     order: cardData.order,
                     title: String(
@@ -102,8 +100,7 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
                     imageID: getOnboardingHeaderImageID(from: cardData.image),
                     instructionsPopup: getPopupInfoModel(
                         from: cardData.instructionsPopup,
-                        withA11yID: ""),
-                    embededLinkText: []
+                        withA11yID: "")
                 )
             }
 
@@ -111,11 +108,56 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
         }
     }
 
+    private func cardIsValid(
+        with card: NimbusOnboardingCardData,
+        using conditionTable: [String: String],
+        and helper: NimbusMessagingHelperProtocol
+    ) -> Bool {
+        let prerequisitesAreMet = verifyConditionEligibility(
+            from: card.prerequisites,
+            checkingAgainst: conditionTable,
+            and: helper)
+
+        guard !card.disqualifiers.isEmpty else {
+            return prerequisitesAreMet
+        }
+
+        let noDisqualifiersAreMet = !verifyConditionEligibility(
+            from: card.disqualifiers,
+            checkingAgainst: conditionTable,
+            and: helper)
+
+        return prerequisitesAreMet && noDisqualifiersAreMet
+    }
+
+    private func verifyConditionEligibility(
+        from cardConditions: [String],
+        checkingAgainst conditionLookupTable: [String: String],
+        and helper: NimbusMessagingHelperProtocol
+    ) -> Bool {
+        // Make sure conditions exist and have a value, and that the number
+        // of valid conditions matches the number of conditions on the card's
+        // respective prerequisite or disqualifier table. If these mismatch,
+        // that means a card contains a condition that's not in the feature
+        // conditions lookup table. JEXLS can only be evaluated on
+        // supported conditions. Otherwise, consider the card invalid.
+        let conditions = cardConditions.compactMap({ conditionLookupTable[$0] })
+        guard conditions.count == cardConditions.count else { return false }
+
+        do {
+            return try NimbusMessagingEvaluationUtility().doesObjectMeet(
+                verificationRequirements: conditions,
+                using: helper)
+        } catch {
+            return false
+        }
+    }
+
     /// Returns an optional array of ``OnboardingButtonInfoModel`` given the data.
     /// A card is not viable without buttons.
     private func getOnboardingCardButtons(
         from cardButtons: NimbusOnboardingButtons
-    ) -> OnboardingButtons<OnboardingActions> {
+    ) -> OnboardingButtons {
         return OnboardingButtons(
             primary: OnboardingButtonInfoModel(
                 title: String(format: cardButtons.primary.title,
@@ -128,7 +170,7 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
 
     private func getOnboardingMultipleChoiceButtons(
         from cardButtons: [NimbusOnboardingMultipleChoiceButton]
-    ) -> [OnboardingMultipleChoiceButtonModel<OnboardingMultipleChoiceAction>] {
+    ) -> [OnboardingMultipleChoiceButtonModel] {
         return cardButtons.map { button in
             return OnboardingMultipleChoiceButtonModel(
                 title: button.title,
@@ -142,10 +184,31 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
         from cardLink: NimbusOnboardingLink?
     ) -> OnboardingLinkInfoModel? {
         guard let cardLink = cardLink,
-              let url = URL(string: cardLink.url)
+              let url = URL(string: cardLink.url, invalidCharacters: false)
         else { return nil }
 
         return OnboardingLinkInfoModel(title: cardLink.title, url: url)
+    }
+
+    private func getOnboardingHeaderImageID(
+        from identifier: NimbusOnboardingHeaderImage
+    ) -> String {
+        switch identifier {
+        case .welcomeGlobe: return ImageIdentifiers.Onboarding.HeaderImages.welcomev106
+        case .syncDevices: return ImageIdentifiers.Onboarding.HeaderImages.syncv106
+        case .notifications: return ImageIdentifiers.Onboarding.HeaderImages.notification
+        case .setDefaultSteps: return ImageIdentifiers.Onboarding.HeaderImages.setDefaultSteps
+        case .setToDock: return ImageIdentifiers.Onboarding.HeaderImages.setToDock
+        case .searchWidget: return ImageIdentifiers.Onboarding.HeaderImages.searchWidget
+        // Customization experiment
+        case .themeing: return ImageIdentifiers.Onboarding.HeaderImages.theming
+        case .toolbar: return ImageIdentifiers.Onboarding.HeaderImages.toolbar
+        case .customizeFirefox: return ImageIdentifiers.Onboarding.HeaderImages.customizeFirefox
+        // Challenge the Default experiment
+        case .notificationsCtd: return ImageIdentifiers.Onboarding.ChallengeTheDefault.notifications
+        case .welcomeCtd: return ImageIdentifiers.Onboarding.ChallengeTheDefault.welcome
+        case .syncDevicesCtd: return ImageIdentifiers.Onboarding.ChallengeTheDefault.sync
+        }
     }
 
     private func getOnboardingMultipleChoiceButtonImageID(
@@ -157,18 +220,13 @@ class NimbusOnboardingFeatureLayer: NimbusOnboardingFeatureLayerProtocol {
         case .themeLight: return ImageIdentifiers.Onboarding.MultipleChoiceButtonImages.themeLight
         case .toolbarTop: return ImageIdentifiers.Onboarding.MultipleChoiceButtonImages.toolbarTop
         case .toolbarBottom: return ImageIdentifiers.Onboarding.MultipleChoiceButtonImages.toolbarBottom
-        case .themeSystemJapan: return ImageIdentifiers.Onboarding.MultipleChoiceButtonImages.themeSystemJapan
-        case .themeDarkJapan: return ImageIdentifiers.Onboarding.MultipleChoiceButtonImages.themeDarkJapan
-        case .themeLightJapan: return ImageIdentifiers.Onboarding.MultipleChoiceButtonImages.themeLightJapan
-        case .toolbarTopJapan: return ImageIdentifiers.Onboarding.MultipleChoiceButtonImages.toolbarTopJapan
-        case .toolbarBottomJapan: return ImageIdentifiers.Onboarding.MultipleChoiceButtonImages.toolbarBottomJapan
         }
     }
 
     private func getPopupInfoModel(
         from data: NimbusOnboardingInstructionPopup?,
         withA11yID a11yID: String
-    ) -> OnboardingInstructionsPopupInfoModel<OnboardingInstructionsPopupActions>? {
+    ) -> OnboardingInstructionsPopupInfoModel? {
         guard let data else { return nil }
 
         return OnboardingInstructionsPopupInfoModel(

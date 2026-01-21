@@ -9,7 +9,6 @@ import Shared
 import UIKit
 
 protocol SurveySurfaceViewControllerDelegate: AnyObject {
-    @MainActor
     func didFinish()
 }
 
@@ -34,8 +33,8 @@ class SurveySurfaceViewController: UIViewController, Themeable {
     var viewModel: SurveySurfaceViewModel
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
-    var imageViewYConstraint: NSLayoutConstraint?
+    var themeObserver: NSObjectProtocol?
+    var imageViewYConstraint: NSLayoutConstraint!
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
 
@@ -110,10 +109,9 @@ class SurveySurfaceViewController: UIViewController, Themeable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        listenForThemeChange(view)
         setupView()
         updateContent()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
     }
 
@@ -138,13 +136,13 @@ class SurveySurfaceViewController: UIViewController, Themeable {
 
     private func constrainViews() {
         imageViewYConstraint = imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        imageViewYConstraint?.isActive = true
 
         NSLayoutConstraint.activate(
             [
                 imageView.heightAnchor.constraint(equalToConstant: UX.imageViewSize.height),
                 imageView.widthAnchor.constraint(equalToConstant: UX.imageViewSize.width),
                 imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                imageViewYConstraint,
 
                 titleLabel.topAnchor.constraint(
                     equalTo: imageView.bottomAnchor,
@@ -213,12 +211,12 @@ class SurveySurfaceViewController: UIViewController, Themeable {
     /// Changes the constraint of the imageView. This needs to be done separately
     /// if we want to do it in an animation.
     private func changeImageViewConstraint() {
-        imageViewYConstraint?.isActive = false
+        NSLayoutConstraint.deactivate([imageViewYConstraint])
         imageViewYConstraint = imageView.centerYAnchor.constraint(
             equalTo: view.centerYAnchor,
             constant: -(view.frame.height * UX.imageViewCenterYOffset)
         )
-        imageViewYConstraint?.isActive = true
+        NSLayoutConstraint.activate([imageViewYConstraint])
     }
 
     // MARK: - Button Actions

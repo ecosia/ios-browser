@@ -12,13 +12,11 @@ class MockNavigationController: NavigationController {
     var delegate: UINavigationControllerDelegate?
     var isNavigationBarHidden = false
     var fromViewController: UIViewController?
-    var topViewController: UIViewController?
 
     var presentCalled = 0
     var dismissCalled = 0
     var pushCalled = 0
     var popViewCalled = 0
-    var popToViewControllerCalled = 0
 
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         presentCalled += 1
@@ -32,31 +30,14 @@ class MockNavigationController: NavigationController {
     func pushViewController(_ viewController: UIViewController, animated: Bool) {
         pushCalled += 1
         presentedViewController = viewController
-        topViewController = viewController
-        viewControllers.append(viewController)
     }
 
     func popViewController(animated: Bool) -> UIViewController? {
         popViewCalled += 1
-        viewControllers.removeLast()
         return presentedViewController
     }
 
     func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
         self.viewControllers = viewControllers
-    }
-
-    func popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
-        popToViewControllerCalled += 1
-
-        // Simulate popping everything above the target
-        guard let index = viewControllers.firstIndex(of: viewController),
-              index < viewControllers.count - 1 else {
-            return nil
-        }
-
-        let popped = Array(viewControllers[(index + 1)...])
-        viewControllers.removeSubrange((index + 1)...)
-        return popped
     }
 }

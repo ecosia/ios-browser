@@ -18,13 +18,13 @@
 addFeatureFilesToNimbus() {
     for filename in firefox-ios/nimbus-features/*.yaml; do
         relativeName="${filename#firefox-ios/}"
-        echo "  - $relativeName" >>$1
+        echo "  - $relativeName" >> $1
     done
 }
 
 # Removes the files listed in the FML's `include` block
 cleanupNimbusFile() {
-    grep -v "nimbus-features" $1 >temp
+    grep -v "nimbus-features" $1 > temp
     rm $1
     mv temp $1
 }
@@ -45,7 +45,6 @@ configureFeatureName() {
 addNewFeatureContent() {
     KEBAB_FEATURE_NAME=$(configureFeatureName $2)
     echo """# The configuration for the $2 feature
-# Please remember to add this feature to the feature flag spreadsheet.
 features:
   $KEBAB_FEATURE_NAME:
     description: >
@@ -67,25 +66,15 @@ features:
 objects:
 
 enums:
-""" >$1
-}
-
-standardizeFeatureName() {
-    if [[ "$1" == *Feature ]]; then
-        echo "$1"
-    else
-        echo "${1}Feature"
-    fi
+""" > $1
 }
 
 if [ "$1" == "--add" ]; then
-    STANDARDIZED_NAME=$(standardizeFeatureName "$2")
-    NEW_FILE="firefox-ios/nimbus-features/$STANDARDIZED_NAME.yaml"
+    NEW_FILE=firefox-ios/nimbus-features/$2.yaml
     touch $NEW_FILE
-    addNewFeatureContent $NEW_FILE $STANDARDIZED_NAME
+    addNewFeatureContent $NEW_FILE $2
     updateNimbusFML
-    echo """Added new feature successfully
-Please remember to add the feature to the feature flag spreadsheet"""
+    echo "Added new feature successfully"
 fi
 
 if [ "$1" == "--update" ]; then

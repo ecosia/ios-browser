@@ -2,19 +2,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Shared
 import Common
 
 // MARK: - Protocol
-protocol FeatureFlaggable {}
+protocol FeatureFlaggable { }
 
 extension FeatureFlaggable {
     var featureFlags: LegacyFeatureFlagsManager {
         return LegacyFeatureFlagsManager.shared
-    }
-
-    var isAnyStoriesRedesignEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.homepageStoriesRedesign, checking: .buildOnly)
-               || featureFlags.isFeatureEnabled(.homepageStoriesRedesignV2, checking: .buildOnly)
     }
 }
 
@@ -31,8 +27,7 @@ enum FlaggableFeatureCheckOptions {
     case userOnly
 }
 
-// FIXME: FXIOS-13986 Make truly thread safe
-class LegacyFeatureFlagsManager: HasNimbusFeatureFlags, @unchecked Sendable {
+class LegacyFeatureFlagsManager: HasNimbusFeatureFlags {
     /// This Singleton should only be accessed directly in places where the
     /// `FeatureFlaggable` is not available. Otherwise, access to the feature
     /// flags system should be done through the protocol, giving access to the
@@ -40,7 +35,7 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags, @unchecked Sendable {
     static let shared = LegacyFeatureFlagsManager()
 
     // MARK: - Variables
-    private var profile: Profile?
+    private var profile: Profile!
     private var coreFeatures: [CoreFeatureFlagID: CoreFlaggableFeature] = [:]
 
     // MARK: - Public methods
@@ -56,11 +51,17 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags, @unchecked Sendable {
     public func isFeatureEnabled(_ featureID: NimbusFeatureFlagID,
                                  checking channelsToCheck: FlaggableFeatureCheckOptions
     ) -> Bool {
-        guard let profile else { return false }
-
         let feature = NimbusFlaggableFeature(withID: featureID, and: profile)
         let nimbusSetting = getNimbusOrDebugSetting(with: feature)
         let userSetting = feature.isUserEnabled(using: nimbusFlags)
+
+        // Ecosia: Turn off specific feature flags
+        switch featureID {
+        case .splashScreen, .feltPrivacySimplifiedUI, .microsurvey:
+            return false
+        default:
+            break
+        }
 
         switch channelsToCheck {
         case .buildOnly:
@@ -74,7 +75,7 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags, @unchecked Sendable {
 
     /// Allows us to override nimbus feature flags for a specific build using the debug menu
     private func getNimbusOrDebugSetting(with feature: NimbusFlaggableFeature) -> Bool {
-        #if MOZ_CHANNEL_beta || MOZ_CHANNEL_developer
+        #if MOZ_CHANNEL_BETA || MOZ_CHANNEL_FENNEC
         return feature.isDebugEnabled(using: nimbusFlags)
         #else
         return feature.isNimbusEnabled(using: nimbusFlags)
@@ -85,22 +86,18 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags, @unchecked Sendable {
     /// binary state. Further information on return types can be found in
     /// `FlaggableFeatureOptions`
     public func getCustomState<T>(for featureID: NimbusFeatureFlagWithCustomOptionsID) -> T? {
-        guard let profile else { return nil }
-
         let feature = NimbusFlaggableFeature(withID: convertCustomIDToStandard(featureID),
                                              and: profile)
         guard let userSetting = feature.getUserPreference(using: nimbusFlags) else { return nil }
 
         switch featureID {
         case .searchBarPosition: return SearchBarPosition(rawValue: userSetting) as? T
-        case .startAtHome: return StartAtHome(rawValue: userSetting) as? T
         }
     }
 
     private func convertCustomIDToStandard(_ featureID: NimbusFeatureFlagWithCustomOptionsID) -> NimbusFeatureFlagID {
         switch featureID {
         case .searchBarPosition: return .bottomSearchBar
-        case .startAtHome: return .startAtHome
         }
     }
 
@@ -112,10 +109,8 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags, @unchecked Sendable {
 
     /// Set a feature that has a binary state to on or off
     public func set(feature featureID: NimbusFeatureFlagID, to desiredState: Bool, isDebug: Bool = false) {
-        guard let profile else { return }
-
         let feature = NimbusFlaggableFeature(withID: featureID, and: profile)
-        #if MOZ_CHANNEL_beta || MOZ_CHANNEL_developer
+        #if MOZ_CHANNEL_BETA || MOZ_CHANNEL_FENNEC
         if isDebug {
             feature.setDebugPreference(to: desiredState)
         } else {
@@ -132,17 +127,11 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags, @unchecked Sendable {
         feature featureID: NimbusFeatureFlagWithCustomOptionsID,
         to desiredState: T
     ) {
-        guard let profile else { return }
-
         let feature = NimbusFlaggableFeature(withID: convertCustomIDToStandard(featureID),
                                              and: profile)
         switch featureID {
         case .searchBarPosition:
             if let option = desiredState as? SearchBarPosition {
-                feature.setUserPreference(to: option.rawValue)
-            }
-        case .startAtHome:
-            if let option = desiredState as? StartAtHome {
                 feature.setUserPreference(to: option.rawValue)
             }
         }
@@ -168,9 +157,16 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags, @unchecked Sendable {
                                                enabledFor: [.developer])
         coreFeatures[.useMockData] = useMockData
 
-        let useStagingUnifiedAdsAPI = CoreFlaggableFeature(withID: .useStagingUnifiedAdsAPI,
-                                                           enabledFor: [.developer])
+        let useStagingContileAPI = CoreFlaggableFeature(withID: .useStagingContileAPI,
+                                                        enabledFor: [.beta, .developer])
+        let useStagingSponsoredPocketStoriesAPI = CoreFlaggableFeature(withID: .useStagingSponsoredPocketStoriesAPI,
+                                                                       enabledFor: [.beta, .developer])
 
-        coreFeatures[.useStagingUnifiedAdsAPI] = useStagingUnifiedAdsAPI
+        let useStagingFakespotAPI = CoreFlaggableFeature(withID: .useStagingFakespotAPI,
+                                                         enabledFor: [])
+
+        coreFeatures[.useStagingContileAPI] = useStagingContileAPI
+        coreFeatures[.useStagingSponsoredPocketStoriesAPI] = useStagingSponsoredPocketStoriesAPI
+        coreFeatures[.useStagingFakespotAPI] = useStagingFakespotAPI
     }
 }

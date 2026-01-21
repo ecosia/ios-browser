@@ -7,13 +7,12 @@ import Foundation
 import Shared
 import SiteImageView
 
-class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell, FeatureFlaggable {
+class TopTabCell: UICollectionViewCell, ThemeApplicable, LegacyTabTrayCell, ReusableCell, FeatureFlaggable {
     struct UX {
         // MARK: - Favicon and Title Constants
         static let faviconSize: CGFloat = 20
         static let faviconCornerRadius: CGFloat = 2
         static let tabTitlePadding: CGFloat = 10
-        static let tabTitlePaddingVersion: CGFloat = 14
         static let tabNudge: CGFloat = 1 // Nudge the favicon and close button by 1px
 
         // MARK: - Tab Appearance Constants
@@ -35,8 +34,6 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell, FeatureFl
     var isSelectedTab = false
 
     weak var delegate: TopTabCellDelegate?
-
-    private var windowUUID: WindowUUID?
 
     // MARK: - UI Elements
     let cellBackground: UIView = .build { view in
@@ -60,7 +57,7 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell, FeatureFl
     let favicon: FaviconImageView = .build { _ in }
 
     let closeButton: UIButton = .build { button in
-        button.configuration = .plain()
+        button.setImage(UIImage.templateImageNamed(StandardImageIdentifiers.Large.cross), for: [])
         button.configuration?.contentInsets = NSDirectionalEdgeInsets(top: UX.verticalPadding,
                                                                       leading: UX.tabTitlePadding,
                                                                       bottom: UX.verticalPadding,
@@ -79,7 +76,6 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell, FeatureFl
 
     func configureLegacyCellWith(tab: Tab, isSelected selected: Bool, theme: Theme) {
         isSelectedTab = selected
-        windowUUID = tab.windowUUID
 
         titleText.text = tab.getTabTrayTitle()
         accessibilityLabel = getA11yTitleLabel(tab: tab)
@@ -91,11 +87,7 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell, FeatureFl
                                                 self.titleText.text ?? "")
         closeButton.showsLargeContentViewer = true
         closeButton.largeContentTitle = .TopSitesRemoveButtonLargeContentTitle
-        closeButton.configuration?.image = UIImage.templateImageNamed(StandardImageIdentifiers.Medium.cross)
-        closeButton.configuration?.contentInsets = NSDirectionalEdgeInsets(top: UX.verticalPadding,
-                                                                           leading: UX.tabTitlePaddingVersion,
-                                                                           bottom: UX.verticalPadding,
-                                                                           trailing: UX.tabTitlePaddingVersion)
+        closeButton.largeContentImage = UIImage.templateImageNamed(StandardImageIdentifiers.Large.cross)
         closeButton.scalesLargeContentImage = true
 
         let hideCloseButton = frame.width < UX.closeButtonThreshold && !selected
@@ -126,14 +118,24 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell, FeatureFl
 
     func applySelectedStyle(theme: Theme) {
         let colors = theme.colors
+        /* Ecosia: Update theme
         favicon.tintColor = colors.textPrimary
         titleText.textColor = colors.textPrimary
         closeButton.tintColor = colors.textPrimary
 
-        let backgroundColor = colors.actionTabActive
+        let isToolbarRefactorEnabled = featureFlags.isFeatureEnabled(.toolbarRefactor, checking: .buildOnly)
+        let backgroundColor = isToolbarRefactorEnabled ? colors.actionTabActive : colors.layer2
         cellBackground.backgroundColor = backgroundColor
         cellBackground.layer.shadowColor = colors.shadowDefault.cgColor
         cellBackground.isHidden = false
+         */
+        cellBackground.backgroundColor = colors.ecosia.buttonBackgroundPrimary
+
+        let tint = isSelectedTab ? colors.ecosia.textInversePrimary : colors.ecosia.textPrimary
+        titleText.textColor = tint
+        closeButton.tintColor = tint
+        favicon.tintColor = tint
+        cellBackground.isHidden = !isSelectedTab
     }
 
     func applyUnselectedStyle(theme: Theme) {
@@ -142,9 +144,10 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell, FeatureFl
         titleText.textColor = colors.textPrimary
         closeButton.tintColor = colors.textPrimary
 
-        cellBackground.backgroundColor = .clear
+        let isToolbarRefactorEnabled = featureFlags.isFeatureEnabled(.toolbarRefactor, checking: .buildOnly)
+        cellBackground.backgroundColor = isToolbarRefactorEnabled ? colors.actionTabInactive : .clear
         cellBackground.layer.shadowColor = UIColor.clear.cgColor
-        cellBackground.isHidden = false
+        cellBackground.isHidden = isToolbarRefactorEnabled ? false : true
     }
 
     func applyTheme(theme: Theme) {
@@ -192,17 +195,5 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell, FeatureFl
         )
 
         clipsToBounds = false
-    }
-
-    func getA11yTitleLabel(tab: Tab) -> String? {
-        let baseName = tab.getTabTrayTitle()
-
-        if isSelectedTab, !tab.getTabTrayTitle().isEmpty {
-            return baseName + ". " + String.TabsTray.TabTrayCurrentlySelectedTabAccessibilityLabel
-        } else if isSelectedTab {
-            return String.TabsTray.TabTrayCurrentlySelectedTabAccessibilityLabel
-        } else {
-            return baseName
-        }
     }
 }

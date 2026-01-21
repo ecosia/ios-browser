@@ -6,22 +6,17 @@ import UIKit
 import Common
 
 public protocol BrowserNavigationToolbarDelegate: AnyObject {
-    @MainActor
     func configureContextualHint(for button: UIButton, with contextualHintType: String)
 }
 
 /// Navigation toolbar implementation.
-public final class BrowserNavigationToolbar: UIView,
-                                             NavigationToolbar,
-                                             ThemeApplicable,
-                                             ToolbarButtonCaching {
+public class BrowserNavigationToolbar: UIView, NavigationToolbar, ThemeApplicable {
     private enum UX {
         static let horizontalEdgeSpace: CGFloat = 16
         static let buttonSize = CGSize(width: 48, height: 48)
         static let borderHeight: CGFloat = 1
     }
 
-    var cachedButtonReferences = [String: ToolbarButton]()
     private weak var toolbarDelegate: BrowserNavigationToolbarDelegate?
     private lazy var actionStack: UIStackView = .build { view in
         view.distribution = .equalSpacing
@@ -29,13 +24,6 @@ public final class BrowserNavigationToolbar: UIView,
     private lazy var toolbarBorderView: UIView = .build()
     private var toolbarBorderHeightConstraint: NSLayoutConstraint?
     private var theme: Theme?
-    private var isTranslucent = false {
-        didSet {
-            // We need to call applyTheme to ensure the colors are updated in sync whenever the translucency changes.
-            guard let theme, isTranslucent != oldValue else { return }
-            applyTheme(theme: theme)
-        }
-    }
 
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -46,16 +34,13 @@ public final class BrowserNavigationToolbar: UIView,
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configure(
-        config: NavigationToolbarConfiguration,
-        toolbarDelegate: BrowserNavigationToolbarDelegate
-    ) {
+    public func configure(state: NavigationToolbarState, toolbarDelegate: BrowserNavigationToolbarDelegate) {
         self.toolbarDelegate = toolbarDelegate
-        self.isTranslucent = config.isTranslucencyEnabled
-        updateActionStack(toolbarElements: config.actions)
+
+        updateActionStack(toolbarElements: state.actions)
 
         // Update border
-        toolbarBorderHeightConstraint?.constant = config.shouldDisplayBorder ? UX.borderHeight : 0
+        toolbarBorderHeightConstraint?.constant = state.shouldDisplayBorder ? UX.borderHeight : 0
     }
 
     // MARK: - Private
@@ -85,10 +70,16 @@ public final class BrowserNavigationToolbar: UIView,
     }
 
     private func updateActionStack(toolbarElements: [ToolbarElement]) {
-        let buttons = toolbarElements.map { toolbarElement in
-            let hasCachedButton = hasCachedButton(for: toolbarElement)
-            let button = getToolbarButton(for: toolbarElement)
+        actionStack.removeAllArrangedViews()
+        toolbarElements.forEach { toolbarElement in
+            let button = toolbarElement.numberOfTabs != nil ? TabNumberButton() : ToolbarButton()
             button.configure(element: toolbarElement)
+            actionStack.addArrangedSubview(button)
+
+            NSLayoutConstraint.activate([
+                button.widthAnchor.constraint(equalToConstant: UX.buttonSize.width),
+                button.heightAnchor.constraint(equalToConstant: UX.buttonSize.height),
+            ])
 
             if let theme {
                 // As we recreate the buttons we need to apply the theme for them to be displayed correctly
@@ -98,28 +89,12 @@ public final class BrowserNavigationToolbar: UIView,
             if let contextualHintType = toolbarElement.contextualHintType {
                 toolbarDelegate?.configureContextualHint(for: button, with: contextualHintType)
             }
-
-            // Only add the constraints to new buttons
-            if !hasCachedButton {
-                NSLayoutConstraint.activate([
-                    button.widthAnchor.constraint(equalToConstant: UX.buttonSize.width),
-                    button.heightAnchor.constraint(equalToConstant: UX.buttonSize.height),
-                ])
-            }
-
-            return button
-        }
-
-        actionStack.removeAllArrangedViews()
-
-        buttons.forEach { button in
-            actionStack.addArrangedSubview(button)
         }
     }
 
     // MARK: - ThemeApplicable
     public func applyTheme(theme: Theme) {
-        backgroundColor = isTranslucent ? .clear : theme.colors.layerSurfaceLow
+        backgroundColor = theme.colors.layer1
         toolbarBorderView.backgroundColor = theme.colors.borderPrimary
 
         actionStack.arrangedSubviews.forEach { element in

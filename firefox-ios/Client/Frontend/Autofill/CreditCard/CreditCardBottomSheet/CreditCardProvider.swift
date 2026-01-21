@@ -9,17 +9,15 @@ import struct MozillaAppServices.CreditCard
 protocol CreditCardProvider {
     func addCreditCard(
         creditCard: UnencryptedCreditCardFields,
-        completion: @escaping @Sendable (CreditCard?, Error?) -> Void
+        completion: @escaping (CreditCard?, Error?) -> Void
     )
     func decryptCreditCardNumber(encryptedCCNum: String?) -> String?
-    func deleteCreditCard(id: String, completion: @escaping @Sendable (Bool, Error?) -> Void)
-    func listCreditCards(completion: @escaping @Sendable ([CreditCard]?, Error?) -> Void)
+    func listCreditCards(completion: @escaping ([CreditCard]?, Error?) -> Void)
     func updateCreditCard(
         id: String,
         creditCard: UnencryptedCreditCardFields,
-        completion: @escaping @Sendable (Bool?, Error?) -> Void
+        completion: @escaping (Bool?, Error?) -> Void
     )
-    func verifyCreditCards(key: String, completionHandler: @escaping @Sendable (Bool) -> Void)
 }
 
 extension RustAutofill: CreditCardProvider {}

@@ -5,11 +5,10 @@
 import Foundation
 
 class NewTabPageSetting: Setting {
-    private let profile: Profile?
+    private let profile: Profile
     private weak var settingsDelegate: GeneralSettingsDelegate?
 
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
 
@@ -17,9 +16,8 @@ class NewTabPageSetting: Setting {
         return AccessibilityIdentifiers.Settings.NewTab.title
     }
 
-    override var status: NSAttributedString? {
-        guard let profile else { return nil }
-        return NSAttributedString(string: NewTabAccessors.getNewTabPage(profile.prefs).settingTitle)
+    override var status: NSAttributedString {
+        return NSAttributedString(string: NewTabAccessors.getNewTabPage(self.profile.prefs).settingTitle)
     }
 
     override var style: UITableViewCell.CellStyle { return .value1 }

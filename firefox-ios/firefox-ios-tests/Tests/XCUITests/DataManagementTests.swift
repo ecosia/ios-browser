@@ -5,71 +5,35 @@
 import XCTest
 
 class DataManagementTests: BaseTestCase {
-    private var webSitesDataScreen: WebsiteDataScreen!
-
-    func cleanAllData() {
-        navigator.goto(WebsiteDataSettings)
-        mozWaitForElementToExist(app.tables.otherElements["Website Data"])
-        mozWaitForElementToNotExist(app.activityIndicators.firstMatch)
-        // navigator.performAction(Action.AcceptClearAllWebsiteData)
-        // We need to fix the method in FxScreenGraph file
-        // but there are many linter issues on that file, so this is a quick fix
-        app.tables.cells["ClearAllWebsiteData"].staticTexts["Clear All Website Data"].waitAndTap(timeout: TIMEOUT)
-        app.alerts.buttons["OK"].waitAndTap(timeout: TIMEOUT)
-        mozWaitForElementToNotExist(app.alerts.buttons["OK"])
-        XCTAssertEqual(app.cells.buttons.images.count, 0, "The Website data has not cleared correctly")
-        // Navigate back to the browser
-        mozWaitElementEnabled(element: app.buttons["Data Management"], timeout: TIMEOUT)
-        app.buttons["Data Management"].waitAndTap()
-        app.buttons["Settings"].waitAndTap()
-        app.buttons["Done"].waitAndTap()
-    }
-
     // Testing the search bar, and clear website data option
     // https://mozilla.testrail.io/index.php?/cases/view/2307015
     func testWebSiteDataOptions() {
-        cleanAllData()
-        navigator.nowAt(BrowserTab)
-        navigator.openURL(path(forTestPage: "test-mozilla-org.html"))
-        navigator.nowAt(BrowserTab)
-        navigator.openURL(path(forTestPage: "test-example.html"))
         navigator.nowAt(NewTabScreen)
         waitForTabsButton()
-        // The Settings button may not be visible on iOS 15
-        if #unavailable(iOS 16) {
-            navigator.goto(BrowserTabMenu)
-            app.swipeUp()
-        }
         navigator.goto(WebsiteDataSettings)
         mozWaitForElementToExist(app.tables.otherElements["Website Data"])
+        app.tables.otherElements["Website Data"].swipeDown()
+        mozWaitForElementToExist(app.searchFields["Filter Sites"])
+        navigator.performAction(Action.TapOnFilterWebsites)
+        app.typeText("bing")
+        mozWaitForElementToExist(app.tables["Search results"])
+        let expectedSearchResults = app.tables["Search results"].cells.count
+        sleep(3)
+        XCTAssertEqual(expectedSearchResults, 1)
+        navigator.performAction(Action.TapOnFilterWebsites)
 
-        var beforeDelete = 0
-        if #available(iOS 17, *) {
-            beforeDelete = app.cells.images.count
-            app.cells.images["circle"].firstMatch.waitAndTap()
-        } else {
-            beforeDelete = app.cells.staticTexts.count
-            app.cells.staticTexts.firstMatch.waitAndTap()
-        }
+        app.buttons["Cancel"].tap()
+        mozWaitForElementToExist(app.tables.otherElements["Website Data"])
 
-        app.otherElements.staticTexts["Clear Items: 1"].waitAndTap()
-        app.alerts.buttons["OK"].waitAndTap()
-        mozWaitForElementToNotExist(app.alerts.buttons["OK"])
-        if #available(iOS 17, *) {
-            XCTAssertEqual(beforeDelete-1, app.cells.images.count, "The first entry has not been deleted correctly")
-        } else {
-            XCTAssertEqual(beforeDelete-1, app.cells.staticTexts.count, "The first entry has not been deleted correctly")
-        }
         navigator.performAction(Action.AcceptClearAllWebsiteData)
         mozWaitForElementToExist(app.tables.cells["ClearAllWebsiteData"].staticTexts["Clear All Website Data"])
-        XCTAssertEqual(0, app.cells.buttons.images.count)
+        let expectedWebsitesCleared = app.tables.cells.count
+        XCTAssertEqual(expectedWebsitesCleared, 1)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307017
     // Smoketest
     func testWebSiteDataEnterFirstTime() {
-        cleanAllData()
-        navigator.nowAt(NewTabScreen)
         navigator.openURL("example.com")
         waitUntilPageLoad()
         navigator.goto(WebsiteDataSettings)
@@ -80,71 +44,12 @@ class DataManagementTests: BaseTestCase {
             mozWaitForElementToExist(app.tables.buttons.firstMatch)
         }
         if app.cells["ShowMoreWebsiteData"].exists {
-            app.cells["ShowMoreWebsiteData"].waitAndTap()
+            app.cells["ShowMoreWebsiteData"].tap()
         }
         mozWaitForElementToExist(app.staticTexts["example.com"])
-        if #available(iOS 17, *) {
-            XCTAssertTrue(app.cells.images.element(matching: .any, identifier: "circle").exists)
-        } else {
-            XCTAssertTrue(app.cells.staticTexts.elementContainingText("example.com").exists)
-        }
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2307017
-    // Smoketest TAE
-    func testWebSiteDataEnterFirstTime_TAE() {
-        webSitesDataScreen = WebsiteDataScreen(app: app)
-        navigator.goto(WebsiteDataSettings)
-        webSitesDataScreen.clearAllWebsiteData()
-        navigator.nowAt(NewTabScreen)
-        navigator.openURL("example.com")
-        waitUntilPageLoad()
-        navigator.goto(WebsiteDataSettings)
-        webSitesDataScreen.waitUntilListIsReady()
-        webSitesDataScreen.expandShowMoreIfNeeded()
-        webSitesDataScreen.waitForExampleDomain()
-        webSitesDataScreen.assertWebsiteDataVisible()
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2802088
-    func testFilterWebsiteData() {
-        cleanAllData()
-        navigator.nowAt(BrowserTab)
-        navigator.openURL(path(forTestPage: "test-mozilla-org.html"))
-        navigator.nowAt(BrowserTab)
-        navigator.openURL(path(forTestPage: "test-example.html"))
-        navigator.nowAt(NewTabScreen)
-        waitForTabsButton()
-        // The Settings button may not be visible on iOS 15
-        if #unavailable(iOS 16) {
-            navigator.goto(BrowserTabMenu)
-            app.swipeUp()
-        }
-        navigator.goto(WebsiteDataSettings)
-        mozWaitForElementToExist(app.tables.otherElements["Website Data"])
-        app.tables.otherElements["Website Data"].swipeDown()
-        mozWaitForElementToExist(app.searchFields["Filter Sites"])
-        navigator.performAction(Action.TapOnFilterWebsites)
-        app.typeText("mozilla")
-        mozWaitForElementToExist(app.tables["Search results"])
-        // "localhost" still exist in the debugDescription, but is not visible.
-        // I cannot test for visibility at the moment.
-        // let expectedSearchResults = app.tables["Search results"].cells.count
-        // XCTAssertEqual(expectedSearchResults, 1)
-        if #available(iOS 26, *) {
-            if iPad() {
-                app.buttons["Clear text"].waitAndTap()
-            } else {
-                app.buttons["close"].waitAndTap()
-            }
-        } else {
-            app.buttons["Cancel"].waitAndTap()
-        }
-        mozWaitForElementToExist(app.tables.otherElements["Website Data"])
-        if #available(iOS 17, *) {
-            XCTAssertGreaterThan(app.cells.images.count, 1)
-        } else {
-            XCTAssertGreaterThan(app.cells.staticTexts.count-1, 1)
-        }
+        // There should be 4 entries. One is the website visited and 3 for extrainfo from the page.
+        // This assert will remain commented until a way is found of having website data clean on the first run
+        // This is to avoid intermittent failings
+        // XCTAssertEqual(app.tables.staticTexts.count, 4)
     }
  }

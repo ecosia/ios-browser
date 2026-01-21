@@ -3,30 +3,17 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import XCTest
 
 // MARK: - Data
 struct ParserData {
     func getDictData(from dict: DictData) throws -> [String: Any] {
-        let data = dict.getData()
-        let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-
-        guard let dictData = jsonObject as? [String: Any] else {
-            XCTFail("Failed to cast JSON object to expected type in getDictData: \(type(of: jsonObject))")
-            return [:]
-        }
-        return dictData
+        try JSONSerialization.jsonObject(with: dict.getData(),
+                                         options: []) as! [String: Any]
     }
 
     func getListData(from list: ListData) throws -> [String] {
-        let data = list.getData()
-        let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-
-        guard let listData = jsonObject as? [String] else {
-            XCTFail("Failed to cast JSON object to expected type in getListData: \(type(of: jsonObject))")
-            return []
-        }
-        return listData
+        try JSONSerialization.jsonObject(with: list.getData(),
+                                         options: []) as! [String]
     }
 }
 

@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 5.6
 
 import PackageDescription
 
@@ -6,11 +6,9 @@ let package = Package(
     name: "BrowserKit",
     platforms: [
         .iOS(.v15),
-        .macOS(.v12)
+        .macOS(.v10_15)
     ],
     products: [
-        .library(name: "Shared",
-                 targets: ["Shared"]),
         .library(
             name: "SiteImageView",
             targets: ["SiteImageView"]),
@@ -35,22 +33,9 @@ let package = Package(
         .library(
             name: "MenuKit",
             targets: ["MenuKit"]),
-        .library(name: "SummarizeKit",
-                 targets: ["SummarizeKit"]),
-        .library(name: "JWTKit",
-                 targets: ["JWTKit"]),
-        .library(
-            name: "UnifiedSearchKit",
-            targets: ["UnifiedSearchKit"]),
         .library(
             name: "ContentBlockingGenerator",
             targets: ["ContentBlockingGenerator"]),
-        .library(
-            name: "OnboardingKit",
-            targets: ["OnboardingKit"]),
-        .library(
-            name: "ActionExtensionKit",
-            targets: ["ActionExtensionKit"]),
         .executable(
             name: "ExecutableContentBlockingGenerator",
             targets: ["ExecutableContentBlockingGenerator"]),
@@ -61,7 +46,7 @@ let package = Package(
             branch: "master"),
         .package(
             url: "https://github.com/onevcat/Kingfisher.git",
-            exact: "8.2.0"),
+            exact: "7.12.0"),
         .package(
             url: "https://github.com/AliSoftware/Dip.git",
             exact: "7.1.1"),
@@ -76,197 +61,81 @@ let package = Package(
             branch: "master"),
         .package(
             url: "https://github.com/swhitty/SwiftDraw",
-            exact: "0.18.3"),
-        .package(
-            url: "https://github.com/johnxnguyen/Down.git",
-            exact: "0.11.0"),
+            exact: "0.17.0"),
     ],
     targets: [
         .target(
-            name: "Shared",
-            dependencies: ["Common"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]
-        ),
-        .target(
             name: "ComponentLibrary",
             dependencies: ["Common", "SiteImageView"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "ComponentLibraryTests",
-            dependencies: ["ComponentLibrary"],
-            swiftSettings: [
-            ]
-        ),
+            dependencies: ["ComponentLibrary"]),
         .target(
             name: "SiteImageView",
             dependencies: ["Fuzi", "Kingfisher", "Common", "SwiftDraw"],
             exclude: ["README.md"],
             resources: [.process("BundledTopSitesFavicons.xcassets")],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "SiteImageViewTests",
             dependencies: ["SiteImageView", .product(name: "GCDWebServers", package: "GCDWebServer")],
             resources: [
                 .copy("Resources/mozilla.ico"),
-                .copy("Resources/inf-nan.svg"),
                 .copy("Resources/hackernews.svg")
-            ],
-            swiftSettings: [
-            ],
+            ]
         ),
         .target(
             name: "Common",
             dependencies: ["Dip",
                            "SwiftyBeaver",
                            .product(name: "Sentry-Dynamic", package: "sentry-cocoa")],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]
-        ),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "CommonTests",
-            dependencies: ["Common"],
-            swiftSettings: [
-            ]),
+            dependencies: ["Common"]),
         .target(
             name: "TabDataStore",
             dependencies: ["Common"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "TabDataStoreTests",
-            dependencies: ["TabDataStore"],
-            swiftSettings: [
-            ]
-        ),
+            dependencies: ["TabDataStore"]),
         .target(
             name: "Redux",
             dependencies: ["Common"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "ReduxTests",
-            dependencies: ["Redux"],
-            swiftSettings: [
-            ]
-        ),
+            dependencies: ["Redux"]),
         .target(
             name: "WebEngine",
             dependencies: ["Common",
                            .product(name: "GCDWebServers", package: "GCDWebServer")],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "WebEngineTests",
-            dependencies: ["WebEngine"],
-            swiftSettings: [
-            ]
-        ),
+            dependencies: ["WebEngine"]),
         .target(
             name: "ToolbarKit",
             dependencies: ["Common"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "ToolbarKitTests",
-            dependencies: ["ToolbarKit"],
-            swiftSettings: [
-        ]),
+            dependencies: ["ToolbarKit"]),
         .target(
             name: "MenuKit",
             dependencies: ["Common", "ComponentLibrary"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "MenuKitTests",
-            dependencies: ["MenuKit"],
-            swiftSettings: [
-            ]
-        ),
-        .target(
-            name: "SummarizeKit",
-            dependencies: [
-                "Common",
-                "ComponentLibrary",
-                "Down"
-            ],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]
-        ),
-        .testTarget(name: "SummarizeKitTests",
-                    dependencies: ["SummarizeKit"],
-                    swiftSettings: [
-                        .unsafeFlags(["-enable-testing"]),
-                    ]),
-        .target(
-            name: "JWTKit",
-            dependencies: ["Common", "Shared"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]
-        ),
-        .testTarget(
-            name: "JWTKitTests",
-            dependencies: ["JWTKit"],
-            swiftSettings: [
-            ]
-        ),
-        .target(
-            name: "UnifiedSearchKit",
-            dependencies: ["Common", "ComponentLibrary", "MenuKit"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            dependencies: ["MenuKit"]),
         .target(
             name: "ContentBlockingGenerator",
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
+            swiftSettings: [.unsafeFlags(["-enable-testing"])]),
         .testTarget(
             name: "ContentBlockingGeneratorTests",
-            dependencies: ["ContentBlockingGenerator"],
-            swiftSettings: [
-            ]),
-        .target(
-            name: "OnboardingKit",
-            dependencies: ["Common", "ComponentLibrary"],
-            resources: [
-                .process("Shaders")
-            ],
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ],
-            linkerSettings: [
-                .linkedFramework("Metal"),
-                .linkedFramework("MetalKit")
-            ]),
-        .testTarget(
-            name: "OnboardingKitTests",
-            dependencies: ["OnboardingKit"],
-            swiftSettings: [
-            ]),
-        .target(
-            name: "ActionExtensionKit",
-            swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
-            ]),
-        .testTarget(
-            name: "ActionExtensionKitTests",
-            dependencies: ["ActionExtensionKit"],
-            swiftSettings: [
-            ]),
+            dependencies: ["ContentBlockingGenerator"]),
         .executableTarget(
             name: "ExecutableContentBlockingGenerator",
             dependencies: ["ContentBlockingGenerator"]),

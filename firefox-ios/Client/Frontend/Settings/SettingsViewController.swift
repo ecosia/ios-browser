@@ -3,17 +3,18 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Shared
 import Common
 
 class SettingsViewController: UIViewController, Themeable {
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol
 
     weak var settingsDelegate: SettingsDelegate?
 
-    var profile: Profile?
-    var tabManager: TabManager?
+    var profile: Profile!
+    var tabManager: TabManager!
     let windowUUID: WindowUUID
 
     var currentWindowUUID: UUID? { return windowUUID }
@@ -37,8 +38,7 @@ class SettingsViewController: UIViewController, Themeable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
     }
 

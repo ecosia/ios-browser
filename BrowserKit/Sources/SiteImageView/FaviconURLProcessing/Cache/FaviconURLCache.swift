@@ -4,7 +4,7 @@
 
 import Foundation
 
-protocol FaviconURLCache: Sendable {
+protocol FaviconURLCache {
     func getURLFromCache(cacheKey: String) async throws -> URL
     func cacheURL(cacheKey: String, faviconURL: URL) async
     func clearCache() async
@@ -32,7 +32,7 @@ actor DefaultFaviconURLCache: FaviconURLCache {
 
     func getURLFromCache(cacheKey: String) async throws -> URL {
         guard let favicon = urlCache[cacheKey],
-              let url = URL(string: favicon.faviconURL)
+              let url = URL(string: favicon.faviconURL, invalidCharacters: false)
         else { throw SiteImageError.noURLInCache }
 
         // Update the element in the cache so it's time to expire is reset
@@ -59,12 +59,12 @@ actor DefaultFaviconURLCache: FaviconURLCache {
 
     private func preserveCache() {
         preserveTask?.cancel()
-        preserveTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: self?.preserveDebounceTime ?? 0)
+        preserveTask = Task {
+            try? await Task.sleep(nanoseconds: preserveDebounceTime)
             guard !Task.isCancelled,
-                  let data = await self?.archiveCacheData()
+                  let data = archiveCacheData()
             else { return }
-            await self?.fileManager.saveURLCache(data: data)
+            await fileManager.saveURLCache(data: data)
         }
     }
 

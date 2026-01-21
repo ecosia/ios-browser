@@ -12,11 +12,11 @@ class UpdateViewModel: OnboardingViewModelProtocol,
     // MARK: - Properties
     var profile: Profile
     var hasSyncableAccount: Bool?
-    var availableCards: [OnboardingCardViewController<OnboardingKitCardInfoModel>]
-    var isDismissible: Bool
+    var availableCards: [OnboardingCardViewController]
+    var isDismissable: Bool
     var telemetryUtility: OnboardingTelemetryProtocol
     let windowUUID: WindowUUID
-    private var cardModels: [OnboardingKitCardInfoModel]
+    private var cardModels: [OnboardingCardInfoModelProtocol]
 
     var shouldShowSingleCard: Bool {
         return availableCards.count == 1
@@ -34,14 +34,14 @@ class UpdateViewModel: OnboardingViewModelProtocol,
     // MARK: - Initializer
     init(
         profile: Profile,
-        model: OnboardingKitViewModel,
+        model: OnboardingViewModel,
         telemetryUtility: OnboardingTelemetryProtocol,
         windowUUID: WindowUUID
     ) {
         self.profile = profile
         self.telemetryUtility = telemetryUtility
         self.cardModels = model.cards
-        self.isDismissible = model.isDismissible
+        self.isDismissable = model.isDismissable
         self.availableCards = []
         self.windowUUID = windowUUID
     }
@@ -73,20 +73,24 @@ class UpdateViewModel: OnboardingViewModelProtocol,
 
     // Function added to wait for AccountManager initialization to get
     // if the user is Sign in with Sync Account to decide which cards to show
-    func hasSyncableAccount(completion: @MainActor @escaping () -> Void) {
-        hasSyncableAccount = profile.hasAccount()
-        ensureMainThread {
-            completion()
+    func hasSyncableAccount(completion: @escaping () -> Void) {
+        profile.hasSyncAccount { result in
+            self.hasSyncableAccount = result
+            ensureMainThread {
+                completion()
+            }
         }
     }
 
-    func containsSyncableAccount() -> Bool {
-        let hasSync = profile.hasAccount()
-        hasSyncableAccount = hasSync
-        return hasSync
+    func hasSyncableAccount() async -> Bool {
+        return await withCheckedContinuation { continuation in
+            profile.hasSyncAccount { hasSync in
+                self.hasSyncableAccount = hasSync
+                continuation.resume(returning: hasSync)
+            }
+        }
     }
 
-    @MainActor
     func setupViewControllerDelegates(with delegate: OnboardingCardDelegate, for window: WindowUUID) {
         availableCards.removeAll()
         for cardModel in cardModels {
@@ -98,12 +102,12 @@ class UpdateViewModel: OnboardingViewModelProtocol,
             }
 
             if cardModel.cardType == .multipleChoice {
-            availableCards.append(OnboardingMultipleChoiceCardViewController<OnboardingKitCardInfoModel>(
+            availableCards.append(OnboardingMultipleChoiceCardViewController(
                 viewModel: cardModel,
                 delegate: delegate,
                 windowUUID: window))
             } else {
-                availableCards.append(OnboardingBasicCardViewController<OnboardingKitCardInfoModel>(
+                availableCards.append(OnboardingBasicCardViewController(
                     viewModel: cardModel,
                     delegate: delegate,
                     windowUUID: window))

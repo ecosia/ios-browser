@@ -13,10 +13,10 @@ let ReadingListDefaultUnread = true
 let ReadingListDefaultArchived = false
 let ReadingListDefaultFavorite = false
 
-public protocol ReadingList: Sendable {
+public protocol ReadingList {
     func getAvailableRecords() -> Deferred<Maybe<[ReadingListItem]>>
-    func getAvailableRecords(completion: @escaping @Sendable ([ReadingListItem]) -> Void)
-    func deleteRecord(_ record: ReadingListItem, completion: (@Sendable (Bool) -> Void)?)
+    func getAvailableRecords(completion: @escaping ([ReadingListItem]) -> Void)
+    func deleteRecord(_ record: ReadingListItem, completion: ((Bool) -> Void)?)
     @discardableResult
     func createRecordWithURL(_ url: String, title: String, addedBy: String) -> Deferred<Maybe<ReadingListItem>>
     func getRecordWithURL(_ url: String) -> Deferred<Maybe<ReadingListItem>>
@@ -24,7 +24,7 @@ public protocol ReadingList: Sendable {
     func updateRecord(_ record: ReadingListItem, unread: Bool) -> Deferred<Maybe<ReadingListItem>>
 }
 
-public struct ReadingListItem: Equatable, Sendable {
+public struct ReadingListItem: Equatable {
     public let id: Int
     public let lastModified: Timestamp
     public let url: String

@@ -60,7 +60,7 @@ class AutopushTests: XCTestCase {
 }
 
 // MARK: - MockPushManager
-final class MockPushManager: PushManagerProtocol, @unchecked Sendable {
+class MockPushManager: PushManagerProtocol {
     public var subscribeCalledWith: String?
     public var getSubscriptionCalledWith: String?
     public var unsubscribeCalledWith: String?

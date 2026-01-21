@@ -3,12 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-// TODO: FXIOS-14194 - @preconcurrency on BackgroundTasks
-@preconcurrency import BackgroundTasks
+import BackgroundTasks
 import Common
 
-// TODO: FXIOS-14113 - BackgroundSyncUtility @unchecked Sendable
-final class BackgroundSyncUtility: BackgroundUtilityProtocol, @unchecked Sendable {
+class BackgroundSyncUtility: BackgroundUtilityProtocol {
     let profile: Profile
     let application: UIApplication
     let logger: Logger
@@ -25,7 +23,7 @@ final class BackgroundSyncUtility: BackgroundUtilityProtocol, @unchecked Sendabl
     }
 
     func scheduleTaskOnAppBackground() {
-        if let syncManager = profile.syncManager, syncManager.isSyncing {
+        if profile.syncManager.isSyncing {
             // If syncing, create a background task because _shutdown() is blocking and
             // might take a few seconds to complete
             taskId = application.beginBackgroundTask(expirationHandler: {
@@ -63,7 +61,7 @@ final class BackgroundSyncUtility: BackgroundUtilityProtocol, @unchecked Sendabl
                 return
             }
             let collection = ["bookmarks", "history"]
-            self.profile.syncManager?.syncNamedCollections(why: .backgrounded, names: collection).uponQueue(.main) { _ in
+            self.profile.syncManager.syncNamedCollections(why: .backgrounded, names: collection).uponQueue(.main) { _ in
                 task.setTaskCompleted(success: true)
                 let request = BGProcessingTaskRequest(identifier: "org.mozilla.ios.sync.part2")
                 request.earliestBeginDate = Date(timeIntervalSinceNow: 1)
@@ -83,7 +81,7 @@ final class BackgroundSyncUtility: BackgroundUtilityProtocol, @unchecked Sendabl
         BGTaskScheduler.shared.register(forTaskWithIdentifier: "org.mozilla.ios.sync.part2",
                                         using: DispatchQueue.global()) { task in
             let collection = ["tabs", "logins", "clients"]
-            self.profile.syncManager?.syncNamedCollections(why: .backgrounded, names: collection).uponQueue(.main) { _ in
+            self.profile.syncManager.syncNamedCollections(why: .backgrounded, names: collection).uponQueue(.main) { _ in
                 self.shutdownProfileWhenNotActive()
                 task.setTaskCompleted(success: true)
             }

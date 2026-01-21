@@ -8,7 +8,6 @@ import WebKit
 @testable import Client
 
 class DownloadHelperTests: XCTestCase {
-    @MainActor
     func test_init_whenMIMETypeIsNil_initializeCorrectly() {
         let response = anyResponse(mimeType: nil)
 
@@ -18,7 +17,6 @@ class DownloadHelperTests: XCTestCase {
         XCTAssertNotNil(subject)
     }
 
-    @MainActor
     func test_shouldDownloadFile_whenMIMETypeOctetStream_isTrue() {
         let mimeType = MIMEType.OctetStream
 
@@ -32,7 +30,6 @@ class DownloadHelperTests: XCTestCase {
         XCTAssertTrue(shouldDownload ?? false)
     }
 
-    @MainActor
     func test_shouldDownloadFile_whenMIMETypeIsNotOctetStream_isFalse() {
         let mimeType = MIMEType.GIF
 
@@ -47,35 +44,6 @@ class DownloadHelperTests: XCTestCase {
         }
     }
 
-    @MainActor
-    func test_shouldDownloadFile_whenContentDispositionAttachmentHeader_isTrue() {
-        let response = httpURLResponse(mimeType: MIMEType.JPEG,
-                                       contentDispositionHeader: true)
-        if let subject = createSubject(request: anyRequest(),
-                                       response: response,
-                                       cookieStore: cookieStore()) {
-            let shouldDownload = subject.shouldDownloadFile(canShowInWebView: true,
-                                                            forceDownload: false,
-                                                            isForMainFrame: false)
-            XCTAssertTrue(shouldDownload)
-        }
-    }
-
-    @MainActor
-    func test_shouldDownloadFile_whenContentDispositionAttachmentHeader_isFalse() {
-        let response = httpURLResponse(mimeType: MIMEType.JPEG,
-                                       contentDispositionHeader: false)
-        if let subject = createSubject(request: anyRequest(),
-                                       response: response,
-                                       cookieStore: cookieStore()) {
-            let shouldDownload = subject.shouldDownloadFile(canShowInWebView: true,
-                                                            forceDownload: false,
-                                                            isForMainFrame: false)
-            XCTAssertFalse(shouldDownload)
-        }
-    }
-
-    @MainActor
     func test_shouldDownloadFile_whenCanShowInWebview_isFalse() {
         let response = anyResponse(mimeType: MIMEType.GIF)
 
@@ -89,7 +57,6 @@ class DownloadHelperTests: XCTestCase {
         }
     }
 
-    @MainActor
     func test_shouldDownloadFile_whenCanNotShowInWebview_isTrue() {
         let response = anyResponse(mimeType: MIMEType.GIF)
 
@@ -103,7 +70,6 @@ class DownloadHelperTests: XCTestCase {
         }
     }
 
-    @MainActor
     func test_shouldDownloadFile_whenNotForceDownload_isFalse() {
         let response = anyResponse(mimeType: MIMEType.GIF)
 
@@ -117,7 +83,6 @@ class DownloadHelperTests: XCTestCase {
         }
     }
 
-    @MainActor
     func test_shouldDownloadFile_whenForceDownload_isTrue() {
         let response = anyResponse(mimeType: MIMEType.GIF)
 
@@ -131,7 +96,6 @@ class DownloadHelperTests: XCTestCase {
         }
     }
 
-    @MainActor
     func test_downloadViewModel_whenRequestURLIsWrong_deliversEmptyResult() {
         let request = anyRequest(urlString: "wrong-url.com")
         let subject = createSubject(request: request,
@@ -143,7 +107,6 @@ class DownloadHelperTests: XCTestCase {
         XCTAssertNil(downloadViewModel)
     }
 
-    @MainActor
     func test_downloadViewModel_deliversCorrectTitle() {
         let response = anyResponse(urlString: "http://some-domain.com/some-image.jpg")
         let subject = createSubject(request: anyRequest(),
@@ -155,7 +118,6 @@ class DownloadHelperTests: XCTestCase {
         XCTAssertEqual(downloadViewModel!.title!, "some-image.jpg")
     }
 
-    @MainActor
     func test_downloadViewModel_deliversCorrectCancelButtonTitle() {
         let subject = createSubject(request: anyRequest(),
                                     response: anyResponse(mimeType: nil),
@@ -189,15 +151,6 @@ class DownloadHelperTests: XCTestCase {
         )
     }
 
-    private func httpURLResponse(mimeType: String,
-                                 contentDispositionHeader: Bool) -> MockHTTPURLResponse {
-        return MockHTTPURLResponse(forcedMimeType: mimeType,
-                                   url: URL(string: "http://any-url.com")!,
-                                   statusCode: 200,
-                                   httpVersion: "HTTP/1.1",
-                                   headerFields: contentDispositionHeader ? ["Content-Disposition": "attachment"] : nil)!
-    }
-
     private func anyResponse(urlString: String) -> URLResponse {
         return URLResponse(
             url: URL(string: urlString)!,
@@ -207,7 +160,6 @@ class DownloadHelperTests: XCTestCase {
         )
     }
 
-    @MainActor
     private func cookieStore() -> WKHTTPCookieStore {
         return WKWebsiteDataStore.`default`().httpCookieStore
     }
@@ -215,23 +167,4 @@ class DownloadHelperTests: XCTestCase {
     private func anyCachePolicy() -> URLRequest.CachePolicy {
         return .useProtocolCachePolicy
     }
-}
-
-class MockHTTPURLResponse: HTTPURLResponse, @unchecked Sendable {
-    private var forcedMimeType: String
-    init?(forcedMimeType: String,
-          url: URL,
-          statusCode: Int,
-          httpVersion HTTPVersion: String?,
-          headerFields: [String: String]?) {
-        self.forcedMimeType = forcedMimeType
-        super.init(url: url,
-                   statusCode: statusCode,
-                   httpVersion: HTTPVersion,
-                   headerFields: headerFields)
-    }
-
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-
-    override var mimeType: String? { forcedMimeType }
 }

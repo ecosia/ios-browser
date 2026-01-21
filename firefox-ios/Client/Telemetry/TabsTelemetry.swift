@@ -3,32 +3,54 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+/* Ecosia: Remove Glean
 import Glean
+ */
 
 final class TabsTelemetry {
+    /* Ecosia: Remove Glean
     /// Measure with a time distribution https://mozilla.github.io/glean/book/reference/metrics/timing_distribution.html
     /// how long it takes to switch to a new tab
     private var tabSwitchTimerId: GleanTimerId?
-
-    private let gleanWrapper: GleanWrapper
-
-    init(gleanWrapper: GleanWrapper = DefaultGleanWrapper()) {
-        self.gleanWrapper = gleanWrapper
-    }
+     */
 
     func startTabSwitchMeasurement() {
-        tabSwitchTimerId = gleanWrapper.startTiming(for: GleanMetrics.Tabs.tabSwitch)
+        /* Ecosia: Remove Glean
+        tabSwitchTimerId = GleanMetrics.Tabs.tabSwitch.start()
+         */
     }
 
     func stopTabSwitchMeasurement() {
+        /* Ecosia: Remove Glean
         guard let timerId = tabSwitchTimerId else { return }
-        gleanWrapper.stopAndAccumulateTiming(for: GleanMetrics.Tabs.tabSwitch, timerId: timerId)
+        GleanMetrics.Tabs.tabSwitch.stopAndAccumulate(timerId)
         tabSwitchTimerId = nil
+         */
     }
 
-    func trackConsecutiveCrashTelemetry(attemptNumber: UInt) {
-        let extras = GleanMetrics.Webview.ProcessDidTerminateExtra(consecutiveCrash: Int32(attemptNumber))
-        gleanWrapper.recordEvent(for: GleanMetrics.Webview.processDidTerminate,
-                                 extras: extras)
+    static func trackTabsQuantity(tabManager: TabManager) {
+        let privateExtra = [
+            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.privateTabs.count)
+        ]
+        TelemetryWrapper.recordEvent(category: .information,
+                                     method: .background,
+                                     object: .tabPrivateQuantity,
+                                     extras: privateExtra)
+
+        let normalExtra = [
+            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.normalActiveTabs.count)
+        ]
+        TelemetryWrapper.recordEvent(category: .information,
+                                     method: .background,
+                                     object: .tabNormalQuantity,
+                                     extras: normalExtra)
+
+        let inactiveExtra = [
+            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.inactiveTabs.count)
+        ]
+        TelemetryWrapper.recordEvent(category: .information,
+                                     method: .background,
+                                     object: .tabInactiveQuantity,
+                                     extras: inactiveExtra)
     }
 }

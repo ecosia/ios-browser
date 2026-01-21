@@ -6,7 +6,7 @@ import UIKit
 import Common
 
 /// Generate a default letter image from the domain name
-protocol LetterImageGenerator: Sendable {
+protocol LetterImageGenerator {
     /// Generates a letter image based on the first character in the domain name
     /// Runs main thread due to UILabel.initWithFrame(:)
     /// - Parameter domain: The string domain name
@@ -15,8 +15,8 @@ protocol LetterImageGenerator: Sendable {
     func generateLetterImage(siteString: String) async throws -> UIImage
 }
 
-final class DefaultLetterImageGenerator: LetterImageGenerator {
-    private let logger: Logger
+class DefaultLetterImageGenerator: LetterImageGenerator {
+    private var logger: Logger
 
     init(logger: Logger = DefaultLogger.shared) {
         self.logger = logger
@@ -24,7 +24,13 @@ final class DefaultLetterImageGenerator: LetterImageGenerator {
 
     @MainActor
     func generateLetterImage(siteString: String) async throws -> UIImage {
-        let capitalizedLetter = try generateLetter(fromSiteString: siteString)
+        guard let letter: Character = siteString.first else {
+            logger.log("No letter found for site, which should never happen",
+                       level: .warning,
+                       category: .images)
+            throw SiteImageError.noLetterImage
+        }
+        let capitalizedLetter = letter.uppercased()
 
         let color = generateBackgroundColor(forSite: siteString)
         let image = generateImage(fromLetter: capitalizedLetter,
@@ -32,19 +38,7 @@ final class DefaultLetterImageGenerator: LetterImageGenerator {
         return image
     }
 
-    internal func generateLetter(fromSiteString siteString: String) throws -> String {
-        guard let letter: Character = siteString.first else {
-            logger.log("No letter found for site, which should never happen",
-                       level: .warning,
-                       category: .images)
-            throw SiteImageError.noLetterImage
-        }
-
-        return letter.uppercased()
-    }
-
-    @MainActor
-    internal func generateImage(fromLetter letter: String, color: UIColor) -> UIImage {
+    func generateImage(fromLetter letter: String, color: UIColor) -> UIImage {
         var image = UIImage()
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
         label.text = letter
@@ -62,7 +56,7 @@ final class DefaultLetterImageGenerator: LetterImageGenerator {
         return image
     }
 
-    internal func generateBackgroundColor(forSite siteString: String) -> UIColor {
+    private func generateBackgroundColor(forSite siteString: String) -> UIColor {
         let index = abs(stableHash(siteString)) % (defaultBackgroundColors.count - 1)
         let colorHex = defaultBackgroundColors[index]
         return UIColor(colorString: colorHex)

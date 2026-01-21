@@ -4,6 +4,7 @@
 
 import Common
 import UIKit
+import Shared
 
 class PasswordManagerSettingsTableViewCell: ThemedTableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

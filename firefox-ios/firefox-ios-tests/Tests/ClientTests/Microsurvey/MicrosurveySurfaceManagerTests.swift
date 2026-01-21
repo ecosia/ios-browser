@@ -7,20 +7,18 @@ import XCTest
 
 @testable import Client
 
-@MainActor
 final class MicrosurveySurfaceManagerTests: XCTestCase {
     private var messageManager: MockGleanPlumbMessageManagerProtocol!
-
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         messageManager = MockGleanPlumbMessageManagerProtocol()
     }
 
-    override func tearDown() async throws {
-        DependencyHelperMock().reset()
+    override func tearDown() {
+        super.tearDown()
         messageManager = nil
-        try await super.tearDown()
+        AppContainer.shared.reset()
     }
 
     func testNilMessage_microsurveyShouldNotShow() {
@@ -82,7 +80,7 @@ final class MicrosurveySurfaceManagerTests: XCTestCase {
         XCTAssertEqual(messageManager.onMessageDismissedCalled, 0)
     }
 
-    func testManager_messageDismissCalled() {
+    func testManager_messageDimissCalled() {
         let subject = createSubject()
         messageManager.message = createMessage()
         _ = subject.showMicrosurveyPrompt()
@@ -95,7 +93,7 @@ final class MicrosurveySurfaceManagerTests: XCTestCase {
     }
 
     private func createSubject(
-        file: StaticString = #filePath,
+        file: StaticString = #file,
         line: UInt = #line
     ) -> MicrosurveySurfaceManager {
         let subject = MicrosurveySurfaceManager(messagingManager: messageManager)
@@ -126,7 +124,7 @@ class MockMicrosurveyMessageDataProtocol: MessageDataProtocol {
     var surface: MessageSurfaceId
     var isControl = true
     var title: String? = "title label test"
-    var text = "text label test"
+    var text: String = "text label test"
     var buttonLabel: String? = "button label test"
     var experiment: String?
     var actionParams: [String: String] = [:]

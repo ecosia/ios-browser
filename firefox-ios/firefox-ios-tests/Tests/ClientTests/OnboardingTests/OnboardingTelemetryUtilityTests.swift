@@ -7,420 +7,131 @@ import Glean
 
 @testable import Client
 
-@MainActor
-final class OnboardingTelemetryUtilityTests: XCTestCase {
+class OnboardingTelemetryUtilityTests: XCTestCase {
     typealias CardNames = NimbusOnboardingTestingConfigUtility.CardOrder
-    var mockGleanWrapper: MockGleanWrapper!
 
-    override func setUp() async throws {
-        try await super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
-        mockGleanWrapper = MockGleanWrapper()
-        Self.setupTelemetry(with: MockProfile())
-    }
-
-    override func tearDown() async throws {
-        mockGleanWrapper = nil
-        Self.tearDownTelemetry()
-        try await super.tearDown()
+    override func setUp() {
+        super.setUp()
+        Glean.shared.resetGlean(clearStores: true)
     }
 
     // MARK: - Card View telemetry
-    func testSendOnboardingCardView_WelcomeCard_Success() throws {
+    func testSendOnboardingCardView_WelcomeCard_Success() {
         let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.cardView
-        typealias EventExtrasType = GleanMetrics.Onboarding.CardViewExtra
 
         subject.sendCardViewTelemetry(from: CardNames.welcome.rawValue)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.welcome.rawValue)
-        XCTAssertEqual(savedExtras.onboardingVariant, "legacy")
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.cardView)
     }
 
-    func testSendOnboardingCardView_SyncCard_Success() throws {
+    func testSendOnboardingCardView_SyncCard_Success() {
         let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.cardView
-        typealias EventExtrasType = GleanMetrics.Onboarding.CardViewExtra
 
         subject.sendCardViewTelemetry(from: CardNames.sync.rawValue)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.sync.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.cardView)
     }
 
-    func testSendOnboardingCardView_NotificationsCard_Success() throws {
+    func testSendOnboardingCardView_NotificationsCard_Success() {
         let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.cardView
-        typealias EventExtrasType = GleanMetrics.Onboarding.CardViewExtra
 
         subject.sendCardViewTelemetry(from: CardNames.notifications.rawValue)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.notifications.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.cardView)
     }
 
-    func testSendOnboardingCardView_UpgradeSyncCard_Success() throws {
+    func testSendOnboardingCardView_UpgradeSyncCard_Success() {
         let subject = createTelemetryUtility(for: .upgrade)
-        let event = GleanMetrics.Onboarding.cardView
-        typealias EventExtrasType = GleanMetrics.Onboarding.CardViewExtra
 
         subject.sendCardViewTelemetry(from: CardNames.updateSync.rawValue)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.updateSync.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.cardView)
     }
 
-    func testSendOnboardingCardView_UpgradeWelcomeCard_Success() throws {
+    func testSendOnboardingCardView_UpgradeWelcomeCard_Success() {
         let subject = createTelemetryUtility(for: .upgrade)
-        let event = GleanMetrics.Onboarding.cardView
-        typealias EventExtrasType = GleanMetrics.Onboarding.CardViewExtra
 
         subject.sendCardViewTelemetry(from: CardNames.updateWelcome.rawValue)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.updateWelcome.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.cardView)
     }
 
     // MARK: - Primary tap
-    func testSendOnboardingPrimaryTap_WelcomeCard() throws {
+    func testSendOnboardingPrimaryTap_WelcomeCard() {
         let isPrimaryButton = true
         let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.primaryButtonTap
-        typealias EventExtrasType = GleanMetrics.Onboarding.PrimaryButtonTapExtra
 
         subject.sendButtonActionTelemetry(from: CardNames.welcome.rawValue,
                                           with: .forwardOneCard,
                                           and: isPrimaryButton)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.welcome.rawValue)
-        XCTAssertEqual(savedExtras.buttonAction, OnboardingActions.forwardOneCard.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.primaryButtonTap)
     }
 
-    func testSendOnboardingPrimaryTap_UpgradeWelcomeCard() throws {
+    func testSendOnboardingPrimaryTap_UpgradeWelcomeCard() {
         let isPrimaryButton = true
         let subject = createTelemetryUtility(for: .upgrade)
-        let event = GleanMetrics.Onboarding.primaryButtonTap
-        typealias EventExtrasType = GleanMetrics.Onboarding.PrimaryButtonTapExtra
 
         subject.sendButtonActionTelemetry(from: CardNames.updateWelcome.rawValue,
                                           with: .setDefaultBrowser,
                                           and: isPrimaryButton)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.updateWelcome.rawValue)
-        XCTAssertEqual(savedExtras.buttonAction, OnboardingActions.setDefaultBrowser.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.primaryButtonTap)
     }
 
     // MARK: - Secondary tap
-    func testSendOnboardingSecondaryTap_SyncCard() throws {
+    func testSendOnboardingSecondaryTap_SyncCard() {
         let isPrimaryButton = false
         let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.secondaryButtonTap
-        typealias EventExtrasType = GleanMetrics.Onboarding.SecondaryButtonTapExtra
 
         subject.sendButtonActionTelemetry(from: CardNames.sync.rawValue,
                                           with: .forwardOneCard,
                                           and: isPrimaryButton)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.sync.rawValue)
-        XCTAssertEqual(savedExtras.buttonAction, OnboardingActions.forwardOneCard.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.secondaryButtonTap)
     }
 
-    func testSendOnboardingSecondaryTap_UpdateSyncCard() throws {
+    func testSendOnboardingSecondaryTap_UpdateSyncCard() {
         let isPrimaryButton = false
         let subject = createTelemetryUtility(for: .upgrade)
-        let event = GleanMetrics.Onboarding.secondaryButtonTap
-        typealias EventExtrasType = GleanMetrics.Onboarding.SecondaryButtonTapExtra
 
         subject.sendButtonActionTelemetry(from: CardNames.updateSync.rawValue,
                                           with: .forwardOneCard,
                                           and: isPrimaryButton)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.updateSync.rawValue)
-        XCTAssertEqual(savedExtras.buttonAction, OnboardingActions.forwardOneCard.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.secondaryButtonTap)
     }
 
     // MARK: - Multiple Choice Buttons
-    func testSendOnboardingMultipleChoiceButton() throws {
+    func testSendOnboardingMultipleChoiceButton() {
         let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.multipleChoiceButtonTap
-        typealias EventExtrasType = GleanMetrics.Onboarding.MultipleChoiceButtonTapExtra
 
         subject.sendMultipleChoiceButtonActionTelemetry(from: CardNames.welcome.rawValue,
                                                         with: .themeDark)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.welcome.rawValue)
-        XCTAssertEqual(savedExtras.buttonAction, OnboardingMultipleChoiceAction.themeDark.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.multipleChoiceButtonTap)
     }
 
     // MARK: - Close
-    func testSendOnboardingClose_NotificationsCard() throws {
+    func testSendOnboardingClose_NotificationsCard() {
         let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.closeTap
-        typealias EventExtrasType = GleanMetrics.Onboarding.CloseTapExtra
 
         subject.sendDismissOnboardingTelemetry(from: CardNames.notifications.rawValue)
 
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.notifications.rawValue)
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
-    }
-
-    // MARK: - Modern Onboarding Tests
-    func testSendModernOnboardingCardView_WelcomeCard_Success() throws {
-        let subject = createModernTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.cardView
-        typealias EventExtrasType = GleanMetrics.Onboarding.CardViewExtra
-
-        subject.sendCardViewTelemetry(from: CardNames.welcome.rawValue)
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.welcome.rawValue)
-        XCTAssertEqual(savedExtras.onboardingVariant, "modern")
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
-    }
-
-    func testSendModernOnboardingPrimaryButtonTap() throws {
-        let subject = createModernTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.Onboarding.primaryButtonTap
-        typealias EventExtrasType = GleanMetrics.Onboarding.PrimaryButtonTapExtra
-
-        subject.sendButtonActionTelemetry(from: CardNames.welcome.rawValue,
-                                          with: .forwardOneCard,
-                                          and: true)
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.cardType, CardNames.welcome.rawValue)
-        XCTAssertEqual(savedExtras.buttonAction, OnboardingActions.forwardOneCard.rawValue)
-        XCTAssertEqual(savedExtras.onboardingVariant, "modern")
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
-    }
-
-    func testOnboardingVariant_Modern_IsSetCorrectly() throws {
-        let subject = createModernTelemetryUtility(for: .freshInstall)
-        typealias EventExtrasType = GleanMetrics.Onboarding.CardViewExtra
-
-        subject.sendCardViewTelemetry(from: CardNames.welcome.rawValue)
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        XCTAssertEqual(savedExtras.onboardingVariant, "modern")
-    }
-
-    func testOnboardingVariant_Japan_IsSetCorrectly() throws {
-        let subject = createModernTelemetryUtility(for: .freshInstall, variant: .japan)
-        typealias EventExtrasType = GleanMetrics.Onboarding.CardViewExtra
-
-        subject.sendCardViewTelemetry(from: CardNames.welcome.rawValue)
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        XCTAssertEqual(savedExtras.onboardingVariant, "japan")
-    }
-
-    // MARK: - Go To Settings Button Tapped Telemetry
-    func testSendGoToSettingsButtonTappedTelemetry_RecordsEvent() throws {
-        let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.OnboardingDefaultBrowserSheet.goToSettingsButtonTapped
-        typealias EventExtrasType = GleanMetrics.OnboardingDefaultBrowserSheet.GoToSettingsButtonTappedExtra
-
-        subject.sendGoToSettingsButtonTappedTelemetry()
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.onboardingVariant, "legacy")
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
-    }
-
-    func testSendGoToSettingsButtonTappedTelemetry_MultipleCalls_RecordsMultipleEvents() throws {
-        let subject = createTelemetryUtility(for: .freshInstall)
-
-        subject.sendGoToSettingsButtonTappedTelemetry()
-        subject.sendGoToSettingsButtonTappedTelemetry()
-        subject.sendGoToSettingsButtonTappedTelemetry()
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 3)
-        XCTAssertEqual(mockGleanWrapper.savedExtras.count, 3)
-    }
-
-    func testSendGoToSettingsButtonTappedTelemetry_WorksWithLegacyOnboarding() throws {
-        let subject = createTelemetryUtility(for: .upgrade)
-        typealias EventExtrasType = GleanMetrics.OnboardingDefaultBrowserSheet.GoToSettingsButtonTappedExtra
-
-        subject.sendGoToSettingsButtonTappedTelemetry()
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        XCTAssertEqual(savedExtras.onboardingVariant, "legacy")
-    }
-
-    func testSendGoToSettingsButtonTappedTelemetry_WorksWithModernOnboarding() throws {
-        let subject = createModernTelemetryUtility(for: .freshInstall)
-        typealias EventExtrasType = GleanMetrics.OnboardingDefaultBrowserSheet.GoToSettingsButtonTappedExtra
-
-        subject.sendGoToSettingsButtonTappedTelemetry()
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        XCTAssertEqual(savedExtras.onboardingVariant, "modern")
-    }
-
-    // MARK: - Dismiss Button Tapped Telemetry
-    func testSendDismissButtonTappedTelemetry_RecordsEvent() throws {
-        let subject = createTelemetryUtility(for: .freshInstall)
-        let event = GleanMetrics.OnboardingDefaultBrowserSheet.dismissButtonTapped
-        typealias EventExtrasType = GleanMetrics.OnboardingDefaultBrowserSheet.DismissButtonTappedExtra
-
-        subject.sendDismissButtonTappedTelemetry()
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<EventExtrasType>)
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.onboardingVariant, "legacy")
-        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
-    }
-
-    func testSendDismissButtonTappedTelemetry_MultipleCalls_RecordsMultipleEvents() throws {
-        let subject = createTelemetryUtility(for: .freshInstall)
-
-        subject.sendDismissButtonTappedTelemetry()
-        subject.sendDismissButtonTappedTelemetry()
-        subject.sendDismissButtonTappedTelemetry()
-
-        XCTAssertEqual(mockGleanWrapper.recordEventCalled, 3)
-        XCTAssertEqual(mockGleanWrapper.savedExtras.count, 3)
-    }
-
-    func testSendDismissButtonTappedTelemetry_WorksWithLegacyOnboarding() throws {
-        let subject = createTelemetryUtility(for: .upgrade)
-        typealias EventExtrasType = GleanMetrics.OnboardingDefaultBrowserSheet.DismissButtonTappedExtra
-
-        subject.sendDismissButtonTappedTelemetry()
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        XCTAssertEqual(savedExtras.onboardingVariant, "legacy")
-    }
-
-    func testSendDismissButtonTappedTelemetry_WorksWithModernOnboarding() throws {
-        let subject = createModernTelemetryUtility(for: .freshInstall)
-        typealias EventExtrasType = GleanMetrics.OnboardingDefaultBrowserSheet.DismissButtonTappedExtra
-
-        subject.sendDismissButtonTappedTelemetry()
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        XCTAssertEqual(savedExtras.onboardingVariant, "modern")
-    }
-
-    func testSendDismissButtonTappedTelemetry_WorksWithJapanOnboarding() throws {
-        let subject = createModernTelemetryUtility(for: .freshInstall, variant: .japan)
-        typealias EventExtrasType = GleanMetrics.OnboardingDefaultBrowserSheet.DismissButtonTappedExtra
-
-        subject.sendDismissButtonTappedTelemetry()
-
-        let savedExtras = try XCTUnwrap(mockGleanWrapper.savedExtras.first as? EventExtrasType)
-        XCTAssertEqual(savedExtras.onboardingVariant, "japan")
+        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.closeTap)
     }
 
     // MARK: Private
     private func createTelemetryUtility(
         for onboardingType: OnboardingType,
-        file: StaticString = #filePath,
+        file: StaticString = #file,
         line: UInt = #line
     ) -> OnboardingTelemetryUtility {
         let nimbusConfigUtility = NimbusOnboardingTestingConfigUtility()
         nimbusConfigUtility.setupNimbus(withOrder: NimbusOnboardingTestingConfigUtility.CardOrder.allCards)
         let model = NimbusOnboardingFeatureLayer().getOnboardingModel(for: onboardingType)
 
-        let telemetryUtility = OnboardingTelemetryUtility(
-            with: model,
-            gleanWrapper: mockGleanWrapper
-        )
-        trackForMemoryLeaks(telemetryUtility, file: file, line: line)
-
-        return telemetryUtility
-    }
-
-    private func createModernTelemetryUtility(
-        for onboardingType: OnboardingType,
-        variant: OnboardingVariant = .modern,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> OnboardingTelemetryUtility {
-        let nimbusConfigUtility = NimbusOnboardingTestingConfigUtility()
-        let cardOrder: [NimbusOnboardingTestingConfigUtility.CardOrder] = {
-            switch onboardingType {
-            case .freshInstall:
-                return [.welcome, .notifications, .sync]
-            case .upgrade:
-                return [.updateWelcome, .updateSync]
-            }
-        }()
-        nimbusConfigUtility.setupNimbus(withOrder: cardOrder, uiVariant: variant)
-        let layer = NimbusOnboardingKitFeatureLayer(
-            onboardingVariant: variant,
-            isDefaultBrowser: false,
-            isIpad: false
-        )
-        let model = layer.getOnboardingModel(for: onboardingType)
-
-        let telemetryUtility = OnboardingTelemetryUtility(
-            with: model,
-            onboardingVariant: variant,
-            gleanWrapper: mockGleanWrapper
-        )
+        let telemetryUtility = OnboardingTelemetryUtility(with: model)
         trackForMemoryLeaks(telemetryUtility, file: file, line: line)
 
         return telemetryUtility

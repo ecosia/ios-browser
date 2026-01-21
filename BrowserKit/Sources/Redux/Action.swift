@@ -6,12 +6,15 @@ import Foundation
 import Common
 
 /// Used to describe an action that can be dispatched by the redux store
-public protocol Action: Sendable, CustomDebugStringConvertible {
-    var windowUUID: WindowUUID { get }
-    var actionType: ActionType { get }
-}
+open class Action: CustomDebugStringConvertible {
+    public var windowUUID: WindowUUID
+    public var actionType: ActionType
 
-extension Action {
+    public init(windowUUID: WindowUUID, actionType: ActionType) {
+        self.windowUUID = windowUUID
+        self.actionType = actionType
+    }
+
     func displayString() -> String {
         let className = String(describing: Self.self)
         return "\(className) \(actionType)"
@@ -19,8 +22,9 @@ extension Action {
 
     public var debugDescription: String {
         let className = String(describing: type(of: self))
-        return "<\(className)> Type: \(actionType) Window: \(windowUUID.uuidString.prefix(4))"
+        let memAddr = Unmanaged.passUnretained(self).toOpaque()
+        return "<\(className): \(memAddr)> Type: \(actionType) Window: \(windowUUID.uuidString.prefix(4))"
     }
 }
 
-public protocol ActionType: Sendable {}
+public protocol ActionType {}

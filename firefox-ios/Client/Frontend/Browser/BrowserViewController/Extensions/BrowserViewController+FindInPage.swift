@@ -21,7 +21,6 @@ extension BrowserViewController {
         guard let webView = tabManager.selectedTab?.webView else { return }
 
         if isVisible {
-            webView.scrollView.keyboardDismissMode = .none
             webView.isFindInteractionEnabled = true
             webView.findInteraction?.searchText = searchText ?? ""
             webView.findInteraction?.presentFindNavigator(showingReplace: false)
@@ -42,7 +41,10 @@ extension BrowserViewController {
     }
 
     private func setupFindInPage() {
+        /* Ecosia: Custom UI for FindInPageBar
         let findInPageBar = FindInPageBar()
+         */
+        let findInPageBar = EcosiaFindInPageBar()
         self.findInPageBar = findInPageBar
         findInPageBar.delegate = self
 
@@ -66,7 +68,10 @@ extension BrowserViewController {
         findInPageBar.layoutIfNeeded()
     }
 
+    /* Ecosia: Custom UI for FindInPageBar
     private func removeFindInPage(_ findInPageBar: FindInPageBar, tab: Tab? = nil) {
+     */
+    private func removeFindInPage(_ findInPageBar: EcosiaFindInPageBar, tab: Tab? = nil) {
         findInPageBar.endEditing(true)
         let tab = tab ?? tabManager.selectedTab
         guard let webView = tab?.webView else { return }
@@ -77,6 +82,7 @@ extension BrowserViewController {
     }
 }
 
+/* Ecosia: Custom UI for FindInPageBar
 extension BrowserViewController: FindInPageBarDelegate, FindInPageHelperDelegate {
     func findInPage(_ findInPage: FindInPageBar, didTextChange text: String) {
         find(text, function: "find")
@@ -93,6 +99,42 @@ extension BrowserViewController: FindInPageBarDelegate, FindInPageHelperDelegate
     }
 
     func findInPageDidPressClose(_ findInPage: FindInPageBar) {
+        updateFindInPageVisibility(isVisible: false)
+    }
+
+    fileprivate func find(_ text: String, function: String) {
+        guard let webView = tabManager.selectedTab?.webView else { return }
+        let escaped = text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        webView.evaluateJavascriptInDefaultContentWorld("__firefox__.\(function)(\"\(escaped)\")")
+    }
+
+    func findInPageHelper(_ findInPageHelper: FindInPageHelper, didUpdateCurrentResult currentResult: Int) {
+        findInPageBar?.currentResult = currentResult
+    }
+
+    func findInPageHelper(_ findInPageHelper: FindInPageHelper, didUpdateTotalResults totalResults: Int) {
+        findInPageBar?.totalResults = totalResults
+    }
+}
+*/
+
+extension BrowserViewController: EcosiaFindInPageBarDelegate, FindInPageHelperDelegate {
+
+    func findInPage(_ findInPage: EcosiaFindInPageBar, didTextChange text: String) {
+        find(text, function: "find")
+    }
+
+    func findInPage(_ findInPage: EcosiaFindInPageBar, didFindNextWithText text: String) {
+        findInPageBar?.endEditing(true)
+        find(text, function: "findNext")
+    }
+
+    func findInPage(_ findInPage: EcosiaFindInPageBar, didFindPreviousWithText text: String) {
+        findInPageBar?.endEditing(true)
+        find(text, function: "findPrevious")
+    }
+
+    func findInPageDidPressClose(_ findInPage: EcosiaFindInPageBar) {
         updateFindInPageVisibility(isVisible: false)
     }
 

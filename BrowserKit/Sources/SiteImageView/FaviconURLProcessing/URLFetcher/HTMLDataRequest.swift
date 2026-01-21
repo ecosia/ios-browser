@@ -4,7 +4,7 @@
 
 import Foundation
 
-protocol HTMLDataRequest: Sendable {
+protocol HTMLDataRequest {
     func fetchDataForURL(_ url: URL) async throws -> Data
 }
 
@@ -30,11 +30,16 @@ struct DefaultHTMLDataRequest: HTMLDataRequest {
 
         let urlSession = URLSession(configuration: configuration)
 
-        do {
-            let (data, _) = try await urlSession.data(from: url)
-            return data
-        } catch {
-            throw SiteImageError.invalidHTML
+        return try await withCheckedThrowingContinuation { continuation in
+            urlSession.dataTask(with: url) { data, _, error in
+                guard let data = data,
+                      error == nil
+                else {
+                    continuation.resume(throwing: SiteImageError.invalidHTML)
+                    return
+                }
+                continuation.resume(returning: data)
+            }.resume()
         }
     }
 }

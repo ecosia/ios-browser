@@ -11,10 +11,6 @@ class DefaultRouter: NSObject, Router {
         return navigationController.viewControllers.first
     }
 
-    var isPresenting: Bool {
-        return navigationController.presentedViewController != nil
-    }
-
     var navigationController: NavigationController
 
     init(navigationController: NavigationController) {
@@ -30,19 +26,6 @@ class DefaultRouter: NSObject, Router {
         }
 
         viewController.presentationController?.delegate = self
-        navigationController.present(viewController, animated: animated, completion: nil)
-    }
-
-    func present(_ viewController: UIViewController,
-                 animated: Bool,
-                 customTransition: UIViewControllerTransitioningDelegate?,
-                 presentationStyle: UIModalPresentationStyle = .fullScreen) {
-        viewController.modalPresentationStyle = presentationStyle
-
-        if let transition = customTransition {
-            viewController.transitioningDelegate = transition
-        }
-
         navigationController.present(viewController, animated: animated, completion: nil)
     }
 
@@ -66,19 +49,6 @@ class DefaultRouter: NSObject, Router {
         if let controller = navigationController.popViewController(animated: animated) {
             runCompletion(for: controller)
         }
-    }
-
-    func popToViewController(_ viewController: UIViewController,
-                             reason: DismissalReason = .user,
-                             animated: Bool = true) -> [UIViewController]? {
-        if let controllers = navigationController.popToViewController(viewController, animated: animated) {
-            for controller in controllers {
-                (controller as? DismissalNotifiable)?.willBeDismissed(reason: reason)
-                runCompletion(for: controller)
-            }
-            return controllers
-        }
-        return nil
     }
 
     func setRootViewController(_ viewController: UIViewController, hideBar: Bool = false, animated: Bool = false) {

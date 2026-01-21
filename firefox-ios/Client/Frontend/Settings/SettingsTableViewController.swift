@@ -6,6 +6,7 @@ import Account
 import Common
 import Shared
 import UIKit
+import Ecosia
 
 struct SettingsUX {
     static let TableViewHeaderFooterHeight = CGFloat(44)
@@ -27,25 +28,12 @@ extension UILabel {
 }
 
 // A base setting class that shows a title. You probably want to subclass this, not use it directly.
-@MainActor
 class Setting: NSObject {
-    struct UX {
-        static let horizontalMargin: CGFloat = 15
-        static var cellLayoutMarginsForCurrentOS: UIEdgeInsets {
-            guard #available(iOS 26.0, *) else { return .zero }
-            return UIEdgeInsets(top: 0, left: horizontalMargin, bottom: 0, right: 0)
-        }
-        static var cellSeparatorInsetForCurrentOS: UIEdgeInsets {
-            guard #available(iOS 26.0, *) else { return .zero }
-            return UIEdgeInsets(top: 0, left: horizontalMargin, bottom: 0, right: horizontalMargin)
-        }
-    }
-
     private var _title: NSAttributedString?
     private var _footerTitle: NSAttributedString?
     private var _cellHeight: CGFloat?
     private var _image: UIImage?
-    var theme: Theme?
+    var theme: Theme!
 
     weak var delegate: SettingsDelegate?
 
@@ -113,16 +101,34 @@ class Setting: NSObject {
         cell.selectionStyle = enabled ? .default : .none
         cell.accessibilityIdentifier = accessibilityIdentifier
         cell.imageView?.image = _image
+
+        // Ecosia: Update identifier
+        if let accessibilityIdentifier {
+            cell.textLabel?.accessibilityIdentifier = "\(accessibilityIdentifier)_title"
+            cell.detailTextLabel?.accessibilityIdentifier = "\(accessibilityIdentifier)_detail"
+            cell.imageView?.accessibilityIdentifier = "\(accessibilityIdentifier)_image"
+        }
+        if let title = title?.string {
+            if let detailText = cell.detailTextLabel?.text {
+                cell.accessibilityLabel = "\(title), \(detailText)"
+            } else if let status = status?.string {
+                cell.accessibilityLabel = "\(title), \(status)"
+            } else {
+                cell.accessibilityLabel = title
+            }
+        }
+
         cell.accessibilityTraits = UIAccessibilityTraits.button
         cell.indentationWidth = 0
-        cell.layoutMargins = UX.cellLayoutMarginsForCurrentOS
-        cell.separatorInset = UX.cellSeparatorInsetForCurrentOS
+        cell.layoutMargins = .zero
         cell.isUserInteractionEnabled = enabled
 
         backgroundView.backgroundColor = theme.colors.layer5Hover
         backgroundView.bounds = cell.bounds
         cell.selectedBackgroundView = backgroundView
 
+        // So that the separator line goes all the way to the left edge.
+        cell.separatorInset = .zero
         if let cell = cell as? ThemedTableViewCell {
             cell.applyTheme(theme: theme)
         }
@@ -188,10 +194,16 @@ class PaddedSwitch: UIView {
         static let padding: CGFloat = 8
     }
 
+    /* Ecosia: Use themed Switch
     let switchView: UISwitch
+     */
+    let switchView: EcosiaThemedSwitch
 
     init() {
+        /* Ecosia: Use themed Switch
         self.switchView = UISwitch()
+         */
+        self.switchView = EcosiaThemedSwitch()
         super.init(frame: .zero)
 
         addSubview(switchView)
@@ -236,6 +248,8 @@ class BoolSetting: Setting, FeatureFlaggable {
     init(
         prefs: Prefs?,
         prefKey: String? = nil,
+        // Ecosia: Add accessibility identifier
+        accessibilityIdentifier: String? = nil,
         defaultValue: Bool?,
         attributedTitleText: NSAttributedString,
         attributedStatusText: NSAttributedString? = nil,
@@ -249,12 +263,16 @@ class BoolSetting: Setting, FeatureFlaggable {
         self.statusText = attributedStatusText
         self.featureFlagName = featureFlagName
         super.init(title: attributedTitleText)
+        // Ecosia: Add accessibility identifier
+        self.accessibilityIdentifier = accessibilityIdentifier
     }
 
     convenience init(
         prefs: Prefs,
         theme: Theme,
         prefKey: String? = nil,
+        // Ecosia: Add accessibility identifier
+        accessibilityIdentifier: String? = nil,
         defaultValue: Bool,
         titleText: String,
         statusText: String? = nil,
@@ -269,6 +287,8 @@ class BoolSetting: Setting, FeatureFlaggable {
         self.init(
             prefs: prefs,
             prefKey: prefKey,
+            // Ecosia: Add accessibility identifier
+            accessibilityIdentifier: accessibilityIdentifier,
             defaultValue: defaultValue,
             attributedTitleText: NSAttributedString(
                 string: titleText,
@@ -317,7 +337,12 @@ class BoolSetting: Setting, FeatureFlaggable {
 
     public lazy var control: PaddedSwitch = {
         let control = PaddedSwitch()
+        /* Ecosia: Update identifier
         control.switchView.accessibilityIdentifier = prefKey
+        */
+        if let accessibilityIdentifier {
+            control.accessibilityIdentifier = "\(accessibilityIdentifier)_switch"
+        }
         control.switchView.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         return control
     }()
@@ -329,6 +354,9 @@ class BoolSetting: Setting, FeatureFlaggable {
             onTintColor: theme.colors.actionPrimary,
             isEnabled: enabled
         )
+
+        // Ecosia: Apply Switch theme when cell is configured (triggered on theme change)
+        control.switchView.applyTheme(theme: theme)
 
         displayBool(control.switchView)
         if let title = title {
@@ -352,15 +380,17 @@ class BoolSetting: Setting, FeatureFlaggable {
     func switchValueChanged(_ control: UISwitch) {
         writeBool(control)
         settingDidChange?(control.isOn)
-
-        if let settingChanged = featureFlagName?.rawValue ?? prefKey {
-            SettingsTelemetry().changedSetting(
-                settingChanged,
-                to: "\(control.isOn)",
-                from: "\(!control.isOn)"
-            )
+        if let featureFlagName = featureFlagName {
+            TelemetryWrapper.recordEvent(category: .action,
+                                         method: .change,
+                                         object: .setting,
+                                         extras: ["pref": featureFlagName.rawValue as Any,
+                                                  "to": control.isOn])
         } else {
-            assertionFailure("We should be able to get a unique key to describe the changed setting")
+            TelemetryWrapper.recordEvent(category: .action,
+                                         method: .change,
+                                         object: .setting,
+                                         extras: ["pref": prefKey as Any, "to": control.isOn])
         }
     }
 
@@ -464,7 +494,7 @@ class StringPrefSetting: StringSetting {
         placeholder: String,
         accessibilityIdentifier: String,
         settingIsValid isValueValid: ((String?) -> Bool)? = nil,
-        settingDidChange: (@MainActor (String?) -> Void)? = nil
+        settingDidChange: ((String?) -> Void)? = nil
     ) {
         super.init(defaultValue: defaultValue,
                    placeholder: placeholder,
@@ -485,7 +515,7 @@ class WebPageSetting: StringPrefSetting {
         placeholder: String,
         accessibilityIdentifier: String,
         isChecked: @escaping () -> Bool = { return false },
-        settingDidChange: (@MainActor (String?) -> Void)? = nil
+        settingDidChange: ((String?) -> Void)? = nil
     ) {
         self.isChecked = isChecked
         super.init(prefs: prefs,
@@ -513,12 +543,11 @@ class WebPageSetting: StringPrefSetting {
         alignTextFieldToNatural()
     }
 
-    @MainActor
     static func isURLOrEmpty(_ string: String?) -> Bool {
         guard let string = string, !string.isEmpty else {
             return true
         }
-        return URL(string: string)?.isWebPage() ?? false
+        return URL(string: string, invalidCharacters: false)?.isWebPage() ?? false
     }
 }
 
@@ -539,7 +568,7 @@ class StringSetting: Setting, UITextFieldDelegate {
 
     private let defaultValue: String?
     private let placeholder: String
-    private let settingDidChange: (@MainActor (String?) -> Void)?
+    private let settingDidChange: ((String?) -> Void)?
     private let settingIsValid: ((String?) -> Bool)?
     private let persister: SettingValuePersister
 
@@ -551,7 +580,7 @@ class StringSetting: Setting, UITextFieldDelegate {
         accessibilityIdentifier: String,
         persister: SettingValuePersister,
         settingIsValid isValueValid: ((String?) -> Bool)? = nil,
-        settingDidChange: (@MainActor (String?) -> Void)? = nil
+        settingDidChange: ((String?) -> Void)? = nil
     ) {
         self.defaultValue = defaultValue
         self.settingDidChange = settingDidChange
@@ -643,15 +672,17 @@ class StringSetting: Setting, UITextFieldDelegate {
 
     @objc
     func textFieldDidChange(_ textField: UITextField) {
-        let color = isValid(textField.text) ? theme?.colors.textPrimary : theme?.colors.textCritical
+        let color = isValid(textField.text) ? theme.colors.textPrimary : theme.colors.textCritical
         textField.textColor = color
     }
 
+    @objc
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return isValid(textField.text)
     }
 
+    @objc
     func textFieldDidEndEditing(_ textField: UITextField) {
         let text = textField.text
         if !isValid(text) {
@@ -773,12 +804,77 @@ class CheckmarkSetting: Setting {
     }
 }
 
+/// A helper class for a setting backed by a UITextField.
+/// This takes an optional isEnabled and mandatory onClick callback
+/// isEnabled is called on each tableview.reloadData. If it returns
+/// false then the 'button' appears disabled.
+class ButtonSetting: Setting {
+    private struct UX {
+        static let padding: CGFloat = 8
+        static let textLabelHeight: CGFloat = 44
+    }
+
+    let onButtonClick: (UINavigationController?) -> Void
+    let destructive: Bool
+    let isEnabled: (() -> Bool)?
+
+    init(title: NSAttributedString?,
+         destructive: Bool = false,
+         accessibilityIdentifier: String,
+         isEnabled: (() -> Bool)? = nil,
+         onClick: @escaping (UINavigationController?) -> Void) {
+        self.onButtonClick = onClick
+        self.destructive = destructive
+        self.isEnabled = isEnabled
+        super.init(title: title)
+        self.accessibilityIdentifier = accessibilityIdentifier
+    }
+
+    override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
+        super.onConfigureCell(cell, theme: theme)
+
+        if isEnabled?() ?? true {
+            cell.textLabel?.textColor = destructive ? theme.colors.textCritical : theme.colors.actionPrimary
+        } else {
+            cell.textLabel?.textColor = theme.colors.textDisabled
+        }
+        if let textLabel = cell.textLabel {
+            NSLayoutConstraint.activate(
+                [
+                    textLabel.heightAnchor.constraint(equalToConstant: UX.textLabelHeight),
+                    textLabel.trailingAnchor.constraint(
+                        equalTo: cell.contentView.trailingAnchor,
+                        constant: -UX.padding
+                    ),
+                    textLabel.leadingAnchor.constraint(
+                        equalTo: cell.contentView.leadingAnchor,
+                        constant: UX.padding
+                    )
+                ]
+            )
+            textLabel.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        cell.textLabel?.textAlignment = .center
+        cell.accessibilityTraits = UIAccessibilityTraits.button
+        cell.selectionStyle = .none
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        // Force editing to end for any focused text fields so they can finish up validation first.
+        navigationController?.view.endEditing(true)
+        if isEnabled?() ?? true {
+            onButtonClick(navigationController)
+        }
+    }
+}
+
 // A helper class for prefs that deal with sync. Handles reloading the tableView data if changes to
 // the fxAccount happen.
 class AccountSetting: Setting {
     unowned var settings: SettingsTableViewController
 
-    var profile: Profile? {
+    var profile: Profile {
         return settings.profile
     }
 
@@ -791,7 +887,7 @@ class AccountSetting: Setting {
 
     override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
         super.onConfigureCell(cell, theme: theme)
-        if settings.profile?.rustFxA.userProfile != nil {
+        if settings.profile.rustFxA.userProfile != nil {
             cell.selectionStyle = .none
         }
     }
@@ -800,29 +896,23 @@ class AccountSetting: Setting {
 }
 
 class WithAccountSetting: AccountSetting {
-    override var hidden: Bool {
-        guard let profile else { return true }
-        return !profile.hasAccount()
-    }
+    override var hidden: Bool { return !profile.hasAccount() }
 }
 
 class WithoutAccountSetting: AccountSetting {
-    override var hidden: Bool {
-        guard let profile else { return false }
-        return profile.hasAccount()
-    }
+    override var hidden: Bool { return profile.hasAccount() }
 }
 
+@objc
 protocol SettingsDelegate: AnyObject {
-    @MainActor
     func settingsOpenURLInNewTab(_ url: URL)
-
-    @MainActor
     func didFinish()
+    // Ecosia: Reload after ntp customization changes
+    func reloadHomepage()
 }
 
 // The base settings view controller.
-class SettingsTableViewController: ThemedTableViewController, Notifiable {
+class SettingsTableViewController: ThemedTableViewController {
     private struct UX {
         static let tableViewFooterHeight: CGFloat = 30
         static let estimatedRowHeight: CGFloat = 44
@@ -833,8 +923,8 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
 
     weak var settingsDelegate: SettingsDelegate?
 
-    var profile: Profile?
-    var tabManager: TabManager?
+    var profile: Profile!
+    var tabManager: TabManager!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -863,14 +953,23 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
         super.viewWillAppear(animated)
 
         settings = generateSettings()
-        startObservingNotifications(
-            withNotificationCenter: NotificationCenter.default,
-            forObserver: self,
-            observing: [
-                .ProfileDidStartSyncing,
-                .ProfileDidFinishSyncing,
-                .FirefoxAccountChanged
-            ]
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(syncDidChangeState),
+            name: .ProfileDidStartSyncing,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(syncDidChangeState),
+            name: .ProfileDidFinishSyncing,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(firefoxAccountDidChange),
+            name: .FirefoxAccountChanged,
+            object: nil
         )
 
         applyTheme()
@@ -905,10 +1004,14 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
         return []
     }
 
+    @objc
     private func syncDidChangeState() {
-        self.tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 
+    @objc
     private func refresh() {
         // Through-out, be aware that modifying the control while a refresh is in progress is /not/ supported
         // and will likely crash the app.
@@ -916,6 +1019,7 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
         // TODO [rustfxa] listen to notification and refresh profile
     }
 
+    @objc
     func firefoxAccountDidChange() {
         self.tableView.reloadData()
     }
@@ -957,20 +1061,12 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
     }
 
     private func dequeueCellFor(indexPath: IndexPath, setting: Setting) -> ThemedTableViewCell {
-        if setting is DisconnectSetting {
+        if setting as? DisconnectSetting != nil {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: ThemedCenteredTableViewCell.cellIdentifier,
                 for: indexPath
             ) as? ThemedCenteredTableViewCell else {
                 return ThemedCenteredTableViewCell()
-            }
-            return cell
-        } else if setting is SendDataSetting {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: ThemedLearnMoreTableViewCell.cellIdentifier,
-                for: indexPath
-            ) as? ThemedLearnMoreTableViewCell else {
-                return ThemedLearnMoreTableViewCell()
             }
             return cell
         } else if setting.style == .subtitle {
@@ -1068,23 +1164,6 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
         let section = settings[indexPath.section]
         if let setting = section[indexPath.row] {
             setting.accessoryButtonTapped()
-        }
-    }
-
-    // MARK: Notifiable
-
-    func handleNotifications(_ notification: Notification) {
-        switch notification.name {
-        case .ProfileDidStartSyncing, .ProfileDidFinishSyncing:
-            ensureMainThread {
-                self.syncDidChangeState()
-            }
-        case .FirefoxAccountChanged:
-            ensureMainThread {
-                self.firefoxAccountDidChange()
-            }
-        default:
-            break
         }
     }
 }

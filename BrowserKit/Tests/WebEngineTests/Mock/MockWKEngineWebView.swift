@@ -6,25 +6,19 @@ import UIKit
 import WebKit
 @testable import WebEngine
 
-/// Necessary since some methods of `WKWebView` cannot be overriden. An abstraction need to be used to be able
-/// to mock all methods.
-@MainActor
-@available(iOS 16.0, *)
 class MockWKEngineWebView: UIView, WKEngineWebView {
-    weak var delegate: WKEngineWebViewDelegate?
-    weak var uiDelegate: WKUIDelegate?
-    weak var navigationDelegate: WKNavigationDelegate?
+    var delegate: WKEngineWebViewDelegate?
+    var uiDelegate: WKUIDelegate?
+    var navigationDelegate: WKNavigationDelegate?
 
     var engineConfiguration: WKEngineConfiguration
     var interactionState: Any?
-    var engineScrollView: WKScrollView? = MockEngineScrollView()
+    var engineScrollView: WKScrollView! = MockEngineScrollView()
     var url: URL?
     var title: String?
     var hasOnlySecureContent = false
     var allowsBackForwardNavigationGestures = true
     var allowsLinkPreview = true
-    var isFindInteractionEnabled = false
-    var findInteraction: UIFindInteraction?
     var isInspectable = true
 
     var estimatedProgress: Double = 0
@@ -35,28 +29,24 @@ class MockWKEngineWebView: UIView, WKEngineWebView {
     var loadCalled = 0
     var loadFileURLCalled = 0
     var reloadFromOriginCalled = 0
+    var replaceLocationCalled = 0
     var stopLoadingCalled = 0
     var goBackCalled = 0
     var goForwardCalled = 0
-    var goToCalled = 0
-    var getBackListCalled = 0
-    var getForwardListCalled = 0
-    var getCurrentBackForwardItemCalled = 0
     var removeAllUserScriptsCalled = 0
     var removeFromSuperviewCalled = 0
-    var closeCalled = 0
+    var addObserverCalled = 0
+    var removeObserverCalled = 0
     var evaluateJavaScriptCalled = 0
     var savedJavaScript: String?
     var javascriptResult: (Result<Any, Error>)?
-    nonisolated(unsafe) var pageZoom: CGFloat = 1.0
-    var viewPrintFormatterCalled = 0
+    var pageZoom: CGFloat = 1.0
 
     var loadFileReadAccessURL: URL?
 
     required init?(frame: CGRect,
-                   configurationProvider: WKEngineConfigurationProvider,
-                   parameters: WKWebViewParameters) {
-        self.engineConfiguration = configurationProvider.createConfiguration(parameters: parameters)
+                   configurationProvider: WKEngineConfigurationProvider) {
+        self.engineConfiguration = configurationProvider.createConfiguration()
         super.init(frame: frame)
     }
 
@@ -82,6 +72,11 @@ class MockWKEngineWebView: UIView, WKEngineWebView {
         return nil
     }
 
+    func replaceLocation(with url: URL) {
+        self.url = url
+        replaceLocationCalled += 1
+    }
+
     func stopLoading() {
         stopLoadingCalled += 1
     }
@@ -96,26 +91,6 @@ class MockWKEngineWebView: UIView, WKEngineWebView {
         return nil
     }
 
-    func go(to item: WKBackForwardListItem) -> WKNavigation? {
-        goToCalled += 1
-        return nil
-    }
-
-    func backList() -> [WKBackForwardListItem] {
-        getBackListCalled += 1
-        return []
-    }
-
-    func forwardList() -> [WKBackForwardListItem] {
-        getForwardListCalled += 1
-        return []
-    }
-
-    func currentBackForwardListItem() -> WKBackForwardListItem? {
-        getCurrentBackForwardItemCalled += 1
-        return nil
-    }
-
     func removeAllUserScripts() {
         removeAllUserScriptsCalled += 1
     }
@@ -124,19 +99,22 @@ class MockWKEngineWebView: UIView, WKEngineWebView {
         removeFromSuperviewCalled += 1
     }
 
-    func close() {
-        closeCalled += 1
+    override func addObserver(_ observer: NSObject,
+                              forKeyPath keyPath: String,
+                              options: NSKeyValueObservingOptions,
+                              context: UnsafeMutableRawPointer?) {
+        addObserverCalled += 1
     }
 
-    override func viewPrintFormatter() -> UIViewPrintFormatter {
-        viewPrintFormatterCalled += 1
-        return UIViewPrintFormatter()
+    override func removeObserver(_ observer: NSObject,
+                                 forKeyPath keyPath: String) {
+        removeObserverCalled += 1
     }
 
     func evaluateJavaScript(_ javaScript: String,
                             in frame: WKFrameInfo?,
                             in contentWorld: WKContentWorld,
-                            completionHandler: (@MainActor (Result<Any, Error>) -> Void)?) {
+                            completionHandler: ((Result<Any, Error>) -> Void)?) {
         evaluateJavaScriptCalled += 1
         savedJavaScript = javaScript
 

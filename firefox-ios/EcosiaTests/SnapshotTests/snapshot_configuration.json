@@ -1,0 +1,41 @@
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (3rd generation)",
+      "orientation": "portrait"
+    },
+    {
+      "name": "iPhone 16 Pro",
+      "orientation": "portrait",
+      "os": "18.6",
+      "isDefaultTestDevice": true
+    },
+    {
+      "name": "iPhone 16 Pro Max",
+      "orientation": "landscape"
+    },
+    {
+      "name": "iPad Pro 11-inch (M4)",
+      "orientation": "portrait"
+    }
+  ],
+  "testBundles": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "NTPComponentTests",
+          "devices": ["iPhone 16 Pro"],
+          "locales": ["all"]
+        }
+      ]
+    }
+  ]
+}

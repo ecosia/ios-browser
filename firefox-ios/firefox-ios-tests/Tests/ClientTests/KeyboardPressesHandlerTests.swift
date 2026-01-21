@@ -9,7 +9,6 @@ import Foundation
 import XCTest
 
 @available(iOS 13.4, *)
-@MainActor
 class KeyboardPressesHandlerTests: XCTestCase {
     func testDefaultsPressedAreFalse() {
         let handler = KeyboardPressesHandler()

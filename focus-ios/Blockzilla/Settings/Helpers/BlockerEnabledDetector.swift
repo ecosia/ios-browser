@@ -7,7 +7,7 @@ import SafariServices
 
 typealias EnabledCallback = (Bool) -> Void
 
-final class BlockerEnabledDetector {
+class BlockerEnabledDetector {
     func detectEnabled(_ parentView: UIView, callback: @escaping EnabledCallback) {
         SFContentBlockerManager.getStateOfContentBlocker(withIdentifier: AppInfo.contentBlockerBundleIdentifier) { state, error in
             DispatchQueue.main.async {

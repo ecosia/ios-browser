@@ -17,16 +17,16 @@ class FileAccessorTests: XCTestCase {
             .userDomainMask,
             true
         )[0] as NSString
-        files = MockFiles(rootPath: docPath.appendingPathComponent("filetest"))
+        files = FileAccessor(rootPath: docPath.appendingPathComponent("filetest"))
 
         testDir = try files.getAndEnsureDirectory()
         try files.removeFilesInDirectory()
     }
 
     override func tearDown() {
+        super.tearDown()
         files = nil
         testDir = nil
-        super.tearDown()
     }
 
     func testFileAccessor() {

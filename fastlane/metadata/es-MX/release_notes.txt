@@ -1,0 +1,1 @@
+Arreglamos algunos bugs y añadimos algunas mejoras de estabilidad.

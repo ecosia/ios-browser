@@ -62,56 +62,32 @@ final class CertificatesCell: UITableViewCell, ReusableCell, ThemeApplicable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(theme: Theme, sectionTitle: String, items: CertificateItems, isIssuerName: Bool = false) {
+    func configure(theme: Theme, sectionTitle: String, items: CertificateItems) {
         applyTheme(theme: theme)
         sectionLabel.text = sectionTitle
         for (key, value) in items {
-            let isUnderlined = isIssuerName && key == .Menu.EnhancedTrackingProtection.certificateCommonName
             let stackView = getSectionItemStackView()
-            let titleLabel = getItemLabel(theme: theme, with: key, isTitle: true, isUnderlined: isUnderlined)
+            let titleLabel = getItemLabel(theme: theme, with: key, isTitle: true)
             titleLabel.widthAnchor.constraint(equalToConstant: UX.sectionLabelWidth).isActive = true
             stackView.addArrangedSubview(titleLabel)
-            stackView.addArrangedSubview(getItemLabel(
-                theme: theme,
-                with: value,
-                isTitle: false,
-                isUnderlined: isUnderlined
-            ))
+            stackView.addArrangedSubview(getItemLabel(theme: theme, with: value, isTitle: false))
             allSectionItemsStackView.addArrangedSubview(stackView)
         }
     }
 
-    // MARK: Accessibility
-    func setupAccessibilityIdentifiers() {
-        typealias A11y = AccessibilityIdentifiers.EnhancedTrackingProtection.DetailsScreen
-        sectionLabel.accessibilityIdentifier = A11y.sectionLabel
-        allSectionItemsStackView.accessibilityIdentifier = A11y.allSectionItems
-    }
-
     func applyTheme(theme: Theme) {
-        backgroundColor = theme.colors.layer5
+        backgroundColor = .clear
         sectionLabel.textColor = theme.colors.textPrimary
     }
 
-    private func getItemLabel(theme: Theme, with title: String, isTitle: Bool, isUnderlined: Bool) -> UILabel {
-        let itemLabel: UILabel = .build()
-        itemLabel.font = FXFontStyles.Bold.headline.scaledFont()
-        itemLabel.textAlignment = isTitle ? .right : .left
-        itemLabel.numberOfLines = 0
-        itemLabel.lineBreakMode = .byWordWrapping
-        itemLabel.accessibilityIdentifier = AccessibilityIdentifiers.EnhancedTrackingProtection.DetailsScreen.itemLabel
-        if isUnderlined, !isTitle {
-            let attributedString = NSAttributedString(
-                string: title,
-                attributes: [
-                    .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]
-            )
-            itemLabel.textColor = theme.colors.textAccent
-            itemLabel.attributedText = attributedString
-        } else {
-            itemLabel.textColor = isTitle ? theme.colors.textSecondary : theme.colors.textPrimary
-            itemLabel.text = title
+    private func getItemLabel(theme: Theme, with title: String, isTitle: Bool) -> UILabel {
+        let itemLabel: UILabel = .build { label in
+            label.font = FXFontStyles.Bold.headline.scaledFont()
+            label.textColor = isTitle ? theme.colors.textSecondary : theme.colors.textPrimary
+            label.text = title
+            label.textAlignment = isTitle ? .right : .left
+            label.numberOfLines = 0
+            label.lineBreakMode = .byWordWrapping
         }
         return itemLabel
     }

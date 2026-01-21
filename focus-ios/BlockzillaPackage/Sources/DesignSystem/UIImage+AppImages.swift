@@ -12,7 +12,6 @@ public extension UIImage {
     }
 }
 
-// swiftlint:disable force_unwrapping
 public extension UIImage {
     // MARK: Tracking Protection
     static let trackingProtectionOff = UIImage(named: "tracking_protection_off")!
@@ -52,4 +51,3 @@ public extension UIImage {
     static let findPrevious = UIImage(named: "find_previous")!
     static let findNext = UIImage(named: "find_next")!
 }
-// swiftlint:enable force_unwrapping

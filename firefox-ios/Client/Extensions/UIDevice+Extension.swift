@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum Model: String {
+public enum Model: String {
     case simulator = "simulator"
     case iPhoneSE = "iPhone SE (1st gen)"
     case iPodTouch = "iPod touch 7th gen"

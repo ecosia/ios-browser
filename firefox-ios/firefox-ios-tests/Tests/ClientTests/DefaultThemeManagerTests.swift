@@ -5,7 +5,6 @@
 import XCTest
 @testable import Common
 
-@MainActor
 final class DefaultThemeManagerTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
@@ -14,14 +13,14 @@ final class DefaultThemeManagerTests: XCTestCase {
     private var userDefaults: MockUserDefaults!
 
     // MARK: - Test lifecycle
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         userDefaults = MockUserDefaults()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         userDefaults = nil
-        try await super.tearDown()
     }
 
     // MARK: - Initialization tests
@@ -90,25 +89,6 @@ final class DefaultThemeManagerTests: XCTestCase {
             userDefaults.string(forKey: DefaultThemeManager.ThemeKeys.themeName),
             expectedResult.rawValue
         )
-    }
-
-    // MARK: - resolveTheme
-    func testDTM_inNormalMode_withForcePrivate_retrievesPrivateTheme() {
-        let sut = createSubject(with: userDefaults)
-        let theme = sut.resolvedTheme(with: true)
-
-        XCTAssertEqual(theme.type, ThemeType.privateMode)
-        XCTAssertEqual(userDefaults.string(forKey: DefaultThemeManager.ThemeKeys.themeName), ThemeType.light.rawValue)
-    }
-
-    func testDTM_inNormalMode_withoutForcePrivate_retrievesLightTheme() {
-        let sut = createSubject(with: userDefaults)
-        let expectedResult = ThemeType.light
-
-        let theme = sut.resolvedTheme(with: false)
-
-        XCTAssertEqual(theme.type, expectedResult)
-        XCTAssertEqual(userDefaults.string(forKey: DefaultThemeManager.ThemeKeys.themeName), expectedResult.rawValue)
     }
 
     // MARK: - System theme tests
@@ -263,7 +243,7 @@ final class DefaultThemeManagerTests: XCTestCase {
     // MARK: - Helper methods
 
     private func createSubject(with userDefaults: UserDefaultsInterface,
-                               file: StaticString = #filePath,
+                               file: StaticString = #file,
                                line: UInt = #line) -> DefaultThemeManager {
         let subject = DefaultThemeManager(
             userDefaults: userDefaults,

@@ -7,21 +7,20 @@ import XCTest
 
 @testable import Client
 
-@MainActor
 class ContextualHintViewProviderTests: XCTestCase {
     typealias CFRPrefsKeys = PrefsKeys.ContextualHints
 
     private var profile: MockProfile!
 
-    override func setUp() async throws {
+    override func setUp() {
+        super.setUp()
         profile = MockProfile()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
-        try await super.setUp()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         profile = nil
-        try await super.tearDown()
     }
 
     // MARK: Mark Contextual Hint Configuration
@@ -29,6 +28,7 @@ class ContextualHintViewProviderTests: XCTestCase {
     func test_dataClearanceConfiguration() {
         let subject = ContextualHintViewProvider(forHintType: .dataClearance, with: profile)
         XCTAssertTrue(subject.shouldPresentContextualHint())
+        XCTAssertFalse(subject.isActionType)
     }
 
     func test_markContextualHintPresented_setPrefsTrue() {

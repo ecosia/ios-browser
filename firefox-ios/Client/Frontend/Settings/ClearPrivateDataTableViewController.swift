@@ -6,6 +6,7 @@ import UIKit
 import Shared
 import Common
 import ComponentLibrary
+import Ecosia
 
 class ClearPrivateDataTableViewController: ThemedTableViewController {
     private var clearButton: UITableViewCell?
@@ -104,11 +105,18 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
         } else if indexPath.section == sectionToggles {
             cell.textLabel?.text = clearables[indexPath.item].clearable.label
             cell.textLabel?.numberOfLines = 0
+            /* Ecosia: Use EcosiaThemedSwitch
             let control = ThemedSwitch()
             control.applyTheme(theme: currentTheme())
+             */
+            let control = EcosiaThemedSwitch()
+            /* Ecosia: No need for `onTintColor` with EcosiaThemedSwitch
             control.onTintColor = currentTheme().colors.actionPrimary
+             */
             control.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
             control.isOn = toggles[indexPath.item]
+            // Ecosia: Apply theme only after `isOn` to use correct color
+            control.applyTheme(theme: currentTheme())
             cell.accessoryView = control
             cell.selectionStyle = .none
             control.tag = indexPath.item
@@ -154,6 +162,8 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
             let view = WebsiteDataManagementViewController(windowUUID: windowUUID)
             navigationController?.pushViewController(view, animated: true)
         } else if indexPath.section == sectionButton {
+            // Ecosia: Track "Clear Private Data" button click
+            Analytics.shared.clearsDataFromSection(.main)
             let alert: UIAlertController
             if self.toggles[historyClearableIndex] && profile.hasAccount() {
                 alert = clearSyncedHistoryAlert(okayCallback: clearPrivateData)
@@ -187,13 +197,10 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
             }
             .allSucceed()
             .uponQueue(.main) { result in
-                // FXIOS-13228 It should be safe to assumeIsolated here because of `.main` queue above
-                MainActor.assumeIsolated {
-                    self.profile.prefs.setObject(self.toggles, forKey: Keys.keyTogglesPref.rawValue)
+                self.profile.prefs.setObject(self.toggles, forKey: Keys.keyTogglesPref.rawValue)
 
-                    // Disable the Clear Private Data button after it's clicked.
-                    self.clearButtonEnabled = false
-                }
+                // Disable the Clear Private Data button after it's clicked.
+                self.clearButtonEnabled = false
             }
     }
 

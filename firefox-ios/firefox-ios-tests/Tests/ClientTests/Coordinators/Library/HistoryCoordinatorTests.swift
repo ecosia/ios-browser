@@ -3,9 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Storage
 @testable import Client
 
-@MainActor
 final class HistoryCoordinatorTests: XCTestCase {
     private var router: MockRouter!
     private var profile: MockProfile!
@@ -13,8 +13,8 @@ final class HistoryCoordinatorTests: XCTestCase {
     private var notificationCenter: MockNotificationCenter!
     private var navigationHandler: MockLibraryNavigationHandler!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         router = MockRouter(navigationController: UINavigationController())
         profile = MockProfile()
@@ -23,14 +23,14 @@ final class HistoryCoordinatorTests: XCTestCase {
         navigationHandler = MockLibraryNavigationHandler()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
         router = nil
         profile = nil
         parentCoordinator = nil
         notificationCenter = nil
         navigationHandler = nil
-        try await super.tearDown()
     }
 
     func testShowRecentlyClosedTabs() {
@@ -39,6 +39,15 @@ final class HistoryCoordinatorTests: XCTestCase {
         subject.showRecentlyClosedTab()
 
         XCTAssertTrue(router.pushedViewController is RecentlyClosedTabsPanel)
+        XCTAssertEqual(router.pushCalled, 1)
+    }
+
+    func testShowSearchGroupedItems() {
+        let subject = createSubject()
+
+        subject.showSearchGroupedItems(ASGroup(searchTerm: "", groupedItems: [], timestamp: .zero))
+
+        XCTAssertTrue(router.pushedViewController is SearchGroupedItemsViewController)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
@@ -51,7 +60,7 @@ final class HistoryCoordinatorTests: XCTestCase {
         XCTAssertEqual(notificationCenter.postCallCount, 1)
     }
 
-    func testShowShareSheet_callsNavigationHandlerShareFunction() {
+    func testShowShareExtension_callsNavigationHandlerShareFunction() {
         let subject = createSubject()
 
         subject.shareLibraryItem(

@@ -10,11 +10,11 @@ import Storage
 
 protocol TopSitesWidget {
     /// Write top sites to widgetkit
+    @available(iOS 14.0, *)
     func writeWidgetKitTopSites()
 }
 
-// TODO: FXIOS-14116 - TopSitesWidgetManager @unchecked Sendable
-final class TopSitesWidgetManager: TopSitesWidget, @unchecked Sendable {
+class TopSitesWidgetManager: TopSitesWidget {
     private let topSitesProvider: TopSitesProvider
     private let userDefaults: UserDefaultsInterface
 
@@ -24,13 +24,13 @@ final class TopSitesWidgetManager: TopSitesWidget, @unchecked Sendable {
         self.userDefaults = userDefaults
     }
 
+    @available(iOS 14.0, *)
     func writeWidgetKitTopSites() {
         topSitesProvider.getTopSites { sites in
             guard let sites = sites else { return }
 
             // save top sites for widgetkit use
             self.save(topSites: sites)
-
             // Update widget timeline
             WidgetCenter.shared.reloadAllTimelines()
         }
@@ -39,8 +39,7 @@ final class TopSitesWidgetManager: TopSitesWidget, @unchecked Sendable {
     private func save(topSites: [Site]) {
         userDefaults.removeObject(forKey: PrefsKeys.WidgetKitSimpleTopTab)
 
-        guard let encodedData = try? JSONEncoder().encode(topSites) else { return }
-
+        guard let encodedData = try? Site.encode(with: JSONEncoder(), data: topSites) else { return }
         userDefaults.set(encodedData, forKey: PrefsKeys.WidgetKitSimpleTopTab)
     }
 }

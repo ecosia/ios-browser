@@ -4,7 +4,7 @@
 
 import UIKit
 
-public final class TooltipTableViewCell: UITableViewCell {
+public class TooltipTableViewCell: UITableViewCell {
     private lazy var tooltip: TooltipView = {
         let tooltipView = TooltipView()
         tooltipView.translatesAutoresizingMaskIntoConstraints = false

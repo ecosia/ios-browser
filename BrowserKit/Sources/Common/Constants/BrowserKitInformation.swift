@@ -4,15 +4,15 @@
 
 import Foundation
 
-/// Contains application information necessary for BrowserKit functionalities.
-/// FIXME: FXIOS-13125 We should be able to mark this Sendable without mutable state
-public final class BrowserKitInformation: @unchecked Sendable {
-    // FIXME: FXIOS-13125 Shared state for the app should not be stored in the Common package.
-    public static let shared = BrowserKitInformation()
+// Contains application information necessary for BrowserKit functionalities.
+// BrowserKit should stay agnostic of the application it's used in, and so the
+// client should pass down this information on setup of the application.
+public class BrowserKitInformation {
+    public static var shared = BrowserKitInformation()
 
-    public var buildChannel: AppBuildChannel?
-    public var nightlyAppVersion: String?
-    public var sharedContainerIdentifier: String?
+    public var buildChannel: AppBuildChannel!
+    public var nightlyAppVersion: String!
+    public var sharedContainerIdentifier: String!
 
     public func configure(buildChannel: AppBuildChannel,
                           nightlyAppVersion: String,

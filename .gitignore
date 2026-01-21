@@ -2,6 +2,7 @@
 build/
 !taskcluster/kinds/build
 .build/
+
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -100,13 +101,9 @@ firefox-ios/Client/Assets/AllFramesAtDocumentEnd.js
 firefox-ios/Client/Assets/MainFrameAtDocumentStart.js
 firefox-ios/Client/Assets/MainFrameAtDocumentEnd.js
 firefox-ios/Client/Assets/AutofillAllFramesAtDocumentStart.js
-firefox-ios/Client/Assets/NightModeMainFrameAtDocumentEnd.js
-firefox-ios/Client/Assets/NightModeAllFramesAtDocumentStart.js
 firefox-ios/Client/Assets/WebcompatAllFramesAtDocumentStart.js
 firefox-ios/Client/Assets/addressFormLayout.js
 firefox-ios/Client/Assets/AddressFormManager.js
-firefox-ios/Client/Assets/TranslationsEngine.js
-firefox-ios/Client/Assets/translations-engine.worker.js
 firefox-ios/Client/Assets/*.js.LICENSE.txt
 
 # L10n
@@ -139,3 +136,37 @@ ContentBlockingLists/disconnect-*
 focus-ios/shavar-*
 firefox-ios/shavar-*
 shavar-*
+
+# bundler
+vendor/bundle
+.bundle/config
+
+# transifex
+/tx
+
+# Ecosia: Additional configs
+Staging.xcconfig
+Production.xcconfig
+.github/workflows/firefox-*.yml
+firefox-ios/SourcePackages
+test_output
+.vscode
+firefox-ios/EcosiaTests/Results
+firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts/*
+firefox-ios/TestResults.xcresult
+
+# Tuist generated files
+firefox-ios/Client.xcodeproj
+firefox-ios/Client.xcworkspace
+firefox-ios/Derived
+Derived
+*.xcworkspace
+Tuist/Dependencies
+.tuist-cache
+
+# Keep Tuist manifests (exceptions to the above)
+!firefox-ios/Project.swift
+!firefox-ios/Tuist/Tuist.swift
+firefox-ios/Client.xcodeproj/xcshareddata/xcschemes
+firefox-ios/Client.xcodeproj/project.pbxproj
+BrowserKit/Package.resolved

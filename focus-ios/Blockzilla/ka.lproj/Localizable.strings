@@ -1,7 +1,7 @@
 /* Button on About screen */
 "About.learnMoreButton" = "ვრცლად";
 
-/* Label on About screen. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Label on About screen */
 "About.missionLabel" = "%@ შექმნილია Mozilla-ს მიერ. ჩვენი მიზანია ჯანსაღი, გახსნილი ინტერნეტის ხელშეწყობა.";
 
 /* Label on About screen */
@@ -11,7 +11,7 @@
 "About.privateBullet2" = "შეზღუდეთ მეთვალყურეები (ან დაუშვით პარამეტრებიდან)";
 
 /* Label on About screen */
-"About.privateBullet3" = "გაასუფთავეთ ფუნთუშების, ძიებისა და საიტების ისტორიის წასაშლელად";
+"About.privateBullet3" = "გაასუფთავეთ, ფუნთუშების, ძიებისა და საიტების ისტორიის წასაშლელად";
 
 /* Label on About screen */
 "About.privateBulletHeader" = "გამოიყენეთ პირად ბრაუზერად:";
@@ -25,25 +25,22 @@
 /* Label for row in About screen */
 "About.rowRights" = "თქვენი უფლებები";
 
-/* Label for row in About screen */
-"About.rowTerms" = "გამოყენების პირობები";
+/* Label on About screen */
+"About.safariBullet1" = "შეზღუდეთ თვალთვალი, მეტი პირადულობისთვის";
 
 /* Label on About screen */
-"About.safariBullet1" = "შეზღუდეთ თვალთვალი მეტი პირადულობისთვის";
+"About.safariBullet2" = "შეზღუდეთ ვებშრიფტები, გვერდის მოცულობის შესამცირებლად";
 
 /* Label on About screen */
-"About.safariBullet2" = "შეზღუდეთ ვებშრიფტები გვერდის მოცულობის შესამცირებლად";
+"About.safariBulletHeader" = "გამოიყენეთ, Safari-ს დამატებად:";
 
-/* Label on About screen */
-"About.safariBulletHeader" = "გამოიყენეთ Safari-ს დამატებად:";
-
-/* %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). Title displayed in the settings screen that, when tapped, takes the user to a page with information about the product. Also displayed as a header for the About page. */
+/* %@ is the name of the app (Focus / Klar). Title displayed in the settings screen that, when tapped, takes the user to a page with information about the product. Also displayed as a header for the About page. */
 "About.title" = "%@ პროგრამის შესახებ";
 
-/* Label on About screen. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Label on About screen */
 "About.topLabel" = "%@ გიბრუნებთ მართვის სადავეებს.";
 
-/* Title for action sheet item to open the current page in another application. %@ is the name of the application to open the current page. */
+/* Title for action sheet item to open the current page in another application. Placeholder is the name of the application to open the current page. */
 "actionSheet.openIn" = "გახსნა %@-ით";
 
 /* Button to dismiss the 'Add Pass Failed' alert. */
@@ -55,7 +52,7 @@
 /* Title of the 'Add Pass Failed' alert. */
 "AddPass.Error.Title" = "კოდის დამატება ვერ მოხერხდა";
 
-/* %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). Prompt shown to ask the user to use Touch ID, Face ID, or passcode to continue browsing after returning to the app. */
+/* %@ is app name. Prompt shown to ask the user to use Touch ID, Face ID, or passcode to continue browsing after returning to the app. */
 "Authentication.reason" = "ვინაობის დამოწმება, %@-ზე დასაბრუნებლად";
 
 /* Label for button to add a custom URL */
@@ -79,7 +76,7 @@
 /* Label for toast alerting a custom URL has been added */
 "Autocomplete.customUrlAdded" = "ახალი საკუთარი URL დაემატა.";
 
-/* Description for enabling or disabling the default list. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Description for enabling or disabling the default list. The placeholder is replaced with the application name, which can be either Firefox Focus or Firefox Klar. */
 "Autocomplete.defaultDescriptoin" = "ჩართეთ და %@ თავად დაასრულებს 450-ზე მეტ ცნობილ URL-ბმულს მისამართების ველში აკრეფისას.";
 
 /* label describing URL Autocomplete as disabled */
@@ -100,7 +97,7 @@
 /* Label for enabling or disabling autocomplete */
 "Autocomplete.mySites" = "ჩემი საიტები";
 
-/* Description for adding and managing custom autocomplete URLs. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Description for adding and managing custom autocomplete URLs. The placeholder is replaced with the application name, which can be either Firefox Focus or Firefox Klar. */
 "Autocomplete.mySitesDesc" = "ჩართეთ და %@ თავად დაასრულებს თქვენს რჩეულ URL-ბმულებს.";
 
 /* Label for enabling or disabling top sites */
@@ -148,13 +145,13 @@
 /* Button label used for cancelling to open another app from Focus */
 "ExternalAppLink.cancelTitle" = "გაუქმება";
 
-/* Dialog title used for opening an external app from Focus. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Dialog title used for opening an external app from Focus. The placeholder string is the app name of either Focus or Klar. */
 "ExternalAppLink.messageTitle" = "%@ ცდილობს სხვა პროგრამის გახსნას";
 
 /* Button label for opening another app from Focus */
 "ExternalAppLink.openTitle" = "გახსნა";
 
-/* Dialog title used for opening an external app from Focus. %1$@ is the app name (for example “Firefox Focus” or ”Firefox Klar”), %2$@ is the app it wants to open. */
+/* Dialog title used for opening an external app from Focus. First placeholder string is the app name of either Focus or Klar and the second placeholder string specifies the app it wants to open. */
 "externalAppLinkWithAppName.messageTitle" = "%1$@ ცდილობს გახსნას %2$@";
 
 /* Button label in external link dialog to cancel the dialog. Test page: https://people-mozilla.org/~bnicholson/test/schemes.html */
@@ -181,17 +178,11 @@
 /* Button label used to close a menu that displays as a popup. */
 "Menu.Close" = "დახურვა";
 
-/* Error message shown when no internet connection is available */
-"Network.Offline.ErrorMessage" = "ჩანს, ინტერნეტი კავშირგარეშეა.";
-
-/* Button text for retrying network connection */
-"Network.Offline.RetryButton" = "კვლავ სცადეთ";
-
 /* Text for a label that indicates the title of button from onboarding screen version 2. */
 "NewOnboarding.Button.Title.V2" = "დაიწყეთ";
 
 /* Text for a label that indicates the subtitle for the onboarding screen version 2. */
-"NewOnboarding.Subtitle.V2" = "სწრაფი. პირადი. საქმისკენ მიმართული.";
+"NewOnboarding.Subtitle.V2" = "სწრაფი. პირადი. მხოლოდ საქმისკენ მიმართული.";
 
 /* Text for a label that indicates the title of button from onboarding screen */
 "Onboarding.Button.Title" = "დაიწყეთ გვერდების მონახულება";
@@ -202,10 +193,10 @@
 /* Text for a label that indicates the first subtitle for the default browser onboarding screen version 2. */
 "Onboarding.DefaultBrowser.FirstSubtitle.V2" = "ისტორია გასუფთავდება პროგრამის დახურვისთანავე პირადულობის უკეთ დასაცავად.";
 
-/* Text for a label that indicates the second subtitle for the default browser onboarding screen version 2. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text for a label that indicates the second subtitle for the default browser onboarding screen version 2. %@ is the name of the app (Focus/Klar) */
 "Onboarding.DefaultBrowser.SecondSubtitle.V2" = "გახადეთ %@ ნაგულისხმევი, რომ დაიცვათ მონაცემები ყოველი ბმულის გახსნისას.";
 
-/* Text for a label that indicates the title for the default browser onboarding screen version 2. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text for a label that indicates the title for the default browser onboarding screen version 2. %@ is the name of the app (Focus/Klar) */
 "Onboarding.DefaultBrowser.Title.V2" = "%@ არ ჰგავს სხვა ბრაუზერებს";
 
 /* Text for a label that indicates the title of the top button from the default browser onboarding screen version 2. */
@@ -217,17 +208,11 @@
 /* Text for a label that indicates the title of history section from onboarding screen. */
 "Onboarding.History.Title" = "წარსული ვერ დაგედევნებათ კუდში";
 
-/* Text for a label that indicates the description of incognito section from onboarding screen. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text for a label that indicates the description of incognito section from onboarding screen. Placeholder can be (Focus or Klar). */
 "Onboarding.Incognito.Description" = "%@ პირადულობის უზრუნველმყოფი ბრაუზერია, თვალის დევნებისგან დაცვითა და მავნე შიგთავსის შეზღუდვით.";
 
 /* Text for a label that indicates the title of incognito section from onboarding screen. */
 "Onboarding.Incognito.Title" = "მეტი, ვიდრე მხოლოდ ფარული რეჟიმი";
-
-/* Used as a text for the link in Onboarding.PrivacyNotice.Text. */
-"Onboarding.PrivacyNotice.LinkText" = "პირადულობის განაცხადი";
-
-/* Text that describes Firefox's commitment to privacy. %@ is a link using Onboarding.PrivacyNotice.LinkText as text. */
-"Onboarding.PrivacyNotice.Text" = "Firefox ზრუნავს თქვენს პირადულობაზე. ვრცლად იხილეთ %@.";
 
 /* Text for a label that indicates the description of protection section from onboarding screen. */
 "Onboarding.Protection.Description" = "პარამეტრების მორგებით თავად გადაწყვიტეთ, რას და როგორ გაამხელთ.";
@@ -238,40 +223,19 @@
 /* Text for a label that indicates the subtitle for onboarding screen. */
 "Onboarding.Subtitle" = "აიყვანეთ თვალიერების პირადი რეჟიმი ახალ დონეზე.";
 
-/* Label for the agreement button in the Terms of Use screen. */
-"Onboarding.TermsOfUse.ButtonText" = "თანხმობა და გაგრძელება";
-
-/* Label for the agreement button in the Terms of Use screen. */
-"Onboarding.TermsOfUse.ButtonTextV2" = "გაგრძელება";
-
-/* Button label to dismiss the Privacy Policy and Terms of Use screen. */
-"Onboarding.TermsOfUse.Done.ButtonText" = "მზადაა";
-
-/* Used as a text for the link in Onboarding.TermsOfUse.Text. */
-"Onboarding.TermsOfUse.LinkText" = "გამოყენების პირობები, რომელსაც გთავაზობთ Firefox";
-
-/* Subtitle for the Terms of Use screen during onboarding. */
-"Onboarding.TermsOfUse.Subtitle" = "სწრაფი. პირადი. საქმისკენ მიმართული.";
-
-/* Text that describes the agreement to the Firefox Terms of Use. %@ is a link using Onboarding.TermsOfUse.LinkText as text. */
-"Onboarding.TermsOfUse.Text" = "თუ განაგრძობთ, თანახმა ხართ მიიღოთ %@.";
-
-/* Title for the Terms of Use screen during onboarding. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
-"Onboarding.TermsOfUse.Title" = "მოგესალმებათ %@";
-
-/* Text for a label that indicates the title for onboarding screen. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text for a label that indicates the title for onboarding screen. Placeholder can be (Focus or Klar). */
 "Onboarding.Title" = "მოგესალმებათ Firefox %@!";
 
 /* Label for instructions to enable Safari, shown when enabling Safari Integration in Settings */
 "Safari.instructionsContentBlockers" = "დააჭირეთ Safari-ს და გადადით შიგთავსის შემზღუდველებზე (Content Blockers)";
 
-/* Label for instructions to enable Safari, shown when enabling Safari Integration in Settings. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Label for instructions to enable Safari, shown when enabling Safari Integration in Settings */
 "Safari.instructionsEnable" = "ჩართეთ %@";
 
 /* Label for instructions to enable extensions in Safari, shown when enabling Safari Integration in Settings */
 "Safari.instructionsExtentions" = "აირჩიეთ Safari, შემდეგ კი გაფართოებები";
 
-/* Error label when the blocker is not enabled, shown in the intro and main app when disabled. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Error label when the blocker is not enabled, shown in the intro and main app when disabled */
 "Safari.instructionsNotEnabled" = "%@ არაა ჩართული.";
 
 /* Label for instructions to enable Safari, shown when enabling Safari Integration in Settings */
@@ -292,8 +256,8 @@
 /* Label for enable option on search suggestions prompt */
 "SearchSuggestions.promptEnable" = "დიახ";
 
-/* %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). Label for search suggestions prompt message */
-"SearchSuggestions.promptMessage" = "ძიების შემოთავაზებებისთვის %@ უგზავნის მისამართის ველში აკრეფილ ტექსტს შერჩეულ საძიებო სისტემას.";
+/* %@ is the name of the app (Focus / Klar). Label for search suggestions prompt message */
+"SearchSuggestions.promptMessage" = "ძიების შემოთავაზებებისთვის, %@ უგზავნის მისამართის ველში აკრეფილ ტექსტს, შერჩეულ საძიებო სისტემას.";
 
 /* Title for search suggestions prompt */
 "SearchSuggestions.promptTitle" = "გსურთ ძიების შემოთავაზებების ჩვენება?";
@@ -310,25 +274,16 @@
 /* Button label for accepting Content blocker alert */
 "Settings.blockOtherYes2" = "შიგთავსის მეთვალყურეების შეზღუდვა";
 
-/* On the Settings screen, this is the subtitle text for a toggle which controls sending daily usage ping. */
-"Settings.DailyUsagePing.Message" = "ამით Mozilla მიახლოებით ითვლის მოქმედ მომხმარებლებს.";
-
-/* On the Settings screen, this is the title text for a toggle which controls automatically sending daily usage ping. */
-"Settings.DailyUsagePing.Title" = "დღიური გამოყენების უწყება";
-
 /* Dark theme option in settings menu */
 "Settings.darkTheme" = "მუქი";
 
-/* Description associated with the Crash Reports toggle on settings screen */
-"Settings.detailTextCrashReports.V2" = "დაგვეხმარება ბრაუზერის ხარვეზების დადგენასა და მოგვარებაში.";
+/* Description associated to the Search Suggestions toggle on main screen. %@ is the app name (Focus/Klar) */
+"Settings.detailTextSearchSuggestion" = "%@ გაუგზავნის საძიებო სისტემას, მისამართების ველში აკრეფილ ტექსტს";
 
-/* Description associated to the Search Suggestions toggle on main screen. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
-"Settings.detailTextSearchSuggestion" = "%@ გაუგზავნის საძიებო სისტემას მისამართების ველში აკრეფილ ტექსტს.";
-
-/* Description associated to the Send Usage Data toggle on main screen. %@ is the app name (for example "Firefox Focus" or "Firefox Klar"). */
+/* Description associated to the Send Usage Data toggle on main screen. %@ is the app name (Focus/Klar) */
 "Settings.detailTextSendUsageData" = "Mozilla აღრიცხავს მხოლოდ იმ მონაცემებს, რომლებიც გვეხმარება, გავაუმჯობესოთ %@.";
 
-/* Description associated to the Studies toggle on the settings screen. %@ is the app name (for example "Firefox Focus" or "Firefox Klar"). */
+/* Description associated to the Studies toggle on the settings screen. %@ is the app name (Focus/Klar) */
 "Settings.detailTextStudies" = "%@ დროდადრო დააყენებს და ჩაატარებს კვლევებს.";
 
 /* Title for section in settings menu */
@@ -343,7 +298,7 @@
 /* Light theme option in settings menu */
 "Settings.lightTheme" = "ნათელი";
 
-/* %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). Title displayed in the settings screen that, when tapped, allows the user to leave a review for the app on the app store. */
+/* %@ is the name of the app (Focus / Klar). Title displayed in the settings screen that, when tapped, allows the user to leave a review for the app on the app store. */
 "Settings.rate" = "შეაფასეთ %@";
 
 /* Label for Safari integration section */
@@ -356,7 +311,7 @@
 "Settings.Search.AddSearchEngineButton" = "სხვა საძიებოს დამატება";
 
 /* Title on add search engine settings screen */
-"Settings.Search.AddSearchEngineTitle" = "საძიებოს დამატება";
+"Settings.Search.AddSearchEngineTitle" = "საძიებო სისტემის დამატება";
 
 /* Header for rows of installed search engines */
 "Settings.Search.InstalledSearchEngines" = "დაყენებული საძიებო სისტემები";
@@ -400,8 +355,8 @@
 /* Label title for set as default browser row */
 "Settings.setAsDefaultBrowser" = "ნაგულისხმევ ბრაუზერად მითითება";
 
-/* %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). Description for set as default browser option. */
-"Settings.setAsDefaultBrowserDescription" = "შედეგად, ბმულებს საიტებიდან, ელფოსტიდან, წერილებიდან პირდაპირ გახსნის %@.";
+/* %@ is the name of the app. Description for set as default browser option */
+"Settings.setAsDefaultBrowserDescription" = "შედეგად ბმულებს საიტებიდან, ელფოსტიდან, წერილებიდან, პირდაპირ გახსნის %@.";
 
 /* System value for theme section in settings menu */
 "Settings.systemTheme" = "სისტემის მიხედვით";
@@ -427,14 +382,11 @@
 /* Label for the checkbox to toggle Social trackers */
 "Settings.toggleBlockSocial2" = "სოცქსელების";
 
-/* Label for Crash Reports toggle on settings screen */
-"Settings.toggleCrashReports" = "უეცარი გათიშვის მოხსენებების თვითგაგზავნა";
-
 /* Label for toggle on settings screen */
-"Settings.toggleFaceID" = "სახის ამოცნობით ჩაკეტილი პროგრამის გაღება";
+"Settings.toggleFaceID" = "გამოიყენეთ სახის ამომცნობი, პროგრამის გასახსნელად";
 
-/* %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). Description for 'Enable Face ID' displayed under its respective toggle in the settings menu. */
-"Settings.toggleFaceIDDescription" = "სახის ამომცნობით გაიღება %@ თუ URL-ბმული უკვე გახსნილია პროგრამაში";
+/* %@ is the name of the app (Focus / Klar). Description for 'Enable Face ID' displayed under its respective toggle in the settings menu. */
+"Settings.toggleFaceIDDescription" = "სახის ამომცნობით შესაძლებელია გაიხსნას %@ თუ URL-ბმული უკვე გახსნილია პროგრამაში";
 
 /* Show home screen tips toggle label on settings screen */
 "Settings.toggleHomeScreenTips" = "ცნობები საწყის გვერდზე";
@@ -451,7 +403,7 @@
 /* Label for toggle on settings screen */
 "Settings.toggleTouchID" = "გამოიყენეთ თითის ანაბეჭდი, პროგრამის გასახსნელად";
 
-/* %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). Description for 'Enable Touch ID' displayed under its respective toggle in the settings menu. */
+/* %@ is the name of the app (Focus / Klar). Description for 'Enable Touch ID' displayed under its respective toggle in the settings menu. */
 "Settings.toggleTouchIDDescription" = "თითის ანაბეჭდით შესაძლებელია გაიხსნას %@ თუ URL-ბმული უკვე გახსნილია პროგრამაში";
 
 /* Status off for tracking protection in settings screen */
@@ -497,7 +449,7 @@
 "ShareMenu.ShareOpenChrome" = "Chrome-ში გახსნა";
 
 /* Text for the share menu option when a user wants to open the current website in the default browser. */
-"ShareMenu.ShareOpenDefaultBrowser" = "ნაგულისხმევი ბრაუზერით გახსნა";
+"ShareMenu.ShareOpenDefaultBrowser" = "ნაგულისხმევი ბრაუზერით";
 
 /* Text for the share menu option when a user wants to open the current website in the Firefox app. */
 "ShareMenu.ShareOpenFirefox" = "Firefox-ში გახსნა";
@@ -529,14 +481,14 @@
 /* This is the subtitle text for step one that is displayed in the Show Me How Onboarding Screen */
 "ShowMeHowOnboarding.SubtitleStepOne.V2" = "ხანგრძლივად დააჭირეთ მთავარ ეკრანს, სანამ ხატულები რხევას დაიწყებს.";
 
-/* This is the subtitle text for step three that is displayed in the Show Me How onboarding screen. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
-"ShowMeHowOnboarding.SubtitleStepThree.V2" = "მონახეთ %@. შემდეგ აირჩიეთ ჩანამატი.";
+/* This is the subtitle text for step three that is displayed in the Show Me How onboarding screen. %@ is the name of the app (Focus/Klar) */
+"ShowMeHowOnboarding.SubtitleStepThree.V2" = "მონახეთ %@. შემდეგ აირჩიეთ ვიჯეტი.";
 
 /* This is the subtitle text for step two that is displayed in the Show Me How Onboarding Screen */
 "ShowMeHowOnboarding.SubtitleStepTwo.V2" = "შეეხეთ დამატების ნიშანს.";
 
-/* This is the title text that is displayed in the Show Me How Onboarding Screen. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
-"ShowMeHowOnboarding.Title.V2" = "გამოიყენეთ %@ ჩანამატით";
+/* This is the title text that is displayed in the Show Me How Onboarding Screen. %@ is the name of the app (Focus/Klar) */
+"ShowMeHowOnboarding.Title.V2" = "დაამატეთ ვიჯეტი %@";
 
 /* Button to add a favorite URL to Siri. */
 "Siri.add" = "დამატება";
@@ -562,7 +514,7 @@
 /* Label for input to set a favorite URL to be opened by Siri. */
 "Siri.urlToOpen" = "ბმული გასახსნელად";
 
-/* Text for a label that indicates the title for biometric tip. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text for a label that indicates the title for biometric tip. The placeholder is replaced with the long product name (Firefox Focus or Firefox Klar). */
 "Tip.Biometric.Title" = "ჩაიკეტოს %@ საიტის გახსნისას:";
 
 /* Text for a label that indicates the description for biometric Face ID tip. */
@@ -577,13 +529,13 @@
 /* Text for a label that indicates the title for request desktop tip. */
 "Tip.RequestDesktop.Title" = "გსურთ, საიტის სრული სახით ხილვა?";
 
-/* Text for a label that indicates the description for share trackers tip. %@ is the number of trackers blocked. Only shown when there are more than 10 trackers blocked. For locales where we would need plural support, please feel free to translate this string as `Trackers blocked so far: %@` instead. */
-"Tip.ShareTrackers.Description" = "%@ შეიზღუდა ამ დრომდე.";
+/* Text for a label that indicates the description for share trackers tip. The placeholder is the number of trackers blocked. Only shown when there are more than 10 trackers blocked. For locales where we would need plural support, please feel free to translate this string as `Trackers blocked so far: %@` instead. */
+"Tip.ShareTrackers.Description" = "%@ შეიზრუდა ამ დრომდე.";
 
-/* Text for a label that indicates the title for share trackers tip. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text for a label that indicates the title for share trackers tip. The placeholder is replaced with the long product name (Firefox Focus or Firefox Klar). */
 "Tip.ShareTrackers.Title" = "თქვენ ნახულობთ. %@ ზღუდავს.";
 
-/* Text for a label that indicates the description for shortcuts tip. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text for a label that indicates the description for shortcuts tip. The placeholder is replaced with the short product name (Focus or Klar). */
 "Tip.Shortcuts.Description" = "აირჩიეთ მალსახმობებში დამატება %@ მენიუდან";
 
 /* Text for a label that indicates the title for shortcuts tip. */
@@ -592,7 +544,7 @@
 /* Text for a label that indicates the description for siri erase tip. The shortcut in this context is the iOS Siri Shortcut, not a Focus website shortcut. */
 "Tip.SiriErase.Description" = "Siri-მალსახმობის დამატება";
 
-/* Text for a label that indicates the title for siri erase tip. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text for a label that indicates the title for siri erase tip. The placeholder is replaced with the long product name (Firefox Focus or Firefox Klar). */
 "Tip.SiriErase.Title" = "„Siri, გაასუფთავე %@.”";
 
 /* Text for a label that indicates the description for siri favorite tip. The shortcut in this context is the iOS Siri Shortcut, not a Focus website shortcut. */
@@ -607,7 +559,7 @@
 /* Text for a label that indicates the title for sites not working tip. */
 "Tip.SitesNotWorking.Title" = "საიტზე აკლია რამე ან უცნაურად მუშაობს?";
 
-/* Text shown on quick action widget inviting the user to browse in the app. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
 "TodayWidget.SearchInApp.Instruction" = "ძიება – %@";
 
 /* This is the body text that is displayed for the Context Menu icon tooltip */
@@ -619,7 +571,7 @@
 /* This is the body text that is displayed for the Search Bar tooltip */
 "TooltipBodyText.SearchBar" = "წამოიწყეთ პირადი თვალიერება და იმთავითვე შევზღუდავთ მეთვალყურეებსა და სხვა მავნებლებს.";
 
-/* This is the body text that is displayed for the Shield icon tooltip. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
+/* This is the body text that is displayed for the Shield icon tooltip. Where placeholder can be (Focus or Klar). */
 "TooltipBodyText.ShieldIcon" = "%@ უკრძალავს ამ საიტს თქვენს თვალთვალს. შეეხეთ ფარის ნიშანს და იხილეთ ვრცლად, რა შეიზღუდა.";
 
 /* This is the body text that is displayed for the Shield icon tooltip when we block trackers for the first time on a website */
@@ -652,8 +604,8 @@
 /* Text for the toggle that enables/disables tracking protection. */
 "trackingProtection.toggleLabel2" = "თვალთვალისგან გაძლიერებული დაცვა";
 
-/* Text for tracking protection screen showing the number of trackers blocked since the app install. %@ is replaced with the install date of the application. */
-"trackingProtection.trackersBlockedLabel" = "სულ შეზღუდული თარიღიდან %@";
+/* Text for tracking protection screen showing the number of trackers blocked since the app install. The placeholder is replaced with the install date of the application. */
+"trackingProtection.trackersBlockedLabel" = "სულ შეზღუდული, თარიღიდან %@";
 
 /* Text for the header of trackers section from Tracking Protection. */
 "trackingProtection.trackersHeader" = "შესაზღუდი მეთვალყურეები";
@@ -679,7 +631,7 @@
 /* Placeholder text shown in the URL bar before the user navigates to a page */
 "URL.placeholderText" = "მოძებნეთ ან შეიყვანეთ მისამართი";
 
-/* Label displayed for search button when typing in the URL bar. %@ is the text type by the user. */
+/* Label displayed for search button when typing in the URL bar */
 "URL.searchLabel" = "ძიება: %@";
 
 /* Text for the URL bar showing the number of trackers blocked on a webpage. */
@@ -688,8 +640,8 @@
 /* Title for the action button shown on card view that will take the user to a tutorial explaining the user how to add an widget */
 "WidgetOnboardingCard.ActionButton" = "იხილეთ, როგორ";
 
-/* Subtitle shown on card view explaining the app has a widget option. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
-"WidgetOnboardingCard.Subtitle" = "ახლა კი დარჩით თქვენს პირად ფანჯარაში, მაგრამ მომავალში სწრაფად რომ გაიხსნას %@, გამოიყენეთ ჩანამატი მთავარ ეკრანზე.";
+/* Subtitle shown on card view explaining the app has a widget option. %@ is the name of the app (Focus/Klar). */
+"WidgetOnboardingCard.Subtitle" = "ახლა გადადით პირად ფანჯარაზე, თუმცა შემდეგ ჯერზე სწრაფად გახსნისთვის გამოიყენეთ %@-ვიჯეტი მთავარი ეკრანიდან.";
 
 /* Title shown on card view explaining the app has a widget option */
 "WidgetOnboardingCard.Title" = "დათვალიერების ისტორია გასუფთავებულია! 🎉";

@@ -11,5 +11,4 @@ enum ReferringPage: Equatable {
     case settings
     case none
     case tabTray
-    case library
 }

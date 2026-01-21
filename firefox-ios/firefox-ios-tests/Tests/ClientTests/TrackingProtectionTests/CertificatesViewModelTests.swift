@@ -19,8 +19,8 @@ final class CertificatesViewModelTests: XCTestCase {
     }
 
     override func tearDown() {
-        model = nil
         super.tearDown()
+        model = nil
     }
 
     func testGetCertificateValues() {

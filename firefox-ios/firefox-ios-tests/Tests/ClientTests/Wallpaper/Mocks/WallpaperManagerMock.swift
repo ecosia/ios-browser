@@ -6,7 +6,7 @@ import Foundation
 
 @testable import Client
 
-final class WallpaperManagerMock: WallpaperManagerInterface, @unchecked Sendable {
+class WallpaperManagerMock: WallpaperManagerInterface {
     var currentWallpaper = Wallpaper(id: "fxDefault",
                                      textColor: .green,
                                      cardColor: .purple,
@@ -24,8 +24,6 @@ final class WallpaperManagerMock: WallpaperManagerInterface, @unchecked Sendable
 
     func canOnboardingBeShown(using: Profile) -> Bool { return true }
 
-    func onboardingSeen() {}
-
     func setCurrentWallpaper(
         to wallpaper: Wallpaper,
         completion: @escaping (Result<Void, Error>) -> Void
@@ -38,14 +36,17 @@ final class WallpaperManagerMock: WallpaperManagerInterface, @unchecked Sendable
     var fetchCallCount = 0
     var fetchResult: Result<Void, Error> = .success(())
 
-    func fetchAssetsFor(_ wallpaper: Wallpaper, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+    func fetchAssetsFor(_ wallpaper: Wallpaper, completion: @escaping (Result<Void, Error>) -> Void) {
         fetchCallCount += 1
         completion(fetchResult)
     }
 
-    func removeUnusedAssets() {}
+    func removeUnusedAssets() {
+    }
 
-    func checkForUpdates() {}
+    func checkForUpdates() {
+    }
 
-    func migrateLegacyAssets() {}
+    func migrateLegacyAssets() {
+    }
 }

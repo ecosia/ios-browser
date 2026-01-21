@@ -4,44 +4,37 @@
 
 import Common
 import Foundation
+import Storage
 import SwiftUI
+import Shared
 
 import struct MozillaAppServices.CreditCard
 
-struct CreditCardInputView: ThemeableView {
-    private struct UX {
-        static let cornerRadius: CGFloat = 24
-        static let blurRadius: CGFloat = 10
-        static let dividerHeight: CGFloat = 0.7
-        static let spacerHeight: CGFloat = 4
-        static let dividerPaddingTop: CGFloat = 1
-        static let inputFieldPaddingTop: CGFloat = 11
-        static let removeCardButtonPaddingTop: CGFloat = 28
-    }
-
+struct CreditCardInputView: View {
     @ObservedObject var viewModel: CreditCardInputViewModel
     @State private var isBlurred = false
 
     // Theming
     let windowUUID: WindowUUID
-    var themeManager: ThemeManager
-    @State var theme: Theme
-
-    init(
-        viewModel: CreditCardInputViewModel,
-        windowUUID: WindowUUID,
-        themeManager: ThemeManager
-    ) {
-        self.viewModel = viewModel
-        self.windowUUID = windowUUID
-        self.themeManager = themeManager
-        self.theme = themeManager.getCurrentTheme(for: windowUUID)
-    }
+    @Environment(\.themeManager)
+    var themeManager
+    @State var backgroundColor: Color = .clear
+    @State var borderColor: Color = .clear
+    @State var textFieldBackgroundColor: Color = .clear
+    @State var barButtonColor: Color = .clear
+    @State var saveButtonDisabledColor: Color = .clear
 
     var body: some View {
         NavigationView {
             main
-                .blur(radius: isBlurred ? UX.blurRadius : 0)
+                .blur(radius: isBlurred ? 10 : 0)
+                .onAppear {
+                    applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .ThemeDidChange)) { notification in
+                    guard let uuid = notification.windowUUID, uuid == windowUUID else { return }
+                    applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+                }
                 .onReceive(NotificationCenter.default.publisher(
                     for: UIApplication.willResignActiveNotification)
                 ) { _ in
@@ -53,12 +46,11 @@ struct CreditCardInputView: ThemeableView {
                     isBlurred = false
                 }
         }
-        .listenToThemeChanges(theme: $theme, manager: themeManager, windowUUID: windowUUID)
     }
 
     private var main: some View {
         return ZStack {
-            Color(theme.colors.layer1).ignoresSafeArea()
+            backgroundColor.ignoresSafeArea()
             form
                 .navigationBarTitle(viewModel.state.title,
                                     displayMode: .inline)
@@ -66,55 +58,44 @@ struct CreditCardInputView: ThemeableView {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         rightBarButton()
                             .disabled(!viewModel.isRightBarButtonEnabled)
-                            .foregroundColor(Color(theme.colors.actionPrimary))
+                            .foregroundColor(barButtonColor)
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
                         leftBarButton()
-                            .foregroundColor(Color(theme.colors.actionPrimary))
+                            .foregroundColor(barButtonColor)
                     }
                 }
                 .padding(.top, 0)
-                .background(Color(theme.colors.layer1).edgesIgnoringSafeArea(.bottom))
+                .background(backgroundColor.edgesIgnoringSafeArea(.bottom))
         }
     }
 
     private var form: some View {
         return VStack(spacing: 0) {
-            if #unavailable(iOS 26.0) {
-                Divider()
-                    .frame(height: UX.dividerHeight)
-                    .foregroundColor(.clear)
-            }
+            Divider()
+                .frame(height: 0.7)
+                .foregroundColor(borderColor)
 
             name
-                .background(Color(theme.colors.layer2))
-                .modifier(NewStyleRoundedCorners(topLeadingCorner: UX.cornerRadius,
-                                                 topTrailingCorner: UX.cornerRadius,
-                                                 bottomLeadingCorner: nil,
-                                                 bottomTrailingCorner: nil))
+                .background(textFieldBackgroundColor)
 
             number
-                .background(Color(theme.colors.layer2))
+                .background(textFieldBackgroundColor)
 
             expiration
-                .background(Color(theme.colors.layer2))
-                .modifier(NewStyleRoundedCorners(topLeadingCorner: nil,
-                                                 topTrailingCorner: nil,
-                                                 bottomLeadingCorner: UX.cornerRadius,
-                                                 bottomTrailingCorner: UX.cornerRadius))
+                .background(textFieldBackgroundColor)
 
             Spacer()
-                .frame(height: UX.spacerHeight)
+                .frame(height: 4)
 
             if viewModel.state == .edit {
                 RemoveCardButton(windowUUID: windowUUID,
                                  alertDetails: viewModel.removeButtonDetails)
-                .padding(.top, UX.removeCardButtonPaddingTop)
+                .padding(.top, 28)
             }
 
             Spacer()
         }
-        .modifier(NewStyleExtraPadding())
     }
 
     private var name: some View {
@@ -123,12 +104,12 @@ struct CreditCardInputView: ThemeableView {
                                  inputType: .name,
                                  showError: !viewModel.nameIsValid,
                                  inputViewModel: viewModel)
-            .padding(.top, UX.inputFieldPaddingTop)
+            .padding(.top, 11)
 
             Divider()
-                .frame(height: UX.dividerHeight)
-                .foregroundColor(.clear)
-                .padding(.top, UX.dividerPaddingTop)
+                .frame(height: 0.7)
+                .foregroundColor(borderColor)
+                .padding(.top, 1)
         }
     }
 
@@ -138,12 +119,12 @@ struct CreditCardInputView: ThemeableView {
                                  inputType: .number,
                                  showError: !viewModel.numberIsValid,
                                  inputViewModel: viewModel)
-            .padding(.top, UX.inputFieldPaddingTop)
+            .padding(.top, 11)
 
             Divider()
-                .frame(height: UX.dividerHeight)
-                .foregroundColor(.clear)
-                .padding(.top, UX.dividerPaddingTop)
+                .frame(height: 0.7)
+                .foregroundColor(borderColor)
+                .padding(.top, 1)
         }
     }
 
@@ -153,15 +134,21 @@ struct CreditCardInputView: ThemeableView {
                                  inputType: .expiration,
                                  showError: viewModel.showExpirationError,
                                  inputViewModel: viewModel)
-            .padding(.top, UX.inputFieldPaddingTop)
+            .padding(.top, 11)
 
-            if #unavailable(iOS 26.0) {
-                Divider()
-                    .frame(height: UX.dividerHeight)
-                    .foregroundColor(.clear)
-                    .padding(.top, UX.dividerPaddingTop)
-            }
+            Divider()
+                .frame(height: 0.7)
+                .foregroundColor(borderColor)
+                .padding(.top, 1)
         }
+    }
+
+    func applyTheme(theme: Theme) {
+        let color = theme.colors
+        backgroundColor = Color(color.layer1)
+        textFieldBackgroundColor = Color(color.layer2)
+        barButtonColor = Color(color.actionPrimary)
+        saveButtonDisabledColor = Color(color.textSecondary)
     }
 
     func rightBarButton() -> some View {
@@ -174,41 +161,31 @@ struct CreditCardInputView: ThemeableView {
                 // Update existing card
                 if viewModel.state == .edit {
                     viewModel.updateCreditCard { _, error in
-                        ensureMainThread {
-                            guard let error = error else {
-                                viewModel.dismiss?(.updatedCard, true)
-                                return
-                            }
-                            viewModel.logger.log("Unable to update card with error: \(error)",
-                                                 level: .fatal,
-                                                 category: .autofill)
-                            viewModel.dismiss?(.none, false)
+                        guard let error = error else {
+                            viewModel.dismiss?(.updatedCard, true)
+                            return
                         }
+                        viewModel.logger?.log("Unable to update card with error: \(error)",
+                                              level: .fatal,
+                                              category: .autofill)
+                        viewModel.dismiss?(.none, false)
                     }
                 } else {
                     // Save new card
                     viewModel.saveCreditCard { _, error in
-                        ensureMainThread {
-                            guard let error = error else {
-                                viewModel.dismiss?(.savedCard, true)
-                                return
-                            }
-                            viewModel.logger.log("Unable to save credit card with error: \(error)",
-                                                 level: .fatal,
-                                                 category: .autofill)
-                            viewModel.dismiss?(.savedCard, false)
+                        guard let error = error else {
+                            viewModel.dismiss?(.savedCard, true)
+                            return
                         }
+                        viewModel.logger?.log("Unable to save credit card with error: \(error)",
+                                              level: .fatal,
+                                              category: .autofill)
+                        viewModel.dismiss?(.savedCard, false)
                     }
                 }
             }
         }
-        .modifier(
-            CreditCardViewButtonStyle(
-                isEnabled: viewModel.isRightBarButtonEnabled,
-                theme: theme,
-                buttonState: btnState
-            )
-        )
+        .foregroundColor(viewModel.isRightBarButtonEnabled ? barButtonColor : saveButtonDisabledColor)
         .onDisappear {
             viewModel.isRightBarButtonEnabled = false
         }
@@ -248,10 +225,6 @@ struct CreditCardEditView_Previews: PreviewProvider {
                                                  creditCard: sampleCreditCard,
                                                  state: .view)
 
-        return CreditCardInputView(
-            viewModel: viewModel,
-            windowUUID: .XCTestDefaultUUID,
-            themeManager: DefaultThemeManager(sharedContainerIdentifier: "")
-        )
+        return CreditCardInputView(viewModel: viewModel, windowUUID: .XCTestDefaultUUID)
     }
 }

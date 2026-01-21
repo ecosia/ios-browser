@@ -4,7 +4,6 @@
 
 #include "Common.xcconfig"
 #include "Debug.xcconfig"
-#include "version.xcconfig"
 
 INFOPLIST_FILE = Client/Info.plist
 MOZ_BUNDLE_DISPLAY_NAME = Fennec ($(USER))
@@ -13,9 +12,6 @@ MOZ_BUNDLE_ID = org.mozilla.ios.Fennec
 INCLUDE_SETTINGS_BUNDLE = YES
 MOZ_TODAY_WIDGET_SEARCH_DISPLAY_NAME = Firefox - Search
 CODE_SIGN_ENTITLEMENTS = Client/Entitlements/FennecApplication.entitlements
-CHANNEL = developer
-OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_$(CHANNEL)
+OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
 MOZ_INTERNAL_URL_SCHEME = fennec
-OTHER_LDFLAGS = -ObjC -fprofile-instr-generate -Xlinker -no_application_extension
-SWIFT_OPTIMIZATION_LEVEL = -Onone
-ENABLE_NS_ASSERTIONS = YES
+OTHER_LDFLAGS = -ObjC -fprofile-instr-generate -ld_classic

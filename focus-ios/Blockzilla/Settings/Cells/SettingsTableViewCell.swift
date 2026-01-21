@@ -15,18 +15,15 @@ class SettingsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setConfiguration(text: String, secondaryText: String? = nil) {
-        var configuration = defaultContentConfiguration()
-        configuration.text = text
-        configuration.textProperties.color = .primaryText
-        
-        if let secondaryText {
-            configuration.secondaryText = secondaryText
+    internal func setupDynamicFont(forLabels labels: [UILabel], addObserver: Bool = false) {
+        for label in labels {
+            label.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)
+            label.adjustsFontForContentSizeCategory = true
         }
-        
-        let margins = configuration.directionalLayoutMargins
-        configuration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: margins.top, leading: UIConstants.layout.settingsCellLeftInset, bottom: margins.bottom, trailing: margins.trailing)
-        configuration.prefersSideBySideTextAndSecondaryText = true
-        contentConfiguration = configuration
+
+        NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification, object: nil, queue: nil) { [weak self] _ in
+            guard let self = self else { return }
+            self.setupDynamicFont(forLabels: labels)
+        }
     }
 }

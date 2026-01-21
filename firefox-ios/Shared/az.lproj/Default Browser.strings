@@ -1,7 +1,7 @@
 /* Button string to learn how to set your default browser. */
 "DefaultBrowserCard.Button.v2" = "Necə ediləcəyini öyrən";
 
-/* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
+/* Title for small home tab banner shown that allows user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "Əsas səyyah tətbiqinizi dəyişdirin";
 
 /* Button string to open settings that allows user to switch their default browser to Firefox. */
@@ -14,7 +14,7 @@
 "DefaultBrowserOnboarding.Description2" = "2. Əsas Səyyah Tətbiq-inə toxunun";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. Firefox seçin";
+"DefaultBrowserOnboarding.Description3" = "3. Ecosia seçin";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "Əsas Səyyah Tətbiqi";

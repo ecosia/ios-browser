@@ -4,17 +4,17 @@
 
 import UIKit
 import CoreSpotlight
+import Storage
 import Shared
+import Sync
 import UserNotifications
+import Account
 import Common
 
-class SceneDelegate: UIResponder,
-                     UIWindowSceneDelegate,
-                     FeatureFlaggable {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     let profile: Profile = AppContainer.shared.resolve()
-    lazy var introScreenManager = IntroScreenManager(prefs: profile.prefs)
     var sessionManager: AppSessionProvider = AppContainer.shared.resolve()
     var downloadQueue: DownloadQueue = AppContainer.shared.resolve()
 
@@ -23,9 +23,6 @@ class SceneDelegate: UIResponder,
 
     private let logger: Logger = DefaultLogger.shared
     private let tabErrorTelemetryHelper = TabErrorTelemetryHelper.shared
-    private var isDeeplinkOptimizationRefactorEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.deeplinkOptimizationRefactor, checking: .buildOnly)
-    }
 
     // MARK: - Connecting / Disconnecting Scenes
 
@@ -54,14 +51,11 @@ class SceneDelegate: UIResponder,
             prefs: profile.prefs
         )
 
-        let sceneCoordinator = SceneCoordinator(scene: scene, introManager: introScreenManager)
+        let sceneCoordinator = SceneCoordinator(scene: scene)
         self.sceneCoordinator = sceneCoordinator
         self.window = sceneCoordinator.window
         sceneCoordinator.start()
         handle(connectionOptions: connectionOptions)
-        if !sessionManager.launchSessionProvider.openedFromExternalSource {
-            AppEventQueue.signal(event: .recordStartupTimeOpenDeeplinkCancelled)
-        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -236,18 +230,8 @@ class SceneDelegate: UIResponder,
         logger.log("Scene coordinator will handle a route", level: .info, category: .coordinator)
         sessionManager.launchSessionProvider.openedFromExternalSource = true
 
-        if isDeeplinkOptimizationRefactorEnabled {
+        AppEventQueue.wait(for: [.startupFlowComplete, .tabRestoration(sceneCoordinator.windowUUID)]) {
             sceneCoordinator.findAndHandle(route: route)
-        } else {
-            AppEventQueue.wait(for: [.startupFlowComplete, .tabRestoration(sceneCoordinator.windowUUID)]) {
-                ensureMainThread { [weak self] in
-                    self?.logger.log("Start up flow and restoration done, will handle route",
-                                     level: .info,
-                                     category: .coordinator)
-                    sceneCoordinator.findAndHandle(route: route)
-                    AppEventQueue.signal(event: .recordStartupTimeOpenDeeplinkComplete)
-                }
-            }
         }
     }
 }

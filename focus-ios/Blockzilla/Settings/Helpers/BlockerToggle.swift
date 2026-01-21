@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class BlockerToggle: Equatable {
+class BlockerToggle: Equatable {
     let toggle = UISwitch()
     let label: String
     let setting: SettingsToggle

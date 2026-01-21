@@ -4,8 +4,9 @@
 
 import SwiftUI
 import Common
+import Storage
 
-import struct MozillaAppServices.Login
+import struct MozillaAppServices.EncryptedLogin
 
 /// A view representing a cell displaying login information.
 struct LoginCellView: View {
@@ -19,7 +20,7 @@ struct LoginCellView: View {
     @Environment(\.themeManager)
     var themeManager
 
-    private(set) var login: Login
+    private(set) var login: EncryptedLogin
     private(set) var onTap: () -> Void
 
     // MARK: - Body
@@ -37,15 +38,14 @@ struct LoginCellView: View {
                     .alignmentGuide(.midIconAndLabel) { $0[VerticalAlignment.center] }
                     .accessibilityHidden(true)
                 VStack(alignment: .leading) {
-                    Text(login.origin)
+                    Text(login.decryptedUsername.isEmpty ? String.PasswordAutofill.LoginListCellNoUsername
+                         : login.decryptedUsername)
                         .font(.body)
                         .foregroundColor(textColor)
                         .alignmentGuide(.midIconAndLabel) { $0[VerticalAlignment.center] }
-                    Text(login.username.isEmpty ? String.PasswordAutofill.LoginListCellNoUsername
-                         : login.username)
+                    Text(verbatim: "**********")
                         .font(.subheadline)
                         .foregroundColor(customLightGray)
-                        .alignmentGuide(.midIconAndLabel) { $0[VerticalAlignment.center] }
                 }
                 Spacer()
             }
@@ -96,7 +96,7 @@ struct LoginButtonStyle: ButtonStyle {
 struct LoginCellView_Previews: PreviewProvider {
     static var previews: some View {
         // Create a sample login item
-        let loginRecord = Login(
+        let loginRecord = EncryptedLogin(
             credentials: URLCredential(
                 user: "test",
                 password: "doubletest",

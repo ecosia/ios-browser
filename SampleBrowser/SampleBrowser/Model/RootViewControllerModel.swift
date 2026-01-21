@@ -80,35 +80,50 @@ class RootViewControllerModel {
 
     // MARK: - Address toolbar
     func addressToolbarContainerModel(url: URL?) -> AddressToolbarContainerModel {
-        let locationViewConfig = LocationViewConfiguration(
+        let pageActions = [ToolbarElement(
+            iconName: StandardImageIdentifiers.Large.qrCode,
+            isEnabled: true,
+            a11yLabel: "Read QR Code",
+            a11yHint: nil,
+            a11yId: "qrCodeButton",
+            hasLongPressAction: false,
+            onSelected: nil)]
+
+        let browserActions = [ToolbarElement(
+            iconName: StandardImageIdentifiers.Large.appMenu,
+            isEnabled: true,
+            a11yLabel: "Open Menu",
+            a11yHint: nil,
+            a11yId: "appMenuButton",
+            hasLongPressAction: false,
+            onSelected: { _ in
+                self.addressToolbarDelegate?.didTapMenu()
+            })]
+
+        let locationViewState = LocationViewState(
             searchEngineImageViewA11yId: "searchEngine",
             searchEngineImageViewA11yLabel: "Search engine icon",
             lockIconButtonA11yId: "lockButton",
             lockIconButtonA11yLabel: "Tracking Protection",
             urlTextFieldPlaceholder: "Search or enter address",
-            urlTextFieldA11yId: "urlTestField",
-            searchEngineImage: UIImage(named: "duckduckgoSearchEngine"),
+            urlTextFieldA11yId: "urlTextField",
+            searchEngineImage: UIImage(named: "bingSearchEngine"),
             lockIconImageName: StandardImageIdentifiers.Large.lock,
-            lockIconNeedsTheming: false,
-            safeListedURLImageName: StandardImageIdentifiers.Small.notificationDotFill,
             url: url,
             droppableUrl: nil,
             searchTerm: nil,
             isEditing: false,
-            didStartTyping: false,
-            shouldShowKeyboard: true,
-            shouldSelectSearchTerm: false
-        )
+            isScrollingDuringEdit: false,
+            shouldSelectSearchTerm: false)
 
         // FXIOS-8947: Use scroll position
         return AddressToolbarContainerModel(
             toolbarPosition: .top,
             scrollY: 0,
             isPrivate: false,
-            locationViewConfiguration: locationViewConfig,
+            locationViewState: locationViewState,
             navigationActions: [],
-            leadingPageActions: [],
-            trailingPageActions: [],
-            browserActions: [])
+            pageActions: pageActions,
+            browserActions: browserActions)
     }
 }

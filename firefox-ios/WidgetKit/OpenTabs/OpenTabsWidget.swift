@@ -7,9 +7,12 @@ import WidgetKit
 import UIKit
 import Combine
 import Common
+// Ecosia: Additional imports for Ecosia framework and suggested sites updates
+import Ecosia
+import Storage
 
 struct OpenTabsWidget: Widget {
-    private let kind = "Quick View"
+    private let kind: String = "Quick View"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TabProvider()) { entry in
@@ -25,7 +28,10 @@ struct OpenTabsWidget: Widget {
 struct OpenTabsView: View {
     let entry: OpenTabsEntry
 
+    /* Ecosia: Update Environment state definition
     @Environment(\.widgetFamily)
+     */
+    @SwiftUI.Environment(\.widgetFamily)
     var widgetFamily
 
     @ViewBuilder
@@ -34,86 +40,47 @@ struct OpenTabsView: View {
         VStack(alignment: .leading) {
             Link(destination: linkToContainingApp("?uuid=\(tab.uuid)", query: query)) {
                 HStack(alignment: .center, spacing: 15) {
-                    if let favIcon = entry.favicons[tab.imageKey] {
-                        favIcon.resizable().frame(width: 16, height: 16)
-                            .foregroundColor(Color("openTabsContentColor"))
+                    if entry.favicons[tab.imageKey] != nil {
+                        (entry.favicons[tab.imageKey])!.resizable().frame(width: 16, height: 16)
                     } else {
                         Image(decorative: StandardImageIdentifiers.Large.globe)
-                            .foregroundColor(Color("openTabsContentColor"))
+                            .foregroundColor(Color.white)
                             .frame(width: 16, height: 16)
                     }
 
-                    Text(tab.title ?? "")
-                        .foregroundColor(Color("openTabsContentColor"))
+                    Text(tab.title!)
+                    /* Ecosia: update color
+                        .foregroundColor(Color.white)
+                     */
+                        .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                         .multilineTextAlignment(.leading)
                         .lineLimit(1)
                         .font(.system(size: 15, weight: .regular, design: .default))
-                    Spacer()
                 }.padding(.horizontal)
             }
 
-            // Separator
             Rectangle()
-                .fill(Color("separatorColor"))
+                /* Ecosia: update color
+                .fill(Color(UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 0.3)))
+                 */
+                .fill(Color.ecosiaBundledColorWithName("Border"))
                 .frame(height: 0.5)
                 .padding(.leading, 45)
         }
     }
 
-    var emptyView: some View {
-        VStack {
-            Text(String.NoOpenTabsLabel)
-            HStack {
-                Spacer()
-                Image(decorative: StandardImageIdentifiers.Small.externalLink)
-                    .foregroundColor(Color("openTabsContentColor"))
-                Text(String.OpenFirefoxLabel)
-                    .foregroundColor(Color("openTabsContentColor"))
-                    .lineLimit(1)
-                    .font(.system(size: 13, weight: .semibold, design: .default))
-                Spacer()
-            }.padding(10)
-        }
-        .foregroundColor(Color("backgroundColor"))
-    }
-
-    var tabsView: some View {
-        VStack(spacing: 8) {
-            ForEach(entry.tabs.suffix(numberOfTabsToDisplay), id: \.self) { tab in
-                lineItemForTab(tab)
-            }
-
-            if entry.tabs.count > numberOfTabsToDisplay {
-                HStack(alignment: .center, spacing: 15) {
-                    Image(decorative: StandardImageIdentifiers.Small.externalLink)
-                        .foregroundColor(Color("openTabsContentColor"))
-                        .frame(width: 16, height: 16)
-                    Text(
-                        String.localizedStringWithFormat(
-                            String.MoreTabsLabel,
-                            (entry.tabs.count - numberOfTabsToDisplay)
-                        )
-                    )
-                    .foregroundColor(Color("openTabsContentColor"))
-                    .lineLimit(1)
-                    .font(.system(size: 13, weight: .semibold, design: .default))
-                    Spacer()
-                }.padding([.horizontal])
-            } else {
-                openFirefoxButton
-            }
-
-            Spacer()
-        }.padding(.top, 14)
-    }
-
     var openFirefoxButton: some View {
         HStack(alignment: .center, spacing: 15) {
-            Image(decorative: StandardImageIdentifiers.Small.externalLink)
-                .foregroundColor(Color("openTabsContentColor"))
-            Text(String.OpenFirefoxLabel)
-                .foregroundColor(Color("openTabsContentColor"))
-                .lineLimit(1)
+            /* Ecosia: Update image and color
+            Image(decorative: StandardImageIdentifiers.Small.externalLink).foregroundColor(Color.white)
+            */
+            Image(decorative: "openEcosia", bundle: .ecosia)
+                .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
+            Text("Open Firefox") // Ecosia: Leave "Open Firefox" as within the WidgetKit Strings the key matches.
+                /* Ecosia: update color
+                .foregroundColor(Color.white).lineLimit(1)
+                */
+                .foregroundColor(.ecosiaBundledColorWithName("PrimaryText")).lineLimit(1)
                 .font(.system(size: 13, weight: .semibold, design: .default))
             Spacer()
         }.padding([.horizontal])
@@ -130,31 +97,72 @@ struct OpenTabsView: View {
     var body: some View {
         Group {
             if entry.tabs.isEmpty {
-                emptyView
+                VStack {
+                    Text(String.NoOpenTabsLabel)
+                    HStack {
+                        Spacer()
+                        /* Ecosia: Update image
+                        Image(decorative: StandardImageIdentifiers.Small.externalLink)
+                        */
+                        Image(decorative: "openEcosia", bundle: .ecosia)
+                        Text(String.OpenFirefoxLabel)
+                            /* Ecosia: Update color
+                            .foregroundColor(Color.white).lineLimit(1)
+                            */
+                            .foregroundColor(.ecosiaBundledColorWithName("PrimaryText")).lineLimit(1)
+                            .font(.system(size: 13, weight: .semibold, design: .default))
+                        Spacer()
+                    }.padding(10)
+                }
+                // Ecosia: update color
+                // .foregroundColor(Color.white)
+                .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
             } else {
-                tabsView
+                VStack(spacing: 8) {
+                    ForEach(entry.tabs.suffix(numberOfTabsToDisplay), id: \.self) { tab in
+                        lineItemForTab(tab)
+                    }
+
+                    if entry.tabs.count > numberOfTabsToDisplay {
+                        HStack(alignment: .center, spacing: 15) {
+                            /* Update image and color 
+                            Image(decorative: StandardImageIdentifiers.Small.externalLink)
+                                .foregroundColor(Color.white)
+                            */
+                            Image(decorative: "openEcosia", bundle: .ecosia)
+                                .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
+                                .frame(width: 16, height: 16)
+                            Text(
+                                String.localizedStringWithFormat(
+                                    String.MoreTabsLabel,
+                                    (entry.tabs.count - numberOfTabsToDisplay)
+                                )
+                            )
+                            /* Ecosia: Update color
+                            .foregroundColor(Color.white)
+                            */
+                            .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
+                            .lineLimit(1)
+                            .font(.system(size: 13, weight: .semibold, design: .default))
+                            Spacer()
+                        }.padding([.horizontal])
+                    } else {
+                        openFirefoxButton
+                    }
+
+                    Spacer()
+                }.padding(.top, 14)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .widgetBackground(Color("backgroundColor"))
+        /* Ecosia: update color
+        .widgetBackground(Color(UIColor(red: 0.11, green: 0.11, blue: 0.13, alpha: 1.00)))
+        */
+        .background((Color.ecosiaBundledColorWithName("PrimaryBackground")))
     }
 
     private func linkToContainingApp(_ urlSuffix: String = "", query: String) -> URL {
         let urlString = "\(scheme)://\(query)\(urlSuffix)"
-        return URL(string: urlString)!
-    }
-}
-
-struct OpenTabsPreview: PreviewProvider {
-    static let favIcons = ["globe":
-                            Image(decorative: StandardImageIdentifiers.Large.globe)]
-    static let tabs = [SimpleTab(lastUsedTime: nil)]
-    static let testEntry = OpenTabsEntry(date: Date(),
-                                         favicons: favIcons,
-                                         tabs: [SimpleTab]())
-    static var previews: some View {
-        Group {
-            OpenTabsView(entry: testEntry)
-        }
+        return URL(string: urlString, invalidCharacters: false)!
     }
 }

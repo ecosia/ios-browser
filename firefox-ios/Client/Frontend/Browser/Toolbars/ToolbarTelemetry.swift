@@ -3,110 +3,144 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+/* Ecosia: Remove Glean
 import Glean
+ */
 
 struct ToolbarTelemetry {
-    private let gleanWrapper: GleanWrapper
-
-    init(gleanWrapper: GleanWrapper = DefaultGleanWrapper()) {
-        self.gleanWrapper = gleanWrapper
-    }
-
-    func middleButtonType(_ buttonType: NavigationBarMiddleButtonType) {
-        gleanWrapper.recordString(for: GleanMetrics.UserToolbar.middleButtonType, value: buttonType.rawValue)
-    }
-
     // Tap
+    func qrCodeButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
+        let isPrivateExtra = GleanMetrics.Toolbar.QrScanButtonTappedExtra(isPrivate: isPrivate)
+        GleanMetrics.Toolbar.qrScanButtonTapped.record(isPrivateExtra)
+         */
+    }
+
     func clearSearchButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.ClearSearchButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.clearSearchButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.clearSearchButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func shareButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.ShareButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.shareButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.shareButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func refreshButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.RefreshButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.refreshButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.refreshButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func readerModeButtonTapped(isPrivate: Bool, isEnabled: Bool) {
+        /* Ecosia: Remove Glean
         let readerModeExtra = GleanMetrics.Toolbar.ReaderModeButtonTappedExtra(enabled: isPrivate,
                                                                                isPrivate: isEnabled)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.readerModeButtonTapped, extras: readerModeExtra)
+        GleanMetrics.Toolbar.readerModeButtonTapped.record(readerModeExtra)
+         */
     }
 
     func siteInfoButtonTapped(isPrivate: Bool) {
-        let extra = GleanMetrics.Toolbar.SiteInfoButtonTappedExtra(isPrivate: isPrivate,
-                                                                   isToolbar: true)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.siteInfoButtonTapped, extras: extra)
+        /* Ecosia: Remove Glean
+        let isPrivateExtra = GleanMetrics.Toolbar.SiteInfoButtonTappedExtra(isPrivate: isPrivate)
+        GleanMetrics.Toolbar.siteInfoButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func backButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.BackButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.backButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.backButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func forwardButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.ForwardButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.forwardButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.forwardButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func homeButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.HomeButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.homeButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.homeButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func oneTapNewTabButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.OneTapNewTabButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.oneTapNewTabButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.oneTapNewTabButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func searchButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.SearchButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.searchButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.searchButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func tabTrayButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.TabTrayButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.tabTrayButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.tabTrayButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func menuButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.AppMenuButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.appMenuButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.appMenuButtonTapped.record(isPrivateExtra)
+         */
     }
 
     func dataClearanceButtonTapped(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.DataClearanceButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.dataClearanceButtonTapped, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.dataClearanceButtonTapped.record(isPrivateExtra)
+         */
     }
 
     // Long Press
     func backButtonLongPressed(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.BackLongPressExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.backLongPress, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.backLongPress.record(isPrivateExtra)
+         */
     }
 
     func forwardButtonLongPressed(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.ForwardLongPressExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.forwardLongPress, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.forwardLongPress.record(isPrivateExtra)
+         */
     }
 
     func oneTapNewTabButtonLongPressed(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.OneTapNewTabLongPressExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.oneTapNewTabLongPress, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.oneTapNewTabLongPress.record(isPrivateExtra)
+         */
     }
 
     func tabTrayButtonLongPressed(isPrivate: Bool) {
+        /* Ecosia: Remove Glean
         let isPrivateExtra = GleanMetrics.Toolbar.TabTrayLongPressExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.tabTrayLongPress, extras: isPrivateExtra)
+        GleanMetrics.Toolbar.tabTrayLongPress.record(isPrivateExtra)
+         */
     }
 
     // Other
     func dragInteractionStarted() {
-        gleanWrapper.recordEvent(for: GleanMetrics.Awesomebar.dragLocationBar)
+        /* Ecosia: Remove Glean
+        GleanMetrics.Awesomebar.dragLocationBar.record()
+         */
     }
 }

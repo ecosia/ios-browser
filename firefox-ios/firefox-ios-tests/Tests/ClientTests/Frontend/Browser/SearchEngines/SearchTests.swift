@@ -9,6 +9,37 @@ import XCTest
 @testable import Client
 
 class SearchTests: XCTestCase {
+    /* Ecosia: Replace Google tests with Ecosia's
+    func testParsing() {
+        let parser = OpenSearchParser(pluginMode: true)
+        let file = Bundle.main.path(forResource: "google-b-m", ofType: "xml", inDirectory: "SearchPlugins/")
+        let engine: OpenSearchEngine! = parser.parse(file!, engineID: "google-b-m")
+        XCTAssertEqual(engine.shortName, "Google")
+
+        // Test regular search queries.
+        XCTAssertEqual(engine.searchURLForQuery("foobar")!.absoluteString,
+                       "https://www.google.com/search?q=foobar&ie=utf-8&oe=utf-8&client=firefox-b-m")
+
+        // Test search suggestion queries.
+        XCTAssertEqual(engine.suggestURLForQuery("foobar")!.absoluteString,
+                       "https://www.google.com/complete/search?client=firefox&q=foobar")
+    }
+     */
+    func testParsing() {
+        let parser = OpenSearchParser(pluginMode: true)
+        let file = Bundle.main.path(forResource: "ecosia", ofType: "xml", inDirectory: "SearchPlugins/")
+        let engine: OpenSearchEngine! = parser.parse(file!, engineID: "ecosia")
+        XCTAssertEqual(engine.shortName, "Ecosia")
+
+        // Test regular search queries.
+        XCTAssertEqual(engine.searchURLForQuery("foobar")!.absoluteString,
+                       "https://www.ecosia-staging.xyz/search?q=foobar&tt=iosapp")
+
+        // Test search suggestion queries.
+        XCTAssertEqual(engine.suggestURLForQuery("foobar")!.absoluteString,
+                       "https://ac.ecosia.org/autocomplete?q=foobar&type=list")
+    }
+
     func testURIFixup() {
         // Check valid URLs. We can load these after some fixup.
         checkValidURL("http://www.mozilla.org", afterFixup: "http://www.mozilla.org")
@@ -41,13 +72,11 @@ class SearchTests: XCTestCase {
         checkValidURL(" 创业咖啡.中国 ", afterFixup: "http://xn--vhq70hq9bhxa.xn--fiqs8s")
     }
 
-    @MainActor
     func testSuggestClient() {
         let webServerBase = startMockSuggestServer()
         let engine = OpenSearchEngine(
             engineID: "mock",
             shortName: "Mock engine",
-            telemetrySuffix: nil,
             image: UIImage(),
             searchTemplate: "",
             suggestTemplate: "\(webServerBase)?q={searchTerms}",
@@ -89,6 +118,62 @@ class SearchTests: XCTestCase {
             }
         })
         waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testExtractingOfSearchTermsFromURL() {
+        let parser = OpenSearchParser(pluginMode: true)
+        var file = Bundle.main.path(forResource: "google-b-m", ofType: "xml", inDirectory: "SearchPlugins/")!
+        let googleEngine: OpenSearchEngine! = parser.parse(file, engineID: "google")
+
+        // create URL
+        let searchTerm = "Foo Bar"
+        let encodedSeachTerm = searchTerm.replacingOccurrences(of: " ", with: "+")
+        let googleSearchURL = URL(string: "https://www.google.com/search?q=\(encodedSeachTerm)&ie=utf-8&oe=utf-8&gws_rd=cr&ei=I0UyVp_qK4HtUoytjagM")
+        let duckDuckGoSearchURL = URL(string: "https://duckduckgo.com/?q=\(encodedSeachTerm)&ia=about")
+        let invalidSearchURL = URL(string: "https://www.google.co.uk")
+        let yaaniSearchURL = URL(string: "https://tr.yaani.com.tr/?src=1#q=\(encodedSeachTerm)")
+
+        // check it correctly matches google search term given google config
+        XCTAssertEqual(searchTerm, googleEngine.queryForSearchURL(googleSearchURL))
+
+        // check it doesn't match when the URL is not a search URL
+        XCTAssertNil(googleEngine.queryForSearchURL(invalidSearchURL))
+
+        // check that it matches given a different configuration
+        file = Bundle.main.path(forResource: "ddg", ofType: "xml", inDirectory: "SearchPlugins/")!
+        let duckDuckGoEngine: OpenSearchEngine! = parser.parse(file, engineID: "duckduckgo")
+        XCTAssertEqual(searchTerm, duckDuckGoEngine.queryForSearchURL(duckDuckGoSearchURL))
+
+        // check it doesn't match search URLs for different configurations
+        XCTAssertNil(duckDuckGoEngine.queryForSearchURL(googleSearchURL))
+
+        // check that if you pass in a nil URL that everything works
+        XCTAssertNil(duckDuckGoEngine.queryForSearchURL(nil))
+
+        // check that if search engine that uses fragment matches search term
+        file = Bundle.main.path(forResource: "yaani", ofType: "xml", inDirectory: "SearchPlugins/")!
+        let yaaniEngine: OpenSearchEngine = parser.parse(file, engineID: "Yaani")!
+        XCTAssertEqual(searchTerm, yaaniEngine.queryForSearchURL(yaaniSearchURL))
+    }
+
+    func testBingParsing_iPhone_hasIphonePartnerCode() {
+        let parser = OpenSearchParser(pluginMode: true, userInterfaceIdiom: .phone)
+        let file = Bundle.main.path(forResource: "bing", ofType: "xml", inDirectory: "SearchPlugins/")
+        let engine: OpenSearchEngine! = parser.parse(file!, engineID: "bing")
+        XCTAssertEqual(engine.shortName, "Bing")
+
+         let containsPartnerCode = engine.searchTemplate.contains("pc=MOZW")
+         XCTAssertTrue(containsPartnerCode)
+    }
+
+    func testBingParsing_iPad_hasIpadPartnerCode() {
+        let parser = OpenSearchParser(pluginMode: true, userInterfaceIdiom: .pad)
+        let file = Bundle.main.path(forResource: "bing", ofType: "xml", inDirectory: "SearchPlugins/")
+        let engine: OpenSearchEngine! = parser.parse(file!, engineID: "bing")
+        XCTAssertEqual(engine.shortName, "Bing")
+
+         let containsPartnerCode = engine.searchTemplate.contains("pc=MOZL")
+         XCTAssertTrue(containsPartnerCode)
     }
 }
 

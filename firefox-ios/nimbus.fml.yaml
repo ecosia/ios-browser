@@ -13,42 +13,32 @@ channels:
   - beta
   - release
 include:
+  - nimbus-features/accountSettingsReduxFeature.yaml
   - nimbus-features/addressAutofillFeature.yaml
-  - nimbus-features/appIconSelectionFeature.yaml
-  - nimbus-features/appleSummarizerFeature.yaml
-  - nimbus-features/deeplinkOptimizationRefactorFeature.yaml
-  - nimbus-features/defaultZoomFeature.yaml
-  - nimbus-features/downloadLiveActivitiesFeature.yaml
+  - nimbus-features/autofillFeature.yaml
+  - nimbus-features/bookmarkRefactorFeature.yaml
+  - nimbus-features/contextualHintFeature.yaml
+  - nimbus-features/fakespotFeature.yaml
   - nimbus-features/feltPrivacyFeature.yaml
-  - nimbus-features/firefoxJpGuideDefaultSite.yaml
   - nimbus-features/firefoxSuggestFeature.yaml
   - nimbus-features/generalFeatures.yaml
-  - nimbus-features/hntSponsoredShortcutsFeature.yaml
+  - nimbus-features/gleanServerKnobs.yaml
   - nimbus-features/homepageRebuildFeature.yaml
-  - nimbus-features/homepageRedesignFeature.yaml
-  - nimbus-features/hostedSummarizerFeature.yaml
+  - nimbus-features/homescreenFeature.yaml
   - nimbus-features/menuRefactorFeature.yaml
   - nimbus-features/messagingFeature.yaml
   - nimbus-features/microsurveyFeature.yaml
   - nimbus-features/nativeErrorPageFeature.yaml
-  - nimbus-features/newAddressBarMenu.yaml
-  - nimbus-features/newAppearanceMenu.yaml
+  - nimbus-features/nightModeFeature.yaml
   - nimbus-features/onboardingFrameworkFeature.yaml
-  - nimbus-features/privacyNoticeFeature.yaml
-  - nimbus-features/recentSearchesFeature.yaml
-  - nimbus-features/relayIntegrationFeature.yaml
+  - nimbus-features/passwordGeneratorFeature.yaml
+  - nimbus-features/reduxSearchSettingsFeature.yaml
+  - nimbus-features/remoteTabManagement.yaml
   - nimbus-features/searchFeature.yaml
-  - nimbus-features/sentFromFirefoxFeature.yaml
   - nimbus-features/splashScreenFeature.yaml
   - nimbus-features/spotlightSearchFeature.yaml
-  - nimbus-features/startAtHomeFeature.yaml
-  - nimbus-features/tabScrollRefactorFeature.yaml
-  - nimbus-features/tabTrayUIExperiments.yaml
+  - nimbus-features/tabTrayFeature.yaml
+  - nimbus-features/tabTrayRefactorFeature.yaml
   - nimbus-features/toolbarRefactorFeature.yaml
-  - nimbus-features/tosFeature.yaml
-  - nimbus-features/touFeature.yaml
   - nimbus-features/trackingProtectionRefactor.yaml
-  - nimbus-features/translationsFeature.yaml
-  - nimbus-features/trendingSearchesFeature.yaml
-  - nimbus-features/updatedPasswordManager.yaml
-  - nimbus-features/webEngineIntegrationRefactor.yaml
+  - nimbus-features/zoomFeature.yaml

@@ -6,14 +6,9 @@ import Common
 import Redux
 import ToolbarKit
 
-struct ToolbarAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+final class ToolbarAction: Action {
     let toolbarPosition: SearchBarPosition?
-    let toolbarLayout: ToolbarLayoutStyle?
-    let isTranslucent: Bool?
     let numberOfTabs: Int?
-    let scrollAlpha: Float?
     let url: URL?
     let searchTerm: String?
     let isPrivate: Bool?
@@ -22,7 +17,6 @@ struct ToolbarAction: Action {
     let isShowingTopTabs: Bool?
     let canGoBack: Bool?
     let canGoForward: Bool?
-    let canSummarize: Bool
     let readerModeState: ReaderModeState?
     let addressBorderPosition: AddressToolbarBorderPosition?
     let displayNavBorder: Bool?
@@ -32,16 +26,9 @@ struct ToolbarAction: Action {
     let isLoading: Bool?
     let isNewTabFeatureEnabled: Bool?
     let canShowDataClearanceAction: Bool?
-    let shouldShowKeyboard: Bool?
-    let shouldAnimate: Bool?
-    let middleButton: NavigationBarMiddleButtonType?
-    let translationConfiguration: TranslationConfiguration?
 
     init(toolbarPosition: SearchBarPosition? = nil,
-         toolbarLayout: ToolbarLayoutStyle? = nil,
-         isTranslucent: Bool? = nil,
          numberOfTabs: Int? = nil,
-         scrollAlpha: Float? = nil,
          url: URL? = nil,
          searchTerm: String? = nil,
          isPrivate: Bool? = nil,
@@ -50,7 +37,6 @@ struct ToolbarAction: Action {
          isShowingTopTabs: Bool? = nil,
          canGoBack: Bool? = nil,
          canGoForward: Bool? = nil,
-         canSummarize: Bool = false,
          readerModeState: ReaderModeState? = nil,
          addressBorderPosition: AddressToolbarBorderPosition = .none,
          displayNavBorder: Bool? = nil,
@@ -60,19 +46,10 @@ struct ToolbarAction: Action {
          isLoading: Bool? = nil,
          isNewTabFeatureEnabled: Bool? = nil,
          canShowDataClearanceAction: Bool? = nil,
-         shouldShowKeyboard: Bool? = nil,
-         shouldAnimate: Bool? = nil,
-         middleButton: NavigationBarMiddleButtonType? = nil,
-         translationConfiguration: TranslationConfiguration? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.toolbarPosition = toolbarPosition
-        self.toolbarLayout = toolbarLayout
-        self.isTranslucent = isTranslucent
         self.numberOfTabs = numberOfTabs
-        self.scrollAlpha = scrollAlpha
         self.url = url
         self.searchTerm = searchTerm
         self.isPrivate = isPrivate
@@ -90,11 +67,7 @@ struct ToolbarAction: Action {
         self.isLoading = isLoading
         self.isNewTabFeatureEnabled = isNewTabFeatureEnabled
         self.canShowDataClearanceAction = canShowDataClearanceAction
-        self.shouldShowKeyboard = shouldShowKeyboard
-        self.shouldAnimate = shouldAnimate
-        self.canSummarize = canSummarize
-        self.middleButton = middleButton
-        self.translationConfiguration = translationConfiguration
+        super.init(windowUUID: windowUUID, actionType: actionType)
     }
 }
 
@@ -102,17 +75,14 @@ enum ToolbarActionType: ActionType {
     case didLoadToolbars
     case numberOfTabsChanged
     case urlDidChange
-    case scrollAlphaNeedsUpdate
     case didSetTextInLocationView
     case borderPositionChanged
     case toolbarPositionChanged
     case showMenuWarningBadge
     case didPasteSearchTerm
     case didStartEditingUrl
-    case cancelEditOnHomepage
     case cancelEdit
-    case keyboardStateDidChange
-    case animationStateChanged
+    case didScrollDuringEdit
     case readerModeStateChanged
     case backForwardButtonStateChanged
     case traitCollectionDidChange
@@ -123,44 +93,26 @@ enum ToolbarActionType: ActionType {
     case clearSearch
     case didDeleteSearchTerm
     case didEnterSearchTerm
-    // User submitted a search term to load the search request
-    case didSubmitSearchTerm
-    case didSetSearchTerm
     case didStartTyping
-    case translucencyDidChange
-    case navigationMiddleButtonDidChange
-    // Translations related actions that are needed to associate with the toolbar
-    // due to how our leadingPageActions are tied to ToolbarActions
-    case didStartTranslatingPage
-    case translationCompleted
-    case receivedTranslationLanguage
-    case didReceiveErrorTranslating
-    case didTranslationSettingsChange
 }
 
-struct ToolbarMiddlewareAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
-    let buttonType: ToolbarActionConfiguration.ActionType?
+class ToolbarMiddlewareAction: Action {
+    let buttonType: ToolbarActionState.ActionType?
     let buttonTapped: UIButton?
     let gestureType: ToolbarButtonGesture?
     let scrollOffset: CGPoint?
-    let readerModeState: ReaderModeState?
 
-    init(buttonType: ToolbarActionConfiguration.ActionType? = nil,
+    init(buttonType: ToolbarActionState.ActionType? = nil,
          buttonTapped: UIButton? = nil,
          gestureType: ToolbarButtonGesture? = nil,
          scrollOffset: CGPoint? = nil,
-         readerModeState: ReaderModeState? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.buttonType = buttonType
         self.buttonTapped = buttonTapped
-        self.readerModeState = readerModeState
         self.gestureType = gestureType
         self.scrollOffset = scrollOffset
+        super.init(windowUUID: windowUUID, actionType: actionType)
     }
 }
 
@@ -170,5 +122,4 @@ enum ToolbarMiddlewareActionType: ActionType {
     case urlDidChange
     case didClearSearch
     case didStartDragInteraction
-    case loadSummaryState
 }

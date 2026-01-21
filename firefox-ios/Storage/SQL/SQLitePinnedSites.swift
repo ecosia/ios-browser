@@ -5,7 +5,7 @@
 import Foundation
 import Shared
 
-private let ignoredSchemes = ["about"]
+private var ignoredSchemes = ["about"]
 
 public func isIgnoredURL(_ url: URL) -> Bool {
     guard let scheme = url.scheme else { return false }
@@ -18,7 +18,7 @@ public func isIgnoredURL(_ url: URL) -> Bool {
 }
 
 public func isIgnoredURL(_ url: String) -> Bool {
-    if let url = URL(string: url) {
+    if let url = URL(string: url, invalidCharacters: false) {
         return isIgnoredURL(url)
     }
 
@@ -39,33 +39,6 @@ extension SDRow {
 }
 
 extension BrowserDBSQLite: PinnedSites {
-    // Methods for new homepage that complies with Swift 6 Migration
-    public func remove(pinnedSite site: Site) async throws {
-        guard let host = (site.url as String).asURL?.normalizedHost else {
-            throw DatabaseError(description: "Invalid url for site \(site.url)")
-        }
-
-        try await awaitDatabaseRun(for: [("DELETE FROM pinned_top_sites where domain = ?", [host])])
-        self.notificationCenter.post(name: .TopSitesUpdated, object: nil)
-        try await awaitDatabaseRun(for: [("UPDATE domains SET showOnTopSites = 1 WHERE domain = ?", [host])])
-    }
-
-    /// Helper method that converts using the deferred types to result
-    /// and adopts modern swift concurrency to avoid refactoring the database level
-    private func awaitDatabaseRun(for commands: [(String, Args)]) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            database.run(commands).upon { result in
-                switch result {
-                case .success:
-                    continuation.resume()
-                case .failure(let error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
-    // Legacy methods that use deferred
     public func removeFromPinnedTopSites(_ site: Site) -> Success {
         guard let host = (site.url as String).asURL?.normalizedHost else {
             return deferMaybe(DatabaseError(description: "Invalid url for site \(site.url)"))
@@ -73,15 +46,10 @@ extension BrowserDBSQLite: PinnedSites {
 
         // do a fuzzy delete so dupes can be removed
         let query: (String, Args?) = ("DELETE FROM pinned_top_sites where domain = ?", [host])
-        return database.run([query])
-            .bind { result in
-                if let failureValue = result.failureValue {
-                    return deferMaybe(failureValue)
-                }
-
-                self.notificationCenter.post(name: .TopSitesUpdated, object: self)
-                return self.database.run([("UPDATE domains SET showOnTopSites = 1 WHERE domain = ?", [host])])
-            }
+        return database.run([query]) >>== {
+            self.notificationCenter.post(name: .TopSitesUpdated, object: self)
+            return self.database.run([("UPDATE domains SET showOnTopSites = 1 WHERE domain = ?", [host])])
+        }
     }
 
     public func isPinnedTopSite(_ url: String) -> Deferred<Maybe<Bool>> {
@@ -108,27 +76,20 @@ extension BrowserDBSQLite: PinnedSites {
             return deferMaybe(DatabaseError(description: "Invalid site \(site.url)"))
         }
 
-        let args: Args = [site.url, now, site.title, host]
+        // We insert a dummy guid for backward compatibility.
+        // in the past, the guid was required, but we removed that requirement.
+        // if we do not insert a guid, users who downgrade their version of firefox will
+        // crash when loading their pinned tabs.
+        //
+        // We have since allowed the guid to be optional, and should remove this guid
+        // once we stop supporting downgrading to any versions less than 110.
+        let args: Args = [site.url, now, site.title, site.id, "dummy-guid", host]
         let arglist = BrowserDB.varlist(args.count)
 
-        return self.database
-            .run([("INSERT OR REPLACE INTO pinned_top_sites (url, pinDate, title, domain) VALUES \(arglist)", args)])
-            .bind { result in
-                if let error = result.failureValue {
-                    return deferMaybe(error)
-                }
-                self.notificationCenter.post(name: .TopSitesUpdated, object: self)
-                return succeed()
-            }
-    }
-
-    public func addPinnedTopSite(_ site: Site, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-        addPinnedTopSite(site).upon { result in
-            if result.successValue != nil {
-                completion(.success(()))
-            } else if let error = result.failureValue {
-                completion(.failure(error))
-            }
+        return self.database.run([("INSERT OR REPLACE INTO pinned_top_sites (url, pinDate, title, historyID, guid, domain) VALUES \(arglist)", args)])
+        >>== {
+            self.notificationCenter.post(name: .TopSitesUpdated, object: self)
+            return succeed()
         }
     }
 }

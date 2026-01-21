@@ -6,7 +6,6 @@ import Foundation
 
 class DeleteExportedDataSetting: HiddenSetting {
     override var title: NSAttributedString? {
-        guard let theme else { return nil }
         // Not localized for now.
         return NSAttributedString(
             string: "Delete exported databases",

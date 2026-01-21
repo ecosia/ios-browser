@@ -109,9 +109,9 @@ tasks:
               tasks_for in ["action", "cron"]
               || (isPullRequest && pullRequestAction in ["opened", "reopened", "synchronize"])
               || (tasks_for == "github-push" && short_head_branch == "main")
-              || (tasks_for == "github-push" && short_head_branch[:8] == "release/")
+              || (tasks_for == "github-release" && releaseAction == "published")
             then:
-                taskId:
+                taskId: 
                     $if: 'tasks_for != "action"'
                     then: '${ownTaskId}'
                 taskGroupId:
@@ -139,7 +139,7 @@ tasks:
                                 name: "Decision Task for cron job ${cron.job_name}"
                                 description: 'Created by a [cron task](https://firefox-ci-tc.services.mozilla.com/tasks/${cron.task_id})'
                 provisionerId: "${trustDomain}-${level}"
-                workerType: "decision"
+                workerType: "decision-gcp"
                 tags:
                     $if: 'tasks_for == "github-push" || isPullRequest'
                     then:
@@ -155,7 +155,7 @@ tasks:
                 routes:
                     $flattenDeep:
                         - checks
-                        - $if: '!isPullRequest'
+                        - $if: 'level == "3"'
                           then:
                             - tc-treeherder.v2.${project}.${head_sha}
                             - $if: 'tasks_for == "github-push"'
@@ -231,7 +231,7 @@ tasks:
                     # Note: This task is built server side without the context or tooling that
                     # exist in tree so we must hard code the hash
                     image:
-                        mozillareleases/taskgraph:decision-v13.1.0@sha256:8ff59a0d89e8fd7bbdc236cf1fb15e03be9ef67d7e74ed8ffe15f27765593ecd
+                        mozillareleases/taskgraph:decision-c4ac262880970ca484105929e02dd12f00214d5f2603ab6ce4c0d17de5cd0280@sha256:2dd667994aa13fccdcdcede85c570a5eb4a5247e42875a9e95a135ef774ee469
                     maxRunTime: 1800
 
                     command:
@@ -247,10 +247,10 @@ tasks:
                               $if: 'tasks_for == "action"'
                               then: >
                                   ln -s /builds/worker/artifacts artifacts &&
-                                  taskgraph action-callback
+                                  ~/.local/bin/taskgraph action-callback
                               else: >
                                   ln -s /builds/worker/artifacts artifacts &&
-                                  taskgraph decision
+                                  ~/.local/bin/taskgraph decision
                                   --pushlog-id='0'
                                   --pushdate='0'
                                   --project='${project}'

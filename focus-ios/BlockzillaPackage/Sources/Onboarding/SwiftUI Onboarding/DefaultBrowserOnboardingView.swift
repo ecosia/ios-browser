@@ -15,94 +15,62 @@ struct DefaultBrowserOnboardingView: View {
         VStack {
             HStack {
                 Spacer()
-                closeOnboardingButton
-                    .accessibilityIdentifier(AccessibilityIdentifiers.DefaultBrowserOnboarding.closeButton)
+                Button(action: {
+                    viewModel.send(.defaultBrowserCloseTapped)
+                }, label: {
+                    Image.close
+                })
             }
             Image.huggingFocus
                 .resizable()
                 .scaledToFit()
                 .frame(maxHeight: .imageMaxHeight)
-                .accessibilityIdentifier(AccessibilityIdentifiers.DefaultBrowserOnboarding.image)
-                .accessibilityHidden(true)
             VStack {
-                title
-                subtitles
+                Text(viewModel.defaultBrowserConfig.title)
+                    .bold()
+                    .font(.system(size: .titleSize))
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, .titleBottomPadding)
+                VStack(alignment: .leading) {
+                    Text(viewModel.defaultBrowserConfig.firstSubtitle)
+                        .padding(.bottom, .firstSubtitleBottomPadding)
+                    Text(viewModel.defaultBrowserConfig.secondSubtitle)
+                }
+                .font(.body16)
             }
             .foregroundColor(.secondOnboardingScreenText)
             Spacer()
-            openSettingsButton
-                .accessibilityIdentifier(AccessibilityIdentifiers.DefaultBrowserOnboarding.openSettingsButton)
-            skipOnboardingButton
-                .accessibilityIdentifier(AccessibilityIdentifiers.DefaultBrowserOnboarding.skipOnboardingButton)
+            Button(action: {
+                viewModel.send(.defaultBrowserSettingsTapped)
+            }, label: {
+                Text(viewModel.defaultBrowserConfig.topButtonTitle)
+                    .foregroundColor(.systemBackground)
+                    .font(.body16Bold)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: .buttonHeight)
+                    .background(Color.actionButton)
+                    .cornerRadius(.radius)
+            })
+            Button(action: {
+                viewModel.send(.defaultBrowserSkip)
+            }, label: {
+                Text(viewModel.defaultBrowserConfig.bottomButtonTitle)
+                    .foregroundColor(.black)
+                    .font(.body16Bold)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: .buttonHeight)
+                    .background(Color.secondOnboardingScreenBottomButton)
+                    .cornerRadius(.radius)
+            })
+            .padding(.bottom, .skipButtonPadding)
         }
         .padding([.leading, .trailing], .viewPadding)
         .navigationBarHidden(true)
         .background(Color.secondOnboardingScreenBackground
-            .edgesIgnoringSafeArea([.top, .bottom]))
-        .onChange(of: viewModel.activeScreen) { newValue in
-            if newValue == .default {
-                DispatchQueue.main.async {
-                    UIAccessibility.post(notification: .screenChanged, argument: title)
-                }
-            }
+        .edgesIgnoringSafeArea([.top, .bottom]))
+        .onAppear {
+            viewModel.send(.defaultBrowserAppeared)
         }
-    }
-
-    private var closeOnboardingButton: some View {
-        Button(action: {
-            viewModel.send(.defaultBrowserCloseTapped)
-        }, label: {
-            Image.close
-        })
-    }
-
-    private var title: some View {
-        Text(viewModel.defaultBrowserConfig.title)
-            .bold()
-            .font(.system(size: .titleSize))
-            .multilineTextAlignment(.center)
-            .padding(.bottom, .titleBottomPadding)
-            .accessibilityIdentifier(AccessibilityIdentifiers.DefaultBrowserOnboarding.title)
-            .accessibilityAddTraits(.isHeader)
-    }
-
-    private var subtitles: some View {
-        VStack(alignment: .leading) {
-            Text(viewModel.defaultBrowserConfig.firstSubtitle)
-                .padding(.bottom, .firstSubtitleBottomPadding)
-            Text(viewModel.defaultBrowserConfig.secondSubtitle)
-        }
-        .font(.body16)
-        .accessibilityIdentifier(AccessibilityIdentifiers.DefaultBrowserOnboarding.subtitles)
-    }
-
-    private var openSettingsButton: some View {
-        Button(action: {
-            viewModel.send(.defaultBrowserSettingsTapped)
-        }, label: {
-            Text(viewModel.defaultBrowserConfig.topButtonTitle)
-                .foregroundColor(.systemBackground)
-                .font(.body16Bold)
-                .frame(maxWidth: .infinity)
-                .frame(height: .buttonHeight)
-                .background(Color.actionButton)
-                .cornerRadius(.radius)
-        })
-    }
-
-    private var skipOnboardingButton: some View {
-        Button(action: {
-            viewModel.send(.defaultBrowserSkip)
-        }, label: {
-            Text(viewModel.defaultBrowserConfig.bottomButtonTitle)
-                .foregroundColor(.black)
-                .font(.body16Bold)
-                .frame(maxWidth: .infinity)
-                .frame(height: .buttonHeight)
-                .background(Color.secondOnboardingScreenBottomButton)
-                .cornerRadius(.radius)
-        })
-        .padding(.bottom, .skipButtonPadding)
     }
 }
 

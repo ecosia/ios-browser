@@ -8,7 +8,7 @@ import Shared
 /// Data source for handling LoginData objects from a Cursor
 class LoginDataSource: NSObject, UITableViewDataSource {
     // in case there are no items to run cellForRowAt on, use an empty state view
-    private lazy var emptyStateView = NoLoginsView()
+    private let emptyStateView = NoLoginsView()
     var viewModel: PasswordManagerViewModel
 
     let boolSettings: (BoolSetting, BoolSetting)
@@ -71,7 +71,7 @@ class LoginDataSource: NSObject, UITableViewDataSource {
         } else if let cell = tableView.dequeueReusableCell(withIdentifier: PasswordManagerTableViewCell.cellIdentifier,
                                                            for: indexPath) as? PasswordManagerTableViewCell {
             guard let login = viewModel.loginAtIndexPath(indexPath) else { return cell }
-            let username = login.username
+            let username = login.decryptedUsername
             cell.hostnameLabel.text = login.hostname
             cell.usernameLabel.text = username.isEmpty ? "(no username)" : username
             if let breaches = viewModel.userBreaches, breaches.contains(login) {

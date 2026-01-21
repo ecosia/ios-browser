@@ -29,14 +29,13 @@ extension UIView {
     ///
     /// - Parameter style: The strength of the blur desired
     func addBlurEffect(using style: UIBlurEffect.Style) {
-        guard !UIAccessibility.isReduceTransparencyEnabled, shouldAddBlur else { return }
+        guard !UIAccessibility.isReduceTransparencyEnabled else { return }
 
         let blurEffect = UIBlurEffect(style: style)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.clipsToBounds = true
         blurEffectView.isUserInteractionEnabled = false
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
-        blurEffectView.layer.cornerRadius = layer.cornerRadius
         insertSubview(blurEffectView, at: 0)
 
         NSLayoutConstraint.activate([
@@ -65,12 +64,5 @@ extension UIView {
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
         layer.mask = maskLayer
-    }
-
-    /// Getting a snapshot from a view using image renderer
-    var snapshot: UIImage {
-        UIGraphicsImageRenderer(size: bounds.size).image { _ in
-            drawHierarchy(in: bounds, afterScreenUpdates: true)
-        }
     }
 }

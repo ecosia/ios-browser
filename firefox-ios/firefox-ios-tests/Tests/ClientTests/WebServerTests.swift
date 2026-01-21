@@ -34,27 +34,18 @@ class WebServerTests: XCTestCase {
     }
 
     override func tearDown() {
+        super.tearDown()
         webServer = nil
         webServerBase = nil
-        super.tearDown()
     }
 
     func testWebServerIsRunning() {
         XCTAssertTrue(webServer.isRunning)
     }
 
-    func testWebServerIsServingRequests() async throws {
-        guard let url = URL(string: "\(webServerBase!)/hello") else {
-            XCTFail("Invalid URL")
-            return
-        }
-        let (data, response) = try await URLSession.shared.data(from: url)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            XCTFail("Invalid response status code")
-            return
-        }
-        let responseString = String(data: data, encoding: .utf8)
-        XCTAssertNotNil(responseString)
-        XCTAssertTrue(responseString == "<html><body><p>Hello World</p></body></html>")
+    func testWebServerIsServingRequests() {
+        let response = try? String(contentsOf: URL(string: "\(webServerBase!)/hello")!, encoding: .utf8)
+        XCTAssertNotNil(response)
+        XCTAssertTrue(response == "<html><body><p>Hello World</p></body></html>")
     }
 }

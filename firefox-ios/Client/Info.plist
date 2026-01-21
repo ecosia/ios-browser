@@ -2,23 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LiteLLMAPIKey</key>
-	<string>$(LITE_LLM_API_KEY)</string>
-	<key>LiteLLMAPIEndpoint</key>
-	<string>$(LITE_LLM_API_ENDPOINT)</string>
-	<key>LiteLLMAPIModel</key>
-	<string>$(LITE_LLM_API_MODEL)</string>
-	<key>SKAdNetworkItems</key>
-	<array>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>4fzdc2evr5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>cstr6suwn9.skadnetwork</string>
-		</dict>
-	</array>
+	<key>AUTH0_CLIENT_ID</key>
+	<string>$(AUTH0_CLIENT_ID)</string>
 	<key>AdjustAppToken</key>
 	<string>$(ADJUST_APP_TOKEN)</string>
 	<key>AppIdentifierPrefix</key>
@@ -30,8 +15,10 @@
 		<string>org.mozilla.ios.surface.notification.refresh</string>
 		<string>org.mozilla.ios.firefox.suggest.ingest</string>
 	</array>
+	<key>BRAZE_API_KEY</key>
+	<string>$(BRAZE_API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>$(MOZ_BUNDLE_DISPLAY_NAME)</string>
 	<key>CFBundleExecutable</key>
@@ -45,14 +32,14 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(APP_VERSION)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>org.mozilla.Client</string>
+			<string>com.ecosia.ecosiaapp</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>$(MOZ_PUBLIC_URL_SCHEME)</string>
@@ -64,8 +51,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>CHANNEL</key>
-	<string>$(CHANNEL)</string>
+	<key>CF_ACCESS_CLIENT_ID</key>
+	<string>$(CF_ACCESS_CLIENT_ID)</string>
+	<key>CF_ACCESS_CLIENT_SECRET</key>
+	<string>$(CF_ACCESS_CLIENT_SECRET)</string>
 	<key>INIntentsSupported</key>
 	<array>
 		<string>QuickActionIntent</string>
@@ -121,12 +110,11 @@
 	<string>Firefox uses your microphone to record and upload audio.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This lets you save photos.</string>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>QuickActionIntent</string>
-		<string>org.mozilla.ios.firefox.browsing</string>
+		<string>QuickLinkSelectionIntent</string>
+		<string>com.ecosia.ecosiaapp.browsing</string>
 	</array>
 	<key>NimbusURL</key>
 	<string>$(NIMBUS_URL)</string>
@@ -140,11 +128,12 @@
 		<string>NewYorkMedium-BoldItalic.otf</string>
 		<string>NewYorkMedium-Regular.otf</string>
 		<string>NewYorkMedium-RegularItalic.otf</string>
+        <string>FoundersGroteskCondensed-Semibold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
-		<true/>
+		<false/>
 		<key>UISceneConfigurations</key>
 		<dict>
 			<key>UIWindowSceneSessionRoleApplication</key>
@@ -172,11 +161,19 @@
 		</dict>
 		<dict>
 			<key>UIApplicationShortcutItemIconFile</key>
-			<string>privateModeLarge</string>
+			<string>privateSearch</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>New Private Tab</string>
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).NewPrivateTab</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconFile</key>
+			<string>menu-ScanQRCode</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Scan QR Code</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).QRCode</string>
 		</dict>
 	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -190,13 +187,13 @@
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<string>EcosiaLaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
 	<key>UIStatusBarHidden</key>
-	<false/>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -9,7 +9,7 @@ public protocol TooltipViewDelegate: AnyObject {
     func didTapTooltipDismissButton()
 }
 
-final class TooltipView: UIView {
+class TooltipView: UIView {
     weak var delegate: TooltipViewDelegate?
 
     private lazy var gradient: CAGradientLayer = {

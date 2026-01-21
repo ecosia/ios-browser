@@ -7,19 +7,18 @@ import XCTest
 
 @testable import Client
 
-@MainActor
 class IntroViewControllerTests: XCTestCase {
     var mockNotificationCenter: MockNotificationCenter!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         mockNotificationCenter = MockNotificationCenter()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         mockNotificationCenter = nil
-        try await super.tearDown()
     }
 
     // Temp. Disabled: https://mozilla-hub.atlassian.net/browse/FXIOS-7505
@@ -38,8 +37,11 @@ class IntroViewControllerTests: XCTestCase {
     func testSubjectRegistersForNotification() {
         XCTAssertEqual(mockNotificationCenter.addObserverCallCount, 0)
         let subject = createSubject()
-        subject.registerForNotification()
+
         XCTAssertEqual(mockNotificationCenter.addObserverCallCount, 1)
+        subject.registerForNotification()
+
+        XCTAssertEqual(mockNotificationCenter.addObserverCallCount, 2)
     }
 
     func testViewMoving_MovesToNextCard_ifSetDefaultBrowserCard() {
@@ -74,7 +76,6 @@ class IntroViewControllerTests: XCTestCase {
         XCTAssertEqual(subject.pageControl.currentPage, 2)
     }
 
-    @MainActor
     func testViewMovesToNextScreenAfterNotification() {
         let subject = createSubject()
         XCTAssertEqual(subject.pageControl.currentPage, 0)
@@ -90,7 +91,7 @@ class IntroViewControllerTests: XCTestCase {
     // MARK: - Private Helpers
     func createSubject(
         withCustomPrimaryActions: [OnboardingActions] = [.setDefaultBrowser, .syncSignIn, .requestNotifications],
-        file: StaticString = #filePath,
+        file: StaticString = #file,
         line: UInt = #line
     ) -> IntroViewController {
         NimbusOnboardingTestingConfigUtility().setupNimbusWith(

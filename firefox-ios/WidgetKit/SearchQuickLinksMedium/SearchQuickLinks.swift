@@ -42,12 +42,15 @@ struct SearchQuickLinksEntryView: View {
             }
         }
         .padding(10.0)
+        /* Ecosia: Update color
         .widgetBackground(Color("backgroundColor"))
+         */
+        .widgetBackground(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 }
 
 struct SearchQuickLinksWidget: Widget {
-    private let kind = "Quick Actions - Medium"
+    private let kind: String = "Quick Actions - Medium"
 
     public var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in

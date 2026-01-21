@@ -4,17 +4,14 @@
 
 import Common
 import Foundation
+import Shared
 
 class DefaultBrowserSetting: Setting {
     override var accessibilityIdentifier: String? { return "DefaultBrowserSettings" }
 
     init(theme: Theme) {
-        super.init(
-            title: NSAttributedString(
-                string: String.DefaultBrowserMenuItem,
-                attributes: [NSAttributedString.Key.foregroundColor: theme.colors.actionPrimary]
-            )
-        )
+        super.init(title: NSAttributedString(string: String.DefaultBrowserMenuItem,
+                                             attributes: [NSAttributedString.Key.foregroundColor: theme.colors.actionPrimary]))
     }
 
     override func onClick(_ navigationController: UINavigationController?) {

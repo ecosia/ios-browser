@@ -7,24 +7,24 @@ import Foundation
 import GCDWebServers
 import Shared
 
-final class WebServerUtil {
-    private let readerModeHander: ReaderModeHandlersProtocol
-    private let webServer: WebServerProtocol
-    private let profile: Profile
+class WebServerUtil {
+    private var readerModeHander: ReaderModeHandlersProtocol
+    private var webServer: WebServerProtocol
+    private var profile: Profile
 
-    init(readerModeHandler: some ReaderModeHandlersProtocol,
+    init(readerModeHander: ReaderModeHandlersProtocol = ReaderModeHandlers(),
          webServer: WebServer = WebServer.sharedInstance,
          profile: Profile) {
-        self.readerModeHander = readerModeHandler
+        self.readerModeHander = readerModeHander
         self.webServer = webServer
         self.profile = profile
     }
 
-    @MainActor
     func setUpWebServer() {
         guard !webServer.server.isRunning else { return }
 
         readerModeHander.register(webServer, profile: profile)
+
         let responders: [(String, InternalSchemeResponse)] =
              [(AboutHomeHandler.path, AboutHomeHandler()),
               (AboutLicenseHandler.path, AboutLicenseHandler()),
@@ -78,9 +78,7 @@ of Mammon shall tremble. from The Book of Mozilla, 3:31 (Red Letter Edition) </s
                              "test-mozilla-book",
                              "test-mozilla-org",
                              "test-popup-blocker",
-                             "test-translation",
-                             "test-user-agent",
-                             "test-cookie-store"]
+                             "test-user-agent"]
         htmlFixtures.forEach {
             addHTMLFixture(name: $0, server: server)
         }

@@ -6,11 +6,11 @@ import Foundation
 import Redux
 import Common
 
-struct AppState: StateType, Sendable {
+struct AppState: StateType {
     let activeScreens: ActiveScreensState
 
     static let reducer: Reducer<Self> = { state, action in
-        return AppState(activeScreens: ActiveScreensState.reducer(state.activeScreens, action))
+        AppState(activeScreens: ActiveScreensState.reducer(state.activeScreens, action))
     }
 
     func screenState<S: ScreenState>(_ s: S.Type,
@@ -22,20 +22,17 @@ struct AppState: StateType, Sendable {
                 case (.browserViewController(let state), .browserViewController): return state as? S
                 case (.homepage(let state), .homepage): return state as? S
                 case (.mainMenu(let state), .mainMenu): return state as? S
+                case (.mainMenuDetails(let state), .mainMenuDetails): return state as? S
                 case (.microsurvey(let state), .microsurvey): return state as? S
                 case (.remoteTabsPanel(let state), .remoteTabsPanel): return state as? S
                 case (.tabsPanel(let state), .tabsPanel): return state as? S
                 case (.tabPeek(let state), .tabPeek): return state as? S
                 case (.tabsTray(let state), .tabsTray): return state as? S
-                case (.termsOfUse(let state), .termsOfUse): return state as? S
                 case (.themeSettings(let state), .themeSettings): return state as? S
                 case (.toolbar(let state), .toolbar): return state as? S
                 case (.searchEngineSelection(let state), .searchEngineSelection): return state as? S
                 case (.trackingProtection(let state), .trackingProtection): return state as? S
                 case (.passwordGenerator(let state), .passwordGenerator): return state as? S
-                case (.nativeErrorPage(let state), .nativeErrorPage): return state as? S
-                case (.shortcutsLibrary(let state), .shortcutsLibrary): return state as? S
-                case (.storiesFeed(let state), .storiesFeed): return state as? S
                 default: return nil
                 }
             }.first(where: {
@@ -50,10 +47,6 @@ struct AppState: StateType, Sendable {
                 return $0.windowUUID == expectedUUID
             })
     }
-
-    static func defaultState(from state: AppState) -> AppState {
-        return AppState(activeScreens: state.activeScreens)
-    }
 }
 
 extension AppState {
@@ -62,11 +55,9 @@ extension AppState {
     }
 }
 
-@MainActor
 let middlewares = [
     FeltPrivacyMiddleware().privacyManagerProvider,
     MainMenuMiddleware().mainMenuProvider,
-    MessageCardMiddleware().messageCardProvider,
     MicrosurveyMiddleware().microsurveyProvider,
     MicrosurveyPromptMiddleware().microsurveyProvider,
     RemoteTabsPanelMiddleware().remoteTabsPanelProvider,
@@ -74,34 +65,20 @@ let middlewares = [
     ThemeManagerMiddleware().themeManagerProvider,
     ToolbarMiddleware().toolbarProvider,
     SearchEngineSelectionMiddleware().searchEngineSelectionProvider,
-    TopSitesMiddleware().topSitesProvider,
     TrackingProtectionMiddleware().trackingProtectionProvider,
     PasswordGeneratorMiddleware().passwordGeneratorProvider,
-    MerinoMiddleware().pocketSectionProvider,
-    NativeErrorPageMiddleware().nativeErrorPageProvider,
-    WallpaperMiddleware().wallpaperProvider,
-    BookmarksMiddleware().bookmarksProvider,
-    HomepageMiddleware(notificationCenter: NotificationCenter.default).homepageProvider,
-    StartAtHomeMiddleware().startAtHomeProvider,
-    ShortcutsLibraryMiddleware().shortcutsLibraryProvider,
-    SummarizerMiddleware().summarizerProvider,
-    TermsOfUseMiddleware().termsOfUseProvider,
-    TranslationsMiddleware().translationsProvider
+    PocketMiddleware().pocketSectionProvider
 ]
 
 // In order for us to mock and test the middlewares easier,
 // we change the store to be instantiated as a variable.
 // For non testing builds, we leave the store as a constant.
 #if TESTING
-@MainActor
-var store: any DefaultDispatchStore<AppState> = Store(
-    state: AppState(),
-    reducer: AppState.reducer,
-    middlewares: AppConstants.isRunningUnitTest ? [] : middlewares
-)
+var store = Store(state: AppState(),
+                  reducer: AppState.reducer,
+                  middlewares: middlewares)
 #else
-@MainActor
-let store: any DefaultDispatchStore<AppState> = Store(state: AppState(),
-                                                      reducer: AppState.reducer,
-                                                      middlewares: middlewares)
+let store = Store(state: AppState(),
+                  reducer: AppState.reducer,
+                  middlewares: middlewares)
 #endif

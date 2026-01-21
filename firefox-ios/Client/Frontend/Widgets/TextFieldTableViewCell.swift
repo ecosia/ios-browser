@@ -4,6 +4,7 @@
 
 import Common
 import UIKit
+import Shared
 
 protocol TextFieldTableViewCellDelegate: AnyObject {
     func textFieldTableViewCell(_ textFieldTableViewCell: TextFieldTableViewCell, didChangeText text: String)
@@ -56,14 +57,12 @@ class TextFieldTableViewCell: UITableViewCell, ThemeApplicable {
         title: String,
         textFieldText: String,
         autocapitalizationType: UITextAutocapitalizationType,
-        keyboardType: UIKeyboardType,
-        textFieldAccessibilityIdentifier: String? = nil
+        keyboardType: UIKeyboardType
     ) {
         titleLabel.text = title
         textField.text = textFieldText
         textField.autocapitalizationType = autocapitalizationType
         textField.keyboardType = keyboardType
-        textField.accessibilityIdentifier = textFieldAccessibilityIdentifier
     }
 
     func focusTextField() {

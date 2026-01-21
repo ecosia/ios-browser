@@ -7,13 +7,10 @@ import XCTest
 
 @testable import Client
 
-@MainActor
 final class MicrosurveyPromptMiddlewareTests: XCTestCase {
-    private var mockMicrosurveyManager: MockMicrosurveySurfaceManager!
-    var mockStore: MockStoreForMiddleware<AppState>!
-
-    override func setUp() async throws {
-        try await super.setUp()
+    private var microsurveyManager: MockMicrosurveySurfaceManager!
+    override func setUp() {
+        super.setUp()
         let model = MicrosurveyModel(
             id: "survey-id",
             promptTitle: "title",
@@ -27,100 +24,65 @@ final class MicrosurveyPromptMiddlewareTests: XCTestCase {
             icon: nil,
             utmContent: nil
         )
-        mockMicrosurveyManager = MockMicrosurveySurfaceManager(with: model)
-        DependencyHelperMock().bootstrapDependencies()
-        setupStore()
+        microsurveyManager = MockMicrosurveySurfaceManager(with: model)
+        DependencyHelperMock().bootstrapDependencies(injectedMicrosurveyManager: microsurveyManager)
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
-        resetStore()
-        try await super.tearDown()
     }
 
     func testShowPromptAction_withInvalidModel() {
-        let subject = createSubject(microsurveyManager: MockMicrosurveySurfaceManager(with: nil))
-
-        let action = MicrosurveyPromptMiddlewareAction(
-            windowUUID: .XCTestDefaultUUID,
-            actionType: MicrosurveyPromptActionType.showPrompt
+        DependencyHelperMock().bootstrapDependencies()
+        let mockStore = Store(
+            state: AppState(),
+            reducer: AppState.reducer,
+            middlewares: [MicrosurveyPromptMiddleware().microsurveyProvider]
         )
 
-        subject.microsurveyProvider(AppState(), action)
-
-        XCTAssertEqual(mockStore.dispatchedActions.count, 0)
-        XCTAssertEqual(mockMicrosurveyManager.handleMessageDisplayedCount, 0)
+        let action = getAction(for: .showPrompt)
+        mockStore.dispatch(action)
+        XCTAssertEqual(microsurveyManager.handleMessageDisplayedCount, 0)
     }
 
-    func testShowPromptAction_withValidModel() throws {
-        let subject = createSubject(microsurveyManager: mockMicrosurveyManager)
-        let action = MicrosurveyPromptMiddlewareAction(
-            windowUUID: .XCTestDefaultUUID,
-            actionType: MicrosurveyPromptActionType.showPrompt
+    func testShowPromptAction_withValidModel() {
+        let mockStore = Store(
+            state: AppState(),
+            reducer: AppState.reducer,
+            middlewares: [MicrosurveyPromptMiddleware().microsurveyProvider]
         )
 
-        subject.microsurveyProvider(AppState(), action)
-
-        let actionCalled = try XCTUnwrap(mockStore.dispatchedActions.first as? MicrosurveyPromptMiddlewareAction)
-        let actionType = try XCTUnwrap(actionCalled.actionType as? MicrosurveyPromptMiddlewareActionType)
-
-        XCTAssertEqual(actionType, MicrosurveyPromptMiddlewareActionType.initialize)
-        XCTAssertEqual(mockStore.dispatchedActions.count, 1)
-        XCTAssertEqual(mockMicrosurveyManager.handleMessageDisplayedCount, 1)
+        let action = getAction(for: .showPrompt)
+        mockStore.dispatch(action)
+        XCTAssertEqual(microsurveyManager.handleMessageDisplayedCount, 1)
     }
 
     func testClosePromptAction() {
-        let subject = createSubject(microsurveyManager: mockMicrosurveyManager)
-        let action = MicrosurveyPromptMiddlewareAction(
-            windowUUID: .XCTestDefaultUUID,
-            actionType: MicrosurveyPromptActionType.closePrompt
+        let mockStore = Store(
+            state: AppState(),
+            reducer: AppState.reducer,
+            middlewares: [MicrosurveyPromptMiddleware().microsurveyProvider]
         )
 
-        subject.microsurveyProvider(AppState(), action)
-
-        XCTAssertEqual(mockStore.dispatchedActions.count, 0)
-        XCTAssertEqual(mockMicrosurveyManager.handleMessageDismissCount, 1)
+        let action = getAction(for: .closePrompt)
+        mockStore.dispatch(action)
+        XCTAssertEqual(microsurveyManager.handleMessageDismissCount, 1)
     }
 
     func testContinueToSurveyAction() {
-        let subject = createSubject(microsurveyManager: mockMicrosurveyManager)
-        let action = MicrosurveyPromptMiddlewareAction(
-            windowUUID: .XCTestDefaultUUID,
-            actionType: MicrosurveyPromptActionType.continueToSurvey
+        let mockStore = Store(
+            state: AppState(),
+            reducer: AppState.reducer,
+            middlewares: [MicrosurveyPromptMiddleware().microsurveyProvider]
         )
 
-        subject.microsurveyProvider(AppState(), action)
-
-        XCTAssertEqual(mockStore.dispatchedActions.count, 0)
-        XCTAssertEqual(mockMicrosurveyManager.handleMessagePressedCount, 1)
+        let action = getAction(for: .continueToSurvey)
+        mockStore.dispatch(action)
+        XCTAssertEqual(microsurveyManager.handleMessagePressedCount, 1)
     }
 
-    // MARK: - Helpers
-    private func createSubject(microsurveyManager: MockMicrosurveySurfaceManager) -> MicrosurveyPromptMiddleware {
-        return MicrosurveyPromptMiddleware(microsurveyManager: microsurveyManager)
-    }
-
-    // MARK: StoreTestUtility
-    func setupAppState() -> AppState {
-        return AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
-                    .microsurvey(
-                        MicrosurveyState(
-                            windowUUID: .XCTestDefaultUUID
-                        )
-                    ),
-                ]
-            )
-        )
-    }
-
-    func setupStore() {
-        mockStore = MockStoreForMiddleware(state: setupAppState())
-        StoreTestUtilityHelper.setupStore(with: mockStore)
-    }
-
-    func resetStore() {
-        StoreTestUtilityHelper.resetStore()
+    private func getAction(for actionType: MicrosurveyPromptActionType) -> MicrosurveyPromptMiddlewareAction {
+        return MicrosurveyPromptMiddlewareAction(windowUUID: .XCTestDefaultUUID, actionType: actionType)
     }
 }

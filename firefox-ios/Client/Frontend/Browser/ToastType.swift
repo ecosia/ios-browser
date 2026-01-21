@@ -4,18 +4,18 @@
 
 import Foundation
 import Common
-import Redux
 
 enum ToastType: Equatable {
-    case addBookmark(urlString: String)
+    case addBookmark
     case addToReadingList
-    case clearCookies
+    case addShortcut
     case closedSingleTab
+    case closedSingleInactiveTab
     case closedAllTabs(count: Int)
-    case openNewTab
+    case closedAllInactiveTabs(count: Int)
+    case copyURL
     case removeFromReadingList
     case removeShortcut
-    case retryTranslatingPage
 
     var title: String {
         switch self {
@@ -23,55 +23,44 @@ enum ToastType: Equatable {
             return .LegacyAppMenu.AddBookmarkConfirmMessage
         case .addToReadingList:
             return .LegacyAppMenu.AddToReadingListConfirmMessage
-        case .clearCookies:
-            return .Menu.EnhancedTrackingProtection.clearDataToastMessage
-        case .closedSingleTab:
+        case .addShortcut:
+            return .LegacyAppMenu.AddPinToShortcutsConfirmMessage
+        case .closedSingleTab, .closedSingleInactiveTab:
             return .TabsTray.CloseTabsToast.SingleTabTitle
-        case let .closedAllTabs(count: tabsCount):
+        case let .closedAllInactiveTabs(tabsCount),
+            let .closedAllTabs(count: tabsCount):
             return String.localizedStringWithFormat(
                 .TabsTray.CloseTabsToast.Title,
                 tabsCount)
-        case .openNewTab:
-            return .ContextMenuButtonToastNewTabOpenedLabelText
+        case .copyURL:
+            return .LegacyAppMenu.AppMenuCopyURLConfirmMessage
         case .removeFromReadingList:
             return .LegacyAppMenu.RemoveFromReadingListConfirmMessage
         case .removeShortcut:
             return .LegacyAppMenu.RemovePinFromShortcutsConfirmMessage
-        case .retryTranslatingPage:
-            return .Translations.Sheet.Error.GeneralTitle
         }
     }
 
     var buttonText: String {
-        switch self {
-        case .openNewTab:
-            return .ContextMenuButtonToastNewTabOpenedButtonText
-        case .retryTranslatingPage:
-            return .Translations.Banner.RetryButton
-        default:
-            return .TabsTray.CloseTabsToast.Action
-        }
+        return .TabsTray.CloseTabsToast.Action
     }
 
-    func reduxAction(for uuid: WindowUUID) -> Action? {
+    func reduxAction(for uuid: WindowUUID) -> TabPanelViewAction? {
+        var actionType: TabPanelViewActionType
         switch self {
-        case .closedSingleTab:
-            return tabPanelAction(for: TabPanelViewActionType.undoClose, uuid: uuid)
-        case .closedAllTabs:
-            return tabPanelAction(for: TabPanelViewActionType.undoCloseAllTabs, uuid: uuid)
-        case .retryTranslatingPage:
-            return TranslationsAction(windowUUID: uuid, actionType: TranslationsActionType.didTapRetryFailedTranslation)
-        case .clearCookies,
+        case .closedSingleTab: actionType = TabPanelViewActionType.undoClose
+        case .closedSingleInactiveTab: actionType = TabPanelViewActionType.undoCloseInactiveTab
+        case .closedAllTabs: actionType = TabPanelViewActionType.undoCloseAllTabs
+        case .closedAllInactiveTabs: actionType = TabPanelViewActionType.undoCloseAllInactiveTabs
+        case .copyURL,
                 .addBookmark,
+                .addShortcut,
                 .addToReadingList,
-                .openNewTab,
                 .removeFromReadingList,
                 .removeShortcut:
             return nil
         }
-    }
 
-    private func tabPanelAction(for actionType: TabPanelViewActionType, uuid: WindowUUID) -> TabPanelViewAction {
         // None of the above handled toast actions require a specific panelType
         return TabPanelViewAction(panelType: nil,
                                   windowUUID: uuid,

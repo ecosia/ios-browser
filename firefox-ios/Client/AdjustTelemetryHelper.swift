@@ -1,8 +1,7 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-//
-// swiftlint:disable comment_spacing
+// swiftlint:disable comment_spacing file_header
+//// This Source Code Form is subject to the terms of the Mozilla Public
+//// License, v. 2.0. If a copy of the MPL was not distributed with this
+//// file, You can obtain one at http://mozilla.org/MPL/2.0/
 //
 //import Foundation
 //import Adjust
@@ -55,7 +54,7 @@
 //            telemetry.record(network: network)
 //        }
 //
-//        gleanWrapper.submit(GleanMetrics.Pings.shared.firstSession)
+//        gleanWrapper.submitPing()
 //    }
 //}
-// swiftlint:enable comment_spacing
+// swiftlint:enable comment_spacing file_header

@@ -5,6 +5,7 @@
 import Common
 import Foundation
 import SwiftUI
+import Shared
 
 protocol ToggleModelDelegate: AnyObject {
     func toggleDidChange(_ toggleModel: ToggleModel)
@@ -25,12 +26,6 @@ class ToggleModel: ObservableObject {
 }
 
 struct CreditCardAutofillToggle: View {
-    private struct UX {
-        static let paddingSize: CGFloat = 4
-        static let dividerHeight: CGFloat = 0.7
-        static let padding: CGFloat = 16
-    }
-
     // Theming
     let windowUUID: WindowUUID
     @Environment(\.themeManager)
@@ -43,21 +38,20 @@ struct CreditCardAutofillToggle: View {
     var body: some View {
         VStack {
             Divider()
-                .frame(height: UX.dividerHeight)
-                .padding(.leading, UX.padding)
+                .frame(height: 0.7)
+                .padding(.leading, 16)
                 .hidden()
             HStack {
                 Toggle(String.CreditCard.EditCard.ToggleToAllowAutofillTitle, isOn: $model.isEnabled)
                     .font(.body)
                     .foregroundColor(textColor)
-                    .padding(.leading, UX.padding)
-                    .padding(.trailing, UX.padding)
-                    .modifier(NewStyleExtraPaddingTopAndBottom(paddingSize: UX.paddingSize))
+                    .padding(.leading, 16)
+                    .padding(.trailing, 16)
                     .toggleStyle(SwitchToggleStyle(tint: toggleTintColor))
             }
             Divider()
-                .frame(height: UX.dividerHeight)
-                .padding(.leading, UX.padding)
+                .frame(height: 0.7)
+                .padding(.leading, 16)
         }
         .background(backgroundColor)
         .onAppear {

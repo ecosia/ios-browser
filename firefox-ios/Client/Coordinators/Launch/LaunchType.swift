@@ -3,17 +3,16 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Common
+import Shared
 
 enum LaunchCoordinatorType {
     case SceneCoordinator, BrowserCoordinator
 }
 
 enum LaunchType {
-    /// Showing the terms of service
-    case termsOfService(manager: TermsOfServiceManager)
-
     /// Showing the intro onboarding
-    case intro(manager: IntroScreenManagerProtocol)
+    case intro(manager: IntroScreenManager)
 
     /// Show the update onboarding
     case update(viewModel: UpdateViewModel)
@@ -30,7 +29,7 @@ enum LaunchType {
     ///   - isIphone: True when the current device is of type iPhone
     /// - Returns: true if the launch type can be launched from a particular coordinator or not
     func canLaunch(fromType type: LaunchCoordinatorType,
-                   isIphone: Bool) -> Bool {
+                   isIphone: Bool = UIDevice.current.userInterfaceIdiom == .phone) -> Bool {
         switch type {
         case .BrowserCoordinator:
             return !isFullScreenAvailable(isIphone: isIphone)
@@ -42,15 +41,9 @@ enum LaunchType {
     /// We show full screen launch types from scene coordinator, other launch type are shown from browser coordinator
     /// - Parameter isIphone: True when the current device is of type iPhone
     /// - Returns: if the launch type needs to be full screen or not
-    func isFullScreenAvailable(isIphone: Bool) -> Bool {
+    func isFullScreenAvailable(isIphone: Bool = UIDevice.current.userInterfaceIdiom == .phone) -> Bool {
         switch self {
-        case .termsOfService:
-            return true
-        case .intro(let introManager):
-            // For intro onboarding, use full screen on iPad only when modern onboarding is enabled
-            return isIphone || introManager.isModernOnboardingEnabled
-        case .update:
-            // For update onboarding, always use iPhone-only behavior for now
+        case .intro, .update:
             return isIphone
         case .survey:
             return true

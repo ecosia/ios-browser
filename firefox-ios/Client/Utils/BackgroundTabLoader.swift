@@ -15,10 +15,10 @@ protocol BackgroundTabLoader {
     func loadBackgroundTabs()
 }
 
-final class DefaultBackgroundTabLoader: BackgroundTabLoader, Sendable {
-    private let tabQueue: TabQueue
-    private let backgroundQueue: DispatchQueueInterface
-    private let applicationHelper: ApplicationHelper
+final class DefaultBackgroundTabLoader: BackgroundTabLoader {
+    private var tabQueue: TabQueue
+    private var backgroundQueue: DispatchQueueInterface
+    private var applicationHelper: ApplicationHelper
 
     init(tabQueue: TabQueue,
          applicationHelper: ApplicationHelper = DefaultApplicationHelper(),
@@ -31,14 +31,13 @@ final class DefaultBackgroundTabLoader: BackgroundTabLoader, Sendable {
     func loadBackgroundTabs() {
         // Make sure we load queued tabs on a background thread
         backgroundQueue.async { [weak self] in
-            guard let self else { return }
+            guard let self = self else { return }
             self.dequeueQueuedTabs()
         }
     }
 
     private func dequeueQueuedTabs() {
-        // Opens the database on a background thread
-        tabQueue.getQueuedTabs { @MainActor [weak self] urls in
+        tabQueue.getQueuedTabs { [weak self] urls in
             guard let self = self else { return }
             // This assumes that the DB returns rows in a sane order.
             guard !urls.isEmpty else { return }
@@ -56,7 +55,6 @@ final class DefaultBackgroundTabLoader: BackgroundTabLoader, Sendable {
         }
     }
 
-    @MainActor
     private func open(urls: [URL]) {
         for urlToOpen in urls {
             let urlString = URL.mozInternalScheme + "://open-url?url=\(urlToOpen)"

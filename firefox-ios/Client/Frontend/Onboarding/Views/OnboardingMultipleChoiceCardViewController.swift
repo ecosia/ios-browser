@@ -5,34 +5,28 @@
 import UIKit
 import Common
 import ComponentLibrary
-import OnboardingKit
+import Shared
 
-// MARK: - Multiple Choice Card UX Constants
-private typealias UX = OnboardingMultipleChoiceCardViewControllerUX
-private typealias SharedUX = OnboardingCardViewControllerSharedUX
-struct OnboardingMultipleChoiceCardViewControllerUX {
-    static let stackViewSpacingWithoutLink: CGFloat = 5
-    static let stackViewSpacingButtons: CGFloat = 16
-    static let topStackViewPaddingPad: CGFloat = 70
-    static let topStackViewSpacingBetweenImageAndTitle: CGFloat = 15
-    static let topStackViewSpacingBetweenDescriptionAndButtons: CGFloat = 20
-    static let topStackViewPaddingPhone: CGFloat = 90
-    static let choiceButtonStackViewSpacing: CGFloat = 26
-    static let bottomStackViewPaddingPad: CGFloat = 32
-    static let bottomStackViewPaddingPhone: CGFloat = 0
-    static let horizontalTopStackViewPaddingPad: CGFloat = 100
-    static let horizontalTopStackViewPaddingPhone: CGFloat = 24
-    static let scrollViewVerticalPadding: CGFloat = 62
+class OnboardingMultipleChoiceCardViewController: OnboardingCardViewController {
+    struct UX {
+        static let stackViewSpacingWithoutLink: CGFloat = 5
+        static let stackViewSpacingButtons: CGFloat = 16
+        static let topStackViewPaddingPad: CGFloat = 70
+        static let topStackViewSpacingBetweenImageAndTitle: CGFloat = 15
+        static let topStackViewSpacingBetweenDescriptionAndButtons: CGFloat = 20
+        static let topStackViewPaddingPhone: CGFloat = 90
+        static let choiceButtonStackViewSpacing: CGFloat = 26
+        static let bottomStackViewPaddingPad: CGFloat = 32
+        static let bottomStackViewPaddingPhone: CGFloat = 0
+        static let horizontalTopStackViewPaddingPad: CGFloat = 100
+        static let horizontalTopStackViewPaddingPhone: CGFloat = 24
+        static let scrollViewVerticalPadding: CGFloat = 62
 
-    static let smallTopStackViewPadding: CGFloat = 40
+        static let smallTopStackViewPadding: CGFloat = 40
 
-    static let baseImageHeight: CGFloat = 200
-}
+        static let baseImageHeight: CGFloat = 200
+    }
 
-class OnboardingMultipleChoiceCardViewController<CardModel: OnboardingCardInfoModelProtocol>:
-    OnboardingCardViewController<CardModel>
-    where CardModel.OnboardingActionType == OnboardingActions,
-          CardModel.OnboardingMultipleChoiceActionType == OnboardingMultipleChoiceAction {
     // MARK: - Properties
     weak var delegate: OnboardingCardDelegate?
     private var multipleChoiceButtons: [OnboardingMultipleChoiceButtonView]
@@ -70,7 +64,7 @@ class OnboardingMultipleChoiceCardViewController<CardModel: OnboardingCardInfoMo
 
     // MARK: - Initializers
     init(
-        viewModel: CardModel,
+        viewModel: OnboardingCardInfoModelProtocol,
         delegate: OnboardingCardDelegate?,
         windowUUID: WindowUUID
     ) {
@@ -90,9 +84,8 @@ class OnboardingMultipleChoiceCardViewController<CardModel: OnboardingCardInfoMo
 
         setupView()
         updateLayout()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
+        listenForThemeChange(view)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -250,32 +243,13 @@ class OnboardingMultipleChoiceCardViewController<CardModel: OnboardingCardInfoMo
         view.addSubview(scrollView)
     }
 
-    /// Determines whether a given button is the selected button based on the toolbar layout, button properties,
-    /// and the `version1` or `version2 experiment.
-    ///
-    /// - Description: For the `version1` or `version2` experiment, the bottom toolbar button is set as
-    ///   the default selected button.
-    ///   For other layouts, the first button in the multiple choice buttons list is used as the default.
-    private func isSelectedButton(
-        buttonModel: OnboardingMultipleChoiceButtonModel<OnboardingMultipleChoiceAction>,
-        viewModel: CardModel) -> Bool {
-        let isToolbarBottomAction = buttonModel.action == .toolbarBottom
-        let isToolbarTopAction = buttonModel.action == .toolbarTop
-        if isToolbarBottomAction {
-            return true
-        } else {
-            return !isToolbarTopAction && buttonModel == viewModel.multipleChoiceButtons.first
-        }
-    }
-
     private func buildButtonViews() {
         multipleChoiceButtons.removeAll()
         multipleChoiceButtons = viewModel.multipleChoiceButtons.map({ buttonModel in
-            let isSelectedButton = isSelectedButton(buttonModel: buttonModel, viewModel: viewModel)
             return OnboardingMultipleChoiceButtonView(
                 windowUUID: windowUUID,
                 viewModel: OnboardingMultipleChoiceButtonViewModel(
-                    isSelected: isSelectedButton,
+                    isSelected: buttonModel == viewModel.multipleChoiceButtons.first,
                     info: buttonModel,
                     presentingCardName: viewModel.name,
                     a11yIDRoot: viewModel.a11yIdRoot
@@ -285,6 +259,7 @@ class OnboardingMultipleChoiceCardViewController<CardModel: OnboardingCardInfoMo
             )
         })
     }
+
     // MARK: - Button Actions
     @objc
     override func primaryAction() {

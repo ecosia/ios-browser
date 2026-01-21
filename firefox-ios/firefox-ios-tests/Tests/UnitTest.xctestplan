@@ -96,52 +96,24 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "MetaGlobalTests\/testHappyOptimisticStateMachine()",
+        "MetaGlobalTests\/testMetaGlobalAndCryptoKeysFresh()",
+        "MetaGlobalTests\/testMetaGlobalModified()",
+        "MetaGlobalTests\/testUpdatedCryptoKeys()",
+        "StateTests\/testPickling()"
+      ],
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "282731671ABC9BE700AA1954",
+        "name" : "SyncTests"
+      }
+    },
+    {
       "target" : {
         "containerPath" : "container:..\/BrowserKit",
         "identifier" : "TabDataStoreTests",
         "name" : "TabDataStoreTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/BrowserKit",
-        "identifier" : "OnboardingKitTests",
-        "name" : "OnboardingKitTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/BrowserKit",
-        "identifier" : "ContentBlockingGeneratorTests",
-        "name" : "ContentBlockingGeneratorTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/BrowserKit",
-        "identifier" : "WebEngineTests",
-        "name" : "WebEngineTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "2FA436041ABB83B4008031D1",
-        "name" : "AccountTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/BrowserKit",
-        "identifier" : "ActionExtensionKitTests",
-        "name" : "ActionExtensionKitTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "E69DB07C1E97DEA9008A67E6",
-        "name" : "SyncTelemetryTests"
       }
     },
     {
@@ -152,8 +124,14 @@
       }
     },
     {
+      "target" : {
+        "containerPath" : "container:..\/BrowserKit",
+        "identifier" : "ContentBlockingGeneratorTests",
+        "name" : "ContentBlockingGeneratorTests"
+      }
+    },
+    {
       "skippedTests" : [
-        "RustLoginsTests\/testUpdateLogin()",
         "TestBrowserDB\/testMovesDB()"
       ],
       "target" : {
@@ -170,69 +148,55 @@
       }
     },
     {
-      "skippedTests" : [
-        "MetaGlobalTests\/testHappyOptimisticStateMachine()",
-        "MetaGlobalTests\/testMetaGlobalAndCryptoKeysFresh()",
-        "MetaGlobalTests\/testMetaGlobalModified()",
-        "MetaGlobalTests\/testUpdatedCryptoKeys()",
-        "StateTests\/testPickling()"
-      ],
       "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "282731671ABC9BE700AA1954",
-        "name" : "SyncTests"
+        "containerPath" : "container:..\/BrowserKit",
+        "identifier" : "MenuKitTests",
+        "name" : "MenuKitTests"
       }
     },
     {
       "skippedTests" : [
-        "BrowserViewControllerWebViewDelegateTests\/testWebViewDidFinishNavigation_takeScreenshotWhenTabIsSelected()",
-        "ContentBlockerTests",
+        "ContentBlockerTests\/testCompileListsNotInStore_callsCompletionHandlerSuccessfully()",
         "ETPCoverSheetTests",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessage()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessageExceptIfAnySome()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessage_experiments_controlMessages()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessage_experiments_exposureEvents()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessage_experiments_malformedControlMessages()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessage_experiments_multiplControlMessages()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessage_happyPath_byMultipleTriggers()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessage_happyPath_bySurface()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessage_happyPath_byTrigger()",
-        "GleanPlumbMessageManagerTests\/testManagerGetMessages_happyPath_withNoAction()",
-        "GleanPlumbMessageManagerTests\/testManagerOnMessageDismissed()",
-        "GleanPlumbMessageManagerTests\/testManagerOnMessageDisplayed()",
-        "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_linkWithEmbeddedParam()",
-        "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_linkWithEmbeddedParamAndOneActionParam()",
-        "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_linkWithOneParam()",
-        "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_linkWithScheme()",
+        "FirefoxHomeViewModelTests",
+        "FirefoxHomeViewModelTests\/testNumberOfSection_withoutUpdatingData_has2Sections()",
+        "GeneralizedImageFetcherTests\/testBadStatusCode()",
+        "GeneralizedImageFetcherTests\/testErrorResponse()",
+        "GeneralizedImageFetcherTests\/testNilData()",
         "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_withMalformedURL()",
         "HistoryHighlightsDataAdaptorTests",
+        "HistoryHighlightsDataAdaptorTests\/testDelegateMemoryLeak()",
+        "HistoryHighlightsDataAdaptorTests\/testDeleteGroupItem()",
+        "HistoryHighlightsDataAdaptorTests\/testDeleteIndividualItem()",
+        "HistoryHighlightsDataAdaptorTests\/testInitialLoadWithHistoryData()",
+        "HistoryHighlightsDataAdaptorTests\/testInitialLoadWithNoHistoryData()",
         "HistoryHighlightsDataAdaptorTests\/testReloadDataOnNotification()",
-        "HistoryHighlightsTests",
-        "IntroViewControllerTests\/testBasicSetupReturnsExpectedItems()",
-        "OnboardingTelemetryUtilityTests\/testSendOnboardingCardView_WelcomeCard_Success()",
-        "RustSyncManagerTests\/testGetEnginesAndKeys()",
-        "RustSyncManagerTests\/testGetEnginesAndKeysWithNoKey()",
-        "RustSyncManagerTests\/testUpdateEnginePrefs_addressesDisabled()",
-        "RustSyncManagerTests\/testUpdateEnginePrefs_addressesEnabled()",
-        "RustSyncManagerTests\/testUpdateEnginePrefs_bookmarksEnabled()",
-        "ShareTelemetryTests",
+        "IntroScreenManagerTests\/testHasSeenIntroScreen_shouldNotShowIt()",
+        "ShortcutRouteTests",
+        "ShortcutRouteTests\/testInvalidShortcut()",
+        "ShortcutRouteTests\/testNewPrivateTabShortcut()",
+        "ShortcutRouteTests\/testNewTabShortcut()",
         "ShortcutRouteTests\/testOpenLastBookmarkShortcutWithInvalidUrl()",
+        "ShortcutRouteTests\/testOpenLastBookmarkShortcutWithValidUrl()",
+        "ShortcutRouteTests\/testQRCodeShortcut()",
+        "SyncContentSettingsViewControllerTests",
+        "SyncContentSettingsViewControllerTests\/test_syncContentSettingsViewController_engineSectionForSettings()",
+        "SyncContentSettingsViewControllerTests\/test_syncContentSettingsViewController_generateSettingsCount()",
+        "TabLocationViewTests\/testDelegateMemoryLeak()",
+        "TabManagerNavDelegateTests",
+        "TabManagerNavDelegateTests\/test_webViewDecidePolicyFor_actionPolicy_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewDecidePolicyFor_responsePolicy_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewDidCommit_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewDidFailProvisionalNavigation_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewDidFail_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewDidFinish_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewDidReceiveAuthenticationChallenge_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewDidReceiveServerRedirectForProvisionalNavigation_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewDidStartProvisionalNavigation_sendsCorrectMessage()",
+        "TabManagerNavDelegateTests\/test_webViewWebContentProcessDidTerminate_sendsCorrectMessage()",
         "TabManagerTests\/testDeleteSelectedTab()",
         "TabManagerTests\/testPrivatePreference_togglePBMDeletesPrivate()",
-        "TabManagerTests\/testRestoreScreenshotsForTabs()",
-        "TabManagerTests\/testRestoreTabs()",
-        "TabManagerTests\/testRestoreTabsForced()",
-        "TabManagerTests\/testRestoreTabs_whenDeeplinkTabNil_selectsPreviousSelectedTabData()",
-        "TabManagerTests\/testRestoreTabs_whenDeeplinkTabNotNil_selectsDeeplinkTab()",
-        "TabManagerTests\/testRestoreTabs_whenDeeplinkTabPresent()",
-        "TabManagerTests\/testRestoreTabs_whenDeeplinkTabPresent_doesnAddDepplinkTabMultipleTimes()",
-        "TabManagerTests\/testRestoreTabs_whenDeeplinkTabPresent_withSameURLAsRestoredTab()",
-        "TabToolbarHelperTests\/testTelemetryForSiteMenu()",
-        "TelemetryWrapperTests\/test_error_cpuExceptionIsCalled()",
-        "TelemetryWrapperTests\/test_loginWithEmail_GleanIsCalled()",
-        "TestFavicons\/testFaviconFetcherParse()",
-        "VersionSettingTests",
-        "VersionSettingTests\/testCopyAppVersion()"
+        "TestFavicons\/testFaviconFetcherParse()"
       ],
       "target" : {
         "containerPath" : "container:Client.xcodeproj",
@@ -243,15 +207,18 @@
     {
       "target" : {
         "containerPath" : "container:..\/BrowserKit",
-        "identifier" : "SummarizeKitTests",
-        "name" : "SummarizeKitTests"
+        "identifier" : "ReduxTests",
+        "name" : "ReduxTests"
       }
     },
     {
+      "skippedTests" : [
+        "AppDelegateFeatureManagementIntegrationTests\/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions()"
+      ],
       "target" : {
-        "containerPath" : "container:..\/BrowserKit",
-        "identifier" : "JWTKitTests",
-        "name" : "JWTKitTests"
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "2CFE996E2D45329300B25CE0",
+        "name" : "EcosiaTests"
       }
     },
     {
@@ -271,15 +238,15 @@
     {
       "target" : {
         "containerPath" : "container:..\/BrowserKit",
-        "identifier" : "ReduxTests",
-        "name" : "ReduxTests"
+        "identifier" : "WebEngineTests",
+        "name" : "WebEngineTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/BrowserKit",
-        "identifier" : "MenuKitTests",
-        "name" : "MenuKitTests"
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "E69DB07C1E97DEA9008A67E6",
+        "name" : "SyncTelemetryTests"
       }
     }
   ],

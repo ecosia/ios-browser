@@ -43,11 +43,7 @@ class BrowsingTest: BaseTestCase {
         waitForExistence(RemindersApp)
         waitForHittable(RemindersApp)
         RemindersApp.tap()
-        if #unavailable(iOS 26) {
-            waitForExistence(app.buttons["Add"])
-        } else {
-            waitForExistence(app.images["safari"])
-        }
+        waitForExistence(app.buttons["Add"])
     }
 
     // Smoketest
@@ -89,17 +85,17 @@ class BrowsingTest: BaseTestCase {
     // https://mozilla.testrail.io/index.php?/cases/view/2587661
     func testActivityMenuRequestDesktopItem() {
         // Wait for existence rather than hittable because the textfield is technically disabled
-        loadWebPage("www.mozilla.org")
+        loadWebPage("facebook.com")
 
         waitForWebPageLoad()
-        mozWaitForElementToExist(app.buttons["HomeView.settingsButton"])
+        waitForExistence(app.buttons["HomeView.settingsButton"])
         app.buttons["HomeView.settingsButton"].tap()
 
         if iPad() {
-            mozWaitForElementToExist(app.collectionViews.buttons["Request Mobile Site"])
+            waitForExistence(app.collectionViews.buttons["Request Mobile Site"])
             app.collectionViews.buttons["Request Mobile Site"].tap()
         } else {
-            mozWaitForElementToExist(app.collectionViews.buttons["Request Desktop Site"])
+            waitForExistence(app.collectionViews.buttons["Request Desktop Site"])
             app.collectionViews.buttons["Request Desktop Site"].tap()
         }
 

@@ -5,34 +5,24 @@
 import Common
 import Foundation
 import UIKit
+import Shared
 
-class Toast: UIView, ThemeApplicable, Notifiable {
+class Toast: UIView, ThemeApplicable {
     struct UX {
-        static let toastHeightWithoutShadow: CGFloat = 56
-        static let toastHeightWithShadow: CGFloat = 68
+        static let toastHeight: CGFloat = 56
+        static let toastOffset: CGFloat = 16
         static let toastDismissAfter = DispatchTimeInterval.milliseconds(4500) // 4.5 seconds.
         static let toastDelayBefore = DispatchTimeInterval.milliseconds(0) // 0 seconds
         static let toastPrivateModeDelayBefore = DispatchTimeInterval.milliseconds(750)
         static let toastAnimationDuration = 0.5
-        static let toastCornerRadius: CGFloat = 8
-        static let toastSidePadding: CGFloat = 16
-
-        // Shadow
-        static let shadowRadius: CGFloat = 4
-        static let shadowOffset = CGSize(width: 0, height: 2)
-        static let shadowOpacity: Float = 1
-        static let shadowHorizontalSpacing: CGFloat = 16 // Accounts for top and bottom shadow
-        static let shadowVerticalSpacing: CGFloat = 8
     }
 
-    public var notificationCenter: NotificationProtocol = NotificationCenter.default
     var animationConstraint: NSLayoutConstraint?
-    var completionHandler: (@MainActor (Bool) -> Void)?
+    var completionHandler: ((Bool) -> Void)?
 
     weak var viewController: UIViewController?
 
     var dismissed = false
-    private var glassEffectView: UIVisualEffectView?
 
     lazy var gestureRecognizer: UITapGestureRecognizer = {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
@@ -40,35 +30,11 @@ class Toast: UIView, ThemeApplicable, Notifiable {
         return gestureRecognizer
     }()
 
-    lazy var toastView: UIView = .build { _ in }
-
-    override init(frame: CGRect) {
-        super.init(frame: .zero)
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [UIContentSizeCategory.didChangeNotification]
-        )
-        adjustLayoutForA11ySizeCategory()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    lazy var toastView: UIView = .build { view in }
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         superview?.addGestureRecognizer(gestureRecognizer)
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if #unavailable(iOS 26.0) {
-            layer.shadowPath = UIBezierPath(
-                roundedRect: self.toastView.bounds,
-                cornerRadius: UX.toastCornerRadius
-            ).cgPath
-        }
     }
 
     func showToast(viewController: UIViewController? = nil,
@@ -89,7 +55,7 @@ class Toast: UIView, ThemeApplicable, Notifiable {
             UIView.animate(
                 withDuration: UX.toastAnimationDuration,
                 animations: {
-                    self.animationConstraint?.constant = UX.shadowRadius
+                    self.animationConstraint?.constant = 0
                     self.layoutIfNeeded()
                 }
             ) { finished in
@@ -111,7 +77,7 @@ class Toast: UIView, ThemeApplicable, Notifiable {
         UIView.animate(
             withDuration: UX.toastAnimationDuration,
             animations: {
-                self.animationConstraint?.constant = UX.toastHeightWithShadow
+                self.animationConstraint?.constant = UX.toastHeight
                 self.layoutIfNeeded()
             }
         ) { finished in
@@ -128,66 +94,8 @@ class Toast: UIView, ThemeApplicable, Notifiable {
     }
 
     func applyTheme(theme: Theme) {
-        if #available(iOS 26.0, *) {
-            setupGlassEffect(theme: theme)
-        } else {
-            toastView.backgroundColor = theme.colors.actionPrimary
-            setupShadow(theme: theme)
-        }
-    }
-
-    @available(iOS 26.0, *)
-    private func setupGlassEffect(theme: Theme) {
-        // Only add glass effect if it doesn't already exist
-        guard glassEffectView == nil else { return }
-
-        let effectView = UIVisualEffectView()
-
-        #if canImport(FoundationModels)
-        let glassEffect = UIGlassEffect()
-        glassEffect.tintColor = theme.colors.actionPrimary
-        effectView.effect = glassEffect
-        #else
-        effectView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        #endif
-
-        effectView.layer.cornerRadius = UX.toastCornerRadius
-        effectView.clipsToBounds = true
-        effectView.translatesAutoresizingMaskIntoConstraints = false
-
-        toastView.layer.masksToBounds = true
-        toastView.insertSubview(effectView, at: 0)
-
-        NSLayoutConstraint.activate([
-            effectView.topAnchor.constraint(equalTo: toastView.topAnchor),
-            effectView.leadingAnchor.constraint(equalTo: toastView.leadingAnchor),
-            effectView.trailingAnchor.constraint(equalTo: toastView.trailingAnchor),
-            effectView.bottomAnchor.constraint(equalTo: toastView.bottomAnchor)
-        ])
-
-        glassEffectView = effectView
-    }
-
-    private func setupShadow(theme: Theme) {
-        toastView.layer.cornerRadius = UX.toastCornerRadius
-        toastView.layer.shadowRadius = UX.shadowRadius
-        toastView.layer.shadowOffset = UX.shadowOffset
-        toastView.layer.shadowColor = theme.colors.shadowDefault.cgColor
-        toastView.layer.shadowOpacity = UX.shadowOpacity
-    }
-
-    open func adjustLayoutForA11ySizeCategory() {
-        // To override depending on the subclass
-    }
-
-    // MARK: - Notifiable
-    public func handleNotifications(_ notification: Notification) {
-        switch notification.name {
-        case UIContentSizeCategory.didChangeNotification:
-            ensureMainThread {
-                self.adjustLayoutForA11ySizeCategory()
-            }
-        default: break
-        }
+        // Ecosia: Update background
+        // toastView.backgroundColor = theme.colors.actionPrimary
+        toastView.backgroundColor = .clear
     }
 }

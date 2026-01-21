@@ -6,7 +6,7 @@ import UIKit
 import Combine
 import UIComponents
 
-public final class BrowserToolbar: UIView {
+public class BrowserToolbar: UIView {
     private let backgroundLoading = GradientBackgroundView()
     private let backgroundDark = UIView()
     private let backgroundBright = UIView()

@@ -4,8 +4,8 @@
 
 import Common
 import ComponentLibrary
-import OnboardingKit
 import Foundation
+import Shared
 
 /// The ``OnboardingCardDelegate`` is responsible for handling a variety of
 /// functions relating to onboarding actions taken by the user that are
@@ -17,29 +17,23 @@ import Foundation
 /// for the difference in flows that the two onboarding paths represent.
 protocol OnboardingCardDelegate: AnyObject {
     // These methods must be implemented by the object
-    @MainActor
     func handleBottomButtonActions(for action: OnboardingActions,
                                    from cardName: String,
                                    isPrimaryButton: Bool)
-    @MainActor
     func handleMultipleChoiceButtonActions(for action: OnboardingMultipleChoiceAction,
                                            from cardName: String)
-    @MainActor
     func sendCardViewTelemetry(from cardName: String)
 
     // Implemented by default for code sharing
-    @MainActor
     func presentPrivacyPolicy(windowUUID: WindowUUID,
                               from cardName: String,
                               selector: Selector?,
                               completion: (() -> Void)?,
                               referringPage: ReferringPage)
-    @MainActor
     func presentDefaultBrowserPopup(windowUUID: WindowUUID,
                                     from name: String,
                                     completionIfLastCard: (() -> Void)?)
 
-    @MainActor
     func presentSignToSync(
         windowUUID: WindowUUID,
         with fxaOptions: FxALaunchParams,
@@ -50,13 +44,11 @@ protocol OnboardingCardDelegate: AnyObject {
         qrCodeNavigationHandler: QRCodeNavigationHandler?
     )
 
-    @MainActor
     func advance(
         numberOfPages: Int,
         from cardName: String,
         completionIfLastCard completion: (() -> Void)?
     )
-    @MainActor
     func pageChanged(from cardName: String)
 }
 
@@ -64,7 +56,6 @@ extension OnboardingCardDelegate where Self: OnboardingViewControllerProtocol,
                                        Self: UIViewController,
                                        Self: Themeable {
     // MARK: - Privacy Policy
-    @MainActor
     func presentPrivacyPolicy(
         windowUUID: WindowUUID,
         from cardName: String,
@@ -93,7 +84,6 @@ extension OnboardingCardDelegate where Self: OnboardingViewControllerProtocol,
     }
 
     // MARK: - Default Browser Popup
-    @MainActor
     func presentDefaultBrowserPopup(
         windowUUID: WindowUUID,
         from name: String,
@@ -109,32 +99,32 @@ extension OnboardingCardDelegate where Self: OnboardingViewControllerProtocol,
         let instructionsVC = OnboardingInstructionPopupViewController(
             viewModel: popupViewModel,
             windowUUID: windowUUID,
-            buttonTappedFinishFlow: { [weak self] in
-                self?.viewModel.telemetryUtility.sendGoToSettingsButtonTappedTelemetry()
-                self?.advance(
+            buttonTappedFinishFlow: {
+                self.advance(
                     numberOfPages: 1,
                     from: name,
                     completionIfLastCard: completionIfLastCard
                 )
             }
         )
-
-        let bottomSheetVC = OnboardingBottomSheetViewController(windowUUID: windowUUID)
-        bottomSheetVC.onDismiss = { [weak self] in
-            self?.viewModel.telemetryUtility.sendDismissButtonTappedTelemetry()
-        }
-        bottomSheetVC.configure(
-            closeButtonModel: CloseButtonViewModel(
-                a11yLabel: .CloseButtonTitle,
-                a11yIdentifier: AccessibilityIdentifiers.Onboarding.bottomSheetCloseButton
-            ),
-            child: instructionsVC
+        var bottomSheetViewModel = BottomSheetViewModel(
+            closeButtonA11yLabel: .CloseButtonTitle,
+            closeButtonA11yIdentifier:
+                AccessibilityIdentifiers.Onboarding.bottomSheetCloseButton
         )
-        present(bottomSheetVC, animated: true)
+        bottomSheetViewModel.shouldDismissForTapOutside = true
+        let bottomSheetVC = BottomSheetViewController(
+            viewModel: bottomSheetViewModel,
+            childViewController: instructionsVC,
+            usingDimmedBackground: true,
+            windowUUID: windowUUID)
+
+        instructionsVC.dismissDelegate = bottomSheetVC
+
+        self.present(bottomSheetVC, animated: false, completion: nil)
     }
 
     // MARK: - Sync sign in
-    @MainActor
     func presentSignToSync(
         windowUUID: WindowUUID,
         with fxaOptions: FxALaunchParams,
@@ -155,9 +145,7 @@ extension OnboardingCardDelegate where Self: OnboardingViewControllerProtocol,
             style: .plain,
             target: self,
             action: selector)
-        if #available(iOS 26.0, *) {
-            buttonItem.tintColor = themeManager.getCurrentTheme(for: windowUUID).colors.textPrimary
-        }
+        buttonItem.tintColor = themeManager.getCurrentTheme(for: windowUUID).colors.actionPrimary
         singInSyncVC.navigationItem.rightBarButtonItem = buttonItem
         (singInSyncVC as? FirefoxAccountSignInViewController)?.qrCodeNavigationHandler = qrCodeNavigationHandler
 
@@ -168,7 +156,6 @@ extension OnboardingCardDelegate where Self: OnboardingViewControllerProtocol,
     }
 
     // MARK: - Page helpers
-    @MainActor
     func advance(
         numberOfPages: Int,
         from cardName: String,
@@ -184,7 +171,6 @@ extension OnboardingCardDelegate where Self: OnboardingViewControllerProtocol,
 
     // Extra step to make sure pageControl.currentPage is the right index card
     // because UIPageViewControllerDataSource call fails
-    @MainActor
     func pageChanged(from cardName: String) {
         guard let cardIndex = viewModel.availableCards
             .firstIndex(where: { $0.viewModel.name == cardName }),

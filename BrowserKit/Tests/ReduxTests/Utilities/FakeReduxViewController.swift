@@ -11,12 +11,13 @@ let windowUUID = UUID(uuidString: "D9D9D9D9-D9D9-D9D9-D9D9-CD68A019860B")!
 class FakeReduxViewController: UIViewController, StoreSubscriber {
     typealias SubscriberStateType = FakeReduxState
 
-    var receivedStateCounterValue: Int?
-    var isInPrivateMode: Bool?
+    var label = UILabel(frame: .zero)
+    var isInPrivateMode = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         subscribeToRedux()
+        view.addSubview(label)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -38,7 +39,7 @@ class FakeReduxViewController: UIViewController, StoreSubscriber {
     }
 
     func newState(state: FakeReduxState) {
-        receivedStateCounterValue = state.counter
+        label.text = "\(state.counter)"
         isInPrivateMode = state.isInPrivateMode
     }
 

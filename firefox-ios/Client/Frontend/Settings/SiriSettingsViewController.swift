@@ -51,14 +51,13 @@ class SiriOpenURLSetting: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        guard let controller = navigationController?.topViewController else { return }
-        Task { @MainActor in
-            await SiriShortcuts.manageSiri(for: SiriShortcuts.activityType.openURL, in: controller)
+        if let controller = navigationController?.topViewController {
+            SiriShortcuts.manageSiri(for: SiriShortcuts.activityType.openURL, in: controller)
         }
     }
 }
 
-extension SiriSettingsViewController: @MainActor INUIAddVoiceShortcutViewControllerDelegate {
+extension SiriSettingsViewController: INUIAddVoiceShortcutViewControllerDelegate {
     func addVoiceShortcutViewController(
         _ controller: INUIAddVoiceShortcutViewController,
         didFinishWith voiceShortcut: INVoiceShortcut?,
@@ -72,7 +71,7 @@ extension SiriSettingsViewController: @MainActor INUIAddVoiceShortcutViewControl
     }
 }
 
-extension SiriSettingsViewController: @MainActor INUIEditVoiceShortcutViewControllerDelegate {
+extension SiriSettingsViewController: INUIEditVoiceShortcutViewControllerDelegate {
     func editVoiceShortcutViewController(
         _ controller: INUIEditVoiceShortcutViewController,
         didUpdate voiceShortcut: INVoiceShortcut?,

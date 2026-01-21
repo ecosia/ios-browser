@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class EditView: UIView {
+class EditView: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.backgroundColor = .grey10.withAlphaComponent(0.2)
     }

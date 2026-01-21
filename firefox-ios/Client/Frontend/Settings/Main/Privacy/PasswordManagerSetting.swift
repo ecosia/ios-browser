@@ -8,7 +8,6 @@ class PasswordManagerSetting: Setting {
     private weak var settingsDelegate: PrivacySettingsDelegate?
 
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
 

@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class ThemeTableViewAccessoryCell: UITableViewCell {
+class ThemeTableViewAccessoryCell: UITableViewCell {
     var labelText: String? {
         get {
             return textLabel?.text

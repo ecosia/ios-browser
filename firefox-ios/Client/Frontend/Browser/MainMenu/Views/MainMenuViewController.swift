@@ -8,11 +8,13 @@ import UIKit
 import Shared
 import Redux
 import MenuKit
+import SiteImageView
 
 class MainMenuViewController: UIViewController,
                               UIAdaptivePresentationControllerDelegate,
                               UISheetPresentationControllerDelegate,
                               UIScrollViewDelegate,
+                              MenuTableViewDataDelegate,
                               Themeable,
                               Notifiable,
                               StoreSubscriber,
@@ -21,8 +23,6 @@ class MainMenuViewController: UIViewController,
         static let hintViewCornerRadius: CGFloat = 20
         static let hintViewHeight: CGFloat = 140
         static let hintViewMargin: CGFloat = 20
-        static let menuHeightTolerance: CGFloat = 20
-        static let topMarginCFR: CGFloat = 100
     }
     typealias SubscriberStateType = MainMenuState
 
@@ -36,46 +36,21 @@ class MainMenuViewController: UIViewController,
     // MARK: - Properties
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     weak var coordinator: MainMenuCoordinator?
 
     private let windowUUID: WindowUUID
     private let profile: Profile
     private var menuState: MainMenuState
     private let logger: Logger
-    private let mainMenuHelper: MainMenuInterface
 
-    var viewProvider: ContextualHintViewProvider?
+    let viewProvider: ContextualHintViewProvider
 
     var currentWindowUUID: UUID? { return windowUUID }
 
     private var isPad: Bool {
         traitCollection.verticalSizeClass == .regular &&
         !(UIDevice.current.userInterfaceIdiom == .phone)
-    }
-
-    private var isMenuDefaultBrowserBanner: Bool {
-        return featureFlags.isFeatureEnabled(.menuDefaultBrowserBanner, checking: .buildOnly)
-    }
-
-    private var bannerShown: Bool {
-        profile.prefs.boolForKey(PrefsKeys.defaultBrowserBannerShown) ?? false
-    }
-
-    private var hasBeenExpanded = false
-    private var currentCustomMenuHeight = 0.0
-    private var isBrowserDefault = false
-    private var isPhoneLandscape = false
-
-    private var isHomepage: Bool {
-        guard let element = menuState.menuElements.first(where: { $0.isHomepage }) else { return false }
-        return element.isHomepage
-    }
-
-    private var isExpanded: Bool {
-        guard let element = menuState.menuElements.first(where: { $0.isExpanded ?? false }),
-              let isExpanded = element.isExpanded else { return false }
-        return isExpanded
     }
 
     // Used to save the last screen orientation
@@ -87,26 +62,27 @@ class MainMenuViewController: UIViewController,
         profile: Profile,
         notificationCenter: NotificationProtocol = NotificationCenter.default,
         themeManager: ThemeManager = AppContainer.shared.resolve(),
-        logger: Logger = DefaultLogger.shared,
-        mainMenuHelper: MainMenuInterface = MainMenuHelper()
+        logger: Logger = DefaultLogger.shared
     ) {
         self.windowUUID = windowUUID
         self.profile = profile
         self.notificationCenter = notificationCenter
         self.themeManager = themeManager
         self.logger = logger
-        self.mainMenuHelper = mainMenuHelper
-        self.menuState = MainMenuState(windowUUID: windowUUID)
+        menuState = MainMenuState(windowUUID: windowUUID)
+        viewProvider = ContextualHintViewProvider(forHintType: .mainMenu,
+                                                  with: profile)
         self.lastOrientation = UIDevice.current.orientation
         super.init(nibName: nil, bundle: nil)
 
-        viewProvider = ContextualHintViewProvider(forHintType: .mainMenu,
-                                                  with: profile)
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [UIContentSizeCategory.didChangeNotification,
-                        UIAccessibility.reduceTransparencyStatusDidChangeNotification]
+        setupNotifications(forObserver: self,
+                           observing: [.DynamicFontChanged])
+        subscribeToRedux()
+        store.dispatch(
+            MainMenuAction(
+                windowUUID: windowUUID,
+                actionType: MainMenuActionType.didInstantiateView
+            )
         )
     }
 
@@ -120,65 +96,37 @@ class MainMenuViewController: UIViewController,
         presentationController?.delegate = self
         sheetPresentationController?.delegate = self
 
-        subscribeToRedux()
-
         setupView()
-        setupMenuOrientation()
-
         setupTableView()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
-        applyTheme()
-
+        listenForThemeChange(view)
         store.dispatch(
             MainMenuAction(
-                windowUUID: windowUUID,
+                windowUUID: self.windowUUID,
                 actionType: MainMenuActionType.viewDidLoad
             )
         )
 
-        menuContent.siteProtectionHeader.closeButtonCallback = { [weak self] in
-            self?.dispatchCloseMenuAction()
+        menuContent.accountHeaderView.closeButtonCallback = { [weak self] in
+            guard let self else { return }
+            store.dispatch(
+                MainMenuAction(
+                    windowUUID: self.windowUUID,
+                    actionType: MainMenuActionType.tapCloseMenu,
+                    currentTabInfo: menuState.currentTabInfo
+                )
+            )
         }
 
-        menuContent.onCalculatedHeight = { [weak self] height in
-            let customHeight: CGFloat = self?.currentCustomMenuHeight ?? 0
-            if (height > customHeight + UX.menuHeightTolerance) || (height < customHeight - UX.menuHeightTolerance) {
-                self?.currentCustomMenuHeight = height
-                if #available(iOS 16.0, *) {
-                    let customDetent = UISheetPresentationController.Detent.custom { context in
-                        return height
-                    }
-                    // The detents are large or medium only on the first presentation. We can avoid animating the new
-                    // detent in such case cause the animation is already running.
-                    let shouldAnimateDetentChange = self?.sheetPresentationController?.detents.contains { detent in
-                        return detent.identifier != .medium && detent.identifier != .large
-                    } ?? true
-                    guard shouldAnimateDetentChange else {
-                        self?.sheetPresentationController?.detents = [customDetent]
-                        return
-                    }
-                    self?.sheetPresentationController?.animateChanges({
-                        self?.sheetPresentationController?.detents = [customDetent]
-                    })
-                }
-            }
-        }
-
-        menuContent.bannerButtonCallback = { [weak self] in
-            self?.dispatchDefaultBrowserAction()
-        }
-
-        menuContent.closeBannerButtonCallback = { [weak self] in
-            self?.profile.prefs.setBool(true, forKey: PrefsKeys.defaultBrowserBannerShown)
-        }
-
-        menuContent.siteProtectionHeader.siteProtectionsButtonCallback = { [weak self] in
-            self?.dispatchSiteProtectionAction()
-        }
-
-        menuContent.closeButtonCallback = { [weak self] in
-            self?.dispatchCloseMenuAction()
+        menuContent.accountHeaderView.mainButtonCallback = { [weak self] in
+            guard let self else { return }
+            store.dispatch(
+                MainMenuAction(
+                    windowUUID: self.windowUUID,
+                    actionType: MainMenuActionType.tapNavigateToDestination,
+                    navigationDestination: MenuNavigationDestination(.syncSignIn),
+                    currentTabInfo: menuState.currentTabInfo
+                )
+            )
         }
 
         setupAccessibilityIdentifiers()
@@ -204,51 +152,14 @@ class MainMenuViewController: UIViewController,
     }
 
     deinit {
-        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
-        guard Thread.isMainThread else {
-            logger.log(
-                "MainMenuViewController was not deallocated on the main thread. Redux was not cleaned up.",
-                level: .fatal,
-                category: .lifecycle
-            )
-            assertionFailure("The view controller was not deallocated on the main thread. Redux was not cleaned up.")
-            return
-        }
-
-        MainActor.assumeIsolated {
-            unsubscribeFromRedux()
-        }
-    }
-
-    private func updateBlur() {
-        let shouldShowBlur = !mainMenuHelper.isReduceTransparencyEnabled
-
-        if shouldShowBlur {
-#if canImport(FoundationModels)
-            if #unavailable(iOS 26.0) {
-                view.addBlurEffectWithClearBackgroundAndClipping(using: .regular)
-            }
-#else
-            view.addBlurEffectWithClearBackgroundAndClipping(using: .regular)
-#endif
-        } else {
-            view.removeVisualEffectView()
-        }
-
-        applyTheme()
+        unsubscribeFromRedux()
     }
 
     // MARK: Notifications
     func handleNotifications(_ notification: Notification) {
         switch notification.name {
-        case UIContentSizeCategory.didChangeNotification:
-            ensureMainThread {
-                self.adjustLayout()
-            }
-        case UIAccessibility.reduceTransparencyStatusDidChangeNotification:
-            ensureMainThread {
-                self.updateBlur()
-            }
+        case .DynamicFontChanged:
+            adjustLayout()
         default: break
         }
     }
@@ -257,32 +168,20 @@ class MainMenuViewController: UIViewController,
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         adjustLayout()
-        store.dispatch(
-            MainMenuAction(
-                windowUUID: self.windowUUID,
-                actionType: MainMenuActionType.updateMenuAppearance
-            )
-        )
-        setupMenuOrientation()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         coordinator.animate(alongsideTransition: { [weak self] _ in
+            guard let self else { return }
             // We should dismiss CFR when device is rotating
-            if UIDevice.current.orientation != self?.lastOrientation {
-                self?.lastOrientation = UIDevice.current.orientation
-                self?.adjustLayout(isDeviceRotating: true)
+            if UIDevice.current.orientation != lastOrientation {
+                lastOrientation = UIDevice.current.orientation
+                self.adjustLayout(isDeviceRotating: true)
             } else {
-                self?.adjustLayout()
+                self.adjustLayout()
             }
         }, completion: nil)
-        store.dispatch(
-            MainMenuAction(
-                windowUUID: windowUUID,
-                actionType: MainMenuActionType.viewWillTransition
-            )
-        )
     }
 
     // MARK: - UI setup
@@ -291,13 +190,6 @@ class MainMenuViewController: UIViewController,
     }
 
     private func setupView() {
-        #if canImport(FoundationModels)
-        if #unavailable(iOS 26.0) {
-            view.addBlurEffectWithClearBackgroundAndClipping(using: .regular)
-        }
-        #else
-            view.addBlurEffectWithClearBackgroundAndClipping(using: .regular)
-        #endif
         view.addSubview(menuContent)
 
         NSLayoutConstraint.activate([
@@ -307,23 +199,16 @@ class MainMenuViewController: UIViewController,
             menuContent.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
 
-        menuContent.setupDetails(
-            title: String(format: .MainMenu.HeaderBanner.Title, AppName.shortName.rawValue),
-            subtitle: .MainMenu.HeaderBanner.Subtitle,
-            image: UIImage(named: ImageIdentifiers.foxDefaultBrowser),
-            isBannerFlagEnabled: isMenuDefaultBrowserBanner,
-            isBrowserDefault: isBrowserDefault,
-            bannerShown: bannerShown
-        )
-    }
-
-    private func setupMenuOrientation() {
-        menuContent.setupMenuMenuOrientation(isPhoneLandscape: isPhoneLandscape)
+        let icon = UIImage(named: StandardImageIdentifiers.Large.avatarCircle)?
+            .withRenderingMode(.alwaysTemplate)
+        menuContent.setupDetails(subtitle: .MainMenu.Account.SignedOutDescription,
+                                 title: .MainMenu.Account.SignedOutTitle,
+                                 icon: icon)
     }
 
     private func setupHintView() {
-        guard let viewProvider else { return }
         var viewModel = ContextualHintViewModel(
+            isActionType: viewProvider.isActionType,
             actionButtonTitle: viewProvider.getCopyFor(.action),
             title: viewProvider.getCopyFor(.title),
             description: viewProvider.getCopyFor(.description),
@@ -337,34 +222,27 @@ class MainMenuViewController: UIViewController,
         hintView.configure(viewModel: viewModel)
         viewProvider.markContextualHintPresented()
         hintView.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
-        if isPad {
-            view.addSubview(hintView)
-            NSLayoutConstraint.activate([
-                hintView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.hintViewMargin * 4),
-                hintView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.hintViewMargin * 4)
-            ])
-            hintView.topAnchor.constraint(equalTo: menuContent.topAnchor,
-                                          constant: UX.hintViewMargin).isActive = true
-        } else if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                  let window = windowScene.windows.first {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
             window.addSubview(hintView)
-
-            let contentHeight =  UX.hintViewHeight + menuContent.frame.height + UX.hintViewMargin
-            let safeHeight = UIScreen.main.bounds.height - UX.topMarginCFR
-            if safeHeight < contentHeight {
-                hintView.topAnchor.constraint(equalTo: menuContent.topAnchor,
-                                              constant: UX.hintViewMargin).isActive = true
+            if isPad {
+                NSLayoutConstraint.activate([
+                    hintView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.hintViewMargin * 4),
+                    hintView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.hintViewMargin * 4),
+                    hintView.topAnchor.constraint(equalTo: menuContent.accountHeaderView.topAnchor,
+                                                  constant: UX.hintViewMargin)
+                ])
             } else {
-                hintView.bottomAnchor.constraint(equalTo: menuContent.topAnchor,
-                                                 constant: -UX.hintViewMargin).isActive = true
+                NSLayoutConstraint.activate([
+                    hintView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.hintViewMargin),
+                    hintView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.hintViewMargin),
+                    hintView.bottomAnchor.constraint(equalTo: menuContent.accountHeaderView.topAnchor,
+                                                     constant: -UX.hintViewMargin)
+                ])
             }
-            NSLayoutConstraint.activate([
-                hintView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.hintViewMargin),
-                hintView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.hintViewMargin)
-            ])
+            hintViewHeightConstraint = hintView.heightAnchor.constraint(equalToConstant: UX.hintViewHeight)
+            hintViewHeightConstraint?.isActive = true
         }
-        hintViewHeightConstraint = hintView.heightAnchor.constraint(equalToConstant: UX.hintViewHeight)
-        hintViewHeightConstraint?.isActive = true
         hintView.layer.cornerRadius = UX.hintViewCornerRadius
         hintView.layer.masksToBounds = true
         adjustLayout()
@@ -400,12 +278,14 @@ class MainMenuViewController: UIViewController,
     func newState(state: MainMenuState) {
         menuState = state
 
-        isBrowserDefault = menuState.isBrowserDefault
-        menuContent.updateDefaultBrowserStatus(to: isBrowserDefault)
-        isPhoneLandscape = menuState.isPhoneLandscape
+        if let accountData = menuState.accountData {
+            updateHeaderWith(accountData: accountData, icon: menuState.accountIcon)
+            setupAccessibilityIdentifiers(mainButtonA11yLabel: accountData.title)
+        }
 
-        if let siteProtectionsData = menuState.siteProtectionsData {
-            updateSiteProtectionsHeaderWith(siteProtectionsData: siteProtectionsData)
+        if menuState.currentSubmenuView != nil {
+            coordinator?.showDetailViewController()
+            return
         }
 
         if let navigationDestination = menuState.navigationDestination {
@@ -418,78 +298,22 @@ class MainMenuViewController: UIViewController,
             return
         }
 
-        changeDetentIfNecessary()
-        removeHintViewIfNecessary()
         reloadTableView(with: menuState.menuElements)
-
-        if menuState.moreCellTapped {
-            let expandedHint = String.MainMenu.ToolsSection.AccessibilityLabels.ExpandedHint
-            menuContent.announceAccessibility(expandedHint: expandedHint)
-        }
-    }
-
-    private func dispatchCloseMenuAction() {
-        store.dispatch(
-            MainMenuAction(
-                windowUUID: self.windowUUID,
-                actionType: MainMenuActionType.tapCloseMenu,
-                currentTabInfo: menuState.currentTabInfo
-            )
-        )
-    }
-
-    private func dispatchSiteProtectionAction() {
-        store.dispatch(
-            MainMenuAction(
-                windowUUID: self.windowUUID,
-                actionType: MainMenuActionType.tapNavigateToDestination,
-                navigationDestination: MenuNavigationDestination(.siteProtections),
-                currentTabInfo: menuState.currentTabInfo
-            )
-        )
-    }
-
-    private func dispatchDefaultBrowserAction() {
-        store.dispatch(
-            MainMenuAction(
-                windowUUID: self.windowUUID,
-                actionType: MainMenuActionType.tapNavigateToDestination,
-                navigationDestination: MenuNavigationDestination(.defaultBrowser),
-                currentTabInfo: menuState.currentTabInfo
-            )
-        )
     }
 
     // MARK: - UX related
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        view.backgroundColor = theme.colors.layerSurfaceLow.withAlphaComponent(mainMenuHelper.backgroundAlpha())
+        view.backgroundColor = theme.colors.layer3
         menuContent.applyTheme(theme: theme)
     }
 
-    private func updateSiteProtectionsHeaderWith(siteProtectionsData: SiteProtectionsData) {
-        var state = String.MainMenu.SiteProtection.ProtectionsOn
-        var stateImage = StandardImageIdentifiers.Small.shieldCheckmarkFill
-        var shouldUseRenderMode = false
-
-        switch siteProtectionsData.state {
-        case .notSecure:
-            state = String.MainMenu.SiteProtection.ConnectionNotSecure
-            stateImage = StandardImageIdentifiers.Small.shieldSlashFillMulticolor
-        case .on:
-            shouldUseRenderMode = true
-        case .off:
-            state = String.MainMenu.SiteProtection.ProtectionsOff
-            stateImage = StandardImageIdentifiers.Small.shieldSlashFillMulticolor
-        }
-
-        menuContent.siteProtectionHeader.setupDetails(
-            title: siteProtectionsData.title,
-            subtitle: siteProtectionsData.subtitle,
-            image: siteProtectionsData.image,
-            state: state,
-            stateImage: stateImage,
-            shouldUseRenderMode: shouldUseRenderMode)
+    private func updateHeaderWith(accountData: AccountData, icon: UIImage?) {
+        menuContent.accountHeaderView.setupDetails(subtitle: accountData.subtitle ?? "",
+                                                   title: accountData.title,
+                                                   icon: icon,
+                                                   warningIcon: accountData.warningIcon,
+                                                   theme: themeManager.getCurrentTheme(for: windowUUID))
     }
 
     // MARK: - A11y
@@ -520,18 +344,19 @@ class MainMenuViewController: UIViewController,
         return sheetController.selectedDetentIdentifier
     }
 
-    private func setupAccessibilityIdentifiers() {
+    private func setupAccessibilityIdentifiers(
+        mainButtonA11yLabel: String = .MainMenu.Account.AccessibilityLabels.MainButton) {
         menuContent.setupAccessibilityIdentifiers(
+            closeButtonA11yLabel: .MainMenu.Account.AccessibilityLabels.CloseButton,
+            closeButtonA11yId: AccessibilityIdentifiers.MainMenu.HeaderView.closeButton,
+            mainButtonA11yLabel: mainButtonA11yLabel,
+            mainButtonA11yId: AccessibilityIdentifiers.MainMenu.HeaderView.mainButton,
             menuA11yId: AccessibilityIdentifiers.MainMenu.mainMenu,
-            menuA11yLabel: .MainMenu.TabsSection.AccessibilityLabels.MainMenu,
-            closeButtonA11yLabel: .MainMenu.AccessibilityLabels.CloseButton,
-            closeButtonA11yIdentifier: AccessibilityIdentifiers.MainMenu.HeaderView.closeButton,
-            siteProtectionHeaderIdentifier: AccessibilityIdentifiers.MainMenu.SiteProtectionsHeaderView.header,
-            headerBannerCloseButtonA11yIdentifier: AccessibilityIdentifiers.MainMenu.HeaderBanner.closeButton,
-            headerBannerCloseButtonA11yLabel: .MainMenu.AccessibilityLabels.DismissBanner)
+            menuA11yLabel: .MainMenu.TabsSection.AccessibilityLabels.MainMenu)
     }
 
     private func adjustLayout(isDeviceRotating: Bool = false) {
+        menuContent.accountHeaderView.adjustLayout()
         if isDeviceRotating {
             hintView.removeFromSuperview()
         } else {
@@ -552,36 +377,21 @@ class MainMenuViewController: UIViewController,
     }
 
     private func shouldDisplayHintView() -> Bool {
-        guard let viewProvider, !isHomepage else { return false }
-
         // Don't display CFR in landscape mode for iPhones
         if UIDevice.current.isIphoneLandscape {
             return false
         }
 
-        // Don't display CFR for fresh installs
+        // Don't display CFR for fresh installs for users that never saw before the photon main menu
         if InstallType.get() == .fresh {
+            if let photonMainMenuShown = profile.prefs.boolForKey(PrefsKeys.PhotonMainMenuShown),
+               photonMainMenuShown {
+                return viewProvider.shouldPresentContextualHint()
+            }
             viewProvider.markContextualHintPresented()
             return false
         }
-
         return viewProvider.shouldPresentContextualHint()
-    }
-
-    private func changeDetentIfNecessary() {
-        // For iOS 16 or above we are using custom detents
-        if #unavailable(iOS 16) {
-            if isExpanded {
-                if let sheet = self.sheetPresentationController, !hasBeenExpanded {
-                    sheet.selectedDetentIdentifier = .large
-                    hasBeenExpanded = true
-                }
-            }
-        }
-    }
-
-    private func removeHintViewIfNecessary() {
-        if isExpanded { hintView.removeFromSuperview() }
     }
 
     // MARK: - UIAdaptivePresentationControllerDelegate
@@ -606,6 +416,6 @@ class MainMenuViewController: UIViewController,
 
     // MARK: - MenuTableViewDelegate
     func reloadTableView(with data: [MenuSection]) {
-        menuContent.reloadDataView(with: data)
+        menuContent.reloadTableView(with: data)
     }
 }

@@ -4,6 +4,7 @@
 
 import Foundation
 import BackgroundTasks
+import Common
 
 protocol BackgroundUtilityProtocol {
     func scheduleTaskOnAppBackground()

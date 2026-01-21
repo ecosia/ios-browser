@@ -4,6 +4,9 @@
 
 import Foundation
 import XCTest
+import Shared
+
+@testable import Client
 
 class WallpaperMigrationUtilityTests: XCTestCase {
     override func setUp() {
@@ -12,8 +15,8 @@ class WallpaperMigrationUtilityTests: XCTestCase {
     }
 
     override func tearDown() {
-        removeAllFolders()
         super.tearDown()
+        removeAllFolders()
     }
 
     func testRemovingAllFoldersOnSetup() {

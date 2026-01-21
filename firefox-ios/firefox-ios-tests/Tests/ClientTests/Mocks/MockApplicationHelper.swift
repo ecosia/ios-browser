@@ -6,7 +6,7 @@ import UIKit
 import Common
 @testable import Client
 
-final class MockApplicationHelper: ApplicationHelper, @unchecked Sendable {
+class MockApplicationHelper: ApplicationHelper {
     var openSettingsCalled = 0
     var openURLCalled = 0
     var openURLInWindowCalled = 0

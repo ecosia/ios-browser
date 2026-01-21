@@ -28,7 +28,7 @@ class OpenSupportPageSetting: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        guard let url = SupportUtils.URLForGetHelp else { return }
+        guard let url = URL(string: "https://support.mozilla.org/products/ios") else { return }
         settingsDelegate?.pressedOpenSupportPage(url: url)
     }
 }

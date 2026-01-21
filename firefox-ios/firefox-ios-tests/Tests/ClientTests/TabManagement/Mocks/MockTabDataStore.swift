@@ -6,7 +6,7 @@ import Foundation
 import TabDataStore
 import Common
 
-final class MockTabDataStore: TabDataStore, @unchecked Sendable {
+class MockTabDataStore: TabDataStore {
     var fetchWindowDataCalledCount = 0
     var saveWindowDataCalledCount = 0
     var fetchTabWindowData: WindowData?

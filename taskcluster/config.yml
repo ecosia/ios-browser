@@ -22,46 +22,16 @@ workers:
             implementation: scriptworker-bitrise
             os: scriptworker
             worker-type: mobile-{level}-bitrise
-        github:
-            provisioner: scriptworker-k8s
-            implementation: scriptworker-github
-            os: scriptworker
-            worker-type: mobile-{level}-github
         images:
             provisioner: 'mobile-{level}'
             implementation: docker-worker
             os: linux
-            worker-type: 'images'
+            worker-type: 'images-gcp'
         misc:
             provisioner: 'mobile-{level}'
             implementation: docker-worker
             os: linux
-            worker-type: 'b-linux'
-        ship-it:
-            provisioner: scriptworker-k8s
-            implementation: scriptworker-shipit
-            os: scriptworker
-            worker-type: mobile-{level}-shipit
-        tree:
-            provisioner: scriptworker-k8s
-            implementation: scriptworker-tree
-            os: scriptworker
-            worker-type: mobile-{level}-tree
+            worker-type: 'b-linux-gcp'
 
 scriptworker:
     scope-prefix: project:mobile:firefox-ios:releng
-
-release-promotion:
-    flavors:
-        promote:
-            target-tasks-method: promote
-        push:
-            target-tasks-method: push
-        ship:
-            target-tasks-method: ship
-        promote_focus:
-            target-tasks-method: promote_focus
-        push_focus:
-            target-tasks-method: push_focus
-        ship_focus:
-            target-tasks-method: ship_focus

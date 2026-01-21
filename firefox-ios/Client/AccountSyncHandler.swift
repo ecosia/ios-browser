@@ -2,72 +2,30 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Common
 import Foundation
 import Storage
-
-@MainActor
-final class Debouncer {
-    private let delay: TimeInterval
-    private var task: Task<Void, Never>?
-    private let nanosecondsPerSecond: UInt64 = 1_000_000_000
-
-    init(delay: TimeInterval) {
-        self.delay = delay
-    }
-
-    func call(action: @escaping @MainActor () -> Void) {
-        task?.cancel()
-
-        let nanos = UInt64(delay) * nanosecondsPerSecond
-
-        task = Task {
-            try? await Task.sleep(nanoseconds: nanos)
-            guard !Task.isCancelled else { return }
-            action()
-        }
-    }
-}
+import Common
 
 /// `AccountSyncHandler` exists to observe certain `TabEventLabel` notifications,
 /// and react accordingly.
-@MainActor
-final class AccountSyncHandler: TabEventHandler, Sendable {
-    private let debouncer: Debouncer
+class AccountSyncHandler: TabEventHandler {
+    private let throttler: Throttler
     private let profile: Profile
-    private let logger: Logger
-    private let queueDelay: Double
-    private var windowManager: WindowManager {
-        return AppContainer.shared.resolve()
-    }
-    let tabEventWindowResponseType: TabEventHandlerWindowResponseType =
-        .allWindows
+    let tabEventWindowResponseType: TabEventHandlerWindowResponseType = .allWindows
 
-    // For testing purposes only:
-    private let onSyncCompleted: (@Sendable () -> Void)?
-
-    init(
-        with profile: Profile,
-        debounceTime: Double = 5.0,
-        queue: DispatchQueueInterface = DispatchQueue.global(),
-        queueDelay: Double = 0.5,
-        logger: Logger = DefaultLogger.shared,
-        onSyncCompleted: (@Sendable () -> Void)? = nil
-    ) {
+    init(with profile: Profile,
+         throttleTime: Double = 5.0,
+         queue: DispatchQueueInterface = DispatchQueue.global()) {
         self.profile = profile
-        self.debouncer = Debouncer(delay: debounceTime)
-        self.logger = logger
-        self.queueDelay = queueDelay
-        self.onSyncCompleted = onSyncCompleted
+        self.throttler = Throttler(seconds: throttleTime,
+                                   on: queue)
 
-        // Other clients only show urls and ordering of tabs, we can ignore everything
-        // else that doesn't modify those attributes
-        register(self, forTabEvents: .didGainFocus, .didClose, .didChangeURL)
+        register(self, forTabEvents: .didLoadPageMetadata, .didGainFocus)
     }
 
     // MARK: - Account Server Sync
 
-    func tab(_ tab: Tab, didChangeURL url: URL) {
+    func tab(_ tab: Tab, didLoadPageMetadata metadata: PageMetadata) {
         performClientsAndTabsSync()
     }
 
@@ -75,67 +33,20 @@ final class AccountSyncHandler: TabEventHandler, Sendable {
         performClientsAndTabsSync()
     }
 
-    func tabDidClose(_ tab: Tab) {
-        performClientsAndTabsSync()
-    }
-
-    /// For Task Continuity, we want any tab list modifications to reflect across Synced devices.
+    /// For Task Continuity, we want tab loads and tab switches to reflect across Synced devices.
     ///
-    /// To that end, whenever a user adds/removes/switches to any tab,
+    /// To that end, whenever a user's tab finishes loading page metadata or switches to focus on a new tab,
     /// we trigger a "sync" of tabs. We upload records to the Sync Server from local storage and download
     /// any records from the Sync server to local storage.
     ///
-    /// Tabs and clients should stay in sync, so we update our local tabs before syncing
+    /// Tabs and clients should stay in sync, so a call to sync tabs will also sync clients.
     ///
-    /// To prevent multiple tab actions to have a separate syncs, we sync after 5s of no tab activity
+    /// Make sure there's at least a 5 second difference between Syncs.
     private func performClientsAndTabsSync() {
         guard profile.hasSyncableAccount() else { return }
-        debouncer.call { [weak self] in
-            self?.storeTabs()
-        }
-    }
 
-    private func storeTabs() {
-        let tabManagers = windowManager.allWindowTabManagers()
-        let windowCount = tabManagers.count
-
-        // We want all normal and inactive tabs, we never sync private tabs
-        // Store tabs keyed by tabUUID to easily handle overrides.
-        var storedTabsDict = [String: RemoteTab]()
-        for manager in tabManagers {
-            for tab in manager.normalTabs {
-                if let remoteTab = tab.toRemoteTab() {
-                    storedTabsDict[tab.tabUUID] = remoteTab
-                }
-            }
-        }
-
-        // Final stored tabs for syncing
-        let storedTabs = Array(storedTabsDict.values)
-
-        // It's fine if we wait until more busy work has finished. We tend to contend with more important
-        // work like querying for top sites.
-        DispatchQueue.main.asyncAfter(deadline: .now() + queueDelay) { [weak self] in
-            guard let self else { return }
-
-            let logger = self.logger
-            let onSyncCompleted = self.onSyncCompleted
-
-            self.logger.log(
-                "Storing \(storedTabs.count) total tabs for \(windowCount) windows", level: .debug, category: .sync
-            )
-
-            self.profile.storeAndSyncTabs(storedTabs).upon { result in
-                switch result {
-                case .success(let tabCount):
-                    logger.log(
-                        "Successfully stored \(tabCount) tabs", level: .debug, category: .sync)
-                case .failure(let error):
-                    logger.log(
-                        "Failed to store tabs: \(error.localizedDescription)", level: .warning, category: .sync)
-                }
-                onSyncCompleted?() // callback for tests
-            }
+        throttler.throttle { [weak self] in
+            _ = self?.profile.syncManager.syncNamedCollections(why: .user, names: ["tabs"])
         }
     }
 }

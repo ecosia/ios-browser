@@ -4,10 +4,7 @@
 
 import Foundation
 
-/// A dictionary with as Key the local file directory for a temporary document and its online source URL as value
-public typealias TemporaryDocumentSession = [URL: URL]
-
-public struct TabData: Codable, Sendable {
+public struct TabData: Codable {
     public let id: UUID
     public let title: String?
     public let siteUrl: String
@@ -15,7 +12,7 @@ public struct TabData: Codable, Sendable {
     public let isPrivate: Bool
     public let lastUsedTime: Date
     public let createdAtTime: Date
-    public let temporaryDocumentSession: TemporaryDocumentSession?
+    public var tabGroupData: TabGroupData?
 
     public init(id: UUID,
                 title: String?,
@@ -24,7 +21,7 @@ public struct TabData: Codable, Sendable {
                 isPrivate: Bool,
                 lastUsedTime: Date,
                 createdAtTime: Date,
-                temporaryDocumentSession: TemporaryDocumentSession) {
+                tabGroupData: TabGroupData? = nil) {
         self.id = id
         self.title = title
         self.siteUrl = siteUrl
@@ -32,6 +29,6 @@ public struct TabData: Codable, Sendable {
         self.isPrivate = isPrivate
         self.lastUsedTime = lastUsedTime
         self.createdAtTime = createdAtTime
-        self.temporaryDocumentSession = temporaryDocumentSession
+        self.tabGroupData = tabGroupData
     }
 }

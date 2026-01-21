@@ -4,21 +4,20 @@
 
 import XCTest
 
-@MainActor
 class XCTestCaseRootViewController: XCTestCase {
     var rootViewController: UIViewController!
     var window: UIWindow!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         rootViewController = UIViewController()
         window = UIWindow()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         rootViewController = nil
         window = nil
-        try await super.tearDown()
     }
 
     func loadViewForTesting() {

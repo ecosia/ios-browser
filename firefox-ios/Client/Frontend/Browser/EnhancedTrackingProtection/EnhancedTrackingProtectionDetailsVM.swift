@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Shared
 
 struct EnhancedTrackingProtectionDetailsVM {
     let topLevelDomain: String

@@ -2,7 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Common
 import UIKit
 import WebEngine
 
@@ -10,29 +9,32 @@ protocol NavigationDelegate: AnyObject {
     func onURLChange(url: String)
     func onLoadingStateChange(loading: Bool)
     func onNavigationStateChange(canGoBack: Bool, canGoForward: Bool)
-    func showErrorPage(page: ErrorPageViewController)
+
+    func onFindInPage(selected: String)
+    func onFindInPage(currentResult: Int)
+    func onFindInPage(totalResults: Int)
 }
 
 // Holds different type of browser views, communicating through protocols with them
 class BrowserViewController: UIViewController,
-                             EngineSessionDelegate {
+                             EngineSessionDelegate,
+                             FindInPageHelperDelegate {
     weak var navigationDelegate: NavigationDelegate?
     private lazy var progressView: UIProgressView = .build { _ in }
-    private var engineProvider: EngineProvider
-    private var engineSession: EngineSession
+    private var engineSession: EngineSession!
     private var engineView: EngineView
     private let urlFormatter: URLFormatter
-    private var gradientLayer: CAGradientLayer?
 
     // MARK: - Init
 
     init(engineProvider: EngineProvider,
          urlFormatter: URLFormatter = DefaultURLFormatter()) {
-        self.engineProvider = engineProvider
         self.engineSession = engineProvider.session
         self.engineView = engineProvider.view
         self.urlFormatter = urlFormatter
         super.init(nibName: nil, bundle: nil)
+
+        engineSession.findInPageDelegate = self
     }
 
     required init?(coder: NSCoder) {
@@ -41,39 +43,28 @@ class BrowserViewController: UIViewController,
 
     // MARK: - Life cycle
 
-    override func loadView() {
-        view = engineView
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .clear
         setupProgressBar()
+
+        setupBrowserView(engineView)
         engineSession.delegate = self
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setGradientBackground()
-    }
-
-    private func setGradientBackground() {
-        self.gradientLayer?.removeFromSuperlayer()
-        let colorTop =  UIColor.orange.cgColor
-        let colorBottom = UIColor.purple.cgColor
-
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [colorTop, colorBottom]
-        gradientLayer.locations = [0.0, 0.6]
-        gradientLayer.frame = self.view.bounds
-        self.gradientLayer = gradientLayer
-        view.layer.insertSublayer(gradientLayer, at: 0)
-    }
-
     private func setupBrowserView(_ engineView: EngineView) {
+        engineView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(engineView)
+
+        NSLayoutConstraint.activate([
+            engineView.topAnchor.constraint(equalTo: progressView.bottomAnchor),
+            engineView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            engineView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            engineView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+
         engineView.render(session: engineSession)
-        view.bringSubviewToFront(progressView)
     }
 
     private func setupProgressBar() {
@@ -115,6 +106,14 @@ class BrowserViewController: UIViewController,
         engineSession.scrollToTop()
     }
 
+    func findInPage(text: String, function: FindInPageFunction) {
+        engineSession.findInPage(text: text, function: function)
+    }
+
+    func findInPageDone() {
+        engineSession.findInPageDone()
+    }
+
     func switchToStandardTrackingProtection() {
         engineSession.switchToStandardTrackingProtection()
     }
@@ -147,34 +146,15 @@ class BrowserViewController: UIViewController,
         engineSession.updatePageZoom(.reset)
     }
 
-    func showFindInPage() {
-        engineSession.showFindInPage()
-    }
-
-    func requestMediaCapturePermission() -> Bool {
-        return true
-    }
-
     // MARK: - Search
 
     func loadUrlOrSearch(_ searchTerm: SearchTerm) {
-        setupBrowserView(engineView)
-
         if let url = urlFormatter.getURL(entry: searchTerm.term) {
             // Search the entered URL
-            let context = BrowsingContext(type: .internalNavigation, url: url)
-            if let browserURL = BrowserURL(browsingContext: context) {
-                engineSession.load(browserURL: browserURL)
-                return
-            }
-        }
-
-        if let url = URL(string: searchTerm.urlWithSearchTerm) {
+            engineSession.load(url: url.absoluteString)
+        } else {
             // Search term with Search Engine Bing
-            let context = BrowsingContext(type: .internalNavigation, url: url)
-            if let browserURL = BrowserURL(browsingContext: context) {
-                engineSession.load(browserURL: browserURL)
-            }
+            engineSession.load(url: searchTerm.urlWithSearchTerm)
         }
     }
 
@@ -209,10 +189,6 @@ class BrowserViewController: UIViewController,
         progressView.setProgress(Float(progress), animated: true)
     }
 
-    func onHideProgressBar() {
-        progressView.isHidden = true
-    }
-
     func onNavigationStateChange(canGoBack: Bool, canGoForward: Bool) {
         navigationDelegate?.onNavigationStateChange(canGoBack: canGoBack,
                                                     canGoForward: canGoForward)
@@ -223,25 +199,13 @@ class BrowserViewController: UIViewController,
         // We currently do not handle favicons in SampleBrowser, so this is empty.
     }
 
-    func onErrorPageRequest(error: NSError) {
-        let errorPage = ErrorPageViewController()
-        let message = "Error \(String(error.code)) happened on domain \(error.domain): \(error.localizedDescription)"
-        errorPage.configure(errorMessage: message)
-
-        navigationDelegate?.showErrorPage(page: errorPage)
-    }
-
     func onProvideContextualMenu(linkURL: URL?) -> UIContextMenuConfiguration? {
         guard let url = linkURL else { return nil }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            let previewVC = BrowserViewController(engineProvider: self.engineProvider)
-
-            let context = BrowsingContext(type: .internalNavigation, url: url)
-            if let browserURL = BrowserURL(browsingContext: context) {
-                previewVC.engineSession.load(browserURL: browserURL)
-            }
-
+            let previewEngineProvider = EngineProvider()
+            let previewVC = BrowserViewController(engineProvider: previewEngineProvider)
+            previewVC.engineSession.load(url: url.absoluteString)
             return previewVC
         }
 
@@ -253,10 +217,7 @@ class BrowserViewController: UIViewController,
                 image: nil,
                 identifier: UIAction.Identifier("linkContextMenu.openLink")
             ) { [weak self] _ in
-                let context = BrowsingContext(type: .internalNavigation, url: url)
-                if let browserURL = BrowserURL(browsingContext: context) {
-                    self?.engineSession.load(browserURL: browserURL)
-                }
+                self?.engineSession.load(url: url.absoluteString)
             })
 
             return UIMenu(title: url.absoluteString, children: actions)
@@ -271,11 +232,6 @@ class BrowserViewController: UIViewController,
         return .default
     }
 
-    func onRequestOpenNewSession(_ session: EngineSession) {
-        engineSession = session
-        engineView.render(session: session)
-    }
-
     // MARK: - Ads Handling
 
     func adsSearchProviderModels() -> [WebEngine.EngineSearchProviderModel] {
@@ -285,10 +241,20 @@ class BrowserViewController: UIViewController,
     // MARK: - EngineSessionDelegate Menu items
 
     func findInPage(with selection: String) {
-        engineSession.showFindInPage(withSearchText: selection)
+        navigationDelegate?.onFindInPage(selected: selection)
     }
 
     func search(with selection: String) {
         loadUrlOrSearch(SearchTerm(term: selection))
+    }
+
+    // MARK: - FindInPageHelperDelegate
+
+    func findInPageHelper(didUpdateCurrentResult currentResult: Int) {
+        navigationDelegate?.onFindInPage(currentResult: currentResult)
+    }
+
+    func findInPageHelper(didUpdateTotalResults totalResults: Int) {
+        navigationDelegate?.onFindInPage(totalResults: totalResults)
     }
 }

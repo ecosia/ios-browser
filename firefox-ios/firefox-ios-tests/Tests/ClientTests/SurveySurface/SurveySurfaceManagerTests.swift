@@ -3,24 +3,25 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Shared
+import Storage
 import Common
 import UIKit
 @testable import Client
 
-@MainActor
 class SurveySurfaceManagerTests: XCTestCase {
     private var messageManager: MockGleanPlumbMessageManagerProtocol!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         messageManager = MockGleanPlumbMessageManagerProtocol()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         messageManager = nil
-        try await super.tearDown()
     }
 
     func testNilMessage_surveySurfaceShouldNotShow() {
@@ -43,7 +44,6 @@ class SurveySurfaceManagerTests: XCTestCase {
         XCTAssertTrue(subject.shouldShowSurveySurface)
     }
 
-    @MainActor
     func testManager_surveySurfaceIsNotNil() {
         let manager = setupStandardConditions()
         XCTAssertTrue(manager.shouldShowSurveySurface)
@@ -52,7 +52,6 @@ class SurveySurfaceManagerTests: XCTestCase {
         XCTAssertNotNil(subject)
     }
 
-    @MainActor
     func testManager_surveySurfaceInfoIsExpected() {
         let manager = setupStandardConditions()
         XCTAssertTrue(manager.shouldShowSurveySurface)
@@ -85,7 +84,6 @@ class SurveySurfaceManagerTests: XCTestCase {
         XCTAssertEqual(messageManager.onMessageDismissedCalled, 0)
     }
 
-    @MainActor
     func testManager_didTapTakeSurvey_called() {
         let manager = setupStandardConditions()
         XCTAssertTrue(manager.shouldShowSurveySurface)
@@ -105,10 +103,11 @@ class SurveySurfaceManagerTests: XCTestCase {
         XCTAssertEqual(messageManager.onMessagePressedCalled, 0)
         XCTAssertEqual(messageManager.onMessageDismissedCalled, 1)
     }
+}
 
-    // MARK: - Helpers
-
-    func createSubject(file: StaticString = #filePath,
+// MARK: - Helpers
+extension SurveySurfaceManagerTests {
+    func createSubject(file: StaticString = #file,
                        line: UInt = #line
     ) -> SurveySurfaceManager {
         let subject = SurveySurfaceManager(windowUUID: windowUUID, and: messageManager)
@@ -148,7 +147,7 @@ class MockSurveyMessageDataProtocol: MessageDataProtocol {
     var surface: MessageSurfaceId
     var isControl = true
     var title: String? = "title label test"
-    var text = "text label test"
+    var text: String = "text label test"
     var buttonLabel: String? = "button label test"
     var experiment: String?
     var actionParams: [String: String] = [:]

@@ -4,6 +4,7 @@
 
 import Foundation
 import UIKit
+import Shared
 import Common
 
 class UpdateViewController: UIViewController,
@@ -21,7 +22,7 @@ class UpdateViewController: UIViewController,
     var didFinishFlow: (() -> Void)?
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
     weak var qrCodeNavigationHandler: QRCodeNavigationHandler?
@@ -73,9 +74,8 @@ class UpdateViewController: UIViewController,
         super.viewDidLoad()
 
         setupView()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
+        listenForThemeChange(view)
     }
 
     // MARK: View setup
@@ -89,7 +89,7 @@ class UpdateViewController: UIViewController,
             setupMultipleCardsConstraints()
         }
 
-        if viewModel.isDismissible { setupCloseButton() }
+        if viewModel.isDismissable { setupCloseButton() }
     }
 
     private func setupSingleInfoCard() {
@@ -123,7 +123,7 @@ class UpdateViewController: UIViewController,
     }
 
     private func setupCloseButton() {
-        guard viewModel.isDismissible else { return }
+        guard viewModel.isDismissable else { return }
         view.addSubview(closeButton)
         view.bringSubviewToFront(closeButton)
 
@@ -182,7 +182,7 @@ extension UpdateViewController: UIPageViewControllerDataSource, UIPageViewContro
         _ pageViewController: UIPageViewController,
         viewControllerBefore viewController: UIViewController
     ) -> UIViewController? {
-        guard let onboardingVC = viewController as? OnboardingCardViewController<OnboardingKitCardInfoModel>,
+        guard let onboardingVC = viewController as? OnboardingCardViewController,
               let index = getCardIndex(viewController: onboardingVC)
         else { return nil }
 
@@ -199,7 +199,7 @@ extension UpdateViewController: UIPageViewControllerDataSource, UIPageViewContro
         _ pageViewController: UIPageViewController,
         viewControllerAfter viewController: UIViewController
     ) -> UIViewController? {
-        guard let onboardingVC = viewController as? OnboardingCardViewController<OnboardingKitCardInfoModel>,
+        guard let onboardingVC = viewController as? OnboardingCardViewController,
               let index = getCardIndex(viewController: onboardingVC)
         else { return nil }
 

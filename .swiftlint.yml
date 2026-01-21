@@ -1,5 +1,6 @@
 only_rules: # Only enforce these rules, ignore all others
-  - line_length
+  # Ecosia: disabled
+  # - line_length
   - blanket_disable_command
   - class_delegate_protocol
   - closure_spacing
@@ -30,15 +31,16 @@ only_rules: # Only enforce these rules, ignore all others
   - mark
   - no_space_in_method_call
   - ns_number_init_as_function_reference
-  - function_name_whitespace
+  - operator_whitespace
   - orphaned_doc_comment
   - private_over_fileprivate
   - protocol_property_accessors_order
   - redundant_discardable_let
   - redundant_objc_attribute
-  - implicit_optional_initialization
+  - redundant_optional_initialization
   - redundant_string_enum_value
-  - redundant_void_return
+  # Ecosia: disabled
+  # - redundant_void_return
   - return_arrow_whitespace
   - statement_position
   - switch_case_alignment
@@ -57,6 +59,8 @@ only_rules: # Only enforce these rules, ignore all others
   - void_return
   - file_header
   - redundant_type_annotation
+  # Ecosia: disabled
+  # - attributes
   - closing_brace
   - closure_end_indentation
   - contains_over_filter_count
@@ -79,18 +83,13 @@ only_rules: # Only enforce these rules, ignore all others
   - overridden_super_call
   - vertical_parameter_alignment_on_call
   - vertical_whitespace_closing_braces
-  - vertical_whitespace_opening_braces
+  # Ecosia: disabled
+  # - vertical_whitespace_opening_braces
   - yoda_condition
   - accessibility_label_for_image
   - accessibility_trait_for_button
-  - force_cast
-  - closure_body_length
-  - function_body_length
-  - implicitly_unwrapped_optional
-  - prefer_type_checking
-  - attribute_name_spacing
-  - unneeded_break_in_switch
-  - multiline_parameters
+  # Ecosia: enabled
+  - custom_rules
 
 # These rules were originally opted into. Disabling for now to get
 # Swiftlint up and running.
@@ -101,28 +100,33 @@ only_rules: # Only enforce these rules, ignore all others
   # - prohibited_super_call
   # - protocol_property_accessors_order
 
-
 line_length:
   warning: 125
   ignores_urls: true
   ignores_interpolated_strings: true
 
-closure_body_length:
-  warning: 34
-  error: 34
-
-function_body_length:
-  warning: 122
-  error: 122
+custom_rules:
+  reassign_analytics_instance:
+    included:
+      - ".*\\.swift"
+    excluded:
+      - "EcosiaTests/*"
+    regex: "(Analytics.shared =)"
+    capture_group: 0
+    match_kinds:
+      - comment
+      - identifier
+    message: "We should not re-assign Analytics shared instance outside tests."
+    severity: error
+  no_hiding_in_strings:
+    regex: "(Analytics.shared =)"
+    match_kinds: string
 
 file_header:
   required_string: |
                     // This Source Code Form is subject to the terms of the Mozilla Public
                     // License, v. 2.0. If a copy of the MPL was not distributed with this
                     // file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-redundant_type_annotation:
-  consider_default_literal_types_redundant: true
 
 analyzer_rules: # Rules run by `swiftlint analyze`
   - unused_import
@@ -133,6 +137,8 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - .build/
   - firefox-ios/Client/Assets/Search/get_supported_locales.swift
   - firefox-ios/Client/Generated
+  # Ecosia: Include persisted generated
+  - firefox-ios/Client/Ecosia/PersistedGenerated
   - firefox-ios/fastlane/
   - firefox-ios/FxA
   - firefox-ios/FxAClient
@@ -150,19 +156,21 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   # so must be excluded due to file_header rule
   - firefox-ios/Package.swift
   - BrowserKit/Package.swift
-  - BrowserKit/Sources/Shared/Deferred/
   - BrowserKit/.build/
   - firefox-ios/Client/ContentBlocker/ContentBlockerGenerator/Package.swift
   - Package.swift
   - firefox-ios/Build/Intermediates.noindex/Client.build/Fennec-iphoneos/WidgetKitExtension.build/DerivedSources/IntentDefinitionGenerated/WidgetIntents/*
-  # Focus specific
-  - focus-ios/Blockzilla/Generated
-  - focus-ios-tests/tools/Localizations
-  # Application-services specific
-  - MozillaRustComponents/
-  - LocalizationTools
-  - firefoxios-l10n
-
+  # Temporarly ignore focus-ios folder
+  - focus-ios/
+  # Ecosia: Exclude Swift Packages
+  - firefox-ios/SourcePackages
+  # Ecosia: Remove Metrics.swift as part of Glean
+  - Storage/Generated/Metrics.swift
+  # Ecosia: Exclude Tuist-generated files and Tuist configuration
+  - firefox-ios/Derived/
+  - firefox-ios/Project.swift
+  - firefox-ios/Tuist/
+  
 included:
   - /Users/vagrant/git
   - .

@@ -47,6 +47,13 @@ class AutocompleteTextField: UITextField,
     private var notifyTextChanged: (() -> Void)?
     private var lastReplacement: String?
 
+    override var text: String? {
+        didSet {
+            super.text = text
+            self.textDidChange(self)
+        }
+    }
+
     override var accessibilityValue: String? {
         get {
             return (self.text ?? "") + (self.autocompleteTextLabel?.text ?? "")
@@ -203,7 +210,6 @@ class AutocompleteTextField: UITextField,
         let text = (self.text ?? "") + (self.autocompleteTextLabel?.text ?? "")
         let didRemoveCompletion = removeCompletion()
         self.text = text
-        textDidChange(self)
         hideCursor = false
         // Move the cursor to the end of the completion.
         if didRemoveCompletion {
@@ -224,7 +230,6 @@ class AutocompleteTextField: UITextField,
     @objc
     private func clear() {
         text = ""
-        textDidChange(self)
         removeCompletion()
         autocompleteDelegate?.autocompleteTextField(self, didEnterText: "")
     }
@@ -271,7 +276,9 @@ class AutocompleteTextField: UITextField,
         autocompleteTextLabel = nil
 
         if let theme {
-            let color = isPrivateMode ? theme.colors.layerAccentPrivateNonOpaque : theme.colors.layerAccentNonOpaque
+            // Ecosia: Update color
+            // let color = isPrivateMode ? theme.colors.layerAccentPrivateNonOpaque : theme.colors.layerAccentNonOpaque
+            let color = UIColor(red: 0, green: 0.495, blue: 0.66, alpha: 1).withAlphaComponent(0.25)
             autocompleteText.addAttribute(NSAttributedString.Key.backgroundColor,
                                           value: color,
                                           range: NSRange(location: 0, length: suggestionText.count))
@@ -339,7 +346,7 @@ class AutocompleteTextField: UITextField,
     }
 
     func setTextWithoutSearching(_ text: String) {
-        self.text = text
+        super.text = text
         hideCursor = autocompleteTextLabel != nil
         removeCompletion()
     }
@@ -389,7 +396,10 @@ class AutocompleteTextField: UITextField,
             let autocompleteText = NSMutableAttributedString(
                 string: self.autocompleteTextLabel?.attributedText?.string ?? ""
             )
+            /* Ecosia: Update color
             let color = isPrivateMode ? theme.colors.layerAccentPrivateNonOpaque : theme.colors.layerAccentNonOpaque
+            */
+            let color = UIColor(red: 0, green: 0.495, blue: 0.66, alpha: 1).withAlphaComponent(0.25)
             autocompleteText.addAttribute(NSAttributedString.Key.backgroundColor,
                                           value: color,
                                           range: NSRange(location: 0, length: autocompleteText.length))
@@ -406,14 +416,22 @@ class AutocompleteTextField: UITextField,
         attributedPlaceholder = NSAttributedString(string: .TabLocationURLPlaceholder,
                                                    attributes: attributes)
 
+        /* Ecosia: update color
         backgroundColor = theme.colors.layer3
         textColor = theme.colors.textPrimary
         tintColor = theme.colors.actionPrimary
+         */
+        textColor = theme.colors.textSecondary
+        backgroundColor = .clear
 
         // Only refresh if an autocomplete label is presented to the user
         if autocompleteTextLabel?.attributedText != nil {
+            /* Ecosia: update background and color
             autocompleteTextLabel?.backgroundColor = theme.colors.layer3
             autocompleteTextLabel?.textColor = theme.colors.textPrimary
+             */
+            autocompleteTextLabel?.backgroundColor = UIColor(red: 0, green: 0.495, blue: 0.66, alpha: 0.25)
+            autocompleteTextLabel?.textColor = theme.colors.textSecondary
         }
     }
 
@@ -427,8 +445,6 @@ class AutocompleteTextField: UITextField,
     }
 
     func menuHelperPasteAndGo() {
-        ensureMainThread {
-            self.autocompleteDelegate?.autocompletePasteAndGo(self)
-        }
+        autocompleteDelegate?.autocompletePasteAndGo(self)
     }
 }

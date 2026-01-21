@@ -3,23 +3,25 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Shared
 
 /*
  * Factory methods for converting rows from SQLite into model objects
  */
 extension BrowserDBSQLite {
     class func basicHistoryColumnFactory(_ row: SDRow) -> Site {
-        guard let url = row["url"] as? String, let title = row["title"] as? String else {
-            assertionFailure("None of these properties should be nil")
-            return Site.createBasicSite(url: "", title: "")
-        }
-
-        var site = Site.createBasicSite(url: url, title: title, isBookmarked: nil)
+        let id = row["historyID"] as? Int
+        let url = row["url"] as! String
+        let title = row["title"] as! String
+        let guid = row["guid"] as? String
 
         // Extract a boolean from the row if it's present.
-        if let isBookmarked = row["is_bookmarked"] as? Int {
-            site.isBookmarked = isBookmarked != 0
-        }
+        let iB = row["is_bookmarked"] as? Int
+        let isBookmarked: Bool? = (iB == nil) ? nil : (iB! != 0)
+
+        let site = Site(url: url, title: title, bookmarked: isBookmarked)
+        site.guid = guid
+        site.id = id
 
         // Find the most recent visit, regardless of which column it might be in.
         let local = row.getTimestamp("localVisitDate") ?? 0
@@ -30,7 +32,6 @@ extension BrowserDBSQLite {
         if latest > 0 {
             site.latestVisit = Visit(date: latest, type: .link)
         }
-
         return site
     }
 
@@ -48,7 +49,7 @@ extension BrowserDBSQLite {
     }
 
     class func historyMetadataColumnFactory(_ row: SDRow) -> Site {
-        var site = basicHistoryColumnFactory(row)
+        let site = basicHistoryColumnFactory(row)
         site.metadata = pageMetadataColumnFactory(row)
         return site
     }

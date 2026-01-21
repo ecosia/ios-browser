@@ -5,16 +5,16 @@
 "New Tab" = "لسان جديد";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "يستعمل Firefox كاميراتك لمسح رموز QR رقميًا ولالتقاط الصور والڤِديوهات.";
+"NSCameraUsageDescription" = "يستعمل Ecosia كاميراتك لمسح رموز QR رقميًا ولالتقاط الصور والڤِديوهات.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "يتطلب Firefox تفعيل بصمة الوجه للوصول إلى كلمات المرور وطرق الدفع المحفوظة لديك.";
+"NSFaceIDUsageDescription" = "يتطلب Ecosia تفعيل بصمة الوجه للوصول إلى كلمات المرور وطرق الدفع المحفوظة لديك.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "يمكن أن تطلب منك المواقع التي تزورها معرفة مكانك.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "يستعمل Firefox الميكروفون لتسجيل الصوت ورفعه.";
+"NSMicrophoneUsageDescription" = "يستعمل Ecosia الميكروفون لتسجيل الصوت ورفعه.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "يتيح لك هذا حفظ الصور.";

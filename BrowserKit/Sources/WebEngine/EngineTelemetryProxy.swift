@@ -6,7 +6,7 @@ import Foundation
 
 /// Defines events which are engine-agnostic but typically applicable to all WebEngine
 /// clients, such as web view navigation failures and error page events.
-public enum EngineTelemetryEvent: Equatable {
+public enum EngineTelemetryEvent {
     // Navigation failed.
     case didFailNavigation
 
@@ -35,5 +35,5 @@ public enum EngineTelemetryEvent: Equatable {
 /// Protocol for handling WebEngine telemetry events. These can be custom-handled
 /// by clients to be recorded through Glean or any other preferred API.
 public protocol EngineTelemetryProxy: AnyObject {
-    func handleTelemetry(event: EngineTelemetryEvent)
+    func handleTelemetry(session: EngineSession, event: EngineTelemetryEvent)
 }

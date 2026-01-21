@@ -23,195 +23,125 @@ final class LoggerTests: XCTestCase {
         cleanUp()
     }
 
-    // MARK: - Log to SwiftyBeaver and Sentry crash manager
+    // MARK: - Log
 
     func testLog_debug() {
-        let logMessage = "Debug log"
-        let logLevel = LoggerLevel.debug
-        let logCategory = LoggerCategory.setup
-
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(logMessage, level: logLevel, category: logCategory)
-
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Debug log", level: .debug, category: .setup)
         XCTAssertEqual(MockSwiftyBeaver.debugCalled, 1)
-
-        XCTAssertEqual(crashManager.message, logMessage)
-        XCTAssertEqual(crashManager.level, logLevel)
-        XCTAssertEqual(crashManager.category, logCategory)
     }
 
     func testLog_info() {
-        let logMessage = "Info log"
-        let logLevel = LoggerLevel.info
-        let logCategory = LoggerCategory.setup
-
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(logMessage, level: logLevel, category: logCategory)
-
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Info log", level: .info, category: .setup)
         XCTAssertEqual(MockSwiftyBeaver.infoCalled, 1)
-
-        XCTAssertEqual(crashManager.message, logMessage)
-        XCTAssertEqual(crashManager.level, logLevel)
-        XCTAssertEqual(crashManager.category, logCategory)
     }
 
     func testLog_warning() {
-        let logMessage = "Warning log"
-        let logLevel = LoggerLevel.warning
-        let logCategory = LoggerCategory.setup
-
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(logMessage, level: logLevel, category: logCategory)
-
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Warning log", level: .warning, category: .setup)
         XCTAssertEqual(MockSwiftyBeaver.warningCalled, 1)
-
-        XCTAssertEqual(crashManager.message, logMessage)
-        XCTAssertEqual(crashManager.level, logLevel)
-        XCTAssertEqual(crashManager.category, logCategory)
     }
 
     func testLog_fatal() {
-        let logMessage = "Fatal log"
-        let logLevel = LoggerLevel.fatal
-        let logCategory = LoggerCategory.setup
-
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(logMessage, level: logLevel, category: logCategory)
-
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Fatal log", level: .fatal, category: .setup)
         XCTAssertEqual(MockSwiftyBeaver.errorCalled, 1)
-
-        XCTAssertEqual(crashManager.message, logMessage)
-        XCTAssertEqual(crashManager.level, logLevel)
-        XCTAssertEqual(crashManager.category, logCategory)
     }
 
     func testLog_informationCorrelate_withAllParams() throws {
-        let logMessage = "Debug log"
-        let logLevel = LoggerLevel.debug
-        let logCategory = LoggerCategory.setup
-        let logExtraKey = "example"
-        let logExtraValue = "test"
-        let logExtra = [logExtraKey: logExtraValue]
-        let logDescription = "A description"
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Debug log",
+                    level: .debug,
+                    category: .setup,
+                    extra: ["example": "test"],
+                    description: "A description")
 
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(
-            logMessage,
-            level: logLevel,
-            category: logCategory,
-            extra: logExtra,
-            description: logDescription
-        )
-
-        XCTAssertEqual(MockSwiftyBeaver.savedMessage, "\(logMessage) - \(logDescription) - \(logExtraKey): \(logExtraValue)")
+        XCTAssertEqual(MockSwiftyBeaver.savedMessage, "Debug log - A description - example: test")
         XCTAssertEqual(MockSwiftyBeaver.debugCalled, 1)
-
-        XCTAssertEqual(crashManager.message, logMessage)
-        XCTAssertEqual(crashManager.level, logLevel)
-        XCTAssertEqual(crashManager.category, logCategory)
-        XCTAssertEqual(crashManager.extraEvents, ["errorDescription": logDescription, logExtraKey: logExtraValue])
     }
 
     func testLog_informationCorrelate_withMessageAndDescriptionOnly() throws {
-        let logMessage = "Debug log"
-        let logLevel = LoggerLevel.debug
-        let logCategory = LoggerCategory.setup
-        let logDescription = "A description"
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Debug log",
+                    level: .debug,
+                    category: .setup,
+                    description: "A description")
 
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(
-            logMessage,
-            level: logLevel,
-            category: logCategory,
-            description: logDescription
-        )
-
-        XCTAssertEqual(MockSwiftyBeaver.savedMessage, "\(logMessage) - \(logDescription)")
+        XCTAssertEqual(MockSwiftyBeaver.savedMessage, "Debug log - A description")
         XCTAssertEqual(MockSwiftyBeaver.debugCalled, 1)
-
-        XCTAssertEqual(crashManager.message, logMessage)
-        XCTAssertEqual(crashManager.level, logLevel)
-        XCTAssertEqual(crashManager.category, logCategory)
-        XCTAssertEqual(crashManager.extraEvents, ["errorDescription": logDescription])
     }
 
     func testLog_informationCorrelate_withMessageAndExtra() throws {
-        let logMessage = "Debug log"
-        let logLevel = LoggerLevel.debug
-        let logCategory = LoggerCategory.setup
-        let logExtraKey = "example"
-        let logExtraValue = "test"
-        let logExtra = [logExtraKey: logExtraValue]
-
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(
-            logMessage,
-            level: logLevel,
-            category: logCategory,
-            extra: logExtra
-        )
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Debug log",
+                    level: .debug,
+                    category: .setup,
+                    extra: ["example": "test"])
 
         XCTAssertEqual(MockSwiftyBeaver.savedMessage, "Debug log - example: test")
         XCTAssertEqual(MockSwiftyBeaver.debugCalled, 1)
-
-        XCTAssertEqual(crashManager.message, logMessage)
-        XCTAssertEqual(crashManager.level, logLevel)
-        XCTAssertEqual(crashManager.category, logCategory)
-        XCTAssertEqual(crashManager.extraEvents, [logExtraKey: logExtraValue])
     }
 
     func testLog_informationCorrelate_withMessageOnly() throws {
-        let logMessage = "Debug log"
-        let logLevel = LoggerLevel.debug
-        let logCategory = LoggerCategory.setup
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Debug log",
+                    level: .debug,
+                    category: .setup)
 
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(logMessage, level: logLevel, category: logCategory)
-
-        XCTAssertEqual(MockSwiftyBeaver.savedMessage, logMessage)
+        XCTAssertEqual(MockSwiftyBeaver.savedMessage, "Debug log")
         XCTAssertEqual(MockSwiftyBeaver.debugCalled, 1)
-
-        XCTAssertEqual(crashManager.message, logMessage)
-        XCTAssertEqual(crashManager.level, logLevel)
-        XCTAssertEqual(crashManager.category, logCategory)
     }
 
     // MARK: - CrashManager
 
-    func testCrashManagerLog_fatalIsSent_informationCorrelate() throws {
-        let logMessage = "Fatal log"
-        let logLevel = LoggerLevel.fatal
-        let logCategory = LoggerCategory.setup
-        let logExtraKey = "example"
-        let logExtraValue = "test"
-        let logExtra = [logExtraKey: logExtraValue]
-        let logDescription = "A description"
+    func testCrashManagerLog_withoutCrashManager_doesNotLog() {
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.log("Debug log", level: .debug, category: .setup)
+        XCTAssertEqual(MockSwiftyBeaver.debugCalled, 1)
 
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.log(
-            logMessage,
-            level: logLevel,
-            category: logCategory,
-            extra: logExtra,
-            description: logDescription
-        )
+        XCTAssertNil(crashManager.message)
+        XCTAssertNil(crashManager.category)
+        XCTAssertNil(crashManager.level)
+    }
+
+    func testCrashManagerLog_fatalIsSent_informationCorrelate() throws {
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.log("Fatal log",
+                    level: .fatal,
+                    category: .setup,
+                    extra: ["example": "test"],
+                    description: "A description")
 
         XCTAssertEqual(crashManager.message, "Fatal log")
         XCTAssertEqual(crashManager.category, .setup)
         XCTAssertEqual(crashManager.level, .fatal)
-        XCTAssertEqual(crashManager.extraEvents, ["errorDescription": logDescription, logExtraKey: logExtraValue])
+        let extra = try XCTUnwrap(crashManager.extraEvents)
+        XCTAssertEqual(extra, ["example": "test", "errorDescription": "A description"])
     }
 
-    func testCrashManagerLog_sendCrashReportsNotCalled_onInit() {
-        _ = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        XCTAssertEqual(crashManager.savedSendCrashReportsCalled, 0)
+    func testCrashManagerLog_sendUsageDataNotCalled() {
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        XCTAssertNil(crashManager.savedSendUsageData)
     }
 
-    func testCrashManagerLog_sendCrashReportsCalled_onSetup() throws {
-        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder, crashManager: crashManager)
-        subject.setup(sendCrashReports: true)
+    func testCrashManagerLog_sendUsageDataCalled() throws {
+        let subject = DefaultLogger(swiftyBeaverBuilder: beaverBuilder)
+        subject.configure(crashManager: crashManager)
+        subject.setup(sendUsageData: true)
 
-        XCTAssertEqual(crashManager.savedSendCrashReportsCalled, 1)
+        let savedSendUsageData = try XCTUnwrap(crashManager.savedSendUsageData)
+        XCTAssertTrue(savedSendUsageData)
     }
 }
 
@@ -234,32 +164,33 @@ class MockSwiftyBeaverBuilder: SwiftyBeaverBuilder {
 }
 
 // MARK: - MockSwiftyBeaver
-final class MockSwiftyBeaver: SwiftyBeaverWrapper {
+class MockSwiftyBeaver: SwiftyBeaverWrapper {
     static func logFileDirectoryPath(inDocuments: Bool) -> String? {
         return nil
     }
 
-    nonisolated(unsafe) static var savedMessage: String?
+    static var fileDestination: URL?
+    static var savedMessage: String?
 
-    nonisolated(unsafe) static var debugCalled = 0
+    static var debugCalled = 0
     static func debug(_ message: @autoclosure () -> Any, file: String, function: String, line: Int, context: Any?) {
         debugCalled += 1
         savedMessage = "\(message())"
     }
 
-    nonisolated(unsafe) static var infoCalled = 0
+    static var infoCalled = 0
     static func info(_ message: @autoclosure () -> Any, file: String, function: String, line: Int, context: Any?) {
         infoCalled += 1
         savedMessage = "\(message())"
     }
 
-    nonisolated(unsafe) static var warningCalled = 0
+    static var warningCalled = 0
     static func warning(_ message: @autoclosure () -> Any, file: String, function: String, line: Int, context: Any?) {
         warningCalled += 1
         savedMessage = "\(message())"
     }
 
-    nonisolated(unsafe) static var errorCalled = 0
+    static var errorCalled = 0
     static func error(_ message: @autoclosure () -> Any, file: String, function: String, line: Int, context: Any?) {
         errorCalled += 1
         savedMessage = "\(message())"
@@ -267,12 +198,12 @@ final class MockSwiftyBeaver: SwiftyBeaverWrapper {
 }
 
 // MARK: - CrashManager
-final class MockCrashManager: CrashManager, @unchecked Sendable {
+class MockCrashManager: CrashManager {
     var crashedLastLaunch = false
 
-    var savedSendCrashReportsCalled = 0
-    func setup(sendCrashReports: Bool) {
-        savedSendCrashReportsCalled += 1
+    var savedSendUsageData: Bool?
+    func setup(sendUsageData: Bool) {
+        savedSendUsageData = sendUsageData
     }
 
     var message: String?

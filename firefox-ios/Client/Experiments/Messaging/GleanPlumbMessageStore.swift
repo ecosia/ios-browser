@@ -7,7 +7,7 @@ import Foundation
 /// The Message Store is responsible for tracking and updating certain metadata of a Message. This
 /// will primarily help us determine if messages are expired, and perhaps what caused expiry.
 
-protocol GleanPlumbMessageStoreProtocol: Sendable {
+protocol GleanPlumbMessageStoreProtocol {
     /// Return associated metadata for preexisting or new messages.
     func getMessageMetadata(messageId: String) -> GleanPlumbMessageMetaData
 
@@ -26,7 +26,7 @@ protocol GleanPlumbMessageStoreProtocol: Sendable {
                           shouldReport: Bool)
 }
 
-final class GleanPlumbMessageStore: GleanPlumbMessageStoreProtocol {
+class GleanPlumbMessageStore: GleanPlumbMessageStoreProtocol {
     // MARK: - Properties
 
     private let decoder = JSONDecoder()

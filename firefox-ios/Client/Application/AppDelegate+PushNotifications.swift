@@ -4,6 +4,8 @@
 
 import UIKit
 import Shared
+import Storage
+import Sync
 import UserNotifications
 import Account
 
@@ -39,10 +41,11 @@ extension AppDelegate {
         UNUserNotificationCenter.current().setNotificationCategories(categories)
 
         NotificationCenter.default.addObserver(forName: .RegisterForPushNotifications, object: nil, queue: .main) { _ in
-            Task { @MainActor in
-                let settings = await UNUserNotificationCenter.current().notificationSettings()
-                if settings.authorizationStatus != .denied {
-                    UIApplication.shared.registerForRemoteNotifications()
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                DispatchQueue.main.async {
+                    if settings.authorizationStatus != .denied {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
                 }
             }
         }
@@ -52,44 +55,42 @@ extension AppDelegate {
             forName: .constellationStateUpdate,
             object: nil,
             queue: nil
-        ) { [profile] notification in
-            guard let newState = notification.userInfo?["newState"] as? ConstellationState else { return }
-            let remoteDevicesCount = newState.remoteDevices.count
-            self.setPreferencesForSyncedAccount(for: profile, count: remoteDevicesCount)
-            if newState.localDevice?.pushEndpointExpired ?? false {
-                NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
-                // Our endpoint expired, we should check for missed messages
-                profile.pollCommands(forcePoll: true)
+        ) { notification in
+            if let newState = notification.userInfo?["newState"] as? ConstellationState {
+                self.setPreferencesForSyncedAccount(for: newState)
+                if newState.localDevice?.pushEndpointExpired ?? false {
+                    NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
+                    // Our endpoint expired, we should check for missed messages
+                    self.profile.pollCommands(forcePoll: true)
+                }
             }
         }
     }
 
-    nonisolated private func setPreferencesForSyncedAccount(for profile: Profile, count: Int) {
-        guard profile.hasSyncableAccount() else { return }
+    private func setPreferencesForSyncedAccount(for newState: ConstellationState) {
+        guard self.profile.hasSyncableAccount() else { return }
         profile.prefs.setBool(true, forKey: PrefsKeys.Sync.signedInFxaAccount)
+        let remoteCount = newState.remoteDevices.count
         // The additional +1 is to also add a count for the local device being used
-        let devicesCount = Int32(count + 1)
-        profile.prefs.setInt(devicesCount, forKey: PrefsKeys.Sync.numberOfSyncedDevices)
+        let devicesCount = Int32(remoteCount + 1)
+        self.profile.prefs.setInt(devicesCount, forKey: PrefsKeys.Sync.numberOfSyncedDevices)
     }
 }
 
-extension AppDelegate: @MainActor UNUserNotificationCenterDelegate {
-    // Called when the user taps on a notification while in background.
-    func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse
-    ) async {
+/* Ecosia: Deactivate Firefox Push Notification Bahviour
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    // Called when the user taps on a notification from the background.
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
         let content = response.notification.request.content
 
         if content.categoryIdentifier == NotificationSurfaceManager.Constant.notificationCategoryId {
-            guard let messageId = content.userInfo[NotificationSurfaceManager.Constant.messageIdKey] as? String
-            else { return }
-
             switch response.actionIdentifier {
             case UNNotificationDismissActionIdentifier:
-                notificationSurfaceManager.didDismissNotification(messageId)
+                notificationSurfaceManager.didDismissNotification(content.userInfo)
             default:
-                notificationSurfaceManager.didTapNotification(messageId)
+                notificationSurfaceManager.didTapNotification(content.userInfo)
             }
         } else if content.categoryIdentifier == NotificationCloseTabs.notificationCategoryId {
             switch response.actionIdentifier {
@@ -103,21 +104,25 @@ extension AppDelegate: @MainActor UNUserNotificationCenterDelegate {
                 break
             }
         }
+        // We don't poll for commands here because we do that once the application wakes up
+        // The notification service ensures that when the application wakes up, the application will check
+        // for commands
+        completionHandler()
     }
 
     // Called when the user receives a tab (or any other notification) while in foreground.
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification
-    ) async -> UNNotificationPresentationOptions {
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         if profile.prefs.boolForKey(PendingAccountDisconnectedKey) ?? false {
             profile.removeAccount()
 
             // show the notification
-            return [.list, .banner, .sound]
+            completionHandler([.list, .banner, .sound])
         } else {
             profile.pollCommands(forcePoll: true)
-            return []
         }
     }
 }
@@ -135,7 +140,7 @@ extension AppDelegate {
             return
         }
 
-        Task { [profile] in
+        Task {
             do {
                 let autopush = try await Autopush(files: profile.files)
                 try await autopush.updateToken(withDeviceToken: deviceToken)
@@ -160,3 +165,4 @@ extension AppDelegate {
                    category: .setup)
     }
 }
+*/

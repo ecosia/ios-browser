@@ -7,40 +7,24 @@ import Redux
 import Common
 import WebKit
 
-struct PasswordGeneratorFrameContext: Equatable {
-    let origin: String?
-    let host: String
-    let scriptEvaluator: PasswordGeneratorScriptEvaluator
-    let frameInfo: WKFrameInfo?
-
-    static func == (lhs: PasswordGeneratorFrameContext, rhs: PasswordGeneratorFrameContext) -> Bool {
-        lhs.origin == rhs.origin &&
-        lhs.host == rhs.host &&
-        lhs.frameInfo === rhs.frameInfo
-    }
-}
-
-struct PasswordGeneratorAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
-
-    // Used in the middlewares
-    let frameContext: PasswordGeneratorFrameContext?
+final class PasswordGeneratorAction: Action {
+    // Used in the middlwares
+    let currentFrame: WKFrameInfo?
 
     // Used in some reducers
     let password: String?
-    let loginEntryOrigin: String?
+
+    let origin: String?
 
     init(windowUUID: WindowUUID,
          actionType: any ActionType,
+         currentFrame: WKFrameInfo? = nil,
          password: String? = nil,
-         frameContext: PasswordGeneratorFrameContext? = nil,
-         loginEntryOrigin: String? = nil) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
+         origin: String? = nil) {
+        self.currentFrame = currentFrame
         self.password = password
-        self.frameContext = frameContext
-        self.loginEntryOrigin = loginEntryOrigin
+        self.origin = origin
+        super.init(windowUUID: windowUUID, actionType: actionType)
     }
 }
 
@@ -50,8 +34,6 @@ enum PasswordGeneratorActionType: ActionType {
     case userTappedRefreshPassword
     case userTappedUsePassword
     case clearGeneratedPasswordForSite
-    case hidePassword
-    case showPassword
 
     // Middleware Actions
     case updateGeneratedPassword

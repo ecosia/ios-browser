@@ -5,6 +5,7 @@
 import Common
 import UIKit
 import Storage
+import Shared
 import SiteImageView
 
 class PhotonActionSheetSiteHeaderView: UITableViewHeaderFooterView, ReusableCell, ThemeApplicable {
@@ -29,7 +30,7 @@ class PhotonActionSheetSiteHeaderView: UITableViewHeaderFooterView, ReusableCell
         label.numberOfLines = 1
     }
 
-    private lazy var imageView: FaviconImageView = .build { _ in }
+    private lazy var siteImageView: FaviconImageView = .build { _ in }
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -42,21 +43,13 @@ class PhotonActionSheetSiteHeaderView: UITableViewHeaderFooterView, ReusableCell
     }
 
     func configure(with site: Site) {
-        imageView.setFavicon(FaviconImageViewModel(siteURLString: site.url))
+        siteImageView.setFavicon(FaviconImageViewModel(siteURLString: site.url))
         titleLabel.text = site.title.isEmpty ? site.url : site.title
         descriptionLabel.text = site.tileURL.baseDomain
     }
 
-    func configure(with bookmarkFolderTitle: String) {
-        if let image = UIImage(named: StandardImageIdentifiers.Large.folder)?.withRenderingMode(.alwaysTemplate) {
-            imageView.manuallySetImage(image)
-        }
-        titleLabel.text = bookmarkFolderTitle
-    }
-
     func applyTheme(theme: Theme) {
-        imageView.layer.borderColor = theme.colors.borderPrimary.cgColor
-        imageView.tintColor = theme.colors.iconPrimary
+        siteImageView.layer.borderColor = theme.colors.borderPrimary.cgColor
         titleLabel.textColor = theme.colors.textPrimary
         descriptionLabel.textColor = theme.colors.textPrimary
     }
@@ -64,7 +57,7 @@ class PhotonActionSheetSiteHeaderView: UITableViewHeaderFooterView, ReusableCell
     private func setupLayout() {
         backgroundView = UIView()
         backgroundView?.backgroundColor = .clear
-        contentView.addSubview(imageView)
+        contentView.addSubview(siteImageView)
 
         labelContainerView.addSubview(titleLabel)
         labelContainerView.addSubview(descriptionLabel)
@@ -73,14 +66,14 @@ class PhotonActionSheetSiteHeaderView: UITableViewHeaderFooterView, ReusableCell
         let padding = PhotonActionSheetSiteHeaderView.UX.padding
 
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: padding),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
-            imageView.widthAnchor.constraint(equalToConstant: UX.siteImageViewSize),
-            imageView.heightAnchor.constraint(equalToConstant: UX.siteImageViewSize),
-            imageView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -padding),
-            imageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            siteImageView.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: padding),
+            siteImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
+            siteImageView.widthAnchor.constraint(equalToConstant: UX.siteImageViewSize),
+            siteImageView.heightAnchor.constraint(equalToConstant: UX.siteImageViewSize),
+            siteImageView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -padding),
+            siteImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            labelContainerView.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: padding),
+            labelContainerView.leadingAnchor.constraint(equalTo: siteImageView.trailingAnchor, constant: padding),
             labelContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -padding),
             labelContainerView.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: padding),
             labelContainerView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor,

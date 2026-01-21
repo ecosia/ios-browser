@@ -4,21 +4,16 @@
 
 import Foundation
 import Storage
-import Common
 
 import class MozillaAppServices.BookmarkItemData
 
-protocol CanRemoveQuickActionBookmark: Sendable {
-    @MainActor
+protocol CanRemoveQuickActionBookmark {
     var bookmarksHandler: BookmarksHandler { get }
-
-    @MainActor
     func removeBookmarkShortcut(quickAction: QuickActions)
 }
 
 // Extension to easily remove a bookmark from the quick actions
 extension CanRemoveQuickActionBookmark {
-    @MainActor
     func removeBookmarkShortcut(quickAction: QuickActions = QuickActionsImplementation()) {
         // Get most recent bookmark
         bookmarksHandler.getRecentBookmarks(limit: 1) { bookmarkItems in
@@ -29,7 +24,6 @@ extension CanRemoveQuickActionBookmark {
         }
     }
 
-    @MainActor
     private func removeBookmarks(quickAction: QuickActions, bookmarkItems: [BookmarkItemData]) {
         if bookmarkItems.isEmpty {
             // Remove the openLastBookmark shortcut

@@ -5,68 +5,20 @@
 
 $schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
 
-credit_card_key_regeneration:
-  # These track when we need to regenerate the encryption key which causes all
-  # local data to be lost
-  lost:
-    type: event
+# Metrics specific to the history storage
+history:
+  num_visits:
+    type: quantity
+    unit: visit
     description: >
-      The encryption key was regenerated because it was lost
+      The number of visits in a User's history database
     bugs:
-      - https://github.com/mozilla-mobile/firefox-ios/issues/29696
+      - https://mozilla-hub.atlassian.net/browse/SYNC-3260
     data_reviews:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/29697#issuecomment-3347957796
-    data_sensitivity:
-      - technical
+      - https://github.com/mozilla-mobile/firefox-ios/pull/11634
     notification_emails:
-      - synced-client-integrations@mozilla.com
-      - lougenia@mozilla.com
-    expires: never
-
-  corrupt:
-    type: event
-    description: >
-      The encryption key was regenerated because it didn't match the encrypted
-      data
-    bugs:
-      - https://github.com/mozilla-mobile/firefox-ios/issues/29696
-    data_reviews:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/29697#issuecomment-3347957796
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - synced-client-integrations@mozilla.com
-      - lougenia@mozilla.com
-    expires: never
-
-  other:
-    type: event
-    description: >
-      The encryption key was regenerated for an unknown reason
-    bugs:
-      - https://github.com/mozilla-mobile/firefox-ios/issues/29696
-    data_reviews:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/29697#issuecomment-3347957796
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - synced-client-integrations@mozilla.com
-      - lougenia@mozilla.com
-    expires: never
-
-  keychain_data_lost:
-    type: event
-    description: >
-      The encryption key was regenerated because it and the canary phrase are missing from the keychain
-    bugs:
-      - https://github.com/mozilla-mobile/firefox-ios/issues/29696
-    data_reviews:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/29697#issuecomment-3347957796
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - synced-client-integrations@mozilla.com
-      - lougenia@mozilla.com
+      - sync-core@mozilla.com
+      - mhammond@mozilla.com
     expires: never
 
 logins_store_key_regeneration:
@@ -132,61 +84,3 @@ logins_store_key_regeneration:
       - synced-client-integrations@mozilla.com
       - lougenia@mozilla.com
     expires: never
-
-pre_sync_key_retrieval_failure:
-  # These track when we fail to retrieve the an engine's encryption keys for
-  # a sync
-  logins:
-    type: event
-    description: >
-      The logins encryption key could not be retrieved for a logins sync
-    bugs:
-      - https://github.com/mozilla-mobile/firefox-ios/issues/29696
-    data_reviews:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/29697#issuecomment-3347957796
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - synced-client-integrations@mozilla.com
-      - lougenia@mozilla.com
-    expires: never
-    extra_keys:
-      error_message:
-        description: The error encountered retrieving the logins encryption key
-        type: string
-
-  credit_cards:
-    type: event
-    description: >
-      The credit card encryption key could not be retrieved for a credit card sync
-    bugs:
-      - https://github.com/mozilla-mobile/firefox-ios/issues/29696
-    data_reviews:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/29697#issuecomment-3347957796
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - synced-client-integrations@mozilla.com
-      - lougenia@mozilla.com
-    expires: never
-    extra_keys:
-      error_message:
-        description: The error encountered retrieving the credit cards encryption key
-        type: string
-
-user.credit_cards:
-  undecryptable_count:
-    type: counter
-    description: >
-      Track how many undecryptable credit cards we scrub during the credit card
-      verification process
-    bugs:
-      - https://github.com/mozilla-mobile/firefox-ios/issues/30727
-    data_reviews:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/30609#issuecomment-3548892236
-    data_sensitivity:
-      - technical
-    notification_emails:
-      - synced-client-integrations@mozilla.com
-      - lougenia@mozilla.com
-    expires: "never"

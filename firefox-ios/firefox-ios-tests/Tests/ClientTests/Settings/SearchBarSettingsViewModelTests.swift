@@ -8,13 +8,12 @@ import Shared
 
 @testable import Client
 
-@MainActor
 class SearchBarSettingsViewModelTests: XCTestCase {
     var prefs: Prefs!
     var mockNotificationCenter: MockNotificationCenter!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         let profile = MockProfile(databasePrefix: "SearchBarSettingsTests")
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         prefs = profile.prefs
@@ -22,11 +21,11 @@ class SearchBarSettingsViewModelTests: XCTestCase {
         mockNotificationCenter = MockNotificationCenter()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         prefs.clearAll()
         prefs = nil
         mockNotificationCenter = nil
-        try await super.tearDown()
     }
 
     // MARK: Default
@@ -142,7 +141,7 @@ class SearchBarSettingsViewModelTests: XCTestCase {
 
 // MARK: - Helper methods
 private extension SearchBarSettingsViewModelTests {
-    func createViewModel(file: StaticString = #filePath,
+    func createViewModel(file: StaticString = #file,
                          line: UInt = #line) -> SearchBarSettingsViewModel {
         let viewModel = SearchBarSettingsViewModel(prefs: prefs, notificationCenter: mockNotificationCenter)
         trackForMemoryLeaks(viewModel, file: file, line: line)

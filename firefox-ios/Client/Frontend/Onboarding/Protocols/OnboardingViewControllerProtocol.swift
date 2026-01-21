@@ -3,8 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Shared
 
-@MainActor
 protocol OnboardingViewControllerProtocol {
     var pageController: UIPageViewController { get }
     var pageControl: UIPageControl { get }
@@ -17,9 +17,9 @@ protocol OnboardingViewControllerProtocol {
         currentIndex: Int,
         numberOfCardsToMove: Int,
         goForward: Bool
-    ) -> OnboardingCardViewController<OnboardingKitCardInfoModel>?
+    ) -> OnboardingCardViewController?
 
-    func getCardIndex(viewController: OnboardingCardViewController<OnboardingKitCardInfoModel>) -> Int?
+    func getCardIndex(viewController: OnboardingCardViewController) -> Int?
 }
 
 extension OnboardingViewControllerProtocol {
@@ -27,7 +27,7 @@ extension OnboardingViewControllerProtocol {
         currentIndex: Int,
         numberOfCardsToMove: Int,
         goForward: Bool
-    ) -> OnboardingCardViewController<OnboardingKitCardInfoModel>? {
+    ) -> OnboardingCardViewController? {
         guard let nextIndex = viewModel.getNextIndexFrom(
             currentIndex: currentIndex,
             numberOfCardsToMove: numberOfCardsToMove,
@@ -69,7 +69,7 @@ extension OnboardingViewControllerProtocol {
 
     // Due to restrictions with PageViewController we need to get the index of the current view controller
     // to calculate the next view controller
-    func getCardIndex(viewController: OnboardingCardViewController<OnboardingKitCardInfoModel>) -> Int? {
+    func getCardIndex(viewController: OnboardingCardViewController) -> Int? {
         let cardName = viewController.viewModel.name
 
         guard let index = viewModel.availableCards

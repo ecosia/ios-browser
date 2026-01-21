@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Common
 
 enum FxAFlow {
     case completed
@@ -41,11 +40,6 @@ class FxAWebViewTelemetry {
     // There are two valid started flow
     // signup and signin
     var validStartedFlow: FxAUrlPathStartedFlow?
-    private let telemetryWrapper: TelemetryWrapperProtocol
-
-    init(telemetryWrapper: TelemetryWrapperProtocol = TelemetryWrapper.shared) {
-          self.telemetryWrapper = telemetryWrapper
-    }
 
     func getFlowFromUrl(fxaUrl: URL?) -> FxAUrlPathStartedFlow? {
         guard let url = fxaUrl,
@@ -90,7 +84,7 @@ class FxAWebViewTelemetry {
                 eventObject = .fxaConfirmSignInToken
             }
         }
-        telemetryWrapper.recordEvent(
+        TelemetryWrapper.recordEvent(
             category: .firefoxAccount,
             method: .view,
             object: eventObject)

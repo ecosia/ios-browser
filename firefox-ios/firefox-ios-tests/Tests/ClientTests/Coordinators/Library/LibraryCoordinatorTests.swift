@@ -3,27 +3,27 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Storage
 
 @testable import Client
 
-@MainActor
 final class LibraryCoordinatorTests: XCTestCase {
     private var mockRouter: MockRouter!
     private var delegate: MockLibraryCoordinatorDelegate!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
         DependencyHelperMock().bootstrapDependencies()
         self.mockRouter = MockRouter(navigationController: MockNavigationController())
         self.delegate = MockLibraryCoordinatorDelegate()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         self.mockRouter = nil
         self.delegate = nil
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     func testEmptyChildren_whenCreated() {
@@ -96,7 +96,7 @@ final class LibraryCoordinatorTests: XCTestCase {
         XCTAssertEqual(delegate.didFinishSettingsCalled, 1)
     }
 
-    func testShowShareSheet_addsShareSheetCoordinator() {
+    func testShowShareExtension_addsShareExtensionCoordinator() {
         let subject = createSubject()
 
         subject.shareLibraryItem(
@@ -107,7 +107,7 @@ final class LibraryCoordinatorTests: XCTestCase {
         )
 
         XCTAssertEqual(subject.childCoordinators.count, 1)
-        XCTAssertTrue(subject.childCoordinators.first is ShareSheetCoordinator)
+        XCTAssertTrue(subject.childCoordinators.first is ShareExtensionCoordinator)
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertTrue(mockRouter.presentedViewController is UIActivityViewController)
     }

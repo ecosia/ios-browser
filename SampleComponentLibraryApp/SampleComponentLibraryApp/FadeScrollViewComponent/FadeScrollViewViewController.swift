@@ -17,7 +17,6 @@ class FadeScrollViewViewController: UIViewController, Themeable {
     """
 
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
@@ -45,7 +44,7 @@ class FadeScrollViewViewController: UIViewController, Themeable {
         super.viewDidLoad()
         setupView()
 
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
 
         contentLabel.text = String(repeating: "\(loremIpsum)\n\n", count: 5)

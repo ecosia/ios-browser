@@ -5,6 +5,7 @@
 #if canImport(WidgetKit)
 import SwiftUI
 import Common
+import Ecosia
 
 // View for Quick Action Widget Buttons (Small & Medium)
 // +-------------------------------------------------------+
@@ -64,71 +65,73 @@ struct ImageButtonWithLabel: View {
         Link(destination: isSmall ? link.smallWidgetUrl : link.mediumWidgetUrl) {
             ZStack(alignment: .leading) {
                 if !isSmall {
-                    background
+                    ContainerRelativeShape()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: link.backgroundColors),
+                                startPoint: .bottomLeading,
+                                endPoint: .topTrailing
+                            )
+                        )
                 }
 
                 VStack(alignment: .center, spacing: 50.0) {
                     HStack(alignment: .top) {
-                        label
+                        VStack(alignment: .leading) {
+                            if isSmall {
+                                Text(link.label)
+                                    .font(.headline)
+                                    .minimumScaleFactor(0.75)
+                                    .layoutPriority(1000)
+                                    // Ecosia: add color
+                                    .foregroundColor(link.textColor)
+                            } else {
+                                Text(link.label)
+                                    .font(.footnote)
+                                    .minimumScaleFactor(0.75)
+                                    .layoutPriority(1000)
+                                    // Ecosia: add color
+                                    .foregroundColor(link.textColor)
+                            }
+                        }
                         Spacer()
-                        logo
+                        /* Ecosia: Update image
+                        if link == .search && isSmall {
+                            Image(decorative: StandardImageIdentifiers.Large.search)
+                                .scaledToFit()
+                                .frame(height: 24.0)
+                        } else {
+                            Image(decorative: link.imageName)
+                                .scaledToFit()
+                                .frame(height: 24.0)
+                        }
+                         */
+                        Image(decorative: link.imageName, bundle: .ecosia)
+                            .scaledToFit()
+                            .frame(height: 24.0)
+                            .foregroundColor(link.iconColor)
                     }
                     if isSmall {
-                        icon
+                        HStack(alignment: .bottom) {
+                            Spacer()
+                            /* Ecosia: Update image
+                            Image(decorative: "faviconFox")
+                             .scaledToFit()
+                             .frame(height: 24.0)
+                            */
+                            Image(decorative: "iconLogo", bundle: .ecosia)
+                                .scaledToFit()
+                                .frame(height: 24.0)
+                                .foregroundColor(link.iconColor)
+                        }
                     }
                 }
+                /* Ecosia: Update color
                 .foregroundColor(Color("widgetLabelColors"))
+                 */
+                .foregroundColor(Color.ecosiaBundledColorWithName("widgetLabelColors"))
                 .padding([.horizontal, .vertical], paddingValue)
             }
-        }
-    }
-
-    private var background: some View {
-        return ContainerRelativeShape()
-            .fill(
-                LinearGradient(
-                    gradient: Gradient(colors: link.backgroundColors),
-                    startPoint: .bottomLeading,
-                    endPoint: .topTrailing
-                )
-            )
-            .widgetAccentableCompat()
-    }
-
-    private var label: some View {
-        return VStack(alignment: .leading) {
-            if isSmall {
-                Text(link.label)
-                    .font(.headline)
-                    .minimumScaleFactor(0.75)
-                    .layoutPriority(1000)
-            } else {
-                Text(link.label)
-                    .font(.footnote)
-                    .minimumScaleFactor(0.75)
-                    .layoutPriority(1000)
-            }
-        }
-    }
-
-    private var logo: some View {
-        if link == .search && isSmall {
-            return Image(decorative: StandardImageIdentifiers.Large.search)
-                .scaledToFit()
-                .frame(height: 24.0)
-        } else {
-            return Image(decorative: link.imageName)
-                .scaledToFit()
-                .frame(height: 24.0)
-        }
-    }
-
-    private var icon: some View {
-        return HStack(alignment: .bottom) {
-            Spacer()
-            Image(decorative: "faviconFox")
-                .scaledToFit()
-                .frame(height: 24.0)
         }
     }
 }

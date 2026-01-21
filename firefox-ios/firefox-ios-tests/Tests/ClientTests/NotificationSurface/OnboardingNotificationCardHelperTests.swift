@@ -4,6 +4,7 @@
 
 import Foundation
 import XCTest
+import Shared
 import Common
 
 @testable import Client
@@ -12,16 +13,16 @@ class OnboardingNotificationCardHelperTests: XCTestCase {
     var nimbusUtility: NimbusOnboardingTestingConfigUtility!
     typealias cards = NimbusOnboardingTestingConfigUtility.CardOrder
 
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
         nimbusUtility = NimbusOnboardingTestingConfigUtility()
     }
 
-    override func tearDown() async throws {
-        DependencyHelperMock().reset()
+    override func tearDown() {
+        super.tearDown()
+        AppContainer.shared.reset()
         nimbusUtility = nil
-        try await super.tearDown()
     }
 
     func testHelper_fromOnboarding_withNotificationCard_returnsTrue() {

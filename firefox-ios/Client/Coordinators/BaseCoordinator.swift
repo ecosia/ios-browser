@@ -11,7 +11,7 @@ open class BaseCoordinator: NSObject, Coordinator {
     var childCoordinators: [Coordinator] = []
     var router: Router
     var logger: Logger
-    var isDismissible: Bool { true }
+    var isDismissable: Bool { true }
     private var mainQueue: DispatchQueueInterface
 
     init(router: Router,
@@ -50,9 +50,8 @@ open class BaseCoordinator: NSObject, Coordinator {
 
         // Dismiss any child of the matching coordinator that handles a route
         for child in matchingCoordinator.childCoordinators {
-            guard child.isDismissible else { continue }
+            guard child.isDismissable else { continue }
 
-            logger.log("Dismissing child of the matching coordinator", level: .debug, category: .coordinator)
             matchingCoordinator.router.dismiss()
             matchingCoordinator.remove(child: child)
         }
@@ -65,7 +64,6 @@ open class BaseCoordinator: NSObject, Coordinator {
     func find(route: Route) -> Coordinator? {
         // Check if the current coordinator can handle the route.
         if canHandle(route: route) {
-            logger.log("Can handle the route with \(self)", level: .debug, category: .coordinator)
             savedRoute = nil
             return self
         }
@@ -75,16 +73,13 @@ open class BaseCoordinator: NSObject, Coordinator {
             if let matchingCoordinator = childCoordinator.find(route: route) {
                 savedRoute = nil
 
-                logger.log("Can handle route with child coordinator \(matchingCoordinator)",
-                           level: .debug,
-                           category: .coordinator)
                 return matchingCoordinator
             }
         }
 
         // If no matching coordinator is found, return nil and save the Route to be passed along when it next navigates
         savedRoute = route
-        logger.log("No coordinator found, saved a route", level: .info, category: .coordinator)
+        logger.log("Saved a route", level: .info, category: .coordinator)
         return nil
     }
 }

@@ -32,11 +32,11 @@ class LoginInputTests: KIFTestCase {
         tester().enterText(username, intoWebViewInputWithName: "username")
         tester().enterText("password", intoWebViewInputWithName: "password")
         tester().tapWebViewElementWithAccessibilityLabel("submit_btn")
-
+        
         tester().waitForAnimationsToFinish(withTimeout: 3)
         tester().waitForView(withAccessibilityLabel: "Save login \(username) for \(self.webRoot!)?")
 
-        tester().tapView(withAccessibilityIdentifier: AccessibilityIdentifiers.SaveLoginAlert.notNowButton)
+        tester().tapView(withAccessibilityIdentifier: "SaveLoginPrompt.dontSaveButton")
     }
 
     func testLoginFormDisplaysUpdateSnackbarIfPreviouslySaved() {
@@ -53,15 +53,15 @@ class LoginInputTests: KIFTestCase {
         tester().waitForAnimationsToFinish(withTimeout: 3)
         tester().wait(forTimeInterval: 1)
         tester().waitForAnimationsToFinish(withTimeout: 3)
-
-        tester().tapView(withAccessibilityIdentifier: AccessibilityIdentifiers.SaveLoginAlert.saveButton)
+        
+        tester().tapView(withAccessibilityIdentifier: "SaveLoginPrompt.saveLoginButton")
         tester().enterText(username, intoWebViewInputWithName: "username")
         tester().enterText(password2, intoWebViewInputWithName: "password")
         tester().tapWebViewElementWithAccessibilityLabel("submit_btn")
         tester().waitForAnimationsToFinish(withTimeout: 3)
         tester().wait(forTimeInterval: 1)
         tester().waitForView(withAccessibilityLabel: "Update login \(username) for \(self.webRoot!)?")
-        tester().tapView(withAccessibilityIdentifier: AccessibilityIdentifiers.SaveLoginAlert.updateButton)
+        tester().tapView(withAccessibilityIdentifier: "UpdateLoginPrompt.updateButton")
     }
 
     func testLoginFormDoesntOfferSaveWhenEmptyPassword() {
@@ -88,7 +88,7 @@ class LoginInputTests: KIFTestCase {
         tester().tapWebViewElementWithAccessibilityLabel("submit_btn")
         tester().waitForAnimationsToFinish(withTimeout: 3)
         tester().waitForView(withAccessibilityLabel: "Save login \(username) for \(self.webRoot!)?")
-        tester().tapView(withAccessibilityIdentifier: AccessibilityIdentifiers.SaveLoginAlert.saveButton)
+        tester().tapView(withAccessibilityIdentifier: "SaveLoginPrompt.saveLoginButton")
 
         tester().enterText(username, intoWebViewInputWithName: "username")
         tester().enterText(password2, intoWebViewInputWithName: "password")

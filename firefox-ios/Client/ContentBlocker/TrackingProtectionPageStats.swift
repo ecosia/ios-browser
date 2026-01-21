@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Shared
 import Common
 
 struct TPPageStats {
@@ -41,18 +42,16 @@ struct TPPageStats {
     }
 }
 
-// FIXME: FXIOS-13985 Make truly thread safe
-class TPStatsBlocklistChecker: @unchecked Sendable {
+class TPStatsBlocklistChecker {
     static let shared = TPStatsBlocklistChecker()
 
     // Initialized async, is non-nil when ready to be used.
     private var blockLists: TPStatsBlocklists?
 
-    @MainActor
     func isBlocked(
         url: URL,
         mainDocumentURL: URL,
-        completionHandler: @Sendable @escaping (BlocklistCategory?) -> Void
+        completionHandler: @escaping (BlocklistCategory?) -> Void
     ) {
         guard let blockLists = blockLists,
               let host = url.host,
@@ -99,10 +98,7 @@ class TPStatsBlocklistChecker: @unchecked Sendable {
 
 // The 'unless-domain' and 'if-domain' rules use wildcard expressions, convert this to regex.
 func wildcardContentBlockerDomainToRegex(domain: String) -> String? {
-    struct Memo {
-        // TODO: FXIOS-12586 This global property is not concurrency safe
-        nonisolated(unsafe) static var domains = [String: String]()
-    }
+    struct Memo { static var domains = [String: String]() }
 
     if let memoized = Memo.domains[domain] {
         return memoized
@@ -119,8 +115,7 @@ func wildcardContentBlockerDomainToRegex(domain: String) -> String? {
     return regex
 }
 
-// TODO: FXIOS-13617 TPStatsBlocklists is not actually Sendable
-class TPStatsBlocklists: @unchecked Sendable {
+class TPStatsBlocklists {
     class Rule {
         let regex: String
         let loadType: LoadType
@@ -176,12 +171,13 @@ class TPStatsBlocklists: @unchecked Sendable {
             ] {
             let list: [[String: AnyObject]]
             do {
-                let settingsLists = RemoteDataType.contentBlockingLists
-                guard let json = try? settingsLists.loadLocalSettingsFileAsJSON(fileName: blockListFile.filename) else {
-                    logger.log("Blocklists: could not load blocklist JSON file.", level: .warning, category: .webview)
-                    assertionFailure("Blocklists: could not load file.")
-                    continue
+                guard let path = Bundle.main.path(forResource: blockListFile.filename, ofType: "json") else {
+                    logger.log("Blocklists: bad file path.", level: .warning, category: .webview)
+                    assertionFailure("Blocklists: bad file path.")
+                    return
                 }
+
+                let json = try Data(contentsOf: URL(fileURLWithPath: path))
                 guard let data = try JSONSerialization.jsonObject(
                     with: json,
                     options: []

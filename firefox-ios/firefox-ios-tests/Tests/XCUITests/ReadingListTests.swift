@@ -5,54 +5,17 @@
 import Common
 import XCTest
 
-class ReadingListTests: FeatureFlaggedTestBase {
-    private var readingListScreen: ReadingListScreen!
-    private var toolBarScreen: ToolbarScreen!
-    private var browserScreen: BrowserScreen!
-
-    override func setUp() async throws {
-        launchArguments.append(LaunchArguments.SkipAppleIntelligence)
-        try await super.setUp()
-        readingListScreen = ReadingListScreen(app: app)
-        toolBarScreen = ToolbarScreen(app: app)
-        browserScreen = BrowserScreen(app: app)
-    }
-
+class ReadingListTests: BaseTestCase {
     // https://mozilla.testrail.io/index.php?/cases/view/2287278f
     // Smoketest
     func testLoadReaderContent() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         navigator.openURL(path(forTestPage: "test-mozilla-book.html"))
-        waitUntilPageLoad()
         navigator.nowAt(BrowserTab)
         mozWaitForElementToNotExist(app.staticTexts["Fennec pasted from XCUITests-Runner"])
         app.buttons["Reader View"].waitAndTap()
         // The settings of reader view are shown as well as the content of the web site
-        waitForElementsToExist(
-            [
-                app.buttons["Display Settings"],
-                app.webViews.staticTexts["The Book of Mozilla"]
-            ]
-        )
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2287278f
-    // Smoketest TAE
-    func testLoadReaderContent_TAE() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
-        navigator.nowAt(HomePanelsScreen)
-        navigator.goto(URLBarOpen)
-        navigator.openURL(path(forTestPage: "test-mozilla-book.html"))
-        waitUntilPageLoad()
-        navigator.nowAt(BrowserTab)
-        readingListScreen.assertFennecAlertNotExists()
-        readingListScreen.tapOnReaderView()
-        // The settings of reader view are shown as well as the content of the web site
-        readingListScreen.assertReaderListContentVisible()
+        mozWaitForElementToExist(app.buttons["Display Settings"])
+        mozWaitForElementToExist(app.webViews.staticTexts["The Book of Mozilla"])
     }
 
     private func checkReadingListNumberOfItems(items: Int) {
@@ -64,9 +27,6 @@ class ReadingListTests: FeatureFlaggedTestBase {
     // https://mozilla.testrail.io/index.php?/cases/view/2306991
     // Smoketest
     func testAddToReadingList() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         navigator.nowAt(NewTabScreen)
         // Navigate to reading list
         navigator.goto(BrowserTabMenu)
@@ -74,7 +34,7 @@ class ReadingListTests: FeatureFlaggedTestBase {
 
         // Check to make sure the reading list is empty
         checkReadingListNumberOfItems(items: 0)
-        app.buttons["Done"].waitAndTap()
+        app.buttons["Done"].tap()
         // Add item to reading list and check that it appears
         addContentToReaderView()
         navigator.goto(BrowserTabMenu)
@@ -86,38 +46,13 @@ class ReadingListTests: FeatureFlaggedTestBase {
         checkReadingListNumberOfItems(items: 1)
     }
 
-    // https://mozilla.testrail.io/index.php?/cases/view/2306991
-    // Smoketest TAE
-    func testAddToReadingList_TAE() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
-        navigator.nowAt(NewTabScreen)
-        // Navigate to reading list
-        navigator.goto(BrowserTabMenu)
-        navigator.goto(LibraryPanel_ReadingList)
-
-        // Check to make sure the reading list is empty
-        readingListScreen.checkReadingListNumberOfItems(items: 0)
-        readingListScreen.tapOnDoneButton()
-        // Add item to reading list and check that it appears
-        addContentToReaderView()
-        navigator.goto(BrowserTabMenu)
-        navigator.goto(LibraryPanel_ReadingList)
-
-        // Check that there is one item
-        readingListScreen.waitForSavedBook()
-        readingListScreen.checkReadingListNumberOfItems(items: 1)
-    }
-
     // https://mozilla.testrail.io/index.php?/cases/view/2306995
-    func testAddToReadingListPrivateMode_tabTrayExperimentOn() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
+    func testAddToReadingListPrivateMode() {
         navigator.nowAt(NewTabScreen)
-        navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
+        navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
         navigator.performAction(Action.OpenNewTabFromTabTray)
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton])
+        navigator.performAction(Action.CloseURLBarOpen)
         navigator.nowAt(NewTabScreen)
         waitForTabsButton()
         navigator.goto(BrowserTabMenu)
@@ -125,7 +60,7 @@ class ReadingListTests: FeatureFlaggedTestBase {
 
         // Initially reading list is empty
         checkReadingListNumberOfItems(items: 0)
-        app.buttons["Done"].waitAndTap()
+        app.buttons["Done"].tap()
         // Add item to reading list and check that it appears
         addContentToReaderView()
         navigator.goto(BrowserTabMenu)
@@ -135,11 +70,13 @@ class ReadingListTests: FeatureFlaggedTestBase {
         let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
         mozWaitForElementToExist(savedToReadingList)
         checkReadingListNumberOfItems(items: 1)
-        app.buttons["Done"].waitAndTap()
+        app.buttons["Done"].tap()
         updateScreenGraph()
         // Check that it appears on regular mode
-        navigator.toggleOff(userState.isPrivate, withAction: Action.ToggleExperimentRegularMode)
+        navigator.toggleOff(userState.isPrivate, withAction: Action.ToggleRegularMode)
         navigator.performAction(Action.OpenNewTabFromTabTray)
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton])
+        navigator.performAction(Action.CloseURLBarOpen)
         navigator.nowAt(NewTabScreen)
         waitForTabsButton()
         navigator.goto(LibraryPanel_ReadingList)
@@ -148,25 +85,19 @@ class ReadingListTests: FeatureFlaggedTestBase {
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306992
     func testMarkAsReadAndUreadFromReaderView() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         addContentToReaderView()
 
         // Mark the content as read, so the mark as unread buttons appear
-        app.buttons["Mark as Read"].waitAndTap()
+        app.buttons["Mark as Read"].tap()
         mozWaitForElementToExist(app.buttons["Mark as Unread"])
 
         // Mark the content as unread, so the mark as read button appear
-        app.buttons["Mark as Unread"].waitAndTap()
+        app.buttons["Mark as Unread"].tap()
         mozWaitForElementToExist(app.buttons["Mark as Read"])
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306996
     func testRemoveFromReadingView() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         addContentToReaderView()
         // Once the content has been added, remove it
         app.buttons["Remove from Reading List"].waitAndTap()
@@ -177,40 +108,31 @@ class ReadingListTests: FeatureFlaggedTestBase {
         // Go to reader list view to check that there is not any item there
         navigator.goto(BrowserTabMenu)
         navigator.goto(LibraryPanel_ReadingList)
+        navigator.goto(LibraryPanel_ReadingList)
         checkReadingListNumberOfItems(items: 0)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306997
     func testMarkAsReadAndUnreadFromReadingList() throws {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         addContentToReaderView()
         navigator.goto(BrowserTabMenu)
         navigator.goto(LibraryPanel_ReadingList)
 
         mozWaitForElementToExist(app.tables["ReadingTable"])
         // Check that there is one item
-        let savedToReadingList = app.tables["ReadingTable"].staticTexts["The Book of Mozilla"]
+        let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
         mozWaitForElementToExist(savedToReadingList)
 
         // Mark it as read/unread
         savedToReadingList.swipeLeft()
-        mozWaitForElementToExist(app.tables.buttons.staticTexts["Mark as  Read"])
-        app.tables["ReadingTable"].buttons.element(boundBy: 1).waitAndTap()
-        // iOS 26: Once we remove the item, the item is gone.
-        // https://github.com/mozilla-mobile/firefox-ios/issues/31283
-        if #unavailable(iOS 26) {
-            savedToReadingList.swipeLeft()
-            mozWaitForElementToExist(app.tables.buttons.staticTexts["Mark as  Unread"])
-        }
+        mozWaitForElementToExist(app.tables.cells.buttons.staticTexts["Mark as  Read"])
+        app.tables["ReadingTable"].cells.buttons.element(boundBy: 1).tap()
+        savedToReadingList.swipeLeft()
+        mozWaitForElementToExist(app.tables.cells.buttons.staticTexts["Mark as  Unread"])
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306998
     func testRemoveFromReadingList() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         addContentToReaderView()
         navigator.goto(BrowserTabMenu)
         navigator.goto(LibraryPanel_ReadingList)
@@ -228,15 +150,12 @@ class ReadingListTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306999
-    func testAddToReadingListFromBrowserTabMenu() throws {
-        throw XCTSkip("Skipping. The option add to reading list is not available on the new menu")
-        /*
-        app.launch()
+    func testAddToReadingListFromBrowserTabMenu() {
         navigator.nowAt(NewTabScreen)
         // First time Reading list is empty
         navigator.goto(LibraryPanel_ReadingList)
         checkReadingListNumberOfItems(items: 0)
-        app.buttons["Done"].waitAndTap()
+        app.buttons["Done"].tap()
         // Add item to Reading List from Page Options Menu
         updateScreenGraph()
         navigator.openURL(path(forTestPage: "test-mozilla-org.html"))
@@ -246,15 +165,11 @@ class ReadingListTests: FeatureFlaggedTestBase {
         navigator.nowAt(BrowserTab)
         navigator.goto(LibraryPanel_ReadingList)
         checkReadingListNumberOfItems(items: 1)
-         */
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307000
     func testOpenSavedForReadingLongPressInNewTab() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
-        let numTab = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton].value as? String
+        let numTab = app.buttons["Show Tabs"].value as? String
         XCTAssertEqual(numTab, "1")
 
         // Add item to Reading List
@@ -268,20 +183,17 @@ class ReadingListTests: FeatureFlaggedTestBase {
 
         // Select to open in New Tab
         mozWaitForElementToExist(app.tables["Context Menu"])
-        app.tables.buttons[StandardImageIdentifiers.Large.plus].waitAndTap()
+        app.tables.otherElements[StandardImageIdentifiers.Large.plus].tap()
         updateScreenGraph()
         // Now there should be two tabs open
         navigator.goto(HomePanelsScreen)
         // Disabling validation of tab count until https://github.com/mozilla-mobile/firefox-ios/issues/17579 is fixed
-//        let numTabAfter = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton].value as? String
+//        let numTabAfter = app.buttons["Show Tabs"].value as? String
 //        XCTAssertEqual(numTabAfter, "2")
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307001
     func testRemoveSavedForReadingLongPress() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         // Add item to Reading List
         addContentToReaderView()
         navigator.goto(LibraryPanel_ReadingList)
@@ -291,7 +203,7 @@ class ReadingListTests: FeatureFlaggedTestBase {
         mozWaitForElementToExist(savedToReadingList)
         savedToReadingList.press(forDuration: 1)
         mozWaitForElementToExist(app.tables["Context Menu"])
-        app.tables.buttons[StandardImageIdentifiers.Large.cross].waitAndTap()
+        app.tables.otherElements[StandardImageIdentifiers.Large.cross].tap()
 
         // Verify the item has been removed
         mozWaitForElementToNotExist(app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"])
@@ -300,23 +212,16 @@ class ReadingListTests: FeatureFlaggedTestBase {
     // https://mozilla.testrail.io/index.php?/cases/view/2306893
     // Smoketest
     func testReadingList() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         navigator.nowAt(NewTabScreen)
         navigator.goto(LibraryPanel_ReadingList)
         // Validate empty reading list panel
         let emptyReadingList1 = AccessibilityIdentifiers.LibraryPanels.ReadingListPanel.emptyReadingList1
         let emptyReadingList2 = AccessibilityIdentifiers.LibraryPanels.ReadingListPanel.emptyReadingList2
         let emptyReadingList3 = AccessibilityIdentifiers.LibraryPanels.ReadingListPanel.emptyReadingList3
-        waitForElementsToExist(
-            [
-                app.staticTexts[emptyReadingList1],
-                app.staticTexts[emptyReadingList2],
-                app.staticTexts[emptyReadingList3]
-            ]
-        )
-        app.buttons["Done"].waitAndTap()
+        mozWaitForElementToExist(app.staticTexts[emptyReadingList1])
+        mozWaitForElementToExist(app.staticTexts[emptyReadingList2])
+        mozWaitForElementToExist(app.staticTexts[emptyReadingList3])
+        app.buttons["Done"].tap()
         // Add item to reading list and check that it appears
         addContentToReaderView()
         navigator.goto(BrowserTabMenu)
@@ -324,7 +229,7 @@ class ReadingListTests: FeatureFlaggedTestBase {
         let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
         mozWaitForElementToExist(savedToReadingList)
         // Tap on an article
-        savedToReadingList.waitAndTap()
+        savedToReadingList.tap()
         // The article is displayed in Reader View
         mozWaitForElementToExist(app.buttons["Reader View"])
         // iOS 18 only: Reader View icon is enabled but is not selected.
@@ -332,117 +237,33 @@ class ReadingListTests: FeatureFlaggedTestBase {
             XCTAssertTrue(app.buttons["Reader View"].isSelected)
         }
         XCTAssertTrue(app.buttons["Reader View"].isEnabled)
-        app.buttons[AccessibilityIdentifiers.Toolbar.addNewTabButton].waitAndTap()
-        // Clare's alternative fix
-        // mozWaitForElementToNotExist(app.buttons[AccessibilityIdentifiers.Toolbar.addNewTabButton])
-        // mozWaitElementHittable(element: app.links["TopSitesCell"].firstMatch, timeout: TIMEOUT)
-        // app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton].waitAndTap()
-        let cancelButton = app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton]
-        let keyboard = app.keyboards.firstMatch
-        var nrOfTaps = 3
-        while keyboard.exists && nrOfTaps > 0 {
-            cancelButton.waitAndTap()
-            nrOfTaps -= 1
-        }
-        navigator.nowAt(NewTabScreen)
-        waitForTabsButton()
-        // issue 28625: iOS 15 may not open the menu fully.
-        if #available(iOS 16, *) {
-            navigator.goto(LibraryPanel_ReadingList)
-            // Swipe the article left
-            // The article has been marked as Read
-            mozWaitForElementToExist(app.tables["ReadingTable"].cells.elementContainingText("The Book of Mozilla, read"))
-            savedToReadingList.swipeLeft()
-            // Two options are revealed
-            waitForElementsToExist(
-                [
-                    app.buttons.staticTexts["Mark as  Unread"],
-                    app.buttons.staticTexts["Remove"]
-                ]
-            )
-            // Tap 'Mark as Unread'
-            app.buttons.staticTexts["Mark as  Unread"].tap(force: true)
-            // The article has been marked as Unread
-            mozWaitForElementToExist(app.tables["ReadingTable"].cells.elementContainingText("The Book of Mozilla, unread"))
-            // Swipe te article left and tap 'Remove'
-            savedToReadingList.swipeLeft()
-            app.buttons.staticTexts["Remove"].tap(force: true)
-            // The article is deleted from the Reading List
-            checkReadingListNumberOfItems(items: 0)
-            waitForElementsToExist(
-                [
-                    app.staticTexts[emptyReadingList1],
-                    app.staticTexts[emptyReadingList2],
-                    app.staticTexts[emptyReadingList3]
-                ]
-            )
-        }
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2306893
-    // Smoketest TAE
-    func testReadingList_TAE() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
+        app.buttons[AccessibilityIdentifiers.Toolbar.homeButton].tap()
         navigator.nowAt(NewTabScreen)
         navigator.goto(LibraryPanel_ReadingList)
-        // Validate empty reading list panel
-        readingListScreen.waitForReadingListsPanel()
-        readingListScreen.tapOnDoneButton()
-        // Add item to reading list and check that it appears
-        addContentToReaderView()
-        navigator.goto(BrowserTabMenu)
-        navigator.goto(LibraryPanel_ReadingList)
-        readingListScreen.waitForSavedBook()
-        let savedToReadingList = readingListScreen.getSavedBookElement()
-        // Tap on an article
-        savedToReadingList.waitAndTap()
-        // The article is displayed in Reader View
-        readingListScreen.assertReaderButtonExists()
-        // iOS 18 only: Reader View icon is enabled but is not selected.
-        if #unavailable(iOS 18) {
-            readingListScreen.assertReaderButtonIsSelected()
-        }
-        readingListScreen.assertReaderButtonIsEnabled()
-        toolBarScreen.tapOnNewTabButton()
-        // Clare's alternative fix
-        // mozWaitForElementToNotExist(app.buttons[AccessibilityIdentifiers.Toolbar.addNewTabButton])
-        // mozWaitElementHittable(element: app.links["TopSitesCell"].firstMatch, timeout: TIMEOUT)
-        // app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton].waitAndTap()
-        browserScreen.dismissKeyboardIfVisible()
-        navigator.nowAt(NewTabScreen)
-        toolBarScreen.assertTabsButtonExists()
-        // issue 28625: iOS 15 may not open the menu fully.
-        if #available(iOS 16, *) {
-            let articleRead = "The Book of Mozilla, read"
-            let articleUnread = "The Book of Mozilla, unread"
-            navigator.goto(LibraryPanel_ReadingList)
-            // Swipe the article left
-            // The article has been marked as Read
-            readingListScreen.waitForArticle(articleRead)
-            savedToReadingList.swipeLeft()
-            // Two options are revealed
-            readingListScreen.assertSwipeOptionsVisible()
-            // Tap 'Mark as Unread'
-            readingListScreen.tapMarkAsUnread()
-            // The article has been marked as Unread
-            readingListScreen.waitForArticle(articleUnread)
-            // Swipe te article left and tap 'Remove'
-            savedToReadingList.swipeLeft()
-            readingListScreen.tapRemoveArticle()
-            // The article is deleted from the Reading List
-            checkReadingListNumberOfItems(items: 0)
-            readingListScreen.waitForReadingListsPanel()
-        }
+        // Swipe the article left
+        // The article has been marked as Read
+        mozWaitForElementToExist(app.tables["ReadingTable"].cells.elementContainingText("The Book of Mozilla, read"))
+        savedToReadingList.swipeLeft()
+        // Two options are revealed
+        mozWaitForElementToExist(app.tables.cells.buttons.staticTexts["Mark as  Unread"])
+        mozWaitForElementToExist(app.tables.cells.buttons.staticTexts["Remove"])
+        // Tap 'Mark as Unread'
+        app.tables.cells.buttons.staticTexts["Mark as  Unread"].tap(force: true)
+        // The article has been marked as Unread
+        mozWaitForElementToExist(app.tables["ReadingTable"].cells.elementContainingText("The Book of Mozilla, unread"))
+        // Swipe te article left and tap 'Remove'
+        savedToReadingList.swipeLeft()
+        app.tables.cells.buttons.staticTexts["Remove"].tap(force: true)
+        // The article is deleted from the Reading List
+        checkReadingListNumberOfItems(items: 0)
+        mozWaitForElementToExist(app.staticTexts[emptyReadingList1])
+        mozWaitForElementToExist(app.staticTexts[emptyReadingList2])
+        mozWaitForElementToExist(app.staticTexts[emptyReadingList3])
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306993
     // Smoketest
     func testAddToReaderListOptions() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
         addContentToReaderView()
         // Check that Settings layouts options are shown
         app.buttons["ReaderModeBarView.settingsButton"].waitAndTap()
@@ -451,17 +272,5 @@ class ReadingListTests: FeatureFlaggedTestBase {
         for option in layoutOptions {
             XCTAssertTrue(app.buttons[option].exists, "Option \(option) doesn't exists")
         }
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2306993
-    // Smoketest TAE
-    func testAddToReaderListOptions_TAE() {
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
-        addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
-        app.launch()
-        addContentToReaderView()
-        // Check that Settings layouts options are shown
-        readingListScreen.openReaderModeSettings()
-        readingListScreen.assertReaderModeOptionsVisible()
     }
 }

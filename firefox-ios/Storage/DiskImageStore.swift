@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Shared
 import UIKit
 import Common
 
@@ -11,7 +12,7 @@ enum DiskImageStoreErrorCase: Error {
     case cannotWrite(description: String)
 }
 
-public protocol DiskImageStore: Sendable {
+public protocol DiskImageStore {
     /// Gets an image for the given key if it is in the store.
     func getImageForKey(_ key: String) async throws -> UIImage
 
@@ -54,13 +55,7 @@ public actor DefaultDiskImageStore: DiskImageStore {
         var keys = [String]()
         if let fileEnumerator = FileManager.default.enumerator(atPath: filesDir) {
             for file in fileEnumerator {
-                if let fileName = file as? String {
-                    keys.append(fileName)
-                } else {
-                    logger.log("Non-string item encountered while enumerating files",
-                               level: .fatal,
-                               category: .storage)
-                }
+                keys.append(file as! String)
             }
         }
         self.keys = Set(keys)
@@ -73,7 +68,7 @@ public actor DefaultDiskImageStore: DiskImageStore {
 
         let imagePath = URL(fileURLWithPath: filesDir).appendingPathComponent(key)
         let data = try Data(contentsOf: imagePath)
-        if let image = UIImage(data: data, scale: 1.0) {
+        if let image = UIImage(data: data) {
             return image
         } else {
             throw DiskImageStoreErrorCase.invalidImageData(description: "Invalid image data")
@@ -82,31 +77,12 @@ public actor DefaultDiskImageStore: DiskImageStore {
 
     public func saveImageForKey(_ key: String, image: UIImage) async throws {
         let imageURL = URL(fileURLWithPath: filesDir).appendingPathComponent(key)
-
-        guard let data = scaleImageFrom3xTo1x(image).jpegData(compressionQuality: quality) else {
+        if let data = image.jpegData(compressionQuality: quality) {
+            try data.write(to: imageURL, options: .noFileProtection)
+            keys.insert(key)
+        } else {
             throw DiskImageStoreErrorCase.cannotWrite(description: "Could not write image to file")
         }
-
-        try data.write(to: imageURL, options: .noFileProtection)
-        keys.insert(key)
-    }
-
-    private func scaleImageFrom3xTo1x(_ image: UIImage) -> UIImage {
-        let targetScale: CGFloat = 1.0
-
-        if image.scale > targetScale {
-            let newSize = CGSize(
-                width: image.size.width * (targetScale / image.scale),
-                height: image.size.height * (targetScale / image.scale)
-            )
-
-            return UIGraphicsImageRenderer(size: newSize)
-                .image { context in
-                    image.draw(in: CGRect(origin: .zero, size: newSize))
-                }
-        }
-
-        return image
     }
 
     public func clearAllScreenshotsExcluding(_ keys: Set<String>) async throws {

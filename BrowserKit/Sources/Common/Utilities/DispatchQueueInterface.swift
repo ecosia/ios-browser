@@ -4,16 +4,19 @@
 
 import Foundation
 
-public protocol DispatchQueueInterface: Sendable {
+public protocol DispatchQueueInterface {
+    @preconcurrency
     func async(group: DispatchGroup?,
                qos: DispatchQoS,
                flags: DispatchWorkItemFlags,
                execute work: @escaping @Sendable @convention(block) () -> Void)
 
-    func ensureMainThread(execute work: @escaping @MainActor @convention(block) () -> Swift.Void)
+    @preconcurrency
+    func ensureMainThread(execute work: @escaping @Sendable @convention(block) () -> Swift.Void)
 
     func asyncAfter(deadline: DispatchTime, execute: DispatchWorkItem)
 
+    @preconcurrency
     func asyncAfter(deadline: DispatchTime,
                     qos: DispatchQoS,
                     flags: DispatchWorkItemFlags,
@@ -21,6 +24,7 @@ public protocol DispatchQueueInterface: Sendable {
 }
 
 extension DispatchQueueInterface {
+    @preconcurrency
     public func async(group: DispatchGroup? = nil,
                       qos: DispatchQoS = .unspecified,
                       flags: DispatchWorkItemFlags = [],
@@ -28,6 +32,7 @@ extension DispatchQueueInterface {
         async(group: group, qos: qos, flags: flags, execute: work)
     }
 
+    @preconcurrency
     public func asyncAfter(deadline: DispatchTime,
                            qos: DispatchQoS = .unspecified,
                            flags: DispatchWorkItemFlags = [],
@@ -35,11 +40,10 @@ extension DispatchQueueInterface {
         asyncAfter(deadline: deadline, qos: qos, flags: flags, execute: work)
     }
 
-    public func ensureMainThread(execute work: @escaping @MainActor @convention(block) () -> Swift.Void) {
+    @preconcurrency
+    public func ensureMainThread(execute work: @escaping @Sendable @convention(block) () -> Swift.Void) {
         if Thread.isMainThread {
-            MainActor.assumeIsolated {
-                work()
-            }
+            work()
         } else {
             DispatchQueue.main.async {
                 work()

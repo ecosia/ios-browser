@@ -12,21 +12,18 @@ class StudiesToggleSetting: BoolSetting {
     init(prefs: Prefs,
          delegate: SettingsDelegate?,
          theme: Theme,
-         settingsDelegate: SupportSettingsDelegate?,
-         title: String,
-         message: String,
-         linkedText: String) {
+         settingsDelegate: SupportSettingsDelegate?) {
         let statusText = NSMutableAttributedString()
         statusText.append(
             NSAttributedString(
-                string: message,
+                string: .SettingsStudiesToggleMessage,
                 attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textSecondary]
             )
         )
-        statusText.append(NSAttributedString(string: "\n"))
+        statusText.append(NSAttributedString(string: " "))
         statusText.append(
             NSAttributedString(
-                string: linkedText,
+                string: .SettingsStudiesToggleLink,
                 attributes: [NSAttributedString.Key.foregroundColor: theme.colors.actionPrimary]
             )
         )
@@ -37,7 +34,7 @@ class StudiesToggleSetting: BoolSetting {
             prefs: prefs,
             prefKey: AppConstants.prefStudiesToggle,
             defaultValue: true,
-            attributedTitleText: NSAttributedString(string: title),
+            attributedTitleText: NSAttributedString(string: .SettingsStudiesToggleTitle),
             attributedStatusText: statusText,
             settingDidChange: {
                 Experiments.setStudiesSetting($0)
@@ -48,9 +45,8 @@ class StudiesToggleSetting: BoolSetting {
 
         let sendUsageDataPref = prefs.boolForKey(AppConstants.prefSendUsageData) ?? true
 
-        // Special Case (EXP-4780, FXIOS-10534) disable studies if usage data is disabled
-        // and studies should be toggled back on after re-enabling Telemetry
-        self.enabled = sendUsageDataPref
+        // Special Case (EXP-4780) disable studies if usage data is disabled
+        updateSetting(for: sendUsageDataPref)
     }
 
     private func setupSettingDidChange() {
@@ -60,23 +56,20 @@ class StudiesToggleSetting: BoolSetting {
     }
 
     func updateSetting(for isUsageEnabled: Bool) {
-        self.enabled = isUsageEnabled
-        // We make sure to set this on initialization, in case the setting is turned off
-        // in which case, we would to make sure that users are opted out of experiments
-        // Note: Switch should be enabled only when telemetry usage is enabled
-        updateControlState(isEnabled: isUsageEnabled)
+        guard !isUsageEnabled else {
+            // Note: switch should be enabled only when telemetry usage is enabled
+            control.setSwitchTappable(to: true)
+            // We make sure to set this on initialization, in case the setting is turned off
+            // in which case, we would to make sure that users are opted out of experiments
+            Experiments.setStudiesSetting(prefs?.boolForKey(AppConstants.prefStudiesToggle) ?? true)
+            return
+        }
 
-        // Set experiments study setting based on usage enabled state
-        // Special Case (EXP-4780, FXIOS-10534) disable Studies if usage data is disabled
-        // and studies should be toggled back on after re-enabling Telemetry
-        let studiesEnabled = isUsageEnabled && (prefs?.boolForKey(AppConstants.prefStudiesToggle) ?? true)
-        Experiments.setStudiesSetting(studiesEnabled)
-    }
-
-    private func updateControlState(isEnabled: Bool) {
-        control.setSwitchTappable(to: isEnabled)
-        control.toggleSwitch(to: isEnabled)
+        // Special Case (EXP-4780) disable Studies if usage data is disabled
+        control.setSwitchTappable(to: false)
+        control.toggleSwitch(to: false)
         writeBool(control.switchView)
+        Experiments.setStudiesSetting(false)
     }
 
     override var accessibilityIdentifier: String? {

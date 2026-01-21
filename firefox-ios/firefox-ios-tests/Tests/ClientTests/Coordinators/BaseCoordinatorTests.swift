@@ -5,21 +5,20 @@
 import XCTest
 @testable import Client
 
-@MainActor
 final class BaseCoordinatorTests: XCTestCase {
     var navigationController: NavigationController!
     var router: MockRouter!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         navigationController = MockNavigationController()
         router = MockRouter(navigationController: navigationController)
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         navigationController = nil
         router = nil
-        try await super.tearDown()
     }
 
     func testAddChild() {
@@ -112,5 +111,5 @@ final class BaseCoordinatorTests: XCTestCase {
 }
 
 class NonDismissableCoordinator: BaseCoordinator {
-    override var isDismissible: Bool { false }
+    override var isDismissable: Bool { false }
 }

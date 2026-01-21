@@ -26,22 +26,17 @@ class EditBookmarkCell: UITableViewCell,
         view.distribution = .fillProportionally
         view.spacing = 10.0
     }
-    private lazy var textFieldsDivider: UIView = .build()
+    private lazy var textFieldsDivder: UIView = .build()
     private lazy var titleTextfield: TextField = .build { view in
         view.addAction(UIAction(handler: { [weak self] _ in
             self?.titleTextFieldDidChange()
         }), for: .editingChanged)
-        view.adjustsFontSizeToFitWidth = true
-        view.accessibilityIdentifier = AccessibilityIdentifiers.LibraryPanels.BookmarksPanel.titleTextField
     }
     private lazy var urlTextfield: TextField = .build { view in
         view.keyboardType = .URL
         view.addAction(UIAction(handler: { [weak self] _ in
-            self?.urlTextFieldDidChange()
+            self?.urlTextFieldDidChane()
         }), for: .editingChanged)
-        view.adjustsFontSizeToFitWidth = true
-        view.accessibilityIdentifier = AccessibilityIdentifiers.LibraryPanels.BookmarksPanel.urlTextField
-        view.autocapitalizationType = .none
     }
     var onTitleFieldUpdate: ((String) -> Void)?
     var onURLFieldUpdate: ((String) -> Void)?
@@ -56,21 +51,8 @@ class EditBookmarkCell: UITableViewCell,
     }
 
     private func setupSubviews() {
-        typealias A11y = AccessibilityIdentifiers.LibraryPanels.BookmarksPanel
-        let textFieldViewModel = TextFieldViewModel(
-            formA11yId: A11y.titleTextField,
-            clearButtonA11yId: A11y.titleTextFieldClearButton,
-            clearButtonA11yLabel: String.Bookmarks.Menu.ClearTextFieldButtonA11yLabel
-        )
-        titleTextfield.configure(viewModel: textFieldViewModel)
-        let urlTextFieldViewModel = TextFieldViewModel(
-            formA11yId: A11y.urlTextField,
-            clearButtonA11yId: A11y.urlTextFieldClearButton,
-            clearButtonA11yLabel: String.Bookmarks.Menu.ClearTextFieldButtonA11yLabel
-        )
-        urlTextfield.configure(viewModel: urlTextFieldViewModel)
         textFieldsContainerView.addArrangedSubview(titleTextfield)
-        textFieldsContainerView.addArrangedSubview(textFieldsDivider)
+        textFieldsContainerView.addArrangedSubview(textFieldsDivder)
         textFieldsContainerView.addArrangedSubview(urlTextfield)
         contentView.addSubviews(faviconImageView, textFieldsContainerView)
 
@@ -86,9 +68,9 @@ class EditBookmarkCell: UITableViewCell,
             faviconImageView.widthAnchor.constraint(equalToConstant: faviconDynamicSize),
             faviconImageView.heightAnchor.constraint(equalToConstant: faviconDynamicSize),
 
-            textFieldsDivider.heightAnchor.constraint(equalToConstant: UX.textFieldDividerHeight),
-            textFieldsDivider.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
-                                                        constant: -UX.textFieldDividerTrailingPadding),
+            textFieldsDivder.heightAnchor.constraint(equalToConstant: UX.textFieldDividerHeight),
+            textFieldsDivder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                       constant: -UX.textFieldDividerTrailingPadding),
 
             textFieldsContainerView.leadingAnchor.constraint(equalTo: faviconImageView.trailingAnchor,
                                                              constant: UX.textFieldContainerLeadingPadding),
@@ -116,11 +98,11 @@ class EditBookmarkCell: UITableViewCell,
     func applyTheme(theme: any Theme) {
         urlTextfield.applyTheme(theme: theme)
         titleTextfield.applyTheme(theme: theme)
-        textFieldsDivider.backgroundColor = theme.colors.borderPrimary
-        backgroundColor = theme.colors.layer5
+        textFieldsDivder.backgroundColor = theme.colors.borderPrimary
+        contentView.backgroundColor = theme.colors.layer2
     }
 
-    private func urlTextFieldDidChange() {
+    private func urlTextFieldDidChane() {
         onURLFieldUpdate?(urlTextfield.text ?? "")
     }
 

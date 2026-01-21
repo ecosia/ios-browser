@@ -6,39 +6,33 @@ import Foundation
 import Redux
 import Common
 import WebKit
-import SummarizeKit
 
-struct GeneralBrowserAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+class GeneralBrowserAction: Action {
     let selectedTabURL: URL?
     let isPrivateBrowsing: Bool?
     let toastType: ToastType?
     let showOverlay: Bool?
     let buttonTapped: UIButton?
     let isNativeErrorPage: Bool?
-    let frameContext: PasswordGeneratorFrameContext?
-    let summarizerConfig: SummarizerConfig?
+    let frame: WKFrameInfo?
     init(selectedTabURL: URL? = nil,
          isPrivateBrowsing: Bool? = nil,
          toastType: ToastType? = nil,
          showOverlay: Bool? = nil,
          buttonTapped: UIButton? = nil,
          isNativeErrorPage: Bool? = nil,
-         frameContext: PasswordGeneratorFrameContext? = nil,
-         summarizerConfig: SummarizerConfig? = nil,
+         frame: WKFrameInfo? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.selectedTabURL = selectedTabURL
         self.isPrivateBrowsing = isPrivateBrowsing
         self.toastType = toastType
         self.buttonTapped = buttonTapped
         self.showOverlay = showOverlay
         self.isNativeErrorPage = isNativeErrorPage
-        self.frameContext = frameContext
-        self.summarizerConfig = summarizerConfig
+        self.frame = frame
+        super.init(windowUUID: windowUUID,
+                   actionType: actionType)
     }
 }
 
@@ -51,34 +45,26 @@ enum GeneralBrowserActionType: ActionType {
     case navigateBack
     case navigateForward
     case showTabTray
+    case showQRcodeReader
     case showBackForwardList
     case showTrackingProtectionDetails
     case showTabsLongPressActions
     case showReloadLongPressAction
     case showMenu
     case showLocationViewLongPressActionSheet
-    case showSummarizer
     case stopLoadingWebsite
     case reloadWebsite
     case reloadWebsiteNoCache
     case showShare
     case showReaderMode
-    case startAtHome
     case addNewTab
     case showNewTabLongPressActions
     case addToReadingListLongPressAction
     case clearData
     case showPasswordGenerator
-    case didSelectedTabChangeToHomepage
-    case enteredZeroSearchScreen
-    case didUnhideToolbar
-    case didCloseTabFromToolbar
-    case shakeMotionEnded
 }
 
-struct GeneralBrowserMiddlewareAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+class GeneralBrowserMiddlewareAction: Action {
     let scrollOffset: CGPoint?
     let toolbarPosition: SearchBarPosition?
 
@@ -86,10 +72,10 @@ struct GeneralBrowserMiddlewareAction: Action {
          toolbarPosition: SearchBarPosition? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.scrollOffset = scrollOffset
         self.toolbarPosition = toolbarPosition
+        super.init(windowUUID: windowUUID,
+                   actionType: actionType)
     }
 }
 

@@ -4,9 +4,9 @@
 
 import Foundation
 import Redux
+import Shared
 import Common
 
-@MainActor
 final class MicrosurveyPromptMiddleware {
     private let microsurveyManager: MicrosurveyManager
 
@@ -51,7 +51,6 @@ final class MicrosurveyPromptMiddleware {
         microsurveyManager.handleMessageDismiss()
     }
 
-    @MainActor
     private func openSurvey() {
         microsurveyManager.handleMessagePressed()
     }

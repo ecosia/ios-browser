@@ -16,17 +16,16 @@ class BlockedTrackersTableViewControllerTests: XCTestCase {
         connectionSecure: true
     )
 
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         DependencyHelperMock().reset()
-        try await super.tearDown()
+        super.tearDown()
     }
 
-    @MainActor
     func testBlockedTrackersViewController_simpleCreation_hasNoLeaks() {
         let blockedTrackersViewController = BlockedTrackersTableViewController(
             with: blockedTrackersMockModel,

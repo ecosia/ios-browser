@@ -4,7 +4,6 @@
 
 import Foundation
 import Shared
-import Common
 import UIKit
 
 enum CFRTelemetryEvent {
@@ -16,16 +15,14 @@ enum CFRTelemetryEvent {
 enum ContextualHintType: String {
     case jumpBackIn = "JumpBackIn"
     case jumpBackInSyncedTab = "JumpBackInSyncedTab"
+    case inactiveTabs = "InactiveTabs"
+    case toolbarLocation = "ToolbarLocation"
     case mainMenu = "MainMenu"
+    case shoppingExperience = "ShoppingExperience"
     case dataClearance = "DataClearance"
     case navigation = "Navigation"
-    case relay = "Relay"
-    case toolbarUpdate = "ToolbarUpdate"
-    case translation = "Translation"
-    case summarizeToolbarEntry = "SummarizeToolbarEntry"
 }
 
-@MainActor
 class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLocationProvider {
     typealias CFRPrefsKeys = PrefsKeys.ContextualHints
     typealias CFRStrings = String.ContextualHints
@@ -52,8 +49,7 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
         let hintEligibilityUtility = ContextualHintEligibilityUtility(
             with: profile,
             overlayState: overlayState,
-            isToolbarUpdateCFRFeatureEnabled: featureFlags.isFeatureEnabled(.toolbarUpdateHint, checking: .buildOnly)
-        )
+            isCFRToolbarFeatureEnabled: featureFlags.isFeatureEnabled(.isToolbarCFREnabled, checking: .buildOnly))
 
         return hintEligibilityUtility.canPresent(hintType)
     }
@@ -82,11 +78,18 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
     }
 
     func startTimer() {
-        let defaultTimeInterval: TimeInterval = 1.25
+        var timeInterval: TimeInterval = 0
+
+        switch hintType {
+        case .inactiveTabs: timeInterval = 0.25
+        case .toolbarLocation: timeInterval = 0.5
+        default: timeInterval = 1.25
+        }
+
         timer?.invalidate()
 
         timer = Timer.scheduledTimer(
-            timeInterval: defaultTimeInterval,
+            timeInterval: timeInterval,
             target: self,
             selector: #selector(presentHint),
             userInfo: nil,
@@ -101,12 +104,31 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
     // MARK: Text
 
     func getCopyFor(_ copyType: ContextualHintCopyType) -> String {
-        return ContextualHintCopyProvider().getCopyFor(copyType, of: hintType)
+        let copyProvider: ContextualHintCopyProvider
+
+        switch hintType {
+        case .toolbarLocation: copyProvider = ContextualHintCopyProvider(arrowDirecton: arrowDirection)
+        default: copyProvider = ContextualHintCopyProvider()
+        }
+
+        return copyProvider.getCopyFor(copyType, of: hintType)
+    }
+
+    var isActionType: Bool {
+        switch hintType {
+        case .inactiveTabs,
+                .toolbarLocation,
+                .shoppingExperience:
+            return true
+
+        default: return false
+        }
     }
 
     // MARK: - Telemetry
     func sendTelemetryEvent(for eventType: CFRTelemetryEvent) {
-        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: hintType.rawValue]
+        let hintTypeExtra = hintType == .toolbarLocation ? getToolbarLocation() : hintType.rawValue
+        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: hintTypeExtra]
 
         switch eventType {
         case .closeButton:
@@ -135,16 +157,20 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
         }
     }
 
+    private func getToolbarLocation() -> String {
+        guard isBottomSearchBar else { return "ToolbarLocationTop" }
+
+        return "ToolbarLocationBottom"
+    }
+
     // MARK: - Present
     @objc
-    nonisolated private func presentHint() {
-        ensureMainThread {
-            guard self.shouldPresentContextualHint() else { return }
+    private func presentHint() {
+        guard shouldPresentContextualHint() else { return }
 
-            self.timer?.invalidate()
-            self.timer = nil
-            self.presentFromTimer?()
-            self.presentFromTimer = nil
-        }
+        timer?.invalidate()
+        timer = nil
+        presentFromTimer?()
+        presentFromTimer = nil
     }
 }

@@ -6,7 +6,7 @@ import UIKit
 import Intents
 import IntentsUI
 
-final class SiriFavoriteViewController: UIViewController {
+class SiriFavoriteViewController: UIViewController {
     private lazy var cancelButton: UIBarButtonItem = {
         let cancelButton = UIBarButtonItem(title: UIConstants.strings.cancel, style: .plain, target: self, action: #selector(SiriFavoriteViewController.cancelTapped))
         cancelButton.tintColor = .accent

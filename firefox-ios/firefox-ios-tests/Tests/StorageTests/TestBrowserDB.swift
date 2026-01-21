@@ -7,7 +7,7 @@ import Shared
 @testable import Storage
 import XCTest
 
-class TestBrowserDB: XCTestCase, @unchecked Sendable {
+class TestBrowserDB: XCTestCase {
     let files = MockFiles()
 
     fileprivate func rm(_ path: String) {
@@ -54,17 +54,7 @@ class TestBrowserDB: XCTestCase, @unchecked Sendable {
         let results = db.runQuery("SELECT bmkUri, title FROM bookmarksLocal WHERE type = 1",
                                   args: nil,
                                   factory: { row in
-            guard let bmkUri = row[0] as? String else {
-                XCTFail("Failed to cast value for key 'bmkUri' to String.")
-                return ("", "")
-            }
-
-            guard let title = row[1] as? String else {
-                XCTFail("Failed to cast value for key 'title' to String.")
-                return (bmkUri, "")
-            }
-
-            return (bmkUri, title)
+            (row[0] as! String, row[1] as! String)
         }).value.successValue!
 
         // The bookmark with the long URL has been deleted.
@@ -89,14 +79,8 @@ class TestBrowserDB: XCTestCase, @unchecked Sendable {
 
         // Grab a pointer to the -shm so we can compare later.
         let shmAAttributes = try files.attributesForFileAt(relativePath: "foo.db-shm")
-        guard let creationA = shmAAttributes[FileAttributeKey.creationDate] as? Date else {
-            XCTFail("Failed to cast value for key 'creationDate' to Date.")
-            return
-        }
-        guard let inodeA = (shmAAttributes[FileAttributeKey.systemFileNumber] as? NSNumber)?.uintValue else {
-            XCTFail("Failed to cast value for key 'systemFileNumber' to NSNumber.")
-            return
-        }
+        let creationA = shmAAttributes[FileAttributeKey.creationDate] as! Date
+        let inodeA = (shmAAttributes[FileAttributeKey.systemFileNumber] as! NSNumber).uintValue
 
         XCTAssertFalse(files.exists("foo.db.bak.1"))
         XCTAssertFalse(files.exists("foo.db.bak.1-shm"))
@@ -129,14 +113,8 @@ class TestBrowserDB: XCTestCase, @unchecked Sendable {
 
         // But now it's been reopened, it's not the same -shm!
         let shmBAttributes = try files.attributesForFileAt(relativePath: "foo.db-shm")
-        guard let creationB = shmBAttributes[FileAttributeKey.creationDate] as? Date else {
-            XCTFail("Failed to cast value for key 'creationDate' to Date.")
-            return
-        }
-        guard let inodeB = (shmBAttributes[FileAttributeKey.systemFileNumber] as? NSNumber)?.uintValue else {
-            XCTFail("Failed to cast value for key 'systemFileNumber' to NSNumber.")
-            return
-        }
+        let creationB = shmBAttributes[FileAttributeKey.creationDate] as! Date
+        let inodeB = (shmBAttributes[FileAttributeKey.systemFileNumber] as! NSNumber).uintValue
         XCTAssertTrue(creationA.compare(creationB) != ComparisonResult.orderedDescending)
         XCTAssertNotEqual(inodeA, inodeB)
 
@@ -148,7 +126,7 @@ class TestBrowserDB: XCTestCase, @unchecked Sendable {
         XCTAssertEqual("foo.db", (listener.notification?.object as? String))
     }
 
-    func testConcurrentQueriesDealloc() async {
+    func testConcurrentQueriesDealloc() {
         let expectation = self.expectation(description: "Got all DB results")
 
         let db = BrowserDB(filename: "foo.db", schema: BrowserSchema(), files: self.files)
@@ -164,35 +142,34 @@ class TestBrowserDB: XCTestCase, @unchecked Sendable {
             }
         }
 
+        func fooBarFactory(_ row: SDRow) -> [String: Any] {
+            var result: [String: Any] = [:]
+            result["id"] = row["id"]
+            result["bar"] = row["bar"]
+            return result
+        }
+
         let shortConcurrentQuery = db.runQueryConcurrently(
             "SELECT * FROM foo LIMIT 1",
             args: nil,
-            factory: Self.fooBarFactory
+            factory: fooBarFactory
         )
 
-        await self.trackForMemoryLeaks(shortConcurrentQuery)
-
-        _ = shortConcurrentQuery.bind { result -> Deferred<Maybe<Bool>> in
-            if result.successValue?.asArray() != nil {
+        _ = shortConcurrentQuery.bind { result -> Deferred<Maybe<[[String: Any]]>> in
+            if let results = result.successValue?.asArray() {
                 expectation.fulfill()
-                return deferMaybe(true)
+                return deferMaybe(results)
             }
 
             return deferMaybe(DatabaseError(description: "Unable to execute concurrent short-running query"))
         }
 
-        await fulfillment(of: [expectation], timeout: 3)
+        trackForMemoryLeaks(shortConcurrentQuery)
+
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
-    nonisolated static func fooBarFactory(_ row: SDRow) -> [String: Any] {
-        var result: [String: Any] = [:]
-        result["id"] = row["id"]
-        result["bar"] = row["bar"]
-        return result
-    }
-
-    @MainActor
-    func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+    func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #file, line: UInt = #line) {
         addTeardownBlock { [weak instance] in
             XCTAssertNil(
                 instance,

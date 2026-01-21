@@ -5,71 +5,108 @@
 import XCTest
 
 @testable import Redux
+let store = Store(state: FakeReduxState(),
+                  reducer: FakeReduxState.reducer,
+                  middlewares: [FakeReduxMiddleware().fakeProvider])
 
-// Global state used in FakeReduxViewController.
-@MainActor
-var store: Store<FakeReduxState>!
-
-@MainActor
 final class ReduxIntegrationTests: XCTestCase {
-    let initialCountValue = 8
+    var fakeViewController: FakeReduxViewController!
+    var expectedIntValue: Int!
 
-    var fakeReduxViewController: FakeReduxViewController!
-    var mockState: FakeReduxState!
-    var mockMiddleware: FakeReduxMiddleware!
-
-    override func setUp() async throws {
-        try await super.setUp()
-
-        mockState = FakeReduxState()
-        mockMiddleware = FakeReduxMiddleware()
-        mockMiddleware.generateInitialCountValue = {
-            return self.initialCountValue
-        }
-
-        store = Store(state: mockState,
-                      reducer: FakeReduxState.reducer,
-                      middlewares: [mockMiddleware.fakeProvider])
-
-        // Initialize the VC after store and middleware are set up
-        fakeReduxViewController = createAndLoadViewController()
+    override func setUp() {
+        super.setUp()
+        fakeViewController = FakeReduxViewController()
+        fakeViewController.view.setNeedsLayout()
     }
 
-    // This test will fail if actions are not completely processed before the next action is fired (i.e. action queuing).
+    override func tearDown() {
+        super.tearDown()
+        fakeViewController = nil
+    }
+
     func testDispatchStore_IncreaseCounter() {
-        fakeReduxViewController.increaseCounter()
+        getExpectedValue(shouldIncrease: true)
+        fakeViewController.increaseCounter()
 
-        XCTAssertEqual(fakeReduxViewController.receivedStateCounterValue, initialCountValue + 1)
+        // Needed to wait for Redux action handled async in main thread
+        let expectation = self.expectation(description: "Redux integration test")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            expectation.fulfill()
+            let intValue = Int(self.fakeViewController.label.text ?? "0")
+            XCTAssertEqual(intValue, self.expectedIntValue)
+        }
+        waitForExpectations(timeout: 1)
     }
 
-    // This test will fail if actions are not completely processed before the next action is fired (i.e. action queuing).
     func testDispatchStore_DecreaseCounter() {
-        fakeReduxViewController.decreaseCounter()
+        getExpectedValue(shouldIncrease: false)
+        fakeViewController.decreaseCounter()
 
-        XCTAssertEqual(fakeReduxViewController.receivedStateCounterValue, initialCountValue - 1)
+        // Needed to wait for Redux action handled async in main thread
+        let expectation = self.expectation(description: "Redux integration test")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            expectation.fulfill()
+            let intValue = Int(self.fakeViewController.label.text ?? "0")
+            XCTAssertEqual(intValue, self.expectedIntValue)
+        }
+        waitForExpectations(timeout: 1)
     }
 
-    func testDispatchStore_SetPrivateMode() {
-        let expectedResult = true
-        fakeReduxViewController.setPrivateMode(to: expectedResult)
-
-        XCTAssertEqual(fakeReduxViewController.isInPrivateMode, expectedResult)
-    }
-
-    func testDispatchStore_TogglePrivateMode() {
+    func testDispatchStore_InitialPrivateValue() {
         let expectedResult = false
-        fakeReduxViewController.setPrivateMode(to: true)
-        fakeReduxViewController.setPrivateMode(to: expectedResult)
 
-        XCTAssertEqual(fakeReduxViewController.isInPrivateMode, expectedResult)
+        // Needed to wait for Redux action handled async in main thread
+        let expectation = self.expectation(description: "Redux integration test")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            expectation.fulfill()
+            let result = self.fakeViewController.isInPrivateMode
+            XCTAssertEqual(result, expectedResult)
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    func testDispatchStore_SetPrivateToTrue() {
+        let expectedResult = true
+        fakeViewController.setPrivateMode(to: expectedResult)
+
+        // Needed to wait for Redux action handled async in main thread
+        let expectation = self.expectation(description: "Redux integration test")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            expectation.fulfill()
+            let result = self.fakeViewController.isInPrivateMode
+            XCTAssertEqual(result, expectedResult)
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    func testDispatchStore_SetPrivateToFalse() {
+        let expectedResult = false
+        fakeViewController.setPrivateMode(to: true)
+        fakeViewController.setPrivateMode(to: expectedResult)
+
+        // Needed to wait for Redux action handled async in main thread
+        let expectation = self.expectation(description: "Redux integration test")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            expectation.fulfill()
+            let result = self.fakeViewController.isInPrivateMode
+            XCTAssertEqual(result, expectedResult)
+        }
+        waitForExpectations(timeout: 1)
     }
 
     // MARK: - Helper functions
-
-    private func createAndLoadViewController() -> FakeReduxViewController {
-        let fakeViewController = FakeReduxViewController()
-        fakeViewController.view.setNeedsLayout()
-
-        return fakeViewController
+    private func getExpectedValue(shouldIncrease: Bool) {
+        // Needed to wait for Redux action handled async in main thread
+        let expectation = self.expectation(description: "Redux integration test")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            expectation.fulfill()
+            self.expectedIntValue = store.state.counter
+            if shouldIncrease {
+                self.expectedIntValue += 1
+            } else {
+                self.expectedIntValue -= 1
+            }
+        }
+        waitForExpectations(timeout: 1)
     }
 }

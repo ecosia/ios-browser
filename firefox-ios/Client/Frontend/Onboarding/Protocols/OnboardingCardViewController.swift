@@ -5,27 +5,24 @@
 import UIKit
 import Common
 import ComponentLibrary
-import OnboardingKit
 
-// MARK: - Common UX Elements
-private typealias SharedUX = OnboardingCardViewControllerSharedUX
-struct OnboardingCardViewControllerSharedUX {
-    static let topStackViewSpacing: CGFloat = 24
-    @MainActor
-    static let titleFont: UIFont = {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return FXFontStyles.Bold.title1.scaledFont()
-        } else {
-            return FXFontStyles.Bold.title2.scaledFont()
-        }
-    }()
+class OnboardingCardViewController: UIViewController, Themeable {
+    // MARK: - Common UX Elements
+    struct SharedUX {
+        static let topStackViewSpacing: CGFloat = 24
+        static let titleFont: UIFont = {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                return FXFontStyles.Bold.title1.scaledFont()
+            } else {
+                return FXFontStyles.Bold.title2.scaledFont()
+            }
+        }()
 
-    // small device
-    static let smallStackViewSpacing: CGFloat = 8
-    static let smallScrollViewVerticalPadding: CGFloat = 20
-}
+        // small device
+        static let smallStackViewSpacing: CGFloat = 8
+        static let smallScrollViewVerticalPadding: CGFloat = 20
+    }
 
-class OnboardingCardViewController<CardModel: OnboardingCardInfoModelProtocol>: UIViewController, Themeable {
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
 
@@ -75,9 +72,7 @@ class OnboardingCardViewController<CardModel: OnboardingCardInfoModelProtocol>: 
     lazy var titleLabel: UILabel = .build { label in
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.font = self.shouldUseSmallDeviceLayout
-            ? FXFontStyles.Bold.title3.scaledFont()
-            : SharedUX.titleFont
+        label.font = self.shouldUseSmallDeviceLayout ? FXFontStyles.Bold.title3.scaledFont() : SharedUX.titleFont
         label.adjustsFontForContentSizeCategory = true
         label.accessibilityIdentifier = "\(self.viewModel.a11yIdRoot)TitleLabel"
         label.accessibilityTraits.insert(.header)
@@ -101,14 +96,14 @@ class OnboardingCardViewController<CardModel: OnboardingCardInfoModelProtocol>: 
 
     // MARK: - Themeable
     var themeManager: Common.ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: Common.NotificationProtocol
 
-    var viewModel: CardModel
+    var viewModel: OnboardingCardInfoModelProtocol
 
     // MARK: - Initializers
     init(
-        viewModel: CardModel,
+        viewModel: OnboardingCardInfoModelProtocol,
         windowUUID: WindowUUID,
         themeManager: ThemeManager = AppContainer.shared.resolve(),
         notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -164,6 +159,5 @@ class OnboardingCardViewController<CardModel: OnboardingCardInfoModelProtocol>: 
         secondaryButton.applyTheme(theme: currentTheme())
     }
 
-    // FIXME: FXIOS-12996 Use Themeable
     func applyTheme() { }
 }

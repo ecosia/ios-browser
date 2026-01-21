@@ -3,18 +3,15 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Common
 @testable import Client
 
-class MockAppAuthenticator: AppAuthenticationProtocol, @unchecked Sendable {
+class MockAppAuthenticator: AppAuthenticationProtocol {
     var authenticationState: AuthenticationState = .deviceOwnerAuthenticated
     var shouldAuthenticateDeviceOwner = true
     var shouldSucceed = true
 
-    func getAuthenticationState(completion: @MainActor @escaping (AuthenticationState) -> Void) {
-        ensureMainThread {
-            completion(self.authenticationState)
-        }
+    func getAuthenticationState(completion: @escaping (AuthenticationState) -> Void) {
+        completion(authenticationState)
     }
 
     var canAuthenticateDeviceOwner: Bool {
@@ -22,14 +19,12 @@ class MockAppAuthenticator: AppAuthenticationProtocol, @unchecked Sendable {
     }
 
     func authenticateWithDeviceOwnerAuthentication(
-        _ completion: @MainActor @escaping (Result<Void, AuthenticationError>) -> Void
+        _ completion: @escaping (Result<Void, AuthenticationError>) -> Void
     ) {
-        ensureMainThread {
-            if self.shouldSucceed {
-                completion(.success(()))
-            } else {
-                completion(.failure(.failedAuthentication(message: "Testing mock: failure")))
-            }
+        if shouldSucceed {
+            completion(.success(()))
+        } else {
+            completion(.failure(.failedAutentication(message: "Testing mock: failure")))
         }
     }
 }

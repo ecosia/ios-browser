@@ -9,7 +9,7 @@ import UIKit
 import Shared
 
 /*
-
+    
  |----------------|
  |              X |
  |Title Multiline |
@@ -22,7 +22,7 @@ import Shared
  |----------------|
  |    [Button]    | (Bottom View)
  |----------------|
-
+ 
  */
 
 class DefaultBrowserOnboardingViewController: UIViewController, OnViewDismissable, Themeable {
@@ -38,7 +38,7 @@ class DefaultBrowserOnboardingViewController: UIViewController, OnViewDismissabl
 
     // MARK: - Properties
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol
     var onViewDismissed: (() -> Void)?
 
@@ -117,8 +117,7 @@ class DefaultBrowserOnboardingViewController: UIViewController, OnViewDismissabl
         super.viewDidLoad()
 
         initialViewSetup()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
     }
 
@@ -243,15 +242,9 @@ class DefaultBrowserOnboardingViewController: UIViewController, OnViewDismissabl
     private func goToSettings() {
         viewModel.goToSettings?()
 
-        // By clicking this card, we assume that the user will have set us
-        // as the default browser
-        DefaultBrowserUtility().isDefaultBrowser = true
-
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .goToSettingsDefaultBrowserOnboarding
-        )
+        // Don't show default browser card if this button is clicked
+        UserDefaults.standard.set(true, forKey: PrefsKeys.DidDismissDefaultBrowserMessage)
+        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .goToSettingsDefaultBrowserOnboarding)
 
         DefaultApplicationHelper().openSettings()
     }

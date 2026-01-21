@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 import MozillaAppServices
 import XCTest
 
@@ -13,6 +14,7 @@ class RustSyncManagerAPITests: XCTestCase {
     func testReportSyncTelemetry() {
         self.rustSyncManagerApi = RustSyncManagerAPI()
         let expectation = expectation(description: "Completed telemetry reporting")
+        var actual = ""
         let expected = "The operation couldn’t be completed. (MozillaAppServices.TelemetryJSONError error 0.)"
         let invalidSyncResult = SyncResult(status: ServiceStatus.ok,
                                            successful: [],
@@ -23,10 +25,11 @@ class RustSyncManagerAPITests: XCTestCase {
                                            telemetryJson: "{\"version\": \"invalidVersion\"}")
         self.rustSyncManagerApi
             .reportSyncTelemetry(syncResult: invalidSyncResult) { description in
-                XCTAssertEqual(description, expected)
+                actual = description
                 expectation.fulfill()
             }
 
-        wait(for: [expectation], timeout: 5)
+        waitForExpectations(timeout: 5)
+        XCTAssertEqual(actual, expected)
     }
 }

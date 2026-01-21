@@ -20,24 +20,15 @@ open class AppInfo {
     }
 
     public static var bundleIdentifier: String {
-        guard let bundleIdentifier = applicationBundle.object(forInfoDictionaryKey: "CFBundleIdentifier") as? String else {
-            fatalError("CFBundleIdentifier not found in info.plist")
-        }
-        return bundleIdentifier
+        return applicationBundle.object(forInfoDictionaryKey: "CFBundleIdentifier") as! String
     }
 
     public static var appVersion: String {
-        guard let appVersion = applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else {
-            fatalError("CFBundleShortVersionString not found in info.plist")
-        }
-        return appVersion
+        return applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     }
 
     public static var buildNumber: String {
-        guard let buildNumber = applicationBundle.object(forInfoDictionaryKey: String(kCFBundleVersionKey)) as? String else {
-            fatalError("kCFBundleVersionKey not found in info.plist")
-        }
-        return buildNumber
+        return applicationBundle.object(forInfoDictionaryKey: String(kCFBundleVersionKey)) as! String
     }
 
     /// Return the base bundle identifier.
@@ -47,9 +38,7 @@ open class AppInfo {
     /// of the *base* bundle identifier.
     public static var baseBundleIdentifier: String {
         let bundle = Bundle.main
-        guard let packageType = bundle.object(forInfoDictionaryKey: "CFBundlePackageType") as? String else {
-            fatalError("CFBundlePackageType not found in info.plist")
-        }
+        let packageType = bundle.object(forInfoDictionaryKey: "CFBundlePackageType") as! String
         let baseBundleIdentifier = bundle.bundleIdentifier!
         if packageType == "XPC!" {
             let components = baseBundleIdentifier.components(separatedBy: ".")

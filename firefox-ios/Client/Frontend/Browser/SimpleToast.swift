@@ -4,35 +4,20 @@
 
 import Common
 import Foundation
+import Shared
 
-@MainActor
 struct SimpleToast: ThemeApplicable {
-    struct UX {
-        static let labelPadding: CGFloat = 16
-    }
-
-    private let containerView: UIView = .build { view in
-        view.backgroundColor = .clear
-    }
-
-    private let shadowView: UIView = .build { view in
-        view.layer.cornerRadius = Toast.UX.toastCornerRadius
-    }
-
     private let toastLabel: UILabel = .build { label in
-        label.font = FXFontStyles.Regular.subheadline.scaledFont()
+        label.font = FXFontStyles.Bold.subheadline.scaledFont()
         label.numberOfLines = 0
-        label.backgroundColor = .clear
-        label.adjustsFontSizeToFitWidth = true
-        label.setContentHuggingPriority(.required, for: .vertical)
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.textAlignment = .center
     }
 
     private let heightConstraint: NSLayoutConstraint
 
     init() {
-        heightConstraint = containerView.heightAnchor
-            .constraint(greaterThanOrEqualToConstant: Toast.UX.toastHeightWithShadow)
+        heightConstraint = toastLabel.heightAnchor
+            .constraint(equalToConstant: Toast.UX.toastHeight)
     }
 
     func showAlertWithText(_ text: String,
@@ -40,90 +25,24 @@ struct SimpleToast: ThemeApplicable {
                            theme: Theme,
                            bottomConstraintPadding: CGFloat = 0) {
         toastLabel.text = text
-        bottomContainer.addSubview(containerView)
-        containerView.addSubview(shadowView)
-        shadowView.addSubview(toastLabel)
-
+        bottomContainer.addSubview(toastLabel)
         NSLayoutConstraint.activate([
             heightConstraint,
-            containerView.leadingAnchor.constraint(equalTo: bottomContainer.safeAreaLayoutGuide.leadingAnchor,
-                                                   constant: Toast.UX.toastSidePadding),
-            containerView.trailingAnchor.constraint(equalTo: bottomContainer.safeAreaLayoutGuide.trailingAnchor,
-                                                    constant: -Toast.UX.toastSidePadding),
-            containerView.bottomAnchor.constraint(equalTo: bottomContainer.safeAreaLayoutGuide.bottomAnchor,
-                                                  constant: bottomConstraintPadding),
-
-            shadowView.topAnchor.constraint(equalTo: containerView.topAnchor,
-                                            constant: Toast.UX.shadowHorizontalSpacing / 2),
-            shadowView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
-                                                constant: Toast.UX.shadowVerticalSpacing),
-            shadowView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,
-                                                 constant: -Toast.UX.shadowVerticalSpacing),
-            shadowView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,
-                                               constant: -Toast.UX.shadowHorizontalSpacing / 2),
-            shadowView.heightAnchor.constraint(greaterThanOrEqualToConstant: Toast.UX.toastHeightWithoutShadow),
-
-            toastLabel.topAnchor.constraint(equalTo: shadowView.topAnchor),
-            toastLabel.leadingAnchor.constraint(equalTo: shadowView.leadingAnchor,
-                                                constant: UX.labelPadding),
-            toastLabel.trailingAnchor.constraint(equalTo: shadowView.trailingAnchor,
-                                                 constant: -UX.labelPadding),
-            toastLabel.bottomAnchor.constraint(equalTo: shadowView.bottomAnchor),
+            toastLabel.widthAnchor.constraint(equalTo: bottomContainer.widthAnchor),
+            toastLabel.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor),
+            toastLabel.bottomAnchor.constraint(equalTo: bottomContainer.safeAreaLayoutGuide.bottomAnchor,
+                                               constant: bottomConstraintPadding)
         ])
         applyTheme(theme: theme)
-        animate(containerView)
-
+        animate(toastLabel)
         if UIAccessibility.isVoiceOverRunning {
-            let announcementString = NSMutableAttributedString(string: text)
-
-            // FXIOS-10766/10767 Prevents toast messages from being interrupted
-            if #available(iOS 17, *) {
-                let fullRange = NSRange(location: 0, length: announcementString.length)
-                announcementString.addAttribute(NSAttributedString.Key.accessibilitySpeechAnnouncementPriority,
-                                                value: UIAccessibilityPriority.high.rawValue,
-                                                range: fullRange)
-            }
-            UIAccessibility.post(notification: .announcement, argument: announcementString)
+            UIAccessibility.post(notification: .announcement, argument: text)
         }
     }
 
     func applyTheme(theme: Theme) {
         toastLabel.textColor = theme.colors.textInverted
-        shadowView.backgroundColor = theme.colors.actionPrimary
-        setupShadow(theme: theme)
-    }
-
-    private func setupShadow(theme: Theme) {
-        shadowView.layoutIfNeeded()
-
-        shadowView.layer.shadowPath = UIBezierPath(roundedRect: shadowView.bounds,
-                                                   cornerRadius: Toast.UX.toastCornerRadius).cgPath
-        shadowView.layer.shadowRadius = Toast.UX.shadowRadius
-        shadowView.layer.shadowOffset = Toast.UX.shadowOffset
-        shadowView.layer.shadowColor =  theme.colors.shadowDefault.cgColor
-        shadowView.layer.shadowOpacity = Toast.UX.shadowOpacity
-    }
-
-    private func animate(_ toast: UIView) {
-        UIView.animate(
-            withDuration: Toast.UX.toastAnimationDuration,
-            animations: {
-                var frame = toast.frame
-                frame.origin.y = frame.origin.y - Toast.UX.toastHeightWithShadow
-                frame.size.height = Toast.UX.toastHeightWithShadow
-                toast.frame = frame
-            },
-            completion: { finished in
-                let thousandMilliseconds = DispatchTimeInterval.milliseconds(1000)
-                let zeroMilliseconds = DispatchTimeInterval.milliseconds(0)
-                let voiceOverDelay = UIAccessibility.isVoiceOverRunning ? thousandMilliseconds : zeroMilliseconds
-                let dispatchTime = DispatchTime.now() + Toast.UX.toastDismissAfter + voiceOverDelay
-
-                DispatchQueue.main.asyncAfter(deadline: dispatchTime, execute: {
-                    self.dismiss(toast)
-                })
-            }
-        )
+        toastLabel.backgroundColor = theme.colors.actionPrimary
     }
 
     private func dismiss(_ toast: UIView) {
@@ -135,6 +54,30 @@ struct SimpleToast: ThemeApplicable {
             },
             completion: { finished in
                 toast.removeFromSuperview()
+            }
+        )
+    }
+
+    // Ecosia: Modify privacy for func
+    // private func animate(_ toast: UIView) {
+    func animate(_ toast: UIView) {
+        UIView.animate(
+            withDuration: Toast.UX.toastAnimationDuration,
+            animations: {
+                var frame = toast.frame
+                frame.origin.y = frame.origin.y - Toast.UX.toastHeight
+                frame.size.height = Toast.UX.toastHeight
+                toast.frame = frame
+            },
+            completion: { finished in
+                let thousandMilliseconds = DispatchTimeInterval.milliseconds(1000)
+                let zeroMilliseconds = DispatchTimeInterval.milliseconds(0)
+                let voiceOverDelay = UIAccessibility.isVoiceOverRunning ? thousandMilliseconds : zeroMilliseconds
+                let dispatchTime = DispatchTime.now() + Toast.UX.toastDismissAfter + voiceOverDelay
+
+                DispatchQueue.main.asyncAfter(deadline: dispatchTime, execute: {
+                    self.dismiss(toast)
+                })
             }
         )
     }

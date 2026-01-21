@@ -5,17 +5,14 @@
 import XCTest
 
 class SnapshotTests: BaseTestCaseL10n {
-    @MainActor
     func test01FirstRunScreens() {
-        waitForExistence(app.collectionViews.cells.images["icon_background"], timeout: 30)
+        waitForExistence(app.collectionViews.cells.images["icon_background"], timeout: 10)
         snapshot("00FirstRun")
-        app.otherElements.buttons["TermsOfService.agreeAndContinueButton"].tap()
-        waitForNoExistence(app.collectionViews.cells.images["icon_background"])
+        app.collectionViews.cells.images["icon_background"].swipeLeft()
         waitForExistence(app.collectionViews.cells.images["icon_hugging_focus"], timeout: 3)
         snapshot("01FirstRun")
     }
 
-    @MainActor
     func test02Settings() {
         dismissURLBarFocused()
         openSettings()
@@ -28,7 +25,8 @@ class SnapshotTests: BaseTestCaseL10n {
         app.cells["settingsViewController.siriOpenURLCell"].tap()
         snapshot("SiriMenu")
         app.navigationBars.element(boundBy: 0).buttons.element(boundBy: 0).tap()
-        openSettings()
+        waitForExistence(app.cells["settingsViewController.siriOpenURLCell"])
+        app.swipeDown()
 
         // Tracking Protection menu
         waitForExistence(app.cells["settingsViewController.trackingCell"])
@@ -49,7 +47,6 @@ class SnapshotTests: BaseTestCaseL10n {
         snapshot("AddedCustomURL")
     }
 
-    @MainActor
     func test03About() {
         dismissURLBarFocused()
         openSettings()
@@ -58,7 +55,6 @@ class SnapshotTests: BaseTestCaseL10n {
         snapshot("13About")
     }
 
-    @MainActor
     func test05SafariIntegration() {
         dismissURLBarFocused()
         openSettings()
@@ -67,7 +63,6 @@ class SnapshotTests: BaseTestCaseL10n {
         snapshot("15SafariIntegrationInstructions")
     }
 
-    @MainActor
     func test06Theme() {
         dismissURLBarFocused()
         openSettings()
@@ -81,7 +76,6 @@ class SnapshotTests: BaseTestCaseL10n {
         snapshot("Settings-theme2")
     }
 
-    @MainActor
     func test07PasteAndGo() {
         // Inject a string into clipboard
         let clipboardString = "Hello world"
@@ -100,7 +94,6 @@ class SnapshotTests: BaseTestCaseL10n {
         snapshot("18PasteAndGo")
     }
 
-    @MainActor
     func test10CustomSearchEngines() {
         dismissURLBarFocused()
         app.buttons["HomeView.settingsButton"].tap()
@@ -116,7 +109,6 @@ class SnapshotTests: BaseTestCaseL10n {
         app.navigationBars.element(boundBy: 0).buttons.element(boundBy: 0).tap()
     }
 
-    @MainActor
     func test11WebsiteView() {
         app.textFields.firstMatch.tap()
         app.textFields.firstMatch.typeText("example.com")
@@ -129,7 +121,6 @@ class SnapshotTests: BaseTestCaseL10n {
         snapshot("07YourBrowsingHistoryHasBeenErased")
     }
 
-    @MainActor
     func test12RemoveShortcut() {
         loadWebPage("mozilla.org")
         waitForWebPageLoad()

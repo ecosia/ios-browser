@@ -7,6 +7,7 @@ import Shared
 import Storage
 import Account
 import Common
+import Ecosia
 
 import class MozillaAppServices.Viaduct
 import enum MozillaAppServices.BookmarkRoots
@@ -52,11 +53,8 @@ extension String {
 }
 
 protocol ShareControllerDelegate: AnyObject {
-    @MainActor
     func finish(afterDelay: TimeInterval)
-    @MainActor
     func getValidExtensionContext() -> NSExtensionContext?
-    @MainActor
     func hidePopupWhenShowingAlert()
 }
 
@@ -73,15 +71,18 @@ func addAppExtensionTelemetryEvent(forMethod method: String) {
 class ShareViewController: UIViewController {
     var shareItem: ExtensionUtils.ExtractedShareItem?
     private var viewsShownDuringDoneAnimation = [UIView]()
-    private var stackView: UIStackView?
+    private var stackView: UIStackView!
     private var spinner: UIActivityIndicatorView?
-    private var actionDoneRow: (row: UIStackView, label: UILabel)?
+    private var actionDoneRow: (row: UIStackView, label: UILabel)!
     private var sendToDevice: SendToDevice?
     private var pageInfoHeight: NSLayoutConstraint?
     private var actionRowHeights = [NSLayoutConstraint]()
     private var pageInfoRowTitleLabel: UILabel?
     private var pageInfoRowUrlLabel: UILabel?
-    private let themeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+    /* Ecosia: Swap Theme Manager with Ecosia's
+    private let themeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+     */
+    private let themeManager = EcosiaThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
 
     weak var delegate: ShareControllerDelegate?
 
@@ -138,8 +139,6 @@ class ShareViewController: UIViewController {
     }
 
     private func setupRows() {
-        guard let stackView else { return }
-
         let theme = currentTheme()
         let pageInfoRow = makePageInfoRow(addTo: stackView)
         pageInfoRowTitleLabel = pageInfoRow.titleLabel
@@ -152,21 +151,30 @@ class ShareViewController: UIViewController {
             makeActionRow(
                 addTo: stackView,
                 label: .ShareOpenInFirefox,
+                /* Ecosia: Update image iname
                 imageName: StandardImageIdentifiers.Large.logoFirefox,
+                 */
+                imageName: "atlas",
                 action: #selector(actionOpenInFirefoxNow),
                 hasNavigation: false
             )
             makeActionRow(
                 addTo: stackView,
                 label: .ShareLoadInBackground,
-                imageName: StandardImageIdentifiers.Large.tabTray,
+                /* Ecosia: Update image iname
+                 imageName: StandardImageIdentifiers.Large.tabTray,
+                 */
+                imageName: "load",
                 action: #selector(actionLoadInBackground),
                 hasNavigation: false
             )
             makeActionRow(
                 addTo: stackView,
                 label: .ShareBookmarkThisPage,
+                /* Ecosia: Update image iname
                 imageName: StandardImageIdentifiers.Large.bookmark,
+                 */
+                imageName: "bookmarkAdd",
                 action: #selector(actionBookmarkThisPage),
                 hasNavigation: false
             )
@@ -177,6 +185,7 @@ class ShareViewController: UIViewController {
                 action: #selector(actionAddToReadingList),
                 hasNavigation: false
             )
+            /* Ecosia: Remove Send To Device option as not offered
             makeSeparator(addTo: stackView)
             makeActionRow(
                 addTo: stackView,
@@ -185,6 +194,7 @@ class ShareViewController: UIViewController {
                 action: #selector(actionSendToDevice),
                 hasNavigation: true
             )
+             */
         } else {
             pageInfoRowUrlLabel?.removeFromSuperview()
             makeActionRow(
@@ -204,12 +214,11 @@ class ShareViewController: UIViewController {
         // done state, without this space, the page info label moves down slightly.
         footerSpaceRow.heightAnchor.constraint(greaterThanOrEqualToConstant: 0).isActive = true
 
-        let actionDoneRow = makeActionDoneRow(addTo: stackView)
+        actionDoneRow = makeActionDoneRow(addTo: stackView)
         // Fully constructing and pre-adding as a subview ensures that only the show operation will animate
         // during the UIView.animate(), and other animatable properties will not unexpectedly animate because
         // they are modified in the same event loop as the animation.
         actionDoneRow.row.isHidden = true
-        self.actionDoneRow = actionDoneRow
 
         // All other views are hidden for the done animation.
         viewsShownDuringDoneAnimation += [pageInfoRow.row, footerSpaceRow, actionDoneRow.row]
@@ -308,7 +317,13 @@ class ShareViewController: UIViewController {
         heightConstraint.isActive = true
         actionRowHeights.append(heightConstraint)
 
+        /* Ecosia: Update UIImage gather
         let icon = UIImageView(image: UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate))
+         */
+        var icon = UIImageView(image: UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate))
+        if let image = UIImage(named: imageName, in: .ecosia, with: nil)?.withRenderingMode(.alwaysTemplate) {
+            icon = UIImageView(image: image)
+        }
         icon.contentMode = .scaleAspectFit
         icon.tintColor = theme.colors.iconPrimary
         icon.translatesAutoresizingMaskIntoConstraints = false
@@ -344,11 +359,11 @@ class ShareViewController: UIViewController {
             equalToConstant: CGFloat(UX.viewHeightForDoneState)
         ).isActive = true
 
-        actionDoneRow?.label.text = title
+        actionDoneRow.label.text = title
 
         UIView.animate(withDuration: UX.doneDialogAnimationDuration) {
-            self.actionDoneRow?.row.isHidden = false
-            self.stackView?.arrangedSubviews
+            self.actionDoneRow.row.isHidden = false
+            self.stackView.arrangedSubviews
                 .filter { !self.viewsShownDuringDoneAnimation.contains($0) }
                 .forEach { $0.removeFromSuperview() }
 
@@ -401,7 +416,12 @@ class ShareViewController: UIViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.isTranslucent = false
+        // Ecosia: Assign specific Tint Color
+        navigationController?.navigationBar.tintColor = theme.colors.actionPrimary
+        /* Ecosia: Update Title View with Ecosia logo
         navigationItem.titleView = UIImageView(image: UIImage(named: "Icon-Small"))
+        */
+        navigationItem.titleView = UIImageView(image: .init(named: "iconLogo", in: .ecosia, with: nil))
         navigationItem.titleView?.contentMode = .scaleAspectFit
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: .SendToCancelButton,
@@ -412,7 +432,7 @@ class ShareViewController: UIViewController {
     }
 
     private func setupStackView() {
-        let stackView = UIStackView()
+        stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 4
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -422,8 +442,7 @@ class ShareViewController: UIViewController {
             stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        self.stackView = stackView
+         ])
     }
 
     private func showProgressIndicator() {
@@ -476,14 +495,11 @@ extension ShareViewController {
             let profile = BrowserProfile(localName: "profile")
             profile.reopen()
             // Intentionally block thread with database call.
-
-            // Add new bookmark to the top of the folder
-            // Save bookmark to recent bookmark folder, otherwise save to root folder
-            let folderGuid = profile.prefs.stringForKey(PrefsKeys.RecentBookmarkFolder) ?? BookmarkRoots.MobileFolderGUID
-            profile.places.createBookmark(parentGUID: folderGuid,
-                                          url: item.url,
-                                          title: item.title,
-                                          position: 0)
+            // Add new mobile bookmark at the top of the list
+            _ = profile.places.createBookmark(parentGUID: BookmarkRoots.MobileFolderGUID,
+                                              url: item.url,
+                                              title: item.title,
+                                              position: 0).value
             profile.shutdown()
 
             addAppExtensionTelemetryEvent(forMethod: "bookmark-this-page")
@@ -535,19 +551,13 @@ extension ShareViewController {
             return "firefox://open-url?url=\(encoded)"
         }
 
-        guard let url = URL(string: firefoxUrl(url)) else { return }
+        guard let url = URL(string: firefoxUrl(url), invalidCharacters: false) else { return }
         var responder = self as UIResponder?
         let selectorOpenURL = sel_registerName("openURL:")
         while let current = responder {
-            if #available(iOS 18.0, *) {
-                if let application = responder as? UIApplication {
-                    application.open(url, options: [:], completionHandler: nil)
-                }
-            } else {
-                if current.responds(to: selectorOpenURL) {
-                    current.perform(selectorOpenURL, with: url, afterDelay: 0)
-                    break
-                }
+            if current.responds(to: selectorOpenURL) {
+                current.perform(selectorOpenURL, with: url, afterDelay: 0)
+                break
             }
 
             responder = current.next

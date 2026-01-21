@@ -4,15 +4,15 @@
 
 import Foundation
 import Redux
+import Shared
 import Common
 
-struct PasswordGeneratorState: ScreenState {
+struct PasswordGeneratorState: ScreenState, Equatable {
     var windowUUID: WindowUUID
     var password: String
-    var passwordHidden: Bool
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let passwordGeneratorState = appState.screenState(
+        guard let passwordGeneratorState = store.state.screenState(
             PasswordGeneratorState.self,
             for: .passwordGenerator,
             window: uuid
@@ -23,58 +23,34 @@ struct PasswordGeneratorState: ScreenState {
 
         self.init(
             windowUUID: passwordGeneratorState.windowUUID,
-            password: passwordGeneratorState.password,
-            passwordHidden: passwordGeneratorState.passwordHidden
+            password: passwordGeneratorState.password
         )
     }
 
     init(
         windowUUID: WindowUUID,
-        password: String = "",
-        passwordHidden: Bool = false
+        password: String = ""
     ) {
         self.windowUUID = windowUUID
         self.password = password
-        self.passwordHidden = passwordHidden
     }
 
     static let reducer: Reducer<Self> = { state, action in
-        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
-        else { return defaultState(from: state) }
+        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else { return state }
 
         switch action.actionType {
         case PasswordGeneratorActionType.updateGeneratedPassword:
-            guard let password = (action as? PasswordGeneratorAction)?.password
-            else {
-                return defaultState(from: state)
-            }
+            guard let password = (action as? PasswordGeneratorAction)?.password else {
+                return state}
             return PasswordGeneratorState(
                 windowUUID: action.windowUUID,
-                password: password,
-                passwordHidden: state.passwordHidden)
-
-        case PasswordGeneratorActionType.hidePassword:
-            return PasswordGeneratorState(
-                windowUUID: action.windowUUID,
-                password: state.password,
-                passwordHidden: true)
-
-        case PasswordGeneratorActionType.showPassword:
-            return PasswordGeneratorState(
-                windowUUID: action.windowUUID,
-                password: state.password,
-                passwordHidden: false)
+                password: password)
 
         default:
-            return defaultState(from: state)
+            return PasswordGeneratorState(
+                windowUUID: state.windowUUID,
+                password: state.password
+            )
         }
-    }
-
-    static func defaultState(from state: PasswordGeneratorState) -> PasswordGeneratorState {
-        return PasswordGeneratorState(
-            windowUUID: state.windowUUID,
-            password: state.password,
-            passwordHidden: state.passwordHidden
-        )
     }
 }

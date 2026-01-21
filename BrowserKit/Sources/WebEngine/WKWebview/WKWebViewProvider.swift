@@ -8,10 +8,8 @@ import WebKit
 
 /// Abstraction that allow us to create a `WKWebView` object through
 /// the usage of a configuration provider and an webview abstraction.
-@MainActor
 protocol WKWebViewProvider {
-    func createWebview(configurationProvider: WKEngineConfigurationProvider,
-                       parameters: WKWebViewParameters) -> WKEngineWebView?
+    func createWebview(configurationProvider: WKEngineConfigurationProvider) -> WKEngineWebView?
 }
 
 struct DefaultWKWebViewProvider: WKWebViewProvider {
@@ -21,27 +19,19 @@ struct DefaultWKWebViewProvider: WKWebViewProvider {
         self.logger = logger
     }
 
-    func createWebview(configurationProvider: WKEngineConfigurationProvider,
-                       parameters: WKWebViewParameters) -> WKEngineWebView? {
+    func createWebview(configurationProvider: WKEngineConfigurationProvider) -> WKEngineWebView? {
         guard let webView = DefaultWKEngineWebView(frame: .zero,
-                                                   configurationProvider: configurationProvider,
-                                                   parameters: parameters) else {
+                                                   configurationProvider: configurationProvider) else {
             logger.log("WKEngineWebView creation failed on configuration",
                        level: .fatal,
                        category: .webview)
             return nil
         }
 
-        // TODO: FXIOS-7898 #17643 Handle WebView a11y label and identifier
+        // TODO: FXIOS-7898 #17643 Handle WebView a11y label
         //        webView.accessibilityLabel = .WebViewAccessibilityLabel
-        //        webView.accessibilityIdentifier = "contentView"
-        webView.accessibilityElementsHidden = false
         webView.allowsBackForwardNavigationGestures = true
         webView.allowsLinkPreview = true
-
-        if #available(iOS 16.0, *) {
-            webView.isFindInteractionEnabled = true
-        }
 
         // Allow Safari Web Inspector (requires toggle in Settings > Safari > Advanced).
         if #available(iOS 16.4, *) {

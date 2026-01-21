@@ -6,7 +6,7 @@ import Foundation
 import Shared
 import Common
 
-class OpenWithSettingsViewController: ThemedTableViewController, Notifiable {
+class OpenWithSettingsViewController: ThemedTableViewController {
     struct MailtoProviderEntry {
         let name: String
         let scheme: String
@@ -16,7 +16,7 @@ class OpenWithSettingsViewController: ThemedTableViewController, Notifiable {
     var mailProviderSource = [MailtoProviderEntry]()
 
     fileprivate let prefs: Prefs
-    fileprivate var currentChoice = "mailto"
+    fileprivate var currentChoice: String = "mailto"
 
     init(prefs: Prefs, windowUUID: WindowUUID) {
         self.prefs = prefs
@@ -35,13 +35,10 @@ class OpenWithSettingsViewController: ThemedTableViewController, Notifiable {
         tableView.register(ThemedTableSectionHeaderFooterView.self,
                            forHeaderFooterViewReuseIdentifier: ThemedTableSectionHeaderFooterView.cellIdentifier)
 
-        startObservingNotifications(
-            withNotificationCenter: NotificationCenter.default,
-            forObserver: self,
-            observing: [
-                UIApplication.didBecomeActiveNotification
-            ]
-        )
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(appDidBecomeActive),
+                                               name: UIApplication.didBecomeActiveNotification,
+                                               object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -54,6 +51,7 @@ class OpenWithSettingsViewController: ThemedTableViewController, Notifiable {
         self.prefs.setString(currentChoice, forKey: PrefsKeys.KeyMailToOption)
     }
 
+    @objc
     func appDidBecomeActive() {
         reloadMailProviderSource()
         updateCurrentChoice()
@@ -96,7 +94,7 @@ class OpenWithSettingsViewController: ThemedTableViewController, Notifiable {
     }
 
     func canOpenMailScheme(_ scheme: String) -> Bool {
-        if let url = URL(string: scheme) {
+        if let url = URL(string: scheme, invalidCharacters: false) {
             return UIApplication.shared.canOpenURL(url)
         }
         return false
@@ -156,18 +154,5 @@ class OpenWithSettingsViewController: ThemedTableViewController, Notifiable {
         }
 
         return NSAttributedString(string: string, attributes: color)
-    }
-
-    // MARK: - Notifiable
-
-    public func handleNotifications(_ notification: Notification) {
-        switch notification.name {
-        case UIApplication.didBecomeActiveNotification:
-            ensureMainThread {
-                self.appDidBecomeActive
-            }
-        default:
-            return
-        }
     }
 }

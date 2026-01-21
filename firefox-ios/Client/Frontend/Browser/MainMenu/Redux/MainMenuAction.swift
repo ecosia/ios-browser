@@ -4,79 +4,69 @@
 
 import Common
 import Foundation
+import MenuKit
 import Redux
 
-struct MainMenuAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+final class MainMenuAction: Action {
     var tabID: TabUUID?
     var navigationDestination: MenuNavigationDestination?
     var currentTabInfo: MainMenuTabInfo?
+    var detailsViewToShow: MainMenuDetailsViewType?
     var accountData: AccountData?
-    var siteProtectionsData: SiteProtectionsData?
+    var accountIcon: UIImage?
     var telemetryInfo: TelemetryInfo?
-    var isExpanded: Bool?
-    var isBrowserDefault: Bool
-    var isPhoneLandscape: Bool
-    var moreCellTapped: Bool
-    var accountProfileImage: UIImage?
 
     init(
         windowUUID: WindowUUID,
         actionType: any ActionType,
         navigationDestination: MenuNavigationDestination? = nil,
+        changeMenuViewTo: MainMenuDetailsViewType? = nil,
         currentTabInfo: MainMenuTabInfo? = nil,
         tabID: TabUUID? = nil,
         accountData: AccountData? = nil,
-        siteProtectionsData: SiteProtectionsData? = nil,
-        telemetryInfo: TelemetryInfo? = nil,
-        isExpanded: Bool? = nil,
-        isBrowserDefault: Bool = false,
-        isPhoneLandscape: Bool = false,
-        moreCellTapped: Bool = false,
-        accountProfileImage: UIImage? = nil
+        accountIcon: UIImage? = nil,
+        telemetryInfo: TelemetryInfo? = nil
     ) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.navigationDestination = navigationDestination
+        self.detailsViewToShow = changeMenuViewTo
         self.currentTabInfo = currentTabInfo
         self.tabID = tabID
         self.accountData = accountData
-        self.siteProtectionsData = siteProtectionsData
+        self.accountIcon = accountIcon
         self.telemetryInfo = telemetryInfo
-        self.isExpanded = isExpanded
-        self.isBrowserDefault = isBrowserDefault
-        self.isPhoneLandscape = isPhoneLandscape
-        self.moreCellTapped = moreCellTapped
-        self.accountProfileImage = accountProfileImage
+        super.init(windowUUID: windowUUID, actionType: actionType)
     }
 }
 
 enum MainMenuActionType: ActionType {
     case tapNavigateToDestination
     case tapCloseMenu
+    case tapShowDetailsView
     case tapToggleUserAgent
     case updateCurrentTabInfo
-    case updateProfileImage
-    case tapMoreOptions
+    case didInstantiateView
     case viewDidLoad
     case menuDismissed
-    case tapAddToBookmarks
-    case tapEditBookmark
-    case tapZoom
-    case tapToggleNightMode
-    case tapAddToShortcuts
-    case tapRemoveFromShortcuts
-    case updateSiteProtectionsHeader
-    case updateMenuAppearance
-    case viewWillTransition
 }
 
 enum MainMenuMiddlewareActionType: ActionType {
     case requestTabInfo
-    case requestTabInfoForSiteProtectionsHeader
     case updateAccountHeader
-    case updateBannerVisibility
-    case updateMenuAppearance
-    case updateMenuCells
+}
+
+enum MainMenuDetailsActionType: ActionType {
+    // Tools submenu actions
+    case tapZoom
+    case tapToggleNightMode
+    case tapReportBrokenSite
+
+    // Save submenu actions
+    case tapAddToBookmarks
+    case tapAddToReadingList
+    case tapAddToShortcuts
+    case tapBackToMainMenu
+    case tapDismissView
+    case tapEditBookmark
+    case tapRemoveFromShortcuts
+    case tapRemoveFromReadingList
 }

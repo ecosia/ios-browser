@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct FaviconURL: Codable, Sendable {
+struct FaviconURL: Codable {
     let cacheKey: String
     let faviconURL: String
     var createdAt: Date

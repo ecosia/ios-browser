@@ -3,21 +3,16 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+/* Ecosia: Remove Glean
 import Glean
+ */
 import Storage
 import Common
 
 import class MozillaAppServices.BookmarkFolderData
 import enum MozillaAppServices.BookmarkRoots
 
-protocol AppStartupTelemetry {
-    /// Send the relevant telemetry after App startup.
-    @MainActor
-    func sendStartupTelemetry()
-}
-
-// TODO: FXIOS-14115 - DefaultAppStartupTelemetry @unchecked Sendable
-final class DefaultAppStartupTelemetry: AppStartupTelemetry, @unchecked Sendable {
+final class AppStartupTelemetry {
     let profile: Profile
 
     // MARK: Init
@@ -26,7 +21,6 @@ final class DefaultAppStartupTelemetry: AppStartupTelemetry, @unchecked Sendable
     }
 
     // MARK: Logic
-    @MainActor
     public func sendStartupTelemetry() {
         queryCreditCards()
         queryLogins()
@@ -37,26 +31,26 @@ final class DefaultAppStartupTelemetry: AppStartupTelemetry, @unchecked Sendable
     // MARK: Credit Cards
     func queryCreditCards() {
         _ = profile.autofill.reopenIfClosed()
-        profile.autofill.listCreditCards(completion: { [weak self] cards, error in
+        profile.autofill.listCreditCards(completion: { cards, error in
             guard let cards = cards, error == nil else { return }
-            self?.sendCreditCardsSavedAllTelemetry(numberOfSavedCreditCards: cards.count)
+            self.sendCreditCardsSavedAllTelemetry(numberOfSavedCreditCards: cards.count)
         })
     }
 
     // MARK: Logins
-    @MainActor
     func queryLogins() {
+        let searchController = UISearchController()
         let loginsViewModel = PasswordManagerViewModel(
             profile: profile,
-            searchController: nil,
+            searchController: searchController,
             theme: LightTheme(),
             loginProvider: profile.logins
         )
         let dataSource = LoginDataSource(viewModel: loginsViewModel)
         loginsViewModel.loadLogins(loginDataSource: dataSource)
 
-        loginsViewModel.queryLogins("") { [weak self] logins in
-            self?.sendLoginsSavedAllTelemetry(numberOfSavedLogins: logins.count)
+        loginsViewModel.queryLogins("") { logins in
+            self.sendLoginsSavedAllTelemetry(numberOfSavedLogins: logins.count)
         }
     }
 
@@ -71,16 +65,16 @@ final class DefaultAppStartupTelemetry: AppStartupTelemetry, @unchecked Sendable
     func queryBookmarks() {
         profile.places
             .getBookmarksTree(rootGUID: BookmarkRoots.MobileFolderGUID, recursive: false)
-            .uponQueue(.main) { [weak self] result in
+            .uponQueue(.main) { result in
                 guard let mobileFolder = result.successValue as? BookmarkFolderData else {
                     return
                 }
 
                 if let mobileBookmarks = mobileFolder.fxChildren, !mobileBookmarks.isEmpty {
-                    self?.sendDoesHaveMobileBookmarksTelemetry()
-                    self?.sendMobileBookmarksCountTelemetry(bookmarksCount: Int64(mobileBookmarks.count))
+                    self.sendDoesHaveMobileBookmarksTelemetry()
+                    self.sendMobileBookmarksCountTelemetry(bookmarksCount: Int64(mobileBookmarks.count))
                 } else {
-                    self?.sendDoesntHaveMobileBookmarksTelemetry()
+                    self.sendDoesntHaveMobileBookmarksTelemetry()
                 }
             }
     }

@@ -9,9 +9,8 @@ final class TrackingProtectionConnectionDetailsView: UIView {
     private struct UX {
         static let foxImageSize: CGFloat = 100
         static let connectionDetailsLabelsVerticalSpacing: CGFloat = 12
-        static let labelsCenteringDelta: CGFloat = 8
         static let connectionDetailsLabelBottomSpacing: CGFloat = 28
-        static let connectionDetailsStackSpacing = 8.0
+        static let connectionDetailsStackSpacing = 15.0
     }
 
     private let connectionDetailsContentView: UIView = .build { view in
@@ -24,22 +23,24 @@ final class TrackingProtectionConnectionDetailsView: UIView {
         image.clipsToBounds = true
     }
 
-    private var connectionDetailsLabelsContainer: UIView = .build { view in
-        view.backgroundColor = .clear
+    private var connectionDetailsLabelsContainer: UIStackView = .build { stack in
+        stack.backgroundColor = .clear
+        stack.distribution = .fillProportionally
+        stack.alignment = .leading
+        stack.axis = .vertical
+        stack.spacing = UX.connectionDetailsStackSpacing
     }
 
     private var connectionDetailsTitleLabel: UILabel = .build { label in
         label.font = FXFontStyles.Bold.subheadline.scaledFont()
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .left
     }
 
     private let connectionDetailsStatusLabel: UILabel = .build { label in
         label.font = FXFontStyles.Regular.subheadline.scaledFont()
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .left
     }
 
     private var viewConstraints: [NSLayoutConstraint] = []
@@ -57,8 +58,8 @@ final class TrackingProtectionConnectionDetailsView: UIView {
         self.layer.cornerRadius = TPMenuUX.UX.viewCornerRadius
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         self.layer.masksToBounds = true
-        connectionDetailsLabelsContainer.addSubview(connectionDetailsTitleLabel)
-        connectionDetailsLabelsContainer.addSubview(connectionDetailsStatusLabel)
+        connectionDetailsLabelsContainer.addArrangedSubview(connectionDetailsTitleLabel)
+        connectionDetailsLabelsContainer.addArrangedSubview(connectionDetailsStatusLabel)
         connectionDetailsContentView.addSubviews(foxStatusImage, connectionDetailsLabelsContainer)
         self.addSubview(connectionDetailsContentView)
     }
@@ -82,25 +83,6 @@ final class TrackingProtectionConnectionDetailsView: UIView {
                                                               constant: TPMenuUX.UX.connectionDetailsHeaderMargins),
             connectionDetailsContentView.bottomAnchor.constraint(equalTo: self.bottomAnchor,
                                                                  constant: -TPMenuUX.UX.connectionDetailsHeaderMargins / 2),
-
-            // Labels
-            connectionDetailsTitleLabel.leadingAnchor.constraint(equalTo: connectionDetailsLabelsContainer.leadingAnchor),
-            connectionDetailsTitleLabel.trailingAnchor.constraint(equalTo: connectionDetailsLabelsContainer.trailingAnchor),
-            connectionDetailsTitleLabel.bottomAnchor.constraint(
-                equalTo: connectionDetailsLabelsContainer.centerYAnchor,
-                constant: (-UX.connectionDetailsLabelsVerticalSpacing / 2 - UX.labelsCenteringDelta)
-            ),
-
-            connectionDetailsStatusLabel.leadingAnchor.constraint(equalTo: connectionDetailsLabelsContainer.leadingAnchor),
-            connectionDetailsStatusLabel.trailingAnchor.constraint(equalTo: connectionDetailsLabelsContainer.trailingAnchor),
-            connectionDetailsStatusLabel.topAnchor.constraint(
-                equalTo: connectionDetailsLabelsContainer.centerYAnchor,
-                constant: (UX.connectionDetailsLabelsVerticalSpacing / 2 - UX.labelsCenteringDelta)
-            ),
-            connectionDetailsStatusLabel.bottomAnchor.constraint(
-                lessThanOrEqualTo: connectionDetailsLabelsContainer.bottomAnchor
-            ),
-
             // Image
             foxStatusImage.leadingAnchor.constraint(
                 equalTo: connectionDetailsContentView.leadingAnchor,
@@ -148,9 +130,5 @@ final class TrackingProtectionConnectionDetailsView: UIView {
 
     func setupAccessibilityIdentifiers(foxImageA11yId: String) {
         foxStatusImage.accessibilityIdentifier = foxImageA11yId
-    }
-
-    func applyTheme(theme: Theme) {
-        backgroundColor = theme.colors.layerAccentPrivateNonOpaque
     }
 }

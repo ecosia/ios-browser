@@ -5,43 +5,30 @@
 import Foundation
 import Redux
 @testable import Client
-import XCTest
 
-@MainActor
 protocol StoreTestUtility {
     func setupAppState() -> AppState
-    func setupStore()
-    func resetStore()
+    func setupTestingStore()
+    func resetTestingStore()
 }
 
 /// Utility class used when replacing the global store for testing purposes
 class StoreTestUtilityHelper {
-    @MainActor
-    static func setupStore(with appState: AppState, middlewares: [Middleware<AppState>]) {
-#if TESTING
+    func setupTestingStore(with appState: AppState, middlewares: [Middleware<AppState>]) {
         store = Store(
             state: appState,
             reducer: AppState.reducer,
             middlewares: middlewares
         )
-#endif
-    }
-    @MainActor
-    static func setupStore(with mockStore: any DefaultDispatchStore<AppState>) {
-#if TESTING
-        store = mockStore
-#endif
     }
 
-    /// In order to avoid flaky tests, we should reset the store similar to production
-    @MainActor
-    static func resetStore() {
-#if TESTING
+    /// In order to avoid flaky tests, we should reset the store
+    /// similar to production
+    func resetTestingStore() {
         store = Store(
             state: AppState(),
             reducer: AppState.reducer,
-            middlewares: []
+            middlewares: middlewares
         )
-#endif
     }
 }

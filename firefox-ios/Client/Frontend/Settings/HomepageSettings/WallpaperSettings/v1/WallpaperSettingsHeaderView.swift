@@ -5,6 +5,7 @@
 import Common
 import ComponentLibrary
 import Foundation
+import Shared
 
 struct WallpaperSettingsHeaderViewModel {
     var theme: Theme

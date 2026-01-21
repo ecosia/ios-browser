@@ -3,17 +3,16 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import OnboardingKit
 
 class OnboardingMultipleChoiceButtonViewModel {
     var presentingCardName: String
     var isSelected: Bool
-    let info: OnboardingMultipleChoiceButtonModel<OnboardingMultipleChoiceAction>
+    let info: OnboardingMultipleChoiceButtonModel
     let a11yIDRoot: String
 
     init(
         isSelected: Bool,
-        info: OnboardingMultipleChoiceButtonModel<OnboardingMultipleChoiceAction>,
+        info: OnboardingMultipleChoiceButtonModel,
         presentingCardName: String,
         a11yIDRoot: String
     ) {

@@ -27,22 +27,28 @@ public protocol ThemeColourPalette {
     var layerSuccess: UIColor { get }
     var layerWarning: UIColor { get }
     var layerCritical: UIColor { get }
-    var layerCriticalSubdued: UIColor { get }
     var layerSelectedText: UIColor { get }
     var layerAutofillText: UIColor { get }
-    var layerEmphasis: UIColor { get }
+    var layerSearch: UIColor { get }
     var layerGradientURL: Gradient { get }
-    var layerSurfaceLow: UIColor { get }
-    var layerSurfaceMedium: UIColor { get }
-    var layerSurfaceMediumAlt: UIColor { get }
-    var layerGradientSummary: Gradient { get }
+
+    // MARK: - Ratings
+    var layerRatingA: UIColor { get }
+    var layerRatingASubdued: UIColor { get }
+    var layerRatingB: UIColor { get }
+    var layerRatingBSubdued: UIColor { get }
+    var layerRatingC: UIColor { get }
+    var layerRatingCSubdued: UIColor { get }
+    var layerRatingD: UIColor { get }
+    var layerRatingDSubdued: UIColor { get }
+    var layerRatingF: UIColor { get }
+    var layerRatingFSubdued: UIColor { get }
 
     // MARK: - Actions
     var actionPrimary: UIColor { get }
     var actionPrimaryHover: UIColor { get }
     var actionPrimaryDisabled: UIColor { get }
     var actionSecondary: UIColor { get }
-    var actionSecondaryDisabled: UIColor { get }
     var actionSecondaryHover: UIColor { get }
     var formSurfaceOff: UIColor { get }
     var formKnob: UIColor { get }
@@ -54,7 +60,6 @@ public protocol ThemeColourPalette {
     var actionInformation: UIColor { get }
     var actionTabActive: UIColor { get }
     var actionTabInactive: UIColor { get }
-    var actionCloseButton: UIColor { get }
 
     // MARK: - Text
     var textPrimary: UIColor { get }
@@ -91,14 +96,5 @@ public protocol ThemeColourPalette {
     var borderToolbarDivider: UIColor { get }
 
     // MARK: - Shadow
-    var shadowSubtle: UIColor { get }
     var shadowDefault: UIColor { get }
-    var shadowStrong: UIColor { get }
-    var shadowBorder: UIColor { get }
-
-    // MARK: - Gradient
-    var gradientOnboardingStop1: UIColor { get }
-    var gradientOnboardingStop2: UIColor { get }
-    var gradientOnboardingStop3: UIColor { get }
-    var gradientOnboardingStop4: UIColor { get }
 }

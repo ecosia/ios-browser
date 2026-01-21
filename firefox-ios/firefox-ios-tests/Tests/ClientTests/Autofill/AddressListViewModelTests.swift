@@ -4,12 +4,12 @@
 
 import Combine
 import MozillaAppServices
+import Storage
 import XCTest
 import Common
 
 @testable import Client
 
-@MainActor
 final class AddressListViewModelTests: XCTestCase {
     var viewModel: AddressListViewModel!
     var mockProfile: MockProfile!
@@ -72,8 +72,8 @@ final class AddressListViewModelTests: XCTestCase {
         )
     ]
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         mockProfile = MockProfile()
         mockLogger = MockLogger()
         mockAutofill = MockAutofill()
@@ -87,11 +87,11 @@ final class AddressListViewModelTests: XCTestCase {
         )
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         viewModel = nil
         mockProfile = nil
         mockLogger = nil
-        try await super.tearDown()
+        super.tearDown()
     }
 
     func testFetchAddressesSuccess() {
@@ -105,6 +105,8 @@ final class AddressListViewModelTests: XCTestCase {
 
         viewModel
             .$addresses
+        // Drop first to ignore the initial value
+            .dropFirst()
             .sink { value in
                 XCTAssertEqual(value, addresses)
                 addressesExpectation.fulfill()
@@ -113,6 +115,7 @@ final class AddressListViewModelTests: XCTestCase {
 
         viewModel
             .$showSection
+            .dropFirst()
             .sink { value in
                 XCTAssertTrue(value)
                 showSectionExpectation.fulfill()
@@ -154,14 +157,7 @@ final class AddressListViewModelTests: XCTestCase {
     func testTapAddShowsAddAddressScreenThenTapCancelDismissScreen() {
         let showSectionAddExpectation = XCTestExpectation(description: "Show add section")
         let dismissSectionAddExpectation = XCTestExpectation(description: "Dismiss add section")
-        let viewModel = AddressListViewModel(
-            logger: mockLogger,
-            windowUUID: WindowUUID(),
-            addressProvider: mockAutofill,
-            themeManager: mockThemeManager,
-            profile: mockProfile,
-            localeProvider: MockLocaleProvider(regionCode: "RO")
-        )
+        viewModel.currentRegionCode = { "RO" }
         viewModel.addAddressButtonTap()
 
         let cancellable = viewModel
@@ -201,7 +197,7 @@ final class AddressListViewModelTests: XCTestCase {
             .store(in: &cancellables)
     }
 
-    func testTapSaveAddressScreenDismissScreenAndCallsAddressFetching() {
+    func testTapSaveAddressScreenDismissScreenAndCallesAddressFetching() {
         let address = dummyAddresses[0]
         mockAutofill.mockSaveAddressResult = .success(address)
         viewModel.saveAction = { completion in
@@ -218,7 +214,7 @@ final class AddressListViewModelTests: XCTestCase {
                 email: "john.doe@example.com"
             ))
         }
-        let dismissSectionAddExpectation = XCTestExpectation(description: "Dismiss add section")
+        let dismissSectionAddExpectation = XCTestExpectation(description: "Dimiss add section")
         let newAddressesSectionExpectation = XCTestExpectation(description: "New address loaded")
 
         viewModel.addAddressButtonTap()
@@ -243,7 +239,7 @@ final class AddressListViewModelTests: XCTestCase {
             .store(in: &cancellables)
     }
 
-    func testTappingOnAddressAndTapCancelDismissesEditScreen() {
+    func testTappingOnAddressAndTapCancelDissmissesEditScreen() {
         let address = dummyAddresses[0]
 
         viewModel.addressTapped(address)
@@ -268,33 +264,28 @@ final class AddressListViewModelTests: XCTestCase {
         viewModel.editButtonTap()
         XCTAssertTrue(viewModel.isEditMode)
 
-        viewModel.removeConfirmationButtonTap()
+        viewModel.removeConfimationButtonTap()
         XCTAssertTrue(mockAutofill.deleteAddressesCalled)
     }
 }
 
-final class MockAutofill: AddressProvider, SyncAutofillProvider, @unchecked Sendable {
+final class MockAutofill: AddressProvider {
     var mockListAllAddressesResult: Result<[Address], Error>?
     var mockSaveAddressResult: Result<Address, Error>?
     var mockEditAddressResult: Result<Void, Error>?
     var listAllAddressesCalled = false
     var deleteAddressesCalled = false
-    var getStoredKeyCalledCount = 0
-    var registerWithSyncManagerCalled = 0
-    var reportPreSyncKeyRetrievalFailureCalled = 0
-    var verifyCreditCardsCalled = 0
-    var creditCardsVerified = true
 
     func deleteAddress(
         id: String,
-        completion: @escaping @Sendable (Result<Void, any Error>) -> Void
+        completion: @escaping (Result<Void, any Error>) -> Void
     ) {
         deleteAddressesCalled = true
     }
 
     func addAddress(
         address: UpdatableAddressFields,
-        completion: @escaping @Sendable (Result<Address, Error>) -> Void
+        completion: @escaping (Result<Address, Error>) -> Void
     ) {
         if let result = mockSaveAddressResult {
             completion(result)
@@ -304,14 +295,14 @@ final class MockAutofill: AddressProvider, SyncAutofillProvider, @unchecked Send
     func updateAddress(
         id: String,
         address: MozillaAppServices.UpdatableAddressFields,
-        completion: @escaping @Sendable (Result<Void, any Error>) -> Void
+        completion: @escaping (Result<Void, any Error>) -> Void
     ) {
         if let result = mockEditAddressResult {
             completion(result)
         }
     }
 
-    func listAllAddresses(completion: @escaping @Sendable ([Address]?, Error?) -> Void) {
+    func listAllAddresses(completion: @escaping ([Address]?, Error?) -> Void) {
         listAllAddressesCalled = true
         if let result = mockListAllAddressesResult {
             switch result {
@@ -321,23 +312,5 @@ final class MockAutofill: AddressProvider, SyncAutofillProvider, @unchecked Send
                 completion(nil, error)
             }
         }
-    }
-
-    func getStoredKey(completion: @Sendable @escaping (Result<String, NSError>) -> Void) {
-        getStoredKeyCalledCount += 1
-        return completion(.success("test autofill encryption key"))
-    }
-
-    func registerWithSyncManager() {
-        registerWithSyncManagerCalled += 1
-    }
-
-    func reportPreSyncKeyRetrievalFailure(err: String) {
-        reportPreSyncKeyRetrievalFailureCalled += 1
-    }
-
-    func verifyCreditCards(key: String, completionHandler: @escaping @Sendable (Bool) -> Void) {
-        verifyCreditCardsCalled += 1
-        completionHandler(creditCardsVerified)
     }
 }

@@ -8,18 +8,16 @@ import Shared
 
 protocol NotificationSurfaceDelegate: AnyObject {
     func didDisplayMessage(_ message: GleanPlumbMessage)
-    @MainActor
-    func didTapNotification(_ messageId: String)
-    func didDismissNotification(_ messageId: String)
+    func didTapNotification(_ userInfo: [AnyHashable: Any])
+    func didDismissNotification(_ userInfo: [AnyHashable: Any])
 }
 
-// TODO: FXIOS-FXIOS-13583 - NotificationSurfaceManager should be concurrency safe
-class NotificationSurfaceManager: NotificationSurfaceDelegate, @unchecked Sendable {
+class NotificationSurfaceManager: NotificationSurfaceDelegate {
     struct Constant {
-        static let notificationBaseId = "org.mozilla.ios.notification"
-        static let notificationCategoryId = "org.mozilla.ios.notification.category"
+        static let notificationBaseId: String = "org.mozilla.ios.notification"
+        static let notificationCategoryId: String = "org.mozilla.ios.notification.category"
         static let messageDelay: CGFloat = 3 // seconds
-        static let messageIdKey = "messageId"
+        static let messageIdKey: String = "messageId"
     }
 
     // MARK: - Properties
@@ -51,17 +49,18 @@ class NotificationSurfaceManager: NotificationSurfaceDelegate, @unchecked Sendab
     // MARK: - Functionality
     /// Checks whether a message exists, and is not expired, and schedules
     /// a notification to be presented.
-    func showNotificationSurface() async {
+    func showNotificationSurface() {
         guard let message = message, !message.isExpired else { return }
 
         let notificationId = Constant.notificationBaseId + ".\(message.id)"
 
         // Check if message is already getting displayed
-        let notification = await notificationManager.findDeliveredNotificationForId(id: notificationId)
-        // Don't schedule the notification again if it was already delivered
-        guard notification == nil else { return }
+        notificationManager.findDeliveredNotificationForId(id: notificationId) { [weak self] notification in
+            // Don't schedule the notification again if it was already delivered
+            guard notification == nil else { return }
 
-        scheduleNotification(message: message, notificationId: notificationId)
+            self?.scheduleNotification(message: message, notificationId: notificationId)
+        }
     }
 
     // MARK: NotificationSurfaceDelegate
@@ -69,15 +68,17 @@ class NotificationSurfaceManager: NotificationSurfaceDelegate, @unchecked Sendab
         messagingManager.onMessageDisplayed(message)
     }
 
-    func didTapNotification(_ messageId: String) {
-        guard let message = messagingManager.messageForId(messageId)
+    func didTapNotification(_ userInfo: [AnyHashable: Any]) {
+        guard let messageId = userInfo[Constant.messageIdKey] as? String,
+              let message = messagingManager.messageForId(messageId)
         else { return }
 
         messagingManager.onMessagePressed(message, window: nil, shouldExpire: true)
     }
 
-    func didDismissNotification(_ messageId: String) {
-        guard let message = messagingManager.messageForId(messageId)
+    func didDismissNotification(_ userInfo: [AnyHashable: Any]) {
+        guard let messageId = userInfo[Constant.messageIdKey] as? String,
+              let message = messagingManager.messageForId(messageId)
         else { return }
 
         messagingManager.onMessageDismissed(message)
@@ -96,8 +97,6 @@ class NotificationSurfaceManager: NotificationSurfaceDelegate, @unchecked Sendab
                                      interval: TimeInterval(Constant.messageDelay),
                                      repeats: false)
 
-        // TODO: FXIOS-13583 - Capture of 'message' with non-Sendable type 'GleanPlumbMessage' in a '@Sendable' closure
-        nonisolated(unsafe) let message = message
         // Schedule notification telemetry for when notification gets displayed
         DispatchQueue.global().asyncAfter(deadline: .now() + Constant.messageDelay) { [weak self] in
             self?.didDisplayMessage(message)

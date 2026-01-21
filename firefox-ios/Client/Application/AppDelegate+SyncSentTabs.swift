@@ -3,7 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Shared
+import Storage
+import Sync
 import UserNotifications
+import Account
 import Common
 
 extension UIApplication {
@@ -17,31 +20,37 @@ extension UIApplication {
 /// Sync will get the list of sent tabs, and try to display any in that list.
 /// Thus, push notifications are not needed to receive sent or closed tabs;
 /// they can be handled when the app performs a sync.
-final class AppFxACommandsDelegate: FxACommandsDelegate, Sendable {
+class AppFxACommandsDelegate: FxACommandsDelegate {
     private let app: ApplicationStateProvider
-    private let applicationHelper: ApplicationHelper
+    private let logger: Logger
+    private var applicationHelper: ApplicationHelper
+    private var mainQueue: DispatchQueueInterface
 
     init(app: ApplicationStateProvider,
-         applicationHelper: ApplicationHelper = DefaultApplicationHelper()) {
+         logger: Logger = DefaultLogger.shared,
+         applicationHelper: ApplicationHelper = DefaultApplicationHelper(),
+         mainQueue: DispatchQueueInterface = DispatchQueue.main) {
         self.app = app
+        self.logger = logger
         self.applicationHelper = applicationHelper
+        self.mainQueue = mainQueue
     }
 
-    @MainActor
     func openSendTabs(for urls: [URL]) {
-        guard app.applicationState == .active else { return }
+        mainQueue.async {
+            guard self.app.applicationState == .active else { return }
 
-        for urlToOpen in urls {
-            let urlString = URL.mozInternalScheme + "://open-url?url=\(urlToOpen)"
-            guard let url = URL(string: urlString) else { continue }
-
-            applicationHelper.open(url)
+            for urlToOpen in urls {
+                let urlString = URL.mozInternalScheme + "://open-url?url=\(urlToOpen)"
+                guard let url = URL(string: urlString) else { continue }
+                self.applicationHelper.open(url)
+            }
         }
     }
 
     func closeTabs(for urls: [URL]) {
         Task {
-            await applicationHelper.closeTabs(urls)
+            await self.applicationHelper.closeTabs(urls)
         }
     }
 }

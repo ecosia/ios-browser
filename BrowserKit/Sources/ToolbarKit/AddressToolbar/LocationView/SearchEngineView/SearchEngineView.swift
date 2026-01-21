@@ -6,12 +6,7 @@ import UIKit
 import Common
 
 /// Protocol for a view which displays the current search engine inside the toolbar.
-@MainActor
 protocol SearchEngineView: UIView {
-    func configure(
-        _ config: LocationViewConfiguration,
-        isLocationTextCentered: Bool,
-        delegate: LocationViewDelegate
-    )
+    func configure(_ state: LocationViewState, delegate: LocationViewDelegate)
     func applyTheme(theme: Theme)
 }

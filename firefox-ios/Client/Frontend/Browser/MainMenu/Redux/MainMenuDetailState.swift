@@ -4,16 +4,17 @@
 
 import Common
 import MenuKit
+import Shared
 import Redux
 
-struct MainMenuDetailsState: ScreenState, Equatable, Sendable {
-    let windowUUID: WindowUUID
-    let menuElements: [MenuSection]
-    let shouldDismiss: Bool
-    let shouldGoBackToMainMenu: Bool
-    let navigationDestination: MenuNavigationDestination?
-    let submenuType: MainMenuDetailsViewType?
-    let isHomepage: Bool?
+struct MainMenuDetailsState: ScreenState, Equatable {
+    var windowUUID: WindowUUID
+    var menuElements: [MenuSection]
+    var shouldDismiss: Bool
+    var shouldGoBackToMainMenu: Bool
+    var navigationDestination: MenuNavigationDestination?
+    var submenuType: MainMenuDetailsViewType?
+    var isHomepage: Bool?
 
     var title: String {
         typealias Titles = String.MainMenu.ToolsSection
@@ -74,16 +75,51 @@ struct MainMenuDetailsState: ScreenState, Equatable, Sendable {
     }
 
     static let reducer: Reducer<Self> = { state, action in
-        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
-        else {
-            return defaultState(from: state)
+        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else {
+            return MainMenuDetailsState(
+                windowUUID: state.windowUUID,
+                menuElements: state.menuElements,
+                submenuType: state.submenuType,
+                isHomepage: state.isHomepage
+            )
         }
 
         switch action.actionType {
         case ScreenActionType.showScreen:
-            return handleShowScreenAction(action: action, state: state)
+            guard let screenAction = action as? ScreenAction,
+                  screenAction.screen == .mainMenuDetails,
+                  let menuState = store.state.screenState(
+                    MainMenuState.self,
+                    for: .mainMenu,
+                    window: action.windowUUID),
+                  let currentTabInfo = menuState.currentTabInfo,
+                  let currentSubmenu = menuState.currentSubmenuView
+                  // let toolbarState = store.state.screenState(
+                  //   ToolbarState.self,
+                  //   for: .toolbar,
+                  //   window: action.windowUUID),
+                  // let readerModeState = toolbarState.addressToolbar.readerModeState
+            else { return state }
+
+            return MainMenuDetailsState(
+                windowUUID: state.windowUUID,
+                menuElements: state.menuConfigurator.generateMenuElements(
+                    with: currentTabInfo,
+                    for: currentSubmenu,
+                    and: action.windowUUID,
+                    readerState: nil
+                ),
+                submenuType: currentSubmenu,
+                isHomepage: state.isHomepage
+            )
         case MainMenuDetailsActionType.tapBackToMainMenu:
-            return handleTapBackToMainMenuAction(state: state)
+            return MainMenuDetailsState(
+                windowUUID: state.windowUUID,
+                menuElements: state.menuElements,
+                submenuType: state.submenuType,
+                isHomepage: state.isHomepage,
+                shouldGoBackToMenu: true
+            )
         case MainMenuDetailsActionType.tapDismissView,
             MainMenuDetailsActionType.tapAddToBookmarks,
             MainMenuDetailsActionType.tapAddToShortcuts,
@@ -92,91 +128,36 @@ struct MainMenuDetailsState: ScreenState, Equatable, Sendable {
             MainMenuDetailsActionType.tapRemoveFromReadingList,
             MainMenuDetailsActionType.tapToggleNightMode,
             GeneralBrowserActionType.showReaderMode:
-            return handleDismissableAction(state: state)
+            return MainMenuDetailsState(
+                windowUUID: state.windowUUID,
+                menuElements: state.menuElements,
+                submenuType: state.submenuType,
+                isHomepage: state.isHomepage,
+                shouldDismiss: true
+            )
         case MainMenuDetailsActionType.tapEditBookmark:
-            return handleTapEditBookmarkAction(state: state)
+            return MainMenuDetailsState(
+                windowUUID: state.windowUUID,
+                menuElements: state.menuElements,
+                submenuType: state.submenuType,
+                isHomepage: state.isHomepage,
+                navigationDestination: MenuNavigationDestination(.editBookmark)
+            )
         case MainMenuDetailsActionType.tapZoom:
-            return handleTapZoomAction(state: state)
+            return MainMenuDetailsState(
+                windowUUID: state.windowUUID,
+                menuElements: state.menuElements,
+                submenuType: state.submenuType,
+                isHomepage: state.isHomepage,
+                navigationDestination: MenuNavigationDestination(.zoom)
+            )
         default:
-            return defaultState(from: state)
+            return MainMenuDetailsState(
+                windowUUID: state.windowUUID,
+                menuElements: state.menuElements,
+                submenuType: state.submenuType,
+                isHomepage: state.isHomepage
+            )
         }
-    }
-
-    private static func handleShowScreenAction(action: Action, state: Self) -> MainMenuDetailsState {
-        guard let screenAction = action as? ScreenAction,
-              screenAction.screen == .mainMenuDetails,
-              let menuState = store.state.screenState(
-                MainMenuState.self,
-                for: .mainMenu,
-                window: action.windowUUID),
-              let currentTabInfo = menuState.currentTabInfo,
-              let currentSubmenu = menuState.currentSubmenuView
-              // let toolbarState = store.state.screenState(
-              //   ToolbarState.self,
-              //   for: .toolbar,
-              //   window: action.windowUUID),
-              // let readerModeState = toolbarState.addressToolbar.readerModeState
-        else { return defaultState(from: state) }
-
-        return MainMenuDetailsState(
-            windowUUID: state.windowUUID,
-            menuElements: state.menuConfigurator.generateMenuElements(
-                with: currentTabInfo,
-                for: currentSubmenu,
-                and: action.windowUUID,
-                readerState: nil
-            ),
-            submenuType: currentSubmenu,
-            isHomepage: state.isHomepage
-        )
-    }
-
-    private static func handleTapBackToMainMenuAction(state: Self) -> MainMenuDetailsState {
-        return MainMenuDetailsState(
-            windowUUID: state.windowUUID,
-            menuElements: state.menuElements,
-            submenuType: state.submenuType,
-            isHomepage: state.isHomepage,
-            shouldGoBackToMenu: true
-        )
-    }
-
-    private static func handleDismissableAction(state: Self) -> MainMenuDetailsState {
-        return MainMenuDetailsState(
-            windowUUID: state.windowUUID,
-            menuElements: state.menuElements,
-            submenuType: state.submenuType,
-            isHomepage: state.isHomepage,
-            shouldDismiss: true
-        )
-    }
-
-    private static func handleTapEditBookmarkAction(state: Self) -> MainMenuDetailsState {
-        return MainMenuDetailsState(
-            windowUUID: state.windowUUID,
-            menuElements: state.menuElements,
-            submenuType: state.submenuType,
-            isHomepage: state.isHomepage,
-            navigationDestination: MenuNavigationDestination(.editBookmark)
-        )
-    }
-
-    private static func handleTapZoomAction(state: Self) -> MainMenuDetailsState {
-        return MainMenuDetailsState(
-            windowUUID: state.windowUUID,
-            menuElements: state.menuElements,
-            submenuType: state.submenuType,
-            isHomepage: state.isHomepage,
-            navigationDestination: MenuNavigationDestination(.zoom)
-        )
-    }
-
-    static func defaultState(from state: MainMenuDetailsState) -> MainMenuDetailsState {
-        return MainMenuDetailsState(
-            windowUUID: state.windowUUID,
-            menuElements: state.menuElements,
-            submenuType: state.submenuType,
-            isHomepage: state.isHomepage
-        )
     }
 }

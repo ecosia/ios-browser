@@ -4,8 +4,6 @@
 
 import MappaMundi
 import XCTest
-import Shared
-import Common
 
 let testPageBase = "http://www.example.com"
 let loremIpsumURL = "\(testPageBase)"
@@ -23,8 +21,8 @@ class L10nBaseSnapshotTests: XCTestCase {
                 LaunchArguments.DisableAnimations]
 
     @MainActor
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
         setupSnapshot(app)
@@ -48,7 +46,7 @@ class L10nBaseSnapshotTests: XCTestCase {
     func waitForExistence(
         _ element: XCUIElement,
         timeout: TimeInterval = 5.0,
-        file: String = #filePath,
+        file: String = #file,
         line: UInt = #line
     ) {
             waitFor(element, with: "exists == true", timeout: timeout, file: file, line: line)
@@ -97,7 +95,7 @@ class L10nBaseSnapshotTests: XCTestCase {
     func waitForNoExistence(
         _ element: XCUIElement,
         timeoutValue: TimeInterval = 5.0,
-        file: String = #filePath,
+        file: String = #file,
         line: UInt = #line
     ) {
         waitFor(element, with: "exists != true", timeout: timeoutValue, file: file, line: line)
@@ -141,26 +139,5 @@ extension XCUIElement {
     func waitAndTap(timeout: TimeInterval? = TIMEOUT) {
         L10nBaseSnapshotTests().mozWaitForElementToExist(self, timeout: timeout)
         self.tap()
-    }
-
-    /// Waits for the UI element and then taps and types the provided text if it exists.
-    func tapAndTypeText(_ text: String, timeout: TimeInterval? = TIMEOUT) {
-        L10nBaseSnapshotTests().mozWaitForElementToExist(self, timeout: timeout)
-        self.tap()
-        self.typeText(text)
-    }
-
-    func pressWithRetry(duration: TimeInterval, timeout: TimeInterval = TIMEOUT, element: XCUIElement) {
-        L10nBaseSnapshotTests().mozWaitForElementToExist(self, timeout: timeout)
-        self.press(forDuration: duration)
-        var attempts = 5
-        while !element.exists && attempts > 0 {
-            self.press(forDuration: duration)
-            attempts -= 1
-        }
-
-        if !element.exists {
-            XCTFail("\(element) is not visible after \(attempts) attempts")
-        }
     }
 }

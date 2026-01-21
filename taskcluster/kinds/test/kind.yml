@@ -23,7 +23,7 @@ tasks:
             tier: 1
         run:
             using: run-task
-            use-caches: [checkout, pip]
+            use-caches: true
             cwd: '{checkout}'
             command: >-
                 pip3 install --break-system-packages -r taskcluster/requirements.txt &&

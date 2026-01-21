@@ -31,7 +31,7 @@
 /* Title label for when there are no credit cards shown in credit card list in autofill settings screen. %@ is the product name and should not be altered. */
 "CreditCard.Settings.EmptyListTitle.v122" = "Αποθήκευση καρτών στο %@";
 
-/* Accessibility label for a credit card list item in autofill settings screen. %1$@ is the credit card issuer (e.g. Visa), %2$@ is the name of the credit card holder, %3$@ is the last 4 digits of the credit card, %4$@ is the card's expiration date. */
+/* Accessibility label for a credit card list item in autofill settings screen. The first parameter is the credit card issuer (e.g. Visa). The second parameter is the name of the credit card holder. The third parameter is the last 4 digits of the credit card. The fourth parameter is the card's expiration date. */
 "CreditCard.Settings.ListItemA11y.v118" = "%1$@, όνομα κατόχου: %2$@, κατάληξη: %3$@, λήξη: %4$@";
 
 /* When a user is in the process or has finished making a purchase with a card not saved in Firefox's list of stored cards, we ask the user if they would like to save this card for future purchases. This string indicates to users that they can deny Firefox from remembering the card that is being used. */
@@ -59,88 +59,16 @@
 "CreditCards.Settings.UseSavedCardFromKeyboard.v112" = "Χρήση αποθηκευμένης κάρτας";
 
 /* Settings section title for the old Firefox account */
-"FxA.FirefoxAccount.v119" = "Λογαριασμος";
+"FxA.FirefoxAccount.v119" = "Λογαριασμός";
+
+/* Label used as an item in Settings screen. When touched, it will take user to address autofill settings page to that will allow user to add or modify saved addresses to allow for autofill in a webpage. */
+"Settings.AddressAutofill.Title.v124" = "Διευθύνσεις αυτόματης συμπλήρωσης";
 
 /* Label used as an item in Settings screen. When touched, it will take user to address autofill settings page to that will allow user to add or modify saved addresses to allow for autofill in a webpage. */
 "Settings.AddressAutofill.Title.v126" = "Διευθύνσεις";
 
-/* Section description in Appearance settings for middle button configuration of the bottom toolbar. */
-"Settings.Appearance.NavigationToolbar.Description.v145" = "Αλλάζει το κουμπί στο κέντρο της γραμμής εργαλείων.";
-
-/* Section header title in Appearance settings that configures the middle button of the bottom toolbar. */
-"Settings.Appearance.NavigationToolbar.SectionHeader.v145" = "Κουμπί γραμμής εργαλείων";
-
-/* Default section header title under page zoom settings. Indicates the default value for all websites */
-"Settings.Appearance.Zoom.Default.Title.v140" = "Προεπιλογή";
-
-/* Button to reset specific zoom site levels back to default */
-"Settings.Appearance.Zoom.Reset.Button.v140" = "Επαναφορά ρυθμίσεων ιστοτόπων";
-
-/* Page zoom section header title in Appearance settings */
-"Settings.Appearance.Zoom.SectionHeader.v140" = "Ρυθμίσεις ζουμ";
-
-/* Specific site settings section footer title under page zoom settings. Explain how to add elements to the list */
-"Settings.Appearance.Zoom.SpecificSiteZoom.Footer.v140" = "Για προσθήκη σε αυτήν τη λίστα, επισκεφθείτε έναν ιστότοπο και προσαρμόστε το ζουμ από το μενού";
-
-/* Specific site settings section header title under page zoom settings. List all websites with custom zoom level */
-"Settings.Appearance.Zoom.SpecificSiteZoom.Title.v140" = "Ρυθμίσεις συγκεκριμένου ιστοτόπου";
-
-/* Page zoom settings title in Appearance settings */
-"Settings.Appearance.Zoom.Title.v140" = "Ζουμ σελίδας";
-
-/* Zoom level title under page zoom settings to select the default zoom level for all websites */
-"Settings.Appearance.Zoom.ZoomLevelTitle.v140" = "Επίπεδο ζουμ";
-
-/* In the settings menu, in the General section, this is the title for Autofills & Passwords customization section. */
-"Settings.AutofillAndPassword.Title.v137" = "Αυτόματη συμπλήρωση και συνθηματικά";
-
 /* Label used as an item in Settings screen. When touched, it will take user to credit card settings page to that will allows to add or modify saved credit cards to allow for autofill in a webpage. */
 "Settings.AutofillCreditCard.Title.v122" = "Μέθοδοι πληρωμής";
-
-/* In the settings menu, in the Autoplay customization section, this label indicates that selecting this will allow audio and video content to autoplay. */
-"Settings.Autoplay.AllowAudioAndVideo.v137" = "Αποδοχή ήχου και βίντεο";
-
-/* In the settings menu, in the Autoplay customization section, this label indicates that selecting this will block audio from autoplaying. */
-"Settings.Autoplay.BlockAudio.v137" = "Φραγή ήχου";
-
-/* In the settings menu, in the Autoplay customization section, this label indicates that selecting this will block audio and video content from autoplaying. */
-"Settings.Autoplay.BlockAudioAndVideo.v137" = "Φραγή ήχου και βίντεο";
-
-/* In the settings menu, in the Autoplay customization section, this label indicates that selecting this will block audio and video content from autoplaying. */
-"Settings.Autoplay.Footer.v137" = "Οι ρυθμίσεις αυτόματης αναπαραγωγής θα ισχύουν μόνο για τις νέες καρτέλες. Οι αλλαγές δεν μπορούν να εφαρμοστούν στις υπάρχουσες καρτέλες μέχρι να επανεκκινηθεί η εφαρμογή.";
-
-/* In the settings menu, this label indicates that there is an option of customizing the Autoplay behaviour. */
-"Settings.Autoplay.SettingsTitle.v137" = "Αυτόματη αναπαραγωγή";
-
-/* This is the title for Links customization under the Browsing settings section. */
-"Settings.Browsing.Links.v137" = "Συνδεσμοι";
-
-/* This is the title for Media customization under the Browsing settings section. */
-"Settings.Browsing.Media.v137" = "Πολυμεσα";
-
-/* This is the title for Tabs customization under the Browsing settings section. */
-"Settings.Browsing.Tabs.v137" = "Καρτέλες";
-
-/* In the settings menu, in the General section, this is the title for Browsing customization section. */
-"Settings.Browsing.Title.v137" = "Περιήγηση";
-
-/* Title for a link that explains how Mozilla send crash reports. */
-"Settings.CrashReports.Link.v136" = "Μάθετε περισσότερα";
-
-/* On the Settings screen, this is the subtitle text for a toggle which controls automatically sending crash reports. */
-"Settings.CrashReports.Message.v136" = "Αυτό μας επιτρέπει να διαγνώσουμε και να διορθώσουμε προβλήματα με την εφαρμογή περιήγησης.";
-
-/* On the Settings screen, this is the title text for a toggle which controls automatically sending crash reports. */
-"Settings.CrashReports.Title.v135" = "Αυτόματη αποστολή αναφορών κατάρρευσης";
-
-/* Title for a link that explains how Mozilla send daily usage ping. */
-"Settings.DailyUsagePing.Link.v136" = "Μάθετε περισσότερα";
-
-/* On the Settings screen, this is the subtitle text for a toggle which controls sending daily usage ping. %@ is the company name (e.g. Mozilla). */
-"Settings.DailyUsagePing.Message.v135" = "Αυτό βοηθά το %@ να εκτιμήσει τους ενεργούς χρήστες.";
-
-/* On the Settings screen, this is the title text for a toggle which controls automatically sending daily usage ping. */
-"Settings.DailyUsagePing.Title.v135" = "Ping ημερήσιας χρήσης";
 
 /* Title displayed in header of the FxA settings panel. */
 "Settings.FxA.Title.v119" = "Λογαριασμός";
@@ -151,11 +79,11 @@
 /* This is the title for the setting that toggles Sync related notifications in the settings menu under the Notifications section. */
 "Settings.Notifications.SyncNotificationsTitle.v112" = "Συγχρονισμός";
 
-/* This is the footer title informing the user needs to turn on notifications in iOS Settings. Both %1$@ and %2$@ are the app name (e.g. Firefox). */
+/* This is the footer title informing the user needs to turn on notifications in iOS Settings. Both placeholders will be replaced with the app name. */
 "Settings.Notifications.SystemNotificationsDisabledMessage.v112" = "Απενεργοποιήσατε όλες τις ειδοποιήσεις του %1$@. Ενεργοποιήστε τις μεταβαίνοντας στις Ρυθμίσεις συσκευής > Γνωστοποιήσεις > %2$@";
 
-/* This is the description for the setting that toggles Tips and Features feature in the settings menu under the Notifications section. %@ is the app name (e.g. Firefox). */
-"Settings.Notifications.TipsAndFeaturesNotificationsStatus.v112" = "Ενημερωθείτε για χρήσιμες λειτουργίες και πώς να αξιοποιήσετε στο έπακρο το %@.";
+/* This is the description for the setting that toggles Tips and Features feature in the settings menu under the Notifications section. The placeholder will be replaced with the app name. */
+"Settings.Notifications.TipsAndFeaturesNotificationsStatus.v112" = "Μάθετε σχετικά με χρήσιμες λειτουργίες και πώς να αξιοποιήσετε στο έπακρο το %@.";
 
 /* This is the title for the setting that toggles Tips and Features feature in the settings menu under the Notifications section. */
 "Settings.Notifications.TipsAndFeaturesNotificationsTitle.v112" = "Συμβουλές και δυνατότητες";
@@ -163,35 +91,23 @@
 /* In the settings menu, in the Privacy section, this is the title for Notifications customization section. */
 "Settings.Notifications.Title.v112" = "Ειδοποιήσεις";
 
-/* This is the title informing the user that they need to turn on notifications in iOS Settings. %@ is the app name (e.g. Firefox). */
+/* This is the title informing the user needs to turn on notifications in iOS Settings. The placeholder will be replaced with the app name. */
 "Settings.Notifications.TurnOnNotificationsMessage.v112" = "Μεταβείτε στις ρυθμίσεις της συσκευής σας για να ενεργοποιήσετε τις ειδοποιήσεις στο %@";
 
-/* This is the title informing the user that they need to turn on notifications in iOS Settings. */
+/* This is the title informing the user needs to turn on notifications in iOS Settings. */
 "Settings.Notifications.TurnOnNotificationsTitle.v112" = "Ενεργοποίηση ειδοποιήσεων";
-
-/* Show Firefox Browser Privacy Notice page from the Privacy section in the settings. See https://www.mozilla.org/privacy/firefox/ */
-"Settings.PrivacyNotice.Title.v137" = "Σημείωση απορρήτου";
-
-/* Title for a link that explains what Mozilla means by Rollouts */
-"Settings.Rollouts.Link.v148" = "Μάθετε περισσότερα";
-
-/* A short description that explains that Mozilla may change features remotely. %@ is the app name (e.g. Firefox). */
-"Settings.Rollouts.Message.v148" = "Οι λειτουργίες, οι επιδόσεις και η σταθερότητα του %@ θα βελτιώνονται με κάθε νέα ενημέρωση. Οι αλλαγές εφαρμόζονται απομακρυσμένα.";
-
-/* Label used as a toggle item in Settings. When this is off, the user is opting out of all rollouts. */
-"Settings.Rollouts.Title.v148" = "Αποδοχή απομακρυσμένων βελτιώσεων";
-
-/* In the settings menu, in the General section, this is the title for the option that allows user to disable the autohide feature of the tab and address bar. */
-"Settings.ScrollToHideTabAndAddressBar.Title.v138" = "Κάντε κύλιση για απόκρυψη της καρτέλας και της γραμμής διευθύνσεων";
 
 /* Accessibility label for default search engine setting. */
 "Settings.Search.Accessibility.DefaultSearchEngine.v121" = "Προεπιλεγμένη μηχανή αναζήτησης";
 
 /* Accessibility label for Learn more about Firefox Suggest. */
-"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "Μάθετε περισσότερα για τις Προτάσεις Firefox";
+"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "Μάθετε περισσότερα για τις Προτάσεις Ecosia";
 
 /* Title for alternate search engines settings section in the Search page in the Settings menu. */
 "Settings.Search.AlternateSearchEngines.Title.v124.v2" = "Εναλλακτικές μηχανές αναζήτησης";
+
+/* Footer for the `default search engine` settings section in the Search Settings page, which explains in more details what the `Show Search Suggestions` setting includes. */
+"Settings.Search.DefaultSearchEngine.Footer.v122" = "Αποτελέσματα από αναζητήσεις, ιστορικό, σελιδοδείκτες και άλλα";
 
 /* Title for the `default search engine` settings section in the Search page in the Settings menu. */
 "Settings.Search.DefaultSearchEngine.Title.v121" = "Προεπιλεγμένη μηχανή αναζήτησης";
@@ -205,20 +121,29 @@
 /* Description for `Show in Private Sessions` toggle, located in `Suggestions from Search Engines` section in the Search page in the Settings menu. */
 "Settings.Search.PrivateSession.Description.v125" = "Εμφάνιση προτάσεων από μηχανές αναζήτησης σε ιδιωτικές συνεδρίες";
 
+/* Label for toggle. Explains that in private browsing mode, the search suggestions which appears at the top of the search bar, can be toggled on or off. Located in the Private Session section in the Search page in the Settings menu. */
+"Settings.Search.PrivateSession.Setting.v122" = "Εμφάνιση προτάσεων στην ιδιωτική περιήγηση";
+
 /* Label for toggle. Explains that in private browsing mode, the search suggestions which appears at the top of the search bar, can be toggled on or off. Located in `Suggestions from Search Engines` and `Address Bar - Firefox Suggest` sections in the Search page in the Settings menu. */
 "Settings.Search.PrivateSession.Setting.v124" = "Εμφάνιση σε ιδιωτικές συνεδρίες";
+
+/* Title for the `Private Browsing` settings section in the Search page in the Settings menu. */
+"Settings.Search.PrivateSession.Title.v122" = "Ιδιωτική περιήγηση";
+
+/* Title for quick-search engines settings section in the Search page in the Settings menu. */
+"Settings.Search.QuickEnginesTitle.v121" = "Μηχανές γρήγορης αναζήτησης";
 
 /* Label for the `show search suggestions` setting, in the Search Settings page. */
 "Settings.Search.ShowSuggestions.v121" = "Εμφάνιση προτάσεων αναζήτησης";
 
 /* In the Search page of the Settings menu, the title for the Firefox Suggest settings section. */
-"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "Γραμμή διευθύνσεων - Προτάσεις Firefox";
+"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "Γραμμή διευθύνσεων - Προτάσεις Ecosia";
 
 /* In the search page of the Settings menu, the title for the link to the SUMO Page about Firefox Suggest. */
-"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "Μάθετε περισσότερα για τις Προτάσεις Firefox";
+"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "Μάθετε περισσότερα για τις Προτάσεις Ecosia";
 
 /* Description for `Show in Private Sessions` toggle, located in `Address Bar - Firefox Suggest` section in the Search page in the Settings menu. */
-"Settings.Search.Suggest.PrivateSession.Description.v125" = "Εμφάνιση προτάσεων από τις Προτάσεις Firefox σε ιδιωτικές συνεδρίες";
+"Settings.Search.Suggest.PrivateSession.Description.v125" = "Εμφάνιση προτάσεων από τις Προτάσεις Ecosia σε ιδιωτικές συνεδρίες";
 
 /* In the Search page of the Settings menu, the title for the setting to enable search browsing history. */
 "Settings.Search.Suggest.SearchBrowsingHistory.Title.v124" = "Αναζήτηση ιστορικού περιήγησης";
@@ -229,84 +154,21 @@
 /* In the Search page of the Settings menu, the title for the setting to enable synced tabs. */
 "Settings.Search.Suggest.SearchSyncedTabs.Title.v124" = "Αναζήτηση συγχρονισμένων καρτελών";
 
-/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from Firefox. %@ is the app name (e.g. Firefox). - Firefox. */
+/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from Firefox. */
+"Settings.Search.Suggest.ShowNonSponsoredSuggestions.Description.v124" = "Λάβετε προτάσεις από το διαδίκτυο που σχετίζονται με την αναζήτησή σας";
+
+/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from Firefox. Placeholder is for the app name - Firefox. */
 "Settings.Search.Suggest.ShowNonSponsoredSuggestions.Description.v124.v2" = "Λάβετε προτάσεις από το %@ που σχετίζονται με την αναζήτησή σας";
+
+/* In the Search page of the Settings menu, the title for setting to enable Suggestions from Firefox. Placeholder is for the app name - Firefox. */
+"Settings.Search.Suggest.ShowNonSponsoredSuggestions.Title.v124" = "Προτάσεις από το %@";
 
 /* In the Search page of the Settings menu, the title for setting to enable Suggestions from the web in Firefox. */
 "Settings.Search.Suggest.ShowNonSponsoredSuggestions.Title.v124.v2" = "Προτάσεις από το διαδίκτυο";
 
-/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from sponsors. %@ is the app name (e.g. Firefox). - Firefox. */
+/* In the Search page of the Settings menu, the description for the setting to enable Suggestions from sponsors. Placeholder is for the app name - Firefox. */
 "Settings.Search.Suggest.ShowSponsoredSuggestions.Description.v124" = "Υποστηρίξτε το %@ με περιστασιακές προτάσεις χορηγών";
 
 /* In the Search page of the Settings menu, the title for the setting to enable Suggestions from sponsors. */
 "Settings.Search.Suggest.ShowSponsoredSuggestions.Title.v124" = "Προτάσεις από χορηγούς";
-
-/* Title for a link that explains what Mozilla means by Studies */
-"Settings.Studies.Link.v136" = "Μάθετε περισσότερα";
-
-/* Title for a link that explains what Mozilla means by Studies */
-"Settings.Studies.Link.v148" = "Μάθετε περισσότερα";
-
-/* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Message.v136" = "Δοκιμάστε λειτουργίες και ιδέες πριν δημοσιευτούν σε όλους.";
-
-/* A short description that explains that Mozilla is running studies. %@ is the app name (e.g. Firefox). */
-"Settings.Studies.Message.v148" = "Το %@ επιλέγει τυχαίους χρήστες για τη δοκιμή λειτουργιών, βελτιώνοντας την ποιότητα για όλους.";
-
-/* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
-"Settings.Studies.Title.v136" = "Εγκατάσταση και εκτέλεση μελετών";
-
-/* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
-"Settings.Studies.Title.v148" = "Αποδοχή μελετών για λειτουργίες";
-
-/* This is the footer text for the setting that toggles the Summarize feature under the Summarize settings section. */
-"Settings.Summarize.FooterTitle.v142" = "Παρέχει πρόσβαση στη σύνοψη σελίδων.";
-
-/* This is the footer text for the gestures features under the Summarize settings section. */
-"Settings.Summarize.GesturesSection.FooterTitle.v142" = "Ανακινήστε τη συσκευή σας πέρα δώθε για να συνοψίσετε μια σελίδα.";
-
-/* This is the title for the setting that toggles the Shake Gesture feature under the Summarize settings section. */
-"Settings.Summarize.GesturesSection.ShakeGestureTitle.v142" = "Ανακίνηση για σύνοψη";
-
-/* This is the section title for the gestures features under the Summarize settings section. */
-"Settings.Summarize.GesturesSection.Title.v142" = "Χειρονομίες";
-
-/* This is the title for the setting that toggles the Summarize feature under the Summarize settings section. */
-"Settings.Summarize.SummarizePagesTitle.v142" = "Σύνοψη σελίδων";
-
-/* In the settings menu, in the General section, this is the title for the Summarize settings section. */
-"Settings.Summarize.Title.v142" = "Συνόψεις σελίδων";
-
-/* Title for a link that explains how Mozilla send technical and interaction data. */
-"Settings.TechnicalData.Link.v136" = "Μάθετε περισσότερα";
-
-/* On the Settings screen, this is the subtitle text for a toggle which controls sending technical and interaction data. %@ is the app name (e.g. Firefox). */
-"Settings.TechnicalData.Message.v136" = "Τα δεδομένα σχετικά με τη συσκευή σας, τη διαμόρφωση του υλικού της και τη χρήση συμβάλλουν στη βελτίωση των λειτουργιών, των επιδόσεων και της σταθερότητας του %@.";
-
-/* On the Settings screen, this is the title text for a toggle which controls sending technical and interaction data. */
-"Settings.TechnicalData.Title.v136" = "Αποστολή τεχνικών δεδομένων και δεδομένων αλληλεπίδρασης";
-
-/* Terms of Use settings section title */
-"Settings.TermsOfUse.Title.v137" = "Όροι χρήσης";
-
-/* In the Appearance settings menu, in the Toolbar Button section, this label indicates that selecting this will make the home button appear in the middle of the navigation toolbar. */
-"Settings.Toolbar.Navigation.MiddleButton.Home.v145" = "Αρχική σελίδα";
-
-/* In the Appearance settings menu, in the Toolbar Button section, this label indicates that selecting this will make the New Tab button appear in the middle of the navigation toolbar. */
-"Settings.Toolbar.Navigation.MiddleButton.NewTab.v145" = "Νέα καρτέλα";
-
-/* This is the section title text for the the Translation feature under the Translation settings section. */
-"Settings.Translation.SectionTitle.v145" = "Προτιμήσεις μετάφρασης";
-
-/* In the settings menu, in the General section, this is the text to show next to the Translation setting title and indicates if the translation feature has been disabled. */
-"Settings.Translation.SettingOff.v145" = "Ανενεργό";
-
-/* In the settings menu, in the General section, this is the text to show next to the Translation setting title and indicates if the translation feature has been enabled. */
-"Settings.Translation.SettingOn.v145" = "Ενεργό";
-
-/* In the settings menu, in the General section, this is the title for the Translation settings section. */
-"Settings.Translation.Title.v145" = "Μετάφραση";
-
-/* This is the title for the setting that toggles the Translation feature that allows users to translate web pages under the Translation settings section. */
-"Settings.Translation.ToggleTitle.v145" = "Ενεργοποίηση μεταφράσεων";
 

@@ -10,81 +10,70 @@ import Redux
 final class TrackingProtectionStateTests: XCTestCase {
     private var mockProfile: MockProfile!
 
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
         mockProfile = MockProfile()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         mockProfile = nil
-        try await super.tearDown()
     }
 
-    @MainActor
-    func testDismissTrackingProtectionAction() {
+    func testDismissSurveyAction() {
         let initialState = createSubject()
         let reducer = trackingProtectionReducer()
 
-        XCTAssertEqual(initialState.navigateTo, .home)
-        XCTAssertNil(initialState.displayView)
-        XCTAssertEqual(initialState.shouldClearCookies, false)
+        XCTAssertEqual(initialState.shouldDismiss, false)
 
         let action = getMiddlewareAction(for: .dismissTrackingProtection)
         let newState = reducer(initialState, action)
 
-        XCTAssertEqual(newState.navigateTo, .close)
-        XCTAssertNil(newState.displayView)
-        XCTAssertEqual(newState.shouldClearCookies, false)
+        XCTAssertEqual(newState.shouldDismiss, true)
+        XCTAssertEqual(newState.showTrackingProtectionSettings, false)
     }
 
-    @MainActor
-    func testNavigateToSettingsAction() {
+    func testShowTrackingProtectionSettingsAction() {
         let initialState = createSubject()
         let reducer = trackingProtectionReducer()
 
-        XCTAssertEqual(initialState.navigateTo, .home)
-        XCTAssertNil(initialState.displayView)
+        XCTAssertEqual(initialState.showTrackingProtectionSettings, false)
 
         let action = getMiddlewareAction(for: .navigateToSettings)
         let newState = reducer(initialState, action)
 
-        XCTAssertEqual(newState.navigateTo, .settings)
-        XCTAssertNil(newState.displayView)
+        XCTAssertEqual(newState.shouldDismiss, true)
+        XCTAssertEqual(newState.showTrackingProtectionSettings, true)
     }
 
-    @MainActor
     func testShowTrackingProtectionDetailsAction() {
         let initialState = createSubject()
         let reducer = trackingProtectionReducer()
 
-        XCTAssertNil(initialState.displayView)
-        XCTAssertEqual(initialState.navigateTo, .home)
+        XCTAssertEqual(initialState.showDetails, false)
 
         let action = getMiddlewareAction(for: .showTrackingProtectionDetails)
         let newState = reducer(initialState, action)
 
-        XCTAssertEqual(newState.displayView, .trackingProtectionDetails)
-        XCTAssertNil(newState.navigateTo)
+        XCTAssertEqual(newState.shouldDismiss, false)
+        XCTAssertEqual(newState.showDetails, true)
     }
 
-    @MainActor
-    func testShowBlockedTrackersDetailsAction() {
+    func testShowBlockedTrackersAction() {
         let initialState = createSubject()
         let reducer = trackingProtectionReducer()
 
-        XCTAssertNil(initialState.displayView)
-        XCTAssertEqual(initialState.navigateTo, .home)
+        XCTAssertEqual(initialState.showBlockedTrackers, false)
 
         let action = getMiddlewareAction(for: .showBlockedTrackersDetails)
         let newState = reducer(initialState, action)
 
-        XCTAssertEqual(newState.displayView, .blockedTrackersDetails)
-        XCTAssertNil(newState.navigateTo)
+        XCTAssertEqual(newState.shouldDismiss, false)
+        XCTAssertEqual(newState.showBlockedTrackers, true)
     }
 
-    @MainActor
-    func testToggleTrackingProtectionStatusAction() {
+    func testToggleTrackingProtectionAction() {
         let initialState = createSubject()
         let reducer = trackingProtectionReducer()
 
@@ -94,44 +83,9 @@ final class TrackingProtectionStateTests: XCTestCase {
         let newState = reducer(initialState, action)
 
         XCTAssertEqual(newState.trackingProtectionEnabled, false)
-        XCTAssertNil(newState.navigateTo)
-        XCTAssertNil(newState.displayView)
     }
 
-    @MainActor
-    func testUpdateBlockedTrackerStatsAction() {
-        let initialState = createSubject()
-        let reducer = trackingProtectionReducer()
-
-        XCTAssertEqual(initialState.shouldUpdateBlockedTrackerStats, false)
-
-        let action = getAction(for: .updateBlockedTrackerStats)
-        let newState = reducer(initialState, action)
-
-        XCTAssertEqual(newState.shouldUpdateBlockedTrackerStats, true)
-        XCTAssertEqual(newState.shouldUpdateConnectionStatus, false)
-        XCTAssertNil(newState.navigateTo)
-        XCTAssertNil(newState.displayView)
-    }
-
-    @MainActor
-    func testUpdateConnectionStatusAction() {
-        let initialState = createSubject()
-        let reducer = trackingProtectionReducer()
-
-        XCTAssertEqual(initialState.shouldUpdateConnectionStatus, false)
-
-        let action = getAction(for: .updateConnectionStatus)
-        let newState = reducer(initialState, action)
-
-        XCTAssertEqual(newState.shouldUpdateConnectionStatus, true)
-        XCTAssertEqual(newState.shouldUpdateBlockedTrackerStats, false)
-        XCTAssertNil(newState.navigateTo)
-        XCTAssertNil(newState.displayView)
-    }
-
-    // MARK: - Private Helper Methods
-
+    // MARK: - Private
     private func createSubject() -> TrackingProtectionState {
         return TrackingProtectionState(windowUUID: .XCTestDefaultUUID)
     }
@@ -143,10 +97,10 @@ final class TrackingProtectionStateTests: XCTestCase {
     private func getMiddlewareAction(
         for actionType: TrackingProtectionMiddlewareActionType
     ) -> TrackingProtectionMiddlewareAction {
-        return TrackingProtectionMiddlewareAction(windowUUID: .XCTestDefaultUUID, actionType: actionType)
+        return  TrackingProtectionMiddlewareAction(windowUUID: .XCTestDefaultUUID, actionType: actionType)
     }
 
-    private func getAction(for actionType: TrackingProtectionActionType) -> Action {
-        return TrackingProtectionAction(windowUUID: .XCTestDefaultUUID, actionType: actionType)
+    private func getAction(for actionType: TrackingProtectionActionType) -> TrackingProtectionAction {
+        return  TrackingProtectionAction(windowUUID: .XCTestDefaultUUID, actionType: actionType)
     }
 }

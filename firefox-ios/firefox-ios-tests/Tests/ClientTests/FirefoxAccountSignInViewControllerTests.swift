@@ -12,19 +12,18 @@ final class FirefoxAccountSignInViewControllerTests: XCTestCase {
     private var mockProfile: MockProfile!
     var deeplinkParams: FxALaunchParams!
 
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
         mockProfile = MockProfile()
         deeplinkParams = FxALaunchParams(entrypoint: .browserMenu, query: ["test_key": "test_value"])
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
-    @MainActor
     func testFirefoxAccountSignInViewController_simpleCreation_hasNoLeaks() {
         let testFirefoxAccountSignInViewController = FirefoxAccountSignInViewController(
             profile: mockProfile,

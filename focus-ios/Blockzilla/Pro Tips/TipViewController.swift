@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class TipViewController: UIViewController {
+class TipViewController: UIViewController {
     // Mark dependency explicit
     private let nimbus = NimbusWrapper.shared
 

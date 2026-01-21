@@ -8,50 +8,30 @@ import XCTest
 @testable import Client
 
 final class PrivateBrowsingTelemetryTests: XCTestCase {
-    var gleanWrapper: MockGleanWrapper!
-
     override func setUp() {
         super.setUp()
-        gleanWrapper = MockGleanWrapper()
+        Glean.shared.resetGlean(clearStores: true)
     }
 
     func testDataClearanceConfirmed() throws {
-        let subject = PrivateBrowsingTelemetry(gleanWrapper: gleanWrapper)
+        let subject = PrivateBrowsingTelemetry()
 
         subject.sendDataClearanceTappedTelemetry(didConfirm: true)
 
-        let savedEvent = try XCTUnwrap(
-            gleanWrapper.savedEvents.first as? EventMetricType<GleanMetrics.PrivateBrowsing.DataClearanceIconTappedExtra>
-        )
-        let savedExtras = try XCTUnwrap(
-            gleanWrapper.savedExtras.first as? GleanMetrics.PrivateBrowsing.DataClearanceIconTappedExtra
-        )
-        let expectedMetricType = type(of: GleanMetrics.PrivateBrowsing.dataClearanceIconTapped)
-        let resultMetricType = type(of: savedEvent)
-        let message = TelemetryDebugMessage(expectedMetric: expectedMetricType, resultMetric: resultMetricType)
+        testEventMetricRecordingSuccess(metric: GleanMetrics.PrivateBrowsing.dataClearanceIconTapped)
 
-        XCTAssert(resultMetricType == expectedMetricType, message.text)
-        XCTAssertEqual(gleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.didConfirm, true)
+        let resultValue = try XCTUnwrap(GleanMetrics.PrivateBrowsing.dataClearanceIconTapped.testGetValue())
+        XCTAssertEqual(resultValue[0].extra?["did_confirm"], "true")
     }
 
     func testDataClearanceCancelled() throws {
-        let subject = PrivateBrowsingTelemetry(gleanWrapper: gleanWrapper)
+        let subject = PrivateBrowsingTelemetry()
 
         subject.sendDataClearanceTappedTelemetry(didConfirm: false)
 
-        let savedEvent = try XCTUnwrap(
-            gleanWrapper.savedEvents.first as? EventMetricType<GleanMetrics.PrivateBrowsing.DataClearanceIconTappedExtra>
-        )
-        let savedExtras = try XCTUnwrap(
-            gleanWrapper.savedExtras.first as? GleanMetrics.PrivateBrowsing.DataClearanceIconTappedExtra
-        )
-        let expectedMetricType = type(of: GleanMetrics.PrivateBrowsing.dataClearanceIconTapped)
-        let resultMetricType = type(of: savedEvent)
-        let message = TelemetryDebugMessage(expectedMetric: expectedMetricType, resultMetric: resultMetricType)
+        testEventMetricRecordingSuccess(metric: GleanMetrics.PrivateBrowsing.dataClearanceIconTapped)
 
-        XCTAssert(resultMetricType == expectedMetricType, message.text)
-        XCTAssertEqual(gleanWrapper.recordEventCalled, 1)
-        XCTAssertEqual(savedExtras.didConfirm, false)
+        let resultValue = try XCTUnwrap(GleanMetrics.PrivateBrowsing.dataClearanceIconTapped.testGetValue())
+        XCTAssertEqual(resultValue[0].extra?["did_confirm"], "false")
     }
 }

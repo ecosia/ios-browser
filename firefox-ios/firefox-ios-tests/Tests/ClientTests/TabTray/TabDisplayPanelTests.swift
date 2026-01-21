@@ -7,44 +7,50 @@ import XCTest
 
 @testable import Client
 final class TabDisplayPanelTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
-    @MainActor
+    func testExpandedInactiveTabs_InitialState() {
+        let subject = createSubject(isPrivateMode: false,
+                                    emptyTabs: false,
+                                    emptyInactiveTabs: false)
+
+        XCTAssertTrue(subject.tabsState.isInactiveTabsExpanded)
+    }
+
     func testIsPrivateTabsEmpty() {
         let subject = createSubject(isPrivateMode: true,
-                                    emptyTabs: true)
+                                    emptyTabs: true,
+                                    emptyInactiveTabs: true)
 
         XCTAssertTrue(subject.tabsState.isPrivateTabsEmpty)
     }
 
-    @MainActor
     func testIsPrivateTabsNotEmpty() {
         let subject = createSubject(isPrivateMode: true,
-                                    emptyTabs: false)
+                                    emptyTabs: false,
+                                    emptyInactiveTabs: true)
 
         XCTAssertFalse(subject.tabsState.isPrivateTabsEmpty)
     }
 
     // MARK: - Private
-    @MainActor
     private func createSubject(isPrivateMode: Bool,
                                emptyTabs: Bool,
-                               file: StaticString = #filePath,
-                               line: UInt = #line) -> TabDisplayPanelViewController {
+                               emptyInactiveTabs: Bool,
+                               file: StaticString = #file,
+                               line: UInt = #line) -> TabDisplayPanel {
         let subjectState = createSubjectState(isPrivateMode: isPrivateMode,
-                                              emptyTabs: emptyTabs)
-        let delegate = MockTabDisplayViewDragAndDropInteraction()
-        let subject = TabDisplayPanelViewController(isPrivateMode: isPrivateMode,
-                                                    windowUUID: .XCTestDefaultUUID,
-                                                    dragAndDropDelegate: delegate)
+                                              emptyTabs: emptyTabs,
+                                              emptyInactiveTabs: emptyInactiveTabs)
+        let subject = TabDisplayPanel(isPrivateMode: isPrivateMode, windowUUID: .XCTestDefaultUUID)
         subject.newState(state: subjectState)
 
         trackForMemoryLeaks(subject, file: file, line: line)
@@ -52,11 +58,25 @@ final class TabDisplayPanelTests: XCTestCase {
     }
 
     private func createSubjectState(isPrivateMode: Bool,
-                                    emptyTabs: Bool) -> TabsPanelState {
+                                    emptyTabs: Bool,
+                                    emptyInactiveTabs: Bool) -> TabsPanelState {
         let tabs = createTabs(emptyTabs)
+        var inactiveTabs = [InactiveTabsModel]()
+        if !emptyInactiveTabs {
+            let uuid = "UUID"
+            for index in 0...2 {
+                let inactiveTabModel = InactiveTabsModel(tabUUID: uuid,
+                                                         title: "InactiveTab\(index)",
+                                                         url: nil)
+                inactiveTabs.append(inactiveTabModel)
+            }
+        }
+        let isInactiveTabsExpanded = !isPrivateMode && !inactiveTabs.isEmpty
         return TabsPanelState(windowUUID: .XCTestDefaultUUID,
                               isPrivateMode: isPrivateMode,
-                              tabs: tabs)
+                              tabs: tabs,
+                              inactiveTabs: inactiveTabs,
+                              isInactiveTabsExpanded: isInactiveTabsExpanded)
     }
 
     private func createTabs(_ emptyTabs: Bool) -> [TabModel] {

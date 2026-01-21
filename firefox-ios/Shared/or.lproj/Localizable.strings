@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. %@ is the hostname of the site. */
+/* Authentication prompt message with no realm. Parameter is the hostname of the site */
 "A username and password are being requested by %@." = "%@ଙ୍କ ଦ୍ୱାରା ଏକ ଇଉଜରନାମ ଓ ପାସୱାର୍ଡ଼ ବ୍ୟବହାର ହେଉଛି ।";
 
-/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
+/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
 "A username and password are being requested by %@. The site says: %@" = "%1$@ଙ୍କ ଦେଇ ଏକ ଇଉଜରନାମ ଓ ପାସୱାର୍ଡ଼ ଅନୁରୋଧ କରାଯାଇଛି । ସାଇଟରେ ଲେଖାଯାଇଛି: %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -25,7 +25,7 @@
 /* The title for the unpinning a topsite action */
 "ActivityStream.ContextMenu.UnpinTopsite" = "ଅସଂଲଘ୍ନ";
 
-/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. %d is the number of tabs. It will read 'Tabs: 5' or similar. */
+/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. The placeholder is for a number. It will read 'Tabs: 5' or similar. */
 "ActivityStream.JumpBackIn.TabGroup.SiteCount" = "ଟ୍ୟାବଗୁଡିକ: %d";
 
 /* A string used to signify the start of the Recently Saved section in Home Screen. */
@@ -33,6 +33,9 @@
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "ନଗଦ ଦେଖିଥିଲେ";
+
+/* Section title label for Shortcuts */
+"ActivityStream.Shortcuts.SectionTitle" = "ସର୍ଟକଟ୍‌ଗୁଡିକ";
 
 /* The title for the setting page which lets you select the number of top site rows */
 "ActivityStream.TopSites.RowSettingFooter" = "ଧାଡ଼ି ସେଟ୍ କରନ୍ତୁ";
@@ -274,13 +277,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "ଡାଉନଲୋଡ଼ସମୂହ";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "%d ଫାଇଲର 1";
 
-/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
+/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -304,7 +307,7 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "ଏହା ଏକ ଭୁଲ୍ ବିନ୍ୟାସ କିମ୍ବା ଆକ୍ରମଣକାରୀଙ୍କ ଦ୍ୱାରା ଟ୍ୟାମ୍ପରିଂ ହୋଇପାରେ | ଯଦି ଆପଣ ସମ୍ଭାବ୍ୟ ବିପଦକୁ ଗ୍ରହଣ କରନ୍ତି ତେବେ ଅଗ୍ରଗତି କରନ୍ତୁ";
 
-/* Warning text on the certificate error page. %@ is the domain of the website. */
+/* Warning text on the certificate error page */
 "ErrorPages.CertWarning.Description" = "%@ ର ମାଲିକ ସେମାନଙ୍କର ୱେବସାଇଟ୍ କୁ ଭୁଲ୍ ଭାବରେ ବିନ୍ୟାସ କରିଛନ୍ତି | ଆପଣଙ୍କର ସୂଚନା ଚୋରି ହେବାରୁ ରକ୍ଷା କରିବା ପାଇଁ, ଫାୟାରଫକ୍ସ ଏହି ୱେବସାଇଟ୍ ସହିତ ସଂଯୋଗ ହୋଇନାହିଁ";
 
 /* Title on the certificate error page */
@@ -389,7 +392,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ ସଫଳତାର ସହିତ ବିଛିନ୍ନ ହୋଇଛି";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "ଏହି ଡିଭାଇସ୍ Firefox ସିଙ୍କ୍ ରୁ ସଫଳତାର ସହ ବିଚ୍ଛିନ୍ନ ହୋଇଛି।";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "ଏହି ଡିଭାଇସ୍ Ecosia ସିଙ୍କ୍ ରୁ ସଫଳତାର ସହ ବିଚ୍ଛିନ୍ନ ହୋଇଛି।";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "ସମୟାନୁସାମୟିକ ସଂଯୋଗ ବିଚ୍ୟୁତି ହୋଇଗଲା";
@@ -398,10 +401,10 @@
 "FxAPush_DeviceDisconnected_title" = "ସମୟାନୁସାମୟିକ ସଂଯୋଗ ବିଚ୍ୟୁତି ହୋଇଗଲା";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ଏକ ଡିଭାଇସ୍ Firefox ସିଙ୍କ୍ ରୁ ସଫଳତାର ସହ ବିଚ୍ଛିନ୍ନ ହୋଇଛି।";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ଏକ ଡିଭାଇସ୍ Ecosia ସିଙ୍କ୍ ରୁ ସଫଳତାର ସହ ବିଚ୍ଛିନ୍ନ ହୋଇଛି।";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Firefox ଲୋଗୋ, ୱାଲ୍ପେପର ପରିବର୍ତ୍ତନ କରନ୍ତୁ।";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Ecosia ଲୋଗୋ, ୱାଲ୍ପେପର ପରିବର୍ତ୍ତନ କରନ୍ତୁ।";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "ସହଯୋଗ";
@@ -644,7 +647,7 @@
 "LoginsList.Title" = "SAVED LOGINS";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "ଲାଗୁଛି ଗତଥର Firefox ବନ୍ଦ ହୋଇଗଲା । ପୁରୁଣା ଟ୍ୟାବ ଫେରାଇବାକୁ ଚାହାନ୍ତି କି?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "ଲାଗୁଛି ଗତଥର Ecosia ବନ୍ଦ ହୋଇଗଲା । ପୁରୁଣା ଟ୍ୟାବ ଫେରାଇବାକୁ ଚାହାନ୍ତି କି?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "ପଠିତ ଭାବେ ଚିହ୍ନଟ କରନ୍ତୁ";
@@ -733,7 +736,7 @@
 /* Accessibility label for the Home button on the toolbar. Pressing this button brings the user to the home page. */
 "Menu.Toolbar.Home.AccessibilityLabel.v99" = "ମୂଳ ସ୍ଥାନ";
 
-/* String to let users know the site verifier, where %@ represents the SSL certificate signer. */
+/* String to let users know the site verifier, where the placeholder represents the SSL certificate signer. */
 "Menu.TrackingProtection.Details.Verifier" = "%@ ଦ୍ୱାରା ଯାଞ୍ଚକରାଯାଇଛି";
 
 /* The title for tracking protection settings */
@@ -911,7 +914,7 @@
 "Settings.DataManagement.SearchLabel" = "ସ୍କ୍ରିପ୍ଟଗୁଡ଼ିକୁ ଛାଣନ୍ତୁ";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Firefox ଆପଣଙ୍କ ଆକାଉଣ୍ଟ ସହ ସିଙ୍କ କରିବା ବନ୍ଦ କରିଦେଲେ ମଧ୍ୟ ଆପଣଙ୍କ ଏହି ଡିଭାଇସରେ ବ୍ରାଉଜିଂ ଡାଟା ଲିଭାଇବ ନାହିଁ ।";
+"Settings.Disconnect.Body" = "Ecosia ଆପଣଙ୍କ ଆକାଉଣ୍ଟ ସହ ସିଙ୍କ କରିବା ବନ୍ଦ କରିଦେଲେ ମଧ୍ୟ ଆପଣଙ୍କ ଏହି ଡିଭାଇସରେ ବ୍ରାଉଜିଂ ଡାଟା ଲିଭାଇବ ନାହିଁ ।";
 
 /* Cancel action button in alert when user is prompted for disconnect */
 "Settings.Disconnect.CancelButton" = "ବାତିଲ କରନ୍ତୁ";

@@ -4,8 +4,8 @@
 
 import Common
 import Storage
+import Shared
 
-@MainActor
 protocol LibraryPanelContextMenu {
     var windowUUID: WindowUUID { get }
     func getSiteDetails(for indexPath: IndexPath) -> Site?
@@ -20,10 +20,6 @@ protocol LibraryPanelContextMenu {
 }
 
 extension LibraryPanelContextMenu {
-    func getSiteDetails(for indexPath: IndexPath) -> Site? {
-        return nil
-    }
-
     func presentContextMenu(for indexPath: IndexPath) {
         guard let site = getSiteDetails(for: indexPath) else { return }
 
@@ -50,7 +46,7 @@ extension LibraryPanelContextMenu {
         for site: Site,
         recentlyClosedPanelDelegate: RecentlyClosedPanelDelegate?
     ) -> [PhotonRowActions]? {
-        guard let siteURL = URL(string: site.url) else { return nil }
+        guard let siteURL = URL(string: site.url, invalidCharacters: false) else { return nil }
 
         let openInNewTabAction = SingleActionViewModel(
             title: .OpenInNewTabContextMenuTitle,
@@ -69,11 +65,34 @@ extension LibraryPanelContextMenu {
         return [PhotonRowActions(openInNewTabAction), PhotonRowActions(openInNewPrivateTabAction)]
     }
 
+    func getRemoteTabContextMenuActions(
+        for site: Site,
+        remotePanelDelegate: RemotePanelDelegate?
+    ) -> [PhotonRowActions]? {
+        guard let siteURL = URL(string: site.url, invalidCharacters: false) else { return nil }
+
+        let openInNewTabAction = SingleActionViewModel(
+            title: .OpenInNewTabContextMenuTitle,
+            iconString: StandardImageIdentifiers.Large.plus
+        ) { _ in
+            remotePanelDelegate?.remotePanelDidRequestToOpenInNewTab(siteURL, isPrivate: false)
+        }
+
+        let openInNewPrivateTabAction = SingleActionViewModel(
+            title: .OpenInNewPrivateTabContextMenuTitle,
+            iconString: StandardImageIdentifiers.Large.privateMode
+        ) { _ in
+            remotePanelDelegate?.remotePanelDidRequestToOpenInNewTab(siteURL, isPrivate: true)
+        }
+
+        return [PhotonRowActions(openInNewTabAction), PhotonRowActions(openInNewPrivateTabAction)]
+    }
+
     func getDefaultContextMenuActions(
         for site: Site,
         libraryPanelDelegate: LibraryPanelDelegate?
     ) -> [PhotonRowActions]? {
-        guard let siteURL = URL(string: site.url) else { return nil }
+        guard let siteURL = URL(string: site.url, invalidCharacters: false) else { return nil }
 
         let openInNewTabAction = SingleActionViewModel(title: .OpenInNewTabContextMenuTitle,
                                                        iconString: StandardImageIdentifiers.Large.plus) { _ in
@@ -93,7 +112,7 @@ extension LibraryPanelContextMenu {
         return SingleActionViewModel(
             title: .ShareContextMenuTitle,
             iconString: StandardImageIdentifiers.Large.share) { _ in
-                guard let siteURL = URL(string: site.url) else { return }
+                guard let siteURL = URL(string: site.url, invalidCharacters: false) else { return }
                 delegate?.shareLibraryItem(url: siteURL, sourceView: sourceView)
         }.items
     }

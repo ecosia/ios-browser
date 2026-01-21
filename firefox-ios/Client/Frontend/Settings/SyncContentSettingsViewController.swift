@@ -8,10 +8,10 @@ import Shared
 import Sync
 import Account
 
-final class ManageFxAccountSetting: Setting {
+class ManageFxAccountSetting: Setting {
     private var notification: NSObjectProtocol?
 
-    let profile: Profile?
+    let profile: Profile
 
     override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
 
@@ -34,15 +34,12 @@ final class ManageFxAccountSetting: Setting {
             forName: .accountLoggedOut,
             object: nil,
             queue: .main
-        ) { _ in
-            ensureMainThread { [weak settings] in
-                settings?.dismiss(animated: true, completion: nil)
-            }
+        ) { [weak settings] _ in
+            settings?.dismiss(animated: true, completion: nil)
         }
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        guard let profile else { return }
         let fxaParams = FxALaunchParams(entrypoint: .manageFxASetting, query: [:])
         let viewController = FxAWebViewController(pageType: .settingsPage,
                                                   profile: profile,
@@ -52,23 +49,15 @@ final class ManageFxAccountSetting: Setting {
     }
 
     deinit {
-        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
-        guard Thread.isMainThread else {
-            assertionFailure("ManageFxAccountSetting was not deallocated on the main thread. Observer was not removed")
-            return
-        }
-
-        MainActor.assumeIsolated {
-            if let notification = notification {
-                NotificationCenter.default.removeObserver(notification)
-            }
+        if let notification = notification {
+            NotificationCenter.default.removeObserver(notification)
         }
     }
 }
 
 class DisconnectSetting: Setting {
     let settingsVC: SettingsTableViewController
-    let profile: Profile?
+    let profile: Profile
     override var accessoryType: UITableViewCell.AccessoryType { return .none }
 
     init(settings: SettingsTableViewController) {
@@ -93,7 +82,7 @@ class DisconnectSetting: Setting {
 
         alertController.addAction(
             UIAlertAction(title: .SettingsDisconnectDestructiveAction, style: .destructive) { (action) in
-                self.profile?.removeAccount()
+                self.profile.removeAccount()
                 TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .tap, object: .syncUserLoggedOut)
 
                 // If there is more than one view controller in the navigation controller, we can pop.
@@ -150,17 +139,9 @@ class DeviceNameSetting: StringSetting {
         notification = NotificationCenter.default.addObserver(
             forName: Notification.Name.constellationStateUpdate,
             object: nil,
-            queue: .main
+            queue: nil
         ) { [weak self] notification in
-            guard Thread.isMainThread else {
-                assertionFailure("This must be called main thread")
-                return
-            }
-
-            // We have set the queue to `.main` on the observer, so theoretically this is safe to call here
-            MainActor.assumeIsolated {
-                self?.tableView?.tableView.reloadData()
-            }
+            self?.tableView?.tableView.reloadData()
         }
     }
 
@@ -170,16 +151,8 @@ class DeviceNameSetting: StringSetting {
     }
 
     deinit {
-        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
-        guard Thread.isMainThread else {
-            assertionFailure("DeviceNameSetting was not deallocated on the main thread. Observer was not removed")
-            return
-        }
-
-        MainActor.assumeIsolated {
-            if let notification = notification {
-                NotificationCenter.default.removeObserver(notification)
-            }
+        if let notification = notification {
+            NotificationCenter.default.removeObserver(notification)
         }
     }
 }
@@ -199,14 +172,9 @@ class SyncContentSettingsViewController: SettingsTableViewController, FeatureFla
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.profile?.syncManager?.reportOpenSyncSettingsMenuTelemetry()
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         if !enginesToSyncOnExit.isEmpty {
-            self.profile?.syncManager?.syncPostSyncSettingsChange(
+            _ = self.profile.syncManager.syncNamedCollections(
                 why: .enabledChange,
                 names: Array(enginesToSyncOnExit)
             )
@@ -224,11 +192,11 @@ class SyncContentSettingsViewController: SettingsTableViewController, FeatureFla
                 self.loginsSyncEnabledTelemetry(status: enabled)
             }
 
-            if self.profile?.prefs.boolForKey(prefName) != nil { // Switch it back to not-changed
-                self.profile?.prefs.removeObjectForKey(prefName)
+            if self.profile.prefs.boolForKey(prefName) != nil { // Switch it back to not-changed
+                self.profile.prefs.removeObjectForKey(prefName)
                 self.enginesToSyncOnExit.remove(engineName.rawValue)
             } else {
-                self.profile?.prefs.setBool(true, forKey: prefName)
+                self.profile.prefs.setBool(true, forKey: prefName)
                 self.enginesToSyncOnExit.insert(engineName.rawValue)
             }
         }
@@ -259,7 +227,6 @@ class SyncContentSettingsViewController: SettingsTableViewController, FeatureFla
     override func generateSettings() -> [SettingSection] {
         let manage = ManageFxAccountSetting(settings: self)
         let manageSection = SettingSection(title: nil, footerTitle: nil, children: [manage])
-        guard let profile else { return [manageSection] }
 
         let bookmarks = BoolSetting(
             prefs: profile.prefs,
@@ -306,9 +273,15 @@ class SyncContentSettingsViewController: SettingsTableViewController, FeatureFla
             attributedStatusText: nil,
             settingDidChange: engineSettingChanged(.addresses))
 
-        var engineSectionChildren: [Setting] = [bookmarks, history, tabs, passwords, creditCards]
+        var engineSectionChildren: [Setting] = [bookmarks, history, tabs, passwords]
 
-        if AddressLocaleFeatureValidator.isValidRegion(for: SystemLocaleProvider().regionCode()) {
+        if featureFlags.isFeatureEnabled(
+            .creditCardAutofillStatus,
+            checking: .buildOnly) {
+            engineSectionChildren.append(creditCards)
+        }
+
+        if AddressLocaleFeatureValidator.isValidRegion() {
             engineSectionChildren.append(addresses)
         }
 

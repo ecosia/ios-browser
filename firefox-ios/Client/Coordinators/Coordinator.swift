@@ -5,7 +5,6 @@
 import Common
 import Foundation
 
-@MainActor
 protocol Coordinator: AnyObject {
     var id: UUID { get }
     var childCoordinators: [Coordinator] { get }
@@ -14,9 +13,9 @@ protocol Coordinator: AnyObject {
 
     /// Determines whether this coordinator can be dismissed or not, in some cases the coordinator
     /// cannot be dismissed for example due to state saving.
-    /// This isn't ideal for this pattern, but was deemed necessary to keep existing behavior while
+    /// This isn't ideal for this pattern, but was deemed necessary to keep existing behavior while 
     /// moving away from previous pattern. By default, all coordinators should be dismissable.
-    var isDismissible: Bool { get }
+    var isDismissable: Bool { get }
 
     /// Will hold the Route the coordinator was asked to navigate to in case the path could not be handled yet.
     var savedRoute: Route? { get set }

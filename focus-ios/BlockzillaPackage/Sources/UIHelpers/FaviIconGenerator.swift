@@ -4,7 +4,7 @@
 
 import UIKit
 
-public final class FaviIconGenerator {
+public class FaviIconGenerator {
     private let cachedImages = NSCache<NSString, UIImage>()
 
     private init() {}

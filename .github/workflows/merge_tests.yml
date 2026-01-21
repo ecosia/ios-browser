@@ -1,0 +1,27 @@
+name: Merge Unit Tests
+
+on:
+  pull_request:
+    branches: [main, 'patch/**']
+  push:
+    branches: [tuist-implementation]
+
+jobs:
+  execute_merge_tests:
+    runs-on: macos-15
+    name: Execute Merge Tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare environment
+        uses: ./.github/actions/prepare_environment
+        with:
+          core-token: ${{ secrets.IOS_CORE_TOKEN }}
+
+      - name: Perform Unit Tests and Publish Test reports
+        id: perform-tests
+        uses: ./.github/actions/perform_unit_tests
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

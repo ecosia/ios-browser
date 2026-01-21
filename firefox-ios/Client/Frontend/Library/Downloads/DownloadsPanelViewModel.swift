@@ -44,11 +44,13 @@ class DownloadsPanelViewModel {
     func headerTitle(for section: Int) -> String? {
         switch section {
         case 0:
-            return .LibraryPanel.Sections.LastTwentyFourHours
+           return .LibraryPanel.Sections.Today
         case 1:
-            return .LibraryPanel.Sections.LastSevenDays
+            return .LibraryPanel.Sections.Yesterday
         case 2:
-            return .LibraryPanel.Sections.LastFourWeeks
+            return .LibraryPanel.Sections.LastWeek
+        case 3:
+            return .LibraryPanel.Sections.LastMonth
         default:
             return nil
         }

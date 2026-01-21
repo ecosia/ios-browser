@@ -15,17 +15,21 @@ public func initializeRustErrors(logger: Logger) {
     setApplicationErrorReporter(errorReporter: FirefoxIOSErrorReporter(logger: logger))
 }
 
-/// The `AppServicesErrorReport` (with its conformance to `CustomCrashReport`) exists
+/// The `AppServicesErrorReport` class (with its inheritance from `CustomCrashReport`) exists
 /// to distinguish native Sentry reports from reports originating in A-S
-private struct AppServicesErrorReport: Error, CustomCrashReport {
-    let typeName: String
-    let message: String
+private class AppServicesErrorReport: Error, CustomCrashReport {
+    var typeName: String
+    var message: String
+
+    init(typeName: String, message: String) {
+        self.typeName = typeName
+        self.message = message
+    }
 }
 
 /// The `FirefoxIOSErrorReporter` class contains the callbacks A-S uses to report Sentry errors and
 /// breadcrumbs. These functions are not intended to be explicitly called in this repo.
-/// TODO(FXIOS-12942): Implement proper thread-safety
-private final class FirefoxIOSErrorReporter: ApplicationErrorReporter, @unchecked Sendable {
+private class FirefoxIOSErrorReporter: ApplicationErrorReporter {
     var logger: Logger
 
     init(logger: Logger) {
@@ -44,8 +48,7 @@ private final class FirefoxIOSErrorReporter: ApplicationErrorReporter, @unchecke
 }
 
 /// The `ForwardOnLog` class exists to support the rust-log-forwarder `setLogger` function.
-/// TODO(FXIOS-12942): Implement proper thread-safety
-internal final class ForwardOnLog: AppServicesLogger, @unchecked Sendable {
+internal class ForwardOnLog: AppServicesLogger {
     var logger: Logger
 
     init(logger: Logger) {

@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class AutocompleteCustomUrlViewController: UIViewController {
+class AutocompleteCustomUrlViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.dataSource = self

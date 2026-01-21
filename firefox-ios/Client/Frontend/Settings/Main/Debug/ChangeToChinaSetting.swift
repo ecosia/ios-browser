@@ -7,7 +7,6 @@ import Foundation
 
 class ChangeToChinaSetting: HiddenSetting {
     override var title: NSAttributedString? {
-        guard let theme else { return nil }
         return NSAttributedString(
             string: "Toggle China version (needs restart)",
             attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary]

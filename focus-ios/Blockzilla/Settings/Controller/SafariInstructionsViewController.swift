@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class SafariInstructionsViewController: UIViewController {
+class SafariInstructionsViewController: UIViewController {
     private let detector = BlockerEnabledDetector()
 
     private lazy var disabledStateView: DisabledStateView = {
@@ -39,7 +39,7 @@ final class SafariInstructionsViewController: UIViewController {
     }
 }
 
-private final class DisabledStateView: UIView {
+private class DisabledStateView: UIView {
     private lazy var label: SmartLabel = {
         let label = SmartLabel()
         label.text = UIConstants.strings.safariInstructionsNotEnabled

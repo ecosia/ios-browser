@@ -1,6 +1,4 @@
-/* (No Comment) */
-"Intents.Erase.Description" = "Șterge sesiunea de navigare";
+/* Title of the Erase intent. */
+"Intents.Erase.Title" = "Erase";
 
-/* (No Comment) */
-"Intents.Erase.Title" = "Șterge";
-
+"Intents.Erase.Description" = "Erase browsing session";

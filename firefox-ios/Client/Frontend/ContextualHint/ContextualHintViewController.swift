@@ -6,6 +6,7 @@ import Common
 import ComponentLibrary
 import Foundation
 import UIKit
+import Shared
 
 class ContextualHintViewController: UIViewController,
                                     OnViewDismissable,
@@ -22,7 +23,7 @@ class ContextualHintViewController: UIViewController,
     // MARK: - Properties
     private var viewProvider: ContextualHintViewProvider
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol
     private let windowUUID: WindowUUID
 
@@ -54,6 +55,8 @@ class ContextualHintViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
+        listenForThemeChange(view)
+        applyTheme()
         isPresenting = true
     }
 
@@ -63,9 +66,6 @@ class ContextualHintViewController: UIViewController,
         onViewSummoned = nil
         view.setNeedsLayout()
         view.layoutIfNeeded()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
-        applyTheme()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -132,7 +132,7 @@ class ContextualHintViewController: UIViewController,
         presentedUsing presentation: (() -> Void)?,
         sourceRect: CGRect = CGRect.null,
         withActionBeforeAppearing preAction: (() -> Void)? = nil,
-        actionOnDismiss postAction: (@MainActor () -> Void)? = nil,
+        actionOnDismiss postAction: (() -> Void)? = nil,
         andActionForButton buttonAction: (() -> Void)? = nil,
         andShouldStartTimerRightAway shouldStartTimer: Bool = true,
         overlayState: OverlayStateProtocol? = nil,
@@ -164,6 +164,7 @@ class ContextualHintViewController: UIViewController,
         if delegate == nil { presentationController?.delegate = self }
 
         var viewModel = ContextualHintViewModel(
+            isActionType: viewProvider.isActionType,
             actionButtonTitle: viewProvider.getCopyFor(.action),
             title: viewProvider.getCopyFor(.title),
             description: viewProvider.getCopyFor(.description),
@@ -220,5 +221,14 @@ class ContextualHintViewController: UIViewController,
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         self.view.setNeedsLayout()
+    }
+}
+
+/* Ecosia: Accessing the function of the private `viewProvider`
+ via helper function. The scope is to deactivate the hint for new users
+ */
+extension ContextualHintViewController {
+    func deactivateHintForNewUsers() {
+        viewProvider.markContextualHintPresented()
     }
 }

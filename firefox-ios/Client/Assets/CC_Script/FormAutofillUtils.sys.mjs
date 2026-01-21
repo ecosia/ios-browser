@@ -101,15 +101,7 @@ const FORM_SUBMISSION_REASON = {
   PAGE_NAVIGATION: "page-navigation",
 };
 
-const ELIGIBLE_ELEMENT_TYPES = ["input", "select", "textarea"];
-const ELIGIBLE_INPUT_TYPES = [
-  "text",
-  "email",
-  "tel",
-  "number",
-  "month",
-  "search",
-];
+const ELIGIBLE_INPUT_TYPES = ["text", "email", "tel", "number", "month"];
 
 // The maximum length of data to be saved in a single field for preventing DoS
 // attacks that fill the user's hard drive(s).
@@ -130,8 +122,6 @@ FormAutofillUtils = {
   MAX_FIELD_VALUE_LENGTH,
   FIELD_STATES,
   FORM_SUBMISSION_REASON,
-  ELIGIBLE_ELEMENT_TYPES,
-  ELIGIBLE_INPUT_TYPES,
 
   _fieldNameInfo: {
     name: "name",
@@ -145,7 +135,6 @@ FormAutofillUtils = {
     "address-line3": "address",
     "address-level1": "address",
     "address-level2": "address",
-    "address-level3": "address",
     // DE addresses are often split into street name and house number;
     // combined they form address-line1
     "address-streetname": "address",
@@ -189,20 +178,6 @@ FormAutofillUtils = {
 
   isCCNumber(ccNumber) {
     return ccNumber && lazy.CreditCard.isValidNumber(ccNumber);
-  },
-
-  isTextControl(element) {
-    return (
-      HTMLInputElement.isInstance(element) ||
-      HTMLTextAreaElement.isInstance(element)
-    );
-  },
-
-  queryEligibleElements(element, includeIframe = false) {
-    const types = includeIframe
-      ? [...ELIGIBLE_ELEMENT_TYPES, "iframe"]
-      : ELIGIBLE_ELEMENT_TYPES;
-    return Array.from(element.querySelectorAll(types.join(",")));
   },
 
   /**
@@ -503,10 +478,6 @@ FormAutofillUtils = {
     if (HTMLInputElement.isInstance(element)) {
       // `element.type` can be recognized as `text`, if it's missing or invalid.
       return ELIGIBLE_INPUT_TYPES.includes(element.type);
-    }
-
-    if (HTMLTextAreaElement.isInstance(element)) {
-      return true;
     }
 
     return HTMLSelectElement.isInstance(element);
@@ -824,7 +795,6 @@ FormAutofillUtils = {
         sub_keys: subKeys,
         sub_names: subNames,
         sub_lnames: subLnames,
-        sub_isoids: subIsoids,
       } = metadata;
       if (!subKeys) {
         // Not all regions have sub_keys. e.g. DE
@@ -838,7 +808,6 @@ FormAutofillUtils = {
         let identifiedValue = this.identifyValue(
           subKeys,
           subNames,
-          subIsoids,
           val,
           collators
         );
@@ -920,7 +889,6 @@ FormAutofillUtils = {
           }
           // Apply sub_lnames if sub_names does not exist
           let names = dataset.sub_names || dataset.sub_lnames;
-          let isoids = dataset.sub_isoids;
 
           // Go through options one by one to find a match.
           // Also check if any option contain the address-level1 key.
@@ -932,14 +900,12 @@ FormAutofillUtils = {
             let optionValue = this.identifyValue(
               keys,
               names,
-              isoids,
               option.value,
               collators
             );
             let optionText = this.identifyValue(
               keys,
               names,
-              isoids,
               option.text,
               collators,
               true
@@ -1098,17 +1064,12 @@ FormAutofillUtils = {
    *
    * @param   {Array<string>} keys
    * @param   {Array<string>} names
-   * @param   {Array<string>} isoids
    * @param   {string} value
    * @param   {Array} collators
    * @param   {bool} inexactMatch
    * @returns {string}
    */
-  identifyValue(keys, names, isoids, value, collators, inexactMatch = false) {
-    if (!value) {
-      return null;
-    }
-
+  identifyValue(keys, names, value, collators, inexactMatch = false) {
     let resultKey = keys.find(key => this.strCompare(value, key, collators));
     if (resultKey) {
       return resultKey;
@@ -1119,15 +1080,11 @@ FormAutofillUtils = {
         ? this.strInclude(value, name, collators)
         : this.strCompare(value, name, collators)
     );
-    if (index === -1) {
-      index = isoids.findIndex(isoid =>
-        inexactMatch
-          ? this.strInclude(value, isoid, collators)
-          : this.strCompare(value, isoid, collators)
-      );
+    if (index !== -1) {
+      return keys[index];
     }
 
-    return index !== -1 ? keys[index] : null;
+    return null;
   },
 
   /**
@@ -1439,6 +1396,18 @@ FormAutofillUtils = {
     );
   },
 };
+
+ChromeUtils.defineLazyGetter(FormAutofillUtils, "stringBundle", function () {
+  return Services.strings.createBundle(
+    "chrome://formautofill/locale/formautofill.properties"
+  );
+});
+
+ChromeUtils.defineLazyGetter(FormAutofillUtils, "brandBundle", function () {
+  return Services.strings.createBundle(
+    "chrome://branding/locale/brand.properties"
+  );
+});
 
 XPCOMUtils.defineLazyPreferenceGetter(
   FormAutofillUtils,

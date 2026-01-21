@@ -7,15 +7,15 @@ import Foundation
 import Storage
 import Shared
 
-import struct MozillaAppServices.Login
+import struct MozillaAppServices.EncryptedLogin
 import struct MozillaAppServices.LoginEntry
 
 struct NewSearchInProgressError: MaybeErrorType {
     public let description: String
 }
 
+// MARK: - Main View Model
 // Login List View Model
-@MainActor
 final class PasswordManagerViewModel {
     private(set) var profile: Profile
     private(set) var isDuringSearchControllerDismiss = false
@@ -27,7 +27,9 @@ final class PasswordManagerViewModel {
     private(set) var titles = [Character]()
     private(set) var loginRecordSections = [Character: [LoginRecord]]() {
         didSet {
-            self.delegate?.loginSectionsDidUpdate()
+            ensureMainThread {
+                self.delegate?.loginSectionsDidUpdate()
+            }
         }
     }
     let listSelectionHelper = PasswordManagerSelectionHelper()
@@ -38,15 +40,13 @@ final class PasswordManagerViewModel {
     private(set) var userBreaches: Set<LoginRecord>?
     private(set) var breachIndexPath = Set<IndexPath>() {
         didSet {
-            ensureMainThread { [weak self] in
-                self?.delegate?.breachPathDidUpdate()
-            }
+            delegate?.breachPathDidUpdate()
         }
     }
     var hasLoadedBreaches = false
     var theme: Theme
 
-    init(profile: Profile, searchController: UISearchController?, theme: Theme, loginProvider: LoginProvider) {
+    init(profile: Profile, searchController: UISearchController, theme: Theme, loginProvider: LoginProvider) {
         self.profile = profile
         self.searchController = searchController
         self.theme = theme
@@ -60,27 +60,25 @@ final class PasswordManagerViewModel {
             // Loading breaches is a heavy operation hence loading it once per opening logins screen
             guard self?.hasLoadedBreaches == false else { return }
             self?.breachAlertsManager.loadBreaches(completion: { _ in
-                ensureMainThread {
-                    guard let self = self else { return }
+                guard let self = self else { return }
 
-                    self.userBreaches = self.breachAlertsManager.findUserBreaches(logins).successValue
-                    guard let breaches = self.userBreaches else { return }
-                    var indexPaths = Set<IndexPath>()
-                    for breach in breaches {
-                        if logins.contains(breach), let indexPath = self.indexPathForLogin(breach) {
-                            indexPaths.insert(indexPath)
-                        }
+                self.userBreaches = self.breachAlertsManager.findUserBreaches(logins).successValue
+                guard let breaches = self.userBreaches else { return }
+                var indexPaths = Set<IndexPath>()
+                for breach in breaches {
+                    if logins.contains(breach), let indexPath = self.indexPathForLogin(breach) {
+                        indexPaths.insert(indexPath)
                     }
-                    self.breachIndexPath = indexPaths
-                    self.hasLoadedBreaches = true
                 }
+                self.breachIndexPath = indexPaths
+                self.hasLoadedBreaches = true
             })
         }
     }
 
     /// Searches SQLite database for logins that match query.
     /// Wraps the SQLiteLogins method to allow us to cancel it from our end.
-    func queryLogins(_ query: String, completion: @escaping @MainActor ([Login]) -> Void) {
+    func queryLogins(_ query: String, completion: @escaping ([EncryptedLogin]) -> Void) {
         loginProvider.searchLoginsWithQuery(query) { result in
             ensureMainThread {
                 switch result {
@@ -149,26 +147,22 @@ final class PasswordManagerViewModel {
             self?.titles = titles
             self?.loginRecordSections = sections
 
-            ensureMainThread { [weak self] in
-                // Disable the search controller if there are no logins saved
-                if !(self?.searchController?.isActive ?? true) {
-                    self?.searchController?.searchBar.isUserInteractionEnabled = !logins.isEmpty
-                    self?.searchController?.searchBar.alpha = logins.isEmpty ? 0.5 : 1.0
-                }
+            // Disable the search controller if there are no logins saved
+            if !(self?.searchController?.isActive ?? true) {
+                self?.searchController?.searchBar.isUserInteractionEnabled = !logins.isEmpty
+                self?.searchController?.searchBar.alpha = logins.isEmpty ? 0.5 : 1.0
             }
         }
     }
 
-    public func save(loginRecord: LoginEntry, completion: @escaping @MainActor (String?) -> Void) {
+    public func save(loginRecord: LoginEntry, completion: @escaping ((String?) -> Void)) {
         loginProvider.addLogin(login: loginRecord, completionHandler: { result in
-            ensureMainThread {
-                switch result {
-                case .success(let encryptedLogin):
-                    self.sendLoginsSavedTelemetry()
-                    completion(encryptedLogin?.id)
-                case .failure(let error):
-                    completion(error as? String)
-                }
+            switch result {
+            case .success(let encryptedLogin):
+                self.sendLoginsSavedTelemetry()
+                completion(encryptedLogin?.id)
+            case .failure(let error):
+                completion(error as? String)
             }
         })
     }
@@ -199,8 +193,6 @@ final class PasswordManagerViewModel {
 
 // MARK: - LoginDataSourceViewModelDelegate
 protocol LoginViewModelDelegate: AnyObject {
-    @MainActor
     func loginSectionsDidUpdate()
-    @MainActor
     func breachPathDidUpdate()
 }

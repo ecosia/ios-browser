@@ -4,7 +4,7 @@
 
 import Foundation
 
-protocol LoggerFileManager: Sendable {
+protocol LoggerFileManager {
     /// Get the URL of a new log file
     func getLogDestination() -> URL?
 
@@ -15,13 +15,13 @@ protocol LoggerFileManager: Sendable {
     func deleteCachedLogFiles()
 }
 
-final class DefaultLoggerFileManager: LoggerFileManager {
+class DefaultLoggerFileManager: LoggerFileManager {
     private static let TwoMBsInBytes: Int64 = 2 * 100000
-    private let fileManager: FileManagerProtocol
+    private var fileManager: FileManagerProtocol
     private let fileNameRoot: String
     private let sizeLimit: Int64
 
-    private let logDirectoryPath: String?
+    var logDirectoryPath: String?
 
     init(fileNameRoot: String = "Firefox",
          fileManager: FileManagerProtocol = FileManager.default,
@@ -29,11 +29,11 @@ final class DefaultLoggerFileManager: LoggerFileManager {
         self.fileNameRoot = fileNameRoot
         self.fileManager = fileManager
         self.sizeLimit = sizeLimit
-        self.logDirectoryPath = Self.logFileDirectoryPath(inDocuments: false, withFileManager: fileManager)
+        self.logDirectoryPath = logFileDirectoryPath(inDocuments: false)
     }
 
     func getLogDestination() -> URL? {
-        guard let path = Self.logFileDirectoryPath(inDocuments: false, withFileManager: fileManager) else { return nil }
+        guard let path = logFileDirectoryPath(inDocuments: false) else { return nil }
 
         let pathComponent = "\(fileNameRoot).log"
         return URL(fileURLWithPath: path, isDirectory: true).appendingPathComponent(pathComponent)
@@ -58,7 +58,7 @@ final class DefaultLoggerFileManager: LoggerFileManager {
     }
 
     private func deleteOldLogs(inDocuments: Bool) {
-        guard let logDirectoryPath = Self.logFileDirectoryPath(inDocuments: inDocuments, withFileManager: fileManager),
+        guard let logDirectoryPath = logFileDirectoryPath(inDocuments: inDocuments),
               let logFiles = try? fileManager.contentsOfDirectoryAtPath(logDirectoryPath,
                                                                         withFilenamePrefix: fileNameRoot)
         else { return }
@@ -70,8 +70,8 @@ final class DefaultLoggerFileManager: LoggerFileManager {
 
     /// Copy logs file from the cache to the documents folder
     private func copyLogs() {
-        guard let defaultLogDirectoryPath = Self.logFileDirectoryPath(inDocuments: false, withFileManager: fileManager),
-              let documentsLogDirectoryPath = Self.logFileDirectoryPath(inDocuments: true, withFileManager: fileManager),
+        guard let defaultLogDirectoryPath = logFileDirectoryPath(inDocuments: false),
+              let documentsLogDirectoryPath = logFileDirectoryPath(inDocuments: true),
               let previousLogFiles = try? fileManager.contentsOfDirectory(atPath: defaultLogDirectoryPath)
         else { return }
 
@@ -86,13 +86,10 @@ final class DefaultLoggerFileManager: LoggerFileManager {
 
     /// Get the logs file either from documents or cache folder. If the Logs folder doesn't
     /// exist in that folder it will be created.
-    ///
-    /// - Parameter inDocuments: If `true` then we get the document logs path, if `false` we get the cache logs path
+    /// 
+    /// - Parameter inDocuments: If true then we get the documentlogs path, if not we get the cache logs path
     /// - Returns: The path for logs in the directory we asked for
-    private static func logFileDirectoryPath(
-        inDocuments: Bool,
-        withFileManager fileManager: FileManagerProtocol
-    ) -> String? {
+    private func logFileDirectoryPath(inDocuments: Bool) -> String? {
         let searchPathDirectory: FileManager.SearchPathDirectory = inDocuments ? .documentDirectory : .cachesDirectory
         guard let targetDirectory = NSSearchPathForDirectoriesInDomains(searchPathDirectory,
                                                                         .userDomainMask,

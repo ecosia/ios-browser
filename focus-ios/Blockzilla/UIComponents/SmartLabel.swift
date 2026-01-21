@@ -5,7 +5,7 @@
 import UIKit
 import UIHelpers
 
-final class SmartLabel: UILabel {
+class SmartLabel: UILabel {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setupShrinkage()

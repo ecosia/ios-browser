@@ -16,13 +16,13 @@ public struct ActionButtonViewModel {
     public let a11yIdentifier: String?
     public let horizontalInset: CGFloat
     public let verticalInset: CGFloat
-    public var touchUpAction: (@MainActor (UIButton) -> Void)?
+    public var touchUpAction: ((UIButton) -> Void)?
 
     public init(title: String,
                 a11yIdentifier: String?,
                 horizontalInset: CGFloat = UX.horizontalInset,
                 verticalInset: CGFloat = UX.verticalInset,
-                touchUpAction: (@MainActor (UIButton) -> Void)?) {
+                touchUpAction: ((UIButton) -> Void)?) {
         self.title = title
         self.a11yIdentifier = a11yIdentifier
         self.horizontalInset = horizontalInset

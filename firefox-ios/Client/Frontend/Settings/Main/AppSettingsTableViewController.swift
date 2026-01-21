@@ -5,9 +5,7 @@
 import Common
 import UIKit
 import Shared
-import Glean
-
-import struct MozillaAppServices.VisitObservation
+import Ecosia
 
 // MARK: - Settings Flow Delegate Protocol
 
@@ -18,39 +16,22 @@ protocol SettingsFlowDelegate: AnyObject,
                                AccountSettingsDelegate,
                                AboutSettingsDelegate,
                                SupportSettingsDelegate {
-    @MainActor
     func showDevicePassCode()
-
-    @MainActor
     func showCreditCardSettings()
-
-    @MainActor
     func showExperiments()
-
-    @MainActor
     func showFirefoxSuggest()
-
-    @MainActor
     func openDebugTestTabs(count: Int)
-
-    @MainActor
     func showDebugFeatureFlags()
-
-    @MainActor
     func showPasswordManager(shouldShowOnboarding: Bool)
-
-    @MainActor
     func didFinishShowingSettings()
 }
 
 // MARK: - App Settings Screen Protocol
 
 protocol AppSettingsScreen: UIViewController {
-    @MainActor
     var settingsDelegate: SettingsDelegate? { get set }
-    @MainActor
     var parentCoordinator: SettingsFlowDelegate? { get set }
-    @MainActor
+
     func handle(route: Route.SettingsSection)
 }
 
@@ -65,49 +46,32 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                       SharedSettingsDelegate {
     // MARK: - Properties
     private var showDebugSettings = false
-    private var debugSettingsClickCount = 0
+    private var debugSettingsClickCount: Int = 0
     private var appAuthenticator: AppAuthenticationProtocol
     private var applicationHelper: ApplicationHelper
-    private let logger: Logger
-    private let gleanUsageReportingMetricsService: GleanUsageReportingMetricsService
-    private var hasAppearedBefore = false
-    private let searchEnginesManager: SearchEnginesManagerProvider
-    private let summarizerNimbusUtils: SummarizerNimbusUtils
 
     weak var parentCoordinator: SettingsFlowDelegate?
 
     // MARK: - Data Settings
-    private var sendTechnicalDataSetting: SendDataSetting?
-    private var sendCrashReportsSetting: SendDataSetting?
-    private var sendDailyUsagePingSetting: SendDataSetting?
-    private var studiesToggleSetting: SendDataSetting?
-    private var rolloutsToggleSetting: SendDataSetting?
+    private var sendAnonymousUsageDataSetting: BoolSetting?
+    private var studiesToggleSetting: BoolSetting?
 
     // MARK: - Initializers
-    init(
-        with profile: Profile,
-        and tabManager: TabManager,
-        settingsDelegate: SettingsDelegate,
-        parentCoordinator: SettingsFlowDelegate,
-        gleanUsageReportingMetricsService: GleanUsageReportingMetricsService,
-        appAuthenticator: AppAuthenticationProtocol = AppAuthenticator(),
-        applicationHelper: ApplicationHelper = DefaultApplicationHelper(),
-        summarizerNimbusUtils: SummarizerNimbusUtils = DefaultSummarizerNimbusUtils(),
-        logger: Logger = DefaultLogger.shared,
-        searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
-    ) {
-        self.summarizerNimbusUtils = summarizerNimbusUtils
+    init(with profile: Profile,
+         and tabManager: TabManager,
+         delegate: SettingsDelegate? = nil,
+         appAuthenticator: AppAuthenticationProtocol = AppAuthenticator(),
+         applicationHelper: ApplicationHelper = DefaultApplicationHelper()) {
         self.appAuthenticator = appAuthenticator
         self.applicationHelper = applicationHelper
-        self.logger = logger
-        self.gleanUsageReportingMetricsService = gleanUsageReportingMetricsService
-        self.searchEnginesManager = searchEnginesManager
 
-        super.init(windowUUID: tabManager.windowUUID)
+        // Ecosia: Update TableView to grouped style
+        // super.init(windowUUID: tabManager.windowUUID)
+        super.init(style: .insetGrouped, windowUUID: tabManager.windowUUID)
+
         self.profile = profile
         self.tabManager = tabManager
-        self.settingsDelegate = settingsDelegate
-        self.parentCoordinator = parentCoordinator
+        self.settingsDelegate = delegate
         setupNavigationBar()
         setupDataSettings()
     }
@@ -119,20 +83,26 @@ class AppSettingsTableViewController: SettingsTableViewController,
     // MARK: - View lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(cellType: ThemedLearnMoreTableViewCell.self)
+
         setupNavigationBar()
         configureAccessibilityIdentifiers()
+
+        // Ecosia: Register Nudge Card if needed
+        if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
+            tableView.register(DefaultBrowserSettingsNudgeCardHeaderView.self,
+                               forHeaderFooterViewReuseIdentifier: DefaultBrowserSettingsNudgeCardHeaderView.cellIdentifier)
+        }
     }
 
+    /* Ecosia: Move settings reload to `viewWillAppear`
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        if hasAppearedBefore {
-            // Only reload if we're returning from a child view
-            askedToReload()
-        }
-
-        hasAppearedBefore = true
+        askedToReload()
+    }
+     */
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        askedToReload()
     }
 
     // MARK: - Actions
@@ -147,7 +117,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         navigationItem.title = String.AppSettingsTitle
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: .AppSettingsDone,
-            style: .plain,
+            style: .done,
             target: self,
             action: #selector(done))
     }
@@ -167,7 +137,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         case .creditCard:
             authenticateUserFor(route: route)
         case .rateApp:
-            RatingPromptManager.goToAppStoreReview()
+            openHelpDialogOrRateApp()
         default:
             break
         }
@@ -183,7 +153,25 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
     }
 
-    // MARK: - User Authentication
+    // MARK: Ecosia
+
+    private func openHelpDialogOrRateApp() {
+        let rateAction = UIAlertAction(title: .localized(.settingsRatingPromptYes), style: .default) { _ in
+            UIApplication.shared.open(EcosiaEnvironment.current.urlProvider.storeWriteReviewPage)
+        }
+
+        let helpAction = UIAlertAction(title: .localized(.settingsRatingPromptNo), style: .destructive) { [weak self] _ in
+            self?.settingsDelegate?.settingsOpenURLInNewTab(EcosiaEnvironment.current.urlProvider.helpPage)
+            self?.dismissVC()
+        }
+
+        let alertController = UIAlertController(title: .localized(.settingsRatingPromptTitle), message: nil, preferredStyle: .alert)
+        alertController.addAction(rateAction)
+        alertController.addAction(helpAction)
+        present(alertController, animated: true)
+    }
+
+    // MARK: - User AutheSntication
 
     // Authenticates the user prior to allowing access to sensitive sections
     private func authenticateUserFor(route: Route.SettingsSection) {
@@ -214,115 +202,32 @@ class AppSettingsTableViewController: SettingsTableViewController,
     // MARK: Data settings setup
 
     private func setupDataSettings() {
-        guard let profile else { return }
-
-        let studiesSetting = SendDataSetting(
+        let anonymousUsageDataSetting = SendAnonymousUsageDataSetting(
             prefs: profile.prefs,
-            prefKey: AppConstants.prefStudiesToggle,
-            defaultValue: true,
-            titleText: .StudiesSettingTitleV3,
-            subtitleText: String(format: .StudiesSettingMessageV3, AppName.shortName.rawValue),
-            learnMoreText: .StudiesSettingLinkV3,
-            learnMoreURL: SupportUtils.URLForTopic("ios-studies"),
-            a11yId: AccessibilityIdentifiers.Settings.SendData.studiesTitle,
-            learnMoreA11yId: AccessibilityIdentifiers.Settings.SendData.studiesLearnMoreButton,
-            settingsDelegate: parentCoordinator,
-            isStudiesCase: true
-        )
-        studiesSetting.settingDidChange = {
-            Experiments.setStudiesSetting($0)
-        }
-
-        // Initialize rollouts participation on startup (rollouts are independent of telemetry)
-        // Get the value from Nimbus SDK to respect any DB migration that may have occurred
-        let rolloutsEnabled = Experiments.shared.rolloutParticipation
-        // Sync prefs with SDK value so UI toggle shows correct state after DB migration
-        if profile.prefs.boolForKey(AppConstants.prefRolloutsToggle) == nil {
-            profile.prefs.setBool(rolloutsEnabled, forKey: AppConstants.prefRolloutsToggle)
-        }
-        Experiments.setRolloutsSetting(rolloutsEnabled)
-
-        let rolloutsSetting = SendDataSetting(
-            prefs: profile.prefs,
-            prefKey: AppConstants.prefRolloutsToggle,
-            defaultValue: true,
-            titleText: .RolloutsSettingTitle,
-            subtitleText: String(format: .RolloutsSettingMessage, AppName.shortName.rawValue),
-            learnMoreText: .RolloutsSettingLink,
-            learnMoreURL: SupportUtils.URLForTopic("remote-improvements"),
-            a11yId: AccessibilityIdentifiers.Settings.SendData.rolloutsTitle,
-            learnMoreA11yId: AccessibilityIdentifiers.Settings.SendData.rolloutsLearnMoreButton,
-            settingsDelegate: parentCoordinator
-        )
-        rolloutsSetting.settingDidChange = {
-            Experiments.setRolloutsSetting($0)
-        }
-
-        let sendTechnicalDataSettings = SendDataSetting(
-            prefs: profile.prefs,
-            prefKey: AppConstants.prefSendUsageData,
-            defaultValue: true,
-            titleText: .SendTechnicalDataSettingTitleV2,
-            subtitleText: String(format: .SendTechnicalDataSettingMessageV2, AppName.shortName.rawValue),
-            learnMoreText: .SendTechnicalDataSettingLinkV2,
-            learnMoreURL: SupportUtils.URLForTopic("mobile-technical-and-interaction-data"),
-            a11yId: AccessibilityIdentifiers.Settings.SendData.sendTechnicalDataTitle,
-            learnMoreA11yId: AccessibilityIdentifiers.Settings.SendData.sendTechnicalDataLearnMoreButton,
+            delegate: settingsDelegate,
+            theme: themeManager.getCurrentTheme(for: windowUUID),
             settingsDelegate: parentCoordinator
         )
 
-        sendTechnicalDataSettings.settingDidChange = { [weak self] value in
-            guard let self else { return }
-            DefaultGleanWrapper().setUpload(isEnabled: value)
-            Experiments.setTelemetrySetting(value)
+        let studiesSetting = StudiesToggleSetting(
+            prefs: profile.prefs,
+            delegate: settingsDelegate,
+            theme: themeManager.getCurrentTheme(for: windowUUID),
+            settingsDelegate: parentCoordinator
+        )
+
+        anonymousUsageDataSetting.shouldSendUsageData = { value in
             studiesSetting.updateSetting(for: value)
-            self.tableView.reloadData()
         }
-        sendTechnicalDataSetting = sendTechnicalDataSettings
 
-        let sendDailyUsagePingSettings = SendDataSetting(
-            prefs: profile.prefs,
-            prefKey: AppConstants.prefSendDailyUsagePing,
-            defaultValue: true,
-            titleText: .SendDailyUsagePingSettingTitle,
-            subtitleText: String(format: .SendDailyUsagePingSettingMessage, MozillaName.shortName.rawValue),
-            learnMoreText: .SendDailyUsagePingSettingLinkV2,
-            learnMoreURL: SupportUtils.URLForTopic("usage-ping-settings-mobile"),
-            a11yId: AccessibilityIdentifiers.Settings.SendData.sendDailyUsagePingTitle,
-            learnMoreA11yId: AccessibilityIdentifiers.Settings.SendData.sendDailyUsagePingLearnMoreButton,
-            settingsDelegate: parentCoordinator
-        )
-        sendDailyUsagePingSettings.settingDidChange = { [weak self] value in
-            if value {
-                self?.gleanUsageReportingMetricsService.start()
-            } else {
-                self?.gleanUsageReportingMetricsService.stop()
-            }
-        }
-        sendDailyUsagePingSetting = sendDailyUsagePingSettings
-
-        let sendCrashReportsSettings = SendDataSetting(
-            prefs: profile.prefs,
-            prefKey: AppConstants.prefSendCrashReports,
-            defaultValue: true,
-            titleText: .SendCrashReportsSettingTitle,
-            subtitleText: String(format: .SendCrashReportsSettingMessageV2, MozillaName.shortName.rawValue),
-            learnMoreText: .SendCrashReportsSettingLinkV2,
-            learnMoreURL: SupportUtils.URLForTopic("ios-crash-reports"),
-            a11yId: AccessibilityIdentifiers.Settings.SendData.sendCrashReportsTitle,
-            learnMoreA11yId: AccessibilityIdentifiers.Settings.SendData.sendCrashReportsLearnMoreButton,
-            settingsDelegate: parentCoordinator
-        )
-        self.sendCrashReportsSetting = sendCrashReportsSettings
-
+        sendAnonymousUsageDataSetting = anonymousUsageDataSetting
         studiesToggleSetting = studiesSetting
-        rolloutsToggleSetting = rolloutsSetting
     }
 
     // MARK: - Generate Settings
 
     override func generateSettings() -> [SettingSection] {
-        setupDataSettings()
+        /* Ecosia: Review Settings
         var settings = [SettingSection]()
         settings += getDefaultBrowserSetting()
         settings += getAccountSetting()
@@ -334,8 +239,10 @@ class AppSettingsTableViewController: SettingsTableViewController,
         if showDebugSettings {
             settings += getDebugSettings()
         }
-
+         
         return settings
+         */
+        getEcosiaSettingsSectionsShowingDebug(showDebugSettings)
     }
 
     private func getDefaultBrowserSetting() -> [SettingSection] {
@@ -347,66 +254,88 @@ class AppSettingsTableViewController: SettingsTableViewController,
     }
 
     private func getAccountSetting() -> [SettingSection] {
+        let accountChinaSyncSetting: [Setting]
+        if !AppInfo.isChinaEdition {
+            accountChinaSyncSetting = []
+        } else {
+            accountChinaSyncSetting = [
+                // Show China sync service setting:
+                ChinaSyncServiceSetting(settings: self, settingsDelegate: self)
+            ]
+        }
+
         let accountSectionTitle = NSAttributedString(string: .FxAFirefoxAccount)
 
         let attributedString = NSAttributedString(string: .Settings.Sync.ButtonDescription)
-        let accountFooterText = !(profile?.hasAccount() ?? false) ? attributedString : nil
+        let accountFooterText = !profile.hasAccount() ? attributedString : nil
 
-        var settings = [
+        return [SettingSection(title: accountSectionTitle, footerTitle: accountFooterText, children: [
             // Without a Firefox Account:
             ConnectSetting(settings: self, settingsDelegate: parentCoordinator),
             AdvancedAccountSetting(settings: self, isHidden: showDebugSettings, settingsDelegate: parentCoordinator),
             // With a Firefox Account:
             AccountStatusSetting(settings: self, settingsDelegate: parentCoordinator),
             SyncNowSetting(settings: self, settingsDelegate: parentCoordinator)
-        ]
-        if AppInfo.isChinaEdition, let profile {
-            settings.append(ChinaSyncServiceSetting(profile: profile, settingsDelegate: self))
-        }
-        return [
-            SettingSection(title: accountSectionTitle, footerTitle: accountFooterText, children: settings)
-        ]
+        ] + accountChinaSyncSetting)]
     }
 
     private func getGeneralSettings() -> [SettingSection] {
         var generalSettings: [Setting] = [
-            BrowsingSetting(settings: self, settingsDelegate: parentCoordinator),
-            SearchSetting(
-                settingsDelegate: parentCoordinator,
-                searchEnginesManager: searchEnginesManager,
-                theme: themeManager.getCurrentTheme(for: windowUUID)
-            ),
+            SearchSetting(settings: self, settingsDelegate: parentCoordinator),
             NewTabPageSetting(settings: self, settingsDelegate: parentCoordinator),
             HomeSetting(settings: self, settingsDelegate: parentCoordinator),
-            ThemeSetting(settings: self, settingsDelegate: parentCoordinator)
+            OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
+            ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
+            SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
+            BlockPopupSetting(settings: self),
+            NoImageModeSetting(settings: self),
         ]
 
-        if isSearchBarLocationFeatureEnabled, let profile {
-            generalSettings.append(
-                SearchBarSetting(settings: self, profile: profile, settingsDelegate: parentCoordinator)
-            )
+        if isSearchBarLocationFeatureEnabled {
+            generalSettings.insert(SearchBarSetting(settings: self, settingsDelegate: parentCoordinator), at: 5)
         }
 
-        // For users whose devices support alternate app icons, add the App Icon setting
-        if UIApplication.shared.supportsAlternateIcons {
-            generalSettings.append(
-                AppIconSetting(
+        let inactiveTabsAreBuildActive = featureFlags.isFeatureEnabled(.inactiveTabs, checking: .buildOnly)
+        if inactiveTabsAreBuildActive {
+            generalSettings.insert(
+                TabsSetting(
                     theme: themeManager.getCurrentTheme(for: windowUUID),
                     settingsDelegate: parentCoordinator
-                )
+                ),
+                at: 3
             )
         }
 
-        if summarizerNimbusUtils.isSummarizeFeatureEnabled {
-            generalSettings.append(SummarizeSetting(settings: self, settingsDelegate: parentCoordinator))
-        }
+        let offerToOpenCopiedLinksSettings = BoolSetting(
+            prefs: profile.prefs,
+            theme: themeManager.getCurrentTheme(for: windowUUID),
+            prefKey: "showClipboardBar",
+            defaultValue: false,
+            titleText: .SettingsOfferClipboardBarTitle,
+            statusText: String(format: .SettingsOfferClipboardBarStatus, AppName.shortName.rawValue)
+        )
 
-        if featureFlags.isFeatureEnabled(.translation, checking: .buildOnly) {
-            generalSettings.append(TranslationSetting(settings: self, settingsDelegate: parentCoordinator))
-        }
+        let showLinksPreviewSettings = BoolSetting(
+            prefs: profile.prefs,
+            theme: themeManager.getCurrentTheme(for: windowUUID),
+            prefKey: PrefsKeys.ContextMenuShowLinkPreviews,
+            defaultValue: true,
+            titleText: .SettingsShowLinkPreviewsTitle,
+            statusText: .SettingsShowLinkPreviewsStatus
+        )
+
+        let blockOpeningExternalAppsSettings = BoolSetting(
+            prefs: profile.prefs,
+            theme: themeManager.getCurrentTheme(for: windowUUID),
+            prefKey: PrefsKeys.BlockOpeningExternalApps,
+            defaultValue: false,
+            titleText: .SettingsBlockOpeningExternalAppsTitle
+        )
 
         generalSettings += [
-            SiriPageSetting(settings: self, settingsDelegate: parentCoordinator)
+            offerToOpenCopiedLinksSettings,
+            showLinksPreviewSettings,
+            blockOpeningExternalAppsSettings
         ]
 
         return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
@@ -415,82 +344,61 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
     private func getPrivacySettings() -> [SettingSection] {
         var privacySettings = [Setting]()
+        privacySettings.append(PasswordManagerSetting(settings: self, settingsDelegate: parentCoordinator))
 
-        privacySettings.append(AutofillPasswordSetting(settings: self, settingsDelegate: parentCoordinator))
+        let autofillCreditCardStatus = featureFlags.isFeatureEnabled(.creditCardAutofillStatus, checking: .buildOnly)
+        if autofillCreditCardStatus {
+            privacySettings.append(AutofillCreditCardSettings(settings: self, settingsDelegate: parentCoordinator))
+        }
+
+        let autofillAddressStatus = AddressLocaleFeatureValidator.isValidRegion()
+        if autofillAddressStatus {
+            privacySettings.append(AddressAutofillSetting(theme: themeManager.getCurrentTheme(for: windowUUID),
+                                                          profile: profile,
+                                                          settingsDelegate: parentCoordinator))
+        }
 
         privacySettings.append(ClearPrivateDataSetting(settings: self, settingsDelegate: parentCoordinator))
 
-        if let profile {
-            privacySettings.append(
-                BoolSetting(
-                    prefs: profile.prefs,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
-                    prefKey: PrefsKeys.Settings.closePrivateTabs,
-                    defaultValue: true,
-                    titleText: .AppSettingsClosePrivateTabsTitle,
-                    statusText: .AppSettingsClosePrivateTabsDescription
-                ) { _ in
-                    let action = TabTrayAction(windowUUID: self.windowUUID,
-                                               actionType: TabTrayActionType.closePrivateTabsSettingToggled)
-                    store.dispatch(action)
-                }
-            )
-        }
+        privacySettings += [
+            BoolSetting(prefs: profile.prefs,
+                        theme: themeManager.getCurrentTheme(for: windowUUID),
+                        prefKey: PrefsKeys.Settings.closePrivateTabs,
+                        defaultValue: true,
+                        titleText: .AppSettingsClosePrivateTabsTitle,
+                        statusText: .AppSettingsClosePrivateTabsDescription) { _ in
+                            let action = TabTrayAction(windowUUID: self.windowUUID,
+                                                       actionType: TabTrayActionType.closePrivateTabsSettingToggled)
+                            store.dispatch(action)
+            }
+        ]
 
         privacySettings.append(ContentBlockerSetting(settings: self, settingsDelegate: parentCoordinator))
 
-        if let profile {
-            privacySettings.append(NotificationsSetting(theme: themeManager.getCurrentTheme(for: windowUUID),
-                                                        profile: profile,
-                                                        settingsDelegate: parentCoordinator))
-        }
-
-        privacySettings.append(PrivacyPolicySetting(theme: themeManager.getCurrentTheme(for: windowUUID),
+        privacySettings.append(NotificationsSetting(theme: themeManager.getCurrentTheme(for: windowUUID),
+                                                    profile: profile,
                                                     settingsDelegate: parentCoordinator))
+
+        privacySettings += [
+            PrivacyPolicySetting(theme: themeManager.getCurrentTheme(for: windowUUID),
+                                 settingsDelegate: parentCoordinator)
+        ]
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
                                children: privacySettings)]
     }
 
     private func getSupportSettings() -> [SettingSection] {
-        var supportSettings = [
+        guard let sendAnonymousUsageDataSetting, let studiesToggleSetting else { return [] }
+        let supportSettings = [
             ShowIntroductionSetting(settings: self, settingsDelegate: self),
             SendFeedbackSetting(settingsDelegate: parentCoordinator),
-        ]
-
-        // Only add this toggle to the Settings if Sent from Firefox feature flag is enabled from Nimbus
-        if featureFlags.isFeatureEnabled(.sentFromFirefox, checking: .buildOnly), let profile {
-            supportSettings.append(
-                SentFromFirefoxSetting(
-                    prefs: profile.prefs,
-                    delegate: settingsDelegate,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
-                    settingsDelegate: parentCoordinator
-                )
-            )
-        }
-
-        guard let sendTechnicalDataSetting,
-              let sendDailyUsagePingSetting,
-              let studiesToggleSetting,
-              let rolloutsToggleSetting,
-              let sendCrashReportsSetting else {
-            return []
-        }
-
-        supportSettings.append(contentsOf: [
-            sendTechnicalDataSetting,
+            sendAnonymousUsageDataSetting,
             studiesToggleSetting,
-            rolloutsToggleSetting,
-            sendDailyUsagePingSetting,
-            sendCrashReportsSetting
-        ])
-
-        supportSettings.append(contentsOf: [
             OpenSupportPageSetting(delegate: settingsDelegate,
                                    theme: themeManager.getCurrentTheme(for: windowUUID),
                                    settingsDelegate: parentCoordinator),
-        ])
+        ]
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsSupport),
                                children: supportSettings)]
@@ -516,28 +424,19 @@ class AppSettingsTableViewController: SettingsTableViewController,
             AppDataUsageReportSetting(settings: self),
             DeleteExportedDataSetting(settings: self),
             ForceCrashSetting(settings: self),
-            ForceRSSyncSetting(settings: self),
+            SwitchFakespotProduction(settings: self, settingsDelegate: self),
             ChangeToChinaSetting(settings: self),
             AppReviewPromptSetting(settings: self, settingsDelegate: self),
+            ToggleInactiveTabs(settings: self, settingsDelegate: self),
             ResetContextualHints(settings: self),
             ResetWallpaperOnboardingPage(settings: self, settingsDelegate: self),
-            ResetTermsOfServiceAcceptancePage(settings: self, settingsDelegate: self),
-            ResetSearchEnginePrefsSetting(settings: self),
             SentryIDSetting(settings: self, settingsDelegate: self),
-            TermsOfUseTimeout(settings: self, settingsDelegate: self),
+            FasterInactiveTabs(settings: self, settingsDelegate: self),
             OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
-            FirefoxSuggestSettings(settings: self, settingsDelegate: self),
-            ScreenshotSetting(settings: self),
-            DeleteLoginsKeysSetting(settings: self),
-            DeleteAutofillKeysSetting(settings: self),
-            ChangeRSServerSetting(settings: self),
-            PopupHTMLSetting(settings: self),
-            AddShortcutsSetting(settings: self, settingsDelegate: self),
-            MerinoTestDataSetting(settings: self, settingsDelegate: self)
+            FirefoxSuggestSettings(settings: self, settingsDelegate: self)
         ]
 
-        #if MOZ_CHANNEL_beta || MOZ_CHANNEL_developer
-        hiddenDebugOptions.append(PrivacyNoticeUpdate(settings: self))
+        #if MOZ_CHANNEL_BETA || MOZ_CHANNEL_FENNEC
         hiddenDebugOptions.append(FeatureFlagsSettings(settings: self, settingsDelegate: self))
         #endif
 
@@ -576,31 +475,6 @@ class AppSettingsTableViewController: SettingsTableViewController,
         parentCoordinator?.openDebugTestTabs(count: 50)
     }
 
-    /// Adds 20 random shortcuts to the top sites / shortcuts library
-    func pressedAddShortcuts() {
-        guard let filePath = Bundle.main.path(forResource: "topdomains", ofType: "txt"),
-              let fileContents = try? String(contentsOfFile: filePath, encoding: .utf8) else { return }
-
-        let allDomains = Array(Set(
-            fileContents
-                .components(separatedBy: .newlines)
-                .filter { !$0.isEmpty && $0.filter { $0 == "." }.count < 2 }
-        ))
-
-        let randomDomains = Array(allDomains.shuffled().prefix(20))
-
-        let sites = Dictionary(uniqueKeysWithValues: randomDomains.map { domain in
-            let title = domain.components(separatedBy: ".").first ?? domain
-            let url = "https://\(domain)"
-            return (title, url)
-        })
-
-        for site in sites {
-            let visitObservation = VisitObservation(url: site.value, title: site.key, visitType: .link)
-            _ = profile?.places.applyObservation(visitObservation: visitObservation)
-        }
-    }
-
     func pressedDebugFeatureFlags() {
         parentCoordinator?.showDebugFeatureFlags()
     }
@@ -620,26 +494,84 @@ class AppSettingsTableViewController: SettingsTableViewController,
         tableView.reloadData()
     }
 
-    override func applyTheme() {
-        super.applyTheme()
-        if #available(iOS 26.0, *) {
-            let theme = themeManager.getCurrentTheme(for: windowUUID)
-            navigationItem.rightBarButtonItem?.tintColor = theme.colors.textPrimary
-        }
-    }
-
     // MARK: - UITableViewDelegate
 
+    /* Ecosia: Set the header view for the table view with custom handling for the default browser nudge card
+       Adds other overrides after this one to modify the UI logic
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let headerView = super.tableView(
+        let headerView = super.tableView(
             tableView,
             viewForHeaderInSection: section
-        ) as? ThemedTableSectionHeaderFooterView else {
-            logger.log("Failed to cast or retrieve ThemedTableSectionHeaderFooterView for section: \(section)",
-                       level: .fatal,
-                       category: .lifecycle)
-            return UIView()
-        }
+        ) as! ThemedTableSectionHeaderFooterView
         return headerView
+    }
+     */
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if shouldShowDefaultBrowserNudgeCardInSection(section),
+           let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: DefaultBrowserSettingsNudgeCardHeaderView.cellIdentifier)
+            as? DefaultBrowserSettingsNudgeCardHeaderView {
+            header.onDismiss = { [weak self] in
+                User.shared.hideDefaultBrowserSettingNudgeCard()
+                Analytics.shared.defaultBrowserSettingsViaNudgeCardDismiss()
+                self?.hideDefaultBrowserNudgeCardInSection(section)
+            }
+            header.onTap = { [weak self] in
+                self?.showDefaultBrowserDetailView()
+            }
+            header.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+            return header
+        } else if let headerView = super.tableView(
+            tableView,
+            viewForHeaderInSection: section
+        ) as? ThemedTableSectionHeaderFooterView {
+            return headerView
+        }
+        return nil
+    }
+
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard shouldShowDefaultBrowserNudgeCardInSection(section) else {
+            return super.tableView(tableView, viewForFooterInSection: section)
+        }
+        return nil
+    }
+
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        guard shouldShowDefaultBrowserNudgeCardInSection(section) else {
+            return super.tableView(tableView, heightForFooterInSection: section)
+        }
+        return 0
+    }
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if shouldShowDefaultBrowserNudgeCardInSection(section) {
+            return UITableView.automaticDimension
+        }
+        return super.tableView(tableView, heightForHeaderInSection: section)
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if shouldShowDefaultBrowserNudgeCardInSection(section) {
+            return 1
+        }
+        return super.tableView(tableView, numberOfRowsInSection: section)
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if shouldShowDefaultBrowserNudgeCardInSection(indexPath.section) {
+            let cell = UITableViewCell()
+            cell.isUserInteractionEnabled = false
+            cell.backgroundColor = .clear
+            cell.contentView.isHidden = true
+            return cell
+        }
+        return super.tableView(tableView, cellForRowAt: indexPath)
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if shouldShowDefaultBrowserNudgeCardInSection(indexPath.section) {
+            return .leastNonzeroMagnitude
+        }
+        return super.tableView(tableView, heightForRowAt: indexPath)
     }
 }

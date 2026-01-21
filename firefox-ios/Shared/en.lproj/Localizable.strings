@@ -260,7 +260,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "It may be a misconfiguration or tampering by an attacker. Proceed if you accept the potential risk.";
 
 /* Warning text on the certificate error page */
-"ErrorPages.CertWarning.Description" = "The owner of %@ has configured their website improperly. To protect your information from being stolen, Firefox has not connected to this website.";
+"ErrorPages.CertWarning.Description" = "The owner of %@ has configured their website improperly. To protect your information from being stolen, Ecosia has not connected to this website.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "This Connection is Untrusted";
@@ -281,13 +281,13 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Firefox Home Page";
+"Firefox.HomePage.Title" = "Ecosia Home Page";
 
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "Forward";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Firefox Account";
+"FxA.FirefoxAccount" = "Ecosia Account";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Manage Account & Devices";
@@ -299,19 +299,19 @@
 "FxA.SyncNow" = "Sync Now";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Firefox Sync has connected to %@";
+"FxAPush_DeviceConnected_body" = "Ecosia Sync has connected to %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Sync Connected";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "This device has been successfully disconnected from Firefox Sync.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "This device has been successfully disconnected from Ecosia Sync.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Sync Disconnected";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "A device has disconnected from Firefox Sync";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "A device has disconnected from Ecosia Sync";
 
 /* Body of a notification displayed when named device has been disconnected from FxA. %@ refers to the name of the disconnected device. */
 "FxAPush_DeviceDisconnected_body" = "%@ has been successfully disconnected.";
@@ -350,7 +350,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "Sign in to view a list of tabs from your other devices.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "History";
@@ -445,6 +445,18 @@
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "Don’t Update";
 
+/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
+"LoginsHelper.PromptSaveLogin.Title" = "Save login %1$@ for %2$@?";
+
+/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
+"LoginsHelper.PromptSavePassword.Title" = "Save password for %@?";
+
+/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "Update login for %@?";
+
+/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "Update login %1$@ for %2$@?";
+
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "Save Login";
 
@@ -458,7 +470,7 @@
 "LoginsList.Title" = "SAVED LOGINS";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Looks like Firefox crashed previously. Would you like to restore your tabs?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Looks like Ecosia crashed previously. Would you like to restore your tabs?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Mark as Read";
@@ -554,7 +566,7 @@
 "Okay" = "Okay";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Oops! Firefox crashed";
+"Oops! Firefox crashed" = "Oops! Ecosia crashed";
 
 /* See http://mzl.la/1G7uHo7 */
 "Open Settings" = "Open Settings";
@@ -566,7 +578,7 @@
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Open articles in Reader View by tapping the book icon when it appears in the title bar.";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Firefox cannot open the page because it has an invalid address.";
+"OpenURL.Error.Message" = "Ecosia cannot open the page because it has an invalid address.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "Cannot Open Page";
@@ -578,7 +590,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "This allows you to save the image to your Camera Roll.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox would like to access your Photos";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia would like to access your Photos";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Close";
@@ -692,7 +704,7 @@
 "Send Report" = "Send Report";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Send a crash report so Mozilla can fix the problem?";
+"Send a crash report so Mozilla can fix the problem?" = "Send a crash report so Ecosia can fix the problem?";
 
 /* Button title for cancelling share screen */
 "SendTo.Cancel.Button" = "Cancel";
@@ -713,13 +725,13 @@
 "SendTo.NavBar.Title" = "Send Tab";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "You don’t have any other devices connected to this Firefox Account available to sync.";
+"SendTo.NoDevicesFound.Message" = "You don’t have any other devices connected to this Ecosia Account available to sync.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Please open Firefox, go to Settings and sign in to continue.";
+"SendTo.NotSignedIn.Message" = "Please open Ecosia, go to Settings and sign in to continue.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "You are not signed in to your Firefox Account.";
+"SendTo.NotSignedIn.Title" = "You are not signed in to your Ecosia Account.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Send";
@@ -728,7 +740,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Tap to begin";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "View";
@@ -797,7 +809,7 @@
 "Settings.DataManagement.Title" = "Data Management";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Firefox will stop syncing with your account, but won’t delete any of your browsing data on this device.";
+"Settings.Disconnect.Body" = "Ecosia will stop syncing with your account, but won’t delete any of your browsing data on this device.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Disconnect Sync";
@@ -860,7 +872,7 @@
 "Settings.FxA.Sync.SectionName" = "Sync Settings";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Firefox Account";
+"Settings.FxA.Title" = "Ecosia Account";
 
 /* General settings section title */
 "Settings.General.SectionName" = "General";
@@ -884,7 +896,7 @@
 "Settings.NewTab.Option.BlankPage" = "Blank Page";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Firefox Home";
+"Settings.NewTab.Option.FirefoxHome" = "Ecosia Home";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Homepage";
@@ -902,7 +914,7 @@
 "Settings.NewTab.TopSectionNameFooter" = "Choose what to load when opening a new tab";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "When Opening Firefox";
+"Settings.OfferClipboardBar.Status" = "When Opening Ecosia";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "Offer to Open Copied Links";
@@ -926,7 +938,7 @@
 "Settings.SendUsage.Link" = "Learn More.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla strives to only collect what we need to provide and improve Firefox for everyone.";
+"Settings.SendUsage.Message" = "Ecosia strives to only collect what we need to provide and improve Ecosia for everyone.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Send Usage Data";
@@ -944,7 +956,7 @@
 "Settings.Siri.OpenTabShortcut" = "Open New Tab";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Use Siri shortcuts to quickly open Firefox via Siri";
+"Settings.Siri.SectionDescription" = "Use Siri shortcuts to quickly open Ecosia via Siri";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Siri Shortcuts";
@@ -1019,13 +1031,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Load in Background";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Loading in Firefox";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Loading in Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Open in Firefox";
+"ShareExtension.OpenInFirefoxAction.Title" = "Open in Ecosia";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Search in Firefox";
+"ShareExtension.SeachInFirefoxAction.Title" = "Search in Ecosia";
 
 /* Label for show search suggestions setting. */
 "Show Search Suggestions" = "Show Search Suggestions";
@@ -1078,6 +1090,9 @@
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Undo";
 
+/* The label indicating that all the tabs were closed */
+"Tabs.DeleteAllUndo.Title" = "%d tab(s) closed";
+
 /* Message displayed when the reader mode page could not be loaded. This message will appear only when sharing to Firefox reader mode from another app. */
 "The page could not be displayed in Reader View." = "The page could not be displayed in Reader View.";
 
@@ -1124,7 +1139,7 @@
 "UIMenuItem.PasteGo" = "Paste & Go";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Search with Firefox";
+"UIMenuItem.SearchWithFirefox" = "Search with Ecosia";
 
 /* Debug option */
 "Use stage servers" = "Use stage servers";
@@ -1148,7 +1163,7 @@
 "Yesterday" = "Yesterday";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "You don’t have any tabs open in Firefox on your other devices.";
+"You don’t have any tabs open in Firefox on your other devices." = "You don’t have any tabs open in Ecosia on your other devices.";
 
 /* Tile title for YouTube */
 "YouTube" = "YouTube";
@@ -1160,7 +1175,7 @@
 "fxa.signin.camera-signin" = "Sign In with Your Camera";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "On your computer open Firefox and go to firefox.com/pair";
+"fxa.signin.qr-link-instruction" = "On your computer open Ecosia and go to ecosia.org/pair";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "Ready to Scan";
@@ -1194,3 +1209,4 @@
 
 /* Relative date for yesterday. */
 "yesterday" = "yesterday";
+

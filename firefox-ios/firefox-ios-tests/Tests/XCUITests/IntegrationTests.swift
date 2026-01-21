@@ -4,14 +4,13 @@
 
 import Common
 import XCTest
-import Shared
 
-private let testingURL = "https://example.com"
+private let testingURL = "example.com"
 private let userName = "iosmztest"
 private let userPassword = "test15mz"
-private let historyItemSavedOnDesktop = "https://www.example.com/"
+private let historyItemSavedOnDesktop = "http://www.example.com/"
 private let loginEntry = "https://accounts.google.com"
-private let tabOpenInDesktop = "https://example.com/"
+private let tabOpenInDesktop = "http://example.com/"
 
 class IntegrationTests: BaseTestCase {
     let testWithDB = ["testFxASyncHistory"]
@@ -20,39 +19,38 @@ class IntegrationTests: BaseTestCase {
     // This DB contains 1 entry example.com
     let historyDB = "exampleURLHistoryBookmark-places.db"
 
-    override func setUp() async throws {
-        // Test name looks like: "[Class testFunc]", parse out the function name
-        let parts = name.replacingOccurrences(of: "]", with: "").split(separator: " ")
-        let key = String(parts[1])
-        if testWithDB.contains(key) {
-            // for the current test name, add the db fixture used
-            launchArguments = [LaunchArguments.SkipIntro,
-                               LaunchArguments.StageServer,
-                               LaunchArguments.SkipWhatsNew,
-                               LaunchArguments.SkipETPCoverSheet,
-                               LaunchArguments.LoadDatabasePrefix + historyDB,
-                               LaunchArguments.SkipContextualHints]
-        } else if testFxAChinaServer.contains(key) {
-            launchArguments = [LaunchArguments.SkipIntro,
-                               LaunchArguments.FxAChinaServer,
-                               LaunchArguments.SkipWhatsNew,
-                               LaunchArguments.SkipETPCoverSheet,
-                               LaunchArguments.SkipContextualHints]
-        }
-        launchArguments.append(LaunchArguments.DisableAnimations)
-        try await super.setUp()
-    }
+    override func setUp() {
+     // Test name looks like: "[Class testFunc]", parse out the function name
+     let parts = name.replacingOccurrences(of: "]", with: "").split(separator: " ")
+     let key = String(parts[1])
+     if testWithDB.contains(key) {
+     // for the current test name, add the db fixture used
+     launchArguments = [LaunchArguments.SkipIntro,
+                        LaunchArguments.StageServer,
+                        LaunchArguments.SkipWhatsNew,
+                        LaunchArguments.SkipETPCoverSheet,
+                        LaunchArguments.LoadDatabasePrefix + historyDB,
+                        LaunchArguments.SkipContextualHints]
+     } else if testFxAChinaServer.contains(key) {
+        launchArguments = [LaunchArguments.SkipIntro,
+                           LaunchArguments.FxAChinaServer,
+                           LaunchArguments.SkipWhatsNew,
+                           LaunchArguments.SkipETPCoverSheet,
+                           LaunchArguments.SkipContextualHints]
+     }
+    launchArguments.append(LaunchArguments.DisableAnimations)
+     super.setUp()
+     }
 
-    func allowNotifications() {
+    func allowNotifications () {
         addUIInterruptionMonitor(withDescription: "notifications") { (alert) -> Bool in
-            alert.buttons["Allow"].waitAndTap()
+            alert.buttons["Allow"].tap()
             return true
         }
         app.swipeDown()
     }
 
     private func signInFxAccounts() {
-        navigator.goto(BrowserTabMenu)
         navigator.goto(Intro_FxASignin)
         navigator.performAction(Action.OpenEmailToSignIn)
         sleep(5)
@@ -60,12 +58,11 @@ class IntegrationTests: BaseTestCase {
             app.navigationBars[AccessibilityIdentifiers.Settings.FirefoxAccount.fxaNavigationBar],
             timeout: TIMEOUT_LONG
         )
+        mozWaitForElementToExist(app.staticTexts["Continue to your Mozilla account"], timeout: TIMEOUT_LONG)
         userState.fxaUsername = ProcessInfo.processInfo.environment["FXA_EMAIL"]!
         userState.fxaPassword = ProcessInfo.processInfo.environment["FXA_PASSWORD"]!
-        mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Settings.FirefoxAccount.emailTextField])
         navigator.performAction(Action.FxATypeEmail)
         navigator.performAction(Action.FxATapOnContinueButton)
-        mozWaitForElementToNotExist(app.textFields[AccessibilityIdentifiers.Settings.FirefoxAccount.emailTextField])
         mozWaitForElementToExist(app.staticTexts["Enter your password"], timeout: TIMEOUT_LONG)
         navigator.performAction(Action.FxATypePasswordExistingAccount)
         navigator.performAction(Action.FxATapOnSignInButton)
@@ -77,22 +74,18 @@ class IntegrationTests: BaseTestCase {
     private func waitForInitialSyncComplete() {
         navigator.nowAt(BrowserTab)
         waitForTabsButton()
-        navigator.goto(BrowserTabMenu)
         navigator.goto(SettingsScreen)
         mozWaitForElementToExist(app.staticTexts["ACCOUNT"], timeout: TIMEOUT_LONG)
         mozWaitForElementToNotExist(app.staticTexts["Sync and Save Data"])
         sleep(5)
-        if app.tables.staticTexts["Sync is offline"].exists {
-            app.tables.staticTexts["Sync is offline"].waitAndTap()
-        }
         if app.tables.staticTexts["Sync Now"].exists {
-            app.tables.staticTexts["Sync Now"].waitAndTap()
+            app.tables.staticTexts["Sync Now"].tap()
         }
         mozWaitForElementToNotExist(app.tables.staticTexts["Syncing…"])
         mozWaitForElementToExist(app.tables.staticTexts["Sync Now"], timeout: TIMEOUT_LONG)
     }
 
-    func testFxASyncHistory() {
+    func testFxASyncHistory () {
         // History is generated using the DB so go directly to Sign in
         // Sign into Mozilla Account
         navigator.goto(BrowserTabMenu)
@@ -102,7 +95,7 @@ class IntegrationTests: BaseTestCase {
         waitForInitialSyncComplete()
     }
 
-    func testFxASyncPageUsingChinaFxA() {
+    func testFxASyncPageUsingChinaFxA () {
         // History is generated using the DB so go directly to Sign in
         // Sign into Mozilla Account
         navigator.goto(BrowserTabMenu)
@@ -115,23 +108,21 @@ class IntegrationTests: BaseTestCase {
         )
     }
 
-    func testFxASyncBookmark() {
-        waitForTabsButton()
-        navigator.nowAt(HomePanelsScreen)
+    func testFxASyncBookmark () {
         // Bookmark is added by the DB
         // Sign into Mozilla Account
-        navigator.openURL(testingURL)
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon])
-        navigator.nowAt(BrowserTab)
+        navigator.openURL("example.com")
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.trackingProtection])
         navigator.goto(BrowserTabMenu)
-        navigator.performAction(Action.Bookmark)
+        app.tables.otherElements[StandardImageIdentifiers.Large.bookmark].waitAndTap()
+        navigator.nowAt(BrowserTab)
         signInFxAccounts()
 
         // Wait for initial sync to complete
         waitForInitialSyncComplete()
     }
 
-    func testFxASyncBookmarkDesktop() {
+    func testFxASyncBookmarkDesktop () {
         // Sign into Mozilla Account
         signInFxAccounts()
 
@@ -141,48 +132,45 @@ class IntegrationTests: BaseTestCase {
         mozWaitForElementToExist(app.tables["Bookmarks List"].cells.staticTexts["Example Domain"])
     }
 
-    func testFxASyncTabs() {
-        signInFxAccounts()
-
-        // We only sync tabs if the user is signed in
-        navigator.nowAt(HomePanelsScreen)
-        waitForTabsButton()
+    func testFxASyncTabs () {
         navigator.openURL(testingURL)
         waitUntilPageLoad()
+        navigator.goto(BrowserTabMenu)
+        signInFxAccounts()
 
         // Wait for initial sync to complete
-        waitForInitialSyncComplete()
+        navigator.nowAt(BrowserTab)
         // This is only to check that the device's name changed
         navigator.goto(SettingsScreen)
         app.tables.cells.element(boundBy: 1).waitAndTap()
         mozWaitForElementToExist(app.cells["DeviceNameSetting"].textFields["DeviceNameSettingTextField"])
         XCTAssertEqual(
-            app.cells["DeviceNameSetting"].textFields["DeviceNameSettingTextField"].value! as? String,
-            "Fennec (admin) on iOS"
+            app.cells["DeviceNameSetting"].textFields["DeviceNameSettingTextField"].value! as! String,
+            "Fennec (administrator) on iOS"
         )
 
         // Sync again just to make sure to sync after new name is shown
-        app.buttons["Settings"].waitAndTap()
-        navigator.nowAt(SettingsScreen)
-        navigator.goto(BrowserTab)
-        waitForInitialSyncComplete()
+        app.buttons["Settings"].tap()
+        mozWaitForElementToExist(app.staticTexts["ACCOUNT"])
+        app.tables.cells.element(boundBy: 2).tap()
+        mozWaitForElementToExist(app.tables.staticTexts["Sync Now"], timeout: TIMEOUT_LONG)
     }
 
-    func testFxASyncLogins() {
-        waitForTabsButton()
-        navigator.nowAt(HomePanelsScreen)
+    func testFxASyncLogins () {
         navigator.openURL("gmail.com")
         waitUntilPageLoad()
 
         // Log in in order to save it
-        app.webViews.textFields["Email or phone"].tapAndTypeText(userName)
-        app.webViews.buttons["Next"].waitAndTap()
-        app.webViews.secureTextFields["Password"].tapAndTypeText(userPassword)
+        app.webViews.textFields["Email or phone"].waitAndTap()
+        app.webViews.textFields["Email or phone"].typeText(userName)
+        app.webViews.buttons["Next"].tap()
+        app.webViews.secureTextFields["Password"].waitAndTap()
+        app.webViews.secureTextFields["Password"].typeText(userPassword)
 
-        app.webViews.buttons["Sign in"].waitAndTap()
+        app.webViews.buttons["Sign in"].tap()
 
         // Save the login
-        app.buttons[AccessibilityIdentifiers.SaveLoginAlert.saveButton].waitAndTap()
+        app.buttons["SaveLoginPrompt.saveLoginButton"].waitAndTap()
 
         // Sign in with FxAccount
         signInFxAccounts()
@@ -190,7 +178,7 @@ class IntegrationTests: BaseTestCase {
         waitForInitialSyncComplete()
     }
 
-    func testFxASyncHistoryDesktop() {
+    func testFxASyncHistoryDesktop () {
         // Sign into Mozilla Account
         signInFxAccounts()
 
@@ -202,7 +190,7 @@ class IntegrationTests: BaseTestCase {
         mozWaitForElementToExist(app.tables.cells.staticTexts[historyItemSavedOnDesktop])
     }
 
-    func testFxASyncPasswordDesktop() {
+    func testFxASyncPasswordDesktop () {
         // Sign into Mozilla Account
         signInFxAccounts()
 
@@ -213,18 +201,19 @@ class IntegrationTests: BaseTestCase {
         navigator.nowAt(SettingsScreen)
         navigator.goto(LoginsSettings)
         mozWaitForElementToExist(app.buttons.firstMatch)
-        app.scrollViews.buttons["Continue"].waitAndTap()
+        app.buttons["Continue"].tap()
 
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let passcodeInput = springboard.secureTextFields["Passcode field"]
-        passcodeInput.tapAndTypeText("foo\n")
+        passcodeInput.tap()
+        passcodeInput.typeText("foo\n")
 
         navigator.goto(LoginsSettings)
         mozWaitForElementToExist(app.tables["Login List"])
         XCTAssertTrue(app.tables.cells.staticTexts[loginEntry].exists, "The login saved on desktop is not synced")
     }
 
-    func testFxASyncTabsDesktop() {
+    func testFxASyncTabsDesktop () {
         // Sign into Mozilla Account
         signInFxAccounts()
 
@@ -232,10 +221,10 @@ class IntegrationTests: BaseTestCase {
         waitForInitialSyncComplete()
 
         // Check synced Tabs
-        app.buttons["Done"].waitAndTap()
+        app.buttons["Done"].tap()
         navigator.nowAt(HomePanelsScreen)
         navigator.goto(TabTray)
-        navigator.performAction(Action.ToggleExperimentSyncMode)
+        navigator.performAction(Action.ToggleSyncMode)
 
         // Need to swipe to get the data on the screen on focus
         app.swipeDown()
@@ -252,12 +241,8 @@ class IntegrationTests: BaseTestCase {
         navigator.nowAt(SettingsScreen)
         // Check Bookmarks
         navigator.goto(LibraryPanel_Bookmarks)
-        waitForElementsToExist(
-            [
-                app.tables["Bookmarks List"],
-                app.tables["Bookmarks List"].cells.staticTexts["Example Domain"]
-            ]
-        )
+        mozWaitForElementToExist(app.tables["Bookmarks List"])
+        mozWaitForElementToExist(app.tables["Bookmarks List"].cells.staticTexts["Example Domain"])
 
         // Check Login
         navigator.performAction(Action.CloseBookmarkPanel)
@@ -268,11 +253,12 @@ class IntegrationTests: BaseTestCase {
         navigator.nowAt(SettingsScreen)
         navigator.goto(LoginsSettings)
         mozWaitForElementToExist(app.buttons.firstMatch)
-        app.scrollViews.buttons["Continue"].waitAndTap()
+        app.buttons["Continue"].tap()
 
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let passcodeInput = springboard.secureTextFields["Passcode field"]
-        passcodeInput.tapAndTypeText("foo\n")
+        passcodeInput.tap()
+        passcodeInput.typeText("foo\n")
 
         mozWaitForElementToExist(app.tables["Login List"])
         // Verify the login
@@ -280,18 +266,18 @@ class IntegrationTests: BaseTestCase {
 
         // Disconnect account
         navigator.goto(SettingsScreen)
-        app.tables.cells.element(boundBy: 1).waitAndTap()
+        app.tables.cells.element(boundBy: 1).tap()
         mozWaitForElementToExist(app.cells["DeviceNameSetting"].textFields["DeviceNameSettingTextField"])
 
-        app.cells["SignOut"].waitAndTap()
+        app.cells["SignOut"].tap()
 
         app.buttons["Disconnect"].waitAndTap()
         sleep(3)
 
         // Connect same account again
         navigator.nowAt(SettingsScreen)
-        app.tables.cells["SignInToSync"].waitAndTap()
-        app.buttons["EmailSignIn.button"].waitAndTap()
+        app.tables.cells["SignInToSync"].tap()
+        app.buttons["EmailSignIn.button"].tap()
 
         navigator.nowAt(FxASigninScreen)
         mozWaitForElementToExist(app.staticTexts["Enter your password"], timeout: TIMEOUT_LONG)
@@ -300,8 +286,8 @@ class IntegrationTests: BaseTestCase {
         mozWaitForElementToNotExist(app.staticTexts["Enter your password"], timeout: TIMEOUT_LONG)
 
         navigator.nowAt(SettingsScreen)
-        app.swipeDown()
         mozWaitForElementToExist(app.staticTexts["GENERAL"])
+        app.swipeDown()
         mozWaitForElementToExist(app.staticTexts["ACCOUNT"])
         mozWaitForElementToExist(app.tables.staticTexts["Sync Now"], timeout: TIMEOUT_LONG)
 
@@ -316,13 +302,10 @@ class IntegrationTests: BaseTestCase {
         navigator.goto(SettingsScreen)
         navigator.goto(LoginsSettings)
 
-        passcodeInput.tapAndTypeText("foo\n")
+        passcodeInput.tap()
+        passcodeInput.typeText("foo\n")
 
-        waitForElementsToExist(
-            [
-                app.tables["Login List"],
-                app.staticTexts["https://accounts.google.com"]
-            ]
-        )
+        mozWaitForElementToExist(app.tables["Login List"])
+        mozWaitForElementToExist(app.staticTexts["https://accounts.google.com"])
     }
 }

@@ -25,12 +25,39 @@ class TestSwiftData: XCTestCase {
         swiftData = SwiftData(filename: testDB, schema: BrowserSchema(), files: files)
         let table = BrowserSchema()
 
+        // Ensure static flags match expected values.
+        XCTAssert(SwiftData.EnableWAL, "WAL enabled")
+
         XCTAssertNil(addSite(table, url: "http://url0", title: "title0"), "Added url0.")
     }
 
-    func testDefaultSettings() {
+    override func tearDown() {
+        super.tearDown()
+        // Restore static flags to their default values.
+        SwiftData.EnableWAL = true
+    }
+
+    func testNoWAL() {
+        SwiftData.EnableWAL = false
         let error = writeDuringRead()
         XCTAssertNil(error, "Insertion succeeded")
+    }
+
+    func testDefaultSettings() {
+        SwiftData.EnableWAL = true
+        let error = writeDuringRead()
+        XCTAssertNil(error, "Insertion succeeded")
+    }
+
+    func testBusyTimeout() {
+        SwiftData.EnableWAL = false
+        let error = writeDuringRead(closeTimeout: 1)
+        XCTAssertNil(error, "Insertion succeeded")
+    }
+
+    func testFilledCursor() {
+        SwiftData.EnableWAL = false
+        XCTAssertNil(writeDuringRead(true), "Insertion succeeded")
     }
 
     fileprivate func writeDuringRead(
@@ -38,7 +65,7 @@ class TestSwiftData: XCTestCase {
         closeTimeout: UInt64? = nil
     ) -> MaybeErrorType? {
         // Query the database and hold the cursor.
-        nonisolated(unsafe) var c: Cursor<SDRow>!
+        var c: Cursor<SDRow>!
         let result = swiftData!.withConnection(SwiftData.Flags.readOnly) { db in
             if safeQuery {
                 c = db.executeQuery("SELECT * FROM history", factory: { $0 })

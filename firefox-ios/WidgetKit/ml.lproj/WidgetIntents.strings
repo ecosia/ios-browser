@@ -1,48 +1,48 @@
 /* (No Comment) */
-"2GqvPe" = "പകര്‍ത്തിയ കണ്ണിയിലേക്ക് പോവുക";
+"2GqvPe" = "Go to Copied Link";
 
 /* (No Comment) */
-"ctDNmu" = "ഉടൻ നടപടികളിലോട്ടു് പെട്ടന്നൊരുവഴി";
+"ctDNmu" = "Quick access to various Ecosia actions";
 
 /* (No Comment) */
-"eHmH1H" = "സ്വകാര്യ ടാബുകൾ മായ്ക്കുക";
+"eHmH1H" = "Clear Private Tabs";
 
 /* (No Comment) */
-"eqyNJg" = "ദ്രുത പ്രവർത്തനം";
+"eqyNJg" = "Quick Action";
 
 /* (No Comment) */
-"eV8mOT" = "ദ്രുത പ്രവർത്തന തരങ്ങൾ";
+"eV8mOT" = "Quick Action Type";
 
 /* (No Comment) */
-"fi3W24-2GqvPe" = "‘പകൎത്തിയ കണ്ണിയലേക്കു് പോവുക’ എന്നതുമായി പൊരുത്തപ്പെടുന്ന ${count} സാധ്യതകളുണ്ടു്.";
+"fi3W24-2GqvPe" = "There are ${count} options matching ‘Go to Copied Link’.";
 
 /* (No Comment) */
-"fi3W24-eHmH1H" = "‘സ്വകാര്യ ടാബുകളെ മായ്ക്കുക’ എന്നതുമായി പൊരുത്തപ്പെടുന്ന ${count} സാധ്യതകളുണ്ടു്.";
+"fi3W24-eHmH1H" = "There are ${count} options matching ‘Clear Private Tabs’.";
 
 /* (No Comment) */
-"fi3W24-scEmjs" = "പുതിയ സ്വകാര്യ തിരയൽ’ എന്നതുമായി പൊരുത്തപ്പെടുന്ന ${count} സാധ്യതകളുണ്ടു്.";
+"fi3W24-scEmjs" = "There are ${count} options matching ‘New Private Search’.";
 
 /* (No Comment) */
-"fi3W24-xRJbBP" = "പുതിയ തിരയൽ’ എന്നതുമായി പൊരുത്തപ്പെടുന്ന ${count} സാധ്യതകളുണ്ടു്.";
+"fi3W24-xRJbBP" = "There are ${count} options matching ‘New Search’.";
 
 /* (No Comment) */
-"PzSrmZ-2GqvPe" = "വെറും ഉറപ്പിക്കാൻ മാത്രം, താങ്ങൾക്കു് പകർത്തിയ കണ്ണി വരെ അല്ലെ പോവുണ്ടുതായിരുന്നതു്?";
+"PzSrmZ-2GqvPe" = "Just to confirm, you wanted ‘Go to Copied Link’?";
 
 /* (No Comment) */
-"PzSrmZ-eHmH1H" = "വെറും ഉറപ്പിക്കാൻ മാത്രം, താങ്ങൾക്കു് എല്ലാ സ്വകാര്യ ടാബുകൾ മായ്ക്കണം അല്ലെ?";
+"PzSrmZ-eHmH1H" = "Just to confirm, you wanted ‘Clear Private Tabs’?";
 
 /* (No Comment) */
-"PzSrmZ-scEmjs" = "വെറും ഉറപ്പിക്കാൻ മാത്രം, താങ്ങൾക്കു് ഒരു പുതിയ സ്വകാര്യ തിരയൽ വേണം, അല്ലെ?";
+"PzSrmZ-scEmjs" = "Just to confirm, you wanted ‘New Private Search’?";
 
 /* (No Comment) */
-"PzSrmZ-xRJbBP" = "വെറും ഉറപ്പിക്കാൻ മാത്രം, താങ്ങൾക്കു് ഒരു പുതിയ തിരയൽ വേണം, അല്ലെ?";
+"PzSrmZ-xRJbBP" = "Just to confirm, you wanted ‘New Search’?";
 
 /* (No Comment) */
-"scEmjs" = "പുതിയ സ്വകാര്യ തിരയൽ";
+"scEmjs" = "New Private Search";
 
 /* (No Comment) */
-"w9jdPK" = "ദ്രുത പ്രവർത്തനം";
+"w9jdPK" = "Quick Action";
 
 /* (No Comment) */
-"xRJbBP" = "പുതിയ തിരയൽ";
+"xRJbBP" = "New Search";
 

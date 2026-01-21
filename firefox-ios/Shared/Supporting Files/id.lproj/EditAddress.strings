@@ -1,33 +1,3 @@
-/* Title for the cancel button in the remove address alert. */
-"Addresses.EditAddress.Alert.CancelButton.v129" = "Batal";
-
-/* Message explaining the consequences of removing an address from all synced devices. */
-"Addresses.EditAddress.Alert.Message.v129" = "Alamat akan dihapus dari semua perangkat Anda yang disinkronkan.";
-
-/* Title for the remove button in the remove address alert. */
-"Addresses.EditAddress.Alert.RemoveButton.v129" = "Hapus";
-
-/* Title for the alert indicating the action to remove an address. */
-"Addresses.EditAddress.Alert.Title.v129" = "Hapus Alamat";
-
-/* Title for the interface option where users can add a new address for autofill purposes. This facilitates quicker form completion by automatically filling in the user's address information. */
-"Addresses.EditAddress.AutofillAddAddressTitle.v129" = "Tambahkan alamat";
-
-/* Label for the area field, allowing users to specify a particular area within a city or region. This detail can improve the specificity and accuracy of autofilled addresses. */
-"Addresses.EditAddress.AutofillAddressArea.v129" = "Area";
-
-/* Label for the field where users input the city part of their address. This information is crucial for mail delivery and service provision, ensuring accurate city identification in autofill settings. */
-"Addresses.EditAddress.AutofillAddressCity.v129" = "Kota";
-
-/* Label for the field where users can specify just the country, used in contexts where full address details are not required. Simplifies autofill when only country information is necessary. */
-"Addresses.EditAddress.AutofillAddressCountryOnly.v129" = "Negara";
-
-/* Label for the country or region field in address forms, allowing users to specify their country or territorial region. This is fundamental for international mail and services, ensuring autofill accuracy across borders. */
-"Addresses.EditAddress.AutofillAddressCountryRegion.v129" = "Negara atau Wilayah";
-
-/* Label for the county field, crucial for addressing in regions where county lines play a key role in postal services. Enhances autofill accuracy by including county information. */
-"Addresses.EditAddress.AutofillAddressCounty.v129" = "Kabupaten";
-
 /* Label for the department field, used in countries like France and Colombia where departments are a key administrative division. Ensures correct departmental information is autofilled. */
 "Addresses.EditAddress.AutofillAddressDepartment.v129" = "Departemen";
 
@@ -82,14 +52,8 @@
 /* Label for the state field, a necessary component of addresses in many countries, especially the USA. It ensures that state-specific details are correctly filled in forms using autofill. */
 "Addresses.EditAddress.AutofillAddressState.v129" = "Negara Bagian";
 
-/* Label for the suburb field, enabling users to add suburb details to their address. This is important for accurate delivery and services in suburban areas, enhancing autofill functionality. */
-"Addresses.EditAddress.AutofillAddressSuburb.v129" = "Pinggiran kota";
-
 /* Label for the telephone number field, allowing users to input their contact number. This is essential for communication and service provision, ensuring contact details are autofilled correctly. */
 "Addresses.EditAddress.AutofillAddressTel.v129" = "Telepon";
-
-/* Label for the input field for the townland, a specific type of land division used in rural areas. Enhances address detail for users in regions where townlands are a common addressing component. */
-"Addresses.EditAddress.AutofillAddressTownland.v129" = "Kota kecil";
 
 /* Label for the field to input the name of a village or township. This is crucial for addresses in rural areas, ensuring the autofill feature accurately captures all necessary geographical details. */
 "Addresses.EditAddress.AutofillAddressVillageTownship.v129" = "Desa atau Kotapraja";

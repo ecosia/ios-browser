@@ -14,7 +14,7 @@ import Common
 ///     - Can be set through `setHeroImage(_ viewModel: SiteImageViewHeroImageModel)`
 ///     - The layout size is set through the properties of SiteImageViewHeroImageModel
 ///     - Need to setup theme calls through `updateHeroImageTheme(with colors: SiteImageViewColor)`
-public final class HeroImageView: UIView, SiteImageView {
+public class HeroImageView: UIView, SiteImageView {
     // MARK: - Properties
     var uniqueID: UUID?
     var imageFetcher: SiteImageHandler
@@ -75,7 +75,7 @@ public final class HeroImageView: UIView, SiteImageView {
 
     func setURL(_ siteURLString: String, type: SiteImageType) {
         guard canMakeRequest(with: siteURLString),
-              let siteURL = URL(string: siteURLString) else {
+              let siteURL = URL(string: siteURLString, invalidCharacters: false) else {
             return
         }
 

@@ -13,7 +13,6 @@ import struct MozillaAppServices.LoginEntry
 enum FocusFieldType: String, Codable {
     case username
     case password
-    case email
 }
 
 struct FieldFocusMessage: Codable {
@@ -23,7 +22,7 @@ struct FieldFocusMessage: Codable {
 
 struct LoginInjectionData: Codable {
     var requestId: String
-    var name = "RemoteLogins:loginsFound"
+    var name: String = "RemoteLogins:loginsFound"
     var logins: [LoginItem]
 }
 
@@ -33,15 +32,12 @@ struct LoginItem: Codable {
     var hostname: String
 }
 
-// TODO: FXIOS-13180 Make LoginsHelper actually sendable
-class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
+class LoginsHelper: TabContentScript, FeatureFlaggable {
     private weak var tab: Tab?
     private let profile: Profile
     private let theme: Theme
-    private var loginAlert: SaveLoginAlert?
-    private var loginAlertTimer: Timer?
-    private var loginAlertTimeout: TimeInterval = 10
-    private var currentRequestId = ""
+    private var snackBar: SnackBar?
+    private var currentRequestId: String = ""
     private var logger: Logger = DefaultLogger.shared
 
     public var foundFieldValues: ((FocusFieldType, String) -> Void)?
@@ -65,20 +61,12 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
         self.theme = theme
     }
 
-    func prepareForDeinit() {
-        self.loginAlertTimer = nil
-        if let loginAlert {
-            self.loginAlert = nil
-            tab?.removeLoginAlert(loginAlert)
-        }
-    }
-
     func scriptMessageHandlerNames() -> [String]? {
         return ["loginsManagerMessageHandler"]
     }
 
     private func getOrigin(_ uriString: String, allowJS: Bool = false) -> String? {
-        guard let uri = URL(string: uriString),
+        guard let uri = URL(string: uriString, invalidCharacters: false),
               let scheme = uri.scheme, !scheme.isEmpty,
               let host = uri.host
         else {
@@ -138,41 +126,24 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
               let type = res["type"] as? String
         else { return }
 
-        // NOTE(FXIOS-12024): This is added only to be able t oswitch between implementations inside the JS.
-        // Once we rollout the update for all users, this will be removed.
-        if type == "ready" {
-            LoginsHelper.setUpdatedPasswordEnabled(with: self.tab)
-            return
-        }
+        if self.featureFlags.isFeatureEnabled(.passwordGenerator, checking: .buildOnly) {
+            if type == "generatePassword", let tab = self.tab, !tab.isPrivate {
+                let userDefaults = UserDefaults.standard
+                let showPasswordGeneratorClosure = {
+                    let newAction = GeneralBrowserAction(
+                        frame: message.frameInfo,
+                        windowUUID: tab.windowUUID,
+                        actionType: GeneralBrowserActionType.showPasswordGenerator)
 
-        if type == "clearAccessoryView" {
-            tab?.webView?.accessoryView.reloadViewFor(.standard)
-        }
-        let scriptEvaluator = WebKitPasswordGeneratorScriptEvaluator(webView: message.frameInfo.webView)
-        let frameContext = PasswordGeneratorFrameContext(origin: message.frameInfo.webView?.url?.origin,
-                                                         host: message.frameInfo.securityOrigin.host,
-                                                         scriptEvaluator: scriptEvaluator,
-                                                         frameInfo: message.frameInfo)
-
-        if type == "generatePassword",
-            let tab = self.tab,
-            !tab.isPrivate,
-            profile.prefs.boolForKey("saveLogins") ?? true {
-            let userDefaults = UserDefaults.standard
-            let showPasswordGeneratorClosure = {
-                let newAction = GeneralBrowserAction(
-                    frameContext: frameContext,
-                    windowUUID: tab.windowUUID,
-                    actionType: GeneralBrowserActionType.showPasswordGenerator)
-
-                store.dispatch(newAction)
-            }
-            if userDefaults.value(forKey: PrefsKeys.PasswordGeneratorShown) == nil {
-                userDefaults.set(true, forKey: PrefsKeys.PasswordGeneratorShown)
-                showPasswordGeneratorClosure()
-            } else {
-                tab.webView?.accessoryView.useStrongPasswordClosure = showPasswordGeneratorClosure
-                tab.webView?.accessoryView.reloadViewFor(.passwordGenerator)
+                    store.dispatch(newAction)
+                }
+                if userDefaults.value(forKey: PrefsKeys.PasswordGeneratorShown) == nil {
+                    userDefaults.set(true, forKey: PrefsKeys.PasswordGeneratorShown)
+                    showPasswordGeneratorClosure()
+                } else {
+                    tab.webView?.accessoryView.useStrongPasswordClosure = showPasswordGeneratorClosure
+                    tab.webView?.accessoryView.reloadViewFor(.passwordGenerator)
+                }
             }
         }
 
@@ -205,10 +176,6 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
         // NOTE: This is a partial stub / placeholder
         // FXIOS-3856 will further enhance the logs into actual callback
         switch message.fieldType {
-        case .email:
-            logger.log("Parsed message email",
-                       level: .debug,
-                       category: .webview)
         case .username:
             logger.log("Parsed message username",
                        level: .debug,
@@ -234,6 +201,32 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
         }
     }
 
+    class func replace(_ base: String, keys: [String], replacements: [String]) -> NSMutableAttributedString {
+        var ranges = [NSRange]()
+        var string = base
+        for (index, key) in keys.enumerated() {
+            let replace = replacements[index]
+            let range = string.range(of: key,
+                                     options: .literal,
+                                     range: nil,
+                                     locale: nil)!
+            string.replaceSubrange(range, with: replace)
+            let nsRange = NSRange(location: string.distance(from: string.startIndex, to: range.lowerBound),
+                                  length: replace.count)
+            ranges.append(nsRange)
+        }
+
+        var attributes = [NSAttributedString.Key: AnyObject]()
+        attributes[NSAttributedString.Key.font] = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
+        attributes[NSAttributedString.Key.foregroundColor] = UIColor.Photon.Grey60
+        let attr = NSMutableAttributedString(string: string, attributes: attributes)
+        let font = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.medium)
+        for range in ranges {
+            attr.addAttribute(NSAttributedString.Key.font, value: font, range: range)
+        }
+        return attr
+    }
+
     func setCredentials(_ login: LoginEntry) {
         if login.password.isEmpty || login.username.isEmpty {
             return
@@ -247,7 +240,7 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
                 switch res {
                 case .success(let successValue):
                     for saved in successValue {
-                        if saved.password == login.password {
+                        if saved.decryptedPassword == login.password {
                             self.profile.logins.use(login: saved, completionHandler: { _ in })
                             return
                         }
@@ -264,14 +257,10 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
         }
     }
 
-    @MainActor
     private func promptSave(_ login: LoginEntry) {
         guard login.isValid.isSuccess else { return }
 
-        if profile.prefs.boolForKey("saveLogins") ?? true &&
-            tab?.isPrivate == false {
-            clearStoredPasswordAfterGeneration(origin: login.hostname)
-        }
+        clearStoredPasswordAfterGeneration(origin: login.hostname)
 
         let promptMessage: String
         let https = "^https:\\/\\/"
@@ -284,35 +273,37 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
             promptMessage = String(format: .SaveLoginPrompt, url)
         }
 
-        if let existingPrompt = self.loginAlert {
-            tab?.removeLoginAlert(existingPrompt)
+        if let existingPrompt = self.snackBar {
+            tab?.removeSnackbar(existingPrompt)
         }
 
-        let alert = SaveLoginAlert()
-        alert.saveAction = {
-            self.tab?.removeLoginAlert(alert)
-            self.loginAlert = nil
+        snackBar = TimerSnackBar(text: promptMessage, img: UIImage(named: StandardImageIdentifiers.Large.login))
+        let dontSave = SnackButton(
+            title: .LoginsHelperDontSaveButtonTitle,
+            accessibilityIdentifier: "SaveLoginPrompt.dontSaveButton",
+            bold: false
+        ) { bar in
+            self.tab?.removeSnackbar(bar)
+            self.snackBar = nil
+            return
+        }
+        let save = SnackButton(
+            title: .LoginsHelperSaveLoginButtonTitle,
+            accessibilityIdentifier: "SaveLoginPrompt.saveLoginButton",
+            bold: true
+        ) { bar in
+            self.tab?.removeSnackbar(bar)
+            self.snackBar = nil
             self.sendLoginsSavedTelemetry()
             self.profile.logins.addLogin(login: login, completionHandler: { _ in })
         }
-        alert.notNotAction = {
-            self.tab?.removeLoginAlert(alert)
-            self.loginAlert = nil
-        }
 
-        let viewModel = SaveLoginAlertViewModel(
-            saveButtonTitle: .LoginsHelperSaveLoginButtonTitle,
-            saveButtonA11yId: AccessibilityIdentifiers.SaveLoginAlert.saveButton,
-            notNowButtonTitle: .LoginsHelperDontSaveButtonTitle,
-            notNowButtonA11yId: AccessibilityIdentifiers.SaveLoginAlert.notNowButton,
-            titleText: promptMessage
-        )
-        alert.configure(viewModel: viewModel)
-
-        show(alert)
+        applyTheme(for: dontSave, save)
+        snackBar?.addButton(dontSave)
+        snackBar?.addButton(save)
+        tab?.addSnackbar(snackBar!)
     }
 
-    @MainActor
     private func promptUpdateFromLogin(login old: LoginRecord, toLogin new: LoginEntry) {
         guard new.isValid.isSuccess else { return }
 
@@ -324,58 +315,34 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
             formatted = String(format: .UpdateLoginPrompt, new.hostname)
         }
 
-        if let existingPrompt = self.loginAlert {
-            tab?.removeLoginAlert(existingPrompt)
+        if let existingPrompt = self.snackBar {
+            tab?.removeSnackbar(existingPrompt)
         }
 
-        let alert = SaveLoginAlert()
-        alert.saveAction = {
-            self.tab?.removeLoginAlert(alert)
-            self.loginAlert = nil
+        snackBar = TimerSnackBar(text: formatted, img: UIImage(named: StandardImageIdentifiers.Large.login))
+        let dontSave = SnackButton(
+            title: .LoginsHelperDontUpdateButtonTitle,
+            accessibilityIdentifier: "UpdateLoginPrompt.donttUpdateButton",
+            bold: false
+        ) { bar in
+            self.tab?.removeSnackbar(bar)
+            self.snackBar = nil
+        }
+        let update = SnackButton(
+            title: .LoginsHelperUpdateButtonTitle,
+            accessibilityIdentifier: "UpdateLoginPrompt.updateButton",
+            bold: true
+        ) { bar in
+            self.tab?.removeSnackbar(bar)
+            self.snackBar = nil
             self.sendLoginsModifiedTelemetry()
             self.profile.logins.updateLogin(id: old.id, login: new, completionHandler: { _ in })
         }
-        alert.notNotAction = {
-            self.tab?.removeLoginAlert(alert)
-            self.loginAlert = nil
-        }
 
-        let viewModel = SaveLoginAlertViewModel(
-            saveButtonTitle: .LoginsHelperUpdateButtonTitle,
-            saveButtonA11yId: AccessibilityIdentifiers.SaveLoginAlert.updateButton,
-            notNowButtonTitle: .LoginsHelperDontUpdateButtonTitle,
-            notNowButtonA11yId: AccessibilityIdentifiers.SaveLoginAlert.dontUpdateButton,
-            titleText: formatted
-        )
-        alert.configure(viewModel: viewModel)
-
-        show(alert)
-    }
-
-    @MainActor
-    private func show(_ alert: SaveLoginAlert) {
-        loginAlert = alert
-        loginAlert?.applyTheme(theme: theme)
-        tab?.addLoginAlert(alert)
-
-        let timer = Timer(
-            timeInterval: loginAlertTimeout,
-            target: self,
-            selector: #selector(timerDone),
-            userInfo: nil,
-            repeats: false
-        )
-        RunLoop.current.add(timer, forMode: RunLoop.Mode.default)
-        loginAlert?.shouldPersist = true
-        loginAlertTimer = timer
-    }
-
-    @objc
-    nonisolated func timerDone() {
-        ensureMainThread {
-            self.loginAlert?.shouldPersist = false
-            self.loginAlertTimer = nil
-        }
+        applyTheme(for: dontSave, update)
+        snackBar?.addButton(dontSave)
+        snackBar?.addButton(update)
+        tab?.addSnackbar(snackBar!)
     }
 
     private func requestLogins(_ request: [String: Any], url: URL) {
@@ -383,24 +350,22 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
             // Even though we don't currently use these two fields,
             // verify that they were received as additional confirmation
             // that this is a valid request from LoginsHelper.js.
-            request["formOrigin"] is String,
-            request["actionOrigin"] is String
+            request["formOrigin"] as? String != nil,
+            request["actionOrigin"] as? String != nil
         else { return }
 
         currentRequestId = requestId
     }
 
-    @MainActor
     private func clearStoredPasswordAfterGeneration(origin: String) {
         if let windowUUID = self.tab?.windowUUID {
             let action = PasswordGeneratorAction(windowUUID: windowUUID,
                                                  actionType: PasswordGeneratorActionType.clearGeneratedPasswordForSite,
-                                                 loginEntryOrigin: origin)
+                                                 origin: origin)
             store.dispatch(action)
         }
     }
 
-    @MainActor
     public static func fillLoginDetails(with tab: Tab,
                                         loginData: LoginInjectionData) {
         guard let data = try? JSONEncoder().encode(loginData),
@@ -413,22 +378,12 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
                                      object: .loginsAutofilled)
     }
 
-    @MainActor
     public static func yieldFocusBackToField(with tab: Tab) {
         let jsFocusCallback = "window.__firefox__.logins.yieldFocusBackToField()"
         tab.webView?.evaluateJavascriptInDefaultContentWorld(jsFocusCallback)
     }
 
-    @MainActor
-    public static func setUpdatedPasswordEnabled(with tab: Tab?) {
-        guard let tab = tab else { return }
-        let status = LegacyFeatureFlagsManager.shared.isFeatureEnabled(.updatedPasswordManager, checking: .buildOnly)
-        let jsUpdatedPasswordEnabled = "window.__firefox__.logins.isUpdatedPasswordManagerEnabled(\(status))"
-        tab.webView?.evaluateJavascriptInDefaultContentWorld(jsUpdatedPasswordEnabled)
-    }
-
     // MARK: Theming System
-    @MainActor
     private func applyTheme(for views: UIView...) {
         views.forEach { view in
             if let view = view as? ThemeApplicable {

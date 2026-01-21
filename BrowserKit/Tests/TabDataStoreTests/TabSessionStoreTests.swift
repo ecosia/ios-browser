@@ -15,13 +15,12 @@ final class TabSessionStoreTests: XCTestCase {
     }
 
     override func tearDown() {
-        mockFileManager = nil
         super.tearDown()
+        mockFileManager = nil
     }
 
     // MARK: Save
 
-    @MainActor
     func testSaveWithoutDirectory() {
         let subject = createSubject()
         let uuid = UUID()
@@ -33,7 +32,6 @@ final class TabSessionStoreTests: XCTestCase {
         XCTAssertEqual(mockFileManager.createDirectoryAtPathCalledCount, 0)
     }
 
-    @MainActor
     func testSaveTabSession() {
         let subject = createSubject()
         let uuid = UUID()
@@ -48,7 +46,7 @@ final class TabSessionStoreTests: XCTestCase {
     }
 
     // MARK: Fetch
-    @MainActor
+
     func testFetchTabSessionWithoutDirectory() {
         let subject = createSubject()
         let uuid = UUID()
@@ -58,7 +56,6 @@ final class TabSessionStoreTests: XCTestCase {
         XCTAssertEqual(mockFileManager.tabSessionDataDirectoryCalledCount, 1)
     }
 
-    @MainActor
     func testFetchTabSession() {
         let subject = createSubject()
         let uuid = UUID()
@@ -70,7 +67,7 @@ final class TabSessionStoreTests: XCTestCase {
     }
 
     // MARK: Helper functions
-    @MainActor
+
     func createSubject() -> DefaultTabSessionStore {
         let subject = DefaultTabSessionStore(fileManager: mockFileManager)
         trackForMemoryLeaks(subject)

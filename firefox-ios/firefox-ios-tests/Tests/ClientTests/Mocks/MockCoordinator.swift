@@ -12,7 +12,7 @@ class MockCoordinator: Coordinator {
     var router: Router
     var savedRoute: Route?
     var logger: Logger = MockLogger()
-    var isDismissible = true
+    var isDismissable = true
 
     var addChildCalled = 0
     var removedChildCalled = 0

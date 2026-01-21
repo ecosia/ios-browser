@@ -6,6 +6,7 @@
 import XCTest
 import WebKit
 import Storage
+import Shared
 import Common
 
 class JumpBackInViewModelTests: XCTestCase {
@@ -19,16 +20,17 @@ class JumpBackInViewModelTests: XCTestCase {
 
     let iPhone14ScreenSize = CGSize(width: 390, height: 844)
     let sleepTime: UInt64 = 100_000_000
-
     override func setUp() {
         super.setUp()
-        mockTabManager = MockTabManager()
-        DependencyHelperMock().bootstrapDependencies(injectedTabManager: mockTabManager)
+
+        DependencyHelperMock().bootstrapDependencies()
         adaptor = JumpBackInDataAdaptorMock()
         mockProfile = MockProfile()
+        mockTabManager = MockTabManager()
         stubBrowserViewController = BrowserViewController(
             profile: mockProfile,
-            tabManager: mockTabManager
+            tabManager: TabManagerImplementation(profile: mockProfile,
+                                                 uuid: ReservedWindowUUID(uuid: .XCTestDefaultUUID, isNew: false))
         )
 
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
@@ -45,7 +47,6 @@ class JumpBackInViewModelTests: XCTestCase {
 
     // MARK: - Switch to tab
 
-    @MainActor
     func test_switchToTab_notInOverlayMode_switchTabs() {
         let subject = createSubject()
         let tab = createTab(profile: mockProfile)
@@ -55,7 +56,6 @@ class JumpBackInViewModelTests: XCTestCase {
         XCTAssertFalse(mockTabManager.lastSelectedTabs.isEmpty)
     }
 
-    @MainActor
     func test_switchToTab_inOverlayMode_leaveOverlayMode() {
         let subject = createSubject()
         let tab = createTab(profile: mockProfile)
@@ -65,7 +65,6 @@ class JumpBackInViewModelTests: XCTestCase {
         XCTAssertFalse(mockTabManager.lastSelectedTabs.isEmpty)
     }
 
-    @MainActor
     func test_switchToTab_tabManagerSelectsTab() {
         let subject = createSubject()
         let tab1 = createTab(profile: mockProfile)
@@ -375,7 +374,6 @@ class JumpBackInViewModelTests: XCTestCase {
 
     // MARK: - Sync tab layout
 
-    @MainActor
     func testMaxDisplayedItemSyncedTab_withAccount() {
         let subject = createSubject()
 
@@ -385,7 +383,6 @@ class JumpBackInViewModelTests: XCTestCase {
         XCTAssertEqual(maxItems.syncedTabCount, 1)
     }
 
-    @MainActor
     func testMaxDisplayedItemSyncedTab_withoutAccount() {
         let subject = createSubject()
 
@@ -612,7 +609,6 @@ extension JumpBackInViewModelTests {
         return subject
     }
 
-    @MainActor
     func createTab(profile: MockProfile,
                    urlString: String? = "www.website.com") -> Tab {
         let tab = Tab(profile: profile, windowUUID: windowUUID)

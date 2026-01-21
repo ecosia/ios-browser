@@ -5,12 +5,7 @@
 import Foundation
 
 protocol AboutSettingsDelegate: AnyObject {
-    @MainActor
     func pressedRateApp()
-
-    @MainActor
     func pressedLicense(url: URL, title: NSAttributedString)
-
-    @MainActor
     func pressedYourRights(url: URL, title: NSAttributedString)
 }

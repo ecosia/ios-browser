@@ -5,20 +5,20 @@
 import Storage
 import AuthenticationServices
 
-import struct MozillaAppServices.Login
+import struct MozillaAppServices.EncryptedLogin
 
 extension LoginRecord {
     public var passwordCredentialIdentity: ASPasswordCredentialIdentity {
-        let serviceIdentifier = ASCredentialServiceIdentifier(identifier: self.origin, type: .URL)
+        let serviceIdentifier = ASCredentialServiceIdentifier(identifier: self.hostname, type: .URL)
         return ASPasswordCredentialIdentity(
             serviceIdentifier: serviceIdentifier,
-            user: self.username,
+            user: self.decryptedUsername,
             recordIdentifier: self.id
         )
     }
 
     public var passwordCredential: ASPasswordCredential {
-        return ASPasswordCredential(user: self.username, password: self.password)
+        return ASPasswordCredential(user: self.decryptedUsername, password: self.decryptedPassword)
     }
 }
 

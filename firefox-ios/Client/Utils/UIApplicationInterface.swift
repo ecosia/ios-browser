@@ -11,6 +11,7 @@ protocol UIApplicationInterface {
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
     @MainActor
+    @preconcurrency
     func isDefault(_ category: UIApplication.Category) throws -> Bool
 }
 

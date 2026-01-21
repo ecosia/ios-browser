@@ -22,11 +22,10 @@ public protocol TypedCursor: Sequence {
     func asArray() -> [T]
 }
 
-// TODO: FXIOS-13300 - Refactor Cursor and it's subclasses to be concurrency safe
 /**
  * Provides a generic method of returning some data and status information about a request.
  */
-open class Cursor<T>: @unchecked Sendable, TypedCursor {
+open class Cursor<T>: TypedCursor {
     open var count: Int { return 0 }
 
     // Extra status information
@@ -83,11 +82,10 @@ open class Cursor<T>: @unchecked Sendable, TypedCursor {
     }
 }
 
-// TODO: FXIOS-13300 - Refactor Cursor and it's subclasses to be concurrency safe
 /*
  * A cursor implementation that wraps an array.
  */
-open class ArrayCursor<T>: Cursor<T>, @unchecked Sendable {
+open class ArrayCursor<T>: Cursor<T> {
     fileprivate var data: [T]
 
     override open var count: Int {

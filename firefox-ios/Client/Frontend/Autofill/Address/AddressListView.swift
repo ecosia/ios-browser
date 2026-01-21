@@ -5,6 +5,7 @@
 import SwiftUI
 import Common
 import Shared
+import Storage
 
 // MARK: - AddressListView
 
@@ -32,7 +33,6 @@ struct AddressListView: View {
     @State var titleTextColor: Color = .clear
     @State var subTextColor: Color = .clear
     @State var imageColor: Color = .clear
-    @State var listColor: Color = .clear
 
     // MARK: - Body
 
@@ -56,7 +56,7 @@ struct AddressListView: View {
                     .font(.caption)
                     .foregroundColor(customLightGray)
                 }
-                .modifier(ColoredListStyle(backgroundColor: listColor))
+                .listStyle(.plain)
                 .listRowInsets(EdgeInsets())
             } else if viewModel.isEditingFeatureEnabled {
                 contentUnavailableView
@@ -141,7 +141,6 @@ struct AddressListView: View {
         titleTextColor = Color(color.textPrimary)
         subTextColor = Color(color.textSecondary)
         imageColor = Color(color.iconSecondary)
-        listColor = Color(color.layer1)
     }
 
     @ViewBuilder var contentUnavailableView: some View {

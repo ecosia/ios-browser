@@ -21,29 +21,22 @@ class NightModeHelper: TabContentScript, FeatureFlaggable {
         return ["NightMode"]
     }
 
-    static func jsCallbackBuilder(_ enabled: Bool) -> String {
-        return "window.__firefox__.NightMode.setEnabled(\(enabled))"
-    }
-
     func userContentController(
         _ userContentController: WKUserContentController,
         didReceiveScriptMessage message: WKScriptMessage
     ) {
         guard let webView = message.frameInfo.webView else { return }
-        webView.evaluateJavascriptInCustomContentWorld(
-            NightModeHelper.jsCallbackBuilder(NightModeHelper.isActivated()),
-            in: .world(name: NightModeHelper.name())
-        )
+        let jsCallback = "window.__firefox__.NightMode.setEnabled(\(NightModeHelper.isActivated()))"
+        webView.evaluateJavascriptInDefaultContentWorld(jsCallback)
     }
 
-    @MainActor
     static func toggle(
         _ userDefaults: UserDefaultsInterface = UserDefaults.standard
     ) {
-        setNightMode(userDefaults, enabled: !NightModeHelper.isActivated())
+        let isActive = userDefaults.bool(forKey: NightModeKeys.Status)
+        setNightMode(userDefaults, enabled: !isActive)
     }
 
-    @MainActor
     static func setNightMode(
         _ userDefaults: UserDefaultsInterface = UserDefaults.standard,
         enabled: Bool
@@ -67,7 +60,6 @@ class NightModeHelper: TabContentScript, FeatureFlaggable {
     // and will be removed once a decision from that experiment is reached.
     // TODO: https://mozilla-hub.atlassian.net/browse/FXIOS-8475
     // Reminder: Any future refactors for 8475 need to work with multi-window.
-    @MainActor
     static func turnOff(
         _ userDefaults: UserDefaultsInterface = UserDefaults.standard
     ) {

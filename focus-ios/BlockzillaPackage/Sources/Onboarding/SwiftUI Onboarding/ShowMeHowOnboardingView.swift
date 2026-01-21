@@ -18,9 +18,25 @@ public struct ShowMeHowOnboardingView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: .verticalSpacing) {
-                    OnboardingInstructionLabel(image: Image.stepOneImage, label: config.subtitleStep1)
+                    HStack(alignment: .top, spacing: .horizontalSpacing) {
+                        Image.stepOneImage
+                            .resizable()
+                            .frame(width: .iconSize, height: .iconSize)
+                            .foregroundColor(.gray)
+                        Text(config.subtitleStep1)
+                            .font(.body16)
+                            .multilineTextAlignment(.leading)
+                    }
                     VStack(alignment: .leading, spacing: .horizontalSpacing) {
-                        OnboardingInstructionLabel(image: Image.stepTwoImage, label: config.subtitleStep2)
+                        HStack(alignment: .top, spacing: .horizontalSpacing) {
+                            Image.stepTwoImage
+                                .resizable()
+                                .frame(width: .iconSize, height: .iconSize)
+                                .foregroundColor(.gray)
+                            Text(config.subtitleStep2)
+                                .font(.body16)
+                                .multilineTextAlignment(.leading)
+                        }
                         HStack {
                             Spacer()
                             Image.jiggleModeImage
@@ -28,7 +44,15 @@ public struct ShowMeHowOnboardingView: View {
                         }
                     }
                     VStack(alignment: .leading, spacing: .horizontalSpacing) {
-                        OnboardingInstructionLabel(image: Image.stepThreeImage, label: config.subtitleStep3)
+                        HStack(alignment: .top, spacing: .horizontalSpacing) {
+                            Image.stepThreeImage
+                                .resizable()
+                                .frame(width: .iconSize, height: .iconSize)
+                                .foregroundColor(.gray)
+                            Text(config.subtitleStep3)
+                                .font(.body16)
+                                .multilineTextAlignment(.leading)
+                        }
                         HStack {
                             Spacer()
                             OnboardingSearchWidgetView(title: config.widgetText, padding: true, background: true)
@@ -49,28 +73,6 @@ public struct ShowMeHowOnboardingView: View {
                     }
             }
             .navigationBarBackButtonHidden(true)
-        }
-    }
-}
-
-public struct OnboardingInstructionLabel: View {
-    private let image: Image
-    private let label: String
-
-    public init(image: Image, label: String) {
-        self.image = image
-        self.label = label
-    }
-
-    public var body: some View {
-        HStack(alignment: .top, spacing: .horizontalSpacing) {
-            image
-                .resizable()
-                .frame(width: .iconSize, height: .iconSize)
-                .foregroundColor(.gray)
-            Text(label)
-                .font(.body16)
-                .multilineTextAlignment(.leading)
         }
     }
 }

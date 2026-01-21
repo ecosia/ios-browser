@@ -49,7 +49,7 @@ protocol PhotonActionSheetDelegate: AnyObject {
     func photonActionSheetDidToggleProtection(enabled: Bool)
 }
 
-final class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
+class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     weak var delegate: PhotonActionSheetDelegate?
     private(set) var actions: [[PhotonActionSheetItem]]
 
@@ -262,7 +262,7 @@ final class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableVie
     }
 }
 
-private final class PhotonActionSheetTitleHeaderView: UITableViewHeaderFooterView {
+private class PhotonActionSheetTitleHeaderView: UITableViewHeaderFooterView {
     static let Padding: CGFloat = 12
 
     lazy var titleLabel: UILabel = {
@@ -315,7 +315,7 @@ private final class PhotonActionSheetTitleHeaderView: UITableViewHeaderFooterVie
     }
 }
 
-private final class PhotonActionSheetSeparator: UITableViewHeaderFooterView {
+private class PhotonActionSheetSeparator: UITableViewHeaderFooterView {
     private let separatorLineView = UIView()
 
     override init(reuseIdentifier: String?) {

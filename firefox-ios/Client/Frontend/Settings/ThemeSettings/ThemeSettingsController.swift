@@ -7,14 +7,15 @@ import Foundation
 import Redux
 import Shared
 import ComponentLibrary
+import Ecosia
 
-class ThemeSettingsController: ThemedTableViewController, StoreSubscriber, Notifiable {
+class ThemeSettingsController: ThemedTableViewController, StoreSubscriber {
     typealias SubscriberStateType = ThemeSettingsState
     struct UX {
-        static let rowHeight: CGFloat = 70
-        static let moonSunIconSize: CGFloat = 18
-        static let sliderLeftRightInset: CGFloat = 16
-        static let spaceBetweenTableSections: CGFloat = 20
+        static var rowHeight: CGFloat = 70
+        static var moonSunIconSize: CGFloat = 18
+        static var sliderLeftRightInset: CGFloat = 16
+        static var spaceBetweenTableSections: CGFloat = 20
     }
 
     enum Section: Int {
@@ -59,13 +60,10 @@ class ThemeSettingsController: ThemedTableViewController, StoreSubscriber, Notif
         tableView.register(ThemedTableSectionHeaderFooterView.self,
                            forHeaderFooterViewReuseIdentifier: ThemedTableSectionHeaderFooterView.cellIdentifier)
 
-        startObservingNotifications(
-            withNotificationCenter: NotificationCenter.default,
-            forObserver: self,
-            observing: [
-                UIScreen.brightnessDidChangeNotification
-            ]
-        )
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(systemBrightnessChanged),
+                                               name: UIScreen.brightnessDidChangeNotification,
+                                               object: nil)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -122,16 +120,15 @@ class ThemeSettingsController: ThemedTableViewController, StoreSubscriber, Notif
         }
     }
 
-    nonisolated func systemBrightnessChanged() {
-        ensureMainThread {
-            guard self.themeState.isAutomaticBrightnessEnabled else { return }
+    @objc
+    func systemBrightnessChanged() {
+        guard themeState.isAutomaticBrightnessEnabled else { return }
 
-            let action = ThemeSettingsViewAction(windowUUID: self.windowUUID,
-                                                 actionType: ThemeSettingsViewActionType.receivedSystemBrightnessChange)
-            store.dispatch(action)
+        let action = ThemeSettingsViewAction(windowUUID: windowUUID,
+                                             actionType: ThemeSettingsViewActionType.receivedSystemBrightnessChange)
+        store.dispatch(action)
 
-            self.brightnessChanged()
-        }
+        brightnessChanged()
     }
 
     /// Update Theme if user or system brightness change due to user action
@@ -240,12 +237,19 @@ class ThemeSettingsController: ThemedTableViewController, StoreSubscriber, Notif
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.lineBreakMode = .byWordWrapping
 
+            /* Ecosia: Use EcosiaThemedSwitch
             let control = ThemedSwitch()
             control.applyTheme(theme: theme)
+             */
+            let control = EcosiaThemedSwitch()
             control.accessibilityIdentifier = "SystemThemeSwitchValue"
+            /* Ecosia: No need for `onTintColor` with EcosiaThemedSwitch
             control.onTintColor = theme.colors.actionPrimary
+             */
             control.addTarget(self, action: #selector(systemThemeSwitchValueChanged), for: .valueChanged)
             control.isOn = themeState.useSystemAppearance
+            // Ecosia: Apply theme only after `isOn` to use correct color
+            control.applyTheme(theme: theme)
 
             cell.accessoryView = control
         case .automaticBrightness:
@@ -379,18 +383,5 @@ class ThemeSettingsController: ThemedTableViewController, StoreSubscriber, Notif
         deviceBrightnessIndicator.maximumTrackTintColor = .clear
         deviceBrightnessIndicator.thumbTintColor = theme.colors.formKnob
         self.slider = (slider, deviceBrightnessIndicator)
-    }
-
-    // MARK: - Notifiable
-
-    public func handleNotifications(_ notification: Notification) {
-        switch notification.name {
-        case UIScreen.brightnessDidChangeNotification:
-            ensureMainThread {
-                self.systemBrightnessChanged
-            }
-        default:
-            return
-        }
     }
 }

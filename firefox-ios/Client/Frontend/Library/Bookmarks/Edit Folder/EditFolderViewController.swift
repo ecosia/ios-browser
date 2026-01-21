@@ -11,7 +11,7 @@ class EditFolderViewController: UIViewController,
                                 Themeable {
     private struct UX {
         static let editFolderCellTopPadding: CGFloat = 25.0
-        static let parentFolderHeaderHorizontalPadding: CGFloat = 16.0
+        static let parentFolderHeaderHorizzontalPadding: CGFloat = 16.0
         static let parentFolderHeaderBottomPadding: CGFloat = 8.0
         static let parentFolderHeaderIdentifier = "parentFolderHeaderIdentifier"
     }
@@ -21,7 +21,7 @@ class EditFolderViewController: UIViewController,
     }
     var currentWindowUUID: WindowUUID?
     var themeManager: any ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: (any NSObjectProtocol)?
     var notificationCenter: any NotificationProtocol
     var onViewWillDisappear: (() -> Void)?
     var onViewWillAppear: (() -> Void)?
@@ -31,35 +31,18 @@ class EditFolderViewController: UIViewController,
 
     private let viewModel: EditFolderViewModel
 
-    private lazy var tableView: UITableView = .build({ view in
+    private lazy var tableView: UITableView = .build { view in
         view.dataSource = self
         view.delegate = self
         view.register(cellType: EditFolderCell.self)
         view.register(cellType: OneLineTableViewCell.self)
         view.register(UITableViewHeaderFooterView.self,
                       forHeaderFooterViewReuseIdentifier: UX.parentFolderHeaderIdentifier)
+        view.separatorStyle = .none
         let headerSpacerView = UIView(frame: CGRect(origin: .zero,
                                                     size: CGSize(width: 0, height: UX.editFolderCellTopPadding)))
         view.tableHeaderView = headerSpacerView
-        view.keyboardDismissMode = .onDrag
-    }, {
-        if #available(iOS 26.0, *) {
-            UITableView(frame: .zero, style: .insetGrouped)
-        } else {
-            UITableView()
-        }
-    })
-
-    private lazy var saveBarButton: UIBarButtonItem =  {
-        let button = UIBarButtonItem(
-            title: String.Bookmarks.Menu.EditBookmarkSave,
-            style: .plain,
-            target: self,
-            action: #selector(saveButtonAction)
-        )
-        button.accessibilityIdentifier = AccessibilityIdentifiers.LibraryPanels.BookmarksPanel.saveButton
-        return button
-    }()
+    }
 
     init(viewModel: EditFolderViewModel,
          windowUUID: WindowUUID,
@@ -81,14 +64,10 @@ class EditFolderViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         title = viewModel.controllerTitle
-        navigationItem.rightBarButtonItem = saveBarButton
         viewModel.onFolderStatusUpdate = { [weak self] in
             self?.tableView.reloadSections(IndexSet(integer: Section.parentFolder.rawValue), with: .automatic)
         }
         setupSubviews()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
-        applyTheme()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -113,11 +92,7 @@ class EditFolderViewController: UIViewController,
             navigationController?.setNavigationBarHidden(true, animated: true)
         }
         onViewWillDisappear?()
-
-        // Only save when clicking the back button, not when we swipe the view controller away
-        if isMovingFromParent {
-            viewModel.save()
-        }
+        viewModel.save()
     }
 
     private func setupSubviews() {
@@ -125,17 +100,9 @@ class EditFolderViewController: UIViewController,
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-
-    // MARK: - Actions
-
-    @objc
-    func saveButtonAction() {
-        // Save will happen in viewWillDisappear
-        navigationController?.popViewController(animated: true)
     }
 
     // MARK: - Themeable
@@ -158,9 +125,6 @@ class EditFolderViewController: UIViewController,
         navigationController?.navigationBar.tintColor = theme.colors.actionPrimary
         view.backgroundColor = theme.colors.layer1
         tableView.backgroundColor = theme.colors.layer1
-        if #available(iOS 26.0, *) {
-            saveBarButton.tintColor = theme.colors.textAccent
-        }
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
@@ -193,13 +157,7 @@ class EditFolderViewController: UIViewController,
                                                            for: indexPath) as? OneLineTableViewCell,
                   let folder = viewModel.folderStructures[safe: indexPath.row]
             else { return UITableViewCell() }
-            if folder.guid == Folder.DesktopFolderHeaderPlaceholderGuid {
-                configureDesktopBookmarksHeaderCell(cell)
-            } else {
-                configureParentFolderCell(cell, folder: folder)
-                cell.accessibilityIdentifier =
-                "\(AccessibilityIdentifiers.LibraryPanels.BookmarksPanel.bookmarkParentFolderCell)_\(indexPath.row)"
-            }
+            configureParentFolderCell(cell, folder: folder)
             return cell
         }
     }
@@ -217,29 +175,11 @@ class EditFolderViewController: UIViewController,
         let folderImage = UIImage(named: StandardImageIdentifiers.Large.folder)?.withRenderingMode(.alwaysTemplate)
         cell.leftImageView.image = folderImage
         cell.indentationLevel = viewModel.folderStructures.count == 1 ? 0 : folder.indentation
-        let isFolderSelected = folder.guid == viewModel.selectedFolder?.guid
+        let isFolderSelected = folder == viewModel.selectedFolder
         let canShowAccessoryView = viewModel.shouldShowDisclosureIndicator(isFolderSelected: isFolderSelected)
         cell.accessoryType = canShowAccessoryView ? .checkmark : .none
         cell.selectionStyle = .default
-        cell.accessibilityTraits = .button
-        cell.customization = .regular
         cell.applyTheme(theme: theme)
-    }
-
-    private func configureDesktopBookmarksHeaderCell(_ cell: OneLineTableViewCell) {
-        cell.titleLabel.text = String.Bookmarks.Menu.EditBookmarkDesktopBookmarksLabel
-        cell.customization = .desktopBookmarksLabel
-        cell.indentationLevel = 1
-        cell.accessoryType = .none
-        cell.selectionStyle = .none
-        cell.applyTheme(theme: theme)
-    }
-
-    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if viewModel.folderStructures[safe: indexPath.row]?.guid == Folder.DesktopFolderHeaderPlaceholderGuid {
-            return nil
-        }
-        return indexPath
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -259,9 +199,9 @@ class EditFolderViewController: UIViewController,
         configuration.textProperties.font = FXFontStyles.Regular.callout.scaledFont()
         configuration.textProperties.color = theme.colors.textSecondary
         let layoutMargins = NSDirectionalEdgeInsets(top: 0,
-                                                    leading: UX.parentFolderHeaderHorizontalPadding,
+                                                    leading: UX.parentFolderHeaderHorizzontalPadding,
                                                     bottom: UX.parentFolderHeaderBottomPadding,
-                                                    trailing: UX.parentFolderHeaderHorizontalPadding)
+                                                    trailing: UX.parentFolderHeaderHorizzontalPadding)
         configuration.directionalLayoutMargins = layoutMargins
         header.contentConfiguration = configuration
         header.directionalLayoutMargins = .zero

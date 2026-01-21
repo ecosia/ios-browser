@@ -5,36 +5,31 @@
 import Foundation
 import WebKit
 import Shared
-import Glean
 
-enum HistoryDeletionUtilityDateOptions: String, CaseIterable {
+enum HistoryDeletionUtilityDateOptions {
     case lastHour
-    case lastTwentyFourHours
-    case lastSevenDays
-    case lastFourWeeks
+    case today
+    case yesterday
     case allTime
 }
 
 protocol HistoryDeletionProtocol {
-    func delete(_ sites: [String], completion: @Sendable @escaping (Bool) -> Void)
-    @MainActor
+    func delete(_ sites: [String], completion: @escaping (Bool) -> Void)
     func deleteHistoryFrom(_ dateOption: HistoryDeletionUtilityDateOptions,
-                           completion: @Sendable @escaping @MainActor (HistoryDeletionUtilityDateOptions) -> Void)
+                           completion: @escaping (HistoryDeletionUtilityDateOptions) -> Void)
 }
 
-final class HistoryDeletionUtility: HistoryDeletionProtocol, Sendable {
-    private let profile: Profile
-    private let gleanWrapper: GleanWrapper
+class HistoryDeletionUtility: HistoryDeletionProtocol {
+    private var profile: Profile
 
-    init(with profile: Profile, gleanWrapper: GleanWrapper = DefaultGleanWrapper()) {
+    init(with profile: Profile) {
         self.profile = profile
-        self.gleanWrapper = gleanWrapper
     }
 
     // MARK: Interface
     func delete(
         _ sites: [String],
-        completion: @Sendable @escaping (Bool) -> Void
+        completion: @escaping (Bool) -> Void
     ) {
         deleteFromHistory(sites)
         deleteMetadata(sites) { result in
@@ -42,24 +37,21 @@ final class HistoryDeletionUtility: HistoryDeletionProtocol, Sendable {
         }
     }
 
-    @MainActor
     func deleteHistoryFrom(
         _ dateOption: HistoryDeletionUtilityDateOptions,
-        completion: @Sendable @escaping @MainActor (HistoryDeletionUtilityDateOptions) -> Void
+        completion: @escaping (HistoryDeletionUtilityDateOptions) -> Void
     ) {
         deleteWKWebsiteDataSince(dateOption, for: WKWebsiteDataStore.allWebsiteDataTypes())
         // For efficiency, we'll delete data in parallel, which is why closures are
         // not encloning each subsequent call
         deleteProfileHistorySince(dateOption) { result in
             self.clearRecentlyClosedTabs(using: dateOption)
-            DispatchQueue.main.async {
-                completion(dateOption)
-            }
+            completion(dateOption)
         }
 
         deleteProfileMetadataSince(dateOption)
 
-        HistoryDeletionUtilityTelemetry().clearedHistory(dateOption)
+        reportDeletionFor(dateOption)
     }
 
     // MARK: URL based deletion functions
@@ -69,7 +61,7 @@ final class HistoryDeletionUtility: HistoryDeletionProtocol, Sendable {
 
     private func deleteMetadata(
         _ sites: [String],
-        completion: @Sendable @escaping (Bool) -> Void
+        completion: @escaping (Bool) -> Void
     ) {
         sites.forEach { currentSite in
             profile.places
@@ -85,7 +77,6 @@ final class HistoryDeletionUtility: HistoryDeletionProtocol, Sendable {
     }
 
     // MARK: - Date based deletion functions
-    @MainActor
     private func deleteWKWebsiteDataSince(
         _ dateOption: HistoryDeletionUtilityDateOptions,
         for types: Set<String>
@@ -101,7 +92,7 @@ final class HistoryDeletionUtility: HistoryDeletionProtocol, Sendable {
 
     private func deleteProfileHistorySince(
         _ dateOption: HistoryDeletionUtilityDateOptions,
-        completion: @Sendable @escaping (Bool?) -> Void
+        completion: @escaping (Bool?) -> Void
     ) {
         switch dateOption {
         case .allTime:
@@ -153,15 +144,36 @@ final class HistoryDeletionUtility: HistoryDeletionProtocol, Sendable {
         switch dateOption {
         case .lastHour:
             return Calendar.current.date(byAdding: .hour, value: -1, to: Date())
-        case .lastTwentyFourHours:
-            return Calendar.current.date(byAdding: .hour, value: -24, to: Date())
-        case .lastSevenDays:
-            return Calendar.current.date(byAdding: .day, value: -7, to: Date())
-        case .lastFourWeeks:
-            return Calendar.current.date(byAdding: .day, value: -28, to: Date())
+        case .today:
+            return Calendar.current.startOfDay(for: Date())
+        case .yesterday:
+            guard let yesterday = Calendar.current.date(byAdding: .hour,
+                                                        value: -24,
+                                                        to: Date())
+            else { return nil }
+
+            return Calendar.current.startOfDay(for: yesterday)
         case .allTime:
             let pastReferenceDate = Date(timeIntervalSinceReferenceDate: 0)
             return requiringAllTimeAsPresent ? Date() : pastReferenceDate
+        }
+    }
+
+    private func reportDeletionFor(_ dateOption: HistoryDeletionUtilityDateOptions) {
+        switch dateOption {
+        case .today:
+            TelemetryWrapper.recordEvent(category: .action,
+                                         method: .tap,
+                                         object: .historyRemovedToday)
+        case .yesterday:
+            TelemetryWrapper.recordEvent(category: .action,
+                                         method: .tap,
+                                         object: .historyRemovedTodayAndYesterday)
+        case .allTime:
+            TelemetryWrapper.recordEvent(category: .action,
+                                         method: .tap,
+                                         object: .historyRemovedAll)
+        default: break
         }
     }
 }

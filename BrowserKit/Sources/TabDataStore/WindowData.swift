@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct WindowData: Codable, Sendable {
+public struct WindowData: Codable {
     public let id: UUID
     public let activeTabId: UUID
     public let tabData: [TabData]

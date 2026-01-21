@@ -8,11 +8,10 @@ import Redux
 import UIKit
 
 protocol NavigationToolbarContainerDelegate: AnyObject {
-    @MainActor
     func configureContextualHint(for: UIButton, with contextualHintType: String)
 }
 
-final class NavigationToolbarContainer: UIView, ThemeApplicable, StoreSubscriber {
+class NavigationToolbarContainer: UIView, ThemeApplicable, StoreSubscriber {
     typealias SubscriberStateType = ToolbarState
 
     private enum UX {
@@ -24,16 +23,14 @@ final class NavigationToolbarContainer: UIView, ThemeApplicable, StoreSubscriber
             subscribeToRedux()
         }
     }
-    lazy var toolbarHelper: ToolbarHelperInterface = ToolbarHelper()
     weak var toolbarDelegate: NavigationToolbarContainerDelegate?
+    private var toolbarState: ToolbarState?
     private var model: NavigationToolbarContainerModel?
 
     private lazy var toolbar: BrowserNavigationToolbar =  .build { _ in }
     private var toolbarHeightConstraint: NSLayoutConstraint?
 
     private var bottomToolbarHeight: CGFloat { return UX.toolbarHeight + UIConstants.BottomInset }
-
-    private var theme: Theme?
 
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -42,23 +39,6 @@ final class NavigationToolbarContainer: UIView, ThemeApplicable, StoreSubscriber
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    deinit {
-        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
-        guard Thread.isMainThread else {
-            DefaultLogger.shared.log(
-                "NavigationToolbarContainer was not deallocated on the main thread. Redux was not cleaned up.",
-                level: .fatal,
-                category: .lifecycle
-            )
-            assertionFailure("The view was not deallocated on the main thread. Redux was not cleaned up.")
-            return
-        }
-
-        MainActor.assumeIsolated {
-            unsubscribeFromRedux()
-        }
     }
 
     override func layoutSubviews() {
@@ -94,10 +74,7 @@ final class NavigationToolbarContainer: UIView, ThemeApplicable, StoreSubscriber
 
         if self.model != model {
             self.model = model
-            toolbar.configure(
-                config: model.navigationToolbarConfiguration,
-                toolbarDelegate: self
-            )
+            toolbar.configure(state: model.navigationToolbarState, toolbarDelegate: self)
         }
     }
 
@@ -118,8 +95,7 @@ final class NavigationToolbarContainer: UIView, ThemeApplicable, StoreSubscriber
     // MARK: - ThemeApplicable
     func applyTheme(theme: Theme) {
         toolbar.applyTheme(theme: theme)
-        let backgroundAlpha: CGFloat = toolbarHelper.glassEffectAlpha
-        backgroundColor = theme.colors.layerSurfaceLow.withAlphaComponent(backgroundAlpha)
+        backgroundColor = theme.colors.layer1
     }
 }
 

@@ -5,9 +5,7 @@
 import Redux
 import Common
 
-struct TabPeekAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+class TabPeekAction: Action {
     let tabUUID: TabUUID?
     let tabPeekModel: TabPeekModel?
 
@@ -15,10 +13,10 @@ struct TabPeekAction: Action {
          tabPeekModel: TabPeekModel? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.tabUUID = tabUUID
         self.tabPeekModel = tabPeekModel
+        super.init(windowUUID: windowUUID,
+                   actionType: actionType)
     }
 }
 
@@ -26,7 +24,6 @@ enum TabPeekActionType: ActionType {
     // MARK: - View Actions
     case didLoadTabPeek
     case addToBookmarks
-    case removeBookmark
     case copyURL
     case closeTab
 

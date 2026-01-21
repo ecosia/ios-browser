@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Shared
 
 class PrivacyPolicySetting: Setting {
     private weak var settingsDelegate: PrivacySettingsDelegate?
@@ -21,7 +22,7 @@ class PrivacyPolicySetting: Setting {
         self.settingsDelegate = settingsDelegate
         super.init(
             title: NSAttributedString(
-                string: .AppSettingsPrivacyNotice,
+                string: .AppSettingsPrivacyPolicy,
                 attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary]
             )
         )

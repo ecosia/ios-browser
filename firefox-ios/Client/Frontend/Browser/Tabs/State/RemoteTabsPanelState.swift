@@ -4,9 +4,8 @@
 
 import Common
 import Redux
+import Shared
 import Storage
-
-import struct MozillaAppServices.Device
 
 /// Status of Sync tab refresh.
 enum RemoteTabsPanelRefreshState {
@@ -46,20 +45,17 @@ enum RemoteTabsPanelEmptyStateReason {
 }
 
 /// State for RemoteTabsPanel. WIP.
-struct RemoteTabsPanelState: ScreenState, Sendable {
+struct RemoteTabsPanelState: ScreenState, Equatable {
     let refreshState: RemoteTabsPanelRefreshState
     let allowsRefresh: Bool
     let clientAndTabs: [ClientAndTabs]
     let showingEmptyState: RemoteTabsPanelEmptyStateReason?// If showing empty (or error) state
     let windowUUID: WindowUUID
-    let devices: [Device]
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let panelState = appState.screenState(
-            RemoteTabsPanelState.self,
-            for: .remoteTabsPanel,
-            window: uuid
-        ) else {
+        guard let panelState = store.state.screenState(RemoteTabsPanelState.self,
+                                                       for: .remoteTabsPanel,
+                                                       window: uuid) else {
             self.init(windowUUID: uuid)
             return
         }
@@ -68,8 +64,7 @@ struct RemoteTabsPanelState: ScreenState, Sendable {
                   refreshState: panelState.refreshState,
                   allowsRefresh: panelState.allowsRefresh,
                   clientAndTabs: panelState.clientAndTabs,
-                  showingEmptyState: panelState.showingEmptyState,
-                  devices: panelState.devices)
+                  showingEmptyState: panelState.showingEmptyState)
     }
 
     init(windowUUID: WindowUUID) {
@@ -77,97 +72,54 @@ struct RemoteTabsPanelState: ScreenState, Sendable {
                   refreshState: .idle,
                   allowsRefresh: false,
                   clientAndTabs: [],
-                  showingEmptyState: .noTabs,
-                  devices: [])
+                  showingEmptyState: .noTabs)
     }
 
     init(windowUUID: WindowUUID,
          refreshState: RemoteTabsPanelRefreshState,
          allowsRefresh: Bool,
          clientAndTabs: [ClientAndTabs],
-         showingEmptyState: RemoteTabsPanelEmptyStateReason?,
-         devices: [Device]
-    ) {
+         showingEmptyState: RemoteTabsPanelEmptyStateReason?) {
         self.windowUUID = windowUUID
         self.refreshState = refreshState
         self.allowsRefresh = allowsRefresh
         self.clientAndTabs = clientAndTabs
         self.showingEmptyState = showingEmptyState
-        self.devices = devices
     }
 
     static let reducer: Reducer<Self> = { state, action in
         // Only process actions for the current window
         guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID,
-              let action = action as? RemoteTabsPanelAction else { return defaultState(from: state) }
+              let action = action as? RemoteTabsPanelAction else { return state }
 
         switch action.actionType {
         case RemoteTabsPanelActionType.refreshDidBegin:
-            return handleRefreshDidBeginAction(state: state)
+            let newState = RemoteTabsPanelState(windowUUID: state.windowUUID,
+                                                refreshState: .refreshing,
+                                                allowsRefresh: state.allowsRefresh,
+                                                clientAndTabs: state.clientAndTabs,
+                                                showingEmptyState: state.showingEmptyState)
+            return newState
         case RemoteTabsPanelActionType.refreshDidFail:
-            guard let reason = action.reason else { return defaultState(from: state) }
+            guard let reason = action.reason else { return state }
             // Refresh failed. Show error empty state.
-            return handleRefreshDidFailAction(reason: reason, state: state)
+            let allowsRefresh = reason.allowsRefresh
+            let newState = RemoteTabsPanelState(windowUUID: state.windowUUID,
+                                                refreshState: .idle,
+                                                allowsRefresh: allowsRefresh,
+                                                clientAndTabs: state.clientAndTabs,
+                                                showingEmptyState: reason)
+            return newState
         case RemoteTabsPanelActionType.refreshDidSucceed:
-            guard let clientAndTabs = action.clientAndTabs else { return defaultState(from: state) }
-            return handleRefreshDidSucceedAction(clientAndTabs: clientAndTabs,
-                                                 state: state,
-                                                 action: action)
-        case RemoteTabsPanelActionType.remoteDevicesChanged:
-            guard let devices = action.devices else { return defaultState(from: state) }
-            return handleRemoteDevicesChangedAction(devices: devices, state: state)
+            guard let clientAndTabs = action.clientAndTabs else { return state }
+            let newState = RemoteTabsPanelState(windowUUID: state.windowUUID,
+                                                refreshState: .idle,
+                                                allowsRefresh: true,
+                                                clientAndTabs: clientAndTabs,
+                                                showingEmptyState: nil)
+            return newState
         default:
-            return defaultState(from: state)
+            return state
         }
-    }
-
-    private static func handleRefreshDidBeginAction(state: RemoteTabsPanelState) -> RemoteTabsPanelState {
-        return RemoteTabsPanelState(windowUUID: state.windowUUID,
-                                    refreshState: .refreshing,
-                                    allowsRefresh: state.allowsRefresh,
-                                    clientAndTabs: state.clientAndTabs,
-                                    showingEmptyState: state.showingEmptyState,
-                                    devices: state.devices)
-    }
-
-    private static func handleRefreshDidFailAction(reason: RemoteTabsPanelEmptyStateReason,
-                                                   state: RemoteTabsPanelState) -> RemoteTabsPanelState {
-        let allowsRefresh = reason.allowsRefresh
-        return RemoteTabsPanelState(windowUUID: state.windowUUID,
-                                    refreshState: .idle,
-                                    allowsRefresh: allowsRefresh,
-                                    clientAndTabs: state.clientAndTabs,
-                                    showingEmptyState: reason,
-                                    devices: state.devices)
-    }
-
-    private static func handleRefreshDidSucceedAction(clientAndTabs: [ClientAndTabs],
-                                                      state: RemoteTabsPanelState,
-                                                      action: RemoteTabsPanelAction) -> RemoteTabsPanelState {
-        return RemoteTabsPanelState(windowUUID: state.windowUUID,
-                                    refreshState: .idle,
-                                    allowsRefresh: true,
-                                    clientAndTabs: clientAndTabs,
-                                    showingEmptyState: nil,
-                                    devices: action.devices ?? state.devices)
-    }
-
-    private static func handleRemoteDevicesChangedAction(devices: [Device],
-                                                         state: RemoteTabsPanelState) -> RemoteTabsPanelState {
-        return RemoteTabsPanelState(windowUUID: state.windowUUID,
-                                    refreshState: .idle,
-                                    allowsRefresh: state.allowsRefresh,
-                                    clientAndTabs: state.clientAndTabs,
-                                    showingEmptyState: state.showingEmptyState,
-                                    devices: devices)
-    }
-
-    static func defaultState(from state: RemoteTabsPanelState) -> RemoteTabsPanelState {
-        return RemoteTabsPanelState(windowUUID: state.windowUUID,
-                                    refreshState: state.refreshState,
-                                    allowsRefresh: state.allowsRefresh,
-                                    clientAndTabs: state.clientAndTabs,
-                                    showingEmptyState: state.showingEmptyState,
-                                    devices: state.devices)
     }
 }

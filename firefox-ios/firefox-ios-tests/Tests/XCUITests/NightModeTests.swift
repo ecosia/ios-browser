@@ -3,31 +3,15 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
-class NightModeTests: BaseTestCase {
-    var nightModeOnCell: XCUIElement {
-        app.tables.cells["MainMenu.NightModeOn"]
-    }
+import Common
 
+class NightModeTests: BaseTestCase {
     private func checkNightModeOn() {
-        mozWaitForElementToExist(nightModeOnCell)
-        XCTAssertTrue(nightModeOnCell.label == "Website Dark Mode")
-        if !iPad() {
-            mozWaitForElementToExist(app.tables.staticTexts["On"])
-        } else {
-            mozWaitForElementToExist(app.tables.staticTexts.matching(identifier: "On").element(boundBy: 1))
-        }
-        // Turn off night mode
-        nightModeOnCell.waitAndTap()
+        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.nightMode])
     }
 
     private func checkNightModeOff() {
-        mozWaitForElementToExist(nightModeOnCell)
-        XCTAssertTrue(nightModeOnCell.label == "Website Dark Mode")
-        if !iPad() {
-            mozWaitForElementToExist(app.tables.staticTexts.matching(identifier: "Off").element(boundBy: 1))
-        } else {
-            mozWaitForElementToExist(app.tables.staticTexts["Off"])
-        }
+        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.nightMode])
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307056
@@ -35,18 +19,20 @@ class NightModeTests: BaseTestCase {
         let url1 = "test-example.html"
         // Go to a webpage, and select night mode on and off, check it's applied or not
         navigator.openURL(path(forTestPage: url1))
-        waitUntilPageLoad()
+
         // turn on the night mode
-        navigator.goto(BrowserTabMenuMore)
         navigator.performAction(Action.ToggleNightMode)
         navigator.nowAt(BrowserTab)
-        navigator.goto(BrowserTabMenuMore)
+        navigator.goto(BrowserTabMenu)
         // checking night mode on or off
         checkNightModeOn()
 
+        // turn off the night mode
+        navigator.performAction(Action.ToggleNightMode)
+
         // checking night mode on or off
         navigator.nowAt(BrowserTab)
-        navigator.goto(BrowserTabMenuMore)
+        navigator.goto(BrowserTabMenu)
         checkNightModeOff()
     }
 }

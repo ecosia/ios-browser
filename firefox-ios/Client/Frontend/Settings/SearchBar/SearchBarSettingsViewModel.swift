@@ -5,10 +5,11 @@
 import Common
 import Foundation
 import Shared
+import Ecosia
 
-enum SearchBarPosition: String, FlaggableFeatureOptions, CaseIterable {
-    case top
+enum SearchBarPosition: String, FlaggableFeatureOptions {
     case bottom
+    case top
 
     var getLocalizedTitle: String {
         switch self {
@@ -18,32 +19,9 @@ enum SearchBarPosition: String, FlaggableFeatureOptions, CaseIterable {
             return .Settings.Toolbar.Top
         }
     }
-
-    /// NOTE: To avoid duplication, this enum is reused in the new address bar setting menu.
-    /// TODO(FXIOS-12000): Once the experiment is done, we can move this enum closer to the new UI.
-    var label: String {
-        switch self {
-        case .top:
-            return .Settings.AddressBar.Top
-        case .bottom:
-            return .Settings.AddressBar.Bottom
-        }
-    }
-
-    /// NOTE: To avoid duplication, this enum is reused in the new address bar setting menu.
-    /// TODO(FXIOS-12000): Once the experiment is done, we can move this enum closer to the new UI and remove unused props.
-    var imageName: String {
-        switch self {
-        case .top:
-            return ImageIdentifiers.AddressBar.addressBarIllustrationTop
-        case .bottom:
-            return ImageIdentifiers.AddressBar.addressBarIllustrationBottom
-        }
-    }
 }
 
 protocol SearchBarPreferenceDelegate: AnyObject {
-    @MainActor
     func didUpdateSearchBarPositionPreference()
 }
 
@@ -51,13 +29,12 @@ protocol SearchBarPreferenceDelegate: AnyObject {
 protocol SearchBarLocationProvider: FeatureFlaggable {
     var isSearchBarLocationFeatureEnabled: Bool { get }
     var searchBarPosition: SearchBarPosition { get }
-    @MainActor
     var isBottomSearchBar: Bool { get }
 }
 
 extension SearchBarLocationProvider {
     var isSearchBarLocationFeatureEnabled: Bool {
-        let isiPad = UIDeviceDetails.userInterfaceIdiom == .pad
+        let isiPad = UIDevice.current.userInterfaceIdiom == .pad
         let isFeatureEnabled = featureFlags.isFeatureEnabled(.bottomSearchBar, checking: .buildOnly)
 
         return isFeatureEnabled && !isiPad
@@ -65,7 +42,10 @@ extension SearchBarLocationProvider {
 
     var searchBarPosition: SearchBarPosition {
         guard let position: SearchBarPosition = featureFlags.getCustomState(for: .searchBarPosition) else {
+            /* Ecosia: Search Bar stays on top by default
             return .bottom
+             */
+            return .top
         }
 
         return position
@@ -79,6 +59,7 @@ extension SearchBarLocationProvider {
 }
 
 final class SearchBarSettingsViewModel: FeatureFlaggable {
+    var title: String = .Settings.Toolbar.Toolbar
     weak var delegate: SearchBarPreferenceDelegate?
 
     private let prefs: Prefs
@@ -88,16 +69,8 @@ final class SearchBarSettingsViewModel: FeatureFlaggable {
         self.notificationCenter = notificationCenter
     }
 
-    var isNewAddressBarOn: Bool {
-        featureFlags.isFeatureEnabled(.addressBarMenu, checking: .buildOnly)
-    }
-
-    var title: String {
-        isNewAddressBarOn ? .Settings.AddressBar.AddressBarMenuTitle : .Settings.Toolbar.Toolbar
-    }
-
     var searchBarTitle: String {
-        isNewAddressBarOn ? "" : searchBarPosition.getLocalizedTitle
+        searchBarPosition.getLocalizedTitle
     }
 
     var searchBarPosition: SearchBarPosition {
@@ -108,8 +81,7 @@ final class SearchBarSettingsViewModel: FeatureFlaggable {
         return position
     }
 
-    // TODO: FXIOS-12830 view models should not contain Views that require main actor isolation
-    @MainActor var topSetting: CheckmarkSetting {
+    var topSetting: CheckmarkSetting {
         return CheckmarkSetting(title: NSAttributedString(string: SearchBarPosition.top.getLocalizedTitle),
                                 subtitle: nil,
                                 accessibilityIdentifier: AccessibilityIdentifiers.Settings.SearchBar.topSetting,
@@ -118,8 +90,7 @@ final class SearchBarSettingsViewModel: FeatureFlaggable {
         )
     }
 
-    // TODO: FXIOS-12830 view models should not contain Views that require main actor isolation
-    @MainActor var bottomSetting: CheckmarkSetting {
+    var bottomSetting: CheckmarkSetting {
         return CheckmarkSetting(title: NSAttributedString(string: SearchBarPosition.bottom.getLocalizedTitle),
                                 subtitle: nil,
                                 accessibilityIdentifier: AccessibilityIdentifiers.Settings.SearchBar.bottomSetting,
@@ -130,25 +101,26 @@ final class SearchBarSettingsViewModel: FeatureFlaggable {
 }
 
 // MARK: Private
-extension SearchBarSettingsViewModel {
-    @MainActor
+private extension SearchBarSettingsViewModel {
     func saveSearchBarPosition(_ searchBarPosition: SearchBarPosition) {
-        let previousPosition: SearchBarPosition? = featureFlags.getCustomState(for: .searchBarPosition)
-
         featureFlags.set(feature: .searchBarPosition, to: searchBarPosition)
         delegate?.didUpdateSearchBarPositionPreference()
-        recordPreferenceChange(searchBarPosition, previousPosition: previousPosition)
+        recordPreferenceChange(searchBarPosition)
 
         let notificationObject = [PrefsKeys.FeatureFlags.SearchBarPosition: searchBarPosition]
         notificationCenter.post(name: .SearchBarPositionDidChange, withObject: notificationObject)
+
+        // Ecosia: Track toolbar position change
+        Analytics.shared.searchbarChanged(to: searchBarPosition.rawValue)
     }
 
-    private func recordPreferenceChange(_ searchBarPosition: SearchBarPosition, previousPosition: SearchBarPosition?) {
-        SettingsTelemetry().changedSetting(
-            PrefsKeys.FeatureFlags.SearchBarPosition,
-            to: searchBarPosition.rawValue,
-            from: previousPosition?.rawValue ?? SettingsTelemetry.Placeholders.missingValue
-        )
+    func recordPreferenceChange(_ searchBarPosition: SearchBarPosition) {
+        let extras = [TelemetryWrapper.EventExtraKey.preference.rawValue: PrefsKeys.FeatureFlags.SearchBarPosition,
+                      TelemetryWrapper.EventExtraKey.preferenceChanged.rawValue: searchBarPosition.rawValue]
+        TelemetryWrapper.recordEvent(category: .action,
+                                     method: .change,
+                                     object: .setting,
+                                     extras: extras)
     }
 }
 

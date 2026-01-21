@@ -7,10 +7,9 @@ import Redux
 import Shared
 import Common
 import WebKit
-import SummarizeKit
 
-struct BrowserViewControllerState: ScreenState {
-    enum NavigationType: Equatable {
+struct BrowserViewControllerState: ScreenState, Equatable {
+    enum NavigationType {
         case home
         case back
         case forward
@@ -21,6 +20,7 @@ struct BrowserViewControllerState: ScreenState {
     }
 
     enum DisplayType: Equatable {
+        case qrCodeReader
         case backForwardList
         case trackingProtectionDetails
         case tabsLongPressActions
@@ -34,26 +34,24 @@ struct BrowserViewControllerState: ScreenState {
         case readerModeLongPressAction
         case dataClearance
         case passwordGenerator
-        // TODO: FXIOS-13118 Clean up and remove as we should have one navigation entry point
-        case summarizer(config: SummarizerConfig?)
     }
 
     let windowUUID: WindowUUID
     var searchScreenState: SearchScreenState
+    var showDataClearanceFlow: Bool
+    var fakespotState: FakespotState
     var toast: ToastType?
     var showOverlay: Bool? // use default value when re-creating
     var reloadWebView: Bool
-    var shouldStartAtHome: Bool
     var browserViewType: BrowserViewType
     var navigateTo: NavigationType? // use default value when re-creating
     var displayView: DisplayType? // use default value when re-creating
     var buttonTapped: UIButton?
-    var frameContext: PasswordGeneratorFrameContext?
+    var frame: WKFrameInfo?
     var microsurveyState: MicrosurveyPromptState
-    var navigationDestination: NavigationDestination?
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let bvcState = appState.screenState(
+        guard let bvcState = store.state.screenState(
             BrowserViewControllerState.self,
             for: .browserViewController,
             window: uuid)
@@ -63,23 +61,25 @@ struct BrowserViewControllerState: ScreenState {
         }
 
         self.init(searchScreenState: bvcState.searchScreenState,
+                  showDataClearanceFlow: bvcState.showDataClearanceFlow,
+                  fakespotState: bvcState.fakespotState,
                   toast: bvcState.toast,
                   showOverlay: bvcState.showOverlay,
                   windowUUID: bvcState.windowUUID,
                   reloadWebView: bvcState.reloadWebView,
-                  shouldStartAtHome: bvcState.shouldStartAtHome,
                   browserViewType: bvcState.browserViewType,
                   navigateTo: bvcState.navigateTo,
                   displayView: bvcState.displayView,
                   buttonTapped: bvcState.buttonTapped,
-                  frameContext: bvcState.frameContext,
-                  microsurveyState: bvcState.microsurveyState,
-                  navigationDestination: bvcState.navigationDestination)
+                  frame: bvcState.frame,
+                  microsurveyState: bvcState.microsurveyState)
     }
 
     init(windowUUID: WindowUUID) {
         self.init(
             searchScreenState: SearchScreenState(),
+            showDataClearanceFlow: false,
+            fakespotState: FakespotState(windowUUID: windowUUID),
             toast: nil,
             showOverlay: nil,
             windowUUID: windowUUID,
@@ -87,600 +87,372 @@ struct BrowserViewControllerState: ScreenState {
             navigateTo: nil,
             displayView: nil,
             buttonTapped: nil,
-            microsurveyState: MicrosurveyPromptState(windowUUID: windowUUID),
-            navigationDestination: nil)
+            microsurveyState: MicrosurveyPromptState(windowUUID: windowUUID))
     }
 
     init(
         searchScreenState: SearchScreenState,
+        showDataClearanceFlow: Bool,
+        fakespotState: FakespotState,
         toast: ToastType? = nil,
         showOverlay: Bool? = nil,
         windowUUID: WindowUUID,
         reloadWebView: Bool = false,
-        shouldStartAtHome: Bool = false,
         browserViewType: BrowserViewType,
         navigateTo: NavigationType? = nil,
         displayView: DisplayType? = nil,
         buttonTapped: UIButton? = nil,
-        frameContext: PasswordGeneratorFrameContext? = nil,
-        microsurveyState: MicrosurveyPromptState,
-        navigationDestination: NavigationDestination? = nil
+        frame: WKFrameInfo? = nil,
+        microsurveyState: MicrosurveyPromptState
     ) {
         self.searchScreenState = searchScreenState
+        self.showDataClearanceFlow = showDataClearanceFlow
+        self.fakespotState = fakespotState
         self.toast = toast
         self.windowUUID = windowUUID
         self.showOverlay = showOverlay
         self.reloadWebView = reloadWebView
-        self.shouldStartAtHome = shouldStartAtHome
         self.browserViewType = browserViewType
         self.navigateTo = navigateTo
         self.displayView = displayView
         self.buttonTapped = buttonTapped
-        self.frameContext = frameContext
+        self.frame = frame
         self.microsurveyState = microsurveyState
-        self.navigationDestination = navigationDestination
     }
 
     static let reducer: Reducer<Self> = { state, action in
         // Only process actions for the current window
-        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else {
-            return defaultState(from: state)
-        }
+        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else { return state }
 
-        if let action = action as? MicrosurveyPromptAction {
-            return reduceStateForMicrosurveyAction(action: action, state: state)
+        if let action = action as? FakespotAction {
+            return BrowserViewControllerState.reduceStateForFakeSpotAction(action: action, state: state)
+        } else if let action = action as? MicrosurveyPromptAction {
+            return BrowserViewControllerState.reduceStateForMicrosurveyAction(action: action, state: state)
         } else if let action = action as? GeneralBrowserAction {
-            return reduceStateForGeneralBrowserAction(action: action, state: state)
-        } else if let action = action as? NavigationBrowserAction {
-            return reduceStateForNavigationBrowserAction(action: action, state: state)
-        } else if let action = action as? StartAtHomeAction {
-            return reduceStateForStartAtHomeAction(action: action, state: state)
-        } else if let action = action as? ToolbarMiddlewareAction {
-            return reduceStateForToolbarMiddlewareAction(action: action, state: state)
-        } else if let action = action as? ToolbarAction {
-            return reduceStateForToolbarAction(action: action, state: state)
-        } else if let action = action as? SummarizeAction {
-            return reduceStateForSummarizeAction(action: action, state: state)
+            return BrowserViewControllerState.reduceStateForGeneralBrowserAction(action: action, state: state)
         } else {
             return BrowserViewControllerState(
                 searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
                 windowUUID: state.windowUUID,
                 reloadWebView: false,
-                shouldStartAtHome: false,
                 browserViewType: state.browserViewType,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
-                navigationDestination: nil)
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
         }
     }
 
-    // MARK: - Navigation Browser Action
-    @MainActor
-    static func reduceStateForNavigationBrowserAction(
-        action: NavigationBrowserAction,
-        state: BrowserViewControllerState
-    ) -> BrowserViewControllerState {
-        switch action.actionType {
-        case NavigationBrowserActionType.tapOnCustomizeHomepageButton,
-            NavigationBrowserActionType.tapOnTrackingProtection,
-            NavigationBrowserActionType.tapOnCell,
-            NavigationBrowserActionType.tapOnLink,
-            NavigationBrowserActionType.tapOnJumpBackInShowAllButton,
-            NavigationBrowserActionType.tapOnBookmarksShowMoreButton,
-            NavigationBrowserActionType.longPressOnCell,
-            NavigationBrowserActionType.tapOnOpenInNewTab,
-            NavigationBrowserActionType.tapOnSettingsSection,
-            NavigationBrowserActionType.tapOnShareSheet,
-            NavigationBrowserActionType.tapOnHomepageSearchBar,
-            NavigationBrowserActionType.tapOnShortcutsShowAllButton,
-            NavigationBrowserActionType.tapOnAllStoriesButton,
-            NavigationBrowserActionType.tapOnPrivacyNoticeLink:
-            return BrowserViewControllerState(
-                searchScreenState: state.searchScreenState,
-                windowUUID: state.windowUUID,
-                browserViewType: state.browserViewType,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
-                navigationDestination: action.navigationDestination
-            )
-        default:
-            return passthroughState(from: state, action: action)
-        }
+    static func reduceStateForFakeSpotAction(action: FakespotAction,
+                                             state: BrowserViewControllerState) -> BrowserViewControllerState {
+        return BrowserViewControllerState(
+            searchScreenState: state.searchScreenState,
+            showDataClearanceFlow: state.showDataClearanceFlow,
+            fakespotState: FakespotState.reducer(state.fakespotState, action),
+            windowUUID: state.windowUUID,
+            browserViewType: state.browserViewType,
+            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
     }
 
-    // MARK: - Start At Home Action
-    @MainActor
-    static func reduceStateForStartAtHomeAction(
-        action: StartAtHomeAction,
-        state: BrowserViewControllerState
-    ) -> BrowserViewControllerState {
-        switch action.actionType {
-        case StartAtHomeMiddlewareActionType.startAtHomeCheckCompleted:
-            return resolveStateForStartAtHome(action: action, state: state)
-        default:
-            return passthroughState(from: state, action: action)
-        }
-    }
-
-    // MARK: - Summarize Action
-    @MainActor
-    static func reduceStateForSummarizeAction(
-        action: SummarizeAction,
-        state: BrowserViewControllerState
-    ) -> BrowserViewControllerState {
-        switch action.actionType {
-        case SummarizeMiddlewareActionType.configuredSummarizer:
-            return BrowserViewControllerState(
-                searchScreenState: state.searchScreenState,
-                windowUUID: state.windowUUID,
-                browserViewType: state.browserViewType,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
-                navigationDestination: NavigationDestination(.summarizer(config: action.summarizerConfig))
-            )
-        default:
-            return passthroughState(from: state, action: action)
-        }
-    }
-
-    // MARK: - Toolbar Action
-
-    /// Navigate to homepage zero search state, which is a scrim layer / dimming view,
-    /// after tapping on search button on navigation toolbar
-    @MainActor
-    static func reduceStateForToolbarMiddlewareAction(
-        action: ToolbarMiddlewareAction,
-        state: BrowserViewControllerState
-    ) -> BrowserViewControllerState {
-        switch action.actionType {
-        case ToolbarMiddlewareActionType.didTapButton:
-            let shouldShowSearchBar = store.state.screenState(
-                HomepageState.self,
-                for: .homepage,
-                window: action.windowUUID
-            )?.searchState.shouldShowSearchBar ?? false
-
-            guard shouldShowSearchBar, action.buttonType == .search else {
-                return passthroughState(from: state, action: action)
-            }
-
-            return BrowserViewControllerState(
-                searchScreenState: state.searchScreenState,
-                windowUUID: state.windowUUID,
-                browserViewType: state.browserViewType,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
-                navigationDestination: NavigationDestination(.homepageZeroSearch)
-            )
-        default:
-            return passthroughState(from: state, action: action)
-        }
-    }
-
-    /// Navigate to zero search that shows trending / recent searches state
-    /// after tapping on search button on navigation toolbar
-    @MainActor
-    static func reduceStateForToolbarAction(
-        action: ToolbarAction,
-        state: BrowserViewControllerState
-    ) -> BrowserViewControllerState {
-        switch action.actionType {
-        case ToolbarActionType.didStartEditingUrl, ToolbarActionType.didDeleteSearchTerm:
-            guard case .webview = state.browserViewType else { return passthroughState(from: state, action: action) }
-            return BrowserViewControllerState(
-                searchScreenState: state.searchScreenState,
-                windowUUID: state.windowUUID,
-                browserViewType: state.browserViewType,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
-                navigationDestination: NavigationDestination(.zeroSearch)
-            )
-        default:
-            return passthroughState(from: state, action: action)
-        }
-    }
-
-    @MainActor
     static func reduceStateForMicrosurveyAction(action: MicrosurveyPromptAction,
                                                 state: BrowserViewControllerState) -> BrowserViewControllerState {
         return BrowserViewControllerState(
             searchScreenState: state.searchScreenState,
+            showDataClearanceFlow: state.showDataClearanceFlow,
+            fakespotState: state.fakespotState,
             windowUUID: state.windowUUID,
             browserViewType: state.browserViewType,
             microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
     }
 
-    @MainActor
     static func reduceStateForGeneralBrowserAction(action: GeneralBrowserAction,
                                                    state: BrowserViewControllerState) -> BrowserViewControllerState {
         switch action.actionType {
         case GeneralBrowserActionType.showToast:
-            return handleShowToastAction(state: state, action: action)
-        case GeneralBrowserActionType.showOverlay,
-            GeneralBrowserActionType.leaveOverlay:
-            return handleShowAndLeaveOverlayAction(state: state, action: action)
-        case GeneralBrowserActionType.updateSelectedTab:
-            return resolveStateForUpdateSelectedTab(action: action, state: state)
-        case GeneralBrowserActionType.goToHomepage:
-            return handleGoToHomepageAction(state: state, action: action)
-        case GeneralBrowserActionType.addNewTab:
-            return handleAddNewTabAction(state: state, action: action)
-        case GeneralBrowserActionType.showBackForwardList:
-            return handleShowBackForwardListAction(state: state, action: action)
-        case GeneralBrowserActionType.showTrackingProtectionDetails:
-            return handleShowTrackingProtectionDetailsAction(state: state, action: action)
-        case GeneralBrowserActionType.showMenu:
-            return handleShowMenuAction(state: state, action: action)
-        case GeneralBrowserActionType.showTabsLongPressActions:
-            return handleShowTabsLongPressAction(state: state, action: action)
-        case GeneralBrowserActionType.showReloadLongPressAction:
-            return handleShowReloadLongPressAction(state: state, action: action)
-        case GeneralBrowserActionType.showLocationViewLongPressActionSheet:
-            return handleShowLocationViewLongPressActionSheetAction(state: state, action: action)
-        case GeneralBrowserActionType.navigateBack:
-            return handleNavigateBackAction(state: state, action: action)
-        case GeneralBrowserActionType.navigateForward:
-            return handleNavigateForwardAction(state: state, action: action)
-        case GeneralBrowserActionType.showTabTray:
-            return handleShowTabTrayAction(state: state, action: action)
-        case GeneralBrowserActionType.reloadWebsite:
-            return handleReloadWebsiteAction(state: state, action: action)
-        case GeneralBrowserActionType.reloadWebsiteNoCache:
-            return handleReloadWebsiteNoCacheAction(state: state, action: action)
-        case GeneralBrowserActionType.stopLoadingWebsite:
-            return handleStopLoadingWebsiteAction(state: state, action: action)
-        case GeneralBrowserActionType.showShare:
-            return handleShowShareAction(state: state, action: action)
-        case GeneralBrowserActionType.showReaderMode:
-            return handleShowReaderModeAction(state: state, action: action)
-        case GeneralBrowserActionType.showNewTabLongPressActions:
-            return handleShowNewTabLongPressAction(state: state, action: action)
-        case GeneralBrowserActionType.addToReadingListLongPressAction:
-            return handleAddToReadingListLongPressAction(state: state, action: action)
-        case GeneralBrowserActionType.clearData:
-            return handleClearDataAction(state: state, action: action)
-        case GeneralBrowserActionType.showPasswordGenerator:
-            return handleShowPasswordGeneratorAction(state: state, action: action)
-        case GeneralBrowserActionType.showSummarizer:
-            return handleShowSummarizerAction(state: state, action: action)
-        default:
-            return passthroughState(from: state, action: action)
-        }
-    }
-
-    @MainActor
-    private static func handleShowToastAction(state: BrowserViewControllerState,
-                                              action: GeneralBrowserAction) -> BrowserViewControllerState {
-        guard let toastType = action.toastType else {
-            return defaultState(from: state)
-        }
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: toastType,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowAndLeaveOverlayAction(state: BrowserViewControllerState,
-                                                        action: GeneralBrowserAction) -> BrowserViewControllerState {
-        let showOverlay = action.showOverlay ?? false
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            showOverlay: showOverlay,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleGoToHomepageAction(state: BrowserViewControllerState,
-                                                 action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            navigateTo: .home,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleAddNewTabAction(state: BrowserViewControllerState,
-                                              action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            navigateTo: .newTab,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowBackForwardListAction(state: BrowserViewControllerState,
-                                                        action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .backForwardList,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowTrackingProtectionDetailsAction(
-        state: BrowserViewControllerState,
-        action: GeneralBrowserAction) -> BrowserViewControllerState {
+            guard let toastType = action.toastType else { return state }
             return BrowserViewControllerState(
                 searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: toastType,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showOverlay,
+            GeneralBrowserActionType.leaveOverlay:
+            let showOverlay = action.showOverlay ?? false
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                showOverlay: showOverlay,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.updateSelectedTab:
+            return BrowserViewControllerState.resolveStateForUpdateSelectedTab(action: action, state: state)
+
+        case GeneralBrowserActionType.goToHomepage:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
                 toast: state.toast,
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
-                displayView: .trackingProtectionDetails,
-                buttonTapped: action.buttonTapped,
+                navigateTo: .home,
                 microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-        }
 
-    @MainActor
-    private static func handleShowMenuAction(state: BrowserViewControllerState,
-                                             action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .menu,
-            buttonTapped: action.buttonTapped,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowTabsLongPressAction(state: BrowserViewControllerState,
-                                                      action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .tabsLongPressActions,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowReloadLongPressAction(state: BrowserViewControllerState,
-                                                        action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .reloadLongPressAction,
-            buttonTapped: action.buttonTapped,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowLocationViewLongPressActionSheetAction(
-        state: BrowserViewControllerState,
-        action: GeneralBrowserAction) -> BrowserViewControllerState {
+        case GeneralBrowserActionType.addNewTab:
             return BrowserViewControllerState(
                 searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                navigateTo: .newTab,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showQRcodeReader:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .qrCodeReader,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showBackForwardList:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .backForwardList,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showTrackingProtectionDetails:
+            return BrowserViewControllerState(
+                    searchScreenState: state.searchScreenState,
+                    showDataClearanceFlow: state.showDataClearanceFlow,
+                    fakespotState: state.fakespotState,
+                    toast: state.toast,
+                    windowUUID: state.windowUUID,
+                    browserViewType: state.browserViewType,
+                    displayView: .trackingProtectionDetails,
+                    buttonTapped: action.buttonTapped,
+                    microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showMenu:
+            return BrowserViewControllerState(
+                    searchScreenState: state.searchScreenState,
+                    showDataClearanceFlow: state.showDataClearanceFlow,
+                    fakespotState: state.fakespotState,
+                    toast: state.toast,
+                    windowUUID: state.windowUUID,
+                    browserViewType: state.browserViewType,
+                    displayView: .menu,
+                    buttonTapped: action.buttonTapped,
+                    microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showTabsLongPressActions:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .tabsLongPressActions,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showReloadLongPressAction:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .reloadLongPressAction,
+                buttonTapped: action.buttonTapped,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showLocationViewLongPressActionSheet:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
                 toast: state.toast,
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .locationViewLongPressAction,
                 microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.navigateBack:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                navigateTo: .back,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+        case GeneralBrowserActionType.navigateForward:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                navigateTo: .forward,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showTabTray:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .tabTray,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.reloadWebsite:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                navigateTo: .reload,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.reloadWebsiteNoCache:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                navigateTo: .reloadNoCache,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.stopLoadingWebsite:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                navigateTo: .stopLoading,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showShare:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .share,
+                buttonTapped: action.buttonTapped,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showReaderMode:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .readerMode,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.showNewTabLongPressActions:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .newTabLongPressActions,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.addToReadingListLongPressAction:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                toast: state.toast,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .readerModeLongPressAction,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+
+        case GeneralBrowserActionType.clearData:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .dataClearance,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+        case GeneralBrowserActionType.showPasswordGenerator:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                displayView: .passwordGenerator,
+                frame: action.frame,
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action)
+                )
+        default:
+            return state
         }
-
-    @MainActor
-    private static func handleNavigateBackAction(state: BrowserViewControllerState,
-                                                 action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            navigateTo: .back,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
     }
 
-    @MainActor
-    private static func handleNavigateForwardAction(state: BrowserViewControllerState,
-                                                    action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            navigateTo: .forward,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowTabTrayAction(state: BrowserViewControllerState,
-                                                action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .tabTray,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleReloadWebsiteAction(state: BrowserViewControllerState,
-                                                  action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            navigateTo: .reload,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleReloadWebsiteNoCacheAction(state: BrowserViewControllerState,
-                                                         action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            navigateTo: .reloadNoCache,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleStopLoadingWebsiteAction(state: BrowserViewControllerState,
-                                                       action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            navigateTo: .stopLoading,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowShareAction(state: BrowserViewControllerState,
-                                              action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .share,
-            buttonTapped: action.buttonTapped,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowReaderModeAction(state: BrowserViewControllerState,
-                                                   action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .readerMode,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowNewTabLongPressAction(state: BrowserViewControllerState,
-                                                        action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .newTabLongPressActions,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleAddToReadingListLongPressAction(state: BrowserViewControllerState,
-                                                              action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            toast: state.toast,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .readerModeLongPressAction,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleClearDataAction(state: BrowserViewControllerState,
-                                              action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .dataClearance,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowPasswordGeneratorAction(state: BrowserViewControllerState,
-                                                          action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .passwordGenerator,
-            frameContext: action.frameContext,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func handleShowSummarizerAction(state: BrowserViewControllerState,
-                                                   action: GeneralBrowserAction) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            displayView: .summarizer(config: action.summarizerConfig),
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    private static func passthroughState(
-        from state: BrowserViewControllerState,
-        action: Action
-    ) -> BrowserViewControllerState {
-        let microsurveyState = MicrosurveyPromptState.reducer(state.microsurveyState, action)
-
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            microsurveyState: microsurveyState
-        )
-    }
-
-    static func defaultState(from state: BrowserViewControllerState) -> BrowserViewControllerState {
-        let microsurveyState = MicrosurveyPromptState.defaultState(from: state.microsurveyState)
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            windowUUID: state.windowUUID,
-            browserViewType: state.browserViewType,
-            microsurveyState: microsurveyState
-        )
-    }
-
-    @MainActor
     static func resolveStateForUpdateSelectedTab(action: GeneralBrowserAction,
                                                  state: BrowserViewControllerState) -> BrowserViewControllerState {
         let isAboutHomeURL = InternalURL(action.selectedTabURL)?.isAboutHomeURL ?? false
         var browserViewType = BrowserViewType.normalHomepage
         let isPrivateBrowsing = action.isPrivateBrowsing ?? false
+        let isNativeErrorPage = action.isNativeErrorPage ?? false
+        let isErrorURL = InternalURL(action.selectedTabURL)?.isErrorPage ?? false
 
         if isAboutHomeURL {
             browserViewType = isPrivateBrowsing ? .privateHomepage : .normalHomepage
+        } else if isNativeErrorPage && isErrorURL {
+            browserViewType = .nativeErrorPage
         } else {
             browserViewType = .webview
         }
 
         return BrowserViewControllerState(
             searchScreenState: SearchScreenState(inPrivateMode: isPrivateBrowsing),
+            showDataClearanceFlow: state.showDataClearanceFlow,
+            fakespotState: state.fakespotState,
             windowUUID: state.windowUUID,
             reloadWebView: true,
             browserViewType: browserViewType,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
-    }
-
-    @MainActor
-    static func resolveStateForStartAtHome(
-        action: StartAtHomeAction,
-        state: BrowserViewControllerState
-    ) -> BrowserViewControllerState {
-        return BrowserViewControllerState(
-            searchScreenState: state.searchScreenState,
-            windowUUID: state.windowUUID,
-            shouldStartAtHome: action.shouldStartAtHome ?? false,
-            browserViewType: state.browserViewType,
             microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
     }
 }

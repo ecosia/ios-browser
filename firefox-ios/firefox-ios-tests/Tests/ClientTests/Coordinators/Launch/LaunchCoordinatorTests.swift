@@ -2,21 +2,18 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import SwiftUI
 import Common
-import OnboardingKit
 import XCTest
 @testable import Client
 
-@MainActor
 final class LaunchCoordinatorTests: XCTestCase {
     private var profile: MockProfile!
     private var mockRouter: MockRouter!
     private var delegate: MockLaunchCoordinatorDelegate!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
@@ -24,12 +21,12 @@ final class LaunchCoordinatorTests: XCTestCase {
         delegate = MockLaunchCoordinatorDelegate()
     }
 
-    override func tearDown() async throws {
-        DependencyHelperMock().reset()
+    override func tearDown() {
+        super.tearDown()
         profile = nil
         mockRouter = nil
         delegate = nil
-        try await super.tearDown()
+        AppContainer.shared.reset()
     }
 
     func testInitialState() {
@@ -40,79 +37,32 @@ final class LaunchCoordinatorTests: XCTestCase {
         XCTAssertTrue(subject.childCoordinators.isEmpty)
     }
 
-    // MARK: - Terms of Service
-    func testStart_termsOfServiceNotIphone_present() throws {
-        let termsOfServiceManager = TermsOfServiceManager(prefs: profile.prefs)
-        let subject = createSubject(isIphone: false)
-        subject.start(with: .termsOfService(manager: termsOfServiceManager))
-
-        XCTAssertEqual(mockRouter.presentCalled, 1)
-        XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
-        let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
-        XCTAssertNotNil(presentedViewController as? TermsOfServiceViewController)
-    }
-
-    func testStart_termsOfServiceIsIphone_present() throws {
-        let termsOfServiceManager = TermsOfServiceManager(prefs: profile.prefs)
-        let subject = createSubject(isIphone: true)
-        subject.start(with: .termsOfService(manager: termsOfServiceManager))
-
-        XCTAssertEqual(mockRouter.presentCalled, 1)
-        XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
-        let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
-        XCTAssertNotNil(presentedViewController as? TermsOfServiceViewController)
-    }
-
     // MARK: - Intro
+    /* Ecosia: Disable Onboarding dependant tests since LaunchCoordinator.presentIntroOnboarding is temporarily disabled
     func testStart_introNotIphone_present() throws {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: false)
         subject.start(with: .intro(manager: introScreenManager))
-
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
-        XCTAssertNotNil(presentedViewController as? IntroViewController)
+        // Ecosia: Update view controller being presented
+        // XCTAssertNotNil(presentedViewController as? IntroViewController)
+        XCTAssertNotNil(presentedViewController as? WelcomeNavigation)
     }
 
     func testStart_introIsIphone_setRootView() throws {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: true)
         subject.start(with: .intro(manager: introScreenManager))
-
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)
-        XCTAssertNotNil(pushedVC as? IntroViewController)
+        // Ecosia: Update view controller being presented
+        // XCTAssertNotNil(pushedVC as? IntroViewController)
+        XCTAssertNotNil(pushedVC as? WelcomeNavigation)
     }
-
-    func testStart_introNotIphone_presentToModernUI() throws {
-        let introScreenManager = MockIntroScreenManager(isModernEnabled: true)
-        let subject = createSubject(isIphone: false)
-        subject.start(with: .intro(manager: introScreenManager))
-
-        XCTAssertEqual(mockRouter.presentCalled, 1)
-        XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
-        let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
-        XCTAssertTrue(
-            presentedViewController is
-            UIHostingController<OnboardingKit.OnboardingView<Client.OnboardingKitCardInfoModel>>
-        )
-    }
-
-    func testStart_introIsIphone_setRootViewToModernUI() throws {
-        let introScreenManager = MockIntroScreenManager(isModernEnabled: true)
-        let subject = createSubject(isIphone: true)
-        subject.start(with: .intro(manager: introScreenManager))
-
-        XCTAssertEqual(mockRouter.presentCalled, 1)
-        XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
-        let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)
-        XCTAssertTrue(
-            pushedVC is
-            UIHostingController<OnboardingKit.OnboardingView<Client.OnboardingKitCardInfoModel>>
-        )
-    }
+    */
 
     // MARK: - Update
     func testStart_updateNotIphone_present() throws {
@@ -168,7 +118,7 @@ final class LaunchCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         XCTAssertNil(mockRouter.presentedViewController)
     }
-
+    /* Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
     func testStart_surveyWithMessage_setRootView() throws {
         let messageManager = MockGleanPlumbMessageManagerProtocol()
         let message = createMessage(isExpired: false)
@@ -184,6 +134,7 @@ final class LaunchCoordinatorTests: XCTestCase {
         let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)
         XCTAssertNotNil(pushedVC as? SurveySurfaceViewController)
     }
+     */
 
     // MARK: - QRCodeNavigationHandler
 
@@ -208,6 +159,7 @@ final class LaunchCoordinatorTests: XCTestCase {
     }
 
     // MARK: - Delegates
+    /* Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
     func testStart_surveySetsDelegate() throws {
         let messageManager = MockGleanPlumbMessageManagerProtocol()
         let message = createMessage(isExpired: false)
@@ -221,6 +173,7 @@ final class LaunchCoordinatorTests: XCTestCase {
         let presentedVC = try XCTUnwrap(mockRouter.presentedViewController as? SurveySurfaceViewController)
         XCTAssertNotNil(presentedVC.delegate)
     }
+     */
 
     func testDidFinish_fromSurveySurfaceViewControllerDelegate() {
         let subject = createSubject(isIphone: false)
@@ -233,7 +186,7 @@ final class LaunchCoordinatorTests: XCTestCase {
 
     // MARK: - Helpers
     private func createSubject(isIphone: Bool,
-                               file: StaticString = #filePath,
+                               file: StaticString = #file,
                                line: UInt = #line) -> LaunchCoordinator {
         let subject = LaunchCoordinator(
             router: mockRouter,
@@ -245,6 +198,7 @@ final class LaunchCoordinatorTests: XCTestCase {
         return subject
     }
 
+    /* Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
     private func createMessage(
         for surface: MessageSurfaceId = .survey,
         isExpired: Bool
@@ -262,4 +216,5 @@ final class LaunchCoordinatorTests: XCTestCase {
                                  style: MockStyleDataProtocol(),
                                  metadata: metadata)
     }
+     */
 }

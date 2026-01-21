@@ -5,7 +5,7 @@
 import UIKit
 import MobileCoreServices
 
-final class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
+class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
     func beginRequest(with context: NSExtensionContext) {
         // NSItemProvider apparently doesn't support multiple attachments as a way to load multiple blocking lists.
         // As a workaround, we load each list into memory, then merge them into a single attachment.
@@ -30,13 +30,12 @@ final class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
 
     /// Gets the dictionary form of the tracking list with the specified file name.
     private func itemsFromFile(_ name: String) -> [NSDictionary] {
-        guard let url = Bundle.main.url(forResource: name, withExtension: "json") else { return [] }
+        let url = Bundle.main.url(forResource: name, withExtension: "json")
         do {
-            let data = try Data(contentsOf: url)
-            let json = try JSONSerialization.jsonObject(with: data, options: [])
-            return json as? [NSDictionary] ?? []
+            let data = try Data(contentsOf: url!)
+            return try JSONSerialization.jsonObject(with: data, options: []) as! [NSDictionary]
         } catch {
-            fatalError("Invalid data at \(url)")
+            fatalError("Invalid data at \(url!)")
         }
     }
 }

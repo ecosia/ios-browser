@@ -16,7 +16,7 @@ class TopTabFader: UIView {
 
     private lazy var hMaskLayer: CAGradientLayer = {
         let hMaskLayer = CAGradientLayer()
-        let innerColor = UIColor.white.cgColor
+        let innerColor = UIColor.Photon.White100.cgColor
         let outerColor = UIColor(white: 1, alpha: 0.0).cgColor
 
         hMaskLayer.anchorPoint = .zero

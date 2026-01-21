@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. %@ is the hostname of the site. */
+/* Authentication prompt message with no realm. Parameter is the hostname of the site */
 "A username and password are being requested by %@." = "ឈ្មោះ​អ្នក​ប្រើ និង​ពាក្យ​សម្ងាត់​​បាន​កំពុង​ស្នើ​ដោយ %@ ។";
 
-/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
+/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
 "A username and password are being requested by %@. The site says: %@" = "ឈ្មោះ​អ្នក​ប្រើ និង​ពាក្យ​សម្ងាត់​កំពុង​ត្រូវ​បាន​ស្នើ​ដោយ %1$@ ។ តំបន់បណ្ដាញ​​ប្រាប់​ថា៖ %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -28,7 +28,7 @@
 /* Title for the Jump Back In section. This section allows users to jump back in to a recently viewed tab */
 "ActivityStream.JumpBackIn.SectionTitle" = "រំលង​ត្រឡប់វិញ";
 
-/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. %d is the number of tabs. It will read 'Tabs: 5' or similar. */
+/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. The placeholder is for a number. It will read 'Tabs: 5' or similar. */
 "ActivityStream.JumpBackIn.TabGroup.SiteCount" = "ផ្ទាំង៖ %d";
 
 /* A string used to signify the start of the Recently Saved section in Home Screen. */
@@ -36,6 +36,9 @@
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "បាន​ចូលមើល​ថ្មីៗ";
+
+/* Section title label for Shortcuts */
+"ActivityStream.Shortcuts.SectionTitle" = "ផ្លូវកាត់";
 
 /* The title for the setting page which lets you select the number of top site rows */
 "ActivityStream.TopSites.RowSettingFooter" = "កំណត់​ជួរ​ដេក";
@@ -250,13 +253,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "ទាញយក";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "ឯកសារ​ 1 នៃ %d";
 
-/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
+/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -280,8 +283,8 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "វា​អាច​ជា​ការ​កំណត់​រចនាសម្ព័ន្ធ​ខុស ឬ​​​ការ​លួច​ផ្លាស់ប្ដូរ​ដោយ​អ្នក​វាយប្រហារ។ ចាប់ផ្ដើម​ដំណើរការ បើ​អ្នក​ព្រម​ទទួល​ហានិភ័យ​ដ៏​ខ្លាំង​នេះ។";
 
-/* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "ម្ចាស់​នៃ %@ បាន​កំណត់​រចនាសម្ព័ន្ធ​​វេបសាយ​​របស់​ពួកគេ​មិន​សមរម្យ។ ដើម្បី​ការពារ​ព័ត៌មាន​របស់​អ្នក​ពី​ការ​លួច Firefox មិន​បាន​ភ្ជាប់​ទៅ​វេបសាយ​នេះ​ទេ។";
+/* Warning text on the certificate error page */
+"ErrorPages.CertWarning.Description" = "ម្ចាស់​នៃ %@ បាន​កំណត់​រចនាសម្ព័ន្ធ​​វេបសាយ​​របស់​ពួកគេ​មិន​សមរម្យ។ ដើម្បី​ការពារ​ព័ត៌មាន​របស់​អ្នក​ពី​ការ​លួច Ecosia មិន​បាន​ភ្ជាប់​ទៅ​វេបសាយ​នេះ​ទេ។";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "ការ​តភ្ជាប់​នេះ​មិន​ត្រូវ​បាន​ជឿ​ទុកចិត្ត​ឡើយ";
@@ -302,7 +305,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "ទំព័រដើម Firefox";
+"Firefox.HomePage.Title" = "ទំព័រដើម Ecosia";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "កែ​គេហទំព័រ​តាមបំណង";
@@ -311,7 +314,7 @@
 "Forward" = "បញ្ជូន​បន្ត";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "គណនី Firefox";
+"FxA.FirefoxAccount" = "គណនី Ecosia";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "គ្រប់គ្រងគណនី និង​ឧបករណ៍";
@@ -323,7 +326,7 @@
 "FxA.SyncNow" = "ធ្វើសមកាលកម្មឥឡូវនេះ";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "ការធ្វើសមកាលកម្ម Firefox បានតភ្ជាប់ទៅ %@";
+"FxAPush_DeviceConnected_body" = "ការធ្វើសមកាលកម្ម Ecosia បានតភ្ជាប់ទៅ %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "បានតភ្ជាប់ការធ្វើសមកាលកម្ម";
@@ -332,7 +335,7 @@
 "FxAPush_DeviceDisconnected_body" = "បានផ្តាច់ %@ ដោយជោគជ័យ។";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "ឧបករណ៍នេះត្រូវបានផ្តាច់ពី Firefox Sync ដោយជោគជ័យ។";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "ឧបករណ៍នេះត្រូវបានផ្តាច់ពី Ecosia Sync ដោយជោគជ័យ។";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "បានផ្តាច់ការធ្វើសមកាលកម្ម";
@@ -341,7 +344,7 @@
 "FxAPush_DeviceDisconnected_title" = "បានផ្តាច់ការធ្វើសមកាលកម្ម";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ឧបករណ៍មួយបានផ្តាច់ពី Firefox Sync";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ឧបករណ៍មួយបានផ្តាច់ពី Ecosia Sync";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "ជំនួយ";
@@ -374,7 +377,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "ចូល ដើម្បី​មើល​បញ្ជី​ផ្ទាំង​ពី​ឧបករណ៍​ផ្សេងៗ​របស់​អ្នក។";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "ការ​ធ្វើ​សមកាលកម្ម Firefox";
+"HistoryPanel.EmptySyncedTabsState.Title" = "ការ​ធ្វើ​សមកាលកម្ម Ecosia";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "ប្រវត្តិ​";
@@ -487,6 +490,18 @@
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "កុំ​ធ្វើ​បច្ចុប្បន្នភាព";
 
+/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
+"LoginsHelper.PromptSaveLogin.Title" = "រក្សាទុក​ការ​ចូល %1$@ សម្រាប់ %2$@ ដែរ ឬ​ទេ?";
+
+/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
+"LoginsHelper.PromptSavePassword.Title" = "រក្សាទុក​ពាក្យ​សម្ងាត់​សម្រាប់ %@ ដែរ ឬ​ទេ?";
+
+/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "ធ្វើបច្ចុប្បន្នភាពការចូលសម្រាប់ %@ ដែរ​ឬ​ទេ?";
+
+/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "ធ្វើ​បច្ចុប្បន្នភាព​ការ​ចូល %1$@ សម្រាប់ %2$@ ដែរឬ​ទេ?";
+
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "រក្សាទុក​ការ​ចូល";
 
@@ -500,7 +515,7 @@
 "LoginsList.Title" = "ការចូល​ដែល​បាន​រក្សាទុក";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Firefox ដូចជា​បាន​គាំង​កាល​ពី​មុន។ តើ​អ្នក​ចង់​ស្ដារ​ផ្ទាំង​របស់​អ្នក​មែន​ទេ?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Ecosia ដូចជា​បាន​គាំង​កាល​ពី​មុន។ តើ​អ្នក​ចង់​ស្ដារ​ផ្ទាំង​របស់​អ្នក​មែន​ទេ?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "សម្គាល់​ថា​អាន";
@@ -623,7 +638,7 @@
 "Okay" = "យល់ព្រម";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "អូ! Firefox បាន​គាំង​ហើយ";
+"Oops! Firefox crashed" = "អូ! Ecosia បាន​គាំង​ហើយ";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "បើក​អត្ថបទ​នៅ​ក្នុង​​ទិដ្ឋភាព​អ្នក​អាន​ដោយ​ប៉ះ​រូបតំណាង​សៀវភៅ​នៅ​ពេល​វា​បង្ហាញ​នៅ​ក្នុង​របារ​ចំណងជើង។";
@@ -635,7 +650,7 @@
 "Open Tabs" = "បើកផ្ទាំង";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "កម្មវិធី Firefox មិនអាចបើកទំព័របានទេ ដោយសារ​វាមានអាសយដ្ឋានមិនត្រឹមត្រូវ។";
+"OpenURL.Error.Message" = "កម្មវិធី Ecosia មិនអាចបើកទំព័របានទេ ដោយសារ​វាមានអាសយដ្ឋានមិនត្រឹមត្រូវ។";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "មិនអាចបើកទំព័រ​បាន​ទេ";
@@ -647,7 +662,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "វា​អនុញ្ញាត​ឱ្យ​អ្នក​អាច​រក្សាទុក​រូបភាព​ទៅ​ក្នុង​របុំ​កាមេរ៉ា​របស់អ្នក។";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox ចង់​ចូល​​​ប្រើ​រូបថត​របស់​អ្នក";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia ចង់​ចូល​​​ប្រើ​រូបថត​របស់​អ្នក";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "បិទ";
@@ -761,7 +776,7 @@
 "Search.ThirdPartyEngines.OK" = "យល់ព្រម​";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "ផ្ញើ​របាយការណ៍​ជាប់​គាំង ​ដូច្នេះ Mozilla អាច​ដោះស្រាយ​បញ្ហា​បាន?";
+"Send a crash report so Mozilla can fix the problem?" = "ផ្ញើ​របាយការណ៍​ជាប់​គាំង ​ដូច្នេះ Ecosia អាច​ដោះស្រាយ​បញ្ហា​បាន?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "ផ្ញើ​មតិត្រឡប់";
@@ -788,13 +803,13 @@
 "SendTo.NavBar.Title" = "ផ្ញើ​ផ្ទាំង";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "អ្នក​មិន​មាន​ឧបករណ៍​ផ្សេង​ណា​មួយ​បាន​ភ្ជាប់​ទៅ​គណនី Firefox ដែល​អាច​ប្រើ ​​ដើម្បី​ធ្វើ​សមកាលកម្ម​​បាននោះ​ទេ។";
+"SendTo.NoDevicesFound.Message" = "អ្នក​មិន​មាន​ឧបករណ៍​ផ្សេង​ណា​មួយ​បាន​ភ្ជាប់​ទៅ​គណនី Ecosia ដែល​អាច​ប្រើ ​​ដើម្បី​ធ្វើ​សមកាលកម្ម​​បាននោះ​ទេ។";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "សូម​បើក​កម្មវិធី Firefox រួច​ទៅ​កាន់​ ការ​កំណត់ និង​ចូល​ដើម្បី​បន្ត។";
+"SendTo.NotSignedIn.Message" = "សូម​បើក​កម្មវិធី Ecosia រួច​ទៅ​កាន់​ ការ​កំណត់ និង​ចូល​ដើម្បី​បន្ត។";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "អ្នក​មិន​បាន​ចូល​ទៅ​គណនី Firefox របស់​អ្នក​ទេ។";
+"SendTo.NotSignedIn.Title" = "អ្នក​មិន​បាន​ចូល​ទៅ​គណនី Ecosia របស់​អ្នក​ទេ។";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "ផ្ញើ";
@@ -815,7 +830,7 @@
 "SentTab.NoTabArrivingNotification.body" = "ចុច ដើម្បីចាប់ផ្ដើម";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "មើល";
@@ -872,7 +887,7 @@
 "Settings.DataManagement.Title" = "ការ​គ្រប់​គ្រង​ទិន្នន័យ";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Firefox នឹង​ឈប់​ធ្វើ​សមកាលកម្ម​ជាមួយ​គណនី​របស់​អ្នក ប៉ុន្តែ​នឹង​មិន​លុប​ទិន្នន័យ​​ដែលរុករក​​​របស់​អ្នក​​​នៅ​លើ​ឧបករណ៍​នេះ​ទេ។";
+"Settings.Disconnect.Body" = "Ecosia នឹង​ឈប់​ធ្វើ​សមកាលកម្ម​ជាមួយ​គណនី​របស់​អ្នក ប៉ុន្តែ​នឹង​មិន​លុប​ទិន្នន័យ​​ដែលរុករក​​​របស់​អ្នក​​​នៅ​លើ​ឧបករណ៍​នេះ​ទេ។";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "ផ្តាច់​ការធ្វើ​សមកាលកម្ម";
@@ -935,7 +950,7 @@
 "Settings.FxA.Sync.SectionName" = "ធ្វើសមកាលកម្ម​ការកំណត់";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "គណនី Firefox";
+"Settings.FxA.Title" = "គណនី Ecosia";
 
 /* General settings section title */
 "Settings.General.SectionName" = "ទូទៅ";
@@ -959,7 +974,7 @@
 "Settings.NewTab.Option.BlankPage" = "ទំព័រទទេ";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "ទំព័រដើម Firefox";
+"Settings.NewTab.Option.FirefoxHome" = "ទំព័រដើម Ecosia";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "ទំព័រ​ដើម";
@@ -977,7 +992,10 @@
 "Settings.NewTab.TopSectionNameFooter" = "ជ្រើសរើសអ្វីដែលត្រូវផ្ទុកនៅពេលបើកផ្ទាំងថ្មី";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "នៅពេលបើក Firefox";
+"Settings.OfferClipboardBar.Status" = "នៅពេលបើក Ecosia";
+
+/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
+"Settings.OfferClipboardBar.StatusV2" = "នៅពេលបើក Ecosia";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "ផ្តល់ជូនឲ្យបើកតំណដែលបានចម្លង";
@@ -1001,7 +1019,7 @@
 "Settings.SendUsage.Link" = "ស្វែងយល់បន្ថែម។";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla ខិតខំប្រមូលតែអ្វីដែល​យើងត្រូវការដើម្បីផ្តល់ និងធ្វើឱ្យ Firefox ប្រសើរឡើងសម្រាប់អ្នកគ្រប់គ្នា។";
+"Settings.SendUsage.Message" = "Ecosia ខិតខំប្រមូលតែអ្វីដែល​យើងត្រូវការដើម្បីផ្តល់ និងធ្វើឱ្យ Ecosia ប្រសើរឡើងសម្រាប់អ្នកគ្រប់គ្នា។";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "ផ្ញើទិន្នន័យការប្រើប្រាស់";
@@ -1022,7 +1040,7 @@
 "Settings.Siri.OpenTabShortcut" = "បើក​ផ្ទាំង​ថ្មី";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "ប្រើផ្លូវកាត់ Siri ដើម្បីបើក Firefox តាមរយៈកម្មវិធី Siri";
+"Settings.Siri.SectionDescription" = "ប្រើផ្លូវកាត់ Siri ដើម្បីបើក Ecosia តាមរយៈកម្មវិធី Siri";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "ផ្លូវកាត់ Siri";
@@ -1031,7 +1049,7 @@
 "Settings.Studies.Toggle.Link" = "ស្វែងយល់បន្ថែម។";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Firefox អាចតំឡើងនិងដំណើរការការសិក្សាម្តងម្កាល។";
+"Settings.Studies.Toggle.Message" = "Ecosia អាចតំឡើងនិងដំណើរការការសិក្សាម្តងម្កាល។";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "ការសិក្សា";
@@ -1091,13 +1109,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "ផ្ទុកនៅផ្ទៃខាងក្រោយ";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "កំពុងផ្ទុកក្នុង Firefox";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "កំពុងផ្ទុកក្នុង Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "បើកក្នុង Firefox";
+"ShareExtension.OpenInFirefoxAction.Title" = "បើកក្នុង Ecosia";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "ស្វែងរកក្នុង Firefox";
+"ShareExtension.SeachInFirefoxAction.Title" = "ស្វែងរកក្នុង Ecosia";
 
 /* Label for show search suggestions setting. */
 "Show Search Suggestions" = "បង្ហាញ​​សំណើ​ស្វែងរក";
@@ -1123,13 +1141,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "សមកាលកម្ម​គ្មាន​អ៊ីនធឺណិត";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "ផ្ទាំង %1$@ នៃ %2$@";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "បង្ហាញ​ផ្ទាំង​ទាំងអស់";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "ផ្ទាំង %1$@ ដល់ %2$@ នៃ %3$@";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1137,6 +1155,9 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "មិន​ធ្វើ​វិញ​";
+
+/* The label indicating that all the tabs were closed */
+"Tabs.DeleteAllUndo.Title" = "បាន​បិទ​ផ្ទាំង %d";
 
 /* A label indicating the keyboard shortcut of closing all tabs from the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "TabTray.CloseAllTabs.KeyCodeTitle" = "បិទ​ផ្ទាំង​ទាំងអស់";
@@ -1165,7 +1186,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "ថ្ងៃ​នេះ";
 
-/* Relative date for date older than a minute. %@ is the time. */
+/* Relative date for date older than a minute. */
 "today at %@" = "ថ្ងៃ​នេះ​នៅ %@";
 
 /* Accessibility label for the Menu button. */
@@ -1174,7 +1195,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "បិទ​ផ្ទាំង​ទាំងអស់";
 
-/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
+/* Button shown in editing mode to remove this site from the top sites panel. */
 "TopSites.RemovePage.Button" = "យក​ទំព័រ​ចេញ - %@";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1183,7 +1204,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "បាទ/ចាស";
 
-/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
+/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "ទំព័រនេះបង្ហាញជា %1$@ តើចង់បកប្រែទៅជា %2$@ ជាមួយ %3$@ ដែរឫទេ?";
 
 /* Tile title for Twitter */
@@ -1193,7 +1214,7 @@
 "UIMenuItem.PasteGo" = "ដាក់ចូល និង​ទៅ";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "ស្វែងរកជាមួយ Firefox";
+"UIMenuItem.SearchWithFirefox" = "ស្វែងរកជាមួយ Ecosia";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "មិន​ទាន់​អាន";
@@ -1220,7 +1241,7 @@
 "Yesterday" = "ម្សិលមិញ";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "អ្នក​មិន​មាន​ផ្ទាំង​ណា​មួយ​បើក​ក្នុង Firefox លើ​ឧបករណ៍​ផ្សេង​របស់​អ្នក​ទេ។";
+"You don’t have any tabs open in Firefox on your other devices." = "អ្នក​មិន​មាន​ផ្ទាំង​ណា​មួយ​បើក​ក្នុង Ecosia លើ​ឧបករណ៍​ផ្សេង​របស់​អ្នក​ទេ។";
 
 /* Your Rights settings section title */
 "Your Rights" = "សិទ្ធិ​របស់​អ្នក";

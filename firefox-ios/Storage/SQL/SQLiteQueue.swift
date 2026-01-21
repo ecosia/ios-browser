@@ -5,35 +5,34 @@
 import Foundation
 import Shared
 
-public final class SQLiteQueue: TabQueue {
+open class SQLiteQueue: TabQueue {
     let db: BrowserDB
 
     public init(db: BrowserDB) {
         self.db = db
     }
 
-    public func addToQueue(_ tab: ShareItem) -> Success {
-        return db.run("INSERT OR IGNORE INTO queue (url) VALUES (?)", withArgs: [tab.url])
+    open func addToQueue(_ tab: ShareItem) -> Success {
+        let args: Args = [tab.url, tab.title]
+        return db.run("INSERT OR IGNORE INTO queue (url, title) VALUES (?, ?)", withArgs: args)
     }
 
     fileprivate func factory(_ row: SDRow) -> ShareItem {
-        let url = row["url"] as? String ?? ""
-        return ShareItem(url: url, title: "")
+        return ShareItem(url: row["url"] as! String, title: row["title"] as? String)
     }
 
-    public func getQueuedTabs(completion: @MainActor @escaping ([ShareItem]) -> Void) {
-        let sql = "SELECT url FROM queue"
-        db.runQuery(sql, args: nil, factory: self.factory)
-            .uponQueue(.main) { result in
-                guard let cursor = result.successValue else { return }
-                // FXIOS-13228 It should be safe to assumeIsolated here because of `.main` queue above
-                MainActor.assumeIsolated {
-                    completion(cursor.asArray())
-                }
-            }
+    open func getQueuedTabs(completion: @escaping ([ShareItem]) -> Void) {
+        let sql = "SELECT url, title FROM queue"
+        let deferredResponse = db.runQuery(sql, args: nil, factory: self.factory) >>== { cursor in
+            return deferMaybe(cursor.asArray())
+        }
+
+        deferredResponse.upon { result in
+            completion(result.successValue ?? [])
+        }
     }
 
-    public func clearQueuedTabs() -> Success {
+    open func clearQueuedTabs() -> Success {
         return db.run("DELETE FROM queue")
     }
 }

@@ -2,9 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 import MozillaAppServices
+import Shared
 import XCTest
-import OnboardingKit
 
 @testable import Client
 
@@ -19,14 +20,16 @@ class NimbusOnboardingFeatureLayerTests: XCTestCase {
     }
 
     override func tearDown() {
-        configUtility = nil
         super.tearDown()
+        configUtility = nil
     }
 
     // MARK: - Test placeholder methods
     func testLayer_placeholderNamingMethod_returnsExpectedStrigs() {
         setupNimbusForStringTesting()
-        let expectedPlaceholderString = "A string inside Firefox with a placeholder"
+        // Ecosia: Update placeholder
+        // let expectedPlaceholderString = "A string inside Firefox with a placeholder"
+        let expectedPlaceholderString = "A string inside Ecosia with a placeholder"
         let expectedNoPlaceholderString = "On Wednesday's, we wear pink"
         let layer = NimbusOnboardingFeatureLayer(with: MockNimbusMessagingHelperUtility())
 
@@ -45,7 +48,7 @@ class NimbusOnboardingFeatureLayerTests: XCTestCase {
         let layer = NimbusOnboardingFeatureLayer(with: MockNimbusMessagingHelperUtility())
         let subject = layer.getOnboardingModel(for: .freshInstall)
 
-        XCTAssertTrue(subject.isDismissible)
+        XCTAssertTrue(subject.isDismissable)
     }
 
     func testLayer_dismissable_isFalse() {
@@ -53,7 +56,7 @@ class NimbusOnboardingFeatureLayerTests: XCTestCase {
         let layer = NimbusOnboardingFeatureLayer(with: MockNimbusMessagingHelperUtility())
         let subject = layer.getOnboardingModel(for: .freshInstall)
 
-        XCTAssertFalse(subject.isDismissible)
+        XCTAssertFalse(subject.isDismissable)
     }
 
     // MARK: - Test A11yRoot
@@ -92,7 +95,7 @@ class NimbusOnboardingFeatureLayerTests: XCTestCase {
             return
         }
 
-        let expectedCard = OnboardingKitCardInfoModel(
+        let expectedCard = OnboardingCardInfoModel(
             cardType: .basic,
             name: CardElementNames.name + " 1",
             order: 10,
@@ -100,19 +103,18 @@ class NimbusOnboardingFeatureLayerTests: XCTestCase {
             body: CardElementNames.body + " 1",
             link: OnboardingLinkInfoModel(title: CardElementNames.linkTitle,
                                           url: URL(string: CardElementNames.linkURL)!),
-            buttons: OnboardingButtons<OnboardingActions>(
-                primary: OnboardingButtonInfoModel<OnboardingActions>(
+            buttons: OnboardingButtons(
+                primary: OnboardingButtonInfoModel(
                     title: CardElementNames.primaryButtonTitle,
                     action: .forwardOneCard),
-                secondary: OnboardingButtonInfoModel<OnboardingActions>(
+                secondary: OnboardingButtonInfoModel(
                     title: CardElementNames.secondaryButtonTitle,
                     action: .forwardOneCard)),
             multipleChoiceButtons: [],
             onboardingType: .freshInstall,
             a11yIdRoot: CardElementNames.a11yIDOnboarding,
             imageID: ImageIdentifiers.Onboarding.HeaderImages.welcomev106,
-            instructionsPopup: nil,
-            embededLinkText: [])
+            instructionsPopup: nil)
 
         XCTAssertEqual(subject.name, expectedCard.name)
         XCTAssertEqual(subject.title, expectedCard.title)

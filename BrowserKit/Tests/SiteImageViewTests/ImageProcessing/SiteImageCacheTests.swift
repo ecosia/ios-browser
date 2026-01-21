@@ -87,7 +87,7 @@ final class SiteImageCacheTests: XCTestCase {
     }
 }
 
-private final class MockDefaultImageCache: DefaultImageCache, @unchecked Sendable {
+private class MockDefaultImageCache: DefaultImageCache {
     var image: UIImage?
     var retrievalError: KingfisherError?
     var capturedRetrievalKey: String?

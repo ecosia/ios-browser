@@ -16,8 +16,8 @@ class TPStatsBlocklistsTests: XCTestCase {
     }
 
     override func tearDown() {
-        blocklists = nil
         super.tearDown()
+        blocklists = nil
     }
 
     func testLoadPerformance() {

@@ -8,7 +8,7 @@ import MozillaAppServices
 
 class PasswordManagerSelectionHelperTests: XCTestCase {
     private var selectionHelper: PasswordManagerSelectionHelper!
-    private let loginRecord = Login(
+    private let loginRecord = EncryptedLogin(
         credentials: URLCredential(
             user: "test",
             password: "doubletest",
@@ -23,8 +23,8 @@ class PasswordManagerSelectionHelperTests: XCTestCase {
     }
 
     override func tearDown() {
-        selectionHelper = nil
         super.tearDown()
+        selectionHelper = nil
     }
 
     func testSelectCellFromLoginRecord() {
@@ -57,7 +57,7 @@ class PasswordManagerSelectionHelperTests: XCTestCase {
     }
 
     func testRemoveAllCell() {
-        let loginRecord2 = Login(
+        let loginRecord2 = EncryptedLogin(
             credentials: URLCredential(user: "filippo", password: "testtest", persistence: .permanent),
             protectionSpace: URLProtectionSpace.fromOrigin("https://testtest.com")
         )

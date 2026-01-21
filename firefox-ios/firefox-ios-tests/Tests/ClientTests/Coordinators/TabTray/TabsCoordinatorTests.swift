@@ -5,20 +5,19 @@
 import XCTest
 @testable import Client
 
-@MainActor
 final class TabsCoordinatorTests: XCTestCase {
     private var mockRouter: MockRouter!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         mockRouter = MockRouter(navigationController: MockNavigationController())
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         mockRouter = nil
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     func testInitialState() {
@@ -28,7 +27,7 @@ final class TabsCoordinatorTests: XCTestCase {
     }
 
     // MARK: - Helpers
-    private func createSubject(file: StaticString = #filePath,
+    private func createSubject(file: StaticString = #file,
                                line: UInt = #line) -> TabsCoordinator {
         let subject = TabsCoordinator(router: mockRouter)
 

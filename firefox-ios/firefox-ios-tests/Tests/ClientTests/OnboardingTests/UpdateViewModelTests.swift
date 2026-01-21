@@ -7,30 +7,20 @@ import Foundation
 import XCTest
 import Shared
 import Common
-import OnboardingKit
 
-@MainActor
-final class UpdateViewModelTests: XCTestCase {
+class UpdateViewModelTests: XCTestCase {
     private var profile: MockProfile!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         profile = nil
-        UserDefaults.standard.removeObject(forKey: PrefsKeys.NimbusUserEnabledFeatureTestsOverride)
-        try await super.tearDown()
-    }
-
-    func testContainsSyncableAccounts_returnsMockValue() {
-        profile.hasSyncableAccountMock = true
-        let subject = createSubject()
-
-        XCTAssertTrue(subject.containsSyncableAccount())
     }
 
     // MARK: Enable cards
@@ -40,7 +30,7 @@ final class UpdateViewModelTests: XCTestCase {
         let expectation = expectation(description: "The hasAccount var has value")
 
         subject.hasSyncableAccount {
-            subject.setupViewControllerDelegates(with: MockOnboardingCardDelegateController(),
+            subject.setupViewControllerDelegates(with: MockOnboardinCardDelegateController(),
                                                  for: self.windowUUID)
 
             XCTAssertEqual(subject.availableCards.count, 2)
@@ -57,7 +47,7 @@ final class UpdateViewModelTests: XCTestCase {
         let expectation = expectation(description: "The hasAccount var has value")
 
         subject.hasSyncableAccount {
-            subject.setupViewControllerDelegates(with: MockOnboardingCardDelegateController(),
+            subject.setupViewControllerDelegates(with: MockOnboardinCardDelegateController(),
                                                  for: self.windowUUID)
 
             XCTAssertEqual(subject.availableCards.count, 2)
@@ -75,7 +65,7 @@ final class UpdateViewModelTests: XCTestCase {
         let expectation = expectation(description: "The hasAccount var has value")
 
         subject.hasSyncableAccount {
-            subject.setupViewControllerDelegates(with: MockOnboardingCardDelegateController(),
+            subject.setupViewControllerDelegates(with: MockOnboardinCardDelegateController(),
                                                  for: self.windowUUID)
 
             XCTAssertEqual(subject.shouldShowSingleCard, false)
@@ -87,7 +77,7 @@ final class UpdateViewModelTests: XCTestCase {
     func testHasSingleCard_ForSyncAccountDisabled() {
         profile.hasSyncableAccountMock = false
         let subject = createSubject()
-        subject.setupViewControllerDelegates(with: MockOnboardingCardDelegateController(),
+        subject.setupViewControllerDelegates(with: MockOnboardinCardDelegateController(),
                                              for: self.windowUUID)
 
         XCTAssertEqual(subject.shouldShowSingleCard, false)
@@ -114,7 +104,7 @@ final class UpdateViewModelTests: XCTestCase {
     func testShouldNotShowCoverSheetForSameVersion() {
         let subject = createSubject()
         let currentTestAppVersion = "22.0"
-        UserDefaults.standard.set(true, forKey: PrefsKeys.NimbusUserEnabledFeatureTestsOverride)
+        UserDefaults.standard.set(true, forKey: PrefsKeys.NimbusFeatureTestsOverride)
 
         // Setting clean install to false
         profile.prefs.setString(currentTestAppVersion, forKey: PrefsKeys.AppVersion.Latest)
@@ -182,7 +172,7 @@ final class UpdateViewModelTests: XCTestCase {
     // MARK: - Private Helpers
     func createSubject(
         hasOnboardingCards: Bool = true,
-        file: StaticString = #filePath,
+        file: StaticString = #file,
         line: UInt = #line
     ) -> UpdateViewModel {
         let onboardingModel = createOnboardingViewModel(withCards: hasOnboardingCards)
@@ -197,22 +187,20 @@ final class UpdateViewModelTests: XCTestCase {
         return subject
     }
 
-    func createOnboardingViewModel(withCards: Bool) -> OnboardingKitViewModel {
-        let cards: [OnboardingKitCardInfoModel] = [
+    func createOnboardingViewModel(withCards: Bool) -> OnboardingViewModel {
+        let cards: [OnboardingCardInfoModel] = [
             createCard(index: 1),
             createCard(index: 2)
         ]
 
-        return OnboardingKitViewModel(cards: withCards ? cards : [],
-                                      isDismissible: true)
+        return OnboardingViewModel(cards: withCards ? cards : [],
+                                   isDismissable: true)
     }
 
-    func createCard(index: Int) -> OnboardingKitCardInfoModel {
-        let buttons = OnboardingButtons<OnboardingActions>(
-            primary: OnboardingButtonInfoModel<OnboardingActions>(
-                title: "Button title \(index)",
-                action: .forwardOneCard))
-        return OnboardingKitCardInfoModel(
+    func createCard(index: Int) -> OnboardingCardInfoModel {
+        let buttons = OnboardingButtons(primary: OnboardingButtonInfoModel(title: "Button title \(index)",
+                                                                           action: .forwardOneCard))
+        return OnboardingCardInfoModel(
             cardType: .basic,
             name: "Name \(index)",
             order: index,
@@ -224,7 +212,6 @@ final class UpdateViewModelTests: XCTestCase {
             onboardingType: .upgrade,
             a11yIdRoot: "A11y id \(index)",
             imageID: "Image id \(index)",
-            instructionsPopup: nil,
-            embededLinkText: [])
+            instructionsPopup: nil)
     }
 }

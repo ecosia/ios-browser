@@ -4,7 +4,7 @@
 
 import Shared
 
-public struct RemoteClient: Equatable, Sendable {
+public struct RemoteClient: Equatable {
     public let guid: GUID?
     public let modified: Timestamp
 

@@ -7,21 +7,20 @@ import XCTest
 
 @testable import Client
 
-@MainActor
 final class MicrosurveyCoordinatorTests: XCTestCase {
     private var mockRouter: MockRouter!
     private var mockTabManager: MockTabManager!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         mockRouter = MockRouter(navigationController: MockNavigationController())
         mockTabManager = MockTabManager()
     }
 
-    override func tearDown() async throws {
-        DependencyHelperMock().reset()
-        try await super.tearDown()
+    override func tearDown() {
+        super.tearDown()
+        AppContainer.shared.reset()
     }
 
     func testInitialState() {
@@ -49,7 +48,6 @@ final class MicrosurveyCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.dismissCalled, 1)
     }
 
-    @MainActor
     func testMicrosurveyDelegate_showPrivacy_callsRouterDismiss_andCreatesNewTab() throws {
         let subject = createSubject()
         let languageIdentifier = Locale.preferredLanguages.first ?? ""
@@ -62,7 +60,6 @@ final class MicrosurveyCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockTabManager.addTabsURLs, [URL(string: "https://www.mozilla.org/\(languageIdentifier)/privacy/firefox/?utm_medium=firefox-mobile&utm_source=modal&utm_campaign=microsurvey")])
     }
 
-    @MainActor
     func testMicrosurveyDelegate_showPrivacyWithContentParams_callsRouterDismiss_andCreatesNewTab() throws {
         let subject = createSubject()
         let languageIdentifier = Locale.preferredLanguages.first ?? ""
@@ -75,7 +72,7 @@ final class MicrosurveyCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockTabManager.addTabsURLs, [URL(string: "https://www.mozilla.org/\(languageIdentifier)/privacy/firefox/?utm_medium=firefox-mobile&utm_source=modal&utm_campaign=microsurvey&utm_content=homepage")])
     }
 
-    private func createSubject(file: StaticString = #filePath,
+    private func createSubject(file: StaticString = #file,
                                line: UInt = #line) -> MicrosurveyCoordinator {
         let subject = MicrosurveyCoordinator(
             model: MicrosurveyMock.model,

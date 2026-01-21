@@ -6,18 +6,17 @@ import Account
 import Foundation
 import Shared
 import Storage
+import Sync
 import XCTest
-import Common
 
 @testable import Client
 
 import enum MozillaAppServices.SyncReason
 import struct MozillaAppServices.SyncResult
-import class MozillaAppServices.RemoteSettingsService
 
 public typealias ClientSyncManager = Client.SyncManager
 
-open class ClientSyncManagerSpy: ClientSyncManager, @unchecked Sendable {
+open class ClientSyncManagerSpy: ClientSyncManager {
     open var isSyncing = false
     open var lastSyncFinishTime: Timestamp?
     open var syncDisplayState: SyncDisplayState?
@@ -35,17 +34,13 @@ open class ClientSyncManagerSpy: ClientSyncManager, @unchecked Sendable {
     open func syncTabs() -> Deferred<Maybe<SyncResult>> { return emptySyncResult }
     open func syncHistory() -> Deferred<Maybe<SyncResult>> { return emptySyncResult }
     open func syncEverything(why: SyncReason) -> Success { return succeed() }
+    open func updateCreditCardAutofillStatus(value: Bool) {}
 
     var syncNamedCollectionsCalled = 0
-    open func syncNamedCollections(why: SyncReason, names: [String]) -> Deferred<Maybe<SyncResult>> {
+    open func syncNamedCollections(why: SyncReason, names: [String]) -> Success {
         syncNamedCollectionsCalled += 1
-        return emptySyncResult
+        return succeed()
     }
-    var syncPostSyncSettingsChangeCalled = 0
-    open func syncPostSyncSettingsChange(why: SyncReason, names: [String]) {
-        syncPostSyncSettingsChangeCalled += 1
-    }
-    open func reportOpenSyncSettingsMenuTelemetry() {}
     open func beginTimedSyncs() {}
     open func endTimedSyncs() {}
     open func applicationDidBecomeActive() {
@@ -79,7 +74,7 @@ open class ClientSyncManagerSpy: ClientSyncManager, @unchecked Sendable {
     }
 }
 
-final class MockTabQueue: TabQueue, @unchecked Sendable {
+final class MockTabQueue: TabQueue {
     var queuedTabs = [ShareItem]()
     var getQueuedTabsCalled = 0
     var addToQueueCalled = 0
@@ -90,11 +85,9 @@ final class MockTabQueue: TabQueue, @unchecked Sendable {
         return succeed()
     }
 
-    func getQueuedTabs(completion: @MainActor @escaping ([ShareItem]) -> Void) {
-        Task { @MainActor in
-            completion(queuedTabs)
-            getQueuedTabsCalled += 1
-        }
+    func getQueuedTabs(completion: @escaping ([ShareItem]) -> Void) {
+        getQueuedTabsCalled += 1
+        return completion(queuedTabs)
     }
 
     func clearQueuedTabs() -> Success {
@@ -104,51 +97,33 @@ final class MockTabQueue: TabQueue, @unchecked Sendable {
 }
 
 class MockFiles: FileAccessor {
-    var rootPath: String
-
-    init(rootPath: String? = nil) {
-        guard let rootPath else {
-            let docPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-            self.rootPath = (docPath as NSString).appendingPathComponent("testing")
-            return
-        }
-
-        self.rootPath = rootPath
+    init() {
+        let docPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        super.init(rootPath: (docPath as NSString).appendingPathComponent("testing"))
     }
 }
 
-// TODO: FXIOS-12610 Profile should be refactored so it is **not** `Sendable`.
-final class MockProfile: Client.Profile, @unchecked Sendable {
+open class MockProfile: Client.Profile {
     public var rustFxA: RustFirefoxAccounts {
         return RustFirefoxAccounts.shared
     }
 
     // Read/Writeable properties for mocking
 
-    public let files: FileAccessor
-    public let syncManager: ClientSyncManager?
-    public let firefoxSuggest: RustFirefoxSuggestProtocol?
-    public let remoteSettingsService: RemoteSettingsService
-    public let mockNotificationCenter: NotificationProtocol = MockNotificationCenter()
+    public var files: FileAccessor
+    public var syncManager: ClientSyncManager!
+    public var firefoxSuggest: RustFirefoxSuggestProtocol?
 
-    fileprivate let name = "mockaccount"
+    fileprivate let name: String = "mockaccount"
 
     private let directory: String
     private let databasePrefix: String
-    private let injectedPinnedSites: MockablePinnedSites?
 
-    init(
-        databasePrefix: String = "mock",
-        firefoxSuggest: RustFirefoxSuggestProtocol? = nil,
-        remoteSettingsService: RemoteSettingsService = RemoteSettingsService(noPointer: .init()),
-        injectedPinnedSites: MockablePinnedSites? = nil
-    ) {
+    init(databasePrefix: String = "mock", firefoxSuggest: RustFirefoxSuggestProtocol? = nil) {
         files = MockFiles()
         syncManager = ClientSyncManagerSpy()
         self.databasePrefix = databasePrefix
         self.firefoxSuggest = firefoxSuggest
-        self.remoteSettingsService = remoteSettingsService
-        self.injectedPinnedSites = injectedPinnedSites
 
         do {
             directory = try files.getAndEnsureDirectory()
@@ -156,10 +131,6 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
             XCTFail("Could not create directory at root path: \(error)")
             fatalError("Could not create directory at root path: \(error)")
         }
-    }
-
-    deinit {
-        shutdown()
     }
 
     public func localName() -> String {
@@ -196,6 +167,10 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
 
     public lazy var certStore: CertStore = {
         return CertStore()
+    }()
+
+    public lazy var searchEnginesManager: SearchEnginesManager = {
+        return SearchEnginesManager(prefs: self.prefs, files: self.files)
     }()
 
     public lazy var prefs: Prefs = {
@@ -246,7 +221,7 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
         ).appendingPathComponent("\(databasePrefix)_places.db").path
         try? files.remove("\(databasePrefix)_places.db")
 
-        let places = RustPlaces(databasePath: placesDatabasePath, notificationCenter: mockNotificationCenter)
+        let places = RustPlaces(databasePath: placesDatabasePath)
         _ = places.reopenIfClosed()
 
         return places
@@ -267,7 +242,7 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
     }()
 
     public lazy var pinnedSites: PinnedSites = {
-        injectedPinnedSites ?? legacyPlaces
+        legacyPlaces
     }()
 
     public func hasSyncAccount(completion: @escaping (Bool) -> Void) {
@@ -286,7 +261,7 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
     public func flushAccount() {}
 
     public func removeAccount() {
-        self.syncManager?.onRemovedAccount()
+        self.syncManager.onRemovedAccount()
     }
 
     public func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
@@ -309,22 +284,8 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
 
     public func cleanupHistoryIfNeeded() {}
 
-    var storeAndSyncTabsCalled = 0
-    public func storeAndSyncTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
-        storeAndSyncTabsCalled += 1
+    public func storeTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
         return deferMaybe(0)
-    }
-
-    public func addTabToCommandQueue(_ deviceId: String, url: URL) {
-        return
-    }
-
-    public func removeTabFromCommandQueue(_ deviceId: String, url: URL) {
-        return
-    }
-
-    public func flushTabCommands(toDeviceId: String?) {
-        return
     }
 
     public func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success {

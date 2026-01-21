@@ -6,32 +6,31 @@ import Foundation
 import UIKit
 import Common
 
-final class MenuTableView: UIView, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, ThemeApplicable {
-    struct UX {
-        static let topPadding: CGFloat = 24
-        static let menuSiteTopPadding: CGFloat = 12
-        static let topPaddingWithBanner: CGFloat = 8
-        static let distanceBetweenSections: CGFloat = 16
+public protocol MenuTableViewDataDelegate: AnyObject {
+    func reloadTableView(with data: [MenuSection])
+}
+
+class MenuTableView: UIView,
+                     UITableViewDelegate,
+                     UITableViewDataSource, ThemeApplicable {
+    private struct UX {
+        static let topPadding: CGFloat = 12
         static let tableViewMargin: CGFloat = 16
+        static let distanceBetweenSections: CGFloat = 32
     }
 
-    private(set) var tableView: UITableView
-    private let tableHelper: MenuTableViewHelper
-
+    private var tableView: UITableView
+    private var menuData: [MenuSection]
     private var theme: Theme?
 
-    public var tableViewContentSize: CGFloat {
-        tableView.contentSize.height
-    }
+    public var updateHeaderLineView: ((_ isHidden: Bool) -> Void)?
 
     override init(frame: CGRect) {
         tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: UX.tableViewMargin, bottom: 0, right: UX.tableViewMargin)
         tableView.sectionFooterHeight = 0
-        tableHelper = MenuTableViewHelper(tableView: tableView)
+        menuData = []
         super.init(frame: .zero)
-        tableView.delegate = self
-        tableView.dataSource = self
         setupView()
     }
 
@@ -40,6 +39,11 @@ final class MenuTableView: UIView, UITableViewDelegate, UITableViewDataSource, U
     }
 
     private func setupView() {
+        setupTableView()
+        setupUI()
+    }
+
+    private func setupUI() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(tableView)
 
@@ -49,70 +53,83 @@ final class MenuTableView: UIView, UITableViewDelegate, UITableViewDataSource, U
             tableView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ])
-
-        tableView.register(MenuCell.self, forCellReuseIdentifier: MenuCell.cellIdentifier)
-        tableView.register(MenuInfoCell.self, forCellReuseIdentifier: MenuInfoCell.cellIdentifier)
-        tableView.register(MenuAccountCell.self, forCellReuseIdentifier: MenuAccountCell.cellIdentifier)
-        tableView.register(MenuSquaresViewContentCell.self,
-                           forCellReuseIdentifier: MenuSquaresViewContentCell.cellIdentifier)
     }
 
-    func setupAccessibilityIdentifiers(menuA11yId: String, menuA11yLabel: String) {
-        tableView.accessibilityIdentifier = menuA11yId
-        tableView.accessibilityLabel = menuA11yLabel
+    private func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(
+            MenuCell.self,
+            forCellReuseIdentifier: MenuCell.cellIdentifier
+        )
     }
 
-    public func reloadTableView(with data: [MenuSection], isBannerVisible: Bool) {
-        tableHelper.updateData(data, theme: theme, isBannerVisible: isBannerVisible)
-        tableHelper.reload()
-    }
-
-    // MARK: - UITableViewDataSource
+    // MARK: - UITableView Methods
     func numberOfSections(in tableView: UITableView) -> Int {
-        return tableHelper.menuDataCount()
-    }
-
-    func tableView(
-        _ tableView: UITableView,
-        numberOfRowsInSection section: Int
-    ) -> Int {
-        return tableHelper.numberOfRowsInSection(section)
-    }
-
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-        return tableHelper.cellForRowAt(tableView, indexPath)
-    }
-
-    // MARK: - UITableViewDelegate
-    func tableView(
-        _ tableView: UITableView,
-        didSelectRowAt indexPath: IndexPath
-    ) {
-        tableHelper.didSelectRowAt(tableView, indexPath)
+        return menuData.count
     }
 
     func tableView(
         _ tableView: UITableView,
         heightForHeaderInSection section: Int
     ) -> CGFloat {
-        return tableHelper.calculateHeightForHeaderInSection(section)
+        return section == 0 ? UX.topPadding : UX.distanceBetweenSections
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
+        return menuData[section].options.count
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: MenuCell.cellIdentifier,
+            for: indexPath
+        ) as! MenuCell
+
+        cell.configureCellWith(model: menuData[indexPath.section].options[indexPath.row])
+        if let theme { cell.applyTheme(theme: theme) }
+        return cell
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        tableView.deselectRow(at: indexPath, animated: false)
+
+        if let action = menuData[indexPath.section].options[indexPath.row].action {
+            action()
+        }
     }
 
     func tableView(
         _ tableView: UITableView,
         viewForHeaderInSection section: Int
     ) -> UIView? {
-        return tableHelper.viewForHeaderInSection(section)
+        if section == 0 {
+            let headerView = UIView()
+            headerView.backgroundColor = .clear
+            return headerView
+        }
+        return nil
     }
 
-    // MARK: - UIScrollViewDelegate
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if tableHelper.isHomepage, !UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-            scrollView.contentOffset = .zero
-            scrollView.showsVerticalScrollIndicator = false
+    func reloadTableView(with data: [MenuSection]) {
+        menuData = data
+        tableView.reloadData()
+    }
+
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y >= UX.topPadding {
+            updateHeaderLineView?(false)
+        } else {
+            updateHeaderLineView?(true)
         }
     }
 

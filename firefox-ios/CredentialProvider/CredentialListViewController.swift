@@ -7,9 +7,7 @@ import AuthenticationServices
 import Common
 
 protocol CredentialListViewProtocol: AnyObject {
-    @MainActor
     var credentialExtensionContext: ASCredentialProviderExtensionContext? { get }
-    @MainActor
     var searchIsActive: Bool { get }
 }
 
@@ -18,7 +16,7 @@ class CredentialListViewController: UIViewController, CredentialListViewProtocol
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
-        tableView.backgroundColor = CredentialProvider.tableViewBackgroundColor
+        tableView.backgroundColor = UIColor.CredentialProvider.tableViewBackgroundColor
         tableView.showsVerticalScrollIndicator = false
         tableView.dataSource = self
         tableView.delegate = self

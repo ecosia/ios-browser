@@ -5,12 +5,11 @@
 import SwiftUI
 
 enum Screen: CaseIterable {
-    case tos
     case getStarted
     case `default`
 }
 
-public final class OnboardingViewModel: ObservableObject {
+public class OnboardingViewModel: ObservableObject {
     public enum Action {
         case getStartedAppeared
         case getStartedCloseTapped
@@ -19,42 +18,20 @@ public final class OnboardingViewModel: ObservableObject {
         case defaultBrowserSettingsTapped
         case defaultBrowserSkip
         case defaultBrowserAppeared
-        // Terms Of Service
-        case onAcceptAndContinueTapped
-        case openTermsOfUse(URL)
-        case openPrivacyNotice(URL)
     }
 
     public let config: GetStartedOnboardingViewConfig
     public let defaultBrowserConfig: DefaultBrowserViewConfig
-    public let tosConfig: TermsOfServiceConfig
     public let dismissAction: () -> Void
     public let telemetry: (Action) -> Void
-    let isTosEnabled: Bool
-    let termsURL: URL
-    let privacyURL: URL
-    @Published var activeScreen = Screen.getStarted
-    @Published var privacyPolicyURL: URL?
 
-    public init(
-        config: GetStartedOnboardingViewConfig,
-        defaultBrowserConfig: DefaultBrowserViewConfig,
-        tosConfig: TermsOfServiceConfig,
-        isTosEnabled: Bool,
-        termsURL: URL,
-        privacyURL: URL,
-        dismissAction: @escaping () -> Void,
-        telemetry: @escaping (OnboardingViewModel.Action) -> Void
-    ) {
+    @Published var activeScreen = Screen.getStarted
+
+    public init(config: GetStartedOnboardingViewConfig, defaultBrowserConfig: DefaultBrowserViewConfig, dismissAction: @escaping () -> Void, telemetry: @escaping (OnboardingViewModel.Action) -> Void) {
         self.config = config
         self.defaultBrowserConfig = defaultBrowserConfig
-        self.tosConfig = tosConfig
-        self.isTosEnabled = isTosEnabled
         self.dismissAction = dismissAction
         self.telemetry = telemetry
-        self.activeScreen = isTosEnabled ? .tos : .getStarted
-        self.termsURL = termsURL
-        self.privacyURL = privacyURL
     }
 
     func open(_ screen: Screen) {
@@ -78,16 +55,6 @@ public final class OnboardingViewModel: ObservableObject {
             dismissAction()
         case .defaultBrowserAppeared:
             break
-        case .onAcceptAndContinueTapped:
-            activeScreen = .default
-        case let .openTermsOfUse(url):
-            privacyPolicyURL = url
-        case let .openPrivacyNotice(url):
-            privacyPolicyURL = url
         }
     }
-}
-
-extension URL: @retroactive Identifiable {
-    public var id: String { absoluteString }
 }

@@ -7,7 +7,6 @@ import WebKit
 
 /// Protocol each script injected into a WKEngineSession needs to follow.
 /// Scripts are injected through the `WKContentScriptManager`
-@MainActor
 protocol WKContentScript {
     static func name() -> String
 

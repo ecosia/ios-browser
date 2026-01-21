@@ -4,6 +4,7 @@
 
 import Common
 import MozillaAppServices
+import Shared
 import Storage
 import WebKit
 import XCTest
@@ -16,16 +17,14 @@ class SponsoredContentFilterUtilityTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
     private var profile: MockProfile!
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         profile = MockProfile()
-        await DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         profile = nil
-        DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     // MARK: - Sites
@@ -56,7 +55,6 @@ class SponsoredContentFilterUtilityTests: XCTestCase {
 
     // MARK: - Tabs
 
-    @MainActor
     func testNoNormalTabsFilter() {
         let subject = SponsoredContentFilterUtility()
         let tabs = createTabs(normalTabsCount: 5,
@@ -67,7 +65,6 @@ class SponsoredContentFilterUtilityTests: XCTestCase {
         XCTAssertEqual(result.count, 5, "No tabs were removed")
     }
 
-    @MainActor
     func testNoEmptyURLsTabsFilter() {
         let subject = SponsoredContentFilterUtility()
         let tabs = createTabs(normalTabsCount: 0,
@@ -78,7 +75,6 @@ class SponsoredContentFilterUtilityTests: XCTestCase {
         XCTAssertEqual(result.count, 5, "No tabs were removed")
     }
 
-    @MainActor
     func testSponsoredTabsFilter() {
         let subject = SponsoredContentFilterUtility()
         let tabs = createTabs(normalTabsCount: 0,
@@ -89,7 +85,6 @@ class SponsoredContentFilterUtilityTests: XCTestCase {
         XCTAssertEqual(result.count, 0, "All sponsored tabs were removed")
     }
 
-    @MainActor
     func testSponsoredTabsFilterMixed() {
         let subject = SponsoredContentFilterUtility()
         let tabs = createTabs(normalTabsCount: 4,
@@ -99,6 +94,35 @@ class SponsoredContentFilterUtilityTests: XCTestCase {
         let result = subject.filterSponsoredTabs(from: tabs)
         XCTAssertEqual(result.count, 7, "All sponsored tabs were removed")
     }
+
+    // MARK: - Highlights
+
+    func testNoNormalHighlightsFilter() {
+        let subject = SponsoredContentFilterUtility()
+        let highlights = createHistoryHighlight(normalHighlightsCount: 5,
+                                                sponsoredHighlightsCount: 0)
+        XCTAssertEqual(highlights.count, 5)
+        let result = subject.filterSponsoredHighlights(from: highlights)
+        XCTAssertEqual(result.count, 5, "No sponsored highlights were removed")
+    }
+
+    func testSponsoredHighlightsFilter() {
+        let subject = SponsoredContentFilterUtility()
+        let highlights = createHistoryHighlight(normalHighlightsCount: 0,
+                                                sponsoredHighlightsCount: 5)
+        XCTAssertEqual(highlights.count, 5)
+        let result = subject.filterSponsoredHighlights(from: highlights)
+        XCTAssertEqual(result.count, 0, "All sponsored highlights were removed")
+    }
+
+    func testSponsoredHighlightsFilterMixed() {
+        let subject = SponsoredContentFilterUtility()
+        let highlights = createHistoryHighlight(normalHighlightsCount: 3,
+                                                sponsoredHighlightsCount: 2)
+        XCTAssertEqual(highlights.count, 5)
+        let result = subject.filterSponsoredHighlights(from: highlights)
+        XCTAssertEqual(result.count, 3, "All sponsored highlights were removed")
+    }
 }
 
 // MARK: - Helpers
@@ -107,21 +131,20 @@ extension SponsoredContentFilterUtilityTests {
                      sponsoredSitesCount: Int) -> [Site] {
         var sites = [Site]()
         (0..<normalSitesCount).forEach { index in
-            let site = Site.createBasicSite(url: normalURL,
-                                            title: "")
+            let site = Site(url: normalURL,
+                            title: "")
             sites.append(site)
         }
 
         (0..<sponsoredSitesCount).forEach { index in
-            let site = Site.createBasicSite(url: SponsoredContentFilterUtilityTests.sponsoredStandardURL,
-                                            title: "")
+            let site = Site(url: SponsoredContentFilterUtilityTests.sponsoredStandardURL,
+                            title: "")
             sites.append(site)
         }
 
         return sites
     }
 
-    @MainActor
     func createTabs(normalTabsCount: Int,
                     emptyURLTabsCount: Int,
                     sponsoredTabsCount: Int) -> [Tab] {
@@ -144,5 +167,32 @@ extension SponsoredContentFilterUtilityTests {
         }
 
         return tabs
+    }
+
+    func createHistoryHighlight(
+        normalHighlightsCount: Int,
+        sponsoredHighlightsCount: Int,
+        sponsoredUrl: String = SponsoredContentFilterUtilityTests.sponsoredStandardURL
+    ) -> [HistoryHighlight] {
+        var highlights = [HistoryHighlight]()
+        (0..<normalHighlightsCount).forEach { index in
+            let highlight = HistoryHighlight(score: 0,
+                                             placeId: 0,
+                                             url: normalURL,
+                                             title: "",
+                                             previewImageUrl: nil)
+            highlights.append(highlight)
+        }
+
+        (0..<sponsoredHighlightsCount).forEach { index in
+            let highlight = HistoryHighlight(score: 0,
+                                             placeId: 0,
+                                             url: sponsoredUrl,
+                                             title: "",
+                                             previewImageUrl: nil)
+            highlights.append(highlight)
+        }
+
+        return highlights
     }
 }

@@ -4,8 +4,9 @@
 
 import Foundation
 import Common
+@testable import Client
 
-final class MockUserDefaults: UserDefaultsInterface, @unchecked Sendable {
+class MockUserDefaults: UserDefaultsInterface {
     // MARK: - Properties
     public var savedData: [String: Any?]
     public var registrationDictionary: [String: Any]

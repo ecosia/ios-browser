@@ -20,7 +20,7 @@ extension HasNimbusSearchBar {
     }
 }
 
-final class NimbusManager: Sendable {
+class NimbusManager {
     // MARK: - Singleton
 
     /// To help with access control, we should use protocols to access the required
@@ -28,8 +28,8 @@ final class NimbusManager: Sendable {
     static let shared = NimbusManager()
 
     // MARK: - Properties
-    let featureFlagLayer: NimbusFeatureFlagLayer
-    let bottomSearchBarLayer: NimbusSearchBarLayer
+    var featureFlagLayer: NimbusFeatureFlagLayer
+    var bottomSearchBarLayer: NimbusSearchBarLayer
 
     init(with featureFlagLayer: NimbusFeatureFlagLayer = NimbusFeatureFlagLayer(),
          bottomSearchBarLayer: NimbusSearchBarLayer = NimbusSearchBarLayer()

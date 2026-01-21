@@ -4,7 +4,7 @@
 
 import Foundation
 
-public enum AddressToolbarPosition: Sendable {
+public enum AddressToolbarPosition {
     case bottom
     case top
 }

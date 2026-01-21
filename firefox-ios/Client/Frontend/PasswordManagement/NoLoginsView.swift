@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Shared
 
 /// Empty state view when there is no logins to display.
 class NoLoginsView: UIView, ThemeApplicable {

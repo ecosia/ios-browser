@@ -2,7 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Common
 import XCTest
 
 class PerformanceTests: BaseTestCase {
@@ -21,7 +20,7 @@ class PerformanceTests: BaseTestCase {
                     "testPerfBookmarks1000openMenu": "testBookmarksDatabase1000-places.db",
                     "testPerfBookmarks1000startUp": "testBookmarksDatabase1000-places.db"]
 
-    override func setUp() async throws {
+    override func setUp() {
         // Test name looks like: "[Class testFunc]", parse out function name
         let parts = name.replacingOccurrences(of: "]", with: "").split(separator: " ")
         let functionName = String(parts[1])
@@ -39,7 +38,7 @@ class PerformanceTests: BaseTestCase {
             launchArguments.append(LaunchArguments.LoadTabsStateArchive + fixtures[functionName]!)
             launchArguments.append(LaunchArguments.LoadDatabasePrefix + fixtures[functionName]!)
         }
-        try await super.setUp()
+        super.setUp()
     }
 
     // This test run first to install the app in the device
@@ -88,12 +87,8 @@ class PerformanceTests: BaseTestCase {
         let tabsButtonNumber = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton].staticTexts["20"]
         let doneButton = app.buttons[AccessibilityIdentifiers.TabTray.doneButton]
 
-        waitForElementsToExist(
-            [
-                tabsButton,
-                tabsButtonNumber
-            ]
-        )
+        mozWaitForElementToExist(tabsButton)
+        mozWaitForElementToExist(tabsButtonNumber)
 
         measure(metrics: [
             XCTClockMetric(), // to measure timeClock Mon
@@ -114,12 +109,8 @@ class PerformanceTests: BaseTestCase {
         let tabsButtonNumber = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton].staticTexts["∞"]
         let doneButton = app.buttons[AccessibilityIdentifiers.TabTray.doneButton]
 
-        waitForElementsToExist(
-            [
-                tabsButton,
-                tabsButtonNumber
-            ]
-        )
+        mozWaitForElementToExist(tabsButton)
+        mozWaitForElementToExist(tabsButtonNumber)
 
         measure(metrics: [
             XCTClockMetric(), // to measure timeClock Mon
@@ -301,7 +292,8 @@ class PerformanceTests: BaseTestCase {
                 do {
                     // Activity measurement here
                     let bookmarksListSnapshot = try bookmarksList.snapshot()
-                    let bookmarks = bookmarksListSnapshot.children.filter { $0.elementType == .cell }
+                    let bookmarksListCells = bookmarksListSnapshot.children.filter { $0.elementType == .cell }
+                    let bookmarks = bookmarksListCells.dropFirst()
 
                     XCTAssertEqual(bookmarks.count, 1, "Number of cells in 'Bookmarks List' is not equal to 1")
                 } catch {
@@ -356,7 +348,8 @@ class PerformanceTests: BaseTestCase {
                 // Filter out 'Other' elements and drop 'Desktop Bookmarks' cell for a true bookmark count.
                 do {
                     let bookmarksListSnapshot = try bookmarksList.snapshot()
-                    let bookmarks = bookmarksListSnapshot.children.filter { $0.elementType == .cell }
+                    let bookmarksListCells = bookmarksListSnapshot.children.filter { $0.elementType == .cell }
+                    let bookmarks = bookmarksListCells.dropFirst()
 
                     // Activity measurement here
                     XCTAssertEqual(bookmarks.count, 100, "Number of cells in 'Bookmarks List' is not equal to 100")
@@ -413,7 +406,8 @@ class PerformanceTests: BaseTestCase {
                 do {
                     // Activity measurement here
                     let bookmarksListSnapshot = try bookmarksList.snapshot()
-                    let bookmarks = bookmarksListSnapshot.children.filter { $0.elementType == .cell }
+                    let bookmarksListCells = bookmarksListSnapshot.children.filter { $0.elementType == .cell }
+                    let bookmarks = bookmarksListCells.dropFirst()
 
                     XCTAssertEqual(bookmarks.count, 1000, "Number of cells in 'Bookmarks List' is not equal to 1000")
                 } catch {

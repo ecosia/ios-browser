@@ -3,23 +3,25 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 @testable import Client
+import Shared
+import Storage
+import Sync
 import UIKit
 import Common
 import XCTest
 
 class CustomSearchEnginesTest: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         AppContainer.shared.reset()
-        try await super.tearDown()
     }
 
-    @MainActor
     func testgetSearchTemplate() {
         let profile = MockBrowserProfile(localName: "customSearchTests")
         let customSearchEngineForm = CustomSearchViewController(windowUUID: windowUUID)

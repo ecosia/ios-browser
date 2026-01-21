@@ -5,13 +5,14 @@
 import Common
 import UIKit
 import Shared
+import Storage
 import SwiftUI
 
 import struct MozillaAppServices.CreditCard
 
 class CreditCardSettingsViewController: SensitiveViewController, UIAdaptivePresentationControllerDelegate, Themeable {
     var viewModel: CreditCardSettingsViewModel
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var themeManager: ThemeManager
     var notificationCenter: NotificationProtocol
 
@@ -61,7 +62,7 @@ class CreditCardSettingsViewController: SensitiveViewController, UIAdaptivePrese
         self.creditCardEmptyView = UIHostingController(rootView: emptyView)
         self.creditCardEmptyView.view.backgroundColor = .clear
 
-        super.init()
+        super.init(nibName: nil, bundle: nil)
         self.creditCardTableViewController.didSelectCardAtIndex = { [weak self] creditCard in
             self?.viewCreditCard(card: creditCard)
             self?.sendCreditCardsManagementCardTappedTelemetry()
@@ -75,8 +76,7 @@ class CreditCardSettingsViewController: SensitiveViewController, UIAdaptivePrese
     override func viewDidLoad() {
         super.viewDidLoad()
         viewSetup()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
     }
 
@@ -154,6 +154,10 @@ class CreditCardSettingsViewController: SensitiveViewController, UIAdaptivePrese
         view.backgroundColor = theme.colors.layer1
     }
 
+    deinit {
+        notificationCenter.removeObserver(self)
+    }
+
     // MARK: - Private helpers
 
     private func updateStateForEditView(editState: CreditCardEditState,
@@ -163,13 +167,11 @@ class CreditCardSettingsViewController: SensitiveViewController, UIAdaptivePrese
             viewModel.cardInputViewModel.creditCard = creditCard
         }
         viewModel.cardInputViewModel.updateState(state: editState)
-        creditCardEditView = CreditCardInputView(
-            viewModel: viewModel.cardInputViewModel,
-            windowUUID: windowUUID,
-            themeManager: themeManager
-        )
+        creditCardEditView = CreditCardInputView(viewModel: viewModel.cardInputViewModel, windowUUID: windowUUID)
         viewModel.cardInputViewModel.dismiss = { [weak self] status, successVal in
             DispatchQueue.main.async {
+                self?.showToast(status: status)
+
                 if successVal {
                     self?.updateCreditCardList()
                     self?.sendTelemetry(forStatus: status)
@@ -187,6 +189,13 @@ class CreditCardSettingsViewController: SensitiveViewController, UIAdaptivePrese
         creditCardAddEditView.modalPresentationStyle = .formSheet
         creditCardAddEditView.presentationController?.delegate = self
         present(creditCardAddEditView, animated: true, completion: nil)
+    }
+
+    private func showToast(status: CreditCardModifiedStatus) {
+        guard status != .none else { return }
+        SimpleToast().showAlertWithText(status.message,
+                                        bottomContainer: view,
+                                        theme: self.themeManager.getCurrentTheme(for: self.windowUUID))
     }
 
     @objc

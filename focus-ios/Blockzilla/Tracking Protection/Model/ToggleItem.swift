@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ToggleItem {
+class ToggleItem {
     let title: String
     let subtitle: String?
     let settingsKey: SettingsToggle

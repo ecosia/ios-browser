@@ -24,7 +24,7 @@ struct GeneralizedImageFetcher: URLCaching {
     func getImageFor(
         url: URL,
         timestamp: Timestamp = Date.now(),
-        completion: @escaping @Sendable (UIImage?) -> Void
+        completion: @escaping (UIImage?) -> Void
     ) {
         let request = URLRequest(
             url: url,
@@ -33,7 +33,9 @@ struct GeneralizedImageFetcher: URLCaching {
         )
 
         if let cachedImage = findCachedData(for: request, timestamp: timestamp) {
-            completion(UIImage(data: cachedImage))
+            DispatchQueue.main.async {
+                completion(UIImage(data: cachedImage))
+            }
         } else {
             fetchImage(request: request, completion: completion)
         }
@@ -41,7 +43,7 @@ struct GeneralizedImageFetcher: URLCaching {
 
     private func fetchImage(
         request: URLRequest,
-        completion: @escaping @Sendable (UIImage?) -> Void
+        completion: @escaping (UIImage?) -> Void
     ) {
         urlSession.dataTask(with: request) { data, response, error in
             guard error == nil else {

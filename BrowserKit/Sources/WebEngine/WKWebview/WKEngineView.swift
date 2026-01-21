@@ -5,28 +5,12 @@
 import Common
 import UIKit
 
-final class WKEngineView: UIView, EngineView, FullscreenDelegate {
+class WKEngineView: UIView, EngineView {
     private var session: WKEngineSession?
     private var logger: Logger
-    private var sessionlifeCycleManager: WKSessionLifecycleManager
 
-    // TODO: FXIOS-13670 With Swift 6 we can use default params in the init
-    @MainActor
-    public static func factory(frame: CGRect) -> WKEngineView {
-        let sessionlifeCycleManager = DefaultWKSessionLifecycleManager()
-        let logger = DefaultLogger.shared
-        return WKEngineView(
-            frame: frame,
-            sessionlifeCycleManager: sessionlifeCycleManager,
-            logger: logger
-        )
-    }
-
-    @MainActor
     init(frame: CGRect,
-         sessionlifeCycleManager: WKSessionLifecycleManager,
-         logger: Logger) {
-        self.sessionlifeCycleManager = sessionlifeCycleManager
+         logger: Logger = DefaultLogger.shared) {
         self.logger = logger
         super.init(frame: frame)
     }
@@ -52,40 +36,19 @@ final class WKEngineView: UIView, EngineView, FullscreenDelegate {
 
     private func remove(session: WKEngineSession) {
         session.webView.removeFromSuperview()
-        session.fullscreenDelegate = nil
-        sessionlifeCycleManager.deactivate(session)
     }
 
     private func add(session: WKEngineSession) {
         self.session = session
-        session.fullscreenDelegate = self
-        sessionlifeCycleManager.activate(session)
-        setupWebViewLayout()
-    }
-
-    private func setupWebViewLayout() {
-        guard let session else { return }
+        addSubview(session.webView)
 
         let webView = session.webView
-        addSubview(webView)
         webView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            webView.topAnchor.constraint(equalTo: topAnchor),
             webView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+            webView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            webView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
-    }
-
-    func enteringFullscreen() {
-        guard let session else { return }
-
-        let webView = session.webView
-        webView.translatesAutoresizingMaskIntoConstraints = true
-        webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    }
-
-    func exitingFullscreen() {
-        setupWebViewLayout()
     }
 }

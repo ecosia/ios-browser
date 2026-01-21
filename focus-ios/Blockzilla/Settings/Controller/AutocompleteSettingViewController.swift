@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class AutocompleteSettingViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class AutocompleteSettingViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.dataSource = self
@@ -53,30 +53,31 @@ final class AutocompleteSettingViewController: UIViewController, UITableViewDele
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell
         if indexPath.section == 0 {
-            let blockerToggle = BlockerToggle(label: UIConstants.strings.settingsAutocompleteSection, setting: .enableCustomDomainAutocomplete)
-            blockerToggle.toggle.isOn = Settings.getToggle(.enableDomainAutocomplete)
-            blockerToggle.toggle.accessibilityIdentifier = "toggleAutocompleteSwitch"
-            blockerToggle.toggle.addTarget(self, action: #selector(defaultToggleSwitched(_:)), for: .valueChanged)
-            blockerToggle.toggle.onTintColor = .accent
-            let toggleCell = SettingsTableViewToggleCell(style: .subtitle, reuseIdentifier: "enableCell", toggle: blockerToggle)
-            toggleCell.setConfiguration(text: UIConstants.strings.autocompleteTopSites)
-            cell = toggleCell
+            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "enableCell")
+            cell.textLabel?.text = UIConstants.strings.autocompleteTopSites
+            cell.contentView.layoutMargins = UIEdgeInsets(top: 0, left: UIConstants.layout.settingsCellLeftInset, bottom: 0, right: 0)
+            let toggle = UISwitch()
+            toggle.addTarget(self, action: #selector(defaultToggleSwitched(_:)), for: .valueChanged)
+            toggle.accessibilityIdentifier = "toggleAutocompleteSwitch"
+            toggle.isOn = Settings.getToggle(.enableDomainAutocomplete)
+            toggle.onTintColor = .accent
+            cell.accessoryView = PaddedSwitch(switchView: toggle)
         } else {
             if indexPath.row == 0 {
-                let blockerToggle = BlockerToggle(label: UIConstants.strings.settingsAutocompleteSection, setting: .enableCustomDomainAutocomplete)
-                blockerToggle.toggle.isOn = Settings.getToggle(.enableCustomDomainAutocomplete)
-                blockerToggle.toggle.accessibilityIdentifier = "toggleCustomAutocompleteSwitch"
-                blockerToggle.toggle.addTarget(self, action: #selector(customToggleSwitched(_:)), for: .valueChanged)
-                blockerToggle.toggle.onTintColor = .accent
-                let toggleCell = SettingsTableViewToggleCell(style: .subtitle, reuseIdentifier: "enableCell", toggle: blockerToggle)
-                toggleCell.setConfiguration(text: UIConstants.strings.autocompleteMySites)
-                cell = toggleCell
+                cell = UITableViewCell(style: .subtitle, reuseIdentifier: "enableCell")
+                cell.textLabel?.text = UIConstants.strings.autocompleteMySites
+                cell.contentView.layoutMargins = UIEdgeInsets(top: 0, left: UIConstants.layout.settingsCellLeftInset, bottom: 0, right: 0)
+                let toggle = UISwitch()
+                toggle.addTarget(self, action: #selector(customToggleSwitched(_:)), for: .valueChanged)
+                toggle.accessibilityIdentifier = "toggleCustomAutocompleteSwitch"
+                toggle.isOn = Settings.getToggle(.enableCustomDomainAutocomplete)
+                toggle.onTintColor = .accent
+                cell.accessoryView = PaddedSwitch(switchView: toggle)
             } else {
-                let settingCell = SettingsTableViewCell(style: .subtitle, reuseIdentifier: "newDomainCell")
-                settingCell.accessoryType = .disclosureIndicator
-                settingCell.accessibilityIdentifier = "customURLS"
-                settingCell.setConfiguration(text: UIConstants.strings.autocompleteManageSitesLabel)
-                cell = settingCell
+                cell = SettingsTableViewCell(style: .subtitle, reuseIdentifier: "newDomainCell")
+                cell.accessoryType = .disclosureIndicator
+                cell.accessibilityIdentifier = "customURLS"
+                cell.textLabel?.text = UIConstants.strings.autocompleteManageSitesLabel
             }
         }
 

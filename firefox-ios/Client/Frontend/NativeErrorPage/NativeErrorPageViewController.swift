@@ -6,37 +6,35 @@ import Foundation
 import Common
 import ComponentLibrary
 import Redux
+import Shared
 
 final class NativeErrorPageViewController: UIViewController,
                                            Themeable,
-                                           ContentContainable,
-                                           StoreSubscriber {
-    typealias SubscriberStateType = NativeErrorPageState
+                                           ContentContainable {
+    private let model: ErrorPageModel
     private let windowUUID: WindowUUID
 
-    // MARK: Themeable Variables
-    var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
-    var notificationCenter: NotificationProtocol
+    // MARK: Themable Variables
+    var themeManager: Common.ThemeManager
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: Common.NotificationProtocol
     var currentWindowUUID: UUID? {
         windowUUID
     }
 
     private var overlayManager: OverlayModeManager
     var contentType: ContentType = .nativeErrorPage
-    private var nativeErrorPageState: NativeErrorPageState
 
     // MARK: UI Elements
     private struct UX {
         static let logoSizeWidth: CGFloat = 221
-        static let logoSizeWidthiPad: CGFloat = 240
         static let mainStackSpacing: CGFloat = 24
         static let textStackSpacing: CGFloat = 16
         static let portraitPadding = NSDirectionalEdgeInsets(
-            top: 120,
-            leading: 32,
+            top: 76,
+            leading: 16,
             bottom: -16,
-            trailing: -32
+            trailing: -16
         )
         static let landscapePadding = NSDirectionalEdgeInsets(
             top: 60,
@@ -52,39 +50,36 @@ final class NativeErrorPageViewController: UIViewController,
         stackView.spacing = UX.mainStackSpacing
     }
 
-    private lazy var contentStack: UIStackView = .build { stackView in
+    private lazy var textStack: UIStackView = .build { stackView in
         stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .equalSpacing
         stackView.spacing = UX.textStackSpacing
     }
 
-    private lazy var foxImage: UIImageView = .build { imageView in
+    private lazy var commonContainer: UIStackView = .build { stackView in
+        stackView.axis = .vertical
+        stackView.spacing = UX.mainStackSpacing
+        stackView.distribution = .fill
+    }
+
+    private lazy var logoImage: UIImageView = .build { imageView in
         imageView.image = UIImage(
             named: ImageIdentifiers.NativeErrorPage.noInternetConnection
         )
         imageView.contentMode = .scaleAspectFit
-        imageView.isAccessibilityElement = false
-        imageView.accessibilityIdentifier = AccessibilityIdentifiers.NativeErrorPage.foxImage
     }
 
     private lazy var titleLabel: UILabel = .build { label in
         label.adjustsFontForContentSizeCategory = true
         label.font = FXFontStyles.Bold.title2.scaledFont()
         label.numberOfLines = 0
-        label.textAlignment = .center
         label.text = .NativeErrorPage.NoInternetConnection.TitleLabel
-        label.accessibilityIdentifier = AccessibilityIdentifiers.NativeErrorPage.titleLabel
-        label.accessibilityTraits = .header
     }
 
     private lazy var errorDescriptionLabel: UILabel = .build { label in
         label.adjustsFontForContentSizeCategory = true
-        label.font = FXFontStyles.Regular.subheadline.scaledFont()
+        label.font = FXFontStyles.Regular.body.scaledFont()
         label.numberOfLines = 0
-        label.textAlignment = .center
         label.text = .NativeErrorPage.NoInternetConnection.Description
-        label.accessibilityIdentifier = AccessibilityIdentifiers.NativeErrorPage.errorDescriptionLabel
     }
 
     private lazy var reloadButton: PrimaryRoundedButton = .build { button in
@@ -92,137 +87,43 @@ final class NativeErrorPageViewController: UIViewController,
         button.isEnabled = true
     }
 
-    private var commonConstraintsList = [NSLayoutConstraint]()
-    private var portraitConstraintsList = [NSLayoutConstraint]()
-    private var landscapeConstraintsList = [NSLayoutConstraint]()
+    private var contraintsList = [NSLayoutConstraint]()
 
-    private var isLandscape: Bool {
-        return UIDevice.current.isIphoneLandscape
-    }
-
-    // Helper function to switch layout to 'portrait' is ContentSizeCategory is large or more
-    private var isLargeContentSizeCategory: Bool {
-        switch traitCollection.preferredContentSizeCategory {
-        case .accessibilityExtraLarge, .accessibilityExtraExtraLarge, .accessibilityExtraExtraExtraLarge:
-            return true
-        default:
-            return false
-        }
-    }
-
-    /// Determines whether the layout should use a horizontal axis based on
-    /// the current device type, orientation, and Dynamic Type settings.
-    /// - If the **content size category** is large, the layout always uses a **vertical** axis
-    /// - Otherwise, if the device is an **iPad**, the layout uses a **horizontal** axis,
-    ///   as there is sufficient screen space for side-by-side elements.
-    /// - On **iPhone**, the layout is horizontal only when in **landscape** orientation.
-    ///
-    /// - Returns: `true` if a horizontal layout should be used; `false` if vertical.
-    private var shouldUseHorizontalLayout: Bool {
-        guard !isLargeContentSizeCategory else { return false }
-
-        if shouldUseiPadSetup() {
-            return true
-        } else {
-            return isLandscape
-        }
+    required init?(
+        coder aDecoder: NSCoder
+    ) {
+        fatalError(
+            "init(coder:) has not been implemented"
+        )
     }
 
     init(
+        model: ErrorPageModel,
         windowUUID: WindowUUID,
         themeManager: ThemeManager = AppContainer.shared.resolve(),
         overlayManager: OverlayModeManager,
         notificationCenter: NotificationProtocol = NotificationCenter.default
     ) {
+        self.model = model
         self.windowUUID = windowUUID
         self.themeManager = themeManager
         self.overlayManager = overlayManager
         self.notificationCenter = notificationCenter
-        nativeErrorPageState = NativeErrorPageState(windowUUID: windowUUID)
-
         super.init(
             nibName: nil,
             bundle: nil
         )
 
-        subscribeToRedux()
         configureUI()
         setupLayout()
         adjustConstraints()
         showViewForCurrentOrientation()
     }
 
-    // MARK: Redux
-    func newState(state: NativeErrorPageState) {
-        nativeErrorPageState = state
-
-        if !state.title.isEmpty {
-            titleLabel.text = state.title
-            foxImage.image = UIImage(named: nativeErrorPageState.foxImage)
-
-            if let validURL = state.url {
-                let errorDescription = getDescriptionWithHostName(
-                    errorURL: validURL,
-                    description: state.description
-                )
-                errorDescriptionLabel.attributedText = errorDescription
-            } else {
-                errorDescriptionLabel.text = state.description
-            }
-        } else {
-            return
-        }
-    }
-
-    func subscribeToRedux() {
-        let action = ScreenAction(windowUUID: windowUUID,
-                                  actionType: ScreenActionType.showScreen,
-                                  screen: .nativeErrorPage)
-        store.dispatch(action)
-        let uuid = windowUUID
-        store.subscribe(self, transform: {
-            return $0.select({ appState in
-                return NativeErrorPageState(appState: appState, uuid: uuid)
-            })
-        })
-    }
-
-    func unsubscribeFromRedux() {
-        let action = ScreenAction(windowUUID: self.windowUUID,
-                                  actionType: ScreenActionType.closeScreen,
-                                  screen: .nativeErrorPage)
-        store.dispatch(action)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    deinit {
-        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
-        guard Thread.isMainThread else {
-            assertionFailure("AddressBarPanGestureHandler was not deallocated on the main thread. Observer was not removed")
-            return
-        }
-
-        MainActor.assumeIsolated {
-            unsubscribeFromRedux()
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
-
-        store.dispatch(NativeErrorPageAction(windowUUID: windowUUID,
-                                             actionType: NativeErrorPageActionType.errorPageLoaded))
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        view.accessibilityViewIsModal = true
     }
 
     override func viewWillTransition(
@@ -237,10 +138,11 @@ final class NativeErrorPageViewController: UIViewController,
         showViewForCurrentOrientation()
     }
 
+    // TODO: FXIOS-9639 #21237 [a11y] Verify accessibility for Voice Over, Dynamic text
     private func configureUI() {
         let viewModel = PrimaryRoundedButtonViewModel(
             title: .NativeErrorPage.ButtonLabel,
-            a11yIdentifier: AccessibilityIdentifiers.NativeErrorPage.reloadButton
+            a11yIdentifier: ""
         )
         reloadButton.configure(
             viewModel: viewModel
@@ -248,19 +150,19 @@ final class NativeErrorPageViewController: UIViewController,
     }
 
     private func setupLayout() {
-        contentStack.addArrangedSubview(titleLabel)
-        contentStack.addArrangedSubview(errorDescriptionLabel)
-        contentStack.setCustomSpacing(UX.mainStackSpacing, after: errorDescriptionLabel)
-        contentStack.addArrangedSubview(reloadButton)
-        scrollContainer.addArrangedSubview(foxImage)
-        scrollContainer.addArrangedSubview(contentStack)
+        textStack.addArrangedSubview(titleLabel)
+        textStack.addArrangedSubview(errorDescriptionLabel)
+        commonContainer.addArrangedSubview(textStack)
+        commonContainer.addArrangedSubview(reloadButton)
+        scrollContainer.addArrangedSubview(logoImage)
+        scrollContainer.addArrangedSubview(commonContainer)
         scrollView.addSubview(scrollContainer)
         view.addSubview(scrollView)
     }
 
     func adjustConstraints() {
-        NSLayoutConstraint.deactivate(portraitConstraintsList + landscapeConstraintsList + commonConstraintsList)
-        commonConstraintsList = [
+        NSLayoutConstraint.deactivate(contraintsList)
+        contraintsList = [
             scrollView.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor
             ),
@@ -273,47 +175,41 @@ final class NativeErrorPageViewController: UIViewController,
             scrollView.bottomAnchor.constraint(
                 equalTo: view.bottomAnchor
             ),
-
             scrollContainer.topAnchor.constraint(
                 equalTo: scrollView.topAnchor,
-                constant: isLandscape ? UX.landscapePadding.top : UX.portraitPadding.top
+                constant: self.isLandscape ? UX.landscapePadding.top : UX.portraitPadding.top
             ),
             scrollContainer.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: isLandscape ? UX.landscapePadding.leading : UX.portraitPadding.leading
+                constant: self.isLandscape ? UX.landscapePadding.leading : UX.portraitPadding.leading
             ),
             scrollContainer.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: isLandscape ? UX.landscapePadding.trailing : UX.portraitPadding.trailing
+                constant: self.isLandscape ? UX.landscapePadding.trailing : UX.portraitPadding.trailing
             ),
             scrollContainer.bottomAnchor.constraint(
                 equalTo: scrollView.bottomAnchor,
-                constant: isLandscape ? UX.landscapePadding.bottom : UX.portraitPadding.bottom
+                constant: self.isLandscape ? UX.landscapePadding.bottom : UX.portraitPadding.bottom
             ),
+            logoImage.widthAnchor.constraint(equalToConstant: UX.logoSizeWidth)
         ]
+        NSLayoutConstraint.activate(contraintsList)
+    }
 
-        portraitConstraintsList = [
-            foxImage.widthAnchor.constraint(equalToConstant: UX.logoSizeWidth)
-        ]
-
-        landscapeConstraintsList = [
-            foxImage.widthAnchor.constraint(equalToConstant: UX.logoSizeWidthiPad),
-            reloadButton.widthAnchor.constraint(
-                equalTo: contentStack.widthAnchor
-            )
-        ]
-
-        NSLayoutConstraint.activate(commonConstraintsList)
-
-        if shouldUseHorizontalLayout {
-            NSLayoutConstraint.activate(landscapeConstraintsList)
-        } else {
-            NSLayoutConstraint.activate(portraitConstraintsList)
-        }
+    private var isLandscape: Bool {
+        return UIDevice.current.isIphoneLandscape
     }
 
     private func showViewForCurrentOrientation() {
-        scrollContainer.axis = shouldUseHorizontalLayout ? .horizontal : .vertical
+        if isLandscape {
+            scrollContainer.axis = .horizontal
+            titleLabel.textAlignment = .left
+            errorDescriptionLabel.textAlignment = .left
+        } else {
+            scrollContainer.axis = .vertical
+            titleLabel.textAlignment = .center
+            errorDescriptionLabel.textAlignment = .center
+        }
     }
 
     // MARK: ThemeApplicable
@@ -327,26 +223,12 @@ final class NativeErrorPageViewController: UIViewController,
 
     @objc
     private func didTapReload() {
-        ensureMainThread {
-            store.dispatch(
-                GeneralBrowserAction(
-                    isNativeErrorPage: true,
-                    windowUUID: self.windowUUID,
-                    actionType: GeneralBrowserActionType.reloadWebsite
-                )
+        store.dispatch(
+            GeneralBrowserAction(
+                isNativeErrorPage: true,
+                windowUUID: windowUUID,
+                actionType: GeneralBrowserActionType.reloadWebsite
             )
-        }
-    }
-
-    func getDescriptionWithHostName(errorURL: URL, description: String) -> NSAttributedString? {
-        guard let validHostName = errorURL.host else { return nil }
-
-        let errDescription = String(format: description, validHostName)
-        let attributedString = errDescription.attributedText(
-            style: [.font: FXFontStyles.Regular.subheadline.scaledFont()],
-            highlightedText: validHostName,
-            highlightedTextStyle: [.font: FXFontStyles.Bold.body.scaledFont()]
         )
-        return attributedString
     }
 }

@@ -2,14 +2,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 import Foundation
+import Shared
 
 import protocol MozillaAppServices.NimbusMessagingHelperProtocol
 
 /// A utility for evaluating a Nimbus feature based on a set of valid JEXLs.
 /// Adaptable to any Nimbus feature by implementing a variable of type
 ///  `Map<String, String>` and adding respective fields to required objects.
-final class NimbusMessagingEvaluationUtility: Sendable {
+class NimbusMessagingEvaluationUtility {
     /// Checks whether a message is eligible to be show by evaluating message JEXLs.
     func isMessageEligible(
         _ message: GleanPlumbMessage,

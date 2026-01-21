@@ -5,7 +5,7 @@
 import Foundation
 import WebKit
 
-public struct WKContentBlockingSettings: OptionSet, Sendable {
+public struct WKContentBlockingSettings: OptionSet {
     public let rawValue: Int
 
     public init(rawValue: Int) {

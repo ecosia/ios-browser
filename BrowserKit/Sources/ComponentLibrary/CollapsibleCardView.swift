@@ -50,7 +50,7 @@ public struct CollapsibleCardViewModel {
     }
 }
 
-public final class CollapsibleCardView: ShadowCardView, UIGestureRecognizerDelegate {
+public class CollapsibleCardView: ShadowCardView, UIGestureRecognizerDelegate {
     private struct UX {
         static let verticalPadding: CGFloat = 8
         static let horizontalPadding: CGFloat = 8
@@ -104,7 +104,7 @@ public final class CollapsibleCardView: ShadowCardView, UIGestureRecognizerDeleg
 
     private lazy var headerView: UIView = .build { _ in }
     private lazy var containerView: UIView = .build { _ in }
-    private var tapRecognizer: UITapGestureRecognizer?
+    private var tapRecognizer: UITapGestureRecognizer!
 
     lazy var titleLabel: UILabel = .build { label in
         label.adjustsFontForContentSizeCategory = true
@@ -124,11 +124,9 @@ public final class CollapsibleCardView: ShadowCardView, UIGestureRecognizerDeleg
 
         setupLayout()
 
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapHeader))
+        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapHeader))
         tapRecognizer.delegate = self
         headerView.addGestureRecognizer(tapRecognizer)
-
-        self.tapRecognizer = tapRecognizer
     }
 
     required init?(coder aDecoder: NSCoder) {

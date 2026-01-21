@@ -4,32 +4,34 @@
 
 import Common
 import XCTest
-import Shared
 
-// Commented this for the moment because current Menu does not contain any Report Broken Site option
-/*
-class ReportSiteTests: FeatureFlaggedTestBase {
-    // https://mozilla.testrail.io/index.php?/cases/view/2831278
+class ReportSiteTests: BaseTestCase {
+    override func setUpApp() {
+        setUpLaunchArguments()
+    }
+
     func testReportSiteIssueOn() {
         launchAndGoToMenu()
-        mozWaitForElementToExist(app.tables.cells[AccessibilityIdentifiers.MainMenu.reportBrokenSite])
+
+        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.lightbulb])
     }
-    
-    // https://mozilla.testrail.io/index.php?/cases/view/2831279
+
     func testReportSiteIssueOff() {
-        addLaunchArgument(jsonFileName: "reportSiteIssueOff",
-                          featureName: "general-app-features")
-        
+        var launchArgs = app.launchArguments + ["\(LaunchArguments.LoadExperiment)reportSiteIssueOff"]
+        launchArgs = launchArgs + ["\(LaunchArguments.ExperimentFeatureName)general-app-features"]
+        app.launchArguments = launchArgs
+
         launchAndGoToMenu()
-        mozWaitForElementToNotExist(app.tables.cells[AccessibilityIdentifiers.MainMenu.reportBrokenSite])
+
+        mozWaitForElementToNotExist(app.tables.otherElements[StandardImageIdentifiers.Large.lightbulb])
     }
-    
+
     // MARK: Helper
     func launchAndGoToMenu() {
         app.launch()
-        
+
         navigator.openURL(path(forTestPage: "test-mozilla-book.html"))
-        navigator.goto(ToolsBrowserTabMenu)
+        navigator.goto(BrowserTabMenu)
+        mozWaitForElementToExist(app.tables["Context Menu"])
     }
 }
-*/

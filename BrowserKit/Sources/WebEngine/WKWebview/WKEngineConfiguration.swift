@@ -6,14 +6,10 @@ import Foundation
 import WebKit
 
 /// Abstraction on top of `WKWebViewConfiguration` and the `WKUserContentController`
-@MainActor
-public protocol WKEngineConfiguration {
-    var webViewConfiguration: WKWebViewConfiguration { get set }
-
+protocol WKEngineConfiguration {
     func addUserScript(_ userScript: WKUserScript)
     func addInDefaultContentWorld(scriptMessageHandler: WKScriptMessageHandler, name: String)
     func addInPageContentWorld(scriptMessageHandler: WKScriptMessageHandler, name: String)
-    func addInCustomContentWorld(scriptMessageHandler: WKScriptMessageHandler, name: String)
     func removeScriptMessageHandler(forName name: String)
     func removeAllUserScripts()
 }
@@ -36,12 +32,6 @@ struct DefaultEngineConfiguration: WKEngineConfiguration {
                                name: String) {
         webViewConfiguration.userContentController.add(scriptMessageHandler,
                                                        contentWorld: .page,
-                                                       name: name)
-    }
-
-    func addInCustomContentWorld(scriptMessageHandler: WKScriptMessageHandler, name: String) {
-        webViewConfiguration.userContentController.add(scriptMessageHandler,
-                                                       contentWorld: .world(name: name),
                                                        name: name)
     }
 

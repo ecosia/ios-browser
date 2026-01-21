@@ -4,13 +4,8 @@
 
 import Foundation
 
-/// The constants related to the Web Engine
 struct EngineConstants {
     static let aboutBlank = "about:blank"
-    // FXIOS-13519 - EngineConstants.webserverPort is not thread safe
-    nonisolated(unsafe) static var webserverPort = 6571
-    static let isPrivateKey = "isPrivate"
-    static let readerModeStateKey = "readerModeStateKey"
 }
 
 /// Value change type for adjusting browser page zoom.

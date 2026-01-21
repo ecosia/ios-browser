@@ -3,32 +3,21 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Storage
 import Common
 
 import struct MozillaAppServices.LoginEntry
 
 protocol PasswordManagerCoordinatorDelegate: AnyObject, ParentCoordinatorDelegate {
-    @MainActor
     func settingsOpenURLInNewTab(_ url: URL)
-
-    @MainActor
     func didFinishPasswordManager(from: PasswordManagerCoordinator)
 }
 
 protocol PasswordManagerFlowDelegate: AnyObject {
-    @MainActor
     func continueFromOnboarding()
-
-    @MainActor
     func showDevicePassCode()
-
-    @MainActor
     func pressedPasswordDetail(model: PasswordDetailViewControllerModel)
-
-    @MainActor
     func pressedAddPassword(completion: @escaping (LoginEntry) -> Void)
-
-    @MainActor
     func openURL(url: URL)
 }
 

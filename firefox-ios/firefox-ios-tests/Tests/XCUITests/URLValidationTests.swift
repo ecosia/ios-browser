@@ -8,18 +8,16 @@ class URLValidationTests: BaseTestCase {
     let urlTypes = ["www.mozilla.org", "www.mozilla.org/", "https://www.mozilla.org", "www.mozilla.org/en", "www.mozilla.org/en-",
                     "www.mozilla.org/en-US", "https://www.mozilla.org/", "https://www.mozilla.org/en", "https://www.mozilla.org/en-US"]
     let urlHttpTypes = ["http://example.com", "http://example.com/"]
-    let urlField = XCUIApplication().textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
-    var browserScreen: BrowserScreen!
+    let urlField = XCUIApplication().textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         continueAfterFailure = true
         navigator.goto(SearchSettings)
-        app.tables.switches["Show Search Suggestions"].waitAndTap()
+        app.tables.switches["Show Search Suggestions"].tap()
         scrollToElement(app.tables.switches["FirefoxSuggestShowNonSponsoredSuggestions"])
-        app.tables.switches["FirefoxSuggestShowNonSponsoredSuggestions"].waitAndTap()
+        app.tables.switches["FirefoxSuggestShowNonSponsoredSuggestions"].tap()
         navigator.goto(NewTabScreen)
-        browserScreen = BrowserScreen(app: app)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2460854
@@ -28,9 +26,15 @@ class URLValidationTests: BaseTestCase {
         for url in urlTypes {
             navigator.openURL(url)
             waitUntilPageLoad()
+            mozWaitForElementToExist(app.otherElements.staticTexts["Welcome to Mozilla"])
             mozWaitForElementToExist(app.buttons["Menu"])
-            XCTAssertTrue(app.otherElements.staticTexts.elementContainingText("Mozilla").exists)
-            mozWaitForValueContains(urlField, value: "mozilla.org")
+            // Getting the current system locale ex:- en-US
+            var locale = Locale.preferredLanguages[0]
+            // Only the below url suffixes should lead to en-US website
+            if url.hasSuffix("en") || url.hasSuffix("en-") || url.hasSuffix("en-US") {
+                locale = "en-US"
+            }
+            mozWaitForValueContains(urlField, value: "www.mozilla.org/\(locale)/")
             clearURL()
         }
 
@@ -38,38 +42,15 @@ class URLValidationTests: BaseTestCase {
             navigator.openURL(url)
             waitUntilPageLoad()
             mozWaitForElementToExist(app.otherElements.staticTexts["Example Domain"])
-            mozWaitForValueContains(urlField, value: "example.com")
+            mozWaitForValueContains(urlField, value: "example.com/")
             clearURL()
         }
     }
 
-    // https://mozilla.testrail.io/index.php?/cases/view/2460854
-    // Smoketest TAE
-    func testDifferentURLTypes_TAE() {
-        for url in urlTypes {
-            navigator.openURL(url)
-            waitUntilPageLoad()
-            browserScreen.assertMozillaPageLoaded(urlField: urlField)
-            clearURL_TAE()
-        }
-
-        for url in urlHttpTypes {
-            navigator.openURL(url)
-            waitUntilPageLoad()
-            browserScreen.assertExampleDomainLoaded(urlField: urlField)
-            clearURL_TAE()
-        }
-    }
-
     private func clearURL() {
-        navigator.nowAt(BrowserTab)
-        navigator.goto(URLBarOpen)
-        app.buttons["Clear text"].waitAndTap()
-    }
-
-    private func clearURL_TAE() {
-        navigator.nowAt(BrowserTab)
-        navigator.goto(URLBarOpen)
-        browserScreen.clearURL()
+        if iPad() {
+            navigator.goto(URLBarOpen)
+            app.buttons["Clear text"].waitAndTap()
+        }
     }
 }

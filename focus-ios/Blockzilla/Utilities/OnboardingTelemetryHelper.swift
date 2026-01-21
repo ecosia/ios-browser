@@ -11,7 +11,7 @@ enum CardViewType: String {
     case widgetTutorial = "widget-tutorial"
 }
 
-final class OnboardingTelemetryHelper {
+class OnboardingTelemetryHelper {
     public enum Event {
         case getStartedAppeared
         case getStartedCloseTapped

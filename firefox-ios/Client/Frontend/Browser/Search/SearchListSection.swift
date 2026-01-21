@@ -5,15 +5,11 @@
 import Foundation
 
 enum SearchListSection: Int, CaseIterable {
-    // Pre search state
-    case recentSearches
-    case trendingSearches
-
-    // User typed search term state
     case searchSuggestions
     case firefoxSuggestions
-    case openedTabs
     case bookmarks
     case remoteTabs
     case history
+    case openedTabs
+    case searchHighlights
 }

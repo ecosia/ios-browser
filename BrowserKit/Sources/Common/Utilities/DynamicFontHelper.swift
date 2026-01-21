@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import SwiftUI
 
 public protocol DynamicFontHelper {
     /// Returns a font that will dynamically scale with dynamic text
@@ -13,7 +12,6 @@ public protocol DynamicFontHelper {
     /// - Returns: The UIFont with the specified font size and style
     static func preferredFont(withTextStyle textStyle: UIFont.TextStyle,
                               size: CGFloat,
-                              sizeCap: CGFloat?,
                               weight: UIFont.Weight?,
                               symbolicTraits: UIFontDescriptor.SymbolicTraits?
     ) -> UIFont
@@ -26,53 +24,21 @@ public protocol DynamicFontHelper {
     static func preferredBoldFont(withTextStyle textStyle: UIFont.TextStyle,
                                   size: CGFloat
     ) -> UIFont
-
-    /// Returns a SwiftUI `DynamicFont` that scales with Dynamic Type.
-    ///
-    /// - Parameters:
-    ///   - textStyle: The text style to base scaling on.
-    ///   - size: The base font size (points).
-    ///   - sizeCap: Optional maximum size (points) after scaling.
-    ///   - weight: Optional font weight (uses style's default if `nil`).
-    ///   - design: The font design to apply.
-    static func preferredSwiftUIFont(withTextStyle textStyle: Font.TextStyle,
-                                     size: CGFloat,
-                                     sizeCap: CGFloat?,
-                                     weight: Font.Weight?,
-                                     design: Font.Design
-    ) -> DynamicFont
-
-    /// Returns a bold SwiftUI `DynamicFont` that scales with Dynamic Type.
-    ///
-    /// - Parameters:
-    ///   - textStyle: The text style to base scaling on.
-    ///   - size: The base font size (points).
-    ///   - design: The font design to apply.
-    static func preferredBoldSwiftUIFont(withTextStyle textStyle: Font.TextStyle,
-                                         size: CGFloat,
-                                         design: Font.Design
-    ) -> DynamicFont
 }
 
 public extension DynamicFontHelper {
     static func preferredFont(withTextStyle textStyle: UIFont.TextStyle,
                               size: CGFloat,
-                              sizeCap: CGFloat? = nil,
                               weight: UIFont.Weight? = nil,
                               symbolicTraits: UIFontDescriptor.SymbolicTraits? = nil
     ) -> UIFont {
-        preferredFont(withTextStyle: textStyle,
-                      size: size,
-                      sizeCap: sizeCap,
-                      weight: weight,
-                      symbolicTraits: symbolicTraits)
+        preferredFont(withTextStyle: textStyle, size: size, weight: weight, symbolicTraits: symbolicTraits)
     }
 }
 
 public struct DefaultDynamicFontHelper: DynamicFontHelper {
     public static func preferredFont(withTextStyle textStyle: UIFont.TextStyle,
                                      size: CGFloat,
-                                     sizeCap: CGFloat? = nil,
                                      weight: UIFont.Weight? = nil,
                                      symbolicTraits: UIFontDescriptor.SymbolicTraits? = nil) -> UIFont {
         let fontMetrics = UIFontMetrics(forTextStyle: textStyle)
@@ -82,56 +48,17 @@ public struct DefaultDynamicFontHelper: DynamicFontHelper {
             fontDescriptor = descriptor
         }
 
-        let font = fontForWeight(descriptor: fontDescriptor,
-                                 size: size,
-                                 weight: weight)
-        let scaledFont = fontMetrics.scaledFont(for: font)
-
-        if let sizeCap {
-            if scaledFont.pointSize > sizeCap {
-                return fontForWeight(descriptor: fontDescriptor,
-                                     size: sizeCap,
-                                     weight: weight)
-            }
-        }
-
-        return scaledFont
-    }
-
-    static func fontForWeight(descriptor: UIFontDescriptor, size: CGFloat, weight: UIFont.Weight?) -> UIFont {
+        var font: UIFont
         if let weight = weight {
-            return UIFont.systemFont(ofSize: size, weight: weight)
+            font = UIFont.systemFont(ofSize: size, weight: weight)
         } else {
-            return UIFont(descriptor: descriptor, size: size)
+            font = UIFont(descriptor: fontDescriptor, size: size)
         }
+
+        return fontMetrics.scaledFont(for: font)
     }
 
     public static func preferredBoldFont(withTextStyle textStyle: UIFont.TextStyle, size: CGFloat) -> UIFont {
         return preferredFont(withTextStyle: textStyle, size: size, weight: .bold)
-    }
-
-    // MARK: - SwiftUI Font Methods
-
-    public static func preferredSwiftUIFont(withTextStyle textStyle: Font.TextStyle,
-                                            size: CGFloat,
-                                            sizeCap: CGFloat? = nil,
-                                            weight: Font.Weight? = nil,
-                                            design: Font.Design = .default) -> DynamicFont {
-        return DynamicFont(
-            textStyle: textStyle,
-            size: size,
-            sizeCap: sizeCap,
-            weight: weight,
-            design: design
-        )
-    }
-
-    public static func preferredBoldSwiftUIFont(withTextStyle textStyle: Font.TextStyle,
-                                                size: CGFloat,
-                                                design: Font.Design = .default) -> DynamicFont {
-        return preferredSwiftUIFont(withTextStyle: textStyle,
-                                    size: size,
-                                    weight: .bold,
-                                    design: design)
     }
 }

@@ -8,24 +8,16 @@ import Dip
 
 /// This is our concrete dependency container. It holds all dependencies / services the app would need through
 /// a session.
-public final class AppContainer: ServiceProvider {
-    /// FIXME: FXIOS-13125 Shared state for the app should not be stored in the Common package.
-    nonisolated(unsafe) public static let shared: ServiceProvider = AppContainer()
+public class AppContainer: ServiceProvider {
+    public static let shared: ServiceProvider = AppContainer()
 
     /// The item holding registered services.
     private var container = DependencyContainer()
 
     /// Any services needed by the client can be resolved by calling this.
     public func resolve<T>() -> T {
-        resolve(T.self)
-    }
-
-    public func resolve<T>(_ type: T.Type) -> T {
         do {
-            guard let service = try container.resolve(type) as? T else {
-                fatalError("Failed to cast resolved service to type \(T.self)")
-            }
-            return service
+            return try container.resolve(T.self) as! T
         } catch {
             // If a service we thought was registered can't be resolved, this is likely an issue within
             // bootstrapping. Double check your registrations and their types.

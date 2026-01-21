@@ -4,13 +4,24 @@
 
 import UIKit
 
-final class SettingsTableViewToggleCell: SettingsTableViewCell {
+class SettingsTableViewToggleCell: SettingsTableViewCell {
     private let newLabel = SmartLabel()
     var navigationController: UINavigationController?
 
     init(style: UITableViewCell.CellStyle, reuseIdentifier: String?, toggle: BlockerToggle) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setConfiguration(text: toggle.label)
+        setupDynamicFont(forLabels: [newLabel], addObserver: true)
+
+        newLabel.numberOfLines = 0
+        newLabel.text = toggle.label
+
+        textLabel?.numberOfLines = 0
+        textLabel?.text = toggle.label
+
+        newLabel.textColor = .primaryText
+        textLabel?.textColor = .primaryText
+        layoutMargins = UIEdgeInsets.zero
+
         accessoryView = PaddedSwitch(switchView: toggle.toggle)
         selectionStyle = .none
     }

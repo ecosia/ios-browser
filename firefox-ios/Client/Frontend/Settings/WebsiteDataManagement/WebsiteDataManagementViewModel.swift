@@ -5,8 +5,7 @@
 import Foundation
 import WebKit
 
-// TODO: FXIOS-14216 - WebsiteDataManagementViewModel shouldn't be @unchecked Sendable
-final class WebsiteDataManagementViewModel: @unchecked Sendable {
+class WebsiteDataManagementViewModel {
     enum State {
         case loading
         case displayInitial
@@ -25,7 +24,6 @@ final class WebsiteDataManagementViewModel: @unchecked Sendable {
         }
     }
 
-    @MainActor
     func loadAllWebsiteData() {
         state = .loading
 
@@ -49,7 +47,6 @@ final class WebsiteDataManagementViewModel: @unchecked Sendable {
         onViewModelChanged()
     }
 
-    @MainActor
     func createAlertToRemove() -> UIAlertController {
         if selectedRecords.isEmpty {
             return UIAlertController.clearAllWebsiteDataAlert { _ in self.removeAllRecords() }
@@ -62,7 +59,6 @@ final class WebsiteDataManagementViewModel: @unchecked Sendable {
         state = .displayAll
     }
 
-    @MainActor
     private func removeSelectedRecords() {
         let previousState = state
         state = .loading
@@ -77,7 +73,6 @@ final class WebsiteDataManagementViewModel: @unchecked Sendable {
         }
     }
 
-    @MainActor
     private func removeAllRecords() {
         let previousState = state
         state = .loading

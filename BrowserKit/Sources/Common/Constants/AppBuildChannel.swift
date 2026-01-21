@@ -4,7 +4,7 @@
 
 import Foundation
 
-public enum AppBuildChannel: String, Sendable {
+public enum AppBuildChannel: String {
     case release
     case beta
     case developer

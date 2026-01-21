@@ -5,6 +5,7 @@
 import Foundation
 import MozillaAppServices
 import Common
+import Shared
 
 class RemoteSettingsUtils {
     private let logger: Logger

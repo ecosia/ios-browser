@@ -14,16 +14,12 @@ class RootViewController: UIViewController,
                           AddressToolbarContainerDelegate,
                           SearchSuggestionDelegate,
                           SettingsDelegate,
+                          FindInPageBarDelegate,
                           Themeable {
-    private struct UX {
-        static let addressToolbarContainerHorizontalPadding: CGFloat = 16.0
-    }
-
     var currentWindowUUID: UUID?
     var themeManager: ThemeManager
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
-    var themeListenerCancellable: Any?
 
     private lazy var navigationToolbar: NavigationToolbarContainer = .build { _ in }
     private lazy var addressToolbarContainer: AddressToolbarContainer =  .build { _ in }
@@ -33,7 +29,7 @@ class RootViewController: UIViewController,
 
     private var browserVC: BrowserViewController
     private var searchVC: SearchViewController
-    private var errorPage: ErrorPageViewController?
+    private var findInPageBar: FindInPageBar?
 
     private var model = RootViewControllerModel()
 
@@ -63,7 +59,7 @@ class RootViewController: UIViewController,
         configureSearchView()
         configureNavigationToolbar()
 
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
     }
 
@@ -106,11 +102,9 @@ class RootViewController: UIViewController,
             statusBarFiller.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
             addressToolbarContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            addressToolbarContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor,
-                                                             constant: UX.addressToolbarContainerHorizontalPadding),
+            addressToolbarContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             addressToolbarContainer.bottomAnchor.constraint(equalTo: browserVC.view.topAnchor),
-            addressToolbarContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor,
-                                                              constant: -UX.addressToolbarContainerHorizontalPadding)
+            addressToolbarContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
         model.addressToolbarDelegate = self
@@ -191,8 +185,6 @@ class RootViewController: UIViewController,
     // MARK: - NavigationDelegate
 
     func onLoadingStateChange(loading: Bool) {
-        removeErrorPage()
-
         model.updateReloadStopButton(loading: loading)
         updateNavigationToolbar()
     }
@@ -206,8 +198,16 @@ class RootViewController: UIViewController,
         updateAddressToolbar(url: URL(string: url))
     }
 
-    func showFindInPage() {
-        browserVC.showFindInPage()
+    func onFindInPage(selected: String) {
+        showFindInPage()
+    }
+
+    func onFindInPage(currentResult: Int) {
+        findInPageBar?.currentResult = currentResult
+    }
+
+    func onFindInPage(totalResults: Int) {
+        findInPageBar?.totalResults = totalResults
     }
 
     // MARK: - AddressToolbarDelegate
@@ -248,8 +248,6 @@ class RootViewController: UIViewController,
     func addressToolbarDidProvideItemsForDragInteraction() {}
 
     func addressToolbarDidTapSearchEngine(_ searchEngineView: UIView) {}
-
-    func addressToolbarNeedsSearchReset() {}
 
     // MARK: - SearchViewDelegate
 
@@ -295,39 +293,20 @@ class RootViewController: UIViewController,
         browserVC.scrollToTop()
     }
 
-    func loadPopupWebSource() {
-        let path = URL(fileURLWithPath: Bundle.main.path(forResource: "testPopUp", ofType: "html") ?? "")
-        browserVC.loadUrlOrSearch(SearchTerm(term: path.absoluteString))
-    }
+    func showFindInPage() {
+        let findInPageBar = FindInPageBar()
+        findInPageBar.translatesAutoresizingMaskIntoConstraints = false
+        findInPageBar.delegate = self
+        self.findInPageBar = findInPageBar
 
-    func loadPrintWebSource() {
-        let path = URL(fileURLWithPath: Bundle.main.path(forResource: "testPrintPreview", ofType: "html") ?? "")
-        browserVC.loadUrlOrSearch(SearchTerm(term: path.absoluteString))
-    }
-
-    func showErrorPage(page: ErrorPageViewController) {
-        self.errorPage = page
-        addChild(page)
-        page.view.frame = view.bounds
-        page.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(page.view)
+        view.addSubview(findInPageBar)
 
         NSLayoutConstraint.activate([
-            page.view.topAnchor.constraint(equalTo: addressToolbarContainer.bottomAnchor),
-            page.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            page.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            page.view.bottomAnchor.constraint(equalTo: navigationToolbar.topAnchor)
+            findInPageBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            findInPageBar.bottomAnchor.constraint(equalTo: navigationToolbar.topAnchor),
+            findInPageBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            findInPageBar.heightAnchor.constraint(equalToConstant: 46)
         ])
-
-        page.didMove(toParent: self)
-    }
-
-    private func removeErrorPage() {
-        guard let errorPage else { return }
-        errorPage.willMove(toParent: nil)
-        errorPage.view.removeFromSuperview()
-        errorPage.removeFromParent()
-        self.errorPage = nil
     }
 
     // MARK: - AddressToolbarContainerDelegate
@@ -335,6 +314,26 @@ class RootViewController: UIViewController,
         let settingsVC = SettingsViewController()
         settingsVC.delegate = self
         present(settingsVC, animated: true)
+    }
+
+    // MARK: - FindInPageBarDelegate
+    func findInPage(_ findInPage: FindInPageBar, textChanged text: String) {
+        browserVC.findInPage(text: text, function: .find)
+    }
+
+    func findInPage(_ findInPage: FindInPageBar, findPreviousWithText text: String) {
+        browserVC.findInPage(text: text, function: .findPrevious)
+    }
+
+    func findInPage(_ findInPage: FindInPageBar, findNextWithText text: String) {
+        browserVC.findInPage(text: text, function: .findNext)
+    }
+
+    func findInPageDidPressClose(_ findInPage: FindInPageBar) {
+        browserVC.findInPageDone()
+        findInPageBar?.endEditing(true)
+        findInPageBar?.removeFromSuperview()
+        findInPageBar = nil
     }
 
     // MARK: Themeable

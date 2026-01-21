@@ -5,23 +5,20 @@
 import Foundation
 import Shared
 
-public struct ReadingListStorageError: MaybeErrorType, Sendable {
-    let message: String
-
-    public init(message: String) {
+public class ReadingListStorageError: MaybeErrorType {
+    var message: String
+    public init(_ message: String) {
         self.message = message
     }
-
     public var description: String {
         return message
     }
 }
 
-public struct SQLiteReadingList: Sendable {
-    private let db: BrowserDB
-    private let notificationCenter: NotificationCenter
+open class SQLiteReadingList {
+    let db: BrowserDB
 
-    private let allColumns = [
+    let allColumns = [
         "client_id",
         "client_last_modified",
         "id",
@@ -33,39 +30,39 @@ public struct SQLiteReadingList: Sendable {
         "favorite",
         "unread"
     ].joined(separator: ",")
+    let notificationCenter: NotificationCenter
 
-    public init(
-        db: BrowserDB,
-        notificationCenter: NotificationCenter = NotificationCenter.default
-    ) {
+    public required init(db: BrowserDB,
+                         notificationCenter: NotificationCenter = NotificationCenter.default) {
         self.db = db
         self.notificationCenter = notificationCenter
     }
 }
 
 extension SQLiteReadingList: ReadingList {
-    public func getAvailableRecords(completion: @escaping @Sendable ([ReadingListItem]) -> Void) {
+    public func getAvailableRecords(completion: @escaping ([ReadingListItem]) -> Void) {
         let sql = "SELECT \(allColumns) FROM items ORDER BY client_last_modified DESC"
-        db.runQuery(
+        let deferredResponse = db.runQuery(
             sql,
             args: nil,
             factory: SQLiteReadingList.ReadingListItemFactory
-        ).upon { result in
-            guard let cursor = result.successValue else {
-                completion([])
-                return
-            }
-            completion(cursor.asArray())
+        ) >>== { cursor in
+            return deferMaybe(cursor.asArray())
+        }
+
+        deferredResponse.upon { result in
+            completion(result.successValue ?? [])
         }
     }
 
     public func getAvailableRecords() -> Deferred<Maybe<[ReadingListItem]>> {
         let sql = "SELECT \(allColumns) FROM items ORDER BY client_last_modified DESC"
-        return db.runQuery(sql, args: nil, factory: SQLiteReadingList.ReadingListItemFactory)
-            .map { $0.map { cursor in cursor.asArray() } }
+        return db.runQuery(sql, args: nil, factory: SQLiteReadingList.ReadingListItemFactory) >>== { cursor in
+            return deferMaybe(cursor.asArray())
+        }
     }
 
-    public func deleteRecord(_ record: ReadingListItem, completion: (@Sendable (Bool) -> Void)? = nil) {
+    public func deleteRecord(_ record: ReadingListItem, completion: ((Bool) -> Void)? = nil) {
         let sql = "DELETE FROM items WHERE client_id = ?"
         let args: Args = [record.id]
         let deferredResponse = db.run(sql, withArgs: args)
@@ -87,7 +84,7 @@ extension SQLiteReadingList: ReadingList {
             try connection.executeChange(insertSQL, withArgs: insertArgs)
 
             if connection.lastInsertedRowID == lastInsertedRowID {
-                throw ReadingListStorageError(message: "Unable to insert ReadingListItem")
+                throw ReadingListStorageError("Unable to insert ReadingListItem")
             }
 
             let querySQL = "SELECT \(self.allColumns) FROM items WHERE client_id = ? LIMIT 1"
@@ -104,7 +101,7 @@ extension SQLiteReadingList: ReadingList {
                 self.notificationCenter.post(name: .ReadingListUpdated, object: self)
                 return item
             } else {
-                throw ReadingListStorageError(message: "Unable to get inserted ReadingListItem")
+                throw ReadingListStorageError("Unable to get inserted ReadingListItem")
             }
         }
     }
@@ -112,14 +109,13 @@ extension SQLiteReadingList: ReadingList {
     public func getRecordWithURL(_ url: String) -> Deferred<Maybe<ReadingListItem>> {
         let sql = "SELECT \(allColumns) FROM items WHERE url = ? LIMIT 1"
         let args: Args = [url]
-        return db.runQuery(sql, args: args, factory: SQLiteReadingList.ReadingListItemFactory).map { $0.bind { cursor in
+        return db.runQuery(sql, args: args, factory: SQLiteReadingList.ReadingListItemFactory) >>== { cursor in
             let items = cursor.asArray()
             if let item = items.first {
-                return Maybe(success: item)
+                return deferMaybe(item)
             } else {
-                return Maybe(failure: ReadingListStorageError(message: "Can't create RLCR from row"))
+                return deferMaybe(ReadingListStorageError("Can't create RLCR from row"))
             }
-        }
         }
     }
 
@@ -144,28 +140,17 @@ extension SQLiteReadingList: ReadingList {
                 self.notificationCenter.post(name: .ReadingListUpdated, object: self)
                 return item
             } else {
-                throw ReadingListStorageError(message: "Unable to get updated ReadingListItem")
+                throw ReadingListStorageError("Unable to get updated ReadingListItem")
             }
         }
     }
 
-    fileprivate static func ReadingListItemFactory(_ row: SDRow) -> ReadingListItem {
-        guard let id = row["client_id"] as? Int,
-              let url = row["url"] as? String,
-              let title = row["title"] as? String,
-              let addedBy = row["added_by"] as? String else {
-            return ReadingListItem(
-                id: 0,
-                lastModified: 0,
-                url: "",
-                title: "",
-                addedBy: "",
-                unread: false,
-                archived: false,
-                favorite: false
-            )
-        }
+    fileprivate class func ReadingListItemFactory(_ row: SDRow) -> ReadingListItem {
+        let id = row["client_id"] as! Int
         let lastModified = row.getTimestamp("client_last_modified")!
+        let url = row["url"] as! String
+        let title = row["title"] as! String
+        let addedBy = row["added_by"] as! String
         let archived = row.getBoolean("archived")
         let unread = row.getBoolean("unread")
         let favorite = row.getBoolean("favorite")

@@ -5,9 +5,7 @@
 import Redux
 import Common
 
-struct TabTrayAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+class TabTrayAction: Action {
     let panelType: TabTrayPanelType?
     let tabTrayModel: TabTrayModel?
     let hasSyncableAccount: Bool?
@@ -17,19 +15,17 @@ struct TabTrayAction: Action {
          hasSyncableAccount: Bool? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.panelType = panelType
         self.tabTrayModel = tabTrayModel
         self.hasSyncableAccount = hasSyncableAccount
+        super.init(windowUUID: windowUUID,
+                   actionType: actionType)
     }
 }
 
-enum TabTrayActionType: ActionType {
+enum  TabTrayActionType: ActionType {
     case tabTrayDidLoad
     case changePanel
-    case doneButtonTapped
-    case modalSwipedToClose
 
     // Middleware actions
     case didLoadTabTray

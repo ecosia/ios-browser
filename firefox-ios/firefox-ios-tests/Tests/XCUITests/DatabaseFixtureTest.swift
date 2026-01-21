@@ -2,7 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Common
 import XCTest
 
 class DatabaseFixtureTest: BaseTestCase {
@@ -11,7 +10,7 @@ class DatabaseFixtureTest: BaseTestCase {
         "testHistoryDatabaseFixture": "testHistoryDatabase100-places.db"
     ]
 
-    override func setUp() async throws {
+    override func setUp() {
         // Test name looks like: "[Class testFunc]", parse out the function name
         let parts = name.replacingOccurrences(of: "]", with: "").split(separator: " ")
         let key = String(parts[1])
@@ -21,7 +20,7 @@ class DatabaseFixtureTest: BaseTestCase {
                            LaunchArguments.LoadDatabasePrefix + fixtures[key]!,
                            LaunchArguments.SkipContextualHints,
                            LaunchArguments.DisableAnimations]
-        try await super.setUp()
+        super.setUp()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2458579
@@ -39,10 +38,12 @@ class DatabaseFixtureTest: BaseTestCase {
 
         do {
             // Take a custom snapshot to avoid unnecessary snapshots by xctrunner (~9s each).
+            // Filter out 'Other' elements and drop the 'Desktop Bookmarks' cell for a true bookmark count.
             let bookmarksListSnapshot = try bookmarksList.snapshot()
             let bookmarksListCells = bookmarksListSnapshot.children.filter { $0.elementType == .cell }
+            let filteredBookmarksList = bookmarksListCells.dropFirst()
 
-            XCTAssertEqual(bookmarksListCells.count, 1000, "There should be 1000 entries in the bookmarks list")
+            XCTAssertEqual(filteredBookmarksList.count, 1000, "There should be 1000 entries in the bookmarks list")
         } catch {
             XCTFail("Failed to take snapshot: \(error)")
         }

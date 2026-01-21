@@ -3,19 +3,19 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Shared
 import Storage
 import XCTest
 
 @testable import Client
 
-@MainActor
 class SearchViewControllerTest: XCTestCase {
     var profile: MockProfile!
     var searchEnginesManager: SearchEnginesManager!
     var searchViewController: SearchViewController!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile(firefoxSuggest: MockRustFirefoxSuggest())
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
@@ -32,9 +32,7 @@ class SearchViewControllerTest: XCTestCase {
             isBottomSearchBar: false,
             profile: profile,
             model: searchEnginesManager,
-            tabManager: MockTabManager(),
-            trendingSearchClient: MockTrendingSearchClient(),
-            recentSearchProvider: MockRecentSearchProvider()
+            tabManager: MockTabManager()
         )
 
         searchViewController = SearchViewController(
@@ -44,16 +42,16 @@ class SearchViewControllerTest: XCTestCase {
         )
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         profile = nil
-        try await super.tearDown()
     }
 
     func testHistoryAndBookmarksAreFilteredWhenShowSponsoredSuggestionsIsTrue() {
         searchEnginesManager.shouldShowSponsoredSuggestions = true
-        let data = ArrayCursor<Site>(data: [ Site.createBasicSite(url: "https://example.com?mfadid=adm", title: "Test1"),
-                                             Site.createBasicSite(url: "https://example.com", title: "Test2"),
-                                             Site.createBasicSite(url: "https://example.com?a=b&c=d", title: "Test3")])
+        let data = ArrayCursor<Site>(data: [ Site(url: "https://example.com?mfadid=adm", title: "Test1"),
+                                             Site(url: "https://example.com", title: "Test2"),
+                                             Site(url: "https://example.com?a=b&c=d", title: "Test3")])
 
         searchViewController.viewModel.loader(dataLoaded: data)
         XCTAssertEqual(searchViewController.data.count, 2)
@@ -61,9 +59,9 @@ class SearchViewControllerTest: XCTestCase {
 
     func testHistoryAndBookmarksAreNotFilteredWhenShowSponsoredSuggestionsIsFalse() {
         searchEnginesManager.shouldShowSponsoredSuggestions = false
-        let data = ArrayCursor<Site>(data: [ Site.createBasicSite(url: "https://example.com?mfadid=adm", title: "Test1"),
-                                             Site.createBasicSite(url: "https://example.com", title: "Test2"),
-                                             Site.createBasicSite(url: "https://example.com?a=b&c=d", title: "Test3")])
+        let data = ArrayCursor<Site>(data: [ Site(url: "https://example.com?mfadid=adm", title: "Test1"),
+                                             Site(url: "https://example.com", title: "Test2"),
+                                             Site(url: "https://example.com?a=b&c=d", title: "Test3")])
         searchViewController.viewModel.loader(dataLoaded: data)
         XCTAssertEqual(searchViewController.data.count, 3)
     }

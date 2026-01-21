@@ -3,17 +3,19 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Common
+import Shared
 
 import protocol MozillaAppServices.NimbusMessagingHelperProtocol
 
-protocol NimbusMessagingHelperUtilityProtocol: Sendable {
+protocol NimbusMessagingHelperUtilityProtocol {
     func createNimbusMessagingHelper() -> NimbusMessagingHelperProtocol?
 }
 
-final class NimbusMessagingHelperUtility: NimbusMessagingHelperUtilityProtocol {
-    private let createMessageHelper: @Sendable () -> NimbusMessagingHelperProtocol?
+class NimbusMessagingHelperUtility: NimbusMessagingHelperUtilityProtocol {
+    private let createMessageHelper: () -> NimbusMessagingHelperProtocol?
 
-    init(createMessageHelper: @escaping @Sendable () -> NimbusMessagingHelperProtocol? = Experiments.createJexlHelper) {
+    init(createMessageHelper: @escaping () -> NimbusMessagingHelperProtocol? = Experiments.createJexlHelper) {
         self.createMessageHelper = createMessageHelper
     }
 

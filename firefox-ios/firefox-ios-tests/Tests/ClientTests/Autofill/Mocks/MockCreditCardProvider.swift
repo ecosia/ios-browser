@@ -6,15 +6,12 @@ import Foundation
 import MozillaAppServices
 import Storage
 
-final class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
+class MockCreditCardProvider: CreditCardProvider {
     var addCreditCardCalledCount = 0
     var updateCreditCardCalledCount = 0
     var listCreditCardsCalledCount = 0
-    var deleteCreditCardsCalledCount = 0
-    var verifyCreditCardsCalled = 0
-    var creditCardsVerified = true
 
-    var exampleCreditCard = CreditCard(
+    private var exampleCreditCard = CreditCard(
         guid: "1",
         ccName: "Allen Burges",
         ccNumberEnc: "4111111111111111",
@@ -28,10 +25,6 @@ final class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
         timesUsed: 123123
     )
 
-    private(set) var lastDeletedID: String?
-    var deleteResult: (status: Bool, error: Error?) = (false, nil)
-    var updateResult: (status: Bool?, error: Error?) = (nil, nil)
-
     func addCreditCard(
         creditCard: UnencryptedCreditCardFields,
         completion: @escaping (CreditCard?, Error?) -> Void
@@ -40,11 +33,6 @@ final class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
         completion(exampleCreditCard, nil)
     }
     func decryptCreditCardNumber(encryptedCCNum: String?) -> String? { return "testCCNum" }
-    func deleteCreditCard(id: String, completion: @escaping @Sendable (Bool, (any Error)?) -> Void) {
-        deleteCreditCardsCalledCount += 1
-        lastDeletedID = id
-        completion(deleteResult.status, deleteResult.error)
-    }
     func listCreditCards(completion: @escaping ([CreditCard]?, Error?) -> Void) {
         listCreditCardsCalledCount += 1
         completion([exampleCreditCard], nil)
@@ -55,11 +43,6 @@ final class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
         completion: @escaping (Bool?, Error?) -> Void
     ) {
         updateCreditCardCalledCount += 1
-        completion(updateResult.status, updateResult.error)
-    }
-
-    func verifyCreditCards(key: String, completionHandler: @escaping @Sendable (Bool) -> Void) {
-        verifyCreditCardsCalled += 1
-        completionHandler(creditCardsVerified)
+        completion(nil, nil)
     }
 }

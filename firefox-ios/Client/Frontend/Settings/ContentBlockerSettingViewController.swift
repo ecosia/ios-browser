@@ -7,7 +7,8 @@ import Foundation
 import Shared
 import ComponentLibrary
 
-class ContentBlockerSettingViewController: SettingsTableViewController {
+class ContentBlockerSettingViewController: SettingsTableViewController,
+                                           Notifiable {
     private struct UX {
         static let buttonContentInsets = NSDirectionalEdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0)
     }
@@ -35,10 +36,6 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
                 style: .plain,
                 target: self,
                 action: #selector(done))
-            if #available(iOS 26.0, *) {
-                let theme = themeManager.getCurrentTheme(for: windowUUID)
-                navigationItem.rightBarButtonItem?.tintColor = theme.colors.textPrimary
-            }
         }
     }
 
@@ -49,11 +46,8 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         applyTheme()
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [UIContentSizeCategory.didChangeNotification]
-        )
+        setupNotifications(forObserver: self, observing: [UIContentSizeCategory.didChangeNotification])
+        linkButton.isHidden = currentBlockingStrength == .strict
     }
 
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
@@ -72,15 +66,15 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
                     return option == self.currentBlockingStrength
                 },
                 onChecked: {
-                    let previousOption = self.currentBlockingStrength
-
                     self.currentBlockingStrength = option
                     self.prefs.setString(self.currentBlockingStrength.rawValue,
                                          forKey: ContentBlockingConfig.Prefs.StrengthKey)
                     TabContentBlocker.prefsChanged()
                     self.tableView.reloadData()
 
-                    self.recordEventOnChecked(option: option, fromOption: previousOption)
+                    self.linkButton.isHidden = option == .strict
+
+                    self.recordEventOnChecked(option: option)
                 })
 
             let uuid = windowUUID
@@ -96,32 +90,27 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
             return setting
         }
 
-        var sections: [SettingSection] = []
-
-        if let profile {
-            let enabledSetting = BoolSetting(
-                prefs: profile.prefs,
-                prefKey: ContentBlockingConfig.Prefs.EnabledKey,
-                defaultValue: ContentBlockingConfig.Defaults.NormalBrowsing,
-                attributedTitleText: NSAttributedString(string: .TrackingProtectionEnableTitle)) { [weak self] enabled in
-                    TabContentBlocker.prefsChanged()
-                    strengthSetting.forEach { item in
-                        item.enabled = enabled
-                    }
-                    self?.tableView.reloadData()
-                    TelemetryWrapper.recordEvent(category: .action,
-                                                 method: .tap,
-                                                 object: .trackingProtectionMenu,
-                                                 extras: [TelemetryWrapper.EventExtraKey.etpEnabled.rawValue: enabled] )
-            }
-
-            let firstSection = SettingSection(
-                title: nil,
-                footerTitle: NSAttributedString(string: .TrackingProtectionCellFooter),
-                children: [enabledSetting]
-            )
-            sections.append(firstSection)
+        let enabledSetting = BoolSetting(
+            prefs: profile.prefs,
+            prefKey: ContentBlockingConfig.Prefs.EnabledKey,
+            defaultValue: ContentBlockingConfig.Defaults.NormalBrowsing,
+            attributedTitleText: NSAttributedString(string: .TrackingProtectionEnableTitle)) { [weak self] enabled in
+                TabContentBlocker.prefsChanged()
+                strengthSetting.forEach { item in
+                    item.enabled = enabled
+                }
+                self?.tableView.reloadData()
+                TelemetryWrapper.recordEvent(category: .action,
+                                             method: .tap,
+                                             object: .trackingProtectionMenu,
+                                             extras: [TelemetryWrapper.EventExtraKey.etpEnabled.rawValue: enabled] )
         }
+
+        let firstSection = SettingSection(
+            title: nil,
+            footerTitle: NSAttributedString(string: .TrackingProtectionCellFooter),
+            children: [enabledSetting]
+        )
 
         let optionalFooterTitle = NSAttributedString(string: .TrackingProtectionLevelFooter)
 
@@ -133,13 +122,20 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
             footerTitle: optionalFooterTitle,
             children: strengthSetting
         )
-        sections.append(secondSection)
-
-        return sections
+        return [firstSection, secondSection]
     }
 
-    private func recordEventOnChecked(option: BlockingStrength, fromOption: BlockingStrength) {
-        SettingsTelemetry().changedSetting("ETP-strength", to: option.rawValue, from: fromOption.rawValue)
+    private func recordEventOnChecked(option: BlockingStrength) {
+        let extras = [
+            TelemetryWrapper.EventExtraKey.preference.rawValue: "ETP-strength",
+            TelemetryWrapper.EventExtraKey.preferenceChanged.rawValue: option.rawValue
+        ]
+        TelemetryWrapper.recordEvent(
+            category: .action,
+            method: .change,
+            object: .setting,
+            extras: extras
+        )
 
         if option == .strict {
             TelemetryWrapper.recordEvent(
@@ -213,16 +209,16 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
     }
 
     // MARK: - Notifiable
-    override func handleNotifications(_ notification: Notification) {
-        super.handleNotifications(notification)
-
+    func handleNotifications(_ notification: Notification) {
         switch notification.name {
         case UIContentSizeCategory.didChangeNotification:
-            ensureMainThread {
-                self.tableView.reloadData()
-            }
+            tableView.reloadData()
         default:
             break
         }
+    }
+
+    deinit {
+        notificationCenter.removeObserver(self)
     }
 }

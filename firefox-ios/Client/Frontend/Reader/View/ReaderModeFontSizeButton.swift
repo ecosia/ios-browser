@@ -2,8 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Common
-import UIKit
+import Foundation
 
 enum FontSizeAction {
     case smaller
@@ -11,7 +10,7 @@ enum FontSizeAction {
     case bigger
 }
 
-class ReaderModeFontSizeButton: ReaderModeSettingsButton, ThemeApplicable {
+class ReaderModeFontSizeButton: UIButton {
     var fontSizeAction: FontSizeAction = .bigger
 
     convenience init(fontSizeAction: FontSizeAction) {
@@ -20,29 +19,18 @@ class ReaderModeFontSizeButton: ReaderModeSettingsButton, ThemeApplicable {
 
         switch fontSizeAction {
         case .smaller:
-            configuration?.title = .ReaderModeStyleSmallerLabel
+            setTitle(.ReaderModeStyleSmallerLabel, for: [])
             accessibilityLabel = .ReaderModeStyleSmallerAccessibilityLabel
-            accessibilityIdentifier = AccessibilityIdentifiers.ReaderMode.smallerFontSizeButton
         case .bigger:
-            configuration?.title = .ReaderModeStyleLargerLabel
+            setTitle(.ReaderModeStyleLargerLabel, for: [])
             accessibilityLabel = .ReaderModeStyleLargerAccessibilityLabel
-            accessibilityIdentifier = AccessibilityIdentifiers.ReaderMode.biggerFontSizeButton
         case .reset:
-            configuration?.title = .ReaderModeStyleFontSize
             accessibilityLabel = .ReaderModeResetFontSizeAccessibilityLabel
-            accessibilityIdentifier = AccessibilityIdentifiers.ReaderMode.resetFontSizeButton
         }
 
-        guard fontSizeAction != .reset else { return }
-
-        sansSerifFont = FXFontStyles.Regular.title3.scaledFont()
-        serifFont = UIFont(name: UX.serifFontName,
-                           size: FXFontStyles.Regular.title3.systemFont().pointSize)
-    }
-
-    // MARK: ThemeApplicable
-    public func applyTheme(theme: Theme) {
-        configuration?.baseForegroundColor = theme.colors.textPrimary
-        setNeedsUpdateConfiguration()
+        titleLabel?.font = UIFont(
+            name: "SF-Pro-Text-Regular",
+            size: LegacyDynamicFontHelper.defaultHelper.ReaderBigFontSize
+        )
     }
 }

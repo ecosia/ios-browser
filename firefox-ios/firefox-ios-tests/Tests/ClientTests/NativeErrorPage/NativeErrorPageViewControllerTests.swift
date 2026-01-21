@@ -7,23 +7,23 @@ import Common
 
 @testable import Client
 
-@MainActor
 final class NativeErrorPageViewControllerTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     func testNativeErrorPageViewController_simpleCreation_hasNoLeaks() {
         let overlayManager = MockOverlayModeManager()
         let nativeErrroPageViewController = NativeErrorPageViewController(
+            model: NativeErrorPageMock.model,
             windowUUID: windowUUID,
             overlayManager: overlayManager
         )

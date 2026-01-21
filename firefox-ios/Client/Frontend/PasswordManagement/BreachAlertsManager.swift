@@ -24,18 +24,16 @@ struct BreachRecord: Codable, Equatable, Hashable {
 }
 
 /// A manager for the user's breached login information, if any.
-/// FIXME: FXIOS-14141 class is not Sendable / thread safe
-final class BreachAlertsManager: @unchecked Sendable {
+public final class BreachAlertsManager {
     static let monitorAboutUrl = URL(string: "https://monitor.firefox.com/about")
     var breaches = Set<BreachRecord>()
     var client: BreachAlertsClientProtocol
-    var profile: Profile
+    var profile: Profile!
     private lazy var cacheURL: URL? = {
         guard let path = try? self.profile.files.getAndEnsureDirectory() else { return nil }
         return URL(fileURLWithPath: path, isDirectory: true).appendingPathComponent("breaches.json")
     }()
     private let dateFormatter = DateFormatter()
-
     init(_ client: BreachAlertsClientProtocol = BreachAlertsClient(), profile: Profile) {
         self.client = client
         self.profile = profile
@@ -44,7 +42,7 @@ final class BreachAlertsManager: @unchecked Sendable {
     /// Loads breaches from Monitor endpoint using BreachAlertsClient.
     ///    - Parameters:
     ///         - completion: a completion handler for the processed breaches
-    func loadBreaches(completion: @escaping @Sendable (Maybe<Set<BreachRecord>>) -> Void) {
+    func loadBreaches(completion: @escaping (Maybe<Set<BreachRecord>>) -> Void) {
         guard let cacheURL = self.cacheURL else {
             self.fetchAndSaveBreaches(completion)
             return
@@ -175,7 +173,7 @@ final class BreachAlertsManager: @unchecked Sendable {
         return result
     }
 
-    private func fetchAndSaveBreaches(_ completion: @escaping @Sendable (Maybe<Set<BreachRecord>>) -> Void) {
+    private func fetchAndSaveBreaches(_ completion: @escaping (Maybe<Set<BreachRecord>>) -> Void) {
         guard let cacheURL = self.cacheURL else { return }
         self.client.fetchData(endpoint: .breachedAccounts, profile: self.profile) { maybeData in
             guard let fetchedData = maybeData.successValue else { return }

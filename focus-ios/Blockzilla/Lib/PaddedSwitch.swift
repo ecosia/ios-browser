@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class PaddedSwitch: UIView {
+class PaddedSwitch: UIView {
     private static let Padding: CGFloat = 8
 
     convenience init(switchView: UISwitch) {

@@ -7,10 +7,7 @@ import Foundation
 import Shared
 
 protocol MicrosurveyCoordinatorDelegate: AnyObject {
-    @MainActor
     func dismissFlow()
-
-    @MainActor
     func showPrivacy(with content: String?)
 }
 
@@ -44,7 +41,6 @@ final class MicrosurveyCoordinator: BaseCoordinator, FeatureFlaggable, Microsurv
         parentCoordinator?.didFinish(from: self)
     }
 
-    @MainActor
     func showPrivacy(with content: String?) {
         guard let url = SupportUtils.URLForPrivacyNotice(
             source: UTMParams.source,

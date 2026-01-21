@@ -4,12 +4,11 @@
 
 import UIKit
 
-@MainActor
 public protocol AccessibilityActionsSource: AnyObject {
     func accessibilityCustomActionsForView(_ view: UIView) -> [UIAccessibilityCustomAction]?
 }
 
-public final class AccessibleAction {
+open class AccessibleAction: NSObject {
     public let name: String
     public let handler: () -> Bool
 
@@ -17,14 +16,27 @@ public final class AccessibleAction {
         self.name = name
         self.handler = handler
     }
+}
 
-    @MainActor
-    public var accessibilityCustomAction: UIAccessibilityCustomAction {
-        return UIAccessibilityCustomAction(name: name, target: self, selector: #selector(performAccessibilityAction))
-    }
-
+extension AccessibleAction { // UIAccessibilityCustomAction
     @objc
     private func performAccessibilityAction() -> Bool {
         return handler()
+    }
+
+    public var accessibilityCustomAction: UIAccessibilityCustomAction {
+        return UIAccessibilityCustomAction(name: name, target: self, selector: #selector(performAccessibilityAction))
+    }
+}
+
+extension AccessibleAction { // UIAlertAction
+    private var alertActionHandler: (UIAlertAction?) -> Void {
+        return { _ in
+            _ = self.handler()
+        }
+    }
+
+    public func alertAction(style: UIAlertAction.Style) -> UIAlertAction {
+        return UIAlertAction(title: name, style: style, handler: alertActionHandler)
     }
 }

@@ -10,14 +10,20 @@ import SwiftUI
 
 import struct MozillaAppServices.VisitTransitionSet
 
-// TODO: FXIOS-13450 Make HistoryPanelViewModel actually sendable
-final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
+private class FetchInProgressError: MaybeErrorType {
+    internal var description: String {
+        return "Fetch is already in-progress"
+    }
+}
+
+class HistoryPanelViewModel: FeatureFlaggable {
     enum Sections: Int, CaseIterable {
         case additionalHistoryActions
         case lastHour
-        case lastTwentyFourHours
-        case lastSevenDays
-        case lastFourWeeks
+        case today
+        case yesterday
+        case lastWeek
+        case lastMonth
         case older
         case searchResults
 
@@ -25,12 +31,14 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
             switch self {
             case .lastHour:
                 return .LibraryPanel.Sections.LastHour
-            case .lastTwentyFourHours:
-                return .LibraryPanel.Sections.LastTwentyFourHours
-            case .lastSevenDays:
-                return .LibraryPanel.Sections.LastSevenDays
-            case .lastFourWeeks:
-                return .LibraryPanel.Sections.LastFourWeeks
+            case .today:
+                return .LibraryPanel.Sections.Today
+            case .yesterday:
+                return .LibraryPanel.Sections.Yesterday
+            case .lastWeek:
+                return .LibraryPanel.Sections.LastWeek
+            case .lastMonth:
+                return .LibraryPanel.Sections.LastMonth
             case .older:
                 return .LibraryPanel.Sections.Older
             case .additionalHistoryActions, .searchResults:
@@ -39,20 +47,16 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
         }
     }
 
-    enum HistoryItem: Hashable, Sendable {
-        case site(Site)
-        case historyActionables(HistoryActionablesModel)
-    }
-
     // MARK: - Properties
 
     private let profile: Profile
-    private let logger: Logger
+    private var logger: Logger
     // Request limit and offset
     private let queryFetchLimit = 100
     // Is not intended to be use in prod code, only on test
     private(set) var currentFetchOffset = 0
     private let searchQueryFetchLimit = 50
+    private var searchCurrentFetchOffset = 0
 
     // Search
     var isSearchInProgress = false
@@ -61,6 +65,8 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
 
     let historyActionables = HistoryActionablesModel.activeActionables
     var visibleSections: [Sections] = []
+    // Groups items we should have a single datasource containing sites and groups
+    var searchTermGroups: [ASGroup<Site>] = []
     // Only individual sites
     var dateGroupedSites = DateGroupedTableData<Site>(includeLastHour: true)
     var isFetchInProgress = false
@@ -78,7 +84,7 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
 
     let historyPanelNotifications = [Notification.Name.FirefoxAccountChanged,
                                      Notification.Name.PrivateDataClearedHistory,
-                                     UIContentSizeCategory.didChangeNotification,
+                                     Notification.Name.DynamicFontChanged,
                                      Notification.Name.DatabaseWasReopened,
                                      Notification.Name.OpenClearRecentHistory,
                                      Notification.Name.OpenRecentlyClosedTabs]
@@ -91,8 +97,8 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
         self.logger = logger
     }
 
-    /// Begin the process of fetching history data. A prefetch also triggers this.
-    func reloadData(completion: @Sendable @escaping (Bool) -> Void) {
+    /// Begin the process of fetching history data, and creating ASGroups from them. A prefetch also triggers this.
+    func reloadData(completion: @escaping (Bool) -> Void) {
         // Can be called while app backgrounded and the db closed, don't try to reload the data source in this case
         guard !profile.isShutdown, !isFetchInProgress else {
             completion(false)
@@ -103,18 +109,26 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
             resetHistory()
         }
 
-        fetchData { fetchedSites in
-            DispatchQueue.global().async { [weak self] in
-                guard let self,
+        fetchData { [weak self] fetchedSites in
+            DispatchQueue.global().async {
+                guard let self = self,
                       !fetchedSites.isEmpty else {
                     completion(false)
                     return
                 }
 
                 self.currentFetchOffset += self.queryFetchLimit
-                self.createGroupedSites(sites: fetchedSites)
-                self.buildVisibleSections()
-                completion(true)
+                self.populateASGroups(fetchedSites: fetchedSites) { groups, items in
+                    guard let groups = groups else {
+                        completion(false)
+                        return
+                    }
+
+                    self.searchTermGroups.append(contentsOf: groups)
+                    self.createGroupedSites(sites: items)
+                    self.buildGroupsVisibleSections()
+                    completion(true)
+                }
             }
         }
     }
@@ -127,7 +141,7 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
         }
     }
 
-    func performSearch(term: String, completion: @MainActor @escaping (Bool) -> Void) {
+    func performSearch(term: String, completion: @escaping (Bool) -> Void) {
         isFetchInProgress = true
 
         profile.places.interruptReader()
@@ -135,30 +149,27 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
             matchingSearchQuery: term,
             limit: searchQueryFetchLimit
         ).uponQueue(.main) { result in
-            // FXIOS-13228 It should be safe to assumeIsolated here because of `.main` queue above
-            MainActor.assumeIsolated {
-                self.isFetchInProgress = false
+            self.isFetchInProgress = false
 
-                guard result.isSuccess else {
-                    self.logger.log(
-                        "Error searching history panel",
-                        level: .warning,
-                        category: .sync,
-                        description: result.failureValue?.localizedDescription ?? "Unkown error searching history"
-                    )
-                    completion(false)
-                    return
-                }
-                if let result = result.successValue {
-                    self.searchResultSites = result.map { Site.createBasicSite(url: $0.url, title: $0.title) }
-                    completion(!result.isEmpty)
-                }
+            guard result.isSuccess else {
+                self.logger.log(
+                    "Error searching history panel",
+                    level: .warning,
+                    category: .sync,
+                    description: result.failureValue?.localizedDescription ?? "Unkown error searching history"
+                )
+                completion(false)
+                return
+            }
+            if let result = result.successValue {
+                self.searchResultSites = result.map { Site(url: $0.url, title: $0.title) }
+                completion(!result.isEmpty)
             }
         }
     }
 
     func shouldShowEmptyState(searchText: String = "") -> Bool {
-        guard isSearchInProgress else { return dateGroupedSites.isEmpty }
+        guard isSearchInProgress else { return dateGroupedSites.isEmpty && searchTermGroups.isEmpty }
 
         // if the search text is empty we show the regular history so the empty should not show
         return !searchText.isEmpty ? searchResultSites.isEmpty : false
@@ -179,7 +190,8 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
         // Since we remove all data, we reset our fetchOffset back to the start.
         currentFetchOffset = 0
 
-        dateGroupedSites = DateGroupedTableData<Site>(includeLastHour: true)
+        searchTermGroups.removeAll()
+        dateGroupedSites = DateGroupedTableData<Site>()
         buildVisibleSections()
     }
 
@@ -189,21 +201,84 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
         return hiddenSections.contains(where: { $0 == sectionToHide })
     }
 
+    /// Based on the latest visit of the group items gets the section where the group should be added
+    /// if the section is available (visible) and not hidden returns it if not returns nil
+    /// - Parameter group: ASGroup
+    /// - Parameter comparisonDate: Comparison date is used to control unit tests outcome.
+    /// - Returns: Section where group should be added
+    func shouldAddGroupToSections(group: ASGroup<Site>,
+                                  comparisonDate: Date = Date()) -> HistoryPanelViewModel.Sections? {
+        guard let section = groupBelongsToSection(asGroup: group, comparisonDate: comparisonDate),
+                visibleSections.contains(section),
+              !hiddenSections.contains(section) else {
+            return nil
+        }
+
+        return section
+    }
+
+    /// This helps us place an ASGroup<Site> in the correct section.
+    /// - Parameters:
+    ///   - asGroup: ASGroup
+    ///   - comparisonDate: Comparison date is used to control unit tests outcome.
+    /// - Returns: Section where group should be added
+    func groupBelongsToSection(asGroup: ASGroup<Site>, comparisonDate: Date = Date()) -> HistoryPanelViewModel.Sections? {
+        guard let individualItem = asGroup.groupedItems.last,
+              let lastVisit = individualItem.latestVisit
+        else { return nil }
+
+        let groupDate = TimeInterval.timeIntervalSince1970ToDate(
+            timeInterval: TimeInterval.fromMicrosecondTimestamp(lastVisit.date)
+        )
+        if groupDate.isWithinLastHour(comparisonDate: comparisonDate) {
+            return .lastHour
+        } else if groupDate.isToday() {
+            return .today
+        } else if groupDate.isYesterday() {
+            return .yesterday
+        } else if groupDate.isWithinLast7Days(comparisonDate: comparisonDate) {
+            return .lastWeek
+        } else if groupDate.isWithinLast14Days(comparisonDate: comparisonDate) {
+            // Since two weeks falls within here, lastMonth will have an ASGroup, if it exists.
+            return .lastMonth
+        }
+
+        return nil
+    }
+
+    func groupsForSection(section: Sections) -> [ASGroup<Site>] {
+        let groups = searchTermGroups.filter { group in
+            if let groupInSection = groupBelongsToSection(asGroup: group) {
+                return groupInSection == section
+            }
+
+            return false
+        }
+
+        return groups
+    }
+
     func deleteGroupsFor(dateOption: HistoryDeletionUtilityDateOptions) {
         guard let deletableSections = getDeletableSection(for: dateOption) else { return }
         deletableSections.forEach { section in
-            let sectionItems = dateGroupedSites
-                .itemsForSection(section.rawValue - 1)
-                .map(HistoryItem.site)
+            // Remove grouped items for delete section
+            var sectionItems: [AnyHashable] = groupsForSection(section: section)
+            let singleItems = dateGroupedSites.itemsForSection(section.rawValue - 1)
+            sectionItems.append(contentsOf: singleItems)
             removeHistoryItems(item: sectionItems, at: section.rawValue)
         }
     }
 
-    /// This handles removing a Site from the view.
-    func removeHistoryItems(item historyItem: [HistoryItem], at section: Int) {
+    /// This handles removing either a Site or an ASGroup<Site> from the view.
+    func removeHistoryItems(item historyItem: [AnyHashable], at section: Int) {
         historyItem.forEach { item in
-            if case HistoryItem.site(let site) = item {
+            if let site = item as? Site {
                 deleteSingle(site: site)
+            } else if let group = item as? ASGroup<Site> {
+                group.groupedItems.forEach { site in
+                    deleteSingle(site: site)
+                }
+                searchTermGroups = searchTermGroups.filter { $0 != group }
             }
         }
         buildVisibleSections()
@@ -211,7 +286,7 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
 
     // MARK: - Private helpers
 
-    private func fetchData(completion: @escaping @Sendable ([Site]) -> Void) {
+    private func fetchData(completion: @escaping (([Site]) -> Void)) {
         guard !isFetchInProgress else {
             completion([])
             return
@@ -223,12 +298,12 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
             limit: queryFetchLimit,
             offset: currentFetchOffset,
             excludedTypes: VisitTransitionSet(0)
-        ).upon { result in
+        ).upon { [weak self] result in
             completion(result.successValue?.asArray() ?? [])
 
             // Force 100ms delay between resolution of the last batch of results
             // and the next time `fetchData()` can be called.
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
                 guard let self = self else { return }
                 self.isFetchInProgress = false
                 self.logger.log("currentFetchOffset is: \(self.currentFetchOffset)",
@@ -241,6 +316,13 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
     private func resetHistory() {
         removeAllData()
         shouldResetHistory = false
+    }
+
+    private func buildGroupsVisibleSections() {
+        self.visibleSections = Sections.allCases.filter { section in
+            return self.dateGroupedSites.numberOfItemsForSection(section.rawValue - 1) > 0
+            || !self.groupsForSection(section: section).isEmpty
+        }
     }
 
     private func buildVisibleSections() {
@@ -262,6 +344,20 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
         }
     }
 
+    /// Provide groups for currently fetched history items.
+    private func populateASGroups(
+        fetchedSites: [Site],
+        completion: @escaping ([ASGroup<Site>]?, _ filteredItems: [Site]) -> Void
+    ) {
+        SearchTermGroupsUtility.getSiteGroups(
+            with: self.profile,
+            from: fetchedSites,
+            using: .orderedDescending
+        ) { group, individualItems in
+            completion(group, individualItems)
+        }
+    }
+
     private func deleteSingle(site: Site) {
         dateGroupedSites.remove(site)
         self.profile.places.deleteVisitsFor(url: site.url).uponQueue(.main) { _ in
@@ -277,12 +373,10 @@ final class HistoryPanelViewModel: FeatureFlaggable, @unchecked Sendable {
         switch dateOption {
         case .lastHour:
             return [.lastHour]
-        case .lastTwentyFourHours:
-            return [.lastHour, .lastTwentyFourHours]
-        case .lastSevenDays:
-            return [.lastHour, .lastTwentyFourHours, .lastSevenDays]
-        case .lastFourWeeks:
-            return [.lastHour, .lastTwentyFourHours, .lastSevenDays, .lastFourWeeks]
+        case .today:
+            return [.lastHour, .today]
+        case .yesterday:
+            return [.lastHour, .today, .yesterday]
         default:
             return nil
         }

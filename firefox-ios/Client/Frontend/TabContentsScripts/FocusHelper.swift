@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Shared
 import WebKit
 
 class FocusHelper: TabContentScript {

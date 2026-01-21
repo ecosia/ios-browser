@@ -1,32 +1,23 @@
-## :scroll: Tickets
-[Jira ticket](https://mozilla-hub.atlassian.net/browse/FXIOS-TODO)
-[Github issue](https://github.com/mozilla-mobile/firefox-ios/issues/TODO)
+<!--
+Don't forget to add a prefix to the pr title in this format
+[MOB-####] PR SHORT DESCRIPTION
+-->
 
-## :bulb: Description
-<!--- Describe your changes so the reviewer can understand the context and decisions made for your work -->
+[MOB-####]
 
-## :movie_camera: Demos
-<!-- Please upload screenshots or video demos of your work, if applicable -->
-<!-- You can either use a table (best for before/after screenshots) or the <details> disclosure -->
+## Context
 
-| Before | After |
-| - | - |
-| <!--insert "before" image here--> | <!--insert "after" image here--> |
-| <!--insert "before" image here--> | <!--insert "after" image here--> |
-| <!--insert "before" image here--> | <!--insert "after" image here--> |
+## Approach
 
-<!-- If you're only using the Before/After table above, or the Demo disclosure below, you can delete the other, unused markup -->
-<details>
-<summary>Demo</summary>
-<!-- Shorthand image template: <img height=400 src="<URL>" /> -->
-</details>
+## Other
 
-## :pencil: Checklist
-- [ ] I filled in the ticket numbers and a description of my work
-- [ ] I updated the PR name to follow our [PR naming guidelines](https://github.com/mozilla-mobile/firefox-ios/wiki/Pull-Request-Naming-Guide)
-- [ ] I ensured unit tests pass and wrote tests for new code
-- [ ] If working on UI, I checked and implemented accessibility (Dynamic Text and VoiceOver)
-- [ ] If adding telemetry, I read the [data stewardship requirements](https://github.com/mozilla-mobile/firefox-ios/wiki/Adding-Glean-Telemetry-Events) and will request a data review
-- [ ] If adding or modifying strings, I read the [guidelines](https://github.com/mozilla-mobile/firefox-ios/wiki/How-to-add-and-modify-Strings) and will request a string review from l10n
-- [ ] If needed, I updated documentation and added comments to complex code
+## Before merging
 
+### Checklist
+
+- [ ] I performed some relevant testing on a real device and/or simulator for both iPhone and iPad
+- [ ] I wrote Unit Tests that confirm the expected behaviour
+- [ ] I updated only the [english localization source files](Client/Ecosia/L10N/es.lproj) if needed
+- [ ] I added the `// Ecosia:` helper comments where needed
+- [ ] I made sure that any change to the Analytics events included in PR won't alter current analytics (e.g. new users, upgrading users)
+- [ ] I included documentation updates to the coding standards or Confluence doc, when needed

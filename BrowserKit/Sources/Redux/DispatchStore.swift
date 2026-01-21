@@ -6,25 +6,19 @@ import Foundation
 
 /// Protocol that allows to subscribe to the store and receive dispatched actions to modify the store state
 public protocol DispatchStore {
-    @MainActor
     func dispatch(_ action: Action)
 }
 
-public protocol DefaultDispatchStore<State>: DispatchStore where State: StateType {
-    associatedtype State
+public protocol DefaultDispatchStore: DispatchStore {
+    associatedtype State: StateType
 
-    @MainActor
     var state: State { get }
 
-    @MainActor
     func subscribe<S: StoreSubscriber>(_ subscriber: S) where S.SubscriberStateType == State
-    @MainActor
     func subscribe<SubState, S: StoreSubscriber>(
         _ subscriber: S,
         transform: ((Subscription<State>) -> Subscription<SubState>)?
     ) where S.SubscriberStateType == SubState
-    @MainActor
     func unsubscribe<S: StoreSubscriber>(_ subscriber: S) where S.SubscriberStateType == State
-    @MainActor
     func unsubscribe(_ subscriber: any StoreSubscriber)
 }

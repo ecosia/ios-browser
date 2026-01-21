@@ -8,12 +8,14 @@ import SwiftUI
 import UIKit
 import Common
 
-@MainActor
 class SendToDevice: DevicePickerViewControllerDelegate, InstructionsViewDelegate {
     var sharedItem: ShareItem?
     weak var delegate: ShareControllerDelegate?
 
+    /* Ecosia: Swap Theme Manager with Ecosia's
     private let themeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+     */
+    private let themeManager = EcosiaThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
 
     private var profile: Profile {
         let profile = BrowserProfile(localName: "profile")
@@ -65,15 +67,11 @@ class SendToDevice: DevicePickerViewControllerDelegate, InstructionsViewDelegate
             return finish()
         }
 
-        profile.sendItem(item, toDevices: devices)
-            .uponQueue(.main) { _ in
-                // FXIOS-13228 It should be safe to assumeIsolated here because of `.main` queue above
-                MainActor.assumeIsolated {
-                    self.finish()
+        profile.sendItem(item, toDevices: devices).uponQueue(.main) { _ in
+            self.finish()
 
-                    addAppExtensionTelemetryEvent(forMethod: "send-to-device")
-                }
-            }
+            addAppExtensionTelemetryEvent(forMethod: "send-to-device")
+        }
     }
 
     func devicePickerViewControllerDidCancel(_ devicePickerViewController: DevicePickerViewController) {

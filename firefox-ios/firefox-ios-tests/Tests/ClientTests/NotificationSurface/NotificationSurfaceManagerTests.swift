@@ -3,24 +3,25 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Shared
+import Common
 @testable import Client
 
-@MainActor
-final class NotificationSurfaceManagerTests: XCTestCase {
+class NotificationSurfaceManagerTests: XCTestCase {
     private var messageManager: MockGleanPlumbMessageManagerProtocol!
     private var notificationManager: MockNotificationManager!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         notificationManager = MockNotificationManager()
         messageManager = MockGleanPlumbMessageManagerProtocol()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         messageManager = nil
         notificationManager = nil
-        try await super.tearDown()
     }
 
     func testShouldShowSurface_noMessage() {
@@ -37,25 +38,25 @@ final class NotificationSurfaceManagerTests: XCTestCase {
         XCTAssertTrue(subject.shouldShowSurface)
     }
 
-    func testShowSurface_noMessage() async {
+    func testShowSurface_noMessage() {
         let subject = createSubject()
 
         XCTAssertFalse(subject.shouldShowSurface)
 
-        await subject.showNotificationSurface()
+        subject.showNotificationSurface()
 
         XCTAssertFalse(notificationManager.scheduleWithIntervalWasCalled)
         XCTAssertEqual(notificationManager.scheduledNotifications, 0)
     }
 
-    func testShowSurface_validMessage() async {
+    func testShowSurface_validMessage() {
         let subject = createSubject()
         let message = createMessage()
         messageManager.message = message
 
         XCTAssertTrue(subject.shouldShowSurface)
 
-        await subject.showNotificationSurface()
+        subject.showNotificationSurface()
 
         XCTAssertTrue(notificationManager.scheduleWithIntervalWasCalled)
         XCTAssertEqual(notificationManager.scheduledNotifications, 1)
@@ -63,14 +64,14 @@ final class NotificationSurfaceManagerTests: XCTestCase {
 
     func testDidTapNotification_noMessageId() {
         let subject = createSubject()
-        subject.didTapNotification("")
+        subject.didTapNotification([:])
 
         XCTAssertEqual(messageManager.onMessagePressedCalled, 0)
     }
 
     func testDidTapNotification_noMessageFound() {
         let subject = createSubject()
-        subject.didTapNotification("test")
+        subject.didTapNotification([NotificationSurfaceManager.Constant.messageIdKey: "test"])
 
         XCTAssertEqual(messageManager.onMessagePressedCalled, 0)
     }
@@ -82,7 +83,7 @@ final class NotificationSurfaceManagerTests: XCTestCase {
 
         XCTAssertTrue(subject.shouldShowSurface)
 
-        subject.didTapNotification("test-notification")
+        subject.didTapNotification([NotificationSurfaceManager.Constant.messageIdKey: "test-notification"])
 
         XCTAssertEqual(messageManager.onMessagePressedCalled, 1)
     }
@@ -94,13 +95,13 @@ final class NotificationSurfaceManagerTests: XCTestCase {
 
         XCTAssertTrue(subject.shouldShowSurface)
 
-        subject.didTapNotification("test-notification")
+        subject.didTapNotification([NotificationSurfaceManager.Constant.messageIdKey: "test-notification"])
 
         XCTAssertEqual(messageManager.onMessagePressedCalled, 1)
     }
 
     // MARK: Helpers
-    private func createSubject(file: StaticString = #filePath,
+    private func createSubject(file: StaticString = #file,
                                line: UInt = #line
     ) -> NotificationSurfaceManager {
         let subject = NotificationSurfaceManager(messagingManager: messageManager,
@@ -148,7 +149,7 @@ class MockNotificationMessageDataProtocol: MessageDataProtocol {
     var surface: MessageSurfaceId
     var isControl = true
     var title: String? = "title label test"
-    var text = "text label test"
+    var text: String = "text label test"
     var buttonLabel: String? = "button label test"
     var experiment: String?
     var actionParams: [String: String] = [:]

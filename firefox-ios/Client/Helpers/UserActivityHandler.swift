@@ -10,14 +10,11 @@ import MobileCoreServices
 import WebKit
 import SiteImageView
 import Common
-import WebEngine
 
-let browsingActivityType = "org.mozilla.ios.firefox.browsing"
+private let browsingActivityType: String = "org.mozilla.ios.firefox.browsing"
 
-// TODO: FXIOS-14175 - SearchableIndex is not thread safe
-nonisolated(unsafe) private let searchableIndex = CSSearchableIndex.default()
+private let searchableIndex = CSSearchableIndex.default()
 
-@MainActor
 class UserActivityHandler {
     private let logger: Logger
 
@@ -34,11 +31,10 @@ class UserActivityHandler {
         )
     }
 
-    class func clearSearchIndex(completionHandler: (@Sendable (Error?) -> Void)? = nil) {
+    class func clearSearchIndex(completionHandler: ((Error?) -> Void)? = nil) {
         searchableIndex.deleteAllSearchableItems(completionHandler: completionHandler)
     }
 
-    @MainActor
     fileprivate func setUserActivityForTab(_ tab: Tab, url: URL) {
         guard !tab.isPrivate, url.isWebPage(includeDataURIs: false),
               !InternalURL.isValid(url: url)
@@ -74,13 +70,13 @@ extension UserActivityHandler: TabEventHandler {
     }
 
     func tab(_ tab: Tab, didLoadPageMetadata metadata: PageMetadata) {
-        guard let url = URL(string: metadata.siteURL) else { return }
+        guard let url = URL(string: metadata.siteURL, invalidCharacters: false) else { return }
 
         setUserActivityForTab(tab, url: url)
     }
 
     func tab(_ tab: Tab, didLoadReadability page: ReadabilityResult) {
-        Task { @MainActor in
+        Task {
             await spotlightIndex(page, for: tab)
         }
     }
@@ -93,7 +89,6 @@ extension UserActivityHandler: TabEventHandler {
 }
 
 extension UserActivityHandler {
-    @MainActor
     func spotlightIndex(_ page: ReadabilityResult, for tab: Tab) async {
         guard let url = tab.url,
               !tab.isPrivate,

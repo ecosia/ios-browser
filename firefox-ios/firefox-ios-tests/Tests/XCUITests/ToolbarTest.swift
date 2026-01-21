@@ -12,15 +12,15 @@ let website1: [String: String] = [
 ]
 let website2 = path(forTestPage: "test-example.html")
 
-class ToolbarTests: FeatureFlaggedTestBase {
-    override func setUp() async throws {
-        try await super.setUp()
+class ToolbarTests: BaseTestCase {
+    override func setUp() {
+        super.setUp()
         XCUIDevice.shared.orientation = UIDeviceOrientation.landscapeLeft
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         XCUIDevice.shared.orientation = UIDeviceOrientation.portrait
-        try await super.tearDown()
+        super.tearDown()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2344428
@@ -28,11 +28,11 @@ class ToolbarTests: FeatureFlaggedTestBase {
      * Tests landscape page navigation enablement with the URL bar with tab switching.
      */
     func testLandscapeNavigationWithTabSwitch() {
-        app.launch()
+        navigator.nowAt(NewTabScreen)
+        waitForTabsButton()
         let urlPlaceholder = "Search or enter address"
-        let searchTextField = AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField
-        XCTAssert(app.textFields[searchTextField].exists)
-        let defaultValuePlaceholder = app.textFields[searchTextField].placeholderValue!
+        XCTAssert(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].exists)
+        let defaultValuePlaceholder = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].placeholderValue!
 
         // Check the url placeholder text and that the back and forward buttons are disabled
         XCTAssertTrue(urlPlaceholder == defaultValuePlaceholder, "The placeholder does not show the correct value")
@@ -40,27 +40,22 @@ class ToolbarTests: FeatureFlaggedTestBase {
         XCTAssertFalse(app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].isEnabled)
 
         // Navigate to two pages and press back once so that all buttons are enabled in landscape mode.
-        navigator.nowAt(NewTabScreen)
         navigator.openURL(website1["url"]!)
         waitUntilPageLoad()
         mozWaitForElementToExist(app.webViews.links["Mozilla"], timeout: 10)
-        guard let valueMozilla = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].value
-                as? String else {
-            XCTFail("Failed to retrieve the value from the Mozilla URL bar textField")
-            return
-        }
+        let valueMozilla = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].value as! String
         XCTAssertEqual(valueMozilla, urlValueLong)
         XCTAssertTrue(app.buttons[AccessibilityIdentifiers.Toolbar.backButton].isEnabled)
         XCTAssertFalse(app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].isEnabled)
         XCTAssertTrue(app.buttons[AccessibilityIdentifiers.Toolbar.reloadButton].isEnabled)
         navigator.openURL(website2)
         waitUntilPageLoad()
-        let url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
-        mozWaitForValueContains(url, value: "localhost")
+        let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
+        mozWaitForValueContains(url, value: "localhost:\(serverPort)")
         XCTAssertTrue(app.buttons[AccessibilityIdentifiers.Toolbar.backButton].isEnabled)
         XCTAssertFalse(app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].isEnabled)
 
-        app.buttons[AccessibilityIdentifiers.Toolbar.backButton].waitAndTap()
+        app.buttons[AccessibilityIdentifiers.Toolbar.backButton].tap()
         XCTAssertEqual(valueMozilla, urlValueLong)
 
         waitUntilPageLoad()
@@ -70,8 +65,8 @@ class ToolbarTests: FeatureFlaggedTestBase {
         // Open new tab and then go back to previous tab to test navigation buttons.
         waitForTabsButton()
         navigator.goto(TabTray)
-        mozWaitForElementToExist(app.cells.elementContainingText(website1["label"]!))
-        app.cells.element(boundBy: 0).waitAndTap()
+        mozWaitForElementToExist(app.cells.staticTexts[website1["label"]!])
+        app.cells.element(boundBy: 0).tap()
         XCTAssertEqual(valueMozilla, urlValueLong)
 
         // Test to see if all the buttons are enabled.
@@ -82,25 +77,19 @@ class ToolbarTests: FeatureFlaggedTestBase {
 
     // https://mozilla.testrail.io/index.php?/cases/view/2344430
     func testClearURLTextUsingBackspace() {
-        app.launch()
-        mozWaitForElementToExist(app.links[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
         navigator.openURL(website1["url"]!)
         waitUntilPageLoad()
         waitForTabsButton()
         mozWaitForElementToExist(app.webViews.links["Mozilla"], timeout: 10)
-        guard let valueMozilla = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].value
-                as? String else {
-            XCTFail("Failed to retrieve the value from the Mozilla URL bar text field")
-            return
-        }
+        let valueMozilla = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].value as! String
         XCTAssertEqual(valueMozilla, urlValueLong)
 
         // Simulate pressing on backspace key should remove the text
-        app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].waitAndTap()
+        app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].tap()
         urlBarAddress.typeText("\u{8}")
 
         let value = urlBarAddress.value
-        XCTAssertEqual(value as? String, "Search or enter address", "The url has not been removed correctly")
+        XCTAssertEqual(value as? String, "", "The url has not been removed correctly")
     }
 
     // Check that after scrolling on a page, the URL bar is hidden. Tapping one on the status bar will reveal
@@ -108,27 +97,24 @@ class ToolbarTests: FeatureFlaggedTestBase {
     // Skipping for iPad for now, not sure how to implement it there
     // https://mozilla.testrail.io/index.php?/cases/view/2344431
     func testRevealToolbarWhenTappingOnStatusbar() {
-        app.launch()
         if !iPad() {
             // Workaround when testing on iPhone. If the orientation is in landscape on iPhone the tests will fail.
 
             XCUIDevice.shared.orientation = UIDeviceOrientation.portrait
-            navigator.nowAt(HomePanelsScreen)
-            navigator.goto(URLBarOpen)
-            mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField])
+            mozWaitForElementToExist(app.otherElements["Navigation Toolbar"])
 
             navigator.openURL(website1["url"]!, waitForLoading: true)
-            // Wait for the loading indicator to appear
+            // Adding the waiter right after navigating to the webpage in order to make the test more stable
             waitUntilPageLoad()
             mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
-            let settingsMenuButton = app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton]
+            let PageOptionsMenu = app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton]
             let statusbarElement: XCUIElement = XCUIApplication(
                 bundleIdentifier: "com.apple.springboard"
             ).statusBars.element(boundBy: 1)
             app.swipeUp()
-            XCTAssertFalse(settingsMenuButton.isHittable)
+            XCTAssertFalse(PageOptionsMenu.isHittable)
             statusbarElement.tap(force: true)
-            XCTAssertTrue(settingsMenuButton.isHittable)
+            XCTAssertTrue(PageOptionsMenu.isHittable)
             statusbarElement.tap(force: true)
             let topElement = app.webViews
                 .otherElements["Internet for people, not profit — Mozilla"]
@@ -141,9 +127,8 @@ class ToolbarTests: FeatureFlaggedTestBase {
         }
    }
 
-    // https://mozilla.testrail.io/index.php?/cases/view/3197644
+    // https://mozilla.testrail.io/index.php?/cases/view/2306870
     func testOpenNewTabButtonOnToolbar() throws {
-        app.launch()
         if iPad() {
             throw XCTSkip("iPhone only test")
         } else {
@@ -153,32 +138,33 @@ class ToolbarTests: FeatureFlaggedTestBase {
             // Repeat steps on private mode
             // validateAddNewTabButtonOnToolbar() does not work on iOS 15
             if #available(iOS 16, *) {
-                navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
+                navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
                 navigator.performAction(Action.OpenNewTabFromTabTray)
+                app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton].tap()
                 validateAddNewTabButtonOnToolbar(isPrivate: true)
             }
         }
     }
 
     private func validateAddNewTabButtonOnToolbar(isPrivate: Bool) {
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton])
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.searchButton])
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.addNewTabButton])
         restartInBackground()
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton])
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.searchButton])
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.addNewTabButton])
         // Swipe up to close the app does not work on iOS 15.
         if #available(iOS 16, *) {
             closeFromAppSwitcherAndRelaunch()
-            mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField])
-            mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
-            if !isPrivate {
-                mozWaitForElementToExist(app.staticTexts[AccessibilityIdentifiers.FirefoxHomepage.SectionTitles.topSites])
-                mozWaitForElementToExist(app.staticTexts[AccessibilityIdentifiers.FirefoxHomepage.SectionTitles.merino])
+            mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.searchButton])
+            let addNewTabButton = app.buttons[AccessibilityIdentifiers.Toolbar.addNewTabButton]
+            mozWaitForElementToExist(addNewTabButton)
+            addNewTabButton.tapOnApp()
+            if !app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton].exists {
+                addNewTabButton.tap()
             }
-            navigator.nowAt(BrowserTab)
-            mozWaitElementHittable(element: app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton], timeout: TIMEOUT)
-            navigator.goto(TabTray)
-            navigator.performAction(Action.OpenNewTabFromTabTray)
+            app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton].waitAndTap()
             mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton])
-            XCTAssertEqual(app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton].value as? String, "2")
+            XCTAssertEqual(app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton].value as! String, "2")
         }
     }
 }

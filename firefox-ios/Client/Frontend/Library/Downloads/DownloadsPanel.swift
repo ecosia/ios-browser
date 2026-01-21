@@ -4,14 +4,14 @@
 
 import UIKit
 import Shared
+import Storage
 import Common
 
 class DownloadsPanel: UIViewController,
                       UITableViewDelegate,
                       UITableViewDataSource,
                       LibraryPanel,
-                      Themeable,
-                      Notifiable {
+                      Themeable {
     private struct UX {
         static let welcomeScreenTopPadding: CGFloat = 120
         static let welcomeScreenPadding: CGFloat = 15
@@ -23,10 +23,14 @@ class DownloadsPanel: UIViewController,
     var state: LibraryPanelMainState
     var bottomToolbarItems = [UIBarButtonItem]()
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol
     private var viewModel = DownloadsPanelViewModel()
     private let logger: Logger
+    private let events: [Notification.Name] = [.FileDidDownload,
+                                               .PrivateDataClearedDownloadedFiles,
+                                               .DynamicFontChanged,
+                                               .DownloadPanelFileWasDeleted]
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
 
@@ -58,17 +62,14 @@ class DownloadsPanel: UIViewController,
         self.state = .downloads
         self.windowUUID = windowUUID
         super.init(nibName: nil, bundle: nil)
-
-        startObservingNotifications(
-            withNotificationCenter: NotificationCenter.default,
-            forObserver: self,
-            observing: [
-                .FileDidDownload,
-                .PrivateDataClearedDownloadedFiles,
-                UIContentSizeCategory.didChangeNotification,
-                .DownloadPanelFileWasDeleted
-            ]
-        )
+        events.forEach {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(notificationReceived),
+                name: $0,
+                object: nil
+            )
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -95,32 +96,37 @@ class DownloadsPanel: UIViewController,
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        listenForThemeChange(view)
         applyTheme()
     }
 
-    func handleNotifications(_ notification: Notification) {
-        let notificationName = notification.name
-        let notificationWindowUUID = notification.windowUUID
+    deinit {
+        // The view might outlive this view controller thanks to animations;
+        // explicitly nil out its references to us to avoid crashes. Bug 1218826.
+        tableView.dataSource = nil
+        tableView.delegate = nil
+    }
 
-        ensureMainThread {
-            switch notificationName {
+    @objc
+    func notificationReceived(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+
+            switch notification.name {
             case .FileDidDownload, .PrivateDataClearedDownloadedFiles:
                 self.reloadData()
-
-            case UIContentSizeCategory.didChangeNotification:
+            case .DynamicFontChanged:
                 self.reloadData()
                 if self.emptyStateOverlayView.superview != nil {
                     self.emptyStateOverlayView.removeFromSuperview()
                 }
                 self.emptyStateOverlayView = self.createEmptyStateOverlayView()
-
+                break
             case .DownloadPanelFileWasDeleted:
-                guard let uuid = notificationWindowUUID,
+                guard let uuid = notification.windowUUID,
                       uuid != self.windowUUID else { return }
                 // If another window's download panel has deleted a file, ensure we refresh our table
                 self.reloadData()
-
             default:
                 break
             }
@@ -150,16 +156,10 @@ class DownloadsPanel: UIViewController,
     }
 
     private func shareDownloadedFile(_ downloadedFile: DownloadedFile, indexPath: IndexPath) {
-        // Since this file is already downloaded, we don't have a remote URL to use for the "Send to Device" activity
-        let shareType = ShareType.file(url: downloadedFile.path, remoteURL: nil)
+        let helper = ShareExtensionHelper(url: downloadedFile.path, tab: nil)
+        let controller = helper.createActivityViewController { _, _ in }
 
-        let shareActivityViewController = ShareManager.createActivityViewController(
-            shareType: shareType,
-            shareMessage: nil,
-            completionHandler: { _, _ in }
-        )
-
-        if let popoverPresentationController = shareActivityViewController.popoverPresentationController {
+        if let popoverPresentationController = controller.popoverPresentationController {
             guard let tableViewCell = tableView.cellForRow(at: indexPath) else { return }
 
             popoverPresentationController.sourceView = tableViewCell
@@ -167,7 +167,7 @@ class DownloadsPanel: UIViewController,
             popoverPresentationController.permittedArrowDirections = .any
         }
 
-        present(shareActivityViewController, animated: true, completion: nil)
+        present(controller, animated: true, completion: nil)
     }
 
     private func iconForFileExtension(_ fileExtension: String) -> UIImage? {
@@ -231,9 +231,13 @@ class DownloadsPanel: UIViewController,
             if emptyStateOverlayView.superview == nil {
                 view.addSubview(emptyStateOverlayView)
                 view.bringSubviewToFront(emptyStateOverlayView)
+                // Ecosia: Add `topAnchorDelta` util to determine `topAnchor` margin
+                let topAnchorDelta: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? -50 : 0
 
                 NSLayoutConstraint.activate([
-                    emptyStateOverlayView.topAnchor.constraint(equalTo: view.topAnchor),
+                    // Ecosia: Update reading list top anchor constant only if iPhone
+                    // emptyStateOverlayView.topAnchor.constraint(equalTo: view.topAnchor),
+                    emptyStateOverlayView.topAnchor.constraint(equalTo: view.topAnchor, constant: topAnchorDelta),
                     emptyStateOverlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                     emptyStateOverlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                     emptyStateOverlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
@@ -253,7 +257,9 @@ class DownloadsPanel: UIViewController,
         let logoImageView: UIImageView = .build { imageView in
             imageView.image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.download)?
                 .withRenderingMode(.alwaysTemplate)
-            imageView.tintColor = theme.colors.iconSecondary
+            // Ecosia: Update icon color
+            // imageView.tintColor = theme.colors.iconSecondary
+            imageView.tintColor = theme.colors.textPrimary
         }
         let welcomeLabel: UILabel = .build { label in
             label.text = .TabsTray.DownloadsPanel.EmptyStateTitle
@@ -283,13 +289,8 @@ class DownloadsPanel: UIViewController,
 
     // MARK: - TableView Delegate / DataSource
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: TwoLineImageOverlayCell.cellIdentifier,
-                                                       for: indexPath) as? TwoLineImageOverlayCell else {
-            logger.log("Failed to dequeue TwoLineImageOverlayCell at indexPath: \(indexPath)",
-                       level: .fatal,
-                       category: .library)
-            return UITableViewCell()
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: TwoLineImageOverlayCell.cellIdentifier,
+                                                 for: indexPath) as! TwoLineImageOverlayCell
 
         return configureDownloadedFile(cell, for: indexPath)
     }
@@ -317,10 +318,9 @@ class DownloadsPanel: UIViewController,
 
         let title = viewModel.headerTitle(for: section) ?? ""
 
-        let headerViewModel = SiteTableViewHeaderModel(
-            title: title,
-            accessory: .none
-        )
+        let headerViewModel = SiteTableViewHeaderModel(title: title,
+                                                       isCollapsible: false,
+                                                       collapsibleState: nil)
         headerView.configure(headerViewModel)
         headerView.showBorder(for: .top, !viewModel.isFirstSection(section))
         headerView.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
@@ -370,7 +370,6 @@ class DownloadsPanel: UIViewController,
             style: .destructive,
             title: .TabsTray.DownloadsPanel.DeleteTitle
         ) { [weak self] (_, _, completion) in
-            // Swipe > delete action
             guard let strongSelf = self else { completion(false); return }
 
             if let downloadedFile = strongSelf.viewModel.downloadedFileForIndexPath(indexPath),
@@ -396,7 +395,6 @@ class DownloadsPanel: UIViewController,
             style: .normal,
             title: .TabsTray.DownloadsPanel.ShareTitle
         ) { [weak self] (_, view, completion) in
-            // Swipe > share action (which is different from the row selection share behaviour)
             guard let strongSelf = self else { completion(false); return }
 
             view.backgroundColor = strongSelf.view.tintColor

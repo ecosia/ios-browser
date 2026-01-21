@@ -5,6 +5,7 @@
 import Foundation
 import Common
 import Storage
+import Shared
 import WebKit
 import ComponentLibrary
 
@@ -104,11 +105,11 @@ class CredentialAutofillCoordinator: BaseCoordinator {
             }
         }
 
-        let bottomSheetViewModel = BottomSheetViewModel(
-            shouldDismissForTapOutside: false,
+        var bottomSheetViewModel = BottomSheetViewModel(
             closeButtonA11yLabel: .CloseButtonTitle,
             closeButtonA11yIdentifier: AccessibilityIdentifiers.Autofill.creditCardCloseButton
         )
+        bottomSheetViewModel.shouldDismissForTapOutside = false
 
         let bottomSheetVC = BottomSheetViewController(
             viewModel: bottomSheetViewModel,
@@ -132,7 +133,11 @@ class CredentialAutofillCoordinator: BaseCoordinator {
             logger: logger,
             onLoginCellTap: { [weak self] login in
                 guard let self else { return }
-                guard let currentTab = self.tabManager.selectedTab else {
+                let rustLoginsEncryption = RustLoginEncryptionKeys()
+
+                guard let currentTab = self.tabManager.selectedTab,
+                      let decryptLogin = rustLoginsEncryption.decryptSecureFields(login: login)
+                else {
                     router.dismiss(animated: true)
                     parentCoordinator?.didFinish(from: self)
                     return
@@ -143,9 +148,9 @@ class CredentialAutofillCoordinator: BaseCoordinator {
                     loginData: LoginInjectionData(
                         requestId: currentRequestId,
                         logins: [LoginItem(
-                            username: login.username,
-                            password: login.password,
-                            hostname: login.origin
+                            username: decryptLogin.secFields.username,
+                            password: decryptLogin.secFields.password,
+                            hostname: decryptLogin.fields.origin
                         )]
                     )
                 )
@@ -177,11 +182,11 @@ class CredentialAutofillCoordinator: BaseCoordinator {
             )
         }
 
-        let bottomSheetViewModel = BottomSheetViewModel(
-            shouldDismissForTapOutside: false,
+        var bottomSheetViewModel = BottomSheetViewModel(
             closeButtonA11yLabel: .CloseButtonTitle,
             closeButtonA11yIdentifier: AccessibilityIdentifiers.Autofill.loginCloseButton
         )
+        bottomSheetViewModel.shouldDismissForTapOutside = false
 
         let bottomSheetVC = BottomSheetViewController(
             viewModel: bottomSheetViewModel,

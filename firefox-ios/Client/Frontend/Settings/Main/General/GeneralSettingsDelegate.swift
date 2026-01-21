@@ -6,36 +6,12 @@ import Foundation
 
 /// Child settings pages general actions
 protocol GeneralSettingsDelegate: AnyObject {
-    @MainActor
-    func pressedCustomizeAppIcon()
-
-    @MainActor
     func pressedHome()
-
-    @MainActor
+    func pressedMailApp()
     func pressedNewTab()
-
-    @MainActor
     func pressedSearchEngine()
-
-    @MainActor
     func pressedSiri()
-
-    @MainActor
     func pressedToolbar()
-
-    @MainActor
+    func pressedTabs()
     func pressedTheme()
-
-    @MainActor
-    func pressedBrowsing()
-
-    @MainActor
-    func pressedSummarize()
-
-    @MainActor
-    func pressedTranslation()
-
-    @MainActor
-    func pressedAutoFillsPasswords()
 }

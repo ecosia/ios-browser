@@ -10,7 +10,7 @@ import FocusAppServices
 let NimbusUseStagingServerDefault = "NimbusUseStagingServer"
 let NimbusUsePreviewCollectionDefault = "NimbusUsePreviewCollection"
 
-final class NimbusWrapper {
+class NimbusWrapper {
     static let shared = NimbusWrapper()
 
     private init() {

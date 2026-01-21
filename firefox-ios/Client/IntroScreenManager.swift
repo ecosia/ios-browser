@@ -4,56 +4,25 @@
 
 import Foundation
 import Shared
+import Ecosia
 
-protocol IntroScreenManagerProtocol {
-    var shouldShowIntroScreen: Bool { get }
-    var isModernOnboardingEnabled: Bool { get }
-    var onboardingVariant: OnboardingVariant { get }
-    func didSeeIntroScreen()
-}
-
-struct IntroScreenManager: FeatureFlaggable, IntroScreenManagerProtocol {
+struct IntroScreenManager {
     var prefs: Prefs
 
     var shouldShowIntroScreen: Bool {
-        prefs.intForKey(PrefsKeys.IntroSeen) == nil
+        /* Ecosia
+           The `PrefsKeys.IntroSeen` is also used to flag the DefaultBrowser card showing
+           for some reason. So the in the version based on top of the v104, the check to
+           show the IntroScreen/Onboarding is perfomed at AppDelegate level
+           checking against the `User.shared.firstTime` flag.
+           We are now performing the check here so the whole coordinators/managers patters will work
+           as usual.
+         */
+        // prefs.intForKey(PrefsKeys.IntroSeen) == nil
+        User.shared.firstTime
     }
 
     func didSeeIntroScreen() {
         prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-    }
-
-    var isModernOnboardingEnabled: Bool {
-        featureFlags.isFeatureEnabled(.modernOnboardingUI, checking: .buildAndUser)
-    }
-
-    var shouldUseBrandRefreshConfiguration: Bool {
-        featureFlags.isFeatureEnabled(.shouldUseBrandRefreshConfiguration, checking: .buildAndUser)
-    }
-
-    var shouldUseJapanConfiguration: Bool {
-        featureFlags.isFeatureEnabled(.shouldUseJapanConfiguration, checking: .buildAndUser)
-    }
-
-    /// Determines the onboarding variant based on feature flags.
-    ///
-    /// Priority order (if multiple flags are enabled):
-    /// 1. Japan configuration (highest priority)
-    /// 2. Brand refresh configuration
-    /// 3. Modern onboarding
-    /// 4. Legacy onboarding (lowest priority)
-    ///
-    /// Note: If both `shouldUseJapanConfiguration` and `shouldUseBrandRefreshConfiguration`
-    /// are enabled, Japan configuration takes precedence.
-    var onboardingVariant: OnboardingVariant {
-        if isModernOnboardingEnabled && shouldUseJapanConfiguration {
-            return .japan
-        } else if isModernOnboardingEnabled && shouldUseBrandRefreshConfiguration {
-            return .brandRefresh
-        } else if isModernOnboardingEnabled {
-            return .modern
-        } else {
-            return .legacy
-        }
     }
 }

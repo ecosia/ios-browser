@@ -3,12 +3,12 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Shared
 import Common
 
 @testable import Client
 
-@MainActor
-class MockOnboardingCardDelegateController: UIViewController,
+class MockOnboardinCardDelegateController: UIViewController,
                                            OnboardingCardDelegate,
                                            OnboardingViewControllerProtocol,
                                            Themeable {
@@ -25,7 +25,7 @@ class MockOnboardingCardDelegateController: UIViewController,
             with: NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)))
     var didFinishFlow: (() -> Void)?
     var themeManager: ThemeManager = AppContainer.shared.resolve()
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
     func applyTheme() { }
 
@@ -34,7 +34,7 @@ class MockOnboardingCardDelegateController: UIViewController,
     var multipleChoiceAction: OnboardingMultipleChoiceAction?
 
     func handleBottomButtonActions(
-        for action: OnboardingActions,
+        for action: Client.OnboardingActions,
         from cardName: String,
         isPrimaryButton: Bool
     ) {

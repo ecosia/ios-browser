@@ -8,17 +8,16 @@ import Storage
 import Common
 
 import struct MozillaAppServices.LoginEntry
-import struct MozillaAppServices.Login
+import struct MozillaAppServices.EncryptedLogin
 
 class Authenticator {
     fileprivate static let MaxAuthenticationAttempts = 3
 
-    @MainActor
     static func handleAuthRequest(
         _ viewController: UIViewController,
         challenge: URLAuthenticationChallenge,
         loginsHelper: LoginsHelper?,
-        completionHandler: @escaping @Sendable (Result<LoginEntry, Error>) -> Void
+        completionHandler: @escaping ((Result<LoginEntry, Error>) -> Void)
     ) {
         // If there have already been too many login attempts, we'll just fail.
         if challenge.previousFailureCount >= Authenticator.MaxAuthenticationAttempts {
@@ -95,7 +94,7 @@ class Authenticator {
         _ challenge: URLAuthenticationChallenge,
         fromLoginsProvider loginsProvider: RustLogins,
         logger: Logger = DefaultLogger.shared,
-        completionHandler: @escaping @Sendable (Result<URLCredential?, Error>) -> Void
+        completionHandler: @escaping (Result<URLCredential?, Error>) -> Void
     ) {
         loginsProvider.getLoginsFor(protectionSpace: challenge.protectionSpace, withUsername: nil) { result in
             switch result {
@@ -142,14 +141,14 @@ class Authenticator {
         }
     }
 
-    private static func filterHttpAuthLogins(logins: [Login]) -> [Login] {
+    private static func filterHttpAuthLogins(logins: [EncryptedLogin]) -> [EncryptedLogin] {
         return logins.compactMap {
             // HTTP Auth must have nil formSubmitUrl and a non-nil httpRealm.
             return $0.formSubmitUrl == nil && $0.httpRealm != nil ? $0 : nil
         }
     }
 
-    private static func handleDuplicatedEntries(logins: [Login],
+    private static func handleDuplicatedEntries(logins: [EncryptedLogin],
                                                 challenge: URLAuthenticationChallenge,
                                                 loginsProvider: RustLogins) -> URLCredential? {
         let credentials = (logins.first(where: { login in
@@ -168,12 +167,10 @@ class Authenticator {
         return credentials
     }
 
-    private static func handleUnmatchedSchemes(
-        logins: [Login],
-        challenge: URLAuthenticationChallenge,
-        loginsProvider: RustLogins,
-        completionHandler: @escaping @Sendable (Result<URLCredential?, Error>) -> Void
-    ) {
+    private static func handleUnmatchedSchemes(logins: [EncryptedLogin],
+                                               challenge: URLAuthenticationChallenge,
+                                               loginsProvider: RustLogins,
+                                               completionHandler: @escaping (Result<URLCredential?, Error>) -> Void) {
         let login = logins[0]
         let credentials = login.credentials
         let new = LoginEntry(credentials: login.credentials, protectionSpace: challenge.protectionSpace)
@@ -187,7 +184,6 @@ class Authenticator {
         }
     }
 
-    @MainActor
     fileprivate static func promptForUsernamePassword(
         _ viewController: UIViewController,
         credentials: URLCredential?,

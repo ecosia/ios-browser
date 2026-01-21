@@ -5,14 +5,12 @@
 import Foundation
 import UIKit
 import Common
+import Shared
+import ComponentLibrary
 
 class TrackingProtectionVerifiedByView: UIView {
-    private struct UX {
-        static let labelsVerticalMargins: CGFloat = 11
-    }
-
     private let verifiedByLabel: UILabel = .build { label in
-        label.font = FXFontStyles.Regular.body.scaledFont()
+        label.font = FXFontStyles.Regular.subheadline.scaledFont()
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .left
@@ -29,7 +27,7 @@ class TrackingProtectionVerifiedByView: UIView {
 
     // MARK: View Setup
     private func setupView() {
-        layer.cornerRadius = TPMenuUX.UX.newStyleCornerRadius
+        layer.cornerRadius = TPMenuUX.UX.viewCornerRadius
         layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         layer.masksToBounds = true
 
@@ -38,8 +36,8 @@ class TrackingProtectionVerifiedByView: UIView {
         NSLayoutConstraint.activate([
             verifiedByLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: TPMenuUX.UX.horizontalMargin),
             verifiedByLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -TPMenuUX.UX.horizontalMargin),
-            verifiedByLabel.topAnchor.constraint(equalTo: topAnchor, constant: UX.labelsVerticalMargins),
-            verifiedByLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.labelsVerticalMargins)
+            verifiedByLabel.topAnchor.constraint(equalTo: topAnchor, constant: TPMenuUX.UX.horizontalMargin),
+            verifiedByLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -TPMenuUX.UX.horizontalMargin)
         ])
     }
 

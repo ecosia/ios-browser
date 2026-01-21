@@ -1,48 +1,48 @@
 /* (No Comment) */
-"2GqvPe" = "Mergi la linkul copiat";
+"2GqvPe" = "Go to Copied Link";
 
 /* (No Comment) */
-"ctDNmu" = "Acces rapid la diverse acțiuni Firefox";
+"ctDNmu" = "Quick access to various Ecosia actions";
 
 /* (No Comment) */
-"eHmH1H" = "Elimină filele private";
+"eHmH1H" = "Clear Private Tabs";
 
 /* (No Comment) */
-"eqyNJg" = "Acțiune rapidă";
+"eqyNJg" = "Quick Action";
 
 /* (No Comment) */
-"eV8mOT" = "Tip de acțiune rapidă";
+"eV8mOT" = "Quick Action Type";
 
 /* (No Comment) */
-"fi3W24-2GqvPe" = "Există ${count} (de) opțiuni care se potrivesc cu „Mergi la linkul copiat”.";
+"fi3W24-2GqvPe" = "There are ${count} options matching ‘Go to Copied Link’.";
 
 /* (No Comment) */
-"fi3W24-eHmH1H" = "Există ${count} (de) opțiuni care se potrivesc cu „Șterge filele private”.";
+"fi3W24-eHmH1H" = "There are ${count} options matching ‘Clear Private Tabs’.";
 
 /* (No Comment) */
-"fi3W24-scEmjs" = "Există ${count} (de) opțiuni care se potrivesc cu „Căutare privată nouă”.";
+"fi3W24-scEmjs" = "There are ${count} options matching ‘New Private Search’.";
 
 /* (No Comment) */
-"fi3W24-xRJbBP" = "Există ${count} (de) opțiuni care se potrivesc cu „Căutare nouă”.";
+"fi3W24-xRJbBP" = "There are ${count} options matching ‘New Search’.";
 
 /* (No Comment) */
-"PzSrmZ-2GqvPe" = "Doar pentru confirmare, vrei „Mergi la linkul copiat”?";
+"PzSrmZ-2GqvPe" = "Just to confirm, you wanted ‘Go to Copied Link’?";
 
 /* (No Comment) */
-"PzSrmZ-eHmH1H" = "Doar pentru confirmare, vrei „Șterge filele private”?";
+"PzSrmZ-eHmH1H" = "Just to confirm, you wanted ‘Clear Private Tabs’?";
 
 /* (No Comment) */
-"PzSrmZ-scEmjs" = "Doar pentru confirmare, vrei „Căutare privată nouă”?";
+"PzSrmZ-scEmjs" = "Just to confirm, you wanted ‘New Private Search’?";
 
 /* (No Comment) */
-"PzSrmZ-xRJbBP" = "Doar pentru confirmare, vrei „Căutare nouă”?";
+"PzSrmZ-xRJbBP" = "Just to confirm, you wanted ‘New Search’?";
 
 /* (No Comment) */
-"scEmjs" = "Căutare privată nouă";
+"scEmjs" = "New Private Search";
 
 /* (No Comment) */
-"w9jdPK" = "Acțiune rapidă";
+"w9jdPK" = "Quick Action";
 
 /* (No Comment) */
-"xRJbBP" = "Căutare nouă";
+"xRJbBP" = "New Search";
 

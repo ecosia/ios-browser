@@ -5,10 +5,7 @@
 "New Tab" = "Нов раздел";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox използва камерата ви, за да сканира QR кодове и да прави снимки и видео.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox изисква Face ID, за да има достъп до запазените от вас пароли и методи на плащане.";
+"NSCameraUsageDescription" = "От тук може да правите и качвате снимки.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Страниците, които посещавате може да поискат вашето местоположение.";
@@ -20,5 +17,5 @@
 "NSPhotoLibraryAddUsageDescription" = "От тук може да запазвате снимки.";
 
 /* (No Comment) */
-"Scan QR Code" = "Сканиране на QR";
+"Scan QR Code" = "Сканиране на QR код";
 

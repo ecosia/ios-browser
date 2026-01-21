@@ -8,100 +8,71 @@ import Common
 
 @testable import Client
 
-@MainActor
 class AccountSyncHandlerTests: XCTestCase {
     private var profile: MockProfile!
     private var syncManager: ClientSyncManagerSpy!
     private var queue: MockDispatchQueue!
-    private var mockWindowManager: MockWindowManager!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         self.profile = MockProfile()
         self.syncManager = profile.syncManager as? ClientSyncManagerSpy
         self.queue = MockDispatchQueue()
-        let mockTabManager =  MockTabManager()
-        DependencyHelperMock().bootstrapDependencies(
-            injectedWindowManager: mockWindowManager,
-            injectedTabManager: mockTabManager
-        )
-        mockTabManager.recentlyAccessedNormalTabs = [createTab(profile: profile)]
-        mockWindowManager = MockWindowManager(
-            wrappedManager: WindowManagerImplementation(),
-            tabManager: mockTabManager
-        )
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         self.syncManager = nil
         self.profile = nil
         self.queue = nil
-        self.mockWindowManager = nil
-        DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     func testTabDidGainFocus_doesntSyncWithoutAccount() {
-        let expectation = XCTestExpectation(description: "sync is not called without an account")
-        expectation.isInverted = true
         profile.hasSyncableAccountMock = false
-        let subject = AccountSyncHandler(with: profile, queue: queue, onSyncCompleted: {
-            expectation.fulfill()
-        })
+        let subject = AccountSyncHandler(with: profile, queue: queue)
         let tab = createTab(profile: profile)
         subject.tabDidGainFocus(tab)
 
-        wait(for: [expectation], timeout: 1.0)
-        XCTAssertEqual(profile.storeAndSyncTabsCalled, 0)
+        XCTAssertEqual(syncManager.syncNamedCollectionsCalled, 0)
     }
 
     func testTabDidGainFocus_syncWithAccount() {
-        let expectation = XCTestExpectation(description: "storeAndSyncTabs called after listed time of tab gaining focus")
-        let subject = AccountSyncHandler(with: profile, debounceTime: 0.1, queue: queue, queueDelay: 0.1, onSyncCompleted: {
+        let subject = AccountSyncHandler(with: profile, queue: queue)
+        let tab = createTab(profile: profile)
+        subject.tabDidGainFocus(tab)
+
+        XCTAssertEqual(syncManager.syncNamedCollectionsCalled, 1)
+    }
+
+    func testTabDidGainFocus_highThrottleTime_executedAtMostOnce() {
+        let threshold: Double = 1000
+        let stepWaitTime = 2.0
+        let subject = AccountSyncHandler(with: profile, throttleTime: threshold, queue: DispatchQueue.global())
+        let tab = createTab(profile: profile)
+
+        subject.tabDidGainFocus(tab)
+        subject.tabDidGainFocus(tab)
+
+        let expectation = XCTestExpectation(description: "SyncNamedCollectionsCalled value expectation")
+        DispatchQueue.main.asyncAfter(deadline: .now() + stepWaitTime) {
+            XCTAssertEqual(self.syncManager.syncNamedCollectionsCalled, 1)
             expectation.fulfill()
-        })
-        let tab = createTab(profile: profile)
-        subject.tabDidGainFocus(tab)
-
-        wait(for: [expectation], timeout: 1.0)
-        XCTAssertEqual(profile.storeAndSyncTabsCalled, 1)
+        }
+        wait(for: [expectation], timeout: stepWaitTime * 2)
     }
 
-    func testTabDidGainFocus_multipleActions_executedAtMostOnce() {
-        let expectation = XCTestExpectation(
-            description: "storeAndSyncTabs only called once from multiple tab actions")
-        let subject = AccountSyncHandler(
-            with: profile, debounceTime: 0.1, queue: DispatchQueue.global(), queueDelay: 0.1, onSyncCompleted: {
-                expectation.fulfill()
-            })
-        let tab = createTab(profile: profile)
-
-        subject.tabDidGainFocus(tab)
-        subject.tabDidGainFocus(tab)
-
-        wait(for: [expectation], timeout: 1.0)
-        XCTAssertEqual(profile.storeAndSyncTabsCalled, 1)
-    }
-
-    func testTabDidGainFocus_multipleDebounce_withWithMultipleSyncs() {
-        let expectation = XCTestExpectation(
-            description: "storeAndSyncTabs called multiple times if outside of debounce time")
-        expectation.expectedFulfillmentCount = 2
-        let subject = AccountSyncHandler(
-            with: profile, debounceTime: 0.1, queue: DispatchQueue.global(), queueDelay: 0.1, onSyncCompleted: {
-                expectation.fulfill()
-            })
+    func testTabDidGainFocus_multipleThrottle_withWaitSyncOnce() {
+        let subject = AccountSyncHandler(with: profile, throttleTime: 0.2, queue: DispatchQueue.global())
         let tab = createTab(profile: profile)
         subject.tabDidGainFocus(tab)
-        subject.tabDidLoseFocus(tab)
-        wait(1.0)
         subject.tabDidGainFocus(tab)
-        subject.tabDidLoseFocus(tab)
         subject.tabDidGainFocus(tab)
+        subject.tabDidGainFocus(tab)
+        subject.tabDidGainFocus(tab)
+        wait(0.5)
 
-        wait(for: [expectation], timeout: 1.0)
-        XCTAssertEqual(profile.storeAndSyncTabsCalled, 2)
+        XCTAssertEqual(syncManager.syncNamedCollectionsCalled, 1)
     }
 }
 

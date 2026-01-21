@@ -1,8 +1,7 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-//
-// swiftlint:disable comment_spacing
+// swiftlint:disable comment_spacing file_header
+//// This Source Code Form is subject to the terms of the Mozilla Public
+//// License, v. 2.0. If a copy of the MPL was not distributed with this
+//// file, You can obtain one at http://mozilla.org/MPL/2.0/
 //
 //import Common
 //import Foundation
@@ -74,7 +73,7 @@
 //        return config
 //    }
 //
-//    /// Return true if Adjust should be enabled. If the user has disabled the Send Anonymous Usage Data
+//    /// Return true if Adjust should be enabled. If the user has disabled the Send Anonymous Usage Data 
 //    /// then we only do one ping to get the attribution and turn it off (i.e. we only enable it if we
 //    /// have not seen the attribution data yet).
 //    private var shouldEnable: Bool {
@@ -124,4 +123,4 @@
 //        return true
 //    }
 //}
-// swiftlint:enable comment_spacing
+// swiftlint:enable comment_spacing file_header

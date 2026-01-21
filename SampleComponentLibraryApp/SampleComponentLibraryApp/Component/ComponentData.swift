@@ -10,8 +10,8 @@ struct ComponentData {
                 FadeScrollViewComponentViewModel(),
                 ContextualHintViewComponentViewModel(),
                 BottomSheetComponentViewModel(),
+                CardViewComponentViewModel(),
                 ShadowCardViewComponentViewModel(),
-                CollapsibleCardViewComponentViewModel(),
-                HeadersComponentViewModel()]
+                CollapsibleCardViewComponentViewModel()]
     }
 }

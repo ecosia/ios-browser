@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class TrackingProtectionManager {
+class TrackingProtectionManager {
     @Published var trackingProtectionStatus: TrackingProtectionStatus
 
     init(isTrackingEnabled: () -> Bool) {

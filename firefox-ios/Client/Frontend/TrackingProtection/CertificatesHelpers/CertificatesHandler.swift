@@ -43,9 +43,9 @@ class CertificatesHandler {
 }
 
 // Define a function to get the certificates for a given URL
-func getCertificates(for url: URL, completion: @escaping @Sendable ([Certificate]?) -> Void) {
+func getCertificates(for url: URL, completion: @escaping ([Certificate]?) -> Void) {
     // Create a URL session with a custom delegate
-    let session = URLSession(configuration: .ephemeral,
+    let session = URLSession(configuration: .default,
                              delegate: CertificateDelegate(completion: completion),
                              delegateQueue: nil)
 
@@ -63,10 +63,10 @@ func getCertificates(for url: URL, completion: @escaping @Sendable ([Certificate
 }
 
 // Custom delegate to handle the authentication challenge
-final class CertificateDelegate: NSObject, URLSessionDelegate {
-    private let completion: @Sendable ([Certificate]?) -> Void
+class CertificateDelegate: NSObject, URLSessionDelegate {
+    private let completion: ([Certificate]?) -> Void
 
-    init(completion: @escaping @Sendable ([Certificate]?) -> Void) {
+    init(completion: @escaping ([Certificate]?) -> Void) {
         self.completion = completion
     }
 

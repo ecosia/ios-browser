@@ -4,25 +4,25 @@
 
 import XCTest
 @testable import Client
-import Shared
+// Ecosia: Remove Shared as we import Client
+// import Shared
 import Common
 
-@MainActor
 class VersionSettingTests: XCTestCase {
     private var delegate: MockDebugSettingsDelegate!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
         DependencyHelperMock().bootstrapDependencies()
         delegate = MockDebugSettingsDelegate()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         DependencyHelperMock().reset()
         delegate = nil
-        try await super.tearDown()
     }
 
     func testCopyAppVersion() {
@@ -39,7 +39,10 @@ class VersionSettingTests: XCTestCase {
 
         // Then
         let appVersionString = UIPasteboard.general.string
+        /* Ecosia: Update appversion predicate
         let appVersionPredicate = (appVersionString?.contains("Firefox") ?? false) == true
+        */
+        let appVersionPredicate = (appVersionString?.contains("Ecosia") ?? false) == true
         XCTAssertNotNil(appVersionString, "App version not copied")
         XCTAssert(appVersionPredicate, "Pasteboard doesn't contain app version")
     }

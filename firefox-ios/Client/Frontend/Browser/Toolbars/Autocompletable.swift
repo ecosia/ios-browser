@@ -5,6 +5,5 @@
 import Foundation
 
 protocol Autocompletable: UIView {
-    @MainActor
     func setAutocompleteSuggestion(_ suggestion: String?)
 }

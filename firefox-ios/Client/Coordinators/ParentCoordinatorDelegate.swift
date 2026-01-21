@@ -6,6 +6,5 @@ import Foundation
 
 protocol ParentCoordinatorDelegate: AnyObject {
     /// Notifies the parent coordinator that a child coordinator has finished his session.
-    @MainActor
     func didFinish(from childCoordinator: Coordinator)
 }

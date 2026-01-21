@@ -5,14 +5,12 @@
 import XCTest
 @testable import WebEngine
 
-@MainActor
 final class SecurityManagerTests: XCTestCase {
     // MARK: - Internal Navigation
 
     func testCanNavigateGivenInternalNotAUrlThenRefused() {
-        let url = URL(string: "blabla")!
         let context = BrowsingContext(type: .internalNavigation,
-                                      url: url)
+                                      url: "blabla")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -21,9 +19,8 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     func testCanNavigateGivenInternalNoSchemeThenRefused() {
-        let url = URL(string: "banana.com")!
         let context = BrowsingContext(type: .internalNavigation,
-                                      url: url)
+                                      url: "banana.com")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -32,9 +29,8 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     func testCanNavigateGivenInternalAboutHTTPSThenAllowed() {
-        let url = URL(string: "https://mozilla.com")!
         let context = BrowsingContext(type: .internalNavigation,
-                                      url: url)
+                                      url: "https://mozilla.com")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -43,9 +39,8 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     func testCanNavigateGivenInternalAboutUrlThenAllowed() {
-        let url = URL(string: "about://home.com")!
         let context = BrowsingContext(type: .internalNavigation,
-                                      url: url)
+                                      url: "about://home.com")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -54,9 +49,8 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     func testCanNavigateGivenInternalAboutSchemeOnlyUrlThenRefused() {
-        let url = URL(string: "about:")!
         let context = BrowsingContext(type: .internalNavigation,
-                                      url: url)
+                                      url: "about:")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -65,10 +59,10 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     // MARK: - External Navigation
+
     func testCanNavigateGivenExternalNotAUrlThenRefused() {
-        let url = URL(string: "blabla")!
         let context = BrowsingContext(type: .externalNavigation,
-                                      url: url)
+                                      url: "blabla")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -77,9 +71,8 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     func testCanNavigateGivenExternalHTTPSURLThenAllowed() {
-        let url = URL(string: "https://mozilla.com")!
         let context = BrowsingContext(type: .externalNavigation,
-                                      url: url)
+                                      url: "https://mozilla.com")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -88,9 +81,8 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     func testCanNavigateGivenExternalHTTPURLThenAllowed() {
-        let url = URL(string: "http://mozilla.com")!
         let context = BrowsingContext(type: .externalNavigation,
-                                      url: url)
+                                      url: "http://mozilla.com")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -99,9 +91,8 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     func testCanNavigateGivenExternalDataURLThenAllowed() {
-        let url = URL(string: "data://someDataBlob.com")!
         let context = BrowsingContext(type: .externalNavigation,
-                                      url: url)
+                                      url: "data://someDataBlob.com")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -110,9 +101,8 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     func testCanNavigateGivenExternalJavascriptURLThenRefused() {
-        let url = URL(string: "javascript://badurl.com")!
         let context = BrowsingContext(type: .externalNavigation,
-                                      url: url)
+                                      url: "javascript://badurl.com")
         let subject = createSubject()
 
         let result = subject.canNavigateWith(browsingContext: context)
@@ -121,6 +111,7 @@ final class SecurityManagerTests: XCTestCase {
     }
 
     // MARK: Helper
+
     func createSubject() -> DefaultSecurityManager {
         let subject = DefaultSecurityManager()
         trackForMemoryLeaks(subject)

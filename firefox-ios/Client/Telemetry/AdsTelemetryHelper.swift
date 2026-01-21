@@ -3,17 +3,20 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Shared
 import WebKit
+/* Ecosia: Remove Glean
 import Glean
+ */
 
-enum BasicSearchProvider: String {
+public enum BasicSearchProvider: String {
     case google
     case duckduckgo
     case yahoo
     case bing
 }
 
-public struct SearchProviderModel: Sendable {
+public struct SearchProviderModel {
     typealias Predicate = (String) -> Bool
     let name: String
     let regexp: String
@@ -23,7 +26,7 @@ public struct SearchProviderModel: Sendable {
     let followOnParams: [String]
     let extraAdServersRegexps: [String]
 
-    static let searchProviderList = [
+    public static let searchProviderList = [
         SearchProviderModel(
             name: BasicSearchProvider.google.rawValue,
             regexp: #"^https:\/\/www\.google\.(?:.+)\/search"#,
@@ -95,7 +98,7 @@ extension SearchProviderModel {
     }
 }
 
-final class AdsTelemetryHelper: TabContentScript {
+class AdsTelemetryHelper: TabContentScript {
     fileprivate weak var tab: Tab?
 
     class func name() -> String {
@@ -127,7 +130,6 @@ final class AdsTelemetryHelper: TabContentScript {
         }
     }
 
-    @MainActor
     private func getProviderForMessage(message: WKScriptMessage) -> SearchProviderModel? {
         guard let body = message.body as? [String: Any], let url = body["url"] as? String else { return nil }
         for provider in SearchProviderModel.searchProviderList {
@@ -138,13 +140,17 @@ final class AdsTelemetryHelper: TabContentScript {
         return nil
     }
 
-    // MARK: Tracking
+    // Tracking
 
-    static func trackAdsFoundOnPage(providerName: String) {
+    public static func trackAdsFoundOnPage(providerName: String) {
+        /* Ecosia: Remove Glean
         GleanMetrics.BrowserSearch.withAds["provider-\(providerName)"].add()
+         */
     }
 
-    static func trackAdsClickedOnPage(providerName: String) {
+    public static func trackAdsClickedOnPage(providerName: String) {
+        /* Ecosia: Remove Glean
         GleanMetrics.BrowserSearch.adClicks["provider-\(providerName)"].add()
+         */
     }
 }

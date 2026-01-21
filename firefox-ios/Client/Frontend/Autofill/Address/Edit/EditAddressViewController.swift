@@ -14,13 +14,6 @@ class EditAddressViewController: UIViewController,
                                  WKScriptMessageHandler,
                                  Themeable,
                                  KeyboardHelperDelegate {
-    private struct UX {
-        static let stackViewInset: CGFloat = 16
-        static let stackViewSpacing: CGFloat = 16
-        static let removeButtonHeight: CGFloat = 44
-        static let roundedCornerRadius: CGFloat = 24
-    }
-
     private lazy var removeButton: RemoveAddressButton = {
         let button = RemoveAddressButton()
         button.setTitle(.Addresses.Settings.Edit.RemoveAddressButtonTitle, for: .normal)
@@ -42,7 +35,7 @@ class EditAddressViewController: UIViewController,
     var model: AddressListViewModel
     private let logger: Logger
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
     var currentWindowUUID: WindowUUID? { model.windowUUID }
     var webView: WKWebView? { model.editAddressWebViewManager.webView }
@@ -66,10 +59,8 @@ class EditAddressViewController: UIViewController,
         super.viewDidLoad()
         setupWebView()
         setupRemoveButton()
+        listenForThemeChange(view)
         KeyboardHelper.defaultHelper.addDelegate(self)
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
-        applyTheme()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -85,7 +76,7 @@ class EditAddressViewController: UIViewController,
             theme: themeManager.getCurrentTheme(for: currentWindowUUID)
         )
         NSLayoutConstraint.activate([
-            removeButton.heightAnchor.constraint(equalToConstant: UX.removeButtonHeight)
+            removeButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
 
@@ -94,17 +85,6 @@ class EditAddressViewController: UIViewController,
         view.addSubview(stackView)
         stackView.addArrangedSubview(webView)
         stackView.isLayoutMarginsRelativeArrangement = true
-
-        if #available(iOS 26.0, *) {
-            stackView.layoutMargins = UIEdgeInsets(top: 0, left: UX.stackViewInset, bottom: 0, right: UX.stackViewInset)
-            stackView.spacing = UX.stackViewSpacing
-            webView.layer.cornerRadius = UX.roundedCornerRadius
-            webView.clipsToBounds = true
-
-            removeButton.layer.cornerRadius = UX.removeButtonHeight / 2
-            removeButton.clipsToBounds = true
-        }
-
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -232,7 +212,7 @@ class EditAddressViewController: UIViewController,
             title: String.Addresses.Settings.Edit.RemoveButtonTitle,
             style: .destructive,
             handler: { [weak self] _ in
-                self?.model.removeConfirmationButtonTap()
+                self?.model.removeConfimationButtonTap()
             }
         ))
 

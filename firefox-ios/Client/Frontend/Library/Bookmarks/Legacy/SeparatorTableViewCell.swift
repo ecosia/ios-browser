@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Shared
 
 class SeparatorTableViewCell: OneLineTableViewCell {
     override func applyTheme(theme: Theme) {

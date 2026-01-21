@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import ToolbarKit
+import Common
 
 final class ToolbarManagerTests: XCTestCase {
     // Address toolbar border

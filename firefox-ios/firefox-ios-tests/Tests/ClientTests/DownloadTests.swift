@@ -5,24 +5,23 @@
 import XCTest
 @testable import Client
 
-@MainActor
-final class DownloadTests: XCTestCase {
+class DownloadTests: XCTestCase {
     var download: Download!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         download = Download(originWindow: .XCTestDefaultUUID)
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         download = nil
-        try await super.tearDown()
     }
 
     func testDelegateMemoryLeak() {
         let mockDownloadDelegate = MockDownloadDelegate()
         download.delegate = mockDownloadDelegate
-        trackForMemoryLeaks(download, file: #filePath, line: #line)
+        trackForMemoryLeaks(download, file: #file, line: #line)
         download = nil
     }
 
@@ -34,7 +33,7 @@ final class DownloadTests: XCTestCase {
         download.cancel()
 
         // Check for memory leaks
-        trackForMemoryLeaks(download, file: #filePath, line: #line)
+        trackForMemoryLeaks(download, file: #file, line: #line)
 
         download = nil
     }
@@ -47,7 +46,7 @@ final class DownloadTests: XCTestCase {
         download.pause()
 
         // Check for memory leaks
-        trackForMemoryLeaks(download, file: #filePath, line: #line)
+        trackForMemoryLeaks(download, file: #file, line: #line)
 
         download = nil
     }
@@ -60,7 +59,7 @@ final class DownloadTests: XCTestCase {
         download.resume()
 
         // Check for memory leaks
-        trackForMemoryLeaks(download, file: #filePath, line: #line)
+        trackForMemoryLeaks(download, file: #file, line: #line)
 
         download = nil
     }

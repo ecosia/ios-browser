@@ -7,7 +7,7 @@ import XCTest
 
 @testable import Client
 
-class WallpaperNetworkingModuleTests: XCTestCase, WallpaperTestDataProvider, @unchecked Sendable {
+class WallpaperNetworkingModuleTests: XCTestCase, WallpaperTestDataProvider {
     let url = URL(string: "my.testurl.com")!
 
     func testAsyncDataCall() async {
@@ -17,7 +17,7 @@ class WallpaperNetworkingModuleTests: XCTestCase, WallpaperTestDataProvider, @un
                                                httpVersion: nil,
                                                headerFields: nil)!
 
-        let session = MockURLSession(
+        let session = WallpaperURLSessionMock(
             with: expectedData,
             response: expectedResponse,
             and: nil
@@ -35,46 +35,57 @@ class WallpaperNetworkingModuleTests: XCTestCase, WallpaperTestDataProvider, @un
 
     func testServerReturnsError() async {
         let expectedError = URLError(.cannotConnectToHost)
-        let session = MockURLSession(with: nil,
-                                     response: nil,
-                                     and: expectedError)
+        let session = WallpaperURLSessionMock(with: nil,
+                                              response: nil,
+                                              and: expectedError)
         let subject = WallpaperNetworkingModule(with: session)
 
-        await assertAsyncThrowsEqual(URLError(.cannotConnectToHost)) { [url] in
+        do {
             _ = try await subject.data(from: url)
+            XCTFail("This test should throw an error, but it did not.")
+        } catch {
+            XCTAssertEqual(error as? URLError, expectedError)
         }
     }
 
     func testResponseUnder200() async {
         let response = createResponseWith(statusCode: Int.random(in: 0..<200))
-        let session = MockURLSession(with: nil,
-                                     response: response,
-                                     and: nil)
+        let session = WallpaperURLSessionMock(with: nil,
+                                              response: response,
+                                              and: nil)
         let subject = WallpaperNetworkingModule(with: session)
 
-        await assertAsyncThrowsEqual(URLError(.badServerResponse)) {
+        do {
             _ = try await subject.data(from: url)
+            XCTFail("This test should throw an error, but it did not.")
+        } catch {
+            XCTAssertEqual(error as! URLError,
+                           URLError(.badServerResponse))
         }
     }
 
     func testResponseOver300() async {
         let response = createResponseWith(statusCode: Int.random(in: 300...599))
-        let session = MockURLSession(with: nil,
-                                     response: response,
-                                     and: nil)
+        let session = WallpaperURLSessionMock(with: nil,
+                                              response: response,
+                                              and: nil)
         let subject = WallpaperNetworkingModule(with: session)
 
-        await assertAsyncThrowsEqual(URLError(.badServerResponse)) {
+        do {
             _ = try await subject.data(from: url)
+            XCTFail("This test should throw an error, but it did not.")
+        } catch {
+            XCTAssertEqual(error as! URLError,
+                           URLError(.badServerResponse))
         }
     }
 
     func testDataReturned() async {
         let response = createResponseWith(statusCode: Int.random(in: 200..<300))
         let data = getDataFromJSONFile(named: .goodData)
-        let session = MockURLSession(with: data,
-                                     response: response,
-                                     and: nil)
+        let session = WallpaperURLSessionMock(with: data,
+                                              response: response,
+                                              and: nil)
         let subject = WallpaperNetworkingModule(with: session)
 
         do {
@@ -87,13 +98,17 @@ class WallpaperNetworkingModuleTests: XCTestCase, WallpaperTestDataProvider, @un
 
     func testDataNotReturnedButWithGoodResponse() async {
         let response = createResponseWith(statusCode: Int.random(in: 200..<300))
-        let session = MockURLSession(with: nil,
-                                     response: response,
-                                     and: nil)
+        let session = WallpaperURLSessionMock(with: nil,
+                                              response: response,
+                                              and: nil)
         let subject = WallpaperNetworkingModule(with: session)
 
-        await assertAsyncThrowsEqual(WallpaperServiceError.dataUnavailable) {
+        do {
             _ = try await subject.data(from: url)
+            XCTFail("This test should throw an error, but it did not.")
+        } catch {
+            XCTAssertEqual(error as! WallpaperServiceError,
+                           WallpaperServiceError.dataUnavailable)
         }
     }
 }

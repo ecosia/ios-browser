@@ -2,23 +2,21 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Common
 import Foundation
 
 class SearchSetting: Setting {
-    private let searchEnginesManager: SearchEnginesManagerProvider
+    private let profile: Profile
     private weak var settingsDelegate: GeneralSettingsDelegate?
 
     override var accessoryView: UIImageView? {
-        guard let theme else { return nil }
         return SettingDisclosureUtility.buildDisclosureIndicator(theme: theme)
     }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
-    override var status: NSAttributedString? {
+    override var status: NSAttributedString {
         return NSAttributedString(
-            string: searchEnginesManager.defaultEngine?.shortName ?? ""
+            string: profile.searchEnginesManager.defaultEngine?.shortName ?? ""
         )
     }
 
@@ -26,11 +24,11 @@ class SearchSetting: Setting {
         return AccessibilityIdentifiers.Settings.Search.title
     }
 
-    init(settingsDelegate: GeneralSettingsDelegate?,
-         searchEnginesManager: SearchEnginesManagerProvider,
-         theme: Theme) {
-        self.searchEnginesManager = searchEnginesManager
+    init(settings: SettingsTableViewController,
+         settingsDelegate: GeneralSettingsDelegate?) {
+        self.profile = settings.profile
         self.settingsDelegate = settingsDelegate
+        let theme = settings.themeManager.getCurrentTheme(for: settings.windowUUID)
         super.init(
             title: NSAttributedString(
                 string: .AppSettingsSearch,

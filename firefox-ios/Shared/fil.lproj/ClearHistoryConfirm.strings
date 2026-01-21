@@ -1,5 +1,5 @@
 /* The cancel button when confirming clear history. */
-"Cancel" = "Ikansela";
+"Cancel" = "Kanselahin";
 
 /* The confirmation button that clears history even when Sync is connected. */
 "OK" = "OK";

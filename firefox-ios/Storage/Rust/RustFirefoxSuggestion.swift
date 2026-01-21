@@ -61,10 +61,8 @@ public struct RustFirefoxSuggestion: Equatable {
             blockId,
             advertiser,
             iabCategory,
-            _,
             impressionUrlString,
             clickUrlString,
-            _,
             _,
             _
         ) = suggestion {

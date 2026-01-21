@@ -4,6 +4,7 @@
 
 import Common
 import UIKit
+import Shared
 
 // MARK: - PhotonActionSheetLineSeparator
 class PhotonActionSheetLineSeparator: UITableViewHeaderFooterView, ReusableCell, ThemeApplicable {

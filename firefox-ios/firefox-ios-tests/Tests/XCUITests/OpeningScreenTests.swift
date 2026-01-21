@@ -12,11 +12,11 @@ class OpeningScreenTests: BaseTestCase {
         // Close the app from app switcher. Relaunch the app
         closeFromAppSwitcherAndRelaunch()
         // After re-launching the app, the last visited page is displayed
-        let url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
-        mozWaitForValueContains(url, value: "localhost")
+        let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
+        mozWaitForValueContains(url, value: "test-mozilla-org")
         // Background and restore Firefox
         restartInBackground()
         // After re-launching the app, the last visited page is displayed
-        mozWaitForValueContains(url, value: "localhost")
+        mozWaitForValueContains(url, value: "test-mozilla-org")
     }
 }

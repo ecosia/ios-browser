@@ -8,14 +8,14 @@ import XCTest
 @testable import Client
 
 final class SearchEngineSelectionStateTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         DependencyHelperMock().reset()
-        try await super.tearDown()
+        super.tearDown()
     }
 
     func testInitialization() {
@@ -25,15 +25,14 @@ final class SearchEngineSelectionStateTests: XCTestCase {
         XCTAssertEqual(initialState.searchEngines, [])
     }
 
-    @MainActor
     func testDidLoadSearchEngines() {
         let initialState = createSubject()
         let reducer = searchEngineSelectionReducer()
 
-        let expectedResult = [
+        let expectedResult: [OpenSearchEngine] = [
             OpenSearchEngineTests.generateOpenSearchEngine(type: .wikipedia, withImage: UIImage()),
             OpenSearchEngineTests.generateOpenSearchEngine(type: .youtube, withImage: UIImage())
-        ].map({ $0.generateModel() })
+        ]
 
         XCTAssertEqual(initialState.searchEngines, [])
 
@@ -47,31 +46,6 @@ final class SearchEngineSelectionStateTests: XCTestCase {
         )
 
         XCTAssertEqual(newState.searchEngines, expectedResult)
-        XCTAssertNil(newState.selectedSearchEngine)
-    }
-
-    @MainActor
-    func testDidTapSearchEngine() {
-        let initialState = createSubject()
-        let reducer = searchEngineSelectionReducer()
-
-        let selectedSearchEngine = OpenSearchEngineTests.generateOpenSearchEngine(type: .wikipedia, withImage: UIImage())
-                                   .generateModel()
-
-        XCTAssertEqual(initialState.searchEngines, [])
-        XCTAssertNil(initialState.selectedSearchEngine)
-
-        let newState = reducer(
-            initialState,
-            SearchEngineSelectionAction(
-                windowUUID: .XCTestDefaultUUID,
-                actionType: SearchEngineSelectionActionType.didTapSearchEngine,
-                selectedSearchEngine: selectedSearchEngine
-            )
-        )
-
-        XCTAssertTrue(newState.searchEngines.isEmpty)
-        XCTAssertEqual(newState.selectedSearchEngine, selectedSearchEngine)
     }
 
     // MARK: - Private

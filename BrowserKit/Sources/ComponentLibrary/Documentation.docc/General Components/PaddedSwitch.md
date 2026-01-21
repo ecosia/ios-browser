@@ -1,10 +1,10 @@
 # ``ComponentLibrary/PaddedSwitch``
 
-The control used as an on/off toggle.
+The button which is used for toggle actions.
 
 ## Overview
 
-`PaddedSwitch` is a subclass of `UIView`. It contains a ``ThemedSwitch``, adding some padding for the width of that control. This switch view should be configured through its view model ``PaddedSwitchViewModel``.
+The `PaddedSwitch` is a subclass of the `UIView`. It contains a ``ThemedSwitch``, adding some padding for the width of that control. This switch view should be configured through it's view model ``PaddedSwitchViewModel``.
 
 ## Illustration
 

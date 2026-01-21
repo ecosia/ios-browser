@@ -5,10 +5,9 @@
 import Common
 import ComponentLibrary
 import UIKit
+import Shared
 
-class CreditCardBottomSheetFooterView: UITableViewHeaderFooterView,
-                                       ReusableCell,
-                                       ThemeApplicable {
+class CreditCardBottomSheetFooterView: UITableViewHeaderFooterView, ReusableCell, ThemeApplicable {
     private struct UX {
         static let manageCardsButtonLeadingSpace: CGFloat = 0
         static let manageCardsButtonTopSpace: CGFloat = 24

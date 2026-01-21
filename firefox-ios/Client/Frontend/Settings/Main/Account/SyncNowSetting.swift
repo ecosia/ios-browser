@@ -6,8 +6,7 @@ import Common
 import Foundation
 import Shared
 
-class SyncNowSetting: WithAccountSetting,
-                      Notifiable {
+class SyncNowSetting: WithAccountSetting {
     private weak var settingsDelegate: AccountSettingsDelegate?
     private var notificationCenter: NotificationProtocol
 
@@ -28,13 +27,14 @@ class SyncNowSetting: WithAccountSetting,
         self.notificationCenter = notificationCenter
         super.init(settings: settings)
 
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [
-                .ProfileDidFinishSyncing
-            ]
-        )
+        notificationCenter.addObserver(self,
+                                       selector: #selector(stopRotateSyncIcon),
+                                       name: .ProfileDidFinishSyncing,
+                                       object: nil)
+    }
+
+    deinit {
+        notificationCenter.removeObserver(self)
     }
 
     private lazy var timestampFormatter: DateFormatter = {
@@ -43,9 +43,7 @@ class SyncNowSetting: WithAccountSetting,
         return formatter
     }()
 
-    private var syncNowTitle: NSAttributedString? {
-        guard let theme else { return nil }
-
+    private var syncNowTitle: NSAttributedString {
         if !DeviceInfo.hasConnectivity() {
             return NSAttributedString(
                 string: .FxANoInternetConnection,
@@ -68,27 +66,22 @@ class SyncNowSetting: WithAccountSetting,
     }
 
     func startRotateSyncIcon() {
-        self.imageView.layer.add(self.continuousRotateAnimation, forKey: "rotateKey")
+        DispatchQueue.main.async {
+            self.imageView.layer.add(self.continuousRotateAnimation, forKey: "rotateKey")
+        }
     }
 
+    @objc
     func stopRotateSyncIcon() {
-        self.imageView.layer.removeAllAnimations()
-    }
-
-    // MARK: Notifiable
-    func handleNotifications(_ notification: Notification) {
-        guard notification.name == .ProfileDidFinishSyncing else { return }
-
-        ensureMainThread {
-            self.stopRotateSyncIcon()
+        DispatchQueue.main.async {
+            self.imageView.layer.removeAllAnimations()
         }
     }
 
     override var accessoryType: UITableViewCell.AccessoryType { return .none }
 
     override var image: UIImage? {
-        guard let profile, let theme else { return nil }
-        guard let syncStatus = profile.syncManager?.syncDisplayState else {
+        guard let syncStatus = profile.syncManager.syncDisplayState else {
             return syncIcon?.tinted(withColor: theme.colors.iconPrimary)
         }
 
@@ -101,7 +94,7 @@ class SyncNowSetting: WithAccountSetting,
     }
 
     override var title: NSAttributedString? {
-        guard let theme, let syncStatus = profile?.syncManager?.syncDisplayState else {
+        guard let syncStatus = profile.syncManager.syncDisplayState else {
             return syncNowTitle
         }
 
@@ -120,20 +113,15 @@ class SyncNowSetting: WithAccountSetting,
         case .inProgress:
             return NSAttributedString(
                 string: .SyncingMessageWithEllipsis,
-                attributes: [
-                    NSAttributedString.Key.foregroundColor: theme.colors.textPrimary,
-                    NSAttributedString.Key.font: FXFontStyles.Regular.body.scaledFont()
-                ]
-            )
+                attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary,
+                             NSAttributedString.Key.font: FXFontStyles.Regular.body.scaledFont()])
         default:
             return syncNowTitle
         }
     }
 
     override var status: NSAttributedString? {
-        guard let theme, let timestamp = profile?.syncManager?.lastSyncFinishTime else {
-            return nil
-        }
+        guard let timestamp = profile.syncManager.lastSyncFinishTime else { return nil }
 
         let formattedLabel = timestampFormatter.string(from: Date.fromTimestamp(timestamp))
         let attributedString = NSMutableAttributedString(string: formattedLabel)
@@ -154,7 +142,7 @@ class SyncNowSetting: WithAccountSetting,
                 return false
             }
 
-            return profile?.hasSyncableAccount() ?? false
+            return profile.hasSyncableAccount()
         }
         // swiftlint:disable unused_setter_value
         set { }
@@ -162,10 +150,10 @@ class SyncNowSetting: WithAccountSetting,
     }
 
     private lazy var troubleshootButton: UIButton = .build { [weak self] troubleshootButton in
-        guard let self = self, let theme = self.theme else { return }
+        guard let self = self else { return }
         troubleshootButton.setTitle(.FirefoxSyncTroubleshootTitle, for: .normal)
         troubleshootButton.addTarget(self, action: #selector(self.troubleshoot), for: .touchUpInside)
-        troubleshootButton.setTitleColor(theme.colors.textCritical, for: .normal)
+        troubleshootButton.setTitleColor(self.theme.colors.textCritical, for: .normal)
         troubleshootButton.titleLabel?.font = FXFontStyles.Regular.caption1.scaledFont()
     }
 
@@ -177,15 +165,15 @@ class SyncNowSetting: WithAccountSetting,
     }
 
     private lazy var warningIcon: UIImageView = {
-        let image = UIImage(named: StandardImageIdentifiers.Large.warningFill)
-        guard let theme else { return UIImageView(image: image) }
-        return UIImageView(image: image?.tinted(withColor: theme.colors.iconCritical))
+        let image = UIImage(named: StandardImageIdentifiers.Large.warningFill)?
+            .tinted(withColor: theme.colors.iconCritical)
+        return UIImageView(image: image)
     }()
 
     private lazy var errorIcon: UIImageView = {
-        let image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.warningFill)
-        guard let theme else { return UIImageView(image: image) }
-        return UIImageView(image: image?.tinted(withColor: theme.colors.iconCritical))
+        let image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.warningFill)?
+            .tinted(withColor: theme.colors.iconCritical)
+        return UIImageView(image: image)
     }()
 
     private let syncSUMOURL = SupportUtils.URLForTopic("sync-status-ios")
@@ -197,11 +185,10 @@ class SyncNowSetting: WithAccountSetting,
 
     override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
         super.onConfigureCell(cell, theme: theme)
-
         cell.textLabel?.attributedText = title
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
-        if let syncStatus = profile?.syncManager?.syncDisplayState {
+        if let syncStatus = profile.syncManager.syncDisplayState {
             switch syncStatus {
             case .bad(let message):
                 if message != nil {
@@ -228,14 +215,7 @@ class SyncNowSetting: WithAccountSetting,
             cell.accessoryView = nil
         }
         cell.accessoryType = accessoryType
-        cell.isUserInteractionEnabled = !(profile?.syncManager?.isSyncing ?? false) && DeviceInfo.hasConnectivity()
-
-        configureImageCell(for: cell)
-    }
-
-    private func configureImageCell(for cell: UITableViewCell) {
-        // Reset imageview to avoid showing wrong image
-        cell.imageView?.image = nil
+        cell.isUserInteractionEnabled = !profile.syncManager.isSyncing && DeviceInfo.hasConnectivity()
 
         // Animation that loops continuously until stopped
         continuousRotateAnimation.fromValue = 0.0
@@ -254,7 +234,7 @@ class SyncNowSetting: WithAccountSetting,
         cell.imageView?.image = syncIconWrapper
         cell.imageView?.addSubview(imageView)
 
-        if let syncStatus = profile?.syncManager?.syncDisplayState {
+        if let syncStatus = profile.syncManager.syncDisplayState {
             switch syncStatus {
             case .inProgress:
                 self.startRotateSyncIcon()
@@ -278,7 +258,7 @@ class SyncNowSetting: WithAccountSetting,
             return
         }
 
-        profile?.syncManager?.syncEverything(why: .user)
-        profile?.pollCommands(forcePoll: true)
+        profile.syncManager.syncEverything(why: .user)
+        profile.pollCommands(forcePoll: true)
     }
 }

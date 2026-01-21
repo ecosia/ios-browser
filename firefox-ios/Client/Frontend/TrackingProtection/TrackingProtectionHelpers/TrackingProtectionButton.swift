@@ -14,7 +14,6 @@ public struct TrackingProtectionButtonModel {
 class TrackingProtectionButton: ResizableButton, ThemeApplicable {
     private struct UX {
         static let buttonCornerRadius: CGFloat = 12
-        static let newStyleButtonCornerRadius: CGFloat = 24
         static let buttonVerticalInset: CGFloat = 12
         static let buttonHorizontalInset: CGFloat = 16
         static let buttonFontSize: CGFloat = 16
@@ -61,6 +60,7 @@ class TrackingProtectionButton: ResizableButton, ThemeApplicable {
         updatedConfiguration.contentInsets = UX.contentInsets
         updatedConfiguration.title = viewModel?.title
         updatedConfiguration.titleAlignment = .leading
+        updatedConfiguration.background.customView?.layer.borderWidth = 1
         updatedConfiguration.background.customView?.layer.borderColor = borderColor.cgColor
 
         configuration = updatedConfiguration
@@ -77,6 +77,7 @@ class TrackingProtectionButton: ResizableButton, ThemeApplicable {
         updatedConfiguration.contentInsets = UX.contentInsets
         updatedConfiguration.title = viewModel.title
         updatedConfiguration.titleAlignment = .leading
+        updatedConfiguration.background.customView?.layer.borderWidth = 1
         updatedConfiguration.background.customView?.layer.borderColor = borderColor.cgColor
 
 //        if there were any pre-existing transformer applied to the background color,
@@ -84,11 +85,7 @@ class TrackingProtectionButton: ResizableButton, ThemeApplicable {
 //        By explicitly setting it to nil, we're ensuring a static background color
 //        that is defined in updatedConfiguration.background.backgroundColor
         updatedConfiguration.background.backgroundColorTransformer = nil
-        if #available(iOS 26.0, *) {
-            updatedConfiguration.background.cornerRadius = UX.newStyleButtonCornerRadius
-        } else {
-            updatedConfiguration.background.cornerRadius = UX.buttonCornerRadius
-        }
+        updatedConfiguration.background.cornerRadius = UX.buttonCornerRadius
 
         updatedConfiguration.cornerStyle = .fixed
 
@@ -99,8 +96,9 @@ class TrackingProtectionButton: ResizableButton, ThemeApplicable {
     // MARK: ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        backgroundColorNormal = theme.colors.layer2
+        self.backgroundColor = theme.colors.layer2
         foregroundColor = theme.colors.textPrimary
+        borderColor = theme.colors.borderPrimary
         setNeedsUpdateConfiguration()
     }
 }

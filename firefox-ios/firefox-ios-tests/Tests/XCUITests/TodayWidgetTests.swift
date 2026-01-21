@@ -11,142 +11,73 @@ let editHomeScreenButton = "com.apple.springboardhome.application-shortcut-item.
 let removeWidgetButton = "com.apple.springboardhome.application-shortcut-item.remove-widget"
 
 // Widget Buttons Identifier
-// TODO FXIOS-12604 These global properties are not concurrency safe
-@MainActor
-var goToCopiedLink = springboard.buttons["Go to Copied Link"]
-@MainActor
-var newPrivateSearch = springboard.buttons["New Private Search"]
-@MainActor
-var newSearch = springboard.buttons["New Search"]
-@MainActor
-var clearPrivateTabs = springboard.buttons["Clear Private Tabs"]
+let goToCopiedLink = springboard.buttons["Go to Copied Link"]
+let newPrivateSearch = springboard.buttons["New Private Search"]
+let newSearch = springboard.buttons["New Search"]
+let clearPrivateTabs = springboard.buttons["Clear Private Tabs"]
 
 // Widget coordinates
-@MainActor
 let normalized = springboard.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
 
 // Get the screen size
-@MainActor
 let screenSize = springboard.windows.element(boundBy: 0).frame.size
 
 // Calculate the center-right coordinate (x: right edge, y: middle of the screen)
-@MainActor
 let centerRightX = screenSize.width * 0.95  // Adjust this value if you want slightly away from the edge
-@MainActor
 let centerRightY = screenSize.height / 2
 
 // Create the coordinate using the calculated points
-@MainActor
 let coordinate = springboard.coordinate(withNormalizedOffset: CGVector(
     dx: centerRightX / screenSize.width, dy: centerRightY / screenSize.height))
 
-// Functions
-enum SwipeDirection {
-    case swipeUp
-    case swipeRight
-}
-
-@MainActor
-private func widgetExist() -> Bool {
-    let firefoxWidgetButton = springboard
-        .buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Firefox")).element.exists
-    let firefoxWidgetSecureSearchButton = springboard
-        .buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Private Tab")).element.exists
-    let firefoxCopiedLinkWidget = springboard.buttons
-        .matching(NSPredicate(format: "label CONTAINS[c] %@", "Copied Link")).element.exists
-    return firefoxWidgetButton || firefoxWidgetSecureSearchButton || firefoxCopiedLinkWidget
-}
-
-@MainActor
-private func goToTodayWidgetPage() {
-    // Swipe right until the "Screen Time" icon appears
-
-    if #available(iOS 26, *) {
-        springboard.swipeRight()
-        springboard.swipeRight()
-    } else if #unavailable(iOS 16) {
-        while !springboard.textFields["SpotlightSearchField"].exists {
-            springboard.swipeRight()
-        }
-    } else {
-        while !springboard.icons["Screen Time"].exists {
-            springboard.swipeRight()
-        }
-    }
-}
-
-@MainActor
-private func checkPresenceFirefoxWidget() -> Bool {
-    let maxSwipes = 3
-    var firefoxWidgetExists = false
-    var numberOfSwipes = 0
-
-    // Initial check for widget presence
-    if widgetExist() {
-        firefoxWidgetExists = true
-    } else {
-        // Perform swipe up until the widget is found or maxSwipes reached
-        while !springboard.buttons["Edit"].exists && numberOfSwipes < maxSwipes {
-            springboard.swipeUp()
-            if widgetExist() {
-                firefoxWidgetExists = true
-                break
-            }
-            numberOfSwipes += 1
-        }
-    }
-
-    return firefoxWidgetExists
-}
-
-@MainActor
-private func checkFirefoxShortcutsOptions() {
-    let maxSwipes = 3
-    var swipeCount = 0
-    while !springboard.buttons["Edit"].exists && swipeCount < maxSwipes {
-        springboard.swipeUp()
-        swipeCount += 1
-    }
-    XCTAssertTrue(springboard.buttons.matching(
-        NSPredicate(format: "label CONTAINS[c] %@", "Firefox")).element.exists,
-                  "Search in Firefox Option doesn't exist"
-    )
-    XCTAssertTrue(springboard.buttons.matching(
-        NSPredicate(format: "label CONTAINS[c] %@", "Private Tab")).element.exists,
-                  "Search in Private Tab Option doesn't exist"
-    )
-    XCTAssertTrue(springboard.buttons.matching(
-        NSPredicate(format: "label CONTAINS[c] %@", "Private Tabs")).element.exists,
-                  "Close Private Tabs option doesn't exist"
-    )
-    XCTAssertTrue(springboard.buttons.matching(
-        NSPredicate(format: "label CONTAINS[c] %@", "Copied Link")).element.exists,
-                  "Go to copied link option doesn't exist"
-    )
-}
-
-@MainActor
-private func skipOnboardingIfNeeded(app: XCUIApplication) {
-    if app.buttons["Continue"].waitForExistence(timeout: TIMEOUT) {
-        app.buttons["Continue"].waitAndTap()
-        app.buttons["CloseButton"].waitAndTap()
-    }
-}
-
-// swiftlint:disable:next type_body_length
 class TodayWidgetTests: BaseTestCase {
+    enum SwipeDirection {
+        case swipeUp
+        case swipeRight
+    }
+
+    private func widgetExist() -> Bool {
+        let firefoxWidgetButton = springboard
+            .buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Firefox")).element.exists
+        let firefoxWidgetSecureSearchButton = springboard
+            .buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Private Tab")).element.exists
+        let firefoxCopiedLinkWidget = springboard.buttons
+            .matching(NSPredicate(format: "label CONTAINS[c] %@", "Copied Link")).element.exists
+        return firefoxWidgetButton || firefoxWidgetSecureSearchButton || firefoxCopiedLinkWidget
+    }
+
+    private func checkPresenceFirefoxWidget() -> Bool {
+        let maxSwipes = 3
+        var firefoxWidgetExists = false
+        var numberOfSwipes = 0
+
+        // Initial check for widget presence
+        if widgetExist() {
+            firefoxWidgetExists = true
+        } else {
+            // Perform swipe up until the widget is found or maxSwipes reached
+            while !springboard.buttons["Edit"].exists && numberOfSwipes < maxSwipes {
+                springboard.swipeUp()
+                if widgetExist() {
+                    firefoxWidgetExists = true
+                    break
+                }
+                numberOfSwipes += 1
+            }
+        }
+
+        return firefoxWidgetExists
+    }
+
     private func removeFirefoxWidget() {
         let maxSwipes = 3
         var numberOfSwipes = 0
-        let widgetLabels = ["Firefox", "Private Tab", "Copied Link"]
         // Function to press and hold on a widget if it exists
-        func pressAndHoldWidget(matching label: String) -> Bool {
+        func pressAndHoldWidget(matching label: String) {
             let widget = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", label)).element
             if widget.exists {
                 widget.press(forDuration: 1)
-                return true
             }
-            return false
         }
         // Swipe up until the "Edit" button is visible or maxSwipes is reached
         while !springboard.buttons["Edit"].exists && numberOfSwipes < maxSwipes {
@@ -154,33 +85,18 @@ class TodayWidgetTests: BaseTestCase {
             numberOfSwipes += 1
         }
         // Attempt to press and hold on any of the Firefox widget elements
-        var widgetFound = false
-        for label in widgetLabels where pressAndHoldWidget(matching: label) {
-                widgetFound = true
-                break
-        }
+        pressAndHoldWidget(matching: "Firefox")
+        pressAndHoldWidget(matching: "Private Tab")
+        pressAndHoldWidget(matching: "Copied Link")
 
-        guard widgetFound else {
-                XCTFail("Firefox widget not found")
-                return
-        }
-        if #unavailable(iOS 16) {
-            mozWaitElementHittable(element: springboard.buttons["Remove Widget"], timeout: TIMEOUT)
-            springboard.buttons["Remove Widget"].waitAndTap()
-        } else {
-            mozWaitElementHittable(element: springboard.buttons[removeWidgetButton], timeout: TIMEOUT)
-            springboard.buttons[removeWidgetButton].waitAndTap()
-        }
+        mozWaitElementHittable(element: springboard.buttons[removeWidgetButton], timeout: 5)
+        springboard.buttons[removeWidgetButton].tap()
 
-        waitForElementsToExist(
-            [
-                springboard.alerts.buttons["Remove"],
-                springboard.alerts.buttons["Cancel"]
-            ]
-        )
+        mozWaitForElementToExist(springboard.alerts.buttons["Remove"])
+        mozWaitForElementToExist(springboard.alerts.buttons["Cancel"])
 
-        mozWaitElementHittable(element: springboard.alerts.buttons["Remove"], timeout: TIMEOUT)
-        springboard.alerts.buttons["Remove"].waitAndTap()
+        mozWaitElementHittable(element: springboard.alerts.buttons["Remove"], timeout: 5)
+        springboard.alerts.buttons["Remove"].tap()
     }
 
     private func checkFirefoxAvailablesWidgets() {
@@ -206,45 +122,6 @@ class TodayWidgetTests: BaseTestCase {
         XCTAssertTrue(quickActionExists, "Failed to find 'Quick Actions' after swiping back.")
     }
 
-    private func removeFirefoxShortcutWidget() {
-        let maxSwipes = 3
-        var numberOfSwipes = 0
-        // Function to press and hold on a widget if it exists
-        func pressAndHoldWidget(matching label: String) {
-            let widget = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", label)).element
-            if widget.exists {
-                widget.press(forDuration: 1)
-            }
-        }
-        // Swipe up until the "Edit" button is visible or maxSwipes is reached
-        while !springboard.buttons["Edit"].exists && numberOfSwipes < maxSwipes {
-            springboard.swipeUp()
-            numberOfSwipes += 1
-        }
-
-        let firefoxSearchOption = springboard.buttons.matching(
-            NSPredicate(format: "label CONTAINS[c] %@", "Firefox")).element.exists
-        let firefoxPrivateSearchOption = springboard.buttons.matching(
-            NSPredicate(format: "label CONTAINS[c] %@", "Private Tab")).element.exists
-        let firefoxClearPrivateTabsOption = springboard.buttons.matching(
-            NSPredicate(format: "label CONTAINS[c] %@", "Private Tabs")).element.exists
-        let firefoxCopiedLinkOptions = springboard.buttons.matching(
-            NSPredicate(format: "label CONTAINS[c] %@", "Copied Link")).element.exists
-        if firefoxSearchOption && firefoxPrivateSearchOption &&
-            firefoxClearPrivateTabsOption && firefoxCopiedLinkOptions {
-            pressAndHoldWidget(matching: "Firefox")
-        }
-
-        mozWaitElementHittable(element: springboard.buttons[removeWidgetButton], timeout: TIMEOUT)
-        springboard.buttons[removeWidgetButton].waitAndTap()
-
-        mozWaitForElementToExist(springboard.alerts.buttons["Remove"])
-        mozWaitForElementToExist(springboard.alerts.buttons["Cancel"])
-
-        mozWaitElementHittable(element: springboard.alerts.buttons["Remove"], timeout: TIMEOUT)
-        springboard.alerts.buttons["Remove"].waitAndTap()
-    }
-
     private func checkFirefoxWidgetOptions() {
         let maxSwipes = 3
         var swipeCount = 0
@@ -256,14 +133,15 @@ class TodayWidgetTests: BaseTestCase {
         // Long press on the Firefox widget
         longPressOnWidget(widgetType: "Firefox", duration: 1)
         // Assert the presence of widget options
-        if #unavailable(iOS 16) {
-            XCTAssertTrue(springboard.buttons["Edit Widget"].exists, "Edit Widget option not found.")
-            XCTAssertTrue(springboard.buttons["Edit Home Screen"].exists, "Edit Home Screen option not found.")
-            XCTAssertTrue(springboard.buttons["Remove Widget"].exists, "Remove Widget option not found.")
-        } else {
-            XCTAssertTrue(springboard.buttons[removeWidgetButton].exists, "Remove Widget option not found.")
-            XCTAssertTrue(springboard.buttons[editHomeScreenButton].exists, "Edit Home Screen option not found.")
-            XCTAssertTrue(springboard.buttons[editWidgetButton].exists, "Edit Widget option not found.")
+        XCTAssertTrue(springboard.buttons[removeWidgetButton].exists, "Remove Widget option not found.")
+        XCTAssertTrue(springboard.buttons[editHomeScreenButton].exists, "Edit Home Screen option not found.")
+        XCTAssertTrue(springboard.buttons[editWidgetButton].exists, "Edit Widget option not found.")
+    }
+
+    private func goToTodayWidgetPage() {
+        // Swipe right until the "Screen Time" icon appears
+        while !springboard.icons["Screen Time"].exists {
+            springboard.swipeRight()
         }
     }
 
@@ -271,7 +149,7 @@ class TodayWidgetTests: BaseTestCase {
         mozWaitForElementToExist(springboard
             .buttons[editWidgetButton])
         springboard
-            .buttons[editWidgetButton].waitAndTap()
+            .buttons[editWidgetButton].tap()
     }
 
     private func longPressOnWidget(widgetType: String, duration: Double) {
@@ -282,8 +160,8 @@ class TodayWidgetTests: BaseTestCase {
 
     private func tapOnWidget(widgetType: String) {
         let widget = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", widgetType)).element
-        mozWaitElementHittable(element: widget, timeout: TIMEOUT)
-        widget.waitAndTap()
+        mozWaitElementHittable(element: widget, timeout: 5)
+        widget.tap()
     }
 
     private func allowCopyFromOtherApps() {
@@ -293,36 +171,47 @@ class TodayWidgetTests: BaseTestCase {
             iOS_Settings.swipeUp()
         }
         // Tap the first Firefox entry
-        iOS_Settings.staticTexts["org.mozilla.ios.Fennec"].waitAndTap()
+        iOS_Settings.staticTexts["org.mozilla.ios.Fennec"].tap()
         // Wait for "Paste from Other Apps" button, tap it, then allow copying
-        iOS_Settings.buttons["Paste from Other Apps"].waitAndTap()
-        iOS_Settings.staticTexts["Allow"].waitAndTap()
+        mozWaitForElementToExist(iOS_Settings.buttons["Paste from Other Apps"])
+        iOS_Settings.buttons["Paste from Other Apps"].tap()
+        mozWaitForElementToExist(iOS_Settings.staticTexts["Allow"])
+        iOS_Settings.staticTexts["Allow"].tap()
     }
 
     private func addWidget(widgetName: String) {
         if iPad() {
-            springboard.buttons["Add Widget"].waitAndTap()
+            mozWaitForElementToExist(springboard.buttons["Add Widget"])
+            springboard.buttons["Add Widget"].tap()
         } else {
-            if #available(iOS 18, *) {
-                springboard.icons["Screen Time"].press(forDuration: 3)
-                if springboard.buttons["Edit Home Screen"].exists {
-                    springboard.buttons["Edit Home Screen"].waitAndTap()
-                }
-            }
-            springboard.buttons["Edit"].waitAndTap()
-            springboard.buttons["Add Widget"].waitAndTap()
+            springboard.buttons["Edit"].tap()
+            mozWaitForElementToExist(springboard.buttons["Add Widget"])
+            springboard.buttons["Add Widget"].tap()
         }
-        mozWaitElementHittable(element: springboard.searchFields["Search Widgets"], timeout: TIMEOUT)
-        springboard.searchFields["Search Widgets"].waitAndTap()
+        mozWaitElementHittable(element: springboard.searchFields["Search Widgets"], timeout: 5)
+        springboard.searchFields["Search Widgets"].tap()
         springboard.searchFields["Search Widgets"].typeText(widgetName)
         let predicate = NSPredicate(format: "label CONTAINS[c] %@", widgetName+" (")
         let cells = springboard.cells.matching(predicate)
-        cells.element.waitAndTap()
+        cells.element.tap()
     }
 
     private func findAndTapWidget(widgetType: String) {
         let widget = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", widgetType)).element
-        widget.waitAndTap()
+        mozWaitForElementToExist(widget)
+        widget.tap()
+    }
+
+    private func swipeUntilExists(element: XCUIElement, maxSwipes: Int = 3, direction: SwipeDirection = .swipeUp) {
+        var swipes = 0
+        while !element.exists && swipes < maxSwipes {
+            if direction == .swipeUp {
+                springboard.swipeUp()
+            } else {
+                springboard.swipeRight()
+            }
+            swipes += 1
+        }
     }
 
     private func removeWidgetIfExists(widgetType: String) {
@@ -333,21 +222,18 @@ class TodayWidgetTests: BaseTestCase {
 
     private func addAndSearchForWidget(widgetName: String) {
         addWidget(widgetName: widgetName)
-        mozWaitElementHittable(element: springboard.searchFields["Search Widgets"], timeout: TIMEOUT)
-        springboard.searchFields["Search Widgets"].waitAndTap()
+        mozWaitElementHittable(element: springboard.searchFields["Search Widgets"], timeout: 5)
+        springboard.searchFields["Search Widgets"].tap()
         springboard.searchFields["Search Widgets"].typeText(widgetName)
         let predicate = NSPredicate(format: "label CONTAINS[c] %@", widgetName + " (")
         let cells = springboard.cells.matching(predicate)
-        cells.element.waitAndTap()
+        cells.element.tap()
     }
 
     // TESTS
     // https://mozilla.testrail.io/index.php?/cases/view/2769289
-    func testNewSearchWidget() throws {
-        if #unavailable(iOS 16) {
-            throw XCTSkip("iOS 16 is required")
-        }
-        app.terminate()
+    func testNewSearchWidget() {
+        XCUIDevice.shared.press(.home)
         // Go to Today Widget Page
         goToTodayWidgetPage()
         // Remove Firefox Widget if present
@@ -360,41 +246,41 @@ class TodayWidgetTests: BaseTestCase {
         // Check available widgets
         checkFirefoxAvailablesWidgets()
         // Add Quick Action Widget
-        springboard.buttons[" Add Widget"].waitAndTap()
+        springboard.buttons[" Add Widget"].tap()
         springboard.swipeDown()
-        springboard.buttons["Done"].waitAndTap()
+        springboard.buttons["Done"].tap()
         // Check Quick Action widget options
         checkFirefoxWidgetOptions()
         // Edit Widget and check the options
-        springboard.buttons[editWidgetButton].waitAndTap()
-        mozWaitElementHittable(element: newSearch, timeout: TIMEOUT)
-        newSearch.waitAndTap()
+        springboard.buttons[editWidgetButton].tap()
+        mozWaitElementHittable(element: newSearch, timeout: 5)
+        newSearch.tap()
         // Verify widget actions
-        if #unavailable(iOS 17) {
-            goToCopiedLink = springboard.staticTexts["Go to Copied Link"]
-            newPrivateSearch = springboard.staticTexts["New Private Search"]
-            newSearch = springboard.staticTexts["New Search"]
-            clearPrivateTabs = springboard.staticTexts["Clear Private Tabs"]
-        }
         mozWaitForElementToExist(goToCopiedLink)
         XCTAssertTrue(goToCopiedLink.exists)
         XCTAssertTrue(newPrivateSearch.exists)
         XCTAssertTrue(clearPrivateTabs.exists)
-        newSearch.waitAndTap()
+        newSearch.tap()
         // Tap outside alert to close it
-        mozWaitForElementToExist(newSearch)
         coordinate.tap()
         // Check New Search action
         tapOnWidget(widgetType: "Firefox")
+        // Verify private mode toggle based on device type
+        var elementToAssert = AccessibilityIdentifiers.FirefoxHomepage.OtherButtons.privateModeToggleButton
+        if iPad() {
+            elementToAssert = AccessibilityIdentifiers.Browser.TopTabs.privateModeButton
+        }
+        guard let buttonValue = app.buttons[elementToAssert].value as? String else {
+            XCTFail("Expected value to be a String but found \(type(of: app.buttons[elementToAssert].value))")
+            return
+        }
+        XCTAssertTrue(buttonValue == "Off", "Expected button value to be 'Off', but got \(buttonValue)")
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2769297
-    func testNewPrivateSearchWidget() throws {
-        if #unavailable(iOS 16) {
-            throw XCTSkip("iOS 16 is required")
-        }
+    func testNewPrivateSearchWidget() {
         // Return to the Home screen
-        app.terminate()
+        XCUIDevice.shared.press(.home)
         // Navigate to the Today Widget Page
         goToTodayWidgetPage()
         // Remove Firefox Widget if it exists
@@ -409,50 +295,53 @@ class TodayWidgetTests: BaseTestCase {
         // Check available widgets
         checkFirefoxAvailablesWidgets()
         // Add Quick Action Widget
-        springboard.buttons[" Add Widget"].waitAndTap()
+        springboard.buttons[" Add Widget"].tap()
         springboard.swipeDown()
-        springboard.buttons["Done"].waitAndTap()
+        springboard.buttons["Done"].tap()
         // Verify options available in the Quick Action Widget
         checkFirefoxWidgetOptions()
         // Edit widget and interact with options
-        if #unavailable(iOS 16) {
-            springboard.buttons["Edit Widget"].waitAndTap()
-        } else {
-            springboard.buttons[editWidgetButton].waitAndTap()
-        }
-        mozWaitElementHittable(element: newSearch, timeout: TIMEOUT)
-        newSearch.waitAndTap()
-        if #unavailable(iOS 17) {
-            goToCopiedLink = springboard.staticTexts["Go to Copied Link"]
-            newPrivateSearch = springboard.staticTexts["New Private Search"]
-            newSearch = springboard.staticTexts["New Search"]
-            clearPrivateTabs = springboard.staticTexts["Clear Private Tabs"]
-        }
+        springboard.buttons[editWidgetButton].tap()
+        mozWaitElementHittable(element: newSearch, timeout: 5)
+        newSearch.tap()
         // Verify the existence of New Search-related buttons
-        mozWaitForElementToExist(goToCopiedLink, timeout: TIMEOUT)
+        mozWaitForElementToExist(goToCopiedLink, timeout: 5)
         XCTAssertTrue(goToCopiedLink.exists, "Go to Copied Link button not found.")
         XCTAssertTrue(newPrivateSearch.exists, "New Private Search button not found.")
         XCTAssertTrue(clearPrivateTabs.exists, "Clear Private Tabs button not found.")
         // Start a new private search
-        mozWaitElementHittable(element: newPrivateSearch, timeout: TIMEOUT)
-        newPrivateSearch.waitAndTap()
+        mozWaitElementHittable(element: newPrivateSearch, timeout: 5)
+        newPrivateSearch.tap()
         // Tap outside the alert to dismiss it
-        mozWaitForElementToExist(newPrivateSearch)
         coordinate.tap()
+        // Terminate the app to start a fresh session
+        app.terminate()
+        // Reopen and check the Private Tab widget
         tapOnWidget(widgetType: "Private Tab")
-        skipOnboardingIfNeeded(app: app)
+        // Handle different UI behavior on iPad and iPhone
+        if !iPad() {
+            mozWaitElementHittable(element: app.buttons["CloseButton"], timeout: 10)
+            app.buttons["CloseButton"].tap()
+        }
         // Verify the presence of Private Mode message
         mozWaitForElementToExist(app.staticTexts["Leave no traces on this device"])
+        // Verify private mode toggle is on
+        var elementToAssert = AccessibilityIdentifiers.FirefoxHomepage.OtherButtons.privateModeToggleButton
+        if iPad() {
+            elementToAssert = AccessibilityIdentifiers.Browser.TopTabs.privateModeButton
+        }
+        guard let buttonValue = app.buttons[elementToAssert].value as? String else {
+            XCTFail("Expected value to be a String but found \(type(of: app.buttons[elementToAssert].value))")
+            return
+        }
+        XCTAssertTrue(buttonValue == "On", "Expected button value to be 'On', but got \(buttonValue)")
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2769300
-    func testGoToCopiedLinkWidget() throws {
-        if #unavailable(iOS 16) {
-            throw XCTSkip("iOS 16 is required")
-        }
-        let copiedString = "mozilla.org"
+    func testGoToCopiedLinkWidget() {
+        let copiedString = "www.mozilla.org"
         // Press Home and navigate to Today Widget Page
-        app.terminate()
+        XCUIDevice.shared.press(.home)
         goToTodayWidgetPage()
         // Remove Firefox Widget if it already exists
         if checkPresenceFirefoxWidget() {
@@ -465,164 +354,43 @@ class TodayWidgetTests: BaseTestCase {
         addWidget(widgetName: "Fennec")
         checkFirefoxAvailablesWidgets()
         // Add Quick Action Widget
-        springboard.buttons[" Add Widget"].waitAndTap()
+        springboard.buttons[" Add Widget"].tap()
         springboard.swipeDown()
-        springboard.buttons["Done"].waitAndTap()
+        springboard.buttons["Done"].tap()
         // Check available options in Quick Action Widget
         checkFirefoxWidgetOptions()
         // Tap on Edit Widget and check the available options
-        if #unavailable(iOS 16) {
-            springboard.buttons["Edit Widget"].waitAndTap()
-        } else {
-            springboard.buttons[editWidgetButton].waitAndTap()
-        }
-        mozWaitElementHittable(element: newSearch, timeout: TIMEOUT)
-        newSearch.waitAndTap()
-        if #unavailable(iOS 17) {
-            goToCopiedLink = springboard.staticTexts["Go to Copied Link"]
-            newPrivateSearch = springboard.staticTexts["New Private Search"]
-            newSearch = springboard.staticTexts["New Search"]
-            clearPrivateTabs = springboard.staticTexts["Clear Private Tabs"]
-        }
+        springboard.buttons[editWidgetButton].tap()
+        mozWaitElementHittable(element: newSearch, timeout: 3)
+        newSearch.tap()
         // Ensure the Go To Copied Link option exists
-        mozWaitForElementToExist(goToCopiedLink, timeout: TIMEOUT)
+        mozWaitForElementToExist(goToCopiedLink, timeout: 3)
         XCTAssertTrue(goToCopiedLink.exists, "Go To Copied Link button not found.")
         XCTAssertTrue(newPrivateSearch.exists, "New Private Search button not found.")
-        XCTAssertTrue(clearPrivateTabs.exists, "Clear Private Tabs button not found.")
+        XCTAssertTrue(springboard.buttons["Clear Private Tabs"].exists, "Clear Private Tabs button not found.")
         // Tap Go To Copied Link
-        mozWaitElementHittable(element: goToCopiedLink, timeout: TIMEOUT)
-        goToCopiedLink.waitAndTap()
+        mozWaitElementHittable(element: goToCopiedLink, timeout: 3)
+        goToCopiedLink.tap()
         // Tap outside the alert to close it
         coordinate.tap()
         // Copy the string to the clipboard
         UIPasteboard.general.string = copiedString
+        app.terminate()
+        // Reopen and interact with the Copied Link widget
         tapOnWidget(widgetType: "Copied Link")
         // Handle paste alert
-        if #available(iOS 16, *) {
-            mozWaitElementHittable(element: springboard.alerts.buttons["Allow Paste"], timeout: TIMEOUT)
-            springboard.alerts.buttons["Allow Paste"].waitAndTap()
+        mozWaitElementHittable(element: springboard.alerts.buttons["Allow Paste"], timeout: 3)
+        springboard.alerts.buttons["Allow Paste"].tap()
+        // Handle iPad/iPhone UI differences
+        if !iPad() {
+            mozWaitElementHittable(element: app.buttons["CloseButton"], timeout: 10)
+            app.buttons["CloseButton"].tap()
         }
-
-        skipOnboardingIfNeeded(app: app)
-
         // Verify the copied string is in the URL field
-        mozWaitForElementToExist(urlBarAddress, timeout: TIMEOUT)
-        mozWaitForValueContains(urlBarAddress, value: copiedString, timeout: TIMEOUT)
-        guard let urlField = urlBarAddress.value as? String else {
-            XCTFail("Expected value to be a String but found \(type(of: urlBarAddress.value))")
-            return
-        }
-        XCTAssertTrue(urlField.contains(copiedString),
-                      "URL does not contain the copied string.")
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2783001
-    func testFxShortcutSearchWidget() throws {
-        if #unavailable(iOS 16) {
-            throw XCTSkip("iOS 16 is required")
-        }
-        app.terminate()
-        goToTodayWidgetPage()
-        // Remove Firefox Widget if it already exists
-        if checkPresenceFirefoxWidget() {
-            removeFirefoxWidget()
-        }
-        // Add Firefox Widget
-        if iPad() {
-            coordinate.press(forDuration: 3)
-        }
-        addWidget(widgetName: "Fennec")
-        checkFirefoxAvailablesWidgets()
-        // Add Firefox Shortcut Widget
-        springboard.swipeLeft()
-        mozWaitForElementToExist(springboard.staticTexts["Firefox Shortcuts"])
-        springboard.buttons[" Add Widget"].waitAndTap()
-        springboard.swipeDown()
-        springboard.buttons["Done"].waitAndTap()
-        checkFirefoxShortcutsOptions()
-        springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Firefox")).element.waitAndTap()
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2783002
-    func testFxShortcutPrivateSearchWidget() throws {
-        if #unavailable(iOS 16) {
-            throw XCTSkip("iOS 16 is required")
-        }
-        app.terminate()
-        goToTodayWidgetPage()
-        // Remove Firefox Widget if it already exists
-        if checkPresenceFirefoxWidget() {
-            removeFirefoxWidget()
-        }
-        // Add Firefox Widget
-        if iPad() {
-            coordinate.press(forDuration: 3)
-        }
-        addWidget(widgetName: "Fennec")
-        checkFirefoxAvailablesWidgets()
-        // Add Firefox Shortcut Widget
-        springboard.swipeLeft()
-        mozWaitForElementToExist(springboard.staticTexts["Firefox Shortcuts"])
-        springboard.buttons[" Add Widget"].waitAndTap()
-        springboard.swipeDown()
-        springboard.buttons["Done"].waitAndTap()
-        checkFirefoxShortcutsOptions()
-        mozWaitElementHittable(element: springboard.buttons.matching(
-            NSPredicate(format: "label CONTAINS[c] %@", "Private Tab")
-        ).element.firstMatch, timeout: TIMEOUT)
-        springboard.buttons.matching(NSPredicate(
-            format: "label CONTAINS[c] %@", "Private Tab")
-        ).element.firstMatch.waitAndTap()
-        skipOnboardingIfNeeded(app: app)
-        // Verify the presence of Private Mode message
-        mozWaitForElementToExist(app.staticTexts["Leave no traces on this device"])
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2783003
-    func testFxShortcutGoToCopiedLinkWidget() throws {
-        if #unavailable(iOS 16) {
-            throw XCTSkip("iOS 16 is required")
-        }
-        let copiedString = "mozilla.org"
-        UIPasteboard.general.string = copiedString
-        app.terminate()
-
-        sleep(3)
-
-        goToTodayWidgetPage()
-        // Remove Firefox Widget if it already exists
-        if checkPresenceFirefoxWidget() {
-            removeFirefoxWidget()
-        }
-        // Add Firefox Widget
-        if iPad() {
-            coordinate.press(forDuration: 5)
-        }
-        addWidget(widgetName: "Fennec")
-        checkFirefoxAvailablesWidgets()
-        // Add Firefox Shortcut Widget
-        springboard.swipeLeft()
-        mozWaitForElementToExist(springboard.staticTexts["Firefox Shortcuts"])
-        springboard.buttons[" Add Widget"].waitAndTap()
-        springboard.swipeDown()
-        springboard.buttons["Done"].waitAndTap()
-        checkFirefoxShortcutsOptions()
-        mozWaitElementHittable(element: springboard.buttons.matching(
-            NSPredicate(format: "label CONTAINS[c] %@", "Copied Link")
-        ).element, timeout: TIMEOUT)
-        springboard.buttons.matching(NSPredicate(
-            format: "label CONTAINS[c] %@", "Copied Link")
-        ).element.waitAndTap()
-
-        sleep(2)
-        mozWaitElementHittable(element: springboard.alerts.buttons["Allow Paste"], timeout: TIMEOUT)
-        springboard.alerts.buttons["Allow Paste"].waitAndTap()
-        skipOnboardingIfNeeded(app: app)
-        // Verify the copied string is in the URL field
-        mozWaitForElementToExist(urlBarAddress, timeout: TIMEOUT)
-        mozWaitForValueContains(urlBarAddress, value: copiedString, timeout: TIMEOUT)
-        guard let urlField = urlBarAddress.value as? String else {
-            XCTFail("Expected value to be a String but found \(type(of: urlBarAddress.value))")
+        mozWaitForElementToExist(app.textFields["url"], timeout: 10)
+        mozWaitForValueContains(app.textFields["url"], value: copiedString, timeout: 5)
+        guard let urlField = app.textFields["url"].value as? String else {
+            XCTFail("Expected value to be a String but found \(type(of: app.textFields["url"].value))")
             return
         }
         XCTAssertTrue(urlField.contains(copiedString),

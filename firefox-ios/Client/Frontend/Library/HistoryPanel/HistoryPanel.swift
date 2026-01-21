@@ -9,13 +9,17 @@ import WebKit
 import Common
 import SiteImageView
 
-// FIXME: FXIOS-13958 @objcMembers is unsafe with main actor isolation
+private class FetchInProgressError: MaybeErrorType {
+    internal var description: String {
+        return "Fetch is already in-progress"
+    }
+}
+
 @objcMembers
 class HistoryPanel: UIViewController,
                     LibraryPanel,
                     LibraryPanelContextMenu,
-                    Themeable,
-                    Notifiable {
+                    Themeable {
     struct UX {
         static let WelcomeScreenItemWidth = 170
         static let IconSize = 23
@@ -25,7 +29,6 @@ class HistoryPanel: UIViewController,
 
     // MARK: - Properties
     typealias HistoryPanelSections = HistoryPanelViewModel.Sections
-    typealias HistoryItem = HistoryPanelViewModel.HistoryItem
     typealias a11yIds = AccessibilityIdentifiers.LibraryPanels.HistoryPanel
 
     weak var libraryPanelDelegate: LibraryPanelDelegate?
@@ -41,13 +44,13 @@ class HistoryPanel: UIViewController,
     var keyboardState: KeyboardState?
     var chevronImage = UIImage(named: StandardImageIdentifiers.Large.chevronRight)?.withRenderingMode(.alwaysTemplate)
     var themeManager: ThemeManager
-    var themeListenerCancellable: Any?
+    var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol
-    var logger: Logger
+    private var logger: Logger
 
     // We'll be able to prefetch more often the higher this number is. But remember, it's expensive!
     private let historyPanelPrefetchOffset = 8
-    var diffableDataSource: UITableViewDiffableDataSource<HistoryPanelSections, HistoryItem>?
+    var diffableDataSource: UITableViewDiffableDataSource<HistoryPanelSections, AnyHashable>?
 
     var shouldShowToolBar: Bool {
         return state == .history(state: .mainView) || state == .history(state: .search)
@@ -72,12 +75,20 @@ class HistoryPanel: UIViewController,
             return [bottomDeleteButton, flexibleSpace]
         }
 
-        return [bottomDeleteButton, flexibleSpace, bottomSearchButton, flexibleSpace]
+        // Ecosia: Update button position
+        // return [bottomDeleteButton, flexibleSpace, bottomSearchButton, flexibleSpace]
+        return [flexibleSpace, bottomSearchButton, flexibleSpace, bottomDeleteButton]
     }
 
     // UI
     private lazy var bottomSearchButton: UIBarButtonItem = {
+        /* Ecosia: Updare bottom search button
         let button = UIBarButtonItem(image: UIImage.templateImageNamed(StandardImageIdentifiers.Large.search),
+                                     style: .plain,
+                                     target: self,
+                                     action: #selector(bottomSearchButtonAction))
+         */
+        let button = UIBarButtonItem(image: UIImage.templateImageNamed("searchFilled"),
                                      style: .plain,
                                      target: self,
                                      action: #selector(bottomSearchButtonAction))
@@ -86,7 +97,13 @@ class HistoryPanel: UIViewController,
     }()
 
     private lazy var bottomDeleteButton: UIBarButtonItem = {
+        /* Ecosia: Updare clear all button
         let button = UIBarButtonItem(image: UIImage.templateImageNamed(StandardImageIdentifiers.Large.delete),
+                                     style: .plain,
+                                     target: self,
+                                     action: #selector(bottomDeleteButtonAction))
+         */
+        let button = UIBarButtonItem(title: .localized(.clearAll),
                                      style: .plain,
                                      target: self,
                                      action: #selector(bottomDeleteButtonAction))
@@ -100,11 +117,18 @@ class HistoryPanel: UIViewController,
         searchbar.searchTextField.placeholder = self.viewModel.searchHistoryPlaceholder
         searchbar.returnKeyType = .go
         searchbar.delegate = self
-        searchbar.showsCancelButton = true
+        // Ecosia: Update SearchBar properties
+        searchbar.searchBarStyle = .prominent
+        searchbar.searchTextField.layer.cornerRadius = 18
+        searchbar.searchTextField.layer.masksToBounds = true
+        searchbar.backgroundImage = .init()
     }
 
-    private lazy var tableView: UITableView = .build { [weak self] tableView in
-        guard let self = self else { return }
+    // Ecosia: Update TableView init to make it grouped
+    // private lazy var tableView: UITableView = .build { [weak self] tableView in
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self.diffableDataSource
         tableView.addGestureRecognizer(self.longPressRecognizer)
         tableView.accessibilityIdentifier = a11yIds.tableView
@@ -118,9 +142,12 @@ class HistoryPanel: UIViewController,
                            forCellReuseIdentifier: OneLineTableViewCell.cellIdentifier)
         tableView.register(SiteTableViewHeader.self,
                            forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier)
-
         tableView.sectionHeaderTopPadding = 0
-    }
+
+        // Ecosia: Update tableView properties
+        tableView.contentInset.top = 32
+        return tableView
+    }()
 
     lazy var longPressRecognizer: UILongPressGestureRecognizer = {
         UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGestureRecognized))
@@ -135,6 +162,8 @@ class HistoryPanel: UIViewController,
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = true
     }
+    // Ecosia: Add Empty Header
+    private lazy var emptyHeader = EmptyHeader(icon: "libraryHistory", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
     var refreshControl: UIRefreshControl?
     var recentlyClosedCell: OneLineTableViewCell?
 
@@ -166,18 +195,19 @@ class HistoryPanel: UIViewController,
         super.viewDidLoad()
 
         KeyboardHelper.defaultHelper.addDelegate(self)
+        viewModel.historyPanelNotifications.forEach {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleNotifications),
+                name: $0,
+                object: nil
+            )
+        }
 
-        startObservingNotifications(
-            withNotificationCenter: NotificationCenter.default,
-            forObserver: self,
-            observing: viewModel.historyPanelNotifications
-        )
-
+        listenForThemeChange(view)
         handleRefreshControl()
         setupLayout()
         configureDataSource()
-
-        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
 
         // Update theme of already existing view
@@ -221,9 +251,14 @@ class HistoryPanel: UIViewController,
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
-            bottomStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            /* Ecosia: Update constraints
+             bottomStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+             bottomStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+             bottomStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+             */
+            bottomStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
             bottomStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            bottomStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+            bottomStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)
         ])
     }
 
@@ -232,8 +267,8 @@ class HistoryPanel: UIViewController,
         // Avoid refreshing if search is in progress
         guard !viewModel.isSearchInProgress else { return }
 
-        viewModel.reloadData { success in
-            ensureMainThread { [weak self] in
+        viewModel.reloadData { [weak self] success in
+            DispatchQueue.main.async {
                 self?.applySnapshot(animatingDifferences: animating)
             }
         }
@@ -258,18 +293,18 @@ class HistoryPanel: UIViewController,
     }
 
     // Use to enable/disable the additional history action rows. `HistoryActionablesModel`
-    private func setTappableStateAndStyle(with item: HistoryItem, on cell: OneLineTableViewCell) {
+    private func setTappableStateAndStyle(with item: AnyHashable, on cell: OneLineTableViewCell) {
         var isEnabled = false
 
-        switch item {
-        case .historyActionables(let actionableItem):
+        if let actionableItem = item as? HistoryActionablesModel {
             switch actionableItem.itemIdentity {
+            case .clearHistory:
+                isEnabled = !viewModel.dateGroupedSites.isEmpty
             case .recentlyClosed:
                 isEnabled = viewModel.hasRecentlyClosed
                 recentlyClosedCell = cell
+            default: break
             }
-        default:
-            break
         }
 
         // Set interaction behavior and style
@@ -281,9 +316,7 @@ class HistoryPanel: UIViewController,
     // MARK: - Datasource helpers
 
     func siteAt(indexPath: IndexPath) -> Site? {
-        guard let item = diffableDataSource?.itemIdentifier(for: indexPath),
-              case let HistoryItem.site(siteItem) = item
-        else { return nil }
+        guard let siteItem = diffableDataSource?.itemIdentifier(for: indexPath) as? Site else { return nil }
 
         return siteItem
     }
@@ -292,78 +325,73 @@ class HistoryPanel: UIViewController,
         clearHistoryHelper.showClearRecentHistory(onViewController: self) { [weak self] dateOption in
             // Delete groupings that belong to THAT section.
             switch dateOption {
-            case .lastHour, .lastTwentyFourHours, .lastSevenDays, .lastFourWeeks:
+            case .lastHour, .today, .yesterday:
                 self?.viewModel.deleteGroupsFor(dateOption: dateOption)
             default:
                 self?.viewModel.removeAllData()
             }
 
-            self?.applySnapshot()
-            self?.tableView.reloadData()
-            self?.refreshRecentlyClosedCell()
+            DispatchQueue.main.async {
+                self?.applySnapshot()
+                self?.tableView.reloadData()
+                self?.refreshRecentlyClosedCell()
+            }
         }
     }
 
     private func refreshRecentlyClosedCell() {
         guard let cell = recentlyClosedCell else { return }
 
-        guard let historyActionable = HistoryActionablesModel.activeActionables
+        let item: HistoryActionablesModel? =
+        HistoryActionablesModel.activeActionables
             .first(where: { $0.itemIdentity == .recentlyClosed })
-            .map({
+            .map {
                 var item = $0
                 item.configureImage(for: windowUUID)
                 return item
-            }) else {
-                return
             }
-
         self.setTappableStateAndStyle(
-            with: HistoryItem.historyActionables(historyActionable),
-            on: cell
-        )
+            with: item,
+            on: cell)
     }
 
     func handleNotifications(_ notification: Notification) {
-        let notificationName = notification.name
-        let notificationDBName = notification.object as? String
+        switch notification.name {
+        case .FirefoxAccountChanged, .PrivateDataClearedHistory:
+            viewModel.removeAllData()
+            fetchDataAndUpdateLayout(animating: true)
 
-        ensureMainThread {
-            switch notificationName {
-            case .FirefoxAccountChanged, .PrivateDataClearedHistory:
-                self.viewModel.removeAllData()
-                self.fetchDataAndUpdateLayout(animating: true)
-
-                if self.profile.hasSyncableAccount() {
-                    self.resyncHistory()
-                }
-
-            case UIContentSizeCategory.didChangeNotification:
-                if self.emptyStateOverlayView.superview != nil {
-                    self.emptyStateOverlayView.removeFromSuperview()
-                }
-                self.emptyStateOverlayView = self.createEmptyStateOverlayView()
-                self.resyncHistory()
-
-            case .DatabaseWasReopened:
-                if let dbName = notificationDBName, dbName == "browser.db" {
-                    self.fetchDataAndUpdateLayout(animating: true)
-                }
-
-            case .OpenClearRecentHistory:
-                if self.viewModel.isSearchInProgress {
-                    self.exitSearchState()
-                }
-
-                self.showClearRecentHistory()
-
-            case .OpenRecentlyClosedTabs:
-                self.historyCoordinatorDelegate?.showRecentlyClosedTab()
-                self.applySnapshot(animatingDifferences: true)
-
-            default:
-                // no need to do anything at all
-                break
+            if profile.hasSyncableAccount() {
+                resyncHistory()
             }
+            break
+        case .DynamicFontChanged:
+            /* Ecosia: Remove emptyStateOverlayView ref
+            if emptyStateOverlayView.superview != nil {
+                emptyStateOverlayView.removeFromSuperview()
+            }
+            emptyStateOverlayView = createEmptyStateOverlayView()
+             */
+            resyncHistory()
+            break
+        case .DatabaseWasReopened:
+            if let dbName = notification.object as? String, dbName == "browser.db" {
+                fetchDataAndUpdateLayout(animating: true)
+            }
+        case .OpenClearRecentHistory:
+            if viewModel.isSearchInProgress {
+                exitSearchState()
+            }
+
+            showClearRecentHistory()
+            break
+        case .OpenRecentlyClosedTabs:
+            historyCoordinatorDelegate?.showRecentlyClosedTab()
+            applySnapshot(animatingDifferences: true)
+            break
+        default:
+            // no need to do anything at all
+            break
         }
     }
 
@@ -371,18 +399,27 @@ class HistoryPanel: UIViewController,
 
     /// Handles dequeuing the appropriate type of cell when needed.
     private func configureDataSource() {
-        diffableDataSource = UITableViewDiffableDataSource<HistoryPanelSections, HistoryItem>(
-            tableView: tableView
-        ) { [weak self] (tableView, indexPath, item) -> UITableViewCell? in
+        diffableDataSource = UITableViewDiffableDataSource<
+            HistoryPanelSections,
+            AnyHashable
+        >(tableView: tableView) { [weak self] (tableView, indexPath, item) -> UITableViewCell? in
             guard let self else { return nil }
 
-            switch item {
-            case .historyActionables(var historyActionable):
+            if var historyActionable = item as? HistoryActionablesModel {
                 historyActionable.configureImage(for: windowUUID)
                 return getHistoryActionableCell(historyActionable: historyActionable, indexPath: indexPath)
-            case .site(let site):
+            }
+
+            if let site = item as? Site {
                 return getSiteCell(site: site, indexPath: indexPath)
             }
+
+            if let searchTermGroup = item as? ASGroup<Site> {
+                return getGroupCell(searchTermGroup: searchTermGroup, indexPath: indexPath)
+            }
+
+            // This should never happen! You will have an empty row!
+            return UITableViewCell()
         }
     }
 
@@ -404,20 +441,19 @@ class HistoryPanel: UIViewController,
     }
 
     private func configureHistoryActionableCell(
-        _ historyActionableModel: HistoryActionablesModel,
+        _ historyActionable: HistoryActionablesModel,
         _ cell: OneLineTableViewCell
     ) -> OneLineTableViewCell {
         cell.leftImageView.tintColor = currentTheme().colors.textPrimary
         cell.leftImageView.backgroundColor = .clear
 
-        let viewModel = OneLineTableViewCellViewModel(title: historyActionableModel.itemTitle,
-                                                      leftImageView: historyActionableModel.itemImage,
+        let viewModel = OneLineTableViewCellViewModel(title: historyActionable.itemTitle,
+                                                      leftImageView: historyActionable.itemImage,
                                                       accessoryView: nil,
-                                                      accessoryType: .none,
-                                                      editingAccessoryView: nil)
+                                                      accessoryType: .none)
         cell.configure(viewModel: viewModel)
-        cell.accessibilityIdentifier = historyActionableModel.itemA11yId
-        setTappableStateAndStyle(with: .historyActionables(historyActionableModel), on: cell)
+        cell.accessibilityIdentifier = historyActionable.itemA11yId
+        setTappableStateAndStyle(with: historyActionable, on: cell)
         cell.applyTheme(theme: currentTheme())
         return cell
     }
@@ -453,43 +489,86 @@ class HistoryPanel: UIViewController,
         return cell
     }
 
+    private func getGroupCell(searchTermGroup: ASGroup<Site>, indexPath: IndexPath) -> UITableViewCell? {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: TwoLineImageOverlayCell.cellIdentifier,
+            for: indexPath
+        ) as? TwoLineImageOverlayCell else {
+            logger.log("History Panel - cannot create TwoLineImageOverlayCell for Search Term Group",
+                       level: .debug,
+                       category: .library)
+            return nil
+        }
+
+        let asGroupCell = configureASGroupCell(searchTermGroup, cell)
+        return asGroupCell
+    }
+
+    private func configureASGroupCell(
+        _ asGroup: ASGroup<Site>,
+        _ cell: TwoLineImageOverlayCell
+    ) -> TwoLineImageOverlayCell {
+        if let groupCount = asGroup.description {
+            cell.descriptionLabel.text = groupCount
+        }
+
+        cell.titleLabel.text = asGroup.displayTitle
+        let imageView = UIImageView(image: chevronImage)
+        cell.accessoryView = imageView
+        let tabTrayImage = UIImage(named: StandardImageIdentifiers.Large.tabTray) ?? UIImage()
+        let tintedTabTrayImage = tabTrayImage.withTintColor(currentTheme().colors.iconSecondary)
+        cell.leftImageView.manuallySetImage(tintedTabTrayImage)
+        cell.leftImageView.backgroundColor = currentTheme().colors.layer5
+        cell.applyTheme(theme: currentTheme())
+        return cell
+    }
+
     /// The data source gets populated here for your choice of section.
     func applySnapshot(animatingDifferences: Bool = false) {
-        var snapshot = NSDiffableDataSourceSnapshot<HistoryPanelSections, HistoryItem>()
+        var snapshot = NSDiffableDataSourceSnapshot<HistoryPanelSections, AnyHashable>()
 
         snapshot.appendSections(viewModel.visibleSections)
 
         snapshot.sectionIdentifiers.forEach { section in
             if !viewModel.hiddenSections.contains(where: { $0 == section }) {
-                let sectionData = viewModel.dateGroupedSites.itemsForSection(section.rawValue - 1)
-                let sectionDataUniqued = sectionData.uniqued()
-
-                // FXIOS-10996 Temporary check for duplicates to help diagnose history panel crashes
-                if sectionData.count > sectionDataUniqued.count {
-                    // If you crash here, please record your steps in ticket FXIOS-11563. Diagnose if possible as you
-                    // have stumbled upon one of our rare Sentry crashes that is probably dependent on your unique
-                    // browsing history state.
-                    assertionFailure("FXIOS-11563 We should never have duplicates! Log how you made this crash happen.")
-                }
-
                 snapshot.appendItems(
-                    sectionDataUniqued.map { HistoryItem.site($0) }, // FXIOS-10996 Force unique while we investigate history panel crashes
+                    viewModel.dateGroupedSites.itemsForSection(section.rawValue - 1),
                     toSection: section
                 )
             }
         }
 
-        // Insert your fixed first section and data (e.g. "Recently Closed" cell)
+        // Insert the ASGroup at the correct spot!
+        viewModel.searchTermGroups.forEach { grouping in
+            if let groupSection = viewModel.shouldAddGroupToSections(group: grouping) {
+                guard let individualItem = grouping.groupedItems.last,
+                      let lastVisit = individualItem.latestVisit
+                else { return }
+
+                let groupTimeInterval = TimeInterval.fromMicrosecondTimestamp(lastVisit.date)
+
+                if let groupPlacedAfterItem = (
+                    viewModel.dateGroupedSites.itemsForSection(groupSection.rawValue - 1)
+                ).first(where: { site in
+                    guard let lastVisit = site.latestVisit else { return false }
+                    return groupTimeInterval > TimeInterval.fromMicrosecondTimestamp(lastVisit.date)
+                }) {
+                    // In this case, we have Site items AND a group in the section.
+                    snapshot.insertItems([grouping], beforeItem: groupPlacedAfterItem)
+                } else {
+                    // Looks like this group's the only item in the section
+                    snapshot.appendItems([grouping], toSection: groupSection)
+                }
+            }
+        }
+
+        // Insert your fixed first section and data
         if let historySection = snapshot.sectionIdentifiers.first, historySection != .additionalHistoryActions {
             snapshot.insertSections([.additionalHistoryActions], beforeSection: historySection)
         } else {
             snapshot.appendSections([.additionalHistoryActions])
         }
-
-        snapshot.appendItems(
-            viewModel.historyActionables.map { HistoryItem.historyActionables($0) },
-            toSection: .additionalHistoryActions
-        )
+        snapshot.appendItems(viewModel.historyActionables, toSection: .additionalHistoryActions)
 
         diffableDataSource?.apply(snapshot, animatingDifferences: animatingDifferences, completion: nil)
         updateEmptyPanelState()
@@ -517,8 +596,8 @@ class HistoryPanel: UIViewController,
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
-        guard let item = diffableDataSource?.itemIdentifier(for: indexPath),
-              case HistoryItem.site = item else {
+        if let item = diffableDataSource?.itemIdentifier(for: indexPath),
+           item as? HistoryActionablesModel != nil {
             return nil
         }
 
@@ -527,7 +606,7 @@ class HistoryPanel: UIViewController,
             style: .destructive,
             title: .HistoryPanelDelete
         ) { [weak self] (_, _, completion) in
-            guard let self else {
+            guard let self = self else {
                 completion(false)
                 return
             }
@@ -544,7 +623,10 @@ class HistoryPanel: UIViewController,
         if viewModel.shouldShowEmptyState(searchText: searchbar.text ?? "") {
             applyEmptyStateViewTheme(currentTheme())
             welcomeLabel.text = viewModel.emptyStateText
-            tableView.tableFooterView = emptyStateOverlayView
+            // Ecosia: Replace empty header
+            // tableView.tableFooterView = emptyStateOverlayView
+            tableView.tableFooterView = emptyHeader
+            emptyHeader.applyTheme(theme: currentTheme())
         } else {
             tableView.alwaysBounceVertical = true
             tableView.tableFooterView = nil
@@ -595,18 +677,39 @@ class HistoryPanel: UIViewController,
         tableView.backgroundColor = theme.colors.layer1
         emptyStateOverlayView.backgroundColor = theme.colors.layer1
 
+        /* Ecosia: Search Bar and TableView with same color
         searchbar.backgroundColor = theme.colors.layer3
+        */
+        searchbar.barTintColor = tableView.backgroundColor
+        searchbar.backgroundColor = tableView.backgroundColor
+        searchbar.searchTextField.backgroundColor = theme.colors.ecosia.backgroundPrimary
+
+        /* Ecosia: Update search bar image
         let tintColor = theme.colors.textPrimary
         let searchBarImage = UIImage(named: StandardImageIdentifiers.Large.history)?
             .withRenderingMode(.alwaysTemplate)
             .tinted(withColor: tintColor)
+        */
+        let searchBarImage = UIImage(named: "search")?.tinted(withColor: theme.colors.ecosia.textSecondary).createScaled(.init(width: 16, height: 16))
+
         searchbar.setImage(searchBarImage, for: .search, state: .normal)
+
+        /* Ecosia: Update search bar tint color
         searchbar.tintColor = theme.colors.textPrimary
+        */
+        searchbar.tintColor = theme.colors.textPrimary
+
         navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: theme.colors.textPrimary
         ]
+
+        /* Ecosia: Update bottomSearchButton theming
         bottomSearchButton.tintColor = theme.colors.iconPrimary
         bottomDeleteButton.tintColor = theme.colors.iconPrimary
+        */
+        bottomSearchButton.tintColor = theme.colors.ecosia.textPrimary
+        bottomDeleteButton.tintColor = theme.colors.ecosia.stateError
+
         applyEmptyStateViewTheme(theme)
 
         tableView.reloadData()
@@ -627,7 +730,7 @@ class HistoryPanel: UIViewController,
                                      value: .historyPanelNonGroupItem)
     }
 
-    // MARK: - LibraryPanelContextMenu - override default extension methods
+    // MARK: - LibraryPanelContextMenu
 
     func presentContextMenu(
         for site: Site,
@@ -678,11 +781,16 @@ extension HistoryPanel: UITableViewDelegate {
 
         guard let item = diffableDataSource?.itemIdentifier(for: indexPath) else { return }
 
-        switch item {
-        case .site(let site):
+        if let site = item as? Site {
             handleSiteItemTapped(site: site)
-        case .historyActionables(let historyActionable):
+        }
+
+        if let historyActionable = item as? HistoryActionablesModel {
             handleHistoryActionableTapped(historyActionable: historyActionable)
+        }
+
+        if let asGroupItem = item as? ASGroup<Site> {
+            handleASGroupItemTapped(asGroupItem: asGroupItem)
         }
     }
 
@@ -693,7 +801,7 @@ extension HistoryPanel: UITableViewDelegate {
     }
 
     private func handleSiteItemTapped(site: Site) {
-        guard let url = URL(string: site.url) else {
+        guard let url = URL(string: site.url, invalidCharacters: false) else {
             self.logger.log("Couldn't navigate to site",
                             level: .warning,
                             category: .library)
@@ -710,11 +818,28 @@ extension HistoryPanel: UITableViewDelegate {
         updatePanelState(newState: .history(state: .inFolder))
 
         switch historyActionable.itemIdentity {
+        case .clearHistory:
+            showClearRecentHistory()
         case .recentlyClosed:
             guard viewModel.hasRecentlyClosed else { return }
             refreshControl?.endRefreshing()
             historyCoordinatorDelegate?.showRecentlyClosedTab()
+        default: break
         }
+    }
+
+    private func handleASGroupItemTapped(asGroupItem: ASGroup<Site>) {
+        exitSearchState()
+        updatePanelState(newState: .history(state: .inFolder))
+
+        historyCoordinatorDelegate?.showSearchGroupedItems(asGroupItem)
+        TelemetryWrapper.recordEvent(
+            category: .action,
+            method: .navigate,
+            object: .navigateToGroupHistory,
+            value: nil,
+            extras: nil
+        )
     }
 
     @objc
@@ -740,7 +865,8 @@ extension HistoryPanel: UITableViewDelegate {
         let isCollapsed = viewModel.isSectionCollapsed(sectionIndex: section - 1)
         let headerViewModel = SiteTableViewHeaderModel(
             title: actualSection.title ?? "",
-            accessory: .collapsible(state: isCollapsed ? ExpandButtonState.trailing : ExpandButtonState.down)
+            isCollapsible: true,
+            collapsibleState: isCollapsed ? ExpandButtonState.trailing : ExpandButtonState.down
         )
         header.configure(headerViewModel)
         header.applyTheme(theme: currentTheme())
@@ -749,6 +875,11 @@ extension HistoryPanel: UITableViewDelegate {
         header.tag = section
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(sectionHeaderTapped(sender:)))
         header.addGestureRecognizer(tapGesture)
+
+        // let historySectionsWithGroups
+        _ = viewModel.searchTermGroups.map { group in
+            viewModel.groupBelongsToSection(asGroup: group)
+        }
 
         return header
     }
@@ -787,17 +918,13 @@ extension HistoryPanel {
     }
 
     private func resyncHistory() {
-        profile.syncManager?.syncHistory()
-            .uponQueue(.main) { syncResult in
-                // FXIOS-13228 It should be safe to assumeIsolated here because of `.main` queue above
-                MainActor.assumeIsolated {
-                    self.endRefreshing()
+        profile.syncManager.syncHistory().uponQueue(.main) { syncResult in
+            self.endRefreshing()
 
-                    if syncResult.isSuccess {
-                        self.fetchDataAndUpdateLayout(animating: true)
-                    }
-                }
+            if syncResult.isSuccess {
+                self.fetchDataAndUpdateLayout(animating: true)
             }
+        }
     }
 }
 
@@ -831,17 +958,13 @@ extension HistoryPanel {
 
     /// When long pressed, a menu appears giving the choice of pinning as a Top Site.
     func pinToTopSites(_ site: Site) {
-        profile.pinnedSites.addPinnedTopSite(site)
-            .uponQueue(.main) { result in
-                // FXIOS-13228 It should be safe to assumeIsolated here because of `.main` queue above
-                MainActor.assumeIsolated {
-                    if result.isSuccess {
-                        SimpleToast().showAlertWithText(.LegacyAppMenu.AddPinToShortcutsConfirmMessage,
-                                                        bottomContainer: self.view,
-                                                        theme: self.currentTheme())
-                    }
-                }
+        profile.pinnedSites.addPinnedTopSite(site).uponQueue(.main) { result in
+            if result.isSuccess {
+                SimpleToast().showAlertWithText(.LegacyAppMenu.AddPinToShortcutsConfirmMessage,
+                                                bottomContainer: self.view,
+                                                theme: self.currentTheme())
             }
+        }
     }
 
     @objc
@@ -849,8 +972,7 @@ extension HistoryPanel {
         guard longPressGestureRecognizer.state == .began else { return }
         let touchPoint = longPressGestureRecognizer.location(in: tableView)
         guard let indexPath = tableView.indexPathForRow(at: touchPoint),
-              let item = diffableDataSource?.itemIdentifier(for: indexPath),
-              case HistoryItem.site = item
+              diffableDataSource?.itemIdentifier(for: indexPath) as? HistoryActionablesModel == nil
         else { return }
 
         presentContextMenu(for: indexPath)

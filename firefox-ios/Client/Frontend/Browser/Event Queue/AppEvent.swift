@@ -3,10 +3,11 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Shared
 import Common
 
-/// Base event type protocol. Conforming types must be Hashable.
-public protocol AppEventType: Hashable, Sendable { }
+/// Base event type protocol. Conforming types must be hashable.
+public protocol AppEventType: Hashable { }
 
 public enum AppEvent: AppEventType {
     // MARK: - Global App Events
@@ -20,10 +21,6 @@ public enum AppEvent: AppEventType {
     case postLaunchDependenciesComplete
     case accountManagerInitialized
     case browserIsReady
-
-    // Events: Open Deeplink startup time record
-    case recordStartupTimeOpenDeeplinkComplete
-    case recordStartupTimeOpenDeeplinkCancelled
 
     // Activities: Profile Syncing
     case profileSyncing

@@ -4,24 +4,21 @@
 
 import XCTest
 import Common
-import OnboardingKit
 
 @testable import Client
 
-@MainActor
 class OnboardingButtonActionTests: XCTestCase {
-    var mockDelegate: MockOnboardingCardDelegateController!
+    var mockDelegate: MockOnboardinCardDelegateController!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
-        DependencyHelperMock().reset()
+    override func tearDown() {
+        super.tearDown()
         mockDelegate = nil
-        try await super.tearDown()
     }
 
     func testMockDelegate_whenInitialized_actionIsNil() {
@@ -105,26 +102,26 @@ class OnboardingButtonActionTests: XCTestCase {
     func setSubjectUpWith(
         firstAction: OnboardingActions,
         twoButtons: Bool = true,
-        file: StaticString = #filePath,
+        file: StaticString = #file,
         line: UInt = #line
-    ) -> OnboardingBasicCardViewController<OnboardingKitCardInfoModel> {
-        var buttons: OnboardingButtons<OnboardingActions>
+    ) -> OnboardingBasicCardViewController {
+        var buttons: OnboardingButtons
         if twoButtons {
             buttons = OnboardingButtons(
-                primary: OnboardingButtonInfoModel<OnboardingActions>(
+                primary: OnboardingButtonInfoModel(
                     title: .Onboarding.Sync.SignInAction,
                     action: firstAction),
-                secondary: OnboardingButtonInfoModel<OnboardingActions>(
+                secondary: OnboardingButtonInfoModel(
                     title: .Onboarding.Sync.SkipAction,
                     action: .forwardOneCard))
         } else {
             buttons = OnboardingButtons(
-                primary: OnboardingButtonInfoModel<OnboardingActions>(
+                primary: OnboardingButtonInfoModel(
                     title: .Onboarding.Sync.SignInAction,
                     action: firstAction))
         }
 
-        let mockInfoModel = OnboardingKitCardInfoModel(
+        let mockInfoModel = OnboardingCardInfoModel(
             cardType: .basic,
             name: "signSync",
             order: 10,
@@ -136,10 +133,9 @@ class OnboardingButtonActionTests: XCTestCase {
             onboardingType: .freshInstall,
             a11yIdRoot: AccessibilityIdentifiers.Onboarding.onboarding,
             imageID: ImageIdentifiers.Onboarding.HeaderImages.syncv106,
-            instructionsPopup: nil,
-            embededLinkText: [])
+            instructionsPopup: nil)
 
-        mockDelegate = MockOnboardingCardDelegateController()
+        mockDelegate = MockOnboardinCardDelegateController()
         let subject = OnboardingBasicCardViewController(
             viewModel: mockInfoModel,
             delegate: mockDelegate,

@@ -6,7 +6,6 @@ import Foundation
 
 class ExportBrowserDataSetting: HiddenSetting {
     override var title: NSAttributedString? {
-        guard let theme else { return nil }
         // Not localized for now.
         return NSAttributedString(
             string: "Copy databases to app container",
@@ -17,15 +16,11 @@ class ExportBrowserDataSetting: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         do {
-            guard let profile  = self.settings.profile else { return }
-            try profile.files.copyMatching(
+            try self.settings.profile.files.copyMatching(
                 fromRelativeDirectory: "",
                 toAbsoluteDirectory: documentsPath
             ) { file in
-                return file.hasPrefix("browser.")
-                || file.hasPrefix("logins.")
-                || file.hasPrefix("metadata.")
-                || file.hasPrefix("nimbus.")
+                return file.hasPrefix("browser.") || file.hasPrefix("logins.") || file.hasPrefix("metadata.")
             }
         } catch {}
     }

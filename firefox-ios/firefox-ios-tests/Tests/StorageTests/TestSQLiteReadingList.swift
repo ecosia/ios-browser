@@ -54,10 +54,7 @@ class TestSQLiteReadingList: XCTestCase {
             break
         }
 
-        let result2 = readingList
-                      .getRecordWithURL("http://www.anandtech.com/show/9117/analyzing-intel-core-m-performance")
-                      .value
-
+        let result2 = readingList.getRecordWithURL("http://www.anandtech.com/show/9117/analyzing-intel-core-m-performance").value
         switch result2 {
         case .failure(let error):
             XCTFail(error.description)
@@ -116,21 +113,12 @@ class TestSQLiteReadingList: XCTestCase {
             break
         }
 
-        readingList.deleteRecord(result1.successValue!) { [readingList] success in
-            guard let readingList else {
-                XCTFail()
-                return
-            }
-
-            guard success else {
+        readingList.deleteRecord(result1.successValue!) { success in
+            if !success {
                 XCTFail("Failed to delete reading list item")
-                return
             }
 
-            let result3 = readingList
-                          .getRecordWithURL("http://www.anandtech.com/show/9117/analyzing-intel-core-m-performance")
-                          .value
-
+            let result3 = self.readingList.getRecordWithURL("http://www.anandtech.com/show/9117/analyzing-intel-core-m-performance").value
             switch result3 {
             case .failure:
                 break

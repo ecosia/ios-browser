@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class HomeViewToolbar: UIView {
+class HomeViewToolbar: UIView {
     private let stackView = UIStackView()
 
     init() {

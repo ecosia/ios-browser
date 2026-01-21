@@ -6,14 +6,12 @@ import UIKit
 
 /// Used to add menu controller items in different parts of our applications, mainly on different textfields type
 public protocol MenuHelper {
-    @MainActor
     func setItems(webViewModel: MenuHelperWebViewModel?,
                   loginModel: MenuHelperLoginModel?,
                   urlBarModel: MenuHelperURLBarModel?)
 }
 
-public final class DefaultMenuHelper: NSObject, MenuHelper {
-    @MainActor
+public class DefaultMenuHelper: NSObject, MenuHelper {
     public func setItems(webViewModel: MenuHelperWebViewModel?,
                          loginModel: MenuHelperLoginModel?,
                          urlBarModel: MenuHelperURLBarModel?) {

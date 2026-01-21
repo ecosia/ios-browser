@@ -3,9 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Common
 
 /// Used in HeroImageView and FaviconImageView to update their image using the SiteImageHandler
-@MainActor
 protocol SiteImageView: UIView {
     var uniqueID: UUID? { get set }
     var imageFetcher: SiteImageHandler { get set }

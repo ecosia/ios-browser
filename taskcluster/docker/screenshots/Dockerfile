@@ -5,7 +5,7 @@
 FROM ubuntu:22.04
 
 # Add worker user
-RUN mkdir -p /builds && \
+RUN mkdir /builds && \
     useradd -d /builds/worker -s /bin/bash -m worker && \
     chown worker:worker /builds/worker && \
     mkdir /builds/worker/artifacts && \

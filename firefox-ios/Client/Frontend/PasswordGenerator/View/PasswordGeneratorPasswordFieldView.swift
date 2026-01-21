@@ -13,8 +13,6 @@ final class PasswordGeneratorPasswordFieldView: UIView, ThemeApplicable, Notifia
         static let passwordFieldVerticalPadding: CGFloat = 10
         static let passwordLabelAndButtonSpacing: CGFloat = 10
         static let passwordRefreshButtonHeight: CGFloat = 18
-        static let passwordHiddenAlpha: CGFloat = 0
-        static let passwordVisibleAlpha: CGFloat = 1
     }
 
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -43,16 +41,13 @@ final class PasswordGeneratorPasswordFieldView: UIView, ThemeApplicable, Notifia
         button.addTarget(self, action: #selector(self.refreshOnClick), for: .touchUpInside)
     }
 
-    var refreshPasswordButtonOnClick: (@MainActor () -> Void)?
+    var refreshPasswordButtonOnClick: (() -> Void)?
 
     convenience init(frame: CGRect, notificationCenter: NotificationProtocol = NotificationCenter.default) {
         self.init(frame: frame)
         self.notificationCenter = notificationCenter
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [UIContentSizeCategory.didChangeNotification]
-        )
+        setupNotifications(forObserver: self,
+                           observing: [.DynamicFontChanged])
     }
 
     override init(frame: CGRect) {
@@ -60,11 +55,8 @@ final class PasswordGeneratorPasswordFieldView: UIView, ThemeApplicable, Notifia
         self.layer.borderWidth = UX.passwordFieldBorderWidth
         self.layer.cornerRadius = UX.passwordFieldCornerRadius
         self.accessibilityIdentifier = AccessibilityIdentifiers.PasswordGenerator.passwordField
-        startObservingNotifications(
-            withNotificationCenter: notificationCenter,
-            forObserver: self,
-            observing: [UIContentSizeCategory.didChangeNotification]
-        )
+        setupNotifications(forObserver: self,
+                           observing: [.DynamicFontChanged])
         setupLayout()
     }
 
@@ -116,10 +108,6 @@ final class PasswordGeneratorPasswordFieldView: UIView, ThemeApplicable, Notifia
         return attributedString
     }
 
-    func setPasswordHidden(_ hidden: Bool) {
-        passwordLabel.alpha = hidden ? UX.passwordHiddenAlpha : UX.passwordVisibleAlpha
-    }
-
     @objc
     private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
         let copyItem = UIMenuItem(title: .PasswordGenerator.CopyPasswordButtonLabel, action: #selector(self.copyText))
@@ -151,10 +139,8 @@ final class PasswordGeneratorPasswordFieldView: UIView, ThemeApplicable, Notifia
 
     func handleNotifications(_ notification: Notification) {
         switch notification.name {
-        case UIContentSizeCategory.didChangeNotification:
-            ensureMainThread {
-                self.applyDynamicFontChange()
-            }
+        case .DynamicFontChanged:
+            applyDynamicFontChange()
         default: break
         }
     }

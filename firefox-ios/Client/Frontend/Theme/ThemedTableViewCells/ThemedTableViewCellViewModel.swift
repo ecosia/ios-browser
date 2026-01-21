@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Shared
 
 enum ThemedTableViewCellType {
     case standard, actionPrimary, destructive, disabled
@@ -12,10 +13,10 @@ enum ThemedTableViewCellType {
 class ThemedTableViewCellViewModel {
     var type: ThemedTableViewCellType
 
-    var textColor: UIColor?
-    var detailTextColor: UIColor?
-    var backgroundColor: UIColor?
-    var tintColor: UIColor?
+    var textColor: UIColor!
+    var detailTextColor: UIColor!
+    var backgroundColor: UIColor!
+    var tintColor: UIColor!
 
     init(theme: Theme, type: ThemedTableViewCellType) {
         self.type = type

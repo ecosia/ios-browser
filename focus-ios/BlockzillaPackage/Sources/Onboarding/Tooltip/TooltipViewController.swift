@@ -4,7 +4,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
 
-public final class TooltipViewController: UIViewController {
+public class TooltipViewController: UIViewController {
     private lazy var tooltipView: TooltipView = {
         let tooltipView = TooltipView()
         tooltipView.translatesAutoresizingMaskIntoConstraints = false

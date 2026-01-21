@@ -4,11 +4,14 @@
 
 import XCTest
 @testable import Shared
+import Common
 
 final class UserAgentTests: XCTestCase {
     func testGetUserAgentDesktop_withListedDomain_returnProperUserAgent() {
         let domains = CustomUserAgentConstant.customDesktopUAForDomain
         domains.forEach { domain, agent in
+            // Ecosia: Add not nil check for domain
+            XCTAssertNotNil(domain)
             XCTAssertEqual(agent, UserAgent.getUserAgent(domain: domain, platform: .Desktop))
         }
     }
@@ -22,13 +25,19 @@ final class UserAgentTests: XCTestCase {
 
     func testGetUserAgentDesktop_withPaypalDomain_returnMobileUserAgent() {
         let paypalDomain = "paypal.com"
+        /* Ecosia: Use default Firefox UA instead
         XCTAssertEqual(UserAgent.mobileUserAgent(),
+         */
+        XCTAssertEqual(UserAgentBuilder.defaultFirefoxMobileUserAgent().userAgent(),
                        UserAgent.getUserAgent(domain: paypalDomain, platform: .Desktop))
     }
 
     func testGetUserAgentMobile_withPaypalDomain_returnProperUserAgent() {
         let paypalDomain = "paypal.com"
+        /* Ecosia: Use default Firefox UA instead
         XCTAssertEqual(UserAgent.mobileUserAgent(),
+         */
+        XCTAssertEqual(UserAgentBuilder.defaultFirefoxMobileUserAgent().userAgent(),
                        UserAgent.getUserAgent(domain: paypalDomain, platform: .Mobile))
     }
 }

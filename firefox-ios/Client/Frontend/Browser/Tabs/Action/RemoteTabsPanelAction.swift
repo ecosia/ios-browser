@@ -6,46 +6,30 @@ import Common
 import Redux
 import Storage
 
-import struct MozillaAppServices.Device
-
 /// Defines actions sent to Redux for Sync tab in tab tray
-struct RemoteTabsPanelAction: Action, Sendable {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
+class RemoteTabsPanelAction: Action {
     let clientAndTabs: [ClientAndTabs]?
     let reason: RemoteTabsPanelEmptyStateReason?
     let url: URL?
-    let targetDeviceId: String?
-    let devices: [Device]?
 
     init(clientAndTabs: [ClientAndTabs]? = nil,
          reason: RemoteTabsPanelEmptyStateReason? = nil,
          url: URL? = nil,
-         targetDeviceId: String? = nil,
-         devices: [Device]? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
         self.clientAndTabs = clientAndTabs
         self.reason = reason
         self.url = url
-        self.targetDeviceId = targetDeviceId
-        self.devices = devices
+        super.init(windowUUID: windowUUID,
+                   actionType: actionType)
     }
 }
 
 enum RemoteTabsPanelActionType: ActionType {
     case panelDidAppear
     case refreshTabs
-    case refreshTabsWithCache
     case refreshDidBegin
     case refreshDidFail
     case refreshDidSucceed
-    case closeTabCompatible
     case openSelectedURL
-    case closeSelectedRemoteURL
-    case undoCloseSelectedRemoteURL
-    case flushTabCommands
-    case remoteDevicesChanged
 }
