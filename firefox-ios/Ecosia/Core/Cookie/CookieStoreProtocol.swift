@@ -4,7 +4,7 @@
 
 import WebKit
 
-public protocol CookieStoreProtocol {
+public protocol CookieStoreProtocol: Sendable {
     func allCookies() async -> [HTTPCookie]
     func setCookie(_ cookie: HTTPCookie) async
 }

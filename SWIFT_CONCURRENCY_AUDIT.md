@@ -9,7 +9,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 
 ---
 
-## ✅ Already Fixed (29 files)
+## ✅ Already Fixed (30 files)
 
 - ✅ Publisher.swift - @MainActor protocol with Sendable constraints
 - ✅ Images.swift - @MainActor with async/await + Sendable Item
@@ -33,6 +33,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ BaseRequest.swift - Sendable protocol
 - ✅ Requestable.swift - Sendable protocol
 - ✅ Environment.swift - Sendable enum
+- ✅ CookieStoreProtocol.swift - Sendable protocol
 - ✅ NewsModel, Tab, Page, AuthStateAction, AuthWindowState, Report, Referrals.Model - Sendable
 
 ---
@@ -179,6 +180,7 @@ Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurr
 - ✅ [SWIFT-CONCURRENCY] Fix FinancialReports actor + iOS 15 compatibility (5 files)
 - ✅ [SWIFT-CONCURRENCY] Fix Publisher protocol conformance crossing MainActor (4 files)
 - ✅ [SWIFT-CONCURRENCY] Fix protocol Sendable conformance (HTTPClient, BaseRequest, Requestable, Environment, Images.Item) (6 files)
+- ✅ [SWIFT-CONCURRENCY] Fix CookieStoreProtocol Sendable conformance for Task closure (1 file)
 
 ---
 
