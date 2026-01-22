@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol AccountsProviderProtocol {
+public protocol AccountsProviderProtocol: Sendable {
     func registerVisit(accessToken: String) async throws -> AccountVisitResponse
 }
 

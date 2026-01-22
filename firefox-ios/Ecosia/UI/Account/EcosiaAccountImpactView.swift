@@ -177,6 +177,7 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
 
     public init() {}
 
+    @MainActor
     public mutating func applyTheme(theme: Theme) {
         backgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
         cardBackgroundColor = Color(theme.colors.ecosia.backgroundElevation1)

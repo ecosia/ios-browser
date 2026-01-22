@@ -2,12 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+@preconcurrency import Foundation
 import SwiftUI
 import Combine
 import Common
 
 /// Centralized, reactive authentication state provider for consistent UI state across all components
 /// This eliminates the need for individual components to manage their own auth state observers
+@MainActor
 public class EcosiaAuthUIStateProvider: ObservableObject {
 
     /// Auth0 gives us back a Gravatar URL when no profile picture URL is provided from a resource (e.g. Sign In with Apple)
@@ -65,7 +67,11 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     public nonisolated(unsafe) static var accountsProviderFactory: () -> AccountsProviderProtocol = { AccountsProvider() }
 
     /// Shared instance for app-wide auth state
-    public nonisolated(unsafe) static let shared = EcosiaAuthUIStateProvider(accountsProvider: accountsProviderFactory())
+    public nonisolated(unsafe) static let shared: EcosiaAuthUIStateProvider = {
+        MainActor.assumeIsolated {
+            EcosiaAuthUIStateProvider(accountsProvider: accountsProviderFactory())
+        }
+    }()
 
     public init(accountsProvider: AccountsProviderProtocol) {
         self.accountsProvider = accountsProvider
@@ -84,14 +90,16 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     }
 
     deinit {
-        if let observer = authStateObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-        if let observer = userProfileObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-        if let observer = seedProgressObserver {
-            NotificationCenter.default.removeObserver(observer)
+        MainActor.assumeIsolated {
+            if let observer = authStateObserver {
+                NotificationCenter.default.removeObserver(observer)
+            }
+            if let observer = userProfileObserver {
+                NotificationCenter.default.removeObserver(observer)
+            }
+            if let observer = seedProgressObserver {
+                NotificationCenter.default.removeObserver(observer)
+            }
         }
     }
 
@@ -128,7 +136,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            Task {
+            Task { [notification] in
                 await self?.handleAuthStateChange(notification)
             }
         }

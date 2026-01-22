@@ -38,6 +38,7 @@ import Common
 // MARK: - EcosiaThemeable Protocol
 
 /// Protocol for theme containers that can receive theme updates
+@MainActor
 public protocol EcosiaThemeable {
     /// Apply the given theme to update the theme properties
     /// - Parameter theme: The theme to apply

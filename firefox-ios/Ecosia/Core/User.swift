@@ -60,6 +60,7 @@ public struct User: Codable, Equatable {
     public var news = Date.distantPast
     public var migrated = false
     public var referrals = Referrals.Model()
+    @MainActor
     public var seedCount: Int {
         EcosiaAuthUIStateProvider.shared.seedCount
     }

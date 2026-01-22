@@ -86,7 +86,7 @@ public class AppConstants {
     public static let prefStudiesToggle = "settings.studiesToggle"
 
     /// Build Channel.
-    public static let buildChannel: AppBuildChannel = {
+    public nonisolated(unsafe) static let buildChannel: AppBuildChannel = {
         #if MOZ_CHANNEL_RELEASE
         return AppBuildChannel.release
         #elseif MOZ_CHANNEL_BETA

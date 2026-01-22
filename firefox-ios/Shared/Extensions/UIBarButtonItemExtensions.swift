@@ -15,7 +15,7 @@ extension UIBarButtonItem {
 
     private struct AssociatedKeys {
         // This property's address will be used as a unique address for the associated object's handle
-        static var targetClosure: UInt8 = 0
+        nonisolated(unsafe) static var targetClosure: UInt8 = 0
     }
 
     private var targetClosure: ((UIBarButtonItem) -> Void)? {

@@ -66,7 +66,7 @@ open class KeyboardHelper: NSObject {
 
     open class var defaultHelper: KeyboardHelper {
         struct Singleton {
-            static let instance = KeyboardHelper()
+            nonisolated(unsafe) static let instance = KeyboardHelper()
         }
         return Singleton.instance
     }

@@ -12,7 +12,11 @@ open class UserAgent {
     public static let uaBitMobile = "Mobile/15E148"
     public static let uaBitFx = "FxiOS/\(AppInfo.appVersion)"
     // Ecosia: Add Ecosia UserAgent info
-    public static let uaBitVersion = "Version/\(UIDevice.current.systemVersion)"
+    public nonisolated(unsafe) static let uaBitVersion: String = {
+        MainActor.assumeIsolated {
+            "Version/\(UIDevice.current.systemVersion)"
+        }
+    }()
     public static var uaBitEcosia: String {
         let ecosiaAppVersion = AppInfo.applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
         return "(Ecosia ios@\(ecosiaAppVersion).\(AppInfo.buildNumber))"
@@ -26,7 +30,7 @@ open class UserAgent {
     // For iPad, we need to append this to the default UA for google.com to show correct page
     public static let uaBitGoogleIpad = "Version/13.0.3"
 
-    private static var defaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
+    private nonisolated(unsafe) static var defaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
 
     private static func clientUserAgent(prefix: String) -> String {
         let versionStr: String

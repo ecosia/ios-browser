@@ -79,6 +79,7 @@ public struct DefaultBrowserCoordinator {
 
 extension DefaultBrowserCoordinator {
 
+    @MainActor
     public static func makeDefaultCoordinatorAndShowDetailViewFrom(_ navigationController: UINavigationController?,
                                                                    analyticsLabel: Analytics.Label.DefaultBrowser,
                                                                    topViewContentBackground: Color,
