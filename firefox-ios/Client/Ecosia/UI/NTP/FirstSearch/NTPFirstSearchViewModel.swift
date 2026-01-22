@@ -120,6 +120,7 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
 
 extension NTPFirstSearchViewModel: ProductTourObserver {
     func productTourStateDidChange(_ state: ProductTourState) {
+        // TODO: Delay to reload after url loading so it doesn't flash
         // Notify delegate to reload the view when product tour state changes
         delegate?.reloadView()
     }

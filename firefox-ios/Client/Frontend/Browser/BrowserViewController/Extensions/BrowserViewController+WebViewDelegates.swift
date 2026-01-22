@@ -606,6 +606,12 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
 
+            // TODO: Is this the best place?
+            // Ecosia: Update Product Tour state if needed
+            if OnboardingProductTourExperiment.isEnabled {
+                ProductTourManager.shared.completeFirstSearchIfNeeded()
+            }
+
             // Ecosia: Track search if is Ecosia's vertical
             let urlChanged = url != previousUrl
             let isReload = navigationAction.navigationType == .reload

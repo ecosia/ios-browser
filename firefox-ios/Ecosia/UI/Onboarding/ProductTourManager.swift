@@ -86,9 +86,8 @@ public final class ProductTourManager {
         }
     }
 
-    // TODO: Find best place to do this
     /// Mark the first search as completed
-    public func completeFirstSearch() {
+    public func completeFirstSearchIfNeeded() {
         guard currentState == .firstSearch else { return }
         currentState = .searchCompleted
     }

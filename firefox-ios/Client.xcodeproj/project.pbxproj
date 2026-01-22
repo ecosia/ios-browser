@@ -81,7 +81,6 @@
 		1230CFF32EBB990900D7AC00 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
 		123283ED2F210C10009EA5BC /* NTPFirstSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123283EC2F210C10009EA5BC /* NTPFirstSearchCell.swift */; };
 		123283EF2F210C23009EA5BC /* NTPFirstSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123283EE2F210C23009EA5BC /* NTPFirstSearchViewModel.swift */; };
-		123283F12F210CEA009EA5BC /* LegacyHomepageViewController+ProductTour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123283F02F210CEA009EA5BC /* LegacyHomepageViewController+ProductTour.swift */; };
 		123475C32DA6730A0017B0C2 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A6AB4528CA6A4C00EBEBDD /* String+Extension.swift */; };
 		123475CC2DA7D6620017B0C2 /* BeforeOrAfterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */; };
 		12348FFA2DB8D2D40017B0C2 /* PrefsKeys+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12348FF92DB8D2CC0017B0C2 /* PrefsKeys+Ecosia.swift */; };
@@ -2372,7 +2371,6 @@
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		123283EC2F210C10009EA5BC /* NTPFirstSearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPFirstSearchCell.swift; sourceTree = "<group>"; };
 		123283EE2F210C23009EA5BC /* NTPFirstSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPFirstSearchViewModel.swift; sourceTree = "<group>"; };
-		123283F02F210CEA009EA5BC /* LegacyHomepageViewController+ProductTour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LegacyHomepageViewController+ProductTour.swift"; sourceTree = "<group>"; };
 		123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeOrAfterView.swift; sourceTree = "<group>"; };
 		12348FF92DB8D2CC0017B0C2 /* PrefsKeys+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrefsKeys+Ecosia.swift"; sourceTree = "<group>"; };
 		123CEC4B2E7814A2009EB379 /* FoundersGroteskCondensed-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FoundersGroteskCondensed-Semibold.ttf"; sourceTree = "<group>"; };
@@ -10675,7 +10673,6 @@
 			isa = PBXGroup;
 			children = (
 				121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */,
-				123283F02F210CEA009EA5BC /* LegacyHomepageViewController+ProductTour.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -17073,7 +17070,6 @@
 				DA4F826729AD221600189590 /* ZoomPageBar.swift in Sources */,
 				59A68E0B4ABBF55E14819668 /* LegacyBookmarksPanel.swift in Sources */,
 				BD4B2DE429BB4D9A005FAA50 /* TimerSnackBar.swift in Sources */,
-				123283F12F210CEA009EA5BC /* LegacyHomepageViewController+ProductTour.swift in Sources */,
 				810FF3582B1784E7009F062C /* PrivateModeAction.swift in Sources */,
 				21EA466A2B04130500AAAB2D /* TabsPanelState.swift in Sources */,
 				D04D1B862097859B0074B35F /* DownloadToast.swift in Sources */,

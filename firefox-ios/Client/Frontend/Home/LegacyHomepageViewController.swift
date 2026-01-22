@@ -150,8 +150,6 @@ class LegacyHomepageViewController:
         jumpBackInContextualHintViewController.stopTimer()
         syncTabContextualHintViewController.stopTimer()
         notificationCenter.removeObserver(self)
-        // Ecosia: Product tour
-        cleanupProductTourIntegration()
     }
 
     // MARK: - View lifecycle
@@ -168,9 +166,6 @@ class LegacyHomepageViewController:
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
-
-        // Ecosia: Product tour
-        configureProductTourIntegration()
 
         setupSectionsAction()
         reloadView()
