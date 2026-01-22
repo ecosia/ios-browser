@@ -25,28 +25,23 @@ private let baseSettings: SettingsDictionary = [
 
 private let packages: [Package] = [
     .local(path: "../BrowserKit"),
+    .local(path: "../MozillaRustComponents"),
     .remote(url: "https://github.com/auth0/Auth0.swift.git", requirement: .upToNextMajor(from: "2.0.0")),
     .remote(url: "https://github.com/braze-inc/braze-swift-sdk.git", requirement: .upToNextMajor(from: "11.9.0")),
     .remote(url: "https://github.com/airbnb/lottie-ios.git", requirement: .exact("4.4.0")),
-    .remote(url: "https://github.com/scinfu/SwiftSoup.git", requirement: .exact("2.5.3")),
     .remote(url: "https://github.com/mozilla/glean-swift.git", requirement: .exact("61.2.0")),
     .remote(url: "https://github.com/snowplow/snowplow-ios-tracker.git", requirement: .upToNextMinor(from: "6.0.9")),
-    .remote(url: "https://github.com/auth0/SimpleKeychain.git", requirement: .upToNextMajor(from: "1.3.0")),
-    .remote(url: "https://github.com/auth0/JWTDecode.swift.git", requirement: .upToNextMajor(from: "3.3.0")),
     .remote(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", requirement: .upToNextMajor(from: "1.18.7")),
     .remote(url: "https://github.com/nalexn/ViewInspector.git", requirement: .upToNextMajor(from: "0.10.1")),
-    .remote(url: "https://github.com/pointfreeco/xctest-dynamic-overlay.git", requirement: .upToNextMajor(from: "1.5.1")),
-    .remote(url: "https://github.com/pointfreeco/swift-custom-dump.git", requirement: .upToNextMajor(from: "1.3.3")),
     .remote(url: "https://github.com/kif-framework/KIF.git", requirement: .exact("3.8.9")),
     .remote(url: "https://github.com/adjust/ios_sdk.git", requirement: .exact("4.37.0")),
     .remote(url: "https://github.com/SnapKit/SnapKit.git", requirement: .exact("5.7.0")),
     .remote(url: "https://github.com/nbhasin2/Fuzi.git", requirement: .branch("master")),
     .remote(url: "https://github.com/nbhasin2/GCDWebServer.git", requirement: .branch("master")),
     .remote(url: "https://github.com/getsentry/sentry-cocoa.git", requirement: .exact("8.36.0")),
-    .remote(url: "https://github.com/onevcat/Kingfisher.git", requirement: .exact("7.12.0")),
+    .remote(url: "https://github.com/onevcat/Kingfisher.git", requirement: .exact("8.2.0")),
     .remote(url: "https://github.com/apple/swift-certificates.git", requirement: .exact("1.2.0")),
     .remote(url: "https://github.com/mozilla-mobile/MappaMundi.git", requirement: .branch("master")),
-    .remote(url: "https://github.com/ecosia/rust-components-swift.git", requirement: .branch("133.0.0_Glean_removed")),
 ]
 
 // MARK: - Build Scripts
@@ -320,7 +315,7 @@ private let fixMozillaRustComponentsEmbeddingScript: [TargetScript] = [
 private let clientBuildScripts: [TargetScript] = 
     swiftlintScript +
     updateVersionScript +
-    fixMozillaRustComponentsEmbeddingScript +
+    // fixMozillaRustComponentsEmbeddingScript +
     moveNestedFrameworksScript +
     addOptionalResourcesScript +
     populateTestFixturesScript +
@@ -338,45 +333,13 @@ let allTargets: [Target] = [
             bundleId: "$(MOZ_BUNDLE_ID)",
             infoPlist: .file(path: "Client/Info.plist"),
             sources: [
-                .glob("Client/**/*.swift", excluding: [
-                    "Client/Assets/Search/get_supported_locales.swift",
-                    "Client/Frontend/Browser/FaviconManager.swift",
-                    "Client/Frontend/Browser/TranslationToastHandler.swift",
-                    "Client/Frontend/Login/LoginViewController.swift",
-                    "Client/Frontend/Strings.swift",
-                    // Ecosia: Exclude original Firefox files that are replaced by Ecosia versions
-                    "Client/Frontend/Home/HomepageSectionType.swift",
-                    "Client/Frontend/Home/TopSites/Cell/TopSiteItemCell.swift",
-                    "Client/Ecosia/UI/NTP/DefaultBrowser.swift",
-                    // Ecosia: Exclude Ecosia override files that are not currently used
-                    "Client/Frontend/Widgets/EcosiaTabTrayButtonExtensions.swift",
-                    // Ecosia: Exclude outdated color definitions (use Ecosia framework version)
-                    "Client/Ecosia/UI/Theme/EcosiaColor.swift",
-                    // Exclude new Redux tab management files not yet integrated
-                    "Client/Frontend/Browser/Tabs/Action/TabManagerAction.swift",
-                    "Client/Frontend/Browser/Tabs/State/TabViewState.swift",
-                    // Exclude only PocketViewModel from old Pocket (unused, new one might exist elsewhere)
-                    "Client/Frontend/Home/Pocket/PocketViewModel.swift",
-                    // Exclude features not yet integrated (Bookmarks, MessageCard, and JumpBackInViewModel)
-                    "Client/Frontend/Home/Bookmarks/**",
-                    "Client/Frontend/Home/JumpBackIn/JumpBackInViewModel.swift",
-                    "Client/Frontend/Home/MessageCard/**",
-                    // Exclude unused AppDelegate extension
-                    "Client/Application/AppDelegate+PushNotifications.swift"
-                ]),
+                "Client/**/*.{swift, h, m}",
                 "Providers/**/*.swift",
-                "Extensions/NotificationService/NotificationPayloads.swift",
-                "WidgetKit/OpenTabs/SimpleTab.swift",
-                "Account/FxAPushMessageHandler.swift",
-                "RustFxA/FirefoxAccountSignInViewController.swift",
-                "RustFxA/FxAEntryPoint.swift",
-                "RustFxA/FxALaunchParams.swift",
-                "RustFxA/FxASignInViewParameters.swift",
-                "RustFxA/FxAWebViewController.swift",
-                "RustFxA/FxAWebViewModel.swift",
-                "RustFxA/FxAWebViewTelemetry.swift",
-                "Client/**/*.m",
-                "Client/**/*.h"
+                "Extensions/**/*",
+                "WidgetKit/**/*.swift",
+                "Account/**/*.{plist, swift, h}",
+                "RustFxA/**/*.swift",
+                "TranslationsEngine.html"
             ],
             resources: [
                 // Ecosia: Explicitly list CC_Script files (autofill, credit card, form handling)
@@ -404,7 +367,6 @@ let allTargets: [Target] = [
                 
                 // Other Client/Assets files
                 "Client/Assets/**/*.{css,html,png,jpg,jpeg,pdf,otf,ttf}",
-                "Client/Assets/FxASignIn.js",
                 "Client/Assets/SpotlightHelper.js",
                 
                 // Ecosia: Exclude ALL Firefox AppIcons (we use Ecosia's from Client/Ecosia/UI/Ecosia.xcassets)
@@ -413,11 +375,9 @@ let allTargets: [Target] = [
                     "Client/Assets/Images.xcassets/AppIcon_Beta.appiconset",
                     "Client/Assets/Images.xcassets/AppIcon_Developer.appiconset"
                 ]),
-                .folderReference(path: "Client/Assets/Search/SearchPlugins"),
                 "Client/Frontend/**/*.{storyboard,xib,xcassets,strings,stringsdict}",
                 "Client/Ecosia/**/*.{xib,xcassets,strings,stringsdict}",
                 "Client/*.lproj/**",
-                "../ContentBlockingLists/*.json",
             ],
             scripts: clientBuildScripts,
             dependencies: [
@@ -554,6 +514,7 @@ let allTargets: [Target] = [
                 // Link Binary With Libraries
                 .package(product: "Fuzi"),
                 .target(name: "RustMozillaAppServices"),
+                .target(name: "Localizations"),
                 .package(product: "SnapKit"),
                 .package(product: "Common"),
                 .sdk(name: "ImageIO", type: .framework),
@@ -630,6 +591,7 @@ let allTargets: [Target] = [
                 // Link Binary With Libraries
                 .target(name: "Storage"),
                 .target(name: "RustMozillaAppServices"),
+                .target(name: "Localizations"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
                 .package(product: "Common"),
@@ -798,6 +760,7 @@ let allTargets: [Target] = [
                 .target(name: "Shared"),
 
                 // Link Binary With Libraries
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "GCDWebServers"),
             ],
             settings: .settings(base: baseSettings.merging([
@@ -854,45 +817,6 @@ let allTargets: [Target] = [
             ], uniquingKeysWith: { _, new in new }))
         ),
 
-        // MARK: - Shared Framework
-        .target(
-            name: "Shared",
-            destinations: .iOS,
-            product: .framework,
-            bundleId: "org.mozilla.ios.Shared",
-            infoPlist: .file(path: "Shared/Supporting Files/Info.plist"),
-            sources: [
-                "Shared/**/*.swift",
-                "Shared/**/*.m",
-                "Client/Frontend/Strings.swift",
-                "ThirdParty/Deferred/Deferred/*.swift",
-                "ThirdParty/Reachability.swift",
-                "ThirdParty/Result/*.swift"
-            ],
-            resources: ["Shared/**/*.{strings,stringsdict}"],
-            dependencies: [
-                // Target Dependencies
-                .target(name: "Ecosia"),
-                .target(name: "RustMozillaAppServices"),
-
-                // Link Binary With Libraries
-                .package(product: "WebEngine"),
-                .package(product: "GCDWebServers"),
-                .package(product: "Common"),
-                .package(product: "MozillaAppServices"),
-            ],
-            settings: .settings(
-                base: baseSettings.merging([
-                    "APPLICATION_EXTENSION_API_ONLY": "YES",
-                    "DEFINES_MODULE": "YES",
-                    "CLANG_ENABLE_MODULES": "YES",
-                    "GCC_TREAT_WARNINGS_AS_ERRORS": "NO",
-                    "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
-                    "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
-                ], uniquingKeysWith: { _, new in new })
-            )
-        ),
-
         // MARK: - Sync Framework
         .target(
             name: "Sync",
@@ -920,6 +844,46 @@ let allTargets: [Target] = [
                 "GCC_TREAT_WARNINGS_AS_ERRORS": "NO",
                 "GCC_WARN_INHIBIT_ALL_WARNINGS": "YES",
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Sync/Sync-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
+        ),
+
+        // MARK: - Shared Framework
+        .target(
+            name: "Shared",
+            destinations: .iOS,
+            product: .staticLibrary,
+            bundleId: "org.mozilla.ios.Shared",
+            infoPlist: .file(path: "Shared/Info.plist"),
+            sources: ["Shared/**/*.swift"],
+            resources: ["Shared/**/*.{strings,stringsdict}"],
+            dependencies: [
+                // Link Binary With Libraries
+                .package(product: "Common"),
+                .package(product: "GCDWebServers"),
+            ],
+            settings: .settings(base: baseSettings.merging([
+                "DEFINES_MODULE": "YES",
+                "HEADER_SEARCH_PATHS": [
+                    "$(inherited)",
+                    "$(SRCROOT)",
+                    "$(SRCROOT)/Shared"
+                ],
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
+            ], uniquingKeysWith: { _, new in new }))
+        ),
+
+        // MARK: - Localizations Framework
+        .target(
+            name: "Localizations",
+            destinations: .iOS,
+            product: .framework,
+            bundleId: "org.mozilla.ios.Localizations",
+            infoPlist: .file(path: "Localizations/Info.plist"),
+            sources: ["Localizations/**/*.swift"],
+            resources: ["Localizations/**/*.{strings,stringsdict}"],
+            settings: .settings(base: baseSettings.merging([
+                "DEFINES_MODULE": "YES",
+                "GENERATE_INFOPLIST_FILE": "YES"
             ], uniquingKeysWith: { _, new in new }))
         ),
 
@@ -1015,11 +979,14 @@ let allTargets: [Target] = [
             sources: ["firefox-ios-tests/Tests/ClientTests/**/*.swift"],
             dependencies: [
                 .target(name: "Client"),
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "Common"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
+                .package(product: "Kingfisher"),
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
+                .sdk(name: "z", type: .library),
             ],
             settings: .settings(base: baseSettings)
         ),
