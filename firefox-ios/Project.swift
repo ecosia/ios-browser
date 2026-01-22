@@ -29,7 +29,7 @@ private let packages: [Package] = [
     .remote(url: "https://github.com/auth0/Auth0.swift.git", requirement: .upToNextMajor(from: "2.0.0")),
     .remote(url: "https://github.com/braze-inc/braze-swift-sdk.git", requirement: .upToNextMajor(from: "11.9.0")),
     .remote(url: "https://github.com/airbnb/lottie-ios.git", requirement: .exact("4.4.0")),
-    .remote(url: "https://github.com/mozilla/glean-swift.git", requirement: .exact("61.2.0")),
+    .remote(url: "https://github.com/mozilla/glean-swift.git", requirement: .upToNextMinor(from: "66.3.0")),
     .remote(url: "https://github.com/snowplow/snowplow-ios-tracker.git", requirement: .upToNextMinor(from: "6.0.9")),
     .remote(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", requirement: .upToNextMajor(from: "1.18.7")),
     .remote(url: "https://github.com/nalexn/ViewInspector.git", requirement: .upToNextMajor(from: "0.10.1")),
@@ -837,7 +837,7 @@ let allTargets: [Target] = [
             destinations: .iOS,
             product: .framework,
             bundleId: "org.mozilla.ios.Localizations",
-            infoPlist: .file(path: "Localizations/Info.plist"),
+            infoPlist: .file(path: "Shared/Supporting Files/Info.plist"),
             resources: ["Localizations/**/*.{strings,stringsdict}"],
             dependencies: [
                 .package(product: "Common"),
