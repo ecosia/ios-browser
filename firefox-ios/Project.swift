@@ -382,47 +382,53 @@ let allTargets: [Target] = [
             scripts: clientBuildScripts,
             dependencies: [
                 // Target Dependencies
-                .target(name: "Sync"),
-                .target(name: "Shared"),
                 .target(name: "ShareTo"),
                 .target(name: "WidgetKitExtension"),
                 // Temporarily disabled during Firefox 147.2 upgrade - provisioning profile issues
                 // .target(name: "CredentialProvider"),
                 // .target(name: "ActionExtension"),
+                // .target(name: "NotificationService"),
                 .target(name: "Ecosia"),
-                .target(name: "RustMozillaAppServices"),
 
                 // Link Binary With Libraries
-                .package(product: "MozillaAppServices"),
-                .package(product: "BrazeUI"),
-                .package(product: "BrazeKit"),
-                .package(product: "Common"),
-                .sdk(name: "AdServices", type: .framework, status: .optional),
-                .sdk(name: "iAd", type: .framework),
-                .package(product: "ComponentLibrary"),
-                .package(product: "SiteImageView"),
-                .sdk(name: "SafariServices", type: .framework),
                 .sdk(name: "Accelerate", type: .framework),
-                .sdk(name: "AuthenticationServices", type: .framework),
-                .sdk(name: "xml2", type: .library),
-                .package(product: "ToolbarKit"),
-                .sdk(name: "z", type: .library),
+                .sdk(name: "AdServices", type: .framework, status: .optional),
                 .sdk(name: "AdSupport", type: .framework),
-                .package(product: "Sentry-Dynamic"),
-                .package(product: "Kingfisher"),
-                .package(product: "MenuKit"),
-                .package(product: "Lottie"),
+                .sdk(name: "AuthenticationServices", type: .framework),
+                .package(product: "Common"),
+                .package(product: "ComponentLibrary"),
                 .package(product: "Fuzi"),
-                .package(product: "Adjust"),
-                .sdk(name: "ImageIO", type: .framework),
-                .package(product: "Glean"),
-                .package(product: "X509"),
                 .package(product: "GCDWebServers"),
-                .package(product: "TabDataStore"),
-                .package(product: "Redux"),
-                .package(product: "SnowplowTracker"),
+                .package(product: "Glean"),
+                .sdk(name: "iAd", type: .framework),
+                .sdk(name: "ImageIO", type: .framework),
+                .package(product: "Kingfisher"),
+                .target(name: "Localizations"),
+                .package(product: "Lottie"),
+                .package(product: "MenuKit"),
+                .package(product: "OnboardingKit"),
                 .sdk(name: "PassKit", type: .framework),
+                .package(product: "Redux"),
+                .target(name: "RustMozillaAppServices"),
+                .sdk(name: "SafariServices", type: .framework),
+                .package(product: "Sentry-Dynamic"),
+                .target(name: "Shared"),
+                .package(product: "SiteImageView"),
                 .package(product: "SnapKit"),
+                .package(product: "SummarizeKit"),
+                .target(name: "Sync"),
+                .package(product: "TabDataStore"),
+                .package(product: "ToolbarKit"),
+                .package(product: "UnifiedSearchKit"),
+                .sdk(name: "xml2", type: .library),
+                .sdk(name: "z", type: .library),
+                .package(product: "X509"),
+                
+                // Ecosia-specific dependencies
+                .package(product: "Adjust"),
+                .package(product: "BrazeKit"),
+                .package(product: "BrazeUI"),
+                .package(product: "SnowplowTracker"),
             ],
             settings: .settings(
                 base: baseSettings.merging([
@@ -507,21 +513,13 @@ let allTargets: [Target] = [
             resources: ["Extensions/ShareTo/**/*.{xcassets,strings,stringsdict}"],
             dependencies: [
                 // Target Dependencies
-                .target(name: "Shared"),
-                .target(name: "Sync"),
-                .target(name: "Storage"),
-
-                // Link Binary With Libraries
+                .package(product: "Shared"),
                 .package(product: "Fuzi"),
-                .target(name: "RustMozillaAppServices"),
-                .target(name: "Localizations"),
-                .package(product: "SnapKit"),
                 .package(product: "Common"),
+                .package(product: "SnapKit"),
                 .sdk(name: "ImageIO", type: .framework),
-                .package(product: "MozillaAppServices"),
-                .package(product: "SiteImageView"),
-                .package(product: "GCDWebServers"),
-                .package(product: "Kingfisher"),
+                .sdk(name: "RustMozillaAppServices", type: .framework),
+                .sdk(name: "Localizations", type: .framework),
             ],
             settings: .settings(
                 base: baseSettings.merging([
@@ -585,21 +583,17 @@ let allTargets: [Target] = [
                 "PrivacyInfo.xcprivacy"
             ],
             dependencies: [
-                // Target Dependencies
-                .target(name: "Shared"),
-
-                // Link Binary With Libraries
-                .target(name: "Storage"),
-                .target(name: "RustMozillaAppServices"),
-                .target(name: "Localizations"),
+                .package(product: "Common"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
-                .package(product: "Common"),
-                .package(product: "TabDataStore"),
-                .sdk(name: "WidgetKit", type: .framework),
+                .package(product: "libStorage.a"),
+                .sdk(name: "Localizations", type: .framework),
+                .sdk(name: "RustMozillaAppServices", type: .framework),
+                .package(product: "Shared"),
                 .package(product: "SiteImageView"),
                 .sdk(name: "SwiftUI", type: .framework),
-                .package(product: "MozillaAppServices"),
+                .package(product: "TabDataStore"),
+                .sdk(name: "WidgetKit", type: .framework),
             ],
             settings: .settings(
                 base: baseSettings.merging([
@@ -755,13 +749,8 @@ let allTargets: [Target] = [
                 "Client/Telemetry/ReferringPage.swift"
             ],
             dependencies: [
-                // Target Dependencies
-                .target(name: "Storage"),
-                .target(name: "Shared"),
-
-                // Link Binary With Libraries
                 .target(name: "RustMozillaAppServices"),
-                .package(product: "GCDWebServers"),
+                .sdk(name: "GCDWebServers", type: .framework)
             ],
             settings: .settings(base: baseSettings.merging([
                 "ALWAYS_SEARCH_USER_PATHS": "YES",
@@ -791,15 +780,12 @@ let allTargets: [Target] = [
             sources: ["Storage/**/*.swift"],
             resources: ["Storage/**/*.{xcdatamodeld,sql,html,js}"],
             dependencies: [
-                // Target Dependencies
-                .target(name: "Shared"),
-                .target(name: "Ecosia"),
-
-                // Link Binary With Libraries
-                .package(product: "SiteImageView"),
-                .package(product: "GCDWebServers"),
                 .package(product: "Common"),
+                .package(product: "GCDWebServers"),
                 .package(product: "Kingfisher"),
+                .sdk(name: "RustMozillaAppServices", type: .framework),
+                .package(product: "Shared"),
+                .package(product: "SiteImageView"),
             ],
             settings: .settings(base: baseSettings.merging([
                 "DEFINES_MODULE": "YES",
@@ -826,17 +812,14 @@ let allTargets: [Target] = [
             infoPlist: .file(path: "Sync/Info.plist"),
             sources: ["Sync/**/*.swift"],
             dependencies: [
-                // Target Dependencies
-                .target(name: "Account"),
-                .target(name: "Shared"),
-                .target(name: "RustMozillaAppServices"),
-
-                // Link Binary With Libraries
-                .package(product: "Fuzi"),
-                .package(product: "SiteImageView"),
-                .target(name: "Storage"),
                 .package(product: "Common"),
-                .package(product: "MozillaAppServices"),
+                .package(product: "Fuzi"),
+                .package(product: "libAccount.a"),
+                .package(product: "libStorage.a"),
+                .sdk(name: "Localizations", type: .framework),
+                .sdk(name: "RustMozillaAppServices", type: .framework),
+                .package(product: "Shared"),
+                .package(product: "SiteImageView"),
             ],
             settings: .settings(base: baseSettings.merging([
                 "APPLICATION_EXTENSION_API_ONLY": "YES",
@@ -847,31 +830,6 @@ let allTargets: [Target] = [
             ], uniquingKeysWith: { _, new in new }))
         ),
 
-        // MARK: - Shared Framework
-        .target(
-            name: "Shared",
-            destinations: .iOS,
-            product: .staticLibrary,
-            bundleId: "org.mozilla.ios.Shared",
-            infoPlist: .file(path: "Shared/Info.plist"),
-            sources: ["Shared/**/*.swift"],
-            resources: ["Shared/**/*.{strings,stringsdict}"],
-            dependencies: [
-                // Link Binary With Libraries
-                .package(product: "Common"),
-                .package(product: "GCDWebServers"),
-            ],
-            settings: .settings(base: baseSettings.merging([
-                "DEFINES_MODULE": "YES",
-                "HEADER_SEARCH_PATHS": [
-                    "$(inherited)",
-                    "$(SRCROOT)",
-                    "$(SRCROOT)/Shared"
-                ],
-                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
-            ], uniquingKeysWith: { _, new in new }))
-        ),
-
         // MARK: - Localizations Framework
         .target(
             name: "Localizations",
@@ -879,8 +837,13 @@ let allTargets: [Target] = [
             product: .framework,
             bundleId: "org.mozilla.ios.Localizations",
             infoPlist: .file(path: "Localizations/Info.plist"),
-            sources: ["Localizations/**/*.swift"],
             resources: ["Localizations/**/*.{strings,stringsdict}"],
+            dependencies: [
+                .package(product: "Common"),
+                .package(product: "GCDWebServers"),
+                .package(product: "Shared"),
+                .package(product: "WebEngine")
+            ],
             settings: .settings(base: baseSettings.merging([
                 "DEFINES_MODULE": "YES",
                 "GENERATE_INFOPLIST_FILE": "YES"
@@ -938,8 +901,7 @@ let allTargets: [Target] = [
             infoPlist: .file(path: "RustMozillaAppServices-Info.plist"),
             sources: ["Tuist/RustMozillaAppServices.swift"],
             dependencies: [
-                // Link Binary With Libraries
-                .package(product: "MozillaAppServices"),
+                .package(product: "MozillaRustComponents"),
             ],
             settings: .settings(base: baseSettings.merging([
                 "APPLICATION_EXTENSION_API_ONLY": "YES",
@@ -957,12 +919,9 @@ let allTargets: [Target] = [
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/AccountTests/**/*.swift"],
             dependencies: [
-                .target(name: "Account"),
-                .package(product: "Common"),
-                .package(product: "Fuzi"),
-                .package(product: "GCDWebServers"),
-                .package(product: "SiteImageView"),
-                .package(product: "TabDataStore"),
+                .sdk(name: "RustMozillaAppServices", type: .framework),
+                .package(product: "Shared"),
+
             ],
             settings: .settings(base: baseSettings.merging([
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Account/Account-Bridging-Header.h"
