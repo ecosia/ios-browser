@@ -381,13 +381,14 @@ let allTargets: [Target] = [
             ],
             scripts: clientBuildScripts,
             dependencies: [
-                // Target Dependencies
+                // Target Dependencies (app extensions)
                 .target(name: "ShareTo"),
                 .target(name: "WidgetKitExtension"),
                 // Temporarily disabled during Firefox 147.2 upgrade - provisioning profile issues
                 // .target(name: "CredentialProvider"),
                 // .target(name: "ActionExtension"),
                 // .target(name: "NotificationService"),
+                // .target(name: "Sticker"),
                 .target(name: "Ecosia"),
 
                 // Link Binary With Libraries
@@ -412,7 +413,7 @@ let allTargets: [Target] = [
                 .target(name: "RustMozillaAppServices"),
                 .sdk(name: "SafariServices", type: .framework),
                 .package(product: "Sentry-Dynamic"),
-                .target(name: "Shared"),
+                .package(product: "Shared"),
                 .package(product: "SiteImageView"),
                 .package(product: "SnapKit"),
                 .package(product: "SummarizeKit"),
