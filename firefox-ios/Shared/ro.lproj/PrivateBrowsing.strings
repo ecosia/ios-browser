@@ -5,7 +5,7 @@
 "ContextMenu.OpenInNewPrivateTabButtonTitle" = "Deschide într-o filă privată nouă";
 
 /* Description text displayed when there are no open tabs while in private mode */
-"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "Ecosia nu va reține istoricul sau cookie-urile, însă noile marcaje vor fi salvate.";
+"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "Firefox nu va reține istoricul sau cookie-urile, însă noile marcaje vor fi salvate.";
 
 /* Text button displayed when there are no tabs open while in private mode */
 "Learn More" = "Află mai multe";
@@ -21,6 +21,9 @@
 
 /* Accessibility label for toggling on/off private mode */
 "Private Mode" = "Mod privat";
+
+/* Accessibility label for toggling on/off private mode */
+"PrivateBrowsing.Toggle.A11y.Label.v132" = "Navigare privată";
 
 /* Accessiblity hint for toggling on/off private mode */
 "Turns private mode on or off" = "Activează sau dezactivează modul privat";

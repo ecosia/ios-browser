@@ -2,7 +2,7 @@
 "Are you sure?" = "Ești sigur?";
 
 /* Prompt option for cancelling out of deletion */
-"Cancel" = "Renunță";
+"Cancel" = "Anulează";
 
 /* Accessibility message e.g. spoken by VoiceOver after the user taps the close button in the search field to clear the search and exit search mode */
 "Clear Search" = "Șterge căutarea";
@@ -10,11 +10,26 @@
 /* Copy password text selection menu item */
 "Copy" = "Copiază";
 
-/* Label describing when the current login was created with the timestamp as the parameter. */
+/* Label describing when the current login was created. %@ is the timestamp. */
 "Created %@" = "Creată %@";
 
 /* Label for the button used to delete the current login. */
 "Delete" = "Șterge";
+
+/* Prompt option for cancelling out of deletion */
+"DeleteLoginAlert.DeleteButton.Cancel.v122" = "Anulează";
+
+/* Label for the button used to delete the current login. */
+"DeleteLoginAlert.DeleteButton.Title.v122" = "Elimină";
+
+/* Prompt message warning the user that deleting non-synced logins will permanently remove them, when they attempt to do so */
+"DeleteLoginAlert.Message.Local.v122" = "Acțiunea este ireversibilă.";
+
+/* Prompt message warning the user that deleted logins will remove logins from all connected devices */
+"DeleteLoginAlert.Message.Synced.v122" = "Vei elimina parola de pe toate dispozitivele sincronizate.";
+
+/* Title for the prompt that appears when the user deletes a login. */
+"DeleteLoginsAlert.Title.v122" = "Elimini parola?";
 
 /* Label for the button used to deselect all logins. */
 "Deselect All" = "Deselectează toate";
@@ -25,17 +40,23 @@
 /* Hide password text selection menu item */
 "Hide" = "Ascunde";
 
+/* This message appears briefly as a notification (toast) to inform the user that a password has been successfully removed. */
+"LoginList.DeleteToast.v135" = "Parolă eliminată";
+
 /* Prompt message warning the user that deleting non-synced logins will permanently remove them */
 "Logins will be permanently removed." = "Autentificările vor fi eliminate definitiv.";
 
 /* Prompt message warning the user that deleted logins will remove logins from all connected devices */
 "Logins will be removed from all connected devices." = "Autentificările vor fi eliminate de pe toate dispozitivele conectate.";
 
-/* Label describing when the current login was last modified with the timestamp as the parameter. */
+/* Label describing when the current login was last modified. %@ is the timestamp. */
 "Modified %@" = "Modificată %@";
 
 /* Label displayed when no logins are found after searching. */
 "No logins found" = "Nicio autentificare găsită";
+
+/* Label displayed when no logins are found after searching. */
+"NoLoginsFound.Title.v122" = "Nu s-au găsit parole";
 
 /* Open and Fill website text selection menu item */
 "Open & Fill" = "Deschide și completează";
@@ -51,6 +72,9 @@
 
 /* Accessibility label for the search input field in the Logins list */
 "Search Input Field" = "Câmp de introducere a căutării";
+
+/* Title for the search field at the top of the Logins list screen */
+"SearchInput.Title.Search.v106" = "Caută";
 
 /* Label for the button used to select all logins. */
 "Select All" = "Selectează tot";

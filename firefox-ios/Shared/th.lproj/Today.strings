@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "ปิดแท็บส่วนตัว";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "เพิ่มทางลัด Ecosia ไปยังหน้าจอหลักของคุณ";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "เพิ่มทางลัด Firefox ไปยังหน้าจอหลักของคุณ";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "ไปยังลิงก์ที่คัดลอก";
@@ -23,19 +23,19 @@
 "TodayWidget.NoOpenTabsLabel" = "ไม่มีแท็บที่เปิดอยู่";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "เปิด Ecosia";
+"TodayWidget.OpenFirefoxLabel" = "เปิด Firefox";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "การค้นหาแบบส่วนตัว";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "เพิ่มทางลัด Ecosia ลงในหน้าจอโฮมของคุณ หลังจากเพิ่มวิดเจ็ตแล้ว ให้แตะค้างไว้เพื่อแก้ไขและเลือกทางลัดอื่น";
+"TodayWidget.QuickActionGalleryDescription" = "เพิ่มทางลัด Firefox ลงในหน้าจอโฮมของคุณ หลังจากเพิ่มวิดเจ็ตแล้ว ให้แตะค้างไว้เพื่อแก้ไขและเลือกทางลัดอื่น";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "การกระทำด่วน";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "Ecosia Shortcuts";
+"TodayWidget.QuickActionsGalleryTitleV2" = "Firefox Shortcuts";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "เพิ่มทางลัดไปยังแท็บที่เปิดอยู่ของคุณ";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "การดูแบบด่วน";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "ค้นหาใน Ecosia";
+"TodayWidget.SearchInFirefoxV2" = "ค้นหาใน Firefox";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "ค้นหาในแท็บส่วนตัว";

@@ -4,7 +4,7 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. Parameter is the hostname of the site */
+/* Authentication prompt message with no realm. %@ is the hostname of the site. */
 "A username and password are being requested by %@." = "Lo site %@ demanda un nom d’utilizaire e un senhal.";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -24,9 +24,6 @@
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "Visitats fa res";
-
-/* Section title label for Shortcuts */
-"ActivityStream.Shortcuts.SectionTitle" = "Acorchis";
 
 /* Accessibility label for the Add Tab button in the Tab Tray. */
 "Add Tab" = "Apondre un onlget";
@@ -220,13 +217,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "Telecargaments";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "1 de %d fichièrs";
 
-/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
+/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -260,7 +257,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Pagina d'acuèlh de Ecosia";
+"Firefox.HomePage.Title" = "Pagina d'acuèlh de Firefox";
 
 /* On each Pocket Stories on the Firefox Homepage, this label appears and indicates the number of minutes to read an article. Minutes should be abbreviated due to space constraints. %d represents the number of minutes */
 "FirefoxHome.Pocket.Minutes.v99" = "%S min";
@@ -278,7 +275,7 @@
 "Forward" = "Pagina seguenta";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Compte Ecosia";
+"FxA.FirefoxAccount" = "Compte Firefox";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Gestion del compte";
@@ -290,7 +287,7 @@
 "FxA.SyncNow" = "Sincronizar ara";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Ecosia Sync s’es connectat a %@";
+"FxAPush_DeviceConnected_body" = "Firefox Sync s’es connectat a %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Sync connectat";
@@ -299,7 +296,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ es estat corrèctament desconnectat.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Aqueste periferic es estat corrèctament desconnectat de Ecosia Sync.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Aqueste periferic es estat corrèctament desconnectat de Firefox Sync.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Sincronizacion desconnectada";
@@ -308,7 +305,7 @@
 "FxAPush_DeviceDisconnected_title" = "Sincronizacion desconnectada";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Un periferic es estat desconnectat de Ecosia Sync";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Un periferic es estat desconnectat de Firefox Sync";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Ajuda";
@@ -338,7 +335,7 @@
 "HistoryPanel.EmptySyncedTabsNullState.Description" = "Los onglets de vòstres autres periferics s’afichan aquí.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Istoric";
@@ -487,12 +484,6 @@
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "Metre pas a jorn";
 
-/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptSaveLogin.Title" = "Enregistrar l’identificant %1$@ per %2$@ ?";
-
-/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
-"LoginsHelper.PromptSavePassword.Title" = "Enregistrar lo senhal per %@ ?";
-
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "Enregistrar l’identificant";
 
@@ -506,7 +497,7 @@
 "LoginsList.Search.Cancel" = "Anullar";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Sembla que Ecosia a fracassat. Volètz restablir los onglets ?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Sembla que Firefox a fracassat. Volètz restablir los onglets ?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Marcar coma legit";
@@ -638,7 +629,7 @@
 "Okay" = "OK";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Ecosia a plantat";
+"Oops! Firefox crashed" = "Firefox a plantat";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Obrir d'articles en mòde lectura en tocant l’icòna del libre quand apareis dins la barra de títol.";
@@ -650,7 +641,7 @@
 "Open Tabs" = "Dobrir los onglets";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Ecosia pòt pas dobrir la pagina perque l’adreça es invalida.";
+"OpenURL.Error.Message" = "Firefox pòt pas dobrir la pagina perque l’adreça es invalida.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "Dobertura impossibla de la pagina";
@@ -662,7 +653,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "Aquò vos permet d’enregistrar l’imatge dins Pellicula.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia vòl accedir a vòstras fòtos";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox vòl accedir a vòstras fòtos";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Tampar";
@@ -764,7 +755,7 @@
 "Search.ThirdPartyEngines.OK" = "D'acòrd";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Enviar un rapòrt de plantatge que Ecosia pòsca corregir lo problèma ?";
+"Send a crash report so Mozilla can fix the problem?" = "Enviar un rapòrt de plantatge que Mozilla pòsca corregir lo problèma ?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Enviar un comentari";
@@ -794,13 +785,13 @@
 "SendTo.NavBar.Title" = "Enviar l’onglet";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Avètz pas cap d'autre aparelh prèst a èsser sincronizat e connectat a aqueste compte Ecosia.";
+"SendTo.NoDevicesFound.Message" = "Avètz pas cap d'autre aparelh prèst a èsser sincronizat e connectat a aqueste compte Firefox.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Obrissètz Ecosia, anatz als paramètres e connectatz per aviar.";
+"SendTo.NotSignedIn.Message" = "Obrissètz Firefox, anatz als paramètres e connectatz per aviar.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Sètz pas connectat a vòstre compte Ecosia.";
+"SendTo.NotSignedIn.Title" = "Sètz pas connectat a vòstre compte Firefox.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Enviar";
@@ -818,7 +809,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Tocatz per començar";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
+"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Veire";
@@ -920,7 +911,7 @@
 "Settings.FxA.Sync.SectionName" = "Paramètres de sincronizacion";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Compte Ecosia";
+"Settings.FxA.Title" = "Compte Firefox";
 
 /* General settings section title */
 "Settings.General.SectionName" = "General";
@@ -947,7 +938,7 @@
 "Settings.NewTab.Option.BlankPage" = "Pagina voida";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Acuèlh de Ecosia";
+"Settings.NewTab.Option.FirefoxHome" = "Acuèlh de Firefox";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Pagina d’acuèlh";
@@ -965,10 +956,7 @@
 "Settings.NewTab.TopSectionNameFooter" = "Causissètz çò que cal mostrar en dobrir un onglet novèl";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "En dobrir Ecosia";
-
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.StatusV2" = "En dobrir Ecosia";
+"Settings.OfferClipboardBar.Status" = "En dobrir Firefox";
 
 /* Label used as an item in Settings. When touched it will open a dialog to configure the open with (mail links) behavior. */
 "Settings.OpenWith.SectionName" = "Aplicacion de corrièr electronic";
@@ -986,7 +974,7 @@
 "Settings.SendUsage.Link" = "Ne saber mai.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Ecosia s’esfòrça de reculhir pas que las donadas necessàrias per vos ofrir e melhorar Ecosia.";
+"Settings.SendUsage.Message" = "Mozilla s’esfòrça de reculhir pas que las donadas necessàrias per vos ofrir e melhorar Firefox.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Mandar de donadas d’utilizacion";
@@ -998,7 +986,7 @@
 "Settings.Siri.OpenTabShortcut" = "Dobrir un onglet novèl";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Utilizar las acorcha Siri per obrir rapidament Ecosia via Siri";
+"Settings.Siri.SectionDescription" = "Utilizar las acorcha Siri per obrir rapidament Firefox via Siri";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Acorcha Siri";
@@ -1046,13 +1034,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Cargar en rèire plan";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Cargament dins Ecosia";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Cargament dins Firefox";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Dobrir dins Ecosia";
+"ShareExtension.OpenInFirefoxAction.Title" = "Dobrir dins Firefox";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Cercar dins Ecosia";
+"ShareExtension.SeachInFirefoxAction.Title" = "Cercar dins Firefox";
 
 /* Label for show search suggestions setting. */
 "Show Search Suggestions" = "Afichar las suggestions de recèrca";
@@ -1078,13 +1066,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "Sync es fòra linha";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "Onglet %1$@ de %2$@";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "Afichar totes los onglets";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "Onglets %1$@ a %2$@ de %3$@";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1092,9 +1080,6 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Anullar";
-
-/* The label indicating that all the tabs were closed */
-"Tabs.DeleteAllUndo.Title" = "%d onglet(s) tampat(s)";
 
 /* A label indicating the keyboard shortcut of closing all tabs from the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "TabTray.CloseAllTabs.KeyCodeTitle" = "Tampar totes los onglets";
@@ -1123,7 +1108,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "Uèi";
 
-/* Relative date for date older than a minute. */
+/* Relative date for date older than a minute. %@ is the time. */
 "today at %@" = "uèi a %@";
 
 /* Accessibility label for the Menu button. */
@@ -1132,7 +1117,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "Tampar totes los onglets";
 
-/* Button shown in editing mode to remove this site from the top sites panel. */
+/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
 "TopSites.RemovePage.Button" = "Suprimir la pagina — %@";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1141,7 +1126,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "Òc";
 
-/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
+/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "Aquesta pagina sembla èsser en %1$@. La traduire en %2$@ amb %3$@ ?";
 
 /* Tile title for Twitter */
@@ -1151,7 +1136,7 @@
 "UIMenuItem.PasteGo" = "Pegar e i anar";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Cercar amb Ecosia";
+"UIMenuItem.SearchWithFirefox" = "Cercar amb Firefox";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "pas legit";
@@ -1178,7 +1163,7 @@
 "Yesterday" = "Ièr";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "Avètz pas cap d'onglet obèrt dins Ecosia sus vòstres autres aparelhs.";
+"You don’t have any tabs open in Firefox on your other devices." = "Avètz pas cap d'onglet obèrt dins Firefox sus vòstres autres aparelhs.";
 
 /* Your Rights settings section title */
 "Your Rights" = "Vòstres dreits";

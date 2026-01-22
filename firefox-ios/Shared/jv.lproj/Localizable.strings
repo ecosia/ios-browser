@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. Parameter is the hostname of the site */
+/* Authentication prompt message with no realm. %@ is the hostname of the site. */
 "A username and password are being requested by %@." = "Jeneng panganggo lan tembung wadi dijaluk déning %@.";
 
-/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
+/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
 "A username and password are being requested by %@. The site says: %@" = "Jeneng panganggo lan tembung wadi dijaluk déning %1$@. Situs ngandani %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -193,13 +193,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "Undhuhan";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "1 saka %d dhokumèn";
 
-/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
+/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -223,8 +223,8 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "Mungkin ana ralat konfigurasi utawa rusak déning panyerang. Bacutaké yèn sampéyan nrima risikoné.";
 
-/* Warning text on the certificate error page */
-"ErrorPages.CertWarning.Description" = "Wong sing duwèni %@ bar ngatur situsé kang ora bener. Kanggo ngamanaké informasi sampéyan bèn ora dicolong, Ecosia medhot konèksi menyang situs iki.";
+/* Warning text on the certificate error page. %@ is the domain of the website. */
+"ErrorPages.CertWarning.Description" = "Wong sing duwèni %@ bar ngatur situsé kang ora bener. Kanggo ngamanaké informasi sampéyan bèn ora dicolong, Firefox medhot konèksi menyang situs iki.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "Sambungan Iki ora Dipercaya";
@@ -245,13 +245,13 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Tepas Ecosia";
+"Firefox.HomePage.Title" = "Tepas Firefox";
 
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "Bacutaké";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Akun Ecosia";
+"FxA.FirefoxAccount" = "Akun Firefox";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Atur Akun & Piranti";
@@ -263,7 +263,7 @@
 "FxA.SyncNow" = "Sync Saiki";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Sync Ecosia wis nyambung karo %@";
+"FxAPush_DeviceConnected_body" = "Sync Firefox wis nyambung karo %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Sync Nyambung";
@@ -272,7 +272,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ wis suksès dipedhot.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Piranti iki suksès pisah saka Ecosia Sync.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Piranti iki suksès pisah saka Firefox Sync.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Sync Dipedhot";
@@ -281,7 +281,7 @@
 "FxAPush_DeviceDisconnected_title" = "Sync Dipedhot";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Piranti wis dipedhot saka Sync Ecosia";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Piranti wis dipedhot saka Sync Firefox";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Pitulung";
@@ -314,7 +314,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "Mlebu kanggo ndeleng dhaptar tab saka piranti liyané.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Riwayat";
@@ -412,12 +412,6 @@
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "Aja nganyari";
 
-/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptSaveLogin.Title" = "Simpen log mlebu %1$@ kanggo %2$@?";
-
-/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
-"LoginsHelper.PromptSavePassword.Title" = "Simpen sandhi kanggo %@?";
-
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "Info Log Mlebu Kasimpen";
 
@@ -431,7 +425,7 @@
 "LoginsList.Title" = "LOG MLEBU KASIMPEN";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Ecosia kayané bar mandheg. Apa sampéyan arep mbalèni ngemot tab sampéyan?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Firefox kayané bar mandheg. Apa sampéyan arep mbalèni ngemot tab sampéyan?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Tengeri minangka Wis Diwaca";
@@ -512,7 +506,7 @@
 "Okay" = "Oké";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Dhuh! Ecosiaé mogok";
+"Oops! Firefox crashed" = "Dhuh! Firefoxé mogok";
 
 /* See http://mzl.la/1G7uHo7 */
 "Open Settings" = "Bukak Setélan";
@@ -599,13 +593,13 @@
 "SendTo.NavBar.Title" = "Kirim Tab";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Sampèyan durung mlebu menyang Akun Ecosia.";
+"SendTo.NotSignedIn.Title" = "Sampèyan durung mlebu menyang Akun Firefox.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Kirim";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
+"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Deleng";
@@ -677,7 +671,7 @@
 "Settings.FxA.DeviceName" = "Jeneng Piranti";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Akun Ecosia";
+"Settings.FxA.Title" = "Akun Firefox";
 
 /* General settings section title */
 "Settings.General.SectionName" = "Umum";
@@ -686,7 +680,7 @@
 "Settings.HomePage.SectionName" = "Kaca Utama";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Ecosia Home";
+"Settings.NewTab.Option.FirefoxHome" = "Firefox Home";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Kaca Utama";
@@ -701,10 +695,7 @@
 "Settings.NewTab.TopSectionName" = "Tuduhaké";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "Nalika Mbukak Ecosia";
-
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.StatusV2" = "Nalika Mbukak Ecosia";
+"Settings.OfferClipboardBar.Status" = "Nalika Mbukak Firefox";
 
 /* Label used as an item in Settings. When touched it will open a dialog to configure the open with (mail links) behavior. */
 "Settings.OpenWith.SectionName" = "Aplikasi Mail";
@@ -743,13 +734,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Amot ing Latar";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Ngamot ing Ecosia";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Ngamot ing Firefox";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Bukak ing Ecosia";
+"ShareExtension.OpenInFirefoxAction.Title" = "Bukak ing Firefox";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Golèk ing Ecosia";
+"ShareExtension.SeachInFirefoxAction.Title" = "Golèk ing Firefox";
 
 /* Accessibility Label for the tab toolbar Stop button */
 "Stop" = "Lèrèn";
@@ -762,9 +753,6 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Wurung";
-
-/* The label indicating that all the tabs were closed */
-"Tabs.DeleteAllUndo.Title" = "%d tab ditutup";
 
 /* A label indicating the keyboard shortcut of closing all tabs from the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "TabTray.CloseAllTabs.KeyCodeTitle" = "Tutup Kabèh Tab";
@@ -784,7 +772,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "Dina iki";
 
-/* Relative date for date older than a minute. */
+/* Relative date for date older than a minute. %@ is the time. */
 "today at %@" = "dina iki ing %@";
 
 /* Accessibility label for the Menu button. */

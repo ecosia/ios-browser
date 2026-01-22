@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. Parameter is the hostname of the site */
+/* Authentication prompt message with no realm. %@ is the hostname of the site. */
 "A username and password are being requested by %@." = "%@ වෙතින් පරිශ්‍රීලක නාමයක් හා මුරපදයක් ඉල්ලා සිටියි.";
 
-/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
+/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
 "A username and password are being requested by %@. The site says: %@" = "%1$@ විසින් පරිශ්‍රීලක නාමයක් සහ මුරපදයක් ඉල්ලා සිටියි. අඩවිය පවසන්නේ: %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -17,7 +17,7 @@
 "About" = "පිළිබඳව";
 
 /* The title for the pinning a shortcut action */
-"ActivityStream.ContextMenu.AddToShortcuts" = "කෙටිමං වෙත යොදන්න";
+"ActivityStream.ContextMenu.AddToShortcuts" = "කෙටිමං වෙත දමන්න";
 
 /* The title for the pinning a topsite action */
 "ActivityStream.ContextMenu.PinTopsite2" = "අමුණන්න";
@@ -28,7 +28,7 @@
 /* Title for the Jump Back In section. This section allows users to jump back in to a recently viewed tab */
 "ActivityStream.JumpBackIn.SectionTitle" = "ආපසු පනින්න";
 
-/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. The placeholder is for a number. It will read 'Tabs: 5' or similar. */
+/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. %d is the number of tabs. It will read 'Tabs: 5' or similar. */
 "ActivityStream.JumpBackIn.TabGroup.SiteCount" = "පටිති: %d";
 
 /* A string used to signify the start of the Recently Saved section in Home Screen. */
@@ -37,9 +37,6 @@
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "මෑතදී ගොඩවැදුණු";
 
-/* Section title label for Shortcuts */
-"ActivityStream.Shortcuts.SectionTitle" = "කෙටිමං";
-
 /* The title for the setting page which lets you select the number of top site rows */
 "ActivityStream.TopSites.RowSettingFooter" = "පේළි සකසන්න";
 
@@ -47,10 +44,10 @@
 "Add Tab" = "පටිත්තක් යොදන්න";
 
 /* Name for button adding current article to reading list in reader mode */
-"Add to Reading List" = "කියවීමේ ලේඛනයට එක් කරන්න";
+"Add to Reading List" = "කියවීමේ ලැයිස්තුවට දමන්න";
 
 /* Accessibility message e.g. spoken by VoiceOver after the current page gets added to the Reading List using the Reader View button, e.g. by long-pressing it or by its accessibility custom action. */
-"Added page to Reading List" = "කියවීමේ ලේඛනයට පිටුව එක් කෙරිණි";
+"Added page to Reading List" = "කියවීමේ ලැයිස්තුවට පිටුව එක් කෙරිණි";
 
 /* Button to dismiss the 'Add Pass Failed' alert.  See https://support.apple.com/HT204003 for context on Wallet. */
 "AddPass.Error.Dismiss" = "හරි";
@@ -65,7 +62,7 @@
 "Address and Search" = "ලිපිනය සහ සෙවීම";
 
 /* Accessibility label for action adding current page to reading list. */
-"Address.Bar.ReadingList.v106" = "කියවීමේ ලේඛනයට යොදන්න";
+"Address.Bar.ReadingList.v106" = "කියවීමේ ලැයිස්තුවට දමන්න";
 
 /* Accessibility label for the Address Bar, where a user can enter the search they wish to make */
 "Address.Bar.v99" = "ලිපින තීරුව";
@@ -212,10 +209,10 @@
 "ContextualHintsCloseButtonAccessibility.v105" = "වසන්න";
 
 /* Accessibility message e.g. spoken by VoiceOver after adding current webpage to the Reading List failed. */
-"Could not add page to Reading list" = "කියවීමේ ලේඛනයට පිටුව එක් කිරීමට නොහැකි විය";
+"Could not add page to Reading list" = "කියවීමේ ලැයිස්තුවට පිටුව එක් කිරීමට නොහැකි විය";
 
 /* Accessibility message e.g. spoken by VoiceOver after the user wanted to add current page to the Reading List and this was not done, likely because it already was in the Reading List, but perhaps also because of real failures. */
-"Could not add page to Reading List. Maybe it’s already there?" = "කියවීමේ ලේඛනයට පිටුව එක් කිරීමට නොහැකි විය. බාගදා එය දැනටමත් තිබේද?";
+"Could not add page to Reading List. Maybe it’s already there?" = "කියවීමේ ලැයිස්තුවට පිටුව එක් කිරීමට නොහැකි විය. බාගදා එය දැනටමත් තිබේද?";
 
 /* Error message that is shown in settings when there was a problem loading */
 "Could not load page." = "පිටුව පූරණය කළ නොහැකියි.";
@@ -280,13 +277,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "බාගැනීම්";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "ගොනු %d න් 1ක්";
 
-/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
+/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -305,16 +302,16 @@
 "ErrorPages.Advanced.Button" = "වැඩිදුර";
 
 /* Warning text when clicking the Advanced button on error pages */
-"ErrorPages.AdvancedWarning1.Text" = "අවවාදයයි: මෙම අඩවිය වෙත ඔබගේ සම්බන්ධතාවය ආරක්‍ෂිත බව තහවුරු කළ නොහැකිය.";
+"ErrorPages.AdvancedWarning1.Text" = "අවවාදයයි: මෙම අඩවිය වෙත ඔබගේ සම්බන්‍ධතාව ආරක්‍ෂිත දැයි තහවුරු කළ නොහැකිය.";
 
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "එය වැරදි වින්‍යාස කිරීමක් හෝ ප්‍රහාරකයෙකුගේ අපවේශනයක් විය හැකිය. ඔබ අවදානම පිළිගන්නේ නම් ඉදිරියට යන්න.";
 
-/* Warning text on the certificate error page */
+/* Warning text on the certificate error page. %@ is the domain of the website. */
 "ErrorPages.CertWarning.Description" = "%@ හි අයිතිකරු ඔවුන්ගේ වියමන අඩවිය නිසි ලෙස සකස් කර නැත. ඔබගේ තොරතුරු සොරෙන් ගැනීම වැළැක්වීමට, ෆයර්ෆොක්ස් මෙම අඩවියට සම්බන්ධ වී නැත.";
 
 /* Title on the certificate error page */
-"ErrorPages.CertWarning.Title" = "මෙම සම්බන්ධතාවය අවිශ්වාසයි";
+"ErrorPages.CertWarning.Title" = "මෙම සම්බන්ධතාව අවිශ්වාසයි";
 
 /* Label for button to go back from the error page */
 "ErrorPages.GoBack.Button" = "ආපසු යන්න";
@@ -383,13 +380,13 @@
 "FxA.ManageAccount" = "ගිණුම හා උපාංග කළමනාකරණය";
 
 /* Label when no internet is present */
-"FxA.NoInternetConnection" = "අන්තර්ජාල සම්බන්ධතාවයක් නැත";
+"FxA.NoInternetConnection" = "අන්තර්ජාල සම්බන්ධතාවක් නැත";
 
 /* FxA sign in view subtitle */
 "fxa.signin.camera-signin" = "රූගතය සමඟ පිවිසෙන්න";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "පරිගණකයෙහි ෆයර්ෆොක්ස් විවෘත කර ecosia.org/pair වෙත යන්න";
+"fxa.signin.qr-link-instruction" = "පරිගණකයෙහි ෆයර්ෆොක්ස් විවෘත කර firefox.com/pair වෙත යන්න";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "පරිලෝකනයට ඔබන්න";
@@ -401,10 +398,10 @@
 "FxA.SyncNow" = "සමමුහූර්ත කරන්න";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "ෆයර්ෆොක්ස් සමමුහූර්තය %@ වෙත සම්බන්ධිතයි";
+"FxAPush_DeviceConnected_body" = "ෆයර්ෆොක්ස් සමමුහූර්තය %@ වෙත සම්බන්ධයි";
 
 /* Title of a notification displayed when another device has connected to FxA. */
-"FxAPush_DeviceConnected_title" = "සමමුහූර්තය සම්බන්ධිතයි";
+"FxAPush_DeviceConnected_title" = "සමමුහූර්තය සම්බන්ධයි";
 
 /* Body of a notification displayed when named device has been disconnected from FxA. %@ refers to the name of the disconnected device. */
 "FxAPush_DeviceDisconnected_body" = "%@ වෙතින් සාර්ථකව විසන්ධි කර ඇත.";
@@ -536,7 +533,7 @@
 "Keyboard.Shortcuts.ActualSize" = "සැබෑ ප්‍රමාණය";
 
 /* A label indicating the keyboard shortcut of adding the currently viewing web page as a bookmark. This label is displayed in the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
-"Keyboard.Shortcuts.AddBookmark" = "පොත් යොමුවක් යොදන්න";
+"Keyboard.Shortcuts.AddBookmark" = "පොත්යොමුවක් තබන්න";
 
 /* A label indicating the keyboard shortcut of clearing recent history. This label is displayed in the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Keyboard.Shortcuts.ClearRecentHistory" = "මෑත ඉතිහාසය මකන්න";
@@ -611,7 +608,7 @@
 "LibraryPanel.History.DeleteGroupedItem.v104" = "මකන්න";
 
 /* In the history panel, users will be able to search terms in their browsing history. This label is shown when there is no results after querying the search terms in the user's history. */
-"LibraryPanel.History.NoHistoryFound.v99" = "ඉතිහාසයක් හමු නොවිණි";
+"LibraryPanel.History.NoHistoryFound.v99" = "ඉතිහාසයක් හමු නොවුණි";
 
 /* In the history panel, this is the title on the button that navigates the user to a screen showing their recently closed tabs. */
 "LibraryPanel.History.RecentlyClosedTabs.v99" = "මෑතදී වැසු පටිති";
@@ -670,18 +667,6 @@
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "යාවත්කාල නොකරන්න";
 
-/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptSaveLogin.Title" = "%2$@ සඳහා %1$@ පිවිසුම සුරකින්නද?";
-
-/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
-"LoginsHelper.PromptSavePassword.Title" = "%@ සඳහා මුරපදය සුරකින්නද?";
-
-/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "%@ සඳහා පිවිසුම යාවත්කාල කරන්නද?";
-
-/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "%2$@ සඳහා %1$@ පිවිසුම යාවත්කාල කරන්නද?";
-
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "පිවිසුම සුරකින්න";
 
@@ -725,10 +710,10 @@
 "Menu.AddReadingList.Label.v99" = "එකතු";
 
 /* Toast displayed to the user after adding the item to their reading list. */
-"Menu.AddToReadingList.Confirm" = "කියවීමේ ලේඛනයට එක් කෙරිණි";
+"Menu.AddToReadingList.Confirm" = "කියවීමේ ලැයිස්තුවට එක් කෙරිණි";
 
 /* Label for the add to shortcuts button in the menu. Pressing this button pins the current website as a shortcut on the home page. */
-"Menu.AddToShortcuts.v99" = "කෙටිමං වෙත යොදන්න";
+"Menu.AddToShortcuts.v99" = "කෙටිමං වෙත දමන්න";
 
 /* Label for the button, displayed in the menu, takes you to bookmarks screen when pressed. */
 "Menu.Bookmarks.Label" = "පොත්යොමු";
@@ -779,7 +764,7 @@
 "Menu.PasteAndGo.Title" = "අලවන්න හා යන්න";
 
 /* Label for the button, displayed in the menu, takes you to Reading List screen when pressed. */
-"Menu.ReadingList.Label" = "කියවීමේ ලේඛනය";
+"Menu.ReadingList.Label" = "කියවීමේ ලැයිස්තුව";
 
 /* Label for the button, displayed in the menu, used to reload the current website without Tracking Protection */
 "Menu.ReloadWithoutTrackingProtection.Title" = "ලුහුබැඳීමේ රැකවරණය රහිතව යළි පූරණය";
@@ -800,7 +785,7 @@
 "Menu.RemovePin.Confirm2.v99" = "කෙටිමං වලින් ඉවත් කෙරිණි";
 
 /* Toast displayed to confirm to the user that his reading list item was correctly removed. */
-"Menu.RemoveReadingList.Confirm.v99" = "කියවීමේ ලේඛනයෙන් ඉවත් කෙරිණි";
+"Menu.RemoveReadingList.Confirm.v99" = "කියවීමේ ලැයිස්තුවෙන් ඉවත් කෙරිණි";
 
 /* Label for the remove from reading list button in the menu. Pressing this button removes the current page from the reading list. Please keep the text as short as possible for this label. */
 "Menu.RemoveReadingList.Label.v99" = "ඉවත් කරන්න";
@@ -820,7 +805,7 @@
 /* Accessibility label for the Home button on the toolbar. Pressing this button brings the user to the home page. */
 "Menu.Toolbar.Home.AccessibilityLabel.v99" = "මුල";
 
-/* String to let users know the site verifier, where the placeholder represents the SSL certificate signer. */
+/* String to let users know the site verifier, where %@ represents the SSL certificate signer. */
 "Menu.TrackingProtection.Details.Verifier" = "සත්‍යාපනය: %@";
 
 /* The title for tracking protection settings */
@@ -853,7 +838,7 @@
 /* The title for the option to view the What's new page. */
 "Menu.WhatsNew.Title" = "මොනවාද අළුත්";
 
-/* Label for the zoom page button in the menu, used to show the Zoom Page bar. The placeholder shows the current zoom level in percent. */
+/* Label for the zoom page button in the menu, used to show the Zoom Page bar. %@ shows the current zoom level in percent. */
 "Menu.ZoomPage.Title.v113" = "විශාලනය (%@)";
 
 /* Accessibility label for Mobile Device image in remote tabs list */
@@ -920,13 +905,13 @@
 "Privacy" = "පෞද්ගලිකත්‍වය";
 
 /* Show Firefox Browser Privacy Policy page from the Privacy section in the settings. See https://www.mozilla.org/privacy/firefox/ */
-"Privacy Policy" = "පෞද්ගලිකත්‍ව ප්‍රතිපත්තිය";
+"Privacy Policy" = "රහස්‍යතා ප්‍රතිපත්තිය";
 
 /* This is the value for a label that indicates if a user is on an unencrypted website. */
-"ProtectionStatus.NotSecure" = "සම්බන්ධතාවය අනාරක්‍ෂිතයි";
+"ProtectionStatus.NotSecure" = "සම්බන්‍ධතාව අනාරක්‍ෂිතයි";
 
 /* This is the value for a label that indicates if a user is on a secure https connection. */
-"ProtectionStatus.Secure" = "සම්බන්ධතාවය ආරක්‍ෂිතයි";
+"ProtectionStatus.Secure" = "සම්බන්‍ධතාව ආරක්‍ෂිතයි";
 
 /* Title for quick-search engines settings section. */
 "Quick-Search Engines" = "ඉක්මන් සෙවුම් යන්ත්‍ර";
@@ -950,7 +935,7 @@
 "ReaderModeBar.MarkAsUnread.v106" = "නොකියවූ බව යොදන්න";
 
 /* Panel accessibility label */
-"Reading list" = "කියවීමේ ලේඛනය";
+"Reading list" = "කියවීමේ ලැයිස්තුව";
 
 /* Title for the Recently Closed Tabs Panel */
 "RecentlyClosedTabsPanel.Title" = "මෑතදී වැසූ";
@@ -968,7 +953,7 @@
 "Remove" = "ඉවත් කරන්න";
 
 /* Name for button removing current article from reading list in reader mode */
-"Remove from Reading List" = "කියවීමේ ලේඛනයෙන් ඉවතලන්න";
+"Remove from Reading List" = "කියවීමේ ලැයිස්තුවෙන් ඉවතලන්න";
 
 /* Cancel button text shown in reopen-alert at home page. */
 "ReopenAlert.Actions.Cancel" = "අවලංගු";
@@ -986,7 +971,7 @@
 "Sans-serif" = "Sans-serif";
 
 /* See http://mzl.la/1LXbDOL */
-"Save pages to your Reading List by tapping the book plus icon in the Reader View controls." = "කියවීමේ දැක්ම පාලනවල ඇති පොත+ නිරූපකය තට්ටු කිරීමෙන් ඔබගේ කියවීම් ලේඛනයට පිටු සුරකින්න.";
+"Save pages to your Reading List by tapping the book plus icon in the Reader View controls." = "කියවීමේ දැක්ම පාලන වල ඇති පොත+ නිරූපකය තට්ටු කිරීමෙන් ඔබගේ කියවීමේ ලැයිස්තුවට පිටු සුරකින්න.";
 
 /* OK button to dismiss the error prompt. */
 "ScanQRCode.Error.OK.Button" = "හරි";
@@ -1141,6 +1126,21 @@
 /* The placeholder for URL Field when saving a custom search engine */
 "Settings.AddCustomEngine.URLPlaceholder" = "ඒ.ස.නි. (විමසුම %s සමඟ ප්‍රතිස්ථාපනය)";
 
+/* In the settings menu, this label indicates that there is an option of customizing the Address Bar position. */
+"Settings.AddressBar.SettingsTitle.v138" = "ලිපින තීරුව";
+
+/* Browser theme settings section title in Appearance settings */
+"Settings.Appearance.BrowserTheme.SectionHeader.v137" = "අතිරික්සුවේ තේමාව";
+
+/* Title in main app settings for Appearance settings */
+"Settings.Appearance.Title.v137" = "පෙනුම";
+
+/* Website Appearance settings section title in Appearance settings */
+"Settings.Appearance.WebsiteAppearance.SectionHeader.v137" = "අඩවි වල පෙනුම";
+
+/* Under Website Appearance section in Appearance menu, this is the title of the toggle to switch dark theme on/off. */
+"Settings.Appearance.WebsiteDarkModeToggle.Title.v137" = "අඩවි වලට අඳුරු ප්‍රකාරය";
+
 /* Title of setting to block opening external apps when pressing links. */
 "Settings.BlockOpeningExternalApps.Title" = "බාහිර යෙදුම් ඇරීම අවහිර කරන්න";
 
@@ -1153,7 +1153,7 @@
 /* Label used as an item in Settings. When touched it will open a dialog prompting the user to make sure they want to clear all of their private data. */
 "Settings.ClearPrivateData.SectionName" = "පෞද්ගලික දත්ත මකන්න";
 
-/* Button in Data Management that clears private data for the selected items. Parameter is the number of items to be cleared */
+/* Button in Data Management that clears private data for the selected items. %1$@ is the number of items to be cleared. */
 "Settings.ClearSelectedWebsiteData.ClearSelected.Button" = "අථක මකන්න: %1$@";
 
 /* Copy app version alert shown in settings. */
@@ -1399,11 +1399,8 @@
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Status" = "ෆයර්ෆොක්ස් විවෘත කරන විට";
 
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. Placeholder is for the app name. */
+/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "%@ විවෘත කරන විට";
-
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.StatusV2" = "ෆයර්ෆොක්ස් විවෘත කරන විට";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "පිටපත් කළ සබැඳි ඇරීමට දක්වන්න";
@@ -1571,10 +1568,10 @@
 "Settings.WebsiteData.Title" = "අඩවියේ දත්ත";
 
 /* Action label on share extension to add page to the Firefox reading list. */
-"ShareExtension.AddToReadingListAction.Title" = "කියවීමේ ලේඛනයට එක් කරන්න";
+"ShareExtension.AddToReadingListAction.Title" = "කියවීමේ ලැයිස්තුවට දමන්න";
 
 /* Share extension label shown after user has performed 'Add to Reading List' action. */
-"ShareExtension.AddToReadingListActionDone.Title" = "කියවීමේ ලේඛනයට එක් කෙරිණි";
+"ShareExtension.AddToReadingListActionDone.Title" = "කියවීමේ ලැයිස්තුවට එක් කෙරිණි";
 
 /* Action label on share extension to bookmark the page in Firefox. */
 "ShareExtension.BookmarkThisPageAction.Title" = "මෙම පිටුව පොත්යොමුවකට";
@@ -1624,13 +1621,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "සමමුහූර්තය මාර්ගඅපගතයි";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "%2$@ න් %1$@ පටිත්ත";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "සියළු පටිති පෙන්වන්න";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "%3$@ න් පටිති %1$@ සිට %2$@ දක්වා";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1638,9 +1635,6 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "පෙරසේ";
-
-/* The label indicating that all the tabs were closed */
-"Tabs.DeleteAllUndo.Title" = "පටිති %d ක් වැසිණි";
 
 /* Accessibility title for the inactive tabs section button when section is closed. This section groups all tabs that haven't been used in a while. */
 "TabsTray.InactiveTabs.SectionTitle.Closed.Accessibility.v103" = "අක්‍රිය පටිති බලන්න";
@@ -1660,7 +1654,7 @@
 /* Accessibility label for the currently selected tab. */
 "TabTray.CurrentSelectedTab.A11Y" = "දැනට තේරූ පටිත්ත.";
 
-/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as \"Others\" */
+/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as “Others”. */
 "TabTray.Header.FilteredTabs.SectionHeader" = "වෙනත්";
 
 /* Title for the inactive tabs section. This section groups all tabs that haven't been used in a while. */
@@ -1711,7 +1705,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "අද";
 
-/* Relative date for date older than a minute. */
+/* Relative date for date older than a minute. %@ is the time. */
 "today at %@" = "අද %@ ට";
 
 /* Accessibility label for the Menu button. */
@@ -1720,7 +1714,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "සියළු පටිති වසන්න";
 
-/* Button shown in editing mode to remove this site from the top sites panel. */
+/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
 "TopSites.RemovePage.Button" = "%@ — පිටුව ඉවත් කරන්න";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1729,7 +1723,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "ඔව්";
 
-/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
+/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "මෙම පිටුව %1$@ න් ඇති බව පෙනේ. %3$@ සමඟින් %2$@ වෙත පරිවර්තනය කරන්නද?";
 
 /* Tile title for Twitter */
@@ -1772,7 +1766,7 @@
 "Web content" = "වියමන අන්තර්ගතය";
 
 /* See http://mzl.la/1LXbDOL */
-"Welcome to your Reading List" = "ඔබගේ කියවීමේ ලේඛනය වෙත පිළිගනිමු";
+"Welcome to your Reading List" = "ඔබගේ කියවීමේ ලැයිස්තුව වෙත පිළිගනිමු";
 
 /* Restore Tabs Prompt Title */
 "Well, this is embarrassing." = "මෙය අපහසුතාවයට පත්කරවයි :(";

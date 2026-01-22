@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. Parameter is the hostname of the site */
+/* Authentication prompt message with no realm. %@ is the hostname of the site. */
 "A username and password are being requested by %@." = "%@ မှ သုံးဆွဲသူ အမည် နှင့် လျှို့ဝှက်စကားလုံး အားတောင်းခံနေသည်";
 
-/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
+/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
 "A username and password are being requested by %@. The site says: %@" = "%1$@ မှ သုံးစွဲသူ နှင့် လျှို့ဝှက်စကားလုံး တောင်းခံနေသည်။ ဆိုဒ်မှ %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -15,6 +15,15 @@
 
 /* About settings section title */
 "About" = "အကြောင်း";
+
+/* The title for the pinning a shortcut action */
+"ActivityStream.ContextMenu.AddToShortcuts" = "ဖြတ်လမ်းများထဲသို့ ထည့်ပါ။";
+
+/* The title for the pinning a topsite action */
+"ActivityStream.ContextMenu.PinTopsite2" = "ပင်နံပတ်";
+
+/* The title for the unpinning a topsite action */
+"ActivityStream.ContextMenu.UnpinTopsite" = "တွယ်ဖြုတ်ရန်";
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "လတ်တလော သုံးခဲ့သော";
@@ -226,13 +235,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "ဆွဲချချက်များ";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "ဖိုင်များ %d ခု ထဲမှ 1 ခု";
 
-/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
+/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -256,7 +265,7 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "၄င်းသည် မှားယွင်းစွာ ချိန်ညှိထားခြင်းကြောင့် သို့မဟုတ် တိုက်ခိုက်သူမှ စွက်ဖက်နှောင့်ယှက်နေခြင်းကြောင့် ဖြစ်နိုင်ပါသည်။ အကယ်၍ သင်သည် တစ်စုံတစ်ရာကြုံတွေ့မှုကို လက်ခံနိုင်ပါက ရှေ့သို့ ဆက်လက်ဆောင်ရွက်နိုင်ပါသည်။";
 
-/* Warning text on the certificate error page */
+/* Warning text on the certificate error page. %@ is the domain of the website. */
 "ErrorPages.CertWarning.Description" = "%@ ၏ ပိုင်ရှင်သည် သူတို့၏ ဒီဝဘ်ဆိုက်ကို သင့်လျော်မှန်ကန်စွာ ချိန်ညှိထားခြင်း မရှိပါ။ သင့်အချက်အလက်များ ခိုးယူခံရခြင်းမှ ကာကွယ်ရန် မီးမြေခွေးသည် ဒီဝဘ်ဆိုက်ကို မချိတ်ဆက်ပါ။";
 
 /* Title on the certificate error page */
@@ -278,13 +287,13 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = " Ecosia ပင်မစာမျက်နှာ";
+"Firefox.HomePage.Title" = " Firefox ပင်မစာမျက်နှာ";
 
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "လွှဲပြောင်းပို့ရန်";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Ecosia အကောင့်";
+"FxA.FirefoxAccount" = "Firefox အကောင့်";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "အကောင့်နှင့် ကိရိယာများကို စီမံရန်";
@@ -296,7 +305,7 @@
 "fxa.signin.camera-signin" = "သင်၏ကင်မရာဖြင့်ဝင်ပါ";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "<b>https://ecosia.org/pair</b> ကိုသွားပြီး သင့်ကွန်ပျူတာတွင် Ecosia ဖွင့်ပါ။";
+"fxa.signin.qr-link-instruction" = "<b>https://firefox.com/pair</b> ကိုသွားပြီး သင့်ကွန်ပျူတာတွင် Firefox ဖွင့်ပါ။";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "စကင်ဖတ်ရန်အဆင်သင့်";
@@ -308,7 +317,7 @@
 "FxA.SyncNow" = "ယခုပင် တစ်ပြေးညီ ပြုလုပ်ပါ";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Ecosia Sync သည် %@ ကို ချိတ်ဆက်ထားပြီးပြီ";
+"FxAPush_DeviceConnected_body" = "Firefox Sync သည် %@ ကို ချိတ်ဆက်ထားပြီးပြီ";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Sync ကို ချိတ်ဆက်ထားသည်";
@@ -317,7 +326,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ သည် ချိတ်ဆက်မှုကို ဖြုတ်ပြီးပြီ။";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "ယခုကိရိယာသည် Ecosia Sync ထံသို့ ချိတ်ဆက်မှုကို အောင်မြင်စွာ ဖြုတ်ပြီးပြီ။";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "ယခုကိရိယာသည် Firefox Sync ထံသို့ ချိတ်ဆက်မှုကို အောင်မြင်စွာ ဖြုတ်ပြီးပြီ။";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Sync ကို ချိတ်ဆက်မထားပါ";
@@ -326,7 +335,7 @@
 "FxAPush_DeviceDisconnected_title" = "Sync ကို ချိတ်ဆက်မထားပါ";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ကိရိယာသည် Ecosia Sync သို့ ချိတ်ဆက်မထားပါ";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ကိရိယာသည် Firefox Sync သို့ ချိတ်ဆက်မထားပါ";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "အကူအညီ";
@@ -359,7 +368,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "အခြား ဖွင့်ထားသောကိရိယာများမှ တပ်ဗ်များကိုကြည့်";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "မှတ်တမ်း";
@@ -456,18 +465,6 @@
 
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "အဆင့်မမြှင့်ပါ";
-
-/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptSaveLogin.Title" = "%2$@? အတွက် ဝင်ရောက်မှု %1$@ ကို သိမ်းမည်လား။";
-
-/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
-"LoginsHelper.PromptSavePassword.Title" = "%@ အတွက် စကားဝှက်ကို သိမ်းမည်လား။";
-
-/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "%@ အတွက် login အသစ်ပြောင်းမလား။";
-
-/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "%2$@ အတွက် ဝင်ရောက်မှု %1$@ ကို ပြောင်းလဲသိမ်းမည်လား။";
 
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "ဝင်ရောက်မှုကို သိမ်းပါ";
@@ -596,7 +593,7 @@
 "Open Tabs" = "တပ်ဗ်များကို ဖွင့်";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "လိပ်စာ မှားယွင်းနေသောကြောင့် Ecosia သည် စာမျက်နှာကို မဖွင့်နိုင်ပါ။";
+"OpenURL.Error.Message" = "လိပ်စာ မှားယွင်းနေသောကြောင့် Firefox သည် စာမျက်နှာကို မဖွင့်နိုင်ပါ။";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "စာမျက်နှာကို မဖွင့်နိုင်ပါ";
@@ -608,7 +605,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "ရုပ်ပုံများကို သင့် Camera Roll တွင် သိမ်းနိုင်စေမည်။";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "သင့် Photos များကို Ecosia က ရယူအသုံးပြုခွင့် ရှိချင်သည်";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "သင့် Photos များကို Firefox က ရယူအသုံးပြုခွင့် ရှိချင်သည်";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "ပိတ်";
@@ -746,13 +743,13 @@
 "SendTo.NavBar.Title" = "တပ်ဗ်ကို ပို့ရန်";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Ecosia Account ကို Sync ရန် သင့်တွင် ချိတ်ဆက်ထားသော အခြား ကိရိယာများ မရှိပါ။";
+"SendTo.NoDevicesFound.Message" = "Firefox Account ကို Sync ရန် သင့်တွင် ချိတ်ဆက်ထားသော အခြား ကိရိယာများ မရှိပါ။";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Ecosia ကို ကျေးဇူးပြု၍ ဖွင့်ပါ၊ အပြင်အဆင်များသို့ သွားပါ၊ ပြီးနောက် ဆက်လက်ဆောင်ရွက်ရန် ဝင်ရောက်ပါ။";
+"SendTo.NotSignedIn.Message" = "Firefox ကို ကျေးဇူးပြု၍ ဖွင့်ပါ၊ အပြင်အဆင်များသို့ သွားပါ၊ ပြီးနောက် ဆက်လက်ဆောင်ရွက်ရန် ဝင်ရောက်ပါ။";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "သင့် Ecosia Account သို့ ဝင်ရောက်ထားခြင်း မရှိပါ။";
+"SendTo.NotSignedIn.Title" = "သင့် Firefox Account သို့ ဝင်ရောက်ထားခြင်း မရှိပါ။";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "ပို့ရန်";
@@ -773,7 +770,7 @@
 "SentTab.NoTabArrivingNotification.body" = "စတင်ရန် တို့ထိပါ";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
+"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "ကြည့်ရန်";
@@ -830,7 +827,7 @@
 "Settings.DataManagement.Title" = "အချက်အလက် စီမံခန့်ခွဲမှု";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Ecosia သည် အကောင့်နှင့် အချက်အလက်များ ထပ်တူပြုခြင်းကို ရပ်တန့်ပါမည်။ သို့သော် ယခုကိရိယာရှိ သင်၏ မည်သည့်အချက်အလက်ကိုမျှ ဖျက်ပစ်မည် မဟုတ်ပါ။";
+"Settings.Disconnect.Body" = "Firefox သည် အကောင့်နှင့် အချက်အလက်များ ထပ်တူပြုခြင်းကို ရပ်တန့်ပါမည်။ သို့သော် ယခုကိရိယာရှိ သင်၏ မည်သည့်အချက်အလက်ကိုမျှ ဖျက်ပစ်မည် မဟုတ်ပါ။";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Sync နှင့် ချိတ်ဆက်ဖြုတ်ရန်";
@@ -893,7 +890,7 @@
 "Settings.FxA.Sync.SectionName" = "Sync အပြင်အဆင်များ";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Ecosia အကောင့်";
+"Settings.FxA.Title" = "Firefox အကောင့်";
 
 /* General settings section title */
 "Settings.General.SectionName" = "အထွေထွေ";
@@ -917,7 +914,7 @@
 "Settings.NewTab.Option.BlankPage" = "စာမျက်နှာအလွတ်";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Ecosia အဖွင့်စာမျက်နှာ";
+"Settings.NewTab.Option.FirefoxHome" = "Firefox အဖွင့်စာမျက်နှာ";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "အဖွင့်စာမျက်နှာ";
@@ -935,10 +932,7 @@
 "Settings.NewTab.TopSectionNameFooter" = "တက်ပ်အသစ်ဖွင့်သည့်အခါတက်လာမည့်အရာကိုရွေးချယ်ပါ";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "Ecosia ကို ဖွင့်သည့်အခါ";
-
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.StatusV2" = "Ecosia ကို ဖွင့်သည့်အခါ";
+"Settings.OfferClipboardBar.Status" = "Firefox ကို ဖွင့်သည့်အခါ";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "ကူးယူထားသော လင့်ခ်များကို ဖွင့်ရန် မေးမြန်းပါ";
@@ -962,7 +956,7 @@
 "Settings.SendUsage.Link" = "ပိုမိုလေ့လာရန်။";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Ecosia သည် လူတိုင်းအတွက် Ecosia ကို ပေးစွမ်းရန်နှင့် တိုးတက်ကောင်းမွန်စေရန်အတွက်သာ ကောက်ခံမှုပြုခြင်း ဖြစ်ပါသည်။";
+"Settings.SendUsage.Message" = "Mozilla သည် လူတိုင်းအတွက် Firefox ကို ပေးစွမ်းရန်နှင့် တိုးတက်ကောင်းမွန်စေရန်အတွက်သာ ကောက်ခံမှုပြုခြင်း ဖြစ်ပါသည်။";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "အသုံးပြုမှုဆိုင်ရာ အချက်အလက်များကို ပေးပို့ရန်";
@@ -983,7 +977,7 @@
 "Settings.Siri.OpenTabShortcut" = "တပ်ဗ်အသစ် ဖွင့်ပါ";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Siri မှတဆင့် Ecosia ကို မြန်မြန်ဆန်ဆန် ဖွင့်ရန် Siri နည်းလမ်းတိုများကို အသုံးပြုပါ";
+"Settings.Siri.SectionDescription" = "Siri မှတဆင့် Firefox ကို မြန်မြန်ဆန်ဆန် ဖွင့်ရန် Siri နည်းလမ်းတိုများကို အသုံးပြုပါ";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Siri နည်းလမ်းတိုများ";
@@ -1052,13 +1046,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "နောက်ကွယ်တွင် ဆောင်ရွက်ပါ";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Ecosia တွင် ဆောင်ရွက်နေသည်";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Firefox တွင် ဆောင်ရွက်နေသည်";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Ecosia နှင့် ဖွင့်ပါ";
+"ShareExtension.OpenInFirefoxAction.Title" = "Firefox နှင့် ဖွင့်ပါ";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Ecosia တွင် ရှာပါ";
+"ShareExtension.SeachInFirefoxAction.Title" = "Firefox တွင် ရှာပါ";
 
 /* Label for show search suggestions setting. */
 "Show Search Suggestions" = "ရှာဖွေရေး အကြံပြုချက်များကို ပြပါ";
@@ -1084,13 +1078,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "တစ်ပြေးညီဆောင်ရွက်မှုသည် အော့ဖ်လိုင်း ဖြစ်နေသည်";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "တပ်ဗ် %2$@ ၏ %1$@";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "တပ်ဗ်အားလုံးကို ပြပါ";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "တပ်ဗ် %1$@ အား %3$@ ၏ %2$@ သို့";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1098,9 +1092,6 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Undo";
-
-/* The label indicating that all the tabs were closed */
-"Tabs.DeleteAllUndo.Title" = "တဗ် %d ခု ပိတ်လိုက်သည်";
 
 /* Accessibility label for the Add Tab button in the Tab Tray. */
 "TabTray.AddTab.Button" = "တပ်ဗ် ပေါင်းထည့်ပါ။";
@@ -1138,7 +1129,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "ဒီနေ့";
 
-/* Relative date for date older than a minute. */
+/* Relative date for date older than a minute. %@ is the time. */
 "today at %@" = "ယနေ့ %@";
 
 /* Accessibility label for the Menu button. */
@@ -1147,7 +1138,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "တပ်ဗ်အားလုံးကို ပိတ်ရန်";
 
-/* Button shown in editing mode to remove this site from the top sites panel. */
+/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
 "TopSites.RemovePage.Button" = "စာမျက်နှာကို ဖျက်ရန်။ ။%@";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1156,7 +1147,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "ဟုတ်ပါသည်";
 
-/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
+/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "ယခုစာမျက်နှာသည် %1$@ ဘာသာဖြင့် ပေါ်ပါမည်။ %3$@ နှင့် %2$@ သို့ ဘာသာပြန် အသုံးပြုမည်လား။";
 
 /* Tile title for Twitter */
@@ -1166,7 +1157,7 @@
 "UIMenuItem.PasteGo" = "ကူးယူပြီးနောက်သွားမည်";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Ecosia ဖြင့် ရှာပါ";
+"UIMenuItem.SearchWithFirefox" = "Firefox ဖြင့် ရှာပါ";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "မဖတ်";

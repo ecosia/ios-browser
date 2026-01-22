@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. Parameter is the hostname of the site */
+/* Authentication prompt message with no realm. %@ is the hostname of the site. */
 "A username and password are being requested by %@." = "%@ пайдаланушы атын мен паролін сұраған.";
 
-/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
+/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
 "A username and password are being requested by %@. The site says: %@" = "%1$@ пайдаланушы атын мен паролін сұраған. Сайт айтады: %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -28,7 +28,7 @@
 /* Title for the Jump Back In section. This section allows users to jump back in to a recently viewed tab */
 "ActivityStream.JumpBackIn.SectionTitle" = "Кері оралу";
 
-/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. The placeholder is for a number. It will read 'Tabs: 5' or similar. */
+/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. %d is the number of tabs. It will read 'Tabs: 5' or similar. */
 "ActivityStream.JumpBackIn.TabGroup.SiteCount" = "Беттер: %d";
 
 /* A string used to signify the start of the Recently Saved section in Home Screen. */
@@ -36,9 +36,6 @@
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "Жуырда қаралған";
-
-/* Section title label for Shortcuts */
-"ActivityStream.Shortcuts.SectionTitle" = "Жарлықтар";
 
 /* The title for the setting page which lets you select the number of top site rows */
 "ActivityStream.TopSites.RowSettingFooter" = "Жолдар саны";
@@ -280,13 +277,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "Жүктемелер";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "%d файлдан бірі";
 
-/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
+/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -310,8 +307,8 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "Бұл қате баптаулар немесе шабуылшының зиянкес әрекеттері болуы мүмкін. Өз тәуекеліңізге қарай жалғастырыңыз.";
 
-/* Warning text on the certificate error page */
-"ErrorPages.CertWarning.Description" = "%@ иесі өз сайтын дұрыс емес баптаған. Ақпаратыңызды ұрланудан қорғау үшін, Ecosia веб сайтпен байланыспады.";
+/* Warning text on the certificate error page. %@ is the domain of the website. */
+"ErrorPages.CertWarning.Description" = "%@ иесі өз сайтын дұрыс емес баптаған. Ақпаратыңызды ұрланудан қорғау үшін, Firefox веб сайтпен байланыспады.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "Бұл байланыс сенімсіз";
@@ -332,7 +329,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Ecosia үй парағы";
+"Firefox.HomePage.Title" = "Firefox үй парағы";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "Үй бетін баптау";
@@ -348,6 +345,9 @@
 
 /* When a user taps and holds on an item from the Recently Visited section, this label will appear indicating the option to remove that item. */
 "FirefoxHome.RecentHistory.Remove" = "Өшіру";
+
+/* On each Story on the Firefox Homepage, this label appears and indicates the number of minutes to read an article. Minutes should be abbreviated due to space constraints. %d represents the number of minutes */
+"FirefoxHome.Stories.Minutes.v140" = "минут: %d";
 
 /* Label showing how many pages there is in a search group. %d represents a number */
 "FirefoxHomepage.Common.PagesCount.v112" = "Беттер: %d";
@@ -373,11 +373,14 @@
 /* This string will show under a shortcuts tile on the firefox home page, indicating that the tile is a sponsored tile. Space is limited, please keep as short as possible. */
 "FirefoxHomepage.Shortcuts.Sponsored.v100" = "Демеуленген";
 
+/* This string will show under the description on pocket story, indicating that the story is sponsored. */
+"FirefoxHomepage.Stories.Sponsored.v140" = "Демеуленген";
+
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "Алға";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Ecosia тіркелгісі";
+"FxA.FirefoxAccount" = "Firefox тіркелгісі";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Тіркелгі және құрылғыларды басқару";
@@ -389,7 +392,7 @@
 "fxa.signin.camera-signin" = "Камерамен кіріңіз";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "Компьютеріңізде Ecosia ашып, https://ecosia.org/pair адресіне өтіңіз";
+"fxa.signin.qr-link-instruction" = "Компьютеріңізде Firefox ашып, https://firefox.com/pair адресіне өтіңіз";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "Сканерлеуге дайын";
@@ -401,7 +404,7 @@
 "FxA.SyncNow" = "Қазір синхрондау";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Ecosia синхрондауға %@ байланысты";
+"FxAPush_DeviceConnected_body" = "Firefox синхрондауға %@ байланысты";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Синхрондау байланысқан";
@@ -410,7 +413,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ сәтті ажыратылды.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Бұл құрылғы Ecosia синхрондауынан ажыратылды.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Бұл құрылғы Firefox синхрондауынан ажыратылды.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Синхрондау байланыспаған";
@@ -419,10 +422,10 @@
 "FxAPush_DeviceDisconnected_title" = "Синхрондау байланыспаған";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Құрылғы Ecosia синхрондауынан ажыратылды";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Құрылғы Firefox синхрондауынан ажыратылды";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Ecosia логотипі - тұсқағазды өзгерту.";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Firefox логотипі - тұсқағазды өзгерту.";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Көмек";
@@ -455,7 +458,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "Басқа құрылғыларыңыздан беттер тізімдерін қарау үшін кіріңіз.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Тарихы";
@@ -653,13 +656,13 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "Көбірек білу";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "Ecosia үшін автотолтыру мүмкіндігін пайдалану үшін құрылғының рұқсат коды іске қосылған болуы керек.";
+"Logins.PasscodeRequirement.Warning" = "Firefox үшін автотолтыру мүмкіндігін пайдалану үшін құрылғының рұқсат коды іске қосылған болуы керек.";
 
 /* Label displaying welcome view tagline under the title */
 "Logins.WelcomeView.Tagline" = "Парольдеріңізді өзіңізбен бірге алып жүріңіз";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "Ecosia парольдерін автотолтыру";
+"Logins.WelcomeView.Title2" = "Firefox парольдерін автотолтыру";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "Автотолтыруды іске қосу";
@@ -669,18 +672,6 @@
 
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "Жаңартпау";
-
-/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptSaveLogin.Title" = "%1$@ логинін, %2$@ жерінде, сақтау керек пе?";
-
-/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
-"LoginsHelper.PromptSavePassword.Title" = "%@ үшін парольді сақтау керек пе?";
-
-/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "%@ үшін логинді жаңарту керек пе?";
-
-/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "%1$@ логинін, %2$@ жерінде, жаңарту керек пе?";
 
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "Логинді сақтау";
@@ -704,7 +695,7 @@
 "LoginsList.Title" = "САҚТАЛҒАН ЛОГИНДЕР";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Ecosia алдында құлаған сияқты. Беттерді қалпына келтіруді қалайсыз ба?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Firefox алдында құлаған сияқты. Беттерді қалпына келтіруді қалайсыз ба?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Оқылған ретінде белгілеу";
@@ -820,7 +811,7 @@
 /* Accessibility label for the Home button on the toolbar. Pressing this button brings the user to the home page. */
 "Menu.Toolbar.Home.AccessibilityLabel.v99" = "Үй беті";
 
-/* String to let users know the site verifier, where the placeholder represents the SSL certificate signer. */
+/* String to let users know the site verifier, where %@ represents the SSL certificate signer. */
 "Menu.TrackingProtection.Details.Verifier" = "Расталды: %@";
 
 /* The title for tracking protection settings */
@@ -859,7 +850,7 @@
 /* The title for the option to view the What's new page. */
 "Menu.WhatsNew.Title" = "Не жаңалық";
 
-/* Label for the zoom page button in the menu, used to show the Zoom Page bar. The placeholder shows the current zoom level in percent. */
+/* Label for the zoom page button in the menu, used to show the Zoom Page bar. %@ shows the current zoom level in percent. */
 "Menu.ZoomPage.Title.v113" = "Масштаб (%@)";
 
 /* Accessibility label for Mobile Device image in remote tabs list */
@@ -893,7 +884,7 @@
 "Onboarding.WhatsNew.Button.Title" = "Шолуды бастау";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Қап! Ecosia құлаған";
+"Oops! Firefox crashed" = "Қап! Firefox құлаған";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Мақалаларды оқу режимінде ашу үшін, атау жолағындағы кітапша таңбашасы пайда болған кезде, оған шертіңіз.";
@@ -905,7 +896,7 @@
 "Open Tabs" = "Ашық беттер";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Ecosia бұл парақты аша алмайды, өйткені оның адресі қате.";
+"OpenURL.Error.Message" = "Firefox бұл парақты аша алмайды, өйткені оның адресі қате.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "Парақты ашу мүмкін емес";
@@ -917,7 +908,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "Бұл арқылы сіз суретті Фототаспаға сақтай аласыз.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia суреттеріңізге қатынағысы келеді";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox суреттеріңізге қатынағысы келеді";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Жабу";
@@ -1004,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "Деректер жарамсыз";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "Құрылғының \"Баптаулар\" > \"Ecosia\" бетін ашыңыз. Ecosia үшін камераға қатынауға рұқсат етіңіз.";
+"ScanQRCode.PermissionError.Message.v100" = "Құрылғының \"Баптаулар\" > \"Firefox\" бетін ашыңыз. Firefox үшін камераға қатынауға рұқсат етіңіз.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "QR кодын сканерлеу";
@@ -1019,7 +1010,7 @@
 "Search.Awesomebar.SwitchToTab" = "Бетке ауысу";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "Ecosia ұсынысы";
+"Search.SuggestSectionTitle.v102" = "Firefox ұсынысы";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "Жаңа іздеу жүйесі жылдам іздеу жолағында көрсетілетін болады.";
@@ -1055,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "ОК";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Ecosia бұл мәселені шеше алатындай құлау хабарламасын жіберу керек пе?";
+"Send a crash report so Mozilla can fix the problem?" = "Mozilla бұл мәселені шеше алатындай құлау хабарламасын жіберу керек пе?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Кері байланыс хабарламасын жіберу";
@@ -1085,13 +1076,13 @@
 "SendTo.NavBar.Title" = "Бетті жіберу";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Бұл Ecosia тіркелгісіне байланысқан және синхрондау үшін қолжетерлік басқа құрылғыларыңыз жоқ.";
+"SendTo.NoDevicesFound.Message" = "Бұл Firefox тіркелгісіне байланысқан және синхрондау үшін қолжетерлік басқа құрылғыларыңыз жоқ.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Жалғастыру үшін Ecosia-ты ашып, баптауларға өтіңіз және тіркелгіге кіріңіз.";
+"SendTo.NotSignedIn.Message" = "Жалғастыру үшін Firefox-ты ашып, баптауларға өтіңіз және тіркелгіге кіріңіз.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Сіз өз Ecosia тіркелгіңізге кірген жоқсыз.";
+"SendTo.NotSignedIn.Title" = "Сіз өз Firefox тіркелгіңізге кірген жоқсыз.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Жіберу";
@@ -1112,7 +1103,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Бастау үшін шертіңіз";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Ecosia синхрондау";
+"SentTab.NoTabArrivingNotification.title" = "Firefox синхрондау";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Қарап шығу";
@@ -1147,6 +1138,33 @@
 /* The placeholder for URL Field when saving a custom search engine */
 "Settings.AddCustomEngine.URLPlaceholder" = "URL (Сұранымды %s мәнімен алмастырыңыз)";
 
+/* In the settings menu, in the Address Bar customization section, this label indicates that selecting this will make the address bar appear at the bottom of the screen. */
+"Settings.AddressBar.Bottom.v138" = "Төменде";
+
+/* In the settings menu, in the Address Bar customization menu, this is the title of the section where the user can toggle the address bar position. */
+"Settings.AddressBar.SectionTitle.v138" = "Адрестік жолақтың орналасуы";
+
+/* In the settings menu, this label indicates that there is an option of customizing the Address Bar position. */
+"Settings.AddressBar.SettingsTitle.v138" = "Адрес жолағы";
+
+/* In the settings menu, in the Address Bar customization section, this label indicates that selecting this will make the address bar appear at the top of the screen. */
+"Settings.AddressBar.Top.v138" = "Жоғарыда";
+
+/* Browser theme settings section title in Appearance settings */
+"Settings.Appearance.BrowserTheme.SectionHeader.v137" = "Браузер темасы";
+
+/* Title in main app settings for Appearance settings */
+"Settings.Appearance.Title.v137" = "Сыртқы түрі";
+
+/* Website Appearance settings section title in Appearance settings */
+"Settings.Appearance.WebsiteAppearance.SectionHeader.v137" = "Веб-сайттың сыртқы түрі";
+
+/* Under Website Appearance section in Appearance menu, this is the text under the toggle describing the dark mode feature. */
+"Settings.Appearance.WebsiteDarkMode.Description.v137" = "Веб-сайттарға қараңғы көрініс береді. Кейбір сайттар дұрыс көрінбеуі мүмкін.";
+
+/* Under Website Appearance section in Appearance menu, this is the title of the toggle to switch dark theme on/off. */
+"Settings.Appearance.WebsiteDarkModeToggle.Title.v137" = "Веб-сайттың қараңғы режимі";
+
 /* Title of setting to block opening external apps when pressing links. */
 "Settings.BlockOpeningExternalApps.Title" = "Сыртқы қолданбаларды ашуды блоктау";
 
@@ -1159,7 +1177,7 @@
 /* Label used as an item in Settings. When touched it will open a dialog prompting the user to make sure they want to clear all of their private data. */
 "Settings.ClearPrivateData.SectionName" = "Жеке деректерді өшіру";
 
-/* Button in Data Management that clears private data for the selected items. Parameter is the number of items to be cleared */
+/* Button in Data Management that clears private data for the selected items. %1$@ is the number of items to be cleared. */
 "Settings.ClearSelectedWebsiteData.ClearSelected.Button" = "Элементтерді өшіру: %1$@";
 
 /* Copy app version alert shown in settings. */
@@ -1175,7 +1193,7 @@
 "Settings.DataManagement.Title" = "Деректерді басқару";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Ecosia тіркелгіңізбен синхрондауды тоқтатады, бірақ, бұл құрылғыда барлық шолу деректері қалады.";
+"Settings.Disconnect.Body" = "Firefox тіркелгіңізбен синхрондауды тоқтатады, бірақ, бұл құрылғыда барлық шолу деректері қалады.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Синхрондаудан ажырату";
@@ -1241,7 +1259,7 @@
 "Settings.FxA.Sync.SectionName" = "Синхрондау баптаулары";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Ecosia тіркелгісі";
+"Settings.FxA.Title" = "Firefox тіркелгісі";
 
 /* General settings section title */
 "Settings.General.SectionName" = "Жалпы";
@@ -1250,7 +1268,7 @@
 "Settings.Home.Current.Description.v101" = "Басты бет ретінде не көрсетілетінін таңдаңыз.";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "Ecosia басты бетінде көретін мазмұнды таңдаңыз.";
+"Settings.Home.Option.Description.v101" = "Firefox басты бетінде көретін мазмұнды таңдаңыз.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "Кері оралу";
@@ -1274,7 +1292,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "Үй парағы";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "Ecosia-қа оралғанда не көретініңізді таңдаңыз.";
+"Settings.Home.Option.StartAtHome.Description" = "Firefox-қа оралғанда не көретініңізді таңдаңыз.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "Соңғы бет";
@@ -1289,25 +1307,25 @@
 "Settings.Home.Option.Wallpaper" = "Түсқағаз";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Ecosia тұсқағазы, аметист үлгісі.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Firefox тұсқағазы, аметист үлгісі.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Ecosia тұсқағазы, жағажай белестерінің үлгісі.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Firefox тұсқағазы, жағажай белестерінің үлгісі.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Ecosia тұсқағазы, көгілдір үлгісі.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Firefox тұсқағазы, көгілдір үлгісі.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "Бастапқы, ашық тұсқағаз.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Ecosia тұсқағазы, күншығыс үлгісі.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Firefox тұсқағазы, күншығыс үлгісі.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "Үй беттің тұсқағаз циклін ауыстырғышы";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Ecosia тұсқағазы, ымырт белестерінің үлгісі.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Firefox тұсқағазы, ымырт белестерінің үлгісі.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "Классикалық %@";
@@ -1328,7 +1346,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "Шектеулі таралым";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Ecosia басты бетінің логотипін түрту арқылы тұсқағазды өзгертіңіз";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Firefox басты бетінің логотипін түрту арқылы тұсқағазды өзгертіңіз";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "Түсқағаз";
@@ -1382,7 +1400,7 @@
 "Settings.NewTab.Option.Custom" = "Таңдауыңызша";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Ecosia үй парағы";
+"Settings.NewTab.Option.FirefoxHome" = "Firefox үй парағы";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Үй парағы";
@@ -1403,13 +1421,10 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "Суреттерді блоктау";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "Ecosia-ты ашу кезінде";
+"Settings.OfferClipboardBar.Status" = "Firefox-ты ашу кезінде";
 
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. Placeholder is for the app name. */
+/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "%@ ашқанда";
-
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.StatusV2" = "Ecosia-ты ашу кезінде";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "Көшіріп алынған сілтемелерді ашуды ұсыну";
@@ -1445,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Көбірек білу.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Ecosia тек Ecosia қолданбасын әркім үшін ұсыну және жақсарту мақсатында керек деректерді жинауға тырысады.";
+"Settings.SendUsage.Message" = "Mozilla тек Firefox қолданбасын әркім үшін ұсыну және жақсарту мақсатында керек деректерді жинауға тырысады.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Қолдану деректерін жіберу";
@@ -1466,7 +1481,7 @@
 "Settings.Siri.OpenTabShortcut" = "Жаңа бетті ашу";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Siri арқылы Ecosia-ты жылдам ашу үшін Siri жарлықтарын қолдану";
+"Settings.Siri.SectionDescription" = "Siri арқылы Firefox-ты жылдам ашу үшін Siri жарлықтарын қолдану";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Siri жарлықтары";
@@ -1475,7 +1490,7 @@
 "Settings.Studies.Toggle.Link" = "Көбірек білу.";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Ecosia кейде зерттеулерді орнатып, орындай алады.";
+"Settings.Studies.Toggle.Message" = "Firefox кейде зерттеулерді орнатып, орындай алады.";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "Зерттеулер";
@@ -1592,13 +1607,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Фонда жүктеу";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Ecosia-та жүктеу";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Firefox-та жүктеу";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Ecosia көмегімен ашу";
+"ShareExtension.OpenInFirefoxAction.Title" = "Firefox көмегімен ашу";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Ecosia ішінен іздеу";
+"ShareExtension.SeachInFirefoxAction.Title" = "Firefox ішінен іздеу";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "Көшіріп алу";
@@ -1630,13 +1645,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "Синхрондау желіден тыс";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "Бет: %1$@: %2$@";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "Барлық беттерді көрсету";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "Беттер: %1$@ - %2$@: %3$@";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1644,9 +1659,6 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Болдырмау";
-
-/* The label indicating that all the tabs were closed */
-"Tabs.DeleteAllUndo.Title" = "%d бет жабылды";
 
 /* Accessibility title for the inactive tabs section button when section is closed. This section groups all tabs that haven't been used in a while. */
 "TabsTray.InactiveTabs.SectionTitle.Closed.Accessibility.v103" = "Белсенді емес беттерді қарау";
@@ -1666,7 +1678,7 @@
 /* Accessibility label for the currently selected tab. */
 "TabTray.CurrentSelectedTab.A11Y" = "Ағымдағы таңдалған бет.";
 
-/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as \"Others\" */
+/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as “Others”. */
 "TabTray.Header.FilteredTabs.SectionHeader" = "Басқалар";
 
 /* Title for the inactive tabs section. This section groups all tabs that haven't been used in a while. */
@@ -1717,7 +1729,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "Бүгін";
 
-/* Relative date for date older than a minute. */
+/* Relative date for date older than a minute. %@ is the time. */
 "today at %@" = "бүгін, уақыты %@";
 
 /* Accessibility label for the Menu button. */
@@ -1726,7 +1738,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "Барлық беттерді жабу";
 
-/* Button shown in editing mode to remove this site from the top sites panel. */
+/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
 "TopSites.RemovePage.Button" = "Бетті өшіру - %@";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1735,7 +1747,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "Иә";
 
-/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
+/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "Бұл бет %1$@ тілінде сияқты. %3$@ көмегімен оны %2$@ тіліне аудару керек пе?";
 
 /* Tile title for Twitter */
@@ -1745,7 +1757,7 @@
 "UIMenuItem.PasteGo" = "Кірістіру және өту";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Ecosia көмегімен іздеу";
+"UIMenuItem.SearchWithFirefox" = "Firefox көмегімен іздеу";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "оқылмаған";
@@ -1793,7 +1805,7 @@
 "Yesterday" = "Кеше";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "Басқа құрылғыларыңыздағы Ecosia-та ашық беттер сізде жоқ.";
+"You don’t have any tabs open in Firefox on your other devices." = "Басқа құрылғыларыңыздағы Firefox-та ашық беттер сізде жоқ.";
 
 /* Your Rights settings section title */
 "Your Rights" = "Құқықтарыңыз";

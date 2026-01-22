@@ -23,19 +23,19 @@
 "TodayWidget.NoOpenTabsLabel" = "열린 탭이 없습니다.";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "Ecosia 열기";
+"TodayWidget.OpenFirefoxLabel" = "Firefox 열기";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "사생활 보호 검색";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "홈 화면에 Ecosia 바로 가기를 추가하세요. 위젯을 추가한 후, 길게 터치하여 수정 및 다른 바로 가기를 선택하세요.";
+"TodayWidget.QuickActionGalleryDescription" = "홈 화면에 Firefox 바로 가기를 추가하세요. 위젯을 추가한 후, 길게 터치하여 수정 및 다른 바로 가기를 선택하세요.";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "빠른 작업";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "Ecosia 단축키";
+"TodayWidget.QuickActionsGalleryTitleV2" = "Firefox 단축키";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "열려있는 탭에 바로 가기를 추가합니다.";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "빠르게 보기";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "Ecosia에서 검색";
+"TodayWidget.SearchInFirefoxV2" = "Firefox에서 검색";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "사생활 보호 탭에서 검색";

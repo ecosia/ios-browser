@@ -1,5 +1,5 @@
 /* Prompt title when deleting logins */
-"Are you sure?" = "Ste si istý?";
+"Are you sure?" = "Naozaj?";
 
 /* Prompt option for cancelling out of deletion */
 "Cancel" = "Zrušiť";
@@ -10,7 +10,7 @@
 /* Copy password text selection menu item */
 "Copy" = "Kopírovať";
 
-/* Label describing when the current login was created with the timestamp as the parameter. */
+/* Label describing when the current login was created. %@ is the timestamp. */
 "Created %@" = "Vytvorené %@";
 
 /* Label for the button used to delete the current login. */
@@ -40,13 +40,16 @@
 /* Hide password text selection menu item */
 "Hide" = "Skryť";
 
+/* This message appears briefly as a notification (toast) to inform the user that a password has been successfully removed. */
+"LoginList.DeleteToast.v135" = "Heslo bolo odstránené";
+
 /* Prompt message warning the user that deleting non-synced logins will permanently remove them */
 "Logins will be permanently removed." = "Prihlasovacie údaje sa natrvalo odstránia.";
 
 /* Prompt message warning the user that deleted logins will remove logins from all connected devices */
 "Logins will be removed from all connected devices." = "Prihlasovacie údaje sa odstránia zo všetkých pripojených zariadení.";
 
-/* Label describing when the current login was last modified with the timestamp as the parameter. */
+/* Label describing when the current login was last modified. %@ is the timestamp. */
 "Modified %@" = "Upravené %@";
 
 /* Label displayed when no logins are found after searching. */

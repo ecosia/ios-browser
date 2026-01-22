@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "ᱱᱤᱡᱮᱨᱟᱠ ᱴᱮᱵᱽ ᱠᱚ ᱵᱚᱸᱫᱚ";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "Ecosia ᱠᱷᱟᱴᱚᱢᱟᱪᱷᱟ ᱟᱢᱟᱜ ᱚᱲᱟᱜ ᱤᱥᱠᱨᱤᱱ ᱨᱮ ᱥᱮᱞᱮᱫ ᱢᱮ.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "Firefox ᱠᱷᱟᱴᱚᱢᱟᱪᱷᱟ ᱟᱢᱟᱜ ᱚᱲᱟᱜ ᱤᱥᱠᱨᱤᱱ ᱨᱮ ᱥᱮᱞᱮᱫ ᱢᱮ.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "ᱱᱚᱠᱚᱞ ᱟᱠᱟᱱ ᱞᱮᱸᱠ ᱛᱮ ᱪᱟᱞᱟᱜᱢᱮ";
@@ -23,19 +23,19 @@
 "TodayWidget.NoOpenTabsLabel" = "ᱴᱮᱵᱽ ᱠᱚ ᱡᱷᱤ ᱵᱚᱱᱩ-ᱟ.";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "Ecosia ᱡᱷᱤᱜ ᱢᱮ";
+"TodayWidget.OpenFirefoxLabel" = "Firefox ᱡᱷᱤᱜ ᱢᱮ";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "ᱱᱤᱡᱮᱨᱟᱠ ᱥᱮᱸᱫᱽᱨᱟ";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "ᱢᱤᱫ ᱴᱟᱝ Ecosia ᱠᱷᱟᱴᱚᱢᱟᱪᱷᱟ ᱚᱲᱟᱜ ᱤᱥᱠᱨᱤᱱ ᱨᱮ ᱥᱮᱞᱮᱫ ᱛᱟᱞᱟᱝ ᱢᱮ. ᱣᱤᱡᱮᱴ ᱥᱮᱞᱮᱫ ᱠᱟᱛᱮ ᱡᱚᱴᱮᱫ ᱢᱮ ᱟᱨ ᱚᱛᱟ ᱫᱚᱦᱚᱭ ᱢᱮ ᱥᱟᱯᱲᱟᱣ ᱞᱚᱜᱤᱛ ᱛᱮ ᱟᱨ ᱮᱴᱟᱜ-ᱟ ᱠᱷᱟᱴᱚᱢᱟᱪᱷᱟ ᱵᱟᱪᱷᱟᱣ ᱛᱟᱞᱟᱝ ᱢᱮ.";
+"TodayWidget.QuickActionGalleryDescription" = "ᱢᱤᱫ ᱴᱟᱝ Firefox ᱠᱷᱟᱴᱚᱢᱟᱪᱷᱟ ᱚᱲᱟᱜ ᱤᱥᱠᱨᱤᱱ ᱨᱮ ᱥᱮᱞᱮᱫ ᱛᱟᱞᱟᱝ ᱢᱮ. ᱣᱤᱡᱮᱴ ᱥᱮᱞᱮᱫ ᱠᱟᱛᱮ ᱡᱚᱴᱮᱫ ᱢᱮ ᱟᱨ ᱚᱛᱟ ᱫᱚᱦᱚᱭ ᱢᱮ ᱥᱟᱯᱲᱟᱣ ᱞᱚᱜᱤᱛ ᱛᱮ ᱟᱨ ᱮᱴᱟᱜ-ᱟ ᱠᱷᱟᱴᱚᱢᱟᱪᱷᱟ ᱵᱟᱪᱷᱟᱣ ᱛᱟᱞᱟᱝ ᱢᱮ.";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "ᱞᱚᱜᱚᱱ ᱛᱮᱭᱟ ᱠᱚᱢᱤ";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "Ecosia ᱥᱚᱴᱠᱚᱴ";
+"TodayWidget.QuickActionsGalleryTitleV2" = "Firefox ᱥᱚᱴᱠᱚᱴ";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "ᱟᱢᱟᱜ ᱠᱷᱩᱞᱟᱹ ᱟᱠᱟᱱ ᱴᱮᱵᱽ ᱠᱚ ᱨᱮᱭᱟᱜ ᱥᱚᱴᱠᱚᱴ ᱠᱚ ᱥᱮᱞᱮᱫ ᱢᱮ ᱾";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "ᱞᱚᱜᱚᱱ ᱛᱮ ᱧᱮᱞ";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "Ecosia ᱨᱮ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ";
+"TodayWidget.SearchInFirefoxV2" = "Firefox ᱨᱮ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "ᱱᱤᱡᱮᱨᱟᱠ ᱴᱮᱵᱽ ᱨᱮ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ";

@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "Sulje yksityiset välilehdet";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "Lisää Ecosiain oikotiet kotinäyttöön.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "Lisää Firefoxin oikotiet kotinäyttöön.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "Siirry kopioituun linkkiin";
@@ -23,19 +23,19 @@
 "TodayWidget.NoOpenTabsLabel" = "Ei avoimia välilehtiä.";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "Avaa Ecosia";
+"TodayWidget.OpenFirefoxLabel" = "Avaa Firefox";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "Yksityinen haku";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "Lisää Ecosia-oikotie kotinäyttöön. Kun olet lisännyt widgetin, kosketa pitkään muokataksesi sitä ja valitse toinen oikotie.";
+"TodayWidget.QuickActionGalleryDescription" = "Lisää Firefox-oikotie kotinäyttöön. Kun olet lisännyt widgetin, kosketa pitkään muokataksesi sitä ja valitse toinen oikotie.";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "Pikatoiminnot";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "Ecosia-oikotiet";
+"TodayWidget.QuickActionsGalleryTitleV2" = "Firefox-oikotiet";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "Lisää oikoteitä avoimiin välilehtiisi.";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "Pikanäkymä";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "Hae\nEcosiaissa";
+"TodayWidget.SearchInFirefoxV2" = "Hae\nFirefoxissa";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "Hae\nyksityisessä välilehdessä";

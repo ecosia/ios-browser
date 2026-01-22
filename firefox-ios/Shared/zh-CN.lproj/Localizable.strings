@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. Parameter is the hostname of the site */
+/* Authentication prompt message with no realm. %@ is the hostname of the site. */
 "A username and password are being requested by %@." = "%@ 请求您输入用户名和密码。";
 
-/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
+/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
 "A username and password are being requested by %@. The site says: %@" = "%1$@ 请求您输入用户名和密码。此网站称：%2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -28,7 +28,7 @@
 /* Title for the Jump Back In section. This section allows users to jump back in to a recently viewed tab */
 "ActivityStream.JumpBackIn.SectionTitle" = "回到先前页面";
 
-/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. The placeholder is for a number. It will read 'Tabs: 5' or similar. */
+/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. %d is the number of tabs. It will read 'Tabs: 5' or similar. */
 "ActivityStream.JumpBackIn.TabGroup.SiteCount" = "标签页：%d";
 
 /* A string used to signify the start of the Recently Saved section in Home Screen. */
@@ -36,9 +36,6 @@
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "最近访问";
-
-/* Section title label for Shortcuts */
-"ActivityStream.Shortcuts.SectionTitle" = "快捷方式";
 
 /* The title for the setting page which lets you select the number of top site rows */
 "ActivityStream.TopSites.RowSettingFooter" = "设置行数";
@@ -83,7 +80,7 @@
 "Back" = "后退";
 
 /* Block pop-up windows setting */
-"Block Pop-up Windows" = "阻止弹出窗口";
+"Block Pop-up Windows" = "阻止弹出式窗口";
 
 /* The label for the Title field when editing a bookmark */
 "Bookmark.DetailFieldTitle.Label" = "标题";
@@ -280,13 +277,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "下载";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "第 1 个文件，共 %d 个文件";
 
-/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
+/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -310,8 +307,8 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "这可能是配置错误，也可能是被攻击者篡改。继续访问需要承担潜在的风险。";
 
-/* Warning text on the certificate error page */
-"ErrorPages.CertWarning.Description" = "%@ 的管理员未正确配置网站。为避免您的信息被窃，Ecosia 没有建立与该网站的连接。";
+/* Warning text on the certificate error page. %@ is the domain of the website. */
+"ErrorPages.CertWarning.Description" = "%@ 的管理员未正确配置网站。为避免您的信息被窃，Firefox 没有建立与该网站的连接。";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "此连接不受信任";
@@ -326,13 +323,13 @@
 "ExternalLink.AppStore.ConfirmationTitle" = "在 App Store 中打开此链接？";
 
 /* Question shown to user when tapping an SMS or MailTo link that opens the external app for those. */
-"ExternalLink.AppStore.GenericConfirmationTitle" = "用外部应用程序打开此链接？";
+"ExternalLink.AppStore.GenericConfirmationTitle" = "用外部应用打开此链接？";
 
 /* Tile title for Facebook */
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Ecosia 主页";
+"Firefox.HomePage.Title" = "Firefox 主页";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "定制主页";
@@ -348,6 +345,9 @@
 
 /* When a user taps and holds on an item from the Recently Visited section, this label will appear indicating the option to remove that item. */
 "FirefoxHome.RecentHistory.Remove" = "移除";
+
+/* On each Story on the Firefox Homepage, this label appears and indicates the number of minutes to read an article. Minutes should be abbreviated due to space constraints. %d represents the number of minutes */
+"FirefoxHome.Stories.Minutes.v140" = "%d 分钟";
 
 /* Label showing how many pages there is in a search group. %d represents a number */
 "FirefoxHomepage.Common.PagesCount.v112" = "页数：%d";
@@ -373,11 +373,14 @@
 /* This string will show under a shortcuts tile on the firefox home page, indicating that the tile is a sponsored tile. Space is limited, please keep as short as possible. */
 "FirefoxHomepage.Shortcuts.Sponsored.v100" = "赞助推广";
 
+/* This string will show under the description on pocket story, indicating that the story is sponsored. */
+"FirefoxHomepage.Stories.Sponsored.v140" = "赞助推广";
+
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "前进";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Ecosia 账户";
+"FxA.FirefoxAccount" = "Firefox 账户";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "管理账户和设备";
@@ -389,7 +392,7 @@
 "fxa.signin.camera-signin" = "使用相机登录";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "在计算机上使用 Ecosia 打开 ecosia.org/pair";
+"fxa.signin.qr-link-instruction" = "在计算机上使用 Firefox 打开 firefox.com/pair";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "立即扫码";
@@ -401,7 +404,7 @@
 "FxA.SyncNow" = "立即同步";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Ecosia 同步已连接至 %@";
+"FxAPush_DeviceConnected_body" = "Firefox 同步已连接至 %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "同步已连接";
@@ -410,7 +413,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ 已成功断开。";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "此设备已成功断开 Ecosia 同步。";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "此设备已成功断开 Firefox 同步。";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "同步已断开";
@@ -419,10 +422,10 @@
 "FxAPush_DeviceDisconnected_title" = "同步已断开";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "一台设备已断开 Ecosia 同步";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "一台设备已断开 Firefox 同步";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Ecosia 徽标，更换壁纸。";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Firefox 徽标，更换壁纸。";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "帮助";
@@ -437,7 +440,7 @@
 "HistoryPanel.ClearHistoryMenuOptionEverything" = "所有";
 
 /* Button to perform action to clear history for the last hour */
-"HistoryPanel.ClearHistoryMenuOptionTheLastHour" = "最近一小时";
+"HistoryPanel.ClearHistoryMenuOptionTheLastHour" = "过去一小时";
 
 /* Button to perform action to clear history for today only */
 "HistoryPanel.ClearHistoryMenuOptionToday" = "今天";
@@ -455,7 +458,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "登录以查看来自您的其他设备的标签页列表。";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia 同步";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox 同步";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "历史记录";
@@ -584,10 +587,10 @@
 "Keyboard.Shortcuts.ZoomOut" = "缩小";
 
 /* This label is meant to signify the section containing a group of items from the past thirty days. */
-"Last month" = "上个月";
+"Last month" = "过去一个月";
 
 /* This label is meant to signify the section containing a group of items from the past seven days. */
-"Last week" = "上周";
+"Last week" = "过去一周";
 
 /* Panel accessibility label */
 "LibraryPanel.Accessibility.Bookmarks.v106" = "书签";
@@ -602,7 +605,7 @@
 "LibraryPanel.History.ClearGroupedTabsDelete.v100" = "删除";
 
 /* Within the History Panel, users can delete search group sites history. %@ represents the search group name. */
-"LibraryPanel.History.ClearGroupedTabsTitle.v100" = "要删除 %@ 中的所有网站吗？";
+"LibraryPanel.History.ClearGroupedTabsTitle.v100" = "确定要删除 %@ 中的所有网站吗？";
 
 /* Within the History Panel, users can open an action menu to clear recent history. */
 "LibraryPanel.History.ClearHistoryMenuTitle.v100" = "删除历史记录（包含同步自其他设备的记录）、Cookie 和其他浏览数据。";
@@ -653,13 +656,13 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "详细了解";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "要使用 Ecosia 的“自动填充”功能，须先启用设备密码。";
+"Logins.PasscodeRequirement.Warning" = "要使用 Firefox 的“自动填充”功能，须先启用设备密码。";
 
 /* Label displaying welcome view tagline under the title */
 "Logins.WelcomeView.Tagline" = "随身携带密码";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "自动填充 Ecosia 密码";
+"Logins.WelcomeView.Title2" = "自动填充 Firefox 密码";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "启用“自动填充”";
@@ -669,18 +672,6 @@
 
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "不更新";
-
-/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptSaveLogin.Title" = "保存 %2$@ 上 %1$@ 的登录信息？";
-
-/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
-"LoginsHelper.PromptSavePassword.Title" = "保存 %@ 上的密码？";
-
-/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "要更新 %@ 的登录信息吗？";
-
-/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "要更新 %2$@ 上 %1$@ 的登录信息吗？";
 
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "保存登录信息";
@@ -704,7 +695,7 @@
 "LoginsList.Title" = "已保存的登录信息";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "看起来 Ecosia 此前崩溃了。您想恢复您的标签页吗？";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "看起来 Firefox 此前崩溃了。您想恢复您的标签页吗？";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "标记为已读";
@@ -820,7 +811,7 @@
 /* Accessibility label for the Home button on the toolbar. Pressing this button brings the user to the home page. */
 "Menu.Toolbar.Home.AccessibilityLabel.v99" = "主页";
 
-/* String to let users know the site verifier, where the placeholder represents the SSL certificate signer. */
+/* String to let users know the site verifier, where %@ represents the SSL certificate signer. */
 "Menu.TrackingProtection.Details.Verifier" = "验证者：%@";
 
 /* The title for tracking protection settings */
@@ -859,7 +850,7 @@
 /* The title for the option to view the What's new page. */
 "Menu.WhatsNew.Title" = "新版变化";
 
-/* Label for the zoom page button in the menu, used to show the Zoom Page bar. The placeholder shows the current zoom level in percent. */
+/* Label for the zoom page button in the menu, used to show the Zoom Page bar. %@ shows the current zoom level in percent. */
 "Menu.ZoomPage.Title.v113" = "缩放（%@）";
 
 /* Accessibility label for Mobile Device image in remote tabs list */
@@ -893,7 +884,7 @@
 "Onboarding.WhatsNew.Button.Title" = "开始浏览";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "啊哦！Ecosia 崩溃了";
+"Oops! Firefox crashed" = "啊哦！Firefox 崩溃了";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "当书本图标出现在标题栏时，轻点它即可在阅读模式下阅读文章。";
@@ -905,7 +896,7 @@
 "Open Tabs" = "打开的标签页";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "地址无效，因此Ecosia 无法打开该页面。";
+"OpenURL.Error.Message" = "地址无效，因此Firefox 无法打开该页面。";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "无法打开页面";
@@ -917,7 +908,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "这将允许您保存图像到您的“相机胶卷”。";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia 想要访问您的照片";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox 想要访问您的照片";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "关闭";
@@ -1004,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "数据无效";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "请到设备的“设置”>“Ecosia”，允许 Ecosia 访问相机。";
+"ScanQRCode.PermissionError.Message.v100" = "请到设备的“设置”>“Firefox”，允许 Firefox 访问相机。";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "扫描二维码";
@@ -1019,7 +1010,7 @@
 "Search.Awesomebar.SwitchToTab" = "切换到标签页";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "Ecosia 建议";
+"Search.SuggestSectionTitle.v102" = "Firefox 建议";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "新的搜索引擎将在快捷搜索栏中显示。";
@@ -1055,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "确定";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "发送一则崩溃报告给 Ecosia，以便我们修复此问题？";
+"Send a crash report so Mozilla can fix the problem?" = "发送一则崩溃报告给 Mozilla，以便我们修复此问题？";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "发送反馈";
@@ -1085,13 +1076,13 @@
 "SendTo.NavBar.Title" = "发送标签页";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "您没有其他已连接此 Ecosia 账户的设备可用于同步。";
+"SendTo.NoDevicesFound.Message" = "您没有其他已连接此 Firefox 账户的设备可用于同步。";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "请打开 Ecosia，转至“设置”并登录以继续。";
+"SendTo.NotSignedIn.Message" = "请打开 Firefox，转至“设置”并登录以继续。";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "您尚未登录您的 Ecosia 账户。";
+"SendTo.NotSignedIn.Title" = "您尚未登录您的 Firefox 账户。";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "发送";
@@ -1112,7 +1103,7 @@
 "SentTab.NoTabArrivingNotification.body" = "轻点以开始";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Ecosia 同步";
+"SentTab.NoTabArrivingNotification.title" = "Firefox 同步";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "查看";
@@ -1147,6 +1138,33 @@
 /* The placeholder for URL Field when saving a custom search engine */
 "Settings.AddCustomEngine.URLPlaceholder" = "网址（请用 %s 替换查询内容）";
 
+/* In the settings menu, in the Address Bar customization section, this label indicates that selecting this will make the address bar appear at the bottom of the screen. */
+"Settings.AddressBar.Bottom.v138" = "底部";
+
+/* In the settings menu, in the Address Bar customization menu, this is the title of the section where the user can toggle the address bar position. */
+"Settings.AddressBar.SectionTitle.v138" = "地址栏位置";
+
+/* In the settings menu, this label indicates that there is an option of customizing the Address Bar position. */
+"Settings.AddressBar.SettingsTitle.v138" = "地址栏";
+
+/* In the settings menu, in the Address Bar customization section, this label indicates that selecting this will make the address bar appear at the top of the screen. */
+"Settings.AddressBar.Top.v138" = "顶部";
+
+/* Browser theme settings section title in Appearance settings */
+"Settings.Appearance.BrowserTheme.SectionHeader.v137" = "浏览器主题";
+
+/* Title in main app settings for Appearance settings */
+"Settings.Appearance.Title.v137" = "外观";
+
+/* Website Appearance settings section title in Appearance settings */
+"Settings.Appearance.WebsiteAppearance.SectionHeader.v137" = "网站外观";
+
+/* Under Website Appearance section in Appearance menu, this is the text under the toggle describing the dark mode feature. */
+"Settings.Appearance.WebsiteDarkMode.Description.v137" = "为网站提供深色外观。可能造成部分网站显示效果异常。";
+
+/* Under Website Appearance section in Appearance menu, this is the title of the toggle to switch dark theme on/off. */
+"Settings.Appearance.WebsiteDarkModeToggle.Title.v137" = "网站深色模式";
+
 /* Title of setting to block opening external apps when pressing links. */
 "Settings.BlockOpeningExternalApps.Title" = "阻止打开外部应用";
 
@@ -1159,7 +1177,7 @@
 /* Label used as an item in Settings. When touched it will open a dialog prompting the user to make sure they want to clear all of their private data. */
 "Settings.ClearPrivateData.SectionName" = "清除隐私数据";
 
-/* Button in Data Management that clears private data for the selected items. Parameter is the number of items to be cleared */
+/* Button in Data Management that clears private data for the selected items. %1$@ is the number of items to be cleared. */
 "Settings.ClearSelectedWebsiteData.ClearSelected.Button" = "清除项目：%1$@";
 
 /* Copy app version alert shown in settings. */
@@ -1175,7 +1193,7 @@
 "Settings.DataManagement.Title" = "数据管理";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Ecosia 将停止与您的账户的同步，但不会删除此设备上的任何浏览数据。";
+"Settings.Disconnect.Body" = "Firefox 将停止与您的账户的同步，但不会删除此设备上的任何浏览数据。";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "断开同步";
@@ -1241,7 +1259,7 @@
 "Settings.FxA.Sync.SectionName" = "同步设置";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Ecosia 账户";
+"Settings.FxA.Title" = "Firefox 账户";
 
 /* General settings section title */
 "Settings.General.SectionName" = "常规";
@@ -1250,7 +1268,7 @@
 "Settings.Home.Current.Description.v101" = "选择要在主页显示的内容。";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "选择要在 Ecosia 主页看到的内容。";
+"Settings.Home.Option.Description.v101" = "选择要在 Firefox 主页看到的内容。";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "回到先前页面";
@@ -1274,7 +1292,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "主页";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "选择您回到 Ecosia 时要看到的内容。";
+"Settings.Home.Option.StartAtHome.Description" = "选择您回到 Firefox 时要看到的内容。";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "最后打开的标签页";
@@ -1289,25 +1307,25 @@
 "Settings.Home.Option.Wallpaper" = "壁纸";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Ecosia 壁纸，紫晶图案。";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Firefox 壁纸，紫晶图案。";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Ecosia 壁纸，海滩山丘图案。";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Firefox 壁纸，海滩山丘图案。";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Ecosia 壁纸，蔚蓝图案。";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Firefox 壁纸，蔚蓝图案。";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "默认明亮壁纸。";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Ecosia 壁纸，日出图案。";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Firefox 壁纸，日出图案。";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "主页壁纸切换开关";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Ecosia 壁纸，暮光山丘图案。";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Firefox 壁纸，暮光山丘图案。";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "%@ 经典";
@@ -1328,7 +1346,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "限定版";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "轻点 Ecosia 主页徽标以更换壁纸";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "轻点 Firefox 主页徽标以更换壁纸";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "壁纸";
@@ -1343,10 +1361,10 @@
 "Settings.HomePage.SectionName" = "首页";
 
 /* This string is the title of the setting button which can be clicked to open a page to customize the number of rows in the shortcuts section */
-"Settings.Homepage.Shortcuts.Rows.v100" = "行";
+"Settings.Homepage.Shortcuts.Rows.v100" = "行数";
 
 /* This string is the title of the page to customize the number of rows in the shortcuts section */
-"Settings.Homepage.Shortcuts.RowsPageTitle.v100" = "行";
+"Settings.Homepage.Shortcuts.RowsPageTitle.v100" = "行数";
 
 /* Users can disable or enable shortcuts related settings. This string is the title of the page to change your shortcuts settings. */
 "Settings.Homepage.Shortcuts.ShortcutsPageTitle.v100" = "快捷方式";
@@ -1382,7 +1400,7 @@
 "Settings.NewTab.Option.Custom" = "自定义";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Ecosia 主页";
+"Settings.NewTab.Option.FirefoxHome" = "Firefox 主页";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "主页";
@@ -1403,13 +1421,10 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "无图模式";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "当打开 Ecosia 时";
+"Settings.OfferClipboardBar.Status" = "当打开 Firefox 时";
 
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. Placeholder is for the app name. */
+/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "打开 %@ 时询问";
-
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.StatusV2" = "当打开 Ecosia 时";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "询问打开已复制的链接";
@@ -1445,16 +1460,16 @@
 "Settings.SendUsage.Link" = "详细了解。";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Ecosia 仅收集为大众提供和改进 Ecosia 所必要的信息。";
+"Settings.SendUsage.Message" = "Mozilla 力图仅收集为大众提供和改进 Firefox 所必要的信息。";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "发送使用数据";
 
 /* Description displayed under the ”Show Link Previews” option */
-"Settings.ShowLinkPreviews.Status" = "长按链接时";
+"Settings.ShowLinkPreviews.Status" = "长按链接时显示";
 
 /* Description displayed under the ”Show Link Previews” option */
-"Settings.ShowLinkPreviews.StatusV2" = "长按链接时";
+"Settings.ShowLinkPreviews.StatusV2" = "长按链接时显示";
 
 /* Title of setting to enable link previews when long-pressing links. */
 "Settings.ShowLinkPreviews.Title" = "显示链接预览";
@@ -1466,7 +1481,7 @@
 "Settings.Siri.OpenTabShortcut" = "打开新标签页";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "使用 Siri 快捷指令快速开启 Ecosia";
+"Settings.Siri.SectionDescription" = "使用 Siri 快捷指令快速开启 Firefox";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Siri 快捷指令";
@@ -1475,7 +1490,7 @@
 "Settings.Studies.Toggle.Link" = "详细了解。";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Ecosia 可能会不时地安装并运行一些研究项目。";
+"Settings.Studies.Toggle.Message" = "Firefox 可能会不时地安装并运行一些研究项目。";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "研究";
@@ -1592,13 +1607,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "在后台载入";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "正在 Ecosia 中载入";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "正在 Firefox 中载入";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "在 Ecosia 中打开";
+"ShareExtension.OpenInFirefoxAction.Title" = "在 Firefox 中打开";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "在 Ecosia 中搜索";
+"ShareExtension.SeachInFirefoxAction.Title" = "在 Firefox 中搜索";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "复制";
@@ -1630,13 +1645,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "同步已离线";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "第 %1$@ 个标签页，共 %2$@ 个";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "显示所有标签页";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "第 %1$@ 至第 %2$@ 个标签页，共 %3$@ 个";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1644,9 +1659,6 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "撤销";
-
-/* The label indicating that all the tabs were closed */
-"Tabs.DeleteAllUndo.Title" = "%d 个标签页已关闭";
 
 /* Accessibility title for the inactive tabs section button when section is closed. This section groups all tabs that haven't been used in a while. */
 "TabsTray.InactiveTabs.SectionTitle.Closed.Accessibility.v103" = "查看休眠标签页";
@@ -1666,7 +1678,7 @@
 /* Accessibility label for the currently selected tab. */
 "TabTray.CurrentSelectedTab.A11Y" = "当前选择的标签页。";
 
-/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as \"Others\" */
+/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as “Others”. */
 "TabTray.Header.FilteredTabs.SectionHeader" = "其他";
 
 /* Title for the inactive tabs section. This section groups all tabs that haven't been used in a while. */
@@ -1676,7 +1688,7 @@
 "TabTray.OpenNewTab.KeyCodeTitle" = "打开新标签页";
 
 /* The title on the button to look at private tabs. */
-"TabTray.SegmentedControlTitles.PrivateTabs" = "隐私";
+"TabTray.SegmentedControlTitles.PrivateTabs" = "隐私浏览";
 
 /* The title on the button to look at synced tabs. */
 "TabTray.SegmentedControlTitles.SyncedTabs" = "已同步";
@@ -1717,7 +1729,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "今天";
 
-/* Relative date for date older than a minute. */
+/* Relative date for date older than a minute. %@ is the time. */
 "today at %@" = "今天 %@";
 
 /* Accessibility label for the Menu button. */
@@ -1726,7 +1738,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "关闭所有标签页";
 
-/* Button shown in editing mode to remove this site from the top sites panel. */
+/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
 "TopSites.RemovePage.Button" = "移除页面 - %@";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1735,7 +1747,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "是";
 
-/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
+/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "此页面以 %1$@ 显示，要使用 %3$@ 将其翻译为 %2$@ 吗？";
 
 /* Tile title for Twitter */
@@ -1745,7 +1757,7 @@
 "UIMenuItem.PasteGo" = "粘贴并前往";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "使用 Ecosia 搜索";
+"UIMenuItem.SearchWithFirefox" = "使用 Firefox 搜索";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "未读";
@@ -1793,7 +1805,7 @@
 "Yesterday" = "昨天";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "您没有在其他设备的 Ecosia 上已经打开的标签页。";
+"You don’t have any tabs open in Firefox on your other devices." = "您没有在其他设备的 Firefox 上已经打开的标签页。";
 
 /* Your Rights settings section title */
 "Your Rights" = "您的权利";

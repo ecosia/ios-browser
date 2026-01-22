@@ -10,7 +10,7 @@
 /* Copy password text selection menu item */
 "Copy" = "Kopiera";
 
-/* Label describing when the current login was created with the timestamp as the parameter. */
+/* Label describing when the current login was created. %@ is the timestamp. */
 "Created %@" = "Skapad %@";
 
 /* Label for the button used to delete the current login. */
@@ -40,13 +40,16 @@
 /* Hide password text selection menu item */
 "Hide" = "Dölj";
 
+/* This message appears briefly as a notification (toast) to inform the user that a password has been successfully removed. */
+"LoginList.DeleteToast.v135" = "Lösenord har tagits bort";
+
 /* Prompt message warning the user that deleting non-synced logins will permanently remove them */
 "Logins will be permanently removed." = "Inloggningar kommer att bli permanent borttagna.";
 
 /* Prompt message warning the user that deleted logins will remove logins from all connected devices */
 "Logins will be removed from all connected devices." = "Inloggningar kommer att tas bort från alla anslutna enheter.";
 
-/* Label describing when the current login was last modified with the timestamp as the parameter. */
+/* Label describing when the current login was last modified. %@ is the timestamp. */
 "Modified %@" = "Ändrad %@";
 
 /* Label displayed when no logins are found after searching. */

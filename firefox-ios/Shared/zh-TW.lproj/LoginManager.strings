@@ -10,7 +10,7 @@
 /* Copy password text selection menu item */
 "Copy" = "複製";
 
-/* Label describing when the current login was created with the timestamp as the parameter. */
+/* Label describing when the current login was created. %@ is the timestamp. */
 "Created %@" = "建立於 %@";
 
 /* Label for the button used to delete the current login. */
@@ -26,7 +26,7 @@
 "DeleteLoginAlert.Message.Local.v122" = "無法還原此動作。";
 
 /* Prompt message warning the user that deleted logins will remove logins from all connected devices */
-"DeleteLoginAlert.Message.Synced.v122" = "將從您所有進行同步的裝置中，刪除密碼。";
+"DeleteLoginAlert.Message.Synced.v122" = "將從您所有進行同步的裝置中，刪除這筆密碼。";
 
 /* Title for the prompt that appears when the user deletes a login. */
 "DeleteLoginsAlert.Title.v122" = "要移除密碼嗎？";
@@ -40,20 +40,23 @@
 /* Hide password text selection menu item */
 "Hide" = "隱藏";
 
+/* This message appears briefly as a notification (toast) to inform the user that a password has been successfully removed. */
+"LoginList.DeleteToast.v135" = "已刪除密碼";
+
 /* Prompt message warning the user that deleting non-synced logins will permanently remove them */
 "Logins will be permanently removed." = "將永久移除登入資訊。";
 
 /* Prompt message warning the user that deleted logins will remove logins from all connected devices */
 "Logins will be removed from all connected devices." = "將移除所有連結的裝置中的登入資訊。";
 
-/* Label describing when the current login was last modified with the timestamp as the parameter. */
+/* Label describing when the current login was last modified. %@ is the timestamp. */
 "Modified %@" = "修改於 %@";
 
 /* Label displayed when no logins are found after searching. */
 "No logins found" = "找不到登入資訊";
 
 /* Label displayed when no logins are found after searching. */
-"NoLoginsFound.Title.v122" = "未儲存密碼";
+"NoLoginsFound.Title.v122" = "找不到密碼";
 
 /* Open and Fill website text selection menu item */
 "Open & Fill" = "開啟及填入";

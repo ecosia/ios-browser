@@ -4,17 +4,17 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. Parameter is the hostname of the site */
-"A username and password are being requested by %@." = "Το %@ απαιτεί όνομα χρήστη και κωδικό πρόσβασης.";
+/* Authentication prompt message with no realm. %@ is the hostname of the site. */
+"A username and password are being requested by %@." = "Το %@ απαιτεί όνομα χρήστη και συνθηματικό.";
 
-/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
-"A username and password are being requested by %@. The site says: %@" = "Το %1$@ απαιτεί όνομα χρήστη και κωδικό πρόσβασης. Ο ιστότοπος δηλώνει: %2$@";
+/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
+"A username and password are being requested by %@. The site says: %@" = "Το %1$@ απαιτεί όνομα χρήστη και συνθηματικό. Ο ιστότοπος δηλώνει: %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "Aa" = "Αα";
 
 /* About settings section title */
-"About" = "Σχετικά";
+"About" = "Πληροφοριες";
 
 /* The title for the pinning a shortcut action */
 "ActivityStream.ContextMenu.AddToShortcuts" = "Προσθήκη συντόμευσης";
@@ -28,7 +28,7 @@
 /* Title for the Jump Back In section. This section allows users to jump back in to a recently viewed tab */
 "ActivityStream.JumpBackIn.SectionTitle" = "Άμεση επιστροφή";
 
-/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. The placeholder is for a number. It will read 'Tabs: 5' or similar. */
+/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. %d is the number of tabs. It will read 'Tabs: 5' or similar. */
 "ActivityStream.JumpBackIn.TabGroup.SiteCount" = "Καρτέλες: %d";
 
 /* A string used to signify the start of the Recently Saved section in Home Screen. */
@@ -36,9 +36,6 @@
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "Πρόσφατες επισκέψεις";
-
-/* Section title label for Shortcuts */
-"ActivityStream.Shortcuts.SectionTitle" = "Συντομεύσεις";
 
 /* The title for the setting page which lets you select the number of top site rows */
 "ActivityStream.TopSites.RowSettingFooter" = "Ορισμός γραμμών";
@@ -56,7 +53,7 @@
 "AddPass.Error.Dismiss" = "OK";
 
 /* Text of the 'Add Pass Failed' alert.  See https://support.apple.com/HT204003 for context on Wallet. */
-"AddPass.Error.Message" = "Προέκυψε σφάλμα κατά την προσθήκη του πάσου στο Πορτοφόλι. Παρακαλώ δοκιμάστε ξανά αργότερα.";
+"AddPass.Error.Message" = "Προέκυψε σφάλμα κατά την προσθήκη του πάσου στο Πορτοφόλι. Δοκιμάστε ξανά αργότερα.";
 
 /* Title of the 'Add Pass Failed' alert. See https://support.apple.com/HT204003 for context on Wallet. */
 "AddPass.Error.Title" = "Αποτυχία προσθήκης πάσου";
@@ -125,7 +122,7 @@
 "BreachAlerts.BreachDate" = "Αυτή η παράβαση συνέβη στις";
 
 /* Description of what a breach is */
-"BreachAlerts.Description" = "Διέρρευσαν ή κλάπηκαν κωδικοί πρόσβασης από την τελευταία φορά που αλλάξατε τον κωδικό πρόσβασής σας. Για την προστασία του λογαριασμού, συνδεθείτε στη σελίδα και αλλάξτε τον κωδικό πρόσβασής σας.";
+"BreachAlerts.Description" = "Διέρρευσαν ή κλάπηκαν συνθηματικά από την τελευταία φορά που αλλάξατε το συνθηματικό σας. Για την προστασία του λογαριασμού, συνδεθείτε στη σελίδα και αλλάξτε το συνθηματικό σας.";
 
 /* Link to monitor.firefox.com to learn more about breached passwords */
 "BreachAlerts.LearnMoreButton" = "Μάθετε περισσότερα";
@@ -215,10 +212,10 @@
 "Could not add page to Reading list" = "Δεν ήταν δυνατή η προσθήκη σελίδας στη λίστα ανάγνωσης";
 
 /* Accessibility message e.g. spoken by VoiceOver after the user wanted to add current page to the Reading List and this was not done, likely because it already was in the Reading List, but perhaps also because of real failures. */
-"Could not add page to Reading List. Maybe it’s already there?" = "Αδυναμία προσθήκης σελίδας στη Λίστα Ανάγνωσης. Μήπως είναι ήδη εκεί;";
+"Could not add page to Reading List. Maybe it’s already there?" = "Δεν ήταν δυνατή η προσθήκη της σελίδας στη λίστα ανάγνωσης. Μήπως βρίσκεται ήδη εκεί;";
 
 /* Error message that is shown in settings when there was a problem loading */
-"Could not load page." = "Αδυναμία φόρτωσης σελίδας.";
+"Could not load page." = "Δεν ήταν δυνατή η φόρτωση της σελίδας.";
 
 /* Description for the new ETP mode i.e. standard vs strict */
 "CoverSheet.v24.ETP.Description" = "Η ενσωματωμένη ενισχυμένη προστασία από καταγραφή εμποδίζει την καταγραφή σας από διαφημίσεις. Επιλέξτε την αυστηρή λειτουργία για φραγή ακόμη περισσότερων ιχνηλατών, διαφημίσεων και αναδυόμενων.";
@@ -280,13 +277,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "Λήψεις";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "1 από %d αρχεία";
 
-/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
+/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -299,7 +296,7 @@
 "DownloadsPanel.Share.Title" = "Κοινή χρήση";
 
 /* Text message in the settings table view */
-"Enter your password to connect" = "Εισαγάγετε τον κωδικό πρόσβασής σας για σύνδεση";
+"Enter your password to connect" = "Εισαγάγετε το συνθηματικό σας για να συνδεθείτε";
 
 /* Label for button to perform advanced actions on the error page */
 "ErrorPages.Advanced.Button" = "Για προχωρημένους";
@@ -310,8 +307,8 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "Ενδέχεται να είναι μια λάθος ρύθμιση ή αλλοίωση από τρίτους. Συνεχίστε αν αποδέχεστε τον πιθανό κίνδυνο.";
 
-/* Warning text on the certificate error page */
-"ErrorPages.CertWarning.Description" = "Ο ιδιοκτήτης του %@ δεν έχει ρυθμίσει σωστά τον ιστότοπό του. Για την προστασία των πληροφοριών σας από κλοπή, το Ecosia δεν έχει συνδεθεί σε αυτόν τον ιστότοπο.";
+/* Warning text on the certificate error page. %@ is the domain of the website. */
+"ErrorPages.CertWarning.Description" = "Ο ιδιοκτήτης του %@ δεν έχει ρυθμίσει σωστά τον ιστότοπό του. Για την προστασία των πληροφοριών σας από κλοπή, το Firefox δεν έχει συνδεθεί σε αυτόν τον ιστότοπο.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "Αυτή η σύνδεση δεν είναι αξιόπιστη";
@@ -332,7 +329,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Αρχική σελίδα Ecosia";
+"Firefox.HomePage.Title" = "Αρχική σελίδα Firefox";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "Προσαρμογή αρχικής σελίδας";
@@ -348,6 +345,9 @@
 
 /* When a user taps and holds on an item from the Recently Visited section, this label will appear indicating the option to remove that item. */
 "FirefoxHome.RecentHistory.Remove" = "Αφαίρεση";
+
+/* On each Story on the Firefox Homepage, this label appears and indicates the number of minutes to read an article. Minutes should be abbreviated due to space constraints. %d represents the number of minutes */
+"FirefoxHome.Stories.Minutes.v140" = "Λεπτά: %d";
 
 /* Label showing how many pages there is in a search group. %d represents a number */
 "FirefoxHomepage.Common.PagesCount.v112" = "Σελίδες: %d";
@@ -373,11 +373,14 @@
 /* This string will show under a shortcuts tile on the firefox home page, indicating that the tile is a sponsored tile. Space is limited, please keep as short as possible. */
 "FirefoxHomepage.Shortcuts.Sponsored.v100" = "Χορηγία";
 
+/* This string will show under the description on pocket story, indicating that the story is sponsored. */
+"FirefoxHomepage.Stories.Sponsored.v140" = "Χορηγία";
+
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "Εμπρός";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Λογαριασμός Ecosia";
+"FxA.FirefoxAccount" = "Λογαριασμός Firefox";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Διαχείριση λογαριασμού και συσκευών";
@@ -389,7 +392,7 @@
 "fxa.signin.camera-signin" = "Σύνδεση με την κάμερά σας";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "Στον υπολογιστή σας, ανοίξτε το Ecosia και μεταβείτε στο ecosia.org/pair";
+"fxa.signin.qr-link-instruction" = "Στον υπολογιστή σας, ανοίξτε το Firefox και μεταβείτε στο firefox.com/pair";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "Σάρωση";
@@ -401,7 +404,7 @@
 "FxA.SyncNow" = "Συγχρονισμός τώρα";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Το Ecosia Sync έχει συνδεθεί με τη συσκευή %@";
+"FxAPush_DeviceConnected_body" = "Το Firefox Sync έχει συνδεθεί με τη συσκευή %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Το Sync συνδέθηκε";
@@ -410,7 +413,7 @@
 "FxAPush_DeviceDisconnected_body" = "Η συσκευή %@ έχει αποσυνδεθεί επιτυχώς.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Αυτή η συσκευή έχει αποσυνδεθεί επιτυχώς από το Ecosia Sync.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Αυτή η συσκευή έχει αποσυνδεθεί επιτυχώς από το Firefox Sync.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Το Sync αποσυνδέθηκε";
@@ -419,10 +422,10 @@
 "FxAPush_DeviceDisconnected_title" = "Το Sync αποσυνδέθηκε";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Μια συσκευή αποσυνδέθηκε από το Ecosia Sync";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Μια συσκευή αποσυνδέθηκε από το Firefox Sync";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Λογότυπο Ecosia, αλλαγής ταπετσαρίας.";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Λογότυπο Firefox, αλλαγής ταπετσαρίας.";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Βοήθεια";
@@ -455,7 +458,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "Συνδεθείτε για να δείτε μια λίστα καρτελών από τις άλλες συσκευές σας.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Ιστορικό";
@@ -653,13 +656,13 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "Μάθετε περισσότερα";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "Για τη λειτουργίας αυτόματης συμπλήρωσης του Ecosia, πρέπει να έχετε ενεργοποιήσει το συνθηματικό συσκευής.";
+"Logins.PasscodeRequirement.Warning" = "Για τη λειτουργίας αυτόματης συμπλήρωσης του Firefox, πρέπει να έχετε ενεργοποιήσει το συνθηματικό συσκευής.";
 
 /* Label displaying welcome view tagline under the title */
-"Logins.WelcomeView.Tagline" = "Πάρτε τους κωδικούς πρόσβασής σας παντού";
+"Logins.WelcomeView.Tagline" = "Πάρτε τα συνθηματικά σας παντού";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "Αυτόματη συμπλήρωση κωδικών πρόσβασης Ecosia";
+"Logins.WelcomeView.Title2" = "Αυτόματη συμπλήρωση συνθηματικών στο Firefox";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "Ενεργοποίηση αυτόματης συμπλήρωσης";
@@ -668,19 +671,7 @@
 "LoginsHelper.DontSave.Button" = "Χωρίς αποθήκευση";
 
 /* Button to not update the user's password */
-"LoginsHelper.DontUpdate.Button" = "Να μη γίνει ενημέρωση";
-
-/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptSaveLogin.Title" = "Αποθήκευση σύνδεσης %1$@ για %2$@;";
-
-/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
-"LoginsHelper.PromptSavePassword.Title" = "Αποθήκευση κωδικού πρόσβασης για %@;";
-
-/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "Ενημέρωση σύνδεσης για %@;";
-
-/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "Ενημέρωση σύνδεσης %1$@ για %2$@;";
+"LoginsHelper.DontUpdate.Button" = "Να μην γίνει ενημέρωση";
 
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "Αποθήκευση σύνδεσης";
@@ -698,19 +689,19 @@
 "LoginsList.Search.Cancel" = "Ακύρωση";
 
 /* Label displaying select a password to fill instruction */
-"LoginsList.SelectPassword.Title" = "Επιλέξτε έναν κωδικό πρόσβασης για συμπλήρωση";
+"LoginsList.SelectPassword.Title" = "Επιλέξτε ένα συνθηματικό προς συμπλήρωση";
 
 /* Title for the list of logins */
 "LoginsList.Title" = "ΑΠΟΘΗΚΕΥΜΕΝΕΣ ΣΥΝΔΕΣΕΙΣ";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Φαίνεται πως το Ecosia κατέρρευσε προηγουμένως. Θα θέλατε να επαναφέρετε τις καρτέλες σας;";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Φαίνεται πως το Firefox κατέρρευσε προηγουμένως. Θα θέλατε να επαναφέρετε τις καρτέλες σας;";
 
 /* Title for the button that marks a reading list item as read */
-"Mark as Read" = "Σήμανση ως αναγνωσμένο";
+"Mark as Read" = "Επισήμανση ως αναγνωσμένο";
 
 /* Title for the button that marks a reading list item as unread */
-"Mark as Unread" = "Σήμανση ως μη αναγνωσμένο";
+"Mark as Unread" = "Επισήμανση ως μη αναγνωσμένο";
 
 /* Toast displayed to the user after a bookmark has been added. */
 "Menu.AddBookmark.Confirm" = "Ο σελιδοδείκτης προστέθηκε";
@@ -770,7 +761,7 @@
 "Menu.NightModeTurnOn.Label2" = "Ενεργοποίηση νυχτερινής λειτουργίας";
 
 /* Label for the button, displayed in the menu, takes you to passwords screen when pressed. */
-"Menu.Passwords.Label" = "Κωδικοί πρόσβασης";
+"Menu.Passwords.Label" = "Συνθηματικά";
 
 /* The title for the button that lets you paste into the location bar */
 "Menu.Paste.Title" = "Επικόλληση";
@@ -820,7 +811,7 @@
 /* Accessibility label for the Home button on the toolbar. Pressing this button brings the user to the home page. */
 "Menu.Toolbar.Home.AccessibilityLabel.v99" = "Αρχική";
 
-/* String to let users know the site verifier, where the placeholder represents the SSL certificate signer. */
+/* String to let users know the site verifier, where %@ represents the SSL certificate signer. */
 "Menu.TrackingProtection.Details.Verifier" = "Επαλήθευση από %@";
 
 /* The title for tracking protection settings */
@@ -836,37 +827,37 @@
 "Menu.TrackingProtectionCrossSiteTrackers.Title" = "Ιχνηλάτες μεταξύ ιστοτόπων";
 
 /* The title that shows the number of cryptomining scripts blocked */
-"Menu.TrackingProtectionCryptominersBlocked.Title" = "Cryptominers";
+"Menu.TrackingProtectionCryptominersBlocked.Title" = "Cryptominer";
 
 /* Description of content trackers. */
-"Menu.TrackingProtectionDescription.ContentTrackers" = "Οι ιστότοποι μπορεί να φορτώνουν εξωτερικές διαφημίσεις, βίντεο και άλλο περιεχόμενο με κρυφούς ιχνηλάτες. Η φραγή τους συμβάλλει στην ταχύτερη φόρτωση ιστοτόπων, αλλά κάποια κουμπιά, φόρμες και πεδία σύνδεσης ενδέχεται να μη λειτουργούν.";
+"Menu.TrackingProtectionDescription.ContentTrackers" = "Οι ιστότοποι ενδέχεται να φορτώνουν εξωτερικές διαφημίσεις, βίντεο και άλλο περιεχόμενο με κρυφούς ιχνηλάτες. Η φραγή τους μπορεί να συμβάλλει στην ταχύτερη φόρτωση των ιστοτόπων, αλλά ορισμένα κουμπιά, φόρμες και πεδία σύνδεσης ενδέχεται να μην λειτουργούν.";
 
 /* Description of cross-site trackers. */
 "Menu.TrackingProtectionDescription.CrossSiteNew" = "Αυτά τα cookie σάς ακολουθούν από ιστότοπο σε ιστότοπο για να συλλέξουν δεδομένα σχετικά με το τι κάνετε στο διαδίκτυο. Δημιουργούνται από τρίτους, όπως διαφημιστές και εταιρείες ανάλυσης.";
 
 /* Description of cryptominers. */
-"Menu.TrackingProtectionDescription.CryptominersNew" = "Τα cryptominers χρησιμοποιούν κρυφά την υπολογιστική ισχύ του συστήματός σας για να εξορύξουν κρυπτονομίσματα. Τα σενάρια εξόρυξης κρυπτονομισμάτων εξαντλούν την μπαταρία σας, επιβραδύνουν τον υπολογιστή σας, ενώ ενδέχεται να δείτε αυξημένες χρεώσεις στο λογαριασμό τους ρεύματος.";
+"Menu.TrackingProtectionDescription.CryptominersNew" = "Τα cryptominer χρησιμοποιούν κρυφά την υπολογιστική ισχύ του συστήματός σας για να κάνουν εξόρυξη κρυπτονομισμάτων. Τα σενάρια εξόρυξης κρυπτονομισμάτων καταναλώνουν μπαταρία, επιβραδύνουν τον υπολογιστή σας, ενώ ενδέχεται να δείτε αυξημένες χρεώσεις στον λογαριασμό ρεύματός σας.";
 
 /* Description of fingerprinters. */
-"Menu.TrackingProtectionDescription.Fingerprinters" = "Οι ρυθμίσεις στο πρόγραμμα περιήγησης και στον υπολογιστή σας είναι μοναδικές. Τα fingerprinters συλλέγουν πολλές από αυτές τις μοναδικές ρυθμίσεις για να δημιουργήσουν ένα προφίλ για εσάς, το οποίο μπορεί να χρησιμοποιηθεί για να την καταγραφή της περιήγησής σας.";
+"Menu.TrackingProtectionDescription.Fingerprinters" = "Οι ρυθμίσεις της εφαρμογής περιήγησης και της συσκευής σας είναι μοναδικές. Τα fingerprinter συλλέγουν πολλές από αυτές τις μοναδικές ρυθμίσεις για να δημιουργήσουν ένα προφίλ για εσάς, το οποίο μπορεί να χρησιμοποιηθεί για να την καταγραφή σας κατά την περιήγηση.";
 
 /* Description of social network trackers. */
 "Menu.TrackingProtectionDescription.SocialNetworksNew" = "Τα μέσα κοινωνικής δικτύωσης τοποθετούν ιχνηλάτες σε άλλους ιστοτόπους για να δημιουργήσουν ένα πιο ολοκληρωμένο και στοχευμένο προφίλ για εσάς. Ο αποκλεισμός ιχνηλατών μειώνει αυτά που βλέπουν οι εταιρείες μέσω κοινωνικής δικτύωσης.";
 
 /* The title that shows the number of fingerprinting scripts blocked */
-"Menu.TrackingProtectionFingerprintersBlocked.Title" = "Fingerprinters";
+"Menu.TrackingProtectionFingerprintersBlocked.Title" = "Fingerprinter";
 
 /* The title for the option to view the What's new page. */
 "Menu.WhatsNew.Title" = "Τι νέο υπάρχει";
 
-/* Label for the zoom page button in the menu, used to show the Zoom Page bar. The placeholder shows the current zoom level in percent. */
+/* Label for the zoom page button in the menu, used to show the Zoom Page bar. %@ shows the current zoom level in percent. */
 "Menu.ZoomPage.Title.v113" = "Ζουμ (%@)";
 
 /* Accessibility label for Mobile Device image in remote tabs list */
 "mobile device" = "κινητή συσκευή";
 
 /* Relative date for dates older than a month and less than two months. */
-"more than a month ago" = "πάνω από ένα μήνα πριν";
+"more than a month ago" = "πάνω από έναν μήνα πριν";
 
 /* Description for a date more than a week ago, but less than a month ago. */
 "more than a week ago" = "πάνω από μία εβδομάδα πριν";
@@ -893,7 +884,7 @@
 "Onboarding.WhatsNew.Button.Title" = "Έναρξη περιήγησης";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Ωχ! Το Ecosia κατέρρευσε";
+"Oops! Firefox crashed" = "Ωχ! Το Firefox κατέρρευσε";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Ανοίξτε τα άρθρα στην προβολή ανάγνωσης πατώντας στο εικονίδιο-βιβλίο όταν εμφανίζεται στη γραμμή τίτλου.";
@@ -905,25 +896,25 @@
 "Open Tabs" = "Άνοιγμα καρτελών";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Το Ecosia δεν μπορεί να ανοίξει τη σελίδα επειδή έχει μια μη έγκυρη διεύθυνση.";
+"OpenURL.Error.Message" = "Το Firefox δεν μπορεί να ανοίξει τη σελίδα επειδή έχει μια μη έγκυρη διεύθυνση.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
-"OpenURL.Error.Title" = "Αδυναμία ανοίγματος σελίδας";
+"OpenURL.Error.Title" = "Δεν είναι δυνατό το άνοιγμα της σελίδας";
 
 /* Password textbox in Authentication prompt */
-"Password" = "Κωδικός πρόσβασης";
+"Password" = "Συνθηματικό";
 
 /* See http://mzl.la/1G7uHo7 */
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "Σας επιτρέπει να αποθηκεύετε την εικόνα στο Άλμπουμ κάμερας.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Το Ecosia θα ήθελε πρόσβαση στις φωτογραφίες σας";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Το Firefox θα ήθελε πρόσβαση στις φωτογραφίες σας";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Κλείσιμο";
 
 /* Privacy section title */
-"Privacy" = "Απόρρητο";
+"Privacy" = "Απορρητο";
 
 /* Show Firefox Browser Privacy Policy page from the Privacy section in the settings. See https://www.mozilla.org/privacy/firefox/ */
 "Privacy Policy" = "Πολιτική απορρήτου";
@@ -1004,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "Άκυρα δεδομένα";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "Μεταβείτε στις «Ρυθμίσεις» > «Ecosia». Επιτρέψτε στο Ecosia την πρόσβαση στην κάμερα.";
+"ScanQRCode.PermissionError.Message.v100" = "Μεταβείτε στις «Ρυθμίσεις» > «Firefox». Επιτρέψτε στο Firefox την πρόσβαση στην κάμερα.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "Σάρωση κωδικού QR";
@@ -1019,7 +1010,7 @@
 "Search.Awesomebar.SwitchToTab" = "Εναλλαγή σε καρτέλα";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "Προτάσεις Ecosia";
+"Search.SuggestSectionTitle.v102" = "Προτάσεις Firefox";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "Η νέα μηχανή αναζήτησης θα εμφανιστεί στη γραμμή γρήγορης αναζήτησης.";
@@ -1046,7 +1037,7 @@
 "Search.ThirdPartyEngines.FailedTitle" = "Αποτυχία";
 
 /* A message explaining fault in custom search engine form. */
-"Search.ThirdPartyEngines.FormErrorMessage" = "Παρακαλώ συμπληρώστε σωστά όλα τα πεδία.";
+"Search.ThirdPartyEngines.FormErrorMessage" = "Συμπληρώστε σωστά όλα τα πεδία.";
 
 /* A title stating that we failed to add custom search engine. */
 "Search.ThirdPartyEngines.FormErrorTitle" = "Αποτυχία";
@@ -1055,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "OK";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Αποστολή αναφοράς κατάρρευσης, ώστε να μπορέσει η Ecosia να διορθώσει το πρόβλημα;";
+"Send a crash report so Mozilla can fix the problem?" = "Αποστολή αναφοράς κατάρρευσης, ώστε να μπορέσει η Mozilla να διορθώσει το πρόβλημα;";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Αποστολή σχολίων";
@@ -1085,13 +1076,13 @@
 "SendTo.NavBar.Title" = "Αποστολή καρτέλας";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Δεν έχετε συνδέσει καμία άλλη, διαθέσιμη προς συγχρονισμό, συσκευή σε αυτό το λογαριασμό Ecosia.";
+"SendTo.NoDevicesFound.Message" = "Δεν έχετε συνδέσει καμία άλλη, διαθέσιμη προς συγχρονισμό, συσκευή σε αυτόν τον λογαριασμό Firefox.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Παρακαλούμε ανοίξτε το Ecosia, μεταβείτε στις Ρυθμίσεις και συνδεθείτε για να συνεχίσετε.";
+"SendTo.NotSignedIn.Message" = "Ανοίξτε το Firefox, μεταβείτε στις Ρυθμίσεις και συνδεθείτε για να συνεχίσετε.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Δεν έχετε συνδεθεί στον λογαριασμό Ecosia σας.";
+"SendTo.NotSignedIn.Title" = "Δεν έχετε συνδεθεί στον λογαριασμό Firefox σας.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Αποστολή";
@@ -1112,7 +1103,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Πατήστε για έναρξη";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
+"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Προβολή";
@@ -1136,7 +1127,7 @@
 "Settings.AddCustomEngine.Title" = "Προσθήκη μηχανής αναζήτησης";
 
 /* The title for the field which sets the title for a custom search engine. */
-"Settings.AddCustomEngine.TitleLabel" = "Τίτλος";
+"Settings.AddCustomEngine.TitleLabel" = "Τιτλος";
 
 /* The placeholder for Title Field when saving a custom search engine. */
 "Settings.AddCustomEngine.TitlePlaceholder" = "Μηχανή αναζήτησης";
@@ -1146,6 +1137,33 @@
 
 /* The placeholder for URL Field when saving a custom search engine */
 "Settings.AddCustomEngine.URLPlaceholder" = "URL (Αντικατάσταση ερωτήματος με %s)";
+
+/* In the settings menu, in the Address Bar customization section, this label indicates that selecting this will make the address bar appear at the bottom of the screen. */
+"Settings.AddressBar.Bottom.v138" = "Κάτω";
+
+/* In the settings menu, in the Address Bar customization menu, this is the title of the section where the user can toggle the address bar position. */
+"Settings.AddressBar.SectionTitle.v138" = "Θέση γραμμής διευθύνσεων";
+
+/* In the settings menu, this label indicates that there is an option of customizing the Address Bar position. */
+"Settings.AddressBar.SettingsTitle.v138" = "Γραμμή διευθύνσεων";
+
+/* In the settings menu, in the Address Bar customization section, this label indicates that selecting this will make the address bar appear at the top of the screen. */
+"Settings.AddressBar.Top.v138" = "Πάνω";
+
+/* Browser theme settings section title in Appearance settings */
+"Settings.Appearance.BrowserTheme.SectionHeader.v137" = "Θεμα εφαρμογης περιηγησης";
+
+/* Title in main app settings for Appearance settings */
+"Settings.Appearance.Title.v137" = "Εμφάνιση";
+
+/* Website Appearance settings section title in Appearance settings */
+"Settings.Appearance.WebsiteAppearance.SectionHeader.v137" = "Εμφανιση ιστοτοπων";
+
+/* Under Website Appearance section in Appearance menu, this is the text under the toggle describing the dark mode feature. */
+"Settings.Appearance.WebsiteDarkMode.Description.v137" = "Δίνει στους ιστοτόπους μια σκουρόχρωμη εμφάνιση. Ορισμένοι ιστότοποι ενδέχεται να μην εμφανίζονται σωστά.";
+
+/* Under Website Appearance section in Appearance menu, this is the title of the toggle to switch dark theme on/off. */
+"Settings.Appearance.WebsiteDarkModeToggle.Title.v137" = "Σκουρόχρωμη λειτουργία ιστοτόπων";
 
 /* Title of setting to block opening external apps when pressing links. */
 "Settings.BlockOpeningExternalApps.Title" = "Φραγή ανοίγματος εξωτερικών εφαρμογών";
@@ -1159,7 +1177,7 @@
 /* Label used as an item in Settings. When touched it will open a dialog prompting the user to make sure they want to clear all of their private data. */
 "Settings.ClearPrivateData.SectionName" = "Απαλοιφή ιδιωτικών δεδομένων";
 
-/* Button in Data Management that clears private data for the selected items. Parameter is the number of items to be cleared */
+/* Button in Data Management that clears private data for the selected items. %1$@ is the number of items to be cleared. */
 "Settings.ClearSelectedWebsiteData.ClearSelected.Button" = "Απαλοιφή στοιχείων: %1$@";
 
 /* Copy app version alert shown in settings. */
@@ -1175,7 +1193,7 @@
 "Settings.DataManagement.Title" = "Διαχείριση δεδομένων";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Το Ecosia θα σταματήσει τον συγχρονισμό με τον λογαριασμό σας, αλλά δεν θα διαγράψει τα δεδομένα περιήγησής σας από αυτήν την συσκευή.";
+"Settings.Disconnect.Body" = "Το Firefox θα σταματήσει τον συγχρονισμό με τον λογαριασμό σας, αλλά δεν θα διαγράψει τα δεδομένα περιήγησής σας από αυτήν τη συσκευή.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Αποσύνδεση Sync";
@@ -1241,16 +1259,16 @@
 "Settings.FxA.Sync.SectionName" = "Ρυθμίσεις συγχρονισμού";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Λογαριασμός Ecosia";
+"Settings.FxA.Title" = "Λογαριασμός Firefox";
 
 /* General settings section title */
-"Settings.General.SectionName" = "Γενικά";
+"Settings.General.SectionName" = "Γενικα";
 
 /* This is the description below the settings section located in the menu under customize current homepage. It describes what the options in the section are for. */
 "Settings.Home.Current.Description.v101" = "Επιλέξτε τι εμφανίζεται ως αρχική σελίδα.";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "Επιλέξτε τι περιλαμβάνεται στην αρχική σελίδα του Ecosia.";
+"Settings.Home.Option.Description.v101" = "Επιλέξτε τι περιλαμβάνεται στην αρχική σελίδα του Firefox.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "Άμεση επιστροφή";
@@ -1274,40 +1292,40 @@
 "Settings.Home.Option.StartAtHome.Always" = "Αρχική σελίδα";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "Επιλέξτε τι θα βλέπετε όταν επιστρέφετε στο Ecosia.";
+"Settings.Home.Option.StartAtHome.Description" = "Επιλέξτε τι θα βλέπετε όταν επιστρέφετε στο Firefox.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "Τελευταία καρτέλα";
 
 /* Title for the section in the settings menu where users can configure the behaviour of the Start at Home feature on the Firefox Homepage. */
-"Settings.Home.Option.StartAtHome.Title" = "Οθόνη εκκίνησης";
+"Settings.Home.Option.StartAtHome.Title" = "Οθονη εκκινησης";
 
 /* In the settings menu, this is the title of the Firefox Homepage customization settings section */
-"Settings.Home.Option.Title.v101" = "Συμπερίληψη στην αρχική σελίδα";
+"Settings.Home.Option.Title.v101" = "Συμπεριληψη στην αρχικη σελιδα";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the title for the option that allows users to access the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper" = "Ταπετσαρία";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Ταπετσαρία Ecosia, μοτίβο αμέθυστου.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Ταπετσαρία Firefox, μοτίβο αμέθυστου.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Ταπετσαρία Ecosia, μοτίβο λόφων παραλίας.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Ταπετσαρία Firefox, μοτίβο λόφων παραλίας.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Ταπετσαρία Ecosia, γαλανό μοτίβο.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Ταπετσαρία Firefox, γαλανό μοτίβο.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "Προεπιλεγμένη διάφανη ταπετσαρία.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Ταπετσαρία Ecosia, μοτίβο ανατολής.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Ταπετσαρία Firefox, μοτίβο ανατολής.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "Διακόπτης εναλλαγής ταπετσαρίας αρχικής οθόνης";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Ταπετσαρία Ecosia, μοτίβο λόφων δειλινού.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Ταπετσαρία Firefox, μοτίβο λόφων δειλινού.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "Κλασικό %@";
@@ -1328,7 +1346,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "Περιορισμένη έκδοση";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Αλλαγή ταπετσαρίας από το λογότυπο του Ecosia στην αρχική σελίδα";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Αλλαγή ταπετσαρίας από το λογότυπο του Firefox στην αρχική σελίδα";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "Ταπετσαρία";
@@ -1364,13 +1382,13 @@
 "Settings.Homepage.Shortcuts.ToggleOn.v100" = "Ενεργές";
 
 /* Title of the setting section containing the URL of the current home page. */
-"Settings.HomePage.URL.Title" = "Τρέχουσα αρχική σελίδα";
+"Settings.HomePage.URL.Title" = "Τρεχουσα αρχικη σελιδα";
 
 /* Button in settings to use the current page as home page. */
 "Settings.HomePage.UseCurrent.Button" = "Χρήση τρέχουσας σελίδας";
 
 /* Title for the logins and passwords screen. Translation could just use 'Logins' if the title is too long */
-"Settings.LoginsAndPasswordsTitle" = "Συνδέσεις και κωδικοί πρόσβασης";
+"Settings.LoginsAndPasswordsTitle" = "Συνδέσεις και συνθηματικά";
 
 /* Label used to set a custom url as the new tab option (homepage). */
 "Settings.NewTab.CustomURL" = "Προσαρμοσμένο URL";
@@ -1382,7 +1400,7 @@
 "Settings.NewTab.Option.Custom" = "Προσαρμογή";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Αρχική Ecosia";
+"Settings.NewTab.Option.FirefoxHome" = "Αρχική Firefox";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Αρχική σελίδα";
@@ -1394,7 +1412,7 @@
 "Settings.NewTab.Title" = "Νέα καρτέλα";
 
 /* Label at the top of the New Tab screen after entering New Tab in settings */
-"Settings.NewTab.TopSectionName" = "Εμφάνιση";
+"Settings.NewTab.TopSectionName" = "Εμφανιση";
 
 /* Footer at the bottom of the New Tab screen after entering New Tab in settings */
 "Settings.NewTab.TopSectionNameFooter" = "Επιλέξτε τι θα φορτώνεται κατά το άνοιγμα νέας καρτέλας";
@@ -1403,34 +1421,31 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "Φραγή εικόνων";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "Κατά το άνοιγμα του Ecosia";
+"Settings.OfferClipboardBar.Status" = "Κατά το άνοιγμα του Firefox";
 
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. Placeholder is for the app name. */
-"Settings.OfferClipboardBar.Status.v128" = "Κατά το άνοιγμα %@";
-
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.StatusV2" = "Κατά το άνοιγμα του Ecosia";
+/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
+"Settings.OfferClipboardBar.Status.v128" = "Κατά το άνοιγμα του %@";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "Επιλογή για άνοιγμα αντιγραμμένων συνδέσμων";
 
 /* Title for Open With Settings */
-"Settings.OpenWith.PageTitle" = "Άνοιγμα συνδέσμων email με";
+"Settings.OpenWith.PageTitle" = "Ανοιγμα συνδεσμων email με";
 
 /* Label used as an item in Settings. When touched it will open a dialog to configure the open with (mail links) behavior. */
-"Settings.OpenWith.SectionName" = "Εφαρμογή Mail";
+"Settings.OpenWith.SectionName" = "Εφαρμογή email";
 
 /* Touch ID prompt subtitle when accessing logins and passwords */
-"Settings.Passwords.FingerPrintReason.v103" = "Αποκτήστε πρόσβαση στους κωδικούς πρόσβασης με το αποτύπωμά σας.";
+"Settings.Passwords.FingerPrintReason.v103" = "Αποκτήστε πρόσβαση στα συνθηματικά με το αποτύπωμά σας.";
 
 /* Message shown when you enter Passwords screen for the first time. It explains how password are protected in the Firefox for iOS application. */
-"Settings.Passwords.OnboardingMessage.v103" = "Οι κωδικοί πρόσβασής σας προστατεύονται από το Face ID, το Touch ID ή ένα συνθηματικό.";
+"Settings.Passwords.OnboardingMessage.v103" = "Τα συνθηματικά σας προστατεύονται με το Face ID, το Touch ID ή τον κωδικό της συσκευής.";
 
 /* Setting that appears in the Passwords screen to enable the built-in password manager so users can save their passwords. */
-"Settings.Passwords.SavePasswords.v103" = "Αποθήκευση κωδικών πρόσβασης";
+"Settings.Passwords.SavePasswords.v103" = "Αποθήκευση συνθηματικών";
 
 /* Title for the passwords screen. */
-"Settings.Passwords.Title.v103" = "Κωδικοί πρόσβασης";
+"Settings.Passwords.Title.v103" = "Συνθηματικά";
 
 /* Setting to enable the built-in password manager */
 "Settings.SaveLogins.Title" = "Αποθήκευση συνδέσεων";
@@ -1445,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Μάθετε περισσότερα.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Η Ecosia αγωνίζεται για να συλλέγει μόνο ό,τι χρειάζεται για να παρέχει και να βελτιώνει το Ecosia για όλους.";
+"Settings.SendUsage.Message" = "Η Mozilla αγωνίζεται για να συλλέγει μόνο ό,τι χρειάζεται για να παρέχει και να βελτιώνει το Firefox για όλους.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Αποστολή δεδομένων χρήσης";
@@ -1466,7 +1481,7 @@
 "Settings.Siri.OpenTabShortcut" = "Άνοιγμα νέας καρτέλας";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Χρήση συντομεύσεων Siri για ταχύ άνοιγμα του Ecosia μέσω Siri";
+"Settings.Siri.SectionDescription" = "Χρησιμοποιήστε τις συντομεύσεις για γρήγορο άνοιγμα του Firefox μέσω του Siri";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Συντομεύσεις Siri";
@@ -1475,13 +1490,13 @@
 "Settings.Studies.Toggle.Link" = "Μάθετε περισσότερα.";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Το Ecosia ενδέχεται να εγκαθιστά και να εκτελεί περιστασιακά μελέτες.";
+"Settings.Studies.Toggle.Message" = "Το Firefox ενδέχεται να εγκαθιστά και να εκτελεί περιστασιακά μελέτες.";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "Μελέτες";
 
 /* Ddescription that appears in the settings screen to explain what Firefox Sync is useful for. */
-"Settings.Sync.ButtonDescription.v103" = "Συνδεθείτε για να συγχρονίσετε τις καρτέλες, τους σελιδοδείκτες, τους κωδικούς πρόσβασης και πολλά άλλα.";
+"Settings.Sync.ButtonDescription.v103" = "Συνδεθείτε για να συγχρονίσετε τις καρτέλες, τους σελιδοδείκτες, τα συνθηματικά και πολλά άλλα.";
 
 /* Button label that appears in the settings to prompt the user to sign in to Firefox for iOS sync service to sync and save data. */
 "Settings.Sync.ButtonTitle.v103" = "Συγχρονισμός και αποθήκευση δεδομένων";
@@ -1499,7 +1514,7 @@
 "Settings.Tabs.CustomizeTabsSection.TabGroups" = "Ομάδες καρτελών";
 
 /* In the settings menu, in the Tabs customization section, this is the title for the Tabs Tray customization section. The tabs tray is accessed from firefox hompage */
-"Settings.Tabs.CustomizeTabsSection.Title" = "Προσαρμογή περιοχής καρτελών";
+"Settings.Tabs.CustomizeTabsSection.Title" = "Προσαρμογη περιοχης καρτελων";
 
 /* In the settings menu, this is the title for the Tabs customization section option */
 "Settings.Tabs.Title" = "Καρτέλες";
@@ -1514,7 +1529,7 @@
 "Settings.Toolbar.Top" = "Πάνω";
 
 /* Dismiss button for the tracker protection alert. */
-"Settings.TrackingProtection.Alert.Button" = "OK, το 'πιασα";
+"Settings.TrackingProtection.Alert.Button" = "OK, το κατάλαβα";
 
 /* Decription for the tracker protection alert. */
 "Settings.TrackingProtection.Alert.Description" = "Εάν ένας ιστότοπος δεν λειτουργεί όπως πρέπει, πατήστε το λουκέτο στη γραμμή διευθύνσεων και απενεργοποιήστε την Ενισχυμένη προστασία από καταγραφή για αυτήν τη σελίδα.";
@@ -1544,7 +1559,7 @@
 "Settings.TrackingProtection.ProtectionLevelStrict.Description" = "Αποκλείει περισσότερους ιχνηλάτες, διαφημίσεις και αναδυόμενα. Οι σελίδες φορτώνονται ταχύτερα, αλλά ορισμένες λειτουργίες ενδέχεται να απουσιάζουν.";
 
 /* Title for tracking protection options section where level can be selected. */
-"Settings.TrackingProtection.ProtectionLevelTitle" = "Επίπεδο προστασίας";
+"Settings.TrackingProtection.ProtectionLevelTitle" = "Επιπεδο προστασιας";
 
 /* Row in top-level of settings that gets tapped to show the tracking protection settings detail view. */
 "Settings.TrackingProtection.SectionName" = "Προστασία από καταγραφή";
@@ -1592,13 +1607,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Φόρτωση στο παρασκήνιο";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Φόρτωση στο Ecosia";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Φόρτωση στο Firefox";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Άνοιγμα στο Ecosia";
+"ShareExtension.OpenInFirefoxAction.Title" = "Άνοιγμα στο Firefox";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Αναζήτηση στο Ecosia";
+"ShareExtension.SeachInFirefoxAction.Title" = "Αναζήτηση στο Firefox";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "Αντιγραφή";
@@ -1619,10 +1634,10 @@
 "Stop" = "Διακοπή";
 
 /* Support section title */
-"Support" = "Υποστήριξη";
+"Support" = "Υποστηριξη";
 
 /* Accessibility hint for tab tray's displayed tab. */
-"Swipe right or left with three fingers to close the tab." = "Σύρετε αριστερά ή δεξιά χρησιμοποιώντας τρία δάχτυλα για να κλείσετε την καρτέλα.";
+"Swipe right or left with three fingers to close the tab." = "Σύρετε αριστερά ή δεξιά με τρία δάχτυλα για να κλείσετε την καρτέλα.";
 
 /* Message displayed when the user's account is syncing with ellipsis at the end */
 "Sync.SyncingEllipsis.Label" = "Συγχρονισμός…";
@@ -1630,13 +1645,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "Το Sync είναι εκτός σύνδεσης";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "Καρτέλα %1$@ από %2$@";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "Προβολή όλων των καρτελών";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "Καρτέλες %1$@ έως %2$@ από %3$@";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1644,9 +1659,6 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Αναίρεση";
-
-/* The label indicating that all the tabs were closed */
-"Tabs.DeleteAllUndo.Title" = "Έκλεισε(αν) %d καρτέλα(ες)";
 
 /* Accessibility title for the inactive tabs section button when section is closed. This section groups all tabs that haven't been used in a while. */
 "TabsTray.InactiveTabs.SectionTitle.Closed.Accessibility.v103" = "Προβολή ανενεργών καρτελών";
@@ -1666,7 +1678,7 @@
 /* Accessibility label for the currently selected tab. */
 "TabTray.CurrentSelectedTab.A11Y" = "Τρέχουσα επιλεγμένη καρτέλα.";
 
-/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as \"Others\" */
+/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as “Others”. */
 "TabTray.Header.FilteredTabs.SectionHeader" = "Άλλες";
 
 /* Title for the inactive tabs section. This section groups all tabs that haven't been used in a while. */
@@ -1700,7 +1712,7 @@
 "There was an error converting the page" = "Προέκυψε σφάλμα μετατροπής της σελίδας";
 
 /* Relative date for date in past week. */
-"this week" = "αυτή την εβδομάδα";
+"this week" = "αυτήν την εβδομάδα";
 
 /* Relative date for yesterday. */
 "TimeConstants.Yesterday.v106" = "χθες";
@@ -1717,7 +1729,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "Σήμερα";
 
-/* Relative date for date older than a minute. */
+/* Relative date for date older than a minute. %@ is the time. */
 "today at %@" = "σήμερα στις %@";
 
 /* Accessibility label for the Menu button. */
@@ -1726,7 +1738,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "Κλείσιμο όλων των καρτελών";
 
-/* Button shown in editing mode to remove this site from the top sites panel. */
+/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
 "TopSites.RemovePage.Button" = "Αφαίρεση σελίδας - %@";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1735,7 +1747,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "Ναι";
 
-/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
+/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "Η σελίδα φαίνεται ότι είναι στα %1$@. Μετάφραση σε %2$@ με %3$@;";
 
 /* Tile title for Twitter */
@@ -1745,7 +1757,7 @@
 "UIMenuItem.PasteGo" = "Επικόλληση και μετάβαση";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Αναζήτηση με το Ecosia";
+"UIMenuItem.SearchWithFirefox" = "Αναζήτηση με το Firefox";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "μη αναγνωσμένο";
@@ -1793,7 +1805,7 @@
 "Yesterday" = "Χθες";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "Δεν έχετε καμία ανοικτή καρτέλα στο Ecosia στις άλλες σας συσκευές.";
+"You don’t have any tabs open in Firefox on your other devices." = "Δεν έχετε καμία ανοικτή καρτέλα στο Firefox στις άλλες σας συσκευές.";
 
 /* Your Rights settings section title */
 "Your Rights" = "Τα δικαιώματά σας";

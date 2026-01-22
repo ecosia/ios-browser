@@ -4,10 +4,10 @@
 /* Button for larger reader font size. Keep this extremely short! This is shown in the reader mode toolbar. */
 "+" = "+";
 
-/* Authentication prompt message with no realm. Parameter is the hostname of the site */
+/* Authentication prompt message with no realm. %@ is the hostname of the site. */
 "A username and password are being requested by %@." = "Sait %@ nõuab kasutajanime ja parooli.";
 
-/* Authentication prompt message with a realm. First parameter is the hostname. Second is the realm string */
+/* Authentication prompt message with a realm. %1$@ is the hostname, %2$@ is the realm string. */
 "A username and password are being requested by %@. The site says: %@" = "Sait %1$@ nõuab kasutajanime ja parooli. Sait ütleb: %2$@";
 
 /* Button for reader mode font size. Keep this extremely short! This is shown in the reader mode toolbar. */
@@ -28,7 +28,7 @@
 /* Title for the Jump Back In section. This section allows users to jump back in to a recently viewed tab */
 "ActivityStream.JumpBackIn.SectionTitle" = "Hiljutised kaardid";
 
-/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. The placeholder is for a number. It will read 'Tabs: 5' or similar. */
+/* On the Firefox homepage in the Jump Back In section, if a Tab group item - a collection of grouped tabs from a related search - exists underneath the search term for the tab group, there will be a subtitle with a number for how many tabs are in that group. %d is the number of tabs. It will read 'Tabs: 5' or similar. */
 "ActivityStream.JumpBackIn.TabGroup.SiteCount" = "Kaarte: %d";
 
 /* A string used to signify the start of the Recently Saved section in Home Screen. */
@@ -36,9 +36,6 @@
 
 /* Section title label for recently visited websites */
 "ActivityStream.RecentHistory.Title" = "Hiljuti külastatud";
-
-/* Section title label for Shortcuts */
-"ActivityStream.Shortcuts.SectionTitle" = "Otseteed";
 
 /* The title for the setting page which lets you select the number of top site rows */
 "ActivityStream.TopSites.RowSettingFooter" = "Ridade määramine";
@@ -63,6 +60,9 @@
 
 /* Accessibility label for address and search field, both words (Address, Search) are therefore nouns. */
 "Address and Search" = "Aadress ja otsing";
+
+/* Accessibility label for action adding current page to reading list. */
+"Address.Bar.ReadingList.v106" = "Lisa lugemisnimekirja";
 
 /* Accessibility label for the Address Bar, where a user can enter the search they wish to make */
 "Address.Bar.v99" = "Aadressiriba";
@@ -163,11 +163,17 @@
 /* The label text in the Button Toast for switching to a fresh New Private Tab. */
 "ContextMenu.ButtonToast.NewPrivateTabOpened.LabelText" = "Avati uus privaatne kaart";
 
+/* The label text in the Button Toast for switching to a fresh New Private Tab. */
+"ContextMenu.ButtonToast.NewPrivateTabOpened.LabelText.v113" = "Avati uus privaatne kaart";
+
 /* The button text in the Button Toast for switching to a fresh New Tab. */
 "ContextMenu.ButtonToast.NewTabOpened.ButtonText" = "Lülitu";
 
 /* The label text in the Button Toast for switching to a fresh New Tab. */
 "ContextMenu.ButtonToast.NewTabOpened.LabelText" = "Avati uus kaart";
+
+/* The label text in the Button Toast for switching to a fresh New Tab. */
+"ContextMenu.ButtonToast.NewTabOpened.LabelText.v114" = "Avati uus kaart";
 
 /* Context menu item for copying an image to the clipboard */
 "ContextMenu.CopyImageButtonTitle" = "Kopeeri pilt";
@@ -198,6 +204,9 @@
 
 /* Contextual hints are little popups that appear for the users informing them of new features. This one is the call to action for the inactive tabs contextual popup. */
 "ContextualHints.TabTray.InactiveTabs.CallToAction" = "Lülita see sätetes välja";
+
+/* Accessibility label for action denoting closing contextual hint. */
+"ContextualHintsCloseButtonAccessibility.v105" = "Sulge";
 
 /* Accessibility message e.g. spoken by VoiceOver after adding current webpage to the Reading List failed. */
 "Could not add page to Reading list" = "Lehte polnud võimalik lugemisnimekirja lisada";
@@ -265,13 +274,13 @@
 /* The button to open a new tab with the Downloads home panel */
 "Downloads.Toast.GoToDownloads.Button" = "Allalaadimised";
 
-/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. */
+/* The description text in the Download progress toast for showing the number of files when multiple files are downloading. %d is the total number of files. */
 "Downloads.Toast.MultipleFiles.DescriptionText" = "1. fail, kokku %d";
 
-/* The description text in the Download progress toast for showing the number of files (1$) and download progress (2$). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where 1$ is Downloads.Toast.MultipleFiles.DescriptionText and 2$ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and 1$ should come before 2$ everywhere except for right-to-left locales. */
+/* The description text in the Download progress toast for showing the number of files (%1$@) and download progress (%2$@). This string only consists of two placeholders for purposes of displaying two other strings side-by-side where %1$@ is Downloads.Toast.MultipleFiles.DescriptionText and %2$@ is Downloads.Toast.Progress.DescriptionText. This string should only consist of the two placeholders side-by-side separated by a single space and %1$@ should come before %2$@ everywhere except for right-to-left locales. */
 "Downloads.Toast.MultipleFilesAndProgress.DescriptionText" = "%1$@ %2$@";
 
-/* The description text in the Download progress toast for showing the downloaded file size (1$) out of the total expected file size (2$). */
+/* The description text in the Download progress toast for showing the downloaded file size (%1$@) out of the total expected file size (%2$@). */
 "Downloads.Toast.Progress.DescriptionText" = "%1$@/%2$@";
 
 /* Action button for deleting downloaded files in the Downloads panel. */
@@ -295,8 +304,8 @@
 /* Additional warning text when clicking the Advanced button on error pages */
 "ErrorPages.AdvancedWarning2.Text" = "Tegemist võib olla häälestusveaga või ründaja rikkumisega. Jätka ainult siis, kui nõustud võimaliku riskiga.";
 
-/* Warning text on the certificate error page */
-"ErrorPages.CertWarning.Description" = "Saidi %@ omanik on oma veebilehe valesti häälestanud. Sinu andmete kaitsmiseks varastamise eest ei loonud Ecosia selle veebilehega ühendust.";
+/* Warning text on the certificate error page. %@ is the domain of the website. */
+"ErrorPages.CertWarning.Description" = "Saidi %@ omanik on oma veebilehe valesti häälestanud. Sinu andmete kaitsmiseks varastamise eest ei loonud Firefox selle veebilehega ühendust.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "Seda ühendust ei usaldata";
@@ -317,7 +326,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Ecosiai avaleht";
+"Firefox.HomePage.Title" = "Firefoxi avaleht";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "Kohanda avalehte";
@@ -347,7 +356,7 @@
 "Forward" = "Edasi";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Ecosiai konto";
+"FxA.FirefoxAccount" = "Firefoxi konto";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Halda kontot ja seadmeid";
@@ -359,7 +368,7 @@
 "fxa.signin.camera-signin" = "Logi sisse oma kaameraga";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "Ava Ecosia oma arvutis ja mine aadressile ecosia.org/pair";
+"fxa.signin.qr-link-instruction" = "Ava Firefox oma arvutis ja mine aadressile firefox.com/pair";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "Skannimiseks valmis";
@@ -371,7 +380,7 @@
 "FxA.SyncNow" = "Sünkroniseeri kohe";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Ecosia Sync on ühendatud seadmega %@";
+"FxAPush_DeviceConnected_body" = "Firefox Sync on ühendatud seadmega %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Sync on ühendatud";
@@ -380,7 +389,7 @@
 "FxAPush_DeviceDisconnected_body" = "Seade %@ on edukalt lahti ühendatud.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "See seade ühendati edukalt Ecosia Syncist lahti.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "See seade ühendati edukalt Firefox Syncist lahti.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Sync ühendati lahti";
@@ -389,10 +398,10 @@
 "FxAPush_DeviceDisconnected_title" = "Sync ühendati lahti";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Seade on Ecosia Syncist lahti ühendatud";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Seade on Firefox Syncist lahti ühendatud";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Ecosiai logo - taustapildi muutmise nupp.";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Firefoxi logo - taustapildi muutmise nupp.";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Abi";
@@ -425,7 +434,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "Teistes seadmetes avatud kaartide nimekirja nägemiseks logi sisse.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Ajalugu";
@@ -556,6 +565,12 @@
 /* This label is meant to signify the section containing a group of items from the past seven days. */
 "Last week" = "Eelmine nädal";
 
+/* Panel accessibility label */
+"LibraryPanel.Accessibility.Bookmarks.v106" = "Järjehoidjad";
+
+/* Panel accessibility label */
+"LibraryPanel.Accessibility.History.v106" = "Ajalugu";
+
 /* Within the History Panel, users can delete search group sites history. They can cancel this action by pressing a cancel button. */
 "LibraryPanel.History.ClearGroupedTabsCancel.v100" = "Loobu";
 
@@ -567,6 +582,9 @@
 
 /* Within the History Panel, users can open an action menu to clear recent history. */
 "LibraryPanel.History.ClearHistoryMenuTitle.v100" = "Eemaldab ajaloo (sh teistest seadmetest sünkroniseeritud ajaloo), küpsised ja muud lehitsemise andmed.";
+
+/* Within the history panel, a user can navigate into a screen with only grouped history items. Within that screen, a user can now swipe to delete a single item in the list. This label informs the user of a deletion action on the item. */
+"LibraryPanel.History.DeleteGroupedItem.v104" = "Kustuta";
 
 /* In the history panel, users will be able to search terms in their browsing history. This label is shown when there is no results after querying the search terms in the user's history. */
 "LibraryPanel.History.NoHistoryFound.v99" = "Ajalugu ei leitud";
@@ -617,7 +635,7 @@
 "Logins.WelcomeView.Tagline" = "Võta oma paroolid kõikjale kaasa";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "Täida Ecosiai paroolid automaatselt";
+"Logins.WelcomeView.Title2" = "Täida Firefoxi paroolid automaatselt";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "Lülita automaatne täitmine sisse";
@@ -627,18 +645,6 @@
 
 /* Button to not update the user's password */
 "LoginsHelper.DontUpdate.Button" = "Ära uuenda";
-
-/* Prompt for saving a login. The first parameter is the username being saved. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptSaveLogin.Title" = "Kas salvestada kasutajanimi %1$@ saidi %2$@ jaoks?";
-
-/* Prompt for saving a password with no username. The parameter is the hostname of the site. */
-"LoginsHelper.PromptSavePassword.Title" = "Kas salvestada saidi %@ parool?";
-
-/* Prompt for updating a login. The first parameter is the hostname for which the password will be updated for. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg" = "Kas uuendada saidi %@ kasutajatunnused?";
-
-/* Prompt for updating a login. The first parameter is the username for which the password will be updated for. The second parameter is the hostname of the site. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg" = "Kas uuendada kasutajakonto %1$@ saidi %2$@ jaoks?";
 
 /* Button to save the user's password */
 "LoginsHelper.SaveLogin.Button" = "Salvesta kasutajakonto";
@@ -662,7 +668,7 @@
 "LoginsList.Title" = "SALVESTATUD KASUTAJAKONTOD";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Paistab, et Ecosia jooksis varem kokku. Kas soovid oma kaardid taastada?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Paistab, et Firefox jooksis varem kokku. Kas soovid oma kaardid taastada?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Märgi loetuks";
@@ -703,11 +709,20 @@
 /* Label for the button, displayed in the menu, takes you to Downloads screen when pressed. */
 "Menu.Downloads.Label" = "Allalaadimised";
 
+/* A switch to disable enhanced tracking protection inside the menu. */
+"Menu.EnhancedTrackingProtectionOff.Title" = "Sellel saidil on kaitse VÄLJAS";
+
+/* A switch to enable enhanced tracking protection inside the menu. */
+"Menu.EnhancedTrackingProtectionOn.Title" = "Sellel saidil on kaitse SEES";
+
 /* Label for the help button in the menu page. Pressing this button opens the support page https://support.mozilla.org/en-US/products/ios */
 "Menu.Help.v99" = "Abi";
 
 /* Label for the button, displayed in the menu, takes you to History screen when pressed. */
 "Menu.History.Label" = "Ajalugu";
+
+/* Label for the new private tab button in the menu page. Pressing this button opens a new private tab. */
+"Menu.NewPrivateTab.Label" = "Uus privaatne kaart";
 
 /* Label for the new tab button in the menu page. Pressing this button opens a new tab. */
 "Menu.NewTab.v99" = "Uus kaart";
@@ -766,7 +781,7 @@
 /* Accessibility label for the Home button on the toolbar. Pressing this button brings the user to the home page. */
 "Menu.Toolbar.Home.AccessibilityLabel.v99" = "Avaleht";
 
-/* String to let users know the site verifier, where the placeholder represents the SSL certificate signer. */
+/* String to let users know the site verifier, where %@ represents the SSL certificate signer. */
 "Menu.TrackingProtection.Details.Verifier" = "Verifitseerija: %@";
 
 /* The title for tracking protection settings */
@@ -836,7 +851,7 @@
 "Onboarding.WhatsNew.Button.Title" = "Alusta veebilehitsemist";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Oih! Ecosia jooksis kokku";
+"Oops! Firefox crashed" = "Oih! Firefox jooksis kokku";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Artiklite avamiseks lugemisrežiimis puuduta raamatu ikooni, kui see ilmub aadressiribale.";
@@ -848,7 +863,7 @@
 "Open Tabs" = "Avatud kaardid";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Ecosia ei saa seda lehte avada, sest sellel on vigane aadress.";
+"OpenURL.Error.Message" = "Firefox ei saa seda lehte avada, sest sellel on vigane aadress.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "Lehe avamine pole võimalik";
@@ -860,7 +875,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "See võimaldab salvestada pildi Camera Rolli.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia soovib ligipääsu sinu piltidele";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox soovib ligipääsu sinu piltidele";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Sulge";
@@ -891,6 +906,12 @@
 
 /* Accessibility message e.g. spoken by VoiceOver when Reader Mode becomes available. */
 "ReaderMode.Available.VoiceOverAnnouncement" = "Saadaval on lugemisvaade";
+
+/* Name for Mark as read button in reader mode */
+"ReaderModeBar.MarkAsRead.v106" = "Märgi loetuks";
+
+/* Name for Mark as unread button in reader mode */
+"ReaderModeBar.MarkAsUnread.v106" = "Märgi mitteloetuks";
 
 /* Panel accessibility label */
 "Reading list" = "Lugemisnimekiri";
@@ -941,7 +962,7 @@
 "ScanQRCode.InvalidDataError.Message" = "Andmed on vigased";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "Ava oma seadmes ‘Settings’ > ‘Ecosia’. Seejärel luba kaamera ligipääs.";
+"ScanQRCode.PermissionError.Message.v100" = "Ava oma seadmes ‘Settings’ > ‘Firefox’. Seejärel luba kaamera ligipääs.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "QR-koodi skannimine";
@@ -989,7 +1010,7 @@
 "Search.ThirdPartyEngines.OK" = "Olgu";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Kas saata vearaport, et Ecosia saaks probleemi lahendada?";
+"Send a crash report so Mozilla can fix the problem?" = "Kas saata vearaport, et Mozilla saaks probleemi lahendada?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Saada tagasisidet";
@@ -1016,13 +1037,13 @@
 "SendTo.NavBar.Title" = "Kaardi saatmine";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Sul ei ole selle Ecosiai kontoga teisi sünkroniseeritavaid seadmeid ühendatud.";
+"SendTo.NoDevicesFound.Message" = "Sul ei ole selle Firefoxi kontoga teisi sünkroniseeritavaid seadmeid ühendatud.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Jätkamiseks ava Ecosia, mine sätetesse ja logi sisse.";
+"SendTo.NotSignedIn.Message" = "Jätkamiseks ava Firefox, mine sätetesse ja logi sisse.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Sa pole oma Ecosiai kontosse sisse logitud.";
+"SendTo.NotSignedIn.Title" = "Sa pole oma Firefoxi kontosse sisse logitud.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Saada";
@@ -1043,7 +1064,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Alustamiseks puuduta";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
+"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Vaata";
@@ -1087,7 +1108,7 @@
 /* Label used as an item in Settings. When touched it will open a dialog prompting the user to make sure they want to clear all of their private data. */
 "Settings.ClearPrivateData.SectionName" = "Kustuta privaatsed andmed";
 
-/* Button in Data Management that clears private data for the selected items. Parameter is the number of items to be cleared */
+/* Button in Data Management that clears private data for the selected items. %1$@ is the number of items to be cleared. */
 "Settings.ClearSelectedWebsiteData.ClearSelected.Button" = "Kustuta saidid: %1$@";
 
 /* Copy app version alert shown in settings. */
@@ -1103,7 +1124,7 @@
 "Settings.DataManagement.Title" = "Andmehaldus";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Ecosia lõpetab sinu kontoga sünkroniseerimise, aga ei kustuta lehitsemise andmeid sellest seadmest.";
+"Settings.Disconnect.Body" = "Firefox lõpetab sinu kontoga sünkroniseerimise, aga ei kustuta lehitsemise andmeid sellest seadmest.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Katkesta ühendus Synciga";
@@ -1166,7 +1187,7 @@
 "Settings.FxA.Sync.SectionName" = "Synci sätted";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Ecosiai konto";
+"Settings.FxA.Title" = "Firefoxi konto";
 
 /* General settings section title */
 "Settings.General.SectionName" = "Üldine";
@@ -1175,7 +1196,7 @@
 "Settings.Home.Current.Description.v101" = "Vali, mida kuvatakse avalehena.";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "Vali Ecosiai avalehel sisalduv.";
+"Settings.Home.Option.Description.v101" = "Vali Firefoxi avalehel sisalduv.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "Hiljutised kaardid";
@@ -1199,7 +1220,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "Avaleht";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "Vali, mida näed Ecosiai naastes.";
+"Settings.Home.Option.StartAtHome.Description" = "Vali, mida näed Firefoxi naastes.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "Viimane kaart";
@@ -1214,31 +1235,31 @@
 "Settings.Home.Option.Wallpaper" = "Taustapilt";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Ecosiai taustapilt, ametüsti muster.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Firefoxi taustapilt, ametüsti muster.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Ecosiai taustapilt, rannamägede muster.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Firefoxi taustapilt, rannamägede muster.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Ecosiai taustapilt, helesinine muster.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Firefoxi taustapilt, helesinine muster.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "Vaikimis selge taustapilt.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Ecosiai taustapilt, päikesetõusu muster.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Firefoxi taustapilt, päikesetõusu muster.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "Avalehe taustapilti ringlemise lüliti";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Ecosiai taustapilt, hämariku mägede muster.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Firefoxi taustapilt, hämariku mägede muster.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the section that allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.CollectionTitle" = "AVAKUVA";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Taustapilti saab muuta Ecosiai logo puudutades";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Taustapilti saab muuta Firefoxi logo puudutades";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "Taustapilt";
@@ -1289,7 +1310,7 @@
 "Settings.NewTab.Option.BlankPage" = "Tühi leht";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Ecosiai avaleht";
+"Settings.NewTab.Option.FirefoxHome" = "Firefoxi avaleht";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Avaleht";
@@ -1310,10 +1331,7 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "Pildid blokitakse";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "Ecosiai avamisel";
-
-/* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.StatusV2" = "Ecosiai avamisel";
+"Settings.OfferClipboardBar.Status" = "Firefoxi avamisel";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "Pakutakse kopeeritud linkide avamist";
@@ -1337,7 +1355,7 @@
 "Settings.SendUsage.Link" = "Rohkem teavet.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Ecosia püüab koguda ainult seda, mida vajame, et teha Ecosia kõigi jaoks paremaks.";
+"Settings.SendUsage.Message" = "Mozilla püüab koguda ainult seda, mida vajame, et teha Firefox kõigi jaoks paremaks.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Saadetakse kasutusandmeid";
@@ -1358,7 +1376,7 @@
 "Settings.Siri.OpenTabShortcut" = "Ava uus kaart";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Kasuta Siri otseteid, et avada Ecosia kiiresti";
+"Settings.Siri.SectionDescription" = "Kasuta Siri otseteid, et avada Firefox kiiresti";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Siri otseteed";
@@ -1367,7 +1385,7 @@
 "Settings.Studies.Toggle.Link" = "Rohkem teavet.";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Ecosia võib aegajalt paigaldada ja käivitada uuringuid.";
+"Settings.Studies.Toggle.Message" = "Firefox võib aegajalt paigaldada ja käivitada uuringuid.";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "Uuringud";
@@ -1463,13 +1481,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Laadi taustal";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Laaditakse Ecosiais";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Laaditakse Firefoxis";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Ava Ecosiais";
+"ShareExtension.OpenInFirefoxAction.Title" = "Ava Firefoxis";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Otsi Ecosiais";
+"ShareExtension.SeachInFirefoxAction.Title" = "Otsi Firefoxis";
 
 /* Label for show search suggestions setting. */
 "Show Search Suggestions" = "Kuvatakse otsingusoovitusi";
@@ -1495,13 +1513,13 @@
 /* Title for Sync status message when Sync failed due to being offline */
 "SyncState.Offline.Title" = "Sync on võrguta";
 
-/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray, along with the total number of tabs. E.g. \"Tab 2 of 5\" says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
+/* Message spoken by VoiceOver saying the position of the single currently visible tab in Tabs Tray (%1$@), along with the total number of tabs (%2$@). E.g. “Tab 2 of 5” says that tab 2 is visible (and is the only visible tab), out of 5 tabs total. */
 "Tab %@ of %@" = "Kaart %1$@, kokku %2$@ kaarti";
 
 /* A label indicating the keyboard shortcut of showing the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "Tab.ShowTabTray.KeyCodeTitle" = "Kuva kõiki kaarte";
 
-/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray, along with the total number of tabs. E.g. \"Tabs 8 to 10 of 15\" says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
+/* Message spoken by VoiceOver saying the range of tabs that are currently visible in Tabs Tray (%1$@ to %2$@), along with the total number of tabs (%3$@). E.g. “Tabs 8 to 10 of 15” says tabs 8, 9 and 10 are visible, out of 15 tabs total. */
 "Tabs %@ to %@ of %@" = "Kaardid %1$@ kuni %2$@, kokku %3$@";
 
 /* Accessibility label for the Tabs Tray view. */
@@ -1509,9 +1527,6 @@
 
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Võta tagasi";
-
-/* The label indicating that all the tabs were closed */
-"Tabs.DeleteAllUndo.Title" = "Suleti %d kaart(i)";
 
 /* Accessibility label for the Add Tab button in the Tab Tray. */
 "TabTray.AddTab.Button" = "Lisa kaart";
@@ -1522,7 +1537,7 @@
 /* Accessibility label for the currently selected tab. */
 "TabTray.CurrentSelectedTab.A11Y" = "Hetkel valitud kaart.";
 
-/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as \"Others\" */
+/* In the tab tray, when tab groups appear and there exist tabs that don't belong to any group, those tabs are listed under this header as “Others”. */
 "TabTray.Header.FilteredTabs.SectionHeader" = "Muud kaardid";
 
 /* Title for the inactive tabs section. This section groups all tabs that haven't been used in a while. */
@@ -1567,7 +1582,7 @@
 /* This label is meant to signify the section containing a group of items from the current day. */
 "Today" = "Täna";
 
-/* Relative date for date older than a minute. */
+/* Relative date for date older than a minute. %@ is the time. */
 "today at %@" = "täna kell %@";
 
 /* Accessibility label for the Menu button. */
@@ -1576,7 +1591,7 @@
 /* Accessibility label for the Close All Tabs menu button. */
 "Toolbar.Menu.CloseAllTabs" = "Sulge kõik kaardid";
 
-/* Button shown in editing mode to remove this site from the top sites panel. */
+/* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
 "TopSites.RemovePage.Button" = "Eemalda leht — %@";
 
 /* Button to disallow the page to be translated to the user locale language */
@@ -1585,7 +1600,7 @@
 /* Button to allow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.OK" = "Jah";
 
-/* Prompt for translation. The first parameter is the language the page is in. The second parameter is the name of our local language. The third is the name of the service. */
+/* Prompt for translation. %1$@ is the language the page is in. %2$@ is the name of our local language. %3$@ is the name of the service. */
 "TranslationToastHandler.PromptTranslate.Title" = "See leht näib olevat keeles %1$@. Kas soovid selle tõlkida teenusega %3$@ keelde %2$@?";
 
 /* Tile title for Twitter */
@@ -1595,7 +1610,7 @@
 "UIMenuItem.PasteGo" = "Aseta ja mine";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Otsi Ecosiaiga";
+"UIMenuItem.SearchWithFirefox" = "Otsi Firefoxiga";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "lugemata";
@@ -1625,7 +1640,7 @@
 "Yesterday" = "Eile";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "Sul pole teistes seadmetes olevates Ecosiaides kaarte avatud.";
+"You don’t have any tabs open in Firefox on your other devices." = "Sul pole teistes seadmetes olevates Firefoxides kaarte avatud.";
 
 /* Your Rights settings section title */
 "Your Rights" = "Sinu õigused";

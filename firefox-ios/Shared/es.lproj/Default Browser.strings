@@ -1,5 +1,5 @@
 /* Description for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.BetterInternet.Description.v108" = "Hacer de Ecosia tu navegador predeterminado es votar por una Internet abierta y accesible.";
+"DefaultBrowserCard.BetterInternet.Description.v108" = "Hacer de Firefox tu navegador predeterminado es votar por una Internet abierta y accesible.";
 
 /* Title for small home tab banner shown that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.BetterInternet.Title.v108" = "Un mejor Internet de forma predeterminada";
@@ -8,19 +8,19 @@
 "DefaultBrowserCard.Button.v2" = "Aprender cómo";
 
 /* Description for small home tab banner shown that allows user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "Configura enlaces de sitios web, correos electrónicos y mensajes para que se abran automáticamente en Ecosia.";
+"DefaultBrowserCard.Description" = "Configura enlaces de sitios web, correos electrónicos y mensajes para que se abran automáticamente en Firefox.";
 
 /* Description for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.NextLevel.Description.v108" = "Elige Ecosia como tu navegador predeterminado para que la velocidad, seguridad y privacidad sean automáticas.";
+"DefaultBrowserCard.NextLevel.Description.v108" = "Elige Firefox como tu navegador predeterminado para que la velocidad, seguridad y privacidad sean automáticas.";
 
 /* Title for small home tab banner shown that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.NextLevel.Title.v108" = "Mejora la navegación cotidiana";
 
 /* Description for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Ecosia bloquea de promedio más de 3.000 rastreadores por usuario al mes. Haznos tu navegador predeterminado para tu privacidad y tranquilidad.";
+"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Firefox bloquea de promedio más de 3.000 rastreadores por usuario al mes. Haznos tu navegador predeterminado para tu privacidad y tranquilidad.";
 
 /* Title for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Ecosia tiene la privacidad cubierta";
+"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Firefox tiene la privacidad cubierta";
 
 /* Title for small home tab banner shown that allows user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "Cambia tu navegador predeterminado";
@@ -35,7 +35,7 @@
 "DefaultBrowserOnboarding.Description2" = "2. Tocar aplicación de navegador predeterminada";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. Seleccionar Ecosia";
+"DefaultBrowserOnboarding.Description3" = "3. Seleccionar Firefox";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "Aplicación de navegador predeterminado";
