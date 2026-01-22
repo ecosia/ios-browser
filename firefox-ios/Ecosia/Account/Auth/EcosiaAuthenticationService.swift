@@ -13,7 +13,7 @@ import Common
  This class provides a centralized interface for all authentication operations in the Ecosia app,
  including login, logout, credential renewal, and session token management for web-to-native SSO..
  */
-public final class EcosiaAuthenticationService {
+public final class EcosiaAuthenticationService: @unchecked Sendable {
 
     // MARK: - Public Properties
 
@@ -72,8 +72,8 @@ public final class EcosiaAuthenticationService {
      */
     public init(auth0Provider: Auth0ProviderProtocol = NativeToWebSSOAuth0Provider()) {
         self.auth0Provider = auth0Provider
-        Task {
-            await self.retrieveStoredCredentials()
+        Task { [weak self] in
+            await self?.retrieveStoredCredentials()
         }
     }
 
@@ -246,7 +246,7 @@ public final class EcosiaAuthenticationService {
         self.isLoggedIn = isLoggedIn
 
         // Dispatch state change to the new state management system
-        Task {
+        Task { [isLoggedIn] in
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
         }
     }

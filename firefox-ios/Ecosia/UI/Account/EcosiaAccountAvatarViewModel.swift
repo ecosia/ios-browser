@@ -47,12 +47,14 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
     }
 
     deinit {
-        [progressObserver, levelUpObserver].forEach {
-            if let observer = $0 {
-                NotificationCenter.default.removeObserver(observer)
+        MainActor.assumeIsolated {
+            [progressObserver, levelUpObserver].forEach {
+                if let observer = $0 {
+                    NotificationCenter.default.removeObserver(observer)
+                }
             }
+            cancellables.removeAll()
         }
-        cancellables.removeAll()
     }
 
     public func updateAvatarURL(_ url: URL?) {

@@ -10,7 +10,7 @@ import Foundation
 import AdServices
 import Common
 
-public enum MMPEvent: String {
+public enum MMPEvent: String, Sendable {
     case onboardingStart = "onboarding_start"
     case onboardingComplete = "onboarding_complete"
     case firstSearch = "first_search"
@@ -55,7 +55,7 @@ public struct MMP {
     public static func sendEvent(_ event: MMPEvent) {
         guard User.shared.sendAnonymousUsageData else { return }
 
-        Task {
+        Task { [event] in
             do {
                 let mmpProvider: MMPProvider = Singular(includeSKAN: true)
                 try await mmpProvider.sendEvent(event, appDeviceInfo: appDeviceInfo)

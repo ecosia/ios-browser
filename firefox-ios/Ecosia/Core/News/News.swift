@@ -42,7 +42,7 @@ public final class News: StatePublisher {
     public func load(session: URLSession, force: Bool = false) {
         guard needsUpdate || force else { return }
         session.dataTask(with: EcosiaEnvironment.current.urlProvider.notifications) { [weak self] data, _, _ in
-            self?.dispatch.async {
+            self?.dispatch.async { [weak self] in
                 guard
                     let data = data,
                     let new = try? self?.decoder.decode([NewsModel].self, from: data)

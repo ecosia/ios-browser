@@ -16,6 +16,7 @@ public struct DefaultBrowserCoordinator {
         self.style = style
     }
 
+    @MainActor
     public func showDetailView(from analyticsLabel: Analytics.Label.DefaultBrowser) {
         let steps = [
             InstructionStep(text: .defaultBrowserCardDetailInstructionStep1),
@@ -106,9 +107,10 @@ extension DefaultBrowserCoordinator {
     }
 }
 
-final class DetailViewDoneHandler: NSObject {
-    let onDone: () -> Void
-    init(onDone: @escaping () -> Void) {
+@MainActor
+final class DetailViewDoneHandler: NSObject, @unchecked Sendable {
+    let onDone: @Sendable () -> Void
+    init(onDone: @escaping @Sendable () -> Void) {
         self.onDone = onDone
     }
 

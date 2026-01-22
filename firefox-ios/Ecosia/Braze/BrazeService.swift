@@ -4,7 +4,7 @@
 
 import Foundation
 import UIKit
-import UserNotifications
+@preconcurrency import UserNotifications
 import BrazeKit
 import BrazeUI
 
@@ -196,26 +196,22 @@ extension BrazeService: BrazeDelegate {
     }
 }
 
-extension BrazeService: UNUserNotificationCenterDelegate {
-    nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        Task { @MainActor [response, completionHandler] in
-            if let braze, braze.notifications.handleUserNotification(
-                response: response,
-                withCompletionHandler: completionHandler
-            ) {
-                return
-            }
-            completionHandler()
+extension BrazeService: @preconcurrency UNUserNotificationCenterDelegate {
+    public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if let braze, braze.notifications.handleUserNotification(
+            response: response,
+            withCompletionHandler: completionHandler
+        ) {
+            return
         }
+        completionHandler()
     }
 
-    nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        Task { @MainActor [notification, completionHandler] in
-            if let braze {
-                braze.notifications.handleForegroundNotification(notification: notification)
-            }
-            completionHandler([.list, .banner, .sound, .badge])
+    public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        if let braze {
+            braze.notifications.handleForegroundNotification(notification: notification)
         }
+        completionHandler([.list, .banner, .sound, .badge])
     }
 }
 
