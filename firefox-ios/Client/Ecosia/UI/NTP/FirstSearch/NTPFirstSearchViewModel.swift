@@ -49,13 +49,13 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(120)
+            heightDimension: .estimated(300)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(120)
+            heightDimension: .estimated(300)
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
@@ -91,9 +91,23 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
     func configure(_ collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(cellType: NTPFirstSearchCell.self, for: indexPath)
         cell?.configure(
-            title: UX.welcomeTitle,
-            description: UX.welcomeDescription
+            title: "Get started with Ecosia",
+            description: "Try a search and discover how you're helping fight climate change by using Ecosia.",
+            suggestions: [
+                "Weather London",
+                "Train to Paris",
+                "How to see the Northern Lights?",
+                "Things to do in London",
+                "\"Have a nice day\" in Spanish"
+            ]
         )
+        cell?.onCloseButtonTapped = {
+            // Handle close action
+        }
+        cell?.onSearchSuggestionTapped = { suggestion in
+            // Handle search suggestion tap
+            print("User tapped: \(suggestion)")
+        }
         cell?.applyTheme(theme: theme)
         return cell ?? UICollectionViewCell()
     }
