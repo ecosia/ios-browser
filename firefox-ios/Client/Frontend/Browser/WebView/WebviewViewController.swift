@@ -5,12 +5,19 @@
 import Foundation
 import Shared
 import WebKit
+import WebEngine
+import Common
 
-class WebviewViewController: UIViewController, ContentContainable, ScreenshotableView {
-    private var webView: WKWebView
+class WebviewViewController: UIViewController,
+                             ContentContainable,
+                             ScreenshotableView,
+                             FullscreenDelegate {
+    private var webView: WKWebView?
     var contentType: ContentType = .webview
+    // TODO: FXIOS-12158 Add back after investigating why video player is broken
+//    var isFullScreen = false
 
-    init(webView: WKWebView, isPrivate: Bool = false) {
+    init(webView: WKWebView) {
         self.webView = webView
         super.init(nibName: nil, bundle: nil)
     }
@@ -25,25 +32,24 @@ class WebviewViewController: UIViewController, ContentContainable, Screenshotabl
     }
 
     private func setupWebView() {
+        guard let webView else { return }
         view.addSubview(webView)
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: view.topAnchor),
-            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        webView.pinToSuperview()
     }
 
-    func update(webView: WKWebView, isPrivate: Bool = false) {
+    func update(webView: WKWebView?) {
         self.webView = webView
+
+        // Avoid updating constraints while on fullscreen mode
+        // TODO: FXIOS-12158 Add back after investigating why video player is broken
+//        guard !isFullScreen else { return }
         setupWebView()
     }
 
     // MARK: - ScreenshotableView
 
     func getScreenshotData(completionHandler: @escaping (ScreenshotData?) -> Void) {
-        guard let url = webView.url,
+        guard let webView, let url = webView.url,
               InternalURL(url) == nil else {
             completionHandler(nil)
             return
@@ -61,5 +67,20 @@ class WebviewViewController: UIViewController, ContentContainable, Screenshotabl
                 completionHandler(nil)
             }
         }
+    }
+
+    // MARK: - FullscreenDelegate
+
+    func enteringFullscreen() {
+        // TODO: FXIOS-12158 Add back after investigating why video player is broken
+//        isFullScreen = true
+//        webView.translatesAutoresizingMaskIntoConstraints = true
+//        webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    }
+
+    func exitingFullscreen() {
+        // TODO: FXIOS-12158 Add back after investigating why video player is broken
+//        setupWebView()
+//        isFullScreen = false
     }
 }

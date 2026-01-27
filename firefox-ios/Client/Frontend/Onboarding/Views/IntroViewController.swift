@@ -29,7 +29,7 @@ class IntroViewController: UIViewController,
     var didFinishFlow: (() -> Void)?
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var userDefaults: UserDefaultsInterface
     var hasRegisteredForDefaultBrowserNotification = false
     var currentWindowUUID: UUID? { windowUUID }
@@ -82,7 +82,6 @@ class IntroViewController: UIViewController,
 
         self.viewModel.setupViewControllerDelegates(with: self, for: windowUUID)
         setupLayout()
-        applyTheme()
     }
 
     required init?(coder: NSCoder) {
@@ -92,12 +91,10 @@ class IntroViewController: UIViewController,
     // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        listenForThemeChange(view)
         populatePageController()
-    }
 
-    deinit {
-        notificationCenter.removeObserver(self)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        applyTheme()
     }
 
     // MARK: View setup
@@ -112,7 +109,7 @@ class IntroViewController: UIViewController,
 
     private func setupLayout() {
         setupPageController()
-        if viewModel.isDismissable { setupCloseButton() }
+        if viewModel.isDismissible { setupCloseButton() }
     }
 
     private func setupPageController() {
@@ -129,7 +126,7 @@ class IntroViewController: UIViewController,
     }
 
     private func setupCloseButton() {
-        guard viewModel.isDismissable else { return }
+        guard viewModel.isDismissible else { return }
         view.addSubview(closeButton)
         view.bringSubviewToFront(closeButton)
         view.accessibilityElements = [closeButton, pageController.view as Any, pageControl]
@@ -182,6 +179,7 @@ class IntroViewController: UIViewController,
     func closeOnboarding() {
         guard let viewModel = viewModel as? IntroViewModel else { return }
         viewModel.saveHasSeenOnboarding()
+        viewModel.saveSearchBarPosition()
         didFinishFlow?()
         viewModel.telemetryUtility.sendDismissOnboardingTelemetry(
             from: viewModel.availableCards[pageControl.currentPage].viewModel.name)
@@ -201,7 +199,9 @@ class IntroViewController: UIViewController,
     func handleNotifications(_ notification: Notification) {
         switch notification.name {
         case UIApplication.didEnterBackgroundNotification:
-            appDidEnterBackgroundNotification()
+            ensureMainThread {
+                self.appDidEnterBackgroundNotification()
+            }
         default:
             break
         }
@@ -209,8 +209,11 @@ class IntroViewController: UIViewController,
 
     func registerForNotification() {
         if !hasRegisteredForDefaultBrowserNotification {
-            setupNotifications(forObserver: self,
-                               observing: [UIApplication.didEnterBackgroundNotification])
+            startObservingNotifications(
+                withNotificationCenter: notificationCenter,
+                forObserver: self,
+                observing: [UIApplication.didEnterBackgroundNotification]
+            )
             hasRegisteredForDefaultBrowserNotification = true
         }
     }
@@ -245,7 +248,7 @@ extension IntroViewController: UIPageViewControllerDataSource, UIPageViewControl
         _ pageViewController: UIPageViewController,
         viewControllerBefore viewController: UIViewController
     ) -> UIViewController? {
-        guard let onboardingVC = viewController as? OnboardingCardViewController,
+        guard let onboardingVC = viewController as? OnboardingCardViewController<OnboardingKitCardInfoModel>,
               let index = getCardIndex(viewController: onboardingVC)
         else { return nil }
 
@@ -262,7 +265,7 @@ extension IntroViewController: UIPageViewControllerDataSource, UIPageViewControl
         _ pageViewController: UIPageViewController,
         viewControllerAfter viewController: UIViewController
     ) -> UIViewController? {
-        guard let onboardingVC = viewController as? OnboardingCardViewController,
+        guard let onboardingVC = viewController as? OnboardingCardViewController<OnboardingKitCardInfoModel>,
               let index = getCardIndex(viewController: onboardingVC)
         else { return nil }
 
@@ -325,8 +328,13 @@ extension IntroViewController: OnboardingCardDelegate {
             introViewModel.chosenOptions.insert(.setAsDefaultBrowser)
             introViewModel.updateOnboardingUserActivationEvent()
             registerForNotification()
+            viewModel.telemetryUtility.sendGoToSettingsButtonTappedTelemetry()
             DefaultApplicationHelper().openSettings()
         case .openInstructionsPopup:
+            /// Setting default browser card action opens an instruction pop up instead of
+            /// setting a default browser action. TBD if the above code even still fires.
+            introViewModel.chosenOptions.insert(.setAsDefaultBrowser)
+            introViewModel.updateOnboardingUserActivationEvent()
             presentDefaultBrowserPopup(
                 windowUUID: windowUUID,
                 from: cardName,
@@ -337,6 +345,7 @@ extension IntroViewController: OnboardingCardDelegate {
                 from: cardName,
                 selector: #selector(dismissPrivacyPolicyViewController))
         case .openIosFxSettings:
+            viewModel.telemetryUtility.sendGoToSettingsButtonTappedTelemetry()
             DefaultApplicationHelper().openSettings()
             advance(numberOfPages: 1, from: cardName) {
                 self.showNextPageCompletionForLastCard()
@@ -367,8 +376,12 @@ extension IntroViewController: OnboardingCardDelegate {
             turnSystemTheme(on: true)
         case .toolbarBottom:
             featureFlags.set(feature: .searchBarPosition, to: SearchBarPosition.bottom)
+            let notificationObject = [PrefsKeys.FeatureFlags.SearchBarPosition: SearchBarPosition.bottom]
+            notificationCenter.post(name: .SearchBarPositionDidChange, withObject: notificationObject)
         case .toolbarTop:
             featureFlags.set(feature: .searchBarPosition, to: SearchBarPosition.top)
+            let notificationObject = [PrefsKeys.FeatureFlags.SearchBarPosition: SearchBarPosition.top]
+            notificationCenter.post(name: .SearchBarPositionDidChange, withObject: notificationObject)
         }
         viewModel.telemetryUtility.sendMultipleChoiceButtonActionTelemetry(
             from: cardName,

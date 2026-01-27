@@ -4,7 +4,17 @@
 
 import Foundation
 
-public enum AddressToolbarBorderPosition {
+public struct AddressToolbarBorderConfiguration {
+    var a11yIdentifier: String
+    var borderPosition: AddressToolbarBorderPosition?
+
+    public init(a11yIdentifier: String, borderPosition: AddressToolbarBorderPosition?) {
+        self.a11yIdentifier = a11yIdentifier
+        self.borderPosition = borderPosition
+    }
+}
+
+public enum AddressToolbarBorderPosition: Sendable {
     case bottom
     case top
     case none
@@ -20,7 +30,7 @@ public protocol ToolbarManager {
     func shouldDisplayNavigationBorder(toolbarPosition: AddressToolbarPosition) -> Bool
 }
 
-public class DefaultToolbarManager: ToolbarManager {
+public final class DefaultToolbarManager: ToolbarManager {
     public init() {}
 
     public func getAddressBorderPosition(for toolbarPosition: AddressToolbarPosition,

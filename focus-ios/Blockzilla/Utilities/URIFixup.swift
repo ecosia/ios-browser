@@ -4,7 +4,7 @@
 
 import Foundation
 
-class URIFixup {
+final class URIFixup {
     static func getURL(entry: String) -> URL? {
         let trimmed = entry.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         guard let escaped = trimmed.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlAllowed) else {
@@ -15,7 +15,7 @@ class URIFixup {
             return nil
         }
 
-        // Check if the URL string does not start with "file://". 
+        // Check if the URL string does not start with "file://".
         // If it starts with "file://", return nil, indicating that this function
         // does not handle local file URLs, resulting in a search
 

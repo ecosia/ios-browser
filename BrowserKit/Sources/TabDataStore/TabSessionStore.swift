@@ -5,23 +5,25 @@
 import Foundation
 import Common
 
-public protocol TabSessionStore {
+public protocol TabSessionStore: Sendable {
     /// Saves the session data associated with a tab
     /// - Parameters:
     ///   - tabID: an ID that uniquely identifies the tab
     ///   - sessionData: the data associated with a session, encoded as a Data object
+    @MainActor
     func saveTabSession(tabID: UUID, sessionData: Data)
 
     /// Fetches the session data associated with a tab
     /// - Parameter tabID: an ID that uniquely identifies the tab
     /// - Returns: the data associated with a session, encoded as a Data object
+    @MainActor
     func fetchTabSession(tabID: UUID) -> Data?
 
     /// Cleans up any tab session data files for tabs that are no longer open.
     func deleteUnusedTabSessionData(keeping: [UUID]) async
 }
 
-public class DefaultTabSessionStore: TabSessionStore {
+public final class DefaultTabSessionStore: TabSessionStore {
     let fileManager: TabFileManager
     let logger: Logger
     let filePrefix = "tab-"
@@ -34,7 +36,12 @@ public class DefaultTabSessionStore: TabSessionStore {
     }
 
     public func saveTabSession(tabID: UUID, sessionData: Data) {
-        guard let directory = fileManager.tabSessionDataDirectory() else { return }
+        guard let directory = fileManager.tabSessionDataDirectory() else {
+            logger.log("Failed to save session data. No tab session data directory path.",
+                       level: .warning,
+                       category: .tabs)
+            return
+        }
 
         if !fileManager.fileExists(atPath: directory) {
             fileManager.createDirectoryAtPath(path: directory)
@@ -42,8 +49,6 @@ public class DefaultTabSessionStore: TabSessionStore {
 
         let path = directory.appendingPathComponent(filePrefix + tabID.uuidString)
         do {
-            lock.lock()
-            defer { lock.unlock() }
             try sessionData.write(to: path, options: .atomicWrite)
         } catch {
             logger.log("Failed to save session data with error: \(error.localizedDescription)",
@@ -54,11 +59,14 @@ public class DefaultTabSessionStore: TabSessionStore {
 
     public func fetchTabSession(tabID: UUID) -> Data? {
         guard let path = fileManager.tabSessionDataDirectory()?.appendingPathComponent(filePrefix + tabID.uuidString)
-        else { return nil }
+        else {
+            logger.log("Failed to decode session data. No tab session data directory path.",
+                       level: .warning,
+                       category: .tabs)
+            return nil
+        }
 
         do {
-            lock.lock()
-            defer { lock.unlock() }
             return try Data(contentsOf: path)
         } catch {
             logger.log("Failed to decode session data with error: \(error.localizedDescription)",

@@ -5,9 +5,13 @@
 import { IOSAppConstants } from "resource://gre/modules/shared/Constants.ios.mjs";
 import Overrides from "resource://gre/modules/Overrides.ios.js";
 
+const EMPTY_MODULE_PATH = "EmptyModule.sys.mjs";
+
 /* eslint mozilla/use-isInstance: 0 */
 HTMLSelectElement.isInstance = element => element instanceof HTMLSelectElement;
 HTMLInputElement.isInstance = element => element instanceof HTMLInputElement;
+HTMLTextAreaElement.isInstance = element =>
+  element instanceof HTMLTextAreaElement;
 HTMLIFrameElement.isInstance = element => element instanceof HTMLIFrameElement;
 HTMLFormElement.isInstance = element => element instanceof HTMLFormElement;
 ShadowRoot.isInstance = element => element instanceof ShadowRoot;
@@ -16,11 +20,24 @@ HTMLElement.prototype.ownerGlobal = window;
 
 // We cannot mock this in WebKit because we lack access to low-level APIs.
 // For completeness, we simply return true when the input type is "password".
-HTMLInputElement.prototype.hasBeenTypePassword = function () {
-  return this.type === "password";
-};
+// NOTE: Since now we also include this file for password generator, it might be included multiple times
+// which causes the defineProperty to throw. Allowing it to be overwritten for now is fine, since
+// our code runs in a sandbox and only firefox code can overwrite it.
+Object.defineProperty(HTMLInputElement.prototype, "hasBeenTypePassword", {
+  get() {
+    return this.type === "password";
+  },
+  configurable: true,
+});
 
-HTMLInputElement.prototype.setUserInput = function (value) {
+Object.defineProperty(HTMLInputElement.prototype, "nodePrincipal", {
+  get() {
+    return { isNullPrincipal: false };
+  },
+  configurable: true,
+});
+
+function setUserInput(value) {
   this.value = value;
 
   // In React apps, setting .value may not always work reliably.
@@ -36,7 +53,10 @@ HTMLInputElement.prototype.setUserInput = function (value) {
   });
 
   this.dispatchEvent(new Event("blur", { bubbles: true }));
-};
+}
+
+HTMLInputElement.prototype.setUserInput = setUserInput;
+HTMLTextAreaElement.prototype.setUserInput = setUserInput;
 
 // Mimic the behavior of .getAutocompleteInfo()
 // It should return an object with a fieldName property matching the autocomplete attribute
@@ -89,13 +109,15 @@ const internalModuleResolvers = {
     const moduleName = moduleURI.split("/").pop();
     const modulePath =
       "./" + (Overrides.ModuleOverrides[moduleName] ?? moduleName);
-    return moduleResolver(modulePath);
+    return { module: moduleResolver(modulePath), path: modulePath };
   },
 
   resolveModules(obj, modules) {
     for (const [exportName, moduleURI] of Object.entries(modules)) {
       const resolvedModule = this.resolveModule(moduleURI);
-      obj[exportName] = resolvedModule?.[exportName];
+      obj[exportName] = resolvedModule.path.includes(EMPTY_MODULE_PATH)
+        ? resolvedModule.module?.default
+        : resolvedModule.module?.[exportName];
     }
   },
 };
@@ -110,13 +132,14 @@ export const XPCOMUtils = withNotImplementedError({
     onUpdate,
     transform = val => val
   ) => {
-    if (!Object.keys(IOSAppConstants.prefs).includes(pref)) {
-      throw Error(`Pref ${pref} is not defined.`);
+    const value = IOSAppConstants.prefs[pref] ?? defaultValue;
+    // Explicitly check for undefined since null, false, "" and 0 are valid values
+    if (value === undefined) {
+      throw Error(
+        `Pref ${pref} is not defined and no valid default value was provided.`
+      );
     }
-    obj[prop] = transform(IOSAppConstants.prefs[pref] ?? defaultValue);
-  },
-  defineLazyModuleGetters(obj, modules) {
-    internalModuleResolvers.resolveModules(obj, modules);
+    obj[prop] = transform(value);
   },
   defineLazyServiceGetter() {
     // Don't do anything
@@ -135,7 +158,7 @@ export const ChromeUtils = withNotImplementedError({
     internalModuleResolvers.resolveModules(obj, modules);
   },
   importESModule(moduleURI) {
-    return internalModuleResolvers.resolveModule(moduleURI);
+    return internalModuleResolvers.resolveModule(moduleURI)?.module;
   },
 });
 window.ChromeUtils = ChromeUtils;
@@ -163,30 +186,6 @@ export const Services = withNotImplementedError({
         formatStringFromName: () => "",
       }),
   }),
-  telemetry: withNotImplementedError({
-    scalarAdd: (scalarName, scalarValue) => {
-      // For now, we only care about the address form telemetry
-      // TODO(FXCM-935): move address telemetry to Glean so we can remove this
-      // Data format of the sent message is:
-      // {
-      //   type: "scalar",
-      //   name: "formautofill.addresses.detected_sections_count",
-      //   value: Number,
-      // }
-      if (scalarName !== "formautofill.addresses.detected_sections_count") {
-        return;
-      }
-
-      // eslint-disable-next-line no-undef
-      webkit.messageHandlers.addressFormTelemetryMessageHandler.postMessage(
-        JSON.stringify({
-          type: "scalar",
-          object: scalarName,
-          value: scalarValue,
-        })
-      );
-    },
-  }),
   // TODO(FXCM-936): we should use crypto.randomUUID() instead of Services.uuid.generateUUID() in our codebase
   // Underneath crypto.randomUUID() uses the same implementation as generateUUID()
   // https://searchfox.org/mozilla-central/rev/d405168c4d3c0fb900a7354ae17bb34e939af996/dom/base/Crypto.cpp#96
@@ -205,6 +204,8 @@ window.Localization = function () {
 // dispatches telemetry messages to the iOS, we need to modify typedefs in swift. For now, we map the telemetry events
 // to the expected shape. FXCM-935 will tackle cleaning this up.
 window.Glean = {
+  // While moving away from Legacy Telemetry to Glean, the automated script generated the additional categories
+  // `creditcard` and `address`. After bug 1933961 all probes will have moved to category formautofillCreditcards and formautofillAddresses.
   formautofillCreditcards: undefinedProxy(),
   formautofill: undefinedProxy(),
   creditcard: undefinedProxy(),
@@ -247,6 +248,9 @@ window.Glean = {
       },
     }
   ),
+  // Keeping unused category formautofillAddresses here, because Bug 1933961
+  // will move probes from the glean category address to formautofillAddresses
+  formautofillAddresses: undefinedProxy(),
 };
 
 const genericLogger = () =>

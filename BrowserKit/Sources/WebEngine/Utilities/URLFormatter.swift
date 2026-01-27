@@ -16,7 +16,7 @@ public protocol URLFormatter {
     func getURL(entry: String) -> URL?
 }
 
-public class DefaultURLFormatter: URLFormatter {
+public final class DefaultURLFormatter: URLFormatter {
     private var securityManager: SecurityManager
 
     public init(securityManager: SecurityManager = DefaultSecurityManager()) {
@@ -30,8 +30,8 @@ public class DefaultURLFormatter: URLFormatter {
 
     public func getURL(entry: String) -> URL? {
         // If it's an Internal URL no formatting should happen
-        if let url = URL(string: entry, invalidCharacters: false), WKInternalURL.isValid(url: url) {
-            return URL(string: entry, invalidCharacters: false)
+        if let url = URL(string: entry), WKInternalURL.isValid(url: url) {
+            return URL(string: entry)
         }
 
         // If the entry is `localhost` then navigate to it
@@ -60,7 +60,7 @@ public class DefaultURLFormatter: URLFormatter {
     // Handle the entry if it has a scheme, make sure it's safe before browsing to it
     private func handleWithScheme(with entry: String) -> URL? {
         // Check if the URL includes a scheme
-        guard let url = URL(string: entry, invalidCharacters: false),
+        guard let url = handleURL(with: entry),
               url.scheme != nil,
               entry.range(of: "\\b:[0-9]{1,5}", options: .regularExpression) == nil else {
             return nil
@@ -74,13 +74,43 @@ public class DefaultURLFormatter: URLFormatter {
         }
 
         // Only allow this URL if it's safe
-        let browsingContext = BrowsingContext(type: .internalNavigation,
-                                              url: entry)
+        let browsingContext = BrowsingContext(type: .internalNavigation, url: url)
         if securityManager.canNavigateWith(browsingContext: browsingContext) == .allowed {
-            return URL(string: entry, invalidCharacters: false)
+            return url
         } else {
             return nil
         }
+    }
+
+    private func handleURL(with entry: String) -> URL? {
+        // Per Apple docs, for apps linked on or after iOS 17 and aligned OS versions, URL parsing has updated
+        // from the obsolete RFC 1738/1808 parsing to the same RFC 3986 parsing as URLComponents.
+        // iOS 17+, URL automatically percent- and IDNA-encodes invalid characters to help create a valid URL.
+
+        if #available(iOS 17, *) {
+            return URL(string: entry)
+        } else {
+            // We only want to do percent encoding on our other schemes
+            let hasHTTPScheme = entry.hasPrefix("http://") || entry.hasPrefix("https://")
+            guard !hasHTTPScheme else { return URL(string: entry) }
+
+            // FXIOS-14375 - Manually add percent encoding since it's not handled by URL(string:) in < iOS 17
+            guard let escapedURL = entry.addingPercentEncoding(withAllowedCharacters: urlAllowed) else {
+                return nil
+            }
+            guard let finalURL = URL(string: escapedURL), schemeIsValid(for: finalURL) else { return nil }
+            return finalURL
+        }
+    }
+
+    /**
+     Returns whether the URL's scheme is one of those listed on the official list of URI schemes.
+     This only accepts permanent schemes: historical and provisional schemes are not accepted.
+     */
+    func schemeIsValid(for url: URL) -> Bool {
+        guard let scheme = url.scheme else { return false }
+        return SchemesDefinition.permanentURISchemes.contains(scheme.lowercased())
+               && url.absoluteString.lowercased() != scheme + ":"
     }
 
     // Handle the entry if it has no scheme
@@ -115,7 +145,7 @@ public class DefaultURLFormatter: URLFormatter {
         let finalURL = escapedURL.hasPrefix("http://") || escapedURL.hasPrefix("https://") ? escapedURL : "http://\(escapedURL)"
 
         // If there is a host, return this formatted as a URL
-        if let url = URL(string: finalURL, invalidCharacters: false), url.host != nil {
+        if let url = URL(string: finalURL), url.host != nil {
             return url
         }
 

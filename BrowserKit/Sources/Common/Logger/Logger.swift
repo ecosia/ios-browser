@@ -4,11 +4,10 @@
 
 import Foundation
 
-public protocol Logger {
+public protocol Logger: Sendable {
     var crashedLastLaunch: Bool { get }
 
-    func setup(sendUsageData: Bool)
-    func configure(crashManager: CrashManager)
+    func setup(sendCrashReports: Bool)
     func logCustomError(error: Error)
 
     /// Log a new message to the logging system
@@ -43,7 +42,7 @@ public extension Logger {
              category: LoggerCategory,
              extra: [String: String]? = nil,
              description: String? = nil,
-             file: String = #file,
+             file: String = #filePath,
              function: String = #function,
              line: Int = #line) {
         self.log(message,

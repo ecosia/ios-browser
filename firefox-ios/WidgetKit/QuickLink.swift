@@ -4,7 +4,6 @@
 
 import SwiftUI
 import Common
-import Ecosia
 
 /// Enum file that holds the different cases for the Quick Actions small widget with their
 /// configurations (string, backgrounds, images) as selected by the user in edit mode.
@@ -17,21 +16,13 @@ enum QuickLink: Int {
     public var imageName: String {
         switch self {
         case .search:
-            // Ecosia: update image
-            // return "faviconFox"
-            return "openEcosia"
+            return "faviconFox"
         case .privateSearch:
-            /* Ecosia: update image
             return StandardImageIdentifiers.Large.privateMode
-            */
-            return "ecosiaSmallPrivateMask"
         case .copiedLink:
             return StandardImageIdentifiers.Large.tabTray
         case .closePrivateTabs:
-            /* Ecosia: update image
-            StandardImageIdentifiers.Large.delete
-            */
-            return "ecosiaDelete"
+            return StandardImageIdentifiers.Large.delete
         }
     }
 
@@ -74,7 +65,6 @@ enum QuickLink: Int {
         }
     }
 
-    /* Ecosia: Update colors
     public var backgroundColors: [Color] {
         switch self {
         case .search:
@@ -86,46 +76,5 @@ enum QuickLink: Int {
         case .closePrivateTabs:
             return [Color("privateGradientThree"), Color("privateGradientTwo"), Color("privateGradientOne")]
         }
-    }
-     */
-
-    public var backgroundColors: [Color] {
-        /* Ecosia: Update colors
-        switch self {
-        case .search:
-            return [Color("PrimaryBrand")]
-        case .privateSearch:
-            return [Color("TertiaryBackground")]
-        case .copiedLink:
-            return [Color("TertiaryBackground")]
-        case .closePrivateTabs:
-            return [Color("TertiaryBackground")]
-        }
-         */
-        return [.ecosiaBundledColorWithName("TertiaryBackground")]
-    }
-
-    public var textColor: Color {
-        /* Ecosia: Update colors
-        switch self {
-        case .search:
-            return .init("PrimaryBackground")
-        default:
-            return .init("PrimaryText")
-        }
-         */
-        return .ecosiaBundledColorWithName("PrimaryText")
-    }
-
-    public var iconColor: Color {
-        /* Ecosia: Update colors
-        switch self {
-        case .search:
-            return .init("PrimaryBackground")
-        default:
-            return .init("SecondaryIcon")
-        }
-         */
-        return .ecosiaBundledColorWithName("PrimaryText")
     }
 }

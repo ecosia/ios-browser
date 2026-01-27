@@ -5,15 +5,18 @@
 import Common
 import Foundation
 import Shared
-import Storage
 import UIKit
 
 protocol PhotonActionSheetProtocol {
+    @MainActor
     var tabManager: TabManager { get }
+    @MainActor
     var profile: Profile { get }
+    @MainActor
     var themeManager: ThemeManager { get }
 }
 
+@MainActor
 extension PhotonActionSheetProtocol {
     typealias PresentableVC = UIViewController & UIPopoverPresentationControllerDelegate
 
@@ -22,39 +25,6 @@ extension PhotonActionSheetProtocol {
                           from view: UIView) {
         // TODO: Regression testing needed here.
         guard let uuid = view.currentWindowUUID else { return }
-
-        // Ecosia: Ecosia: custom UI/UX for main menu
-        guard !viewModel.isMainMenu else {
-
-            // main menu should only be opened from the browser
-            guard let browser = self as? BrowserViewController else { return }
-            let sheet = PageActionMenu(viewModel: viewModel, delegate: browser, windowUUID: uuid)
-            sheet.modalPresentationStyle = viewModel.modalStyle
-
-            // iPhone
-            if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
-                sheet.detents = [.medium(), .large()]
-            }
-
-            // ipad
-            if let popoverVC = sheet.popoverPresentationController, sheet.modalPresentationStyle == .popover {
-                popoverVC.delegate = viewController
-                popoverVC.sourceView = view
-                popoverVC.sourceRect = view.bounds
-
-                let trait = viewController.traitCollection
-                if viewModel.isMainMenu {
-                    let margins = viewModel.getMainMenuPopOverMargins(trait: trait, view: view, presentedOn: viewController)
-                    popoverVC.popoverLayoutMargins = margins
-                }
-                // Ecosia: Update permitted arrow dimensions
-                // popoverVC.permittedArrowDirections = [.up]
-                popoverVC.permittedArrowDirections = viewModel.getPossibleArrowDirections(trait: trait)
-            }
-
-            viewController.present(sheet, animated: true, completion: nil)
-            return
-        }
 
         let sheet = PhotonActionSheet(viewModel: viewModel, windowUUID: uuid)
         sheet.modalPresentationStyle = viewModel.modalStyle
@@ -80,38 +50,37 @@ extension PhotonActionSheetProtocol {
     }
 
     func getLongPressLocationBarActions(with view: UIView, alertContainer: UIView) -> [PhotonRowActions] {
-        let pasteGoAction = SingleActionViewModel(title: .PasteAndGoTitle,
-                                                  iconString: StandardImageIdentifiers.Large.clipboard) { _ in
-            if let pasteboardContents = UIPasteboard.general.string {
-                if let urlBar = view as? URLBarView {
-                    urlBar.delegate?.urlBar(urlBar, didSubmitText: pasteboardContents)
-                } else if let toolbar = view as? AddressToolbarContainer {
+        let pasteGoAction = SingleActionViewModel(
+            title: .PasteAndGoTitle,
+            iconString: StandardImageIdentifiers.Large.clipboard,
+            tapHandler: { _ in
+                if let pasteboardContents = UIPasteboard.general.string,
+                   let toolbar = view as? AddressToolbarContainer {
                     toolbar.delegate?.openBrowser(searchTerm: pasteboardContents)
                 }
-            }
-        }
-        pasteGoAction.accessibilityId = AccessibilityIdentifiers.Photon.pasteAndGoAction
+            },
+            accessibilityId: AccessibilityIdentifiers.Photon.pasteAndGoAction
+        )
 
-        let pasteAction = SingleActionViewModel(title: .PasteTitle,
-                                                iconString: StandardImageIdentifiers.Large.clipboard) { _ in
-            if let pasteboardContents = UIPasteboard.general.string {
-                if let urlBar = view as? URLBarView {
-                    urlBar.enterOverlayMode(pasteboardContents, pasted: true, search: true)
-                } else if let toolbar = view as? AddressToolbarContainer {
-                    toolbar.enterOverlayMode(pasteboardContents, pasted: true, search: true)
+        let pasteAction = SingleActionViewModel(
+            title: .PasteTitle,
+            iconString: StandardImageIdentifiers.Large.clipboard,
+            tapHandler: { _ in
+                if let pasteboardContents = UIPasteboard.general.string,
+                   let toolbar = view as? AddressToolbarContainer {
+                        toolbar.enterOverlayMode(pasteboardContents, pasted: true, search: true)
                 }
-            }
-        }
-        pasteAction.accessibilityId = AccessibilityIdentifiers.Photon.pasteAction
+            },
+            accessibilityId: AccessibilityIdentifiers.Photon.pasteAction
+        )
 
-        let copyAddressAction = SingleActionViewModel(title: .CopyAddressTitle,
-                                                      iconString: StandardImageIdentifiers.Large.link) { _ in
+        let copyAddressAction = SingleActionViewModel(
+            title: .CopyAddressTitle,
+            iconString: StandardImageIdentifiers.Large.link
+        ) { [tabManager] _ in
             let currentURL = tabManager.selectedTab?.currentURL()
             if let url = tabManager.selectedTab?.canonicalURL?.displayURL ?? currentURL {
                 UIPasteboard.general.url = url
-                SimpleToast().showAlertWithText(.LegacyAppMenu.AppMenuCopyURLConfirmMessage,
-                                                bottomContainer: alertContainer,
-                                                theme: themeManager.getCurrentTheme(for: tabManager.windowUUID))
             }
         }
 

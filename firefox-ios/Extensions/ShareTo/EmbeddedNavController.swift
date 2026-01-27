@@ -5,13 +5,13 @@
 import Common
 import UIKit
 import Shared
-import Storage
 
+@MainActor
 class EmbeddedNavController {
     weak var parent: UIViewController?
     var controllers = [UIViewController]()
     var navigationController: UINavigationController
-    var heightConstraint: NSLayoutConstraint!
+    var heightConstraint: NSLayoutConstraint
     let isSearchMode: Bool
 
     init(isSearchMode: Bool, parent: UIViewController, rootViewController: UIViewController) {
@@ -72,7 +72,16 @@ class EmbeddedNavController {
     }
 
     deinit {
-        navigationController.view.removeFromSuperview()
-        navigationController.removeFromParent()
+        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits. EmbeddedNavController probably
+        // should be a real nav controller...
+        guard Thread.isMainThread else {
+            assertionFailure("EmbeddedNavController was not deallocated on the main thread.")
+            return
+        }
+
+        MainActor.assumeIsolated {
+            navigationController.view.removeFromSuperview()
+            navigationController.removeFromParent()
+        }
     }
 }

@@ -4,7 +4,6 @@
 
 import Foundation
 import Common
-import Shared
 
 class BlockedTrackersHeaderView: UITableViewHeaderFooterView,
                                  ReusableCell {
@@ -32,17 +31,19 @@ class BlockedTrackersHeaderView: UITableViewHeaderFooterView,
         NSLayoutConstraint.activate([
             totalTrackersBlockedLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
-                constant: TPMenuUX.UX.horizontalMargin
+                constant: 2 * TPMenuUX.UX.horizontalMargin // to align with the cell images
             ),
             totalTrackersBlockedLabel.trailingAnchor.constraint(
                 equalTo: trailingAnchor,
                 constant: -TPMenuUX.UX.horizontalMargin
             ),
             totalTrackersBlockedLabel.topAnchor.constraint(
-                equalTo: topAnchor
+                equalTo: topAnchor,
+                constant: TPMenuUX.UX.connectionDetailsHeaderMargins
             ),
             totalTrackersBlockedLabel.bottomAnchor.constraint(
-                equalTo: bottomAnchor
+                equalTo: bottomAnchor,
+                constant: -TPMenuUX.UX.connectionDetailsHeaderMargins
             )
         ])
     }

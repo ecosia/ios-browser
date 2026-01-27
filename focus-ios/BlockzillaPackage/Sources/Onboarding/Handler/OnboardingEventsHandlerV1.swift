@@ -5,7 +5,7 @@
 import Foundation
 import Combine
 
-public class OnboardingEventsHandlerV1: OnboardingEventsHandling {
+public final class OnboardingEventsHandlerV1: OnboardingEventsHandling {
     private let setShownTips: (Set<ToolTipRoute>) -> Void
 
     @Published public var route: ToolTipRoute?
@@ -58,6 +58,14 @@ public class OnboardingEventsHandlerV1: OnboardingEventsHandling {
         if !shownTips.contains(route) {
             self.route = route
             shownTips.insert(route)
+        }
+    }
+    
+    public func dismissTooltip(route: ToolTipRoute) {
+        shownTips.insert(route)
+        
+        if self.route == route {
+            self.route = nil
         }
     }
 }

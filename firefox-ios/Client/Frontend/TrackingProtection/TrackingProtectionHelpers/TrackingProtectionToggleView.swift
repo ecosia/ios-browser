@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import Ecosia
 
 final class TrackingProtectionToggleView: UIView, ThemeApplicable {
     private struct UX {
@@ -18,18 +17,17 @@ final class TrackingProtectionToggleView: UIView, ThemeApplicable {
         stack.alignment = .leading
         stack.axis = .vertical
         stack.spacing = TPMenuUX.UX.headerLabelDistance
+        stack.isAccessibilityElement = true
     }
 
     private let toggleLabel: UILabel = .build { label in
         label.font = FXFontStyles.Regular.body.scaledFont()
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
+        label.isAccessibilityElement = false
     }
 
-    /* Ecosia: Use themed Switch
     private let toggleSwitch: UISwitch = .build { toggleSwitch in
-     */
-    private let toggleSwitch: EcosiaThemedSwitch = .build { toggleSwitch in
         toggleSwitch.isEnabled = true
     }
 
@@ -37,6 +35,7 @@ final class TrackingProtectionToggleView: UIView, ThemeApplicable {
         label.font = FXFontStyles.Regular.caption1.scaledFont()
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
+        label.isAccessibilityElement = false
     }
 
     private var viewConstraints: [NSLayoutConstraint] = []
@@ -108,20 +107,29 @@ final class TrackingProtectionToggleView: UIView, ThemeApplicable {
         toggleSwitch.isHidden = isHidden
     }
 
-    func setStatusLabelText(with text: String) {
+    func setStatusLabelText(with text: String, and shouldUseButtonTrait: Bool) {
         toggleStatusLabel.text = text
+        toggleLabelsContainer.accessibilityHint = text
+        if shouldUseButtonTrait {
+            toggleLabelsContainer.accessibilityTraits = .button
+        } else {
+            toggleLabelsContainer.accessibilityTraits.remove(.button)
+        }
     }
 
     func setupDetails(isOn: Bool) {
-        toggleSwitch.isOn = isOn
-        toggleLabel.text = .Menu.EnhancedTrackingProtection.switchTitle
-        toggleStatusLabel.text = isOn ?
+        let title: String = .Menu.EnhancedTrackingProtection.switchTitle
+        let subtitle: String = isOn ?
             .Menu.EnhancedTrackingProtection.switchOnText : .Menu.EnhancedTrackingProtection.switchOffText
+        toggleSwitch.isOn = isOn
+        toggleLabel.text = title
+        toggleStatusLabel.text = subtitle
+        toggleLabelsContainer.accessibilityLabel = title
+        toggleLabelsContainer.accessibilityHint = subtitle
     }
 
-    func setupAccessibilityIdentifiers(toggleViewTitleLabelA11yId: String, toggleViewBodyLabelA11yId: String) {
-        toggleLabel.accessibilityIdentifier = toggleViewTitleLabelA11yId
-        toggleStatusLabel.accessibilityIdentifier = toggleViewBodyLabelA11yId
+    func setupAccessibilityIdentifiers(toggleViewLabelsContainerA11yId: String) {
+        toggleLabelsContainer.accessibilityIdentifier = toggleViewLabelsContainerA11yId
     }
 
     func setupActions() {
@@ -135,11 +143,8 @@ final class TrackingProtectionToggleView: UIView, ThemeApplicable {
 
     func applyTheme(theme: Theme) {
         self.backgroundColor = theme.colors.layer2
-        /* Ecosia: Use applyTheme from EcosiaThemedSwitch
         toggleSwitch.tintColor = theme.colors.actionPrimary
         toggleSwitch.onTintColor = theme.colors.actionPrimary
-         */
-        toggleSwitch.applyTheme(theme: theme)
         toggleStatusLabel.textColor = theme.colors.textSecondary
     }
 }

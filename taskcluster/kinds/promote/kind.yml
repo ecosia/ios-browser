@@ -1,0 +1,71 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+
+transforms:
+    - ffios_taskgraph.transforms.relpro_promote
+    - ffios_taskgraph.transforms.bitrise
+    - taskgraph.transforms.task
+
+
+task-defaults:
+  run-on-tasks-for: []
+  treeherder:
+    symbol:
+      by-build-type:
+        release: B
+        beta: Bb
+    kind: build
+    tier: 1
+    platform: ios/opt
+  worker-type: bitrise
+  shipping-phase: promote
+  bitrise:
+    artifact_prefix: public
+
+
+tasks:
+    release:
+      description: Start a release build
+      bitrise:
+        workflows:
+          - release_promotion_promote:
+              - API_BITRISE_SCHEME: Firefox
+      attributes:
+        build-type: release
+        product-type: firefox
+    beta:
+      description: Start a beta build
+      bitrise:
+        workflows:
+          - release_promotion_promote:
+              - API_BITRISE_SCHEME: FirefoxBeta
+      attributes:
+        build-type: beta
+        product-type: firefox
+    focus:
+      description: Start a focus build
+      bitrise:
+        workflows:
+          - release_promotion_promote_focus:
+            - API_BITRISE_SCHEME: Focus
+      attributes:
+        build-type: release
+        product-type: focus
+        product-variant: focus
+      treeherder:
+        symbol: Bf
+    klar:
+      description: Start a klar build
+      bitrise:
+        workflows:
+          - release_promotion_promote_focus:
+            - API_BITRISE_SCHEME: Klar
+      attributes:
+        build-type: release
+        product-type: focus
+        product-variant: klar
+      treeherder:
+        symbol: Bk

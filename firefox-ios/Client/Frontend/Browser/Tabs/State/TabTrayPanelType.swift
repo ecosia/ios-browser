@@ -13,9 +13,9 @@ enum TabTrayPanelType: Int, CaseIterable {
     var navTitle: String {
         switch self {
         case .tabs:
-            return .TabTrayV2Title
+            return .TabsTray.TabTrayV2Title
         case .privateTabs:
-            return .TabTrayPrivateBrowsingTitle
+            return .TabsTray.TabTrayPrivateBrowsingTitle
         case .syncedTabs:
             return .LegacyAppMenu.AppMenuSyncedTabsTitleString
         }
@@ -24,11 +24,11 @@ enum TabTrayPanelType: Int, CaseIterable {
     var label: String {
         switch self {
         case .tabs:
-            return String.TabTraySegmentedControlTitlesTabs
+            return .TabsTray.TabsSelectorNormalTabsTitle
         case .privateTabs:
-            return String.TabTraySegmentedControlTitlesPrivateTabs
+            return .TabsTray.TabsSelectorPrivateTabsTitle
         case .syncedTabs:
-            return String.TabTraySegmentedControlTitlesSyncedTabs
+            return .TabsTray.TabsSelectorSyncedTabsTitle
         }
     }
 
@@ -41,5 +41,27 @@ enum TabTrayPanelType: Int, CaseIterable {
         case .syncedTabs:
             return UIImage(named: StandardImageIdentifiers.Large.syncTabs)
         }
+    }
+
+    var modeForTelemetry: TabsPanelTelemetry.Mode {
+        switch self {
+        case .tabs:
+            return .normal
+        case .privateTabs:
+            return .private
+        case .syncedTabs:
+            return .sync
+        }
+    }
+
+    static func getExperimentConvert(index: Int) -> TabTrayPanelType {
+        var panelType: TabTrayPanelType = .tabs
+        switch index {
+        case 0: panelType = .privateTabs
+        case 1: panelType = .tabs
+        case 2: panelType = .syncedTabs
+        default: break
+        }
+        return panelType
     }
 }

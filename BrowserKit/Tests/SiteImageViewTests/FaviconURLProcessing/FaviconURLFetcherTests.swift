@@ -7,11 +7,11 @@ import XCTest
 
 class FaviconURLFetcherTests: XCTestCase {
     var subject: DefaultFaviconURLFetcher!
-    var networkMock: HTMLDataRequestMock!
+    var networkMock: MockHTMLDataRequest!
 
     override func setUp() {
         super.setUp()
-        networkMock = HTMLDataRequestMock()
+        networkMock = MockHTMLDataRequest()
         subject = DefaultFaviconURLFetcher(network: networkMock)
     }
 
@@ -40,6 +40,19 @@ class FaviconURLFetcherTests: XCTestCase {
             XCTAssertEqual(result.absoluteString, "http://firefox.com/favicon.ico")
         } catch {
             XCTFail("Failed to fetch favicon with no icon using fallback ico")
+        }
+    }
+
+    func testGetFavicon_whenNetworkError() async throws {
+        let url = URL(string: "http://firefox.com")!
+        networkMock.error = URLError(.badURL)
+
+        do {
+            _ = try await subject.fetchFaviconURL(siteURL: url)
+            XCTFail("fetchFaviconURL should throw an error when a network error occurs")
+        } catch {
+            let responseError = try XCTUnwrap(error as? URLError)
+            XCTAssertEqual(responseError.code, .badURL)
         }
     }
 

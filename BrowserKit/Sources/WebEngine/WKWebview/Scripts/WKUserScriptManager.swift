@@ -6,11 +6,12 @@ import WebKit
 import Foundation
 
 /// Manager used to inject scripts at document start or end inside a WKEngineWebView
+@MainActor
 protocol WKUserScriptManager {
     func injectUserScriptsIntoWebView(_ webView: WKEngineWebView)
 }
 
-class DefaultUserScriptManager: WKUserScriptManager {
+final class DefaultUserScriptManager: WKUserScriptManager {
     // Scripts can use this to verify the application (not JS on the web) is calling into them
     private let appIdToken = UUID().uuidString
     private let scriptProvider: UserScriptProvider
@@ -48,6 +49,9 @@ class DefaultUserScriptManager: WKUserScriptManager {
                 webView.engineConfiguration.addUserScript(webcompatUserScript)
             }
         }
+
+        let printUserScript = injectPrintScript()
+        webView.engineConfiguration.addUserScript(printUserScript)
     }
 
     /// Cache all of the pre-compiled user scripts so they don't need re-fetched from disk for each webview.
@@ -75,6 +79,18 @@ class DefaultUserScriptManager: WKUserScriptManager {
                                       forMainFrameOnly: userScriptInfo.isMainFrame,
                                       in: .defaultClient)
         compiledUserScripts[name] = userScript
+    }
+
+    // We inject a script that needs to be in the `page` content world in order to hook `window.print()`.
+    // Github issue: #8274
+    private func injectPrintScript() -> WKUserScript {
+        let source = "window.print = () => window.webkit.messageHandlers.printHandler.postMessage({})"
+        return WKUserScript(
+            source: source,
+            injectionTime: .atDocumentEnd,
+            forMainFrameOnly: false,
+            in: .page
+        )
     }
 
     private func injectWebCompatScript(name: String, userScriptInfo: UserScriptInfo) {

@@ -13,11 +13,11 @@ protocol NTPImpactCellDelegate: AnyObject {
 
 @MainActor final class NTPImpactCellViewModel {
     weak var delegate: NTPImpactCellDelegate?
-    
+
     // Cache for async-computed values
     private var cachedTotalInvested: Int = 0
     private var cachedTotalTrees: Int = 0
-    
+
     var infoItemSections: [[ClimateImpactInfo]] {
         let firstSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
         let secondSection: [ClimateImpactInfo] = [referralInfo]
@@ -32,13 +32,13 @@ protocol NTPImpactCellDelegate: AnyObject {
     var totalInvestedInfo: ClimateImpactInfo {
         .totalInvested(value: cachedTotalInvested)
     }
-    
+
     private func updateCachedTotalTrees() {
         Task { @MainActor in
             self.cachedTotalTrees = await TreesProjection.shared.treesAt(.init())
         }
     }
-    
+
     private func updateCachedTotalInvested() {
         Task { @MainActor in
             self.cachedTotalInvested = await InvestmentsProjection.shared.totalInvestedAt(.init())
@@ -68,7 +68,7 @@ protocol NTPImpactCellDelegate: AnyObject {
         // Initial cache updates
         updateCachedTotalTrees()
         updateCachedTotalInvested()
-        
+
         guard !UIAccessibility.isReduceMotionEnabled else {
             refreshCell(withInfo: totalTreesInfo)
             refreshCell(withInfo: totalInvestedInfo)

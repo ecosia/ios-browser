@@ -37,12 +37,13 @@ function sed_into_readme() {
 PROJECT_FIREFOX_FILE="firefox-ios/Client.xcodeproj/project.pbxproj"
 PROJECT_FOCUS_FILE="focus-ios/Blockzilla.xcodeproj/project.pbxproj"
 BIT_RISE_FILE="bitrise.yml"
-XCODE_VERSION=$(grep "stack:" $BIT_RISE_FILE | head -n 1 | grep -o '\d\d.\d')
+# Grepping the tail of Bitrise file since contains the correct Xcode version
+XCODE_VERSION=$(grep "stack:" $BIT_RISE_FILE | tail -n 1 | grep -o '\d\d.\d')
 DEPLOYMENT_TARGET_FIREFOX=$(deployment_target $PROJECT_FIREFOX_FILE)
 DEPLOYMENT_TARGET_FOCUS=$(deployment_target $PROJECT_FOCUS_FILE)
 README_FILE="README.md"
 BROWSER_KIT_SWIFT_PACKAGE_FILE="BrowserKit/Package.swift"
-SWIFT_VERSION=$(head -n 1 $BROWSER_KIT_SWIFT_PACKAGE_FILE | grep -o '\d.\d')
+SWIFT_VERSION=$(head -n 1 "$BROWSER_KIT_SWIFT_PACKAGE_FILE" | grep -o '[0-9]\+\.[0-9]\+')
 
 sed_into_readme "Firefox-iOS" $DEPLOYMENT_TARGET_FIREFOX
 sed_into_readme "Focus-iOS" $DEPLOYMENT_TARGET_FOCUS

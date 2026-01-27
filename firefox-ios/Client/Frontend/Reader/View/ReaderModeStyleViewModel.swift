@@ -8,13 +8,14 @@ import Common
 // MARK: - ReaderModeStyleViewModelDelegate
 
 protocol ReaderModeStyleViewModelDelegate: AnyObject {
+    @MainActor
     func readerModeStyleViewModel(_ readerModeStyleViewModel: ReaderModeStyleViewModel,
                                   didConfigureStyle style: ReaderModeStyle,
                                   isUsingUserDefinedColor: Bool)
 }
 
 // MARK: - ReaderModeStyleViewModel
-
+@MainActor
 class ReaderModeStyleViewModel {
     public init(windowUUID: WindowUUID,
                 isBottomPresented: Bool,
@@ -26,16 +27,8 @@ class ReaderModeStyleViewModel {
     }
 
     struct UX {
-        static let RowHeight = 50.0
         // For top or bottom presentation
         static let PresentationSpace = 13.0
-
-        static let SeparatorLineThickness = 1.0
-        static let Width = 270.0
-        static let Height = 4.0 * RowHeight + 3.0 * SeparatorLineThickness
-
-        static let BrightnessSliderWidth = 140
-        static let BrightnessIconOffset = 10
     }
 
     var isBottomPresented: Bool

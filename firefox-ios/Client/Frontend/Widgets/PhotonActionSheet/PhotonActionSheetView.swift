@@ -4,11 +4,11 @@
 
 import Common
 import Foundation
-import Storage
 import Shared
 
 // MARK: - PhotonActionSheetViewDelegate
 protocol PhotonActionSheetViewDelegate: AnyObject {
+    @MainActor
     func didClick(item: SingleActionViewModel?, animationCompletion: @escaping () -> Void)
 }
 
@@ -28,7 +28,6 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
     }
 
     // MARK: - Variables
-    private var badgeOverlay: BadgeWithBackdrop?
     private var item: SingleActionViewModel?
     weak var delegate: PhotonActionSheetViewDelegate?
 
@@ -55,6 +54,8 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
         let label = createLabel()
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
+        label.adjustsFontSizeToFitWidth = true
+        label.setContentHuggingPriority(.required, for: .vertical)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         label.font = FXFontStyles.Regular.title3.scaledFont()
         return label
@@ -64,6 +65,9 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
         let label = createLabel()
         label.numberOfLines = 0
         label.font = FXFontStyles.Regular.footnote.scaledFont()
+        label.adjustsFontSizeToFitWidth = true
+        label.setContentHuggingPriority(.required, for: .vertical)
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
 
@@ -168,13 +172,13 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
 
     @objc
     private func didClick(_ gestureRecognizer: UITapGestureRecognizer?) {
-        guard let item = item,
+        guard var item = item,
               let handler = item.tapHandler
         else { return }
 
         isSelected = (gestureRecognizer?.state == .began) || (gestureRecognizer?.state == .changed)
 
-        item.isEnabled = !item.isEnabled
+        item = SingleActionViewModel.copy(item, isEnabled: item.isEnabled)
 
         // Notify the delegate then wait until all animations are completed before handling the item
         // (Note: The iOS16 system find interactor will only work if the settings menu dismiss animation has completed)
@@ -204,6 +208,7 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
 
         accessibilityIdentifier = item.accessibilityId ?? item.iconString
         accessibilityLabel = item.currentTitle
+        accessibilityTraits = .button
 
         if item.isFlipped {
             transform = CGAffineTransform(scaleX: 1, y: -1)
@@ -215,7 +220,6 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
             statusIcon.removeFromSuperview()
         }
 
-        setupBadgeOverlay(action: item)
         addSubBorder(action: item)
         applyTheme(theme: theme)
     }
@@ -237,18 +241,18 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
     }
 
     func applyTheme(theme: Theme) {
-        tintColor = theme.colors.textPrimary
-        titleLabel.textColor = theme.colors.textPrimary
-        subtitleLabel.textColor = theme.colors.textPrimary
-        tabsLabel.textColor = theme.colors.textPrimary
+        let colors = theme.colors
+        tintColor = colors.textPrimary
+        titleLabel.textColor = colors.textPrimary
+        subtitleLabel.textColor = colors.textPrimary
+        tabsLabel.textColor = colors.textPrimary
 
-        verticalBorder.backgroundColor = theme.colors.layer4
-        bottomBorder.backgroundColor = theme.colors.layer4
+        verticalBorder.backgroundColor = colors.layer4
+        bottomBorder.backgroundColor = colors.layer4
 
-        badgeOverlay?.badge.tintBackground(color: theme.colors.layer1)
-        disclosureIndicator.tintColor = theme.colors.iconSecondary
+        disclosureIndicator.tintColor = colors.iconSecondary
 
-        let iconTint: UIColor? = item?.needsIconActionableTint ?? false ? theme.colors.iconAccentYellow : tintColor
+        let iconTint: UIColor? = item?.needsIconActionableTint ?? false ? colors.iconAccentYellow : tintColor
         statusIcon.tintColor = iconTint
     }
 
@@ -338,9 +342,11 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
                 GeneralizedImageFetcher().getImageFor( url: actionIconUrl) { image in
                     guard let image = image else { return }
 
-                    self.statusIcon.image = image.createScaled(PhotonActionSheet.UX.iconSize)
-                        .withRenderingMode(.alwaysOriginal)
-                    self.statusIcon.layer.cornerRadius = PhotonActionSheet.UX.iconSize.width / 2
+                    DispatchQueue.main.async {
+                        self.statusIcon.image = image.createScaled(PhotonActionSheet.UX.iconSize)
+                            .withRenderingMode(.alwaysOriginal)
+                        self.statusIcon.layer.cornerRadius = PhotonActionSheet.UX.iconSize.width / 2
+                    }
                 }
             }
         case .TabsButton:
@@ -371,17 +377,5 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate, ThemeApplicabl
                 stackView.addArrangedSubview(statusIcon)
             }
         }
-    }
-
-    private func setupBadgeOverlay(action: SingleActionViewModel) {
-        guard let name = action.badgeIconName,
-              action.isEnabled,
-              let parent = statusIcon.superview
-        else { return }
-
-        badgeOverlay = BadgeWithBackdrop(imageName: name)
-        badgeOverlay?.add(toParent: parent)
-        badgeOverlay?.layout(onButton: statusIcon)
-        badgeOverlay?.show(true)
     }
 }

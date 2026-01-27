@@ -3,8 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import SwiftUI
-import Shared
 import Common
+import ComponentLibrary
 
 struct LoginAutofillView: View {
     let windowUUID: WindowUUID
@@ -30,7 +30,9 @@ struct LoginAutofillView: View {
             )
         }
         .padding()
-        .background(backgroundColor)
+        .if(!isIOS26OrLater) { view in
+            view.background(backgroundColor)
+        }
         .onAppear {
             applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         }
@@ -50,7 +52,7 @@ struct LoginAutofillView: View {
     LoginAutofillView(
         windowUUID: .XCTestDefaultUUID,
         viewModel: LoginListViewModel(
-            tabURL: URL(string: "http://www.example.com", invalidCharacters: false)!,
+            tabURL: URL(string: "http://www.example.com")!,
             field: FocusFieldType.username,
             loginStorage: MockLoginStorage(),
             logger: MockLogger(),

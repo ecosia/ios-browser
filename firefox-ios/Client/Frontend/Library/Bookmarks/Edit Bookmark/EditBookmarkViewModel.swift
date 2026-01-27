@@ -2,20 +2,32 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 import Foundation
 import MozillaAppServices
 import Shared
 
-typealias VoidReturnCallback = () -> Void
+typealias VoidReturnCallback = @MainActor () -> Void
 
-class EditBookmarkViewModel {
+protocol ParentFolderSelector: AnyObject {
+    /// In some cases, a child `EditFolderViewController` needs to pass information to a parent `EditBookmarkViewController`
+    /// to select the folder that was just created
+    /// - Parameter folder: The folder that was created in the `EditFolderViewController`
+    @MainActor
+    func selectFolderCreatedFromChild(folder: Folder)
+}
+
+// FIXME: FXIOS-14161 Make EditBookmarkViewModel actually Sendable
+class EditBookmarkViewModel: ParentFolderSelector, @unchecked Sendable {
     private let parentFolder: FxBookmarkNode
     private var node: BookmarkItemData?
     private let profile: Profile
+    private let logger: Logger
     private let folderFetcher: FolderHierarchyFetcher
     private let bookmarksSaver: BookmarksSaver
+    weak var bookmarkCoordinatorDelegate: BookmarksCoordinatorDelegate?
 
-    private var isFolderCollapsed = true
+    private(set) var isFolderCollapsed = true
     private(set) var folderStructures: [Folder] = []
     private(set) var selectedFolder: Folder?
 
@@ -29,14 +41,23 @@ class EditBookmarkViewModel {
     var onFolderStatusUpdate: VoidReturnCallback?
     var onBookmarkSaved: VoidReturnCallback?
 
+    var getBackNavigationButtonTitle: String {
+        if parentFolder.guid == BookmarkRoots.MobileFolderGUID {
+            return .Bookmarks.Menu.AllBookmarks
+        }
+        return parentFolder.title
+    }
+
     init(parentFolder: FxBookmarkNode,
          node: FxBookmarkNode?,
          profile: Profile,
+         logger: Logger = DefaultLogger.shared,
          bookmarksSaver: BookmarksSaver? = nil,
          folderFetcher: FolderHierarchyFetcher? = nil) {
         self.parentFolder = parentFolder
         self.node = node as? BookmarkItemData
         self.profile = profile
+        self.logger = logger
         self.bookmarksSaver = bookmarksSaver ?? DefaultBookmarksSaver(profile: profile)
         self.folderFetcher = folderFetcher ?? DefaultFolderHierarchyFetcher(profile: profile,
                                                                             rootFolderGUID: BookmarkRoots.RootGUID)
@@ -45,21 +66,23 @@ class EditBookmarkViewModel {
         selectedFolder = folder
     }
 
-    func backNavigationButtonTitle() -> String {
-        if parentFolder.guid == BookmarkRoots.MobileFolderGUID {
-            return .Bookmarks.Menu.AllBookmarks
+    func shouldShowDisclosureIndicatorForFolder(_ folder: Folder) -> Bool {
+        let shouldShowDisclosureIndicator = folder.guid == selectedFolder?.guid
+        return shouldShowDisclosureIndicator && !isFolderCollapsed
+    }
+
+    func indentationForFolder(_ folder: Folder) -> Int {
+        if isFolderCollapsed {
+            return 0
         }
-        return parentFolder.title
+        return folder.indentation
     }
 
-    func shouldShowDisclosureIndicator(isFolderSelected: Bool) -> Bool {
-        return isFolderSelected && !isFolderCollapsed
-    }
-
+    @MainActor
     func selectFolder(_ folder: Folder) {
         isFolderCollapsed.toggle()
+        selectedFolder = folder
         if isFolderCollapsed {
-            selectedFolder = folder
             folderStructures = [folder]
             onFolderStatusUpdate?()
         } else {
@@ -67,12 +90,19 @@ class EditBookmarkViewModel {
         }
     }
 
+    @MainActor
+    func createNewFolder() {
+        bookmarkCoordinatorDelegate?.showBookmarkDetail(
+            bookmarkType: .folder,
+            parentBookmarkFolder: parentFolder,
+            parentFolderSelector: self)
+    }
+
     private func getFolderStructure(_ selectedFolder: Folder) {
         Task { @MainActor [weak self] in
             let folders = await self?.folderFetcher.fetchFolders()
             guard let folders else { return }
             self?.folderStructures = folders
-            self?.selectedFolder = selectedFolder
             self?.onFolderStatusUpdate?()
         }
     }
@@ -85,13 +115,42 @@ class EditBookmarkViewModel {
         node = node?.copy(with: bookmarkTitle, url: url)
     }
 
-    func saveBookmark() {
-        guard let selectedFolder, let node else { return }
-        Task { @MainActor [weak self] in
-            _ = await self?.bookmarksSaver.save(bookmark: node,
-                                                parentFolderGUID: selectedFolder.guid)
+    @discardableResult
+    func saveBookmark() -> Task<Void, Never>? {
+        guard let selectedFolder, let node else { return nil }
+        return Task { @MainActor [weak self] in
+            // There is no way to access the EditBookmarkViewController without the bookmark already existing,
+            // so this call will always try to update an existing bookmark
+            let result = await self?.bookmarksSaver.save(bookmark: node,
+                                                         parentFolderGUID: selectedFolder.guid)
+            // Only update the recent folder pref if it doesn't match whats saved in the pref
+            if selectedFolder.guid != self?.profile.prefs.stringForKey(PrefsKeys.RecentBookmarkFolder) {
+                switch result {
+                case .success:
+                    self?.profile.prefs.setString(selectedFolder.guid, forKey: PrefsKeys.RecentBookmarkFolder)
+                case .failure(let error):
+                    self?.logger.log("Failed to save bookmark: \(error)", level: .warning, category: .library)
+                case .none:
+                    break
+                }
+            }
+
             self?.onBookmarkSaved?()
         }
+    }
+
+    @MainActor
+    func didFinish() {
+        bookmarkCoordinatorDelegate?.didFinish()
+    }
+
+    // MARK: ParentFolderSelector
+
+    func selectFolderCreatedFromChild(folder: Folder) {
+        isFolderCollapsed = true
+        selectedFolder = folder
+        folderStructures = [folder]
+        onFolderStatusUpdate?()
     }
 }
 

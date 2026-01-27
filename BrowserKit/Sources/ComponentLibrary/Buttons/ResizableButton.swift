@@ -19,13 +19,6 @@ open class ResizableButton: UIButton {
         }
     }
 
-    // Ecosia: Add support to custom font
-    public var customFont: UIFont? {
-        didSet {
-            updateFontConfiguration()
-        }
-    }
-
     override public init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -51,13 +44,8 @@ open class ResizableButton: UIButton {
         }
 
         let size = title.sizeThatFits(CGSize(width: availableWidth, height: .greatestFiniteMagnitude))
-        /* Ecosia: Update Size calculation
         return CGSize(width: size.width + widthContentInset,
                       height: size.height + heightContentInset)
-         */
-        let boundingBox = title.text?.boundingRect(with: size, options: .usesLineFragmentOrigin, context: nil) ?? .zero
-        return CGSize(width: boundingBox.width + widthContentInset,
-                      height: boundingBox.height + heightContentInset)
     }
 
     override public func layoutSubviews() {
@@ -75,24 +63,6 @@ open class ResizableButton: UIButton {
         configuration = UIButton.Configuration.plain()
         configuration?.titleLineBreakMode = .byWordWrapping
         updateContentInsets()
-        // Ecosia: Add support to custom font
-        updateFontConfiguration()
-    }
-
-    // Ecosia: Add support to custom font
-    private func updateFontConfiguration() {
-        guard let font = customFont else { return }
-
-        configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-            var outgoing = incoming
-            // Respect Dynamic Type scaling if the original font does
-            if incoming.font?.fontDescriptor.symbolicTraits.contains(.traitBold) ?? false {
-                outgoing.font = UIFontMetrics.default.scaledFont(for: font)
-            } else {
-                outgoing.font = font
-            }
-            return outgoing
-        }
     }
 
     private func updateContentInsets() {

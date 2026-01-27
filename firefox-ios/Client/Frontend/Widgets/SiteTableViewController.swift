@@ -5,7 +5,6 @@
 import UIKit
 import Storage
 import Common
-import Shared
 
 struct SiteTableViewControllerUX {
     static let RowHeight: CGFloat = 44
@@ -21,24 +20,15 @@ class SiteTableViewController: UIViewController,
                                Themeable {
     var themeManager: ThemeManager
     let windowManager: WindowManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol
     let profile: Profile
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
 
-    // Ecosia: Branding
-    let style: UITableView.Style
-
     var data = Cursor<Site>(status: .success, msg: "No data set")
-    /* Ecosia: Update TableView init to make it grouped
     lazy var tableView: UITableView = .build { [weak self] table in
         guard let self = self else { return }
-    */
-    lazy var tableView: UITableView = {
-        let table = UITableView(frame: .zero, style: self.style)
-        table.translatesAutoresizingMaskIntoConstraints = false
-
         table.delegate = self
         table.dataSource = self
         table.register(
@@ -53,27 +43,21 @@ class SiteTableViewController: UIViewController,
             SiteTableViewHeader.self,
             forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier
         )
-
-        /* Enable layout margins
         table.layoutMargins = .zero
-        */
-
         table.keyboardDismissMode = .onDrag
         table.accessibilityIdentifier = "SiteTable"
         table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = SiteTableViewControllerUX.RowHeight
         table.setEditing(false, animated: false)
 
-        if self as? LibraryPanelContextMenu != nil {
+        if self is LibraryPanelContextMenu {
             table.dragDelegate = self
         }
 
         // Set an empty footer to prevent empty cells from appearing in the list.
         table.tableFooterView = UIView()
         table.sectionHeaderTopPadding = 0
-        // Ecosia: Update TableView init to make it grouped
-        return table
-    }()
+    }
 
     override private init(nibName: String?, bundle: Bundle?) {
         fatalError("init(coder:) has not been implemented")
@@ -83,20 +67,13 @@ class SiteTableViewController: UIViewController,
          windowUUID: WindowUUID,
          notificationCenter: NotificationProtocol = NotificationCenter.default,
          windowManager: WindowManager = AppContainer.shared.resolve(),
-         // Ecosia: Update init adding `style`
-         // themeManager: ThemeManager = AppContainer.shared.resolve()
-         themeManager: ThemeManager = AppContainer.shared.resolve(),
-         style: UITableView.Style = .plain) {
+         themeManager: ThemeManager = AppContainer.shared.resolve()) {
         self.profile = profile
         self.windowUUID = windowUUID
         self.notificationCenter = notificationCenter
         self.themeManager = themeManager
         self.windowManager = windowManager
-        // Ecosia: Update init adding `style`
-        self.style = style
         super.init(nibName: nil, bundle: nil)
-        listenForThemeChange(view)
-        applyTheme()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -107,13 +84,9 @@ class SiteTableViewController: UIViewController,
         super.viewDidLoad()
 
         setupView()
-    }
 
-    deinit {
-        // The view might outlive this view controller thanks to animations;
-        // explicitly nil out its references to us to avoid crashes. Bug 1218826.
-        tableView.dataSource = nil
-        tableView.delegate = nil
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        applyTheme()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -129,7 +102,7 @@ class SiteTableViewController: UIViewController,
         super.viewWillTransition(to: size, with: coordinator)
         tableView.setEditing(false, animated: false)
         // The AS context menu does not behave correctly. Dismiss it when rotating.
-        if self.presentedViewController as? PhotonActionSheet != nil {
+        if self.presentedViewController is PhotonActionSheet {
             self.presentedViewController?.dismiss(animated: true, completion: nil)
         }
     }
@@ -177,12 +150,8 @@ class SiteTableViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let header = view as? UITableViewHeaderFooterView {
-            /* Ecosia: Update header text label color
             header.textLabel?.textColor = themeManager.getCurrentTheme(for: windowUUID).colors.textPrimary
             header.contentView.backgroundColor = themeManager.getCurrentTheme(for: windowUUID).colors.layer1
-             */
-            header.textLabel?.textColor = themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.textSecondary
-            header.contentView.backgroundColor = .clear
         }
     }
 
@@ -230,10 +199,8 @@ extension SiteTableViewController: UITableViewDragDelegate {
     ) -> [UIDragItem] {
         guard let panelVC = self as? LibraryPanelContextMenu,
               let site = panelVC.getSiteDetails(for: indexPath),
-              let url = URL(
-                string: site.url,
-                invalidCharacters: false
-              ), let itemProvider = NSItemProvider(contentsOf: url)
+              let url = URL(string: site.url),
+              let itemProvider = NSItemProvider(contentsOf: url)
         else { return [] }
 
         // Telemetry is being sent to legacy, need to add it to metrics.yml

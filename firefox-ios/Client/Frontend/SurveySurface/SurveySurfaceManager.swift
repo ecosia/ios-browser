@@ -8,6 +8,7 @@ import Shared
 
 protocol SurveySurfaceDelegate: AnyObject {
     func didDisplayMessage()
+    @MainActor
     func didTapTakeSurvey()
     func didTapDismissSurvey()
 }
@@ -47,6 +48,7 @@ class SurveySurfaceManager: SurveySurfaceDelegate {
     /// build a `SurveySurfaceViewController` to be presented.
     ///
     /// - Returns: An optional `SurveySurfaceViewController`
+    @MainActor
     func getSurveySurface() -> SurveySurfaceViewController? {
         guard let message = message,
               let image = UIImage(named: ImageIdentifiers.logo)

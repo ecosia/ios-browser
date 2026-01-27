@@ -9,6 +9,8 @@ import "Assets/CC_Script/Helpers.ios.mjs";
 import { Logic } from "Assets/CC_Script/LoginManager.shared.sys.mjs";
 import { PasswordGenerator } from "resource://gre/modules/PasswordGenerator.sys.mjs";
 import { LoginFormFactory } from "resource://gre/modules/shared/LoginFormFactory.sys.mjs";
+import { PasswordRulesParser } from "Assets/CC_Script/PasswordRulesParser.sys.mjs"
+import { LoginFormState } from "Assets/CC_Script/LoginFormState.sys.mjs"
 
 // Ensure this module only gets included once. This is
 // required for user scripts injected into all frames.
@@ -46,15 +48,15 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
     receiveMessage: function (msg) {
       switch (msg.name) {
         case "RemoteLogins:loginsFound": {
-          this.loginsFound(this.activeField.form, msg.logins);
+          this.loginsFound(this.activeField, msg.logins);
           break;
         }
       }
     },
 
-    loginsFound : function (form, loginsFound) {
+    loginsFound : function (field, loginsFound) {
       var autofillForm = gAutofillForms; // && !PrivateBrowsingUtils.isContentWindowPrivate(doc.defaultView);
-      this._fillForm(form, autofillForm, true, false, false, loginsFound);
+      this._fillForm(field, autofillForm, true, false, false, loginsFound);
     },
 
     /*
@@ -243,7 +245,7 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
 
       // Get the appropriate fields from the form.
       // [usernameField, newPasswordField, oldPasswordField]
-      var fields = this._getFormFields(form, true);
+      var fields = getUsernameAndPassword(form, true);
       var usernameField = fields[0];
       var newPasswordField = fields[1];
       var oldPasswordField = fields[2];
@@ -315,22 +317,22 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
      *     the user
      * - foundLogins is an array of nsILoginInfo for optimization
      */
-    _fillForm : function (form, autofillForm, ignoreAutocomplete,
+    _fillForm : function (field, autofillForm, ignoreAutocomplete,
                           clobberPassword, userTriggered, foundLogins) {
       // Heuristically determine what the user/pass fields are
       // We do this before checking to see if logins are stored,
       // so that the user isn't prompted for a master password
       // without need.
-      var fields = this._getFormFields(form, false);
+      var fields = getUsernameAndPassword(field, false);
       var usernameField = fields[0];
       var passwordField = fields[1];
 
       // Need a valid password field to do anything.
-      if (passwordField == null)
+      if (passwordField == null && !LoginManagerContent.updatedPasswordManagerEnabled)
         return [false, foundLogins];
 
       // If the password field is disabled or read-only, there's nothing to do.
-      if (passwordField.disabled || passwordField.readOnly) {
+      if (passwordField?.disabled || passwordField?.readOnly) {
         log("not filling form, password field disabled or read-only");
         return [false, foundLogins];
       }
@@ -343,9 +345,9 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
       var maxPasswordLen = Number.MAX_VALUE;
 
       // If attribute wasn't set, default is -1.
-      if (usernameField && usernameField.maxLength >= 0)
+      if (usernameField?.maxLength >= 0)
         maxUsernameLen = usernameField.maxLength;
-      if (passwordField.maxLength >= 0)
+      if (passwordField?.maxLength >= 0)
         maxPasswordLen = passwordField.maxLength;
 
       var createLogin = function(login) {
@@ -418,7 +420,7 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
             usernameField.focus();
           }
         }
-        if (passwordField.value != selectedLogin.password) {
+        if (passwordField?.value != selectedLogin.password) {
           this.fillValue(passwordField, selectedLogin.password);
           dispatchKeyboardEvent(passwordField, "keydown", KEYCODE_ARROW_DOWN);
           dispatchKeyboardEvent(passwordField, "keyup", KEYCODE_ARROW_DOWN);
@@ -453,9 +455,9 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
     // The rules are provided by swift depending on the domain
     if(rules) {
       const domainRules = PasswordRulesParser.parsePasswordRules(
-        rules
+        rules["password-rules"] ?? ""
       );
-      mapOfRules = transformRulesToMap(domainRules);
+      mapOfRules = Logic.transformRulesToMap(domainRules);
     }
 
     const generatedPassword = PasswordGenerator.generatePassword({
@@ -467,11 +469,26 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
   };
 
   function fillGeneratedPassword(password) {
+    LoginManagerContent.fromFill = true
     this.yieldFocusBackToField();
     const passwordField = LoginManagerContent.activeField;
     passwordField?.setUserInput(password);
     const confirmationField = Logic.findConfirmationField(passwordField, LoginFormFactory);
     confirmationField?.setUserInput(password);
+    LoginManagerContent.fromFill = false
+  }
+
+  function fillRelayEmail(email) {
+      /* TODO: Do we need this fromFill set for Relay? */
+      LoginManagerContent.fromFill = true
+      this.yieldFocusBackToField();
+      const emailField = LoginManagerContent.activeField;
+      emailField?.setUserInput(email);
+      LoginManagerContent.fromFill = false
+  }
+
+  function isUpdatedPasswordManagerEnabled(enabled) {
+    LoginManagerContent.updatedPasswordManagerEnabled = enabled
   }
 
   function yieldFocusBackToField() {
@@ -482,32 +499,61 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
   // define the field types for focus events
   const FocusFieldType = {
     username: "username",
-    password: "password"
+    password: "password",
+    email: "email"
   };
+
+  function getUsernameAndPassword(field, isSubmission) {
+    if(LoginManagerContent.updatedPasswordManagerEnabled && HTMLInputElement.isInstance(field)) {
+      if(!LoginManagerContent.state) {
+        LoginManagerContent.state = new LoginFormState();
+      }
+      return LoginManagerContent.state.getUserNameAndPasswordFields(field, isSubmission);
+    }
+    return LoginManagerContent._getFormFields(isSubmission ? field : field.form, isSubmission);
+  }
 
   function onFocusIn(event) {
     const form = event.target?.form;
-    if (!form) {
+    // Only allow formless and passwordless logins with new updated password manager
+    const updatedPasswordManagerEnabled = LoginManagerContent.updatedPasswordManagerEnabled;
+    if (!updatedPasswordManagerEnabled && !form) {
       return;
     }
 
-    const [username, password] = LoginManagerContent._getFormFields(form, false);
     const field = event.target;
+    let [username, password] = getUsernameAndPassword(field, false);
     const formHasNewPassword =
       password && Logic.isProbablyANewPasswordField(password);
     const isPasswordField = field === password;
+    const isLoginField = field === username || isPasswordField;
+
+    if(!isLoginField) {
+      return ;
+    }
+
+    // Always clear accessory view when a field is focused to start from a clean state
+    webkit.messageHandlers.loginsManagerMessageHandler.postMessage({
+      type: "clearAccessoryView",
+    });
+    field.shouldIgnoreAutofill = true;
     const isYieldingFocus = LoginManagerContent.activeField === field;
     LoginManagerContent.activeField = field;
-    if (formHasNewPassword && isPasswordField && !isYieldingFocus) {
+    if (formHasNewPassword && isPasswordField && !LoginManagerContent.fromFill) {
       webkit.messageHandlers.loginsManagerMessageHandler.postMessage({
         type: "generatePassword",
       });
-    } else if (!formHasNewPassword && password) {
+    } else if (!formHasNewPassword && (password || updatedPasswordManagerEnabled)) {
       webkit.messageHandlers.loginsManagerMessageHandler.postMessage({
         type: "fieldType",
         fieldType:
           field === username ? FocusFieldType.username : FocusFieldType.password,
       });
+    } else if (Logic.isInferredEmailField(field)) {
+        webkit.messageHandlers.loginsManagerMessageHandler.postMessage({
+            type: "fieldType",
+            fieldType: FocusFieldType.email,
+        });
     }
   }
 
@@ -557,6 +603,8 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
     this.yieldFocusBackToField = yieldFocusBackToField;
     this.generatePassword = generatePassword;
     this.fillGeneratedPassword = fillGeneratedPassword;
+    this.fillRelayEmail = fillRelayEmail;
+    this.isUpdatedPasswordManagerEnabled = isUpdatedPasswordManagerEnabled;
   }
 
   Object.defineProperty(window.__firefox__, "logins", {
@@ -572,3 +620,7 @@ window.__firefox__.includeOnce("LoginsHelper", function() {
     element.dispatchEvent(event);
   }
 });
+
+// NOTE: This is mainly for swift to set the appropriate version of the password manager to use.
+// Once we have full rollout of the new password manager, we can remove this.
+webkit.messageHandlers.loginsManagerMessageHandler.postMessage({type: "ready"});

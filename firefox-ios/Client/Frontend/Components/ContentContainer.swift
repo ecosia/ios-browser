@@ -6,27 +6,29 @@ import UIKit
 
 enum ContentType {
     case homepage
-    case legacyHomepage
     case privateHomepage
     case nativeErrorPage
     case webview
 }
 
+@MainActor
 protocol ContentContainable: UIViewController {
     var contentType: ContentType { get }
 }
 
 /// A container for view controllers, currently used to embed content in BrowserViewController
-class ContentContainer: UIView {
-    private var type: ContentType?
-    private var contentController: ContentContainable?
+class ContentContainer: UIView, FeatureFlaggable {
+    var toolbarHelper: ToolbarHelperInterface = ToolbarHelper()
 
-    var contentView: UIView? {
-        return contentController?.view
+    private var isSwipingTabsEnabled: Bool {
+        return toolbarHelper.isSwipingTabsEnabled
     }
 
-    var hasLegacyHomepage: Bool {
-        return type == .legacyHomepage
+    private var type: ContentType?
+    private(set) var contentController: ContentContainable?
+
+    var contentView: Screenshotable? {
+        return contentController?.view
     }
 
     var hasPrivateHomepage: Bool {
@@ -37,9 +39,8 @@ class ContentContainer: UIView {
         return type == .homepage
     }
 
-    // Ecosia: add computed var due to cherry pick https://github.com/mozilla-mobile/firefox-ios/pull/24609
     var hasAnyHomepage: Bool {
-        return hasLegacyHomepage || hasHomepage || hasPrivateHomepage
+        return hasHomepage || hasPrivateHomepage
     }
 
     var hasWebView: Bool {
@@ -50,14 +51,22 @@ class ContentContainer: UIView {
         return type == .nativeErrorPage
     }
 
+    /// Returns true if the previous content managed by the `ContentContainer` should be removed from screen.
+    ///
+    /// If the content shouldn't be removed then it's view hierarchy is kept on screen.
+    private var shouldRemovePreviousContent: Bool {
+        if isSwipingTabsEnabled {
+            return !hasWebView && !hasHomepage && !hasPrivateHomepage
+        }
+        return !hasWebView
+    }
+
     /// Determine if the content can be added, making sure we only add once
     /// - Parameters:
     ///   - viewController: The view controller to add to the container
     /// - Returns: True when we can add the view controller to the container
     func canAdd(content: ContentContainable) -> Bool {
         switch type {
-        case .legacyHomepage:
-            return !(content is LegacyHomepageViewController)
         case .nativeErrorPage:
             return !(content is NativeErrorPageViewController)
         case .homepage:
@@ -85,16 +94,16 @@ class ContentContainer: UIView {
     /// - Parameter content: The content to update
     func update(content: ContentContainable) {
         removePreviousContent()
+        if isSwipingTabsEnabled {
+            bringSubviewToFront(content.view)
+        }
         saveContentType(content: content)
     }
 
     // MARK: - Private
 
     private func removePreviousContent() {
-        // Only remove previous content when it's the homepage or native error page.
-        // We're not removing the webview controller for now since if it's not loaded, the
-        // webview doesn't layout it's WKCompositingView which result in black screen
-        guard !hasWebView else { return }
+        guard shouldRemovePreviousContent else { return }
         contentController?.willMove(toParent: nil)
         contentController?.view.removeFromSuperview()
         contentController?.removeFromParent()

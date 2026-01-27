@@ -3,10 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import ComponentLibrary
 import UIKit
-import Shared
 import Redux
+import UnifiedSearchKit
 
 class SearchEngineSelectionViewController: UIViewController,
                                            UISheetPresentationControllerDelegate,
@@ -16,7 +15,7 @@ class SearchEngineSelectionViewController: UIViewController,
     // MARK: - Properties
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var currentWindowUUID: UUID? { return windowUUID }
 
     weak var coordinator: SearchEngineSelectionCoordinator?
@@ -25,24 +24,7 @@ class SearchEngineSelectionViewController: UIViewController,
     private let logger: Logger
 
     // MARK: - UI/UX elements
-    // FXIOS-10192 This button is a temporary placeholder used to set up the navigation / coordinators. Will be removed.
-    private lazy var placeholderOpenSettingsButton: UIButton = .build { view in
-        view.setTitle(.UnifiedSearch.SearchEngineSelection.SearchSettings, for: .normal)
-        view.setTitleColor(.blue, for: .normal)
-        view.titleLabel?.numberOfLines = 0
-        view.titleLabel?.textAlignment = .center
-
-        view.addTarget(self, action: #selector(self.didTapOpenSettings), for: .touchUpInside)
-    }
-    // FIXME FXIOS-10189 This will be deleted later.
-    private lazy var placeholderSwitchSearchEngineButton: UIButton = .build { view in
-        view.setTitle("Test changing search engine", for: .normal)
-        view.setTitleColor(.systemPink, for: .normal)
-        view.titleLabel?.numberOfLines = 0
-        view.titleLabel?.textAlignment = .center
-
-        view.addTarget(self, action: #selector(self.testDidChangeSearchEngine), for: .touchUpInside)
-    }
+    private var searchEngineTableView: SearchEngineTableView = .build()
 
     // MARK: - Initializers and Lifecycle
 
@@ -61,9 +43,6 @@ class SearchEngineSelectionViewController: UIViewController,
         super.init(nibName: nil, bundle: nil)
 
         subscribeToRedux()
-
-        // TODO Additional setup to come
-        // ...
     }
 
     required init?(coder: NSCoder) {
@@ -71,7 +50,15 @@ class SearchEngineSelectionViewController: UIViewController,
     }
 
     deinit {
-        unsubscribeFromRedux()
+        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
+        guard Thread.isMainThread else {
+            assertionFailure("AddressBarPanGestureHandler was not deallocated on the main thread. Observer was not removed")
+            return
+        }
+
+        MainActor.assumeIsolated {
+            unsubscribeFromRedux()
+        }
     }
 
     override func viewDidLoad() {
@@ -81,7 +68,9 @@ class SearchEngineSelectionViewController: UIViewController,
         popoverPresentationController?.delegate = self // For iPad setup
 
         setupView()
-        listenForThemeChange(view)
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        applyTheme()
 
         store.dispatch(
             SearchEngineSelectionAction(
@@ -100,16 +89,13 @@ class SearchEngineSelectionViewController: UIViewController,
     // MARK: - UI / UX
 
     private func setupView() {
-        view.addSubview(placeholderOpenSettingsButton)
-        view.addSubviews(placeholderSwitchSearchEngineButton)
+        view.addSubview(searchEngineTableView)
 
         NSLayoutConstraint.activate([
-            placeholderOpenSettingsButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
-            placeholderOpenSettingsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            placeholderOpenSettingsButton.widthAnchor.constraint(equalToConstant: 200),
-
-            placeholderSwitchSearchEngineButton.topAnchor.constraint(equalTo: placeholderOpenSettingsButton.bottomAnchor),
-            placeholderSwitchSearchEngineButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            searchEngineTableView.topAnchor.constraint(equalTo: view.topAnchor),
+            searchEngineTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            searchEngineTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchEngineTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
 
@@ -145,8 +131,32 @@ class SearchEngineSelectionViewController: UIViewController,
     func newState(state: SearchEngineSelectionState) {
         self.state = state
 
-        // FIXME FXIOS-10189 Eventually we'll have a tableview. Placeholder for temporary testing redux.
-        placeholderSwitchSearchEngineButton.setTitle(state.searchEngines.last?.shortName ?? "Empty!", for: .normal)
+        searchEngineTableView.reloadTableView(
+            with: createSearchEngineTableData(withSearchEngines: state.searchEngines)
+        )
+    }
+
+    func createSearchEngineTableData(withSearchEngines: [SearchEngineModel]) -> [SearchEngineSection] {
+        let searchEngineElements = withSearchEngines.map { engine in
+            SearchEngineElement(fromSearchEngine: engine, withAction: { [weak self] in
+                self?.didTap(searchEngineModel: engine)
+            })
+        }
+
+        let searchSettingsElement = SearchEngineElement(
+            title: String.UnifiedSearch.SearchEngineSelection.SearchSettings,
+            image: UIImage(named: StandardImageIdentifiers.Large.settings)?.withRenderingMode(.alwaysTemplate) ?? UIImage(),
+            a11yLabel: String.UnifiedSearch.SearchEngineSelection.AccessibilityLabels.SearchSettingsLabel,
+            a11yHint: String.UnifiedSearch.SearchEngineSelection.AccessibilityLabels.SearchSettingsHint,
+            a11yId: AccessibilityIdentifiers.UnifiedSearch.BottomSheetRow.searchSettings,
+            action: { [weak self] in
+                self?.didTapOpenSettings()
+            })
+
+        return [
+            SearchEngineSection(options: searchEngineElements),
+            SearchEngineSection(options: [searchSettingsElement])
+        ]
     }
 
     // MARK: - Theme
@@ -155,6 +165,7 @@ class SearchEngineSelectionViewController: UIViewController,
         let theme = themeManager.getCurrentTheme(for: windowUUID)
 
         view.backgroundColor = theme.colors.layer3
+        searchEngineTableView.applyTheme(theme: theme)
     }
 
     // MARK: - UISheetPresentationControllerDelegate inheriting UIAdaptivePresentationControllerDelegate
@@ -165,15 +176,20 @@ class SearchEngineSelectionViewController: UIViewController,
 
     // MARK: - Navigation
 
-    @objc
-    func didTapOpenSettings(sender: UIButton) {
+    func didTapOpenSettings() {
         coordinator?.navigateToSearchSettings(animated: true)
     }
 
-    // FIXME FXIOS-10189 This will be deleted later.
-    @objc
-    func testDidChangeSearchEngine(sender: UIButton) {
-        // TODO FXIOS-10384 Push action to the toolbar to update the search engine selection for the next search and
-        // to focus the toolbar (if it isn't already focused).
+    func didTap(searchEngineModel: SearchEngineModel) {
+        store.dispatch(
+            SearchEngineSelectionAction(
+                windowUUID: self.windowUUID,
+                actionType: SearchEngineSelectionActionType.didTapSearchEngine,
+                selectedSearchEngine: searchEngineModel
+            )
+        )
+
+        // Close the view after a selection has been made
+        coordinator?.dismissModal(animated: true)
     }
 }

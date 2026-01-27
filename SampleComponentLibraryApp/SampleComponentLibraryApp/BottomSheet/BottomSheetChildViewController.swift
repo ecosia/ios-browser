@@ -17,6 +17,7 @@ class BottomSheetChildViewController: UIViewController, BottomSheetChild, Themea
     """
 
     var themeManager: ThemeManager
+    var themeListenerCancellable: Any?
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
@@ -24,8 +25,6 @@ class BottomSheetChildViewController: UIViewController, BottomSheetChild, Themea
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
     }
-
-    private var heightConstraint: NSLayoutConstraint!
 
     init(themeManager: ThemeManager = AppContainer.shared.resolve()) {
         self.themeManager = themeManager
@@ -38,7 +37,7 @@ class BottomSheetChildViewController: UIViewController, BottomSheetChild, Themea
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        listenForThemeChange(view)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
 
         contentLabel.text = String(repeating: "\(loremIpsum)", count: 1)

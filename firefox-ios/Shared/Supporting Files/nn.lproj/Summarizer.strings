@@ -1,0 +1,81 @@
+/* The label displayed in the summary report when the summary was generated using Apple Intelligence. */
+"Summarizer.AppleBrand.Label.v142" = "Samanfatta av Apple Intelligence";
+
+/* The a11y label for the close button in the summary view. */
+"Summarizer.CloseButton.Accessibility.Label.v145" = "Lat att samandrag";
+
+/* The label for the error button that allows the user to close the summary view because there is an error summarizing the page and the summary cannot be retried. */
+"Summarizer.CloseButton.Label.v142" = "Lat att";
+
+/* The error message displayed when the summarizer encounters missing page content while summarizing a page (e.g the page is still loading). */
+"Summarizer.Error.MissingPageContent.Message.v142" = "Sida blir framleis lasta inn. Vent til ho er ferdig, og trykk deretter på samanfatt.";
+
+/* The error message displayed when the summarizer encounters a rate limit while summarizing a page. */
+"Summarizer.Error.RateLimited.Message.v142" = "Kan ikkje handsame denne akkurat no. Prøv igjen seinare!";
+
+/* The error message displayed when the summarizer encounters an unknown error while summarizing a page. */
+"Summarizer.Error.Unknown.Message.v142" = "Feil ved oppsummering av sida. Prøv på nytt seinare.";
+
+/* The error message displayed when the summarizer encounters unsafe content while summarizing a page. */
+"Summarizer.Error.UnsafeWebsite.Message.v142" = "Avgrensa innhald oppdaga. Denne sida kan vere avgrensa eller hovudsakleg visuell.";
+
+/* The error message displayed when the summarizer encounters unsupported content while summarizing a page (e.g unsupported language, content too long). */
+"Summarizer.Error.UnsupportedContent.Message.v142" = "Denne nettstaden tillèt ikkje innhaldssamandrag. Prøv ei anna side.";
+
+/* The description is displayed at the end of the summary report as a footnote to the users in that the report can contain errors. */
+"Summarizer.Footnote.Label.v144" = "Merk: Oppsummeringar kan innehalde feil.";
+
+/* The label displayed in the summary report when the summary was generated using by a third-party service. %@ refers to the name of the service/app (e.g Firefox). */
+"Summarizer.HostedBrand.Label.v142" = "Samanfatta av %@";
+
+/* The a11y label for the loading label on the summarize loading screen. */
+"Summarizer.Loading.Accessibility.Label.v145" = "Lastar samandrag";
+
+/* When the user uses the summarizing feature, this is the loading label that is shown while the summarization is being performed. */
+"Summarizer.Loading.Label.v142" = "Samanfattar…";
+
+/* The a11y label for the retry button in the summary view when the summarizer fails with an error that allows retrying to summarize the page. */
+"Summarizer.RetryButton.Accessibility.Label.v145" = "Prøv på nytt å oppsummere nettsida";
+
+/* The label for the error button that allows the user to retry summarizing the page. */
+"Summarizer.RetryButton.Label.v142" = "Prøv på nytt";
+
+/* The a11y label for the web page view that shows on top of the summary view. Tapping or dragging on the view will close the summary page. */
+"Summarizer.TabSnapshot.Accessibility.Label.v145" = "Dra eller trykk på nettsida for å late att samandraget";
+
+/* The label for the allow button on the Terms of Service alert. */
+"Summarizer.ToS.Alert.AllowButton.Label.v142" = "Tillat";
+
+/* The message for the Terms of Service alert that asks the user if they want to allow page summaries with Apple Intelligence. %@ is the app name (e.g Firefox). */
+"Summarizer.ToS.Alert.AppleMessage.Label.v142" = "%@ brukar Apple Intelligence for å samanfatte sider.";
+
+/* The label for the cancel button on the Terms of Service alert for the summarizer. */
+"Summarizer.ToS.Alert.CancelButton.Label.v142" = "Avbryt";
+
+/* The label for the continue button on the Terms of Service alert. */
+"Summarizer.ToS.Alert.ContinueButton.Label.v144" = "Hald fram";
+
+/* The message for the Terms of Service alert that asks the user if they want to allow page summaries with Firefox AI. %@ is the app name (e.g Firefox). */
+"Summarizer.ToS.Alert.FirefoxMessage.Label.v144" = "%@ brukar skybasert AI til å samanfatte sider, og returnerer desse samandraga til eininga di.";
+
+/* The label for the learn more link button on the Terms of Service alert for the summarizer. */
+"Summarizer.ToS.Alert.LearnMoreButton.Label.v142" = "Les meir";
+
+/* The title for the Terms of Service alert that asks the user if they want to allow page summaries. */
+"Summarizer.ToS.Alert.Title.Label.v142" = "Tillate sideoppsummering?";
+
+/* The label for the learn more link button on the Terms of Service alert for the summarizer. */
+"Summarizer.ToS.InfoLabel.LearnMoreButton.Label.v143" = "Korleis det fungerer";
+
+/* The a11y label for the allow button on the info panel when the user has not yet accepted the ToS. */
+"Summarizer.ToS.InfoPanel.AllowButton.Accessibility.Label.v145" = "Godta samtykke";
+
+/* The label for the accept button in the info panel in the summarizer when the user has not yet accepted the ToS. */
+"Summarizer.ToS.InfoPanel.ContinueButton.Label.v143" = "Hald fram";
+
+/* The message for the Terms of Service alert that asks the user if they want to continue to summarize the page. %@ is the app name (e.g Firefox). */
+"Summarizer.ToS.InfoPanel.Label.v143" = "Sjå hovudpunkta på få sekund med %@.";
+
+/* The title for the Terms of Service information panel that asks the user if they want to summarize this page. */
+"Summarizer.ToS.InfoPanel.Title.Label.v143" = "Samanfatte denne sida?";
+

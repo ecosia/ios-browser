@@ -6,12 +6,7 @@ import Foundation
 import Shared
 import Common
 import WebKit
-
-enum ReadabilityOperationResult {
-    case success(ReadabilityResult)
-    case error(NSError)
-    case timeout
-}
+import WebEngine
 
 class ReadabilityOperation: Operation, @unchecked Sendable {
     let profile: Profile
@@ -89,7 +84,6 @@ class ReadabilityOperation: Operation, @unchecked Sendable {
                 logger.log("Result was of type error",
                            level: .warning,
                            category: .library)
-                break
             }
         }
     }
@@ -98,7 +92,7 @@ class ReadabilityOperation: Operation, @unchecked Sendable {
 extension ReadabilityOperation: WKNavigationDelegate {
     func webView(
         _ webView: WKWebView,
-        didFail navigation: WKNavigation!,
+        didFail navigation: WKNavigation?,
         withError error: Error
     ) {
         result = ReadabilityOperationResult.error(error as NSError)
@@ -107,15 +101,15 @@ extension ReadabilityOperation: WKNavigationDelegate {
 
     func webView(
         _ webView: WKWebView,
-        didFailProvisionalNavigation navigation: WKNavigation!,
+        didFailProvisionalNavigation navigation: WKNavigation?,
         withError error: Error
     ) {
         result = ReadabilityOperationResult.error(error as NSError)
         semaphore.signal()
     }
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        webView.evaluateJavascriptInDefaultContentWorld("\(ReaderModeNamespace).checkReadability()")
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation?) {
+        webView.evaluateJavascriptInDefaultContentWorld("\(ReaderModeInfo.namespace.rawValue).checkReadability()")
     }
 }
 

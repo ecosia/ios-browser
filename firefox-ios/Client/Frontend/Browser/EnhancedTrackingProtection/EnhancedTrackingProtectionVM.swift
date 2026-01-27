@@ -3,8 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import Shared
-import Storage
 
 class EnhancedTrackingProtectionMenuVM {
     // MARK: - Variables
@@ -68,6 +66,7 @@ class EnhancedTrackingProtectionMenuVM {
                                                    connectionSecure: connectionSecure)
     }
 
+    @MainActor
     func toggleSiteSafelistStatus() {
         TelemetryWrapper.recordEvent(category: .action, method: .add, object: .trackingProtectionSafelist)
         ContentBlocker.shared.safelist(enable: contentBlockerStatus != .safelisted, url: url) { [weak self] in

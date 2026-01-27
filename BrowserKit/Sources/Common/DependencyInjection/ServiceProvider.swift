@@ -15,9 +15,10 @@ import Dip
 ///
 /// These are minimum requirements. Container creation varies based on the framework
 /// used - that detail can be kept out of here. However, every service provider is expected
-/// to resolve services. 
+/// to resolve services.
 public protocol ServiceProvider {
     func resolve<T>() -> T
+    func resolve<T>(_ type: T.Type) -> T
     func register<T>(service: T)
     func bootstrap()
     func reset()

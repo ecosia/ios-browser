@@ -4,19 +4,19 @@
 
 import Common
 import Redux
-import ToolbarKit
 
+@MainActor
 final class SearchEngineSelectionMiddleware {
     private let profile: Profile
     private let logger: Logger
-    private let searchEnginesManager: SearchEnginesManager
+    private let searchEnginesManager: SearchEnginesManagerProvider
 
     init(profile: Profile = AppContainer.shared.resolve(),
-         searchEnginesManager: SearchEnginesManager? = nil,
+         searchEnginesManager: SearchEnginesManagerProvider = AppContainer.shared.resolve(SearchEnginesManager.self),
          logger: Logger = DefaultLogger.shared) {
         self.profile = profile
         self.logger = logger
-        self.searchEnginesManager = searchEnginesManager ?? SearchEnginesManager(prefs: profile.prefs, files: profile.files)
+        self.searchEnginesManager = searchEnginesManager
     }
 
     lazy var searchEngineSelectionProvider: Middleware<AppState> = { [self] state, action in
@@ -24,15 +24,22 @@ final class SearchEngineSelectionMiddleware {
 
         switch action.actionType {
         case SearchEngineSelectionActionType.viewDidLoad:
-            guard let searchEngines = searchEnginesManager.orderedEngines, !searchEngines.isEmpty else {
+            let searchEngines = searchEnginesManager.orderedEngines
+
+            guard !searchEngines.isEmpty else {
                 // The SearchEngineManager should have loaded these by now, but if not, attempt to fetch the search engines
-                self.searchEnginesManager.getOrderedEngines { [weak self] searchEngines in
+                self.searchEnginesManager.getOrderedEngines { [weak self] preferences, searchEngines in
                     self?.notifyDidLoad(windowUUID: action.windowUUID, searchEngines: searchEngines)
                 }
                 return
             }
 
             notifyDidLoad(windowUUID: action.windowUUID, searchEngines: searchEngines)
+
+        case SearchEngineSelectionActionType.didTapSearchEngine:
+            // Trigger editing in the toolbar
+            let action = ToolbarAction(windowUUID: action.windowUUID, actionType: ToolbarActionType.didStartEditingUrl)
+            store.dispatch(action)
 
         default:
             break
@@ -43,7 +50,7 @@ final class SearchEngineSelectionMiddleware {
         let action = SearchEngineSelectionAction(
             windowUUID: windowUUID,
             actionType: SearchEngineSelectionActionType.didLoadSearchEngines,
-            searchEngines: searchEngines
+            searchEngines: searchEngines.map({ $0.generateModel() })
         )
         store.dispatch(action)
     }

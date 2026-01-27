@@ -5,6 +5,7 @@
 import Common
 import UIKit
 import Shared
+import Storage
 
 import class MozillaAppServices.FxAccountManager
 import class MozillaAppServices.FxAConfig
@@ -16,14 +17,6 @@ import struct MozillaAppServices.Profile
 
 let PendingAccountDisconnectedKey = "PendingAccountDisconnect"
 
-// Used to ignore unknown classes when de-archiving
-final class Unknown: NSObject, NSCoding {
-    func encode(with coder: NSCoder) {}
-    init(coder aDecoder: NSCoder) {
-        super.init()
-    }
-}
-
 // A convenience to allow other callers to pass in Nimbus/Flaggable features
 // to RustFirefoxAccounts
 public struct RustFxAFeatures: OptionSet {
@@ -34,12 +27,13 @@ public struct RustFxAFeatures: OptionSet {
     }
 }
 
+// TODO: FXIOS-13290 Make RustFirefoxAccounts actually sendable
 // TODO: renamed FirefoxAccounts.swift once the old code is removed fully.
 /**
  A singleton that wraps the Rust FxA library.
  The singleton design is poor for testability through dependency injection and may need to be changed in future.
  */
-open class RustFirefoxAccounts {
+public final class RustFirefoxAccounts: @unchecked Sendable {
     public static let prefKeyLastDeviceName = "prefKeyLastDeviceName"
     private static let clientID = "1b1a3e44c54fbb58"
     public static let redirectURL = "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
@@ -47,9 +41,11 @@ open class RustFirefoxAccounts {
     // https://searchfox.org/mozilla-central/rev/887d4b5da89a11920ed0fd96b7b7f066927a67db/services/fxaccounts/FxAccountsCommon.js#88
     public static let pushScope = "chrome://fxa-device-update"
     public static let shared = RustFirefoxAccounts()
+
     public var accountManager: FxAccountManager?
     public var avatar: Avatar?
-    fileprivate static var prefs: Prefs?
+    // TODO: FXIOS-12596 There is no need for this to be static. This should be an easier fix
+    nonisolated(unsafe) private static var prefs: Prefs?
     public let pushNotifications = PushNotificationSetup()
     private let logger: Logger
 
@@ -80,23 +76,17 @@ open class RustFirefoxAccounts {
      hook into notifications like `.accountProfileUpdate` to refresh once initialize() is complete.
      Or they can wait on the accountManager deferred to fill.
      */
+    @MainActor
     public static func startup(
         prefs: Prefs,
-        features: RustFxAFeatures = RustFxAFeatures(),
         logger: Logger = DefaultLogger.shared,
         completion: @escaping (FxAccountManager) -> Void
     ) {
-        assert(Thread.isMainThread)
-        if !Thread.isMainThread {
-            logger.log("Startup of RustFirefoxAccounts is happening OFF the main thread!",
-                       level: .warning,
-                       category: .sync)
-        }
         RustFirefoxAccounts.prefs = prefs
         if let accManager = RustFirefoxAccounts.shared.accountManager {
             completion(accManager)
         }
-        let manager = RustFirefoxAccounts.shared.createAccountManager(features: features)
+        let manager = RustFirefoxAccounts.shared.createAccountManager()
         manager.initialize { result in
             assert(Thread.isMainThread)
             if !Thread.isMainThread {
@@ -117,6 +107,7 @@ open class RustFirefoxAccounts {
     }
 
     // Reconfiguring a completed FxA init
+    @MainActor
     public static func reconfig(prefs: Prefs, completion: @escaping (FxAccountManager) -> Void) {
         // reset the accountManager and go through the startup process again with new prefs
         RustFirefoxAccounts.shared.accountManager = nil
@@ -129,7 +120,8 @@ open class RustFirefoxAccounts {
         return RustFirefoxAccounts.prefs?.boolForKey(PrefsKeys.KeyEnableChinaSyncService) ?? AppInfo.isChinaEdition
     }
 
-    private func createAccountManager(features: RustFxAFeatures) -> FxAccountManager {
+    @MainActor
+    private func createAccountManager() -> FxAccountManager {
         let prefs = RustFirefoxAccounts.prefs
         if prefs == nil {
             logger.log("prefs is unexpectedly nil", level: .warning, category: .sync)
@@ -181,9 +173,10 @@ open class RustFirefoxAccounts {
             deviceType: type,
             capabilities: capabilities
         )
-        let accessGroupPrefix = Bundle.main.object(forInfoDictionaryKey: "MozDevelopmentTeam") as! String
+        guard let accessGroupPrefix = Bundle.main.object(forInfoDictionaryKey: "MozDevelopmentTeam") as? String else {
+            fatalError("Missing or invalid 'MozDevelopmentTeam' key in Info.plist")
+        }
         let accessGroupIdentifier = AppInfo.keychainAccessGroupWithPrefix(accessGroupPrefix)
-
         return FxAccountManager(
             config: config,
             deviceConfig: deviceConfig,
@@ -202,7 +195,7 @@ open class RustFirefoxAccounts {
     private func update() {
         guard let accountManager = RustFirefoxAccounts.shared.accountManager else { return}
         let avatarUrl = accountManager.accountProfile()?.avatar
-        if let str = avatarUrl, let url = URL(string: str, invalidCharacters: false) {
+        if let str = avatarUrl, let url = URL(string: str) {
             avatar = Avatar(url: url)
         }
 
@@ -255,12 +248,6 @@ open class RustFirefoxAccounts {
         prefs?.removeObjectForKey(prefKeyCachedUserProfile)
         prefs?.removeObjectForKey(PendingAccountDisconnectedKey)
         cachedUserProfile = nil
-    }
-
-    public func hasAccount(completion: @escaping (Bool) -> Void) {
-        if let manager = RustFirefoxAccounts.shared.accountManager {
-            completion(manager.hasAccount())
-        }
     }
 
     public func hasAccount() -> Bool {

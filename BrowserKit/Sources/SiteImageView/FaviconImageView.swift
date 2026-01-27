@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Common
 
 /// FaviconImageView supports the favicon image layout.
 /// By setting the view model, the image will be updated for you asynchronously
@@ -11,7 +10,8 @@ import Common
 /// - Favicon
 ///     - Can be set through `setFavicon(_ viewModel: SiteImageViewFaviconModel)`
 ///     - No theming calls needed
-public class FaviconImageView: UIImageView, SiteImageView {
+@MainActor
+public final class FaviconImageView: UIImageView, SiteImageView {
     // MARK: - Properties
     var uniqueID: UUID?
     var imageFetcher: SiteImageHandler
@@ -24,6 +24,10 @@ public class FaviconImageView: UIImageView, SiteImageView {
         self.imageFetcher = DefaultSiteImageHandler()
         super.init(frame: frame)
         setupUI()
+    }
+
+    public convenience init(completionHandler: @escaping () -> Void) {
+        self.init(frame: .zero, imageFetcher: DefaultSiteImageHandler(), completionHandler: completionHandler)
     }
 
     // Internal init used in unit tests only
@@ -60,14 +64,9 @@ public class FaviconImageView: UIImageView, SiteImageView {
     // MARK: - SiteImageView
 
     func setURL(_ viewModel: FaviconImageViewModel) {
-        /* Ecosia: Make sure url is set even if cell is re-used with same url (was causing MOB-3212)
         guard let siteURLString = viewModel.siteURLString,
-              let siteURL = URL(string: siteURLString, invalidCharacters: false),
+              let siteURL = URL(string: siteURLString),
               canMakeRequest(with: siteURLString)
-        else { return }
-         */
-        guard let siteURLString = viewModel.siteURLString,
-              let siteURL = URL(string: siteURLString, invalidCharacters: false)
         else { return }
 
         // If a new request is being made on an existing image it is likely a cell or view being reused.

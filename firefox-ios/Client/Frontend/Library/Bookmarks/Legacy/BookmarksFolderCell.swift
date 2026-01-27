@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Storage
 import Common
 
 import class MozillaAppServices.BookmarkFolderData
@@ -11,13 +10,8 @@ import class MozillaAppServices.BookmarkItemData
 
 /// Used to setup bookmarks and folder cell in Bookmarks panel, getting their viewModel
 protocol BookmarksFolderCell {
+    @MainActor
     func getViewModel() -> OneLineTableViewCellViewModel
-
-    func didSelect(profile: Profile,
-                   windowUUID: WindowUUID,
-                   libraryPanelDelegate: LibraryPanelDelegate?,
-                   navigationController: UINavigationController?,
-                   logger: Logger)
 }
 
 extension BookmarkFolderData: BookmarksFolderCell {
@@ -28,29 +22,11 @@ extension BookmarkFolderData: BookmarksFolderCell {
         } else {
             title = self.title
         }
-
         return OneLineTableViewCellViewModel(title: title,
                                              leftImageView: leftImageView,
-                                             accessoryView: nil,
-                                             accessoryType: .disclosureIndicator)
-    }
-
-    func didSelect(profile: Profile,
-                   windowUUID: WindowUUID,
-                   libraryPanelDelegate: LibraryPanelDelegate?,
-                   navigationController: UINavigationController?,
-                   logger: Logger) {
-        let viewModel = BookmarksPanelViewModel(profile: profile,
-                                                bookmarksHandler: profile.places,
-                                                bookmarkFolderGUID: guid)
-        let nextController = LegacyBookmarksPanel(viewModel: viewModel, windowUUID: windowUUID)
-        if isRoot, let localizedString = LocalizedRootBookmarkFolderStrings[guid] {
-            nextController.title = localizedString
-        } else {
-            nextController.title = title
-        }
-        nextController.libraryPanelDelegate = libraryPanelDelegate
-        navigationController?.pushViewController(nextController, animated: true)
+                                             accessoryView: UIImageView(image: chevronImage),
+                                             accessoryType: .none,
+                                             editingAccessoryView: UIImageView(image: chevronImage))
     }
 }
 
@@ -62,32 +38,11 @@ extension BookmarkItemData: BookmarksFolderCell {
         } else {
             title = self.title
         }
-
         return OneLineTableViewCellViewModel(title: title,
                                              leftImageView: nil,
-                                             accessoryView: nil,
-                                             accessoryType: .disclosureIndicator)
-    }
-
-    func didSelect(profile: Profile,
-                   windowUUID: WindowUUID,
-                   libraryPanelDelegate: LibraryPanelDelegate?,
-                   navigationController: UINavigationController?,
-                   logger: Logger) {
-        // If we can't get a real URL out of what should be a URL, we let the user's
-        // default search engine give it a shot.
-        // Typically we'll be in this state if the user has tapped a bookmarked search template
-        // (e.g., "http://foo.com/bar/?query=%s"), and this will get them the same behavior as if
-        // they'd copied and pasted into the URL bar.
-        // See BrowserViewController.urlBar:didSubmitText:.
-        guard let url = URIFixup.getURL(url) ?? profile.searchEnginesManager.defaultEngine?.searchURLForQuery(url) else {
-            logger.log("Invalid URL, and couldn't generate a search URL for it.",
-                       level: .warning,
-                       category: .library)
-            return
-        }
-        libraryPanelDelegate?.libraryPanel(didSelectURL: url, visitType: .bookmark)
-        TelemetryWrapper.recordEvent(category: .action, method: .open, object: .bookmark, value: .bookmarksPanel)
+                                             accessoryView: UIImageView(image: chevronImage),
+                                             accessoryType: .none,
+                                             editingAccessoryView: UIImageView(image: chevronImage))
     }
 }
 
@@ -98,6 +53,8 @@ extension FxBookmarkNode {
     }
 
     var chevronImage: UIImage? {
-        return UIImage(named: StandardImageIdentifiers.Large.chevronRight)?.withRenderingMode(.alwaysTemplate)
+        return UIImage(named: StandardImageIdentifiers.Large.chevronRight)?
+            .withRenderingMode(.alwaysTemplate)
+            .imageFlippedForRightToLeftLayoutDirection()
     }
 }

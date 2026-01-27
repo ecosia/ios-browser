@@ -5,10 +5,8 @@
 import Common
 import UIKit
 
-// Ecosia: Prefer `EcosiaThemedSwitch` instead!
-
 /// The themed `UISwitch` used in the ``PaddedSwitch``
-public class ThemedSwitch: UISwitch, ThemeApplicable {
+public final class ThemedSwitch: UISwitch, ThemeApplicable {
     private var enabledOnColor: UIColor?
     private var disabledOnColor: UIColor?
     private var enabledOffColor: UIColor?

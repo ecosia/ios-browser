@@ -5,12 +5,9 @@
 import SwiftUI
 import WidgetKit
 import Combine
-// Ecosia: Additional imports for Ecosia framework and suggested sites updates
-import Ecosia
-import Storage
 
 struct TopSitesWidget: Widget {
-    private let kind: String = "Top Sites"
+    private let kind = "Top Sites"
 
      var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TopSitesProvider()) { entry in
@@ -25,7 +22,7 @@ struct TopSitesWidget: Widget {
 
 struct TopSitesView: View {
     private struct UX {
-        static let widgetBackgroundColor = Color(red: 0.11, green: 0.11, blue: 0.13)
+        static let widgetBackgroundColor = Color("backgroundColor")
         static let emptySquareFillColor = Color(red: 0.85, green: 0.85, blue: 0.85, opacity: 0.3)
         static let itemCornerRadius: CGFloat = 5.0
         static let iconScale: CGFloat = 1.0
@@ -50,14 +47,8 @@ struct TopSitesView: View {
                             topSitesItem(site, iconSize: itemSize)
                                 .frame(height: rowSize)
                         } else {
-                            /* Ecosia: Update rectangle
                             Rectangle()
-                             */
-                            RoundedRectangle(cornerRadius: UX.itemCornerRadius)
-                                /* Ecosia: Update color
                                 .fill(Color.clear)
-                                 */
-                                .fill(Color.ecosiaBundledColorWithName("TertiaryBackground"))
                                 .frame(height: rowSize)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: UX.itemCornerRadius)
@@ -71,10 +62,7 @@ struct TopSitesView: View {
             .padding(.all)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        /* Ecosia: Update color
         .widgetBackground(UX.widgetBackgroundColor)
-         */
-        .widgetBackground(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 
     @ViewBuilder
@@ -111,6 +99,6 @@ struct TopSitesView: View {
 
     private func linkToContainingApp(_ urlSuffix: String = "", query: String) -> URL {
         let urlString = "\(scheme)://\(query)\(urlSuffix)"
-        return URL(string: urlString, invalidCharacters: false)!
+        return URL(string: urlString)!
     }
 }

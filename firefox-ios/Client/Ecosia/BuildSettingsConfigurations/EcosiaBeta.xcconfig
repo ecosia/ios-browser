@@ -4,8 +4,8 @@
 
 // This is a version of the Ecosia Beta config for the staging environment.
 
-#include "Common.xcconfig"
-#include "Release.xcconfig"
+#include "../../Configuration/Common.xcconfig"
+#include "../../Configuration/Release.xcconfig"
 #include "Staging.xcconfig"
 
 MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta

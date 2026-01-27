@@ -95,7 +95,7 @@ extension SearchProviderModel {
     }
 }
 
-class AdsTelemetryHelper {
+final class AdsTelemetryHelper {
     var getURL: (() -> URL?)!
     var adsTelemetryUrlList = [String]() {
         didSet {
@@ -104,7 +104,7 @@ class AdsTelemetryHelper {
     }
     var adsTelemetryRedirectUrlList = [URL]()
     var startingSearchUrlWithAds: URL?
-    var adsProviderName: String = ""
+    var adsProviderName = ""
 
     func trackAds(message: WKScriptMessage) {
         guard

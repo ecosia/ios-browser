@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Down",
+        "repositoryURL": "https://github.com/johnxnguyen/Down.git",
+        "state": {
+          "branch": null,
+          "revision": "f34b166be1f1db4aa8f573067e901d72f2a6be57",
+          "version": "0.11.0"
+        }
+      },
+      {
         "package": "Fuzi",
         "repositoryURL": "https://github.com/nbhasin2/Fuzi.git",
         "state": {
@@ -33,8 +42,8 @@
         "repositoryURL": "https://github.com/mozilla/glean-swift",
         "state": {
           "branch": null,
-          "revision": "51794f8b74c55ebde6d1502b641eacc19176e139",
-          "version": "61.2.0"
+          "revision": "8470fb7d0ff00d1d0f845ec445fbc70b4c6cbab3",
+          "version": "66.3.0"
         }
       },
       {
@@ -42,17 +51,8 @@
         "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "2ef543ee21d63734e1c004ad6c870255e8716c50",
-          "version": "7.12.0"
-        }
-      },
-      {
-        "package": "MozillaRustComponentsSwift",
-        "repositoryURL": "https://github.com/mozilla/rust-components-swift",
-        "state": {
-          "branch": null,
-          "revision": "277bceafc423d793f5a1c1a50f76d67fb1feec4e",
-          "version": "133.0.0"
+          "revision": "3db26ab625d194c38e68c1a40e43d1bc12743fe0",
+          "version": "8.2.0"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/swhitty/SwiftDraw",
         "state": {
           "branch": null,
-          "revision": "a5c680f07b33f4cc9a451491b417b8119de23c6e",
-          "version": "0.17.0"
+          "revision": "2cfd97c753feafe23c767ad3cb4daaf5c5415272",
+          "version": "0.18.3"
         }
       },
       {

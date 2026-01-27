@@ -23,6 +23,7 @@ public final class NavigationHeaderView: UIView {
         label.textAlignment = .center
         label.font = FXFontStyles.Regular.headline.scaledFont()
         label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingTail
         label.accessibilityTraits.insert(.header)
         label.isAccessibilityElement = false
     }
@@ -35,12 +36,16 @@ public final class NavigationHeaderView: UIView {
         button.setImage(UIImage(imageLiteralResourceName: StandardImageIdentifiers.Large.chevronLeft)
             .withRenderingMode(.alwaysTemplate),
                         for: .normal)
+        button.adjustsImageSizeForAccessibilityContentSizeCategory = true
+        button.imageView?.contentMode = .scaleAspectFit
         button.titleLabel?.adjustsFontSizeToFitWidth = true
         button.addTarget(self, action: #selector(self.backButtonTapped), for: .touchUpInside)
+        button.contentHorizontalAlignment = .leading
     }
 
     private let horizontalLine: UIView = .build()
 
+    private var backButtonText = ""
     private var viewConstraints: [NSLayoutConstraint] = []
 
     override init(frame: CGRect) {
@@ -62,26 +67,18 @@ public final class NavigationHeaderView: UIView {
         closeButton.removeConstraints(closeButton.constraints)
         viewConstraints.removeAll()
         viewConstraints.append(contentsOf: [
-            backButton.leadingAnchor.constraint(
-                equalTo: leadingAnchor,
-                constant: UX.imageMargins
-            ),
+            backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.imageMargins),
             backButton.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            titleLabel.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: UX.baseDistance
-            ),
-            titleLabel.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
-                constant: -UX.baseDistance
-            ),
+            titleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor,
+                                                constant: UX.horizontalMargin),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: closeButton.leadingAnchor,
+                                                 constant: -UX.horizontalMargin),
             titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: UX.baseDistance),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.baseDistance),
 
-            closeButton.trailingAnchor.constraint(
-                equalTo: trailingAnchor,
-                constant: -UX.horizontalMargin
-            ),
+            closeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.horizontalMargin),
             closeButton.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             horizontalLine.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -114,12 +111,15 @@ public final class NavigationHeaderView: UIView {
 
     public func setViews(with title: String, and backButtonText: String) {
         titleLabel.text = title
+        self.backButtonText = backButtonText
         backButton.setTitle(backButtonText, for: .normal)
     }
 
     public func adjustLayout() {
+        let isAccessibilityCategory = UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory
         backButton.titleLabel?.font = FXFontStyles.Regular.body.scaledFont()
-        updateLayout(isAccessibilityCategory: UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory)
+        backButton.setTitle(isAccessibilityCategory ? "" : backButtonText, for: .normal)
+        updateLayout(isAccessibilityCategory: isAccessibilityCategory)
     }
 
     public func updateHeaderLineView(isHidden: Bool) {
@@ -145,13 +145,11 @@ public final class NavigationHeaderView: UIView {
         let buttonImage = UIImage(named: StandardImageIdentifiers.Medium.cross)?
             .withTintColor(theme.colors.iconSecondary)
         closeButton.setImage(buttonImage, for: .normal)
-        /* Ecosia: Update close button background color
         closeButton.backgroundColor = theme.colors.layer2
-         */
-        closeButton.backgroundColor = theme.colors.ecosia.buttonBackgroundSecondary
         backButton.tintColor = theme.colors.iconAccent
         backButton.setTitleColor(theme.colors.textAccent, for: .normal)
         horizontalLine.backgroundColor = theme.colors.borderPrimary
         titleLabel.textColor = theme.colors.textPrimary
+        backgroundColor = theme.colors.layer3
     }
 }

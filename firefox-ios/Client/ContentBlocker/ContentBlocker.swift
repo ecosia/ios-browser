@@ -111,6 +111,7 @@ struct NoImageModeDefaults {
     static let ScriptName = "images"
 }
 
+@MainActor
 class ContentBlocker {
     var safelistedDomains = SafelistedDomains()
     let ruleStore = WKContentRuleListStore.default()
@@ -230,11 +231,8 @@ class ContentBlocker {
             tab.currentWebView()?.configuration.userContentController.remove(rule)
         }
 
-        // Async required here to ensure remove() call is processed.
-        DispatchQueue.main.async { [weak tab] in
-            tab?.currentWebView()?
-                .evaluateJavascriptInDefaultContentWorld("window.__firefox__.NoImageMode.setEnabled(\(enabled))")
-        }
+        tab.currentWebView()?
+            .evaluateJavascriptInDefaultContentWorld("window.__firefox__.NoImageMode.setEnabled(\(enabled))")
     }
 }
 
@@ -244,19 +242,33 @@ class ContentBlocker {
 // no longer match. Finally, any JSON rule files that aren't in the ruleStore need to be compiled and stored in the
 // ruleStore.
 extension ContentBlocker {
-    private func loadJsonFromBundle(forResource file: String, completion: @escaping (_ jsonString: String) -> Void) {
+    private func loadJsonFromBundle(
+        forResource file: String,
+        completion: @escaping @Sendable (
+            _ jsonString: String
+        ) -> Void
+    ) {
         let logger = self.logger
         DispatchQueue.global().async {
-            var source = ""
+            let source: String
             do {
                 let jsonSuffix = ".json"
                 let suffixLength = jsonSuffix.count
                 // Trim off .json suffix if needed, we only want the raw file name
                 let fileTrimmed = file.hasSuffix(jsonSuffix) ? String(file.dropLast(suffixLength)) : file
-                if let path = Bundle.main.path(forResource: fileTrimmed, ofType: "json") {
-                    source = try String(contentsOfFile: path, encoding: .utf8)
+
+                if fileTrimmed.hasPrefix(BlocklistFileName.customBlocklistJSONFilePrefix) {
+                    if let path = Bundle.main.path(forResource: fileTrimmed, ofType: "json") {
+                        source = try String(contentsOfFile: path, encoding: .utf8)
+                    } else {
+                        source = ""
+                    }
+                } else {
+                    let json = try RemoteDataType.contentBlockingLists.loadLocalSettingsFileAsJSON(fileName: fileTrimmed)
+                    source = String(data: json, encoding: .utf8) ?? ""
                 }
             } catch let error {
+                source = ""
                 logger.log("Error loading content-blocking JSON: \(error)", level: .warning, category: .adblock)
                 assertionFailure("Error loading JSON from bundle.")
             }
@@ -282,17 +294,13 @@ extension ContentBlocker {
                 }
             }
             logger.log("Removed \(available.count) lists from rule store.", level: .info, category: .adblock)
-            dispatchGroup.notify(queue: DispatchQueue.main) {
+            dispatchGroup.notify(queue: .main) {
                 completion()
             }
         }
     }
 
-    private func calculateHash(forFileAtPath path: String) -> String? {
-        guard let fileData = try? Data(contentsOf: URL(fileURLWithPath: path)) else {
-            return nil
-        }
-
+    private func calculateHash(for fileData: Data) -> String? {
         let hash = SHA256.hash(data: fileData)
         return hash.compactMap { String(format: "%02x", $0) }.joined()
     }
@@ -302,9 +310,10 @@ extension ContentBlocker {
         let defaults = UserDefaults.standard
         var hasChanged = false
 
+        let lists = RemoteDataType.contentBlockingLists
         for list in blocklists {
-            guard let path = Bundle.main.path(forResource: list, ofType: "json"),
-                  let newHash = calculateHash(forFileAtPath: path) else { continue }
+            guard let data = try? lists.loadLocalSettingsFileAsJSON(fileName: list) else { continue }
+            guard let newHash = calculateHash(for: data) else { continue }
 
             let oldHash = defaults.string(forKey: list)
             if oldHash != newHash {
@@ -378,22 +387,24 @@ extension ContentBlocker {
 
                 self?.logger.log("Will compile list: \(filename)", level: .info, category: .adblock)
                 self?.loadJsonFromBundle(forResource: filename) { jsonString in
-                    var str = jsonString
+                    ensureMainThread {
+                        var str = jsonString
 
-                    // Here we find the closing array bracket in the JSON string
-                    // and append our safelist as a rule to the end of the JSON.
-                    guard let self, let range = str.range(of: "]", options: String.CompareOptions.backwards) else {
-                        dispatchGroup.leave()
-                        return
-                    }
-                    str = str.replacingCharacters(in: range, with: self.safelistAsJSON() + "]")
-                    self.ruleStore?.compileContentRuleList(
-                        forIdentifier: filename,
-                        encodedContentRuleList: str
-                    ) { rule, error in
-                        listsCompiledCount += 1
-                        errorCount += (error == nil ? 0 : 1)
-                        self.compileContentRuleListCompletion(dispatchGroup: dispatchGroup, rule: rule, error: error)
+                        // Here we find the closing array bracket in the JSON string
+                        // and append our safelist as a rule to the end of the JSON.
+                        guard let self, let range = str.range(of: "]", options: String.CompareOptions.backwards) else {
+                            dispatchGroup.leave()
+                            return
+                        }
+                        str = str.replacingCharacters(in: range, with: self.safelistAsJSON() + "]")
+                        self.ruleStore?.compileContentRuleList(
+                            forIdentifier: filename,
+                            encodedContentRuleList: str
+                        ) { rule, error in
+                            listsCompiledCount += 1
+                            errorCount += (error == nil ? 0 : 1)
+                            self.compileContentRuleListCompletion(dispatchGroup: dispatchGroup, rule: rule, error: error)
+                        }
                     }
                 }
             }

@@ -4,9 +4,9 @@
 
 import Common
 import UIKit
-import Shared
 
 class WallpaperSettingsViewController: WallpaperBaseViewController, Themeable {
+    @MainActor
     private struct UX {
         static let cardWidth: CGFloat = UIDevice().isTinyFormFactor ? 88 : 97
         static let cardHeight: CGFloat = UIDevice().isTinyFormFactor ? 80 : 88
@@ -18,7 +18,7 @@ class WallpaperSettingsViewController: WallpaperBaseViewController, Themeable {
     private var viewModel: WallpaperSettingsViewModel
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     private var logger: Logger
     weak var settingsDelegate: SettingsDelegate?
     let windowUUID: WindowUUID
@@ -67,10 +67,14 @@ class WallpaperSettingsViewController: WallpaperBaseViewController, Themeable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        startObservingNotifications(
+            withNotificationCenter: notificationCenter,
+            forObserver: self,
+            observing: [UIContentSizeCategory.didChangeNotification]
+        )
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
-        setupNotifications(forObserver: self,
-                           observing: [UIContentSizeCategory.didChangeNotification])
-        listenForThemeChange(view)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -234,9 +238,11 @@ private extension WallpaperSettingsViewController {
                         delay: Toast.UX.toastDelayBefore,
                         duration: Toast.UX.toastDismissAfter) { toast in
             [
-                toast.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-                toast.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-                toast.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+                toast.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor,
+                                               constant: Toast.UX.toastSidePadding),
+                toast.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor,
+                                                constant: -Toast.UX.toastSidePadding),
+                toast.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
             ]
         }
     }
@@ -246,26 +252,21 @@ private extension WallpaperSettingsViewController {
         viewModel.selectHomepageTab()
     }
 
-    func preferredContentSizeChanged(_ notification: Notification) {
-        // Reload the complete collection view as the section headers are not adjusting their size correctly otherwise
-        collectionView.reloadData()
-    }
-
     func downloadAndSetWallpaper(at indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? WallpaperCollectionViewCell
             else { return }
 
         cell.showDownloading(true)
 
-        viewModel.downloadAndSetWallpaper(at: indexPath) { [weak self] result in
-            ensureMainThread {
+        viewModel.downloadAndSetWallpaper(at: indexPath) { result in
+            ensureMainThread { [weak self] in
                 switch result {
                 case .success:
                     self?.showToast()
                 case .failure(let error):
                     self?.logger.log("Could not download and set wallpaper: \(error.localizedDescription)",
                                      level: .warning,
-                                     category: .legacyHomepage)
+                                     category: .homepage)
                     self?.showError(error) { _ in
                         self?.downloadAndSetWallpaper(at: indexPath)
                     }
@@ -281,7 +282,10 @@ extension WallpaperSettingsViewController: Notifiable {
     func handleNotifications(_ notification: Notification) {
         switch notification.name {
         case UIContentSizeCategory.didChangeNotification:
-            preferredContentSizeChanged(notification)
+            ensureMainThread {
+                // Reload the entire collection view as the section headers are not adjusting their size correctly otherwise
+                self.collectionView.reloadData()
+            }
         default: break
         }
     }

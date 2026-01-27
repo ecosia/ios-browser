@@ -3,14 +3,14 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import Shared
-import Storage
 import SwiftUI
 import UIKit
 
 import struct MozillaAppServices.CreditCard
 
-class CreditCardTableViewController: UIViewController, Themeable {
+class CreditCardTableViewController: UIViewController,
+                                     Themeable,
+                                     Notifiable {
     // MARK: UX constants
     struct UX {
         static let toggleSwitchContainerHeight: CGFloat = 40
@@ -22,11 +22,12 @@ class CreditCardTableViewController: UIViewController, Themeable {
         static let savedCardsTitleLabelLeading: CGFloat = 16
         static let savedCardsTitleLabelHeight: CGFloat = 13
         static let tableViewTopAnchor: CGFloat = 8
+        static let estimatedRowHeight: CGFloat = 86
     }
 
     var viewModel: CreditCardTableViewModel
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol
     var didSelectCardAtIndex: ((_ creditCard: CreditCard) -> Void)?
     var lastSelectedIndex: IndexPath?
@@ -36,7 +37,11 @@ class CreditCardTableViewController: UIViewController, Themeable {
     // MARK: View
 
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
+        let tableView: UITableView = if #available(iOS 26.0, *) {
+            UITableView(frame: .zero, style: .insetGrouped)
+        } else {
+            UITableView(frame: .zero, style: .grouped)
+        }
         tableView.register(HostingTableViewCell<CreditCardItemRow>.self,
                            forCellReuseIdentifier: HostingTableViewCell<CreditCardItemRow>.cellIdentifier)
         tableView.register(HostingTableViewCell<CreditCardAutofillToggle>.self,
@@ -50,7 +55,7 @@ class CreditCardTableViewController: UIViewController, Themeable {
             origin: .zero,
             size: CGSize(width: 0, height: CGFloat.leastNormalMagnitude)))
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 86
+        tableView.estimatedRowHeight = UX.estimatedRowHeight
         tableView.separatorStyle = .none
         tableView.separatorColor = .clear
         tableView.dataSource = self
@@ -78,14 +83,15 @@ class CreditCardTableViewController: UIViewController, Themeable {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewSetup()
-        listenForThemeChange(view)
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didFinishAnnouncement),
-            name: UIAccessibility.announcementDidFinishNotification,
-            object: nil)
+        startObservingNotifications(
+            withNotificationCenter: NotificationCenter.default,
+            forObserver: self,
+            observing: [UIAccessibility.announcementDidFinishNotification]
+        )
     }
 
     private func viewSetup() {
@@ -115,12 +121,10 @@ class CreditCardTableViewController: UIViewController, Themeable {
         tableView.reloadData()
     }
 
-    deinit {
-        notificationCenter.removeObserver(self)
-    }
+    // MARK: Notifiable
+    func handleNotifications(_ notification: Notification) {
+        guard notification.name == UIAccessibility.announcementDidFinishNotification else { return }
 
-    @objc
-    func didFinishAnnouncement(notification: Notification) {
         if let userInfo = notification.userInfo,
            let announcementText =  userInfo[UIAccessibility.announcementStringValueUserInfoKey] as? String {
             let saveSuccessMessage: String = .CreditCard.SnackBar.SavedCardLabel
@@ -129,8 +133,11 @@ class CreditCardTableViewController: UIViewController, Themeable {
             if announcementText == saveSuccessMessage
                 || announcementText == updateSuccessMessage
                 || announcementText == removeCardMessage {
-                if let lastIndex = lastSelectedIndex, let lastSelectedCell = tableView.cellForRow(at: lastIndex) {
-                    UIAccessibility.post(notification: .layoutChanged, argument: lastSelectedCell)
+                ensureMainThread {
+                    if let lastIndex = self.lastSelectedIndex,
+                       let lastSelectedCell = self.tableView.cellForRow(at: lastIndex) {
+                        UIAccessibility.post(notification: .layoutChanged, argument: lastSelectedCell)
+                    }
                 }
             }
         }

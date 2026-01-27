@@ -5,22 +5,24 @@
 import XCTest
 @testable import WebEngine
 
+@MainActor
+@available(iOS 16.0, *)
 final class MetadataFetcherHelperTests: XCTestCase {
     var metadataDelegate: MockMetadataFetcherDelegate!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         metadataDelegate = MockMetadataFetcherDelegate()
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         metadataDelegate = nil
+        try await super.tearDown()
     }
 
-    func testFetchFromSessionGivenNotWebpageURLThenPageMetadataNil() {
+    func testFetchFromSessionGivenNotWebpageURLThenPageMetadataNil() async {
         let subject = createSubject()
-        let session = MockWKEngineSession()
+        let session = await MockWKEngineSession()
         let url = URL(string: "blob:example.com")!
 
         subject.fetch(fromSession: session, url: url)
@@ -28,9 +30,9 @@ final class MetadataFetcherHelperTests: XCTestCase {
         XCTAssertNil(session.sessionData.pageMetadata)
     }
 
-    func testFetchFromSessionGivenInternalURLThenPageMetadataNil() {
+    func testFetchFromSessionGivenInternalURLThenPageMetadataNil() async {
         let subject = createSubject()
-        let session = MockWKEngineSession()
+        let session = await MockWKEngineSession()
         let url = URL(string: "http://localhost:1234/test-fixture/")!
 
         subject.fetch(fromSession: session, url: url)
@@ -39,11 +41,13 @@ final class MetadataFetcherHelperTests: XCTestCase {
         XCTAssertEqual(metadataDelegate.didLoadPageMetadataCalled, 0)
     }
 
-    func testFetchFromSessionGivenErrorThenPageMetadataNil() {
+    @MainActor
+    func testFetchFromSessionGivenErrorThenPageMetadataNil() async {
         let subject = createSubject()
-        let session = MockWKEngineSession()
+        let session = await MockWKEngineSession()
         let url = URL(string: "https://mozilla.com")!
         enum TestError: Error { case example }
+
         session.webviewProvider.webView.javascriptResult = .failure(TestError.example)
 
         subject.fetch(fromSession: session, url: url)
@@ -52,21 +56,23 @@ final class MetadataFetcherHelperTests: XCTestCase {
         XCTAssertEqual(metadataDelegate.didLoadPageMetadataCalled, 0)
     }
 
-    func testFetchFromSessionGivenURLThenJavascriptIsProper() {
+    func testFetchFromSessionGivenURLThenJavascriptIsProper() async {
         let expectedJavascript = "__firefox__.metadata && __firefox__.metadata.getMetadata()"
         let subject = createSubject()
-        let session = MockWKEngineSession()
+        let session = await MockWKEngineSession()
         let url = URL(string: "https://mozilla.com")!
 
         subject.fetch(fromSession: session, url: url)
 
-        XCTAssertEqual(session.webviewProvider.webView.savedJavaScript, expectedJavascript)
+        let savedJavaScript = session.webviewProvider.webView.savedJavaScript
+        XCTAssertEqual(savedJavaScript, expectedJavascript)
         XCTAssertEqual(metadataDelegate.didLoadPageMetadataCalled, 0)
     }
 
-    func testFetchFromSessionGivenEmptyResultThenPageMetadataNil() {
+    @MainActor
+    func testFetchFromSessionGivenEmptyResultThenPageMetadataNil() async {
         let subject = createSubject()
-        let session = MockWKEngineSession()
+        let session = await MockWKEngineSession()
         let url = URL(string: "https://mozilla.com")!
         session.webviewProvider.webView.javascriptResult = .success(["": ""])
 
@@ -76,11 +82,12 @@ final class MetadataFetcherHelperTests: XCTestCase {
         XCTAssertEqual(metadataDelegate.didLoadPageMetadataCalled, 0)
     }
 
-    func testFetchFromSessionGivenPageMetadataResultThenPageMetadataDelegateCalled() {
+    @MainActor
+    func testFetchFromSessionGivenPageMetadataResultThenPageMetadataDelegateCalled() async {
         let expectedTitle = "Some title"
         let expectedPageMetadata = createDictionnaryPageMetadata(title: expectedTitle)
         let subject = createSubject()
-        let session = MockWKEngineSession()
+        let session = await MockWKEngineSession()
         let url = URL(string: "https://mozilla.com")!
         session.webviewProvider.webView.javascriptResult = .success(expectedPageMetadata)
 

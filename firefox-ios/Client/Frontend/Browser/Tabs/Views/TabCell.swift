@@ -9,26 +9,26 @@ import Shared
 import SiteImageView
 
 protocol TabCellDelegate: AnyObject {
+    @MainActor
     func tabCellDidClose(for tabUUID: TabUUID)
 }
 
-class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
+final class TabCell: UICollectionViewCell,
+                     ThemeApplicable,
+                     ReusableCell {
     struct UX {
         static let borderWidth: CGFloat = 3.0
-        static let cornerRadius: CGFloat = 6
+        static let cornerRadius: CGFloat = 16
         static let subviewDefaultPadding: CGFloat = 6.0
         static let faviconYOffset: CGFloat = 10.0
         static let faviconSize: CGFloat = 20
         static let closeButtonSize: CGFloat = 32
-        static let textBoxHeight: CGFloat = 32
-        static let closeButtonEdgeInset = NSDirectionalEdgeInsets(top: 10,
-                                                                  leading: 10,
-                                                                  bottom: 10,
-                                                                  trailing: 10)
-
-        // Using the same sizes for fallback favicon as the top sites on the homepage
-        static let imageBackgroundSize = TopSiteItemCell.UX.imageBackgroundSize
-        static let topSiteIconSize = TopSiteItemCell.UX.iconSize
+        static let textBoxHeight: CGFloat = 44
+        static let closeButtonTrailing: CGFloat = 4
+        static let closeButtonEdgeInset = NSDirectionalEdgeInsets(top: 12,
+                                                                  leading: 12,
+                                                                  bottom: 12,
+                                                                  trailing: 12)
     }
     // MARK: - Properties
 
@@ -40,20 +40,20 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     private lazy var smallFaviconView: FaviconImageView = .build()
     private lazy var favicon: FaviconImageView = .build()
-    private var headerView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+    private lazy var headerView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
 
     // MARK: - UI
 
     private lazy var backgroundHolder: UIView = .build { view in
-        view.layer.cornerRadius = UX.cornerRadius + UX.borderWidth
+        view.layer.cornerRadius = UX.cornerRadius
         view.clipsToBounds = true
     }
 
     private lazy var faviconBG: UIView = .build { view in
-        view.layer.cornerRadius = HomepageViewModel.UX.generalCornerRadius
-        view.layer.borderWidth = HomepageViewModel.UX.generalBorderWidth
-        view.layer.shadowOffset = HomepageViewModel.UX.shadowOffset
-        view.layer.shadowRadius = HomepageViewModel.UX.shadowRadius
+        view.layer.cornerRadius = HomepageUX.generalCornerRadius
+        view.layer.borderWidth = HomepageUX.generalBorderWidth
+        view.layer.shadowOffset = HomepageUX.shadowOffset
+        view.layer.shadowRadius = HomepageUX.shadowRadius
         view.isHidden = true
     }
 
@@ -65,6 +65,8 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     private lazy var titleText: UILabel = .build { label in
         label.numberOfLines = 1
         label.font = FXFontStyles.Bold.caption1.scaledFont()
+        label.adjustsFontForContentSizeCategory = true
+        label.isAccessibilityElement = false
     }
 
     private lazy var closeButton: UIButton = .build { button in
@@ -80,8 +82,8 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.animator = SwipeAnimator(animatingView: self)
-        self.closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
+        animator = SwipeAnimator(animatingView: self)
+        closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
 
         contentView.addSubview(backgroundHolder)
 
@@ -89,15 +91,15 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         backgroundHolder.addSubviews(screenshotView, faviconBG, headerView)
 
         accessibilityCustomActions = [
-            UIAccessibilityCustomAction(name: .TabTrayCloseAccessibilityCustomAction,
-                                        target: self.animator,
+            UIAccessibilityCustomAction(name: .TabsTray.TabTrayCloseAccessibilityCustomAction,
+                                        target: animator,
                                         selector: #selector(SwipeAnimator.closeWithoutGesture))
         ]
 
         headerView.translatesAutoresizingMaskIntoConstraints = false
-        headerView.contentView.addSubview(self.closeButton)
-        headerView.contentView.addSubview(self.titleText)
-        headerView.contentView.addSubview(self.favicon)
+        headerView.contentView.addSubview(closeButton)
+        headerView.contentView.addSubview(titleText)
+        headerView.contentView.addSubview(favicon)
 
         setupConstraints()
     }
@@ -105,12 +107,12 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) not yet supported") }
 
     // MARK: - Configuration
-    func configure(with tabModel: TabModel, theme: Theme?, delegate: TabCellDelegate) {
+    func configure(with tabModel: TabModel, theme: Theme?, delegate: TabCellDelegate, a11yId: String) {
         self.tabModel = tabModel
         self.delegate = delegate
 
         if let swipeAnimatorDelegate = delegate as? SwipeAnimatorDelegate {
-            self.animator?.delegate = swipeAnimatorDelegate
+            animator?.delegate = swipeAnimatorDelegate
         }
 
         animator?.animateBackToCenter()
@@ -118,7 +120,8 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         titleText.text = tabModel.tabTitle
         accessibilityLabel = getA11yTitleLabel(tabModel: tabModel)
         isAccessibilityElement = true
-        accessibilityHint = .TabTraySwipeToCloseAccessibilityHint
+        accessibilityHint = .TabsTray.TabTraySwipeToCloseAccessibilityHint
+        accessibilityIdentifier = a11yId
 
         let identifier = StandardImageIdentifiers.Large.globe
         if let globeFavicon = UIImage(named: identifier)?.withRenderingMode(.alwaysTemplate) {
@@ -152,19 +155,15 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     func applyTheme(theme: Theme) {
         headerView.effect = UIBlurEffect(style: theme.type.tabTitleBlurStyle())
-        /* Ecosia: Add custom theme references
         backgroundHolder.backgroundColor = theme.colors.layer1
         closeButton.tintColor = theme.colors.indicatorActive
         titleText.textColor = theme.colors.textPrimary
         screenshotView.backgroundColor = theme.colors.layer1
         favicon.tintColor = theme.colors.textPrimary
         smallFaviconView.tintColor = theme.colors.textPrimary
-         */
-        backgroundHolder.backgroundColor = theme.colors.ecosia.backgroundPrimary
-        closeButton.tintColor = theme.colors.ecosia.textPrimary
-        titleText.textColor = theme.colors.ecosia.textPrimary
-        screenshotView.backgroundColor = theme.colors.ecosia.backgroundElevation1
-        favicon.tintColor = theme.colors.ecosia.textPrimary
+
+        let isPrivate = tabModel?.isPrivate ?? false
+        layer.borderColor = (isPrivate ? theme.colors.borderAccentPrivate : theme.colors.borderAccent).cgColor
     }
 
     // MARK: - Configuration
@@ -217,12 +216,12 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
                                          right: UX.borderWidth)
             layer.borderColor = (isPrivate ? theme.colors.borderAccentPrivate : theme.colors.borderAccent).cgColor
             layer.borderWidth = UX.borderWidth
-            layer.cornerRadius = UX.cornerRadius + UX.borderWidth
+            layer.cornerRadius = UX.cornerRadius
         } else {
             layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             layer.borderColor = UIColor.clear.cgColor
             layer.borderWidth = 0
-            layer.cornerRadius = UX.cornerRadius + UX.borderWidth
+            layer.cornerRadius = UX.cornerRadius
         }
     }
 
@@ -267,7 +266,8 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             closeButton.heightAnchor.constraint(equalToConstant: UX.closeButtonSize),
             closeButton.widthAnchor.constraint(equalToConstant: UX.closeButtonSize),
             closeButton.centerYAnchor.constraint(equalTo: headerView.contentView.centerYAnchor),
-            closeButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
+            closeButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor,
+                                                  constant: -UX.closeButtonTrailing),
 
             titleText.leadingAnchor.constraint(equalTo: favicon.trailingAnchor,
                                                constant: UX.subviewDefaultPadding),
@@ -284,11 +284,11 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
             faviconBG.centerYAnchor.constraint(equalTo: backgroundHolder.centerYAnchor, constant: UX.faviconYOffset),
             faviconBG.centerXAnchor.constraint(equalTo: backgroundHolder.centerXAnchor),
-            faviconBG.heightAnchor.constraint(equalToConstant: UX.imageBackgroundSize.height),
-            faviconBG.widthAnchor.constraint(equalToConstant: UX.imageBackgroundSize.width),
+            faviconBG.heightAnchor.constraint(equalToConstant: HomepageUX.imageBackgroundSize.height),
+            faviconBG.widthAnchor.constraint(equalToConstant: HomepageUX.imageBackgroundSize.width),
 
-            smallFaviconView.heightAnchor.constraint(equalToConstant: UX.topSiteIconSize.height),
-            smallFaviconView.widthAnchor.constraint(equalToConstant: UX.topSiteIconSize.width),
+            smallFaviconView.heightAnchor.constraint(equalToConstant: HomepageUX.topSiteIconSize.height),
+            smallFaviconView.widthAnchor.constraint(equalToConstant: HomepageUX.topSiteIconSize.width),
             smallFaviconView.centerYAnchor.constraint(equalTo: faviconBG.centerYAnchor),
             smallFaviconView.centerXAnchor.constraint(equalTo: faviconBG.centerXAnchor),
         ])
@@ -314,9 +314,9 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         let baseName = tabModel.tabTitle
 
         if isSelectedTab, !baseName.isEmpty {
-            return baseName + ". " + String.TabTrayCurrentlySelectedTabAccessibilityLabel
+            return baseName + ". " + String.TabsTray.TabTrayCurrentlySelectedTabAccessibilityLabel
         } else if isSelectedTab {
-            return String.TabTrayCurrentlySelectedTabAccessibilityLabel
+            return String.TabsTray.TabTrayCurrentlySelectedTabAccessibilityLabel
         } else {
             return baseName
         }

@@ -184,4 +184,3 @@ public enum Unleash: UnleashProtocol {
         return rules.contains(where: { $0.shouldRefresh })
     }
 }
-

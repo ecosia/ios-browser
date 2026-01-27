@@ -1,0 +1,69 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+
+transforms:
+    - taskgraph.transforms.from_deps
+    - ffios_taskgraph.transforms.bitrise
+    - ffios_taskgraph.transforms.relpro_push
+    - taskgraph.transforms.task
+
+kind-dependencies:
+    - promote
+
+tasks:
+    appstoreconnect:
+      description: Start push workflow
+      from-deps:
+        group-by:
+          attribute: build-type
+        unique-kinds: false
+        copy-attributes: true
+        with-attributes:
+          product-type:
+            - firefox
+          release-type:
+            - beta
+            - release
+      run-on-tasks-for: []
+      treeherder:
+        symbol:
+          by-build-type:
+            release: P
+            beta: Pb
+        tier: 1
+        platform: ios/opt
+      worker-type: bitrise
+      shipping-phase: push
+      bitrise:
+        artifact_prefix: public
+        workflows:
+          - release_promotion_push: []
+    appstoreconnect-focus:
+      description: Start push workflow for focus
+      from-deps:
+        group-by:
+          attribute: product-variant
+        unique-kinds: false
+        copy-attributes: true
+        with-attributes:
+          product-type:
+            - focus
+          release-type:
+            - release
+      run-on-tasks-for: []
+      treeherder:
+        symbol:
+          by-product-variant:
+            focus: Pf
+            klar: Pk
+        tier: 1
+        platform: ios/opt
+      worker-type: bitrise
+      shipping-phase: push
+      bitrise:
+        artifact_prefix: public
+        workflows:
+          - release_promotion_push_focus: []

@@ -4,6 +4,7 @@
 
 import Shared
 import UIKit
+import Common
 
 // Naming functions: use the suffix 'KeyCommand' for an additional level of namespacing (bug 1415830)
 extension BrowserViewController {
@@ -44,8 +45,8 @@ extension BrowserViewController {
         guard let tab = tabManager.selectedTab,
               let url = tab.canonicalURL?.displayURL else { return }
 
-        if !contentContainer.hasLegacyHomepage {
-            addBookmark(url: url.absoluteString, title: tab.title)
+        if !contentContainer.hasAnyHomepage {
+            addBookmark(urlString: url.absoluteString, title: tab.title)
         }
     }
 
@@ -55,15 +56,8 @@ extension BrowserViewController {
                                      method: .press,
                                      object: .keyCommand,
                                      extras: ["action": "reload"])
-        guard let tab = tabManager.selectedTab else { return }
-        if isToolbarRefactorEnabled {
-            store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
-                                                actionType: GeneralBrowserActionType.reloadWebsite))
-        } else {
-            if !contentContainer.hasLegacyHomepage {
-                tab.reload()
-            }
-        }
+        store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
+                                            actionType: GeneralBrowserActionType.reloadWebsite))
     }
 
     @objc
@@ -72,15 +66,8 @@ extension BrowserViewController {
                                      method: .press,
                                      object: .keyCommand,
                                      extras: ["action": "reload-no-cache"])
-        guard let tab = tabManager.selectedTab else { return }
-        if isToolbarRefactorEnabled {
-            store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
-                                                actionType: GeneralBrowserActionType.reloadWebsiteNoCache))
-        } else {
-            if !contentContainer.hasLegacyHomepage {
-                tab.reload(bypassCache: true)
-            }
-        }
+        store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
+                                            actionType: GeneralBrowserActionType.reloadWebsiteNoCache))
     }
 
     @objc
@@ -90,14 +77,9 @@ extension BrowserViewController {
                                      object: .keyCommand,
                                      extras: ["action": "go-back"])
         guard let tab = tabManager.selectedTab, tab.canGoBack else { return }
-        if isToolbarRefactorEnabled {
-            store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
-                                                actionType: GeneralBrowserActionType.navigateBack))
-        } else {
-            if !contentContainer.hasLegacyHomepage {
-                tab.goBack()
-            }
-        }
+
+        store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
+                                            actionType: GeneralBrowserActionType.navigateBack))
     }
 
     @objc
@@ -107,14 +89,9 @@ extension BrowserViewController {
                                      object: .keyCommand,
                                      extras: ["action": "go-forward"])
         guard let tab = tabManager.selectedTab, tab.canGoForward else { return }
-        if isToolbarRefactorEnabled {
-            store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
-                                                actionType: GeneralBrowserActionType.navigateForward))
-        } else {
-            if !contentContainer.hasLegacyHomepage {
-                tab.goForward()
-            }
-        }
+
+        store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
+                                            actionType: GeneralBrowserActionType.navigateForward))
     }
 
     @objc
@@ -134,7 +111,7 @@ extension BrowserViewController {
     private func findInPage(withText text: String) {
         guard let tab = tabManager.selectedTab else { return }
 
-        if !contentContainer.hasLegacyHomepage {
+        if !contentContainer.hasAnyHomepage {
             self.tab(tab, didSelectFindInPageForSelection: text)
         }
     }
@@ -146,12 +123,7 @@ extension BrowserViewController {
                                      object: .keyCommand,
                                      extras: ["action": "select-location-bar"])
         scrollController.showToolbars(animated: true)
-
-        if isToolbarRefactorEnabled {
-            store.dispatch(ToolbarAction(windowUUID: windowUUID, actionType: ToolbarActionType.didStartEditingUrl))
-        } else {
-            urlBar.tabLocationViewDidTapLocation(urlBar.locationView)
-        }
+        store.dispatch(ToolbarAction(windowUUID: windowUUID, actionType: ToolbarActionType.didStartEditingUrl))
     }
 
     @objc
@@ -161,14 +133,8 @@ extension BrowserViewController {
                                      object: .keyCommand,
                                      extras: ["action": "new-tab"])
 
-        if isToolbarRefactorEnabled {
-            store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
-                                                actionType: GeneralBrowserActionType.addNewTab))
-        } else {
-            let isPrivate = tabManager.selectedTab?.isPrivate ?? false
-            openBlankNewTab(focusLocationField: true, isPrivate: isPrivate)
-            keyboardPressesHandler().reset()
-        }
+        store.dispatch(GeneralBrowserAction(windowUUID: windowUUID,
+                                            actionType: GeneralBrowserActionType.addNewTab))
     }
 
     @objc
@@ -195,13 +161,16 @@ extension BrowserViewController {
 
     @objc
     func closeTabKeyCommand() {
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .press,
-                                     object: .keyCommand,
-                                     extras: ["action": "close-tab"])
-        guard let currentTab = tabManager.selectedTab else { return }
-        tabManager.removeTab(currentTab)
-        keyboardPressesHandler().reset()
+        ensureMainThread {
+            TelemetryWrapper.recordEvent(category: .action,
+                                         method: .press,
+                                         object: .keyCommand,
+                                         extras: ["action": "close-tab"])
+            guard let currentTab = self.tabManager.selectedTab else { return }
+            self.tabsPanelTelemetry.tabClosed(mode: currentTab.isPrivate ? .private : .normal)
+            self.tabManager.removeTab(currentTab.tabUUID)
+            self.keyboardPressesHandler().reset()
+        }
     }
 
     @objc
@@ -339,29 +308,25 @@ extension BrowserViewController {
 
     @objc
     func zoomIn() {
-        guard let currentTab = tabManager.selectedTab else { return }
+        guard contentContainer.hasAnyHomepage else { return }
 
-        if !contentContainer.hasLegacyHomepage {
-            currentTab.zoomIn()
-        }
+        let zoomValue = zoomManager.zoomIn()
+        zoomPageBar?.updateZoomLabel(zoomValue: zoomValue)
     }
 
     @objc
     func zoomOut() {
-        guard let currentTab = tabManager.selectedTab else { return }
+        guard contentContainer.hasAnyHomepage else { return }
 
-        if !contentContainer.hasLegacyHomepage {
-            currentTab.zoomOut()
-        }
+        let zoomValue = zoomManager.zoomOut()
+        zoomPageBar?.updateZoomLabel(zoomValue: zoomValue)
     }
 
     @objc
     func resetZoom() {
-        guard let currentTab = tabManager.selectedTab else { return }
+        guard contentContainer.hasAnyHomepage else { return }
 
-        if !contentContainer.hasLegacyHomepage {
-            currentTab.resetZoom()
-        }
+        zoomManager.resetZoom()
     }
 
     // MARK: - KeyCommands
@@ -421,9 +386,7 @@ extension BrowserViewController {
 
         let isEditingText = tabManager.selectedTab?.isEditing ?? false
 
-        if !isToolbarRefactorEnabled, urlBar.inOverlayMode {
-            return commands + searchLocationCommands
-        } else if !isEditingText {
+        if !isEditingText {
             return commands + overridesTextEditing
         }
         return commands

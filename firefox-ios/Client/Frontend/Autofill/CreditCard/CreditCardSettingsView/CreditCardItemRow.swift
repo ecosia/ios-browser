@@ -5,8 +5,6 @@
 import Common
 import Foundation
 import SwiftUI
-import Storage
-import Shared
 
 import struct MozillaAppServices.CreditCard
 
@@ -111,7 +109,7 @@ struct CreditCardItemRow: View {
         return AdaptiveStack(horizontalAlignment: .leading,
                              spacing: isAccessibilityCategory ? 0 : 5,
                              isAccessibilityCategory: isAccessibilityCategory) {
-            Text(item.ccType)
+            Text(item.ccType.uppercased())
                 .font(.body)
                 .foregroundColor(titleTextColor)
             Text(verbatim: "••••\(item.ccNumberLast4)")

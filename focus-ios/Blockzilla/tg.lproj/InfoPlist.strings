@@ -1,0 +1,18 @@
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Ин ба шумо барои аксгирӣ ва боркунии аксҳо имкон медиҳад.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Ин ба шумо барои кушодани қулфи барнома имкон медиҳад.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Сомонаҳое, ки шумо тамошо мекунед, метавонанд ҷойгиршавии шуморо талаб кунанд.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Ин ба шумо барои наворгирӣ ва боркунии видеоҳо имкон медиҳад.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Ин ба шумо барои нигоҳдорӣ ва боркунии аксҳо имкон медиҳад.";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "Пок кардан ва кушодан";
+

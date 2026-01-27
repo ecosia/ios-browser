@@ -8,7 +8,7 @@ public struct DarkTheme: Theme {
     public var type: ThemeType = .dark
     /* Ecosia: Use Ecosia color palette subclass
     public var colors: ThemeColourPalette = DarkColourPalette()
-     */
+    */
     public var colors: EcosiaThemeColourPalette = DarkColourPalette()
 
     public init() {}
@@ -22,19 +22,17 @@ public struct NightModeTheme: Theme {
     public var type: ThemeType = .nightMode
     /* Ecosia: Use Ecosia color palette subclass
     public var colors: ThemeColourPalette = DarkColourPalette()
-     */
+    */
     public var colors: EcosiaThemeColourPalette = DarkColourPalette()
 
     public init() {}
 }
 
-/* Ecosia: Use Ecosia color palette subclass
+/* Ecosia: Conform to EcosiaThemeColourPalette
 private struct DarkColourPalette: ThemeColourPalette {
- */
+*/
 private struct DarkColourPalette: EcosiaThemeColourPalette {
-    var ecosia: EcosiaSemanticColors {
-        FakeEcosiaSemanticColors()
-    }
+    var ecosia: EcosiaSemanticColors = FakeEcosiaSemanticColors()
 
     // MARK: - Layers
     var layer1: UIColor = FXColors.DarkGrey60
@@ -44,7 +42,7 @@ private struct DarkColourPalette: EcosiaThemeColourPalette {
     var layer5: UIColor = FXColors.DarkGrey40
     var layer5Hover: UIColor = FXColors.DarkGrey20
     var layerScrim: UIColor = FXColors.DarkGrey90.withAlphaComponent(0.95)
-    var layerGradient = Gradient(colors: [FXColors.Violet60, FXColors.Violet70])
+    var layerGradient = Gradient(colors: [FXColors.Violet70, FXColors.Violet60])
     var layerGradientOverlay = Gradient(colors: [FXColors.DarkGrey40.withAlphaComponent(0),
                                                  FXColors.DarkGrey40.withAlphaComponent(0.4)])
     var layerAccentNonOpaque: UIColor = FXColors.Blue20.withAlphaComponent(0.2)
@@ -60,31 +58,28 @@ private struct DarkColourPalette: EcosiaThemeColourPalette {
     var layerSuccess: UIColor = FXColors.Green80
     var layerWarning: UIColor = FXColors.Yellow70.withAlphaComponent(0.77)
     var layerCritical: UIColor = FXColors.Pink80
+    var layerCriticalSubdued: UIColor = FXColors.Red05.withAlphaComponent(0.7)
     var layerSelectedText: UIColor = FXColors.Blue40
     var layerAutofillText: UIColor = FXColors.LightGrey05.withAlphaComponent(0.34)
-    var layerSearch: UIColor = FXColors.DarkGrey80
+    var layerEmphasis: UIColor = FXColors.DarkGrey80
     var layerGradientURL = Gradient(colors: [
         FXColors.DarkGrey80.withAlphaComponent(0),
         FXColors.DarkGrey80.withAlphaComponent(1)
     ])
-
-    // MARK: - Ratings
-    var layerRatingA: UIColor = FXColors.Green20
-    var layerRatingASubdued: UIColor = FXColors.Green05.withAlphaComponent(0.7)
-    var layerRatingB: UIColor = FXColors.Blue10
-    var layerRatingBSubdued: UIColor = FXColors.Blue05.withAlphaComponent(0.4)
-    var layerRatingC: UIColor = FXColors.Yellow20
-    var layerRatingCSubdued: UIColor = FXColors.Yellow05.withAlphaComponent(0.7)
-    var layerRatingD: UIColor = FXColors.Orange20
-    var layerRatingDSubdued: UIColor = FXColors.Orange05.withAlphaComponent(0.7)
-    var layerRatingF: UIColor = FXColors.Red30
-    var layerRatingFSubdued: UIColor = FXColors.Red05.withAlphaComponent(0.6)
+    var layerSurfaceLow = FXColors.DarkGrey60
+    var layerSurfaceMedium = FXColors.DarkGrey80
+    var layerSurfaceMediumAlt = FXColors.DarkGrey40
+    var layerGradientSummary = Gradient(colors: [
+        FXColors.Red70,
+        FXColors.Orange50
+    ])
 
     // MARK: - Actions
     var actionPrimary: UIColor = FXColors.Blue30
     var actionPrimaryHover: UIColor = FXColors.Blue20
     var actionPrimaryDisabled: UIColor = FXColors.Blue30.withAlphaComponent(0.5)
     var actionSecondary: UIColor = FXColors.DarkGrey05
+    var actionSecondaryDisabled: UIColor = FXColors.DarkGrey05.withAlphaComponent(0.5)
     var actionSecondaryHover: UIColor = FXColors.LightGrey90
     var formSurfaceOff: UIColor = FXColors.DarkGrey05
     var formKnob: UIColor = FXColors.White
@@ -96,6 +91,7 @@ private struct DarkColourPalette: EcosiaThemeColourPalette {
     var actionInformation: UIColor = FXColors.Blue60
     var actionTabActive: UIColor = FXColors.DarkGrey30
     var actionTabInactive: UIColor = FXColors.DarkGrey80
+    var actionCloseButton: UIColor = FXColors.DarkGrey30
 
     // MARK: - Text
     var textPrimary: UIColor = FXColors.LightGrey05
@@ -132,8 +128,15 @@ private struct DarkColourPalette: EcosiaThemeColourPalette {
     var borderToolbarDivider: UIColor = FXColors.DarkGrey60
 
     // MARK: - Shadow
-    var shadowDefault: UIColor = FXColors.DarkGrey90.withAlphaComponent(0.16)
+    var shadowSubtle: UIColor = FXColors.DarkGrey80.withAlphaComponent(0.10)
+    var shadowDefault: UIColor = FXColors.DarkGrey80.withAlphaComponent(0.12)
+    var shadowStrong: UIColor = FXColors.DarkGrey80.withAlphaComponent(0.16)
 
-    // MARK: - Ecosia Legacy Colors
-    var layer6: UIColor = FXColors.DarkGrey60
+    // MARK: - Gradient
+    var gradientOnboardingStop1: UIColor = FXColors.Yellow50
+    var gradientOnboardingStop2: UIColor = FXColors.Blue50
+    var gradientOnboardingStop3: UIColor = FXColors.Red60
+    var gradientOnboardingStop4: UIColor = FXColors.Orange50
+
+    var shadowBorder: UIColor = FXColors.DarkGrey50.withAlphaComponent(0.50)
 }

@@ -10,7 +10,8 @@ public enum WallpaperSettingsError: Error {
     case itemNotFound
 }
 
-class WallpaperSettingsViewModel {
+// TODO: FXIOS-14150 - WallpaperSettingsViewModel shouldn't be @unchecked Sendable
+final class WallpaperSettingsViewModel: FeatureFlaggable, @unchecked Sendable {
     typealias a11yIds = AccessibilityIdentifiers.Settings.Homepage.CustomizeFirefox.Wallpaper
     typealias stringIds = String.Settings.Homepage.Wallpaper
 
@@ -36,9 +37,6 @@ class WallpaperSettingsViewModel {
         }
     }
 
-    private var theme: Theme
-    private var wallpaperManager: WallpaperManagerInterface
-    private var wallpaperCollections = [WallpaperCollection]()
     var tabManager: TabManager
     var sectionLayout: WallpaperSettingsLayout = .compact // We use the compact layout as default
     var selectedIndexPath: IndexPath?
@@ -47,12 +45,21 @@ class WallpaperSettingsViewModel {
         return wallpaperCollections.count
     }
 
-    init(wallpaperManager: WallpaperManagerInterface = WallpaperManager(),
-         tabManager: TabManager,
-         theme: Theme) {
+    private var theme: Theme
+    private var wallpaperManager: WallpaperManagerInterface
+    private var wallpaperCollections = [WallpaperCollection]()
+    private let windowUUID: WindowUUID
+
+    init(
+        wallpaperManager: WallpaperManagerInterface = WallpaperManager(),
+        tabManager: TabManager,
+        theme: Theme,
+        windowUUID: WindowUUID
+    ) {
         self.wallpaperManager = wallpaperManager
         self.tabManager = tabManager
         self.theme = theme
+        self.windowUUID = windowUUID
         setupWallpapers()
     }
 
@@ -60,6 +67,7 @@ class WallpaperSettingsViewModel {
         return wallpaperCollections[safe: section]?.wallpapers.count ?? 0
     }
 
+    @MainActor
     func sectionHeaderViewModel(for sectionIndex: Int,
                                 dismissView: @escaping (() -> Void)
     ) -> WallpaperSettingsHeaderViewModel? {
@@ -114,7 +122,8 @@ class WallpaperSettingsViewModel {
                              indexPath: indexPath)
     }
 
-    func downloadAndSetWallpaper(at indexPath: IndexPath, completion: @escaping (Result<Void, Error>) -> Void) {
+    func downloadAndSetWallpaper(at indexPath: IndexPath,
+                                 completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
         guard let collection = wallpaperCollections[safe: indexPath.section],
               let wallpaper = collection.wallpapers[safe: indexPath.row]
         else {
@@ -122,7 +131,7 @@ class WallpaperSettingsViewModel {
             return
         }
 
-        let setWallpaperBlock = { [weak self] in
+        let setWallpaperBlock: @Sendable () -> ()? = { [weak self] in
             self?.updateCurrentWallpaper(for: wallpaper, in: collection) { result in
                 if case .success = result {
                     self?.selectedIndexPath = indexPath
@@ -149,16 +158,25 @@ class WallpaperSettingsViewModel {
         wallpaperManager.removeUnusedAssets()
     }
 
+    @MainActor
     func selectHomepageTab() {
         let homepageTab = getHomepageTab(isPrivate: tabManager.selectedTab?.isPrivate ?? false)
 
         tabManager.selectTab(homepageTab, previous: nil)
     }
 
-    /// Get mostRecentHomePage used if none is available we add and select a new homepage Tab
-    /// - Parameter isPrivate: If private mode is selected
+    /// Returns the most recently used homepage tab from either the private or normal tab list,
+    /// depending on the currently selected tab's privacy status.
+    /// If no homepage tab is found, it creates and returns a new tab.
+    ///
+    /// - Parameter isPrivate: A Boolean indicating whether the selected tab is in private mode
+    /// - Returns: A `Tab` instance representing the most recent homepage tab, or a newly created one if none exist.
+    @MainActor
     private func getHomepageTab(isPrivate: Bool) -> Tab {
-        guard let homepageTab = tabManager.getMostRecentHomepageTab() else {
+        let tabsToFilter = isPrivate ? tabManager.privateTabs : tabManager.normalTabs
+        let homepageTabs = tabsToFilter.filter { $0.isFxHomeTab }
+
+        guard let homepageTab = mostRecentTab(inTabs: homepageTabs) else {
             return tabManager.addTab(nil, afterTab: nil, isPrivate: isPrivate)
         }
 
@@ -205,7 +223,7 @@ private extension WallpaperSettingsViewModel {
                                 in collection: WallpaperCollection,
                                 completion: @escaping (Result<Void, Error>) -> Void) {
         wallpaperManager.setCurrentWallpaper(to: wallpaper) { [weak self] result in
-            guard let extra = self?.telemetryMetadata(for: wallpaper, in: collection) else {
+            guard let self else {
                 completion(result)
                 return
             }
@@ -213,9 +231,22 @@ private extension WallpaperSettingsViewModel {
                                          method: .tap,
                                          object: .wallpaperSettings,
                                          value: .wallpaperSelected,
-                                         extras: extra)
+                                         extras: self.telemetryMetadata(for: wallpaper, in: collection))
 
-           completion(result)
+            // TODO: FXIOS-11486 Move interface for setting wallpaper into Wallpaper middleware
+            let wallpaperConfig = WallpaperConfiguration(wallpaper: wallpaper)
+            // We are passing the wallpaperConfiguration here even though right now it is not being used
+            // by the middleware that is responding to this action. It will be as soon as we move the wallpaper
+            // manager logic to the middlware.
+            ensureMainThread {
+                let action = WallpaperAction(
+                    wallpaperConfiguration: wallpaperConfig,
+                    windowUUID: self.windowUUID,
+                    actionType: WallpaperActionType.wallpaperSelected
+                )
+                store.dispatch(action)
+            }
+            completion(result)
         }
     }
 
@@ -226,7 +257,7 @@ private extension WallpaperSettingsViewModel {
 
         let wallpaperTypeKey = TelemetryWrapper.EventExtraKey.wallpaperType.rawValue
         switch (wallpaper.type, collection.type) {
-        case (.defaultWallpaper, _):
+        case (.none, _):
             metadata[wallpaperTypeKey] = "default"
         case (.other, .classic):
             metadata[wallpaperTypeKey] = collection.type.rawValue

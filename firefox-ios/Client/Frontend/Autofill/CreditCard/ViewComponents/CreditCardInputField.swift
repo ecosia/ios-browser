@@ -5,7 +5,6 @@
 import Common
 import Foundation
 import SwiftUI
-import Shared
 
 enum CreditCardInputType: String {
     case name, number, expiration
@@ -14,11 +13,11 @@ enum CreditCardInputType: String {
 struct CreditCardInputField: View {
     let creditCardValidator: CreditCardValidator
     let inputType: CreditCardInputType
-    var fieldHeadline: String = ""
-    var errorString: String = ""
+    var fieldHeadline = ""
+    var errorString = ""
     var delimiterCharacter: String?
-    var userInputLimit: Int = 0
-    var formattedTextLimit: Int = 0
+    var userInputLimit = 0
+    var formattedTextLimit = 0
     var keyboardType: UIKeyboardType = .numberPad
     var showError = false
     var disableEditing: Bool {
@@ -27,7 +26,7 @@ struct CreditCardInputField: View {
     @ObservedObject var viewModel: CreditCardInputViewModel
     let inputFieldHelper: CreditCardInputFieldHelper
     @FocusState private var isFocused: Bool
-    @State var text: String = ""
+    @State var text = ""
     @State var shouldReveal = true {
         willSet(val) {
             if inputType == .number {

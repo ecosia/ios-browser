@@ -4,6 +4,7 @@
 
 
 from taskgraph.target_tasks import register_target_task
+from .build_types import should_build_type_get_targetted_for_release_type
 
 
 @register_target_task('l10n_screenshots')
@@ -30,5 +31,110 @@ def target_tasks_default(full_task_graph, parameters, graph_config):
     via the `run_on_projects` attributes."""
     def filter(task, parameters):
         return task.kind == "firebase-performance"
+
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
+
+@register_target_task("promote")
+def target_tasks_promote(full_task_graph, parameters, graph_config):
+    return _filter_release_promotion(
+        full_task_graph,
+        parameters,
+        filtered_for_candidates=[],
+        shipping_phase="promote",
+        product_type="firefox",
+    )
+
+@register_target_task("push")
+def target_tasks_push(full_task_graph, parameters, graph_config):
+    filtered_for_candidates = target_tasks_promote(
+        full_task_graph,
+        parameters,
+        graph_config,
+    )
+    return _filter_release_promotion(
+        full_task_graph,
+        parameters,
+        filtered_for_candidates,
+        shipping_phase="push",
+        product_type="firefox",
+    )
+
+@register_target_task("ship")
+def target_tasks_ship(full_task_graph, parameters, graph_config):
+    filtered_for_candidates = target_tasks_push(
+        full_task_graph,
+        parameters,
+        graph_config,
+    )
+    return _filter_release_promotion(
+        full_task_graph,
+        parameters,
+        filtered_for_candidates,
+        shipping_phase="ship",
+        product_type="firefox",
+    )
+
+@register_target_task("promote_focus")
+def target_tasks_promote_focus(full_task_graph, parameters, graph_config):
+    return _filter_release_promotion(
+        full_task_graph,
+        parameters,
+        filtered_for_candidates=[],
+        shipping_phase="promote",
+        product_type="focus",
+    )
+
+@register_target_task("push_focus")
+def target_tasks_push_focus(full_task_graph, parameters, graph_config):
+    filtered_for_candidates = target_tasks_promote_focus(
+        full_task_graph,
+        parameters,
+        graph_config,
+    )
+    return _filter_release_promotion(
+        full_task_graph,
+        parameters,
+        filtered_for_candidates,
+        shipping_phase="push",
+        product_type="focus",
+    )
+
+@register_target_task("ship_focus")
+def target_tasks_ship_focus(full_task_graph, parameters, graph_config):
+    filtered_for_candidates = target_tasks_push_focus(
+        full_task_graph,
+        parameters,
+        graph_config,
+    )
+    return _filter_release_promotion(
+        full_task_graph,
+        parameters,
+        filtered_for_candidates,
+        shipping_phase="ship",
+        product_type="focus",
+    )
+
+def does_task_match_release_type(task, release_type):
+    return task.attributes.get("release-type") == release_type
+
+def _filter_release_promotion(
+    full_task_graph, parameters, filtered_for_candidates, shipping_phase, product_type,
+):
+    def filter(task, parameters):
+        # Include promotion tasks; these will be optimized out
+        if task.label in filtered_for_candidates:
+            return True
+
+        if task.attributes.get("product-type") != parameters["product_type"]:
+            return False
+
+        if not should_build_type_get_targetted_for_release_type(task, parameters["release_type"]):
+            return False
+
+        return task.attributes.get(
+            "shipping_phase"
+        ) == shipping_phase and does_task_match_release_type(
+            task, parameters["release_type"]
+        )
 
     return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]

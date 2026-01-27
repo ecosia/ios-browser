@@ -3,20 +3,19 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import Storage
 import Foundation
 
-import struct MozillaAppServices.EncryptedLogin
+import struct MozillaAppServices.Login
 
 @MainActor
 class LoginListViewModel: ObservableObject {
-    @Published var logins: [EncryptedLogin] = []
+    @Published var logins: [Login] = []
 
     private let tabURL: URL
     private let field: FocusFieldType
     private let loginStorage: LoginStorage
     private let logger: Logger
-    let onLoginCellTap: (EncryptedLogin) -> Void
+    let onLoginCellTap: (Login) -> Void
     let manageLoginInfoAction: () -> Void
 
     var shortDisplayString: String {
@@ -28,7 +27,7 @@ class LoginListViewModel: ObservableObject {
         field: FocusFieldType,
         loginStorage: LoginStorage,
         logger: Logger,
-        onLoginCellTap: @escaping (EncryptedLogin) -> Void,
+        onLoginCellTap: @escaping (Login) -> Void,
         manageLoginInfoAction: @escaping () -> Void
     ) {
         self.tabURL = tabURL
@@ -43,9 +42,18 @@ class LoginListViewModel: ObservableObject {
         do {
             let logins = try await loginStorage.listLogins()
             self.logins = logins.filter { login in
-                if field == FocusFieldType.username && login.decryptedUsername.isEmpty { return false }
+                if field == FocusFieldType.username && login.username.isEmpty { return false }
                 guard let recordHostnameURL = URL(string: login.hostname) else { return false }
                 return recordHostnameURL.baseDomain == tabURL.baseDomain
+            }
+            self.logins.sort {
+                guard let login0 = URL(string: $0.hostname) else {
+                    return false
+                }
+                guard let login1 = URL(string: $1.hostname) else {
+                    return false
+                }
+                return login0.host == tabURL.host && login1.host != tabURL.host
             }
         } catch {
             self.logger.log("Error fetching logins",
@@ -56,13 +64,13 @@ class LoginListViewModel: ObservableObject {
     }
 }
 
-class MockLogger: Logger {
+class MockLogger: Logger, @unchecked Sendable {
     var crashedLastLaunch = false
     var savedMessage: String?
     var savedLevel: LoggerLevel?
     var savedCategory: LoggerCategory?
 
-    func setup(sendUsageData: Bool) {}
+    func setup(sendCrashReports: Bool) {}
     func configure(crashManager: Common.CrashManager) {}
     func copyLogsToDocuments() {}
     func logCustomError(error: Error) {}
@@ -73,7 +81,7 @@ class MockLogger: Logger {
              category: LoggerCategory,
              extra: [String: String]? = nil,
              description: String? = nil,
-             file: String = #file,
+             file: String = #filePath,
              function: String = #function,
              line: Int = #line) {
         savedMessage = message

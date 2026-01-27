@@ -4,7 +4,10 @@
 
 import Foundation
 
-public struct TabData: Codable {
+/// A dictionary with as Key the local file directory for a temporary document and its online source URL as value
+public typealias TemporaryDocumentSession = [URL: URL]
+
+public struct TabData: Codable, Sendable {
     public let id: UUID
     public let title: String?
     public let siteUrl: String
@@ -12,7 +15,7 @@ public struct TabData: Codable {
     public let isPrivate: Bool
     public let lastUsedTime: Date
     public let createdAtTime: Date
-    public var tabGroupData: TabGroupData?
+    public let temporaryDocumentSession: TemporaryDocumentSession?
 
     public init(id: UUID,
                 title: String?,
@@ -21,7 +24,7 @@ public struct TabData: Codable {
                 isPrivate: Bool,
                 lastUsedTime: Date,
                 createdAtTime: Date,
-                tabGroupData: TabGroupData? = nil) {
+                temporaryDocumentSession: TemporaryDocumentSession) {
         self.id = id
         self.title = title
         self.siteUrl = siteUrl
@@ -29,6 +32,6 @@ public struct TabData: Codable {
         self.isPrivate = isPrivate
         self.lastUsedTime = lastUsedTime
         self.createdAtTime = createdAtTime
-        self.tabGroupData = tabGroupData
+        self.temporaryDocumentSession = temporaryDocumentSession
     }
 }

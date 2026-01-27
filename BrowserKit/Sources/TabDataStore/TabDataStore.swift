@@ -5,7 +5,7 @@
 import Foundation
 import Common
 
-public protocol TabDataStore {
+public protocol TabDataStore: Sendable {
     /// Fetches the previously saved window data matching the provided UUID,
     /// if it exists. This data contains the list of tabs.
     /// - Returns: The window data object if one was previously saved
@@ -23,7 +23,7 @@ public protocol TabDataStore {
     /// saved files in the directory) it is faster than fetchWindowData() and is
     /// preferable when only the UUIDs are needed.
     /// - Returns: a list of UUIDs for any saved WindowData.
-    func fetchWindowDataUUIDs() -> [WindowUUID]
+    nonisolated func fetchWindowDataUUIDs() -> [WindowUUID]
 
     /// Erases the on-disk data for tab windows matching the provided UUIDs.
     /// - Parameter forUUIDs: the UUIDs to delete the on-disk tab files for.
@@ -139,7 +139,12 @@ public actor DefaultTabDataStore: TabDataStore {
     // MARK: - Saving Data
 
     public func saveWindowData(window: WindowData, forced: Bool) async {
-        guard let windowSavingPath = windowURLPath(for: window.id, isBackup: false) else { return }
+        guard let windowSavingPath = windowURLPath(for: window.id, isBackup: false) else {
+            logger.log("Not saving window data. Could not build window saving path.",
+                       level: .warning,
+                       category: .tabs)
+            return
+        }
 
         // Hold onto a copy of the latest window data so whenever the save happens it is using the latest
         windowDataToSave = window
@@ -160,10 +165,26 @@ public actor DefaultTabDataStore: TabDataStore {
     }
 
     private func createWindowDataBackup(windowPath: URL) {
-        guard let windowID = windowDataToSave?.id,
-              let backupWindowSavingPath = windowURLPath(for: windowID, isBackup: true),
-              let backupDirectoryPath = fileManager.windowDataDirectory(isBackup: true)
-        else { return }
+        guard let windowID = windowDataToSave?.id else {
+            logger.log("Failed to create window data backup. Window to save is nil",
+                       level: .warning,
+                       category: .tabs)
+            return
+        }
+
+        guard let backupWindowSavingPath = windowURLPath(for: windowID, isBackup: true) else {
+            logger.log("Failed to create window data backup. Could not create windowURLPath.",
+                       level: .warning,
+                       category: .tabs)
+            return
+        }
+
+        guard let backupDirectoryPath = fileManager.windowDataDirectory(isBackup: true) else {
+            logger.log("Failed to create window data backup. No backup directory path.",
+                       level: .warning,
+                       category: .tabs)
+            return
+        }
 
         if !fileManager.fileExists(atPath: backupDirectoryPath) {
             fileManager.createDirectoryAtPath(path: backupDirectoryPath)
@@ -253,7 +274,7 @@ public actor DefaultTabDataStore: TabDataStore {
     /// for that window based on the file name.
     /// - Parameter url: the URL to parse.
     /// - Returns: a window UUID or nil if the URL was invalid.
-    private nonisolated func windowUUID(fromURL url: URL) -> WindowUUID? {
+    nonisolated private func windowUUID(fromURL url: URL) -> WindowUUID? {
         let file = url.lastPathComponent
         guard file.hasPrefix(filePrefix) else { return nil }
         let uuidString = String(file.dropFirst(filePrefix.count))

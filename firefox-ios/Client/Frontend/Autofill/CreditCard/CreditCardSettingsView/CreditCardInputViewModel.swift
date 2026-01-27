@@ -93,11 +93,12 @@ enum CreditCardModifiedStatus {
     }
 }
 
-class CreditCardInputViewModel: ObservableObject {
+// TODO: FXIOS-14112 - Fix CreditCardInputViewModel @unchecked Sendable
+final class CreditCardInputViewModel: ObservableObject, @unchecked Sendable {
     typealias CreditCardText = String.CreditCard.Alert
-    var logger: Logger?
+    let logger: Logger
     let profile: Profile
-    let autofill: RustAutofill
+    let autofill: CreditCardProvider
     var creditCard: CreditCard?
     let creditCardValidator: CreditCardValidator
 
@@ -115,15 +116,15 @@ class CreditCardInputViewModel: ObservableObject {
                    _ successVal: Bool) -> Void)?
 
     @Published var state: CreditCardEditState
-    @Published var errorState: String = ""
-    @Published var enteredValue: String = ""
+    @Published var errorState = ""
+    @Published var enteredValue = ""
     @Published var cardType: CreditCardType?
     @Published var nameIsValid = true
     @Published var numberIsValid = true
     @Published var showExpirationError = false
-    @Published var nameOnCard: String = ""
+    @Published var nameOnCard = ""
 
-    @Published var expirationDate: String = "" {
+    @Published var expirationDate = "" {
         didSet {
             var dateVal = expirationDate
             if state == .view {
@@ -133,7 +134,7 @@ class CreditCardInputViewModel: ObservableObject {
         }
     }
 
-    @Published var cardNumber: String = "" {
+    @Published var cardNumber = "" {
         willSet {
             // Set the card type
             self.cardType = creditCardValidator.cardTypeFor(newValue)
@@ -187,10 +188,11 @@ class CreditCardInputViewModel: ObservableObject {
     init(profile: Profile,
          creditCard: CreditCard? = nil,
          creditCardValidator: CreditCardValidator = CreditCardValidator(),
+         creditCardProvider: CreditCardProvider,
          logger: Logger = DefaultLogger.shared
     ) {
         self.profile = profile
-        self.autofill = profile.autofill
+        self.autofill = creditCardProvider
         self.creditCard = creditCard
         self.state = .add
         self.creditCardValidator = creditCardValidator
@@ -205,7 +207,8 @@ class CreditCardInputViewModel: ObservableObject {
          enteredValue: String,
          creditCard: CreditCard? = nil,
          state: CreditCardEditState,
-         creditCardValidator: CreditCardValidator = CreditCardValidator()
+         creditCardValidator: CreditCardValidator = CreditCardValidator(),
+         logger: Logger = DefaultLogger.shared
     ) {
         self.profile = profile
         self.errorState = errorState
@@ -214,6 +217,7 @@ class CreditCardInputViewModel: ObservableObject {
         self.creditCard = creditCard
         self.state = state
         self.creditCardValidator = creditCardValidator
+        self.logger = logger
         self.isRightBarButtonEnabled = initialStateToEnableTopRightButton()
     }
 
@@ -229,7 +233,7 @@ class CreditCardInputViewModel: ObservableObject {
         }
     }
 
-    public func saveCreditCard(completion: @escaping (CreditCard?, Error?) -> Void) {
+    public func saveCreditCard(completion: @escaping @Sendable (CreditCard?, Error?) -> Void) {
         guard let plainCreditCard = getDisplayedCCValues() else {
             completion(nil, InputVMError.unableToSaveCC)
             return
@@ -239,7 +243,7 @@ class CreditCardInputViewModel: ObservableObject {
                                completion: completion)
     }
 
-    func updateCreditCard(completion: @escaping (Bool?, Error?) -> Void) {
+    func updateCreditCard(completion: @escaping @Sendable (Bool?, Error?) -> Void) {
         guard let creditCard = creditCard,
               let plainCreditCard = getDisplayedCCValues() else {
             completion(true, InputVMError.unableToUpdateCC)
@@ -252,22 +256,26 @@ class CreditCardInputViewModel: ObservableObject {
     }
 
     func removeCreditCard(creditCard: CreditCard?,
-                          completion: @escaping (CreditCardModifiedStatus, Bool) -> Void) {
+                          completion: @escaping @MainActor (CreditCardModifiedStatus, Bool) -> Void) {
         guard let currentCreditCard = creditCard,
               !currentCreditCard.guid.isEmpty else {
-            completion(.none, false)
+            ensureMainThread {
+                completion(.none, false)
+            }
             return
         }
 
         autofill.deleteCreditCard(id: currentCreditCard.guid) { status, error in
-            guard let error = error, status else {
-                completion(.removedCard, true)
-                return
+            ensureMainThread {
+                guard let error = error, status else {
+                    completion(.removedCard, true)
+                    return
+                }
+                self.logger.log("Unable to remove credit card: \(error)",
+                                level: .warning,
+                                category: .storage)
+                completion(.none, false)
             }
-            self.logger?.log("Unable to remove credit card: \(error)",
-                             level: .warning,
-                             category: .storage)
-            completion(.none, false)
         }
     }
 

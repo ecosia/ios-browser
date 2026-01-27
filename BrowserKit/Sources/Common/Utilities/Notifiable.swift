@@ -5,54 +5,57 @@
 import Foundation
 
 @objc
-public protocol NotificationProtocol {
-    func post(name: NSNotification.Name, withObject object: Any?, withUserInfo info: Any?)
-    func addObserver(_ observer: Any,
-                     selector aSelector: Selector,
-                     name aName: NSNotification.Name?,
-                     object anObject: Any?)
-    func addObserver(name: NSNotification.Name?,
-                     queue: OperationQueue?,
-                     using block: @escaping (Notification) -> Void) -> NSObjectProtocol?
-    func removeObserver(_ observer: Any)
-}
-
-extension NotificationProtocol {
-    public func post(name: NSNotification.Name, withObject object: Any? = nil, withUserInfo info: Any? = nil) {
-        self.post(name: name, withObject: object, withUserInfo: info)
-    }
-}
-
-extension NotificationCenter: NotificationProtocol {
-    public func post(name: NSNotification.Name, withObject object: Any?, withUserInfo info: Any?) {
-        let payload = (info as? [AnyHashable: Any])
-        self.post(name: name, object: object, userInfo: payload)
-    }
-
-    public func addObserver(name: NSNotification.Name?,
-                            queue: OperationQueue?,
-                            using block: @escaping (Notification) -> Void) -> NSObjectProtocol? {
-        self.addObserver(forName: name,
-                         object: nil,
-                         queue: queue,
-                         using: block)
-    }
-}
-
-@objc
-public protocol Notifiable {
-    var notificationCenter: NotificationProtocol { get set }
-    func handleNotifications(_ notification: Notification)
+public protocol Notifiable: AnyObject {
+    /// We must treat `@objc` methods as `nonisolated`, as we cannot guarantee actor isolation when called outside
+    /// asynchronous contexts. This will change in Swift 6.2 when we can start using `MainActorMessage` to guarantee
+    /// threading.
+    nonisolated func handleNotifications(_ notification: Notification)
 }
 
 public extension Notifiable {
-    func setupNotifications(forObserver observer: Any,
-                            observing notifications: [Notification.Name]) {
-        notifications.forEach {
-            notificationCenter.addObserver(observer,
-                                           selector: #selector(handleNotifications),
-                                           name: $0,
-                                           object: nil)
+    /// Registers an observer for the given notifications.
+    func startObservingNotifications(
+        withNotificationCenter notificationCenter: NotificationProtocol,
+        forObserver observer: Any,
+        observing notifications: [Notification.Name]
+    ) {
+        // It is possible to add duplicate observers, so to be extra safe with this Notifiable API we will attempt to remove
+        // any existing observers matching these requirements first.
+        stopObservingNotifications(
+            withNotificationCenter: notificationCenter,
+            forObserver: observer,
+            observing: notifications
+        )
+
+        // Set up observers, calling our nonisolated handle method to ensure we don't make the mistake of thinking we can
+        // handle notifications on `@MainActor` methods when using `@objc`.
+        for notification in notifications {
+            notificationCenter.addObserver(
+                observer,
+                selector: #selector(handleNotifications),
+                name: notification,
+                object: nil
+            )
+        }
+    }
+
+    /// Deregisters a notification observer for the given notifications.
+    ///
+    /// It is not necessary to call this on `deinit`. Your theme observer is automatically cleaned up once it is deallocated.
+    /// You only need to call this if you want to stop observing a notification during the lifetime of your observer.
+    func stopObservingNotifications(
+        withNotificationCenter notificationCenter: NotificationProtocol,
+        forObserver observer: Any,
+        observing notifications: [Notification.Name]
+    ) {
+        // Set up observers, calling our nonisolated handle method to ensure we don't make the mistake of thinking we can
+        // handle notifications on `@MainActor` methods when using `@objc`.
+        for notification in notifications {
+            notificationCenter.removeObserver(
+                observer,
+                name: notification,
+                object: nil
+            )
         }
     }
 }

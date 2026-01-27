@@ -7,7 +7,7 @@ import Common
 import WebKit
 import Redux
 
-class TabPeekViewController: UIViewController,
+final class TabPeekViewController: UIViewController,
                              StoreSubscriber {
     typealias SubscriberStateType = TabPeekState
 
@@ -41,7 +41,15 @@ class TabPeekViewController: UIViewController,
     }
 
     deinit {
-        unsubscribeFromRedux()
+        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
+        guard Thread.isMainThread else {
+            assertionFailure("AddressBarPanGestureHandler was not deallocated on the main thread. Observer was not removed")
+            return
+        }
+
+        MainActor.assumeIsolated {
+            unsubscribeFromRedux()
+        }
     }
 
     override func viewDidLoad() {
@@ -104,6 +112,18 @@ class TabPeekViewController: UIViewController,
                 let action = TabPeekAction(tabUUID: self.tabModel.tabUUID,
                                            windowUUID: self.windowUUID,
                                            actionType: TabPeekActionType.addToBookmarks)
+                store.dispatch(action)
+                return
+            })
+        }
+        if tabPeekState.showRemoveBookmark {
+            actions.append(UIAction(title: .TabPeekRemoveBookmark,
+                                    image: UIImage.templateImageNamed(StandardImageIdentifiers.Large.bookmarkFill),
+                                    identifier: nil) { [weak self] _ in
+                guard let self else { return }
+                let action = TabPeekAction(tabUUID: self.tabModel.tabUUID,
+                                           windowUUID: self.windowUUID,
+                                           actionType: TabPeekActionType.removeBookmark)
                 store.dispatch(action)
                 return
             })

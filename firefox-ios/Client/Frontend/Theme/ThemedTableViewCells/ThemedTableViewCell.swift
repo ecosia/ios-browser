@@ -4,7 +4,6 @@
 
 import Common
 import UIKit
-import Shared
 
 class ThemedTableViewCell: UITableViewCell, ReusableCell, ThemeApplicable {
     var viewModel: ThemedTableViewCellViewModel?
@@ -13,8 +12,6 @@ class ThemedTableViewCell: UITableViewCell, ReusableCell, ThemeApplicable {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellStyle = style
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        // Ecosia: adjust layout margins
-        contentView.directionalLayoutMargins.leading = 16
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -74,10 +71,10 @@ class ThemedTableViewCell: UITableViewCell, ReusableCell, ThemeApplicable {
         self.viewModel?.setColors(theme: theme)
         // Take view model color if it exists, otherwise fallback to default colors
         textLabel?.textColor = viewModel?.textColor ?? theme.colors.textPrimary
-        detailTextLabel?.textColor = viewModel?.detailTextColor ?? theme.colors.textSecondary
-        // Ecosia: Update background color
-        // backgroundColor = viewModel?.backgroundColor ?? theme.colors.layer5
-        backgroundColor = viewModel?.backgroundColor ?? theme.colors.ecosia.backgroundElevation1
+        if let detailColor = viewModel?.detailTextColor {
+            detailTextLabel?.textColor = detailColor
+        }
+        backgroundColor = viewModel?.backgroundColor ?? theme.colors.layer5
         tintColor = viewModel?.tintColor ?? theme.colors.actionPrimary
     }
 

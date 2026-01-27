@@ -4,11 +4,10 @@
 
 import Common
 import Foundation
-import Shared
 
 struct SettingDisclosureUtility {
+    @MainActor
     static func buildDisclosureIndicator(theme: Theme) -> UIImageView {
-        /* Ecosia: Custom chevron disclosure indicator
         let disclosureIndicator = UIImageView()
         disclosureIndicator.image = UIImage(
             named: StandardImageIdentifiers.Large.chevronRight
@@ -17,7 +16,5 @@ struct SettingDisclosureUtility {
         disclosureIndicator.sizeToFit()
         disclosureIndicator.adjustsImageSizeForAccessibilityContentSizeCategory = true
         return disclosureIndicator
-        */
-        ecosiaDisclosureIndicator(theme: theme)
     }
 }

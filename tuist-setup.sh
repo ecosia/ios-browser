@@ -66,6 +66,16 @@ else
 fi
 echo -e "${GREEN}✓ Project generated${NC}\n"
 
+# Create Staging.xcconfig if not existing
+file_path="firefox-ios/Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig"
+if [ ! -f "$file_path" ]; then
+    echo -e "${YELLOW}Creating Staging.xcconfig...${NC}"
+    touch "$file_path"
+    echo -e "${GREEN}✓ Staging.xcconfig created${NC}\n"
+else
+    echo -e "${GREEN}✓ Staging.xcconfig already exists${NC}\n"
+fi
+
 echo -e "${GREEN}═══════════════════════════════════════${NC}"
 echo -e "${GREEN}   ✓ Setup Complete!${NC}"
 echo -e "${GREEN}═══════════════════════════════════════${NC}\n"

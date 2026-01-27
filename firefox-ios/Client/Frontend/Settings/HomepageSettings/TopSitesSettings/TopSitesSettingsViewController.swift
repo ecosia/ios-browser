@@ -6,7 +6,7 @@ import Foundation
 import Common
 import Shared
 
-class TopSitesSettingsViewController: SettingsTableViewController, FeatureFlaggable {
+final class TopSitesSettingsViewController: SettingsTableViewController, FeatureFlaggable {
     // MARK: - Initializers
     init(windowUUID: WindowUUID) {
         super.init(style: .grouped, windowUUID: windowUUID)
@@ -28,52 +28,85 @@ class TopSitesSettingsViewController: SettingsTableViewController, FeatureFlagga
 
     // MARK: - Methods
     override func generateSettings() -> [SettingSection] {
-        var sections = [Setting]()
-        /* Ecosia: custom top site setting
-        let topSitesSetting = BoolSetting(
-            prefs: profile.prefs,
-            theme: themeManager.getCurrentTheme(for: windowUUID),
-            prefKey: PrefsKeys.UserFeatureFlagPrefs.TopSiteSection,
-            defaultValue: true,
-            titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle
-        )
-        sections.append(topSitesSetting)
+        var sections: [SettingSection] = []
 
-        let sponsoredShortcutSetting = BoolSetting(
-            prefs: profile.prefs,
-            theme: themeManager.getCurrentTheme(for: windowUUID),
-            prefKey: PrefsKeys.UserFeatureFlagPrefs.SponsoredShortcuts,
-            defaultValue: true,
-            titleText: .Settings.Homepage.Shortcuts.SponsoredShortcutsToggle
-        )
-        sections.append(sponsoredShortcutSetting)
-         */
-        let topSitesSetting = NTPCustomizationSetting(prefs: profile.prefs,
-                                                      theme: themeManager.getCurrentTheme(for: windowUUID),
-                                                      config: .topSites)
-        sections.append(topSitesSetting)
+        if let profile {
+            let toggleSettings = [
+                BoolSetting(
+                    prefs: profile.prefs,
+                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    prefKey: PrefsKeys.UserFeatureFlagPrefs.TopSiteSection,
+                    defaultValue: true,
+                    titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle
+                ) { isOn in
+                    store.dispatch(
+                        TopSitesAction(
+                            isEnabled: isOn,
+                            windowUUID: self.windowUUID,
+                            actionType: TopSitesActionType.toggleShowSectionSetting
+                        )
+                    )
+                },
+                BoolSetting(
+                    prefs: profile.prefs,
+                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    prefKey: PrefsKeys.FeatureFlags.SponsoredShortcuts,
+                    defaultValue: featureFlags.isFeatureEnabled(.hntSponsoredShortcuts, checking: .userOnly),
+                    titleText: .Settings.Homepage.Shortcuts.SponsoredShortcutsToggle
+                ) { _ in
+                    store.dispatch(
+                        TopSitesAction(
+                            windowUUID: self.windowUUID,
+                            actionType: TopSitesActionType.toggleShowSponsoredSettings
+                        )
+                    )
 
-        let toggleSection = SettingSection(title: nil,
-                                           children: sections)
+                    // If sponsored shortcuts are turned off, request to delete the user data
+                    let isSponsoredShortcutsEnabled = profile.prefs.boolForKey(
+                        PrefsKeys.FeatureFlags.SponsoredShortcuts
+                    ) ?? true
+                    if !isSponsoredShortcutsEnabled,
+                       let contextId = TelemetryContextualIdentifier.contextId {
+                        self.deleteUserRequest(contextId: contextId)
+                    }
+                }
+            ]
+            let toggleSection = SettingSection(title: nil, children: toggleSettings)
+            sections.append(toggleSection)
+        }
 
         let rowSetting = RowSettings(settings: self)
         let rowSection = SettingSection(title: nil, children: [rowSetting])
+        sections.append(rowSection)
 
-        return [toggleSection, rowSection]
+        return sections
+    }
+
+    private func deleteUserRequest(contextId: String) {
+        Task {
+            let remover = UnifiedAdsUserDataRemover()
+            try await remover.deleteUserData(contextID: contextId)
+        }
     }
 }
 
 // MARK: - TopSitesSettings
 extension TopSitesSettingsViewController {
     class RowSettings: Setting {
-        let profile: Profile
+        let profile: Profile?
         let windowUUID: WindowUUID
 
         override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
         override var status: NSAttributedString {
             let defaultValue = TopSitesRowCountSettingsController.defaultNumberOfRows
-            let numberOfRows = profile.prefs.intForKey(PrefsKeys.NumberOfTopSiteRows) ?? defaultValue
-
+            let numberOfRows = profile?.prefs.intForKey(PrefsKeys.NumberOfTopSiteRows) ?? defaultValue
+            store.dispatch(
+                TopSitesAction(
+                    numberOfRows: Int(numberOfRows),
+                    windowUUID: self.windowUUID,
+                    actionType: TopSitesActionType.updatedNumberOfRows
+                )
+            )
             return NSAttributedString(string: String(format: "%d", numberOfRows))
         }
 
@@ -97,6 +130,7 @@ extension TopSitesSettingsViewController {
         }
 
         override func onClick(_ navigationController: UINavigationController?) {
+            guard let profile else { return }
             let viewController = TopSitesRowCountSettingsController(prefs: profile.prefs, windowUUID: windowUUID)
             viewController.profile = profile
             navigationController?.pushViewController(viewController, animated: true)

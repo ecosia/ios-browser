@@ -1,4 +1,5 @@
 {
+  "originHash" : "5f9ff91b8dd9b6abf456faecb88cc90443ea893d8dc4ffbf58d8d91507e7411a",
   "pins" : [
     {
       "identity" : "a-star",
@@ -37,6 +38,15 @@
       }
     },
     {
+      "identity" : "down",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/johnxnguyen/Down.git",
+      "state" : {
+        "revision" : "f34b166be1f1db4aa8f573067e901d72f2a6be57",
+        "version" : "0.11.0"
+      }
+    },
+    {
       "identity" : "fuzi",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nbhasin2/Fuzi.git",
@@ -59,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mozilla/glean-swift",
       "state" : {
-        "revision" : "51794f8b74c55ebde6d1502b641eacc19176e139",
-        "version" : "61.2.0"
+        "revision" : "8470fb7d0ff00d1d0f845ec445fbc70b4c6cbab3",
+        "version" : "66.3.0"
       }
     },
     {
@@ -95,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "2ef543ee21d63734e1c004ad6c870255e8716c50",
-        "version" : "7.12.0"
+        "revision" : "3db26ab625d194c38e68c1a40e43d1bc12743fe0",
+        "version" : "8.2.0"
       }
     },
     {
@@ -109,21 +119,21 @@
       }
     },
     {
+      "identity" : "lrucache",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nicklockwood/LRUCache.git",
+      "state" : {
+        "revision" : "cb5b2bd0da83ad29c0bec762d39f41c8ad0eaf3e",
+        "version" : "1.2.1"
+      }
+    },
+    {
       "identity" : "mappamundi",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mozilla-mobile/MappaMundi.git",
       "state" : {
         "branch" : "master",
         "revision" : "f56a6e483163a761adc8cd25c337db0ed1eac524"
-      }
-    },
-    {
-      "identity" : "rust-components-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ecosia/rust-components-swift.git",
-      "state" : {
-        "branch" : "133.0.0_Glean_removed",
-        "revision" : "e23b9086b2ce905e1b3187248c965c123b780fff"
       }
     },
     {
@@ -181,6 +191,15 @@
       }
     },
     {
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "b601256eab081c0f92f059e12818ac1d4f178ff7",
+        "version" : "1.3.0"
+      }
+    },
+    {
       "identity" : "swift-certificates",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-certificates.git",
@@ -230,17 +249,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swhitty/SwiftDraw",
       "state" : {
-        "revision" : "a5c680f07b33f4cc9a451491b417b8119de23c6e",
-        "version" : "0.17.0"
+        "revision" : "2cfd97c753feafe23c767ad3cb4daaf5c5415272",
+        "version" : "0.18.3"
       }
     },
     {
       "identity" : "swiftsoup",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/scinfu/SwiftSoup",
+      "location" : "https://github.com/scinfu/SwiftSoup.git",
       "state" : {
-        "revision" : "f707b8680cddb96dc1855632340a572ef37bbb98",
-        "version" : "2.5.3"
+        "revision" : "d86f244ed497d48012782e2f59c985a55e77b3f5",
+        "version" : "2.11.3"
       }
     },
     {
@@ -271,5 +290,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

@@ -7,6 +7,7 @@ import UIKit
 
 /// Delegate for the text field events. Since LocationTextField owns the UITextFieldDelegate,
 /// callers must use this instead.
+@MainActor
 protocol LocationTextFieldDelegate: AnyObject {
     func locationTextField(_ textField: LocationTextField, didEnterText text: String)
     func locationTextFieldShouldReturn(_ textField: LocationTextField) -> Bool
@@ -34,7 +35,9 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     private var lastReplacement: String?
     private var hideCursor = false
     private var isSettingMarkedText = false
-
+    var clearButton: UIButton? {
+        return value(forKey: "_clearButton") as? UIButton
+    }
     private let copyShortcutKey = "c"
 
     // MARK: - Init
@@ -50,6 +53,11 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
         autocapitalizationType = .none
         returnKeyType = .go
         tintAdjustmentMode = .normal
+
+        // Setting the content type to a field that is not related to AutoFill functionality
+        // like email and password, should disable the Operating system to load those content,
+        // hence having a faster keyboard start up the first time
+        textContentType = .URL
         delegate = self
 
         // Disable dragging urls on iPhones because it conflicts with editing the text
@@ -148,16 +156,7 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
         tintColor = colors.layerSelectedText
         clearButtonTintColor = colors.iconPrimary
         markedTextStyle = [NSAttributedString.Key.backgroundColor: colors.layerAutofillText]
-
-        if isEditing {
-            textColor = colors.textPrimary
-        }
-
-        attributedPlaceholder = NSAttributedString(
-            string: placeholder ?? "",
-            attributes: [NSAttributedString.Key.foregroundColor: colors.textSecondary]
-        )
-
+        textColor = colors.textPrimary
         tintClearButton()
     }
 
@@ -169,7 +168,6 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
         guard !isSettingMarkedText else { return }
 
         hideCursor = markedTextRange != nil
-        removeCompletion()
 
         let isKeyboardReplacingText = lastReplacement != nil
         if isKeyboardReplacingText, markedTextRange == nil {
@@ -287,6 +285,7 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     }
 
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        text = ""
         removeCompletion()
         return autocompleteDelegate?.locationTextFieldShouldClear(self) ?? true
     }

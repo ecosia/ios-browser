@@ -5,7 +5,6 @@
 import UIKit
 import Shared
 import Common
-import Ecosia
 
 class WebsiteDataManagementViewController: UIViewController,
                                            UITableViewDataSource,
@@ -13,12 +12,22 @@ class WebsiteDataManagementViewController: UIViewController,
                                            UISearchBarDelegate,
                                            Themeable {
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
     private static let showMoreCellReuseIdentifier = "showMoreCell"
-
+    private struct UX {
+        static let sectionTopMargin: CGFloat = 10
+        static var tableViewStyleForCurrentOS: UITableView.Style {
+            guard #available(iOS 26.0, *) else { return .grouped }
+            return .insetGrouped
+        }
+        static var sectionTopMarginForCurrentOS: CGFloat {
+            guard #available(iOS 26.0, *) else { return 0 }
+            return UX.sectionTopMargin
+        }
+    }
     private enum Section: Int {
         case sites = 0
         case showMore = 1
@@ -46,7 +55,7 @@ class WebsiteDataManagementViewController: UIViewController,
 
     private let viewModel = WebsiteDataManagementViewModel()
 
-    var tableView: UITableView!
+    var tableView: UITableView?
     var searchController: UISearchController?
 
     private lazy var searchResultsViewController = WebsiteDataSearchResultsViewController(viewModel: viewModel,
@@ -58,10 +67,19 @@ class WebsiteDataManagementViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = .SettingsWebsiteDataTitle
-        navigationController?.setToolbarHidden(true, animated: false)
+        setupView()
 
-        tableView = UITableView()
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        applyTheme()
+    }
+
+    private func setupView() {
+        title = .SettingsWebsiteDataTitle
+
+        let tableView = UITableView(
+            frame: .zero,
+            style: UX.tableViewStyleForCurrentOS
+        )
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorColor = currentTheme().colors.borderPrimary
@@ -111,7 +129,7 @@ class WebsiteDataManagementViewController: UIViewController,
             guard let self = self else { return }
             self.loadingView.isHidden = self.viewModel.state != .loading
             self.searchResultsViewController.reloadData()
-            self.tableView.reloadData()
+            self.tableView?.reloadData()
         }
 
         viewModel.loadAllWebsiteData()
@@ -127,18 +145,15 @@ class WebsiteDataManagementViewController: UIViewController,
         searchController.searchBar.delegate = self
         searchController.searchBar.barStyle = currentTheme().type.getBarStyle()
 
+        if #unavailable(iOS 26.0) {
+            navigationItem.hidesSearchBarWhenScrolling = false
+        }
+
         navigationItem.searchController = searchController
         self.searchController = searchController
+        self.tableView = tableView
 
         definesPresentationContext = true
-
-        listenForThemeChange(view)
-        applyTheme()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        unfoldSearchbar()
     }
 
     func tableView(
@@ -195,7 +210,7 @@ class WebsiteDataManagementViewController: UIViewController,
         }
         switch section {
         case .sites:
-            guard let cell = tableView.dequeueReusableCell(
+            guard let cell = tableView?.dequeueReusableCell(
                 withIdentifier: ThemedTableViewCell.cellIdentifier,
                 for: indexPath
             ) as? ThemedTableViewCell
@@ -204,7 +219,7 @@ class WebsiteDataManagementViewController: UIViewController,
             }
             return cell
         case .showMore:
-            guard let cell = tableView.dequeueReusableCell(
+            guard let cell = tableView?.dequeueReusableCell(
                 withIdentifier: WebsiteDataManagementViewController.showMoreCellReuseIdentifier,
                 for: indexPath
             ) as? ThemedTableViewCell
@@ -213,7 +228,7 @@ class WebsiteDataManagementViewController: UIViewController,
             }
             return cell
         case .clearButton:
-            guard let cell = tableView.dequeueReusableCell(
+            guard let cell = tableView?.dequeueReusableCell(
                 withIdentifier: ThemedCenteredTableViewCell.cellIdentifier,
                 for: indexPath
             ) as? ThemedCenteredTableViewCell
@@ -251,13 +266,10 @@ class WebsiteDataManagementViewController: UIViewController,
         case .sites:
             guard let item = viewModel.siteRecords[safe: indexPath.row] else { return }
             viewModel.selectItem(item)
-            break
         case .showMore:
             viewModel.showMoreButtonPressed()
             tableView.reloadData()
         case .clearButton:
-            // Ecosia: Track "Clear Private Data" button click
-            Analytics.shared.clearsDataFromSection(.websites)
             let generator = UIImpactFeedbackGenerator(style: .heavy)
             generator.impactOccurred()
             let alert = viewModel.createAlertToRemove()
@@ -272,7 +284,6 @@ class WebsiteDataManagementViewController: UIViewController,
         case .sites:
             guard let item = viewModel.siteRecords[safe: indexPath.row] else { return }
             viewModel.deselectItem(item)
-            break
         default: break
         }
     }
@@ -320,11 +331,11 @@ class WebsiteDataManagementViewController: UIViewController,
         let section = Section(rawValue: section)!
         switch section {
         case .clearButton:
-            return 10 // Controls the space between the site list and the button
+            return UX.sectionTopMargin // Controls the space between the site list and the button
         case .sites:
             return UITableView.automaticDimension
         case .showMore:
-            return 0
+            return UX.sectionTopMarginForCurrentOS
         }
     }
 
@@ -342,14 +353,9 @@ class WebsiteDataManagementViewController: UIViewController,
         return 0
     }
 
-    private func unfoldSearchbar() {
-        guard let searchBarHeight = navigationItem.searchController?.searchBar.intrinsicContentSize.height else { return }
-        tableView.setContentOffset(CGPoint(x: 0, y: -searchBarHeight + tableView.contentOffset.y), animated: true)
-    }
-
     func applyTheme() {
         loadingView.applyTheme(theme: currentTheme())
-        tableView.separatorColor = currentTheme().colors.borderPrimary
-        tableView.backgroundColor = currentTheme().colors.layer1
+        tableView?.separatorColor = currentTheme().colors.borderPrimary
+        tableView?.backgroundColor = currentTheme().colors.layer1
     }
 }

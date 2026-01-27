@@ -4,16 +4,17 @@
 
 import Storage
 
-import struct MozillaAppServices.EncryptedLogin
+import struct MozillaAppServices.Login
 
 protocol LoginStorage {
-    func listLogins() async throws -> [EncryptedLogin]
+    @MainActor
+    func listLogins() async throws -> [Login]
 }
 
 extension RustLogins: LoginStorage {
-    func listLogins() async throws -> [EncryptedLogin] {
+    func listLogins() async throws -> [Login] {
         return try await withCheckedThrowingContinuation { continuation in
-            self.listLogins().upon { result in
+            self.listLogins { result in
                 switch result {
                 case .success(let logins):
                     continuation.resume(returning: logins)
@@ -27,7 +28,7 @@ extension RustLogins: LoginStorage {
 
 class MockLoginStorage: LoginStorage {
     var shouldThrowError = false
-    func listLogins() async throws -> [EncryptedLogin] {
+    func listLogins() async throws -> [Login] {
         if shouldThrowError {
             struct StorageError: Error {}
             throw StorageError()
@@ -36,8 +37,8 @@ class MockLoginStorage: LoginStorage {
             try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC) // 0.5 seconds
 
             // Return mock login data
-            let mockLogins: [EncryptedLogin] = [
-                EncryptedLogin(
+            let mockLogins: [Login] = [
+                Login(
                     credentials: URLCredential(
                         user: "test",
                         password: "doubletest",
@@ -45,7 +46,7 @@ class MockLoginStorage: LoginStorage {
                     ),
                     protectionSpace: URLProtectionSpace.fromOrigin("https://test.com")
                 ),
-                EncryptedLogin(
+                Login(
                     credentials: URLCredential(
                         user: "test",
                         password: "doubletest",

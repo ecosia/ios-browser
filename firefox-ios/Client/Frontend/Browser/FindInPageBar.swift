@@ -4,12 +4,18 @@
 
 import Common
 import UIKit
-import Shared
 
 protocol FindInPageBarDelegate: AnyObject {
+    @MainActor
     func findInPage(_ findInPage: FindInPageBar, didTextChange text: String)
+
+    @MainActor
     func findInPage(_ findInPage: FindInPageBar, didFindPreviousWithText text: String)
+
+    @MainActor
     func findInPage(_ findInPage: FindInPageBar, didFindNextWithText text: String)
+
+    @MainActor
     func findInPageDidPressClose(_ findInPage: FindInPageBar)
 }
 

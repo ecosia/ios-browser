@@ -10,13 +10,18 @@ class EditFolderCell: UITableViewCell,
                       ReusableCell,
                       ThemeApplicable {
     private struct UX {
-        static let textFieldVerticalPadding: CGFloat = 12.0
+        static let textFieldVerticalPadding: CGFloat = if #available(iOS 26.0, *) {
+            14
+        } else {
+            12
+        }
         static let textFieldHorizontalPadding: CGFloat = 16.0
     }
     private lazy var titleTextField: TextField = .build { view in
         view.addAction(UIAction(handler: { [weak self] _ in
             self?.titleTextFieldDidChange()
         }), for: .editingChanged)
+        view.accessibilityIdentifier = AccessibilityIdentifiers.LibraryPanels.BookmarksPanel.titleTextField
     }
     var onTitleFieldUpdate: ((String) -> Void)?
 
@@ -34,6 +39,13 @@ class EditFolderCell: UITableViewCell,
     }
 
     private func setupSubviews() {
+        typealias A11y = AccessibilityIdentifiers.LibraryPanels.BookmarksPanel
+        let viewModel = TextFieldViewModel(
+            formA11yId: A11y.titleTextField,
+            clearButtonA11yId: A11y.titleTextFieldClearButton,
+            clearButtonA11yLabel: String.Bookmarks.Menu.ClearTextFieldButtonA11yLabel
+        )
+        titleTextField.configure(viewModel: viewModel)
         titleTextField.placeholder = .BookmarkDetailFieldTitle
         contentView.addSubview(titleTextField)
         NSLayoutConstraint.activate([
@@ -60,6 +72,6 @@ class EditFolderCell: UITableViewCell,
 
     func applyTheme(theme: any Theme) {
         titleTextField.applyTheme(theme: theme)
-        contentView.backgroundColor = theme.colors.layer2
+        backgroundColor = theme.colors.layer5
     }
 }

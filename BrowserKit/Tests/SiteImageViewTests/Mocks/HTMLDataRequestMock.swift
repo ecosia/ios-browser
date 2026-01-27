@@ -5,10 +5,10 @@
 import Foundation
 @testable import SiteImageView
 
-class HTMLDataRequestMock: HTMLDataRequest {
+final class MockHTMLDataRequest: HTMLDataRequest, @unchecked Sendable {
     var fetchDataForURLCount = 0
     var data: Data?
-    var error: SiteImageError?
+    var error: (any Error)?
 
     func fetchDataForURL(_ url: URL) async throws -> Data {
         fetchDataForURLCount += 1

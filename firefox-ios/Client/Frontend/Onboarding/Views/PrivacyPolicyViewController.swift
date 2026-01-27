@@ -8,28 +8,13 @@ import Common
 import Shared
 
 class PrivacyPolicyViewController: UIViewController, Themeable {
-    private enum UX {
-        static let leadingPaddingPad: CGFloat = 8
-        static let leadingPaddingPhone: CGFloat = 0
-        static let topPaddingPad: CGFloat = 0
-        static let topPaddingPhone: CGFloat = 0
-        static let contentScalePhone: CGFloat = 1.0
-        static var contentScaleIpad: CGFloat {
-            if UIWindow.isPortrait {
-                return 0.84
-            } else {
-                return 0.58
-            }
-        }
-    }
-    private var webView: WKWebView!
     private var url: URL
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
 
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
 
     init(
         url: URL,
@@ -51,57 +36,51 @@ class PrivacyPolicyViewController: UIViewController, Themeable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        listenForThemeChange(view)
         setupView()
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
     }
 
     func setupView() {
-        var frame = CGRect(x: UX.leadingPaddingPhone,
-                           y: UX.topPaddingPhone,
-                           width: view.frame.width,
-                           height: view.frame.height)
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            if traitCollection.horizontalSizeClass == .regular {
-                frame = CGRect(x: UX.leadingPaddingPad,
-                               y: UX.topPaddingPad,
-                               width: view.frame.width * UX.contentScaleIpad,
-                               height: view.frame.height - UX.topPaddingPad)
-            } else {
-                frame = CGRect(x: UX.leadingPaddingPhone,
-                               y: UX.topPaddingPhone,
-                               width: view.frame.width * UX.contentScalePhone,
-                               height: view.frame.height - UX.topPaddingPhone)
-            }
-        } else if UIDevice.current.userInterfaceIdiom == .phone {
-            frame = CGRect(x: UX.leadingPaddingPhone,
-                           y: UX.topPaddingPhone,
-                           width: view.frame.width * UX.contentScalePhone,
-                           height: view.frame.height - UX.topPaddingPhone)
-        }
-        webView = WKWebView(frame: frame)
+        let config = WKWebViewConfiguration()
+        config.setURLSchemeHandler(InternalSchemeHandler(shouldUseOldErrorPage: true), forURLScheme: InternalURL.scheme)
+        let webView = WKWebView(frame: .zero, configuration: config)
+        webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
         webView.load(URLRequest(url: url))
+
         view.backgroundColor = .systemBackground
         view.addSubview(webView)
+
+        NSLayoutConstraint.activate([
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            webView.topAnchor.constraint(equalTo: view.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     // MARK: - Theming
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        navigationItem.rightBarButtonItem?.tintColor = theme.colors.actionPrimary
+        if #available(iOS 26.0, *) {
+            navigationItem.rightBarButtonItem?.tintColor = theme.colors.textOnLight
+        } else {
+            navigationItem.rightBarButtonItem?.tintColor = theme.colors.actionPrimary
+        }
     }
 }
 
 extension PrivacyPolicyViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        let contentSize = webView.scrollView.contentSize
-        let viewSize = self.view.bounds.size
-        let zoom = viewSize.width / contentSize.width
-
-        webView.scrollView.minimumZoomScale = zoom * 0.8
-        webView.scrollView.maximumZoomScale = zoom * 0.8
-        webView.scrollView.zoomScale = zoom * 0.8
+    func webView(
+        _ webView: WKWebView,
+        didFailProvisionalNavigation navigation: WKNavigation?,
+        withError error: any Error
+    ) {
+        let error = error as NSError
+        if error.code == CFNetworkErrors.cfurlErrorNotConnectedToInternet.rawValue {
+            ErrorPageHelper(certStore: nil).loadPage(error, forUrl: url, inWebView: webView)
+        }
     }
 }

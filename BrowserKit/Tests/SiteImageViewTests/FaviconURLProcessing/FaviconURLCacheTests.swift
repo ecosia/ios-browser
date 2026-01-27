@@ -5,32 +5,35 @@
 import XCTest
 @testable import SiteImageView
 
+@MainActor
 class FaviconURLCacheTests: XCTestCase {
-    var subject: DefaultFaviconURLCache!
     var mockFileManager: MockURLCacheFileManager!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         mockFileManager = MockURLCacheFileManager()
-        subject = DefaultFaviconURLCache(fileManager: mockFileManager)
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         mockFileManager = nil
-        subject = nil
+        try await super.tearDown()
     }
 
     func testGetURLFromCacheWithEmptyCache() async {
+        let subject = createSubject(fileManager: mockFileManager)
         let cacheKey = "firefox.com"
         let result = try? await subject.getURLFromCache(cacheKey: cacheKey)
         XCTAssertNil(result)
     }
 
-    func testGetURLFromCacheWithValuePresent() async {
+    func testGetURLFromCacheWithValuePresent() async throws {
+        let subject = createSubject(fileManager: MockURLCacheFileManager())
         let cacheKey = "firefox.com"
         await subject.cacheURL(cacheKey: cacheKey, faviconURL: URL(string: "www.firefox.com")!)
         let result = try? await subject.getURLFromCache(cacheKey: cacheKey)
+
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+
         XCTAssertEqual(result?.absoluteString, "www.firefox.com")
     }
 
@@ -40,7 +43,7 @@ class FaviconURLCacheTests: XCTestCase {
         let testFavicons = [FaviconURL(cacheKey: cacheKey, faviconURL: "www.google.com", createdAt: Date())]
         await fileManager.saveURLCache(data: getTestData(items: testFavicons))
 
-        subject = DefaultFaviconURLCache(fileManager: fileManager)
+        let subject = createSubject(fileManager: fileManager)
 
         try await Task.sleep(nanoseconds: 1_000_000_000)
 
@@ -58,18 +61,20 @@ class FaviconURLCacheTests: XCTestCase {
                             FaviconURL(cacheKey: "firefox", faviconURL: "www.firefox.com", createdAt: expiredDate)]
         await fileManager.saveURLCache(data: getTestData(items: testFavicons))
 
-        subject = DefaultFaviconURLCache(fileManager: fileManager)
+        let subject = createSubject(fileManager: fileManager)
 
         try await Task.sleep(nanoseconds: 1_000_000_000)
 
         let result1 = try? await subject.getURLFromCache(cacheKey: "amazon")
         XCTAssertEqual(result1?.absoluteString, "www.amazon.com")
 
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+
         let result2 = try? await subject.getURLFromCache(cacheKey: "firefox")
         XCTAssertNil(result2)
     }
 
-    private func getTestData(items: [FaviconURL], file: String = #file, line: UInt = #line) -> Data {
+    private func getTestData(items: [FaviconURL], file: String = #filePath, line: UInt = #line) -> Data {
         let archiver = NSKeyedArchiver(requiringSecureCoding: false)
         do {
             try archiver.encodeEncodable(items, forKey: "favicon-url-cache")
@@ -77,6 +82,14 @@ class FaviconURLCacheTests: XCTestCase {
             XCTFail("Something went wrong generating mock favicon data, file: \(file), line: \(line)")
         }
         return archiver.encodedData
+    }
+
+    func createSubject(fileManager: URLCacheFileManager,
+                       file: StaticString = #filePath,
+                       line: UInt = #line) -> DefaultFaviconURLCache {
+        let subject = DefaultFaviconURLCache(fileManager: fileManager)
+        trackForMemoryLeaks(subject, file: file, line: line)
+        return subject
     }
 }
 

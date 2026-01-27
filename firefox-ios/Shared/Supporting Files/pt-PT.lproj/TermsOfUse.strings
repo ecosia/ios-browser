@@ -1,0 +1,42 @@
+/* Label for the button that confirms user acceptance of the Terms of Use. */
+"TermsOfUse.AcceptButton.v142" = "Aceitar";
+
+/* Label for the back button shown in the Terms of Use web view. */
+"TermsOfUse.BackButton.v142" = "Retroceder";
+
+/* Introductory message in the Terms of Use sheet that mentions updated Terms of Use and Privacy Notice. %@ will be replaced with the app name (e.g., Firefox). */
+"TermsOfUse.Description.v142" = "Introduzimos os Termos de utilização do %@ e atualizamos a nossa Informação de privacidade.";
+
+/* Text shown in the Terms of Use bottom sheet for variants 1 and 2. %@ is replaced with the localized 'here' link text. */
+"TermsOfUse.LearnMoreHere.v147" = "Pode saber mais %@.";
+
+/* Link text for 'here' in the phrase 'You can learn more here.' shown in the Terms of Use sheet for variants 1 and 2. */
+"TermsOfUse.Link.HereText.v147" = "aqui";
+
+/* Link shown in the Terms of Use sheet to direct users to more details about the update. */
+"TermsOfUse.Link.LearnMore.v142" = "Saber mais";
+
+/* Hyperlink label pointing to the Privacy Notice document from the Terms of Use sheet. */
+"TermsOfUse.Link.PrivacyNotice.v142" = "Informação de privacidade";
+
+/* Hyperlink label for the Terms of Use document. %@ is replaced with the app name (e.g., Firefox). */
+"TermsOfUse.Link.TermsOfUse.v142" = "Termos de utilização do %@";
+
+/* Label for the button that allows the user to postpone accepting the Terms of Use. */
+"TermsOfUse.RemindMeLaterButton.v142" = "Lembrar mais tarde";
+
+/* Descriptive text shown before user accepts the Terms of Use. Includes link text for 'Learn more'. */
+"TermsOfUse.ReviewAndAcceptText.v142" = "Por favor, despenda de um momento para rever e aceitar. Saber mais";
+
+/* Accessibility notification that is triggered when the Terms of Use sheet is presented. */
+"TermsOfUse.TermsOfUseHasOpened.v142" = "Folha dos Termos de utilização aberta";
+
+/* Title shown at the top of the Terms of Use bottom sheet, indicating that there is an update to terms of use. */
+"TermsOfUse.Title.v142" = "Temos uma atualização";
+
+/* Title shown at the top of the Terms of Use bottom sheet for variant 1. */
+"TermsOfUse.TitleValue1.v147" = "Termos de utilização";
+
+/* Title shown at the top of the Terms of Use bottom sheet for variant 2. %@ is replaced with the app name (e.g., Firefox). */
+"TermsOfUse.TitleValue2.v147" = "Uma nota de %@";
+

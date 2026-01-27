@@ -6,10 +6,10 @@ import Foundation
 import Sentry
 
 // MARK: - CrashManager
-public protocol CrashManager {
+public protocol CrashManager: Sendable {
     var crashedLastLaunch: Bool { get }
     func captureError(error: Error)
-    func setup(sendUsageData: Bool)
+    func setup(sendCrashReports: Bool)
     func send(message: String,
               category: LoggerCategory,
               level: LoggerLevel,
@@ -17,20 +17,22 @@ public protocol CrashManager {
 }
 
 /**
- *Crash report for rust errors
+ * Crash report for rust errors
  *
  * We implement this on exception classes that correspond to Rust errors to
  * customize how the crash reports look.
  *
- * CrashReporting implementors should test if exceptions implement this
+ * CrashReporting implementers should test if exceptions implement this
  * interface.  If so, they should try to customize their crash reports to match.
  */
 public protocol CustomCrashReport {
-    var typeName: String { get set }
-    var message: String { get set }
+    var typeName: String { get }
+    var message: String { get }
 }
 
-public class DefaultCrashManager: CrashManager {
+/// **Note**: This class is safely `@unchecked Sendable` because we protect the only mutable state (`enabled`) with a manual
+/// synchronization method (a lock).
+public final class DefaultCrashManager: CrashManager, @unchecked Sendable {
     enum Environment: String {
         case nightly = "Nightly"
         case production = "Production"
@@ -41,9 +43,14 @@ public class DefaultCrashManager: CrashManager {
     private let defaultDeviceAppHash = "0000000000000000000000000000000000000000"
     private let deviceAppHashLength = UInt(20)
 
+    // We are using a lock to manually protect our mutable state to make this class @unchecked Sendable
+    private let enabledLock = NSLock()
     private var enabled = false
 
     private var shouldSetup: Bool {
+        enabledLock.lock()
+        defer { enabledLock.unlock() }
+
         return !enabled
                 && !isSimulator
                 && isValidReleaseName
@@ -68,11 +75,10 @@ public class DefaultCrashManager: CrashManager {
         return "\(AppInfo.bundleIdentifier)@\(AppInfo.appVersion)"
     }
 
-    // MARK: - Init
-    private var appInfo: BrowserKitInformation
-    private var sentryWrapper: SentryWrapper
-    private var isSimulator: Bool
-    private var skipReleaseNameCheck: Bool
+    private let appInfo: BrowserKitInformation
+    private let sentryWrapper: SentryWrapper
+    private let isSimulator: Bool
+    private let skipReleaseNameCheck: Bool
 
     // Only enable app hang tracking in Beta for now
     private var shouldEnableAppHangTracking: Bool {
@@ -86,6 +92,8 @@ public class DefaultCrashManager: CrashManager {
     private var shouldEnableTraceProfiling: Bool {
         return appInfo.buildChannel == .beta
     }
+
+    // MARK: - Init
 
     public init(appInfo: BrowserKitInformation = BrowserKitInformation.shared,
                 sentryWrapper: SentryWrapper = DefaultSentry(),
@@ -102,8 +110,12 @@ public class DefaultCrashManager: CrashManager {
         return sentryWrapper.crashedInLastRun
     }
 
-    public func setup(sendUsageData: Bool) {
-        guard shouldSetup, sendUsageData, let dsn = sentryWrapper.dsn else { return }
+    public func setup(sendCrashReports: Bool) {
+        guard shouldSetup,
+              sendCrashReports,
+              let dsn = sentryWrapper.dsn else {
+            return
+        }
 
         sentryWrapper.startWithConfigureOptions(configure: { options in
             options.dsn = dsn
@@ -128,12 +140,16 @@ public class DefaultCrashManager: CrashManager {
             // Turn Sentry breadcrumbs off since we have our own log swizzling
             options.enableAutoBreadcrumbTracking = false
             options.beforeSend = { event in
-                if event.error.self is CustomCrashReport {
-                    self.alterEventForCustomCrash(event: event, crash: event.error as! CustomCrashReport)
+                guard let crashReport = event.error.self as? CustomCrashReport else {
+                    return event
                 }
+                self.alterEventForCustomCrash(event: event, crash: crashReport)
                 return event
             }
         })
+
+        enabledLock.lock()
+        defer { enabledLock.unlock() }
         enabled = true
 
         configureScope()
@@ -159,6 +175,8 @@ public class DefaultCrashManager: CrashManager {
                      category: LoggerCategory,
                      level: LoggerLevel,
                      extraEvents: [String: String]?) {
+        enabledLock.lock()
+        defer { enabledLock.unlock() }
         guard enabled else { return }
 
         guard shouldSendEventFor(level) else {
@@ -216,7 +234,7 @@ public class DefaultCrashManager: CrashManager {
         return event
     }
 
-    /// Do not send messages to Sentry if disabled OR if we are not on beta and the severity isnt severe
+    /// Do not send messages to Sentry if disabled OR if we are not on beta and the severity isn't severe
     /// This is the behaviour we want for Sentry logging
     ///       .info .warning .fatal
     /// Debug      n        n          n

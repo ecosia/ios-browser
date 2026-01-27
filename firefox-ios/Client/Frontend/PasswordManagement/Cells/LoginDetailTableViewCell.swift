@@ -4,14 +4,17 @@
 
 import Common
 import UIKit
-import Storage
-import Shared
 
 protocol LoginDetailTableViewCellDelegate: AnyObject {
+    @MainActor
     func didSelectOpenAndFillForCell(_ cell: LoginDetailTableViewCell)
+    @MainActor
     func shouldReturnAfterEditingDescription(_ cell: LoginDetailTableViewCell) -> Bool
+    @MainActor
     func canPerform(action: Selector, for cell: LoginDetailTableViewCell) -> Bool
+    @MainActor
     func textFieldDidChange(_ cell: LoginDetailTableViewCell)
+    @MainActor
     func textFieldDidEndEditing(_ cell: LoginDetailTableViewCell)
 }
 
@@ -29,11 +32,11 @@ struct LoginDetailTableViewCellModel {
     }
 }
 
-class LoginDetailTableViewCell: UITableViewCell,
-                                ThemeApplicable,
-                                ReusableCell,
-                                UITextFieldDelegate,
-                                MenuHelperLoginInterface {
+final class LoginDetailTableViewCell: UITableViewCell,
+                                      ThemeApplicable,
+                                      ReusableCell,
+                                      UITextFieldDelegate,
+                                      MenuHelperLoginInterface {
     private struct UX {
         static let horizontalMargin: CGFloat = 14
         static let verticalMargin: CGFloat = 11
@@ -175,20 +178,28 @@ class LoginDetailTableViewCell: UITableViewCell,
 
     // MARK: - Menu Selectors
     func menuHelperReveal() {
-        descriptionLabel.isSecureTextEntry = false
+        ensureMainThread {
+            self.descriptionLabel.isSecureTextEntry = false
+        }
     }
 
     func menuHelperSecure() {
-        descriptionLabel.isSecureTextEntry = true
+        ensureMainThread {
+            self.descriptionLabel.isSecureTextEntry = true
+        }
     }
 
     func menuHelperCopy() {
-        // Copy description text to clipboard
-        UIPasteboard.general.string = descriptionLabel.text
+        ensureMainThread {
+            // Copy description text to clipboard
+            UIPasteboard.general.string = self.descriptionLabel.text
+        }
     }
 
     func menuHelperOpenAndFill() {
-        delegate?.didSelectOpenAndFillForCell(self)
+        ensureMainThread {
+            self.delegate?.didSelectOpenAndFillForCell(self)
+        }
     }
 
     // MARK: - UITextFieldDelegate

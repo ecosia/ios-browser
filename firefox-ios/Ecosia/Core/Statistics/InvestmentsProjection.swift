@@ -18,11 +18,11 @@ import Foundation
             guard let self = self else { return }
             // Get initial interval from Statistics actor
             let initialInterval = await self.getTimerInterval()
-            
+
             while !Task.isCancelled {
                 let count = await self.totalInvestedAt(Date())
                 self.send(count)
-                
+
                 // Get updated interval (in case Statistics changed)
                 let interval = await self.getTimerInterval()
                 // Use nanoseconds API for iOS 15 compatibility
@@ -40,7 +40,7 @@ import Foundation
         let investmentPerSecond = await Statistics.shared.investmentPerSecond
         let totalInvestments = await Statistics.shared.totalInvestments
         let totalInvestmentsLastUpdated = await Statistics.shared.totalInvestmentsLastUpdated
-        
+
         let deltaTimeInSeconds = date.timeIntervalSince(totalInvestmentsLastUpdated)
         return .init(deltaTimeInSeconds * investmentPerSecond + totalInvestments)
     }

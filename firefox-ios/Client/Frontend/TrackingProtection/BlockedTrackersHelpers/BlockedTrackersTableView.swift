@@ -5,7 +5,6 @@
 import Foundation
 import UIKit
 import Common
-import Shared
 
 class BlockedTrackersTableView: UITableView,
                                 UITableViewDelegate {
@@ -31,7 +30,7 @@ class BlockedTrackersTableView: UITableView,
         layer.cornerRadius = TPMenuUX.UX.viewCornerRadius
         allowsSelection = false
         separatorColor = .clear
-        separatorStyle = .singleLine
+        separatorStyle = .none
         isScrollEnabled = false
         showsVerticalScrollIndicator = false
         rowHeight = UITableView.automaticDimension
@@ -53,7 +52,7 @@ class BlockedTrackersTableView: UITableView,
 
     // MARK: Themable
     func applyTheme(theme: Theme) {
-        backgroundColor = theme.colors.layer1
+        backgroundColor = theme.colors.layer3
         layer.borderColor = theme.colors.borderPrimary.cgColor
     }
 }

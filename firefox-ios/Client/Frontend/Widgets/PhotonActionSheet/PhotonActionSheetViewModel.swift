@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 import Storage
 import UIKit
 
@@ -11,13 +12,16 @@ public enum PresentationStyle {
     case popover // when displayed on the iPad
 }
 
+@MainActor
 class PhotonActionSheetViewModel: FeatureFlaggable {
     // MARK: - Properties
     var actions: [[PhotonRowActions]]
     var modalStyle: UIModalPresentationStyle
+    private let logger: Logger
 
     var closeButtonTitle: String?
-    var site: Site?
+    let site: Site?
+    var bookmarkFolderTitle: String?
     var title: String?
 
     var presentationStyle: PresentationStyle {
@@ -25,13 +29,15 @@ class PhotonActionSheetViewModel: FeatureFlaggable {
     }
 
     private enum SheetStyle {
-        case site, title, other
+        case site, title, bookmarkFolder, other
     }
 
     // Style is based on what the view model was init with
     private var sheetStyle: SheetStyle {
         if site != nil {
             return .site
+        } else if bookmarkFolderTitle != nil {
+            return .bookmarkFolder
         } else if title != nil {
             return .title
         } else {
@@ -42,10 +48,14 @@ class PhotonActionSheetViewModel: FeatureFlaggable {
     // MARK: - Initializers
     init(actions: [[PhotonRowActions]],
          site: Site? = nil,
-         modalStyle: UIModalPresentationStyle) {
+         bookmarkFolderTitle: String? = nil,
+         modalStyle: UIModalPresentationStyle,
+         logger: Logger = DefaultLogger.shared) {
         self.actions = actions
         self.site = site
+        self.bookmarkFolderTitle = bookmarkFolderTitle
         self.modalStyle = modalStyle
+        self.logger = logger
     }
 
     init(actions: [[PhotonRowActions]],
@@ -53,7 +63,8 @@ class PhotonActionSheetViewModel: FeatureFlaggable {
          title: String? = nil,
          modalStyle: UIModalPresentationStyle,
          isMainMenu: Bool = false,
-         isMainMenuInverted: Bool = false) {
+         isMainMenuInverted: Bool = false,
+         logger: Logger = DefaultLogger.shared) {
         self.actions = actions
         self.closeButtonTitle = closeButtonTitle
         self.title = title
@@ -61,6 +72,8 @@ class PhotonActionSheetViewModel: FeatureFlaggable {
 
         self.isMainMenu = isMainMenu
         self.isMainMenuInverted = isMainMenuInverted
+        self.logger = logger
+        self.site = nil
         setMainMenuStyle()
     }
 
@@ -86,7 +99,16 @@ class PhotonActionSheetViewModel: FeatureFlaggable {
         actions = actions.map { $0.reversed() }.reversed()
 
         // Flip cells
-        actions.forEach { $0.forEach { $0.items.forEach { $0.isFlipped = true } } }
+        actions = actions.map {
+            $0.map { oldPhotonAction in
+                let newPhotonAction = PhotonRowActions(
+                    oldPhotonAction.items.map { oldActionVM in
+                        SingleActionViewModel.copy(oldActionVM, isFlipped: true)
+                    }
+                )
+                return newPhotonAction
+            }
+        }
     }
 
     // Main menu is inverted if hamburger icon is at the bottom
@@ -103,20 +125,42 @@ class PhotonActionSheetViewModel: FeatureFlaggable {
         switch sheetStyle {
         case .site:
             guard let site = site else { break }
-            let header = tableView.dequeueReusableHeaderFooterView(
-                withIdentifier: PhotonActionSheetSiteHeaderView.cellIdentifier) as! PhotonActionSheetSiteHeaderView
+            guard let header = tableView.dequeueReusableHeaderFooterView(
+                withIdentifier: PhotonActionSheetSiteHeaderView.cellIdentifier
+            ) as? PhotonActionSheetSiteHeaderView else {
+                logger.log("Failed to dequeue PhotonActionSheetSiteHeaderView",
+                           level: .fatal,
+                           category: .library)
+                return UIView()
+            }
             header.configure(with: site)
             return header
-
+        case .bookmarkFolder:
+            guard let bookmarkFolderTitle = bookmarkFolderTitle else { break }
+            guard let header = tableView.dequeueReusableHeaderFooterView(
+                withIdentifier: PhotonActionSheetSiteHeaderView.cellIdentifier
+            ) as? PhotonActionSheetSiteHeaderView else {
+                logger.log("Failed to dequeue PhotonActionSheetSiteHeaderView",
+                           level: .fatal,
+                           category: .library)
+                return UIView()
+            }
+            header.configure(with: bookmarkFolderTitle)
+            return header
         case .title:
             guard let title = title else { break }
             if section > 0 {
                 return tableView.dequeueReusableHeaderFooterView(
                     withIdentifier: PhotonActionSheetLineSeparator.cellIdentifier)
             } else {
-                let header = tableView.dequeueReusableHeaderFooterView(
+                guard let header = tableView.dequeueReusableHeaderFooterView(
                     withIdentifier: PhotonActionSheetTitleHeaderView.cellIdentifier
-                ) as! PhotonActionSheetTitleHeaderView
+                ) as? PhotonActionSheetTitleHeaderView else {
+                    logger.log("Failed to dequeue PhotonActionSheetTitleHeaderView",
+                               level: .fatal,
+                               category: .library)
+                    return UIView()
+                }
                 header.configure(with: title)
                 return header
             }
@@ -138,7 +182,7 @@ class PhotonActionSheetViewModel: FeatureFlaggable {
 
     private func getHeaderHeightForFirstSection() -> CGFloat {
         switch sheetStyle {
-        case .site:
+        case .site, .bookmarkFolder:
             return UITableView.automaticDimension
         case .title:
             return PhotonActionSheet.UX.titleHeaderSectionHeight
@@ -181,10 +225,8 @@ class PhotonActionSheetViewModel: FeatureFlaggable {
     private func getSmallSizeMargins(view: UIView, presentedOn viewController: UIViewController) -> UIEdgeInsets {
         // Align menu icons with popover icons
         let extraLandscapeSpacing: CGFloat = UIWindow.isLandscape ? 10 : 0
-        let isToolbarRefactorEnabled = featureFlags.isFeatureEnabled(.toolbarRefactor, checking: .buildOnly)
-        let statusIconSize = isToolbarRefactorEnabled ? 0 : PhotonActionSheetView.UX.StatusIconSize.width
         let halfFrameWidth = view.frame.size.width / 2
-        let rightInset = halfFrameWidth - PhotonActionSheet.UX.spacing - statusIconSize / 2 + extraLandscapeSpacing
+        let rightInset = halfFrameWidth - PhotonActionSheet.UX.spacing / 2 + extraLandscapeSpacing
 
         // Calculate top and bottom insets
         let convertedPoint = view.convert(view.frame.origin, to: viewController.view)

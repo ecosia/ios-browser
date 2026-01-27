@@ -42,15 +42,15 @@ public final class News: StatePublisher {
 
     public func load(session: URLSession, force: Bool = false) {
         guard needsUpdate || force else { return }
-        
+
         Task {
             do {
                 let (data, _) = try await session.data(from: EcosiaEnvironment.current.urlProvider.notifications)
-                
+
                 guard let new = try? decoder.decode([NewsModel].self, from: data) else {
                     return
                 }
-                
+
                 let cleaned = new.compactMap { clean($0) }
                 items = Set(cleaned + Array(items))
                 await save()
@@ -64,7 +64,7 @@ public final class News: StatePublisher {
         // Perform file I/O on background
         let fileURL = FileManager.news
         let currentLanguage = Language.current
-        
+
         await Task.detached {
             guard let news = try? JSONDecoder().decode([NewsModel].self, from: Data(contentsOf: fileURL)) else {
                 return []
@@ -79,10 +79,10 @@ public final class News: StatePublisher {
 
     private func save() async {
         guard !items.isEmpty else { return }
-        
+
         let itemsToSave = items
         let fileURL = FileManager.news
-        
+
         // Perform file I/O on background
         await Task.detached {
             do {

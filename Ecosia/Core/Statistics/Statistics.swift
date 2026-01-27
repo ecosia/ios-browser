@@ -55,23 +55,23 @@ public actor Statistics {
     internal func setTotalInvestments(_ value: Double) {
         totalInvestments = value
     }
-    
+
     internal func setTotalInvestmentsLastUpdated(_ date: Date) {
         totalInvestmentsLastUpdated = date
     }
-    
+
     internal func setInvestmentPerSecond(_ value: Double) {
         investmentPerSecond = value
     }
-    
+
     internal func setTreesPlanted(_ value: Double) {
         treesPlanted = value
     }
-    
+
     internal func setTreesPlantedLastUpdated(_ date: Date) {
         treesPlantedLastUpdated = date
     }
-    
+
     internal func setTimePerTree(_ value: Double) {
         timePerTree = value
     }

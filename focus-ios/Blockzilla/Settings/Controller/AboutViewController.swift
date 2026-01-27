@@ -5,7 +5,7 @@
 import Foundation
 import UIKit
 
-class AboutViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, AboutHeaderViewDelegate {
+final class AboutViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, AboutHeaderViewDelegate {
     enum AboutSection: CaseIterable {
         case aboutHeader
         case aboutCategories
@@ -36,7 +36,7 @@ class AboutViewController: UIViewController, UITableViewDataSource, UITableViewD
             case .aboutCategories:
                 switch row {
                 case 0: cell.textLabel?.text = UIConstants.strings.aboutRowHelp
-                case 1: cell.textLabel?.text = UIConstants.strings.aboutRowRights
+                case 1: cell.textLabel?.text = UIConstants.strings.aboutRowTerms
                 case 2: cell.textLabel?.text = UIConstants.strings.aboutRowPrivacy
                 default: break
                 }
@@ -57,7 +57,7 @@ class AboutViewController: UIViewController, UITableViewDataSource, UITableViewD
                     return URL(string: "https://support.mozilla.org/\(AppInfo.config.supportPath)",
                                invalidCharacters: false)
                 case 1:
-                    return URL(string: "https://www.mozilla.org/en-US/about/legal/terms/firefox/",
+                    return URL(string: "https://www.mozilla.org/about/legal/terms/firefox-focus/",
                                invalidCharacters: false)
                 case 2:
                     return URL(string: "https://www.mozilla.org/privacy/firefox-focus",
@@ -188,7 +188,7 @@ private protocol AboutHeaderViewDelegate: AnyObject {
     func aboutHeaderViewDidPressLearnMore(_ aboutHeaderView: AboutHeaderView)
 }
 
-private class AboutHeaderView: UIView {
+private final class AboutHeaderView: UIView {
     weak var delegate: AboutHeaderViewDelegate?
 
     private lazy var logo: UIImageView = {

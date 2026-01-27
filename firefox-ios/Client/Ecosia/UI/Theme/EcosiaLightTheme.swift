@@ -39,28 +39,22 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerSuccess: UIColor { fallbackTheme.colors.layerSuccess }
     var layerWarning: UIColor { ecosia.stateError }
     var layerCritical: UIColor { fallbackTheme.colors.layerCritical }
+    var layerCriticalSubdued: UIColor { fallbackTheme.colors.layerCriticalSubdued }
     var layerSelectedText: UIColor { fallbackTheme.colors.layerSelectedText }
     var layerAutofillText: UIColor { fallbackTheme.colors.layerAutofillText }
-    var layerSearch: UIColor { fallbackTheme.colors.layerSearch }
+    var layerEmphasis: UIColor { fallbackTheme.colors.layerEmphasis }
     var layerGradientURL: Gradient { fallbackTheme.colors.layerGradientURL }
-
-    // MARK: - Ratings
-    var layerRatingA: UIColor { fallbackTheme.colors.layerRatingA }
-    var layerRatingASubdued: UIColor { fallbackTheme.colors.layerRatingASubdued }
-    var layerRatingB: UIColor { fallbackTheme.colors.layerRatingB }
-    var layerRatingBSubdued: UIColor { fallbackTheme.colors.layerRatingBSubdued }
-    var layerRatingC: UIColor { fallbackTheme.colors.layerRatingC }
-    var layerRatingCSubdued: UIColor { fallbackTheme.colors.layerRatingCSubdued }
-    var layerRatingD: UIColor { fallbackTheme.colors.layerRatingD }
-    var layerRatingDSubdued: UIColor { fallbackTheme.colors.layerRatingDSubdued }
-    var layerRatingF: UIColor { fallbackTheme.colors.layerRatingF }
-    var layerRatingFSubdued: UIColor { fallbackTheme.colors.layerRatingFSubdued }
+    var layerSurfaceLow: UIColor { fallbackTheme.colors.layerSurfaceLow }
+    var layerSurfaceMedium: UIColor { fallbackTheme.colors.layerSurfaceMedium }
+    var layerSurfaceMediumAlt: UIColor { fallbackTheme.colors.layerSurfaceMediumAlt }
+    var layerGradientSummary: Gradient { fallbackTheme.colors.layerGradientSummary }
 
     // MARK: - Actions
     var actionPrimary: UIColor { ecosia.buttonBackgroundPrimary }
     var actionPrimaryHover: UIColor { ecosia.buttonBackgroundPrimaryActive }
     var actionPrimaryDisabled: UIColor { fallbackTheme.colors.actionPrimaryDisabled }
     var actionSecondary: UIColor { ecosia.buttonBackgroundSecondary }
+    var actionSecondaryDisabled: UIColor { fallbackTheme.colors.actionSecondaryDisabled }
     var actionSecondaryHover: UIColor { fallbackTheme.colors.actionSecondaryHover }
     var formSurfaceOff: UIColor { fallbackTheme.colors.formSurfaceOff }
     var formKnob: UIColor { fallbackTheme.colors.formKnob }
@@ -72,6 +66,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var actionInformation: UIColor { fallbackTheme.colors.actionInformation }
     var actionTabActive: UIColor { fallbackTheme.colors.actionTabActive }
     var actionTabInactive: UIColor { fallbackTheme.colors.actionTabInactive }
+    var actionCloseButton: UIColor { fallbackTheme.colors.actionCloseButton }
 
     // MARK: - Text
     var textPrimary: UIColor { ecosia.textPrimary }
@@ -108,7 +103,16 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var borderToolbarDivider: UIColor { fallbackTheme.colors.borderToolbarDivider }
 
     // MARK: - Shadow
+    var shadowSubtle: UIColor { fallbackTheme.colors.shadowSubtle }
     var shadowDefault: UIColor { fallbackTheme.colors.shadowDefault }
+    var shadowStrong: UIColor { fallbackTheme.colors.shadowStrong }
+    var shadowBorder: UIColor { fallbackTheme.colors.shadowBorder }
+
+    // MARK: - Gradient
+    var gradientOnboardingStop1: UIColor { fallbackTheme.colors.gradientOnboardingStop1 }
+    var gradientOnboardingStop2: UIColor { fallbackTheme.colors.gradientOnboardingStop2 }
+    var gradientOnboardingStop3: UIColor { fallbackTheme.colors.gradientOnboardingStop3 }
+    var gradientOnboardingStop4: UIColor { fallbackTheme.colors.gradientOnboardingStop4 }
 }
 
 private struct EcosiaLightSemanticColors: EcosiaSemanticColors {

@@ -44,14 +44,14 @@ public enum Language: String, Codable, CaseIterable, Sendable {
 /// and we're replacing DispatchQueue pattern with simpler direct access
 private final class LanguageManager: @unchecked Sendable {
     static let shared = LanguageManager()
-    
+
     private let lock = NSLock()
     private var _current: Language
-    
+
     init() {
         self._current = Language.make(for: .current)
     }
-    
+
     var unsafeCurrent: Language {
         get {
             lock.lock()

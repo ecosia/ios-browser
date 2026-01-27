@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Shared
 import Common
 
 class IntroViewModel: OnboardingViewModelProtocol, FeatureFlaggable {
@@ -21,41 +20,60 @@ class IntroViewModel: OnboardingViewModelProtocol, FeatureFlaggable {
 
     // MARK: - Properties
     // FXIOS-6036 - Make this non optional when coordinators are used
-    var introScreenManager: IntroScreenManager?
+    var introScreenManager: IntroScreenManagerProtocol?
     var chosenOptions: OnboardingOptions = []
 
-    var availableCards: [OnboardingCardViewController]
-    var isDismissable: Bool
+    var availableCards: [OnboardingCardViewController<OnboardingKitCardInfoModel>]
+    var isDismissible: Bool
     var profile: Profile
     var telemetryUtility: OnboardingTelemetryProtocol
-    private var cardModels: [OnboardingCardInfoModelProtocol]
+    private var cardModels: [OnboardingKitCardInfoModel]
 
     // MARK: - Initializer
     init(
-        introScreenManager: IntroScreenManager? = nil,
+        introScreenManager: IntroScreenManagerProtocol? = nil,
         profile: Profile,
-        model: OnboardingViewModel,
+        model: OnboardingKitViewModel,
         telemetryUtility: OnboardingTelemetryProtocol
     ) {
         self.introScreenManager = introScreenManager
         self.profile = profile
         self.telemetryUtility = telemetryUtility
         self.cardModels = model.cards
-        self.isDismissable = model.isDismissable
+        self.isDismissible = model.isDismissible
         self.availableCards = []
     }
 
     // MARK: - Methods
+
+    /// Adds a card to `availableCards` if needed.
+    /// Does not add the card on iPads where the user can choose the address bar position (`top` or `bottom`),
+    /// as we want the address bar to always be on top for iPads.
+    @MainActor
+    private func addCardIfNeeded(
+        for cardModel: OnboardingKitCardInfoModel,
+        delegate: OnboardingCardDelegate?,
+        windowUUID: WindowUUID
+    ) {
+        let card = cardModel.multipleChoiceButtons.first
+        let isPad = UIDevice.current.userInterfaceIdiom == .pad
+
+        if !(card?.action == .toolbarBottom || card?.action == .toolbarTop) || !isPad {
+            availableCards.append(OnboardingMultipleChoiceCardViewController<OnboardingKitCardInfoModel>(
+                viewModel: cardModel,
+                delegate: delegate,
+                windowUUID: windowUUID))
+        }
+    }
+
+    @MainActor
     func setupViewControllerDelegates(with delegate: OnboardingCardDelegate, for window: WindowUUID) {
         availableCards.removeAll()
         cardModels.forEach { cardModel in
             if cardModel.cardType == .multipleChoice {
-            availableCards.append(OnboardingMultipleChoiceCardViewController(
-                viewModel: cardModel,
-                delegate: delegate,
-                windowUUID: window))
+                addCardIfNeeded(for: cardModel, delegate: delegate, windowUUID: window)
             } else {
-                availableCards.append(OnboardingBasicCardViewController(
+                availableCards.append(OnboardingBasicCardViewController<OnboardingKitCardInfoModel>(
                     viewModel: cardModel,
                     delegate: delegate,
                     windowUUID: window))
@@ -65,6 +83,11 @@ class IntroViewModel: OnboardingViewModelProtocol, FeatureFlaggable {
 
     func saveHasSeenOnboarding() {
         introScreenManager?.didSeeIntroScreen()
+    }
+
+    @MainActor
+    func saveSearchBarPosition() {
+        SearchBarLocationSaver().saveUserSearchBarLocation(profile: profile)
     }
 
     // MARK: SkAdNetwork

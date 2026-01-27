@@ -16,9 +16,9 @@ final class MicrosurveyViewController: UIViewController,
                                        Notifiable {
     typealias SubscriberStateType = MicrosurveyState
 
-    // MARK: Themable Variables
+    // MARK: Themeable Variables
     var themeManager: Common.ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: Common.NotificationProtocol
     var currentWindowUUID: UUID? { windowUUID }
 
@@ -125,9 +125,11 @@ final class MicrosurveyViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(model: MicrosurveyModel, windowUUID: WindowUUID,
-         themeManager: ThemeManager = AppContainer.shared.resolve(),
-         notificationCenter: NotificationProtocol = NotificationCenter.default
+    init(
+        model: MicrosurveyModel,
+        windowUUID: WindowUUID,
+        themeManager: ThemeManager = AppContainer.shared.resolve(),
+        notificationCenter: NotificationProtocol = NotificationCenter.default
     ) {
         self.windowUUID = windowUUID
         self.themeManager = themeManager
@@ -135,8 +137,11 @@ final class MicrosurveyViewController: UIViewController,
         microsurveyState = MicrosurveyState(windowUUID: windowUUID)
         self.model = model
         super.init(nibName: nil, bundle: nil)
-        setupNotifications(forObserver: self,
-                           observing: [.DynamicFontChanged])
+        startObservingNotifications(
+            withNotificationCenter: notificationCenter,
+            forObserver: self,
+            observing: [UIContentSizeCategory.didChangeNotification]
+        )
 
         subscribeToRedux()
         configureUI()
@@ -176,7 +181,7 @@ final class MicrosurveyViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        listenForThemeChange(view)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
     }
 
@@ -193,8 +198,15 @@ final class MicrosurveyViewController: UIViewController,
     }
 
     deinit {
-        unsubscribeFromRedux()
-        tableView.removeFromSuperview()
+        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
+        guard Thread.isMainThread else {
+            assertionFailure("AddressBarPanGestureHandler was not deallocated on the main thread. Observer was not removed")
+            return
+        }
+
+        MainActor.assumeIsolated {
+            unsubscribeFromRedux()
+        }
     }
 
     private func configureUI() {
@@ -305,8 +317,10 @@ final class MicrosurveyViewController: UIViewController,
     // MARK: Notifiable
     func handleNotifications(_ notification: Notification) {
         switch notification.name {
-        case .DynamicFontChanged:
-            adjustIconSize()
+        case UIContentSizeCategory.didChangeNotification:
+            ensureMainThread {
+                self.adjustIconSize()
+            }
         default: break
         }
     }

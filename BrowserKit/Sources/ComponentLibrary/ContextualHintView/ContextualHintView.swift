@@ -6,8 +6,8 @@ import Foundation
 import Common
 import UIKit
 
-public class ContextualHintView: UIView, ThemeApplicable {
-    private var viewModel: ContextualHintViewModel!
+public final class ContextualHintView: UIView, ThemeApplicable {
+    private var viewModel: ContextualHintViewModel?
 
     struct UX {
         static let closeButtonSize = CGSize(width: 35, height: 35)
@@ -15,7 +15,6 @@ public class ContextualHintView: UIView, ThemeApplicable {
         static let closeButtonTop: CGFloat = 23
         static let closeButtonBottom: CGFloat = 12
         static let closeButtonInsets = NSDirectionalEdgeInsets(top: 0, leading: 7.5, bottom: 15, trailing: 7.5)
-        static let actionButtonInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         static let stackViewLeading: CGFloat = 16
         static let stackViewTopArrowTopConstraint: CGFloat = 16
         static let stackViewBottomArrowTopConstraint: CGFloat = 5
@@ -48,12 +47,6 @@ public class ContextualHintView: UIView, ThemeApplicable {
         label.adjustsFontForContentSizeCategory = true
     }
 
-    private lazy var actionButton: LinkButton = .build { button in
-        button.titleLabel?.textAlignment = .left
-        button.titleLabel?.numberOfLines = 0
-        button.addTarget(self, action: #selector(self.didTapActionButton), for: .touchUpInside)
-    }
-
     private lazy var stackView: UIStackView = .build { stack in
         stack.backgroundColor = .clear
         stack.distribution = .fillProportionally
@@ -84,18 +77,10 @@ public class ContextualHintView: UIView, ThemeApplicable {
     public func configure(viewModel: ContextualHintViewModel) {
         self.viewModel = viewModel
 
-        let actionButtonViewModel = LinkButtonViewModel(
-            title: viewModel.actionButtonTitle,
-            a11yIdentifier: viewModel.actionButtonA11yId,
-            contentInsets: UX.actionButtonInsets
-        )
-        actionButton.configure(viewModel: actionButtonViewModel)
-
         closeButton.accessibilityLabel = viewModel.closeButtonA11yLabel
         descriptionLabel.text = viewModel.description
 
-        // Ecosia: Remove gradient
-        // layer.addSublayer(gradient)
+        layer.addSublayer(gradient)
 
         addSubview(scrollView)
         addSubview(closeButton)
@@ -108,12 +93,13 @@ public class ContextualHintView: UIView, ThemeApplicable {
             stackView.addArrangedSubview(titleLabel)
         }
         stackView.addArrangedSubview(descriptionLabel)
-        if viewModel.isActionType { stackView.addArrangedSubview(actionButton) }
 
         setupConstraints()
     }
 
     private func setupConstraints() {
+        guard let viewModel else { return }
+
         let isArrowUp = viewModel.arrowDirection == .up
         let topPadding = isArrowUp ? UX.stackViewTopArrowTopConstraint : UX.stackViewBottomArrowTopConstraint
         let closeButtonPadding = isArrowUp ? UX.closeButtonTop : UX.closeButtonBottom
@@ -152,39 +138,13 @@ public class ContextualHintView: UIView, ThemeApplicable {
 
     @objc
     private func didTapCloseButton(sender: UIButton) {
-        viewModel.closeButtonAction?(sender)
-    }
-
-    @objc
-    private func didTapActionButton(sender: UIButton) {
-        viewModel.actionButtonAction?(sender)
+        viewModel?.closeButtonAction?(sender)
     }
 
     public func applyTheme(theme: Theme) {
         closeButton.tintColor = theme.colors.textOnDark
         titleLabel.textColor = theme.colors.textOnDark
         descriptionLabel.textColor = theme.colors.textOnDark
-        // Ecosia: Update custom background theming
-        if theme.type == .light {
-            backgroundColor = UIColor(red: 0.153, green: 0.322, blue: 0.263, alpha: 1)
-        } else {
-            backgroundColor = UIColor(rgb: 0xAFE9B0)
-        }
         gradient.colors = theme.colors.layerGradient.cgColors
-
-        if viewModel.isActionType {
-            let textAttributes: [NSAttributedString.Key: Any] = [
-                .font: FXFontStyles.Regular.body.scaledFont(),
-                .foregroundColor: theme.colors.textOnDark,
-                .underlineStyle: NSUnderlineStyle.single.rawValue
-            ]
-
-            let attributeString = NSMutableAttributedString(
-                string: viewModel.actionButtonTitle,
-                attributes: textAttributes
-            )
-
-            actionButton.setAttributedTitle(attributeString, for: .normal)
-        }
     }
 }

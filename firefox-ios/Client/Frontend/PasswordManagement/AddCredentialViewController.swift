@@ -4,7 +4,6 @@
 
 import UIKit
 import Shared
-import Storage
 import Common
 
 import struct MozillaAppServices.LoginEntry
@@ -21,7 +20,7 @@ enum AddCredentialField: Int {
 
 class AddCredentialViewController: UIViewController, Themeable {
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
@@ -40,9 +39,9 @@ class AddCredentialViewController: UIViewController, Themeable {
         tableView.tableFooterView = UIView()
         tableView.separatorInset = .zero
     }
-    fileprivate weak var websiteField: UITextField!
-    fileprivate weak var usernameField: UITextField!
-    fileprivate weak var passwordField: UITextField!
+    fileprivate weak var websiteField: UITextField?
+    fileprivate weak var usernameField: UITextField?
+    fileprivate weak var passwordField: UITextField?
 
     fileprivate let didSaveAction: (LoginEntry) -> Void
 
@@ -54,12 +53,16 @@ class AddCredentialViewController: UIViewController, Themeable {
     fileprivate lazy var saveButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
             title: .SettingsAddCustomEngineSaveButtonText,
-            style: .done,
+            style: .plain,
             target: self,
             action: #selector(addCredential)
         )
         button.isEnabled = false
-        button.tintColor = themeManager.getCurrentTheme(for: windowUUID).colors.actionPrimary
+        if #available(iOS 26.0, *) {
+            button.tintColor = themeManager.getCurrentTheme(for: windowUUID).colors.textAccent
+        } else {
+            button.tintColor = themeManager.getCurrentTheme(for: windowUUID).colors.actionPrimary
+        }
         return button
     }()
 
@@ -93,8 +96,8 @@ class AddCredentialViewController: UIViewController, Themeable {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
-        listenForThemeChange(view)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -107,24 +110,22 @@ class AddCredentialViewController: UIViewController, Themeable {
 
     @objc
     func addCredential() {
-        guard let hostname = websiteField.text,
-              let username = usernameField.text,
-              let password = passwordField.text else {
+        guard let hostname = websiteField?.text,
+              let username = usernameField?.text,
+              let password = passwordField?.text else {
             return
         }
 
         dismiss(animated: true) {
-            let entry = LoginEntryFlattened(
-                id: "",
-                hostname: hostname,
-                password: password,
-                username: username,
+            self.didSaveAction(LoginEntry(
+                origin: hostname,
                 httpRealm: nil,
-                formSubmitUrl: hostname,
+                formActionOrigin: hostname,
                 usernameField: "",
-                passwordField: ""
+                passwordField: "",
+                password: password,
+                username: username)
             )
-            self.didSaveAction(LoginEntry(fromLoginEntryFlattened: entry))
         }
     }
 
@@ -165,7 +166,7 @@ extension AddCredentialViewController: UITableViewDataSource {
             loginCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
             usernameField = loginCell.descriptionLabel
             if isRTLLanguage {
-                usernameField.textAlignment = .right
+                usernameField?.textAlignment = .right
             }
             return loginCell
 
@@ -191,7 +192,7 @@ extension AddCredentialViewController: UITableViewDataSource {
             loginCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
             websiteField = loginCell.descriptionLabel
             if isRTLLanguage {
-                websiteField.textAlignment = .right
+                websiteField?.textAlignment = .right
             }
             return loginCell
         }
@@ -245,15 +246,15 @@ extension AddCredentialViewController: KeyboardHelperDelegate {
 extension AddCredentialViewController: LoginDetailTableViewCellDelegate {
     func textFieldDidEndEditing(_ cell: LoginDetailTableViewCell) {
         guard cell.descriptionLabel == websiteField, let website = websiteField?.text else { return }
-        websiteField.text = normalize(website: website)
+        websiteField?.text = normalize(website: website)
     }
 
     func textFieldDidChange(_ cell: LoginDetailTableViewCell) {
         // TODO: Add validation if necessary
         let enableSave =
-            !(websiteField.text?.isEmpty ?? true) &&
-            !(usernameField.text?.isEmpty ?? true) &&
-            !(passwordField.text?.isEmpty ?? true)
+            !(websiteField?.text?.isEmpty ?? true) &&
+            !(usernameField?.text?.isEmpty ?? true) &&
+            !(passwordField?.text?.isEmpty ?? true)
 
         saveButton.isEnabled = enableSave
     }
@@ -293,9 +294,9 @@ extension AddCredentialViewController: LoginDetailTableViewCellDelegate {
     func shouldReturnAfterEditingDescription(_ cell: LoginDetailTableViewCell) -> Bool {
         switch cell.descriptionLabel {
         case websiteField:
-            usernameField.becomeFirstResponder()
+            usernameField?.becomeFirstResponder()
         case usernameField:
-            passwordField.becomeFirstResponder()
+            passwordField?.becomeFirstResponder()
         case passwordField:
             return false
         default:

@@ -4,6 +4,7 @@
 
 import Foundation
 import Shared
+import Common
 import UIKit
 
 enum CFRTelemetryEvent {
@@ -15,14 +16,16 @@ enum CFRTelemetryEvent {
 enum ContextualHintType: String {
     case jumpBackIn = "JumpBackIn"
     case jumpBackInSyncedTab = "JumpBackInSyncedTab"
-    case inactiveTabs = "InactiveTabs"
-    case toolbarLocation = "ToolbarLocation"
     case mainMenu = "MainMenu"
-    case shoppingExperience = "ShoppingExperience"
     case dataClearance = "DataClearance"
     case navigation = "Navigation"
+    case relay = "Relay"
+    case toolbarUpdate = "ToolbarUpdate"
+    case translation = "Translation"
+    case summarizeToolbarEntry = "SummarizeToolbarEntry"
 }
 
+@MainActor
 class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLocationProvider {
     typealias CFRPrefsKeys = PrefsKeys.ContextualHints
     typealias CFRStrings = String.ContextualHints
@@ -49,7 +52,8 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
         let hintEligibilityUtility = ContextualHintEligibilityUtility(
             with: profile,
             overlayState: overlayState,
-            isCFRToolbarFeatureEnabled: featureFlags.isFeatureEnabled(.isToolbarCFREnabled, checking: .buildOnly))
+            isToolbarUpdateCFRFeatureEnabled: featureFlags.isFeatureEnabled(.toolbarUpdateHint, checking: .buildOnly)
+        )
 
         return hintEligibilityUtility.canPresent(hintType)
     }
@@ -78,18 +82,11 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
     }
 
     func startTimer() {
-        var timeInterval: TimeInterval = 0
-
-        switch hintType {
-        case .inactiveTabs: timeInterval = 0.25
-        case .toolbarLocation: timeInterval = 0.5
-        default: timeInterval = 1.25
-        }
-
+        let defaultTimeInterval: TimeInterval = 1.25
         timer?.invalidate()
 
         timer = Timer.scheduledTimer(
-            timeInterval: timeInterval,
+            timeInterval: defaultTimeInterval,
             target: self,
             selector: #selector(presentHint),
             userInfo: nil,
@@ -104,25 +101,7 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
     // MARK: Text
 
     func getCopyFor(_ copyType: ContextualHintCopyType) -> String {
-        let copyProvider: ContextualHintCopyProvider
-
-        switch hintType {
-        case .toolbarLocation: copyProvider = ContextualHintCopyProvider(arrowDirecton: arrowDirection)
-        default: copyProvider = ContextualHintCopyProvider()
-        }
-
-        return copyProvider.getCopyFor(copyType, of: hintType)
-    }
-
-    var isActionType: Bool {
-        switch hintType {
-        case .inactiveTabs,
-                .toolbarLocation,
-                .shoppingExperience:
-            return true
-
-        default: return false
-        }
+        return ContextualHintCopyProvider().getCopyFor(copyType, of: hintType)
     }
 
     // MARK: - Telemetry
@@ -165,12 +144,14 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
 
     // MARK: - Present
     @objc
-    private func presentHint() {
-        guard shouldPresentContextualHint() else { return }
+    nonisolated private func presentHint() {
+        ensureMainThread {
+            guard self.shouldPresentContextualHint() else { return }
 
-        timer?.invalidate()
-        timer = nil
-        presentFromTimer?()
-        presentFromTimer = nil
+            self.timer?.invalidate()
+            self.timer = nil
+            self.presentFromTimer?()
+            self.presentFromTimer = nil
+        }
     }
 }

@@ -16,7 +16,7 @@ class AddressAutofillSettingsViewController: SensitiveViewController, Themeable 
     var viewModel: AddressAutofillSettingsViewModel
 
     /// Observer for theme changes.
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
 
     /// Manager responsible for handling themes.
     var themeManager: ThemeManager
@@ -70,7 +70,7 @@ class AddressAutofillSettingsViewController: SensitiveViewController, Themeable 
             addressListViewModel: viewModel.addressListViewModel)
         self.addressAutofillSettingsPageView = UIHostingController(rootView: addressAutofillSettingsVC)
 
-        super.init(nibName: nil, bundle: nil)
+        super.init()
     }
 
     /// Not implemented for this view controller. Raises a fatal error.
@@ -84,19 +84,21 @@ class AddressAutofillSettingsViewController: SensitiveViewController, Themeable 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        listenForThemeChange(view)
-        applyTheme()
+
         viewModel.addressListViewModel.presentToast = { [weak self] status in
             guard let self else { return }
             switch status {
             case let .error(errorType):
-                ActionToast(
-                    text: errorType.message,
-                    bottomContainer: view,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
-                    buttonTitle: errorType.actionTitle,
-                    buttonAction: errorType.action
-                ).show()
+                let viewModel = ButtonToastViewModel(labelText: errorType.message,
+                                                     buttonText: errorType.actionTitle)
+                let toast = ButtonToast(viewModel: viewModel,
+                                        theme: themeManager.getCurrentTheme(for: windowUUID),
+                                        completion: { buttonTap in
+                    if buttonTap {
+                        errorType.action()
+                    }
+                })
+                show(toast: toast)
             default:
                 SimpleToast().showAlertWithText(
                     status.message,
@@ -104,6 +106,23 @@ class AddressAutofillSettingsViewController: SensitiveViewController, Themeable 
                     theme: themeManager.getCurrentTheme(for: windowUUID)
                 )
             }
+        }
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        applyTheme()
+    }
+
+    private func show(toast: Toast,
+                      afterWaiting delay: DispatchTimeInterval = Toast.UX.toastDelayBefore,
+                      duration: DispatchTimeInterval? = Toast.UX.toastDismissAfter) {
+        toast.showToast(viewController: self, delay: delay, duration: duration) { toast in
+            [
+                toast.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor,
+                                               constant: Toast.UX.toastSidePadding),
+                toast.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor,
+                                                constant: -Toast.UX.toastSidePadding),
+                toast.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+            ]
         }
     }
 
@@ -141,10 +160,5 @@ class AddressAutofillSettingsViewController: SensitiveViewController, Themeable 
     @objc
     func addAddress() {
         self.viewModel.addressListViewModel.addAddressButtonTap()
-    }
-
-    deinit {
-        addressAutofillSettingsPageView.removeFromParent()
-        addressAutofillSettingsPageView.view.removeFromSuperview()
     }
 }

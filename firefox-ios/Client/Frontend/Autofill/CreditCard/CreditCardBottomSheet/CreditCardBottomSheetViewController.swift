@@ -5,7 +5,6 @@
 import Common
 import ComponentLibrary
 import Foundation
-import Shared
 import Storage
 import UIKit
 
@@ -15,6 +14,7 @@ class CreditCardBottomSheetViewController: UIViewController,
                                            BottomSheetChild,
                                            Themeable {
     // MARK: UX
+    @MainActor
     struct UX {
         static let containerPadding: CGFloat = 18.0
         static let tableMargin: CGFloat = 0
@@ -35,7 +35,7 @@ class CreditCardBottomSheetViewController: UIViewController,
 
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     private var viewModel: CreditCardBottomSheetViewModel
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
@@ -92,8 +92,9 @@ class CreditCardBottomSheetViewController: UIViewController,
         button.addTarget(self, action: #selector(self.didTapYes), for: .touchUpInside)
     }
 
-    private var contentViewHeightConstraint: NSLayoutConstraint!
-    private var contentWidthConstraint: NSLayoutConstraint!
+    private var contentViewHeightConstraint: NSLayoutConstraint?
+    private var contentWidthConstraint: NSLayoutConstraint?
+    private var glassEffectView: UIVisualEffectView?
 
     // MARK: - Initializers
     init(viewModel: CreditCardBottomSheetViewModel,
@@ -107,8 +108,9 @@ class CreditCardBottomSheetViewController: UIViewController,
         super.init(nibName: nil, bundle: nil)
 
         self.viewModel.didUpdateCreditCard = { [weak self] in
-            self?.cardTableView.reloadData()
-            self?.cardTableView.isScrollEnabled = self?.cardTableView.contentSize.height ?? 0 > self?.view.frame.height ?? 0
+            guard let self else { return }
+            self.cardTableView.reloadData()
+            self.cardTableView.isScrollEnabled = self.cardTableView.contentSize.height > self.view.frame.height
         }
 
         // Only allow selection when we are in selectSavedCard state
@@ -123,23 +125,21 @@ class CreditCardBottomSheetViewController: UIViewController,
     // MARK: View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        listenForThemeChange(view)
+
         addSubviews()
         setupView()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateConstraints()
-    }
-
-    deinit {
-        notificationCenter.removeObserver(self)
     }
 
     // MARK: View Setup
@@ -173,12 +173,14 @@ class CreditCardBottomSheetViewController: UIViewController,
         contentViewHeightConstraint = contentView.heightAnchor.constraint(
             greaterThanOrEqualToConstant: estimatedContentHeight
         )
-        contentViewHeightConstraint.priority = UILayoutPriority(999)
+        contentViewHeightConstraint?.priority = UILayoutPriority(999)
+        contentViewHeightConstraint?.isActive = true
 
         let contentWidthCheck = UX.contentViewWidth > view.frame.width
         let contentViewWidth = contentWidthCheck ? view.frame.width - UX.containerPadding : UX.contentViewWidth
         contentWidthConstraint = contentView.widthAnchor.constraint(equalToConstant: contentViewWidth)
-        contentWidthConstraint.priority = UILayoutPriority(999)
+        contentWidthConstraint?.priority = UILayoutPriority(999)
+        contentWidthConstraint?.isActive = true
 
         NSLayoutConstraint.activate(
             [
@@ -211,22 +213,22 @@ class CreditCardBottomSheetViewController: UIViewController,
                 ),
 
                 yesButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.yesButtonHeight),
-                contentWidthConstraint,
-                contentViewHeightConstraint
             ]
         )
     }
 
     func updateConstraints() {
-        let buttonsHeight = buttonsContainerStackView.frame.height
-        let estimatedContentHeight = cardTableView.contentSize.height +
-        buttonsHeight + UX.bottomSpacing + UX.distanceBetweenHeaderAndTop
-        let aspectRatio = estimatedContentHeight / contentView.bounds.size.height
-        contentViewHeightConstraint.constant = contentViewHeightConstraint.constant * aspectRatio
+        if let contentViewHeightConstraint {
+            let buttonsHeight = buttonsContainerStackView.frame.height
+            let estimatedContentHeight = cardTableView.contentSize.height +
+                buttonsHeight + UX.bottomSpacing + UX.distanceBetweenHeaderAndTop
+            let aspectRatio = estimatedContentHeight / contentView.bounds.size.height
+            contentViewHeightConstraint.constant = contentViewHeightConstraint.constant * aspectRatio
+        }
 
         let contentWidthCheck = UX.contentViewWidth > view.frame.size.width
         let contentViewWidth = contentWidthCheck ? view.frame.size.width - UX.containerPadding : UX.contentViewWidth
-        contentWidthConstraint.constant = contentViewWidth
+        contentWidthConstraint?.constant = contentViewWidth
     }
 
     // MARK: View Transitions
@@ -239,9 +241,9 @@ class CreditCardBottomSheetViewController: UIViewController,
         super.viewWillTransition(to: size, with: coordinator)
         let contentWidthCheck = UX.contentViewWidth > size.width
         let contentViewWidth = contentWidthCheck ? size.width - UX.containerPadding : UX.contentViewWidth
-        contentWidthConstraint.constant = contentViewWidth
+        contentWidthConstraint?.constant = contentViewWidth
         if let header = cardTableView.headerView(forSection: 0) as? CreditCardBottomSheetHeaderView {
-            header.titleLabelTrailingConstraint.constant = contentWidthCheck ? -UX.closeButtonMarginAndWidth : 0
+            header.titleLabelTrailingConstraint?.constant = contentWidthCheck ? -UX.closeButtonMarginAndWidth : 0
         }
     }
 
@@ -367,8 +369,49 @@ class CreditCardBottomSheetViewController: UIViewController,
     // MARK: Themable
     func applyTheme() {
         let currentTheme = themeManager.getCurrentTheme(for: windowUUID).colors
-        view.backgroundColor = currentTheme.layer1
+
+        if #available(iOS 26.0, *) {
+            setupGlassEffect()
+            view.backgroundColor = .clear
+        } else {
+            view.backgroundColor = currentTheme.layer1
+        }
+
         cardTableView.reloadData()
+    }
+
+    @available(iOS 26.0, *)
+    private func setupGlassEffect() {
+        // Only add glass effect if it doesn't already exist
+        guard glassEffectView == nil else { return }
+
+        let effectView = UIVisualEffectView()
+
+        #if canImport(FoundationModels)
+        let glassEffect = UIGlassEffect()
+        glassEffect.isInteractive = true
+        effectView.effect = glassEffect
+        #else
+        effectView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        #endif
+
+        effectView.layer.cornerRadius = UX.yesButtonCornerRadius
+        effectView.clipsToBounds = true
+        effectView.translatesAutoresizingMaskIntoConstraints = false
+
+        // Add glass effect to the main view instead of contentView
+        view.backgroundColor = .clear
+        contentView.backgroundColor = .clear
+        view.insertSubview(effectView, at: 0)
+
+        NSLayoutConstraint.activate([
+            effectView.topAnchor.constraint(equalTo: view.topAnchor),
+            effectView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            effectView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            effectView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+
+        glassEffectView = effectView
     }
 
     // MARK: Telemetry

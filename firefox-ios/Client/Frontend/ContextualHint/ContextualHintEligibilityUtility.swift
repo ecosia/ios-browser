@@ -7,6 +7,7 @@ import Shared
 
 /// Public interface for contextual hint consumers
 protocol ContextualHintEligibilityUtilityProtocol {
+    @MainActor
     func canPresent(_ hint: ContextualHintType) -> Bool
 }
 
@@ -14,22 +15,20 @@ struct ContextualHintEligibilityUtility: ContextualHintEligibilityUtilityProtoco
                                          ContextualHintPrefsKeysProvider,
                                          SearchBarLocationProvider {
     var profile: Profile
-    var device: UIDeviceInterface
     // For contextual hints shown in Homepage that can overlap with keyboard being raised by user interaction
     private var overlayState: OverlayStateProtocol?
-    var isCFRToolbarFeatureEnabled: Bool
+    var isToolbarUpdateCFRFeatureEnabled: Bool
 
     init(with profile: Profile,
          overlayState: OverlayStateProtocol?,
-         device: UIDeviceInterface = UIDevice.current,
-         isCFRToolbarFeatureEnabled: Bool = false) {
+         isToolbarUpdateCFRFeatureEnabled: Bool = false) {
         self.profile = profile
         self.overlayState = overlayState
-        self.device = device
-        self.isCFRToolbarFeatureEnabled = isCFRToolbarFeatureEnabled
+        self.isToolbarUpdateCFRFeatureEnabled = isToolbarUpdateCFRFeatureEnabled
     }
 
     /// Determine if this hint is eligible to present, outside of Nimbus flag settings.
+    @MainActor
     func canPresent(_ hintType: ContextualHintType) -> Bool {
         guard !isInOverlayMode else { return false }
 
@@ -42,15 +41,17 @@ struct ContextualHintEligibilityUtility: ContextualHintEligibilityUtilityProtoco
             hintTypeShouldBePresented = canJumpBackInBePresented
         case .jumpBackInSyncedTab:
             hintTypeShouldBePresented = canPresentJumpBackInSyncedTab
-        case .toolbarLocation:
-            hintTypeShouldBePresented = isSearchBarLocationFeatureEnabled
         case .mainMenu:
-            hintTypeShouldBePresented = canMenuCFRBePresented
-        case .inactiveTabs:
-            hintTypeShouldBePresented = true
-        case .shoppingExperience:
-            return canPresentShoppingCFR
+            hintTypeShouldBePresented = canMenuRedesignCFRBePresented
         case .navigation:
+            hintTypeShouldBePresented = true
+        case .relay:
+            hintTypeShouldBePresented = canRelayMaskCFRBePresented
+        case .toolbarUpdate:
+            hintTypeShouldBePresented = canToolbarUpdateCFRBePresented
+        case .translation:
+            hintTypeShouldBePresented = canTranslationCFRBePresented
+        case .summarizeToolbarEntry:
             hintTypeShouldBePresented = true
         }
 
@@ -58,35 +59,50 @@ struct ContextualHintEligibilityUtility: ContextualHintEligibilityUtilityProtoco
     }
 
     // MARK: - Private helpers
-
+    @MainActor
     private var isInOverlayMode: Bool {
         guard overlayState != nil else { return false }
 
         return overlayState?.inOverlayMode ?? false
     }
 
-    /// Determine if the CFR for Menu is presentable.
+    /// Determine if the CFR for Menu Redesign is presentable.
     ///
     /// It's presentable on these conditions:
-    /// - menu-hint flag is enabled
-    private var canMenuCFRBePresented: Bool {
-        return featureFlags.isFeatureEnabled(.menuRefactorHint, checking: .buildOnly) ? true : false
+    /// - menu-redesign-hint flag is enabled
+    private var canMenuRedesignCFRBePresented: Bool {
+        return featureFlags.isFeatureEnabled(.menuRedesignHint, checking: .buildOnly) ? true : false
     }
 
-    /// If device is iPhone we present JumpBackIn and SyncTab CFRs only after Toolbar CFR has been
-    /// presented if the feature is enabled. If the Toolbar CFR flag is disabled or the device
-    /// is iPad (toolbar CFR is not presented on iPad) we bypass it
-    private var shouldCheckToolbarHasShown: Bool {
-        guard device.userInterfaceIdiom != .pad,
-              isCFRToolbarFeatureEnabled else { return true }
+    /// Determine if the CFR for Toolbar Update is presentable.
+    ///
+    /// It's presentable on these conditions:
+    /// - toolbar-update-hint flag is enabled
+    private var canToolbarUpdateCFRBePresented: Bool {
+        return isToolbarUpdateCFRFeatureEnabled
+    }
 
-        return profile.prefs.boolForKey(CFRPrefsKeys.toolbarOnboardingKey.rawValue) ?? false
+    private var canTranslationCFRBePresented: Bool {
+        return featureFlags.isFeatureEnabled(.translation, checking: .buildOnly) ? true : false
+    }
+
+    @MainActor
+    private var canRelayMaskCFRBePresented: Bool {
+        return RelayController.isFeatureEnabled
+    }
+
+    /// We present JumpBackIn and SyncTab CFRs only after Toolbar CFR has been
+    /// presented if the feature is enabled. If the Toolbar CFR flag is disabled we bypass it.
+    private var shouldCheckToolbarHasShown: Bool {
+        guard isToolbarUpdateCFRFeatureEnabled else { return true }
+
+        return profile.prefs.boolForKey(CFRPrefsKeys.toolbarUpdateKey.rawValue) ?? false
     }
 
     /// Determine if the CFR for Jump Back In is presentable.
     ///
     /// It's presentable on these conditions:
-    /// - the Toolbar CFR has already been presented or the CFR toolbar flag is disabled
+    /// - the Toolbar Update CFR has already been presented or the toolbar update flag CFR is disabled
     /// - the JumpBackInSyncedTab CFR has NOT been presented already
     /// - the JumpBackIn CFR has NOT been presented yet
     private var canJumpBackInBePresented: Bool {
@@ -101,54 +117,9 @@ struct ContextualHintEligibilityUtility: ContextualHintEligibilityUtilityProtoco
     /// Determine if the CFR for SyncedTab in JumpBackIn is presentable.
     ///
     /// The context hint is presentable when certain conditions are met:
-    /// - A synced tab appears in Jump Back In
-    /// - The Toolbar CFR has already been presented or the CFR toolbar flag is disabled
-    /// - This CFR hasn't already been presented
-    /// - The Home Tab Banner isn't being displayed (not specified by Product,
-    ///   but the CFR might show when the anchor point isn't on screen)
+    /// - the Toolbar Update CFR has already been presented or the toolbar update flag CFR is disabled
     private var canPresentJumpBackInSyncedTab: Bool {
         return shouldCheckToolbarHasShown
-    }
-
-    /// Determine if the Shopping CFRs should present.
-    /// There are 2 types of CFRs.
-    ///
-    /// - Shopping CFR-1: The user has not opted in for the Shopping Experience.
-    /// - Shopping CFR-2: The user has opted in for the Shopping Experience.
-    private var canPresentShoppingCFR: Bool {
-        guard !hasAlreadyBeenPresented(.shoppingExperience) else {
-            // Retrieve the counter for shopping onboarding CFRs
-            let shoppingOnboardingKey = PrefsKeys.ContextualHints.shoppingOnboardingCFRsCounterKey.rawValue
-            let cfrCounter = profile.prefs.intForKey(shoppingOnboardingKey) ?? 1
-            // Check if the user has opted in for Shopping Experience
-            let hasOptedIn = profile.prefs.boolForKey(PrefsKeys.Shopping2023OptIn) ?? false
-            // Retrieve the last timestamp for Fakespot CFRs
-            let lastTimestamp = profile.prefs.timestampForKey(PrefsKeys.FakespotLastCFRTimestamp)
-            // Check if 12 hours have passed since the last timestamp
-            let hasTimePassed = lastTimestamp != nil ? Date.hasTimePassedBy(
-                hours: 12,
-                lastTimestamp: lastTimestamp!
-            ) : false
-
-            if cfrCounter <= 2, !hasOptedIn, hasTimePassed {
-                // - Display CFR-1
-                profile.prefs.setInt(
-                    cfrCounter + 1,
-                    forKey: PrefsKeys.ContextualHints.shoppingOnboardingCFRsCounterKey.rawValue
-                )
-                profile.prefs.setTimestamp(Date.now(), forKey: PrefsKeys.FakespotLastCFRTimestamp)
-                return true
-            } else if cfrCounter < 4, hasOptedIn, hasTimePassed {
-                // - Display CFR-2
-                profile.prefs.setInt(4, forKey: PrefsKeys.ContextualHints.shoppingOnboardingCFRsCounterKey.rawValue)
-                return true
-            }
-            return false
-        }
-        // - Display CFR-1
-        profile.prefs.setInt(1, forKey: PrefsKeys.ContextualHints.shoppingOnboardingCFRsCounterKey.rawValue)
-        profile.prefs.setTimestamp(Date.now(), forKey: PrefsKeys.FakespotLastCFRTimestamp)
-        return true
     }
 
     private func hasAlreadyBeenPresented(_ hintType: ContextualHintType) -> Bool {

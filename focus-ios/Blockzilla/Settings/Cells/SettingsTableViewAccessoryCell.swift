@@ -4,24 +4,10 @@
 
 import UIKit
 
-class SettingsTableViewAccessoryCell: SettingsTableViewCell {
-    var labelText: String? {
-        get { return textLabel?.text }
-        set {
-            textLabel?.text = newValue
-        }
-    }
-
-    var accessoryLabelText: String? {
-        get { return detailTextLabel?.text }
-        set {
-            detailTextLabel?.text = newValue
-        }
-    }
-
+final class SettingsTableViewAccessoryCell: SettingsTableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        accessoryView = UIImageView(image: UIImage(systemName: "chevron.right"))
+        accessoryView = UIImageView(image: UIImage(systemName: "chevron.right")?.imageFlippedForRightToLeftLayoutDirection())
         tintColor = .secondaryText.withAlphaComponent(0.3)
     }
 

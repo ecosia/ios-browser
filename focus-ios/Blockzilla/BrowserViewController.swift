@@ -13,7 +13,7 @@ import Onboarding
 import AppShortcuts
 import SwiftUI
 
-class BrowserViewController: UIViewController {
+final class BrowserViewController: UIViewController {
     private let mainContainerView = UIView(frame: .zero)
     let darkView = UIView()
     private lazy var trackingProtectionManager = TrackingProtectionManager(
@@ -68,6 +68,7 @@ class BrowserViewController: UIViewController {
     private var themeManager: ThemeManager
     private let shortcutsPresenter = ShortcutsPresenter()
     private let onboardingTelemetry = OnboardingTelemetryHelper()
+    private let gleanUsageReportingMetricsService: GleanUsageReportingMetricsService
 
     private enum URLBarScrollState {
         case collapsed
@@ -108,12 +109,14 @@ class BrowserViewController: UIViewController {
         shortcutManager: ShortcutsManager,
         authenticationManager: AuthenticationManager,
         onboardingEventsHandler: OnboardingEventsHandling,
+        gleanUsageReportingMetricsService: GleanUsageReportingMetricsService,
         themeManager: ThemeManager
     ) {
         self.tipManager = tipManager
         self.shortcutManager = shortcutManager
         self.authenticationManager = authenticationManager
         self.onboardingEventsHandler = onboardingEventsHandler
+        self.gleanUsageReportingMetricsService = gleanUsageReportingMetricsService
         self.themeManager = themeManager
         super.init(nibName: nil, bundle: nil)
         KeyboardHelper.defaultHelper.addDelegate(delegate: self)
@@ -320,7 +323,8 @@ class BrowserViewController: UIViewController {
 
     private func tooltipController(
         anchoredBy sourceView: UIView,
-        sourceRect: CGRect, title: String = "",
+        sourceRect: CGRect, 
+        title: String = "",
         body: String,
         dismiss: @escaping () -> Void ) -> UIViewController {
             let tooltipViewController = TooltipViewController()
@@ -395,7 +399,7 @@ class BrowserViewController: UIViewController {
             let dismissOnboarding = { [unowned self] in
                 UserDefaults.standard.set(true, forKey: OnboardingConstants.onboardingDidAppear)
                 urlBar.activateTextField()
-                onboardingEventsHandler.route = nil
+                onboardingEventsHandler.dismissTooltip(route: .onboarding(.v2))
                 onboardingEventsHandler.send(.enterHome)
             }
                 return OnboardingFactory.make(onboardingType: onboardingType, dismissAction: dismissOnboarding, telemetry: onboardingTelemetry.handle(event:))
@@ -1228,7 +1232,7 @@ extension BrowserViewController: UIDropInteractionDelegate {
 
     func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
         _ = session.loadObjects(ofClass: URL.self) { urls in
-            guard let url = urls.first else {
+            guard let draggedUrl = urls.first, let url = URIFixup.getURL(entry: draggedUrl.absoluteString) else {
                 return
             }
 
@@ -1713,6 +1717,12 @@ extension BrowserViewController: LegacyWebControllerDelegate {
         showToolbars()
     }
 
+    func webControllerWillCancelNavigation(_ controller: any LegacyWebController) {
+        // Ensure the current location is refreshed after the web view has updated its URL
+        // for a navigation action cancelled within our delegate callback
+        DispatchQueue.main.async { self.urlBar.url = self.webViewController.url }
+    }
+
     func webController(_ controller: LegacyWebController, didFailNavigationWithError error: Error) {
         // FXIOS-8637 - #19160 - Integrate onTitleChange, onLocationChange in Focus iOS
         urlBar.url = webViewController.url
@@ -2066,6 +2076,7 @@ extension BrowserViewController: MenuActionable {
             searchEngineManager: searchEngineManager,
             authenticationManager: authenticationManager,
             onboardingEventsHandler: onboardingEventsHandler,
+            gleanUsageReportingMetricsService: gleanUsageReportingMetricsService,
             themeManager: themeManager,
             dismissScreenCompletion: activateUrlBarOnHomeView,
             shouldScrollToSiri: shouldScrollToSiri

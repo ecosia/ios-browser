@@ -55,7 +55,7 @@ public final class Tabs {
     public func clear() {
         items = []
         current = nil
-        
+
         Task.detached {
             if FileManager.default.fileExists(atPath: FileManager.snapshots.path) {
                 try? FileManager.default.removeItem(at: FileManager.snapshots)

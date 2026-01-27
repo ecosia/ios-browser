@@ -19,10 +19,10 @@ import XCTest
         await statistics.setTreesPlanted(10)
         await statistics.setTreesPlantedLastUpdated(date.addingTimeInterval(-100))
         await statistics.setTimePerTree(2)
-        
+
         // Act
         let result = await treesProjection.treesAt(date)
-        
+
         // Assert
         XCTAssertEqual(Int(100/2 + 10-1), result)
     }
@@ -35,7 +35,7 @@ import XCTest
         let exp = XCTestExpectation(description: "Wait for timer")
         let projection = TreesProjection()
         var receivedCount: Int?
-        
+
         // Act
         projection.subscribe(self) { count in
             receivedCount = count

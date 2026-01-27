@@ -7,7 +7,9 @@ import Common
 
 /// A view which contains a search engine icon and a drop down arrow. Supports tapping actions which call the appropriate
 /// method on the `LocationViewDelegate`.
-final class DropDownSearchEngineView: UIView, SearchEngineView, ThemeApplicable {
+final class DropDownSearchEngineView: UIView,
+                                      SearchEngineView,
+                                      ThemeApplicable {
     // MARK: - Properties
     private enum UX {
         static let cornerRadius: CGFloat = 4
@@ -41,9 +43,9 @@ final class DropDownSearchEngineView: UIView, SearchEngineView, ThemeApplicable 
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(_ state: LocationViewState, delegate: LocationViewDelegate) {
-        searchEngineImageView.image = state.searchEngineImage
-        configureA11y(state)
+    func configure(_ config: LocationViewConfiguration, isLocationTextCentered: Bool, delegate: LocationViewDelegate) {
+        searchEngineImageView.image = config.searchEngineImage
+        configureA11y(config)
         self.delegate = delegate
     }
 
@@ -81,10 +83,10 @@ final class DropDownSearchEngineView: UIView, SearchEngineView, ThemeApplicable 
 
     // MARK: - Accessibility
 
-    private func configureA11y(_ state: LocationViewState) {
-         searchEngineImageView.accessibilityIdentifier = state.searchEngineImageViewA11yId
-         searchEngineImageView.accessibilityLabel = state.searchEngineImageViewA11yLabel
-         searchEngineImageView.largeContentTitle = state.searchEngineImageViewA11yLabel
+    private func configureA11y(_ config: LocationViewConfiguration) {
+         searchEngineImageView.accessibilityIdentifier = config.searchEngineImageViewA11yId
+         searchEngineImageView.accessibilityLabel = config.searchEngineImageViewA11yLabel
+         searchEngineImageView.largeContentTitle = config.searchEngineImageViewA11yLabel
          searchEngineImageView.largeContentImage = nil
     }
 

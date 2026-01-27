@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Shared
 import Common
 
 /// The history panel has a fixed first section and cells. In this case, we'll only need some
@@ -22,7 +21,7 @@ struct HistoryActionablesModel: Hashable {
     let identifier = UUID()
 
     enum ActionableItem {
-        case clearHistory, recentlyClosed, syncHistory
+        case recentlyClosed
     }
 
     // MARK: - Init
@@ -34,6 +33,7 @@ struct HistoryActionablesModel: Hashable {
         self.imageName = imageName
     }
 
+    @MainActor
     mutating func configureImage(for window: WindowUUID) {
         if let imageName = imageName {
             let themeManager: ThemeManager = AppContainer.shared.resolve()

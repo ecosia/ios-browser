@@ -3,12 +3,12 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Shared
 
 class SendFeedbackSetting: Setting {
     private weak var settingsDelegate: SupportSettingsDelegate?
 
     override var title: NSAttributedString? {
+        guard let theme else { return nil }
         return NSAttributedString(string: .AppSettingsSendFeedback,
                                   attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary])
     }

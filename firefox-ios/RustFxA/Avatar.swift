@@ -6,26 +6,18 @@ import Common
 import UIKit
 import Shared
 
-open class Avatar {
-    open var image: UIImage?
+public final class Avatar: Sendable {
     public let url: URL?
 
     init(url: URL?) {
         self.url = url
 
         downloadAvatar(url: url) { image in
-            guard let avatarImage = image else {
-                self.image = UIImage(named: StandardImageIdentifiers.Large.avatarCircle)
-                NotificationCenter.default.post(name: .FirefoxAccountProfileChanged, object: self)
-                return
-            }
-
-            self.image = avatarImage
             NotificationCenter.default.post(name: .FirefoxAccountProfileChanged, object: self)
         }
     }
 
-    private func downloadAvatar(url: URL?, completion: @escaping (UIImage?) -> Void) {
+    private func downloadAvatar(url: URL?, completion: @escaping @Sendable (UIImage?) -> Void) {
         guard let avatarUrl = url else {
             completion(nil)
             return

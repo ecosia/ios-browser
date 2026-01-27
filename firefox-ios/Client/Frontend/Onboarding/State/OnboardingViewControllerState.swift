@@ -4,14 +4,13 @@
 
 import Foundation
 import Redux
-import Shared
 import Common
 
-struct OnboardingViewControllerState: ScreenState, Equatable {
+struct OnboardingViewControllerState: ScreenState {
     let windowUUID: WindowUUID
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let introState = store.state.screenState(
+        guard let introState = appState.screenState(
             OnboardingViewControllerState.self,
             for: .onboardingViewController,
             window: uuid)
@@ -29,10 +28,18 @@ struct OnboardingViewControllerState: ScreenState, Equatable {
 
     static let reducer: Reducer<Self> = { state, action in
         // Only process actions for the current window
-        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else { return state }
+        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
+        else {
+            return defaultState(from: state)
+        }
 
         switch action {
-        default: return OnboardingViewControllerState(windowUUID: state.windowUUID)
+        default:
+            return defaultState(from: state)
         }
+    }
+
+    static func defaultState(from state: OnboardingViewControllerState) -> OnboardingViewControllerState {
+        return OnboardingViewControllerState(windowUUID: state.windowUUID)
     }
 }

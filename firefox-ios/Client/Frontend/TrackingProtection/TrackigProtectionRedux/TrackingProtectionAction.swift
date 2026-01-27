@@ -4,10 +4,12 @@
 
 import Foundation
 import Redux
-import Shared
 import Common
 
-final class TrackingProtectionAction: Action { }
+struct TrackingProtectionAction: Action {
+    let windowUUID: WindowUUID
+    let actionType: ActionType
+}
 
 enum TrackingProtectionActionType: ActionType {
     case toggleTrackingProtectionStatus
@@ -19,9 +21,13 @@ enum TrackingProtectionActionType: ActionType {
     case tappedShowClearCookiesAlert
     case goBack
     case updateBlockedTrackerStats
+    case updateConnectionStatus
 }
 
-final class TrackingProtectionMiddlewareAction: Action { }
+struct TrackingProtectionMiddlewareAction: Action {
+    let windowUUID: WindowUUID
+    let actionType: ActionType
+}
 
 enum TrackingProtectionMiddlewareActionType: ActionType {
     case dismissTrackingProtection

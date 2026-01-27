@@ -9,11 +9,16 @@ import Common
 
 import struct MozillaAppServices.LoginEntry
 
-class PasswordManagerListViewController: SensitiveViewController, Themeable {
+class PasswordManagerListViewController: SensitiveViewController,
+                                         Themeable {
+    private struct UX {
+        static let separatorInset: CGFloat = 20
+        static let selectAllButtonMargin: CGFloat = 16
+    }
     static let loginsSettingsSection = 0
 
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol
 
     private let viewModel: PasswordManagerViewModel
@@ -23,7 +28,7 @@ class PasswordManagerListViewController: SensitiveViewController, Themeable {
     private let loadingView: SettingsLoadingView = .build()
     private var deleteAlert: UIAlertController?
     private var selectedIndexPaths = [IndexPath]()
-    private let tableView: UITableView = .build()
+    private let tableView: UITableView
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { return windowUUID }
 
@@ -53,8 +58,13 @@ class PasswordManagerListViewController: SensitiveViewController, Themeable {
         self.loginDataSource = LoginDataSource(viewModel: viewModel)
         self.themeManager = themeManager
         self.notificationCenter = notificationCenter
-        super.init(nibName: nil, bundle: nil)
-        listenForThemeChange(view)
+        if #available(iOS 26.0, *) {
+            tableView = UITableView(frame: .zero, style: .insetGrouped)
+            tableView.translatesAutoresizingMaskIntoConstraints = false
+        } else {
+            tableView = .build()
+        }
+        super.init()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -64,7 +74,12 @@ class PasswordManagerListViewController: SensitiveViewController, Themeable {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = .Settings.Passwords.Title
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
+        let rightInset: CGFloat = if #available(iOS 26.0, *) {
+            UX.separatorInset / 1.5
+        } else {
+            0
+        }
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: UX.separatorInset, bottom: 0, right: rightInset)
         tableView.register(cellType: PasswordManagerSettingsTableViewCell.self)
         tableView.register(cellType: PasswordManagerTableViewCell.self)
         tableView.registerHeaderFooter(cellType: ThemedTableSectionHeaderFooterView.self)
@@ -82,21 +97,22 @@ class PasswordManagerListViewController: SensitiveViewController, Themeable {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = .LoginsListSearchPlaceholder
         searchController.delegate = self
-        navigationItem.hidesSearchBarWhenScrolling = false
+        if #unavailable(iOS 26.0) {
+            navigationItem.hidesSearchBarWhenScrolling = false
+        }
         navigationItem.searchController = searchController
         definesPresentationContext = true
         // No need to hide the navigation bar on iPad to make room, and hiding makes the search bar too close to the top
         searchController.hidesNavigationBarDuringPresentation = UIDevice.current.userInterfaceIdiom != .pad
 
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self,
-                                       selector: #selector(remoteLoginsDidChange),
-                                       name: .DataRemoteLoginChangesWereApplied,
-                                       object: nil)
-        notificationCenter.addObserver(self,
-                                       selector: #selector(dismissAlertController),
-                                       name: UIApplication.didEnterBackgroundNotification,
-                                       object: nil)
+        startObservingNotifications(
+            withNotificationCenter: NotificationCenter.default,
+            forObserver: self,
+            observing: [
+                .DataRemoteLoginChangesWereApplied,
+                UIApplication.didEnterBackgroundNotification
+            ]
+        )
 
         setupDefaultNavButtons()
         view.addSubview(tableView)
@@ -110,9 +126,6 @@ class PasswordManagerListViewController: SensitiveViewController, Themeable {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: selectionButton.topAnchor),
 
-            selectionButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            selectionButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            selectionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             selectionButton.topAnchor.constraint(equalTo: tableView.bottomAnchor),
             selectionButton.heightAnchor.constraint(equalToConstant: UIConstants.ToolbarHeight),
 
@@ -124,6 +137,31 @@ class PasswordManagerListViewController: SensitiveViewController, Themeable {
 
         selectionButton.isHidden = true
 
+        if #available(iOS 26.0, *) {
+            selectionButton.layer.cornerRadius = UIConstants.ToolbarHeight / 2
+            NSLayoutConstraint.activate([
+                selectionButton.leadingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                    constant: UX.selectAllButtonMargin
+                ),
+                selectionButton.trailingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                    constant: -UX.selectAllButtonMargin
+                ),
+                selectionButton.bottomAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                    constant: -UX.selectAllButtonMargin / 2
+                )
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                selectionButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                selectionButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+                selectionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            ])
+        }
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
 
         KeyboardHelper.defaultHelper.addDelegate(self)
@@ -132,7 +170,7 @@ class PasswordManagerListViewController: SensitiveViewController, Themeable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadLogins()
+        loadLogins(searchController.searchBar.text)
     }
 
     func applyTheme() {
@@ -229,6 +267,24 @@ class PasswordManagerListViewController: SensitiveViewController, Themeable {
                                      method: .tap,
                                      object: .loginsManagementLoginsTapped)
     }
+
+    // MARK: Notifiable
+    override func handleNotifications(_ notification: Notification) {
+        super.handleNotifications(notification)
+        let notificationName = notification.name
+
+        ensureMainThread {
+            switch notificationName {
+            case .DataRemoteLoginChangesWereApplied:
+                self.loadLogins()
+            case UIApplication.didEnterBackgroundNotification:
+                self.deleteAlert?.dismiss(animated: false, completion: nil)
+                self.navigationController?.view.endEditing(true)
+            default:
+                break
+            }
+        }
+    }
 }
 
 extension PasswordManagerListViewController: UISearchResultsUpdating {
@@ -253,19 +309,6 @@ extension PasswordManagerListViewController: UISearchControllerDelegate {
 
 // MARK: - Selectors
 private extension PasswordManagerListViewController {
-    @objc
-    func remoteLoginsDidChange() {
-        DispatchQueue.main.async {
-            self.loadLogins()
-        }
-    }
-
-    @objc
-    func dismissAlertController() {
-        self.deleteAlert?.dismiss(animated: false, completion: nil)
-        navigationController?.view.endEditing(true)
-    }
-
     func loadLogins(_ query: String? = nil) {
         loadingView.isHidden = false
         loadingView.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
@@ -305,35 +348,39 @@ private extension PasswordManagerListViewController {
         selectionButton.isHidden = true
         self.view.layoutIfNeeded()
 
-        tableView.setEditing(false, animated: true)
+        tableView.setEditing(false, animated: false)
         setupDefaultNavButtons()
         tableView.reloadData()
     }
 
     @objc
     func tappedDelete() {
-        viewModel.profile.hasSyncedLogins().uponQueue(.main) { yes in
-            self.deleteAlert = UIAlertController.deleteLoginAlertWithDeleteCallback({ [unowned self] _ in
-                // Delete here
-                let guidsToDelete = self.tableView.allLoginIndexPaths.compactMap { index in
-                    if let loginRecord = self.viewModel.loginAtIndexPath(index),
-                       self.viewModel.listSelectionHelper.isCellSelected(with: loginRecord) {
-                        return loginRecord.id
-                    }
-                    return nil
-                }
+        viewModel.profile.hasSyncedLogins()
+            .uponQueue(.main) { yes in
+                // FXIOS-13228 It should be safe to assumeIsolated here because of `.main` queue above
+                MainActor.assumeIsolated {
+                    self.deleteAlert = UIAlertController.deleteLoginAlertWithDeleteCallback({ [unowned self] _ in
+                        // Delete here
+                        let guidsToDelete = self.tableView.allLoginIndexPaths.compactMap { index in
+                            if let loginRecord = self.viewModel.loginAtIndexPath(index),
+                               self.viewModel.listSelectionHelper.isCellSelected(with: loginRecord) {
+                                return loginRecord.id
+                            }
+                            return nil
+                        }
 
-                self.viewModel.profile.logins.deleteLogins(ids: guidsToDelete) { _ in
-                    DispatchQueue.main.async {
-                        self.cancelSelection()
-                        self.loadLogins()
-                        self.sendLoginsDeletedTelemetry()
-                    }
-                }
-            }, hasSyncedLogins: yes.successValue ?? true)
+                        self.viewModel.profile.logins.deleteLogins(ids: guidsToDelete) { _ in
+                            DispatchQueue.main.async {
+                                self.cancelSelection()
+                                self.loadLogins()
+                                self.sendLoginsDeletedTelemetry()
+                            }
+                        }
+                    }, hasSyncedLogins: yes.successValue ?? true)
 
-            self.present(self.deleteAlert!, animated: true, completion: nil)
-        }
+                    self.present(self.deleteAlert!, animated: true, completion: nil)
+                }
+            }
     }
 
     @objc
@@ -374,8 +421,13 @@ extension PasswordManagerListViewController: UITableViewDelegate {
         ) as? ThemedTableSectionHeaderFooterView else { return nil }
         headerView.titleLabel.text = .LoginsListTitle
         // not using a grouped table: show header borders
-        headerView.showBorder(for: .top, true)
-        headerView.showBorder(for: .bottom, true)
+        if #available(iOS 26.0, *) {
+            headerView.showBorder(for: .top, false)
+            headerView.showBorder(for: .bottom, false)
+        } else {
+            headerView.showBorder(for: .top, true)
+            headerView.showBorder(for: .bottom, true)
+        }
         headerView.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return headerView
     }

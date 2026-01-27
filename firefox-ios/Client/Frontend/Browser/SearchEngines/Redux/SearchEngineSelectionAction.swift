@@ -4,21 +4,33 @@
 
 import Common
 import Foundation
-import MenuKit
 import Redux
 
-final class SearchEngineSelectionAction: Action {
-    let searchEngines: [OpenSearchEngine]?
+struct SearchEngineSelectionAction: Action {
+    let windowUUID: WindowUUID
+    let actionType: ActionType
+    let searchEngines: [SearchEngineModel]?
+    let selectedSearchEngine: SearchEngineModel?
 
-    init(windowUUID: WindowUUID, actionType: ActionType, searchEngines: [OpenSearchEngine]? = nil) {
+    init(
+        windowUUID: WindowUUID,
+        actionType: ActionType,
+        searchEngines: [SearchEngineModel]? = nil,
+        selectedSearchEngine: SearchEngineModel? = nil
+    ) {
+        self.windowUUID = windowUUID
+        self.actionType = actionType
         self.searchEngines = searchEngines
-        super.init(windowUUID: windowUUID, actionType: actionType)
+        self.selectedSearchEngine = selectedSearchEngine
     }
 }
 
 enum SearchEngineSelectionActionType: ActionType {
     case viewDidLoad
     case didLoadSearchEngines
+    case didTapSearchEngine
 }
 
-enum SearchEngineSelectionMiddlewareActionType: ActionType {}
+enum SearchEngineSelectionMiddlewareActionType: ActionType {
+    case didClearAlternativeSearchEngine
+}

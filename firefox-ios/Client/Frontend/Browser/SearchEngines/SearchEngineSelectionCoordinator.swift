@@ -4,14 +4,17 @@
 
 import Common
 import Foundation
-import Shared
 
 protocol SearchEngineSelectionCoordinatorDelegate: AnyObject {
+    @MainActor
     func showSettings(at destination: Route.SettingsSection)
 }
 
 protocol SearchEngineSelectionCoordinator: AnyObject {
+    @MainActor
     func navigateToSearchSettings(animated: Bool)
+
+    @MainActor
     func dismissModal(animated: Bool)
 }
 

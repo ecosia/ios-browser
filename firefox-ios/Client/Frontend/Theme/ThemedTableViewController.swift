@@ -3,15 +3,26 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Shared
 import Common
 
 class ThemedTableViewController: UITableViewController, Themeable, InjectedThemeUUIDIdentifiable {
     var themeManager: ThemeManager
-    @objc var notificationCenter: NotificationProtocol
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
+    var notificationCenter: NotificationProtocol
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { return windowUUID }
+
+    struct UX {
+        static let horizontalMargin: CGFloat = 15
+        static func tableViewStyleForCurrentOS(with style: UITableView.Style) -> UITableView.Style {
+            guard #available(iOS 26.0, *) else { return style }
+            return .insetGrouped
+        }
+        static var cellSeparatorInsetForCurrentOS: UIEdgeInsets {
+            guard #available(iOS 26.0, *) else { return .zero }
+            return UIEdgeInsets(top: 0, left: horizontalMargin, bottom: 0, right: horizontalMargin)
+        }
+    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -24,7 +35,7 @@ class ThemedTableViewController: UITableViewController, Themeable, InjectedTheme
         self.windowUUID = windowUUID
         self.themeManager = themeManager
         self.notificationCenter = notificationCenter
-        super.init(style: style)
+        super.init(style: UX.tableViewStyleForCurrentOS(with: style))
     }
 
     override func tableView(
@@ -35,9 +46,9 @@ class ThemedTableViewController: UITableViewController, Themeable, InjectedTheme
     }
 
     /// Dequeues a ThemedTableViewCell for the provided IndexPath.
-    /// 
+    ///
     /// This method could be overridden by subclasses, if subclasses of ThemedTableViewCell are needed to be dequeued.
-    /// In order to deque subclasses of ThemedTableViewCell they must be registered in the table view.
+    /// In order to dequeue subclasses of ThemedTableViewCell they must be registered in the table view.
     func dequeueCellFor(indexPath: IndexPath) -> ThemedTableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: ThemedTableViewCell.cellIdentifier,
@@ -77,8 +88,9 @@ class ThemedTableViewController: UITableViewController, Themeable, InjectedTheme
         super.viewDidLoad()
         tableView.register(cellType: ThemedTableViewCell.self)
         tableView.register(cellType: ThemedCenteredTableViewCell.self)
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
-        listenForThemeChange(view)
     }
 
     func applyTheme() {
@@ -89,6 +101,7 @@ class ThemedTableViewController: UITableViewController, Themeable, InjectedTheme
     }
 }
 
+@MainActor
 class ThemedHeaderFooterViewBordersHelper: ThemeApplicable {
     enum BorderLocation {
         case top

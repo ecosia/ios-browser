@@ -4,8 +4,8 @@
 
 // This is a debuggable version of the Ecosia Beta config with the same Bundle ID and setup utilized in staging.
 
-#include "Common.xcconfig"
-#include "Debug.xcconfig"
+#include "../../Configuration/Common.xcconfig"
+#include "../../Configuration/Debug.xcconfig"
 #include "Staging.xcconfig"
 
 INFOPLIST_FILE = Client/Info.plist

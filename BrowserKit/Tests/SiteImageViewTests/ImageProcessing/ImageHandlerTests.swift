@@ -38,8 +38,7 @@ final class ImageHandlerTests: XCTestCase {
         return SiteImageModel(id: UUID(),
                               imageType: type,
                               siteURL: siteURL,
-                              siteResource: resourceURL != nil ? .remoteURL(url: resourceURL!) : nil,
-                              image: nil)
+                              siteResource: resourceURL != nil ? .remoteURL(url: resourceURL!) : nil)
     }
 
     func testFavicon_whenImageInCache_returnsCacheImage() async {
@@ -63,61 +62,60 @@ final class ImageHandlerTests: XCTestCase {
         XCTAssertEqual(letterImageGenerator.generateLetterImageCalled, 0)
     }
 
-    // TODO: FXIOS-10642, loading images from the bundle this way doesn't work in XCode 16
-//    func testFavicon_whenSiteResourceNil_imageIsInBundle_noCachedImage_returnsBundleImage() async {
-//        // provide this site url, since the cache key is "google" and default favicons are store with cacheKey as name
-//        // in bundle
-//        let siteURL = URL(string: "https://www.google.com")!
-//        let subject = createSubject()
-//        let model = SiteImageModel(id: UUID(), imageType: .favicon, siteURL: siteURL)
-//        let image = await subject.fetchFavicon(imageModel: model)
-//
-//        let siteImageBundle = Bundle.allBundles.first {
-//            return $0.bundleIdentifier?.contains("SiteImageView-resources") ?? false
-//        }!
-//        let expectedImage = UIImage(named: "google", in: siteImageBundle, with: nil)
-//        XCTAssertEqual(expectedImage, image)
-//        XCTAssertEqual(siteImageCache.cacheImageCalled, 0)
-//        XCTAssertEqual(faviconFetcher.fetchImageSucceedCalled, 0)
-//        XCTAssertEqual(faviconFetcher.fetchImageFailedCalled, 0)
-//        XCTAssertEqual(letterImageGenerator.generateLetterImageCalled, 0)
-//    }
-//
-//    func testFavicon_whenSiteResourceNil_imageIsInBundle_cachedImagePresent_returnsBundleImage() async {
-//        let siteURL = URL(string: "https://www.google.com")!
-//        siteImageCache.image = UIImage()
-//        let subject = createSubject()
-//        let model = SiteImageModel(id: UUID(), imageType: .favicon, siteURL: siteURL)
-//        let image = await subject.fetchFavicon(imageModel: model)
-//
-//        let siteImageBundle = Bundle.allBundles.first {
-//            return $0.bundleIdentifier?.contains("SiteImageView-resources") ?? false
-//        }!
-//        let expectedImage = UIImage(named: "google", in: siteImageBundle, with: nil)
-//        XCTAssertEqual(expectedImage, image)
-//        XCTAssertEqual(siteImageCache.cacheImageCalled, 0)
-//        XCTAssertEqual(faviconFetcher.fetchImageSucceedCalled, 0)
-//        XCTAssertEqual(faviconFetcher.fetchImageFailedCalled, 0)
-//        XCTAssertEqual(letterImageGenerator.generateLetterImageCalled, 0)
-//    }
-//
-//    func testFavicon_whenSiteResourceIsInBundle_returnsBundleImage() async {
-//        let siteURL = URL(string: "https://www.facebook.com")!
-//        let subject = createSubject()
-//        let resource: SiteResource = .bundleAsset(name: "facebook", forRemoteResource: siteURL)
-//        let model = SiteImageModel(id: UUID(), imageType: .favicon, siteURL: siteURL, siteResource: resource)
-//        let image = await subject.fetchFavicon(imageModel: model)
-//
-//        let siteImageBundle = Bundle.allBundles.first {
-//            return $0.bundleIdentifier?.contains("SiteImageView-resources") ?? false
-//        }!
-//        let expectedImage = UIImage(named: "facebook", in: siteImageBundle, with: nil)
-//        XCTAssertEqual(expectedImage, image)
-//        XCTAssertEqual(siteImageCache.cacheImageCalled, 0)
-//        XCTAssertEqual(faviconFetcher.fetchImageSucceedCalled, 0)
-//        XCTAssertEqual(faviconFetcher.fetchImageFailedCalled, 0)
-//        XCTAssertEqual(letterImageGenerator.generateLetterImageCalled, 0)
-//    }
+    func testFavicon_whenSiteResourceNil_imageIsInBundle_noCachedImage_returnsBundleImage() async {
+        // provide this site url, since the cache key is "google" and default favicons are store with cacheKey as name
+        // in bundle
+        let siteURL = URL(string: "https://www.google.com")!
+        let subject = createSubject()
+        let model = SiteImageModel(id: UUID(), imageType: .favicon, siteURL: siteURL)
+        let image = await subject.fetchFavicon(imageModel: model)
+
+        let siteImageBundle = Bundle.allBundles.first {
+            return $0.bundleIdentifier?.contains("browserkit.SiteImageView.resources") ?? false
+        }!
+        let expectedImage = UIImage(named: "google", in: siteImageBundle, with: nil)
+        XCTAssertEqual(expectedImage, image)
+        XCTAssertEqual(siteImageCache.cacheImageCalled, 0)
+        XCTAssertEqual(faviconFetcher.fetchImageSucceedCalled, 0)
+        XCTAssertEqual(faviconFetcher.fetchImageFailedCalled, 0)
+        XCTAssertEqual(letterImageGenerator.generateLetterImageCalled, 0)
+    }
+
+    func testFavicon_whenSiteResourceNil_imageIsInBundle_cachedImagePresent_returnsBundleImage() async {
+        let siteURL = URL(string: "https://www.google.com")!
+        siteImageCache.image = UIImage()
+        let subject = createSubject()
+        let model = SiteImageModel(id: UUID(), imageType: .favicon, siteURL: siteURL)
+        let image = await subject.fetchFavicon(imageModel: model)
+
+        let siteImageBundle = Bundle.allBundles.first {
+            return $0.bundleIdentifier?.contains("browserkit.SiteImageView.resources") ?? false
+        }!
+        let expectedImage = UIImage(named: "google", in: siteImageBundle, with: nil)
+        XCTAssertEqual(expectedImage, image)
+        XCTAssertEqual(siteImageCache.cacheImageCalled, 0)
+        XCTAssertEqual(faviconFetcher.fetchImageSucceedCalled, 0)
+        XCTAssertEqual(faviconFetcher.fetchImageFailedCalled, 0)
+        XCTAssertEqual(letterImageGenerator.generateLetterImageCalled, 0)
+    }
+
+    func testFavicon_whenSiteResourceIsInBundle_returnsBundleImage() async {
+        let siteURL = URL(string: "https://www.facebook.com")!
+        let subject = createSubject()
+        let resource: SiteResource = .bundleAsset(name: "facebook", forRemoteResource: siteURL)
+        let model = SiteImageModel(id: UUID(), imageType: .favicon, siteURL: siteURL, siteResource: resource)
+        let image = await subject.fetchFavicon(imageModel: model)
+
+        let siteImageBundle = Bundle.allBundles.first {
+            return $0.bundleIdentifier?.contains("browserkit.SiteImageView.resources") ?? false
+        }!
+        let expectedImage = UIImage(named: "facebook", in: siteImageBundle, with: nil)
+        XCTAssertEqual(expectedImage, image)
+        XCTAssertEqual(siteImageCache.cacheImageCalled, 0)
+        XCTAssertEqual(faviconFetcher.fetchImageSucceedCalled, 0)
+        XCTAssertEqual(faviconFetcher.fetchImageFailedCalled, 0)
+        XCTAssertEqual(letterImageGenerator.generateLetterImageCalled, 0)
+    }
 
     func testFavicon_whenNoImages_returnsFallbackLetterFavicon_forHardcodedFaviconURL() async {
         let subject = createSubject()
@@ -212,8 +210,7 @@ final class ImageHandlerTests: XCTestCase {
         let model = SiteImageModel(id: UUID(),
                                    imageType: .favicon,
                                    siteURL: URL(string: "internal://local/about/home#panel=0")!,
-                                   siteResource: nil,
-                                   image: nil)
+                                   siteResource: nil)
         let result = await subject.fetchFavicon(imageModel: model)
 
         XCTAssertEqual(letterImageGenerator.image, result)
@@ -366,7 +363,7 @@ private extension ImageHandlerTests {
 }
 
 // MARK: - MockHeroImageFetcher
-private class MockHeroImageFetcher: HeroImageFetcher {
+private final class MockHeroImageFetcher: HeroImageFetcher, @unchecked Sendable {
     var image: UIImage?
     var fetchHeroImageSucceedCalled = 0
     var fetchHeroImageFailedCalled = 0
@@ -385,7 +382,7 @@ private class MockHeroImageFetcher: HeroImageFetcher {
 }
 
 // MARK: - MockSiteImageCache
-private class MockSiteImageCache: SiteImageCache {
+private final class MockSiteImageCache: SiteImageCache, @unchecked Sendable {
     var image: UIImage?
     var getImageFromCacheSucceedCalled = 0
     var getImageFromCacheFailedCalled = 0
@@ -416,7 +413,7 @@ private class MockSiteImageCache: SiteImageCache {
 }
 
 // MARK: - MockFaviconFetcher
-private class MockFaviconFetcher: FaviconFetcher {
+private final class MockFaviconFetcher: FaviconFetcher, @unchecked Sendable {
     var image: UIImage?
     var fetchImageSucceedCalled = 0
     var fetchImageFailedCalled = 0
@@ -433,7 +430,7 @@ private class MockFaviconFetcher: FaviconFetcher {
 }
 
 // MARK: - MockLetterImageGenerator
-private class MockLetterImageGenerator: LetterImageGenerator {
+private class MockLetterImageGenerator: LetterImageGenerator, @unchecked Sendable {
     var image = UIImage()
     var generateLetterImageCalled = 0
     var capturedSiteString: String?
@@ -442,5 +439,15 @@ private class MockLetterImageGenerator: LetterImageGenerator {
         generateLetterImageCalled += 1
         capturedSiteString = siteString
         return image
+    }
+
+    func generateImage(fromLetter letter: String, color: UIColor) -> UIImage {
+        // Unneeded
+        return UIImage()
+    }
+
+    func generateLetter(fromSiteString siteString: String) throws -> String {
+        // Unneeded
+        return ""
     }
 }

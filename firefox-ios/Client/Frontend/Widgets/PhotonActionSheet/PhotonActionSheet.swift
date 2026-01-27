@@ -3,19 +3,21 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Storage
 import Shared
 import UIKit
 import Common
 
 extension PhotonActionSheet: Notifiable {
     func handleNotifications(_ notification: Notification) {
-        switch notification.name {
-        case .ProfileDidFinishSyncing, .ProfileDidStartSyncing:
-            stopRotateSyncIcon()
-        case UIAccessibility.reduceTransparencyStatusDidChangeNotification:
-            reduceTransparencyChanged()
-        default: break
+        let name = notification.name
+        ensureMainThread {
+            switch name {
+            case .ProfileDidFinishSyncing, .ProfileDidStartSyncing:
+                self.stopRotateSyncIcon()
+            case UIAccessibility.reduceTransparencyStatusDidChangeNotification:
+                self.reduceTransparencyChanged()
+            default: break
+            }
         }
     }
 }
@@ -44,9 +46,11 @@ class PhotonActionSheet: UIViewController, Themeable {
     private var constraints = [NSLayoutConstraint]()
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
+
+    weak var coordinator: ContextMenuCoordinatorDelegate?
 
     private lazy var closeButton: UIButton = .build { button in
         button.setTitle(.CloseButtonTitle, for: .normal)
@@ -86,17 +90,30 @@ class PhotonActionSheet: UIViewController, Themeable {
     }
 
     deinit {
-        tableView.dataSource = nil
-        tableView.delegate = nil
-        tableView.removeFromSuperview()
-        notificationCenter.removeObserver(self)
+        // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
+        guard Thread.isMainThread else {
+            DefaultLogger.shared.log(
+                "AddressToolbarContainer was not deallocated on the main thread. Redux was not cleaned up.",
+                level: .fatal,
+                category: .lifecycle
+            )
+            assertionFailure("The view was not deallocated on the main thread. Redux was not cleaned up.")
+            return
+        }
+
+        MainActor.assumeIsolated {
+            // Not sure that we need to do this clean up in the deinit but leaving this in place since
+            // this class should be going away soon
+            tableView.dataSource = nil
+            tableView.delegate = nil
+            tableView.removeFromSuperview()
+        }
     }
 
     // MARK: - View cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        listenForThemeChange(view)
         view.addSubview(tableView)
         view.accessibilityIdentifier = AccessibilityIdentifiers.Photon.view
 
@@ -105,12 +122,16 @@ class PhotonActionSheet: UIViewController, Themeable {
 
         setupLayout()
 
-        setupNotifications(
+        startObservingNotifications(
+            withNotificationCenter: notificationCenter,
             forObserver: self,
             observing: [.ProfileDidFinishSyncing,
                         .ProfileDidStartSyncing,
                         UIAccessibility.reduceTransparencyStatusDidChangeNotification]
         )
+
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
+        applyTheme()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -316,15 +337,20 @@ class PhotonActionSheet: UIViewController, Themeable {
                                of object: Any?,
                                change: [NSKeyValueChangeKey: Any]?,
                                context: UnsafeMutableRawPointer?) {
-        if viewModel.presentationStyle == .popover && !wasHeightOverridden {
-            let size = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-            preferredContentSize = CGSize(width: size.width, height: tableView.contentSize.height)
+        ensureMainThread {
+            if self.viewModel.presentationStyle == .popover && !self.wasHeightOverridden {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    let size = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+                    preferredContentSize = CGSize(width: size.width, height: tableView.contentSize.height)
+                }
+            }
         }
     }
 
     @objc
     private func dismiss(_ gestureRecognizer: UIGestureRecognizer?) {
-        dismissVC()
+        dismissSheet()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -332,7 +358,7 @@ class PhotonActionSheet: UIViewController, Themeable {
         // Need to handle click outside view for non-popover sheet styles
         guard let touch = touches.first else { return }
         if !tableView.frame.contains(touch.location(in: view)) {
-            dismissVC()
+            dismissSheet()
         }
     }
 
@@ -490,11 +516,16 @@ extension PhotonActionSheet: UITableViewDataSource, UITableViewDelegate {
         (header as? ThemeApplicable)?.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return header
     }
+
+    private func dismissSheet(withCompletion completion: (() -> Void)? = nil) {
+        dismissVC(withCompletion: completion)
+        coordinator?.dismissFlow()
+    }
 }
 
 // MARK: - PhotonActionSheetViewDelegate
 extension PhotonActionSheet: PhotonActionSheetContainerCellDelegate {
     func didClick(item: SingleActionViewModel?, animationCompletion: @escaping () -> Void) {
-        dismissVC(withCompletion: animationCompletion)
+        dismissSheet(withCompletion: animationCompletion)
     }
 }

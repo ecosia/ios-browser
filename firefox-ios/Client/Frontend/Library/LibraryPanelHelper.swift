@@ -3,28 +3,42 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Shared
-import Storage
 import Common
 
 import enum MozillaAppServices.VisitType
 
 protocol LibraryPanelDelegate: AnyObject {
+    @MainActor
     func libraryPanelDidRequestToOpenInNewTab(_ url: URL, isPrivate: Bool)
+
+    @MainActor
     func libraryPanel(didSelectURL url: URL, visitType: VisitType)
+
+    @MainActor
     var libraryPanelWindowUUID: WindowUUID { get }
 }
 
 protocol LibraryPanel: UIViewController {
+    @MainActor
     var libraryPanelDelegate: LibraryPanelDelegate? { get set }
+
+    @MainActor
     var state: LibraryPanelMainState { get set }
+
+    @MainActor
     var bottomToolbarItems: [UIBarButtonItem] { get }
 
+    @MainActor
     func handleLeftTopButton()
+
+    @MainActor
     func handleRightTopButton()
+
+    @MainActor
     func shouldDismissOnDone() -> Bool
 }
 
+@MainActor
 extension LibraryPanel {
     var flexibleSpace: UIBarButtonItem {
         return UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -50,12 +64,8 @@ extension LibraryPanel {
 enum LibraryPanelType: Int, CaseIterable {
     case bookmarks = 0
     case history = 1
-    /* Ecosia: Invert Download and Reading list positions in the LibraryViewController
     case downloads = 2
     case readingList = 3
-     */
-    case readingList = 2
-    case downloads = 3
 
     var title: String {
         switch self {
@@ -101,26 +111,15 @@ class LibraryPanelHelper {
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.historyView,
                 panelType: .history),
 
-            /* Ecosia: Invert Download and Reading list positions in the LibraryViewController
-             LibraryPanelDescriptor(
+            LibraryPanelDescriptor(
                 accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.downloadsView,
                 panelType: .downloads),
-             
-            LibraryPanelDescriptor(
-                accessibilityLabel: .LibraryPanelReadingListAccessibilityLabel,
-                accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.readingListView,
-                panelType: .readingList),
-             */
-            LibraryPanelDescriptor(
-                accessibilityLabel: .LibraryPanelReadingListAccessibilityLabel,
-                accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.readingListView,
-                panelType: .readingList),
 
             LibraryPanelDescriptor(
-                accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
-                accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.downloadsView,
-                panelType: .downloads),
+                accessibilityLabel: .LibraryPanelReadingListAccessibilityLabel,
+                accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.readingListView,
+                panelType: .readingList)
         ]
     }()
 }

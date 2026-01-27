@@ -3,13 +3,17 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import AVFoundation
+// AVCaptureSession is threadsafe even though it is not Sendable
+@preconcurrency import AVFoundation
 import Shared
 import Common
 
 protocol QRCodeViewControllerDelegate: AnyObject {
+    @MainActor
     func didScanQRCodeWithURL(_ url: URL)
-    func didScanQRCodeWithText(_ text: String)
+    @MainActor
+    func didScanQRCodeWithTextContent(_ content: TextContentDetector.DetectedType?, rawText: String)
+    @MainActor
     var qrCodeScanningPermissionLevel: QRCodeScanPermissions { get }
 }
 
@@ -41,7 +45,7 @@ class QRCodeViewController: UIViewController {
 
     private var state: QRCodeViewControllerState = .scanning
 
-    private lazy var captureSession: AVCaptureSession = {
+    nonisolated private let captureSession: AVCaptureSession = {
         let session = AVCaptureSession()
         session.sessionPreset = AVCaptureSession.Preset.high
         return session
@@ -75,8 +79,8 @@ class QRCodeViewController: UIViewController {
     private var isLightOn = false
     private var shapeLayer = CAShapeLayer()
 
-    private var scanLineTopConstraint: NSLayoutConstraint!
-    private var scanBorderWidthConstraint: NSLayoutConstraint!
+    private var scanLineTopConstraint: NSLayoutConstraint?
+    private var scanBorderWidthConstraint: NSLayoutConstraint?
 
     private var scanBorderSize: CGFloat {
         let minSize = min(view.frame.width, view.frame.height)
@@ -215,7 +219,10 @@ class QRCodeViewController: UIViewController {
 
         scanLineTopConstraint = scanLine.topAnchor.constraint(equalTo: scanBorder.topAnchor,
                                                               constant: UX.scanLineHeight)
+        scanLineTopConstraint?.isActive = true
+
         scanBorderWidthConstraint = scanBorder.widthAnchor.constraint(equalToConstant: scanBorderSize)
+        scanBorderWidthConstraint?.isActive = true
 
         NSLayoutConstraint.activate([
             maskView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -225,10 +232,8 @@ class QRCodeViewController: UIViewController {
 
             scanBorder.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             scanBorder.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            scanBorderWidthConstraint,
             scanBorder.heightAnchor.constraint(equalTo: scanBorder.widthAnchor),
 
-            scanLineTopConstraint,
             scanLine.leadingAnchor.constraint(equalTo: scanBorder.leadingAnchor),
             scanLine.widthAnchor.constraint(equalTo: scanBorder.widthAnchor),
             scanLine.heightAnchor.constraint(equalToConstant: UX.scanLineHeight),
@@ -240,7 +245,7 @@ class QRCodeViewController: UIViewController {
     }
 
     private func updateContraintsAfterTransition() {
-        scanBorderWidthConstraint.constant = scanBorderSize
+        scanBorderWidthConstraint?.constant = scanBorderSize
     }
 
     private func setupVideoPreviewLayer() {
@@ -271,10 +276,10 @@ class QRCodeViewController: UIViewController {
                        delay: 0,
                        options: [.repeat],
                        animations: {
-            self.scanLineTopConstraint.constant = self.scanBorder.frame.size.height - UX.scanLineHeight
+            self.scanLineTopConstraint?.constant = self.scanBorder.frame.size.height - UX.scanLineHeight
             self.view.layoutIfNeeded()
         }) { (value: Bool) in
-            self.scanLineTopConstraint.constant = UX.scanLineHeight
+            self.scanLineTopConstraint?.constant = UX.scanLineHeight
             self.perform(#selector(self.startScanLineAnimation), with: nil, afterDelay: 0)
         }
     }
@@ -349,9 +354,21 @@ class QRCodeViewController: UIViewController {
     private func dismissController(_ completion: (() -> Void)? = nil) {
         dismissHandler?.dismiss(completion)
     }
+
+    // MARK: - Utilities
+
+    private func promptPreviewURL(for url: URL) -> String? {
+        let websiteHost: String?
+        if #available(iOS 16.0, *) {
+            websiteHost = url.host()
+        } else {
+            websiteHost = url.host
+        }
+        return websiteHost
+    }
 }
 
-extension QRCodeViewController: AVCaptureMetadataOutputObjectsDelegate {
+extension QRCodeViewController: @MainActor AVCaptureMetadataOutputObjectsDelegate {
     func metadataOutput(_ output: AVCaptureMetadataOutput,
                         didOutput metadataObjects: [AVMetadataObject],
                         from connection: AVCaptureConnection) {
@@ -364,6 +381,11 @@ extension QRCodeViewController: AVCaptureMetadataOutputObjectsDelegate {
 
         func openScannedQRCodeURL(_ url: URL) {
             qrCodeDelegate?.didScanQRCodeWithURL(url)
+            cleanUpAndRemoveQRCodeScanner()
+        }
+
+        func openScannedQRCodeTextContent(_ content: TextContentDetector.DetectedType?, rawText: String) {
+            qrCodeDelegate?.didScanQRCodeWithTextContent(content, rawText: rawText)
             cleanUpAndRemoveQRCodeScanner()
         }
 
@@ -383,15 +405,13 @@ extension QRCodeViewController: AVCaptureMetadataOutputObjectsDelegate {
                let qrCodeDelegate = self.qrCodeDelegate,
                let text = metaData.stringValue {
                 captureSession.stopRunning()
+                let shouldPrompt = qrCodeDelegate.qrCodeScanningPermissionLevel != .allowURLsWithoutPrompt
                 // Open QR codes only when they are recognized as webpages, otherwise open as text
                 if let url = URIFixup.getURL(text), url.isWebPage(), url.baseDomain != nil {
-                    let shouldPrompt = qrCodeDelegate.qrCodeScanningPermissionLevel != .allowURLsWithoutPrompt
-
                     if shouldPrompt {
                         // Prompt users before opening scanned URL. Show shortened host (if possible) as the preview.
                         state = .promptingUser
-                        let websiteHost: String?
-                        if #available(iOS 16.0, *) { websiteHost = url.host() } else { websiteHost = url.host }
+                        let websiteHost = promptPreviewURL(for: url)
                         presentConfirmationAlert(urlDisplayString: websiteHost ?? text,
                                                  onCancel: { _ in cleanUpAndRemoveQRCodeScanner() },
                                                  onConfirm: { _ in openScannedQRCodeURL(url) })
@@ -400,7 +420,21 @@ extension QRCodeViewController: AVCaptureMetadataOutputObjectsDelegate {
                         openScannedQRCodeURL(url)
                     }
                 } else {
-                    qrCodeDelegate.didScanQRCodeWithText(text)
+                    let content = TextContentDetector.detectTextContent(text)
+
+                    // If we should prompt for URLs and our text type has detected a website link, show alert first
+                    switch (shouldPrompt, content) {
+                    case (true, .link(let url)):
+                        // Prompt users before opening scanned URL. Show shortened host (if possible) as the preview.
+                        state = .promptingUser
+                        let websiteHost = promptPreviewURL(for: url)
+                        presentConfirmationAlert(urlDisplayString: websiteHost ?? text,
+                                                 onCancel: { _ in cleanUpAndRemoveQRCodeScanner() },
+                                                 onConfirm: { _ in openScannedQRCodeTextContent(content, rawText: text) })
+                        return
+                    default:
+                        openScannedQRCodeTextContent(content, rawText: text)
+                    }
                 }
             }
             cleanUpAndRemoveQRCodeScanner()

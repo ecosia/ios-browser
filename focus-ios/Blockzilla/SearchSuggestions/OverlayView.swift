@@ -17,8 +17,8 @@ protocol OverlayViewDelegate: AnyObject {
     func overlayView(_ overlayView: OverlayView, didTapArrowText text: String)
 }
 
-class IndexedInsetButton: InsetButton {
-    private var index: Int = 0
+final class IndexedInsetButton: InsetButton {
+    private var index = 0
     func setIndex(_ i: Int) {
         index = i
     }
@@ -27,7 +27,7 @@ class IndexedInsetButton: InsetButton {
     }
 }
 
-class OverlayView: UIView {
+final class OverlayView: UIView {
     weak var delegate: OverlayViewDelegate?
     private let addToAutocompleteButton = InsetButton()
     private var searchQuery = ""
@@ -229,7 +229,7 @@ class OverlayView: UIView {
         }
     }
 
-    func setUpOverlayButton (button: InsetButton) {
+    func setUpOverlayButton(button: InsetButton) {
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         if UIView.userInterfaceLayoutDirection(for: button.semanticContentAttribute) == .rightToLeft {
             button.contentHorizontalAlignment = .right
@@ -247,14 +247,14 @@ class OverlayView: UIView {
     }
 
     /**
-     
+
      Localize and style 'phrase' text for use as a button title.
-     
+
      - Parameter phrase: The phrase text for a button title
      - Parameter localizedStringFormat: The localization format string to apply
-     
+
      - Returns: An NSAttributedString with `phrase` localized and styled appropriately.
-     
+
      */
 	func getAttributedButtonTitle(phrase: String, localizedStringFormat: String) -> NSAttributedString {
         let attributedString = NSMutableAttributedString(string: localizedStringFormat, attributes: [.foregroundColor: UIColor.primaryText])

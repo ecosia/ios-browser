@@ -4,7 +4,8 @@
 
 import Foundation
 
-class SubscriptionWrapper<State>: Hashable {
+@MainActor
+final class SubscriptionWrapper<State: Equatable>: @MainActor Hashable {
     private let originalSubscription: Subscription<State>
     weak var subscriber: AnyStoreSubscriber?
     private let objectIdentifier: ObjectIdentifier
@@ -41,18 +42,23 @@ class SubscriptionWrapper<State>: Hashable {
     }
 }
 
-public class Subscription<State> {
-    public var observer: ((State?, State) -> Void)?
+@MainActor
+public final class Subscription<State: Equatable> {
+    public var observer: (@MainActor (State?, State) -> Void)?
 
     init() {}
 
-    public init(sink: @escaping (@escaping (State?, State) -> Void) -> Void) {
+    init(sink: @escaping (@MainActor @escaping (State?, State) -> Void) -> Void) {
         sink { old, new in
             self.newValues(oldState: old, newState: new)
         }
     }
 
     func newValues(oldState: State?, newState: State) {
+        // State was updated but observers are not notified if the state is the same
+        guard newState != oldState else {
+            return
+        }
         self.observer?(oldState, newState)
     }
 

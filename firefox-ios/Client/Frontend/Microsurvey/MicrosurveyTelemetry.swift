@@ -3,43 +3,45 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-/* Ecosia: Remove Glean
 import Glean
- */
 
-struct MicrosurveyTelemetry {
+protocol MicrosurveyTelemetryProtocol {
+    func surveyViewed(surveyId: String)
+    func privacyNoticeTapped(surveyId: String)
+    func dismissButtonTapped(surveyId: String)
+    func userResponseSubmitted(surveyId: String, userSelection: String)
+    func confirmationShown(surveyId: String)
+}
+
+struct MicrosurveyTelemetry: MicrosurveyTelemetryProtocol {
+    private let gleanWrapper: GleanWrapper
+
+    init(gleanWrapper: GleanWrapper = DefaultGleanWrapper()) {
+        self.gleanWrapper = gleanWrapper
+    }
+
     func surveyViewed(surveyId: String) {
-        /* Ecosia: Remove Glean
         let surveyIdExtra = GleanMetrics.Microsurvey.ShownExtra(surveyId: surveyId)
-        GleanMetrics.Microsurvey.shown.record(surveyIdExtra)
-         */
+        gleanWrapper.recordEvent(for: GleanMetrics.Microsurvey.shown, extras: surveyIdExtra)
     }
 
     func privacyNoticeTapped(surveyId: String) {
-        /* Ecosia: Remove Glean
         let surveyIdExtra = GleanMetrics.Microsurvey.PrivacyNoticeTappedExtra(surveyId: surveyId)
-        GleanMetrics.Microsurvey.privacyNoticeTapped.record(surveyIdExtra)
-         */
+        gleanWrapper.recordEvent(for: GleanMetrics.Microsurvey.privacyNoticeTapped, extras: surveyIdExtra)
     }
 
     func dismissButtonTapped(surveyId: String) {
-        /* Ecosia: Remove Glean
         let surveyIdExtra = GleanMetrics.Microsurvey.DismissButtonTappedExtra(surveyId: surveyId)
-        GleanMetrics.Microsurvey.dismissButtonTapped.record(surveyIdExtra)
-         */
+        gleanWrapper.recordEvent(for: GleanMetrics.Microsurvey.dismissButtonTapped, extras: surveyIdExtra)
     }
 
     func userResponseSubmitted(surveyId: String, userSelection: String) {
-        /* Ecosia: Remove Glean
         let submitExtra = GleanMetrics.Microsurvey.SubmitButtonTappedExtra(surveyId: surveyId, userSelection: userSelection)
-        GleanMetrics.Microsurvey.submitButtonTapped.record(submitExtra)
-         */
+        gleanWrapper.recordEvent(for: GleanMetrics.Microsurvey.submitButtonTapped, extras: submitExtra)
     }
 
     func confirmationShown(surveyId: String) {
-        /* Ecosia: Remove Glean
         let surveyIdExtra = GleanMetrics.Microsurvey.ConfirmationShownExtra(surveyId: surveyId)
-        GleanMetrics.Microsurvey.confirmationShown.record(surveyIdExtra)
-         */
+        gleanWrapper.recordEvent(for: GleanMetrics.Microsurvey.confirmationShown, extras: surveyIdExtra)
     }
 }

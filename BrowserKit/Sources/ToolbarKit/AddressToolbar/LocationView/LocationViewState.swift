@@ -4,7 +4,7 @@
 
 import UIKit
 
-public struct LocationViewState {
+public struct LocationViewConfiguration {
     public let searchEngineImageViewA11yId: String
     public let searchEngineImageViewA11yLabel: String
 
@@ -23,10 +23,10 @@ public struct LocationViewState {
     public let searchTerm: String?
     public let isEditing: Bool
     public let didStartTyping: Bool
-    public let isScrollingDuringEdit: Bool
+    public let shouldShowKeyboard: Bool
     public let shouldSelectSearchTerm: Bool
-    public var onTapLockIcon: ((UIButton) -> Void)?
-    public var onLongPress: (() -> Void)?
+    public var onTapLockIcon: (@MainActor (UIButton) -> Void)?
+    public var onLongPress: (@MainActor () -> Void)?
 
     public init(
         searchEngineImageViewA11yId: String,
@@ -44,10 +44,10 @@ public struct LocationViewState {
         searchTerm: String?,
         isEditing: Bool,
         didStartTyping: Bool,
-        isScrollingDuringEdit: Bool,
+        shouldShowKeyboard: Bool,
         shouldSelectSearchTerm: Bool,
-        onTapLockIcon: ((UIButton) -> Void)? = nil,
-        onLongPress: (() -> Void)? = nil
+        onTapLockIcon: (@MainActor (UIButton) -> Void)? = nil,
+        onLongPress: (@MainActor () -> Void)? = nil
     ) {
         self.searchEngineImageViewA11yId = searchEngineImageViewA11yId
         self.searchEngineImageViewA11yLabel = searchEngineImageViewA11yLabel
@@ -64,7 +64,7 @@ public struct LocationViewState {
         self.searchTerm = searchTerm
         self.isEditing = isEditing
         self.didStartTyping = didStartTyping
-        self.isScrollingDuringEdit = isScrollingDuringEdit
+        self.shouldShowKeyboard = shouldShowKeyboard
         self.shouldSelectSearchTerm = shouldSelectSearchTerm
         self.onTapLockIcon = onTapLockIcon
         self.onLongPress = onLongPress

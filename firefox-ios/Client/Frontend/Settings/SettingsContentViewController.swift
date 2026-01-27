@@ -6,6 +6,7 @@ import Shared
 import UIKit
 import WebKit
 import Common
+import WebEngine
 
 let DefaultTimeoutTimeInterval = 10.0 // Seconds.  We'll want some telemetry on load times in the wild.
 
@@ -20,13 +21,13 @@ class SettingsContentViewController: UIViewController, WKNavigationDelegate, The
     }
 
     var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
 
     var settingsTitle: NSAttributedString?
-    var url: URL!
+    var url: URL?
     var timer: Timer?
 
     var isLoaded = false {
@@ -73,7 +74,7 @@ class SettingsContentViewController: UIViewController, WKNavigationDelegate, The
     private lazy var settingsWebView: WKWebView = .build()
 
     private func startLoading(_ timeout: Double = DefaultTimeoutTimeInterval) {
-        if self.isLoaded {
+        guard !self.isLoaded, let url else {
             return
         }
         if timeout > 0 {
@@ -132,13 +133,19 @@ class SettingsContentViewController: UIViewController, WKNavigationDelegate, The
 
         startLoading()
 
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
-        listenForThemeChange(view)
     }
 
     func makeWebView() -> WKWebView {
-        let config = LegacyTabManager.makeWebViewConfig(isPrivate: true, prefs: nil)
-        config.preferences.javaScriptCanOpenWindowsAutomatically = false
+        let parameters = WKWebViewParameters(
+            blockPopups: true,
+            isPrivate: true,
+            autoPlay: .all,
+            schemeHandler: InternalSchemeHandler()
+        )
+
+        let config = DefaultWKEngineConfigurationProvider().createConfiguration(parameters: parameters).webViewConfiguration
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.translatesAutoresizingMaskIntoConstraints = false
@@ -200,15 +207,15 @@ class SettingsContentViewController: UIViewController, WKNavigationDelegate, The
         self.isError = true
     }
 
-    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation?, withError error: Error) {
         didTimeOut()
     }
 
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation?, withError error: Error) {
         didTimeOut()
     }
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation?) {
         self.timer?.invalidate()
         self.timer = nil
         self.isLoaded = true

@@ -6,8 +6,10 @@ import Common
 import UIKit
 import Shared
 import Storage
+import MozillaAppServices
 
 // Small iPhone screens in landscape require that the popup have a shorter height.
+@MainActor
 func isLandscapeSmallScreen(_ traitCollection: UITraitCollection) -> Bool {
     if !UX.enableResizeRowsForSmallScreens {
         return false
@@ -32,6 +34,9 @@ class InitialViewController: UIViewController {
     var shareViewController: ShareViewController?
 
     override func viewDidLoad() {
+        // Initialize app services ( including NSS ). Must be called before any other calls to rust components.
+        MozillaAppServices.initialize()
+
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         super.viewDidLoad()
 
@@ -50,34 +55,32 @@ class InitialViewController: UIViewController {
         self.view.alpha = 0
 
         self.getShareItem { shareItem in
-            DispatchQueue.main.async {
-                guard let shareItem = shareItem else {
-                    let alert = UIAlertController(
-                        title: .SendToErrorTitle,
-                        message: .SendToErrorMessage,
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(
-                        title: .SendToErrorOKButton,
-                        style: .default
-                    ) { _ in self.finish(afterDelay: 0)
-                    })
-                    self.present(alert, animated: true, completion: nil)
-                    return
-                }
-
-                // This is the view controller for the popup dialog
-                let shareController = ShareViewController()
-                shareController.delegate = self
-                shareController.shareItem = shareItem
-                self.shareViewController = shareController
-
-                self.embedController = EmbeddedNavController(
-                    isSearchMode: !shareItem.isUrlType(),
-                    parent: self,
-                    rootViewController: shareController
+            guard let shareItem = shareItem else {
+                let alert = UIAlertController(
+                    title: .SendToErrorTitle,
+                    message: .SendToErrorMessage,
+                    preferredStyle: .alert
                 )
+                alert.addAction(UIAlertAction(
+                    title: .SendToErrorOKButton,
+                    style: .default
+                ) { _ in self.finish(afterDelay: 0)
+                })
+                self.present(alert, animated: true, completion: nil)
+                return
             }
+
+            // This is the view controller for the popup dialog
+            let shareController = ShareViewController()
+            shareController.delegate = self
+            shareController.shareItem = shareItem
+            self.shareViewController = shareController
+
+            self.embedController = EmbeddedNavController(
+                isSearchMode: !shareItem.isUrlType(),
+                parent: self,
+                rootViewController: shareController
+            )
         }
     }
 
@@ -92,13 +95,15 @@ class InitialViewController: UIViewController {
         }
     }
 
-    func getShareItem(completion: @escaping (ExtensionUtils.ExtractedShareItem?) -> Void) {
+    func getShareItem(completion: @MainActor @escaping (ExtensionUtils.ExtractedShareItem?) -> Void) {
         ExtensionUtils.extractSharedItem(fromExtensionContext: extensionContext) { item, error in
-            if let item = item, error == nil {
-                completion(item)
-            } else {
-                completion(nil)
-                self.extensionContext?.cancelRequest(withError: CocoaError(.keyValueValidation))
+            DispatchQueue.main.async {
+                if let item = item, error == nil {
+                    completion(item)
+                } else {
+                    completion(nil)
+                    self.extensionContext?.cancelRequest(withError: CocoaError(.keyValueValidation))
+                }
             }
         }
     }

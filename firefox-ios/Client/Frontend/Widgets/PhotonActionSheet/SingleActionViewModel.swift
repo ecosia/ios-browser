@@ -4,7 +4,7 @@
 
 import Foundation
 
-public enum PhotonActionSheetIconType {
+public enum PhotonActionSheetIconType: Sendable {
     case Image
     case URL
     case TabsButton
@@ -13,7 +13,7 @@ public enum PhotonActionSheetIconType {
 
 // One row on the PhotonActionSheet table view can contain more than one item
 struct PhotonRowActions {
-    var items: [SingleActionViewModel]
+    let items: [SingleActionViewModel]
     init(_ items: [SingleActionViewModel]) {
         self.items = items
     }
@@ -24,42 +24,39 @@ struct PhotonRowActions {
 }
 
 // MARK: - SingleActionViewModel
-class SingleActionViewModel {
+struct SingleActionViewModel: Sendable {
     enum IconAlignment {
         case left
         case right
     }
 
     // MARK: - Properties
-    private(set) var text: String?
-    private(set) var iconString: String?
-    private(set) var iconURL: URL?
-    private(set) var iconType: PhotonActionSheetIconType
-    private(set) var allowIconScaling: Bool
-    private(set) var iconAlignment: IconAlignment
-    private(set) var needsIconActionableTint: Bool
+    let text: String?
+    let iconString: String?
+    let iconURL: URL?
+    let iconType: PhotonActionSheetIconType
+    let allowIconScaling: Bool
+    let iconAlignment: IconAlignment
+    let needsIconActionableTint: Bool
 
-    var isEnabled: Bool // Used by toggles like night mode to switch tint color
-    // Ecosia: Add `isNew` bool
-    var isNew: Bool // Used to display the "New" badge
-    private(set) var bold = false
-    private(set) var tabCount: String?
-    private(set) var tapHandler: ((SingleActionViewModel) -> Void)?
-    private(set) var badgeIconName: String?
+    let bold: Bool
+    let tabCount: String?
+    let tapHandler: (@MainActor (SingleActionViewModel) -> Void)?
 
+    let isEnabled: Bool // Used by toggles like night mode to switch tint color
     // Flip the cells for the main menu (hamburger menu) since content needs to appear at the bottom
     // Both cells and tableview are flipped so content already appears at bottom when the menu is opened.
     // This avoids having to scroll the table view.
-    public var isFlipped = false
+    let isFlipped: Bool
 
     // Enable title customization beyond what the interface provides,
-    public var customRender: ((_ title: UILabel, _ contentView: UIView) -> Void)?
+    let customRender: (@MainActor (_ title: UILabel, _ contentView: UIView) -> Void)?
 
     // Enable height customization
-    public var customHeight: ((SingleActionViewModel) -> CGFloat)?
+    let customHeight: (@MainActor (SingleActionViewModel) -> CGFloat)?
 
     // Normally the icon name is used, but if there is no icon, this is used.
-    public var accessibilityId: String?
+    let accessibilityId: String?
 
     // MARK: - Initializers
     init(title: String,
@@ -71,11 +68,14 @@ class SingleActionViewModel {
          iconAlignment: IconAlignment = .left,
          needsIconActionableTint: Bool = false,
          isEnabled: Bool = false,
-         badgeIconNamed: String? = nil,
          bold: Bool? = false,
          tabCount: String? = nil,
-         isNew: Bool = false, // Ecosia: Add `isNew` bool
-         tapHandler: ((SingleActionViewModel) -> Void)? = nil) {
+         isFlipped: Bool = false,
+         tapHandler: (@MainActor (SingleActionViewModel) -> Void)? = nil,
+         customRender: (@MainActor (_ title: UILabel, _ contentView: UIView) -> Void)? = nil,
+         customHeight: (@MainActor (SingleActionViewModel) -> CGFloat)? = nil,
+         accessibilityId: String? = nil
+    ) {
         self.title = title
         self.iconString = iconString
         self.iconURL = iconURL
@@ -88,8 +88,32 @@ class SingleActionViewModel {
         self.text = text
         self.bold = bold ?? false
         self.tabCount = tabCount
-        self.isNew = isNew // Ecosia: Add `isNew` bool
-        self.badgeIconName = badgeIconNamed
+        self.isFlipped = isFlipped
+        self.customRender = customRender
+        self.customHeight = customHeight
+        self.accessibilityId = accessibilityId
+    }
+
+    static func copy(
+        _ vmodel: SingleActionViewModel,
+        isEnabled: Bool? = nil,
+        isFlipped: Bool? = nil
+    ) -> SingleActionViewModel {
+        return SingleActionViewModel(
+            title: vmodel.title,
+            text: vmodel.text,
+            iconString: vmodel.iconString,
+            iconURL: vmodel.iconURL,
+            iconType: vmodel.iconType,
+            allowIconScaling: vmodel.allowIconScaling,
+            iconAlignment: vmodel.iconAlignment,
+            needsIconActionableTint: vmodel.needsIconActionableTint,
+            isEnabled: isEnabled ?? vmodel.isEnabled,
+            bold: vmodel.bold,
+            tabCount: vmodel.tabCount,
+            isFlipped: isFlipped ?? vmodel.isFlipped,
+            tapHandler: vmodel.tapHandler
+        )
     }
 
     // MARK: - MultiRowSetup

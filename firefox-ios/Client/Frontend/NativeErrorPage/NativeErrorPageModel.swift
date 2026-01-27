@@ -4,8 +4,19 @@
 
 import Foundation
 
-struct ErrorPageModel {
+struct ErrorPageModel: Equatable {
     let errorTitle: String
-    let errorDecription: String
-    let errorCode: String
+    let errorDescription: String
+    let foxImageName: String
+    let url: URL?
+    let advancedSection: AdvancedSectionConfig?
+    let showGoBackButton: Bool
+
+    struct AdvancedSectionConfig: Equatable {
+        let buttonText: String
+        let infoText: String
+        let warningText: String
+        let certificateErrorCode: String?
+        let showProceedButton: Bool
+    }
 }

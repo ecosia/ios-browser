@@ -5,6 +5,7 @@
 import Common
 import Shared
 import TabDataStore
+import Foundation
 
 private let userDefaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
 
@@ -14,13 +15,11 @@ struct SimpleTab: Hashable, Codable {
     let lastUsedTime: Timestamp? // From Session Data
     var faviconURL: String?
     var isPrivate = false
-    var uuid: String = ""
+    var uuid = ""
     var imageKey: String {
         return url?.baseDomain ?? ""
     }
-}
 
-extension SimpleTab {
     static func getSimpleTabs() -> [String: SimpleTab] {
         if let tbs = userDefaults.object(forKey: PrefsKeys.WidgetKitSimpleTabKey) as? Data {
             do {

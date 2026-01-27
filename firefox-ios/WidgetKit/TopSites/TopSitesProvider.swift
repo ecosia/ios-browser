@@ -23,7 +23,7 @@ struct TopSitesProvider: TimelineProvider {
         return TopSitesEntry(date: Date(), favicons: [String: Image](), sites: [])
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (TopSitesEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping @Sendable (TopSitesEntry) -> Void) {
         let topSites = getStoredTopSites()
         let siteImageFetcher = DefaultSiteImageHandler.factory()
 
@@ -31,13 +31,14 @@ struct TopSitesProvider: TimelineProvider {
             let tabFaviconDictionary = await withTaskGroup(of: (String, UIImage).self,
                                                            returning: [String: Image].self) { group in
                 for site in topSites {
+                    let imageKey = site.faviconImageCacheKey
                     let siteImageModel = SiteImageModel(id: UUID(),
                                                         imageType: .favicon,
                                                         siteURL: site.tileURL,
                                                         siteResource: site.faviconResource)
                     group.addTask {
                         let image = await siteImageFetcher.getImage(model: siteImageModel)
-                        return (site.faviconImageCacheKey, image)
+                        return (imageKey, image)
                     }
                 }
 
@@ -49,7 +50,7 @@ struct TopSitesProvider: TimelineProvider {
         }
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<TopSitesEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @Sendable @escaping (Timeline<TopSitesEntry>) -> Void) {
         getSnapshot(in: context, completion: { topSitesEntry in
             let timeline = Timeline(entries: [topSitesEntry], policy: .atEnd)
             completion(timeline)
@@ -58,8 +59,8 @@ struct TopSitesProvider: TimelineProvider {
 
     private func getStoredTopSites() -> [WidgetTopSite] {
         if let topSites = userDefaults.object(forKey: PrefsKeys.WidgetKitSimpleTopTab) as? Data {
-            let decoder = JSONDecoder()
-            return (try? WidgetTopSite.decode(from: decoder, data: topSites)) ?? []
+            let decodedSites = try? JSONDecoder().decode([WidgetTopSite].self, from: topSites)
+            return decodedSites ?? []
         }
         return [WidgetTopSite]()
     }

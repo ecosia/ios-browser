@@ -1,0 +1,178 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import WebKit
+import XCTest
+import Common
+@testable import WebEngine
+
+@MainActor
+final class WKUIHandlerTests: XCTestCase {
+    private var sessionDelegate: MockEngineSessionDelegate!
+    private var mockDecider: MockPolicyDecider!
+    private var mockApplication: MockApplication!
+    private let testURL = URL(string: "https://www.example.com")!
+    private var sessionCreator: MockSessionCreator!
+
+    override func setUp() async throws {
+        try await super.setUp()
+        sessionCreator = MockSessionCreator()
+        mockApplication = MockApplication()
+        mockDecider = MockPolicyDecider()
+        sessionDelegate = MockEngineSessionDelegate()
+    }
+
+    override func tearDown() async throws {
+        sessionCreator = nil
+        mockApplication = nil
+        mockDecider = nil
+        sessionDelegate = nil
+        try await super.tearDown()
+    }
+
+    func testRequestMediaCaptureSuccess() {
+        let subject = createSubject(isActive: true)
+
+        let expectation = expectation(description: "Wait for the decision handler to be called")
+        let decisionHandler: @Sendable (WKPermissionDecision) -> Void = { (decision: WKPermissionDecision) in
+            XCTAssertEqual(decision, .prompt)
+            expectation.fulfill()
+        }
+
+        subject.requestMediaCapturePermission(decisionHandler: decisionHandler)
+        wait(for: [expectation])
+    }
+
+    func testRequestMediaCaptureIsActiveFalse() {
+        let subject = createSubject(isActive: false)
+
+        let expectation = expectation(description: "Wait for the decision handler to be called")
+
+        let decisionHandler: @Sendable (WKPermissionDecision) -> Void = { (decision: WKPermissionDecision) in
+            XCTAssertEqual(decision, .deny)
+            expectation.fulfill()
+        }
+
+        subject.requestMediaCapturePermission(decisionHandler: decisionHandler)
+        wait(for: [expectation])
+    }
+
+    func testRequestMediaCaptureDelegateReturnsFalse() {
+        sessionDelegate.hasMediaCapturePermission = false
+        let subject = createSubject(isActive: true)
+
+        let expectation = expectation(description: "Wait for the decision handler to be called")
+
+        let decisionHandler: @Sendable (WKPermissionDecision) -> Void = { (decision: WKPermissionDecision) in
+            XCTAssertEqual(decision, .deny)
+            expectation.fulfill()
+        }
+
+        subject.requestMediaCapturePermission(decisionHandler: decisionHandler)
+        wait(for: [expectation])
+    }
+
+    // MARK: - createWebViewWith
+
+    func testRequestPopupWindow_whenPolicyIsAllow_returnsWebView() {
+        let subject = createSubject()
+
+        let webView = subject.webView(
+            MockWKWebView(),
+            createWebViewWith: WKWebViewConfiguration(),
+            for: MockWKNavigationAction(url: testURL),
+            windowFeatures: .init()
+        )
+
+        XCTAssertNotNil(webView)
+        XCTAssertEqual(sessionCreator.createPopupSessionCalled, 1)
+    }
+
+    func testRequestPopupWindow_whenPolicyIsCancel_returnsNil() {
+        let subject = createSubject()
+        mockDecider.policyToReturn = .cancel
+
+        let webView = subject.webView(
+            MockWKWebView(),
+            createWebViewWith: WKWebViewConfiguration(),
+            for: MockWKNavigationAction(url: testURL),
+            windowFeatures: .init()
+        )
+
+        XCTAssertNil(webView)
+        XCTAssertEqual(sessionCreator.createPopupSessionCalled, 0)
+    }
+
+    func testRequestPopupWindow_whenPolicyIsLaunchExternalApps_returnsNil() {
+        let subject = createSubject()
+        mockDecider.policyToReturn = .launchExternalApp
+
+        let webView = subject.webView(
+            MockWKWebView(),
+            createWebViewWith: WKWebViewConfiguration(),
+            for: MockWKNavigationAction(url: testURL),
+            windowFeatures: .init()
+        )
+
+        XCTAssertNil(webView)
+        XCTAssertEqual(sessionCreator.createPopupSessionCalled, 0)
+    }
+
+    func testRequestPopupWindow_whenPolicyIsLaunchExternalApps_launchExternalApp() {
+        let subject = createSubject()
+        mockDecider.policyToReturn = .launchExternalApp
+
+        let webView = subject.webView(
+            MockWKWebView(),
+            createWebViewWith: WKWebViewConfiguration(),
+            for: MockWKNavigationAction(url: testURL),
+            windowFeatures: .init()
+        )
+
+        XCTAssertNil(webView)
+        XCTAssertEqual(sessionCreator.createPopupSessionCalled, 0)
+        XCTAssertEqual(mockApplication.canOpenCalled, 1)
+        XCTAssertEqual(mockApplication.openCalled, 1)
+    }
+
+    func testRequestPopupWindow_whenPolicyIsLaunchExternalApps_doesntLaunchUnsupportedApp() {
+        let subject = createSubject()
+        mockDecider.policyToReturn = .launchExternalApp
+        mockApplication.canOpenURL = false
+
+        let webView = subject.webView(
+            MockWKWebView(),
+            createWebViewWith: WKWebViewConfiguration(),
+            for: MockWKNavigationAction(url: testURL),
+            windowFeatures: .init()
+        )
+
+        XCTAssertNil(webView)
+        XCTAssertEqual(sessionCreator.createPopupSessionCalled, 0)
+        XCTAssertEqual(mockApplication.canOpenCalled, 1)
+        XCTAssertEqual(mockApplication.openCalled, 0)
+    }
+
+    func createSubject(isActive: Bool = false) -> DefaultUIHandler {
+        let uiHandler = DefaultUIHandler(
+            sessionDependencies: DefaultTestDependencies().sessionDependencies,
+            sessionCreator: sessionCreator,
+            application: mockApplication,
+            policyDecider: mockDecider
+        )
+        uiHandler.delegate = sessionDelegate
+        uiHandler.isActive = isActive
+        return uiHandler
+    }
+}
+
+class MockSessionCreator: SessionCreator {
+    var createPopupSessionCalled = 0
+
+    func createPopupSession(configuration: WKWebViewConfiguration, parent: WKWebView) -> WKWebView? {
+        createPopupSessionCalled += 1
+        return parent
+    }
+}

@@ -145,7 +145,7 @@ class BaseTestCase: XCTestCase {
         waitForExistence(app.buttons["HomeView.settingsButton"], timeout: 10)
     }
 
-    func waitForWebPageLoad () {
+    func waitForWebPageLoad() {
         let app = XCUIApplication()
         let finishLoadingTimeout: TimeInterval = 60
         let progressIndicator = app.progressIndicators.element(boundBy: 0)
@@ -180,5 +180,17 @@ class BaseTestCase: XCTestCase {
 
         mozTap(searchEngineSelection)
         mozTap(settingsViewControllerDoneButton)
+    }
+}
+
+extension XCUIElementQuery {
+    func containingText(_ text: String) -> XCUIElementQuery {
+        return matching(
+            NSPredicate(format: "label CONTAINS %@ OR %@ == '' AND label != nil AND label != ''", text, text)
+        )
+    }
+
+    func elementContainingText(_ text: String) -> XCUIElement {
+        return containingText(text).element(boundBy: 0)
     }
 }

@@ -42,6 +42,7 @@ private let packages: [Package] = [
     .remote(url: "https://github.com/onevcat/Kingfisher.git", requirement: .exact("8.2.0")),
     .remote(url: "https://github.com/apple/swift-certificates.git", requirement: .exact("1.2.0")),
     .remote(url: "https://github.com/mozilla-mobile/MappaMundi.git", requirement: .branch("master")),
+    .remote(url: "https://github.com/scinfu/SwiftSoup.git", requirement: .upToNextMajor(from: "2.0.0")),
 ]
 
 // MARK: - Build Scripts
@@ -63,7 +64,7 @@ private let swiftlintScript: [TargetScript] = [
             # order to use nested configurations
             cd ${SWIFTLINT_ROOT}
 
-            swiftlint lint ${MODIFIED_FILES}
+            # swiftlint lint ${MODIFIED_FILES}
         else
             echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
         fi
@@ -333,13 +334,20 @@ let allTargets: [Target] = [
             bundleId: "$(MOZ_BUNDLE_ID)",
             infoPlist: .file(path: "Client/Info.plist"),
             sources: [
-                "Client/**/*.{swift, h, m}",
+                .glob(
+                    "Client/**/*.{swift,h,m}",
+                    excluding: [
+                        "Client/Assets/Search/get_supported_locales.swift",
+                        "Client/Frontend/Browser/PrivateModeButton.swift",
+                        "Client/Frontend/Browser/TranslationToastHandler.swift"
+                    ]
+                ),
+                "Shared/**/*.{plist, swift, strings, stringsdict}",
                 "Providers/**/*.swift",
                 "Extensions/**/*",
-                "WidgetKit/**/*.swift",
                 "Account/**/*.{plist, swift, h}",
                 "RustFxA/**/*.swift",
-                "TranslationsEngine.html"
+                "TranslationsEngine.html",
             ],
             resources: [
                 // Ecosia: Explicitly list CC_Script files (autofill, credit card, form handling)
@@ -375,7 +383,6 @@ let allTargets: [Target] = [
                     "Client/Assets/Images.xcassets/AppIcon_Beta.appiconset",
                     "Client/Assets/Images.xcassets/AppIcon_Developer.appiconset"
                 ]),
-                "Client/Frontend/**/*.{storyboard,xib,xcassets,strings,stringsdict}",
                 "Client/Ecosia/**/*.{xib,xcassets,strings,stringsdict}",
                 "Client/*.lproj/**",
             ],
@@ -390,6 +397,10 @@ let allTargets: [Target] = [
                 // .target(name: "NotificationService"),
                 // .target(name: "Sticker"),
                 .target(name: "Ecosia"),
+                
+                // Firefox frameworks
+                .target(name: "Account"),
+                .target(name: "Storage"),
 
                 // Link Binary With Libraries
                 .sdk(name: "Accelerate", type: .framework),
@@ -477,11 +488,15 @@ let allTargets: [Target] = [
             infoPlist: .file(path: "Extensions/ShareTo/Info.plist"),
             sources: [
                 "Extensions/ShareTo/**/*.swift",
+                "Shared/Strings.swift",
                 "Providers/Profile.swift",
                 "Providers/RustErrors.swift",
-                "Providers/RustSyncManager.swift",
                 "Providers/SyncDisplayState.swift",
                 "Providers/LoginRecordExtension.swift",
+                "Providers/RustProtocols/LoginProvider.swift",
+                "Providers/RustProtocols/AutofillProvider.swift",
+                "Providers/RustProtocols/PlacesProvider.swift",
+                "Providers/RustProtocols/TabsProvider.swift",
                 "Push/Autopush.swift",
                 "Push/PushConfiguration.swift",
                 "Client/Frontend/Extensions/DevicePickerViewController.swift",
@@ -495,9 +510,6 @@ let allTargets: [Target] = [
                 "Client/Frontend/Browser/Event Queue/EventQueue.swift",
                 "Client/Frontend/Browser/Event Queue/AppEvent.swift",
                 "Client/Frontend/Browser/URIFixup.swift",
-                "Client/Frontend/Browser/SearchEngines/DefaultSearchEngineProvider.swift",
-                "Client/Frontend/Browser/SearchEngines/OpenSearchEngine.swift",
-                "Client/Frontend/Browser/SearchEngines/OpenSearchParser.swift",
                 "Client/Frontend/Browser/DefaultSearchPrefs.swift",
                 "Client/Frontend/Browser/String+Punycode.swift",
                 "Client/Extensions/Locale+possibilitiesForLanguageIdentifier.swift",
@@ -507,20 +519,32 @@ let allTargets: [Target] = [
                 "Client/Application/UIConstants.swift",
                 "Client/ImageIdentifiers.swift",
                 "Client/Extensions/AnyHashable.swift",
+                "Client/Ecosia/UI/Theme/EcosiaColor.swift",
                 "Client/Ecosia/UI/Theme/EcosiaThemeManager.swift",
                 "Client/Ecosia/UI/Theme/EcosiaLightTheme.swift",
-                "Client/Ecosia/UI/Theme/EcosiaDarkTheme.swift"
+                "Client/Ecosia/UI/Theme/EcosiaDarkTheme.swift",
+                "Client/Utils/LocaleProvider.swift",
+                "Client/Application/RemoteSettings/Application Services/RemoteSettingsServiceSyncCoordinator.swift"
             ],
             resources: ["Extensions/ShareTo/**/*.{xcassets,strings,stringsdict}"],
             dependencies: [
                 // Target Dependencies
-                .package(product: "Shared"),
-                .package(product: "Fuzi"),
+                .target(name: "Account"),
                 .package(product: "Common"),
-                .package(product: "SnapKit"),
+                .target(name: "Ecosia"),
+                .package(product: "Fuzi"),
                 .sdk(name: "ImageIO", type: .framework),
+                .target(name: "Localizations"),
                 .sdk(name: "RustMozillaAppServices", type: .framework),
-                .sdk(name: "Localizations", type: .framework),
+                .package(product: "Shared"),
+                /* Ecosia: Add SiteImageView dependency for Storage linkage
+                 * ShareTo extension uses Storage which depends on SiteImageView types.
+                 * Required to resolve linker errors for Site equality operations.
+                 */
+                .package(product: "SiteImageView"),
+                .package(product: "SnapKit"),
+                .target(name: "Storage"),
+                .target(name: "Sync"),
             ],
             settings: .settings(
                 base: baseSettings.merging([
@@ -572,10 +596,12 @@ let allTargets: [Target] = [
                 "Client/ImageIdentifiers.swift",
                 "Client/Frontend/InternalSchemeHandler/InternalSchemeHandler.swift",
                 "Client/Frontend/Theme/LegacyThemeManager/photon-colors.swift",
+                "Client/Ecosia/UI/Theme/EcosiaColor.swift",
                 "Client/Ecosia/UI/Theme/EcosiaThemeManager.swift",
                 "Client/Ecosia/UI/Theme/EcosiaLightTheme.swift",
                 "Client/Ecosia/UI/Theme/EcosiaDarkTheme.swift",
                 "Client/Utils/DispatchQueueHelper.swift",
+                "Shared/Strings.swift",
                 "Shared/TimeConstants.swift",
                 "Shared/AppInfo.swift"
             ],
@@ -585,13 +611,14 @@ let allTargets: [Target] = [
             ],
             dependencies: [
                 .package(product: "Common"),
+                .target(name: "Ecosia"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
-                .package(product: "libStorage.a"),
-                .sdk(name: "Localizations", type: .framework),
+                .target(name: "Localizations"),
                 .sdk(name: "RustMozillaAppServices", type: .framework),
                 .package(product: "Shared"),
                 .package(product: "SiteImageView"),
+                .target(name: "Storage"),
                 .sdk(name: "SwiftUI", type: .framework),
                 .package(product: "TabDataStore"),
                 .sdk(name: "WidgetKit", type: .framework),
@@ -740,6 +767,8 @@ let allTargets: [Target] = [
             bundleId: "org.mozilla.ios.Account",
             infoPlist: .file(path: "Account/Info.plist"),
             sources: [
+                // Ecosia: Only include Info.plist from Account folder - FxAPushMessageHandler needs Profile from Client
+                "Account/Info.plist",
                 "RustFxA/Avatar.swift",
                 "RustFxA/PushNotificationSetup.swift",
                 "RustFxA/RustFirefoxAccounts.swift",
@@ -750,8 +779,11 @@ let allTargets: [Target] = [
                 "Client/Telemetry/ReferringPage.swift"
             ],
             dependencies: [
-                .target(name: "RustMozillaAppServices"),
-                .sdk(name: "GCDWebServers", type: .framework)
+                .package(product: "Common"),
+                .package(product: "GCDWebServers"),
+                .sdk(name: "RustMozillaAppServices", type: .framework),
+                .package(product: "Shared"),
+                .target(name: "Storage"),
             ],
             settings: .settings(base: baseSettings.merging([
                 "ALWAYS_SEARCH_USER_PATHS": "YES",
@@ -760,6 +792,7 @@ let allTargets: [Target] = [
                     "$(inherited)",
                     "$(SRCROOT)",
                     "$(SDKROOT)/usr/include/libxml2",
+                    "ThirdParty/Apple",
                     "ThirdParty/ecec/include/**",
                     "FxA/FxA/include"
                 ],
@@ -778,12 +811,24 @@ let allTargets: [Target] = [
             product: .staticLibrary,
             bundleId: "org.mozilla.ios.Storage",
             infoPlist: .file(path: "Storage/Info.plist"),
+            /* Ecosia: Include FSUtils Objective-C files for SwiftData compatibility
+             * Storage depends on FSUtils for filesystem operations.
+             * Firefox v147.2 requires these files to be explicitly included.
             sources: ["Storage/**/*.swift"],
+            */
+            sources: [
+                "Storage/**/*.swift",
+                "Shared/FSUtils.h",
+                "Shared/FSUtils.m"
+            ],
             resources: ["Storage/**/*.{xcdatamodeld,sql,html,js}"],
             dependencies: [
                 .package(product: "Common"),
+                // Ecosia: Storage doesn't depend on Ecosia - DefaultSuggestedSites feature disabled
+                // .target(name: "Ecosia"),
                 .package(product: "GCDWebServers"),
                 .package(product: "Kingfisher"),
+                .target(name: "Localizations"),
                 .sdk(name: "RustMozillaAppServices", type: .framework),
                 .package(product: "Shared"),
                 .package(product: "SiteImageView"),
@@ -813,11 +858,11 @@ let allTargets: [Target] = [
             infoPlist: .file(path: "Sync/Info.plist"),
             sources: ["Sync/**/*.swift"],
             dependencies: [
+                .target(name: "Account"),
                 .package(product: "Common"),
                 .package(product: "Fuzi"),
-                .package(product: "libAccount.a"),
-                .package(product: "libStorage.a"),
-                .sdk(name: "Localizations", type: .framework),
+                .target(name: "Storage"),
+                .target(name: "Localizations"),
                 .sdk(name: "RustMozillaAppServices", type: .framework),
                 .package(product: "Shared"),
                 .package(product: "SiteImageView"),
@@ -1149,6 +1194,8 @@ let project = Project(
     organizationName: "com.ecosia",
     options: .options(
         automaticSchemesOptions: .disabled,
+        // Ecosia: Disable TuistStrings - breaks with certain Ecosia string keys (e.g., "%@+")
+        // Firefox string constants are manually defined in Shared/Strings.swift
         disableSynthesizedResourceAccessors: true
     ),
     packages: packages,

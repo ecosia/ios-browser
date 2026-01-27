@@ -4,14 +4,20 @@
 
 import Foundation
 import QuickLook
+import Common
 
-class OpenQLPreviewHelper: NSObject, QLPreviewControllerDataSource {
+final class OpenQLPreviewHelper: NSObject, QLPreviewControllerDataSource, QLPreviewControllerDelegate {
     private var previewItem = NSURL()
     private let presenter: Presenter
     private let previewController: QLPreviewController
+    private var completionHandler: (() -> Void)?
 
-    init(presenter: Presenter) {
+    /// Retain a reference to the temporary document for the life of this previewer, or the preview will be empty
+    private var temporaryDocument: TemporaryDocument
+
+    init(presenter: Presenter, withTemporaryDocument temporaryDocument: TemporaryDocument) {
         self.presenter = presenter
+        self.temporaryDocument = temporaryDocument
         self.previewController = QLPreviewController()
         super.init()
     }
@@ -32,7 +38,10 @@ class OpenQLPreviewHelper: NSObject, QLPreviewControllerDataSource {
         return QLPreviewController.canPreview(url)
     }
 
-    func open() {
+    func open(completionHandler: @escaping (() -> Void)) {
+        self.completionHandler = completionHandler
+
+        previewController.delegate = self
         previewController.dataSource = self
         ensureMainThread {
             self.presenter.present(self.previewController,
@@ -41,12 +50,22 @@ class OpenQLPreviewHelper: NSObject, QLPreviewControllerDataSource {
         }
     }
 
+    // MARK: - QLPreviewControllerDelegate
+
+    @MainActor
     func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
         return 1
     }
 
+    @MainActor
     func previewController(_ controller: QLPreviewController,
                            previewItemAt index: Int) -> QLPreviewItem {
         return previewItem
+    }
+
+    nonisolated func previewControllerDidDismiss(_ controller: QLPreviewController) {
+        Task { @MainActor in
+            self.completionHandler?()
+        }
     }
 }

@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 @preconcurrency import WebKit
-import Account
 import Common
 import Shared
 
@@ -83,7 +82,9 @@ class FxAWebViewController: UIViewController {
         view = webView
         webView.addObserver(self, forKeyPath: KVOConstants.URL.rawValue, options: .new, context: nil)
         viewModel.setupFirstPage { [weak self] (request, telemetryEventMethod) in
-            self?.loadRequest(request, isPairing: telemetryEventMethod == .qrPairing)
+            ensureMainThread { [self] in
+                self?.loadRequest(request, isPairing: telemetryEventMethod == .qrPairing)
+            }
         }
 
         viewModel.onDismissController = { [weak self] in
@@ -99,7 +100,11 @@ class FxAWebViewController: UIViewController {
         if dismissType == .dismiss {
             super.dismiss(animated: animated, completion: completion)
         } else if dismissType == .popToTabTray {
-            shouldDismissFxASignInViewController?()
+            if let shouldDismissFxASignInViewController {
+                shouldDismissFxASignInViewController()
+            } else {
+                super.dismiss(animated: animated, completion: completion)
+            }
         } else {
             // Pop to settings view controller
             navigationController?.popToRootViewController(animated: true)
@@ -109,7 +114,9 @@ class FxAWebViewController: UIViewController {
 
     deinit {
         webView.removeObserver(self, forKeyPath: KVOConstants.URL.rawValue)
-        endPairingConnectionBackgroundTask()
+        Task { @MainActor [backgroundTaskID] in
+            UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        }
     }
 
     // MARK: Background task
@@ -151,7 +158,7 @@ extension FxAWebViewController: WKNavigationDelegate {
     func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationAction: WKNavigationAction,
-        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+        decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
     ) {
         if let blobURL = navigationAction.request.url,
            viewModel.isMozillaAccountPDF(blobURL: blobURL, webViewURL: webView.url) {
@@ -171,7 +178,7 @@ extension FxAWebViewController: WKNavigationDelegate {
         }
     }
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation?) {
         let hideLongpress = "document.body.style.webkitTouchCallout='none';"
         webView.evaluateJavascriptInDefaultContentWorld(hideLongpress)
 
@@ -261,23 +268,28 @@ private class WKScriptMessageHandleDelegate: NSObject, WKScriptMessageHandler {
 
 // MARK: - Observe value
 extension FxAWebViewController {
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?,
-                               change: [NSKeyValueChangeKey: Any]?,
-                               context: UnsafeMutableRawPointer?) {
-        guard let kp = keyPath,
-              let path = KVOConstants(rawValue: kp)
-        else {
-            sendObserveValueError(forKeyPath: keyPath)
-            return
-        }
-
-        switch path {
-        case .URL:
-            if let flow = viewModel.fxAWebViewTelemetry.getFlowFromUrl(fxaUrl: webView.url) {
-                viewModel.fxAWebViewTelemetry.recordTelemetry(for: FxAFlow.startedFlow(type: flow))
+    override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
+        ensureMainThread {
+            guard let kp = keyPath,
+                  let path = KVOConstants(rawValue: kp)
+            else {
+                self.sendObserveValueError(forKeyPath: keyPath)
+                return
             }
-        default:
-            sendObserveValueError(forKeyPath: keyPath)
+
+            switch path {
+            case .URL:
+                if let flow = self.viewModel.fxAWebViewTelemetry.getFlowFromUrl(fxaUrl: self.webView.url) {
+                    self.viewModel.fxAWebViewTelemetry.recordTelemetry(for: FxAFlow.startedFlow(type: flow))
+                }
+            default:
+                self.sendObserveValueError(forKeyPath: keyPath)
+            }
         }
     }
 

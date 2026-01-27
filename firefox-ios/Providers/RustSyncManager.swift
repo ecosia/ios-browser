@@ -9,30 +9,39 @@ import Sync
 import AuthenticationServices
 import Common
 
-import class MozillaAppServices.MZKeychainWrapper
 import enum MozillaAppServices.OAuthScope
+import enum MozillaAppServices.ServiceStatus
 import enum MozillaAppServices.SyncEngineSelection
 import enum MozillaAppServices.SyncReason
 import struct MozillaAppServices.DeviceSettings
 import struct MozillaAppServices.SyncAuthInfo
 import struct MozillaAppServices.SyncParams
 import struct MozillaAppServices.SyncResult
+import struct MozillaAppServices.Device
+import struct MozillaAppServices.ScopedKey
+import struct MozillaAppServices.AccessTokenInfo
 
 // Extends NSObject so we can use timers.
-public class RustSyncManager: NSObject, SyncManager {
+// TODO: FXIOS-14225 - RustSyncManager shouldn't be @unchecked Sendable
+public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
     // We shouldn't live beyond our containing BrowserProfile, either in the main app
     // or in an extension.
     // But it's possible that we'll finish a side-effect sync after we've ditched the
     // profile as a whole, so we hold on to our Prefs, potentially for a little while
     // longer. This is safe as a strong reference, because there's no cycle.
     private weak var profile: BrowserProfile?
+    private let logins: SyncLoginProvider
+    private let autofill: SyncAutofillProvider
+    private let places: SyncPlacesProvider
+    private let tabs: SyncTabsProvider
     private let prefs: Prefs
     private var syncTimer: Timer?
     private var backgrounded = true
     private let logger: Logger
     private let fxaDeclinedEngines = "fxa.cwts.declinedSyncEngines"
     private var notificationCenter: NotificationProtocol
-    var creditCardAutofillEnabled = false
+    private var syncBackOffTimer: Timer?
+    private let syncBackOffDelay = 180.0 // 3 Minutes
 
     let fifteenMinutesInterval = TimeInterval(60 * 15)
 
@@ -66,14 +75,21 @@ public class RustSyncManager: NSObject, SyncManager {
     init(profile: BrowserProfile,
          creditCardAutofillEnabled: Bool = false,
          logger: Logger = DefaultLogger.shared,
+         logins: SyncLoginProvider? = nil,
+         autofill: SyncAutofillProvider? = nil,
+         places: SyncPlacesProvider? = nil,
+         tabs: SyncTabsProvider? = nil,
          notificationCenter: NotificationProtocol = NotificationCenter.default) {
         self.profile = profile
         self.prefs = profile.prefs
         self.logger = logger
         self.notificationCenter = notificationCenter
+        self.logins = logins ?? profile.logins
+        self.autofill = autofill ?? profile.autofill
+        self.places = places ?? profile.places
+        self.tabs = tabs ?? profile.tabs
 
         super.init()
-        self.creditCardAutofillEnabled = creditCardAutofillEnabled
     }
 
     @objc
@@ -91,10 +107,6 @@ public class RustSyncManager: NSObject, SyncManager {
                                     selector: selector,
                                     userInfo: nil,
                                     repeats: true)
-    }
-
-    public func updateCreditCardAutofillStatus(value: Bool) {
-        creditCardAutofillEnabled = value
     }
 
     func syncEverythingSoon() {
@@ -239,7 +251,7 @@ public class RustSyncManager: NSObject, SyncManager {
         notificationCenter.post(name: notification)
     }
 
-    func doInBackgroundAfter(_ millis: Int64, _ block: @escaping () -> Void) {
+    func doInBackgroundAfter(_ millis: Int64, _ block: @Sendable @escaping () -> Void) {
         let queue = DispatchQueue.global(qos: DispatchQoS.background.qosClass)
         queue.asyncAfter(
             deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(Int(millis)),
@@ -270,9 +282,9 @@ public class RustSyncManager: NSObject, SyncManager {
                     .prefsForSync
                     .branch("scratchpad")
                     .stringForKey("keyLabel") {
-                        MZKeychainWrapper
+                        RustKeychain
                             .sharedClientAppContainerKeychain
-                            .removeObject(forKey: keyLabel)
+                            .removeObject(key: keyLabel)
                 }
                 self.prefsForSync.clearAll()
             }
@@ -294,20 +306,21 @@ public class RustSyncManager: NSObject, SyncManager {
         return false
     }
 
-    public func getEngineEnablementChangesForAccount() -> [String: Bool] {
+    public func getEngineEnablementChangesForAccount(withStateChange: Bool = true) -> [String: Bool] {
         var engineEnablements: [String: Bool] = [:]
+
+        let engines = syncManagerAPI.rustTogglableEngines
+
         // We just created the account, the user went through the Choose What to Sync
         // screen on FxA.
         if let declined = UserDefaults.standard.stringArray(forKey: fxaDeclinedEngines) {
-            declined.forEach { engineEnablements[$0] = false }
-            UserDefaults.standard.removeObject(forKey: fxaDeclinedEngines)
+            engines.forEach { engineEnablements[$0.rawValue] = !declined.contains($0.rawValue) }
+            if withStateChange {
+                UserDefaults.standard.removeObject(forKey: fxaDeclinedEngines)
+            }
         } else {
             // Bundle in authState the engines the user activated/disabled since the
             // last sync.
-            let engines = self.creditCardAutofillEnabled ?
-                syncManagerAPI.rustTogglableEngines :
-                syncManagerAPI.rustTogglableEngines.filter({ $0 != RustSyncManagerAPI.TogglableEngine.creditcards })
-
             engines.forEach { engine in
                 let stateChangedPref = "engine.\(engine).enabledStateChanged"
                 if prefsForSync.boolForKey(stateChangedPref) != nil,
@@ -332,111 +345,239 @@ public class RustSyncManager: NSObject, SyncManager {
         return engineEnablements
     }
 
-    public class ScopedKeyError: MaybeErrorType {
+    public struct ScopedKeyError: MaybeErrorType {
         public let description = "No key data found for scope."
     }
 
-    public class EncryptionKeyError: MaybeErrorType {
-        public let description = "Failed to get stored key."
-    }
-
-    public class DeviceIdError: MaybeErrorType {
+    public struct DeviceIdError: MaybeErrorType {
         public let description = "Failed to get deviceId."
     }
 
-    public class NoTokenServerURLError: MaybeErrorType {
+    public struct NoTokenServerURLError: MaybeErrorType {
         public let description = "Failed to get token server endpoint url."
     }
 
-    public class EngineAndKeyRetrievalError: MaybeErrorType {
-        public let description = "Failed to get sync engine and key data."
+    /* Ecosia: Remove @Sendable to avoid concurrency warnings, capture with [weak self, completion]
+    func shouldSyncLogins(_ passwordEngineIncluded: Bool, completion: @escaping @Sendable (Bool) -> Void) {
+        ...
+            self.logins.verifyLogins { successfullyVerified in
+                self.prefs.setBool(successfullyVerified, forKey: PrefsKeys.LoginsHaveBeenVerified)
+                completion(successfullyVerified)
+            }
+        ...
+    }
+    */
+    func shouldSyncLogins(_ passwordEngineIncluded: Bool, completion: @escaping (Bool) -> Void) {
+        guard passwordEngineIncluded else {
+            completion(false)
+            return
+        }
+        if !(self.prefs.boolForKey(PrefsKeys.LoginsHaveBeenVerified) ?? false) {
+            // We should only sync logins when the verification step has completed successfully.
+            // Otherwise logins could exist in the database that can't be decrypted and would
+            // prevent logins from syncing if they are not removed.
+
+            self.logins.verifyLogins { [weak self, completion] successfullyVerified in
+                self?.prefs.setBool(successfullyVerified, forKey: PrefsKeys.LoginsHaveBeenVerified)
+                completion(successfullyVerified)
+            }
+        } else {
+            // Successful logins verification already occurred so login syncing can proceed
+            completion(true)
+        }
     }
 
+    /* Ecosia: Remove @Sendable to avoid concurrency warnings, capture with [weak self, completion]
+    func shouldSyncCreditCards(_ creditCardEngineIncluded: Bool,
+                               key: String?,
+                               completion: @escaping @Sendable (Bool) -> Void) {
+        ...
+            self.autofill.verifyCreditCards(key: encKey) { successfullyVerified in
+                self.prefs.setBool(successfullyVerified, forKey: PrefsKeys.CreditCardsHaveBeenVerified)
+                completion(successfullyVerified)
+            }
+        ...
+    }
+    */
+    func shouldSyncCreditCards(_ creditCardEngineIncluded: Bool,
+                               key: String?,
+                               completion: @escaping (Bool) -> Void) {
+        guard creditCardEngineIncluded, let encKey = key else {
+            completion(false)
+            return
+        }
+        if !(self.prefs.boolForKey(PrefsKeys.CreditCardsHaveBeenVerified) ?? false) {
+            // We should only sync credit cards when the verification step has completed
+            // successfully. Otherwise records could exist in the database that can't be decrypted
+            // and would prevent credit cards from syncing if they are not scrubbed.
+
+            self.autofill.verifyCreditCards(key: encKey) { [weak self, completion] successfullyVerified in
+                self?.prefs.setBool(successfullyVerified, forKey: PrefsKeys.CreditCardsHaveBeenVerified)
+                completion(successfullyVerified)
+            }
+        } else {
+            // Successful credit cards verification already occurred so credit card syncing can proceed
+            completion(true)
+        }
+    }
+
+    /* Ecosia: Remove @Sendable and capture engines locally to avoid Sendable capture warning
+    private func registerSyncEngines(engines: [RustSyncManagerAPI.TogglableEngine],
+                                     loginKey: String?,
+                                     creditCardKey: String?,
+                                     completion: @escaping @Sendable (([String], [String: String])) -> Void) {
+        ...
+        self.shouldSyncLogins(passwordEngineIncluded) { syncLogins in
+            self.shouldSyncCreditCards(creditCardEngineIncluded, key: creditCardKey) { syncCreditCards in
+                self.doRegisterSyncEngines(engines, ...)
+            }
+        }
+    }
+    */
     private func registerSyncEngines(engines: [RustSyncManagerAPI.TogglableEngine],
                                      loginKey: String?,
                                      creditCardKey: String?,
                                      completion: @escaping (([String], [String: String])) -> Void) {
+        let passwordEngineIncluded = engines.contains(.passwords)
+        let creditCardEngineIncluded = engines.contains(.creditcards)
+        let localEngines = engines
+        self.shouldSyncLogins(passwordEngineIncluded) { syncLogins in
+            self.shouldSyncCreditCards(creditCardEngineIncluded, key: creditCardKey) { syncCreditCards in
+                self.doRegisterSyncEngines(localEngines,
+                                           syncLogins,
+                                           loginKey,
+                                           syncCreditCards,
+                                           creditCardKey) { registeredEngineData in completion(registeredEngineData) }
+            }
+        }
+    }
+
+    /* Ecosia: Remove @Sendable from completion to avoid concurrency warnings
+    private func doRegisterSyncEngines(_ engines: [RustSyncManagerAPI.TogglableEngine],
+                                       _ syncLogins: Bool,
+                                       _ loginKey: String?,
+                                       _ syncCreditCards: Bool,
+                                       _ creditCardKey: String?,
+                                       completion: @escaping @Sendable (([String], [String: String])) -> Void) {
+    */
+    private func doRegisterSyncEngines(_ engines: [RustSyncManagerAPI.TogglableEngine],
+                                       _ syncLogins: Bool,
+                                       _ loginKey: String?,
+                                       _ syncCreditCards: Bool,
+                                       _ creditCardKey: String?,
+                                       completion: @escaping (([String], [String: String])) -> Void) {
         var localEncryptionKeys: [String: String] = [:]
         var rustEngines: [String] = []
-        var registeredPlaces = false
         var registeredAutofill = false
+        var registeredPlaces = false
 
-        for engine in engines.filter({
-            self.syncManagerAPI.rustTogglableEngines.contains($0) }) {
-             switch engine {
-             case .tabs:
-                 self.profile?.tabs.registerWithSyncManager()
-                 rustEngines.append(engine.rawValue)
-             case .passwords:
-                 if let key = loginKey {
-                     self.profile?.logins.registerWithSyncManager()
-                     localEncryptionKeys[engine.rawValue] = key
-                     rustEngines.append(engine.rawValue)
-                 }
-             case .creditcards:
-                 if self.creditCardAutofillEnabled {
-                    if let key = creditCardKey {
-                        // checking if autofill was already registered with addresses
-                        if !registeredAutofill {
-                            self.profile?.autofill.registerWithSyncManager()
-                            registeredAutofill = true
-                        }
-                        localEncryptionKeys[engine.rawValue] = key
-                        rustEngines.append(engine.rawValue)
-                     }
-                 }
-             case .addresses:
-                 // checking if autofill was already registered with credit cards
-                 if !registeredAutofill {
-                     self.profile?.autofill.registerWithSyncManager()
-                     registeredAutofill = true
-                 }
-                 rustEngines.append(engine.rawValue)
-             case .bookmarks, .history:
-                 if !registeredPlaces {
-                     self.profile?.places.registerWithSyncManager()
-                     registeredPlaces = true
-                 }
-                 rustEngines.append(engine.rawValue)
-             }
+        for engine in engines.filter({ self.syncManagerAPI.rustTogglableEngines.contains($0) }) {
+            switch engine {
+            case .tabs:
+                self.tabs.registerWithSyncManager()
+                rustEngines.append(engine.rawValue)
+            case .passwords:
+                if syncLogins, loginKey != nil {
+                    self.logins.registerWithSyncManager()
+                    rustEngines.append(engine.rawValue)
+                }
+            case .creditcards:
+                if syncCreditCards, let key = creditCardKey {
+                    // checking if autofill was already registered with addresses
+                    if !registeredAutofill {
+                        self.autofill.registerWithSyncManager()
+                        registeredAutofill = true
+                    }
+                    localEncryptionKeys[engine.rawValue] = key
+                    rustEngines.append(engine.rawValue)
+                }
+            case .addresses:
+                // checking if autofill was already registered with credit cards
+                if !registeredAutofill {
+                    self.autofill.registerWithSyncManager()
+                    registeredAutofill = true
+                }
+                rustEngines.append(engine.rawValue)
+            case .bookmarks, .history:
+                if !registeredPlaces {
+                    self.places.registerWithSyncManager()
+                    registeredPlaces = true
+                }
+                rustEngines.append(engine.rawValue)
+            }
         }
         completion((rustEngines, localEncryptionKeys))
     }
 
+    /* Ecosia: Remove @Sendable from completion to avoid concurrency warnings
+    func getEnginesAndKeys(engines: [RustSyncManagerAPI.TogglableEngine],
+                           completion: @escaping @Sendable (([String], [String: String])) -> Void) {
+    */
     func getEnginesAndKeys(engines: [RustSyncManagerAPI.TogglableEngine],
                            completion: @escaping (([String], [String: String])) -> Void) {
-        profile?.logins.getStoredKey { loginResult in
-            var loginKey: String?
+        logins.getStoredKey { loginResult in
+            let loginKey: String?
 
             switch loginResult {
             case .success(let key):
                 loginKey = key
             case .failure(let err):
-                self.logger.log("Login encryption key could not be retrieved for syncing: \(err)",
-                                level: .warning,
-                                category: .sync)
+                self.logger.log(
+                    "Login encryption key could not be retrieved for syncing: \(err)",
+                    level: .warning,
+                    category: .sync
+                )
+                loginKey = nil
+                self.logins.reportPreSyncKeyRetrievalFailure(err: err.localizedDescription)
             }
 
-            self.profile?.autofill.getStoredKey { creditCardResult in
+            self.autofill.getStoredKey { creditCardResult in
                 var creditCardKey: String?
-
                 switch creditCardResult {
                 case .success(let key):
                     creditCardKey = key
                 case .failure(let err):
-                    self.logger.log("Credit card encryption key could not be retrieved for syncing: \(err)",
-                                    level: .warning,
-                                    category: .sync)
+                    self.logger.log(
+                        "Credit card encryption key could not be retrieved for syncing: \(err)",
+                        level: .warning,
+                        category: .sync
+                    )
+                    creditCardKey = nil
+                    self.autofill.reportPreSyncKeyRetrievalFailure(err: err.localizedDescription)
                 }
 
-                self.registerSyncEngines(engines: engines,
+                // calling `getEnginesWithRetrievedKeys` to remove engines that will fail to sync because
+                // the encryption key is missing
+                let enginesToSync = self.getEnginesWithRetrievedKeys(creditCardKey, loginKey, engines)
+                self.registerSyncEngines(engines: enginesToSync,
                                          loginKey: loginKey,
-                                         creditCardKey: creditCardKey,
-                                         completion: completion)
+                                         creditCardKey: creditCardKey) { result in
+                    completion(result)
+                }
             }
         }
     }
 
+   func getEnginesWithRetrievedKeys(_ creditCardKey: String?,
+                                    _ loginKey: String?,
+                                    _ engines: [RustSyncManagerAPI.TogglableEngine]
+                                   ) -> [RustSyncManagerAPI.TogglableEngine] {
+       var enginesToSync = engines
+
+       if loginKey == nil {
+           enginesToSync = enginesToSync.filter { $0 != RustSyncManagerAPI.TogglableEngine.passwords }
+       }
+
+       if creditCardKey == nil {
+           enginesToSync = enginesToSync.filter { $0 != RustSyncManagerAPI.TogglableEngine.creditcards }
+       }
+
+       return enginesToSync
+    }
+
+    /* Ecosia: Remove @Sendable from completion to avoid concurrency warnings
+    private func doSync(params: SyncParams, completion: @escaping @Sendable (SyncResult) -> Void) {
+    */
     private func doSync(params: SyncParams, completion: @escaping (SyncResult) -> Void) {
         beginSyncing()
         syncManagerAPI.sync(params: params) { syncResult in
@@ -534,18 +675,13 @@ public class RustSyncManager: NSObject, SyncManager {
                             engines: SyncEngineSelection.some(engines: rustEngines),
                             enabledChanges: self.getEngineEnablementChangesForAccount(),
                             localEncryptionKeys: localEncryptionKeys,
-                            authInfo: SyncAuthInfo(
-                                kid: key.kid,
-                                fxaAccessToken: accessTokenInfo.token,
-                                syncKey: key.k,
-                                tokenserverUrl: tokenServerEndpointURL.absoluteString),
+                            authInfo: self.createSyncAuthInfo(key: key,
+                                                              accessTokenInfo: accessTokenInfo,
+                                                              tokenServerEndpointURL: tokenServerEndpointURL),
                             persistedState:
                                 self.prefs
                                     .stringForKey(PrefsKeys.RustSyncManagerPersistedState),
-                            deviceSettings: DeviceSettings(
-                                fxaDeviceId: device.id,
-                                name: device.displayName,
-                                kind: device.deviceType))
+                            deviceSettings: self.createDeviceSettings(device: device))
 
                         self.doSync(params: params) { syncResult in
                             deferred.fill(Maybe(success: syncResult))
@@ -557,10 +693,32 @@ public class RustSyncManager: NSObject, SyncManager {
         return deferred
     }
 
+    private func createSyncAuthInfo(key: ScopedKey,
+                                    accessTokenInfo: AccessTokenInfo,
+                                    tokenServerEndpointURL: URL) -> SyncAuthInfo {
+        return SyncAuthInfo(
+            kid: key.kid,
+            fxaAccessToken: accessTokenInfo.token,
+            syncKey: key.k,
+            tokenserverUrl: tokenServerEndpointURL.absoluteString)
+    }
+
+    private func createDeviceSettings(device: Device) -> DeviceSettings {
+        return DeviceSettings(
+            fxaDeviceId: device.id,
+            name: device.displayName,
+            kind: device.deviceType)
+    }
+
     @discardableResult
     public func syncEverything(why: SyncReason) -> Success {
-        return syncRustEngines(why: why,
-                               engines: syncManagerAPI.rustTogglableEngines.compactMap { $0.rawValue }) >>> succeed
+        // Convert Deferred<Maybe<SyncResult>> into Deferred<Maybe<Void>>:
+        // - If sync succeeds, return success with ().
+        // - If sync fails, propagate the same failure.
+        return syncRustEngines(
+            why: why,
+            engines: syncManagerAPI.rustTogglableEngines.compactMap { $0.rawValue }
+        ).map { $0.map { _ in () } }
     }
 
     /**
@@ -568,7 +726,7 @@ public class RustSyncManager: NSObject, SyncManager {
      * Some help is given to callers who use different namespaces (specifically: `passwords` is mapped to `logins`)
      * and to preserve some ordering rules.
      */
-    public func syncNamedCollections(why: SyncReason, names: [String]) -> Success {
+    public func syncNamedCollections(why: SyncReason, names: [String]) -> Deferred<Maybe<SyncResult>> {
         // Massage the list of names into engine identifiers.var engines = [String]()
         var engines = [String]()
 
@@ -577,7 +735,52 @@ public class RustSyncManager: NSObject, SyncManager {
             engines.append(name)
         }
 
-        return syncRustEngines(why: why, engines: engines) >>> succeed
+        return syncRustEngines(why: why, engines: engines)
+    }
+
+    /**
+     * A specialized version of `syncNamedCollections` for execution after a sync settings change. Allows selective
+     * sync of different collections and retries the sync if the initial call is backed off.
+     */
+    public func syncPostSyncSettingsChange(why: SyncReason, names: [String]) {
+        let enablements = getEngineEnablementChangesForAccount(withStateChange: false)
+        let enabledEngines = Array(enablements.filter({ $0.value }).keys)
+        let disabledEngines = Array(enablements.filter({ !$0.value }).keys)
+
+        /* Ecosia: Telemetry method removed in MozillaAppServices update
+        // report sync settings telemetry changes
+        self.syncManagerAPI.reportSaveSyncSettingsTelemetry(enabledEngines: enabledEngines,
+                                                            disabledEngines: disabledEngines)
+        */
+
+        syncNamedCollections(why: why, names: names).upon { result in
+            guard result.isSuccess, let syncResult = result.successValue else {
+                return
+            }
+
+            // If the sync was backed off, retry it after a delay.
+            if syncResult.status == .backedOff {
+                self.retrySyncAfterDelay(why: why, names: names)
+            }
+        }
+    }
+
+    /* Ecosia: Telemetry method removed in MozillaAppServices update
+    public func reportOpenSyncSettingsMenuTelemetry() {
+        self.syncManagerAPI.reportOpenSyncSettingsMenuTelemetry()
+    }
+    */
+    public func reportOpenSyncSettingsMenuTelemetry() {
+        // Method body removed - telemetry not available
+    }
+
+    private func retrySyncAfterDelay(why: SyncReason, names: [String]) {
+        self.syncBackOffTimer?.invalidate()
+
+        self.syncBackOffTimer = Timer.scheduledTimer(withTimeInterval: self.syncBackOffDelay,
+                                                     repeats: false) { _ in
+            _ = self.syncNamedCollections(why: why, names: names)
+        }
     }
 
     public func syncTabs() -> Deferred<Maybe<SyncResult>> {

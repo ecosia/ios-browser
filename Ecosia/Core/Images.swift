@@ -46,7 +46,7 @@ public final class Images: Publisher {
     private func download(_ url: URL) {
         // Cancel any existing task for this URL
         activeTasks[url]?.cancel()
-        
+
         // Create new download task
         let task = Task { @MainActor in
             do {
@@ -60,7 +60,7 @@ public final class Images: Publisher {
                 self.activeTasks.removeValue(forKey: url)
             }
         }
-        
+
         activeTasks[url] = task
     }
 

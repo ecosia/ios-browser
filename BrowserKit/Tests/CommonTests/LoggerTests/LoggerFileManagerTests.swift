@@ -73,8 +73,8 @@ final class LoggerFileManagerTests: XCTestCase {
 }
 
 // MARK: - MockFileManager
-private class MockFileManager: FileManagerProtocol {
-    var fileExists = false
+private final class MockFileManager: FileManagerProtocol, @unchecked Sendable {
+    let fileExists = false
     func fileExists(atPath path: String) -> Bool {
         return fileExists
     }
@@ -84,6 +84,16 @@ private class MockFileManager: FileManagerProtocol {
         in domainMask: FileManager.SearchPathDomainMask
     ) -> [URL] {
         return []
+    }
+
+    func contents(atPath path: String) -> Data? {
+        return nil
+    }
+
+    var fileCreated = false
+    func createFile(atPath path: String, contents data: Data?, attributes attr: [FileAttributeKey: Any]?) -> Bool {
+        fileCreated = true
+        return fileCreated
     }
 
     var contentsOfDirectory: [String] = []
@@ -107,6 +117,11 @@ private class MockFileManager: FileManagerProtocol {
         destinationURL = dstURL
     }
 
+    var moveItemCalled = 0
+    func moveItem(at: URL, to: URL) throws {
+        moveItemCalled += 1
+    }
+
     var removeItemCalled = 0
     func removeItem(atPath path: String) throws {
         removeItemCalled += 1
@@ -115,5 +130,19 @@ private class MockFileManager: FileManagerProtocol {
     var contentsOfDirectoryAtPath: [String] = []
     func contentsOfDirectoryAtPath(_ path: String, withFilenamePrefix prefix: String) throws -> [String] {
         return contentsOfDirectoryAtPath
+    }
+
+    var contentsOfDirectoryAtURL: [URL] = []
+    func contentsOfDirectory(
+        at url: URL,
+        includingPropertiesForKeys keys: [URLResourceKey]?,
+        options mask: FileManager.DirectoryEnumerationOptions
+    ) throws -> [URL] {
+        return contentsOfDirectoryAtURL
+    }
+
+    var removeItemAtURLCalled = 0
+    func removeItem(at url: URL) throws {
+        removeItemAtURLCalled += 1
     }
 }

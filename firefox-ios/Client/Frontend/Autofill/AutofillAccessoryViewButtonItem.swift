@@ -4,7 +4,6 @@
 
 import UIKit
 import Common
-import Shared
 
 /// Custom UIBarButtonItem with an autofill accessory view.
 ///
@@ -22,19 +21,19 @@ import Shared
 /// # Methods
 /// - `init(image:labelText:tappedAction:)`: Initializes the accessory view with an image, label, and optional tap action.
 /// - `tappedAccessoryButton()`: Handles the tap action on the accessory view.
-class AutofillAccessoryViewButtonItem: UIBarButtonItem {
+final class AutofillAccessoryViewButtonItem: UIBarButtonItem {
     // MARK: - Constants
     private struct UX {
         static let accessoryImageViewSize: CGFloat = 24
         static let accessoryButtonStackViewSpacing: CGFloat = 2
         static let cornerRadius: CGFloat = 4
-        static let padding: CGFloat = 4
+        static let iPadPadding: CGFloat = 80
     }
 
     // MARK: - Properties
     private let accessoryImageView: UIImageView
     private let useAccessoryTextLabel: UILabel
-    private let tappedAccessoryButtonAction: (() -> Void)?
+    private let tappedAccessoryButtonAction: (@MainActor () -> Void)?
 
     /// Tint color for the accessory image view.
     var accessoryImageViewTintColor: UIColor? {
@@ -59,7 +58,11 @@ class AutofillAccessoryViewButtonItem: UIBarButtonItem {
     ///   - image: The image for the accessory image view.
     ///   - labelText: The text for the accessory view label.
     ///   - tappedAction: The closure to be executed when the accessory view is tapped.
-    init(image: UIImage?, labelText: String, tappedAction: (() -> Void)? = nil) {
+    init(
+        image: UIImage?,
+        labelText: String,
+        tappedAction: (@MainActor () -> Void)? = nil
+    ) {
         self.accessoryImageView = .build { imageView in
             imageView.image = image?.withRenderingMode(.alwaysTemplate)
             imageView.contentMode = .scaleAspectFit
@@ -89,6 +92,7 @@ class AutofillAccessoryViewButtonItem: UIBarButtonItem {
 
     // MARK: - Setup
     private func setup() {
+        configureAccessibility()
         let stackViewTapped = UITapGestureRecognizer(target: self, action: #selector(tappedAccessoryButton))
 
         // Create a container view for the stack view
@@ -97,18 +101,48 @@ class AutofillAccessoryViewButtonItem: UIBarButtonItem {
         // Add the stack view to the container view
         let accessoryView = UIStackView(arrangedSubviews: [accessoryImageView, useAccessoryTextLabel])
         accessoryView.spacing = UX.accessoryButtonStackViewSpacing
-        accessoryView.distribution = .equalCentering
 
         // Add the stack view to the container view
         containerView.addSubview(accessoryView)
 
         // Add constraints to provide padding
         accessoryView.translatesAutoresizingMaskIntoConstraints = false
+        let isiPad = UIDevice.current.userInterfaceIdiom == .pad
+
+        if #available(iOS 26.0, *) {
+            sharesBackground = false
+            accessoryView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+        }
+
+        let leadingConstraint = if #available(iOS 26.0, *), isiPad {
+            accessoryView.leadingAnchor
+                .constraint(
+                    equalTo: containerView.leadingAnchor,
+                    constant: UX.iPadPadding
+                )
+        } else {
+            accessoryView.leadingAnchor
+                .constraint(
+                greaterThanOrEqualTo: containerView.leadingAnchor
+            )
+        }
+
+        let trailingConstraint = if #available(iOS 26.0, *), isiPad {
+            accessoryView.trailingAnchor
+                .constraint(
+                    equalTo: containerView.trailingAnchor,
+                    constant: -UX.iPadPadding
+                )
+        } else {
+            accessoryView.trailingAnchor
+                .constraint(
+                lessThanOrEqualTo: containerView.trailingAnchor
+            )
+        }
+
         NSLayoutConstraint.activate([
-            accessoryView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
-                                                   constant: UX.padding),
-            accessoryView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,
-                                                    constant: -UX.padding),
+            leadingConstraint,
+            trailingConstraint,
             accessoryView.topAnchor.constraint(equalTo: containerView.topAnchor),
             accessoryView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
@@ -120,8 +154,19 @@ class AutofillAccessoryViewButtonItem: UIBarButtonItem {
         self.customView = containerView
     }
 
+    private func configureAccessibility() {
+        let isiOS26Available: Bool = if #available(iOS 26, *) {
+            true
+        } else {
+            false
+        }
+        accessoryImageView.accessibilityElementsHidden = !isiOS26Available
+        accessoryImageView.accessibilityTraits = isiOS26Available ? .button : .none
+        useAccessoryTextLabel.accessibilityTraits = isiOS26Available ? .none : .button
+    }
+
     private func updateBackgroundColor() {
-        if let backgroundColor = backgroundColor {
+        if let backgroundColor {
             customView?.backgroundColor = backgroundColor
         }
     }
