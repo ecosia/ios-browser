@@ -90,6 +90,7 @@
 		1251623C2D59FB30005CB958 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFE99662D45329200B25CE0 /* Ecosia.framework */; };
 		1251623D2D59FB31005CB958 /* Ecosia.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFE99662D45329200B25CE0 /* Ecosia.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		128D68602F2A3AEE00F4B3EE /* LocalizedSearchSuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128D685F2F2A3AE700F4B3EE /* LocalizedSearchSuggestions.swift */; };
+		128D6E822F2A94CF00F4B3EE /* SearchSuggestionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128D6E812F2A94CF00F4B3EE /* SearchSuggestionFlowLayout.swift */; };
 		129F18FE2EC5F04200E870C0 /* Task+Sleep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 129F18FD2EC5F04200E870C0 /* Task+Sleep.swift */; };
 		12A536342D3E637800924CB0 /* DownloadHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8D1C61BA037F500C8AE9E /* DownloadHelper.swift */; };
 		12A536352D3E63A200924CB0 /* GlobalTabEventHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F819C51FD70F5D009E31E4 /* GlobalTabEventHandlers.swift */; };
@@ -2379,6 +2380,7 @@
 		126A40A4A5AFDFD655B0FDF4 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		126F44CCB14373DC7813DE1F /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		128D685F2F2A3AE700F4B3EE /* LocalizedSearchSuggestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedSearchSuggestions.swift; sourceTree = "<group>"; };
+		128D6E812F2A94CF00F4B3EE /* SearchSuggestionFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionFlowLayout.swift; sourceTree = "<group>"; };
 		129F18FD2EC5F04200E870C0 /* Task+Sleep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Sleep.swift"; sourceTree = "<group>"; };
 		12AEB1252D3A51670035D7D8 /* LegacySessionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacySessionData.swift; sourceTree = "<group>"; };
 		12AEB1272D3A568D0035D7D8 /* SessionRestoreHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRestoreHandler.swift; sourceTree = "<group>"; };
@@ -9952,6 +9954,7 @@
 				128D685F2F2A3AE700F4B3EE /* LocalizedSearchSuggestions.swift */,
 				123283EC2F210C10009EA5BC /* NTPFirstSearchCell.swift */,
 				123283EE2F210C23009EA5BC /* NTPFirstSearchViewModel.swift */,
+				128D6E812F2A94CF00F4B3EE /* SearchSuggestionFlowLayout.swift */,
 			);
 			path = FirstSearch;
 			sourceTree = "<group>";
@@ -17181,6 +17184,7 @@
 				D04CD718215EBD85004FF5B0 /* SettingsLoadingView.swift in Sources */,
 				0B8BF3702CA2D60B00E9812D /* BookmarksViewController.swift in Sources */,
 				21420EF72ABA338D00B28550 /* TabTrayCoordinator.swift in Sources */,
+				128D6E822F2A94CF00F4B3EE /* SearchSuggestionFlowLayout.swift in Sources */,
 				5A70EF1F295E3DFC00790249 /* UnitTestAppDelegate.swift in Sources */,
 				2128E27E2934F78600FB91BE /* CustomAppActivity.swift in Sources */,
 				966B0DC82926F60500A85A7E /* UIResponder+Extensions.swift in Sources */,

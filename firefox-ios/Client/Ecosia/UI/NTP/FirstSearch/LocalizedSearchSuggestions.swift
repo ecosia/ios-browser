@@ -42,33 +42,33 @@ struct LocalizedSearchSuggestions {
         case .franceFrench:
             return [
                 "Météo Toulouse",
-                "Quelle est la hauteur de la tour Eiffel ?",
                 "Notre-Dame de Paris",
+                "Quelle est la hauteur de la tour Eiffel ?",
                 "\"Bonne journée\" en espagnol",
                 "Activités à Marseille"
             ]
         case .germanyGerman:
             return [
                 "Wetter Berlin",
-                "Wie hoch ist der Berliner Fernsehturm?",
                 "Neuschwanstein",
+                "Wie hoch ist der Berliner Fernsehturm?",
                 "\"Hab einen schönen Tag\" auf Spanisch",
                 "Aktivitäten in München"
             ]
         case .ukEnglish:
             return [
                 "Weather in London",
-                "How to see the Northern Lights?",
                 "Palace of Westminster",
+                "How to see the Northern Lights?",
                 "\"Have a nice day\" in Spanish",
                 "Things to do in London"
             ]
         case .usEnglish:
             return [
-                "Weather in San francisco",
-                "How long is the Rio Grande",
                 "New York City",
                 "Things to do in Miami",
+                "Weather in San francisco",
+                "How long is the Rio Grande",
                 "\"Have a nice day\" in Spanish"
             ]
         case .default:
