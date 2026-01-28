@@ -10,7 +10,7 @@ extension Locale {
         identifier.replacingOccurrences(of: "_", with: "-").lowercased()
     }
 
-    var regionIdentifier: String? {
+    public var regionIdentifier: String? {
         if #available(iOS 16, macOS 13, *) {
             return region?.identifier
         } else {
@@ -25,6 +25,15 @@ extension Locale {
     public var englishLocalizedCountryName: String? {
         guard let regionIdentifier = regionIdentifier else { return nil }
         return Locale(identifier: "en_US").localizedString(forRegionCode: regionIdentifier)
+    }
+
+    /// Returns the language code in a backward-compatible way
+    public var languageIdentifier: String? {
+        if #available(iOS 16, macOS 13, *) {
+            return language.languageCode?.identifier
+        } else {
+            return languageCode
+        }
     }
 }
 

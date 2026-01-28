@@ -93,13 +93,7 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
         cell?.configure(
             title: "Get started with Ecosia",
             description: "Try a search and discover how you're helping fight climate change by using Ecosia.",
-            suggestions: [
-                "Weather London",
-                "Train to Paris",
-                "How to see the Northern Lights?",
-                "Things to do in London",
-                "\"Have a nice day\" in Spanish"
-            ]
+            suggestions: LocalizedSearchSuggestions.suggestions()
         )
         cell?.onCloseButtonTapped = {
             // Handle close action
