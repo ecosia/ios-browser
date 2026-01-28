@@ -5,6 +5,7 @@
 import Common
 import UIKit
 import Shared
+import Ecosia
 
 class TabToolbar: UIView, SearchBarLocationProvider {
     // MARK: - Variables
@@ -78,7 +79,7 @@ class TabToolbar: UIView, SearchBarLocationProvider {
         backButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.backButton
         forwardButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.forwardButton
         tabsButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.tabsButton
-        circleButton.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.TabToolbar.circleButton
+        circleButton.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.TabToolbar.circleButton
         appMenuButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.settingsMenuButton
         accessibilityNavigationStyle = .combined
         accessibilityLabel = .TabToolbarNavigationToolbarAccessibilityLabel

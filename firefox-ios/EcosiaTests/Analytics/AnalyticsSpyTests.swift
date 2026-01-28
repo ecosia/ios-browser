@@ -76,16 +76,9 @@ final class AnalyticsSpy: Analytics {
         }
     }
 
-    var introDisplayingPageCalled: Property.OnboardingPage?
-    override func introDisplaying(page: Property.OnboardingPage?) {
-        introDisplayingPageCalled = page
-    }
-
-    var introClickLabelCalled: Label.Onboarding?
-    var introClickPageCalled: Property.OnboardingPage?
-    override func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?) {
-        introClickLabelCalled = label
-        introClickPageCalled = page
+    var introWelcomeActionCalled: Action.Welcome?
+    override func introWelcome(action: Action.Welcome) {
+        introWelcomeActionCalled = action
     }
 
     var navigationActionCalled: Action?
@@ -402,127 +395,6 @@ final class AnalyticsSpyTests: XCTestCase {
                 XCTAssertEqual(analyticsSpy.menuStatusItemCalled, testCase.label, "Expected menu status label to be \(testCase.label.rawValue)")
                 XCTAssertEqual(analyticsSpy.menuStatusItemChangedTo, testCase.value, "Expected menu status value to be \(testCase.value)")
             }
-        }
-    }
-
-    // MARK: - Onboarding / Welcome Tests
-
-    func testWelcomeViewDidAppearTracksIntroDisplayingAndIntroClickStart() {
-        // Arrange
-        let welcome = makeWelcome()
-        XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
-
-        // Act
-        welcome.loadViewIfNeeded()
-        welcome.viewDidAppear(false)
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .start, "Analytics should track intro displaying page as .start.")
-    }
-
-    func testWelcomeGetStartedTracksIntroClickNext() {
-        // Arrange
-        let welcome = makeWelcome()
-        XCTAssertNil(analyticsSpy.introClickLabelCalled)
-        XCTAssertNil(analyticsSpy.introClickPageCalled)
-
-        // Act
-        welcome.getStarted()
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next, "Analytics should track intro click label as .next.")
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .start, "Analytics should track intro click page as .start.")
-    }
-
-    func testWelcomeSkipTracksIntroClickSkip() {
-        // Arrange
-        let welcome = makeWelcome()
-        XCTAssertNil(analyticsSpy.introClickLabelCalled)
-        XCTAssertNil(analyticsSpy.introClickPageCalled)
-
-        // Act
-        welcome.skip()
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip, "Analytics should track intro click label as .skip.")
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .start, "Analytics should track intro click page as .start.")
-    }
-
-    // MARK: - Onboarding / Welcome Tour Tests
-
-    func testWelcomeTourViewDidAppearTracksIntroDisplaying() {
-        // Arrange
-        let welcomeTour = makeWelcomeTour()
-        XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
-
-        // Act
-        welcomeTour.loadViewIfNeeded()
-        welcomeTour.viewDidAppear(false)
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .greenSearch, "Analytics should track intro displaying page as .greenSearch.")
-    }
-
-    func testWelcomeTourNextTracksIntroClickNext() {
-        // Arrange
-        let welcomeTour = makeWelcomeTour()
-        XCTAssertNil(analyticsSpy.introClickLabelCalled)
-        XCTAssertNil(analyticsSpy.introClickPageCalled)
-
-        // Act
-        welcomeTour.loadViewIfNeeded()
-        welcomeTour.viewDidAppear(false)
-        welcomeTour.forward()
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next, "Analytics should track intro click label as .next.")
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch, "Analytics should track intro click page as .greenSearch.")
-    }
-
-    func testWelcomeTourSkipTracksIntroClickSkip() {
-        // Arrange
-        let welcomeTour = makeWelcomeTour()
-        XCTAssertNil(analyticsSpy.introClickLabelCalled)
-        XCTAssertNil(analyticsSpy.introClickPageCalled)
-
-        // Act
-        welcomeTour.loadViewIfNeeded()
-        welcomeTour.viewDidAppear(false)
-        welcomeTour.skip()
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip, "Analytics should track intro click label as .skip.")
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch, "Analytics should track intro click page as .greenSearch.")
-    }
-
-    func testWelcomeTourTracksAnalyticsForAllPages() {
-        // Arrange
-        let welcomeTour = makeWelcomeTour()
-        let pages: [Analytics.Property.OnboardingPage] = [
-            .greenSearch,
-            .profits,
-            .action,
-            .transparentFinances
-        ]
-        welcomeTour.loadViewIfNeeded()
-        welcomeTour.viewDidAppear(false)
-
-        for (index, page) in pages.enumerated() {
-            // Reset analyticsSpy properties
-            analyticsSpy.introDisplayingPageCalled = nil
-
-            if index < pages.count - 1 {
-                // Act
-                welcomeTour.forward()
-
-                // Assert
-                XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next, "Analytics should track intro click label as .next.")
-                XCTAssertEqual(analyticsSpy.introClickPageCalled, page, "Analytics should track intro click page as \(page).")
-            }
-
-            // Reset analyticsSpy properties
-            analyticsSpy.introClickLabelCalled = nil
-            analyticsSpy.introClickPageCalled = nil
         }
     }
 
@@ -1020,12 +892,8 @@ extension AnalyticsSpyTests {
         return analyticsSpy
     }
 
-    func makeWelcomeTour() -> WelcomeTour {
-        WelcomeTour(delegate: MockWelcomeTourDelegate(), windowUUID: .XCTestDefaultUUID)
-    }
-
-    func makeWelcome() -> Welcome {
-        Welcome(delegate: MockWelcomeDelegate(), windowUUID: .XCTestDefaultUUID)
+    func makeWelcomeView() -> WelcomeView {
+        WelcomeView(windowUUID: .XCTestDefaultUUID, onFinish: {})
     }
 
     func makeInstructionsViewSUT(onButtonTap: @escaping () -> Void = {}) -> InstructionStepsView<some View> {

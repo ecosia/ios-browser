@@ -5,6 +5,7 @@
 import UIKit
 import Shared
 import Common
+import Ecosia
 
 protocol EcosiaFindInPageBarDelegate: AnyObject {
     func findInPage(_ findInPage: EcosiaFindInPageBar, didTextChange text: String)
@@ -43,7 +44,7 @@ final class EcosiaFindInPageBar: UIView, ThemeApplicable {
         textField.inputAssistantItem.trailingBarButtonGroups = []
         textField.enablesReturnKeyAutomatically = true
         textField.returnKeyType = .search
-        textField.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.searchField
+        textField.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.FindInPage.searchField
         textField.delegate = self
         return textField
     }()
@@ -52,7 +53,7 @@ final class EcosiaFindInPageBar: UIView, ThemeApplicable {
         label.font = .preferredFont(forTextStyle: .footnote)
         label.textAlignment = .right
         label.isHidden = true
-        label.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.matchCount
+        label.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.FindInPage.matchCount
         return label
     }()
     private lazy var previousButton: UIButton = {
@@ -61,7 +62,7 @@ final class EcosiaFindInPageBar: UIView, ThemeApplicable {
         button.isEnabled = false
         button.accessibilityLabel = .FindInPagePreviousAccessibilityLabel
         button.addTarget(self, action: #selector(didFindPrevious), for: .touchUpInside)
-        button.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.findPrevious
+        button.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.FindInPage.findPrevious
         return button
     }()
     private lazy var nextButton: UIButton = {
@@ -70,7 +71,7 @@ final class EcosiaFindInPageBar: UIView, ThemeApplicable {
         button.isEnabled = false
         button.accessibilityLabel = .FindInPageNextAccessibilityLabel
         button.addTarget(self, action: #selector(didFindNext), for: .touchUpInside)
-        button.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.findNext
+        button.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.FindInPage.findNext
         return button
     }()
     private lazy var closeButton: UIButton = {
@@ -78,7 +79,7 @@ final class EcosiaFindInPageBar: UIView, ThemeApplicable {
         button.setTitle(.localized(.done), for: .normal)
         button.accessibilityLabel = .FindInPageDoneAccessibilityLabel
         button.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
-        button.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.findClose
+        button.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.FindInPage.findClose
         return button
     }()
     private lazy var topBorder = UIView()
