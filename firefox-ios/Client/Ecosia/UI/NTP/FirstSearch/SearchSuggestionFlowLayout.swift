@@ -47,19 +47,17 @@ struct FlowLayoutContainer: View {
     }
 
     private func computeRows() -> [[String]] {
-        // Use a more realistic width estimation based on iPhone screen sizes
-        // iPhone widths: iPhone SE: 375, iPhone Pro: 390-430, with padding ~16 on each side
-        let estimatedAvailableWidth: CGFloat = 350 // More realistic estimate for most iPhones
-        
+        // TODO: Dynamically get width
+        let estimatedAvailableWidth: CGFloat = 350
+
         var rows: [[String]] = []
         var currentRow: [String] = []
         var currentRowWidth: CGFloat = 0
-        
+
         for item in items {
-            // Estimate pill width (this is approximate but should work well)
             let estimatedPillWidth = estimatePillWidth(for: item)
             let requiredWidth = currentRowWidth + estimatedPillWidth + (currentRow.isEmpty ? 0 : spacing)
-            
+
             if requiredWidth <= estimatedAvailableWidth || currentRow.isEmpty {
                 // Item fits in current row
                 currentRow.append(item)
@@ -73,22 +71,21 @@ struct FlowLayoutContainer: View {
                 currentRowWidth = estimatedPillWidth
             }
         }
-        
+
         // Add the last row
         if !currentRow.isEmpty {
             rows.append(currentRow)
         }
-        
+
         return rows
     }
-    
+
     private func estimatePillWidth(for text: String) -> CGFloat {
-        // More accurate estimation based on actual pill appearance
-        let characterWidth: CGFloat = 7.5 // Slightly smaller based on subheadline font
-        let iconSpace: CGFloat = 20 // Icon + spacing
+        let characterWidth: CGFloat = 7.5 // Based on subheadline font
+        let iconSpace: CGFloat = 20
         let horizontalPadding: CGFloat = 16 // 8 on each side
-        let borderWidth: CGFloat = 2 // Account for stroke
-        
+        let borderWidth: CGFloat = 2
+
         return CGFloat(text.count) * characterWidth + iconSpace + horizontalPadding + borderWidth
     }
 }
@@ -104,22 +101,26 @@ struct SearchSuggestionPill: View {
             HStack(spacing: 4) {
                 Text(text)
                     .font(.subheadline)
-                    .foregroundColor(Color(theme.colors.textPrimary))
+                    .foregroundColor(Color(theme.colors.ecosia.buttonContentSecondary))
                     .lineLimit(1)
 
                 if let searchIcon = UIImage(named: "searchUrl") {
                     Image(uiImage: searchIcon)
-                        .foregroundColor(Color(theme.colors.iconSecondary))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(Color(theme.colors.ecosia.iconDecorative))
                         .frame(width: 16, height: 16)
+                        .accessibilityLabel("Search icon")
                 }
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
+            .frame(height: 44)
             .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color(theme.colors.borderPrimary), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 22)
+                    .stroke(Color(theme.colors.ecosia.borderDecorative), lineWidth: 1)
                     .background(
-                        RoundedRectangle(cornerRadius: 20)
+                        RoundedRectangle(cornerRadius: 22)
                             .fill(Color.clear)
                     )
             )

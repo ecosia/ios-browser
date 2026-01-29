@@ -10,13 +10,17 @@ import SwiftUI
 final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
 
     struct UX {
-        static let headerPadding: CGFloat = 16
-        static let labelSpacing: CGFloat = 12
+        static let contentTopSpacing: CGFloat = 40 // Includes space for the icon
+        static let contentSpacing: CGFloat = 8
+        static let extraSuggestionsSpacing: CGFloat = 12
         static let cornerRadius: CGFloat = 12
-        static let iconSize: CGFloat = 40
-        static let iconCircleSize: CGFloat = 60
-        static let closeButtonSize: CGFloat = 24
-        static let contentTopPadding: CGFloat = 25
+        static let iconSize: CGFloat = 36
+        static let iconCircleSize: CGFloat = 56
+        static let closeButtonSize: CGFloat = 40
+        static let closeButtonImageSize: CGFloat = 16
+        static let closeButtonMargin: CGFloat = 8
+        static let contentHorizontalPadding: CGFloat = 16
+        static let contentBottomPadding: CGFloat = 24
     }
 
     // MARK: - Properties
@@ -28,24 +32,24 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
 
     private lazy var containerView: UIView = .build { view in
         view.layer.cornerRadius = UX.cornerRadius
-        view.clipsToBounds = false // Changed to false to allow icon to extend outside
+        view.clipsToBounds = false
     }
 
     private lazy var iconContainerView: UIView = .build { view in
         view.backgroundColor = .systemBackground
         view.layer.cornerRadius = UX.iconCircleSize / 2
-        // Removed shadow properties to blend with container
     }
 
     private lazy var iconImageView: UIImageView = .build { imageView in
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .systemGreen
-        imageView.accessibilityLabel = "Search icon"
+        imageView.accessibilityLabel = "Seedling icon"
+        imageView.image = .init(named: "plantedSeedling")
     }
 
     private lazy var closeButton: UIButton = .build { button in
-        let config = UIImage.SymbolConfiguration(pointSize: UX.closeButtonSize, weight: .medium)
-        let image = UIImage(systemName: "xmark", withConfiguration: config)
+        let config = UIImage.SymbolConfiguration(pointSize: UX.closeButtonImageSize, weight: .medium)
+        let image = UIImage(named: "close", in: .ecosia, with: config)
         button.setImage(image, for: .normal)
         button.tintColor = .systemGray
         button.accessibilityLabel = "Close"
@@ -55,19 +59,19 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
     private lazy var contentStackView: UIStackView = .build { stack in
         stack.axis = .vertical
         stack.alignment = .center
-        stack.spacing = UX.labelSpacing
+        stack.spacing = UX.contentSpacing
         stack.distribution = .fill
     }
 
     private lazy var titleLabel: UILabel = .build { label in
-        label.font = .preferredFont(forTextStyle: .title2)
+        label.font = .preferredFont(forTextStyle: .callout).semibold()
         label.textAlignment = .center
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
     }
 
     private lazy var descriptionLabel: UILabel = .build { label in
-        label.font = .preferredFont(forTextStyle: .body)
+        label.font = .preferredFont(forTextStyle: .subheadline)
         label.textAlignment = .center
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
@@ -126,16 +130,16 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
             iconImageView.heightAnchor.constraint(equalToConstant: UX.iconSize),
 
             // Close button constraints (top right)
-            closeButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: UX.headerPadding),
-            closeButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -UX.headerPadding),
+            closeButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: UX.closeButtonMargin),
+            closeButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -UX.closeButtonMargin),
             closeButton.widthAnchor.constraint(equalToConstant: UX.closeButtonSize),
             closeButton.heightAnchor.constraint(equalToConstant: UX.closeButtonSize),
 
             // Content stack constraints
-            contentStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: UX.contentTopPadding),
-            contentStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: UX.headerPadding),
-            contentStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -UX.headerPadding),
-            contentStackView.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -UX.headerPadding),
+            contentStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: UX.contentTopSpacing),
+            contentStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: UX.contentHorizontalPadding),
+            contentStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -UX.contentHorizontalPadding),
+            contentStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -UX.contentBottomPadding),
 
             // Suggestions container width constraint
             suggestionsContainerView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor)
@@ -179,7 +183,7 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
         suggestionsContainerView.addSubview(hostingController.view)
 
         NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(equalTo: suggestionsContainerView.topAnchor),
+            hostingController.view.topAnchor.constraint(equalTo: suggestionsContainerView.topAnchor, constant: UX.extraSuggestionsSpacing),
             hostingController.view.leadingAnchor.constraint(equalTo: suggestionsContainerView.leadingAnchor),
             hostingController.view.trailingAnchor.constraint(equalTo: suggestionsContainerView.trailingAnchor),
             hostingController.view.bottomAnchor.constraint(equalTo: suggestionsContainerView.bottomAnchor)
@@ -204,10 +208,9 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
 
     // MARK: - Configuration
 
-    func configure(title: String, description: String, suggestions: [String] = [], iconImage: UIImage? = nil) {
+    func configure(title: String, description: String, suggestions: [String] = []) {
         titleLabel.text = title
         descriptionLabel.text = description
-        iconImageView.image = iconImage ?? UIImage(named: "plantedSeedling")
 
         // Store suggestions and set up SwiftUI layout if theme is available
         currentSuggestions = suggestions
@@ -221,12 +224,12 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
         currentTheme = theme
 
         // Apply theme to UIKit components
-        titleLabel.textColor = theme.colors.textPrimary
-        descriptionLabel.textColor = theme.colors.textSecondary
-        containerView.backgroundColor = theme.colors.layer2
-        contentView.backgroundColor = theme.colors.layer1
-        closeButton.tintColor = theme.colors.iconSecondary
-        iconContainerView.backgroundColor = theme.colors.layer2
+        titleLabel.textColor = theme.colors.ecosia.textPrimary
+        descriptionLabel.textColor = theme.colors.ecosia.textSecondary
+        containerView.backgroundColor = theme.colors.ecosia.backgroundElevation1
+        contentView.backgroundColor = .clear
+        closeButton.tintColor = theme.colors.ecosia.buttonContentSecondary
+        iconContainerView.backgroundColor = theme.colors.ecosia.backgroundElevation1
 
         // Update SwiftUI view with new theme (or set it up if not done yet)
         if swiftUIHostingController != nil {
