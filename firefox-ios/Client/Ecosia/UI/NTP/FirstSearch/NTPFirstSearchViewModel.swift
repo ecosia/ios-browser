@@ -6,6 +6,10 @@ import Foundation
 import Common
 import Ecosia
 
+protocol NTPFirstSearchViewModelDelegate: AnyObject {
+    func searchWithQuery(_ query: String)
+}
+
 /// View model for the Product Tour NTP section that appears during onboarding
 class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
@@ -22,7 +26,8 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
     internal var theme: Theme
     private var productTourManager: ProductTourManager
-    weak var delegate: HomepageDataModelDelegate?
+    weak var delegate: NTPFirstSearchViewModelDelegate?
+    weak var dataModelDelegate: HomepageDataModelDelegate?
 
     // MARK: - Computed Properties
 
@@ -95,12 +100,11 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
             description: "Try a search and discover how you're helping fight climate change by using Ecosia.",
             suggestions: LocalizedSearchSuggestions.suggestions()
         )
-        cell?.onCloseButtonTapped = {
-            // Handle close action
+        cell?.onCloseButtonTapped = { [weak self] in
+            self?.handleCloseAction()
         }
-        cell?.onSearchSuggestionTapped = { suggestion in
-            // Handle search suggestion tap
-            print("User tapped: \(suggestion)")
+        cell?.onSearchSuggestionTapped = { [weak self] suggestion in
+            self?.handleSearchSuggestion(suggestion)
         }
         cell?.applyTheme(theme: theme)
         return cell ?? UICollectionViewCell()
@@ -122,6 +126,17 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
     func handleLongPress(with collectionView: UICollectionView, indexPath: IndexPath) {
         // No long press action for product tour NTP cell
     }
+
+    // MARK: - Private Action Handlers
+
+    private func handleCloseAction() {
+        productTourManager.completeTour()
+        dataModelDelegate?.reloadView()
+    }
+
+    private func handleSearchSuggestion(_ suggestion: String) {
+        delegate?.searchWithQuery(suggestion)
+    }
 }
 
 // MARK: - ProductTourObserver
@@ -129,7 +144,6 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
 extension NTPFirstSearchViewModel: ProductTourObserver {
     func productTourStateDidChange(_ state: ProductTourState) {
         // TODO: Delay to reload after url loading so it doesn't flash
-        // Notify delegate to reload the view when product tour state changes
-        delegate?.reloadView()
+        dataModelDelegate?.reloadView()
     }
 }

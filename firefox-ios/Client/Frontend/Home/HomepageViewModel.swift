@@ -251,7 +251,7 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
         self.nimbus = nimbus
         // Ecosia: Add Ecosia's ViewModels delegates
         newsViewModel.dataModelDelegate = self
-        productTourNTPViewModel.delegate = self
+        productTourNTPViewModel.dataModelDelegate = self
         topSiteViewModel.delegate = self
         /* Ecosia Remove bookmarks section
         bookmarksViewModel.delegate = self
