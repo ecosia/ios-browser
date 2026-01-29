@@ -27,19 +27,16 @@ public struct WelcomeView: View {
         static let exitOffset: CGFloat = 50
 
         // Gradient dimensions
-        static let centeredGradientSize: CGFloat = 210
         static let topGradientBottomOffset: CGFloat = 19
         static let bodyGradientTopOffset: CGFloat = 20
         static let bodyGradientBottomOffset: CGFloat = 24
 
         // Animation timings (relative delays between phases)
         static let initialDelay: TimeInterval = 0.5
-        static let phase1Duration: TimeInterval = 0.5
-        static let gradientFadeDuration: TimeInterval = 0.2
-        static let phase2Delay: TimeInterval = 0.15
+        static let phase1Duration: TimeInterval = 0.35
         static let phase2Duration: TimeInterval = 0.35
         static let phase3Delay: TimeInterval = 0.5
-        static let phase3Duration: TimeInterval = 0.35
+        static let phase3Duration: TimeInterval = 0.5
         static let exitDuration: TimeInterval = 0.35
     }
 
@@ -59,7 +56,6 @@ public struct WelcomeView: View {
     @State private var showVideoBackground: Bool = false
     @State private var shouldPlayVideo: Bool = false
     @State private var backgroundOpacity: Double = 1.0
-    @State private var centeredGradientOpacity: Double = 0.0
     @State private var topGradientOpacity: Double = 0.0
     @State private var bodyGradientOpacity: Double = 0.0
     @State private var theme = WelcomeViewTheme()
@@ -93,27 +89,13 @@ public struct WelcomeView: View {
                 .opacity(backgroundOpacity)
 
             // Video background (clipped to transition mask)
-            ZStack {
-                WelcomeVideoPlayer(
-                    videoName: "welcome_background",
-                    onReady: {
-                        isVideoReady = true
-                    },
-                    shouldPlay: shouldPlayVideo
-                )
-
-                // Centered radial gradient behind logo
-                RadialGradient(
-                    gradient: Gradient(colors: [
-                        Color.black.opacity(0.55),
-                        Color.black.opacity(0)
-                    ]),
-                    center: .center,
-                    startRadius: 0,
-                    endRadius: UX.centeredGradientSize / 2
-                )
-                .opacity(centeredGradientOpacity)
-            }
+            WelcomeVideoPlayer(
+                videoName: "welcome_background",
+                onReady: {
+                    isVideoReady = true
+                },
+                shouldPlay: shouldPlayVideo
+            )
             .mask(
                 RoundedRectangle(cornerRadius: UX.maskCornerRadius)
                     .frame(height: transitionMaskHeight)
@@ -258,7 +240,6 @@ public struct WelcomeView: View {
         bodyOpacity = 1.0
         topGradientOpacity = 1.0
         bodyGradientOpacity = 1.0
-        centeredGradientOpacity = 0.0
         backgroundOpacity = 0.0
         animationPhase = .phase3Complete
     }
@@ -273,24 +254,14 @@ public struct WelcomeView: View {
             showVideoBackground = true
             transitionMaskWidth = screenWidth - UX.maskInitialWidthMargin * 2
 
-            await animate(duration: UX.phase1Duration) {
+            await animate(duration: UX.phase1Duration, animation: .snappy(duration: UX.phase1Duration)) {
                 transitionMaskScale = 1.0
                 logoColor = theme.contentTextColor
             }
 
             guard !Task.isCancelled else { return }
 
-            // Fade in centered gradient directly after phase 1 ends
-            await animate(duration: UX.gradientFadeDuration) {
-                centeredGradientOpacity = 1.0
-            }
-
-            guard !Task.isCancelled else { return }
-
             // Phase 2: Animate in welcome text above, move logo down
-            try? await Task.sleep(duration: UX.phase2Delay)
-            guard !Task.isCancelled else { return }
-
             await animate(duration: UX.phase2Duration) {
                 welcomeTextOpacity = 1.0
                 welcomeTextOffset = phase2WelcomeTextOffset
@@ -320,7 +291,6 @@ public struct WelcomeView: View {
                 bodyOpacity = 1.0
                 topGradientOpacity = 1.0
                 bodyGradientOpacity = 1.0
-                centeredGradientOpacity = 0.0
                 backgroundOpacity = 0.0
                 animationPhase = .phase3Complete
             }
@@ -328,8 +298,9 @@ public struct WelcomeView: View {
     }
 
     @MainActor
-    private func animate(duration: TimeInterval, _ updates: @escaping () -> Void) async {
-        withAnimation(.easeInOut(duration: duration)) {
+    private func animate(duration: TimeInterval, animation: Animation? = nil, _ updates: @escaping () -> Void) async {
+        let finalAnimation = animation ?? .easeInOut(duration: duration)
+        withAnimation(finalAnimation) {
             updates()
         }
         try? await Task.sleep(duration: duration)
