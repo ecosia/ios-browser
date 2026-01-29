@@ -130,11 +130,17 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
     // MARK: - Private Action Handlers
 
     private func handleCloseAction() {
+        Analytics.shared.firstSearchCardDismiss()
         productTourManager.completeTour()
         dataModelDelegate?.reloadView()
     }
 
     private func handleSearchSuggestion(_ suggestion: String) {
+        // Find the index of the suggestion to track as pill number
+        let suggestions = LocalizedSearchSuggestions.suggestions()
+        if let pillIndex = suggestions.firstIndex(of: suggestion) {
+            Analytics.shared.firstSearchCardSuggestionClick(pillNumber: pillIndex + 1) // 1-based indexing for analytics
+        }
         delegate?.searchWithQuery(suggestion)
     }
 }

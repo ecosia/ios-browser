@@ -109,7 +109,8 @@ extension Analytics {
 
         public enum Onboarding: String {
             case
-            welcome = "welcome_screen"
+            welcome = "welcome_screen",
+            firstSearchCard = "first_search_card"
         }
 
         public enum Referral: String {
@@ -240,6 +241,7 @@ extension Analytics {
         detail,
         menu,
         nativeSettings = "native_settings",
+        pill,
         signOut = "sign_out"
 
         public enum APNConsent: String {
