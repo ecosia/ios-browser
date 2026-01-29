@@ -8,7 +8,9 @@ struct LocalizedSearchSuggestions {
     /// Represents a region and language combination
     enum RegionLanguage {
         case franceFrench
+        case franceEnglish
         case germanyGerman
+        case germanyEnglish
         case ukEnglish
         case usEnglish
         case `default`
@@ -24,8 +26,12 @@ struct LocalizedSearchSuggestions {
             switch (languageCode, regionCode) {
             case ("fr", "FR"):
                 return .franceFrench
+            case ("en", "FR"):
+                return .franceEnglish
             case ("de", "DE"):
                 return .germanyGerman
+            case ("en", "DE"):
+                return .germanyEnglish
             case ("en", "GB"):
                 return .ukEnglish
             case ("en", "US"):
@@ -47,6 +53,14 @@ struct LocalizedSearchSuggestions {
                 "\"Bonne journée\" en espagnol",
                 "Activités à Marseille"
             ]
+        case .franceEnglish:
+            return [
+                "Weather in Toulouse",
+                "Notre-Dame of Paris",
+                "What is the height of the Eiffel Tower?",
+                "\"Have a nice day\" in Spanish",
+                "Things to do in Marseille"
+            ]
         case .germanyGerman:
             return [
                 "Wetter Berlin",
@@ -54,6 +68,14 @@ struct LocalizedSearchSuggestions {
                 "Wie hoch ist der Berliner Fernsehturm?",
                 "\"Hab einen schönen Tag\" auf Spanisch",
                 "Aktivitäten in München"
+            ]
+        case .germanyEnglish:
+            return [
+                "Weather in Berlin",
+                "Neuschwanstein Castle",
+                "How tall is the Berlin TV Tower?",
+                "\"Have a nice day\" in Spanish",
+                "Things to do in Munich",
             ]
         case .ukEnglish:
             return [
@@ -74,7 +96,10 @@ struct LocalizedSearchSuggestions {
         case .default:
             return [
                 "Time in New York",
-                "Climate change"
+                "Climate change",
+                "How to see the Northern Lights?",
+                "Solar System",
+                "100 USD to EUR"
             ]
         }
     }
