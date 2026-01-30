@@ -606,6 +606,12 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
 
+            // TODO: Refactor this behind search vertical check - possibly together with analytics logic below
+            // Ecosia: Update Product Tour state if needed
+            if OnboardingProductTourExperiment.isEnabled {
+                ProductTourManager.shared.completeFirstSearchIfNeeded()
+            }
+
             // Ecosia: Track search if is Ecosia's vertical
             let urlChanged = url != previousUrl
             let isReload = navigationAction.navigationType == .reload
