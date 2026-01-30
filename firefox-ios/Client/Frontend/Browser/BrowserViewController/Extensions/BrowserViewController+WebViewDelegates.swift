@@ -606,7 +606,7 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
 
-            // TODO: Is this the best place?
+            // TODO: Refactor this behind search vertical check - possibly together with analytics logic below
             // Ecosia: Update Product Tour state if needed
             if OnboardingProductTourExperiment.isEnabled {
                 ProductTourManager.shared.completeFirstSearchIfNeeded()
