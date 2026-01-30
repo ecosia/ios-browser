@@ -35,7 +35,6 @@ struct FlowLayoutContainer: View {
     var body: some View {
         let width = availableWidth ?? UIScreen.main.bounds.width - 32 // Fallback to screen width minus margins
         let rows = computeRows(availableWidth: width)
-        let totalHeight = calculateTotalHeight(rows: rows)
 
         VStack(alignment: .center, spacing: spacing) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
@@ -50,7 +49,6 @@ struct FlowLayoutContainer: View {
                 }
             }
         }
-        .frame(height: totalHeight)
     }
 
     private func computeRows(availableWidth: CGFloat) -> [[String]] {
@@ -81,16 +79,6 @@ struct FlowLayoutContainer: View {
         }
 
         return rows
-    }
-
-    private func calculateTotalHeight(rows: [[String]]) -> CGFloat {
-        guard !rows.isEmpty else { return 0 }
-
-        let numberOfRows = CGFloat(rows.count)
-        let totalSpacing = spacing * max(0, numberOfRows - 1)
-        let pillHeight = SearchSuggestionPill.UX.height
-
-        return (numberOfRows * pillHeight) + totalSpacing
     }
 
     private func estimatePillWidth(for text: String) -> CGFloat {
