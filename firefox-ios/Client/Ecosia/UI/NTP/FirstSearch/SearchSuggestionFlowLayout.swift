@@ -11,12 +11,14 @@ struct SearchSuggestionFlowLayout: View {
     let suggestions: [String]
     let onSuggestionTapped: (String) -> Void
     let theme: Theme
+    let availableWidth: CGFloat?
 
     var body: some View {
         FlowLayoutContainer(
             items: suggestions,
             spacing: 8,
             theme: theme,
+            availableWidth: availableWidth,
             onTap: onSuggestionTapped
         )
     }
@@ -27,11 +29,16 @@ struct FlowLayoutContainer: View {
     let items: [String]
     let spacing: CGFloat
     let theme: Theme
+    let availableWidth: CGFloat?
     let onTap: (String) -> Void
 
     var body: some View {
+        let width = availableWidth ?? UIScreen.main.bounds.width - 32 // Fallback to screen width minus margins
+        let rows = computeRows(availableWidth: width)
+        let totalHeight = calculateTotalHeight(rows: rows)
+
         VStack(alignment: .center, spacing: spacing) {
-            ForEach(computeRows(), id: \.self) { row in
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 HStack(spacing: spacing) {
                     ForEach(row, id: \.self) { item in
                         SearchSuggestionPill(
@@ -43,12 +50,11 @@ struct FlowLayoutContainer: View {
                 }
             }
         }
-        .frame(maxWidth: .infinity)
+        .frame(height: totalHeight)
     }
 
-    private func computeRows() -> [[String]] {
-        // TODO: Dynamically get width
-        let estimatedAvailableWidth: CGFloat = 350
+    private func computeRows(availableWidth: CGFloat) -> [[String]] {
+        let effectiveAvailableWidth = max(availableWidth - 32, 100) // Account for margins
 
         var rows: [[String]] = []
         var currentRow: [String] = []
@@ -58,12 +64,10 @@ struct FlowLayoutContainer: View {
             let estimatedPillWidth = estimatePillWidth(for: item)
             let requiredWidth = currentRowWidth + estimatedPillWidth + (currentRow.isEmpty ? 0 : spacing)
 
-            if requiredWidth <= estimatedAvailableWidth || currentRow.isEmpty {
-                // Item fits in current row
+            if requiredWidth <= effectiveAvailableWidth || currentRow.isEmpty {
                 currentRow.append(item)
                 currentRowWidth = requiredWidth
             } else {
-                // Start new row
                 if !currentRow.isEmpty {
                     rows.append(currentRow)
                 }
@@ -72,7 +76,6 @@ struct FlowLayoutContainer: View {
             }
         }
 
-        // Add the last row
         if !currentRow.isEmpty {
             rows.append(currentRow)
         }
@@ -80,13 +83,25 @@ struct FlowLayoutContainer: View {
         return rows
     }
 
-    private func estimatePillWidth(for text: String) -> CGFloat {
-        let characterWidth: CGFloat = 7.5 // Based on subheadline font
-        let iconSpace: CGFloat = 20
-        let horizontalPadding: CGFloat = 16 // 8 on each side
-        let borderWidth: CGFloat = 2
+    private func calculateTotalHeight(rows: [[String]]) -> CGFloat {
+        guard !rows.isEmpty else { return 0 }
 
-        return CGFloat(text.count) * characterWidth + iconSpace + horizontalPadding + borderWidth
+        let numberOfRows = CGFloat(rows.count)
+        let totalSpacing = spacing * max(0, numberOfRows - 1)
+        let pillHeight = SearchSuggestionPill.UX.height
+
+        return (numberOfRows * pillHeight) + totalSpacing
+    }
+
+    private func estimatePillWidth(for text: String) -> CGFloat {
+        let textSize = measureText(text, font: SearchSuggestionPill.UX.font)
+        return textSize.width + SearchSuggestionPill.UX.totalNonTextWidth
+    }
+
+    private func measureText(_ text: String, font: UIFont) -> CGSize {
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        let size = (text as NSString).size(withAttributes: attributes)
+        return CGSize(width: ceil(size.width) + 2, height: ceil(size.height))
     }
 }
 
@@ -96,11 +111,38 @@ struct SearchSuggestionPill: View {
     let theme: Theme
     let onTap: () -> Void
 
+    struct UX {
+        static let fontSize: CGFloat = 15 // subheadline equivalent
+        static let fontWeight: UIFont.Weight = .regular
+
+        // Layout
+        static let iconSize: CGFloat = 16
+        static let iconTextSpacing: CGFloat = 4
+        static let horizontalPadding: CGFloat = 12
+        static let verticalPadding: CGFloat = 12
+        static let height: CGFloat = 44
+        static let cornerRadius: CGFloat = 22
+        static let borderWidth: CGFloat = 1
+
+        // Calculated properties
+        static var totalHorizontalPadding: CGFloat {
+            horizontalPadding * 2
+        }
+
+        static var totalNonTextWidth: CGFloat {
+            iconSize + iconTextSpacing + totalHorizontalPadding + borderWidth
+        }
+
+        static var font: UIFont {
+            UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
+        }
+    }
+
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 4) {
+            HStack(spacing: UX.iconTextSpacing) {
                 Text(text)
-                    .font(.subheadline)
+                    .preferredBodyFont(size: UX.fontSize)
                     .foregroundColor(Color(theme.colors.ecosia.buttonContentSecondary))
                     .lineLimit(1)
 
@@ -109,18 +151,18 @@ struct SearchSuggestionPill: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color(theme.colors.ecosia.iconDecorative))
-                        .frame(width: 16, height: 16)
+                        .frame(width: UX.iconSize, height: UX.iconSize)
                         .accessibilityLabel("Search icon")
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 12)
-            .frame(height: 44)
+            .padding(.horizontal, UX.horizontalPadding)
+            .padding(.vertical, UX.verticalPadding)
+            .frame(height: UX.height)
             .background(
-                RoundedRectangle(cornerRadius: 22)
-                    .stroke(Color(theme.colors.ecosia.borderDecorative), lineWidth: 1)
+                RoundedRectangle(cornerRadius: UX.cornerRadius)
+                    .stroke(Color(theme.colors.ecosia.borderDecorative), lineWidth: UX.borderWidth)
                     .background(
-                        RoundedRectangle(cornerRadius: 22)
+                        RoundedRectangle(cornerRadius: UX.cornerRadius)
                             .fill(Color.clear)
                     )
             )

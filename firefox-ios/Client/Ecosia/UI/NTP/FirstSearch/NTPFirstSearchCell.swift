@@ -165,12 +165,17 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
         }
 
         // Create new SwiftUI view
+        let availableWidth = suggestionsContainerView.bounds.width > 0
+            ? suggestionsContainerView.bounds.width
+            : UIScreen.main.bounds.width - (UX.contentHorizontalPadding * 2)
+
         let swiftUIView = SearchSuggestionFlowLayout(
             suggestions: currentSuggestions,
             onSuggestionTapped: { [weak self] suggestion in
                 self?.onSearchSuggestionTapped?(suggestion)
             },
-            theme: theme
+            theme: theme,
+            availableWidth: availableWidth
         )
 
         // Create hosting controller
@@ -195,12 +200,17 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
         guard let hostingController = swiftUIHostingController,
               let theme = currentTheme else { return }
 
+        let availableWidth = suggestionsContainerView.bounds.width > 0 
+            ? suggestionsContainerView.bounds.width 
+            : UIScreen.main.bounds.width - (UX.contentHorizontalPadding * 2)
+            
         let updatedView = SearchSuggestionFlowLayout(
             suggestions: currentSuggestions,
             onSuggestionTapped: { [weak self] suggestion in
                 self?.onSearchSuggestionTapped?(suggestion)
             },
-            theme: theme
+            theme: theme,
+            availableWidth: availableWidth
         )
 
         hostingController.rootView = updatedView
