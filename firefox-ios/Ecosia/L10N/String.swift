@@ -71,6 +71,8 @@ extension String {
         case myTrees = "My trees"
         case networkError = "Network error!"
         case new = "New"
+        case ntpFirstSearchTitle = "Get started with Ecosia"
+        case ntpFirstSearchDescription = "Try a search and discover how you're helping fight climate change by using Ecosia."
         case noConnectionMessage = "We couldn't verify your link. Please check your internet connection and try again."
         case noConnectionNSURLErrorTitle = "No connection"
         case noConnectionNSURLErrorMessage = "Please check your internet connection and try again"

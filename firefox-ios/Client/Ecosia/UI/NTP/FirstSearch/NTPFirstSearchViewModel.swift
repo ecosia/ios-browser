@@ -96,8 +96,8 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
     func configure(_ collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(cellType: NTPFirstSearchCell.self, for: indexPath)
         cell?.configure(
-            title: "Get started with Ecosia",
-            description: "Try a search and discover how you're helping fight climate change by using Ecosia.",
+            title: .localized(.ntpFirstSearchTitle),
+            description: .localized(.ntpFirstSearchDescription),
             suggestions: LocalizedSearchSuggestions.suggestions()
         )
         cell?.onCloseButtonTapped = { [weak self] in
