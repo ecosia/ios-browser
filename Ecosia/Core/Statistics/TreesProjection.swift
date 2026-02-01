@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 public final class TreesProjection: Publisher {
     public static let shared = TreesProjection()
     public var subscriptions = [Subscription<Int>]()

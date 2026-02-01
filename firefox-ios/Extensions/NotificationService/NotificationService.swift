@@ -5,13 +5,11 @@
 import Common
 import Account
 import Shared
-import Storage
-import Sync
 import UserNotifications
+import MozillaAppServices
 
-import class MozillaAppServices.Viaduct
-
-class NotificationService: UNNotificationServiceExtension {
+// FIXME: FXIOS-14295 Make NotificationService thread safe
+class NotificationService: UNNotificationServiceExtension, @unchecked Sendable {
     var display: SyncDataDisplay?
     var profile: BrowserProfile?
 
@@ -27,10 +25,15 @@ class NotificationService: UNNotificationServiceExtension {
         // Set-up Rust network stack. This is needed in addition to the call
         // from the AppDelegate due to the fact that this uses a separate process
         Viaduct.shared.useReqwestBackend()
+        MozillaAppServices.initialize()
 
-        let userInfo = request.content.userInfo
+        // FIXME: FXIOS-14273 Dictionaries are non-Sendable
+        nonisolated(unsafe) let userInfo = request.content.userInfo
 
-        let content = request.content.mutableCopy() as! UNMutableNotificationContent
+        guard let content = request.content.mutableCopy() as? UNMutableNotificationContent else {
+            contentHandler(request.content)
+            return
+        }
 
         if self.profile == nil {
             self.profile = BrowserProfile(localName: "profile")
@@ -43,7 +46,10 @@ class NotificationService: UNNotificationServiceExtension {
 
         let display = SyncDataDisplay(content: content, contentHandler: contentHandler)
         self.display = display
-        let handlerCompletion = { (result: Result<PushMessage, PushMessageError>) in
+        self.handleEncryptedPushMessage(
+            userInfo: userInfo,
+            profile: profile
+        ) { (result: Result<PushMessage, PushMessageError>) in
             guard case .success(let event) = result else {
                 if case .failure(let failure) = result {
                     self.didFinish(nil, with: failure)
@@ -52,12 +58,11 @@ class NotificationService: UNNotificationServiceExtension {
             }
             self.didFinish(event)
         }
-        self.handleEncryptedPushMessage(userInfo: userInfo, profile: profile, completion: handlerCompletion)
     }
 
-    func handleEncryptedPushMessage(userInfo: [AnyHashable: Any],
+    func handleEncryptedPushMessage(userInfo: sending [AnyHashable: Any],
                                     profile: BrowserProfile,
-                                    completion: @escaping (Result<PushMessage, PushMessageError>) -> Void
+                                    completion: @escaping @Sendable (Result<PushMessage, PushMessageError>) -> Void
     ) {
         Task {
             do {
@@ -78,7 +83,7 @@ class NotificationService: UNNotificationServiceExtension {
                 }
                 if decryptResult.scope == RustFirefoxAccounts.pushScope {
                     let handler = FxAPushMessageHandler(with: profile)
-                    handler.handleDecryptedMessage(message: decryptedString, completion: completion)
+                    await handler.handleDecryptedMessage(message: decryptedString, completion: completion)
                 } else {
                     completion(.failure(.messageIncomplete("Unknown sender")))
                 }
@@ -148,7 +153,6 @@ class SyncDataDisplay {
             displayThisDeviceDisconnectedNotification()
         default:
             displayUnknownMessageNotification(debugInfo: "Unknown: \(message)")
-            break
         }
     }
 
@@ -169,7 +173,7 @@ class SyncDataDisplay {
     }
 
     func displayAccountVerifiedNotification() {
-        #if MOZ_CHANNEL_BETA || DEBUG
+        #if MOZ_CHANNEL_beta || DEBUG
             presentNotification(
                 title: .SentTab_NoTabArrivingNotification_title,
                 body: "DEBUG: Account Verified"
@@ -184,7 +188,7 @@ class SyncDataDisplay {
     }
 
     func displayUnknownMessageNotification(debugInfo: String) {
-        #if MOZ_CHANNEL_BETA || DEBUG
+        #if MOZ_CHANNEL_beta || DEBUG
             presentNotification(
                 title: .SentTab_NoTabArrivingNotification_title,
                 body: "DEBUG: " + debugInfo
@@ -200,7 +204,7 @@ class SyncDataDisplay {
 
     func displayNewSentTabNotification(tab: [String: String]) {
         if let urlString = tab[NotificationSentTabs.Payload.urlKey],
-            let url = URL(string: urlString, invalidCharacters: false),
+            let url = URL(string: urlString),
             url.isWebPage(),
             let title = tab[NotificationSentTabs.Payload.titleKey] {
             let tab = [

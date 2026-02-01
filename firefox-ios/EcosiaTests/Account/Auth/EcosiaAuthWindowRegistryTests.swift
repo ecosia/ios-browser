@@ -6,6 +6,7 @@ import XCTest
 import Common
 @testable import Ecosia
 
+@MainActor
 final class EcosiaAuthWindowRegistryTests: XCTestCase {
 
     var windowRegistry: EcosiaAuthWindowRegistry!

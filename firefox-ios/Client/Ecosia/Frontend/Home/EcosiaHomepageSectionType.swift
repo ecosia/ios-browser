@@ -78,7 +78,7 @@ extension HomepageSectionType {
                        bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
         case .libraryShortcuts, .topSites, .impact, .news, .ntpCustomization:
-            guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
+            guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else {
                 return NSDirectionalEdgeInsets(top: 0,
                                                leading: MinimumInsets,
                                                bottom: bottomSpacing,

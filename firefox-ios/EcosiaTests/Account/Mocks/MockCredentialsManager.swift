@@ -6,6 +6,7 @@ import Foundation
 import Auth0
 @testable import Ecosia
 
+@MainActor
 final class MockCredentialsManager: CredentialsManagerProtocol {
 
     // MARK: - Test Control Properties

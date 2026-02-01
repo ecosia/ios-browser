@@ -7,9 +7,7 @@ import MozillaAppServices
 import Shared
 import Storage
 import XCTest
-/* Ecosia: Remove Glean
 import Glean
- */
 
 @testable import Client
 
@@ -34,9 +32,7 @@ class PasswordManagerViewModelTests: XCTestCase {
         self.mockDelegate = MockLoginViewModelDelegate()
         self.viewModel.delegate = mockDelegate
         self.viewModel.setBreachAlertsManager(MockBreachAlertsClient())
-        /* Ecosia: Remove Glean
         Glean.shared.resetGlean(clearStores: true)
-         */
     }
 
     override func tearDown() {
@@ -60,9 +56,7 @@ class PasswordManagerViewModelTests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1)
-        /* Ecosia: Remove Glean
         testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
-         */
     }
 
     func testaddLoginWithString() {
@@ -78,9 +72,7 @@ class PasswordManagerViewModelTests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1)
-        /* Ecosia: Remove Glean
         testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
-         */
     }
 
     func testQueryLoginsWithEmptyString() {

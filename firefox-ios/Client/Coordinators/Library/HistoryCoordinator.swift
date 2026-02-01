@@ -5,16 +5,15 @@
 import Foundation
 import Common
 import Shared
-import Storage
 
 protocol HistoryCoordinatorDelegate: AnyObject, LibraryPanelCoordinatorDelegate {
+    @MainActor
     func showRecentlyClosedTab()
-
-    /// Shows table view controller with searched sites grouped.
-    func showSearchGroupedItems(_ items: ASGroup<Site>)
 }
 
-class HistoryCoordinator: BaseCoordinator, HistoryCoordinatorDelegate {
+class HistoryCoordinator: BaseCoordinator,
+                          HistoryCoordinatorDelegate,
+                          Notifiable {
     // MARK: - Properties
 
     private let profile: Profile
@@ -39,18 +38,22 @@ class HistoryCoordinator: BaseCoordinator, HistoryCoordinatorDelegate {
         self.notificationCenter = notificationCenter
         self.navigationHandler = navigationHandler
         super.init(router: router)
-        self.notificationCenter.addObserver(
-            self,
-            selector: #selector(openClearHistory),
-            name: .OpenClearRecentHistory,
-            object: nil
+
+        startObservingNotifications(
+            withNotificationCenter: notificationCenter,
+            forObserver: self,
+            observing: [.OpenClearRecentHistory]
         )
     }
 
-    @objc
-    private func openClearHistory() {
-        guard let historyPanel = router.rootViewController as? HistoryPanel else { return }
-        historyPanel.showClearRecentHistory()
+    // MARK: Notifiable
+    func handleNotifications(_ notification: Notification) {
+        guard notification.name == .OpenClearRecentHistory else { return }
+
+        ensureMainThread {
+            guard let historyPanel = self.router.rootViewController as? HistoryPanel else { return }
+            historyPanel.showClearRecentHistory()
+        }
     }
 
     // MARK: - HistoryCoordinatorDelegate
@@ -63,21 +66,7 @@ class HistoryCoordinator: BaseCoordinator, HistoryCoordinatorDelegate {
         router.push(controller)
     }
 
-    func showSearchGroupedItems(_ items: ASGroup<Site>) {
-        let asGroupListViewModel = SearchGroupedItemsViewModel(asGroup: items, presenter: .historyPanel)
-        let asGroupListVC = SearchGroupedItemsViewController(viewModel: asGroupListViewModel,
-                                                             profile: profile,
-                                                             windowUUID: windowUUID)
-        asGroupListVC.libraryPanelDelegate = parentCoordinator
-        asGroupListVC.title = items.displayTitle
-        router.push(asGroupListVC)
-    }
-
     func shareLibraryItem(url: URL, sourceView: UIView) {
         navigationHandler?.shareLibraryItem(url: url, sourceView: sourceView)
-    }
-
-    deinit {
-        notificationCenter.removeObserver(self)
     }
 }

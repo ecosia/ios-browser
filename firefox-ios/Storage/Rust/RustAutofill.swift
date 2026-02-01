@@ -4,8 +4,7 @@
 
 import Foundation
 import Common
-// Ecosia: Glean removed - not used by Ecosia
-// import Glean
+import Glean
 
 import class MozillaAppServices.Store
 import enum MozillaAppServices.AutofillApiError
@@ -332,7 +331,7 @@ public class RustAutofill: @unchecked Sendable {
                  let result = try storage.scrubUndecryptableCreditCardDataForRemoteReplacement(localEncryptionKey: key)
 
                 if result.totalScrubbedRecords > 0 {
-                    // Ecosia: Glean removed - not used by Ecosia
+                    // Ecosia: Telemetry silenced via FakeGleanWrapper
                     // GleanMetrics.UserCreditCards.undecryptableCount.add(Int32(result.totalScrubbedRecords))
                 }
                 completionHandler(true)
@@ -483,13 +482,11 @@ public class RustAutofill: @unchecked Sendable {
 
     /// Reports when the credit card encryption key can't be rerieved for a credit cards sync
     public func reportPreSyncKeyRetrievalFailure(err: String) {
-        // Ecosia: Glean removed - not used by Ecosia
-        /*
-        GleanMetrics
-            .PreSyncKeyRetrievalFailure
-            .creditCards
-            .record(GleanMetrics.PreSyncKeyRetrievalFailure.CreditCardsExtra(errorMessage: err))
-        */
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        // GleanMetrics
+        //     .PreSyncKeyRetrievalFailure
+        //     .creditCards
+        //     .record(GleanMetrics.PreSyncKeyRetrievalFailure.CreditCardsExtra(errorMessage: err))
     }
 
     /// Retrieves the stored encryption key.
@@ -506,12 +503,12 @@ public class RustAutofill: @unchecked Sendable {
                                              key: key,
                                              completion: completion)
             case (.some(key), .none):
-                // Ecosia: Glean removed - not used by Ecosia
+                // Ecosia: Telemetry silenced via FakeGleanWrapper
                 // GleanMetrics.CreditCardKeyRegeneration.other.record()
                 self.handleUnexpectedKeyAction(completion: completion)
             case (.none, .some(encryptedCanaryPhrase)):
-                // Ecosia: Glean removed - not used by Ecosia
-                // GleanMetrics.CreditCardKeyRegeneration.lost.record()
+                 // Ecosia: Telemetry silenced via FakeGleanWrapper
+                 // GleanMetrics.CreditCardKeyRegeneration.lost.record()
                 self.handleUnexpectedKeyAction(completion: completion)
             case (.none, .none):
                 self.handleFirstTimeCallOrClearedKeychainAction(completion: completion)
@@ -548,7 +545,7 @@ public class RustAutofill: @unchecked Sendable {
             logger.log("Autofill key was corrupted, new one generated",
                        level: .warning,
                        category: .storage)
-            // Ecosia: Glean removed - not used by Ecosia
+            // Ecosia: Telemetry silenced via FakeGleanWrapper
             // GleanMetrics.CreditCardKeyRegeneration.corrupt.record()
             resetCreditCardsAndKey(completion: completion)
         }
@@ -574,7 +571,7 @@ public class RustAutofill: @unchecked Sendable {
                 if hasCreditCards {
                     // Since the key data isn't present and we have credit card records in
                     // the database, we both scrub the records and reset the key.
-                    // Ecosia: Glean removed - not used by Ecosia
+                    // Ecosia: Telemetry silenced via FakeGleanWrapper
                     // GleanMetrics.CreditCardKeyRegeneration.keychainDataLost.record()
                     self.resetCreditCardsAndKey(completion: completion)
                 } else {

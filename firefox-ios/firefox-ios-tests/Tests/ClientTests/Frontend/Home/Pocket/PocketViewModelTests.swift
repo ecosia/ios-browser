@@ -3,9 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-/* Ecosia: Remove Glean
 import Glean
- */
 import Shared
 import XCTest
 
@@ -21,9 +19,7 @@ final class PocketViewModelTests: XCTestCase, FeatureFlaggable {
         profile = MockProfile()
 
         featureFlags.initializeDeveloperFeatures(with: profile)
-        /* Ecosia: Remove Glean
         Glean.shared.resetGlean(clearStores: true)
-         */
     }
 
     override func tearDown() {
@@ -47,7 +43,6 @@ final class PocketViewModelTests: XCTestCase, FeatureFlaggable {
         XCTAssertFalse(subject.isEnabled)
     }
 
-    /* Ecosia: remove Glean dependency
     func testRecordSectionHasShown() throws {
         adaptor.pocketStories = createStories(numberOfStories: 1)
         let subject = createSubject()
@@ -64,7 +59,6 @@ final class PocketViewModelTests: XCTestCase, FeatureFlaggable {
         testCounterMetricRecordingSuccess(metric: GleanMetrics.Pocket.sectionImpressions,
                                           value: 1)
     }
-     */
 
     // MARK: - Dimension
 
@@ -106,7 +100,6 @@ final class PocketViewModelTests: XCTestCase, FeatureFlaggable {
         XCTAssertNotNil(cell)
     }
 
-    /* Ecosia: remove Glean dependency
     func testClickingStandardCell_recordsTapOnStory() {
         adaptor.pocketStories = createStories(numberOfStories: 1)
         let subject = createSubject()
@@ -116,7 +109,6 @@ final class PocketViewModelTests: XCTestCase, FeatureFlaggable {
         testLabeledMetricSuccess(metric: GleanMetrics.Pocket.openStoryOrigin)
         testLabeledMetricSuccess(metric: GleanMetrics.Pocket.openStoryPosition)
     }
-     */
 
     func testClickingStandardCell_callsTapTileAction() {
         adaptor.pocketStories = createStories(numberOfStories: 1)
@@ -158,7 +150,6 @@ final class PocketViewModelTests: XCTestCase, FeatureFlaggable {
         XCTAssertNotNil(cell)
     }
 
-    /* Ecosia: Remove Glean
     func testClickingDiscoverCell_recordsTapOnStory() {
         adaptor.pocketStories = createStories(numberOfStories: 1)
         let subject = createSubject()
@@ -168,7 +159,6 @@ final class PocketViewModelTests: XCTestCase, FeatureFlaggable {
         testLabeledMetricSuccess(metric: GleanMetrics.Pocket.openStoryOrigin)
         testLabeledMetricSuccess(metric: GleanMetrics.Pocket.openStoryPosition)
     }
-     */
 
     func testClickingDiscoverCell_callsTapTileAction() {
         adaptor.pocketStories = createStories(numberOfStories: 1)

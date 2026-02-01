@@ -5,6 +5,7 @@
 import UIKit
 import Common
 
+@MainActor
 final class EmptyReadingListView: UIView, Themeable {
 
     struct ReadingListPanelUX {

@@ -238,6 +238,7 @@ final class ResetAccountImpactNudgeCard: HiddenSetting {
     }
 }
 
+@MainActor
 class UnleashVariantResetSetting: HiddenSetting {
     var titleName: String? { return nil }
     var variant: Unleash.Variant? { return nil }

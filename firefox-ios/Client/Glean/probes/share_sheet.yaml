@@ -1,0 +1,67 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# This file defines the metrics that are recorded by the Glean SDK. They are
+# automatically converted to Swift code at build time using the `glean_parser`
+# PyPI package.
+
+# This file is organized (roughly) alphabetically by metric names
+# for easy navigation
+
+---
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
+
+$tags:
+  - ShareSheet
+
+###############################################################################
+# Documentation
+###############################################################################
+
+# Add your new metrics and/or events here.
+# Share sheet specific metrics
+share_sheet:
+  shared_to:
+    type: event
+    description: |
+      Records when the user has shared content out of the app via the iOS
+      system share sheet. The extra values describe the app the user chose
+      and the type of content being shared.
+
+      **Developer Note**: Telemetry is recorded for all shares that go through
+      the `ShareManager` via the `ShareTelemetryActivityItemProvider` action.
+
+      Owner: @andy
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/23704
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/23786
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+    extra_keys:
+      activity_identifier:
+        type: string
+        description: |
+          The activity identifier of the app to which the user has shared content.
+      share_type:
+        type: string
+        description: |
+          The type of content shared. Either a file, website, or tab.
+      has_share_message:
+        type: boolean
+        description: |
+          Whether an explicit share message (and optional subject line) was 
+          appended to the shared content. For example, when a user shares
+          Firefox anniversary text to their friends. This text will generally
+          accompany a link.
+      is_enrolled_in_sent_from_firefox:
+        type: boolean
+        description: |
+          Whether the user is enrolled in the Sent from Firefox experiment.
+      is_opted_in_sent_from_firefox:
+        type: boolean
+        description: |
+          Whether the user is opted in to the Sent from Firefox experiment.
+          Only returns true if the user is both enrolled and opted in.

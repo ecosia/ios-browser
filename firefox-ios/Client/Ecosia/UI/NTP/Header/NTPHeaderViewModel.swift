@@ -9,6 +9,7 @@ import SwiftUI
 import Ecosia
 import Combine
 
+@MainActor
 final class NTPHeaderViewModel: ObservableObject {
     struct UX {
         static let topInset: CGFloat = 24
@@ -76,7 +77,8 @@ final class NTPHeaderViewModel: ObservableObject {
         showSeedSparkles = true
 
         // Turn off sparkles after animation completes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2.5))
             self.showSeedSparkles = false
         }
     }

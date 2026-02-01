@@ -5,13 +5,14 @@
 import Foundation
 import Glean
 
-typealias SyncMetrics = GleanMetrics.SyncV2
-typealias LoginsMetrics = GleanMetrics.LoginsSyncV2
-typealias BookmarksMetrics = GleanMetrics.BookmarksSyncV2
-typealias HistoryMetrics = GleanMetrics.HistorySyncV2
-typealias CreditcardsMetrics = GleanMetrics.CreditcardsSyncV2
-typealias AddressesMetrics = GleanMetrics.AddressesSyncV2
-typealias TabsMetrics = GleanMetrics.TabsSyncV2
+// Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+// typealias SyncMetrics = GleanMetrics.SyncV2
+// typealias LoginsMetrics = GleanMetrics.LoginsSyncV2
+// typealias BookmarksMetrics = GleanMetrics.BookmarksSyncV2
+// typealias HistoryMetrics = GleanMetrics.HistorySyncV2
+// typealias CreditcardsMetrics = GleanMetrics.CreditcardsSyncV2
+// typealias AddressesMetrics = GleanMetrics.AddressesSyncV2
+// typealias TabsMetrics = GleanMetrics.TabsSyncV2
 
 enum SupportedEngines: String {
     case History = "history"
@@ -28,60 +29,22 @@ enum TelemetryReportingError: Error {
 }
 
 func processSyncTelemetry(syncTelemetry: RustSyncTelemetryPing,
-                          submitGlobalPing: (NoReasonCodes?) -> Void = GleanMetrics.Pings.shared.sync.submit,
-                          submitHistoryPing: (NoReasonCodes?) -> Void = GleanMetrics.Pings.shared.historySync.submit,
-                          submitBookmarksPing: (NoReasonCodes?) -> Void
-                              = GleanMetrics.Pings.shared.bookmarksSync.submit,
-                          submitLoginsPing: (NoReasonCodes?) -> Void
-                              = GleanMetrics.Pings.shared.loginsSync.submit,
-                          submitCreditCardsPing: (NoReasonCodes?) -> Void
-                              = GleanMetrics.Pings.shared.creditcardsSync.submit,
-                          submitAddressesPing: (NoReasonCodes?) -> Void
-                              = GleanMetrics.Pings.shared.addressesSync.submit,
-                          submitTabsPing: (NoReasonCodes?) -> Void = GleanMetrics.Pings.shared.tabsSync.submit) throws {
-    for syncInfo in syncTelemetry.syncs {
-        _ = SyncMetrics.syncUuid.generateAndSet()
-
-        if let failureReason = syncInfo.failureReason {
-            recordFailureReason(reason: failureReason,
-                                failureReasonMetric: SyncMetrics.failureReason)
-        }
-
-        for engineInfo in syncInfo.engines {
-            switch engineInfo.name {
-            case SupportedEngines.Bookmarks.rawValue:
-                try individualBookmarksSync(hashedFxaUid: syncTelemetry.uid,
-                                            engineInfo: engineInfo)
-                submitBookmarksPing(nil)
-            case SupportedEngines.History.rawValue:
-                try individualHistorySync(hashedFxaUid: syncTelemetry.uid,
-                                          engineInfo: engineInfo)
-                submitHistoryPing(nil)
-            case SupportedEngines.Logins.rawValue:
-                try individualLoginsSync(hashedFxaUid: syncTelemetry.uid,
-                                         engineInfo: engineInfo)
-                submitLoginsPing(nil)
-            case SupportedEngines.CreditCards.rawValue:
-                try individualCreditCardsSync(hashedFxaUid: syncTelemetry.uid,
-                                              engineInfo: engineInfo)
-                submitCreditCardsPing(nil)
-            case SupportedEngines.Addresses.rawValue:
-                try individualAddressesSync(hashedFxaUid: syncTelemetry.uid,
-                                              engineInfo: engineInfo)
-                submitAddressesPing(nil)
-            case SupportedEngines.Tabs.rawValue:
-                try individualTabsSync(hashedFxaUid: syncTelemetry.uid,
-                                       engineInfo: engineInfo)
-                submitTabsPing(nil)
-            default:
-                let message = "Ignoring telemetry for engine \(engineInfo.name)"
-                throw TelemetryReportingError.UnsupportedEngine(message: message)
-            }
-        }
-        submitGlobalPing(nil)
-    }
+                          submitGlobalPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
+                          submitHistoryPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
+                          submitBookmarksPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
+                          submitLoginsPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
+                          submitCreditCardsPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
+                         submitAddressesPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
+                         submitTabsPing: (NoReasonCodes?) -> Void = { _ in }) throws { // Ecosia: Telemetry silenced
+    // Ecosia: Entire function body silenced - all sync telemetry disabled
+    // for syncInfo in syncTelemetry.syncs {
+    //     _ = SyncMetrics.syncUuid.generateAndSet()
+    //     ... (all telemetry code removed)
+    // }
 }
 
+// Ecosia: All telemetry helper functions silenced - GleanMetrics not available in separate package
+/*
 private func individualLoginsSync(hashedFxaUid: String, engineInfo: EngineInfo) throws {
     guard engineInfo.name == SupportedEngines.Logins.rawValue else {
         let message = "Expected 'passwords', got \(engineInfo.name)"
@@ -404,10 +367,11 @@ class BaseGleanSyncPing {
                                      failedToApply: Int32(failedToApply),
                                      reconciled: Int32(info.incoming?.reconciled ?? 0),
                                      uploaded: Int32(uploaded),
-                                     failedToUpload: Int32(failedToUpload),
-                                     outgoingBatches: Int32(info.outgoing.count),
-                                     failureReason: info.failureReason)
+                                    failedToUpload: Int32(failedToUpload),
+                                    outgoingBatches: Int32(info.outgoing.count),
+                                    failureReason: info.failureReason)
 
         return ping
     }
 }
+*/

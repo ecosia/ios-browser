@@ -5,14 +5,16 @@
 import Common
 import Foundation
 import WebKit
-import Shared
 
 protocol EnhancedTrackingProtectionCoordinatorDelegate: AnyObject {
+    @MainActor
     func didFinishEnhancedTrackingProtection(from coordinator: EnhancedTrackingProtectionCoordinator)
+    @MainActor
     func settingsOpenPage(settings: Route.SettingsSection)
 }
 
 protocol ETPCoordinatorSSLStatusDelegate: AnyObject {
+    @MainActor
     var showHasOnlySecureContentInTrackingPanel: Bool { get }
 }
 
@@ -92,14 +94,21 @@ class EnhancedTrackingProtectionCoordinator: BaseCoordinator,
                 }
                 enhancedTrackingProtectionMenuVC.asPopover = true
                 guard let trackingProtectionNavController = trackingProtectionNavController else { return }
-                router.present(trackingProtectionNavController, animated: true, completion: nil)
+                trackingProtectionNavController.sheetPresentationController?.prefersEdgeAttachedInCompactHeight = true
+                router.present(trackingProtectionNavController, animated: true) {
+                    // Ensures the VC gets deinit when we dismiss through `UIAdaptivePresentationControllerDelegate`
+                    self.didFinish()
+                }
             } else {
                 guard let trackingProtectionNavController = trackingProtectionNavController else { return }
                 trackingProtectionNavController.preferredContentSize = UX.popoverPreferredSize
                 trackingProtectionNavController.modalPresentationStyle = .popover
                 trackingProtectionNavController.popoverPresentationController?.sourceView = sourceView
                 trackingProtectionNavController.popoverPresentationController?.permittedArrowDirections = .up
-                router.present(trackingProtectionNavController, animated: true, completion: nil)
+                router.present(trackingProtectionNavController, animated: true) {
+                    // Ensures the VC gets deinit when we dismiss through `UIAdaptivePresentationControllerDelegate`
+                    self.didFinish()
+                }
             }
         } else if let legacyEnhancedTrackingProtectionMenuVC {
             if UIDevice.current.userInterfaceIdiom == .phone {

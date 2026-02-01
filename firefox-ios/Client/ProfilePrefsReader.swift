@@ -1,0 +1,70 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import Shared
+
+/// A helper for reading user preference values from a profile-based `UserDefaults` store
+/// without requiring access to the `Profile` object.
+///
+/// This is useful in contexts where only the app group suite is available (e.g., startup code,
+/// experiments), and certain known preference keys need to be queried.
+struct ProfilePrefsReader {
+    /// Prefix used to simulate the `NSUserDefaultsPrefs` profile key namespace.
+    static let prefix = "profile."
+    private let userDefaults: UserDefaultsInterface
+
+    init(userDefaults: UserDefaultsInterface? = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)) {
+        guard let userDefaults = userDefaults else {
+            fatalError("Failed to create UserDefaults with suite: \(AppInfo.sharedContainerIdentifier)")
+        }
+        self.userDefaults = userDefaults
+    }
+
+    /// Returns `true` if the saved search bar position for the user is `.bottom`.
+    ///
+    /// This checks the `SearchBarPositionUsersPrefsKey` and deserializes it into
+    /// a `SearchBarPosition` enum. If the key is missing or not `SearchBarPosition.bottom`, it returns `false`.
+    func isBottomToolbarUser() -> Bool {
+        let key = ProfilePrefsReader.prefix + PrefsKeys.FeatureFlags.SearchBarPosition
+        if let rawValue = userDefaults.string(forKey: key),
+           let position = SearchBarPosition(rawValue: rawValue) {
+            return position == .bottom
+        }
+
+        return false
+    }
+
+    /// Returns `true` if the user has enabled tips and feature notifications.
+    ///
+    /// This checks a boolean flag stored under `TipsAndFeaturesNotifications`.
+    /// If the key is missing, the result is `false`.
+    func hasEnabledTipsNotifications() -> Bool {
+        let key = ProfilePrefsReader.prefix + PrefsKeys.Notifications.TipsAndFeaturesNotifications
+        return userDefaults.bool(forKey: key)
+    }
+
+    /// Returns `true` if the user has accepted the Terms of Use(from onboarding or bottom sheet).
+    ///
+    /// This checks both the `TermsOfUseAccepted` boolean preference and the
+    /// `TermsOfServiceAccepted` integer preference.
+    /// If either indicates acceptance, returns `true`. Otherwise returns `false`.
+    func hasAcceptedTermsOfUse() -> Bool {
+        let touKey = ProfilePrefsReader.prefix + PrefsKeys.TermsOfUseAccepted
+        let tosKey = ProfilePrefsReader.prefix + PrefsKeys.TermsOfServiceAccepted
+
+        let hasAcceptedToU = userDefaults.bool(forKey: touKey)
+        let hasAcceptedToS = userDefaults.object(forKey: tosKey) as? Int == 1
+
+        return hasAcceptedToU || hasAcceptedToS
+    }
+
+    /// Delegates calculation to ToUExperiencePointsCalculator
+    /// Parameter region: The user's region code
+    /// Returns: The calculated  points (0, 1, or 2) based on user settings
+    func getTouExperiencePoints(region: String?) -> Int32 {
+        let calculator = ToUExperiencePointsCalculator(userDefaults: userDefaults, region: region)
+        return calculator.calculatePoints()
+    }
+}

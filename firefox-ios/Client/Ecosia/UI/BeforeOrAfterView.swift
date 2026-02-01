@@ -6,6 +6,7 @@ import UIKit
 import Common
 import Ecosia
 
+@MainActor
 final class BeforeOrAfterView: UIView, ThemeApplicable {
     enum ContentType {
         case before

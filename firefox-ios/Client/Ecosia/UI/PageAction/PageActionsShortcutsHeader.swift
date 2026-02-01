@@ -12,6 +12,7 @@ protocol PageActionsShortcutsDelegate: AnyObject {
     func pageOptionsSettings()
 }
 
+@MainActor
 class PageActionsShortcutsHeader: UITableViewHeaderFooterView, ThemeApplicable {
 
     var mainView = UIStackView()

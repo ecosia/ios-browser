@@ -7,6 +7,7 @@ import Common
 @testable import Client
 @testable import Ecosia
 
+@MainActor
 class EcosiaHomeViewModelTests: XCTestCase {
 
     var profile: MockProfile!

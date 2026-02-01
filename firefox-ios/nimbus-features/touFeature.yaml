@@ -1,0 +1,60 @@
+# The configuration for the touFeature feature
+features:
+  tou-feature:
+    description: >
+      This feature is for managing the rollout of the Terms of Use (ToU) implementation.
+    variables:
+      status:
+        description: >
+          Enables the feature
+        type: Boolean
+        default: false
+      max-reminders-count:
+        description: >
+          Maximum number of ToU bottom sheet reminders that can be displayed
+        type: Int
+        default: 2
+      enable-drag-to-dismiss:
+        description: >
+          Whether to show a drag handle on the prompt and allows users to use it to dismiss the prompt.
+        type: Boolean
+        default: true
+      content-option:
+        description: >
+          Determines which predefined title and "learn more" strings are used for the Terms of Use prompt.
+        type: TermsOfUsePromptContentOption
+        default: value-0
+    defaults:
+      - channel: beta
+        value:
+          status: false
+          max-reminders-count: 2
+          enable-drag-to-dismiss: true
+          content-option: value-0
+      - channel: developer
+        value:
+          status: false
+          max-reminders-count: 2
+          enable-drag-to-dismiss: true
+          content-option: value-0
+
+enums:
+  TermsOfUsePromptContentOption:
+    description: |
+      Determines which predefined title and "learn more" strings are used for the Terms of Use prompt.
+    variants:
+      value-0:
+        description: |
+          Uses the current defaults:
+          - Title: "We've got an update"
+          - Learn more: "Please take a moment to review and accept. Learn more."
+      value-1:
+        description: |
+          Uses the following copy:
+          - Title: "Terms of Use"
+          - Learn more: "You can learn more here."
+      value-2:
+        description: |
+          Uses the following copy:
+          - Title: "A note from Firefox"
+          - Learn more: "You can learn more here."

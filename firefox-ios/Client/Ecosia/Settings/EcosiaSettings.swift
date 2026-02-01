@@ -249,6 +249,7 @@ final class HomepageSettings: Setting {
 }
 
 /// Setting option that opens the Ecosia Help Center
+@MainActor
 class HelpCenterSetting: Setting {
     override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
 
@@ -271,6 +272,7 @@ class HelpCenterSetting: Setting {
 }
 
 /// Setting for displaying the feedback view from the settings menu
+@MainActor
 class EcosiaSendFeedbackSetting: Setting {
     override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
 

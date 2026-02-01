@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 public final class FinancialReports {
     public struct Report: Decodable, Equatable {
         public internal(set) var totalIncome: Double

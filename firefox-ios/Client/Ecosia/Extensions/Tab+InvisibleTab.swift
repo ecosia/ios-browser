@@ -18,7 +18,9 @@ extension Tab {
     ///
     /// This property is commonly used for authentication tabs and other 
     /// background operations that should not be visible to users.
-    var isInvisible: Bool {
+    ///
+    /// Safety: nonisolated because InvisibleTabManager is thread-safe via DispatchQueue
+    nonisolated var isInvisible: Bool {
         get {
             return InvisibleTabManager.shared.isTabInvisible(self)
         }
@@ -33,13 +35,17 @@ extension Tab {
 
     /// Convenience method to mark this tab as invisible
     /// Equivalent to setting `isInvisible = true`
-    func markAsInvisible() {
+    ///
+    /// Safety: nonisolated because it delegates to thread-safe InvisibleTabManager
+    nonisolated func markAsInvisible() {
         isInvisible = true
     }
 
     /// Convenience method to mark this tab as visible
     /// Equivalent to setting `isInvisible = false`
-    func markAsVisible() {
+    ///
+    /// Safety: nonisolated because it delegates to thread-safe InvisibleTabManager
+    nonisolated func markAsVisible() {
         isInvisible = false
     }
 }

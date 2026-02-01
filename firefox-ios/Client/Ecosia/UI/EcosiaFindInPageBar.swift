@@ -16,6 +16,7 @@ protocol EcosiaFindInPageBarDelegate: AnyObject {
 /// Ecosia's custom UI for FindInPageBar.
 ///
 /// You can find the Firefox original view in Client/Frontend/Browser/FindInPageBar (removed from Target since no longer used)
+@MainActor
 final class EcosiaFindInPageBar: UIView, ThemeApplicable {
     private struct UX {
         static let barHeight: CGFloat = 60

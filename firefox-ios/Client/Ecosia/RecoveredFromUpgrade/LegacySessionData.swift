@@ -41,6 +41,7 @@ private func migrate(urls: [URL]) -> [URL] {
 }
 // Ecosia: Tabs architecture implementation from ~v112 to ~116
 // class LegacySessionData: Codable {
+@MainActor
 class LegacySessionData: NSObject, Codable, NSCoding {
 
     let currentPage: Int

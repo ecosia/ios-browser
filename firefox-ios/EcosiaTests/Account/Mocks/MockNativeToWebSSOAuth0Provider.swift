@@ -8,6 +8,7 @@ import Auth0
 /// A mock that simulates NativeToWebSSOAuth0Provider behavior for testing
 /// Note: Since NativeToWebSSOAuth0Provider is a struct, we can't inherit from it
 /// Instead, we create a separate mock that can be used in tests that need SSO functionality
+@MainActor
 final class MockNativeToWebSSOAuth0Provider: MockAuth0Provider {
 
     // MARK: - Additional Test Control Properties for SSO

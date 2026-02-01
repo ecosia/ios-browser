@@ -9,7 +9,9 @@ final class InvisibleTabManager {
 
     // MARK: - Singleton
 
-    static let shared = InvisibleTabManager()
+    /// Thread-safe singleton using DispatchQueue for synchronization
+    /// Safety: All mutable state is protected by concurrent DispatchQueue with barrier writes
+    nonisolated(unsafe) static let shared = InvisibleTabManager()
 
     // MARK: - Private Properties
 

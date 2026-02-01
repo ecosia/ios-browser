@@ -10,6 +10,7 @@ protocol WhatsNewViewDelegate: AnyObject {
     func whatsNewViewDidShow(_ viewController: WhatsNewViewController)
 }
 
+@MainActor
 final class WhatsNewViewController: UIViewController, Themeable {
 
     // MARK: - UX

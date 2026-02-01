@@ -3,11 +3,11 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Storage
 
 import enum MozillaAppServices.VisitType
 
 protocol ReadingListNavigationHandler: AnyObject, LibraryPanelCoordinatorDelegate {
+    @MainActor
     func openUrl(_ url: URL, visitType: VisitType)
 }
 

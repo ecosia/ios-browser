@@ -3,40 +3,33 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Shared
-import Storage
 import CoreSpotlight
 import UIKit
 import Common
-/* Ecosia: Remove Glean
 import Glean
- */
 import TabDataStore
-import Ecosia
 
 import class MozillaAppServices.Viaduct
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
     let logger = DefaultLogger.shared
     var notificationCenter: NotificationProtocol = NotificationCenter.default
     var orientationLock = UIInterfaceOrientationMask.all
 
-    private let creditCardAutofillStatus = FxNimbus.shared
-        .features
-        .creditCardAutofill
-        .value()
-        .creditCardAutofillStatus
-
     lazy var profile: Profile = BrowserProfile(
         localName: "profile",
-        fxaCommandsDelegate: UIApplication.shared.fxaCommandsDelegate,
-        creditCardAutofillEnabled: creditCardAutofillStatus
+        fxaCommandsDelegate: UIApplication.shared.fxaCommandsDelegate)
+
+    lazy var searchEnginesManager = SearchEnginesManager(
+        prefs: profile.prefs,
+        files: profile.files
     )
 
-    /* Ecosia: Swap Theme Manager with Ecosia's
-    lazy var themeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
-     */
-    lazy var themeManager: ThemeManager = EcosiaThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
-    lazy var ratingPromptManager = RatingPromptManager(profile: profile)
+    lazy var themeManager: ThemeManager = DefaultThemeManager(
+        sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
+        isNewAppearanceMenuOnClosure: { self.featureFlags.isFeatureEnabled(.appearanceMenu, checking: .buildOnly) }
+    )
+    lazy var documentLogger = DocumentLogger(logger: logger)
     lazy var appSessionManager: AppSessionProvider = AppSessionManager()
     lazy var notificationSurfaceManager = NotificationSurfaceManager()
     lazy var tabDataStore = DefaultTabDataStore()
@@ -44,17 +37,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     lazy var backgroundTabLoader: BackgroundTabLoader = {
         return DefaultBackgroundTabLoader(tabQueue: (AppContainer.shared.resolve() as Profile).queue)
     }()
+    lazy var shareTelemetry = ShareTelemetry()
+    lazy var gleanUsageReportingMetricsService = GleanUsageReportingMetricsService(profile: profile)
     private var isLoadingBackgroundTabs = false
 
     private var shutdownWebServer: DispatchSourceTimer?
     private var webServerUtil: WebServerUtil?
     private var appLaunchUtil: AppLaunchUtil?
-    // Ecosia: Searches counter
-    private let searchesCounter = SearchesCounter()
     private var backgroundWorkUtility: BackgroundFetchAndProcessingUtility?
+    private var suggestBackgroundUtility: BackgroundFirefoxSuggestIngestUtility?
+    private var suggestBackgroundTaskID: UIBackgroundTaskIdentifier = .invalid
+    private static let suggestBackgroundTaskName = "SuggestIngest"
     private var widgetManager: TopSitesWidgetManager?
     private var menuBuilderHelper: MenuBuilderHelper?
-    private var metricKitWrapper = MetricKitWrapper()
+    private lazy var metricKitWrapper = MetricKitWrapper()
     private let wallpaperMetadataQueue = DispatchQueue(label: "com.moz.wallpaperVerification.queue")
 
     func application(
@@ -62,6 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        startRecordingStartupOpenURLTime()
         // Configure app information for BrowserKit, needed for logger
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
@@ -71,8 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // before any Application Services component gets used.
         Viaduct.shared.useReqwestBackend()
 
-        // Configure logger so we can start tracking logs early
-        logger.configure(crashManager: DefaultCrashManager())
         initializeRustErrors(logger: logger)
         logger.log("willFinishLaunchingWithOptions begin",
                    level: .info,
@@ -87,19 +82,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .browserIsReady
         ])
 
+        // Initialize the feature flag subsystem.
+        // Among other things, it toggles on and off Nimbus, Unified ads, Adjust.
+        // i.e. this must be run before initializing those systems.
+        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
+
         // Then setup dependency container as it's needed for everything else
         DependencyHelper().bootstrapDependencies()
-
-        // Ecosia: Configure accounts provider factory for error simulation support
-        // This must happen before EcosiaAuthUIStateProvider.shared is first accessed
-        EcosiaAuthUIStateProvider.accountsProviderFactory = { AccountsProviderWrapper() }
 
         appLaunchUtil = AppLaunchUtil(profile: profile)
         appLaunchUtil?.setUpPreLaunchDependencies()
 
         // Set up a web server that serves us static content.
         // Do this early so that it is ready when the UI is presented.
-        webServerUtil = WebServerUtil(profile: profile)
+        webServerUtil = WebServerUtil(readerModeHandler: ReaderModeHandlers(), profile: profile)
         webServerUtil?.setUpWebServer()
 
         menuBuilderHelper = MenuBuilderHelper()
@@ -108,7 +104,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                    level: .info,
                    category: .lifecycle)
 
+        // Perform migration of changed UA file
+        Tab.ChangeUserAgent.performMigration()
+
         return true
+    }
+
+    private func startRecordingStartupOpenURLTime() {
+        shareTelemetry.recordOpenDeeplinkTime()
+        var recordCompleteToken: ActionToken?
+        var recordCancelledToken: ActionToken?
+        recordCompleteToken = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkComplete) { [weak self] in
+            ensureMainThread { [weak self] in
+                self?.shareTelemetry.sendOpenDeeplinkTimeRecord()
+                guard let recordCancelledToken, let recordCompleteToken  else { return }
+                AppEventQueue.cancelAction(token: recordCancelledToken)
+                AppEventQueue.cancelAction(token: recordCompleteToken)
+            }
+        }
+        recordCancelledToken = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkCancelled) { [weak self] in
+            ensureMainThread { [weak self] in
+                self?.shareTelemetry.cancelOpenURLTimeRecord()
+                guard let recordCancelledToken, let recordCompleteToken  else { return }
+                AppEventQueue.cancelAction(token: recordCancelledToken)
+                AppEventQueue.cancelAction(token: recordCompleteToken)
+            }
+        }
     }
 
     func application(
@@ -120,48 +141,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                    level: .info,
                    category: .lifecycle)
 
-        // Ecosia: Allow Braze to be initialized after feature management
-        BrazeService.prepareForDelayedInitialization()
+        // Fix iOS simulator builds for Fennec after running unit tests locally [FXIOS-10712]
+        fixSimulatorDevBuild(application)
 
-        // Ecosia: pushNotificationSetup()
+        pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()
-        /* Ecosia: Do not intialize Background sync
         backgroundWorkUtility = BackgroundFetchAndProcessingUtility()
         backgroundWorkUtility?.registerUtility(BackgroundSyncUtility(profile: profile, application: application))
         backgroundWorkUtility?.registerUtility(BackgroundNotificationSurfaceUtility())
+
         if let firefoxSuggest = profile.firefoxSuggest {
-            backgroundWorkUtility?.registerUtility(BackgroundFirefoxSuggestIngestUtility(
-                firefoxSuggest: firefoxSuggest
-            ))
-        }
-         */
-        // Ecosia: Update EcosiaInstallType if needed. This should always happen before `FeatureManagement`.
-        EcosiaInstallType.evaluateCurrentEcosiaInstallType()
-        // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
-
-        /* 
-         Ecosia: Feature Management fetch
-         We perform the same configuration retrieval in
-         `applicationDidBecomeActive(:)` and sounds redundant;
-         However we need it here to make sure we retrieve the latest
-         flag state of the EngagementService.
-         Decouple the "loading" only from the filesystem of any
-         previously saved Model from the `Unleash.start(:)` will not
-         make any tangible difference in the process as we check if
-         any cached version of the Model is in place.
-         */
-        Task {
-            await FeatureManagement.fetchConfiguration()
-            // Ecosia: Braze Service Initialization after feature flags are fetched for conditional initialization
-            BrazeService.shared.initialize()
-            // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
-            Analytics.shared.activity(.launch)
+            suggestBackgroundUtility = BackgroundFirefoxSuggestIngestUtility(firefoxSuggest: firefoxSuggest)
         }
 
-        // Ecosia: fetching statistics before they are used
-        Task.detached {
-            try? await Statistics.shared.fetchAndUpdate()
-        }
+        metricKitWrapper.beginObservingMXPayloads()
 
         let topSitesProvider = TopSitesProviderImplementation(
             placesFetcher: profile.places,
@@ -173,8 +166,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         addObservers()
 
-        // Ecosia: Send the install event. It happens only once per App install.
-        Analytics.shared.install()
+        /// Prewarm translation resources off the main thread
+        /// This will fetch the translator WASM and model attachments for the device language.
+        /// Running this on a utility QoS to avoid impacting app launch time.
+        if featureFlags.isFeatureEnabled(.translation, checking: .buildOnly) {
+            Task(priority: .utility) {
+                await ASTranslationModelsFetcher().prewarmResourcesForStartup()
+            }
+        }
 
         logger.log("didFinishLaunchingWithOptions end",
                    level: .info,
@@ -199,8 +198,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             profile.removeAccount()
         }
 
-        profile.syncManager.applicationDidBecomeActive()
+        profile.syncManager?.applicationDidBecomeActive()
         webServerUtil?.setUpWebServer()
+
+        // Process any pending app extension telemetry events (e.g., from Share Extension)
+        TelemetryWrapper.shared.processPendingAppExtensionTelemetry(profile: profile)
 
         TelemetryWrapper.recordEvent(category: .action, method: .foreground, object: .app)
 
@@ -209,28 +211,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Cleanup can be a heavy operation, take it out of the startup path. Instead check after a few seconds.
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
-            // TODO: testing to see if this fixes https://mozilla-hub.atlassian.net/browse/FXIOS-7632
-            // self?.profile.cleanupHistoryIfNeeded()
-            self?.ratingPromptManager.updateData()
+            self?.profile.cleanupHistoryIfNeeded()
         }
 
-        // Ecosia
-        Task {
-            await FeatureManagement.fetchConfiguration()
-            Analytics.shared.activity(.resume)
-        }
-        MMP.sendSession()
-        searchesCounter.subscribe(self) { searchCount in
-            MMP.handleSearchEvent(searchCount)
-        }
-
-        DispatchQueue.global().async { [weak self] in
-            self?.profile.pollCommands(forcePoll: false)
+        DispatchQueue.global().async { [weak profile] in
+            profile?.pollCommands(forcePoll: false)
         }
 
         updateWallpaperMetadata()
         loadBackgroundTabs()
-
+        ingestFirefoxSuggestions(in: application)
         logger.log("applicationDidBecomeActive end",
                    level: .info,
                    category: .lifecycle)
@@ -247,7 +237,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         TelemetryWrapper.recordEvent(category: .action, method: .background, object: .app)
 
-        profile.syncManager.applicationDidEnterBackground()
+        profile.syncManager?.applicationDidEnterBackground()
 
         let singleShotTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
         // 2 seconds is ample for a localhost request to be completed by GCDWebServer.
@@ -268,6 +258,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // We have only five seconds here, so let's hope this doesn't take too long.
         logger.log("applicationWillTerminate", level: .info, category: .lifecycle)
         profile.shutdown()
+        documentLogger.logPendingDownloads()
     }
 
     func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
@@ -290,8 +281,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         requiredEvents += windowManager.allWindowUUIDs(includingReserved: true).map { .tabRestoration($0) }
         isLoadingBackgroundTabs = true
         AppEventQueue.wait(for: requiredEvents) { [weak self] in
-            self?.isLoadingBackgroundTabs = false
-            self?.backgroundTabLoader.loadBackgroundTabs()
+            ensureMainThread { [weak self] in
+                self?.isLoadingBackgroundTabs = false
+                self?.backgroundTabLoader.loadBackgroundTabs()
+            }
+        }
+    }
+
+    private func ingestFirefoxSuggestions(in application: UIApplication) {
+        /// Start a background task so that the ingest task doesn't get killed
+        /// immediately if the app goes to the background before ingest finishes. iOS will kill
+        /// our process as soon as we hit background if we don't have a background task running.
+        suggestBackgroundTaskID = application.beginBackgroundTask(
+            withName: Self.suggestBackgroundTaskName) { [weak self, application] in
+            guard let self = self else { return }
+            self.profile.firefoxSuggest?.interruptEverything()
+            application.endBackgroundTask(self.suggestBackgroundTaskID)
+            self.suggestBackgroundTaskID = .invalid
+        }
+
+        /// On first run (when suggest‑data.db is empty) this populates the db; later calls are no‑ops due to `emptyOnly`.
+        /// For details, see:
+        ///     https://github.com/mozilla/application-services/blob/5aade8c09653ad2a2ec02746dc6bcf80dc8434c2/components/suggest/src/store.rs#L597-L599
+        /// Actual periodic refreshing happens in the background in `BackgroundFirefoxSuggestIngestUtility.swift`.
+        /// `.utility` priority is used here because this blocks on network calls and would otherwise trigger a
+        /// priority‑inversion warning if run at user‑initiated QoS.
+        Task(priority: .utility) { [profile] in
+            do {
+                try await profile.firefoxSuggest?.ingest(emptyOnly: true)
+            } catch {
+                self.logger.log("Suggest ingest failed: \(error)", level: .warning, category: .storage)
+            }
+            /// Only schedule the periodic BGProcessingTask after the
+            /// initial on-launch ingest completes, to avoid double scheduling
+            /// or racing against our own background task.
+            self.suggestBackgroundUtility?.scheduleTaskOnAppBackground()
+            if self.suggestBackgroundTaskID != .invalid {
+                application.endBackgroundTask(self.suggestBackgroundTaskID)
+                self.suggestBackgroundTaskID = .invalid
+            }
         }
     }
 
@@ -301,27 +329,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             wallpaperManager.checkForUpdates()
         }
     }
+
+    private func fixSimulatorDevBuild(_ application: UIApplication) {
+        // Corrects an issue for development when running Fennec target in
+        // the simulator after having run unit tests locally.
+        #if targetEnvironment(simulator) && MOZ_CHANNEL_developer
+        let key = "_FennecLaunchedUnitTestDelegate"
+        guard let flagSet = UserDefaults.standard.value(forKey: key) as? Bool, flagSet else { return }
+        // Private API. This code is not present in release builds.
+        application.openSessions.forEach {
+            application.perform(Selector(("_removeSessionFromSessionSet:")), with: $0)
+        }
+        UserDefaults.standard.removeObject(forKey: key)
+        #endif
+    }
 }
 
 extension AppDelegate: Notifiable {
     private func addObservers() {
-        setupNotifications(forObserver: self, observing: [UIApplication.didBecomeActiveNotification,
-                                                          UIApplication.willResignActiveNotification,
-                                                          UIApplication.didEnterBackgroundNotification])
+        startObservingNotifications(
+            withNotificationCenter: notificationCenter,
+            forObserver: self,
+            observing: [UIApplication.didBecomeActiveNotification,
+                        UIApplication.willResignActiveNotification,
+                        UIApplication.didEnterBackgroundNotification]
+        )
     }
 
     /// When migrated to Scenes, these methods aren't called.
     /// Consider this a temporary solution to calling into those methods.
     func handleNotifications(_ notification: Notification) {
-        switch notification.name {
-        case UIApplication.didBecomeActiveNotification:
-            applicationDidBecomeActive(UIApplication.shared)
-        case UIApplication.willResignActiveNotification:
-            applicationWillResignActive(UIApplication.shared)
-        case UIApplication.didEnterBackgroundNotification:
-            applicationDidEnterBackground(UIApplication.shared)
+        let name = notification.name
+        ensureMainThread {
+            switch name {
+            case UIApplication.didBecomeActiveNotification:
+                self.applicationDidBecomeActive(UIApplication.shared)
+            case UIApplication.willResignActiveNotification:
+                self.applicationWillResignActive(UIApplication.shared)
+            case UIApplication.didEnterBackgroundNotification:
+                self.applicationDidEnterBackground(UIApplication.shared)
 
-        default: break
+            default: break
+            }
         }
     }
 }
@@ -368,19 +417,5 @@ extension AppDelegate {
         configuration.delegateClass = connectingSceneSession.configuration.delegateClass
 
         return configuration
-    }
-}
-
-// Ecosia: Register the APN device token and handle background notifications
-extension AppDelegate {
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        BrazeService.shared.registerDeviceToken(deviceToken)
-    }
-
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        if BrazeService.shared.handleBackgroundNotification(userInfo: userInfo, completionHandler: completionHandler) {
-            return
-        }
-        completionHandler(.noData)
     }
 }

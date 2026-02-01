@@ -6,6 +6,7 @@ import XCTest
 import Auth0
 @testable import Ecosia
 
+@MainActor
 final class AuthWorkflowTests: XCTestCase {
 
     var auth: EcosiaAuthenticationService!

@@ -9,6 +9,7 @@ protocol NTPCustomizationCellDelegate: AnyObject {
     func openNTPCustomizationSettings()
 }
 
+@MainActor
 final class NTPCustomizationCellViewModel {
     weak var delegate: NTPCustomizationCellDelegate?
     var theme: Theme

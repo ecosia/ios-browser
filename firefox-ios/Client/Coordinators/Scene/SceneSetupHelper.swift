@@ -4,7 +4,6 @@
 
 import Common
 import UIKit
-import Shared
 
 class BrowserWindow: UIWindow {
     let uuid: WindowUUID
@@ -27,6 +26,7 @@ class BrowserWindow: UIWindow {
 }
 
 struct SceneSetupHelper {
+    @MainActor
     func configureWindowFor(_ scene: UIScene,
                             windowUUID: WindowUUID,
                             screenshotServiceDelegate: UIScreenshotServiceDelegate) -> UIWindow {
@@ -46,6 +46,7 @@ struct SceneSetupHelper {
         return window
     }
 
+    @MainActor
     func createNavigationController() -> UINavigationController {
         let navigationController = RootNavigationController()
         navigationController.isNavigationBarHidden = true
@@ -56,7 +57,10 @@ struct SceneSetupHelper {
 }
 
 class RootNavigationController: UINavigationController {
-    override var prefersStatusBarHidden: Bool {
-        return true
+    // Forward status bar appearance decisions to the top view controller. By default, UINavigationController ignores
+    // child view controllers’ preferStatusBarHidden values. Overriding this ensures that the top view controller controls
+    // whether the status bar is hidden.
+    override var childForStatusBarHidden: UIViewController? {
+        return topViewController
     }
 }

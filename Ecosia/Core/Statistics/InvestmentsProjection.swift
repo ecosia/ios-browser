@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 public final class InvestmentsProjection: Publisher {
     public static let shared = InvestmentsProjection()
     public var subscriptions = [Subscription<Int>]()

@@ -10,6 +10,7 @@ protocol DefaultBrowserDelegate: AnyObject {
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowserViewController)
 }
 
+@MainActor
 final class DefaultBrowserViewController: UIViewController, Themeable {
     static let minSearchCountToTrigger = 50
 

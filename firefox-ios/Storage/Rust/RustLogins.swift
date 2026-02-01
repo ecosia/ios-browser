@@ -3,8 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-// Ecosia: Glean removed - not used by Ecosia
-// import Glean
+import Glean
 import Shared
 import Common
 
@@ -609,13 +608,11 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
     }
 
     public func reportPreSyncKeyRetrievalFailure(err: String) {
-        // Ecosia: Glean removed - not used by Ecosia
-        /*
-        GleanMetrics
-            .PreSyncKeyRetrievalFailure
-            .logins
-            .record(GleanMetrics .PreSyncKeyRetrievalFailure .LoginsExtra(errorMessage: err))
-        */
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        // GleanMetrics
+        //     .PreSyncKeyRetrievalFailure
+        //     .logins
+        //     .record(GleanMetrics.PreSyncKeyRetrievalFailure.LoginsExtra(errorMessage: err))
     }
 
     private func resetLoginsAndKey(completion: @escaping @Sendable (Result<String, NSError>) -> Void) {
@@ -671,8 +668,8 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
                 self.logger.log("Logins key was corrupted, new one generated",
                                 level: .warning,
                                 category: .storage)
-                        // Ecosia: Glean removed - not used by Ecosia
-                        // GleanMetrics.LoginsStoreKeyRegeneration.corrupt.record()
+                // Ecosia: Telemetry silenced via FakeGleanWrapper
+                // GleanMetrics.LoginsStoreKeyRegeneration.corrupt.record()
                 self.resetLoginsAndKey(completion: completion)
             }
         } catch let error as NSError {
@@ -690,8 +687,8 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
         self.logger.log("Logins key lost due to storage malfunction, new one generated",
                         level: .warning,
                         category: .storage)
-                // Ecosia: Glean removed - not used by Ecosia
-                // GleanMetrics.LoginsStoreKeyRegeneration.other.record()
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        // GleanMetrics.LoginsStoreKeyRegeneration.other.record()
         self.resetLoginsAndKey(completion: completion)
     }
 
@@ -701,8 +698,8 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
         self.logger.log("Logins key lost, new one generated",
                         level: .warning,
                         category: .storage)
-                // Ecosia: Glean removed - not used by Ecosia
-                // GleanMetrics.LoginsStoreKeyRegeneration.lost.record()
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        // GleanMetrics.LoginsStoreKeyRegeneration.lost.record()
         self.resetLoginsAndKey(completion: completion)
     }
 
@@ -727,8 +724,8 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
             if hasLogins {
                 // Since the key data isn't present and we have login records in
                 // the database, we both clear the database and reset the key.
-                        // Ecosia: Glean removed - not used by Ecosia
-                        // GleanMetrics.LoginsStoreKeyRegeneration.keychainDataLost.record()
+                // Ecosia: Telemetry silenced via FakeGleanWrapper
+                // GleanMetrics.LoginsStoreKeyRegeneration.keychainDataLost.record()
                 self.resetLoginsAndKey(completion: completion)
             } else {
                 // There are no records in the database so we don't need to wipe any

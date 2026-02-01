@@ -19,47 +19,51 @@ public let defaultErrorReporter: NimbusErrorReporter = { err in
     }
 }
 
-final class GleanMetricsHandler: MetricsHandler {
+class GleanMetricsHandler: MetricsHandler {
     func recordEnrollmentStatuses(enrollmentStatusExtras: [EnrollmentStatusExtraDef]) {
-        for extra in enrollmentStatusExtras {
-            GleanMetrics.NimbusEvents.enrollmentStatus
-                .record(GleanMetrics.NimbusEvents.EnrollmentStatusExtra(
-                    branch: extra.branch,
-                    conflictSlug: extra.conflictSlug,
-                    errorString: extra.errorString,
-                    reason: extra.reason,
-                    slug: extra.slug,
-                    status: extra.status
-                ))
-        }
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // for extra in enrollmentStatusExtras {
+        //     GleanMetrics.NimbusEvents.enrollmentStatus
+        //         .record(GleanMetrics.NimbusEvents.EnrollmentStatusExtra(
+        //             branch: extra.branch,
+        //             conflictSlug: extra.conflictSlug,
+        //             errorString: extra.errorString,
+        //             reason: extra.reason,
+        //             slug: extra.slug,
+        //             status: extra.status
+        //         ))
+        // }
     }
 
     func recordFeatureActivation(event: FeatureExposureExtraDef) {
-        GleanMetrics.NimbusEvents.activation
-            .record(GleanMetrics.NimbusEvents.ActivationExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.activation
+        //     .record(GleanMetrics.NimbusEvents.ActivationExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId
+        //     ))
     }
 
     func recordFeatureExposure(event: FeatureExposureExtraDef) {
-        GleanMetrics.NimbusEvents.exposure
-            .record(GleanMetrics.NimbusEvents.ExposureExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.exposure
+        //     .record(GleanMetrics.NimbusEvents.ExposureExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId
+        //     ))
     }
 
     func recordMalformedFeatureConfig(event: MalformedFeatureConfigExtraDef) {
-        GleanMetrics.NimbusEvents.malformedFeature
-            .record(GleanMetrics.NimbusEvents.MalformedFeatureExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId,
-                partId: event.part
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.malformedFeature
+        //     .record(GleanMetrics.NimbusEvents.MalformedFeatureExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId,
+        //         partId: event.part
+        //     ))
     }
 }
 
@@ -85,13 +89,16 @@ public extension Nimbus {
         enabled: Bool = true,
         userDefaults: UserDefaults? = nil,
         errorReporter: @escaping NimbusErrorReporter = defaultErrorReporter,
-        recordedContext: RecordedContext? = nil
+        recordedContext: RecordedContext? = nil,
+        remoteSettingsService: RemoteSettingsService? = nil,
+        collectionName: String? = nil
     ) throws -> NimbusInterface {
         guard enabled else {
             return NimbusDisabled.shared
         }
 
         let context = Nimbus.buildExperimentContext(appSettings)
+        // Ecosia: Use remoteSettingsService from server config (API changed in newer version)
         let nimbusClient = try NimbusClient(
             appCtx: context,
             recordedContext: recordedContext,
@@ -99,8 +106,8 @@ public extension Nimbus {
             dbpath: dbPath,
             metricsHandler: GleanMetricsHandler(),
             geckoPrefHandler: nil,
-            remoteSettingsService: server?.remoteSettingsService,
-            collectionName: server?.collection
+            remoteSettingsService: server?.remoteSettingsService ?? remoteSettingsService,
+            collectionName: server?.collection ?? collectionName
         )
 
         return Nimbus(
@@ -114,24 +121,8 @@ public extension Nimbus {
     static func buildExperimentContext(
         _ appSettings: NimbusAppSettings,
         bundle: Bundle = Bundle.main,
-        device currentDevice: UIDevice? = nil
+        device: UIDevice = .current
     ) -> AppContext {
-        var systemName = ""
-        var systemVersion = ""
-
-        // FIXME: FXIOS-13512 Questionable workaround to get main actor isolated UIDevice.current; rearchitect later
-        if Thread.isMainThread {
-            MainActor.assumeIsolated {
-                systemName = (currentDevice ?? UIDevice.current).systemName
-                systemVersion = (currentDevice ?? UIDevice.current).systemVersion
-            }
-        } else {
-            DispatchQueue.main.sync {
-                systemName = (currentDevice ?? UIDevice.current).systemName
-                systemVersion = (currentDevice ?? UIDevice.current).systemVersion
-            }
-        }
-
         let info = bundle.infoDictionary ?? [:]
         var inferredDateInstalledOn: Date? {
             guard
@@ -154,8 +145,8 @@ public extension Nimbus {
             deviceManufacturer: Sysctl.manufacturer,
             deviceModel: Sysctl.model,
             locale: getLocaleTag(), // from Glean utils
-            os: systemName,
-            osVersion: systemVersion,
+            os: device.systemName,
+            osVersion: device.systemVersion,
             androidSdkVersion: nil,
             debugTag: "Nimbus.rs",
             installationDate: installationDateSinceEpoch,

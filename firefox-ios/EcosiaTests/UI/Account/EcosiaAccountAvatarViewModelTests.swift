@@ -7,6 +7,7 @@ import Combine
 @testable import Ecosia
 
 @available(iOS 16.0, *)
+@MainActor
 final class EcosiaAccountAvatarViewModelTests: XCTestCase {
 
     private var viewModel: EcosiaAccountAvatarViewModel!

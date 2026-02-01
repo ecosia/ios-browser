@@ -3,36 +3,34 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-/* Ecosia: Remove Glean
 import Glean
- */
 
 /// Measure with a time distribution https://mozilla.github.io/glean/book/reference/metrics/timing_distribution.html
 /// how long it takes to load a webpage
 final class WebViewLoadMeasurementTelemetry {
-    /* Ecosia: Remove Glean
+    private let gleanWrapper: GleanWrapper
     private var loadTimerId: GleanTimerId?
-     */
+
+    init(gleanWrapper: GleanWrapper = DefaultGleanWrapper()) {
+        self.gleanWrapper = gleanWrapper
+    }
 
     func start() {
-        /* Ecosia: Remove Glean
-        loadTimerId = GleanMetrics.Webview.pageLoad.start()
-         */
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        loadTimerId = gleanWrapper.startTiming(for: GleanMetrics.Webview.pageLoad)
     }
 
     func stop() {
-        /* Ecosia: Remove Glean
         guard let timerId = loadTimerId else { return }
-        GleanMetrics.Webview.pageLoad.stopAndAccumulate(timerId)
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        gleanWrapper.stopAndAccumulateTiming(for: GleanMetrics.Webview.pageLoad, timerId: timerId)
         loadTimerId = nil
-         */
     }
 
     func cancel() {
-        /* Ecosia: Remove Glean
         if let loadTimerId {
-            GleanMetrics.Webview.pageLoad.cancel(loadTimerId)
+            // Ecosia: Telemetry silenced via FakeGleanWrapper
+            gleanWrapper.cancelTiming(for: GleanMetrics.Webview.pageLoad, timerId: loadTimerId)
         }
-         */
     }
 }

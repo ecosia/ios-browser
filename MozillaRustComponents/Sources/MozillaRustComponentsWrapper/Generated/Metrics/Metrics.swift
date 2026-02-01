@@ -23,235 +23,2370 @@ extension GleanMetrics {
             // Intentionally left private, no external user can instantiate a new global object.
         }
 
-        public static let info = BuildInfo(buildDate: DateComponents(calendar: Calendar.current, timeZone: TimeZone(abbreviation: "UTC"), year: 2026, month: 1, day: 16, hour: 5, minute: 19, second: 1))
+        public static let info = BuildInfo(buildDate: DateComponents(calendar: Calendar.current, timeZone: TimeZone(abbreviation: "UTC"), year: 2026, month: 1, day: 30, hour: 16, minute: 30, second: 39))
     }
 
-    enum AdsClient {
-        private static let buildCacheErrorLabel = StringMetricType( // generated from ads_client.build_cache_error
-            CommonMetricData(
-                category: "ads_client",
-                name: "build_cache_error",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
+    final class Pings: Sendable {
+        public static let shared = Pings()
+        private init() {
+            // Intentionally left private, no external user can instantiate a new global object.
+        }
+
+        enum DauReportingReasonCodes: Int, ReasonCodes, Sendable {
+            case active = 0
+            case dirtyStartup = 1
+            case inactive = 2
+
+            public func index() -> Int {
+                return self.rawValue
+            }
+        }
+
+        /// Minimal ping to measure DAU.
+        /// Sent on the baseline schedule.
+        /// 
+        /// **NOTE**: This ping is deprecated and replaced by the `usage-reporting` ping.
+        let dauReporting = Ping<DauReportingReasonCodes>(
+            name: "dau-reporting",
+            includeClientId: true,
+            sendIfEmpty: true,
+            preciseTimestamps: true,
+            includeInfoSections: true,
+            enabled: true,
+            schedulesPings: [],
+            reasonCodes: ["active", "dirty_startup", "inactive"],
+            followsCollectionEnabled: true,
+            uploaderCapabilities: []
         )
 
-        /// Errors encountered when building the HTTP cache, labeled by error type. The
-        /// string value contains the error message or error type.
-        static let buildCacheError = try! LabeledMetricType<StringMetricType>( // generated from ads_client.build_cache_error
-            category: "ads_client",
-            name: "build_cache_error",
-            sendInPings: ["metrics"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: buildCacheErrorLabel,
-            labels: ["builder_error", "database_error", "empty_db_path", "invalid_max_size", "invalid_ttl"]
+        /// Recorded on first_session when the user installs the app.
+        let firstSession = Ping<NoReasonCodes>(
+            name: "first-session",
+            includeClientId: true,
+            sendIfEmpty: false,
+            preciseTimestamps: true,
+            includeInfoSections: true,
+            enabled: true,
+            schedulesPings: [],
+            reasonCodes: [],
+            followsCollectionEnabled: true,
+            uploaderCapabilities: []
         )
 
-        private static let clientErrorLabel = StringMetricType( // generated from ads_client.client_error
-            CommonMetricData(
-                category: "ads_client",
-                name: "client_error",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
+        /// A ping for information about Mozilla Account usage. Sent at the same cadence
+        /// as the baseline ping.
+        /// 
+        /// Owner: @jdavis
+        let fxAccounts = Ping<NoReasonCodes>(
+            name: "fx-accounts",
+            includeClientId: true,
+            sendIfEmpty: false,
+            preciseTimestamps: true,
+            includeInfoSections: true,
+            enabled: true,
+            schedulesPings: [],
+            reasonCodes: [],
+            followsCollectionEnabled: true,
+            uploaderCapabilities: []
         )
 
-        /// Errors encountered when using the ads client, labeled by operation type. The
-        /// string value contains the error message or error type. Errors are recorded even
-        /// if they are propagated to the consumer.
-        static let clientError = try! LabeledMetricType<StringMetricType>( // generated from ads_client.client_error
-            category: "ads_client",
-            name: "client_error",
-            sendInPings: ["metrics"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: clientErrorLabel,
-            labels: ["record_click", "record_impression", "report_ad", "request_ads"]
+        /// A ping representing a single event occurring with or to a Firefox Suggestion.
+        /// Distinguishable by its `ping_type`.
+        /// Does not contain a `client_id`, preferring a `context_id` instead.
+        let fxSuggest = Ping<NoReasonCodes>(
+            name: "fx-suggest",
+            includeClientId: false,
+            sendIfEmpty: false,
+            preciseTimestamps: true,
+            includeInfoSections: true,
+            enabled: true,
+            schedulesPings: [],
+            reasonCodes: [],
+            followsCollectionEnabled: true,
+            uploaderCapabilities: ["ohttp"]
         )
 
-        private static let clientOperationTotalLabel = CounterMetricType( // generated from ads_client.client_operation_total
-            CommonMetricData(
-                category: "ads_client",
-                name: "client_operation_total",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
+        /// This ping is submitted by Nimbus code after the enrollment workflow has
+        /// completed.
+        let nimbus = Ping<NoReasonCodes>(
+            name: "nimbus",
+            includeClientId: true,
+            sendIfEmpty: true,
+            preciseTimestamps: true,
+            includeInfoSections: true,
+            enabled: true,
+            schedulesPings: [],
+            reasonCodes: [],
+            followsCollectionEnabled: true,
+            uploaderCapabilities: []
         )
 
-        /// The total number of operations attempted by the ads client, labeled by
-        /// operation type. Used as the denominator for client_operation_success_rate.
-        static let clientOperationTotal = try! LabeledMetricType<CounterMetricType>( // generated from ads_client.client_operation_total
-            category: "ads_client",
-            name: "client_operation_total",
-            sendInPings: ["metrics"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: clientOperationTotalLabel,
-            labels: ["new", "record_click", "record_impression", "report_ad", "request_ads"]
+        /// This ping is submitted when a user opts out of
+        /// usage-reporting during the onboarding process.
+        /// It is sent immediately upon opting out of Telemetry/Usage Tracking (T/UT)
+        /// at ToS consent. This ping will only ever be sent during the
+        /// initial onboarding flow.
+        /// If the global telemetry preference is disabled, this ping
+        /// includes specific settings to ensure it can still be submitted.
+        let onboardingOptOut = Ping<NoReasonCodes>(
+            name: "onboarding-opt-out",
+            includeClientId: false,
+            sendIfEmpty: true,
+            preciseTimestamps: true,
+            includeInfoSections: false,
+            enabled: false,
+            schedulesPings: [],
+            reasonCodes: [],
+            followsCollectionEnabled: false,
+            uploaderCapabilities: []
         )
 
-        private static let deserializationErrorLabel = StringMetricType( // generated from ads_client.deserialization_error
-            CommonMetricData(
-                category: "ads_client",
-                name: "deserialization_error",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
+        /// Recorded when a sponsored top site is rendered and
+        /// visible on the newtab page. Visibility is qualified
+        /// as when the homepage is brought to the front of the
+        /// Browser, and sponsored tiles are 100% visible on screen.
+        let topsitesImpression = Ping<NoReasonCodes>(
+            name: "topsites-impression",
+            includeClientId: false,
+            sendIfEmpty: false,
+            preciseTimestamps: true,
+            includeInfoSections: true,
+            enabled: true,
+            schedulesPings: [],
+            reasonCodes: [],
+            followsCollectionEnabled: true,
+            uploaderCapabilities: []
         )
 
-        /// Deserialization errors encountered when parsing AdResponse data, labeled by
-        /// error type. The string value contains the error message or details. Invalid ad
-        /// items are skipped but these errors are tracked for monitoring data quality
-        /// issues.
-        static let deserializationError = try! LabeledMetricType<StringMetricType>( // generated from ads_client.deserialization_error
-            category: "ads_client",
-            name: "deserialization_error",
-            sendInPings: ["metrics"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: deserializationErrorLabel,
-            labels: ["invalid_ad_item", "invalid_array", "invalid_structure"]
+        enum UsageDeletionRequestReasonCodes: Int, ReasonCodes, Sendable {
+            case setUploadEnabled = 0
+
+            public func index() -> Int {
+                return self.rawValue
+            }
+        }
+
+        /// This ping is submitted when a user opts out of sending usage
+        /// frequency of Firefox to Mozilla.
+        /// Sent in response to user action.
+        let usageDeletionRequest = Ping<UsageDeletionRequestReasonCodes>(
+            name: "usage-deletion-request",
+            includeClientId: false,
+            sendIfEmpty: true,
+            preciseTimestamps: true,
+            includeInfoSections: false,
+            enabled: false,
+            schedulesPings: [],
+            reasonCodes: ["set_upload_enabled"],
+            followsCollectionEnabled: false,
+            uploaderCapabilities: []
         )
 
-        private static let httpCacheOutcomeLabel = StringMetricType( // generated from ads_client.http_cache_outcome
-            CommonMetricData(
-                category: "ads_client",
-                name: "http_cache_outcome",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
+        enum UsageReportingReasonCodes: Int, ReasonCodes, Sendable {
+            case active = 0
+            case dirtyStartup = 1
+            case inactive = 2
+
+            public func index() -> Int {
+                return self.rawValue
+            }
+        }
+
+        /// Minimal ping to measure the usage frequency of Firefox.
+        /// Sent on the baseline schedule.
+        let usageReporting = Ping<UsageReportingReasonCodes>(
+            name: "usage-reporting",
+            includeClientId: false,
+            sendIfEmpty: true,
+            preciseTimestamps: true,
+            includeInfoSections: false,
+            enabled: false,
+            schedulesPings: [],
+            reasonCodes: ["active", "dirty_startup", "inactive"],
+            followsCollectionEnabled: false,
+            uploaderCapabilities: []
         )
 
-        /// The total number of outcomes encountered during read operations on the http
-        /// cache, labeled by type. The string value contains the error message or error
-        /// type.
-        static let httpCacheOutcome = try! LabeledMetricType<StringMetricType>( // generated from ads_client.http_cache_outcome
-            category: "ads_client",
-            name: "http_cache_outcome",
-            sendInPings: ["metrics"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: httpCacheOutcomeLabel,
-            labels: ["cleanup_failed", "hit", "lookup_failed", "miss_not_cacheable", "miss_stored", "no_cache", "store_failed"]
-        )
     }
 
-    enum NimbusEvents {
-        struct ActivationExtra: EventExtras {
-            var branch: String?
-            var experiment: String?
-            var featureId: String?
+    enum AiSummarize {
+        struct SummarizationCompletedExtra: EventExtras {
+            var connectionType: String?
+            var errorType: String?
+            var lengthChars: Int32?
+            var lengthWords: Int32?
+            var model: String?
+            var outcome: Bool?
 
             func toExtraRecord() -> [String: String] {
                 var record = [String: String]()
 
-                if let branch = self.branch {
-                    record["branch"] = String(branch)
+                if let connectionType = self.connectionType {
+                    record["connection_type"] = String(connectionType)
                 }
-                if let experiment = self.experiment {
-                    record["experiment"] = String(experiment)
+                if let errorType = self.errorType {
+                    record["error_type"] = String(errorType)
                 }
-                if let featureId = self.featureId {
-                    record["feature_id"] = String(featureId)
+                if let lengthChars = self.lengthChars {
+                    record["length_chars"] = String(lengthChars)
+                }
+                if let lengthWords = self.lengthWords {
+                    record["length_words"] = String(lengthWords)
+                }
+                if let model = self.model {
+                    record["model"] = String(model)
+                }
+                if let outcome = self.outcome {
+                    record["outcome"] = String(outcome)
                 }
 
                 return record
             }
         }
 
-        struct DisqualificationExtra: EventExtras {
-            var branch: String?
-            var experiment: String?
+        struct SummarizationConsentDisplayedExtra: EventExtras {
+            var agreed: Bool?
 
             func toExtraRecord() -> [String: String] {
                 var record = [String: String]()
 
-                if let branch = self.branch {
-                    record["branch"] = String(branch)
-                }
-                if let experiment = self.experiment {
-                    record["experiment"] = String(experiment)
+                if let agreed = self.agreed {
+                    record["agreed"] = String(agreed)
                 }
 
                 return record
             }
         }
 
-        struct EnrollFailedExtra: EventExtras {
-            var branch: String?
-            var experiment: String?
-            var reason: String?
+        struct SummarizationRequestedExtra: EventExtras {
+            var trigger: String?
 
             func toExtraRecord() -> [String: String] {
                 var record = [String: String]()
 
-                if let branch = self.branch {
-                    record["branch"] = String(branch)
-                }
-                if let experiment = self.experiment {
-                    record["experiment"] = String(experiment)
-                }
-                if let reason = self.reason {
-                    record["reason"] = String(reason)
+                if let trigger = self.trigger {
+                    record["trigger"] = String(trigger)
                 }
 
                 return record
             }
         }
 
-        struct EnrollmentExtra: EventExtras {
-            var branch: String?
-            var experiment: String?
-            var experimentType: String?
+        struct SummarizationStartedExtra: EventExtras {
+            var lengthChars: Int32?
+            var lengthWords: Int32?
 
             func toExtraRecord() -> [String: String] {
                 var record = [String: String]()
 
-                if let branch = self.branch {
-                    record["branch"] = String(branch)
+                if let lengthChars = self.lengthChars {
+                    record["length_chars"] = String(lengthChars)
                 }
-                if let experiment = self.experiment {
-                    record["experiment"] = String(experiment)
-                }
-                if let experimentType = self.experimentType {
-                    record["experiment_type"] = String(experimentType)
+                if let lengthWords = self.lengthWords {
+                    record["length_words"] = String(lengthWords)
                 }
 
                 return record
             }
         }
 
-        struct EnrollmentStatusExtra: EventExtras {
-            var branch: String?
-            var conflictSlug: String?
-            var errorString: String?
-            var reason: String?
-            var slug: String?
+        /// Recorded when the user cancels or closes the summarization at any point.
+        static let summarizationClosed = EventMetricType<NoExtras>( // generated from ai.summarize.summarization_closed
+            CommonMetricData(
+                category: "ai.summarize",
+                name: "summarization_closed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when the summarizer service returns the summary or errors out.
+        static let summarizationCompleted = EventMetricType<SummarizationCompletedExtra>( // generated from ai.summarize.summarization_completed
+            CommonMetricData(
+                category: "ai.summarize",
+                name: "summarization_completed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["connection_type", "error_type", "length_chars", "length_words", "model", "outcome"]
+        )
+
+        /// Recorded when the user is shown the Terms of Service consent dialogue.
+        static let summarizationConsentDisplayed = EventMetricType<SummarizationConsentDisplayedExtra>( // generated from ai.summarize.summarization_consent_displayed
+            CommonMetricData(
+                category: "ai.summarize",
+                name: "summarization_consent_displayed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["agreed"]
+        )
+
+        /// Recorded when the result of the summarization is displayed to the user.
+        static let summarizationDisplayed = EventMetricType<NoExtras>( // generated from ai.summarize.summarization_displayed
+            CommonMetricData(
+                category: "ai.summarize",
+                name: "summarization_displayed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded the instant the user initiates the summarization.
+        /// (e.g. taps menu button, toolbar icon or shakes the device)
+        static let summarizationRequested = EventMetricType<SummarizationRequestedExtra>( // generated from ai.summarize.summarization_requested
+            CommonMetricData(
+                category: "ai.summarize",
+                name: "summarization_requested",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["trigger"]
+        )
+
+        /// Recorded when the summarizer service starts processing the page's text content.
+        static let summarizationStarted = EventMetricType<SummarizationStartedExtra>( // generated from ai.summarize.summarization_started
+            CommonMetricData(
+                category: "ai.summarize",
+                name: "summarization_started",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["length_chars", "length_words"]
+        )
+
+        /// Records the total time for generating the summary and showing it to the user.
+        /// Starts when the user triggers summarization.
+        /// Ends when user sees the result or an error.
+        static let summarizationTime = TimingDistributionMetricType( // generated from ai.summarize.summarization_time
+            CommonMetricData(
+                category: "ai.summarize",
+                name: "summarization_time",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , .millisecond
+        )
+
+    }
+
+    enum UserAiSummarize {
+        /// Records if the user has shake to summarize option enabled
+        static let shakeGestureEnabled = BooleanMetricType( // generated from user.ai.summarize.shake_gesture_enabled
+            CommonMetricData(
+                category: "user.ai.summarize",
+                name: "shake_gesture_enabled",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records if the user has summarization enabled.
+        static let summarizationEnabled = BooleanMetricType( // generated from user.ai.summarize.summarization_enabled
+            CommonMetricData(
+                category: "user.ai.summarize",
+                name: "summarization_enabled",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Translations {
+        struct PageLanguageIdentificationFailedExtra: EventExtras {
+            var errorType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let errorType = self.errorType {
+                    record["error_type"] = String(errorType)
+                }
+
+                return record
+            }
+        }
+
+        struct PageLanguageIdentifiedExtra: EventExtras {
+            var deviceLanguage: String?
+            var identifiedLanguage: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let deviceLanguage = self.deviceLanguage {
+                    record["device_language"] = String(deviceLanguage)
+                }
+                if let identifiedLanguage = self.identifiedLanguage {
+                    record["identified_language"] = String(identifiedLanguage)
+                }
+
+                return record
+            }
+        }
+
+        struct TranslationFailedExtra: EventExtras {
+            var errorType: String?
+            var translationFlowId: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let errorType = self.errorType {
+                    record["error_type"] = String(errorType)
+                }
+                if let translationFlowId = self.translationFlowId {
+                    record["translation_flow_id"] = String(translationFlowId)
+                }
+
+                return record
+            }
+        }
+
+        struct WebpageRestoredExtra: EventExtras {
+            var translationFlowId: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let translationFlowId = self.translationFlowId {
+                    record["translation_flow_id"] = String(translationFlowId)
+                }
+
+                return record
+            }
+        }
+
+        /// Triggers when there is an error attempting to detect the language of a
+        /// webpage from a sample.
+        static let pageLanguageIdentificationFailed = EventMetricType<PageLanguageIdentificationFailedExtra>( // generated from translations.page_language_identification_failed
+            CommonMetricData(
+                category: "translations",
+                name: "page_language_identification_failed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["error_type"]
+        )
+
+        /// Triggers when the language of a webpage has been successfully detected
+        /// from a text sample.
+        static let pageLanguageIdentified = EventMetricType<PageLanguageIdentifiedExtra>( // generated from translations.page_language_identified
+            CommonMetricData(
+                category: "translations",
+                name: "page_language_identified",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["device_language", "identified_language"]
+        )
+
+        /// Recorded when translation fails after a translation request is made.
+        static let translationFailed = EventMetricType<TranslationFailedExtra>( // generated from translations.translation_failed
+            CommonMetricData(
+                category: "translations",
+                name: "translation_failed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["error_type", "translation_flow_id"]
+        )
+
+        /// Recorded when the user restores a webpage to its original (non-translated)
+        /// content.
+        static let webpageRestored = EventMetricType<WebpageRestoredExtra>( // generated from translations.webpage_restored
+            CommonMetricData(
+                category: "translations",
+                name: "webpage_restored",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["translation_flow_id"]
+        )
+
+    }
+
+    enum AppIcon {
+        /// A user opened a new private tab from long pressing the app icon
+        static let newPrivateTabTapped = EventMetricType<NoExtras>( // generated from app_icon.new_private_tab_tapped
+            CommonMetricData(
+                category: "app_icon",
+                name: "new_private_tab_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum AppMenu {
+        struct CloseButtonExtra: EventExtras {
+            var isHomepage: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isHomepage = self.isHomepage {
+                    record["is_homepage"] = String(isHomepage)
+                }
+
+                return record
+            }
+        }
+
+        struct MainMenuOptionSelectedExtra: EventExtras {
+            var isHomepage: Bool?
+            var option: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isHomepage = self.isHomepage {
+                    record["is_homepage"] = String(isHomepage)
+                }
+                if let option = self.option {
+                    record["option"] = String(option)
+                }
+
+                return record
+            }
+        }
+
+        struct MenuDismissedExtra: EventExtras {
+            var isHomepage: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isHomepage = self.isHomepage {
+                    record["is_homepage"] = String(isHomepage)
+                }
+
+                return record
+            }
+        }
+
+        /// Counts the number of times a user disables Block Images
+        /// in the app menu
+        static let blockImagesDisabled = CounterMetricType( // generated from app_menu.block_images_disabled
+            CommonMetricData(
+                category: "app_menu",
+                name: "block_images_disabled",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user enables Block Images
+        /// in the app menu
+        static let blockImagesEnabled = CounterMetricType( // generated from app_menu.block_images_enabled
+            CommonMetricData(
+                category: "app_menu",
+                name: "block_images_enabled",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Record event when user has tapped the close menu button.
+        static let closeButton = EventMetricType<CloseButtonExtra>( // generated from app_menu.close_button
+            CommonMetricData(
+                category: "app_menu",
+                name: "close_button",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_homepage"]
+        )
+
+        /// Counts the number of times a user taps Customize Homepage
+        /// in the app menu
+        static let customizeHomepage = CounterMetricType( // generated from app_menu.customize_homepage
+            CommonMetricData(
+                category: "app_menu",
+                name: "customize_homepage",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Help in the app menu
+        static let help = CounterMetricType( // generated from app_menu.help
+            CommonMetricData(
+                category: "app_menu",
+                name: "help",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Home in the app menu
+        static let home = CounterMetricType( // generated from app_menu.home
+            CommonMetricData(
+                category: "app_menu",
+                name: "home",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps in the menu toolbar
+        /// on the homepage
+        static let homepageMenu = CounterMetricType( // generated from app_menu.homepage_menu
+            CommonMetricData(
+                category: "app_menu",
+                name: "homepage_menu",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Logins & Passwords
+        /// in the app menu
+        static let logins = CounterMetricType( // generated from app_menu.logins
+            CommonMetricData(
+                category: "app_menu",
+                name: "logins",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Record event when user has tapped on the main menu option.
+        static let mainMenuOptionSelected = EventMetricType<MainMenuOptionSelectedExtra>( // generated from app_menu.main_menu_option_selected
+            CommonMetricData(
+                category: "app_menu",
+                name: "main_menu_option_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_homepage", "option"]
+        )
+
+        /// Record event when user has dismissed the menu because of tapping outside or
+        /// drag the menu.
+        static let menuDismissed = EventMetricType<MenuDismissedExtra>( // generated from app_menu.menu_dismissed
+            CommonMetricData(
+                category: "app_menu",
+                name: "menu_dismissed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_homepage"]
+        )
+
+        /// Counts the number of times a user taps Disable Night Mode
+        /// in the app menu
+        static let nightModeDisabled = CounterMetricType( // generated from app_menu.night_mode_disabled
+            CommonMetricData(
+                category: "app_menu",
+                name: "night_mode_disabled",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Enable Night Mode
+        /// in the app menu
+        static let nightModeEnabled = CounterMetricType( // generated from app_menu.night_mode_enabled
+            CommonMetricData(
+                category: "app_menu",
+                name: "night_mode_enabled",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records when the user taps Passwords in the app menu
+        static let passwords = EventMetricType<NoExtras>( // generated from app_menu.passwords
+            CommonMetricData(
+                category: "app_menu",
+                name: "passwords",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Counts the number of times a user taps Settings in the app menu
+        static let settings = CounterMetricType( // generated from app_menu.settings
+            CommonMetricData(
+                category: "app_menu",
+                name: "settings",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Sign Into Sync
+        /// in the app menu
+        static let signIntoSync = CounterMetricType( // generated from app_menu.sign_into_sync
+            CommonMetricData(
+                category: "app_menu",
+                name: "sign_into_sync",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps in the menu toolbar
+        /// from a website
+        static let siteMenu = CounterMetricType( // generated from app_menu.site_menu
+            CommonMetricData(
+                category: "app_menu",
+                name: "site_menu",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps What's New in the app menu
+        static let whatsNew = CounterMetricType( // generated from app_menu.whats_new
+            CommonMetricData(
+                category: "app_menu",
+                name: "whats_new",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum PageActionMenu {
+        /// Counts the number of times a user taps Copy Address
+        /// in the page action menu
+        static let copyAddress = CounterMetricType( // generated from page_action_menu.copy_address
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "copy_address",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user creates a new tab from the
+        /// page action menu.
+        static let createNewTab = CounterMetricType( // generated from page_action_menu.create_new_tab
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "create_new_tab",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Find in Page
+        /// in the page action menu
+        static let findInPage = CounterMetricType( // generated from page_action_menu.find_in_page
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "find_in_page",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Pin to Top Sites
+        /// in the page action menu
+        static let pinToTopSites = CounterMetricType( // generated from page_action_menu.pin_to_top_sites
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "pin_to_top_sites",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Pin to Top Sites
+        /// in the page action menu
+        static let removePinnedSite = CounterMetricType( // generated from page_action_menu.remove_pinned_site
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "remove_pinned_site",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Report Site Issue
+        /// in the page action menu
+        static let reportSiteIssue = CounterMetricType( // generated from page_action_menu.report_site_issue
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "report_site_issue",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Request Desktop Site
+        /// in the page action menu
+        static let requestDesktopSite = CounterMetricType( // generated from page_action_menu.request_desktop_site
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "request_desktop_site",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Request Mobile Site
+        /// in the page action menu
+        static let requestMobileSite = CounterMetricType( // generated from page_action_menu.request_mobile_site
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "request_mobile_site",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Send to Device
+        /// in the page action menu
+        static let sendToDevice = CounterMetricType( // generated from page_action_menu.send_to_device
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "send_to_device",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps Share Page With in the
+        /// page action menu
+        static let sharePageWith = CounterMetricType( // generated from page_action_menu.share_page_with
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "share_page_with",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user navigates to the downloads panel
+        /// from the page action menu.
+        static let viewDownloadsPanel = CounterMetricType( // generated from page_action_menu.view_downloads_panel
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "view_downloads_panel",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user navigates to the history panel
+        /// from the page action menu.
+        static let viewHistoryPanel = CounterMetricType( // generated from page_action_menu.view_history_panel
+            CommonMetricData(
+                category: "page_action_menu",
+                name: "view_history_panel",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Addresses {
+        /// Recorded when the autofill prompt was dismissed.
+        static let autofillPromptDismissed = EventMetricType<NoExtras>( // generated from addresses.autofill_prompt_dismissed
+            CommonMetricData(
+                category: "addresses",
+                name: "autofill_prompt_dismissed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when the autofill prompt was expanded.
+        static let autofillPromptExpanded = EventMetricType<NoExtras>( // generated from addresses.autofill_prompt_expanded
+            CommonMetricData(
+                category: "addresses",
+                name: "autofill_prompt_expanded",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when autofill popup is shown, indicating which field triggered this
+        /// event.
+        static let autofillPromptShown = EventMetricType<NoExtras>( // generated from addresses.autofill_prompt_shown
+            CommonMetricData(
+                category: "addresses",
+                name: "autofill_prompt_shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a form is autofilled.
+        static let autofilled = EventMetricType<NoExtras>( // generated from addresses.autofilled
+            CommonMetricData(
+                category: "addresses",
+                name: "autofilled",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a form is recognized as an address form.
+        static let formDetected = EventMetricType<NoExtras>( // generated from addresses.form_detected
+            CommonMetricData(
+                category: "addresses",
+                name: "form_detected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a field is autofilled and then modified by the user.
+        static let modified = EventMetricType<NoExtras>( // generated from addresses.modified
+            CommonMetricData(
+                category: "addresses",
+                name: "modified",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A counter of the number of all addresses that are currently saved by the user.
+        static let savedAll = QuantityMetricType( // generated from addresses.saved_all
+            CommonMetricData(
+                category: "addresses",
+                name: "saved_all",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Recorded when the user has tapped Autofill in the settings menu.
+        static let settingsAutofill = EventMetricType<NoExtras>( // generated from addresses.settings_autofill
+            CommonMetricData(
+                category: "addresses",
+                name: "settings_autofill",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum CreditCard {
+        struct AutofillToggleExtra: EventExtras {
+            var isEnabled: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isEnabled = self.isEnabled {
+                    record["is_enabled"] = String(isEnabled)
+                }
+
+                return record
+            }
+        }
+
+        struct SyncToggleExtra: EventExtras {
+            var isEnabled: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isEnabled = self.isEnabled {
+                    record["is_enabled"] = String(isEnabled)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded on startup to check if credit card
+        /// autofill settings are enabled
+        static let autofillEnabled = BooleanMetricType( // generated from credit_card.autofill_enabled
+            CommonMetricData(
+                category: "credit_card",
+                name: "autofill_enabled",
+                sendInPings: ["metrics"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// Recorded when a user taps a card from bottom sheet
+        /// select a card flow and the credit card does not
+        /// get autofilled on the webpage
+        static let autofillFailed = EventMetricType<NoExtras>( // generated from credit_card.autofill_failed
+            CommonMetricData(
+                category: "credit_card",
+                name: "autofill_failed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the credit card autofill prompt was dismissed.
+        static let autofillPromptDismissed = EventMetricType<NoExtras>( // generated from credit_card.autofill_prompt_dismissed
+            CommonMetricData(
+                category: "credit_card",
+                name: "autofill_prompt_dismissed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the credit card autofill prompt was expanded.
+        static let autofillPromptExpanded = EventMetricType<NoExtras>( // generated from credit_card.autofill_prompt_expanded
+            CommonMetricData(
+                category: "credit_card",
+                name: "autofill_prompt_expanded",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the credit card autofill prompt was shown.
+        static let autofillPromptShown = EventMetricType<NoExtras>( // generated from credit_card.autofill_prompt_shown
+            CommonMetricData(
+                category: "credit_card",
+                name: "autofill_prompt_shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when the user taps on credit card autofill
+        /// settings item in settings screen.
+        static let autofillSettingsTapped = EventMetricType<NoExtras>( // generated from credit_card.autofill_settings_tapped
+            CommonMetricData(
+                category: "credit_card",
+                name: "autofill_settings_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a user toggles to enable save and autofill
+        /// cards in autofill settings
+        static let autofillToggle = EventMetricType<AutofillToggleExtra>( // generated from credit_card.autofill_toggle
+            CommonMetricData(
+                category: "credit_card",
+                name: "autofill_toggle",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_enabled"]
+        )
+
+        /// Recorded when a user taps a card from bottom sheet
+        /// select a card flow and the credit card gets
+        /// autofilled on the webpage
+        static let autofilled = EventMetricType<NoExtras>( // generated from credit_card.autofilled
+            CommonMetricData(
+                category: "credit_card",
+                name: "autofilled",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A counter of the number of credit cards that have been deleted by the user.
+        static let deleted = CounterMetricType( // generated from credit_card.deleted
+            CommonMetricData(
+                category: "credit_card",
+                name: "deleted",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Recorded when the user taps on credit card form input
+        /// and we detect it.
+        static let formDetected = EventMetricType<NoExtras>( // generated from credit_card.form_detected
+            CommonMetricData(
+                category: "credit_card",
+                name: "form_detected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the user has tapped the add button through credit card management
+        /// settings.
+        static let managementAddTapped = EventMetricType<NoExtras>( // generated from credit_card.management_add_tapped
+            CommonMetricData(
+                category: "credit_card",
+                name: "management_add_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the user has tapped on a saved card through credit card management
+        /// settings.
+        static let managementCardTapped = EventMetricType<NoExtras>( // generated from credit_card.management_card_tapped
+            CommonMetricData(
+                category: "credit_card",
+                name: "management_card_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A counter of the number of credit cards that have been modified by the user.
+        static let modified = CounterMetricType( // generated from credit_card.modified
+            CommonMetricData(
+                category: "credit_card",
+                name: "modified",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Recorded when a user saved a credit card using
+        /// the autofill save prompt.
+        static let savePromptCreate = EventMetricType<NoExtras>( // generated from credit_card.save_prompt_create
+            CommonMetricData(
+                category: "credit_card",
+                name: "save_prompt_create",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the credit card autofill save prompt is shown.
+        static let savePromptShown = EventMetricType<NoExtras>( // generated from credit_card.save_prompt_shown
+            CommonMetricData(
+                category: "credit_card",
+                name: "save_prompt_shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the user updated a credit card using the autofill save prompt.
+        static let savePromptUpdate = EventMetricType<NoExtras>( // generated from credit_card.save_prompt_update
+            CommonMetricData(
+                category: "credit_card",
+                name: "save_prompt_update",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A counter of the number of credit cards that have been saved by the user.
+        static let saved = CounterMetricType( // generated from credit_card.saved
+            CommonMetricData(
+                category: "credit_card",
+                name: "saved",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Record the number of ALL the credit cards that have been currently stored by
+        /// the user.
+        static let savedAll = QuantityMetricType( // generated from credit_card.saved_all
+            CommonMetricData(
+                category: "credit_card",
+                name: "saved_all",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Recorded on startup to check if credit card
+        /// sync settings are enabled
+        static let syncEnabled = BooleanMetricType( // generated from credit_card.sync_enabled
+            CommonMetricData(
+                category: "credit_card",
+                name: "sync_enabled",
+                sendInPings: ["metrics"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// Recorded when a user toggles to enable save and autofill
+        /// cards in sync settings
+        static let syncToggle = EventMetricType<SyncToggleExtra>( // generated from credit_card.sync_toggle
+            CommonMetricData(
+                category: "credit_card",
+                name: "sync_toggle",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_enabled"]
+        )
+
+    }
+
+    enum AutofillEmailMask {
+        struct AutofillFailedExtra: EventExtras {
+            var error: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let error = self.error {
+                    record["error"] = String(error)
+                }
+
+                return record
+            }
+        }
+
+        struct AutofilledExtra: EventExtras {
+            var isNewEmailMask: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isNewEmailMask = self.isNewEmailMask {
+                    record["is_new_email_mask"] = String(isNewEmailMask)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when autofilling a Relay email mask fails for any reason.
+        static let autofillFailed = EventMetricType<AutofillFailedExtra>( // generated from autofill.email_mask.autofill_failed
+            CommonMetricData(
+                category: "autofill.email_mask",
+                name: "autofill_failed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["error"]
+        )
+
+        /// Recorded when autofilling a Relay email mask succeeds.
+        static let autofilled = EventMetricType<AutofilledExtra>( // generated from autofill.email_mask.autofilled
+            CommonMetricData(
+                category: "autofill.email_mask",
+                name: "autofilled",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_new_email_mask"]
+        )
+
+        /// Recorded when the Learn More button in the Email Mask settings screen is
+        /// tapped.
+        static let emailMaskLearnMoreTapped = EventMetricType<NoExtras>( // generated from autofill.email_mask.email_mask_learn_more_tapped
+            CommonMetricData(
+                category: "autofill.email_mask",
+                name: "email_mask_learn_more_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when the Manage Email Masks button in Email Mask settings is tapped.
+        static let manageEmailMaskTapped = EventMetricType<NoExtras>( // generated from autofill.email_mask.manage_email_mask_tapped
+            CommonMetricData(
+                category: "autofill.email_mask",
+                name: "manage_email_mask_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when the keyboard accessory is shown to allow Relay email mask
+        /// generation.
+        static let promptShown = EventMetricType<NoExtras>( // generated from autofill.email_mask.prompt_shown
+            CommonMetricData(
+                category: "autofill.email_mask",
+                name: "prompt_shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum PasswordGenerator {
+        /// The "use password button" of the password generator bottom sheet was clicked.
+        static let filled = CounterMetricType( // generated from password_generator.filled
+            CommonMetricData(
+                category: "password_generator",
+                name: "filled",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// The password generator bottom sheet was shown and is visible
+        static let shown = CounterMetricType( // generated from password_generator.shown
+            CommonMetricData(
+                category: "password_generator",
+                name: "shown",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Logins {
+        struct SyncEnabledExtra: EventExtras {
+            var isEnabled: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isEnabled = self.isEnabled {
+                    record["is_enabled"] = String(isEnabled)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when the user has failed to autofill a password.
+        static let autofillFailed = EventMetricType<NoExtras>( // generated from logins.autofill_failed
+            CommonMetricData(
+                category: "logins",
+                name: "autofill_failed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Password autofill prompt was dismissed.
+        static let autofillPromptDismissed = EventMetricType<NoExtras>( // generated from logins.autofill_prompt_dismissed
+            CommonMetricData(
+                category: "logins",
+                name: "autofill_prompt_dismissed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Password autofill prompt was expanded.
+        static let autofillPromptExpanded = EventMetricType<NoExtras>( // generated from logins.autofill_prompt_expanded
+            CommonMetricData(
+                category: "logins",
+                name: "autofill_prompt_expanded",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Password autofill prompt was shown.
+        static let autofillPromptShown = EventMetricType<NoExtras>( // generated from logins.autofill_prompt_shown
+            CommonMetricData(
+                category: "logins",
+                name: "autofill_prompt_shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the user has autofilled a login.
+        static let autofilled = EventMetricType<NoExtras>( // generated from logins.autofilled
+            CommonMetricData(
+                category: "logins",
+                name: "autofilled",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A counter of the number of passwords that have been deleted by the user.
+        static let deleted = CounterMetricType( // generated from logins.deleted
+            CommonMetricData(
+                category: "logins",
+                name: "deleted",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records when the user has tapped the add button through password management in
+        /// the settings menu
+        static let managementAddTapped = EventMetricType<NoExtras>( // generated from logins.management_add_tapped
+            CommonMetricData(
+                category: "logins",
+                name: "management_add_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the user has tapped on a saved login through password management
+        /// in the setting menu.
+        static let managementLoginsTapped = EventMetricType<NoExtras>( // generated from logins.management_logins_tapped
+            CommonMetricData(
+                category: "logins",
+                name: "management_logins_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A counter of the number of passwords that have been modified by the user.
+        static let modified = CounterMetricType( // generated from logins.modified
+            CommonMetricData(
+                category: "logins",
+                name: "modified",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A counter of the number of passwords that have been saved by the user.
+        static let saved = CounterMetricType( // generated from logins.saved
+            CommonMetricData(
+                category: "logins",
+                name: "saved",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Record the number of ALL the passwords that have been currently stored by the
+        /// user.
+        static let savedAll = QuantityMetricType( // generated from logins.saved_all
+            CommonMetricData(
+                category: "logins",
+                name: "saved_all",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Whether the user has logins enabled in sync option
+        static let syncEnabled = EventMetricType<SyncEnabledExtra>( // generated from logins.sync_enabled
+            CommonMetricData(
+                category: "logins",
+                name: "sync_enabled",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_enabled"]
+        )
+
+    }
+
+    enum HistoryMigration2022 {
+        /// Recorded when a user undergoes a successful application services history
+        /// migration. This migration occurs for users updating their app from
+        /// version 110. The migration ensures the user preserves all their browsing
+        /// history. This migration was added in the fall of 2022.
+        /// 
+        /// This setting can safely be expired after we have ensured that the history
+        /// migration code is no longer required (due to low event counts).
+        /// 
+        /// Owner: @Andy
+        static let migrationAttempted = EventMetricType<NoExtras>( // generated from history.migration_2022.migration_attempted
+            CommonMetricData(
+                category: "history.migration_2022",
+                name: "migration_attempted",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum HomepageShortcutsLibrary {
+        /// Recorded when a user closes the shortcuts library via the back button or swipe
+        /// back gesture.
+        static let closed = EventMetricType<NoExtras>( // generated from homepage.shortcuts_library.closed
+            CommonMetricData(
+                category: "homepage.shortcuts_library",
+                name: "closed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a user taps on a shortcut in the shortcuts library screen.
+        static let shortcutTapped = EventMetricType<NoExtras>( // generated from homepage.shortcuts_library.shortcut_tapped
+            CommonMetricData(
+                category: "homepage.shortcuts_library",
+                name: "shortcut_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a user sees the shortcuts library screen.
+        static let viewed = EventMetricType<NoExtras>( // generated from homepage.shortcuts_library.viewed
+            CommonMetricData(
+                category: "homepage.shortcuts_library",
+                name: "viewed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum HomepageStoriesFeed {
+        struct StoryTappedExtra: EventExtras {
+            var index: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let index = self.index {
+                    record["index"] = String(index)
+                }
+
+                return record
+            }
+        }
+
+        struct StoryViewedExtra: EventExtras {
+            var index: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let index = self.index {
+                    record["index"] = String(index)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when a user closes the stories feed via the back button or swipe back
+        /// gesture.
+        static let closed = EventMetricType<NoExtras>( // generated from homepage.stories_feed.closed
+            CommonMetricData(
+                category: "homepage.stories_feed",
+                name: "closed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a user taps on a story in the stories feed screen.
+        static let storyTapped = EventMetricType<StoryTappedExtra>( // generated from homepage.stories_feed.story_tapped
+            CommonMetricData(
+                category: "homepage.stories_feed",
+                name: "story_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["index"]
+        )
+
+        /// Records the stories the user can see (impressions) when they stop scrolling.
+        static let storyViewed = EventMetricType<StoryViewedExtra>( // generated from homepage.stories_feed.story_viewed
+            CommonMetricData(
+                category: "homepage.stories_feed",
+                name: "story_viewed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["index"]
+        )
+
+        /// Recorded when a user sees the stories feed screen.
+        static let viewed = EventMetricType<NoExtras>( // generated from homepage.stories_feed.viewed
+            CommonMetricData(
+                category: "homepage.stories_feed",
+                name: "viewed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum Bookmarks {
+        /// A user added a new bookmark folder.
+        static let folderAdd = EventMetricType<NoExtras>( // generated from bookmarks.folder_add
+            CommonMetricData(
+                category: "bookmarks",
+                name: "folder_add",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        private static let viewListLabel = CounterMetricType( // generated from bookmarks.view_list
+            CommonMetricData(
+                category: "bookmarks",
+                name: "view_list",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times the bookmarks list is opened
+        /// from either the Home Panel tab button or the App Menu.
+        static let viewList = try! LabeledMetricType<CounterMetricType>( // generated from bookmarks.view_list
+            category: "bookmarks",
+            name: "view_list",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: viewListLabel,
+            labels: ["app-menu"]
+        )
+
+        private static let addLabel = CounterMetricType( // generated from bookmarks.add
+            CommonMetricData(
+                category: "bookmarks",
+                name: "add",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a bookmark is added from the
+        /// following:
+        /// * Page Action Menu
+        /// * Share Menu
+        /// * Activity stream
+        static let add = try! LabeledMetricType<CounterMetricType>( // generated from bookmarks.add
+            category: "bookmarks",
+            name: "add",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: addLabel,
+            labels: ["activity-stream", "page-action-menu", "share-menu"]
+        )
+
+        private static let deleteLabel = CounterMetricType( // generated from bookmarks.delete
+            CommonMetricData(
+                category: "bookmarks",
+                name: "delete",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a bookmark is deleted from
+        /// the following:
+        /// * Page Action Menu
+        /// * Activity Stream
+        /// * Bookmarks Panel
+        static let delete = try! LabeledMetricType<CounterMetricType>( // generated from bookmarks.delete
+            category: "bookmarks",
+            name: "delete",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: deleteLabel,
+            labels: ["activity-stream", "bookmarks-panel", "page-action-menu"]
+        )
+
+        private static let editLabel = CounterMetricType( // generated from bookmarks.edit
+            CommonMetricData(
+                category: "bookmarks",
+                name: "edit",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a bookmark is tapped to
+        /// be edited from:
+        /// * Add bookmark toast Edit button
+        /// * Bookmarks panel edit bookmarks view
+        static let edit = try! LabeledMetricType<CounterMetricType>( // generated from bookmarks.edit
+            category: "bookmarks",
+            name: "edit",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: editLabel,
+            labels: ["add-bookmark-toast", "bookmarks-panel"]
+        )
+
+        /// A boolean that indicates if the user has bookmarks
+        /// in the mobile folder.
+        static let hasMobileBookmarks = BooleanMetricType( // generated from bookmarks.has_mobile_bookmarks
+            CommonMetricData(
+                category: "bookmarks",
+                name: "has_mobile_bookmarks",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A quantity that indicates how many bookmarks a user
+        /// has in the mobile folder.
+        static let mobileBookmarksCount = QuantityMetricType( // generated from bookmarks.mobile_bookmarks_count
+            CommonMetricData(
+                category: "bookmarks",
+                name: "mobile_bookmarks_count",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let openLabel = CounterMetricType( // generated from bookmarks.open
+            CommonMetricData(
+                category: "bookmarks",
+                name: "open",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a bookmark is opened from
+        /// the following:
+        /// * Awesomebar results
+        /// * Bookmarks Panel
+        /// * Top sites
+        static let open = try! LabeledMetricType<CounterMetricType>( // generated from bookmarks.open
+            category: "bookmarks",
+            name: "open",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: openLabel,
+            labels: ["awesomebar-results", "bookmarks-panel"]
+        )
+
+    }
+
+    enum Downloads {
+        /// Records when a row is pressed in the downloads panel
+        static let downloadsPanelRowTapped = EventMetricType<NoExtras>( // generated from downloads.downloads_panel_row_tapped
+            CommonMetricData(
+                category: "downloads",
+                name: "downloads_panel_row_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the download now button is pressed
+        static let downloadNowButtonTapped = EventMetricType<NoExtras>( // generated from downloads.download_now_button_tapped
+            CommonMetricData(
+                category: "downloads",
+                name: "download_now_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the toast message is tapped after a download is completed
+        static let viewDownloadCompleteToast = EventMetricType<NoExtras>( // generated from downloads.view_download_complete_toast
+            CommonMetricData(
+                category: "downloads",
+                name: "view_download_complete_toast",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum History {
+        /// Recorded when a user taps on trash icon in history panel
+        static let deleteTap = EventMetricType<NoExtras>( // generated from history.delete_tap
+            CommonMetricData(
+                category: "history",
+                name: "delete_tap",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A user opened the history screen.
+        static let opened = EventMetricType<NoExtras>( // generated from history.opened
+            CommonMetricData(
+                category: "history",
+                name: "opened",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a user opened a history item
+        static let openedItem = EventMetricType<NoExtras>( // generated from history.opened_item
+            CommonMetricData(
+                category: "history",
+                name: "opened_item",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A user removed a history item.
+        static let removed = EventMetricType<NoExtras>( // generated from history.removed
+            CommonMetricData(
+                category: "history",
+                name: "removed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a user taps on search icon in history panel
+        static let searchTap = EventMetricType<NoExtras>( // generated from history.search_tap
+            CommonMetricData(
+                category: "history",
+                name: "search_tap",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        private static let selectedItemLabel = CounterMetricType( // generated from history.selected_item
+            CommonMetricData(
+                category: "history",
+                name: "selected_item",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user selected an item from
+        /// the history panel. This labeled counter will tell apart
+        /// items that appear inside a group, and those that do not.
+        static let selectedItem = try! LabeledMetricType<CounterMetricType>( // generated from history.selected_item
+            category: "history",
+            name: "selected_item",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: selectedItemLabel,
+            labels: ["group-item", "non-grouped-item"]
+        )
+
+    }
+
+    enum LibraryHistoryPanel {
+        struct ClearedHistoryExtra: EventExtras {
+            var timeframe: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let timeframe = self.timeframe {
+                    record["timeframe"] = String(timeframe)
+                }
+
+                return record
+            }
+        }
+
+        /// A user deleted history entries from a certain timeframe
+        static let clearedHistory = EventMetricType<ClearedHistoryExtra>( // generated from library.history_panel.cleared_history
+            CommonMetricData(
+                category: "library.history_panel",
+                name: "cleared_history",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["timeframe"]
+        )
+
+    }
+
+    enum ReadingList {
+        /// Counts the number of times an item is opened from the
+        /// Reading List
+        static let open = CounterMetricType( // generated from reading_list.open
+            CommonMetricData(
+                category: "reading_list",
+                name: "open",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let addLabel = CounterMetricType( // generated from reading_list.add
+            CommonMetricData(
+                category: "reading_list",
+                name: "add",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times an item is added to the reading
+        /// list from the following:
+        /// * Reader Mode Toolbar
+        /// * Share Extension
+        /// * Page Action Menu
+        static let add = try! LabeledMetricType<CounterMetricType>( // generated from reading_list.add
+            category: "reading_list",
+            name: "add",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: addLabel,
+            labels: ["page-action-menu", "reader-mode-toolbar", "share-extension"]
+        )
+
+        private static let deleteLabel = CounterMetricType( // generated from reading_list.delete
+            CommonMetricData(
+                category: "reading_list",
+                name: "delete",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times an item is added to the
+        /// reading list from the following:
+        /// * Reader Mode Toolbar
+        /// * Reading List Panel
+        static let delete = try! LabeledMetricType<CounterMetricType>( // generated from reading_list.delete
+            category: "reading_list",
+            name: "delete",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: deleteLabel,
+            labels: ["page-action-menu", "reader-mode-toolbar", "reading-list-panel"]
+        )
+
+    }
+
+    enum Accessibility {
+        struct DynamicTextExtra: EventExtras {
+            var isAccessibilitySizeEnabled: String?
+            var preferredSize: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isAccessibilitySizeEnabled = self.isAccessibilitySizeEnabled {
+                    record["is_accessibility_size_enabled"] = String(isAccessibilitySizeEnabled)
+                }
+                if let preferredSize = self.preferredSize {
+                    record["preferred_size"] = String(preferredSize)
+                }
+
+                return record
+            }
+        }
+
+        struct InvertColorsExtra: EventExtras {
+            var isEnabled: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isEnabled = self.isEnabled {
+                    record["is_enabled"] = String(isEnabled)
+                }
+
+                return record
+            }
+        }
+
+        struct ReduceMotionExtra: EventExtras {
+            var isEnabled: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isEnabled = self.isEnabled {
+                    record["is_enabled"] = String(isEnabled)
+                }
+
+                return record
+            }
+        }
+
+        struct ReduceTransparencyExtra: EventExtras {
+            var isEnabled: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isEnabled = self.isEnabled {
+                    record["is_enabled"] = String(isEnabled)
+                }
+
+                return record
+            }
+        }
+
+        struct SwitchControlExtra: EventExtras {
+            var isRunning: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isRunning = self.isRunning {
+                    record["is_running"] = String(isRunning)
+                }
+
+                return record
+            }
+        }
+
+        struct VoiceOverExtra: EventExtras {
+            var isRunning: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isRunning = self.isRunning {
+                    record["is_running"] = String(isRunning)
+                }
+
+                return record
+            }
+        }
+
+        /// Records the Dynamic Text feature
+        static let dynamicText = EventMetricType<DynamicTextExtra>( // generated from accessibility.dynamic_text
+            CommonMetricData(
+                category: "accessibility",
+                name: "dynamic_text",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_accessibility_size_enabled", "preferred_size"]
+        )
+
+        /// Records the Invert Colors feature
+        static let invertColors = EventMetricType<InvertColorsExtra>( // generated from accessibility.invert_colors
+            CommonMetricData(
+                category: "accessibility",
+                name: "invert_colors",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_enabled"]
+        )
+
+        /// Records the Reduce Motion feature
+        static let reduceMotion = EventMetricType<ReduceMotionExtra>( // generated from accessibility.reduce_motion
+            CommonMetricData(
+                category: "accessibility",
+                name: "reduce_motion",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_enabled"]
+        )
+
+        /// Records the Reduce Transparency feature
+        static let reduceTransparency = EventMetricType<ReduceTransparencyExtra>( // generated from accessibility.reduce_transparency
+            CommonMetricData(
+                category: "accessibility",
+                name: "reduce_transparency",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_enabled"]
+        )
+
+        /// Records the Switch Control feature
+        static let switchControl = EventMetricType<SwitchControlExtra>( // generated from accessibility.switch_control
+            CommonMetricData(
+                category: "accessibility",
+                name: "switch_control",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_running"]
+        )
+
+        /// Records the Voice Over feature
+        static let voiceOver = EventMetricType<VoiceOverExtra>( // generated from accessibility.voice_over
+            CommonMetricData(
+                category: "accessibility",
+                name: "voice_over",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_running"]
+        )
+
+    }
+
+    enum Adjust {
+        struct DeeplinkReceivedExtra: EventExtras {
+            var receivedUrl: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let receivedUrl = self.receivedUrl {
+                    record["received_url"] = String(receivedUrl)
+                }
+
+                return record
+            }
+        }
+
+        /// A string containing the Adjust ad group ID from which the user installed
+        /// Firefox-iOS.
+        static let adGroup = StringMetricType( // generated from adjust.ad_group
+            CommonMetricData(
+                category: "adjust",
+                name: "ad_group",
+                sendInPings: ["first-session", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A string containing the Adjust campaign ID from which the user installed
+        /// Firefox-iOS.
+        static let campaign = StringMetricType( // generated from adjust.campaign
+            CommonMetricData(
+                category: "adjust",
+                name: "campaign",
+                sendInPings: ["first-session", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A string containing the Adjust creative ID from which the user installed
+        /// Firefox-iOS.
+        static let creative = StringMetricType( // generated from adjust.creative
+            CommonMetricData(
+                category: "adjust",
+                name: "creative",
+                sendInPings: ["first-session", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Send for Adjust callback for deeplink.
+        static let deeplinkReceived = EventMetricType<DeeplinkReceivedExtra>( // generated from adjust.deeplink_received
+            CommonMetricData(
+                category: "adjust",
+                name: "deeplink_received",
+                sendInPings: ["events", "first-session"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["received_url"]
+        )
+
+        /// A string containing the Adjust network ID from which the user installed
+        /// Firefox-iOS.
+        static let network = StringMetricType( // generated from adjust.network
+            CommonMetricData(
+                category: "adjust",
+                name: "network",
+                sendInPings: ["first-session", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum App {
+        struct DefaultBrowserApiErrorExtra: EventExtras {
+            var apiQueryCount: Int32?
+            var errorDescription: String?
+            var lastProvidedDate: String?
+            var retryDate: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let apiQueryCount = self.apiQueryCount {
+                    record["api_query_count"] = String(apiQueryCount)
+                }
+                if let errorDescription = self.errorDescription {
+                    record["error_description"] = String(errorDescription)
+                }
+                if let lastProvidedDate = self.lastProvidedDate {
+                    record["last_provided_date"] = String(lastProvidedDate)
+                }
+                if let retryDate = self.retryDate {
+                    record["retry_date"] = String(retryDate)
+                }
+
+                return record
+            }
+        }
+
+        struct NotificationPermissionExtra: EventExtras {
+            var alertSetting: String?
             var status: String?
 
             func toExtraRecord() -> [String: String] {
                 var record = [String: String]()
 
-                if let branch = self.branch {
-                    record["branch"] = String(branch)
-                }
-                if let conflictSlug = self.conflictSlug {
-                    record["conflict_slug"] = String(conflictSlug)
-                }
-                if let errorString = self.errorString {
-                    record["error_string"] = String(errorString)
-                }
-                if let reason = self.reason {
-                    record["reason"] = String(reason)
-                }
-                if let slug = self.slug {
-                    record["slug"] = String(slug)
+                if let alertSetting = self.alertSetting {
+                    record["alert_setting"] = String(alertSetting)
                 }
                 if let status = self.status {
                     record["status"] = String(status)
@@ -261,179 +2396,88 @@ extension GleanMetrics {
             }
         }
 
-        struct ExposureExtra: EventExtras {
-            var branch: String?
-            var experiment: String?
-            var featureId: String?
-
-            func toExtraRecord() -> [String: String] {
-                var record = [String: String]()
-
-                if let branch = self.branch {
-                    record["branch"] = String(branch)
-                }
-                if let experiment = self.experiment {
-                    record["experiment"] = String(experiment)
-                }
-                if let featureId = self.featureId {
-                    record["feature_id"] = String(featureId)
-                }
-
-                return record
-            }
-        }
-
-        struct MalformedFeatureExtra: EventExtras {
-            var branch: String?
-            var experiment: String?
-            var featureId: String?
-            var partId: String?
-
-            func toExtraRecord() -> [String: String] {
-                var record = [String: String]()
-
-                if let branch = self.branch {
-                    record["branch"] = String(branch)
-                }
-                if let experiment = self.experiment {
-                    record["experiment"] = String(experiment)
-                }
-                if let featureId = self.featureId {
-                    record["feature_id"] = String(featureId)
-                }
-                if let partId = self.partId {
-                    record["part_id"] = String(partId)
-                }
-
-                return record
-            }
-        }
-
-        struct UnenrollFailedExtra: EventExtras {
-            var experiment: String?
-            var reason: String?
-
-            func toExtraRecord() -> [String: String] {
-                var record = [String: String]()
-
-                if let experiment = self.experiment {
-                    record["experiment"] = String(experiment)
-                }
-                if let reason = self.reason {
-                    record["reason"] = String(reason)
-                }
-
-                return record
-            }
-        }
-
-        struct UnenrollmentExtra: EventExtras {
-            var branch: String?
-            var experiment: String?
-            var reason: String?
-
-            func toExtraRecord() -> [String: String] {
-                var record = [String: String]()
-
-                if let branch = self.branch {
-                    record["branch"] = String(branch)
-                }
-                if let experiment = self.experiment {
-                    record["experiment"] = String(experiment)
-                }
-                if let reason = self.reason {
-                    record["reason"] = String(reason)
-                }
-
-                return record
-            }
-        }
-
-        /// Recorded when a feature is configured with an experimental configuration for
-        /// the first time in this session.
-        static let activation = EventMetricType<ActivationExtra>( // generated from nimbus_events.activation
+        /// The user installed the app via the browser choice screen
+        static let choiceScreenAcquisition = BooleanMetricType( // generated from app.choice_screen_acquisition
             CommonMetricData(
-                category: "nimbus_events",
-                name: "activation",
-                sendInPings: ["events"],
+                category: "app",
+                name: "choice_screen_acquisition",
+                sendInPings: ["metrics"],
                 lifetime: .ping,
-                disabled: true
+                disabled: false
             )
-            , ["branch", "experiment", "feature_id"]
         )
 
-        /// Recorded when a user becomes ineligible to continue receiving the treatment for
-        /// an enrolled experiment, for reasons such as the user opting out of the
-        /// experiment or no longer matching targeting for the experiment.
-        static let disqualification = EventMetricType<DisqualificationExtra>( // generated from nimbus_events.disqualification
+        /// Is Firefox the default browser
+        static let defaultBrowser = BooleanMetricType( // generated from app.default_browser
             CommonMetricData(
-                category: "nimbus_events",
-                name: "disqualification",
+                category: "app",
+                name: "default_browser",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records when the UIApplication.isDefault API returns an error,
+        /// capturing error details and context for debugging.
+        static let defaultBrowserApiError = EventMetricType<DefaultBrowserApiErrorExtra>( // generated from app.default_browser_api_error
+            CommonMetricData(
+                category: "app",
+                name: "default_browser_api_error",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
             )
-            , ["branch", "experiment"]
+            , ["api_query_count", "error_description", "last_provided_date", "retry_date"]
         )
 
-        /// Recorded when an enrollment fails, including the reason for the failure.
-        static let enrollFailed = EventMetricType<EnrollFailedExtra>( // generated from nimbus_events.enroll_failed
+        /// The date of when the app was last opened as default browser.
+        static let lastOpenedAsDefaultBrowser = DatetimeMetricType( // generated from app.last_opened_as_default_browser
             CommonMetricData(
-                category: "nimbus_events",
-                name: "enroll_failed",
-                sendInPings: ["background-update", "events"],
+                category: "app",
+                name: "last_opened_as_default_browser",
+                sendInPings: ["baseline", "metrics"],
                 lifetime: .ping,
                 disabled: false
             )
-            , ["branch", "experiment", "reason"]
+            , .day
         )
 
-        /// Recorded when a user has met the conditions and is first bucketed into an
-        /// experiment (i.e. targeting matched and they were randomized into a bucket and
-        /// branch of the experiment). Expected a maximum of once per experiment per user.
-        static let enrollment = EventMetricType<EnrollmentExtra>( // generated from nimbus_events.enrollment
+        /// Records the status of the users notification permission.
+        static let notificationPermission = EventMetricType<NotificationPermissionExtra>( // generated from app.notification_permission
             CommonMetricData(
-                category: "nimbus_events",
-                name: "enrollment",
+                category: "app",
+                name: "notification_permission",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
             )
-            , ["branch", "experiment", "experiment_type"]
+            , ["alert_setting", "status"]
         )
 
-        /// Recorded for each enrollment status each time the SDK completes application of
-        /// pending experiments.
-        static let enrollmentStatus = EventMetricType<EnrollmentStatusExtra>( // generated from nimbus_events.enrollment_status
+        /// Counts the number of times the app is opened from an external
+        /// link, implying the client has Firefox set as a default browser.
+        /// 
+        /// Currently this is our most accurate way of measuring how
+        /// often Firefox is set as the default browser.
+        static let openedAsDefaultBrowser = CounterMetricType( // generated from app.opened_as_default_browser
             CommonMetricData(
-                category: "nimbus_events",
-                name: "enrollment_status",
-                sendInPings: ["events"],
-                lifetime: .ping,
-                disabled: true
-            )
-            , ["branch", "conflict_slug", "error_string", "reason", "slug", "status"]
-        )
-
-        /// Recorded when a user actually observes an experimental treatment, or would have
-        /// observed an experimental treatment if they had been in a branch that would have
-        /// shown one.
-        static let exposure = EventMetricType<ExposureExtra>( // generated from nimbus_events.exposure
-            CommonMetricData(
-                category: "nimbus_events",
-                name: "exposure",
-                sendInPings: ["events"],
+                category: "app",
+                name: "opened_as_default_browser",
+                sendInPings: ["metrics"],
                 lifetime: .ping,
                 disabled: false
             )
-            , ["branch", "experiment", "feature_id"]
         )
 
-        /// An event sent when Nimbus finishes launching.
-        static let isReady = EventMetricType<NoExtras>( // generated from nimbus_events.is_ready
+    }
+
+    enum AppCycle {
+        /// Records when the app goes to background
+        static let background = EventMetricType<NoExtras>( // generated from app_cycle.background
             CommonMetricData(
-                category: "nimbus_events",
-                name: "is_ready",
+                category: "app_cycle",
+                name: "background",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
@@ -441,107 +2485,5328 @@ extension GleanMetrics {
             , []
         )
 
-        /// Recorded when feature code detects a problem with some part of the feature
-        /// configuration.
-        static let malformedFeature = EventMetricType<MalformedFeatureExtra>( // generated from nimbus_events.malformed_feature
+        /// Records when the app comes to foreground
+        static let foreground = EventMetricType<NoExtras>( // generated from app_cycle.foreground
             CommonMetricData(
-                category: "nimbus_events",
-                name: "malformed_feature",
+                category: "app_cycle",
+                name: "foreground",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
             )
-            , ["branch", "experiment", "feature_id", "part_id"]
+            , []
         )
 
-        /// Recorded when an unenrollment fails, including the reason for the failure.
-        static let unenrollFailed = EventMetricType<UnenrollFailedExtra>( // generated from nimbus_events.unenroll_failed
-            CommonMetricData(
-                category: "nimbus_events",
-                name: "unenroll_failed",
-                sendInPings: ["background-update", "events"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , ["experiment", "reason"]
-        )
-
-        /// Recorded when either telemetry is disabled, or the experiment has run for its
-        /// designed duration (i.e. it is no longer present in the Nimbus Remote Settings
-        /// collection)
-        static let unenrollment = EventMetricType<UnenrollmentExtra>( // generated from nimbus_events.unenrollment
-            CommonMetricData(
-                category: "nimbus_events",
-                name: "unenrollment",
-                sendInPings: ["events"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , ["branch", "experiment", "reason"]
-        )
     }
 
-    enum NimbusHealth {
-        struct CacheNotReadyForFeatureExtra: EventExtras {
-            var featureId: String?
+    enum AppErrors {
+        struct CpuExceptionExtra: EventExtras {
+            var size: Int32?
 
             func toExtraRecord() -> [String: String] {
                 var record = [String: String]()
 
-                if let featureId = self.featureId {
-                    record["feature_id"] = String(featureId)
+                if let size = self.size {
+                    record["size"] = String(size)
                 }
 
                 return record
             }
         }
 
-        /// Measure how long `applyPendingExperiments` takes.
-        /// `applyPendingExperiments` uses disk I/O, and happens at
-        /// startup, as part of the initialization sequence.
-        static let applyPendingExperimentsTime = TimingDistributionMetricType( // generated from nimbus_health.apply_pending_experiments_time
-            CommonMetricData(
-                category: "nimbus_health",
-                name: "apply_pending_experiments_time",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
+        struct HangExceptionExtra: EventExtras {
+            var size: Int32?
 
-        /// Recorded when an application or library requests a feature configuration before
-        /// the in memory cache has been populated from the database
-        static let cacheNotReadyForFeature = EventMetricType<CacheNotReadyForFeatureExtra>( // generated from nimbus_health.cache_not_ready_for_feature
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let size = self.size {
+                    record["size"] = String(size)
+                }
+
+                return record
+            }
+        }
+
+        struct LargeFileWriteExtra: EventExtras {
+            var size: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let size = self.size {
+                    record["size"] = String(size)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when a cpu exception is triggered
+        static let cpuException = EventMetricType<CpuExceptionExtra>( // generated from app_errors.cpu_exception
             CommonMetricData(
-                category: "nimbus_health",
-                name: "cache_not_ready_for_feature",
+                category: "app_errors",
+                name: "cpu_exception",
                 sendInPings: ["events"],
                 lifetime: .ping,
-                disabled: true
+                disabled: false
             )
-            , ["feature_id"]
+            , ["size"]
         )
 
-        /// Measures how long `fetchExperiments` takes.
-        static let fetchExperimentsTime = TimingDistributionMetricType( // generated from nimbus_health.fetch_experiments_time
+        /// Recorded when the previous session ended as a result of a crash
+        static let crashedLastLaunch = EventMetricType<NoExtras>( // generated from app_errors.crashed_last_launch
             CommonMetricData(
-                category: "nimbus_health",
-                name: "fetch_experiments_time",
+                category: "app_errors",
+                name: "crashed_last_launch",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when the main thread hangs
+        static let hangException = EventMetricType<HangExceptionExtra>( // generated from app_errors.hang_exception
+            CommonMetricData(
+                category: "app_errors",
+                name: "hang_exception",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["size"]
+        )
+
+        /// Recorded when a very large file is written to disk
+        static let largeFileWrite = EventMetricType<LargeFileWriteExtra>( // generated from app_errors.large_file_write
+            CommonMetricData(
+                category: "app_errors",
+                name: "large_file_write",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["size"]
+        )
+
+        /// Recorded when we detect potential tab loss
+        static let tabLossDetected = EventMetricType<NoExtras>( // generated from app_errors.tab_loss_detected
+            CommonMetricData(
+                category: "app_errors",
+                name: "tab_loss_detected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum BrowserSearch {
+        private static let adClicksLabel = CounterMetricType( // generated from browser_search.ad_clicks
+            CommonMetricData(
+                category: "browser_search",
+                name: "ad_clicks",
+                sendInPings: ["baseline", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records clicks of adverts on SERP pages.
+        /// The key format is `<provider-name>`.
+        static let adClicks = try! LabeledMetricType<CounterMetricType>( // generated from browser_search.ad_clicks
+            category: "browser_search",
+            name: "ad_clicks",
+            sendInPings: ["baseline", "metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: adClicksLabel,
+            labels: nil
+        )
+
+        private static let withAdsLabel = CounterMetricType( // generated from browser_search.with_ads
+            CommonMetricData(
+                category: "browser_search",
+                name: "with_ads",
+                sendInPings: ["baseline", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records counts of SERP pages with adverts displayed.
+        /// The key format is `<provider-name>`.
+        static let withAds = try! LabeledMetricType<CounterMetricType>( // generated from browser_search.with_ads
+            category: "browser_search",
+            name: "with_ads",
+            sendInPings: ["baseline", "metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: withAdsLabel,
+            labels: nil
+        )
+
+    }
+
+    enum CfrAnalytics {
+        struct DismissCfrFromButtonExtra: EventExtras {
+            var hintType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let hintType = self.hintType {
+                    record["hint_type"] = String(hintType)
+                }
+
+                return record
+            }
+        }
+
+        struct DismissCfrFromOutsideTapExtra: EventExtras {
+            var hintType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let hintType = self.hintType {
+                    record["hint_type"] = String(hintType)
+                }
+
+                return record
+            }
+        }
+
+        struct PressCfrActionButtonExtra: EventExtras {
+            var hintType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let hintType = self.hintType {
+                    record["hint_type"] = String(hintType)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when the user dismisses a CFR by tapping
+        /// the close button in the CFR. Hint type is sent
+        /// in the extra keys.
+        static let dismissCfrFromButton = EventMetricType<DismissCfrFromButtonExtra>( // generated from cfr_analytics.dismiss_cfr_from_button
+            CommonMetricData(
+                category: "cfr_analytics",
+                name: "dismiss_cfr_from_button",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["hint_type"]
+        )
+
+        /// Recorded when the user dismisses a CFR by tapping
+        /// outside the CFR. Hint type is sent in the extra keys.
+        static let dismissCfrFromOutsideTap = EventMetricType<DismissCfrFromOutsideTapExtra>( // generated from cfr_analytics.dismiss_cfr_from_outside_tap
+            CommonMetricData(
+                category: "cfr_analytics",
+                name: "dismiss_cfr_from_outside_tap",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["hint_type"]
+        )
+
+        /// Recorded when the user taps CFR's action button.
+        /// Hint type is sent in the extra keys.
+        static let pressCfrActionButton = EventMetricType<PressCfrActionButtonExtra>( // generated from cfr_analytics.press_cfr_action_button
+            CommonMetricData(
+                category: "cfr_analytics",
+                name: "press_cfr_action_button",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["hint_type"]
+        )
+
+    }
+
+    enum ContextMenu {
+        struct DismissedExtra: EventExtras {
+            var origin: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let origin = self.origin {
+                    record["origin"] = String(origin)
+                }
+
+                return record
+            }
+        }
+
+        struct OptionSelectedExtra: EventExtras {
+            var option: String?
+            var origin: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let option = self.option {
+                    record["option"] = String(option)
+                }
+                if let origin = self.origin {
+                    record["origin"] = String(origin)
+                }
+
+                return record
+            }
+        }
+
+        struct ShownExtra: EventExtras {
+            var origin: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let origin = self.origin {
+                    record["origin"] = String(origin)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when a context menu is dismissed.
+        static let dismissed = EventMetricType<DismissedExtra>( // generated from context_menu.dismissed
+            CommonMetricData(
+                category: "context_menu",
+                name: "dismissed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["origin"]
+        )
+
+        /// Records when the user selects an option from a context menu.
+        static let optionSelected = EventMetricType<OptionSelectedExtra>( // generated from context_menu.option_selected
+            CommonMetricData(
+                category: "context_menu",
+                name: "option_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["option", "origin"]
+        )
+
+        /// Records when a context menu is shown.
+        static let shown = EventMetricType<ShownExtra>( // generated from context_menu.shown
+            CommonMetricData(
+                category: "context_menu",
+                name: "shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["origin"]
+        )
+
+    }
+
+    enum DefaultBrowserCard {
+        /// Reports events of Home Tab Banner evergreen impressions.
+        static let evergreenImpression = EventMetricType<NoExtras>( // generated from default_browser_card.evergreen_impression
+            CommonMetricData(
+                category: "default_browser_card",
+                name: "evergreen_impression",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum Deletion {
+        /// The FxA device id.
+        static let syncDeviceId = StringMetricType( // generated from deletion.sync_device_id
+            CommonMetricData(
+                category: "deletion",
+                name: "sync_device_id",
+                sendInPings: ["deletion-request"],
+                lifetime: .user,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Device {
+        /// True if the device support device owner authentication
+        /// with either biometrics or a passcode.
+        static let authentication = BooleanMetricType( // generated from device.authentication
+            CommonMetricData(
+                category: "device",
+                name: "authentication",
+                sendInPings: ["metrics"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum FirefoxHomePage {
+        struct ReadingListViewExtra: EventExtras {
+            var readingListCount: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let readingListCount = self.readingListCount {
+                    record["reading_list_count"] = String(readingListCount)
+                }
+
+                return record
+            }
+        }
+
+        /// Counts the number of times a user taps to open the
+        /// settings menu to customize the Firefox Homepage
+        static let customizeHomepageButton = CounterMetricType( // generated from firefox_home_page.customize_homepage_button
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "customize_homepage_button",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// The number of times a user sees the Firefox Homepage
+        static let firefoxHomepageView = CounterMetricType( // generated from firefox_home_page.firefox_homepage_view
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "firefox_homepage_view",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let jumpBackInGroupOpenOriginLabel = CounterMetricType( // generated from firefox_home_page.jump_back_in_group_open_origin
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "jump_back_in_group_open_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps to open an
+        /// existing group from the Jump Back In section,
+        /// with a home page origin.
+        static let jumpBackInGroupOpenOrigin = try! LabeledMetricType<CounterMetricType>( // generated from firefox_home_page.jump_back_in_group_open_origin
+            category: "firefox_home_page",
+            name: "jump_back_in_group_open_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: jumpBackInGroupOpenOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        /// Counts the number of times a user taps to open an
+        /// existing group from the Jump Back In section
+        static let jumpBackInGroupOpened = CounterMetricType( // generated from firefox_home_page.jump_back_in_group_opened
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "jump_back_in_group_opened",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps the
+        /// Show All button in the Jump Back In section.
+        static let jumpBackInShowAll = CounterMetricType( // generated from firefox_home_page.jump_back_in_show_all
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "jump_back_in_show_all",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let jumpBackInShowAllOriginLabel = CounterMetricType( // generated from firefox_home_page.jump_back_in_show_all_origin
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "jump_back_in_show_all_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps the
+        /// Show All button in the Jump Back In section,
+        /// with a home page origin.
+        static let jumpBackInShowAllOrigin = try! LabeledMetricType<CounterMetricType>( // generated from firefox_home_page.jump_back_in_show_all_origin
+            category: "firefox_home_page",
+            name: "jump_back_in_show_all_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: jumpBackInShowAllOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        /// Counts the number of times a user taps to open an
+        /// existing tab from the Jump Back In section
+        static let jumpBackInTabOpened = CounterMetricType( // generated from firefox_home_page.jump_back_in_tab_opened
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "jump_back_in_tab_opened",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let jumpBackInTabOpenedOriginLabel = CounterMetricType( // generated from firefox_home_page.jump_back_in_tab_opened_origin
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "jump_back_in_tab_opened_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps to open an
+        /// existing tab from the Jump Back In section,
+        /// with a home page origin.
+        static let jumpBackInTabOpenedOrigin = try! LabeledMetricType<CounterMetricType>( // generated from firefox_home_page.jump_back_in_tab_opened_origin
+            category: "firefox_home_page",
+            name: "jump_back_in_tab_opened_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: jumpBackInTabOpenedOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        /// Counts the number of times a user sees a Jump Back In tile
+        /// in the Jump Back In section on the homepage
+        static let jumpBackInTileView = CounterMetricType( // generated from firefox_home_page.jump_back_in_tile_view
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "jump_back_in_tile_view",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts when a user opens Firefox Home
+        /// from awesomebar.
+        static let openFromAwesomebar = CounterMetricType( // generated from firefox_home_page.open_from_awesomebar
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "open_from_awesomebar",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts when user opens Firefox Home from
+        /// bottom right hamburger menu Home button
+        /// and New Tab button.
+        static let openFromMenuHomeButton = CounterMetricType( // generated from firefox_home_page.open_from_menu_home_button
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "open_from_menu_home_button",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Measures the state of the show Pocket stories preference.
+        static let pocketStoriesVisible = BooleanMetricType( // generated from firefox_home_page.pocket_stories_visible
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "pocket_stories_visible",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of reading list items
+        /// appearing in the Recently Saved section
+        /// on the Firefox home page.
+        static let readingListView = EventMetricType<ReadingListViewExtra>( // generated from firefox_home_page.reading_list_view
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "reading_list_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["reading_list_count"]
+        )
+
+        /// Counts the number of times a bookmarked item in
+        /// the Recently Saved section is tapped
+        static let recentlySavedBookmarkItem = CounterMetricType( // generated from firefox_home_page.recently_saved_bookmark_item
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "recently_saved_bookmark_item",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let recentlySavedBookmarkOriginLabel = CounterMetricType( // generated from firefox_home_page.recently_saved_bookmark_origin
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "recently_saved_bookmark_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a bookmarked item in
+        /// the Recently Saved section is tapped,
+        /// with a home page origin.
+        static let recentlySavedBookmarkOrigin = try! LabeledMetricType<CounterMetricType>( // generated from firefox_home_page.recently_saved_bookmark_origin
+            category: "firefox_home_page",
+            name: "recently_saved_bookmark_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: recentlySavedBookmarkOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        private static let recentlySavedReadOriginLabel = CounterMetricType( // generated from firefox_home_page.recently_saved_read_origin
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "recently_saved_read_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a reading list
+        /// item in the Recently Saved section is tapped,
+        /// with a home page origin.
+        static let recentlySavedReadOrigin = try! LabeledMetricType<CounterMetricType>( // generated from firefox_home_page.recently_saved_read_origin
+            category: "firefox_home_page",
+            name: "recently_saved_read_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: recentlySavedReadOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        /// Counts the number of times a reading list
+        /// item in the Recently Saved section is tapped.
+        static let recentlySavedReadingItem = CounterMetricType( // generated from firefox_home_page.recently_saved_reading_item
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "recently_saved_reading_item",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps the Show All
+        /// button of the Recently Saved Section
+        static let recentlySavedShowAll = CounterMetricType( // generated from firefox_home_page.recently_saved_show_all
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "recently_saved_show_all",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let recentlySavedShowAllOriginLabel = CounterMetricType( // generated from firefox_home_page.recently_saved_show_all_origin
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "recently_saved_show_all_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps the Show All
+        /// button of the Recently Saved Section,
+        /// with a home page origin.
+        static let recentlySavedShowAllOrigin = try! LabeledMetricType<CounterMetricType>( // generated from firefox_home_page.recently_saved_show_all_origin
+            category: "firefox_home_page",
+            name: "recently_saved_show_all_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: recentlySavedShowAllOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        /// Counts the number of times a user taps to open a
+        /// synced tab from the Jump Back In section
+        static let syncedTabOpened = CounterMetricType( // generated from firefox_home_page.synced_tab_opened
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "synced_tab_opened",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let syncedTabOpenedOriginLabel = CounterMetricType( // generated from firefox_home_page.synced_tab_opened_origin
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "synced_tab_opened_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps to open a
+        /// synced tab from the Jump Back In section,
+        /// with a home page origin.
+        static let syncedTabOpenedOrigin = try! LabeledMetricType<CounterMetricType>( // generated from firefox_home_page.synced_tab_opened_origin
+            category: "firefox_home_page",
+            name: "synced_tab_opened_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: syncedTabOpenedOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        /// Counts the number of times a user taps the
+        /// Show All button of Synced Tab in the Jump Back In section.
+        static let syncedTabShowAll = CounterMetricType( // generated from firefox_home_page.synced_tab_show_all
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "synced_tab_show_all",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        private static let syncedTabShowAllOriginLabel = CounterMetricType( // generated from firefox_home_page.synced_tab_show_all_origin
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "synced_tab_show_all_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times a user taps the
+        /// Show All button of Synced Tab in the Jump Back In section,
+        /// with a home page origin.
+        static let syncedTabShowAllOrigin = try! LabeledMetricType<CounterMetricType>( // generated from firefox_home_page.synced_tab_show_all_origin
+            category: "firefox_home_page",
+            name: "synced_tab_show_all_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: syncedTabShowAllOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        /// Counts the number of times a user sees the
+        /// Synced Tab tile on the homepage
+        static let syncedTabTileView = CounterMetricType( // generated from firefox_home_page.synced_tab_tile_view
+            CommonMetricData(
+                category: "firefox_home_page",
+                name: "synced_tab_tile_view",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum FxSuggest {
+        /// The name of the advertiser providing the sponsored suggestion
+        static let advertiser = StringMetricType( // generated from fx_suggest.advertiser
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "advertiser",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A unique identifier for a sponsored suggestion. Not set for non-sponsored
+        /// suggestions.
+        static let blockId = QuantityMetricType( // generated from fx_suggest.block_id
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "block_id",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// An identifier to identify users for Contextual Services user interaction pings.
+        static let contextId = UuidMetricType( // generated from fx_suggest.context_id
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "context_id",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records the system region of the user, the same used for configuring region
+        /// specific search providers.
+        static let country = StringMetricType( // generated from fx_suggest.country
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "country",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// The suggestion's advertising category. "22 - Shopping" for sponsored
+        /// suggestions.
+        /// Not set for non-sponsored suggestions.
+        static let iabCategory = StringMetricType( // generated from fx_suggest.iab_category
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "iab_category",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// If `ping_type` is "fxsuggest-impression", indicates whether this impression is
+        /// for a clicked suggestion. If `ping_type` is "fxsuggest-click", always `true`.
+        static let isClicked = BooleanMetricType( // generated from fx_suggest.is_clicked
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "is_clicked",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// The ping's type. Either "fxsuggest-click" or "fxsuggest-impression".
+        static let pingType = StringMetricType( // generated from fx_suggest.ping_type
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "ping_type",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// The position (1-based) of this suggestion in the full list of suggestions,
+        /// relative to the top of the awesomebar.
+        static let position = QuantityMetricType( // generated from fx_suggest.position
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "position",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// If this ping is for a sponsored suggestion, the partner URL for reporting this
+        /// interaction.
+        /// Not set for non-sponsored suggestions.
+        static let reportingUrl = UrlMetricType( // generated from fx_suggest.reporting_url
+            CommonMetricData(
+                category: "fx_suggest",
+                name: "reporting_url",
+                sendInPings: ["fx-suggest"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Homepage {
+        struct ItemTappedExtra: EventExtras {
+            var section: String?
+            var type: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let section = self.section {
+                    record["section"] = String(section)
+                }
+                if let type = self.type {
+                    record["type"] = String(type)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when an item has been tapped on the homepage.
+        static let itemTapped = EventMetricType<ItemTappedExtra>( // generated from homepage.item_tapped
+            CommonMetricData(
+                category: "homepage",
+                name: "item_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["section", "type"]
+        )
+
+        private static let sectionViewedLabel = CounterMetricType( // generated from homepage.section_viewed
+            CommonMetricData(
+                category: "homepage",
+                name: "section_viewed",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records when a section has been viewed on the homepage. See `homepage.viewed`
+        /// for more details on what is considered a homepage view. This event refers to a
+        /// section that has been scrolled to or seen on an homepage that has been viewed.
+        /// The labels matches the values in `HomepageTelemetry.ItemType` under
+        /// `sectionName`
+        static let sectionViewed = try! LabeledMetricType<CounterMetricType>( // generated from homepage.section_viewed
+            category: "homepage",
+            name: "section_viewed",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: sectionViewedLabel,
+            labels: ["bookmarks", "customize_homepage", "jump_back_in", "stories", "top_sites"]
+        )
+
+        /// Records when the Firefox homepage is viewed. We consider a `view` to be if a
+        /// user navigates to a new homepage whether through opening a new tab, navigating
+        /// from a webpage, or after selecting the address bar. Seeing the homepage again
+        /// after viewing a modal that is not full screen does not trigger a view.
+        static let viewed = EventMetricType<NoExtras>( // generated from homepage.viewed
+            CommonMetricData(
+                category: "homepage",
+                name: "viewed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum InstalledMozillaProducts {
+        /// If Focus is installed on the users's device.
+        static let focus = BooleanMetricType( // generated from installed_mozilla_products.focus
+            CommonMetricData(
+                category: "installed_mozilla_products",
+                name: "focus",
+                sendInPings: ["metrics"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// If Klar is installed on the users's device.
+        static let klar = BooleanMetricType( // generated from installed_mozilla_products.klar
+            CommonMetricData(
+                category: "installed_mozilla_products",
+                name: "klar",
+                sendInPings: ["metrics"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum KeyCommands {
+        struct PressKeyCommandActionExtra: EventExtras {
+            var action: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let action = self.action {
+                    record["action"] = String(action)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when a key command action is triggered
+        static let pressKeyCommandAction = EventMetricType<PressKeyCommandActionExtra>( // generated from key_commands.press_key_command_action
+            CommonMetricData(
+                category: "key_commands",
+                name: "press_key_command_action",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["action"]
+        )
+
+    }
+
+    enum LegacyIds {
+        /// The client id from legacy telemetry.
+        static let clientId = UuidMetricType( // generated from legacy.ids.client_id
+            CommonMetricData(
+                category: "legacy.ids",
+                name: "client_id",
+                sendInPings: ["deletion-request", "metrics"],
+                lifetime: .user,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Messaging {
+        struct ClickedExtra: EventExtras {
+            var actionUuid: String?
+            var messageKey: String?
+            var messageSurface: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let actionUuid = self.actionUuid {
+                    record["action_uuid"] = String(actionUuid)
+                }
+                if let messageKey = self.messageKey {
+                    record["message_key"] = String(messageKey)
+                }
+                if let messageSurface = self.messageSurface {
+                    record["message_surface"] = String(messageSurface)
+                }
+
+                return record
+            }
+        }
+
+        struct DismissedExtra: EventExtras {
+            var messageKey: String?
+            var messageSurface: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let messageKey = self.messageKey {
+                    record["message_key"] = String(messageKey)
+                }
+                if let messageSurface = self.messageSurface {
+                    record["message_surface"] = String(messageSurface)
+                }
+
+                return record
+            }
+        }
+
+        struct ExpiredExtra: EventExtras {
+            var messageKey: String?
+            var messageSurface: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let messageKey = self.messageKey {
+                    record["message_key"] = String(messageKey)
+                }
+                if let messageSurface = self.messageSurface {
+                    record["message_surface"] = String(messageSurface)
+                }
+
+                return record
+            }
+        }
+
+        struct MalformedExtra: EventExtras {
+            var messageKey: String?
+            var messageSurface: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let messageKey = self.messageKey {
+                    record["message_key"] = String(messageKey)
+                }
+                if let messageSurface = self.messageSurface {
+                    record["message_surface"] = String(messageSurface)
+                }
+
+                return record
+            }
+        }
+
+        struct ShownExtra: EventExtras {
+            var messageKey: String?
+            var messageSurface: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let messageKey = self.messageKey {
+                    record["message_key"] = String(messageKey)
+                }
+                if let messageSurface = self.messageSurface {
+                    record["message_surface"] = String(messageSurface)
+                }
+
+                return record
+            }
+        }
+
+        /// A message was clicked by the user.
+        static let clicked = EventMetricType<ClickedExtra>( // generated from messaging.clicked
+            CommonMetricData(
+                category: "messaging",
+                name: "clicked",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["action_uuid", "message_key", "message_surface"]
+        )
+
+        /// A message was dismissed by the user.
+        static let dismissed = EventMetricType<DismissedExtra>( // generated from messaging.dismissed
+            CommonMetricData(
+                category: "messaging",
+                name: "dismissed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["message_key", "message_surface"]
+        )
+
+        /// A message's max display count has been reached.
+        static let expired = EventMetricType<ExpiredExtra>( // generated from messaging.expired
+            CommonMetricData(
+                category: "messaging",
+                name: "expired",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["message_key", "message_surface"]
+        )
+
+        /// A message was malformed.
+        static let malformed = EventMetricType<MalformedExtra>( // generated from messaging.malformed
+            CommonMetricData(
+                category: "messaging",
+                name: "malformed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["message_key", "message_surface"]
+        )
+
+        /// A message was shown to the user.
+        static let shown = EventMetricType<ShownExtra>( // generated from messaging.shown
+            CommonMetricData(
+                category: "messaging",
+                name: "shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["message_key", "message_surface"]
+        )
+
+    }
+
+    enum NimbusSystem {
+        struct RecordedNimbusContextObject: Codable, Equatable , ObjectSerialize {
+          var isFirstRun: Bool?
+          var eventQueryValues: RecordedNimbusContextObjectItemEventQueryValuesObject?
+          var isPhone: Bool?
+          var appVersion: String?
+          var locale: String?
+          var daysSinceInstall: Int64?
+          var daysSinceUpdate: Int64?
+          var language: String?
+          var region: String?
+          var isDefaultBrowser: Bool?
+          var isBottomToolbarUser: Bool?
+          var hasEnabledTipsNotifications: Bool?
+          var hasAcceptedTermsOfUse: Bool?
+          var isAppleIntelligenceAvailable: Bool?
+          var cannotUseAppleIntelligence: Bool?
+          var touExperiencePoints: Int64?
+
+        enum CodingKeys: String, CodingKey {
+case isFirstRun = "is_first_run"
+case eventQueryValues = "event_query_values"
+case isPhone = "is_phone"
+case appVersion = "app_version"
+case locale = "locale"
+case daysSinceInstall = "days_since_install"
+case daysSinceUpdate = "days_since_update"
+case language = "language"
+case region = "region"
+case isDefaultBrowser = "is_default_browser"
+case isBottomToolbarUser = "is_bottom_toolbar_user"
+case hasEnabledTipsNotifications = "has_enabled_tips_notifications"
+case hasAcceptedTermsOfUse = "has_accepted_terms_of_use"
+case isAppleIntelligenceAvailable = "is_apple_intelligence_available"
+case cannotUseAppleIntelligence = "cannot_use_apple_intelligence"
+case touExperiencePoints = "tou_experience_points"
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+              if let isFirstRun = self.isFirstRun {
+              try container.encode(isFirstRun, forKey: .isFirstRun)
+              }
+              if let eventQueryValues = self.eventQueryValues {
+              try container.encode(eventQueryValues, forKey: .eventQueryValues)
+              }
+              if let isPhone = self.isPhone {
+              try container.encode(isPhone, forKey: .isPhone)
+              }
+              if let appVersion = self.appVersion {
+              try container.encode(appVersion, forKey: .appVersion)
+              }
+              if let locale = self.locale {
+              try container.encode(locale, forKey: .locale)
+              }
+              if let daysSinceInstall = self.daysSinceInstall {
+              try container.encode(daysSinceInstall, forKey: .daysSinceInstall)
+              }
+              if let daysSinceUpdate = self.daysSinceUpdate {
+              try container.encode(daysSinceUpdate, forKey: .daysSinceUpdate)
+              }
+              if let language = self.language {
+              try container.encode(language, forKey: .language)
+              }
+              if let region = self.region {
+              try container.encode(region, forKey: .region)
+              }
+              if let isDefaultBrowser = self.isDefaultBrowser {
+              try container.encode(isDefaultBrowser, forKey: .isDefaultBrowser)
+              }
+              if let isBottomToolbarUser = self.isBottomToolbarUser {
+              try container.encode(isBottomToolbarUser, forKey: .isBottomToolbarUser)
+              }
+              if let hasEnabledTipsNotifications = self.hasEnabledTipsNotifications {
+              try container.encode(hasEnabledTipsNotifications, forKey: .hasEnabledTipsNotifications)
+              }
+              if let hasAcceptedTermsOfUse = self.hasAcceptedTermsOfUse {
+              try container.encode(hasAcceptedTermsOfUse, forKey: .hasAcceptedTermsOfUse)
+              }
+              if let isAppleIntelligenceAvailable = self.isAppleIntelligenceAvailable {
+              try container.encode(isAppleIntelligenceAvailable, forKey: .isAppleIntelligenceAvailable)
+              }
+              if let cannotUseAppleIntelligence = self.cannotUseAppleIntelligence {
+              try container.encode(cannotUseAppleIntelligence, forKey: .cannotUseAppleIntelligence)
+              }
+              if let touExperiencePoints = self.touExperiencePoints {
+              try container.encode(touExperiencePoints, forKey: .touExperiencePoints)
+              }
+    }
+
+        func intoSerializedObject() -> String {
+            let jsonEncoder = JSONEncoder()
+            let jsonData = try! jsonEncoder.encode(self)
+            let json = String(data: jsonData, encoding: String.Encoding.utf8)!
+            return json
+        }
+    }
+
+        struct RecordedNimbusContextObjectItemEventQueryValuesObject: Codable, Equatable  {
+          var daysOpenedInLast28: Int64?
+
+        enum CodingKeys: String, CodingKey {
+case daysOpenedInLast28 = "days_opened_in_last_28"
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+              if let daysOpenedInLast28 = self.daysOpenedInLast28 {
+              try container.encode(daysOpenedInLast28, forKey: .daysOpenedInLast28)
+              }
+    }
+
+    }
+
+
+        /// The Nimbus context object that is recorded to Glean
+        static let recordedNimbusContext = ObjectMetricType<RecordedNimbusContextObject>( // generated from nimbus_system.recorded_nimbus_context
+            CommonMetricData(
+                category: "nimbus_system",
+                name: "recorded_nimbus_context",
+                sendInPings: ["nimbus"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Pocket {
+        /// A user opens a new private tab based on a pocket story item
+        static let openInPrivateTab = EventMetricType<NoExtras>( // generated from pocket.open_in_private_tab
+            CommonMetricData(
+                category: "pocket",
+                name: "open_in_private_tab",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        private static let openStoryOriginLabel = CounterMetricType( // generated from pocket.open_story_origin
+            CommonMetricData(
+                category: "pocket",
+                name: "open_story_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records when a user opens Pocket article from
+        /// Firefox Home Pocket feed, with a home page origin.
+        static let openStoryOrigin = try! LabeledMetricType<CounterMetricType>( // generated from pocket.open_story_origin
+            category: "pocket",
+            name: "open_story_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: openStoryOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        private static let openStoryPositionLabel = CounterMetricType( // generated from pocket.open_story_position
+            CommonMetricData(
+                category: "pocket",
+                name: "open_story_position",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts when a user opens Pocket article from
+        /// Firefox Home Pocket feed.
+        /// The label is position of tile i.e. 0,1,2...
+        static let openStoryPosition = try! LabeledMetricType<CounterMetricType>( // generated from pocket.open_story_position
+            category: "pocket",
+            name: "open_story_position",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: openStoryPositionLabel,
+            labels: nil
+        )
+
+        /// Counts when a user gets to pocket section
+        /// on Firefox Home
+        static let sectionImpressions = CounterMetricType( // generated from pocket.section_impressions
+            CommonMetricData(
+                category: "pocket",
+                name: "section_impressions",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum PrivateBrowsing {
+        struct DataClearanceIconTappedExtra: EventExtras {
+            var didConfirm: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let didConfirm = self.didConfirm {
+                    record["did_confirm"] = String(didConfirm)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when the private browsing button is tapped.
+        static let dataClearanceIconTapped = EventMetricType<DataClearanceIconTappedExtra>( // generated from private_browsing.data_clearance_icon_tapped
+            CommonMetricData(
+                category: "private_browsing",
+                name: "data_clearance_icon_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["did_confirm"]
+        )
+
+    }
+
+    enum SettingsMenu {
+        /// Records when the user taps Passwords in the settings menu
+        static let passwords = EventMetricType<NoExtras>( // generated from settings_menu.passwords
+            CommonMetricData(
+                category: "settings_menu",
+                name: "passwords",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Counts the number of times setting as default
+        /// browser menu option is tapped.
+        static let setAsDefaultBrowserPressed = CounterMetricType( // generated from settings_menu.set_as_default_browser_pressed
+            CommonMetricData(
+                category: "settings_menu",
+                name: "set_as_default_browser_pressed",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Metric recorded when a user taps on the Show Tour option
+        /// from the app settings menu.
+        static let showTourPressed = EventMetricType<NoExtras>( // generated from settings_menu.show_tour_pressed
+            CommonMetricData(
+                category: "settings_menu",
+                name: "show_tour_pressed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum Share {
+        /// Track the startup time of the application when the app was launched to open a
+        /// url.
+        static let deeplinkOpenUrlStartupTime = TimingDistributionMetricType( // generated from share.deeplink_open_url_startup_time
+            CommonMetricData(
+                category: "share",
+                name: "deeplink_open_url_startup_time",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , .nanosecond
+        )
+
+    }
+
+    enum Sync {
+        /// Counts the number of times a user taps
+        /// on create account button in sync library view
+        static let createAccountPressed = CounterMetricType( // generated from sync.create_account_pressed
+            CommonMetricData(
+                category: "sync",
+                name: "create_account_pressed",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A user tapped disconnect sync in fxa page.
+        static let disconnect = EventMetricType<NoExtras>( // generated from sync.disconnect
+            CommonMetricData(
+                category: "sync",
+                name: "disconnect",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when user successfully logs in
+        static let loginCompletedView = EventMetricType<NoExtras>( // generated from sync.login_completed_view
+            CommonMetricData(
+                category: "sync",
+                name: "login_completed_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when user is on fxa webpage to confirm signin token
+        static let loginTokenView = EventMetricType<NoExtras>( // generated from sync.login_token_view
+            CommonMetricData(
+                category: "sync",
+                name: "login_token_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when user opens login fxa page
+        static let loginView = EventMetricType<NoExtras>( // generated from sync.login_view
+            CommonMetricData(
+                category: "sync",
+                name: "login_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Counts the number of times a user opens
+        /// synced tab
+        static let openTab = CounterMetricType( // generated from sync.open_tab
+            CommonMetricData(
+                category: "sync",
+                name: "open_tab",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A user scanned QR code to attempt to sign in.
+        static let paired = EventMetricType<NoExtras>( // generated from sync.paired
+            CommonMetricData(
+                category: "sync",
+                name: "paired",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when user is on fxa webpage to confirm signup code
+        static let registrationCodeView = EventMetricType<NoExtras>( // generated from sync.registration_code_view
+            CommonMetricData(
+                category: "sync",
+                name: "registration_code_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when user opens successfully completes registration
+        static let registrationCompletedView = EventMetricType<NoExtras>( // generated from sync.registration_completed_view
+            CommonMetricData(
+                category: "sync",
+                name: "registration_completed_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when user opens a registration fxa page
+        static let registrationView = EventMetricType<NoExtras>( // generated from sync.registration_view
+            CommonMetricData(
+                category: "sync",
+                name: "registration_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Counts the number of times a user taps
+        /// on sign in to sync button in sync
+        /// library view
+        static let signInSyncPressed = CounterMetricType( // generated from sync.sign_in_sync_pressed
+            CommonMetricData(
+                category: "sync",
+                name: "sign_in_sync_pressed",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A user chose to use their email to attempt a sign in instead
+        /// of scanning a QR code, counterpart to "scan_pairing".
+        static let useEmail = EventMetricType<NoExtras>( // generated from sync.use_email
+            CommonMetricData(
+                category: "sync",
+                name: "use_email",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum Tabs {
+        struct RestoreTabsAlertExtra: EventExtras {
+            var isEnabled: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isEnabled = self.isEnabled {
+                    record["is_enabled"] = String(isEnabled)
+                }
+
+                return record
+            }
+        }
+
+        /// This counts the number of times a user navigates back in tab
+        /// history by swiping from the left edge of the device to the right.
+        static let navigateTabBackSwipe = CounterMetricType( // generated from tabs.navigate_tab_back_swipe
+            CommonMetricData(
+                category: "tabs",
+                name: "navigate_tab_back_swipe",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// This counts the number of times a user taps the back
+        /// button on a tab's toolbar.
+        static let navigateTabHistoryBack = CounterMetricType( // generated from tabs.navigate_tab_history_back
+            CommonMetricData(
+                category: "tabs",
+                name: "navigate_tab_history_back",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// This counts the number of times a user taps the forward
+        /// button on a tab's toolbar.
+        static let navigateTabHistoryForward = CounterMetricType( // generated from tabs.navigate_tab_history_forward
+            CommonMetricData(
+                category: "tabs",
+                name: "navigate_tab_history_forward",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Record the number of URI's visited by the user.
+        static let normalAndPrivateUriCount = CounterMetricType( // generated from tabs.normal_and_private_uri_count
+            CommonMetricData(
+                category: "tabs",
+                name: "normal_and_private_uri_count",
+                sendInPings: ["baseline", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records when tab view button is pressed
+        static let pressTabToolbar = EventMetricType<NoExtras>( // generated from tabs.press_tab_toolbar
+            CommonMetricData(
+                category: "tabs",
+                name: "press_tab_toolbar",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when a top tab is pressed
+        static let pressTopTab = EventMetricType<NoExtras>( // generated from tabs.press_top_tab
+            CommonMetricData(
+                category: "tabs",
+                name: "press_top_tab",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Record event when user has executed pull to refresh.
+        static let pullToRefresh = EventMetricType<NoExtras>( // generated from tabs.pull_to_refresh
+            CommonMetricData(
+                category: "tabs",
+                name: "pull_to_refresh",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Record event when user has discovered the Easter egg.
+        static let pullToRefreshEasterEgg = EventMetricType<NoExtras>( // generated from tabs.pull_to_refresh_easter_egg
+            CommonMetricData(
+                category: "tabs",
+                name: "pull_to_refresh_easter_egg",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when a users choose an option on the restore tabs alert
+        static let restoreTabsAlert = EventMetricType<RestoreTabsAlertExtra>( // generated from tabs.restore_tabs_alert
+            CommonMetricData(
+                category: "tabs",
+                name: "restore_tabs_alert",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_enabled"]
+        )
+
+        /// Counts how long it takes to switch to another tab
+        static let tabSwitch = TimingDistributionMetricType( // generated from tabs.tab_switch
+            CommonMetricData(
+                category: "tabs",
+                name: "tab_switch",
                 sendInPings: ["metrics"],
                 lifetime: .ping,
                 disabled: false
             )
             , .millisecond
         )
+
     }
 
-    enum LoginsStore {
-        /// The encryption key was regenerated because it didn't match the encrypted data
-        static let keyRegeneratedCorrupt = EventMetricType<NoExtras>( // generated from logins_store.key_regenerated_corrupt
+    enum TopSites {
+        struct ContextualMenuExtra: EventExtras {
+            var type: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let type = self.type {
+                    record["type"] = String(type)
+                }
+
+                return record
+            }
+        }
+
+        struct ContileClickExtra: EventExtras {
+            var position: Int32?
+            var source: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let position = self.position {
+                    record["position"] = String(position)
+                }
+                if let source = self.source {
+                    record["source"] = String(source)
+                }
+
+                return record
+            }
+        }
+
+        struct ContileImpressionExtra: EventExtras {
+            var position: Int32?
+            var source: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let position = self.position {
+                    record["position"] = String(position)
+                }
+                if let source = self.source {
+                    record["source"] = String(source)
+                }
+
+                return record
+            }
+        }
+
+        struct TilePressedExtra: EventExtras {
+            var position: String?
+            var tileType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let position = self.position {
+                    record["position"] = String(position)
+                }
+                if let tileType = self.tileType {
+                    record["tile_type"] = String(tileType)
+                }
+
+                return record
+            }
+        }
+
+        /// A UUID that is unjoinable with other browser metrics. This ID will not be
+        /// shared with AdM, only for internal uses. This ID is shared across all
+        /// contextual services features.
+        static let contextId = UuidMetricType( // generated from top_sites.context_id
             CommonMetricData(
-                category: "logins_store",
-                name: "key_regenerated_corrupt",
+                category: "top_sites",
+                name: "context_id",
+                sendInPings: ["topsites-impression"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// Records when a user clicks on a contextual
+        /// menu option on top site
+        static let contextualMenu = EventMetricType<ContextualMenuExtra>( // generated from top_sites.contextual_menu
+            CommonMetricData(
+                category: "top_sites",
+                name: "contextual_menu",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["type"]
+        )
+
+        /// Advertiser brand for the sponsored TopSites tile
+        static let contileAdvertiser = StringMetricType( // generated from top_sites.contile_advertiser
+            CommonMetricData(
+                category: "top_sites",
+                name: "contile_advertiser",
+                sendInPings: ["topsites-impression"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A user clicked a Contile top site
+        static let contileClick = EventMetricType<ContileClickExtra>( // generated from top_sites.contile_click
+            CommonMetricData(
+                category: "top_sites",
+                name: "contile_click",
+                sendInPings: ["events", "topsites-impression"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["position", "source"]
+        )
+
+        /// A user saw a Contile top site
+        static let contileImpression = EventMetricType<ContileImpressionExtra>( // generated from top_sites.contile_impression
+            CommonMetricData(
+                category: "top_sites",
+                name: "contile_impression",
+                sendInPings: ["events", "topsites-impression"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["position", "source"]
+        )
+
+        /// The AdM reporting endpoint (impression_url for “impression” event,
+        /// click_url for “click” event).
+        static let contileReportingUrl = UrlMetricType( // generated from top_sites.contile_reporting_url
+            CommonMetricData(
+                category: "top_sites",
+                name: "contile_reporting_url",
+                sendInPings: ["topsites-impression"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A unique identifier provided by the AdM for the sponsored TopSites tile
+        static let contileTileId = QuantityMetricType( // generated from top_sites.contile_tile_id
+            CommonMetricData(
+                category: "top_sites",
+                name: "contile_tile_id",
+                sendInPings: ["topsites-impression"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A user opens a new private tab based on a top site item
+        static let openInPrivateTab = EventMetricType<NoExtras>( // generated from top_sites.open_in_private_tab
+            CommonMetricData(
+                category: "top_sites",
+                name: "open_in_private_tab",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        private static let pressedTileOriginLabel = CounterMetricType( // generated from top_sites.pressed_tile_origin
+            CommonMetricData(
+                category: "top_sites",
+                name: "pressed_tile_origin",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records an event when user taps on top site tile,
+        /// with a home page origin.
+        static let pressedTileOrigin = try! LabeledMetricType<CounterMetricType>( // generated from top_sites.pressed_tile_origin
+            category: "top_sites",
+            name: "pressed_tile_origin",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: pressedTileOriginLabel,
+            labels: ["origin-other", "zero-search"]
+        )
+
+        /// Tracks if the user has enabled sponsored shortcuts
+        static let sponsoredShortcuts = BooleanMetricType( // generated from top_sites.sponsored_shortcuts
+            CommonMetricData(
+                category: "top_sites",
+                name: "sponsored_shortcuts",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records an event when user taps on top site tile.
+        static let tilePressed = EventMetricType<TilePressedExtra>( // generated from top_sites.tile_pressed
+            CommonMetricData(
+                category: "top_sites",
+                name: "tile_pressed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["position", "tile_type"]
+        )
+
+    }
+
+    enum Urlbar {
+        struct AbandonmentExtra: EventExtras {
+            var groups: String?
+            var interaction: String?
+            var nChars: Int32?
+            var nResults: Int32?
+            var nWords: Int32?
+            var results: String?
+            var sap: String?
+            var searchMode: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let groups = self.groups {
+                    record["groups"] = String(groups)
+                }
+                if let interaction = self.interaction {
+                    record["interaction"] = String(interaction)
+                }
+                if let nChars = self.nChars {
+                    record["n_chars"] = String(nChars)
+                }
+                if let nResults = self.nResults {
+                    record["n_results"] = String(nResults)
+                }
+                if let nWords = self.nWords {
+                    record["n_words"] = String(nWords)
+                }
+                if let results = self.results {
+                    record["results"] = String(results)
+                }
+                if let sap = self.sap {
+                    record["sap"] = String(sap)
+                }
+                if let searchMode = self.searchMode {
+                    record["search_mode"] = String(searchMode)
+                }
+
+                return record
+            }
+        }
+
+        struct EngagementExtra: EventExtras {
+            var engagementType: String?
+            var groups: String?
+            var interaction: String?
+            var nChars: Int32?
+            var nResults: Int32?
+            var nWords: Int32?
+            var provider: String?
+            var results: String?
+            var sap: String?
+            var searchMode: String?
+            var selectedResult: String?
+            var selectedResultSubtype: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let engagementType = self.engagementType {
+                    record["engagement_type"] = String(engagementType)
+                }
+                if let groups = self.groups {
+                    record["groups"] = String(groups)
+                }
+                if let interaction = self.interaction {
+                    record["interaction"] = String(interaction)
+                }
+                if let nChars = self.nChars {
+                    record["n_chars"] = String(nChars)
+                }
+                if let nResults = self.nResults {
+                    record["n_results"] = String(nResults)
+                }
+                if let nWords = self.nWords {
+                    record["n_words"] = String(nWords)
+                }
+                if let provider = self.provider {
+                    record["provider"] = String(provider)
+                }
+                if let results = self.results {
+                    record["results"] = String(results)
+                }
+                if let sap = self.sap {
+                    record["sap"] = String(sap)
+                }
+                if let searchMode = self.searchMode {
+                    record["search_mode"] = String(searchMode)
+                }
+                if let selectedResult = self.selectedResult {
+                    record["selected_result"] = String(selectedResult)
+                }
+                if let selectedResultSubtype = self.selectedResultSubtype {
+                    record["selected_result_subtype"] = String(selectedResultSubtype)
+                }
+
+                return record
+            }
+        }
+
+        struct ImpressionExtra: EventExtras {
+            var groups: String?
+            var interaction: String?
+            var nChars: Int32?
+            var nResults: Int32?
+            var nWords: Int32?
+            var reason: String?
+            var results: String?
+            var sap: String?
+            var searchMode: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let groups = self.groups {
+                    record["groups"] = String(groups)
+                }
+                if let interaction = self.interaction {
+                    record["interaction"] = String(interaction)
+                }
+                if let nChars = self.nChars {
+                    record["n_chars"] = String(nChars)
+                }
+                if let nResults = self.nResults {
+                    record["n_results"] = String(nResults)
+                }
+                if let nWords = self.nWords {
+                    record["n_words"] = String(nWords)
+                }
+                if let reason = self.reason {
+                    record["reason"] = String(reason)
+                }
+                if let results = self.results {
+                    record["results"] = String(results)
+                }
+                if let sap = self.sap {
+                    record["sap"] = String(sap)
+                }
+                if let searchMode = self.searchMode {
+                    record["search_mode"] = String(searchMode)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when urlbar results are shown to the user
+        static let abandonment = EventMetricType<AbandonmentExtra>( // generated from urlbar.abandonment
+            CommonMetricData(
+                category: "urlbar",
+                name: "abandonment",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["groups", "interaction", "n_chars", "n_results", "n_words", "results", "sap", "search_mode"]
+        )
+
+        /// Recorded when the user executes an action on a result
+        static let engagement = EventMetricType<EngagementExtra>( // generated from urlbar.engagement
+            CommonMetricData(
+                category: "urlbar",
+                name: "engagement",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["engagement_type", "groups", "interaction", "n_chars", "n_results", "n_words", "provider", "results", "sap", "search_mode", "selected_result", "selected_result_subtype"]
+        )
+
+        /// Recorded when urlbar results are shown to the user
+        static let impression = EventMetricType<ImpressionExtra>( // generated from urlbar.impression
+            CommonMetricData(
+                category: "urlbar",
+                name: "impression",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["groups", "interaction", "n_chars", "n_results", "n_words", "reason", "results", "sap", "search_mode"]
+        )
+
+    }
+
+    enum Usage {
+        /// The build identifier generated by the CI system (e.g. "1234/A").
+        /// If the value was not provided through configuration,
+        /// this metric gets set to `Unknown`.
+        static let appBuild = StringMetricType( // generated from usage.app_build
+            CommonMetricData(
+                category: "usage",
+                name: "app_build",
+                sendInPings: ["usage-reporting"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// The channel the application is being distributed on.
+        static let appChannel = StringMetricType( // generated from usage.app_channel
+            CommonMetricData(
+                category: "usage",
+                name: "app_channel",
+                sendInPings: ["usage-reporting"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// The user visible version string (e.g. "1.0.3").
+        /// If the value was not provided through configuration,
+        /// this metric gets set to `Unknown`.
+        static let appDisplayVersion = StringMetricType( // generated from usage.app_display_version
+            CommonMetricData(
+                category: "usage",
+                name: "app_display_version",
+                sendInPings: ["usage-reporting"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// The duration of the last foreground session.
+        static let duration = TimespanMetricType( // generated from usage.duration
+            CommonMetricData(
+                category: "usage",
+                name: "duration",
+                sendInPings: ["usage-reporting"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , .second
+        )
+
+        /// The date of the first run of the application.
+        static let firstRunDate = DatetimeMetricType( // generated from usage.first_run_date
+            CommonMetricData(
+                category: "usage",
+                name: "first_run_date",
+                sendInPings: ["usage-reporting"],
+                lifetime: .user,
+                disabled: false
+            )
+            , .day
+        )
+
+        /// Was the app installed using MDM software.
+        static let isManagedDevice = BooleanMetricType( // generated from usage.is_managed_device
+            CommonMetricData(
+                category: "usage",
+                name: "is_managed_device",
+                sendInPings: ["usage-reporting"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// The name of the operating system.
+        /// Possible values:
+        /// Android, iOS, Linux, Darwin, Windows,
+        /// FreeBSD, NetBSD, OpenBSD, Solaris, Unknown
+        static let os = StringMetricType( // generated from usage.os
+            CommonMetricData(
+                category: "usage",
+                name: "os",
+                sendInPings: ["usage-reporting"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// The user-visible version of the operating system (e.g. "1.2.3").
+        /// If the version detection fails, this metric gets set to `Unknown`.
+        static let osVersion = StringMetricType( // generated from usage.os_version
+            CommonMetricData(
+                category: "usage",
+                name: "os_version",
+                sendInPings: ["usage-reporting"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        /// A UUID uniquely identifying the profile,
+        /// not shared with other telemetry data.
+        static let profileId = UuidMetricType( // generated from usage.profile_id
+            CommonMetricData(
+                category: "usage",
+                name: "profile_id",
+                sendInPings: ["usage-deletion-request", "usage-reporting"],
+                lifetime: .user,
+                disabled: false
+            )
+        )
+
+        /// The optional reason the ping was submitted.
+        /// The specific values for reason are specific to each ping, and are
+        /// documented in the ping's pings.yaml file.
+        static let reason = StringMetricType( // generated from usage.reason
+            CommonMetricData(
+                category: "usage",
+                name: "reason",
+                sendInPings: ["usage-reporting"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum WallpaperAnalytics {
+        struct WallpaperSelectedExtra: EventExtras {
+            var wallpaperName: String?
+            var wallpaperType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let wallpaperName = self.wallpaperName {
+                    record["wallpaper_name"] = String(wallpaperName)
+                }
+                if let wallpaperType = self.wallpaperType {
+                    record["wallpaper_type"] = String(wallpaperType)
+                }
+
+                return record
+            }
+        }
+
+        private static let themedWallpaperLabel = CounterMetricType( // generated from wallpaper_analytics.themed_wallpaper
+            CommonMetricData(
+                category: "wallpaper_analytics",
+                name: "themed_wallpaper",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Recorded when the user enters the background. This reports
+        /// the currently selected wallpaper if it's not the default.
+        static let themedWallpaper = try! LabeledMetricType<CounterMetricType>( // generated from wallpaper_analytics.themed_wallpaper
+            category: "wallpaper_analytics",
+            name: "themed_wallpaper",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: themedWallpaperLabel,
+            labels: nil
+        )
+
+        /// Recorded when the user selects a wallpaper from
+        /// the wallpaper settings screen. Wallpaper information
+        /// is sent in the extra keys.
+        static let wallpaperSelected = EventMetricType<WallpaperSelectedExtra>( // generated from wallpaper_analytics.wallpaper_selected
+            CommonMetricData(
+                category: "wallpaper_analytics",
+                name: "wallpaper_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["wallpaper_name", "wallpaper_type"]
+        )
+
+    }
+
+    enum Webview {
+        struct ProcessDidTerminateExtra: EventExtras {
+            var consecutiveCrash: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let consecutiveCrash = self.consecutiveCrash {
+                    record["consecutive_crash"] = String(consecutiveCrash)
+                }
+
+                return record
+            }
+        }
+
+        struct ShowErrorPageExtra: EventExtras {
+            var errorCode: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let errorCode = self.errorCode {
+                    record["error_code"] = String(errorCode)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when an error occurred during navigation.
+        static let didFail = EventMetricType<NoExtras>( // generated from webview.did_fail
+            CommonMetricData(
+                category: "webview",
+                name: "did_fail",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when an error occurs on early webview navigation.
+        static let didFailProvisional = EventMetricType<NoExtras>( // generated from webview.did_fail_provisional
+            CommonMetricData(
+                category: "webview",
+                name: "did_fail_provisional",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Counts how long each page takes to load
+        static let pageLoad = TimingDistributionMetricType( // generated from webview.page_load
+            CommonMetricData(
+                category: "webview",
+                name: "page_load",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , .millisecond
+        )
+
+        /// Recorded when a webview process terminates and we attempt a reload of that
+        /// webview.
+        static let processDidTerminate = EventMetricType<ProcessDidTerminateExtra>( // generated from webview.process_did_terminate
+            CommonMetricData(
+                category: "webview",
+                name: "process_did_terminate",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["consecutive_crash"]
+        )
+
+        /// Recorded when an error page is shown on the webview.
+        static let showErrorPage = EventMetricType<ShowErrorPageExtra>( // generated from webview.show_error_page
+            CommonMetricData(
+                category: "webview",
+                name: "show_error_page",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["error_code"]
+        )
+
+    }
+
+    enum Widget {
+        /// Counts how many times the large tabs widget opens url
+        static let lTabsOpenUrl = CounterMetricType( // generated from widget.l_tabs_open_url
+            CommonMetricData(
+                category: "widget",
+                name: "l_tabs_open_url",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts how many times medium quick action
+        /// widget closes private tabs
+        static let mQuickActionClosePrivate = CounterMetricType( // generated from widget.m_quick_action_close_private
+            CommonMetricData(
+                category: "widget",
+                name: "m_quick_action_close_private",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts how many times medium quick action
+        /// widget opens copied links
+        static let mQuickActionCopiedLink = CounterMetricType( // generated from widget.m_quick_action_copied_link
+            CommonMetricData(
+                category: "widget",
+                name: "m_quick_action_copied_link",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts how many times medium quick action
+        /// widget opens firefox for private search
+        static let mQuickActionPrivateSearch = CounterMetricType( // generated from widget.m_quick_action_private_search
+            CommonMetricData(
+                category: "widget",
+                name: "m_quick_action_private_search",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts how many times medium quick action
+        /// widget opens firefox for regular search
+        static let mQuickActionSearch = CounterMetricType( // generated from widget.m_quick_action_search
+            CommonMetricData(
+                category: "widget",
+                name: "m_quick_action_search",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts how many times the medium tabs widget opens url
+        static let mTabsOpenUrl = CounterMetricType( // generated from widget.m_tabs_open_url
+            CommonMetricData(
+                category: "widget",
+                name: "m_tabs_open_url",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts how many times user opens top site tabs
+        static let mTopSitesWidget = CounterMetricType( // generated from widget.m_top_sites_widget
+            CommonMetricData(
+                category: "widget",
+                name: "m_top_sites_widget",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts how many times small quick action
+        /// widget opens firefox for regular search
+        static let sQuickActionSearch = CounterMetricType( // generated from widget.s_quick_action_search
+            CommonMetricData(
+                category: "widget",
+                name: "s_quick_action_search",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Windows {
+        /// A snapshot of how many windows the user has opened on iPad.
+        static let ipadWindowCount = QuantityMetricType( // generated from windows.ipad_window_count
+            CommonMetricData(
+                category: "windows",
+                name: "ipad_window_count",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Microsurvey {
+        struct ConfirmationShownExtra: EventExtras {
+            var surveyId: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surveyId = self.surveyId {
+                    record["survey_id"] = String(surveyId)
+                }
+
+                return record
+            }
+        }
+
+        struct DismissButtonTappedExtra: EventExtras {
+            var surveyId: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surveyId = self.surveyId {
+                    record["survey_id"] = String(surveyId)
+                }
+
+                return record
+            }
+        }
+
+        struct PrivacyNoticeTappedExtra: EventExtras {
+            var surveyId: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surveyId = self.surveyId {
+                    record["survey_id"] = String(surveyId)
+                }
+
+                return record
+            }
+        }
+
+        struct ShownExtra: EventExtras {
+            var surveyId: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surveyId = self.surveyId {
+                    record["survey_id"] = String(surveyId)
+                }
+
+                return record
+            }
+        }
+
+        struct SubmitButtonTappedExtra: EventExtras {
+            var surveyId: String?
+            var userSelection: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surveyId = self.surveyId {
+                    record["survey_id"] = String(surveyId)
+                }
+                if let userSelection = self.userSelection {
+                    record["user_selection"] = String(userSelection)
+                }
+
+                return record
+            }
+        }
+
+        /// Records that the confirmation message in the survey has been viewed by the
+        /// user.
+        static let confirmationShown = EventMetricType<ConfirmationShownExtra>( // generated from microsurvey.confirmation_shown
+            CommonMetricData(
+                category: "microsurvey",
+                name: "confirmation_shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["survey_id"]
+        )
+
+        /// Records that the user tapped on the close button to dismiss the survey.
+        static let dismissButtonTapped = EventMetricType<DismissButtonTappedExtra>( // generated from microsurvey.dismiss_button_tapped
+            CommonMetricData(
+                category: "microsurvey",
+                name: "dismiss_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["survey_id"]
+        )
+
+        /// Records that the user tapped on the privacy notice.
+        static let privacyNoticeTapped = EventMetricType<PrivacyNoticeTappedExtra>( // generated from microsurvey.privacy_notice_tapped
+            CommonMetricData(
+                category: "microsurvey",
+                name: "privacy_notice_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["survey_id"]
+        )
+
+        /// The survey surface (bottom sheet) was shown and visible.
+        static let shown = EventMetricType<ShownExtra>( // generated from microsurvey.shown
+            CommonMetricData(
+                category: "microsurvey",
+                name: "shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["survey_id"]
+        )
+
+        /// Records that the user tapped on the submit button to respond to the survey.
+        static let submitButtonTapped = EventMetricType<SubmitButtonTappedExtra>( // generated from microsurvey.submit_button_tapped
+            CommonMetricData(
+                category: "microsurvey",
+                name: "submit_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["survey_id", "user_selection"]
+        )
+
+    }
+
+    enum Onboarding {
+        struct CardViewExtra: EventExtras {
+            var cardType: String?
+            var flowType: String?
+            var onboardingVariant: String?
+            var sequenceId: String?
+            var sequencePosition: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let cardType = self.cardType {
+                    record["card_type"] = String(cardType)
+                }
+                if let flowType = self.flowType {
+                    record["flow_type"] = String(flowType)
+                }
+                if let onboardingVariant = self.onboardingVariant {
+                    record["onboarding_variant"] = String(onboardingVariant)
+                }
+                if let sequenceId = self.sequenceId {
+                    record["sequence_id"] = String(sequenceId)
+                }
+                if let sequencePosition = self.sequencePosition {
+                    record["sequence_position"] = String(sequencePosition)
+                }
+
+                return record
+            }
+        }
+
+        struct CloseTapExtra: EventExtras {
+            var cardType: String?
+            var flowType: String?
+            var onboardingVariant: String?
+            var sequenceId: String?
+            var sequencePosition: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let cardType = self.cardType {
+                    record["card_type"] = String(cardType)
+                }
+                if let flowType = self.flowType {
+                    record["flow_type"] = String(flowType)
+                }
+                if let onboardingVariant = self.onboardingVariant {
+                    record["onboarding_variant"] = String(onboardingVariant)
+                }
+                if let sequenceId = self.sequenceId {
+                    record["sequence_id"] = String(sequenceId)
+                }
+                if let sequencePosition = self.sequencePosition {
+                    record["sequence_position"] = String(sequencePosition)
+                }
+
+                return record
+            }
+        }
+
+        struct MultipleChoiceButtonTapExtra: EventExtras {
+            var buttonAction: String?
+            var cardType: String?
+            var flowType: String?
+            var onboardingVariant: String?
+            var sequenceId: String?
+            var sequencePosition: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let buttonAction = self.buttonAction {
+                    record["button_action"] = String(buttonAction)
+                }
+                if let cardType = self.cardType {
+                    record["card_type"] = String(cardType)
+                }
+                if let flowType = self.flowType {
+                    record["flow_type"] = String(flowType)
+                }
+                if let onboardingVariant = self.onboardingVariant {
+                    record["onboarding_variant"] = String(onboardingVariant)
+                }
+                if let sequenceId = self.sequenceId {
+                    record["sequence_id"] = String(sequenceId)
+                }
+                if let sequencePosition = self.sequencePosition {
+                    record["sequence_position"] = String(sequencePosition)
+                }
+
+                return record
+            }
+        }
+
+        struct NotificationPermissionPromptExtra: EventExtras {
+            var granted: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let granted = self.granted {
+                    record["granted"] = String(granted)
+                }
+
+                return record
+            }
+        }
+
+        struct PrimaryButtonTapExtra: EventExtras {
+            var buttonAction: String?
+            var cardType: String?
+            var flowType: String?
+            var onboardingVariant: String?
+            var sequenceId: String?
+            var sequencePosition: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let buttonAction = self.buttonAction {
+                    record["button_action"] = String(buttonAction)
+                }
+                if let cardType = self.cardType {
+                    record["card_type"] = String(cardType)
+                }
+                if let flowType = self.flowType {
+                    record["flow_type"] = String(flowType)
+                }
+                if let onboardingVariant = self.onboardingVariant {
+                    record["onboarding_variant"] = String(onboardingVariant)
+                }
+                if let sequenceId = self.sequenceId {
+                    record["sequence_id"] = String(sequenceId)
+                }
+                if let sequencePosition = self.sequencePosition {
+                    record["sequence_position"] = String(sequencePosition)
+                }
+
+                return record
+            }
+        }
+
+        struct SecondaryButtonTapExtra: EventExtras {
+            var buttonAction: String?
+            var cardType: String?
+            var flowType: String?
+            var onboardingVariant: String?
+            var sequenceId: String?
+            var sequencePosition: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let buttonAction = self.buttonAction {
+                    record["button_action"] = String(buttonAction)
+                }
+                if let cardType = self.cardType {
+                    record["card_type"] = String(cardType)
+                }
+                if let flowType = self.flowType {
+                    record["flow_type"] = String(flowType)
+                }
+                if let onboardingVariant = self.onboardingVariant {
+                    record["onboarding_variant"] = String(onboardingVariant)
+                }
+                if let sequenceId = self.sequenceId {
+                    record["sequence_id"] = String(sequenceId)
+                }
+                if let sequencePosition = self.sequencePosition {
+                    record["sequence_position"] = String(sequencePosition)
+                }
+
+                return record
+            }
+        }
+
+        struct ToggleAutomaticCrashReportsExtra: EventExtras {
+            var changedTo: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let changedTo = self.changedTo {
+                    record["changed_to"] = String(changedTo)
+                }
+
+                return record
+            }
+        }
+
+        struct ToggleTechnicalInteractionDataExtra: EventExtras {
+            var changedTo: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let changedTo = self.changedTo {
+                    record["changed_to"] = String(changedTo)
+                }
+
+                return record
+            }
+        }
+
+        struct WallpaperSelectedExtra: EventExtras {
+            var wallpaperName: String?
+            var wallpaperType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let wallpaperName = self.wallpaperName {
+                    record["wallpaper_name"] = String(wallpaperName)
+                }
+                if let wallpaperType = self.wallpaperType {
+                    record["wallpaper_type"] = String(wallpaperType)
+                }
+
+                return record
+            }
+        }
+
+        struct WallpaperSelectorSelectedExtra: EventExtras {
+            var wallpaperName: String?
+            var wallpaperType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let wallpaperName = self.wallpaperName {
+                    record["wallpaper_name"] = String(wallpaperName)
+                }
+                if let wallpaperType = self.wallpaperType {
+                    record["wallpaper_type"] = String(wallpaperType)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when an onboarding card is shown
+        static let cardView = EventMetricType<CardViewExtra>( // generated from onboarding.card_view
+            CommonMetricData(
+                category: "onboarding",
+                name: "card_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["card_type", "flow_type", "onboarding_variant", "sequence_id", "sequence_position"]
+        )
+
+        /// Records when the user closes the onboarding.
+        static let closeTap = EventMetricType<CloseTapExtra>( // generated from onboarding.close_tap
+            CommonMetricData(
+                category: "onboarding",
+                name: "close_tap",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["card_type", "flow_type", "onboarding_variant", "sequence_id", "sequence_position"]
+        )
+
+        /// Records the cancelation of a scheduled engagement notification.
+        static let engagementNotificationCancel = EventMetricType<NoExtras>( // generated from onboarding.engagement_notification_cancel
+            CommonMetricData(
+                category: "onboarding",
+                name: "engagement_notification_cancel",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records the users interaction with the engagement notification.
+        static let engagementNotificationTapped = EventMetricType<NoExtras>( // generated from onboarding.engagement_notification_tapped
+            CommonMetricData(
+                category: "onboarding",
+                name: "engagement_notification_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when a multiple choice button is tapped during the onboarding
+        static let multipleChoiceButtonTap = EventMetricType<MultipleChoiceButtonTapExtra>( // generated from onboarding.multiple_choice_button_tap
+            CommonMetricData(
+                category: "onboarding",
+                name: "multiple_choice_button_tap",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["button_action", "card_type", "flow_type", "onboarding_variant", "sequence_id", "sequence_position"]
+        )
+
+        /// Records the users decision to enable/disable notifications.
+        static let notificationPermissionPrompt = EventMetricType<NotificationPermissionPromptExtra>( // generated from onboarding.notification_permission_prompt
+            CommonMetricData(
+                category: "onboarding",
+                name: "notification_permission_prompt",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["granted"]
+        )
+
+        /// Records when the primary button is tapped during the onboarding
+        static let primaryButtonTap = EventMetricType<PrimaryButtonTapExtra>( // generated from onboarding.primary_button_tap
+            CommonMetricData(
+                category: "onboarding",
+                name: "primary_button_tap",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["button_action", "card_type", "flow_type", "onboarding_variant", "sequence_id", "sequence_position"]
+        )
+
+        /// Records when the secondary button is tapped during the onboarding
+        static let secondaryButtonTap = EventMetricType<SecondaryButtonTapExtra>( // generated from onboarding.secondary_button_tap
+            CommonMetricData(
+                category: "onboarding",
+                name: "secondary_button_tap",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["button_action", "card_type", "flow_type", "onboarding_variant", "sequence_id", "sequence_position"]
+        )
+
+        /// User clicked accept button on the terms of service onboarding card.
+        static let termsOfServiceAccepted = EventMetricType<NoExtras>( // generated from onboarding.terms_of_service_accepted
+            CommonMetricData(
+                category: "onboarding",
+                name: "terms_of_service_accepted",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// User viewed the terms of service onboarding card.
+        static let termsOfServiceCard = EventMetricType<NoExtras>( // generated from onboarding.terms_of_service_card
+            CommonMetricData(
+                category: "onboarding",
+                name: "terms_of_service_card",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// User clicked the terms of service link on the onboarding card.
+        static let termsOfServiceLinkClicked = EventMetricType<NoExtras>( // generated from onboarding.terms_of_service_link_clicked
+            CommonMetricData(
+                category: "onboarding",
+                name: "terms_of_service_link_clicked",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// User clicked the manage link on the terms of service onboarding card.
+        static let termsOfServiceManageLinkClicked = EventMetricType<NoExtras>( // generated from onboarding.terms_of_service_manage_link_clicked
+            CommonMetricData(
+                category: "onboarding",
+                name: "terms_of_service_manage_link_clicked",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// User clicked the privacy policy link on the terms of service onboarding card.
+        static let termsOfServicePrivacyNoticeLinkClicked = EventMetricType<NoExtras>( // generated from onboarding.terms_of_service_privacy_notice_link_clicked
+            CommonMetricData(
+                category: "onboarding",
+                name: "terms_of_service_privacy_notice_link_clicked",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// User toggled the preference to automatically send crash reports from the manage
+        /// modal on the terms of service onboarding card.
+        static let toggleAutomaticCrashReports = EventMetricType<ToggleAutomaticCrashReportsExtra>( // generated from onboarding.toggle_automatic_crash_reports
+            CommonMetricData(
+                category: "onboarding",
+                name: "toggle_automatic_crash_reports",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["changed_to"]
+        )
+
+        /// User toggled the preference to share technical and interaction data from the
+        /// manage modal on the terms of service onboarding card.
+        static let toggleTechnicalInteractionData = EventMetricType<ToggleTechnicalInteractionDataExtra>( // generated from onboarding.toggle_technical_interaction_data
+            CommonMetricData(
+                category: "onboarding",
+                name: "toggle_technical_interaction_data",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["changed_to"]
+        )
+
+        /// Recorded when the user selects a wallpaper from
+        /// the wallpaper onboarding screen.
+        static let wallpaperSelected = EventMetricType<WallpaperSelectedExtra>( // generated from onboarding.wallpaper_selected
+            CommonMetricData(
+                category: "onboarding",
+                name: "wallpaper_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["wallpaper_name", "wallpaper_type"]
+        )
+
+        /// Recorded when the wallpaper onboarding bottom sheet
+        /// is dismissed by the user.
+        static let wallpaperSelectorClose = EventMetricType<NoExtras>( // generated from onboarding.wallpaper_selector_close
+            CommonMetricData(
+                category: "onboarding",
+                name: "wallpaper_selector_close",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when the user selects a wallpaper from
+        /// the wallpaper onboarding bottom sheet. Wallpaper information
+        /// is sent in the extra keys.
+        static let wallpaperSelectorSelected = EventMetricType<WallpaperSelectorSelectedExtra>( // generated from onboarding.wallpaper_selector_selected
+            CommonMetricData(
+                category: "onboarding",
+                name: "wallpaper_selector_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["wallpaper_name", "wallpaper_type"]
+        )
+
+        /// Recorded when the wallpaper onboarding bottom sheet is shown to the user.
+        static let wallpaperSelectorView = EventMetricType<NoExtras>( // generated from onboarding.wallpaper_selector_view
+            CommonMetricData(
+                category: "onboarding",
+                name: "wallpaper_selector_view",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum OnboardingDefaultBrowserSheet {
+        struct DismissButtonTappedExtra: EventExtras {
+            var onboardingVariant: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let onboardingVariant = self.onboardingVariant {
+                    record["onboarding_variant"] = String(onboardingVariant)
+                }
+
+                return record
+            }
+        }
+
+        struct GoToSettingsButtonTappedExtra: EventExtras {
+            var onboardingVariant: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let onboardingVariant = self.onboardingVariant {
+                    record["onboarding_variant"] = String(onboardingVariant)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when default browser onboarding is dismissed.
+        /// This applies to both legacy and modern onboarding flows.
+        static let dismissButtonTapped = EventMetricType<DismissButtonTappedExtra>( // generated from onboarding.default_browser_sheet.dismiss_button_tapped
+            CommonMetricData(
+                category: "onboarding.default_browser_sheet",
+                name: "dismiss_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["onboarding_variant"]
+        )
+
+        /// Records when the Go To Settings button on default browser onboarding
+        /// is clicked. This applies to both legacy and modern onboarding flows.
+        static let goToSettingsButtonTapped = EventMetricType<GoToSettingsButtonTappedExtra>( // generated from onboarding.default_browser_sheet.go_to_settings_button_tapped
+            CommonMetricData(
+                category: "onboarding.default_browser_sheet",
+                name: "go_to_settings_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["onboarding_variant"]
+        )
+
+    }
+
+    enum Search {
+        private static let countsLabel = CounterMetricType( // generated from search.counts
+            CommonMetricData(
+                category: "search",
+                name: "counts",
+                sendInPings: ["baseline", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// The labels for this counter are `{search-engine-name}.{source}`
+        /// 
+        /// If the search engine is bundled with Firefox-iOS, then
+        /// `search-engine-name` will be the name of the search engine. If
+        /// it is a custom search engine, the value will be `custom`.
+        /// 
+        /// The value of `source` will reflect the source from which the
+        /// search started.  One of:
+        /// * quicksearch
+        /// * suggestion
+        /// * actionbar
+        static let counts = try! LabeledMetricType<CounterMetricType>( // generated from search.counts
+            category: "search",
+            name: "counts",
+            sendInPings: ["baseline", "metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: countsLabel,
+            labels: nil
+        )
+
+        /// The default search engine identifier if the search engine is
+        /// pre-loaded with Firefox-iOS.  If it's a custom search engine,
+        /// then the value will be 'custom'.
+        static let defaultEngine = StringMetricType( // generated from search.default_engine
+            CommonMetricData(
+                category: "search",
+                name: "default_engine",
+                sendInPings: ["baseline", "metrics"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+        private static let googleTopsitePressedLabel = CounterMetricType( // generated from search.google_topsite_pressed
+            CommonMetricData(
+                category: "search",
+                name: "google_topsite_pressed",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Counts the number of times the google top site button
+        /// is pressed
+        static let googleTopsitePressed = try! LabeledMetricType<CounterMetricType>( // generated from search.google_topsite_pressed
+            category: "search",
+            name: "google_topsite_pressed",
+            sendInPings: ["metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: googleTopsitePressedLabel,
+            labels: nil
+        )
+
+        private static let inContentLabel = CounterMetricType( // generated from search.in_content
+            CommonMetricData(
+                category: "search",
+                name: "in_content",
+                sendInPings: ["baseline", "metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records the type of interaction a user has on SERP pages.
+        static let inContent = try! LabeledMetricType<CounterMetricType>( // generated from search.in_content
+            category: "search",
+            name: "in_content",
+            sendInPings: ["baseline", "metrics"],
+            lifetime: .ping,
+            disabled: false,
+            subMetric: inContentLabel,
+            labels: nil
+        )
+
+        /// Counts the number of times the start search button is
+        /// pressed
+        static let startSearchPressed = CounterMetricType( // generated from search.start_search_pressed
+            CommonMetricData(
+                category: "search",
+                name: "start_search_pressed",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum SearchRecentSearches {
+        struct SuggestionTappedExtra: EventExtras {
+            var position: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let position = self.position {
+                    record["position"] = String(position)
+                }
+
+                return record
+            }
+        }
+
+        struct SuggestionsShownExtra: EventExtras {
+            var count: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let count = self.count {
+                    record["count"] = String(count)
+                }
+
+                return record
+            }
+        }
+
+        /// Triggered when a user taps the button to clear past recent search suggestions.
+        static let clearButtonTapped = EventMetricType<NoExtras>( // generated from search.recent_searches.clear_button_tapped
+            CommonMetricData(
+                category: "search.recent_searches",
+                name: "clear_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Triggered when the user taps a recent search suggestion.
+        static let suggestionTapped = EventMetricType<SuggestionTappedExtra>( // generated from search.recent_searches.suggestion_tapped
+            CommonMetricData(
+                category: "search.recent_searches",
+                name: "suggestion_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["position"]
+        )
+
+        /// Triggered when the recent search suggestions section is shown to the user.
+        static let suggestionsShown = EventMetricType<SuggestionsShownExtra>( // generated from search.recent_searches.suggestions_shown
+            CommonMetricData(
+                category: "search.recent_searches",
+                name: "suggestions_shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["count"]
+        )
+
+    }
+
+    enum SearchTrendingSearches {
+        struct SuggestionTappedExtra: EventExtras {
+            var position: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let position = self.position {
+                    record["position"] = String(position)
+                }
+
+                return record
+            }
+        }
+
+        struct SuggestionsShownExtra: EventExtras {
+            var count: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let count = self.count {
+                    record["count"] = String(count)
+                }
+
+                return record
+            }
+        }
+
+        /// Triggered when the user taps a trending search suggestion.
+        static let suggestionTapped = EventMetricType<SuggestionTappedExtra>( // generated from search.trending_searches.suggestion_tapped
+            CommonMetricData(
+                category: "search.trending_searches",
+                name: "suggestion_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["position"]
+        )
+
+        /// Triggered when the trending search suggestions section is shown to the user.
+        static let suggestionsShown = EventMetricType<SuggestionsShownExtra>( // generated from search.trending_searches.suggestions_shown
+            CommonMetricData(
+                category: "search.trending_searches",
+                name: "suggestions_shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["count"]
+        )
+
+    }
+
+    enum Preferences {
+        struct AutoplaySettingChangedExtra: EventExtras {
+            var mediaType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let mediaType = self.mediaType {
+                    record["media_type"] = String(mediaType)
+                }
+
+                return record
+            }
+        }
+
+        struct ChangedExtra: EventExtras {
+            var changedTo: String?
+            var preference: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let changedTo = self.changedTo {
+                    record["changed_to"] = String(changedTo)
+                }
+                if let preference = self.preference {
+                    record["preference"] = String(preference)
+                }
+
+                return record
+            }
+        }
+
+        /// Event for user changing the autoplay setting
+        static let autoplaySettingChanged = EventMetricType<AutoplaySettingChangedExtra>( // generated from preferences.autoplay_setting_changed
+            CommonMetricData(
+                category: "preferences",
+                name: "autoplay_setting_changed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["media_type"]
+        )
+
+        /// Recorded when a preference is changed and includes the preference that
+        /// changed as well as the value changed to recorded in the extra keys.
+        /// 
+        /// Note: This setting will soon be deprecated in favor of
+        /// `settings.changed`, which also includes a new `changed_from` extra.
+        /// 
+        /// **Expiration:** This setting can be safely expired once the
+        /// `settings.changed` implementation completely shadows the old
+        /// `preferences.changed` implementation.
+        static let changed = EventMetricType<ChangedExtra>( // generated from preferences.changed
+            CommonMetricData(
+                category: "preferences",
+                name: "changed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["changed_to", "preference"]
+        )
+
+        /// Measures the state of the "Close Private Tabs" preference.
+        static let closePrivateTabs = BooleanMetricType( // generated from preferences.close_private_tabs
+            CommonMetricData(
+                category: "preferences",
+                name: "close_private_tabs",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Measures the state of the fxa login.
+        static let fxaLoggedIn = BooleanMetricType( // generated from preferences.fxa_logged_in
+            CommonMetricData(
+                category: "preferences",
+                name: "fxa_logged_in",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// The setting a user chooses as their Home page. By default,
+        /// it is initially set to Firefox Home.
+        static let homePageSetting = StringMetricType( // generated from preferences.home_page_setting
+            CommonMetricData(
+                category: "preferences",
+                name: "home_page_setting",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// What opening screen preference the user has selected under
+        /// "Customize Home". "homepage," "last tab," or
+        /// "homepage after 4 hours" default: "homepage after 4 hours".
+        static let openingScreen = StringMetricType( // generated from preferences.opening_screen
+            CommonMetricData(
+                category: "preferences",
+                name: "opening_screen",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Measures the state of the "Save Logins" preference.
+        static let saveLogins = BooleanMetricType( // generated from preferences.save_logins
+            CommonMetricData(
+                category: "preferences",
+                name: "save_logins",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// True if notifications for sync are allowed, otherwise false.
+        static let syncNotifs = BooleanMetricType( // generated from preferences.sync_notifs
+            CommonMetricData(
+                category: "preferences",
+                name: "sync_notifs",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// True if notifications for tips and features are allowed, otherwise false.
+        static let tipsAndFeaturesNotifs = BooleanMetricType( // generated from preferences.tips_and_features_notifs
+            CommonMetricData(
+                category: "preferences",
+                name: "tips_and_features_notifs",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum Settings {
+        struct ChangedExtra: EventExtras {
+            var changedFrom: String?
+            var changedTo: String?
+            var setting: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let changedFrom = self.changedFrom {
+                    record["changed_from"] = String(changedFrom)
+                }
+                if let changedTo = self.changedTo {
+                    record["changed_to"] = String(changedTo)
+                }
+                if let setting = self.setting {
+                    record["setting"] = String(setting)
+                }
+
+                return record
+            }
+        }
+
+        struct OptionSelectedExtra: EventExtras {
+            var option: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let option = self.option {
+                    record["option"] = String(option)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when the user changes a setting on a Settings screen. Records
+        /// the new value, the previous value, and a key that uniquely identifies the
+        /// setting irrespective of its placement in the Settings screens hierarchy.
+        /// 
+        /// This setting will eventually replace `preferences.changed`.
+        static let changed = EventMetricType<ChangedExtra>( // generated from settings.changed
+            CommonMetricData(
+                category: "settings",
+                name: "changed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["changed_from", "changed_to", "setting"]
+        )
+
+        /// Recorded when the user taps an option to drill deeper into the
+        /// settings menu screens.
+        /// 
+        /// For example, tapping the "App Icon >" option to show the app icon
+        /// selection screen, or tapping "Browsing >" to view the browsing settings.
+        static let optionSelected = EventMetricType<OptionSelectedExtra>( // generated from settings.option_selected
+            CommonMetricData(
+                category: "settings",
+                name: "option_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["option"]
+        )
+
+    }
+
+    enum SettingsAppIcon {
+        struct SelectedExtra: EventExtras {
+            var newName: String?
+            var oldName: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let newName = self.newName {
+                    record["new_name"] = String(newName)
+                }
+                if let oldName = self.oldName {
+                    record["old_name"] = String(oldName)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when the user changes their app icon in the app settings.
+        static let selected = EventMetricType<SelectedExtra>( // generated from settings.app_icon.selected
+            CommonMetricData(
+                category: "settings.app_icon",
+                name: "selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["new_name", "old_name"]
+        )
+
+    }
+
+    enum SettingsZoomBar {
+        struct DomainListItemSwipedToDeleteExtra: EventExtras {
+            var index: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let index = self.index {
+                    record["index"] = String(index)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when the user swipes to delete a specific zoom domain level in the app
+        /// settings.
+        static let domainListItemSwipedToDelete = EventMetricType<DomainListItemSwipedToDeleteExtra>( // generated from settings.zoom_bar.domain_list_item_swiped_to_delete
+            CommonMetricData(
+                category: "settings.zoom_bar",
+                name: "domain_list_item_swiped_to_delete",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["index"]
+        )
+
+        /// Recorded when the user resets the list of zoom domain levels in the app
+        /// settings.
+        static let domainListResetButtonTapped = EventMetricType<NoExtras>( // generated from settings.zoom_bar.domain_list_reset_button_tapped
+            CommonMetricData(
+                category: "settings.zoom_bar",
+                name: "domain_list_reset_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum ShareSheet {
+        struct SharedToExtra: EventExtras {
+            var activityIdentifier: String?
+            var hasShareMessage: Bool?
+            var isEnrolledInSentFromFirefox: Bool?
+            var isOptedInSentFromFirefox: Bool?
+            var shareType: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let activityIdentifier = self.activityIdentifier {
+                    record["activity_identifier"] = String(activityIdentifier)
+                }
+                if let hasShareMessage = self.hasShareMessage {
+                    record["has_share_message"] = String(hasShareMessage)
+                }
+                if let isEnrolledInSentFromFirefox = self.isEnrolledInSentFromFirefox {
+                    record["is_enrolled_in_sent_from_firefox"] = String(isEnrolledInSentFromFirefox)
+                }
+                if let isOptedInSentFromFirefox = self.isOptedInSentFromFirefox {
+                    record["is_opted_in_sent_from_firefox"] = String(isOptedInSentFromFirefox)
+                }
+                if let shareType = self.shareType {
+                    record["share_type"] = String(shareType)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when the user has shared content out of the app via the iOS
+        /// system share sheet. The extra values describe the app the user chose
+        /// and the type of content being shared.
+        /// 
+        /// **Developer Note**: Telemetry is recorded for all shares that go through
+        /// the `ShareManager` via the `ShareTelemetryActivityItemProvider` action.
+        /// 
+        /// Owner: @andy
+        static let sharedTo = EventMetricType<SharedToExtra>( // generated from share_sheet.shared_to
+            CommonMetricData(
+                category: "share_sheet",
+                name: "shared_to",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["activity_identifier", "has_share_message", "is_enrolled_in_sent_from_firefox", "is_opted_in_sent_from_firefox", "share_type"]
+        )
+
+    }
+
+    enum ShareOpenInFirefoxExtension {
+        /// Recorded when the user shares text from the "Open in Firefox" Action Extension.
+        static let textShared = EventMetricType<NoExtras>( // generated from share.open_in_firefox_extension.text_shared
+            CommonMetricData(
+                category: "share.open_in_firefox_extension",
+                name: "text_shared",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Recorded when the user shares a URL from the "Open in Firefox" Action
+        /// Extension.
+        static let urlShared = EventMetricType<NoExtras>( // generated from share.open_in_firefox_extension.url_shared
+            CommonMetricData(
+                category: "share.open_in_firefox_extension",
+                name: "url_shared",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum ShareOpenInFirefoxExtensionList {
+        struct OptionSelectedExtra: EventExtras {
+            var extensionSource: String?
+            var option: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let extensionSource = self.extensionSource {
+                    record["extension_source"] = String(extensionSource)
+                }
+                if let option = self.option {
+                    record["option"] = String(option)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when the user selects an option from the legacy Share Extension view
+        /// controller.
+        static let optionSelected = EventMetricType<OptionSelectedExtra>( // generated from share.open_in_firefox_extension.list.option_selected
+            CommonMetricData(
+                category: "share.open_in_firefox_extension.list",
+                name: "option_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["extension_source", "option"]
+        )
+
+    }
+
+    enum TabsPanel {
+        struct DoneButtonTappedExtra: EventExtras {
+            var mode: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let mode = self.mode {
+                    record["mode"] = String(mode)
+                }
+
+                return record
+            }
+        }
+
+        struct NewTabButtonTappedExtra: EventExtras {
+            var mode: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let mode = self.mode {
+                    record["mode"] = String(mode)
+                }
+
+                return record
+            }
+        }
+
+        struct TabClosedExtra: EventExtras {
+            var mode: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let mode = self.mode {
+                    record["mode"] = String(mode)
+                }
+
+                return record
+            }
+        }
+
+        struct TabModeSelectedExtra: EventExtras {
+            var mode: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let mode = self.mode {
+                    record["mode"] = String(mode)
+                }
+
+                return record
+            }
+        }
+
+        struct TabSelectedExtra: EventExtras {
+            var mode: String?
+            var selectedTabIndex: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let mode = self.mode {
+                    record["mode"] = String(mode)
+                }
+                if let selectedTabIndex = self.selectedTabIndex {
+                    record["selected_tab_index"] = String(selectedTabIndex)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when a user taps the done button to close the tabs panel.
+        static let doneButtonTapped = EventMetricType<DoneButtonTappedExtra>( // generated from tabs_panel.done_button_tapped
+            CommonMetricData(
+                category: "tabs_panel",
+                name: "done_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["mode"]
+        )
+
+        /// Recorded when the user taps the button in the tabs panel to open a new
+        /// tab.
+        static let newTabButtonTapped = EventMetricType<NewTabButtonTappedExtra>( // generated from tabs_panel.new_tab_button_tapped
+            CommonMetricData(
+                category: "tabs_panel",
+                name: "new_tab_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["mode"]
+        )
+
+        /// Recorded when a user closes an open tab via tapping the x or
+        /// swiping closed.
+        static let tabClosed = EventMetricType<TabClosedExtra>( // generated from tabs_panel.tab_closed
+            CommonMetricData(
+                category: "tabs_panel",
+                name: "tab_closed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["mode"]
+        )
+
+        /// Recorded when the user changes the tabs panel mode with the segmented
+        /// control in the tabs panel.
+        static let tabModeSelected = EventMetricType<TabModeSelectedExtra>( // generated from tabs_panel.tab_mode_selected
+            CommonMetricData(
+                category: "tabs_panel",
+                name: "tab_mode_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["mode"]
+        )
+
+        /// Recorded when a user selects a tab in the tabs panel.
+        static let tabSelected = EventMetricType<TabSelectedExtra>( // generated from tabs_panel.tab_selected
+            CommonMetricData(
+                category: "tabs_panel",
+                name: "tab_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["mode", "selected_tab_index"]
+        )
+
+    }
+
+    enum TabsPanelCloseAllTabsSheet {
+        struct OptionSelectedExtra: EventExtras {
+            var mode: String?
+            var option: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let mode = self.mode {
+                    record["mode"] = String(mode)
+                }
+                if let option = self.option {
+                    record["option"] = String(option)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when the user taps an option in the close all tabs sheet.
+        static let optionSelected = EventMetricType<OptionSelectedExtra>( // generated from tabs_panel.close_all_tabs_sheet.option_selected
+            CommonMetricData(
+                category: "tabs_panel.close_all_tabs_sheet",
+                name: "option_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["mode", "option"]
+        )
+
+    }
+
+    enum TabsPanelCloseOldTabsSheet {
+        struct OptionSelectedExtra: EventExtras {
+            var period: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let period = self.period {
+                    record["period"] = String(period)
+                }
+
+                return record
+            }
+        }
+
+        /// Recorded when the user taps an option in the close old tabs sheet.
+        static let optionSelected = EventMetricType<OptionSelectedExtra>( // generated from tabs_panel.close_old_tabs_sheet.option_selected
+            CommonMetricData(
+                category: "tabs_panel.close_old_tabs_sheet",
+                name: "option_selected",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["period"]
+        )
+
+    }
+
+    enum TabsTray {
+        struct PrivateBrowsingIconTappedExtra: EventExtras {
+            var action: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let action = self.action {
+                    record["action"] = String(action)
+                }
+
+                return record
+            }
+        }
+
+        /// A user opened a new private tab from the tab tray
+        static let newPrivateTabTapped = EventMetricType<NoExtras>( // generated from tabs_tray.new_private_tab_tapped
+            CommonMetricData(
+                category: "tabs_tray",
+                name: "new_private_tab_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A user has tapped on the private browsing icon in tabs tray.
+        static let privateBrowsingIconTapped = EventMetricType<PrivateBrowsingIconTappedExtra>( // generated from tabs_tray.private_browsing_icon_tapped
+            CommonMetricData(
+                category: "tabs_tray",
+                name: "private_browsing_icon_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["action"]
+        )
+
+    }
+
+    enum TermsOfUse {
+        struct AcceptedExtra: EventExtras {
+            var surface: String?
+            var touVersion: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surface = self.surface {
+                    record["surface"] = String(surface)
+                }
+                if let touVersion = self.touVersion {
+                    record["tou_version"] = String(touVersion)
+                }
+
+                return record
+            }
+        }
+
+        struct DismissedExtra: EventExtras {
+            var surface: String?
+            var touVersion: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surface = self.surface {
+                    record["surface"] = String(surface)
+                }
+                if let touVersion = self.touVersion {
+                    record["tou_version"] = String(touVersion)
+                }
+
+                return record
+            }
+        }
+
+        struct LearnMoreButtonTappedExtra: EventExtras {
+            var surface: String?
+            var touVersion: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surface = self.surface {
+                    record["surface"] = String(surface)
+                }
+                if let touVersion = self.touVersion {
+                    record["tou_version"] = String(touVersion)
+                }
+
+                return record
+            }
+        }
+
+        struct PrivacyNoticeTappedExtra: EventExtras {
+            var surface: String?
+            var touVersion: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surface = self.surface {
+                    record["surface"] = String(surface)
+                }
+                if let touVersion = self.touVersion {
+                    record["tou_version"] = String(touVersion)
+                }
+
+                return record
+            }
+        }
+
+        struct RemindMeLaterButtonTappedExtra: EventExtras {
+            var surface: String?
+            var touVersion: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surface = self.surface {
+                    record["surface"] = String(surface)
+                }
+                if let touVersion = self.touVersion {
+                    record["tou_version"] = String(touVersion)
+                }
+
+                return record
+            }
+        }
+
+        struct ShownExtra: EventExtras {
+            var surface: String?
+            var touVersion: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surface = self.surface {
+                    record["surface"] = String(surface)
+                }
+                if let touVersion = self.touVersion {
+                    record["tou_version"] = String(touVersion)
+                }
+
+                return record
+            }
+        }
+
+        struct TermsOfUseLinkTappedExtra: EventExtras {
+            var surface: String?
+            var touVersion: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let surface = self.surface {
+                    record["surface"] = String(surface)
+                }
+                if let touVersion = self.touVersion {
+                    record["tou_version"] = String(touVersion)
+                }
+
+                return record
+            }
+        }
+
+        /// User accepted the terms of use.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.accepted` metric.
+        static let accepted = EventMetricType<AcceptedExtra>( // generated from terms_of_use.accepted
+            CommonMetricData(
+                category: "terms_of_use",
+                name: "accepted",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["surface", "tou_version"]
+        )
+
+        /// User dismissed the Terms of Use bottom sheet without accepting or tapping
+        /// remind me later.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.dismiss` metric.
+        static let dismissed = EventMetricType<DismissedExtra>( // generated from terms_of_use.dismissed
+            CommonMetricData(
+                category: "terms_of_use",
+                name: "dismissed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["surface", "tou_version"]
+        )
+
+        /// User tapped the "learn more" button in the Terms of Use bottom sheet.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.learn_more_click` metric.
+        static let learnMoreButtonTapped = EventMetricType<LearnMoreButtonTappedExtra>( // generated from terms_of_use.learn_more_button_tapped
+            CommonMetricData(
+                category: "terms_of_use",
+                name: "learn_more_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["surface", "tou_version"]
+        )
+
+        /// User tapped the privacy notice link in the Terms of Use bottom sheet.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.privacy_notice_click`
+        /// metric.
+        static let privacyNoticeTapped = EventMetricType<PrivacyNoticeTappedExtra>( // generated from terms_of_use.privacy_notice_tapped
+            CommonMetricData(
+                category: "terms_of_use",
+                name: "privacy_notice_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["surface", "tou_version"]
+        )
+
+        /// User tapped the "remind me later" button in the Terms of Use bottom sheet.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.remind_me_later_click`
+        /// metric.
+        static let remindMeLaterButtonTapped = EventMetricType<RemindMeLaterButtonTappedExtra>( // generated from terms_of_use.remind_me_later_button_tapped
+            CommonMetricData(
+                category: "terms_of_use",
+                name: "remind_me_later_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["surface", "tou_version"]
+        )
+
+        /// User viewed the terms of use bottom sheet.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.impression` metric.
+        static let shown = EventMetricType<ShownExtra>( // generated from terms_of_use.shown
+            CommonMetricData(
+                category: "terms_of_use",
+                name: "shown",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["surface", "tou_version"]
+        )
+
+        /// User tapped the terms of use link in the Terms of Use bottom sheet.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.terms_of_use_click`
+        /// metric.
+        static let termsOfUseLinkTapped = EventMetricType<TermsOfUseLinkTappedExtra>( // generated from terms_of_use.terms_of_use_link_tapped
+            CommonMetricData(
+                category: "terms_of_use",
+                name: "terms_of_use_link_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["surface", "tou_version"]
+        )
+
+    }
+
+    enum UserTermsOfUse {
+        /// The timestamp when the user accepted the Terms of Use.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.date` metric.
+        static let dateAccepted = DatetimeMetricType( // generated from user.terms_of_use.date_accepted
+            CommonMetricData(
+                category: "user.terms_of_use",
+                name: "date_accepted",
+                sendInPings: ["metrics", "usage-reporting"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , .millisecond
+        )
+
+        /// Records the number of times a user taps to dismiss (does not include tapping
+        /// accept or remind me later).
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.dismiss_count` metric.
+        static let dismissedCount = CounterMetricType( // generated from user.terms_of_use.dismissed_count
+            CommonMetricData(
+                category: "user.terms_of_use",
+                name: "dismissed_count",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records the number of times a user taps "remind me later".
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.remind_me_later_count`
+        /// metric.
+        static let remindMeLaterCount = CounterMetricType( // generated from user.terms_of_use.remind_me_later_count
+            CommonMetricData(
+                category: "user.terms_of_use",
+                name: "remind_me_later_count",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records the number of ToU impressions the user has had.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.impression_count` metric.
+        static let shownCount = CounterMetricType( // generated from user.terms_of_use.shown_count
+            CommonMetricData(
+                category: "user.terms_of_use",
+                name: "shown_count",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// The version of the Terms of Use the user accepted.
+        /// 
+        /// **Developer Note**: This replaces the old `termsofuse.version` metric.
+        static let versionAccepted = QuantityMetricType( // generated from user.terms_of_use.version_accepted
+            CommonMetricData(
+                category: "user.terms_of_use",
+                name: "version_accepted",
+                sendInPings: ["metrics", "usage-reporting"],
+                lifetime: .application,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum ToastsCloseAllTabs {
+        /// Records when the user selects undo after closing all tabs.
+        static let undoTapped = EventMetricType<NoExtras>( // generated from toasts.close_all_tabs.undo_tapped
+            CommonMetricData(
+                category: "toasts.close_all_tabs",
+                name: "undo_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum ToastsCloseSingleTab {
+        /// Records when the user selects undo after closing a tab.
+        static let undoTapped = EventMetricType<NoExtras>( // generated from toasts.close_single_tab.undo_tapped
+            CommonMetricData(
+                category: "toasts.close_single_tab",
+                name: "undo_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum Awesomebar {
+        struct LocationExtra: EventExtras {
+            var location: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let location = self.location {
+                    record["location"] = String(location)
+                }
+
+                return record
+            }
+        }
+
+        struct SearchResultImpressionExtra: EventExtras {
+            var type: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let type = self.type {
+                    record["type"] = String(type)
+                }
+
+                return record
+            }
+        }
+
+        struct SearchResultTapExtra: EventExtras {
+            var type: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let type = self.type {
+                    record["type"] = String(type)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when dragging the location bar
+        static let dragLocationBar = EventMetricType<NoExtras>( // generated from awesomebar.drag_location_bar
+            CommonMetricData(
+                category: "awesomebar",
+                name: "drag_location_bar",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records location of awesome bar when
+        /// user opens the app
+        static let location = EventMetricType<LocationExtra>( // generated from awesomebar.location
+            CommonMetricData(
+                category: "awesomebar",
+                name: "location",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["location"]
+        )
+
+        /// The time a query against awesomebar took. This helps us understand the
+        /// performance of the awesomebar in querying history and bookmarks. The query time
+        /// will also help us verify that we are **not** introducing any performance
+        /// regressions.
+        static let queryTime = TimingDistributionMetricType( // generated from awesomebar.query_time
+            CommonMetricData(
+                category: "awesomebar",
+                name: "query_time",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , .millisecond
+        )
+
+        /// Recorded for an item that was visible in the list of search results
+        /// when the user finished interacting with the awesomebar.
+        static let searchResultImpression = EventMetricType<SearchResultImpressionExtra>( // generated from awesomebar.search_result_impression
+            CommonMetricData(
+                category: "awesomebar",
+                name: "search_result_impression",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["type"]
+        )
+
+        /// Record type of search item tap from the
+        /// list of results of awesomebar search.
+        static let searchResultTap = EventMetricType<SearchResultTapExtra>( // generated from awesomebar.search_result_tap
+            CommonMetricData(
+                category: "awesomebar",
+                name: "search_result_tap",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["type"]
+        )
+
+        /// Counts the number of times a user taps share
+        /// button on the awesomebar
+        static let shareButtonTapped = EventMetricType<NoExtras>( // generated from awesomebar.share_button_tapped
+            CommonMetricData(
+                category: "awesomebar",
+                name: "share_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum Toolbar {
+        struct AppMenuButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct BackButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct BackLongPressExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct ClearSearchButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct DataClearanceButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct ForwardButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct ForwardLongPressExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct HomeButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct OneTapNewTabButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct OneTapNewTabLongPressExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct ReaderModeButtonTappedExtra: EventExtras {
+            var enabled: Bool?
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let enabled = self.enabled {
+                    record["enabled"] = String(enabled)
+                }
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct RefreshButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct SearchButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct ShareButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct SiteInfoButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+            var isToolbar: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+                if let isToolbar = self.isToolbar {
+                    record["is_toolbar"] = String(isToolbar)
+                }
+
+                return record
+            }
+        }
+
+        struct TabTrayButtonTappedExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct TabTrayLongPressExtra: EventExtras {
+            var isPrivate: Bool?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+
+                return record
+            }
+        }
+
+        struct TranslateButtonTappedExtra: EventExtras {
+            var actionType: String?
+            var isPrivate: Bool?
+            var translationFlowId: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let actionType = self.actionType {
+                    record["action_type"] = String(actionType)
+                }
+                if let isPrivate = self.isPrivate {
+                    record["is_private"] = String(isPrivate)
+                }
+                if let translationFlowId = self.translationFlowId {
+                    record["translation_flow_id"] = String(translationFlowId)
+                }
+
+                return record
+            }
+        }
+
+        /// Counts the number of times a user taps the menu button
+        /// in the address or navigation toolbar
+        static let appMenuButtonTapped = EventMetricType<AppMenuButtonTappedExtra>( // generated from toolbar.app_menu_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "app_menu_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the back button
+        /// in the address or navigation toolbar
+        static let backButtonTapped = EventMetricType<BackButtonTappedExtra>( // generated from toolbar.back_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "back_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user long presses the back button
+        /// in the address or navigation toolbar
+        static let backLongPress = EventMetricType<BackLongPressExtra>( // generated from toolbar.back_long_press
+            CommonMetricData(
+                category: "toolbar",
+                name: "back_long_press",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the clear button
+        /// in the address toolbar
+        static let clearSearchButtonTapped = EventMetricType<ClearSearchButtonTappedExtra>( // generated from toolbar.clear_search_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "clear_search_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the data clearance
+        /// button in the address or navigation toolbar
+        static let dataClearanceButtonTapped = EventMetricType<DataClearanceButtonTappedExtra>( // generated from toolbar.data_clearance_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "data_clearance_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the forward button
+        /// in the address or navigation toolbar
+        static let forwardButtonTapped = EventMetricType<ForwardButtonTappedExtra>( // generated from toolbar.forward_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "forward_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user long presses the forward button
+        /// in the address or navigation toolbar
+        static let forwardLongPress = EventMetricType<ForwardLongPressExtra>( // generated from toolbar.forward_long_press
+            CommonMetricData(
+                category: "toolbar",
+                name: "forward_long_press",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the home button
+        /// in the address or navigation toolbar
+        static let homeButtonTapped = EventMetricType<HomeButtonTappedExtra>( // generated from toolbar.home_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "home_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the one tap new tab
+        /// button in the address or navigation toolbar
+        static let oneTapNewTabButtonTapped = EventMetricType<OneTapNewTabButtonTappedExtra>( // generated from toolbar.one_tap_new_tab_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "one_tap_new_tab_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user long presses the one
+        /// tap new tab button in the address or navigation toolbar
+        static let oneTapNewTabLongPress = EventMetricType<OneTapNewTabLongPressExtra>( // generated from toolbar.one_tap_new_tab_long_press
+            CommonMetricData(
+                category: "toolbar",
+                name: "one_tap_new_tab_long_press",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the reader mode button
+        /// in the address toolbar
+        static let readerModeButtonTapped = EventMetricType<ReaderModeButtonTappedExtra>( // generated from toolbar.reader_mode_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "reader_mode_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["enabled", "is_private"]
+        )
+
+        /// Counts the number of times a user taps the refresh button
+        /// in the address toolbar
+        static let refreshButtonTapped = EventMetricType<RefreshButtonTappedExtra>( // generated from toolbar.refresh_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "refresh_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the search button
+        /// in the address or navigation toolbar
+        static let searchButtonTapped = EventMetricType<SearchButtonTappedExtra>( // generated from toolbar.search_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "search_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the share button
+        /// in the address toolbar
+        static let shareButtonTapped = EventMetricType<ShareButtonTappedExtra>( // generated from toolbar.share_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "share_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user taps the site info button
+        /// in the address toolbar
+        static let siteInfoButtonTapped = EventMetricType<SiteInfoButtonTappedExtra>( // generated from toolbar.site_info_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "site_info_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private", "is_toolbar"]
+        )
+
+        /// Counts the number of times a user taps the tab tray button
+        /// in the address or navigation toolbar
+        static let tabTrayButtonTapped = EventMetricType<TabTrayButtonTappedExtra>( // generated from toolbar.tab_tray_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "tab_tray_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Counts the number of times a user long presses the tab tray
+        /// button in the address or navigation toolbar
+        static let tabTrayLongPress = EventMetricType<TabTrayLongPressExtra>( // generated from toolbar.tab_tray_long_press
+            CommonMetricData(
+                category: "toolbar",
+                name: "tab_tray_long_press",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["is_private"]
+        )
+
+        /// Recorded when the user taps the translate button in the toolbar.
+        /// The outcome of tapping the button depends on the button's current state.
+        /// The user either wants to trigger a full-page translation request or
+        /// restore the page back to its original content.
+        static let translateButtonTapped = EventMetricType<TranslateButtonTappedExtra>( // generated from toolbar.translate_button_tapped
+            CommonMetricData(
+                category: "toolbar",
+                name: "translate_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["action_type", "is_private", "translation_flow_id"]
+        )
+
+    }
+
+    enum UserToolbar {
+        /// Records the user's preference for the middle button (newTab or home).
+        static let middleButtonType = StringMetricType( // generated from user.toolbar.middle_button_type
+            CommonMetricData(
+                category: "user.toolbar",
+                name: "middle_button_type",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum TrackingProtection {
+        struct EtpSettingChangedExtra: EventExtras {
+            var etpEnabled: Bool?
+            var etpSetting: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let etpEnabled = self.etpEnabled {
+                    record["etp_enabled"] = String(etpEnabled)
+                }
+                if let etpSetting = self.etpSetting {
+                    record["etp_setting"] = String(etpSetting)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when the enhanced tracking protection panel is dismissed
+        static let dismissEtpPanel = EventMetricType<NoExtras>( // generated from tracking_protection.dismiss_etp_panel
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "dismiss_etp_panel",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Measures the state of the tracking-protection enabled
+        /// preference.
+        static let enabled = BooleanMetricType( // generated from tracking_protection.enabled
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "enabled",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// A user changed their tracking protection
+        /// level setting to either strict or standard
+        static let etpSettingChanged = EventMetricType<EtpSettingChangedExtra>( // generated from tracking_protection.etp_setting_changed
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "etp_setting_changed",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["etp_enabled", "etp_setting"]
+        )
+
+        /// Records when the certificates screen from the enhanced tracking protection
+        /// panel is shown
+        static let showCertificates = EventMetricType<NoExtras>( // generated from tracking_protection.show_certificates
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "show_certificates",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the clear cookies alert is shown
+        static let showClearCookiesAlert = EventMetricType<NoExtras>( // generated from tracking_protection.show_clear_cookies_alert
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "show_clear_cookies_alert",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the enhanced tracking protection blocked trackers details screen
+        /// is shown
+        static let showEtpBlockedTrackersDetails = EventMetricType<NoExtras>( // generated from tracking_protection.show_etp_blocked_trackers_details
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "show_etp_blocked_trackers_details",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the enhanced tracking protection details screen is shown
+        static let showEtpDetails = EventMetricType<NoExtras>( // generated from tracking_protection.show_etp_details
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "show_etp_details",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the enhanced tracking protection settings screen is shown
+        static let showEtpSettings = EventMetricType<NoExtras>( // generated from tracking_protection.show_etp_settings
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "show_etp_settings",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// A string representing the selected strength of the
+        /// tracking-protection that is enabled. One of:
+        /// * basic
+        /// * strict
+        static let strength = StringMetricType( // generated from tracking_protection.strength
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "strength",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+        /// Records when the clear cookies button from the etp alert is tapped.
+        static let tappedClearCookies = EventMetricType<NoExtras>( // generated from tracking_protection.tapped_clear_cookies
+            CommonMetricData(
+                category: "tracking_protection",
+                name: "tapped_clear_cookies",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+    }
+
+    enum UserClientAssociation {
+        /// The Mozilla Account UID associated with the user.
+        /// 
+        /// Owner: @jdavis
+        static let uid = StringMetricType( // generated from user.client_association.uid
+            CommonMetricData(
+                category: "user.client_association",
+                name: "uid",
+                sendInPings: ["fx-accounts"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
+    enum ZoomBar {
+        struct ZoomInButtonTappedExtra: EventExtras {
+            var level: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let level = self.level {
+                    record["level"] = String(level)
+                }
+
+                return record
+            }
+        }
+
+        struct ZoomOutButtonTappedExtra: EventExtras {
+            var level: Int32?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let level = self.level {
+                    record["level"] = String(level)
+                }
+
+                return record
+            }
+        }
+
+        /// Records when the user taps the close button to close the zoom bar.
+        static let closeButtonTapped = EventMetricType<NoExtras>( // generated from zoom_bar.close_button_tapped
+            CommonMetricData(
+                category: "zoom_bar",
+                name: "close_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the user taps the current zoom percentage to reset the zoom
+        /// level in the zoom bar. This will cause the current webpage to reset
+        /// back to the default 100% zoom level.
+        static let resetButtonTapped = EventMetricType<NoExtras>( // generated from zoom_bar.reset_button_tapped
+            CommonMetricData(
+                category: "zoom_bar",
+                name: "reset_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// Records when the user taps the zoom in button in the zoom bar.
+        /// This will cause the current webpage to zoom in.
+        static let zoomInButtonTapped = EventMetricType<ZoomInButtonTappedExtra>( // generated from zoom_bar.zoom_in_button_tapped
+            CommonMetricData(
+                category: "zoom_bar",
+                name: "zoom_in_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["level"]
+        )
+
+        /// Records when the user taps the zoom out button in the zoom bar.
+        /// This will cause the current webpage to zoom out.
+        static let zoomOutButtonTapped = EventMetricType<ZoomOutButtonTappedExtra>( // generated from zoom_bar.zoom_out_button_tapped
+            CommonMetricData(
+                category: "zoom_bar",
+                name: "zoom_out_button_tapped",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["level"]
+        )
+
+    }
+
+    enum CreditCardKeyRegeneration {
+        /// The encryption key was regenerated because it didn't match the encrypted data
+        static let corrupt = EventMetricType<NoExtras>( // generated from credit_card_key_regeneration.corrupt
+            CommonMetricData(
+                category: "credit_card_key_regeneration",
+                name: "corrupt",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// The encryption key was regenerated because it and the canary phrase are missing
+        /// from the keychain
+        static let keychainDataLost = EventMetricType<NoExtras>( // generated from credit_card_key_regeneration.keychain_data_lost
+            CommonMetricData(
+                category: "credit_card_key_regeneration",
+                name: "keychain_data_lost",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
@@ -550,10 +7815,10 @@ extension GleanMetrics {
         )
 
         /// The encryption key was regenerated because it was lost
-        static let keyRegeneratedLost = EventMetricType<NoExtras>( // generated from logins_store.key_regenerated_lost
+        static let lost = EventMetricType<NoExtras>( // generated from credit_card_key_regeneration.lost
             CommonMetricData(
-                category: "logins_store",
-                name: "key_regenerated_lost",
+                category: "credit_card_key_regeneration",
+                name: "lost",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
@@ -562,10 +7827,10 @@ extension GleanMetrics {
         )
 
         /// The encryption key was regenerated for an unknown reason
-        static let keyRegeneratedOther = EventMetricType<NoExtras>( // generated from logins_store.key_regenerated_other
+        static let other = EventMetricType<NoExtras>( // generated from credit_card_key_regeneration.other
             CommonMetricData(
-                category: "logins_store",
-                name: "key_regenerated_other",
+                category: "credit_card_key_regeneration",
+                name: "other",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
@@ -573,827 +7838,14 @@ extension GleanMetrics {
             , []
         )
 
-        /// Track how many logins we deleted locally due to various reasons that prevent us
-        /// from decrypting the login
-        static let localUndecryptableDeleted = CounterMetricType( // generated from logins_store.local_undecryptable_deleted
-            CommonMetricData(
-                category: "logins_store",
-                name: "local_undecryptable_deleted",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Track how many logins we deleted in the mirror table due to various reasons
-        /// that prevent us from decrypting the login
-        static let mirrorUndecryptableDeleted = CounterMetricType( // generated from logins_store.mirror_undecryptable_deleted
-            CommonMetricData(
-                category: "logins_store",
-                name: "mirror_undecryptable_deleted",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// The total number of read operations performed on the logins store. The count
-        /// only includes operations triggered by the application, not e.g. incidental
-        /// reads performed as part of a sync. It is intended to be used together with
-        /// `read_query_error_count` to measure the overall error rate of read operations
-        /// on the logins store.
-        static let readQueryCount = CounterMetricType( // generated from logins_store.read_query_count
-            CommonMetricData(
-                category: "logins_store",
-                name: "read_query_count",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        private static let readQueryErrorCountLabel = CounterMetricType( // generated from logins_store.read_query_error_count
-            CommonMetricData(
-                category: "logins_store",
-                name: "read_query_error_count",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// The total number of errors encountered during read operations on the logins
-        /// store, labeled by type. It is intended to be used together with
-        /// `read_query_count` to measure the overall error rate of read operations on the
-        /// logins store.
-        static let readQueryErrorCount = try! LabeledMetricType<CounterMetricType>( // generated from logins_store.read_query_error_count
-            category: "logins_store",
-            name: "read_query_error_count",
-            sendInPings: ["metrics"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: readQueryErrorCountLabel,
-            labels: ["interrupted", "storage_error"]
-        )
-
-        /// The total number of write operations performed on the logins store. The count
-        /// only includes operations triggered by the application, not e.g. incidental
-        /// writes performed as part of a sync. It is intended to be used together with
-        /// `write_query_error_count` to measure the overall error rate of write operations
-        /// on the logins store.
-        static let writeQueryCount = CounterMetricType( // generated from logins_store.write_query_count
-            CommonMetricData(
-                category: "logins_store",
-                name: "write_query_count",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        private static let writeQueryErrorCountLabel = CounterMetricType( // generated from logins_store.write_query_error_count
-            CommonMetricData(
-                category: "logins_store",
-                name: "write_query_error_count",
-                sendInPings: ["metrics"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// The total number of errors encountered during write operations on the logins
-        /// store, labeled by type. It is intended to be used together with
-        /// `write_query_count` to measure the overall error rate of write operations on
-        /// the logins store.
-        static let writeQueryErrorCount = try! LabeledMetricType<CounterMetricType>( // generated from logins_store.write_query_error_count
-            category: "logins_store",
-            name: "write_query_error_count",
-            sendInPings: ["metrics"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: writeQueryErrorCountLabel,
-            labels: ["interrupted", "invalid_record", "no_such_record", "storage_error"]
-        )
     }
 
-    enum AddressesSyncV2 {
-        private static let failureReasonLabel = StringMetricType( // generated from addresses_sync_v2.failure_reason
+    enum LoginsStoreKeyRegeneration {
+        /// The encryption key was regenerated because it didn't match the encrypted data
+        static let corrupt = EventMetricType<NoExtras>( // generated from logins_store_key_regeneration.corrupt
             CommonMetricData(
-                category: "addresses_sync_v2",
-                name: "failure_reason",
-                sendInPings: ["addresses-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records why the addresses sync failed: either due to an authentication error,
-        /// unexpected exception, or other error. The error strings are truncated and
-        /// sanitized to omit PII, like URLs and file system paths.
-        static let failureReason = try! LabeledMetricType<StringMetricType>( // generated from addresses_sync_v2.failure_reason
-            category: "addresses_sync_v2",
-            name: "failure_reason",
-            sendInPings: ["addresses-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: failureReasonLabel,
-            labels: ["auth", "other", "unexpected"]
-        )
-
-        /// Records when the addresses sync finished. This includes the time to download,
-        /// apply, and upload all records.
-        static let finishedAt = DatetimeMetricType( // generated from addresses_sync_v2.finished_at
-            CommonMetricData(
-                category: "addresses_sync_v2",
-                name: "finished_at",
-                sendInPings: ["addresses-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        private static let incomingLabel = CounterMetricType( // generated from addresses_sync_v2.incoming
-            CommonMetricData(
-                category: "addresses_sync_v2",
-                name: "incoming",
-                sendInPings: ["addresses-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records incoming addresses record counts. `applied` is the number of incoming
-        /// records that were successfully stored or updated in the local database.
-        /// `failed_to_apply` is the number of records that were ignored due to errors.
-        /// `reconciled` is the number of merged records.
-        static let incoming = try! LabeledMetricType<CounterMetricType>( // generated from addresses_sync_v2.incoming
-            category: "addresses_sync_v2",
-            name: "incoming",
-            sendInPings: ["addresses-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: incomingLabel,
-            labels: ["applied", "failed_to_apply", "reconciled"]
-        )
-
-        private static let outgoingLabel = CounterMetricType( // generated from addresses_sync_v2.outgoing
-            CommonMetricData(
-                category: "addresses_sync_v2",
-                name: "outgoing",
-                sendInPings: ["addresses-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records outgoing addresses record counts. `uploaded` is the number of records
-        /// that were successfully sent to the server. `failed_to_upload` is the number of
-        /// records that weren't uploaded, and will be retried on the next sync.
-        static let outgoing = try! LabeledMetricType<CounterMetricType>( // generated from addresses_sync_v2.outgoing
-            category: "addresses_sync_v2",
-            name: "outgoing",
-            sendInPings: ["addresses-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: outgoingLabel,
-            labels: ["failed_to_upload", "uploaded"]
-        )
-
-        /// Records the number of batches needed to upload all outgoing records. The Sync
-        /// server has a hard limit on the number of records (and request body bytes) on
-        /// the number of records that can fit into a single batch, and large syncs may
-        /// require multiple batches.
-        static let outgoingBatches = CounterMetricType( // generated from addresses_sync_v2.outgoing_batches
-            CommonMetricData(
-                category: "addresses_sync_v2",
-                name: "outgoing_batches",
-                sendInPings: ["addresses-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records when the addresses sync started.
-        static let startedAt = DatetimeMetricType( // generated from addresses_sync_v2.started_at
-            CommonMetricData(
-                category: "addresses_sync_v2",
-                name: "started_at",
-                sendInPings: ["addresses-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        /// The user's hashed Firefox Account ID.
-        static let uid = StringMetricType( // generated from addresses_sync_v2.uid
-            CommonMetricData(
-                category: "addresses_sync_v2",
-                name: "uid",
-                sendInPings: ["addresses-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-    }
-
-    enum BookmarksSyncV2 {
-        private static let failureReasonLabel = StringMetricType( // generated from bookmarks_sync_v2.failure_reason
-            CommonMetricData(
-                category: "bookmarks_sync_v2",
-                name: "failure_reason",
-                sendInPings: ["bookmarks-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records bookmark sync failure reasons.
-        static let failureReason = try! LabeledMetricType<StringMetricType>( // generated from bookmarks_sync_v2.failure_reason
-            category: "bookmarks_sync_v2",
-            name: "failure_reason",
-            sendInPings: ["bookmarks-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: failureReasonLabel,
-            labels: ["auth", "other", "unexpected"]
-        )
-
-        /// Records when the bookmark sync finished.
-        static let finishedAt = DatetimeMetricType( // generated from bookmarks_sync_v2.finished_at
-            CommonMetricData(
-                category: "bookmarks_sync_v2",
-                name: "finished_at",
-                sendInPings: ["bookmarks-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        private static let incomingLabel = CounterMetricType( // generated from bookmarks_sync_v2.incoming
-            CommonMetricData(
-                category: "bookmarks_sync_v2",
-                name: "incoming",
-                sendInPings: ["bookmarks-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records incoming bookmark record counts.
-        static let incoming = try! LabeledMetricType<CounterMetricType>( // generated from bookmarks_sync_v2.incoming
-            category: "bookmarks_sync_v2",
-            name: "incoming",
-            sendInPings: ["bookmarks-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: incomingLabel,
-            labels: ["applied", "failed_to_apply", "reconciled"]
-        )
-
-        private static let outgoingLabel = CounterMetricType( // generated from bookmarks_sync_v2.outgoing
-            CommonMetricData(
-                category: "bookmarks_sync_v2",
-                name: "outgoing",
-                sendInPings: ["bookmarks-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records outgoing bookmark record counts.
-        static let outgoing = try! LabeledMetricType<CounterMetricType>( // generated from bookmarks_sync_v2.outgoing
-            category: "bookmarks_sync_v2",
-            name: "outgoing",
-            sendInPings: ["bookmarks-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: outgoingLabel,
-            labels: ["failed_to_upload", "uploaded"]
-        )
-
-        /// Records the number of batches needed to upload all outgoing records.
-        static let outgoingBatches = CounterMetricType( // generated from bookmarks_sync_v2.outgoing_batches
-            CommonMetricData(
-                category: "bookmarks_sync_v2",
-                name: "outgoing_batches",
-                sendInPings: ["bookmarks-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        private static let remoteTreeProblemsLabel = CounterMetricType( // generated from bookmarks_sync_v2.remote_tree_problems
-            CommonMetricData(
-                category: "bookmarks_sync_v2",
-                name: "remote_tree_problems",
-                sendInPings: ["bookmarks-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records counts for structure problems and divergences in the remote bookmarks
-        /// tree. These are documented in https://github.com/mozilla/dogear/blob/fbade15f2a
-        /// 4f11215e30b8f428a0a8df3defeaec/src/tree.rs#L1273-L1294.
-        static let remoteTreeProblems = try! LabeledMetricType<CounterMetricType>( // generated from bookmarks_sync_v2.remote_tree_problems
-            category: "bookmarks_sync_v2",
-            name: "remote_tree_problems",
-            sendInPings: ["bookmarks-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: remoteTreeProblemsLabel,
-            labels: ["misparented_roots", "missing_children", "missing_parent_guids", "multiple_parents_by_children", "non_folder_parent_guids", "orphans", "parent_child_disagreements"]
-        )
-
-        /// Records when the bookmark sync started.
-        static let startedAt = DatetimeMetricType( // generated from bookmarks_sync_v2.started_at
-            CommonMetricData(
-                category: "bookmarks_sync_v2",
-                name: "started_at",
-                sendInPings: ["bookmarks-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        /// The user's hashed Firefox Account ID.
-        static let uid = StringMetricType( // generated from bookmarks_sync_v2.uid
-            CommonMetricData(
-                category: "bookmarks_sync_v2",
-                name: "uid",
-                sendInPings: ["bookmarks-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-    }
-
-    enum CreditcardsSyncV2 {
-        private static let failureReasonLabel = StringMetricType( // generated from creditcards_sync_v2.failure_reason
-            CommonMetricData(
-                category: "creditcards_sync_v2",
-                name: "failure_reason",
-                sendInPings: ["creditcards-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records why the credit cards sync failed: either due to an authentication
-        /// error, unexpected exception, or other error. The error strings are truncated
-        /// and sanitized to omit PII, like URLs and file system paths.
-        static let failureReason = try! LabeledMetricType<StringMetricType>( // generated from creditcards_sync_v2.failure_reason
-            category: "creditcards_sync_v2",
-            name: "failure_reason",
-            sendInPings: ["creditcards-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: failureReasonLabel,
-            labels: ["auth", "other", "unexpected"]
-        )
-
-        /// Records when the credit cards sync finished. This includes the time to
-        /// download, apply, and upload all records.
-        static let finishedAt = DatetimeMetricType( // generated from creditcards_sync_v2.finished_at
-            CommonMetricData(
-                category: "creditcards_sync_v2",
-                name: "finished_at",
-                sendInPings: ["creditcards-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        private static let incomingLabel = CounterMetricType( // generated from creditcards_sync_v2.incoming
-            CommonMetricData(
-                category: "creditcards_sync_v2",
-                name: "incoming",
-                sendInPings: ["creditcards-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records incoming credit cards record counts. `applied` is the number of
-        /// incoming records that were successfully stored or updated in the local
-        /// database. `failed_to_apply` is the number of records that were ignored due to
-        /// errors. `reconciled` is the number of merged records.
-        static let incoming = try! LabeledMetricType<CounterMetricType>( // generated from creditcards_sync_v2.incoming
-            category: "creditcards_sync_v2",
-            name: "incoming",
-            sendInPings: ["creditcards-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: incomingLabel,
-            labels: ["applied", "failed_to_apply", "reconciled"]
-        )
-
-        private static let outgoingLabel = CounterMetricType( // generated from creditcards_sync_v2.outgoing
-            CommonMetricData(
-                category: "creditcards_sync_v2",
-                name: "outgoing",
-                sendInPings: ["creditcards-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records outgoing credit cards record counts. `uploaded` is the number of
-        /// records that were successfully sent to the server. `failed_to_upload` is the
-        /// number of records that weren't uploaded, and will be retried on the next sync.
-        static let outgoing = try! LabeledMetricType<CounterMetricType>( // generated from creditcards_sync_v2.outgoing
-            category: "creditcards_sync_v2",
-            name: "outgoing",
-            sendInPings: ["creditcards-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: outgoingLabel,
-            labels: ["failed_to_upload", "uploaded"]
-        )
-
-        /// Records the number of batches needed to upload all outgoing records. The Sync
-        /// server has a hard limit on the number of records (and request body bytes) on
-        /// the number of records that can fit into a single batch, and large syncs may
-        /// require multiple batches.
-        static let outgoingBatches = CounterMetricType( // generated from creditcards_sync_v2.outgoing_batches
-            CommonMetricData(
-                category: "creditcards_sync_v2",
-                name: "outgoing_batches",
-                sendInPings: ["creditcards-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records when the credit cards sync started.
-        static let startedAt = DatetimeMetricType( // generated from creditcards_sync_v2.started_at
-            CommonMetricData(
-                category: "creditcards_sync_v2",
-                name: "started_at",
-                sendInPings: ["creditcards-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        /// The user's hashed Firefox Account ID.
-        static let uid = StringMetricType( // generated from creditcards_sync_v2.uid
-            CommonMetricData(
-                category: "creditcards_sync_v2",
-                name: "uid",
-                sendInPings: ["creditcards-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-    }
-
-    enum FxaTabV2 {
-        struct ReceivedExtra: EventExtras {
-            var flowId: String?
-            var reason: String?
-            var streamId: String?
-
-            func toExtraRecord() -> [String: String] {
-                var record = [String: String]()
-
-                if let flowId = self.flowId {
-                    record["flow_id"] = String(flowId)
-                }
-                if let reason = self.reason {
-                    record["reason"] = String(reason)
-                }
-                if let streamId = self.streamId {
-                    record["stream_id"] = String(streamId)
-                }
-
-                return record
-            }
-        }
-
-        struct SentExtra: EventExtras {
-            var flowId: String?
-            var streamId: String?
-
-            func toExtraRecord() -> [String: String] {
-                var record = [String: String]()
-
-                if let flowId = self.flowId {
-                    record["flow_id"] = String(flowId)
-                }
-                if let streamId = self.streamId {
-                    record["stream_id"] = String(streamId)
-                }
-
-                return record
-            }
-        }
-
-        /// Recorded when a tab is received.  Also sent by desktop - see also the docs at
-        /// https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/data/sync-
-        /// ping.html
-        static let received = EventMetricType<ReceivedExtra>( // generated from fxa_tab_v2.received
-            CommonMetricData(
-                category: "fxa_tab_v2",
-                name: "received",
-                sendInPings: ["sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , ["flow_id", "reason", "stream_id"]
-        )
-
-        /// Recorded when a tab is sent. Also sent by desktop - see also the docs at
-        /// https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/data/sync-
-        /// ping.html
-        static let sent = EventMetricType<SentExtra>( // generated from fxa_tab_v2.sent
-            CommonMetricData(
-                category: "fxa_tab_v2",
-                name: "sent",
-                sendInPings: ["sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , ["flow_id", "stream_id"]
-        )
-    }
-
-    enum HistorySyncV2 {
-        private static let failureReasonLabel = StringMetricType( // generated from history_sync_v2.failure_reason
-            CommonMetricData(
-                category: "history_sync_v2",
-                name: "failure_reason",
-                sendInPings: ["history-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records why the history sync failed: either due to an authentication error,
-        /// unexpected exception, or other error. The error strings are truncated and
-        /// sanitized to omit PII, like URLs and file system paths.
-        static let failureReason = try! LabeledMetricType<StringMetricType>( // generated from history_sync_v2.failure_reason
-            category: "history_sync_v2",
-            name: "failure_reason",
-            sendInPings: ["history-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: failureReasonLabel,
-            labels: ["auth", "other", "unexpected"]
-        )
-
-        /// Records when the history sync finished. This includes the time to download,
-        /// apply, and upload all records.
-        static let finishedAt = DatetimeMetricType( // generated from history_sync_v2.finished_at
-            CommonMetricData(
-                category: "history_sync_v2",
-                name: "finished_at",
-                sendInPings: ["history-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        private static let incomingLabel = CounterMetricType( // generated from history_sync_v2.incoming
-            CommonMetricData(
-                category: "history_sync_v2",
-                name: "incoming",
-                sendInPings: ["history-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records incoming history record counts. `applied` is the number of incoming
-        /// history pages that were successfully stored or updated in the local database.
-        /// `failed_to_apply` is the number of pages that were ignored due to errors.
-        /// `reconciled` is the number of pages with new visits locally and remotely, and
-        /// had their visits merged.
-        static let incoming = try! LabeledMetricType<CounterMetricType>( // generated from history_sync_v2.incoming
-            category: "history_sync_v2",
-            name: "incoming",
-            sendInPings: ["history-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: incomingLabel,
-            labels: ["applied", "failed_to_apply", "reconciled"]
-        )
-
-        private static let outgoingLabel = CounterMetricType( // generated from history_sync_v2.outgoing
-            CommonMetricData(
-                category: "history_sync_v2",
-                name: "outgoing",
-                sendInPings: ["history-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records outgoing history record counts. `uploaded` is the number of records
-        /// that were successfully sent to the server. `failed_to_upload` is the number of
-        /// records that weren't uploaded, and will be retried on the next sync.
-        static let outgoing = try! LabeledMetricType<CounterMetricType>( // generated from history_sync_v2.outgoing
-            category: "history_sync_v2",
-            name: "outgoing",
-            sendInPings: ["history-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: outgoingLabel,
-            labels: ["failed_to_upload", "uploaded"]
-        )
-
-        /// Records the number of batches needed to upload all outgoing records. The Sync
-        /// server has a hard limit on the number of records (and request body bytes) on
-        /// the number of records that can fit into a single batch, and large syncs may
-        /// require multiple batches.
-        static let outgoingBatches = CounterMetricType( // generated from history_sync_v2.outgoing_batches
-            CommonMetricData(
-                category: "history_sync_v2",
-                name: "outgoing_batches",
-                sendInPings: ["history-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records when the history sync started.
-        static let startedAt = DatetimeMetricType( // generated from history_sync_v2.started_at
-            CommonMetricData(
-                category: "history_sync_v2",
-                name: "started_at",
-                sendInPings: ["history-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        /// The user's hashed Firefox Account ID.
-        static let uid = StringMetricType( // generated from history_sync_v2.uid
-            CommonMetricData(
-                category: "history_sync_v2",
-                name: "uid",
-                sendInPings: ["history-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-    }
-
-    enum LoginsSyncV2 {
-        private static let failureReasonLabel = StringMetricType( // generated from logins_sync_v2.failure_reason
-            CommonMetricData(
-                category: "logins_sync_v2",
-                name: "failure_reason",
-                sendInPings: ["logins-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records why the passwords sync failed: either due to an authentication error,
-        /// unexpected exception, or other error. The error strings are truncated and
-        /// sanitized to omit PII, like usernames and passwords.
-        static let failureReason = try! LabeledMetricType<StringMetricType>( // generated from logins_sync_v2.failure_reason
-            category: "logins_sync_v2",
-            name: "failure_reason",
-            sendInPings: ["logins-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: failureReasonLabel,
-            labels: ["auth", "other", "unexpected"]
-        )
-
-        /// Records when the passwords sync finished. This includes the time to download,
-        /// apply, and upload all records.
-        static let finishedAt = DatetimeMetricType( // generated from logins_sync_v2.finished_at
-            CommonMetricData(
-                category: "logins_sync_v2",
-                name: "finished_at",
-                sendInPings: ["logins-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        private static let incomingLabel = CounterMetricType( // generated from logins_sync_v2.incoming
-            CommonMetricData(
-                category: "logins_sync_v2",
-                name: "incoming",
-                sendInPings: ["logins-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records incoming passwords record counts. `applied` is the number of incoming
-        /// passwords entries that were successfully stored or updated in the local
-        /// database. `failed_to_apply` is the number of entries that were ignored due to
-        /// errors. `reconciled` is the number of entries with changes both locally and
-        /// remotely that were merged.
-        static let incoming = try! LabeledMetricType<CounterMetricType>( // generated from logins_sync_v2.incoming
-            category: "logins_sync_v2",
-            name: "incoming",
-            sendInPings: ["logins-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: incomingLabel,
-            labels: ["applied", "failed_to_apply", "reconciled"]
-        )
-
-        private static let outgoingLabel = CounterMetricType( // generated from logins_sync_v2.outgoing
-            CommonMetricData(
-                category: "logins_sync_v2",
-                name: "outgoing",
-                sendInPings: ["logins-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records outgoing passwords record counts. `uploaded` is the number of records
-        /// that were successfully sent to the server. `failed_to_upload` is the number of
-        /// records that weren't uploaded, and will be retried on the next sync.
-        static let outgoing = try! LabeledMetricType<CounterMetricType>( // generated from logins_sync_v2.outgoing
-            category: "logins_sync_v2",
-            name: "outgoing",
-            sendInPings: ["logins-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: outgoingLabel,
-            labels: ["failed_to_upload", "uploaded"]
-        )
-
-        /// Records the number of batches needed to upload all outgoing records. The Sync
-        /// server has a hard limit on the number of records (and request body bytes) on
-        /// the number of records that can fit into a single batch, and large syncs may
-        /// require multiple batches.
-        static let outgoingBatches = CounterMetricType( // generated from logins_sync_v2.outgoing_batches
-            CommonMetricData(
-                category: "logins_sync_v2",
-                name: "outgoing_batches",
-                sendInPings: ["logins-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records when the passwords sync started.
-        static let startedAt = DatetimeMetricType( // generated from logins_sync_v2.started_at
-            CommonMetricData(
-                category: "logins_sync_v2",
-                name: "started_at",
-                sendInPings: ["logins-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        /// The user's hashed Firefox Account ID.
-        static let uid = StringMetricType( // generated from logins_sync_v2.uid
-            CommonMetricData(
-                category: "logins_sync_v2",
-                name: "uid",
-                sendInPings: ["logins-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-    }
-
-    enum SyncSettings {
-        struct SaveExtra: EventExtras {
-            var disabledEngines: String?
-            var enabledEngines: String?
-
-            func toExtraRecord() -> [String: String] {
-                var record = [String: String]()
-
-                if let disabledEngines = self.disabledEngines {
-                    record["disabled_engines"] = String(disabledEngines)
-                }
-                if let enabledEngines = self.enabledEngines {
-                    record["enabled_engines"] = String(enabledEngines)
-                }
-
-                return record
-            }
-        }
-
-        /// Records when the user opens the choose sync settings menu.
-        static let openMenu = EventMetricType<NoExtras>( // generated from sync_settings.open_menu
-            CommonMetricData(
-                category: "sync_settings",
-                name: "open_menu",
+                category: "logins_store_key_regeneration",
+                name: "corrupt",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
@@ -1401,300 +7853,113 @@ extension GleanMetrics {
             , []
         )
 
-        /// Records when the user makes sync settings changes.
-        static let save = EventMetricType<SaveExtra>( // generated from sync_settings.save
+        /// The encryption key was regenerated because it and the canary phrase are missing
+        /// from the keychain
+        static let keychainDataLost = EventMetricType<NoExtras>( // generated from logins_store_key_regeneration.keychain_data_lost
             CommonMetricData(
-                category: "sync_settings",
-                name: "save",
+                category: "logins_store_key_regeneration",
+                name: "keychain_data_lost",
                 sendInPings: ["events"],
                 lifetime: .ping,
                 disabled: false
             )
-            , ["disabled_engines", "enabled_engines"]
+            , []
         )
+
+        /// The encryption key was regenerated because it was lost
+        static let lost = EventMetricType<NoExtras>( // generated from logins_store_key_regeneration.lost
+            CommonMetricData(
+                category: "logins_store_key_regeneration",
+                name: "lost",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
+        /// The encryption key was regenerated for an unknown reason
+        static let other = EventMetricType<NoExtras>( // generated from logins_store_key_regeneration.other
+            CommonMetricData(
+                category: "logins_store_key_regeneration",
+                name: "other",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , []
+        )
+
     }
 
-    enum SyncV2 {
-        private static let failureReasonLabel = StringMetricType( // generated from sync_v2.failure_reason
-            CommonMetricData(
-                category: "sync_v2",
-                name: "failure_reason",
-                sendInPings: ["sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
+    enum PreSyncKeyRetrievalFailure {
+        struct CreditCardsExtra: EventExtras {
+            var errorMessage: String?
 
-        /// Records a global sync failure: either due to an authentication error,
-        /// unexpected exception, or other error that caused the sync to fail. Error
-        /// strings are truncated and sanitized to omit PII, like URLs and file system
-        /// paths.
-        static let failureReason = try! LabeledMetricType<StringMetricType>( // generated from sync_v2.failure_reason
-            category: "sync_v2",
-            name: "failure_reason",
-            sendInPings: ["sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: failureReasonLabel,
-            labels: ["auth", "other", "unexpected"]
-        )
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
 
-        /// Unique identifier for this sync, used to correlate together individual pings
-        /// for data types that were synchronized together (history, bookmarks, logins). If
-        /// a data type is synchronized by itself via the legacy 'sync' API (as opposed to
-        /// the Sync Manager), then this field will not be set on the corresponding ping.
-        static let syncUuid = UuidMetricType( // generated from sync_v2.sync_uuid
-            CommonMetricData(
-                category: "sync_v2",
-                name: "sync_uuid",
-                sendInPings: ["bookmarks-sync", "history-sync", "logins-sync", "sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-    }
+                if let errorMessage = self.errorMessage {
+                    record["error_message"] = String(errorMessage)
+                }
 
-    enum TabsSyncV2 {
-        private static let failureReasonLabel = StringMetricType( // generated from tabs_sync_v2.failure_reason
-            CommonMetricData(
-                category: "tabs_sync_v2",
-                name: "failure_reason",
-                sendInPings: ["tabs-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records why the tabs sync failed: either due to an authentication error,
-        /// unexpected exception, or other error. The error strings are truncated and
-        /// sanitized to omit PII, like URLs and file system paths.
-        static let failureReason = try! LabeledMetricType<StringMetricType>( // generated from tabs_sync_v2.failure_reason
-            category: "tabs_sync_v2",
-            name: "failure_reason",
-            sendInPings: ["tabs-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: failureReasonLabel,
-            labels: ["auth", "other", "unexpected"]
-        )
-
-        /// Records when the tabs sync finished. This includes the time to download, apply,
-        /// and upload all records.
-        static let finishedAt = DatetimeMetricType( // generated from tabs_sync_v2.finished_at
-            CommonMetricData(
-                category: "tabs_sync_v2",
-                name: "finished_at",
-                sendInPings: ["tabs-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        private static let incomingLabel = CounterMetricType( // generated from tabs_sync_v2.incoming
-            CommonMetricData(
-                category: "tabs_sync_v2",
-                name: "incoming",
-                sendInPings: ["tabs-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records incoming tabs record counts. `applied` is the number of incoming
-        /// records that were successfully stored or updated in the local database.
-        /// `failed_to_apply` is the number of records that were ignored due to errors.
-        /// `reconciled` is the number of merged records.
-        static let incoming = try! LabeledMetricType<CounterMetricType>( // generated from tabs_sync_v2.incoming
-            category: "tabs_sync_v2",
-            name: "incoming",
-            sendInPings: ["tabs-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: incomingLabel,
-            labels: ["applied", "failed_to_apply", "reconciled"]
-        )
-
-        private static let outgoingLabel = CounterMetricType( // generated from tabs_sync_v2.outgoing
-            CommonMetricData(
-                category: "tabs_sync_v2",
-                name: "outgoing",
-                sendInPings: ["tabs-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records outgoing tabs record counts. `uploaded` is the number of records that
-        /// were successfully sent to the server. `failed_to_upload` is the number of
-        /// records that weren't uploaded, and will be retried on the next sync.
-        static let outgoing = try! LabeledMetricType<CounterMetricType>( // generated from tabs_sync_v2.outgoing
-            category: "tabs_sync_v2",
-            name: "outgoing",
-            sendInPings: ["tabs-sync"],
-            lifetime: .ping,
-            disabled: false,
-            subMetric: outgoingLabel,
-            labels: ["failed_to_upload", "uploaded"]
-        )
-
-        /// Records the number of batches needed to upload all outgoing records. The Sync
-        /// server has a hard limit on the number of records (and request body bytes) on
-        /// the number of records that can fit into a single batch, and large syncs may
-        /// require multiple batches.
-        static let outgoingBatches = CounterMetricType( // generated from tabs_sync_v2.outgoing_batches
-            CommonMetricData(
-                category: "tabs_sync_v2",
-                name: "outgoing_batches",
-                sendInPings: ["tabs-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-
-        /// Records when the tabs sync started.
-        static let startedAt = DatetimeMetricType( // generated from tabs_sync_v2.started_at
-            CommonMetricData(
-                category: "tabs_sync_v2",
-                name: "started_at",
-                sendInPings: ["tabs-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-            , .millisecond
-        )
-
-        /// The user's hashed Firefox Account ID.
-        static let uid = StringMetricType( // generated from tabs_sync_v2.uid
-            CommonMetricData(
-                category: "tabs_sync_v2",
-                name: "uid",
-                sendInPings: ["tabs-sync"],
-                lifetime: .ping,
-                disabled: false
-            )
-        )
-    }
-
-    final class Pings: Sendable {
-        public static let shared = Pings()
-        private init() {
-            // Intentionally left private, no external user can instantiate a new global object.
+                return record
+            }
         }
 
-        /// A ping sent for every Addresses engine sync. It doesn't include the `client_id`
-        /// because it reports a hashed version of the user's Firefox Account ID.
-        let addressesSync = Ping<NoReasonCodes>(
-            name: "addresses-sync",
-            includeClientId: false,
-            sendIfEmpty: false,
-            preciseTimestamps: true,
-            includeInfoSections: true,
-            enabled: true,
-            schedulesPings: [],
-            reasonCodes: [],
-            followsCollectionEnabled: true,
-            uploaderCapabilities: []
+        struct LoginsExtra: EventExtras {
+            var errorMessage: String?
+
+            func toExtraRecord() -> [String: String] {
+                var record = [String: String]()
+
+                if let errorMessage = self.errorMessage {
+                    record["error_message"] = String(errorMessage)
+                }
+
+                return record
+            }
+        }
+
+        /// The credit card encryption key could not be retrieved for a credit card sync
+        static let creditCards = EventMetricType<CreditCardsExtra>( // generated from pre_sync_key_retrieval_failure.credit_cards
+            CommonMetricData(
+                category: "pre_sync_key_retrieval_failure",
+                name: "credit_cards",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["error_message"]
         )
 
-        /// A ping sent for every bookmarks sync. It doesn't include the `client_id`
-        /// because it reports a hashed version of the user's Firefox Account ID.
-        let bookmarksSync = Ping<NoReasonCodes>(
-            name: "bookmarks-sync",
-            includeClientId: false,
-            sendIfEmpty: false,
-            preciseTimestamps: true,
-            includeInfoSections: true,
-            enabled: true,
-            schedulesPings: [],
-            reasonCodes: [],
-            followsCollectionEnabled: true,
-            uploaderCapabilities: []
+        /// The logins encryption key could not be retrieved for a logins sync
+        static let logins = EventMetricType<LoginsExtra>( // generated from pre_sync_key_retrieval_failure.logins
+            CommonMetricData(
+                category: "pre_sync_key_retrieval_failure",
+                name: "logins",
+                sendInPings: ["events"],
+                lifetime: .ping,
+                disabled: false
+            )
+            , ["error_message"]
         )
 
-        /// A ping sent for every Credit Cards engine sync. It doesn't include the
-        /// `client_id` because it reports a hashed version of the user's Firefox Account
-        /// ID.
-        let creditcardsSync = Ping<NoReasonCodes>(
-            name: "creditcards-sync",
-            includeClientId: false,
-            sendIfEmpty: false,
-            preciseTimestamps: true,
-            includeInfoSections: true,
-            enabled: true,
-            schedulesPings: [],
-            reasonCodes: [],
-            followsCollectionEnabled: true,
-            uploaderCapabilities: []
-        )
-
-        /// A ping sent for every history sync. It doesn't include the `client_id` because
-        /// it reports a hashed version of the user's Firefox Account ID.
-        let historySync = Ping<NoReasonCodes>(
-            name: "history-sync",
-            includeClientId: false,
-            sendIfEmpty: false,
-            preciseTimestamps: true,
-            includeInfoSections: true,
-            enabled: true,
-            schedulesPings: [],
-            reasonCodes: [],
-            followsCollectionEnabled: true,
-            uploaderCapabilities: []
-        )
-
-        /// A ping sent for every logins/passwords sync. It doesn't include the `client_id`
-        /// because it reports a hashed version of the user's Firefox Account ID.
-        let loginsSync = Ping<NoReasonCodes>(
-            name: "logins-sync",
-            includeClientId: false,
-            sendIfEmpty: false,
-            preciseTimestamps: true,
-            includeInfoSections: true,
-            enabled: true,
-            schedulesPings: [],
-            reasonCodes: [],
-            followsCollectionEnabled: true,
-            uploaderCapabilities: []
-        )
-
-        /// A summary ping, sent every time a sync is performed. During each Sync one or
-        /// more data types could be synchronized, depending on which data types user
-        /// configured to sync. Alongside with 'sync' ping one or more individual data type
-        /// specific pings will be sent. For example, if history and bookmarks data types
-        /// are configured to be synchronized, the following pings will be sent: 'sync',
-        /// 'history-sync' and 'bookmarks-sync'. Alternatively, if only history is
-        /// configured to be synchronized then 'sync' and 'history-sync' pings will be
-        /// sent. In case of a "global failure" where none of the data type syncs could
-        /// even start, e.g. device is offline, only the 'sync' ping will be sent. This
-        /// ping doesn't include the `client_id` because it reports a hashed version of the
-        /// user's Firefox Account ID.
-        let sync = Ping<NoReasonCodes>(
-            name: "sync",
-            includeClientId: false,
-            sendIfEmpty: false,
-            preciseTimestamps: true,
-            includeInfoSections: true,
-            enabled: true,
-            schedulesPings: [],
-            reasonCodes: [],
-            followsCollectionEnabled: true,
-            uploaderCapabilities: []
-        )
-
-        /// A ping sent for every Tabs engine sync. It doesn't include the `client_id`
-        /// because it reports a hashed version of the user's Firefox Account ID.
-        let tabsSync = Ping<NoReasonCodes>(
-            name: "tabs-sync",
-            includeClientId: false,
-            sendIfEmpty: false,
-            preciseTimestamps: true,
-            includeInfoSections: true,
-            enabled: true,
-            schedulesPings: [],
-            reasonCodes: [],
-            followsCollectionEnabled: true,
-            uploaderCapabilities: []
-        )
     }
+
+    enum UserCreditCards {
+        /// Track how many undecryptable credit cards we scrub during the credit card
+        /// verification process
+        static let undecryptableCount = CounterMetricType( // generated from user.credit_cards.undecryptable_count
+            CommonMetricData(
+                category: "user.credit_cards",
+                name: "undecryptable_count",
+                sendInPings: ["metrics"],
+                lifetime: .ping,
+                disabled: false
+            )
+        )
+
+    }
+
 }

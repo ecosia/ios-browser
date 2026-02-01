@@ -13,6 +13,7 @@ protocol NTPLibraryDelegate: AnyObject {
     func libraryCellOpenDownloads()
 }
 
+@MainActor
 final class NTPLibraryCellViewModel {
     weak var delegate: NTPLibraryDelegate?
     var theme: Theme

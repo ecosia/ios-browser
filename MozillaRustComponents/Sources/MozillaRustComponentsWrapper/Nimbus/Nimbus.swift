@@ -145,36 +145,37 @@ extension Nimbus: FeaturesInterface {
     }
 
     func recordExperimentEvents(_ events: [EnrollmentChangeEvent]) {
-        for event in events {
-            switch event.change {
-            case .enrollment:
-                GleanMetrics.NimbusEvents.enrollment.record(GleanMetrics.NimbusEvents.EnrollmentExtra(
-                    branch: event.branchSlug,
-                    experiment: event.experimentSlug
-                ))
-            case .disqualification:
-                GleanMetrics.NimbusEvents.disqualification.record(GleanMetrics.NimbusEvents.DisqualificationExtra(
-                    branch: event.branchSlug,
-                    experiment: event.experimentSlug
-                ))
-            case .unenrollment:
-                GleanMetrics.NimbusEvents.unenrollment.record(GleanMetrics.NimbusEvents.UnenrollmentExtra(
-                    branch: event.branchSlug,
-                    experiment: event.experimentSlug
-                ))
-            case .enrollFailed:
-                GleanMetrics.NimbusEvents.enrollFailed.record(GleanMetrics.NimbusEvents.EnrollFailedExtra(
-                    branch: event.branchSlug,
-                    experiment: event.experimentSlug,
-                    reason: event.reason
-                ))
-            case .unenrollFailed:
-                GleanMetrics.NimbusEvents.unenrollFailed.record(GleanMetrics.NimbusEvents.UnenrollFailedExtra(
-                    experiment: event.experimentSlug,
-                    reason: event.reason
-                ))
-            }
-        }
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // for event in events {
+        //     switch event.change {
+        //     case .enrollment:
+        //         GleanMetrics.NimbusEvents.enrollment.record(GleanMetrics.NimbusEvents.EnrollmentExtra(
+        //             branch: event.branchSlug,
+        //             experiment: event.experimentSlug
+        //         ))
+        //     case .disqualification:
+        //         GleanMetrics.NimbusEvents.disqualification.record(GleanMetrics.NimbusEvents.DisqualificationExtra(
+        //             branch: event.branchSlug,
+        //             experiment: event.experimentSlug
+        //         ))
+        //     case .unenrollment:
+        //         GleanMetrics.NimbusEvents.unenrollment.record(GleanMetrics.NimbusEvents.UnenrollmentExtra(
+        //             branch: event.branchSlug,
+        //             experiment: event.experimentSlug
+        //         ))
+        //     case .enrollFailed:
+        //         GleanMetrics.NimbusEvents.enrollFailed.record(GleanMetrics.NimbusEvents.EnrollFailedExtra(
+        //             branch: event.branchSlug,
+        //             experiment: event.experimentSlug,
+        //             reason: event.reason
+        //         ))
+        //     case .unenrollFailed:
+        //         GleanMetrics.NimbusEvents.unenrollFailed.record(GleanMetrics.NimbusEvents.UnenrollFailedExtra(
+        //             experiment: event.experimentSlug,
+        //             reason: event.reason
+        //         ))
+        //     }
+        // }
     }
 
     func getFeatureConfigVariablesJson(featureId: String) -> [String: Any]? {
@@ -184,11 +185,12 @@ extension Nimbus: FeaturesInterface {
             }
             return try Dictionary.parse(jsonString: string)
         } catch NimbusError.DatabaseNotReady {
-            GleanMetrics.NimbusHealth.cacheNotReadyForFeature.record(
-                GleanMetrics.NimbusHealth.CacheNotReadyForFeatureExtra(
-                    featureId: featureId
-                )
-            )
+            // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+            // GleanMetrics.NimbusHealth.cacheNotReadyForFeature.record(
+            //     GleanMetrics.NimbusHealth.CacheNotReadyForFeatureExtra(
+            //         featureId: featureId
+            //     )
+            // )
             return nil
         } catch {
             errorReporter(error)
@@ -238,16 +240,18 @@ extension Nimbus {
     }
 
     func fetchExperimentsOnThisThread() throws {
-        try GleanMetrics.NimbusHealth.fetchExperimentsTime.measure {
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // try GleanMetrics.NimbusHealth.fetchExperimentsTime.measure {
             try nimbusClient.fetchExperiments()
-        }
+        // }
         notifyOnExperimentsFetched()
     }
 
     func applyPendingExperimentsOnThisThread() throws {
-        let changes = try GleanMetrics.NimbusHealth.applyPendingExperimentsTime.measure {
-            try nimbusClient.applyPendingExperiments()
-        }
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // let changes = try GleanMetrics.NimbusHealth.applyPendingExperimentsTime.measure {
+            let changes = try nimbusClient.applyPendingExperiments()
+        // }
         postEnrollmentCalculation(changes)
     }
 

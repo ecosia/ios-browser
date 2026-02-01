@@ -104,6 +104,25 @@ private let updateVersionScript: [TargetScript] = [
     )
 ]
 
+/// Nimbus Feature Manifest Generator - Generate Swift code from nimbus.fml.yaml
+private let nimbusFeatureManifestScript: [TargetScript] = [
+    .pre(
+        script: """
+        #!/bin/sh
+        if [ "$ACTION" != "indexbuild" ]; then
+            /usr/bin/env -i HOME=$HOME PROJECT=$PROJECT CONFIGURATION=$CONFIGURATION SOURCE_ROOT=$SOURCE_ROOT bash "$SOURCE_ROOT/bin/nimbus-fml.sh" --verbose
+        fi
+        """,
+        name: "Nimbus Feature Manifest Generator Script",
+        inputPaths: ["$(SOURCE_ROOT)/nimbus.fml.yaml"],
+        outputPaths: [
+            "$(SRCROOT)/Client/Generated/FxNimbus.swift",
+            "$(SRCROOT)/Client/Generated/FxNimbusMessaging.swift"
+        ],
+        basedOnDependencyAnalysis: false
+    )
+]
+
 /// Move Nested Frameworks - Flatten nested frameworks to avoid code signing issues
 private let moveNestedFrameworksScript: [TargetScript] = [
     .post(
@@ -179,6 +198,28 @@ private let populateTestFixturesScript: [TargetScript] = [
         rsync -zvrt --update "$fixtures" "$outpath"
         """,
         name: "Populate test-fixtures script",
+        basedOnDependencyAnalysis: false
+    )
+]
+
+/// Glean SDK Generator - Generate GleanMetrics from Glean YAML files
+/// Ecosia: Copied from Firefox to generate complete GleanMetrics with all namespaces
+/// This ensures all Firefox telemetry code compiles (silenced at runtime via NoOpGleanWrapper)
+private let gleanSDKGeneratorScript: [TargetScript] = [
+    .pre(
+        script: """
+        OUTPUT_DIR="${SRCROOT}/Client/Generated/Metrics/"
+        # remove old Metrics file if present
+        rm -f "${SRCROOT}/Client/Generated/Metrics/Metrics.swift"
+        bash $PWD/bin/sdk_generator.sh -g Glean -o $OUTPUT_DIR
+        """,
+        name: "Glean SDK Generator Script",
+        inputPaths: [
+            "$(SRCROOT)/Client/Glean/pings.yaml",
+            "$(SRCROOT)/Client/Glean/tags.yaml"
+        ],
+        inputFileListPaths: ["$(SRCROOT)/Client/Glean/gleanProbes.xcfilelist"],
+        outputPaths: ["$(SRCROOT)/Client/Generated/Metrics/Metrics.swift"],
         basedOnDependencyAnalysis: false
     )
 ]
@@ -312,16 +353,31 @@ private let fixMozillaRustComponentsEmbeddingScript: [TargetScript] = [
     )
 ]
 
+private let removeFrameworkScriptFromExtensionTargets: [TargetScript] = [
+    .post(
+        script: """
+        cd "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
+        if [[ -d "Frameworks" ]]; then
+            rm -fr Frameworks
+        fi
+        """,
+        name: "Remove Framework from Extension Targets",
+        basedOnDependencyAnalysis: false
+    )
+]
+
 /// All Client target build scripts in execution order
+/// Ecosia: Order matches Firefox's Xcode build phases for consistency
 private let clientBuildScripts: [TargetScript] = 
-    swiftlintScript +
-    updateVersionScript +
+    updateVersionScript +             
+    swiftlintScript +                  
+    populateTestFixturesScript +       
+    gleanSDKGeneratorScript +          
+    nimbusFeatureManifestScript +     
     // fixMozillaRustComponentsEmbeddingScript +
-    moveNestedFrameworksScript +
     addOptionalResourcesScript +
-    populateTestFixturesScript +
-    stripSymbolsScript +
-    removeFrameworksScript
+    moveNestedFrameworksScript +       
+    stripSymbolsScript
 
 // MARK: - Targets
 
@@ -339,15 +395,26 @@ let allTargets: [Target] = [
                     excluding: [
                         "Client/Assets/Search/get_supported_locales.swift",
                         "Client/Frontend/Browser/PrivateModeButton.swift",
-                        "Client/Frontend/Browser/TranslationToastHandler.swift"
+                        "Client/Frontend/Browser/TranslationToastHandler.swift",
+                        "Client/Frontend/Settings/Main/Support/StudiesToggleSetting.swift",
+                        "Client/Frontend/Browser/Tabs/State/TabViewState.swift",
+                        "Client/Frontend/Browser/MainMenu/Redux/MainMenuDetailState.swift",
+                        // Firefox-specific extensions not used by Ecosia
+                        "Extensions/NotificationService/**/*.swift"
                     ]
                 ),
-                "Shared/**/*.{plist, swift, strings, stringsdict}",
+                "Client/Frontend/Settings/Main/General/**/*.swift",
+                "Client/IntroScreenManager.swift",
+                "Client/ProfilePrefsReader.swift",
+                "Client/CrashTracker.swift",
+                // Ecosia: Explicitly include generated files to ensure they're compiled
+                "Client/Generated/**/*.swift",
                 "Providers/**/*.swift",
-                "Extensions/**/*",
-                "Account/**/*.{plist, swift, h}",
+                "Account/*.swift",
                 "RustFxA/**/*.swift",
                 "TranslationsEngine.html",
+                "WidgetKit/DownloadManager/DownloadLiveActivity.swift",
+                "WidgetKit/OpenTabs/SimpleTab.swift"
             ],
             resources: [
                 // Ecosia: Explicitly list CC_Script files (autofill, credit card, form handling)
@@ -376,6 +443,9 @@ let allTargets: [Target] = [
                 // Other Client/Assets files
                 "Client/Assets/**/*.{css,html,png,jpg,jpeg,pdf,otf,ttf}",
                 "Client/Assets/SpotlightHelper.js",
+
+                // Other files in folders but explicitly excluded
+                "Client/MailSchemes.plist",
                 
                 // Ecosia: Exclude ALL Firefox AppIcons (we use Ecosia's from Client/Ecosia/UI/Ecosia.xcassets)
                 .glob(pattern: "Client/Assets/**/*.xcassets", excluding: [
@@ -384,7 +454,8 @@ let allTargets: [Target] = [
                     "Client/Assets/Images.xcassets/AppIcon_Developer.appiconset"
                 ]),
                 "Client/Ecosia/**/*.{xib,xcassets,strings,stringsdict}",
-                "Client/*.lproj/**",
+                .glob(pattern: "Client/*.lproj/**", excluding: ["Client/Extensions/**"]),
+                "Shared/**/*.{strings, stringsdict}",
             ],
             scripts: clientBuildScripts,
             dependencies: [
@@ -488,15 +559,11 @@ let allTargets: [Target] = [
             infoPlist: .file(path: "Extensions/ShareTo/Info.plist"),
             sources: [
                 "Extensions/ShareTo/**/*.swift",
-                "Shared/Strings.swift",
-                "Providers/Profile.swift",
-                "Providers/RustErrors.swift",
-                "Providers/SyncDisplayState.swift",
-                "Providers/LoginRecordExtension.swift",
-                "Providers/RustProtocols/LoginProvider.swift",
-                "Providers/RustProtocols/AutofillProvider.swift",
-                "Providers/RustProtocols/PlacesProvider.swift",
-                "Providers/RustProtocols/TabsProvider.swift",
+                .glob("Providers/**/*.swift", excluding: [
+                    "Providers/Merino/**/*.swift",
+                    "Providers/TopSitesProvider.swift",
+                    "Providers/TopSitesWidgetManager.swift"
+                ]),
                 "Push/Autopush.swift",
                 "Push/PushConfiguration.swift",
                 "Client/Frontend/Extensions/DevicePickerViewController.swift",
@@ -527,24 +594,18 @@ let allTargets: [Target] = [
                 "Client/Application/RemoteSettings/Application Services/RemoteSettingsServiceSyncCoordinator.swift"
             ],
             resources: ["Extensions/ShareTo/**/*.{xcassets,strings,stringsdict}"],
+            scripts: removeFrameworkScriptFromExtensionTargets,
             dependencies: [
                 // Target Dependencies
-                .target(name: "Account"),
-                .package(product: "Common"),
-                .target(name: "Ecosia"),
-                .package(product: "Fuzi"),
-                .sdk(name: "ImageIO", type: .framework),
-                .target(name: "Localizations"),
-                .sdk(name: "RustMozillaAppServices", type: .framework),
-                .package(product: "Shared"),
-                /* Ecosia: Add SiteImageView dependency for Storage linkage
-                 * ShareTo extension uses Storage which depends on SiteImageView types.
-                 * Required to resolve linker errors for Site equality operations.
-                 */
-                .package(product: "SiteImageView"),
-                .package(product: "SnapKit"),
-                .target(name: "Storage"),
                 .target(name: "Sync"),
+                .target(name: "Localizations"),
+                .sdk(name: "Ecosia", type: .framework),
+                .sdk(name: "RustMozillaAppServices", type: .framework),
+                .sdk(name: "ImageIO", type: .framework),
+                .package(product: "Fuzi"),
+                .package(product: "Shared"),
+                .package(product: "SnapKit"),
+                .package(product: "Common")
             ],
             settings: .settings(
                 base: baseSettings.merging([
@@ -588,6 +649,7 @@ let allTargets: [Target] = [
             sources: [
                 "WidgetKit/**/*.swift",
                 "WidgetKit/**/*.intentdefinition",
+                "Client/Frontend/Browser/DownloadHelper/DownloadLiveActivityIntent.swift",
                 "Client/TabManagement/Legacy/LegacyTabDataRetriever.swift",
                 "Client/TabManagement/Legacy/LegacyTabFileManager.swift",
                 "Client/TabManagement/Legacy/LegacyTabGroupData.swift",
@@ -601,7 +663,6 @@ let allTargets: [Target] = [
                 "Client/Ecosia/UI/Theme/EcosiaLightTheme.swift",
                 "Client/Ecosia/UI/Theme/EcosiaDarkTheme.swift",
                 "Client/Utils/DispatchQueueHelper.swift",
-                "Shared/Strings.swift",
                 "Shared/TimeConstants.swift",
                 "Shared/AppInfo.swift"
             ],
@@ -609,19 +670,20 @@ let allTargets: [Target] = [
                 "WidgetKit/**/*.{xcassets,strings,stringsdict}",
                 "PrivacyInfo.xcprivacy"
             ],
+            scripts: removeFrameworkScriptFromExtensionTargets,
             dependencies: [
+                .target(name: "Localizations"),
+                .target(name: "Storage"),  // Ecosia: Added for Storage bridging header
+                .sdk(name: "Ecosia", type: .framework),
+                .sdk(name: "RustMozillaAppServices", type: .framework),
+                .sdk(name: "WidgetKit", type: .framework),
+                .sdk(name: "SwiftUI", type: .framework),
                 .package(product: "Common"),
-                .target(name: "Ecosia"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
-                .target(name: "Localizations"),
-                .sdk(name: "RustMozillaAppServices", type: .framework),
                 .package(product: "Shared"),
                 .package(product: "SiteImageView"),
-                .target(name: "Storage"),
-                .sdk(name: "SwiftUI", type: .framework),
                 .package(product: "TabDataStore"),
-                .sdk(name: "WidgetKit", type: .framework),
             ],
             settings: .settings(
                 base: baseSettings.merging([
@@ -883,6 +945,11 @@ let allTargets: [Target] = [
             product: .framework,
             bundleId: "org.mozilla.ios.Localizations",
             infoPlist: .file(path: "Shared/Supporting Files/Info.plist"),
+            sources: [
+                "Shared/Strings.swift",
+                "Shared/DeviceInfo+defaultClientName.swift",
+                "Shared/Date+relativeTimeString.swift"
+            ],
             resources: ["Localizations/**/*.{strings,stringsdict}"],
             dependencies: [
                 .package(product: "Common"),
@@ -904,8 +971,8 @@ let allTargets: [Target] = [
             bundleId: "com.ecosia.framework.Ecosia",
             infoPlist: .file(path: "Ecosia/Info.plist"),
             sources: [
-                "Ecosia/**/*.swift",
-                "Ecosia/**/*.h",
+                "Ecosia/**/*.{h,swift}",
+                "Ecosia/**/*.h"
             ],
             resources: [
                 "Ecosia/L10N/**/*.{strings,stringsdict}",
@@ -1194,8 +1261,6 @@ let project = Project(
     organizationName: "com.ecosia",
     options: .options(
         automaticSchemesOptions: .disabled,
-        // Ecosia: Disable TuistStrings - breaks with certain Ecosia string keys (e.g., "%@+")
-        // Firefox string constants are manually defined in Shared/Strings.swift
         disableSynthesizedResourceAccessors: true
     ),
     packages: packages,

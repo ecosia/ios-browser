@@ -32,14 +32,15 @@ public final class SyncManagerComponent: Sendable {
     }
 
     public static func reportOpenSyncSettingsMenuTelemetry() {
-        GleanMetrics.SyncSettings.openMenu.record()
+        // Ecosia: Telemetry silenced - not available in separate package
+        // GleanMetrics.SyncSettings.openMenu.record()
     }
 
     public static func reportSaveSyncSettingsTelemetry(enabledEngines: [String], disabledEngines: [String]) {
-        let enabledList = enabledEngines.isEmpty ? nil : enabledEngines.joined(separator: ",")
-        let disabledList = disabledEngines.isEmpty ? nil : disabledEngines.joined(separator: ",")
-        let extras = GleanMetrics.SyncSettings.SaveExtra(disabledEngines: disabledList, enabledEngines: enabledList)
-
-        GleanMetrics.SyncSettings.save.record(extras)
+        // Ecosia: Telemetry silenced - not available in separate package
+        // let enabledList = enabledEngines.isEmpty ? nil : enabledEngines.joined(separator: ",")
+        // let disabledList = disabledEngines.isEmpty ? nil : disabledEngines.joined(separator: ",")
+        // let extras = GleanMetrics.SyncSettings.SaveExtra(disabledEngines: disabledList, enabledEngines: enabledList)
+        // GleanMetrics.SyncSettings.save.record(extras)
     }
 }

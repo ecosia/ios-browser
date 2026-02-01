@@ -6,6 +6,7 @@ import XCTest
 import Auth0
 @testable import Ecosia
 
+@MainActor
 final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
 
     var provider: NativeToWebSSOAuth0Provider!

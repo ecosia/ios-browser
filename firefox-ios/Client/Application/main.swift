@@ -2,9 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Shared
+import Common
 
-private var appDelegate: String?
+private let appDelegate: String
 
 // For performance or UI tests, run the UITestAppDelegate
 // For unit tests, run no app delegate as unit tests are testing enclosed units of code and shouldn't rely

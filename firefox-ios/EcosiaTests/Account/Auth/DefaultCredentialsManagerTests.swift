@@ -7,6 +7,7 @@ import Auth0
 @testable import Ecosia
 @testable import Client
 
+@MainActor
 final class DefaultCredentialsManagerTests: XCTestCase {
 
     var credentialsManager: DefaultCredentialsManager!

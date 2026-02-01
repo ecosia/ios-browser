@@ -9,6 +9,7 @@ import LinkPresentation
 import Common
 import Ecosia
 
+@MainActor
 class MultiplyImpact: UIViewController, Themeable {
 
     // MARK: - UX

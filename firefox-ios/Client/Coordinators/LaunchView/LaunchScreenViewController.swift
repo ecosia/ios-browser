@@ -6,12 +6,9 @@ import Common
 import Foundation
 
 class LaunchScreenViewController: UIViewController, LaunchFinishedLoadingDelegate, FeatureFlaggable {
-    // Ecosia: Custom launch screen
-    // private lazy var launchScreen = LaunchScreenView.fromNib()
-    private lazy var launchScreen = EcosiaLaunchScreenView.fromNib()
+    private lazy var launchScreen = LaunchScreenView.fromNib()
     private weak var coordinator: LaunchFinishedLoadingDelegate?
     private var viewModel: LaunchScreenViewModel
-    private var mainQueue: DispatchQueueInterface
 
     private lazy var splashScreenAnimation = SplashScreenAnimation()
     private let nimbusSplashScreenFeatureLayer = NimbusSplashScreenFeatureLayer()
@@ -21,19 +18,19 @@ class LaunchScreenViewController: UIViewController, LaunchFinishedLoadingDelegat
         && !viewModel.getSplashScreenExperimentHasShown()
     }
 
+    private var isViewSetupComplete = false
+
     init(windowUUID: WindowUUID,
          coordinator: LaunchFinishedLoadingDelegate,
-         viewModel: LaunchScreenViewModel? = nil,
-         mainQueue: DispatchQueueInterface = DispatchQueue.main) {
+         viewModel: LaunchScreenViewModel? = nil) {
         self.coordinator = coordinator
         self.viewModel = viewModel ?? LaunchScreenViewModel(windowUUID: windowUUID)
-        self.mainQueue = mainQueue
         super.init(nibName: nil, bundle: nil)
         self.viewModel.delegate = self
     }
 
     override var prefersStatusBarHidden: Bool {
-        return true
+        return false
     }
 
     required init?(coder: NSCoder) {
@@ -48,23 +45,33 @@ class LaunchScreenViewController: UIViewController, LaunchFinishedLoadingDelegat
 
         Task {
             try await delayStart()
-            await startLoading()
+            startLoading()
         }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupLaunchScreen()
+
+        if !isViewSetupComplete {
+            setupLaunchScreen()
+            isViewSetupComplete = true
+        }
+
+        viewModel.loadNextLaunchType()
     }
 
     // MARK: - Loading
-    func startLoading() async {
-        await viewModel.startLoading()
+    func startLoading() {
+        viewModel.startLoading()
     }
 
     // MARK: - Setup
 
     private func setupLayout() {
+        guard let launchScreen = launchScreen else {
+            fatalError("LaunchScreen view is nil during layout setup")
+        }
+
         launchScreen.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(launchScreen)
 
@@ -79,15 +86,15 @@ class LaunchScreenViewController: UIViewController, LaunchFinishedLoadingDelegat
     // MARK: - LaunchFinishedLoadingDelegate
 
     func launchWith(launchType: LaunchType) {
-        mainQueue.async {
-            self.coordinator?.launchWith(launchType: launchType)
-        }
+        self.coordinator?.launchWith(launchType: launchType)
     }
 
     func launchBrowser() {
-        mainQueue.async {
-            self.coordinator?.launchBrowser()
-        }
+        self.coordinator?.launchBrowser()
+    }
+
+    func finishedLoadingLaunchOrder() {
+        viewModel.loadNextLaunchType()
     }
 
     // MARK: - Splash Screen
@@ -103,7 +110,7 @@ class LaunchScreenViewController: UIViewController, LaunchFinishedLoadingDelegat
         setupLayout()
         guard shouldTriggerSplashScreenExperiment else { return }
         if !UIAccessibility.isReduceMotionEnabled {
-            splashScreenAnimation.configureAnimation(with: launchScreen)
+            splashScreenAnimation.configureAnimation(with: launchScreen!)
         }
     }
 }

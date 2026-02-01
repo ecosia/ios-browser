@@ -5,7 +5,7 @@
 import Foundation
 
 /// An enumeration representing different navigational routes in an application.
-enum Route: Equatable {
+enum Route {
     /// Represents a search route that takes a URL, a boolean value indicating whether the search
     /// is private or not and an optional set of search options.
     ///
@@ -66,10 +66,12 @@ enum Route: Equatable {
     ///                      settings to be displayed.
     case defaultBrowser(section: DefaultBrowserSection)
 
-    /// Represents the referrals route that takes a string as invite code.
+    /// A route for opening a share sheet with share content and an optional accompanying message.
     ///
-    /// - Parameter code: represents the invite code
-    case referrals(code: String)
+    /// - Parameters:
+    ///   - shareType: The content to be shared.
+    ///   - shareMessage: An optional plain text share message to be shared.
+    case sharesheet(shareType: ShareType, shareMessage: ShareMessage?)
 
     /// An enumeration representing different sections of the home panel.
     enum HomepanelSection: String, CaseIterable, Equatable {
@@ -95,6 +97,7 @@ enum Route: Equatable {
     /// An enumeration representing different sections of the settings menu.
     enum SettingsSection: String, CaseIterable, Equatable {
         case addresses
+        case appIcon = "app-icon"
         case contentBlocker
         case clearPrivateData = "clear-private-data"
         case creditCard
@@ -105,7 +108,8 @@ enum Route: Equatable {
         case mailto
         case newTab = "newtab"
         case search
-        case tabs
+        case relayMask
+        case browser
         case theme
         case toolbar
         case topSites
@@ -116,7 +120,6 @@ enum Route: Equatable {
     /// An enumeration representing different actions that can be performed within the application.
     enum AppAction: String, CaseIterable, Equatable {
         case closePrivateTabs = "close-private-tabs"
-        case showQRCode
         case showIntroOnboarding = "show-intro-onboarding"
     }
 

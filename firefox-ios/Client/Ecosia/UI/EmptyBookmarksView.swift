@@ -6,6 +6,7 @@ import UIKit
 import Common
 import Ecosia
 
+@MainActor
 final class EmptyBookmarksView: UIView, ThemeApplicable {
 
     private enum UX {

@@ -5,133 +5,108 @@
 import Common
 import Foundation
 import WebKit
-import Storage
-import Shared
 
 enum TabManagerConstants {
     static let tabScreenshotNamespace = "TabManagerScreenshots"
 }
 
+enum TabsDeletionPeriod: String {
+    case oneDay, oneWeek, oneMonth
+}
+
 // MARK: - TabManager protocol
+@MainActor
 protocol TabManager: AnyObject {
-    var windowUUID: WindowUUID { get }
+    nonisolated var windowUUID: WindowUUID { get }
     var isRestoringTabs: Bool { get }
+    var tabRestoreHasFinished: Bool { get }
     var delaySelectingNewPopupTab: TimeInterval { get }
     var recentlyAccessedNormalTabs: [Tab] { get }
-    var tabs: [Tab] { get }
     var count: Int { get }
+
     var selectedTab: Tab? { get }
-    var selectedTabUUID: UUID? { get }
     var backupCloseTab: BackupCloseTab? { get set }
-    var backupCloseTabs: [Tab] { get set }
-    var normalTabs: [Tab] { get } // Includes active and inactive tabs
-    var normalActiveTabs: [Tab] { get }
-    var inactiveTabs: [Tab] { get }
+
+    var tabs: [Tab] { get }
+    var normalTabs: [Tab] { get }
     var privateTabs: [Tab] { get }
-    var tabDisplayType: TabDisplayType { get set }
+
     subscript(index: Int) -> Tab? { get }
     subscript(webView: WKWebView) -> Tab? { get }
 
+    // MARK: - Add/Remove Delegate
     func addDelegate(_ delegate: TabManagerDelegate)
-    func addNavigationDelegate(_ delegate: WKNavigationDelegate)
+    func setNavigationDelegate(_ delegate: WKNavigationDelegate)
     func removeDelegate(_ delegate: TabManagerDelegate, completion: (() -> Void)?)
+
+    // MARK: - Select Tab
     func selectTab(_ tab: Tab?, previous: Tab?)
-    func addTab(_ request: URLRequest?, afterTab: Tab?, isPrivate: Bool) -> Tab
+
+    // MARK: - Add Tab
     func addTabsForURLs(_ urls: [URL], zombie: Bool, shouldSelectTab: Bool, isPrivate: Bool)
-    func removeTab(_ tab: Tab, completion: (() -> Void)?)
-    func removeTabs(_ tabs: [Tab])
-    func undoCloseTab()
-    func getMostRecentHomepageTab() -> Tab?
-    func getTabFor(_ url: URL) -> Tab?
-    func clearAllTabsHistory()
-    func willSwitchTabMode(leavingPBM: Bool)
-    func cleanupClosedTabs(_ closedTabs: [Tab], previous: Tab?, isPrivate: Bool)
-    func reorderTabs(isPrivate privateMode: Bool, fromIndex visibleFromIndex: Int, toIndex visibleToIndex: Int)
-    func preserveTabs()
-    func restoreTabs(_ forced: Bool)
-    func startAtHomeCheck() -> Bool
-    func getTabForUUID(uuid: TabUUID) -> Tab?
-    func getTabForURL(_ url: URL) -> Tab?
-    func expireSnackbars()
-    @discardableResult
-    func switchPrivacyMode() -> SwitchPrivacyModeResult
-    func addPopupForParentTab(profile: Profile, parentTab: Tab, configuration: WKWebViewConfiguration) -> Tab
-    func makeToastFromRecentlyClosedUrls(_ recentlyClosedTabs: [Tab],
-                                         isPrivate: Bool,
-                                         previousTabUUID: TabUUID)
-    func undoCloseAllTabsLegacy(recentlyClosedTabs: [Tab], previousTabUUID: TabUUID, isPrivate: Bool)
-    func findRightOrLeftTab(forRemovedTab removedTab: Tab, withDeletedIndex deletedIndex: Int) -> Tab?
 
     @discardableResult
-    func addTab(_ request: URLRequest!,
+    func addTab(_ request: URLRequest?,
                 afterTab: Tab?,
                 zombie: Bool,
                 isPrivate: Bool) -> Tab
-    func backgroundRemoveAllTabs(isPrivate: Bool,
-                                 didClearTabs: @escaping (_ tabsToRemove: [Tab],
-                                                          _ isPrivate: Bool,
-                                                          _ previousTabUUID: String) -> Void)
-    // MARK: TabTray refactor interfaces
 
-    /// Async Remove tab option using tabUUID. Replaces direct usage of removeTab where the whole Tab is needed
+    /// Remove tab option using tabUUID.
     /// - Parameter tabUUID: UUID from the tab
-    func removeTab(_ tabUUID: TabUUID) async
+    func removeTab(_ tabUUID: TabUUID)
 
-    /// Async Remove all tabs indicating if is on private mode or not
+    /// Remove all tabs indicating if is on private mode or not
     /// - Parameter isPrivateMode: Is private mode enabled or not
-    func removeAllTabs(isPrivateMode: Bool) async
+    func removeAllTabs(isPrivateMode: Bool)
 
+    /// Removes all tabs matching the urls, used when other clients request to close tabs on this device.
+    func removeTabs(by urls: [URL])
+    func removeTabs(_ tabs: [Tab])
+
+    /// Remove normal tabs older than a certain period of time
+    func removeNormalTabsOlderThan(period: TabsDeletionPeriod, currentDate: Date)
+
+    // MARK: - Undo Close
+    func undoCloseTab()
     /// Undo close all tabs, it will restore the tabs that were backed up when the close action was called.
     func undoCloseAllTabs()
 
-    /// Removes all tabs matching the urls, used when other clients request to close tabs on this device.
-    func removeTabs(by urls: [URL]) async
+    // MARK: Get Tab
+    func getTabForUUID(uuid: TabUUID) -> Tab?
+    func getTabForURL(_ url: URL) -> Tab?
 
-    /// Get inactive tabs from the list of tabs based on the time condition to be considered inactive.
-    /// Replaces LegacyInactiveTabModel and related classes
-    /// 
-    /// - Returns: Return list of tabs considered inactive
-    func getInactiveTabs() -> [Tab]
+    // MARK: Other Tab Actions
+    func clearAllTabsHistory()
+    func reorderTabs(isPrivate privateMode: Bool, fromIndex visibleFromIndex: Int, toIndex visibleToIndex: Int)
+    func preserveTabs()
 
-    /// Async Remove all inactive tabs, used when user closes all inactive tabs and TabTrayFlagManager is enabled
-    func removeAllInactiveTabs() async
+    /// Commits the pending changes to the persistent store.
+    func commitChanges()
 
-    /// Undo all inactive tabs closure. All inactive tabs are added back to the list of tabs
-    func undoCloseInactiveTabs() async
+    func notifyCurrentTabDidFinishLoading()
+
+    func restoreTabs(_ forced: Bool)
+
+    func expireLoginAlerts()
+    @discardableResult
+
+    func switchPrivacyMode() -> SwitchPrivacyModeResult
+
+    func addPopupForParentTab(profile: Profile, parentTab: Tab, configuration: WKWebViewConfiguration) -> Tab
+    func tabDidSetScreenshot(_ tab: Tab)
 }
 
 extension TabManager {
-    func removeDelegate(_ delegate: TabManagerDelegate) {
-        removeDelegate(delegate, completion: nil)
-    }
-
     func selectTab(_ tab: Tab?) {
         selectTab(tab, previous: nil)
-    }
-
-    func removeTab(_ tab: Tab) {
-        let uuid = windowUUID
-        removeTab(tab) {
-            NotificationCenter.default.post(name: .UpdateLabelOnTabClosed,
-                                            object: nil,
-                                            userInfo: uuid.userInfo)
-        }
     }
 
     func restoreTabs(_ forced: Bool = false) {
         restoreTabs(forced)
     }
 
-    func cleanupClosedTabs(_ closedTabs: [Tab],
-                           previous: Tab?,
-                           isPrivate: Bool = false) {
-        cleanupClosedTabs(closedTabs,
-                          previous: previous,
-                          isPrivate: isPrivate)
-    }
-
     @discardableResult
-    func addTab(_ request: URLRequest! = nil,
+    func addTab(_ request: URLRequest? = nil,
                 afterTab: Tab? = nil,
                 zombie: Bool = false,
                 isPrivate: Bool = false
@@ -140,14 +115,6 @@ extension TabManager {
                afterTab: afterTab,
                zombie: zombie,
                isPrivate: isPrivate)
-    }
-
-    func backgroundRemoveAllTabs(isPrivate: Bool = false,
-                                 didClearTabs: @escaping (_ tabsToRemove: [Tab],
-                                                          _ isPrivate: Bool,
-                                                          _ previousTabUUID: TabUUID) -> Void) {
-        backgroundRemoveAllTabs(isPrivate: isPrivate,
-                                didClearTabs: didClearTabs)
     }
 
     func addTabsForURLs(_ urls: [URL], zombie: Bool, shouldSelectTab: Bool = true, isPrivate: Bool = false) {

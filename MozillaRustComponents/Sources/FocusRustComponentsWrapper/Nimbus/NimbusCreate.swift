@@ -21,45 +21,49 @@ public let defaultErrorReporter: NimbusErrorReporter = { err in
 
 class GleanMetricsHandler: MetricsHandler {
     func recordEnrollmentStatuses(enrollmentStatusExtras: [EnrollmentStatusExtraDef]) {
-        for extra in enrollmentStatusExtras {
-            GleanMetrics.NimbusEvents.enrollmentStatus
-                .record(GleanMetrics.NimbusEvents.EnrollmentStatusExtra(
-                    branch: extra.branch,
-                    conflictSlug: extra.conflictSlug,
-                    errorString: extra.errorString,
-                    reason: extra.reason,
-                    slug: extra.slug,
-                    status: extra.status
-                ))
-        }
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // for extra in enrollmentStatusExtras {
+        //     GleanMetrics.NimbusEvents.enrollmentStatus
+        //         .record(GleanMetrics.NimbusEvents.EnrollmentStatusExtra(
+        //             branch: extra.branch,
+        //             conflictSlug: extra.conflictSlug,
+        //             errorString: extra.errorString,
+        //             reason: extra.reason,
+        //             slug: extra.slug,
+        //             status: extra.status
+        //         ))
+        // }
     }
 
     func recordFeatureActivation(event: FeatureExposureExtraDef) {
-        GleanMetrics.NimbusEvents.activation
-            .record(GleanMetrics.NimbusEvents.ActivationExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.activation
+        //     .record(GleanMetrics.NimbusEvents.ActivationExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId
+        //     ))
     }
 
     func recordFeatureExposure(event: FeatureExposureExtraDef) {
-        GleanMetrics.NimbusEvents.exposure
-            .record(GleanMetrics.NimbusEvents.ExposureExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.exposure
+        //     .record(GleanMetrics.NimbusEvents.ExposureExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId
+        //     ))
     }
 
     func recordMalformedFeatureConfig(event: MalformedFeatureConfigExtraDef) {
-        GleanMetrics.NimbusEvents.malformedFeature
-            .record(GleanMetrics.NimbusEvents.MalformedFeatureExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId,
-                partId: event.part
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.malformedFeature
+        //     .record(GleanMetrics.NimbusEvents.MalformedFeatureExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId,
+        //         partId: event.part
+        //     ))
     }
 }
 

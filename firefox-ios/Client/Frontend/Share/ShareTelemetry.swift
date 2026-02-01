@@ -1,6 +1,9 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
+// Ecosia: This file contains Firefox's telemetry code which is kept intact for easier upgrades.
+// All telemetry calls are silenced via NoOpGleanWrapper - see Client/Ecosia/Telemetry/NoOpGleanWrapper.swift
+// No need to comment out individual calls; they compile successfully but do nothing at runtime.
 
 import Foundation
 import Common

@@ -18,7 +18,7 @@ import WidgetKit
 import SummarizeKit
 import ActivityKit
 import Glean
-
+import Ecosia
 import class MozillaAppServices.BookmarkFolderData
 import class MozillaAppServices.BookmarkItemData
 import struct MozillaAppServices.Login
@@ -130,6 +130,8 @@ class BrowserViewController: UIViewController,
     var displayedPopoverController: UIViewController?
     var updateDisplayedPopoverProperties: (() -> Void)?
     lazy var screenshotHelper = ScreenshotHelper(controller: self)
+    // Ecosia: Authentication manager for handling login/logout flows
+    var ecosiaAuth: EcosiaAuth?
 
     // MARK: Lazy loading UI elements
     private var documentLoadingView: TemporaryDocumentLoadingView?

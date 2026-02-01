@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import Shared
 import UIKit
 
 /// Core features are features that are used for developer purposes and are
@@ -12,9 +11,7 @@ import UIKit
 enum CoreFeatureFlagID {
     case adjustEnvironmentProd
     case useMockData
-    case useStagingContileAPI
-    case useStagingSponsoredPocketStoriesAPI
-    case useStagingFakespotAPI
+    case useStagingUnifiedAdsAPI
 }
 
 struct CoreFlaggableFeature {
@@ -34,11 +31,11 @@ struct CoreFlaggableFeature {
 
     /// Returns whether or not the feature is active for the build.
     public func isActiveForBuild() -> Bool {
-        #if MOZ_CHANNEL_RELEASE
+        #if MOZ_CHANNEL_release
             return buildChannels.contains(.release)
-        #elseif MOZ_CHANNEL_BETA
+        #elseif MOZ_CHANNEL_beta
             return buildChannels.contains(.beta)
-        #elseif MOZ_CHANNEL_FENNEC
+        #elseif MOZ_CHANNEL_developer
             return buildChannels.contains(.developer)
         #else
             return buildChannels.contains(.other)

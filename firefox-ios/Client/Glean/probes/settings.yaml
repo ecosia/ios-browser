@@ -1,0 +1,294 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# This file defines the metrics that are recorded by the Glean SDK. They are
+# automatically converted to Swift code at build time using the `glean_parser`
+# PyPI package.
+
+# This file is organized (roughly) alphabetically by metric names
+# for easy navigation
+
+---
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
+
+$tags:
+  - Settings
+
+###############################################################################
+# Legacy "preferences" telemetry to be expired and/or migrated to "settings" 
+# telemetry.
+###############################################################################
+
+preferences:
+  changed:
+    type: event
+    description: |
+      Recorded when a preference is changed and includes the preference that
+      changed as well as the value changed to recorded in the extra keys.
+
+      Note: This setting will soon be deprecated in favor of
+      `settings.changed`, which also includes a new `changed_from` extra.
+
+      **Expiration:** This setting can be safely expired once the
+      `settings.changed` implementation completely shadows the old 
+      `preferences.changed` implementation.
+    extra_keys:
+      preference:
+        type: string
+        description: |
+          The preference that was changed.
+      changed_to:
+        type: string
+        description: |
+          The value the preference was changed to.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1644846
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1644846
+      - https://github.com/mozilla-mobile/firefox-ios/pull/9673
+      - https://github.com/mozilla-mobile/firefox-ios/pull/12334
+      - https://github.com/mozilla-mobile/firefox-ios/pull/14102
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  home_page_setting:
+    type: string
+    description: |
+      The setting a user chooses as their Home page. By default,
+      it is initially set to Firefox Home.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/8887
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/8887
+      - https://github.com/mozilla-mobile/firefox-ios/pull/9673
+      - https://github.com/mozilla-mobile/firefox-ios/pull/12334
+      - https://github.com/mozilla-mobile/firefox-ios/pull/14102
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  save_logins:
+    type: boolean
+    description: |
+      Measures the state of the "Save Logins" preference.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1644846
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1644846
+      - https://github.com/mozilla-mobile/firefox-ios/pull/9673
+      - https://github.com/mozilla-mobile/firefox-ios/pull/12334
+      - https://github.com/mozilla-mobile/firefox-ios/pull/14102
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  tips_and_features_notifs:
+    type: boolean
+    description: |
+      True if notifications for tips and features are allowed, otherwise false.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/14907
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/15114
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  sync_notifs:
+    type: boolean
+    description: |
+      True if notifications for sync are allowed, otherwise false.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/14907
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/15114
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  fxa_logged_in:
+    type: boolean
+    description: |
+      Measures the state of the fxa login.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/14904
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/15181
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  close_private_tabs:
+    type: boolean
+    description: |
+      Measures the state of the "Close Private Tabs" preference.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1644846
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1644846
+      - https://github.com/mozilla-mobile/firefox-ios/pull/9673
+      - https://github.com/mozilla-mobile/firefox-ios/pull/12334
+      - https://github.com/mozilla-mobile/firefox-ios/pull/14102
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  opening_screen:
+    type: string
+    description: |
+      What opening screen preference the user has selected under
+      "Customize Home". "homepage," "last tab," or
+      "homepage after 4 hours" default: "homepage after 4 hours".
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/14908
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/15583
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  autoplay_setting_changed:
+    type: event
+    description: |
+      Event for user changing the autoplay setting
+    extra_keys:
+      media_type:
+        type: string
+        description: |
+          We either send "allowAudioAndVideo", "blockAudio" or "blockAudioAndVideo".
+          Default is "allowAudioAndVideo".
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/12862
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/TODO
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+
+###############################################################################
+# New "settings" telemetry properly nested under "settings".
+###############################################################################
+
+# General Settings Events
+settings:
+  changed:
+    type: event
+    description: |
+      Recorded when the user changes a setting on a Settings screen. Records
+      the new value, the previous value, and a key that uniquely identifies the
+      setting irrespective of its placement in the Settings screens hierarchy.
+
+      This setting will eventually replace `preferences.changed`.
+    extra_keys:
+      setting:
+        type: string
+        description: |
+          A unique key describing the setting that was changed.
+      changed_to:
+        type: string
+        description: |
+          The new value of the setting.
+      changed_from:
+        type: string
+        description: |
+          The previous value of the setting.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1644846
+      - https://mozilla-hub.atlassian.net/browse/FXIOS-12437
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1644846
+      - https://github.com/mozilla-mobile/firefox-ios/pull/9673
+      - https://github.com/mozilla-mobile/firefox-ios/pull/12334
+      - https://github.com/mozilla-mobile/firefox-ios/pull/14102
+      - https://github.com/mozilla-mobile/firefox-ios/pull/27180
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  option_selected:
+    type: event
+    description: |
+      Recorded when the user taps an option to drill deeper into the
+      settings menu screens.
+      
+      For example, tapping the "App Icon >" option to show the app icon
+      selection screen, or tapping "Browsing >" to view the browsing settings.
+    extra_keys:
+      option:
+        type: string
+        description: |
+          A unique key describing the item selected from the settings menu and
+          its submenus. This unique key should describe the screen being shown
+          next to the user. 
+          
+          Keep in mind that experiments and redesigns sometimes move options to
+          different depths of the settings screens. However, this unique key
+          should always remain the same. As a result, it is useful to devise a
+          unique key irrespective of the option's current placement in the
+          settings hierarchy.
+    bugs:
+      - https://mozilla-hub.atlassian.net/browse/FXIOS-12155
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/27128
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+
+# App Icon Settings
+settings.app_icon:
+  selected:
+    type: event
+    description: |
+      Records when the user changes their app icon in the app settings.
+    extra_keys:
+      new_name:
+        type: string
+        description: |
+          The name of the new app icon the user has selected. Options
+          are listed in the AppIcon enumeration.
+      old_name:
+        type: string
+        description: |
+          The name of the app icon the user had previously selected.
+          Returns "unknown" if the previous icon had an invalid name.
+    bugs:
+      - https://mozilla-hub.atlassian.net/browse/FXIOS-11473
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/25029
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - AppIconSelection
+        
+# Default Zoom Settings
+settings.zoom_bar:
+  domain_list_item_swiped_to_delete:
+    type: event
+    description: |
+      Recorded when the user swipes to delete a specific zoom domain level in the app settings.
+    extra_keys:
+      index:
+        type: quantity
+        description: |
+          The index of the site in the list of domains that have a user-configured page zoom level. Index 0 is the top of the list.
+    bugs:
+      - https://mozilla-hub.atlassian.net/browse/FXIOS-12371
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/27006
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - ZoomBar
+  domain_list_reset_button_tapped:
+    type: event
+    description: |
+      Recorded when the user resets the list of zoom domain levels in the app settings.
+    bugs:
+      - https://mozilla-hub.atlassian.net/browse/FXIOS-12371
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/27006
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - ZoomBar
+    no_lint:
+      - COMMON_PREFIX

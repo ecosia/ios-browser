@@ -11,6 +11,7 @@ extension WindowUUID {
     static let snapshotTestDefaultUUID = WindowUUID(uuidString: "E9E9E9E9-E9E9-E9E9-E9E9-CD68A019860E")!
 }
 
+@MainActor
 class SnapshotBaseTests: XCTestCase {
 
     var profile: MockProfile!

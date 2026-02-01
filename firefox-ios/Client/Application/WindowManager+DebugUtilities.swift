@@ -4,11 +4,11 @@
 
 import Foundation
 import Common
-import Shared
 import TabDataStore
 
 extension WindowManagerImplementation {
     /// For developer and internal debugging of Multi-window on iPad
+    @MainActor
     func _debugDiagnostics() -> String {
         func short(_ uuid: UUID) -> String { return String(uuid.uuidString.prefix(4)) }
         guard let del = (UIApplication.shared.delegate as? AppDelegate) else { return "<err>"}
@@ -53,6 +53,7 @@ extension WindowManagerImplementation {
 }
 
 /// Convenience. For developer and internal debugging
+@MainActor
 func _wndMgrDebug() -> String {
     let windowMgr: WindowManager = AppContainer.shared.resolve()
     return (windowMgr as? WindowManagerImplementation)?._debugDiagnostics() ?? "<err>"

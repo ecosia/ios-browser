@@ -5,6 +5,7 @@
 import UIKit
 import Common
 
+@MainActor
 final class MultiplyImpactStep: UIView, ThemeApplicable {
     private weak var indicator: UIImageView?
     private weak var titleLabel: UILabel?

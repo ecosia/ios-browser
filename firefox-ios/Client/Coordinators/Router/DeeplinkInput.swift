@@ -12,6 +12,7 @@ enum DeeplinkInput {
         case fxaSignIn = "fxa-signin"
         case openUrl = "open-url"
         case openText = "open-text"
+        case sharesheet = "share-sheet"
         case glean
         case widgetMediumTopSitesOpenUrl = "widget-medium-topsites-open-url"
         case widgetSmallQuickLinkOpenUrl = "widget-small-quicklink-open-url"
@@ -33,6 +34,30 @@ enum DeeplinkInput {
                 return false
             }
         }
+
+        /// Checks if we have a valid URL and returns false if we received an invalid URL.
+        /// Some cases don't need to be handled, so we return true directly.
+        /// For specific cases, if we don't have a URL query, then we return true.
+        /// If we have a URL query, then make sure to check it's a webpage.
+        ///
+        /// - Parameter urlQuery: the URL that will be used to route
+        /// - Returns: true if we don't need need to handle the case, the urlQuery is null, or if the URL is a valid webPage
+        func isValidURL(
+            urlQuery: URL?
+        ) -> Bool {
+            switch self {
+            case .openText,
+                    .openUrl, .sharesheet,
+                    .widgetTabsLargeOpenUrl, .widgetTabsMediumOpenUrl,
+                    .widgetMediumTopSitesOpenUrl,
+                    .widgetSmallQuickLinkOpenUrl, .widgetMediumQuickLinkOpenUrl,
+                    .widgetSmallQuickLinkOpenCopied, .widgetMediumQuickLinkOpenCopied:
+                return urlQuery?.isWebPage() ?? true
+            case .deepLink, .fxaSignIn, .glean,
+                    .widgetSmallQuickLinkClosePrivateTabs, .widgetMediumQuickLinkClosePrivateTabs:
+                return true
+            }
+        }
     }
 
     /// An enumeration of possible paths for deep links.
@@ -47,6 +72,5 @@ enum DeeplinkInput {
         case newTab = "NewTab"
         case newPrivateTab = "NewPrivateTab"
         case openLastBookmark = "OpenLastBookmark"
-        case qrCode = "QRCode"
     }
 }

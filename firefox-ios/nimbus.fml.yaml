@@ -1,4 +1,9 @@
 ---
+# Ecosia: This file is copied from Firefox to ensure all Nimbus features are defined
+# This allows Firefox's feature flag code to compile unchanged
+# Actual feature flags are controlled at runtime via Nimbus configuration
+# On Firefox upgrades: Copy the updated nimbus.fml.yaml from Firefox
+#
 # The features to be included in the nimbus.fml will be listed
 # in the `include` block. This should not be a manual process.
 # Please see the documentation in `iOSNimbusFeatureUtility`
@@ -13,32 +18,42 @@ channels:
   - beta
   - release
 include:
-  - nimbus-features/accountSettingsReduxFeature.yaml
   - nimbus-features/addressAutofillFeature.yaml
-  - nimbus-features/autofillFeature.yaml
-  - nimbus-features/bookmarkRefactorFeature.yaml
-  - nimbus-features/contextualHintFeature.yaml
-  - nimbus-features/fakespotFeature.yaml
+  - nimbus-features/appIconSelectionFeature.yaml
+  - nimbus-features/appleSummarizerFeature.yaml
+  - nimbus-features/deeplinkOptimizationRefactorFeature.yaml
+  - nimbus-features/defaultZoomFeature.yaml
+  - nimbus-features/downloadLiveActivitiesFeature.yaml
   - nimbus-features/feltPrivacyFeature.yaml
+  - nimbus-features/firefoxJpGuideDefaultSite.yaml
   - nimbus-features/firefoxSuggestFeature.yaml
   - nimbus-features/generalFeatures.yaml
-  - nimbus-features/gleanServerKnobs.yaml
+  - nimbus-features/hntSponsoredShortcutsFeature.yaml
   - nimbus-features/homepageRebuildFeature.yaml
-  - nimbus-features/homescreenFeature.yaml
+  - nimbus-features/homepageRedesignFeature.yaml
+  - nimbus-features/hostedSummarizerFeature.yaml
   - nimbus-features/menuRefactorFeature.yaml
   - nimbus-features/messagingFeature.yaml
   - nimbus-features/microsurveyFeature.yaml
   - nimbus-features/nativeErrorPageFeature.yaml
-  - nimbus-features/nightModeFeature.yaml
+  - nimbus-features/newAddressBarMenu.yaml
+  - nimbus-features/newAppearanceMenu.yaml
   - nimbus-features/onboardingFrameworkFeature.yaml
-  - nimbus-features/passwordGeneratorFeature.yaml
-  - nimbus-features/reduxSearchSettingsFeature.yaml
-  - nimbus-features/remoteTabManagement.yaml
+  - nimbus-features/privacyNoticeFeature.yaml
+  - nimbus-features/recentSearchesFeature.yaml
+  - nimbus-features/relayIntegrationFeature.yaml
   - nimbus-features/searchFeature.yaml
+  - nimbus-features/sentFromFirefoxFeature.yaml
   - nimbus-features/splashScreenFeature.yaml
   - nimbus-features/spotlightSearchFeature.yaml
-  - nimbus-features/tabTrayFeature.yaml
-  - nimbus-features/tabTrayRefactorFeature.yaml
+  - nimbus-features/startAtHomeFeature.yaml
+  - nimbus-features/tabScrollRefactorFeature.yaml
+  - nimbus-features/tabTrayUIExperiments.yaml
   - nimbus-features/toolbarRefactorFeature.yaml
+  - nimbus-features/tosFeature.yaml
+  - nimbus-features/touFeature.yaml
   - nimbus-features/trackingProtectionRefactor.yaml
-  - nimbus-features/zoomFeature.yaml
+  - nimbus-features/translationsFeature.yaml
+  - nimbus-features/trendingSearchesFeature.yaml
+  - nimbus-features/updatedPasswordManager.yaml
+  - nimbus-features/webEngineIntegrationRefactor.yaml

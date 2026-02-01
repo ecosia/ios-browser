@@ -12,6 +12,7 @@ protocol NTPConfigurableNudgeCardCellDelegate: AnyObject {
 }
 
 /// ViewModel for configuring a Nudge Card Cell.
+@MainActor
 class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     var title: String {
         fatalError("Must be overridden")

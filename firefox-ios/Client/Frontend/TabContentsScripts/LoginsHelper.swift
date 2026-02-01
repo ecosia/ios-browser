@@ -372,7 +372,7 @@ class LoginsHelper: @unchecked Sendable, TabContentScript, FeatureFlaggable {
 
     @objc
     nonisolated func timerDone() {
-        ensureMainThread {
+        ensureMainThread { @MainActor in
             self.loginAlert?.shouldPersist = false
             self.loginAlertTimer = nil
         }

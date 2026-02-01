@@ -106,6 +106,7 @@ extension DefaultBrowserCoordinator {
     }
 }
 
+@MainActor
 final class DetailViewDoneHandler: NSObject {
     let onDone: () -> Void
     init(onDone: @escaping () -> Void) {

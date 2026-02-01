@@ -310,12 +310,7 @@ open class BrowserProfile: Profile,
 
         // Initiating the sync manager has to happen prior to the databases being opened,
         // because opening them can trigger events to which the SyncManager listens.
-        /* Ecosia: Exclude RustSyncManager from ShareTo extension to avoid concurrency issues
         self.syncManager = RustSyncManager(profile: self)
-        */
-        #if !MOZ_TARGET_SHARETO
-        self.syncManager = RustSyncManager(profile: self)
-        #endif
 
         // Remove the default homepage. This does not change the user's preference,
         // just the behaviour when there is no homepage.

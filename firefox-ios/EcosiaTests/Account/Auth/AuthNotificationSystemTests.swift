@@ -6,6 +6,7 @@ import XCTest
 import Common
 @testable import Ecosia
 
+@MainActor
 final class AuthNotificationSystemTests: XCTestCase {
 
     var authStateManager: EcosiaBrowserWindowAuthManager!
@@ -369,6 +370,7 @@ final class AuthNotificationSystemTests: XCTestCase {
 
 // MARK: - Helper Classes
 
+@MainActor
 private class NotificationObserver {
     var receivedNotifications: [Notification] = []
     private var expectations: [XCTestExpectation] = []
@@ -396,6 +398,7 @@ private class NotificationObserver {
     }
 }
 
+@MainActor
 private class TestNotificationObserver: NSObject {
     var receivedNotifications: [Notification] = []
     var expectation: XCTestExpectation?

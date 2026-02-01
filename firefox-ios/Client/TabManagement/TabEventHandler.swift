@@ -5,6 +5,7 @@
 import Foundation
 import Storage
 import Common
+import WebEngine
 
 /// A handler can be a plain old swift object. It does not need to extend any
 /// other object, but can.
@@ -67,7 +68,8 @@ enum TabEventHandlerWindowResponseType {
     }
 }
 
-protocol TabEventHandler: AnyObject {
+@MainActor
+protocol TabEventHandler: AnyObject, Sendable {
     var tabEventWindowResponseType: TabEventHandlerWindowResponseType { get }
     func tab(_ tab: Tab, didChangeURL url: URL)
     func tab(_ tab: Tab, didLoadPageMetadata metadata: PageMetadata)
@@ -77,11 +79,11 @@ protocol TabEventHandler: AnyObject {
     func tabDidClose(_ tab: Tab)
     func tabDidToggleDesktopMode(_ tab: Tab)
     func tabDidChangeContentBlocking(_ tab: Tab)
-    func tabDidSetScreenshot(_ tab: Tab, hasHomeScreenshot: Bool)
 }
 
 // Provide default implementations, because we don't want to litter the code with
 // empty methods, and `@objc optional` doesn't really work very well.
+@MainActor
 extension TabEventHandler {
     func tab(_ tab: Tab, didChangeURL url: URL) {}
     func tab(_ tab: Tab, didLoadPageMetadata metadata: PageMetadata) {}
@@ -91,7 +93,6 @@ extension TabEventHandler {
     func tabDidClose(_ tab: Tab) {}
     func tabDidToggleDesktopMode(_ tab: Tab) {}
     func tabDidChangeContentBlocking(_ tab: Tab) {}
-    func tabDidSetScreenshot(_ tab: Tab, hasHomeScreenshot: Bool) {}
 }
 
 enum TabEventLabel: String {
@@ -107,6 +108,7 @@ enum TabEventLabel: String {
 }
 
 // Names of events must be unique!
+@MainActor
 enum TabEvent {
     case didChangeURL(URL)
     case didLoadPageMetadata(PageMetadata)
@@ -116,7 +118,6 @@ enum TabEvent {
     case didClose
     case didToggleDesktopMode
     case didChangeContentBlocking
-    case didSetScreenshot(isHome: Bool)
 
     var label: TabEventLabel {
         let str = "\(self)".components(separatedBy: "(")[0] // Will grab just the name from 'didChangeURL(...)'
@@ -144,8 +145,6 @@ enum TabEvent {
             handler.tabDidToggleDesktopMode(tab)
         case .didChangeContentBlocking:
             handler.tabDidChangeContentBlocking(tab)
-        case .didSetScreenshot(let hasHomeScreenshot):
-            handler.tabDidSetScreenshot(tab, hasHomeScreenshot: hasHomeScreenshot)
         }
     }
 }
@@ -176,7 +175,8 @@ private let center = NotificationCenter()
 
 private struct AssociatedKeys {
     // This property's address will be used as a unique address for the associated object's handle
-    static var observers: UInt8 = 0
+    // TODO: FXIOS-12595 This global property is not concurrency safe
+    nonisolated(unsafe) static var observers: UInt8 = 0
 }
 
 private class ObserverWrapper: NSObject {
@@ -193,16 +193,18 @@ extension TabEventHandler {
     /// `TabObservers` should be preserved for unregistering later.
     func register(_ observer: AnyObject, forTabEvents events: TabEventLabel...) {
         let wrapper = ObserverWrapper()
-        wrapper.observers = events.map { [weak self] eventType in
-            center.addObserver(forName: eventType.name, object: nil, queue: .main) { notification in
-                guard let self else { return }
+        wrapper.observers = events.map { eventType in
+            center.addObserver(forName: eventType.name, object: nil, queue: .main) { [weak self] notification in
                 guard let tab = notification.object as? Tab,
-                      let event = notification.userInfo?["payload"] as? TabEvent,
-                      self.tabEventWindowResponseType.shouldSendHandlerEvent(for: tab.windowUUID) else {
-                    return
-                }
+                      let tabEvent = notification.userInfo?["payload"] as? TabEvent,
+                      let self else { return }
+                MainActor.assumeIsolated {
+                    guard self.tabEventWindowResponseType.shouldSendHandlerEvent(for: tab.windowUUID) else {
+                        return
+                    }
 
-                event.handle(tab, with: self)
+                    tabEvent.handle(tab, with: self)
+                }
             }
         }
 

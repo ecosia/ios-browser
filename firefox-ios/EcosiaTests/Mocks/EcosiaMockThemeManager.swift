@@ -6,6 +6,7 @@ import Common
 import Shared
 @testable import Client
 
+@MainActor
 final class EcosiaMockThemeManager: ThemeManager {
 
     // These have been carried over from the legacy system to maintain backwards compatibility

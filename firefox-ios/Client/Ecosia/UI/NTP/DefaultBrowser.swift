@@ -12,6 +12,7 @@ protocol DefaultBrowserDelegate: AnyObject {
 }
 
 @available(iOS 14, *)
+@MainActor
 final class DefaultBrowser: UIViewController, Themeable {
 
     /// The minimum amount of searches required to show the Default Browser

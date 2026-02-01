@@ -4,9 +4,7 @@
 
 @testable import Client
 
-/* Ecosia: Remove Glean
 import Glean
- */
 import XCTest
 import Common
 import Shared
@@ -58,7 +56,6 @@ class TabToolbarHelperTests: XCTestCase {
         XCTAssertEqual(mockToolbar.multiStateButton.image(for: .normal), imageHome)
     }
 
-    /* Ecosia: remove Glean dependency
     func testTelemetryForSiteMenu() {
         Glean.shared.resetGlean(clearStores: true)
         let mockToolbar = MockTabToolbar()
@@ -67,7 +64,7 @@ class TabToolbarHelperTests: XCTestCase {
         testCounterMetricRecordingSuccess(metric: GleanMetrics.AppMenu.siteMenu)
         Glean.shared.resetGlean(clearStores: true)
     }
-     */
+
     func test_tabToolBarHelper_basicCreation_doesntLeak() {
         let tabToolBar = TabToolbar()
         let subject = TabToolbarHelper(toolbar: tabToolBar)

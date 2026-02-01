@@ -10,10 +10,8 @@
 ## The `CONFIGURATION` to derive the channel used in the feature manifest.
 CHANNEL=
 case "${CONFIGURATION}" in
-    Debug)
-        CHANNEL="developer"
-        ;;
-    BetaDebug)
+    # Firefox configurations
+    Fennec)
         CHANNEL="developer"
         ;;
     Fennec_Testing)
@@ -22,17 +20,36 @@ case "${CONFIGURATION}" in
     Fennec_Enterprise)
         CHANNEL="developer"
         ;;
+    FirefoxStaging)
+        CHANNEL="beta"
+        ;;
+    FirefoxBeta)
+        CHANNEL="beta"
+        ;;
+    Firefox)
+        CHANNEL="release"
+        ;;
+    # Ecosia configurations
+    Debug)
+        CHANNEL="developer"
+        ;;
+    BetaDebug)
+        CHANNEL="developer"
+        ;;
+    Testing)
+        CHANNEL="developer"
+        ;;
     Development_TestFlight)
         CHANNEL="beta"
         ;;
-    Development_AppCenter)
+    Development_Firebase)
         CHANNEL="beta"
         ;;
     Release)
         CHANNEL="release"
         ;;
     *) # The channel must match up with the channels listed in APP_FML_FILE.
-        CHANNEL="$CONFIGURATION"
+        CHANNEL="developer"
         ;;
 esac
 export CHANNEL

@@ -10,7 +10,7 @@ import class MozillaAppServices.FeatureHolder
 import enum MozillaAppServices.NimbusError
 import protocol MozillaAppServices.NimbusMessagingHelperProtocol
 
-protocol GleanPlumbMessageManagerProtocol {
+protocol GleanPlumbMessageManagerProtocol: Sendable {
     /// Performs the bookkeeping and preparation of messages for their respective surfaces.
     /// We can build our collection of eligible messages for a surface in here.
     func onStartup()
@@ -28,6 +28,7 @@ protocol GleanPlumbMessageManagerProtocol {
     /// An optional UUID for the originating window can be provided to ensure any
     /// resulting UI is displayed in the correct window.
     /// Surface calls.
+    @MainActor
     func onMessagePressed(_ message: GleanPlumbMessage, window: WindowUUID?, shouldExpire: Bool)
 
     /// Handles what to do with a message when a user has dismissed it.
@@ -56,7 +57,7 @@ protocol GleanPlumbMessageManagerProtocol {
 ///     - exposure
 ///     - malformed message
 ///     - expiration (handled in the store)
-class GleanPlumbMessageManager: GleanPlumbMessageManagerProtocol {
+final class GleanPlumbMessageManager: GleanPlumbMessageManagerProtocol {
     // MARK: - Properties
     static let shared = GleanPlumbMessageManager()
 
@@ -208,6 +209,7 @@ class GleanPlumbMessageManager: GleanPlumbMessageManagerProtocol {
                                      extras: extras)
     }
 
+    @MainActor
     private func handleLinkAction(
         for message: GleanPlumbMessage,
         action: String,

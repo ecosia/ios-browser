@@ -8,6 +8,7 @@ import ComponentLibrary
 import Ecosia
 
 /// A view representing an individual impact row, used in the New Tab Page to display environmental impact information.
+@MainActor
 final class NTPImpactRowView: UIView, ThemeApplicable {
 
     // MARK: - UX Constants

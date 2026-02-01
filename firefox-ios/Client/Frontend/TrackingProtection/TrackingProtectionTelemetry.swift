@@ -5,30 +5,37 @@ import Glean
 
 struct TrackingProtectionTelemetry {
     func showClearCookiesAlert() {
-        GleanMetrics.TrackingProtection.showClearCookiesAlert.record()
+        // Ecosia: Telemetry metrics removed in Firefox 147.2
+        // GleanMetrics.TrackingProtection.showClearCookiesAlert.record()
     }
 
     func clearCookiesAndSiteData() {
-        GleanMetrics.TrackingProtection.tappedClearCookies.record()
+        // Ecosia: Telemetry metrics removed in Firefox 147.2
+        // GleanMetrics.TrackingProtection.tappedClearCookies.record()
     }
 
     func showTrackingProtectionDetails() {
-        GleanMetrics.TrackingProtection.showEtpDetails.record()
+        // Ecosia: Telemetry metrics removed in Firefox 147.2
+        // GleanMetrics.TrackingProtection.showEtpDetails.record()
     }
 
     func showBlockedTrackersDetails() {
-        GleanMetrics.TrackingProtection.showEtpBlockedTrackersDetails.record()
+        // Ecosia: Telemetry metrics removed in Firefox 147.2
+        // GleanMetrics.TrackingProtection.showEtpBlockedTrackersDetails.record()
     }
 
     func tappedShowSettings() {
-        GleanMetrics.TrackingProtection.showEtpSettings.record()
+        // Ecosia: Telemetry metrics removed in Firefox 147.2
+        // GleanMetrics.TrackingProtection.showEtpSettings.record()
     }
 
     func dismissTrackingProtection() {
-        GleanMetrics.TrackingProtection.dismissEtpPanel.record()
+        // Ecosia: Telemetry metrics removed in Firefox 147.2
+        // GleanMetrics.TrackingProtection.dismissEtpPanel.record()
     }
 
     func trackShowCertificates() {
-        GleanMetrics.TrackingProtection.showCertificates.record()
+        // Ecosia: Telemetry metrics removed in Firefox 147.2
+        // GleanMetrics.TrackingProtection.showCertificates.record()
     }
 }

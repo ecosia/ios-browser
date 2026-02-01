@@ -10,6 +10,7 @@ protocol WelcomeTourDelegate: AnyObject {
     func welcomeTourDidFinish(_ tour: WelcomeTour)
 }
 
+@MainActor
 final class WelcomeTour: UIViewController, Themeable {
 
     private weak var navStack: UIStackView!
@@ -41,7 +42,7 @@ final class WelcomeTour: UIViewController, Themeable {
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { windowUUID }
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
@@ -63,7 +64,7 @@ final class WelcomeTour: UIViewController, Themeable {
         addDynamicViews()
         applyTheme()
 
-        listenForThemeChange(self.view)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
     }
 
     private func addStaticViews() {
@@ -372,3 +373,4 @@ final class WelcomeTour: UIViewController, Themeable {
         imageView.image = .init(named: current.background.image)
     }
 }
+

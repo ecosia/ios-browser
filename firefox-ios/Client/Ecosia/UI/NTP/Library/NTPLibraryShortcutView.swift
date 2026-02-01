@@ -4,6 +4,7 @@
 import UIKit
 import Common
 
+@MainActor
 class NTPLibraryShortcutView: UIView, ThemeApplicable {
     static let spacing: CGFloat = 14
     static let iconSize: CGFloat = 52

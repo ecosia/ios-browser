@@ -3,11 +3,13 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import BackgroundTasks
+// TODO: FXIOS-13582 - Capture of non-Sendable type BGAppRefreshTask in @Sendable closure
+@preconcurrency import BackgroundTasks
 import Common
 import Shared
 
-class BackgroundNotificationSurfaceUtility: BackgroundUtilityProtocol {
+// TODO: FXIOS-13582 - BackgroundNotificationSurfaceUtility should be concurrency safe
+class BackgroundNotificationSurfaceUtility: BackgroundUtilityProtocol, @unchecked Sendable {
     let taskIdentifier = "org.mozilla.ios.surface.notification.refresh"
     var surfaceManager: NotificationSurfaceManager
     var notificationManager: NotificationManagerProtocol
@@ -49,14 +51,20 @@ class BackgroundNotificationSurfaceUtility: BackgroundUtilityProtocol {
         let hasPermission = await notificationManager.hasPermission()
 
         if hasPermission, surfaceManager.shouldShowSurface {
-            surfaceManager.showNotificationSurface()
+            await surfaceManager.showNotificationSurface()
         }
     }
 
     // MARK: Private
     private func setUp() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: taskIdentifier, using: nil) { task in
-            self.handleAppRefresh(task: task as! BGAppRefreshTask)
+            guard let backgroundRefreshTask = task as? BGAppRefreshTask else {
+                self.logger.log("Failed to cast task to BGAppRefreshTask",
+                                level: .fatal,
+                                category: .lifecycle)
+                return
+            }
+            self.handleAppRefresh(task: backgroundRefreshTask)
 
             // Schedule a new refresh task.
             self.scheduleTaskOnAppBackground()

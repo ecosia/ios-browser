@@ -7,6 +7,7 @@ import WebKit
 @testable import Ecosia
 
 @available(iOS 16.0, *)
+@MainActor
 final class EcosiaWebViewModalTests: XCTestCase {
 
     private var coordinator: MockCoordinator!

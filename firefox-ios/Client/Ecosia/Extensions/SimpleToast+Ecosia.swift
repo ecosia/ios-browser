@@ -32,7 +32,36 @@ extension SimpleToast {
             make.height.equalTo(Toast.UX.toastHeight)
             make.bottom.equalTo(bottomContainer).offset(-((bottomInset ?? 0) + CGFloat(12)))
         }
-        animate(toast)
+        // Ecosia: Inline animation since animate() is private in parent class
+        UIView.animate(
+            withDuration: Toast.UX.toastAnimationDuration,
+            animations: {
+                var frame = toast.frame
+                frame.origin.y = frame.origin.y - Toast.UX.toastHeightWithShadow
+                frame.size.height = Toast.UX.toastHeightWithShadow
+                toast.frame = frame
+            },
+            completion: { [weak self] finished in
+                let thousandMilliseconds = DispatchTimeInterval.milliseconds(1000)
+                let zeroMilliseconds = DispatchTimeInterval.milliseconds(0)
+                let voiceOverDelay = UIAccessibility.isVoiceOverRunning ? thousandMilliseconds : zeroMilliseconds
+                let dispatchTime = DispatchTime.now() + Toast.UX.toastDismissAfter + voiceOverDelay
+                
+                DispatchQueue.main.asyncAfter(deadline: dispatchTime) {
+                    guard let self = self else { return }
+                    UIView.animate(
+                        withDuration: Toast.UX.toastAnimationDuration,
+                        animations: {
+                            self.heightConstraint.constant = 0
+                            toast.superview?.layoutIfNeeded()
+                        },
+                        completion: { finished in
+                            toast.removeFromSuperview()
+                        }
+                    )
+                }
+            }
+        )
         return self
     }
 

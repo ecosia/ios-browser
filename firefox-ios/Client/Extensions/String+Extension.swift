@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import UIKit
+import Foundation
 
 extension String {
     /// Returns an attributed string in which the first occurrence of the given
@@ -73,5 +73,27 @@ extension String {
                                      range: nsString.range(of: boldPartsOfString[i] as String))
         }
         return boldString
+    }
+
+    /// Creates an attributed string with a base style and highlights a specific part of the
+    /// string with a different style.
+    ///
+    /// - Parameters:
+    ///   - style: The dictionary of attributes applied to the entire string. Defaults to `nil`.
+    ///   - highlightedText: The substring to be highlighted with a different style.
+    ///   - highlightedTextStyle: The dictionary of attributes applied specifically to the highlighted text.
+    ///   Defaults to `nil`.
+    /// - Returns: An `NSAttributedString` with the specified parts styled differently.
+    ///
+    /// - Note: If the highlighted text does not exist in the original string, no highlighted style is applied.
+    func attributedText(style: [NSAttributedString.Key: Any],
+                        highlightedText: String,
+                        highlightedTextStyle: [NSAttributedString.Key: Any]) -> NSAttributedString {
+        let formattedString = NSMutableAttributedString(string: self, attributes: style)
+        let highlightedTextRange = (self as NSString).range(of: highlightedText)
+        if highlightedTextRange.location != NSNotFound {
+            formattedString.addAttributes(highlightedTextStyle, range: highlightedTextRange)
+        }
+        return formattedString
     }
 }

@@ -9,6 +9,7 @@ import Ecosia
 
 /// Container view to host SwiftUI error toast in UIKit BrowserViewController
 @available(iOS 16.0, *)
+@MainActor
 class EcosiaErrorToastContainerView: UIView {
     private var hostingController: UIHostingController<AnyView>?
 

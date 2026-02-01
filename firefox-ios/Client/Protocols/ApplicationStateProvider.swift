@@ -4,8 +4,10 @@
 
 import UIKit
 
-protocol ApplicationStateProvider {
+protocol ApplicationStateProvider: Sendable {
+    @MainActor
     var applicationState: UIApplication.State { get }
 }
 
+// Since UIApplication is marked `@MainActor`, it is implicitly `Sendable`.
 extension UIApplication: ApplicationStateProvider {}

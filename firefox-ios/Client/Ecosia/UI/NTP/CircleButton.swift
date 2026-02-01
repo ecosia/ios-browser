@@ -6,6 +6,7 @@ import UIKit
 import Shared
 import Common
 
+@MainActor
 class CircleButton: ToolbarButton {
     enum Config {
         case search

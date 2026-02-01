@@ -7,6 +7,7 @@ import SwiftUI
 @testable import Ecosia
 
 @available(iOS 16.0, *)
+@MainActor
 final class EcosiaAccountAvatarPerformanceTests: XCTestCase {
 
     // MARK: - Performance Tests

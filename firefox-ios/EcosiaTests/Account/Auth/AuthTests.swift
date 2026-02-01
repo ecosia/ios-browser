@@ -7,6 +7,7 @@ import Auth0
 @testable import Ecosia
 import WebKit
 
+@MainActor
 final class AuthTests: XCTestCase {
 
     var auth: EcosiaAuthenticationService!

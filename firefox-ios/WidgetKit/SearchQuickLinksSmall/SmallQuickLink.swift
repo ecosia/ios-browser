@@ -5,6 +5,7 @@
 #if canImport(WidgetKit)
 import SwiftUI
 import WidgetKit
+import Localizations  // Ecosia: Import for String extensions
 
 struct IntentProvider: IntentTimelineProvider {
     typealias Intent = QuickActionIntent

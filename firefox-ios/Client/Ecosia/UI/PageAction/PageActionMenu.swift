@@ -5,6 +5,7 @@
 import UIKit
 import Common
 
+@MainActor
 final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - UX
@@ -23,6 +24,10 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
     var currentTheme: Theme { themeManager.getCurrentTheme(for: windowUUID) }
+    var themeListenerCancellable: Any?
+
+    var shouldUsePrivateOverride: Bool { false }
+    var shouldBeInPrivateTheme: Bool { false }
 
     // MARK: - Properties
 
@@ -69,7 +74,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
         setupKnob()
         setupConstraints()
         applyTheme()
-        listenForThemeChange(view)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -235,3 +240,4 @@ extension PageActionMenu: Themeable {
         }
     }
 }
+

@@ -5,9 +5,9 @@
 import Foundation
 import Glean
 
-public final class Nimbus: NimbusInterface {
-    // FIXME: FXIOS-14119 Should be thread safe
-    private nonisolated(unsafe) let _userDefaults: UserDefaults?
+// FIXME: FXIOS-13537 Make this type actually Sendable, or isolate or otherwise protect any mutable state
+public final class Nimbus: NimbusInterface, @unchecked Sendable {
+    private let _userDefaults: UserDefaults?
 
     private let nimbusClient: NimbusClientProtocol
 
@@ -15,14 +15,14 @@ public final class Nimbus: NimbusInterface {
 
     private let errorReporter: NimbusErrorReporter
 
-    let fetchQueue: OperationQueue = {
+    lazy var fetchQueue: OperationQueue = {
         var queue = OperationQueue()
         queue.name = "Nimbus fetch queue"
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
 
-    let dbQueue: OperationQueue = {
+    lazy var dbQueue: OperationQueue = {
         var queue = OperationQueue()
         queue.name = "Nimbus database queue"
         queue.maxConcurrentOperationCount = 1
@@ -53,10 +53,11 @@ private extension Nimbus {
         }
     }
 
-    func catchAll(_ queue: OperationQueue, thunk: @escaping (Operation) throws -> Void) -> Operation {
+    func catchAll(_ queue: OperationQueue, thunk: @Sendable @escaping (Operation) throws -> Void) -> Operation {
         let op = BlockOperation()
-        op.addExecutionBlock {
-            self.catchAll {
+        op.addExecutionBlock { [weak self, weak op] in
+            guard let self, let op else { return }
+            catchAll {
                 try thunk(op)
             }
         }
@@ -144,36 +145,37 @@ extension Nimbus: FeaturesInterface {
     }
 
     func recordExperimentEvents(_ events: [EnrollmentChangeEvent]) {
-        for event in events {
-            switch event.change {
-            case .enrollment:
-                GleanMetrics.NimbusEvents.enrollment.record(GleanMetrics.NimbusEvents.EnrollmentExtra(
-                    branch: event.branchSlug,
-                    experiment: event.experimentSlug
-                ))
-            case .disqualification:
-                GleanMetrics.NimbusEvents.disqualification.record(GleanMetrics.NimbusEvents.DisqualificationExtra(
-                    branch: event.branchSlug,
-                    experiment: event.experimentSlug
-                ))
-            case .unenrollment:
-                GleanMetrics.NimbusEvents.unenrollment.record(GleanMetrics.NimbusEvents.UnenrollmentExtra(
-                    branch: event.branchSlug,
-                    experiment: event.experimentSlug
-                ))
-            case .enrollFailed:
-                GleanMetrics.NimbusEvents.enrollFailed.record(GleanMetrics.NimbusEvents.EnrollFailedExtra(
-                    branch: event.branchSlug,
-                    experiment: event.experimentSlug,
-                    reason: event.reason
-                ))
-            case .unenrollFailed:
-                GleanMetrics.NimbusEvents.unenrollFailed.record(GleanMetrics.NimbusEvents.UnenrollFailedExtra(
-                    experiment: event.experimentSlug,
-                    reason: event.reason
-                ))
-            }
-        }
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // for event in events {
+        //     switch event.change {
+        //     case .enrollment:
+        //         GleanMetrics.NimbusEvents.enrollment.record(GleanMetrics.NimbusEvents.EnrollmentExtra(
+        //             branch: event.branchSlug,
+        //             experiment: event.experimentSlug
+        //         ))
+        //     case .disqualification:
+        //         GleanMetrics.NimbusEvents.disqualification.record(GleanMetrics.NimbusEvents.DisqualificationExtra(
+        //             branch: event.branchSlug,
+        //             experiment: event.experimentSlug
+        //         ))
+        //     case .unenrollment:
+        //         GleanMetrics.NimbusEvents.unenrollment.record(GleanMetrics.NimbusEvents.UnenrollmentExtra(
+        //             branch: event.branchSlug,
+        //             experiment: event.experimentSlug
+        //         ))
+        //     case .enrollFailed:
+        //         GleanMetrics.NimbusEvents.enrollFailed.record(GleanMetrics.NimbusEvents.EnrollFailedExtra(
+        //             branch: event.branchSlug,
+        //             experiment: event.experimentSlug,
+        //             reason: event.reason
+        //         ))
+        //     case .unenrollFailed:
+        //         GleanMetrics.NimbusEvents.unenrollFailed.record(GleanMetrics.NimbusEvents.UnenrollFailedExtra(
+        //             experiment: event.experimentSlug,
+        //             reason: event.reason
+        //         ))
+        //     }
+        // }
     }
 
     func getFeatureConfigVariablesJson(featureId: String) -> [String: Any]? {
@@ -183,11 +185,12 @@ extension Nimbus: FeaturesInterface {
             }
             return try Dictionary.parse(jsonString: string)
         } catch NimbusError.DatabaseNotReady {
-            GleanMetrics.NimbusHealth.cacheNotReadyForFeature.record(
-                GleanMetrics.NimbusHealth.CacheNotReadyForFeatureExtra(
-                    featureId: featureId
-                )
-            )
+            // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+            // GleanMetrics.NimbusHealth.cacheNotReadyForFeature.record(
+            //     GleanMetrics.NimbusHealth.CacheNotReadyForFeatureExtra(
+            //         featureId: featureId
+            //     )
+            // )
             return nil
         } catch {
             errorReporter(error)
@@ -237,16 +240,18 @@ extension Nimbus {
     }
 
     func fetchExperimentsOnThisThread() throws {
-        try GleanMetrics.NimbusHealth.fetchExperimentsTime.measure {
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // try GleanMetrics.NimbusHealth.fetchExperimentsTime.measure {
             try nimbusClient.fetchExperiments()
-        }
+        // }
         notifyOnExperimentsFetched()
     }
 
     func applyPendingExperimentsOnThisThread() throws {
-        let changes = try GleanMetrics.NimbusHealth.applyPendingExperimentsTime.measure {
-            try nimbusClient.applyPendingExperiments()
-        }
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // let changes = try GleanMetrics.NimbusHealth.applyPendingExperimentsTime.measure {
+            let changes = try nimbusClient.applyPendingExperiments()
+        // }
         postEnrollmentCalculation(changes)
     }
 
@@ -365,7 +370,7 @@ extension Nimbus: NimbusStartup {
         applyLocalExperiments(getString: { try String(contentsOf: fileURL) })
     }
 
-    func applyLocalExperiments(getString: @escaping () throws -> String) -> Operation {
+    func applyLocalExperiments(getString: @Sendable @escaping () throws -> String) -> Operation {
         catchAll(dbQueue) { op in
             let json = try getString()
 
@@ -442,8 +447,10 @@ extension Nimbus: NimbusMessagingProtocol {
     }
 }
 
-// FIXME: FXIOS-14118 Not thread safe because of mutable state
-public class NimbusDisabled: NimbusApi, @unchecked Sendable {
+// FIXME: FXIOS-13537 Make this type actually Sendable, or isolate or otherwise protect any mutable state
+public final class NimbusDisabled: NimbusApi, @unchecked Sendable {
+    // FIXME: FXIOS-13501 Unprotected shared mutable state is an error in Swift 6 (nonisolated(unsafe) hidden here because
+    // we use `@unchecked Sendable` on the `NimbusDisabled` class)
     public static let shared = NimbusDisabled()
 
     public var experimentParticipation: Bool = false

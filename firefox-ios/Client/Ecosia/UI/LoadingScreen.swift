@@ -6,6 +6,7 @@ import UIKit
 import Common
 import Ecosia
 
+@MainActor
 final class LoadingScreen: UIViewController {
     private weak var profile: Profile!
     private weak var progress: UIProgressView!

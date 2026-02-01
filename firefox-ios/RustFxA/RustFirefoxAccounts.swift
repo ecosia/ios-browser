@@ -271,7 +271,7 @@ public struct FxAUserProfile: Codable, Equatable {
     public let avatarUrl: String?
     public let displayName: String?
 
-    init(profile: Profile) {
+    init(profile: MozillaAppServices.Profile) {
         uid = profile.uid
         email = profile.email
         avatarUrl = profile.avatar

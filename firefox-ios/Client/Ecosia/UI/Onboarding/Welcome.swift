@@ -10,6 +10,7 @@ protocol WelcomeDelegate: AnyObject {
     func welcomeDidFinish(_ welcome: Welcome)
 }
 
+@MainActor
 final class Welcome: UIViewController {
     private weak var logo: UIImageView!
     private weak var background: UIImageView!

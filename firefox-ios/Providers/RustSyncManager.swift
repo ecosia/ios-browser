@@ -8,6 +8,7 @@ import Storage
 import Sync
 import AuthenticationServices
 import Common
+import Localizations  // Ecosia: Import for String extensions
 
 import enum MozillaAppServices.OAuthScope
 import enum MozillaAppServices.ServiceStatus
@@ -60,7 +61,7 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
         }
     }
 
-    lazy var syncManagerAPI = RustSyncManagerAPI(logger: logger)
+    lazy var syncManagerAPI = RustSyncManagerAPI(logger: logger, dispatchQueue: DispatchQueue.global())
 
     public var isSyncing: Bool {
         return syncDisplayState != nil && syncDisplayState! == .inProgress
@@ -357,17 +358,7 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
         public let description = "Failed to get token server endpoint url."
     }
 
-    /* Ecosia: Remove @Sendable to avoid concurrency warnings, capture with [weak self, completion]
     func shouldSyncLogins(_ passwordEngineIncluded: Bool, completion: @escaping @Sendable (Bool) -> Void) {
-        ...
-            self.logins.verifyLogins { successfullyVerified in
-                self.prefs.setBool(successfullyVerified, forKey: PrefsKeys.LoginsHaveBeenVerified)
-                completion(successfullyVerified)
-            }
-        ...
-    }
-    */
-    func shouldSyncLogins(_ passwordEngineIncluded: Bool, completion: @escaping (Bool) -> Void) {
         guard passwordEngineIncluded else {
             completion(false)
             return
@@ -377,8 +368,8 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
             // Otherwise logins could exist in the database that can't be decrypted and would
             // prevent logins from syncing if they are not removed.
 
-            self.logins.verifyLogins { [weak self, completion] successfullyVerified in
-                self?.prefs.setBool(successfullyVerified, forKey: PrefsKeys.LoginsHaveBeenVerified)
+            self.logins.verifyLogins { successfullyVerified in
+                self.prefs.setBool(successfullyVerified, forKey: PrefsKeys.LoginsHaveBeenVerified)
                 completion(successfullyVerified)
             }
         } else {
@@ -387,21 +378,9 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
         }
     }
 
-    /* Ecosia: Remove @Sendable to avoid concurrency warnings, capture with [weak self, completion]
     func shouldSyncCreditCards(_ creditCardEngineIncluded: Bool,
                                key: String?,
                                completion: @escaping @Sendable (Bool) -> Void) {
-        ...
-            self.autofill.verifyCreditCards(key: encKey) { successfullyVerified in
-                self.prefs.setBool(successfullyVerified, forKey: PrefsKeys.CreditCardsHaveBeenVerified)
-                completion(successfullyVerified)
-            }
-        ...
-    }
-    */
-    func shouldSyncCreditCards(_ creditCardEngineIncluded: Bool,
-                               key: String?,
-                               completion: @escaping (Bool) -> Void) {
         guard creditCardEngineIncluded, let encKey = key else {
             completion(false)
             return
@@ -411,8 +390,8 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
             // successfully. Otherwise records could exist in the database that can't be decrypted
             // and would prevent credit cards from syncing if they are not scrubbed.
 
-            self.autofill.verifyCreditCards(key: encKey) { [weak self, completion] successfullyVerified in
-                self?.prefs.setBool(successfullyVerified, forKey: PrefsKeys.CreditCardsHaveBeenVerified)
+            self.autofill.verifyCreditCards(key: encKey) { successfullyVerified in
+                self.prefs.setBool(successfullyVerified, forKey: PrefsKeys.CreditCardsHaveBeenVerified)
                 completion(successfullyVerified)
             }
         } else {
@@ -421,29 +400,15 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
         }
     }
 
-    /* Ecosia: Remove @Sendable and capture engines locally to avoid Sendable capture warning
     private func registerSyncEngines(engines: [RustSyncManagerAPI.TogglableEngine],
                                      loginKey: String?,
                                      creditCardKey: String?,
                                      completion: @escaping @Sendable (([String], [String: String])) -> Void) {
-        ...
-        self.shouldSyncLogins(passwordEngineIncluded) { syncLogins in
-            self.shouldSyncCreditCards(creditCardEngineIncluded, key: creditCardKey) { syncCreditCards in
-                self.doRegisterSyncEngines(engines, ...)
-            }
-        }
-    }
-    */
-    private func registerSyncEngines(engines: [RustSyncManagerAPI.TogglableEngine],
-                                     loginKey: String?,
-                                     creditCardKey: String?,
-                                     completion: @escaping (([String], [String: String])) -> Void) {
         let passwordEngineIncluded = engines.contains(.passwords)
         let creditCardEngineIncluded = engines.contains(.creditcards)
-        let localEngines = engines
         self.shouldSyncLogins(passwordEngineIncluded) { syncLogins in
             self.shouldSyncCreditCards(creditCardEngineIncluded, key: creditCardKey) { syncCreditCards in
-                self.doRegisterSyncEngines(localEngines,
+                self.doRegisterSyncEngines(engines,
                                            syncLogins,
                                            loginKey,
                                            syncCreditCards,
@@ -452,20 +417,12 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
         }
     }
 
-    /* Ecosia: Remove @Sendable from completion to avoid concurrency warnings
     private func doRegisterSyncEngines(_ engines: [RustSyncManagerAPI.TogglableEngine],
                                        _ syncLogins: Bool,
                                        _ loginKey: String?,
                                        _ syncCreditCards: Bool,
                                        _ creditCardKey: String?,
                                        completion: @escaping @Sendable (([String], [String: String])) -> Void) {
-    */
-    private func doRegisterSyncEngines(_ engines: [RustSyncManagerAPI.TogglableEngine],
-                                       _ syncLogins: Bool,
-                                       _ loginKey: String?,
-                                       _ syncCreditCards: Bool,
-                                       _ creditCardKey: String?,
-                                       completion: @escaping (([String], [String: String])) -> Void) {
         var localEncryptionKeys: [String: String] = [:]
         var rustEngines: [String] = []
         var registeredAutofill = false
@@ -509,12 +466,8 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
         completion((rustEngines, localEncryptionKeys))
     }
 
-    /* Ecosia: Remove @Sendable from completion to avoid concurrency warnings
     func getEnginesAndKeys(engines: [RustSyncManagerAPI.TogglableEngine],
                            completion: @escaping @Sendable (([String], [String: String])) -> Void) {
-    */
-    func getEnginesAndKeys(engines: [RustSyncManagerAPI.TogglableEngine],
-                           completion: @escaping (([String], [String: String])) -> Void) {
         logins.getStoredKey { loginResult in
             let loginKey: String?
 
@@ -551,9 +504,8 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
                 let enginesToSync = self.getEnginesWithRetrievedKeys(creditCardKey, loginKey, engines)
                 self.registerSyncEngines(engines: enginesToSync,
                                          loginKey: loginKey,
-                                         creditCardKey: creditCardKey) { result in
-                    completion(result)
-                }
+                                         creditCardKey: creditCardKey,
+                                         completion: completion)
             }
         }
     }
@@ -575,10 +527,7 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
        return enginesToSync
     }
 
-    /* Ecosia: Remove @Sendable from completion to avoid concurrency warnings
     private func doSync(params: SyncParams, completion: @escaping @Sendable (SyncResult) -> Void) {
-    */
-    private func doSync(params: SyncParams, completion: @escaping (SyncResult) -> Void) {
         beginSyncing()
         syncManagerAPI.sync(params: params) { syncResult in
             // Save the persisted state
@@ -747,11 +696,9 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
         let enabledEngines = Array(enablements.filter({ $0.value }).keys)
         let disabledEngines = Array(enablements.filter({ !$0.value }).keys)
 
-        /* Ecosia: Telemetry method removed in MozillaAppServices update
         // report sync settings telemetry changes
         self.syncManagerAPI.reportSaveSyncSettingsTelemetry(enabledEngines: enabledEngines,
                                                             disabledEngines: disabledEngines)
-        */
 
         syncNamedCollections(why: why, names: names).upon { result in
             guard result.isSuccess, let syncResult = result.successValue else {
@@ -765,13 +712,8 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
         }
     }
 
-    /* Ecosia: Telemetry method removed in MozillaAppServices update
     public func reportOpenSyncSettingsMenuTelemetry() {
         self.syncManagerAPI.reportOpenSyncSettingsMenuTelemetry()
-    }
-    */
-    public func reportOpenSyncSettingsMenuTelemetry() {
-        // Method body removed - telemetry not available
     }
 
     private func retrySyncAfterDelay(why: SyncReason, names: [String]) {

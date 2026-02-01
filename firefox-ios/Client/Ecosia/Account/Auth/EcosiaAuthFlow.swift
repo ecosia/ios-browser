@@ -168,9 +168,8 @@ final class EcosiaAuthFlow {
     private func handleNativeAuthCompleted(delayedCompletion: TimeInterval,
                                            onNativeAuthCompleted: (() -> Void)?) async {
         if delayedCompletion > 0 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delayedCompletion) {
-                onNativeAuthCompleted?()
-            }
+            try? await Task.sleep(for: .seconds(delayedCompletion))
+            onNativeAuthCompleted?()
         } else {
             onNativeAuthCompleted?()
         }

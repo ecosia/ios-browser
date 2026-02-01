@@ -5,6 +5,7 @@
 import UIKit
 import Common
 
+@MainActor
 class EcosiaPrimaryButton: UIButton {
     let windowUUID: WindowUUID
 

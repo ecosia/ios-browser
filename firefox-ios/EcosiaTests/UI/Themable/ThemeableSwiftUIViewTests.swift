@@ -7,6 +7,7 @@ import SwiftUI
 import Common
 @testable import Ecosia
 
+@MainActor
 final class ThemeableSwiftUIViewTests: XCTestCase {
 
     // MARK: - Unit Tests

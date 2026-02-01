@@ -10,6 +10,7 @@ protocol NTPLayoutHighlightDataSource: AnyObject {
     func getSectionViewModel(shownSection: Int) -> HomepageViewModelProtocol?
 }
 
+@MainActor
 class NTPLayout: UICollectionViewCompositionalLayout {
     weak var highlightDataSource: NTPLayoutHighlightDataSource?
 

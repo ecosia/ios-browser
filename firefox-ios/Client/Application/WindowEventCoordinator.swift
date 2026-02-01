@@ -4,7 +4,6 @@
 
 import Foundation
 import Common
-import Shared
 
 /// Events related to multiple window support on iPad. These events are
 /// always associated with one window in particular, but are typically of
@@ -32,5 +31,6 @@ enum WindowEvent {
 /// to key window lifecycle events, such as cleaning up when a window is closed.
 protocol WindowEventCoordinator {
     /// Notifies the coordinator that its parent window/scene is being removed.
+    @MainActor
     func coordinatorHandleWindowEvent(event: WindowEvent, uuid: WindowUUID)
 }

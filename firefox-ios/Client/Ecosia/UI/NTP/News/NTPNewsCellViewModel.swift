@@ -11,6 +11,7 @@ protocol NTPNewsCellDelegate: AnyObject {
     func openSeeAllNews()
 }
 
+@MainActor
 final class NTPNewsCellViewModel {
     private let news = News()
     private(set) var items = [NewsModel]()

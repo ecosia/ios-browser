@@ -13,9 +13,9 @@ import Shared
 // import SiteImageView
 
 open class DefaultSuggestedSites {
-    /* Ecosia: Remove Default Suggested Sites - Ecosia doesn't use Firefox's suggested sites
     public static let firefoxJpGuideURL = "https://blog.mozilla.org/ja/firefox-ja/ios-guide/"
-
+    
+    /* Ecosia: Remove Default Suggested Sites - Ecosia doesn't use Firefox's suggested sites
     private static let urlMap = [
         "https://www.amazon.com/": [
             "as": "https://www.amazon.in",

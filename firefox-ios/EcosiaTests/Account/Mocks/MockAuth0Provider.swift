@@ -7,6 +7,7 @@ import Auth0
 import Combine
 @testable import Ecosia
 
+@MainActor
 class MockAuth0Provider: Auth0ProviderProtocol {
 
     // MARK: - Test Control Properties

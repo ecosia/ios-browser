@@ -37,6 +37,7 @@ func generateResponseThatRedirects(toUrl url: URL) -> (URLResponse, Data) {
 }
 
 /// Handles requests to /about/sessionrestore to restore session history.
+@MainActor
 class SessionRestoreHandler: InternalSchemeResponse {
     static let path = "sessionrestore"
 

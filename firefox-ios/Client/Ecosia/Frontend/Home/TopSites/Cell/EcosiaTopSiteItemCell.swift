@@ -16,6 +16,7 @@ import UIKit
 import Ecosia
 
 /// The TopSite cell that appears in the ASHorizontalScrollView.
+@MainActor
 class TopSiteItemCell: UICollectionViewCell, ReusableCell {
     // MARK: - Variables
 

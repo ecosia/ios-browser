@@ -13,16 +13,17 @@ protocol SharedHomepageCellDelegate: AnyObject {
     func openLink(url: URL)
 }
 
+/* Ecosia: Review Homepage View Controller
 extension LegacyHomepageViewController: SharedHomepageCellDelegate {
     func openLink(url: URL) {
         homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
     }
 }
-
+ */
 protocol SharedHomepageCellLayoutDelegate: AnyObject {
     func invalidateLayout(at indexPaths: [IndexPath])
 }
-
+/* Ecosia: Review Homepage View Controller
 extension LegacyHomepageViewController: SharedHomepageCellLayoutDelegate {
     func invalidateLayout(at indexPaths: [IndexPath]) {
         let context = UICollectionViewLayoutInvalidationContext()
@@ -119,3 +120,4 @@ extension LegacyHomepageViewController: NTPHeaderDelegate {
         openLink(url: Environment.current.urlProvider.aiSearch(origin: .ntp))
     }
 }
+*/

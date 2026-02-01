@@ -3,54 +3,35 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-/* Ecosia: Remove Glean
 import Glean
- */
 
 final class TabsTelemetry {
-    /* Ecosia: Remove Glean
     /// Measure with a time distribution https://mozilla.github.io/glean/book/reference/metrics/timing_distribution.html
     /// how long it takes to switch to a new tab
     private var tabSwitchTimerId: GleanTimerId?
-     */
+
+    private let gleanWrapper: GleanWrapper
+
+    init(gleanWrapper: GleanWrapper = DefaultGleanWrapper()) {
+        self.gleanWrapper = gleanWrapper
+    }
 
     func startTabSwitchMeasurement() {
-        /* Ecosia: Remove Glean
-        tabSwitchTimerId = GleanMetrics.Tabs.tabSwitch.start()
-         */
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        tabSwitchTimerId = gleanWrapper.startTiming(for: GleanMetrics.Tabs.tabSwitch)
     }
 
     func stopTabSwitchMeasurement() {
-        /* Ecosia: Remove Glean
         guard let timerId = tabSwitchTimerId else { return }
-        GleanMetrics.Tabs.tabSwitch.stopAndAccumulate(timerId)
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        gleanWrapper.stopAndAccumulateTiming(for: GleanMetrics.Tabs.tabSwitch, timerId: timerId)
         tabSwitchTimerId = nil
-         */
     }
 
-    static func trackTabsQuantity(tabManager: TabManager) {
-        let privateExtra = [
-            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.privateTabs.count)
-        ]
-        TelemetryWrapper.recordEvent(category: .information,
-                                     method: .background,
-                                     object: .tabPrivateQuantity,
-                                     extras: privateExtra)
-
-        let normalExtra = [
-            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.normalActiveTabs.count)
-        ]
-        TelemetryWrapper.recordEvent(category: .information,
-                                     method: .background,
-                                     object: .tabNormalQuantity,
-                                     extras: normalExtra)
-
-        let inactiveExtra = [
-            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.inactiveTabs.count)
-        ]
-        TelemetryWrapper.recordEvent(category: .information,
-                                     method: .background,
-                                     object: .tabInactiveQuantity,
-                                     extras: inactiveExtra)
+    func trackConsecutiveCrashTelemetry(attemptNumber: UInt) {
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        let extras = GleanMetrics.Webview.ProcessDidTerminateExtra(consecutiveCrash: Int32(attemptNumber))
+        gleanWrapper.recordEvent(for: GleanMetrics.Webview.processDidTerminate,
+                                 extras: extras)
     }
 }

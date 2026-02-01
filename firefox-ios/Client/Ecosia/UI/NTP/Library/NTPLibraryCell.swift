@@ -7,6 +7,7 @@ import UIKit
 import Common
 import Ecosia
 
+@MainActor
 class NTPLibraryCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     var mainView = UIStackView()

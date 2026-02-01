@@ -1,0 +1,178 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+$schema: moz://mozilla.org/schemas/glean/pings/2-0-0
+
+topsites-impression:
+  description: |
+    Recorded when a sponsored top site is rendered and
+    visible on the newtab page. Visibility is qualified
+    as when the homepage is brought to the front of the
+    Browser, and sponsored tiles are 100% visible on screen.
+  include_client_id: false
+  bugs:
+    - https://mozilla-hub.atlassian.net/browse/FXIOS-4120
+  data_reviews:
+    - https://github.com/mozilla-mobile/firefox-ios/pull/10696
+  notification_emails:
+    - fx-ios-data-stewards@mozilla.com
+first-session:
+  description: |
+    Recorded on first_session when the user installs the app.
+  include_client_id: true
+  bugs:
+    - https://github.com/mozilla-mobile/firefox-ios/pull/11089
+  data_reviews:
+    - https://github.com/mozilla-mobile/firefox-ios/pull/11089
+  notification_emails:
+    - fx-ios-data-stewards@mozilla.com
+
+fx-accounts:
+  description: |
+    A ping for information about Mozilla Account usage. Sent at the same cadence
+    as the baseline ping.
+
+    Owner: @jdavis
+  include_client_id: true
+  send_if_empty: false
+  bugs:
+    - https://mozilla-hub.atlassian.net/browse/FXIOS-12445
+  data_reviews:
+    - https://github.com/mozilla-mobile/firefox-ios/pull/27296
+  notification_emails:
+    - fx-ios-data-stewards@mozilla.com
+
+fx-suggest:
+  description: |
+    A ping representing a single event occurring with or to a Firefox Suggestion.
+    Distinguishable by its `ping_type`.
+    Does not contain a `client_id`, preferring a `context_id` instead.
+  include_client_id: false
+  uploader_capabilities:
+    - ohttp
+  bugs:
+    - https://github.com/mozilla-mobile/firefox-ios/issues/16589
+    - https://github.com/mozilla-mobile/firefox-ios/issues/26928
+  data_reviews:
+    - https://github.com/mozilla-mobile/firefox-ios/pull/17556
+  notification_emails:
+    - fx-ios-data-stewards@mozilla.com
+    - ttran@mozilla.com
+    - najiang@mozilla.com
+
+dau-reporting:
+  description: |
+    Minimal ping to measure DAU.
+    Sent on the baseline schedule.
+
+    **NOTE**: This ping is deprecated and replaced by the `usage-reporting` ping.
+  include_client_id: true
+  send_if_empty: true
+  bugs:
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1923843
+  data_reviews:
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1923843
+  notification_emails:
+    - glean-team@mozilla.com
+    - jrediger@mozilla.com
+    - loines@mozilla.com
+  reasons:
+    dirty_startup: |
+      The ping was submitted at startup, because the application process was
+      killed before the Glean SDK had the chance to generate this ping, before
+      becoming inactive, in the last session.
+    inactive: |
+      The ping was submitted when becoming inactive.
+    active: |
+      The ping was submitted when the application became active again,
+      which includes when the application starts.
+
+usage-reporting:
+  description: |
+    Minimal ping to measure the usage frequency of Firefox.
+    Sent on the baseline schedule.
+  include_client_id: false
+  send_if_empty: true
+  bugs:
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1921440
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1929832
+  data_reviews:
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1921440
+  notification_emails:
+    - glean-team@mozilla.com
+    - jrediger@mozilla.com
+    - loines@mozilla.com
+  metadata:
+    follows_collection_enabled: false
+    include_info_sections: false
+  reasons:
+    dirty_startup: |
+      Defined to avoid error logging.
+      *Note*: this ping will not actually send a ping reason.
+    inactive: |
+      Defined to avoid error logging.
+      *Note*: this ping will not actually send a ping reason.
+    active: |
+      Defined to avoid error logging.
+      *Note*: this ping will not actually send a ping reason.
+
+onboarding-opt-out:
+  description: |
+    This ping is submitted when a user opts out of 
+    usage-reporting during the onboarding process. 
+    It is sent immediately upon opting out of Telemetry/Usage Tracking (T/UT) 
+    at ToS consent. This ping will only ever be sent during the 
+    initial onboarding flow. 
+    If the global telemetry preference is disabled, this ping 
+    includes specific settings to ensure it can still be submitted.
+  include_client_id: false
+  send_if_empty: true
+  bugs:
+    - https://mozilla-hub.atlassian.net/browse/FXIOS-10902
+  data_reviews:
+    - https://github.com/mozilla-mobile/firefox-ios/pull/24101
+  notification_emails:
+    - glean-team@mozilla.com
+    - jrediger@mozilla.com
+    - loines@mozilla.com
+  metadata:
+    follows_collection_enabled: false
+    include_info_sections: false
+    
+usage-deletion-request:
+  description: |
+    This ping is submitted when a user opts out of sending usage
+    frequency of Firefox to Mozilla.
+    Sent in response to user action.
+  include_client_id: false
+  send_if_empty: true
+  bugs:
+    - https://mozilla-hub.atlassian.net/browse/FXIOS-10902
+  data_reviews:
+    - https://github.com/mozilla-mobile/firefox-ios/pull/24263
+  notification_emails:
+    - glean-team@mozilla.com
+    - jrediger@mozilla.com
+    - loines@mozilla.com
+  metadata:
+    follows_collection_enabled: false
+    include_info_sections: false
+  reasons:
+    set_upload_enabled: |
+      The ping was submitted due to the usage-reporting data preference changing from
+      enabled to disabled.
+      
+nimbus:
+  description: |
+    This ping is submitted by Nimbus code after the enrollment workflow has completed.
+  include_client_id: true
+  send_if_empty: true
+  bugs:
+    - https://mozilla-hub.atlassian.net/browse/EXP-5154
+  data_reviews:
+    - https://github.com/mozilla-mobile/firefox-ios/pull/24950
+  notification_emails:
+    - chumphreys@mozilla.com
+    - project-nimbus@mozilla.com

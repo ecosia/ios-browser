@@ -64,11 +64,14 @@ extension UIViewController {
         guard let uuid = (view as ThemeUUIDIdentifiable).currentWindowUUID else { return }
 
         let vcToPresent = vcBeingPresented
-        let buttonItem = UIBarButtonItem(title: navItemText.localizedString(), style: .plain) { [weak self] _ in
-            // Note: Do not initialize the back button action with an @objc selector, as `dismissVC`'s method signature
-            // no longer matches (will crash).
-            self?.dismissVC()
-        }
+        let buttonItem = UIBarButtonItem(
+            title: navItemText.localizedString(),
+            style: .plain,
+            target: self,
+            // Note: Do not call `dismissVC` directly as the method signature is not correct (will crash)
+            action: #selector(handleRightBarButtonPressed)
+        )
+
         switch navItemLocation {
         case .Left:
             vcToPresent.navigationItem.leftBarButtonItem = buttonItem
@@ -89,6 +92,13 @@ extension UIViewController {
         presentWithModalDismissIfNeeded(themedNavigationController, animated: true)
     }
 
+    @objc // Note: objc methods should always be marked nonisolated as `@MainActor` isolation can't be guaranteed
+    nonisolated private func handleRightBarButtonPressed(_ sender: UIBarButtonItem) {
+        ensureMainThread {
+            self.dismissVC()
+        }
+    }
+
     func dismissVC(withCompletion completion: (() -> Void)? = nil) {
         self.dismiss(animated: true, completion: completion)
     }
@@ -103,16 +113,6 @@ extension UIViewController {
         } else {
             present(viewController, animated: animated, completion: nil)
         }
-    }
-
-    /// Returns the `SceneDelegate` that's foregrounded, active and currently engaged with.
-    var sceneForVC: SceneDelegate? {
-        guard let scene = walkChainUntil(visiting: UIWindow.self)?
-            .windowScene?
-            .delegate as? SceneDelegate
-        else { return nil }
-
-        return scene
     }
 
     // MARK: - Logger Swizzling
@@ -130,11 +130,26 @@ extension UIViewController {
         case remoteScreenTime = "STWebRemoteViewController"
     }
 
-    /// Add a swizzle on top of the viewWillAppear function to log whenever a view controller will appear.
-    /// Needs to be only called once on app launch.
+    /// Add a swizzle on top of the viewWillAppear and viewWillDisappear functions to log whenever
+    /// a view controller will appear and disappear. Needs to be only called once on app launch.
     static func loggerSwizzle() {
+        viewWillAppearSwizzle()
+        viewWillDisappearSwizzle()
+    }
+
+    private static func viewWillAppearSwizzle() {
         let originalSelector = #selector(UIViewController.viewWillAppear(_:))
         let swizzledSelector = #selector(UIViewController.loggerViewWillAppear(_:))
+
+        guard let originalMethod = class_getInstanceMethod(self, originalSelector),
+              let swizzleMethod = class_getInstanceMethod(self, swizzledSelector) else { return }
+
+        method_exchangeImplementations(originalMethod, swizzleMethod)
+    }
+
+    private static func viewWillDisappearSwizzle() {
+        let originalSelector = #selector(UIViewController.viewWillDisappear(_:))
+        let swizzledSelector = #selector(UIViewController.loggerViewWillDisappear(_:))
 
         guard let originalMethod = class_getInstanceMethod(self, originalSelector),
               let swizzledMethod = class_getInstanceMethod(self, swizzledSelector) else { return }
@@ -150,5 +165,15 @@ extension UIViewController {
         }
 
         loggerViewWillAppear(animated)
+    }
+
+    @objc
+    private func loggerViewWillDisappear(_ animated: Bool) {
+        let values: [String] = LoggerIgnoreViewController.allCases.map { $0.rawValue }
+        if !values.contains("\(type(of: self))") {
+            DefaultLogger.shared.log("\(type(of: self)) will disappear", level: .info, category: .lifecycle)
+        }
+
+        loggerViewWillDisappear(animated)
     }
 }

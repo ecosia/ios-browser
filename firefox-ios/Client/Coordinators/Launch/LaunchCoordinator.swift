@@ -4,20 +4,32 @@
 
 import Common
 import Foundation
+import Shared
+import OnboardingKit
+import SwiftUI
+import ComponentLibrary
 
 protocol LaunchCoordinatorDelegate: AnyObject {
+    @MainActor
+    func didFinishTermsOfService(from coordinator: LaunchCoordinator)
+
+    @MainActor
     func didFinishLaunch(from coordinator: LaunchCoordinator)
 }
 
 // Manages different types of onboarding that gets shown at the launch of the application
-class LaunchCoordinator: BaseCoordinator,
-                         SurveySurfaceViewControllerDelegate,
-                         QRCodeNavigationHandler,
-                         ParentCoordinatorDelegate {
+final class LaunchCoordinator: BaseCoordinator,
+                               SurveySurfaceViewControllerDelegate,
+                               QRCodeNavigationHandler,
+                               ParentCoordinatorDelegate,
+                               OnboardingNavigationDelegate,
+                               OnboardingServiceDelegate {
     private let profile: Profile
     private let isIphone: Bool
     let windowUUID: WindowUUID
+    let themeManager: ThemeManager = AppContainer.shared.resolve()
     weak var parentCoordinator: LaunchCoordinatorDelegate?
+    private var onboardingService: OnboardingService?
 
     init(router: Router,
          windowUUID: WindowUUID,
@@ -29,11 +41,22 @@ class LaunchCoordinator: BaseCoordinator,
         super.init(router: router)
     }
 
+    @MainActor
     func start(with launchType: LaunchType) {
         let isFullScreen = launchType.isFullScreenAvailable(isIphone: isIphone)
         switch launchType {
+        case .termsOfService(let manager):
+            if manager.isModernOnboardingEnabled {
+                presentModernTermsOfUse(with: manager, isFullScreen: isFullScreen)
+            } else {
+                presentTermsOfService(with: manager, isFullScreen: isFullScreen)
+            }
         case .intro(let manager):
-            presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+            if manager.isModernOnboardingEnabled {
+                presentModernIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+            } else {
+                presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+            }
         case .update(let viewModel):
             presentUpdateOnboarding(with: viewModel, isFullScreen: isFullScreen)
         case .defaultBrowser:
@@ -43,28 +66,238 @@ class LaunchCoordinator: BaseCoordinator,
         }
     }
 
+    // MARK: - Terms of Use
+    private func presentModernTermsOfUse(
+        with manager: TermsOfServiceManager,
+        isFullScreen: Bool
+    ) {
+        TermsOfServiceTelemetry().termsOfServiceScreenDisplayed()
+
+        let viewModel = TermsOfUseFlowViewModel(
+            configuration: TermsOfServiceManager.brandRefreshTermsOfUseConfiguration,
+            onTermsOfUseTap: { [weak self] in
+                guard let self = self else { return }
+                TermsOfServiceTelemetry().termsOfServiceLinkTapped()
+                presentLink(with: URL(string: Links.termsOfService))
+            },
+            onPrivacyNoticeTap: { [weak self] in
+                guard let self = self else { return }
+                TermsOfServiceTelemetry().termsOfServicePrivacyNoticeLinkTapped()
+                presentLink(with: URL(string: Links.privacyNotice))
+            },
+            onManageSettingsTap: { [weak self] in
+                guard let self = self else { return }
+                TermsOfServiceTelemetry().termsOfServiceManageLinkTapped()
+                let managePreferencesVC = PrivacyPreferencesViewController(profile: profile, windowUUID: windowUUID)
+                if UIDevice.current.userInterfaceIdiom != .phone {
+                    managePreferencesVC.modalPresentationStyle = .formSheet
+                }
+                router.navigationController.presentedViewController?.present(managePreferencesVC, animated: true)
+            },
+            onComplete: { [weak self] in
+                guard let self = self else { return }
+                let acceptedDate = Date()
+                manager.setAccepted(acceptedDate: acceptedDate)
+                TermsOfServiceTelemetry().termsOfServiceAcceptButtonTapped(acceptedDate: acceptedDate)
+
+                let sendTechnicalData = profile.prefs.boolForKey(AppConstants.prefSendUsageData) ?? true
+                let sendStudies = profile.prefs.boolForKey(AppConstants.prefStudiesToggle) ?? true
+                manager.shouldSendTechnicalData(telemetryValue: sendTechnicalData, studiesValue: sendStudies)
+                self.profile.prefs.setBool(sendTechnicalData, forKey: AppConstants.prefSendUsageData)
+
+                let sendCrashReports = profile.prefs.boolForKey(AppConstants.prefSendCrashReports) ?? true
+                self.profile.prefs.setBool(sendCrashReports, forKey: AppConstants.prefSendCrashReports)
+                self.logger.setup(sendCrashReports: sendCrashReports)
+
+                TelemetryWrapper.shared.setup(profile: profile)
+                TelemetryWrapper.shared.recordStartUpTelemetry()
+
+                self.parentCoordinator?.didFinishTermsOfService(from: self)
+            }
+        )
+
+        let view = TermsOfUseView(
+            viewModel: viewModel,
+            windowUUID: windowUUID,
+            themeManager: themeManager
+        )
+
+        let viewController = PortraitOnlyHostingController(rootView: view)
+        // `.overFullScreen` is required to display the underlying view controller beneath the presented one,
+        // and to prevent a white strip glitch caused by synchronization issues between SwiftUI and UIKit.
+        viewController.modalPresentationStyle = .overFullScreen
+        viewController.modalTransitionStyle = .crossDissolve
+        viewController.view.backgroundColor = .clear
+
+        router.present(viewController, animated: true)
+    }
+
+    private func presentLink(with url: URL?) {
+        guard let url else { return }
+        let presentLinkVC = PrivacyPolicyViewController(url: url, windowUUID: windowUUID)
+
+        let buttonItem = UIBarButtonItem(
+            title: .SettingsSearchDoneButton,
+            style: .plain,
+            target: self,
+            action: #selector(dismissPresentedLinkVC))
+        buttonItem.accessibilityIdentifier = AccessibilityIdentifiers.TermsOfService.doneButton
+
+        presentLinkVC.navigationItem.rightBarButtonItem = buttonItem
+        let controller = DismissableNavigationViewController(rootViewController: presentLinkVC)
+        router.navigationController.presentedViewController?.present(controller, animated: true)
+    }
+
+    @objc
+    private func dismissPresentedLinkVC() {
+        router.navigationController.presentedViewController?.dismiss(animated: true, completion: nil)
+    }
+
+    // MARK: - Terms of Service
+    private func presentTermsOfService(with manager: TermsOfServiceManager,
+                                       isFullScreen: Bool) {
+        TermsOfServiceTelemetry().termsOfServiceScreenDisplayed()
+        let viewController = TermsOfServiceViewController(profile: profile, windowUUID: windowUUID)
+        viewController.didFinishFlow = { [weak self] in
+            guard let self = self else { return }
+            let acceptedDate = Date()
+            manager.setAccepted(acceptedDate: acceptedDate)
+            TermsOfServiceTelemetry().termsOfServiceAcceptButtonTapped(acceptedDate: acceptedDate)
+
+            let sendTechnicalData = profile.prefs.boolForKey(AppConstants.prefSendUsageData) ?? true
+            let sendStudies = profile.prefs.boolForKey(AppConstants.prefStudiesToggle) ?? true
+            manager.shouldSendTechnicalData(telemetryValue: sendTechnicalData, studiesValue: sendStudies)
+            self.profile.prefs.setBool(sendTechnicalData, forKey: AppConstants.prefSendUsageData)
+
+            let sendCrashReports = profile.prefs.boolForKey(AppConstants.prefSendCrashReports) ?? true
+            self.profile.prefs.setBool(sendCrashReports, forKey: AppConstants.prefSendCrashReports)
+            self.logger.setup(sendCrashReports: sendCrashReports)
+
+            TelemetryWrapper.shared.setup(profile: profile)
+            TelemetryWrapper.shared.recordStartUpTelemetry()
+
+            self.parentCoordinator?.didFinishTermsOfService(from: self)
+        }
+        viewController.modalPresentationStyle = .fullScreen
+        viewController.modalTransitionStyle = .crossDissolve
+        router.present(viewController, animated: false)
+    }
+
     // MARK: - Intro
-    private func presentIntroOnboarding(with manager: IntroScreenManager,
+    @MainActor
+    private func presentModernIntroOnboarding(with manager: IntroScreenManagerProtocol,
+                                              isFullScreen: Bool) {
+        let onboardingModel = NimbusOnboardingKitFeatureLayer(
+            onboardingVariant: manager.onboardingVariant,
+            isDefaultBrowser: DefaultBrowserUtility().isDefaultBrowser,
+            isIpad: UIDevice.current.userInterfaceIdiom == .pad
+        ).getOnboardingModel(
+            for: .freshInstall
+        )
+        let activityEventHelper = ActivityEventHelper()
+        let telemetryUtility = OnboardingTelemetryUtility(
+            with: onboardingModel,
+            onboardingVariant: manager.onboardingVariant
+        )
+
+        // Create onboardingService and store it directly - don't create local variable
+        self.onboardingService = OnboardingService(
+            windowUUID: windowUUID,
+            profile: profile,
+            themeManager: themeManager,
+            delegate: self,
+            navigationDelegate: self,
+            qrCodeNavigationHandler: self
+        )
+        self.onboardingService?.telemetryUtility = telemetryUtility
+
+        let flowViewModel = OnboardingFlowViewModel<OnboardingKitCardInfoModel>(
+            onboardingCards: onboardingModel.cards,
+            skipText: .Onboarding.LaterAction,
+            onActionTap: { [weak self] action, cardName, completion in
+                guard let onboardingService = self?.onboardingService else { return }
+                onboardingService.handleAction(
+                    action,
+                    from: cardName,
+                    cards: onboardingModel.cards,
+                    with: activityEventHelper,
+                    completion: completion
+                )
+            },
+            onMultipleChoiceActionTap: { [weak self] action, cardName in
+                guard let onboardingService = self?.onboardingService else { return }
+                onboardingService.handleMultipleChoiceAction(
+                    action,
+                    from: cardName
+                )
+            },
+            onComplete: { [weak self] currentCardName in
+                guard let self = self else { return }
+                manager.didSeeIntroScreen()
+                SearchBarLocationSaver().saveUserSearchBarLocation(profile: profile)
+                self.onboardingService = nil
+                parentCoordinator?.didFinishLaunch(from: self)
+            }
+        )
+
+        flowViewModel.onCardView = { cardName in
+            telemetryUtility.sendCardViewTelemetry(from: cardName)
+        }
+
+        flowViewModel.onButtonTap = { cardName, action, isPrimary in
+            telemetryUtility.sendButtonActionTelemetry(
+                from: cardName,
+                with: action,
+                and: isPrimary
+            )
+        }
+
+        flowViewModel.onMultipleChoiceTap = { cardName, action in
+            telemetryUtility.sendMultipleChoiceButtonActionTelemetry(
+                from: cardName,
+                with: action
+            )
+        }
+
+        flowViewModel.onDismiss = { [weak self] cardName in
+            guard let self = self else { return }
+            telemetryUtility.sendDismissOnboardingTelemetry(from: cardName)
+            self.onboardingService = nil
+        }
+
+        let view = OnboardingView<OnboardingKitCardInfoModel>(
+            windowUUID: windowUUID,
+            themeManager: themeManager,
+            viewModel: flowViewModel
+        )
+
+        let hostingController = PortraitOnlyHostingController(rootView: view)
+        // `.overFullScreen` is required to display the underlying view controller beneath the presented one,
+        // and to prevent a white strip glitch caused by synchronization issues between SwiftUI and UIKit.
+        hostingController.modalPresentationStyle = .overFullScreen
+        hostingController.modalTransitionStyle = .crossDissolve
+        hostingController.view.backgroundColor = .clear
+
+        router.present(hostingController, animated: true)
+    }
+
+    // MARK: - Intro
+    private func presentIntroOnboarding(with manager: IntroScreenManagerProtocol,
                                         isFullScreen: Bool) {
-        /* Ecosia: Disable old onboarding since outdated. Remove and clean up once properly updated.
-        
         let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
+
         let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
         let introViewModel = IntroViewModel(introScreenManager: manager,
                                             profile: profile,
                                             model: onboardingModel,
                                             telemetryUtility: telemetryUtility)
-        /* Ecosia: custom onboarding
         let introViewController = IntroViewController(viewModel: introViewModel, windowUUID: windowUUID)
         introViewController.qrCodeNavigationHandler = self
         introViewController.didFinishFlow = { [weak self] in
             guard let self = self else { return }
             self.parentCoordinator?.didFinishLaunch(from: self)
         }
-         */
-        let introViewController = WelcomeNavigation(rootViewController: Welcome(delegate: self, windowUUID: windowUUID))
-        introViewController.isNavigationBarHidden = true
-        introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+
         if isFullScreen {
             introViewController.modalPresentationStyle = .fullScreen
             router.present(introViewController, animated: false)
@@ -75,19 +308,13 @@ class LaunchCoordinator: BaseCoordinator,
             introViewController.modalPresentationStyle = .formSheet
             // Disables dismissing the view by tapping outside the view, based on
             // Nimbus's configuration
-            if !introViewModel.isDismissable {
+            if !introViewModel.isDismissible {
                 introViewController.isModalInPresentation = true
             }
-            /* Ecosia: Remove completion
             router.present(introViewController, animated: true) {
                 introViewController.closeOnboarding()
             }
-             */
-            router.present(introViewController, animated: true)
         }
-        
-        */
-        parentCoordinator?.didFinishLaunch(from: self)
     }
 
     // MARK: - Update
@@ -109,7 +336,7 @@ class LaunchCoordinator: BaseCoordinator,
                 height: ViewControllerConsts.PreferredSize.UpdateViewController.height)
             updateViewController.modalPresentationStyle = .formSheet
             // Nimbus's configuration
-            if !updateViewModel.isDismissable {
+            if !updateViewModel.isDismissible {
                 updateViewController.isModalInPresentation = true
             }
             router.present(updateViewController)
@@ -182,11 +409,25 @@ class LaunchCoordinator: BaseCoordinator,
     func didFinish() {
         parentCoordinator?.didFinishLaunch(from: self)
     }
-}
 
-// Ecosia: custom onboarding
-extension LaunchCoordinator: WelcomeDelegate {
-    func welcomeDidFinish(_ welcome: Welcome) {
-        self.parentCoordinator?.didFinishLaunch(from: self)
+    // MARK: - OnboardingServiceDelegate
+    func dismiss(animated: Bool, completion: (() -> Void)?) {
+        router.navigationController.presentedViewController?.dismiss(
+            animated: animated,
+            completion: completion
+        )
+    }
+
+    func present(_ viewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
+        router.navigationController.presentedViewController?.present(
+            viewController,
+            animated: true,
+            completion: completion
+        )
+    }
+
+    // MARK: - OnboardingNavigationDelegate
+    func finishOnboardingFlow() {
+        dismiss(animated: true, completion: nil)
     }
 }

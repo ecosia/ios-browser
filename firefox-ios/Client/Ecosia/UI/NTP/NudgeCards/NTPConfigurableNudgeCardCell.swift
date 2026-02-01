@@ -8,6 +8,7 @@ import Common
 import Ecosia
 
 /// Reusable Nudge Card Cell that can be configured with any view model.
+@MainActor
 class NTPConfigurableNudgeCardCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     // MARK: - Properties

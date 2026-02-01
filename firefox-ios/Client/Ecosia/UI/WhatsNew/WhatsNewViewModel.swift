@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 final class WhatsNewViewModel {
     var items: [WhatsNewItem]
 
