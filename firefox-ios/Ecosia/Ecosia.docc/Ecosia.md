@@ -144,9 +144,28 @@ you might need to setup your ruby stack:
 ```
 sudo gem install bundler:2.3.4
 bundle install
+
+# you may need to link your ruby if you have a ruby from brew
+echo 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"' >> ~/.zshrc
+
+# you may need to install a ruby <4
+# https://formulae.brew.sh/formula/rbenv
+brew install rbenv
+echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+source ~/.zshrc
+
+rbenv install 3.2.2
+rbenv global 3.2.2
+
 ```
 Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo can be found in LastPass.
 
+
+```
+bundle exec fastlane match --readonly
+[...]
+[14:22:17]: Passphrase for Match storage: [get the password from the password manager]
+```
 
 ### Adding your own device
 
