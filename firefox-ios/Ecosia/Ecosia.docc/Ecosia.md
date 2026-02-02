@@ -90,7 +90,7 @@ git clone https://github.com/ecosia/ios-browser
 cd ios-browser
 sh ./bootstrap.sh
 ```
-5. Open `./firefox-ios/Client.xcodeproj` in Xcode.
+5. Open `open firefox-ios/Client.xcodeproj` in Xcode.
 6. Make sure to select the `Ecosia` [scheme](https://developer.apple.com/documentation/xcode/build-system?changes=_2) in Xcode.
 7. Select the destination device you want to build on.
 8. Run the app with `Cmd + R` or by pressing the `build and run` button.
