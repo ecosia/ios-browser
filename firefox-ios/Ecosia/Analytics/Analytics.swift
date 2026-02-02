@@ -287,19 +287,9 @@ open class Analytics {
 
     // MARK: In-App Search
     public func inappSearch(url: URL) {
-        guard NativeSRPVAnalyticsExperiment.isEnabled,
-              let query = url.getEcosiaSearchQuery() else {
-            return
-        }
-        let payload: [String: Any?] = [
-            "query": query,
-            "page_num": url.getEcosiaSearchPage(),
-            "plt_name": "ios",
-            "plt_v": Bundle.version as NSObject,
-            "search_type": url.getEcosiaSearchVerticalPath()
-        ]
-        track(SelfDescribing(schema: Self.inappSearchSchema,
-                             payload: payload.compactMapValues({ $0 })))
+        // Note: This functionality was previously guarded by the mob_ios_native_srpv_analytics feature flag
+        // and has been permanently disabled as part of MOB-4040
+        return
     }
 
     // MARK: Settings

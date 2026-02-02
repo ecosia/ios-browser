@@ -284,16 +284,6 @@ final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
     }
 }
 
-final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        "Native SRPV Analytics"
-    }
-
-    override var unleashEnabled: Bool? {
-        Unleash.isEnabled(.nativeSRPVAnalytics)
-    }
-}
-
 final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "AI Search MVP"
