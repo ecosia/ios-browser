@@ -132,6 +132,10 @@ The `CURRENT_PROJECT_VERSION` being set to `0` indicates that it is not being us
 
 ## 🏅 Get certificates and profiles
 
+```
+brew install fastlane
+```
+
 Our certs and profiles are managed centrally by [fastlane match](https://docs.fastlane.tools/actions/match/). Find the repo [here](https://github.com/ecosia/IosSearchSigning)
 
 Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo can be found in LastPass.
