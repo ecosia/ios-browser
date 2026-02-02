@@ -140,7 +140,7 @@ brew install fastlane
 
 Our certs and profiles are managed centrally by [fastlane match](https://docs.fastlane.tools/actions/match/). Find the repo [here](https://github.com/ecosia/IosSearchSigning)
 
-you might need to setup your ruby stack:
+You might need to set up your Ruby stack:
 ```
 sudo gem install bundler:2.3.4
 bundle install
