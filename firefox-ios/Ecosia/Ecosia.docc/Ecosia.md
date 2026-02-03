@@ -243,6 +243,10 @@ Make sure that `fastlane` and `transifex`-cli is installed.
     bundle exec fastlane deliver --app-version 8.2.0
     ```
 
+## Unit tests
+
+* run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (XCode)
+
 ## 📸 Snapshot Testing
 
 We built our snapshot testing setup with `SnapshotTestHelper` to streamline UI checks. Here’s the gist:
