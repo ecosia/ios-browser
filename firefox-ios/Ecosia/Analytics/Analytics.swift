@@ -288,7 +288,7 @@ open class Analytics {
     // MARK: In-App Search
     public func inappSearch(url: URL) {
         // Note: This functionality was previously guarded/throttled by the mob_ios_native_srpv_analytics feature flag
-        // and has been permanently enabled/unthrottled part of MOB-4040
+        // and has been permanently enabled/unthrottled as part of MOB-4040
         let payload: [String: Any?] = [
             "query": url.getEcosiaSearchQuery(),
             "page_num": url.getEcosiaSearchPage(),
