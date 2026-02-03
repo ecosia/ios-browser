@@ -753,9 +753,6 @@ final class AnalyticsSpyTests: XCTestCase {
     }
 
     // MARK: - WebView delegate Search Event
-    // Note: The mob_ios_native_srpv_analytics feature flag was removed in MOB-4040
-    // and Analytics.inappSearch() now always returns early without tracking.
-    // These tests remain to verify the webView delegate's logic for when to call inappSearch().
 
     func testWebViewDelegateTracksSearchEventOnEcosiaVerticalURLChange() {
         let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
