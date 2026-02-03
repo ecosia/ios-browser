@@ -7,7 +7,10 @@ import UIKit
 
 struct TabTrayPanelSwipeTheme: Theme {
     var type: ThemeType
+    /* Ecosia: Theme protocol requires colors: EcosiaThemeColourPalette
     var colors: ThemeColourPalette
+     */
+    var colors: EcosiaThemeColourPalette
 
     init(from: Theme, to: Theme, progress: CGFloat) {
         let mixColor = Self.mixColors(from: from.colors, to: to.colors, progress: progress)
@@ -32,9 +35,16 @@ struct TabTrayPanelSwipeTheme: Theme {
         self.colors = TabTrayPanelSwipePalette(base: from.colors, overrides: overrides)
     }
 
+    /* Ecosia: Palettes are EcosiaThemeColourPalette; KeyPath<ThemeColourPalette, UIColor> still applies (EcosiaThemeColourPalette: ThemeColourPalette)
     private static func mixColors(
         from: ThemeColourPalette,
         to: ThemeColourPalette,
+        progress: CGFloat
+    ) -> (_ keyPath: KeyPath<ThemeColourPalette, UIColor>) -> UIColor {
+     */
+    private static func mixColors(
+        from: EcosiaThemeColourPalette,
+        to: EcosiaThemeColourPalette,
         progress: CGFloat
     ) -> (_ keyPath: KeyPath<ThemeColourPalette, UIColor>) -> UIColor {
         return { keyPath in

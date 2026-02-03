@@ -32,7 +32,8 @@ final class NTPHeaderViewModel: ObservableObject {
     var shouldAnimateSeed: Bool { balanceIncrement != nil }
     @Published var showSeedSparkles: Bool = false
 
-    private var levelUpObserver: NSObjectProtocol?
+    // Ecosia: nonisolated(unsafe) so deinit can remove observer without MainActor isolation
+    private nonisolated(unsafe) var levelUpObserver: NSObjectProtocol?
 
     // MARK: - Initialization
     init(profile: Profile,
@@ -47,8 +48,10 @@ final class NTPHeaderViewModel: ObservableObject {
         self.delegate = delegate
 
         // Forward objectWillChange notifications from authStateProvider
-        // This ensures SwiftUI knows to update the view when auth state changes
+        // This ensures SwiftUI knows to update the view when auth state changes.
+        // Ecosia: receive(on: .main) so objectWillChange.send() runs on main actor for strict concurrency.
         authStateProvider.objectWillChange
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
@@ -69,7 +72,9 @@ final class NTPHeaderViewModel: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.triggerSeedSparkles()
+            Task { @MainActor in
+                self?.triggerSeedSparkles()
+            }
         }
     }
 
@@ -78,7 +83,8 @@ final class NTPHeaderViewModel: ObservableObject {
 
         // Turn off sparkles after animation completes
         Task { @MainActor in
-            try? await Task.sleep(for: .seconds(2.5))
+            // Ecosia: Use nanoseconds for iOS 15 compatibility (Task.sleep(for: .seconds) is iOS 16+)
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
             self.showSeedSparkles = false
         }
     }
@@ -105,6 +111,7 @@ final class NTPHeaderViewModel: ObservableObject {
     }
 }
 
+/* Ecosia: Temporarily remove view models
 // MARK: HomeViewModelProtocol
 extension NTPHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     var sectionType: HomepageSectionType {
@@ -170,3 +177,4 @@ extension NTPHeaderViewModel: HomepageSectionHandler {
         // This cell handles its own button actions, no cell selection needed
     }
 }
+ */

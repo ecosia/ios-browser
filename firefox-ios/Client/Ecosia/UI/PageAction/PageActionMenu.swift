@@ -6,7 +6,7 @@ import UIKit
 import Common
 
 @MainActor
-final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
+final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Themeable {
 
     // MARK: - UX
 
@@ -96,6 +96,17 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
         super.viewDidDisappear(animated)
         contentSizeObserver?.invalidate()
         contentSizeObserver = nil
+    }
+
+    func applyTheme() {
+        tableView.reloadData()
+        view.backgroundColor = currentTheme.colors.ecosia.backgroundPrimaryDecorative
+        tableView.backgroundColor = currentTheme.colors.ecosia.backgroundPrimaryDecorative
+        tableView.separatorColor = currentTheme.colors.ecosia.borderDecorative
+        knob.backgroundColor = currentTheme.colors.ecosia.textSecondary
+        tableView.visibleCells.forEach {
+            ($0 as? ThemeApplicable)?.applyTheme(theme: currentTheme)
+        }
     }
 }
 
@@ -224,20 +235,3 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         }
     }
 }
-
-// MARK: - Themeable
-
-extension PageActionMenu: Themeable {
-
-    func applyTheme() {
-        tableView.reloadData()
-        view.backgroundColor = currentTheme.colors.ecosia.backgroundPrimaryDecorative
-        tableView.backgroundColor = currentTheme.colors.ecosia.backgroundPrimaryDecorative
-        tableView.separatorColor = currentTheme.colors.ecosia.borderDecorative
-        knob.backgroundColor = currentTheme.colors.ecosia.textSecondary
-        tableView.visibleCells.forEach {
-            ($0 as? ThemeApplicable)?.applyTheme(theme: currentTheme)
-        }
-    }
-}
-

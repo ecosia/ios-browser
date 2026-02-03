@@ -7,6 +7,7 @@ import Shared
 import Common
 import Ecosia
 
+@MainActor
 protocol NTPNewsCellDelegate: AnyObject {
     func openSeeAllNews()
 }
@@ -20,16 +21,20 @@ final class NTPNewsCellViewModel {
     weak var dataModelDelegate: HomepageDataModelDelegate?
     var theme: Theme
 
-    init(theme: Theme) {
+    init(delegate: NTPNewsCellDelegate? = nil, theme: Theme) {
+        self.delegate = delegate
         self.theme = theme
-        news.subscribeAndReceive(self) { [weak self] in
-            guard let self = self else { return }
-            self.items = $0
-            self.dataModelDelegate?.reloadView()
+        news.subscribeAndReceive(self) { [weak self] newItems in
+            Task { @MainActor in
+                guard let self else { return }
+                self.items = newItems
+                self.dataModelDelegate?.reloadView()
+            }
         }
     }
 }
 
+/* Ecosia: Removed legacy protocol conformances - now using EcosiaHomepageAdapter
 // MARK: HomeViewModelProtocol
 extension NTPNewsCellViewModel: HomepageViewModelProtocol {
 
@@ -108,5 +113,22 @@ extension NTPNewsCellViewModel: HomepageSectionHandler {
         let item = items[index]
         homePanelDelegate?.homePanel(didSelectURL: item.targetUrl, visitType: .link, isGoogleTopSite: false)
         Analytics.shared.navigationOpenNews(item.trackingName)
+    }
+}
+*/
+
+// MARK: - Public Methods for Adapter
+
+extension NTPNewsCellViewModel {
+    var numberOfItemsInSection: Int {
+        return min(3, items.count)
+    }
+    
+    var hasData: Bool {
+        numberOfItemsInSection > 0
+    }
+    
+    func refreshData(for traitCollection: UITraitCollection, size: CGSize, isPortrait: Bool, device: UIUserInterfaceIdiom) {
+        news.load(session: .shared, force: !hasData)
     }
 }

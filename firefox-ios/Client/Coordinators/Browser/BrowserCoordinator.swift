@@ -144,6 +144,20 @@ class BrowserCoordinator: BaseCoordinator,
         )
         homepageController.termsOfUseDelegate = self
         homepageController.view.accessibilityElementsHidden = false
+        
+        // Ecosia: Setup Ecosia adapter for custom homepage sections
+        if self.homepageViewController == nil,
+           let auth = browserViewController.ecosiaAuth,
+           let referrals = browserViewController.referrals {
+            homepageController.setupEcosiaAdapter(
+                profile: profile,
+                tabManager: browserViewController.tabManager,
+                referrals: referrals,
+                auth: auth,
+                browserViewController: browserViewController
+            )
+        }
+        
         dispatchActionForEmbeddingHomepage(with: isZeroSearch)
         guard browserViewController.embedContent(homepageController) else {
             logger.log("Unable to embed new homepage", level: .debug, category: .coordinator)

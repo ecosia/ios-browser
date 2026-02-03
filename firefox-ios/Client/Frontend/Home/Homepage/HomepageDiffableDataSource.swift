@@ -14,6 +14,9 @@ final class HomepageDiffableDataSource:
     FeatureFlaggable {
     typealias TextColor = UIColor
     typealias NumberOfTilesPerRow = Int
+    
+    // Ecosia: Adapter for custom homepage sections
+    weak var ecosiaAdapter: EcosiaHomepageAdapter?
 
     enum HomeSection: Hashable {
         case privacyNotice
@@ -25,6 +28,13 @@ final class HomepageDiffableDataSource:
         case pocket(TextColor?)
         case customizeHomepage
         case spacer
+        // Ecosia: Custom sections for Ecosia-specific homepage content
+        case ecosiaHeader
+        case ecosiaLogo
+        case ecosiaLibrary
+        case ecosiaImpact
+        case ecosiaNews
+        case ecosiaNTPCustomization
 
         var canHandleLongPress: Bool {
             switch self {
@@ -48,8 +58,16 @@ final class HomepageDiffableDataSource:
         case merino(MerinoStoryConfiguration)
         case customizeHomepage
         case spacer
+        // Ecosia: Custom items for Ecosia-specific homepage cells
+        case ecosiaHeader
+        case ecosiaLogo
+        case ecosiaLibrary
+        case ecosiaImpact(sectionIndex: Int)
+        case ecosiaNews
+        case ecosiaNTPCustomization
 
         static var cellTypes: [ReusableCell.Type] {
+            /* Ecosia: Update cellTypes
             return [
                 PrivacyNoticeCell.self,
                 HomepageMessageCardCell.self,
@@ -66,6 +84,18 @@ final class HomepageDiffableDataSource:
                 CustomizeHomepageSectionCell.self,
                 HomepageSpacerCell.self
             ]
+             */
+            var types: [ReusableCell.Type] = [
+                NTPLogoCell.self,
+                NTPLibraryCell.self,
+                NTPImpactCell.self,
+                NTPNewsCell.self,
+                NTPCustomizationCell.self
+            ]
+            if #available(iOS 16.0, *) {
+                types.insert(NTPHeader.self, at: 0)
+            }
+            return types
         }
 
         var telemetryItemType: HomepageTelemetry.ItemType? {
@@ -95,6 +125,11 @@ final class HomepageDiffableDataSource:
         var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
 
         let textColor = state.wallpaperState.wallpaperConfiguration.textColor
+
+        // Ecosia: Insert custom sections at the beginning
+        if let adapter = ecosiaAdapter {
+            appendEcosiaSections(to: &snapshot, adapter: adapter)
+        }
 
         if state.shouldShowPrivacyNotice {
             snapshot.appendSections([.privacyNotice])

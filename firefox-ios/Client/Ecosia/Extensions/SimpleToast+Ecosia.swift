@@ -26,12 +26,15 @@ extension SimpleToast {
         toast.layer.masksToBounds = true
 
         bottomContainer.addSubview(toast)
-        toast.snp.makeConstraints { (make) in
-            make.left.equalTo(bottomContainer).offset(CGFloat(16))
-            make.right.equalTo(bottomContainer).offset(-CGFloat(16))
-            make.height.equalTo(Toast.UX.toastHeight)
-            make.bottom.equalTo(bottomContainer).offset(-((bottomInset ?? 0) + CGFloat(12)))
-        }
+        toast.translatesAutoresizingMaskIntoConstraints = false
+        let toastHeightConstraint = toast.heightAnchor.constraint(equalToConstant: Toast.UX.toastHeightWithShadow)
+        toastHeightConstraint.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            toast.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor, constant: 16),
+            toast.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor, constant: -16),
+            toast.bottomAnchor.constraint(equalTo: bottomContainer.bottomAnchor, constant: -((bottomInset ?? 0) + 12)),
+            toastHeightConstraint
+        ])
         // Ecosia: Inline animation since animate() is private in parent class
         UIView.animate(
             withDuration: Toast.UX.toastAnimationDuration,
@@ -41,21 +44,21 @@ extension SimpleToast {
                 frame.size.height = Toast.UX.toastHeightWithShadow
                 toast.frame = frame
             },
-            completion: { [weak self] finished in
-                let thousandMilliseconds = DispatchTimeInterval.milliseconds(1000)
-                let zeroMilliseconds = DispatchTimeInterval.milliseconds(0)
-                let voiceOverDelay = UIAccessibility.isVoiceOverRunning ? thousandMilliseconds : zeroMilliseconds
-                let dispatchTime = DispatchTime.now() + Toast.UX.toastDismissAfter + voiceOverDelay
-                
-                DispatchQueue.main.asyncAfter(deadline: dispatchTime) {
-                    guard let self = self else { return }
+            completion: { [weak toast, weak toastHeightConstraint] _ in
+                // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency (Toast.UX.toastDismissAfter = 4.5s)
+                let voiceOverExtra: TimeInterval = UIAccessibility.isVoiceOverRunning ? 1.0 : 0.0
+                let totalDelay: TimeInterval = 4.5 + voiceOverExtra
+                Task { @MainActor in
+                    // Ecosia: Use nanoseconds for iOS 15 compatibility (Task.sleep(for: .seconds) is iOS 16+)
+                    try? await Task.sleep(nanoseconds: UInt64(totalDelay * 1_000_000_000))
+                    guard let toast = toast, let toastHeightConstraint = toastHeightConstraint else { return }
                     UIView.animate(
                         withDuration: Toast.UX.toastAnimationDuration,
                         animations: {
-                            self.heightConstraint.constant = 0
+                            toastHeightConstraint.constant = 0
                             toast.superview?.layoutIfNeeded()
                         },
-                        completion: { finished in
+                        completion: { _ in
                             toast.removeFromSuperview()
                         }
                     )

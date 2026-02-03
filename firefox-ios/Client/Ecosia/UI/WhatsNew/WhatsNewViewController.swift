@@ -6,6 +6,7 @@ import UIKit
 import Ecosia
 import Common
 
+@MainActor
 protocol WhatsNewViewDelegate: AnyObject {
     func whatsNewViewDidShow(_ viewController: WhatsNewViewController)
 }
@@ -71,6 +72,7 @@ final class WhatsNewViewController: UIViewController, Themeable {
     var currentWindowUUID: WindowUUID? { return windowUUID }
     var themeManager: ThemeManager
     var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
@@ -98,7 +100,7 @@ final class WhatsNewViewController: UIViewController, Themeable {
         layoutViews()
         applyTheme()
         updateTableView()
-        listenForThemeChange(view)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
     }
 
     override func viewDidAppear(_ animated: Bool) {

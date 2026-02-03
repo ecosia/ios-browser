@@ -7,7 +7,7 @@ import Common
 import Ecosia
 
 @available(iOS 14, *)
-protocol DefaultBrowserDelegate: AnyObject {
+protocol DefaultBrowserLegacyDelegate: AnyObject {
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowser)
 }
 
@@ -15,8 +15,8 @@ protocol DefaultBrowserDelegate: AnyObject {
 @MainActor
 final class DefaultBrowser: UIViewController, Themeable {
 
-    /// The minimum amount of searches required to show the Default Browser
-    static var minPromoSearches = 50
+    /// The minimum amount of searches required to show the Default Browser (concurrency-safe: immutable).
+    static let minPromoSearches = 50
 
     weak var content: UIView!
     weak var image: UIImageView!
@@ -28,17 +28,18 @@ final class DefaultBrowser: UIViewController, Themeable {
     weak var arrow2: UIImageView!
     weak var cta: UIButton!
     weak var skip: UIButton!
-    weak var delegate: DefaultBrowserDelegate?
+    weak var delegate: DefaultBrowserLegacyDelegate?
 
     // MARK: - Themeable Properties
 
+    var themeListenerCancellable: Any?
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { windowUUID }
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
-    init(windowUUID: WindowUUID, delegate: DefaultBrowserDelegate) {
+    init(windowUUID: WindowUUID, delegate: DefaultBrowserLegacyDelegate) {
         self.windowUUID = windowUUID
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
@@ -65,7 +66,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         setupViews()
         applyTheme()
 
-        listenForThemeChange(self.view)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -134,7 +135,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         waves.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
 
         let headline = UILabel()
-        headline.text = .localized(.makeEcosiaYourDefaultBrowser)
+        headline.text = .localized(.defaultBrowserCardTitle)
         headline.translatesAutoresizingMaskIntoConstraints = false
         headline.font = .preferredFont(forTextStyle: .title3).bold()
         headline.adjustsFontForContentSizeCategory = true
@@ -172,7 +173,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         self.arrow1 = arrow1
 
         let text1 = UILabel()
-        text1.text = .localized(.openAllLinksAutomatically)
+        text1.text = .localized(.defaultBrowserCardDescription)
         text1.translatesAutoresizingMaskIntoConstraints = false
         text1.font = .preferredFont(forTextStyle: .subheadline)
         text1.adjustsFontForContentSizeCategory = true
@@ -194,7 +195,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         self.arrow2 = arrow2
 
         let text2 = UILabel()
-        text2.text = .localized(.beClimateActive)
+        text2.text = .localized(.theSimplestWay)
         text2.translatesAutoresizingMaskIntoConstraints = false
         text2.font = .preferredFont(forTextStyle: .subheadline)
         text2.adjustsFontForContentSizeCategory = true
@@ -207,7 +208,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         let cta = EcosiaPrimaryButton(windowUUID: windowUUID)
         cta.contentEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
         cta.translatesAutoresizingMaskIntoConstraints = false
-        cta.setTitle(.localized(.defaultBrowserPromptExperimentButtonControl), for: .normal)
+        cta.setTitle(.localized(.defaultBrowserCardDetailButton), for: .normal)
         cta.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         cta.titleLabel?.adjustsFontForContentSizeCategory = true
         cta.layer.cornerRadius = 25
@@ -226,7 +227,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         skip.backgroundColor = .clear
         skip.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         skip.titleLabel?.adjustsFontForContentSizeCategory = true
-        skip.setTitle(.localized(.maybeLater), for: .normal)
+        skip.setTitle(.localized(.notNow), for: .normal)
         skip.addTarget(self, action: #selector(skipTapped), for: .primaryActionTriggered)
         content.addSubview(skip)
         self.skip = skip
@@ -246,8 +247,8 @@ final class DefaultBrowser: UIViewController, Themeable {
         text2.textColor = theme.colors.ecosia.textSecondary
         arrow1.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
         arrow2.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
-        content.backgroundColor = theme.colors.ecosia.ntpIntroBackground
-        waves.tintColor = theme.colors.ecosia.ntpIntroBackground
+        content.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
+        waves.tintColor = theme.colors.ecosia.backgroundPrimaryDecorative
         cta.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
         skip.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
         cta.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimary

@@ -4,9 +4,13 @@
 
 import Common
 import Foundation
+import Ecosia
 
 class LaunchScreenViewController: UIViewController, LaunchFinishedLoadingDelegate, FeatureFlaggable {
+    /* Ecosia: Use Ecosia launch screen (EcosiaLaunchScreen.xib) instead of Firefox LaunchScreen.xib
     private lazy var launchScreen = LaunchScreenView.fromNib()
+     */
+    private lazy var launchScreen = EcosiaLaunchScreenView.fromNib()
     private weak var coordinator: LaunchFinishedLoadingDelegate?
     private var viewModel: LaunchScreenViewModel
 

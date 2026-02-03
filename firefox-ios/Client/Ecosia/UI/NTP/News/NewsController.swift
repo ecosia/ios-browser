@@ -23,6 +23,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     var currentWindowUUID: Common.WindowUUID? { return windowUUID }
     var themeManager: ThemeManager
     var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
@@ -92,23 +93,29 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        news.subscribeAndReceive(self) { [weak self] in
-            self?.items = $0
-            self?.collection.reloadData()
-            self?.collection.backgroundView = nil
+        news.subscribeAndReceive(self) { [weak self] newItems in
+            Task { @MainActor in
+                guard let self else { return }
+                self.items = newItems
+                self.collection?.reloadData()
+                self.collection?.backgroundView = nil
+            }
         }
 
-        let done = UIBarButtonItem(barButtonSystemItem: .done) { [ weak self ] _ in
-            self?.dismiss(animated: true, completion: nil)
-        }
+        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(newsDoneTapped))
         navigationItem.rightBarButtonItem = done
 
         applyTheme()
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         news.load(session: .shared)
+    }
+
+    @objc private func newsDoneTapped() {
+        dismiss(animated: true, completion: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {

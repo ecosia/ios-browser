@@ -84,7 +84,8 @@ final class LoadingScreen: UIViewController {
 
     // MARK: Referrals
     private func claimReferral(_ code: String) {
-        Task { [weak self] in
+        // Ecosia: @MainActor in Task for strict concurrency (UI / loadingGroup)
+        Task { @MainActor [weak self] in
             do {
                 try await self?.referrals.claim(referrer: code)
                 self?.loadingGroup.leave()

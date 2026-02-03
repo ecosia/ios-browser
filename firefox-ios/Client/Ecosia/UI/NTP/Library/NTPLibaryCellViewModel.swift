@@ -6,6 +6,7 @@ import Foundation
 import Shared
 import Common
 
+@MainActor
 protocol NTPLibraryDelegate: AnyObject {
     func libraryCellOpenBookmarks()
     func libraryCellOpenHistory()
@@ -24,6 +25,7 @@ final class NTPLibraryCellViewModel {
     }
 }
 
+/* Ecosia: Removed legacy protocol conformances - now using EcosiaHomepageAdapter
 // MARK: HomeViewModelProtocol
 extension NTPLibraryCellViewModel: HomepageViewModelProtocol {
 
@@ -77,3 +79,4 @@ extension NTPLibraryCellViewModel: HomepageSectionHandler {
 
     func didSelectItem(at indexPath: IndexPath, homePanelDelegate: HomePanelDelegate?, libraryPanelDelegate: LibraryPanelDelegate?) {}
 }
+*/

@@ -7,6 +7,11 @@ import Shared
 import Common
 import Ecosia
 
+// Ecosia: Optional default so NTP customization and other Ecosia settings can call reloadHomepage().
+extension SettingsDelegate {
+    func reloadHomepage() {}
+}
+
 func ecosiaDisclosureIndicator(theme: Theme) -> UIImageView {
     let config = UIImage.SymbolConfiguration(pointSize: 16)
     let disclosureIndicator = UIImageView(image: .init(systemName: "chevron.right", withConfiguration: config))
@@ -18,13 +23,17 @@ func ecosiaDisclosureIndicator(theme: Theme) -> UIImageView {
 
 final class EcosiaDefaultBrowserSettings: Setting {
 
-    override var accessoryView: UIImageView? { ecosiaDisclosureIndicator(theme: theme) }
+    override var accessoryView: UIImageView? {
+        guard let theme else { return nil }
+        return ecosiaDisclosureIndicator(theme: theme)
+    }
 
     override var title: NSAttributedString? {
         NSAttributedString(string: .localized(.defaultBrowserSettingTitle), attributes: [:])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
+        guard let theme else { return }
         DefaultBrowserCoordinator.makeDefaultCoordinatorAndShowDetailViewFrom(navigationController,
                                                                               analyticsLabel: .settings,
                                                                               topViewContentBackground: EcosiaColor.DarkGreen50.color,
@@ -37,7 +46,10 @@ final class SearchAreaSetting: Setting {
         NSAttributedString(string: .localized(.searchRegion), attributes: [:])
     }
 
-    override var accessoryView: UIImageView? { return ecosiaDisclosureIndicator(theme: theme) }
+    override var accessoryView: UIImageView? {
+        guard let theme else { return nil }
+        return ecosiaDisclosureIndicator(theme: theme)
+    }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
@@ -70,7 +82,10 @@ final class SafeSearchSettings: Setting {
         NSAttributedString(string: .localized(.safeSearch), attributes: [:])
     }
 
-    override var accessoryView: UIImageView? { return ecosiaDisclosureIndicator(theme: theme) }
+    override var accessoryView: UIImageView? {
+        guard let theme else { return nil }
+        return ecosiaDisclosureIndicator(theme: theme)
+    }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
@@ -228,9 +243,12 @@ final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
 }
 
 final class HomepageSettings: Setting {
-    private var profile: Profile
+    private var profile: Profile?
 
-    override var accessoryView: UIImageView? { ecosiaDisclosureIndicator(theme: theme) }
+    override var accessoryView: UIImageView? {
+        guard let theme else { return nil }
+        return ecosiaDisclosureIndicator(theme: theme)
+    }
 
     let windowUUID: WindowUUID
     init(settings: SettingsTableViewController, settingsDelegate: SettingsDelegate?) {
@@ -241,6 +259,7 @@ final class HomepageSettings: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
+        guard let profile else { return }
         let customizationViewController = NTPCustomizationSettingsViewController(windowUUID: windowUUID)
         customizationViewController.profile = profile
         customizationViewController.settingsDelegate = delegate

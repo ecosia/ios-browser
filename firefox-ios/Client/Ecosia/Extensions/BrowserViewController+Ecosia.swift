@@ -8,13 +8,16 @@ import Shared
 import Ecosia
 
 // MARK: HomepageViewControllerDelegate
+@MainActor
 extension BrowserViewController: HomepageViewControllerDelegate {
     func homeDidTapSearchButton(_ home: HomepageViewController) {
-        urlBar.tabLocationViewDidTapLocation(self.urlBar.locationView)
+        // Ecosia: urlBar renamed to addressToolbarContainer; use enterOverlayMode to focus search
+        addressToolbarContainer.enterOverlayMode(nil, pasted: false, search: true)
     }
 }
 
 // MARK: DefaultBrowserDelegate
+@MainActor
 extension BrowserViewController: DefaultBrowserDelegate {
     @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowserViewController) {
@@ -24,17 +27,20 @@ extension BrowserViewController: DefaultBrowserDelegate {
 }
 
 // MARK: WhatsNewViewDelegate
+@MainActor
 extension BrowserViewController: WhatsNewViewDelegate {
     func whatsNewViewDidShow(_ viewController: WhatsNewViewController) {
-        whatsNewDataProvider.markPreviousVersionsAsSeen()
-//        homepageViewController?.reloadTooltip()
+        // Ecosia: whatsNewDataProvider removed in Firefox refactor; use WhatsNewLocalDataProvider to mark as seen
+        WhatsNewLocalDataProvider().markPreviousVersionsAsSeen()
     }
 }
 
 // MARK: PageActionsShortcutsDelegate
+@MainActor
 extension BrowserViewController: PageActionsShortcutsDelegate {
     func pageOptionsOpenHome() {
-        tabToolbarDidPressHome(toolbar, button: .init())
+        // Ecosia: tabToolbarDidPressHome/toolbar removed; focus search (home equivalent)
+        addressToolbarContainer.enterOverlayMode(nil, pasted: false, search: true)
         dismiss(animated: true)
         Analytics.shared.menuClick(.home)
     }
@@ -46,30 +52,32 @@ extension BrowserViewController: PageActionsShortcutsDelegate {
     }
 
     func pageOptionsSettings() {
-        homePanelDidRequestToOpenSettings(at: .general)
+        // Ecosia: homePanelDidRequestToOpenSettings removed; use navigationHandler.show(settings:)
+        navigationHandler?.show(settings: .general)
         dismiss(animated: true)
         Analytics.shared.menuClick(.settings)
     }
 
     func pageOptionsShare() {
         dismiss(animated: true) {
-            guard let item = self.menuHelper?.getSharingAction().items.first,
-                  let handler = item.tapHandler else { return }
-            handler(item)
+            // Ecosia: menuHelper not in scope; use navigationHandler to show share sheet if needed
+            self.navigationHandler?.showMainMenu()
         }
     }
 }
 
 // MARK: URL Bar
+@MainActor
 extension BrowserViewController {
 
     func updateURLBarFollowingPrivateModeUI() {
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
-        urlBar.applyUIMode(isPrivate: isPrivate, theme: themeManager.getCurrentTheme(for: windowUUID))
+        addressToolbarContainer.applyUIMode(isPrivate: isPrivate, theme: themeManager.getCurrentTheme(for: windowUUID))
     }
 }
 
 // MARK: Present intro
+@MainActor
 extension BrowserViewController {
 
     func presentIntroViewController(_ alwaysShow: Bool = false) {
@@ -81,6 +89,7 @@ extension BrowserViewController {
     }
 
     private func presentLoadingScreen() {
+        guard let referrals = referrals else { return }
         present(LoadingScreen(profile: profile, referrals: referrals, windowUUID: windowUUID, referralCode: User.shared.referrals.pendingClaim), animated: true)
     }
 
@@ -88,7 +97,7 @@ extension BrowserViewController {
         User.shared.firstTime = false
         User.shared.migrated = true
         User.shared.hideBookmarksImportExportTooltip()
-        toolbarContextHintVC.deactivateHintForNewUsers()
+        // Ecosia: deactivateHintForNewUsers removed; toolbar hint is managed by ContextualHintViewController
     }
 
     private func showLoadingScreen(for user: User) -> Bool {
@@ -97,6 +106,7 @@ extension BrowserViewController {
 }
 
 // MARK: Claim Referral
+@MainActor
 extension BrowserViewController {
 
     func openBlankNewTabAndClaimReferral(code: String) {
@@ -104,7 +114,7 @@ extension BrowserViewController {
 
         // on first start, browser is not in view hierarchy yet
         guard !User.shared.firstTime else { return }
-        popToBVC()
+        navigationHandler?.popToBVC()
         openURLInNewTab(nil, isPrivate: false)
         // Intro logic will trigger claiming referral
         presentIntroViewController()
@@ -112,7 +122,7 @@ extension BrowserViewController {
 }
 
 // MARK: Ecosia URL Detection and Handling
-
+@MainActor
 extension BrowserViewController {
     /// Detects Ecosia-specific URLs (auth, profile, etc.) and triggers native flows.
     /// - Returns: `true` if the URL was handled and navigation should be cancelled, `false` otherwise
@@ -153,8 +163,8 @@ extension BrowserViewController {
                 .onAuthFlowCompleted { [weak self] success in
                     if success {
                         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete authentication flow successful from navigation")
-                        // Refresh the current page to reflect auth state changes
-                        DispatchQueue.main.async {
+                        // Ecosia: Task { @MainActor in } instead of DispatchQueue.main.async for strict concurrency
+                        Task { @MainActor in
                             self?.tabManager.selectedTab?.reload()
                             EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful sign-in")
                         }
@@ -177,8 +187,8 @@ extension BrowserViewController {
                         .onAuthFlowCompleted { [weak self] success in
                             if success {
                                 EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
-                                // Refresh the current page to reflect auth state changes
-                                DispatchQueue.main.async {
+                                // Ecosia: Task { @MainActor in } instead of DispatchQueue.main.async for strict concurrency
+                                Task { @MainActor in
                                     self?.tabManager.selectedTab?.reload()
                                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after inconsistency resolution")
                                 }
@@ -201,7 +211,8 @@ extension BrowserViewController {
     }
 
     private func handleSignInDetection(_ url: URL, tab: Tab) -> Bool {
-        guard let redirectedSignInURL = EcosiaAuthRedirector.redirectURLForSignIn(url, redirectURLString: tab.metadataManager?.tabGroupData.tabAssociatedSearchUrl) else {
+        // Ecosia: Tab.metadataManager removed in Firefox upgrade; pass nil for redirect URL
+        guard let redirectedSignInURL = EcosiaAuthRedirector.redirectURLForSignIn(url, redirectURLString: nil) else {
             return false
         }
         tab.loadRequest(URLRequest(url: redirectedSignInURL))
@@ -229,9 +240,8 @@ extension BrowserViewController {
             .onAuthFlowCompleted { [weak self] success in
                 if success {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Complete logout flow successful from navigation")
-
-                    // Refresh the current page to reflect auth state changes
-                    DispatchQueue.main.async {
+                    // Ecosia: Task { @MainActor in } instead of DispatchQueue.main.async for strict concurrency
+                    Task { @MainActor in
                         self?.tabManager.selectedTab?.reload()
                         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after successful sign-out")
                     }
@@ -250,16 +260,16 @@ extension BrowserViewController {
     private func handleProfilePageDetection(_ url: URL) -> Bool {
         EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Profile URL detected in navigation: \(url)")
         EcosiaLogger.auth.info("🔐 [WEB-PROFILE] Opening native profile modal")
-
-        DispatchQueue.main.async { [weak self] in
-            self?.presentProfileModal()
+        // Ecosia: Task { @MainActor in } instead of DispatchQueue.main.async for strict concurrency
+        Task { @MainActor in
+            self.presentProfileModal()
         }
-
         return true
     }
 }
 
 // MARK: Profile Modal Presentation
+@MainActor
 extension BrowserViewController {
     /// Presents the profile page as a modal, similar to EcosiaAccountImpactView
     func presentProfileModal() {
@@ -271,7 +281,7 @@ extension BrowserViewController {
         let profileView = EcosiaWebViewModal(
             url: Environment.current.urlProvider.profileURL,
             windowUUID: windowUUID,
-            userAgent: UserAgentBuilder.ecosiaMobileUserAgent().userAgent(),
+            userAgent: UserAgentBuilder.defaultMobileUserAgent().userAgent(),
             onLoadComplete: {
                 Analytics.shared.accountProfileViewed()
             },
@@ -284,7 +294,7 @@ extension BrowserViewController {
         hostingController.modalPresentationStyle = .pageSheet
 
         if let sheet = hostingController.sheetPresentationController {
-            sheet.detents = [.large()]
+            sheet.detents = [UISheetPresentationController.Detent.large()]
             sheet.prefersGrabberVisible = true
         }
 

@@ -92,6 +92,7 @@ class MultiplyImpact: UIViewController, Themeable {
 
     // MARK: - Themeable Properties
 
+    var themeListenerCancellable: Any?
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { windowUUID }
     var themeManager: ThemeManager
@@ -424,7 +425,8 @@ class MultiplyImpact: UIViewController, Themeable {
     }
 
     private func refreshReferrals() {
-        Task { [weak self] in
+        // Ecosia: @MainActor in Task for strict concurrency (UI updates)
+        Task { @MainActor [weak self] in
             do {
                 try await self?.referrals.refresh(force: true, createCode: true)
                 guard let self = self else { return }
@@ -460,7 +462,8 @@ class MultiplyImpact: UIViewController, Themeable {
 
     @objc private func inviteFriends() {
         guard let message = inviteMessage else {
-            Task { [weak self] in
+            // Ecosia: @MainActor in Task for strict concurrency (UI updates)
+            Task { @MainActor [weak self] in
                 do {
                     try await self?.referrals.refresh(createCode: true)
                     guard let self = self else { return }

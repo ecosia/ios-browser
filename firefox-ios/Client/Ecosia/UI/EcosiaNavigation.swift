@@ -11,8 +11,9 @@ final class EcosiaNavigation: UINavigationController, Themeable {
 
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
-    var currentWindowUUID: WindowUUID? { (topViewController as? Themeable)?.currentWindowUUID }
+    var currentWindowUUID: WindowUUID? { (topViewController as? ThemeUUIDIdentifiable)?.currentWindowUUID }
 
     // MARK: - Init
 
@@ -40,7 +41,7 @@ final class EcosiaNavigation: UINavigationController, Themeable {
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.prefersLargeTitles = true
-        listenForThemeChange(self.view)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
         applyTheme()
     }
 

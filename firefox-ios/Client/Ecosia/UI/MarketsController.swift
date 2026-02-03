@@ -6,9 +6,12 @@ import UIKit
 import Common
 import Ecosia
 
+/// Ecosia: @MainActor so static `current` (reads User.shared) is main-actor isolated for strict concurrency.
+@MainActor
 final class Markets {
-    private(set) static var all: [Market] = {
-        return (try? JSONDecoder().decode([Market].self, from: Data(contentsOf: Bundle.ecosia.url(forResource: "markets", withExtension: "json")!)))?.sorted(by: { $0.displayName.compare($1.displayName) == .orderedAscending })  ?? []
+    /// Immutable list loaded once at startup; `static let` is concurrency-safe (read-only, no setter).
+    static let all: [Market] = {
+        return (try? JSONDecoder().decode([Market].self, from: Data(contentsOf: Bundle.ecosia.url(forResource: "markets", withExtension: "json")!)))?.sorted(by: { $0.displayName.compare($1.displayName) == .orderedAscending }) ?? []
     }()
 
     static var current: String? {

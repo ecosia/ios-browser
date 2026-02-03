@@ -6,14 +6,16 @@ import Ecosia
 import UIKit
 import Common
 
-private let items: [(AdultFilter, String)] = [
-    (.strict, .localized(.strict)),
-    (.moderate, .localized(.moderate)),
-    (.off, .localized(.off))]
-
+/// Ecosia: @MainActor so static `current` (reads User.shared) is main-actor isolated for strict concurrency.
+@MainActor
 final class FilterController: ThemedTableViewController {
 
     private let identifier = "filter"
+    private nonisolated(unsafe) static let items: [(AdultFilter, String)] = [
+        (.strict, .localized(.strict)),
+        (.moderate, .localized(.moderate)),
+        (.off, .localized(.off))
+    ]
     static var current: String? {
         items.first(where: { $0.0 == User.shared.adultFilter }).map { $0.1 }
     }
@@ -38,18 +40,18 @@ final class FilterController: ThemedTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        items.count
+        Self.items.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier) ?? ThemedTableViewCell(style: .default, reuseIdentifier: identifier)
-        cell.textLabel!.text = items[cellForRowAt.row].1
-        cell.accessoryType = User.shared.adultFilter == items[cellForRowAt.row].0 ? .checkmark : .none
+        cell.textLabel!.text = Self.items[cellForRowAt.row].1
+        cell.accessoryType = User.shared.adultFilter == Self.items[cellForRowAt.row].0 ? .checkmark : .none
         return cell
     }
 
     override func tableView(_: UITableView, didSelectRowAt: IndexPath) {
-        User.shared.adultFilter = items[didSelectRowAt.row].0
+        User.shared.adultFilter = Self.items[didSelectRowAt.row].0
         tableView.reloadData()
     }
 

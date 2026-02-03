@@ -36,6 +36,7 @@ enum HomepageSectionType: Int, CaseIterable {
         }
     }
 
+    /// Ecosia: Computed each time; no mutable global state (concurrency-safe).
     static var cellTypes: [ReusableCell.Type] {
         var types: [ReusableCell.Type] = []
 

@@ -37,6 +37,9 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
         static let cellCornerRadius: CGFloat = 26
         static let iconCornerRadius: CGFloat = 4
         static let overlayColor = UIColor(white: 0.0, alpha: 0.25)
+        static let shadowOpacity: Float = 0.12
+        static let shadowOffset = CGSize(width: 0, height: 2)
+        static let shadowRadius: CGFloat = 4
     }
 
     private var rootContainer: UIView = .build { view in
@@ -135,14 +138,8 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
         titleLabel.text = topSite.title
         var imageResource: SiteResource?
 
-        if let site = topSite.site as? SponsoredTile,
-           let url = URL(string: site.imageURL, invalidCharacters: false) {
-            imageResource = .remoteURL(url: url)
-        } else if let site = topSite.site as? PinnedSite {
-            imageResource = site.faviconResource
-        } else if let site = topSite.site as? SuggestedSite {
-            imageResource = site.faviconResource
-        }
+        // Ecosia: Firefox types SponsoredTile/PinnedSite/SuggestedSite removed; use default favicon from site URL.
+        imageResource = nil
 
         let viewModel = FaviconImageViewModel(siteURLString: siteURLString,
                                               siteResource: imageResource,
@@ -204,7 +201,7 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
     }
 
     private func configureSponsoredSite(_ topSite: TopSite) {
-        guard topSite.isSponsoredTile else { return }
+        // Ecosia: isSponsoredTile removed from TopSite; no-op for now.
     }
 
     private func setupShadow(theme: Theme) {
@@ -212,9 +209,9 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
         rootContainer.layer.shadowPath = UIBezierPath(roundedRect: rootContainer.bounds,
                                                       cornerRadius: UX.cellCornerRadius).cgPath
         rootContainer.layer.shadowColor = theme.colors.shadowDefault.cgColor
-        rootContainer.layer.shadowOpacity = HomepageViewModel.UX.shadowOpacity
-        rootContainer.layer.shadowOffset = HomepageViewModel.UX.shadowOffset
-        rootContainer.layer.shadowRadius = HomepageViewModel.UX.shadowRadius
+        rootContainer.layer.shadowOpacity = UX.shadowOpacity
+        rootContainer.layer.shadowOffset = UX.shadowOffset
+        rootContainer.layer.shadowRadius = UX.shadowRadius
     }
 }
 

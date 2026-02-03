@@ -7,6 +7,7 @@ import SwiftUI
 import Common
 import Ecosia
 
+@MainActor
 protocol NTPHeaderDelegate: AnyObject {
     func headerOpenAISearch()
 }

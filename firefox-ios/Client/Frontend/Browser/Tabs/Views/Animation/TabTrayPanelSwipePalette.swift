@@ -5,9 +5,15 @@
 import Common
 import UIKit
 
+/* Ecosia: Conform to EcosiaThemeColourPalette so Theme protocol (colors: EcosiaThemeColourPalette) is satisfied
 struct TabTrayPanelSwipePalette: ThemeColourPalette {
     private let base: ThemeColourPalette
     private let partialOverrides: PartialOverrides
+ */
+struct TabTrayPanelSwipePalette: EcosiaThemeColourPalette {
+    private let base: EcosiaThemeColourPalette
+    private let partialOverrides: PartialOverrides
+    var ecosia: EcosiaSemanticColors { base.ecosia }
 
     // MARK: Overridden colors
     var layer1: UIColor {
@@ -152,7 +158,10 @@ struct TabTrayPanelSwipePalette: ThemeColourPalette {
     var gradientOnboardingStop3: UIColor { base.gradientOnboardingStop3 }
     var gradientOnboardingStop4: UIColor { base.gradientOnboardingStop4 }
 
+    /* Ecosia: Base must be EcosiaThemeColourPalette to forward ecosia
     init(base: ThemeColourPalette, overrides: PartialOverrides) {
+     */
+    init(base: EcosiaThemeColourPalette, overrides: PartialOverrides) {
         self.base = base
         self.partialOverrides = overrides
     }

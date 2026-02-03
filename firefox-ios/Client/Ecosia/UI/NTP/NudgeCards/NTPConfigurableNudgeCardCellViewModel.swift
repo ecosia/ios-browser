@@ -84,6 +84,7 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     }
 }
 
+/* Ecosia: Removed legacy protocol conformances - now using EcosiaHomepageAdapter
 extension NTPConfigurableNudgeCardCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
@@ -94,3 +95,4 @@ extension NTPConfigurableNudgeCardCellViewModel: HomepageSectionHandler {
         return cell
     }
 }
+*/

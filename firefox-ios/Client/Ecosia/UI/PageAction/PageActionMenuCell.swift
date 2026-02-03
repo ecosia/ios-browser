@@ -197,7 +197,8 @@ extension PageActionMenuCell {
             imageView?.image = nil
         }
 
-        isNew(actions.items.first?.isNew == true, theme: theme)
+        // Ecosia: SingleActionViewModel has no isNew; show "new" badge only when explicitly supported
+        isNew(false, theme: theme)
 
         if separatorCellsPositions.contains(position) {
             addCustomGroupedStyleLikeSeparator(theme: theme)

@@ -7,45 +7,42 @@ import Foundation
 /// Extension to add invisible tab filtering capabilities to existing TabManager
 /// Provides filtered tab collections that exclude invisible tabs
 ///
-/// Safety: All properties are nonisolated because InvisibleTabManager is thread-safe via DispatchQueue
+/// Ecosia: @MainActor so we can access TabManager's tabs/normalTabs/privateTabs (which are main-actor isolated)
+@MainActor
 extension TabManager {
 
     /// Returns the count of visible tabs only (excludes invisible tabs)
-    /// This should be used for UI display purposes instead of the raw `count` property
-    nonisolated var visibleTabCount: Int {
+    var visibleTabCount: Int {
         return InvisibleTabManager.shared.getVisibleTabs(from: tabs).count
     }
 
     /// Returns the count of invisible tabs only
-    nonisolated var invisibleTabCount: Int {
+    var invisibleTabCount: Int {
         return InvisibleTabManager.shared.getInvisibleTabs(from: tabs).count
     }
 
     /// Returns only visible normal tabs (excludes private and invisible tabs)
-    /// This is the filtered equivalent of `normalTabs`
-    nonisolated var visibleNormalTabs: [Tab] {
+    var visibleNormalTabs: [Tab] {
         return InvisibleTabManager.shared.getVisibleTabs(from: normalTabs)
     }
 
     /// Returns only visible private tabs (excludes invisible tabs)
-    /// This is the filtered equivalent of `privateTabs`
-    nonisolated var visiblePrivateTabs: [Tab] {
+    var visiblePrivateTabs: [Tab] {
         return InvisibleTabManager.shared.getVisibleTabs(from: privateTabs)
     }
 
     /// Returns all invisible tabs
-    nonisolated var invisibleTabs: [Tab] {
+    var invisibleTabs: [Tab] {
         return InvisibleTabManager.shared.getInvisibleTabs(from: tabs)
     }
 
     /// Returns all visible tabs (the opposite of invisibleTabs)
-    nonisolated var visibleTabs: [Tab] {
+    var visibleTabs: [Tab] {
         return InvisibleTabManager.shared.getVisibleTabs(from: tabs)
     }
 
     /// Cleanup invisible tab tracking when tabs are removed
-    /// This should be called when tabs are removed to prevent memory leaks
-    nonisolated func cleanupInvisibleTabTracking() {
+    func cleanupInvisibleTabTracking() {
         let existingTabUUIDs = Set(tabs.map { $0.tabUUID })
         InvisibleTabManager.shared.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs)
     }

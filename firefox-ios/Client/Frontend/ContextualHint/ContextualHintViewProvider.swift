@@ -106,8 +106,7 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
 
     // MARK: - Telemetry
     func sendTelemetryEvent(for eventType: CFRTelemetryEvent) {
-        let hintTypeExtra = hintType == .toolbarLocation ? getToolbarLocation() : hintType.rawValue
-        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: hintTypeExtra]
+        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: hintType.rawValue]
 
         switch eventType {
         case .closeButton:
@@ -134,12 +133,6 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
                                          extras: extra)
             hasSentTelemetryEvent = true
         }
-    }
-
-    private func getToolbarLocation() -> String {
-        guard isBottomSearchBar else { return "ToolbarLocationTop" }
-
-        return "ToolbarLocationBottom"
     }
 
     // MARK: - Present

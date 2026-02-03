@@ -870,5 +870,21 @@ struct AccessibilityIdentifiers {
         static let darkerBrightnessButton = "ReaderMode.darkerBrightnessButton"
         static let brightnessSlider = "ReaderMode.brightnessSlider"
     }
+    // Ecosia: Custom accessibility identifiers
+    struct Ecosia {
+        static let logo = "ecosia-logo"
+
+        struct TabToolbar {
+            static let circleButton = "TabToolbar.circleButton"
+        }
+
+        struct FindInPage {
+            static let searchField = "FindInPage.searchField"
+            static let matchCount = "FindInPage.matchCount"
+            static let findPrevious = "FindInPage.find_previous"
+            static let findNext = "FindInPage.find_next"
+            static let findClose = "FindInPage.close"
+        }
+    }
 }
 // swiftlint:enable line_length

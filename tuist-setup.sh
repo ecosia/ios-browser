@@ -57,12 +57,17 @@ else
     echo -e "${YELLOW}Skipping bootstrap (--skip-bootstrap)${NC}\n"
 fi
 
+# Install SPM dependencies and generate project (run from firefox-ios so Tuist doesn't pass invalid --path to swift package)
+echo -e "${BLUE}Installing Swift package dependencies (force resolved versions)...${NC}"
+(cd firefox-ios && tuist install --force-resolved-versions)
+echo -e "${GREEN}✓ Dependencies installed${NC}\n"
+
 # Generate project with Xcode's default SPM integration
 echo -e "${BLUE}Generating Xcode project...${NC}"
 if [ "$OPEN_XCODE" = false ]; then
-    tuist generate --no-open --path firefox-ios
+    (cd firefox-ios && tuist generate --no-open)
 else
-    tuist generate --path firefox-ios
+    (cd firefox-ios && tuist generate)
 fi
 echo -e "${GREEN}✓ Project generated${NC}\n"
 

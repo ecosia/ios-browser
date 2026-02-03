@@ -20,10 +20,12 @@ final class EmptyReadingListView: UIView, Themeable {
 
     // MARK: - Themeable Properties
 
-    let windowUUID: UUID
+    let windowUUID: WindowUUID
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
+    var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
+    // Ecosia: currentWindowUUID cannot be overridden (UIView extension); theme uses windowUUID from init when applied.
 
     // MARK: - Properties
 
@@ -122,7 +124,7 @@ final class EmptyReadingListView: UIView, Themeable {
         readerModeLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         readingListLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
 
-        listenForThemeChange(self)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
     }
 
     // MARK: - Themeable

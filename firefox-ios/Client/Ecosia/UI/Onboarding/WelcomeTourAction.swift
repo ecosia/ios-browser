@@ -39,29 +39,32 @@ final class WelcomeTourAction: UIView, ThemeApplicable {
         height.priority = .init(rawValue: 500)
         height.isActive = true
 
-        let trees = TreesProjection.shared.treesAt(.init())
-        let oneMillion = 1000000
-        let millionTrees = trees / oneMillion
-        let multiplesOfFive = millionTrees / 5
-        let capped = multiplesOfFive * 5 * oneMillion
-        let treesPlantedByTheCommunity = NumberFormatter.ecosiaDecimalNumberFormatter().string(from: .init(value: capped)) ?? "150M"
-        let countries = "30"
-        let activeProjects = "60"
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let trees = await TreesProjection.shared.treesAt(.init())
+            let oneMillion = 1000000
+            let millionTrees = trees / oneMillion
+            let multiplesOfFive = millionTrees / 5
+            let capped = multiplesOfFive * 5 * oneMillion
+            let treesPlantedByTheCommunity = NumberFormatter.ecosiaDecimalNumberFormatter().string(from: .init(value: capped)) ?? "150M"
+            let countries = "30"
+            let activeProjects = "60"
 
-        let top = WelcomeTourRow(image: "trees",
-                                 title: .init(format: .localized(.numberAsStringWithPlusSymbol), treesPlantedByTheCommunity),
-                                 text: .localized(.treesPlantedByEcosiaCapitalized))
-        stack.addArrangedSubview(top)
+            let top = WelcomeTourRow(image: "trees",
+                                     title: .init(format: .localized(.numberAsStringWithPlusSymbol), treesPlantedByTheCommunity),
+                                     text: .localized(.treesPlantedByEcosiaCapitalized))
+            stack.addArrangedSubview(top)
 
-        let middle = WelcomeTourRow(image: "hand",
-                                    title: .init(format: .localized(.numberAsStringWithPlusSymbol), activeProjects),
-                                    text: .localized(.activeProjects))
-        stack.addArrangedSubview(middle)
+            let middle = WelcomeTourRow(image: "hand",
+                                        title: .init(format: .localized(.numberAsStringWithPlusSymbol), activeProjects),
+                                        text: .localized(.activeProjects))
+            stack.addArrangedSubview(middle)
 
-        let bottom = WelcomeTourRow(image: "pins",
-                                    title: .init(format: .localized(.numberAsStringWithPlusSymbol), countries),
-                                    text: .localized(.countries))
-        stack.addArrangedSubview(bottom)
+            let bottom = WelcomeTourRow(image: "pins",
+                                        title: .init(format: .localized(.numberAsStringWithPlusSymbol), countries),
+                                        text: .localized(.countries))
+            stack.addArrangedSubview(bottom)
+        }
     }
 
     func applyTheme(theme: Theme) {

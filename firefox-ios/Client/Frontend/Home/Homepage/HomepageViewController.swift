@@ -44,8 +44,12 @@ final class HomepageViewController: UIViewController,
     // MARK: - Private variables
     private typealias a11y = AccessibilityIdentifiers.FirefoxHomepage
     private var collectionView: UICollectionView?
+    /// Ecosia: Exposed so Ecosia cell configuration extensions (different file) can dequeue cells.
+    var homepageCollectionView: UICollectionView? { collectionView }
+    /* Ecosia: Update dataSource access to use Ecosia's
     private var dataSource: HomepageDiffableDataSource?
-
+     */
+    var dataSource: HomepageDiffableDataSource?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
@@ -163,6 +167,8 @@ final class HomepageViewController: UIViewController,
             )
         )
         termsOfUseDelegate?.showTermsOfUse(context: .homepageOpened)
+        // Ecosia: Trigger Ecosia data loading
+        ecosiaViewWillAppear()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -184,6 +190,8 @@ final class HomepageViewController: UIViewController,
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         resetTrackedObjects()
+        // Ecosia: Clean up Ecosia resources
+        ecosiaViewDidDisappear()
     }
 
     override func viewDidLayoutSubviews() {
@@ -361,6 +369,8 @@ final class HomepageViewController: UIViewController,
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         view.backgroundColor = theme.colors.layer1
+        // Ecosia: Update theme for Ecosia sections
+        updateEcosiaTheme()
     }
 
     // MARK: - Layout
@@ -411,6 +421,12 @@ final class HomepageViewController: UIViewController,
         collectionView.registerSupplementary(
             of: UICollectionView.elementKindSectionHeader,
             cellType: LabelButtonHeaderView.self
+        )
+        
+        // Ecosia: Register supplementary views for Ecosia sections
+        collectionView.registerSupplementary(
+            of: UICollectionView.elementKindSectionFooter,
+            cellType: NTPImpactDividerFooter.self
         )
 
         collectionView.keyboardDismissMode = .onDrag
@@ -639,6 +655,20 @@ final class HomepageViewController: UIViewController,
             }
 
             return spacerCell
+        
+        // Ecosia: Custom cell configuration
+        case .ecosiaHeader:
+            return configureEcosiaHeaderCell(at: indexPath)
+        case .ecosiaLogo:
+            return configureEcosiaLogoCell(at: indexPath)
+        case .ecosiaLibrary:
+            return configureEcosiaLibraryCell(at: indexPath)
+        case .ecosiaImpact(let sectionIndex):
+            return configureEcosiaImpactCell(at: indexPath, sectionIndex: sectionIndex)
+        case .ecosiaNews:
+            return configureEcosiaNewsCell(at: indexPath)
+        case .ecosiaNTPCustomization:
+            return configureEcosiaNTPCustomizationCell(at: indexPath)
         }
     }
 
@@ -647,6 +677,15 @@ final class HomepageViewController: UIViewController,
         for kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView? {
+        guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else {
+            self.logger.log(
+                "Section should not have been nil, something went wrong",
+                level: .fatal,
+                category: .homepage
+            )
+            return UICollectionReusableView()
+        }
+        
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             guard let sectionHeaderView = collectionView.dequeueSupplementary(
@@ -654,15 +693,19 @@ final class HomepageViewController: UIViewController,
                 cellType: LabelButtonHeaderView.self,
                 for: indexPath)
             else { return UICollectionReusableView() }
-            guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else {
-                self.logger.log(
-                    "Section should not have been nil, something went wrong",
-                    level: .fatal,
-                    category: .homepage
-                )
-                return UICollectionReusableView()
-            }
             return self.configureSectionHeader(for: section, with: sectionHeaderView)
+        case UICollectionView.elementKindSectionFooter:
+            // Ecosia: Handle footer for impact section
+            if case .ecosiaImpact = section {
+                guard let footerView = collectionView.dequeueSupplementary(
+                    of: kind,
+                    cellType: NTPImpactDividerFooter.self,
+                    for: indexPath)
+                else { return UICollectionReusableView() }
+                footerView.applyTheme(theme: currentTheme)
+                return footerView
+            }
+            return nil
         default:
             return nil
         }
@@ -806,7 +849,8 @@ final class HomepageViewController: UIViewController,
         }
     }
 
-    private func navigateToHomepageSettings() {
+    /// Ecosia: Internal so Ecosia cell configuration extension can open homepage settings.
+    func navigateToHomepageSettings() {
         store.dispatch(
             NavigationBrowserAction(
                 navigationDestination: NavigationDestination(.settings(.homePage)),

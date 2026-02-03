@@ -87,6 +87,7 @@ final class EcosiaFindInPageBar: UIView, ThemeApplicable {
     weak var delegate: EcosiaFindInPageBarDelegate?
 
     private static let savedTextKey = "findInPageSavedTextKey"
+    /// Ecosia: UserDefaults read is thread-safe; static property for strict concurrency.
     static var retrieveSavedText: String? {
         return UserDefaults.standard.object(forKey: EcosiaFindInPageBar.savedTextKey) as? String
     }

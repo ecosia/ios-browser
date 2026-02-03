@@ -5,6 +5,7 @@
 import Foundation
 import Common
 
+@MainActor
 protocol NTPCustomizationCellDelegate: AnyObject {
     func openNTPCustomizationSettings()
 }
@@ -20,6 +21,7 @@ final class NTPCustomizationCellViewModel {
     }
 }
 
+/* Ecosia: Removed legacy protocol conformances - now using EcosiaHomepageAdapter
 extension NTPCustomizationCellViewModel: HomepageViewModelProtocol {
 
     func setTheme(theme: Theme) {
@@ -62,3 +64,4 @@ extension NTPCustomizationCellViewModel: HomepageSectionHandler {
         return cell
     }
 }
+*/

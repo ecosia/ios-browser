@@ -56,7 +56,8 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// The items we would like to attempt to show in the update sheet
     private var whatsNewItems: [Version: [WhatsNewItem]]
 
-    private static let defaultWhatsNewItems = [
+    /// Immutable default items; safe to share across isolation boundaries (read-only after init).
+    private nonisolated(unsafe) static let defaultWhatsNewItems: [Version: [WhatsNewItem]] = [
         Version("9.0.0")!: [
             WhatsNewItem(image: UIImage(named: "tree"),
                          title: .localized(.whatsNewFirstItemTitle9_0_0),

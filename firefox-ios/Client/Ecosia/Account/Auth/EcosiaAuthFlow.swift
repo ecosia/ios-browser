@@ -13,6 +13,8 @@ public enum EcosiaAuthFlowResult {
 
 /// Orchestrates complete authentication flows with invisible tab sessions
 /// Provides core functionality for authentication operations
+/// Ecosia: @MainActor so callbacks and session/tab ops stay on main thread; avoids sending non-Sendable closures.
+@MainActor
 final class EcosiaAuthFlow {
 
     public enum FlowType {
@@ -164,11 +166,11 @@ final class EcosiaAuthFlow {
         EcosiaLogger.auth.info("Native Auth0 logout completed")
     }
 
-    @MainActor
     private func handleNativeAuthCompleted(delayedCompletion: TimeInterval,
                                            onNativeAuthCompleted: (() -> Void)?) async {
         if delayedCompletion > 0 {
-            try? await Task.sleep(for: .seconds(delayedCompletion))
+            // Ecosia: Use nanoseconds for iOS 15 compatibility (Task.sleep(for: .seconds) is iOS 16+)
+            try? await Task.sleep(nanoseconds: UInt64(delayedCompletion * 1_000_000_000))
             onNativeAuthCompleted?()
         } else {
             onNativeAuthCompleted?()
@@ -201,16 +203,18 @@ final class EcosiaAuthFlow {
         // Retain session until completion
         activeSession = session
 
-        // Set up session cookies
-        session.setupSessionCookies()
+        // Set up session cookies (main-actor isolated)
+        await MainActor.run { session.setupSessionCookies() }
 
-        // Wait for session completion
+        // Wait for session completion (startMonitoring is main-actor isolated)
         await withCheckedContinuation { continuation in
-            session.startMonitoring { [weak self] success in
-                self?.activeSession = nil // Release session
-                EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                onFlowCompleted?(success)
-                continuation.resume()
+            Task { @MainActor in
+                session.startMonitoring { [weak self] success in
+                    self?.activeSession = nil // Release session
+                    EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+                    onFlowCompleted?(success)
+                    continuation.resume()
+                }
             }
         }
     }
@@ -238,18 +242,19 @@ final class EcosiaAuthFlow {
         // Retain session until completion
         activeSession = session
 
-        // Wait for session completion
+        // Wait for session completion (startMonitoring is main-actor isolated)
         await withCheckedContinuation { continuation in
-            session.startMonitoring { [weak self] success in
-                self?.activeSession = nil // Release session
-                EcosiaLogger.auth.info("Ecosia logout flow completed: \(success)")
-                onFlowCompleted?(success)
-                continuation.resume()
+            Task { @MainActor in
+                session.startMonitoring { [weak self] success in
+                    self?.activeSession = nil // Release session
+                    EcosiaLogger.auth.info("Ecosia logout flow completed: \(success)")
+                    onFlowCompleted?(success)
+                    continuation.resume()
+                }
             }
         }
     }
 
-    @MainActor
     private func handleAuthFailure(_ error: AuthError,
                                    onError: ((AuthError) -> Void)?) async {
         activeSession = nil

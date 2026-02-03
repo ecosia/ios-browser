@@ -46,22 +46,24 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
+        guard let profile else { return nil }
         let introSeen = profile.prefs.intForKey(PrefsKeys.IntroSeen) != nil
         return NSAttributedString(string: introSeen ? "False (click to reset)" : "True", attributes: [:])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        profile.prefs.removeObjectForKey(PrefsKeys.IntroSeen)
+        profile?.prefs.removeObjectForKey(PrefsKeys.IntroSeen)
         settings.tableView.reloadData()
     }
 
-    let profile: Profile
+    var profile: Profile?
     override init(settings: SettingsTableViewController) {
         self.profile = settings.profile
         super.init(settings: settings)
     }
 }
 
+@MainActor
 final class ShowTour: HiddenSetting, WelcomeDelegate {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Show Intro", attributes: [:])
@@ -112,7 +114,9 @@ final class CreateReferralCode: HiddenSetting {
             let alertTitle = "Code created"
             let alert = AlertController(title: alertTitle, message: User.shared.referrals.code, preferredStyle: .alert)
             navigationController?.topViewController?.present(alert, animated: true) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
                     alert.dismiss(animated: true)
                 }
                 self.settings.tableView.reloadData()
@@ -122,7 +126,9 @@ final class CreateReferralCode: HiddenSetting {
 
             let alert = AlertController(title: "Code erased!", message: "Reopen app to create new one", preferredStyle: .alert)
             navigationController?.topViewController?.present(alert, animated: true) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
                     alert.dismiss(animated: true)
                 }
                 self.settings.tableView.reloadData()
@@ -142,7 +148,9 @@ final class AddReferral: HiddenSetting {
         let alertTitle = "Referral count increased by one."
         let alert = AlertController(title: alertTitle, message: "Open NTP to see spotlight", preferredStyle: .alert)
         navigationController?.topViewController?.present(alert, animated: true) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)
             }
         }
@@ -161,7 +169,9 @@ final class AddClaim: HiddenSetting {
         let alertTitle = "User got referred."
         let alert = AlertController(title: alertTitle, message: "Open NTP to see claim", preferredStyle: .alert)
         navigationController?.topViewController?.present(alert, animated: true) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)
             }
         }
@@ -362,7 +372,8 @@ final class AnalyticsStagingUrlSetting: HiddenSetting {
 final class SimulateAuthErrorSetting: HiddenSetting {
     /// UserDefaults key for storing auth error simulation state
     /// Note: Persists across app restarts - toggle again to disable
-    public static let debugKey = "DebugSimulateAuthError"
+    /// Ecosia: nonisolated so async/non–main-actor code can read it without crossing isolation
+    nonisolated public static let debugKey = "DebugSimulateAuthError"
 
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Toggle - Simulate Auth Error", attributes: [:])
@@ -385,7 +396,9 @@ final class SimulateAuthErrorSetting: HiddenSetting {
             preferredStyle: .alert
         )
         navigationController?.topViewController?.present(alert, animated: true) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)
             }
         }
@@ -400,7 +413,8 @@ final class SimulateAuthErrorSetting: HiddenSetting {
 final class SimulateImpactAPIErrorSetting: HiddenSetting {
     /// UserDefaults key for storing impact API error simulation state
     /// Note: Persists across app restarts - toggle again to disable
-    public static let debugKey = "DebugSimulateImpactAPIError"
+    /// Ecosia: nonisolated so async/non–main-actor code can read it without crossing isolation
+    nonisolated public static let debugKey = "DebugSimulateImpactAPIError"
 
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Toggle - Simulate Impact API Error", attributes: [:])
@@ -423,7 +437,9 @@ final class SimulateImpactAPIErrorSetting: HiddenSetting {
             preferredStyle: .alert
         )
         navigationController?.topViewController?.present(alert, animated: true) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)
             }
         }
@@ -484,13 +500,13 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
         )
 
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Dismiss alert after 2 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
                 alert.dismiss(animated: true)
             }
-
-            // Add seed after 10 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
                 UserDefaultsSeedProgressManager.addSeeds(1)
                 EcosiaLogger.accounts.info("Debug: Added 1 seed for logged-out user")
             }
@@ -527,16 +543,14 @@ final class DebugAddSeedsLoggedIn: HiddenSetting {
         )
 
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Dismiss alert after 2 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
                 alert.dismiss(animated: true)
             }
-
-            // Add seeds after 10 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                Task { @MainActor in
-                    EcosiaAuthUIStateProvider.shared.debugAddSeeds(5)
-                }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                EcosiaAuthUIStateProvider.shared.debugAddSeeds(5)
             }
         }
     }
@@ -570,16 +584,14 @@ final class DebugForceLevelUp: HiddenSetting {
         )
 
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Dismiss alert after 2 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
                 alert.dismiss(animated: true)
             }
-
-            // Trigger level-up animation after 10 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                Task { @MainActor in
-                    EcosiaAuthUIStateProvider.shared.debugTriggerLevelUpAnimation()
-                }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                EcosiaAuthUIStateProvider.shared.debugTriggerLevelUpAnimation()
             }
         }
     }
@@ -649,16 +661,14 @@ final class DebugAddCustomSeeds: HiddenSetting {
         )
 
         navigationController?.topViewController?.present(confirmAlert, animated: true) {
-            // Dismiss alert after 2 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
                 confirmAlert.dismiss(animated: true)
             }
-
-            // Add seeds after 10 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                Task { @MainActor in
-                    EcosiaAuthUIStateProvider.shared.debugAddSeeds(count)
-                }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                EcosiaAuthUIStateProvider.shared.debugAddSeeds(count)
             }
         }
     }

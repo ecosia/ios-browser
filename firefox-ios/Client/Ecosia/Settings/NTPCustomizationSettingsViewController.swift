@@ -12,11 +12,13 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
         super.init(style: .insetGrouped, windowUUID: windowUUID)
 
         title = .localized(.homepage)
-        navigationItem.rightBarButtonItem = .init(title: .localized(.done),
-                                                  style: .done) { [weak self] _ in
-            self?.settingsDelegate?.reloadHomepage()
-            self?.settingsDelegate?.didFinish()
-        }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: .localized(.done),
+            primaryAction: UIAction { [weak self] _ in
+                self?.settingsDelegate?.reloadHomepage()
+                self?.settingsDelegate?.didFinish()
+            }
+        )
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -24,14 +26,16 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
     }
 
     override func generateSettings() -> [SettingSection] {
+        guard let profile else {
+            return [SettingSection(title: .init(string: .localized(.showOnHomepage)), children: [])]
+        }
         let customizableSectionConfigs = HomepageSectionType.allCases.compactMap({ $0.customizableConfig })
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         let settings: [Setting] = customizableSectionConfigs.map { config in
             if config == .topSites {
                 return HomePageSettingViewController.TopSitesSettings(settings: self)
             }
-            return NTPCustomizationSetting(prefs: profile.prefs,
-                                           theme: themeManager.getCurrentTheme(for: windowUUID),
-                                           config: config)
+            return NTPCustomizationSetting(prefs: profile.prefs, theme: theme, config: config)
         }
         return [SettingSection(title: .init(string: .localized(.showOnHomepage)), children: settings)]
     }
@@ -53,7 +57,6 @@ final class NTPCustomizationSetting: BoolSetting {
     convenience init(prefs: Prefs, theme: Theme, config: CustomizableNTPSettingConfig) {
         self.init(prefs: prefs,
                   theme: theme,
-                  accessibilityIdentifier: config.accessibilityIdentifierPrefix,
                   defaultValue: true,
                   titleText: .localized(config.localizedTitleKey))
         self.config = config

@@ -8,7 +8,7 @@ import UIKit
 public class EcosiaLaunchScreenView: UIView {
     private static let viewName = "EcosiaLaunchScreen"
 
-    public class func fromNib() -> UIView {
+    public class func fromNib() -> UIView? {
         let view = Bundle.main.loadNibNamed(EcosiaLaunchScreenView.viewName,
                                             owner: nil,
                                             options: nil)![0] as! UIView

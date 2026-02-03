@@ -9,46 +9,38 @@ public enum BookmarkSerializerError: Error {
     case cancelled
 }
 
+@MainActor
 public protocol BookmarkSerializable {
     func serializeBookmarks(_ bookmarks: [BookmarkItem]) async throws -> String
 }
 
+@MainActor
 public class BookmarkSerializer: BookmarkSerializable {
-    private let dispatchQueue: DispatchQueue
+    public init() {}
 
-    public init(dispatchQueue: DispatchQueue = .init(label: "org.ecosia.ios-core.bookmarks")) {
-        self.dispatchQueue = dispatchQueue
-    }
-
+    /// Ecosia: Runs on caller's actor (MainActor when called from export) to avoid sending non-Sendable BookmarkItem across isolation.
     public func serializeBookmarks(_ bookmarks: [BookmarkItem]) async throws -> String {
-        try await withCheckedThrowingContinuation { continuation in
-            dispatchQueue.async { [weak self] in
-                guard let self = self else {
-                    return continuation.resume(throwing: BookmarkSerializerError.cancelled)
-                }
-                /// The trailing open <p> tag is part of the Netscape Bookmark file syntax
-                var html =  """
-                <!DOCTYPE NETSCAPE-Bookmark-file-1>
-                    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-                    <Title>Bookmarks</Title>
-                    <H1>Bookmarks</H1>
-                    <DL><p>
+        /// The trailing open <p> tag is part of the Netscape Bookmark file syntax
+        var html = """
+        <!DOCTYPE NETSCAPE-Bookmark-file-1>
+            <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+            <Title>Bookmarks</Title>
+            <H1>Bookmarks</H1>
+            <DL><p>
 
-                """
+        """
 
-                for bookmark in bookmarks {
-                    html += self.bookmarkBody(for: bookmark, indentation: 2)
-                }
-
-                html += """
-
-                \(String.indent(by: 1))</DL><p>
-                </HTML>
-                """
-
-                continuation.resume(returning: html)
-            }
+        for bookmark in bookmarks {
+            html += bookmarkBody(for: bookmark, indentation: 2)
         }
+
+        html += """
+
+        \(String.indent(by: 1))</DL><p>
+        </HTML>
+        """
+
+        return html
     }
 
     func bookmarkBody(for bookmark: BookmarkItem, indentation: Int) -> String {

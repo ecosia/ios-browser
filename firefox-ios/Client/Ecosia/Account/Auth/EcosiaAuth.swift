@@ -35,6 +35,7 @@ import Common
  - **InvisibleTabSession**: Web session management
  - **TabAutoCloseManager**: Automatic tab cleanup
  */
+@MainActor
 final class EcosiaAuth {
 
     // MARK: - Dependencies
@@ -113,8 +114,8 @@ final class EcosiaAuth {
             browserViewController: browserViewController
         )
 
-        // Start the authentication process
-        Task {
+        // Start the authentication process. Ecosia: Task { @MainActor in } so flow runs on main (UI/tab ops).
+        Task { @MainActor in
             await performLogin(flow)
         }
     }
@@ -131,8 +132,8 @@ final class EcosiaAuth {
             browserViewController: browserViewController
         )
 
-        // Start the authentication process
-        Task {
+        // Start the authentication process. Ecosia: Task { @MainActor in } so flow runs on main (UI/tab ops).
+        Task { @MainActor in
             await performLogout(flow)
         }
     }

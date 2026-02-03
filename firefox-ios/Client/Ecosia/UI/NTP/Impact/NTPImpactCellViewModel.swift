@@ -7,6 +7,7 @@ import Shared
 import Ecosia
 import Common
 
+@MainActor
 protocol NTPImpactCellDelegate: AnyObject {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo)
 }
@@ -56,12 +57,15 @@ protocol NTPImpactCellDelegate: AnyObject {
 
         referrals.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
-            self.refreshCell(withInfo: self.referralInfo)
+            Task { @MainActor in
+                self.refreshCell(withInfo: self.referralInfo)
+            }
         }
     }
 
     deinit {
-        referrals.unsubscribe(self)
+        // Note: referrals.unsubscribe(self) is @MainActor; cannot call from deinit.
+        // Subscription closure uses [weak self] so no retain cycle.
     }
 
     func subscribeToProjections() {
@@ -77,14 +81,18 @@ protocol NTPImpactCellDelegate: AnyObject {
 
         TreesProjection.shared.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
-            self.updateCachedTotalTrees()
-            self.refreshCell(withInfo: self.totalTreesInfo)
+            Task { @MainActor in
+                self.updateCachedTotalTrees()
+                self.refreshCell(withInfo: self.totalTreesInfo)
+            }
         }
 
         InvestmentsProjection.shared.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
-            self.updateCachedTotalInvested()
-            self.refreshCell(withInfo: self.totalInvestedInfo)
+            Task { @MainActor in
+                self.updateCachedTotalInvested()
+                self.refreshCell(withInfo: self.totalInvestedInfo)
+            }
         }
     }
 
@@ -100,6 +108,7 @@ protocol NTPImpactCellDelegate: AnyObject {
     }
 }
 
+/* Ecosia: Removed legacy protocol conformances - now using EcosiaHomepageAdapter
 // MARK: HomeViewModelProtocol
 extension NTPImpactCellViewModel: HomepageViewModelProtocol {
 
@@ -170,3 +179,4 @@ extension NTPImpactCellViewModel: HomepageSectionHandler {
         return cell
     }
 }
+*/

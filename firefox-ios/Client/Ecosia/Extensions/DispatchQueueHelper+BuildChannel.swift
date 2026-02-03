@@ -12,12 +12,15 @@ import Common
 /// - Parameters:
 ///   - work: A closure to be executed on the main thread.
 ///   - delay: The time interval (in seconds) to delay the execution if the build channel is not `.release`. The default value is 5.0 seconds.
-public func executeOnMainThreadWithDelayForNonReleaseBuild(execute work: @escaping @convention(block) () -> Swift.Void,
+public func executeOnMainThreadWithDelayForNonReleaseBuild(execute work: @escaping @Sendable () -> Swift.Void,
                                                            delayedBy delay: TimeInterval = 5.0) {
     if BrowserKitInformation.shared.buildChannel == .release {
         work()
     } else {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+        // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+        Task { @MainActor in
+            // Ecosia: Use nanoseconds for iOS 15 compatibility
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
             work()
         }
     }

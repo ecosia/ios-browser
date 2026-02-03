@@ -18,30 +18,28 @@ public class BookmarkSerializer: BookmarkSerializable {
     public init() {}
 
     public func serializeBookmarks(_ bookmarks: [BookmarkItem]) async throws -> String {
-        // Perform serialization on background task
-        return await Task.detached {
-            /// The trailing open <p> tag is part of the Netscape Bookmark file syntax
-            var html =  """
-            <!DOCTYPE NETSCAPE-Bookmark-file-1>
-                <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-                <Title>Bookmarks</Title>
-                <H1>Bookmarks</H1>
-                <DL><p>
+        // Ecosia: Run on caller's actor (MainActor when called from export) to avoid sending non-Sendable BookmarkItem into Task.detached
+        /// The trailing open <p> tag is part of the Netscape Bookmark file syntax
+        var html = """
+        <!DOCTYPE NETSCAPE-Bookmark-file-1>
+            <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+            <Title>Bookmarks</Title>
+            <H1>Bookmarks</H1>
+            <DL><p>
 
-            """
+        """
 
-            for bookmark in bookmarks {
-                html += self.bookmarkBody(for: bookmark, indentation: 2)
-            }
+        for bookmark in bookmarks {
+            html += self.bookmarkBody(for: bookmark, indentation: 2)
+        }
 
-            html += """
+        html += """
 
-            \(String.indent(by: 1))</DL><p>
-            </HTML>
-            """
+        \(String.indent(by: 1))</DL><p>
+        </HTML>
+        """
 
-            return html
-        }.value
+        return html
     }
 
     func bookmarkBody(for bookmark: BookmarkItem, indentation: Int) -> String {

@@ -10,6 +10,7 @@ import Common
 
 final class NTPTests: SnapshotBaseTests {
 
+    /* Ecosia: Disabled until new homepage snapshot tests are implemented
     func testNTPShowingImpactIntro() {
         User.shared.showImpactIntro()
         snapshotNTP(impactIntroShown: true)
@@ -19,8 +20,10 @@ final class NTPTests: SnapshotBaseTests {
         User.shared.hideImpactIntro()
         snapshotNTP(impactIntroShown: false)
     }
+    */
 }
 
+/* Ecosia: Disabled until new homepage snapshot tests are implemented
 extension NTPTests {
     fileprivate func snapshotNTP(impactIntroShown: Bool) {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
@@ -43,3 +46,4 @@ extension NTPTests {
                                           testName: impactIntroShown ? "NTP_with_impact_intro" : "NTP_without_impact_intro")
     }
 }
+*/

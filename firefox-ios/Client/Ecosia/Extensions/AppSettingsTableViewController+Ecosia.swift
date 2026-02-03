@@ -41,14 +41,21 @@ extension AppSettingsTableViewController {
     }
 
     private func getSearchSection() -> SettingSection {
-
+        guard let profile else {
+            return .init(title: .init(string: .localized(.search)), children: [
+                EcosiaDefaultBrowserSettings(),
+                SearchAreaSetting(settings: self),
+                SafeSearchSettings(settings: self)
+            ])
+        }
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         let settings: [Setting] = [
             EcosiaDefaultBrowserSettings(),
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
-            AutoCompleteSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID)),
-            PersonalSearchSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID)),
-            AIOverviewsSearchSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID))
+            AutoCompleteSettings(prefs: profile.prefs, theme: theme),
+            PersonalSearchSettings(prefs: profile.prefs, theme: theme),
+            AIOverviewsSearchSettings(prefs: profile.prefs, theme: theme)
         ]
 
         return .init(title: .init(string: .localized(.search)),
@@ -56,19 +63,19 @@ extension AppSettingsTableViewController {
     }
 
     private func getCustomizationSection() -> SettingSection {
-
         var customizationSettings: [Setting] = [
             HomepageSettings(settings: self, settingsDelegate: settingsDelegate)
         ]
 
+        /* Ecosia: inactiveTabs / TabsSetting removed in Firefox upgrade; re-add if Nimbus adds flag
         let inactiveTabsAreBuildActive = featureFlags.isFeatureEnabled(.inactiveTabs, checking: .buildOnly)
-
         if inactiveTabsAreBuildActive {
-            customizationSettings.append(TabsSetting(theme: themeManager.getCurrentTheme(for: windowUUID), settingsDelegate: parentCoordinator))
+            customizationSettings.append(TabsSetting(theme: ..., settingsDelegate: parentCoordinator))
         }
+        */
 
-        if isSearchBarLocationFeatureEnabled {
-            customizationSettings.append(SearchBarSetting(settings: self, settingsDelegate: parentCoordinator))
+        if isSearchBarLocationFeatureEnabled, let profile {
+            customizationSettings.append(SearchBarSetting(settings: self, profile: profile, settingsDelegate: parentCoordinator))
         }
 
         return .init(title: .init(string: .localized(.customization)),
@@ -76,16 +83,24 @@ extension AppSettingsTableViewController {
     }
 
     private func getEcosiaGeneralSection() -> SettingSection {
-
+        guard let profile else {
+            return .init(title: .init(string: .SettingsGeneralSectionTitle),
+                         children: [
+                            ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
+                            SiriPageSetting(settings: self, settingsDelegate: parentCoordinator)
+                         ])
+        }
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        /* Ecosia: OpenWithSetting expects BrowsingSettingsDelegate; parentCoordinator is SettingsFlowDelegate so pass nil */
         let generalSettings: [Setting] = [
-            OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
+            OpenWithSetting(settings: self, settingsDelegate: nil),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
             SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
-            BlockPopupSetting(settings: self),
-            NoImageModeSetting(settings: self),
+            BlockPopupSetting(prefs: profile.prefs),
+            NoImageModeSetting(profile: profile),
             BoolSetting(
                 prefs: profile.prefs,
-                theme: themeManager.getCurrentTheme(for: windowUUID),
+                theme: theme,
                 prefKey: "showClipboardBar",
                 defaultValue: false,
                 titleText: .SettingsOfferClipboardBarTitle,
@@ -93,7 +108,7 @@ extension AppSettingsTableViewController {
             ),
             BoolSetting(
                 prefs: profile.prefs,
-                theme: themeManager.getCurrentTheme(for: windowUUID),
+                theme: theme,
                 prefKey: PrefsKeys.ContextMenuShowLinkPreviews,
                 defaultValue: true,
                 titleText: .SettingsShowLinkPreviewsTitle,
@@ -114,21 +129,24 @@ extension AppSettingsTableViewController {
     }
 
     private func getEcosiaPrivacySection() -> SettingSection {
-        let privacySettings = [
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        var privacySettings: [Setting] = [
             PasswordManagerSetting(settings: self, settingsDelegate: parentCoordinator),
             ClearPrivateDataSetting(settings: self, settingsDelegate: parentCoordinator),
-            EcosiaSendAnonymousUsageDataSetting(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID)),
-            BoolSetting(prefs: profile.prefs,
-                        theme: themeManager.getCurrentTheme(for: windowUUID),
-                        prefKey: PrefsKeys.Settings.closePrivateTabs,
-                        // Ecosia: Default value is different from Firefox
-                        defaultValue: PrefsKeysDefaultValues.Settings.closePrivateTabs,
-                        titleText: .AppSettingsClosePrivateTabsTitle,
-                        statusText: .AppSettingsClosePrivateTabsDescription),
             ContentBlockerSetting(settings: self, settingsDelegate: parentCoordinator),
             EcosiaPrivacyPolicySetting(settings: self),
             EcosiaTermsSetting(settings: self)
         ]
+        if let profile {
+            privacySettings.insert(EcosiaSendAnonymousUsageDataSetting(prefs: profile.prefs, theme: theme), at: 2)
+            privacySettings.insert(BoolSetting(prefs: profile.prefs,
+                        theme: theme,
+                        prefKey: PrefsKeys.Settings.closePrivateTabs,
+                        // Ecosia: Default value is different from Firefox
+                        defaultValue: PrefsKeysDefaultValues.Settings.closePrivateTabs,
+                        titleText: .AppSettingsClosePrivateTabsTitle,
+                        statusText: .AppSettingsClosePrivateTabsDescription), at: 3)
+        }
 
         return .init(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
                      children: privacySettings)
@@ -146,6 +164,7 @@ extension AppSettingsTableViewController {
     }
 
     private func getEcosiaDebugSupportSection() -> SettingSection {
+        /* Ecosia: FasterInactiveTabs removed in Firefox upgrade; re-add if type is restored */
         var hiddenDebugSettings: [Setting] = [
             ExportBrowserDataSetting(settings: self),
             ForceCrashSetting(settings: self),
@@ -160,7 +179,6 @@ extension AppSettingsTableViewController {
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),
-            FasterInactiveTabs(settings: self, settingsDelegate: self),
             AnalyticsIdentifierSetting(settings: self),
         ]
 

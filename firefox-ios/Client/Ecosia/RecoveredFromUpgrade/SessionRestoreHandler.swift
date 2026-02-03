@@ -41,7 +41,7 @@ func generateResponseThatRedirects(toUrl url: URL) -> (URLResponse, Data) {
 class SessionRestoreHandler: InternalSchemeResponse {
     static let path = "sessionrestore"
 
-    func response(forRequest request: URLRequest) -> (URLResponse, Data)? {
+    func response(forRequest request: URLRequest, useOldErrorPage: Bool = false) -> (URLResponse, Data)? {
         guard let _url = request.url, let url = InternalURL(_url) else { return nil }
 
         // Handle the 'url='query param

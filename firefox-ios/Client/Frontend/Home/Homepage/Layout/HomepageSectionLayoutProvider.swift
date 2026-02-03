@@ -144,6 +144,11 @@ final class HomepageSectionLayoutProvider: FeatureFlaggable {
         for section: HomepageSection,
         with environment: NSCollectionLayoutEnvironment
     ) -> NSCollectionLayoutSection {
+        // Ecosia: Handle custom sections
+        if let ecosiaLayout = createEcosiaLayoutSection(for: section, with: environment) {
+            return ecosiaLayout
+        }
+        
         let traitCollection = environment.traitCollection
         switch section {
         case .searchBar:
@@ -187,6 +192,11 @@ final class HomepageSectionLayoutProvider: FeatureFlaggable {
             return createBookmarksSectionLayout(for: environment)
         case .spacer:
             return createSpacerSectionLayout(for: environment)
+        // Ecosia: Add default statement to silence switch case
+        default:
+            return NSCollectionLayoutSection(group: .init(layoutSize:
+                    .init(widthDimension: .absolute(0), heightDimension: .absolute(0)),
+                                                          supplementaryItems: []))
         }
     }
 

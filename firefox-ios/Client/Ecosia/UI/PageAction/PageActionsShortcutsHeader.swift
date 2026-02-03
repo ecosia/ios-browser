@@ -5,6 +5,7 @@
 import UIKit
 import Common
 
+@MainActor
 protocol PageActionsShortcutsDelegate: AnyObject {
     func pageOptionsOpenHome()
     func pageOptionsNewTab()

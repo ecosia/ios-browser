@@ -6,6 +6,7 @@ import UIKit
 import Common
 import Ecosia
 
+@MainActor
 protocol DefaultBrowserDelegate: AnyObject {
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowserViewController)
 }
@@ -111,6 +112,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     var screenWidth: CGFloat { UIScreen.main.bounds.width }
 
     // MARK: Themeable Properties
+    var themeListenerCancellable: Any?
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { windowUUID }
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
@@ -146,7 +148,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         setupConstraints()
         applyTheme()
 
-        listenForThemeChange(self.view)
+        listenForThemeChanges(withNotificationCenter: notificationCenter)
     }
 
     override func viewWillAppear(_ animated: Bool) {

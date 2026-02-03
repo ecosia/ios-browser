@@ -2,12 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+// Ecosia: Subclass UIButton instead of ToolbarButton (ToolbarButton is internal to ToolbarKit and not visible to Client).
+
 import UIKit
 import Shared
 import Common
 
 @MainActor
-class CircleButton: ToolbarButton {
+class CircleButton: UIButton, ThemeApplicable {
     enum Config {
         case search
         case newTab
@@ -27,7 +29,7 @@ class CircleButton: ToolbarButton {
         var accessibilityLabel: String {
             switch self {
             case .search: return .TabToolbarSearchAccessibilityLabel
-            case .newTab: return .TabTrayButtonNewTabAccessibilityLabel
+            case .newTab: return .TabsTray.TabTrayAddTabAccessibilityLabel
             }
         }
     }
@@ -58,7 +60,7 @@ class CircleButton: ToolbarButton {
     }
 
     private func setup() {
-        setImage(.templateImageNamed(config.image), for: .normal)
+        setImage(UIImage.templateImageNamed(config.image), for: .normal)
         circle.isUserInteractionEnabled = false
         addSubview(circle)
         sendSubviewToBack(circle)
@@ -69,16 +71,14 @@ class CircleButton: ToolbarButton {
     override func layoutSubviews() {
         super.layoutSubviews()
         let height = bounds.height - margin
-        circle.bounds = .init(size: .init(width: height, height: height))
+        circle.bounds = CGRect(origin: .zero, size: CGSize(width: height, height: height))
         circle.layer.cornerRadius = circle.bounds.height / 2
-        circle.center = .init(x: bounds.width/2, y: bounds.height/2)
+        circle.center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
         circle.isHidden = config.shouldHideCircle
     }
 
-    override func applyTheme(theme: Theme) {
+    func applyTheme(theme: Theme) {
         circle.backgroundColor = theme.colors.ecosia.backgroundTertiary
         tintColor = config.shouldHideCircle ? theme.colors.ecosia.textPrimary : theme.colors.ecosia.buttonBackgroundPrimary
-        selectedTintColor = theme.colors.ecosia.buttonBackgroundPrimaryActive
-        unselectedTintColor = tintColor
     }
 }

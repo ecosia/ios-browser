@@ -72,25 +72,20 @@ final class InvisibleTabSession: TabEventHandler {
 
     // MARK: - Private Implementation
 
+    /// Ecosia: Use TabManager.addTab (LegacyTabManager/configureTab removed in Firefox upgrade)
     private static func createInvisibleTab(url: URL, browserViewController: BrowserViewController) throws -> Tab {
         let profile = browserViewController.profile
+        let tabManager = browserViewController.tabManager
 
-        guard let tabManager = browserViewController.tabManager as? LegacyTabManager else {
-            throw AuthError.authFlowConfigurationError("TabManager not available")
-        }
-
-        // Create invisible tab
-        let newTab = Tab(profile: profile, isPrivate: false, windowUUID: tabManager.windowUUID)
+        let newTab = tabManager.addTab(
+            URLRequest(url: url),
+            afterTab: nil,
+            zombie: false,
+            isPrivate: false
+        )
         newTab.url = url
         newTab.isInvisible = true
 
-        tabManager.configureTab(newTab,
-                                request: URLRequest(url: url),
-                                afterTab: nil,
-                                flushToDisk: true,
-                                zombie: false)
-
-        // Mark as invisible in the manager
         InvisibleTabManager.shared.markTabAsInvisible(newTab)
 
         EcosiaLogger.invisibleTabs.info("Invisible tab created: \(newTab.tabUUID)")
@@ -98,20 +93,17 @@ final class InvisibleTabSession: TabEventHandler {
     }
 
     private func setupTabAutoCloseManager() {
-        // Ensure InvisibleTabAutoCloseManager has the TabManager reference
-        if let tabManager = browserViewController?.tabManager {
-            InvisibleTabAutoCloseManager.shared.setTabManager(tabManager)
-        }
+        guard let tabManager = browserViewController?.tabManager else { return }
+        let tabUUID = tab.tabUUID
+        let timeout = timeout
 
         Task { @MainActor in
-            // Setup auto-close monitoring
+            InvisibleTabAutoCloseManager.shared.setTabManager(tabManager)
             InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
-                self.tab,
+                tabUUID: tabUUID,
                 on: .EcosiaAuthStateChanged,
-                timeout: self.timeout
+                timeout: timeout
             )
-
-            // Register for tab close events
             register(self, forTabEvents: .didClose)
         }
     }
@@ -123,12 +115,20 @@ final class InvisibleTabSession: TabEventHandler {
         cleanup()
 
         EcosiaLogger.invisibleTabs.info("Session completed for tab: \(tab.tabUUID), success: true")
-        completion?(true)
+        // Ecosia: Ensure completion is called on main for strict concurrency (caller may update UI).
+        let completionToCall = completion
+        completion = nil
+        if let completionToCall = completionToCall {
+            Task { @MainActor in
+                completionToCall(true)
+            }
+        }
     }
 
     private func cleanup() {
-        // Cancel auto-close monitoring in InvisibleTabAutoCloseManager
-        InvisibleTabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
+        Task { @MainActor in
+            InvisibleTabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
+        }
     }
 
     private func closeTab() {
@@ -141,10 +141,10 @@ final class InvisibleTabSession: TabEventHandler {
         // Remove from invisible tracking
         InvisibleTabManager.shared.markTabAsVisible(tab)
 
-        // Remove the tab
-        tabManager.removeTab(tab) {
-            EcosiaLogger.invisibleTabs.info("Tab closed: \(self.tab.tabUUID)")
-        }
+        // Ecosia: TabManager protocol has removeTab(_ tabUUID: TabUUID) with no completion
+        tabManager.removeTab(tab.tabUUID)
+        tabManager.cleanupInvisibleTabTracking()
+        EcosiaLogger.invisibleTabs.info("Tab closed: \(tab.tabUUID)")
     }
 
     // MARK: - TabEventHandler
@@ -162,8 +162,8 @@ final class InvisibleTabSession: TabEventHandler {
 
     // MARK: - Cleanup
 
+    /// Ecosia: Don't call cleanup() from deinit — cleanup() is main-actor/actor-isolated. Callers must ensure cleanup when session ends (e.g. handleTabClosed).
     deinit {
-        cleanup()
         EcosiaLogger.invisibleTabs.debug("InvisibleTabSession deallocated")
     }
 }

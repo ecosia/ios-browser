@@ -10,6 +10,7 @@ import Common
 import class MozillaAppServices.BookmarkFolderData
 import Ecosia
 
+@MainActor
 protocol BookmarksExchangable {
     func export(bookmarks: [Ecosia.BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws
     func `import`(from fileURL: URL, in viewController: UIViewController) async throws
@@ -54,7 +55,6 @@ final class BookmarksExchange: BookmarksExchangable {
         )
 
         let serializer = BookmarkSerializer()
-
         let htmlExport = try await serializer.serializeBookmarks(bookmarks)
 
         let exportedBooksmarksUrl = FileManager.default.temporaryDirectory.appendingPathComponent("Bookmarks.html")
@@ -167,6 +167,7 @@ final class BookmarksExchange: BookmarksExchangable {
         }
     }
 
+    @MainActor
     private func themeFromView(view: UIView) -> Theme {
         let themeManager: ThemeManager = AppContainer.shared.resolve()
         return themeManager.getCurrentTheme(for: view.currentWindowUUID)

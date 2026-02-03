@@ -6,6 +6,7 @@ import UIKit
 import Shared
 import Ecosia
 
+/* Ecosia: Legacy NTP layout - disabled as it's no longer used with new homepage architecture
 protocol NTPLayoutHighlightDataSource: AnyObject {
     func getSectionViewModel(shownSection: Int) -> HomepageViewModelProtocol?
 }
@@ -60,3 +61,4 @@ extension String {
         return boundingBox.height
     }
 }
+*/

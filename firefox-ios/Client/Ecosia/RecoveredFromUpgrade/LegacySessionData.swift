@@ -13,10 +13,11 @@ import Shared
 /// reduces security risk. Also, this particular method helps in cleaning up / migrating
 /// old localhost:6571 URLs to internal: SessionData urls 
 private func migrate(urls: [URL]) -> [URL] {
+    let sessionRestorePath = "sessionrestore" // Ecosia: avoid MainActor-isolated SessionRestoreHandler.path
     return urls.compactMap { url in
         var url = url
         let port = AppInfo.webserverPort
-        [("http://localhost:\(port)/errors/error.html?url=", "\(InternalURL.baseUrl)/\(SessionRestoreHandler.path)?url=")
+        [("http://localhost:\(port)/errors/error.html?url=", "\(InternalURL.baseUrl)/\(sessionRestorePath)?url=")
             // TODO: handle reader pages ("http://localhost:6571/reader-mode/page?url=", "\(InternalScheme.url)/\(ReaderModeHandler.path)?url=")
             ].forEach { oldItem, newItem in
             if url.absoluteString.hasPrefix(oldItem) {
@@ -27,21 +28,20 @@ private func migrate(urls: [URL]) -> [URL] {
                     urlStr = newItem + (comp.last ?? "")
                     assertionFailure("SessionData urls have nested internal links, investigate: [\(url.absoluteString)]")
                 }
-                url = URL(string: urlStr, invalidCharacters: false) ?? url
+                url = URL(string: urlStr) ?? url
             }
         }
 
         if let internalUrl = InternalURL(url), internalUrl.isAuthorized,
-            let stripped = URL(string: internalUrl.stripAuthorization, invalidCharacters: false) {
+            let stripped = URL(string: internalUrl.stripAuthorization) {
             return stripped
         }
 
         return url
     }
 }
-// Ecosia: Tabs architecture implementation from ~v112 to ~116
+// Ecosia: Tabs architecture implementation from ~v112 to ~116; NSCoding methods are nonisolated for concurrency.
 // class LegacySessionData: Codable {
-@MainActor
 class LegacySessionData: NSObject, Codable, NSCoding {
 
     let currentPage: Int
