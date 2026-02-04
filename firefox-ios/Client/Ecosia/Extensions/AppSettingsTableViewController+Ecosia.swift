@@ -174,7 +174,6 @@ extension AppSettingsTableViewController {
     private func getEcosiaDebugUnleashSection() -> SettingSection {
         let unleashSettings: [Setting] = [
             UnleashBrazeIntegrationSetting(settings: self),
-            UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]

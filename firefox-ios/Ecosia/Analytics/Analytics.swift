@@ -287,8 +287,9 @@ open class Analytics {
 
     // MARK: In-App Search
     public func inappSearch(url: URL) {
-        guard NativeSRPVAnalyticsExperiment.isEnabled,
-              let query = url.getEcosiaSearchQuery() else {
+        // Note: This functionality was previously guarded/throttled by the mob_ios_native_srpv_analytics feature flag
+        // and has been permanently enabled/unthrottled as part of MOB-4040
+        guard let query = url.getEcosiaSearchQuery() else {
             return
         }
         let payload: [String: Any?] = [
