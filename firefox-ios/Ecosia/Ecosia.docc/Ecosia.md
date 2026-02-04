@@ -76,20 +76,20 @@ brew install swiftlint
 
 1. Install the latest [Xcode developer tools](https://developer.apple.com/xcode/downloads/) from Apple.
 2. Install, [Brew](https://brew.sh), Node, and a Python3 virtualenv for localization scripts:
-```shell
-brew update
-brew install node
-pip3 install virtualenv
-```
+    ```shell
+    brew update
+    brew install node
+    pip3 install virtualenv
+    ```
 3. Clone the repository:
-```shell
-git clone https://github.com/ecosia/ios-browser
-```
+    ```shell
+    git clone https://github.com/ecosia/ios-browser
+    ```
 4. Install Node.js dependencies, build user scripts and update content blocker:
-```shell
-cd ios-browser
-sh ./bootstrap.sh
-```
+    ```shell
+    cd ios-browser
+    sh ./bootstrap.sh
+    ```
 5. Open `firefox-ios/Client.xcodeproj` in Xcode.
 6. Make sure to select the `Ecosia` [scheme](https://developer.apple.com/documentation/xcode/build-system?changes=_2) in Xcode.
 7. Select the destination device you want to build on.
