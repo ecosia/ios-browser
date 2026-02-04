@@ -13,7 +13,6 @@ struct PrivateBrowsingTelemetry {
     }
 
     func sendDataClearanceTappedTelemetry(didConfirm: Bool) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let didConfirmExtra = GleanMetrics.PrivateBrowsing.DataClearanceIconTappedExtra(didConfirm: didConfirm)
         gleanWrapper.recordEvent(for: GleanMetrics.PrivateBrowsing.dataClearanceIconTapped, extras: didConfirmExtra)
     }

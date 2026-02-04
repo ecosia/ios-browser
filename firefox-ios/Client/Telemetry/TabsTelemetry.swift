@@ -17,19 +17,16 @@ final class TabsTelemetry {
     }
 
     func startTabSwitchMeasurement() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         tabSwitchTimerId = gleanWrapper.startTiming(for: GleanMetrics.Tabs.tabSwitch)
     }
 
     func stopTabSwitchMeasurement() {
         guard let timerId = tabSwitchTimerId else { return }
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.stopAndAccumulateTiming(for: GleanMetrics.Tabs.tabSwitch, timerId: timerId)
         tabSwitchTimerId = nil
     }
 
     func trackConsecutiveCrashTelemetry(attemptNumber: UInt) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extras = GleanMetrics.Webview.ProcessDidTerminateExtra(consecutiveCrash: Int32(attemptNumber))
         gleanWrapper.recordEvent(for: GleanMetrics.Webview.processDidTerminate,
                                  extras: extras)

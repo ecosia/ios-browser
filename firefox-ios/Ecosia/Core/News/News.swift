@@ -42,34 +42,38 @@ public final class News: StatePublisher {
     public func load(session: URLSession, force: Bool = false) {
         guard needsUpdate || force else { return }
         session.dataTask(with: EcosiaEnvironment.current.urlProvider.notifications) { [weak self] data, _, _ in
-            self?.dispatch.async { [weak self] in
-                guard
-                    let data = data,
-                    let new = try? self?.decoder.decode([NewsModel].self, from: data)
-                else {
-                    return
-                }
-                let cleaned = new.compactMap { self?.clean($0) }
-                self?.items = .init(cleaned + (self?.items ?? []))
-                self?.save()
+            Task { @MainActor in
+                guard let self else { return }
+                guard let data = data,
+                      let new = try? self.decoder.decode([NewsModel].self, from: data)
+                else { return }
+                let cleaned = new.compactMap { self.clean($0) }
+                self.items = .init(cleaned + self.items)
+                self.save()
             }
         }.resume()
     }
 
     private func restore() {
         dispatch.async { [weak self] in
-            if let news = try? JSONDecoder().decode([NewsModel].self, from: .init(contentsOf: FileManager.news)) {
-                self?.items = .init(news.filter { $0.language == Language.current })
+            let loaded = try? JSONDecoder().decode([NewsModel].self, from: .init(contentsOf: FileManager.news))
+            Task { @MainActor in
+                if let self, let news = loaded {
+                    self.items = .init(news.filter { $0.language == Language.current })
+                }
             }
         }
     }
 
     private func save() {
-        dispatch.async { [weak self] in
-            guard let items = self?.items, !items.isEmpty else { return }
+        let itemsToSave = items
+        guard !itemsToSave.isEmpty else { return }
+        dispatch.async {
             do {
-                try JSONEncoder().encode(items).write(to: FileManager.news, options: .atomic)
-                User.shared.news = Date()
+                try JSONEncoder().encode(itemsToSave).write(to: FileManager.news, options: .atomic)
+                Task { @MainActor in
+                    User.shared.news = Date()
+                }
             } catch {}
         }
     }

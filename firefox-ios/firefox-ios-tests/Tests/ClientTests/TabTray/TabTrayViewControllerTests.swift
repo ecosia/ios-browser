@@ -7,14 +7,15 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class TabTrayViewControllerTests: XCTestCase {
     var delegate: MockTabTrayViewControllerDelegate!
     var navigationController: DismissableNavigationViewController!
     private var tabManager: MockTabManager!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         let mockTabManager = MockTabManager()
         DependencyHelperMock().bootstrapDependencies(injectedTabManager: mockTabManager)
         delegate = MockTabTrayViewControllerDelegate()
@@ -23,11 +24,12 @@ final class TabTrayViewControllerTests: XCTestCase {
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         delegate = nil
         navigationController = nil
         DependencyHelperMock().reset()
+
+        try await super.tearDown()
     }
 
     // MARK: Compact layout
@@ -36,9 +38,7 @@ final class TabTrayViewControllerTests: XCTestCase {
         viewController.layout = .compact
         viewController.viewWillAppear(false)
 
-        // Ecosia: update items
-        // XCTAssertEqual(viewController.segmentControlItems.count, 3)
-        XCTAssertEqual(viewController.segmentControlItems.count, 2)
+        XCTAssertEqual(viewController.segmentControlItems.count, 3)
         guard let navController = viewController.navigationController else {
             XCTFail("NavigationController is expected")
             return
@@ -49,6 +49,7 @@ final class TabTrayViewControllerTests: XCTestCase {
     }
 
     func testBottomToolbarItems_ForTabsInCompact() {
+        setupNimbusTabTrayUIExperimentTesting(isEnabled: false)
         let viewController = createSubject()
 
         viewController.layout = .compact
@@ -58,6 +59,7 @@ final class TabTrayViewControllerTests: XCTestCase {
     }
 
     func testBottomToolbarItems_ForPrivateTabsInCompact() {
+        setupNimbusTabTrayUIExperimentTesting(isEnabled: false)
         let viewController = createSubject(selectedSegment: .privateTabs)
 
         viewController.layout = .compact
@@ -67,11 +69,41 @@ final class TabTrayViewControllerTests: XCTestCase {
     }
 
     func testBottomToolbarItems_ForSyncTabsEnabledInCompact() {
+        setupNimbusTabTrayUIExperimentTesting(isEnabled: false)
         let viewController = createSubject(selectedSegment: .syncedTabs)
         viewController.layout = .compact
         viewController.viewWillAppear(false)
 
         XCTAssertEqual(viewController.toolbarItems?.count, 0)
+    }
+
+    func testBottomToolbarItemsWithExperiment_ForTabsInCompact() {
+        setupNimbusTabTrayUIExperimentTesting(isEnabled: true)
+        let viewController = createSubject()
+
+        viewController.layout = .compact
+        viewController.viewWillAppear(false)
+
+        XCTAssertEqual(viewController.toolbarItems?.count, 5)
+    }
+
+    func testBottomToolbarItemsWithExperiment_ForPrivateTabsInCompact() {
+        setupNimbusTabTrayUIExperimentTesting(isEnabled: true)
+        let viewController = createSubject(selectedSegment: .privateTabs)
+
+        viewController.layout = .compact
+        viewController.viewWillAppear(false)
+
+        XCTAssertEqual(viewController.toolbarItems?.count, 5)
+    }
+
+    func testBottomToolbarItemsWithExperiment_ForSyncTabsEnabledInCompact() {
+        setupNimbusTabTrayUIExperimentTesting(isEnabled: true)
+        let viewController = createSubject(selectedSegment: .syncedTabs)
+        viewController.layout = .compact
+        viewController.viewWillAppear(false)
+
+        XCTAssertEqual(viewController.toolbarItems?.count, 2)
     }
 
     // MARK: Regular layout
@@ -80,9 +112,7 @@ final class TabTrayViewControllerTests: XCTestCase {
         viewController.layout = .regular
         viewController.viewWillAppear(false)
 
-        // Ecosia: update items
-        // XCTAssertEqual(viewController.segmentControlItems.count, 3)
-        XCTAssertEqual(viewController.segmentControlItems.count, 2)
+        XCTAssertEqual(viewController.segmentControlItems.count, 3)
         guard let navController = viewController.navigationController else {
             XCTFail("NavigationController is expected")
             return
@@ -94,9 +124,9 @@ final class TabTrayViewControllerTests: XCTestCase {
 
     // MARK: - Private
     private func createSubject(selectedSegment: TabTrayPanelType = .tabs,
-                               file: StaticString = #file,
+                               file: StaticString = #filePath,
                                line: UInt = #line) -> TabTrayViewController {
-        let subject = TabTrayViewController(selectedTab: selectedSegment, windowUUID: .XCTestDefaultUUID)
+        let subject = TabTrayViewController(panelType: selectedSegment, windowUUID: .XCTestDefaultUUID)
         subject.delegate = delegate
         subject.childPanelControllers = makeChildPanels()
         subject.setupOpenPanel(panelType: selectedSegment)
@@ -117,14 +147,27 @@ final class TabTrayViewControllerTests: XCTestCase {
     }
 
     private func makeChildPanels() -> [UINavigationController] {
-        let regularTabsPanel = TabDisplayPanel(isPrivateMode: false, windowUUID: .XCTestDefaultUUID)
-        let privateTabsPanel = TabDisplayPanel(isPrivateMode: true, windowUUID: .XCTestDefaultUUID)
+        let delegate = MockTabDisplayViewDragAndDropInteraction()
+        let regularTabsPanel = TabDisplayPanelViewController(isPrivateMode: false,
+                                                             windowUUID: .XCTestDefaultUUID,
+                                                             dragAndDropDelegate: delegate)
+        let privateTabsPanel = TabDisplayPanelViewController(isPrivateMode: true,
+                                                             windowUUID: .XCTestDefaultUUID,
+                                                             dragAndDropDelegate: delegate)
         let syncTabs = RemoteTabsPanel(windowUUID: .XCTestDefaultUUID)
         return [
             ThemedNavigationController(rootViewController: regularTabsPanel, windowUUID: windowUUID),
             ThemedNavigationController(rootViewController: privateTabsPanel, windowUUID: windowUUID),
             ThemedNavigationController(rootViewController: syncTabs, windowUUID: windowUUID)
         ]
+    }
+
+    private func setupNimbusTabTrayUIExperimentTesting(isEnabled: Bool) {
+        FxNimbus.shared.features.tabTrayUiExperiments.with { _, _ in
+            return TabTrayUiExperiments(
+                enabled: isEnabled
+            )
+        }
     }
 }
 

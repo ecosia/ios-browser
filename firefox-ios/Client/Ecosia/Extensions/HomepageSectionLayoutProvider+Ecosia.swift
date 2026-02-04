@@ -98,19 +98,26 @@ extension HomepageSectionLayoutProvider {
     }
     
     private func createEcosiaImpactLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+        // Impact has two cells: first = trees + invested, second = referral. Use a vertical group of 2 items.
+        let estimatedCellHeight: CGFloat = 200
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(200)
+            heightDimension: .estimated(estimatedCellHeight)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(
+        let verticalGroupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(200)
+            heightDimension: .estimated(estimatedCellHeight * 2)
         )
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
+        let verticalGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: verticalGroupSize,
+            subitem: item,
+            count: 2
+        )
         
-        let section = NSCollectionLayoutSection(group: group)
+        let section = NSCollectionLayoutSection(group: verticalGroup)
+        section.interGroupSpacing = 0
         
         let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 0)
         section.contentInsets = insets

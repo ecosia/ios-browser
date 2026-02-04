@@ -106,6 +106,12 @@ protocol NTPImpactCellDelegate: AnyObject {
         guard let index = indexForInfo else { return }
         cells[index]?.refresh(items: infoItemSections[index])
     }
+
+    /// Registers a cell so it can be refreshed when projection data updates (e.g. trees planted).
+    /// Call this when configuring the cell in the collection view data source.
+    func registerCell(_ cell: NTPImpactCell, forSectionIndex index: Int) {
+        cells[index] = cell
+    }
 }
 
 /* Ecosia: Removed legacy protocol conformances - now using EcosiaHomepageAdapter

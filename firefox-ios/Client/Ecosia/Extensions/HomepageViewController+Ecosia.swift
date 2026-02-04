@@ -5,6 +5,8 @@
 import UIKit
 import Ecosia
 
+// MARK: - Homepage / shared delegates
+
 @MainActor
 protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidTapSearchButton(_ home: HomepageViewController)
@@ -22,35 +24,33 @@ extension BrowserViewController: SharedHomepageCellDelegate {
     }
 }
 
-/* Ecosia: Review Homepage View Controller
-extension LegacyHomepageViewController: SharedHomepageCellDelegate {
-    func openLink(url: URL) {
-        homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
-    }
-}
- */
 protocol SharedHomepageCellLayoutDelegate: AnyObject {
     func invalidateLayout(at indexPaths: [IndexPath])
 }
-/* Ecosia: Review Homepage View Controller
-extension LegacyHomepageViewController: SharedHomepageCellLayoutDelegate {
-    func invalidateLayout(at indexPaths: [IndexPath]) {
-        let context = UICollectionViewLayoutInvalidationContext()
-        context.invalidateItems(at: indexPaths)
-        collectionView.collectionViewLayout.invalidateLayout(with: context)
-    }
-}
 
-extension LegacyHomepageViewController: NTPTooltipDelegate {
+/*
+ Ecosia: LegacyHomepageViewController NTP extensions removed.
+ NTP delegate behaviour for the new homepage lives in the BrowserViewController
+ extensions below. The new structure uses HomepageViewController + EcosiaHomepageAdapter
+ with delegates set to BrowserViewController in setupEcosiaAdapter.
+ */
+
+// MARK: - Ecosia NTP Delegates (New Homepage – single source of truth)
+@MainActor
+extension BrowserViewController: @MainActor NTPTooltipDelegate {
     func ntpTooltipTapped(_ tooltip: NTPTooltip?) {
-        handleTooltipTapped(tooltip)
+        handleNTPTooltipTapped(tooltip)
     }
 
     func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?) {
-        handleTooltipTapped(tooltip)
+        handleNTPTooltipTapped(tooltip)
     }
 
-    private func handleTooltipTapped(_ tooltip: NTPTooltip?) {
+    func reloadTooltip() {
+        (contentContainer.contentController as? HomepageViewController)?.refreshEcosiaSnapshot()
+    }
+
+    private func handleNTPTooltipTapped(_ tooltip: NTPTooltip?) {
         guard let ntpHighlight = NTPTooltip.highlight() else { return }
 
         UIView.animate(withDuration: 0.3) {
@@ -68,70 +68,8 @@ extension LegacyHomepageViewController: NTPTooltipDelegate {
             self?.reloadTooltip()
         }
     }
-
-    func reloadTooltip() {
-        reloadView()
-    }
 }
 
-extension LegacyHomepageViewController: NTPLibraryDelegate {
-    func libraryCellOpenBookmarks() {
-        homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
-    }
-
-    func libraryCellOpenHistory() {
-        homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .history)
-    }
-
-    func libraryCellOpenReadlist() {
-        homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .readingList)
-    }
-
-    func libraryCellOpenDownloads() {
-        homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .downloads)
-    }
-}
-
-extension LegacyHomepageViewController: NTPImpactCellDelegate {
-    func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
-        switch info {
-        case .referral:
-            let invite = MultiplyImpact(referrals: referrals, windowUUID: windowUUID)
-            invite.delegate = self
-            let nav = EcosiaNavigation(rootViewController: invite)
-            present(nav, animated: true)
-        default:
-            return
-        }
-    }
-}
-
-extension LegacyHomepageViewController: NTPNewsCellDelegate {
-    func openSeeAllNews() {
-        let news = NewsController(items: viewModel.newsViewModel.items,
-                                  windowUUID: windowUUID)
-        news.delegate = self
-        let nav = EcosiaNavigation(rootViewController: news)
-        present(nav, animated: true)
-        Analytics.shared.navigation(.open, label: .news)
-    }
-}
-
-extension LegacyHomepageViewController: NTPCustomizationCellDelegate {
-    func openNTPCustomizationSettings() {
-        Analytics.shared.ntpCustomisation(.click, label: .customize)
-        browserNavigationHandler?.show(settings: .homePage)
-    }
-}
-
-extension LegacyHomepageViewController: NTPHeaderDelegate {
-    func headerOpenAISearch() {
-        openLink(url: Environment.current.urlProvider.aiSearch(origin: .ntp))
-    }
-}
-*/
-
-// MARK: - Ecosia NTP Delegates (New Homepage)
 @MainActor
 extension BrowserViewController: NTPHeaderDelegate {
     func headerOpenAISearch() {

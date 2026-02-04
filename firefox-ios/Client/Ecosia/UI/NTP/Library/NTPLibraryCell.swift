@@ -55,6 +55,7 @@ class NTPLibraryCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        contentView.backgroundColor = .clear
         mainView.distribution = .fillEqually
         mainView.spacing = 0
         mainView.translatesAutoresizingMaskIntoConstraints = false

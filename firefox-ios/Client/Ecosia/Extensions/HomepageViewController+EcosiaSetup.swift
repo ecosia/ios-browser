@@ -5,9 +5,52 @@
 import UIKit
 import Common
 import Ecosia
+import Redux
 
-extension HomepageViewController {
-    
+extension HomepageViewController: @MainActor HomepageDataModelDelegate {
+
+    func reloadView() {
+        refreshEcosiaSnapshot()
+    }
+
+    /// Ecosia: Opens the selected news article in a new tab and records analytics
+    func handleEcosiaNewsSelection(at indexPath: IndexPath) {
+        guard let items = ecosiaAdapter?.newsViewModel?.items,
+              indexPath.item < items.count else { return }
+        let newsItem = items[indexPath.item]
+        let destination = NavigationDestination(
+            .newTab,
+            url: newsItem.targetUrl,
+            isPrivate: false,
+            selectNewTab: true
+        )
+        store.dispatch(NavigationBrowserAction(
+            navigationDestination: destination,
+            windowUUID: windowUUID,
+            actionType: NavigationBrowserActionType.tapOnCell
+        ))
+        Analytics.shared.navigationOpenNews(newsItem.trackingName)
+    }
+
+    /// Ecosia: Registers all Ecosia cell types on the collection view. Call from configureCollectionView so Ecosia cells (e.g. NTPHeader) are always available regardless of setup order.
+    func registerEcosiaCells(on collectionView: UICollectionView) {
+        var types: [ReusableCell.Type] = [
+            NTPLogoCell.self,
+            NTPLibraryCell.self,
+            TopSiteCell.self,
+            EmptyTopSiteCell.self,
+            NTPImpactCell.self,
+            NTPNewsCell.self,
+            NTPCustomizationCell.self
+        ]
+        if #available(iOS 16.0, *) {
+            types.insert(NTPHeader.self, at: 0)
+        }
+        types.forEach {
+            collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
+        }
+    }
+
     /// Ecosia: Sets up the Ecosia homepage adapter and integrates it with the view controller
     func setupEcosiaAdapter(
         profile: Profile,
@@ -37,18 +80,36 @@ extension HomepageViewController {
         // Store adapter
         setEcosiaAdapter(adapter)
 
-        // Use Ecosia-owned data source and attach adapter when it is created
-        homepageDataSourceType = EcosiaHomepageDiffableDataSource.self
-        onDataSourceConfigured = { [weak self] dataSource in
-            (dataSource as? EcosiaHomepageDiffableDataSource)?.ecosiaAdapter = self?.ecosiaAdapter
+        // So News can refresh the snapshot when items load
+        adapter.newsViewModel?.dataModelDelegate = self
+
+        // Register Ecosia cell types (including top sites after library) and attach adapter
+        var ecosiaCellTypes: [ReusableCell.Type] = [
+            NTPLogoCell.self,
+            NTPLibraryCell.self,
+            TopSiteCell.self,
+            EmptyTopSiteCell.self,
+            NTPImpactCell.self,
+            NTPNewsCell.self,
+            NTPCustomizationCell.self
+        ]
+        if #available(iOS 16.0, *) {
+            ecosiaCellTypes.insert(NTPHeader.self, at: 0)
         }
-        // If data source already exists (e.g. reused controller), attach adapter now
-        (dataSource as? EcosiaHomepageDiffableDataSource)?.ecosiaAdapter = adapter
+        homepageCellTypesToRegister = ecosiaCellTypes
+        onDataSourceConfigured = { [weak self] dataSource in
+            dataSource.ecosiaAdapter = self?.ecosiaAdapter
+        }
+        dataSource?.ecosiaAdapter = adapter
     }
     
     /// Ecosia: Called when view will appear to refresh Ecosia data
     func ecosiaViewWillAppear() {
         ecosiaAdapter?.viewWillAppear()
+        ecosiaAdapter?.refreshData(
+            for: traitCollection,
+            size: view.bounds.size
+        )
     }
     
     /// Ecosia: Called when view did disappear to clean up Ecosia resources
@@ -60,5 +121,21 @@ extension HomepageViewController {
     func updateEcosiaTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         ecosiaAdapter?.updateTheme(theme)
+    }
+
+    /// Ecosia: Refreshes the Ecosia snapshot (e.g. after tooltip accept, or when news loads) so the UI updates
+    func refreshEcosiaSnapshot() {
+        guard let dataSource else { return }
+        dataSource.updateSnapshot(
+            state: homepageState,
+            jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
+        )
+        // Force News cell to reconfigure via data source (do not mutate collection view directly)
+        var snapshot = dataSource.snapshot()
+        if snapshot.indexOfSection(.ecosiaNews) != nil,
+           snapshot.itemIdentifiers(inSection: .ecosiaNews).contains(.ecosiaNews) {
+            snapshot.reloadItems([.ecosiaNews])
+            dataSource.apply(snapshot)
+        }
     }
 }

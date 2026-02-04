@@ -57,15 +57,13 @@ final class TabErrorTelemetryHelper {
     /// This count is then checked again upon foregrounding in an attempt to
     /// identify potential tab-loss errors.
     nonisolated func recordTabCountForBackgroundedScene(_ window: WindowUUID) {
-        // Ecosia: Fixed Swift concurrency - wrap in @MainActor closure
-        ensureMainThread { @MainActor in self.recordTabCount(window, entryPoint: .backgroundForeground) }
+        ensureMainThread { self.recordTabCount(window, entryPoint: .backgroundForeground) }
     }
 
     /// Validates the tab count when the app is foregrounded to ensure the
     /// count is consistent with the count upon backgrounding.
     nonisolated func validateTabCountForForegroundedScene(_ window: WindowUUID) {
-        // Ecosia: Fixed Swift concurrency - wrap in @MainActor closure
-        ensureMainThread { @MainActor in self.validateTabCount(window, entryPoint: .backgroundForeground) }
+        ensureMainThread { self.validateTabCount(window, entryPoint: .backgroundForeground) }
     }
 
     func recordTabCountAfterPreservingTabs(_ window: WindowUUID) {

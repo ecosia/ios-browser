@@ -85,6 +85,7 @@ extension HomepageViewController {
                 delegate: ecosiaAdapter?.impactDelegate,
                 theme: themeManager.getCurrentTheme(for: windowUUID)
             )
+            viewModel.registerCell(impactCell, forSectionIndex: sectionIndex)
         }
         return impactCell
     }
@@ -124,6 +125,17 @@ extension HomepageViewController {
         customizationCell.delegate = ecosiaAdapter?.customizationDelegate
         customizationCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return customizationCell
+    }
+
+    /// Ecosia: Configures the section header for the Ecosia News section (layout requires a header).
+    func configureEcosiaNewsSectionHeader(with sectionLabelCell: LabelButtonHeaderView) -> LabelButtonHeaderView {
+        let state = SectionHeaderConfiguration(
+            title: String.localized(.ecosiaNews),
+            a11yIdentifier: "ecosia.ntp.section.news",
+            isButtonHidden: true
+        )
+        sectionLabelCell.configure(state: state, moreButtonAction: nil, textColor: nil, theme: themeManager.getCurrentTheme(for: windowUUID))
+        return sectionLabelCell
     }
 }
 

@@ -13,17 +13,14 @@ struct ShortcutsLibraryTelemetry {
     }
 
     func sendShortcutsLibraryViewedEvent() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.recordEvent(for: GleanMetrics.HomepageShortcutsLibrary.viewed)
     }
 
     func sendShortcutTappedEvent() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.recordEvent(for: GleanMetrics.HomepageShortcutsLibrary.shortcutTapped)
     }
 
     func sendShortcutsLibraryClosedEvent() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.recordEvent(for: GleanMetrics.HomepageShortcutsLibrary.closed)
     }
 }

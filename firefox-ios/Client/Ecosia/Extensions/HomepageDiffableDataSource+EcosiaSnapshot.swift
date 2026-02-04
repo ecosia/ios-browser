@@ -4,6 +4,7 @@
 
 import Common
 import UIKit
+import Ecosia
 
 extension HomepageDiffableDataSource {
     

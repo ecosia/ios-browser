@@ -13,12 +13,10 @@ struct ToastTelemetry {
     }
 
     func undoClosedSingleTab() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.recordEvent(for: GleanMetrics.ToastsCloseSingleTab.undoTapped)
     }
 
     func undoClosedAllTabs() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.recordEvent(for: GleanMetrics.ToastsCloseAllTabs.undoTapped)
     }
 }

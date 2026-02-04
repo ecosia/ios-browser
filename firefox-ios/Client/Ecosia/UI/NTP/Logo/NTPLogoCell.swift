@@ -23,6 +23,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
     }
 
     private func setup() {
+        contentView.backgroundColor = .clear
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
 

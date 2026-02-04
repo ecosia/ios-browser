@@ -26,14 +26,12 @@ struct TelemetryContextualIdentifier {
     static func setupContextId(isGleanMetricsAllowed allowed: Bool = true) {
         // Use existing client UUID, if doesn't exists create a new one
         if let stringContextId = contextId, let clientUUID = UUID(uuidString: stringContextId), allowed {
-            // Ecosia: Telemetry silenced via FakeGleanWrapper
             GleanMetrics.TopSites.contextId.set(clientUUID)
         } else {
             let newUUID = UUID()
             contextId = newUUID.uuidString
 
             guard allowed else { return }
-            // Ecosia: Telemetry silenced via FakeGleanWrapper
             GleanMetrics.TopSites.contextId.set(newUUID)
         }
     }

@@ -4,32 +4,24 @@
 
 import Common
 import UIKit
+import Ecosia
 
 typealias HomepageSection = HomepageDiffableDataSource.HomeSection
 typealias HomepageItem = HomepageDiffableDataSource.HomeItem
 
 /// Holds the data source configuration for the new homepage as part of the rebuild project
-/* Ecosia: Non-final so Ecosia can subclass with EcosiaHomepageDiffableDataSource
 final class HomepageDiffableDataSource:
- */
-class HomepageDiffableDataSource:
     UICollectionViewDiffableDataSource<HomepageSection, HomepageItem>,
     FeatureFlaggable {
     typealias TextColor = UIColor
     typealias NumberOfTilesPerRow = Int
-    
-    // Ecosia: Allow subclass to provide cell types for registration
-    /// Cell types to register with the collection view. Subclasses can override to provide a different set.
+
+    /// Ecosia: When set, snapshot contains only Ecosia sections; when nil, Firefox sections.
+    var ecosiaAdapter: EcosiaHomepageAdapter?
+
+    /// Cell types to register with the collection view.
     class var cellTypesToRegister: [ReusableCell.Type] {
         HomeItem.cellTypes
-    }
-
-    // Ecosia: Required so Ecosia can instantiate EcosiaHomepageDiffableDataSource via metatype
-    required override init(
-        collectionView: UICollectionView,
-        cellProvider: @escaping UICollectionViewDiffableDataSource<HomeSection, HomeItem>.CellProvider
-    ) {
-        super.init(collectionView: collectionView, cellProvider: cellProvider)
     }
 
     enum HomeSection: Hashable {
@@ -123,8 +115,24 @@ class HomepageDiffableDataSource:
         state: HomepageState,
         jumpBackInDisplayConfig: JumpBackInSectionLayoutConfiguration
     ) {
-        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
+        // Ecosia: When adapter is set, use Ecosia sections with top sites after library
+        if let adapter = ecosiaAdapter {
+            var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
+            let textColor = state.wallpaperState.wallpaperConfiguration.textColor
+            for section in adapter.getEcosiaSections() {
+                snapshot.appendSections([section])
+                snapshot.appendItems(adapter.getItems(for: section), toSection: section)
+                if section == .ecosiaLibrary,
+                   let (topSites, numberOfCellsPerRow) = getTopSites(with: state.topSitesState, and: textColor) {
+                    snapshot.appendSections([.topSites(textColor, numberOfCellsPerRow)])
+                    snapshot.appendItems(topSites, toSection: .topSites(textColor, numberOfCellsPerRow))
+                }
+            }
+            apply(snapshot, animatingDifferences: false)
+            return
+        }
 
+        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
         let textColor = state.wallpaperState.wallpaperConfiguration.textColor
 
         if state.shouldShowPrivacyNotice {

@@ -83,6 +83,8 @@ class BrowserCoordinator: BaseCoordinator,
         browserViewController.browserDelegate = self
         browserViewController.navigationHandler = self
         tabManager.addDelegate(self)
+        // Ecosia: Set referrals and ecosiaAuth so showHomepage can run setupEcosiaAdapter and use Ecosia NTP
+        configureEcosiaServicesIfNeeded()
     }
 
     func start(with launchType: LaunchType?) {
@@ -143,9 +145,8 @@ class BrowserCoordinator: BaseCoordinator,
             toastContainer: toastContainer
         )
         homepageController.termsOfUseDelegate = self
-        homepageController.view.accessibilityElementsHidden = false
-        
-        // Ecosia: Setup Ecosia adapter for custom homepage sections
+
+        // Ecosia: Setup Ecosia adapter before first view access so homepage uses Ecosia sections
         if self.homepageViewController == nil,
            let auth = browserViewController.ecosiaAuth,
            let referrals = browserViewController.referrals {
@@ -157,6 +158,8 @@ class BrowserCoordinator: BaseCoordinator,
                 browserViewController: browserViewController
             )
         }
+
+        homepageController.view.accessibilityElementsHidden = false
         
         dispatchActionForEmbeddingHomepage(with: isZeroSearch)
         guard browserViewController.embedContent(homepageController) else {

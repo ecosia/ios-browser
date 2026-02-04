@@ -31,7 +31,6 @@ struct NotificationManagerTelemetry {
         @unknown default: alertSetting = "notSupported"
         }
 
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let permissionExtra = GleanMetrics.App.NotificationPermissionExtra(
             alertSetting: alertSetting,
             status: authorizationStatus
@@ -41,7 +40,6 @@ struct NotificationManagerTelemetry {
     }
 
     func sendNotificationPermissionPrompt(isPermissionGranted: Bool) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let permissionExtra = GleanMetrics.Onboarding.NotificationPermissionPromptExtra(granted: isPermissionGranted)
         gleanWrapper.recordEvent(for: GleanMetrics.Onboarding.notificationPermissionPrompt,
                                  extras: permissionExtra)

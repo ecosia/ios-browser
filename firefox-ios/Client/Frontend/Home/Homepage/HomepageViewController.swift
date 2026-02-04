@@ -50,15 +50,19 @@ final class HomepageViewController: UIViewController,
     private var dataSource: HomepageDiffableDataSource?
      */
     var dataSource: HomepageDiffableDataSource?
-    // Ecosia: Data source type to instantiate; Ecosia sets this to use EcosiaHomepageDiffableDataSource
     var homepageDataSourceType: HomepageDiffableDataSource.Type = HomepageDiffableDataSource.self
-    // Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied
+    /// Ecosia: When set, these cell types are registered instead of the default (Firefox) set.
+    var homepageCellTypesToRegister: [ReusableCell.Type]?
+    /// Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied.
     var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
     private let syncTabContextualHintViewController: ContextualHintViewController
+    /* Ecosia: Update accessor
     private var homepageState: HomepageState
+    */
+    var homepageState: HomepageState
     private var lastContentOffsetY: CGFloat = 0
     private var didFinishFirstLayout = false
 
@@ -313,7 +317,10 @@ final class HomepageViewController: UIViewController,
         return tiles
     }
 
+    /* Ecosia: Update accessor
     private func getJumpBackInDisplayConfig() -> JumpBackInSectionLayoutConfiguration {
+     */
+    func getJumpBackInDisplayConfig() -> JumpBackInSectionLayoutConfiguration {
         return HomepageDimensionCalculator.retrieveJumpBackInDisplayInfo(
             traitCollection: traitCollection
         )
@@ -372,7 +379,10 @@ final class HomepageViewController: UIViewController,
     // MARK: - Theming
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
+        /* Ecosia: Update bakcground
         view.backgroundColor = theme.colors.layer1
+        */
+        view.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         // Ecosia: Update theme for Ecosia sections
         updateEcosiaTheme()
     }
@@ -418,14 +428,10 @@ final class HomepageViewController: UIViewController,
     private func configureCollectionView() {
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
 
-        /* Ecosia: Use injectable data source type for cell registration
         HomepageItem.cellTypes.forEach {
             collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
         }
-         */
-        homepageDataSourceType.cellTypesToRegister.forEach {
-            collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
-        }
+        registerEcosiaCells(on: collectionView)
 
         collectionView.registerSupplementary(
             of: UICollectionView.elementKindSectionHeader,
@@ -495,14 +501,7 @@ final class HomepageViewController: UIViewController,
             return
         }
 
-        /* Ecosia: Use injectable data source type so Ecosia can use EcosiaHomepageDiffableDataSource
         dataSource = HomepageDiffableDataSource(
-            collectionView: collectionView
-        ) { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
-            return self?.configureCell(for: item, at: indexPath)
-        }
-         */
-        dataSource = homepageDataSourceType.init(
             collectionView: collectionView
         ) { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
             return self?.configureCell(for: item, at: indexPath)
@@ -515,6 +514,11 @@ final class HomepageViewController: UIViewController,
         // Ecosia: Allow Ecosia to attach adapter to data source after creation
         if let dataSource {
             onDataSourceConfigured?(dataSource)
+            // Ecosia: Apply initial snapshot; newState may have run before viewDidLoad when dataSource was nil
+            dataSource.updateSnapshot(
+                state: homepageState,
+                jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
+            )
         }
     }
 
@@ -778,6 +782,8 @@ final class HomepageViewController: UIViewController,
                 theme: currentTheme
             )
             return sectionLabelCell
+        case .ecosiaNews:
+            return configureEcosiaNewsSectionHeader(with: sectionLabelCell)
         default:
             return nil
         }
@@ -789,7 +795,10 @@ final class HomepageViewController: UIViewController,
         let renderer = UIGraphicsImageRenderer(size: bounds.size)
 
         return renderer.image { context in
+            /* Ecosia: Update bakcground
             themeManager.getCurrentTheme(for: windowUUID).colors.layer1.setFill()
+             */
+            themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundPrimaryDecorative.setFill()
             context.fill(CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height))
             // Draw the wallpaper separately, so the potential safe area coordinates is filled with the
             // wallpaper
@@ -1084,6 +1093,9 @@ final class HomepageViewController: UIViewController,
             )
             dispatchNavigationBrowserAction(with: destination, actionType: NavigationBrowserActionType.tapOnCell)
             dispatchOpenPocketAction(at: indexPath.item, actionType: MerinoActionType.tapOnHomepageMerinoCell)
+        // Ecosia: Add select on Ecosia News
+        case .ecosiaNews:
+            handleEcosiaNewsSelection(at: indexPath)
         default:
             return
         }

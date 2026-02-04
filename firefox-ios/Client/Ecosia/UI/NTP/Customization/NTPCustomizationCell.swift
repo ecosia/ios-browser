@@ -49,6 +49,7 @@ final class NTPCustomizationCell: UICollectionViewCell, ThemeApplicable, Reusabl
     }
 
     private func setup() {
+        contentView.backgroundColor = .clear
         isAccessibilityElement = true
         accessibilityIdentifier = "customize_homepage"
 

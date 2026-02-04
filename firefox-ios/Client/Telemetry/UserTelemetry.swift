@@ -16,11 +16,9 @@ struct UserTelemetry {
     /// recorded, the ping is immediately submitted.
     /// - Parameter uid: The user's Firefox Account UID.
     func setFirefoxAccountID(uid: String) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.recordString(for: GleanMetrics.UserClientAssociation.uid, value: uid)
 
         // We send the `fx-accounts` ping now that the payload data has been set
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         GleanMetrics.Pings.shared.fxAccounts.submit()
     }
 }

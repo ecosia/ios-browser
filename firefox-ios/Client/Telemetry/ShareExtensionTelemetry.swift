@@ -28,7 +28,6 @@ struct ShareExtensionTelemetry {
 
     /// Records when a user shares a URL from the Share Extension
     func shareURL() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extra = GleanMetrics.ShareOpenInFirefoxExtensionList.OptionSelectedExtra(
             extensionSource: Self.extensionSource,
             option: ShareExtensionOption.openInFirefox.rawValue
@@ -38,7 +37,6 @@ struct ShareExtensionTelemetry {
 
     /// Records when a user shares text from the Share Extension
     func shareText() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extra = GleanMetrics.ShareOpenInFirefoxExtensionList.OptionSelectedExtra(
             extensionSource: Self.extensionSource,
             option: ShareExtensionOption.openInFirefox.rawValue
@@ -48,7 +46,6 @@ struct ShareExtensionTelemetry {
 
     /// Records when a user loads a page in the background from the Share Extension
     func loadInBackground() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extra = GleanMetrics.ShareOpenInFirefoxExtensionList.OptionSelectedExtra(
             extensionSource: Self.extensionSource,
             option: ShareExtensionOption.loadInBackground.rawValue
@@ -58,7 +55,6 @@ struct ShareExtensionTelemetry {
 
     /// Records when a user bookmarks a page from the Share Extension
     func bookmarkThisPage() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extra = GleanMetrics.ShareOpenInFirefoxExtensionList.OptionSelectedExtra(
             extensionSource: Self.extensionSource,
             option: ShareExtensionOption.bookmarkThisPage.rawValue
@@ -68,7 +64,6 @@ struct ShareExtensionTelemetry {
 
     /// Records when a user adds a page to the reading list from the Share Extension
     func addToReadingList() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extra = GleanMetrics.ShareOpenInFirefoxExtensionList.OptionSelectedExtra(
             extensionSource: Self.extensionSource,
             option: ShareExtensionOption.addToReadingList.rawValue
@@ -78,7 +73,6 @@ struct ShareExtensionTelemetry {
 
     /// Records when a user sends a tab to another device from the Share Extension
     func sendToDevice() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extra = GleanMetrics.ShareOpenInFirefoxExtensionList.OptionSelectedExtra(
             extensionSource: Self.extensionSource,
             option: ShareExtensionOption.sendToDevice.rawValue

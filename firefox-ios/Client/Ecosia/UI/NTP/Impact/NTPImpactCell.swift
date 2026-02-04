@@ -45,6 +45,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     }
 
     private func setup() {
+        contentView.backgroundColor = .clear
         contentView.addSubview(containerStack)
         setupConstraints()
     }

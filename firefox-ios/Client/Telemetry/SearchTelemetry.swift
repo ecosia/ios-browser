@@ -174,19 +174,16 @@ class SearchTelemetry: @unchecked Sendable {
 
     // sap: directly from search access point
     func trackSAP() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         GleanMetrics.Search.inContent["\(provider).in-content.sap.\(code)"].add()
     }
 
     // sap-follow-on: user continues to search from an existing sap search
     func trackSAPFollowOn() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         GleanMetrics.Search.inContent["\(provider).in-content.sap-follow-on.\(code)"].add()
     }
 
     // organic: search that didn't come from a SAP
     func trackOrganic() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         GleanMetrics.Search.inContent["\(provider).organic.none"].add()
     }
 
@@ -194,7 +191,6 @@ class SearchTelemetry: @unchecked Sendable {
 
     // Note: This tracks google top site tile tap which opens a google search page
     func trackGoogleTopSiteTap() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         GleanMetrics.Search.googleTopsitePressed["\(SearchEngine.google).\(code)"].add()
     }
 
@@ -202,7 +198,6 @@ class SearchTelemetry: @unchecked Sendable {
     // a follow-on where OQ query item in google url is present but has no data in it
     // Flow: User taps google top site tile -> google page opens -> user types item to search in the page
     func trackGoogleTopSiteFollowOn() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         GleanMetrics.Search.inContent["\(SearchEngine.google).in-content.google-topsite-follow-on.\(code)"].add()
     }
 
@@ -524,34 +519,29 @@ class SearchTelemetry: @unchecked Sendable {
 
     // MARK: Trending Searches
     func trendingSearchesShown(count: Int) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let countExtra = GleanMetrics.SearchTrendingSearches.SuggestionsShownExtra(count: Int32(count))
         gleanWrapper.recordEvent(for: GleanMetrics.SearchTrendingSearches.suggestionsShown, extras: countExtra)
     }
 
     func trendingSearchesTapped(at index: Int) {
         let position = "\(index + 1)"
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let positionExtra = GleanMetrics.SearchTrendingSearches.SuggestionTappedExtra(position: Int32(position))
         gleanWrapper.recordEvent(for: GleanMetrics.SearchTrendingSearches.suggestionTapped, extras: positionExtra)
     }
 
     // MARK: Recent Searches
     func recentSearchesShown(count: Int) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let countExtra = GleanMetrics.SearchRecentSearches.SuggestionsShownExtra(count: Int32(count))
         gleanWrapper.recordEvent(for: GleanMetrics.SearchRecentSearches.suggestionsShown, extras: countExtra)
     }
 
     func recentSearchesTapped(at index: Int) {
         let position = "\(index + 1)"
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let positionExtra = GleanMetrics.SearchRecentSearches.SuggestionTappedExtra(position: Int32(position))
         gleanWrapper.recordEvent(for: GleanMetrics.SearchRecentSearches.suggestionTapped, extras: positionExtra)
     }
 
     func recentSearchesClearButtonTapped() {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.recordEvent(for: GleanMetrics.SearchRecentSearches.clearButtonTapped)
     }
 }

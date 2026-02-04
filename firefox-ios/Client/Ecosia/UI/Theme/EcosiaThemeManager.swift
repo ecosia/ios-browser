@@ -95,7 +95,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
     public func getCurrentTheme(for window: WindowUUID?) -> Theme {
         guard let window else {
             assertionFailure("Attempt to get the theme for a nil window UUID.")
-            return DarkTheme()
+            return EcosiaDarkTheme()
         }
 
         return getThemeFrom(type: determineThemeType(for: window))

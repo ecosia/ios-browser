@@ -126,8 +126,7 @@ final class EcosiaHomepageAdapter {
     func getEcosiaSections() -> [HomepageSection] {
         var sections: [HomepageSection] = []
         
-        // Header (iOS 16+, AI Search enabled)
-        if #available(iOS 16.0, *), shouldShowHeader() {
+        if shouldShowHeader() {
             sections.append(.ecosiaHeader)
         }
         
@@ -180,9 +179,8 @@ final class EcosiaHomepageAdapter {
     // MARK: - Section Visibility
     
     private func shouldShowHeader() -> Bool {
-        // Header is shown on iOS 16+ when AI Search is enabled
         if #available(iOS 16.0, *) {
-            return AISearchMVPExperiment.isEnabled
+            return true
         }
         return false
     }

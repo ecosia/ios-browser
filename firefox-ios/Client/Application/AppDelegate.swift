@@ -25,7 +25,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         files: profile.files
     )
 
+    /* Ecosia: Use EcosiaThemeManager
     lazy var themeManager: ThemeManager = DefaultThemeManager(
+    */
+    lazy var themeManager: ThemeManager = EcosiaThemeManager(
         sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
         isNewAppearanceMenuOnClosure: { self.featureFlags.isFeatureEnabled(.appearanceMenu, checking: .buildOnly) }
     )

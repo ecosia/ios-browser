@@ -49,26 +49,22 @@ struct TabsPanelTelemetry {
             return
         }
 
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extras = GleanMetrics.TabsPanel.NewTabButtonTappedExtra(mode: mode.rawValue)
         gleanWrapper.recordEvent(for: GleanMetrics.TabsPanel.newTabButtonTapped, extras: extras)
     }
 
     func tabModeSelected(mode: Mode) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extras = GleanMetrics.TabsPanel.TabModeSelectedExtra(mode: mode.rawValue)
         gleanWrapper.recordEvent(for: GleanMetrics.TabsPanel.tabModeSelected, extras: extras)
     }
 
     func tabSelected(at index: Int?, mode: Mode) {
         let indexForGlean: Int32? = index != nil ? Int32(index!) : nil
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extras = GleanMetrics.TabsPanel.TabSelectedExtra(mode: mode.rawValue, selectedTabIndex: indexForGlean)
         gleanWrapper.recordEvent(for: GleanMetrics.TabsPanel.tabSelected, extras: extras)
     }
 
     func closeAllTabsSheetOptionSelected(option: CloseAllPanelOption, mode: Mode) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extras = GleanMetrics.TabsPanelCloseAllTabsSheet.OptionSelectedExtra(
             mode: mode.rawValue,
             option: option.rawValue
@@ -77,7 +73,6 @@ struct TabsPanelTelemetry {
     }
 
     func tabClosed(mode: Mode) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extras = GleanMetrics.TabsPanel.TabClosedExtra(
             mode: mode.rawValue
         )
@@ -85,13 +80,11 @@ struct TabsPanelTelemetry {
     }
 
     func doneButtonTapped(mode: Mode) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extras = GleanMetrics.TabsPanel.DoneButtonTappedExtra(mode: mode.rawValue)
         gleanWrapper.recordEvent(for: GleanMetrics.TabsPanel.doneButtonTapped, extras: extras)
     }
 
     func deleteNormalTabsSheetOptionSelected(period: TabsDeletionPeriod) {
-        // Ecosia: Telemetry silenced via FakeGleanWrapper
         let extras = GleanMetrics.TabsPanelCloseOldTabsSheet.OptionSelectedExtra(
             period: period.rawValue
         )
