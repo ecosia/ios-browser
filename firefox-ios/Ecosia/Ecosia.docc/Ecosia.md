@@ -247,6 +247,10 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 * run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (Xcode)
 
+## Acceptance testing
+
+check https://github.com/ecosia/mobile-acceptance-testing for details
+
 ## 📸 Snapshot Testing
 
 We built our snapshot testing setup with `SnapshotTestHelper` to streamline UI checks. Here’s the gist:
