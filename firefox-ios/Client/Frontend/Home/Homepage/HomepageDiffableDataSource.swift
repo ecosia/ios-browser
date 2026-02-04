@@ -9,14 +9,28 @@ typealias HomepageSection = HomepageDiffableDataSource.HomeSection
 typealias HomepageItem = HomepageDiffableDataSource.HomeItem
 
 /// Holds the data source configuration for the new homepage as part of the rebuild project
+/* Ecosia: Non-final so Ecosia can subclass with EcosiaHomepageDiffableDataSource
 final class HomepageDiffableDataSource:
+ */
+class HomepageDiffableDataSource:
     UICollectionViewDiffableDataSource<HomepageSection, HomepageItem>,
     FeatureFlaggable {
     typealias TextColor = UIColor
     typealias NumberOfTilesPerRow = Int
     
-    // Ecosia: Adapter for custom homepage sections
-    weak var ecosiaAdapter: EcosiaHomepageAdapter?
+    // Ecosia: Allow subclass to provide cell types for registration
+    /// Cell types to register with the collection view. Subclasses can override to provide a different set.
+    class var cellTypesToRegister: [ReusableCell.Type] {
+        HomeItem.cellTypes
+    }
+
+    // Ecosia: Required so Ecosia can instantiate EcosiaHomepageDiffableDataSource via metatype
+    required override init(
+        collectionView: UICollectionView,
+        cellProvider: @escaping UICollectionViewDiffableDataSource<HomeSection, HomeItem>.CellProvider
+    ) {
+        super.init(collectionView: collectionView, cellProvider: cellProvider)
+    }
 
     enum HomeSection: Hashable {
         case privacyNotice
@@ -67,7 +81,6 @@ final class HomepageDiffableDataSource:
         case ecosiaNTPCustomization
 
         static var cellTypes: [ReusableCell.Type] {
-            /* Ecosia: Update cellTypes
             return [
                 PrivacyNoticeCell.self,
                 HomepageMessageCardCell.self,
@@ -84,18 +97,6 @@ final class HomepageDiffableDataSource:
                 CustomizeHomepageSectionCell.self,
                 HomepageSpacerCell.self
             ]
-             */
-            var types: [ReusableCell.Type] = [
-                NTPLogoCell.self,
-                NTPLibraryCell.self,
-                NTPImpactCell.self,
-                NTPNewsCell.self,
-                NTPCustomizationCell.self
-            ]
-            if #available(iOS 16.0, *) {
-                types.insert(NTPHeader.self, at: 0)
-            }
-            return types
         }
 
         var telemetryItemType: HomepageTelemetry.ItemType? {
@@ -125,11 +126,6 @@ final class HomepageDiffableDataSource:
         var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
 
         let textColor = state.wallpaperState.wallpaperConfiguration.textColor
-
-        // Ecosia: Insert custom sections at the beginning
-        if let adapter = ecosiaAdapter {
-            appendEcosiaSections(to: &snapshot, adapter: adapter)
-        }
 
         if state.shouldShowPrivacyNotice {
             snapshot.appendSections([.privacyNotice])

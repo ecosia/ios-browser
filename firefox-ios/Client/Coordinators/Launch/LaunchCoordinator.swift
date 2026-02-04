@@ -23,13 +23,19 @@ final class LaunchCoordinator: BaseCoordinator,
                                QRCodeNavigationHandler,
                                ParentCoordinatorDelegate,
                                OnboardingNavigationDelegate,
+                               /* Ecosia: Add WelcomeDelegate
                                OnboardingServiceDelegate {
+                                */
+                               OnboardingServiceDelegate,
+                               WelcomeDelegate {
     private let profile: Profile
     private let isIphone: Bool
     let windowUUID: WindowUUID
     let themeManager: ThemeManager = AppContainer.shared.resolve()
     weak var parentCoordinator: LaunchCoordinatorDelegate?
     private var onboardingService: OnboardingService?
+    // Ecosia: Used when presenting Ecosia Welcome to call didSeeIntroScreen on finish
+    private var introManagerForEcosiaWelcome: IntroScreenManagerProtocol?
 
     init(router: Router,
          windowUUID: WindowUUID,
@@ -52,11 +58,14 @@ final class LaunchCoordinator: BaseCoordinator,
                 presentTermsOfService(with: manager, isFullScreen: isFullScreen)
             }
         case .intro(let manager):
+            /* Ecosia: Swap Firefox onboarding with Ecosia Welcome
             if manager.isModernOnboardingEnabled {
                 presentModernIntroOnboarding(with: manager, isFullScreen: isFullScreen)
             } else {
                 presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
             }
+             */
+            presentEcosiaWelcome(with: manager, isFullScreen: isFullScreen)
         case .update(let viewModel):
             presentUpdateOnboarding(with: viewModel, isFullScreen: isFullScreen)
         case .defaultBrowser:
@@ -181,6 +190,24 @@ final class LaunchCoordinator: BaseCoordinator,
         viewController.modalPresentationStyle = .fullScreen
         viewController.modalTransitionStyle = .crossDissolve
         router.present(viewController, animated: false)
+    }
+
+    // MARK: - Intro (Ecosia)
+    @MainActor
+    private func presentEcosiaWelcome(with manager: IntroScreenManagerProtocol,
+                                      isFullScreen: Bool) {
+        introManagerForEcosiaWelcome = manager
+        let welcome = Welcome(delegate: self, windowUUID: windowUUID)
+        welcome.modalPresentationStyle = .fullScreen
+        welcome.modalTransitionStyle = .crossDissolve
+        router.present(welcome, animated: true)
+    }
+
+    // MARK: - WelcomeDelegate
+    func welcomeDidFinish(_ welcome: Welcome) {
+        introManagerForEcosiaWelcome?.didSeeIntroScreen()
+        introManagerForEcosiaWelcome = nil
+        parentCoordinator?.didFinishLaunch(from: self)
     }
 
     // MARK: - Intro

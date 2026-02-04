@@ -85,6 +85,7 @@ public enum ClientTarget {
                 "Client/Assets/CC_Script/LoginManager.shared.sys.mjs",
                 "Client/Assets/CC_Script/Overrides.ios.js",
                 "Client/Assets/**/*.{css,html,png,jpg,jpeg,pdf,otf,ttf}",
+                "Client/Assets/RemoteSettingsData/**/*.json",
                 "Client/Assets/SpotlightHelper.js",
                 "Client/MailSchemes.plist",
                 .glob(pattern: "Client/Assets/**/*.xcassets", excluding: [

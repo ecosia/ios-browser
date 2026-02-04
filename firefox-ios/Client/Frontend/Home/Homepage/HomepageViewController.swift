@@ -50,6 +50,10 @@ final class HomepageViewController: UIViewController,
     private var dataSource: HomepageDiffableDataSource?
      */
     var dataSource: HomepageDiffableDataSource?
+    // Ecosia: Data source type to instantiate; Ecosia sets this to use EcosiaHomepageDiffableDataSource
+    var homepageDataSourceType: HomepageDiffableDataSource.Type = HomepageDiffableDataSource.self
+    // Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied
+    var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
@@ -414,7 +418,12 @@ final class HomepageViewController: UIViewController,
     private func configureCollectionView() {
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
 
+        /* Ecosia: Use injectable data source type for cell registration
         HomepageItem.cellTypes.forEach {
+            collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
+        }
+         */
+        homepageDataSourceType.cellTypesToRegister.forEach {
             collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
         }
 
@@ -486,7 +495,14 @@ final class HomepageViewController: UIViewController,
             return
         }
 
+        /* Ecosia: Use injectable data source type so Ecosia can use EcosiaHomepageDiffableDataSource
         dataSource = HomepageDiffableDataSource(
+            collectionView: collectionView
+        ) { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
+            return self?.configureCell(for: item, at: indexPath)
+        }
+         */
+        dataSource = homepageDataSourceType.init(
             collectionView: collectionView
         ) { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
             return self?.configureCell(for: item, at: indexPath)
@@ -494,6 +510,11 @@ final class HomepageViewController: UIViewController,
 
         dataSource?.supplementaryViewProvider = { [weak self] (collectionView, kind, indexPath) in
             return self?.configureSupplementaryCell(with: collectionView, for: kind, at: indexPath)
+        }
+
+        // Ecosia: Allow Ecosia to attach adapter to data source after creation
+        if let dataSource {
+            onDataSourceConfigured?(dataSource)
         }
     }
 

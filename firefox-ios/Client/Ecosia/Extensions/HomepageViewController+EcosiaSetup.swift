@@ -36,9 +36,14 @@ extension HomepageViewController {
         
         // Store adapter
         setEcosiaAdapter(adapter)
-        
-        // Connect adapter to data source
-        dataSource?.ecosiaAdapter = adapter
+
+        // Use Ecosia-owned data source and attach adapter when it is created
+        homepageDataSourceType = EcosiaHomepageDiffableDataSource.self
+        onDataSourceConfigured = { [weak self] dataSource in
+            (dataSource as? EcosiaHomepageDiffableDataSource)?.ecosiaAdapter = self?.ecosiaAdapter
+        }
+        // If data source already exists (e.g. reused controller), attach adapter now
+        (dataSource as? EcosiaHomepageDiffableDataSource)?.ecosiaAdapter = adapter
     }
     
     /// Ecosia: Called when view will appear to refresh Ecosia data

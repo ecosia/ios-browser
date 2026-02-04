@@ -105,10 +105,16 @@ class LaunchScreenViewModel {
         var order: [LaunchType] = []
 
         if introScreenManager.shouldShowIntroScreen {
+            /* Ecosia: Present Welcome right after launch screen (intro before ToS)
             if termsOfServiceManager.shouldShowScreen {
                 order.append(.termsOfService(manager: termsOfServiceManager))
             }
             order.append(.intro(manager: introScreenManager))
+             */
+            order.append(.intro(manager: introScreenManager))
+            if termsOfServiceManager.shouldShowScreen {
+                order.append(.termsOfService(manager: termsOfServiceManager))
+            }
         } else if updateViewModel.shouldShowUpdateSheet(appVersion: appVersion),
                   updateViewModel.containsSyncableAccount() {
             order.append(.update(viewModel: updateViewModel))
