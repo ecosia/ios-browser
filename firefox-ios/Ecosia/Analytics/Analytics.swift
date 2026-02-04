@@ -289,8 +289,11 @@ open class Analytics {
     public func inappSearch(url: URL) {
         // Note: This functionality was previously guarded/throttled by the mob_ios_native_srpv_analytics feature flag
         // and has been permanently enabled/unthrottled as part of MOB-4040
+        guard let query = url.getEcosiaSearchQuery() else {
+            return
+        }
         let payload: [String: Any?] = [
-            "query": url.getEcosiaSearchQuery(),
+            "query": query,
             "page_num": url.getEcosiaSearchPage(),
             "plt_name": "ios",
             "plt_v": Bundle.version as NSObject,
