@@ -18,15 +18,15 @@ Some of the Ecosia codebase still lives under the main project `Client/Ecosia` b
 
 ## 🤝 Getting involved
 
-We encourage you to participate in those open source projects. We love Pull Requests, Issue Reports, Feature Requests or any kind of positive contribution. Please read the [Mozilla Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) and our [Contributing guidelines](https://github.com/mozilla-mobile/firefox-ios/blob/main/CONTRIBUTING.md) first. 
+We encourage you to participate in those open source projects. We love Pull Requests, Issue Reports, Feature Requests or any kind of positive contribution. Please read the [Mozilla Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) and our [Contributing guidelines](https://github.com/ecosia/ios-browser/blob/main/CONTRIBUTING.md) first. 
 
-- You can [file a new issue](https://github.com/mozilla-mobile/firefox-ios/issues/new/choose) or research [existing bugs](https://github.com/mozilla-mobile/firefox-ios/issues)
+- You can [file a new issue](https://github.com/ecosia/ios-browser/issues/new/choose) or research [existing bugs](https://github.com/ecosia/ios-browser/issues)
 
 If more information is required or you have any questions then we suggest reaching out to us via:
 - Chat on Element channel [#fx-ios](https://chat.mozilla.org/#/room/#fx-ios:mozilla.org) and [#focus-ios](https://chat.mozilla.org/#/room/#focus-ios:mozilla.org) for general discussion, or write DMs to specific teammates for questions.
-- Open a [Github discussion](https://github.com/mozilla-mobile/firefox-ios/discussions) which can be used for general questions.
+- Open a [Github discussion](https://github.com/ecosia/ios-browser/discussions) which can be used for general questions.
 
-Want to contribute on the codebase but don't know where to start? Here is a list of [issues that are contributor friendly](https://github.com/mozilla-mobile/firefox-ios/labels/Contributor%20OK), but make sure to read the [Contributing guidelines](https://github.com/mozilla-mobile/firefox-ios/blob/main/CONTRIBUTING.md) first.
+Want to contribute on the codebase but don't know where to start? Here is a list of [issues that are contributor friendly](https://github.com/ecosia/ios-browser/labels/Contributor%20OK), but make sure to read the [Contributing guidelines](https://github.com/ecosia/ios-browser/blob/main/CONTRIBUTING.md) first.
 
 ### ⁒ Update Ecosia Comments
 
