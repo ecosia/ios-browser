@@ -39,14 +39,6 @@ when modifying Firefox code for Ecosia customizations, follow these commenting c
    let appVersionPredicate = (appVersionString?.contains("Ecosia") ?? false) == true
    ```
 
-## Building and Dependencies
-
-ensure SwiftLint is installed and used for linting: `brew install swiftlint`
-
-after cloning or when updating dependencies, run `./bootstrap.sh` to install Node.js dependencies, build user scripts, and update content blockers
-
-the project uses Swift Package Manager (SPM). If you encounter dependency issues, try: Xcode -> File -> Packages -> Reset Package Caches
-
 ## User Scripts
 
 User Scripts (JavaScript injected into WKWebView) are compiled, concatenated, and minified using webpack
