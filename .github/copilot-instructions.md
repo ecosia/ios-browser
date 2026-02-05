@@ -67,8 +67,6 @@ translations are managed via Transifex
 
 when adding new strings, add them to `Client/Ecosia/L10N/en.lproj/Ecosia.strings`
 
-after Firefox upgrades, run `python3 ecosify-strings.py firefox-ios` to rebrand Mozilla strings
-
 ## Snapshot Testing
 
 use `SnapshotTestHelper` for UI snapshot testing
