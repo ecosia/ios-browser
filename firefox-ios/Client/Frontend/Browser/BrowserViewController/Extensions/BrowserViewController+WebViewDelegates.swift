@@ -489,6 +489,12 @@ extension BrowserViewController: WKNavigationDelegate {
             return
         }
 
+        // Ecosia: Detect Ecosia-specific URLs (auth, profile, etc.) and trigger native flows
+        if detectAndHandleEcosiaURL(url, for: tab) {
+            decisionHandler(.cancel)
+            return
+        }
+
         // Bugzilla #1979499
         if (url.scheme ?? "").lowercased() == "fido" {
             decisionHandler(.cancel)

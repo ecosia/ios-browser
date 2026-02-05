@@ -595,6 +595,8 @@ class BrowserViewController: UIViewController,
 
         MainActor.assumeIsolated {
             logger.log("BVC deallocating (window: \(windowUUID))", level: .info, category: .lifecycle)
+            // Ecosia: Unregister window from auth state management
+            EcosiaAuthWindowRegistry.shared.unregisterWindow(windowUUID)
             unsubscribeFromRedux()
             observedWebViews.forEach({ stopObserving(webView: $0) })
         }
@@ -1157,6 +1159,9 @@ class BrowserViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Ecosia: Register window for auth state so EcosiaAccounts (login/logout) can dispatch to this BVC
+        EcosiaAuthWindowRegistry.shared.registerWindow(windowUUID)
 
         setupEssentialUI()
         subscribeToRedux()
