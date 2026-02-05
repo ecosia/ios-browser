@@ -249,7 +249,7 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 ## Acceptance testing
 
-check https://github.com/ecosia/mobile-acceptance-testing for details
+Check https://github.com/ecosia/mobile-acceptance-testing for details
 
 ## 📸 Snapshot Testing
 
