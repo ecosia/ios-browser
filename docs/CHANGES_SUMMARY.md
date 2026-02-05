@@ -202,7 +202,7 @@ The following Firefox-inherited folders were **not modified** during this period
 ## 🚀 CI/CD & Configuration
 
 ### .circleci/ (3 files)
-- `config.yml` - CircleCI configuration updates (M4Pro machine, test configurations)
+- `config.yml` - CircleCI configuration updates (M4 Pro machine, test configurations)
 
 ### .github/workflows/ (7 files)
 - `merge_tests.yml` - PR merge test workflow
