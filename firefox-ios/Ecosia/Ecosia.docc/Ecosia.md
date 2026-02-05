@@ -245,7 +245,7 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 ## Unit tests
 
-* run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (Xcode)
+* Run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (Xcode)
 
 ## Acceptance testing
 
