@@ -213,7 +213,7 @@ The following Firefox-inherited folders were **not modified** during this period
 
 ### fastlane/ (18 files)
 - `metadata/[locale]/release_notes.txt` - Localized release notes
-  - Languages: ar, da, de-DE, en-AU, en-CA, en-GB, en-US, es-ES, es_MX, fr-FR, it, ja, nl-NL
+  - Languages: ar, da, de-DE, en-AU, en-CA, en-GB, en-US, es-ES, es-MX, fr-FR, it, ja, nl-NL
 
 ### Root Configuration
 - `.swiftlint.yml` - SwiftLint configuration
