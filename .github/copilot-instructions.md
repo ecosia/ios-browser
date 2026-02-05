@@ -16,7 +16,7 @@ consider a architecture descision record based on this template
 https://github.com/joelparkerhenderson/architecture-decision-record/tree/main/locales/en/templates/decision-record-template-of-the-madr-project is a good template
 request other considerations that to implement a feature
 document unsolved issues in the architecture decision record
-ADRs should be stored in  `docs/decisions/` and the readme `docs/decisions/README.md` should be updated to have an up to date list
+ADRs should be stored in `docs/decisions/` and the readme `docs/decisions/README.md` should be updated to have an up-to-date list
 `docs/decisions/0001-swiftlint-configuration-for-upstream-fork.md` is a good name for the ADR
 
 consider adding readme.md files into folders that are created or touched heavily during feature development so that folders represent features and have some documentation
