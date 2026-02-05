@@ -12,7 +12,7 @@ also add MOB-XXXX with the correct ticket name into the branch name so we can li
 issues that don't reference a ticket should use `NOTICKET` in the PR name and `noticket` in the branch name
 
 
-consider a architecture descision record based on this template
+consider a architecture decision record based on this template
 https://github.com/joelparkerhenderson/architecture-decision-record/tree/main/locales/en/templates/decision-record-template-of-the-madr-project is a good template
 request other considerations needed to implement a feature
 document unsolved issues in the architecture decision record
