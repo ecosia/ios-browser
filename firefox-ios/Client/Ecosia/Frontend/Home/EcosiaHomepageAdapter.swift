@@ -168,7 +168,7 @@ final class EcosiaHomepageAdapter {
                 .ecosiaImpact(sectionIndex: index)
             }
         case .ecosiaNews:
-            return [.ecosiaNews]
+            return (0..<3).map { .ecosiaNewsCard(index: $0) }
         case .ecosiaNTPCustomization:
             return [.ecosiaNTPCustomization]
         default:

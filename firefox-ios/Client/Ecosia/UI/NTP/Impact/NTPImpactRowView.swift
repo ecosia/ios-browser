@@ -203,6 +203,13 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         subtitleLabel.textColor = theme.colors.ecosia.textSecondary
         actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
         dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
+        // Re-apply content so the row is populated when theme runs after being added to the hierarchy (e.g. referral row)
+        imageView.image = info.image
+        imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
+        titleLabel.text = info.title
+        subtitleLabel.text = info.subtitle
+        actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
+        actionButton.setTitle(info.buttonTitle, for: .normal)
     }
 
     // MARK: - Actions

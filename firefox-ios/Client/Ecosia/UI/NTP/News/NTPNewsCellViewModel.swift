@@ -115,9 +115,7 @@ extension NTPNewsCellViewModel: HomepageSectionHandler {
         Analytics.shared.navigationOpenNews(item.trackingName)
     }
 }
-*/
-
-// MARK: - Public Methods for Adapter
+*/// MARK: - Public Methods for Adapter
 
 extension NTPNewsCellViewModel {
     var numberOfItemsInSection: Int {

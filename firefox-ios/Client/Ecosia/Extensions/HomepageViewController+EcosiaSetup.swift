@@ -130,12 +130,16 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             state: homepageState,
             jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
         )
-        // Force News cell to reconfigure via data source (do not mutate collection view directly)
+        // Force News cells to reconfigure via data source (do not mutate collection view directly)
         var snapshot = dataSource.snapshot()
-        if snapshot.indexOfSection(.ecosiaNews) != nil,
-           snapshot.itemIdentifiers(inSection: .ecosiaNews).contains(.ecosiaNews) {
-            snapshot.reloadItems([.ecosiaNews])
-            dataSource.apply(snapshot)
+        if snapshot.indexOfSection(.ecosiaNews) != nil {
+            let newsItems = snapshot.itemIdentifiers(inSection: .ecosiaNews)
+            if !newsItems.isEmpty {
+                snapshot.reloadItems(newsItems)
+                dataSource.apply(snapshot)
+            }
         }
+        // Invalidate layout so self-sizing (e.g. news tiles) recalculates and avoids excess empty space
+        homepageCollectionView?.collectionViewLayout.invalidateLayout()
     }
 }

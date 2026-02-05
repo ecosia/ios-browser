@@ -8,8 +8,8 @@ import Common
 final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, ThemeApplicable {
     struct UX {
         static let dividerHeight: CGFloat = 1
-        static let dividerTop: CGFloat = 20
-        static let dividerBottom: CGFloat = 32
+        static let dividerTop: CGFloat = 12
+        static let dividerBottom: CGFloat = 16
         static let dividerInset: CGFloat = 16
         static let estimatedHeight = dividerHeight + dividerTop + dividerBottom
     }

@@ -90,7 +90,7 @@ extension HomepageViewController {
         return impactCell
     }
     
-    func configureEcosiaNewsCell(at indexPath: IndexPath) -> UICollectionViewCell {
+    func configureEcosiaNewsCell(at indexPath: IndexPath, itemIndex: Int = 0) -> UICollectionViewCell {
         guard let cv = homepageCollectionView,
               let newsCell = cv.dequeueReusableCell(
             cellType: NTPNewsCell.self,
@@ -98,17 +98,19 @@ extension HomepageViewController {
         ) else {
             return UICollectionViewCell()
         }
-        
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         if let viewModel = ecosiaAdapter?.newsViewModel,
-           indexPath.row < viewModel.items.count {
+           itemIndex < viewModel.items.count {
             let itemCount = min(3, viewModel.items.count)
             newsCell.configure(
-                viewModel.items[indexPath.row],
+                viewModel.items[itemIndex],
                 images: Images(.init(configuration: .ephemeral)),
-                row: indexPath.row,
+                row: itemIndex,
                 totalCount: itemCount
             )
-            newsCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+            newsCell.applyTheme(theme: theme)
+        } else {
+            newsCell.applyTheme(theme: theme)
         }
         return newsCell
     }
@@ -128,13 +130,21 @@ extension HomepageViewController {
     }
 
     /// Ecosia: Configures the section header for the Ecosia News section (layout requires a header).
+    /// Uses NTP typography: .title3.bold for section title (same as DefaultBrowser, other NTP headlines).
     func configureEcosiaNewsSectionHeader(with sectionLabelCell: LabelButtonHeaderView) -> LabelButtonHeaderView {
         let state = SectionHeaderConfiguration(
             title: String.localized(.ecosiaNews),
             a11yIdentifier: "ecosia.ntp.section.news",
-            isButtonHidden: true
+            isButtonHidden: false,
+            buttonA11yIdentifier: "see_all",
+            buttonTitle: String.localized(.seeAll)
         )
-        sectionLabelCell.configure(state: state, moreButtonAction: nil, textColor: nil, theme: themeManager.getCurrentTheme(for: windowUUID))
+        let moreButtonAction: (@MainActor (UIButton) -> Void)? = { [weak self] _ in
+            self?.ecosiaAdapter?.newsDelegate?.openSeeAllNews()
+        }
+        sectionLabelCell.configure(state: state, moreButtonAction: moreButtonAction, textColor: nil, theme: themeManager.getCurrentTheme(for: windowUUID))
+        sectionLabelCell.titleLabel.font = .preferredFont(forTextStyle: .title3).bold()
+        sectionLabelCell.titleLabel.adjustsFontForContentSizeCategory = true
         return sectionLabelCell
     }
 }

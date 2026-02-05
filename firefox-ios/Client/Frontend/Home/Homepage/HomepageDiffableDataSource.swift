@@ -70,6 +70,7 @@ final class HomepageDiffableDataSource:
         case ecosiaLibrary
         case ecosiaImpact(sectionIndex: Int)
         case ecosiaNews
+        case ecosiaNewsCard(index: Int)
         case ecosiaNTPCustomization
 
         static var cellTypes: [ReusableCell.Type] {

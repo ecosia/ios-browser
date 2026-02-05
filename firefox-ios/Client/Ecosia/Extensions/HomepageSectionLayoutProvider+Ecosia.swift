@@ -35,23 +35,20 @@ extension HomepageSectionLayoutProvider {
     // MARK: - Individual Section Layouts
     
     private func createEcosiaHeaderLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+        // Dimensions from NTPHeaderViewModel
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .estimated(64)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .estimated(64)
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-        
         let section = NSCollectionLayoutSection(group: group)
-        
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 24, bottomSpacing: 0)
+        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: NTPHeaderViewModel.UX.topInset, bottomSpacing: 0)
         section.contentInsets = insets
-        
         return section
     }
     
@@ -77,55 +74,57 @@ extension HomepageSectionLayoutProvider {
     }
     
     private func createEcosiaLibraryLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+        // Dimensions from NTPLibaryCellViewModel: item fills group height, group estimated(100)
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(100)
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(100)
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(100.0)
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-        
         let section = NSCollectionLayoutSection(group: group)
-        
         let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 8)
         section.contentInsets = insets
-        
         return section
     }
     
     private func createEcosiaImpactLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // Impact has two cells: first = trees + invested, second = referral. Use a vertical group of 2 items.
-        let estimatedCellHeight: CGFloat = 200
+        // Dimensions from NTPImpactCellViewModel: item/group estimated(200) per row; footer from NTPImpactDividerFooter.UX
+        let rowHeight: CGFloat = 200
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(estimatedCellHeight)
+            heightDimension: .estimated(rowHeight)
         )
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
-        let verticalGroupSize = NSCollectionLayoutSize(
+        let firstItem = NSCollectionLayoutItem(layoutSize: itemSize)
+        let firstGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: itemSize,
+            subitem: firstItem,
+            count: 1
+        )
+        let secondItem = NSCollectionLayoutItem(layoutSize: itemSize)
+        let secondGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: itemSize,
+            subitem: secondItem,
+            count: 1
+        )
+        let containerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(estimatedCellHeight * 2)
+            heightDimension: .absolute(rowHeight * 2)
         )
-        let verticalGroup = NSCollectionLayoutGroup.vertical(
-            layoutSize: verticalGroupSize,
-            subitem: item,
-            count: 2
+        let containerGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: containerSize,
+            subitems: [firstGroup, secondGroup]
         )
-        
-        let section = NSCollectionLayoutSection(group: verticalGroup)
+        let section = NSCollectionLayoutSection(group: containerGroup)
         section.interGroupSpacing = 0
-        
         let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 0)
         section.contentInsets = insets
-        
-        // Add footer for divider
         let footerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(40)
+            heightDimension: .estimated(NTPImpactDividerFooter.UX.estimatedHeight)
         )
         let footer = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: footerSize,
@@ -133,32 +132,31 @@ extension HomepageSectionLayoutProvider {
             alignment: .bottom
         )
         section.boundarySupplementaryItems = [footer]
-        
         return section
     }
     
     private func createEcosiaNewsLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+        // Dimensions from NTPNewsCellViewModel: item .estimated(100). Group height = sum of item heights so
+        // the section sizes to content; using 300×3 reserved 900pt per slot and caused large gaps.
+        let itemEstimatedHeight: CGFloat = 100
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(100)
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(itemEstimatedHeight)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(300)
+            heightDimension: .estimated(itemEstimatedHeight * 3) // 3 tiles × item height, not 300 per tile
         )
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-        
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 3)
         let section = NSCollectionLayoutSection(group: group)
-        
+        section.interGroupSpacing = 0
         let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 32)
         section.contentInsets = insets
-        
-        // Add header for "Ecosia News" title
+        // Header: match LabelButtonHeaderView.UX (top 0, bottom 16) + single line ~34pt → ~50pt total
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(100)
+            heightDimension: .estimated(50)
         )
         let header = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
@@ -166,28 +164,24 @@ extension HomepageSectionLayoutProvider {
             alignment: .top
         )
         section.boundarySupplementaryItems = [header]
-        
         return section
     }
     
     private func createEcosiaNTPCustomizationLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+        // Dimensions from NTPCustomizationCellViewModel (NTPCustomizationCell.UX.buttonHeight)
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(100)
+            heightDimension: .estimated(NTPCustomizationCell.UX.buttonHeight)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(100)
+            heightDimension: .estimated(NTPCustomizationCell.UX.buttonHeight)
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-        
         let section = NSCollectionLayoutSection(group: group)
-        
         let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 32)
         section.contentInsets = insets
-        
         return section
     }
     
