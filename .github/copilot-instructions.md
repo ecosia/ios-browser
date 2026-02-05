@@ -14,7 +14,7 @@ issues that don't reference a ticket should use `NOTICKET` in the PR name and `n
 
 consider a architecture descision record based on this template
 https://github.com/joelparkerhenderson/architecture-decision-record/tree/main/locales/en/templates/decision-record-template-of-the-madr-project is a good template
-request other considerations that to implement a feature
+request other considerations needed to implement a feature
 document unsolved issues in the architecture decision record
 ADRs should be stored in `docs/decisions/` and the readme `docs/decisions/README.md` should be updated to have an up-to-date list
 `docs/decisions/0001-swiftlint-configuration-for-upstream-fork.md` is a good name for the ADR
