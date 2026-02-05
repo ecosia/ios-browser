@@ -20,3 +20,51 @@ ADRs should be stored in  `docs/decisions/` and the readme `docs/decisions/READM
 `docs/decisions/0001-swiftlint-configuration-for-upstream-fork.md` is a good name for the ADR
 
 consider adding readme.md files into folders that are created or touched heavily during feature development so that folders represent features and have some documentation
+
+## Commenting Guidelines for Ecosia Code in Firefox
+
+when modifying Firefox code for Ecosia customizations, follow these commenting conventions:
+
+1. **One-liner Comments**: Use `//` for introducing new code or brief explanations.
+   ```swift
+   // Ecosia: Update appversion predicate
+   let appVersionPredicate = (appVersionString?.contains("Ecosia") ?? false) == true
+   ```
+
+2. **Block Comments**: Use `/* */` when commenting out existing Firefox code for easier readability and conflict resolution.
+   ```swift
+   /* Ecosia: Update appversion predicate
+   let appVersionPredicate = (appVersionString?.contains("Firefox") ?? false) == true
+   */
+   let appVersionPredicate = (appVersionString?.contains("Ecosia") ?? false) == true
+   ```
+
+## User Scripts
+
+User Scripts (JavaScript injected into WKWebView) are compiled, concatenated, and minified using webpack
+
+when adding or editing User Scripts in `/Client/Frontend/UserContent/UserScripts/`, recompile them by running `npm run build` in the project root
+
+the compiled outputs are checked into the repository at `/Client/Assets/` with names like `AllFramesAtDocumentEnd.js`, `MainFrameAtDocumentStart.js`, etc.
+
+## Ecosia Framework Structure
+
+the Ecosia Framework (`firefox-ios/Ecosia/`) is a wrapper for Ecosia-specific implementation and logic
+
+some Ecosia codebase still lives under `Client/Ecosia`, but new Ecosia-specific code should be added to the Ecosia Framework when possible
+
+## Translations
+
+translations are managed via Transifex
+
+when adding new strings, add them to `Client/Ecosia/L10N/en.lproj/Ecosia.strings`
+
+## Snapshot Testing
+
+use `SnapshotTestHelper` for UI snapshot testing
+
+snapshot tests support multiple themes, devices, and localizations
+
+reference images are compared to detect unintended UI changes
+
+see `SNAPSHOT_TESTING_WIKI.md` for more details

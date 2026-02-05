@@ -70,7 +70,9 @@ This script will copy all the necessary hooks (such as `prepare-commit-msg`) to 
 
 We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Make sure to install it so that linting runs correctly when building.
 
-`brew install swiftlint`
+```shell
+brew install swiftlint
+```
 
 1. Install the latest [Xcode developer tools](https://developer.apple.com/xcode/downloads/) from Apple.
 2. Install, [Brew](https://brew.sh), Node, and a Python3 virtualenv for localization scripts:
@@ -88,7 +90,7 @@ We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style an
     cd ios-browser
     sh ./bootstrap.sh
     ```
-5. Open `./firefox-ios/Client.xcodeproj` in Xcode.
+5. Open `firefox-ios/Client.xcodeproj` in Xcode.
 6. Make sure to select the `Ecosia` [scheme](https://developer.apple.com/documentation/xcode/build-system?changes=_2) in Xcode.
 7. Select the destination device you want to build on.
 8. Run the app with `Cmd + R` or by pressing the `build and run` button.
@@ -132,9 +134,42 @@ The `CURRENT_PROJECT_VERSION` being set to `0` indicates that it is not being us
 
 ## 🏅 Get certificates and profiles
 
+```
+brew install fastlane
+```
+
 Our certs and profiles are managed centrally by [fastlane match](https://docs.fastlane.tools/actions/match/). Find the repo [here](https://github.com/ecosia/IosSearchSigning)
 
+You might need to set up your Ruby stack:
+```
+sudo gem install bundler:2.3.4
+bundle install
+
+# you may need to link your ruby if you have a ruby from brew
+echo 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"' >> ~/.zshrc
+
+# you may need to install a ruby <4
+# https://formulae.brew.sh/formula/rbenv
+brew install rbenv
+echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+source ~/.zshrc
+
+rbenv install 3.2.2
+rbenv global 3.2.2
+
+```
 Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo can be found in LastPass.
+
+**Command:**
+```shell
+bundle exec fastlane match --readonly
+```
+
+**Expected output:**
+```text
+[...]
+[14:22:17]: Passphrase for Match storage: [get the password from the password manager]
+```
 
 ### Adding your own device
 
@@ -242,6 +277,14 @@ Make sure that `fastlane` and `transifex`-cli is installed.
     ```bash
     bundle exec fastlane deliver --app-version 8.2.0
     ```
+
+## 🧪 Unit tests
+
+* Run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (Xcode)
+
+## ✅ Acceptance testing
+
+Check https://github.com/ecosia/mobile-acceptance-testing for details
 
 ## 📸 Snapshot Testing
 
