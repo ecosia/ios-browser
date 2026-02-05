@@ -243,11 +243,11 @@ Make sure that `fastlane` and `transifex`-cli is installed.
     bundle exec fastlane deliver --app-version 8.2.0
     ```
 
-## Unit tests
+## 🧪 Unit tests
 
 * Run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (Xcode)
 
-## Acceptance testing
+## ✅ Acceptance testing
 
 check https://github.com/ecosia/mobile-acceptance-testing for details
 
