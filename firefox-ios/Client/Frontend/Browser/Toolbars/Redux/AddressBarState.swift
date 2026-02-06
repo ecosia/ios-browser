@@ -39,6 +39,14 @@ struct AddressBarState: StateType, Sendable, Equatable {
         a11yLabel: AccessibilityIdentifiers.GeneralizedIdentifiers.back,
         a11yId: AccessibilityIdentifiers.Browser.UrlBar.cancelButton)
 
+    // Ecosia: QR code scanner button for editing mode
+    private static let qrCodeAction = ToolbarActionConfiguration(
+        actionType: .search,
+        iconName: "menu-ScanQRCode",
+        isEnabled: true,
+        a11yLabel: .ScanQRCodeViewTitle,
+        a11yId: "urlBar-scanQRCode")
+
     private static let cancelEditTextAction = ToolbarActionConfiguration(
         actionType: .cancelEdit,
         actionLabel: .CancelString, // Use .AddressToolbar.CancelEditButtonLabel starting v138 (localization)
@@ -988,6 +996,12 @@ struct AddressBarState: StateType, Sendable, Equatable {
 
         let isShowingNavigationToolbar = action.isShowingNavigationToolbar ?? toolbarState.isShowingNavigationToolbar
 
+        // Ecosia: Show back arrow (cancel edit) when editing
+        if isEditing {
+            actions.append(cancelEditAction)
+            return actions
+        }
+
         if !isShowingNavigationToolbar {
             // otherwise back/forward and maybe data clearance when navigation toolbar is hidden
             let canGoBack = action.canGoBack ?? toolbarState.canGoBack
@@ -1144,8 +1158,8 @@ struct AddressBarState: StateType, Sendable, Equatable {
         let layout = isLoadAction ? action.toolbarLayout : toolbarState.toolbarLayout
 
         if isEditing {
-            // cancel button when in edit mode
-            actions.append(cancelEditTextAction)
+            // Ecosia: Show back arrow on left (cancel button) and QR code on right
+            return [qrCodeAction]
         }
 
         // In compact only cancel action should be shown
