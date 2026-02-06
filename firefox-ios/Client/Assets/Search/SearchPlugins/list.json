@@ -860,9 +860,6 @@
         "visibleDefaultEngines": [
           "google-b-m", "bing", "wikipedia-zh-CN"
         ]
-      },
-      "CN": {
-        "searchDefault": "百度"
       }
     },
     "zh-TW": {
