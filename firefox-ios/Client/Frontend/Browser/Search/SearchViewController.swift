@@ -134,6 +134,9 @@ class SearchViewController: SiteTableViewController,
         searchEngineScrollView.decelerationRate = UIScrollView.DecelerationRate.fast
         searchEngineContainerView.addSubview(searchEngineScrollView)
         view.addSubview(searchEngineContainerView)
+        
+        // Ecosia: Hide search engine selection UI
+        searchEngineContainerView.isHidden = true
 
         searchEngineScrollView.addSubview(searchEngineStackView)
 
@@ -272,7 +275,8 @@ class SearchViewController: SiteTableViewController,
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: searchEngineScrollView.topAnchor)
+            // Ecosia: Extend table view to bottom since search engine container is hidden
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
@@ -447,12 +451,17 @@ class SearchViewController: SiteTableViewController,
             searchTelemetry?.trendingSearchesTapped(at: indexPath.row)
 
         case .searchSuggestions:
+            // Ecosia: Check if this is the AI Search item
+            if isAISearchRow(indexPath) {
+                handleAISearchSelection(indexPath)
+                return
+            }
+            
             guard let defaultEngine = viewModel.searchEnginesManager?.defaultEngine else { return }
 
             searchTelemetry?.selectedResult = .searchSuggest
             // Assume that only the default search engine can provide search suggestions.
-            guard let suggestions = viewModel.suggestions,
-                  let suggestion = suggestions[safe: indexPath.row],
+            guard let suggestion = safeSuggestion(at: indexPath.row),
                   let url = defaultEngine.searchURLForQuery(suggestion)
             else { return }
 
@@ -594,7 +603,9 @@ class SearchViewController: SiteTableViewController,
             case .trendingSearches:
                 viewModel.recordTrendingSearchesDisplayedEvent()
             case .searchSuggestions:
-                if let site = viewModel.suggestions?[indexPath.row] {
+                // Ecosia: Skip telemetry for AI Search item
+                if !isAISearchRow(indexPath),
+                   let site = safeSuggestion(at: indexPath.row) {
                     if searchTelemetry?.visibleSuggestions.contains(site) == false {
                         searchTelemetry?.visibleSuggestions.append(site)
                     }
@@ -646,8 +657,8 @@ class SearchViewController: SiteTableViewController,
         case .trendingSearches:
             return viewModel.shouldShowTrendingSearches ? viewModel.trendingSearches.count : 0
         case .searchSuggestions:
-            guard let count = viewModel.suggestions?.count else { return 0 }
-            return count < 4 ? count : 4
+            // Ecosia: Use custom method that includes AI Search item
+            return numberOfRowsForSearchSuggestions()
         case .openedTabs:
             return !viewModel.isZeroSearchState ? viewModel.filteredOpenedTabs.count : 0
         case .remoteTabs:
@@ -662,7 +673,8 @@ class SearchViewController: SiteTableViewController,
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return SearchListSection.allCases.count
+        // Ecosia: Hide Firefox Suggest and only show 4 sections instead of all
+        return 4
     }
 
     func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
@@ -676,7 +688,12 @@ class SearchViewController: SiteTableViewController,
             let suggestion = viewModel.historySites[indexPath.item]
             searchDelegate?.searchViewController(self, didHighlightText: suggestion.url, search: false)
         case .searchSuggestions:
-            guard let suggestion = viewModel.suggestions?[indexPath.item] else { return }
+            // Ecosia: Check if this is the AI Search item
+            if isAISearchRow(indexPath) {
+                handleAISearchHighlight(indexPath)
+                return
+            }
+            guard let suggestion = safeSuggestion(at: indexPath.item) else { return }
             searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)
         case .remoteTabs:
             let suggestion = viewModel.remoteClientTabs[indexPath.item]
@@ -739,7 +756,10 @@ class SearchViewController: SiteTableViewController,
             }
 
         case .searchSuggestions:
-            if let site = viewModel.suggestions?[indexPath.row] {
+            // Ecosia: Check if this is the AI Search item
+            if isAISearchRow(indexPath) {
+                cell = configureAISearchCell(oneLineCell)
+            } else if let site = safeSuggestion(at: indexPath.row) {
                 let oneLineCellViewModel = oneLineCellModelForSearch(
                     with: site,
                     shouldShowAccessoryView: indexPath.row > 0
@@ -838,7 +858,8 @@ class SearchViewController: SiteTableViewController,
         shouldShowAccessoryView: Bool = true
     ) -> OneLineTableViewCellViewModel {
         let appendButton = UIButton(type: .roundedRect)
-        appendButton.setImage(searchAppendImage?.withRenderingMode(.alwaysTemplate), for: .normal)
+        // Ecosia: Use searchAppend icon
+        appendButton.setImage(UIImage.templateImageNamed("searchAppend"), for: .normal)
         appendButton.adjustsImageSizeForAccessibilityContentSizeCategory = true
         let action = UIAction { [weak self] _ in
             self?.appendSearch(with: text)
