@@ -6,6 +6,8 @@ This directory contains Mobile Decision Records (MDR) for the Ecosia iOS Browser
 
 A Mobile Decision Record is a document that captures an important architectural or technical decision made for the mobile application, along with its context and consequences. We use the [MADR (Markdown Any Decision Records)](https://adr.github.io/madr/) template format.
 
+There is a loose collection of old MRD style documents in our [jira](https://ecosia.atlassian.net/wiki/spaces/DEV/pages/3491397671/Native+Apps+Architectural+Decision+Records)
+
 ## Creating a new MDR
 
 1. Copy the template from an existing MDR or use the MADR template
