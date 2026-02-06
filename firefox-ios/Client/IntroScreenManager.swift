@@ -17,14 +17,13 @@ struct IntroScreenManager: FeatureFlaggable, IntroScreenManagerProtocol {
     var prefs: Prefs
 
     var shouldShowIntroScreen: Bool {
-        /* Ecosia: Update intro rule
         prefs.intForKey(PrefsKeys.IntroSeen) == nil
-         */
-        User.shared.firstTime
     }
 
     func didSeeIntroScreen() {
         prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        // Ecosia: Keep firstTime in sync with IntroSeen so first-time-only logic (e.g. handleFirstTimeUserActions) is consistent.
+        User.shared.firstTime = false
     }
 
     var isModernOnboardingEnabled: Bool {

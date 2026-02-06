@@ -67,12 +67,13 @@ extension HomepageSectionLayoutProvider {
         
         let section = NSCollectionLayoutSection(group: group)
         
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 0)
+        let logoVerticalPadding: CGFloat = 24
+        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: logoVerticalPadding, bottomSpacing: logoVerticalPadding)
         section.contentInsets = insets
-        
+
         return section
     }
-    
+
     private func createEcosiaLibraryLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
         // Dimensions from NTPLibaryCellViewModel: item fills group height, group estimated(100)
         let itemSize = NSCollectionLayoutSize(
