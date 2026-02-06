@@ -153,10 +153,16 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     // MARK: - ThemeApplicable
     func applyTheme(theme: Theme) {
         let colors = theme.colors
+        /* Ecosia: Use Ecosia text/icon colors for location field (legacy URLBarView applyTheme)
         tintColor = colors.layerSelectedText
         clearButtonTintColor = colors.iconPrimary
         markedTextStyle = [NSAttributedString.Key.backgroundColor: colors.layerAutofillText]
         textColor = colors.textPrimary
+         */
+        tintColor = colors.ecosia.buttonBackgroundPrimary
+        clearButtonTintColor = colors.ecosia.textPrimary
+        markedTextStyle = [NSAttributedString.Key.backgroundColor: colors.ecosia.backgroundTertiary]
+        textColor = colors.ecosia.textPrimary
         tintClearButton()
     }
 

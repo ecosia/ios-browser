@@ -677,6 +677,7 @@ final class AddressToolbarContainer: UIView,
     }
 
     private func applyProgressBarTheme(isPrivateMode: Bool, theme: Theme) {
+        /* Ecosia: Swap Firefox progress bar gradient with Ecosia highlighter styling
         let gradientStartColor = isPrivateMode ? theme.colors.borderAccentPrivate : theme.colors.borderAccent
         let gradientMiddleColor = isPrivateMode ? nil : theme.colors.iconAccentPink
         let gradientEndColor = isPrivateMode ? theme.colors.borderAccentPrivate : theme.colors.iconAccentYellow
@@ -685,6 +686,14 @@ final class AddressToolbarContainer: UIView,
             startColor: gradientStartColor,
             middleColor: gradientMiddleColor,
             endColor: gradientEndColor
+        )
+         */
+        let highlighter = theme.colors.ecosia.highlighter
+        progressBar.backgroundColor = theme.colors.ecosia.backgroundTertiary
+        progressBar.setGradientColors(
+            startColor: highlighter,
+            middleColor: highlighter,
+            endColor: highlighter
         )
     }
 

@@ -733,8 +733,10 @@ final class LocationView: UIView,
     func applyTheme(theme: Theme) {
         self.theme = theme
         let colors = theme.colors
-
+        /* Ecosia: Use Ecosia semantic colors for location view (legacy URLBarView applyTheme)
         let mainBackgroundColor = hasAlternativeLocationColor ? colors.layerSurfaceMediumAlt : colors.layerSurfaceMedium
+         */
+        let mainBackgroundColor = colors.ecosia.backgroundTertiary
         if #available(iOS 26.0, *), scrollAlpha.isZero {
             // We want to use system colors when the location view is fully transparent
             // To make sure it blends well with the background when using glass effect.
@@ -742,9 +744,14 @@ final class LocationView: UIView,
             urlTextFieldSubdomainColor = .label
             lockIconButton.tintColor = .label
         } else {
+            /* Ecosia: Use Ecosia text colors
             urlTextFieldColor = colors.textPrimary
             urlTextFieldSubdomainColor = colors.textSecondary
             lockIconButton.tintColor = colors.textSecondary
+             */
+            urlTextFieldColor = colors.ecosia.textPrimary
+            urlTextFieldSubdomainColor = colors.ecosia.textSecondary
+            lockIconButton.tintColor = colors.ecosia.textSecondary
         }
         gradientLayer.colors = Gradient(
             colors: [
@@ -757,11 +764,15 @@ final class LocationView: UIView,
         urlTextField.applyTheme(theme: theme)
         urlTextField.attributedPlaceholder = NSAttributedString(
             string: urlTextField.placeholder ?? "",
-            attributes: [.foregroundColor: colors.textPrimary]
+            attributes: [.foregroundColor: colors.ecosia.textPrimary]
         )
 
+        /* Ecosia: Use Ecosia colors for lock/safe icons
         safeListedURLImageColor = colors.iconAccentBlue
         lockIconImageColor = colors.textSecondary
+         */
+        safeListedURLImageColor = colors.ecosia.iconDecorative
+        lockIconImageColor = colors.ecosia.textSecondary
 
         setLockIconImage()
         // Applying the theme to urlTextField can cause the url formatting to get removed

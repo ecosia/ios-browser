@@ -3,8 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import ToolbarKit
+import Ecosia
 import Shared
+import ToolbarKit
 
 final class AddressToolbarContainerModel: Equatable {
     let toolbarHelper: ToolbarHelperInterface
@@ -40,6 +41,11 @@ final class AddressToolbarContainerModel: Equatable {
 
     @MainActor
     var addressToolbarConfig: AddressToolbarConfiguration {
+        buildAddressToolbarConfig()
+    }
+
+    @MainActor
+    private func buildAddressToolbarConfig() -> AddressToolbarConfiguration {
         let term = searchTerm ?? searchTermFromURL(url)
         let backgroundAlpha = toolbarHelper.glassEffectAlpha
         let shouldBlur = toolbarHelper.shouldBlur()
@@ -54,6 +60,15 @@ final class AddressToolbarContainerModel: Equatable {
             droppableUrl = url
         }
 
+        // Ecosia: Ecosify URL when needed; use Ecosia search/logo icon (legacy URLBarView behaviour).
+        let displayURL: URL? = {
+            if isEmptySearch { return nil }
+            guard let u = url else { return nil }
+            return u.shouldEcosify() ? u.ecosified(isIncognitoEnabled: isPrivateMode) : u
+        }()
+        let isHome = url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? true
+        let displaySearchEngineImage: UIImage? = ecosiaSearchEngineImage(isEditing: isEditing, isPrivate: isPrivateMode, isHome: isHome, defaultImage: searchEngineImage)
+
         let locationViewConfiguration = LocationViewConfiguration(
             searchEngineImageViewA11yId: AccessibilityIdentifiers.Browser.AddressToolbar.searchEngine,
             searchEngineImageViewA11yLabel: String(
@@ -64,11 +79,11 @@ final class AddressToolbarContainerModel: Equatable {
             lockIconButtonA11yLabel: .AddressToolbar.PrivacyAndSecuritySettingsA11yLabel,
             urlTextFieldPlaceholder: .AddressToolbar.LocationPlaceholder,
             urlTextFieldA11yId: AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField,
-            searchEngineImage: searchEngineImage,
+            searchEngineImage: displaySearchEngineImage,
             lockIconImageName: lockIconImageName,
             lockIconNeedsTheming: lockIconNeedsTheming,
             safeListedURLImageName: safeListedURLImageName,
-            url: isEmptySearch ? nil : url,
+            url: displayURL,
             droppableUrl: droppableUrl,
             searchTerm: isEmptySearch ? nil : term,
             isEditing: isEditing,
@@ -103,6 +118,20 @@ final class AddressToolbarContainerModel: Equatable {
             uxConfiguration: uxConfiguration,
             shouldAnimate: shouldAnimate
         )
+    }
+
+    /// Ecosia: Search/logo icon for address bar (editing = Ecosia logo or private icon; home = default/search; !home = hidden).
+    private func ecosiaSearchEngineImage(isEditing: Bool, isPrivate: Bool, isHome: Bool, defaultImage: UIImage?) -> UIImage? {
+        if isEditing {
+            if isPrivate {
+                return UIImage.templateImageNamed(StandardImageIdentifiers.Large.privateMode)
+            }
+            return UIImage(named: "iconLogo", in: .ecosia, with: nil)
+        }
+        if isHome {
+            return defaultImage ?? UIImage.templateImageNamed("searchUrl")
+        }
+        return nil
     }
 
     /// Returns a skeleton (placeholder) `AddressToolbarConfiguration` for the address bar.
