@@ -149,6 +149,7 @@ class ShareViewController: UIViewController {
         makeSeparator(addTo: stackView)
 
         if shareItem?.isUrlType() ?? true {
+            // Ecosia: Use Ecosia app icon/logo for "Open in browser" row; ensure Icon-Small and this image reference Ecosia assets in ShareTo Images.xcassets.
             makeActionRow(
                 addTo: stackView,
                 label: .ShareOpenInFirefox,
@@ -401,6 +402,7 @@ class ShareViewController: UIViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.isTranslucent = false
+        // Ecosia: Icon-Small should be the Ecosia app icon in ShareTo/Images.xcassets/Icon-Small.imageset (e.g. icon-40@2x.png).
         navigationItem.titleView = UIImageView(image: UIImage(named: "Icon-Small"))
         navigationItem.titleView?.contentMode = .scaleAspectFit
         navigationItem.leftBarButtonItem = UIBarButtonItem(

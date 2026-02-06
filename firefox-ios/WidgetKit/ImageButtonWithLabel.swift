@@ -123,6 +123,7 @@ struct ImageButtonWithLabel: View {
         }
     }
 
+    // Ecosia: Use Ecosia app icon in WidgetKit/Assets.xcassets (e.g. add faviconEcosia or replace faviconFox imageset for Ecosia build).
     private var icon: some View {
         return HStack(alignment: .bottom) {
             Spacer()
