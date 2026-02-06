@@ -10,6 +10,8 @@ final class LocationContainer: UIView, ThemeApplicable {
         static let shadowRadius: CGFloat = 14
         static let shadowOpacity: Float = 1
         static let shadowOffset = CGSize(width: 0, height: 2)
+        // Ecosia: Border when editing (legacy URLBarView overlay border)
+        static let borderWidthEditing: CGFloat = 2
     }
 
     init() {
@@ -37,6 +39,17 @@ final class LocationContainer: UIView, ThemeApplicable {
         let targetOpacity = scrollAlpha.isZero ? 0 : UX.shadowOpacity
         guard layer.shadowOpacity != targetOpacity else { return }
         layer.shadowOpacity = targetOpacity
+    }
+
+    // Ecosia: Update border based on editing state (legacy URLBarView overlay border styling)
+    func updateBorder(isEditing: Bool, theme: Theme) {
+        if isEditing {
+            layer.borderWidth = UX.borderWidthEditing
+            layer.borderColor = theme.colors.ecosia.buttonBackgroundPrimary.cgColor
+        } else {
+            layer.borderWidth = 0
+            layer.borderColor = nil
+        }
     }
 
     // MARK: - ThemeApplicable

@@ -11,8 +11,14 @@ final class PlainSearchEngineView: UIView,
                                    ThemeApplicable {
     // MARK: - Properties
     private enum UX {
-        static let cornerRadius: CGFloat = if #available(iOS 26.0, *) { 12 } else { 4 }
+        /* Ecosia: Use different sizes for editing vs not editing (legacy URLBarView sizing)
+        static let cornerRadius: CGFloat = 4
         static let imageViewSize = CGSize(width: 24, height: 24)
+        */
+        static let cornerRadius: CGFloat = if #available(iOS 26.0, *) { 12 } else { 4 }
+        // Ecosia: Use different sizes for editing (overlay) vs not editing (legacy URLBarView sizing)
+        static let imageViewSizeMedium = CGSize(width: 24, height: 24) // When editing
+        static let imageViewSizeSmall = CGSize(width: 16, height: 16) // When not editing
     }
 
     private lazy var searchEngineImageView: UIImageView = .build { imageView in
@@ -21,6 +27,10 @@ final class PlainSearchEngineView: UIView,
         imageView.isAccessibilityElement = true
         imageView.clipsToBounds = true
     }
+
+    // Ecosia: Store constraints for dynamic sizing based on isEditing
+    private var imageViewWidthConstraint: NSLayoutConstraint?
+    private var imageViewHeightConstraint: NSLayoutConstraint?
 
     private var theme: Theme?
     private var isURLTextFieldCentered = false {
@@ -41,9 +51,17 @@ final class PlainSearchEngineView: UIView,
         fatalError("init(coder:) has not been implemented")
     }
 
+    /* Ecosia: Configure with LocationViewConfiguration and dynamic sizing
+    func configure(_ state: LocationViewState, delegate: LocationViewDelegate) {
+        searchEngineImageView.image = state.searchEngineImage
+        configureA11y(state)
+    }
+    */
     func configure(_ config: LocationViewConfiguration, isLocationTextCentered: Bool, delegate: LocationViewDelegate) {
         isURLTextFieldCentered = isLocationTextCentered
         searchEngineImageView.image = config.searchEngineImage
+        // Ecosia: Adjust icon size based on editing state (24pt when editing, 16pt when not, like legacy URLBarView)
+        updateIconSize(isEditing: config.isEditing)
         configureA11y(config)
     }
 
@@ -53,9 +71,18 @@ final class PlainSearchEngineView: UIView,
         translatesAutoresizingMaskIntoConstraints = true
         addSubviews(searchEngineImageView)
 
+        /* Ecosia: Store constraints for dynamic sizing
         NSLayoutConstraint.activate([
             searchEngineImageView.heightAnchor.constraint(equalToConstant: UX.imageViewSize.height),
             searchEngineImageView.widthAnchor.constraint(equalToConstant: UX.imageViewSize.width),
+        */
+        // Ecosia: Store constraints for dynamic sizing
+        imageViewHeightConstraint = searchEngineImageView.heightAnchor.constraint(equalToConstant: UX.imageViewSizeMedium.height)
+        imageViewWidthConstraint = searchEngineImageView.widthAnchor.constraint(equalToConstant: UX.imageViewSizeMedium.width)
+
+        NSLayoutConstraint.activate([
+            imageViewHeightConstraint!,
+            imageViewWidthConstraint!,
             searchEngineImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             searchEngineImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             searchEngineImageView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor),
@@ -65,8 +92,23 @@ final class PlainSearchEngineView: UIView,
         ])
     }
 
+    // Ecosia: Update icon size based on editing state (legacy URLBarView behaviour)
+    private func updateIconSize(isEditing: Bool) {
+        let size = isEditing ? UX.imageViewSizeMedium : UX.imageViewSizeSmall
+        imageViewWidthConstraint?.constant = size.width
+        imageViewHeightConstraint?.constant = size.height
+    }
+
     // MARK: - Accessibility
 
+    /* Ecosia: Use LocationViewConfiguration instead of LocationViewState
+    private func configureA11y(_ state: LocationViewState) {
+        searchEngineImageView.accessibilityIdentifier = state.searchEngineImageViewA11yId
+        searchEngineImageView.accessibilityLabel = state.searchEngineImageViewA11yLabel
+        searchEngineImageView.largeContentTitle = state.searchEngineImageViewA11yLabel
+        searchEngineImageView.largeContentImage = nil
+    }
+    */
     private func configureA11y(_ config: LocationViewConfiguration) {
         searchEngineImageView.accessibilityIdentifier = config.searchEngineImageViewA11yId
         searchEngineImageView.accessibilityLabel = config.searchEngineImageViewA11yLabel
@@ -78,7 +120,10 @@ final class PlainSearchEngineView: UIView,
 
     func applyTheme(theme: Theme) {
         let colors = theme.colors
+        /* Ecosia: Use Ecosia background for search engine icon area (legacy URLBarView search icon)
         searchEngineImageView.backgroundColor = isURLTextFieldCentered ? colors.layerSurfaceLow : colors.layer2
+         */
+        searchEngineImageView.backgroundColor = colors.ecosia.backgroundTertiary
         self.theme = theme
     }
 }

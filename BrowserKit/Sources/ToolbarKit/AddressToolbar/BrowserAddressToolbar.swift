@@ -157,6 +157,12 @@ public class BrowserAddressToolbar: UIView,
             uxConfig: config.uxConfiguration,
             addressBarPosition: addressBarPosition
         )
+
+        // Ecosia: Update location container border based on editing state (legacy URLBarView overlay border)
+        if let theme {
+            locationContainer.updateBorder(isEditing: config.locationViewConfiguration.isEditing, theme: theme)
+        }
+
         updateActions(config: config, animated: animated)
         droppableUrl = config.locationViewConfiguration.droppableUrl
     }
@@ -496,6 +502,10 @@ public class BrowserAddressToolbar: UIView,
         toolbarBottomBorderView.backgroundColor = colors.borderPrimary
         locationContainer.applyTheme(theme: theme)
         locationView.applyTheme(theme: theme)
+        // Ecosia: Update location container border when theme changes (legacy URLBarView overlay border)
+        if let isEditing = previousConfiguration?.locationViewConfiguration.isEditing {
+            locationContainer.updateBorder(isEditing: isEditing, theme: theme)
+        }
         self.theme = theme
     }
 
