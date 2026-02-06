@@ -23,7 +23,10 @@ protocol SearchEngineDelegate: AnyObject {
 }
 
 struct SearchEngineProviderFactory {
+    /* Ecosia: Use custom provider that ensures Ecosia is always the default
     static let defaultSearchEngineProvider: SearchEngineProvider = ASSearchEngineProvider()
+    */
+    static let defaultSearchEngineProvider: SearchEngineProvider = EcosiaSearchEngineProvider()
 }
 
 /// Manages a set of `OpenSearchEngine`s.
