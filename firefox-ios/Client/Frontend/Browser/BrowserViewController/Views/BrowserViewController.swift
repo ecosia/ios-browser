@@ -2876,6 +2876,9 @@ class BrowserViewController: UIViewController,
                     actionType: ToolbarActionType.animationStateChanged
                 )
             )
+        // Ecosia: Handle QR code scanner display
+        case .qrCode:
+            navigationHandler?.showQRCode(delegate: self, rootNavigationController: nil)
         case .share:
             // User tapped the Share button in the toolbar
             guard let button = state.buttonTapped else { return }
@@ -3252,6 +3255,11 @@ class BrowserViewController: UIViewController,
             DefaultLogger.shared.log("Error handling URL entry: \"\(text)\".", level: .warning, category: .tabs)
             return
         }
+        
+        // Ecosia: DEBUG - Log which search engine is being used
+        print("🔍 DEBUG: Submitting search with engine: \(engine.shortName), URL: \(searchURL)")
+        print("🔍 DEBUG: All available engines: \(searchEnginesManager.orderedEngines.map { $0.shortName })")
+        print("🔍 DEBUG: Default engine: \(searchEnginesManager.defaultEngine?.shortName ?? "none")")
 
         let conversionMetrics = UserConversionMetrics()
         conversionMetrics.didPerformSearch()

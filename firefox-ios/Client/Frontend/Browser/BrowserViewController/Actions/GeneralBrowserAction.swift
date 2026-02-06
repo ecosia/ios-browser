@@ -74,6 +74,8 @@ enum GeneralBrowserActionType: ActionType {
     case didUnhideToolbar
     case didCloseTabFromToolbar
     case shakeMotionEnded
+    // Ecosia: QR code scanner action
+    case showQRCode
 }
 
 struct GeneralBrowserMiddlewareAction: Action {

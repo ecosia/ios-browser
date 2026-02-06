@@ -294,9 +294,23 @@ final class ToolbarMiddleware: FeatureFlaggable {
             store.dispatch(action)
 
         case .search:
+            /* Ecosia: Check if this is the QR code scanner button
             toolbarTelemetry.searchButtonTapped(isPrivate: toolbarState.isPrivateMode)
             let action = ToolbarAction(windowUUID: action.windowUUID, actionType: ToolbarActionType.didStartEditingUrl)
             store.dispatch(action)
+            */
+            // Ecosia: Check if this is the QR code scanner button
+            if action.gestureType == .tap, action.buttonTapped?.accessibilityIdentifier == "urlBar-scanQRCode" {
+                // Show QR code scanner
+                let qrAction = GeneralBrowserAction(windowUUID: action.windowUUID,
+                                                    actionType: GeneralBrowserActionType.showQRCode)
+                store.dispatch(qrAction)
+            } else {
+                // Standard search button behavior
+                toolbarTelemetry.searchButtonTapped(isPrivate: toolbarState.isPrivateMode)
+                let action = ToolbarAction(windowUUID: action.windowUUID, actionType: ToolbarActionType.didStartEditingUrl)
+                store.dispatch(action)
+            }
 
         case .dataClearance:
             toolbarTelemetry.dataClearanceButtonTapped(isPrivate: toolbarState.isPrivateMode)

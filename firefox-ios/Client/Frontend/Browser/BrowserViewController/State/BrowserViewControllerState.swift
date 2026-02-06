@@ -36,6 +36,8 @@ struct BrowserViewControllerState: ScreenState {
         case passwordGenerator
         // TODO: FXIOS-13118 Clean up and remove as we should have one navigation entry point
         case summarizer(config: SummarizerConfig?)
+        // Ecosia: QR code scanner display type
+        case qrCode
     }
 
     let windowUUID: WindowUUID
@@ -338,6 +340,9 @@ struct BrowserViewControllerState: ScreenState {
             return handleShowPasswordGeneratorAction(state: state, action: action)
         case GeneralBrowserActionType.showSummarizer:
             return handleShowSummarizerAction(state: state, action: action)
+        // Ecosia: Handle QR code scanner action
+        case GeneralBrowserActionType.showQRCode:
+            return handleShowQRCodeAction(state: state, action: action)
         default:
             return passthroughState(from: state, action: action)
         }
@@ -681,6 +686,20 @@ struct BrowserViewControllerState: ScreenState {
             windowUUID: state.windowUUID,
             shouldStartAtHome: action.shouldStartAtHome ?? false,
             browserViewType: state.browserViewType,
+            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+    }
+
+    // MARK: - Ecosia
+
+    @MainActor
+    private static func handleShowQRCodeAction(state: BrowserViewControllerState,
+                                              action: GeneralBrowserAction) -> BrowserViewControllerState {
+        return BrowserViewControllerState(
+            searchScreenState: state.searchScreenState,
+            toast: state.toast,
+            windowUUID: state.windowUUID,
+            browserViewType: state.browserViewType,
+            displayView: .qrCode,
             microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
     }
 }
