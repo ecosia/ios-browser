@@ -54,7 +54,11 @@ public final class AppIconManager {
 
     private let application: UIApplication?
 
-    /// Initializes the manager. Pass `nil` during testing to avoid UIKit dependency.
+    /// Initializes the manager.
+    ///
+    /// - Parameter application: The `UIApplication` instance to use.
+    ///   Pass `nil` during testing; in production the shared instance
+    ///   resolves `UIApplication.shared` on the main thread automatically.
     public init(application: UIApplication? = nil) {
         self.application = application
     }
@@ -86,6 +90,11 @@ public final class AppIconManager {
     // MARK: - Private
 
     private var resolvedApplication: UIApplication? {
-        application ?? (Thread.isMainThread ? UIApplication.shared : nil)
+        if let application { return application }
+        guard Thread.isMainThread else {
+            assertionFailure("AppIconManager: UIApplication.shared must be accessed from the main thread.")
+            return nil
+        }
+        return UIApplication.shared
     }
 }

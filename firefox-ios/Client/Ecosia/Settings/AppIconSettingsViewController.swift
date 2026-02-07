@@ -45,7 +45,16 @@ extension AppIconSettingsViewController: AppIconSelectionDelegate {
     func didSelect(icon: AppIcon) {
         guard icon != iconManager.currentIcon else { return }
         iconManager.setIcon(icon) { [weak self] error in
-            guard error == nil else { return }
+            if let error {
+                let alert = UIAlertController(
+                    title: nil,
+                    message: error.localizedDescription,
+                    preferredStyle: .alert
+                )
+                alert.addAction(.init(title: .localized(.done), style: .default))
+                self?.present(alert, animated: true)
+                return
+            }
             self?.settings = self?.generateSettings() ?? []
             self?.tableView.reloadData()
         }

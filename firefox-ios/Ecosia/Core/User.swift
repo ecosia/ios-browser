@@ -43,6 +43,7 @@ public struct User: Codable, Equatable {
     }
 
     // MARK: App Icon
+    /// The user's selected app icon, managed by `AppIconManager`.
     public var appIcon = AppIcon.default
 
     // MARK: NTP Customization
