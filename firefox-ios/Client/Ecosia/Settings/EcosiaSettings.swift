@@ -248,6 +248,28 @@ final class HomepageSettings: Setting {
     }
 }
 
+final class AppIconSettings: Setting {
+
+    override var accessoryView: UIImageView? { ecosiaDisclosureIndicator(theme: theme) }
+
+    override var style: UITableViewCell.CellStyle { return .value1 }
+
+    override var status: NSAttributedString {
+        NSAttributedString(string: .localized(User.shared.appIcon.localizedTitleKey))
+    }
+
+    let windowUUID: WindowUUID
+    init(settings: SettingsTableViewController) {
+        self.windowUUID = settings.windowUUID
+        super.init(title: NSAttributedString(string: .localized(.appIcon)))
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let viewController = AppIconSettingsViewController(windowUUID: windowUUID)
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
 /// Setting option that opens the Ecosia Help Center
 class HelpCenterSetting: Setting {
     override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
