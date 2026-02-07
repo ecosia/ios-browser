@@ -242,6 +242,12 @@ extension String {
         case defaultBrowserCardDetailInstructionStep3 = "Choose **Ecosia**"
         case defaultBrowserCardDetailButton = "Make default in settings"
 
+        // MARK: - App Icon
+        case appIcon = "App Icon"
+        case appIconDefault = "Default"
+        case appIconGreen = "Green"
+        case appIconBlack = "Black"
+
         // MARK: - Feedback View
         case reportIssue = "Report an issue"
         case helpCenter = "Help Center"

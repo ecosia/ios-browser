@@ -58,7 +58,8 @@ extension AppSettingsTableViewController {
     private func getCustomizationSection() -> SettingSection {
 
         var customizationSettings: [Setting] = [
-            HomepageSettings(settings: self, settingsDelegate: settingsDelegate)
+            HomepageSettings(settings: self, settingsDelegate: settingsDelegate),
+            AppIconSettings(settings: self)
         ]
 
         let inactiveTabsAreBuildActive = featureFlags.isFeatureEnabled(.inactiveTabs, checking: .buildOnly)

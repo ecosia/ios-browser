@@ -42,6 +42,9 @@ public struct User: Codable, Equatable {
         return cookieConsentValue.contains("a")
     }
 
+    // MARK: App Icon
+    public var appIcon = AppIcon.default
+
     // MARK: NTP Customization
     public var showTopSites = true
     public var topSitesRows = 4
@@ -98,7 +101,8 @@ public struct User: Codable, Equatable {
         state,
         cookieConsentValue,
         whatsNewItemsVersionsShown,
-        analyticsUserState
+        analyticsUserState,
+        appIcon
         // Reusing previous decoding keys
         case searchCount = "treeCount"
         case showTopSites = "topSites"
@@ -129,6 +133,7 @@ public struct User: Codable, Equatable {
         cookieConsentValue = try? root.decode(String.self, forKey: .cookieConsentValue)
         whatsNewItemsVersionsShown = (try? root.decode(Set<String>.self, forKey: .whatsNewItemsVersionsShown)) ?? []
         analyticsUserState = (try? root.decode(AnalyticsStateContext.self, forKey: .analyticsUserState)) ?? .init()
+        appIcon = (try? root.decode(AppIcon.self, forKey: .appIcon)) ?? .default
     }
 
     init() {
@@ -156,6 +161,7 @@ public struct User: Codable, Equatable {
             cookieConsentValue = stored.cookieConsentValue
             whatsNewItemsVersionsShown = stored.whatsNewItemsVersionsShown
             analyticsUserState = stored.analyticsUserState
+            appIcon = stored.appIcon
         } else {
             save()
         }

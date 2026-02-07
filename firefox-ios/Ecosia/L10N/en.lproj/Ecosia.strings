@@ -300,3 +300,9 @@
 "Level: %@" = "Level: %@";
 "Opens your profile page" = "Opens your profile page";
 "Sign out of your account" = "Sign out of your account";
+
+/* App Icon Settings */
+"App Icon" = "App Icon";
+"Default" = "Default";
+"Green" = "Green";
+"Black" = "Black";

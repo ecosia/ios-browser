@@ -282,6 +282,20 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 * Run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (Xcode)
 
+## 🎨 Alternate App Icons
+
+The app supports alternate app icons using Apple's asset-catalog approach (Xcode 14+). Users can choose a different icon from **Settings → Customization → App Icon**.
+
+### Adding a new alternate icon
+
+1. Create a new `.appiconset` folder in `Client/Assets/Images.xcassets/` (e.g. `AppIconNewVariant.appiconset`) with the required icon sizes
+2. Create a matching preview `.imageset` (e.g. `AppIconNewVariantPreview.imageset`) with 1×/2×/3× images for the settings list
+3. Add a new case to the `AppIcon` enum in `Ecosia/Core/AppIconManager.swift`
+4. Add a localization key in `Ecosia/L10N/String.swift` and the English string in `Ecosia/L10N/en.lproj/Ecosia.strings`
+5. Add the icon set name to the `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` build setting in Xcode
+
+See the ADR at `docs/decisions/0002-alternate-app-icons-support.md` for architectural details.
+
 ## ✅ Acceptance testing
 
 Check https://github.com/ecosia/mobile-acceptance-testing for details
