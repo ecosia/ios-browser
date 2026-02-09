@@ -56,10 +56,10 @@ Tuist is a project generation tool for Xcode that allows defining project struct
    - Fixed archive export for Xcode 16 compatibility
 
 5. **Documentation**
-   - Created comprehensive upgrade guide
+   - Created comprehensive upgrade guide: `firefox-ios/Tuist/upgrade/TUIST_INTEGRATION_GUIDE.md`
    - Added conflict helper workflow documentation
-   - Updated README to include Tuist information
-   - Organized upgrade tools under dedicated Tuist folder
+   - Updated README: `firefox-ios/Ecosia/Ecosia.docc/Ecosia.md`
+   - Organized upgrade tools under dedicated Tuist folder: `firefox-ios/Tuist/upgrade/`
 
 #### Challenges Overcome
 
@@ -70,11 +70,50 @@ Tuist is a project generation tool for Xcode that allows defining project struct
 
 #### Files Modified
 
-- `Project.swift` - New Tuist project definition
+- `firefox-ios/Project.swift` - New Tuist project definition
 - `Fastfile` - Updated for Tuist workspace
 - `.gitignore` - Added Tuist-generated files
 - CI configuration files
 - Build script helpers
+
+#### Getting Started with Tuist
+
+> **Note**: Tuist is implemented in the `tuist-implementation` branch, not yet merged to `main`.
+
+**Quick Setup:**
+```bash
+# Clone the repository (if not already done)
+git clone https://github.com/ecosia/ios-browser
+cd ios-browser
+
+# Run the Tuist setup script (installs Tuist and generates project)
+./tuist-setup.sh
+
+# Generate the Xcode project
+cd firefox-ios
+tuist generate
+
+# Open the generated project
+open Client.xcodeproj
+```
+
+**Documentation Resources:**
+- **Main Setup Guide**: `firefox-ios/Ecosia/Ecosia.docc/Ecosia.md` - General build instructions
+- **Tuist Integration Guide**: `firefox-ios/Tuist/upgrade/TUIST_INTEGRATION_GUIDE.md` - Complete Firefox upgrade workflow with Tuist
+- **Upgrade Tools**: `firefox-ios/Tuist/upgrade/` - Contains conflict helper and automation scripts
+
+**Key Concept:**
+```
+Project.swift (tracked in git) → tuist generate → Client.xcodeproj (gitignored)
+```
+
+Instead of manually editing `.xcodeproj/project.pbxproj` (30,000 lines of XML), you edit `Project.swift` (850 lines of Swift code).
+
+**Benefits:**
+- Reduces merge conflicts from 100+ to 10-20 during Firefox upgrades (85% reduction)
+- Type-safe configuration validated by Swift compiler
+- Readable, reviewable project structure
+- Auto-resolves 50-60% of source code conflicts with the included conflict helper tool
 
 ---
 
