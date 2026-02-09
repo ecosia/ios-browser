@@ -326,15 +326,11 @@ class LegacyHomepageViewController:
     }
 
     func createLayout() -> UICollectionViewLayout {
-        /* Ecosia: Update Layout type
-        let layout = UICollectionViewCompositionalLayout { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
-        */
         let layout = NTPLayout { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
             -> NSCollectionLayoutSection? in
             guard let self,
                   let viewModel = self.viewModel.getSectionViewModel(shownSection: sectionIndex),
                   viewModel.shouldShow
-            // Returning a default section to prevent the app to crash with invalid section definition
             else {
                 let shownSection = self?.viewModel.shownSections[safe: sectionIndex]
                 self?.logger.log("The current section index: \(sectionIndex) didn't load a valid section. The associated section type if present is: \(String(describing: shownSection))",
@@ -1068,3 +1064,4 @@ extension LegacyHomepageViewController: Notifiable {
         }
     }
 }
+

@@ -56,12 +56,12 @@ final class HomepageSectionLayoutProvider {
     init(logger: Logger = DefaultLogger.shared) {
         self.logger = logger
     }
-
+    
     func createCompositionalLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { (sectionIndex, environment) -> NSCollectionLayoutSection? in
             guard let section = HomepageSection(rawValue: sectionIndex) else {
                 self.logger.log(
-                    "Section should not have been nil, something went wrong",
+                    "HomepageSectionLayoutProvider: Section should not have been nil, something went wrong",
                     level: .fatal,
                     category: .homepage
                 )
@@ -188,3 +188,4 @@ final class HomepageSectionLayoutProvider {
         return section
     }
 }
+

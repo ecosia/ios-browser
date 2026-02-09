@@ -2183,6 +2183,9 @@
 		00BF4ADC86945E3BB6261468 /* hi-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hi-IN"; path = "hi-IN.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		00CB40AB9D8919903B25B929 /* ga */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ga; path = ga.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		010C4D489819E44907C04EA6 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = "nb.lproj/Default Browser.strings"; sourceTree = "<group>"; };
+		011D2E112F35F0AD006776FB /* NEW_TAB_HOMEPAGE_PLAN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = NEW_TAB_HOMEPAGE_PLAN.md; sourceTree = "<group>"; };
+		011D2E122F35F686006776FB /* EcosiaSectionBackgroundDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaSectionBackgroundDecorationView.swift; sourceTree = "<group>"; };
+		011D2E132F35F781006776FB /* EcosiaSectionBackgroundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaSectionBackgroundManager.swift; sourceTree = "<group>"; };
 		01724472B0A3FC847975C573 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
 		019E45BAB9513E1AFE642AF5 /* ml */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ml; path = ml.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
 		01C242DCBB36514BBB04614C /* pa-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pa-IN"; path = "pa-IN.lproj/ClearPrivateDataConfirm.strings"; sourceTree = "<group>"; };
@@ -14391,6 +14394,9 @@
 				43BE578B278BA4D900491291 /* RustMozillaAppServices-Info.plist */,
 				8ACD3B972BA8EA8300E73E9A /* PrivacyInfo.xcprivacy */,
 				2CC242722D520DE80098467A /* Recovered References */,
+				011D2E112F35F0AD006776FB /* NEW_TAB_HOMEPAGE_PLAN.md */,
+				011D2E122F35F686006776FB /* EcosiaSectionBackgroundDecorationView.swift */,
+				011D2E132F35F781006776FB /* EcosiaSectionBackgroundManager.swift */,
 			);
 			sourceTree = "<group>";
 		};
