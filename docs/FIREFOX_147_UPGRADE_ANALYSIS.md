@@ -78,23 +78,53 @@ Tuist is a project generation tool for Xcode that allows defining project struct
 
 #### Getting Started with Tuist
 
-> **Note**: Tuist is implemented in the `tuist-implementation` branch, not yet merged to `main`.
+> **⚠️ IMPORTANT**: Tuist is implemented in the `tuist-implementation` branch, NOT yet merged to `main`.
+> 
+> You must checkout the `tuist-implementation` branch to use Tuist.
 
 **Quick Setup:**
 ```bash
-# Clone the repository (if not already done)
+# 1. Clone the repository (if not already done)
 git clone https://github.com/ecosia/ios-browser
 cd ios-browser
 
-# Run the Tuist setup script (installs Tuist and generates project)
-./tuist-setup.sh
+# 2. Checkout the tuist-implementation branch
+git checkout tuist-implementation
 
-# Generate the Xcode project
+# 3. Run bootstrap to set up dependencies
+./bootstrap.sh
+
+# 4. Create the Client/Generated directory (required for Tuist)
+mkdir -p firefox-ios/Client/Generated
+
+# 5. Generate the Xcode project with Tuist
 cd firefox-ios
 tuist generate
 
-# Open the generated project
+# 6. Open the generated project
 open Client.xcodeproj
+```
+
+**Troubleshooting:**
+
+If you get an error like:
+```
+The directory "Client/Generated" does not exist
+```
+
+**Solution:** You're likely on the wrong branch or missing the Generated directory.
+```bash
+# Check which branch you're on
+git branch --show-current
+
+# If not on tuist-implementation, checkout that branch
+git checkout tuist-implementation
+
+# Create the required directory
+mkdir -p firefox-ios/Client/Generated
+
+# Then run tuist generate again
+cd firefox-ios && tuist generate
 ```
 
 **Documentation Resources:**
