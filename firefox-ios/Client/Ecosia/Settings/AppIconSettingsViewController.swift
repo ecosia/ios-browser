@@ -44,6 +44,11 @@ protocol AppIconSelectionDelegate: AnyObject {
 extension AppIconSettingsViewController: AppIconSelectionDelegate {
     func didSelect(icon: AppIcon) {
         guard icon != iconManager.currentIcon else { return }
+        // Deselect rows to end the table view interaction before the
+        // system presents its icon-change confirmation alert.
+        if let selected = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: selected, animated: true)
+        }
         iconManager.setIcon(icon) { [weak self] error in
             if let error {
                 let alert = UIAlertController(

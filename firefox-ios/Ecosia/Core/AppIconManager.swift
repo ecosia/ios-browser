@@ -78,14 +78,28 @@ public final class AppIconManager {
     /// The call is dispatched asynchronously to avoid
     /// `LSIconAlertManager` errors that occur when the system
     /// alert token is requested during an in-flight UI interaction.
+    /// If the system returns a transient `EAGAIN` (code 35) error,
+    /// the request is retried once after a longer delay.
     ///
     /// - Parameters:
     ///   - icon: The desired `AppIcon`.
     ///   - completion: Called on the main queue with an optional error.
     public func setIcon(_ icon: AppIcon, completion: ((Error?) -> Void)? = nil) {
+        performIconChange(icon, retryCount: 0, completion: completion)
+    }
+
+    private func performIconChange(_ icon: AppIcon, retryCount: Int, completion: ((Error?) -> Void)?) {
         let app = resolvedApplication
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        let delay: TimeInterval = retryCount == 0 ? 0.3 : 1.0
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             app?.setAlternateIconName(icon.alternateIconName) { error in
+                if let error = error as? NSError,
+                   error.domain == NSPOSIXErrorDomain,
+                   error.code == 35,
+                   retryCount < 1 {
+                    self?.performIconChange(icon, retryCount: retryCount + 1, completion: completion)
+                    return
+                }
                 if error == nil {
                     User.shared.appIcon = icon
                 }
