@@ -48,9 +48,9 @@ Alternate icon sets are placed in `Images.xcassets` alongside the primary `AppIc
 * `AppIconSettingsViewController` — settings screen listing available icons with checkmark selection
 * `AppIconSettings` — setting row in the Customization section of the main settings table
 
-### Xcode Build Configuration Required
+### Xcode Build Configuration
 
-In the Xcode project build settings for the **Ecosia** and **EcosiaBeta** targets, add:
+All Client target build configurations in `Client.xcodeproj` include:
 
 ```
 ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = AppIconGreen AppIconBlack
@@ -73,5 +73,4 @@ Images.xcassets/
 ## Open Issues
 
 * Final icon designs for Green and Black variants need to be provided by the design team (current files are solid-color placeholders)
-* The `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` build setting must be configured in Xcode project settings manually
 * Analytics tracking for icon changes can be added once the analytics event schema is defined

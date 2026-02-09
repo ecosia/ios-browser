@@ -23875,6 +23875,7 @@
 		2C02BE252B0E319400FE80C2 /* BetaDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGreen AppIconBlack";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Beta;
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -24134,6 +24135,7 @@
 		2C02BE3A2B0E31B100FE80C2 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGreen AppIconBlack";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Beta;
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -24389,6 +24391,7 @@
 		2C2F32032D46A5CC00977F55 /* Testing */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGreen AppIconBlack";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Developer;
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -26112,6 +26115,7 @@
 		E448FC9E1AEE7A6000869B6C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGreen AppIconBlack";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -26357,6 +26361,7 @@
 		E6DCC2061DCBB6F100CEC4B7 /* BetaDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGreen AppIconBlack";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Developer;
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -26589,6 +26594,7 @@
 		E6FCC42A1C40562400DF6113 /* Development_TestFlight */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGreen AppIconBlack";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Beta;
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -26779,6 +26785,7 @@
 		F84B21DE1A090F8100AAB793 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGreen AppIconBlack";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Developer;
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
