@@ -185,11 +185,12 @@ final class EcosiaAuthFlow {
         // Get session transfer URL
         let signUpURL = EcosiaEnvironment.current.urlProvider.signUpURL
 
-        EcosiaLogger.session.info("Retrieving session transfer token for SSO")
+        EcosiaLogger.auth.info("🔐 [AUTH-FLOW] === Starting Native-to-Web SSO Session Transfer ===")
+        EcosiaLogger.auth.info("🔐 [AUTH-FLOW] Step 1: Retrieving session transfer token")
         await authService.getSessionTransferToken()
 
         // Create invisible tab session (must be on main thread for UI operations)
-        EcosiaLogger.invisibleTabs.info("Creating invisible tab session for login")
+        EcosiaLogger.auth.info("🔐 [AUTH-FLOW] Step 2: Creating invisible tab for URL: \(signUpURL)")
         let session = try await MainActor.run {
             try InvisibleTabSession(
                 url: signUpURL,
@@ -203,13 +204,15 @@ final class EcosiaAuthFlow {
         activeSession = session
 
         // Set up session cookies
+        EcosiaLogger.auth.info("🔐 [AUTH-FLOW] Step 3: Injecting session transfer cookie into webview")
         session.setupSessionCookies()
 
         // Wait for session completion
+        EcosiaLogger.auth.info("🔐 [AUTH-FLOW] Step 4: Waiting for web to recognize session and complete")
         await withCheckedContinuation { continuation in
             session.startMonitoring { [weak self] success in
                 self?.activeSession = nil // Release session
-                EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+                EcosiaLogger.auth.info("🔐 [AUTH-FLOW] === Native-to-Web SSO Transfer Completed: \(success ? "SUCCESS" : "FAILURE") ===")
                 onFlowCompleted?(success)
                 continuation.resume()
             }
@@ -225,8 +228,10 @@ final class EcosiaAuthFlow {
         // Get logout URL
         let logoutURL = EcosiaEnvironment.current.urlProvider.logoutURL
 
+        EcosiaLogger.auth.info("🔐 [AUTH-FLOW] === Starting Web Session Cleanup (Logout) ===")
+        
         // Create invisible tab session for logout (must be on main thread for UI operations)
-        EcosiaLogger.invisibleTabs.info("Creating invisible tab session for logout")
+        EcosiaLogger.auth.info("🔐 [AUTH-FLOW] Creating invisible tab for logout URL: \(logoutURL)")
         let session = try await MainActor.run {
             try InvisibleTabSession(
                 url: logoutURL,
@@ -240,10 +245,11 @@ final class EcosiaAuthFlow {
         activeSession = session
 
         // Wait for session completion
+        EcosiaLogger.auth.info("🔐 [AUTH-FLOW] Waiting for web session cleanup to complete")
         await withCheckedContinuation { continuation in
             session.startMonitoring { [weak self] success in
                 self?.activeSession = nil // Release session
-                EcosiaLogger.auth.info("Ecosia logout flow completed: \(success)")
+                EcosiaLogger.auth.info("🔐 [AUTH-FLOW] === Web Session Cleanup Completed: \(success ? "SUCCESS" : "FAILURE") ===")
                 onFlowCompleted?(success)
                 continuation.resume()
             }

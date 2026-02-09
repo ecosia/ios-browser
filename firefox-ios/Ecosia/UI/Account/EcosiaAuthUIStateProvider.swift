@@ -243,27 +243,44 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     @MainActor
     private func updateBalance(_ response: AccountVisitResponse) {
+        let oldSeedCount = seedCount
+        let oldLevelNumber = currentLevelNumber
+        let oldProgress = currentProgress
+        
         let newSeedCount = response.seeds.totalAmount
         let newLevelNumber = response.growthPoints.level.number
         let newProgress = response.progressToNextLevel
 
+        EcosiaLogger.accounts.info("🌱 [SEEDS-UI] Updating UI balance from API response")
+        EcosiaLogger.accounts.info("🌱 [SEEDS-UI] Current UI state: seeds=\(oldSeedCount), level=\(oldLevelNumber), progress=\(String(format: "%.2f%%", oldProgress * 100))")
+        EcosiaLogger.accounts.info("🌱 [SEEDS-UI] New API state: seeds=\(newSeedCount), level=\(newLevelNumber), progress=\(String(format: "%.2f%%", newProgress * 100))")
+        
+        // Check for discrepancies
+        if oldSeedCount != newSeedCount {
+            EcosiaLogger.accounts.info("🌱 [SEEDS-UI] Seed count changing: \(oldSeedCount) → \(newSeedCount) (delta: \(newSeedCount - oldSeedCount))")
+        } else {
+            EcosiaLogger.accounts.info("🌱 [SEEDS-UI] Seed count unchanged: \(oldSeedCount)")
+        }
+        
         // Update level and progress from API
         currentLevelNumber = newLevelNumber
         currentProgress = newProgress
 
         // Trigger level-up animation if user leveled up
         if response.didLevelUp {
-            EcosiaLogger.accounts.info("Level up detected: triggering animation for level \(newLevelNumber)")
+            EcosiaLogger.accounts.info("🌱 [SEEDS-UI] ⬆️ Level up detected: \(oldLevelNumber) → \(newLevelNumber)")
             triggerLevelUpAnimation()
         }
 
         if let increment = response.seedsIncrement {
-            EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment)), level=\(newLevelNumber), progress=\(newProgress)")
+            EcosiaLogger.accounts.info("🌱 [SEEDS-UI] Animating balance change: \(seedCount) → \(newSeedCount) (+\(increment))")
             animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
         } else {
-            EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
+            EcosiaLogger.accounts.info("🌱 [SEEDS-UI] Updating balance without animation: \(seedCount) → \(newSeedCount)")
             seedCount = newSeedCount
         }
+        
+        EcosiaLogger.accounts.info("🌱 [SEEDS-UI] UI balance update complete")
     }
 
     @MainActor

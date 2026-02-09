@@ -88,13 +88,25 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
 
     /// Updates avatar progress based on AccountVisitResponse
     public func updateFromBalanceResponse(_ response: AccountVisitResponse) {
+        let oldSeedCount = seedCount
+        let oldLevelNumber = currentLevelNumber
+        let oldProgress = progress
+        
         let newSeedCount = response.seeds.totalAmount
         let newLevelNumber = response.growthPoints.level.number
         let newProgress = response.progressToNextLevel
 
+        EcosiaLogger.accounts.info("🌱 [SEEDS-AVATAR] Updating avatar from API response")
+        EcosiaLogger.accounts.info("🌱 [SEEDS-AVATAR] Current avatar state: seeds=\(oldSeedCount), level=\(oldLevelNumber), progress=\(String(format: "%.2f%%", oldProgress * 100))")
+        EcosiaLogger.accounts.info("🌱 [SEEDS-AVATAR] New API state: seeds=\(newSeedCount), level=\(newLevelNumber), progress=\(String(format: "%.2f%%", newProgress * 100))")
+
         // Update seed count
         previousSeedCount = seedCount
         seedCount = newSeedCount
+        
+        if oldSeedCount != newSeedCount {
+            EcosiaLogger.accounts.info("🌱 [SEEDS-AVATAR] Seed count changed: \(oldSeedCount) → \(newSeedCount) (delta: \(newSeedCount - oldSeedCount))")
+        }
 
         // Update level and progress from API
         currentLevelNumber = newLevelNumber
@@ -102,11 +114,11 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
 
         // Check for level up using growth points
         if response.didLevelUp {
+            EcosiaLogger.accounts.info("🌱 [SEEDS-AVATAR] ⬆️ Level up animation triggered: \(oldLevelNumber) → \(newLevelNumber)")
             triggerLevelUpAnimation(targetProgress: newProgress)
-            EcosiaLogger.accounts.info("User leveled up to level \(newLevelNumber) via growth points")
         }
 
-        EcosiaLogger.accounts.info("Avatar received balance update: seeds=\(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
+        EcosiaLogger.accounts.info("🌱 [SEEDS-AVATAR] Avatar update complete")
     }
 
     /// Updates seed count manually (for local/offline scenarios - logged-out users)
