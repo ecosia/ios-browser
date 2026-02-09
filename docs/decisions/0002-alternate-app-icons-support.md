@@ -9,6 +9,7 @@
 Users want to personalize their Ecosia browser experience by choosing from different app icons. Apple provides the ability to offer alternate app icons via `UIApplication.setAlternateIconName(_:)` and Xcode asset catalog configuration. The original Firefox iOS codebase does not include this capability. We need to add infrastructure for alternate app icon selection in the Ecosia browser.
 
 * https://developer.apple.com/documentation/uikit/uiapplication/setalternateiconname(_:completionhandler:) is the core API used
+* https://developer.apple.com/documentation/xcode/configuring-your-app-to-use-alternate-app-icons#Configure-the-asset-catalog-compiler the general overview
 
 ## Decision Drivers
 
