@@ -75,15 +75,22 @@ public final class AppIconManager {
 
     /// Sets the app icon to the given value.
     ///
+    /// The call is dispatched asynchronously to avoid
+    /// `LSIconAlertManager` errors that occur when the system
+    /// alert token is requested during an in-flight UI interaction.
+    ///
     /// - Parameters:
     ///   - icon: The desired `AppIcon`.
     ///   - completion: Called on the main queue with an optional error.
     public func setIcon(_ icon: AppIcon, completion: ((Error?) -> Void)? = nil) {
-        resolvedApplication?.setAlternateIconName(icon.alternateIconName) { error in
-            if error == nil {
-                User.shared.appIcon = icon
+        let app = resolvedApplication
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            app?.setAlternateIconName(icon.alternateIconName) { error in
+                if error == nil {
+                    User.shared.appIcon = icon
+                }
+                completion?(error)
             }
-            completion?(error)
         }
     }
 
