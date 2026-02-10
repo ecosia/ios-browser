@@ -249,24 +249,10 @@ open class Analytics {
     }
 
     // MARK: Onboarding
-    public func introDisplaying(page: Property.OnboardingPage?) {
-        guard let page else {
-            return
-        }
+    public func introWelcome(action: Action.Welcome) {
         let event = Structured(category: Category.intro.rawValue,
-                               action: Action.display.rawValue)
-            .property(page.rawValue)
-        track(event)
-    }
-
-    public func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?) {
-        guard let page else {
-            return
-        }
-        let event = Structured(category: Category.intro.rawValue,
-                               action: Action.click.rawValue)
-            .label(label.rawValue)
-            .property(page.rawValue)
+                               action: action.rawValue)
+            .label(Label.Onboarding.welcome.rawValue)
         track(event)
     }
 
