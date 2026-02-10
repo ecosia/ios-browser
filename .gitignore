@@ -69,11 +69,18 @@ buildServer.json
 # IDEA
 .idea
 
-# Required for Glean
-firefox-ios/Client/Generated
-firefox-ios/Sync/Generated
-firefox-ios/Storage/Generated
-focus-ios/Blockzilla/Generated
+# Required for Glean - ignore generated files but keep directory structure
+firefox-ios/Client/Generated/*
+!firefox-ios/Client/Generated/.gitkeep
+!firefox-ios/Client/Generated/Metrics/
+firefox-ios/Client/Generated/Metrics/*
+!firefox-ios/Client/Generated/Metrics/.gitkeep
+firefox-ios/Sync/Generated/*
+!firefox-ios/Sync/Generated/.gitkeep
+firefox-ios/Storage/Generated/*
+!firefox-ios/Storage/Generated/.gitkeep
+focus-ios/Blockzilla/Generated/*
+!focus-ios/Blockzilla/Generated/.gitkeep
 .venv/
 
 firefox-ios/ThirdParty/google-breakpad

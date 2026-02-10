@@ -1,0 +1,2 @@
+# This file ensures the Generated directory exists for Tuist
+# The directory is populated by build scripts during compilation

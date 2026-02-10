@@ -1,0 +1,2 @@
+# This file ensures the Metrics directory exists for Tuist
+# The directory is populated by Glean SDK Generator during build
