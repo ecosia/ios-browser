@@ -25,6 +25,12 @@ The Ecosia iOS browser is a fork of Mozilla's Firefox iOS browser. As a fork, we
 
 Chosen option: **Option 3 - Lint all files but do not auto-fix Firefox core files**, because it allows us to maintain visibility of code quality across the entire codebase while avoiding merge conflicts that would arise from auto-fixing upstream code.
 
+To ensure we can work with the file, the JSON is pretty printed and json-key-sorted
+
+```shell
+python3 -m json.tool --sort-keys swiftlint_baseline.json > swiftlint_baseline.tmp && mv swiftlint_baseline.tmp swiftlint_baseline.json
+```
+
 ### Positive Consequences
 
 * Merge conflicts with upstream Firefox are minimized
