@@ -13,6 +13,7 @@ This log lists the architectural decisions for MADR.
 * [ADR-0004](0004-using-redux-to-replace-mvvm.md) - Using Redux to replace MVVM
 * [ADR-0005](0005-redux-and-navigation.md) - Redux-driven Navigation via Navigation Actions & State
 * [ADR-0006](0006-adopt-three-tier-documentation-structure.md) - Adopt Three-Tier Documentation Structure
+* [ADR-0007](0007-gitkeep-for-tuist-generated-directories.md) - Use .gitkeep Files for Tuist-Referenced Generated Directories
 
 <!-- adrlogstop -->
 
