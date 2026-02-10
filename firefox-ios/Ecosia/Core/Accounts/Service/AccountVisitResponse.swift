@@ -11,46 +11,6 @@ public struct AccountVisitResponse: Codable {
     public init(seeds: Seeds, growthPoints: GrowthPoints) {
         self.seeds = seeds
         self.growthPoints = growthPoints
-        
-        // Ecosia: Log whenever AccountVisitResponse is created to track seed sync issues
-        EcosiaLogger.accounts.info("🌱 [SEEDS] AccountVisitResponse created")
-        logResponseDetails()
-    }
-    
-    // Ecosia: Helper to log comprehensive response details
-    private func logResponseDetails() {
-        EcosiaLogger.accounts.info("🌱 [SEEDS] Seeds details:")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Balance: \(seeds.balanceAmount)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Total: \(seeds.totalAmount)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Previous total: \(seeds.previousTotalAmount)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Is modified: \(seeds.isModified)")
-        if let increment = seedsIncrement {
-            EcosiaLogger.accounts.info("🌱 [SEEDS]   - Increment: +\(increment)")
-        }
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Last visit: \(seeds.lastVisitAt)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Updated: \(seeds.updatedAt)")
-        
-        EcosiaLogger.accounts.info("🌱 [SEEDS] Growth Points details:")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Balance: \(growthPoints.balanceAmount)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Total: \(growthPoints.totalAmount)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Previous total: \(growthPoints.previousTotalAmount)")
-        if let increment = growthPointsIncrement {
-            EcosiaLogger.accounts.info("🌱 [SEEDS]   - Increment: +\(increment)")
-        }
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Is modified: \(growthPoints.isModified)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Level: \(growthPoints.level.number)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Previous level: \(growthPoints.previousLevel.number)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Did level up: \(didLevelUp)")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - Progress to next level: \(String(format: "%.2f%%", progressToNextLevel * 100))")
-        EcosiaLogger.accounts.info("🌱 [SEEDS]   - GP earned towards next: \(growthPoints.level.growthPointsEarnedTowardsNextLevel)/\(growthPoints.level.growthPointsToUnlockNextLevel)")
-        
-        #if DEBUG
-        EcosiaLogger.accounts.debug("🌱 [SEEDS] [DEBUG-ONLY] Full response JSON:")
-        if let jsonData = try? JSONEncoder().encode(self),
-           let jsonString = String(data: jsonData, encoding: .utf8) {
-            EcosiaLogger.accounts.debug("🌱 [SEEDS] [DEBUG-ONLY] \(jsonString)")
-        }
-        #endif
     }
 
     public struct Seeds: Codable {

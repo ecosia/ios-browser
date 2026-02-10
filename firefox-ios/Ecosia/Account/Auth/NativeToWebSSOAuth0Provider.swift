@@ -41,26 +41,16 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     /// Custom clearSession implementation that bypasses Auth0's default logout alert
     /// We provide immediate logout without any confirmation popups for better UX
     public func clearSession() async throws {
-        EcosiaLogger.auth.info("🔐 [SSO] Clearing web session cookies")
         // Skip calling webAuth.clearSession() to avoid Auth0's native logout alert
         // Logout happens immediately without any confirmation dialogs by clearing the auth session cookie
         await clearWebSessionCookies()
-        EcosiaLogger.auth.info("🔐 [SSO] \(Cookie.authSession.name) cookie cleared successfully")
+        EcosiaLogger.auth.info("\(Cookie.authSession.name) cookie cleared successfully")
     }
 
     /// Clears EASC (Ecosia Auth Session Cookie) cookies from the default web data store
     private func clearWebSessionCookies() async {
         let cookieStore = await WKWebsiteDataStore.default().httpCookieStore
-        let allCookies = await cookieStore.allCookies()
-        
-        EcosiaLogger.auth.info("🔐 [SSO] Found \(allCookies.count) total cookies in web data store")
-        
-        guard let sessionCookie = allCookies.first(where: { $0.name == Cookie.authSession.name }) else {
-            EcosiaLogger.auth.notice("🔐 [SSO] No session cookie found to delete")
-            return
-        }
-        
-        EcosiaLogger.auth.info("🔐 [SSO] Deleting session cookie: \(sessionCookie.name), domain: \(sessionCookie.domain)")
+        guard let sessionCookie = await cookieStore.allCookies().first(where: { $0.name == Cookie.authSession.name }) else { return }
         await cookieStore.deleteCookie(sessionCookie)
     }
 }
@@ -72,42 +62,19 @@ extension NativeToWebSSOAuth0Provider {
     /// - Returns: A `session_token` as `SessionToken` (a `String` type).
     /// - Throws: An error if the retrieval fails.
     public func getSSOCredentials() async throws -> SSOCredentials {
-        EcosiaLogger.auth.info("🔐 [SSO] Starting SSO credentials retrieval")
-        
         let credentials = try await retrieveCredentials()
-        EcosiaLogger.auth.info("🔐 [SSO] Retrieved stored credentials successfully")
-        
         guard let refreshToken = credentials.refreshToken else {
-            EcosiaLogger.auth.error("🔐 [SSO] Missing refresh token - cannot perform SSO exchange")
             throw NativeToWebSSOError.missingRefreshToken("Refresh token is missing. Please check your credentials.")
         }
 
-        EcosiaLogger.auth.info("🔐 [SSO] Requesting session transfer token from Auth0 /ssoExchange endpoint")
-        EcosiaLogger.auth.info("🔐 [SSO] Using clientId: \(settings.id), domain: \(settings.domain)")
-        
         let configuration: URLSessionConfiguration = .default
         let ecosiaAuth0Session = URLSession(configuration: configuration.withCloudFlareAuthParameters())
-        
-        do {
-            let ssoCredentials = try await Auth0
-                .authentication(clientId: settings.id,
-                                domain: settings.domain,
-                                session: ecosiaAuth0Session)
-                .ssoExchange(withRefreshToken: refreshToken)
-                .start()
-            
-            EcosiaLogger.auth.info("🔐 [SSO] Session transfer token retrieved successfully")
-            EcosiaLogger.auth.info("🔐 [SSO] Token expires at: \(ssoCredentials.expiresIn)")
-            
-            #if DEBUG
-            EcosiaLogger.auth.debug("🔐 [SSO] [DEBUG-ONLY] Session transfer token value: \(ssoCredentials.sessionTransferToken)")
-            #endif
-            
-            return ssoCredentials
-        } catch {
-            EcosiaLogger.auth.error("🔐 [SSO] Failed to retrieve session transfer token: \(error)")
-            throw error
-        }
+        return try await Auth0
+            .authentication(clientId: settings.id,
+                            domain: settings.domain,
+                            session: ecosiaAuth0Session)
+            .ssoExchange(withRefreshToken: refreshToken)
+            .start()
     }
 
     /// Retrieves configuration values from the Auth0.plist file.

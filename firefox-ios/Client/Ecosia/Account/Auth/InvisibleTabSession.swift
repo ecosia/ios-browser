@@ -49,40 +49,14 @@ final class InvisibleTabSession: TabEventHandler {
 
     /// Sets up session cookies for the tab
     func setupSessionCookies() {
-        EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Setting up session cookies for tab: \(tab.tabUUID)")
-        
         guard let sessionCookie = authService.getSessionTokenCookie() else {
-            EcosiaLogger.invisibleTabs.notice("🔐 [INVISIBLE-TAB] No session cookie available for tab: \(tab.tabUUID)")
+            EcosiaLogger.cookies.notice("No session cookie available for tab")
             return
         }
 
         Task { @MainActor in
-            EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Injecting session cookie into webview")
-            EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB]   - Cookie name: \(sessionCookie.name)")
-            EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB]   - Cookie domain: \(sessionCookie.domain)")
-            EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB]   - Cookie path: \(sessionCookie.path)")
-            EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB]   - Cookie secure: \(sessionCookie.isSecure)")
-            EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB]   - Cookie expires: \(sessionCookie.expiresDate?.description ?? "session")")
-            
-            #if DEBUG
-            EcosiaLogger.invisibleTabs.debug("🔐 [INVISIBLE-TAB] [DEBUG-ONLY] Cookie value being injected: \(sessionCookie.value)")
-            #endif
-            
             tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
-            EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Session cookie set successfully for tab: \(self.tab.tabUUID)")
-            
-            #if DEBUG
-            // Verify the cookie was actually set by reading it back
-            let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
-            if let cookieStore = cookieStore {
-                let allCookies = await cookieStore.allCookies()
-                if let retrievedCookie = allCookies.first(where: { $0.name == sessionCookie.name }) {
-                    EcosiaLogger.invisibleTabs.debug("🔐 [INVISIBLE-TAB] [DEBUG-ONLY] Cookie retrieved from webview: name=\(retrievedCookie.name), value=\(retrievedCookie.value)")
-                } else {
-                    EcosiaLogger.invisibleTabs.error("🔐 [INVISIBLE-TAB] [DEBUG-ONLY] Cookie not found in webview after setting!")
-                }
-            }
-            #endif
+            EcosiaLogger.cookies.info("Session cookie set for tab: \(self.tab.tabUUID)")
         }
     }
 
@@ -91,11 +65,9 @@ final class InvisibleTabSession: TabEventHandler {
     func startMonitoring(_ completion: @escaping (Bool) -> Void) {
         self.completion = completion
 
-        EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Starting session monitoring for tab: \(tab.tabUUID)")
-        EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Target URL: \(url)")
-        EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Timeout: \(timeout) seconds")
-        
         setupTabAutoCloseManager()
+
+        EcosiaLogger.invisibleTabs.info("Starting session monitoring: \(tab.tabUUID)")
     }
 
     // MARK: - Private Implementation
@@ -145,18 +117,12 @@ final class InvisibleTabSession: TabEventHandler {
     }
 
     private func handleTabClosed() {
-        guard !isCompleted else { 
-            EcosiaLogger.invisibleTabs.notice("🔐 [INVISIBLE-TAB] Tab already marked as completed: \(tab.tabUUID)")
-            return 
-        }
+        guard !isCompleted else { return }
         isCompleted = true
 
-        EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Tab closed successfully: \(tab.tabUUID)")
-        EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Session transfer completed")
-        
         cleanup()
 
-        EcosiaLogger.invisibleTabs.info("🔐 [INVISIBLE-TAB] Calling completion handler with success")
+        EcosiaLogger.invisibleTabs.info("Session completed for tab: \(tab.tabUUID), success: true")
         completion?(true)
     }
 

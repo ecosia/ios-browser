@@ -83,21 +83,18 @@ public final class EcosiaAuthenticationService {
     ///           `AuthError.credentialStorageError` if credential storage throws an error,
     ///           `AuthError.credentialStorageFailed` if credential storage returns false.
     public func login() async throws {
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Starting login flow")
-        
         // First, attempt authentication
         let credentials: Credentials
         do {
             credentials = try await auth0Provider.startAuth()
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Authentication successful - received credentials")
-            logCredentialsInfo(credentials, context: "login")
+            EcosiaLogger.auth.info("Authentication successful")
         } catch {
-            EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Authentication failed: \(error)")
+            EcosiaLogger.auth.error("Authentication failed: \(error)")
 
             // Check if user cancelled the login operation
             if let webAuthError = error as? WebAuthError,
                case .userCancelled = webAuthError {
-                EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] User cancelled login operation")
+                EcosiaLogger.auth.info("User cancelled login operation")
                 throw AuthError.userCancelled
             }
 
@@ -106,21 +103,19 @@ public final class EcosiaAuthenticationService {
 
         // Then, attempt to store credentials
         do {
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Storing credentials in keychain")
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
-                EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Credentials stored successfully")
                 setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
                 if !skipUserInfoFetch {
                     await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
                 }
-                EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Login completed successfully")
+                EcosiaLogger.auth.info("Login completed successfully")
             } else {
-                EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Credential storage failed (returned false)")
+                EcosiaLogger.auth.error("Credential storage failed (returned false)")
                 throw AuthError.credentialsStorageFailed
             }
         } catch {
-            EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Credential storage error: \(error)")
+            EcosiaLogger.auth.error("Credential storage error: \(error)")
             throw AuthError.credentialsStorageError(error)
         }
     }
@@ -131,61 +126,47 @@ public final class EcosiaAuthenticationService {
     ///           `AuthError.sessionClearingFailed` if both web session and credential clearing fail,
     ///           `AuthError.credentialsClearingFailed` if only credential clearing fails.
     public func logout(triggerWebLogout: Bool = true) async throws {
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Starting logout flow (triggerWebLogout: \(triggerWebLogout))")
-        
         var sessionClearingError: Error?
 
         // First, try to clear the web session if requested
         if triggerWebLogout {
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Clearing web session")
             do {
                 try await auth0Provider.clearSession()
-                EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Web session cleared successfully")
+                EcosiaLogger.auth.info("Web session cleared successfully")
             } catch {
                 sessionClearingError = error
-                EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Failed to clear web session: \(error)")
+                EcosiaLogger.auth.error("Failed to clear web session: \(error)")
 
                 // Check if user cancelled the logout operation
                 if let webAuthError = error as? WebAuthError,
                    case .userCancelled = webAuthError {
-                    EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] User cancelled logout operation")
+                    EcosiaLogger.auth.info("User cancelled logout operation")
                     throw AuthError.userCancelled
                 }
             }
-        } else {
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Skipping web session clearing (web-initiated logout)")
         }
 
         // Then, try to clear stored credentials
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Clearing stored credentials from keychain")
         let credentialsCleared = auth0Provider.clearCredentials()
 
         if credentialsCleared {
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Credentials cleared from keychain")
             setupTokensWithCredentials(nil)
-            
             // Clear user profile on logout
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Clearing user profile and cached images")
             try await ImageCacheLoader.clearCache(for: userProfile?.pictureURL)
             userProfile = nil
+            EcosiaLogger.auth.info("Credentials cleared successfully")
 
             // If we had a session clearing error but credentials cleared successfully,
             // we still consider the logout successful since the user is logged out locally
             if let sessionError = sessionClearingError {
-                EcosiaLogger.auth.notice("🔐 [AUTH-SERVICE] Logout completed with web session clearing warning: \(sessionError)")
-            } else {
-                EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Logout completed successfully")
+                EcosiaLogger.auth.notice("Logout completed with web session clearing warning: \(sessionError)")
             }
         } else {
-            EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Failed to clear credentials")
-            
             // If credentials clearing failed, throw appropriate error
             if let sessionError = sessionClearingError {
-                EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Both session and credentials clearing failed")
                 // Both session and credentials clearing failed
                 throw AuthError.sessionClearingFailed(sessionError)
             } else if auth0Provider.canRenewCredentials() {
-                EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Credentials clearing failed but credentials are still renewable")
                 // Only credentials clearing failed, as we can still renew them
                 throw AuthError.credentialsClearingFailed
             }
@@ -207,22 +188,18 @@ public final class EcosiaAuthenticationService {
      the method will log the error and leave the user in an unauthenticated state.
      */
     public func retrieveStoredCredentials() async {
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Attempting to retrieve stored credentials from keychain")
-        
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Retrieved stored credentials successfully")
-            logCredentialsInfo(credentials, context: "retrieval")
-            
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
             if !skipUserInfoFetch {
                 await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
             }
+            EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
             // Dispatch state loaded with current authentication status
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
         } catch {
-            EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Failed to retrieve credentials: \(error)")
+            EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
             // Even if retrieval fails, dispatch state loaded as false
             await dispatchAuthStateChange(isLoggedIn: false, fromCredentialRetrieval: true)
         }
@@ -245,22 +222,17 @@ public final class EcosiaAuthenticationService {
      - You encounter authentication errors that might be resolved by token renewal
      */
     public func renewCredentialsIfNeeded() async throws {
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Checking if credentials can be renewed")
-        
         guard auth0Provider.canRenewCredentials() else {
-            EcosiaLogger.auth.notice("🔐 [AUTH-SERVICE] No renewable credentials available")
+            EcosiaLogger.auth.info("No renewable credentials available")
             return
         }
 
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Renewing credentials using refresh token")
-        
         do {
             let credentials = try await auth0Provider.renewCredentials()
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Credentials renewed successfully")
-            logCredentialsInfo(credentials, context: "renewal")
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            EcosiaLogger.auth.info("Renewed credentials successfully")
         } catch {
-            EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Failed to renew credentials: \(error)")
+            EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
             throw AuthError.credentialsRenewalFailed(error)
         }
     }
@@ -323,19 +295,13 @@ extension EcosiaAuthenticationService {
      - The auth provider must support SSO credential retrieval
      */
     public func getSessionTransferToken() async {
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Requesting session transfer token for SSO")
-        
         guard isLoggedIn else {
-            EcosiaLogger.auth.notice("🔐 [AUTH-SERVICE] Cannot get session transfer token - user not logged in")
+            EcosiaLogger.auth.notice("Cannot get session transfer token - user not logged in")
             return
         }
-        
         ssoCredentials = await retrieveSSOCredentials()
-        if let credentials = ssoCredentials {
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Session transfer token retrieved successfully")
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Token expires at: \(credentials.expiresIn)")
-        } else {
-            EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Failed to retrieve session transfer token")
+        if ssoCredentials != nil {
+            EcosiaLogger.session.info("Retrieved session transfer token for SSO")
         }
     }
 
@@ -357,20 +323,11 @@ extension EcosiaAuthenticationService {
      ```
      */
     public func getSessionTokenCookie() -> HTTPCookie? {
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Creating session token cookie for web")
-        
         guard isLoggedIn else {
-            EcosiaLogger.auth.notice("🔐 [AUTH-SERVICE] Cannot create session cookie - user not logged in")
+            EcosiaLogger.auth.notice("Cannot create session cookie - user not logged in")
             return nil
         }
-        
-        let cookie = makeSessionTokenCookieWithSSOCredentials(ssoCredentials)
-        if let cookie = cookie {
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Session cookie created: name=\(cookie.name), domain=\(cookie.domain), expires=\(cookie.expiresDate?.description ?? "nil")")
-        } else {
-            EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Failed to create session cookie")
-        }
-        return cookie
+        return makeSessionTokenCookieWithSSOCredentials(ssoCredentials)
     }
 
     /**
@@ -386,17 +343,12 @@ extension EcosiaAuthenticationService {
      before attempting to retrieve credentials.
      */
     private func retrieveSSOCredentials() async -> SSOCredentials? {
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Checking if auth provider supports SSO")
-        
         if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
-            EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Auth provider supports SSO - requesting credentials")
             do {
                 return try await authProvider.getSSOCredentials()
             } catch {
-                EcosiaLogger.auth.error("🔐 [AUTH-SERVICE] Failed to retrieve SSO credentials: \(error)")
+                EcosiaLogger.auth.error("Failed to retrieve SSO credentials: \(error)")
             }
-        } else {
-            EcosiaLogger.auth.notice("🔐 [AUTH-SERVICE] Auth provider does not support SSO")
         }
         return nil
     }
@@ -422,47 +374,17 @@ extension EcosiaAuthenticationService {
      */
     private func makeSessionTokenCookieWithSSOCredentials(_ ssoCredentials: SSOCredentials?) -> HTTPCookie? {
         guard let ssoCredentials else {
-            EcosiaLogger.auth.notice("🔐 [AUTH-SERVICE] No SSO credentials available to create session cookie")
+            EcosiaLogger.auth.notice("No SSO credentials available to create session cookie")
             return nil
         }
-        
-        let cookieProperties: [HTTPCookiePropertyKey: Any] = [
+        return HTTPCookie(properties: [
             .domain: auth0Provider.settings.cookieDomain,
             .path: "/",
             .name: "auth0_session_transfer_token",
             .value: ssoCredentials.sessionTransferToken,
             .expires: ssoCredentials.expiresIn,
             .secure: true
-        ]
-        
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Creating session cookie with properties:")
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE]   - domain: \(auth0Provider.settings.cookieDomain)")
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE]   - name: auth0_session_transfer_token")
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE]   - expires: \(ssoCredentials.expiresIn)")
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE]   - secure: true")
-        
-        #if DEBUG
-        EcosiaLogger.auth.debug("🔐 [AUTH-SERVICE] [DEBUG-ONLY] Cookie value: \(ssoCredentials.sessionTransferToken)")
-        #endif
-        
-        return HTTPCookie(properties: cookieProperties)
-    }
-    
-    /// Helper method to log credential information (without exposing sensitive tokens)
-    private func logCredentialsInfo(_ credentials: Credentials, context: String) {
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE] Credentials info (\(context)):")
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE]   - Has ID token: \(credentials.idToken)")
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE]   - Has access token: \(!credentials.accessToken.isEmpty)")
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE]   - Has refresh token: \(credentials.refreshToken != nil)")
-        EcosiaLogger.auth.info("🔐 [AUTH-SERVICE]   - Access token expires in: \(credentials.expiresIn) seconds")
-        #if DEBUG
-        EcosiaLogger.auth.debug("🔐 [AUTH-SERVICE] [DEBUG-ONLY] Full credentials (\(context)):")
-        EcosiaLogger.auth.debug("🔐 [AUTH-SERVICE] [DEBUG-ONLY]   - ID token: \(credentials.idToken)")
-        EcosiaLogger.auth.debug("🔐 [AUTH-SERVICE] [DEBUG-ONLY]   - Access token: \(credentials.accessToken)")
-        if let refreshToken = credentials.refreshToken {
-            EcosiaLogger.auth.debug("🔐 [AUTH-SERVICE] [DEBUG-ONLY]   - Refresh token: \(refreshToken)")
-        }
-        #endif
+        ])
     }
 }
 
