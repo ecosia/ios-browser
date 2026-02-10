@@ -74,6 +74,32 @@ python3 -m json.tool --sort-keys swiftlint_baseline.json > swiftlint_baseline.tm
   - Running `swiftlint --fix` only on those specific files
   - Integrating this into the CI/CD pipeline or pre-commit hooks
 
+
+for some reason running `swiftlint --fix firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift` for instance would not work out of the box:
+```
+➜ swiftlint  firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift 
+\warning: 'redundant_optional_initialization' has been renamed to 'implicit_optional_initialization' and will be completely removed in a future release.
+warning: 'operator_whitespace' has been renamed to 'function_name_whitespace' and will be completely removed in a future release.
+warning: Found a configuration for 'line_length' rule, but it is not present in 'only_rules'.
+Linting Swift files at paths firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift
+Linting 'AppSettingsTableViewController+Ecosia.swift' (1/1)
+/Users/falkorichter/Documents/ios-browser-2026/firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift:143:25: warning: Vertical Parameter Alignment on Call Violation: Function parameters should be aligned vertically if they're in multiple lines in a method call (vertical_parameter_alignment_on_call)
+/Users/falkorichter/Documents/ios-browser-2026/firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift:144:25: warning: Vertical Parameter Alignment on Call Violation: Function parameters should be aligned vertically if they're in multiple lines in a method call (vertical_parameter_alignment_on_call)
+/Users/falkorichter/Documents/ios-browser-2026/firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift:146:25: warning: Vertical Parameter Alignment on Call Violation: Function parameters should be aligned vertically if they're in multiple lines in a method call (vertical_parameter_alignment_on_call)
+/Users/falkorichter/Documents/ios-browser-2026/firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift:147:25: warning: Vertical Parameter Alignment on Call Violation: Function parameters should be aligned vertically if they're in multiple lines in a method call (vertical_parameter_alignment_on_call)
+/Users/falkorichter/Documents/ios-browser-2026/firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift:148:25: warning: Vertical Parameter Alignment on Call Violation: Function parameters should be aligned vertically if they're in multiple lines in a method call (vertical_parameter_alignment_on_call)
+Done linting! Found 5 violations, 0 serious in 1 file.
+
+➜ swiftlint --fix firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift
+warning: 'redundant_optional_initialization' has been renamed to 'implicit_optional_initialization' and will be completely removed in a future release.
+warning: 'operator_whitespace' has been renamed to 'function_name_whitespace' and will be completely removed in a future release.
+warning: Found a configuration for 'line_length' rule, but it is not present in 'only_rules'.
+Correcting Swift files at paths firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift
+Correcting 'AppSettingsTableViewController+Ecosia.swift' (1/1)
+Done correcting 1 file!
+```
+It mentions `Done correcting 1 file!` but the file has not been fixed and had to be fixed manually.
+
 ## Links
 
 * [SwiftLint Configuration](.swiftlint.yml) - Current SwiftLint rules and exclusions

@@ -140,12 +140,12 @@ extension AppSettingsTableViewController {
         if let profile {
             privacySettings.insert(EcosiaSendAnonymousUsageDataSetting(prefs: profile.prefs, theme: theme), at: 2)
             privacySettings.insert(BoolSetting(prefs: profile.prefs,
-                        theme: theme,
-                        prefKey: PrefsKeys.Settings.closePrivateTabs,
-                        // Ecosia: Default value is different from Firefox
-                        defaultValue: PrefsKeysDefaultValues.Settings.closePrivateTabs,
-                        titleText: .AppSettingsClosePrivateTabsTitle,
-                        statusText: .AppSettingsClosePrivateTabsDescription), at: 3)
+                                               theme: theme,
+                                               refKey: PrefsKeys.Settings.closePrivateTabs,
+                                               // Ecosia: Default value is different from Firefox
+                                               defaultValue: PrefsKeysDefaultValues.Settings.closePrivateTabs,
+                                               titleText: .AppSettingsClosePrivateTabsTitle,
+                                               statusText: .AppSettingsClosePrivateTabsDescription), at: 3)
         }
 
         return .init(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
