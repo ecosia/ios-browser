@@ -84,7 +84,7 @@ here is is how you update the baseline (please only commit the pretty printed ve
 ```
 rm swiftlint_baseline.json
 swiftlint --write-baseline swiftlint_baseline.json
-python3 -m json.tool swiftlint_baseline.json > swiftlint_baseline.tmp && mv swiftlint_baseline.tmp swiftlint_baseline.json
+python3 -m json.tool --sort-keys swiftlint_baseline.json > swiftlint_baseline.tmp && mv swiftlint_baseline.tmp swiftlint_baseline.json
 ````
 
 ### First-time setup and building
