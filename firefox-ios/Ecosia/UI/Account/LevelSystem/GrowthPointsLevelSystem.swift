@@ -22,7 +22,7 @@ public struct GrowthPointsLevelSystem {
         case 2: return String.localized(.greenExplorer)
         case 3: return String.localized(.planetPal)
         case 4: return String.localized(.seedlingSupporter)
-        case 5: return String.localized(.biodiversityBeetle)
+        case 5: return String.localized(.biodiversityBestie)
         case 6: return String.localized(.forestFriend)
         case 7: return String.localized(.wildlifeProtector)
         case 8: return String.localized(.ecoExplorer)
