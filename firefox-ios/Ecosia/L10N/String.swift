@@ -267,7 +267,7 @@ extension String {
         case greenExplorer = "Green explorer"
         case planetPal = "Planet pal"
         case seedlingSupporter = "Seedling supporter"
-        case biodiversityBeetle = "Biodiversity beetle"
+        case biodiversityBestie = "Biodiversity bestie"
         case forestFriend = "Forest friend"
         case wildlifeProtector = "Wildlife protector"
         case ecoExplorer = "Eco explorer"
