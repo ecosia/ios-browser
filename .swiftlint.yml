@@ -178,3 +178,6 @@ included:
 
 # reporter: "json" # reporter type (xcode, json, csv, checkstyle)
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle)
+
+# Baseline from 2026-02-10 so we can enforce SwiftLint and prevent introducing new violations in new code and fixes.
+baseline: swiftlint_baseline.json

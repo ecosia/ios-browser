@@ -20,91 +20,91 @@ struct FakeGleanWrapper: GleanWrapper {
     func handleDeeplinkUrl(url: URL) {
         // Ecosia: No-op
     }
-    
+
     func setUpload(isEnabled: Bool) {
         // Ecosia: No-op
     }
-    
+
     func enableTestingMode() {
         // Ecosia: No-op
     }
-    
+
     // MARK: Glean Metrics - All no-ops
-    
+
     func recordEvent<ExtraObject>(for metric: EventMetricType<ExtraObject>,
                                   extras: EventExtras) where ExtraObject: EventExtras {
         // Ecosia: No-op
     }
-    
+
     func recordEvent<NoExtras>(for metric: EventMetricType<NoExtras>) where NoExtras: EventExtras {
         // Ecosia: No-op
     }
-    
+
     func incrementCounter(for metric: CounterMetricType) {
         // Ecosia: No-op
     }
-    
+
     func recordString(for metric: StringMetricType, value: String) {
         // Ecosia: No-op
     }
-    
+
     func incrementLabeledCounter(for metric: LabeledMetricType<CounterMetricType>, label: String) {
         // Ecosia: No-op
     }
-    
+
     func setBoolean(for metric: BooleanMetricType, value: Bool) {
         // Ecosia: No-op
     }
-    
+
     func recordQuantity(for metric: QuantityMetricType, value: Int64) {
         // Ecosia: No-op
     }
-    
+
     func recordLabel(for metric: LabeledMetricType<StringMetricType>, label: String, value: String) {
         // Ecosia: No-op
     }
-    
+
     func recordLabeledQuantity(for metric: LabeledMetricType<QuantityMetricType>, label: String, value: Int64) {
         // Ecosia: No-op
     }
-    
+
     func recordUrl(for metric: UrlMetricType, value: URL) {
         // Ecosia: No-op
     }
-    
+
     func recordDatetime(for metric: DatetimeMetricType, value: Date) {
         // Ecosia: No-op
     }
-    
+
     func recordUUID(for metric: UuidMetricType, value: UUID) {
         // Ecosia: No-op
     }
-    
+
     func incrementNumerator(for metric: RateMetricType, amount: Int32) {
         // Ecosia: No-op
     }
-    
+
     func incrementDenominator(for metric: RateMetricType, amount: Int32) {
         // Ecosia: No-op
     }
-    
+
     // MARK: Timing Metrics - All no-ops
-    
+
     func startTiming(for metric: TimingDistributionMetricType) -> GleanTimerId {
         // Ecosia: Return dummy timer ID (no actual timing happens)
         return GleanTimerId(id: 0)
     }
-    
+
     func cancelTiming(for metric: TimingDistributionMetricType, timerId: GleanTimerId) {
         // Ecosia: No-op
     }
-    
+
     func stopAndAccumulateTiming(for metric: TimingDistributionMetricType, timerId: GleanTimerId) {
         // Ecosia: No-op
     }
-    
+
     // MARK: Pings - All no-ops
-    
+
     func submit<ReasonCodesEnum>(ping: Ping<ReasonCodesEnum>) where ReasonCodesEnum: ReasonCodes {
         // Ecosia: No-op - no pings are submitted
     }
