@@ -68,6 +68,7 @@
 		0EC57D082CA6FCA5002E3F04 /* PasswordGeneratorHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC57D072CA6FCA5002E3F04 /* PasswordGeneratorHeaderView.swift */; };
 		0EC57D0A2CA6FCC5002E3F04 /* PasswordGeneratorPasswordFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC57D092CA6FCC5002E3F04 /* PasswordGeneratorPasswordFieldView.swift */; };
 		0ECB6B6D2CCFF718006A7C82 /* DateGroupedTableDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECB6B672CCFE663006A7C82 /* DateGroupedTableDataTests.swift */; };
+		120059182F3C8BD800D65907 /* BrowserViewController+EcosiaSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120059172F3C8BD800D65907 /* BrowserViewController+EcosiaSearch.swift */; };
 		121416752D6373BA0097788B /* AllFramesAtDocumentEnd.js in Resources */ = {isa = PBXBuildFile; fileRef = 121416722D6373BA0097788B /* AllFramesAtDocumentEnd.js */; };
 		121416762D6373BA0097788B /* AllFramesAtDocumentStart.js in Resources */ = {isa = PBXBuildFile; fileRef = 121416732D6373BA0097788B /* AllFramesAtDocumentStart.js */; };
 		121416772D6373BA0097788B /* AutofillAllFramesAtDocumentStart.js in Resources */ = {isa = PBXBuildFile; fileRef = 121416742D6373BA0097788B /* AutofillAllFramesAtDocumentStart.js */; };
@@ -2360,6 +2361,7 @@
 		109E4D959F25FF2F13848417 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
 		10CD44F0A402C84BB31E5474 /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/Intro.strings"; sourceTree = "<group>"; };
 		11F747589EB8A55A47647C93 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
+		120059172F3C8BD800D65907 /* BrowserViewController+EcosiaSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+EcosiaSearch.swift"; sourceTree = "<group>"; };
 		120F42119EB30F217AB9493E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		121416712D6373BA0097788B /* AddressFormManager.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AddressFormManager.js; sourceTree = "<group>"; };
 		121416722D6373BA0097788B /* AllFramesAtDocumentEnd.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AllFramesAtDocumentEnd.js; sourceTree = "<group>"; };
@@ -10513,6 +10515,7 @@
 			isa = PBXGroup;
 			children = (
 				2C8723972EA931490085902C /* BrowserViewController+EcosiaErrorHandling.swift */,
+				120059172F3C8BD800D65907 /* BrowserViewController+EcosiaSearch.swift */,
 				2C8723982EA931490085902C /* Tab+InvisibleTab.swift */,
 				2C8723992EA931490085902C /* TabManager+InvisibleTab.swift */,
 				2CB5C33E2E45F02D00B1048F /* SearchViewController+Ecosia.swift */,
@@ -17208,6 +17211,7 @@
 				8AD40FCA27BADC4B00672675 /* ReaderModeButton.swift in Sources */,
 				E1C437A32A96343A00D188CB /* FakespotFadeLabel.swift in Sources */,
 				8A3EF7FB2A2FCF9D00796E3A /* ForceCrashSetting.swift in Sources */,
+				120059182F3C8BD800D65907 /* BrowserViewController+EcosiaSearch.swift in Sources */,
 				2178A6A4291455F7002EC290 /* ReaderModeFontSizeButton.swift in Sources */,
 				BCFF93F02AABA55A005B5B71 /* BackgroundFirefoxSuggestIngestUtility.swift in Sources */,
 				BCFF93F22AAF9688005B5B71 /* FirefoxSuggestSettings.swift in Sources */,
