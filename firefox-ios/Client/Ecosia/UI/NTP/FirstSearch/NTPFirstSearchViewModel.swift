@@ -21,7 +21,7 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     // MARK: - HomepageViewModelProtocol Properties
 
     var sectionType: HomepageSectionType = .firstSearch
-    var headerViewModel: LabelButtonHeaderViewModel = LabelButtonHeaderViewModel.emptyHeader
+    var headerViewModel = LabelButtonHeaderViewModel.emptyHeader
     let isEnabled: Bool = true
 
     internal var theme: Theme
@@ -149,7 +149,6 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
 
 extension NTPFirstSearchViewModel: ProductTourObserver {
     func productTourStateDidChange(_ state: ProductTourState) {
-        // TODO: Delay to reload after url loading so it doesn't flash
         dataModelDelegate?.reloadView()
     }
 }

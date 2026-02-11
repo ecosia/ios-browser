@@ -20,14 +20,8 @@ extension BrowserViewController {
         navigationAction: WKNavigationAction,
         previousUrl: URL?
     ) -> URL {
-        // Check if this is an Ecosia search vertical
         guard url.isEcosiaSearchVertical() else {
             return url
-        }
-
-        // Handle product tour completion for first search
-        if OnboardingProductTourExperiment.isEnabled {
-            ProductTourManager.shared.completeFirstSearchIfNeeded()
         }
 
         // Only process if not navigating back/forward and either URL changed or it's a reload
@@ -42,5 +36,18 @@ extension BrowserViewController {
         Analytics.shared.inappSearch(url: url)
 
         return url
+    }
+
+    /// Handles product tour completion when Ecosia search finishes loading
+    /// - Parameter url: The URL that finished loading
+    func handleEcosiaSearchCompletion(url: URL) {
+        guard url.isEcosiaSearchVertical() else {
+            return
+        }
+
+        // Handle product tour completion for first search AFTER loading completes
+        if OnboardingProductTourExperiment.isEnabled {
+            ProductTourManager.shared.completeFirstSearchIfNeeded()
+        }
     }
 }
