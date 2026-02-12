@@ -25,7 +25,6 @@ public final class ProductTourManager {
     public static let shared = ProductTourManager()
 
     private let userDefaults: UserDefaults
-    private let logger: Logger
     private let kProductTourStateKey = "ProductTourState"
 
     // Observers for state changes
@@ -37,16 +36,12 @@ public final class ProductTourManager {
             guard oldValue != currentState else { return }
             saveState()
             notifyObservers()
-            logger.log("Product tour state changed from \(oldValue.rawValue) to \(currentState.rawValue)",
-                       level: .info,
-                       category: .lifecycle)
         }
     }
 
     init(userDefaults: UserDefaults = .standard,
          logger: Logger = DefaultLogger.shared) {
         self.userDefaults = userDefaults
-        self.logger = logger
         self.currentState = Self.loadState(from: userDefaults)
     }
 

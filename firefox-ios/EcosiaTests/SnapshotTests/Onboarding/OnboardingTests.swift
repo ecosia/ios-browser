@@ -5,6 +5,7 @@
 import SnapshotTesting
 import XCTest
 @testable import Client
+@testable import Ecosia
 
 final class OnboardingTests: SnapshotBaseTests {
 
