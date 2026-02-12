@@ -142,4 +142,14 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // Invalidate layout so self-sizing (e.g. news tiles) recalculates and avoids excess empty space
         homepageCollectionView?.collectionViewLayout.invalidateLayout()
     }
+    
+    /// Ecosia: Returns wallpaper state with Ecosia NTP background
+    func getEcosiaNTPWallpaperState() -> WallpaperState? {
+        guard let adapter = ecosiaAdapter else {
+            return nil
+        }
+        let wallpaperConfig = adapter.getNTPBackgroundConfiguration()
+        let state = WallpaperState(windowUUID: windowUUID, wallpaperConfiguration: wallpaperConfig)
+        return state
+    }
 }

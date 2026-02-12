@@ -16,6 +16,23 @@ It contains info on the way we got the project structure, how we interface it wi
 The Ecosia Framework aims to be a wrapper of all our Ecosia isolated implementation and logic.
 Some of the Ecosia codebase still lives under the main project `Client/Ecosia` but the goal is to bring as much codebase as possible as part of this dedicated framework.
 
+### 🎨 New Tab Page (NTP) Background
+
+The Ecosia NTP features a custom background that adapts to light and dark modes. The implementation leverages Firefox's existing `WallpaperBackgroundView` infrastructure.
+
+**Key Components:**
+- **Background Assets**: Located in `Client/Ecosia/UI/Ecosia.xcassets/ntpBackground.imageset/`
+- **Configuration**: `EcosiaHomepageAdapter.getNTPBackgroundConfiguration()` provides the wallpaper configuration
+- **Integration**: `HomepageViewController.getEcosiaNTPWallpaperState()` applies the Ecosia background via the wallpaper state system
+
+**Theme Support:**
+- Light mode: Subtle gradient from light gray/white to soft pink/lavender
+- Dark mode: Gradient from dark gray/blue-black to dark purple/violet
+- Automatic switching based on system theme
+
+**Asset Management:**
+The background images support multiple resolutions (1x, 2x, 3x) and automatically adapt to device orientation. See the README in the imageset folder for instructions on updating the background images.
+
 ## 🤝 Getting involved
 
 We encourage you to participate in those open source projects. We love Pull Requests, Issue Reports, Feature Requests or any kind of positive contribution. Please read the [Mozilla Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) and our [Contributing guidelines](https://github.com/mozilla-mobile/firefox-ios/blob/main/CONTRIBUTING.md) first. 

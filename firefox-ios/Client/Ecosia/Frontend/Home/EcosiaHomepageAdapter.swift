@@ -212,4 +212,51 @@ final class EcosiaHomepageAdapter {
             device: UIDevice.current.userInterfaceIdiom
         )
     }
+    
+    // MARK: - Ecosia: NTP Background
+
+    /// Ecosia: Provides the wallpaper configuration for the NTP background
+    func getNTPBackgroundConfiguration() -> WallpaperConfiguration {
+
+        let wallpaperManager = WallpaperManager()
+        let currentWallpaper = wallpaperManager.currentWallpaper
+
+        var portraitImage: UIImage?
+        var landscapeImage: UIImage?
+
+        // Try to load bundled asset first if available
+        if let bundledAssetName = currentWallpaper.bundledAssetName {
+            portraitImage = UIImage(named: bundledAssetName)
+            landscapeImage = UIImage(named: bundledAssetName)
+        }
+
+        // If no bundled asset, try to load downloaded images
+        if portraitImage == nil || landscapeImage == nil {
+            let storageUtility = WallpaperStorageUtility()
+
+            do {
+                portraitImage = try storageUtility.fetchImageNamed(currentWallpaper.portraitID)
+
+                landscapeImage = try storageUtility.fetchImageNamed(currentWallpaper.landscapeID)
+            } catch {
+            }
+        }
+
+        // Fallback to default bundled background if nothing loaded
+        if portraitImage == nil {
+            portraitImage = UIImage(named: "ntpBackground")
+            landscapeImage = UIImage(named: "ntpBackground")
+        }
+
+
+        return WallpaperConfiguration(
+            id: currentWallpaper.id,
+            landscapeImage: landscapeImage,
+            portraitImage: portraitImage,
+            textColor: currentWallpaper.textColor,
+            cardColor: currentWallpaper.cardColor,
+            logoTextColor: currentWallpaper.logoTextColor,
+            hasImage: portraitImage != nil || landscapeImage != nil
+        )
+    }
 }
