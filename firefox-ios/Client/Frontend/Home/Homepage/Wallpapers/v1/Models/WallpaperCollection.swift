@@ -35,7 +35,12 @@ struct WallpaperCollection: Codable, Equatable {
     let heading: String?
 
     var type: WallpaperCollectionType {
+        #if ECOSIA
+        // Ecosia: Treat "ecosia-nature" as the classic collection
+        return id == "ecosia-nature" ? .classic : .limitedEdition
+        #else
         return id == "classic-firefox" ? .classic : .limitedEdition
+        #endif
     }
 
     var learnMoreUrl: URL? {

@@ -72,11 +72,14 @@ final class WebServer: WebServerProtocol, @unchecked Sendable {
                     return
                 }
 
-                // Hop to the MainActor for the actual handler logic
+                // Hop to the MainActor for the actual handler logic.
+                // Copy the non-Sendable completion into a local to avoid capturing it across concurrency domains.
+                // Mark as nonisolated(unsafe) since we're already using @unchecked Sendable and managing thread safety.
+                nonisolated(unsafe) let completionLocal = completion
                 ensureMainThread {
                     handler(request) { response in
                         // Call GCDWebServer's completion when the handler is done
-                        completion(response)
+                        completionLocal(response)
                     }
                 }
             }
@@ -126,3 +129,4 @@ final class WebServer: WebServerProtocol, @unchecked Sendable {
         return WebServer.sharedInstance.URLForResource("page", module: "reader-mode")
     }
 }
+
