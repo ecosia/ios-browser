@@ -208,18 +208,25 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
     }
 
     private func addDefaultWallpaper(to availableCollections: [WallpaperCollection]) -> [WallpaperCollection] {
-        let baseWallpaper = [Wallpaper.baseWallpaper]
+        // Ecosia: Use ecosiaDefault (with bundled asset) instead of baseWallpaper (no image)
+        #if ECOSIA
+        let defaultWallpaper = [Wallpaper.ecosiaDefault]
+        let collectionID = "classic-ecosia"
+        #else
+        let defaultWallpaper = [Wallpaper.baseWallpaper]
+        let collectionID = "classic-firefox"
+        #endif
 
         if availableCollections.isEmpty {
-            return [WallpaperCollection(id: "classic-firefox",
+            return [WallpaperCollection(id: collectionID,
                                         learnMoreURL: nil,
                                         availableLocales: nil,
                                         availability: nil,
-                                        wallpapers: baseWallpaper,
+                                        wallpapers: defaultWallpaper,
                                         description: nil,
                                         heading: nil)]
         } else if let classicCollection = availableCollections.first(where: { $0.type == .classic }) {
-            let newWallpapers = baseWallpaper + classicCollection.wallpapers
+            let newWallpapers = defaultWallpaper + classicCollection.wallpapers
             let newClassic = WallpaperCollection(id: classicCollection.id,
                                                  learnMoreURL: classicCollection.learnMoreUrl?.absoluteString,
                                                  availableLocales: classicCollection.availableLocales,

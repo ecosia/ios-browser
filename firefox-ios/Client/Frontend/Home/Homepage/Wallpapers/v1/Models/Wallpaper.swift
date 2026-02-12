@@ -27,6 +27,7 @@ struct Wallpaper: Equatable {
                 && lhs.textColor == rhs.textColor
                 && lhs.cardColor == rhs.cardColor
                 && lhs.logoTextColor == rhs.logoTextColor
+                && lhs.bundledAssetName == rhs.bundledAssetName
     }
 
     enum ImageTypeID {
@@ -39,6 +40,7 @@ struct Wallpaper: Equatable {
         case textColor = "text-color"
         case cardColor = "card-color"
         case logoTextColor = "logo-text-color"
+        case bundledAssetName = "bundled-asset-name"
         case id
     }
 
@@ -46,6 +48,22 @@ struct Wallpaper: Equatable {
     let textColor: UIColor?
     let cardColor: UIColor?
     let logoTextColor: UIColor?
+    let bundledAssetName: String?  // Ecosia: Optional bundled asset for offline-first experience
+
+    // MARK: - Initializer
+    init(
+        id: String,
+        textColor: UIColor?,
+        cardColor: UIColor?,
+        logoTextColor: UIColor?,
+        bundledAssetName: String? = nil  // Default to nil - only specify when using bundled assets
+    ) {
+        self.id = id
+        self.textColor = textColor
+        self.cardColor = cardColor
+        self.logoTextColor = logoTextColor
+        self.bundledAssetName = bundledAssetName
+    }
 
     var thumbnailID: String { return "\(id)\(fileId.thumbnail)" }
     var portraitID: String { return "\(id)\(deviceVersionID)\(fileId.portrait)" }
@@ -59,6 +77,17 @@ struct Wallpaper: Equatable {
             textColor: nil,
             cardColor: nil,
             logoTextColor: nil
+        )
+    }
+
+    /// Ecosia: Default wallpaper with bundled asset for immediate first-launch experience
+    static var ecosiaDefault: Wallpaper {
+        return Wallpaper(
+            id: "ecosia-default",
+            textColor: UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
+            cardColor: UIColor(red: 0.1, green: 0.3, blue: 0.18, alpha: 1.0),
+            logoTextColor: UIColor(red: 0.91, green: 0.96, blue: 0.91, alpha: 1.0),
+            bundledAssetName: "ntpBackground"
         )
     }
 
@@ -99,6 +128,19 @@ struct Wallpaper: Equatable {
         // If it's a default (empty) wallpaper
         guard type == .other else { return nil }
 
+        // Ecosia: Check for bundled asset first (offline-first approach)
+        if let assetName = bundledAssetName {
+            if let bundledImage = UIImage(named: assetName) {
+                // For thumbnails, return a scaled-down version of the bundled image
+                if imageType == .thumbnail {
+                    let targetSize = CGSize(width: 200, height: 200)
+                    return bundledImage.createScaled(targetSize)
+                }
+                return bundledImage
+            }
+        }
+
+        // Fallback to downloaded/cached images
         do {
             let storageUtility = WallpaperStorageUtility()
 
@@ -121,6 +163,7 @@ extension Wallpaper: Decodable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
         id = try values.decode(String.self, forKey: .id)
+        bundledAssetName = try? values.decode(String.self, forKey: .bundledAssetName)
 
         // Returning `nil` if the strings aren't valid as we already handle nil cases
         let textHexString = try? values.decode(String.self, forKey: .textColor)
@@ -139,7 +182,7 @@ extension Wallpaper: Decodable {
 
         textColor = getColorFrom(textHexString)
         cardColor = getColorFrom(cardHexString)
-        logoTextColor = getColorFrom(logoHexString)
+        logoTextColor = getColorFrom(logoHexString)        
     }
 }
 
@@ -156,6 +199,7 @@ extension Wallpaper: Encodable {
             try container.encode(nilString, forKey: .textColor)
             try container.encode(nilString, forKey: .cardColor)
             try container.encode(nilString, forKey: .logoTextColor)
+            try container.encodeIfPresent(bundledAssetName, forKey: .bundledAssetName)
             return
         }
 
@@ -167,6 +211,7 @@ extension Wallpaper: Encodable {
         try container.encode(textHex, forKey: .textColor)
         try container.encode(cardHex, forKey: .cardColor)
         try container.encode(logoHex, forKey: .logoTextColor)
+        try container.encodeIfPresent(bundledAssetName, forKey: .bundledAssetName)
     }
 
     private func dropOctothorpeIfAvailable(from string: String) -> String {
@@ -177,3 +222,4 @@ extension Wallpaper: Encodable {
         return string
     }
 }
+

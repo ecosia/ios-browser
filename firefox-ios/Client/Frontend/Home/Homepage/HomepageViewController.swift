@@ -347,7 +347,12 @@ final class HomepageViewController: UIViewController,
     }
 
     func newState(state: HomepageState) {
-        wallpaperView.wallpaperState = state.wallpaperState
+        // Ecosia: Use Ecosia NTP background instead of Firefox wallpaper
+        if let ecosiaWallpaperState = getEcosiaNTPWallpaperState() {
+            wallpaperView.wallpaperState = ecosiaWallpaperState
+        } else {
+            wallpaperView.wallpaperState = state.wallpaperState
+        }
 
         // TODO: - FXIOS-13346 / FXIOS-13343 - fix collection view being reloaded all the time also when data don't change
         // this is a quick workaround to avoid blocking the main thread by calling apply snapshot many times.
