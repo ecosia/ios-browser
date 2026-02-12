@@ -32,7 +32,6 @@ extension BrowserViewController {
             return url
         }
 
-        // Track the search analytics
         Analytics.shared.inappSearch(url: url)
 
         return url
@@ -45,7 +44,6 @@ extension BrowserViewController {
             return
         }
 
-        // Handle product tour completion for first search AFTER loading completes
         if OnboardingProductTourExperiment.isEnabled {
             ProductTourManager.shared.completeFirstSearchIfNeeded()
         }

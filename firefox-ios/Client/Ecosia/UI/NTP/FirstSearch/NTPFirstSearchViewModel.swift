@@ -13,13 +13,6 @@ protocol NTPFirstSearchViewModelDelegate: AnyObject {
 /// View model for the Product Tour NTP section that appears during onboarding
 class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
-    struct UX {
-        static let welcomeTitle = "Welcome to Your New Tab"
-        static let welcomeDescription = "Start your search journey here. This is where you'll find everything you need."
-    }
-
-    // MARK: - HomepageViewModelProtocol Properties
-
     var sectionType: HomepageSectionType = .firstSearch
     var headerViewModel = LabelButtonHeaderViewModel.emptyHeader
     let isEnabled: Bool = true
@@ -29,27 +22,20 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     weak var delegate: NTPFirstSearchViewModelDelegate?
     weak var dataModelDelegate: HomepageDataModelDelegate?
 
-    // MARK: - Computed Properties
-
     var shouldShow: Bool {
         return productTourManager.shouldShowProductTourHomepage
     }
-
-    // MARK: - Initialization
 
     init(theme: Theme, productTourManager: ProductTourManager = ProductTourManager.shared) {
         self.theme = theme
         self.productTourManager = productTourManager
 
-        // Register as observer for product tour state changes
         productTourManager.addObserver(self)
     }
 
     deinit {
         productTourManager.removeObserver(self)
     }
-
-    // MARK: - HomepageViewModelProtocol Methods
 
     func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
@@ -83,10 +69,6 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     func setTheme(theme: Theme) {
         self.theme = theme
     }
-
-    func updatePrivacyConcernedSection(isPrivate: Bool) {
-        // Product tour content is not affected by privacy mode
-    }
 }
 
 // MARK: - HomepageSectionHandler
@@ -112,19 +94,20 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell,
                    at indexPath: IndexPath) -> UICollectionViewCell {
-        // This method is used by some legacy sections, but we handle configuration in the main configure method
+        guard let cell = cell as? NTPFirstSearchCell else { return cell }
+        cell.configure(
+            title: .localized(.ntpFirstSearchTitle),
+            description: .localized(.ntpFirstSearchDescription),
+            suggestions: LocalizedSearchSuggestions.suggestions()
+        )
+        cell.onCloseButtonTapped = { [weak self] in
+            self?.handleCloseAction()
+        }
+        cell.onSearchSuggestionTapped = { [weak self] suggestion in
+            self?.handleSearchSuggestion(suggestion)
+        }
+        cell.applyTheme(theme: theme)
         return cell
-    }
-
-    func didSelectItem(at indexPath: IndexPath,
-                       homePanelDelegate: HomePanelDelegate?,
-                       libraryPanelDelegate: LibraryPanelDelegate?) {
-        // Product tour NTP cell doesn't have a tap action currently
-        // Could be extended in the future to show onboarding tips or advance tour state
-    }
-
-    func handleLongPress(with collectionView: UICollectionView, indexPath: IndexPath) {
-        // No long press action for product tour NTP cell
     }
 
     // MARK: - Private Action Handlers

@@ -24,7 +24,7 @@ struct SearchSuggestionFlowLayout: View {
     }
 }
 
-/// Container that handles the flow layout using a simpler, more reliable approach
+/// Container that handles the flow layout
 struct FlowLayoutContainer: View {
     let items: [String]
     let spacing: CGFloat
@@ -33,7 +33,7 @@ struct FlowLayoutContainer: View {
     let onTap: (String) -> Void
 
     var body: some View {
-        let width = availableWidth ?? UIScreen.main.bounds.width - 32 // Fallback to screen width minus margins
+        let width = availableWidth ?? UIScreen.main.bounds.width - 32 // Minus margins
         let rows = computeRows(availableWidth: width)
 
         VStack(alignment: .center, spacing: spacing) {
@@ -102,8 +102,6 @@ struct SearchSuggestionPill: View {
     struct UX {
         static let fontSize: CGFloat = 15 // subheadline equivalent
         static let fontWeight: UIFont.Weight = .regular
-
-        // Layout
         static let iconSize: CGFloat = 16
         static let iconTextSpacing: CGFloat = 4
         static let horizontalPadding: CGFloat = 12
@@ -112,7 +110,6 @@ struct SearchSuggestionPill: View {
         static let cornerRadius: CGFloat = 22
         static let borderWidth: CGFloat = 1
 
-        // Calculated properties
         static var totalHorizontalPadding: CGFloat {
             horizontalPadding * 2
         }
