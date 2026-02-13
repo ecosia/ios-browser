@@ -123,7 +123,6 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         self.delegate = delegate
         if traitCollection.userInterfaceIdiom == .pad {
             modalPresentationStyle = .formSheet
-            preferredContentSize = .init(width: 544, height: 600)
         } else {
             modalPresentationCapturesStatusBarAppearance = true
         }
