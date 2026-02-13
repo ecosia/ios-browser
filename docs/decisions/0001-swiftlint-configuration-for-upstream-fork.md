@@ -104,3 +104,4 @@ It mentions `Done correcting 1 file!` but the file has not been fixed and had to
 
 * [SwiftLint Configuration](.swiftlint.yml) - Current SwiftLint rules and exclusions
 * [Firefox iOS Repository](https://github.com/mozilla-mobile/firefox-ios) - Upstream repository
+* Confluence: NAPPS-5 - [SwiftLint Configuration for Upstream Firefox Fork](https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4408836232/2026-02-03+-+ADR-NAPPS-5+SwiftLint+Configuration+for+Upstream+Firefox+Fork)
