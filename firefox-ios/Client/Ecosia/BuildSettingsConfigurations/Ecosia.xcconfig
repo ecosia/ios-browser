@@ -14,4 +14,4 @@ OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_RELEASE
 MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = $(inherited) -ld_classic
 DEVELOPMENT_TEAM = 33YMRSYD2L
-MOZ_WALLPAPER_ASSET_URL=https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs
+MOZ_WALLPAPER_ASSET_URL=https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/cdn
