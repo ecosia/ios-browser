@@ -39,6 +39,7 @@ struct WallpaperURLProvider {
         // TEMPORARY HARDCODE: Bypass Info.plist for debugging
         // TODO: fetch from buildconfig
         return URL(string: "https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/wallpapers.json")!
+        return URL(string: "https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/cdn/metadata/v1/wallpapers.json")!
     }
 
     private func imageURLWith(_ key: String, and fileName: String) throws -> URL {
