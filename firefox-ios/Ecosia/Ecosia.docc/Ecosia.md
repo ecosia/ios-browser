@@ -74,9 +74,35 @@ We use [Tuist](https://tuist.dev) to generate the Xcode project and manage the b
 
 We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Make sure to install it so that linting runs correctly when building.
 
+#### Installation & Version Pinning
+
+We pin SwiftLint to **version 0.63.2** to ensure consistent linting behavior across all developers and CI. This version is specified in [`.github/workflows/swift_lint.yml`](/.github/workflows/swift_lint.yml).
+
 ```shell
 brew install swiftlint
+brew pin swiftlint
 ```
+
+The `brew pin` command prevents SwiftLint from being automatically upgraded when you run `brew upgrade`. This ensures everyone on the team uses version 0.63.2.
+
+**To verify the pinned version:**
+```shell
+swiftlint version
+brew list --pinned
+```
+
+#### Baseline Approach
+
+We use SwiftLint's baseline feature (`swiftlint_baseline.json`) to handle existing violations in Firefox core files while enforcing standards on new code. This means:
+- ✅ New code you write must be lint-clean
+- ⚠️ Existing violations in Firefox core files are baselined (won't block builds)
+- 🔄 The baseline is regenerated after upstream Firefox merges
+
+#### Version Updates
+
+SwiftLint version is evaluated during upstream Firefox merges. Since Firefox doesn't pin versions (they use the latest), we assess whether to upgrade when merging their changes.
+
+**For more details**, see the Architecture Decision Record: [SwiftLint Configuration for Upstream Firefox Fork](../../../docs/decisions/0001-swiftlint-configuration-for-upstream-fork.md)
 
 We have a baseline. We will attempt to not add new swiftlint violations. Some violations may be in the firefox base.
 
