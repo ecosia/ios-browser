@@ -1,5 +1,5 @@
 {
-    "last-updated-date": "2026-02-12",
+    "last-updated-date": "2026-02-13",
     "collections": [
         {
             "id": "ecosia-nature",
@@ -8,16 +8,9 @@
             "availability-range": null,
             "wallpapers": [
                 {
-                    "id": "ecosia-default",
-                    "text-color": "FFFFFF",
-                    "card-color": "1A4D2E",
-                    "logo-text-color": "E8F5E9",
-                    "bundled-asset-name": "ntpBackground"
-                },
-                {
                     "id": "ecosia-forest",
                     "text-color": "FFFFFF",
-                    "card-color": "2D4A2B",
+                    "card-color": "1A4D2E",
                     "logo-text-color": "E8F5E9",
                     "bundled-asset-name": "ntpBackground"
                 },
@@ -25,22 +18,13 @@
                     "id": "ecosia-ocean",
                     "text-color": "FFFFFF",
                     "card-color": "1B4965",
-                    "logo-text-color": "CAE9FF",
-                    "bundled-asset-name": "ntpBackground"
+                    "logo-text-color": "CAE9FF"
                 },
                 {
                     "id": "ecosia-mountains",
                     "text-color": "FFFFFF",
                     "card-color": "2C3E50",
-                    "logo-text-color": "ECF0F1",
-                    "bundled-asset-name": "ntpBackground"
-                },
-                {
-                    "id": "ecosia-desert",
-                    "text-color": "FFFFFF",
-                    "card-color": "8B4513",
-                    "logo-text-color": "FFF8DC",
-                    "bundled-asset-name": "ntpBackground"
+                    "logo-text-color": "ECF0F1"
                 }
             ],
             "heading": "Ecosia Nature",

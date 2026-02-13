@@ -68,3 +68,104 @@ snapshot tests support multiple themes, devices, and localizations
 reference images are compared to detect unintended UI changes
 
 see `SNAPSHOT_TESTING_WIKI.md` for more details
+
+## Running Tests from Command Line
+
+### Project Structure
+
+The project uses `firefox-ios/Client.xcodeproj` with the **Ecosia** scheme for builds and tests.
+
+### Available Test Targets
+
+- `ClientTests` - Firefox and Ecosia client tests (including wallpaper tests)
+- `EcosiaTests` - Ecosia-specific unit tests
+- `EcosiaSnapshotTests` - Ecosia UI snapshot tests
+- `AccountTests` - Account-related tests
+- `StorageTests` - Storage layer tests
+- `SyncTests` - Sync functionality tests
+
+### List Available Schemes and Targets
+
+```bash
+xcodebuild -project firefox-ios/Client.xcodeproj -list
+```
+
+### Running All Tests
+
+```bash
+xcodebuild test \
+  -project firefox-ios/Client.xcodeproj \
+  -scheme Ecosia \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+```
+
+### Running Specific Test Target
+
+```bash
+# Run all EcosiaTests
+xcodebuild test \
+  -project firefox-ios/Client.xcodeproj \
+  -scheme Ecosia \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -only-testing:EcosiaTests
+
+# Run all ClientTests
+xcodebuild test \
+  -project firefox-ios/Client.xcodeproj \
+  -scheme Ecosia \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -only-testing:ClientTests
+```
+
+### Running Specific Test Class
+
+```bash
+# Run wallpaper-related tests
+xcodebuild test \
+  -project firefox-ios/Client.xcodeproj \
+  -scheme Ecosia \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -only-testing:ClientTests/WallpaperCodableTests
+```
+
+### Running Specific Test Method
+
+```bash
+xcodebuild test \
+  -project firefox-ios/Client.xcodeproj \
+  -scheme Ecosia \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -only-testing:ClientTests/WallpaperCodableTests/testEncodingWithBundledAsset
+```
+
+### List Available Simulators
+
+```bash
+xcrun simctl list devices available | grep iPhone
+```
+
+### Tips
+
+- Use `-only-testing` to run specific test targets, classes, or methods
+- Use `-skip-testing` to exclude specific tests
+- The scheme is **Ecosia**, not ClientTests or EcosiaTests (those are test targets, not schemes)
+- Test results are saved to `~/Library/Developer/Xcode/DerivedData/Client-*/Logs/Test/`
+- If you get "database is locked" errors, ensure no other builds are running in Xcode
+- Use `| tee /tmp/test-output.txt` to save output to a file while viewing it
+
+### Known Issues
+
+- Command-line test runs may fail with "Unable to find module dependency" errors for Shared, Client, or Common modules
+- This appears to be related to the complex build configuration with multiple targets and BrowserKit integration
+- **Workaround**: Run tests from within Xcode.app using the Test Navigator (⌘6) or Product → Test (⌘U)
+- Tests run successfully from Xcode's UI but may have issues from command line without proper DerivedData setup
+
+### Running Tests from Xcode
+
+The most reliable way to run tests:
+
+1. Open `firefox-ios/Client.xcodeproj` in Xcode
+2. Select the **Ecosia** scheme
+3. Choose a simulator (e.g., iPhone 17 Pro)
+4. Open Test Navigator (⌘6)
+5. Run all tests (⌘U) or click the ▶︎ button next to specific test classes/methods

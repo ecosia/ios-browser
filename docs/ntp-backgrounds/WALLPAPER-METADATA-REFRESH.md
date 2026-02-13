@@ -111,14 +111,25 @@ UserDefaults.standard.removeObject(forKey: "Wallpapers.MetadataLastCheckedDate")
 **Using Simulator:**
 
 ```bash
-# Find metadata file
-find ~/Library/Developer/CoreSimulator/Devices -name "metadata" -path "*/wallpapers/*" 2>/dev/null
+# Find and delete all wallpaper metadata files
+find ~/Library/Developer/CoreSimulator/Devices -type f -name "metadata" -path "*/wallpapers/metadata/*" 2>/dev/null -exec rm -v {} \;
 
-# Delete it
-rm /path/to/metadata/file
+# Or to see what would be deleted first (dry run):
+find ~/Library/Developer/CoreSimulator/Devices -type f -name "metadata" -path "*/wallpapers/metadata/*" 2>/dev/null
 
-# Relaunch app
+# To delete entire wallpapers directory (including thumbnails and downloaded images):
+find ~/Library/Developer/CoreSimulator/Devices -type d -name "wallpapers" -path "*/Application Support/*" 2>/dev/null -exec rm -rfv {} \;
 ```
+
+**Using Physical Device (via Xcode):**
+
+1. Window → Devices and Simulators
+2. Select your device
+3. Click on the Ecosia app
+4. Click the gear icon → Download Container
+5. Navigate to `AppData/Library/Application Support/wallpapers/`
+6. Delete the `metadata` folder
+7. Replace Container
 
 **Effect:** App treats it as first launch, fetches metadata
 
