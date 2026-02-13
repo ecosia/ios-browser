@@ -26,3 +26,7 @@ A Mobile Decision Record is a document that captures an important architectural 
 |----|-------|--------|------|
 | [0001](0001-swiftlint-configuration-for-upstream-fork.md) | SwiftLint Configuration for Upstream Firefox Fork | Accepted | 2026-02-03 |
 | [0002](0002-alternate-app-icons-support.md) | Alternate App Icons Support | Accepted | 2026-02-07 |
+| [0003](0003-json-file-persistence-for-user-data.md) | JSON File Persistence for User Data | Accepted | 2021-04-27 |
+| [0004](0004-production-macro-for-environment-configuration.md) | Production Macro for Environment Configuration | Accepted | 2023-06-29 |
+| [0005](0005-analytics-spy-for-unit-testing.md) | Analytics Spy for Unit Testing | Accepted | 2024-11-01 |
+| [0006](0006-accounts-in-chrome-ntp.md) | Accounts in Chrome NTP | Proposed | 2024-11-27 |
