@@ -12,7 +12,7 @@ extension BrowserViewController {
     // MARK: - Associated Object Keys
     
     private struct AssociatedKeys {
-        static var spotlightCoordinator = "spotlightCoordinator"
+        static var spotlightCoordinator: UInt8 = 0
     }
     
     // MARK: - Spotlight Coordinator

@@ -10542,7 +10542,6 @@
 				12C11EA02D2828EA00E4DDBF /* DispatchQueueHelper+BuildChannel.swift */,
 				12348FF92DB8D2CC0017B0C2 /* PrefsKeys+Ecosia.swift */,
 				129F18FD2EC5F04200E870C0 /* Task+Sleep.swift */,
-				120EBBB52F3F35F60056F398 /* BrowserViewController+ProductTourSpotlight.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -10691,9 +10690,10 @@
 		2CFEA0422D455BD500B25CE0 /* ProductTour */ = {
 			isa = PBXGroup;
 			children = (
+				120EBBB52F3F35F60056F398 /* BrowserViewController+ProductTourSpotlight.swift */,
 				121C6E172EC1EF870060319A /* BrowserViewController+WelcomeTransition.swift */,
-				120EBBA12F3F30FA0056F398 /* SpotlightToast.swift */,
 				120EBBA32F3F31140056F398 /* ProductTourSpotlightCoordinator.swift */,
+				120EBBA12F3F30FA0056F398 /* SpotlightToast.swift */,
 			);
 			path = ProductTour;
 			sourceTree = "<group>";
