@@ -674,8 +674,11 @@ final class DebugAddCustomSeeds: HiddenSetting {
     }
 }
 
+// Note: There's also a ForceWallpaperRefresh in the Firefox debug menu
+// (Client/Frontend/Settings/Main/Debug/ForceWallpaperRefresh.swift)
+// This Ecosia version is kept separate for Ecosia-specific debug settings
 @MainActor
-final class ForceWallpaperRefresh: HiddenSetting {
+final class EcosiaForceWallpaperRefresh: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Force Wallpaper Refresh", attributes: [:])
     }
