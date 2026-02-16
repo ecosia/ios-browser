@@ -4,7 +4,7 @@
 
 import Common
 import Foundation
-import GCDWebServers
+@preconcurrency import GCDWebServers
 import Shared
 
 protocol WebServerProtocol {
@@ -13,13 +13,12 @@ protocol WebServerProtocol {
     func start() throws -> Bool
 }
 
-class WebServer: WebServerProtocol {
-    private var logger: Logger
-    static let WebServerSharedInstance = WebServer()
+/// FIXME: FXIOS-13989 Make truly thread safe
+/// NOTE: FXIOS-14560 -- Be careful; `@MainActor` will cause crashes with GCDWebServer dependency.
+final class WebServer: WebServerProtocol, @unchecked Sendable {
+    static let sharedInstance = WebServer()
 
-    class var sharedInstance: WebServer {
-        return WebServerSharedInstance
-    }
+    private let logger: Logger
 
     let server = GCDWebServer()
 
@@ -47,8 +46,6 @@ class WebServer: WebServerProtocol {
                 GCDWebServerOption_Port: AppInfo.webserverPort,
                 GCDWebServerOption_BindToLocalhost: true,
                 GCDWebServerOption_AutomaticallySuspendInBackground: false, // done by the app in AppDelegate
-                GCDWebServerOption_AuthenticationMethod: GCDWebServerAuthenticationMethod_Basic,
-                GCDWebServerOption_AuthenticationAccounts: [sessionToken: ""]
             ])
         }
         return server.isRunning
@@ -59,21 +56,33 @@ class WebServer: WebServerProtocol {
         _ method: String,
         module: String,
         resource: String,
-        handler: @escaping (_ request: GCDWebServerRequest?) -> GCDWebServerResponse?
+        handler: @escaping @MainActor (
+            _ request: GCDWebServerRequest?,
+            _ responseCompletion: @escaping @Sendable (GCDWebServerResponse?) -> Void
+        ) -> Void
     ) {
-        // Prevent serving content if the requested host isn't a safelisted local host.
-        let wrappedHandler = {(request: GCDWebServerRequest?) -> GCDWebServerResponse? in
-            guard let request = request,
-                  InternalURL.isValid(url: request.url)
-            else { return GCDWebServerResponse(statusCode: 403) }
-
-            return handler(request)
-        }
         server.addHandler(
             forMethod: method,
             path: "/\(module)/\(resource)",
             request: GCDWebServerRequest.self,
-            processBlock: wrappedHandler
+            asyncProcessBlock: { request, completion in
+                // Prevent serving content if the requested host isn't a safelisted local host.
+                guard InternalURL.isValid(url: request.url) else {
+                    completion(GCDWebServerResponse(statusCode: 403))
+                    return
+                }
+
+                // Hop to the MainActor for the actual handler logic.
+                // Copy the non-Sendable completion into a local to avoid capturing it across concurrency domains.
+                // Mark as nonisolated(unsafe) since we're already using @unchecked Sendable and managing thread safety.
+                nonisolated(unsafe) let completionLocal = completion
+                ensureMainThread {
+                    handler(request) { response in
+                        // Call GCDWebServer's completion when the handler is done
+                        completionLocal(response)
+                    }
+                }
+            }
         )
     }
 
