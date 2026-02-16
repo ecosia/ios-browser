@@ -748,6 +748,9 @@ class BrowserViewController: UIViewController,
         // Ecosia: Register window for auth state management
         EcosiaAuthWindowRegistry.shared.registerWindow(windowUUID)
 
+        // Ecosia
+        setupProductTourSpotlight()
+
         KeyboardHelper.defaultHelper.addDelegate(self)
         trackTelemetry()
         setupNotifications()
@@ -3085,6 +3088,9 @@ class BrowserViewController: UIViewController,
 
         // Ecosia: Update URLBar following PrivateModeUI
         updateURLBarFollowingPrivateModeUI()
+
+        // Ecosia
+        updateSpotlightTheme()
     }
 
     var isPreferSwitchToOpenTabOverDuplicateFeatureEnabled: Bool {
