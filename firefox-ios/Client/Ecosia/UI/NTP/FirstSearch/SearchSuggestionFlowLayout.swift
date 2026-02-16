@@ -52,8 +52,6 @@ struct FlowLayoutContainer: View {
     }
 
     private func computeRows(availableWidth: CGFloat) -> [[String]] {
-        let effectiveAvailableWidth = max(availableWidth - 32, 100) // Account for margins
-
         var rows: [[String]] = []
         var currentRow: [String] = []
         var currentRowWidth: CGFloat = 0
@@ -62,7 +60,7 @@ struct FlowLayoutContainer: View {
             let estimatedPillWidth = estimatePillWidth(for: item)
             let requiredWidth = currentRowWidth + estimatedPillWidth + (currentRow.isEmpty ? 0 : spacing)
 
-            if requiredWidth <= effectiveAvailableWidth || currentRow.isEmpty {
+            if requiredWidth <= availableWidth || currentRow.isEmpty {
                 currentRow.append(item)
                 currentRowWidth = requiredWidth
             } else {
@@ -137,7 +135,7 @@ struct SearchSuggestionPill: View {
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color(theme.colors.ecosia.iconDecorative))
                         .frame(width: UX.iconSize, height: UX.iconSize)
-                        .accessibilityLabel("Search icon")
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, UX.horizontalPadding)

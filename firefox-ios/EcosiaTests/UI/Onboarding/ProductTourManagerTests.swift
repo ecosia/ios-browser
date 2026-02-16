@@ -9,18 +9,21 @@ import Common
 final class ProductTourManagerTests: XCTestCase {
     var userDefaults: UserDefaults!
     var sut: ProductTourManager!
+    var suiteName: String!
 
     override func setUp() {
         super.setUp()
-        userDefaults = UserDefaults(suiteName: "ProductTourManagerTests-\(UUID().uuidString)")!
+        suiteName = "ProductTourManagerTests-\(UUID().uuidString)"
+        userDefaults = UserDefaults(suiteName: suiteName)!
         sut = ProductTourManager(userDefaults: userDefaults)
     }
-
     override func tearDown() {
-        userDefaults.removePersistentDomain(forName: userDefaults.dictionaryRepresentation().keys.first ?? "")
+        if let suiteName = suiteName {
+            userDefaults.removePersistentDomain(forName: suiteName)
+        }
         userDefaults = nil
         sut = nil
-        super.tearDown()
+        suiteName = nil
     }
 
     // MARK: - Initialization Tests

@@ -89,8 +89,8 @@ struct LocalizedSearchSuggestions {
             return [
                 "New York City",
                 "Things to do in Miami",
-                "Weather in San francisco",
-                "How long is the Rio Grande",
+                "Weather in San Francisco",
+                "How long is the Rio Grande?",
                 "\"Have a nice day\" in Spanish"
             ]
         case .default:

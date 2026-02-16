@@ -115,7 +115,6 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
     private func handleCloseAction() {
         Analytics.shared.firstSearchCardDismiss()
         productTourManager.completeTour()
-        dataModelDelegate?.reloadView()
     }
 
     private func handleSearchSuggestion(_ suggestion: String) {

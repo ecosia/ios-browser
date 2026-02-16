@@ -23,9 +23,9 @@ public protocol ProductTourObserver: AnyObject {
 /// Manager responsible for controlling the product tour state across the app
 public final class ProductTourManager {
     public static let shared = ProductTourManager()
+    private static let objectKey = "ProductTourState"
 
     private let userDefaults: UserDefaults
-    private let kProductTourStateKey = "ProductTourState"
 
     // Observers for state changes
     private var observers: [WeakReference] = []
@@ -39,8 +39,7 @@ public final class ProductTourManager {
         }
     }
 
-    init(userDefaults: UserDefaults = .standard,
-         logger: Logger = DefaultLogger.shared) {
+    init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
         self.currentState = Self.loadState(from: userDefaults)
     }
@@ -106,13 +105,13 @@ public final class ProductTourManager {
 
     private static func loadState(from userDefaults: UserDefaults) -> ProductTourState {
         guard OnboardingProductTourExperiment.isEnabled else { return .tourCompleted }
-        let savedStateString = userDefaults.string(forKey: "ProductTourState")
+        let savedStateString = userDefaults.string(forKey: objectKey)
         return ProductTourState(rawValue: savedStateString ?? "") ?? .default
     }
 
     private func saveState() {
         if OnboardingProductTourExperiment.isEnabled {
-            userDefaults.set(currentState.rawValue, forKey: kProductTourStateKey)
+            userDefaults.set(currentState.rawValue, forKey: Self.objectKey)
         }
     }
 

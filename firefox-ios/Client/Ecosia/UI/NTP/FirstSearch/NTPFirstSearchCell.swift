@@ -43,7 +43,7 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
     private lazy var iconImageView: UIImageView = .build { imageView in
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .systemGreen
-        imageView.accessibilityLabel = "Seedling icon"
+        imageView.isAccessibilityElement = false
         imageView.image = .init(named: "plantedSeedling")
     }
 
@@ -52,8 +52,7 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
         let image = UIImage(named: "close", in: .ecosia, with: config)
         button.setImage(image, for: .normal)
         button.tintColor = .systemGray
-        button.accessibilityLabel = "Close"
-        button.accessibilityHint = "Closes the search suggestions"
+        button.accessibilityLabel = .localized(.close)
     }
 
     private lazy var contentStackView: UIStackView = .build { stack in
