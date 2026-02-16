@@ -184,6 +184,7 @@ extension AppSettingsTableViewController {
             */
             AnalyticsIdentifierSetting(settings: self),
             RefreshStatisticsSetting(settings: self),
+            ForceWallpaperRefresh(settings: self),
         ]
 
         if EcosiaEnvironment.current == .staging {
