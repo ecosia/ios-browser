@@ -34,14 +34,15 @@ struct ReaderModeHandlers: ReaderModeHandlersProtocol {
             "GET",
             module: "reader-mode",
             resource: "page-exists"
-        ) { (request: GCDWebServerRequest?) -> GCDWebServerResponse? in
+        ) { (request: GCDWebServerRequest?, completion: @escaping @Sendable (GCDWebServerResponse?) -> Void) in
             guard let stringURL = request?.query?["url"],
                   let url = URL(string: stringURL, invalidCharacters: false) else {
-                return GCDWebServerResponse(statusCode: 500)
+                completion(GCDWebServerResponse(statusCode: 500))
+                return
             }
 
             let status = readerModeCache.contains(url) ? 200 : 404
-            return GCDWebServerResponse(statusCode: status)
+            completion(GCDWebServerResponse(statusCode: status))
         }
 
         var readerModeStyle = ReaderModeStyle.defaultStyle()
@@ -51,7 +52,7 @@ struct ReaderModeHandlers: ReaderModeHandlersProtocol {
             "GET",
             module: "reader-mode",
             resource: "page"
-        ) { (request: GCDWebServerRequest?) -> GCDWebServerResponse? in
+        ) { (request: GCDWebServerRequest?, completion: @escaping @Sendable (GCDWebServerResponse?) -> Void) in
             if let url = request?.query?["url"] {
                 if let url = URL(string: url, invalidCharacters: false), url.isWebPage() {
                     do {
@@ -69,12 +70,16 @@ struct ReaderModeHandlers: ReaderModeHandlersProtocol {
                             readabilityResult,
                             initialStyle: readerModeStyle
                         ),
-                              let response = GCDWebServerDataResponse(html: html) else { return nil }
+                              let response = GCDWebServerDataResponse(html: html) else {
+                            completion(nil)
+                            return
+                        }
                         // Apply a Content Security Policy that disallows everything except images from
                         // anywhere and fonts and css from our internal server
                         response.setValue("default-src 'none'; img-src *; style-src http://localhost:* '\(ReaderModeStyleHash)'; font-src http://localhost:*",
                                           forAdditionalHeader: "Content-Security-Policy")
-                        return response
+                        completion(response)
+                        return
                     } catch {
                         // This page has not been converted to reader mode yet. This happens when you for example add an
                         // item via the app extension and the application has not yet had a change to readerize that
@@ -113,7 +118,8 @@ struct ReaderModeHandlers: ReaderModeHandlersProtocol {
                                     with: .ReaderModeHandlerLoadOriginalPage,
                                     options: .literal,
                                     range: NSRange(location: 0, length: readerViewLoading.length))
-                                return GCDWebServerDataResponse(html: readerViewLoading as String)
+                                completion(GCDWebServerDataResponse(html: readerViewLoading as String))
+                                return
                             } catch _ {
                             }
                         }
@@ -122,7 +128,7 @@ struct ReaderModeHandlers: ReaderModeHandlersProtocol {
             }
 
             let errorString: String = .ReaderModeHandlerError
-            return GCDWebServerDataResponse(html: errorString) // TODO Needs a proper error page
+            completion(GCDWebServerDataResponse(html: errorString)) // TODO Needs a proper error page
         }
     }
 }
