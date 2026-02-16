@@ -45,6 +45,8 @@ extension String {
         case forceDarkMode = "Force Dark Mode"
         case turnOffDarkMode = "Turn off Dark Mode"
         case getStarted = "Get started"
+        case goBack = "Go back"
+        case gotIt = "Got it"
         case home = "Home"
         case homepage = "Homepage"
         case welcomeTo = "Welcome to"
@@ -70,6 +72,7 @@ extension String {
         case mySearches = "My searches"
         case myTrees = "My trees"
         case networkError = "Network error!"
+        case next = "Next"
         case new = "New"
         case ntpFirstSearchTitle = "Get started with Ecosia"
         case ntpFirstSearchDescription = "Try a search and discover how you're helping fight climate change by using Ecosia."
@@ -215,7 +218,6 @@ extension String {
         case whatsNewFirstItemDescription10_0_0 = "You can now easily zoom in and out on any page through options."
         case whatsNewSecondItemTitle10_0_0 = "Password manager"
         case whatsNewSecondItemDescription10_0_0 = "We’ve added 1Password to Ecosia to help you to manage your passwords securely."
-        case whatsNewFooterButtonTitle = "Got it"
         case configurableNudgeCardCloseButtonAccessibilityLabel = "Close card button"
         case newsletterNTPCardExperimentTitle = "Be the first to know"
         case newsletterNTPCardExperimentDescription = "Subscribe to our monthly newsletter for updates on your climate impact."
@@ -286,5 +288,11 @@ extension String {
         case userLevelAccessibilityLabel = "Level: %@"
         case profileButtonAccessibilityHint = "Opens your profile page"
         case signOutButtonAccessibilityHint = "Sign out of your account"
+
+        // MARK: - Product Tour Spotlight
+        case spotlightStep1Title = "You browse with 100% clean energy"
+        case spotlightStep1Description = "You're helping push dirty energy off the grid! We produce more solar and wind energy than your searches take."
+        case spotlightStep2Title = "We use profits for the planet"
+        case spotlightStep2Description = "Unlike any other search engines, we use 100% of the profits that we make from ads for climate action!"
     }
 }

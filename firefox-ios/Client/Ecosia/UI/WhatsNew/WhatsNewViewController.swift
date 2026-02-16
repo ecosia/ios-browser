@@ -159,7 +159,7 @@ extension WhatsNewViewController {
         tableView.dataSource = self
         tableView.register(WhatsNewCell.self, forCellReuseIdentifier: WhatsNewCell.cellIdentifier)
 
-        footerButton.setTitle(.localized(.whatsNewFooterButtonTitle), for: .normal)
+        footerButton.setTitle(.localized(.gotIt), for: .normal)
         footerButton.translatesAutoresizingMaskIntoConstraints = false
         footerButton.addTarget(self, action: #selector(footerButtonTapped), for: .touchUpInside)
         footerButton.layer.cornerRadius = UX.FooterButton.height/2
