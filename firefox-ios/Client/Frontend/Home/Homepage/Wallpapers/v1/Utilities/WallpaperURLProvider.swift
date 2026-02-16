@@ -46,10 +46,12 @@ struct WallpaperURLProvider {
     }
 
     private func imageURLWith(_ key: String, and fileName: String) throws -> URL {
-        let scheme = try urlScheme()
-        print("🐛 WALLPAPER: imageURLWith scheme=\(scheme), key=\(key), fileName=\(fileName)")
-        guard let url = URL(string: "\(scheme)/\(key)/\(fileName).jpg") else {
-            print("🐛 WALLPAPER: Failed to create URL from \(scheme)/\(key)/\(fileName).jpg")
+        // TEMPORARY HARDCODE: Use same base URL as metadata
+        // TODO: fetch from buildconfig
+        let baseURL = "https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/cdn"
+        print("🐛 WALLPAPER: imageURLWith baseURL=\(baseURL), key=\(key), fileName=\(fileName)")
+        guard let url = URL(string: "\(baseURL)/\(key)/\(fileName).jpg") else {
+            print("🐛 WALLPAPER: Failed to create URL from \(baseURL)/\(key)/\(fileName).jpg")
             throw URLProviderError.invalidURL
         }
         print("🐛 WALLPAPER: Created image URL: \(url)")
