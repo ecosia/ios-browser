@@ -35,9 +35,10 @@ class SpotlightToast: Toast {
         static let descriptionFontSize: CGFloat = 15
         static let stepCounterFontSize: CGFloat = 13
 
-        static let buttonHeight: CGFloat = 44
-        static let buttonCornerRadius: CGFloat = 22
-        static let buttonHorizontalPadding: CGFloat = 24
+        static let buttonHeight: CGFloat = 40
+        static let buttonCornerRadius: CGFloat = 20
+        static let buttonHorizontalPadding: CGFloat = 15
+        static let buttonInternalSpacing: CGFloat = 16
     }
 
     // MARK: - Properties
@@ -92,7 +93,7 @@ class SpotlightToast: Toast {
         stackView.axis = .horizontal
         stackView.spacing = UX.buttonSpacing
         stackView.alignment = .center
-        stackView.distribution = .fill
+        stackView.distribution = .equalSpacing
     }
 
     private lazy var stepCounterLabel: UILabel = .build { label in
@@ -106,38 +107,49 @@ class SpotlightToast: Toast {
 
     private lazy var buttonStackView: UIStackView = .build { stackView in
         stackView.axis = .horizontal
-        stackView.spacing = UX.buttonSpacing
+        stackView.spacing = UX.buttonInternalSpacing
         stackView.alignment = .fill
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
     }
 
     private lazy var secondaryButton: UIButton = .build { button in
-        button.titleLabel?.font = DefaultDynamicFontHelper.preferredFont(
-            withTextStyle: .body,
-            size: UX.titleFontSize
-        )
-        button.layer.cornerRadius = UX.buttonCornerRadius
-        button.layer.borderWidth = 1
-        button.contentEdgeInsets = UIEdgeInsets(
+        var config = UIButton.Configuration.plain()
+        config.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
-            left: UX.buttonHorizontalPadding,
+            leading: UX.buttonHorizontalPadding,
             bottom: 0,
-            right: UX.buttonHorizontalPadding
+            trailing: UX.buttonHorizontalPadding
         )
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = DefaultDynamicFontHelper.preferredFont(
+                withTextStyle: .body,
+                size: UX.titleFontSize
+            )
+            return outgoing
+        }
+        button.configuration = config
     }
 
     private lazy var primaryButton: UIButton = .build { button in
-        button.titleLabel?.font = DefaultDynamicFontHelper.preferredFont(
-            withTextStyle: .body,
-            size: UX.titleFontSize
-        )
-        button.layer.cornerRadius = UX.buttonCornerRadius
-        button.contentEdgeInsets = UIEdgeInsets(
+        var config = UIButton.Configuration.plain()
+        config.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
-            left: UX.buttonHorizontalPadding,
+            leading: UX.buttonHorizontalPadding,
             bottom: 0,
-            right: UX.buttonHorizontalPadding
+            trailing: UX.buttonHorizontalPadding
         )
+        config.cornerStyle = .capsule
+        config.background.strokeWidth = 1
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = DefaultDynamicFontHelper.preferredFont(
+                withTextStyle: .body,
+                size: UX.titleFontSize
+            )
+            return outgoing
+        }
+        button.configuration = config
     }
 
     // MARK: - Initialization
@@ -192,7 +204,7 @@ class SpotlightToast: Toast {
             secondaryButton.setTitle(secondaryButtonText, for: .normal)
             secondaryButton.addTarget(self, action: #selector(secondaryButtonTapped), for: .touchUpInside)
             buttonStackView.addArrangedSubview(secondaryButton)
-            
+
             NSLayoutConstraint.activate([
                 secondaryButton.heightAnchor.constraint(equalToConstant: UX.buttonHeight)
             ])
@@ -241,17 +253,15 @@ class SpotlightToast: Toast {
         titleLabel.textColor = theme.colors.ecosia.textPrimary
         descriptionLabel.textColor = theme.colors.ecosia.textPrimary
         stepCounterLabel.textColor = theme.colors.ecosia.textPrimary
-
-        // Secondary button (outlined style)
-        secondaryButton.setTitleColor(theme.colors.ecosia.textPrimary, for: .normal)
-        secondaryButton.backgroundColor = .clear
-        secondaryButton.layer.borderColor = theme.colors.ecosia.textPrimary.cgColor
-
-        // Primary button (filled style)
-        primaryButton.setTitleColor(theme.colors.ecosia.textPrimary, for: .normal)
-        primaryButton.backgroundColor = .clear
-        primaryButton.layer.borderWidth = 1
-        primaryButton.layer.borderColor = theme.colors.ecosia.textPrimary.cgColor
+        var secondaryConfig = secondaryButton.configuration
+        secondaryConfig?.baseForegroundColor = theme.colors.ecosia.textPrimary
+        secondaryConfig?.baseBackgroundColor = .clear
+        secondaryButton.configuration = secondaryConfig
+        var primaryConfig = primaryButton.configuration
+        primaryConfig?.baseForegroundColor = theme.colors.ecosia.textPrimary
+        primaryConfig?.baseBackgroundColor = .clear
+        primaryConfig?.background.strokeColor = theme.colors.ecosia.textPrimary
+        primaryButton.configuration = primaryConfig
     }
 
     // MARK: - Actions
