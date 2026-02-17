@@ -18,7 +18,7 @@ public enum ExtensionConfigurations {
             ),
             .debug(
                 name: "BetaDebug",
-                settings: ["PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.\(suffix)"],
+                settings: ["PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox.\(suffix)"],
                 xcconfig: "\(basePath)/EcosiaBetaDebug\(xcconfigSuffix).xcconfig"
             ),
             .debug(
