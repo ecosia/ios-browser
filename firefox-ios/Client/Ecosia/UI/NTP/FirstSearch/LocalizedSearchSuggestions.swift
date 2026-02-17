@@ -15,30 +15,22 @@ struct LocalizedSearchSuggestions {
         case usEnglish
         case `default`
 
+        private static let localeMapping: [String: RegionLanguage] = [
+            "fr_FR": .franceFrench,
+            "en_FR": .franceEnglish,
+            "de_DE": .germanyGerman,
+            "en_DE": .germanyEnglish,
+            "en_GB": .ukEnglish,
+            "en_US": .usEnglish
+        ]
+
         static func current() -> RegionLanguage {
             return from(locale: Locale.current)
         }
 
         static func from(locale: Locale) -> RegionLanguage {
-            let languageCode = locale.languageIdentifier ?? ""
-            let regionCode = locale.regionIdentifier ?? ""
-
-            switch (languageCode, regionCode) {
-            case ("fr", "FR"):
-                return .franceFrench
-            case ("en", "FR"):
-                return .franceEnglish
-            case ("de", "DE"):
-                return .germanyGerman
-            case ("en", "DE"):
-                return .germanyEnglish
-            case ("en", "GB"):
-                return .ukEnglish
-            case ("en", "US"):
-                return .usEnglish
-            default:
-                return .default
-            }
+            let identifier = locale.identifier
+            return localeMapping[identifier] ?? .default
         }
     }
 
