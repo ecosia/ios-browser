@@ -29,6 +29,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     }()
     private lazy var imageView: UIImageView = {
         let view = UIImageView(image: .init(named: "defaultBrowser"))
+        view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         view.setContentCompressionResistancePriority(.required, for: .vertical)
