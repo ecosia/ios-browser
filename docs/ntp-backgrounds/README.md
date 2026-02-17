@@ -140,7 +140,9 @@ jobs:
 
 ## Schema Reference
 
-Based on [Firefox iOS Wallpapers Wiki](https://github.com/mozilla-mobile/firefox-ios/wiki/Wallpapers) with Ecosia extensions.
+Based on **[Mozilla Firefox iOS Wallpapers](https://github.com/mozilla-mobile/firefox-ios/wiki/Wallpapers)** (official documentation) with Ecosia extensions.
+
+See [MOZILLA-FIREFOX-WALLPAPERS.md](./MOZILLA-FIREFOX-WALLPAPERS.md) for the complete Mozilla documentation (retrieved 2026-02-17).
 
 ### Key Differences from Firefox
 

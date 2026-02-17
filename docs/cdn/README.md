@@ -7,14 +7,10 @@ This directory contains all files intended for CDN deployment to serve wallpaper
 ```
 cdn/
 ├── metadata/v1/wallpapers.json  # Wallpaper metadata configuration
-└── ios/                         # Wallpaper image assets
-    ├── ecosia-default/
-    ├── ecosia-forest/
-    ├── ecosia-ocean/
-    ├── ecosia-mountains/
-    ├── ecosia-desert/
-    ├── spring-bloom/
-    └── autumn-leaves/
+├── ecosia-mountains/            # Wallpaper image assets
+├── ecosia-ocean/
+├── spring-bloom/
+└── autumn-leaves/
 ```
 
 ## Files
@@ -27,22 +23,24 @@ cdn/
 
 ### Images
 
-Each wallpaper directory (under `ios/`) contains 5 JPG image variants:
+Each wallpaper directory contains 5 JPG image variants:
 
-- `{id}_thumbnail.jpg` - Thumbnail for settings UI (200x200px recommended)
+- `{id}_thumbnail.jpg` - Thumbnail for settings UI (200x200px)
 - `{id}_iPhone_portrait.jpg` - iPhone portrait orientation
 - `{id}_iPhone_landscape.jpg` - iPhone landscape orientation
 - `{id}_iPad_portrait.jpg` - iPad portrait orientation
 - `{id}_iPad_landscape.jpg` - iPad landscape orientation
 
-**Total files**: 35 images (7 wallpapers × 5 variants each)
+**Example**: `ecosia-mountains/ecosia-mountains_thumbnail.jpg`
 
 ## CDN URLs
 
 The app constructs URLs using the pattern defined in `WallpaperURLProvider.swift`:
 
 - Metadata: `{base_url}/metadata/v1/wallpapers.json`
-- Images: `{base_url}/ios/{wallpaper-id}/{filename}.jpg`
+- Images: `{base_url}/{wallpaper-id}/{filename}.jpg`
+
+Example: `https://cdn.example.com/ecosia-mountains/ecosia-mountains_thumbnail.jpg`
 
 ## Current Development Setup
 
@@ -75,13 +73,18 @@ This should be replaced with the production CDN URL before merging.
 
 ## Validation
 
-Before deploying, validate the metadata file:
+Before deploying, validate both metadata and image assets:
 
 ```bash
 cd ../ntp-backgrounds
 npm install
-node validate-wallpapers.js
+node validate-wallpapers-full.js
 ```
+
+This validates:
+- ✅ JSON metadata against schema
+- ✅ All referenced images exist on GitHub
+- ✅ Images are valid JPEG files
 
 See `../ntp-backgrounds/WALLPAPER-VALIDATION.md` for details.
 
@@ -89,10 +92,12 @@ See `../ntp-backgrounds/WALLPAPER-VALIDATION.md` for details.
 
 All technical documentation, JSON schema, and validation scripts are in `../ntp-backgrounds/`:
 
+- **[MOZILLA-FIREFOX-WALLPAPERS.md](../ntp-backgrounds/MOZILLA-FIREFOX-WALLPAPERS.md)** - Official Mozilla Firefox iOS wallpaper documentation
+- **[Mozilla Firefox iOS Wallpapers Wiki](https://github.com/mozilla-mobile/firefox-ios/wiki/Wallpapers)** - Online reference
 - `wallpapers-schema.json` - JSON Schema for metadata structure
 - `WALLPAPER-VALIDATION.md` - Validation setup and usage guide
 - `WALLPAPER-METADATA-REFRESH.md` - How metadata refresh works
-- `validate-wallpapers.js` - Validation script
+- `validate-wallpapers-full.js` - Comprehensive validation script
 
 ## Temporary Nature
 
