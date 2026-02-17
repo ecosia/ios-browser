@@ -219,10 +219,10 @@ Enables offline-first wallpaper experience:
 
 ## Further Reading
 
-- **[Firefox iOS Wallpapers Wiki](https://github.com/mozilla-mobile/firefox-ios/wiki/Wallpapers)** - Original documentation
+- **[Mozilla Firefox iOS Wallpapers](https://github.com/mozilla-mobile/firefox-ios/wiki/Wallpapers)** - Official Mozilla documentation ([local copy](./MOZILLA-FIREFOX-WALLPAPERS.md))
 - **[JSON Schema Specification](https://json-schema.org/)** - Official standard
-- **[metadata/v1/README.md](./metadata/v1/README.md)** - Detailed validation docs
-- **[wallpaper-asset-structure.md](./wallpaper-asset-structure.md)** - Asset file naming conventions
+- **[README.md](./README.md)** - Main wallpaper documentation
+- **[wallpapers-schema.json](./wallpapers-schema.json)** - JSON Schema definition
 
 ## Troubleshooting
 
