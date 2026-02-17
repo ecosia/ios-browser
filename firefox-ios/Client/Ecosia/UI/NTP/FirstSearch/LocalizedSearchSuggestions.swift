@@ -29,7 +29,15 @@ struct LocalizedSearchSuggestions {
         }
 
         static func from(locale: Locale) -> RegionLanguage {
-            let identifier = locale.identifier
+            var identifier: String
+            // Concatenated since locale.identifier has strange behaviour with mismatched language and region
+            // E.g. English (US) on Germany is "en_us@rg=dezzzz"
+            if let language = locale.languageIdentifier,
+                    let region = locale.regionIdentifier {
+                identifier = language + "_" + region
+            } else {
+                identifier = locale.identifier
+            }
             return localeMapping[identifier] ?? .default
         }
     }
