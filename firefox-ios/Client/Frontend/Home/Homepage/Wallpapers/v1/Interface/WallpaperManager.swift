@@ -66,17 +66,28 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
 
     /// Determines whether the wallpaper settings can be shown
     var canSettingsBeShown: Bool {
-        guard hasEnoughThumbnailsToShow else { return false }
+        print("🐛 WALLPAPER: canSettingsBeShown called, hasEnoughThumbnailsToShow = \(hasEnoughThumbnailsToShow)")
+        guard hasEnoughThumbnailsToShow else {
+            print("🐛 WALLPAPER: canSettingsBeShown returning false - not enough thumbnails")
+            return false
+        }
 
+        print("🐛 WALLPAPER: canSettingsBeShown returning true")
         return true
     }
 
     /// Returns true if the metadata & thumbnails are available
     private var hasEnoughThumbnailsToShow: Bool {
         let thumbnailUtility = WallpaperThumbnailUtility(with: networkingModule)
+        let areThumbnailsAvailable = thumbnailUtility.areThumbnailsAvailable
+        print("🐛 WALLPAPER: hasEnoughThumbnailsToShow - areThumbnailsAvailable = \(areThumbnailsAvailable)")
 
-        guard thumbnailUtility.areThumbnailsAvailable else { return false }
+        guard areThumbnailsAvailable else {
+            print("🐛 WALLPAPER: hasEnoughThumbnailsToShow returning false")
+            return false
+        }
 
+        print("🐛 WALLPAPER: hasEnoughThumbnailsToShow returning true")
         return true
     }
 
@@ -172,12 +183,16 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
     /// to existing metadata, and, if there are changes, performs the necessary operations
     /// to ensure parity between server data and what the user sees locally.
     public func checkForUpdates() {
+        print("🐛 WALLPAPER: WallpaperManager.checkForUpdates() called")
         let thumbnailUtility = WallpaperThumbnailUtility(with: networkingModule)
         let metadataUtility = WallpaperMetadataUtility(with: networkingModule)
 
         Task {
+            print("🐛 WALLPAPER: Fetching metadata...")
             let didFetchNewData = await metadataUtility.metadataUpdateFetchedNewData()
+            print("🐛 WALLPAPER: didFetchNewData = \(didFetchNewData)")
             if didFetchNewData {
+                print("🐛 WALLPAPER: Running migration...")
                 let migrationUtility = WallpaperMigrationUtility()
                 migrationUtility.attemptMetadataMigration()
             }
