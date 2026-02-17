@@ -6,7 +6,14 @@
  * Validates wallpaper metadata JSON files and verifies all image assets exist.
  *
  * Usage:
+ *   node validate-wallpapers-full.js [BASE_URL]
+ *
+ * Arguments:
+ *   BASE_URL - Optional. Base URL for wallpaper assets (default: GitHub raw URL)
+ *
+ * Examples:
  *   node validate-wallpapers-full.js
+ *   node validate-wallpapers-full.js https://cdn.example.com/wallpapers
  *
  * What it does:
  * 1. Validates local JSON file against schema
@@ -28,8 +35,9 @@ const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 
-// Configuration
-const BASE_URL = 'https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/cdn';
+// Parse command line arguments
+const args = process.argv.slice(2);
+const BASE_URL = args[0] || 'https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/cdn';
 const LOCAL_JSON_PATH = path.resolve(__dirname, '../cdn/metadata/v1/wallpapers.json');
 const SCHEMA_PATH = path.resolve(__dirname, 'wallpapers-schema.json');
 const TEMP_DIR = path.resolve(__dirname, '.temp-validation');
@@ -253,6 +261,7 @@ function performBusinessValidation(data) {
  */
 async function validate() {
   log('\n🎨 Wallpaper Metadata & Assets Validator\n', 'bright');
+  logInfo(`Base URL: ${BASE_URL}\n`);
 
   let hasErrors = false;
 
