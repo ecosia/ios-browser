@@ -184,7 +184,7 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
         self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
-        self.productTourNTPViewModel = NTPFirstSearchViewModel(theme: theme)
+        self.productTourNTPViewModel = NTPFirstSearchViewModel(theme: theme, windowUUID: tabManager.windowUUID)
         self.wallpaperManager = wallpaperManager
         /* Ecosia: Remove `jumpBackIn` section reference
         let jumpBackInAdaptor = JumpBackInDataAdaptorImplementation(profile: profile,

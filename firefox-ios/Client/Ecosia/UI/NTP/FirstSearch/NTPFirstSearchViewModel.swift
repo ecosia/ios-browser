@@ -18,6 +18,7 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     let isEnabled: Bool = true
 
     internal var theme: Theme
+    let windowUUID: WindowUUID
     private var productTourManager: ProductTourManager
     weak var delegate: NTPFirstSearchViewModelDelegate?
     weak var dataModelDelegate: HomepageDataModelDelegate?
@@ -26,8 +27,11 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         return productTourManager.shouldShowProductTourHomepage
     }
 
-    init(theme: Theme, productTourManager: ProductTourManager = ProductTourManager.shared) {
+    init(theme: Theme,
+         windowUUID: WindowUUID,
+         productTourManager: ProductTourManager = ProductTourManager.shared) {
         self.theme = theme
+        self.windowUUID = windowUUID
         self.productTourManager = productTourManager
 
         productTourManager.addObserver(self)
@@ -75,30 +79,14 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
 extension NTPFirstSearchViewModel: HomepageSectionHandler {
 
-    func configure(_ collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(cellType: NTPFirstSearchCell.self, for: indexPath)
-        cell?.configure(
-            title: .localized(.ntpFirstSearchTitle),
-            description: .localized(.ntpFirstSearchDescription),
-            suggestions: LocalizedSearchSuggestions.suggestions()
-        )
-        cell?.onCloseButtonTapped = { [weak self] in
-            self?.handleCloseAction()
-        }
-        cell?.onSearchSuggestionTapped = { [weak self] suggestion in
-            self?.handleSearchSuggestion(suggestion)
-        }
-        cell?.applyTheme(theme: theme)
-        return cell ?? UICollectionViewCell()
-    }
-
     func configure(_ cell: UICollectionViewCell,
                    at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = cell as? NTPFirstSearchCell else { return cell }
         cell.configure(
             title: .localized(.ntpFirstSearchTitle),
             description: .localized(.ntpFirstSearchDescription),
-            suggestions: LocalizedSearchSuggestions.suggestions()
+            suggestions: LocalizedSearchSuggestions.suggestions(),
+            windowUUID: windowUUID
         )
         cell.onCloseButtonTapped = { [weak self] in
             self?.handleCloseAction()

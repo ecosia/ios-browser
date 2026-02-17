@@ -87,7 +87,7 @@ struct FlowLayoutContainer: View {
     private func measureText(_ text: String, font: UIFont) -> CGSize {
         let attributes: [NSAttributedString.Key: Any] = [.font: font]
         let size = (text as NSString).size(withAttributes: attributes)
-        return CGSize(width: ceil(size.width) + 2, height: ceil(size.height))
+        return CGSize(width: ceil(size.width), height: ceil(size.height))
     }
 }
 
@@ -128,6 +128,7 @@ struct SearchSuggestionPill: View {
                     .preferredBodyFont(size: UX.fontSize)
                     .foregroundColor(Color(theme.colors.ecosia.buttonContentSecondary))
                     .lineLimit(1)
+                    .fixedSize()
 
                 if let searchIcon = UIImage(named: "searchUrl") {
                     Image(uiImage: searchIcon)
