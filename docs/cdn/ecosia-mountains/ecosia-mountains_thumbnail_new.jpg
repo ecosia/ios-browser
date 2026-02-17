@@ -1,0 +1,1 @@
+{"error":"Invalid \"query\" input data","details":[{"received":"sq","code":"invalid_enum_value","options":["square","medium","small","xsmall"],"path":["type"],"message":"Invalid enum value. Expected 'square' | 'medium' | 'small' | 'xsmall', received 'sq'"}],"code":400}
