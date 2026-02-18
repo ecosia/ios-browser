@@ -122,25 +122,25 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
         currentStepIndex += 1
 
         if currentStepIndex < spotlightSteps.count {
-            // Show next spotlight
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                self?.showCurrentSpotlight()
-            }
+            // Transition to next spotlight with forward animation
+            let nextStep = spotlightSteps[currentStepIndex]
+            currentSpotlight?.transition(to: nextStep, direction: .forward)
         } else {
             // All steps completed
+            dismissCurrentSpotlight()
             completeTour()
         }
     }
 
     private func handleSecondaryAction() {
         if currentStepIndex > 0 {
-            // Go back to previous step
+            // Transition back to previous step with backward animation
             currentStepIndex -= 1
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                self?.showCurrentSpotlight()
-            }
+            let previousStep = spotlightSteps[currentStepIndex]
+            currentSpotlight?.transition(to: previousStep, direction: .backward)
         } else {
             // Skip the tour
+            dismissCurrentSpotlight()
             completeTour()
         }
     }

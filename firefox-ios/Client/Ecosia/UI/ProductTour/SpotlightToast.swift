@@ -39,6 +39,8 @@ class SpotlightToast: Toast {
         static let buttonCornerRadius: CGFloat = 20
         static let buttonHorizontalPadding: CGFloat = 15
         static let buttonInternalSpacing: CGFloat = 16
+
+        static let transitionAnimationDuration: CGFloat = 0.5
     }
 
     // MARK: - Properties
@@ -189,6 +191,7 @@ class SpotlightToast: Toast {
         // We want explicit button taps only, not tap-to-dismiss
         gestureRecognizer.isEnabled = false
 
+        // Build view hierarchy
         if viewModel.image != nil {
             containerStackView.addArrangedSubview(spotlightImageView)
             NSLayoutConstraint.activate([
@@ -200,16 +203,15 @@ class SpotlightToast: Toast {
         containerStackView.addArrangedSubview(bottomRowStackView)
         bottomRowStackView.addArrangedSubview(stepCounterLabel)
         bottomRowStackView.addArrangedSubview(buttonStackView)
-        if let secondaryButtonText = viewModel.secondaryButtonText {
-            secondaryButton.setTitle(secondaryButtonText, for: .normal)
+
+        // Add buttons to button stack view
+        if viewModel.secondaryButtonText != nil {
             secondaryButton.addTarget(self, action: #selector(secondaryButtonTapped), for: .touchUpInside)
             buttonStackView.addArrangedSubview(secondaryButton)
-
             NSLayoutConstraint.activate([
                 secondaryButton.heightAnchor.constraint(equalToConstant: UX.buttonHeight)
             ])
         }
-        primaryButton.setTitle(viewModel.primaryButtonText, for: .normal)
         primaryButton.addTarget(self, action: #selector(primaryButtonTapped), for: .touchUpInside)
         buttonStackView.addArrangedSubview(primaryButton)
 
@@ -241,6 +243,12 @@ class SpotlightToast: Toast {
         titleLabel.text = viewModel.titleText
         descriptionLabel.text = viewModel.descriptionText
         stepCounterLabel.text = "\(viewModel.currentStep) / \(viewModel.totalSteps)"
+
+        // Update button text
+        primaryButton.setTitle(viewModel.primaryButtonText, for: .normal)
+        if let secondaryButtonText = viewModel.secondaryButtonText {
+            secondaryButton.setTitle(secondaryButtonText, for: .normal)
+        }
     }
 
     // MARK: - Theme
@@ -270,13 +278,11 @@ class SpotlightToast: Toast {
     @objc
     private func primaryButtonTapped() {
         primaryButtonAction?()
-        dismiss(true)
     }
 
     @objc
     private func secondaryButtonTapped() {
         secondaryButtonAction?()
-        dismiss(true)
     }
 
     // MARK: - Public Methods
@@ -304,6 +310,46 @@ class SpotlightToast: Toast {
         )
     }
 
+    /// Transition to a new view model with directional animation
+    /// - Parameters:
+    ///   - newViewModel: The new spotlight step to display
+    ///   - direction: The direction of transition (.forward or .backward)
+    ///   - completion: Called when transition is complete
+    func transition(to newViewModel: SpotlightToastViewModel, direction: TransitionDirection, completion: (() -> Void)? = nil) {
+        let screenWidth = UIScreen.main.bounds.width
+        let offscreenOffset: CGFloat = direction == .forward ? -screenWidth : screenWidth
+        let entryOffset: CGFloat = direction == .forward ? screenWidth : -screenWidth
+
+        // First, slide the current content off-screen
+        UIView.animate(
+            withDuration: UX.transitionAnimationDuration,
+            delay: 0,
+            options: [.curveEaseInOut],
+            animations: {
+                self.containerStackView.transform = CGAffineTransform(translationX: offscreenOffset, y: 0)
+            }
+        ) { _ in
+            // Update the view model and reconfigure content
+            self.viewModel = newViewModel
+            self.configureContent()
+
+            // Position the new content off-screen (opposite side)
+            self.containerStackView.transform = CGAffineTransform(translationX: entryOffset, y: 0)
+
+            // Slide the new content on-screen
+            UIView.animate(
+                withDuration: UX.transitionAnimationDuration,
+                delay: 0,
+                options: [.curveEaseInOut],
+                animations: {
+                    self.containerStackView.transform = .identity
+                }
+            ) { _ in
+                completion?()
+            }
+        }
+    }
+
     override func dismiss(_ buttonPressed: Bool) {
         guard !dismissed else { return }
 
@@ -323,4 +369,11 @@ class SpotlightToast: Toast {
             }
         }
     }
+}
+
+// MARK: - TransitionDirection
+
+enum TransitionDirection {
+    case forward
+    case backward
 }
