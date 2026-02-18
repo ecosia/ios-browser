@@ -119,3 +119,9 @@ extension LegacyHomepageViewController: NTPHeaderDelegate {
         openLink(url: Environment.current.urlProvider.aiSearch(origin: .ntp))
     }
 }
+
+extension LegacyHomepageViewController: NTPFirstSearchViewModelDelegate {
+    func searchWithQuery(_ query: String) {
+        openLink(url: URL.ecosiaSearchWithQuery(query))
+    }
+}

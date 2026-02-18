@@ -606,14 +606,12 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
 
-            // Ecosia: Track search if is Ecosia's vertical
-            let urlChanged = url != previousUrl
-            let isReload = navigationAction.navigationType == .reload
-            let isBackForward = navigationAction.navigationType == .backForward
-            if !isBackForward && (urlChanged || isReload) && url.isEcosiaSearchVertical() {
-                Analytics.shared.inappSearch(url: url)
-            }
-            previousUrl = url
+            // Ecosia: Handle search tracking
+            previousUrl = handleEcosiaSearchTracking(
+                url: url,
+                navigationAction: navigationAction,
+                previousUrl: previousUrl
+            )
 
             decisionHandler(.allow)
             return
@@ -929,6 +927,12 @@ extension BrowserViewController: WKNavigationDelegate {
 
         if let tab = tabManager[webView],
            let metadataManager = tab.metadataManager {
+
+            // Ecosia: Handle search completion after URL finishes loading
+            if let url = webView.url {
+                handleEcosiaSearchCompletion(url: url)
+            }
+
             navigateInTab(tab: tab, to: navigation, webViewStatus: .finishedNavigation)
 
             // Only update search term data with valid search term data

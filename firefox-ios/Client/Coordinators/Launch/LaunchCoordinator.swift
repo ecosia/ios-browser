@@ -57,6 +57,9 @@ class LaunchCoordinator: BaseCoordinator,
                 return
             }
 
+            // Ecosia: Initialize product tour state for first launch
+            ProductTourManager.shared.resetTour()
+
             /* Ecosia: custom onboarding
             let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
             let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)

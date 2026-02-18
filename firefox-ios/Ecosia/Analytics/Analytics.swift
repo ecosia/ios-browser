@@ -256,6 +256,22 @@ open class Analytics {
         track(event)
     }
 
+    public func firstSearchCardDismiss() {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.Onboarding.firstSearchCard.rawValue)
+        track(event)
+    }
+
+    public func firstSearchCardSuggestionClick(pillNumber: Int) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Onboarding.firstSearchCard.rawValue)
+            .property(Property.pill.rawValue)
+            .value(NSNumber(value: pillNumber))
+        track(event)
+    }
+
     // MARK: Push Notifications Consent
     func apnConsent(_ action: Action.APNConsent) {
         let event = Structured(category: Category.pushNotificationConsent.rawValue,
