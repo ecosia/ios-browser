@@ -223,7 +223,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             afterView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: screenWidth/4)
         ])
     }
-    
+
     private func createTopConstraint() -> NSLayoutConstraint {
         if traitCollection.userInterfaceIdiom == .pad {
             return contentView.topAnchor.constraint(equalTo: view.topAnchor)
