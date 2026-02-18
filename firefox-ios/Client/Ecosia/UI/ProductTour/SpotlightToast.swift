@@ -248,6 +248,7 @@ class SpotlightToast: Toast {
     override func applyTheme(theme: Theme) {
         super.applyTheme(theme: theme)
 
+        // TODO: Review dark mode
         containerStackView.backgroundColor = theme.colors.ecosia.backgroundFeatured
 
         titleLabel.textColor = theme.colors.ecosia.textPrimary
@@ -283,7 +284,8 @@ class SpotlightToast: Toast {
     /// Show the spotlight toast with custom animation duration
     func show(
         in viewController: UIViewController,
-        delay: DispatchTimeInterval = .milliseconds(500)
+        delay: DispatchTimeInterval = .milliseconds(500),
+        bottomInset: CGFloat = 0
     ) {
         self.viewController = viewController
 
@@ -296,7 +298,7 @@ class SpotlightToast: Toast {
                 return [
                     toast.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
                     toast.trailingAnchor.constraint(equalTo: superview.trailingAnchor),
-                    toast.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor)
+                    toast.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor, constant: -bottomInset)
                 ]
             }
         )

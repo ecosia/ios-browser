@@ -108,7 +108,9 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
         )
 
         currentSpotlight = spotlight
-        spotlight.show(in: viewController)
+        // Use layoutMargins.bottom to position above the TabToolbar
+        let bottomInset = viewController.view.layoutMargins.bottom
+        spotlight.show(in: viewController, bottomInset: bottomInset)
     }
 
     private func dismissCurrentSpotlight() {
