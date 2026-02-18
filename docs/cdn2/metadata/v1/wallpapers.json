@@ -1,0 +1,221 @@
+{
+  "last-updated-date": "2026-02-18",
+  "collections": [
+    {
+      "id": "abstract-nature",
+      "learn-more-url": "https://ecosia.org",
+      "available-locales": null,
+      "availability-range": null,
+      "wallpapers": [
+        {
+          "id": "flower",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "forest",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "leaf",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "mountain",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "mushroom",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "soil",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "wood",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        }
+      ],
+      "heading": "Abstract Nature",
+      "description": "Abstract Nature wallpapers"
+    },
+    {
+      "id": "ecosia-projects",
+      "learn-more-url": "https://ecosia.org",
+      "available-locales": null,
+      "availability-range": null,
+      "wallpapers": [
+        {
+          "id": "australia",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "ethiopia",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "india",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "senegal",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "spain",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "uganda",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        }
+      ],
+      "heading": "Ecosia Projects",
+      "description": "Ecosia Projects wallpapers"
+    },
+    {
+      "id": "ecosia-projects-brazil",
+      "learn-more-url": "https://ecosia.org",
+      "available-locales": null,
+      "availability-range": null,
+      "wallpapers": [
+        {
+          "id": "brazil",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "brazil1",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "brazil2",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        }
+      ],
+      "heading": "Ecosia Projects: Brazil",
+      "description": "Ecosia Projects: Brazil wallpapers"
+    },
+    {
+      "id": "ecosia-projects-ghana",
+      "learn-more-url": "https://ecosia.org",
+      "available-locales": null,
+      "availability-range": null,
+      "wallpapers": [
+        {
+          "id": "ghana",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "ghana1",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "ghana2",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        }
+      ],
+      "heading": "Ecosia Projects: Ghana",
+      "description": "Ecosia Projects: Ghana wallpapers"
+    },
+    {
+      "id": "ecosia-projects-kenya",
+      "learn-more-url": "https://ecosia.org",
+      "available-locales": null,
+      "availability-range": null,
+      "wallpapers": [
+        {
+          "id": "kenya",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "kenya1",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "kenya2",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        }
+      ],
+      "heading": "Ecosia Projects: Kenya",
+      "description": "Ecosia Projects: Kenya wallpapers"
+    },
+    {
+      "id": "ecosia-projects-madagascar",
+      "learn-more-url": "https://ecosia.org",
+      "available-locales": null,
+      "availability-range": null,
+      "wallpapers": [
+        {
+          "id": "madagascar",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "madagascar1",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "madagascar2",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        },
+        {
+          "id": "madagascar3",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9"
+        }
+      ],
+      "heading": "Ecosia Projects: Madagascar",
+      "description": "Ecosia Projects: Madagascar wallpapers"
+    }
+  ]
+}
