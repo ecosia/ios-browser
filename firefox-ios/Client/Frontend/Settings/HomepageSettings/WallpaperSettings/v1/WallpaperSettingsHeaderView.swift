@@ -8,8 +8,9 @@ import Foundation
 
 struct WallpaperSettingsHeaderViewModel {
     var theme: Theme
-    var title: String
-    var titleA11yIdentifier: String
+    // Ecosia: Made title optional to allow collections without headings
+    var title: String?
+    var titleA11yIdentifier: String?
 
     var description: String?
     var descriptionA11yIdentifier: String?
@@ -66,6 +67,9 @@ class WallpaperSettingsHeaderView: UICollectionReusableView, ReusableCell {
         descriptionLabel.text = nil
         learnMoreButton.setAttributedTitle(nil, for: .normal)
 
+        // Ecosia: Remove all views from stack to handle optional title
+        contentStackView.removeArrangedView(titleLabel)
+        titleLabel.removeFromSuperview()
         contentStackView.removeArrangedView(descriptionLabel)
         descriptionLabel.removeFromSuperview()
         contentStackView.removeArrangedView(learnMoreButton)
@@ -75,12 +79,17 @@ class WallpaperSettingsHeaderView: UICollectionReusableView, ReusableCell {
     func configure(viewModel: WallpaperSettingsHeaderViewModel) {
         self.viewModel = viewModel
 
-        titleLabel.text = viewModel.title
-        titleLabel.accessibilityIdentifier = viewModel.titleA11yIdentifier
+        // Ecosia: Only add title if it exists
+        if let title = viewModel.title, !title.isEmpty {
+            titleLabel.text = title
+            titleLabel.accessibilityIdentifier = viewModel.titleA11yIdentifier
+            contentStackView.addArrangedSubview(titleLabel)
+        }
 
-        if let description = viewModel.description, let descriptionA11y = viewModel.descriptionA11yIdentifier {
+        // Ecosia: Only add description if it exists
+        if let description = viewModel.description, !description.isEmpty {
             descriptionLabel.text = description
-            descriptionLabel.accessibilityIdentifier = descriptionA11y
+            descriptionLabel.accessibilityIdentifier = viewModel.descriptionA11yIdentifier
             contentStackView.addArrangedSubview(descriptionLabel)
         }
 
@@ -116,7 +125,7 @@ class WallpaperSettingsHeaderView: UICollectionReusableView, ReusableCell {
 // MARK: - Private
 private extension WallpaperSettingsHeaderView {
     func setupView() {
-        contentStackView.addArrangedSubview(titleLabel)
+        // Ecosia: Don't add titleLabel here - it's added conditionally in configure()
         addSubview(contentStackView)
 
         NSLayoutConstraint.activate([

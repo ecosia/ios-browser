@@ -71,12 +71,17 @@
         },
         "heading": {
           "type": ["string", "null"],
-          "description": "Custom display title for the collection. Set to null to use default heading.",
+          "description": "Optional display title for the collection. Displayed independently. Set to null to not show a heading.",
           "examples": ["Ecosia Nature", "Ecosia Seasonal", null]
+        },
+        "subheading": {
+          "type": ["string", "null"],
+          "description": "Optional subtitle displayed below the heading. Displayed independently. Set to null to not show a subheading.",
+          "examples": ["Discover the beauty of natural landscapes", "Limited time seasonal collection", null]
         },
         "description": {
           "type": ["string", "null"],
-          "description": "Custom description for the collection. Set to null to use default description.",
+          "description": "Optional description for the collection. Currently not displayed in UI, reserved for future use or metadata purposes.",
           "examples": ["Beautiful nature-inspired backgrounds", "Celebrate the changing seasons", null]
         }
       }

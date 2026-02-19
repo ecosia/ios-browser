@@ -14,6 +14,7 @@ struct WallpaperCollection: Codable, Equatable {
                 && lhs.wallpapers == rhs.wallpapers
                 && lhs.description == rhs.description
                 && lhs.heading == rhs.heading
+                && lhs.subheading == rhs.subheading
     }
 
     enum CodingKeys: String, CodingKey {
@@ -24,6 +25,7 @@ struct WallpaperCollection: Codable, Equatable {
         case wallpapers
         case description
         case heading
+        case subheading
     }
 
     let id: String
@@ -33,6 +35,7 @@ struct WallpaperCollection: Codable, Equatable {
     let wallpapers: [Wallpaper]
     let description: String?
     let heading: String?
+    let subheading: String?
 
     var type: WallpaperCollectionType {
         #if ECOSIA
@@ -76,7 +79,8 @@ struct WallpaperCollection: Codable, Equatable {
         availability: WallpaperCollectionAvailability?,
         wallpapers: [Wallpaper],
         description: String?,
-        heading: String?
+        heading: String?,
+        subheading: String? = nil
     ) {
         self.id = id
         self.learnMoreURLString = learnMoreURL
@@ -85,5 +89,6 @@ struct WallpaperCollection: Codable, Equatable {
         self.wallpapers = wallpapers
         self.description = description
         self.heading = heading
+        self.subheading = subheading
     }
 }
