@@ -107,6 +107,11 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
             }
         )
 
+        // Set completion handler for when toast is dismissed by tapping outside
+        spotlight.completionHandler = { [weak self] _ in
+            self?.completeTour()
+        }
+
         currentSpotlight = spotlight
         // Use layoutMargins.bottom to position above the TabToolbar
         let bottomInset = viewController.view.layoutMargins.bottom

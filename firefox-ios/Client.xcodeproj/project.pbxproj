@@ -69,10 +69,10 @@
 		0EC57D0A2CA6FCC5002E3F04 /* PasswordGeneratorPasswordFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC57D092CA6FCC5002E3F04 /* PasswordGeneratorPasswordFieldView.swift */; };
 		0ECB6B6D2CCFF718006A7C82 /* DateGroupedTableDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECB6B672CCFE663006A7C82 /* DateGroupedTableDataTests.swift */; };
 		120059182F3C8BD800D65907 /* BrowserViewController+EcosiaSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120059172F3C8BD800D65907 /* BrowserViewController+EcosiaSearch.swift */; };
-		120ED1362F446A260056F398 /* NTPFirstSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120ED1352F446A260056F398 /* NTPFirstSearchView.swift */; };
 		120EBBA22F3F30FA0056F398 /* SpotlightToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120EBBA12F3F30FA0056F398 /* SpotlightToast.swift */; };
 		120EBBA42F3F31140056F398 /* ProductTourSpotlightCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120EBBA32F3F31140056F398 /* ProductTourSpotlightCoordinator.swift */; };
 		120EBBB62F3F35F60056F398 /* BrowserViewController+ProductTourSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120EBBB52F3F35F60056F398 /* BrowserViewController+ProductTourSpotlight.swift */; };
+		120ED1362F446A260056F398 /* NTPFirstSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120ED1352F446A260056F398 /* NTPFirstSearchView.swift */; };
 		121416752D6373BA0097788B /* AllFramesAtDocumentEnd.js in Resources */ = {isa = PBXBuildFile; fileRef = 121416722D6373BA0097788B /* AllFramesAtDocumentEnd.js */; };
 		121416762D6373BA0097788B /* AllFramesAtDocumentStart.js in Resources */ = {isa = PBXBuildFile; fileRef = 121416732D6373BA0097788B /* AllFramesAtDocumentStart.js */; };
 		121416772D6373BA0097788B /* AutofillAllFramesAtDocumentStart.js in Resources */ = {isa = PBXBuildFile; fileRef = 121416742D6373BA0097788B /* AutofillAllFramesAtDocumentStart.js */; };
@@ -2366,10 +2366,10 @@
 		10CD44F0A402C84BB31E5474 /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/Intro.strings"; sourceTree = "<group>"; };
 		11F747589EB8A55A47647C93 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
 		120059172F3C8BD800D65907 /* BrowserViewController+EcosiaSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+EcosiaSearch.swift"; sourceTree = "<group>"; };
-		120ED1352F446A260056F398 /* NTPFirstSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPFirstSearchView.swift; sourceTree = "<group>"; };
 		120EBBA12F3F30FA0056F398 /* SpotlightToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightToast.swift; sourceTree = "<group>"; };
 		120EBBA32F3F31140056F398 /* ProductTourSpotlightCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductTourSpotlightCoordinator.swift; sourceTree = "<group>"; };
 		120EBBB52F3F35F60056F398 /* BrowserViewController+ProductTourSpotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+ProductTourSpotlight.swift"; sourceTree = "<group>"; };
+		120ED1352F446A260056F398 /* NTPFirstSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPFirstSearchView.swift; sourceTree = "<group>"; };
 		120F42119EB30F217AB9493E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		121416712D6373BA0097788B /* AddressFormManager.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AddressFormManager.js; sourceTree = "<group>"; };
 		121416722D6373BA0097788B /* AllFramesAtDocumentEnd.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AllFramesAtDocumentEnd.js; sourceTree = "<group>"; };

@@ -187,9 +187,8 @@ class SpotlightToast: Toast {
         self.addSubview(toastView)
         toastView.addSubview(containerStackView)
 
-        // Disable the tap gesture recognizer from Toast base class
-        // We want explicit button taps only, not tap-to-dismiss
-        gestureRecognizer.isEnabled = false
+        // Configure gesture recognizer for custom tap handling
+        gestureRecognizer.isEnabled = true
 
         // Build view hierarchy
         if viewModel.image != nil {
@@ -368,6 +367,25 @@ class SpotlightToast: Toast {
                 self.completionHandler?(false)
             }
         }
+    }
+
+    // MARK: - Gesture Handling
+
+    /// Override tap handling to dismiss on taps outside the toast
+    /// Taps on the toast itself are ignored (handled by buttons)
+    /// Taps on the web view behind are not captured, so are ignored
+    /// Taps anywhere else dismiss the toast and complete the tour
+    override func handleTap(_ gestureRecognizer: UIGestureRecognizer) {
+        let tapLocation = gestureRecognizer.location(in: self)
+
+        // Check if tap is on the toast view itself - if so, ignore it
+        if toastView.frame.contains(tapLocation) {
+            return
+        }
+
+        // Otherwise, dismiss the toast and complete the tour
+        dismiss(false)
+        completionHandler?(false)
     }
 }
 
