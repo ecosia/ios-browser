@@ -17,7 +17,7 @@ The Ecosia iOS browser is a fork of Mozilla's Firefox iOS browser. As a fork, we
 * Firefox core codebase has existing lint violations that are outside our control
 * Need consistent SwiftLint version across team members and CI environment
 * We want to maintain a zero-violation policy for most of the year
-* we might have a time after the merge of upstream with violations
+* We might have a time after the merge of upstream with violations
 
 ## Decision Outcome
 
@@ -112,7 +112,7 @@ This pinning strategy ensures that violations introduced by Firefox upstream are
 
 ## Resolved Issues
 
-* by pinning the version of swiftlint we introduce some consistency
+* By pinning the version of swiftlint we introduce some consistency
 * the baseline offers an option to *temporarely* ignore swiftlint issues
 
 
