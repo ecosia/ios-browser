@@ -1,0 +1,56 @@
+{
+    "last-updated-date": "2026-02-13",
+    "collections": [
+        {
+            "id": "ecosia-nature",
+            "learn-more-url": "https://ecosia.org",
+            "available-locales": null,
+            "availability-range": null,
+            "wallpapers": [
+                {
+                    "id": "ecosia-forest",
+                    "text-color": "FFFFFF",
+                    "card-color": "1A4D2E",
+                    "logo-text-color": "E8F5E9",
+                    "bundled-asset-name": "ntpBackground"
+                },
+                {
+                    "id": "ecosia-ocean",
+                    "text-color": "FFFFFF",
+                    "card-color": "1B4965",
+                    "logo-text-color": "CAE9FF"
+                },
+                {
+                    "id": "ecosia-mountains",
+                    "text-color": "FFFFFF",
+                    "card-color": "2C3E50",
+                    "logo-text-color": "ECF0F1"
+                }
+            ],
+            "heading": "Ecosia Nature",
+            "description": "Beautiful nature-inspired backgrounds"
+        },
+        {
+            "id": "ecosia-seasonal",
+            "learn-more-url": "https://ecosia.org/seasonal",
+            "available-locales": null,
+            "availability-range": null,
+            "wallpapers": [
+                {
+                    "id": "spring-bloom",
+                    "text-color": "FFFFFF",
+                    "card-color": "E91E63",
+                    "logo-text-color": "FCE4EC"
+                },
+                {
+                    "id": "autumn-leaves",
+                    "text-color": "FFFFFF",
+                    "card-color": "FF6F00",
+                    "logo-text-color": "FFF3E0"
+                }
+            ],
+            "heading": "Ecosia Seasonal",
+            "description": "Celebrate the changing seasons"
+        }
+    ]
+}

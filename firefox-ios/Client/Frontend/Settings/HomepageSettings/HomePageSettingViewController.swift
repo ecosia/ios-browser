@@ -16,7 +16,9 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
     var wallpaperManager: WallpaperManagerInterface
 
     var isWallpaperSectionEnabled: Bool {
-        return wallpaperManager.canSettingsBeShown
+        let canShow = wallpaperManager.canSettingsBeShown
+        print("🐛 WALLPAPER: isWallpaperSectionEnabled called, canSettingsBeShown = \(canShow)")
+        return canShow
     }
 
     var isPocketSectionEnabled: Bool {
@@ -192,7 +194,11 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
             sectionItems.append(pocketSetting)
         }
 
+        print("🐛 WALLPAPER: Checking if wallpaper section should be added...")
+        print("🐛 WALLPAPER: isWallpaperSectionEnabled = \(isWallpaperSectionEnabled)")
+        print("🐛 WALLPAPER: tabManager exists = \(tabManager != nil)")
         if isWallpaperSectionEnabled, let tabManager {
+            print("🐛 WALLPAPER: Adding wallpaper setting to section items")
             let wallpaperSetting = WallpaperSettings(
                 settings: self,
                 settingsDelegate: settingsDelegate,
@@ -200,6 +206,8 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
                 wallpaperManager: wallpaperManager
             )
             sectionItems.append(wallpaperSetting)
+        } else {
+            print("🐛 WALLPAPER: NOT adding wallpaper setting - condition failed")
         }
 
         return SettingSection(

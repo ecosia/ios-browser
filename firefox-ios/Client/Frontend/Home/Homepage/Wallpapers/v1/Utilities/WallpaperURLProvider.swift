@@ -27,29 +27,34 @@ struct WallpaperURLProvider {
     let currentMetadataEndpoint: WallpaperMetadataEndpoint = .v1
 
     func url(for urlType: WallpaperURLType) throws -> URL {
+        print("🐛 WALLPAPER: WallpaperURLProvider.url(for:) called with type: \(urlType)")
         switch urlType {
         case .metadata:
-            return try metadataURL()
+            let metadataURL = try metadataURL()
+            print("🐛 WALLPAPER: metadataURL = \(metadataURL)")
+            return metadataURL
         case .image(let fileName, let folderName):
             return try imageURLWith(folderName, and: fileName)
         }
     }
 
     private func metadataURL() throws -> URL {
-        let scheme = try urlScheme()
-        guard let url = URL(string: "\(scheme)/metadata/\(currentMetadataEndpoint.rawValue)/wallpapers.json") else {
-            throw URLProviderError.invalidURL
-        }
-
-        return url
+        // TEMPORARY HARDCODE: Bypass Info.plist for debugging
+        // TODO: fetch from buildconfig
+        print("🐛 WALLPAPER: Using hardcoded metadata URL (cdn2)")
+        return URL(string: "https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/cdn2/metadata/v1/wallpapers.json")!
     }
 
     private func imageURLWith(_ key: String, and fileName: String) throws -> URL {
-        let scheme = try urlScheme()
-        guard let url = URL(string: "\(scheme)/ios/\(key)/\(fileName).jpg") else {
+        // TEMPORARY HARDCODE: Use same base URL as metadata
+        // TODO: fetch from buildconfig
+        let baseURL = "https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/cdn2"
+        print("🐛 WALLPAPER: imageURLWith baseURL=\(baseURL), key=\(key), fileName=\(fileName)")
+        guard let url = URL(string: "\(baseURL)/\(key)/\(fileName).jpg") else {
+            print("🐛 WALLPAPER: Failed to create URL from \(baseURL)/\(key)/\(fileName).jpg")
             throw URLProviderError.invalidURL
         }
-
+        print("🐛 WALLPAPER: Created image URL: \(url)")
         return url
     }
 

@@ -66,17 +66,28 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
 
     /// Determines whether the wallpaper settings can be shown
     var canSettingsBeShown: Bool {
-        guard hasEnoughThumbnailsToShow else { return false }
+        print("🐛 WALLPAPER: canSettingsBeShown called, hasEnoughThumbnailsToShow = \(hasEnoughThumbnailsToShow)")
+        guard hasEnoughThumbnailsToShow else {
+            print("🐛 WALLPAPER: canSettingsBeShown returning false - not enough thumbnails")
+            return false
+        }
 
+        print("🐛 WALLPAPER: canSettingsBeShown returning true")
         return true
     }
 
     /// Returns true if the metadata & thumbnails are available
     private var hasEnoughThumbnailsToShow: Bool {
         let thumbnailUtility = WallpaperThumbnailUtility(with: networkingModule)
+        let areThumbnailsAvailable = thumbnailUtility.areThumbnailsAvailable
+        print("🐛 WALLPAPER: hasEnoughThumbnailsToShow - areThumbnailsAvailable = \(areThumbnailsAvailable)")
 
-        guard thumbnailUtility.areThumbnailsAvailable else { return false }
+        guard areThumbnailsAvailable else {
+            print("🐛 WALLPAPER: hasEnoughThumbnailsToShow returning false")
+            return false
+        }
 
+        print("🐛 WALLPAPER: hasEnoughThumbnailsToShow returning true")
         return true
     }
 
@@ -172,12 +183,16 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
     /// to existing metadata, and, if there are changes, performs the necessary operations
     /// to ensure parity between server data and what the user sees locally.
     public func checkForUpdates() {
+        print("🐛 WALLPAPER: WallpaperManager.checkForUpdates() called")
         let thumbnailUtility = WallpaperThumbnailUtility(with: networkingModule)
         let metadataUtility = WallpaperMetadataUtility(with: networkingModule)
 
         Task {
+            print("🐛 WALLPAPER: Fetching metadata...")
             let didFetchNewData = await metadataUtility.metadataUpdateFetchedNewData()
+            print("🐛 WALLPAPER: didFetchNewData = \(didFetchNewData)")
             if didFetchNewData {
+                print("🐛 WALLPAPER: Running migration...")
                 let migrationUtility = WallpaperMigrationUtility()
                 migrationUtility.attemptMetadataMigration()
             }
@@ -208,25 +223,33 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
     }
 
     private func addDefaultWallpaper(to availableCollections: [WallpaperCollection]) -> [WallpaperCollection] {
-        let baseWallpaper = [Wallpaper.baseWallpaper]
+        // Ecosia: Use ecosiaDefault (with bundled asset) instead of baseWallpaper (no image)
+        #if ECOSIA
+        let defaultWallpaper = [Wallpaper.ecosiaDefault]
+        let collectionID = "classic-ecosia"
+        #else
+        let defaultWallpaper = [Wallpaper.baseWallpaper]
+        let collectionID = "classic-firefox"
+        #endif
 
         if availableCollections.isEmpty {
-            return [WallpaperCollection(id: "classic-firefox",
+            return [WallpaperCollection(id: collectionID,
                                         learnMoreURL: nil,
                                         availableLocales: nil,
                                         availability: nil,
-                                        wallpapers: baseWallpaper,
+                                        wallpapers: defaultWallpaper,
                                         description: nil,
                                         heading: nil)]
         } else if let classicCollection = availableCollections.first(where: { $0.type == .classic }) {
-            let newWallpapers = baseWallpaper + classicCollection.wallpapers
+            let newWallpapers = defaultWallpaper + classicCollection.wallpapers
             let newClassic = WallpaperCollection(id: classicCollection.id,
                                                  learnMoreURL: classicCollection.learnMoreUrl?.absoluteString,
                                                  availableLocales: classicCollection.availableLocales,
                                                  availability: classicCollection.availability,
                                                  wallpapers: newWallpapers,
                                                  description: classicCollection.description,
-                                                 heading: classicCollection.heading)
+                                                 heading: classicCollection.heading,
+                                                 subheading: classicCollection.subheading)
 
             return [newClassic] + availableCollections.filter { $0.type != .classic }
         } else {
@@ -257,7 +280,8 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
                 availability: collection.availability,
                 wallpapers: collection.wallpapers.filter { $0.thumbnail != nil },
                 description: collection.description,
-                heading: collection.heading)
+                heading: collection.heading,
+                subheading: collection.subheading)
         }
     }
 }

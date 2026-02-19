@@ -347,7 +347,12 @@ final class HomepageViewController: UIViewController,
     }
 
     func newState(state: HomepageState) {
-        wallpaperView.wallpaperState = state.wallpaperState
+        // Ecosia: Use Ecosia NTP background instead of Firefox wallpaper
+        if let ecosiaWallpaperState = getEcosiaNTPWallpaperState() {
+            wallpaperView.wallpaperState = ecosiaWallpaperState
+        } else {
+            wallpaperView.wallpaperState = state.wallpaperState
+        }
 
         // TODO: - FXIOS-13346 / FXIOS-13343 - fix collection view being reloaded all the time also when data don't change
         // this is a quick workaround to avoid blocking the main thread by calling apply snapshot many times.
@@ -417,11 +422,14 @@ final class HomepageViewController: UIViewController,
 
         view.addSubview(collectionView)
 
+        // Ecosia MOB-4170: Use safeAreaLayoutGuide for bottom to respect any additional safe area insets
+        // set by parent (BrowserViewController) when there's overlaying UI like bottom toolbar
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            // collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
 

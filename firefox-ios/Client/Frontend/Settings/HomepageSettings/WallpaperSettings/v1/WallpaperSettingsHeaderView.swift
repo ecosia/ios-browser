@@ -8,11 +8,10 @@ import Foundation
 
 struct WallpaperSettingsHeaderViewModel {
     var theme: Theme
-    var title: String
-    var titleA11yIdentifier: String
+    // Ecosia: Made title optional to allow collections without headings
+    var title: String?
 
-    var description: String?
-    var descriptionA11yIdentifier: String?
+    var subheading: String?
 
     var buttonTitle: String?
     var buttonA11yIdentifier: String?
@@ -39,7 +38,7 @@ class WallpaperSettingsHeaderView: UICollectionReusableView, ReusableCell {
         label.numberOfLines = 0
     }
 
-    private lazy var descriptionLabel: UILabel = .build { label in
+    private lazy var subheadingLabel: UILabel = .build { label in
         label.font = FXFontStyles.Regular.body.scaledFont()
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
@@ -63,11 +62,14 @@ class WallpaperSettingsHeaderView: UICollectionReusableView, ReusableCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         titleLabel.text = nil
-        descriptionLabel.text = nil
+        subheadingLabel.text = nil
         learnMoreButton.setAttributedTitle(nil, for: .normal)
 
-        contentStackView.removeArrangedView(descriptionLabel)
-        descriptionLabel.removeFromSuperview()
+        // Ecosia: Remove all views from stack to handle optional title
+        contentStackView.removeArrangedView(titleLabel)
+        titleLabel.removeFromSuperview()
+        contentStackView.removeArrangedView(subheadingLabel)
+        subheadingLabel.removeFromSuperview()
         contentStackView.removeArrangedView(learnMoreButton)
         learnMoreButton.removeFromSuperview()
     }
@@ -75,13 +77,16 @@ class WallpaperSettingsHeaderView: UICollectionReusableView, ReusableCell {
     func configure(viewModel: WallpaperSettingsHeaderViewModel) {
         self.viewModel = viewModel
 
-        titleLabel.text = viewModel.title
-        titleLabel.accessibilityIdentifier = viewModel.titleA11yIdentifier
+        // Ecosia: Only add title if it exists
+        if let title = viewModel.title, !title.isEmpty {
+            titleLabel.text = title
+            contentStackView.addArrangedSubview(titleLabel)
+        }
 
-        if let description = viewModel.description, let descriptionA11y = viewModel.descriptionA11yIdentifier {
-            descriptionLabel.text = description
-            descriptionLabel.accessibilityIdentifier = descriptionA11y
-            contentStackView.addArrangedSubview(descriptionLabel)
+        // Ecosia: Only add description if it exists
+        if let subheading = viewModel.subheading {
+            subheadingLabel.text = subheading
+            contentStackView.addArrangedSubview(subheadingLabel)
         }
 
         if let buttonTitle = viewModel.buttonTitle,
@@ -116,7 +121,7 @@ class WallpaperSettingsHeaderView: UICollectionReusableView, ReusableCell {
 // MARK: - Private
 private extension WallpaperSettingsHeaderView {
     func setupView() {
-        contentStackView.addArrangedSubview(titleLabel)
+        // Ecosia: Don't add titleLabel here - it's added conditionally in configure()
         addSubview(contentStackView)
 
         NSLayoutConstraint.activate([
@@ -133,7 +138,7 @@ extension WallpaperSettingsHeaderView: ThemeApplicable {
     func applyTheme(theme: Theme) {
         contentStackView.backgroundColor = theme.colors.layer5
         titleLabel.textColor = theme.colors.textPrimary
-        descriptionLabel.textColor = theme.colors.textPrimary
+        subheadingLabel.textColor = theme.colors.textPrimary
         setButtonStyle(theme: theme)
     }
 

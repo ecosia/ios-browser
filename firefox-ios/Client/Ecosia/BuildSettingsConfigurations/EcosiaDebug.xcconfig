@@ -22,3 +22,4 @@ MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate -ld_classic
 DEVELOPMENT_TEAM = 33YMRSYD2L
 AUTH0_CLIENT_ID=FBaIsy0X5hIh2sSmalmf5pACZ512dIYl
+MOZ_WALLPAPER_ASSET_URL=https://raw.githubusercontent.com/ecosia/ios-browser/refs/heads/copilot/add-background-to-ecosian-ntp/docs/cdn

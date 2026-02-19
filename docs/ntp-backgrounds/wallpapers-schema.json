@@ -1,0 +1,193 @@
+{
+  "$id": "https://ecosia.org/schemas/wallpapers-metadata.json",
+  "title": "Ecosia Wallpaper Metadata",
+  "description": "Defines wallpaper collections and their properties for Ecosia iOS browser. Based on Firefox iOS wallpaper system with Ecosia extensions.",
+  "type": "object",
+  "required": ["last-updated-date", "collections"],
+  "additionalProperties": false,
+  "properties": {
+    "last-updated-date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "ISO 8601 date (YYYY-MM-DD) indicating when metadata was last updated",
+      "examples": ["2026-02-12", "2025-12-25"]
+    },
+    "collections": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Array of wallpaper collections. Must contain at least one collection.",
+      "items": {
+        "$ref": "#/$defs/collection"
+      }
+    }
+  },
+  "$defs": {
+    "collection": {
+      "type": "object",
+      "required": ["id", "wallpapers"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique identifier for the collection. Use lowercase letters, numbers, and hyphens only. Special values: 'classic-firefox' for Firefox default, 'ecosia-nature' for Ecosia default.",
+          "examples": ["ecosia-nature", "ecosia-seasonal", "classic-firefox"]
+        },
+        "learn-more-url": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "description": "URL users can visit via 'Learn More' button. Set to null to hide the button.",
+          "examples": ["https://ecosia.org", "https://ecosia.org/seasonal", null]
+        },
+        "available-locales": {
+          "type": ["array", "null"],
+          "description": "Locale codes where this collection is available. Use standard locale format (e.g., 'en-US', 'pt-BR'). Set to null or empty array for worldwide availability.",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+            "examples": ["en-US", "pt-BR", "de-DE", "fr-FR"]
+          },
+          "examples": [["en-US", "en-GB"], null, []]
+        },
+        "availability-range": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/availability-range"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Date range controlling when this collection is visible. Set to null for permanent availability."
+        },
+        "wallpapers": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Array of wallpaper objects in this collection. Must contain at least one wallpaper.",
+          "items": {
+            "$ref": "#/$defs/wallpaper"
+          }
+        },
+        "heading": {
+          "type": ["string", "null"],
+          "description": "Optional display title for the collection. Displayed independently. Set to null to not show a heading.",
+          "examples": ["Ecosia Nature", "Ecosia Seasonal", null]
+        },
+        "subheading": {
+          "type": ["string", "null"],
+          "description": "Optional subtitle displayed below the heading. Displayed independently. Set to null to not show a subheading.",
+          "examples": ["Discover the beauty of natural landscapes", "Limited time seasonal collection", null]
+        },
+        "description": {
+          "type": ["string", "null"],
+          "description": "Optional description for the collection. Currently not displayed in UI, reserved for future use or metadata purposes.",
+          "examples": ["Beautiful nature-inspired backgrounds", "Celebrate the changing seasons", null]
+        }
+      }
+    },
+    "availability-range": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Defines start and end dates for collection visibility. Either field can be null for infinite availability in that direction.",
+      "properties": {
+        "start": {
+          "type": ["string", "null"],
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Collection becomes visible on this date (YYYY-MM-DD). Set to null for immediate availability.",
+          "examples": ["2026-03-01", "2025-12-01", null]
+        },
+        "end": {
+          "type": ["string", "null"],
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Collection becomes unavailable after this date (YYYY-MM-DD). Set to null for permanent availability.",
+          "examples": ["2026-05-31", "2026-02-28", null]
+        }
+      }
+    },
+    "wallpaper": {
+      "type": "object",
+      "required": ["id"],
+      "additionalProperties": false,
+      "description": "Individual wallpaper configuration. The 'id' must match the folder name containing asset files.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique identifier matching asset folder name. Used to construct filenames: {id}_thumbnail.jpg, {id}_iPhone_portrait.jpg, etc.",
+          "examples": ["ecosia-default", "ecosia-forest", "spring-bloom"]
+        },
+        "text-color": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{6}$",
+          "description": "Hex color code (6 digits, no #) for homepage text to ensure readability over wallpaper. Required for accessibility.",
+          "examples": ["FFFFFF", "000000", "E8F5E9"]
+        },
+        "card-color": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{6}$",
+          "description": "Hex color code (6 digits, no #) for homepage card elements when blurring is unavailable.",
+          "examples": ["1A4D2E", "2D4A2B", "E91E63"]
+        },
+        "logo-text-color": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{6}$",
+          "description": "Hex color code (6 digits, no #) for homepage logo text elements.",
+          "examples": ["E8F5E9", "CAE9FF", "FCE4EC"]
+        },
+        "bundled-asset-name": {
+          "type": "string",
+          "description": "Ecosia extension: Name of bundled asset in app bundle for offline-first experience. If present, this asset is used instead of downloading from server. Enables wallpaper to work immediately on first launch.",
+          "examples": ["ntpBackground"]
+        }
+      },
+      "examples": [
+        {
+          "id": "ecosia-default",
+          "text-color": "FFFFFF",
+          "card-color": "1A4D2E",
+          "logo-text-color": "E8F5E9",
+          "bundled-asset-name": "ntpBackground"
+        },
+        {
+          "id": "spring-bloom",
+          "text-color": "FFFFFF",
+          "card-color": "E91E63",
+          "logo-text-color": "FCE4EC"
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "last-updated-date": "2026-02-12",
+      "collections": [
+        {
+          "id": "ecosia-nature",
+          "learn-more-url": "https://ecosia.org",
+          "available-locales": null,
+          "availability-range": null,
+          "wallpapers": [
+            {
+              "id": "ecosia-default",
+              "text-color": "FFFFFF",
+              "card-color": "1A4D2E",
+              "logo-text-color": "E8F5E9",
+              "bundled-asset-name": "ntpBackground"
+            },
+            {
+              "id": "ecosia-forest",
+              "text-color": "FFFFFF",
+              "card-color": "2D4A2B",
+              "logo-text-color": "E8F5E9"
+            }
+          ],
+          "heading": "Ecosia Nature",
+          "description": "Beautiful nature-inspired backgrounds"
+        }
+      ]
+    }
+  ]
+}
