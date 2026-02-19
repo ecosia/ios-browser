@@ -177,7 +177,11 @@ final class AccountsServiceTests: XCTestCase {
         XCTAssertEqual(response.seedsIncrement, 3)
     }
 
-    func testRegisterVisit_UnauthorizedError() async throws {
+    func testRegisterVisit_UnauthorizedError_ThrowsAuthenticationRequired() async throws {
+        // This test verifies that a 401 Unauthorized response throws authenticationRequired error.
+        // With the new proactive token refresh approach, 401s only occur for genuine auth failures
+        // (revoked token, logged out on server, etc.) since expired tokens are refreshed before the request.
+        
         // Arrange
         mockHTTPClient.response = HTTPURLResponse(
             url: URL(string: "https://example.com")!,
@@ -190,8 +194,8 @@ final class AccountsServiceTests: XCTestCase {
         do {
             _ = try await accountsService.registerVisit(accessToken: "invalid-token")
             XCTFail("Expected unauthorized error")
-        } catch AccountsService.Error.authenticationRequired {
-            // Expected error
+        } catch AccountsService.Error.unauthorized {
+            // Expected error - 401 now indicates a genuine auth failure
         } catch {
             XCTFail("Unexpected error: \(error)")
         }

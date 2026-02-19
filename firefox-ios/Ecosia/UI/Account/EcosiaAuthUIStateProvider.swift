@@ -50,6 +50,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private var userProfileObserver: NSObjectProtocol?
     private var seedProgressObserver: NSObjectProtocol?
     private let accountsProvider: AccountsProviderProtocol
+    private let authenticationService: EcosiaAuthenticationService
     /// Normalizing the avatar to match Web's Product behaviour.
     /// Our Auth Provider (Auth0) sends us a Gravatar URL when no profile image is retrieved from a user
     /// (e.g. Apple Sign In). As of now, we replace it with our tree-image in `EcosiaAvatar` by not setting any URL
@@ -67,12 +68,13 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// Shared instance for app-wide auth state
     public static let shared = EcosiaAuthUIStateProvider(accountsProvider: accountsProviderFactory())
 
-    public init(accountsProvider: AccountsProviderProtocol) {
+    public init(accountsProvider: AccountsProviderProtocol, authenticationService: EcosiaAuthenticationService = .shared) {
         self.accountsProvider = accountsProvider
+        self.authenticationService = authenticationService
 
         // Initialize state synchronously to prevent flickering
-        self.isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        self.userProfile = EcosiaAuthenticationService.shared.userProfile
+        self.isLoggedIn = authenticationService.isLoggedIn
+        self.userProfile = authenticationService.userProfile
         self.avatarURL = normalizedAvatarURL
         self.username = userProfile?.name
 
@@ -217,10 +219,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private func registerVisitIfNeeded() {
         Task {
             do {
-                guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
-                    EcosiaLogger.accounts.notice("Cannot register visit - no access token available")
-                    return
-                }
+                // Get fresh access token from Auth0 - automatically handles expiry and refresh
+                let accessToken = try await authenticationService.getFreshAccessToken()
 
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
                 let response = try await accountsProvider.registerVisit(accessToken: accessToken)

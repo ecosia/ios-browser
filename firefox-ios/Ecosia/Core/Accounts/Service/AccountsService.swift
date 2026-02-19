@@ -19,33 +19,13 @@ public final class AccountsService: AccountsServiceProtocol {
     }
 
     private let client: HTTPClient
-    private let authenticationService: EcosiaAuthenticationService
 
-    public init(client: HTTPClient = URLSessionHTTPClient(),
-                authenticationService: EcosiaAuthenticationService = EcosiaAuthenticationService.shared) {
+    public init(client: HTTPClient = URLSessionHTTPClient()) {
         self.client = client
-        self.authenticationService = authenticationService
     }
 
     public func registerVisit(accessToken: String) async throws -> AccountVisitResponse {
-        do {
-            return try await performVisitRequest(accessToken: accessToken)
-        } catch Error.unauthorized {
-            EcosiaLogger.auth.info("Access token expired, attempting to renew credentials")
-            do {
-                try await authenticationService.renewCredentialsIfNeeded()
-            } catch {
-                EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
-                throw Error.authenticationRequired
-            }
-
-            guard let refreshedToken = authenticationService.accessToken, !refreshedToken.isEmpty else {
-                EcosiaLogger.auth.error("Renewed credentials do not expose an access token")
-                throw Error.authenticationRequired
-            }
-
-            return try await performVisitRequest(accessToken: refreshedToken)
-        }
+        return try await performVisitRequest(accessToken: accessToken)
     }
 
     private func performVisitRequest(accessToken: String) async throws -> AccountVisitResponse {
