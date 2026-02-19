@@ -76,7 +76,7 @@ final class WallpaperSettingsViewModel: FeatureFlaggable, @unchecked Sendable {
         // Ecosia: Use collection heading and subheading from JSON directly
         // Both are optional and independent - no fallback to localized strings
         let title: String? = collection.heading
-        let description: String? = collection.subheading
+        let subheading: String? = collection.subheading
 
         // Show "Learn More" button only if there's a learn-more URL
         let buttonTitle: String? = collection.learnMoreUrl != nil ? stringIds.LearnMoreButton : nil
@@ -94,9 +94,7 @@ final class WallpaperSettingsViewModel: FeatureFlaggable, @unchecked Sendable {
         return WallpaperSettingsHeaderViewModel(
             theme: theme,
             title: title,
-            titleA11yIdentifier: "\(a11yIds.collectionTitle)_\(sectionIndex)",
-            description: description,
-            descriptionA11yIdentifier: "\(a11yIds.collectionDescription)_\(sectionIndex)",
+            subheading: subheading,
             buttonTitle: buttonTitle,
             buttonA11yIdentifier: "\(a11yIds.collectionButton)_\(sectionIndex)",
             buttonAction: collection.learnMoreUrl != nil ? buttonAction : nil)
