@@ -422,11 +422,14 @@ final class HomepageViewController: UIViewController,
 
         view.addSubview(collectionView)
 
+        // Ecosia MOB-4170: Use safeAreaLayoutGuide for bottom to respect any additional safe area insets
+        // set by parent (BrowserViewController) when there's overlaying UI like bottom toolbar
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            // collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
 

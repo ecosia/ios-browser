@@ -99,10 +99,24 @@ All technical documentation, JSON schema, and validation scripts are in `../ntp-
 - `WALLPAPER-METADATA-REFRESH.md` - How metadata refresh works
 - `validate-wallpapers-full.js` - Comprehensive validation script
 
+## CDN Deployment Status
+
+**✅ DEPLOYED TO CORE REPO**
+
+These assets have been deployed to the Ecosia CDN infrastructure:
+
+- **Repository:** `core` (Ecosia monorepo)
+- **Branch:** `MOB-4105-add-mobile-wallpapers-to-cdn`
+- **Location:** `static-files/assets/mobile-wallpapers/`
+- **Commit:** 23a1494aa9
+- **Date:** 2026-02-17
+
+See [CDN-DEPLOYMENT.md](../ntp-backgrounds/CDN-DEPLOYMENT.md) for complete deployment documentation.
+
 ## Temporary Nature
 
-**Note**: This directory may be removed from the repository before merging, as CDN assets should be deployed separately from the app codebase. It serves as a reference for:
+**Note**: This directory may be removed from the ios-browser repository after successful production deployment, as CDN assets are now maintained in the core repository. It currently serves as:
 
-1. Backend team to understand expected CDN structure
-2. Testing and development during feature implementation
-3. Initial deployment preparation
+1. ✅ Reference for CDN structure (deployed to core repo)
+2. ⏳ Testing during development (until production CDN is live)
+3. 📝 Documentation for expected file structure

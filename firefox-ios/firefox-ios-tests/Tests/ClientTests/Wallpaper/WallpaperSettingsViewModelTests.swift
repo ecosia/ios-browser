@@ -58,24 +58,133 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                        wallpaperManager.availableCollections[safe: 1]?.wallpapers.count)
     }
 
-    func testSectionHeaderViewModel_defaultCollectionWithoutLinkAndDescription() {
+    // Ecosia: Test collection without heading or subheading shows no title/description
+    func testSectionHeaderViewModel_defaultCollectionWithoutHeadingOrSubheading() {
         let subject = createSubject()
         let headerViewModel = subject.sectionHeaderViewModel(for: 0) {
         }
 
-        XCTAssertNotNil(headerViewModel?.title)
+        // Without heading/subheading in JSON, no title/description should be shown
+        XCTAssertNil(headerViewModel?.title)
         XCTAssertNil(headerViewModel?.description)
-        XCTAssertNil(headerViewModel?.buttonTitle)
+        XCTAssertNil(headerViewModel?.buttonTitle) // No learn-more URL
     }
 
-    func testSectionHeaderViewModel_limitedCollectionWithLinkAndDescription() {
+    // Ecosia: Test collection with learn-more URL shows button
+    func testSectionHeaderViewModel_collectionWithLearnMoreURL() {
         let subject = createSubject()
         let headerViewModel = subject.sectionHeaderViewModel(for: 1) {
         }
 
-        XCTAssertNotNil(headerViewModel?.title)
-        XCTAssertNotNil(headerViewModel?.description)
+        // Collection has learn-more URL, so button should be present
         XCTAssertNotNil(headerViewModel?.buttonTitle)
+    }
+
+    // Ecosia: Test that JSON heading and subheading are used when available
+    func testSectionHeaderViewModel_usesJSONHeadingAndSubheading() {
+        guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
+
+        // Add a collection with custom heading and subheading
+        let customHeading = "Abstract Nature"
+        let customSubheading = "Beautiful nature wallpapers"
+        let wallpapers = [Wallpaper(id: "test",
+                                    textColor: .green,
+                                    cardColor: .green,
+                                    logoTextColor: .green)]
+
+        mockManager.mockAvailableCollections.append(
+            WallpaperCollection(
+                id: "custom-collection",
+                learnMoreURL: "https://ecosia.org",
+                availableLocales: nil,
+                availability: nil,
+                wallpapers: wallpapers,
+                description: nil,
+                heading: customHeading,
+                subheading: customSubheading)
+        )
+
+        let subject = createSubject()
+        let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
+        }
+
+        // Verify that the custom heading and subheading from JSON are used
+        XCTAssertEqual(headerViewModel?.title, customHeading)
+        XCTAssertEqual(headerViewModel?.description, customSubheading)
+        XCTAssertNotNil(headerViewModel?.buttonTitle)
+    }
+
+    // Ecosia: Test that heading can be shown independently without subheading
+    func testSectionHeaderViewModel_headingWithoutSubheading() {
+        guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
+
+        let customHeading = "Ecosia Projects"
+        let wallpapers = [Wallpaper(id: "test",
+                                    textColor: .green,
+                                    cardColor: .green,
+                                    logoTextColor: .green)]
+
+        mockManager.mockAvailableCollections.append(
+            WallpaperCollection(
+                id: "heading-only-collection",
+                learnMoreURL: "https://ecosia.org",
+                availableLocales: nil,
+                availability: nil,
+                wallpapers: wallpapers,
+                description: nil,
+                heading: customHeading,
+                subheading: nil)
+        )
+
+        let subject = createSubject()
+        let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
+        }
+
+        // Verify that only heading is shown, no subheading
+        XCTAssertEqual(headerViewModel?.title, customHeading)
+        XCTAssertNil(headerViewModel?.description)
+    }
+
+    // Ecosia: Test that subheading can be shown independently without heading
+    func testSectionHeaderViewModel_subheadingWithoutHeading() {
+        guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
+
+        let customSubheading = "Lorem ipsum dolor sit amet"
+        let wallpapers = [Wallpaper(id: "test",
+                                    textColor: .green,
+                                    cardColor: .green,
+                                    logoTextColor: .green)]
+
+        mockManager.mockAvailableCollections.append(
+            WallpaperCollection(
+                id: "subheading-only-collection",
+                learnMoreURL: "https://ecosia.org",
+                availableLocales: nil,
+                availability: nil,
+                wallpapers: wallpapers,
+                description: nil,
+                heading: nil,
+                subheading: customSubheading)
+        )
+
+        let subject = createSubject()
+        let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
+        }
+
+        // Verify that only subheading is shown, no heading
+        XCTAssertNil(headerViewModel?.title)
+        XCTAssertEqual(headerViewModel?.description, customSubheading)
+    }
+
+    // Ecosia: Test that no title/description is shown when both are nil
+    func testSectionHeaderViewModel_noFallbackWhenBothNil() {
+        let subject = createSubject()
+        let headerViewModel = subject.sectionHeaderViewModel(for: 0) {
+        }
+
+        // Verify that when heading/subheading are nil, nothing is shown (no fallback to localized strings)
+        XCTAssertNil(headerViewModel?.title)
+        XCTAssertNil(headerViewModel?.description)
     }
 
     func testDownloadAndSetWallpaper_downloaded_wallpaperIsSet() {
@@ -150,7 +259,8 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                 availability: nil,
                 wallpapers: wallpapersForOther,
                 description: nil,
-                heading: nil),
+                heading: nil,
+                subheading: nil),
             WallpaperCollection(
                 id: "otherCollection",
                 learnMoreURL: "https://www.mozilla.com",
@@ -158,7 +268,8 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                 availability: nil,
                 wallpapers: wallpapersForOther,
                 description: nil,
-                heading: nil)
+                heading: nil,
+                subheading: nil)
         ]
     }
 }
