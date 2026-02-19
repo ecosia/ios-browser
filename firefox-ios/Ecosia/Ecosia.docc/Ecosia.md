@@ -106,7 +106,7 @@ SwiftLint version is evaluated during upstream Firefox merges. Since Firefox doe
 
 We have a baseline. We will attempt to not add new swiftlint violations. Some violations may be in the firefox base.
 
-here is is how you update the baseline (please only commit the pretty printed version):
+here is how you update the baseline (please only commit the pretty printed version):
 ```
 rm swiftlint_baseline.json
 swiftlint --write-baseline swiftlint_baseline.json

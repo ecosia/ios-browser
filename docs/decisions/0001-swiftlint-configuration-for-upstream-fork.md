@@ -59,7 +59,7 @@ python3 -m json.tool --sort-keys swiftlint_baseline.json > swiftlint_baseline.tm
 
 ### Negative Consequences
 
-* Firefox core files retain existing lint violations (but they're baselined)
+* Firefox core files _could_ retain existing lint violations (but they're baselined)
 * Baseline file requires manual regeneration after upstream merges
 * Version pinning requires coordination when upgrading SwiftLint
 
@@ -146,5 +146,5 @@ It mentions `Done correcting 1 file!` but the file has not been fixed and had to
 * [SwiftLint Configuration](../../.swiftlint.yml) - Current SwiftLint rules and exclusions
 * [SwiftLint Baseline](../../swiftlint_baseline.json) - Baseline file capturing existing violations
 * [SwiftLint CI Workflow](../../.github/workflows/swift_lint.yml) - GitHub Actions workflow with version specification
-* [Ecosia README - SwiftLint Section](../../firefox-ios/Ecosia/Ecosia.docc/Ecosia.md#-swiftlint) - Setup instructions for developers
+* [Ecosia README - SwiftLint Section](../../firefox-ios/Ecosia/Ecosia.docc/Ecosia.md) - Setup instructions for developers
 * [Firefox iOS Repository](https://github.com/mozilla-mobile/firefox-ios) - Upstream repository
