@@ -123,10 +123,8 @@ extension BrowserViewController {
         let interceptedType = interceptor.interceptedType(for: url)
 
         switch interceptedType {
-        case .signUp:
-            return handleSignUpDetection(url, tab: tab)
-        case .signIn:
-            return handleSignInDetection(url, tab: tab)
+        case .signUp, .signIn:
+            return handleSignInAndSignUpDetection(url, tab: tab)
         case .signOut:
             return handleSignOutDetection(url)
         case .profile:
@@ -136,9 +134,9 @@ extension BrowserViewController {
         }
     }
 
-    private func handleSignUpDetection(_ url: URL, tab: Tab) -> Bool {
+    private func handleSignInAndSignUpDetection(_ url: URL, tab: Tab) -> Bool {
         guard let ecosiaAuth = ecosiaAuth else {
-            EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-up detection")
+            EcosiaLogger.auth.notice("No EcosiaAuth instance available for authentication detection")
             return false
         }
 
@@ -197,14 +195,6 @@ extension BrowserViewController {
                 .logout()
         }
 
-        return true
-    }
-
-    private func handleSignInDetection(_ url: URL, tab: Tab) -> Bool {
-        guard let redirectedSignInURL = EcosiaAuthRedirector.redirectURLForSignIn(url, redirectURLString: tab.metadataManager?.tabGroupData.tabAssociatedSearchUrl) else {
-            return false
-        }
-        tab.loadRequest(URLRequest(url: redirectedSignInURL))
         return true
     }
 
