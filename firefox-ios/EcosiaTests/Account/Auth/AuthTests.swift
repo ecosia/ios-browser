@@ -559,7 +559,8 @@ final class AuthTests: XCTestCase {
             _ = try await auth.getFreshAccessToken()
             XCTFail("Expected getFreshAccessToken to throw but it didn't")
         } catch AuthError.notLoggedIn {
-            // Expected error
+            // Expected error - isLoggedIn must not have been set to true before validation
+            XCTAssertFalse(auth.isLoggedIn, "isLoggedIn should not be set to true when access token is empty")
         } catch {
             XCTFail("Unexpected error type: \(error)")
         }
