@@ -78,7 +78,7 @@ public final class AccountsService: AccountsServiceProtocol {
 
         do {
             let decodedResponse = try JSONDecoder().decode(AccountVisitResponse.self, from: data)
-            EcosiaLogger.network.info("Accounts visit successful: seeds=\(decodedResponse.seeds.totalAmount), seedsModified=\(decodedResponse.seeds.isModified), level=\(decodedResponse.growthPoints.level.number), levelUp=\(decodedResponse.didLevelUp)")
+            EcosiaLogger.network.info("Accounts visit successful: seeds=\(decodedResponse.seeds.balanceAmount), seedsModified=\(decodedResponse.seeds.isModified), level=\(decodedResponse.growthPoints.level.number), levelUp=\(decodedResponse.didLevelUp)")
             return decodedResponse
         } catch {
             EcosiaLogger.network.error("Accounts visit response decoding failed: \(error.localizedDescription)")
