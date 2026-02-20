@@ -270,15 +270,16 @@ public final class EcosiaAuthenticationService {
     public func getFreshAccessToken() async throws -> String {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
-            // Update cached tokens with fresh values
-            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
-            
+
             let accessToken = credentials.accessToken
             guard !accessToken.isEmpty else {
                 EcosiaLogger.auth.error("Retrieved credentials do not contain a valid access token")
                 throw AuthError.notLoggedIn
             }
-            
+
+            // Update cached tokens only after validating the access token
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+
             return accessToken
         } catch let error as AuthError {
             // Re-throw AuthError as-is
@@ -297,9 +298,14 @@ public final class EcosiaAuthenticationService {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
+
+        let wasLoggedIn = self.isLoggedIn
         self.isLoggedIn = isLoggedIn
 
-        // Dispatch state change to the new state management system
+        // Only dispatch the auth state change when the login state actually transitions,
+        // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
+        // on every token refresh when the user is already logged in.
+        guard wasLoggedIn != isLoggedIn else { return }
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
         }
