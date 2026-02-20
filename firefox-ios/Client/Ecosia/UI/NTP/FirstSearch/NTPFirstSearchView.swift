@@ -84,6 +84,7 @@ struct NTPFirstSearchView: View {
                             .frame(width: UX.closeButtonSize, height: UX.closeButtonSize)
                             .contentShape(Rectangle())
                     }
+                    .buttonStyle(EcosiaButtonStyle(theme: themeManager.getCurrentTheme(for: windowUUID), style: .bare, cornerRadius: UX.closeButtonSize / 2))
                     .accessibilityLabel(Text(verbatim: .localized(.close)))
                     .padding(.top, UX.closeButtonMargin)
                     .padding(.trailing, UX.closeButtonMargin)
