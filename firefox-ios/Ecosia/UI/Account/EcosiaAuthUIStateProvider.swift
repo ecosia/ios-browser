@@ -185,9 +185,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     @MainActor
     private func handleUserProfileUpdate() {
         Task { @MainActor in
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+            isLoggedIn = authenticationService.isLoggedIn
         }
-        userProfile = EcosiaAuthenticationService.shared.userProfile
+        userProfile = authenticationService.userProfile
         username = userProfile?.name
         avatarURL = normalizedAvatarURL
     }
