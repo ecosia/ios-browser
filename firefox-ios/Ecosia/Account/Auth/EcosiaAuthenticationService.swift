@@ -237,15 +237,75 @@ public final class EcosiaAuthenticationService {
         }
     }
 
+    /**
+     Retrieves a fresh access token from Auth0's CredentialsManager.
+     
+     This method leverages Auth0's built-in credential management to automatically handle
+     token expiry checking and renewal. The CredentialsManager will refresh the token if it's
+     expired or about to expire, ensuring the returned token is always valid.
+     
+     - Returns: A fresh, valid access token
+     - Throws: `AuthError.notLoggedIn` if stored credentials do not contain a valid access token,
+               `AuthError.credentialsRetrievalFailed` if credentials cannot be retrieved or refreshed (including when no stored credentials are available)
+     
+     ## Use Cases
+     
+     Use this method instead of the cached `accessToken` property when making API requests
+     to avoid 401 errors from expired tokens:
+     
+     ```swift
+     let token = try await authService.getFreshAccessToken()
+     let response = try await accountsService.registerVisit(accessToken: token)
+     ```
+     
+     ## How It Works
+     
+     1. Calls `auth0Provider.retrieveCredentials()` (protocol implementation backed by Auth0's `CredentialsManager.credentials()`) which checks token expiry
+     2. If token is expired, automatically refreshes using the refresh token
+     3. Updates cached token properties with the refreshed values
+     4. Returns the fresh access token
+     
+     This eliminates the need for reactive 401 error handling and retry logic.
+     */
+    public func getFreshAccessToken() async throws -> String {
+        do {
+            let credentials = try await auth0Provider.retrieveCredentials()
+
+            let accessToken = credentials.accessToken
+            guard !accessToken.isEmpty else {
+                EcosiaLogger.auth.error("Retrieved credentials do not contain a valid access token")
+                throw AuthError.notLoggedIn
+            }
+
+            // Update cached tokens only after validating the access token
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+
+            return accessToken
+        } catch let error as AuthError {
+            // Re-throw AuthError as-is
+            EcosiaLogger.auth.error("Failed to get fresh access token: \(error)")
+            throw error
+        } catch {
+            // Wrap other errors in credentialsRetrievalFailed
+            EcosiaLogger.auth.error("Failed to get fresh access token: \(error)")
+            throw AuthError.credentialsRetrievalFailed(error)
+        }
+    }
+
     /// Helper method to setup tokens and login flag
     private func setupTokensWithCredentials(_ credentials: Credentials?,
                                             settingLoggedInStateTo isLoggedIn: Bool = false) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
+
+        let wasLoggedIn = self.isLoggedIn
         self.isLoggedIn = isLoggedIn
 
-        // Dispatch state change to the new state management system
+        // Only dispatch the auth state change when the login state actually transitions,
+        // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
+        // on every token refresh when the user is already logged in.
+        guard wasLoggedIn != isLoggedIn else { return }
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
         }

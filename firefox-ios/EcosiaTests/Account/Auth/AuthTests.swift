@@ -474,6 +474,114 @@ final class AuthTests: XCTestCase {
         XCTAssertNil(auth.refreshToken)
     }
 
+    // MARK: - Get Fresh Access Token Tests
+    
+    func testGetFreshAccessToken_withValidCredentials_returnsToken() async throws {
+        // Arrange
+        let expectedToken = "fresh-access-token"
+        let credentials = Credentials(
+            accessToken: expectedToken,
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        mockProvider.mockCredentials = credentials
+        mockProvider.hasStoredCredentials = true
+        
+        // Reset call count before the actual test call (initialization may have called it)
+        mockProvider.retrieveCredentialsCallCount = 0
+        
+        // Act
+        let token = try await auth.getFreshAccessToken()
+        
+        // Assert
+        XCTAssertEqual(token, expectedToken)
+        XCTAssertEqual(mockProvider.retrieveCredentialsCallCount, 1)
+        XCTAssertEqual(auth.accessToken, expectedToken)
+        XCTAssertTrue(auth.isLoggedIn)
+    }
+    
+    func testGetFreshAccessToken_withExpiredToken_refreshesAutomatically() async throws {
+        // Arrange
+        let expiredToken = "expired-access-token"
+        let freshToken = "refreshed-access-token"
+
+        // Simulate expired credentials already stored (e.g. from a previous session)
+        let expiredCredentials = Credentials(
+            accessToken: expiredToken,
+            tokenType: "Bearer",
+            idToken: "old-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(-3600), // Expired 1 hour ago
+            scope: "openid profile email"
+        )
+
+        // Fresh credentials returned by Auth0's CredentialsManager after auto-refresh
+        let refreshedCredentials = Credentials(
+            accessToken: freshToken,
+            tokenType: "Bearer",
+            idToken: "new-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        mockProvider.hasStoredCredentials = true
+        mockProvider.storedCredentials = expiredCredentials
+        mockProvider.mockCredentials = refreshedCredentials
+
+        // Act
+        let token = try await auth.getFreshAccessToken()
+
+        // Assert
+        XCTAssertEqual(token, freshToken, "Should return the refreshed token")
+        XCTAssertNotEqual(token, expiredToken, "Should not return the expired token")
+        XCTAssertEqual(auth.accessToken, freshToken)
+        XCTAssertEqual(mockProvider.retrieveCredentialsCallCount, 1, "Should call retrieveCredentials once to trigger auto-refresh")
+    }
+    
+    func testGetFreshAccessToken_withNoCredentials_throwsError() async throws {
+        // Arrange
+        mockProvider.hasStoredCredentials = false
+        mockProvider.shouldFailRetrieveCredentials = true
+        
+        // Act & Assert
+        do {
+            _ = try await auth.getFreshAccessToken()
+            XCTFail("Expected getFreshAccessToken to throw but it didn't")
+        } catch AuthError.credentialsRetrievalFailed {
+            // Expected error
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+    
+    func testGetFreshAccessToken_withEmptyToken_throwsNotLoggedIn() async throws {
+        // Arrange
+        let credentials = Credentials(
+            accessToken: "", // Empty token
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        mockProvider.mockCredentials = credentials
+        mockProvider.hasStoredCredentials = true
+        
+        // Act & Assert
+        do {
+            _ = try await auth.getFreshAccessToken()
+            XCTFail("Expected getFreshAccessToken to throw but it didn't")
+        } catch AuthError.notLoggedIn {
+            // Expected error - isLoggedIn must not have been set to true before validation
+            XCTAssertFalse(auth.isLoggedIn, "isLoggedIn should not be set to true when access token is empty")
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
     // MARK: - Helper Methods
 
     private func setupLoggedInState() async {
