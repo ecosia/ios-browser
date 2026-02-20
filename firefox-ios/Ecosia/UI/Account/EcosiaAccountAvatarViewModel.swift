@@ -88,7 +88,7 @@ public final class EcosiaAccountAvatarViewModel: ObservableObject {
 
     /// Updates avatar progress based on AccountVisitResponse
     public func updateFromBalanceResponse(_ response: AccountVisitResponse) {
-        let newSeedCount = response.seeds.totalAmount
+        let newSeedCount = response.seeds.balanceAmount
         let newLevelNumber = response.growthPoints.level.number
         let newProgress = response.progressToNextLevel
 
