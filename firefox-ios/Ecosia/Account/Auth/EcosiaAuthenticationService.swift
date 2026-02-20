@@ -245,8 +245,8 @@ public final class EcosiaAuthenticationService {
      expired or about to expire, ensuring the returned token is always valid.
      
      - Returns: A fresh, valid access token
-     - Throws: `AuthError.notLoggedIn` if no credentials are available,
-               `AuthError.credentialsRetrievalFailed` if credential retrieval fails
+     - Throws: `AuthError.notLoggedIn` if stored credentials do not contain a valid access token,
+               `AuthError.credentialsRetrievalFailed` if credentials cannot be retrieved or refreshed (including when no stored credentials are available)
      
      ## Use Cases
      
