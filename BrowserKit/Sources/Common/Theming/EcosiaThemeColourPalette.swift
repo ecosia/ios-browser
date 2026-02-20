@@ -39,6 +39,7 @@ public protocol EcosiaSemanticColors {
     var buttonBackgroundSecondary: UIColor { get }
     var buttonBackgroundSecondaryActive: UIColor { get }
     var buttonBackgroundSecondaryHover: UIColor { get }
+    var buttonBackgroundTransparentActive: UIColor { get }
     var buttonContentSecondary: UIColor { get }
     var buttonContentSecondaryStatic: UIColor { get }
 
@@ -99,6 +100,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondary: UIColor = .systemGray
     var buttonBackgroundSecondaryActive: UIColor = .systemGray
     var buttonBackgroundSecondaryHover: UIColor = .systemGray
+    var buttonBackgroundTransparentActive: UIColor = .systemGray
     var buttonContentSecondary: UIColor = .systemGray
     var buttonContentSecondaryStatic: UIColor = .systemGray
     var borderNegative: UIColor = .systemGray

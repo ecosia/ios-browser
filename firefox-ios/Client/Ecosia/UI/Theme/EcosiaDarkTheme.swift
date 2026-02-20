@@ -45,6 +45,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondary: UIColor = EcosiaColor.Gray90
     var buttonBackgroundSecondaryActive: UIColor = EcosiaColor.Gray50
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColor.Gray70
+    var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Gray70.withAlphaComponent(0.24)
     var buttonContentSecondary: UIColor = EcosiaColor.White
     var buttonContentSecondaryStatic: UIColor = EcosiaColor.Gray70
     var highlighter: UIColor = EcosiaColor.Grellow100.withAlphaComponent(0.32)

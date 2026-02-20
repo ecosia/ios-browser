@@ -5,6 +5,7 @@
 import SwiftUI
 import UIKit
 import Common
+import Ecosia
 
 /// SwiftUI view that provides a stable flow layout for search suggestion pills
 struct SearchSuggestionFlowLayout: View {
@@ -143,25 +144,6 @@ struct SearchSuggestionPill: View {
             .padding(.vertical, UX.verticalPadding)
             .frame(height: UX.height)
         }
-        .buttonStyle(HighlightButtonStyle(theme: theme))
-    }
-}
-
-/// Button style that shows highlight state during tap
-struct HighlightButtonStyle: ButtonStyle {
-    let theme: Theme
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .background(
-                RoundedRectangle(cornerRadius: SearchSuggestionPill.UX.cornerRadius)
-                    .stroke(Color(theme.colors.ecosia.borderDecorative), lineWidth: SearchSuggestionPill.UX.borderWidth)
-                    .background(
-                        RoundedRectangle(cornerRadius: SearchSuggestionPill.UX.cornerRadius)
-                            .fill(Color(configuration.isPressed
-                                ? theme.colors.ecosia.buttonBackgroundSecondaryActive
-                                : theme.colors.ecosia.buttonBackgroundSecondary))
-                    )
-            )
+        .buttonStyle(EcosiaButtonStyle(theme: theme, style: .outline, cornerRadius: UX.cornerRadius, borderWidth: UX.borderWidth))
     }
 }
