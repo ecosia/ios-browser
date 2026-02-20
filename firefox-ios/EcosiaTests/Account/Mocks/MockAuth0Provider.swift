@@ -20,6 +20,7 @@ class MockAuth0Provider: Auth0ProviderProtocol {
 
     // MARK: - Mock Data
     var mockCredentials: Credentials?
+    var storedCredentials: Credentials?
     var mockError: Error?
     var hasStoredCredentials = false
 
@@ -80,7 +81,13 @@ class MockAuth0Provider: Auth0ProviderProtocol {
             throw NSError(domain: "MockAuth0Provider", code: 1006, userInfo: [NSLocalizedDescriptionKey: "No credentials were found in the store."])
         }
 
-        return mockCredentials ?? createMockCredentials()
+        // Simulate Auth0's CredentialsManager auto-refresh: when stored credentials are expired,
+        // return mockCredentials to represent the freshly refreshed token
+        if let storedCreds = storedCredentials, storedCreds.expiresIn < Date() {
+            return mockCredentials ?? createMockCredentials()
+        }
+
+        return storedCredentials ?? mockCredentials ?? createMockCredentials()
     }
 
     func clearCredentials() -> Bool {
@@ -135,6 +142,7 @@ class MockAuth0Provider: Auth0ProviderProtocol {
         clearCredentialsResult = true
 
         mockCredentials = nil
+        storedCredentials = nil
         mockError = nil
         hasStoredCredentials = false  // Clear stored credentials state
 

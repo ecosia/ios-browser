@@ -504,25 +504,41 @@ final class AuthTests: XCTestCase {
     }
     
     func testGetFreshAccessToken_withExpiredToken_refreshesAutomatically() async throws {
-        // Arrange - Auth0's CredentialsManager automatically refreshes expired tokens
+        // Arrange
+        let expiredToken = "expired-access-token"
         let freshToken = "refreshed-access-token"
-        let credentials = Credentials(
+
+        // Simulate expired credentials already stored (e.g. from a previous session)
+        let expiredCredentials = Credentials(
+            accessToken: expiredToken,
+            tokenType: "Bearer",
+            idToken: "old-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(-3600), // Expired 1 hour ago
+            scope: "openid profile email"
+        )
+
+        // Fresh credentials returned by Auth0's CredentialsManager after auto-refresh
+        let refreshedCredentials = Credentials(
             accessToken: freshToken,
             tokenType: "Bearer",
-            idToken: "test-id-token",
+            idToken: "new-id-token",
             refreshToken: "test-refresh-token",
             expiresIn: Date().addingTimeInterval(3600),
             scope: "openid profile email"
         )
-        mockProvider.mockCredentials = credentials
         mockProvider.hasStoredCredentials = true
-        
+        mockProvider.storedCredentials = expiredCredentials
+        mockProvider.mockCredentials = refreshedCredentials
+
         // Act
         let token = try await auth.getFreshAccessToken()
-        
+
         // Assert
-        XCTAssertEqual(token, freshToken)
+        XCTAssertEqual(token, freshToken, "Should return the refreshed token")
+        XCTAssertNotEqual(token, expiredToken, "Should not return the expired token")
         XCTAssertEqual(auth.accessToken, freshToken)
+        XCTAssertEqual(mockProvider.retrieveCredentialsCallCount, 1, "Should call retrieveCredentials once to trigger auto-refresh")
     }
     
     func testGetFreshAccessToken_withNoCredentials_throwsError() async throws {
