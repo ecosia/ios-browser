@@ -136,7 +136,7 @@ extension BrowserViewController {
 
     private func handleSignInAndSignUpDetection(_ url: URL, tab: Tab) -> Bool {
         guard let ecosiaAuth = ecosiaAuth else {
-            EcosiaLogger.auth.notice("No EcosiaAuth instance available for sign-up detection")
+            EcosiaLogger.auth.notice("No EcosiaAuth instance available for authentication detection")
             return false
         }
 
