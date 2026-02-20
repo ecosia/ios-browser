@@ -76,6 +76,7 @@ struct NTPFirstSearchView: View {
                     // Close button
                     Button(action: onClose) {
                         Image(uiImage: closeButtonImage)
+                            .renderingMode(.template)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: UX.closeButtonImageSize, height: UX.closeButtonImageSize)
@@ -103,7 +104,6 @@ struct NTPFirstSearchView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: UX.iconSize, height: UX.iconSize)
-                            .foregroundColor(.green)
                     )
                     .accessibilityHidden(true)
 
