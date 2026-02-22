@@ -20,6 +20,16 @@ public protocol CredentialsManagerProtocol {
     /// - Throws: An error if retrieving credentials fails.
     func credentials() async throws -> Credentials
 
+    /// Retrieves stored credentials asynchronously with a minimum time-to-live.
+    ///
+    /// - Parameters:
+    ///   - scope: The scope to request. If nil, uses the stored credentials' scope.
+    ///   - minTTL: The minimum time in seconds the access token should remain valid.
+    ///             If 0, returns credentials without checking expiry or refreshing.
+    /// - Returns: The stored `Credentials` object if available.
+    /// - Throws: An error if retrieving credentials fails.
+    func credentials(withScope scope: String?, minTTL: Int) async throws -> Credentials
+
     /// Clears stored credentials.
     ///
     /// - Returns: A boolean indicating whether the credentials were successfully cleared.

@@ -61,8 +61,12 @@ extension NativeToWebSSOAuth0Provider {
     ///
     /// - Returns: A `session_token` as `SessionToken` (a `String` type).
     /// - Throws: An error if the retrieval fails.
+    /// - Note: This method retrieves credentials without minTTL to avoid unnecessary token refresh
+    ///         that could invalidate the SSO session transfer token before it's used.
     public func getSSOCredentials() async throws -> SSOCredentials {
-        let credentials = try await retrieveCredentials()
+        // Retrieve credentials without triggering refresh by setting minTTL to 0
+        // This prevents the refresh token from being rotated before we use it for SSO
+        let credentials = try await credentialsManager.credentials(withScope: nil, minTTL: 0)
         guard let refreshToken = credentials.refreshToken else {
             throw NativeToWebSSOError.missingRefreshToken("Refresh token is missing. Please check your credentials.")
         }

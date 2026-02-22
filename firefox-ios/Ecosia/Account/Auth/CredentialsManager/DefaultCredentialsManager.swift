@@ -21,6 +21,10 @@ struct DefaultCredentialsManager: CredentialsManagerProtocol {
         try await credentialManager.credentials()
     }
 
+    func credentials(withScope scope: String?, minTTL: Int) async throws -> Auth0.Credentials {
+        try await credentialManager.credentials(withScope: scope, minTTL: minTTL)
+    }
+
     func clear() -> Bool {
         credentialManager.clear()
     }
