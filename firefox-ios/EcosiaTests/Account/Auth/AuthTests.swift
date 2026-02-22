@@ -475,7 +475,7 @@ final class AuthTests: XCTestCase {
     }
 
     // MARK: - Get Fresh Access Token Tests
-    
+
     func testGetFreshAccessToken_withValidCredentials_returnsToken() async throws {
         // Arrange
         let expectedToken = "fresh-access-token"
@@ -489,20 +489,20 @@ final class AuthTests: XCTestCase {
         )
         mockProvider.mockCredentials = credentials
         mockProvider.hasStoredCredentials = true
-        
+
         // Reset call count before the actual test call (initialization may have called it)
         mockProvider.retrieveCredentialsCallCount = 0
-        
+
         // Act
         let token = try await auth.getFreshAccessToken()
-        
+
         // Assert
         XCTAssertEqual(token, expectedToken)
         XCTAssertEqual(mockProvider.retrieveCredentialsCallCount, 1)
         XCTAssertEqual(auth.accessToken, expectedToken)
         XCTAssertTrue(auth.isLoggedIn)
     }
-    
+
     func testGetFreshAccessToken_withExpiredToken_refreshesAutomatically() async throws {
         // Arrange
         let expiredToken = "expired-access-token"
@@ -540,12 +540,12 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.accessToken, freshToken)
         XCTAssertEqual(mockProvider.retrieveCredentialsCallCount, 1, "Should call retrieveCredentials once to trigger auto-refresh")
     }
-    
+
     func testGetFreshAccessToken_withNoCredentials_throwsError() async throws {
         // Arrange
         mockProvider.hasStoredCredentials = false
         mockProvider.shouldFailRetrieveCredentials = true
-        
+
         // Act & Assert
         do {
             _ = try await auth.getFreshAccessToken()
@@ -556,7 +556,7 @@ final class AuthTests: XCTestCase {
             XCTFail("Unexpected error type: \(error)")
         }
     }
-    
+
     func testGetFreshAccessToken_withEmptyToken_throwsNotLoggedIn() async throws {
         // Arrange
         let credentials = Credentials(
@@ -569,7 +569,7 @@ final class AuthTests: XCTestCase {
         )
         mockProvider.mockCredentials = credentials
         mockProvider.hasStoredCredentials = true
-        
+
         // Act & Assert
         do {
             _ = try await auth.getFreshAccessToken()

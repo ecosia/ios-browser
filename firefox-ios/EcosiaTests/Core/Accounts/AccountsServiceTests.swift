@@ -181,7 +181,7 @@ final class AccountsServiceTests: XCTestCase {
         // This test verifies that a 401 Unauthorized response throws an `.unauthorized` error.
         // With the new proactive token refresh approach, 401s only occur for genuine auth failures
         // (revoked token, logged out on server, etc.) since expired tokens are refreshed before the request.
-        
+
         // Arrange
         mockHTTPClient.response = HTTPURLResponse(
             url: URL(string: "https://example.com")!,
