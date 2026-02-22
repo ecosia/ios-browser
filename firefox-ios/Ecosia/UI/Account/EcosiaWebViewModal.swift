@@ -210,14 +210,6 @@ private struct WebViewRepresentable: UIViewRepresentable {
                 return
             }
 
-            let interceptor = EcosiaURLInterceptor()
-            if interceptor.interceptedType(for: url) == .signIn,
-               let redirectURL = EcosiaAuthRedirector.redirectURLForSignIn(url, redirectURLString: parent.redirectURLString) {
-                decisionHandler(.cancel)
-                webView.load(URLRequest(url: redirectURL))
-                return
-            }
-
             decisionHandler(.allow)
         }
 

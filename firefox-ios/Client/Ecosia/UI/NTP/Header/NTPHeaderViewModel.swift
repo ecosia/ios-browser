@@ -139,7 +139,7 @@ extension NTPHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
     var isEnabled: Bool {
         if #available(iOS 16.0, *) {
-            return AISearchMVPExperiment.isEnabled
+            return true
         }
         return false
     }
