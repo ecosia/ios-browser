@@ -218,7 +218,9 @@ Controlled by the user setting. Open **Settings → Homepage** and toggle Bookma
 
 ## Links
 
-- Ticket: MOB-4150
+- Ticket MOB-4150 (referrals): https://ecosia.atlassian.net/browse/MOB-4150
+- Ticket MOB-4151 (news): https://ecosia.atlassian.net/browse/MOB-4151
+- PR #1060: https://github.com/ecosia/ios-browser/pull/1060
 - Branch: `browse-MOB-4150/remove-referrrals`
 - Debug section entry: `firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift` → `getEcosiaDebugSupportSection()`
 - Debug setting classes: `firefox-ios/Client/Ecosia/Settings/EcosiaDebugSettings.swift`
