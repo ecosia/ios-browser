@@ -261,7 +261,9 @@ public final class EcosiaAuthenticationService {
      ## How It Works
      
      1. Calls `auth0Provider.retrieveCredentials()` (protocol implementation backed by Auth0's `CredentialsManager.credentials()`) which checks token expiry
-     2. If token is expired, automatically refreshes using the refresh token
+     2. If token is expired, automatically refreshes using the refresh token per the OAuth 2.0 standard
+        (see [RFC 6749 §6 – Refreshing an Access Token](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
+        and [Auth0 – Use Refresh Tokens](https://auth0.com/docs/secure/tokens/refresh-tokens/use-refresh-tokens))
      3. Updates cached token properties with the refreshed values
      4. Returns the fresh access token
      
