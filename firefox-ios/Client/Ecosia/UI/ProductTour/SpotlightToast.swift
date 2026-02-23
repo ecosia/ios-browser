@@ -21,7 +21,7 @@ struct SpotlightToastViewModel {
 
 // MARK: - SpotlightToast
 
-class SpotlightToast: Toast {
+class SpotlightToast: Toast, UIGestureRecognizerDelegate {
     struct UX {
         static let containerHeight: CGFloat = 368
         static let cornerRadius: CGFloat = 10
@@ -189,6 +189,7 @@ class SpotlightToast: Toast {
 
         // Configure gesture recognizer for custom tap handling
         gestureRecognizer.isEnabled = true
+        gestureRecognizer.delegate = self
 
         // Build view hierarchy
         if viewModel.image != nil {
@@ -372,20 +373,39 @@ class SpotlightToast: Toast {
     // MARK: - Gesture Handling
 
     /// Override tap handling to dismiss on taps outside the toast
-    /// Taps on the toast itself are ignored (handled by buttons)
-    /// Taps on the web view behind are not captured, so are ignored
-    /// Taps anywhere else dismiss the toast and complete the tour
+    /// Note: shouldReceive touch already filters out touches on the toast itself,
+    /// so this will only be called for touches outside the toast
     override func handleTap(_ gestureRecognizer: UIGestureRecognizer) {
-        let tapLocation = gestureRecognizer.location(in: self)
-
-        // Check if tap is on the toast view itself - if so, ignore it
-        if toastView.frame.contains(tapLocation) {
-            return
-        }
-
-        // Otherwise, dismiss the toast and complete the tour
         dismiss(false)
         completionHandler?(false)
+    }
+
+    /// Allow simultaneous recognition with other gestures, except for web view gestures
+    /// This ensures URL bar gestures still work while blocking web view interaction
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        // TODO: Investigate if we can filter out WebView interactions
+
+        // Allow simultaneous recognition with other gestures (like URL text field)
+        return true
+    }
+
+    /// Decide whether to handle each touch based on location
+    /// This filters out touches on the toast itself (so buttons work)
+    /// and touches on the web view (so web content remains interactive)
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let touchLocation = touch.location(in: self)
+
+        // If the touch is on the toast itself, don't handle it with our gesture
+        // (let buttons handle their own touches)
+        if toastView.frame.contains(touchLocation) {
+            return false
+        }
+
+        // For other touches outside the toast (like URL bar), we want to handle them
+        return true
     }
 }
 
