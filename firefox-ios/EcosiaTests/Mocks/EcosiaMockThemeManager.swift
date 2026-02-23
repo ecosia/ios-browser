@@ -86,6 +86,12 @@ final class EcosiaMockThemeManager: ThemeManager {
 
     func getUserManualTheme() -> ThemeType { return currentThemeStorage.type }
 
+    func resolvedTheme(with shouldShowPrivateTheme: Bool) -> Theme {
+        return currentThemeStorage
+    }
+
+    var isNewAppearanceMenuOn: Bool { return false }
+
     func reloadTheme(for window: UUID) { }
 
     func setWindow(_ window: UIWindow, for uuid: UUID) { }

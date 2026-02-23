@@ -25,6 +25,13 @@ final class ThemeableMockThemeManager: ThemeManager {
     func setSystemTheme(isOn: Bool) {}
     func setManualTheme(to newTheme: ThemeType) {}
     func getUserManualTheme() -> ThemeType { return .light }
+    
+    func resolvedTheme(with shouldShowPrivateTheme: Bool) -> Theme {
+        return currentTheme
+    }
+    
+    var isNewAppearanceMenuOn: Bool { return false }
+    
     func setAutomaticBrightness(isOn: Bool) {}
     func setAutomaticBrightnessValue(_ value: Float) {}
     func applyThemeUpdatesToWindows() {}

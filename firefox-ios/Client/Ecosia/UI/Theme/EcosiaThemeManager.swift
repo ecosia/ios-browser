@@ -102,7 +102,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
     }
 
     public func resolvedTheme(with shouldShowPrivateTheme: Bool) -> Theme {
-        return shouldShowPrivateTheme ? PrivateModeTheme() : getThemeFrom(type: determineUserTheme())
+        return getThemeFrom(type: determineUserTheme())
     }
 
     @MainActor
@@ -205,7 +205,6 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
     }
 
     private func determineThemeType(for window: WindowUUID) -> ThemeType {
-        if getPrivateThemeIsOn(for: window) { return .privateMode }
         return determineUserTheme()
     }
 
@@ -244,7 +243,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
         case .nightMode:
             return EcosiaDarkTheme()
         case .privateMode:
-            return PrivateModeTheme()
+            return EcosiaDarkTheme()
         }
     }
 
