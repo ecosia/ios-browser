@@ -93,25 +93,16 @@ brew list --pinned
 
 #### Baseline Approach
 
-We use SwiftLint's baseline feature (`swiftlint_baseline.json`) to handle existing violations in Firefox core files while enforcing standards on new code. This means:
-- ✅ New code you write must be lint-clean
-- ⚠️ Existing violations in Firefox core files are baselined (won't block builds)
-- 🔄 The baseline is regenerated after upstream Firefox merges
+SwiftLint's baseline feature (`swiftlint_baseline.json`) is used **temporarily** during Firefox upstream merges when SwiftLint version updates introduce new violations. Key principles:
+- ✅ **Main branch must have an empty baseline** — all violations must be fixed before the upgrade is complete
+- ⚠️ The baseline is only for Ecosia files during the transition period when updating SwiftLint versions
+- 🔄 New code you write must always be lint-clean, regardless of baseline state
 
 #### Version Updates
 
 SwiftLint version is evaluated during upstream Firefox merges. Since Firefox doesn't pin versions (they use the latest), we assess whether to upgrade when merging their changes.
 
-**For more details**, see the Architecture Decision Record: [SwiftLint Configuration for Upstream Firefox Fork](../../../docs/decisions/0001-swiftlint-configuration-for-upstream-fork.md)
-
-We have a baseline. We will attempt to not add new swiftlint violations. Some violations may be in the firefox base.
-
-here is how you update the baseline (please only commit the pretty printed version):
-```
-rm swiftlint_baseline.json
-swiftlint --write-baseline swiftlint_baseline.json
-python3 -m json.tool --sort-keys swiftlint_baseline.json > swiftlint_baseline.tmp && mv swiftlint_baseline.tmp swiftlint_baseline.json
-````
+**For more details on baseline workflow and version updates**, see the Architecture Decision Record: [SwiftLint Configuration for Upstream Firefox Fork](../../../docs/decisions/0001-swiftlint-configuration-for-upstream-fork.md)
 
 ### First-time setup and building
 
