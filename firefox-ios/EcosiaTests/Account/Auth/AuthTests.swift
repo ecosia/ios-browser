@@ -531,6 +531,9 @@ final class AuthTests: XCTestCase {
         mockProvider.storedCredentials = expiredCredentials
         mockProvider.mockCredentials = refreshedCredentials
 
+        // Reset call count before the actual test call (initialization may have called it)
+        mockProvider.retrieveCredentialsCallCount = 0
+
         // Act
         let token = try await auth.getFreshAccessToken()
 
