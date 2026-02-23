@@ -289,8 +289,8 @@ class SpotlightToast: Toast {
     /// Show the spotlight toast with custom animation duration
     func show(
         in viewController: UIViewController,
-        delay: DispatchTimeInterval = .milliseconds(500),
-        bottomInset: CGFloat = 0
+        bottomAnchorView: UIView,
+        delay: DispatchTimeInterval = .milliseconds(500)
     ) {
         self.viewController = viewController
 
@@ -303,7 +303,7 @@ class SpotlightToast: Toast {
                 return [
                     toast.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
                     toast.trailingAnchor.constraint(equalTo: superview.trailingAnchor),
-                    toast.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor, constant: -bottomInset)
+                    toast.bottomAnchor.constraint(equalTo: bottomAnchorView.topAnchor)
                 ]
             }
         )

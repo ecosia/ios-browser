@@ -13,6 +13,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     // MARK: - Properties
 
     private weak var viewController: UIViewController?
+    private var bottomContentView: UIView
     private var currentSpotlight: SpotlightToast?
     private var currentStepIndex: Int = 0
     private let theme: Theme
@@ -44,8 +45,9 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
     // MARK: - Initialization
 
-    init(viewController: UIViewController, theme: Theme) {
+    init(viewController: UIViewController, bottomContentView: UIView, theme: Theme) {
         self.viewController = viewController
+        self.bottomContentView = bottomContentView
         self.theme = theme
 
         // Register as observer
@@ -113,9 +115,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
         }
 
         currentSpotlight = spotlight
-        // Use layoutMargins.bottom to position above the TabToolbar
-        let bottomInset = viewController.view.layoutMargins.bottom
-        spotlight.show(in: viewController, bottomInset: bottomInset)
+        spotlight.show(in: viewController, bottomAnchorView: bottomContentView)
     }
 
     private func dismissCurrentSpotlight() {
