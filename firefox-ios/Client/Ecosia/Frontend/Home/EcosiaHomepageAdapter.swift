@@ -190,6 +190,8 @@ final class EcosiaHomepageAdapter {
     }
 
     private func shouldShowNews() -> Bool {
+        // Ecosia: Hidden by default (MOB-4150); re-enable via debug menu
+        guard ToggleNTPNewsSection.isEnabled else { return false }
         return User.shared.showEcosiaNews
     }
 
