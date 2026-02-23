@@ -38,6 +38,12 @@ final class MockCredentialsManager: CredentialsManagerProtocol {
         return mockCredentials ?? storedCredentials ?? createMockCredentials()
     }
 
+    func credentials(withScope scope: String?, minTTL: Int) async throws -> Credentials {
+        // For mock purposes, delegate to the main credentials method
+        // In a real implementation, minTTL would affect whether credentials are refreshed
+        return try await credentials()
+    }
+
     func renew() async throws -> Credentials {
         renewCallCount += 1
 

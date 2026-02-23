@@ -237,15 +237,53 @@ public final class EcosiaAuthenticationService {
         }
     }
 
+    /**
+     Retrieves a fresh access token, leveraging Auth0's `CredentialsManager.credentials(withScope:minTTL:parameters:headers:)`
+     to automatically handle token expiry checking and renewal.
+     
+     - Returns: A fresh, valid access token
+     - Throws: `AuthError.notLoggedIn` if stored credentials do not contain a valid access token,
+               `AuthError.credentialsRetrievalFailed` if credentials cannot be retrieved or refreshed
+     */
+    public func getFreshAccessToken() async throws -> String {
+        do {
+            let credentials = try await auth0Provider.retrieveCredentials()
+
+            let accessToken = credentials.accessToken
+            guard !accessToken.isEmpty else {
+                EcosiaLogger.auth.error("Retrieved credentials do not contain a valid access token")
+                throw AuthError.notLoggedIn
+            }
+
+            // Update cached tokens only after validating the access token
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+
+            return accessToken
+        } catch let error as AuthError {
+            // Re-throw AuthError as-is
+            EcosiaLogger.auth.error("Failed to get fresh access token: \(error)")
+            throw error
+        } catch {
+            // Wrap other errors in credentialsRetrievalFailed
+            EcosiaLogger.auth.error("Failed to get fresh access token: \(error)")
+            throw AuthError.credentialsRetrievalFailed(error)
+        }
+    }
+
     /// Helper method to setup tokens and login flag
     private func setupTokensWithCredentials(_ credentials: Credentials?,
                                             settingLoggedInStateTo isLoggedIn: Bool = false) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
+
+        let wasLoggedIn = self.isLoggedIn
         self.isLoggedIn = isLoggedIn
 
-        // Dispatch state change to the new state management system
+        // Only dispatch the auth state change when the login state actually transitions,
+        // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
+        // on every token refresh when the user is already logged in.
+        guard wasLoggedIn != isLoggedIn else { return }
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
         }
