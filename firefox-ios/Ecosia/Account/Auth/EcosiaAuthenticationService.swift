@@ -238,34 +238,16 @@ public final class EcosiaAuthenticationService {
     }
 
     /**
-     Retrieves a fresh access token from Auth0's CredentialsManager.
-     
-     This method leverages Auth0's built-in credential management to automatically handle
-     token expiry checking and renewal. The CredentialsManager will refresh the token if it's
-     expired or about to expire, ensuring the returned token is always valid.
-     
+     Retrieves a fresh access token using Auth0's `CredentialsManager.credentials()`.
+
+     Token expiry checking and renewal are handled automatically: if the token is expired
+     or about to expire, it is refreshed transparently before being returned.
+
+     See: [CredentialsManager.credentials(withScope:minTTL:parameters:headers:)](https://auth0.github.io/Auth0.swift/documentation/auth0/credentialsmanager/credentials(withscope:minttl:parameters:headers:-11d2f))
+
      - Returns: A fresh, valid access token
      - Throws: `AuthError.notLoggedIn` if stored credentials do not contain a valid access token,
                `AuthError.credentialsRetrievalFailed` if credentials cannot be retrieved or refreshed (including when no stored credentials are available)
-     
-     ## Use Cases
-     
-     Use this method instead of the cached `accessToken` property when making API requests
-     to avoid 401 errors from expired tokens:
-     
-     ```swift
-     let token = try await authService.getFreshAccessToken()
-     let response = try await accountsService.registerVisit(accessToken: token)
-     ```
-     
-     ## How It Works
-     
-     1. Calls `auth0Provider.retrieveCredentials()` (protocol implementation backed by Auth0's `CredentialsManager.credentials()`) which checks token expiry
-     2. If token is expired, automatically refreshes using the refresh token
-     3. Updates cached token properties with the refreshed values
-     4. Returns the fresh access token
-     
-     This eliminates the need for reactive 401 error handling and retry logic.
      */
     public func getFreshAccessToken() async throws -> String {
         do {
