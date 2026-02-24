@@ -27,12 +27,9 @@ struct WallpaperURLProvider {
     let currentMetadataEndpoint: WallpaperMetadataEndpoint = .v1
 
     func url(for urlType: WallpaperURLType) throws -> URL {
-        print("🐛 WALLPAPER: WallpaperURLProvider.url(for:) called with type: \(urlType)")
         switch urlType {
         case .metadata:
-            let metadataURL = try metadataURL()
-            print("🐛 WALLPAPER: metadataURL = \(metadataURL)")
-            return metadataURL
+            return try metadataURL()
         case .image(let fileName, let folderName):
             return try imageURLWith(folderName, and: fileName)
         }
@@ -41,7 +38,6 @@ struct WallpaperURLProvider {
     private func metadataURL() throws -> URL {
         // TEMPORARY HARDCODE: Bypass Info.plist for debugging
         // TODO: fetch from buildconfig
-        print("🐛 WALLPAPER: Using hardcoded metadata URL (cdn2)")
         return URL(string: "https://cdn.ecosia.org/static/mobile-wallpapers/metadata/v1/wallpapers.json")!
     }
 
@@ -49,12 +45,9 @@ struct WallpaperURLProvider {
         // TEMPORARY HARDCODE: Use same base URL as metadata
         // TODO: fetch from buildconfig
         let baseURL = "https://cdn.ecosia.org/static/mobile-wallpapers"
-        print("🐛 WALLPAPER: imageURLWith baseURL=\(baseURL), key=\(key), fileName=\(fileName)")
         guard let url = URL(string: "\(baseURL)/\(key)/\(fileName).jpg") else {
-            print("🐛 WALLPAPER: Failed to create URL from \(baseURL)/\(key)/\(fileName).jpg")
             throw URLProviderError.invalidURL
         }
-        print("🐛 WALLPAPER: Created image URL: \(url)")
         return url
     }
 
