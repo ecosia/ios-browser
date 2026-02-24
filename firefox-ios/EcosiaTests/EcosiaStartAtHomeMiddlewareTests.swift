@@ -152,7 +152,7 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
         mockProfile.prefs.setString(StartAtHome.always.rawValue, forKey: PrefsKeys.FeatureFlags.StartAtHome)
         let privateTab = mockTabManager.addTab(isPrivate: true)
         mockTabManager.selectTab(privateTab)
-        
+
         let subject = createSubject(with: mockProfile)
         let action = StartAtHomeAction(
             windowUUID: .XCTestDefaultUUID,
