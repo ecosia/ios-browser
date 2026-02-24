@@ -384,13 +384,6 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        // Block simultaneous recognition with WKWebView gesture recognizers
-        // This allows web content to be interactive during the spotlight
-        if let view = otherGestureRecognizer.view,
-           view is WKWebView || view.isDescendant(of: WKWebView.self) {
-            return false
-        }
-
         // Allow simultaneous recognition with other gestures (like URL text field)
         return true
     }
