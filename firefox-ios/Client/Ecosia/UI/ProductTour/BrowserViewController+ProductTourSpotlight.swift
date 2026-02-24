@@ -9,25 +9,6 @@ import Ecosia
 // MARK: - Product Tour Spotlight Integration
 extension BrowserViewController {
 
-    // MARK: - Associated Object Keys
-
-    private struct AssociatedKeys {
-        static var spotlightCoordinator: UInt8 = 0
-    }
-
-    // MARK: - Spotlight Coordinator
-
-    /// The coordinator that manages product tour spotlight display
-    /// This property is stored using associated objects to avoid modifying the main BrowserViewController class
-    var spotlightCoordinator: ProductTourSpotlightCoordinator? {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.spotlightCoordinator) as? ProductTourSpotlightCoordinator
-        }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.spotlightCoordinator, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-
     // MARK: - Setup
 
     /// Sets up the product tour spotlight coordinator
@@ -54,6 +35,11 @@ extension BrowserViewController {
     /// Call this when theme changes (e.g., dark mode toggle)
     func updateSpotlightTheme() {
         guard OnboardingProductTourExperiment.isEnabled else {
+            return
+        }
+
+        // Don't recreate coordinator if a spotlight is currently showing
+        guard spotlightCoordinator?.isShowingSpotlight != true else {
             return
         }
 

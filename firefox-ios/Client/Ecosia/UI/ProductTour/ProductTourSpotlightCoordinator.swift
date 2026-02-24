@@ -20,6 +20,11 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     // TODO: Make dynamic when privacy tour is introduced (MOB-3905)
     private let analyticsLabel: Analytics.Label.Onboarding = .serpTour
 
+    /// Whether a spotlight is currently being displayed
+    var isShowingSpotlight: Bool {
+        return currentSpotlight != nil
+    }
+
     // The spotlight steps to show when searchCompleted state is reached
     private lazy var spotlightSteps: [SpotlightToastViewModel] = {
         return [

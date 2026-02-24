@@ -135,6 +135,10 @@ class BrowserViewController: UIViewController,
 
     // Ecosia: Authentication manager for handling login/logout flows
     var ecosiaAuth: EcosiaAuth?
+
+    // Ecosia: Retain coordinator for spotlight product tours
+    var spotlightCoordinator: ProductTourSpotlightCoordinator?
+
     lazy var isTabTrayRefactorEnabled: Bool = TabTrayFlagManager.isRefactorEnabled
     var isToolbarRefactorEnabled: Bool {
         return featureFlags.isFeatureEnabled(.toolbarRefactor, checking: .buildOnly)
