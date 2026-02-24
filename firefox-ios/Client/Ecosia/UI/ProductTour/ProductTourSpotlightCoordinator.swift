@@ -33,7 +33,6 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
                 secondaryButtonText: .localized(.skip)
             ),
             SpotlightToastViewModel(
-                // TODO: Export image without text and handle localisation?
                 image: UIImage(named: "spotlightPlanetProfits"),
                 titleText: .localized(.spotlightStep2Title),
                 descriptionText: .localized(.spotlightStep2Description),

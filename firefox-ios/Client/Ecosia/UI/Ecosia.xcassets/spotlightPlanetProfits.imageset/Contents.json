@@ -1,15 +1,16 @@
 {
   "images" : [
     {
-      "filename" : "photo-before-after.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "photo-before-after (1).png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "photo-before-after (2).png",
       "idiom" : "universal",
       "scale" : "3x"
     }
