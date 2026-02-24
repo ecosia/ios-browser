@@ -6,6 +6,7 @@ import Common
 import Foundation
 import Shared
 import UIKit
+import WebKit
 
 // MARK: - View Model
 
@@ -383,7 +384,12 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        // TODO: Investigate if we can filter out WebView interactions
+        // Block simultaneous recognition with WKWebView gesture recognizers
+        // This allows web content to be interactive during the spotlight
+        if let view = otherGestureRecognizer.view,
+           view is WKWebView || view.isDescendant(of: WKWebView.self) {
+            return false
+        }
 
         // Allow simultaneous recognition with other gestures (like URL text field)
         return true
@@ -403,6 +409,22 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
         // For other touches outside the toast (like URL bar), we want to handle them
         return true
+    }
+}
+
+// MARK: - UIView Extension
+
+fileprivate extension UIView {
+    /// Checks if this view is a descendant of a specific view type
+    func isDescendant(of type: AnyClass) -> Bool {
+        var currentView: UIView? = self
+        while let view = currentView {
+            if view.isKind(of: type) {
+                return true
+            }
+            currentView = view.superview
+        }
+        return false
     }
 }
 
