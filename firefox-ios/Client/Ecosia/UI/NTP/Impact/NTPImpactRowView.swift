@@ -22,6 +22,13 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     // MARK: - UI Elements
 
+    // Ecosia: Frosted glass background — blurs the wallpaper behind each row
+    private lazy var blurEffectView: UIVisualEffectView = {
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     /// Stack view to arrange title and subtitle labels vertically.
     private let titleAndSubtitleContainerView = UIStackView()
 
@@ -144,6 +151,9 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = .ecosia.borderRadius._l
+        // Ecosia: Clip subviews so the blur view respects the rounded corners
+        clipsToBounds = true
+        addSubview(blurEffectView)
 
         mainContainerView.translatesAutoresizingMaskIntoConstraints = false
         mainContainerView.axis = .horizontal
@@ -172,6 +182,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private func setupConstraints() {
 
         NSLayoutConstraint.activate([
+            blurEffectView.topAnchor.constraint(equalTo: topAnchor),
+            blurEffectView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            blurEffectView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            blurEffectView.bottomAnchor.constraint(equalTo: bottomAnchor),
             mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
             mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
@@ -198,7 +212,12 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        backgroundColor = customBackgroundColor ?? theme.colors.ecosia.backgroundElevation1
+        // Ecosia: Frosted glass — keep the row transparent so the blur shows the wallpaper through.
+        // Use systemThinMaterial variants (not .extraLight/.dark): .extraLight is too opaque for
+        // coloured wallpapers and an extra contentView tint created redundant white overlay layers.
+        backgroundColor = .clear
+        let blurStyle: UIBlurEffect.Style = theme.type == .light ? .systemThinMaterialLight : .systemThinMaterialDark
+        blurEffectView.effect = UIBlurEffect(style: blurStyle)
         titleLabel.textColor = theme.colors.ecosia.textPrimary
         subtitleLabel.textColor = theme.colors.ecosia.textSecondary
         actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
