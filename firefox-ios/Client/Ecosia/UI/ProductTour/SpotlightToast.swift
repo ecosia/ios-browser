@@ -314,37 +314,51 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
     ///   - direction: The direction of transition (.forward or .backward)
     ///   - completion: Called when transition is complete
     func transition(to newViewModel: SpotlightToastViewModel, direction: TransitionDirection, completion: (() -> Void)? = nil) {
-        let screenWidth = UIScreen.main.bounds.width
-        let offscreenOffset: CGFloat = direction == .forward ? -screenWidth : screenWidth
-        let entryOffset: CGFloat = direction == .forward ? screenWidth : -screenWidth
+        // Create a snapshot of the current content
+        guard let snapshot = containerStackView.snapshotView(afterScreenUpdates: false) else {
+            // Just update content if snapshot fails
+            self.viewModel = newViewModel
+            configureContent()
+            completion?()
+            return
+        }
 
-        // First, slide the current content off-screen
+        // Forward: new content comes from right, old goes left
+        // Backward: new content comes from left, old goes right
+        let containerWidth = containerStackView.bounds.width
+        let spacing = Toast.UX.toastOffset * 2  // Space between the views
+        let animationOffset = containerWidth + spacing
+        let exitOffset: CGFloat = direction == .forward ? -animationOffset : animationOffset
+        let entryOffset: CGFloat = direction == .forward ? animationOffset : -animationOffset
+
+        // Position the snapshot exactly where the current content is
+        snapshot.frame = containerStackView.frame
+        snapshot.alpha = containerStackView.alpha
+        snapshot.transform = containerStackView.transform
+        toastView.addSubview(snapshot)
+
+        // Update the view model and reconfigure content
+        self.viewModel = newViewModel
+        configureContent()
+
+        // Position the new content off-screen horizontally
+        containerStackView.transform = CGAffineTransform(translationX: entryOffset, y: 0)
+        containerStackView.alpha = 1.0  // Keep visible during horizontal slide
+
         UIView.animate(
             withDuration: UX.transitionAnimationDuration,
             delay: 0,
             options: [.curveEaseInOut],
             animations: {
-                self.containerStackView.transform = CGAffineTransform(translationX: offscreenOffset, y: 0)
+                // Exit animation: slide horizontally off-screen
+                snapshot.transform = CGAffineTransform(translationX: exitOffset, y: 0)
+
+                // Enter animation: slide to center position
+                self.containerStackView.transform = .identity
             }
         ) { _ in
-            // Update the view model and reconfigure content
-            self.viewModel = newViewModel
-            self.configureContent()
-
-            // Position the new content off-screen (opposite side)
-            self.containerStackView.transform = CGAffineTransform(translationX: entryOffset, y: 0)
-
-            // Slide the new content on-screen
-            UIView.animate(
-                withDuration: UX.transitionAnimationDuration,
-                delay: 0,
-                options: [.curveEaseInOut],
-                animations: {
-                    self.containerStackView.transform = .identity
-                }
-            ) { _ in
-                completion?()
-            }
+            snapshot.removeFromSuperview()
+            completion?()
         }
     }
 
