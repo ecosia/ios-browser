@@ -41,7 +41,9 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         static let buttonHorizontalPadding: CGFloat = 15
         static let buttonInternalSpacing: CGFloat = 16
 
-        static let transitionAnimationDuration: CGFloat = 0.5
+        static let showAnimationDelay: TimeInterval = 0.5
+        static let transitionAnimationDuration: TimeInterval = 0.5
+        static let verticalAnimationOffset: CGFloat = 50
     }
 
     // MARK: - Properties
@@ -224,19 +226,13 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
             toastView.leadingAnchor.constraint(equalTo: leadingAnchor),
             toastView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            toastView.heightAnchor.constraint(equalTo: heightAnchor),
+            toastView.topAnchor.constraint(equalTo: topAnchor),
+            toastView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             heightAnchor.constraint(equalToConstant: UX.containerHeight + Toast.UX.toastOffset),
 
             primaryButton.heightAnchor.constraint(equalToConstant: UX.buttonHeight)
         ])
-
-        // Animation constraint
-        animationConstraint = toastView.topAnchor.constraint(
-            equalTo: topAnchor,
-            constant: UX.containerHeight + Toast.UX.toastOffset
-        )
-        animationConstraint?.isActive = true
     }
 
     private func configureContent() {
@@ -285,25 +281,38 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
     // MARK: - Public Methods
 
-    /// Show the spotlight toast with custom animation duration
+    /// Show the spotlight toast with animation
     func show(
         in viewController: UIViewController,
         bottomAnchorView: UIView,
-        delay: DispatchTimeInterval = .milliseconds(500)
+        delay: TimeInterval = UX.showAnimationDelay
     ) {
         self.viewController = viewController
+        translatesAutoresizingMaskIntoConstraints = false
 
-        showToast(
-            viewController: viewController,
+        // Add to view hierarchy first
+        viewController.view.addSubview(self)
+
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            bottomAnchor.constraint(equalTo: bottomAnchorView.topAnchor)
+        ])
+
+        // Set initial state: below and transparent
+        containerStackView.transform = CGAffineTransform(translationX: 0, y: UX.verticalAnimationOffset)
+        containerStackView.alpha = 0
+
+        layoutIfNeeded()
+
+        // Animate to final position
+        UIView.animate(
+            withDuration: Toast.UX.toastAnimationDuration,
             delay: delay,
-            duration: nil,  // Don't auto-dismiss
-            updateConstraintsOn: { toast in
-                guard let superview = toast.superview else { return [] }
-                return [
-                    toast.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
-                    toast.trailingAnchor.constraint(equalTo: superview.trailingAnchor),
-                    toast.bottomAnchor.constraint(equalTo: bottomAnchorView.topAnchor)
-                ]
+            options: [.curveEaseOut],
+            animations: {
+                self.containerStackView.transform = .identity
+                self.containerStackView.alpha = 1.0
             }
         )
     }
@@ -313,53 +322,52 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
     ///   - newViewModel: The new spotlight step to display
     ///   - direction: The direction of transition (.forward or .backward)
     ///   - completion: Called when transition is complete
-    func transition(to newViewModel: SpotlightToastViewModel, direction: TransitionDirection, completion: (() -> Void)? = nil) {
-        // Create a snapshot of the current content
+    func transition(
+        to newViewModel: SpotlightToastViewModel,
+        direction: TransitionDirection,
+        completion: (() -> Void)? = nil
+    ) {
         guard let snapshot = containerStackView.snapshotView(afterScreenUpdates: false) else {
-            // Just update content if snapshot fails
+            // Fallback: just update content if snapshot fails
             self.viewModel = newViewModel
             configureContent()
             completion?()
             return
         }
 
-        // Forward: new content comes from right, old goes left
-        // Backward: new content comes from left, old goes right
+        // Calculate offsets for horizontal slide animation
         let containerWidth = containerStackView.bounds.width
-        let spacing = Toast.UX.toastOffset * 2  // Space between the views
+        let spacing = Toast.UX.toastOffset * 2
         let animationOffset = containerWidth + spacing
         let exitOffset: CGFloat = direction == .forward ? -animationOffset : animationOffset
         let entryOffset: CGFloat = direction == .forward ? animationOffset : -animationOffset
 
-        // Position the snapshot exactly where the current content is
+        // Position snapshot at current location
         snapshot.frame = containerStackView.frame
         snapshot.alpha = containerStackView.alpha
         snapshot.transform = containerStackView.transform
         toastView.addSubview(snapshot)
 
-        // Update the view model and reconfigure content
+        // Update content and position off-screen
         self.viewModel = newViewModel
         configureContent()
-
-        // Position the new content off-screen horizontally
         containerStackView.transform = CGAffineTransform(translationX: entryOffset, y: 0)
-        containerStackView.alpha = 1.0  // Keep visible during horizontal slide
+        containerStackView.alpha = 1.0
 
+        // Animate transition
         UIView.animate(
             withDuration: UX.transitionAnimationDuration,
             delay: 0,
             options: [.curveEaseInOut],
             animations: {
-                // Exit animation: slide horizontally off-screen
                 snapshot.transform = CGAffineTransform(translationX: exitOffset, y: 0)
-
-                // Enter animation: slide to center position
                 self.containerStackView.transform = .identity
+            },
+            completion: { _ in
+                snapshot.removeFromSuperview()
+                completion?()
             }
-        ) { _ in
-            snapshot.removeFromSuperview()
-            completion?()
-        }
+        )
     }
 
     override func dismiss(_ buttonPressed: Bool) {
@@ -371,15 +379,16 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         UIView.animate(
             withDuration: Toast.UX.toastAnimationDuration,
             animations: {
-                self.animationConstraint?.constant = UX.containerHeight + Toast.UX.toastOffset
-                self.layoutIfNeeded()
+                self.containerStackView.transform = CGAffineTransform(translationX: 0, y: UX.verticalAnimationOffset)
+                self.containerStackView.alpha = 0
+            },
+            completion: { _ in
+                self.removeFromSuperview()
+                if !buttonPressed {
+                    self.completionHandler?(false)
+                }
             }
-        ) { finished in
-            self.removeFromSuperview()
-            if !buttonPressed {
-                self.completionHandler?(false)
-            }
-        }
+        )
     }
 
     // MARK: - Gesture Handling
