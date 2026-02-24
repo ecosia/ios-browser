@@ -10,9 +10,9 @@ struct EcosiaSearchBarLocationSaver: SearchBarLocationProvider, FeatureFlaggable
     func saveUserSearchBarLocation(profile: Profile,
                                    userInterfaceIdiom: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {
         let hasSearchBarPosition = profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition) != nil
-        
+
         guard !hasSearchBarPosition else { return }
-        
+
         if User.shared.firstTime {
             featureFlags.set(feature: .searchBarPosition, to: SearchBarPosition.bottom)
         }
