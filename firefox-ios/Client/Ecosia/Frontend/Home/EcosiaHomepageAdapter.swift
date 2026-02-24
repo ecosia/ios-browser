@@ -132,10 +132,13 @@ final class EcosiaHomepageAdapter {
 
         // Logo
         sections.append(.ecosiaLogo)
-
-        // Library shortcuts
-        sections.append(.ecosiaLibrary)
-
+        
+        // Library shortcuts (Bookmarks, History, Reading List, Downloads)
+        // Ecosia: Hidden by default (MOB-4150); re-enable via debug menu
+        if ToggleNTPLibraryShortcuts.isEnabled {
+            sections.append(.ecosiaLibrary)
+        }
+        
         // Climate impact (if enabled)
         if shouldShowImpact() {
             sections.append(.ecosiaImpact)

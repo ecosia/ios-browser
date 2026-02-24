@@ -676,6 +676,30 @@ final class DebugAddCustomSeeds: HiddenSetting {
 
 // MARK: - NTP Section Visibility Debug Settings (MOB-4150)
 
+final class ToggleNTPLibraryShortcuts: HiddenSetting {
+    /// UserDefaults key — defaults to false (library shortcuts hidden)
+    nonisolated public static let debugKey = "NTPShowLibraryShortcuts"
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Show NTP Library Shortcuts", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "Visible" : "Hidden (default)"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        UserDefaults.standard.set(!Self.isEnabled, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+
+    public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
 final class ToggleNTPReferralRow: HiddenSetting {
     /// UserDefaults key — defaults to false (referral row hidden)
     nonisolated public static let debugKey = "NTPShowReferralRow"

@@ -180,6 +180,7 @@ extension AppSettingsTableViewController {
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),
             AnalyticsIdentifierSetting(settings: self),
+            ToggleNTPLibraryShortcuts(settings: self),
             ToggleNTPReferralRow(settings: self),
             ToggleNTPNewsSection(settings: self),
             EcosiaForceWallpaperRefresh(settings: self),

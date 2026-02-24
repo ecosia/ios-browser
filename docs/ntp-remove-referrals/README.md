@@ -2,12 +2,13 @@
 
 ## Overview
 
-Two sections of the NTP (New Tab Page) are being deactivated:
+Three sections of the NTP (New Tab Page) are being deactivated:
 
 1. **Referral row** — the second cell inside the Impact UICollectionView (`NTPImpactRowView` with `ClimateImpactInfo.referral`)
 2. **Ecosia News section** — the `ecosiaNews` section in the homepage collection view (3 × `NTPNewsCell`)
+3. **Library shortcuts** — the `ecosiaLibrary` section containing Bookmarks, History, Reading List, and Downloads (`NTPLibraryCell` / `NTPLibraryShortcutView`)
 
-Both are **hidden by default** and re-enabled via the **Ecosia Debug settings section**.
+All three are **hidden by default** and re-enabled via the **Ecosia Debug settings section**.
 
 The **Bookmarks section** is controlled entirely by the existing Firefox user setting (`HomepageSettings` → Bookmarks toggle). No additional debug gate is needed — the user setting is the source of truth.
 
@@ -42,6 +43,7 @@ Look for these exact strings in the **`Debug`** section (not `DEBUG`):
 
 | Entry title | Status label | Default |
 |-------------|--------------|---------|
+| `Debug: Toggle - Show NTP Library Shortcuts` | `Hidden (default)` or `Visible` | Hidden |
 | `Debug: Toggle - Show NTP Referral Row` | `Hidden (default)` or `Visible` | Hidden |
 | `Debug: Toggle - Show NTP News Section` | `Hidden (default)` or `Visible` | Hidden |
 
@@ -109,7 +111,17 @@ Gate: `ToggleNTPNewsSection.isEnabled` (UserDefaults `"NTPShowNewsSection"`, def
 
 The `.ecosiaNews` case is also removed from the NTP customization row by overriding `CustomizableNTPSettingConfig.allCases` to return only `[.topSites, .climateImpact]`. The case itself stays in the enum for analytics and `User.shared.showEcosiaNews` persistence.
 
-### Bookmarks section
+### Library shortcuts
+
+```
+HomepageViewController (UICollectionView)
+  └── EcosiaHomepageAdapter.getEcosiaSections()
+        └── ToggleNTPLibraryShortcuts.isEnabled → sections.append(.ecosiaLibrary)
+```
+
+Gate: `ToggleNTPLibraryShortcuts.isEnabled` (UserDefaults `"NTPShowLibraryShortcuts"`, default `false`) in `EcosiaHomepageAdapter.getEcosiaSections()`. The section contains four `NTPLibraryShortcutView` buttons: Bookmarks, History, Reading List, Downloads.
+
+### Bookmarks section (Firefox)
 
 Controlled by the existing Firefox user setting (`HomepageSettings` → Bookmarks toggle, backed by `BookmarksSectionState.shouldShowSection`). No Ecosia gate is applied — the user setting is the source of truth.
 
@@ -153,8 +165,8 @@ maxCards = 5  ← ceiling (Ecosia, MOB-4150)
 | `firefox-ios/Client/Ecosia/UI/NTP/Impact/NTPImpactCellViewModel.swift` | Gate `infoItemSections[1]` (referral) behind `ToggleNTPReferralRow.isEnabled` | Ecosia |
 | `firefox-ios/Client/Ecosia/Frontend/Home/EcosiaHomepageAdapter.swift` | Gate `shouldShowNews()` behind `ToggleNTPNewsSection.isEnabled` | Ecosia |
 | `firefox-ios/Client/Ecosia/UI/NTP/Customization/CustomizableNTPSettingConfig.swift` | Override `allCases` to exclude `.ecosiaNews` from the customization row | Ecosia |
-| `firefox-ios/Client/Ecosia/Settings/EcosiaDebugSettings.swift` | Add `ToggleNTPReferralRow`, `ToggleNTPNewsSection` classes | Ecosia |
-| `firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift` | Register both new settings in `getEcosiaDebugSupportSection()` | Ecosia |
+| `firefox-ios/Client/Ecosia/Settings/EcosiaDebugSettings.swift` | Add `ToggleNTPLibraryShortcuts`, `ToggleNTPReferralRow`, `ToggleNTPNewsSection` classes | Ecosia |
+| `firefox-ios/Client/Ecosia/Extensions/AppSettingsTableViewController+Ecosia.swift` | Register all three new settings in `getEcosiaDebugSupportSection()` | Ecosia |
 | `firefox-ios/Client/Ecosia/Extensions/HomepageSectionLayoutProvider+Ecosia.swift` | Intercept `.ecosiaNews` and `.topSites` layouts to use `getEcosiaSectionInsets` for consistent width | Ecosia |
 
 ---
@@ -175,6 +187,12 @@ maxCards = 5  ← ceiling (Ecosia, MOB-4150)
 2. Settings → `Debug` → tap **"Debug: Toggle - Show NTP Referral Row"** → confirm status changes to "Visible" → navigate to NTP → confirm referral row appears.
 3. Toggle back OFF → confirm row disappears.
 4. Background/foreground with toggle ON → confirm state is preserved via `UserDefaults`.
+
+### Library shortcuts
+
+1. Launch app → open NTP → confirm the Bookmarks/History/Reading List/Downloads row is **not visible**.
+2. Settings → `Debug` → tap **"Debug: Toggle - Show NTP Library Shortcuts"** → navigate to NTP → confirm the shortcuts row appears.
+3. Toggle back OFF → row disappears; state persists via `UserDefaults`.
 
 ### News section
 
