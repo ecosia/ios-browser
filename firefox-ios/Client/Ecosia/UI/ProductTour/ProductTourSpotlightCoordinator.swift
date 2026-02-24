@@ -17,6 +17,8 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     private var currentSpotlight: SpotlightToast?
     private var currentStepIndex: Int = 0
     private let theme: Theme
+    // TODO: Make dynamic when privacy tour is introduced (MOB-3905)
+    private let analyticsLabel: Analytics.Label.Onboarding = .serpTour
 
     // The spotlight steps to show when searchCompleted state is reached
     private lazy var spotlightSteps: [SpotlightToastViewModel] = {
@@ -116,6 +118,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
         currentSpotlight = spotlight
         spotlight.show(in: viewController, bottomAnchorView: bottomContentView)
+        Analytics.shared.spotlightTourDisplay(label: analyticsLabel, step: step.currentStep)
     }
 
     private func dismissCurrentSpotlight() {
@@ -124,29 +127,39 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     }
 
     private func handlePrimaryAction() {
+        let currentStep = spotlightSteps[currentStepIndex]
+
         currentStepIndex += 1
 
         if currentStepIndex < spotlightSteps.count {
             // Transition to next spotlight with forward animation
             let nextStep = spotlightSteps[currentStepIndex]
             currentSpotlight?.transition(to: nextStep, direction: .forward)
+            Analytics.shared.spotlightTourClick(label: analyticsLabel, action: .next, step: currentStep.currentStep)
+            Analytics.shared.spotlightTourDisplay(label: analyticsLabel, step: nextStep.currentStep)
         } else {
             // All steps completed
             dismissCurrentSpotlight()
             completeTour()
+            Analytics.shared.spotlightTourClick(label: analyticsLabel, action: .complete, step: currentStep.currentStep)
         }
     }
 
     private func handleSecondaryAction() {
+        let currentStep = spotlightSteps[currentStepIndex]
+
         if currentStepIndex > 0 {
             // Transition back to previous step with backward animation
             currentStepIndex -= 1
             let previousStep = spotlightSteps[currentStepIndex]
             currentSpotlight?.transition(to: previousStep, direction: .backward)
+            Analytics.shared.spotlightTourClick(label: analyticsLabel, action: .back, step: currentStep.currentStep)
+            Analytics.shared.spotlightTourDisplay(label: analyticsLabel, step: previousStep.currentStep)
         } else {
             // Skip the tour
             dismissCurrentSpotlight()
             completeTour()
+            Analytics.shared.spotlightTourClick(label: analyticsLabel, action: .skip, step: currentStep.currentStep)
         }
     }
 
