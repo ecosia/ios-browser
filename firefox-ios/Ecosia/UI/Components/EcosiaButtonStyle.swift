@@ -42,8 +42,8 @@ public struct EcosiaButtonStyle: ButtonStyle {
                         .background(
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .fill(Color(configuration.isPressed
-                                    ? theme.colors.ecosia.buttonBackgroundSecondaryActive
-                                    : theme.colors.ecosia.buttonBackgroundSecondary))
+                                            ? theme.colors.ecosia.buttonBackgroundSecondaryActive
+                                            : .clear))
                         )
                 )
         }
