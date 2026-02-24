@@ -405,22 +405,6 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
     }
 }
 
-// MARK: - UIView Extension
-
-fileprivate extension UIView {
-    /// Checks if this view is a descendant of a specific view type
-    func isDescendant(of type: AnyClass) -> Bool {
-        var currentView: UIView? = self
-        while let view = currentView {
-            if view.isKind(of: type) {
-                return true
-            }
-            currentView = view.superview
-        }
-        return false
-    }
-}
-
 // MARK: - TransitionDirection
 
 enum TransitionDirection {
