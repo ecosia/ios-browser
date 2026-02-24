@@ -255,10 +255,7 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
     override func applyTheme(theme: Theme) {
         super.applyTheme(theme: theme)
-
-        // TODO: Review dark mode
         containerStackView.backgroundColor = theme.colors.ecosia.backgroundFeatured
-
         titleLabel.textColor = theme.colors.ecosia.textPrimary
         descriptionLabel.textColor = theme.colors.ecosia.textPrimary
         stepCounterLabel.textColor = theme.colors.ecosia.textPrimary
