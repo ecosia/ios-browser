@@ -50,8 +50,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFit
-        // Ecosia: Icons always render over glassmorphism wallpaper background
-        image.tintColor = .white
         return image
     }()
 
@@ -79,6 +77,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .footnote).semibold()
         button.titleLabel?.textAlignment = .right
+        // Ecosia: ResizableButton defaults to numberOfLines=0; force single line so the button
+        // never expands the referral row taller than the trees/invested rows.
+        button.titleLabel?.numberOfLines = 1
+        button.configuration?.titleLineBreakMode = .byTruncatingTail
         button.contentHorizontalAlignment = .right
         button.contentVerticalAlignment = .center
         button.buttonEdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
@@ -223,10 +225,11 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         layer.borderWidth = UX.glassBorderWidth
         layer.borderColor = UIColor(white: 1, alpha: UX.glassBorderAlpha).cgColor
         glassBackground.loadCurrentWallpaper()
-        // Ecosia: White text over glassmorphism wallpaper background
+        // Ecosia: White text and icons over glassmorphism wallpaper background
         titleLabel.textColor = .white
         subtitleLabel.textColor = .white
         actionButton.setTitleColor(.white, for: .normal)
+        imageView.tintColor = .white
         dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         // Re-apply content so the row is populated when theme runs after being added to the hierarchy (e.g. referral row)
         imageView.image = info.image

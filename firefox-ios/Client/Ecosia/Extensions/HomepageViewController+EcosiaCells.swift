@@ -142,7 +142,8 @@ extension HomepageViewController {
         let moreButtonAction: (@MainActor (UIButton) -> Void)? = { [weak self] _ in
             self?.ecosiaAdapter?.newsDelegate?.openSeeAllNews()
         }
-        sectionLabelCell.configure(state: state, moreButtonAction: moreButtonAction, textColor: nil, theme: themeManager.getCurrentTheme(for: windowUUID))
+        // Ecosia: White text over glassmorphism wallpaper background
+        sectionLabelCell.configure(state: state, moreButtonAction: moreButtonAction, textColor: .white, theme: themeManager.getCurrentTheme(for: windowUUID))
         sectionLabelCell.titleLabel.font = .preferredFont(forTextStyle: .title3).bold()
         sectionLabelCell.titleLabel.adjustsFontForContentSizeCategory = true
         return sectionLabelCell
