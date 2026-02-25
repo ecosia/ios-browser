@@ -76,6 +76,7 @@ struct NTPFirstSearchView: View {
                     // Close button
                     Button(action: onClose) {
                         Image(uiImage: closeButtonImage)
+                            .renderingMode(.template)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: UX.closeButtonImageSize, height: UX.closeButtonImageSize)
@@ -83,6 +84,7 @@ struct NTPFirstSearchView: View {
                             .frame(width: UX.closeButtonSize, height: UX.closeButtonSize)
                             .contentShape(Rectangle())
                     }
+                    .buttonStyle(EcosiaButtonStyle(theme: themeManager.getCurrentTheme(for: windowUUID), style: .bare, cornerRadius: UX.closeButtonSize / 2))
                     .accessibilityLabel(Text(verbatim: .localized(.close)))
                     .padding(.top, UX.closeButtonMargin)
                     .padding(.trailing, UX.closeButtonMargin)
@@ -103,7 +105,6 @@ struct NTPFirstSearchView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: UX.iconSize, height: UX.iconSize)
-                            .foregroundColor(.green)
                     )
                     .accessibilityHidden(true)
 

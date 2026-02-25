@@ -5,6 +5,7 @@
 import SwiftUI
 import UIKit
 import Common
+import Ecosia
 
 /// SwiftUI view that provides a stable flow layout for search suggestion pills
 struct SearchSuggestionFlowLayout: View {
@@ -142,15 +143,7 @@ struct SearchSuggestionPill: View {
             .padding(.horizontal, UX.horizontalPadding)
             .padding(.vertical, UX.verticalPadding)
             .frame(height: UX.height)
-            .background(
-                RoundedRectangle(cornerRadius: UX.cornerRadius)
-                    .stroke(Color(theme.colors.ecosia.borderDecorative), lineWidth: UX.borderWidth)
-                    .background(
-                        RoundedRectangle(cornerRadius: UX.cornerRadius)
-                            .fill(Color.clear)
-                    )
-            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(EcosiaButtonStyle(theme: theme, style: .outline, cornerRadius: UX.cornerRadius, borderWidth: UX.borderWidth))
     }
 }

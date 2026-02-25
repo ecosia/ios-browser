@@ -242,7 +242,6 @@ extension Analytics {
         detail,
         menu,
         nativeSettings = "native_settings",
-        pill,
         signOut = "sign_out"
 
         public enum APNConsent: String {

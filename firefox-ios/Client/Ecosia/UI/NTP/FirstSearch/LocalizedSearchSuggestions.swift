@@ -6,40 +6,45 @@
 struct LocalizedSearchSuggestions {
 
     /// Represents a region and language combination
-    enum RegionLanguage {
-        case franceFrench
-        case franceEnglish
-        case germanyGerman
-        case germanyEnglish
-        case ukEnglish
-        case usEnglish
-        case `default`
+    enum RegionLanguage: String {
+        case franceFrench = "fr_FR"
+        case franceEnglish = "en_FR"
+        case germanyGerman = "de_DE"
+        case germanyEnglish = "en_DE"
+        case ukEnglish = "en_GB"
+        case usEnglish = "en_US"
+        case `default` = "default"
 
-        private static let localeMapping: [String: RegionLanguage] = [
-            "fr_FR": .franceFrench,
-            "en_FR": .franceEnglish,
-            "de_DE": .germanyGerman,
-            "en_DE": .germanyEnglish,
-            "en_GB": .ukEnglish,
-            "en_US": .usEnglish
-        ]
+        /// Returns the locale identifier for this region language
+        private static func identifier(for locale: Locale) -> String {
+            // Concatenated since locale.identifier has strange behaviour with mismatched language and region
+            // E.g. English (US) on Germany is "en_us@rg=dezzzz"
+            if let language = locale.languageIdentifier,
+               let region = locale.regionIdentifier {
+                return language + "_" + region
+            } else {
+                return locale.identifier
+            }
+        }
+
+        /// Returns the analytics-formatted identifier (with hyphens instead of underscores)
+        var analyticsIdentifier: String {
+            Self.identifier(for: .current).replacingOccurrences(of: "_", with: "-")
+        }
 
         static func current() -> RegionLanguage {
             return from(locale: Locale.current)
         }
 
         static func from(locale: Locale) -> RegionLanguage {
-            var identifier: String
-            // Concatenated since locale.identifier has strange behaviour with mismatched language and region
-            // E.g. English (US) on Germany is "en_us@rg=dezzzz"
-            if let language = locale.languageIdentifier,
-                    let region = locale.regionIdentifier {
-                identifier = language + "_" + region
-            } else {
-                identifier = locale.identifier
-            }
-            return localeMapping[identifier] ?? .default
+            let identifier = Self.identifier(for: locale)
+            return RegionLanguage(rawValue: identifier) ?? .default
         }
+    }
+
+    /// Returns the current region language identifier for analytics
+    static func currentRegionLanguageAnalyticsIdentifier() -> String {
+        return RegionLanguage.current().analyticsIdentifier
     }
 
     /// Returns localized search suggestions based on the user's region and language

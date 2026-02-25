@@ -263,11 +263,11 @@ open class Analytics {
         track(event)
     }
 
-    public func firstSearchCardSuggestionClick(pillNumber: Int) {
+    public func firstSearchCardSuggestionClick(pillNumber: Int, languageRegionIdentifier: String) {
         let event = Structured(category: Category.intro.rawValue,
                                action: Action.click.rawValue)
             .label(Label.Onboarding.firstSearchCard.rawValue)
-            .property(Property.pill.rawValue)
+            .property(languageRegionIdentifier)
             .value(NSNumber(value: pillNumber))
         track(event)
     }
