@@ -13,7 +13,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     // MARK: - Properties
 
     private weak var viewController: UIViewController?
-    private var bottomContentView: UIView
+    private weak var bottomContentView: UIView?
     private var currentSpotlight: SpotlightToast?
     private var currentStepIndex: Int = 0
     private var theme: Theme
@@ -104,7 +104,8 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
             return
         }
 
-        guard let viewController = viewController else {
+        guard let viewController = viewController,
+              let bottomContentView = bottomContentView else {
             return
         }
 
