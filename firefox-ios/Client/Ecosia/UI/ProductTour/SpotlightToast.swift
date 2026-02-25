@@ -6,7 +6,6 @@ import Common
 import Foundation
 import Shared
 import UIKit
-import WebKit
 
 // MARK: - View Model
 
