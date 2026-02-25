@@ -40,10 +40,10 @@ public enum URLProvider {
 
     public var snowplow: String {
         switch self {
-        case .production:
+        case .production, .debug:
             return "sp.ecosia.org"
-        case .staging, .debug:
-            return "org-ecosia-prod1.mini.snplow.net"
+        case .staging:
+            return "https://osc.ecosia-dev.xyz"
         }
     }
 
