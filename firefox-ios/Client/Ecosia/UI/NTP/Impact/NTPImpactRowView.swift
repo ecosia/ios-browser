@@ -18,9 +18,9 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         static let horizontalSpacing: CGFloat = 8
         static let padding: CGFloat = 16
         static let imageHeight: CGFloat = 24
-        // Ecosia: Glassmorphism — matches Figma "Web/Glassmorphism/Glass, Blur 24px"
-        static let glassBorderAlpha: CGFloat = 0.25
-        static let glassBorderWidth: CGFloat = 0.5
+        // Ecosia: Glassmorphism — matches Figma "Border-border-glass-static" (#FFFFFF3D = white 23.9%)
+        static let glassBorderAlpha: CGFloat = 0x3D / 255.0
+        static let glassBorderWidth: CGFloat = 1
     }
 
     // MARK: - UI Elements
