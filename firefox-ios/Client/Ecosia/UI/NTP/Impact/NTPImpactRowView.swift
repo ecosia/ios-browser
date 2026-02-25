@@ -50,6 +50,8 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFit
+        // Ecosia: Icons always render over glassmorphism wallpaper background
+        image.tintColor = .white
         return image
     }()
 

@@ -32,10 +32,15 @@ extension UIImage {
 ///
 /// **Technique (ADR 0003 — Option 2):**
 /// The full wallpaper is blurred once with Core Image and stored in a lightweight cache.
-/// The blurred image is sized to the full screen and its origin is offset by the *negative*
-/// of the view's position in window coordinates — the "counter-movement" trick — so the visible
-/// slice always corresponds to the wallpaper pixels directly behind the row.
-/// A KVO observer on the parent `UIScrollView` keeps the offset current while the user scrolls.
+/// The blurred image is sized to match `WallpaperBackgroundView` and its origin is offset
+/// by the *negative* of this view's position in the wallpaper's coordinate space —
+/// the "counter-movement" trick — so the visible slice always corresponds to the
+/// wallpaper pixels directly behind the row.
+///
+/// Coordinates are expressed relative to `WallpaperBackgroundView` (not the window) because
+/// `HomepageViewController` extends the wallpaper *above* the safe area by `safeAreaInsets.top`,
+/// so the wallpaper's coordinate origin does not coincide with the window origin.
+/// A KVO observer on the parent `UIScrollView` keeps the offset current while scrolling.
 @MainActor
 final class NTPImpactGlassBackgroundView: UIView {
 
@@ -69,8 +74,16 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     // MARK: - State
 
-    private var fullScreenSize: CGSize = .zero
     private var scrollViewObservation: NSKeyValueObservation?
+    // Ecosia: Cached reference to the wallpaper view for pixel-accurate coordinate alignment (ADR 0003)
+    private weak var cachedWallpaperView: WallpaperBackgroundView?
+
+    // MARK: - Public API
+
+    /// Per-device tuning offset applied on top of the computed counter-movement.
+    /// Positive values shift the blur down; negative values shift it up.
+    /// Useful for validating alignment across iPhone form factors.
+    var wallpaperYAdjustment: CGFloat = 0
 
     // MARK: - Init
 
@@ -94,14 +107,16 @@ final class NTPImpactGlassBackgroundView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         tintView.frame = bounds
-        syncImageToWindowCoordinates()
+        syncImageToWallpaperCoordinates()
     }
 
     override func didMoveToWindow() {
         super.didMoveToWindow()
         scrollViewObservation = nil
+        // Reset cached wallpaper view; it will be re-discovered after re-attachment
+        cachedWallpaperView = nil
         guard window != nil else { return }
-        syncImageToWindowCoordinates()
+        syncImageToWallpaperCoordinates()
         observeParentScrollView()
     }
 
@@ -121,7 +136,7 @@ final class NTPImpactGlassBackgroundView: UIView {
 
             // Check cache before running the expensive blur
             if let cached = await MainActor.run(body: { Self.blurCache.object(forKey: source) }) {
-                await MainActor.run { [weak self] in self?.apply(blurredImage: cached, source: source) }
+                await MainActor.run { [weak self] in self?.apply(blurredImage: cached) }
                 return
             }
 
@@ -129,27 +144,63 @@ final class NTPImpactGlassBackgroundView: UIView {
             await MainActor.run { [weak self] in
                 guard let blurred else { return }
                 Self.blurCache.setObject(blurred, forKey: source)
-                self?.apply(blurredImage: blurred, source: source)
+                self?.apply(blurredImage: blurred)
             }
         }
     }
 
     // MARK: - Private
 
-    private func apply(blurredImage: UIImage, source: UIImage) {
-        // Size the image to fill the screen; syncImageToWindowCoordinates adjusts the origin
-        fullScreenSize = UIScreen.main.bounds.size
+    private func apply(blurredImage: UIImage) {
         backgroundImageView.image = blurredImage
-        backgroundImageView.frame = CGRect(origin: .zero, size: fullScreenSize)
-        syncImageToWindowCoordinates()
+        syncImageToWallpaperCoordinates()
     }
 
     /// Shifts the inner image so the visible portion aligns with the wallpaper behind the row.
-    /// As the row moves down (originY increases), the image moves up by the same amount.
-    private func syncImageToWindowCoordinates() {
-        guard backgroundImageView.image != nil, let window else { return }
+    ///
+    /// Coordinates are expressed relative to `WallpaperBackgroundView` so that the blurred image
+    /// uses the same origin and size as the actual wallpaper — eliminating the `safeAreaInsets.top`
+    /// offset introduced by `HomepageViewController`'s wallpaper constraints (ADR 0003).
+    private func syncImageToWallpaperCoordinates() {
+        guard backgroundImageView.image != nil else { return }
+
+        // Lazily discover and cache the WallpaperBackgroundView
+        if cachedWallpaperView == nil {
+            cachedWallpaperView = findWallpaperView()
+        }
+
+        if let wallpaperView = cachedWallpaperView {
+            // Express this view's origin in the wallpaper's coordinate space
+            let origin = convert(CGPoint.zero, to: wallpaperView)
+            backgroundImageView.frame = CGRect(
+                origin: CGPoint(x: -origin.x, y: -origin.y + wallpaperYAdjustment),
+                size: wallpaperView.bounds.size
+            )
+            return
+        }
+
+        // Fallback: window coordinates (used when wallpaper view is not yet in the hierarchy)
+        guard let window else { return }
         let origin = convert(CGPoint.zero, to: window)
-        backgroundImageView.frame.origin = CGPoint(x: -origin.x, y: -origin.y)
+        backgroundImageView.frame.size = UIScreen.main.bounds.size
+        backgroundImageView.frame.origin = CGPoint(x: -origin.x, y: -origin.y + wallpaperYAdjustment)
+    }
+
+    /// Walks the view tree from the window root to find `WallpaperBackgroundView`.
+    /// Called at most once per window attachment (result is cached in `cachedWallpaperView`).
+    private func findWallpaperView() -> WallpaperBackgroundView? {
+        // Walk up to the root of the window hierarchy
+        var root: UIView = self
+        while let parent = root.superview { root = parent }
+        return findDescendant(ofType: WallpaperBackgroundView.self, in: root)
+    }
+
+    private func findDescendant<T: UIView>(ofType type: T.Type, in view: UIView) -> T? {
+        if let match = view as? T { return match }
+        for subview in view.subviews {
+            if let found = findDescendant(ofType: type, in: subview) { return found }
+        }
+        return nil
     }
 
     /// Adds a KVO observer on the nearest parent scroll view so the offset stays current
@@ -162,7 +213,7 @@ final class NTPImpactGlassBackgroundView: UIView {
                     \.contentOffset,
                     options: .new
                 ) { [weak self] _, _ in
-                    Task { @MainActor [weak self] in self?.syncImageToWindowCoordinates() }
+                    Task { @MainActor [weak self] in self?.syncImageToWallpaperCoordinates() }
                 }
                 return
             }
@@ -179,6 +230,7 @@ extension NTPImpactGlassBackgroundView: Notifiable {
         Task { @MainActor [weak self] in
             // Flush the shared cache so the new wallpaper gets blurred fresh
             Self.blurCache.removeAllObjects()
+            self?.cachedWallpaperView = nil
             self?.loadCurrentWallpaper()
         }
     }

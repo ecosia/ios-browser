@@ -81,16 +81,36 @@ A `UIView` subclass that:
 1. Loads the current wallpaper via `WallpaperManager().currentWallpaper` on a detached `Task`
 2. Blurs it with `UIImage.gaussianBlurred(radius: 24)` (Core Image extension)
 3. Caches the result by original-image pointer identity to avoid re-blurring the same wallpaper
-4. Sizes the inner `UIImageView` to the full screen and offsets it by `-windowOrigin` so the
-   visible slice matches the wallpaper beneath the row
+4. Walks the window's view tree to find `WallpaperBackgroundView`, caches it as a weak reference,
+   and sizes + offsets the inner `UIImageView` in the wallpaper's coordinate space (see below)
 5. Observes the parent `UIScrollView.contentOffset` via KVO to keep the offset in sync while scrolling
 6. Conforms to `Notifiable` and observes `.WallpaperDidChange` — on receipt it flushes the shared
-   blur cache and calls `loadCurrentWallpaper()` so the new wallpaper is immediately reflected
+   blur cache, clears the cached wallpaper view reference, and calls `loadCurrentWallpaper()`
+7. Exposes `wallpaperYAdjustment: CGFloat` for per-device fine-tuning of the vertical offset
+
+**Coordinate alignment — why `WallpaperBackgroundView` and not the window:**
+
+`HomepageViewController` constrains the wallpaper view *above* the view's top anchor by
+`safeAreaInsets.top` (the status-bar / Dynamic Island height ≈ 47–59 pt on modern iPhones):
 
 ```swift
-// Counter-movement: as the row moves down the screen (origin.y increases),
-// the inner image moves up by the same amount so the "window" stays aligned.
-imageView.frame.origin = CGPoint(x: -windowOrigin.x, y: -windowOrigin.y)
+wallpaperView.topAnchor.constraint(equalTo: view.topAnchor, constant: -wallpaperTopConstant)
+```
+
+This means the wallpaper's coordinate origin is at `y = -safeAreaInsets.top` in window space.
+Using window coordinates directly shifts the blurred image down by `safeAreaInsets.top` relative
+to the actual wallpaper — the visible misalignment reported as a ~32 px upward shift.
+
+The fix converts this view's origin into `WallpaperBackgroundView`'s coordinate space, then sizes
+the inner image to match `WallpaperBackgroundView.bounds.size` so aspect-fill scaling is identical:
+
+```swift
+// Counter-movement relative to WallpaperBackgroundView
+let origin = convert(CGPoint.zero, to: wallpaperView)
+backgroundImageView.frame = CGRect(
+    origin: CGPoint(x: -origin.x, y: -origin.y + wallpaperYAdjustment),
+    size: wallpaperView.bounds.size
+)
 ```
 
 #### `UIImage.gaussianBlurred(radius:)`
@@ -124,7 +144,14 @@ extension UIImage {
   for pixel-perfect accuracy; in practice the blur is soft enough that this is not visible.
 
 * **Wallpaper changes at runtime** — resolved. `NTPImpactGlassBackgroundView` now observes
-  `.WallpaperDidChange` via `Notifiable`, flushes the blur cache, and reloads immediately.
+  `.WallpaperDidChange` via `Notifiable`, flushes the blur cache, clears the cached wallpaper view
+  reference, and reloads immediately.
+
+* **`safeAreaInsets.top` coordinate mismatch** — resolved. The blurred image is now sized and
+  positioned relative to `WallpaperBackgroundView` (found via a one-time view-tree walk, then cached)
+  rather than the window, eliminating the ~32–59 pt vertical misalignment caused by the wallpaper
+  view being extended above the safe area. A `wallpaperYAdjustment: CGFloat` property is exposed for
+  per-device fine-tuning.
 
 * **No wallpaper** — when the user has selected a plain-colour background (`WallpaperManager`
   returns `nil` portrait image) the glass view is invisible/empty; the row falls back to a
