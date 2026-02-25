@@ -18,13 +18,16 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         static let horizontalSpacing: CGFloat = 8
         static let padding: CGFloat = 16
         static let imageHeight: CGFloat = 24
+        // Ecosia: Glassmorphism — matches Figma "Web/Glassmorphism/Glass, Blur 24px"
+        static let glassBorderAlpha: CGFloat = 0.25
+        static let glassBorderWidth: CGFloat = 0.5
     }
 
     // MARK: - UI Elements
 
-    // Ecosia: Frosted glass background — blurs the wallpaper behind each row
-    private lazy var blurEffectView: UIVisualEffectView = {
-        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
+    // Ecosia: Core Image 24px Gaussian blur glass background (see ADR 0003)
+    private let glassBackground: NTPImpactGlassBackgroundView = {
+        let view = NTPImpactGlassBackgroundView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -151,9 +154,9 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = .ecosia.borderRadius._l
-        // Ecosia: Clip subviews so the blur view respects the rounded corners
+        // Ecosia: clipsToBounds ensures glassBackground respects rounded corners
         clipsToBounds = true
-        addSubview(blurEffectView)
+        addSubview(glassBackground)
 
         mainContainerView.translatesAutoresizingMaskIntoConstraints = false
         mainContainerView.axis = .horizontal
@@ -182,10 +185,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private func setupConstraints() {
 
         NSLayoutConstraint.activate([
-            blurEffectView.topAnchor.constraint(equalTo: topAnchor),
-            blurEffectView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            blurEffectView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            blurEffectView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            glassBackground.topAnchor.constraint(equalTo: topAnchor),
+            glassBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
+            glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
+            glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
             mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
             mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
@@ -212,15 +215,16 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        // Ecosia: Frosted glass — keep the row transparent so the blur shows the wallpaper through.
-        // Use systemThinMaterial variants (not .extraLight/.dark): .extraLight is too opaque for
-        // coloured wallpapers and an extra contentView tint created redundant white overlay layers.
+        // Ecosia: Glassmorphism — exact 24px Gaussian blur via Core Image (ADR 0003).
+        // glassBackground handles the blur + dark tint; the white border gives the glass edge.
         backgroundColor = .clear
-        let blurStyle: UIBlurEffect.Style = theme.type == .light ? .systemThinMaterialLight : .systemThinMaterialDark
-        blurEffectView.effect = UIBlurEffect(style: blurStyle)
-        titleLabel.textColor = theme.colors.ecosia.textPrimary
-        subtitleLabel.textColor = theme.colors.ecosia.textSecondary
-        actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
+        layer.borderWidth = UX.glassBorderWidth
+        layer.borderColor = UIColor(white: 1, alpha: UX.glassBorderAlpha).cgColor
+        glassBackground.loadCurrentWallpaper()
+        // Ecosia: White text over glassmorphism wallpaper background
+        titleLabel.textColor = .white
+        subtitleLabel.textColor = .white
+        actionButton.setTitleColor(.white, for: .normal)
         dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         // Re-apply content so the row is populated when theme runs after being added to the hierarchy (e.g. referral row)
         imageView.image = info.image
