@@ -16,7 +16,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     private var bottomContentView: UIView
     private var currentSpotlight: SpotlightToast?
     private var currentStepIndex: Int = 0
-    private let theme: Theme
+    private var theme: Theme
     // TODO: Make dynamic when privacy tour is introduced (MOB-3905)
     private let analyticsLabel: Analytics.Label.Onboarding = .serpTour
 
@@ -80,6 +80,12 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     }
 
     // MARK: - Public Methods
+
+    /// Updates the theme for the coordinator and any currently displayed spotlight
+    func updateTheme(_ newTheme: Theme) {
+        theme = newTheme
+        currentSpotlight?.applyTheme(theme: newTheme)
+    }
 
     /// Manually trigger spotlight display (useful for testing or manual triggers)
     func showSpotlightIfNeeded() {

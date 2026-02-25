@@ -38,17 +38,18 @@ extension BrowserViewController {
             return
         }
 
-        // Don't recreate coordinator if a spotlight is currently showing
-        guard spotlightCoordinator?.isShowingSpotlight != true else {
-            return
-        }
-
-        // Recreate coordinator with new theme
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        spotlightCoordinator = ProductTourSpotlightCoordinator(
-            viewController: self,
-            bottomContentView: bottomContentStackView,
-            theme: theme
-        )
+
+        if let coordinator = spotlightCoordinator {
+            // Update theme on existing coordinator
+            coordinator.updateTheme(theme)
+        } else {
+            // Create coordinator if it doesn't exist yet
+            spotlightCoordinator = ProductTourSpotlightCoordinator(
+                viewController: self,
+                bottomContentView: bottomContentStackView,
+                theme: theme
+            )
+        }
     }
 }
