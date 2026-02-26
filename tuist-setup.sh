@@ -65,10 +65,13 @@ echo -e "${GREEN}✓ Dependencies installed${NC}\n"
 # Create Generated directories so Tuist glob validation passes on a clean clone.
 mkdir -p firefox-ios/Client/Generated/Metrics
 
-# Pre-generate Nimbus FML source files before Xcode build.
-# On CI, Xcode's build system may skip or race the pre-build script phase that
-# generates FxNimbus.swift/FxNimbusMessaging.swift, causing compilation failures.
-# Running it here guarantees the files exist before xcodebuild starts.
+# Pre-generate source files that Xcode build phases produce into Client/Generated/.
+# Tuist writes specific file references (not globs) into the .pbxproj when it generates
+# the project. If a file does not exist at `tuist generate` time, it is never added to
+# the project and is therefore never compiled — even if the corresponding build-phase
+# script creates it later. Pre-generating here ensures every file is present before
+# `tuist generate` runs, so the compiler sees the complete module on every clean build.
+
 echo -e "${BLUE}Pre-generating Nimbus FML source files...${NC}"
 (
     cd firefox-ios
@@ -78,6 +81,31 @@ echo -e "${BLUE}Pre-generating Nimbus FML source files...${NC}"
     bash bin/nimbus-fml.sh
 )
 echo -e "${GREEN}✓ Nimbus FML source files generated${NC}\n"
+
+echo -e "${BLUE}Pre-generating Glean metrics source files...${NC}"
+(
+    cd firefox-ios
+    SOURCE_ROOT="$(pwd)"
+    OUTPUT_DIR="${SOURCE_ROOT}/Client/Generated/Metrics/"
+
+    # Collect YAML inputs: the two static files plus everything in the xcfilelist,
+    # mirroring exactly what the Xcode "Glean SDK Generator Script" build phase passes.
+    YAML_FILES=(
+        "${SOURCE_ROOT}/Client/Glean/pings.yaml"
+        "${SOURCE_ROOT}/Client/Glean/tags.yaml"
+    )
+    while IFS= read -r line; do
+        [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
+        line="${line//\$(PROJECT_DIR)/${SOURCE_ROOT}}"
+        line="${line//\$(SRCROOT)/${SOURCE_ROOT}}"
+        YAML_FILES+=("$line")
+    done < "${SOURCE_ROOT}/Client/Glean/gleanProbes.xcfilelist"
+
+    SOURCE_ROOT="${SOURCE_ROOT}" \
+    PROJECT="Client" \
+    bash bin/sdk_generator.sh -g Glean -o "${OUTPUT_DIR}" "${YAML_FILES[@]}"
+)
+echo -e "${GREEN}✓ Glean metrics source files generated${NC}\n"
 
 # Generate project with Xcode's default SPM integration
 echo -e "${BLUE}Generating Xcode project...${NC}"
