@@ -134,8 +134,11 @@ final class StatisticsTests: XCTestCase {
 
         // Assert – projection from today should be ≥ live base
         let projection = await TreesProjection.shared.treesAt(Date())
-        XCTAssertGreaterThanOrEqual(projection, Int(liveBase),
-            "After fetching live data, projection should be ≥ the fetched base")
+        XCTAssertGreaterThanOrEqual(
+            projection,
+            Int(liveBase),
+            "After fetching live data, projection should be ≥ the fetched base"
+        )
     }
 }
 
