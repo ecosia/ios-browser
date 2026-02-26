@@ -139,7 +139,7 @@ jobs:
               echo "export TESTFLIGHT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
@@ -177,7 +177,7 @@ jobs:
     steps:
       - checkout
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
@@ -216,7 +216,7 @@ jobs:
               echo "export DEPLOYMENT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
@@ -292,7 +292,7 @@ jobs:
               echo "export DEPLOYMENT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
@@ -348,7 +348,7 @@ jobs:
               echo "export DEPLOYMENT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
