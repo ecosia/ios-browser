@@ -90,29 +90,29 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(trees, 247_000_000)
     }
 
-    // MARK: - Stale-defaults regression
+    // MARK: - Default-values regression
 
-    /// Documents the root cause of MOB-XXXX: the default treesPlanted base is from Nov 2020.
-    /// Without calling fetchAndUpdate(), the projection drifts ~6M below the live value by 2026.
-    /// This test pins the defaults and confirms the formula produces a stale-but-calculable count.
-    func testDefaultValuesProduceKnownStaleProjection() async {
+    /// Pins the default values to the Dec 2025 API snapshot so any accidental change breaks this test.
+    /// Without calling fetchAndUpdate(), the hardcoded defaults now project within ~3.5M of live (vs. ~6M gap with Nov 2020 base).
+    func testDefaultValuesProduceKnownProjection() async {
         let freshStats = Statistics()
         let base = await freshStats.treesPlanted
         let baseDate = await freshStats.treesPlantedLastUpdated
         let timePerTree = await freshStats.timePerTree
 
-        // Base values must still be the Nov 2020 defaults
-        XCTAssertEqual(base, 113_016_418, "Default treesPlanted baseline changed — update docs/fix")
-        XCTAssertEqual(baseDate, Date(timeIntervalSince1970: 1_604_671_200), "Default base date changed — update docs/fix")
+        // Base values must match the Dec 2025 API snapshot
+        XCTAssertEqual(base, 244_418_472, "Default treesPlanted baseline changed — update from live API and update docs/fix")
+        XCTAssertEqual(baseDate, Date(timeIntervalSince1970: 1_764_606_840), "Default base date changed — update docs/fix") // 2025-12-01T16:34:00Z
+        XCTAssertEqual(timePerTree, 2.2, "Default timePerTree changed — update from live API and update docs/fix")
 
-        // Projection for a fixed reference point (2026-02-26) should equal ~241.8M
-        let referenceDate = Date(timeIntervalSince1970: 1_740_614_400) // 2026-02-26 00:00 UTC
+        // Projection for a fixed reference point (2026-02-26 00:00 UTC = 1_772_064_000)
+        let referenceDate = Date(timeIntervalSince1970: 1_772_064_000) // 2026-02-26 00:00 UTC
         let elapsed = referenceDate.timeIntervalSince(baseDate)
         let projected = Int(elapsed / timePerTree + base - 1)
 
-        // Stale projection < live value: document the gap is ~6M
-        XCTAssertGreaterThan(projected, 240_000_000, "Projection from defaults should exceed 240M by 2026")
-        XCTAssertLessThan(projected, 245_000_000, "Projection from defaults should be below live ~247M")
+        // Projection from Dec 2025 defaults should be ~247.8M on 2026-02-26
+        XCTAssertGreaterThan(projected, 246_000_000, "Projection from defaults should exceed 246M by Feb 2026")
+        XCTAssertLessThan(projected, 250_000_000, "Projection from defaults should be below 250M by Feb 2026")
     }
 
     /// When fetchAndUpdate succeeds with live data, the subsequent projection matches the live count.
