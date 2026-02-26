@@ -53,7 +53,7 @@ class BrowserWebUIDelegate: NSObject, WKUIDelegate {
         _ webView: WKWebView,
         runJavaScriptConfirmPanelWithMessage message: String,
         initiatedByFrame frame: WKFrameInfo,
-        completionHandler: @escaping @MainActor (Bool) -> Void
+        completionHandler: @escaping @Sendable (Bool) -> Void
     ) {
         legacyResponder?.webView?(
             webView,
@@ -68,7 +68,7 @@ class BrowserWebUIDelegate: NSObject, WKUIDelegate {
         runJavaScriptTextInputPanelWithPrompt prompt: String,
         defaultText: String?,
         initiatedByFrame frame: WKFrameInfo,
-        completionHandler: @escaping @MainActor (String?) -> Void
+        completionHandler: @escaping @Sendable (String?) -> Void
     ) {
         legacyResponder?.webView?(
             webView,
@@ -86,7 +86,7 @@ class BrowserWebUIDelegate: NSObject, WKUIDelegate {
     func webView(
         _ webView: WKWebView,
         contextMenuConfigurationForElement elementInfo: WKContextMenuElementInfo,
-        completionHandler: @escaping @MainActor (UIContextMenuConfiguration?) -> Void
+        completionHandler: @escaping @Sendable (UIContextMenuConfiguration?) -> Void
     ) {
         legacyResponder?.webView?(
             webView,
@@ -104,7 +104,7 @@ class BrowserWebUIDelegate: NSObject, WKUIDelegate {
         requestMediaCapturePermissionFor origin: WKSecurityOrigin,
         initiatedByFrame frame: WKFrameInfo,
         type: WKMediaCaptureType,
-        decisionHandler: @escaping @MainActor (WKPermissionDecision) -> Void
+        decisionHandler: @escaping @Sendable (WKPermissionDecision) -> Void
     ) {
         legacyResponder?.webView?(
             webView,
