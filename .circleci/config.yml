@@ -35,7 +35,7 @@ environment_common: &environment_common
 
 macos_common: &macos_common
   macos:
-    xcode: "16.4"
+    xcode: "26.2"
   resource_class: m4pro.medium
 
 jobs:
