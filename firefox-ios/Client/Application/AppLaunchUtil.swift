@@ -99,7 +99,10 @@ final class AppLaunchUtil: Sendable {
         }
 
         // Save toolbar position to user prefs
+        /* Ecosia: Use Ecosia's search bar location saver
         SearchBarLocationSaver().saveUserSearchBarLocation(profile: profile)
+        */
+        EcosiaSearchBarLocationSaver().saveUserSearchBarLocation(profile: profile)
         let deviceName = UIDevice.current.name
 
         NotificationCenter.default.addObserver(
