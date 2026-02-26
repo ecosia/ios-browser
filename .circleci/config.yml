@@ -35,7 +35,7 @@ environment_common: &environment_common
 
 macos_common: &macos_common
   macos:
-    xcode: "16.4"
+    xcode: "26.2"
   resource_class: m4pro.medium
 
 jobs:
@@ -139,12 +139,12 @@ jobs:
               echo "export TESTFLIGHT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
           name: Bundle install
-          command: bundle check || bundle install --path vendor/bundle
+          command: bundle config set path 'vendor/bundle' && bundle check || bundle install
       - save_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
           paths:
@@ -177,12 +177,12 @@ jobs:
     steps:
       - checkout
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
           name: Bundle install
-          command: bundle check || bundle install --path vendor/bundle
+          command: bundle config set path 'vendor/bundle' && bundle check || bundle install
       - save_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
           paths:
@@ -216,12 +216,12 @@ jobs:
               echo "export DEPLOYMENT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
           name: Bundle install
-          command: bundle check || bundle install --path vendor/bundle
+          command: bundle config set path 'vendor/bundle' && bundle check || bundle install
       - save_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
           paths:
@@ -292,12 +292,12 @@ jobs:
               echo "export DEPLOYMENT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
           name: Bundle install
-          command: bundle check || bundle install --path vendor/bundle
+          command: bundle config set path 'vendor/bundle' && bundle check || bundle install
       - save_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
           paths:
@@ -348,12 +348,12 @@ jobs:
               echo "export DEPLOYMENT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
-          version: "3.2"
+          version: "3.4"
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
           name: Bundle install
-          command: bundle check || bundle install --path vendor/bundle
+          command: bundle config set path 'vendor/bundle' && bundle check || bundle install
       - save_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
           paths:
