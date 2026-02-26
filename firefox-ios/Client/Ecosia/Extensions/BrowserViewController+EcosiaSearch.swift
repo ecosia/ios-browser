@@ -9,6 +9,8 @@ import Ecosia
 // MARK: - Ecosia Search Handling Extension
 extension BrowserViewController {
 
+    // TODO: Generalise methods naming (ecosia filter is only inside them)
+
     /// Handles Ecosia search-related tracking
     /// - Parameters:
     ///   - url: The URL to check for Ecosia search verticals
@@ -40,12 +42,12 @@ extension BrowserViewController {
     /// Handles product tour completion when Ecosia search finishes loading
     /// - Parameter url: The URL that finished loading
     func handleEcosiaSearchCompletion(url: URL) {
-        guard url.isEcosiaSearchVertical() else {
-            return
-        }
-
         if OnboardingProductTourExperiment.isEnabled {
-            ProductTourManager.shared.completeFirstSearchIfNeeded()
+            if url.isEcosiaSearchVertical() {
+                ProductTourManager.shared.completeFirstSearchIfNeeded()
+            } else if url.isBrowser() && !url.isEcosia() {
+                ProductTourManager.shared.completeExternalWebsiteVisitIfNeeded()
+            }
         }
     }
 }

@@ -122,7 +122,7 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
 // MARK: - ProductTourObserver
 
 extension NTPFirstSearchViewModel: ProductTourObserver {
-    func productTourStateDidChange(_ state: ProductTourState) {
+    func productTour(didReceiveEvent event: ProductTourEvent) {
         dataModelDelegate?.reloadView()
     }
 }

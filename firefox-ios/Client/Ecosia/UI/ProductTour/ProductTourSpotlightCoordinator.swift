@@ -25,13 +25,13 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
         return currentSpotlight != nil
     }
 
-    // The spotlight steps to show when searchCompleted state is reached
+    // The spotlight steps to show when search is completed
     private lazy var spotlightSteps: [SpotlightToastViewModel] = {
         return [
             SpotlightToastViewModel(
                 image: UIImage(named: "spotlightCleanEnergy"),
-                titleText: .localized(.spotlightStep1Title),
-                descriptionText: .localized(.spotlightStep1Description),
+                titleText: .localized(.serpSpotlightStep1Title),
+                descriptionText: .localized(.serpSpotlightStep1Description),
                 currentStep: 1,
                 totalSteps: 2,
                 primaryButtonText: .localized(.next),
@@ -39,14 +39,27 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
             ),
             SpotlightToastViewModel(
                 image: UIImage(named: "spotlightPlanetProfits"),
-                titleText: .localized(.spotlightStep2Title),
-                descriptionText: .localized(.spotlightStep2Description),
+                titleText: .localized(.serpSpotlightStep2Title),
+                descriptionText: .localized(.serpSpotlightStep2Description),
                 currentStep: 2,
                 totalSteps: 2,
                 primaryButtonText: .localized(.gotIt),
                 secondaryButtonText: .localized(.goBack)
             )
         ]
+    }()
+
+    // The spotlight to show when the user visits an external website
+    private lazy var externalWebsiteSpotlight: SpotlightToastViewModel = {
+        SpotlightToastViewModel(
+            image: nil,
+            titleText: .localized(.protectionSpotlightTitle),
+            descriptionText: .localized(.protectionSpotlightDescription),
+            currentStep: 1,
+            totalSteps: 1,
+            primaryButtonText: .localized(.gotIt),
+            secondaryButtonText: .localized(.readMore) // TODO: Add right side icon
+        )
     }()
 
     // MARK: - Initialization
@@ -66,15 +79,16 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
     // MARK: - ProductTourObserver
 
-    func productTourStateDidChange(_ state: ProductTourState) {
-        switch state {
+    func productTour(didReceiveEvent event: ProductTourEvent) {
+        switch event {
         case .searchCompleted:
-            // Show the first spotlight when search is completed
             currentStepIndex = 0
-            showCurrentSpotlight()
+            showSearchSpotlight()
+        case .externalWebsiteVisited:
+            showExternalWebsiteSpotlight()
         case .tourCompleted:
             dismissCurrentSpotlight()
-        case .firstSearch:
+        case .tourStarted:
             dismissCurrentSpotlight()
         }
     }
@@ -89,25 +103,21 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
     /// Manually trigger spotlight display (useful for testing or manual triggers)
     func showSpotlightIfNeeded() {
-        let currentState = ProductTourManager.shared.currentState
-
-        if currentState == .searchCompleted {
+        if ProductTourManager.shared.shouldShowSearchSpotlight {
             currentStepIndex = 0
-            showCurrentSpotlight()
+            showSearchSpotlight()
+        } else if ProductTourManager.shared.shouldShowExternalWebsiteSpotlight {
+            showExternalWebsiteSpotlight()
         }
     }
 
     // MARK: - Private Methods
 
-    private func showCurrentSpotlight() {
-        guard currentStepIndex < spotlightSteps.count else {
-            return
-        }
+    private func showSearchSpotlight() {
+        guard currentStepIndex < spotlightSteps.count else { return }
 
         guard let viewController = viewController,
-              let bottomContentView = bottomContentView else {
-            return
-        }
+              let bottomContentView = bottomContentView else { return }
 
         let step = spotlightSteps[currentStepIndex]
 
@@ -124,12 +134,43 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
         // Set completion handler for when toast is dismissed by tapping outside
         spotlight.completionHandler = { [weak self] _ in
-            self?.completeTour()
+            self?.completeSearchMilestone()
         }
 
         currentSpotlight = spotlight
         spotlight.show(in: viewController, bottomAnchorView: bottomContentView)
         Analytics.shared.spotlightTourDisplay(label: analyticsLabel, step: step.currentStep)
+    }
+
+    private func showExternalWebsiteSpotlight() {
+        guard let viewController = viewController,
+              let bottomContentView = bottomContentView else { return }
+
+        // Dismiss any existing spotlight before showing the external website one
+        dismissCurrentSpotlight()
+
+        let step = externalWebsiteSpotlight
+
+        let spotlight = SpotlightToast(
+            viewModel: step,
+            theme: theme,
+            // TODO: Avoid duplication, e.g. re-use action methods
+            primaryAction: { [weak self] in
+                self?.dismissCurrentSpotlight()
+                self?.completeExternalWebsiteMilestone()
+            },
+            secondaryAction: {
+                // TODO: Open helpscout links
+                print("Read more tapped - open helpscout article")
+            }
+        )
+
+        spotlight.completionHandler = { [weak self] _ in
+            self?.completeExternalWebsiteMilestone()
+        }
+
+        currentSpotlight = spotlight
+        spotlight.show(in: viewController, bottomAnchorView: bottomContentView)
     }
 
     private func dismissCurrentSpotlight() {
@@ -151,7 +192,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
         } else {
             // All steps completed
             dismissCurrentSpotlight()
-            completeTour()
+            completeSearchMilestone()
             Analytics.shared.spotlightTourClick(label: analyticsLabel, action: .complete, step: currentStep.currentStep)
         }
     }
@@ -169,13 +210,18 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
         } else {
             // Skip the tour
             dismissCurrentSpotlight()
-            completeTour()
+            completeSearchMilestone()
             Analytics.shared.spotlightTourClick(label: analyticsLabel, action: .skip, step: currentStep.currentStep)
         }
     }
 
-    private func completeTour() {
+    private func completeSearchMilestone() {
         currentSpotlight = nil
-        ProductTourManager.shared.completeTour()
+        ProductTourManager.shared.completeSearchSpotlight()
+    }
+
+    private func completeExternalWebsiteMilestone() {
+        currentSpotlight = nil
+        ProductTourManager.shared.completeExternalWebsiteSpotlight()
     }
 }
