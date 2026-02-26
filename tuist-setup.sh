@@ -62,6 +62,10 @@ echo -e "${BLUE}Installing Swift package dependencies (force resolved versions).
 (cd firefox-ios && tuist install --force-resolved-versions)
 echo -e "${GREEN}✓ Dependencies installed${NC}\n"
 
+# Create Generated directories so Tuist glob validation passes on a clean clone.
+# The actual Swift files are produced by Nimbus FML and Glean build scripts at compile time.
+mkdir -p firefox-ios/Client/Generated/Metrics
+
 # Generate project with Xcode's default SPM integration
 echo -e "${BLUE}Generating Xcode project...${NC}"
 if [ "$OPEN_XCODE" = false ]; then
