@@ -63,8 +63,21 @@ echo -e "${BLUE}Installing Swift package dependencies (force resolved versions).
 echo -e "${GREEN}✓ Dependencies installed${NC}\n"
 
 # Create Generated directories so Tuist glob validation passes on a clean clone.
-# The actual Swift files are produced by Nimbus FML and Glean build scripts at compile time.
 mkdir -p firefox-ios/Client/Generated/Metrics
+
+# Pre-generate Nimbus FML source files before Xcode build.
+# On CI, Xcode's build system may skip or race the pre-build script phase that
+# generates FxNimbus.swift/FxNimbusMessaging.swift, causing compilation failures.
+# Running it here guarantees the files exist before xcodebuild starts.
+echo -e "${BLUE}Pre-generating Nimbus FML source files...${NC}"
+(
+    cd firefox-ios
+    SOURCE_ROOT="$(pwd)" \
+    PROJECT="Client" \
+    CONFIGURATION="Development_Firebase" \
+    bash bin/nimbus-fml.sh
+)
+echo -e "${GREEN}✓ Nimbus FML source files generated${NC}\n"
 
 # Generate project with Xcode's default SPM integration
 echo -e "${BLUE}Generating Xcode project...${NC}"
