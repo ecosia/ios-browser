@@ -198,10 +198,6 @@ final class EcosiaHomepageAdapter {
     func viewWillAppear() {
         impactViewModel?.subscribeToProjections()
         // News automatically subscribes on init
-        // Ecosia: Fetch latest statistics so the tree counter reflects live data from CloudFront
-        Task.detached {
-            try? await Statistics.shared.fetchAndUpdate()
-        }
     }
     
     func viewDidDisappear() {
