@@ -23,12 +23,7 @@ extension BrowserViewController {
             return
         }
 
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        spotlightCoordinator = ProductTourSpotlightCoordinator(
-            viewController: self,
-            bottomContentView: bottomContentStackView,
-            theme: theme
-        )
+        makeSpotlightCoordinator()
     }
 
     /// Updates the spotlight coordinator's theme when theme changes
@@ -38,18 +33,30 @@ extension BrowserViewController {
             return
         }
 
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-
         if let coordinator = spotlightCoordinator {
             // Update theme on existing coordinator
+            let theme = themeManager.getCurrentTheme(for: windowUUID)
             coordinator.updateTheme(theme)
         } else {
             // Create coordinator if it doesn't exist yet
-            spotlightCoordinator = ProductTourSpotlightCoordinator(
-                viewController: self,
-                bottomContentView: bottomContentStackView,
-                theme: theme
-            )
+            makeSpotlightCoordinator()
         }
+    }
+
+    // MARK: - Private Helpers
+
+    @discardableResult
+    private func makeSpotlightCoordinator() -> ProductTourSpotlightCoordinator {
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        let coordinator = ProductTourSpotlightCoordinator(
+            viewController: self,
+            bottomContentView: bottomContentStackView,
+            theme: theme
+        )
+        coordinator.openURL = { [weak self] url in
+            self?.openURLInNewTab(url)
+        }
+        spotlightCoordinator = coordinator
+        return coordinator
     }
 }

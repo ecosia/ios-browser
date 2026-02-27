@@ -147,14 +147,36 @@ public enum URLProvider {
         }
     }
 
+    public var support: URL {
+        switch Language.current {
+        case .de:
+            return URL(string: "https://de.support.ecosia.org/")!
+        case .fr:
+            return URL(string: "https://fr.support.ecosia.org/")!
+        default:
+            return URL(string: "https://support.ecosia.org/")!
+        }
+    }
+
     public var helpPage: URL {
         switch Language.current {
         case .de:
-            return URL(string: "https://de.support.ecosia.org/category/695-ecosia-ios-app")!
+            return support.appendingPathComponent("category/695-ecosia-ios-app")
         case .fr:
-            return URL(string: "https://fr.support.ecosia.org/category/805-ecosia-ios-app")!
+            return support.appendingPathComponent("category/805-ecosia-ios-app")
         default:
-            return URL(string: "https://support.ecosia.org/category/827-ecosia-ios-app")!
+            return support.appendingPathComponent("category/827-ecosia-ios-app")
+        }
+    }
+
+    public var trackingProtectionHelpPage: URL {
+        switch Language.current {
+        case .de:
+            return support.appendingPathComponent("article/1024-tracking-protection-mobile")
+        case .fr:
+            return support.appendingPathComponent("article/1025-tracking-protection")
+        default:
+            return support.appendingPathComponent("article/1023-tracking-protection")
         }
     }
 

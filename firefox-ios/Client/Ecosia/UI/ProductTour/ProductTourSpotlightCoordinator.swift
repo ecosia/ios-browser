@@ -7,6 +7,7 @@ import Foundation
 import UIKit
 import Ecosia
 
+// TODO: Add tests
 /// Coordinates the display of spotlight toasts during the product tour
 final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
@@ -19,6 +20,9 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     private var theme: Theme
     // TODO: Make dynamic when privacy tour is introduced (MOB-3905)
     private let analyticsLabel: Analytics.Label.Onboarding = .serpTour
+
+    /// Closure called when the coordinator needs to open a URL in a new tab
+    var openURL: ((URL) -> Void)?
 
     /// Whether a spotlight is currently being displayed
     var isShowingSpotlight: Bool {
@@ -159,9 +163,10 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
                 self?.dismissCurrentSpotlight()
                 self?.completeExternalWebsiteMilestone()
             },
-            secondaryAction: {
-                // TODO: Open helpscout links
-                print("Read more tapped - open helpscout article")
+            secondaryAction: { [weak self] in
+                self?.dismissCurrentSpotlight()
+                self?.completeExternalWebsiteMilestone()
+                self?.openURL?(EcosiaEnvironment.current.urlProvider.trackingProtectionHelpPage)
             }
         )
 
