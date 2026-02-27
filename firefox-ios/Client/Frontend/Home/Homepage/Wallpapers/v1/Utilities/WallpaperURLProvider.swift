@@ -45,12 +45,11 @@ struct WallpaperURLProvider {
     }
 
     private func imageURLWith(_ key: String, and fileName: String) throws -> URL {
-        // TEMPORARY HARDCODE: Use same base URL as metadata
-        // TODO: fetch from buildconfig
-        let baseURL = "https://cdn.ecosia.org/static/mobile-wallpapers"
-        guard let url = URL(string: "\(baseURL)/\(key)/\(fileName).jpg") else {
+        let scheme = try urlScheme()
+        guard let url = URL(string: "\(scheme)/ios/\(key)/\(fileName).jpg") else {
             throw URLProviderError.invalidURL
         }
+
         return url
     }
 
