@@ -111,7 +111,8 @@ extension Analytics {
             case
             welcome = "welcome_screen",
             firstSearchCard = "first_search_card",
-            serpTour = "serp_tour"
+            serpTour = "serp_tour",
+            privacyTour = "privacy_tour"
         }
 
         public enum Referral: String {
@@ -301,7 +302,8 @@ extension Analytics {
             skip,
             next,
             back,
-            complete
+            complete,
+            readMore = "read_more"
         }
     }
 }
