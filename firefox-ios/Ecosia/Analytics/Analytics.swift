@@ -272,6 +272,23 @@ open class Analytics {
         track(event)
     }
 
+    public func spotlightTourDisplay(label: Label.Onboarding, step: Int) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.display.rawValue)
+            .label(label.rawValue)
+            .value(NSNumber(value: step))
+        track(event)
+    }
+
+    public func spotlightTourClick(label: Label.Onboarding, action: Property.SpotlightTour, step: Int) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.click.rawValue)
+            .label(label.rawValue)
+            .property(action.rawValue)
+            .value(NSNumber(value: step))
+        track(event)
+    }
+
     // MARK: Push Notifications Consent
     func apnConsent(_ action: Action.APNConsent) {
         let event = Structured(category: Category.pushNotificationConsent.rawValue,
