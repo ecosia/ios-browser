@@ -135,6 +135,10 @@ class BrowserViewController: UIViewController,
 
     // Ecosia: Authentication manager for handling login/logout flows
     var ecosiaAuth: EcosiaAuth?
+
+    // Ecosia: Retain coordinator for spotlight product tours
+    var spotlightCoordinator: ProductTourSpotlightCoordinator?
+
     lazy var isTabTrayRefactorEnabled: Bool = TabTrayFlagManager.isRefactorEnabled
     var isToolbarRefactorEnabled: Bool {
         return featureFlags.isFeatureEnabled(.toolbarRefactor, checking: .buildOnly)
@@ -747,6 +751,9 @@ class BrowserViewController: UIViewController,
 
         // Ecosia: Register window for auth state management
         EcosiaAuthWindowRegistry.shared.registerWindow(windowUUID)
+
+        // Ecosia
+        setupProductTourSpotlightIfNeeded()
 
         KeyboardHelper.defaultHelper.addDelegate(self)
         trackTelemetry()
@@ -3085,6 +3092,9 @@ class BrowserViewController: UIViewController,
 
         // Ecosia: Update URLBar following PrivateModeUI
         updateURLBarFollowingPrivateModeUI()
+
+        // Ecosia
+        updateSpotlightThemeIfNeeded()
     }
 
     var isPreferSwitchToOpenTabOverDuplicateFeatureEnabled: Bool {
