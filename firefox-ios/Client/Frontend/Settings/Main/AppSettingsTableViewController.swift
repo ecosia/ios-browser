@@ -323,6 +323,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
     override func generateSettings() -> [SettingSection] {
         setupDataSettings()
+        /* Ecosia: Replace Firefox settings with Ecosia-specific sections
         var settings = [SettingSection]()
         settings += getDefaultBrowserSetting()
         settings += getAccountSetting()
@@ -336,6 +337,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
 
         return settings
+        */
+        return getEcosiaSettingsSectionsShowingDebug(showDebugSettings)
     }
 
     private func getDefaultBrowserSetting() -> [SettingSection] {

@@ -716,6 +716,80 @@ final class DebugAddCustomSeeds: HiddenSetting {
     }
 }
 
+// MARK: - NTP Section Visibility Debug Settings (MOB-4150)
+
+final class ToggleNTPLibraryShortcuts: HiddenSetting {
+    /// UserDefaults key — defaults to false (library shortcuts hidden)
+    nonisolated public static let debugKey = "NTPShowLibraryShortcuts"
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Show NTP Library Shortcuts", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "Visible" : "Hidden (default)"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        UserDefaults.standard.set(!Self.isEnabled, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+
+    public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+final class ToggleNTPReferralRow: HiddenSetting {
+    /// UserDefaults key — defaults to false (referral row hidden)
+    nonisolated public static let debugKey = "NTPShowReferralRow"
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Show NTP Referral Row", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "Visible" : "Hidden (default)"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        UserDefaults.standard.set(!Self.isEnabled, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+
+    public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+final class ToggleNTPNewsSection: HiddenSetting {
+    /// UserDefaults key — defaults to false (news section hidden)
+    nonisolated public static let debugKey = "NTPShowNewsSection"
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Show NTP News Section", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "Visible" : "Hidden (default)"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        UserDefaults.standard.set(!Self.isEnabled, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+
+    public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
 // MARK: - Statistics Refresh
 
 @MainActor
@@ -741,6 +815,7 @@ final class RefreshStatisticsSetting: HiddenSetting {
         )
 
         confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
         confirmAlert.addAction(UIAlertAction(title: "Refresh", style: .default) { [weak self] _ in
             self?.performFetch(navigationController: navigationController)
         })

@@ -21,6 +21,8 @@ protocol NTPImpactCellDelegate: AnyObject {
 
     var infoItemSections: [[ClimateImpactInfo]] {
         let firstSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
+        // Ecosia: Hide referral section by default (MOB-4150); re-enable via debug menu
+        guard ToggleNTPReferralRow.isEnabled else { return [firstSection] }
         let secondSection: [ClimateImpactInfo] = [referralInfo]
         return [firstSection, secondSection]
     }
