@@ -17,13 +17,34 @@ struct SpotlightToastViewModel {
     let totalSteps: Int
     let primaryButtonText: String
     let secondaryButtonText: String?
+    /// Optional trailing icon displayed to the right of the secondary button text.
+    let secondaryButtonIcon: UIImage?
+
+    init(
+        image: UIImage?,
+        titleText: String,
+        descriptionText: String,
+        currentStep: Int,
+        totalSteps: Int,
+        primaryButtonText: String,
+        secondaryButtonText: String?,
+        secondaryButtonIcon: UIImage? = nil
+    ) {
+        self.image = image
+        self.titleText = titleText
+        self.descriptionText = descriptionText
+        self.currentStep = currentStep
+        self.totalSteps = totalSteps
+        self.primaryButtonText = primaryButtonText
+        self.secondaryButtonText = secondaryButtonText
+        self.secondaryButtonIcon = secondaryButtonIcon
+    }
 }
 
 // MARK: - SpotlightToast
 
 class SpotlightToast: Toast, UIGestureRecognizerDelegate {
     struct UX {
-        static let containerHeight: CGFloat = 368
         static let cornerRadius: CGFloat = 10
         static let contentPadding: CGFloat = 16
         static let verticalSpacing: CGFloat = 16
@@ -39,6 +60,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         static let buttonCornerRadius: CGFloat = 20
         static let buttonHorizontalPadding: CGFloat = 15
         static let buttonInternalSpacing: CGFloat = 16
+        static let secondaryButtonIconPadding: CGFloat = 4
+        static let secondaryButtonIconSize: CGFloat = 16
 
         static let showAnimationDelay: TimeInterval = 0.5
         static let transitionAnimationDuration: TimeInterval = 0.5
@@ -50,6 +73,15 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
     private var viewModel: SpotlightToastViewModel
     private var primaryButtonAction: (() -> Void)?
     private var secondaryButtonAction: (() -> Void)?
+
+    // Reusable constraints for optional views
+    private lazy var imageHeightConstraint: NSLayoutConstraint = {
+        spotlightImageView.heightAnchor.constraint(equalToConstant: UX.imageHeight)
+    }()
+
+    private lazy var secondaryButtonHeightConstraint: NSLayoutConstraint = {
+        secondaryButton.heightAnchor.constraint(equalToConstant: UX.buttonHeight)
+    }()
 
     // MARK: - UI Components
 
@@ -97,7 +129,7 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         stackView.axis = .horizontal
         stackView.spacing = UX.buttonSpacing
         stackView.alignment = .center
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fill
     }
 
     private lazy var stepCounterLabel: UILabel = .build { label in
@@ -124,6 +156,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
             bottom: 0,
             trailing: UX.buttonHorizontalPadding
         )
+        config.imagePlacement = .trailing
+        config.imagePadding = UX.secondaryButtonIconPadding
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = DefaultDynamicFontHelper.preferredFont(
@@ -194,26 +228,16 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         gestureRecognizer.delegate = self
 
         // Build view hierarchy
-        if viewModel.image != nil {
-            containerStackView.addArrangedSubview(spotlightImageView)
-            NSLayoutConstraint.activate([
-                spotlightImageView.heightAnchor.constraint(equalToConstant: UX.imageHeight)
-            ])
-        }
+        configureImageView(for: viewModel)
         containerStackView.addArrangedSubview(titleLabel)
         containerStackView.addArrangedSubview(descriptionLabel)
         containerStackView.addArrangedSubview(bottomRowStackView)
         bottomRowStackView.addArrangedSubview(stepCounterLabel)
+        bottomRowStackView.addArrangedSubview(UIView()) // Flexible spacer to right-align buttons
         bottomRowStackView.addArrangedSubview(buttonStackView)
 
         // Add buttons to button stack view
-        if viewModel.secondaryButtonText != nil {
-            secondaryButton.addTarget(self, action: #selector(secondaryButtonTapped), for: .touchUpInside)
-            buttonStackView.addArrangedSubview(secondaryButton)
-            NSLayoutConstraint.activate([
-                secondaryButton.heightAnchor.constraint(equalToConstant: UX.buttonHeight)
-            ])
-        }
+        configureSecondaryButton(for: viewModel)
         primaryButton.addTarget(self, action: #selector(primaryButtonTapped), for: .touchUpInside)
         buttonStackView.addArrangedSubview(primaryButton)
 
@@ -228,23 +252,81 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
             toastView.topAnchor.constraint(equalTo: topAnchor),
             toastView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            heightAnchor.constraint(equalToConstant: UX.containerHeight + Toast.UX.toastOffset),
-
             primaryButton.heightAnchor.constraint(equalToConstant: UX.buttonHeight)
         ])
+    }
+
+    /// Adds or removes the image view from the container stack based on the view model
+    private func configureImageView(for viewModel: SpotlightToastViewModel) {
+        if viewModel.image != nil {
+            if spotlightImageView.superview == nil {
+                containerStackView.insertArrangedSubview(spotlightImageView, at: 0)
+                imageHeightConstraint.isActive = true
+            }
+        } else {
+            if spotlightImageView.superview != nil {
+                containerStackView.removeArrangedSubview(spotlightImageView)
+                spotlightImageView.removeFromSuperview()
+                imageHeightConstraint.isActive = false
+            }
+        }
+    }
+
+    /// Adds or removes the secondary button from the button stack based on the view model
+    private func configureSecondaryButton(for viewModel: SpotlightToastViewModel) {
+        if viewModel.secondaryButtonText != nil {
+            if secondaryButton.superview == nil {
+                secondaryButton.addTarget(self, action: #selector(secondaryButtonTapped), for: .touchUpInside)
+                buttonStackView.insertArrangedSubview(secondaryButton, at: 0)
+                secondaryButtonHeightConstraint.isActive = true
+            }
+        } else {
+            if secondaryButton.superview != nil {
+                secondaryButton.removeTarget(self, action: #selector(secondaryButtonTapped), for: .touchUpInside)
+                buttonStackView.removeArrangedSubview(secondaryButton)
+                secondaryButton.removeFromSuperview()
+                secondaryButtonHeightConstraint.isActive = false
+            }
+        }
+    }
+
+    /// Configures the secondary button's trailing icon based on the view model
+    private func configureSecondaryButtonIcon(for viewModel: SpotlightToastViewModel) {
+        guard var config = secondaryButton.configuration else { return }
+        if let icon = viewModel.secondaryButtonIcon {
+            let size = CGSize(width: UX.secondaryButtonIconSize, height: UX.secondaryButtonIconSize)
+            let renderer = UIGraphicsImageRenderer(size: size)
+            let resizedIcon = renderer.image { _ in
+                icon.draw(in: CGRect(origin: .zero, size: size))
+            }
+            config.image = resizedIcon.withRenderingMode(.alwaysTemplate)
+        } else {
+            config.image = nil
+        }
+        secondaryButton.configuration = config
     }
 
     private func configureContent() {
         spotlightImageView.image = viewModel.image
         titleLabel.text = viewModel.titleText
         descriptionLabel.text = viewModel.descriptionText
-        stepCounterLabel.text = "\(viewModel.currentStep) / \(viewModel.totalSteps)"
+
+        if viewModel.totalSteps > 1 {
+            stepCounterLabel.text = "\(viewModel.currentStep) / \(viewModel.totalSteps)"
+            stepCounterLabel.isHidden = false
+        } else {
+            stepCounterLabel.text = nil
+            stepCounterLabel.isHidden = true
+        }
 
         // Update button text
         primaryButton.setTitle(viewModel.primaryButtonText, for: .normal)
         if let secondaryButtonText = viewModel.secondaryButtonText {
             secondaryButton.setTitle(secondaryButtonText, for: .normal)
         }
+
+        // Update secondary button icon
+        configureSecondaryButtonIcon(for: viewModel)
     }
 
     // MARK: - Theme
@@ -255,10 +337,14 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         titleLabel.textColor = theme.colors.ecosia.textPrimary
         descriptionLabel.textColor = theme.colors.ecosia.textPrimary
         stepCounterLabel.textColor = theme.colors.ecosia.textPrimary
-        var secondaryConfig = secondaryButton.configuration
-        secondaryConfig?.baseForegroundColor = theme.colors.ecosia.textPrimary
-        secondaryConfig?.baseBackgroundColor = .clear
-        secondaryButton.configuration = secondaryConfig
+
+        if secondaryButton.superview != nil {
+            var secondaryConfig = secondaryButton.configuration
+            secondaryConfig?.baseForegroundColor = theme.colors.ecosia.buttonContentSecondary
+            secondaryConfig?.baseBackgroundColor = .clear
+            secondaryButton.configuration = secondaryConfig
+        }
+
         var primaryConfig = primaryButton.configuration
         primaryConfig?.baseForegroundColor = theme.colors.ecosia.textPrimary
         primaryConfig?.baseBackgroundColor = .clear
@@ -329,6 +415,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         guard let snapshot = containerStackView.snapshotView(afterScreenUpdates: false) else {
             // Fallback: just update content if snapshot fails
             self.viewModel = newViewModel
+            configureImageView(for: newViewModel)
+            configureSecondaryButton(for: newViewModel)
             configureContent()
             completion?()
             return
@@ -347,8 +435,10 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         snapshot.transform = containerStackView.transform
         toastView.addSubview(snapshot)
 
-        // Update content and position off-screen
+        // Update content and reconfigure optional views
         self.viewModel = newViewModel
+        configureImageView(for: newViewModel)
+        configureSecondaryButton(for: newViewModel)
         configureContent()
         containerStackView.transform = CGAffineTransform(translationX: entryOffset, y: 0)
         containerStackView.alpha = 1.0

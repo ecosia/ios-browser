@@ -606,8 +606,8 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
 
-            // Ecosia: Handle search tracking
-            previousUrl = handleEcosiaSearchTracking(
+            // Ecosia: Handle navigation tracking
+            previousUrl = ecosiaHandleNavigationAction(
                 url: url,
                 navigationAction: navigationAction,
                 previousUrl: previousUrl
@@ -928,9 +928,9 @@ extension BrowserViewController: WKNavigationDelegate {
         if let tab = tabManager[webView],
            let metadataManager = tab.metadataManager {
 
-            // Ecosia: Handle search completion after URL finishes loading
+            // Ecosia: Handle navigation completion after URL finishes loading
             if let url = webView.url {
-                handleEcosiaSearchCompletion(url: url)
+                ecosiaHandlePageLoadCompletion(url: url)
             }
 
             navigateInTab(tab: tab, to: navigation, webViewStatus: .finishedNavigation)

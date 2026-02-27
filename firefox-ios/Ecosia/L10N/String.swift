@@ -89,6 +89,7 @@ extension String {
         case privateTab = "Private"
         case privateEmpty = "Ecosia won’t remember the pages you visited, your search history or your autofill information once you close a tab. Your searches still contribute to trees."
         case relevantResults = "Relevant results based on past searches"
+        case readMore = "Read More"
         case referrals = "%d referral(s)"
         case referralAccepted = "A friend accepted your invitation and each of you will help plant 1 tree!"
         case referralsAccepted = "%@ friends accepted your invitation and each of you will help plant %@ trees!"
@@ -290,9 +291,11 @@ extension String {
         case signOutButtonAccessibilityHint = "Sign out of your account"
 
         // MARK: - Product Tour Spotlight
-        case spotlightStep1Title = "You browse with 100% clean energy"
-        case spotlightStep1Description = "You're helping push dirty energy off the grid! We produce more solar and wind energy than your searches take."
-        case spotlightStep2Title = "We use profits for the planet"
-        case spotlightStep2Description = "Unlike any other search engines, we use 100% of the profits that we make from ads for climate action!"
+        case serpSpotlightStep1Title = "You browse with 100% clean energy"
+        case serpSpotlightStep1Description = "You're helping push dirty energy off the grid! We produce more solar and wind energy than your searches take."
+        case serpSpotlightStep2Title = "We use profits for the planet"
+        case serpSpotlightStep2Description = "Unlike any other search engines, we use 100% of the profits that we make from ads for climate action!"
+        case protectionSpotlightTitle = "We protect your data like the climate"
+        case protectionSpotlightDescription = "We block unnecessary trackers so you can browse privately, without worries about privacy."
     }
 }

@@ -14,7 +14,8 @@ extension BrowserViewController {
     /// Sets up the product tour spotlight coordinator
     /// Call this in viewDidLoad or similar lifecycle method
     func setupProductTourSpotlightIfNeeded() {
-        guard OnboardingProductTourExperiment.isEnabled else {
+        guard OnboardingProductTourExperiment.isEnabled,
+              ProductTourManager.shared.isInProductTour else {
             return
         }
 
@@ -23,33 +24,41 @@ extension BrowserViewController {
             return
         }
 
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        spotlightCoordinator = ProductTourSpotlightCoordinator(
-            viewController: self,
-            bottomContentView: bottomContentStackView,
-            theme: theme
-        )
+        makeSpotlightCoordinator()
     }
 
     /// Updates the spotlight coordinator's theme when theme changes
     /// Call this when theme changes (e.g., dark mode toggle)
     func updateSpotlightThemeIfNeeded() {
-        guard OnboardingProductTourExperiment.isEnabled else {
+        guard OnboardingProductTourExperiment.isEnabled,
+              ProductTourManager.shared.isInProductTour else {
             return
         }
 
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-
         if let coordinator = spotlightCoordinator {
             // Update theme on existing coordinator
+            let theme = themeManager.getCurrentTheme(for: windowUUID)
             coordinator.updateTheme(theme)
         } else {
             // Create coordinator if it doesn't exist yet
-            spotlightCoordinator = ProductTourSpotlightCoordinator(
-                viewController: self,
-                bottomContentView: bottomContentStackView,
-                theme: theme
-            )
+            makeSpotlightCoordinator()
         }
+    }
+
+    // MARK: - Private Helpers
+
+    @discardableResult
+    private func makeSpotlightCoordinator() -> ProductTourSpotlightCoordinator {
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        let coordinator = ProductTourSpotlightCoordinator(
+            viewController: self,
+            bottomContentView: bottomContentStackView,
+            theme: theme
+        )
+        coordinator.openURL = { [weak self] url in
+            self?.openURLInNewTab(url)
+        }
+        spotlightCoordinator = coordinator
+        return coordinator
     }
 }
