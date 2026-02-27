@@ -753,7 +753,7 @@ class BrowserViewController: UIViewController,
         EcosiaAuthWindowRegistry.shared.registerWindow(windowUUID)
 
         // Ecosia
-        setupProductTourSpotlight()
+        setupProductTourSpotlightIfNeeded()
 
         KeyboardHelper.defaultHelper.addDelegate(self)
         trackTelemetry()
@@ -3094,7 +3094,7 @@ class BrowserViewController: UIViewController,
         updateURLBarFollowingPrivateModeUI()
 
         // Ecosia
-        updateSpotlightTheme()
+        updateSpotlightThemeIfNeeded()
     }
 
     var isPreferSwitchToOpenTabOverDuplicateFeatureEnabled: Bool {
