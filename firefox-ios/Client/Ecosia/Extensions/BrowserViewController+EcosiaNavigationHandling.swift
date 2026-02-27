@@ -6,18 +6,16 @@ import Foundation
 import WebKit
 import Ecosia
 
-// MARK: - Ecosia Search Handling Extension
+// MARK: - Ecosia Web View Event Handling
 extension BrowserViewController {
 
-    // TODO: Generalise methods naming (ecosia filter is only inside them)
-
-    /// Handles Ecosia search-related tracking
+    /// Handles any Ecosia-specific tracking when a navigation action is allowed.
     /// - Parameters:
-    ///   - url: The URL to check for Ecosia search verticals
+    ///   - url: The URL being navigated to
     ///   - navigationAction: The navigation action that triggered this check
     ///   - previousUrl: The previously loaded URL for comparison
     /// - Returns: The URL to set as the new previousUrl
-    func handleEcosiaSearchTracking(
+    func ecosiaHandleNavigationAction(
         url: URL,
         navigationAction: WKNavigationAction,
         previousUrl: URL?
@@ -39,9 +37,9 @@ extension BrowserViewController {
         return url
     }
 
-    /// Handles product tour completion when Ecosia search finishes loading
+    /// Handles any tasks that should run after a page finishes loading.
     /// - Parameter url: The URL that finished loading
-    func handleEcosiaSearchCompletion(url: URL) {
+    func ecosiaHandlePageLoadCompletion(url: URL) {
         if OnboardingProductTourExperiment.isEnabled {
             if url.isEcosiaSearchVertical() {
                 ProductTourManager.shared.completeFirstSearchIfNeeded()
