@@ -181,6 +181,7 @@ extension AppSettingsTableViewController {
             ResetDefaultBrowserNudgeCard(settings: self),
             AnalyticsIdentifierSetting(settings: self),
             EcosiaForceWallpaperRefresh(settings: self),
+            RefreshStatisticsSetting(settings: self),
         ]
 
         if EcosiaEnvironment.current == .staging {

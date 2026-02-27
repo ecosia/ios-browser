@@ -8,6 +8,7 @@ import UIKit
 import Common
 import Glean
 import TabDataStore
+import Ecosia
 
 import class MozillaAppServices.Viaduct
 
@@ -158,6 +159,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         }
 
         metricKitWrapper.beginObservingMXPayloads()
+
+        // Ecosia: fetching statistics before they are used
+        Task.detached {
+            try? await Statistics.shared.fetchAndUpdate()
+        }
 
         let topSitesProvider = TopSitesProviderImplementation(
             placesFetcher: profile.places,

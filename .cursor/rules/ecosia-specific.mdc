@@ -1,0 +1,63 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Ecosia-Specific Guidelines
+
+## Code Customization
+
+- Use "Ecosia:" comments to mark Ecosia customizations in Firefox code
+- Use `//` for new code introductions (e.g. new properties, new methods, new types)
+- Use `/* */` for commenting out existing Firefox code
+- **Swapping with Ecosia**: When replacing Firefox behaviour with Ecosia behaviour, always:
+  1. Comment out the original Firefox code in a block comment that starts with `/* Ecosia: <reason>` (e.g. `/* Ecosia: Swap Firefox onboarding with Ecosia Welcome`)
+  2. Keep the commented-out Firefox code visible inside that block
+  3. Add the Ecosia replacement code immediately after the closing `*/`
+- **Ecosia additions in shared declarations**: When adding an Ecosia-specific item to a list that ends with Firefox code (e.g. protocol conformances), comment out the original closing with `/* Ecosia: <reason>` and add the Ecosia item after:
+  1. Block comment: `/* Ecosia: Add <Item>` then the original last line (e.g. `OnboardingServiceDelegate {`) then `*/`
+  2. Replacement: repeat the last Firefox line with a trailing comma, then add the Ecosia line with the closing. Example:
+  ```
+  /* Ecosia: Add WelcomeDelegate
+  OnboardingServiceDelegate {
+   */
+  OnboardingServiceDelegate,
+  WelcomeDelegate {
+  ```
+- Maintain separation between Firefox base and Ecosia customizations
+- Follow the Framework approach for Ecosia-specific code
+
+## Analytics Implementation
+
+- **ALL** analytics instrumentation must be implemented at the UI/ViewModel layer
+- Use `Analytics.shared` (never reassign the shared instance)
+- Follow established event patterns in `Analytics.Values.swift`
+- Track user actions, not internal system events
+- Example: `Analytics.shared.activity(.homePageViewed)`
+- Implement proper feature flagging for A/B testing
+- Handle market-specific configurations via `markets.json`
+
+## Testing Requirements
+
+- **MANDATORY**: Include tests when writing new code or implementing features
+- Use Given/When/Then structure with minimal, relevant comments only
+- For protocol default implementations: verify actual dependencies are called, not mock call counts
+- Create testable implementations with injectable dependencies
+- Snapshot tests: Use `SnapshotBaseTests` base class with proper theme setup
+- Unit tests: Place in `EcosiaTests/` with clear file organization
+- Write unit tests using XCTest for business logic
+- Implement UI tests using XCUITest for critical user flows
+- Test all accessibility features and edge cases
+- Use mocks and dependency injection for testable code
+- Test performance scenarios and memory usage
+- Follow TDD principles where appropriate
+
+## Security
+
+- Encrypt sensitive data using Keychain Services
+- Use secure communication (Certificate pinning where needed)
+- Implement biometric authentication for sensitive operations
+- Follow App Transport Security requirements
+- Validate and sanitize all user inputs
+- Handle sensitive data appropriately (passwords, personal info)
+- Follow Mozilla's security guidelines
