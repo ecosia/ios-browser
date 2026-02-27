@@ -1,0 +1,30 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Git Standards
+
+## Commit and Push Requirements
+
+- **CRITICAL**: Always await user confirmation before pushing or making commits
+- Once confirmation is granted, follow the established rules
+- Split file changes into separate, logical commits
+- Commit messages: Auto-prefixed with ticket numbers (don't add manually)
+- Ensure git committer and author always match date and time
+- Maintain clean commit history - avoid numerous small commits that clutter the log
+- Skip .gitignore changes by default unless specifically requested
+
+## Branch Management
+
+- Production code is on the main branch
+- New features are implemented by branching off main
+- Use descriptive branch names that reflect the feature or fix
+- Keep branches focused on single features or bug fixes
+
+## Code Review Process
+
+- All changes require review before merging
+- Address feedback promptly and thoroughly
+- Ensure CI/CD checks pass before requesting review
+- Test changes locally before pushing

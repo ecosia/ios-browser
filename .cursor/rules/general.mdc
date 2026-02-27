@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# General rule
+
+Do not create summary files or next steps in markdown or any other text file. Provide summary and next steps as part of the chat.
