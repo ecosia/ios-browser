@@ -129,7 +129,7 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         stackView.axis = .horizontal
         stackView.spacing = UX.buttonSpacing
         stackView.alignment = .center
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fill
     }
 
     private lazy var stepCounterLabel: UILabel = .build { label in
@@ -233,6 +233,7 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         containerStackView.addArrangedSubview(descriptionLabel)
         containerStackView.addArrangedSubview(bottomRowStackView)
         bottomRowStackView.addArrangedSubview(stepCounterLabel)
+        bottomRowStackView.addArrangedSubview(UIView()) // Flexible spacer to right-align buttons
         bottomRowStackView.addArrangedSubview(buttonStackView)
 
         // Add buttons to button stack view
