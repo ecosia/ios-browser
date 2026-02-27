@@ -129,4 +129,3 @@ final class WebServer: WebServerProtocol, @unchecked Sendable {
         return WebServer.sharedInstance.URLForResource("page", module: "reader-mode")
     }
 }
-

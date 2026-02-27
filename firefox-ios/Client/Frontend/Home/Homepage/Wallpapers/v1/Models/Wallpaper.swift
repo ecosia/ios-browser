@@ -182,7 +182,7 @@ extension Wallpaper: Decodable {
 
         textColor = getColorFrom(textHexString)
         cardColor = getColorFrom(cardHexString)
-        logoTextColor = getColorFrom(logoHexString)        
+        logoTextColor = getColorFrom(logoHexString)
     }
 }
 
@@ -222,4 +222,3 @@ extension Wallpaper: Encodable {
         return string
     }
 }
-
