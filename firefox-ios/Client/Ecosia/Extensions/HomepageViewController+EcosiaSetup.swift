@@ -67,7 +67,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             theme: themeManager.getCurrentTheme(for: windowUUID),
             auth: auth
         )
-        
+
         // Set delegates
         adapter.updateDelegates(
             header: browserViewController,
@@ -76,7 +76,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             news: browserViewController,
             customization: browserViewController
         )
-        
+
         // Store adapter
         setEcosiaAdapter(adapter)
 
@@ -102,7 +102,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
         dataSource?.ecosiaAdapter = adapter
     }
-    
+
     /// Ecosia: Called when view will appear to refresh Ecosia data
     func ecosiaViewWillAppear() {
         ecosiaAdapter?.viewWillAppear()
@@ -111,12 +111,12 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             size: view.bounds.size
         )
     }
-    
+
     /// Ecosia: Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
         ecosiaAdapter?.viewDidDisappear()
     }
-    
+
     /// Ecosia: Updates theme for Ecosia sections
     func updateEcosiaTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
@@ -142,7 +142,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // Invalidate layout so self-sizing (e.g. news tiles) recalculates and avoids excess empty space
         homepageCollectionView?.collectionViewLayout.invalidateLayout()
     }
-    
+
     /// Ecosia: Returns wallpaper state with Ecosia NTP background
     func getEcosiaNTPWallpaperState() -> WallpaperState? {
         guard let adapter = ecosiaAdapter else {
