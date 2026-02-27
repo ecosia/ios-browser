@@ -23,6 +23,7 @@
 "Personalized results" = "Personalized results";
 "Plant trees while you browse the web" = "Plant trees while you browse the web";
 "Privacy" = "Privacy";
+"Read More" = "Read More";
 "Relevant results based on past searches" = "Relevant results based on past searches";
 "Safe search" = "Safe search";
 "Search" = "Search";
@@ -30,6 +31,7 @@
 "Search region" = "Search region";
 "Send feedback" = "Send feedback";
 "Shown under the search field" = "Shown under the search field";
+"Sign in" = "Sign in";
 "Start using these green companies to plant more trees and become more sustainable" = "Start using these green companies to plant more trees and become more sustainable";
 "Ecosia news" = "Ecosia news";
 "Strict" = "Strict";
@@ -300,3 +302,18 @@
 "Level: %@" = "Level: %@";
 "Opens your profile page" = "Opens your profile page";
 "Sign out of your account" = "Sign out of your account";
+
+// Product Tour
+"Go back" = "Go back";
+"Welcome to" = "Welcome to";
+"Real change\nat your fingertips" = "Real change\nat your fingertips";
+"Join 20 million people making a difference every day" = "Join 20 million people making a difference every day";
+"Next" = "Next";
+"Get started with Ecosia" = "Get started with Ecosia";
+"Try a search and discover how you're helping fight climate change by using Ecosia." = "Try a search and discover how you're helping fight climate change by using Ecosia.";
+"You browse with 100% clean energy" = "You browse with 100% clean energy";
+"You're helping push dirty energy off the grid! We produce more solar and wind energy than your searches take." = "You're helping push dirty energy off the grid! We produce more solar and wind energy than your searches take.";
+"We use profits for the planet" = "We use profits for the planet";
+"Unlike any other search engines, we use 100% of the profits that we make from ads for climate action!" = "Unlike any other search engines, we use 100% of the profits that we make from ads for climate action!";
+"We protect your data like the climate" = "We protect your data like the climate";
+"We block unnecessary trackers so you can browse privately, without worries about privacy." = "We block unnecessary trackers so you can browse privately, without worries about privacy.";
