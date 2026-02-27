@@ -7,7 +7,6 @@ import Foundation
 import UIKit
 import Ecosia
 
-// TODO: Add tests
 /// Coordinates the display of spotlight toasts during the product tour
 final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
@@ -44,6 +43,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     private var currentStepIndex: Int = 0
     private var currentConfiguration: SpotlightConfiguration?
     private var theme: Theme
+    private let tourManager: ProductTourManager
 
     /// Closure called when the coordinator needs to open a URL in a new tab
     var openURL: ((URL) -> Void)?
@@ -81,8 +81,8 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
             secondaryAction: { stepIndex in
                 stepIndex > 0 ? .back : .skip
             },
-            onComplete: {
-                ProductTourManager.shared.completeSearchSpotlight()
+            onComplete: { [weak self] in
+                self?.tourManager.completeSearchSpotlight()
             }
         )
     }()
@@ -105,25 +105,26 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
             secondaryAction: { _ in
                 .openURL(EcosiaEnvironment.current.urlProvider.trackingProtectionHelpPage)
             },
-            onComplete: {
-                ProductTourManager.shared.completeExternalWebsiteSpotlight()
+            onComplete: { [weak self] in
+                self?.tourManager.completeExternalWebsiteSpotlight()
             }
         )
     }()
 
     // MARK: - Initialization
 
-    init(viewController: UIViewController, bottomContentView: UIView, theme: Theme) {
+    init(viewController: UIViewController, bottomContentView: UIView, theme: Theme, tourManager: ProductTourManager = .shared) {
         self.viewController = viewController
         self.bottomContentView = bottomContentView
         self.theme = theme
+        self.tourManager = tourManager
 
         // Register as observer
-        ProductTourManager.shared.addObserver(self)
+        tourManager.addObserver(self)
     }
 
     deinit {
-        ProductTourManager.shared.removeObserver(self)
+        tourManager.removeObserver(self)
     }
 
     // MARK: - ProductTourObserver
@@ -150,10 +151,10 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
     /// Manually trigger spotlight display (useful for testing or manual triggers)
     func showSpotlightIfNeeded() {
-        if ProductTourManager.shared.shouldShowSearchSpotlight {
+        if tourManager.shouldShowSearchSpotlight {
             currentStepIndex = 0
             showSpotlight(with: searchConfiguration)
-        } else if ProductTourManager.shared.shouldShowExternalWebsiteSpotlight {
+        } else if tourManager.shouldShowExternalWebsiteSpotlight {
             showSpotlight(with: externalWebsiteConfiguration)
         }
     }
@@ -202,7 +203,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
 
     // MARK: - Private Methods – Actions
 
-    private func handlePrimaryAction() {
+    func handlePrimaryAction() {
         guard let configuration = currentConfiguration else { return }
 
         let currentStep = configuration.steps[currentStepIndex]
@@ -222,7 +223,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
         }
     }
 
-    private func handleSecondaryAction() {
+    func handleSecondaryAction() {
         guard let configuration = currentConfiguration else { return }
 
         let currentStep = configuration.steps[currentStepIndex]

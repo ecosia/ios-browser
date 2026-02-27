@@ -69,7 +69,7 @@ public final class ProductTourManager {
         }
     }
 
-    init(userDefaults: UserDefaults = .standard) {
+    public init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
         self.completedMilestones = Self.loadMilestones(from: userDefaults)
     }
