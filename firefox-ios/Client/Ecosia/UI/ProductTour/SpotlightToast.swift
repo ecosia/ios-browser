@@ -17,6 +17,28 @@ struct SpotlightToastViewModel {
     let totalSteps: Int
     let primaryButtonText: String
     let secondaryButtonText: String?
+    /// Optional trailing icon displayed to the right of the secondary button text.
+    let secondaryButtonIcon: UIImage?
+
+    init(
+        image: UIImage?,
+        titleText: String,
+        descriptionText: String,
+        currentStep: Int,
+        totalSteps: Int,
+        primaryButtonText: String,
+        secondaryButtonText: String?,
+        secondaryButtonIcon: UIImage? = nil
+    ) {
+        self.image = image
+        self.titleText = titleText
+        self.descriptionText = descriptionText
+        self.currentStep = currentStep
+        self.totalSteps = totalSteps
+        self.primaryButtonText = primaryButtonText
+        self.secondaryButtonText = secondaryButtonText
+        self.secondaryButtonIcon = secondaryButtonIcon
+    }
 }
 
 // MARK: - SpotlightToast
@@ -38,6 +60,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         static let buttonCornerRadius: CGFloat = 20
         static let buttonHorizontalPadding: CGFloat = 15
         static let buttonInternalSpacing: CGFloat = 16
+        static let secondaryButtonIconPadding: CGFloat = 4
+        static let secondaryButtonIconSize: CGFloat = 16
 
         static let showAnimationDelay: TimeInterval = 0.5
         static let transitionAnimationDuration: TimeInterval = 0.5
@@ -132,6 +156,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
             bottom: 0,
             trailing: UX.buttonHorizontalPadding
         )
+        config.imagePlacement = .trailing
+        config.imagePadding = UX.secondaryButtonIconPadding
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = DefaultDynamicFontHelper.preferredFont(
@@ -263,6 +289,22 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         }
     }
 
+    /// Configures the secondary button's trailing icon based on the view model
+    private func configureSecondaryButtonIcon(for viewModel: SpotlightToastViewModel) {
+        guard var config = secondaryButton.configuration else { return }
+        if let icon = viewModel.secondaryButtonIcon {
+            let size = CGSize(width: UX.secondaryButtonIconSize, height: UX.secondaryButtonIconSize)
+            let renderer = UIGraphicsImageRenderer(size: size)
+            let resizedIcon = renderer.image { _ in
+                icon.draw(in: CGRect(origin: .zero, size: size))
+            }
+            config.image = resizedIcon.withRenderingMode(.alwaysTemplate)
+        } else {
+            config.image = nil
+        }
+        secondaryButton.configuration = config
+    }
+
     private func configureContent() {
         spotlightImageView.image = viewModel.image
         titleLabel.text = viewModel.titleText
@@ -281,6 +323,9 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         if let secondaryButtonText = viewModel.secondaryButtonText {
             secondaryButton.setTitle(secondaryButtonText, for: .normal)
         }
+
+        // Update secondary button icon
+        configureSecondaryButtonIcon(for: viewModel)
     }
 
     // MARK: - Theme
@@ -294,7 +339,7 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
         if secondaryButton.superview != nil {
             var secondaryConfig = secondaryButton.configuration
-            secondaryConfig?.baseForegroundColor = theme.colors.ecosia.textPrimary
+            secondaryConfig?.baseForegroundColor = theme.colors.ecosia.buttonContentSecondary
             secondaryConfig?.baseBackgroundColor = .clear
             secondaryButton.configuration = secondaryConfig
         }

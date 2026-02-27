@@ -97,7 +97,8 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
                     currentStep: 1,
                     totalSteps: 1,
                     primaryButtonText: .localized(.gotIt),
-                    secondaryButtonText: .localized(.readMore) // TODO: Add right side icon
+                    secondaryButtonText: .localized(.readMore),
+                    secondaryButtonIcon: UIImage(named: "openLink")
                 )
             ],
             analyticsLabel: .privacyTour,
