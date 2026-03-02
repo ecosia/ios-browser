@@ -79,13 +79,13 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
     private var secondaryButtonAction: (() -> Void)?
 
     // Reusable constraints for optional views
-    private lazy var imageHeightConstraint: NSLayoutConstraint = {
-        spotlightImageView.heightAnchor.constraint(equalTo: spotlightImageView.widthAnchor,
-                                                   multiplier: UX.imageAspectRatio)
-    }()
-
     private lazy var secondaryButtonHeightConstraint: NSLayoutConstraint = {
         secondaryButton.heightAnchor.constraint(equalToConstant: UX.buttonHeight)
+    }()
+
+    /// Pixel-aligned height set by `updateImageHeightIfNeeded()` once width is known.
+    private lazy var imageHeightConstraint: NSLayoutConstraint = {
+        spotlightImageView.heightAnchor.constraint(equalToConstant: 0)
     }()
 
     // MARK: - UI Components
@@ -278,6 +278,26 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         }
     }
 
+    /// Updates the image height constraint to a pixel-aligned value based on the
+    /// current width and the desired aspect ratio. This avoids sub-pixel rounding
+    /// differences that occur when using a multiplier-based constraint, which can
+    /// cause visible shifts during snapshot-based transition animations.
+    private func updateImageHeightIfNeeded() {
+        let width = spotlightImageView.bounds.width
+        guard width > 0 else { return }
+        let scale = traitCollection.displayScale > 0 ? traitCollection.displayScale : UIScreen.main.scale
+        let exactHeight = width * UX.imageAspectRatio
+        let pixelAlignedHeight = ceil(exactHeight * scale) / scale
+        if imageHeightConstraint.constant != pixelAlignedHeight {
+            imageHeightConstraint.constant = pixelAlignedHeight
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateImageHeightIfNeeded()
+    }
+
     /// Adds or removes the secondary button from the button stack based on the view model
     private func configureSecondaryButton(for viewModel: SpotlightToastViewModel) {
         if viewModel.secondaryButtonText != nil {
@@ -397,6 +417,9 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         // Set initial state: below and transparent
         containerStackView.transform = CGAffineTransform(translationX: 0, y: UX.verticalAnimationOffset)
         containerStackView.alpha = 0
+
+        // Compute the pixel-aligned height
+        updateImageHeightIfNeeded()
 
         layoutIfNeeded()
 
