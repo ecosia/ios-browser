@@ -528,7 +528,6 @@ extension Analytics {
         let endpoint = shouldUseMicroInstance ? urlProvider.snowplowMicro : urlProvider.snowplow
         var networkConfig = NetworkConfiguration(endpoint: endpoint!)
 
-        // TODO: Check if we really need the auth header now and why it still doesn't work (302 redirect to login page)
         if let auth = EcosiaEnvironment.current.cloudFlareAuth {
             networkConfig = networkConfig
                 .requestHeaders([

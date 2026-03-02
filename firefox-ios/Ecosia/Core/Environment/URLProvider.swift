@@ -43,7 +43,7 @@ public enum URLProvider {
         case .production, .debug:
             return "sp.ecosia.org"
         case .staging:
-            return "https://osc.ecosia-dev.xyz"
+            return "https://osc.ecosia-staging.xyz"
         }
     }
 
