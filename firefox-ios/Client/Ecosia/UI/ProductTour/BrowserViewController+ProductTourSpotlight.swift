@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import SafariServices
 import Common
 import Ecosia
 
@@ -56,7 +57,9 @@ extension BrowserViewController {
             theme: theme
         )
         coordinator.openURL = { [weak self] url in
-            self?.openURLInNewTab(url)
+            let safariVC = SFSafariViewController(url: url)
+            safariVC.modalPresentationStyle = .pageSheet
+            self?.present(safariVC, animated: true)
         }
         spotlightCoordinator = coordinator
         return coordinator
