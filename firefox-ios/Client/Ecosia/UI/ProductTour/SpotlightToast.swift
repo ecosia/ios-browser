@@ -49,8 +49,6 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         static let contentPadding: CGFloat = 16
         static let verticalSpacing: CGFloat = 16
         static let buttonSpacing: CGFloat = 8
-        static let imageHeight: CGFloat = 164
-        static let imageCornerRadius: CGFloat = 8
 
         static let titleFontSize: CGFloat = 17
         static let descriptionFontSize: CGFloat = 15
@@ -66,6 +64,12 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         static let showAnimationDelay: TimeInterval = 0.5
         static let transitionAnimationDuration: TimeInterval = 0.5
         static let verticalAnimationOffset: CGFloat = 50
+
+        /// Maximum width of the toast on wide layouts such as iPad.
+        /// Matches the preferred form sheet width used by other modal screens (e.g. DefaultBrowserViewController).
+        static let maxWidth: CGFloat = 544
+        static let imageAspectRatio: CGFloat = 9/16
+        static let imageCornerRadius: CGFloat = 8
     }
 
     // MARK: - Properties
@@ -76,7 +80,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
     // Reusable constraints for optional views
     private lazy var imageHeightConstraint: NSLayoutConstraint = {
-        spotlightImageView.heightAnchor.constraint(equalToConstant: UX.imageHeight)
+        spotlightImageView.heightAnchor.constraint(equalTo: spotlightImageView.widthAnchor,
+                                                   multiplier: UX.imageAspectRatio)
     }()
 
     private lazy var secondaryButtonHeightConstraint: NSLayoutConstraint = {
@@ -256,7 +261,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         ])
     }
 
-    /// Adds or removes the image view from the container stack based on the view model
+    /// Adds or removes the image view from the container stack based on the view model.
+    /// The image view always uses the same fixed aspect ratio so all steps look consistent.
     private func configureImageView(for viewModel: SpotlightToastViewModel) {
         if viewModel.image != nil {
             if spotlightImageView.superview == nil {
@@ -378,9 +384,13 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         // Add to view hierarchy first
         viewController.view.addSubview(self)
 
+        let safeArea = viewController.view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            // Center horizontally and cap the width for wide layouts (e.g. iPad).
+            centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+            widthAnchor.constraint(lessThanOrEqualToConstant: UX.maxWidth),
+            leadingAnchor.constraint(greaterThanOrEqualTo: safeArea.leadingAnchor),
+            trailingAnchor.constraint(lessThanOrEqualTo: safeArea.trailingAnchor),
             bottomAnchor.constraint(equalTo: bottomAnchorView.topAnchor)
         ])
 
