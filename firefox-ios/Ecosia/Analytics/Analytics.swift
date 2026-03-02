@@ -519,16 +519,18 @@ extension Analytics {
     }
 
     /// Factory that builds the `NetworkConfiguration` for the Snowplow tracker, optionally
-    /// including authentication headers if using a micro instance.
+    /// including authentication headers when the environment provides Cloudflare credentials.
     ///
-    /// - Returns: A configured `NetworkConfiguration` object.
     /// - Parameters:
-    ///   - urlProvider: The urlProvider in use. Useful for testing purposes.
-    static func makeNetworkConfig(urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> NetworkConfiguration {
+    ///   - environment: The environment to use for resolving the endpoint and authentication.
+    ///                  Defaults to `EcosiaEnvironment.current`. Pass a specific value in tests.
+    /// - Returns: A configured `NetworkConfiguration` object.
+    static func makeNetworkConfig(environment: EcosiaEnvironment = .current) -> NetworkConfiguration {
+        let urlProvider = environment.urlProvider
         let endpoint = shouldUseMicroInstance ? urlProvider.snowplowMicro : urlProvider.snowplow
         var networkConfig = NetworkConfiguration(endpoint: endpoint!)
 
-        if let auth = EcosiaEnvironment.current.cloudFlareAuth {
+        if let auth = environment.cloudFlareAuth {
             networkConfig = networkConfig
                 .requestHeaders([
                     CloudflareKeyProvider.clientId: auth.id,
