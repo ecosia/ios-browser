@@ -865,6 +865,7 @@ private extension LegacyHomepageViewController {
         viewModel.libraryViewModel.delegate = self
         viewModel.impactViewModel.delegate = self
         viewModel.newsViewModel.delegate = self
+        viewModel.productTourNTPViewModel.delegate = self
         viewModel.ntpCustomizationViewModel.delegate = self
     }
 

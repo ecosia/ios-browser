@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+import Ecosia
 
 final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
     static let bottomMargin: CGFloat = 6
@@ -31,7 +32,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
         logo.clipsToBounds = true
         logo.contentMode = .scaleAspectFit
         logo.isAccessibilityElement = true
-        logo.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.logo
+        logo.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.logo
         logo.accessibilityLabel = .localized(.ecosiaLogoAccessibilityLabel)
         contentView.addSubview(logo)
         self.logo = logo

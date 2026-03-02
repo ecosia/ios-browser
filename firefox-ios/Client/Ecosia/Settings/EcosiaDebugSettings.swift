@@ -62,35 +62,27 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
     }
 }
 
-final class ShowTour: HiddenSetting, WelcomeDelegate {
+final class ResetOnboardingProductTour: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Show Intro", attributes: [:])
+        return NSAttributedString(string: "Debug: Reset onboarding state", attributes: [:])
     }
 
-    let windowUUID: WindowUUID
-    init(settings: SettingsTableViewController, windowUUID: WindowUUID) {
-        self.windowUUID = windowUUID
+    override init(settings: SettingsTableViewController) {
         super.init(settings: settings)
     }
 
-    var parentPresenter: UIViewController?
     override func onClick(_ navigationController: UINavigationController?) {
-        let welcome = Welcome(delegate: self, windowUUID: windowUUID)
-        welcome.modalPresentationStyle = .fullScreen
-        welcome.modalTransitionStyle = .coverVertical
-        let presentingViewController = navigationController?.presentingViewController
-        navigationController?.dismiss(animated: true) {
-            presentingViewController?.present(welcome, animated: true)
-        }
-    }
+        User.shared.firstTime = true
+        ProductTourManager.shared.resetTour()
 
-    func welcomeDidFinish(_ welcome: Welcome) {
-        if let presentedTour = welcome.presentedViewController {
-            presentedTour.dismiss(animated: true) {
-                welcome.dismiss(animated: true)
+        let title = "Onboarding state reset"
+        let message = "Close and open the app to see welcome screen"
+        let alert = AlertController(title: title, message: message, preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
             }
-        } else {
-            welcome.dismiss(animated: true)
+            self.settings.tableView.reloadData()
         }
     }
 }
@@ -295,6 +287,20 @@ final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
 
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.aiSearchMVP)
+    }
+}
+
+final class UnleashOnboardingSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Onboarding Product Tour"
+    }
+
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.onboardingProductTour)
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.onboardingProductTour)
     }
 }
 

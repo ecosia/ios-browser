@@ -109,8 +109,10 @@ extension Analytics {
 
         public enum Onboarding: String {
             case
-            next,
-            skip
+            welcome = "welcome_screen",
+            firstSearchCard = "first_search_card",
+            serpTour = "serp_tour",
+            privacyTour = "privacy_tour"
         }
 
         public enum Referral: String {
@@ -222,6 +224,12 @@ extension Analytics {
             remove,
             unpin
 		}
+
+        public enum Welcome: String {
+            case
+            click,
+            display
+        }
     }
 
     public enum Property: String {
@@ -287,6 +295,15 @@ extension Analytics {
             case
             websites = "websites_data",
             main = "all_private_data"
+        }
+
+        public enum SpotlightTour: String {
+            case
+            skip,
+            next,
+            back,
+            complete,
+            readMore = "read_more"
         }
     }
 }

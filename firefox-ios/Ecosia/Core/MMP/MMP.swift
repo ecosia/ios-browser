@@ -11,8 +11,6 @@ import AdServices
 import Common
 
 public enum MMPEvent: String {
-    case onboardingStart = "onboarding_start"
-    case onboardingComplete = "onboarding_complete"
     case firstSearch = "first_search"
     case fifthSearch = "fifth_search"
     case tenthSearch = "tenth_search"

@@ -39,6 +39,7 @@ public protocol EcosiaSemanticColors {
     var buttonBackgroundSecondary: UIColor { get }
     var buttonBackgroundSecondaryActive: UIColor { get }
     var buttonBackgroundSecondaryHover: UIColor { get }
+    var buttonBackgroundTransparentActive: UIColor { get }
     var buttonContentSecondary: UIColor { get }
     var buttonContentSecondaryStatic: UIColor { get }
 
@@ -67,6 +68,7 @@ public protocol EcosiaSemanticColors {
     var textInversePrimary: UIColor { get }
     var textSecondary: UIColor { get }
     var textStaticDark: UIColor { get }
+    var textStaticLight: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -98,6 +100,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondary: UIColor = .systemGray
     var buttonBackgroundSecondaryActive: UIColor = .systemGray
     var buttonBackgroundSecondaryHover: UIColor = .systemGray
+    var buttonBackgroundTransparentActive: UIColor = .systemGray
     var buttonContentSecondary: UIColor = .systemGray
     var buttonContentSecondaryStatic: UIColor = .systemGray
     var borderNegative: UIColor = .systemGray
@@ -115,4 +118,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textStaticDark: UIColor = .systemGray
+    var textStaticLight: UIColor = .systemGray
 }

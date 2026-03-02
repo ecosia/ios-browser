@@ -249,24 +249,43 @@ open class Analytics {
     }
 
     // MARK: Onboarding
-    public func introDisplaying(page: Property.OnboardingPage?) {
-        guard let page else {
-            return
-        }
+    public func introWelcome(action: Action.Welcome) {
         let event = Structured(category: Category.intro.rawValue,
-                               action: Action.display.rawValue)
-            .property(page.rawValue)
+                               action: action.rawValue)
+            .label(Label.Onboarding.welcome.rawValue)
         track(event)
     }
 
-    public func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?) {
-        guard let page else {
-            return
-        }
+    public func firstSearchCardDismiss() {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.Onboarding.firstSearchCard.rawValue)
+        track(event)
+    }
+
+    public func firstSearchCardSuggestionClick(pillNumber: Int, languageRegionIdentifier: String) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Onboarding.firstSearchCard.rawValue)
+            .property(languageRegionIdentifier)
+            .value(NSNumber(value: pillNumber))
+        track(event)
+    }
+
+    public func spotlightTourDisplay(label: Label.Onboarding, step: Int) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.display.rawValue)
+            .label(label.rawValue)
+            .value(NSNumber(value: step))
+        track(event)
+    }
+
+    public func spotlightTourClick(label: Label.Onboarding, action: Property.SpotlightTour, step: Int) {
         let event = Structured(category: Category.intro.rawValue,
                                action: Action.click.rawValue)
             .label(label.rawValue)
-            .property(page.rawValue)
+            .property(action.rawValue)
+            .value(NSNumber(value: step))
         track(event)
     }
 
