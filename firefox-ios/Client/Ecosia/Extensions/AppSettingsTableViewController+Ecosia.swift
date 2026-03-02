@@ -161,11 +161,6 @@ extension AppSettingsTableViewController {
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
-            UnleashBrazeIntegrationSetting(settings: self),
-            UnleashNativeSRPVAnalyticsSetting(settings: self),
-            UnleashAISearchMVPSetting(settings: self),
-            UnleashOnboardingSetting(settings: self),
-            UnleashIdentifierSetting(settings: self),
             AnalyticsIdentifierSetting(settings: self)
         ]
 
@@ -180,6 +175,7 @@ extension AppSettingsTableViewController {
         let unleashSettings: [Setting] = [
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
+            UnleashOnboardingSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]
 
