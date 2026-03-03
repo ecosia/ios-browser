@@ -67,10 +67,14 @@ public struct WelcomeView: View {
 
     let windowUUID: WindowUUID
     let onFinish: () -> Void
+    let onSignIn: (() -> Void)?
 
-    public init(windowUUID: WindowUUID, onFinish: @escaping () -> Void) {
+    public init(windowUUID: WindowUUID,
+                onFinish: @escaping () -> Void,
+                onSignIn: (() -> Void)? = nil) {
         self.windowUUID = windowUUID
         self.onFinish = onFinish
+        self.onSignIn = onSignIn
     }
 
     enum AnimationPhase {
@@ -179,16 +183,40 @@ public struct WelcomeView: View {
                         .opacity(bodyGradientOpacity)
                     )
 
+                    // Sign in button (primary style with icon)
+                    Button(action: {
+                        Analytics.shared.introWelcome(action: .click)
+                        startExitAnimation(skipFinish: true) {
+                            onSignIn?()
+                        }
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "person.crop.circle") // TODO: Use right icon
+                            Text(verbatim: .localized(.signIn))
+                        }
+                        .font(.body)
+                        .foregroundColor(theme.buttonTextColor)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: UX.buttonHeight)
+                        .background(theme.buttonBackgroundColor)
+                        .cornerRadius(UX.buttonCornerRadius)
+                    }
+
+                    // Maybe later button (outlined style)
                     Button(action: {
                         Analytics.shared.introWelcome(action: .click)
                         startExitAnimation()
                     }) {
-                        Text(verbatim: .localized(.getStarted))
+                        Text(verbatim: .localized(.maybeLater))
                             .font(.body)
-                            .foregroundColor(theme.buttonTextColor)
+                            .foregroundColor(theme.outlinedButtonTextColor)
                             .frame(maxWidth: .infinity)
                             .frame(height: UX.buttonHeight)
-                            .background(theme.buttonBackgroundColor)
+                            .background(Color.clear)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: UX.buttonCornerRadius)
+                                    .stroke(theme.outlinedButtonBorderColor, lineWidth: 1.5)
+                            )
                             .cornerRadius(UX.buttonCornerRadius)
                     }
                 }
@@ -306,7 +334,7 @@ public struct WelcomeView: View {
         try? await Task.sleep(duration: duration)
     }
 
-    private func startExitAnimation() {
+    private func startExitAnimation(skipFinish: Bool = false, onComplete: (() -> Void)? = nil) {
         animationTask?.cancel()
 
         // Phase 4: Exit transition - move content out while fading
@@ -323,7 +351,10 @@ public struct WelcomeView: View {
             }
 
             guard !Task.isCancelled else { return }
-            onFinish()
+            if !skipFinish {
+                onFinish()
+            }
+            onComplete?()
         }
     }
 
@@ -425,11 +456,15 @@ public struct WelcomeViewTheme: EcosiaThemeable {
     var buttonTextColor = Color.white
     var buttonBackgroundColor = Color.green
     var brandPrimaryColor = Color.green
+    var outlinedButtonTextColor = Color.white
+    var outlinedButtonBorderColor = Color.white
 
     public mutating func applyTheme(theme: Theme) {
         contentTextColor = Color(theme.colors.ecosia.textStaticLight)
         buttonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
         buttonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)
         brandPrimaryColor = Color(theme.colors.ecosia.brandPrimary)
+        outlinedButtonTextColor = Color(theme.colors.ecosia.textStaticLight)
+        outlinedButtonBorderColor = Color(theme.colors.ecosia.textStaticLight)
     }
 }

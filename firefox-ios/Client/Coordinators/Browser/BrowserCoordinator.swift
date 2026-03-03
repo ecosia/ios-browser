@@ -115,6 +115,17 @@ class BrowserCoordinator: BaseCoordinator,
         }
     }
 
+    // Ecosia: Handle sign-in request from welcome screen
+    func didRequestSignIn(from coordinator: LaunchCoordinator) {
+        router.dismiss(animated: true) { [weak self] in
+            guard let self else { return }
+            self.browserViewController.animateToolbarsIn()
+            let auth = EcosiaAuth(browserViewController: self.browserViewController)
+            auth.login()
+        }
+        remove(child: coordinator)
+    }
+
     // MARK: - BrowserDelegate
 
     func showLegacyHomepage(
