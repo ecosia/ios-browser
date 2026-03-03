@@ -171,18 +171,21 @@ bundle exec fastlane match --readonly
 [14:22:17]: Passphrase for Match storage: [get the password from the password manager]
 ```
 
-### Adding your own device
+### Registering new devices
 
-As we use `fastlane match` to hardwire profiles it gets a bit tricky to add a new device and run the app via your machine.
+To run the app on a new device, register it on the Apple Developer Portal and re-generate the provisioning profiles using `fastlane match`.
 
-1. Plugin your device and add it to the portal via XCode-Prompt.
-2. Login into [AppDeveloper Portal](https://developer.apple.com/account/)
-3. Navigate to `Certificates, Identifiers & Profiles`
-4. Select `Profiles`-Tab and find `match Development com.ecosia.ecosiaapp`
-5. Edit it and make sure your device is selected
-6. Save, download and double click the Profile
-7. Now XCode should find it as it's in your keychain
-8. Run on Device!
+1. Plug in your device and register it via the [`register_devices`](https://docs.fastlane.tools/actions/register_devices/) action. You will be prompted for the device name and UDID:
+    ```shell
+    bundle exec fastlane run register_devices
+    ```
+2. Re-generate the provisioning profiles to include the new device by running `match` with `--force_for_new_devices` for both **development** (for local development) and **ad hoc** (for Firebase releases):
+    ```shell
+    bundle exec fastlane match development --force_for_new_devices
+    bundle exec fastlane match adhoc --force_for_new_devices
+    ```
+   This flag makes `match` check whether the device count has changed since the last run and automatically re-generate the provisioning profiles if necessary. See the [fastlane match docs](https://docs.fastlane.tools/actions/match/#registering-new-devices) for more details.
+3. Open Xcode, select the **Ecosia Beta** (or **Ecosia**) scheme, choose your device and run (`Cmd + R`).
 
 ## 🗣️ Translations
 
