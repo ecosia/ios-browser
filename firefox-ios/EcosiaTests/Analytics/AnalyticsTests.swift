@@ -150,27 +150,23 @@ final class AnalyticsTests: XCTestCase {
 
     func test_makeNetworkConfig_usesStandardEndpoint_whenShouldUseMicroIsFalse() {
         Analytics.shouldUseMicroInstance = false
-        let mockUrlProvider: URLProvider = .staging
-        let config = Analytics.makeNetworkConfig(urlProvider: mockUrlProvider)
-        XCTAssertEqual(mockUrlProvider.snowplow, config.endpoint?.asURL?.host)
+        let config = Analytics.makeNetworkConfig(environment: .staging)
+        let expectedHost = URLProvider.staging.snowplow.asURL?.host
+        XCTAssertEqual(expectedHost, config.endpoint?.asURL?.host)
     }
 
     func test_makeNetworkConfig_usesMicroEndpoint_whenShouldUseMicroIsTrue() {
         Analytics.shouldUseMicroInstance = true
-        let mockUrlProvider: URLProvider = .staging
-        let config = Analytics.makeNetworkConfig(urlProvider: mockUrlProvider)
-        XCTAssertEqual(mockUrlProvider.snowplowMicro, config.endpoint)
+        let config = Analytics.makeNetworkConfig(environment: .staging)
+        XCTAssertEqual(URLProvider.staging.snowplowMicro, config.endpoint)
         XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientId), true)
         XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientSecret), true)
     }
 
-    func test_makeNetworkConfig_usesProductionEndpoint_whenShouldUseMicroIsFalse_andUrlProvider_isProduction() {
+    func test_makeNetworkConfig_usesProductionEndpoint_whenShouldUseMicroIsFalse_andEnvironment_isProduction() {
         Analytics.shouldUseMicroInstance = false
-        let mockUrlProvider: URLProvider = .production
-        let config = Analytics.makeNetworkConfig(urlProvider: mockUrlProvider)
-        XCTAssertEqual(mockUrlProvider.snowplow, "sp.ecosia.org")
-        XCTAssertEqual(mockUrlProvider.snowplow, config.endpoint?.asURL?.host)
-        XCTAssertNil(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientId))
-        XCTAssertNil(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientSecret))
+        let config = Analytics.makeNetworkConfig(environment: .production)
+        XCTAssertEqual(config.endpoint?.asURL?.host, "sp.ecosia.org")
+        XCTAssertNil(config.requestHeaders, "Production environment should not include Cloudflare authentication headers")
     }
 }
