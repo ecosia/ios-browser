@@ -185,7 +185,7 @@ To run the app on a new device, register it on the Apple Developer Portal and re
     bundle exec fastlane match adhoc --force_for_new_devices
     ```
    This flag makes `match` check whether the device count has changed since the last run and automatically re-generate the provisioning profiles if necessary. See the [fastlane match docs](https://docs.fastlane.tools/actions/match/#registering-new-devices) for more details.
-3. Open Xcode, select the **Ecosia Beta** (or **Ecosia**) scheme, choose your device and run (`Cmd + R`).
+3. Open Xcode, select the **EcosiaBeta** (or **Ecosia**) scheme, choose your device and run (`Cmd + R`).
 
 ## 🗣️ Translations
 
