@@ -108,19 +108,16 @@ final class URLProviderTests: XCTestCase {
         // Debug should follow production for these properties
         XCTAssertEqual(debugProvider.root, productionProvider.root)
         XCTAssertEqual(debugProvider.apiRoot, productionProvider.apiRoot)
+        XCTAssertEqual(debugProvider.snowplow, productionProvider.snowplow)
         XCTAssertEqual(debugProvider.snowplowMicro, productionProvider.snowplowMicro)
         XCTAssertEqual(debugProvider.unleash, productionProvider.unleash)
         XCTAssertEqual(debugProvider.brazeEndpoint, productionProvider.brazeEndpoint)
         XCTAssertEqual(debugProvider.statistics, productionProvider.statistics)
     }
 
-    func testDebugSnowplowFollowsStaging() {
-        let debugProvider = URLProvider.debug
-        let stagingProvider = URLProvider.staging
-
-        // Debug should follow staging only for snowplow
-        XCTAssertEqual(debugProvider.snowplow, stagingProvider.snowplow)
-        XCTAssertEqual(debugProvider.snowplow, "org-ecosia-prod1.mini.snplow.net")
+    func testSnowplowStaging() {
+        let provider = URLProvider.staging
+        XCTAssertEqual(provider.snowplow, "https://osc.ecosia-staging.xyz")
     }
 
     func testTrees() {
