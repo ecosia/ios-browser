@@ -11,6 +11,8 @@ public enum ProductTourEvent {
     case tourStarted
     /// The user completed their first search; show the search spotlight
     case searchCompleted
+    /// The entire search track (first search + spotlight) is done; move to the external website track
+    case searchTrackCompleted
     /// The user visited an external website; show the external website spotlight
     case externalWebsiteVisited
     /// All milestones are done; the tour is finished
@@ -61,6 +63,7 @@ public final class ProductTourManager {
 
     private let userDefaults: UserDefaults
     private let authManager: EcosiaBrowserWindowAuthManager
+    private let isExperimentEnabled: () -> Bool
 
     // Observers for event notifications
     private var observers: [WeakReference] = []
@@ -74,10 +77,12 @@ public final class ProductTourManager {
     }
 
     public init(userDefaults: UserDefaults = .standard,
-                authManager: EcosiaBrowserWindowAuthManager = .shared) {
+                authManager: EcosiaBrowserWindowAuthManager = .shared,
+                isExperimentEnabled: @escaping () -> Bool = { OnboardingProductTourExperiment.isEnabled }) {
         self.userDefaults = userDefaults
         self.authManager = authManager
-        self.completedMilestones = Self.loadMilestones(from: userDefaults)
+        self.isExperimentEnabled = isExperimentEnabled
+        self.completedMilestones = Self.loadMilestones(from: userDefaults, isExperimentEnabled: isExperimentEnabled)
         authManager.subscribe(observer: self, selector: #selector(handleAuthStateChanged(_:)))
     }
 
@@ -108,7 +113,7 @@ public final class ProductTourManager {
         // Existing users skip the first-search homepage and search spotlight
         completedMilestones.insert(.firstSearchDone)
         completedMilestones.insert(.searchSpotlightDone)
-        notifyObservers(event: .searchCompleted)
+        notifyObservers(event: .searchTrackCompleted)
     }
 
     // MARK: - Public API
@@ -128,7 +133,7 @@ public final class ProductTourManager {
 
     /// Whether the user is currently in the product tour
     public var isInProductTour: Bool {
-        guard OnboardingProductTourExperiment.isEnabled else { return false }
+        guard isExperimentEnabled() else { return false }
         return !completedMilestones.contains(.all)
     }
 
@@ -205,14 +210,15 @@ public final class ProductTourManager {
         }
     }
 
-    private static func loadMilestones(from userDefaults: UserDefaults) -> ProductTourMilestones {
-        guard OnboardingProductTourExperiment.isEnabled else { return .all }
+    private static func loadMilestones(from userDefaults: UserDefaults,
+                                       isExperimentEnabled: () -> Bool) -> ProductTourMilestones {
+        guard isExperimentEnabled() else { return .all }
         let rawValue = userDefaults.integer(forKey: milestonesKey)
         return ProductTourMilestones(rawValue: rawValue)
     }
 
     private func saveMilestones() {
-        if OnboardingProductTourExperiment.isEnabled {
+        if isExperimentEnabled() {
             userDefaults.set(completedMilestones.rawValue, forKey: Self.milestonesKey)
         }
     }

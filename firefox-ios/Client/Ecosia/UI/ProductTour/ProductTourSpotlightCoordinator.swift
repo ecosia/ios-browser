@@ -134,6 +134,8 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
         case .searchCompleted:
             currentStepIndex = 0
             showSpotlight(with: searchConfiguration)
+        case .searchTrackCompleted:
+            break
         case .externalWebsiteVisited:
             showSpotlight(with: externalWebsiteConfiguration)
         case .tourCompleted, .tourStarted:

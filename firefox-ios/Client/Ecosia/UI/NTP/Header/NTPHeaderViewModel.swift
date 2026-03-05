@@ -62,6 +62,14 @@ final class NTPHeaderViewModel: ObservableObject {
         }
     }
 
+    var shouldShow: Bool {
+        // If on product tour, show only if logged in
+        if ProductTourManager.shared.shouldShowProductTourHomepage {
+            return EcosiaAuthUIStateProvider.shared.isLoggedIn
+        }
+        return true
+    }
+
     private func setupLevelUpObserver() {
         levelUpObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaAccountLevelUp,

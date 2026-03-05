@@ -26,7 +26,7 @@ final class ProductTourSpotlightCoordinatorTests: XCTestCase {
         super.setUp()
         suiteName = "ProductTourSpotlightCoordinatorTests-\(UUID().uuidString)"
         userDefaults = UserDefaults(suiteName: suiteName)!
-        tourManager = ProductTourManager(userDefaults: userDefaults)
+        tourManager = ProductTourManager(userDefaults: userDefaults, isExperimentEnabled: { true })
 
         viewController = UIViewController()
         bottomContentView = UIView()
@@ -73,6 +73,12 @@ final class ProductTourSpotlightCoordinatorTests: XCTestCase {
         sut.productTour(didReceiveEvent: .searchCompleted)
 
         XCTAssertTrue(sut.isShowingSpotlight)
+    }
+
+    func testDidReceiveEvent_searchTrackCompleted_doesNotShowSpotlight() {
+        sut.productTour(didReceiveEvent: .searchTrackCompleted)
+
+        XCTAssertFalse(sut.isShowingSpotlight)
     }
 
     func testDidReceiveEvent_externalWebsiteVisited_showsSpotlight() {

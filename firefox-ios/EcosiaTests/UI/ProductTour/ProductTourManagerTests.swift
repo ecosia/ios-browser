@@ -20,7 +20,7 @@ final class ProductTourManagerTests: XCTestCase {
         authManager = EcosiaBrowserWindowAuthManager.shared
         testWindowUUID = WindowUUID.XCTestDefaultUUID
         EcosiaAuthWindowRegistry.shared.registerWindow(testWindowUUID)
-        sut = ProductTourManager(userDefaults: userDefaults, authManager: authManager)
+        sut = ProductTourManager(userDefaults: userDefaults, authManager: authManager, isExperimentEnabled: { true })
     }
 
     override func tearDown() {
@@ -412,11 +412,16 @@ final class ProductTourManagerTests: XCTestCase {
     // MARK: - Persistence Tests
 
     func testMilestonesAreNotPersisted_WhenExperimentDisabled() {
-        // Given: Experiment is disabled and tour is reset
-        sut.resetTour()
+        // Given: Experiment is disabled
+        let disabledManager = ProductTourManager(
+            userDefaults: userDefaults,
+            authManager: authManager,
+            isExperimentEnabled: { false }
+        )
 
         // When: Milestones change
-        sut.completeFirstSearchIfNeeded()
+        disabledManager.resetTour()
+        disabledManager.completeFirstSearchIfNeeded()
 
         // Then: Milestones should NOT be persisted
         let savedValue = userDefaults.integer(forKey: "ProductTourMilestones")
@@ -576,7 +581,7 @@ final class ProductTourManagerTests: XCTestCase {
         XCTAssertFalse(sut.isInProductTour)
     }
 
-    func testExistingAccountLogin_NotifiesSearchCompleted() {
+    func testExistingAccountLogin_NotifiesSearchTrackCompleted() {
         // Given: Fresh tour
         sut.resetTour()
 
@@ -586,8 +591,9 @@ final class ProductTourManagerTests: XCTestCase {
         // When: Existing account logs in
         simulateLogin(accountOrigin: .existingAccount)
 
-        // Then: Observers receive searchCompleted so they can skip to external website track
-        XCTAssertTrue(observer.receivedEvents.contains(.searchCompleted))
+        // Then: Observers receive searchTrackCompleted so they can skip to external website track
+        XCTAssertTrue(observer.receivedEvents.contains(.searchTrackCompleted))
+        XCTAssertFalse(observer.receivedEvents.contains(.searchCompleted))
     }
 
     func testCompleteWorkflow_ExistingAccount() {
@@ -611,7 +617,7 @@ final class ProductTourManagerTests: XCTestCase {
 
         XCTAssertEqual(observer.receivedEvents, [
             .tourStarted,
-            .searchCompleted,
+            .searchTrackCompleted,
             .externalWebsiteVisited,
             .tourCompleted
         ])
