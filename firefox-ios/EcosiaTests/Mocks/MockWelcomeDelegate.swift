@@ -5,5 +5,7 @@
 @testable import Ecosia
 
 final class MockWelcomeDelegate: WelcomeDelegate {
+    func welcomeDidRequestSignIn(_ welcome: Ecosia.WelcomeViewController) {}
+
     func welcomeDidFinish(_ welcome: WelcomeViewController) {}
 }

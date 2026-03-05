@@ -72,7 +72,9 @@ final class AuthTests: XCTestCase {
 
         // Act
         do {
-            try await auth.login()
+            let accountOrigin = try await auth.login()
+            // Default mock ID token doesn't contain the custom claim, so it defaults to existing
+            XCTAssertEqual(accountOrigin, .existingAccount)
         } catch {
             XCTFail("Login should succeed, but failed with: \(error)")
         }
@@ -128,6 +130,91 @@ final class AuthTests: XCTestCase {
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
         XCTAssertNil(auth.refreshToken)
+    }
+
+    // MARK: - Account Origin Tests
+
+    func testLogin_withNewlyCreatedAccount_returnsNewAccount() async throws {
+        // Arrange — created_at within seconds of iat indicates a freshly created account
+        let now = Date()
+        let idToken = try makeJWT(claims: [
+            "iat": now.timeIntervalSince1970,
+            "https://ecosia.org/created_at": Self.iso8601Formatter.string(from: now.addingTimeInterval(-2))
+        ])
+        let credentials = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: idToken,
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        mockProvider.mockCredentials = credentials
+
+        // Act
+        do {
+            let accountOrigin = try await auth.login()
+
+            // Assert
+            XCTAssertEqual(accountOrigin, .newAccount)
+        } catch {
+            XCTFail("Login should succeed, but failed with: \(error)")
+        }
+    }
+
+    func testLogin_withExistingAccount_returnsExistingAccount() async throws {
+        // Arrange — created_at well before iat indicates an existing account
+        let now = Date()
+        let idToken = try makeJWT(claims: [
+            "iat": now.timeIntervalSince1970,
+            "https://ecosia.org/created_at": Self.iso8601Formatter.string(from: now.addingTimeInterval(-86400))
+        ])
+        let credentials = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: idToken,
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        mockProvider.mockCredentials = credentials
+
+        // Act
+        do {
+            let accountOrigin = try await auth.login()
+
+            // Assert
+            XCTAssertEqual(accountOrigin, .existingAccount)
+        } catch {
+            XCTFail("Login should succeed, but failed with: \(error)")
+        }
+    }
+
+    func testLogin_withMissingCreatedAtClaim_defaultsToExistingAccount() async throws {
+        // Arrange — JWT without the https://ecosia.org/created_at claim
+        let idToken = try makeJWT(claims: [
+            "sub": "auth0|12345",
+            "iat": Date().timeIntervalSince1970
+        ])
+        let credentials = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: idToken,
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        mockProvider.mockCredentials = credentials
+
+        // Act
+        do {
+            let accountOrigin = try await auth.login()
+
+            // Assert
+            XCTAssertEqual(accountOrigin, .existingAccount)
+        } catch {
+            XCTFail("Login should succeed, but failed with: \(error)")
+        }
     }
 
     // MARK: - Logout Tests
@@ -587,6 +674,13 @@ final class AuthTests: XCTestCase {
 
     // MARK: - Helper Methods
 
+    /// ISO 8601 formatter with fractional seconds, matching the format Auth0 uses for `created_at`.
+    private static let iso8601Formatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
     private func setupLoggedInState() async {
         let credentials = Credentials(
             accessToken: "test-access-token",
@@ -607,5 +701,25 @@ final class AuthTests: XCTestCase {
 
         mockProvider.startAuthCallCount = 0
         mockProvider.storeCredentialsCallCount = 0
+    }
+
+    /// Creates a minimal valid JWT string with the given payload claims.
+    ///
+    /// The token has the structure `header.payload.signature` where header and payload
+    /// are Base64URL-encoded JSON. The signature is a placeholder since we don't verify it.
+    private func makeJWT(claims: [String: Any]) throws -> String {
+        let header = #"{"alg":"RS256","typ":"JWT"}"#
+        let payloadData = try JSONSerialization.data(withJSONObject: claims)
+        let payload = try XCTUnwrap(String(data: payloadData, encoding: .utf8))
+
+        func base64URLEncode(_ string: String) -> String {
+            Data(string.utf8)
+                .base64EncodedString()
+                .replacingOccurrences(of: "+", with: "-")
+                .replacingOccurrences(of: "/", with: "_")
+                .replacingOccurrences(of: "=", with: "")
+        }
+
+        return "\(base64URLEncode(header)).\(base64URLEncode(payload)).mock-signature"
     }
 }

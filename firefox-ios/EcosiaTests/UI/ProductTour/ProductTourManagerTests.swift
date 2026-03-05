@@ -10,28 +10,51 @@ final class ProductTourManagerTests: XCTestCase {
     var userDefaults: UserDefaults!
     var sut: ProductTourManager!
     var suiteName: String!
+    var authManager: EcosiaBrowserWindowAuthManager!
+    var testWindowUUID: WindowUUID!
 
     override func setUp() {
         super.setUp()
         suiteName = "ProductTourManagerTests-\(UUID().uuidString)"
         userDefaults = UserDefaults(suiteName: suiteName)!
-        sut = ProductTourManager(userDefaults: userDefaults)
+        authManager = EcosiaBrowserWindowAuthManager.shared
+        testWindowUUID = WindowUUID.XCTestDefaultUUID
+        EcosiaAuthWindowRegistry.shared.registerWindow(testWindowUUID)
+        sut = ProductTourManager(userDefaults: userDefaults, authManager: authManager)
     }
 
     override func tearDown() {
         if let suiteName = suiteName {
             userDefaults.removePersistentDomain(forName: suiteName)
         }
+        authManager.clearAllStates()
+        EcosiaAuthWindowRegistry.shared.clearAllWindows()
         userDefaults = nil
         sut = nil
         suiteName = nil
+        authManager = nil
+        testWindowUUID = nil
+    }
+
+    // MARK: - Helpers
+
+    /// Simulates a login by dispatching a `userLoggedIn` action through the auth manager,
+    /// which triggers the `ProductTourManager`'s notification handler.
+    private func simulateLogin(accountOrigin: AccountOrigin?) {
+        let action = AuthStateAction(
+            type: .userLoggedIn,
+            windowUUID: testWindowUUID,
+            isLoggedIn: true,
+            accountOrigin: accountOrigin
+        )
+        authManager.dispatch(action: action, for: testWindowUUID)
     }
 
     // MARK: - Initialization Tests
 
     func testInitialState_WhenExperimentDisabled_IsCompleted() {
         // Given/When: Experiment is disabled (default behavior)
-        let manager = ProductTourManager(userDefaults: userDefaults)
+        let manager = ProductTourManager(userDefaults: userDefaults, authManager: authManager)
 
         // Then: All milestones should be marked complete
         XCTAssertEqual(manager.completedMilestones, .all)
@@ -44,7 +67,7 @@ final class ProductTourManagerTests: XCTestCase {
         userDefaults.removeObject(forKey: "ProductTourMilestones")
 
         // When: Manager initializes
-        let manager = ProductTourManager(userDefaults: userDefaults)
+        let manager = ProductTourManager(userDefaults: userDefaults, authManager: authManager)
 
         // Then: Should default to completed (experiment disabled)
         XCTAssertEqual(manager.completedMilestones, .all)
@@ -405,7 +428,7 @@ final class ProductTourManagerTests: XCTestCase {
         userDefaults.set(ProductTourMilestones.firstSearchDone.rawValue, forKey: "ProductTourMilestones")
 
         // When: Creating a new manager instance with experiment disabled
-        let newManager = ProductTourManager(userDefaults: userDefaults)
+        let newManager = ProductTourManager(userDefaults: userDefaults, authManager: authManager)
 
         // Then: Should default to all milestones complete (experiment disabled)
         XCTAssertEqual(newManager.completedMilestones, .all)
@@ -477,6 +500,121 @@ final class ProductTourManagerTests: XCTestCase {
         observer = nil
 
         XCTAssertNoThrow(sut.resetTour())
+    }
+
+    // MARK: - Account Origin Tests
+
+    func testExistingAccountLogin_SkipsSearchTrack() {
+        // Given: Fresh tour
+        sut.resetTour()
+        XCTAssertTrue(sut.shouldShowProductTourHomepage)
+
+        // When: Existing account logs in
+        simulateLogin(accountOrigin: .existingAccount)
+
+        // Then: Search track is skipped, only external website track remains
+        XCTAssertFalse(sut.shouldShowProductTourHomepage)
+        XCTAssertFalse(sut.shouldShowSearchSpotlight)
+        XCTAssertTrue(sut.isInProductTour)
+    }
+
+    func testExistingAccountLogin_ExternalWebsiteTrackStillWorks() {
+        // Given: Fresh tour with existing account login
+        sut.resetTour()
+        simulateLogin(accountOrigin: .existingAccount)
+
+        // When: External website visit happens
+        sut.completeExternalWebsiteVisitIfNeeded()
+
+        // Then: External website spotlight should show
+        XCTAssertTrue(sut.shouldShowExternalWebsiteSpotlight)
+
+        // When: Spotlight is dismissed
+        sut.completeExternalWebsiteSpotlight()
+
+        // Then: Tour completes
+        XCTAssertFalse(sut.isInProductTour)
+    }
+
+    func testNewAccountLogin_FullTourRemains() {
+        // Given: Fresh tour
+        sut.resetTour()
+
+        // When: New account logs in
+        simulateLogin(accountOrigin: .newAccount)
+
+        // Then: Full tour still active — search track not skipped
+        XCTAssertTrue(sut.shouldShowProductTourHomepage)
+        XCTAssertTrue(sut.isInProductTour)
+    }
+
+    func testNilAccountOrigin_FullTourRemains() {
+        // Given: Fresh tour
+        sut.resetTour()
+
+        // When: Login without account origin (claim not configured)
+        simulateLogin(accountOrigin: nil)
+
+        // Then: Full tour still active — treated same as new account
+        XCTAssertTrue(sut.shouldShowProductTourHomepage)
+        XCTAssertTrue(sut.isInProductTour)
+    }
+
+    func testExistingAccountLogin_WhenTourAlreadyCompleted_DoesNothing() {
+        // Given: Tour already completed
+        sut.completeTour()
+        XCTAssertFalse(sut.isInProductTour)
+
+        let observer = MockProductTourObserver()
+        sut.addObserver(observer)
+
+        // When: Existing account logs in
+        simulateLogin(accountOrigin: .existingAccount)
+
+        // Then: No events emitted, tour stays completed
+        XCTAssertTrue(observer.receivedEvents.isEmpty)
+        XCTAssertFalse(sut.isInProductTour)
+    }
+
+    func testExistingAccountLogin_NotifiesSearchCompleted() {
+        // Given: Fresh tour
+        sut.resetTour()
+
+        let observer = MockProductTourObserver()
+        sut.addObserver(observer)
+
+        // When: Existing account logs in
+        simulateLogin(accountOrigin: .existingAccount)
+
+        // Then: Observers receive searchCompleted so they can skip to external website track
+        XCTAssertTrue(observer.receivedEvents.contains(.searchCompleted))
+    }
+
+    func testCompleteWorkflow_ExistingAccount() {
+        // Given: Fresh tour
+        let observer = MockProductTourObserver()
+        sut.addObserver(observer)
+        sut.resetTour()
+
+        // Step 1: Existing account logs in → search track auto-completed
+        simulateLogin(accountOrigin: .existingAccount)
+        XCTAssertFalse(sut.shouldShowProductTourHomepage)
+        XCTAssertFalse(sut.shouldShowSearchSpotlight)
+
+        // Step 2: External website visit
+        sut.completeExternalWebsiteVisitIfNeeded()
+        XCTAssertTrue(sut.shouldShowExternalWebsiteSpotlight)
+
+        // Step 3: External website spotlight done → tour completes
+        sut.completeExternalWebsiteSpotlight()
+        XCTAssertFalse(sut.isInProductTour)
+
+        XCTAssertEqual(observer.receivedEvents, [
+            .tourStarted,
+            .searchCompleted,
+            .externalWebsiteVisited,
+            .tourCompleted
+        ])
     }
 
     // MARK: - Integration Tests
