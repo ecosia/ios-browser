@@ -128,6 +128,7 @@ public final class ProductTourManager {
 
     /// Whether the user is currently in the product tour
     public var isInProductTour: Bool {
+        guard OnboardingProductTourExperiment.isEnabled else { return false }
         return !completedMilestones.contains(.all)
     }
 
