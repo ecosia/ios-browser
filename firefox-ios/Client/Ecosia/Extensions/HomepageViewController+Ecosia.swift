@@ -120,7 +120,7 @@ extension LegacyHomepageViewController: NTPHeaderDelegate {
     }
 }
 
-extension LegacyHomepageViewController: NTPFirstSearchViewModelDelegate {
+extension LegacyHomepageViewController: NTPFirstSearchCellViewModelDelegate {
     func searchWithQuery(_ query: String) {
         openLink(url: URL.ecosiaSearchWithQuery(query))
     }

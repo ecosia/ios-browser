@@ -117,10 +117,15 @@ class BrowserCoordinator: BaseCoordinator,
 
     // Ecosia: Handle sign-in request from welcome screen
     func didRequestSignIn(from coordinator: LaunchCoordinator) {
+        ProductTourManager.shared.signInFlowDidStart()
         router.dismiss(animated: true) { [weak self] in
             guard let self else { return }
             self.browserViewController.animateToolbarsIn()
             EcosiaAuth(browserViewController: self.browserViewController)
+                .onAuthFlowCompleted { _ in
+                    // Ensure the sign-in suspension is lifted regardless of outcome
+                    ProductTourManager.shared.signInFlowDidEnd()
+                }
                 .login()
         }
         remove(child: coordinator)

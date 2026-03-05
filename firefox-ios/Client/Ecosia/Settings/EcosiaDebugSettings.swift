@@ -95,6 +95,9 @@ final class ResetOnboardingProductTour: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         User.shared.firstTime = true
         ProductTourManager.shared.resetTour()
+        Task {
+            try? await EcosiaAuthenticationService.shared.logout()
+        }
 
         let title = "Onboarding state reset"
         let message = "Close and open the app to see welcome screen"

@@ -68,6 +68,10 @@ public final class ProductTourManager {
     // Observers for event notifications
     private var observers: [WeakReference] = []
 
+    /// When `true`, the sign-in flow is in progress and the first-search
+    /// card should be hidden until the flow resolves.
+    public private(set) var isSignInFlowActive: Bool = false
+
     /// Tracks which independent milestones have been completed
     public private(set) var completedMilestones: ProductTourMilestones {
         didSet {
@@ -96,6 +100,11 @@ public final class ProductTourManager {
         guard let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType,
               let authState = notification.userInfo?["authState"] as? AuthWindowState else {
             return
+        }
+
+        // End the sign-in suspension whenever auth resolves if still active
+        if isSignInFlowActive {
+            signInFlowDidEnd()
         }
 
         if case .userLoggedIn = actionType, isInProductTour {
@@ -194,6 +203,22 @@ public final class ProductTourManager {
         guard isInProductTour else { return }
         completedMilestones = .all
         notifyObservers(event: .tourCompleted)
+    }
+
+    // MARK: - Sign-In Flow Suspension
+
+    /// Call when the user starts the sign-in flow from the Welcome screen.
+    public func signInFlowDidStart() {
+        guard !isSignInFlowActive else { return }
+        isSignInFlowActive = true
+        notifyObservers(event: .tourStarted)
+    }
+
+    /// Call when the sign-in flow resolves.
+    public func signInFlowDidEnd() {
+        guard isSignInFlowActive else { return }
+        isSignInFlowActive = false
+        notifyObservers(event: .tourStarted)
     }
 
     /// Reset the tour state (useful for testing or re-onboarding).
