@@ -16,30 +16,32 @@ public enum AccountOrigin: Equatable, Sendable {
 
 extension Credentials {
 
-    /// The maximum number of seconds between `created_at` and `iat` for the account
-    /// to be considered newly created. For new accounts, these timestamps are nearly identical
-    /// since the token is issued moments after account creation.
-    private static let newAccountThresholdSeconds: TimeInterval = 30
-
     /// The custom claim key for the account creation timestamp.
     /// Set via an Auth0 Post-Login Action: ``api.idToken.setCustomClaim(`${CUSTOM_CLAIM_NAMESPACE}/created_at`, event.user.created_at);``
     private static let createdAtClaim = "https://ecosia.org/created_at"
 
+    /// A UTC calendar used for same-day comparisons.
+    private static let utcCalendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar
+    }()
+
     /// Determines whether this login represents a new account or an existing sign-in.
     ///
     /// Compares the `https://ecosia.org/created_at` custom claim (account creation time) with
-    /// `iat` (token issue time) from the ID token. For a newly created account,
-    /// these timestamps will be within seconds of each other.
+    /// the current date. If the account was created on the same UTC calendar day,
+    /// the account is considered new. This accommodates delays caused by e-mail verification
+    /// while still distinguishing new from returning users.
     var accountOrigin: AccountOrigin {
         guard let jwt = try? decode(jwt: idToken),
               let createdAtString = jwt[Self.createdAtClaim].string,
-              let createdAt = Self.iso8601Formatter.date(from: createdAtString),
-              let issuedAt = jwt.issuedAt else { // TODO: Handle e-mail verification case
+              let createdAt = Self.iso8601Formatter.date(from: createdAtString) else {
             return .existingAccount
         }
 
-        let difference = abs(issuedAt.timeIntervalSince(createdAt))
-        return difference <= Self.newAccountThresholdSeconds ? .newAccount : .existingAccount
+        let sameDay = Self.utcCalendar.isDate(createdAt, inSameDayAs: Date())
+        return sameDay ? .newAccount : .existingAccount
     }
 
     /// ISO 8601 formatter configured to handle fractional seconds (e.g. `2026-03-04T10:44:47.942Z`).
