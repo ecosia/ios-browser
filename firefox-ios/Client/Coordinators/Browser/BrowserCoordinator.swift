@@ -120,8 +120,8 @@ class BrowserCoordinator: BaseCoordinator,
         router.dismiss(animated: true) { [weak self] in
             guard let self else { return }
             self.browserViewController.animateToolbarsIn()
-            let auth = EcosiaAuth(browserViewController: self.browserViewController)
-            auth.login()
+            EcosiaAuth(browserViewController: self.browserViewController)
+                .login()
         }
         remove(child: coordinator)
     }

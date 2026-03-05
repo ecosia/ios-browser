@@ -52,11 +52,15 @@ public protocol ProductTourObserver: AnyObject {
 ///   2. **External website track**: first external website visit → external website spotlight
 ///
 /// The tour completes automatically once both tracks are finished.
+///
+/// The manager automatically listens to authentication state changes. When a user logs in,
+/// the ``AccountOrigin`` determines which tour variant to start (new account vs. existing account).
 public final class ProductTourManager {
     public static let shared = ProductTourManager()
     private static let milestonesKey = "ProductTourMilestones"
 
     private let userDefaults: UserDefaults
+    private let authManager: EcosiaBrowserWindowAuthManager
 
     // Observers for event notifications
     private var observers: [WeakReference] = []
@@ -69,9 +73,42 @@ public final class ProductTourManager {
         }
     }
 
-    public init(userDefaults: UserDefaults = .standard) {
+    public init(userDefaults: UserDefaults = .standard,
+                authManager: EcosiaBrowserWindowAuthManager = .shared) {
         self.userDefaults = userDefaults
+        self.authManager = authManager
         self.completedMilestones = Self.loadMilestones(from: userDefaults)
+        authManager.subscribe(observer: self, selector: #selector(handleAuthStateChanged(_:)))
+    }
+
+    deinit {
+        authManager.unsubscribe(observer: self)
+    }
+
+    // MARK: - Auth State Observation
+
+    @objc private func handleAuthStateChanged(_ notification: Notification) {
+        guard let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType,
+              let authState = notification.userInfo?["authState"] as? AuthWindowState else {
+            return
+        }
+
+        if case .userLoggedIn = actionType, isInProductTour {
+            applyAccountOriginToTour(authState.accountOrigin)
+        }
+    }
+
+    /// Adjusts milestones based on account origin.
+    ///
+    /// - New account / no login: full tour (first-search → search spotlight → external website → external website spotlight)
+    /// - Existing account: skip the search track entirely, only the external website track remains
+    private func applyAccountOriginToTour(_ accountOrigin: AccountOrigin?) {
+        guard accountOrigin == .existingAccount else { return }
+
+        // Existing users skip the first-search homepage and search spotlight
+        completedMilestones.insert(.firstSearchDone)
+        completedMilestones.insert(.searchSpotlightDone)
+        notifyObservers(event: .searchCompleted)
     }
 
     // MARK: - Public API

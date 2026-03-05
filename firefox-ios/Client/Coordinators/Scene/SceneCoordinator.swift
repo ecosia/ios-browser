@@ -180,8 +180,8 @@ class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinish
         browserCoordinator.browserViewController.prepareToolbarsForWelcomeTransition()
         router.dismiss(animated: true) {
             browserCoordinator.browserViewController.animateToolbarsIn()
-            let auth = EcosiaAuth(browserViewController: browserCoordinator.browserViewController)
-            auth.login()
+            EcosiaAuth(browserViewController: browserCoordinator.browserViewController)
+                .login()
         }
         remove(child: coordinator)
     }
