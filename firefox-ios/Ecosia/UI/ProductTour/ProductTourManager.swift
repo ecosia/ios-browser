@@ -17,6 +17,10 @@ public enum ProductTourEvent {
     case externalWebsiteVisited
     /// All milestones are done; the tour is finished
     case tourCompleted
+    /// The sign-in flow has started; observers should hold off on tour-related UI changes
+    case signInFlowStarted
+    /// The sign-in flow has ended; observers can resume normal tour behaviour
+    case signInFlowEnded
 }
 
 /// Tracks which product tour milestones have been completed
@@ -211,14 +215,14 @@ public final class ProductTourManager {
     public func signInFlowDidStart() {
         guard !isSignInFlowActive else { return }
         isSignInFlowActive = true
-        notifyObservers(event: .tourStarted)
+        notifyObservers(event: .signInFlowStarted)
     }
 
     /// Call when the sign-in flow resolves.
     public func signInFlowDidEnd() {
         guard isSignInFlowActive else { return }
         isSignInFlowActive = false
-        notifyObservers(event: .tourStarted)
+        notifyObservers(event: .signInFlowEnded)
     }
 
     /// Reset the tour state (useful for testing or re-onboarding).

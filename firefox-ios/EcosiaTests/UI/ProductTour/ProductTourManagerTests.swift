@@ -507,6 +507,70 @@ final class ProductTourManagerTests: XCTestCase {
         XCTAssertNoThrow(sut.resetTour())
     }
 
+    // MARK: - Sign-In Flow Tests
+
+    func testSignInFlowDidStart_SetsIsSignInFlowActive() {
+        sut.resetTour()
+
+        sut.signInFlowDidStart()
+
+        XCTAssertTrue(sut.isSignInFlowActive)
+    }
+
+    func testSignInFlowDidStart_NotifiesObserversWithSignInFlowStarted() {
+        sut.resetTour()
+        let observer = MockProductTourObserver()
+        sut.addObserver(observer)
+
+        sut.signInFlowDidStart()
+
+        XCTAssertEqual(observer.receivedEvents, [.signInFlowStarted])
+    }
+
+    func testSignInFlowDidStart_WhenAlreadyActive_DoesNotNotifyAgain() {
+        sut.resetTour()
+        sut.signInFlowDidStart()
+
+        let observer = MockProductTourObserver()
+        sut.addObserver(observer)
+
+        sut.signInFlowDidStart()
+
+        XCTAssertTrue(observer.receivedEvents.isEmpty)
+    }
+
+    func testSignInFlowDidEnd_ClearsIsSignInFlowActive() {
+        sut.resetTour()
+        sut.signInFlowDidStart()
+
+        sut.signInFlowDidEnd()
+
+        XCTAssertFalse(sut.isSignInFlowActive)
+    }
+
+    func testSignInFlowDidEnd_NotifiesObserversWithSignInFlowEnded() {
+        sut.resetTour()
+        sut.signInFlowDidStart()
+
+        let observer = MockProductTourObserver()
+        sut.addObserver(observer)
+
+        sut.signInFlowDidEnd()
+
+        XCTAssertEqual(observer.receivedEvents, [.signInFlowEnded])
+    }
+
+    func testSignInFlowDidEnd_WhenNotActive_DoesNotNotify() {
+        sut.resetTour()
+
+        let observer = MockProductTourObserver()
+        sut.addObserver(observer)
+
+        sut.signInFlowDidEnd()
+
+        XCTAssertTrue(observer.receivedEvents.isEmpty)
+    }
+
     // MARK: - Account Origin Tests
 
     func testExistingAccountLogin_SkipsSearchTrack() {
