@@ -102,7 +102,6 @@ extension Analytics {
             customize,
             impact,
             news,
-            onboardingCard = "onboarding_card",
             quickActions = "quick_actions",
             topSites = "top_sites"
         }
@@ -268,27 +267,11 @@ extension Analytics {
             readingList = "reading_list"
         }
 
-        public enum OnboardingPage: String, CaseIterable {
-            case
-            start,
-            profits,
-            action,
-            greenSearch = "green_search",
-            transparentFinances = "transparent_finances"
-        }
-
         public enum ShareContent: String {
             case
             ntp,
             web,
             file
-        }
-
-        public enum TopSite: String {
-            case
-            `default`,
-            mostVisited = "most_visited",
-            pinned
         }
 
         public enum SettingsPrivateDataSection: String {
@@ -304,6 +287,19 @@ extension Analytics {
             back,
             complete,
             readMore = "read_more"
+        }
+
+        public enum TopSite: String {
+            case
+            `default`,
+            mostVisited = "most_visited",
+            pinned
+        }
+
+        public enum Welcome: String {
+            case
+            signIn = "sign_in",
+            maybeLater = "maybe_later"
         }
     }
 }

@@ -208,7 +208,7 @@ public struct WelcomeView: View {
                     VStack {
                         // Sign in button (primary style with icon)
                         Button(action: {
-                            Analytics.shared.introWelcome(action: .click)
+                            Analytics.shared.introWelcome(action: .click, property: .signIn)
                             startExitAnimation(skipFinish: true) {
                                 onSignIn?()
                             }
@@ -230,7 +230,7 @@ public struct WelcomeView: View {
 
                         // Maybe later button (outlined style)
                         Button(action: {
-                            Analytics.shared.introWelcome(action: .click)
+                            Analytics.shared.introWelcome(action: .click, property: .maybeLater)
                             startExitAnimation()
                         }) {
                             Text(verbatim: .localized(.maybeLater))
