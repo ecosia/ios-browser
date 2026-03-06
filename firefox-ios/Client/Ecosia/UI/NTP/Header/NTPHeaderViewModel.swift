@@ -63,7 +63,7 @@ final class NTPHeaderViewModel: ObservableObject {
     }
 
     var shouldShow: Bool {
-        // If on product tour, show only if logged in
+        // If on product tour homepage, show only if logged in
         if ProductTourManager.shared.shouldShowProductTourHomepage {
             return EcosiaAuthUIStateProvider.shared.isLoggedIn
         }
