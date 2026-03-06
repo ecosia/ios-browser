@@ -6,12 +6,12 @@ import Foundation
 import Common
 import Ecosia
 
-protocol NTPFirstSearchViewModelDelegate: AnyObject {
+protocol NTPFirstSearchCellViewModelDelegate: AnyObject {
     func searchWithQuery(_ query: String)
 }
 
 /// View model for the Product Tour NTP section that appears during onboarding
-class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
+class NTPFirstSearchCellViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
     var sectionType: HomepageSectionType = .firstSearch
     var headerViewModel = LabelButtonHeaderViewModel.emptyHeader
@@ -20,11 +20,12 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     internal var theme: Theme
     let windowUUID: WindowUUID
     private var productTourManager: ProductTourManager
-    weak var delegate: NTPFirstSearchViewModelDelegate?
+    weak var delegate: NTPFirstSearchCellViewModelDelegate?
     weak var dataModelDelegate: HomepageDataModelDelegate?
 
     var shouldShow: Bool {
         return productTourManager.shouldShowProductTourHomepage
+            && !productTourManager.isSignInFlowActive
     }
 
     init(theme: Theme,
@@ -77,7 +78,7 @@ class NTPFirstSearchViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
 // MARK: - HomepageSectionHandler
 
-extension NTPFirstSearchViewModel: HomepageSectionHandler {
+extension NTPFirstSearchCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell,
                    at indexPath: IndexPath) -> UICollectionViewCell {
@@ -121,7 +122,7 @@ extension NTPFirstSearchViewModel: HomepageSectionHandler {
 
 // MARK: - ProductTourObserver
 
-extension NTPFirstSearchViewModel: ProductTourObserver {
+extension NTPFirstSearchCellViewModel: ProductTourObserver {
     func productTour(didReceiveEvent event: ProductTourEvent) {
         dataModelDelegate?.reloadView()
     }

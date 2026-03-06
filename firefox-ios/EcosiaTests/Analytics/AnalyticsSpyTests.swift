@@ -77,8 +77,10 @@ final class AnalyticsSpy: Analytics {
     }
 
     var introWelcomeActionCalled: Action.Welcome?
-    override func introWelcome(action: Action.Welcome) {
+    var introWelcomePropertyCalled: Property.Welcome?
+    override func introWelcome(action: Action.Welcome, property: Property.Welcome? = nil) {
         introWelcomeActionCalled = action
+        introWelcomePropertyCalled = property
     }
 
     var navigationActionCalled: Action?
@@ -893,7 +895,7 @@ extension AnalyticsSpyTests {
     }
 
     func makeWelcomeView() -> WelcomeView {
-        WelcomeView(windowUUID: .XCTestDefaultUUID, onFinish: {})
+        WelcomeView(windowUUID: .XCTestDefaultUUID, onFinish: {}, onSignIn: {})
     }
 
     func makeInstructionsViewSUT(onButtonTap: @escaping () -> Void = {}) -> InstructionStepsView<some View> {

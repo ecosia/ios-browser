@@ -8,6 +8,8 @@ import Ecosia
 
 protocol LaunchCoordinatorDelegate: AnyObject {
     func didFinishLaunch(from coordinator: LaunchCoordinator)
+    // Ecosia: Handle sign-in request from welcome screen
+    func didRequestSignIn(from coordinator: LaunchCoordinator)
 }
 
 // Manages different types of onboarding that gets shown at the launch of the application
@@ -200,5 +202,9 @@ class LaunchCoordinator: BaseCoordinator,
 extension LaunchCoordinator: WelcomeDelegate {
     func welcomeDidFinish(_ welcome: WelcomeViewController) {
         self.parentCoordinator?.didFinishLaunch(from: self)
+    }
+
+    func welcomeDidRequestSignIn(_ welcome: WelcomeViewController) {
+        self.parentCoordinator?.didRequestSignIn(from: self)
     }
 }

@@ -40,7 +40,7 @@ extension BrowserViewController {
     /// Handles any tasks that should run after a page finishes loading.
     /// - Parameter url: The URL that finished loading
     func ecosiaHandlePageLoadCompletion(url: URL) {
-        if OnboardingProductTourExperiment.isEnabled {
+        if ProductTourManager.shared.isInProductTour {
             if url.isEcosiaSearchVertical() {
                 ProductTourManager.shared.completeFirstSearchIfNeeded()
             } else if url.isBrowser() && !url.isEcosia() {

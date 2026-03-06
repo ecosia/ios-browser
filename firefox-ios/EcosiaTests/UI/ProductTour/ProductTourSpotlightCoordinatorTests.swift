@@ -26,7 +26,7 @@ final class ProductTourSpotlightCoordinatorTests: XCTestCase {
         super.setUp()
         suiteName = "ProductTourSpotlightCoordinatorTests-\(UUID().uuidString)"
         userDefaults = UserDefaults(suiteName: suiteName)!
-        tourManager = ProductTourManager(userDefaults: userDefaults)
+        tourManager = ProductTourManager(userDefaults: userDefaults, isExperimentEnabled: { true })
 
         viewController = UIViewController()
         bottomContentView = UIView()
@@ -72,6 +72,48 @@ final class ProductTourSpotlightCoordinatorTests: XCTestCase {
     func testDidReceiveEvent_searchCompleted_showsSpotlight() {
         sut.productTour(didReceiveEvent: .searchCompleted)
 
+        XCTAssertTrue(sut.isShowingSpotlight)
+    }
+
+    func testDidReceiveEvent_searchTrackCompleted_doesNotShowSpotlight() {
+        sut.productTour(didReceiveEvent: .searchTrackCompleted)
+
+        XCTAssertFalse(sut.isShowingSpotlight)
+    }
+
+    func testDidReceiveEvent_signInFlowStarted_doesNotShowSpotlight() {
+        sut.productTour(didReceiveEvent: .signInFlowStarted)
+
+        XCTAssertFalse(sut.isShowingSpotlight)
+    }
+
+    func testDidReceiveEvent_signInFlowStarted_doesNotDismissExistingSpotlight() {
+        // Given: A spotlight is already showing
+        sut.productTour(didReceiveEvent: .searchCompleted)
+        XCTAssertTrue(sut.isShowingSpotlight)
+
+        // When: Sign-in flow starts
+        sut.productTour(didReceiveEvent: .signInFlowStarted)
+
+        // Then: Existing spotlight remains visible
+        XCTAssertTrue(sut.isShowingSpotlight)
+    }
+
+    func testDidReceiveEvent_signInFlowEnded_doesNotShowSpotlight() {
+        sut.productTour(didReceiveEvent: .signInFlowEnded)
+
+        XCTAssertFalse(sut.isShowingSpotlight)
+    }
+
+    func testDidReceiveEvent_signInFlowEnded_doesNotDismissExistingSpotlight() {
+        // Given: A spotlight is already showing
+        sut.productTour(didReceiveEvent: .externalWebsiteVisited)
+        XCTAssertTrue(sut.isShowingSpotlight)
+
+        // When: Sign-in flow ends
+        sut.productTour(didReceiveEvent: .signInFlowEnded)
+
+        // Then: Existing spotlight remains visible
         XCTAssertTrue(sut.isShowingSpotlight)
     }
 

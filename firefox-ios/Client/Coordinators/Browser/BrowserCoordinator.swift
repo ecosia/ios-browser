@@ -115,6 +115,28 @@ class BrowserCoordinator: BaseCoordinator,
         }
     }
 
+    // Ecosia: Handle sign-in request from welcome screen
+    func didRequestSignIn(from coordinator: LaunchCoordinator) {
+        router.dismiss(animated: true) { [weak self] in
+            guard let self else { return }
+
+            ProductTourManager.shared.signInFlowDidStart()
+
+            self.browserViewController.animateToolbarsIn()
+            EcosiaAuth(browserViewController: self.browserViewController)
+                .onAuthFlowCompleted { _ in
+                    // Ensure the sign-in suspension is lifted regardless of outcome
+                    ProductTourManager.shared.signInFlowDidEnd()
+                }
+                .onError { _ in
+                    // Also lift the suspension if the auth flow errors before completing
+                    ProductTourManager.shared.signInFlowDidEnd()
+                }
+                .login()
+        }
+        remove(child: coordinator)
+    }
+
     // MARK: - BrowserDelegate
 
     func showLegacyHomepage(

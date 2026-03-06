@@ -138,6 +138,8 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
             showSpotlight(with: externalWebsiteConfiguration)
         case .tourCompleted, .tourStarted:
             dismissCurrentSpotlight()
+        case .searchTrackCompleted, .signInFlowStarted, .signInFlowEnded:
+            break
         }
     }
 

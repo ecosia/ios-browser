@@ -30,6 +30,7 @@ public struct WelcomeView: View {
         static let topGradientBottomOffset: CGFloat = 19
         static let bodyGradientTopOffset: CGFloat = 20
         static let bodyGradientBottomOffset: CGFloat = 24
+        static let bottomGradientTopOffset: CGFloat = 20
 
         // Animation timings (relative delays between phases)
         static let initialDelay: TimeInterval = 0.5
@@ -58,6 +59,7 @@ public struct WelcomeView: View {
     @State private var backgroundOpacity: Double = 1.0
     @State private var topGradientOpacity: Double = 0.0
     @State private var bodyGradientOpacity: Double = 0.0
+    @State private var bottomGradientOpacity: Double = 0.0
     @State private var theme = WelcomeViewTheme()
     @State private var isVideoReady = false
     @State private var animationTask: Task<Void, Never>?
@@ -67,10 +69,14 @@ public struct WelcomeView: View {
 
     let windowUUID: WindowUUID
     let onFinish: () -> Void
+    let onSignIn: () -> Void
 
-    public init(windowUUID: WindowUUID, onFinish: @escaping () -> Void) {
+    public init(windowUUID: WindowUUID,
+                onFinish: @escaping () -> Void,
+                onSignIn: @escaping () -> Void) {
         self.windowUUID = windowUUID
         self.onFinish = onFinish
+        self.onSignIn = onSignIn
     }
 
     enum AnimationPhase {
@@ -122,6 +128,25 @@ public struct WelcomeView: View {
                 }
                 .ignoresSafeArea()
                 .opacity(topGradientOpacity)
+            }
+
+            // Bottom vertical gradient behind buttons
+            if animationPhase == .phase3Complete {
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.black.opacity(0),
+                            Color.black.opacity(0.32)
+                        ]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: bottomGradientHeight)
+                }
+                .ignoresSafeArea()
+                .opacity(bottomGradientOpacity)
             }
 
             // Welcome text
@@ -179,18 +204,49 @@ public struct WelcomeView: View {
                         .opacity(bodyGradientOpacity)
                     )
 
-                    Button(action: {
-                        Analytics.shared.introWelcome(action: .click)
-                        startExitAnimation()
-                    }) {
-                        Text(verbatim: .localized(.getStarted))
+                    // Buttons
+                    VStack {
+                        // Sign in button (primary style with icon)
+                        Button(action: {
+                            Analytics.shared.introWelcome(action: .click, property: .signIn)
+                            startExitAnimation(skipFinish: true) {
+                                onSignIn()
+                            }
+                        }) {
+                            HStack(spacing: 8) {
+                                Image("sign-in", bundle: .ecosia)
+                                    .renderingMode(.template)
+                                    .foregroundColor(theme.buttonTextColor)
+                                    .accessibilityHidden(true)
+                                Text(verbatim: .localized(.signIn))
+                            }
                             .font(.body)
                             .foregroundColor(theme.buttonTextColor)
                             .frame(maxWidth: .infinity)
                             .frame(height: UX.buttonHeight)
                             .background(theme.buttonBackgroundColor)
                             .cornerRadius(UX.buttonCornerRadius)
+                        }
+
+                        // Maybe later button (outlined style)
+                        Button(action: {
+                            Analytics.shared.introWelcome(action: .click, property: .maybeLater)
+                            startExitAnimation()
+                        }) {
+                            Text(verbatim: .localized(.maybeLater))
+                                .font(.body)
+                                .foregroundColor(theme.outlinedButtonTextColor)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: UX.buttonHeight)
+                                .background(Color.clear)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: UX.buttonCornerRadius)
+                                        .stroke(theme.outlinedButtonBorderColor, lineWidth: 1.5)
+                                )
+                                .cornerRadius(UX.buttonCornerRadius)
+                        }
                     }
+                    .padding(.top, UX.bottomGradientTopOffset)
                 }
                 .padding(.horizontal, UX.contentPadding)
                 .padding(.top, UX.contentPadding)
@@ -240,6 +296,7 @@ public struct WelcomeView: View {
         bodyOpacity = 1.0
         topGradientOpacity = 1.0
         bodyGradientOpacity = 1.0
+        bottomGradientOpacity = 1.0
         backgroundOpacity = 0.0
         animationPhase = .phase3Complete
     }
@@ -291,6 +348,7 @@ public struct WelcomeView: View {
                 bodyOpacity = 1.0
                 topGradientOpacity = 1.0
                 bodyGradientOpacity = 1.0
+                bottomGradientOpacity = 1.0
                 backgroundOpacity = 0.0
                 animationPhase = .phase3Complete
             }
@@ -306,7 +364,7 @@ public struct WelcomeView: View {
         try? await Task.sleep(duration: duration)
     }
 
-    private func startExitAnimation() {
+    private func startExitAnimation(skipFinish: Bool = false, onComplete: (() -> Void)? = nil) {
         animationTask?.cancel()
 
         // Phase 4: Exit transition - move content out while fading
@@ -323,7 +381,10 @@ public struct WelcomeView: View {
             }
 
             guard !Task.isCancelled else { return }
-            onFinish()
+            if !skipFinish {
+                onFinish()
+            }
+            onComplete?()
         }
     }
 
@@ -416,6 +477,13 @@ extension WelcomeView {
         let logoBottomY = screenHeight / 2 + phase3LogoOffset + (UX.logoHeight / 2)
         return logoBottomY + UX.topGradientBottomOffset
     }
+
+    // Bottom gradient extends from above the buttons down to the bottom of the screen
+    private var bottomGradientHeight: CGFloat {
+        // Covers the button area plus padding plus safe area
+        let buttonsHeight = UX.buttonHeight * 2 + UX.contentPadding // two buttons + spacing
+        return buttonsHeight + UX.bottomGradientTopOffset + UX.contentPadding + safeAreaBottom
+    }
 }
 
 // MARK: - WelcomeViewTheme
@@ -425,11 +493,15 @@ public struct WelcomeViewTheme: EcosiaThemeable {
     var buttonTextColor = Color.white
     var buttonBackgroundColor = Color.green
     var brandPrimaryColor = Color.green
+    var outlinedButtonTextColor = Color.white
+    var outlinedButtonBorderColor = Color.white
 
     public mutating func applyTheme(theme: Theme) {
         contentTextColor = Color(theme.colors.ecosia.textStaticLight)
         buttonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
         buttonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)
         brandPrimaryColor = Color(theme.colors.ecosia.brandPrimary)
+        outlinedButtonTextColor = Color(theme.colors.ecosia.textStaticLight)
+        outlinedButtonBorderColor = Color(theme.colors.ecosia.textStaticLight)
     }
 }

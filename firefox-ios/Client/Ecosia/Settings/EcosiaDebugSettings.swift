@@ -64,7 +64,28 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
 
 final class ResetOnboardingProductTour: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Reset onboarding state", attributes: [:])
+        return NSAttributedString(string: "Debug: Reset product tour state", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        guard OnboardingProductTourExperiment.isEnabled else {
+            return NSAttributedString(string: "Current state: Experiment disabled")
+        }
+
+        let milestones = ProductTourManager.shared.completedMilestones
+        let state: String
+        if milestones.contains(.all) {
+            state = "All"
+        } else {
+            var completed: [String] = []
+            if milestones.contains(.firstSearchDone) { completed.append("firstSearchDone") }
+            if milestones.contains(.searchSpotlightDone) { completed.append("searchSpotlightDone") }
+            if milestones.contains(.externalWebsiteVisitDone) { completed.append("externalWebsiteVisitDone") }
+            if milestones.contains(.externalWebsiteSpotlightDone) { completed.append("externalWebsiteSpotlightDone") }
+            state = completed.isEmpty ? "None" : completed.joined(separator: ", ")
+        }
+        let inTour = ProductTourManager.shared.isInProductTour ? "In tour" : "Tour complete"
+        return NSAttributedString(string: "Current state: \(inTour) | Milestones: \(state)")
     }
 
     override init(settings: SettingsTableViewController) {
@@ -74,6 +95,9 @@ final class ResetOnboardingProductTour: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         User.shared.firstTime = true
         ProductTourManager.shared.resetTour()
+        Task {
+            try? await EcosiaAuthenticationService.shared.logout()
+        }
 
         let title = "Onboarding state reset"
         let message = "Close and open the app to see welcome screen"

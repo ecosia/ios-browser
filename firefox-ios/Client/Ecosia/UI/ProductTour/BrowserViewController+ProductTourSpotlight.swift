@@ -15,8 +15,7 @@ extension BrowserViewController {
     /// Sets up the product tour spotlight coordinator
     /// Call this in viewDidLoad or similar lifecycle method
     func setupProductTourSpotlightIfNeeded() {
-        guard OnboardingProductTourExperiment.isEnabled,
-              ProductTourManager.shared.isInProductTour else {
+        guard ProductTourManager.shared.isInProductTour else {
             return
         }
 
@@ -31,8 +30,7 @@ extension BrowserViewController {
     /// Updates the spotlight coordinator's theme when theme changes
     /// Call this when theme changes (e.g., dark mode toggle)
     func updateSpotlightThemeIfNeeded() {
-        guard OnboardingProductTourExperiment.isEnabled,
-              ProductTourManager.shared.isInProductTour else {
+        guard ProductTourManager.shared.isInProductTour else {
             return
         }
 

@@ -101,6 +101,8 @@ extension String {
         case sendFeedback = "Send feedback"
         case shownUnderSearchField = "Shown under the search field"
         case signUp = "Sign up"
+        case signIn = "Sign in"
+        case maybeLater = "Maybe later"
         case signInErrorMessage = "Something went wrong. Please sign in again."
         case signOutErrorMessage = "Something went wrong. Please sign out again."
         case showOnHomepage = "Show on homepage"

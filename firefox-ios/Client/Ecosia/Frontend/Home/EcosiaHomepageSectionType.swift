@@ -111,8 +111,8 @@ extension HomepageSectionType {
 extension HomepageSectionType {
     var isProductTourSection: Bool {
         switch self {
-        case .homepageHeader, .firstSearch: true
-        case .header, .libraryShortcuts, .topSites, .impact, .news, .ntpCustomization: false
+        case .header, .homepageHeader, .firstSearch: true
+        case .libraryShortcuts, .topSites, .impact, .news, .ntpCustomization: false
         }
     }
 }
