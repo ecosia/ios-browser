@@ -69,11 +69,11 @@ public struct WelcomeView: View {
 
     let windowUUID: WindowUUID
     let onFinish: () -> Void
-    let onSignIn: (() -> Void)?
+    let onSignIn: () -> Void
 
     public init(windowUUID: WindowUUID,
                 onFinish: @escaping () -> Void,
-                onSignIn: (() -> Void)? = nil) {
+                onSignIn: @escaping () -> Void) {
         self.windowUUID = windowUUID
         self.onFinish = onFinish
         self.onSignIn = onSignIn
@@ -210,7 +210,7 @@ public struct WelcomeView: View {
                         Button(action: {
                             Analytics.shared.introWelcome(action: .click, property: .signIn)
                             startExitAnimation(skipFinish: true) {
-                                onSignIn?()
+                                onSignIn()
                             }
                         }) {
                             HStack(spacing: 8) {
