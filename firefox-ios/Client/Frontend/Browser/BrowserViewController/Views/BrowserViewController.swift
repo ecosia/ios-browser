@@ -165,6 +165,8 @@ class BrowserViewController: UIViewController,
     var overKeyboardContainerConstraint: Constraint?
     var bottomContainerConstraint: Constraint?
     var topTouchAreaHeightConstraint: NSLayoutConstraint?
+    // Ecosia: MOB-4170 - Store contentContainer bottom constraint to switch between homepage and webview
+    var contentContainerBottomConstraint: NSLayoutConstraint?
 
     // Overlay dimming view for private mode
     private lazy var privateModeDimmingView: UIView = .build { view in
@@ -766,7 +768,10 @@ class BrowserViewController: UIViewController,
 
         bottomContainer.isClearBackground = showNavToolbar && enableBlur
         bottomBlurView.isHidden = (!showNavToolbar && !isBottomSearchBar && enableBlur) || isScrollAlphaZero
-        bottomContainer.isHidden = isScrollAlphaZero
+        // Ecosia: MOB-4170 - Keep bottom containers hidden when showing homepage, otherwise use scroll alpha
+        let isShowingHomepage = contentContainer.hasHomepage
+        bottomContainer.isHidden = isShowingHomepage || isScrollAlphaZero
+        overKeyboardContainer.isHidden = isShowingHomepage
 
         if !isToolbarTranslucencyRefactorEnabled {
             let maskView = UIView(frame: CGRect(x: 0,
@@ -1658,6 +1663,11 @@ class BrowserViewController: UIViewController,
         } else {
             overKeyboardContainer.removeBottomInsetSpacer()
         }
+
+        // Ecosia: MOB-4170 - Update safe area insets for embedded content when toolbar layout changes
+        if let embeddedContent = contentContainer.contentController {
+            updateAdditionalSafeAreaInsetsForEmbeddedContent(embeddedContent)
+        }
     }
 
     override func willTransition(
@@ -1749,11 +1759,14 @@ class BrowserViewController: UIViewController,
 
     // MARK: - Constraints
     private func setupConstraints() {
+        // Ecosia: MOB-4170 - Store contentContainer bottom constraint to switch for homepage
+        contentContainerBottomConstraint = contentContainer.bottomAnchor.constraint(equalTo: overKeyboardContainer.topAnchor)
+
         NSLayoutConstraint.activate([
             contentContainer.topAnchor.constraint(equalTo: header.bottomAnchor),
             contentContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             contentContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentContainer.bottomAnchor.constraint(equalTo: overKeyboardContainer.topAnchor),
+            contentContainerBottomConstraint!,
 
             topTouchArea.topAnchor.constraint(equalTo: view.topAnchor),
             topTouchArea.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -1875,6 +1888,14 @@ class BrowserViewController: UIViewController,
         }
 
         super.updateViewConstraints()
+
+        // Ecosia: MOB-4170 - Update safe area insets after constraint updates
+        // Dispatch async to ensure frames are updated after constraints
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self,
+                  let embeddedContent = self.contentContainer.contentController else { return }
+            self.updateAdditionalSafeAreaInsetsForEmbeddedContent(embeddedContent)
+        }
     }
 
     func adjustBottomContentStackView(_ remake: ConstraintMaker) {
@@ -1977,6 +1998,12 @@ class BrowserViewController: UIViewController,
         viewController.willMove(toParent: self)
         contentContainer.add(content: viewController)
         viewController.didMove(toParent: self)
+
+        // Ecosia: MOB-4170 - Set additional safe area insets to account for bottom toolbar
+        // This ensures embedded content (like homepage) doesn't extend behind the bottom UI
+        // viewController is ContentContainable which extends UIViewController, so it's always a UIViewController
+        updateAdditionalSafeAreaInsetsForEmbeddedContent(viewController)
+
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
 
         // To make sure the content views content is extending under the toolbars we disable clip to bounds
@@ -1998,12 +2025,68 @@ class BrowserViewController: UIViewController,
         return true
     }
 
+    // Ecosia: MOB-4170 - Update additional safe area insets for embedded content
+    private func updateAdditionalSafeAreaInsetsForEmbeddedContent(_ viewController: UIViewController) {
+        // Calculate the height of bottom UI that overlays the content
+        let showNavToolbar = toolbarHelper.shouldShowNavigationToolbar(for: traitCollection)
+        let bottomUIHeight: CGFloat
+
+        if isBottomSearchBar && showNavToolbar {
+            // Both address bar and nav toolbar at bottom
+            bottomUIHeight = overKeyboardContainer.frame.height
+        } else if isBottomSearchBar {
+            // Only address bar at bottom
+            bottomUIHeight = overKeyboardContainer.frame.height
+        } else if showNavToolbar {
+            // Only nav toolbar at bottom
+            bottomUIHeight = bottomContainer.frame.height
+        } else {
+            // Ecosia: MOB-4170 - Even when flags are false, bottomContainer might still have height
+            // This happens on iPad where the bottom toolbar is present but flags don't indicate it
+            let containerHeight = bottomContainer.frame.height
+            if containerHeight > 0 {
+                bottomUIHeight = containerHeight
+            } else {
+                // No bottom UI
+                bottomUIHeight = 0
+            }
+        }
+
+        // Set additional safe area insets to account for the bottom UI
+        // The system safe area (home indicator) is already included in the view's safe area
+        var insets = viewController.additionalSafeAreaInsets
+        insets.bottom = bottomUIHeight
+        viewController.additionalSafeAreaInsets = insets
+    }
+
+    // Ecosia: MOB-4170 - Switch contentContainer bottom constraint for homepage
+    private func updateContentContainerConstraintForHomepage(_ isHomepage: Bool) {
+        guard let currentConstraint = contentContainerBottomConstraint else { return }
+
+        currentConstraint.isActive = false
+
+        if isHomepage {
+            // For homepage, extend contentContainer to the bottom of the view
+            contentContainerBottomConstraint = contentContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        } else {
+            // For webview, stop contentContainer at overKeyboardContainer top
+            contentContainerBottomConstraint = contentContainer.bottomAnchor.constraint(equalTo: overKeyboardContainer.topAnchor)
+        }
+
+        contentContainerBottomConstraint?.isActive = true
+    }
+
     /// Show the home page embedded in the contentContainer
     /// - Parameter inline: Inline is true when the homepage is created from the tab tray, a long press
     /// on the tab bar to open a new tab or by pressing the home page button on the tab bar. Inline is false when
     /// it's the zero search page, aka when the home page is shown by clicking the url bar from a loaded web page.
     func showEmbeddedHomepage(inline: Bool, isPrivate: Bool) {
         resetCFRsTimer()
+
+        // Ecosia: MOB-4170 - Hide bottom containers on homepage to prevent gray bar on iPad
+        bottomContainer.isHidden = true
+        overKeyboardContainer.isHidden = true
+        updateContentContainerConstraintForHomepage(true)
 
         if isPrivate && featureFlags.isFeatureEnabled(.feltPrivacySimplifiedUI, checking: .buildOnly) {
             browserDelegate?.showPrivateHomepage(overlayManager: overlayManager)
@@ -2041,6 +2124,11 @@ class BrowserViewController: UIViewController,
             logger.log("Webview of selected tab was not available", level: .debug, category: .lifecycle)
             return
         }
+
+        // Ecosia: MOB-4170 - Show bottom containers when displaying web content
+        bottomContainer.isHidden = false
+        overKeyboardContainer.isHidden = false
+        updateContentContainerConstraintForHomepage(false)
 
         if webView.url == nil {
             // The web view can go gray if it was zombified due to memory pressure.
@@ -3255,11 +3343,6 @@ class BrowserViewController: UIViewController,
             DefaultLogger.shared.log("Error handling URL entry: \"\(text)\".", level: .warning, category: .tabs)
             return
         }
-        
-        // Ecosia: DEBUG - Log which search engine is being used
-        print("🔍 DEBUG: Submitting search with engine: \(engine.shortName), URL: \(searchURL)")
-        print("🔍 DEBUG: All available engines: \(searchEnginesManager.orderedEngines.map { $0.shortName })")
-        print("🔍 DEBUG: Default engine: \(searchEnginesManager.defaultEngine?.shortName ?? "none")")
 
         let conversionMetrics = UserConversionMetrics()
         conversionMetrics.didPerformSearch()

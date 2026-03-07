@@ -323,6 +323,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
     override func generateSettings() -> [SettingSection] {
         setupDataSettings()
+        /* Ecosia: Replace Firefox settings with Ecosia-specific sections
         var settings = [SettingSection]()
         settings += getDefaultBrowserSetting()
         settings += getAccountSetting()
@@ -336,6 +337,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
 
         return settings
+        */
+        return getEcosiaSettingsSectionsShowingDebug(showDebugSettings)
     }
 
     private func getDefaultBrowserSetting() -> [SettingSection] {
@@ -520,7 +523,9 @@ class AppSettingsTableViewController: SettingsTableViewController,
             ChangeToChinaSetting(settings: self),
             AppReviewPromptSetting(settings: self, settingsDelegate: self),
             ResetContextualHints(settings: self),
+            ShowWallpaperOnboarding(settings: self, settingsDelegate: self),
             ResetWallpaperOnboardingPage(settings: self, settingsDelegate: self),
+            ForceWallpaperRefresh(settings: self),
             ResetTermsOfServiceAcceptancePage(settings: self, settingsDelegate: self),
             ResetSearchEnginePrefsSetting(settings: self),
             SentryIDSetting(settings: self, settingsDelegate: self),
