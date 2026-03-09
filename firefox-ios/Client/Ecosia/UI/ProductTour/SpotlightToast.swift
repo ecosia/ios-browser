@@ -412,13 +412,19 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
         viewController.view.addSubview(self)
 
-        let safeArea = viewController.view.safeAreaLayoutGuide
+        // On iPhone portrait the toast fills the full view width (matching Toast behaviour).
+        // On iPad and landscape the width is capped at maxWidth and centred.
+        // The high-priority equality makes the toast prefer full width; the required
+        // lessThanOrEqualTo cap wins whenever the view is wider than maxWidth.
+        let preferFullWidth = widthAnchor.constraint(equalTo: viewController.view.widthAnchor)
+        preferFullWidth.priority = .defaultHigh
+
         NSLayoutConstraint.activate([
-            // Center horizontally and cap the width for wide layouts (e.g. iPad).
-            centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+            preferFullWidth,
             widthAnchor.constraint(lessThanOrEqualToConstant: UX.maxWidth),
-            leadingAnchor.constraint(greaterThanOrEqualTo: safeArea.leadingAnchor),
-            trailingAnchor.constraint(lessThanOrEqualTo: safeArea.trailingAnchor),
+            centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+            leadingAnchor.constraint(greaterThanOrEqualTo: viewController.view.leadingAnchor),
+            trailingAnchor.constraint(lessThanOrEqualTo: viewController.view.trailingAnchor),
             bottomAnchor.constraint(equalTo: bottomAnchorView.topAnchor)
         ])
 
