@@ -72,6 +72,29 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         static let imageCornerRadius: CGFloat = 8
     }
 
+    // MARK: - Gradient Overlay
+
+    /// Transparent-to-solid scrim behind the toast covering only the web view area.
+    private final class GradientOverlayView: UIView {
+        override class var layerClass: AnyClass { CAGradientLayer.self }
+
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            let gradient = layer as! CAGradientLayer
+            gradient.startPoint = CGPoint(x: 0.5, y: 0)
+            gradient.endPoint   = CGPoint(x: 0.5, y: 1)
+        }
+
+        required init?(coder: NSCoder) { fatalError() }
+
+        func apply(color: UIColor) {
+            (layer as! CAGradientLayer).colors = [color.withAlphaComponent(0).cgColor, color.cgColor]
+        }
+    }
+
+    private var gradientOverlay: GradientOverlayView?
+    private var gradientColor: UIColor?
+
     // MARK: - Properties
 
     private var viewModel: SpotlightToastViewModel
@@ -385,6 +408,9 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         primaryConfig?.baseBackgroundColor = .clear
         primaryConfig?.background.strokeColor = theme.colors.ecosia.textPrimary
         primaryButton.configuration = primaryConfig
+
+        gradientColor = theme.colors.ecosia.backgroundGradient
+        gradientOverlay?.apply(color: theme.colors.ecosia.backgroundGradient)
     }
 
     // MARK: - Actions
@@ -410,6 +436,14 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         self.viewController = viewController
         translatesAutoresizingMaskIntoConstraints = false
 
+        // Gradient overlay behind the toast (web view area only, not over toolbars)
+        let overlay = GradientOverlayView()
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        overlay.alpha = 0
+        if let color = gradientColor { overlay.apply(color: color) }
+        viewController.view.insertSubview(overlay, belowSubview: bottomAnchorView)
+        gradientOverlay = overlay
+
         viewController.view.addSubview(self)
 
         // On iPhone portrait the toast fills the full view width (matching Toast behaviour).
@@ -425,7 +459,12 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
             centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
             leadingAnchor.constraint(greaterThanOrEqualTo: viewController.view.leadingAnchor),
             trailingAnchor.constraint(lessThanOrEqualTo: viewController.view.trailingAnchor),
-            bottomAnchor.constraint(equalTo: bottomAnchorView.topAnchor)
+            bottomAnchor.constraint(equalTo: bottomAnchorView.topAnchor),
+
+            overlay.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            overlay.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            overlay.topAnchor.constraint(equalTo: topAnchor),
+            overlay.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
         ])
 
         // Set initial state: below and transparent
@@ -445,6 +484,7 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
             animations: {
                 self.containerStackView.transform = .identity
                 self.containerStackView.alpha = 1.0
+                self.gradientOverlay?.alpha = 1.0
             }
         )
     }
@@ -517,8 +557,11 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
             animations: {
                 self.containerStackView.transform = CGAffineTransform(translationX: 0, y: UX.verticalAnimationOffset)
                 self.containerStackView.alpha = 0
+                self.gradientOverlay?.alpha = 0
             },
             completion: { _ in
+                self.gradientOverlay?.removeFromSuperview()
+                self.gradientOverlay = nil
                 self.removeFromSuperview()
                 if !buttonPressed {
                     self.completionHandler?(false)

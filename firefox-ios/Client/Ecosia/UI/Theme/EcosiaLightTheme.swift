@@ -114,6 +114,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
 private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundNeutralInverse: UIColor = EcosiaColor.Gray80
     var backgroundFeatured: UIColor = EcosiaColor.Grellow100
+    var backgroundGradient: UIColor = EcosiaColor.White
     var backgroundPrimary: UIColor = EcosiaColor.White
     var backgroundPrimaryDecorative: UIColor = EcosiaColor.Gray10
     var backgroundRoleNegative: UIColor = EcosiaColor.Peach100
