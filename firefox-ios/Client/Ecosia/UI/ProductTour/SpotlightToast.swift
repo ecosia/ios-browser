@@ -51,7 +51,6 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         static let verticalSpacing: CGFloat = 16
         static let buttonSpacing: CGFloat = 8
 
-        static let titleFontSize: CGFloat = 17
         static let subheadlineFontSize: CGFloat = 15
 
         static let buttonHeight: CGFloat = 40
@@ -193,8 +192,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = DefaultDynamicFontHelper.preferredFont(
-                withTextStyle: .body,
-                size: UX.titleFontSize
+                withTextStyle: .subheadline,
+                size: UX.subheadlineFontSize
             )
             return outgoing
         }
@@ -216,8 +215,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = DefaultDynamicFontHelper.preferredFont(
-                withTextStyle: .body,
-                size: UX.titleFontSize
+                withTextStyle: .subheadline,
+                size: UX.subheadlineFontSize
             )
             return outgoing
         }
