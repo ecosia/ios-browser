@@ -483,7 +483,7 @@ extension Analytics {
     func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: [.brazeIntegration])
+            addABTestContexts(to: event, toggles: [.brazeIntegration, .onboardingProductTour])
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
