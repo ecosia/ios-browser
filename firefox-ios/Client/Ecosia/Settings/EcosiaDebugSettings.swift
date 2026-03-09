@@ -69,6 +69,9 @@ final class ResetOnboardingProductTour: HiddenSetting {
 
     override var status: NSAttributedString? {
         guard OnboardingProductTourExperiment.isEnabled else {
+            if OnboardingProductTourExperiment.isControl {
+                return NSAttributedString(string: "Current state: Control variant — use Unleash Onboarding Product Tour debug setting to reset")
+            }
             return NSAttributedString(string: "Current state: Experiment disabled")
         }
 
@@ -93,6 +96,15 @@ final class ResetOnboardingProductTour: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
+        guard OnboardingProductTourExperiment.isEnabled else {
+            let alert = AlertController(title: "Experiment Disabled or in Control",
+                                        message: "The onboarding product tour experiment is not enabled. Check your constraints (such as version on install) or use the \"Unleash Onboarding Product Tour\" debug setting to reset the Unleash cache and get a new variant assignment.",
+                                        preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(alert, animated: true)
+            return
+        }
+
         User.shared.firstTime = true
         ProductTourManager.shared.resetTour()
         Task {
