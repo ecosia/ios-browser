@@ -177,21 +177,10 @@ class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinish
             return
         }
 
-        ProductTourManager.shared.signInFlowDidStart()
-
         browserCoordinator.browserViewController.prepareToolbarsForWelcomeTransition()
         router.dismiss(animated: true) {
             browserCoordinator.browserViewController.animateToolbarsIn()
-            EcosiaAuth(browserViewController: browserCoordinator.browserViewController)
-                .onAuthFlowCompleted { _ in
-                    // Ensure the sign-in suspension is lifted regardless of outcome
-                    ProductTourManager.shared.signInFlowDidEnd()
-                }
-                .onError { _ in
-                    // Also lift the suspension if the auth flow errors before completing
-                    ProductTourManager.shared.signInFlowDidEnd()
-                }
-                .login()
+            EcosiaAuth.performWelcomeSignIn(browserViewController: browserCoordinator.browserViewController)
         }
         remove(child: coordinator)
     }
