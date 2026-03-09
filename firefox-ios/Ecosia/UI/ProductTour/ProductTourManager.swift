@@ -11,10 +11,16 @@ public enum ProductTourEvent {
     case tourStarted
     /// The user completed their first search; show the search spotlight
     case searchCompleted
+    /// The entire search track (first search + spotlight) is done; move to the external website track
+    case searchTrackCompleted
     /// The user visited an external website; show the external website spotlight
     case externalWebsiteVisited
     /// All milestones are done; the tour is finished
     case tourCompleted
+    /// The sign-in flow has started; observers should hold off on tour-related UI changes
+    case signInFlowStarted
+    /// The sign-in flow has ended; observers can resume normal tour behaviour
+    case signInFlowEnded
 }
 
 /// Tracks which product tour milestones have been completed
@@ -52,14 +58,23 @@ public protocol ProductTourObserver: AnyObject {
 ///   2. **External website track**: first external website visit → external website spotlight
 ///
 /// The tour completes automatically once both tracks are finished.
+///
+/// The manager automatically listens to authentication state changes. When a user logs in,
+/// the ``AccountOrigin`` determines which tour variant to start (new account vs. existing account).
 public final class ProductTourManager {
     public static let shared = ProductTourManager()
     private static let milestonesKey = "ProductTourMilestones"
 
     private let userDefaults: UserDefaults
+    private let authManager: EcosiaBrowserWindowAuthManager
+    private let isExperimentEnabled: () -> Bool
 
     // Observers for event notifications
     private var observers: [WeakReference] = []
+
+    /// When `true`, the sign-in flow is in progress and the first-search
+    /// card should be hidden until the flow resolves.
+    public private(set) var isSignInFlowActive: Bool = false
 
     /// Tracks which independent milestones have been completed
     public private(set) var completedMilestones: ProductTourMilestones {
@@ -69,9 +84,49 @@ public final class ProductTourManager {
         }
     }
 
-    public init(userDefaults: UserDefaults = .standard) {
+    public init(userDefaults: UserDefaults = .standard,
+                authManager: EcosiaBrowserWindowAuthManager = .shared,
+                isExperimentEnabled: @escaping () -> Bool = { OnboardingProductTourExperiment.isEnabled }) {
         self.userDefaults = userDefaults
-        self.completedMilestones = Self.loadMilestones(from: userDefaults)
+        self.authManager = authManager
+        self.isExperimentEnabled = isExperimentEnabled
+        self.completedMilestones = Self.loadMilestones(from: userDefaults, isExperimentEnabled: isExperimentEnabled)
+        authManager.subscribe(observer: self, selector: #selector(handleAuthStateChanged(_:)))
+    }
+
+    deinit {
+        authManager.unsubscribe(observer: self)
+    }
+
+    // MARK: - Auth State Observation
+
+    @objc private func handleAuthStateChanged(_ notification: Notification) {
+        guard let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType,
+              let authState = notification.userInfo?["authState"] as? AuthWindowState else {
+            return
+        }
+
+        // End the sign-in suspension whenever auth resolves if still active
+        if isSignInFlowActive {
+            signInFlowDidEnd()
+        }
+
+        if case .userLoggedIn = actionType, isInProductTour {
+            applyAccountOriginToTour(authState.accountOrigin)
+        }
+    }
+
+    /// Adjusts milestones based on account origin.
+    ///
+    /// - New account / no login: full tour (first-search → search spotlight → external website → external website spotlight)
+    /// - Existing account: skip the search track entirely, only the external website track remains
+    private func applyAccountOriginToTour(_ accountOrigin: AccountOrigin?) {
+        guard accountOrigin == .existingAccount else { return }
+
+        // Existing users skip the first-search homepage and search spotlight
+        completedMilestones.insert(.firstSearchDone)
+        completedMilestones.insert(.searchSpotlightDone)
+        notifyObservers(event: .searchTrackCompleted)
     }
 
     // MARK: - Public API
@@ -91,6 +146,7 @@ public final class ProductTourManager {
 
     /// Whether the user is currently in the product tour
     public var isInProductTour: Bool {
+        guard isExperimentEnabled() else { return false }
         return !completedMilestones.contains(.all)
     }
 
@@ -153,6 +209,22 @@ public final class ProductTourManager {
         notifyObservers(event: .tourCompleted)
     }
 
+    // MARK: - Sign-In Flow Suspension
+
+    /// Call when the user starts the sign-in flow from the Welcome screen.
+    public func signInFlowDidStart() {
+        guard !isSignInFlowActive else { return }
+        isSignInFlowActive = true
+        notifyObservers(event: .signInFlowStarted)
+    }
+
+    /// Call when the sign-in flow resolves.
+    public func signInFlowDidEnd() {
+        guard isSignInFlowActive else { return }
+        isSignInFlowActive = false
+        notifyObservers(event: .signInFlowEnded)
+    }
+
     /// Reset the tour state (useful for testing or re-onboarding).
     public func resetTour() {
         completedMilestones = []
@@ -167,14 +239,15 @@ public final class ProductTourManager {
         }
     }
 
-    private static func loadMilestones(from userDefaults: UserDefaults) -> ProductTourMilestones {
-        guard OnboardingProductTourExperiment.isEnabled else { return .all }
+    private static func loadMilestones(from userDefaults: UserDefaults,
+                                       isExperimentEnabled: () -> Bool) -> ProductTourMilestones {
+        guard isExperimentEnabled() else { return .all }
         let rawValue = userDefaults.integer(forKey: milestonesKey)
         return ProductTourMilestones(rawValue: rawValue)
     }
 
     private func saveMilestones() {
-        if OnboardingProductTourExperiment.isEnabled {
+        if isExperimentEnabled() {
             userDefaults.set(completedMilestones.rawValue, forKey: Self.milestonesKey)
         }
     }

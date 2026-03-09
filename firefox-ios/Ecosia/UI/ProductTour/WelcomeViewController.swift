@@ -8,6 +8,7 @@ import SwiftUI
 
 public protocol WelcomeDelegate: AnyObject {
     func welcomeDidFinish(_ welcome: WelcomeViewController)
+    func welcomeDidRequestSignIn(_ welcome: WelcomeViewController)
 }
 
 public final class WelcomeViewController: UIViewController {
@@ -36,6 +37,10 @@ public final class WelcomeViewController: UIViewController {
             onFinish: { [weak self] in
                 guard let self = self else { return }
                 self.delegate?.welcomeDidFinish(self)
+            },
+            onSignIn: { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.welcomeDidRequestSignIn(self)
             }
         )
 

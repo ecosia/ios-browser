@@ -187,6 +187,30 @@ final class EcosiaAuth {
         }
     }
 
+    // MARK: - Welcome Screen Sign-In
+
+    /// Performs the sign-in flow triggered from the welcome/onboarding screen.
+    ///
+    /// This encapsulates the shared logic used by both `BrowserCoordinator` and
+    /// `SceneCoordinator` when the user requests sign-in during onboarding:
+    /// - Signals `ProductTourManager` that the sign-in flow has started
+    /// - Creates an `EcosiaAuth` instance and begins the login flow
+    /// - Ensures `ProductTourManager` is notified when the flow ends (success or error)
+    ///
+    /// - Parameter browserViewController: The `BrowserViewController` to use for the auth flow.
+    static func performWelcomeSignIn(browserViewController: BrowserViewController) {
+        ProductTourManager.shared.signInFlowDidStart()
+
+        EcosiaAuth(browserViewController: browserViewController)
+            .onAuthFlowCompleted { _ in
+                ProductTourManager.shared.signInFlowDidEnd()
+            }
+            .onError { _ in
+                ProductTourManager.shared.signInFlowDidEnd()
+            }
+            .login()
+    }
+
     // MARK: - State Queries
 
     var isLoggedIn: Bool {

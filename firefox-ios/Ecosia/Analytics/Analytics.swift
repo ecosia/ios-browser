@@ -248,11 +248,12 @@ open class Analytics {
         )
     }
 
-    // MARK: Onboarding
-    public func introWelcome(action: Action.Welcome) {
+    // MARK: Product Tour
+    public func introWelcome(action: Action.Welcome, property: Property.Welcome? = nil) {
         let event = Structured(category: Category.intro.rawValue,
                                action: action.rawValue)
             .label(Label.Onboarding.welcome.rawValue)
+            .property(property?.rawValue)
         track(event)
     }
 
