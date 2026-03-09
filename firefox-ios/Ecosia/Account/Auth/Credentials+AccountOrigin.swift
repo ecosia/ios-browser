@@ -16,9 +16,15 @@ public enum AccountOrigin: Equatable, Sendable {
 
 extension Credentials {
 
+    /// The namespace prefix used to scope custom claims in Auth0 ID tokens.
+    /// This is **not** environment dependant – Auth0 requires a namespace that resembles a URI
+    /// to avoid collisions with registered JWT claims.
+    /// Configured in the Auth0 Post-Login Action as `CUSTOM_CLAIM_NAMESPACE`.
+    private static let customClaimNamespace = "https://ecosia.org"
+
     /// The custom claim key for the account creation timestamp.
     /// Set via an Auth0 Post-Login Action: ``api.idToken.setCustomClaim(`${CUSTOM_CLAIM_NAMESPACE}/created_at`, event.user.created_at);``
-    private static let createdAtClaim = "https://ecosia.org/created_at"
+    private static let createdAtClaim = "\(customClaimNamespace)/created_at"
 
     /// A UTC calendar used for same-day comparisons.
     private static let utcCalendar: Calendar = {
