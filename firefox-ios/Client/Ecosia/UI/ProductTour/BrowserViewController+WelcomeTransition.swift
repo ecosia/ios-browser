@@ -7,7 +7,6 @@ import Shared
 
 // MARK: - Welcome Transition Animation
 extension BrowserViewController {
-    private static let welcomeTransitionBackgroundKey = "welcomeTransitionBackground"
 
     /// Prepares the toolbars to be animated in after welcome dismissal
     /// This should be called early in the view lifecycle
@@ -48,9 +47,5 @@ extension BrowserViewController {
                 self?.contentStackView.alpha = 1
             }
         )
-    }
-
-    private static func hash(for key: String) -> Int {
-        return key.hashValue
     }
 }
