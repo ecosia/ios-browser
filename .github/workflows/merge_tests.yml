@@ -2,7 +2,7 @@ name: Merge Unit Tests
 
 on:
   pull_request:
-    branches: [main, 'patch/**', 'ls-mob-3544-onboarding-product-tour']
+    branches: [main, 'patch/**']
 
 jobs:
   execute_merge_tests:

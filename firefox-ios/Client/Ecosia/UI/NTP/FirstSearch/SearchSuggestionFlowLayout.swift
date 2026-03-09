@@ -33,9 +33,17 @@ struct FlowLayoutContainer: View {
     let availableWidth: CGFloat?
     let onTap: (String) -> Void
 
+    @State private var measuredWidth: CGFloat = 0
+
+    private var effectiveWidth: CGFloat {
+        if let width = availableWidth, width > 0 { return width }
+        // Use the measured width once available; fall back to screen width only for the
+        // very first render before GeometryReader fires, to avoid an empty layout.
+        return measuredWidth > 0 ? measuredWidth : UIScreen.main.bounds.width
+    }
+
     var body: some View {
-        let width = availableWidth ?? UIScreen.main.bounds.width - 32 // Minus margins
-        let rows = computeRows(availableWidth: width)
+        let rows = computeRows(availableWidth: effectiveWidth)
 
         VStack(alignment: .center, spacing: spacing) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
@@ -50,6 +58,14 @@ struct FlowLayoutContainer: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity)
+        .background(
+            GeometryReader { geometry in
+                Color.clear
+                    .onAppear { measuredWidth = geometry.size.width }
+                    .onChange(of: geometry.size.width) { measuredWidth = $0 }
+            }
+        )
     }
 
     private func computeRows(availableWidth: CGFloat) -> [[String]] {

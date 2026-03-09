@@ -418,7 +418,6 @@ workflows:
                 - main
                 - /^main-\d+$/
                 - /^patch\/.+$/
-                - ls-mob-3544-onboarding-product-tour
           context: napps
 
       # Check if version was bumped and conditionally continue to release pipeline

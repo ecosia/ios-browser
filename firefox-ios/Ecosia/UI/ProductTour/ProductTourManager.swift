@@ -127,6 +127,7 @@ public final class ProductTourManager {
         completedMilestones.insert(.firstSearchDone)
         completedMilestones.insert(.searchSpotlightDone)
         notifyObservers(event: .searchTrackCompleted)
+        completeTourIfAllMilestonesCompleted()
     }
 
     // MARK: - Public API

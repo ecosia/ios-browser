@@ -37,11 +37,6 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
     }
 
     private func setupSwiftUIView(title: String, description: String, suggestions: [String]) {
-        // Remove existing hosting controller if needed
-        if hostingController != nil {
-            return // Already set up, no need to recreate
-        }
-
         // Create SwiftUI view
         let swiftUIView = NTPFirstSearchView(
             title: title,
@@ -55,6 +50,12 @@ final class NTPFirstSearchCell: UICollectionViewCell, ReusableCell, ThemeApplica
                 self?.onSearchSuggestionTapped?(suggestion)
             }
         )
+
+        // Update the existing hosting controller's root view if already set up
+        if let hosting = hostingController {
+            hosting.rootView = swiftUIView
+            return
+        }
 
         // Create and configure hosting controller
         let hosting = UIHostingController(rootView: swiftUIView)
