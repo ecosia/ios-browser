@@ -46,17 +46,17 @@ struct SpotlightToastViewModel {
 class SpotlightToast: Toast, UIGestureRecognizerDelegate {
     struct UX {
         static let cornerRadius: CGFloat = 10
-        static let contentPadding: CGFloat = 16
+        static let cardPadding: CGFloat = 8
+        static let contentPadding: CGFloat = 8
         static let verticalSpacing: CGFloat = 16
         static let buttonSpacing: CGFloat = 8
 
         static let titleFontSize: CGFloat = 17
-        static let descriptionFontSize: CGFloat = 15
-        static let stepCounterFontSize: CGFloat = 13
+        static let subheadlineFontSize: CGFloat = 15
 
         static let buttonHeight: CGFloat = 40
         static let buttonCornerRadius: CGFloat = 20
-        static let buttonHorizontalPadding: CGFloat = 15
+        static let buttonHorizontalPadding: CGFloat = 16
         static let buttonInternalSpacing: CGFloat = 16
         static let secondaryButtonIconPadding: CGFloat = 4
         static let secondaryButtonIconSize: CGFloat = 16
@@ -92,18 +92,22 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
     private lazy var containerStackView: UIStackView = .build { stackView in
         stackView.axis = .vertical
-        stackView.spacing = UX.verticalSpacing
+        stackView.spacing = UX.cardPadding
         stackView.alignment = .fill
         stackView.distribution = .fill
-        stackView.layoutMargins = UIEdgeInsets(
-            top: UX.contentPadding,
-            left: UX.contentPadding,
-            bottom: UX.contentPadding,
-            right: UX.contentPadding
-        )
+        stackView.layoutMargins = .init(equalInset: UX.cardPadding)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.layer.cornerRadius = UX.cornerRadius
         stackView.clipsToBounds = true
+    }
+
+    private lazy var textContentStackView: UIStackView = .build { stackView in
+        stackView.axis = .vertical
+        stackView.spacing = UX.verticalSpacing
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.layoutMargins = .init(equalInset: UX.contentPadding)
+        stackView.isLayoutMarginsRelativeArrangement = true
     }
 
     private lazy var spotlightImageView: UIImageView = .build { imageView in
@@ -114,8 +118,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
     private lazy var titleLabel: UILabel = .build { label in
         label.font = DefaultDynamicFontHelper.preferredBoldFont(
-            withTextStyle: .body,
-            size: UX.titleFontSize
+            withTextStyle: .subheadline,
+            size: UX.subheadlineFontSize
         )
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
@@ -123,8 +127,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
     private lazy var descriptionLabel: UILabel = .build { label in
         label.font = DefaultDynamicFontHelper.preferredFont(
-            withTextStyle: .body,
-            size: UX.descriptionFontSize
+            withTextStyle: .subheadline,
+            size: UX.subheadlineFontSize
         )
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
@@ -139,8 +143,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
     private lazy var stepCounterLabel: UILabel = .build { label in
         label.font = DefaultDynamicFontHelper.preferredFont(
-            withTextStyle: .footnote,
-            size: UX.stepCounterFontSize
+            withTextStyle: .subheadline,
+            size: UX.subheadlineFontSize
         )
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -172,6 +176,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
             return outgoing
         }
         button.configuration = config
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 
     private lazy var primaryButton: UIButton = .build { button in
@@ -193,6 +199,8 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
             return outgoing
         }
         button.configuration = config
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 
     // MARK: - Initialization
@@ -234,9 +242,10 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
 
         // Build view hierarchy
         configureImageView(for: viewModel)
-        containerStackView.addArrangedSubview(titleLabel)
-        containerStackView.addArrangedSubview(descriptionLabel)
-        containerStackView.addArrangedSubview(bottomRowStackView)
+        textContentStackView.addArrangedSubview(titleLabel)
+        textContentStackView.addArrangedSubview(descriptionLabel)
+        textContentStackView.addArrangedSubview(bottomRowStackView)
+        containerStackView.addArrangedSubview(textContentStackView)
         bottomRowStackView.addArrangedSubview(stepCounterLabel)
         bottomRowStackView.addArrangedSubview(UIView()) // Flexible spacer to right-align buttons
         bottomRowStackView.addArrangedSubview(buttonStackView)
@@ -401,7 +410,6 @@ class SpotlightToast: Toast, UIGestureRecognizerDelegate {
         self.viewController = viewController
         translatesAutoresizingMaskIntoConstraints = false
 
-        // Add to view hierarchy first
         viewController.view.addSubview(self)
 
         let safeArea = viewController.view.safeAreaLayoutGuide
