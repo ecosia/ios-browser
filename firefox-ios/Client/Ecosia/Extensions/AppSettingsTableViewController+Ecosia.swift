@@ -153,7 +153,7 @@ extension AppSettingsTableViewController {
             OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
             ToggleDefaultBrowserPromo(settings: self),
             ToggleImpactIntro(settings: self),
-            ShowTour(settings: self, windowUUID: windowUUID),
+            ResetOnboardingProductTour(settings: self),
             CreateReferralCode(settings: self),
             AddReferral(settings: self),
             AddClaim(settings: self),
@@ -161,7 +161,7 @@ extension AppSettingsTableViewController {
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
-            AnalyticsIdentifierSetting(settings: self),
+            AnalyticsIdentifierSetting(settings: self)
         ]
 
         if EcosiaEnvironment.current == .staging {
@@ -175,6 +175,7 @@ extension AppSettingsTableViewController {
         let unleashSettings: [Setting] = [
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
+            UnleashOnboardingSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]
 

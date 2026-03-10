@@ -248,25 +248,45 @@ open class Analytics {
         )
     }
 
-    // MARK: Onboarding
-    public func introDisplaying(page: Property.OnboardingPage?) {
-        guard let page else {
-            return
-        }
+    // MARK: Product Tour
+    public func introWelcome(action: Action.Welcome, property: Property.Welcome? = nil) {
         let event = Structured(category: Category.intro.rawValue,
-                               action: Action.display.rawValue)
-            .property(page.rawValue)
+                               action: action.rawValue)
+            .label(Label.Onboarding.welcome.rawValue)
+            .property(property?.rawValue)
         track(event)
     }
 
-    public func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?) {
-        guard let page else {
-            return
-        }
+    public func firstSearchCardDismiss() {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.Onboarding.firstSearchCard.rawValue)
+        track(event)
+    }
+
+    public func firstSearchCardSuggestionClick(pillNumber: Int, languageRegionIdentifier: String) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Onboarding.firstSearchCard.rawValue)
+            .property(languageRegionIdentifier)
+            .value(NSNumber(value: pillNumber))
+        track(event)
+    }
+
+    public func spotlightTourDisplay(label: Label.Onboarding, step: Int) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.display.rawValue)
+            .label(label.rawValue)
+            .value(NSNumber(value: step))
+        track(event)
+    }
+
+    public func spotlightTourClick(label: Label.Onboarding, action: Property.SpotlightTour, step: Int) {
         let event = Structured(category: Category.intro.rawValue,
                                action: Action.click.rawValue)
             .label(label.rawValue)
-            .property(page.rawValue)
+            .property(action.rawValue)
+            .value(NSNumber(value: step))
         track(event)
     }
 
@@ -464,7 +484,7 @@ extension Analytics {
     func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: [.brazeIntegration])
+            addABTestContexts(to: event, toggles: [.brazeIntegration, .onboardingProductTour])
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }

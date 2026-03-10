@@ -117,10 +117,13 @@ extension URL {
         components?.queryItems?.first { $0.name == itemName.rawValue }?.value
     }
 
+    public func isBrowser() -> Bool {
+        scheme.flatMap(Scheme.init(rawValue:))?.isBrowser ?? false
+    }
+
     public func isEcosia(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
-        let isBrowser = scheme.flatMap(Scheme.init(rawValue:))?.isBrowser == true
         let hasURLProviderDomainSuffix = host?.hasSuffix(urlProvider.domain) == true
-        return isBrowser && hasURLProviderDomainSuffix
+        return isBrowser() && hasURLProviderDomainSuffix
     }
 
     private var components: URLComponents? {

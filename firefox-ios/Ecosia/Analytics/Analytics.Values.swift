@@ -102,15 +102,16 @@ extension Analytics {
             customize,
             impact,
             news,
-            onboardingCard = "onboarding_card",
             quickActions = "quick_actions",
             topSites = "top_sites"
         }
 
         public enum Onboarding: String {
             case
-            next,
-            skip
+            welcome = "welcome_screen",
+            firstSearchCard = "first_search_card",
+            serpTour = "serp_tour",
+            privacyTour = "privacy_tour"
         }
 
         public enum Referral: String {
@@ -222,6 +223,12 @@ extension Analytics {
             remove,
             unpin
 		}
+
+        public enum Welcome: String {
+            case
+            click,
+            display
+        }
     }
 
     public enum Property: String {
@@ -260,20 +267,26 @@ extension Analytics {
             readingList = "reading_list"
         }
 
-        public enum OnboardingPage: String, CaseIterable {
-            case
-            start,
-            profits,
-            action,
-            greenSearch = "green_search",
-            transparentFinances = "transparent_finances"
-        }
-
         public enum ShareContent: String {
             case
             ntp,
             web,
             file
+        }
+
+        public enum SettingsPrivateDataSection: String {
+            case
+            websites = "websites_data",
+            main = "all_private_data"
+        }
+
+        public enum SpotlightTour: String {
+            case
+            skip,
+            next,
+            back,
+            complete,
+            readMore = "read_more"
         }
 
         public enum TopSite: String {
@@ -283,10 +296,10 @@ extension Analytics {
             pinned
         }
 
-        public enum SettingsPrivateDataSection: String {
+        public enum Welcome: String {
             case
-            websites = "websites_data",
-            main = "all_private_data"
+            signIn = "sign_in",
+            maybeLater = "maybe_later"
         }
     }
 }

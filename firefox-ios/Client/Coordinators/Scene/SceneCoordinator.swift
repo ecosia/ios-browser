@@ -147,8 +147,41 @@ class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinish
     // MARK: - LaunchCoordinatorDelegate
 
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
+        /* Ecosia: Custom transition
         router.dismiss(animated: true)
         remove(child: coordinator)
+        */
         startBrowser(with: nil)
+
+        // Ecosia: Animate transition from welcome screen
+        guard let browserCoordinator = childCoordinators.first(where: { $0 is BrowserCoordinator }) as? BrowserCoordinator else {
+            router.dismiss(animated: true)
+            remove(child: coordinator)
+            return
+        }
+
+        browserCoordinator.browserViewController.prepareToolbarsForWelcomeTransition()
+        router.dismiss(animated: true) {
+            browserCoordinator.browserViewController.animateToolbarsIn()
+        }
+        remove(child: coordinator)
+    }
+
+    // Ecosia: Handle sign-in request from welcome screen
+    func didRequestSignIn(from coordinator: LaunchCoordinator) {
+        startBrowser(with: nil)
+
+        guard let browserCoordinator = childCoordinators.first(where: { $0 is BrowserCoordinator }) as? BrowserCoordinator else {
+            router.dismiss(animated: true)
+            remove(child: coordinator)
+            return
+        }
+
+        browserCoordinator.browserViewController.prepareToolbarsForWelcomeTransition()
+        router.dismiss(animated: true) {
+            browserCoordinator.browserViewController.animateToolbarsIn()
+            EcosiaAuth.performWelcomeSignIn(browserViewController: browserCoordinator.browserViewController)
+        }
+        remove(child: coordinator)
     }
 }
