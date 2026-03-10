@@ -615,6 +615,12 @@ extension BrowserViewController: WKNavigationDelegate {
                 decisionHandler(allowPolicy)
                 return
             }
+            // Ecosia: Handle navigation tracking
+            previousUrl = ecosiaHandleNavigationAction(
+                url: url,
+                navigationAction: navigationAction,
+                previousUrl: previousUrl
+            )
 
             decisionHandler(.allow)
             return
@@ -1164,6 +1170,10 @@ extension BrowserViewController: WKNavigationDelegate {
                         height: view.frame.height
                     )
                 )
+            }
+            // Ecosia: Handle navigation completion after URL finishes loading
+            if let url = webView.url {
+                ecosiaHandlePageLoadCompletion(url: url)
             }
             navigateInTab(tab: tab, to: navigation, webViewStatus: .finishedNavigation)
 

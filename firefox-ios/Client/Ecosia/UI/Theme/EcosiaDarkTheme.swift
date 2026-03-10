@@ -23,7 +23,8 @@ private class EcosiaDarkColourPalette: EcosiaLightColourPalette {
 
 private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var backgroundNeutralInverse: UIColor = EcosiaColor.White
-    var backgroundFeatured: UIColor = EcosiaColor.Grellow100
+    var backgroundFeatured: UIColor = EcosiaColor.Grellow700
+    var backgroundGradient: UIColor = EcosiaColor.Gray90
     var backgroundPrimary: UIColor = EcosiaColor.Gray90
     var backgroundPrimaryDecorative: UIColor = EcosiaColor.Gray90
     var backgroundRoleNegative: UIColor = EcosiaColor.Claret800
@@ -45,6 +46,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondary: UIColor = EcosiaColor.Gray90
     var buttonBackgroundSecondaryActive: UIColor = EcosiaColor.Gray50
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColor.Gray70
+    var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Gray70.withAlphaComponent(0.24)
     var buttonContentSecondary: UIColor = EcosiaColor.White
     var buttonContentSecondaryStatic: UIColor = EcosiaColor.Gray70
     var highlighter: UIColor = EcosiaColor.Grellow100.withAlphaComponent(0.32)
@@ -61,4 +63,5 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = EcosiaColor.Gray90
     var textSecondary: UIColor = EcosiaColor.Gray30
     var textStaticDark: UIColor = EcosiaColor.Gray70
+    var textStaticLight: UIColor = EcosiaColor.White
 }

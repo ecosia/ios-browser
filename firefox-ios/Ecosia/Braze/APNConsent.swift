@@ -7,8 +7,13 @@ import Foundation
 public struct APNConsent {
     private init() {}
 
+    @MainActor
     public static func requestIfNeeded() async {
-        guard await BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
+        // Do not ask for push consent during Onboarding experiment
+        guard !OnboardingProductTourExperiment.isEnabled else {
+            return
+        }
+        guard BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
             return
         }
         Analytics.shared.apnConsent(.view)

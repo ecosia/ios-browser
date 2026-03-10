@@ -172,13 +172,16 @@ extension AppSettingsTableViewController {
             OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
             ToggleDefaultBrowserPromo(settings: self),
             ToggleImpactIntro(settings: self),
-            ShowTour(settings: self, windowUUID: windowUUID),
+            ResetOnboardingProductTour(settings: self),
             CreateReferralCode(settings: self),
             AddReferral(settings: self),
             AddClaim(settings: self),
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),
+            /* Ecosia: FasterInactiveTabs removed in Firefox upgrade; restore when type is available again
+            FasterInactiveTabs(settings: self, settingsDelegate: self),
+            */
             AnalyticsIdentifierSetting(settings: self),
             RefreshStatisticsSetting(settings: self),
         ]
@@ -195,6 +198,7 @@ extension AppSettingsTableViewController {
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
+            UnleashOnboardingSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]
 

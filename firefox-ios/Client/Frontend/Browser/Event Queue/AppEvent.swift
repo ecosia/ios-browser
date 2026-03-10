@@ -20,6 +20,8 @@ public enum AppEvent: AppEventType {
     case postLaunchDependenciesComplete
     case accountManagerInitialized
     case browserIsReady
+    // Ecosia: Add Feature Management event
+    case featureManagementInitialized
 
     // Events: Open Deeplink startup time record
     case recordStartupTimeOpenDeeplinkComplete

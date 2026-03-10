@@ -83,7 +83,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             .preLaunchDependenciesComplete,
             .postLaunchDependenciesComplete,
             .accountManagerInitialized,
-            .browserIsReady
+            .browserIsReady,
+            // Ecosia: Add Feature Management dependency
+            .featureManagementInitialized
         ])
 
         // Initialize the feature flag subsystem.
@@ -156,6 +158,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
 
         if let firefoxSuggest = profile.firefoxSuggest {
             suggestBackgroundUtility = BackgroundFirefoxSuggestIngestUtility(firefoxSuggest: firefoxSuggest)
+		}
+        /*
+         Ecosia: Feature Management fetch
+         We perform the same configuration retrieval in
+         `applicationDidBecomeActive(:)` and sounds redundant;
+         However we need it here to make sure we retrieve the latest
+         flag state of the EngagementService.
+         Decouple the "loading" only from the filesystem of any
+         previously saved Model from the `Unleash.start(:)` will not
+         make any tangible difference in the process as we check if
+         any cached version of the Model is in place.
+         */
+        Task {
+            await FeatureManagement.fetchConfiguration()
+            // Signal that feature management initialization is complete on main thread
+            AppEventQueue.signal(event: .featureManagementInitialized)
+            // Ecosia: Braze Service Initialization after feature flags are fetched for conditional initialization
+            BrazeService.shared.initialize()
+            // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
+            Analytics.shared.activity(.launch)
         }
 
         metricKitWrapper.beginObservingMXPayloads()

@@ -17,15 +17,18 @@ public struct AuthStateAction {
     public let type: EcosiaAuthActionType
     public let windowUUID: WindowUUID
     public let isLoggedIn: Bool?
+    public let accountOrigin: AccountOrigin?
     public let timestamp: Date
 
     public init(type: EcosiaAuthActionType,
                 windowUUID: WindowUUID,
                 isLoggedIn: Bool? = nil,
+                accountOrigin: AccountOrigin? = nil,
                 timestamp: Date = Date()) {
         self.type = type
         self.windowUUID = windowUUID
         self.isLoggedIn = isLoggedIn
+        self.accountOrigin = accountOrigin
         self.timestamp = timestamp
     }
 }
@@ -35,15 +38,18 @@ public struct AuthWindowState: Equatable {
     public let windowUUID: WindowUUID
     public let isLoggedIn: Bool
     public let authStateLoaded: Bool
+    public let accountOrigin: AccountOrigin?
     public let lastUpdated: Date
 
     public init(windowUUID: WindowUUID,
                 isLoggedIn: Bool,
                 authStateLoaded: Bool,
+                accountOrigin: AccountOrigin? = nil,
                 lastUpdated: Date = Date()) {
         self.windowUUID = windowUUID
         self.isLoggedIn = isLoggedIn
         self.authStateLoaded = authStateLoaded
+        self.accountOrigin = accountOrigin
         self.lastUpdated = lastUpdated
     }
 }

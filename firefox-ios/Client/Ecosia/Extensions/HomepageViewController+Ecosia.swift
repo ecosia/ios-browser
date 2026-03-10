@@ -135,3 +135,18 @@ extension BrowserViewController: NTPCustomizationCellDelegate {
         navigationHandler?.show(settings: .homePage)
     }
 }
+
+/* Ecosia: LegacyHomepageViewController replaced by BrowserViewController
+extension LegacyHomepageViewController: NTPFirstSearchCellViewModelDelegate {
+    func searchWithQuery(_ query: String) {
+        openLink(url: URL.ecosiaSearchWithQuery(query))
+    }
+}
+*/
+
+@MainActor
+extension BrowserViewController: NTPFirstSearchCellViewModelDelegate {
+    func searchWithQuery(_ query: String) {
+        openLink(url: URL.ecosiaSearchWithQuery(query))
+    }
+}

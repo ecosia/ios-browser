@@ -78,11 +78,13 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     }
 
     /// Logs in the user asynchronously and stores credentials if successful.
+    /// - Returns: An `AccountOrigin` indicating whether the user created a new account or signed in to an existing one.
     /// - Throws: `AuthError.userCancelled` if user cancels the authentication,
     ///           `AuthError.authenticationFailed` if Auth0 authentication fails,
     ///           `AuthError.credentialStorageError` if credential storage throws an error,
     ///           `AuthError.credentialStorageFailed` if credential storage returns false.
-    public func login() async throws {
+    @discardableResult
+    public func login() async throws -> AccountOrigin {
         // First, attempt authentication
         let credentials: Credentials
         do {
@@ -101,11 +103,15 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             throw AuthError.authenticationFailed(error)
         }
 
+        // Determine account origin from ID token claims
+        let accountOrigin = credentials.accountOrigin
+        EcosiaLogger.auth.info("Account origin: \(accountOrigin == .newAccount ? "new account" : "existing account")")
+
         // Then, attempt to store credentials
         do {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
-                setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+                setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, accountOrigin: accountOrigin)
                 if !skipUserInfoFetch {
                     await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
                 }
@@ -118,6 +124,8 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             EcosiaLogger.auth.error("Credential storage error: \(error)")
             throw AuthError.credentialsStorageError(error)
         }
+
+        return accountOrigin
     }
 
     /// Logs out the user with option to skip web logout (for web-initiated logout)
@@ -239,15 +247,20 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
 
     /// Helper method to setup tokens and login flag
     private func setupTokensWithCredentials(_ credentials: Credentials?,
-                                            settingLoggedInStateTo isLoggedIn: Bool = false) {
+                                            settingLoggedInStateTo isLoggedIn: Bool = false,
+                                            accountOrigin: AccountOrigin? = nil) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
+        let wasLoggedIn = self.isLoggedIn
         self.isLoggedIn = isLoggedIn
 
-        // Dispatch state change to the new state management system
-        Task { [isLoggedIn] in
-            await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
+        // Only dispatch the auth state change when the login state actually transitions,
+        // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
+        // on every token refresh when the user is already logged in.
+        guard wasLoggedIn != isLoggedIn else { return }
+        Task {
+            await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false, accountOrigin: accountOrigin)
         }
     }
 
@@ -400,7 +413,7 @@ extension EcosiaAuthenticationService {
      -   isLoggedIn: Current authentication status
      -   fromCredentialRetrieval: Whether this is from credential retrieval (for state loaded)
      */
-    private func dispatchAuthStateChange(isLoggedIn: Bool, fromCredentialRetrieval: Bool) async {
+    private func dispatchAuthStateChange(isLoggedIn: Bool, fromCredentialRetrieval: Bool, accountOrigin: AccountOrigin? = nil) async {
         // Determine the correct action type
         let actionType: EcosiaAuthActionType
         if fromCredentialRetrieval {
@@ -412,6 +425,6 @@ extension EcosiaAuthenticationService {
         }
 
         // Dispatch to the new state management system
-        EcosiaBrowserWindowAuthManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType)
+        EcosiaBrowserWindowAuthManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType, accountOrigin: accountOrigin)
     }
 }

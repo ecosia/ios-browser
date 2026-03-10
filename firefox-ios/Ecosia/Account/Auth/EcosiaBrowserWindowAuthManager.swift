@@ -71,14 +71,16 @@ public final class EcosiaBrowserWindowAuthManager {
     /// - Parameters:
     ///   - isLoggedIn: Current login status
     ///   - actionType: Type of authentication action
-    public func dispatchAuthState(isLoggedIn: Bool, actionType: EcosiaAuthActionType) {
+    ///   - accountOrigin: Whether the user created a new account or signed in to an existing one (login only)
+    public func dispatchAuthState(isLoggedIn: Bool, actionType: EcosiaAuthActionType, accountOrigin: AccountOrigin? = nil) {
         let windowUUIDs = EcosiaAuthWindowRegistry.shared.registeredWindows
 
         for windowUUID in windowUUIDs {
             let action = AuthStateAction(
                 type: actionType,
                 windowUUID: windowUUID,
-                isLoggedIn: isLoggedIn
+                isLoggedIn: isLoggedIn,
+                accountOrigin: accountOrigin
             )
             dispatch(action: action, for: windowUUID)
         }
@@ -106,6 +108,7 @@ public final class EcosiaBrowserWindowAuthManager {
                 windowUUID: action.windowUUID,
                 isLoggedIn: action.isLoggedIn ?? false,
                 authStateLoaded: true,
+                accountOrigin: action.accountOrigin ?? existingState.accountOrigin,
                 lastUpdated: action.timestamp
             )
 
@@ -114,6 +117,7 @@ public final class EcosiaBrowserWindowAuthManager {
                 windowUUID: action.windowUUID,
                 isLoggedIn: true,
                 authStateLoaded: existingState.authStateLoaded,
+                accountOrigin: action.accountOrigin,
                 lastUpdated: action.timestamp
             )
 
@@ -122,6 +126,7 @@ public final class EcosiaBrowserWindowAuthManager {
                 windowUUID: action.windowUUID,
                 isLoggedIn: false,
                 authStateLoaded: existingState.authStateLoaded,
+                accountOrigin: nil,
                 lastUpdated: action.timestamp
             )
         }

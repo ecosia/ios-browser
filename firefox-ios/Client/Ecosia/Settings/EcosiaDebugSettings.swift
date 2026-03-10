@@ -64,35 +64,63 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
 }
 
 @MainActor
-final class ShowTour: HiddenSetting, WelcomeDelegate {
+final class ResetOnboardingProductTour: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Show Intro", attributes: [:])
+        return NSAttributedString(string: "Debug: Reset product tour state", attributes: [:])
     }
 
-    let windowUUID: WindowUUID
-    init(settings: SettingsTableViewController, windowUUID: WindowUUID) {
-        self.windowUUID = windowUUID
+    override var status: NSAttributedString? {
+        guard OnboardingProductTourExperiment.isEnabled else {
+            if OnboardingProductTourExperiment.isControl {
+                return NSAttributedString(string: "Current state: Control variant — use Unleash Onboarding Product Tour debug setting to reset")
+            }
+            return NSAttributedString(string: "Current state: Experiment disabled")
+        }
+
+        let milestones = ProductTourManager.shared.completedMilestones
+        let state: String
+        if milestones.contains(.all) {
+            state = "All"
+        } else {
+            var completed: [String] = []
+            if milestones.contains(.firstSearchDone) { completed.append("firstSearchDone") }
+            if milestones.contains(.searchSpotlightDone) { completed.append("searchSpotlightDone") }
+            if milestones.contains(.externalWebsiteVisitDone) { completed.append("externalWebsiteVisitDone") }
+            if milestones.contains(.externalWebsiteSpotlightDone) { completed.append("externalWebsiteSpotlightDone") }
+            state = completed.isEmpty ? "None" : completed.joined(separator: ", ")
+        }
+        let inTour = ProductTourManager.shared.isInProductTour ? "In tour" : "Tour complete"
+        return NSAttributedString(string: "Current state: \(inTour) | Milestones: \(state)")
+    }
+
+    override init(settings: SettingsTableViewController) {
         super.init(settings: settings)
     }
 
-    var parentPresenter: UIViewController?
     override func onClick(_ navigationController: UINavigationController?) {
-        let welcome = Welcome(delegate: self, windowUUID: windowUUID)
-        welcome.modalPresentationStyle = .fullScreen
-        welcome.modalTransitionStyle = .coverVertical
-        let presentingViewController = navigationController?.presentingViewController
-        navigationController?.dismiss(animated: true) {
-            presentingViewController?.present(welcome, animated: true)
+        guard OnboardingProductTourExperiment.isEnabled else {
+            let alert = AlertController(title: "Experiment Disabled or in Control",
+                                        message: "The onboarding product tour experiment is not enabled. Check your constraints (such as version on install) or use the \"Unleash Onboarding Product Tour\" debug setting to reset the Unleash cache and get a new variant assignment.",
+                                        preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(alert, animated: true)
+            return
         }
-    }
 
-    func welcomeDidFinish(_ welcome: Welcome) {
-        if let presentedTour = welcome.presentedViewController {
-            presentedTour.dismiss(animated: true) {
-                welcome.dismiss(animated: true)
+        User.shared.firstTime = true
+        ProductTourManager.shared.resetTour()
+        Task {
+            try? await EcosiaAuthenticationService.shared.logout()
+        }
+
+        let title = "Onboarding state reset"
+        let message = "Close and open the app to see welcome screen"
+        let alert = AlertController(title: title, message: message, preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
             }
-        } else {
-            welcome.dismiss(animated: true)
+            self.settings.tableView.reloadData()
         }
     }
 }
@@ -316,6 +344,20 @@ final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
 
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.aiSearchMVP)
+    }
+}
+
+final class UnleashOnboardingSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Onboarding Product Tour"
+    }
+
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.onboardingProductTour)
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.onboardingProductTour)
     }
 }
 

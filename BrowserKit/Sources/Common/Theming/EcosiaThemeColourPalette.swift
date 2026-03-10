@@ -12,6 +12,7 @@ public protocol EcosiaSemanticColors {
     // MARK: - Background
     var backgroundNeutralInverse: UIColor { get }
     var backgroundFeatured: UIColor { get }
+    var backgroundGradient: UIColor { get }
     var backgroundPrimary: UIColor { get }
     var backgroundPrimaryDecorative: UIColor { get }
     var backgroundSecondary: UIColor { get }
@@ -39,6 +40,7 @@ public protocol EcosiaSemanticColors {
     var buttonBackgroundSecondary: UIColor { get }
     var buttonBackgroundSecondaryActive: UIColor { get }
     var buttonBackgroundSecondaryHover: UIColor { get }
+    var buttonBackgroundTransparentActive: UIColor { get }
     var buttonContentSecondary: UIColor { get }
     var buttonContentSecondaryStatic: UIColor { get }
 
@@ -67,6 +69,7 @@ public protocol EcosiaSemanticColors {
     var textInversePrimary: UIColor { get }
     var textSecondary: UIColor { get }
     var textStaticDark: UIColor { get }
+    var textStaticLight: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -78,6 +81,7 @@ public protocol EcosiaThemeColourPalette: ThemeColourPalette {
 class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundNeutralInverse: UIColor = .systemGray
     var backgroundFeatured: UIColor = .systemGray
+    var backgroundGradient: UIColor = .systemGray
     var backgroundPrimary: UIColor = .systemGray
     var backgroundPrimaryDecorative: UIColor = .systemGray
     var backgroundSecondary: UIColor = .systemGray
@@ -98,6 +102,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondary: UIColor = .systemGray
     var buttonBackgroundSecondaryActive: UIColor = .systemGray
     var buttonBackgroundSecondaryHover: UIColor = .systemGray
+    var buttonBackgroundTransparentActive: UIColor = .systemGray
     var buttonContentSecondary: UIColor = .systemGray
     var buttonContentSecondaryStatic: UIColor = .systemGray
     var borderNegative: UIColor = .systemGray
@@ -115,4 +120,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textStaticDark: UIColor = .systemGray
+    var textStaticLight: UIColor = .systemGray
 }

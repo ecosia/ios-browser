@@ -140,6 +140,20 @@ class BrowserViewController: UIViewController,
     private(set) lazy var mailtoLinkHandler = MailtoLinkHandler()
     private lazy var statusBarOverlay: StatusBarOverlay = .build { view in
         view.accessibilityIdentifier = AccessibilityIdentifiers.Browser.statusBarOverlay
+	}
+
+    // Ecosia: Retain coordinator for spotlight product tours
+    var spotlightCoordinator: ProductTourSpotlightCoordinator?
+
+    // Ecosia: Tracks the last navigated URL to detect URL changes across navigation delegate calls
+    var previousUrl: URL?
+
+    /* Ecosia: TabTrayFlagManager removed in Firefox upgrade; tab tray refactor is always enabled
+    lazy var isTabTrayRefactorEnabled: Bool = TabTrayFlagManager.isRefactorEnabled
+    */
+    let isTabTrayRefactorEnabled: Bool = true
+    var isToolbarRefactorEnabled: Bool {
+        return featureFlags.isFeatureEnabled(.toolbarRefactor, checking: .buildOnly)
     }
     private var statusBarOverlayConstraints = [NSLayoutConstraint]()
     private(set) lazy var addressToolbarContainer: AddressToolbarContainer = .build(nil, {
@@ -1170,6 +1184,9 @@ class BrowserViewController: UIViewController,
         if isTabScrollRefactoringEnabled {
             setupToolbarAnimator()
         }
+
+        // Ecosia
+        setupProductTourSpotlightIfNeeded()
 
         // FXIOS-13551 - testWillNavigateAway calls into viewDidLoad during unit tests, creates a leak
         guard !AppConstants.isRunningUnitTest else { return }
@@ -3932,7 +3949,20 @@ class BrowserViewController: UIViewController,
 
         guard let contentScript = tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         applyThemeForPreferences(profile.prefs, contentScript: contentScript)
+
+        // Ecosia: Update URLBar following PrivateModeUI
+        updateURLBarFollowingPrivateModeUI()
+
+        // Ecosia
+        updateSpotlightThemeIfNeeded()
     }
+
+    /* Ecosia: preferSwitchToOpenTabOverDuplicate removed from NimbusFeatureFlagID in Firefox upgrade
+    var isPreferSwitchToOpenTabOverDuplicateFeatureEnabled: Bool {
+        featureFlags.isFeatureEnabled(.preferSwitchToOpenTabOverDuplicate, checking: .buildOnly)
+    }
+    */
+    var isPreferSwitchToOpenTabOverDuplicateFeatureEnabled: Bool { false }
 
     // MARK: - Telemetry
 

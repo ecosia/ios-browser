@@ -8,6 +8,7 @@ import Shared
 import OnboardingKit
 import SwiftUI
 import ComponentLibrary
+import Ecosia
 
 protocol LaunchCoordinatorDelegate: AnyObject {
     @MainActor
@@ -15,6 +16,9 @@ protocol LaunchCoordinatorDelegate: AnyObject {
 
     @MainActor
     func didFinishLaunch(from coordinator: LaunchCoordinator)
+    // Ecosia: Handle sign-in request from welcome screen
+    @MainActor
+    func didRequestSignIn(from coordinator: LaunchCoordinator)
 }
 
 // Manages different types of onboarding that gets shown at the launch of the application
@@ -23,11 +27,7 @@ final class LaunchCoordinator: BaseCoordinator,
                                QRCodeNavigationHandler,
                                ParentCoordinatorDelegate,
                                OnboardingNavigationDelegate,
-                               /* Ecosia: Add WelcomeDelegate
                                OnboardingServiceDelegate {
-                                */
-                               OnboardingServiceDelegate,
-                               WelcomeDelegate {
     private let profile: Profile
     private let isIphone: Bool
     let windowUUID: WindowUUID
@@ -36,7 +36,7 @@ final class LaunchCoordinator: BaseCoordinator,
     private var onboardingService: OnboardingService?
     // Ecosia: Used when presenting Ecosia Welcome to call didSeeIntroScreen on finish
     private var introManagerForEcosiaWelcome: IntroScreenManagerProtocol?
-
+    
     init(router: Router,
          windowUUID: WindowUUID,
          profile: Profile = AppContainer.shared.resolve(),
@@ -46,7 +46,7 @@ final class LaunchCoordinator: BaseCoordinator,
         self.windowUUID = windowUUID
         super.init(router: router)
     }
-
+    
     @MainActor
     func start(with launchType: LaunchType) {
         let isFullScreen = launchType.isFullScreenAvailable(isIphone: isIphone)
@@ -58,14 +58,14 @@ final class LaunchCoordinator: BaseCoordinator,
                 presentTermsOfService(with: manager, isFullScreen: isFullScreen)
             }
         case .intro(let manager):
-            /* Ecosia: Swap Firefox onboarding with Ecosia Welcome
-            if manager.isModernOnboardingEnabled {
-                presentModernIntroOnboarding(with: manager, isFullScreen: isFullScreen)
-            } else {
-                presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
-            }
+            /* Ecosia: Always present intro onbaording
+             if manager.isModernOnboardingEnabled {
+                 presentModernIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+             } else {
+                 presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+             }
              */
-            presentEcosiaWelcome(with: manager, isFullScreen: isFullScreen)
+            presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
         case .update(let viewModel):
             presentUpdateOnboarding(with: viewModel, isFullScreen: isFullScreen)
         case .defaultBrowser:
@@ -74,14 +74,14 @@ final class LaunchCoordinator: BaseCoordinator,
             presentSurvey(with: manager)
         }
     }
-
+    
     // MARK: - Terms of Use
     private func presentModernTermsOfUse(
         with manager: TermsOfServiceManager,
         isFullScreen: Bool
     ) {
         TermsOfServiceTelemetry().termsOfServiceScreenDisplayed()
-
+        
         let viewModel = TermsOfUseFlowViewModel(
             configuration: TermsOfServiceManager.brandRefreshTermsOfUseConfiguration,
             onTermsOfUseTap: { [weak self] in
@@ -108,60 +108,60 @@ final class LaunchCoordinator: BaseCoordinator,
                 let acceptedDate = Date()
                 manager.setAccepted(acceptedDate: acceptedDate)
                 TermsOfServiceTelemetry().termsOfServiceAcceptButtonTapped(acceptedDate: acceptedDate)
-
+                
                 let sendTechnicalData = profile.prefs.boolForKey(AppConstants.prefSendUsageData) ?? true
                 let sendStudies = profile.prefs.boolForKey(AppConstants.prefStudiesToggle) ?? true
                 manager.shouldSendTechnicalData(telemetryValue: sendTechnicalData, studiesValue: sendStudies)
                 self.profile.prefs.setBool(sendTechnicalData, forKey: AppConstants.prefSendUsageData)
-
+                
                 let sendCrashReports = profile.prefs.boolForKey(AppConstants.prefSendCrashReports) ?? true
                 self.profile.prefs.setBool(sendCrashReports, forKey: AppConstants.prefSendCrashReports)
                 self.logger.setup(sendCrashReports: sendCrashReports)
-
+                
                 TelemetryWrapper.shared.setup(profile: profile)
                 TelemetryWrapper.shared.recordStartUpTelemetry()
-
+                
                 self.parentCoordinator?.didFinishTermsOfService(from: self)
             }
         )
-
+        
         let view = TermsOfUseView(
             viewModel: viewModel,
             windowUUID: windowUUID,
             themeManager: themeManager
         )
-
+        
         let viewController = PortraitOnlyHostingController(rootView: view)
         // `.overFullScreen` is required to display the underlying view controller beneath the presented one,
         // and to prevent a white strip glitch caused by synchronization issues between SwiftUI and UIKit.
         viewController.modalPresentationStyle = .overFullScreen
         viewController.modalTransitionStyle = .crossDissolve
         viewController.view.backgroundColor = .clear
-
+        
         router.present(viewController, animated: true)
     }
-
+    
     private func presentLink(with url: URL?) {
         guard let url else { return }
         let presentLinkVC = PrivacyPolicyViewController(url: url, windowUUID: windowUUID)
-
+        
         let buttonItem = UIBarButtonItem(
             title: .SettingsSearchDoneButton,
             style: .plain,
             target: self,
             action: #selector(dismissPresentedLinkVC))
         buttonItem.accessibilityIdentifier = AccessibilityIdentifiers.TermsOfService.doneButton
-
+        
         presentLinkVC.navigationItem.rightBarButtonItem = buttonItem
         let controller = DismissableNavigationViewController(rootViewController: presentLinkVC)
         router.navigationController.presentedViewController?.present(controller, animated: true)
     }
-
+    
     @objc
     private func dismissPresentedLinkVC() {
         router.navigationController.presentedViewController?.dismiss(animated: true, completion: nil)
     }
-
+    
     // MARK: - Terms of Service
     private func presentTermsOfService(with manager: TermsOfServiceManager,
                                        isFullScreen: Bool) {
@@ -172,44 +172,26 @@ final class LaunchCoordinator: BaseCoordinator,
             let acceptedDate = Date()
             manager.setAccepted(acceptedDate: acceptedDate)
             TermsOfServiceTelemetry().termsOfServiceAcceptButtonTapped(acceptedDate: acceptedDate)
-
+            
             let sendTechnicalData = profile.prefs.boolForKey(AppConstants.prefSendUsageData) ?? true
             let sendStudies = profile.prefs.boolForKey(AppConstants.prefStudiesToggle) ?? true
             manager.shouldSendTechnicalData(telemetryValue: sendTechnicalData, studiesValue: sendStudies)
             self.profile.prefs.setBool(sendTechnicalData, forKey: AppConstants.prefSendUsageData)
-
+            
             let sendCrashReports = profile.prefs.boolForKey(AppConstants.prefSendCrashReports) ?? true
             self.profile.prefs.setBool(sendCrashReports, forKey: AppConstants.prefSendCrashReports)
             self.logger.setup(sendCrashReports: sendCrashReports)
-
+            
             TelemetryWrapper.shared.setup(profile: profile)
             TelemetryWrapper.shared.recordStartUpTelemetry()
-
+            
             self.parentCoordinator?.didFinishTermsOfService(from: self)
         }
         viewController.modalPresentationStyle = .fullScreen
         viewController.modalTransitionStyle = .crossDissolve
         router.present(viewController, animated: false)
     }
-
-    // MARK: - Intro (Ecosia)
-    @MainActor
-    private func presentEcosiaWelcome(with manager: IntroScreenManagerProtocol,
-                                      isFullScreen: Bool) {
-        introManagerForEcosiaWelcome = manager
-        let welcome = Welcome(delegate: self, windowUUID: windowUUID)
-        welcome.modalPresentationStyle = .fullScreen
-        welcome.modalTransitionStyle = .crossDissolve
-        router.present(welcome, animated: true)
-    }
-
-    // MARK: - WelcomeDelegate
-    func welcomeDidFinish(_ welcome: Welcome) {
-        introManagerForEcosiaWelcome?.didSeeIntroScreen()
-        introManagerForEcosiaWelcome = nil
-        parentCoordinator?.didFinishLaunch(from: self)
-    }
-
+        
     // MARK: - Intro
     @MainActor
     private func presentModernIntroOnboarding(with manager: IntroScreenManagerProtocol,
@@ -226,7 +208,7 @@ final class LaunchCoordinator: BaseCoordinator,
             with: onboardingModel,
             onboardingVariant: manager.onboardingVariant
         )
-
+        
         // Create onboardingService and store it directly - don't create local variable
         self.onboardingService = OnboardingService(
             windowUUID: windowUUID,
@@ -237,7 +219,7 @@ final class LaunchCoordinator: BaseCoordinator,
             qrCodeNavigationHandler: self
         )
         self.onboardingService?.telemetryUtility = telemetryUtility
-
+        
         let flowViewModel = OnboardingFlowViewModel<OnboardingKitCardInfoModel>(
             onboardingCards: onboardingModel.cards,
             skipText: .Onboarding.LaterAction,
@@ -266,11 +248,11 @@ final class LaunchCoordinator: BaseCoordinator,
                 parentCoordinator?.didFinishLaunch(from: self)
             }
         )
-
+        
         flowViewModel.onCardView = { cardName in
             telemetryUtility.sendCardViewTelemetry(from: cardName)
         }
-
+        
         flowViewModel.onButtonTap = { cardName, action, isPrimary in
             telemetryUtility.sendButtonActionTelemetry(
                 from: cardName,
@@ -278,72 +260,100 @@ final class LaunchCoordinator: BaseCoordinator,
                 and: isPrimary
             )
         }
-
+        
         flowViewModel.onMultipleChoiceTap = { cardName, action in
             telemetryUtility.sendMultipleChoiceButtonActionTelemetry(
                 from: cardName,
                 with: action
             )
         }
-
+        
         flowViewModel.onDismiss = { [weak self] cardName in
             guard let self = self else { return }
             telemetryUtility.sendDismissOnboardingTelemetry(from: cardName)
             self.onboardingService = nil
         }
-
+        
         let view = OnboardingView<OnboardingKitCardInfoModel>(
             windowUUID: windowUUID,
             themeManager: themeManager,
             viewModel: flowViewModel
         )
-
+        
         let hostingController = PortraitOnlyHostingController(rootView: view)
         // `.overFullScreen` is required to display the underlying view controller beneath the presented one,
         // and to prevent a white strip glitch caused by synchronization issues between SwiftUI and UIKit.
         hostingController.modalPresentationStyle = .overFullScreen
         hostingController.modalTransitionStyle = .crossDissolve
         hostingController.view.backgroundColor = .clear
-
+        
         router.present(hostingController, animated: true)
     }
-
+    
     // MARK: - Intro
     private func presentIntroOnboarding(with manager: IntroScreenManagerProtocol,
                                         isFullScreen: Bool) {
-        let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
+        /* Ecosia: custom onboarding
+         let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
+         
+         let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
+         let introViewModel = IntroViewModel(introScreenManager: manager,
+         profile: profile,
+         model: onboardingModel,
+         telemetryUtility: telemetryUtility)
+         let introViewController = IntroViewController(viewModel: introViewModel, windowUUID: windowUUID)
+         introViewController.qrCodeNavigationHandler = self
+         introViewController.didFinishFlow = { [weak self] in
+         guard let self = self else { return }
+         self.parentCoordinator?.didFinishLaunch(from: self)
+         }
+         
+         if isFullScreen {
+         introViewController.modalPresentationStyle = .fullScreen
+         router.present(introViewController, animated: false)
+         } else {
+         introViewController.preferredContentSize = CGSize(
+         width: ViewControllerConsts.PreferredSize.IntroViewController.width,
+         height: ViewControllerConsts.PreferredSize.IntroViewController.height)
+         introViewController.modalPresentationStyle = .formSheet
+         // Disables dismissing the view by tapping outside the view, based on
+         // Nimbus's configuration
+         if !introViewModel.isDismissible {
+         introViewController.isModalInPresentation = true
+         }
+         router.present(introViewController, animated: true) {
+         introViewController.closeOnboarding()
+         }
+         }
+         */
 
-        let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
-        let introViewModel = IntroViewModel(introScreenManager: manager,
-                                            profile: profile,
-                                            model: onboardingModel,
-                                            telemetryUtility: telemetryUtility)
-        let introViewController = IntroViewController(viewModel: introViewModel, windowUUID: windowUUID)
-        introViewController.qrCodeNavigationHandler = self
-        introViewController.didFinishFlow = { [weak self] in
-            guard let self = self else { return }
-            self.parentCoordinator?.didFinishLaunch(from: self)
-        }
+        // Ecosia: Wait for feature flags before deciding which onboarding to show.
+        // The welcome screen is only presented if the experiment is enabled, preventing a crash
+        // caused by presenting the welcome screen and calling didFinishLaunch concurrently.
+        AppEventQueue.wait(for: .featureManagementInitialized) { [weak self] in
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
 
-        if isFullScreen {
-            introViewController.modalPresentationStyle = .fullScreen
-            router.present(introViewController, animated: false)
-        } else {
-            introViewController.preferredContentSize = CGSize(
-                width: ViewControllerConsts.PreferredSize.IntroViewController.width,
-                height: ViewControllerConsts.PreferredSize.IntroViewController.height)
-            introViewController.modalPresentationStyle = .formSheet
-            // Disables dismissing the view by tapping outside the view, based on
-            // Nimbus's configuration
-            if !introViewModel.isDismissible {
-                introViewController.isModalInPresentation = true
-            }
-            router.present(introViewController, animated: true) {
-                introViewController.closeOnboarding()
+                guard OnboardingProductTourExperiment.isEnabled else {
+                    self.parentCoordinator?.didFinishLaunch(from: self)
+                    return
+                }
+
+                // Experiment is enabled: initialize tour state and present the welcome screen
+                ProductTourManager.shared.resetTour()
+
+                let introViewController = WelcomeNavigation(
+                    rootViewController: WelcomeViewController(delegate: self, windowUUID: self.windowUUID),
+                    windowUUID: self.windowUUID
+                )
+                introViewController.isNavigationBarHidden = true
+                introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+                introViewController.modalPresentationStyle = .fullScreen
+                self.router.present(introViewController, animated: false)
             }
         }
     }
-
+    
     // MARK: - Update
     private func presentUpdateOnboarding(with updateViewModel: UpdateViewModel,
                                          isFullScreen: Bool) {
@@ -353,7 +363,7 @@ final class LaunchCoordinator: BaseCoordinator,
             guard let self = self else { return }
             self.parentCoordinator?.didFinishLaunch(from: self)
         }
-
+        
         if isFullScreen {
             updateViewController.modalPresentationStyle = .fullScreen
             router.present(updateViewController, animated: false)
@@ -369,7 +379,7 @@ final class LaunchCoordinator: BaseCoordinator,
             router.present(updateViewController)
         }
     }
-
+    
     // MARK: - Default Browser
     func presentDefaultBrowserOnboarding() {
         let defaultOnboardingViewController = DefaultBrowserOnboardingViewController(windowUUID: windowUUID)
@@ -377,12 +387,12 @@ final class LaunchCoordinator: BaseCoordinator,
             guard let self = self else { return }
             self.parentCoordinator?.didFinishLaunch(from: self)
         }
-
+        
         defaultOnboardingViewController.viewModel.didAskToDismissView = { [weak self] in
             guard let self = self else { return }
             self.parentCoordinator?.didFinishLaunch(from: self)
         }
-
+        
         defaultOnboardingViewController.preferredContentSize = CGSize(
             width: ViewControllerConsts.PreferredSize.DBOnboardingViewController.width,
             height: ViewControllerConsts.PreferredSize.DBOnboardingViewController.height)
@@ -390,7 +400,7 @@ final class LaunchCoordinator: BaseCoordinator,
         defaultOnboardingViewController.modalPresentationStyle = isiPhone ? .fullScreen : .formSheet
         router.present(defaultOnboardingViewController)
     }
-
+    
     // MARK: - Survey
     func presentSurvey(with manager: SurveySurfaceManager) {
         guard let surveySurface = manager.getSurveySurface() else {
@@ -402,9 +412,9 @@ final class LaunchCoordinator: BaseCoordinator,
         surveySurface.delegate = self
         router.present(surveySurface, animated: false)
     }
-
+    
     // MARK: - QRCodeNavigationHandler
-
+    
     func showQRCode(delegate: QRCodeViewControllerDelegate, rootNavigationController: UINavigationController?) {
         var coordinator: QRCodeCoordinator
         if let qrCodeCoordinator = childCoordinators.first(where: { $0 is QRCodeCoordinator }) as? QRCodeCoordinator {
@@ -425,18 +435,18 @@ final class LaunchCoordinator: BaseCoordinator,
         }
         coordinator.showQRCode(delegate: delegate)
     }
-
+    
     // MARK: - ParentCoordinatorDelegate
-
+    
     func didFinish(from childCoordinator: Coordinator) {
         remove(child: childCoordinator)
     }
-
+    
     // MARK: - SurveySurfaceViewControllerDelegate
     func didFinish() {
         parentCoordinator?.didFinishLaunch(from: self)
     }
-
+    
     // MARK: - OnboardingServiceDelegate
     func dismiss(animated: Bool, completion: (() -> Void)?) {
         router.navigationController.presentedViewController?.dismiss(
@@ -444,7 +454,7 @@ final class LaunchCoordinator: BaseCoordinator,
             completion: completion
         )
     }
-
+    
     func present(_ viewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
         router.navigationController.presentedViewController?.present(
             viewController,
@@ -452,9 +462,20 @@ final class LaunchCoordinator: BaseCoordinator,
             completion: completion
         )
     }
-
+    
     // MARK: - OnboardingNavigationDelegate
     func finishOnboardingFlow() {
         dismiss(animated: true, completion: nil)
+    }
+}
+        
+// Ecosia: custom onboarding
+extension LaunchCoordinator: WelcomeDelegate {
+    func welcomeDidFinish(_ welcome: WelcomeViewController) {
+        self.parentCoordinator?.didFinishLaunch(from: self)
+    }
+
+    func welcomeDidRequestSignIn(_ welcome: WelcomeViewController) {
+        self.parentCoordinator?.didRequestSignIn(from: self)
     }
 }

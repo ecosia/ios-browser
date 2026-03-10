@@ -13,4 +13,7 @@ class MockLaunchCoordinatorDelegate: LaunchCoordinatorDelegate {
         didFinishCalledCount += 1
         savedDidFinishCoordinator = coordinator
     }
+
+    // Ecosia
+    func didRequestSignIn(from coordinator: Client.LaunchCoordinator) {}
 }

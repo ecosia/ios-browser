@@ -83,10 +83,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         self.username = userProfile?.name
 
         // If logged out, ensure seed count is loaded (already done in property initializer)
-        // If logged in, seed count will be updated from API in initializeState()
+        // If logged in, seed count will be updated from API when the NTP header appears
 
         setupAuthStateMonitoring()
-        initializeState()
     }
 
     deinit {
@@ -161,13 +160,6 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             Task {
                 await self?.handleSeedProgressUpdate()
             }
-        }
-    }
-
-    /// Initializes the state based on authentication status.
-    private func initializeState() {
-        Task {
-            await refreshSeedState()
         }
     }
 

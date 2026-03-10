@@ -116,9 +116,14 @@ class BrowserCoordinator: BaseCoordinator,
     }
 
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
+        /* Ecosia: Animate transition from welcome screen
         router.dismiss(animated: true, completion: { [weak self] in
             self?.showTermsOfUse()
         })
+        */
+        router.dismiss(animated: true) { [weak self] in
+            self?.browserViewController.animateToolbarsIn()
+        }
         remove(child: coordinator)
 
         // Once launch is done, we check for any saved Route
@@ -128,6 +133,16 @@ class BrowserCoordinator: BaseCoordinator,
                        category: .coordinator)
             findAndHandle(route: savedRoute)
         }
+    }
+
+    // Ecosia: Handle sign-in request from welcome screen
+    func didRequestSignIn(from coordinator: LaunchCoordinator) {
+        router.dismiss(animated: true) { [weak self] in
+            guard let self else { return }
+            self.browserViewController.animateToolbarsIn()
+            EcosiaAuth.performWelcomeSignIn(browserViewController: self.browserViewController)
+        }
+        remove(child: coordinator)
     }
 
     // MARK: - BrowserDelegate

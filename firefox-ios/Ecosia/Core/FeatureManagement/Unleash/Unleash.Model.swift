@@ -20,12 +20,13 @@ extension Unleash {
 
     public struct Toggle: Codable, Hashable {
         public enum Name: String {
+            case aiSearchMVP = "ai2-67-ai-search-mvp"
             case brazeIntegration = "mob_ios_braze_integration"
             case configTest = "mob_ios_staging_config"
             case seedCounterNTP = "mob_ios_seed_counter_ntp"
             case nativeSRPVAnalytics = "mob_ios_native_srpv_analytics"
             case newsletterCard = "mob_ios_newsletter_card"
-            case aiSearchMVP = "ai2-67-ai-search-mvp"
+            case onboardingProductTour = "mob_ios_onboarding_product_tour"
         }
 
         public let name: String
