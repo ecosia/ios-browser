@@ -58,11 +58,11 @@ enum ClimateImpactInfo: Equatable {
     var image: UIImage? {
         switch self {
         case .referral:
-            return .init(named: "referral", in: .ecosia, with: nil)
+            return .init(named: "referral", in: .ecosia, with: nil)?.withRenderingMode(.alwaysTemplate)
         case .totalTrees:
-            return .init(named: "tree", in: .ecosia, with: nil)
+            return .init(named: "tree", in: .ecosia, with: nil)?.withRenderingMode(.alwaysTemplate)
         case .totalInvested:
-            return .init(named: "banknote", in: .ecosia, with: nil)
+            return .init(named: "banknote", in: .ecosia, with: nil)?.withRenderingMode(.alwaysTemplate)
         }
     }
 

@@ -18,9 +18,19 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         static let horizontalSpacing: CGFloat = 8
         static let padding: CGFloat = 16
         static let imageHeight: CGFloat = 24
+        // Ecosia: Glassmorphism — matches Figma "Border-border-glass-static" (#FFFFFF3D = white 23.9%)
+        static let glassBorderAlpha: CGFloat = 0x3D / 255.0
+        static let glassBorderWidth: CGFloat = 1
     }
 
     // MARK: - UI Elements
+
+    // Ecosia: Core Image 24px Gaussian blur glass background (see ADR 0003)
+    private let glassBackground: NTPImpactGlassBackgroundView = {
+        let view = NTPImpactGlassBackgroundView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
     /// Stack view to arrange title and subtitle labels vertically.
     private let titleAndSubtitleContainerView = UIStackView()
@@ -67,6 +77,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .footnote).semibold()
         button.titleLabel?.textAlignment = .right
+        // Ecosia: ResizableButton defaults to numberOfLines=0; force single line so the button
+        // never expands the referral row taller than the trees/invested rows.
+        button.titleLabel?.numberOfLines = 1
+        button.configuration?.titleLineBreakMode = .byTruncatingTail
         button.contentHorizontalAlignment = .right
         button.contentVerticalAlignment = .center
         button.buttonEdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
@@ -144,6 +158,9 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = .ecosia.borderRadius._l
+        // Ecosia: clipsToBounds ensures glassBackground respects rounded corners
+        clipsToBounds = true
+        addSubview(glassBackground)
 
         mainContainerView.translatesAutoresizingMaskIntoConstraints = false
         mainContainerView.axis = .horizontal
@@ -172,6 +189,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private func setupConstraints() {
 
         NSLayoutConstraint.activate([
+            glassBackground.topAnchor.constraint(equalTo: topAnchor),
+            glassBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
+            glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
+            glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
             mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
             mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
@@ -198,10 +219,17 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        backgroundColor = customBackgroundColor ?? theme.colors.ecosia.backgroundElevation1
-        titleLabel.textColor = theme.colors.ecosia.textPrimary
-        subtitleLabel.textColor = theme.colors.ecosia.textSecondary
-        actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
+        // Ecosia: Glassmorphism — exact 24px Gaussian blur via Core Image (ADR 0003).
+        // glassBackground handles the blur + dark tint; the white border gives the glass edge.
+        backgroundColor = .clear
+        layer.borderWidth = UX.glassBorderWidth
+        layer.borderColor = UIColor(white: 1, alpha: UX.glassBorderAlpha).cgColor
+        glassBackground.loadCurrentWallpaper()
+        // Ecosia: White text and icons over glassmorphism wallpaper background
+        titleLabel.textColor = .white
+        subtitleLabel.textColor = .white
+        actionButton.setTitleColor(.white, for: .normal)
+        imageView.tintColor = .white
         dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         // Re-apply content so the row is populated when theme runs after being added to the hierarchy (e.g. referral row)
         imageView.image = info.image
