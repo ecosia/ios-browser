@@ -6,6 +6,7 @@ import Common
 import UIKit
 import Shared
 import Glean
+import Ecosia // Ecosia
 
 import struct MozillaAppServices.VisitObservation
 
@@ -322,17 +323,27 @@ class AppSettingsTableViewController: SettingsTableViewController,
     // MARK: - Generate Settings
 
     override func generateSettings() -> [SettingSection] {
-        setupDataSettings()
+        // Ecosia: removed setupDataSettings() — Ecosia does not use Firefox data-collection settings
         var settings = [SettingSection]()
-        settings += getDefaultBrowserSetting()
-        settings += getAccountSetting()
+
+        // Ecosia: conditionally show default browser nudge card
+        if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
+            settings += getDefaultBrowserSetting()
+        }
+
+        // Ecosia: removed getAccountSetting() — no sign-in / accounts feature
+        settings += getSearchSection()          // Ecosia: search settings section
+        settings += getCustomizationSection()   // Ecosia: customization section
         settings += getGeneralSettings()
         settings += getPrivacySettings()
         settings += getSupportSettings()
         settings += getAboutSettings()
 
         if showDebugSettings {
-            settings += getDebugSettings()
+            // Ecosia: use Ecosia-specific debug sections
+            settings.append(getEcosiaDebugSupportSection())
+            settings.append(getEcosiaDebugUnleashSection())
+            settings.append(getEcosiaDebugAccountsSection())
         }
 
         return settings
@@ -369,44 +380,39 @@ class AppSettingsTableViewController: SettingsTableViewController,
     }
 
     private func getGeneralSettings() -> [SettingSection] {
-        var generalSettings: [Setting] = [
-            BrowsingSetting(settings: self, settingsDelegate: parentCoordinator),
-            SearchSetting(
-                settingsDelegate: parentCoordinator,
-                searchEnginesManager: searchEnginesManager,
-                theme: themeManager.getCurrentTheme(for: windowUUID)
+        // Ecosia: replaced Firefox general items (Browsing, Search, NewTab, Home, AppIcon,
+        // Summarize, Translation, SearchBar) with Ecosia-specific general settings.
+        // Items moved to Search section or Customization section are handled there.
+        guard let profile else {
+            return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
+                                   children: [
+                                    ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
+                                    SiriPageSetting(settings: self, settingsDelegate: parentCoordinator)
+                                   ])]
+        }
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        let generalSettings: [Setting] = [
+            OpenWithSetting(settings: self, settingsDelegate: nil), // Ecosia: BrowsingSettingsDelegate not available here
+            ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
+            SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
+            BlockPopupSetting(prefs: profile.prefs),
+            NoImageModeSetting(profile: profile),
+            BoolSetting(
+                prefs: profile.prefs,
+                theme: theme,
+                prefKey: "showClipboardBar",
+                defaultValue: false,
+                titleText: .SettingsOfferClipboardBarTitle,
+                statusText: String(format: .SettingsOfferClipboardBarStatus, AppName.shortName.rawValue)
             ),
-            NewTabPageSetting(settings: self, settingsDelegate: parentCoordinator),
-            HomeSetting(settings: self, settingsDelegate: parentCoordinator),
-            ThemeSetting(settings: self, settingsDelegate: parentCoordinator)
-        ]
-
-        if isSearchBarLocationFeatureEnabled, let profile {
-            generalSettings.append(
-                SearchBarSetting(settings: self, profile: profile, settingsDelegate: parentCoordinator)
+            BoolSetting(
+                prefs: profile.prefs,
+                theme: theme,
+                prefKey: PrefsKeys.ContextMenuShowLinkPreviews,
+                defaultValue: true,
+                titleText: .SettingsShowLinkPreviewsTitle,
+                statusText: .SettingsShowLinkPreviewsStatus
             )
-        }
-
-        // For users whose devices support alternate app icons, add the App Icon setting
-        if UIApplication.shared.supportsAlternateIcons {
-            generalSettings.append(
-                AppIconSetting(
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
-                    settingsDelegate: parentCoordinator
-                )
-            )
-        }
-
-        if summarizerNimbusUtils.isSummarizeFeatureEnabled {
-            generalSettings.append(SummarizeSetting(settings: self, settingsDelegate: parentCoordinator))
-        }
-
-        if featureFlags.isFeatureEnabled(.translation, checking: .buildOnly) {
-            generalSettings.append(TranslationSetting(settings: self, settingsDelegate: parentCoordinator))
-        }
-
-        generalSettings += [
-            SiriPageSetting(settings: self, settingsDelegate: parentCoordinator)
         ]
 
         return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
@@ -414,94 +420,53 @@ class AppSettingsTableViewController: SettingsTableViewController,
     }
 
     private func getPrivacySettings() -> [SettingSection] {
-        var privacySettings = [Setting]()
-
-        privacySettings.append(AutofillPasswordSetting(settings: self, settingsDelegate: parentCoordinator))
-
-        privacySettings.append(ClearPrivateDataSetting(settings: self, settingsDelegate: parentCoordinator))
+        // Ecosia: replaced AutofillPasswordSetting with PasswordManagerSetting,
+        // added EcosiaSendAnonymousUsageDataSetting, removed NotificationsSetting,
+        // replaced PrivacyPolicySetting with Ecosia equivalents, added EcosiaTermsSetting
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        var privacySettings: [Setting] = [
+            PasswordManagerSetting(settings: self, settingsDelegate: parentCoordinator),
+            ClearPrivateDataSetting(settings: self, settingsDelegate: parentCoordinator),
+        ]
 
         if let profile {
-            privacySettings.append(
-                BoolSetting(
-                    prefs: profile.prefs,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
-                    prefKey: PrefsKeys.Settings.closePrivateTabs,
-                    defaultValue: true,
-                    titleText: .AppSettingsClosePrivateTabsTitle,
-                    statusText: .AppSettingsClosePrivateTabsDescription
-                ) { _ in
-                    let action = TabTrayAction(windowUUID: self.windowUUID,
-                                               actionType: TabTrayActionType.closePrivateTabsSettingToggled)
-                    store.dispatch(action)
-                }
-            )
+            privacySettings.append(EcosiaSendAnonymousUsageDataSetting(prefs: profile.prefs, theme: theme))
+            privacySettings.append(BoolSetting(
+                prefs: profile.prefs,
+                theme: theme,
+                prefKey: PrefsKeys.Settings.closePrivateTabs,
+                // Ecosia: default value is different from Firefox
+                defaultValue: PrefsKeysDefaultValues.Settings.closePrivateTabs,
+                titleText: .AppSettingsClosePrivateTabsTitle,
+                statusText: .AppSettingsClosePrivateTabsDescription
+            ))
         }
 
         privacySettings.append(ContentBlockerSetting(settings: self, settingsDelegate: parentCoordinator))
-
-        if let profile {
-            privacySettings.append(NotificationsSetting(theme: themeManager.getCurrentTheme(for: windowUUID),
-                                                        profile: profile,
-                                                        settingsDelegate: parentCoordinator))
-        }
-
-        privacySettings.append(PrivacyPolicySetting(theme: themeManager.getCurrentTheme(for: windowUUID),
-                                                    settingsDelegate: parentCoordinator))
+        privacySettings.append(EcosiaPrivacyPolicySetting(settings: self))
+        privacySettings.append(EcosiaTermsSetting(settings: self))
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
                                children: privacySettings)]
     }
 
     private func getSupportSettings() -> [SettingSection] {
-        var supportSettings = [
-            ShowIntroductionSetting(settings: self, settingsDelegate: self),
-            SendFeedbackSetting(settingsDelegate: parentCoordinator),
+        // Ecosia: replaced Firefox support items with Ecosia Help Center and Send Feedback
+        let supportSettings: [Setting] = [
+            HelpCenterSetting(),
+            EcosiaSendFeedbackSetting(settings: self)
         ]
-
-        // Only add this toggle to the Settings if Sent from Firefox feature flag is enabled from Nimbus
-        if featureFlags.isFeatureEnabled(.sentFromFirefox, checking: .buildOnly), let profile {
-            supportSettings.append(
-                SentFromFirefoxSetting(
-                    prefs: profile.prefs,
-                    delegate: settingsDelegate,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
-                    settingsDelegate: parentCoordinator
-                )
-            )
-        }
-
-        guard let sendTechnicalDataSetting,
-              let sendDailyUsagePingSetting,
-              let studiesToggleSetting,
-              let rolloutsToggleSetting,
-              let sendCrashReportsSetting else {
-            return []
-        }
-
-        supportSettings.append(contentsOf: [
-            sendTechnicalDataSetting,
-            studiesToggleSetting,
-            rolloutsToggleSetting,
-            sendDailyUsagePingSetting,
-            sendCrashReportsSetting
-        ])
-
-        supportSettings.append(contentsOf: [
-            OpenSupportPageSetting(delegate: settingsDelegate,
-                                   theme: themeManager.getCurrentTheme(for: windowUUID),
-                                   settingsDelegate: parentCoordinator),
-        ])
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsSupport),
                                children: supportSettings)]
     }
 
     private func getAboutSettings() -> [SettingSection] {
+        // Ecosia: removed YourRightsSetting
         let aboutSettings = [
             AppStoreReviewSetting(settingsDelegate: parentCoordinator),
             VersionSetting(settingsDelegate: self),
             LicenseAndAcknowledgementsSetting(settingsDelegate: parentCoordinator),
-            YourRightsSetting(settingsDelegate: parentCoordinator)
         ]
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsAbout),
