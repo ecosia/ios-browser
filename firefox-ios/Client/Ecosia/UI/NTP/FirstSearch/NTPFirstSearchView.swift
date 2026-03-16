@@ -57,6 +57,7 @@ struct NTPFirstSearchView: View {
                             .font(.subheadline)
                             .foregroundColor(theme.textSecondary)
                             .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
 
                         // Search suggestions
                         if !suggestions.isEmpty {
