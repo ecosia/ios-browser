@@ -28,11 +28,12 @@ extension BrowserViewController {
             return url
         }
 
-        // Only process if not navigating back/forward and either URL changed or it's a reload
-        let urlChanged = url != previousUrl
-        let isReload = navigationAction.navigationType == .reload
+        // Tab restoration (e.g. switching back to a memory-evicted tab) fires with navigationType
+        // .other and the same URL. Genuine user navigations (.linkActivated, .reload, etc.)
+        // should always be tracked, even for the same URL (matching web behaviour).
         let isBackForward = navigationAction.navigationType == .backForward
-        guard !isBackForward && (urlChanged || isReload) else {
+        let isTabRestore = url == previousUrl && navigationAction.navigationType == .other
+        guard !isBackForward && !isTabRestore else {
             return url
         }
 

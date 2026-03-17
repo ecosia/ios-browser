@@ -35,8 +35,8 @@ class BrowserViewController: UIViewController,
                              AddressToolbarContainerDelegate,
                              FeatureFlaggable {
 
-    // Ecosia: Used inside webview delegate to decide if search should be tracked
-    // (for now this is not cleared across sections or tabs, but shouldn't be an issue)
+    // Ecosia: Tracks the last committed search URL to detect tab restoration
+    // (same URL + navigationType .other), which should not fire an event.
     var previousUrl: URL?
 
     // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
