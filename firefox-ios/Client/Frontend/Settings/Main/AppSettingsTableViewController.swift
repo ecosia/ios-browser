@@ -123,6 +123,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
         tableView.register(cellType: ThemedLearnMoreTableViewCell.self)
         setupNavigationBar()
         configureAccessibilityIdentifiers()
+
+        // Ecosia: Register Nudge Card if needed
+        if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
+            tableView.register(DefaultBrowserSettingsNudgeCardHeaderView.self,
+                               forHeaderFooterViewReuseIdentifier: DefaultBrowserSettingsNudgeCardHeaderView.cellIdentifier)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -350,11 +356,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
     }
 
     private func getDefaultBrowserSetting() -> [SettingSection] {
-        let footerTitle = NSAttributedString(
-            string: String.FirefoxHomepage.HomeTabBanner.EvergreenMessage.HomeTabBannerDescription)
-
-        return [SettingSection(footerTitle: footerTitle,
-                               children: [DefaultBrowserSetting(theme: themeManager.getCurrentTheme(for: windowUUID))])]
+        // Ecosia: hidden placeholder section for the nudge card header.
+        // The nudge card header view is displayed via viewForHeaderInSection.
+        // The placeholder Setting carries the accessibility identifier used by isDefaultBrowserCell()
+        // but is hidden so no row is rendered — only the nudge card header is visible.
+        let placeholder = EcosiaDefaultBrowserNudgeCardPlaceholder()
+        return [SettingSection(children: [placeholder])]
     }
 
     private func getAccountSetting() -> [SettingSection] {
@@ -596,6 +603,20 @@ class AppSettingsTableViewController: SettingsTableViewController,
     // MARK: - UITableViewDelegate
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // Ecosia: Show nudge card header for default browser section
+        if shouldShowDefaultBrowserNudgeCardInSection(section),
+           let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: DefaultBrowserSettingsNudgeCardHeaderView.cellIdentifier) as? DefaultBrowserSettingsNudgeCardHeaderView {
+            header.configure(theme: themeManager.getCurrentTheme(for: windowUUID))
+            header.onDismiss = { [weak self] in
+                User.shared.hideDefaultBrowserSettingNudgeCard()
+                self?.hideDefaultBrowserNudgeCardInSection(section)
+            }
+            header.onTap = { [weak self] in
+                self?.showDefaultBrowserDetailView()
+            }
+            return header
+        }
+
         guard let headerView = super.tableView(
             tableView,
             viewForHeaderInSection: section
