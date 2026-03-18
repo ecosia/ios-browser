@@ -44,7 +44,7 @@ final class ProductTourSpotlightCoordinator: ProductTourObserver {
     private var currentConfiguration: SpotlightConfiguration?
     private var theme: Theme
     // Safety: set once at init, accessed in nonisolated deinit only for removeObserver.
-    private nonisolated(unsafe) let tourManager: ProductTourManager
+    nonisolated(unsafe) private let tourManager: ProductTourManager
 
     /// Closure called when the coordinator needs to open a URL in a new tab
     var openURL: ((URL) -> Void)?

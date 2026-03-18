@@ -18,7 +18,7 @@ class NTPFirstSearchCellViewModel {
     internal var theme: Theme
     let windowUUID: WindowUUID
     // Safety: set once at init, accessed in nonisolated deinit only for removeObserver.
-    private nonisolated(unsafe) var productTourManager: ProductTourManager
+    nonisolated(unsafe) private var productTourManager: ProductTourManager
     weak var delegate: NTPFirstSearchCellViewModelDelegate?
     weak var dataModelDelegate: HomepageDataModelDelegate?
 

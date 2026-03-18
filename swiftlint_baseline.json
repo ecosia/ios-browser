@@ -4040,7 +4040,697 @@
             "location": {
                 "character": 1,
                 "file": "firefox-ios/Client/Coordinators/Browser/BrowserCoordinator.swift",
-                "line": 163
+                "line": 178
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 39
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 49
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 77
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 84
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "                ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 111
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "                ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 116
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "                ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 120
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "                ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 123
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 127
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 133
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 140
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 143
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 147
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 154
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 159
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 164
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "            ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 175
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "            ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 180
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "            ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 184
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "            ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 187
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 194
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 211
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 222
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 251
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 255
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 263
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 270
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 276
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 282
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 289
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 292
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 356
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 366
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 382
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 390
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 395
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 403
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 415
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 417
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 438
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 440
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 444
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 449
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 457
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "    ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 465
+            },
+            "reason": "Lines should not have trailing whitespace",
+            "ruleDescription": "Lines should not have trailing whitespace",
+            "ruleIdentifier": "trailing_whitespace",
+            "ruleName": "Trailing Whitespace",
+            "severity": "warning"
+        }
+    },
+    {
+        "text": "        ",
+        "violation": {
+            "location": {
+                "character": 1,
+                "file": "firefox-ios/Client/Coordinators/Launch/LaunchCoordinator.swift",
+                "line": 471
             },
             "reason": "Lines should not have trailing whitespace",
             "ruleDescription": "Lines should not have trailing whitespace",
@@ -5651,20 +6341,6 @@
         }
     },
     {
-        "text": "",
-        "violation": {
-            "location": {
-                "file": "firefox-ios/Client/Ecosia/UI/Onboarding/WelcomeTour.swift",
-                "line": 377
-            },
-            "reason": "Files should have a single trailing newline",
-            "ruleDescription": "Files should have a single trailing newline",
-            "ruleIdentifier": "trailing_newline",
-            "ruleName": "Trailing Newline",
-            "severity": "warning"
-        }
-    },
-    {
         "text": "    private nonisolated(unsafe) static let defaultWhatsNewItems: [Version: [WhatsNewItem]] = [",
         "violation": {
             "location": {
@@ -5695,12 +6371,27 @@
         }
     },
     {
+        "text": "\t}",
+        "violation": {
+            "location": {
+                "character": 2,
+                "file": "firefox-ios/Client/Frontend/Browser/BrowserViewController/Views/BrowserViewController.swift",
+                "line": 143
+            },
+            "reason": "expected 4, got 1",
+            "ruleDescription": "Closure end should have the same indentation as the line that started it.",
+            "ruleIdentifier": "closure_end_indentation",
+            "ruleName": "Closure End Indentation",
+            "severity": "warning"
+        }
+    },
+    {
         "text": "        ",
         "violation": {
             "location": {
                 "character": 1,
                 "file": "firefox-ios/Client/Frontend/Browser/BrowserViewController/Views/BrowserViewController.swift",
-                "line": 3258
+                "line": 3275
             },
             "reason": "Lines should not have trailing whitespace",
             "ruleDescription": "Lines should not have trailing whitespace",
@@ -6006,21 +6697,6 @@
             "ruleDescription": "Images that provide context should have an accessibility label or should be explicitly hidden from accessibility",
             "ruleIdentifier": "accessibility_label_for_image",
             "ruleName": "Accessibility Label for Image",
-            "severity": "warning"
-        }
-    },
-    {
-        "text": "        ",
-        "violation": {
-            "location": {
-                "character": 1,
-                "file": "firefox-ios/EcosiaTests/EcosiaHomeViewModelTests.swift",
-                "line": 56
-            },
-            "reason": "Lines should not have trailing whitespace",
-            "ruleDescription": "Lines should not have trailing whitespace",
-            "ruleIdentifier": "trailing_whitespace",
-            "ruleName": "Trailing Whitespace",
             "severity": "warning"
         }
     },
