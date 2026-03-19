@@ -13,6 +13,7 @@ open class Analytics {
     static let impactBalanceSchema = "iglu:org.ecosia/impact_balance/jsonschema/1-0-0"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
+    private static let privateNamespace = "ios_sp_private"
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
     static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
@@ -29,6 +30,7 @@ open class Analytics {
 
     public static var shared = Analytics()
     private var tracker: TrackerController
+    private var privateTracker: TrackerController
     private let notificationCenter: AnalyticsUserNotificationCenterProtocol
 
     internal init(notificationCenter: AnalyticsUserNotificationCenterProtocol = AnalyticsUserNotificationCenterWrapper()) {
@@ -39,21 +41,23 @@ open class Analytics {
         tracker.screenEngagementAutotracking = false
         tracker.exceptionAutotracking = false
         tracker.diagnosticAutotracking = false
+        privateTracker = Self.makePrivateTracker()
         self.notificationCenter = notificationCenter
     }
 
-    internal func track(_ event: SnowplowTracker.Event) {
+    internal func track(_ event: SnowplowTracker.Event, isPrivate: Bool = false) {
         guard User.shared.sendAnonymousUsageData else { return }
         if let structuredEvent = event as? Structured {
             appendContextIfNeeded(to: structuredEvent)
         }
 #if !TESTING
-        _ = tracker.track(event)
+        _ = (isPrivate ? privateTracker : tracker).track(event)
 #endif
     }
 
     private static func updateTrackerController() {
         Analytics.shared.tracker = makeTracker()
+        Analytics.shared.privateTracker = makePrivateTracker()
     }
 
     private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
@@ -68,6 +72,7 @@ open class Analytics {
     public func reset() {
         User.shared.analyticsId = .init()
         tracker = Self.makeTracker()
+        privateTracker = Self.makePrivateTracker()
     }
 
     // MARK: App events
@@ -306,7 +311,7 @@ open class Analytics {
     }
 
     // MARK: In-App Search
-    public func inappSearch(url: URL) {
+    public func inappSearch(url: URL, isPrivate: Bool = false) {
         // Note: This functionality was previously guarded/throttled by the mob_ios_native_srpv_analytics feature flag
         // and has been permanently enabled/unthrottled as part of MOB-4040
         guard let query = url.getEcosiaSearchQuery() else {
@@ -320,7 +325,8 @@ open class Analytics {
             "search_type": url.getEcosiaSearchVerticalPath()
         ]
         track(SelfDescribing(schema: Self.inappSearchSchema,
-                             payload: payload.compactMapValues({ $0 })))
+                             payload: payload.compactMapValues({ $0 })),
+              isPrivate: isPrivate)
     }
 
     // MARK: Settings
@@ -536,6 +542,24 @@ extension Analytics {
                                         Self.subjectConfiguration,
                                         Self.appInstallTrackingPluginConfiguration,
                                         Self.appResumeDailyTrackingPluginConfiguration])
+    }
+
+    /// Creates and configures a tracker for private browsing.
+    /// Uses `userAnonymisation` to strip all user identifiers (userId, session userId, IDFA/IDFV).
+    /// No subject configuration is applied, so no `userId` is ever set.
+    private static func makePrivateTracker() -> TrackerController {
+        let controller = Snowplow.createTracker(namespace: privateNamespace,
+                                                network: makeNetworkConfig(),
+                                                configurations: [
+                                                    Self.privateTrackerConfiguration,
+                                                    Self.appResumeDailyTrackingPluginConfiguration])
+        controller.installAutotracking = false
+        controller.screenViewAutotracking = false
+        controller.lifecycleAutotracking = false
+        controller.screenEngagementAutotracking = false
+        controller.exceptionAutotracking = false
+        controller.diagnosticAutotracking = false
+        return controller
     }
 
     /// Factory that builds the `NetworkConfiguration` for the Snowplow tracker, optionally

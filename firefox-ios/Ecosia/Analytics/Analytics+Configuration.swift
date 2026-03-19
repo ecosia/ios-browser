@@ -25,6 +25,20 @@ extension Analytics {
     static let subjectConfiguration = SubjectConfiguration()
         .userId(User.shared.analyticsId.uuidString)
 
+    /// Tracker configuration for private browsing sessions.
+    /// - Identical to `trackerConfiguration` but with `userAnonymisation` enabled,
+    ///   which strips userId, session userId, previousSessionId, and IDFA/IDFV from all events.
+    static let privateTrackerConfiguration = TrackerConfiguration()
+        .appId(Bundle.version)
+        .sessionContext(true)
+        .applicationContext(true)
+        .platformContext(true)
+        .platformContextProperties([.appleIdfv])
+        .geoLocationContext(true)
+        .deepLinkContext(false)
+        .screenContext(false)
+        .userAnonymisation(true)
+
     /// Configuration for the daily tracking plugin.
     /// - This plugin filters events based on whether a day has passed since the last check for a specific identifier.
     /// - It specifically filters structured events related to in-app navigation and resume actions.
