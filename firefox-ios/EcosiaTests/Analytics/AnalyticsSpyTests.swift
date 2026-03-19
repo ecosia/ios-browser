@@ -648,12 +648,13 @@ final class AnalyticsSpyTests: XCTestCase {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
             let url = URL(string: urlString)!
-            var action = FakeNavigationAction(url: url,
-                                              navigationType: .other)
+            let action = FakeNavigationAction(url: url, navigationType: .other)
             browser.webView(makeWebView(),
                             decidePolicyFor: action) { policy in
                 XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
             }
+            // inappSearch is now fired at didCommit, not decidePolicyFor
+            browser.ecosiaHandleDidCommit(url: url)
 
             if shouldTrack {
                 XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
@@ -681,12 +682,12 @@ final class AnalyticsSpyTests: XCTestCase {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
             let url = URL(string: urlString)!
-            var action = FakeNavigationAction(url: url,
-                                              navigationType: type)
+            let action = FakeNavigationAction(url: url, navigationType: type)
             browser.webView(makeWebView(),
                             decidePolicyFor: action) { policy in
                 XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
             }
+            browser.ecosiaHandleDidCommit(url: url)
 
             if shouldTrack {
                 XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
@@ -698,6 +699,26 @@ final class AnalyticsSpyTests: XCTestCase {
             analyticsSpy = nil
             Analytics.shared = Analytics()
         }
+    }
+
+    func testEcosiaHandleDidCommitDoesNotFireWhenURLDoesNotMatchPending() {
+        let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
+        analyticsSpy = AnalyticsSpy()
+        Analytics.shared = analyticsSpy
+
+        let rootURL = EcosiaEnvironment.current.urlProvider.root
+        let searchUrl = URL(string: "\(rootURL)/search?q=test")!
+        let differentUrl = URL(string: "\(rootURL)/images?q=test")!
+
+        // Simulate decidePolicyFor setting the pending URL to searchUrl
+        let action = FakeNavigationAction(url: searchUrl, navigationType: .other)
+        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
+
+        // didCommit fires with a different URL (e.g. a redirect landed elsewhere)
+        browser.ecosiaHandleDidCommit(url: differentUrl)
+
+        XCTAssertNil(analyticsSpy.inappSearchUrlCalled,
+                     "Should not track when committed URL does not match pending URL")
     }
 
     // MARK: - Analytics Context Tests

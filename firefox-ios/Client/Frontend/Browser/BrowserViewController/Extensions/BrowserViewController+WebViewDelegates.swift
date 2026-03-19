@@ -881,6 +881,11 @@ extension BrowserViewController: WKNavigationDelegate {
               let metadataManager = tab.metadataManager
         else { return }
 
+        // Ecosia: Fire in-app search event at commit time (closest to Vue's mounted on web)
+        if let url = webView.url {
+            ecosiaHandleDidCommit(url: url)
+        }
+
         searchTelemetry?.trackTabAndTopSiteSAP(tab, webView: webView)
         webviewTelemetry.start()
         tab.url = webView.url
