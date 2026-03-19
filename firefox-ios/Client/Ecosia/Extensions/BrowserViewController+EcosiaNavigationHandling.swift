@@ -10,6 +10,7 @@ import Ecosia
 extension BrowserViewController {
 
     /// Handles any Ecosia-specific tracking when a navigation action is allowed.
+    /// Stores a pending URL to be tracked at didCommit.
     /// - Parameters:
     ///   - url: The URL being navigated to
     ///   - navigationAction: The navigation action that triggered this check
@@ -20,6 +21,9 @@ extension BrowserViewController {
         navigationAction: WKNavigationAction,
         previousUrl: URL?
     ) -> URL {
+        // Clear any stale pending tracking from a previous navigation
+        pendingInappSearchUrl = nil
+
         guard url.isEcosiaSearchVertical() else {
             return url
         }
@@ -32,9 +36,19 @@ extension BrowserViewController {
             return url
         }
 
-        Analytics.shared.inappSearch(url: url)
+        // Store the URL; the event fires in ecosiaHandleDidCommit when content starts rendering
+        pendingInappSearchUrl = url
 
         return url
+    }
+
+    /// Fires the in-app search event when the web content starts to be received (didCommit).
+    /// This matches the timing of Vue's mounted event on web (DOM ready, before full page load).
+    /// - Parameter url: The URL that just committed
+    func ecosiaHandleDidCommit(url: URL) {
+        guard url == pendingInappSearchUrl else { return }
+        pendingInappSearchUrl = nil
+        Analytics.shared.inappSearch(url: url)
     }
 
     /// Handles any tasks that should run after a page finishes loading.
