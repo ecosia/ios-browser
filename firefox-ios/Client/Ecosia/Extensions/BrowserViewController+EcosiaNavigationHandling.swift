@@ -14,32 +14,19 @@ extension BrowserViewController {
     /// - Parameters:
     ///   - url: The URL being navigated to
     ///   - navigationAction: The navigation action that triggered this check
-    ///   - previousUrl: The previously loaded URL for comparison
-    /// - Returns: The URL to set as the new previousUrl
-    func ecosiaHandleNavigationAction(
-        url: URL,
-        navigationAction: WKNavigationAction,
-        previousUrl: URL?
-    ) -> URL {
+    func ecosiaHandleNavigationAction(url: URL, navigationAction: WKNavigationAction) {
         // Clear any stale pending tracking from a previous navigation
         pendingInappSearchUrl = nil
 
-        guard url.isEcosiaSearchVertical() else {
-            return url
-        }
+        guard url.isEcosiaSearchVertical() else { return }
 
-        // Only process if not navigating back/forward and either URL changed or it's a reload
-        let urlChanged = url != previousUrl
-        let isReload = navigationAction.navigationType == .reload
-        let isBackForward = navigationAction.navigationType == .backForward
-        guard !isBackForward && (urlChanged || isReload) else {
-            return url
-        }
+        // Back/forward navigations are suppressed: on web, bfcache keeps the page mounted so
+        // Vue never refires. Tab switching doesn't reach this delegate at all, so any other
+        // navigation type arriving here is a genuine user action and should always track.
+        guard navigationAction.navigationType != .backForward else { return }
 
         // Store the URL; the event fires in ecosiaHandleDidCommit when content starts rendering
         pendingInappSearchUrl = url
-
-        return url
     }
 
     /// Fires the in-app search event when the web content starts to be received (didCommit).

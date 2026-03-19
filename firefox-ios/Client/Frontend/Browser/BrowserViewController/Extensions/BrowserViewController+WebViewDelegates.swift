@@ -616,11 +616,7 @@ extension BrowserViewController: WKNavigationDelegate {
                 return
             }
             // Ecosia: Handle navigation tracking
-            previousUrl = ecosiaHandleNavigationAction(
-                url: url,
-                navigationAction: navigationAction,
-                previousUrl: previousUrl
-            )
+            ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
 
             decisionHandler(.allow)
             return

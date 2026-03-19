@@ -145,10 +145,6 @@ class BrowserViewController: UIViewController,
     // Ecosia: Retain coordinator for spotlight product tours
     var spotlightCoordinator: ProductTourSpotlightCoordinator?
 
-    // Ecosia: Used inside webview delegate to decide if search should be tracked
-    // (for now this is not cleared across sections or tabs, but shouldn't be an issue)
-    var previousUrl: URL?
-
     // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
     // and its navigationType are available) to the actual tracking call in didCommit.
     // Set when eligible, cleared on commit or on the next navigation.
