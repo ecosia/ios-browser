@@ -636,7 +636,7 @@ final class AnalyticsSpyTests: XCTestCase {
             ("https://www.example.org", false, "Does not track external URLs"),
             ("\(rootURL)", false, "Does not track index page"),
             ("\(rootURL)/search?q=test", true, "Tracks search query"),
-            ("\(rootURL)/search?q=test", false, "Does not track if url did not change"),
+            ("\(rootURL)/search?q=test", true, "Tracks same URL again with .other type"),
             ("\(rootURL)/images?q=test1", true, "Tracks images query"),
             ("\(rootURL)/news?q=test2&p=1", true, "Tracks news query"),
             ("\(rootURL)/videos?q=test3", true, "Tracks videos query"),
@@ -674,8 +674,8 @@ final class AnalyticsSpyTests: XCTestCase {
         let rootURL = EcosiaEnvironment.current.urlProvider.root
         let testCases = [
             (WKNavigationType.other, "\(rootURL)/search?q=test", true, "Tracks regular navigation"),
-            (WKNavigationType.reload, "\(rootURL)/search?q=test", true, "Tracks reload (with unchanged url)"),
-            (WKNavigationType.backForward, "\(rootURL)/search?q=test1", false, "Does not track back forward"),
+            (WKNavigationType.reload, "\(rootURL)/search?q=test", true, "Tracks reload"),
+            (WKNavigationType.backForward, "\(rootURL)/search?q=test", false, "Does not track back/forward"),
         ]
 
         for (type, urlString, shouldTrack, message) in testCases {
@@ -699,6 +699,28 @@ final class AnalyticsSpyTests: XCTestCase {
             analyticsSpy = nil
             Analytics.shared = Analytics()
         }
+    }
+
+    func testWebViewDelegateTracksSearchEventOnSameURLWhenLinkActivated() {
+        let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
+        let rootURL = EcosiaEnvironment.current.urlProvider.root
+        let url = URL(string: "\(rootURL)/search?q=test")!
+
+        // Load the URL once to establish it as the current page
+        let firstAction = FakeNavigationAction(url: url, navigationType: .other)
+        browser.webView(makeWebView(), decidePolicyFor: firstAction) { _ in }
+        browser.ecosiaHandleDidCommit(url: url)
+
+        // Navigate to the same URL again via link activation (e.g. tapping the same search vertical)
+        analyticsSpy = AnalyticsSpy()
+        Analytics.shared = analyticsSpy
+        let secondAction = FakeNavigationAction(url: url, navigationType: .linkActivated)
+        browser.webView(makeWebView(), decidePolicyFor: secondAction) { _ in }
+        browser.ecosiaHandleDidCommit(url: url)
+
+        XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
+                       url.absoluteString,
+                       "Should track same URL when navigated via link activation, not treated as tab restore")
     }
 
     func testEcosiaHandleDidCommitDoesNotFireWhenURLDoesNotMatchPending() {
