@@ -7,6 +7,8 @@ import UIKit
 import Storage
 import Shared
 import SiteImageView
+import Ecosia
+import UniformTypeIdentifiers
 
 import MozillaAppServices
 
@@ -31,6 +33,8 @@ final class BookmarksViewController: SiteTableViewController,
     var bookmarksSaver: BookmarksSaver?
     private var logger: Logger
     private let bookmarksTelemetry = BookmarksTelemetry()
+    // Ecosia: Import/Export bookmarks support
+    private lazy var bookmarksExchange: BookmarksExchangable = BookmarksExchange(profile: viewModel.profile)
 
     // MARK: - Toolbar items
     var bottomToolbarItems: [UIBarButtonItem] {
@@ -49,7 +53,8 @@ final class BookmarksViewController: SiteTableViewController,
             if #available(iOS 26.0, *) {
                 bottomRightButton.tintColor = currentTheme().colors.textPrimary
             }
-            return [flexibleSpace, bottomRightButton]
+            // Ecosia: Add "More" button for import/export
+            return [moreButton, flexibleSpace, bottomRightButton]
         case .bookmarks(state: .inFolderEditMode):
             bottomRightButton.title = String.AppSettingsDone
             if #available(iOS 26.0, *) {
@@ -97,13 +102,28 @@ final class BookmarksViewController: SiteTableViewController,
         return button
     }()
 
-    private lazy var emptyStateView: BookmarksFolderEmptyStateView = .build { emptyStateView in
-        emptyStateView.signInAction = { [weak self] in
-            self?.bookmarkCoordinatorDelegate?.showSignIn()
-        }
-    }
+    // Ecosia: "More" button for import/export bookmarks
+    private lazy var moreButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            title: .localized(.bookmarksPanelMore),
+            style: .plain,
+            target: self,
+            action: #selector(showMoreDialog)
+        )
+        button.accessibilityIdentifier = AccessibilityIdentifiers.LibraryPanels.bottomLeftButton
+        return button
+    }()
 
-    private lazy var a11yEmptyStateScrollView: UIScrollView = .build()
+    // Ecosia: Use Ecosia empty bookmarks view with import/learn more
+    private lazy var emptyBookmarksView: EmptyBookmarksView = {
+        let navigationControllerHeight = navigationController?.toolbar.bounds.size.height ?? 0
+        let topAnchorDelta: CGFloat = UIDevice.current.userInterfaceIdiom == .pad
+            ? -navigationControllerHeight
+            : -navigationControllerHeight * 3
+        let view = EmptyBookmarksView(initialBottomMargin: topAnchorDelta)
+        view.delegate = self
+        return view
+    }()
 
     // MARK: - Init
 
@@ -147,8 +167,8 @@ final class BookmarksViewController: SiteTableViewController,
         }
 
         MainActor.assumeIsolated {
-            // FXIOS-11315: Necessary to prevent BookmarksFolderEmptyStateView from being retained in memory
-            a11yEmptyStateScrollView.removeFromSuperview()
+            // Ecosia: Clean up empty state from tableView.backgroundView
+            tableView.backgroundView = nil
         }
     }
 
@@ -391,23 +411,16 @@ final class BookmarksViewController: SiteTableViewController,
         }
     }
 
+    // Ecosia: Use tableView.backgroundView for empty state
     private func updateEmptyState(animated: Bool) {
         let showEmptyState = viewModel.bookmarkNodes.isEmpty && !tableView.isEditing
 
-        if animated {
-            a11yEmptyStateScrollView.isHidden = false
-            UIView.animate(withDuration: 0.2, animations: {
-                self.a11yEmptyStateScrollView.alpha = showEmptyState ? 1 : 0
-            }) { _ in
-                self.a11yEmptyStateScrollView.isHidden = !showEmptyState
-            }
+        if showEmptyState {
+            emptyBookmarksView.applyTheme(theme: currentTheme())
+            tableView.backgroundView = emptyBookmarksView
         } else {
-            a11yEmptyStateScrollView.alpha = showEmptyState ? 1 : 0
-            a11yEmptyStateScrollView.isHidden = !showEmptyState
+            tableView.backgroundView = nil
         }
-
-        emptyStateView.configure(isRoot: viewModel.bookmarkFolderGUID == BookmarkRoots.MobileFolderGUID,
-                                 isSignedIn: profile.hasAccount())
     }
 
     private func createContextButton() -> UIButton {
@@ -445,29 +458,9 @@ final class BookmarksViewController: SiteTableViewController,
         })
     }
 
-    // MARK: - UI Setup
+    // Ecosia: Simplified empty state setup using tableView.backgroundView
     private func setupEmptyStateView() {
-        view.addSubview(a11yEmptyStateScrollView)
-        a11yEmptyStateScrollView.addSubview(emptyStateView)
-        a11yEmptyStateScrollView.isHidden = true
-        NSLayoutConstraint.activate(
-            [
-                a11yEmptyStateScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                a11yEmptyStateScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                a11yEmptyStateScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                a11yEmptyStateScrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-
-                emptyStateView.leadingAnchor.constraint(equalTo: a11yEmptyStateScrollView.contentLayoutGuide.leadingAnchor),
-                emptyStateView.trailingAnchor.constraint(
-                        equalTo: a11yEmptyStateScrollView.contentLayoutGuide.trailingAnchor),
-                emptyStateView.topAnchor.constraint(equalTo: a11yEmptyStateScrollView.contentLayoutGuide.topAnchor),
-                emptyStateView.bottomAnchor.constraint(equalTo: a11yEmptyStateScrollView.contentLayoutGuide.bottomAnchor),
-                emptyStateView.widthAnchor.constraint(equalTo: a11yEmptyStateScrollView.frameLayoutGuide.widthAnchor),
-                emptyStateView.heightAnchor.constraint(
-                    greaterThanOrEqualTo: a11yEmptyStateScrollView.frameLayoutGuide.heightAnchor),
-            ]
-        )
-        emptyStateView.applyTheme(theme: currentTheme())
+        emptyBookmarksView.applyTheme(theme: currentTheme())
     }
 
     // MARK: - UITableViewDataSource | UITableViewDelegate
@@ -818,5 +811,129 @@ extension BookmarksViewController {
         default:
             return
         }
+    }
+}
+
+// MARK: - Ecosia: Import/Export Bookmarks
+
+extension BookmarksViewController {
+
+    @objc func showMoreDialog() {
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        actionSheet.addAction(UIAlertAction(title: .localized(.importBookmarks), style: .default) { [weak self] _ in
+            Analytics.shared.bookmarksPerformImportExport(.import)
+            self?.importBookmarksActionHandler()
+        })
+
+        actionSheet.addAction(UIAlertAction(title: .localized(.exportBookmarks), style: .default) { [weak self] _ in
+            Analytics.shared.bookmarksPerformImportExport(.export)
+            self?.exportBookmarksActionHandler()
+        })
+
+        actionSheet.addAction(UIAlertAction(title: .CancelString, style: .cancel))
+
+        actionSheet.popoverPresentationController?.barButtonItem = moreButton
+        present(actionSheet, animated: true)
+    }
+
+    private func importBookmarksActionHandler() {
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.html])
+        documentPicker.allowsMultipleSelection = false
+        let theme = currentTheme()
+        documentPicker.view.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
+        documentPicker.delegate = self
+        present(documentPicker, animated: true)
+    }
+
+    private func exportBookmarksActionHandler() {
+        Task {
+            do {
+                let bookmarkItems = try await fetchAllBookmarkItems()
+                try await bookmarksExchange.export(bookmarks: bookmarkItems, in: self, barButtonItem: moreButton)
+            } catch {
+                let alert = UIAlertController(
+                    title: .localized(.bookmarksExportFailedTitle),
+                    message: error.localizedDescription,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: .OKString, style: .default))
+                present(alert, animated: true)
+            }
+        }
+    }
+
+    private func fetchAllBookmarkItems() async throws -> [Ecosia.BookmarkItem] {
+        try await withCheckedThrowingContinuation { continuation in
+            profile.places.getBookmarksTree(
+                rootGUID: BookmarkRoots.MobileFolderGUID,
+                recursive: true
+            ) { result in
+                switch result {
+                case .success(let bookmarkNode):
+                    guard let folder = bookmarkNode as? BookmarkFolderData else {
+                        continuation.resume(returning: [])
+                        return
+                    }
+                    let items = BookmarksViewController.convertToBookmarkItems(folder.children ?? [])
+                    nonisolated(unsafe) let sendableItems = items
+                    continuation.resume(returning: sendableItems)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    private nonisolated static func convertToBookmarkItems(_ nodes: [BookmarkNodeData]) -> [Ecosia.BookmarkItem] {
+        nodes.compactMap { node -> Ecosia.BookmarkItem? in
+            switch node {
+            case let folder as BookmarkFolderData:
+                let children = convertToBookmarkItems(folder.children ?? [])
+                return .folder(folder.title, children, .empty)
+            case let item as BookmarkItemData:
+                return .bookmark(item.title, item.url, .empty)
+            default:
+                return nil
+            }
+        }
+    }
+}
+
+// MARK: - Ecosia: UIDocumentPickerDelegate
+
+extension BookmarksViewController: UIDocumentPickerDelegate {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let fileURL = urls.first else { return }
+        Task {
+            do {
+                try await bookmarksExchange.import(from: fileURL, in: self)
+                reloadData()
+            } catch {
+                let alert = UIAlertController(
+                    title: .localized(.bookmarksImportFailedTitle),
+                    message: error.localizedDescription,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: .OKString, style: .default))
+                present(alert, animated: true)
+            }
+        }
+    }
+}
+
+// MARK: - Ecosia: EmptyBookmarksViewDelegate
+
+extension BookmarksViewController: EmptyBookmarksViewDelegate {
+    func emptyBookmarksViewLearnMoreTapped(_ view: EmptyBookmarksView) {
+        libraryPanelDelegate?.libraryPanel(
+            didSelectURL: EcosiaEnvironment.current.urlProvider.bookmarksHelp,
+            visitType: .link
+        )
+    }
+
+    func emptyBookmarksViewImportBookmarksTapped(_ view: EmptyBookmarksView) {
+        Analytics.shared.bookmarksPerformImportExport(.import)
+        importBookmarksActionHandler()
     }
 }
