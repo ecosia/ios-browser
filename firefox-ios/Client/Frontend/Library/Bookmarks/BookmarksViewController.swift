@@ -116,11 +116,7 @@ final class BookmarksViewController: SiteTableViewController,
 
     // Ecosia: Use Ecosia empty bookmarks view with import/learn more
     private lazy var emptyBookmarksView: EmptyBookmarksView = {
-        let navigationControllerHeight = navigationController?.toolbar.bounds.size.height ?? 0
-        let topAnchorDelta: CGFloat = UIDevice.current.userInterfaceIdiom == .pad
-            ? -navigationControllerHeight
-            : -navigationControllerHeight * 3
-        let view = EmptyBookmarksView(initialBottomMargin: topAnchorDelta)
+        let view = EmptyBookmarksView(initialBottomMargin: 0)
         view.delegate = self
         return view
     }()
@@ -167,8 +163,8 @@ final class BookmarksViewController: SiteTableViewController,
         }
 
         MainActor.assumeIsolated {
-            // Ecosia: Clean up empty state from tableView.backgroundView
-            tableView.backgroundView = nil
+            // Ecosia: Clean up empty state view
+            emptyBookmarksView.removeFromSuperview()
         }
     }
 
@@ -209,6 +205,9 @@ final class BookmarksViewController: SiteTableViewController,
             updatePanelState(newState: .bookmarks(state: .inFolder))
         }
         sendPanelChangeNotification()
+
+        // Ecosia: Show empty state immediately if bookmarks haven't loaded yet
+        updateEmptyState(animated: false)
     }
 
     // MARK: - Data
@@ -411,15 +410,23 @@ final class BookmarksViewController: SiteTableViewController,
         }
     }
 
-    // Ecosia: Use tableView.backgroundView for empty state
+    // Ecosia: Show/hide empty state view
     private func updateEmptyState(animated: Bool) {
         let showEmptyState = viewModel.bookmarkNodes.isEmpty && !tableView.isEditing
 
         if showEmptyState {
+            if emptyBookmarksView.superview == nil {
+                emptyBookmarksView.frame = view.bounds
+                emptyBookmarksView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                view.addSubview(emptyBookmarksView)
+            }
             emptyBookmarksView.applyTheme(theme: currentTheme())
-            tableView.backgroundView = emptyBookmarksView
+            emptyBookmarksView.bottomMarginConstraint?.constant = 0
+            view.bringSubviewToFront(emptyBookmarksView)
+            emptyBookmarksView.isHidden = false
         } else {
-            tableView.backgroundView = nil
+            emptyBookmarksView.isHidden = true
+            emptyBookmarksView.removeFromSuperview()
         }
     }
 
@@ -458,7 +465,7 @@ final class BookmarksViewController: SiteTableViewController,
         })
     }
 
-    // Ecosia: Simplified empty state setup using tableView.backgroundView
+    // Ecosia: Apply theme to empty state view
     private func setupEmptyStateView() {
         emptyBookmarksView.applyTheme(theme: currentTheme())
     }
