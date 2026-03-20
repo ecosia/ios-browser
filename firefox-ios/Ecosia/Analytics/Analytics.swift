@@ -13,7 +13,7 @@ open class Analytics {
     static let impactBalanceSchema = "iglu:org.ecosia/impact_balance/jsonschema/1-0-0"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
-    private static let privateNamespace = "ios_sp_private"
+    private static let privateNamespace = "ios_sp_anonymous"
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
     static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
