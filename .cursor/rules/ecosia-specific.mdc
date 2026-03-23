@@ -7,7 +7,8 @@ alwaysApply: true
 
 ## Code Customization
 
-- Use "Ecosia:" comments to mark Ecosia customizations in Firefox code
+- **Ecosia-owned files** (`firefox-ios/Ecosia/`, `firefox-ios/Client/Ecosia/`, `firefox-ios/EcosiaTests/`) do NOT need `// Ecosia:` prefixes — the entire file is Ecosia's. Write plain comments there.
+- **Firefox files modified by Ecosia** (e.g. `firefox-ios/Client/Frontend/`, `firefox-ios/Storage/`) require `// Ecosia:` markers to make customisations visible at a glance.
 - Use `//` for new code introductions (e.g. new properties, new methods, new types)
 - Use `/* */` for commenting out existing Firefox code
 - **Swapping with Ecosia**: When replacing Firefox behaviour with Ecosia behaviour, always:
