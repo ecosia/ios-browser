@@ -66,7 +66,7 @@ class WallpaperSettingsViewModelTests: XCTestCase {
 
         // Without heading/subheading in JSON, no title/description should be shown
         XCTAssertNil(headerViewModel?.title)
-        XCTAssertNil(headerViewModel?.description)
+        XCTAssertNil(headerViewModel?.subheading)
         XCTAssertNil(headerViewModel?.buttonTitle) // No learn-more URL
     }
 
@@ -110,7 +110,7 @@ class WallpaperSettingsViewModelTests: XCTestCase {
 
         // Verify that the custom heading and subheading from JSON are used
         XCTAssertEqual(headerViewModel?.title, customHeading)
-        XCTAssertEqual(headerViewModel?.description, customSubheading)
+        XCTAssertEqual(headerViewModel?.subheading, customSubheading)
         XCTAssertNotNil(headerViewModel?.buttonTitle)
     }
 
@@ -142,7 +142,7 @@ class WallpaperSettingsViewModelTests: XCTestCase {
 
         // Verify that only heading is shown, no subheading
         XCTAssertEqual(headerViewModel?.title, customHeading)
-        XCTAssertNil(headerViewModel?.description)
+        XCTAssertNil(headerViewModel?.subheading)
     }
 
     // Ecosia: Test that subheading can be shown independently without heading
@@ -173,7 +173,7 @@ class WallpaperSettingsViewModelTests: XCTestCase {
 
         // Verify that only subheading is shown, no heading
         XCTAssertNil(headerViewModel?.title)
-        XCTAssertEqual(headerViewModel?.description, customSubheading)
+        XCTAssertEqual(headerViewModel?.subheading, customSubheading)
     }
 
     // Ecosia: Test that no title/description is shown when both are nil
@@ -184,7 +184,7 @@ class WallpaperSettingsViewModelTests: XCTestCase {
 
         // Verify that when heading/subheading are nil, nothing is shown (no fallback to localized strings)
         XCTAssertNil(headerViewModel?.title)
-        XCTAssertNil(headerViewModel?.description)
+        XCTAssertNil(headerViewModel?.subheading)
     }
 
     func testDownloadAndSetWallpaper_downloaded_wallpaperIsSet() {

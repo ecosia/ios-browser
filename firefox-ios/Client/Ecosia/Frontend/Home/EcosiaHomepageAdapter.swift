@@ -133,11 +133,7 @@ final class EcosiaHomepageAdapter {
 
         // Logo moved into the NTPHeader cell — no separate logo section needed.
 
-        // Library shortcuts (Bookmarks, History, Reading List, Downloads)
-        // Hidden by default (MOB-4150); re-enable via debug menu
-        if ToggleNTPLibraryShortcuts.isEnabled {
-            sections.append(.ecosiaLibrary)
-        }
+        // Library shortcuts (Bookmarks, History, Reading List, Downloads) — hidden for now
 
         // Climate impact (if enabled)
         if shouldShowImpact() {
@@ -162,9 +158,6 @@ final class EcosiaHomepageAdapter {
     var topSitesInsertionAnchor: HomepageSection {
         if shouldShowImpact() {
             return .ecosiaImpact
-        }
-        if ToggleNTPLibraryShortcuts.isEnabled {
-            return .ecosiaLibrary
         }
         return .ecosiaHeader
     }
@@ -207,9 +200,7 @@ final class EcosiaHomepageAdapter {
     }
 
     private func shouldShowNews() -> Bool {
-        // Hidden by default (MOB-4150); re-enable via debug menu
-        guard ToggleNTPNewsSection.isEnabled else { return false }
-        return User.shared.showEcosiaNews
+        return false
     }
 
     // MARK: - Lifecycle

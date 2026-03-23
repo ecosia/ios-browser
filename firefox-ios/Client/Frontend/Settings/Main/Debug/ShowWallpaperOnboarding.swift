@@ -7,6 +7,7 @@ import ComponentLibrary
 import Foundation
 import Shared
 
+@MainActor
 class ShowWallpaperOnboarding: HiddenSetting {
     private weak var settingsDelegate: DebugSettingsDelegate?
 

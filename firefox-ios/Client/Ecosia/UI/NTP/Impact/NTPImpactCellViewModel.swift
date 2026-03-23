@@ -23,11 +23,7 @@ protocol NTPImpactCellDelegate: AnyObject {
     private(set) var rotatingTitles: [String] = []
 
     var infoItemSections: [[ClimateImpactInfo]] {
-        let firstSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
-        // Hide referral section by default (MOB-4150); re-enable via debug menu
-        guard ToggleNTPReferralRow.isEnabled else { return [firstSection] }
-        let secondSection: [ClimateImpactInfo] = [referralInfo]
-        return [firstSection, secondSection]
+        return [[totalTreesInfo, totalInvestedInfo]]
     }
     var referralInfo: ClimateImpactInfo {
         .referral(value: User.shared.referrals.count)

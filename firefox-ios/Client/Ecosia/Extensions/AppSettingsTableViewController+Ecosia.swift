@@ -183,10 +183,6 @@ extension AppSettingsTableViewController {
             FasterInactiveTabs(settings: self, settingsDelegate: self),
             */
             AnalyticsIdentifierSetting(settings: self),
-            ToggleNTPLibraryShortcuts(settings: self),
-            ToggleNTPReferralRow(settings: self),
-            ToggleNTPNewsSection(settings: self),
-            EcosiaForceWallpaperRefresh(settings: self),
             RefreshStatisticsSetting(settings: self),
         ]
 

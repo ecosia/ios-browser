@@ -5,9 +5,6 @@
 import Foundation
 import Shared
 
-// Note: There's also an EcosiaForceWallpaperRefresh in Ecosia debug settings
-// (Client/Ecosia/Settings/EcosiaDebugSettings.swift)
-// This Firefox version is kept separate for Firefox-style debug menu
 @MainActor
 class ForceWallpaperRefresh: HiddenSetting {
     override var title: NSAttributedString? {

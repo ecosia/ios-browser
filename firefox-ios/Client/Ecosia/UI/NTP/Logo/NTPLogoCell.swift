@@ -48,7 +48,6 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
     }
 
     func applyTheme(theme: Theme) {
-        // Ecosia: White logo over glassmorphism wallpaper background
-        logo.tintColor = .white
+        logo.tintColor = theme.colors.ecosia.brandPrimary
     }
 }
