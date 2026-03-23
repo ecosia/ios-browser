@@ -42,7 +42,7 @@ final class NTPComponentTests: SnapshotBaseTests {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPImpactCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
             let mockInfoItemSection: ClimateImpactInfo = .totalTrees(value: 200356458)
-            cell.configure(items: [mockInfoItemSection], delegate: nil, theme: self.themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID))
+            cell.configure(items: [mockInfoItemSection], rotatingTitles: [], delegate: nil, theme: self.themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID))
             return cell
         })
     }
@@ -55,7 +55,7 @@ final class NTPComponentTests: SnapshotBaseTests {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPImpactCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
             let mockInfoItemSection: ClimateImpactInfo = .totalInvested(value: 89942822)
-            cell.configure(items: [mockInfoItemSection], delegate: nil, theme: self.themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID))
+            cell.configure(items: [mockInfoItemSection], rotatingTitles: [], delegate: nil, theme: self.themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID))
             return cell
         },
                                           precision: 0.97)
@@ -93,7 +93,7 @@ extension NTPComponentTests {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPImpactCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
             let mockInfoItemSection: ClimateImpactInfo = .referral(value: invites)
-            cell.configure(items: [mockInfoItemSection], delegate: nil, theme: self.themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID))
+            cell.configure(items: [mockInfoItemSection], rotatingTitles: [], delegate: nil, theme: self.themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID))
             return cell
         }, testName: "testNTPReferralInvitesCell_\(invitesTestNameString)")
     }

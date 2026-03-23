@@ -103,9 +103,10 @@ struct HomepageDimensionCalculator {
             availableWidth = availableWidth - cellWidth - HomepageSectionLayoutProvider.UX.standardSpacing
         }
         let minCardsConstant = TopSitesSectionLayoutProvider.UX.minCards
+        let maxCardsConstant = TopSitesSectionLayoutProvider.UX.maxCards
         let tilesPerRowCount = numberOfTiles < minCardsConstant ? minCardsConstant : numberOfTiles
-
-        return tilesPerRowCount
+        // Ecosia: Respect maxCards cap so the row never exceeds 5 tiles (MOB-4150)
+        return min(tilesPerRowCount, maxCardsConstant)
     }
 
     // Returns the height of the tallest view from a collection of views constrained to a given width

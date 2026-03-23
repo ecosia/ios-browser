@@ -26,3 +26,4 @@ A Mobile Decision Record is a document that captures an important architectural 
 |----|-------|--------|------|
 | [0001](0001-swiftlint-configuration-for-upstream-fork.md) | SwiftLint Configuration for Upstream Firefox Fork | Accepted | 2026-02-03 |
 | [0002](0002-alternate-app-icons-support.md) | Alternate App Icons Support | Accepted | 2026-02-07 |
+| [0003](0003-glassmorphism-blur-effect-for-ntp-impact-rows.md) | Glassmorphism Blur Effect for NTP Impact Rows | Accepted | 2026-02-25 |

@@ -13,7 +13,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         refreshEcosiaSnapshot()
     }
 
-    /// Ecosia: Opens the selected news article in a new tab and records analytics
+    /// Opens the selected news article in a new tab and records analytics
     func handleEcosiaNewsSelection(at indexPath: IndexPath) {
         guard let items = ecosiaAdapter?.newsViewModel?.items,
               indexPath.item < items.count else { return }
@@ -32,10 +32,10 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         Analytics.shared.navigationOpenNews(newsItem.trackingName)
     }
 
-    /// Ecosia: Registers all Ecosia cell types on the collection view. Call from configureCollectionView so Ecosia cells (e.g. NTPHeader) are always available regardless of setup order.
+    /// Registers all Ecosia cell types on the collection view. Call from configureCollectionView so Ecosia cells (e.g. NTPHeader) are always available regardless of setup order.
     func registerEcosiaCells(on collectionView: UICollectionView) {
+        // NTPLogoCell removed — logo is now part of NTPHeader.
         var types: [ReusableCell.Type] = [
-            NTPLogoCell.self,
             NTPLibraryCell.self,
             TopSiteCell.self,
             EmptyTopSiteCell.self,
@@ -51,7 +51,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
     }
 
-    /// Ecosia: Sets up the Ecosia homepage adapter and integrates it with the view controller
+    /// Sets up the Ecosia homepage adapter and integrates it with the view controller
     func setupEcosiaAdapter(
         profile: Profile,
         tabManager: TabManager,
@@ -67,7 +67,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             theme: themeManager.getCurrentTheme(for: windowUUID),
             auth: auth
         )
-        
+
         // Set delegates
         adapter.updateDelegates(
             header: browserViewController,
@@ -76,16 +76,15 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             news: browserViewController,
             customization: browserViewController
         )
-        
+
         // Store adapter
         setEcosiaAdapter(adapter)
 
         // So News can refresh the snapshot when items load
         adapter.newsViewModel?.dataModelDelegate = self
 
-        // Register Ecosia cell types (including top sites after library) and attach adapter
+        // Register Ecosia cell types; NTPLogoCell removed — logo now lives in NTPHeader.
         var ecosiaCellTypes: [ReusableCell.Type] = [
-            NTPLogoCell.self,
             NTPLibraryCell.self,
             TopSiteCell.self,
             EmptyTopSiteCell.self,
@@ -102,28 +101,33 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
         dataSource?.ecosiaAdapter = adapter
     }
-    
-    /// Ecosia: Called when view will appear to refresh Ecosia data
+
+    /// Called when view will appear to refresh Ecosia data
     func ecosiaViewWillAppear() {
+        // Remove Firefox's default 24pt top content inset — the safe area already
+        // positions the content correctly, and NTPHeaderView owns its own vertical padding.
+        homepageCollectionView?.contentInset.top = 0
+        homepageCollectionView?.scrollIndicatorInsets.top = 0
+
         ecosiaAdapter?.viewWillAppear()
         ecosiaAdapter?.refreshData(
             for: traitCollection,
             size: view.bounds.size
         )
     }
-    
-    /// Ecosia: Called when view did disappear to clean up Ecosia resources
+
+    /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
         ecosiaAdapter?.viewDidDisappear()
     }
-    
-    /// Ecosia: Updates theme for Ecosia sections
+
+    /// Updates theme for Ecosia sections
     func updateEcosiaTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         ecosiaAdapter?.updateTheme(theme)
     }
 
-    /// Ecosia: Refreshes the Ecosia snapshot (e.g. after tooltip accept, or when news loads) so the UI updates
+    /// Refreshes the Ecosia snapshot (e.g. after tooltip accept, or when news loads) so the UI updates
     func refreshEcosiaSnapshot() {
         guard let dataSource else { return }
         dataSource.updateSnapshot(
@@ -141,5 +145,15 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
         // Invalidate layout so self-sizing (e.g. news tiles) recalculates and avoids excess empty space
         homepageCollectionView?.collectionViewLayout.invalidateLayout()
+    }
+
+    /// Returns wallpaper state with Ecosia NTP background
+    func getEcosiaNTPWallpaperState() -> WallpaperState? {
+        guard let adapter = ecosiaAdapter else {
+            return nil
+        }
+        let wallpaperConfig = adapter.getNTPBackgroundConfiguration()
+        let state = WallpaperState(windowUUID: windowUUID, wallpaperConfiguration: wallpaperConfig)
+        return state
     }
 }

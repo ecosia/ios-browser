@@ -7,7 +7,7 @@ import Common
 
 extension HomepageSectionLayoutProvider {
     
-    /// Ecosia: Creates layout for Ecosia-specific sections
+    /// Creates layout for Ecosia-specific sections
     func createEcosiaLayoutSection(
         for section: HomepageSection,
         with environment: NSCollectionLayoutEnvironment
@@ -24,9 +24,12 @@ extension HomepageSectionLayoutProvider {
         case .ecosiaImpact:
             return createEcosiaImpactLayout(for: traitCollection)
         case .ecosiaNews:
-            return createEcosiaNewsLayout(for: environment)
+            return createEcosiaNewsLayout(for: traitCollection)
         case .ecosiaNTPCustomization:
             return createEcosiaNTPCustomizationLayout(for: traitCollection)
+        // Match shortcuts width to the other Ecosia sections (MOB-4150)
+        case .topSites(_, let numberOfTilesPerRow):
+            return createEcosiaTopSitesLayout(for: traitCollection, numberOfTilesPerRow: numberOfTilesPerRow)
         default:
             return nil
         }
@@ -47,8 +50,12 @@ extension HomepageSectionLayoutProvider {
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
         let section = NSCollectionLayoutSection(group: group)
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: NTPHeaderViewModel.UX.topInset, bottomSpacing: 0)
-        section.contentInsets = insets
+        // No section insets — NTPHeaderView owns all internal padding via SwiftUI modifiers.
+        // Horizontal: .ecosia.space._m (16pt) on each side.
+        // Vertical:   .ecosia.space._m (16pt) top & bottom, giving a 72pt cell height.
+        // The collection view is a child of the wallpaper card so card-edge alignment is
+        // handled by containment, not by section content insets.
+        section.contentInsets = .zero
         return section
     }
     
@@ -66,9 +73,10 @@ extension HomepageSectionLayoutProvider {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
         
         let section = NSCollectionLayoutSection(group: group)
-        
-        let logoVerticalPadding: CGFloat = 24
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: logoVerticalPadding, bottomSpacing: logoVerticalPadding)
+
+        // Top spacing is 0 — the header's SwiftUI .padding(.vertical, _m) provides ~16pt
+        // of visual gap above the wordmark. Bottom spacing separates the logo from the impact tiles.
+        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 24)
         section.contentInsets = insets
 
         return section
@@ -93,54 +101,27 @@ extension HomepageSectionLayoutProvider {
     }
     
     private func createEcosiaImpactLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // Dimensions from NTPImpactCellViewModel: item/group estimated(200) per row; footer from NTPImpactDividerFooter.UX.
-        // Use estimated container height so the section sizes to content and doesn’t leave a large gap above News.
-        let rowHeight: CGFloat = 200
+        // NTPImpactCell is a SINGLE cell whose minimum height is NTPImpactCell.UX.minimumCellHeight.
+        // The large minimum height lets the cell fill the wallpaper card, pushing shortcuts toward
+        // the bottom. The estimated value here is a hint; the real height is set by the cell.
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(rowHeight)
+            heightDimension: .estimated(450)
         )
-        let firstItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        let firstGroup = NSCollectionLayoutGroup.horizontal(
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: itemSize,
-            subitem: firstItem,
+            subitem: item,
             count: 1
         )
-        let secondItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        let secondGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: itemSize,
-            subitem: secondItem,
-            count: 1
-        )
-        let containerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(rowHeight * 2)
-        )
-        let containerGroup = NSCollectionLayoutGroup.vertical(
-            layoutSize: containerSize,
-            subitems: [firstGroup, secondGroup]
-        )
-        let section = NSCollectionLayoutSection(group: containerGroup)
-        section.interGroupSpacing = 0
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 0)
-        section.contentInsets = insets
-        let footerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(NTPImpactDividerFooter.UX.estimatedHeight)
-        )
-        let footer = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: footerSize,
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom
-        )
-        section.boundarySupplementaryItems = [footer]
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .zero
         return section
     }
     
-    /// News section layout and constraints aligned with NewsController (same dimensions, fonts via NTPNewsCell, and content insets).
-    private func createEcosiaNewsLayout(for environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
-        let traitCollection = environment.traitCollection
-        // Same as NewsController: item and group estimated(100), horizontal group count 1 per row; we show 3 rows
+    /// News section layout — uses the same insets as the impact section for consistent width on all devices.
+    private func createEcosiaNewsLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+        // item and group estimated(100), horizontal group count 1 per row; we show 3 rows
         let itemEstimatedHeight: CGFloat = 100
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
@@ -154,11 +135,10 @@ extension HomepageSectionLayoutProvider {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 0
-        // Content insets: horizontal same as NewsController (maxWidth centering); bottom 32 to match NTP sectionInsets(.news) so there is distance to the customize cell
-        var newsInsets = newsSectionContentInsets(environment: environment)
-        newsInsets.bottom = 32
-        section.contentInsets = newsInsets
-        // Header same as NewsController: fractionalWidth(1), estimated(100)
+        // Use getEcosiaSectionInsets so news has the same width as the impact/referral section on all
+        // devices, including iPad where the previous newsSectionContentInsets gave a wider 544pt max (MOB-4150)
+        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 32)
+        section.contentInsets = insets
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(100.0)
@@ -190,24 +170,33 @@ extension HomepageSectionLayoutProvider {
         return section
     }
     
-    // MARK: - Helper Methods
-
-    /// Content insets for the news section matching NewsController (same effective width and centering via maxWidth).
-    private func newsSectionContentInsets(environment: NSCollectionLayoutEnvironment) -> NSDirectionalEdgeInsets {
-        let width = environment.container.contentSize.width
-        let minimumInset: CGFloat = 16
-        let baseMaxWidth = width - (minimumInset * 2)
-        let maxWidth: CGFloat
-        if environment.traitCollection.userInterfaceIdiom == .pad {
-            maxWidth = min(baseMaxWidth, 544)
-        } else if environment.traitCollection.verticalSizeClass == .compact {
-            maxWidth = min(baseMaxWidth, 375)
-        } else {
-            maxWidth = baseMaxWidth
-        }
-        let horizontal = max(0, (width - maxWidth) / 2)
-        return NSDirectionalEdgeInsets(top: 0, leading: horizontal, bottom: 0, trailing: horizontal)
+    /// Shortcuts (top sites) layout — uses the same insets as all other Ecosia sections so the grid
+    /// is the same width as impact, news, and library on every device, including iPad.
+    private func createEcosiaTopSitesLayout(
+        for traitCollection: UITraitCollection,
+        numberOfTilesPerRow: Int
+    ) -> NSCollectionLayoutSection {
+        let section = TopSitesSectionLayoutProvider.createTopSitesSectionLayout(
+            for: traitCollection,
+            numberOfTilesPerRow: numberOfTilesPerRow
+        )
+        // Shortcuts use the same 12pt horizontal inset as the impact tiles so all sections
+        // share a consistent left/right edge within the wallpaper card (Figma: space-s = 12pt).
+        let edgeInset: CGFloat = traitCollection.horizontalSizeClass == .regular ? 100 : .ecosia.space._s
+        // Equal top and bottom insets vertically center the shortcut grid in the remaining
+        // card space below the impact tiles.
+        let insets = NSDirectionalEdgeInsets(
+            top: CGFloat.ecosia.space._m,
+            leading: edgeInset,
+            bottom: CGFloat.ecosia.space._m,
+            trailing: edgeInset
+        )
+        section.contentInsets = insets
+        // No section header — Figma shortcuts section has no title label above the tiles
+        return section
     }
+
+    // MARK: - Helper Methods
 
     private func getEcosiaSectionInsets(
         _ traitCollection: UITraitCollection,
