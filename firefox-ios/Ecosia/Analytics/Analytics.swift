@@ -35,12 +35,6 @@ open class Analytics {
 
     internal init(notificationCenter: AnalyticsUserNotificationCenterProtocol = AnalyticsUserNotificationCenterWrapper()) {
         tracker = Self.makeTracker()
-        tracker.installAutotracking = true
-        tracker.screenViewAutotracking = false
-        tracker.lifecycleAutotracking = false
-        tracker.screenEngagementAutotracking = false
-        tracker.exceptionAutotracking = false
-        tracker.diagnosticAutotracking = false
         privateTracker = Self.makePrivateTracker()
         self.notificationCenter = notificationCenter
     }
@@ -535,31 +529,37 @@ extension Analytics {
     ///
     /// - Returns: A configured `TrackerController` instance, which in non-release builds can either point to mini or micro Snowplow instance.
     private static func makeTracker() -> TrackerController {
-        return Snowplow.createTracker(namespace: namespace,
-                                      network: makeNetworkConfig(),
-                                      configurations: [
-                                        Self.trackerConfiguration,
-                                        Self.subjectConfiguration,
-                                        Self.appInstallTrackingPluginConfiguration,
-                                        Self.appResumeDailyTrackingPluginConfiguration])
+        let controller = Snowplow.createTracker(namespace: namespace,
+                                                network: makeNetworkConfig(),
+                                                configurations: [
+                                                    Self.trackerConfiguration,
+                                                    Self.subjectConfiguration,
+                                                    Self.appInstallTrackingPluginConfiguration,
+                                                    Self.appResumeDailyTrackingPluginConfiguration])
+        configure(controller, installAutotracking: true)
+        return controller
     }
 
     /// Creates and configures a tracker for private browsing.
-    /// Uses `userAnonymisation` to strip all user identifiers (userId, session userId, IDFA/IDFV).
-    /// No subject configuration is applied, so no `userId` is ever set.
+    /// Sets userId to an all-zeros UUID so the field is present but carries no identifying value.
     private static func makePrivateTracker() -> TrackerController {
         let controller = Snowplow.createTracker(namespace: privateNamespace,
                                                 network: makeNetworkConfig(),
                                                 configurations: [
-                                                    Self.privateTrackerConfiguration,
+                                                    Self.trackerConfiguration,
+                                                    Self.privateSubjectConfiguration,
                                                     Self.appResumeDailyTrackingPluginConfiguration])
-        controller.installAutotracking = false
-        controller.screenViewAutotracking = false
-        controller.lifecycleAutotracking = false
-        controller.screenEngagementAutotracking = false
-        controller.exceptionAutotracking = false
-        controller.diagnosticAutotracking = false
+        configure(controller, installAutotracking: false)
         return controller
+    }
+
+    private static func configure(_ tracker: TrackerController, installAutotracking: Bool) {
+        tracker.installAutotracking = installAutotracking
+        tracker.screenViewAutotracking = false
+        tracker.lifecycleAutotracking = false
+        tracker.screenEngagementAutotracking = false
+        tracker.exceptionAutotracking = false
+        tracker.diagnosticAutotracking = false
     }
 
     /// Factory that builds the `NetworkConfiguration` for the Snowplow tracker, optionally
