@@ -99,9 +99,8 @@ final class NTPHeaderViewModel: ObservableObject {
 
     // MARK: - Public Methods
 
-    func openAISearch() {
-        delegate?.headerOpenAISearch()
-        Analytics.shared.aiSearchNTPButtonTapped()
+    func openCustomizeHomepage() {
+        delegate?.headerOpenCustomizeHomepage()
     }
 
     func performLogin() {

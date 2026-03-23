@@ -14,12 +14,17 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - UX Constants
 
     /// Contains constants used for layout and sizing within the `NTPImpactRowView`.
+    /// All spacing/sizing values map to Ecosia design tokens (Figma Foundations).
     struct UX {
-        static let horizontalSpacing: CGFloat = 8
-        static let padding: CGFloat = 16
+        // Ecosia: space-m (16pt) — horizontal gap between icon and statistic title (Figma: Gap 16px)
+        static let horizontalSpacing: CGFloat = .ecosia.space._m
+        // Ecosia: space-m (16pt) — uniform inset around the tile content (Figma: padding-m)
+        static let padding: CGFloat = .ecosia.space._m
+        // Ecosia: space-2s (4pt) — vertical gap between [icon+title row] and subtitle (Figma: Gap space-2s)
+        static let titleSubtitleGap: CGFloat = .ecosia.space._2s
+        // Ecosia: 24pt icon — matches Figma NTP impact icon specification
         static let imageHeight: CGFloat = 24
-        // Ecosia: Glassmorphism — matches Figma "Border-border-glass-static" (#FFFFFF3D = white 23.9%)
-        static let glassBorderAlpha: CGFloat = 0x3D / 255.0
+        static let glassBorderAlpha: CGFloat = NTPGlassUX.borderAlpha
         static let glassBorderWidth: CGFloat = 1
     }
 
@@ -32,11 +37,30 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return view
     }()
 
-    /// Stack view to arrange title and subtitle labels vertically.
-    private let titleAndSubtitleContainerView = UIStackView()
+    // Ecosia: Horizontal container — icon (24×24) on the left, labelsStack on the right.
+    // Flow: Horizontal, Gap: space-m (16pt), padding: space-m (16pt) on all sides.
+    private let mainContainerView: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = UX.horizontalSpacing
+        return stack
+    }()
 
-    /// Main horizontal stack view that arranges the image, title, subtitle, and action button.
-    private let mainContainerView = UIStackView()
+    // Ecosia: Vertical labels stack — statistic title above, description below.
+    // Flow: Vertical, Gap: space-2s (4pt) per Figma .mobile-globalcounter-item spec.
+    // alignment = .fill gives each label an explicit width constraint from the stack,
+    // so UILabel always knows its available width for line-wrapping — including after rotation.
+    // (With .leading, no width constraint is applied and preferredMaxLayoutWidth stays stale.)
+    private let labelsStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.alignment = .fill
+        stack.spacing = UX.titleSubtitleGap
+        return stack
+    }()
 
     /// A container view for the image.
     private lazy var imageContainer: UIView = {
@@ -53,25 +77,28 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return image
     }()
 
-    /// A label for displaying the title of the row.
+    /// A label for displaying the statistic (large number).
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .ecosiaFamilyBrand(size: .ecosia.font._3l)
         label.adjustsFontSizeToFitWidth = true
         label.adjustsFontForContentSizeCategory = true
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return label
     }()
 
-    /// A label for displaying the subtitle of the row.
+    /// A label for displaying the description below the statistic.
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .footnote)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
+        // Ecosia: Force word-wrap so words are never split mid-word across lines.
+        label.lineBreakMode = .byWordWrapping
         return label
     }()
 
-    /// A resizable button for performing actions related to the row.
+    /// A resizable button for performing actions related to the row (referral row only).
     private lazy var actionButton: ResizableButton = {
         let button = ResizableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -114,12 +141,12 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         }
     }
 
-    /// The current position of this row in the overall list (used for layout adjustments like masking).
+    /// The current position of this row in the overall list.
     var position: (row: Int, totalCount: Int) = (0, 0) {
         didSet {
-            let (row, count) = position
-            dividerView.isHidden = row == (count - 1)
-            setMaskedCornersUsingPosition(row: row, totalCount: count)
+            // Ecosia: Each tile is a fully-rounded individual glass card (Figma: border-radius-l on
+            // all 4 corners). The divider is replaced by the 8pt gap in the parent stack view.
+            dividerView.isHidden = true
         }
     }
 
@@ -161,54 +188,46 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         // Ecosia: clipsToBounds ensures glassBackground respects rounded corners
         clipsToBounds = true
         addSubview(glassBackground)
-
-        mainContainerView.translatesAutoresizingMaskIntoConstraints = false
-        mainContainerView.axis = .horizontal
-        mainContainerView.alignment = .center
-        mainContainerView.spacing = UX.horizontalSpacing
-        mainContainerView.addArrangedSubview(imageContainer)
-        imageContainer.addSubview(imageView)
-        addSubview(mainContainerView)
         addSubview(dividerView)
 
-        titleAndSubtitleContainerView.translatesAutoresizingMaskIntoConstraints = false
-        titleAndSubtitleContainerView.axis = .vertical
-        titleAndSubtitleContainerView.alignment = .leading
-        titleAndSubtitleContainerView.addArrangedSubview(titleLabel)
-        titleAndSubtitleContainerView.addArrangedSubview(subtitleLabel)
-        titleAndSubtitleContainerView.isAccessibilityElement = true
-        titleAndSubtitleContainerView.shouldGroupAccessibilityChildren = true
-        titleAndSubtitleContainerView.accessibilityLabel = info.accessibilityLabel
-        titleAndSubtitleContainerView.accessibilityIdentifier = info.accessibilityIdentifier
+        // Ecosia: Figma structure — labels stack: [statistic title] / [description]
+        labelsStack.addArrangedSubview(titleLabel)
+        labelsStack.addArrangedSubview(subtitleLabel)
+        labelsStack.isAccessibilityElement = true
+        labelsStack.shouldGroupAccessibilityChildren = true
+        labelsStack.accessibilityLabel = info.accessibilityLabel
+        labelsStack.accessibilityIdentifier = info.accessibilityIdentifier
 
-        mainContainerView.addArrangedSubview(titleAndSubtitleContainerView)
+        // Ecosia: Figma structure — horizontal row: [icon] + [labelsStack] + [action button]
+        imageContainer.addSubview(imageView)
+        mainContainerView.addArrangedSubview(imageContainer)
+        mainContainerView.addArrangedSubview(labelsStack)
         mainContainerView.addArrangedSubview(actionButton)
+
+        addSubview(mainContainerView)
     }
 
     /// Sets up the layout constraints for the view's subviews.
     private func setupConstraints() {
-
         NSLayoutConstraint.activate([
             glassBackground.topAnchor.constraint(equalTo: topAnchor),
             glassBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
             glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
             glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
+
             mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
             mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
             mainContainerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
+
             dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             dividerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dividerView.heightAnchor.constraint(equalToConstant: 1),
+
             imageContainer.heightAnchor.constraint(equalToConstant: UX.imageHeight),
             imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor),
-            actionButton.topAnchor.constraint(equalTo: titleAndSubtitleContainerView.topAnchor),
-            actionButton.bottomAnchor.constraint(equalTo: titleAndSubtitleContainerView.bottomAnchor),
-            actionButton.widthAnchor.constraint(equalTo: mainContainerView.widthAnchor, multiplier: 1/3)
-        ])
 
-        NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: imageContainer.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: imageContainer.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),

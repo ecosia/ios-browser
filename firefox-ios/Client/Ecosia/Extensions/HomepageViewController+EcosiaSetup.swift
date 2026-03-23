@@ -34,8 +34,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
     /// Ecosia: Registers all Ecosia cell types on the collection view. Call from configureCollectionView so Ecosia cells (e.g. NTPHeader) are always available regardless of setup order.
     func registerEcosiaCells(on collectionView: UICollectionView) {
+        // Ecosia: NTPLogoCell removed — logo is now part of NTPHeader.
         var types: [ReusableCell.Type] = [
-            NTPLogoCell.self,
             NTPLibraryCell.self,
             TopSiteCell.self,
             EmptyTopSiteCell.self,
@@ -83,9 +83,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // So News can refresh the snapshot when items load
         adapter.newsViewModel?.dataModelDelegate = self
 
-        // Register Ecosia cell types (including top sites after library) and attach adapter
+        // Ecosia: Register Ecosia cell types; NTPLogoCell removed — logo now lives in NTPHeader.
         var ecosiaCellTypes: [ReusableCell.Type] = [
-            NTPLogoCell.self,
             NTPLibraryCell.self,
             TopSiteCell.self,
             EmptyTopSiteCell.self,
@@ -105,6 +104,11 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
     /// Ecosia: Called when view will appear to refresh Ecosia data
     func ecosiaViewWillAppear() {
+        // Ecosia: Remove Firefox's default 24pt top content inset — the safe area already
+        // positions the content correctly, and NTPHeaderView owns its own vertical padding.
+        homepageCollectionView?.contentInset.top = 0
+        homepageCollectionView?.scrollIndicatorInsets.top = 0
+
         ecosiaAdapter?.viewWillAppear()
         ecosiaAdapter?.refreshData(
             for: traitCollection,

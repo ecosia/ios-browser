@@ -72,9 +72,8 @@ extension BrowserViewController: @MainActor NTPTooltipDelegate {
 
 @MainActor
 extension BrowserViewController: NTPHeaderDelegate {
-    func headerOpenAISearch() {
-        guard let url = Environment.current.urlProvider.aiSearch(origin: .ntp) as? URL else { return }
-        openURLInNewTab(url, isPrivate: false)
+    func headerOpenCustomizeHomepage() {
+        openNTPCustomizationSettings()
     }
 }
 

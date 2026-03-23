@@ -397,6 +397,7 @@ final class HomepageViewController: UIViewController,
     func configureWallpaperView() {
         view.addSubview(wallpaperView)
 
+        /* Ecosia: Wallpaper as a card that ends cleanly above the URL bar.
         // Constraint so wallpaper appears under the status bar
         let wallpaperTopConstant: CGFloat = UIWindow.keyWindow?.safeAreaInsets.top ?? statusBarFrame?.height ?? 0
 
@@ -406,6 +407,21 @@ final class HomepageViewController: UIViewController,
             wallpaperView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        */
+        // Ecosia: Wallpaper card with Figma tokens:
+        //   border-radius: _1l (20pt)
+        //   padding top/bottom: _m (16pt)   left/right: _s (12pt)
+        // Bottom uses safeAreaLayoutGuide so the card ends above the URL bar.
+        let vInset = CGFloat.ecosia.space._m   // 16pt
+        let hInset = CGFloat.ecosia.space._s   // 12pt
+        NSLayoutConstraint.activate([
+            wallpaperView.topAnchor.constraint(equalTo: view.topAnchor, constant: vInset),
+            wallpaperView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: hInset),
+            wallpaperView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -vInset),
+            wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -hInset)
+        ])
+        // Ecosia: Use helper that propagates the radius to the inner pictureView as well
+        wallpaperView.applyEcosiaCornerRadius(CGFloat.ecosia.borderRadius._1l)
 
         view.sendSubviewToBack(wallpaperView)
     }
@@ -420,6 +436,9 @@ final class HomepageViewController: UIViewController,
             return
         }
 
+        /* Ecosia: Collection view is a child of the wallpaper card so content scrolls within
+         the card's clipped, rounded bounds. wallpaperView is already pinned to the safe area
+         at the bottom, so no separate safeAreaLayoutGuide constraint is needed here.
         view.addSubview(collectionView)
 
         // Ecosia MOB-4170: Use safeAreaLayoutGuide for bottom to respect any additional safe area insets
@@ -430,6 +449,15 @@ final class HomepageViewController: UIViewController,
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             // collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+        */
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        wallpaperView.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: wallpaperView.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: wallpaperView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: wallpaperView.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: wallpaperView.bottomAnchor),
         ])
     }
 
@@ -459,6 +487,8 @@ final class HomepageViewController: UIViewController,
         collectionView.backgroundColor = .clear
         collectionView.accessibilityIdentifier = a11y.collectionView
         collectionView.delegate = self
+        /* Ecosia: Collection view sits inside the wallpaper card; inner spacing is owned by
+         section layouts rather than a global top content inset.
         // Per design requirement, set spacing on top. We may want to revisit this spacing when implement liquid glass.
         collectionView.contentInset = UIEdgeInsets(
             top: HomepageSectionLayoutProvider.UX.topSpacing,
@@ -467,9 +497,14 @@ final class HomepageViewController: UIViewController,
             right: 0
         )
         collectionView.scrollIndicatorInsets = collectionView.contentInset
+        */
+        collectionView.contentInset = .zero
         self.collectionView = collectionView
 
+        /* Ecosia: Parenting is handled by setupLayout, which places the collection view
+         inside wallpaperView so it scrolls within the card's clipped, rounded bounds.
         view.addSubview(collectionView)
+        */
     }
 
     private func createLayout() -> UICollectionViewCompositionalLayout {
@@ -575,6 +610,8 @@ final class HomepageViewController: UIViewController,
             }
 
             if let topSiteCell = topSiteCell as? TopSiteCell {
+                // Ecosia: Enable glass style before configure() so adjustBlur runs with the flag set.
+                topSiteCell.ecosiaGlassStyleEnabled = true
                 topSiteCell.configure(site, position: indexPath.row, theme: currentTheme, textColor: textColor)
                 return topSiteCell
             }

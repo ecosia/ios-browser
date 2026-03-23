@@ -122,7 +122,8 @@ final class EcosiaHomepageAdapter {
         customizationViewModel?.delegate = customization
     }
 
-    /// Returns the ordered list of Ecosia sections that should be displayed
+    /// Returns the ordered list of Ecosia sections that should be displayed.
+    /// Section order matches the Figma design: header → [library] → impact → [topSites inserted by snapshot] → news
     func getEcosiaSections() -> [HomepageSection] {
         var sections: [HomepageSection] = []
 
@@ -130,29 +131,42 @@ final class EcosiaHomepageAdapter {
             sections.append(.ecosiaHeader)
         }
 
-        // Logo
-        sections.append(.ecosiaLogo)
-        
+        // Ecosia: Logo moved into the NTPHeader cell — no separate logo section needed.
+
         // Library shortcuts (Bookmarks, History, Reading List, Downloads)
         // Ecosia: Hidden by default (MOB-4150); re-enable via debug menu
         if ToggleNTPLibraryShortcuts.isEnabled {
             sections.append(.ecosiaLibrary)
         }
-        
+
         // Climate impact (if enabled)
         if shouldShowImpact() {
             sections.append(.ecosiaImpact)
         }
+
+        // Top sites are inserted by HomepageDiffableDataSource after topSitesInsertionAnchor
 
         // News (if enabled)
         if shouldShowNews() {
             sections.append(.ecosiaNews)
         }
 
-        // Customization
-        sections.append(.ecosiaNTPCustomization)
+        // Ecosia: Customization button removed — pencil icon in header handles this
 
         return sections
+    }
+
+    /// The section after which top sites should be inserted.
+    /// Matches the Figma design: shortcuts appear after impact counters when impact is shown,
+    /// or directly after the header when neither impact nor library is shown.
+    var topSitesInsertionAnchor: HomepageSection {
+        if shouldShowImpact() {
+            return .ecosiaImpact
+        }
+        if ToggleNTPLibraryShortcuts.isEnabled {
+            return .ecosiaLibrary
+        }
+        return .ecosiaHeader
     }
 
     /// Returns the items for a given Ecosia section

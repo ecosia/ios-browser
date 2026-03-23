@@ -6,6 +6,22 @@ import Common
 import CoreImage
 import UIKit
 
+// MARK: - NTPGlassUX
+
+/// Shared constants for the Ecosia NTP "Glass Static" visual style.
+///
+/// Matches Figma design tokens:
+/// - `component/button/button-bg-glass-static` = `rgba(26,26,26,0.32)`
+/// - `border/border-glass-static` = `rgba(255,255,255,0.24)`
+/// - `Web/Glassmorphism/Glass` = `backdrop-filter: blur(24px)`
+enum NTPGlassUX {
+    static let darkTintAlpha: CGFloat = 0.32
+    static let darkTintColor = UIColor(red: 26/255, green: 26/255, blue: 26/255, alpha: darkTintAlpha)
+    /// Border opacity matching Figma `rgba(255,255,255,0.24)` glass border.
+    static let borderAlpha: CGFloat = 0x3D / 255.0
+    static let blurRadius: CGFloat = 24
+}
+
 // MARK: - UIImage + Gaussian Blur
 
 extension UIImage {
@@ -46,8 +62,8 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     // MARK: - Blur Constants
 
-    static let blurRadius: CGFloat = 24
-    static let darkTintAlpha: CGFloat = 0.2
+    static let blurRadius: CGFloat = NTPGlassUX.blurRadius
+    static let darkTintAlpha: CGFloat = NTPGlassUX.darkTintAlpha
 
     // MARK: - Cache (shared; one blurred image per wallpaper)
 
@@ -68,7 +84,7 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     private let tintView: UIView = {
         let v = UIView()
-        v.backgroundColor = UIColor(white: 0, alpha: darkTintAlpha)
+        v.backgroundColor = NTPGlassUX.darkTintColor
         return v
     }()
 
@@ -159,8 +175,10 @@ final class NTPImpactGlassBackgroundView: UIView {
     /// Shifts the inner image so the visible portion aligns with the wallpaper behind the row.
     ///
     /// Coordinates are expressed relative to `WallpaperBackgroundView` so that the blurred image
-    /// uses the same origin and size as the actual wallpaper — eliminating the `safeAreaInsets.top`
-    /// offset introduced by `HomepageViewController`'s wallpaper constraints (ADR 0003).
+    /// uses the same origin and size as the actual wallpaper (ADR 0003).
+    /// The wallpaper is now constrained from `view.topAnchor` to `safeAreaLayoutGuide.bottomAnchor`
+    /// (a clean card above the URL bar), so the coordinate system is straightforward — no extra
+    /// `safeAreaInsets.top` offset to account for.
     private func syncImageToWallpaperCoordinates() {
         guard backgroundImageView.image != nil else { return }
 

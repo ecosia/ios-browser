@@ -16,17 +16,25 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
     private var homeTopSite: TopSiteConfiguration?
 
     struct UX {
-        static let imageBackgroundSize = CGSize(width: 60, height: 60)
+        // Ecosia: Figma shortcut-most-visited-iOS icon container: Fixed 56×56px
+        static let imageBackgroundSize = CGSize(width: 56, height: 56)
         static let pinIconSize = CGSize(width: 12, height: 12)
         static let pinBackgroundSize = CGSize(width: 16, height: 16)
         static let pinBackgroundCornerRadius: CGFloat = pinBackgroundSize.width / 2
         static let pinBackgroundShadowOffset = CGSize(width: 1, height: 1)
         static let pinBackgroundShadowOpacity: Float = 1.0
         static let pinBackgroundShadowRadius: CGFloat = 4.0
-        static let textSafeSpace: CGFloat = 6
-        static let faviconCornerRadius: CGFloat = 16
+        // Ecosia: space-1s (8pt) — gap between icon container and label (Figma: Gap space-1s)
+        static let textSafeSpace: CGFloat = .ecosia.space._1s
+        // Ecosia: border-radius-l (10pt) — Figma shortcut icon container Radius: border-radius-l
+        static let faviconCornerRadius: CGFloat = .ecosia.borderRadius._l
         static let faviconTransparentBackgroundInset: CGFloat = 8
+        // Ecosia: 16pt inset renders the favicon at 24×24pt within the 56pt container
+        // (56 − 16 − 16 = 24pt). Confirmed from Figma: favicon is 24×24px.
+        static let ecosiaGlassIconInset: CGFloat = 16
         static let transparencyThreshold: CGFloat = 15
+        // Ecosia: Tag used to identify the dark-tint overlay added for the NTP glass style.
+        static let ecosiaGlassTintTag: Int = 9953
     }
 
     private var rootContainer: UIView = .build { view in
@@ -61,7 +69,8 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
     private lazy var titleLabel: UILabel = .build { titleLabel in
         titleLabel.textAlignment = .center
-        titleLabel.font = FXFontStyles.Bold.caption1.scaledFont()
+        // Ecosia: Figma shortcut label Typography: iOS/Footnote/Regular
+        titleLabel.font = .preferredFont(forTextStyle: .footnote)
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.preferredMaxLayoutWidth = UX.imageBackgroundSize.width + HomepageUX.shadowRadius
         titleLabel.backgroundColor = .clear
@@ -95,6 +104,9 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
     private var textColor: UIColor?
     private var imageViewConstraints: [NSLayoutConstraint] = []
     private var theme: Theme?
+    // Ecosia: When true, always use the NTP glass style regardless of Firefox wallpaper state.
+    // Set by Ecosia cell configuration since Ecosia always shows an NTP background image.
+    var ecosiaGlassStyleEnabled: Bool = false
 
     // MARK: - Inits
 
@@ -117,6 +129,8 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         sponsoredLabel.text = nil
         pinImageBackgroundView.isHidden = true
         imageViewConstraints.forEach { $0.constant = 0 }
+        // Ecosia: Clean up glass-style views added in adjustBlur
+        ecosiaRemoveGlassTintView()
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -138,6 +152,16 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         pinImageBackgroundView.layer.shadowOpacity = UX.pinBackgroundShadowOpacity
         pinImageBackgroundView.layer.shadowOffset = UX.pinBackgroundShadowOffset
         pinImageBackgroundView.layer.shadowRadius = UX.pinBackgroundShadowRadius
+
+        // Ecosia: `addBlurEffect` guards on `!bounds.isEmpty` so it silently no-ops when called
+        // during `configure()` before the first layout pass (new cells start with zero bounds).
+        // Re-apply the glass style here once bounds are known, but only when the
+        // UIVisualEffectView has not been added yet to avoid redundant work.
+        if ecosiaGlassStyleEnabled,
+           !rootContainer.subviews.contains(where: { $0 is UIVisualEffectView }),
+           let theme {
+            adjustBlur(theme: theme)
+        }
     }
 
     // MARK: - Public methods
@@ -241,6 +265,8 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
     private func configurePinnedSite(_ topSite: TopSiteConfiguration) {
         guard topSite.isPinned else { return }
+        // Ecosia: Pin badge is not part of the glass NTP design — always hidden in Ecosia style.
+        guard !ecosiaGlassStyleEnabled else { return }
 
         pinImageBackgroundView.isHidden = false
     }
@@ -268,6 +294,11 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         }
     }
 
+    // Ecosia: Removes the dark-tint overlay view added by the NTP glass style.
+    private func ecosiaRemoveGlassTintView() {
+        rootContainer.viewWithTag(UX.ecosiaGlassTintTag)?.removeFromSuperview()
+    }
+
     private func setupShadow(theme: Theme) {
         rootContainer.layer.cornerRadius = UX.faviconCornerRadius
         rootContainer.layer.shadowPath = UIBezierPath(roundedRect: rootContainer.bounds,
@@ -282,8 +313,11 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 // MARK: ThemeApplicable
 extension TopSiteCell: ThemeApplicable {
     func applyTheme(theme: Theme) {
-        titleLabel.textColor = textColor ?? theme.colors.textPrimary
-        sponsoredLabel.textColor = textColor ?? theme.colors.textPrimary
+        // Ecosia: Force white text over the glass wallpaper background; wallpaper textColor
+        // may be nil or dark which would be invisible against the NTP dark wallpaper.
+        let labelColor: UIColor = ecosiaGlassStyleEnabled ? .white : (textColor ?? theme.colors.textPrimary)
+        titleLabel.textColor = labelColor
+        sponsoredLabel.textColor = labelColor
         selectedOverlay.backgroundColor = theme.colors.layer5Hover.withAlphaComponent(0.25)
 
         adjustBlur(theme: theme)
@@ -293,13 +327,53 @@ extension TopSiteCell: ThemeApplicable {
 // MARK: - Blurrable
 extension TopSiteCell: Blurrable {
     func adjustBlur(theme: Theme) {
-        if shouldApplyWallpaperBlur {
+        // Ecosia: `ecosiaGlassStyleEnabled` is set to true by Ecosia cell configuration because
+        // Ecosia always shows an NTP background image. Firefox's `shouldApplyWallpaperBlur` checks
+        // Firefox's own WallpaperManager which returns false for the Ecosia background.
+        if shouldApplyWallpaperBlur || ecosiaGlassStyleEnabled {
+            /* Ecosia: Replace system material with the shared NTP "Glass Static" style so
+               shortcut tiles match impact tiles and the pencil button over the wallpaper.
             rootContainer.layoutIfNeeded()
             rootContainer.addBlurEffect(using: .systemThickMaterial)
+            */
+            // Ecosia: Blur base (makes the tile distinct against any wallpaper color) +
+            // dark tint overlay (rgba(26,26,26,0.32)) + white border (rgba(255,255,255,0.24)).
+            // This mirrors the impact-tile glass technique: blur + tint + border.
+            rootContainer.removeVisualEffectView()
+            ecosiaRemoveGlassTintView()
+            rootContainer.backgroundColor = .clear
+            rootContainer.addBlurEffect(using: .systemUltraThinMaterial)
+            rootContainer.clipsToBounds = true
+            // Insert dark tint above the UIVisualEffectView (index 0) but below the favicon.
+            let tintView = UIView()
+            tintView.tag = UX.ecosiaGlassTintTag
+            tintView.backgroundColor = NTPGlassUX.darkTintColor
+            tintView.frame = rootContainer.bounds
+            tintView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            tintView.isUserInteractionEnabled = false
+            rootContainer.insertSubview(tintView, at: 1)
+            rootContainer.layer.borderColor = UIColor.white.withAlphaComponent(NTPGlassUX.borderAlpha).cgColor
+            // Ecosia: Figma shortcut icon container Border: 0.5px
+            rootContainer.layer.borderWidth = 0.5
+            // Ecosia: Inset favicon by 14pt so glass ring is visible around the icon (Figma Padding: 14px).
+            let inset = UX.ecosiaGlassIconInset  // 14pt
+            imageViewConstraints.forEach { constraint in
+                if constraint.firstAttribute == .trailing || constraint.firstAttribute == .bottom {
+                    constraint.constant = -inset
+                } else {
+                    constraint.constant = inset
+                }
+            }
+            imageView.layer.cornerRadius = max(0, UX.faviconCornerRadius - inset)
         } else {
             // If blur is disabled set background color
             rootContainer.removeVisualEffectView()
+            ecosiaRemoveGlassTintView()
             rootContainer.backgroundColor = theme.colors.layer5
+            rootContainer.layer.borderWidth = 0
+            rootContainer.clipsToBounds = false
+            imageViewConstraints.forEach { $0.constant = 0 }
+            imageView.layer.cornerRadius = 0
             setupShadow(theme: theme)
         }
     }

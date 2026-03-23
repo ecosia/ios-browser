@@ -782,10 +782,7 @@ class BrowserViewController: UIViewController,
 
         bottomContainer.isClearBackground = showNavToolbar && enableBlur
         bottomBlurView.isHidden = (!showNavToolbar && !isBottomSearchBar && enableBlur) || isScrollAlphaZero
-        // Ecosia: MOB-4170 - Keep bottom containers hidden when showing homepage, otherwise use scroll alpha
-        let isShowingHomepage = contentContainer.hasHomepage
-        bottomContainer.isHidden = isShowingHomepage || isScrollAlphaZero
-        overKeyboardContainer.isHidden = isShowingHomepage
+        bottomContainer.isHidden = isScrollAlphaZero
 
         if !isToolbarTranslucencyRefactorEnabled {
             let maskView = UIView(frame: CGRect(x: 0,
@@ -2049,10 +2046,19 @@ class BrowserViewController: UIViewController,
         let bottomUIHeight: CGFloat
 
         if isBottomSearchBar && showNavToolbar {
-            // Both address bar and nav toolbar at bottom
+            // Both address bar and nav toolbar at bottom.
+            // When the nav toolbar is visible, adjustURLBarHeightBasedOnLocationViewHeight removes
+            // the home-indicator inset spacer from overKeyboardContainer (it lives in bottomContainer
+            // instead). So overKeyboardContainer.frame.height ≈ URL-bar height only (~44pt).
+            // bottomContainer.frame.height ≈ nav-toolbar + home-indicator spacer (~78pt).
+            // We need both to push safeAreaLayoutGuide.bottomAnchor above the URL bar, but we must
+            // subtract UIConstants.BottomInset once because the device safe area already accounts
+            // for the home indicator — including it twice would over-inset the safe area.
             bottomUIHeight = overKeyboardContainer.frame.height
+                + bottomContainer.frame.height
+                - UIConstants.BottomInset
         } else if isBottomSearchBar {
-            // Only address bar at bottom
+            // Only address bar at bottom (spacer already included in overKeyboardContainer height)
             bottomUIHeight = overKeyboardContainer.frame.height
         } else if showNavToolbar {
             // Only nav toolbar at bottom
@@ -2100,9 +2106,6 @@ class BrowserViewController: UIViewController,
     func showEmbeddedHomepage(inline: Bool, isPrivate: Bool) {
         resetCFRsTimer()
 
-        // Ecosia: MOB-4170 - Hide bottom containers on homepage to prevent gray bar on iPad
-        bottomContainer.isHidden = true
-        overKeyboardContainer.isHidden = true
         updateContentContainerConstraintForHomepage(true)
 
         if isPrivate && featureFlags.isFeatureEnabled(.feltPrivacySimplifiedUI, checking: .buildOnly) {
@@ -2142,9 +2145,6 @@ class BrowserViewController: UIViewController,
             return
         }
 
-        // Ecosia: MOB-4170 - Show bottom containers when displaying web content
-        bottomContainer.isHidden = false
-        overKeyboardContainer.isHidden = false
         updateContentContainerConstraintForHomepage(false)
 
         if webView.url == nil {

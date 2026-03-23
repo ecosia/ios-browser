@@ -50,8 +50,12 @@ extension HomepageSectionLayoutProvider {
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
         let section = NSCollectionLayoutSection(group: group)
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: NTPHeaderViewModel.UX.topInset, bottomSpacing: 0)
-        section.contentInsets = insets
+        // Ecosia: No section insets — NTPHeaderView owns all internal padding via SwiftUI modifiers.
+        // Horizontal: .ecosia.space._m (16pt) on each side.
+        // Vertical:   .ecosia.space._m (16pt) top & bottom, giving a 72pt cell height.
+        // The collection view is a child of the wallpaper card so card-edge alignment is
+        // handled by containment, not by section content insets.
+        section.contentInsets = .zero
         return section
     }
     
@@ -69,9 +73,10 @@ extension HomepageSectionLayoutProvider {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
         
         let section = NSCollectionLayoutSection(group: group)
-        
-        let logoVerticalPadding: CGFloat = 24
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: logoVerticalPadding, bottomSpacing: logoVerticalPadding)
+
+        // Ecosia: Top spacing is 0 — the header's SwiftUI .padding(.vertical, _m) provides ~16pt
+        // of visual gap above the wordmark. Bottom spacing separates the logo from the impact tiles.
+        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 24)
         section.contentInsets = insets
 
         return section
@@ -96,47 +101,21 @@ extension HomepageSectionLayoutProvider {
     }
     
     private func createEcosiaImpactLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // Dimensions from NTPImpactCellViewModel: item/group estimated(200) per row; footer from NTPImpactDividerFooter.UX.
-        // Use estimated container height so the section sizes to content and doesn’t leave a large gap above News.
-        let rowHeight: CGFloat = 200
+        // Ecosia: NTPImpactCell is a SINGLE cell. All internal spacing (top 124pt, sides 61pt,
+        // bottom 68pt) is encoded in the cell's containerStack constraints, so section insets are
+        // zero. Estimated height = 124 + 71 + 8 + 71 + 68 = ~342pt.
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(rowHeight)
+            heightDimension: .estimated(342)
         )
-        let firstItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        let firstGroup = NSCollectionLayoutGroup.horizontal(
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: itemSize,
-            subitem: firstItem,
+            subitem: item,
             count: 1
         )
-        let secondItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        let secondGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: itemSize,
-            subitem: secondItem,
-            count: 1
-        )
-        let containerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(rowHeight * 2)
-        )
-        let containerGroup = NSCollectionLayoutGroup.vertical(
-            layoutSize: containerSize,
-            subitems: [firstGroup, secondGroup]
-        )
-        let section = NSCollectionLayoutSection(group: containerGroup)
-        section.interGroupSpacing = 0
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 0)
-        section.contentInsets = insets
-        let footerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(NTPImpactDividerFooter.UX.estimatedHeight)
-        )
-        let footer = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: footerSize,
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom
-        )
-        section.boundarySupplementaryItems = [footer]
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .zero
         return section
     }
     
@@ -201,20 +180,22 @@ extension HomepageSectionLayoutProvider {
             for: traitCollection,
             numberOfTilesPerRow: numberOfTilesPerRow
         )
-        // Ecosia: Replace Firefox's leadingInset (50 pt on iPad) with the shared Ecosia insets
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: UX.spacingBetweenSections)
+        // Ecosia: Shortcuts use the same 12pt horizontal inset as the impact tiles so all sections
+        // share a consistent left/right edge within the wallpaper card (Figma: space-s = 12pt).
+        let edgeInset: CGFloat = traitCollection.horizontalSizeClass == .regular ? 100 : .ecosia.space._s
+        // Ecosia: The top gap between the impact tiles and the first shortcut row comes from the
+        // impact section's own bottom inset (space-m = 16pt), so top is 0 here.
+        // space-1l (24pt) bottom gap separates the shortcut grid from the following news section.
+        // Firefox's UX.spacingBetweenSections (44pt) is calibrated for full-screen sections and
+        // is too large within the Ecosia wallpaper card.
+        let insets = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: edgeInset,
+            bottom: CGFloat.ecosia.space._1l,
+            trailing: edgeInset
+        )
         section.contentInsets = insets
-
-        let headerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(UX.sectionHeaderHeight)
-        )
-        let header = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-        section.boundarySupplementaryItems = [header]
+        // Ecosia: No section header — Figma shortcuts section has no title label above the tiles
         return section
     }
 

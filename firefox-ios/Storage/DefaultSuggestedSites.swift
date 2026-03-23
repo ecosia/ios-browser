@@ -188,19 +188,49 @@ open class DefaultSuggestedSites {
     ]
      */
 
+    // Ecosia: Default top sites shown to new users on the NTP shortcuts row.
+    // trackingId values 1001–1099 are reserved for Ecosia to avoid clashing with Firefox's range (629–806).
+    // Favicons are loaded from each site's well-known apple-touch-icon so no bundled assets are needed.
+    private static let ecosiaSites: [Site] = [
+        Site.createSuggestedSite(
+            url: "https://www.youtube.com/",
+            title: "YouTube",
+            trackingId: 1001,
+            faviconResource: .remoteURL(url: URL(string: "https://www.youtube.com/s/desktop/e4d15d2c/img/favicon_144x144.png")!)
+        ),
+        Site.createSuggestedSite(
+            url: "https://www.wikipedia.org/",
+            title: "Wikipedia",
+            trackingId: 1002,
+            faviconResource: .remoteURL(url: URL(string: "https://www.wikipedia.org/static/apple-touch/wikipedia.png")!)
+        ),
+        Site.createSuggestedSite(
+            url: "https://www.zalando.com/",
+            title: "Zalando",
+            trackingId: 1003,
+            faviconResource: .remoteURL(url: URL(string: "https://img01.ztat.net/brand/favicon/192x192.png")!)
+        ),
+        Site.createSuggestedSite(
+            url: "https://mail.google.com/",
+            title: "Gmail",
+            trackingId: 1004,
+            faviconResource: .remoteURL(url: URL(string: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_gmail_lockup_default_1x_r2.png")!)
+        ),
+    ]
+
     public static func defaultSites() -> [Site] {
-        /* Ecosia: Remove default sites - return empty array
+        // Ecosia: Return Ecosia-curated default shortcuts for new users.
+        /* Firefox original (disabled):
         let locale = Locale.current
         let defaultSites = sites[locale.identifier] ?? sites["default"]
         return defaultSites?.map { site in
-            // Override default suggested site URLs with a localized URL for domains in `urlMap` (e.g. localized Amazon)
             if let domainMap = DefaultSuggestedSites.urlMap[site.url],
                let localizedURL = domainMap[locale.identifier] {
                 return Site.copiedFrom(site: site, withLocalizedURLString: localizedURL)
             }
             return site
         } ?? []
-         */
-        []
+        */
+        ecosiaSites
     }
 }
