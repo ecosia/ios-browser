@@ -210,6 +210,16 @@ public enum URLProvider {
         URL(string: "https://support.ecosia.org/article/844-seed-counter")!
     }
 
+    // CDN-hosted JSON list of rotating USP titles shown above the NTP impact tiles.
+    public var rotatingTitles: URL {
+        switch self {
+        case .production, .debug:
+            return URL(string: "https://cdn.ecosia.org/rotating-titles/v1/titles.json")!
+        case .staging:
+            return URL(string: "https://cdn.ecosia-staging.xyz/rotating-titles/v1/titles.json")!
+        }
+    }
+
     public var profileURL: URL {
         root.appendingPathComponent("accounts/profile")
     }

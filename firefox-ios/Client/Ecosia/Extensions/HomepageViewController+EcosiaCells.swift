@@ -82,6 +82,7 @@ extension HomepageViewController {
             let items = viewModel.infoItemSections[sectionIndex]
             impactCell.configure(
                 items: items,
+                rotatingTitles: viewModel.rotatingTitles,
                 delegate: ecosiaAdapter?.impactDelegate,
                 theme: themeManager.getCurrentTheme(for: windowUUID)
             )
@@ -129,7 +130,7 @@ extension HomepageViewController {
         return customizationCell
     }
 
-    /// Ecosia: Configures the section header for the Ecosia News section (layout requires a header).
+    /// Configures the section header for the Ecosia News section (layout requires a header).
     /// Uses NTP typography: .title3.bold for section title (same as DefaultBrowser, other NTP headlines).
     func configureEcosiaNewsSectionHeader(with sectionLabelCell: LabelButtonHeaderView) -> LabelButtonHeaderView {
         let state = SectionHeaderConfiguration(
@@ -142,7 +143,7 @@ extension HomepageViewController {
         let moreButtonAction: (@MainActor (UIButton) -> Void)? = { [weak self] _ in
             self?.ecosiaAdapter?.newsDelegate?.openSeeAllNews()
         }
-        // Ecosia: White text over glassmorphism wallpaper background
+        // White text over glassmorphism wallpaper background
         sectionLabelCell.configure(state: state, moreButtonAction: moreButtonAction, textColor: .white, theme: themeManager.getCurrentTheme(for: windowUUID))
         sectionLabelCell.titleLabel.font = .preferredFont(forTextStyle: .title3).bold()
         sectionLabelCell.titleLabel.adjustsFontForContentSizeCategory = true
@@ -153,6 +154,6 @@ extension HomepageViewController {
 // MARK: - Associated Keys
 
 private struct AssociatedKeys {
-    /// Ecosia: Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
+    /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var ecosiaAdapter: UInt8 = 0
 }
