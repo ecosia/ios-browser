@@ -828,12 +828,10 @@ extension BookmarksViewController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         actionSheet.addAction(UIAlertAction(title: .localized(.importBookmarks), style: .default) { [weak self] _ in
-            Analytics.shared.bookmarksPerformImportExport(.import)
             self?.importBookmarksActionHandler()
         })
 
         actionSheet.addAction(UIAlertAction(title: .localized(.exportBookmarks), style: .default) { [weak self] _ in
-            Analytics.shared.bookmarksPerformImportExport(.export)
             self?.exportBookmarksActionHandler()
         })
 
@@ -843,7 +841,8 @@ extension BookmarksViewController {
         present(actionSheet, animated: true)
     }
 
-    private func importBookmarksActionHandler() {
+    func importBookmarksActionHandler() {
+        Analytics.shared.bookmarksPerformImportExport(.import)
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.html])
         documentPicker.allowsMultipleSelection = false
         let theme = currentTheme()
@@ -852,7 +851,8 @@ extension BookmarksViewController {
         present(documentPicker, animated: true)
     }
 
-    private func exportBookmarksActionHandler() {
+    func exportBookmarksActionHandler() {
+        Analytics.shared.bookmarksPerformImportExport(.export)
         Task {
             do {
                 let bookmarkItems = try await fetchAllBookmarkItems()
@@ -939,7 +939,6 @@ extension BookmarksViewController: EmptyBookmarksViewDelegate {
     }
 
     func emptyBookmarksViewImportBookmarksTapped(_ view: EmptyBookmarksView) {
-        Analytics.shared.bookmarksPerformImportExport(.import)
         importBookmarksActionHandler()
     }
 }
