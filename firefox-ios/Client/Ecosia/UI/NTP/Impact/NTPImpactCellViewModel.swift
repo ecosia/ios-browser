@@ -19,10 +19,11 @@ protocol NTPImpactCellDelegate: AnyObject {
     private var cachedTotalInvested: Int = 0
     private var cachedTotalTrees: Int = 0
 
+    // Rotating USP titles fetched from the CDN; empty until the first fetch completes.
+    private(set) var rotatingTitles: [String] = []
+
     var infoItemSections: [[ClimateImpactInfo]] {
-        let firstSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
-        let secondSection: [ClimateImpactInfo] = [referralInfo]
-        return [firstSection, secondSection]
+        return [[totalTreesInfo, totalInvestedInfo]]
     }
     var referralInfo: ClimateImpactInfo {
         .referral(value: User.shared.referrals.count)
@@ -68,10 +69,20 @@ protocol NTPImpactCellDelegate: AnyObject {
         // Subscription closure uses [weak self] so no retain cycle.
     }
 
+    // Fetch rotating titles from CDN and cache them; fires once per session.
+    func fetchRotatingTitles() {
+        Task { @MainActor in
+            rotatingTitles = await RotatingTitlesService.shared.titles()
+            // Update all registered cells with the newly loaded titles
+            cells.values.forEach { $0.updateTitle(rotatingTitles) }
+        }
+    }
+
     func subscribeToProjections() {
         // Initial cache updates
         updateCachedTotalTrees()
         updateCachedTotalInvested()
+        fetchRotatingTitles()
 
         guard !UIAccessibility.isReduceMotionEnabled else {
             refreshCell(withInfo: totalTreesInfo)
@@ -180,7 +191,7 @@ extension NTPImpactCellViewModel: HomepageSectionHandler {
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = cell as? NTPImpactCell else { return UICollectionViewCell() }
         let items = infoItemSections[indexPath.row]
-        cell.configure(items: items, delegate: delegate, theme: theme)
+        cell.configure(items: items, rotatingTitles: rotatingTitles, delegate: delegate, theme: theme)
         cells[indexPath.row] = cell
         return cell
     }

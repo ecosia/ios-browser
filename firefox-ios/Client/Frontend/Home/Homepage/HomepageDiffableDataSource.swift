@@ -116,14 +116,15 @@ final class HomepageDiffableDataSource:
         state: HomepageState,
         jumpBackInDisplayConfig: JumpBackInSectionLayoutConfiguration
     ) {
-        // Ecosia: When adapter is set, use Ecosia sections with top sites after library
+        // Ecosia: When adapter is set, use Ecosia sections with top sites inserted at the correct anchor
         if let adapter = ecosiaAdapter {
             var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
             let textColor = state.wallpaperState.wallpaperConfiguration.textColor
+            let topSitesAnchor = adapter.topSitesInsertionAnchor
             for section in adapter.getEcosiaSections() {
                 snapshot.appendSections([section])
                 snapshot.appendItems(adapter.getItems(for: section), toSection: section)
-                if section == .ecosiaLibrary,
+                if section == topSitesAnchor,
                    let (topSites, numberOfCellsPerRow) = getTopSites(with: state.topSitesState, and: textColor) {
                     snapshot.appendSections([.topSites(textColor, numberOfCellsPerRow)])
                     snapshot.appendItems(topSites, toSection: .topSites(textColor, numberOfCellsPerRow))

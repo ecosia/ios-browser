@@ -7,12 +7,24 @@ import SwiftUI
 import Common
 import Ecosia
 
-@MainActor
-protocol NTPHeaderDelegate: AnyObject {
-    func headerOpenAISearch()
+// MARK: - SwiftUI Color + NTPGlassUX
+
+private extension Color {
+    static var ntpGlassDarkTint: Color {
+        Color(red: 26/255, green: 26/255, blue: 26/255).opacity(NTPGlassUX.darkTintAlpha)
+    }
+
+    static func ntpGlassBorder(opacity: Double = Double(NTPGlassUX.borderAlpha)) -> Color {
+        Color.white.opacity(opacity)
+    }
 }
 
-/// NTP header cell containing multiple Ecosia-specific actions like AI search
+@MainActor
+protocol NTPHeaderDelegate: AnyObject {
+    func headerOpenCustomizeHomepage()
+}
+
+/// NTP header cell containing the Ecosia logo and navigation actions
 @available(iOS 16.0, *)
 final class NTPHeader: UICollectionViewCell, ReusableCell {
 
@@ -66,6 +78,62 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
     }
 }
 
+// MARK: - Customize (Pencil) Button
+
+/// Glass-style circular button with a pencil icon for opening NTP customization.
+/// Matches the Figma `button-iOS / Glass static / Medium / edit` component:
+/// - Background: rgba(26,26,26,0.32) with backdrop blur
+/// - Border: rgba(255,255,255,0.24)
+/// - Icon: white (textStaticLight), 16×16pt
+/// - Size: 40×40pt circle
+@available(iOS 16.0, *)
+private struct EcosiaCustomizeButton: View {
+    let onTap: () -> Void
+
+    private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
+    private let iconSize: CGFloat = 16
+
+    var body: some View {
+        Button(action: onTap) {
+            Image("ntp-pencil-edit", bundle: .ecosia)
+                .resizable()
+                .renderingMode(.template)
+                .foregroundColor(.white)
+                .frame(width: iconSize, height: iconSize)
+                .frame(width: buttonSize, height: buttonSize)
+                .background(
+                    ZStack {
+                        Color.clear.background(.ultraThinMaterial)
+                        Color.ntpGlassDarkTint
+                    }
+                )
+                .clipShape(Circle())
+                .overlay(Circle().stroke(Color.ntpGlassBorder(), lineWidth: 1))
+        }
+        .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel(String.localized(.customizeHomepage))
+        .accessibilityIdentifier("ntp_customize_button")
+    }
+}
+
+// MARK: - Ecosia Logo (centered in header)
+
+@available(iOS 16.0, *)
+private struct NTPHeaderLogoView: View {
+    private let logoHeight: CGFloat = 20
+
+    var body: some View {
+        Image("ecosiaLogoLaunch")
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .foregroundColor(.white)
+            .frame(height: logoHeight)
+            .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
+            .accessibilityIdentifier("ntp_header_logo")
+    }
+}
+
 // MARK: - SwiftUI Multi-Purpose Header View
 @available(iOS 16.0, *)
 struct NTPHeaderView: View {
@@ -76,49 +144,51 @@ struct NTPHeaderView: View {
     @State private var showAccountImpactView = false
 
     var body: some View {
-        HStack(spacing: .ecosia.space._1s) {
-            Spacer()
-            if AISearchMVPExperiment.isEnabled {
-                EcosiaAISearchButton(
-                    windowUUID: windowUUID,
-                    onTap: handleAISearchTap
+        ZStack {
+            // Wordmark centered regardless of button widths
+            NTPHeaderLogoView()
+
+            HStack(spacing: .ecosia.space._1s) {
+                EcosiaCustomizeButton(
+                    onTap: handleCustomizeTap
                 )
-            }
-            ZStack(alignment: .topLeading) {
-                EcosiaAccountNavButton(
-                    seedCount: viewModel.seedCount,
-                    avatarURL: viewModel.userAvatarURL,
-                    enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
-                    showSeedSparkles: viewModel.showSeedSparkles,
-                    windowUUID: windowUUID,
-                    onTap: handleTap
-                )
-                .sheet(isPresented: $showAccountImpactView) {
-                    EcosiaAccountImpactView(
-                        viewModel: EcosiaAccountImpactViewModel(
-                            onLogin: {
-                                viewModel.performLogin()
-                            },
-                            onDismiss: {
-                                showAccountImpactView = false
-                            }
-                        ),
-                        windowUUID: windowUUID
+                Spacer()
+                ZStack(alignment: .topLeading) {
+                    EcosiaAccountNavButton(
+                        seedCount: viewModel.seedCount,
+                        avatarURL: viewModel.userAvatarURL,
+                        enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
+                        showSeedSparkles: viewModel.showSeedSparkles,
+                        windowUUID: windowUUID,
+                        onTap: handleTap
                     )
-                    .padding(.horizontal, .ecosia.space._m)
-                    .dynamicHeightPresentationDetent()
-                }
-                if let increment = viewModel.balanceIncrement {
-                    BalanceIncrementAnimationView(
-                        increment: increment,
-                        windowUUID: windowUUID
-                    )
-                    .offset(x: 18, y: -8)
+                    .sheet(isPresented: $showAccountImpactView) {
+                        EcosiaAccountImpactView(
+                            viewModel: EcosiaAccountImpactViewModel(
+                                onLogin: {
+                                    viewModel.performLogin()
+                                },
+                                onDismiss: {
+                                    showAccountImpactView = false
+                                }
+                            ),
+                            windowUUID: windowUUID
+                        )
+                        .padding(.horizontal, .ecosia.space._m)
+                        .dynamicHeightPresentationDetent()
+                    }
+                    if let increment = viewModel.balanceIncrement {
+                        BalanceIncrementAnimationView(
+                            increment: increment,
+                            windowUUID: windowUUID
+                        )
+                        .offset(x: 18, y: -8)
+                    }
                 }
             }
         }
-        .padding(.leading, .ecosia.space._m)
-        .padding(.trailing, .ecosia.space._m)
+        .padding(.horizontal, .ecosia.space._m)
+        .padding(.vertical, .ecosia.space._m)
         .onAppear {
             viewModel.refreshSeedState()
         }
@@ -127,8 +197,8 @@ struct NTPHeaderView: View {
         }
     }
 
-    private func handleAISearchTap() {
-        viewModel.openAISearch()
+    private func handleCustomizeTap() {
+        viewModel.openCustomizeHomepage()
     }
 
     private func handleTap() {

@@ -8,7 +8,12 @@ import Ecosia
 enum CustomizableNTPSettingConfig: CaseIterable {
     case topSites
     case climateImpact
+    // Ecosia: ecosiaNews hidden by default (MOB-4150); removed from the customization UI
     case ecosiaNews
+
+    // Ecosia: manually provide allCases so ecosiaNews is excluded from the NTP customization row while
+    // the case itself remains for analytics and User.shared.showEcosiaNews persistence
+    static var allCases: [CustomizableNTPSettingConfig] { [.topSites, .climateImpact] }
 
     var localizedTitleKey: String.Key {
         switch self {
