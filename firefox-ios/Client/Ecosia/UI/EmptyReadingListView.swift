@@ -8,14 +8,16 @@ import Common
 @MainActor
 final class EmptyReadingListView: UIView, Themeable {
 
-    struct ReadingListPanelUX {
-        static let WelcomeScreenPadding: CGFloat = 24
-        static let WelcomeScreenHorizontalMinPadding: CGFloat = 40
-
-        static let WelcomeScreenMaxWidth: CGFloat = 400
-        static let WelcomeScreenItemImageWidth: CGFloat = 20
-
-        static let WelcomeScreenTopPadding: CGFloat = 120
+    private enum UX {
+        static let TitleLabelFont = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
+        static let SectionLabelFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        static let LayoutMarginsInset: CGFloat = 12
+        static let TitleSpacerHeight: CGFloat = 24
+        static let SectionIconLabelSpacerWidth: CGFloat = 24
+        static let SectionEndSpacerHeight: CGFloat = 16
+        static let SectionIconWidth: CGFloat = 18
+        static let SectionContainerMaxWidth: CGFloat = 450
+        static let TopPadding: CGFloat = 120
     }
 
     // MARK: - Themeable Properties
@@ -25,34 +27,24 @@ final class EmptyReadingListView: UIView, Themeable {
     var themeObserver: NSObjectProtocol?
     var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
-    // Ecosia: currentWindowUUID cannot be overridden (UIView extension); theme uses windowUUID from init when applied.
 
     // MARK: - Properties
 
-    var welcomeLabel: UILabel = .build { label in
+    private let titleLabel: UILabel = {
+        let label = UILabel()
         label.text = .ReaderPanelWelcome
         label.textAlignment = .center
-        label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .semibold)
-        label.adjustsFontSizeToFitWidth = true
-    }
-    var readerModeLabel: UILabel = .build { label in
-        label.text = .ReaderPanelReadingModeDescription
-        label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .light)
-        label.numberOfLines = 0
-    }
-    var readerModeImageView: UIImageView = .build { imageView in
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(named: StandardImageIdentifiers.Large.readerView)?.withRenderingMode(.alwaysTemplate)
-    }
-    var readingListLabel: UILabel = .build { label in
-        label.text = .ReaderPanelReadingListDescription
-        label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .light)
-        label.numberOfLines = 0
-    }
-    var readingListImageView: UIImageView = .build { imageView in
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(named: StandardImageIdentifiers.Large.readingListAdd)?.withRenderingMode(.alwaysTemplate)
-    }
+        label.font = UX.TitleLabelFont
+        label.adjustsFontForContentSizeCategory = true
+        return label
+    }()
+
+    private let containerStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        return stackView
+    }()
 
     // MARK: - Init
 
@@ -71,69 +63,89 @@ final class EmptyReadingListView: UIView, Themeable {
     // MARK: - Setup
 
     private func setup() {
-
         translatesAutoresizingMaskIntoConstraints = false
 
-        let emptyStateViewWrapper: UIView = .build { view in
-            view.addSubviews(self.welcomeLabel,
-                             self.readerModeLabel,
-                             self.readerModeImageView,
-                             self.readingListLabel,
-                             self.readingListImageView)
-        }
-
-        addSubview(emptyStateViewWrapper)
+        addSubview(containerStackView)
 
         NSLayoutConstraint.activate([
-            // title
-            welcomeLabel.topAnchor.constraint(equalTo: emptyStateViewWrapper.topAnchor),
-            welcomeLabel.leadingAnchor.constraint(equalTo: emptyStateViewWrapper.leadingAnchor),
-            welcomeLabel.trailingAnchor.constraint(equalTo: emptyStateViewWrapper.trailingAnchor),
-
-            // first row
-            readerModeLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
-            readerModeImageView.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
-            readerModeImageView.trailingAnchor.constraint(equalTo: readerModeLabel.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
-
-            readerModeImageView.centerYAnchor.constraint(equalTo: readerModeLabel.centerYAnchor),
-            readerModeLabel.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor),
-            readerModeImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
-
-            // second row
-            readingListLabel.topAnchor.constraint(equalTo: readerModeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
-            readingListImageView.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
-            readingListImageView.trailingAnchor.constraint(equalTo: readingListLabel.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
-
-            readingListImageView.centerYAnchor.constraint(equalTo: readingListLabel.centerYAnchor),
-            readingListLabel.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor),
-            readingListImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
-
-            readingListLabel.bottomAnchor.constraint(equalTo: emptyStateViewWrapper.bottomAnchor).priority(.defaultLow),
-
-            // overall positioning of emptyStateViewWrapper
-            emptyStateViewWrapper.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: ReadingListPanelUX.WelcomeScreenHorizontalMinPadding),
-            emptyStateViewWrapper.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -ReadingListPanelUX.WelcomeScreenHorizontalMinPadding),
-            emptyStateViewWrapper.widthAnchor.constraint(lessThanOrEqualToConstant: ReadingListPanelUX.WelcomeScreenMaxWidth),
-
-            emptyStateViewWrapper.centerXAnchor.constraint(equalTo: centerXAnchor),
-            emptyStateViewWrapper.topAnchor.constraint(equalTo: topAnchor, constant: ReadingListPanelUX.WelcomeScreenTopPadding),
-            emptyStateViewWrapper.bottomAnchor.constraint(equalTo: bottomAnchor)
+            containerStackView.leadingAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.leadingAnchor, constant: UX.LayoutMarginsInset),
+            containerStackView.trailingAnchor.constraint(lessThanOrEqualTo: layoutMarginsGuide.trailingAnchor, constant: -UX.LayoutMarginsInset),
+            containerStackView.widthAnchor.constraint(lessThanOrEqualToConstant: UX.SectionContainerMaxWidth),
+            containerStackView.topAnchor.constraint(equalTo: topAnchor, constant: UX.TopPadding),
+            containerStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
-        welcomeLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        readerModeLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        readingListLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        // title
+        containerStackView.addArrangedSubview(titleLabel)
+
+        // space between title and first section
+        let titleSpacer = UIView.build {
+            $0.heightAnchor.constraint(equalToConstant: UX.TitleSpacerHeight).isActive = true
+        }
+        containerStackView.addArrangedSubview(titleSpacer)
+
+        addSection(
+            imageNamed: StandardImageIdentifiers.Large.readerView,
+            text: .ReaderPanelReadingModeDescription
+        )
+        addSection(
+            imageNamed: "addToReadingListUpdate",
+            text: .ReaderPanelReadingListDescription
+        )
 
         listenForThemeChanges(withNotificationCenter: notificationCenter)
+    }
+
+    private func addSection(imageNamed: String, text: String) {
+        let sectionStackView = UIStackView()
+        sectionStackView.axis = .horizontal
+        sectionStackView.alignment = .top
+
+        let sectionIcon = UIImageView()
+        sectionIcon.contentMode = .scaleAspectFit
+        sectionIcon.image = UIImage(named: imageNamed)?.withRenderingMode(.alwaysTemplate)
+        sectionIcon.setContentCompressionResistancePriority(.required, for: .horizontal)
+        sectionIcon.setContentHuggingPriority(.required, for: .horizontal)
+        sectionIcon.translatesAutoresizingMaskIntoConstraints = false
+        sectionIcon.widthAnchor.constraint(equalToConstant: UX.SectionIconWidth).priority(.required).isActive = true
+
+        sectionStackView.addArrangedSubview(sectionIcon)
+
+        let iconLabelSpacer = UIView.build {
+            $0.widthAnchor.constraint(equalToConstant: UX.SectionIconLabelSpacerWidth).isActive = true
+        }
+        sectionStackView.addArrangedSubview(iconLabelSpacer)
+
+        let sectionLabel = UILabel()
+        sectionLabel.font = UX.SectionLabelFont
+        sectionLabel.numberOfLines = 0
+        sectionLabel.text = text
+        sectionLabel.adjustsFontForContentSizeCategory = true
+        sectionStackView.addArrangedSubview(sectionLabel)
+
+        containerStackView.addArrangedSubview(sectionStackView)
+
+        let sectionEndSpacer = UIView.build {
+            $0.heightAnchor.constraint(equalToConstant: UX.SectionEndSpacerHeight).isActive = true
+        }
+        containerStackView.addArrangedSubview(sectionEndSpacer)
     }
 
     // MARK: - Themeable
 
     func applyTheme() {
-        welcomeLabel.textColor = themeManager.getCurrentTheme(for: windowUUID).colors.textPrimary
-        readerModeLabel.textColor = themeManager.getCurrentTheme(for: windowUUID).colors.textSecondary
-        readerModeImageView.tintColor = themeManager.getCurrentTheme(for: windowUUID).colors.textSecondary
-        readingListLabel.textColor = themeManager.getCurrentTheme(for: windowUUID).colors.textSecondary
-        readingListImageView.tintColor = themeManager.getCurrentTheme(for: windowUUID).colors.textSecondary
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        titleLabel.textColor = theme.colors.textPrimary
+
+        for subview in containerStackView.arrangedSubviews {
+            guard let stackView = subview as? UIStackView else { continue }
+            for child in stackView.arrangedSubviews {
+                if let label = child as? UILabel {
+                    label.textColor = theme.colors.textSecondary
+                } else if let imageView = child as? UIImageView {
+                    imageView.tintColor = theme.colors.textSecondary
+                }
+            }
+        }
     }
 }
