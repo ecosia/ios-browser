@@ -421,7 +421,6 @@ final class BookmarksViewController: SiteTableViewController,
                 view.addSubview(emptyBookmarksView)
             }
             emptyBookmarksView.applyTheme(theme: currentTheme())
-            emptyBookmarksView.bottomMarginConstraint?.constant = 0
             view.bringSubviewToFront(emptyBookmarksView)
             emptyBookmarksView.isHidden = false
         } else {
