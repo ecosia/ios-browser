@@ -131,10 +131,10 @@ final class EcosiaHomepageAdapter {
             sections.append(.ecosiaHeader)
         }
 
-        // Ecosia: Logo moved into the NTPHeader cell — no separate logo section needed.
+        // Logo moved into the NTPHeader cell — no separate logo section needed.
 
         // Library shortcuts (Bookmarks, History, Reading List, Downloads)
-        // Ecosia: Hidden by default (MOB-4150); re-enable via debug menu
+        // Hidden by default (MOB-4150); re-enable via debug menu
         if ToggleNTPLibraryShortcuts.isEnabled {
             sections.append(.ecosiaLibrary)
         }
@@ -151,7 +151,7 @@ final class EcosiaHomepageAdapter {
             sections.append(.ecosiaNews)
         }
 
-        // Ecosia: Customization button removed — pencil icon in header handles this
+        // Customization button removed — pencil icon in header handles this
 
         return sections
     }
@@ -207,7 +207,7 @@ final class EcosiaHomepageAdapter {
     }
 
     private func shouldShowNews() -> Bool {
-        // Ecosia: Hidden by default (MOB-4150); re-enable via debug menu
+        // Hidden by default (MOB-4150); re-enable via debug menu
         guard ToggleNTPNewsSection.isEnabled else { return false }
         return User.shared.showEcosiaNews
     }
@@ -234,7 +234,7 @@ final class EcosiaHomepageAdapter {
 
     // MARK: - Ecosia: NTP Background
 
-    /// Ecosia: Provides the wallpaper configuration for the NTP background
+    /// Provides the wallpaper configuration for the NTP background
     func getNTPBackgroundConfiguration() -> WallpaperConfiguration {
 
         let wallpaperManager = WallpaperManager()

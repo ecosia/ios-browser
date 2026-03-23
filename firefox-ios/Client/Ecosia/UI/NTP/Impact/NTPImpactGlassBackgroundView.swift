@@ -91,7 +91,7 @@ final class NTPImpactGlassBackgroundView: UIView {
     // MARK: - State
 
     private var scrollViewObservation: NSKeyValueObservation?
-    // Ecosia: Cached reference to the wallpaper view for pixel-accurate coordinate alignment (ADR 0003)
+    // Cached reference to the wallpaper view for pixel-accurate coordinate alignment (ADR 0003)
     private weak var cachedWallpaperView: WallpaperBackgroundView?
 
     // MARK: - Public API

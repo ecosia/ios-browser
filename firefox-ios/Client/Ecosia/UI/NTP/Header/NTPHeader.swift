@@ -145,7 +145,7 @@ struct NTPHeaderView: View {
 
     var body: some View {
         ZStack {
-            // Ecosia: Wordmark centered regardless of button widths
+            // Wordmark centered regardless of button widths
             NTPHeaderLogoView()
 
             HStack(spacing: .ecosia.space._1s) {

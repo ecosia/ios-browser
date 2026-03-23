@@ -16,13 +16,13 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     /// Contains constants used for layout and sizing within the `NTPImpactRowView`.
     /// All spacing/sizing values map to Ecosia design tokens (Figma Foundations).
     struct UX {
-        // Ecosia: space-m (16pt) — horizontal gap between icon and statistic title (Figma: Gap 16px)
+        // space-m (16pt) — horizontal gap between icon and statistic title (Figma: Gap 16px)
         static let horizontalSpacing: CGFloat = .ecosia.space._m
-        // Ecosia: space-m (16pt) — uniform inset around the tile content (Figma: padding-m)
+        // space-m (16pt) — uniform inset around the tile content (Figma: padding-m)
         static let padding: CGFloat = .ecosia.space._m
-        // Ecosia: space-2s (4pt) — vertical gap between [icon+title row] and subtitle (Figma: Gap space-2s)
+        // space-2s (4pt) — vertical gap between [icon+title row] and subtitle (Figma: Gap space-2s)
         static let titleSubtitleGap: CGFloat = .ecosia.space._2s
-        // Ecosia: 24pt icon — matches Figma NTP impact icon specification
+        // 24pt icon — matches Figma NTP impact icon specification
         static let imageHeight: CGFloat = 24
         static let glassBorderAlpha: CGFloat = NTPGlassUX.borderAlpha
         static let glassBorderWidth: CGFloat = 1
@@ -30,14 +30,14 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     // MARK: - UI Elements
 
-    // Ecosia: Core Image 24px Gaussian blur glass background (see ADR 0003)
+    // Core Image 24px Gaussian blur glass background (see ADR 0003)
     private let glassBackground: NTPImpactGlassBackgroundView = {
         let view = NTPImpactGlassBackgroundView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
-    // Ecosia: Horizontal container — icon (24×24) on the left, labelsStack on the right.
+    // Horizontal container — icon (24×24) on the left, labelsStack on the right.
     // Flow: Horizontal, Gap: space-m (16pt), padding: space-m (16pt) on all sides.
     private let mainContainerView: UIStackView = {
         let stack = UIStackView()
@@ -48,7 +48,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return stack
     }()
 
-    // Ecosia: Vertical labels stack — statistic title above, description below.
+    // Vertical labels stack — statistic title above, description below.
     // Flow: Vertical, Gap: space-2s (4pt) per Figma .mobile-globalcounter-item spec.
     // alignment = .fill gives each label an explicit width constraint from the stack,
     // so UILabel always knows its available width for line-wrapping — including after rotation.
@@ -93,7 +93,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         label.font = .preferredFont(forTextStyle: .footnote)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
-        // Ecosia: Force word-wrap so words are never split mid-word across lines.
+        // Force word-wrap so words are never split mid-word across lines.
         label.lineBreakMode = .byWordWrapping
         return label
     }()
@@ -104,7 +104,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .footnote).semibold()
         button.titleLabel?.textAlignment = .right
-        // Ecosia: ResizableButton defaults to numberOfLines=0; force single line so the button
+        // ResizableButton defaults to numberOfLines=0; force single line so the button
         // never expands the referral row taller than the trees/invested rows.
         button.titleLabel?.numberOfLines = 1
         button.configuration?.titleLineBreakMode = .byTruncatingTail
@@ -144,7 +144,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     /// The current position of this row in the overall list.
     var position: (row: Int, totalCount: Int) = (0, 0) {
         didSet {
-            // Ecosia: Each tile is a fully-rounded individual glass card (Figma: border-radius-l on
+            // Each tile is a fully-rounded individual glass card (Figma: border-radius-l on
             // all 4 corners). The divider is replaced by the 8pt gap in the parent stack view.
             dividerView.isHidden = true
         }
@@ -185,12 +185,12 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = .ecosia.borderRadius._l
-        // Ecosia: clipsToBounds ensures glassBackground respects rounded corners
+        // clipsToBounds ensures glassBackground respects rounded corners
         clipsToBounds = true
         addSubview(glassBackground)
         addSubview(dividerView)
 
-        // Ecosia: Figma structure — labels stack: [statistic title] / [description]
+        // Figma structure — labels stack: [statistic title] / [description]
         labelsStack.addArrangedSubview(titleLabel)
         labelsStack.addArrangedSubview(subtitleLabel)
         labelsStack.isAccessibilityElement = true
@@ -198,7 +198,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         labelsStack.accessibilityLabel = info.accessibilityLabel
         labelsStack.accessibilityIdentifier = info.accessibilityIdentifier
 
-        // Ecosia: Figma structure — horizontal row: [icon] + [labelsStack] + [action button]
+        // Figma structure — horizontal row: [icon] + [labelsStack] + [action button]
         imageContainer.addSubview(imageView)
         mainContainerView.addArrangedSubview(imageContainer)
         mainContainerView.addArrangedSubview(labelsStack)
@@ -238,13 +238,13 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        // Ecosia: Glassmorphism — exact 24px Gaussian blur via Core Image (ADR 0003).
+        // Glassmorphism — exact 24px Gaussian blur via Core Image (ADR 0003).
         // glassBackground handles the blur + dark tint; the white border gives the glass edge.
         backgroundColor = .clear
         layer.borderWidth = UX.glassBorderWidth
         layer.borderColor = UIColor(white: 1, alpha: UX.glassBorderAlpha).cgColor
         glassBackground.loadCurrentWallpaper()
-        // Ecosia: White text and icons over glassmorphism wallpaper background
+        // White text and icons over glassmorphism wallpaper background
         titleLabel.textColor = .white
         subtitleLabel.textColor = .white
         actionButton.setTitleColor(.white, for: .normal)

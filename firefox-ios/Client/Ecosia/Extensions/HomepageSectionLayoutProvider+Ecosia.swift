@@ -7,7 +7,7 @@ import Common
 
 extension HomepageSectionLayoutProvider {
     
-    /// Ecosia: Creates layout for Ecosia-specific sections
+    /// Creates layout for Ecosia-specific sections
     func createEcosiaLayoutSection(
         for section: HomepageSection,
         with environment: NSCollectionLayoutEnvironment
@@ -27,7 +27,7 @@ extension HomepageSectionLayoutProvider {
             return createEcosiaNewsLayout(for: traitCollection)
         case .ecosiaNTPCustomization:
             return createEcosiaNTPCustomizationLayout(for: traitCollection)
-        // Ecosia: Match shortcuts width to the other Ecosia sections (MOB-4150)
+        // Match shortcuts width to the other Ecosia sections (MOB-4150)
         case .topSites(_, let numberOfTilesPerRow):
             return createEcosiaTopSitesLayout(for: traitCollection, numberOfTilesPerRow: numberOfTilesPerRow)
         default:
@@ -50,7 +50,7 @@ extension HomepageSectionLayoutProvider {
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
         let section = NSCollectionLayoutSection(group: group)
-        // Ecosia: No section insets — NTPHeaderView owns all internal padding via SwiftUI modifiers.
+        // No section insets — NTPHeaderView owns all internal padding via SwiftUI modifiers.
         // Horizontal: .ecosia.space._m (16pt) on each side.
         // Vertical:   .ecosia.space._m (16pt) top & bottom, giving a 72pt cell height.
         // The collection view is a child of the wallpaper card so card-edge alignment is
@@ -74,7 +74,7 @@ extension HomepageSectionLayoutProvider {
         
         let section = NSCollectionLayoutSection(group: group)
 
-        // Ecosia: Top spacing is 0 — the header's SwiftUI .padding(.vertical, _m) provides ~16pt
+        // Top spacing is 0 — the header's SwiftUI .padding(.vertical, _m) provides ~16pt
         // of visual gap above the wordmark. Bottom spacing separates the logo from the impact tiles.
         let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 24)
         section.contentInsets = insets
@@ -101,12 +101,12 @@ extension HomepageSectionLayoutProvider {
     }
     
     private func createEcosiaImpactLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // Ecosia: NTPImpactCell is a SINGLE cell. All internal spacing (top 124pt, sides 61pt,
-        // bottom 68pt) is encoded in the cell's containerStack constraints, so section insets are
-        // zero. Estimated height = 124 + 71 + 8 + 71 + 68 = ~342pt.
+        // NTPImpactCell is a SINGLE cell whose minimum height is NTPImpactCell.UX.minimumCellHeight.
+        // The large minimum height lets the cell fill the wallpaper card, pushing shortcuts toward
+        // the bottom. The estimated value here is a hint; the real height is set by the cell.
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(342)
+            heightDimension: .estimated(450)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let group = NSCollectionLayoutGroup.horizontal(
@@ -121,7 +121,7 @@ extension HomepageSectionLayoutProvider {
     
     /// News section layout — uses the same insets as the impact section for consistent width on all devices.
     private func createEcosiaNewsLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // Ecosia: item and group estimated(100), horizontal group count 1 per row; we show 3 rows
+        // item and group estimated(100), horizontal group count 1 per row; we show 3 rows
         let itemEstimatedHeight: CGFloat = 100
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
@@ -135,7 +135,7 @@ extension HomepageSectionLayoutProvider {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 0
-        // Ecosia: Use getEcosiaSectionInsets so news has the same width as the impact/referral section on all
+        // Use getEcosiaSectionInsets so news has the same width as the impact/referral section on all
         // devices, including iPad where the previous newsSectionContentInsets gave a wider 544pt max (MOB-4150)
         let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 32)
         section.contentInsets = insets
@@ -180,22 +180,19 @@ extension HomepageSectionLayoutProvider {
             for: traitCollection,
             numberOfTilesPerRow: numberOfTilesPerRow
         )
-        // Ecosia: Shortcuts use the same 12pt horizontal inset as the impact tiles so all sections
+        // Shortcuts use the same 12pt horizontal inset as the impact tiles so all sections
         // share a consistent left/right edge within the wallpaper card (Figma: space-s = 12pt).
         let edgeInset: CGFloat = traitCollection.horizontalSizeClass == .regular ? 100 : .ecosia.space._s
-        // Ecosia: The top gap between the impact tiles and the first shortcut row comes from the
-        // impact section's own bottom inset (space-m = 16pt), so top is 0 here.
-        // space-1l (24pt) bottom gap separates the shortcut grid from the following news section.
-        // Firefox's UX.spacingBetweenSections (44pt) is calibrated for full-screen sections and
-        // is too large within the Ecosia wallpaper card.
+        // Equal top and bottom insets vertically center the shortcut grid in the remaining
+        // card space below the impact tiles.
         let insets = NSDirectionalEdgeInsets(
-            top: 0,
+            top: CGFloat.ecosia.space._m,
             leading: edgeInset,
-            bottom: CGFloat.ecosia.space._1l,
+            bottom: CGFloat.ecosia.space._m,
             trailing: edgeInset
         )
         section.contentInsets = insets
-        // Ecosia: No section header — Figma shortcuts section has no title label above the tiles
+        // No section header — Figma shortcuts section has no title label above the tiles
         return section
     }
 
