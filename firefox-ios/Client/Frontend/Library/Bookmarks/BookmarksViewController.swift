@@ -891,7 +891,7 @@ extension BookmarksViewController {
         }
     }
 
-    private nonisolated static func convertToBookmarkItems(_ nodes: [BookmarkNodeData]) -> [Ecosia.BookmarkItem] {
+    nonisolated private static func convertToBookmarkItems(_ nodes: [BookmarkNodeData]) -> [Ecosia.BookmarkItem] {
         nodes.compactMap { node -> Ecosia.BookmarkItem? in
             switch node {
             case let folder as BookmarkFolderData:
