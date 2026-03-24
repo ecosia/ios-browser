@@ -68,14 +68,22 @@ class TabTrayCoordinator: BaseCoordinator,
         let privateTabsPanel = TabDisplayPanelViewController(isPrivateMode: true,
                                                              windowUUID: windowUUID,
                                                              dragAndDropDelegate: dragAndDropDelegate)
+        /* Ecosia: Remove syncedTabs from tab tray
         let syncTabs = RemoteTabsPanel(windowUUID: windowUUID)
+        */
 
         let panels: [UIViewController]
         // Panels order is different for the experiment
         if isTabTrayUIExperimentsEnabled {
+            /* Ecosia: Remove syncedTabs from tab tray
             panels = [privateTabsPanel, regularTabsPanel, syncTabs]
+            */
+            panels = [privateTabsPanel, regularTabsPanel]
         } else {
+            /* Ecosia: Remove syncedTabs from tab tray
             panels = [regularTabsPanel, privateTabsPanel, syncTabs]
+            */
+            panels = [regularTabsPanel, privateTabsPanel]
         }
 
         return panels.map {

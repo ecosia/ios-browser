@@ -21,7 +21,10 @@ class ExperimentEmptyPrivateTabsView: UIView,
         static let paddingInBetweenItems: CGFloat = 15
         static let verticalPadding: CGFloat = 20
         static let horizontalPadding: CGFloat = 24
+        /* Ecosia: Larger image for Ecosia private browsing mascot
         static let imageSize = CGSize(width: 72, height: 72)
+        */
+        static let imageSize = CGSize(width: 120, height: 120)
     }
 
     // MARK: - Properties
@@ -49,9 +52,13 @@ class ExperimentEmptyPrivateTabsView: UIView,
         label.font = FXFontStyles.Regular.footnote.scaledFont()
         label.textAlignment = .center
         label.numberOfLines = 0
+        /* Ecosia: Use Ecosia private browsing description
         label.text = .TabsTray.TabTrayPrivateBrowsingDescription
+        */
+        label.text = .localized(.privateEmpty)
     }
 
+    /* Ecosia: Remove Learn More button
     private lazy var learnMoreButton: SecondaryRoundedButton = .build { button in
         let viewModel = SecondaryRoundedButtonViewModel(
             title: .PrivateBrowsingLearnMore,
@@ -60,9 +67,14 @@ class ExperimentEmptyPrivateTabsView: UIView,
         button.configure(viewModel: viewModel)
         button.addTarget(self, action: #selector(self.didTapLearnMore), for: .touchUpInside)
     }
+    */
 
     private let iconImageView: UIImageView = .build { imageView in
+        /* Ecosia: Use Ecosia private browsing icon
         imageView.image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.privateMode)
+        */
+        imageView.image = UIImage(named: "tigerIncognito")
+        imageView.contentMode = .scaleAspectFit
     }
 
     // MARK: - Inits
@@ -77,64 +89,41 @@ class ExperimentEmptyPrivateTabsView: UIView,
         fatalError("init(coder:) has not been implemented")
     }
 
+    /* Ecosia: Remove Learn More button
     private func configureLearnMoreButton() {
         learnMoreButton.addTarget(self, action: #selector(self.didTapLearnMore), for: .touchUpInside)
     }
+    */
+
+    // Ecosia: Vertically centered private browsing placeholder
+    private lazy var contentStack: UIStackView = .build { stack in
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = UX.paddingInBetweenItems
+    }
 
     private func setupLayout() {
+        /* Ecosia: Remove Learn More button and vertically center content
         configureLearnMoreButton()
         centeredView.addSubviews(iconImageView, titleLabel, descriptionLabel, learnMoreButton)
         containerView.addSubview(centeredView)
         scrollView.addSubview(containerView)
         addSubview(scrollView)
+        */
+        contentStack.addArrangedSubview(iconImageView)
+        contentStack.addArrangedSubview(titleLabel)
+        contentStack.addArrangedSubview(descriptionLabel)
+        addSubview(contentStack)
 
         NSLayoutConstraint.activate([
-            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor,
-                                                constant: UX.horizontalPadding),
-            scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                            constant: UX.verticalPadding),
-            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor,
-                                                 constant: -UX.horizontalPadding),
-            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor,
-                                               constant: -UX.verticalPadding),
+            contentStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor,
+                                                  constant: UX.horizontalPadding),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor,
+                                                   constant: -UX.horizontalPadding),
 
-            scrollView.frameLayoutGuide.widthAnchor.constraint(equalTo: containerView.widthAnchor),
-
-            scrollView.contentLayoutGuide.topAnchor.constraint(equalTo: containerView.topAnchor),
-            scrollView.contentLayoutGuide.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-
-            centeredView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: UX.verticalPadding),
-            centeredView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            centeredView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            centeredView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-
-            iconImageView.topAnchor.constraint(equalTo: centeredView.topAnchor,
-                                               constant: UX.paddingInBetweenItems),
-            iconImageView.centerXAnchor.constraint(equalTo: centeredView.centerXAnchor),
             iconImageView.widthAnchor.constraint(equalToConstant: UX.imageSize.width),
             iconImageView.heightAnchor.constraint(equalToConstant: UX.imageSize.height),
-
-            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor,
-                                            constant: UX.paddingInBetweenItems),
-            titleLabel.leadingAnchor.constraint(equalTo: centeredView.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: centeredView.trailingAnchor),
-
-            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor,
-                                                  constant: UX.paddingInBetweenItems),
-            descriptionLabel.leadingAnchor.constraint(equalTo: centeredView.leadingAnchor,
-                                                      constant: UX.horizontalPadding),
-            descriptionLabel.trailingAnchor.constraint(equalTo: centeredView.trailingAnchor,
-                                                       constant: -UX.horizontalPadding),
-
-            learnMoreButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor,
-                                                 constant: UX.paddingInBetweenItems),
-            learnMoreButton.leadingAnchor.constraint(greaterThanOrEqualTo: centeredView.leadingAnchor),
-            learnMoreButton.trailingAnchor.constraint(lessThanOrEqualTo: centeredView.trailingAnchor),
-            learnMoreButton.centerXAnchor.constraint(equalTo: centeredView.centerXAnchor),
-            learnMoreButton.bottomAnchor.constraint(equalTo: centeredView.bottomAnchor,
-                                                    constant: -UX.paddingInBetweenItems),
         ])
     }
 
@@ -142,16 +131,20 @@ class ExperimentEmptyPrivateTabsView: UIView,
         backgroundColor = theme.colors.layer3
         titleLabel.textColor = theme.colors.textPrimary
         descriptionLabel.textColor = theme.colors.textPrimary
+        /* Ecosia: Remove Learn More button theming
         learnMoreButton.applyTheme(theme: theme)
         iconImageView.tintColor = theme.colors.iconDisabled
+        */
     }
 
+    /* Ecosia: Remove Learn More button action
     @objc
     private func didTapLearnMore() {
         guard let url = SupportUtils.URLForTopic("private-browsing-ios") else { return }
         let request = URLRequest(url: url)
         delegate?.didTapLearnMore(urlRequest: request)
     }
+    */
 
     // MARK: - InsetUpdatable
 
