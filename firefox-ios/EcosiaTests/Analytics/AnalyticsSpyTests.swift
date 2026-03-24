@@ -20,8 +20,8 @@ final class AnalyticsSpy: Analytics {
 
     var trackedEvents: [SnowplowTracker.Event] = []
 
-    override func track(_ event: SnowplowTracker.Event) {
-        super.track(event)
+    override func track(_ event: SnowplowTracker.Event, isPrivate: Bool = false) {
+        super.track(event, isPrivate: isPrivate)
         trackedEvents.append(event)
     }
 
@@ -118,8 +118,10 @@ final class AnalyticsSpy: Analytics {
     }
 
     var inappSearchUrlCalled: URL?
-    override func inappSearch(url: URL) {
+    var inappSearchIsPrivateCalled: Bool?
+    override func inappSearch(url: URL, isPrivate: Bool = false) {
         inappSearchUrlCalled = url
+        inappSearchIsPrivateCalled = isPrivate
     }
 
     var ntpTopSiteActionCalled: Action.TopSite?
@@ -654,7 +656,7 @@ final class AnalyticsSpyTests: XCTestCase {
                 XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
             }
             // inappSearch is now fired at didCommit, not decidePolicyFor
-            browser.ecosiaHandleDidCommit(url: url)
+            browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
 
             if shouldTrack {
                 XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
@@ -687,7 +689,7 @@ final class AnalyticsSpyTests: XCTestCase {
                             decidePolicyFor: action) { policy in
                 XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
             }
-            browser.ecosiaHandleDidCommit(url: url)
+            browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
 
             if shouldTrack {
                 XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
@@ -709,14 +711,14 @@ final class AnalyticsSpyTests: XCTestCase {
         // Load the URL once to establish it as the current page
         let firstAction = FakeNavigationAction(url: url, navigationType: .other)
         browser.webView(makeWebView(), decidePolicyFor: firstAction) { _ in }
-        browser.ecosiaHandleDidCommit(url: url)
+        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
 
         // Navigate to the same URL again via link activation (e.g. tapping the same search vertical)
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
         let secondAction = FakeNavigationAction(url: url, navigationType: .linkActivated)
         browser.webView(makeWebView(), decidePolicyFor: secondAction) { _ in }
-        browser.ecosiaHandleDidCommit(url: url)
+        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
 
         XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
                        url.absoluteString,
@@ -737,10 +739,36 @@ final class AnalyticsSpyTests: XCTestCase {
         browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
 
         // didCommit fires with a different URL (e.g. a redirect landed elsewhere)
-        browser.ecosiaHandleDidCommit(url: differentUrl)
+        browser.ecosiaHandleDidCommit(url: differentUrl, isPrivate: false)
 
         XCTAssertNil(analyticsSpy.inappSearchUrlCalled,
                      "Should not track when committed URL does not match pending URL")
+    }
+
+    func testInappSearchPrivateFlagIsForwardedCorrectly() {
+        let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
+
+        let rootURL = EcosiaEnvironment.current.urlProvider.root
+        let url = URL(string: "\(rootURL)/search?q=test")!
+        let action = FakeNavigationAction(url: url, navigationType: .other)
+
+        // Non-private
+        analyticsSpy = AnalyticsSpy()
+        Analytics.shared = analyticsSpy
+        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
+        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+        XCTAssertEqual(analyticsSpy.inappSearchIsPrivateCalled,
+                       false,
+                       "Should forward isPrivate: false for normal tabs")
+
+        // Private
+        analyticsSpy = AnalyticsSpy()
+        Analytics.shared = analyticsSpy
+        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
+        browser.ecosiaHandleDidCommit(url: url, isPrivate: true)
+        XCTAssertEqual(analyticsSpy.inappSearchIsPrivateCalled,
+                       true,
+                       "Should forward isPrivate: true for private tabs")
     }
 
     // MARK: - Analytics Context Tests

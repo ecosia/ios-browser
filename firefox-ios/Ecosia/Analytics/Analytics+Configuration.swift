@@ -25,6 +25,11 @@ extension Analytics {
     nonisolated(unsafe) static let subjectConfiguration = SubjectConfiguration()
         .userId(User.shared.analyticsId.uuidString)
 
+    /// Subject configuration for private browsing sessions.
+    /// - Sets the userId to a null UUID so the field is present but carries no identifying value.
+    static let privateSubjectConfiguration = SubjectConfiguration()
+        .userId(UUID(uuid: UUID_NULL).uuidString)
+
     /// Configuration for the daily tracking plugin.
     /// - This plugin filters events based on whether a day has passed since the last check for a specific identifier.
     /// - It specifically filters structured events related to in-app navigation and resume actions.

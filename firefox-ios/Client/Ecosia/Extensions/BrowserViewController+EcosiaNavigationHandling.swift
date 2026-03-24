@@ -31,11 +31,13 @@ extension BrowserViewController {
 
     /// Fires the in-app search event when the web content starts to be received (didCommit).
     /// This matches the timing of Vue's mounted event on web (DOM ready, before full page load).
-    /// - Parameter url: The URL that just committed
-    func ecosiaHandleDidCommit(url: URL) {
+    /// - Parameters:
+    ///   - url: The URL that just committed
+    ///   - isPrivate: Whether the tab is in private browsing mode
+    func ecosiaHandleDidCommit(url: URL, isPrivate: Bool) {
         guard url == pendingInappSearchUrl else { return }
         pendingInappSearchUrl = nil
-        Analytics.shared.inappSearch(url: url)
+        Analytics.shared.inappSearch(url: url, isPrivate: isPrivate)
     }
 
     /// Handles any tasks that should run after a page finishes loading.
