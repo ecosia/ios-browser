@@ -6,7 +6,7 @@ import Common
 import UIKit
 import Shared
 import Glean
-import Ecosia // Ecosia
+import Ecosia
 
 import struct MozillaAppServices.VisitObservation
 
