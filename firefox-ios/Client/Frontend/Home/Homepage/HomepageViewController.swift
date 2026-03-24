@@ -682,6 +682,8 @@ final class HomepageViewController: UIViewController,
             return spacerCell
         
         // Ecosia: Custom cell configuration
+        case .ecosiaFirstSearch:
+            return configureEcosiaFirstSearchCell(at: indexPath)
         case .ecosiaHeader:
             return configureEcosiaHeaderCell(at: indexPath)
         case .ecosiaLogo:

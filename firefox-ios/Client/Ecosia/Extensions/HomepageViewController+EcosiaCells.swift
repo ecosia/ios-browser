@@ -23,6 +23,20 @@ extension HomepageViewController {
     
     // MARK: - Cell Configuration Methods
     
+    func configureEcosiaFirstSearchCell(at indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cv = homepageCollectionView,
+              let cell = cv.dequeueReusableCell(
+                cellType: NTPFirstSearchCell.self,
+                for: indexPath
+              ) else {
+            return UICollectionViewCell()
+        }
+        if let viewModel = ecosiaAdapter?.firstSearchViewModel {
+            viewModel.configure(cell, at: indexPath)
+        }
+        return cell
+    }
+
     func configureEcosiaHeaderCell(at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cv = homepageCollectionView else { return UICollectionViewCell() }
         if #available(iOS 16.0, *) {

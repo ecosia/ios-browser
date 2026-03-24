@@ -15,6 +15,8 @@ extension HomepageSectionLayoutProvider {
         let traitCollection = environment.traitCollection
         
         switch section {
+        case .ecosiaFirstSearch:
+            return createEcosiaFirstSearchLayout(for: traitCollection)
         case .ecosiaHeader:
             return createEcosiaHeaderLayout(for: traitCollection)
         case .ecosiaLogo:
@@ -33,7 +35,23 @@ extension HomepageSectionLayoutProvider {
     }
     
     // MARK: - Individual Section Layouts
-    
+
+    private func createEcosiaFirstSearchLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(200)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(200)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = getEcosiaSectionInsets(traitCollection, topSpacing: 16, bottomSpacing: 16)
+        return section
+    }
+
     private func createEcosiaHeaderLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
         // Dimensions from NTPHeaderViewModel
         let itemSize = NSCollectionLayoutSize(

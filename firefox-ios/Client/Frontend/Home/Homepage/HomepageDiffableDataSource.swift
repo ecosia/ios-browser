@@ -35,6 +35,7 @@ final class HomepageDiffableDataSource:
         case customizeHomepage
         case spacer
         // Ecosia: Custom sections for Ecosia-specific homepage content
+        case ecosiaFirstSearch
         case ecosiaHeader
         case ecosiaLogo
         case ecosiaLibrary
@@ -65,6 +66,7 @@ final class HomepageDiffableDataSource:
         case customizeHomepage
         case spacer
         // Ecosia: Custom items for Ecosia-specific homepage cells
+        case ecosiaFirstSearch
         case ecosiaHeader
         case ecosiaLogo
         case ecosiaLibrary
