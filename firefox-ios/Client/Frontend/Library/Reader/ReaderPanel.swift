@@ -333,7 +333,11 @@ class ReadingListPanel: UITableViewController,
         return scrollView
     }()
 
-    // Ecosia: Use Ecosia-themed empty reading list view matching production
+    /* Ecosia: Use Ecosia-themed empty reading list view
+    private lazy var emptyStateView: UIView = {
+        return ReaderPanelEmptyStateView(windowUUID: self.windowUUID)
+    }()
+    */
     private lazy var emptyStateView: UIView = {
         return EmptyReadingListView(windowUUID: self.windowUUID)
     }()

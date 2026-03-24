@@ -53,7 +53,9 @@ final class BookmarksViewController: SiteTableViewController,
             if #available(iOS 26.0, *) {
                 bottomRightButton.tintColor = currentTheme().colors.textPrimary
             }
-            // Ecosia: Add "More" button for import/export
+            /* Ecosia: Add "More" button for import/export
+            return [flexibleSpace, bottomRightButton]
+            */
             return [moreButton, flexibleSpace, bottomRightButton]
         case .bookmarks(state: .inFolderEditMode):
             bottomRightButton.title = String.AppSettingsDone
@@ -102,6 +104,16 @@ final class BookmarksViewController: SiteTableViewController,
         return button
     }()
 
+    /* Ecosia: Replace Firefox empty state with Ecosia empty bookmarks view
+    private lazy var emptyStateView: BookmarksFolderEmptyStateView = .build { emptyStateView in
+        emptyStateView.signInAction = { [weak self] in
+            self?.bookmarkCoordinatorDelegate?.showSignIn()
+        }
+    }
+
+    private lazy var a11yEmptyStateScrollView: UIScrollView = .build()
+    */
+
     // Ecosia: "More" button for import/export bookmarks
     private lazy var moreButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
@@ -114,7 +126,6 @@ final class BookmarksViewController: SiteTableViewController,
         return button
     }()
 
-    // Ecosia: Use Ecosia empty bookmarks view with import/learn more
     private lazy var emptyBookmarksView: EmptyBookmarksView = {
         let view = EmptyBookmarksView(initialBottomMargin: 0)
         view.delegate = self
@@ -163,7 +174,10 @@ final class BookmarksViewController: SiteTableViewController,
         }
 
         MainActor.assumeIsolated {
-            // Ecosia: Clean up empty state view
+            /* Ecosia: Clean up Ecosia empty state view instead of Firefox one
+            // FXIOS-11315: Necessary to prevent BookmarksFolderEmptyStateView from being retained in memory
+            a11yEmptyStateScrollView.removeFromSuperview()
+            */
             emptyBookmarksView.removeFromSuperview()
         }
     }
@@ -410,7 +424,26 @@ final class BookmarksViewController: SiteTableViewController,
         }
     }
 
-    // Ecosia: Show/hide empty state view
+    /* Ecosia: Replace Firefox empty state with Ecosia empty bookmarks view
+    private func updateEmptyState(animated: Bool) {
+        let showEmptyState = viewModel.bookmarkNodes.isEmpty && !tableView.isEditing
+
+        if animated {
+            a11yEmptyStateScrollView.isHidden = false
+            UIView.animate(withDuration: 0.2, animations: {
+                self.a11yEmptyStateScrollView.alpha = showEmptyState ? 1 : 0
+            }) { _ in
+                self.a11yEmptyStateScrollView.isHidden = !showEmptyState
+            }
+        } else {
+            a11yEmptyStateScrollView.alpha = showEmptyState ? 1 : 0
+            a11yEmptyStateScrollView.isHidden = !showEmptyState
+        }
+
+        emptyStateView.configure(isRoot: viewModel.bookmarkFolderGUID == BookmarkRoots.MobileFolderGUID,
+                                 isSignedIn: profile.hasAccount())
+    }
+    */
     private func updateEmptyState(animated: Bool) {
         let showEmptyState = viewModel.bookmarkNodes.isEmpty && !tableView.isEditing
 
@@ -464,7 +497,32 @@ final class BookmarksViewController: SiteTableViewController,
         })
     }
 
-    // Ecosia: Apply theme to empty state view
+    /* Ecosia: Replace Firefox empty state setup with Ecosia empty bookmarks view
+    // MARK: - UI Setup
+    private func setupEmptyStateView() {
+        view.addSubview(a11yEmptyStateScrollView)
+        a11yEmptyStateScrollView.addSubview(emptyStateView)
+        a11yEmptyStateScrollView.isHidden = true
+        NSLayoutConstraint.activate(
+            [
+                a11yEmptyStateScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                a11yEmptyStateScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                a11yEmptyStateScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                a11yEmptyStateScrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+
+                emptyStateView.leadingAnchor.constraint(equalTo: a11yEmptyStateScrollView.contentLayoutGuide.leadingAnchor),
+                emptyStateView.trailingAnchor.constraint(
+                        equalTo: a11yEmptyStateScrollView.contentLayoutGuide.trailingAnchor),
+                emptyStateView.topAnchor.constraint(equalTo: a11yEmptyStateScrollView.contentLayoutGuide.topAnchor),
+                emptyStateView.bottomAnchor.constraint(equalTo: a11yEmptyStateScrollView.contentLayoutGuide.bottomAnchor),
+                emptyStateView.widthAnchor.constraint(equalTo: a11yEmptyStateScrollView.frameLayoutGuide.widthAnchor),
+                emptyStateView.heightAnchor.constraint(
+                    greaterThanOrEqualTo: a11yEmptyStateScrollView.frameLayoutGuide.heightAnchor),
+            ]
+        )
+        emptyStateView.applyTheme(theme: currentTheme())
+    }
+    */
     private func setupEmptyStateView() {
         emptyBookmarksView.applyTheme(theme: currentTheme())
     }
