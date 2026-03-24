@@ -27,7 +27,7 @@ extension Analytics {
 
     /// Subject configuration for private browsing sessions.
     /// - Sets the userId to a null UUID so the field is present but carries no identifying value.
-    static let privateSubjectConfiguration = SubjectConfiguration()
+    nonisolated(unsafe) static let privateSubjectConfiguration = SubjectConfiguration()
         .userId(UUID(uuid: UUID_NULL).uuidString)
 
     /// Configuration for the daily tracking plugin.
