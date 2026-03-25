@@ -21,6 +21,16 @@ func ecosiaDisclosureIndicator(theme: Theme) -> UIImageView {
     return disclosureIndicator
 }
 
+/// Hidden placeholder used by the nudge card section.
+/// Carries the accessibility identifier so `isDefaultBrowserCell` can identify the section,
+/// but `hidden = true` ensures no row is rendered.
+final class EcosiaDefaultBrowserNudgeCardPlaceholder: Setting {
+    override var hidden: Bool { true }
+    override var accessibilityIdentifier: String? {
+        AccessibilityIdentifiers.Settings.DefaultBrowser.defaultBrowser
+    }
+}
+
 final class EcosiaDefaultBrowserSettings: Setting {
 
     override var accessoryView: UIImageView? {

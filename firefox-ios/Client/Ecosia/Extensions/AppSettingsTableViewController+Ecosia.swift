@@ -7,46 +7,19 @@ import UIKit
 import Shared
 import Ecosia
 
-extension AppSettingsTableViewController {
-
-    func getEcosiaSettingsSectionsShowingDebug(_ isDebugSectionEnabled: Bool) -> [SettingSection] {
-        var sections = [
-            getSearchSection(),
-            getCustomizationSection(),
-            getEcosiaGeneralSection(),
-            getEcosiaPrivacySection(),
-            getEcosiaSupportSection(),
-            getEcosiaAboutSection()
-        ]
-
-        if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
-            sections.insert(getEcosiaDefaultBrowserSection(), at: 0)
-        }
-
-        if isDebugSectionEnabled {
-            sections.append(getEcosiaDebugSupportSection())
-            sections.append(getEcosiaDebugUnleashSection())
-            sections.append(getEcosiaDebugAccountsSection())
-        }
-
-        return sections
-    }
-}
+// MARK: - Ecosia Settings Sections
+// These sections are called from generateSettings() in AppSettingsTableViewController.swift
+// to integrate Ecosia-specific settings into Firefox's settings flow.
 
 extension AppSettingsTableViewController {
 
-    // We need this section as a placeholder for the default browser nudge card.
-    private func getEcosiaDefaultBrowserSection() -> SettingSection {
-        .init(children: [DefaultBrowserSetting(theme: themeManager.getCurrentTheme(for: windowUUID))])
-    }
-
-    private func getSearchSection() -> SettingSection {
+    func getSearchSection() -> [SettingSection] {
         guard let profile else {
-            return .init(title: .init(string: .localized(.search)), children: [
+            return [SettingSection(title: .init(string: .localized(.search)), children: [
                 EcosiaDefaultBrowserSettings(),
                 SearchAreaSetting(settings: self),
                 SafeSearchSettings(settings: self)
-            ])
+            ])]
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         let settings: [Setting] = [
@@ -58,11 +31,11 @@ extension AppSettingsTableViewController {
             AIOverviewsSearchSettings(prefs: profile.prefs, theme: theme)
         ]
 
-        return .init(title: .init(string: .localized(.search)),
-                     children: settings)
+        return [SettingSection(title: .init(string: .localized(.search)),
+                               children: settings)]
     }
 
-    private func getCustomizationSection() -> SettingSection {
+    func getCustomizationSection() -> [SettingSection] {
         var customizationSettings: [Setting] = [
             HomepageSettings(settings: self, settingsDelegate: settingsDelegate)
         ]
@@ -78,92 +51,16 @@ extension AppSettingsTableViewController {
             customizationSettings.append(SearchBarSetting(settings: self, profile: profile, settingsDelegate: parentCoordinator))
         }
 
-        return .init(title: .init(string: .localized(.customization)),
-                     children: customizationSettings)
+        return [SettingSection(title: .init(string: .localized(.customization)),
+                               children: customizationSettings)]
     }
+}
 
-    private func getEcosiaGeneralSection() -> SettingSection {
-        guard let profile else {
-            return .init(title: .init(string: .SettingsGeneralSectionTitle),
-                         children: [
-                            ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
-                            SiriPageSetting(settings: self, settingsDelegate: parentCoordinator)
-                         ])
-        }
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        /* Ecosia: OpenWithSetting expects BrowsingSettingsDelegate; parentCoordinator is SettingsFlowDelegate so pass nil */
-        let generalSettings: [Setting] = [
-            OpenWithSetting(settings: self, settingsDelegate: nil),
-            ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
-            SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
-            BlockPopupSetting(prefs: profile.prefs),
-            NoImageModeSetting(profile: profile),
-            BoolSetting(
-                prefs: profile.prefs,
-                theme: theme,
-                prefKey: "showClipboardBar",
-                defaultValue: false,
-                titleText: .SettingsOfferClipboardBarTitle,
-                statusText: String(format: .SettingsOfferClipboardBarStatus, AppName.shortName.rawValue)
-            ),
-            BoolSetting(
-                prefs: profile.prefs,
-                theme: theme,
-                prefKey: PrefsKeys.ContextMenuShowLinkPreviews,
-                defaultValue: true,
-                titleText: .SettingsShowLinkPreviewsTitle,
-                statusText: .SettingsShowLinkPreviewsStatus
-            )
-        ]
+// MARK: - Ecosia Debug Sections
 
-        return .init(title: .init(string: .SettingsGeneralSectionTitle),
-                     children: generalSettings)
-    }
+extension AppSettingsTableViewController {
 
-    private func getEcosiaSupportSection() -> SettingSection {
-        let helpCenterSetting = HelpCenterSetting()
-        let sendFeedbackSetting = EcosiaSendFeedbackSetting(settings: self)
-
-        return .init(title: NSAttributedString(string: .AppSettingsSupport),
-                     children: [helpCenterSetting, sendFeedbackSetting])
-    }
-
-    private func getEcosiaPrivacySection() -> SettingSection {
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        var privacySettings: [Setting] = [
-            PasswordManagerSetting(settings: self, settingsDelegate: parentCoordinator),
-            ClearPrivateDataSetting(settings: self, settingsDelegate: parentCoordinator),
-            ContentBlockerSetting(settings: self, settingsDelegate: parentCoordinator),
-            EcosiaPrivacyPolicySetting(settings: self),
-            EcosiaTermsSetting(settings: self)
-        ]
-        if let profile {
-            privacySettings.insert(EcosiaSendAnonymousUsageDataSetting(prefs: profile.prefs, theme: theme), at: 2)
-            privacySettings.insert(BoolSetting(prefs: profile.prefs,
-                                               theme: theme,
-                                               prefKey: PrefsKeys.Settings.closePrivateTabs,
-                                               // Ecosia: Default value is different from Firefox
-                                               defaultValue: PrefsKeysDefaultValues.Settings.closePrivateTabs,
-                                               titleText: .AppSettingsClosePrivateTabsTitle,
-                                               statusText: .AppSettingsClosePrivateTabsDescription), at: 3)
-        }
-
-        return .init(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
-                     children: privacySettings)
-    }
-
-    private func getEcosiaAboutSection() -> SettingSection {
-        let aboutSettings = [
-            AppStoreReviewSetting(settingsDelegate: parentCoordinator),
-            VersionSetting(settingsDelegate: self),
-            LicenseAndAcknowledgementsSetting(settingsDelegate: parentCoordinator),
-        ]
-
-        return .init(title: NSAttributedString(string: .AppSettingsAbout),
-                     children: aboutSettings)
-    }
-
-    private func getEcosiaDebugSupportSection() -> SettingSection {
+    func getEcosiaDebugSupportSection() -> SettingSection {
         /* Ecosia: FasterInactiveTabs removed in Firefox upgrade; re-add if type is restored */
         var hiddenDebugSettings: [Setting] = [
             ExportBrowserDataSetting(settings: self),
@@ -193,7 +90,7 @@ extension AppSettingsTableViewController {
         return SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugSettings)
     }
 
-    private func getEcosiaDebugUnleashSection() -> SettingSection {
+    func getEcosiaDebugUnleashSection() -> SettingSection {
         let unleashSettings: [Setting] = [
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
@@ -205,7 +102,7 @@ extension AppSettingsTableViewController {
         return SettingSection(title: NSAttributedString(string: "Debug - Unleash"), children: unleashSettings)
     }
 
-    private func getEcosiaDebugAccountsSection() -> SettingSection {
+    func getEcosiaDebugAccountsSection() -> SettingSection {
         let accountSettings: [Setting] = [
             ResetAccountImpactNudgeCard(settings: self),
             DebugAddSeedsLoggedOut(settings: self),
