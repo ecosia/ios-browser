@@ -73,7 +73,6 @@ final class WallpaperSettingsViewModel: FeatureFlaggable, @unchecked Sendable {
     ) -> WallpaperSettingsHeaderViewModel? {
         guard let collection = wallpaperCollections[safe: sectionIndex] else { return nil }
 
-        /* Ecosia: Use collection heading and subheading from JSON directly; no fallback to localized strings
         let isClassic = collection.type == .classic
         let classicString = String(format: stringIds.ClassicWallpaper, AppName.shortName.rawValue)
         let title: String = isClassic ? classicString : stringIds.LimitedEditionWallpaper
@@ -84,10 +83,6 @@ final class WallpaperSettingsViewModel: FeatureFlaggable, @unchecked Sendable {
         if sectionIndex > 1 {
             description = stringIds.LimitedEditionDefaultDescription
         }
-        */
-        let title: String? = collection.heading
-        let subheading: String? = collection.subheading
-        let buttonTitle: String? = collection.learnMoreUrl != nil ? stringIds.LearnMoreButton : nil
 
         let buttonAction = { [weak self] in
             guard let strongSelf = self, let learnMoreUrl = collection.learnMoreUrl else { return }
@@ -99,21 +94,12 @@ final class WallpaperSettingsViewModel: FeatureFlaggable, @unchecked Sendable {
             strongSelf.tabManager.selectTab(tab, previous: nil)
         }
 
-        /* Ecosia: Updated init call to match renamed struct properties (title optional, subheading replaces description)
         return WallpaperSettingsHeaderViewModel(
             theme: theme,
             title: title,
             titleA11yIdentifier: "\(a11yIds.collectionTitle)_\(sectionIndex)",
             description: description,
             descriptionA11yIdentifier: "\(a11yIds.collectionDescription)_\(sectionIndex)",
-            buttonTitle: buttonTitle,
-            buttonA11yIdentifier: "\(a11yIds.collectionButton)_\(sectionIndex)",
-            buttonAction: collection.learnMoreUrl != nil ? buttonAction : nil)
-        */
-        return WallpaperSettingsHeaderViewModel(
-            theme: theme,
-            title: title,
-            subheading: subheading,
             buttonTitle: buttonTitle,
             buttonA11yIdentifier: "\(a11yIds.collectionButton)_\(sectionIndex)",
             buttonAction: collection.learnMoreUrl != nil ? buttonAction : nil)
