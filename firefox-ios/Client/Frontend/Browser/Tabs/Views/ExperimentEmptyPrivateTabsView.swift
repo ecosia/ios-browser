@@ -159,6 +159,7 @@ class ExperimentEmptyPrivateTabsView: UIView,
                                                     constant: -UX.paddingInBetweenItems),
         ])
         */
+        // Ecosia: Vertically center content using stack view
         contentStack.addArrangedSubview(iconImageView)
         contentStack.addArrangedSubview(titleLabel)
         contentStack.addArrangedSubview(descriptionLabel)
