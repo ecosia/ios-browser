@@ -228,11 +228,11 @@ final class AnalyticsSpyTests: XCTestCase {
 
     // MARK: - Bookmarks Tests
 
-    var panel: LegacyBookmarksPanel {
+    var panel: BookmarksViewController {
         let viewModel = BookmarksPanelViewModel(profile: profileMock,
                                                 bookmarksHandler: profileMock.places,
                                                 bookmarkFolderGUID: "TestGuid")
-        return LegacyBookmarksPanel(viewModel: viewModel, windowUUID: .XCTestDefaultUUID)
+        return BookmarksViewController(viewModel: viewModel, windowUUID: .XCTestDefaultUUID)
     }
 
     func testTrackImportClick() {

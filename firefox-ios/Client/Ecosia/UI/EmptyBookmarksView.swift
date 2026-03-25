@@ -78,17 +78,21 @@ final class EmptyBookmarksView: UIView, ThemeApplicable {
         return nil
     }
 
+    private enum Layout {
+        static let topPadding: CGFloat = 120
+    }
+
     init(
         initialBottomMargin: CGFloat
     ) {
         super.init(frame: .zero)
-        setup(initialBottomMargin)
+        setup()
     }
 
-    private func setup(_ initialBottomMargin: CGFloat) {
+    private func setup() {
         addSubview(containerStackView)
 
-        bottomMarginConstraint = containerStackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: initialBottomMargin)
+        bottomMarginConstraint = containerStackView.topAnchor.constraint(equalTo: topAnchor, constant: Layout.topPadding)
 
         NSLayoutConstraint.activate([
             containerStackView.leadingAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.leadingAnchor, constant: UX.LayoutMargingsInset),

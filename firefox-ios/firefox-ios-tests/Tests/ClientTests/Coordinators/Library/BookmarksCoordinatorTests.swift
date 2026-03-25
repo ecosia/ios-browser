@@ -6,6 +6,7 @@ import XCTest
 import Storage
 @testable import Client
 
+@MainActor
 final class BookmarksCoordinatorTests: XCTestCase {
     private var router: MockRouter!
     private var profile: MockProfile!
@@ -36,7 +37,7 @@ final class BookmarksCoordinatorTests: XCTestCase {
 
         subject.start(from: folder)
 
-        XCTAssertTrue(router.pushedViewController is LegacyBookmarksPanel)
+        XCTAssertTrue(router.pushedViewController is BookmarksViewController)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
@@ -46,7 +47,7 @@ final class BookmarksCoordinatorTests: XCTestCase {
 
         subject.showBookmarkDetail(for: folder, folder: folder)
 
-        XCTAssertTrue(router.pushedViewController is LegacyBookmarkDetailPanel)
+        XCTAssertTrue(router.pushedViewController is EditFolderViewController)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
@@ -55,7 +56,7 @@ final class BookmarksCoordinatorTests: XCTestCase {
 
         subject.showBookmarkDetail(bookmarkType: .bookmark, parentBookmarkFolder: LocalDesktopFolder())
 
-        XCTAssertTrue(router.pushedViewController is LegacyBookmarkDetailPanel)
+        XCTAssertTrue(router.pushedViewController is EditBookmarkViewController)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
@@ -64,7 +65,7 @@ final class BookmarksCoordinatorTests: XCTestCase {
 
         subject.showBookmarkDetail(bookmarkType: .folder, parentBookmarkFolder: LocalDesktopFolder())
 
-        XCTAssertTrue(router.pushedViewController is LegacyBookmarkDetailPanel)
+        XCTAssertTrue(router.pushedViewController is EditFolderViewController)
         XCTAssertEqual(router.pushCalled, 1)
     }
 
@@ -86,8 +87,8 @@ final class BookmarksCoordinatorTests: XCTestCase {
             router: router,
             profile: profile,
             windowUUID: .XCTestDefaultUUID,
-            parentCoordinator: parentCoordinator,
-            navigationHandler: navigationHandler
+            libraryCoordinator: parentCoordinator,
+            libraryNavigationHandler: navigationHandler
         )
         trackForMemoryLeaks(subject)
         return subject

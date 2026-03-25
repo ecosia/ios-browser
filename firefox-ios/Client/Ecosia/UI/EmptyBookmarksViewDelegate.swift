@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 protocol EmptyBookmarksViewDelegate: AnyObject {
     func emptyBookmarksViewLearnMoreTapped(_ view: EmptyBookmarksView)
     func emptyBookmarksViewImportBookmarksTapped(_ view: EmptyBookmarksView)
