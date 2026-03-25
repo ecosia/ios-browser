@@ -20,6 +20,9 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         // Fixed height reserved for the title — sized for up to 3 lines of brand font
         // (3 × ~39.6pt line height ≈ 119pt). Keeps the tiles stable when the title changes.
         static let titleReservedHeight: CGFloat = 120
+        // In landscape the title fits in 1-2 shorter lines; reduce the reserved height so
+        // the block doesn't have a large empty area above the bottom-pinned label.
+        static let titleReservedHeightLandscape: CGFloat = 60
         // Horizontal inset for the title — nearly full-width for maximum readability
         static let titleHorizontalInset: CGFloat = .ecosia.space._s
         // Horizontal inset for the tiles (Figma redline: 61pt from cell edge)
@@ -90,6 +93,8 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     // Updated in updateContainerAxisForCurrentTraits() to shrink the cell in landscape.
     private var minimumHeightConstraint: NSLayoutConstraint?
+    // Updated in updateContainerAxisForCurrentTraits() to shrink the title area in landscape.
+    private var titleContainerHeightConstraint: NSLayoutConstraint?
 
     private var impactRows: [NTPImpactRowView] {
         tilesStack.arrangedSubviews.compactMap { $0 as? NTPImpactRowView }
@@ -154,7 +159,13 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             titleContainerView.leadingAnchor.constraint(equalTo: contentBlock.leadingAnchor),
             titleContainerView.trailingAnchor.constraint(equalTo: contentBlock.trailingAnchor),
             titleContainerView.topAnchor.constraint(equalTo: contentBlock.topAnchor),
-            titleContainerView.heightAnchor.constraint(equalToConstant: UX.titleReservedHeight),
+        ])
+
+        let titleHeight = titleContainerView.heightAnchor.constraint(equalToConstant: UX.titleReservedHeight)
+        titleContainerHeightConstraint = titleHeight
+        titleHeight.isActive = true
+
+        NSLayoutConstraint.activate([
 
             // Tiles — narrower than the title; extra inset applied within the block
             tilesStack.leadingAnchor.constraint(equalTo: contentBlock.leadingAnchor, constant: tilesIntraBlockInset),
@@ -186,10 +197,14 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         // neither tile stretches wider than the other. In portrait (vertical axis), .fill lets each
         // tile self-size by its content height — equal height is then enforced by tileEqualHeightConstraint.
         tilesStack.distribution = isLandscape ? .fillEqually : .fill
+        // Center alignment in landscape so tiles don't stretch to the full stack height.
+        // In portrait .fill stretches tiles to the full width, which is the desired behaviour.
+        tilesStack.alignment = isLandscape ? .center : .fill
         tilesStack.spacing = UX.cellsSpacing
         // Shrink the minimum cell height in landscape so the card is shorter and there is
         // less empty space between the title and the NTPHeader.
         minimumHeightConstraint?.constant = isLandscape ? UX.minimumCellHeightLandscape : UX.minimumCellHeight
+        titleContainerHeightConstraint?.constant = isLandscape ? UX.titleReservedHeightLandscape : UX.titleReservedHeight
     }
 
     // MARK: - Title

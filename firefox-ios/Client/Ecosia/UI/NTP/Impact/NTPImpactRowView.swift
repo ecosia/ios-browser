@@ -215,10 +215,11 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
             glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
+            mainContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            mainContainerView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: UX.padding),
+            mainContainerView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -UX.padding),
             mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
-            mainContainerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
 
             dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             dividerView.trailingAnchor.constraint(equalTo: trailingAnchor),

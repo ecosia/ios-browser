@@ -230,7 +230,11 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         contentView.addSubview(descriptionWrapper)
 
         NSLayoutConstraint.activate([
+            /* Ecosia: Center icon+label group vertically; pin icon to centerY offset by half the combined height
             rootContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
+            */
+            rootContainer.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor),
+            rootContainer.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -UX.textSafeSpace),
             rootContainer.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             rootContainer.widthAnchor.constraint(equalToConstant: UX.imageBackgroundSize.width),
             rootContainer.heightAnchor.constraint(equalToConstant: UX.imageBackgroundSize.height),
@@ -238,7 +242,10 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
             descriptionWrapper.topAnchor.constraint(equalTo: rootContainer.bottomAnchor, constant: UX.textSafeSpace),
             descriptionWrapper.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             descriptionWrapper.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            /* Ecosia: bottomAnchor now a soft constraint so label doesn't clip
             descriptionWrapper.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            */
+            descriptionWrapper.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
 
             selectedOverlay.topAnchor.constraint(equalTo: rootContainer.topAnchor),
             selectedOverlay.leadingAnchor.constraint(equalTo: rootContainer.leadingAnchor),
