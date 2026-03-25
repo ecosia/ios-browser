@@ -177,7 +177,7 @@ class BrowserCoordinator: BaseCoordinator,
         }
 
         homepageController.view.accessibilityElementsHidden = false
-        
+
         dispatchActionForEmbeddingHomepage(with: isZeroSearch)
         guard browserViewController.embedContent(homepageController) else {
             logger.log("Unable to embed new homepage", level: .debug, category: .coordinator)

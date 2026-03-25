@@ -15,7 +15,6 @@ class WallpaperSelectorViewModelTests: XCTestCase {
 
         wallpaperManager = WallpaperManagerMock()
         addWallpaperCollections()
-
     }
 
     override func tearDown() {

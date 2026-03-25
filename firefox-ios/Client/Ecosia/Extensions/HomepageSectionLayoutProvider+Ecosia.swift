@@ -6,14 +6,14 @@ import UIKit
 import Common
 
 extension HomepageSectionLayoutProvider {
-    
+
     /// Creates layout for Ecosia-specific sections
     func createEcosiaLayoutSection(
         for section: HomepageSection,
         with environment: NSCollectionLayoutEnvironment
     ) -> NSCollectionLayoutSection? {
         let traitCollection = environment.traitCollection
-        
+
         switch section {
         case .ecosiaHeader:
             return createEcosiaHeaderLayout(for: traitCollection)
@@ -34,7 +34,7 @@ extension HomepageSectionLayoutProvider {
             return nil
         }
     }
-    
+
     // MARK: - Individual Section Layouts
 
     private func createEcosiaHeaderLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
@@ -58,20 +58,20 @@ extension HomepageSectionLayoutProvider {
         section.contentInsets = .zero
         return section
     }
-    
+
     private func createEcosiaLogoLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .estimated(100)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
+
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .estimated(100)
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-        
+
         let section = NSCollectionLayoutSection(group: group)
 
         // Top spacing is 0 — the header's SwiftUI .padding(.vertical, _m) provides ~16pt
@@ -99,7 +99,7 @@ extension HomepageSectionLayoutProvider {
         section.contentInsets = insets
         return section
     }
-    
+
     private func createEcosiaImpactLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
         // NTPImpactCell is a SINGLE cell whose minimum height is NTPImpactCell.UX.minimumCellHeight.
         // The large minimum height lets the cell fill the wallpaper card, pushing shortcuts toward
@@ -118,7 +118,7 @@ extension HomepageSectionLayoutProvider {
         section.contentInsets = .zero
         return section
     }
-    
+
     /// News section layout — uses the same insets as the impact section for consistent width on all devices.
     private func createEcosiaNewsLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
         // item and group estimated(100), horizontal group count 1 per row; we show 3 rows
@@ -151,7 +151,7 @@ extension HomepageSectionLayoutProvider {
         section.boundarySupplementaryItems = [header]
         return section
     }
-    
+
     private func createEcosiaNTPCustomizationLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
         // Dimensions from NTPCustomizationCellViewModel (NTPCustomizationCell.UX.buttonHeight)
         let itemSize = NSCollectionLayoutSize(
@@ -169,7 +169,7 @@ extension HomepageSectionLayoutProvider {
         section.contentInsets = insets
         return section
     }
-    
+
     /// Shortcuts (top sites) layout — uses the same insets as all other Ecosia sections so the grid
     /// is the same width as impact, news, and library on every device, including iPad.
     private func createEcosiaTopSitesLayout(
@@ -204,7 +204,7 @@ extension HomepageSectionLayoutProvider {
         bottomSpacing: CGFloat = 32
     ) -> NSDirectionalEdgeInsets {
         let minimumInsets: CGFloat = 16
-        
+
         guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else {
             return NSDirectionalEdgeInsets(
                 top: topSpacing,
@@ -213,19 +213,19 @@ extension HomepageSectionLayoutProvider {
                 trailing: minimumInsets
             )
         }
-        
+
         var horizontal: CGFloat = traitCollection.horizontalSizeClass == .regular ? 100 : 0
         let safeAreaInsets = window.safeAreaInsets.left
         horizontal += minimumInsets + safeAreaInsets
-        
+
         let orientation: UIInterfaceOrientation = window.windowScene?.interfaceOrientation ?? .portrait
-        
+
         // Center layout in iPhone landscape or regular size class
         if traitCollection.horizontalSizeClass == .regular ||
            (orientation.isLandscape && traitCollection.userInterfaceIdiom == .phone) {
             horizontal = window.bounds.width / 4
         }
-        
+
         return NSDirectionalEdgeInsets(
             top: topSpacing,
             leading: horizontal,

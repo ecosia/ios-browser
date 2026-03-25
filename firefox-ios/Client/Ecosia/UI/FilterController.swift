@@ -11,7 +11,7 @@ import Common
 final class FilterController: ThemedTableViewController {
 
     private let identifier = "filter"
-    private nonisolated(unsafe) static let items: [(AdultFilter, String)] = [
+    nonisolated(unsafe) private static let items: [(AdultFilter, String)] = [
         (.strict, .localized(.strict)),
         (.moderate, .localized(.moderate)),
         (.off, .localized(.off))

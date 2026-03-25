@@ -36,20 +36,6 @@ struct LabelButtonHeaderViewModel {
         buttonAction: nil,
         buttonA11yIdentifier: nil
     )
-
-    init(title: String?,
-         titleA11yIdentifier: String?,
-         isButtonHidden: Bool,
-         buttonTitle: String?,
-         buttonAction: ((UILabel) -> Void)?,
-         buttonA11yIdentifier: String?) {
-        self.title = title
-        self.titleA11yIdentifier = titleA11yIdentifier
-        self.isButtonHidden = isButtonHidden
-        self.buttonTitle = buttonTitle
-        self.buttonAction = buttonAction
-        self.buttonA11yIdentifier = buttonA11yIdentifier
-    }
 }
 
 // MARK: - HomepageViewModelProtocol
