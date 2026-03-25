@@ -33,7 +33,7 @@ final class NTPHeaderViewModel: ObservableObject {
     @Published var showSeedSparkles: Bool = false
 
     // nonisolated(unsafe) so deinit can remove observer without MainActor isolation
-    private nonisolated(unsafe) var levelUpObserver: NSObjectProtocol?
+    nonisolated(unsafe) private var levelUpObserver: NSObjectProtocol?
 
     // MARK: - Initialization
     init(profile: Profile,

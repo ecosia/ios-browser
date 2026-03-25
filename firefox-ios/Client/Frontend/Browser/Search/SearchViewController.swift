@@ -134,7 +134,7 @@ class SearchViewController: SiteTableViewController,
         searchEngineScrollView.decelerationRate = UIScrollView.DecelerationRate.fast
         searchEngineContainerView.addSubview(searchEngineScrollView)
         view.addSubview(searchEngineContainerView)
-        
+
         // Ecosia: Hide search engine selection UI
         searchEngineContainerView.isHidden = true
 
@@ -456,7 +456,7 @@ class SearchViewController: SiteTableViewController,
                 handleAISearchSelection(indexPath)
                 return
             }
-            
+
             guard let defaultEngine = viewModel.searchEnginesManager?.defaultEngine else { return }
 
             searchTelemetry?.selectedResult = .searchSuggest

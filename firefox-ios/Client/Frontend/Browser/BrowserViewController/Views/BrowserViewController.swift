@@ -140,7 +140,7 @@ class BrowserViewController: UIViewController,
     private(set) lazy var mailtoLinkHandler = MailtoLinkHandler()
     private lazy var statusBarOverlay: StatusBarOverlay = .build { view in
         view.accessibilityIdentifier = AccessibilityIdentifiers.Browser.statusBarOverlay
-	}
+    }
 
     // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
     // and its navigationType are available) to the actual tracking call in didCommit.

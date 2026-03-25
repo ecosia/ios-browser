@@ -121,11 +121,11 @@ extension NTPNewsCellViewModel {
     var numberOfItemsInSection: Int {
         return min(3, items.count)
     }
-    
+
     var hasData: Bool {
         numberOfItemsInSection > 0
     }
-    
+
     func refreshData(for traitCollection: UITraitCollection, size: CGSize, isPortrait: Bool, device: UIUserInterfaceIdiom) {
         news.load(session: .shared, force: !hasData)
     }

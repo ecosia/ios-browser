@@ -118,10 +118,10 @@ public final class RotatingTitlesService {
     }
 
     private enum CacheKey {
-        static func orderedTitles(language: String) -> String  { "ecosia.rotatingTitles.ordered.\(language)" }
-        static func startDate(language: String) -> String      { "ecosia.rotatingTitles.startDate.\(language)" }
-        static func cachedAt(language: String) -> String       { "ecosia.rotatingTitles.cachedAt.\(language)" }
-        static func frequencyDays(language: String) -> String  { "ecosia.rotatingTitles.frequencyDays.\(language)" }
+        static func orderedTitles(language: String) -> String { "ecosia.rotatingTitles.ordered.\(language)" }
+        static func startDate(language: String) -> String { "ecosia.rotatingTitles.startDate.\(language)" }
+        static func cachedAt(language: String) -> String { "ecosia.rotatingTitles.cachedAt.\(language)" }
+        static func frequencyDays(language: String) -> String { "ecosia.rotatingTitles.frequencyDays.\(language)" }
     }
 
     private var sessionTitles: [String]?

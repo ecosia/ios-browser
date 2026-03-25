@@ -479,7 +479,7 @@ final class HomepageViewController: UIViewController,
             of: UICollectionView.elementKindSectionHeader,
             cellType: LabelButtonHeaderView.self
         )
-        
+
         // Ecosia: Register supplementary views for Ecosia sections
         collectionView.registerSupplementary(
             of: UICollectionView.elementKindSectionFooter,
@@ -731,7 +731,7 @@ final class HomepageViewController: UIViewController,
             }
 
             return spacerCell
-        
+
         // Ecosia: Custom cell configuration
         case .ecosiaHeader:
             return configureEcosiaHeaderCell(at: indexPath)
@@ -763,7 +763,7 @@ final class HomepageViewController: UIViewController,
             )
             return UICollectionReusableView()
         }
-        
+
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             guard let sectionHeaderView = collectionView.dequeueSupplementary(

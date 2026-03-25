@@ -57,7 +57,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     private var whatsNewItems: [Version: [WhatsNewItem]]
 
     /// Immutable default items; safe to share across isolation boundaries (read-only after init).
-    private nonisolated(unsafe) static let defaultWhatsNewItems: [Version: [WhatsNewItem]] = [
+    nonisolated(unsafe) private static let defaultWhatsNewItems: [Version: [WhatsNewItem]] = [
         Version("9.0.0")!: [
             WhatsNewItem(image: .ecosia(named: "tree"),
                          title: .localized(.whatsNewFirstItemTitle9_0_0),

@@ -328,7 +328,7 @@ class LoginTest: BaseTestCase {
         }
     }
 
-    func closeURLBar () {
+    func closeURLBar() {
         waitForTabsButton()
         navigator.nowAt(NewTabScreen)
     }

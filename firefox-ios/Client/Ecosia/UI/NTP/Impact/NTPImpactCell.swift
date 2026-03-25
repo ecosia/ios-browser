@@ -166,7 +166,6 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             contentBlock.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UX.titleHorizontalInset),
             contentBlock.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.titleHorizontalInset),
             contentBlock.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-
         ])
 
         let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.minimumCellHeight)

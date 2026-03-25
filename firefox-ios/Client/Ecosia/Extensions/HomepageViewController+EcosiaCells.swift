@@ -9,20 +9,20 @@ import Ecosia
 // MARK: - Ecosia Cell Configuration
 
 extension HomepageViewController {
-    
+
     // MARK: - Ecosia Adapter Access
-    
+
     var ecosiaAdapter: EcosiaHomepageAdapter? {
         // This will be set as a property on HomepageViewController
         return objc_getAssociatedObject(self, &AssociatedKeys.ecosiaAdapter) as? EcosiaHomepageAdapter
     }
-    
+
     func setEcosiaAdapter(_ adapter: EcosiaHomepageAdapter) {
         objc_setAssociatedObject(self, &AssociatedKeys.ecosiaAdapter, adapter, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-    
+
     // MARK: - Cell Configuration Methods
-    
+
     func configureEcosiaHeaderCell(at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cv = homepageCollectionView else { return UICollectionViewCell() }
         if #available(iOS 16.0, *) {
@@ -32,7 +32,7 @@ extension HomepageViewController {
             ) else {
                 return UICollectionViewCell()
             }
-            
+
             if let viewModel = ecosiaAdapter?.headerViewModel {
                 headerCell.configure(with: viewModel, windowUUID: windowUUID)
             }
@@ -40,7 +40,7 @@ extension HomepageViewController {
         }
         return UICollectionViewCell()
     }
-    
+
     func configureEcosiaLogoCell(at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cv = homepageCollectionView,
               let logoCell = cv.dequeueReusableCell(
@@ -49,11 +49,11 @@ extension HomepageViewController {
         ) else {
             return UICollectionViewCell()
         }
-        
+
         logoCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return logoCell
     }
-    
+
     func configureEcosiaLibraryCell(at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cv = homepageCollectionView,
               let libraryCell = cv.dequeueReusableCell(
@@ -62,12 +62,12 @@ extension HomepageViewController {
         ) else {
             return UICollectionViewCell()
         }
-        
+
         libraryCell.delegate = ecosiaAdapter?.libraryDelegate
         libraryCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return libraryCell
     }
-    
+
     func configureEcosiaImpactCell(at indexPath: IndexPath, sectionIndex: Int) -> UICollectionViewCell {
         guard let cv = homepageCollectionView,
               let impactCell = cv.dequeueReusableCell(
@@ -76,7 +76,7 @@ extension HomepageViewController {
         ) else {
             return UICollectionViewCell()
         }
-        
+
         if let viewModel = ecosiaAdapter?.impactViewModel,
            sectionIndex < viewModel.infoItemSections.count {
             let items = viewModel.infoItemSections[sectionIndex]
@@ -90,7 +90,7 @@ extension HomepageViewController {
         }
         return impactCell
     }
-    
+
     func configureEcosiaNewsCell(at indexPath: IndexPath, itemIndex: Int = 0) -> UICollectionViewCell {
         guard let cv = homepageCollectionView,
               let newsCell = cv.dequeueReusableCell(
@@ -115,7 +115,7 @@ extension HomepageViewController {
         }
         return newsCell
     }
-    
+
     func configureEcosiaNTPCustomizationCell(at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cv = homepageCollectionView,
               let customizationCell = cv.dequeueReusableCell(
@@ -124,7 +124,7 @@ extension HomepageViewController {
         ) else {
             return UICollectionViewCell()
         }
-        
+
         customizationCell.delegate = ecosiaAdapter?.customizationDelegate
         customizationCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return customizationCell

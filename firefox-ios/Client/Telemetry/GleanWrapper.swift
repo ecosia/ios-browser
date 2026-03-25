@@ -46,7 +46,7 @@ protocol GleanWrapper: Sendable {
 struct DefaultGleanWrapper: GleanWrapper {
     // Ecosia: Shared instance for dependency injection
     static let shared = DefaultGleanWrapper()
-    
+
     private let glean: Glean
     // Ecosia: Use FakeGleanWrapper to silence all Firefox telemetry
     // This allows us to keep Firefox's telemetry code intact while preventing any actual data collection
@@ -58,7 +58,7 @@ struct DefaultGleanWrapper: GleanWrapper {
 
     // Ecosia: All methods below delegate to NoOpGleanWrapper (no-op) instead of real Glean implementation
     // This centralizes telemetry silencing in one place, making Firefox upgrades easier
-    
+
     func handleDeeplinkUrl(url: URL) {
         fakeWrapper.handleDeeplinkUrl(url: url)
     }
