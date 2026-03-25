@@ -69,7 +69,9 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
     private lazy var titleLabel: UILabel = .build { titleLabel in
         titleLabel.textAlignment = .center
-        // Ecosia: Figma shortcut label Typography: iOS/Footnote/Regular
+        /* Ecosia: Figma shortcut label Typography: iOS/Footnote/Regular
+        titleLabel.font = FXFontStyles.Bold.caption1.scaledFont()
+        */
         titleLabel.font = .preferredFont(forTextStyle: .footnote)
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.preferredMaxLayoutWidth = UX.imageBackgroundSize.width + HomepageUX.shadowRadius
@@ -316,8 +318,11 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 // MARK: ThemeApplicable
 extension TopSiteCell: ThemeApplicable {
     func applyTheme(theme: Theme) {
-        // Ecosia: Force white text over the glass wallpaper background; wallpaper textColor
-        // may be nil or dark which would be invisible against the NTP dark wallpaper.
+        /* Ecosia: Force white text over the glass wallpaper background; wallpaper textColor
+           may be nil or dark which would be invisible against the NTP dark wallpaper.
+        titleLabel.textColor = textColor ?? theme.colors.textPrimary
+        sponsoredLabel.textColor = textColor ?? theme.colors.textPrimary
+        */
         let labelColor: UIColor = ecosiaGlassStyleEnabled ? .white : (textColor ?? theme.colors.textPrimary)
         titleLabel.textColor = labelColor
         sponsoredLabel.textColor = labelColor
@@ -330,9 +335,10 @@ extension TopSiteCell: ThemeApplicable {
 // MARK: - Blurrable
 extension TopSiteCell: Blurrable {
     func adjustBlur(theme: Theme) {
-        // Ecosia: `ecosiaGlassStyleEnabled` is set to true by Ecosia cell configuration because
-        // Ecosia always shows an NTP background image. Firefox's `shouldApplyWallpaperBlur` checks
-        // Firefox's own WallpaperManager which returns false for the Ecosia background.
+        /* Ecosia: Add ecosiaGlassStyleEnabled check — Ecosia always has an NTP background image
+           but Firefox's shouldApplyWallpaperBlur returns false for the Ecosia bundled wallpaper.
+        if shouldApplyWallpaperBlur {
+        */
         if shouldApplyWallpaperBlur || ecosiaGlassStyleEnabled {
             /* Ecosia: Replace system material with the shared NTP "Glass Static" style so
                shortcut tiles match impact tiles and the pencil button over the wallpaper.

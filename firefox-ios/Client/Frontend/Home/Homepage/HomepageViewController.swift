@@ -351,7 +351,9 @@ final class HomepageViewController: UIViewController,
     }
 
     func newState(state: HomepageState) {
-        // Ecosia: Use Ecosia NTP background instead of Firefox wallpaper
+        /* Ecosia: Use Ecosia NTP background instead of Firefox wallpaper
+        wallpaperView.wallpaperState = state.wallpaperState
+        */
         if let ecosiaWallpaperState = getEcosiaNTPWallpaperState() {
             wallpaperView.wallpaperState = ecosiaWallpaperState
         } else {
