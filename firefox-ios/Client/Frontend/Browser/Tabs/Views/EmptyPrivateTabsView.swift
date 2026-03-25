@@ -106,7 +106,49 @@ class EmptyPrivateTabsView: UIView,
         containerView.addSubviews(iconImageView, titleLabel, descriptionLabel, learnMoreButton)
         scrollView.addSubview(containerView)
         addSubview(scrollView)
+
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor,
+                                                constant: UX.horizontalPadding),
+            scrollView.topAnchor.constraint(equalTo: topAnchor,
+                                            constant: UX.verticalPadding),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor,
+                                                 constant: -UX.horizontalPadding),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor,
+                                               constant: -UX.verticalPadding),
+
+            scrollView.frameLayoutGuide.widthAnchor.constraint(equalTo: containerView.widthAnchor),
+
+            scrollView.contentLayoutGuide.topAnchor.constraint(equalTo: containerView.topAnchor),
+            scrollView.contentLayoutGuide.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+
+            iconImageView.topAnchor.constraint(equalTo: containerView.topAnchor,
+                                               constant: UX.paddingInBetweenItems),
+            iconImageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: UX.imageSize.width),
+            iconImageView.heightAnchor.constraint(equalToConstant: UX.imageSize.height),
+
+            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor,
+                                            constant: UX.paddingInBetweenItems),
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+
+            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor,
+                                                  constant: UX.paddingInBetweenItems),
+            descriptionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+
+            learnMoreButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor,
+                                                 constant: UX.paddingInBetweenItems),
+            learnMoreButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            learnMoreButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            learnMoreButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,
+                                                    constant: -UX.paddingInBetweenItems),
+        ])
         */
+        // Ecosia: Vertically center content using stack view
         contentStack.addArrangedSubview(iconImageView)
         contentStack.addArrangedSubview(titleLabel)
         contentStack.addArrangedSubview(descriptionLabel)
