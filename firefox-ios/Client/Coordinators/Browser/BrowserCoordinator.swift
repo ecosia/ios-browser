@@ -138,6 +138,7 @@ class BrowserCoordinator: BaseCoordinator,
 
     // Ecosia: Handle sign-in request from welcome screen
     func didRequestSignIn(from coordinator: LaunchCoordinator) {
+        browserViewController.prepareToolbarsForWelcomeTransition()
         router.dismiss(animated: true) { [weak self] in
             guard let self else { return }
             self.browserViewController.animateToolbarsIn()

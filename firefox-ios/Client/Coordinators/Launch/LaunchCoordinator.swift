@@ -327,6 +327,9 @@ final class LaunchCoordinator: BaseCoordinator,
          }
          */
 
+        // Store manager before the @Sendable closure to avoid a Sendable capture error.
+        introManagerForEcosiaWelcome = manager
+
         // Ecosia: Wait for feature flags before deciding which onboarding to show.
         // The welcome screen is only presented if the experiment is enabled, preventing a crash
         // caused by presenting the welcome screen and calling didFinishLaunch concurrently.
@@ -335,11 +338,12 @@ final class LaunchCoordinator: BaseCoordinator,
                 guard let self = self else { return }
 
                 guard OnboardingProductTourExperiment.isEnabled else {
+                    self.introManagerForEcosiaWelcome = nil
                     self.parentCoordinator?.didFinishLaunch(from: self)
                     return
                 }
 
-                // Experiment is enabled: initialize tour state and present the welcome screen
+                // Experiment is enabled: initialize tour state and present the welcome screen.
                 ProductTourManager.shared.resetTour()
 
                 let introViewController = WelcomeNavigation(
@@ -472,10 +476,14 @@ final class LaunchCoordinator: BaseCoordinator,
 // Ecosia: custom onboarding
 extension LaunchCoordinator: WelcomeDelegate {
     func welcomeDidFinish(_ welcome: WelcomeViewController) {
+        introManagerForEcosiaWelcome?.didSeeIntroScreen()
+        introManagerForEcosiaWelcome = nil
         self.parentCoordinator?.didFinishLaunch(from: self)
     }
 
     func welcomeDidRequestSignIn(_ welcome: WelcomeViewController) {
+        introManagerForEcosiaWelcome?.didSeeIntroScreen()
+        introManagerForEcosiaWelcome = nil
         self.parentCoordinator?.didRequestSignIn(from: self)
     }
 }
