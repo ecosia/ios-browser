@@ -15,3 +15,4 @@ MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = $(inherited) -ld_classic
 DEVELOPMENT_TEAM = 33YMRSYD2L
 MOZ_WALLPAPER_ASSET_URL=https://cdn.ecosia.org/static/mobile-wallpapers
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) ECOSIA

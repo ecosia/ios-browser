@@ -255,6 +255,7 @@ struct NavigationBarState: StateType, Equatable {
             forwardAction(enabled: canGoForward)
         ]
 
+        /* Ecosia: Always use version2 order (back, forward, middle, tabs, menu) with custom ellipsis icon
         switch layout {
         case .version1, .none:
             actions.append(middleAction)
@@ -267,6 +268,10 @@ struct NavigationBarState: StateType, Equatable {
             actions.append(menuAction(iconName: StandardImageIdentifiers.Large.moreHorizontalRound,
                                       showWarningBadge: showWarningBadge))
         }
+        */
+        actions.append(middleAction)
+        actions.append(tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode))
+        actions.append(menuAction(iconName: "elipsis", showWarningBadge: showWarningBadge))
 
         return actions
     }
