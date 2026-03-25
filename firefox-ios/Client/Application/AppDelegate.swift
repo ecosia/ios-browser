@@ -159,6 +159,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         if let firefoxSuggest = profile.firefoxSuggest {
             suggestBackgroundUtility = BackgroundFirefoxSuggestIngestUtility(firefoxSuggest: firefoxSuggest)
 		}
+        // Ecosia: Update EcosiaInstallType if needed. This should always happen before `FeatureManagement`
+        // so that versionOnInstall and install type are available as Unleash context properties.
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType()
+
         /*
          Ecosia: Feature Management fetch
          We perform the same configuration retrieval in

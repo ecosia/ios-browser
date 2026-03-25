@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import Foundation
 import WebKit
 import Shared
@@ -307,6 +308,11 @@ class BrowserCoordinator: BaseCoordinator,
     }
 
     func browserHasLoaded() {
+        // Ecosia: Store the current version as the upgrade version once the browser is ready.
+        if !User.shared.firstTime {
+            EcosiaInstallType.evaluateCurrentEcosiaInstallType(storeUpgradeVersion: true)
+        }
+
         if !isDeeplinkOptimiziationRefactorEnabled {
             browserIsReady = true
             logger.log("Browser has loaded", level: .info, category: .coordinator)
