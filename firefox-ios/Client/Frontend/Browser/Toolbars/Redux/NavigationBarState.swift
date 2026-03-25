@@ -56,9 +56,18 @@ struct NavigationBarState: StateType, Equatable {
         a11yLabel: .TabToolbarDataClearanceAccessibilityLabel,
         a11yId: AccessibilityIdentifiers.Toolbar.fireButton)
 
+    /* Ecosia: Use Ecosia-owned nav-add icon instead of Firefox plusLarge
     private static let newTabAction = ToolbarActionConfiguration(
         actionType: .newTab,
         iconName: StandardImageIdentifiers.Large.plus,
+        isEnabled: true,
+        a11yLabel: .Toolbars.NewTabButton,
+        a11yId: AccessibilityIdentifiers.Toolbar.addNewTabButton)
+    */
+    // Ecosia: nav-add lives in Client/Ecosia/UI/Ecosia.xcassets/TabToolbar/nav-add.imageset
+    private static let newTabAction = ToolbarActionConfiguration(
+        actionType: .newTab,
+        iconName: "nav-add",
         isEnabled: true,
         a11yLabel: .Toolbars.NewTabButton,
         a11yId: AccessibilityIdentifiers.Toolbar.addNewTabButton)
