@@ -254,8 +254,9 @@ final class EcosiaHomepageAdapter {
 
         // Fallback to default bundled background if nothing loaded
         if portraitImage == nil {
-            portraitImage = UIImage(named: "ntpBackground")
-            landscapeImage = UIImage(named: "ntpBackground")
+            // Ecosia: load from Ecosia framework bundle where the asset now lives
+            portraitImage = UIImage(named: "ntpBackground", in: .ecosia, with: nil)
+            landscapeImage = UIImage(named: "ntpBackground", in: .ecosia, with: nil)
         }
 
         return WallpaperConfiguration(
