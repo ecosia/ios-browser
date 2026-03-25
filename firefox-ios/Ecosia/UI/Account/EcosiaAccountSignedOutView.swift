@@ -55,7 +55,7 @@ public struct EcosiaAccountSignedOutView: View {
                     title: String.localized(.seedsSymbolizeYourOwnImpact),
                     description: String.localized(.collectSeedsEveryDayYouUse),
                     buttonText: String.localized(.learnMoreAboutSeeds),
-                    image: UIImage(named: "account-menu-impact-flag", in: .ecosia, with: nil),
+                    image: .ecosia(named: "account-menu-impact-flag"),
                     showsCloseButton: true,
                     style: NudgeCardStyle(
                         backgroundColor: theme.cardBackgroundColor,

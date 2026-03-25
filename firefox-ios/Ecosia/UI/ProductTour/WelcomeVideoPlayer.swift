@@ -33,7 +33,7 @@ struct WelcomeVideoPlayer: UIViewRepresentable {
         guard let videoURL = Bundle.ecosia.url(forResource: videoName, withExtension: "mp4") else {
             // Fallback to static image if video not found
             // TODO: Change fallback image
-            let imageView = UIImageView(image: .init(named: "forest", in: .ecosia, with: nil))
+            let imageView = UIImageView(image: .ecosia(named: "forest"))
             imageView.contentMode = .scaleAspectFill
             imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             view.addSubview(imageView)

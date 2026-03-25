@@ -95,7 +95,7 @@ private struct EcosiaCustomizeButton: View {
 
     var body: some View {
         Button(action: onTap) {
-            Image("ntp-pencil-edit", bundle: .ecosia)
+            Image.ecosia("ntp-pencil-edit")
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(.white)

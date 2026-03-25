@@ -67,7 +67,7 @@ public struct EcosiaSeedView: View {
 
     public var body: some View {
         HStack(alignment: .center, spacing: spacing) {
-            Image("seed", bundle: .ecosia)
+            Image.ecosia("seed")
                 .resizable()
                 .frame(width: seedIconSize, height: seedIconSize)
                 .scaleEffect(enableAnimation ? animationScale : 1.0)
@@ -95,7 +95,7 @@ public struct EcosiaSeedView: View {
                 .animatedText(numericValue: seedCount, reduceMotionEnabled: !enableAnimation)
 
             if showLock {
-                Image("lock", bundle: .ecosia)
+                Image.ecosia("lock")
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: UX.lockSize, height: UX.lockSize)

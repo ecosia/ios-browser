@@ -72,7 +72,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                     style.topContentBackgroundColor
                         .ignoresSafeArea(edges: .top)
                     topContentView
-                    Image("wave-forms-horizontal-1", bundle: .ecosia)
+                    Image.ecosia("wave-forms-horizontal-1")
                         .resizable()
                         .renderingMode(.template)
                         .frame(height: InstructionStepsViewLayout.wavesHeight)
