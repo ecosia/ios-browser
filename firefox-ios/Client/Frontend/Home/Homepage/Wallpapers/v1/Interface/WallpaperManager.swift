@@ -235,8 +235,7 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
                                                  availability: classicCollection.availability,
                                                  wallpapers: newWallpapers,
                                                  description: classicCollection.description,
-                                                 heading: classicCollection.heading,
-                                                 subheading: classicCollection.subheading)
+                                                 heading: classicCollection.heading)
 
             return [newClassic] + availableCollections.filter { $0.type != .classic }
         } else {
@@ -267,8 +266,7 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
                 availability: collection.availability,
                 wallpapers: collection.wallpapers.filter { $0.thumbnail != nil },
                 description: collection.description,
-                heading: collection.heading,
-                subheading: collection.subheading)
+                heading: collection.heading)
         }
     }
 }
