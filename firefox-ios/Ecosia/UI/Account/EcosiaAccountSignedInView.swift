@@ -74,7 +74,7 @@ public struct EcosiaAccountSignedInView: View {
                 onSignOutTap()
             }) {
                 HStack(alignment: .center, spacing: .ecosia.space._2s) {
-                    Image("sign-out", bundle: .ecosia)
+                    Image.ecosia("sign-out")
                         .renderingMode(.template)
                         .resizable()
                         .frame(width: UX.ctaImageSize, height: UX.ctaImageSize)

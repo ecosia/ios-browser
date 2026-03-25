@@ -214,7 +214,7 @@ public struct WelcomeView: View {
                             }
                         }) {
                             HStack(spacing: 8) {
-                                Image("sign-in", bundle: .ecosia)
+                                Image.ecosia("sign-in")
                                     .renderingMode(.template)
                                     .foregroundColor(theme.buttonTextColor)
                                     .accessibilityHidden(true)

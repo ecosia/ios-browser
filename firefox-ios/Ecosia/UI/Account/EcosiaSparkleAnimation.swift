@@ -104,7 +104,7 @@ public struct EcosiaSparkleAnimation: View {
         ZStack {
             if isVisible {
                 ForEach(sparkles) { sparkle in
-                    Image("highlight-star", bundle: .ecosia)
+                    Image.ecosia("highlight-star")
                         .resizable()
                         .frame(width: sparkle.size, height: sparkle.size)
                         .rotationEffect(.degrees(sparkle.rotation))

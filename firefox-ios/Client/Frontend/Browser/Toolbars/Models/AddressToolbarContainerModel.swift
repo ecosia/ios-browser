@@ -126,7 +126,7 @@ final class AddressToolbarContainerModel: Equatable {
             if isPrivate {
                 return UIImage.templateImageNamed(StandardImageIdentifiers.Large.privateMode)
             }
-            return UIImage(named: "iconLogo", in: .ecosia, with: nil)
+            return .ecosia(named: "iconLogo")
         }
         if isHome {
             return defaultImage ?? UIImage.templateImageNamed("searchUrl")

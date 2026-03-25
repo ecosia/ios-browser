@@ -48,7 +48,7 @@ public struct EcosiaErrorView: View {
     public var body: some View {
         HStack(alignment: .center, spacing: .ecosia.space._s) {
             // Error icon
-            Image("problem", bundle: .ecosia)
+            Image.ecosia("problem")
                 .resizable()
                 .frame(width: .ecosia.space._1l, height: .ecosia.space._1l)
                 .foregroundColor(theme.iconColor)
@@ -74,7 +74,7 @@ public struct EcosiaErrorView: View {
                 Button(action: {
                     onCloseTapped()
                 }) {
-                    Image("close", bundle: .ecosia)
+                    Image.ecosia("close")
                         .renderingMode(.template)
                         .resizable()
                         .frame(width: UX.closeButtonSize, height: UX.closeButtonSize)

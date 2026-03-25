@@ -44,7 +44,7 @@ public struct EcosiaAvatar: View {
     }
 
     private func placeholderView(imageName: String) -> some View {
-        Image(imageName, bundle: .ecosia)
+        Image.ecosia(imageName)
             .resizable()
             .scaledToFit()
             .frame(width: size, height: size)

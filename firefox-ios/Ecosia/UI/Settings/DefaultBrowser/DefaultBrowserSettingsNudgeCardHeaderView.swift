@@ -69,9 +69,7 @@ public final class DefaultBrowserSettingsNudgeCardHeaderView: UITableViewHeaderF
                                             actionButtonTextColor: Color(theme.colors.ecosia.buttonBackgroundPrimary))
         let configurableCardViewModel = NudgeCardViewModel(title: .localized(.defaultBrowserCardTitle),
                                                            description: .localized(.defaultBrowserCardDescription),
-                                                           image: .init(named: "default-browser-card-side-image-koto-illustrations",
-                                                                        in: .ecosia,
-                                                                        with: nil),
+                                                           image: UIImage.ecosia(named: "default-browser-card-side-image-koto-illustrations"),
                                                            style: nudgeCardStyle,
                                                            layout: .default)
         let view = ConfigurableNudgeCardView(viewModel: configurableCardViewModel,
