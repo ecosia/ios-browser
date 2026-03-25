@@ -288,8 +288,11 @@ struct NavigationBarState: StateType, Equatable {
         }
         let canShowDataClearanceAction = canShowDataClearanceAction && isPrivateMode
         let middleActionForWebpage = canShowDataClearanceAction ? dataClearanceAction : customizedMiddleButton
+        /* Ecosia: Always show the new tab (plus) button; Firefox shows a search icon on the homepage
         let middleActionForHomepage = searchAction
         let middleAction = url == nil ? middleActionForHomepage : middleActionForWebpage
+        */
+        let middleAction = middleActionForWebpage
 
         return middleAction
     }
