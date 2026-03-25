@@ -115,7 +115,13 @@ extension HomepageSectionLayoutProvider {
             count: 1
         )
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .zero
+        // Apply insets only on iPad (regular size class) to constrain the card to a readable width.
+        // On iPhone landscape the tiles go side-by-side and become too narrow if we apply
+        // window.bounds.width/4, so we skip the insets there and let the cell fill the width.
+        let insets = traitCollection.horizontalSizeClass == .regular
+            ? getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 0)
+            : NSDirectionalEdgeInsets.zero
+        section.contentInsets = insets
         return section
     }
 
@@ -220,10 +226,12 @@ extension HomepageSectionLayoutProvider {
 
         let orientation: UIInterfaceOrientation = window.windowScene?.interfaceOrientation ?? .portrait
 
-        // Center layout in iPhone landscape or regular size class
+        // Center layout in iPhone landscape or regular size class.
+        // Cap content width at 420pt so iPad landscape tiles don't stretch too far.
         if traitCollection.horizontalSizeClass == .regular ||
            (orientation.isLandscape && traitCollection.userInterfaceIdiom == .phone) {
-            horizontal = window.bounds.width / 4
+            let maxContentWidth: CGFloat = 420
+            horizontal = max(window.bounds.width / 4, (window.bounds.width - maxContentWidth) / 2)
         }
 
         return NSDirectionalEdgeInsets(
