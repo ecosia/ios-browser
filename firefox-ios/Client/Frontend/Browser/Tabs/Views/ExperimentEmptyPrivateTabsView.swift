@@ -109,6 +109,55 @@ class ExperimentEmptyPrivateTabsView: UIView,
         containerView.addSubview(centeredView)
         scrollView.addSubview(containerView)
         addSubview(scrollView)
+
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor,
+                                                constant: UX.horizontalPadding),
+            scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
+                                            constant: UX.verticalPadding),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor,
+                                                 constant: -UX.horizontalPadding),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor,
+                                               constant: -UX.verticalPadding),
+
+            scrollView.frameLayoutGuide.widthAnchor.constraint(equalTo: containerView.widthAnchor),
+
+            scrollView.contentLayoutGuide.topAnchor.constraint(equalTo: containerView.topAnchor),
+            scrollView.contentLayoutGuide.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+
+            centeredView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: UX.verticalPadding),
+            centeredView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            centeredView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            centeredView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+
+            iconImageView.topAnchor.constraint(equalTo: centeredView.topAnchor,
+                                               constant: UX.paddingInBetweenItems),
+            iconImageView.centerXAnchor.constraint(equalTo: centeredView.centerXAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: UX.imageSize.width),
+            iconImageView.heightAnchor.constraint(equalToConstant: UX.imageSize.height),
+
+            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor,
+                                            constant: UX.paddingInBetweenItems),
+            titleLabel.leadingAnchor.constraint(equalTo: centeredView.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: centeredView.trailingAnchor),
+
+            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor,
+                                                  constant: UX.paddingInBetweenItems),
+            descriptionLabel.leadingAnchor.constraint(equalTo: centeredView.leadingAnchor,
+                                                      constant: UX.horizontalPadding),
+            descriptionLabel.trailingAnchor.constraint(equalTo: centeredView.trailingAnchor,
+                                                       constant: -UX.horizontalPadding),
+
+            learnMoreButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor,
+                                                 constant: UX.paddingInBetweenItems),
+            learnMoreButton.leadingAnchor.constraint(greaterThanOrEqualTo: centeredView.leadingAnchor),
+            learnMoreButton.trailingAnchor.constraint(lessThanOrEqualTo: centeredView.trailingAnchor),
+            learnMoreButton.centerXAnchor.constraint(equalTo: centeredView.centerXAnchor),
+            learnMoreButton.bottomAnchor.constraint(equalTo: centeredView.bottomAnchor,
+                                                    constant: -UX.paddingInBetweenItems),
+        ])
         */
         contentStack.addArrangedSubview(iconImageView)
         contentStack.addArrangedSubview(titleLabel)
