@@ -208,7 +208,9 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
     }
 
     private func addDefaultWallpaper(to availableCollections: [WallpaperCollection]) -> [WallpaperCollection] {
-        // Ecosia: Use ecosiaDefault (with bundled asset) instead of baseWallpaper (no image)
+        /* Ecosia: Use ecosiaDefault (with bundled asset) instead of baseWallpaper (no image)
+        let baseWallpaper = [Wallpaper.baseWallpaper]
+        */
         #if ECOSIA
         let defaultWallpaper = [Wallpaper.ecosiaDefault]
         let collectionID = "classic-ecosia"

@@ -8,9 +8,14 @@ import Foundation
 
 struct WallpaperSettingsHeaderViewModel {
     var theme: Theme
-    // Ecosia: Made title optional to allow collections without headings
-    var title: String?
+    /* Ecosia: Made title optional; heading and subheading come from JSON, no fallback to localized strings
+    var title: String
+    var titleA11yIdentifier: String
 
+    var description: String?
+    var descriptionA11yIdentifier: String?
+    */
+    var title: String?
     var subheading: String?
 
     var buttonTitle: String?

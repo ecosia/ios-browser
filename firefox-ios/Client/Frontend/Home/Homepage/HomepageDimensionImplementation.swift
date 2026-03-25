@@ -105,7 +105,9 @@ struct HomepageDimensionCalculator {
         let minCardsConstant = TopSitesSectionLayoutProvider.UX.minCards
         let maxCardsConstant = TopSitesSectionLayoutProvider.UX.maxCards
         let tilesPerRowCount = numberOfTiles < minCardsConstant ? minCardsConstant : numberOfTiles
-        // Ecosia: Respect maxCards cap so the row never exceeds 5 tiles (MOB-4150)
+        /* Ecosia: Respect maxCards cap so the row never exceeds 5 tiles (MOB-4150)
+        return tilesPerRowCount
+        */
         return min(tilesPerRowCount, maxCardsConstant)
     }
 
