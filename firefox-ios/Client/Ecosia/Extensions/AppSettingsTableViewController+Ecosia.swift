@@ -80,6 +80,9 @@ extension AppSettingsTableViewController {
             */
             AnalyticsIdentifierSetting(settings: self),
             RefreshStatisticsSetting(settings: self),
+            // Ecosia: Wallpaper debug options
+            ShowWallpaperOnboarding(settings: self, settingsDelegate: self),
+            ForceWallpaperRefresh(settings: self),
         ]
 
         if EcosiaEnvironment.current == .staging {
