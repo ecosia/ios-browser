@@ -35,7 +35,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     /// Ecosia: Registers all Ecosia cell types on the collection view. Call from configureCollectionView so Ecosia cells (e.g. NTPHeader) are always available regardless of setup order.
     func registerEcosiaCells(on collectionView: UICollectionView) {
         var types: [ReusableCell.Type] = [
-            NTPFirstSearchCell.self,
             NTPLogoCell.self,
             NTPLibraryCell.self,
             TopSiteCell.self,
@@ -81,16 +80,11 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // Store adapter
         setEcosiaAdapter(adapter)
 
-        // Wire first-search view model delegates
-        adapter.firstSearchViewModel?.delegate = browserViewController
-        adapter.firstSearchViewModel?.dataModelDelegate = self
-
         // So News can refresh the snapshot when items load
         adapter.newsViewModel?.dataModelDelegate = self
 
         // Register Ecosia cell types (including top sites after library) and attach adapter
         var ecosiaCellTypes: [ReusableCell.Type] = [
-            NTPFirstSearchCell.self,
             NTPLogoCell.self,
             NTPLibraryCell.self,
             TopSiteCell.self,

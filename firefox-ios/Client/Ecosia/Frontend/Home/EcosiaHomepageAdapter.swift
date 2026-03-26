@@ -22,7 +22,6 @@ final class EcosiaHomepageAdapter {
     private let auth: EcosiaAuth
     
     // View Models for Ecosia sections
-    private(set) var firstSearchViewModel: NTPFirstSearchCellViewModel?
     private(set) var headerViewModel: NTPHeaderViewModel?
     private(set) var libraryViewModel: NTPLibraryCellViewModel?
     private(set) var impactViewModel: NTPImpactCellViewModel?
@@ -55,9 +54,6 @@ final class EcosiaHomepageAdapter {
     }
     
     private func setupViewModels() {
-        // Product tour first-search card
-        firstSearchViewModel = NTPFirstSearchCellViewModel(theme: theme, windowUUID: windowUUID)
-
         // Header (iOS 16+ only)
         if #available(iOS 16.0, *) {
             headerViewModel = NTPHeaderViewModel(
@@ -99,7 +95,6 @@ final class EcosiaHomepageAdapter {
     
     func updateTheme(_ theme: Theme) {
         self.theme = theme
-        firstSearchViewModel?.theme = theme
         headerViewModel?.theme = theme
         libraryViewModel?.theme = theme
         impactViewModel?.theme = theme
@@ -131,11 +126,6 @@ final class EcosiaHomepageAdapter {
     func getEcosiaSections() -> [HomepageSection] {
         var sections: [HomepageSection] = []
 
-        // Product tour first-search card (shown before anything else during onboarding)
-        if firstSearchViewModel?.shouldShow == true {
-            sections.append(.ecosiaFirstSearch)
-        }
-
         if shouldShowHeader() {
             sections.append(.ecosiaHeader)
         }
@@ -165,8 +155,6 @@ final class EcosiaHomepageAdapter {
     /// Returns the items for a given Ecosia section
     func getItems(for section: HomepageSection) -> [HomepageItem] {
         switch section {
-        case .ecosiaFirstSearch:
-            return [.ecosiaFirstSearch]
         case .ecosiaHeader:
             return [.ecosiaHeader]
         case .ecosiaLogo:
