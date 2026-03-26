@@ -85,6 +85,12 @@ class HomepageViewModel: FeatureFlaggable, InjectedThemeUUIDIdentifiable {
     // Note: Should reload the view when have inconsistency between childViewModels count
     // and shownSections count in order to avoid a crash
     var shouldReloadView: Bool {
+        // Ecosia: Mirror the same Product Tour filter used in updateEnabledSections() so the counts converge
+        if ProductTourManager.shared.shouldShowProductTourHomepage {
+            return childViewModels
+                .filter { $0.sectionType.isProductTourSection && $0.shouldShow }
+                .count != shownSections.count
+        }
         return childViewModels.filter({ $0.shouldShow }).count != shownSections.count
     }
 
