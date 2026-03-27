@@ -236,6 +236,9 @@ extension String {
         // MARK: - Feedback View
         case reportIssue = "Report an issue"
         case helpCenter = "Help Center"
+        // Ecosia: Compact menu labels — distinct from the longer in-screen labels above
+        case help = "Help"
+        case reportIssueMenu = "Report Issue"
         case suggestionOrFeedback = "Suggestion or feedback"
         case whatWouldYouLikeToShare = "What would you like to share?"
         case send = "Send"

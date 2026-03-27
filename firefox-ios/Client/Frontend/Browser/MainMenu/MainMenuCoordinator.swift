@@ -40,6 +40,13 @@ protocol MainMenuCoordinatorDelegate: AnyObject {
 
     @MainActor
     func showSummarizePanel(_ trigger: SummarizerTrigger, config: SummarizerConfig?)
+
+    // Ecosia: Help and Report Issue actions for the compact menu
+    @MainActor
+    func showHelp()
+
+    @MainActor
+    func showFeedback(windowUUID: WindowUUID)
 }
 
 class MainMenuCoordinator: BaseCoordinator, FeatureFlaggable {
@@ -123,6 +130,10 @@ class MainMenuCoordinator: BaseCoordinator, FeatureFlaggable {
         case .passwords:
             navigationHandler?.showSettings(at: .password)
 
+        // Ecosia: Reading List added for the compact menu
+        case .readingList:
+            navigationHandler?.showLibraryPanel(.readingList)
+
         case .settings:
             navigationHandler?.showSettings(at: .general)
 
@@ -155,6 +166,13 @@ class MainMenuCoordinator: BaseCoordinator, FeatureFlaggable {
         case .webpageSummary(let config):
             dismissMenuModal(animated: true)
             navigationHandler?.showSummarizePanel(.mainMenu, config: config)
+
+        // Ecosia: Help and Report Issue destinations
+        case .help:
+            navigationHandler?.showHelp()
+
+        case .reportIssue:
+            navigationHandler?.showFeedback(windowUUID: windowUUID)
         }
     }
 

@@ -16,6 +16,23 @@ alwaysApply: true
 - DO NOT localize debug strings or developer-only content
 - Consider string context when providing translations
 
+## Never add Ecosia-specific strings to Firefox files
+
+- **NEVER** add new `MZLocalizedString` entries to `firefox-ios/Shared/Strings.swift` for Ecosia-specific UI
+- `Shared/Strings.swift` is Mozilla/Firefox's string catalog — Ecosia-specific strings do not belong there
+- Before adding a new key, **always check** `firefox-ios/Ecosia/L10N/String.swift` first — the key may already exist
+- For Firefox strings that already cover a concept (e.g. `String.LegacyAppMenu.AppMenuReadingListTitleString`), reuse them rather than duplicating
+
+### Common already-available Ecosia keys
+
+| Concept | Key |
+|---|---|
+| Help Center | `.helpCenter` |
+| Send Feedback / Report Issue | `.sendFeedback` |
+| Report an issue | `.reportIssue` |
+| Search | `.search` |
+| Homepage | `.homepage` |
+
 ## Example
 
 Add a new string in `firefox-ios/Ecosia/L10N/String.swift` `Key` enum

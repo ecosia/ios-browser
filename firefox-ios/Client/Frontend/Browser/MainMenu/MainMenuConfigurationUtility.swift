@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import Foundation
 import MenuKit
 import Shared
@@ -10,10 +11,16 @@ import Shared
 struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
     private struct Icons {
         static let findInPage = StandardImageIdentifiers.Large.search
+        /* Ecosia: Use Ecosia bookmarksEmpty asset instead of Firefox bookmarkTray
         static let bookmarksTray = StandardImageIdentifiers.Large.bookmarkTray
+        */
+        static let bookmarksTray = "bookmarksEmpty"
         static let history = StandardImageIdentifiers.Large.history
         static let downloads = StandardImageIdentifiers.Large.download
+        /* Ecosia: Passwords removed in favour of Reading List
         static let passwords = StandardImageIdentifiers.Large.login
+        */
+        static let readingList = StandardImageIdentifiers.Large.readingList
         static let settings = StandardImageIdentifiers.Large.settings
         static let print = StandardImageIdentifiers.Large.print
         static let addToShortcuts = StandardImageIdentifiers.Large.pin
@@ -24,6 +31,9 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
         static let summarizer = StandardImageIdentifiers.Large.summarizer
         static let avatarCircle = StandardImageIdentifiers.Large.avatarCircle
         static let share = StandardImageIdentifiers.Large.share
+        // Ecosia: Help and Report Issue icons for the compact menu
+        static let help = StandardImageIdentifiers.Large.helpCircle
+        static let reportIssue = "reportIssue"
     }
 
     private var shouldShowReportSiteIssue: Bool {
@@ -78,6 +88,9 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
 
     // MARK: - Menu Sections
     // Horizontal Tabs Section
+    /* Ecosia: Re-layout to match NTP shortcuts order (Bookmarks, History, Reading List, Downloads)
+               and replace Passwords with Reading List. Sign In element removed.
+    */
     private func getHorizontalTabsSection(with uuid: WindowUUID, tabInfo: MainMenuTabInfo) -> MenuSection {
         return MenuSection(
             isHorizontalTabsSection: true,
@@ -122,6 +135,26 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                     )
                 }
             ),
+            // Ecosia: Reading List replaces Passwords, placed before Downloads to match NTP shortcuts order
+            MenuElement(
+                title: .LegacyAppMenu.AppMenuReadingListTitleString,
+                iconName: Icons.readingList,
+                isEnabled: true,
+                isActive: false,
+                a11yLabel: .LegacyAppMenu.AppMenuReadingListTitleString,
+                a11yHint: "",
+                a11yId: AccessibilityIdentifiers.MainMenu.readingList,
+                action: {
+                    store.dispatch(
+                        MainMenuAction(
+                            windowUUID: uuid,
+                            actionType: MainMenuActionType.tapNavigateToDestination,
+                            navigationDestination: MenuNavigationDestination(.readingList),
+                            telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
+                        )
+                    )
+                }
+            ),
             MenuElement(
                 title: .MainMenu.PanelLinkSection.Downloads,
                 iconName: Icons.downloads,
@@ -141,6 +174,7 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                     )
                 }
             ),
+            /* Ecosia: Passwords removed in favour of Reading List
             MenuElement(
                 title: .MainMenu.PanelLinkSection.Passwords,
                 iconName: Icons.passwords,
@@ -160,14 +194,19 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                     )
                 }
             ),
+            */
         ])
     }
 
     // Account Section
+    /* Ecosia: Remove Sign In element and add Help + Report Issue.
+               Sign In removed to avoid exposing Firefox Sync in the compact menu.
+    */
     private func getAccountSection(with uuid: WindowUUID, tabInfo: MainMenuTabInfo, profileImage: UIImage?) -> MenuSection {
         return MenuSection(
             isHomepage: tabInfo.isHomepage,
             options: [
+                /* Ecosia: Sign In removed from the compact menu
                 MenuElement(
                     title: tabInfo.accountData.title,
                     description: tabInfo.accountData.subtitle,
@@ -186,6 +225,47 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                                 actionType: MainMenuActionType.tapNavigateToDestination,
                                 navigationDestination: MenuNavigationDestination(.syncSignIn),
                                 currentTabInfo: tabInfo,
+                                telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
+                            )
+                        )
+                    }
+                ),
+                */
+                // Ecosia: Help button matching production Help Center behaviour
+                MenuElement(
+                    title: String.localized(.help),
+                    iconName: Icons.help,
+                    isEnabled: true,
+                    isActive: false,
+                    a11yLabel: String.localized(.help),
+                    a11yHint: "",
+                    a11yId: AccessibilityIdentifiers.MainMenu.help,
+                    action: {
+                        store.dispatch(
+                            MainMenuAction(
+                                windowUUID: uuid,
+                                actionType: MainMenuActionType.tapNavigateToDestination,
+                                navigationDestination: MenuNavigationDestination(.help),
+                                telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
+                            )
+                        )
+                    }
+                ),
+                // Ecosia: Report Issue opens the Send Feedback window with Report Issue pre-selected
+                MenuElement(
+                    title: String.localized(.reportIssueMenu),
+                    iconName: Icons.reportIssue,
+                    isEnabled: true,
+                    isActive: false,
+                    a11yLabel: String.localized(.reportIssueMenu),
+                    a11yHint: "",
+                    a11yId: AccessibilityIdentifiers.MainMenu.reportIssue,
+                    action: {
+                        store.dispatch(
+                            MainMenuAction(
+                                windowUUID: uuid,
+                                actionType: MainMenuActionType.tapNavigateToDestination,
+                                navigationDestination: MenuNavigationDestination(.reportIssue),
                                 telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
                             )
                         )

@@ -22,8 +22,9 @@ final class MainMenuScreen {
         let elements = [
             sel.BOOKMARKS_BUTTON.element(in: app),
             sel.HISTORY_BUTTON.element(in: app),
+            // Ecosia: Reading List replaces Passwords in the compact menu
+            sel.READING_LIST_BUTTON.element(in: app),
             sel.DOWNLOADS_BUTTON.element(in: app),
-            sel.PASSWORDS_BUTTON.element(in: app),
             sel.SETTINGS_CELL.element(in: app)
         ]
         BaseTestCase().waitForElementsToExist(elements)
