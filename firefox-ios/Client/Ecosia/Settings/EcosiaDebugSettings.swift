@@ -63,51 +63,27 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
     }
 }
 
-@MainActor
-final class ResetOnboardingProductTour: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Reset product tour state", attributes: [:])
-    }
-
-    override var status: NSAttributedString? {
-        guard OnboardingProductTourExperiment.isEnabled else {
-            if OnboardingProductTourExperiment.isControl {
-                return NSAttributedString(string: "Current state: Control variant — use Unleash Onboarding Product Tour debug setting to reset")
-            }
-            return NSAttributedString(string: "Current state: Experiment disabled")
-        }
-
-        return NSAttributedString(string: "Current state: Welcome screen shown once")
-    }
+final class ShowWelcomeScreen: HiddenSetting {
+    var profile: Profile?
 
     override init(settings: SettingsTableViewController) {
+        self.profile = settings.profile
         super.init(settings: settings)
     }
 
+    override var title: NSAttributedString? {
+        NSAttributedString(string: "Debug: Show Welcome Screen")
+    }
+
+    override var status: NSAttributedString? {
+        let seen = profile?.prefs.intForKey(PrefsKeys.IntroSeen) != nil
+        return NSAttributedString(string: seen ? "Seen — tap to reset" : "Not yet seen")
+    }
+
     override func onClick(_ navigationController: UINavigationController?) {
-        guard OnboardingProductTourExperiment.isEnabled else {
-            let alert = AlertController(title: "Experiment Disabled or in Control",
-                                        message: "The onboarding product tour experiment is not enabled. Check your constraints (such as version on install) or use the \"Unleash Onboarding Product Tour\" debug setting to reset the Unleash cache and get a new variant assignment.",
-                                        preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            navigationController?.topViewController?.present(alert, animated: true)
-            return
-        }
-
+        profile?.prefs.removeObjectForKey(PrefsKeys.IntroSeen)
         User.shared.firstTime = true
-        Task {
-            try? await EcosiaAuthenticationService.shared.logout()
-        }
-
-        let title = "Onboarding state reset"
-        let message = "Close and open the app to see welcome screen"
-        let alert = AlertController(title: title, message: message, preferredStyle: .alert)
-        navigationController?.topViewController?.present(alert, animated: true) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                alert.dismiss(animated: true)
-            }
-            self.settings.tableView.reloadData()
-        }
+        settings.tableView.reloadData()
     }
 }
 
