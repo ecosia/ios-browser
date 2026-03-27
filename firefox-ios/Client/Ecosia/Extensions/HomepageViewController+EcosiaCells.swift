@@ -22,7 +22,7 @@ extension HomepageViewController {
     }
     
     // MARK: - Cell Configuration Methods
-
+    
     func configureEcosiaHeaderCell(at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cv = homepageCollectionView else { return UICollectionViewCell() }
         if #available(iOS 16.0, *) {

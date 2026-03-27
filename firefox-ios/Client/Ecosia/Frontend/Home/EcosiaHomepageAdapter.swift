@@ -125,11 +125,11 @@ final class EcosiaHomepageAdapter {
     /// Returns the ordered list of Ecosia sections that should be displayed
     func getEcosiaSections() -> [HomepageSection] {
         var sections: [HomepageSection] = []
-
+        
         if shouldShowHeader() {
             sections.append(.ecosiaHeader)
         }
-
+        
         // Logo
         sections.append(.ecosiaLogo)
         
