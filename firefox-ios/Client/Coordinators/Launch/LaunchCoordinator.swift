@@ -327,33 +327,17 @@ final class LaunchCoordinator: BaseCoordinator,
          }
          */
 
-        // Store manager before the @Sendable closure to avoid a Sendable capture error.
+        // Ecosia: Store manager so welcomeDidFinish/welcomeDidRequestSignIn can mark it as seen.
         introManagerForEcosiaWelcome = manager
 
-        // Ecosia: Wait for feature flags before deciding which onboarding to show.
-        // The welcome screen is only presented if the experiment is enabled, preventing a crash
-        // caused by presenting the welcome screen and calling didFinishLaunch concurrently.
-        AppEventQueue.wait(for: .featureManagementInitialized) { [weak self] in
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-
-                guard OnboardingProductTourExperiment.isEnabled else {
-                    self.introManagerForEcosiaWelcome = nil
-                    self.parentCoordinator?.didFinishLaunch(from: self)
-                    return
-                }
-
-                // Experiment is enabled: present the welcome screen.
-                let introViewController = WelcomeNavigation(
-                    rootViewController: WelcomeViewController(delegate: self, windowUUID: self.windowUUID),
-                    windowUUID: self.windowUUID
-                )
-                introViewController.isNavigationBarHidden = true
-                introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-                introViewController.modalPresentationStyle = .fullScreen
-                self.router.present(introViewController, animated: false)
-            }
-        }
+        let introViewController = WelcomeNavigation(
+            rootViewController: WelcomeViewController(delegate: self, windowUUID: self.windowUUID),
+            windowUUID: self.windowUUID
+        )
+        introViewController.isNavigationBarHidden = true
+        introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+        introViewController.modalPresentationStyle = .fullScreen
+        router.present(introViewController, animated: false)
     }
     
     // MARK: - Update

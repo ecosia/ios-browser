@@ -95,7 +95,6 @@ extension AppSettingsTableViewController {
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
-            UnleashOnboardingSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]
 
