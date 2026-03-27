@@ -77,20 +77,7 @@ final class ResetOnboardingProductTour: HiddenSetting {
             return NSAttributedString(string: "Current state: Experiment disabled")
         }
 
-        let milestones = ProductTourManager.shared.completedMilestones
-        let state: String
-        if milestones.contains(.all) {
-            state = "All"
-        } else {
-            var completed: [String] = []
-            if milestones.contains(.firstSearchDone) { completed.append("firstSearchDone") }
-            if milestones.contains(.searchSpotlightDone) { completed.append("searchSpotlightDone") }
-            if milestones.contains(.externalWebsiteVisitDone) { completed.append("externalWebsiteVisitDone") }
-            if milestones.contains(.externalWebsiteSpotlightDone) { completed.append("externalWebsiteSpotlightDone") }
-            state = completed.isEmpty ? "None" : completed.joined(separator: ", ")
-        }
-        let inTour = ProductTourManager.shared.isInProductTour ? "In tour" : "Tour complete"
-        return NSAttributedString(string: "Current state: \(inTour) | Milestones: \(state)")
+        return NSAttributedString(string: "Current state: Welcome screen shown once")
     }
 
     override init(settings: SettingsTableViewController) {
@@ -108,7 +95,6 @@ final class ResetOnboardingProductTour: HiddenSetting {
         }
 
         User.shared.firstTime = true
-        ProductTourManager.shared.resetTour()
         Task {
             try? await EcosiaAuthenticationService.shared.logout()
         }

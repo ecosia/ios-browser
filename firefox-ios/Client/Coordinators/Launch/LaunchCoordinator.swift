@@ -343,9 +343,7 @@ final class LaunchCoordinator: BaseCoordinator,
                     return
                 }
 
-                // Experiment is enabled: initialize tour state and present the welcome screen.
-                ProductTourManager.shared.resetTour()
-
+                // Experiment is enabled: present the welcome screen.
                 let introViewController = WelcomeNavigation(
                     rootViewController: WelcomeViewController(delegate: self, windowUUID: self.windowUUID),
                     windowUUID: self.windowUUID
