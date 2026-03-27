@@ -142,28 +142,6 @@ final class AutoCompleteSettings: BoolSetting {
     }
 }
 
-final class PersonalSearchSettings: BoolSetting {
-    convenience init(prefs: Prefs, theme: Theme) {
-        self.init(prefs: prefs,
-                  theme: theme,
-                  prefKey: "",
-                  defaultValue: false,
-                  titleText: .localized(.personalizedResults),
-                  statusText: .localized(.relevantResults),
-                  settingDidChange: { value in
-            User.shared.personalized = value
-        })
-    }
-
-    override func displayBool(_ control: UISwitch) {
-        control.isOn = User.shared.personalized
-    }
-
-    override func writeBool(_ control: UISwitch) {
-        User.shared.personalized = control.isOn
-    }
-}
-
 final class AIOverviewsSearchSettings: BoolSetting {
     convenience init(prefs: Prefs, theme: Theme) {
         self.init(prefs: prefs,

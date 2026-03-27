@@ -77,7 +77,6 @@ final class MainCookieHandler: BaseCookieHandler {
             Properties.marketCode: User.shared.marketCode.rawValue,
             Properties.language: Language.current.rawValue,
             Properties.suggestions: String(User.shared.autoComplete ? 1 : 0),
-            Properties.personalized: String(User.shared.personalized ? 1 : 0),
             Properties.marketApplied: "1",
             Properties.marketReapplied: "1",
             Properties.deviceType: "mobile",
@@ -106,10 +105,6 @@ final class MainCookieHandler: BaseCookieHandler {
 
         properties[Properties.adultFilter].flatMap(AdultFilter.init).map {
             user.adultFilter = $0
-        }
-
-        properties[Properties.personalized].flatMap(Int.init).map { NSNumber(value: $0) }.flatMap(Bool.init).map {
-            user.personalized = $0
         }
 
         properties[Properties.suggestions].map {

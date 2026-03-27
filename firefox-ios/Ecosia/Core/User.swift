@@ -31,7 +31,6 @@ public struct User: Codable, Equatable {
     public var marketCode = Local.make(for: .current)
     public var adultFilter = AdultFilter.moderate
     public var autoComplete = true
-    public var personalized = false
     public var aiOverviews = true
 
     // MARK: Privacy Settings
@@ -89,7 +88,6 @@ public struct User: Codable, Equatable {
         adultFilter,
         autoComplete,
         firstTime,
-        personalized,
         aiOverviews,
         sendAnonymousUsageData,
         topSitesRows,
@@ -117,7 +115,6 @@ public struct User: Codable, Equatable {
         adultFilter = (try? root.decode(AdultFilter.self, forKey: .adultFilter)) ?? .moderate
         autoComplete = (try? root.decode(Bool.self, forKey: .autoComplete)) ?? true
         firstTime = (try? root.decode(Bool.self, forKey: .firstTime)) ?? true
-        personalized = (try? root.decode(Bool.self, forKey: .personalized)) ?? false
         aiOverviews = (try? root.decode(Bool.self, forKey: .aiOverviews)) ?? true
         sendAnonymousUsageData = (try? root.decode(Bool.self, forKey: .sendAnonymousUsageData)) ?? true
         topSitesRows = (try? root.decode(Int.self, forKey: .topSitesRows)) ?? 4
@@ -143,7 +140,6 @@ public struct User: Codable, Equatable {
             autoComplete = stored.autoComplete
             firstTime = stored.firstTime
             analyticsId = stored.analyticsId
-            personalized = stored.personalized
             aiOverviews = stored.aiOverviews
             sendAnonymousUsageData = stored.sendAnonymousUsageData
             migrated = stored.migrated
@@ -263,7 +259,6 @@ extension User {
         let marketCode: Local
         let adultFilter: AdultFilter
         let autoComplete: Bool
-        let personalized: Bool
         let aiOverviews: Bool
     }
 
@@ -271,7 +266,6 @@ extension User {
         .init(marketCode: marketCode,
               adultFilter: adultFilter,
               autoComplete: autoComplete,
-              personalized: personalized,
               aiOverviews: aiOverviews)
     }
 
