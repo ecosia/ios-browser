@@ -65,6 +65,7 @@ extension Analytics {
             newTab = "new_tab",
             openInSafari = "open_in_safari",
             readingList = "reading_list",
+            reportIssue = "report_issue",
             requestDesktopSite = "request_desktop_site",
             settings,
             share,
