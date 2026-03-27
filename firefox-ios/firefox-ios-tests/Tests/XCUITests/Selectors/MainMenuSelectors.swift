@@ -8,26 +8,20 @@ protocol MainMenuSelectorSet {
     var DESKTOP_SITE: Selector { get }
     var BOOKMARKS_BUTTON: Selector { get }
     var HISTORY_BUTTON: Selector { get }
-    /* Ecosia: Reading List replaces Passwords in the compact menu
-    var PASSWORDS_BUTTON: Selector { get }
-    */
-    var READING_LIST_BUTTON: Selector { get }
     var DOWNLOADS_BUTTON: Selector { get }
+    var PASSWORDS_BUTTON: Selector { get }
     var SETTINGS_CELL: Selector { get }
     var all: [Selector] { get }
 }
 
 struct MainMenuSelectors: MainMenuSelectorSet {
     private enum IDs {
-        static let desktopSite  = AccessibilityIdentifiers.MainMenu.desktopSite
-        static let bookmarks    = AccessibilityIdentifiers.MainMenu.bookmarks
-        static let history      = AccessibilityIdentifiers.MainMenu.history
-        static let downloads    = AccessibilityIdentifiers.MainMenu.downloads
-        /* Ecosia: Reading List replaces Passwords in the compact menu
-        static let passwords    = AccessibilityIdentifiers.MainMenu.passwords
-        */
-        static let readingList  = AccessibilityIdentifiers.MainMenu.readingList
-        static let settings     = AccessibilityIdentifiers.MainMenu.settings
+        static let desktopSite = AccessibilityIdentifiers.MainMenu.desktopSite
+        static let bookmarks = AccessibilityIdentifiers.MainMenu.bookmarks
+        static let history   = AccessibilityIdentifiers.MainMenu.history
+        static let downloads = AccessibilityIdentifiers.MainMenu.downloads
+        static let passwords = AccessibilityIdentifiers.MainMenu.passwords
+        static let settings  = AccessibilityIdentifiers.MainMenu.settings
     }
 
     let DESKTOP_SITE = Selector.cellById(
@@ -48,22 +42,15 @@ struct MainMenuSelectors: MainMenuSelectorSet {
         groups: ["MainMenu"]
     )
 
-    /* Ecosia: Reading List replaces Passwords in the compact menu
-    let PASSWORDS_BUTTON = Selector.buttonId(
-        IDs.passwords,
-        description: "Passwords button in Main Menu",
-        groups: ["MainMenu"]
-    )
-    */
-    let READING_LIST_BUTTON = Selector.buttonId(
-        IDs.readingList,
-        description: "Reading List button in Main Menu",
-        groups: ["MainMenu"]
-    )
-
     let DOWNLOADS_BUTTON = Selector.buttonId(
         IDs.downloads,
         description: "Downloads button in Main Menu",
+        groups: ["MainMenu"]
+    )
+
+    let PASSWORDS_BUTTON = Selector.buttonId(
+        IDs.passwords,
+        description: "Passwords button in Main Menu",
         groups: ["MainMenu"]
     )
 
@@ -73,10 +60,6 @@ struct MainMenuSelectors: MainMenuSelectorSet {
         groups: ["MainMenu"]
     )
 
-    /* Ecosia: Reading List replaces Passwords in the compact menu
-    var all: [Selector] { [DESKTOP_SITE, BOOKMARKS_BUTTON, HISTORY_BUTTON, PASSWORDS_BUTTON,
-                           DOWNLOADS_BUTTON, SETTINGS_CELL] }
-    */
-    var all: [Selector] { [DESKTOP_SITE, BOOKMARKS_BUTTON, HISTORY_BUTTON, READING_LIST_BUTTON,
-                           DOWNLOADS_BUTTON, SETTINGS_CELL] }
+    var all: [Selector] { [DESKTOP_SITE, BOOKMARKS_BUTTON, HISTORY_BUTTON, DOWNLOADS_BUTTON,
+                           PASSWORDS_BUTTON, SETTINGS_CELL] }
 }
