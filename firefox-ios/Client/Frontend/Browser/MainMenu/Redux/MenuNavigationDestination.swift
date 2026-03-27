@@ -13,6 +13,7 @@ enum MainMenuNavigationDestination: Equatable {
     case findInPage
     case history
     case passwords
+    // Ecosia: Reading List added for the compact menu
     case readingList
     case settings
     case siteProtections
@@ -40,6 +41,7 @@ enum MainMenuNavigationDestination: Equatable {
             .findInPage,
             .history,
             .passwords,
+            // Ecosia: Reading List added for the compact menu
             .readingList,
             .settings,
             .siteProtections,
@@ -49,6 +51,7 @@ enum MainMenuNavigationDestination: Equatable {
             .saveAsPDF,
             .webpageSummary(config: SummarizerConfig(instructions: "", options: [:])),
             .zoom,
+            // Ecosia: Help and Report Issue destinations for the compact menu
             .help,
             .reportIssue
         ]
