@@ -135,4 +135,3 @@ extension BrowserViewController: NTPCustomizationCellDelegate {
         navigationHandler?.show(settings: .homePage)
     }
 }
-

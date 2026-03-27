@@ -39,5 +39,4 @@ extension BrowserViewController {
         pendingInappSearchUrl = nil
         Analytics.shared.inappSearch(url: url, isPrivate: isPrivate)
     }
-
 }

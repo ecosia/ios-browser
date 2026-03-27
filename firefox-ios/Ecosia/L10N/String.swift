@@ -288,6 +288,5 @@ extension String {
         case userLevelAccessibilityLabel = "Level: %@"
         case profileButtonAccessibilityHint = "Opens your profile page"
         case signOutButtonAccessibilityHint = "Sign out of your account"
-
     }
 }
