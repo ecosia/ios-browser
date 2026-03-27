@@ -55,6 +55,7 @@ enum TabTrayPanelType: Int, CaseIterable {
     }
 
     static func getExperimentConvert(index: Int) -> TabTrayPanelType {
+        /* Ecosia: Remove syncedTabs from UI - only 2 panels now
         var panelType: TabTrayPanelType = .tabs
         switch index {
         case 0: panelType = .privateTabs
@@ -63,5 +64,11 @@ enum TabTrayPanelType: Int, CaseIterable {
         default: break
         }
         return panelType
+        */
+        switch index {
+        case 0: return .privateTabs
+        case 1: return .tabs
+        default: return .tabs
+        }
     }
 }
