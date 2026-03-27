@@ -106,6 +106,8 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.bookmarks,
                 action: {
+                    // Ecosia: Track menu item tap
+                    Analytics.shared.menuClick(.bookmarks)
                     store.dispatch(
                         MainMenuAction(
                             windowUUID: uuid,
@@ -125,6 +127,8 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.history,
                 action: {
+                    // Ecosia: Track menu item tap
+                    Analytics.shared.menuClick(.history)
                     store.dispatch(
                         MainMenuAction(
                             windowUUID: uuid,
@@ -145,6 +149,8 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.readingList,
                 action: {
+                    // Ecosia: Track menu item tap
+                    Analytics.shared.menuClick(.readingList)
                     store.dispatch(
                         MainMenuAction(
                             windowUUID: uuid,
@@ -164,6 +170,8 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.downloads,
                 action: {
+                    // Ecosia: Track menu item tap
+                    Analytics.shared.menuClick(.downloads)
                     store.dispatch(
                         MainMenuAction(
                             windowUUID: uuid,
@@ -241,6 +249,8 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                     a11yHint: "",
                     a11yId: AccessibilityIdentifiers.MainMenu.help,
                     action: {
+                        // Ecosia: Track menu item tap
+                        Analytics.shared.menuClick(.help)
                         store.dispatch(
                             MainMenuAction(
                                 windowUUID: uuid,
@@ -261,6 +271,8 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                     a11yHint: "",
                     a11yId: AccessibilityIdentifiers.MainMenu.reportIssue,
                     action: {
+                        // Ecosia: Track menu item tap
+                        Analytics.shared.menuClick(.reportIssue)
                         store.dispatch(
                             MainMenuAction(
                                 windowUUID: uuid,
@@ -280,6 +292,8 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                     a11yHint: "",
                     a11yId: AccessibilityIdentifiers.MainMenu.settings,
                     action: {
+                        // Ecosia: Track menu item tap
+                        Analytics.shared.menuClick(.settings)
                         store.dispatch(
                             MainMenuAction(
                                 windowUUID: uuid,
