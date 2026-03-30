@@ -60,9 +60,9 @@ final class HomepageViewController: UIViewController,
     /// Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied.
     var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
-    /* Ecosia: Stored so it can be upgraded to a cross-hierarchy constraint in viewDidLayoutSubviews */
+    // Ecosia: Stored so it can be upgraded to a cross-hierarchy constraint in viewDidLayoutSubviews
     private var wallpaperBottomConstraint: NSLayoutConstraint?
-    /* Ecosia: Guards against re-applying the cross-hierarchy constraint on each layout pass */
+    // Ecosia: Guards against re-applying the cross-hierarchy constraint on each layout pass
     private var wallpaperExtendedToParent = false
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
@@ -212,9 +212,9 @@ final class HomepageViewController: UIViewController,
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        /* Ecosia: Upgrade wallpaper bottom constraint to BVC's full view once the view is in
-         the window hierarchy. viewWillAppear fires mid-addSubview (no common ancestor yet);
-         viewDidLayoutSubviews is the first safe point after the view is fully embedded. */
+        /* Ecosia: Upgrade wallpaper bottom constraint to BVC's full view once the view is in the window
+         hierarchy. viewWillAppear fires mid-addSubview (no common ancestor yet); viewDidLayoutSubviews
+         is the first safe point after the view is fully embedded. */
         extendEcosiaWallpaperToParent()
 
         /// FXIOS-13970: Legacy homepage layout was appearing blank on iOS 15. The root cause was from applying the diffable
