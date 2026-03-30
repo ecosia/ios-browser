@@ -165,7 +165,7 @@ public enum FrameworkTargets {
             ],
             resources: [
                 "Ecosia/L10N/**/*.{strings,stringsdict}",
-                "Ecosia/UI/**/*.{xcassets,lottie}",
+                "Ecosia/UI/**/*.{xcassets,lottie,mp4}",
                 "Ecosia/markets.json",
                 "Ecosia/Ecosia.docc/**",
             ],

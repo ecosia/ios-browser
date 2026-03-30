@@ -142,9 +142,6 @@ class BrowserViewController: UIViewController,
         view.accessibilityIdentifier = AccessibilityIdentifiers.Browser.statusBarOverlay
 	}
 
-    // Ecosia: Retain coordinator for spotlight product tours
-    var spotlightCoordinator: ProductTourSpotlightCoordinator?
-
     // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
     // and its navigationType are available) to the actual tracking call in didCommit.
     // Set when eligible, cleared on commit or on the next navigation.
@@ -1186,9 +1183,6 @@ class BrowserViewController: UIViewController,
         if isTabScrollRefactoringEnabled {
             setupToolbarAnimator()
         }
-
-        // Ecosia
-        setupProductTourSpotlightIfNeeded()
 
         // FXIOS-13551 - testWillNavigateAway calls into viewDidLoad during unit tests, creates a leak
         guard !AppConstants.isRunningUnitTest else { return }
@@ -3954,9 +3948,6 @@ class BrowserViewController: UIViewController,
 
         // Ecosia: Update URLBar following PrivateModeUI
         updateURLBarFollowingPrivateModeUI()
-
-        // Ecosia
-        updateSpotlightThemeIfNeeded()
     }
 
     /* Ecosia: preferSwitchToOpenTabOverDuplicate removed from NimbusFeatureFlagID in Firefox upgrade

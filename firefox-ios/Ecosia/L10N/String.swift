@@ -56,7 +56,6 @@ extension String {
         case invalidReferralLinkMessage = "Your referral link is wrong or not valid for you. Please check it and try again."
         case invertColors = "Invert website colors"
         case inviteFriends = "Invite friends"
-        case inviteFriendsSpotlight = "Help plant trees by inviting friends"
         case keepUpToDate = "Keep up to date with the latest news from our projects and more"
         case youveContributed = "You’ve contributed to plant a tree with your friend!"
         case learnMore = "Learn more"
@@ -74,8 +73,6 @@ extension String {
         case networkError = "Network error!"
         case next = "Next"
         case new = "New"
-        case ntpFirstSearchTitle = "Get started with Ecosia"
-        case ntpFirstSearchDescription = "Try a search and discover how you're helping fight climate change by using Ecosia."
         case noConnectionMessage = "We couldn't verify your link. Please check your internet connection and try again."
         case noConnectionNSURLErrorTitle = "No connection"
         case noConnectionNSURLErrorMessage = "Please check your internet connection and try again"
@@ -291,13 +288,5 @@ extension String {
         case userLevelAccessibilityLabel = "Level: %@"
         case profileButtonAccessibilityHint = "Opens your profile page"
         case signOutButtonAccessibilityHint = "Sign out of your account"
-
-        // MARK: - Product Tour Spotlight
-        case serpSpotlightStep1Title = "You browse with 100% clean energy"
-        case serpSpotlightStep1Description = "You're helping push dirty energy off the grid! We produce more solar and wind energy than your searches take."
-        case serpSpotlightStep2Title = "We use profits for the planet"
-        case serpSpotlightStep2Description = "Unlike any other search engines, we use 100% of the profits that we make from ads for climate action!"
-        case protectionSpotlightTitle = "We protect your data like the climate"
-        case protectionSpotlightDescription = "We block unnecessary trackers so you can browse privately, without worries about privacy."
     }
 }

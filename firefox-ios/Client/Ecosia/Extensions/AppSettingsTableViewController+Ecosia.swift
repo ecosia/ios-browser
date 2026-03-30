@@ -68,8 +68,8 @@ extension AppSettingsTableViewController {
             PushBackInstallation(settings: self),
             OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
             ToggleDefaultBrowserPromo(settings: self),
+            ShowWelcomeScreen(settings: self),
             ToggleImpactIntro(settings: self),
-            ResetOnboardingProductTour(settings: self),
             CreateReferralCode(settings: self),
             AddReferral(settings: self),
             AddClaim(settings: self),
@@ -95,7 +95,6 @@ extension AppSettingsTableViewController {
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashAISearchMVPSetting(settings: self),
-            UnleashOnboardingSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]
 

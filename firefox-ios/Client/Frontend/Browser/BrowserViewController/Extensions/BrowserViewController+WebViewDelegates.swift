@@ -1172,10 +1172,6 @@ extension BrowserViewController: WKNavigationDelegate {
                     )
                 )
             }
-            // Ecosia: Handle navigation completion after URL finishes loading
-            if let url = webView.url {
-                ecosiaHandlePageLoadCompletion(url: url)
-            }
             navigateInTab(tab: tab, to: navigation, webViewStatus: .finishedNavigation)
 
             // If this tab had previously crashed, wait 5 seconds before resetting

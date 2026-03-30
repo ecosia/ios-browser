@@ -327,31 +327,17 @@ final class LaunchCoordinator: BaseCoordinator,
          }
          */
 
-        // Ecosia: Wait for feature flags before deciding which onboarding to show.
-        // The welcome screen is only presented if the experiment is enabled, preventing a crash
-        // caused by presenting the welcome screen and calling didFinishLaunch concurrently.
-        AppEventQueue.wait(for: .featureManagementInitialized) { [weak self] in
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
+        // Ecosia: Store manager so welcomeDidFinish/welcomeDidRequestSignIn can mark it as seen.
+        introManagerForEcosiaWelcome = manager
 
-                guard OnboardingProductTourExperiment.isEnabled else {
-                    self.parentCoordinator?.didFinishLaunch(from: self)
-                    return
-                }
-
-                // Experiment is enabled: initialize tour state and present the welcome screen
-                ProductTourManager.shared.resetTour()
-
-                let introViewController = WelcomeNavigation(
-                    rootViewController: WelcomeViewController(delegate: self, windowUUID: self.windowUUID),
-                    windowUUID: self.windowUUID
-                )
-                introViewController.isNavigationBarHidden = true
-                introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-                introViewController.modalPresentationStyle = .fullScreen
-                self.router.present(introViewController, animated: false)
-            }
-        }
+        let introViewController = WelcomeNavigation(
+            rootViewController: WelcomeViewController(delegate: self, windowUUID: self.windowUUID),
+            windowUUID: self.windowUUID
+        )
+        introViewController.isNavigationBarHidden = true
+        introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+        introViewController.modalPresentationStyle = .fullScreen
+        router.present(introViewController, animated: false)
     }
     
     // MARK: - Update
@@ -472,10 +458,14 @@ final class LaunchCoordinator: BaseCoordinator,
 // Ecosia: custom onboarding
 extension LaunchCoordinator: WelcomeDelegate {
     func welcomeDidFinish(_ welcome: WelcomeViewController) {
+        introManagerForEcosiaWelcome?.didSeeIntroScreen()
+        introManagerForEcosiaWelcome = nil
         self.parentCoordinator?.didFinishLaunch(from: self)
     }
 
     func welcomeDidRequestSignIn(_ welcome: WelcomeViewController) {
+        introManagerForEcosiaWelcome?.didSeeIntroScreen()
+        introManagerForEcosiaWelcome = nil
         self.parentCoordinator?.didRequestSignIn(from: self)
     }
 }

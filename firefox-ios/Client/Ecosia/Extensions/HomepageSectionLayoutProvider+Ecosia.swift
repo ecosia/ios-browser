@@ -33,7 +33,7 @@ extension HomepageSectionLayoutProvider {
     }
     
     // MARK: - Individual Section Layouts
-    
+
     private func createEcosiaHeaderLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
         // Dimensions from NTPHeaderViewModel
         let itemSize = NSCollectionLayoutSize(

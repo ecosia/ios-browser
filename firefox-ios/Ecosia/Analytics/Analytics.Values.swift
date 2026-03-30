@@ -280,15 +280,6 @@ extension Analytics {
             main = "all_private_data"
         }
 
-        public enum SpotlightTour: String {
-            case
-            skip,
-            next,
-            back,
-            complete,
-            readMore = "read_more"
-        }
-
         public enum TopSite: String {
             case
             `default`,

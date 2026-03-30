@@ -93,7 +93,7 @@ public enum ClientTarget {
                     "Client/Assets/Images.xcassets/AppIcon_Beta.appiconset",
                     "Client/Assets/Images.xcassets/AppIcon_Developer.appiconset"
                 ]),
-                "Client/Ecosia/**/*.{xib,xcassets,strings,stringsdict}",
+                "Client/Ecosia/**/*.{xib,xcassets,strings,stringsdict,ttf,otf}",
                 .glob(pattern: "Client/*.lproj/**", excluding: ["Client/Extensions/**"]),
                 "Shared/**/*.{strings, stringsdict}",
             ],
