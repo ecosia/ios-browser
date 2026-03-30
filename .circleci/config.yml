@@ -416,6 +416,7 @@ workflows:
             branches:
               only: 
                 - main
+                - develop
                 - /^main-\d+$/
                 - /^patch\/.+$/
           context: napps
