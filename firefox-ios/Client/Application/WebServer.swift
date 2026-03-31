@@ -73,8 +73,8 @@ final class WebServer: WebServerProtocol, @unchecked Sendable {
                 }
 
                 // Hop to the MainActor for the actual handler logic.
-                // Copy the non-Sendable completion into a local to avoid capturing it across concurrency domains.
-                // Mark as nonisolated(unsafe) since we're already using @unchecked Sendable and managing thread safety.
+                // Ecosia: Copy the non-Sendable completion into a local to avoid capturing it across concurrency domains.
+                // nonisolated(unsafe) is safe here because we're already using @unchecked Sendable and managing thread safety.
                 nonisolated(unsafe) let completionLocal = completion
                 ensureMainThread {
                     handler(request) { response in
