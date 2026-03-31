@@ -36,7 +36,6 @@ class PasswordManagerListViewController: SensitiveViewController,
 
     fileprivate lazy var selectionButton: UIButton = .build { button in
         button.titleLabel?.font = PasswordManagerViewModel.UX.selectionButtonFont
-        button.addTarget(self, action: #selector(self.tappedSelectionButton), for: .touchUpInside)
     }
 
     static func shouldShowAppMenuShortcut(forPrefs prefs: Prefs) -> Bool {
@@ -136,6 +135,7 @@ class PasswordManagerListViewController: SensitiveViewController,
         ])
 
         selectionButton.isHidden = true
+        selectionButton.addTarget(self, action: #selector(tappedSelectionButton), for: .touchUpInside)
 
         if #available(iOS 26.0, *) {
             selectionButton.layer.cornerRadius = UIConstants.ToolbarHeight / 2
@@ -214,13 +214,10 @@ class PasswordManagerListViewController: SensitiveViewController,
                                                    target: self,
                                                    action: #selector(presentAddCredential))
 
-    lazy var deleteButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: .LoginListDelete,
-                                     style: .plain,
-                                     target: self,
-                                     action: #selector(tappedDelete))
-        return button
-    }()
+    lazy var deleteButton = UIBarButtonItem(title: .LoginListDelete,
+                                              style: .plain,
+                                              target: self,
+                                              action: #selector(tappedDelete))
 
     lazy var cancelSelectionButton = UIBarButtonItem(barButtonSystemItem: .cancel,
                                                      target: self,
@@ -369,11 +366,11 @@ private extension PasswordManagerListViewController {
                             return nil
                         }
 
-                        self.viewModel.profile.logins.deleteLogins(ids: guidsToDelete) { _ in
-                            DispatchQueue.main.async {
-                                self.cancelSelection()
-                                self.loadLogins()
-                                self.sendLoginsDeletedTelemetry()
+                        self.viewModel.profile.logins.deleteLogins(ids: guidsToDelete) { [weak self] _ in
+                            DispatchQueue.main.async { [weak self] in
+                                self?.cancelSelection()
+                                self?.loadLogins()
+                                self?.sendLoginsDeletedTelemetry()
                             }
                         }
                     }, hasSyncedLogins: yes.successValue ?? true)

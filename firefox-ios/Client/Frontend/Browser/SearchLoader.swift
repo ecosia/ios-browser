@@ -94,7 +94,7 @@ final class SearchLoader: Loader<Cursor<Site>, SearchViewModel>, FeatureFlaggabl
                 ensureMainThread { [weak self] in
                     guard let query = self?.query else { return }
 
-                    var queries = [bookmarks]
+                    nonisolated(unsafe) var queries = [bookmarks]
 
                     let group = DispatchGroup()
                     group.enter()

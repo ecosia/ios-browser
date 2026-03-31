@@ -22,7 +22,7 @@ class DownloadLiveActivityWrapper: DownloadProgressDelegate {
 
     let throttler: ConcurrencyThrottlerProtocol = ConcurrencyThrottler(seconds: UX.updateCooldown)
 
-    var downloadLiveActivity: Activity<DownloadLiveActivityAttributes>?
+    nonisolated(unsafe) var downloadLiveActivity: Activity<DownloadLiveActivityAttributes>?
 
     var downloadProgressManager: DownloadProgressManager
 

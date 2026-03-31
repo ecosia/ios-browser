@@ -374,8 +374,8 @@ extension ContentBlocker {
         let blocklists = BlocklistFileName.allBlocklistFileNames
         let dispatchGroup = DispatchGroup()
         let totalListCount = blocklists.count
-        var listsCompiledCount = 0
-        var errorCount = 0
+        nonisolated(unsafe) var listsCompiledCount = 0
+        nonisolated(unsafe) var errorCount = 0
         blocklists.forEach { filename in
             dispatchGroup.enter()
             ruleStore?.lookUpContentRuleList(forIdentifier: filename) { [weak self] contentRuleList, error in
