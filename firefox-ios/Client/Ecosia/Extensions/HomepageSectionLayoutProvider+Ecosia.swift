@@ -23,8 +23,6 @@ extension HomepageSectionLayoutProvider {
             return createEcosiaLibraryLayout(for: traitCollection)
         case .ecosiaImpact:
             return createEcosiaImpactLayout(for: traitCollection)
-        case .ecosiaNews:
-            return createEcosiaNewsLayout(for: traitCollection)
         case .ecosiaNTPCustomization:
             return createEcosiaNTPCustomizationLayout(for: traitCollection)
         // Match shortcuts width to the other Ecosia sections (MOB-4150)
@@ -122,39 +120,6 @@ extension HomepageSectionLayoutProvider {
             ? getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 0)
             : NSDirectionalEdgeInsets.zero
         section.contentInsets = insets
-        return section
-    }
-
-    /// News section layout — uses the same insets as the impact section for consistent width on all devices.
-    private func createEcosiaNewsLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // item and group estimated(100), horizontal group count 1 per row; we show 3 rows
-        let itemEstimatedHeight: CGFloat = 100
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(itemEstimatedHeight)
-        )
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(itemEstimatedHeight)
-        )
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-        let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 0
-        // Use getEcosiaSectionInsets so news has the same width as the impact/referral section on all
-        // devices, including iPad where the previous newsSectionContentInsets gave a wider 544pt max (MOB-4150)
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 32)
-        section.contentInsets = insets
-        let headerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(100.0)
-        )
-        let header = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-        section.boundarySupplementaryItems = [header]
         return section
     }
 

@@ -25,14 +25,12 @@ final class EcosiaHomepageAdapter {
     private(set) var headerViewModel: NTPHeaderViewModel?
     private(set) var libraryViewModel: NTPLibraryCellViewModel?
     private(set) var impactViewModel: NTPImpactCellViewModel?
-    private(set) var newsViewModel: NTPNewsCellViewModel?
     private(set) var customizationViewModel: NTPCustomizationCellViewModel?
 
     // Delegates
     weak var headerDelegate: NTPHeaderDelegate?
     weak var libraryDelegate: NTPLibraryDelegate?
     weak var impactDelegate: NTPImpactCellDelegate?
-    weak var newsDelegate: NTPNewsCellDelegate?
     weak var customizationDelegate: NTPCustomizationCellDelegate?
 
     // MARK: - Initialization
@@ -78,12 +76,6 @@ final class EcosiaHomepageAdapter {
         )
         impactViewModel?.delegate = impactDelegate
 
-        // News
-        newsViewModel = NTPNewsCellViewModel(
-            delegate: newsDelegate,
-            theme: theme
-        )
-
         // Customization
         customizationViewModel = NTPCustomizationCellViewModel(
             delegate: customizationDelegate,
@@ -98,7 +90,6 @@ final class EcosiaHomepageAdapter {
         headerViewModel?.theme = theme
         libraryViewModel?.theme = theme
         impactViewModel?.theme = theme
-        newsViewModel?.theme = theme
         customizationViewModel?.theme = theme
     }
 
@@ -106,19 +97,16 @@ final class EcosiaHomepageAdapter {
         header: NTPHeaderDelegate?,
         library: NTPLibraryDelegate?,
         impact: NTPImpactCellDelegate?,
-        news: NTPNewsCellDelegate?,
         customization: NTPCustomizationCellDelegate?
     ) {
         self.headerDelegate = header
         self.libraryDelegate = library
         self.impactDelegate = impact
-        self.newsDelegate = news
         self.customizationDelegate = customization
 
         headerViewModel?.delegate = header
         libraryViewModel?.delegate = library
         impactViewModel?.delegate = impact
-        newsViewModel?.delegate = news
         customizationViewModel?.delegate = customization
     }
 
@@ -141,11 +129,6 @@ final class EcosiaHomepageAdapter {
         }
 
         // Top sites are inserted by HomepageDiffableDataSource after topSitesInsertionAnchor
-
-        // News (if enabled)
-        if shouldShowNews() {
-            sections.append(.ecosiaNews)
-        }
 
         // Customization button removed — pencil icon in header handles this
 
@@ -172,13 +155,8 @@ final class EcosiaHomepageAdapter {
         case .ecosiaLibrary:
             return [.ecosiaLibrary]
         case .ecosiaImpact:
-            // Impact section has multiple rows
-            guard let impactViewModel = impactViewModel else { return [] }
-            return impactViewModel.infoItemSections.enumerated().map { index, _ in
-                .ecosiaImpact(sectionIndex: index)
-            }
-        case .ecosiaNews:
-            return (0..<3).map { .ecosiaNewsCard(index: $0) }
+            guard impactViewModel != nil else { return [] }
+            return [.ecosiaImpact(sectionIndex: 0)]
         case .ecosiaNTPCustomization:
             return [.ecosiaNTPCustomization]
         default:
@@ -199,28 +177,18 @@ final class EcosiaHomepageAdapter {
         return User.shared.showClimateImpact
     }
 
-    private func shouldShowNews() -> Bool {
-        return false
-    }
 
     // MARK: - Lifecycle
 
     func viewWillAppear() {
-        impactViewModel?.subscribeToProjections()
-        // News automatically subscribes on init
+        impactViewModel?.start()
     }
 
     func viewDidDisappear() {
-        impactViewModel?.unsubscribeToProjections()
+        impactViewModel?.stop()
     }
 
     func refreshData(for traitCollection: UITraitCollection, size: CGSize) {
-        newsViewModel?.refreshData(
-            for: traitCollection,
-            size: size,
-            isPortrait: size.height > size.width,
-            device: UIDevice.current.userInterfaceIdiom
-        )
     }
 
     // MARK: - Ecosia: NTP Background
@@ -243,13 +211,8 @@ final class EcosiaHomepageAdapter {
         // If no bundled asset, try to load downloaded images
         if portraitImage == nil || landscapeImage == nil {
             let storageUtility = WallpaperStorageUtility()
-
-            do {
-                portraitImage = try storageUtility.fetchImageNamed(currentWallpaper.portraitID)
-
-                landscapeImage = try storageUtility.fetchImageNamed(currentWallpaper.landscapeID)
-            } catch {
-            }
+            portraitImage = try? storageUtility.fetchImageNamed(currentWallpaper.portraitID)
+            landscapeImage = try? storageUtility.fetchImageNamed(currentWallpaper.landscapeID)
         }
 
         // Fallback to default bundled background if nothing loaded

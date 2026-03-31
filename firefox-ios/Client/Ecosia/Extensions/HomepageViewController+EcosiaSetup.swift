@@ -13,25 +13,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         refreshEcosiaSnapshot()
     }
 
-    /// Opens the selected news article in a new tab and records analytics
-    func handleEcosiaNewsSelection(at indexPath: IndexPath) {
-        guard let items = ecosiaAdapter?.newsViewModel?.items,
-              indexPath.item < items.count else { return }
-        let newsItem = items[indexPath.item]
-        let destination = NavigationDestination(
-            .newTab,
-            url: newsItem.targetUrl,
-            isPrivate: false,
-            selectNewTab: true
-        )
-        store.dispatch(NavigationBrowserAction(
-            navigationDestination: destination,
-            windowUUID: windowUUID,
-            actionType: NavigationBrowserActionType.tapOnCell
-        ))
-        Analytics.shared.navigationOpenNews(newsItem.trackingName)
-    }
-
     /// Registers all Ecosia cell types on the collection view. Call from configureCollectionView so Ecosia cells (e.g. NTPHeader) are always available regardless of setup order.
     func registerEcosiaCells(on collectionView: UICollectionView) {
         // NTPLogoCell removed — logo is now part of NTPHeader.
@@ -40,7 +21,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             TopSiteCell.self,
             EmptyTopSiteCell.self,
             NTPImpactCell.self,
-            NTPNewsCell.self,
             NTPCustomizationCell.self
         ]
         if #available(iOS 16.0, *) {
@@ -73,15 +53,11 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             header: browserViewController,
             library: browserViewController,
             impact: browserViewController,
-            news: browserViewController,
             customization: browserViewController
         )
 
         // Store adapter
         setEcosiaAdapter(adapter)
-
-        // So News can refresh the snapshot when items load
-        adapter.newsViewModel?.dataModelDelegate = self
 
         // Register Ecosia cell types; NTPLogoCell removed — logo now lives in NTPHeader.
         var ecosiaCellTypes: [ReusableCell.Type] = [
@@ -89,7 +65,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             TopSiteCell.self,
             EmptyTopSiteCell.self,
             NTPImpactCell.self,
-            NTPNewsCell.self,
             NTPCustomizationCell.self
         ]
         if #available(iOS 16.0, *) {
@@ -127,23 +102,13 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ecosiaAdapter?.updateTheme(theme)
     }
 
-    /// Refreshes the Ecosia snapshot (e.g. after tooltip accept, or when news loads) so the UI updates
+    /// Refreshes the Ecosia snapshot so the UI updates
     func refreshEcosiaSnapshot() {
         guard let dataSource else { return }
         dataSource.updateSnapshot(
             state: homepageState,
             jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
         )
-        // Force News cells to reconfigure via data source (do not mutate collection view directly)
-        var snapshot = dataSource.snapshot()
-        if snapshot.indexOfSection(.ecosiaNews) != nil {
-            let newsItems = snapshot.itemIdentifiers(inSection: .ecosiaNews)
-            if !newsItems.isEmpty {
-                snapshot.reloadItems(newsItems)
-                dataSource.apply(snapshot)
-            }
-        }
-        // Invalidate layout so self-sizing (e.g. news tiles) recalculates and avoids excess empty space
         homepageCollectionView?.collectionViewLayout.invalidateLayout()
     }
 
