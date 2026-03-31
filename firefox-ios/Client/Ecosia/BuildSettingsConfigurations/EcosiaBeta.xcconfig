@@ -4,9 +4,9 @@
 
 // This is a version of the Ecosia Beta config for the staging environment.
 
-#include "../../Configuration/Common.xcconfig"
 #include "../../Configuration/Release.xcconfig"
 #include "Staging.xcconfig"
+#include "EcosiaCommon.xcconfig"
 
 MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta
 MOZ_PRODUCT_NAME = Ecosia
@@ -16,4 +16,3 @@ OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_BETA
 MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = $(inherited) -ld_classic
 DEVELOPMENT_TEAM = 33YMRSYD2L
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) ECOSIA

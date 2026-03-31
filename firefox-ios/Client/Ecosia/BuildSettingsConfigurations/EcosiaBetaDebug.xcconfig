@@ -4,9 +4,9 @@
 
 // This is a debuggable version of the Ecosia Beta config with the same Bundle ID and setup utilized in staging.
 
-#include "../../Configuration/Common.xcconfig"
 #include "../../Configuration/Debug.xcconfig"
 #include "Staging.xcconfig"
+#include "EcosiaCommon.xcconfig"
 
 INFOPLIST_FILE = Client/Info.plist
 MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta
@@ -20,4 +20,3 @@ OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
 MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate -ld_classic
 DEVELOPMENT_TEAM = 33YMRSYD2L
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) ECOSIA
