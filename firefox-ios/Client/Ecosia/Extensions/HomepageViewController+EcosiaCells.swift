@@ -77,43 +77,17 @@ extension HomepageViewController {
             return UICollectionViewCell()
         }
 
-        if let viewModel = ecosiaAdapter?.impactViewModel,
-           sectionIndex < viewModel.infoItemSections.count {
-            let items = viewModel.infoItemSections[sectionIndex]
+        if let viewModel = ecosiaAdapter?.impactViewModel {
+            let title = viewModel.rotatingTitle ?? RotatingTitlesService.fallbackTitles.first
             impactCell.configure(
-                items: items,
-                rotatingTitles: viewModel.rotatingTitles,
+                items: viewModel.impactItems,
+                title: title,
                 delegate: ecosiaAdapter?.impactDelegate,
                 theme: themeManager.getCurrentTheme(for: windowUUID)
             )
             viewModel.registerCell(impactCell, forSectionIndex: sectionIndex)
         }
         return impactCell
-    }
-
-    func configureEcosiaNewsCell(at indexPath: IndexPath, itemIndex: Int = 0) -> UICollectionViewCell {
-        guard let cv = homepageCollectionView,
-              let newsCell = cv.dequeueReusableCell(
-            cellType: NTPNewsCell.self,
-            for: indexPath
-        ) else {
-            return UICollectionViewCell()
-        }
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        if let viewModel = ecosiaAdapter?.newsViewModel,
-           itemIndex < viewModel.items.count {
-            let itemCount = min(3, viewModel.items.count)
-            newsCell.configure(
-                viewModel.items[itemIndex],
-                images: Images(.init(configuration: .ephemeral)),
-                row: itemIndex,
-                totalCount: itemCount
-            )
-            newsCell.applyTheme(theme: theme)
-        } else {
-            newsCell.applyTheme(theme: theme)
-        }
-        return newsCell
     }
 
     func configureEcosiaNTPCustomizationCell(at indexPath: IndexPath) -> UICollectionViewCell {
@@ -130,25 +104,6 @@ extension HomepageViewController {
         return customizationCell
     }
 
-    /// Configures the section header for the Ecosia News section (layout requires a header).
-    /// Uses NTP typography: .title3.bold for section title (same as DefaultBrowser, other NTP headlines).
-    func configureEcosiaNewsSectionHeader(with sectionLabelCell: LabelButtonHeaderView) -> LabelButtonHeaderView {
-        let state = SectionHeaderConfiguration(
-            title: String.localized(.ecosiaNews),
-            a11yIdentifier: "ecosia.ntp.section.news",
-            isButtonHidden: false,
-            buttonA11yIdentifier: "see_all",
-            buttonTitle: String.localized(.seeAll)
-        )
-        let moreButtonAction: (@MainActor (UIButton) -> Void)? = { [weak self] _ in
-            self?.ecosiaAdapter?.newsDelegate?.openSeeAllNews()
-        }
-        // White text over glassmorphism wallpaper background
-        sectionLabelCell.configure(state: state, moreButtonAction: moreButtonAction, textColor: .white, theme: themeManager.getCurrentTheme(for: windowUUID))
-        sectionLabelCell.titleLabel.font = .preferredFont(forTextStyle: .title3).bold()
-        sectionLabelCell.titleLabel.adjustsFontForContentSizeCategory = true
-        return sectionLabelCell
-    }
 }
 
 // MARK: - Associated Keys

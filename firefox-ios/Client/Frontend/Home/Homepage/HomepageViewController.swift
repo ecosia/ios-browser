@@ -752,12 +752,8 @@ final class HomepageViewController: UIViewController,
             return configureEcosiaLibraryCell(at: indexPath)
         case .ecosiaImpact(let sectionIndex):
             return configureEcosiaImpactCell(at: indexPath, sectionIndex: sectionIndex)
-        case .ecosiaNewsCard(let index):
-            return configureEcosiaNewsCell(at: indexPath, itemIndex: index)
         case .ecosiaNTPCustomization:
             return configureEcosiaNTPCustomizationCell(at: indexPath)
-        case .ecosiaNews:
-            return configureEcosiaNewsCell(at: indexPath, itemIndex: 0)
         }
     }
 
@@ -846,8 +842,6 @@ final class HomepageViewController: UIViewController,
                 theme: currentTheme
             )
             return sectionLabelCell
-        case .ecosiaNews:
-            return configureEcosiaNewsSectionHeader(with: sectionLabelCell)
         default:
             return nil
         }
@@ -1176,8 +1170,6 @@ final class HomepageViewController: UIViewController,
             )
             dispatchNavigationBrowserAction(with: destination, actionType: NavigationBrowserActionType.tapOnCell)
             dispatchOpenPocketAction(at: indexPath.item, actionType: MerinoActionType.tapOnHomepageMerinoCell)
-        case .ecosiaNewsCard:
-            handleEcosiaNewsSelection(at: indexPath)
         default:
             return
         }

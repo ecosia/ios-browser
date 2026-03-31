@@ -8,18 +8,11 @@ import Ecosia
 enum CustomizableNTPSettingConfig: CaseIterable {
     case topSites
     case climateImpact
-    // Ecosia: ecosiaNews hidden by default (MOB-4150); removed from the customization UI
-    case ecosiaNews
-
-    // Ecosia: manually provide allCases so ecosiaNews is excluded from the NTP customization row while
-    // the case itself remains for analytics and User.shared.showEcosiaNews persistence
-    static var allCases: [CustomizableNTPSettingConfig] { [.topSites, .climateImpact] }
 
     var localizedTitleKey: String.Key {
         switch self {
         case .topSites: return .topSites
         case .climateImpact: return .climateImpact
-        case .ecosiaNews: return .ecosiaNews
         }
     }
 
@@ -28,14 +21,12 @@ enum CustomizableNTPSettingConfig: CaseIterable {
             switch self {
             case .topSites: return User.shared.showTopSites
             case .climateImpact: return User.shared.showClimateImpact
-            case .ecosiaNews: return User.shared.showEcosiaNews
             }
         }
         set {
             switch self {
             case .topSites: User.shared.showTopSites = newValue
             case .climateImpact: User.shared.showClimateImpact = newValue
-            case .ecosiaNews: User.shared.showEcosiaNews = newValue
             }
         }
     }
@@ -44,7 +35,6 @@ enum CustomizableNTPSettingConfig: CaseIterable {
         switch self {
         case .topSites: return .topSites
         case .climateImpact: return .impact
-        case .ecosiaNews: return .news
         }
     }
 
@@ -52,7 +42,6 @@ enum CustomizableNTPSettingConfig: CaseIterable {
         switch self {
         case .topSites: "top_sites"
         case .climateImpact: "climate_impact"
-        case .ecosiaNews: "ecosia_news"
         }
     }
 }

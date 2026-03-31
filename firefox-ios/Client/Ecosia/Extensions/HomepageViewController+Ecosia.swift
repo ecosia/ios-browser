@@ -113,21 +113,6 @@ extension BrowserViewController: NTPImpactCellDelegate {
 }
 
 @MainActor
-extension BrowserViewController: NTPNewsCellDelegate {
-    func openSeeAllNews() {
-        guard let homepage = contentContainer.contentController as? HomepageViewController,
-              let adapter = homepage.ecosiaAdapter,
-              let newsViewModel = adapter.newsViewModel else { return }
-
-        let news = NewsController(items: newsViewModel.items, windowUUID: windowUUID)
-        news.delegate = self
-        let nav = EcosiaNavigation(rootViewController: news)
-        present(nav, animated: true)
-        Analytics.shared.navigation(.open, label: .news)
-    }
-}
-
-@MainActor
 extension BrowserViewController: NTPCustomizationCellDelegate {
     func openNTPCustomizationSettings() {
         Analytics.shared.ntpCustomisation(.click, label: .customize)
