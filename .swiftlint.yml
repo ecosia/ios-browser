@@ -31,14 +31,17 @@ only_rules: # Only enforce these rules, ignore all others
   - mark
   - no_space_in_method_call
   - ns_number_init_as_function_reference
-  - operator_whitespace
+  - function_name_whitespace
   - orphaned_doc_comment
   - private_over_fileprivate
   - protocol_property_accessors_order
   - redundant_discardable_let
   - redundant_objc_attribute
-  - redundant_optional_initialization
+  - implicit_optional_initialization
   - redundant_string_enum_value
+  # Ecosia: operator_whitespace and redundant_optional_initialization are preferred names in SwiftLint ≥ 0.57
+  - operator_whitespace
+  - redundant_optional_initialization
   # Ecosia: disabled
   # - redundant_void_return
   - return_arrow_whitespace
