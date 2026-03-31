@@ -56,16 +56,20 @@ public struct RotatingTitlesResponse: Decodable {
 
     /// Returns the index into `orderedTitles` that corresponds to `date`, using the same
     /// deterministic algorithm as the web implementation so all clients show the same title
-    /// on the same UTC day.
-    ///
-    /// Algorithm (mirrors web `getRotatingTitle`):
-    ///   daysSinceEpoch = utcDayNumber(today) − utcDayNumber(startDate)
-    ///   idx = ((daysSinceEpoch % count) + count) % count   ← safe modulo handles negatives
+    /// on the same UTC day. Delegates to the shared static helper so the logic lives in one place.
     public func startingIndex(for date: Date = Date(), count: Int) -> Int {
+        Self.rotationIndex(startDate: rotation.startDate, frequencyDays: rotation.frequencyDays, count: count, date: date)
+    }
+
+    /// Single source of truth for the rotation algorithm (mirrors web `getRotatingTitle`):
+    ///   stepsElapsed = daysSinceEpoch / frequencyDays
+    ///   idx = ((stepsElapsed % count) + count) % count   ← safe modulo handles negatives
+    static func rotationIndex(startDate: String?, frequencyDays: Int, count: Int, date: Date) -> Int {
         guard count > 0 else { return 0 }
-        let epoch = Self.utcDate(from: rotation.startDate) ?? Self.fallbackEpoch
-        let daysSinceEpoch = Self.utcDayNumber(for: date) - Self.utcDayNumber(for: epoch)
-        return ((daysSinceEpoch % count) + count) % count
+        let epoch = startDate.flatMap { utcDate(from: $0) } ?? fallbackEpoch
+        let daysSinceEpoch = utcDayNumber(for: date) - utcDayNumber(for: epoch)
+        let stepsElapsed = daysSinceEpoch / max(1, frequencyDays)
+        return ((stepsElapsed % count) + count) % count
     }
 
     // MARK: - UTC helpers (mirrors web utcDayNumber)
@@ -168,7 +172,8 @@ public final class RotatingTitlesService {
         // 1. Persisted cache — valid only if it hasn't exceeded the CDN's frequency_days TTL.
         if let ordered = loadOrderedTitles(language: languageCode), !isCacheExpired(language: languageCode, date: date) {
             let startDate = loadStartDate(language: languageCode)
-            let result = Self.applyRotation(to: ordered, startDate: startDate, date: date)
+            let frequencyDays = loadFrequencyDays(language: languageCode)
+            let result = Self.applyRotation(to: ordered, startDate: startDate, frequencyDays: frequencyDays, date: date)
             sessionTitles = result
             return result
         }
@@ -192,7 +197,7 @@ public final class RotatingTitlesService {
         guard !ordered.isEmpty else { return nil }
 
         persist(ordered: ordered, startDate: response.rotation.startDate, frequencyDays: response.rotation.frequencyDays, language: languageCode)
-        return Self.applyRotation(to: ordered, startDate: response.rotation.startDate, date: date)
+        return Self.applyRotation(to: ordered, startDate: response.rotation.startDate, frequencyDays: response.rotation.frequencyDays, date: date)
     }
 
     // MARK: - UserDefaults
@@ -203,6 +208,10 @@ public final class RotatingTitlesService {
 
     private func loadStartDate(language: String) -> String? {
         UserDefaults.standard.string(forKey: CacheKey.startDate(language: language))
+    }
+
+    private func loadFrequencyDays(language: String) -> Int {
+        UserDefaults.standard.integer(forKey: CacheKey.frequencyDays(language: language))
     }
 
     private func persist(ordered: [String], startDate: String, frequencyDays: Int, language: String) {
@@ -237,13 +246,8 @@ public final class RotatingTitlesService {
     /// Returns `fallbackTitles` unchanged (single entry — rotation is a no-op).
     public static func rotatedFallback(for date: Date = Date()) -> [String] { fallbackTitles }
 
-    private static func applyRotation(to ordered: [String], startDate: String?, date: Date) -> [String] {
-        let epoch = startDate.flatMap { RotatingTitlesResponse.utcDate(from: $0) }
-                 ?? RotatingTitlesResponse.fallbackEpoch
-        let daysSinceEpoch = RotatingTitlesResponse.utcDayNumber(for: date)
-                           - RotatingTitlesResponse.utcDayNumber(for: epoch)
-        let count = ordered.count
-        let idx = ((daysSinceEpoch % count) + count) % count
+    private static func applyRotation(to ordered: [String], startDate: String?, frequencyDays: Int, date: Date) -> [String] {
+        let idx = rotationIndex(startDate: startDate, frequencyDays: frequencyDays, count: ordered.count, date: date)
         return rotate(ordered, by: idx)
     }
 }
