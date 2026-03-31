@@ -8,17 +8,12 @@ import UIKit
 
 // MARK: - NTPGlassUX
 
-/// Shared constants for the Ecosia NTP "Glass Static" visual style.
+/// Layout constants for the Ecosia NTP "Glass Static" visual style.
 ///
-/// Matches Figma design tokens:
-/// - `component/button/button-bg-glass-static` = `rgba(26,26,26,0.32)`
-/// - `border/border-glass-static` = `rgba(255,255,255,0.24)`
-/// - `Web/Glassmorphism/Glass` = `backdrop-filter: blur(24px)`
+/// Colours live in `EcosiaSemanticColors` (`ntpGlassTint`, `ntpGlassBorder`) so they are
+/// centrally governed. Only the blur radius is kept here as a layout constant.
+/// Figma reference: `Web/Glassmorphism/Glass` = `backdrop-filter: blur(24px)`
 enum NTPGlassUX {
-    static let darkTintAlpha: CGFloat = 0.32
-    static let darkTintColor = UIColor(red: 26/255, green: 26/255, blue: 26/255, alpha: darkTintAlpha)
-    /// Border opacity matching Figma `rgba(255,255,255,0.24)` glass border.
-    static let borderAlpha: CGFloat = 0x3D / 255.0
     static let blurRadius: CGFloat = 24
 }
 
@@ -63,7 +58,6 @@ final class NTPImpactGlassBackgroundView: UIView {
     // MARK: - Blur Constants
 
     static let blurRadius: CGFloat = NTPGlassUX.blurRadius
-    static let darkTintAlpha: CGFloat = NTPGlassUX.darkTintAlpha
 
     // MARK: - Cache (shared; one blurred image per wallpaper)
 
@@ -84,7 +78,6 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     private let tintView: UIView = {
         let v = UIView()
-        v.backgroundColor = NTPGlassUX.darkTintColor
         return v
     }()
 
@@ -134,6 +127,13 @@ final class NTPImpactGlassBackgroundView: UIView {
         guard window != nil else { return }
         syncImageToWallpaperCoordinates()
         observeParentScrollView()
+    }
+
+    // MARK: - ThemeApplicable
+
+    func applyTheme(theme: Theme) {
+        guard let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia else { return }
+        tintView.backgroundColor = ecosia.ntpGlassTint
     }
 
     // MARK: - Public API

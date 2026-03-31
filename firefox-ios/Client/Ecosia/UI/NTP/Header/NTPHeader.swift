@@ -7,14 +7,16 @@ import SwiftUI
 import Common
 import Ecosia
 
-// MARK: - SwiftUI Color + NTPGlassUX
+// MARK: - SwiftUI Color helpers for NTP glass tokens
 
 private extension Color {
+    /// Figma `component/button/button-bg-glass-static` = `rgba(26,26,26,0.32)`.
     static var ntpGlassDarkTint: Color {
-        Color(red: 26/255, green: 26/255, blue: 26/255).opacity(NTPGlassUX.darkTintAlpha)
+        Color(uiColor: EcosiaColor.Gray90).opacity(0.32)
     }
 
-    static func ntpGlassBorder(opacity: Double = Double(NTPGlassUX.borderAlpha)) -> Color {
+    /// Figma `border/border-glass-static` = `rgba(255,255,255,0.24)`.
+    static func ntpGlassBorder(opacity: Double = 0x3D / 255.0) -> Color {
         Color.white.opacity(opacity)
     }
 }

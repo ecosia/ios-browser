@@ -70,6 +70,12 @@ public protocol EcosiaSemanticColors {
     var textSecondary: UIColor { get }
     var textStaticDark: UIColor { get }
     var textStaticLight: UIColor { get }
+
+    // MARK: - NTP Glass
+    /// Figma token `component/button/button-bg-glass-static` — dark tint overlay on the wallpaper.
+    var ntpGlassTint: UIColor { get }
+    /// Figma token `border/border-glass-static` — white border around glass tiles.
+    var ntpGlassBorder: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -121,4 +127,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textSecondary: UIColor = .systemGray
     var textStaticDark: UIColor = .systemGray
     var textStaticLight: UIColor = .systemGray
+    var ntpGlassTint: UIColor = .systemGray
+    var ntpGlassBorder: UIColor = .systemGray
 }

@@ -350,8 +350,9 @@ extension TopSiteCell: Blurrable {
             rootContainer.addBlurEffect(using: .systemThickMaterial)
             */
             // Ecosia: Blur base (makes the tile distinct against any wallpaper color) +
-            // dark tint overlay (rgba(26,26,26,0.32)) + white border (rgba(255,255,255,0.24)).
+            // dark tint overlay + white border — using semantic glass tokens from EcosiaSemanticColors.
             // This mirrors the impact-tile glass technique: blur + tint + border.
+            let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia
             rootContainer.removeVisualEffectView()
             ecosiaRemoveGlassTintView()
             rootContainer.backgroundColor = .clear
@@ -360,12 +361,12 @@ extension TopSiteCell: Blurrable {
             // Insert dark tint above the UIVisualEffectView (index 0) but below the favicon.
             let tintView = UIView()
             tintView.tag = UX.ecosiaGlassTintTag
-            tintView.backgroundColor = NTPGlassUX.darkTintColor
+            tintView.backgroundColor = ecosia?.ntpGlassTint ?? EcosiaColor.Gray90.withAlphaComponent(0.32)
             tintView.frame = rootContainer.bounds
             tintView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             tintView.isUserInteractionEnabled = false
             rootContainer.insertSubview(tintView, at: 1)
-            rootContainer.layer.borderColor = UIColor.white.withAlphaComponent(NTPGlassUX.borderAlpha).cgColor
+            rootContainer.layer.borderColor = (ecosia?.ntpGlassBorder ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
             // Ecosia: Figma shortcut icon container Border: 0.5px
             rootContainer.layer.borderWidth = 0.5
             // Ecosia: Inset favicon by 14pt so glass ring is visible around the icon (Figma Padding: 14px).
