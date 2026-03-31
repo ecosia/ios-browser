@@ -8,7 +8,6 @@ public enum ClientTarget {
         ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaDebug.xcconfig"),
         .debug(name: "BetaDebug", settings: [
             "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox",
-            "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "",
         ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBetaDebug.xcconfig"),
         .debug(name: "Testing", settings: [
             "PROVISIONING_PROFILE_SPECIFIER": "match Development com.ecosia.ecosiaapp.firefox",
@@ -16,12 +15,10 @@ public enum ClientTarget {
         .release(name: "Release", settings: [
             "CODE_SIGN_IDENTITY": "iPhone Distribution",
             "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp",
-            "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
         ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/Ecosia.xcconfig"),
         .release(name: "Development_TestFlight", settings: [
             "CODE_SIGN_IDENTITY": "iPhone Distribution",
             "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.ecosia.ecosiaapp.firefox",
-            "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ""
         ], xcconfig: "Client/Ecosia/BuildSettingsConfigurations/EcosiaBeta.xcconfig"),
         .release(name: "Development_Firebase", settings: [
             "CODE_SIGN_IDENTITY": "iPhone Distribution",
