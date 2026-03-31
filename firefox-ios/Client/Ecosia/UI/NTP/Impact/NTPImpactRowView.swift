@@ -24,7 +24,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         static let titleSubtitleGap: CGFloat = .ecosia.space._2s
         // 24pt icon — matches Figma NTP impact icon specification
         static let imageHeight: CGFloat = 24
-        static let glassBorderAlpha: CGFloat = NTPGlassUX.borderAlpha
         static let glassBorderWidth: CGFloat = 1
     }
 
@@ -241,9 +240,11 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     func applyTheme(theme: Theme) {
         // Glassmorphism — exact 24px Gaussian blur via Core Image (ADR 0003).
         // glassBackground handles the blur + dark tint; the white border gives the glass edge.
+        let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia
         backgroundColor = .clear
         layer.borderWidth = UX.glassBorderWidth
-        layer.borderColor = UIColor(white: 1, alpha: UX.glassBorderAlpha).cgColor
+        layer.borderColor = (ecosia?.ntpGlassBorder ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
+        glassBackground.applyTheme(theme: theme)
         glassBackground.loadCurrentWallpaper()
         // White text and icons over glassmorphism wallpaper background
         titleLabel.textColor = .white
