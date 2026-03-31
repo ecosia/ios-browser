@@ -19,11 +19,11 @@ protocol NTPImpactCellDelegate: AnyObject {
     private var cachedTotalInvested: Int = 0
     private var cachedTotalTrees: Int = 0
 
-    // Rotating USP titles fetched from the CDN; empty until the first fetch completes.
-    private(set) var rotatingTitles: [String] = []
+    // Rotating USP title fetched from the CDN; nil until the first fetch completes (fallback shown).
+    private(set) var rotatingTitle: String?
 
-    var infoItemSections: [[ClimateImpactInfo]] {
-        return [[totalTreesInfo, totalInvestedInfo]]
+    var impactItems: [ClimateImpactInfo] {
+        [totalTreesInfo, totalInvestedInfo]
     }
     var referralInfo: ClimateImpactInfo {
         .referral(value: User.shared.referrals.count)
@@ -69,20 +69,18 @@ protocol NTPImpactCellDelegate: AnyObject {
         // Subscription closure uses [weak self] so no retain cycle.
     }
 
-    // Fetch rotating titles from CDN and cache them; fires once per session.
-    func fetchRotatingTitles() {
+    // Fetch rotating title from CDN and cache it; fires once per session.
+    private func fetchRotatingTitle() {
         Task { @MainActor in
-            rotatingTitles = await RotatingTitlesService.shared.titles()
-            // Update all registered cells with the newly loaded titles
-            cells.values.forEach { $0.updateTitle(rotatingTitles) }
+            rotatingTitle = await RotatingTitlesService.shared.titles().first
+            cells[0]?.updateTitle(rotatingTitle)
         }
     }
 
-    func subscribeToProjections() {
-        // Initial cache updates
+    func start() {
         updateCachedTotalTrees()
         updateCachedTotalInvested()
-        fetchRotatingTitles()
+        fetchRotatingTitle()
 
         guard !UIAccessibility.isReduceMotionEnabled else {
             refreshCell(withInfo: totalTreesInfo)
@@ -107,15 +105,14 @@ protocol NTPImpactCellDelegate: AnyObject {
         }
     }
 
-    func unsubscribeToProjections() {
+    func stop() {
         TreesProjection.shared.unsubscribe(self)
         InvestmentsProjection.shared.unsubscribe(self)
     }
 
     func refreshCell(withInfo info: ClimateImpactInfo) {
-        let indexForInfo = infoItemSections.firstIndex { $0.contains(where: { $0 == info }) }
-        guard let index = indexForInfo else { return }
-        cells[index]?.refresh(items: infoItemSections[index])
+        guard impactItems.contains(where: { $0 == info }) else { return }
+        cells[0]?.refresh(items: impactItems)
     }
 
     /// Registers a cell so it can be refreshed when projection data updates (e.g. trees planted).
@@ -178,7 +175,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
     }
 
     func numberOfItemsInSection() -> Int {
-        infoItemSections.count
+        1
     }
 
     var isEnabled: Bool {
@@ -190,9 +187,8 @@ extension NTPImpactCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = cell as? NTPImpactCell else { return UICollectionViewCell() }
-        let items = infoItemSections[indexPath.row]
-        cell.configure(items: items, rotatingTitles: rotatingTitles, delegate: delegate, theme: theme)
-        cells[indexPath.row] = cell
+        cell.configure(items: impactItems, title: rotatingTitle, delegate: delegate, theme: theme)
+        cells[0] = cell
         return cell
     }
 }

@@ -209,10 +209,10 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     // MARK: - Title
 
-    /// Updates the displayed title. The first element of `titles` is today's UTC-day title
-    /// as computed by `RotatingTitlesService` — no timer, one title per day, matching web.
-    func updateTitle(_ titles: [String]) {
-        rotatingTitleLabel.text = titles.first
+    /// Updates the displayed title. The value is today's UTC-day title as resolved by
+    /// `RotatingTitlesService` before being passed in — no timer, one title per day, matching web.
+    func updateTitle(_ title: String?) {
+        rotatingTitleLabel.text = title
     }
 
     // MARK: - ThemeApplicable
@@ -227,7 +227,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     // MARK: - Configure
 
     func configure(items: [ClimateImpactInfo],
-                   rotatingTitles: [String],
+                   title: String?,
                    delegate: NTPImpactCellDelegate?,
                    theme: Theme) {
         self.delegate = delegate
@@ -246,19 +246,16 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             rows.append(row)
         }
 
-        // Equal height between tiles — the taller tile (subtitle may wrap) drives the
-        // height for both. Using .defaultHigh priority lets content still expand if needed.
-        if rows.count >= 2 {
+        // Equal height between the two tiles — the taller one drives the height for both.
+        // .defaultHigh priority lets content expand further if absolutely needed.
+        if rows.count == 2 {
             let constraint = rows[0].heightAnchor.constraint(equalTo: rows[1].heightAnchor)
             constraint.priority = .defaultHigh
             constraint.isActive = true
             tileEqualHeightConstraint = constraint
         }
 
-        // titles[0] is today's UTC-day title (pre-rotated by RotatingTitlesService).
-        // Empty only if the CDN is still in flight on very first launch; fallback shown then.
-        let titlesToShow = rotatingTitles.isEmpty ? RotatingTitlesService.fallbackTitles : rotatingTitles
-        updateTitle(titlesToShow)
+        updateTitle(title)
         updateContainerAxisForCurrentTraits()
         applyTheme(theme: theme)
     }
