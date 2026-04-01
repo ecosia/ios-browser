@@ -23,15 +23,6 @@ alwaysApply: true
 - Before adding a new key, **always check** `firefox-ios/Ecosia/L10N/String.swift` first — the key may already exist
 - For Firefox strings that already cover a concept (e.g. `String.LegacyAppMenu.AppMenuReadingListTitleString`), reuse them rather than duplicating
 
-### Common already-available Ecosia keys
-
-| Concept | Key |
-|---|---|
-| Help Center | `.helpCenter` |
-| Send Feedback / Report Issue | `.sendFeedback` |
-| Report an issue | `.reportIssue` |
-| Search | `.search` |
-| Homepage | `.homepage` |
 
 ## Example
 
