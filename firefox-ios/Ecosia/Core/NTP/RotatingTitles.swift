@@ -247,7 +247,7 @@ public final class RotatingTitlesService {
     public static func rotatedFallback(for date: Date = Date()) -> [String] { fallbackTitles }
 
     private static func applyRotation(to ordered: [String], startDate: String?, frequencyDays: Int, date: Date) -> [String] {
-        let idx = rotationIndex(startDate: startDate, frequencyDays: frequencyDays, count: ordered.count, date: date)
+        let idx = RotatingTitlesResponse.rotationIndex(startDate: startDate, frequencyDays: frequencyDays, count: ordered.count, date: date)
         return rotate(ordered, by: idx)
     }
 }
