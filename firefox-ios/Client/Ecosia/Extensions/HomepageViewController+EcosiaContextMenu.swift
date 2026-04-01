@@ -81,8 +81,12 @@ extension HomepageViewController {
         ) { _ in
             store.dispatch(
                 NavigationBrowserAction(
-                    navigationDestination: NavigationDestination(.newTab, url: siteURL,
-                                                                 isPrivate: false, selectNewTab: false),
+                    navigationDestination: NavigationDestination(
+                        .newTab,
+                        url: siteURL,
+                        isPrivate: false,
+                        selectNewTab: false
+                    ),
                     windowUUID: windowUUID,
                     actionType: NavigationBrowserActionType.tapOnOpenInNewTab
                 )
@@ -95,8 +99,12 @@ extension HomepageViewController {
         ) { _ in
             store.dispatch(
                 NavigationBrowserAction(
-                    navigationDestination: NavigationDestination(.newTab, url: siteURL,
-                                                                 isPrivate: true, selectNewTab: false),
+                    navigationDestination: NavigationDestination(
+                        .newTab,
+                        url: siteURL,
+                        isPrivate: true,
+                        selectNewTab: false
+                    ),
                     windowUUID: windowUUID,
                     actionType: NavigationBrowserActionType.tapOnOpenInNewTab
                 )
@@ -145,16 +153,22 @@ extension HomepageViewController {
                 title: .UnpinTopsiteActionTitle2,
                 image: UIImage(systemName: "pin.slash")
             ) { _ in
-                store.dispatch(ContextMenuAction(site: site, windowUUID: windowUUID,
-                                                 actionType: ContextMenuActionType.tappedOnUnpinTopSite))
+                store.dispatch(ContextMenuAction(
+                    site: site,
+                    windowUUID: windowUUID,
+                    actionType: ContextMenuActionType.tappedOnUnpinTopSite
+                ))
             }
             let remove = UIAction(
                 title: .RemoveContextMenuTitle,
                 image: UIImage(systemName: "xmark"),
                 attributes: .destructive
             ) { _ in
-                store.dispatch(ContextMenuAction(site: site, windowUUID: windowUUID,
-                                                 actionType: ContextMenuActionType.tappedOnRemoveTopSite))
+                store.dispatch(ContextMenuAction(
+                    site: site,
+                    windowUUID: windowUUID,
+                    actionType: ContextMenuActionType.tappedOnRemoveTopSite
+                ))
             }
             return UIMenu(children: [
                 UIMenu(options: .displayInline, children: [unpin]),
@@ -167,16 +181,22 @@ extension HomepageViewController {
                 title: .PinTopsiteActionTitle2,
                 image: UIImage(systemName: "pin")
             ) { _ in
-                store.dispatch(ContextMenuAction(site: site, windowUUID: windowUUID,
-                                                 actionType: ContextMenuActionType.tappedOnPinTopSite))
+                store.dispatch(ContextMenuAction(
+                    site: site,
+                    windowUUID: windowUUID,
+                    actionType: ContextMenuActionType.tappedOnPinTopSite
+                ))
             }
             let remove = UIAction(
                 title: .RemoveContextMenuTitle,
                 image: UIImage(systemName: "xmark"),
                 attributes: .destructive
             ) { _ in
-                store.dispatch(ContextMenuAction(site: site, windowUUID: windowUUID,
-                                                 actionType: ContextMenuActionType.tappedOnRemoveTopSite))
+                store.dispatch(ContextMenuAction(
+                    site: site,
+                    windowUUID: windowUUID,
+                    actionType: ContextMenuActionType.tappedOnRemoveTopSite
+                ))
             }
             return UIMenu(children: [
                 UIMenu(options: .displayInline, children: [pin]),
@@ -205,8 +225,10 @@ extension HomepageViewController {
                     actionType: NavigationBrowserActionType.tapOnSettingsSection
                 )
             )
-            store.dispatch(ContextMenuAction(windowUUID: windowUUID,
-                                             actionType: ContextMenuActionType.tappedOnSettingsAction))
+            store.dispatch(ContextMenuAction(
+                windowUUID: windowUUID,
+                actionType: ContextMenuActionType.tappedOnSettingsAction
+            ))
         }
 
         let sponsoredContent = UIAction(
@@ -223,14 +245,20 @@ extension HomepageViewController {
             }
             store.dispatch(
                 NavigationBrowserAction(
-                    navigationDestination: NavigationDestination(.newTab, url: sponsorURL,
-                                                                 isPrivate: false, selectNewTab: true),
+                    navigationDestination: NavigationDestination(
+                        .newTab,
+                        url: sponsorURL,
+                        isPrivate: false,
+                        selectNewTab: true
+                    ),
                     windowUUID: windowUUID,
                     actionType: NavigationBrowserActionType.tapOnOpenInNewTab
                 )
             )
-            store.dispatch(ContextMenuAction(windowUUID: windowUUID,
-                                             actionType: ContextMenuActionType.tappedOnSponsoredAction))
+            store.dispatch(ContextMenuAction(
+                windowUUID: windowUUID,
+                actionType: ContextMenuActionType.tappedOnSponsoredAction
+            ))
         }
 
         return UIMenu(children: [
