@@ -223,6 +223,8 @@
 "Close" = "Close";
 "Help Center" = "Help Center";
 "Thank you for your feedback!" = "Thank you for your feedback!";
+"Help" = "Help";
+"Report Issue" = "Report Issue";
 
 // Error Messages
 "Could not load seed counter" = "Could not load seed counter";

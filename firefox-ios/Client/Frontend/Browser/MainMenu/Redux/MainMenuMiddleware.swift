@@ -201,6 +201,9 @@ final class MainMenuMiddleware: FeatureFlaggable {
         case .passwords:
             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.passwords)
 
+        // Ecosia: Reading List, Help, and Report Issue telemetry — no-op for now
+        case .readingList, .help, .reportIssue: break
+
         case .settings:
             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.settings)
 

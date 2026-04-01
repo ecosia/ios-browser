@@ -11,7 +11,10 @@ class LibraryViewModel {
     var selectedPanel: LibraryPanelType?
 
     var segmentedControlItems: [UIImage] {
+        /* Ecosia: Use Ecosia bookmarksEmpty asset instead of Firefox bookmarkTrayFill
         [UIImage(named: StandardImageIdentifiers.Large.bookmarkTrayFill) ?? UIImage(),
+        */
+        [UIImage(named: "bookmarksEmpty") ?? UIImage(),
          UIImage(named: StandardImageIdentifiers.Large.history) ?? UIImage(),
          UIImage(named: StandardImageIdentifiers.Large.download) ?? UIImage(),
          UIImage(named: StandardImageIdentifiers.Large.readingList) ?? UIImage()]
