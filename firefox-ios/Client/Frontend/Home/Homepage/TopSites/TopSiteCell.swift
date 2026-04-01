@@ -142,6 +142,9 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
     // MARK: - Public methods
 
+    // Ecosia: Exposed for native UIContextMenuInteraction preview targeting.
+    var previewTargetView: UIView { rootContainer }
+
     func configure(_ topSite: TopSiteConfiguration,
                    position: Int,
                    theme: Theme,
