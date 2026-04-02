@@ -1406,7 +1406,21 @@ class BrowserViewController: UIViewController,
     /// As part of the homepage search bar work, we want to only hide the toolbar when the homepage search bar appears.
     /// The homepage search bar should not appear if we are in editing mode.
     private func shouldHideAddressToolbar() {
+        /* Ecosia: Also trigger toolbar hiding when the Ecosia NTP search bar is present,
+           without requiring the homepageSearchBar Nimbus experiment to be enabled.
         guard featureFlags.isFeatureEnabled(.homepageSearchBar, checking: .buildOnly) else { return }
+        */
+        let hasEcosiaNTPSearchBar = contentContainer.hasHomepage &&
+            (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar != nil
+        guard featureFlags.isFeatureEnabled(.homepageSearchBar, checking: .buildOnly) || hasEcosiaNTPSearchBar else {
+            // Ecosia: When we're no longer on the NTP, restore the toolbar if it was hidden by Ecosia logic.
+            guard addressToolbarContainer.isHidden else { return }
+            addressToolbarContainer.isHidden = false
+            store.dispatch(
+                GeneralBrowserAction(windowUUID: windowUUID, actionType: GeneralBrowserActionType.didUnhideToolbar)
+            )
+            return
+        }
         let toolbarState = store.state.screenState(
             ToolbarState.self,
             for: .toolbar,
@@ -1421,7 +1435,11 @@ class BrowserViewController: UIViewController,
             window: windowUUID
         )?.searchState.shouldShowSearchBar ?? false
 
+        /* Ecosia: When the Ecosia NTP search bar is present it acts as the search bar,
+           so treat it the same as shouldShowSearchBar for the toolbar-hiding decision.
         guard shouldShowSearchBar, !isEditing, contentContainer.hasHomepage else {
+        */
+        guard (shouldShowSearchBar || hasEcosiaNTPSearchBar), !isEditing, contentContainer.hasHomepage else {
             guard addressToolbarContainer.isHidden == true else { return }
             addressToolbarContainer.isHidden = false
             store.dispatch(
