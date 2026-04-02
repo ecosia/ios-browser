@@ -373,7 +373,9 @@ class TrackingProtectionViewController: UIViewController,
                 equalTo: view.trailingAnchor,
                 constant: -TPMenuUX.UX.horizontalMargin
             ),
-            // Ecosia: Anchor to baseView top since connection details header is removed
+            /* Ecosia: Anchor to baseView top since connection details header is removed
+            trackersConnectionContainer.topAnchor.constraint(equalTo: connectionDetailsHeaderView.bottomAnchor),
+            */
             trackersConnectionContainer.topAnchor.constraint(
                 equalTo: baseView.topAnchor,
                 constant: TPMenuUX.UX.connectionDetailsHeaderMargins
