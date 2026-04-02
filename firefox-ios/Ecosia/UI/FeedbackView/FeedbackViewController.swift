@@ -11,8 +11,8 @@ public class FeedbackViewController: UIHostingController<FeedbackView> {
     /// Completion handler to be called when feedback is submitted
     public var onFeedbackSubmitted: (() -> Void)?
 
-    public init(windowUUID: WindowUUID? = nil) {
-        var feedbackView = FeedbackView(windowUUID: windowUUID)
+    public init(windowUUID: WindowUUID? = nil, initialFeedbackType: FeedbackType? = nil) {
+        var feedbackView = FeedbackView(windowUUID: windowUUID, initialFeedbackType: initialFeedbackType)
 
         super.init(rootView: feedbackView)
 

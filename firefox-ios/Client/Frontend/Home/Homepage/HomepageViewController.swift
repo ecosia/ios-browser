@@ -46,6 +46,10 @@ final class HomepageViewController: UIViewController,
     private var collectionView: UICollectionView?
     /// Ecosia: Exposed so Ecosia cell configuration extensions (different file) can dequeue cells.
     var homepageCollectionView: UICollectionView? { collectionView }
+    // Ecosia: Exposed for HomepageViewController+EcosiaContextMenu to anchor the share sheet.
+    var ecosiaToastContainer: UIView { toastContainer }
+    // Ecosia: Exposed for HomepageViewController+EcosiaContextMenu to log warnings.
+    var ecosiaLogger: Logger { logger }
     /* Ecosia: Update dataSource access to use Ecosia's
     private var dataSource: HomepageDiffableDataSource?
      */
@@ -876,6 +880,9 @@ final class HomepageViewController: UIViewController,
             )
             return
         }
+        // Ecosia: Top sites use native UIContextMenuConfiguration; PhotonActionSheet is skipped for this section.
+        if case .topSites = section { return }
+
         if section.canHandleLongPress {
             navigateToContextMenu(for: item, sourceView: sourceView)
         }
@@ -1024,7 +1031,8 @@ final class HomepageViewController: UIViewController,
         )
     }
 
-    private func getSiteForContextMenu(for item: HomepageItem) -> Site? {
+    // Ecosia: Internal so HomepageViewController+EcosiaContextMenu can resolve the site for context menu items.
+    func getSiteForContextMenu(for item: HomepageItem) -> Site? {
         switch item {
         case .topSite(let state, _):
             return state.site

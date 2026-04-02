@@ -21,11 +21,9 @@
 "Off" = "Off";
 "Open In Safari" = "Open in Safari";
 "Private" = "Private";
-"Personalized results" = "Personalized results";
 "Plant trees while you browse the web" = "Plant trees while you browse the web";
 "Privacy" = "Privacy";
 "Read More" = "Read More";
-"Relevant results based on past searches" = "Relevant results based on past searches";
 "Safe search" = "Safe search";
 "Search" = "Search";
 "Search the web to plant trees..." = "Search the web to plant trees...";
@@ -225,6 +223,8 @@
 "Close" = "Close";
 "Help Center" = "Help Center";
 "Thank you for your feedback!" = "Thank you for your feedback!";
+"Help" = "Help";
+"Report Issue" = "Report Issue";
 
 // Error Messages
 "Could not load seed counter" = "Could not load seed counter";

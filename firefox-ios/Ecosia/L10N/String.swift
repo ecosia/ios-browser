@@ -80,12 +80,10 @@ extension String {
         case off = "Off"
         case onAverageItTakes = "On average it takes around 45 searches to plant a tree"
         case openInSafari = "Open In Safari"
-        case personalizedResults = "Personalized results"
         case plantTreesWhile = "Plant trees while you browse the web"
         case privacy = "Privacy"
         case privateTab = "Private"
         case privateEmpty = "Ecosia won’t remember the pages you visited, your search history or your autofill information once you close a tab. Your searches still contribute to trees."
-        case relevantResults = "Relevant results based on past searches"
         case readMore = "Read More"
         case referrals = "%d referral(s)"
         case referralAccepted = "A friend accepted your invitation and each of you will help plant 1 tree!"
@@ -233,6 +231,9 @@ extension String {
         // MARK: - Feedback View
         case reportIssue = "Report an issue"
         case helpCenter = "Help Center"
+        // Ecosia: Compact menu labels — distinct from the longer in-screen labels above
+        case help = "Help"
+        case reportIssueMenu = "Report Issue"
         case suggestionOrFeedback = "Suggestion or feedback"
         case whatWouldYouLikeToShare = "What would you like to share?"
         case send = "Send"

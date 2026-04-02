@@ -29,8 +29,9 @@ public struct FeedbackView: View {
         static let textEditorHeight: CGFloat = 200
     }
 
-    public init(windowUUID: WindowUUID? = nil) {
+    public init(windowUUID: WindowUUID? = nil, initialFeedbackType: FeedbackType? = nil) {
         self.windowUUID = windowUUID
+        self._selectedFeedbackType = State(initialValue: initialFeedbackType)
     }
 
     public var body: some View {

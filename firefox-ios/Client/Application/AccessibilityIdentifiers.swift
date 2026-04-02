@@ -121,6 +121,10 @@ struct AccessibilityIdentifiers {
         static let signIn = "MainMenu.SignIn"
         static let summarizePage = "MainMenu.SummarizePage"
         static let trackigProtection = "shieldCheckmarkLarge"
+        // Ecosia: Reading List, Help, and Report Issue identifiers
+        static let readingList = "MainMenu.ReadingList"
+        static let help = "MainMenu.Help"
+        static let reportIssue = "MainMenu.ReportIssue"
     }
 
     struct UnifiedSearch {
