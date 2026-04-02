@@ -16,6 +16,28 @@ extension BrowserViewController: HomepageViewControllerDelegate {
     }
 }
 
+// MARK: NTPSearchBarDelegate
+// Ecosia: Routes the embedded NTP search bar into the existing browser navigation
+// pipeline (Approach 1 spike). Only submission is wired — suggestions and overlay
+// mode integration are out of scope for this spike.
+@MainActor
+extension BrowserViewController: NTPSearchBarDelegate {
+    func ntpSearchBarDidSubmit(_ searchTerm: String) {
+        // Reuses the same path as the standard toolbar: URIFixup → load URL or search.
+        openBrowser(searchTerm: searchTerm)
+    }
+
+    func ntpSearchBarTextDidChange(_ searchTerm: String) {
+        // TODO: pipe into searchSuggestions once an upward-expanding suggestions panel exists.
+    }
+
+    func ntpSearchBarDidBeginEditing() {
+        // TODO: show inline suggestions above the bar (out of scope for spike).
+    }
+
+    func ntpSearchBarDidCancel() {}
+}
+
 // MARK: DefaultBrowserDelegate
 @MainActor
 extension BrowserViewController: DefaultBrowserDelegate {

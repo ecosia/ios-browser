@@ -31,6 +31,26 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
     }
 
+    // Ecosia: Embeds a custom search bar pinned to the bottom of the NTP view.
+    // The bar owns a real UITextField wired directly to the browser's navigation
+    // logic — no toolbar duplication required (Approach 1 spike).
+    func setupNTPSearchBar(delegate: NTPSearchBarDelegate) {
+        let searchBar = NTPSearchBarView()
+        searchBar.delegate = delegate
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(searchBar)
+
+        NSLayoutConstraint.activate([
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            searchBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
+            searchBar.heightAnchor.constraint(equalToConstant: 52)
+        ])
+
+        searchBar.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        setNTPSearchBar(searchBar)
+    }
+
     /// Sets up the Ecosia homepage adapter and integrates it with the view controller
     func setupEcosiaAdapter(
         profile: Profile,
@@ -58,6 +78,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         // Store adapter
         setEcosiaAdapter(adapter)
+
+        // Ecosia: Add the embedded NTP search bar (Approach 1 spike)
+        setupNTPSearchBar(delegate: browserViewController)
 
         // Register Ecosia cell types; NTPLogoCell removed — logo now lives in NTPHeader.
         var ecosiaCellTypes: [ReusableCell.Type] = [
@@ -100,6 +123,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     func updateEcosiaTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         ecosiaAdapter?.updateTheme(theme)
+        ntpSearchBar?.applyTheme(theme: theme)
     }
 
     /// Refreshes the Ecosia snapshot so the UI updates
