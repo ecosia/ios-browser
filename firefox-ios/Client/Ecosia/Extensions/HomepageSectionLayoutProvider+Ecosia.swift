@@ -48,11 +48,7 @@ extension HomepageSectionLayoutProvider {
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
         let section = NSCollectionLayoutSection(group: group)
-        // No section insets — NTPHeaderView owns all internal padding via SwiftUI modifiers.
-        // Horizontal: .ecosia.space._m (16pt) on each side.
-        // Vertical:   .ecosia.space._m (16pt) top & bottom, giving a 72pt cell height.
-        // The collection view is a child of the wallpaper card so card-edge alignment is
-        // handled by containment, not by section content insets.
+        // NTPHeaderView owns all internal padding via SwiftUI modifiers; no additional insets needed here.
         section.contentInsets = .zero
         return section
     }
@@ -71,17 +67,12 @@ extension HomepageSectionLayoutProvider {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
-
-        // Top spacing is 0 — the header's SwiftUI .padding(.vertical, _m) provides ~16pt
-        // of visual gap above the wordmark. Bottom spacing separates the logo from the impact tiles.
         let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 24)
         section.contentInsets = insets
-
         return section
     }
 
     private func createEcosiaLibraryLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // Dimensions from NTPLibaryCellViewModel: item fills group height, group estimated(100)
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
@@ -99,12 +90,10 @@ extension HomepageSectionLayoutProvider {
     }
 
     private func createEcosiaImpactLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // NTPImpactCell is a SINGLE cell whose minimum height is NTPImpactCell.UX.minimumCellHeight.
-        // The large minimum height lets the cell fill the wallpaper card, pushing shortcuts toward
-        // the bottom. The estimated value here is a hint; the real height is set by the cell.
+        // NTPImpactCell is content-sized; this estimated height is a hint for the first layout pass.
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(450)
+            heightDimension: .estimated(304)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let group = NSCollectionLayoutGroup.horizontal(
@@ -124,7 +113,6 @@ extension HomepageSectionLayoutProvider {
     }
 
     private func createEcosiaNTPCustomizationLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // Dimensions from NTPCustomizationCellViewModel (NTPCustomizationCell.UX.buttonHeight)
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .estimated(NTPCustomizationCell.UX.buttonHeight)
@@ -151,11 +139,7 @@ extension HomepageSectionLayoutProvider {
             for: traitCollection,
             numberOfTilesPerRow: numberOfTilesPerRow
         )
-        // Shortcuts use the same 12pt horizontal inset as the impact tiles so all sections
-        // share a consistent left/right edge within the wallpaper card (Figma: space-s = 12pt).
         let edgeInset: CGFloat = traitCollection.horizontalSizeClass == .regular ? 100 : .ecosia.space._s
-        // Equal top and bottom insets vertically center the shortcut grid in the remaining
-        // card space below the impact tiles.
         let insets = NSDirectionalEdgeInsets(
             top: CGFloat.ecosia.space._m,
             leading: edgeInset,
@@ -163,7 +147,6 @@ extension HomepageSectionLayoutProvider {
             trailing: edgeInset
         )
         section.contentInsets = insets
-        // No section header — Figma shortcuts section has no title label above the tiles
         return section
     }
 

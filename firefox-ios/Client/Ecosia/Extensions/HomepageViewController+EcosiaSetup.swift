@@ -83,6 +83,22 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // positions the content correctly, and NTPHeaderView owns its own vertical padding.
         homepageCollectionView?.contentInset.top = 0
         homepageCollectionView?.scrollIndicatorInsets.top = 0
+        // Ecosia: NTP content fits inside the wallpaper card without scrolling.
+        homepageCollectionView?.isScrollEnabled = false
+        // Ecosia: Force 1 row of shortcuts regardless of user preference — NTP shows
+        // exactly 1 row × 4 tiles per the design spec.
+        store.dispatch(TopSitesAction(
+            numberOfRows: 1,
+            windowUUID: windowUUID,
+            actionType: TopSitesActionType.updatedNumberOfRows
+        ))
+        // Ecosia: Remove the navigation toolbar separator on NTP — the wallpaper itself
+        // acts as a visual separator; the border is only needed on SERP.
+        store.dispatch(ToolbarAction(
+            displayNavBorder: false,
+            windowUUID: windowUUID,
+            actionType: ToolbarActionType.borderPositionChanged
+        ))
 
         ecosiaAdapter?.viewWillAppear()
         ecosiaAdapter?.refreshData(

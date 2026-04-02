@@ -10,12 +10,10 @@ import Ecosia
 // MARK: - SwiftUI Color helpers for NTP glass tokens
 
 private extension Color {
-    /// Figma `component/button/button-bg-glass-static` = `rgba(26,26,26,0.32)`.
     static var ntpGlassDarkTint: Color {
         Color(uiColor: EcosiaColor.Gray90).opacity(0.32)
     }
 
-    /// Figma `border/border-glass-static` = `rgba(255,255,255,0.24)`.
     static func ntpGlassBorder(opacity: Double = 0x3D / 255.0) -> Color {
         Color.white.opacity(opacity)
     }
@@ -48,7 +46,6 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
     // MARK: - Setup
 
     private func setup() {
-        // Create a placeholder hosting controller - will be configured later
         let hostingController = UIHostingController(rootView: AnyView(EmptyView()))
         hostingController.view.backgroundColor = UIColor.clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +67,6 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
                    windowUUID: WindowUUID) {
         self.viewModel = viewModel
 
-        // Update the SwiftUI view with the new view model
         let swiftUIView = NTPHeaderView(
             viewModel: viewModel,
             windowUUID: windowUUID
@@ -83,11 +79,6 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 // MARK: - Customize (Pencil) Button
 
 /// Glass-style circular button with a pencil icon for opening NTP customization.
-/// Matches the Figma `button-iOS / Glass static / Medium / edit` component:
-/// - Background: rgba(26,26,26,0.32) with backdrop blur
-/// - Border: rgba(255,255,255,0.24)
-/// - Icon: white (textStaticLight), 16×16pt
-/// - Size: 40×40pt circle
 @available(iOS 16.0, *)
 private struct EcosiaCustomizeButton: View {
     let onTap: () -> Void

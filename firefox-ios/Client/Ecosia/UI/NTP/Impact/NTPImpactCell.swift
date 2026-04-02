@@ -11,27 +11,16 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     // MARK: - UX
 
     struct UX {
-        // space-1s (8pt) gap between the two individual glass tiles, per Figma
         static let cellsSpacing: CGFloat = .ecosia.space._1s
-        // 2× tile gap = 16pt — distance between title bottom and tiles top (Figma)
         static let titleToTilesGap: CGFloat = .ecosia.space._m
-        // FoundersGroteskCond-SmBd at 36pt (Figma: Web/Headline/Headline 3 (4L), semibold)
         static let titleFont: UIFont = .ecosiaFamilyBrand(size: .ecosia.font._4l)
-        // Fixed height reserved for the title — sized for up to 3 lines of brand font
-        // (3 × ~39.6pt line height ≈ 119pt). Keeps the tiles stable when the title changes.
+        // Fixed height for up to 3 lines of brand font (~39.6pt line height × 3 ≈ 119pt).
+        // Keeps the tiles stable when the rotating title changes.
         static let titleReservedHeight: CGFloat = 120
-        // In landscape the title fits in 1-2 shorter lines; reduce the reserved height so
-        // the block doesn't have a large empty area above the bottom-pinned label.
+        // In landscape the title fits in fewer lines; reduce reserved height to avoid dead space.
         static let titleReservedHeightLandscape: CGFloat = 60
-        // Horizontal inset for the title — nearly full-width for maximum readability
         static let titleHorizontalInset: CGFloat = .ecosia.space._s
-        // Horizontal inset for the tiles (Figma redline: 61pt from cell edge)
         static let tilesHorizontalInset: CGFloat = 61
-        // Minimum cell height in portrait — fills most of the wallpaper card.
-        static let minimumCellHeight: CGFloat = 450
-        // Minimum cell height in landscape — much shorter card; let content drive the size
-        // with a small buffer so the block isn't flush against the header.
-        static let minimumCellHeightLandscape: CGFloat = 220
     }
 
     // MARK: - Subviews
@@ -88,12 +77,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         didSet { impactRows.forEach { $0.delegate = delegate } }
     }
 
-    // Tracks the equal-height constraint added in configure() so it can be removed on reuse.
     private var tileEqualHeightConstraint: NSLayoutConstraint?
-
-    // Updated in updateContainerAxisForCurrentTraits() to shrink the cell in landscape.
-    private var minimumHeightConstraint: NSLayoutConstraint?
-    // Updated in updateContainerAxisForCurrentTraits() to shrink the title area in landscape.
     private var titleContainerHeightConstraint: NSLayoutConstraint?
 
     private var impactRows: [NTPImpactRowView] {
@@ -133,29 +117,21 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     private func setup() {
         contentView.backgroundColor = .clear
 
-        // Build view hierarchy:
-        //   contentView
-        //     └─ contentBlock  (plain UIView, centered X+Y in cell)
-        //           ├─ titleContainerView  (6pt insets — nearly full width; fixed height)
-        //           │     └─ rotatingTitleLabel  (bottom-pinned inside)
-        //           └─ tilesStack  (61pt insets from cell edge; = 6pt + 55pt within block)
         titleContainerView.addSubview(rotatingTitleLabel)
         contentBlock.addSubview(titleContainerView)
         contentBlock.addSubview(tilesStack)
         contentView.addSubview(contentBlock)
 
-        // The additional inset tilesStack needs within contentBlock so it lands at the
-        // Figma-specified 61pt from the cell edge (titleHorizontalInset + tilesIntraBlockInset = 61).
+        // tilesHorizontalInset is measured from the cell edge; subtract titleHorizontalInset
+        // (the contentBlock inset) to get the inset required within contentBlock itself.
         let tilesIntraBlockInset = UX.tilesHorizontalInset - UX.titleHorizontalInset
 
         NSLayoutConstraint.activate([
-            // Label — fills container width; bottom-aligned so short text hugs the tiles
             rotatingTitleLabel.leadingAnchor.constraint(equalTo: titleContainerView.leadingAnchor),
             rotatingTitleLabel.trailingAnchor.constraint(equalTo: titleContainerView.trailingAnchor),
             rotatingTitleLabel.bottomAnchor.constraint(equalTo: titleContainerView.bottomAnchor),
             rotatingTitleLabel.topAnchor.constraint(greaterThanOrEqualTo: titleContainerView.topAnchor),
 
-            // Title container — 6pt insets, fixed height, anchored to the top of contentBlock
             titleContainerView.leadingAnchor.constraint(equalTo: contentBlock.leadingAnchor),
             titleContainerView.trailingAnchor.constraint(equalTo: contentBlock.trailingAnchor),
             titleContainerView.topAnchor.constraint(equalTo: contentBlock.topAnchor),
@@ -166,22 +142,18 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         titleHeight.isActive = true
 
         NSLayoutConstraint.activate([
-
-            // Tiles — narrower than the title; extra inset applied within the block
             tilesStack.leadingAnchor.constraint(equalTo: contentBlock.leadingAnchor, constant: tilesIntraBlockInset),
             tilesStack.trailingAnchor.constraint(equalTo: contentBlock.trailingAnchor, constant: -tilesIntraBlockInset),
             tilesStack.topAnchor.constraint(equalTo: titleContainerView.bottomAnchor, constant: UX.titleToTilesGap),
             tilesStack.bottomAnchor.constraint(equalTo: contentBlock.bottomAnchor),
 
-            // Content block — 6pt insets from cell, centered vertically so the group floats
+            // Top/bottom pins let compositional layout measure the cell height from content
+            // without needing a hard minimum height constant.
             contentBlock.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UX.titleHorizontalInset),
             contentBlock.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.titleHorizontalInset),
-            contentBlock.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            contentBlock.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UX.titleToTilesGap),
+            contentBlock.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.titleToTilesGap),
         ])
-
-        let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.minimumCellHeight)
-        minimumHeightConstraint = heightConstraint
-        heightConstraint.isActive = true
 
         updateContainerAxisForCurrentTraits()
     }
@@ -197,20 +169,13 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         // neither tile stretches wider than the other. In portrait (vertical axis), .fill lets each
         // tile self-size by its content height — equal height is then enforced by tileEqualHeightConstraint.
         tilesStack.distribution = isLandscape ? .fillEqually : .fill
-        // Center alignment in landscape so tiles don't stretch to the full stack height.
-        // In portrait .fill stretches tiles to the full width, which is the desired behaviour.
         tilesStack.alignment = isLandscape ? .center : .fill
         tilesStack.spacing = UX.cellsSpacing
-        // Shrink the minimum cell height in landscape so the card is shorter and there is
-        // less empty space between the title and the NTPHeader.
-        minimumHeightConstraint?.constant = isLandscape ? UX.minimumCellHeightLandscape : UX.minimumCellHeight
         titleContainerHeightConstraint?.constant = isLandscape ? UX.titleReservedHeightLandscape : UX.titleReservedHeight
     }
 
     // MARK: - Title
 
-    /// Updates the displayed title. The value is today's UTC-day title as resolved by
-    /// `RotatingTitlesService` before being passed in — no timer, one title per day, matching web.
     func updateTitle(_ title: String?) {
         rotatingTitleLabel.text = title
     }
@@ -232,7 +197,6 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
                    theme: Theme) {
         self.delegate = delegate
 
-        // Reset tiles
         tileEqualHeightConstraint?.isActive = false
         tileEqualHeightConstraint = nil
         tilesStack.removeAllArrangedViews()

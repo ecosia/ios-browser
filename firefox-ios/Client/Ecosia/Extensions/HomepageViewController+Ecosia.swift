@@ -106,8 +106,10 @@ extension BrowserViewController: NTPImpactCellDelegate {
             invite.delegate = self
             let nav = EcosiaNavigation(rootViewController: invite)
             present(nav, animated: true)
-        default:
-            return
+        case .totalTrees, .totalInvested:
+            // Ecosia: Open the counter's destination URL in the current tab (not a new tab).
+            guard let url = info.destinationURL else { return }
+            tabManager.selectedTab?.loadRequest(PrivilegedRequest(url: url) as URLRequest)
         }
     }
 }

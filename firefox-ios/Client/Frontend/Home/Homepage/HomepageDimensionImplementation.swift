@@ -103,12 +103,11 @@ struct HomepageDimensionCalculator {
             availableWidth = availableWidth - cellWidth - HomepageSectionLayoutProvider.UX.standardSpacing
         }
         let minCardsConstant = TopSitesSectionLayoutProvider.UX.minCards
-        let maxCardsConstant = TopSitesSectionLayoutProvider.UX.maxCards
         let tilesPerRowCount = numberOfTiles < minCardsConstant ? minCardsConstant : numberOfTiles
-        /* Ecosia: Respect maxCards cap so the row never exceeds 5 tiles (MOB-4150)
-        return tilesPerRowCount
+        /* Ecosia: Cap at 4 tiles per row — NTP design shows exactly 1 row × 4 shortcuts.
+        return min(tilesPerRowCount, TopSitesSectionLayoutProvider.UX.maxCards)
         */
-        return min(tilesPerRowCount, maxCardsConstant)
+        return min(tilesPerRowCount, 4)
     }
 
     // Returns the height of the tallest view from a collection of views constrained to a given width

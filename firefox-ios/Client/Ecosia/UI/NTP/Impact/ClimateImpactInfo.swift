@@ -3,6 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import UIKit
+import Ecosia
 
 enum ClimateImpactInfo: Equatable {
     case referral(value: Int)
@@ -80,6 +82,20 @@ enum ClimateImpactInfo: Equatable {
         case .referral:
             return .localized(.inviteFriends)
         case .totalTrees, .totalInvested:
+            return nil
+        }
+    }
+
+    /// Deep-link destination for tapping this counter tile.
+    /// Opens in the current tab (not a new tab) per the design spec.
+    var destinationURL: URL? {
+        let urlProvider = EcosiaEnvironment.current.urlProvider
+        switch self {
+        case .totalTrees:
+            return urlProvider.trees
+        case .totalInvested:
+            return urlProvider.financialReports
+        case .referral:
             return nil
         }
     }

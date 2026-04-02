@@ -13,31 +13,23 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     // MARK: - UX Constants
 
-    /// Contains constants used for layout and sizing within the `NTPImpactRowView`.
-    /// All spacing/sizing values map to Ecosia design tokens (Figma Foundations).
     struct UX {
-        // space-m (16pt) — horizontal gap between icon and statistic title (Figma: Gap 16px)
         static let horizontalSpacing: CGFloat = .ecosia.space._m
-        // space-m (16pt) — uniform inset around the tile content (Figma: padding-m)
-        static let padding: CGFloat = .ecosia.space._m
-        // space-2s (4pt) — vertical gap between [icon+title row] and subtitle (Figma: Gap space-2s)
+        static let padding: CGFloat = .ecosia.space._s
         static let titleSubtitleGap: CGFloat = .ecosia.space._2s
-        // 24pt icon — matches Figma NTP impact icon specification
         static let imageHeight: CGFloat = 24
         static let glassBorderWidth: CGFloat = 1
     }
 
     // MARK: - UI Elements
 
-    // Core Image 24px Gaussian blur glass background (see ADR 0003)
+    // Gaussian blur glass background (see ADR 0003)
     private let glassBackground: NTPImpactGlassBackgroundView = {
         let view = NTPImpactGlassBackgroundView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
-    // Horizontal container — icon (24×24) on the left, labelsStack on the right.
-    // Flow: Horizontal, Gap: space-m (16pt), padding: space-m (16pt) on all sides.
     private let mainContainerView: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -47,10 +39,8 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return stack
     }()
 
-    // Vertical labels stack — statistic title above, description below.
-    // Flow: Vertical, Gap: space-2s (4pt) per Figma .mobile-globalcounter-item spec.
-    // alignment = .fill gives each label an explicit width constraint from the stack,
-    // so UILabel always knows its available width for line-wrapping — including after rotation.
+    // alignment = .fill gives each label an explicit width constraint from the stack so UILabel
+    // always knows its available width for line-wrapping — including after device rotation.
     // (With .leading, no width constraint is applied and preferredMaxLayoutWidth stays stale.)
     private let labelsStack: UIStackView = {
         let stack = UIStackView()
@@ -61,14 +51,12 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return stack
     }()
 
-    /// A container view for the image.
     private lazy var imageContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
-    /// The image view representing the icon in the row.
     private lazy var imageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -76,7 +64,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return image
     }()
 
-    /// A label for displaying the statistic (large number).
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .ecosiaFamilyBrand(size: .ecosia.font._3l)
@@ -86,7 +73,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return label
     }()
 
-    /// A label for displaying the description below the statistic.
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .footnote)
@@ -116,7 +102,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return button
     }()
 
-    /// A divider view separating rows visually.
     private lazy var dividerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -125,10 +110,8 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     // MARK: - Properties
 
-    /// Delegate for handling user interactions with the row.
     weak var delegate: NTPImpactCellDelegate?
 
-    /// The information to display in this row, including title, subtitle, and button information.
     var info: ClimateImpactInfo {
         didSet {
             imageView.image = info.image
@@ -140,56 +123,45 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         }
     }
 
-    /// The current position of this row in the overall list.
     var position: (row: Int, totalCount: Int) = (0, 0) {
         didSet {
-            // Each tile is a fully-rounded individual glass card (Figma: border-radius-l on
-            // all 4 corners). The divider is replaced by the 8pt gap in the parent stack view.
             dividerView.isHidden = true
         }
     }
 
-    /// Whether to forcefully hide the action button in this row.
     var forceHideActionButton: Bool = false {
         didSet {
             actionButton.isHidden = forceHideActionButton
         }
     }
 
-    /// Optional background color for the row.
     var customBackgroundColor: UIColor?
 
     // MARK: - Initialization
 
-    /// Initializes a new `NTPImpactRowView` with the provided `ClimateImpactInfo`.
-    ///
-    /// - Parameter info: The `ClimateImpactInfo` object containing the data to display in the row.
     init(info: ClimateImpactInfo) {
         self.info = info
         super.init(frame: .zero)
         defer {
-            // Ensure info setup is completed after initialization
+            // Trigger the didSet observer so subviews are populated on first configure.
             self.info = info
         }
         setupView()
         setupConstraints()
+        setupTapGestureIfNeeded()
     }
 
-    /// Not supported, as `NTPImpactRowView` requires `ClimateImpactInfo` during initialization.
     required init?(coder: NSCoder) { nil }
 
     // MARK: - Setup Methods
 
-    /// Configures and adds subviews to the view.
     private func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = .ecosia.borderRadius._l
-        // clipsToBounds ensures glassBackground respects rounded corners
         clipsToBounds = true
         addSubview(glassBackground)
         addSubview(dividerView)
 
-        // Figma structure — labels stack: [statistic title] / [description]
         labelsStack.addArrangedSubview(titleLabel)
         labelsStack.addArrangedSubview(subtitleLabel)
         labelsStack.isAccessibilityElement = true
@@ -197,7 +169,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         labelsStack.accessibilityLabel = info.accessibilityLabel
         labelsStack.accessibilityIdentifier = info.accessibilityIdentifier
 
-        // Figma structure — horizontal row: [icon] + [labelsStack] + [action button]
         imageContainer.addSubview(imageView)
         mainContainerView.addArrangedSubview(imageContainer)
         mainContainerView.addArrangedSubview(labelsStack)
@@ -206,7 +177,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         addSubview(mainContainerView)
     }
 
-    /// Sets up the layout constraints for the view's subviews.
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             glassBackground.topAnchor.constraint(equalTo: topAnchor),
@@ -238,21 +208,18 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        // Glassmorphism — exact 24px Gaussian blur via Core Image (ADR 0003).
-        // glassBackground handles the blur + dark tint; the white border gives the glass edge.
         let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia
         backgroundColor = .clear
         layer.borderWidth = UX.glassBorderWidth
         layer.borderColor = (ecosia?.ntpGlassBorder ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
         glassBackground.applyTheme(theme: theme)
         glassBackground.loadCurrentWallpaper()
-        // White text and icons over glassmorphism wallpaper background
         titleLabel.textColor = .white
         subtitleLabel.textColor = .white
         actionButton.setTitleColor(.white, for: .normal)
         imageView.tintColor = .white
         dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
-        // Re-apply content so the row is populated when theme runs after being added to the hierarchy (e.g. referral row)
+        // Re-apply content to ensure rows added after initial layout are fully populated.
         imageView.image = info.image
         imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
         titleLabel.text = info.title
@@ -261,9 +228,23 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         actionButton.setTitle(info.buttonTitle, for: .normal)
     }
 
+    // MARK: - Private Setup
+
+    /// Adds a full-tile tap gesture for counter tiles that have a destination URL
+    /// (tree counter → plants page; money counter → financial reports).
+    private func setupTapGestureIfNeeded() {
+        guard info.destinationURL != nil else { return }
+        isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTileTap))
+        addGestureRecognizer(tap)
+    }
+
     // MARK: - Actions
 
-    /// Handles the action button tap event, notifying the delegate.
+    @objc private func handleTileTap() {
+        delegate?.impactCellButtonClickedWithInfo(info)
+    }
+
     @objc private func buttonAction() {
         delegate?.impactCellButtonClickedWithInfo(info)
     }

@@ -12,7 +12,6 @@ import UIKit
 ///
 /// Colours live in `EcosiaSemanticColors` (`ntpGlassTint`, `ntpGlassBorder`) so they are
 /// centrally governed. Only the blur radius is kept here as a layout constant.
-/// Figma reference: `Web/Glassmorphism/Glass` = `backdrop-filter: blur(24px)`
 enum NTPGlassUX {
     static let blurRadius: CGFloat = 24
 }
@@ -20,8 +19,7 @@ enum NTPGlassUX {
 // MARK: - UIImage + Gaussian Blur
 
 extension UIImage {
-    /// Returns a copy blurred with `CIGaussianBlur` at the given radius.
-    /// Matches CSS `backdrop-filter: blur(Npx)` — see ADR 0003.
+    /// Returns a copy blurred with `CIGaussianBlur` at the given radius (see ADR 0003).
     nonisolated func gaussianBlurred(radius: CGFloat) -> UIImage? {
         guard let ciImage = CIImage(image: self) else { return nil }
         guard let filter = CIFilter(name: "CIGaussianBlur") else { return nil }
@@ -70,6 +68,10 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     // MARK: - Subviews
 
+    private let liveBlurView: UIVisualEffectView = {
+        UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+    }()
+
     private let backgroundImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -84,7 +86,6 @@ final class NTPImpactGlassBackgroundView: UIView {
     // MARK: - State
 
     private var scrollViewObservation: NSKeyValueObservation?
-    // Cached reference to the wallpaper view for pixel-accurate coordinate alignment (ADR 0003)
     private weak var cachedWallpaperView: WallpaperBackgroundView?
 
     // MARK: - Public API
@@ -100,6 +101,7 @@ final class NTPImpactGlassBackgroundView: UIView {
         super.init(frame: frame)
         backgroundColor = .clear
         clipsToBounds = true
+        addSubview(liveBlurView)
         addSubview(backgroundImageView)
         addSubview(tintView)
         startObservingNotifications(
@@ -115,6 +117,7 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        liveBlurView.frame = bounds
         tintView.frame = bounds
         syncImageToWallpaperCoordinates()
     }
@@ -122,13 +125,11 @@ final class NTPImpactGlassBackgroundView: UIView {
     override func didMoveToWindow() {
         super.didMoveToWindow()
         scrollViewObservation = nil
-        // Reset cached wallpaper view; it will be re-discovered after re-attachment
         cachedWallpaperView = nil
         guard window != nil else { return }
         syncImageToWallpaperCoordinates()
         observeParentScrollView()
     }
-
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: Theme) {
@@ -146,11 +147,9 @@ final class NTPImpactGlassBackgroundView: UIView {
         let radius = Self.blurRadius
 
         Task.detached(priority: .userInitiated) { [weak self] in
-            // File I/O — fetch portrait or landscape image off the main thread
             let source: UIImage? = isLandscape ? wallpaper.landscape : wallpaper.portrait
             guard let source else { return }
 
-            // Check cache before running the expensive blur
             if let cached = await MainActor.run(body: { Self.blurCache.object(forKey: source) }) {
                 await MainActor.run { [weak self] in self?.apply(blurredImage: cached) }
                 return
@@ -182,7 +181,6 @@ final class NTPImpactGlassBackgroundView: UIView {
     private func syncImageToWallpaperCoordinates() {
         guard backgroundImageView.image != nil else { return }
 
-        // Lazily discover and cache the WallpaperBackgroundView
         if cachedWallpaperView == nil {
             cachedWallpaperView = findWallpaperView()
         }
@@ -204,10 +202,7 @@ final class NTPImpactGlassBackgroundView: UIView {
         backgroundImageView.frame.origin = CGPoint(x: -origin.x, y: -origin.y + wallpaperYAdjustment)
     }
 
-    /// Walks the view tree from the window root to find `WallpaperBackgroundView`.
-    /// Called at most once per window attachment (result is cached in `cachedWallpaperView`).
     private func findWallpaperView() -> WallpaperBackgroundView? {
-        // Walk up to the root of the window hierarchy
         var root: UIView = self
         while let parent = root.superview { root = parent }
         return findDescendant(ofType: WallpaperBackgroundView.self, in: root)
@@ -246,7 +241,6 @@ extension NTPImpactGlassBackgroundView: Notifiable {
     nonisolated func handleNotifications(_ notification: Notification) {
         guard notification.name == .WallpaperDidChange else { return }
         Task { @MainActor [weak self] in
-            // Flush the shared cache so the new wallpaper gets blurred fresh
             Self.blurCache.removeAllObjects()
             self?.cachedWallpaperView = nil
             self?.loadCurrentWallpaper()

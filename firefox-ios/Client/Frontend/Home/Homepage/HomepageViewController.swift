@@ -398,7 +398,7 @@ final class HomepageViewController: UIViewController,
     // MARK: - Theming
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        /* Ecosia: Update bakcground
+        /* Ecosia: Update background
         view.backgroundColor = theme.colors.layer1
         */
         view.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
@@ -422,14 +422,14 @@ final class HomepageViewController: UIViewController,
             wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         */
-        /* Ecosia: Wallpaper card with Figma tokens — border-radius: _1l (20pt), padding: _m (16pt) top/bottom, _s (12pt) sides.
-         The initial bottom constraint anchors to this view's own bottomAnchor. For iPad we upgrade this to a
-         cross-hierarchy constraint pointing to the parent (BVC) view's bottomAnchor in viewDidLayoutSubviews —
-         the first safe lifecycle point after the view is fully in the window hierarchy.
-         BVC.embedContent() already sets clipsToBounds = false on this view, so the card can render past
-         contentContainer's bottom and fill the navigation toolbar area on iOS 26 iPad portrait. */
-        let vInset = CGFloat.ecosia.space._m   // 16pt
-        let hInset = CGFloat.ecosia.space._s   // 12pt
+        // Ecosia: Wallpaper card with rounded corners and insets.
+        // The initial bottom constraint anchors to this view's own bottomAnchor. On iPad it is upgraded
+        // to a cross-hierarchy constraint against the parent (BVC) view's bottomAnchor in
+        // viewDidLayoutSubviews — the first safe lifecycle point after the view is in the window hierarchy.
+        // BVC.embedContent() already sets clipsToBounds = false, so the card can extend into the
+        // navigation toolbar area on iPad portrait.
+        let vInset = CGFloat.ecosia.space._s
+        let hInset = CGFloat.ecosia.space._2s
         let bottomConstraint = wallpaperView.bottomAnchor.constraint(
             equalTo: view.bottomAnchor,
             constant: -vInset

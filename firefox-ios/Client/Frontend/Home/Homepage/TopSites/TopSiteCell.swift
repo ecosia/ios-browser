@@ -16,7 +16,7 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
     private var homeTopSite: TopSiteConfiguration?
 
     struct UX {
-        // Ecosia: Figma shortcut-most-visited-iOS icon container: Fixed 56×56px
+        // Ecosia: Icon container fixed at 56×56pt
         static let imageBackgroundSize = CGSize(width: 56, height: 56)
         static let pinIconSize = CGSize(width: 12, height: 12)
         static let pinBackgroundSize = CGSize(width: 16, height: 16)
@@ -24,16 +24,15 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         static let pinBackgroundShadowOffset = CGSize(width: 1, height: 1)
         static let pinBackgroundShadowOpacity: Float = 1.0
         static let pinBackgroundShadowRadius: CGFloat = 4.0
-        // Ecosia: space-1s (8pt) — gap between icon container and label (Figma: Gap space-1s)
+        // Ecosia: Gap between icon container and label
         static let textSafeSpace: CGFloat = .ecosia.space._1s
-        // Ecosia: border-radius-l (10pt) — Figma shortcut icon container Radius: border-radius-l
+        // Ecosia: Corner radius for shortcut icon container
         static let faviconCornerRadius: CGFloat = .ecosia.borderRadius._l
         static let faviconTransparentBackgroundInset: CGFloat = 8
-        // Ecosia: 16pt inset renders the favicon at 24×24pt within the 56pt container
-        // (56 − 16 − 16 = 24pt). Confirmed from Figma: favicon is 24×24px.
+        // Ecosia: 16pt inset on each side renders the favicon at 24×24pt within the 56pt container
         static let ecosiaGlassIconInset: CGFloat = 16
         static let transparencyThreshold: CGFloat = 15
-        // Ecosia: Tag used to identify the dark-tint overlay added for the NTP glass style.
+        // Ecosia: Tag used to identify the dark-tint overlay for the NTP glass style
         static let ecosiaGlassTintTag: Int = 9953
     }
 
@@ -69,7 +68,7 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
     private lazy var titleLabel: UILabel = .build { titleLabel in
         titleLabel.textAlignment = .center
-        /* Ecosia: Figma shortcut label Typography: iOS/Footnote/Regular
+        /* Ecosia: Use footnote font for shortcut label
         titleLabel.font = FXFontStyles.Bold.caption1.scaledFont()
         */
         titleLabel.font = .preferredFont(forTextStyle: .footnote)
@@ -233,11 +232,11 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         contentView.addSubview(descriptionWrapper)
 
         NSLayoutConstraint.activate([
-            /* Ecosia: Center icon+label group vertically; pin icon to centerY offset by half the combined height
-            rootContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
-            */
+            /* Ecosia: Restore top alignment (centered layout was not on spec per ntp-design-feedback)
             rootContainer.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor),
             rootContainer.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -UX.textSafeSpace),
+            */
+            rootContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
             rootContainer.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             rootContainer.widthAnchor.constraint(equalToConstant: UX.imageBackgroundSize.width),
             rootContainer.heightAnchor.constraint(equalToConstant: UX.imageBackgroundSize.height),
@@ -370,10 +369,10 @@ extension TopSiteCell: Blurrable {
             tintView.isUserInteractionEnabled = false
             rootContainer.insertSubview(tintView, at: 1)
             rootContainer.layer.borderColor = (ecosia?.ntpGlassBorder ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
-            // Ecosia: Figma shortcut icon container Border: 0.5px
+            // Ecosia: 0.5px border for the glass ring
             rootContainer.layer.borderWidth = 0.5
-            // Ecosia: Inset favicon by 14pt so glass ring is visible around the icon (Figma Padding: 14px).
-            let inset = UX.ecosiaGlassIconInset  // 14pt
+            // Ecosia: Inset favicon so the glass ring remains visible around the icon
+            let inset = UX.ecosiaGlassIconInset
             imageViewConstraints.forEach { constraint in
                 if constraint.firstAttribute == .trailing || constraint.firstAttribute == .bottom {
                     constraint.constant = -inset
