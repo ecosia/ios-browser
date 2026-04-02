@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+import Shared
 import Ecosia
 import Redux
 
@@ -40,15 +41,22 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(searchBar)
 
+        let bottomConstraint = searchBar.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+            constant: -8
+        )
         NSLayoutConstraint.activate([
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            searchBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
+            bottomConstraint,
             searchBar.heightAnchor.constraint(equalToConstant: 52)
         ])
 
         searchBar.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         setNTPSearchBar(searchBar)
+        setNTPSearchBarBottomConstraint(bottomConstraint)
+
+        KeyboardHelper.defaultHelper.addDelegate(self)
     }
 
     /// Sets up the Ecosia homepage adapter and integrates it with the view controller
@@ -144,5 +152,42 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         let wallpaperConfig = adapter.getNTPBackgroundConfiguration()
         let state = WallpaperState(windowUUID: windowUUID, wallpaperConfiguration: wallpaperConfig)
         return state
+    }
+}
+
+// MARK: - KeyboardHelperDelegate
+// Ecosia: Adjusts the NTP search bar's bottom constraint when the keyboard appears so
+// the bar stays visible just above the keyboard.
+extension HomepageViewController: KeyboardHelperDelegate {
+    public func keyboardHelper(
+        _ keyboardHelper: KeyboardHelper,
+        keyboardWillShowWithState state: KeyboardState
+    ) {
+        let keyboardHeight = state.intersectionHeightForView(view)
+        guard keyboardHeight > 0, let bottomConstraint = ntpSearchBarBottomConstraint else { return }
+        let safeAreaBottom = view.safeAreaInsets.bottom
+        bottomConstraint.constant = -(keyboardHeight - safeAreaBottom + 8)
+        UIView.animate(
+            withDuration: state.animationDuration,
+            delay: 0,
+            options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
+        ) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    public func keyboardHelper(
+        _ keyboardHelper: KeyboardHelper,
+        keyboardWillHideWithState state: KeyboardState
+    ) {
+        guard let bottomConstraint = ntpSearchBarBottomConstraint else { return }
+        bottomConstraint.constant = -8
+        UIView.animate(
+            withDuration: state.animationDuration,
+            delay: 0,
+            options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
+        ) {
+            self.view.layoutIfNeeded()
+        }
     }
 }
