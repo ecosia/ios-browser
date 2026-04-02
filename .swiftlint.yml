@@ -39,9 +39,6 @@ only_rules: # Only enforce these rules, ignore all others
   - redundant_objc_attribute
   - implicit_optional_initialization
   - redundant_string_enum_value
-  # Ecosia: operator_whitespace and redundant_optional_initialization are preferred names in SwiftLint ≥ 0.57
-  - operator_whitespace
-  - redundant_optional_initialization
   # Ecosia: disabled
   # - redundant_void_return
   - return_arrow_whitespace
@@ -91,6 +88,14 @@ only_rules: # Only enforce these rules, ignore all others
   - yoda_condition
   - accessibility_label_for_image
   - accessibility_trait_for_button
+  - force_cast
+  - closure_body_length
+  - function_body_length
+  - implicitly_unwrapped_optional
+  - prefer_type_checking
+  - attribute_name_spacing
+  - unneeded_break_in_switch
+  - multiline_parameters
   # Ecosia: enabled
   - custom_rules
 
@@ -103,10 +108,13 @@ only_rules: # Only enforce these rules, ignore all others
   # - prohibited_super_call
   # - protocol_property_accessors_order
 
-line_length:
-  warning: 125
-  ignores_urls: true
-  ignores_interpolated_strings: true
+closure_body_length:
+  warning: 34
+  error: 34
+
+function_body_length:
+  warning: 122
+  error: 122
 
 custom_rules:
   reassign_analytics_instance:
@@ -159,12 +167,17 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   # so must be excluded due to file_header rule
   - firefox-ios/Package.swift
   - BrowserKit/Package.swift
+  - BrowserKit/Sources/Shared/Deferred/
   - BrowserKit/.build/
   - firefox-ios/Client/ContentBlocker/ContentBlockerGenerator/Package.swift
   - Package.swift
   - firefox-ios/Build/Intermediates.noindex/Client.build/Fennec-iphoneos/WidgetKitExtension.build/DerivedSources/IntentDefinitionGenerated/WidgetIntents/*
   # Temporarly ignore focus-ios folder
   - focus-ios/
+  # Application-services specific
+  - MozillaRustComponents/
+  - LocalizationTools
+  - firefoxios-l10n
   # Ecosia: Exclude Swift Packages
   - firefox-ios/SourcePackages
   # Ecosia: Remove Metrics.swift as part of Glean

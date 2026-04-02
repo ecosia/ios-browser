@@ -228,7 +228,7 @@ extension String {
         case defaultBrowserCardDetailInstructionStep3 = "Choose **Ecosia**"
         case defaultBrowserCardDetailButton = "Make default in settings"
         case ntpFallbackTitleSearchFindSave = "Search. Find. Save the planet."
-        
+
         // MARK: - Feedback View
         case reportIssue = "Report an issue"
         case helpCenter = "Help Center"

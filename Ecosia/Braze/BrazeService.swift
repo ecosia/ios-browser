@@ -25,7 +25,7 @@ public final class BrazeService: NSObject {
     }
     private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
     private static var apiKey = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "BRAZE_API_KEY") ?? ""
-    public nonisolated static let shared = BrazeService()
+    nonisolated public static let shared = BrazeService()
     public weak var browserDelegate: BrazeBrowserDelegate?
 
     enum Error: Swift.Error {
@@ -97,7 +97,7 @@ extension BrazeService {
 extension BrazeService {
     // MARK: - Braze proxy function
 
-    public nonisolated static func prepareForDelayedInitialization() {
+    nonisolated public static func prepareForDelayedInitialization() {
         Braze.prepareForDelayedInitialization()
     }
 }

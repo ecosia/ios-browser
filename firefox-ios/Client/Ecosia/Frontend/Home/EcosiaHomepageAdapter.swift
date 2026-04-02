@@ -177,7 +177,6 @@ final class EcosiaHomepageAdapter {
         return User.shared.showClimateImpact
     }
 
-
     // MARK: - Lifecycle
 
     func viewWillAppear() {

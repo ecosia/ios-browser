@@ -19,7 +19,7 @@ open actor Analytics {
     static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
     static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
     private static let shouldUseMicroInstanceKey = "shouldUseMicroInstance"
-    public nonisolated static var shouldUseMicroInstance: Bool {
+    nonisolated public static var shouldUseMicroInstance: Bool {
         get {
             UserDefaults.standard.bool(forKey: shouldUseMicroInstanceKey)
         }

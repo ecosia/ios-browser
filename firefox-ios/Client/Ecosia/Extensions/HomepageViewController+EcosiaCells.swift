@@ -103,7 +103,6 @@ extension HomepageViewController {
         customizationCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return customizationCell
     }
-
 }
 
 // MARK: - Associated Keys
