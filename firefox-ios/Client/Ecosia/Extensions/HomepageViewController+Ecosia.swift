@@ -12,6 +12,7 @@ protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidTapSearchButton(_ home: HomepageViewController)
 }
 
+
 @MainActor
 protocol SharedHomepageCellDelegate: AnyObject {
     func openLink(url: URL)

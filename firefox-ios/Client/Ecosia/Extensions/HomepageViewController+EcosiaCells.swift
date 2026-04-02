@@ -100,6 +100,17 @@ extension HomepageViewController {
         customizationCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return customizationCell
     }
+
+    // MARK: - NTP Search Bar Access
+
+    // Ecosia: Stored via associated object so the pinned NTPSearchBarView can be themed later.
+    var ntpSearchBar: NTPSearchBarView? {
+        return objc_getAssociatedObject(self, &AssociatedKeys.ntpSearchBar) as? NTPSearchBarView
+    }
+
+    func setNTPSearchBar(_ view: NTPSearchBarView) {
+        objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBar, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
 }
 
 // MARK: - Associated Keys
@@ -107,4 +118,5 @@ extension HomepageViewController {
 private struct AssociatedKeys {
     /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var ecosiaAdapter: UInt8 = 0
+    nonisolated(unsafe) static var ntpSearchBar: UInt8 = 0
 }
