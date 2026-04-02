@@ -111,6 +111,15 @@ extension HomepageViewController {
     func setNTPSearchBar(_ view: NTPSearchBarView) {
         objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBar, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
+
+    // Ecosia: Stored so it can be adjusted when the keyboard appears/disappears.
+    var ntpSearchBarBottomConstraint: NSLayoutConstraint? {
+        return objc_getAssociatedObject(self, &AssociatedKeys.ntpSearchBarBottomConstraint) as? NSLayoutConstraint
+    }
+
+    func setNTPSearchBarBottomConstraint(_ constraint: NSLayoutConstraint) {
+        objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarBottomConstraint, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
 }
 
 // MARK: - Associated Keys
@@ -119,4 +128,5 @@ private struct AssociatedKeys {
     /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var ecosiaAdapter: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBar: UInt8 = 0
+    nonisolated(unsafe) static var ntpSearchBarBottomConstraint: UInt8 = 0
 }
