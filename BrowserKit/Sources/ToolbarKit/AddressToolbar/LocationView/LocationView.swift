@@ -366,16 +366,22 @@ final class LocationView: UIView,
             return
         }
 
+        /* Ecosia: Always show search engine view (favicon when browsing, logo when home);
+           lock icon replaced by site favicon for a cleaner Ecosia address bar experience
         if isURLTextFieldEmpty {
             updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
         } else {
             updateUIForLockIconDisplay()
         }
+        */
+        updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
         animateIconAppearance()
         urlTextFieldTrailingConstraint?.constant = -locationTextFieldTrailingPadding
     }
 
     private func animateIconAppearance() {
+        /* Ecosia: Always show the search engine view (favicon when browsing, logo when home/editing);
+           the lock icon button is not used — site identity is conveyed via the favicon instead
         let shouldShowLockIcon: Bool
         if isEditing {
             lockIconButton.alpha = 0
@@ -397,6 +403,17 @@ final class LocationView: UIView,
         } else {
             searchEngineContentView.alpha = shouldShowLockIcon ? 0 : 1
             lockIconButton.alpha = shouldShowLockIcon ? 1 : 0
+        }
+        */
+        let isAnimationEnabled = !UIAccessibility.isReduceMotionEnabled
+        if isAnimationEnabled {
+            UIView.animate(withDuration: UX.iconAnimationTime, delay: UX.iconAnimationDelay) {
+                self.searchEngineContentView.alpha = 1
+                self.lockIconButton.alpha = 0
+            }
+        } else {
+            searchEngineContentView.alpha = 1
+            lockIconButton.alpha = 0
         }
     }
 
@@ -707,7 +724,10 @@ final class LocationView: UIView,
         if isURLTextFieldEmpty {
             updateGradient()
         } else {
+            /* Ecosia: Show search engine view (favicon) instead of lock icon when editing ends
             updateUIForLockIconDisplay()
+            */
+            updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
         }
     }
 
