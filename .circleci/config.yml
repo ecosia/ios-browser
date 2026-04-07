@@ -154,7 +154,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: extract Production XCConfig
-          command: echo "$PRODUCTION_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Production.xcconfig
+          command: echo "$PRODUCTION_XCCONFIG" | base64 --decode > firefox-ios/Client/Ecosia/BuildSettingsConfigurations/Production.xcconfig
       - run:
           name: Setup environment and generate Xcode project with Tuist
           command: ./tuist-setup.sh --no-open
@@ -192,7 +192,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: extract Staging XCConfig
-          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig
       - run:
           name: Setup environment and generate Xcode project with Tuist
           command: ./tuist-setup.sh --no-open
@@ -231,7 +231,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: Extract Staging XCConfig
-          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig
       - run:
           name: Setup environment and generate Xcode project with Tuist
           command: ./tuist-setup.sh --no-open
@@ -307,7 +307,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: Extract Staging XCConfig
-          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig
       - run:
           name: Setup environment and generate Xcode project with Tuist
           command: ./tuist-setup.sh --no-open
@@ -363,7 +363,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: Extract Staging XCConfig
-          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig
       - run:
           name: Setup environment and generate Xcode project with Tuist
           command: ./tuist-setup.sh --no-open
