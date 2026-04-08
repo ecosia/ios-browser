@@ -31,10 +31,7 @@ final class PlainSearchEngineView: UIView,
     }
 
     // Ecosia: FaviconImageView for displaying the current page's favicon when browsing
-    private lazy var faviconImageView: FaviconImageView = .build { imageView in
-        imageView.layer.cornerRadius = UX.cornerRadius
-        imageView.clipsToBounds = true
-    }
+    private lazy var faviconImageView: FaviconImageView = .build { _ in }
 
     // Ecosia: Store constraints for dynamic sizing based on isEditing
     private var imageViewWidthConstraint: NSLayoutConstraint?
@@ -124,9 +121,11 @@ final class PlainSearchEngineView: UIView,
         faviconImageView.isHidden = !isBrowsing
         searchEngineImageView.isHidden = isBrowsing
         if isBrowsing, let url = config.url {
+            /* Ecosia: Use cornerRadius 0 for address-bar favicons (16×16); matches StoriesFeedCell convention
+               and avoids the circle-clip "wrapper" effect that UX.cornerRadius (12pt on iOS 26) caused. */
             faviconImageView.setFavicon(FaviconImageViewModel(
                 siteURLString: url.absoluteString,
-                faviconCornerRadius: UX.cornerRadius
+                faviconCornerRadius: 0
             ))
         }
     }

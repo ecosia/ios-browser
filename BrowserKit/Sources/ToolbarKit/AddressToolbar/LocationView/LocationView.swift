@@ -342,7 +342,12 @@ final class LocationView: UIView,
         if shouldAdjustForOverflow {
             handleOverflowAdjustment()
         } else if shouldAdjustForNonEmpty {
+            /* Ecosia: Original 0pt gap was designed for the 40pt lock icon, which provided its own
+               visual separation. The 16pt favicon needs explicit spacing so the URL text doesn't
+               crowd it — use horizontalSpace to match the same gap applied by updateUIForSearchEngineDisplay.
             updateURLTextFieldLeadingConstraint()
+            */
+            updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
         } else {
             updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
         }
