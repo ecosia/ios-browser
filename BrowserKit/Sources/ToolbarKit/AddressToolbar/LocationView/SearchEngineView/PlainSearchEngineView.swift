@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+// Ecosia: Import SiteImageView to support FaviconImageView in the address bar
 import SiteImageView
 
 /// A wrapped UIImageView which displays a plain search engine icon with no tapping features.
@@ -78,6 +79,9 @@ final class PlainSearchEngineView: UIView,
 
     private func setupLayout() {
         translatesAutoresizingMaskIntoConstraints = true
+        /* Ecosia: Also register faviconImageView as a subview for favicon display when browsing
+        addSubviews(searchEngineImageView)
+        */
         addSubviews(searchEngineImageView, faviconImageView)
 
         /* Ecosia: Store constraints for dynamic sizing

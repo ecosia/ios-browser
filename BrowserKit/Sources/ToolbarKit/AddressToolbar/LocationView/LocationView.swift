@@ -374,9 +374,9 @@ final class LocationView: UIView,
             updateUIForLockIconDisplay()
         }
         */
-        // Ecosia: When browsing (non-empty URL), pass isURLTextFieldCentered=false so the icon is always
-        // added to the stack. The .experiment config hard-codes isLocationTextCentered=true, which would
-        // otherwise skip adding the icon via the `!isURLTextFieldCentered || isEditing` guard.
+        /* Ecosia: When browsing (non-empty URL), pass isURLTextFieldCentered=false so the icon is always
+           added to the stack. The .experiment config hard-codes isLocationTextCentered=true, which would
+           otherwise skip adding the icon via the `!isURLTextFieldCentered || isEditing` guard. */
         let effectiveCentered = isURLTextFieldCentered && isURLTextFieldEmpty
         updateUIForSearchEngineDisplay(isURLTextFieldCentered: effectiveCentered)
         animateIconAppearance()
