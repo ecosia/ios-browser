@@ -68,7 +68,7 @@ public final class Tabs {
         items.first { $0.id == tab }?.page
     }
 
-    public func image(_ id: UUID, completion: @escaping (Data?) -> Void) {
+    public func image(_ id: UUID, completion: @escaping @Sendable (Data?) -> Void) {
         queue.async {
             let data = try? Data(contentsOf: FileManager.snapshots.appendingPathComponent(id.uuidString))
             DispatchQueue.main.async {

@@ -7,7 +7,7 @@ import Foundation
 public typealias Title = String
 public typealias Url = String
 
-public struct BookmarkMetadata: Equatable {
+public struct BookmarkMetadata: Equatable, Sendable {
     let addedAt: Date?
     let modifiedAt: Date?
 
@@ -27,7 +27,7 @@ public struct BookmarkMetadata: Equatable {
     }
 }
 
-public enum BookmarkItem: Equatable {
+public enum BookmarkItem: Equatable, Sendable {
     case folder(Title, [BookmarkItem], BookmarkMetadata)
     case bookmark(Title, Url, BookmarkMetadata)
 }

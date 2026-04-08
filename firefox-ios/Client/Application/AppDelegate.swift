@@ -116,8 +116,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         return true
     }
 
+    // Ecosia: Sendable token pair replacing mutable var captures for Swift 6 compliance
+    private final class ActionTokenPair: Sendable {
+        nonisolated(unsafe) var complete: ActionToken?
+        nonisolated(unsafe) var cancelled: ActionToken?
+
+        func cancelAll() {
+            if let complete { AppEventQueue.cancelAction(token: complete) }
+            if let cancelled { AppEventQueue.cancelAction(token: cancelled) }
+        }
+    }
+
     private func startRecordingStartupOpenURLTime() {
         shareTelemetry.recordOpenDeeplinkTime()
+        /* Ecosia: Replace mutable var token captures with ActionTokenPair for Swift 6 @Sendable compliance;
+           all access is on the main thread via ensureMainThread
         var recordCompleteToken: ActionToken?
         var recordCancelledToken: ActionToken?
         recordCompleteToken = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkComplete) { [weak self] in
@@ -134,6 +147,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
                 guard let recordCancelledToken, let recordCompleteToken  else { return }
                 AppEventQueue.cancelAction(token: recordCancelledToken)
                 AppEventQueue.cancelAction(token: recordCompleteToken)
+            }
+        }
+        */
+        let tokens = ActionTokenPair()
+        tokens.complete = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkComplete) { [weak self] in
+            ensureMainThread { [weak self] in
+                self?.shareTelemetry.sendOpenDeeplinkTimeRecord()
+                tokens.cancelAll()
+            }
+        }
+        tokens.cancelled = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkCancelled) { [weak self] in
+            ensureMainThread { [weak self] in
+                self?.shareTelemetry.cancelOpenURLTimeRecord()
+                tokens.cancelAll()
             }
         }
     }

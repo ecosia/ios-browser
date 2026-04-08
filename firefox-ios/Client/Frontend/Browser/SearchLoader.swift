@@ -94,7 +94,11 @@ final class SearchLoader: Loader<Cursor<Site>, SearchViewModel>, FeatureFlaggabl
                 ensureMainThread { [weak self] in
                     guard let query = self?.query else { return }
 
+                    /* Ecosia: Mark queries nonisolated(unsafe) so @Sendable closures can safely capture it;
+                       all access is on the main thread via ensureMainThread and group.notify
                     var queries = [bookmarks]
+                    */
+                    nonisolated(unsafe) var queries = [bookmarks]
 
                     let group = DispatchGroup()
                     group.enter()
