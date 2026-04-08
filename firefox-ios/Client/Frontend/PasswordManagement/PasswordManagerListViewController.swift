@@ -231,9 +231,9 @@ class PasswordManagerListViewController: SensitiveViewController,
     }()
     */
     lazy var deleteButton = UIBarButtonItem(title: .LoginListDelete,
-                                              style: .plain,
-                                              target: self,
-                                              action: #selector(tappedDelete))
+                                            style: .plain,
+                                            target: self,
+                                            action: #selector(tappedDelete))
 
     lazy var cancelSelectionButton = UIBarButtonItem(barButtonSystemItem: .cancel,
                                                      target: self,
