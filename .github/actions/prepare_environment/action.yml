@@ -79,7 +79,7 @@ runs:
 
     - name: Extract Staging XCConfig
       shell: bash
-      run: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
+      run: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig
 
     - name: List Available Simulator Runtimes
       shell: bash
