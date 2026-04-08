@@ -255,6 +255,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             profile?.pollCommands(forcePoll: false)
         }
 
+        // Ecosia: Refresh flags on foreground. The launch call in didFinishLaunchingWithOptions
+        // loads from disk to unblock startup; this one picks up stale flags when returning from background.
+        // No-op if the cache is fresh.
+        Task {
+            await FeatureManagement.fetchConfiguration()
+            Analytics.shared.activity(.resume)
+        }
+
         // Ecosia: Track MMP notifications
         MMP.sendSession()
         searchesCounter.subscribe(self) { searchCount in
