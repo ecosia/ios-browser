@@ -374,6 +374,11 @@ extension ContentBlocker {
         let blocklists = BlocklistFileName.allBlocklistFileNames
         let dispatchGroup = DispatchGroup()
         let totalListCount = blocklists.count
+        /* Ecosia: Mark counters nonisolated(unsafe) so @Sendable closures can safely capture them;
+           all access is on the main thread via ensureMainThread and dispatchGroup.notify
+        var listsCompiledCount = 0
+        var errorCount = 0
+        */
         nonisolated(unsafe) var listsCompiledCount = 0
         nonisolated(unsafe) var errorCount = 0
         blocklists.forEach { filename in

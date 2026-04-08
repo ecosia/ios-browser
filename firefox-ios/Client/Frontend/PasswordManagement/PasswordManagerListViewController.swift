@@ -34,6 +34,12 @@ class PasswordManagerListViewController: SensitiveViewController,
 
     weak var coordinator: PasswordManagerFlowDelegate?
 
+    /* Ecosia: Move addTarget out of lazy initializer to avoid @MainActor self capture in lazy init under Swift 6
+    fileprivate lazy var selectionButton: UIButton = .build { button in
+        button.titleLabel?.font = PasswordManagerViewModel.UX.selectionButtonFont
+        button.addTarget(self, action: #selector(self.tappedSelectionButton), for: .touchUpInside)
+    }
+    */
     fileprivate lazy var selectionButton: UIButton = .build { button in
         button.titleLabel?.font = PasswordManagerViewModel.UX.selectionButtonFont
     }
@@ -135,6 +141,7 @@ class PasswordManagerListViewController: SensitiveViewController,
         ])
 
         selectionButton.isHidden = true
+        // Ecosia: addTarget moved here from lazy initializer to avoid @MainActor self capture under Swift 6
         selectionButton.addTarget(self, action: #selector(tappedSelectionButton), for: .touchUpInside)
 
         if #available(iOS 26.0, *) {
@@ -214,6 +221,15 @@ class PasswordManagerListViewController: SensitiveViewController,
                                                    target: self,
                                                    action: #selector(presentAddCredential))
 
+    /* Ecosia: Simplify lazy init to avoid @MainActor self capture in lazy closure under Swift 6
+    lazy var deleteButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: .LoginListDelete,
+                                     style: .plain,
+                                     target: self,
+                                     action: #selector(tappedDelete))
+        return button
+    }()
+    */
     lazy var deleteButton = UIBarButtonItem(title: .LoginListDelete,
                                               style: .plain,
                                               target: self,
@@ -366,6 +382,15 @@ private extension PasswordManagerListViewController {
                             return nil
                         }
 
+                        /* Ecosia: Add [weak self] to avoid sending non-Sendable self across @Sendable closure boundary
+                        self.viewModel.profile.logins.deleteLogins(ids: guidsToDelete) { _ in
+                            DispatchQueue.main.async {
+                                self.cancelSelection()
+                                self.loadLogins()
+                                self.sendLoginsDeletedTelemetry()
+                            }
+                        }
+                        */
                         self.viewModel.profile.logins.deleteLogins(ids: guidsToDelete) { [weak self] _ in
                             DispatchQueue.main.async { [weak self] in
                                 self?.cancelSelection()
