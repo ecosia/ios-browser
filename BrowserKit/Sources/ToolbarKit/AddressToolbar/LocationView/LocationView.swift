@@ -374,7 +374,11 @@ final class LocationView: UIView,
             updateUIForLockIconDisplay()
         }
         */
-        updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
+        // Ecosia: When browsing (non-empty URL), pass isURLTextFieldCentered=false so the icon is always
+        // added to the stack. The .experiment config hard-codes isLocationTextCentered=true, which would
+        // otherwise skip adding the icon via the `!isURLTextFieldCentered || isEditing` guard.
+        let effectiveCentered = isURLTextFieldCentered && isURLTextFieldEmpty
+        updateUIForSearchEngineDisplay(isURLTextFieldCentered: effectiveCentered)
         animateIconAppearance()
         urlTextFieldTrailingConstraint?.constant = -locationTextFieldTrailingPadding
     }
@@ -727,7 +731,8 @@ final class LocationView: UIView,
             /* Ecosia: Show search engine view (favicon) instead of lock icon when editing ends
             updateUIForLockIconDisplay()
             */
-            updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
+            // Ecosia: URL is present (non-empty), so pass false to ensure the favicon icon is added to the stack.
+            updateUIForSearchEngineDisplay(isURLTextFieldCentered: false)
         }
     }
 

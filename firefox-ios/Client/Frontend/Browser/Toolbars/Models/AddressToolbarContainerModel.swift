@@ -66,7 +66,13 @@ final class AddressToolbarContainerModel: Equatable {
             guard let u = url else { return nil }
             return u.shouldEcosify() ? u.ecosified(isIncognitoEnabled: isPrivateMode) : u
         }()
+        /* Ecosia: Original flatMap returns nil for any regular URL (InternalURL returns nil for https:// URLs),
+           so `nil ?? true` incorrectly treats all regular pages as home. Use map with `?? false` so that
+           non-internal URLs evaluate to false (not home), while nil URL still defaults to true (home).
         let isHome = url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? true
+        */
+        // Ecosia: Regular URLs are not home; nil URL → home, internal about:home → home, everything else → not home
+        let isHome = url.map { InternalURL($0)?.isAboutHomeURL ?? false } ?? true
         let displaySearchEngineImage: UIImage? = ecosiaSearchEngineImage(isEditing: isEditing, isPrivate: isPrivateMode, isHome: isHome, defaultImage: searchEngineImage)
 
         let locationViewConfiguration = LocationViewConfiguration(
