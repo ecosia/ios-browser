@@ -78,10 +78,17 @@ final class PrivateHomepageViewController: UIViewController,
         return messageCard
     }()
 
+    /* Ecosia: Replace Firefox logo header with the Ecosia wordmark logo cell
     private lazy var homepageHeaderCell: HomepageHeaderCell = {
         let header = HomepageHeaderCell()
         header.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         header.configure(headerState: HeaderState(windowUUID: windowUUID))
+        return header
+    }()
+     */
+    private lazy var homepageHeaderCell: NTPLogoCell = {
+        let header = NTPLogoCell()
+        header.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return header
     }()
 
@@ -116,10 +123,12 @@ final class PrivateHomepageViewController: UIViewController,
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateConstraintsForMultitasking()
+        /* Ecosia: NTPLogoCell does not need re-configuration on size class changes
         if previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
             || previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass {
             homepageHeaderCell.configure(headerState: HeaderState(windowUUID: windowUUID))
         }
+         */
         applyTheme()
     }
 
@@ -148,8 +157,11 @@ final class PrivateHomepageViewController: UIViewController,
     }
 
     private func setupLayout() {
+        /* Ecosia: Vertically center the private message card while keeping the logo header pinned at the top
         scrollContainer.addArrangedSubview(homepageHeaderCell.contentView)
         scrollContainer.addArrangedSubview(privateMessageCardCell)
+         */
+        scrollContainer.addArrangedSubview(homepageHeaderCell.contentView)
         scrollContainer.accessibilityElements = [homepageHeaderCell.contentView, privateMessageCardCell]
 
         setupGradient(gradient)
@@ -157,6 +169,9 @@ final class PrivateHomepageViewController: UIViewController,
         view.layer.addSublayer(gradient)
         view.addSubview(scrollView)
         scrollView.addSubview(scrollContainer)
+        // Ecosia: Add the message card directly to the view so it can be vertically centered
+        privateMessageCardCell.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(privateMessageCardCell)
 
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -168,6 +183,17 @@ final class PrivateHomepageViewController: UIViewController,
                                                  constant: UX.defaultScrollContainerPadding),
             scrollContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor,
                                                     constant: -UX.defaultScrollContainerPadding),
+
+            // Ecosia: Vertically center the message card in the safe area
+            privateMessageCardCell.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            privateMessageCardCell.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: UX.defaultScrollContainerPadding
+            ),
+            privateMessageCardCell.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -UX.defaultScrollContainerPadding
+            ),
         ])
 
         setupConstraintsForMultitasking()
