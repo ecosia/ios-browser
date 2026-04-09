@@ -113,7 +113,7 @@ class TodayWidgetTests: BaseTestCase {
             springboard.swipeUp()
             numberOfSwipes += 1
         }
-        // Attempt to press and hold on any of the Ecosia widget elements
+        // Attempt to press and hold on any of the Firefox widget elements
         /* Ecosia: Update widget label from Firefox to Ecosia
         pressAndHoldWidget(matching: "Firefox")
          */
@@ -171,7 +171,7 @@ class TodayWidgetTests: BaseTestCase {
             springboard.swipeUp()
             swipeCount += 1
         }
-        // Long press on the Ecosia widget
+        // Long press on the Firefox widget
         /* Ecosia: Update widget type label from Firefox to Ecosia
         longPressOnWidget(widgetType: "Firefox", duration: 1)
          */
@@ -284,12 +284,12 @@ class TodayWidgetTests: BaseTestCase {
         XCUIDevice.shared.press(.home)
         // Go to Today Widget Page
         goToTodayWidgetPage()
-        // Remove Ecosia Widget if present
+        // Remove Firefox Widget if present
         /* Ecosia: Update widget type label from Firefox to Ecosia
         removeWidgetIfExists(widgetType: "Firefox")
          */
         removeWidgetIfExists(widgetType: "Ecosia")
-        // Add Ecosia Widget
+        // Add Firefox Widget
         if iPad() {
             coordinate.press(forDuration: 3)
         }
@@ -346,7 +346,7 @@ class TodayWidgetTests: BaseTestCase {
         XCUIDevice.shared.press(.home)
         // Navigate to the Today Widget Page
         goToTodayWidgetPage()
-        // Remove Ecosia Widget if it exists
+        // Remove Firefox Widget if it exists
         /* Ecosia: Rename from checkPresenceFirefoxWidget / removeFirefoxWidget
         if checkPresenceFirefoxWidget() {
             removeFirefoxWidget()
@@ -354,7 +354,7 @@ class TodayWidgetTests: BaseTestCase {
         if checkPresenceEcosiaWidget() {
             removeEcosiaWidget()
         }
-        // Add Ecosia Widget
+        // Add Firefox Widget
         if iPad() {
             coordinate.press(forDuration: 3)
         }
@@ -419,7 +419,7 @@ class TodayWidgetTests: BaseTestCase {
         // Press Home and navigate to Today Widget Page
         XCUIDevice.shared.press(.home)
         goToTodayWidgetPage()
-        // Remove Ecosia Widget if it already exists
+        // Remove Firefox Widget if it already exists
         /* Ecosia: Rename from checkPresenceFirefoxWidget / removeFirefoxWidget
         if checkPresenceFirefoxWidget() {
             removeFirefoxWidget()
@@ -427,7 +427,7 @@ class TodayWidgetTests: BaseTestCase {
         if checkPresenceEcosiaWidget() {
             removeEcosiaWidget()
         }
-        // Add Ecosia Widget
+        // Add Firefox Widget
         if iPad() {
             coordinate.press(forDuration: 3)
         }
