@@ -7,9 +7,11 @@ import XCTest
 @testable import Ecosia
 
 final class AppDelegateMMPIntegrationTests: XCTestCase, @unchecked Sendable {
+    // swiftlint:disable implicitly_unwrapped_optional
     var appDelegate: AppDelegate!
     var mockProvider: MockMMPProvider!
     var savedUser: User!
+    // swiftlint:enable implicitly_unwrapped_optional
 
     override func setUp() {
         super.setUp()
