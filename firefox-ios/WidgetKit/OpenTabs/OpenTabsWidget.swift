@@ -135,6 +135,9 @@ struct OpenTabsView: View {
                     Spacer()
                 }.padding([.horizontal])
             } else {
+                /* Ecosia: Rename from openFirefoxButton
+                openFirefoxButton
+                 */
                 openEcosiaButton
             }
 

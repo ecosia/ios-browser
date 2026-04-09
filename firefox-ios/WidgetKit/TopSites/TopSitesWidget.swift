@@ -64,6 +64,9 @@ struct TopSitesView: View {
                                 .frame(height: rowSize)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: UX.itemCornerRadius)
+                                        /* Ecosia: Update color
+                                        .fill(UX.emptySquareFillColor)
+                                         */
                                         .fill(Color.ecosiaBundledColorWithName("TertiaryBackground"))
                                         .frame(width: itemSize, height: itemSize)
                                 }

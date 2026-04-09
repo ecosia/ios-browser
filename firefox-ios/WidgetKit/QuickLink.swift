@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// Ecosia: Add import for Ecosia bundle image and color access
 import Ecosia
 
 /// Enum file that holds the different cases for the Quick Actions small widget with their
@@ -94,10 +95,12 @@ enum QuickLink: Int {
         return [.ecosiaBundledColorWithName("TertiaryBackground")]
     }
 
+    // Ecosia: Add text color property using Ecosia bundle
     public var textColor: Color {
         return .ecosiaBundledColorWithName("PrimaryText")
     }
 
+    // Ecosia: Add icon color property using Ecosia bundle
     public var iconColor: Color {
         return .ecosiaBundledColorWithName("PrimaryText")
     }

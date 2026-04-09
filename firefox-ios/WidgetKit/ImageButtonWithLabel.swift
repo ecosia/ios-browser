@@ -5,6 +5,7 @@
 #if canImport(WidgetKit)
 import SwiftUI
 import Common
+// Ecosia: Add import for Ecosia bundle image and color access
 import Ecosia
 
 // View for Quick Action Widget Buttons (Small & Medium)
@@ -35,7 +36,7 @@ import Ecosia
 // | | +--------------------------------------------+   |  |
 // | | | +--------------------------+ +-----------+ |   |  |
 // | | | | HSTACK (if small widget) | | +-------+ | |   |  |
-// | | | +--------------------------+ | |APPICON| | |   |  |
+// | | | +--------------------------+ | |APPICON| | |   |  |  // Ecosia: Renamed from FXICON
 // | | |                              | +-------+ | |   |  |
 // | | |                              |           | |   |  |
 // | | |                              |           | |   |  |

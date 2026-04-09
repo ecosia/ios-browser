@@ -5,6 +5,7 @@
 #if canImport(WidgetKit)
 import WidgetKit
 import SwiftUI
+// Ecosia: Add import for Ecosia bundle color access
 import Ecosia
 
 struct Provider: TimelineProvider {
