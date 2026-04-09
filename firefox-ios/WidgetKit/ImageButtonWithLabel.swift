@@ -5,6 +5,7 @@
 #if canImport(WidgetKit)
 import SwiftUI
 import Common
+import Ecosia
 
 // View for Quick Action Widget Buttons (Small & Medium)
 // +-------------------------------------------------------+
@@ -77,7 +78,10 @@ struct ImageButtonWithLabel: View {
                         icon
                     }
                 }
+                /* Ecosia: Update color
                 .foregroundColor(Color("widgetLabelColors"))
+                 */
+                .foregroundColor(Color.ecosiaBundledColorWithName("widgetLabelColors"))
                 .padding([.horizontal, .vertical], paddingValue)
             }
         }
@@ -102,16 +106,21 @@ struct ImageButtonWithLabel: View {
                     .font(.headline)
                     .minimumScaleFactor(0.75)
                     .layoutPriority(1000)
+                    // Ecosia: add color
+                    .foregroundColor(link.textColor)
             } else {
                 Text(link.label)
                     .font(.footnote)
                     .minimumScaleFactor(0.75)
                     .layoutPriority(1000)
+                    // Ecosia: add color
+                    .foregroundColor(link.textColor)
             }
         }
     }
 
     private var logo: some View {
+        /* Ecosia: Update image and color — use Ecosia bundle images
         if link == .search && isSmall {
             return Image(decorative: StandardImageIdentifiers.Large.search)
                 .scaledToFit()
@@ -121,17 +130,23 @@ struct ImageButtonWithLabel: View {
                 .scaledToFit()
                 .frame(height: 24.0)
         }
+         */
+        return Image(decorative: link.imageName, bundle: .ecosia)
+            .scaledToFit()
+            .frame(height: 24.0)
+            .foregroundColor(link.iconColor)
     }
 
     private var icon: some View {
         return HStack(alignment: .bottom) {
             Spacer()
-            /* Ecosia: Replace fox icon with Ecosia app icon
+            /* Ecosia: Replace fox icon with Ecosia app icon from Ecosia bundle
             Image(decorative: "faviconFox")
              */
-            Image(decorative: "faviconEcosia")
+            Image(decorative: "iconLogo", bundle: .ecosia)
                 .scaledToFit()
                 .frame(height: 24.0)
+                .foregroundColor(link.iconColor)
         }
     }
 }

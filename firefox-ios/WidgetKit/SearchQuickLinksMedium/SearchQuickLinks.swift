@@ -5,6 +5,7 @@
 #if canImport(WidgetKit)
 import WidgetKit
 import SwiftUI
+import Ecosia
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
@@ -42,7 +43,10 @@ struct SearchQuickLinksEntryView: View {
             }
         }
         .padding(10.0)
+        /* Ecosia: Update color
         .widgetBackground(Color("backgroundColor"))
+         */
+        .widgetBackground(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 }
 

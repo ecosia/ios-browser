@@ -5,6 +5,9 @@
 import SwiftUI
 import WidgetKit
 import Combine
+// Ecosia: Additional imports for Ecosia framework and suggested sites updates
+import Ecosia
+import Storage
 
 struct TopSitesWidget: Widget {
     private let kind = "Top Sites"
@@ -22,7 +25,9 @@ struct TopSitesWidget: Widget {
 
 struct TopSitesView: View {
     private struct UX {
+        /* Ecosia: Update color
         static let widgetBackgroundColor = Color("backgroundColor")
+         */
         static let emptySquareFillColor = Color(red: 0.85, green: 0.85, blue: 0.85, opacity: 0.3)
         static let itemCornerRadius: CGFloat = 5.0
         static let iconScale: CGFloat = 1.0
@@ -47,12 +52,19 @@ struct TopSitesView: View {
                             topSitesItem(site, iconSize: itemSize)
                                 .frame(height: rowSize)
                         } else {
+                            /* Ecosia: Update rectangle and color
                             Rectangle()
                                 .fill(Color.clear)
+                             */
+                            RoundedRectangle(cornerRadius: UX.itemCornerRadius)
+                                /* Ecosia: Update color
+                                .fill(UX.emptySquareFillColor)
+                                 */
+                                .fill(Color.ecosiaBundledColorWithName("TertiaryBackground"))
                                 .frame(height: rowSize)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: UX.itemCornerRadius)
-                                        .fill(UX.emptySquareFillColor)
+                                        .fill(Color.ecosiaBundledColorWithName("TertiaryBackground"))
                                         .frame(width: itemSize, height: itemSize)
                                 }
                         }
@@ -62,7 +74,10 @@ struct TopSitesView: View {
             .padding(.all)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        /* Ecosia: Update color
         .widgetBackground(UX.widgetBackgroundColor)
+         */
+        .widgetBackground(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 
     @ViewBuilder
