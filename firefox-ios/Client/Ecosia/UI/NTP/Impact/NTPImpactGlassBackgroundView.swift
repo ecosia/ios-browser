@@ -19,7 +19,7 @@ enum NTPGlassUX {
 // MARK: - UIImage + Gaussian Blur
 
 extension UIImage {
-    /// Returns a copy blurred with `CIGaussianBlur` at the given radius (see ADR 0003).
+    /// Returns a copy blurred with `CIGaussianBlur` at the given radius.
     nonisolated func gaussianBlurred(radius: CGFloat) -> UIImage? {
         guard let ciImage = CIImage(image: self) else { return nil }
         guard let filter = CIFilter(name: "CIGaussianBlur") else { return nil }
@@ -37,8 +37,8 @@ extension UIImage {
 // MARK: - NTPImpactGlassBackgroundView
 
 /// Provides the glassmorphism blur effect for NTP impact tiles sitting over the wallpaper.
-/// Uses a Core Image Gaussian blur cached per wallpaper image, applying counter-movement
-/// to align the visible slice with the wallpaper pixels directly behind each tile.
+/// Uses a Core Image Gaussian blur cached per wallpaper image; the blurred image is offset
+/// so the visible slice aligns with the wallpaper pixels directly behind each tile.
 /// A KVO observer on the parent scroll view keeps the alignment current while scrolling.
 @MainActor
 final class NTPImpactGlassBackgroundView: UIView {
@@ -80,9 +80,8 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     // MARK: - Public API
 
-    /// Per-device tuning offset applied on top of the computed counter-movement.
+    /// Tuning offset applied on top of the computed image alignment.
     /// Positive values shift the blur down; negative values shift it up.
-    /// Useful for validating alignment across iPhone form factors.
     var wallpaperYAdjustment: CGFloat = 0
 
     // MARK: - Init
@@ -162,12 +161,8 @@ final class NTPImpactGlassBackgroundView: UIView {
     }
 
     /// Shifts the inner image so the visible portion aligns with the wallpaper behind the row.
-    ///
-    /// Coordinates are expressed relative to `WallpaperBackgroundView` so that the blurred image
-    /// uses the same origin and size as the actual wallpaper (ADR 0003).
-    /// The wallpaper is now constrained from `view.topAnchor` to `safeAreaLayoutGuide.bottomAnchor`
-    /// (a clean card above the URL bar), so the coordinate system is straightforward — no extra
-    /// `safeAreaInsets.top` offset to account for.
+    /// Coordinates are expressed relative to `WallpaperBackgroundView`, whose origin and size
+    /// the blurred image matches exactly.
     private func syncImageToWallpaperCoordinates() {
         guard backgroundImageView.image != nil else { return }
 
