@@ -96,12 +96,16 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         config.imagePadding = UX.buttonIconSpacing
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: UX.buttonIconSize, weight: .regular)
         config.image = UIImage(systemName: "arrow.up.right.square", withConfiguration: symbolConfig)
+        // Ecosia: keep the pill title on a single line
+        config.titleLineBreakMode = .byTruncatingTail
         button.configuration = config
         button.titleLabel?.font = FXFontStyles.Regular.subheadline.scaledFont()
         button.titleLabel?.adjustsFontForContentSizeCategory = true
-        // Ecosia: keep the pill on a single line
+        // Ecosia: keep the pill on a single line and shrink the font if it would otherwise wrap
         button.titleLabel?.numberOfLines = 1
         button.titleLabel?.lineBreakMode = .byTruncatingTail
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.minimumScaleFactor = 0.7
         button.layer.cornerRadius = 22
         button.layer.borderWidth = 1
         button.layer.masksToBounds = true
