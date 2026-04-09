@@ -100,14 +100,15 @@ struct OpenTabsView: View {
                     Spacer()
                 }.padding([.horizontal])
             } else {
-                openFirefoxButton
+                openEcosiaButton
             }
 
             Spacer()
         }.padding(.top, 14)
     }
 
-    var openFirefoxButton: some View {
+    // Ecosia: Rename from openFirefoxButton
+    var openEcosiaButton: some View {
         HStack(alignment: .center, spacing: 15) {
             Image(decorative: StandardImageIdentifiers.Small.externalLink)
                 .foregroundColor(Color("openTabsContentColor"))

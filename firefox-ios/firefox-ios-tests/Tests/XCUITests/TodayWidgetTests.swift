@@ -37,39 +37,39 @@ class TodayWidgetTests: BaseTestCase {
     }
 
     private func widgetExist() -> Bool {
-        let firefoxWidgetButton = springboard
-            .buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Firefox")).element.exists
-        let firefoxWidgetSecureSearchButton = springboard
+        let ecosiaWidgetButton = springboard
+            .buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Ecosia")).element.exists
+        let ecosiaWidgetSecureSearchButton = springboard
             .buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Private Tab")).element.exists
-        let firefoxCopiedLinkWidget = springboard.buttons
+        let ecosiaCopiedLinkWidget = springboard.buttons
             .matching(NSPredicate(format: "label CONTAINS[c] %@", "Copied Link")).element.exists
-        return firefoxWidgetButton || firefoxWidgetSecureSearchButton || firefoxCopiedLinkWidget
+        return ecosiaWidgetButton || ecosiaWidgetSecureSearchButton || ecosiaCopiedLinkWidget
     }
 
-    private func checkPresenceFirefoxWidget() -> Bool {
+    private func checkPresenceEcosiaWidget() -> Bool {
         let maxSwipes = 3
-        var firefoxWidgetExists = false
+        var ecosiaWidgetExists = false
         var numberOfSwipes = 0
 
         // Initial check for widget presence
         if widgetExist() {
-            firefoxWidgetExists = true
+            ecosiaWidgetExists = true
         } else {
             // Perform swipe up until the widget is found or maxSwipes reached
             while !springboard.buttons["Edit"].exists && numberOfSwipes < maxSwipes {
                 springboard.swipeUp()
                 if widgetExist() {
-                    firefoxWidgetExists = true
+                    ecosiaWidgetExists = true
                     break
                 }
                 numberOfSwipes += 1
             }
         }
 
-        return firefoxWidgetExists
+        return ecosiaWidgetExists
     }
 
-    private func removeFirefoxWidget() {
+    private func removeEcosiaWidget() {
         let maxSwipes = 3
         var numberOfSwipes = 0
         // Function to press and hold on a widget if it exists
@@ -84,8 +84,8 @@ class TodayWidgetTests: BaseTestCase {
             springboard.swipeUp()
             numberOfSwipes += 1
         }
-        // Attempt to press and hold on any of the Firefox widget elements
-        pressAndHoldWidget(matching: "Firefox")
+        // Attempt to press and hold on any of the Ecosia widget elements
+        pressAndHoldWidget(matching: "Ecosia")
         pressAndHoldWidget(matching: "Private Tab")
         pressAndHoldWidget(matching: "Copied Link")
 
@@ -99,13 +99,13 @@ class TodayWidgetTests: BaseTestCase {
         springboard.alerts.buttons["Remove"].tap()
     }
 
-    private func checkFirefoxAvailablesWidgets() {
+    private func checkEcosiaAvailableWidgets() {
         let maxWidgetCount = 5
         var widgetCount = maxWidgetCount
         // Check existence of widgets by swiping left through the widget list
         mozWaitForElementToExist(springboard.staticTexts["Quick Actions"])
         springboard.swipeLeft()
-        mozWaitForElementToExist(springboard.staticTexts["Firefox Shortcuts"])
+        mozWaitForElementToExist(springboard.staticTexts["Ecosia Shortcuts"])
         springboard.swipeLeft()
         mozWaitForElementToExist(springboard.staticTexts["Quick View"])
         springboard.swipeLeft()
@@ -122,7 +122,7 @@ class TodayWidgetTests: BaseTestCase {
         XCTAssertTrue(quickActionExists, "Failed to find 'Quick Actions' after swiping back.")
     }
 
-    private func checkFirefoxWidgetOptions() {
+    private func checkEcosiaWidgetOptions() {
         let maxSwipes = 3
         var swipeCount = 0
         // Swipe up until the "Edit" button is visible or maxSwipes is reached
@@ -130,8 +130,8 @@ class TodayWidgetTests: BaseTestCase {
             springboard.swipeUp()
             swipeCount += 1
         }
-        // Long press on the Firefox widget
-        longPressOnWidget(widgetType: "Firefox", duration: 1)
+        // Long press on the Ecosia widget
+        longPressOnWidget(widgetType: "Ecosia", duration: 1)
         // Assert the presence of widget options
         XCTAssertTrue(springboard.buttons[removeWidgetButton].exists, "Remove Widget option not found.")
         XCTAssertTrue(springboard.buttons[editHomeScreenButton].exists, "Edit Home Screen option not found.")
@@ -215,8 +215,8 @@ class TodayWidgetTests: BaseTestCase {
     }
 
     private func removeWidgetIfExists(widgetType: String) {
-        if checkPresenceFirefoxWidget() {
-            removeFirefoxWidget()
+        if checkPresenceEcosiaWidget() {
+            removeEcosiaWidget()
         }
     }
 
@@ -236,21 +236,21 @@ class TodayWidgetTests: BaseTestCase {
         XCUIDevice.shared.press(.home)
         // Go to Today Widget Page
         goToTodayWidgetPage()
-        // Remove Firefox Widget if present
-        removeWidgetIfExists(widgetType: "Firefox")
-        // Add Firefox Widget
+        // Remove Ecosia Widget if present
+        removeWidgetIfExists(widgetType: "Ecosia")
+        // Add Ecosia Widget
         if iPad() {
             coordinate.press(forDuration: 3)
         }
-        addWidget(widgetName: "Fennec")
+        addWidget(widgetName: "Ecosia")
         // Check available widgets
-        checkFirefoxAvailablesWidgets()
+        checkEcosiaAvailableWidgets()
         // Add Quick Action Widget
         springboard.buttons[" Add Widget"].tap()
         springboard.swipeDown()
         springboard.buttons["Done"].tap()
         // Check Quick Action widget options
-        checkFirefoxWidgetOptions()
+        checkEcosiaWidgetOptions()
         // Edit Widget and check the options
         springboard.buttons[editWidgetButton].tap()
         mozWaitElementHittable(element: newSearch, timeout: 5)
@@ -264,7 +264,7 @@ class TodayWidgetTests: BaseTestCase {
         // Tap outside alert to close it
         coordinate.tap()
         // Check New Search action
-        tapOnWidget(widgetType: "Firefox")
+        tapOnWidget(widgetType: "Ecosia")
         // Verify private mode toggle based on device type
         var elementToAssert = AccessibilityIdentifiers.FirefoxHomepage.OtherButtons.privateModeToggleButton
         if iPad() {
@@ -283,23 +283,23 @@ class TodayWidgetTests: BaseTestCase {
         XCUIDevice.shared.press(.home)
         // Navigate to the Today Widget Page
         goToTodayWidgetPage()
-        // Remove Firefox Widget if it exists
-        if checkPresenceFirefoxWidget() {
-            removeFirefoxWidget()
+        // Remove Ecosia Widget if it exists
+        if checkPresenceEcosiaWidget() {
+            removeEcosiaWidget()
         }
-        // Add Firefox Widget
+        // Add Ecosia Widget
         if iPad() {
             coordinate.press(forDuration: 3)
         }
-        addWidget(widgetName: "Fennec")
+        addWidget(widgetName: "Ecosia")
         // Check available widgets
-        checkFirefoxAvailablesWidgets()
+        checkEcosiaAvailableWidgets()
         // Add Quick Action Widget
         springboard.buttons[" Add Widget"].tap()
         springboard.swipeDown()
         springboard.buttons["Done"].tap()
         // Verify options available in the Quick Action Widget
-        checkFirefoxWidgetOptions()
+        checkEcosiaWidgetOptions()
         // Edit widget and interact with options
         springboard.buttons[editWidgetButton].tap()
         mozWaitElementHittable(element: newSearch, timeout: 5)
@@ -343,22 +343,22 @@ class TodayWidgetTests: BaseTestCase {
         // Press Home and navigate to Today Widget Page
         XCUIDevice.shared.press(.home)
         goToTodayWidgetPage()
-        // Remove Firefox Widget if it already exists
-        if checkPresenceFirefoxWidget() {
-            removeFirefoxWidget()
+        // Remove Ecosia Widget if it already exists
+        if checkPresenceEcosiaWidget() {
+            removeEcosiaWidget()
         }
-        // Add Firefox Widget
+        // Add Ecosia Widget
         if iPad() {
             coordinate.press(forDuration: 3)
         }
-        addWidget(widgetName: "Fennec")
-        checkFirefoxAvailablesWidgets()
+        addWidget(widgetName: "Ecosia")
+        checkEcosiaAvailableWidgets()
         // Add Quick Action Widget
         springboard.buttons[" Add Widget"].tap()
         springboard.swipeDown()
         springboard.buttons["Done"].tap()
         // Check available options in Quick Action Widget
-        checkFirefoxWidgetOptions()
+        checkEcosiaWidgetOptions()
         // Tap on Edit Widget and check the available options
         springboard.buttons[editWidgetButton].tap()
         mozWaitElementHittable(element: newSearch, timeout: 3)

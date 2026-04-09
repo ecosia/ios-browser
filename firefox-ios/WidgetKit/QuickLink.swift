@@ -16,8 +16,10 @@ enum QuickLink: Int {
     public var imageName: String {
         switch self {
         case .search:
-            // Ecosia: Use Ecosia icon (e.g. "faviconEcosia") when building for Ecosia; ensure WidgetKit Assets.xcassets provides it.
+            /* Ecosia: Replace fox icon with Ecosia app icon
             return "faviconFox"
+             */
+            return "faviconEcosia"
         case .privateSearch:
             return StandardImageIdentifiers.Large.privateMode
         case .copiedLink:

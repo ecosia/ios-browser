@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "පෞද්. පටිති\nවසන්න";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "මුල් තිරයට ෆයර්ෆොක්ස් කෙටිමං එක් කරන්න.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "මුල් තිරයට Ecosia කෙටිමං එක් කරන්න.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "පිටපත් වූ සබැඳියට යන්න";
@@ -23,7 +23,7 @@
 "TodayWidget.NoOpenTabsLabel" = "විවෘත පටිති නැත.";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "ෆයර්ෆොක්ස් අරින්න";
+"TodayWidget.OpenFirefoxLabel" = "Ecosia අරින්න";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "පෞද්. සෙවුම";
@@ -32,7 +32,7 @@
 "TodayWidget.QuickActionsGalleryTitle" = "ඉක්මන් ක්‍රියාමාර්ග";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "ෆයර්ෆොක්ස් කෙටිමං";
+"TodayWidget.QuickActionsGalleryTitleV2" = "Ecosia කෙටිමං";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "විවෘත පටිති වෙත කෙටිමං දමන්න.";
@@ -41,7 +41,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "ඉක්මන් දැක්ම";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "ෆයර්ෆොක්ස්\nහි සොයන්න";
+"TodayWidget.SearchInFirefoxV2" = "Ecosia\nහි සොයන්න";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "පෞද්. පටිත්තක්\nතුළ සොයන්න";

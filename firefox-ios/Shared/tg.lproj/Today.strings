@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "Пӯшидани\nварақаҳои хусусӣ";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "Миёнбурҳои «Firefox»-ро ба экрани асосии худ илова намоед.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "Миёнбурҳои «Ecosia»-ро ба экрани асосии худ илова намоед.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "Ворид шудан ба пайванди нусхабардошташуда";
@@ -23,19 +23,19 @@
 "TodayWidget.NoOpenTabsLabel" = "Ягон варақаи кушодашуда нест.";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "Кушодани «Firefox»";
+"TodayWidget.OpenFirefoxLabel" = "Кушодани «Ecosia»";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "Ҷустуҷӯи хусусӣ";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "Миёнбури «Firefox»-ро ба экрани асосии худ илова намоед. Пас аз илова кардани виҷет, барои таҳрир ва илова кардани миёнбури дигар онро ламс карда, доред.";
+"TodayWidget.QuickActionGalleryDescription" = "Миёнбури «Ecosia»-ро ба экрани асосии худ илова намоед. Пас аз илова кардани виҷет, барои таҳрир ва илова кардани миёнбури дигар онро ламс карда, доред.";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "Амалҳои зуд";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "Миёнбурҳои «Firefox»";
+"TodayWidget.QuickActionsGalleryTitleV2" = "Миёнбурҳои «Ecosia»";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "Миёнбурҳоро ба варақаҳои кушодашудаи худ илова намоед.";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "Намоиши зуд";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "Ҷустуҷӯ дар\n«Firefox»";
+"TodayWidget.SearchInFirefoxV2" = "Ҷустуҷӯ дар\n«Ecosia»";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "Ҷустуҷӯ дар\nварақаи хусусӣ";

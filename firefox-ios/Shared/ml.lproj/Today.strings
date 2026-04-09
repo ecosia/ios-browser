@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "അടയ്ക്കൂ\nസ്വകാര്യ ടാബുകൾ";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "താങ്ങളുടെ ആമുഖതാളിലേക്കു് ഫയർഫോക്സു് കുറുക്കുവഴികൾ ചേർക്കുക.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "താങ്ങളുടെ ആമുഖതാളിലേക്കു് Ecosia കുറുക്കുവഴികൾ ചേർക്കുക.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "പകർത്തിയ കണ്ണിയിലേക്കു് ചെല്ലുക";
@@ -23,7 +23,7 @@
 "TodayWidget.NoOpenTabsLabel" = "തുറന്ന ടാബുകളൊന്നുമില്ല.";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "ഫയർഫോക്സ് തുറക്കൂ";
+"TodayWidget.OpenFirefoxLabel" = "Ecosia തുറക്കൂ";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "സ്വകാര്യ തിരയൽ";
@@ -35,7 +35,7 @@
 "TodayWidget.QuickActionsGalleryTitle" = "ദ്രുത പ്രവർത്തനം";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "ഫയർഫോക്സ് കുറുക്കുവഴികൾ";
+"TodayWidget.QuickActionsGalleryTitleV2" = "Ecosia കുറുക്കുവഴികൾ";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "താങ്ങളുടെ തുറന്ന ടാബുകളിലേക്ക് കുറുക്കുവഴികൾ ചേർക്കുക.";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "പെട്ടെന്നു് കാഴ്ച";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "ഫയർഫോക്സിൽ\nതിരയുക";
+"TodayWidget.SearchInFirefoxV2" = "Ecosia\nതിരയുക";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "തിരയുക\nസ്വകാര്യ ടാബിൽ";

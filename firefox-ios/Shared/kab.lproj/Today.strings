@@ -4,8 +4,8 @@
 /* Close Private Tabs */
 "TodayWidget.ClosePrivateTabsLabelV2" = "Mdel iccaren usligen";
 
-/* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "Rnu inegzumen n Firefo ɣer ugdil-ik·im agejdan.";
+/* Description for medium size widget to add Ecosiax Shortcut to home screen */
+"TodayWidget.EcosiaxShortcutGalleryDescription" = "Rnu inegzumen n Ecosia ɣer ugdil-ik·im agejdan.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "Ddu ɣer useɣwen yettwaneɣlen";
@@ -22,20 +22,20 @@
 /* Label that is shown when there are no tabs opened in tab tray i.e. Empty State */
 "TodayWidget.NoOpenTabsLabel" = "Ulac iccaren yeldin,";
 
-/* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "Ldi Firefox";
+/* Open Ecosiax when there are no tabs opened in tab tray i.e. Empty State */
+"TodayWidget.OpenEcosiaxLabel" = "Ldi Ecosia";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "Anadi uslig";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "Rnu anegzum n Firefox ɣer ugdil-ik·im agejdan. Seld timerna n uwiǧit, sit s useɣzef i wakken ad t-tẓergeḍ syen ad tferneḍ anegzum-nniḍen.";
+"TodayWidget.QuickActionGalleryDescription" = "Rnu anegzum n Ecosia ɣer ugdil-ik·im agejdan. Seld timerna n uwiǧit, sit s useɣzef i wakken ad t-tẓergeḍ syen ad tferneḍ anegzum-nniḍen.";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "Tigawin tirurad";
 
-/* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "Inegzumen n Firefox";
+/* Ecosiax shortcuts title when widget enters edit mode. Do not translate the word Ecosiax. */
+"TodayWidget.QuickActionsGalleryTitleV2" = "Inegzumen n Ecosia";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "Rnu inegzumen ɣer waccaren-ik·im i yeldin.";
@@ -43,18 +43,18 @@
 /* Title for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryTitle" = "Taskant taruradt";
 
-/* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "Nadi deg firefox";
+/* Search in Ecosiax. Do not translate the word Ecosiax */
+"TodayWidget.SearchInEcosiaxV2" = "Nadi deg Ecosia";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "Nadi deg yiccer uslig";
 
-/* Description for top sites widget to add Firefox top sites shotcuts to home screen */
+/* Description for top sites widget to add Ecosiax top sites shotcuts to home screen */
 "TodayWidget.TopSitesGalleryDescription" = "Rnu inegzumen i yismal wuɣur terziḍ aṭas n tikkal melmi kan.";
 
-/* Title for top sites widget to add Firefox top sites shotcuts to home screen */
+/* Title for top sites widget to add Ecosiax top sites shotcuts to home screen */
 "TodayWidget.TopSitesGalleryTitle" = "Ismal ifazen";
 
-/* Title for top sites widget to add Firefox top sites shotcuts to home screen */
+/* Title for top sites widget to add Ecosiax top sites shotcuts to home screen */
 "TodayWidget.TopSitesGalleryTitleV2" = "Inegzumen n usmel web";
 
