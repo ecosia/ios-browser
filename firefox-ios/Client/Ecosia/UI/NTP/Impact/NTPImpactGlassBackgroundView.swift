@@ -36,20 +36,10 @@ extension UIImage {
 
 // MARK: - NTPImpactGlassBackgroundView
 
-/// A view that provides an exact `backdrop-filter: blur(24px)` glassmorphism effect
-/// for NTP impact rows sitting over a wallpaper.
-///
-/// **Technique (ADR 0003 — Option 2):**
-/// The full wallpaper is blurred once with Core Image and stored in a lightweight cache.
-/// The blurred image is sized to match `WallpaperBackgroundView` and its origin is offset
-/// by the *negative* of this view's position in the wallpaper's coordinate space —
-/// the "counter-movement" trick — so the visible slice always corresponds to the
-/// wallpaper pixels directly behind the row.
-///
-/// Coordinates are expressed relative to `WallpaperBackgroundView` (not the window) because
-/// `HomepageViewController` extends the wallpaper *above* the safe area by `safeAreaInsets.top`,
-/// so the wallpaper's coordinate origin does not coincide with the window origin.
-/// A KVO observer on the parent `UIScrollView` keeps the offset current while scrolling.
+/// Provides the glassmorphism blur effect for NTP impact tiles sitting over the wallpaper.
+/// Uses a Core Image Gaussian blur cached per wallpaper image, applying counter-movement
+/// to align the visible slice with the wallpaper pixels directly behind each tile.
+/// A KVO observer on the parent scroll view keeps the alignment current while scrolling.
 @MainActor
 final class NTPImpactGlassBackgroundView: UIView {
 

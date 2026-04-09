@@ -202,18 +202,18 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         tilesStack.removeAllArrangedViews()
 
         var rows: [NTPImpactRowView] = []
-        for (index, info) in items.enumerated() {
+        for info in items {
             let row = NTPImpactRowView(info: info)
-            row.position = (index, items.count)
             row.delegate = delegate
             tilesStack.addArrangedSubview(row)
             rows.append(row)
         }
 
-        // Equal height between the two tiles — the taller one drives the height for both.
-        // .defaultHigh priority lets content expand further if absolutely needed.
-        if rows.count == 2 {
-            let constraint = rows[0].heightAnchor.constraint(equalTo: rows[1].heightAnchor)
+        // Always exactly 2 tiles (trees + invested). Equal height so the taller one drives
+        // both — .defaultHigh lets content still expand if absolutely needed.
+        assert(rows.count == 2, "NTPImpactCell expects exactly 2 tiles")
+        if let first = rows.first, let last = rows.last, first !== last {
+            let constraint = first.heightAnchor.constraint(equalTo: last.heightAnchor)
             constraint.priority = .defaultHigh
             constraint.isActive = true
             tileEqualHeightConstraint = constraint

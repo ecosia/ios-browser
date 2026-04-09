@@ -102,12 +102,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return button
     }()
 
-    private lazy var dividerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     // MARK: - Properties
 
     weak var delegate: NTPImpactCellDelegate?
@@ -120,12 +114,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             subtitleLabel.text = info.subtitle
             actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
             actionButton.setTitle(info.buttonTitle, for: .normal)
-        }
-    }
-
-    var position: (row: Int, totalCount: Int) = (0, 0) {
-        didSet {
-            dividerView.isHidden = true
         }
     }
 
@@ -160,7 +148,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         layer.cornerRadius = .ecosia.borderRadius._l
         clipsToBounds = true
         addSubview(glassBackground)
-        addSubview(dividerView)
 
         labelsStack.addArrangedSubview(titleLabel)
         labelsStack.addArrangedSubview(subtitleLabel)
@@ -190,11 +177,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
 
-            dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
-            dividerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            dividerView.heightAnchor.constraint(equalToConstant: 1),
-
             imageContainer.heightAnchor.constraint(equalToConstant: UX.imageHeight),
             imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor),
 
@@ -218,7 +200,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         subtitleLabel.textColor = .white
         actionButton.setTitleColor(.white, for: .normal)
         imageView.tintColor = .white
-        dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         // Re-apply content to ensure rows added after initial layout are fully populated.
         imageView.image = info.image
         imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
