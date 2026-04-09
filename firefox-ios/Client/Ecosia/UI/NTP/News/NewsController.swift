@@ -5,6 +5,7 @@
 import UIKit
 import Common
 import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
@@ -139,6 +140,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
+        // swiftlint:disable:next force_cast
         let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NTPNewsCell
         cell.configure(items[cellForItemAt.row], images: images, row: cellForItemAt.item, totalCount: items.count)
         cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
@@ -235,3 +237,4 @@ extension UICollectionView {
         }
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

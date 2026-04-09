@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor final class InvestmentsProjectionTests: XCTestCase {
     private var investmentsProjection: InvestmentsProjection!
@@ -47,3 +48,4 @@ import XCTest
         XCTAssertNotNil(receivedAmount)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

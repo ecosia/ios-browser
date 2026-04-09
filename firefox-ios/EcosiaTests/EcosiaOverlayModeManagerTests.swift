@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class EcosiaOverlayModeManagerTests: XCTestCase {
 
@@ -44,3 +45,4 @@ final class EcosiaOverlayModeManagerTests: XCTestCase {
         XCTAssertEqual(subject.enterOverlayModeCallCount, 2)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

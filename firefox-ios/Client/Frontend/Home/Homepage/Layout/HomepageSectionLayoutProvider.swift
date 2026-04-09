@@ -148,7 +148,7 @@ final class HomepageSectionLayoutProvider: FeatureFlaggable {
         if let ecosiaLayout = createEcosiaLayoutSection(for: section, with: environment) {
             return ecosiaLayout
         }
-        
+
         let traitCollection = environment.traitCollection
         switch section {
         case .searchBar:

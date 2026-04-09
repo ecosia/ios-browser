@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 #if os(iOS)
 
@@ -327,3 +328,4 @@ private class MockSingularService: SingularServiceProtocol {
 }
 
 #endif
+// swiftlint:enable implicitly_unwrapped_optional

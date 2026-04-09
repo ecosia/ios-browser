@@ -8,6 +8,7 @@ import Common
 import Redux
 import Shared
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
     private var mockProfile: MockProfile!
@@ -218,3 +219,4 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
         StoreTestUtilityHelper.resetStore()
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

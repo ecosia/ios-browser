@@ -13,29 +13,50 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     // MARK: - UX Constants
 
-    /// Contains constants used for layout and sizing within the `NTPImpactRowView`.
     struct UX {
-        static let horizontalSpacing: CGFloat = 8
-        static let padding: CGFloat = 16
+        static let horizontalSpacing: CGFloat = .ecosia.space._m
+        static let padding: CGFloat = .ecosia.space._s
+        static let titleSubtitleGap: CGFloat = .ecosia.space._2s
         static let imageHeight: CGFloat = 24
+        static let glassBorderWidth: CGFloat = 1
     }
 
     // MARK: - UI Elements
 
-    /// Stack view to arrange title and subtitle labels vertically.
-    private let titleAndSubtitleContainerView = UIStackView()
+    // Gaussian blur glass background (see ADR 0003)
+    private let glassBackground: NTPImpactGlassBackgroundView = {
+        let view = NTPImpactGlassBackgroundView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
-    /// Main horizontal stack view that arranges the image, title, subtitle, and action button.
-    private let mainContainerView = UIStackView()
+    private let mainContainerView: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = UX.horizontalSpacing
+        return stack
+    }()
 
-    /// A container view for the image.
+    // alignment = .fill gives each label an explicit width constraint from the stack so UILabel
+    // always knows its available width for line-wrapping — including after device rotation.
+    // (With .leading, no width constraint is applied and preferredMaxLayoutWidth stays stale.)
+    private let labelsStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.alignment = .fill
+        stack.spacing = UX.titleSubtitleGap
+        return stack
+    }()
+
     private lazy var imageContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
-    /// The image view representing the icon in the row.
     private lazy var imageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -43,30 +64,35 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return image
     }()
 
-    /// A label for displaying the title of the row.
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .ecosiaFamilyBrand(size: .ecosia.font._3l)
         label.adjustsFontSizeToFitWidth = true
         label.adjustsFontForContentSizeCategory = true
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return label
     }()
 
-    /// A label for displaying the subtitle of the row.
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .footnote)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
+        // Force word-wrap so words are never split mid-word across lines.
+        label.lineBreakMode = .byWordWrapping
         return label
     }()
 
-    /// A resizable button for performing actions related to the row.
+    /// A resizable button for performing actions related to the row (referral row only).
     private lazy var actionButton: ResizableButton = {
         let button = ResizableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .footnote).semibold()
         button.titleLabel?.textAlignment = .right
+        // ResizableButton defaults to numberOfLines=0; force single line so the button
+        // never expands the referral row taller than the trees/invested rows.
+        button.titleLabel?.numberOfLines = 1
+        button.configuration?.titleLineBreakMode = .byTruncatingTail
         button.contentHorizontalAlignment = .right
         button.contentVerticalAlignment = .center
         button.buttonEdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
@@ -76,19 +102,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return button
     }()
 
-    /// A divider view separating rows visually.
-    private lazy var dividerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     // MARK: - Properties
 
-    /// Delegate for handling user interactions with the row.
     weak var delegate: NTPImpactCellDelegate?
 
-    /// The information to display in this row, including title, subtitle, and button information.
     var info: ClimateImpactInfo {
         didSet {
             imageView.image = info.image
@@ -100,94 +117,69 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         }
     }
 
-    /// The current position of this row in the overall list (used for layout adjustments like masking).
-    var position: (row: Int, totalCount: Int) = (0, 0) {
-        didSet {
-            let (row, count) = position
-            dividerView.isHidden = row == (count - 1)
-            setMaskedCornersUsingPosition(row: row, totalCount: count)
-        }
-    }
-
-    /// Whether to forcefully hide the action button in this row.
     var forceHideActionButton: Bool = false {
         didSet {
             actionButton.isHidden = forceHideActionButton
         }
     }
 
-    /// Optional background color for the row.
     var customBackgroundColor: UIColor?
 
     // MARK: - Initialization
 
-    /// Initializes a new `NTPImpactRowView` with the provided `ClimateImpactInfo`.
-    ///
-    /// - Parameter info: The `ClimateImpactInfo` object containing the data to display in the row.
     init(info: ClimateImpactInfo) {
         self.info = info
         super.init(frame: .zero)
         defer {
-            // Ensure info setup is completed after initialization
+            // Trigger the didSet observer so subviews are populated on first configure.
             self.info = info
         }
         setupView()
         setupConstraints()
+        setupTapGestureIfNeeded()
     }
 
-    /// Not supported, as `NTPImpactRowView` requires `ClimateImpactInfo` during initialization.
     required init?(coder: NSCoder) { nil }
 
     // MARK: - Setup Methods
 
-    /// Configures and adds subviews to the view.
     private func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = .ecosia.borderRadius._l
+        clipsToBounds = true
+        addSubview(glassBackground)
 
-        mainContainerView.translatesAutoresizingMaskIntoConstraints = false
-        mainContainerView.axis = .horizontal
-        mainContainerView.alignment = .center
-        mainContainerView.spacing = UX.horizontalSpacing
-        mainContainerView.addArrangedSubview(imageContainer)
+        labelsStack.addArrangedSubview(titleLabel)
+        labelsStack.addArrangedSubview(subtitleLabel)
+        labelsStack.isAccessibilityElement = true
+        labelsStack.shouldGroupAccessibilityChildren = true
+        labelsStack.accessibilityLabel = info.accessibilityLabel
+        labelsStack.accessibilityIdentifier = info.accessibilityIdentifier
+
         imageContainer.addSubview(imageView)
-        addSubview(mainContainerView)
-        addSubview(dividerView)
-
-        titleAndSubtitleContainerView.translatesAutoresizingMaskIntoConstraints = false
-        titleAndSubtitleContainerView.axis = .vertical
-        titleAndSubtitleContainerView.alignment = .leading
-        titleAndSubtitleContainerView.addArrangedSubview(titleLabel)
-        titleAndSubtitleContainerView.addArrangedSubview(subtitleLabel)
-        titleAndSubtitleContainerView.isAccessibilityElement = true
-        titleAndSubtitleContainerView.shouldGroupAccessibilityChildren = true
-        titleAndSubtitleContainerView.accessibilityLabel = info.accessibilityLabel
-        titleAndSubtitleContainerView.accessibilityIdentifier = info.accessibilityIdentifier
-
-        mainContainerView.addArrangedSubview(titleAndSubtitleContainerView)
+        mainContainerView.addArrangedSubview(imageContainer)
+        mainContainerView.addArrangedSubview(labelsStack)
         mainContainerView.addArrangedSubview(actionButton)
+
+        addSubview(mainContainerView)
     }
 
-    /// Sets up the layout constraints for the view's subviews.
     private func setupConstraints() {
-
         NSLayoutConstraint.activate([
-            mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
+            glassBackground.topAnchor.constraint(equalTo: topAnchor),
+            glassBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
+            glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
+            glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            mainContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            mainContainerView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: UX.padding),
+            mainContainerView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -UX.padding),
             mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
-            mainContainerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
-            dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
-            dividerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            dividerView.heightAnchor.constraint(equalToConstant: 1),
+
             imageContainer.heightAnchor.constraint(equalToConstant: UX.imageHeight),
             imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor),
-            actionButton.topAnchor.constraint(equalTo: titleAndSubtitleContainerView.topAnchor),
-            actionButton.bottomAnchor.constraint(equalTo: titleAndSubtitleContainerView.bottomAnchor),
-            actionButton.widthAnchor.constraint(equalTo: mainContainerView.widthAnchor, multiplier: 1/3)
-        ])
 
-        NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: imageContainer.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: imageContainer.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
@@ -198,12 +190,17 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        backgroundColor = customBackgroundColor ?? theme.colors.ecosia.backgroundElevation1
-        titleLabel.textColor = theme.colors.ecosia.textPrimary
-        subtitleLabel.textColor = theme.colors.ecosia.textSecondary
-        actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
-        dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
-        // Re-apply content so the row is populated when theme runs after being added to the hierarchy (e.g. referral row)
+        let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia
+        backgroundColor = .clear
+        layer.borderWidth = UX.glassBorderWidth
+        layer.borderColor = (ecosia?.borderGlassStatic ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
+        glassBackground.applyTheme(theme: theme)
+        glassBackground.loadCurrentWallpaper()
+        titleLabel.textColor = .white
+        subtitleLabel.textColor = .white
+        actionButton.setTitleColor(.white, for: .normal)
+        imageView.tintColor = .white
+        // Re-apply content to ensure rows added after initial layout are fully populated.
         imageView.image = info.image
         imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
         titleLabel.text = info.title
@@ -212,9 +209,23 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         actionButton.setTitle(info.buttonTitle, for: .normal)
     }
 
+    // MARK: - Private Setup
+
+    /// Adds a full-tile tap gesture for counter tiles that have a destination URL
+    /// (tree counter → plants page; money counter → financial reports).
+    private func setupTapGestureIfNeeded() {
+        guard info.destinationURL != nil else { return }
+        isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTileTap))
+        addGestureRecognizer(tap)
+    }
+
     // MARK: - Actions
 
-    /// Handles the action button tap event, notifying the delegate.
+    @objc private func handleTileTap() {
+        delegate?.impactCellButtonClickedWithInfo(info)
+    }
+
     @objc private func buttonAction() {
         delegate?.impactCellButtonClickedWithInfo(info)
     }

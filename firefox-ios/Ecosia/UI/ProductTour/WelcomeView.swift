@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 public struct WelcomeView: View {
 
@@ -214,7 +215,7 @@ public struct WelcomeView: View {
                             }
                         }) {
                             HStack(spacing: 8) {
-                                Image("sign-in", bundle: .ecosia)
+                                Image.ecosia("sign-in")
                                     .renderingMode(.template)
                                     .foregroundColor(theme.buttonTextColor)
                                     .accessibilityHidden(true)
@@ -505,3 +506,4 @@ public struct WelcomeViewTheme: EcosiaThemeable {
         outlinedButtonBorderColor = Color(theme.colors.ecosia.textStaticLight)
     }
 }
+// swiftlint:enable closure_body_length

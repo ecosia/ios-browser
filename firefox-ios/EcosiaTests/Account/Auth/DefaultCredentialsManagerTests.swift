@@ -6,6 +6,7 @@ import XCTest
 import Auth0
 @testable import Ecosia
 @testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class DefaultCredentialsManagerTests: XCTestCase {
@@ -289,3 +290,4 @@ final class DefaultCredentialsManagerTests: XCTestCase {
         )
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

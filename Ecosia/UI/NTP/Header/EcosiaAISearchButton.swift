@@ -27,6 +27,7 @@ public struct EcosiaAISearchButton: View {
                 .renderingMode(.template)
                 .foregroundColor(theme.iconColor)
                 .frame(width: .ecosia.space._1l, height: .ecosia.space._1l)
+                .accessibilityHidden(true)
                 .padding(.ecosia.space._2s)
                 .frame(width: .ecosia.space._3l, height: .ecosia.space._3l)
                 .background(theme.backgroundColor)

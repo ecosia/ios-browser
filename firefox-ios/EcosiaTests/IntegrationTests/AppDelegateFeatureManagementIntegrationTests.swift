@@ -5,6 +5,7 @@
 import XCTest
 @testable import Client
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
     var appDelegate: AppDelegate!
@@ -93,3 +94,4 @@ extension AppDelegateFeatureManagementIntegrationTests {
         try? await Unleash.save(model!)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

@@ -78,6 +78,7 @@ extension EcosiaPageActionMenuCellTests {
     func makeSUT(at indexPath: IndexPath) -> PageActionMenuCell {
         let tableView = UITableView()
         tableView.register(PageActionMenuCell.self, forCellReuseIdentifier: PageActionMenuCell.UX.cellIdentifier)
+        // swiftlint:disable:next force_cast
         return tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath) as! PageActionMenuCell
     }
 

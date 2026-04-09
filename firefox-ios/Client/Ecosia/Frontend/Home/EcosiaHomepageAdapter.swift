@@ -11,32 +11,30 @@ import Ecosia
 /// This minimizes changes to Firefox code by encapsulating all Ecosia-specific logic.
 @MainActor
 final class EcosiaHomepageAdapter {
-    
+
     // MARK: - Properties
-    
+
     private let profile: Profile
     private let windowUUID: WindowUUID
     private let tabManager: TabManager
     private let referrals: Referrals
     private var theme: Theme
     private let auth: EcosiaAuth
-    
+
     // View Models for Ecosia sections
     private(set) var headerViewModel: NTPHeaderViewModel?
     private(set) var libraryViewModel: NTPLibraryCellViewModel?
     private(set) var impactViewModel: NTPImpactCellViewModel?
-    private(set) var newsViewModel: NTPNewsCellViewModel?
     private(set) var customizationViewModel: NTPCustomizationCellViewModel?
-    
+
     // Delegates
     weak var headerDelegate: NTPHeaderDelegate?
     weak var libraryDelegate: NTPLibraryDelegate?
     weak var impactDelegate: NTPImpactCellDelegate?
-    weak var newsDelegate: NTPNewsCellDelegate?
     weak var customizationDelegate: NTPCustomizationCellDelegate?
-    
+
     // MARK: - Initialization
-    
+
     init(profile: Profile,
          windowUUID: WindowUUID,
          tabManager: TabManager,
@@ -49,10 +47,10 @@ final class EcosiaHomepageAdapter {
         self.referrals = referrals
         self.theme = theme
         self.auth = auth
-        
+
         setupViewModels()
     }
-    
+
     private func setupViewModels() {
         // Header (iOS 16+ only)
         if #available(iOS 16.0, *) {
@@ -64,94 +62,89 @@ final class EcosiaHomepageAdapter {
                 delegate: headerDelegate
             )
         }
-        
+
         // Library shortcuts
         libraryViewModel = NTPLibraryCellViewModel(
             delegate: libraryDelegate,
             theme: theme
         )
-        
+
         // Climate impact
         impactViewModel = NTPImpactCellViewModel(
             referrals: referrals,
             theme: theme
         )
         impactViewModel?.delegate = impactDelegate
-        
-        // News
-        newsViewModel = NTPNewsCellViewModel(
-            delegate: newsDelegate,
-            theme: theme
-        )
-        
+
         // Customization
         customizationViewModel = NTPCustomizationCellViewModel(
             delegate: customizationDelegate,
             theme: theme
         )
     }
-    
+
     // MARK: - Public Methods
-    
+
     func updateTheme(_ theme: Theme) {
         self.theme = theme
         headerViewModel?.theme = theme
         libraryViewModel?.theme = theme
         impactViewModel?.theme = theme
-        newsViewModel?.theme = theme
         customizationViewModel?.theme = theme
     }
-    
+
     func updateDelegates(
         header: NTPHeaderDelegate?,
         library: NTPLibraryDelegate?,
         impact: NTPImpactCellDelegate?,
-        news: NTPNewsCellDelegate?,
         customization: NTPCustomizationCellDelegate?
     ) {
         self.headerDelegate = header
         self.libraryDelegate = library
         self.impactDelegate = impact
-        self.newsDelegate = news
         self.customizationDelegate = customization
-        
+
         headerViewModel?.delegate = header
         libraryViewModel?.delegate = library
         impactViewModel?.delegate = impact
-        newsViewModel?.delegate = news
         customizationViewModel?.delegate = customization
     }
-    
-    /// Returns the ordered list of Ecosia sections that should be displayed
+
+    /// Returns the ordered list of Ecosia sections that should be displayed.
+    /// Section order matches the Figma design: header → [library] → impact → [topSites inserted by snapshot] → news
     func getEcosiaSections() -> [HomepageSection] {
         var sections: [HomepageSection] = []
-        
+
         if shouldShowHeader() {
             sections.append(.ecosiaHeader)
         }
-        
-        // Logo
-        sections.append(.ecosiaLogo)
-        
-        // Library shortcuts
-        sections.append(.ecosiaLibrary)
-        
+
+        // Logo moved into the NTPHeader cell — no separate logo section needed.
+
+        // Library shortcuts (Bookmarks, History, Reading List, Downloads) — hidden for now
+
         // Climate impact (if enabled)
         if shouldShowImpact() {
             sections.append(.ecosiaImpact)
         }
-        
-        // News (if enabled)
-        if shouldShowNews() {
-            sections.append(.ecosiaNews)
-        }
-        
-        // Customization
-        sections.append(.ecosiaNTPCustomization)
-        
+
+        // Top sites are inserted by HomepageDiffableDataSource after topSitesInsertionAnchor
+
+        // Customization button removed — pencil icon in header handles this
+
         return sections
     }
-    
+
+    /// The section after which top sites should be inserted.
+    /// Matches the Figma design: shortcuts appear after impact counters when impact is shown,
+    /// or directly after the header when neither impact nor library is shown.
+    var topSitesInsertionAnchor: HomepageSection {
+        if shouldShowImpact() {
+            return .ecosiaImpact
+        }
+        return .ecosiaHeader
+    }
+
     /// Returns the items for a given Ecosia section
     func getItems(for section: HomepageSection) -> [HomepageItem] {
         switch section {
@@ -162,54 +155,80 @@ final class EcosiaHomepageAdapter {
         case .ecosiaLibrary:
             return [.ecosiaLibrary]
         case .ecosiaImpact:
-            // Impact section has multiple rows
-            guard let impactViewModel = impactViewModel else { return [] }
-            return impactViewModel.infoItemSections.enumerated().map { index, _ in
-                .ecosiaImpact(sectionIndex: index)
-            }
-        case .ecosiaNews:
-            return (0..<3).map { .ecosiaNewsCard(index: $0) }
+            guard impactViewModel != nil else { return [] }
+            return [.ecosiaImpact(sectionIndex: 0)]
         case .ecosiaNTPCustomization:
             return [.ecosiaNTPCustomization]
         default:
             return []
         }
     }
-    
+
     // MARK: - Section Visibility
-    
+
     private func shouldShowHeader() -> Bool {
         if #available(iOS 16.0, *) {
             return true
         }
         return false
     }
-    
+
     private func shouldShowImpact() -> Bool {
         return User.shared.showClimateImpact
     }
-    
-    private func shouldShowNews() -> Bool {
-        return User.shared.showEcosiaNews
-    }
-    
+
     // MARK: - Lifecycle
-    
+
     func viewWillAppear() {
-        impactViewModel?.subscribeToProjections()
-        // News automatically subscribes on init
+        impactViewModel?.start()
     }
-    
+
     func viewDidDisappear() {
-        impactViewModel?.unsubscribeToProjections()
+        impactViewModel?.stop()
     }
-    
+
     func refreshData(for traitCollection: UITraitCollection, size: CGSize) {
-        newsViewModel?.refreshData(
-            for: traitCollection,
-            size: size,
-            isPortrait: size.height > size.width,
-            device: UIDevice.current.userInterfaceIdiom
+    }
+
+    // MARK: - Ecosia: NTP Background
+
+    /// Provides the wallpaper configuration for the NTP background
+    func getNTPBackgroundConfiguration() -> WallpaperConfiguration {
+
+        let wallpaperManager = WallpaperManager()
+        let currentWallpaper = wallpaperManager.currentWallpaper
+
+        var portraitImage: UIImage?
+        var landscapeImage: UIImage?
+
+        // Try to load bundled asset first if available
+        if let bundledAssetName = currentWallpaper.bundledAssetName {
+            portraitImage = UIImage(named: bundledAssetName)
+            landscapeImage = UIImage(named: bundledAssetName)
+        }
+
+        // If no bundled asset, try to load downloaded images
+        if portraitImage == nil || landscapeImage == nil {
+            let storageUtility = WallpaperStorageUtility()
+            portraitImage = try? storageUtility.fetchImageNamed(currentWallpaper.portraitID)
+            landscapeImage = try? storageUtility.fetchImageNamed(currentWallpaper.landscapeID)
+        }
+
+        // Fallback to default bundled background if nothing loaded
+        if portraitImage == nil {
+            // Ecosia: load from Ecosia framework bundle where the asset now lives
+            portraitImage = .ecosia(named: "ntpBackground")
+            landscapeImage = .ecosia(named: "ntpBackground")
+        }
+
+        return WallpaperConfiguration(
+            id: currentWallpaper.id,
+            landscapeImage: landscapeImage,
+            portraitImage: portraitImage,
+            textColor: currentWallpaper.textColor,
+            cardColor: currentWallpaper.cardColor,
+            logoTextColor: currentWallpaper.logoTextColor,
+            hasImage: portraitImage != nil || landscapeImage != nil
         )
     }
 }

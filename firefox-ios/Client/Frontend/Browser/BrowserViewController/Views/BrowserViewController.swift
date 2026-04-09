@@ -140,7 +140,7 @@ class BrowserViewController: UIViewController,
     private(set) lazy var mailtoLinkHandler = MailtoLinkHandler()
     private lazy var statusBarOverlay: StatusBarOverlay = .build { view in
         view.accessibilityIdentifier = AccessibilityIdentifiers.Browser.statusBarOverlay
-	}
+    }
 
     // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
     // and its navigationType are available) to the actual tracking call in didCommit.
@@ -1990,6 +1990,7 @@ class BrowserViewController: UIViewController,
         viewController.willMove(toParent: self)
         contentContainer.add(content: viewController)
         viewController.didMove(toParent: self)
+
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
 
         // To make sure the content views content is extending under the toolbars we disable clip to bounds
@@ -3268,11 +3269,6 @@ class BrowserViewController: UIViewController,
             DefaultLogger.shared.log("Error handling URL entry: \"\(text)\".", level: .warning, category: .tabs)
             return
         }
-        
-        // Ecosia: DEBUG - Log which search engine is being used
-        print("🔍 DEBUG: Submitting search with engine: \(engine.shortName), URL: \(searchURL)")
-        print("🔍 DEBUG: All available engines: \(searchEnginesManager.orderedEngines.map { $0.shortName })")
-        print("🔍 DEBUG: Default engine: \(searchEnginesManager.defaultEngine?.shortName ?? "none")")
 
         let conversionMetrics = UserConversionMetrics()
         conversionMetrics.didPerformSearch()

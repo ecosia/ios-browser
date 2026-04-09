@@ -1,0 +1,36 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+// Shared Ecosia build settings that depend on and extend Firefox's Common.xcconfig.
+// Each Ecosia variant xcconfig should include this file LAST so these values
+// take precedence over Firefox defaults and per-variant xcconfigs.
+//
+// Variant xcconfigs no longer need to include Common.xcconfig directly —
+// it is pulled in transitively here.
+#include "../../Configuration/Common.xcconfig"
+
+// Ecosia: Override Firefox URL scheme, widget display name, and shared identifiers.
+MOZ_PUBLIC_URL_SCHEME = ecosia
+MOZ_INTERNAL_URL_SCHEME = ecosia
+MOZ_TODAY_WIDGET_SEARCH_DISPLAY_NAME = Ecosia - Search
+MOZ_PRODUCT_NAME = Ecosia
+DEVELOPMENT_TEAM = 33YMRSYD2L
+MOZ_WALLPAPER_ASSET_URL=https://cdn.ecosia.org/static/mobile-wallpapers
+
+// Ecosia: Add libxml2 on top of Firefox's -ObjC baseline.
+OTHER_LDFLAGS = $(inherited) -lxml2
+
+// Ecosia: App marketing version — bump this for every release.
+MARKETING_VERSION = 11.7.2
+
+// Ecosia: Build performance setting.
+EAGER_LINKING = NO
+
+// Ecosia: Swift language version.
+SWIFT_VERSION = 6.2
+
+// Ecosia: Activate the ECOSIA compilation flag so all #if ECOSIA blocks are live.
+// Must come last to pick up DEBUG (or other flags) set by the variant xcconfigs
+// that are included before this file.
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) ECOSIA

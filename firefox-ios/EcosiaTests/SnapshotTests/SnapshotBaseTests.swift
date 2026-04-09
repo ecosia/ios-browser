@@ -6,6 +6,7 @@ import SnapshotTesting
 import XCTest
 import Common
 @testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
 
 extension WindowUUID {
     static let snapshotTestDefaultUUID = WindowUUID(uuidString: "E9E9E9E9-E9E9-E9E9-E9E9-CD68A019860E")!
@@ -37,3 +38,4 @@ class SnapshotBaseTests: XCTestCase {
         profile = nil
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

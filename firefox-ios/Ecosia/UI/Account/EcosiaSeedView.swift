@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 /// A reusable seed count component that displays the seed icon and animated count.
 /// Displays counts 0-999 normally, and "999+" for counts of 1000 or more.
@@ -67,7 +68,7 @@ public struct EcosiaSeedView: View {
 
     public var body: some View {
         HStack(alignment: .center, spacing: spacing) {
-            Image("seed", bundle: .ecosia)
+            Image.ecosia("seed")
                 .resizable()
                 .frame(width: seedIconSize, height: seedIconSize)
                 .scaleEffect(enableAnimation ? animationScale : 1.0)
@@ -95,7 +96,7 @@ public struct EcosiaSeedView: View {
                 .animatedText(numericValue: seedCount, reduceMotionEnabled: !enableAnimation)
 
             if showLock {
-                Image("lock", bundle: .ecosia)
+                Image.ecosia("lock")
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: UX.lockSize, height: UX.lockSize)
@@ -223,3 +224,4 @@ private struct EcosiaSeedViewInteractivePreview: View {
     }
 }
 #endif
+// swiftlint:enable closure_body_length

@@ -7,14 +7,14 @@ import UIKit
 import Ecosia
 
 extension HomepageDiffableDataSource {
-    
+
     /// Ecosia: Builds and appends Ecosia-specific sections to the snapshot
     func appendEcosiaSections(
         to snapshot: inout NSDiffableDataSourceSnapshot<HomeSection, HomeItem>,
         adapter: EcosiaHomepageAdapter
     ) {
         let ecosiaSections = adapter.getEcosiaSections()
-        
+
         for section in ecosiaSections {
             snapshot.appendSections([section])
             let items = adapter.getItems(for: section)

@@ -104,8 +104,10 @@ struct HomepageDimensionCalculator {
         }
         let minCardsConstant = TopSitesSectionLayoutProvider.UX.minCards
         let tilesPerRowCount = numberOfTiles < minCardsConstant ? minCardsConstant : numberOfTiles
-
-        return tilesPerRowCount
+        /* Ecosia: Cap at 4 tiles per row — NTP design shows exactly 1 row × 4 shortcuts.
+        return min(tilesPerRowCount, TopSitesSectionLayoutProvider.UX.maxCards)
+        */
+        return min(tilesPerRowCount, 4)
     }
 
     // Returns the height of the tallest view from a collection of views constrained to a given width

@@ -6,6 +6,7 @@ import XCTest
 import Auth0
 @testable import Ecosia
 import WebKit
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class AuthTests: XCTestCase {
@@ -613,3 +614,4 @@ final class AuthTests: XCTestCase {
         return "\(base64URLEncode(header)).\(base64URLEncode(payload)).mock-signature"
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

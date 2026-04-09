@@ -32,8 +32,8 @@ final class NTPHeaderViewModel: ObservableObject {
     var shouldAnimateSeed: Bool { balanceIncrement != nil }
     @Published var showSeedSparkles: Bool = false
 
-    // Ecosia: nonisolated(unsafe) so deinit can remove observer without MainActor isolation
-    private nonisolated(unsafe) var levelUpObserver: NSObjectProtocol?
+    // nonisolated(unsafe) so deinit can remove observer without MainActor isolation
+    nonisolated(unsafe) private var levelUpObserver: NSObjectProtocol?
 
     // MARK: - Initialization
     init(profile: Profile,
@@ -49,7 +49,7 @@ final class NTPHeaderViewModel: ObservableObject {
 
         // Forward objectWillChange notifications from authStateProvider
         // This ensures SwiftUI knows to update the view when auth state changes.
-        // Ecosia: receive(on: .main) so objectWillChange.send() runs on main actor for strict concurrency.
+        // receive(on: .main) so objectWillChange.send() runs on main actor for strict concurrency.
         authStateProvider.objectWillChange
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
@@ -87,7 +87,7 @@ final class NTPHeaderViewModel: ObservableObject {
 
         // Turn off sparkles after animation completes
         Task { @MainActor in
-            // Ecosia: Use nanoseconds for iOS 15 compatibility (Task.sleep(for: .seconds) is iOS 16+)
+            // Use nanoseconds for iOS 15 compatibility (Task.sleep(for: .seconds) is iOS 16+)
             try? await Task.sleep(nanoseconds: 2_500_000_000)
             self.showSeedSparkles = false
         }
@@ -95,9 +95,8 @@ final class NTPHeaderViewModel: ObservableObject {
 
     // MARK: - Public Methods
 
-    func openAISearch() {
-        delegate?.headerOpenAISearch()
-        Analytics.shared.aiSearchNTPButtonTapped()
+    func openCustomizeHomepage() {
+        delegate?.headerOpenCustomizeHomepage()
     }
 
     func performLogin() {

@@ -64,14 +64,15 @@ public struct AddressToolbarUXConfiguration {
     func locationContainerBackgroundColor(theme: some Theme) -> UIColor {
         guard !scrollAlpha.isZero else { return .clear }
 
-        /* Ecosia: Use Ecosia location background; overlay (centered) = backgroundPrimary, non-overlay = backgroundTertiary
+        /* Ecosia: Use Ecosia location background; overlay (centered) = backgroundPrimary,
+           non-overlay = backgroundElevation1 (Figma: Background/Neutral/elevation-1)
         if hasAlternativeLocationColor {
             return isLocationTextCentered ? theme.colors.layerSurfaceMediumAlt : theme.colors.layerEmphasis
         } else {
             return isLocationTextCentered ? theme.colors.layerSurfaceMedium : theme.colors.layerEmphasis
         }
          */
-        return isLocationTextCentered ? theme.colors.ecosia.backgroundPrimary : theme.colors.ecosia.backgroundTertiary
+        return isLocationTextCentered ? theme.colors.ecosia.backgroundPrimary : theme.colors.ecosia.backgroundElevation1
     }
 
     public func locationViewVerticalPaddings(addressBarPosition: AddressToolbarPosition) -> (top: CGFloat, bottom: CGFloat) {

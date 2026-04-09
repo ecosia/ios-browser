@@ -72,9 +72,8 @@ extension BrowserViewController: @MainActor NTPTooltipDelegate {
 
 @MainActor
 extension BrowserViewController: NTPHeaderDelegate {
-    func headerOpenAISearch() {
-        guard let url = Environment.current.urlProvider.aiSearch(origin: .ntp) as? URL else { return }
-        openURLInNewTab(url, isPrivate: false)
+    func headerOpenCustomizeHomepage() {
+        openNTPCustomizationSettings()
     }
 }
 
@@ -107,24 +106,11 @@ extension BrowserViewController: NTPImpactCellDelegate {
             invite.delegate = self
             let nav = EcosiaNavigation(rootViewController: invite)
             present(nav, animated: true)
-        default:
-            return
+        case .totalTrees, .totalInvested:
+            // Ecosia: Open the counter's destination URL in the current tab (not a new tab).
+            guard let url = info.destinationURL else { return }
+            tabManager.selectedTab?.loadRequest(PrivilegedRequest(url: url) as URLRequest)
         }
-    }
-}
-
-@MainActor
-extension BrowserViewController: NTPNewsCellDelegate {
-    func openSeeAllNews() {
-        guard let homepage = contentContainer.contentController as? HomepageViewController,
-              let adapter = homepage.ecosiaAdapter,
-              let newsViewModel = adapter.newsViewModel else { return }
-
-        let news = NewsController(items: newsViewModel.items, windowUUID: windowUUID)
-        news.delegate = self
-        let nav = EcosiaNavigation(rootViewController: news)
-        present(nav, animated: true)
-        Analytics.shared.navigation(.open, label: .news)
     }
 }
 

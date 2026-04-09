@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 #if os(iOS)
 
@@ -297,3 +298,4 @@ enum MockSessionParameters {
 }
 
 #endif
+// swiftlint:enable implicitly_unwrapped_optional

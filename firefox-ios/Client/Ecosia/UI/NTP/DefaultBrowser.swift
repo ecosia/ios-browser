@@ -5,6 +5,7 @@
 import UIKit
 import Common
 import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @available(iOS 14, *)
 protocol DefaultBrowserLegacyDelegate: AnyObject {
@@ -80,6 +81,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         self.delegate?.defaultBrowserDidShow(self)
     }
 
+    // swiftlint:disable:next function_body_length
     private func setupViews() {
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
@@ -267,3 +269,4 @@ final class DefaultBrowser: UIViewController, Themeable {
         }
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

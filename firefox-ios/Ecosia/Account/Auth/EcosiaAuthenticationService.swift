@@ -18,11 +18,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     // MARK: - Public Properties
 
     /// The shared singleton instance of the EcosiaAuthenticationService class.
-    public nonisolated(unsafe) static let shared = EcosiaAuthenticationService()
+    nonisolated(unsafe) public static let shared = EcosiaAuthenticationService()
 
     /// The default credentials manager used across the application.
     /// This is a static property to ensure consistent credential storage.
-    public nonisolated(unsafe) static let defaultCredentialsManager: CredentialsManagerProtocol = DefaultCredentialsManager()
+    nonisolated(unsafe) public static let defaultCredentialsManager: CredentialsManagerProtocol = DefaultCredentialsManager()
 
     /// The Auth0 provider responsible for authentication operations.
     /// This can be customized to use different authentication flows (e.g., web auth, native-to-web SSO).

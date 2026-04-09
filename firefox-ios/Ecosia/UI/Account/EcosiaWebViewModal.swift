@@ -5,6 +5,8 @@
 import SwiftUI
 import WebKit
 import Common
+// swiftlint:disable closure_body_length
+// swiftlint:disable implicitly_unwrapped_optional
 
 /// A modal view that displays web content in a WebView with navigation controls
 @available(iOS 16.0, *)
@@ -286,3 +288,5 @@ struct EcosiaWebViewModal_Previews: PreviewProvider {
     }
 }
 #endif
+// swiftlint:enable implicitly_unwrapped_optional
+// swiftlint:enable closure_body_length

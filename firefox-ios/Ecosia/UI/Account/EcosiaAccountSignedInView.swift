@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 /// A SwiftUI view that displays the signed-in state of the account impact view
 @available(iOS 16.0, *)
@@ -74,7 +75,7 @@ public struct EcosiaAccountSignedInView: View {
                 onSignOutTap()
             }) {
                 HStack(alignment: .center, spacing: .ecosia.space._2s) {
-                    Image("sign-out", bundle: .ecosia)
+                    Image.ecosia("sign-out")
                         .renderingMode(.template)
                         .resizable()
                         .frame(width: UX.ctaImageSize, height: UX.ctaImageSize)
@@ -156,3 +157,4 @@ struct EcosiaAccountSignedInView_Previews: PreviewProvider {
     }
 }
 #endif
+// swiftlint:enable closure_body_length

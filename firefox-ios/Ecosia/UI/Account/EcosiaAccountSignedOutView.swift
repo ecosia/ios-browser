@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 /// A SwiftUI view that displays the signed-out state of the account impact view
 @available(iOS 16.0, *)
@@ -55,7 +56,7 @@ public struct EcosiaAccountSignedOutView: View {
                     title: String.localized(.seedsSymbolizeYourOwnImpact),
                     description: String.localized(.collectSeedsEveryDayYouUse),
                     buttonText: String.localized(.learnMoreAboutSeeds),
-                    image: UIImage(named: "account-menu-impact-flag", in: .ecosia, with: nil),
+                    image: .ecosia(named: "account-menu-impact-flag"),
                     showsCloseButton: true,
                     style: NudgeCardStyle(
                         backgroundColor: theme.cardBackgroundColor,
@@ -211,3 +212,4 @@ struct EcosiaAccountSignedOutView_Previews: PreviewProvider {
     }
 }
 #endif
+// swiftlint:enable closure_body_length

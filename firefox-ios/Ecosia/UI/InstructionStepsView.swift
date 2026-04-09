@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Lottie
+// swiftlint:disable closure_body_length
 
 private struct InstructionStepsViewLayout {
     static let stepNumberWidthHeight: CGFloat = 24
@@ -72,7 +73,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                     style.topContentBackgroundColor
                         .ignoresSafeArea(edges: .top)
                     topContentView
-                    Image("wave-forms-horizontal-1", bundle: .ecosia)
+                    Image.ecosia("wave-forms-horizontal-1")
                         .resizable()
                         .renderingMode(.template)
                         .frame(height: InstructionStepsViewLayout.wavesHeight)
@@ -213,3 +214,4 @@ struct InstructionStep {
         }
     }
 }
+// swiftlint:enable closure_body_length

@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class WhatsNewCell: UITableViewCell {
 
@@ -86,3 +87,4 @@ extension WhatsNewCell: ThemeApplicable {
 }
 
 extension WhatsNewCell: ReusableCell {}
+// swiftlint:enable implicitly_unwrapped_optional

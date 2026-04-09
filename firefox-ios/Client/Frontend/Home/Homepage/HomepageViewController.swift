@@ -60,6 +60,10 @@ final class HomepageViewController: UIViewController,
     /// Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied.
     var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
+    // Ecosia: Stored so it can be upgraded to a cross-hierarchy constraint in viewDidLayoutSubviews
+    private var wallpaperBottomConstraint: NSLayoutConstraint?
+    // Ecosia: Guards against re-applying the cross-hierarchy constraint on each layout pass
+    private var wallpaperExtendedToParent = false
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
     private let syncTabContextualHintViewController: ContextualHintViewController
@@ -208,6 +212,10 @@ final class HomepageViewController: UIViewController,
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        /* Ecosia: Upgrade wallpaper bottom constraint to BVC's full view once the view is in the window
+         hierarchy. viewWillAppear fires mid-addSubview (no common ancestor yet); viewDidLayoutSubviews
+         is the first safe point after the view is fully embedded. */
+        extendEcosiaWallpaperToParent()
 
         /// FXIOS-13970: Legacy homepage layout was appearing blank on iOS 15. The root cause was from applying the diffable
         /// data source snapshot before the view had finished it's first layout pass, causing the snapshot to be ignored.
@@ -246,6 +254,8 @@ final class HomepageViewController: UIViewController,
                 actionType: HomepageActionType.viewWillTransition
             )
         )
+        // Ecosia: Re-evaluate scrollability on rotation — iPhone landscape needs scrolling.
+        updateEcosiaScrollability(for: size)
     }
 
     // called when the homepage is displayed to make sure it's scrolled to top
@@ -351,7 +361,14 @@ final class HomepageViewController: UIViewController,
     }
 
     func newState(state: HomepageState) {
+        /* Ecosia: Use Ecosia NTP background instead of Firefox wallpaper
         wallpaperView.wallpaperState = state.wallpaperState
+        */
+        if let ecosiaWallpaperState = getEcosiaNTPWallpaperState() {
+            wallpaperView.wallpaperState = ecosiaWallpaperState
+        } else {
+            wallpaperView.wallpaperState = state.wallpaperState
+        }
 
         // TODO: - FXIOS-13346 / FXIOS-13343 - fix collection view being reloaded all the time also when data don't change
         // this is a quick workaround to avoid blocking the main thread by calling apply snapshot many times.
@@ -383,7 +400,7 @@ final class HomepageViewController: UIViewController,
     // MARK: - Theming
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        /* Ecosia: Update bakcground
+        /* Ecosia: Update background
         view.backgroundColor = theme.colors.layer1
         */
         view.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
@@ -396,6 +413,7 @@ final class HomepageViewController: UIViewController,
     func configureWallpaperView() {
         view.addSubview(wallpaperView)
 
+        /* Ecosia: Wallpaper as a card that ends cleanly above the URL bar.
         // Constraint so wallpaper appears under the status bar
         let wallpaperTopConstant: CGFloat = UIWindow.keyWindow?.safeAreaInsets.top ?? statusBarFrame?.height ?? 0
 
@@ -405,6 +423,28 @@ final class HomepageViewController: UIViewController,
             wallpaperView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        */
+        // Ecosia: Wallpaper card with rounded corners and insets.
+        // The initial bottom constraint anchors to this view's own bottomAnchor. On iPad it is upgraded
+        // to a cross-hierarchy constraint against the parent (BVC) view's bottomAnchor in
+        // viewDidLayoutSubviews — the first safe lifecycle point after the view is in the window hierarchy.
+        // BVC.embedContent() already sets clipsToBounds = false, so the card can extend into the
+        // navigation toolbar area on iPad portrait.
+        let vInset = CGFloat.ecosia.space._s
+        let hInset = CGFloat.ecosia.space._2s
+        let bottomConstraint = wallpaperView.bottomAnchor.constraint(
+            equalTo: view.bottomAnchor,
+            constant: -vInset
+        )
+        wallpaperBottomConstraint = bottomConstraint
+        NSLayoutConstraint.activate([
+            wallpaperView.topAnchor.constraint(equalTo: view.topAnchor, constant: vInset),
+            wallpaperView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: hInset),
+            bottomConstraint,
+            wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -hInset)
+        ])
+        // Ecosia: Use helper that propagates the radius to the inner pictureView as well
+        wallpaperView.applyEcosiaCornerRadius(CGFloat.ecosia.borderRadius._1l)
 
         view.sendSubviewToBack(wallpaperView)
     }
@@ -419,13 +459,27 @@ final class HomepageViewController: UIViewController,
             return
         }
 
+        /* Ecosia: Collection view is a child of the wallpaper card so content scrolls within
+         the card's clipped, rounded bounds. wallpaperView is already pinned to the safe area
+         at the bottom, so no separate safeAreaLayoutGuide constraint is needed here.
         view.addSubview(collectionView)
 
+        // Ecosia MOB-4170: Use safeAreaLayoutGuide for bottom to respect any additional safe area insets
+        // set by parent (BrowserViewController) when there's overlaying UI like bottom toolbar
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+        */
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        wallpaperView.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: wallpaperView.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: wallpaperView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: wallpaperView.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: wallpaperView.bottomAnchor),
         ])
     }
 
@@ -441,7 +495,7 @@ final class HomepageViewController: UIViewController,
             of: UICollectionView.elementKindSectionHeader,
             cellType: LabelButtonHeaderView.self
         )
-        
+
         // Ecosia: Register supplementary views for Ecosia sections
         collectionView.registerSupplementary(
             of: UICollectionView.elementKindSectionFooter,
@@ -455,6 +509,8 @@ final class HomepageViewController: UIViewController,
         collectionView.backgroundColor = .clear
         collectionView.accessibilityIdentifier = a11y.collectionView
         collectionView.delegate = self
+        /* Ecosia: Collection view sits inside the wallpaper card; inner spacing is owned by
+         section layouts rather than a global top content inset.
         // Per design requirement, set spacing on top. We may want to revisit this spacing when implement liquid glass.
         collectionView.contentInset = UIEdgeInsets(
             top: HomepageSectionLayoutProvider.UX.topSpacing,
@@ -463,9 +519,14 @@ final class HomepageViewController: UIViewController,
             right: 0
         )
         collectionView.scrollIndicatorInsets = collectionView.contentInset
+        */
+        collectionView.contentInset = .zero
         self.collectionView = collectionView
 
+        /* Ecosia: Parenting is handled by setupLayout, which places the collection view
+         inside wallpaperView so it scrolls within the card's clipped, rounded bounds.
         view.addSubview(collectionView)
+        */
     }
 
     private func createLayout() -> UICollectionViewCompositionalLayout {
@@ -571,6 +632,8 @@ final class HomepageViewController: UIViewController,
             }
 
             if let topSiteCell = topSiteCell as? TopSiteCell {
+                // Ecosia: Enable glass style before configure() so adjustBlur runs with the flag set.
+                topSiteCell.ecosiaGlassStyleEnabled = true
                 topSiteCell.configure(site, position: indexPath.row, theme: currentTheme, textColor: textColor)
                 return topSiteCell
             }
@@ -684,7 +747,7 @@ final class HomepageViewController: UIViewController,
             }
 
             return spacerCell
-        
+
         // Ecosia: Custom cell configuration
         case .ecosiaHeader:
             return configureEcosiaHeaderCell(at: indexPath)
@@ -694,12 +757,8 @@ final class HomepageViewController: UIViewController,
             return configureEcosiaLibraryCell(at: indexPath)
         case .ecosiaImpact(let sectionIndex):
             return configureEcosiaImpactCell(at: indexPath, sectionIndex: sectionIndex)
-        case .ecosiaNewsCard(let index):
-            return configureEcosiaNewsCell(at: indexPath, itemIndex: index)
         case .ecosiaNTPCustomization:
             return configureEcosiaNTPCustomizationCell(at: indexPath)
-        case .ecosiaNews:
-            return configureEcosiaNewsCell(at: indexPath, itemIndex: 0)
         }
     }
 
@@ -716,7 +775,7 @@ final class HomepageViewController: UIViewController,
             )
             return UICollectionReusableView()
         }
-        
+
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             guard let sectionHeaderView = collectionView.dequeueSupplementary(
@@ -788,8 +847,6 @@ final class HomepageViewController: UIViewController,
                 theme: currentTheme
             )
             return sectionLabelCell
-        case .ecosiaNews:
-            return configureEcosiaNewsSectionHeader(with: sectionLabelCell)
         default:
             return nil
         }
@@ -843,6 +900,25 @@ final class HomepageViewController: UIViewController,
                 actionType: HomepageActionType.traitCollectionDidChange
             )
         )
+    }
+
+    /* Ecosia: On iPad, replace the initial view.bottomAnchor constraint with a cross-hierarchy constraint to
+     the parent (BVC) view's bottomAnchor. This lets the wallpaper card fill the full screen height —
+     including the navigation toolbar area — with a consistent 16pt margin on all sides in both orientations.
+     iPhone keeps the initial constraint so the card preserves the visible gap above the toolbar. */
+    private func extendEcosiaWallpaperToParent() {
+        guard !wallpaperExtendedToParent,
+              traitCollection.userInterfaceIdiom == .pad,
+              let parentView = parent?.view else { return }
+        wallpaperBottomConstraint?.isActive = false
+        let vInset = CGFloat.ecosia.space._m
+        let extended = wallpaperView.bottomAnchor.constraint(
+            equalTo: parentView.bottomAnchor,
+            constant: -vInset
+        )
+        extended.isActive = true
+        wallpaperBottomConstraint = extended
+        wallpaperExtendedToParent = true
     }
 
     // MARK: Tap Gesture Recognizer
@@ -1103,8 +1179,6 @@ final class HomepageViewController: UIViewController,
             )
             dispatchNavigationBrowserAction(with: destination, actionType: NavigationBrowserActionType.tapOnCell)
             dispatchOpenPocketAction(at: indexPath.item, actionType: MerinoActionType.tapOnHomepageMerinoCell)
-        case .ecosiaNewsCard:
-            handleEcosiaNewsSelection(at: indexPath)
         default:
             return
         }

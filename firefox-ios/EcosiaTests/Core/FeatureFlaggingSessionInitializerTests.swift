@@ -5,6 +5,7 @@
 import XCTest
 import Foundation
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 class FeatureManagementSessiontInitializerTests: XCTestCase {
 
@@ -43,3 +44,4 @@ extension FeatureManagementSessiontInitializerTests {
         let value: Int
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

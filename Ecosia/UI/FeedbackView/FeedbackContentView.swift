@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 struct FeedbackContentView: View {
     @State private var theme = FeedbackContentViewTheme()
@@ -85,3 +86,4 @@ struct FeedbackContentView: View {
         }
     }
 }
+// swiftlint:enable closure_body_length

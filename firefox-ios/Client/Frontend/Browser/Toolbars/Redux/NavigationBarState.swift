@@ -56,9 +56,18 @@ struct NavigationBarState: StateType, Equatable {
         a11yLabel: .TabToolbarDataClearanceAccessibilityLabel,
         a11yId: AccessibilityIdentifiers.Toolbar.fireButton)
 
+    /* Ecosia: Use Ecosia-owned nav-add icon instead of Firefox plusLarge
     private static let newTabAction = ToolbarActionConfiguration(
         actionType: .newTab,
         iconName: StandardImageIdentifiers.Large.plus,
+        isEnabled: true,
+        a11yLabel: .Toolbars.NewTabButton,
+        a11yId: AccessibilityIdentifiers.Toolbar.addNewTabButton)
+    */
+    // Ecosia: nav-add lives in Client/Ecosia/UI/Ecosia.xcassets/TabToolbar/nav-add.imageset
+    private static let newTabAction = ToolbarActionConfiguration(
+        actionType: .newTab,
+        iconName: "nav-add",
         isEnabled: true,
         a11yLabel: .Toolbars.NewTabButton,
         a11yId: AccessibilityIdentifiers.Toolbar.addNewTabButton)
@@ -255,6 +264,7 @@ struct NavigationBarState: StateType, Equatable {
             forwardAction(enabled: canGoForward)
         ]
 
+        /* Ecosia: Always use version2 order (back, forward, middle, tabs, menu) with custom ellipsis icon
         switch layout {
         case .version1, .none:
             actions.append(middleAction)
@@ -267,6 +277,10 @@ struct NavigationBarState: StateType, Equatable {
             actions.append(menuAction(iconName: StandardImageIdentifiers.Large.moreHorizontalRound,
                                       showWarningBadge: showWarningBadge))
         }
+        */
+        actions.append(middleAction)
+        actions.append(tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode))
+        actions.append(menuAction(iconName: "elipsis", showWarningBadge: showWarningBadge))
 
         return actions
     }
@@ -283,8 +297,11 @@ struct NavigationBarState: StateType, Equatable {
         }
         let canShowDataClearanceAction = canShowDataClearanceAction && isPrivateMode
         let middleActionForWebpage = canShowDataClearanceAction ? dataClearanceAction : customizedMiddleButton
+        /* Ecosia: Always show the new tab (plus) button; Firefox shows a search icon on the homepage
         let middleActionForHomepage = searchAction
         let middleAction = url == nil ? middleActionForHomepage : middleActionForWebpage
+        */
+        let middleAction = middleActionForWebpage
 
         return middleAction
     }

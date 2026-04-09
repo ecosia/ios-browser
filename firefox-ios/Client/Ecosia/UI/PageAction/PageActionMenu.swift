@@ -203,6 +203,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath) as! PageActionMenuCell
         cell.determineTableViewCellPositionAt(indexPath, forActions: viewModel.actions)
         cell.configure(with: viewModel, at: indexPath, theme: currentTheme)
@@ -219,6 +220,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == 0 else { return nil }
 
+        // swiftlint:disable:next force_cast
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: UX.shortcuts) as! PageActionsShortcutsHeader
         header.delegate = delegate
         header.applyTheme(theme: currentTheme)

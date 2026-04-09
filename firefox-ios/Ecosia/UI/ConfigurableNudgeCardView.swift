@@ -234,7 +234,7 @@ public struct ConfigurableNudgeCardView: View {
     }
 
     private var closeButtonImage: some View {
-        Image("close", bundle: .ecosia)
+        Image.ecosia("close")
             .renderingMode(.template)
             .resizable()
             .frame(width: viewModel?.layout.closeButtonSize ?? 15,
@@ -251,9 +251,8 @@ public struct ConfigurableNudgeCardView: View {
         title: "Make ecosia your default browser app",
         description: "Safely open all links from other apps in Ecosia",
         buttonText: "Take Action",
-        image: .init(named: "default-browser-card-side-image-koto-illustrations",
-                     in: .ecosia,
-                     with: nil),
+        image: .ecosia(named: "default-browser-card-side-image-koto-illustrations"),
+        showsCloseButton: false,
         style: NudgeCardStyle(backgroundColor: .clear,
                               textPrimaryColor: .primary,
                               textSecondaryColor: .secondary,

@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class NTPTooltip: UICollectionReusableView, ThemeApplicable {
     enum TailPosition {
@@ -195,3 +196,4 @@ final class NTPTooltip: UICollectionReusableView, ThemeApplicable {
         }
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

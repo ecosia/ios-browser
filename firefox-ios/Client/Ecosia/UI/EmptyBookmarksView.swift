@@ -281,7 +281,6 @@ final class EmptyBookmarksView: UIView, ThemeApplicable {
                 label.textColor = theme.colors.ecosia.textSecondary
             default:
                 $0.tintColor = theme.colors.ecosia.textSecondary
-                break
             }
         }
     }

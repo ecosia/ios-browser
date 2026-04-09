@@ -5,6 +5,7 @@
 import XCTest
 import Auth0
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class AuthWorkflowTests: XCTestCase {
@@ -437,3 +438,4 @@ final class AuthWorkflowTests: XCTestCase {
         )
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

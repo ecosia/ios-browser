@@ -70,7 +70,7 @@ extension HomepageSectionType {
         case .header, .homepageHeader, .libraryShortcuts, .ntpCustomization: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
-        case .news: return .ecosiaNews
+        case .news: return nil
         }
     }
 

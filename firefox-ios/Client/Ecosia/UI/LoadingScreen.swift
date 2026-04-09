@@ -5,6 +5,7 @@
 import UIKit
 import Common
 import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class LoadingScreen: UIViewController {
@@ -140,3 +141,4 @@ extension Referrals.Error {
         }
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

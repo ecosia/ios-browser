@@ -16,6 +16,27 @@ It contains info on the way we got the project structure, how we interface it wi
 The Ecosia Framework aims to be a wrapper of all our Ecosia isolated implementation and logic.
 Some of the Ecosia codebase still lives under the main project `Client/Ecosia` but the goal is to bring as much codebase as possible as part of this dedicated framework.
 
+### 🎨 New Tab Page (NTP)
+
+The Ecosia NTP features a custom wallpaper background (a nature photograph), glassmorphism impact tiles, shortcut tiles, and a daily rotating title fetched from the CDN.
+
+**Background Asset:**
+- Located in `Ecosia/UI/Common.xcassets/ntpBackground.imageset/` (Ecosia framework bundle — loaded via `UIImage.ecosia(named:)`)
+- A single universal asset used in both light and dark mode (no appearance variants)
+- The `WallpaperBackgroundView` is pinned to the parent `BrowserViewController` view on iPad so the card fills the full screen height with a consistent 16pt margin on all sides
+
+**Impact Tiles:**
+- `NTPImpactCell` / `NTPImpactCellViewModel` — glassmorphism rows (trees planted + money invested) driven by `TreesProjection` and `InvestmentsProjection`
+- Rotating title fetched from `RotatingTitlesService` (CDN-backed, one title per UTC day, mirrors web); `UserDefaults` cache respects `frequency_days` from the CDN response; offline fallback: "Search. Find. Save the planet."
+
+**Shortcut Tiles:**
+- `TopSiteCell` updated with glassmorphism background matching Figma spec
+
+**Toolbar:**
+- Fixed order: back → forward → new-tab (plus) → tabs → menu (ellipsis)
+- New-tab button uses the Ecosia-owned `nav-add` asset and is always visible even on the homepage
+- Menu button uses the Ecosia-owned `elipsis` asset
+
 ## 🤝 Getting involved
 
 We encourage you to participate in those open source projects. We love Pull Requests, Issue Reports, Feature Requests or any kind of positive contribution. Please read the [Mozilla Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) and our [Contributing guidelines](https://github.com/mozilla-mobile/firefox-ios/blob/main/CONTRIBUTING.md) first. 

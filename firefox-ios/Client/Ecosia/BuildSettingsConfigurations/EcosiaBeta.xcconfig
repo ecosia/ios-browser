@@ -4,15 +4,12 @@
 
 // This is a version of the Ecosia Beta config for the staging environment.
 
-#include "../../Configuration/Common.xcconfig"
 #include "../../Configuration/Release.xcconfig"
 #include "Staging.xcconfig"
+#include "EcosiaCommon.xcconfig"
 
 MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta
-MOZ_PRODUCT_NAME = Ecosia
 MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox
 CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_BETA
-MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = $(inherited) -ld_classic
-DEVELOPMENT_TEAM = 33YMRSYD2L

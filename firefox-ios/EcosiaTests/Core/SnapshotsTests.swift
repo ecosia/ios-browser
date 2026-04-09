@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class SnapshotsTests: XCTestCase {
     private var tabs: Tabs!
@@ -96,3 +97,4 @@ final class SnapshotsTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional
