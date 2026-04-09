@@ -37,8 +37,7 @@ class TodayWidgetTests: BaseTestCase {
     }
 
     private func widgetExist() -> Bool {
-        // Ecosia: Rename variables from firefox* to ecosia* and update label predicate
-        /* Ecosia: Update predicate label from Firefox to Ecosia
+        /* Ecosia: Update predicate label from Firefox to Ecosia and rename variables
         let firefoxWidgetButton = springboard
             .buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Firefox")).element.exists
         let firefoxWidgetSecureSearchButton = springboard
@@ -60,7 +59,9 @@ class TodayWidgetTests: BaseTestCase {
      */
     private func checkPresenceEcosiaWidget() -> Bool {
         let maxSwipes = 3
-        // Ecosia: Rename from firefoxWidgetExists
+        /* Ecosia: Rename from firefoxWidgetExists
+        var firefoxWidgetExists = false
+         */
         var ecosiaWidgetExists = false
         var numberOfSwipes = 0
 

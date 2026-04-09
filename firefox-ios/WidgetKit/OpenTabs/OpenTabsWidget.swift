@@ -101,7 +101,9 @@ struct OpenTabsView: View {
                 Spacer()
             }.padding(10)
         }
-        // Ecosia: update color
+        /* Ecosia: update color
+        .foregroundColor(Color("backgroundColor"))
+         */
         .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
     }
 
@@ -145,7 +147,9 @@ struct OpenTabsView: View {
         }.padding(.top, 14)
     }
 
-    // Ecosia: Rename from openFirefoxButton
+    /* Ecosia: Rename from openFirefoxButton
+    var openFirefoxButton: some View {
+     */
     var openEcosiaButton: some View {
         HStack(alignment: .center, spacing: 15) {
             /* Ecosia: Update image and color
