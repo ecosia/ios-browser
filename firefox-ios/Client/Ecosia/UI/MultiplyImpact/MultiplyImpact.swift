@@ -60,7 +60,6 @@ class MultiplyImpact: UIViewController, Themeable {
     private lazy var referralImpactRowView: NTPImpactRowView = {
         let view = NTPImpactRowView(info: referralInfo)
         view.forceHideActionButton = true
-        view.position = (0, 1)
         return view
     }()
 
