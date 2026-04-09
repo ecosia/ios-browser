@@ -6862,7 +6862,10 @@ extension String {
     public static let QuickActionsGalleryTitlev2 = MZLocalizedString(
         key: "TodayWidget.QuickActionsGalleryTitleV2",
         tableName: "Today",
+        /* Ecosia: Update copy
         value: "Firefox Shortcuts",
+         */
+        value: "Ecosia Shortcuts",
         comment: "Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox.")
 
     // Quick Action - Medium Size Quick Action
@@ -6886,7 +6889,10 @@ extension String {
     public static let FirefoxShortcutGalleryDescription = MZLocalizedString(
         key: "TodayWidget.FirefoxShortcutGalleryDescription",
         tableName: "Today",
+        /* Ecosia: Update copy
         value: "Add Firefox shortcuts to your Home screen.",
+         */
+        value: "Add Ecosia shortcuts to your Home screen.",
         comment: "Description for medium size widget to add Firefox Shortcut to home screen")
 
     // Quick Action - Small Size Widget
@@ -6898,7 +6904,10 @@ extension String {
     public static let SearchInFirefoxV2 = MZLocalizedString(
         key: "TodayWidget.SearchInFirefoxV2",
         tableName: "Today",
+        /* Ecosia: Update copy
         value: "Search in\nFirefox",
+         */
+        value: "Search in\nEcosia",
         comment: "Search in Firefox. Do not translate the word Firefox")
     public static let ClosePrivateTabsLabelV2 = MZLocalizedString(
         key: "TodayWidget.ClosePrivateTabsLabelV2",
@@ -6910,7 +6919,10 @@ extension String {
     public static let QuickActionGalleryDescription = MZLocalizedString(
         key: "TodayWidget.QuickActionGalleryDescription",
         tableName: "Today",
+        /* Ecosia: Update copy
         value: "Add a Firefox shortcut to your Home screen. After adding the widget, touch and hold to edit it and select a different shortcut.",
+         */
+        value: "Add an Ecosia shortcut to your Home screen. After adding the widget, touch and hold to edit it and select a different shortcut.",
         comment: "Description for small size widget to add it to home screen")
 
     // Top Sites - Medium Size - Gallery View
@@ -6939,7 +6951,10 @@ extension String {
     public static let OpenFirefoxLabel = MZLocalizedString(
         key: "TodayWidget.OpenFirefoxLabel",
         tableName: "Today",
+        /* Ecosia: Update copy
         value: "Open Firefox",
+         */
+        value: "Open Ecosia",
         comment: "Open Firefox when there are no tabs opened in tab tray i.e. Empty State")
     public static let NoOpenTabsLabel = MZLocalizedString(
         key: "TodayWidget.NoOpenTabsLabel",
