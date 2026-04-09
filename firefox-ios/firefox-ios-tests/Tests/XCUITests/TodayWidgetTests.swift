@@ -51,6 +51,9 @@ class TodayWidgetTests: BaseTestCase {
          */
         let ecosiaCopiedLinkWidget = springboard.buttons
             .matching(NSPredicate(format: "label CONTAINS[c] %@", "Copied Link")).element.exists
+        /* Ecosia: Rename from firefoxWidget* variables
+        return firefoxWidgetButton || firefoxWidgetSecureSearchButton || firefoxCopiedLinkWidget
+         */
         return ecosiaWidgetButton || ecosiaWidgetSecureSearchButton || ecosiaCopiedLinkWidget
     }
 
@@ -282,6 +285,9 @@ class TodayWidgetTests: BaseTestCase {
         // Go to Today Widget Page
         goToTodayWidgetPage()
         // Remove Ecosia Widget if present
+        /* Ecosia: Update widget type label from Firefox to Ecosia
+        removeWidgetIfExists(widgetType: "Firefox")
+         */
         removeWidgetIfExists(widgetType: "Ecosia")
         // Add Ecosia Widget
         if iPad() {
