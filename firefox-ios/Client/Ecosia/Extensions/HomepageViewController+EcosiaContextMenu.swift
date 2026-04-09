@@ -75,50 +75,7 @@ extension HomepageViewController {
         guard let siteURL = site.url.asURL else { return UIMenu(children: []) }
         let windowUUID = windowUUID
 
-        let openInNewTab = UIAction(
-            title: .OpenInNewTabContextMenuTitle,
-            image: UIImage(systemName: "plus")
-        ) { _ in
-            store.dispatch(
-                NavigationBrowserAction(
-                    navigationDestination: NavigationDestination(
-                        .newTab,
-                        url: siteURL,
-                        isPrivate: false,
-                        selectNewTab: false
-                    ),
-                    windowUUID: windowUUID,
-                    actionType: NavigationBrowserActionType.tapOnOpenInNewTab
-                )
-            )
-        }
-
-        let openInPrivateTab = UIAction(
-            title: .OpenInNewPrivateTabContextMenuTitle,
-            image: UIImage(systemName: "moon.circle")
-        ) { _ in
-            store.dispatch(
-                NavigationBrowserAction(
-                    navigationDestination: NavigationDestination(
-                        .newTab,
-                        url: siteURL,
-                        isPrivate: true,
-                        selectNewTab: false
-                    ),
-                    windowUUID: windowUUID,
-                    actionType: NavigationBrowserActionType.tapOnOpenInNewTab
-                )
-            )
-            store.dispatch(
-                ContextMenuAction(
-                    menuType: .topSite,
-                    windowUUID: windowUUID,
-                    actionType: ContextMenuActionType.tappedOnOpenNewPrivateTab
-                )
-            )
-        }
-
-        let navigationGroup = UIMenu(options: .displayInline, children: [openInNewTab, openInPrivateTab])
+        let navigationGroup = makeNavigationMenuGroup(siteURL: siteURL, windowUUID: windowUUID)
 
         let shareConfig = ShareSheetConfiguration(
             shareType: .site(url: siteURL),
@@ -205,6 +162,53 @@ extension HomepageViewController {
                 share
             ])
         }
+    }
+
+    // Ecosia: Inline navigation group containing "Open in New Tab" and "Open in Private Tab".
+    @MainActor
+    private func makeNavigationMenuGroup(siteURL: URL, windowUUID: WindowUUID) -> UIMenu {
+        let openInNewTab = UIAction(
+            title: .OpenInNewTabContextMenuTitle,
+            image: UIImage(systemName: "plus")
+        ) { _ in
+            store.dispatch(
+                NavigationBrowserAction(
+                    navigationDestination: NavigationDestination(
+                        .newTab,
+                        url: siteURL,
+                        isPrivate: false,
+                        selectNewTab: false
+                    ),
+                    windowUUID: windowUUID,
+                    actionType: NavigationBrowserActionType.tapOnOpenInNewTab
+                )
+            )
+        }
+        let openInPrivateTab = UIAction(
+            title: .OpenInNewPrivateTabContextMenuTitle,
+            image: UIImage(systemName: "moon.circle")
+        ) { _ in
+            store.dispatch(
+                NavigationBrowserAction(
+                    navigationDestination: NavigationDestination(
+                        .newTab,
+                        url: siteURL,
+                        isPrivate: true,
+                        selectNewTab: false
+                    ),
+                    windowUUID: windowUUID,
+                    actionType: NavigationBrowserActionType.tapOnOpenInNewTab
+                )
+            )
+            store.dispatch(
+                ContextMenuAction(
+                    menuType: .topSite,
+                    windowUUID: windowUUID,
+                    actionType: ContextMenuActionType.tappedOnOpenNewPrivateTab
+                )
+            )
+        }
+        return UIMenu(options: .displayInline, children: [openInNewTab, openInPrivateTab])
     }
 
     // Ecosia: Builds the native UIMenu for a sponsored top site, omitting pin/unpin and adding settings and sponsored-content actions.

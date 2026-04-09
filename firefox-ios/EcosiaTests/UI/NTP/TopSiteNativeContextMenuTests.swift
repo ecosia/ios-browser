@@ -12,6 +12,7 @@ import XCTest
 // Ecosia: Tests for the native UIContextMenuConfiguration on NTP top sites (iOS 26 Liquid Glass context menu).
 @MainActor
 final class TopSiteNativeContextMenuTests: XCTestCase {
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var subject: HomepageViewController!
 
     override func setUp() async throws {
