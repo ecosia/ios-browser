@@ -140,7 +140,10 @@ final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearch
 
     /// Returns the search URL for the given query.
     func searchURLForQuery(_ query: String) -> URL? {
+        /* Ecosia: Use environment-aware URL builder instead of hardcoded template
         return getURLFromTemplate(searchTemplate, query: query)
+        */
+        return URL.ecosiaSearchWithQuery(query)
     }
 
     /// Returns the search suggestion URL for the given query.
