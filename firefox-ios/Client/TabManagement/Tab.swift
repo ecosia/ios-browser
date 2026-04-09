@@ -667,7 +667,15 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
             if let url = request.url, url.isFileURL, request.isPrivileged {
                 return webView.loadFileURL(url, allowingReadAccessTo: url)
             }
+            /* Ecosia: Inject CloudFlare auth headers and language region header for search requests
             return webView.load(request)
+            */
+            var ecosiaUpdatedRequest = request
+            ecosiaUpdatedRequest = ecosiaUpdatedRequest.withCloudFlareAuthParameters()
+            if ecosiaUpdatedRequest.url?.isEcosiaSearchQuery() == true {
+                ecosiaUpdatedRequest.addLanguageRegionHeader()
+            }
+            return webView.load(ecosiaUpdatedRequest)
         }
         return nil
     }
