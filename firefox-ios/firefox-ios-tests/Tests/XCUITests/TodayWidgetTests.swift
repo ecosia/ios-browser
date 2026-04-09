@@ -67,12 +67,18 @@ class TodayWidgetTests: BaseTestCase {
 
         // Initial check for widget presence
         if widgetExist() {
+            /* Ecosia: Rename from firefoxWidgetExists
+            firefoxWidgetExists = true
+             */
             ecosiaWidgetExists = true
         } else {
             // Perform swipe up until the widget is found or maxSwipes reached
             while !springboard.buttons["Edit"].exists && numberOfSwipes < maxSwipes {
                 springboard.swipeUp()
                 if widgetExist() {
+                    /* Ecosia: Rename from firefoxWidgetExists
+                    firefoxWidgetExists = true
+                     */
                     ecosiaWidgetExists = true
                     break
                 }
@@ -80,6 +86,9 @@ class TodayWidgetTests: BaseTestCase {
             }
         }
 
+        /* Ecosia: Rename from firefoxWidgetExists
+        return firefoxWidgetExists
+         */
         return ecosiaWidgetExists
     }
 
