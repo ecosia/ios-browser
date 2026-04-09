@@ -254,6 +254,8 @@ final class HomepageViewController: UIViewController,
                 actionType: HomepageActionType.viewWillTransition
             )
         )
+        // Ecosia: Re-evaluate scrollability on rotation — iPhone landscape needs scrolling.
+        updateEcosiaScrollability(for: size)
     }
 
     // called when the homepage is displayed to make sure it's scrolled to top

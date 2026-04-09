@@ -83,8 +83,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // positions the content correctly, and NTPHeaderView owns its own vertical padding.
         homepageCollectionView?.contentInset.top = 0
         homepageCollectionView?.scrollIndicatorInsets.top = 0
-        // Ecosia: NTP content fits inside the wallpaper card without scrolling.
-        homepageCollectionView?.isScrollEnabled = false
+        updateEcosiaScrollability(for: view.bounds.size)
         // Ecosia: Force 1 row of shortcuts regardless of user preference — NTP shows
         // exactly 1 row × 4 tiles per the design spec.
         store.dispatch(TopSitesAction(
@@ -105,6 +104,14 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             for: traitCollection,
             size: view.bounds.size
         )
+    }
+
+    /// Enables scrolling in iPhone landscape (compact vertical size class) where the NTP
+    /// content is taller than the available height; disables it otherwise so the card
+    /// appears static in portrait and on iPad.
+    func updateEcosiaScrollability(for size: CGSize) {
+        let isPhoneLandscape = size.width > size.height && traitCollection.userInterfaceIdiom == .phone
+        homepageCollectionView?.isScrollEnabled = isPhoneLandscape
     }
 
     /// Called when view did disappear to clean up Ecosia resources
