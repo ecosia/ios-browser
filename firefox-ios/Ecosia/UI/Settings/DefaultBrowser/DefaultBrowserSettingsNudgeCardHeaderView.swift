@@ -5,6 +5,7 @@
 import UIKit
 import SwiftUI
 import Common
+// swiftlint:disable implicitly_unwrapped_optional
 
 /// Reusable Nudge Card Header View that can be configured with any view model.
 @MainActor
@@ -95,3 +96,4 @@ extension DefaultBrowserSettingsNudgeCardHeaderView: ConfigurableNudgeCardAction
         onTap?()
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

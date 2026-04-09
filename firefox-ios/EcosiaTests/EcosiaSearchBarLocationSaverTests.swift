@@ -8,6 +8,7 @@ import Common
 import Shared
 import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 class EcosiaSearchBarLocationSaverTests: XCTestCase {
     private var profile: MockProfile!
@@ -73,3 +74,4 @@ class EcosiaSearchBarLocationSaverTests: XCTestCase {
         return EcosiaSearchBarLocationSaver()
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

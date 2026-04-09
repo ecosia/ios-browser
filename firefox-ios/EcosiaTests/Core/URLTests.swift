@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class URLTests: XCTestCase {
 
@@ -227,3 +228,4 @@ final class URLTests: XCTestCase {
         XCTAssertEqual(.cancel, URL(string: "gmsg://")!.policy)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

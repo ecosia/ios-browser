@@ -5,6 +5,7 @@
 import XCTest
 import Common
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class EcosiaAuthWindowRegistryTests: XCTestCase {
@@ -362,3 +363,4 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         XCTAssertEqual(windowRegistry.windowCount, 0, "Should clean up properly")
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

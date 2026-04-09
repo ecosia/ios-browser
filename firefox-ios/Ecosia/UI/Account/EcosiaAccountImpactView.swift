@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 /// A SwiftUI view that displays account impact information for both logged-in and guest users
 @available(iOS 16.0, *)
@@ -233,3 +234,4 @@ struct EcosiaAccountImpactView_Previews: PreviewProvider {
     }
 }
 #endif
+// swiftlint:enable closure_body_length

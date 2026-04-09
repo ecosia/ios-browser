@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 #if os(iOS)
 
@@ -230,3 +231,4 @@ class SingularServiceTests: XCTestCase {
 }
 
 #endif
+// swiftlint:enable implicitly_unwrapped_optional

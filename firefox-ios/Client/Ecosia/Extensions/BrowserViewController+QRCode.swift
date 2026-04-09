@@ -15,8 +15,8 @@ extension BrowserViewController: QRCodeViewControllerDelegate {
 
         // Log the QR code scan
         DefaultLogger.shared.log("QR code scanned with URL: \(url)",
-                                level: .info,
-                                category: .tabs)
+                                 level: .info,
+                                 category: .tabs)
     }
 
     func didScanQRCodeWithTextContent(_ content: TextContentDetector.DetectedType?, rawText: String) {
@@ -27,8 +27,8 @@ extension BrowserViewController: QRCodeViewControllerDelegate {
         submitSearchText(rawText, forTab: tab)
 
         DefaultLogger.shared.log("QR code scanned with text: \(rawText)",
-                                level: .info,
-                                category: .tabs)
+                                 level: .info,
+                                 category: .tabs)
     }
 
     var qrCodeScanningPermissionLevel: QRCodeScanPermissions {

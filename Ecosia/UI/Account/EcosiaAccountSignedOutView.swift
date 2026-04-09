@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 /// A SwiftUI view that displays the signed-out state of the account impact view
 @available(iOS 16.0, *)
@@ -211,3 +212,4 @@ struct EcosiaAccountSignedOutView_Previews: PreviewProvider {
     }
 }
 #endif
+// swiftlint:enable closure_body_length

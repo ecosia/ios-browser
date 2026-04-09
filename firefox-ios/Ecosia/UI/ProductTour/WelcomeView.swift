@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 public struct WelcomeView: View {
 
@@ -505,3 +506,4 @@ public struct WelcomeViewTheme: EcosiaThemeable {
         outlinedButtonBorderColor = Color(theme.colors.ecosia.textStaticLight)
     }
 }
+// swiftlint:enable closure_body_length

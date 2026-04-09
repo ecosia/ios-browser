@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class ImagesTests: XCTestCase {
     private var session: MockURLSession!
@@ -40,3 +41,4 @@ final class ImagesTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

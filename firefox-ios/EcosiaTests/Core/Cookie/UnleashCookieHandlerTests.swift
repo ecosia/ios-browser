@@ -5,6 +5,7 @@
 @testable import Ecosia
 import XCTest
 import WebKit
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class UnleashCookieHandlerTests: XCTestCase {
 
@@ -139,3 +140,4 @@ extension UnleashCookieHandlerTests {
         XCTAssertEqual(cookie1?.value, cookie2?.value)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

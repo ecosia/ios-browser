@@ -5,6 +5,7 @@
 import XCTest
 import Combine
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @available(iOS 16.0, *)
 @MainActor
@@ -233,3 +234,4 @@ final class EcosiaAccountNotificationCenterTests: XCTestCase {
         NotificationCenter.default.removeObserver(observer)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

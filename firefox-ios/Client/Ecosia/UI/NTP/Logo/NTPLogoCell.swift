@@ -5,6 +5,7 @@
 import UIKit
 import Common
 import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
     static let bottomMargin: CGFloat = 6
@@ -51,3 +52,4 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
         logo.tintColor = theme.colors.ecosia.brandPrimary
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

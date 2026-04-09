@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class EcosiaURLInterceptorTests: XCTestCase {
     private var sut: EcosiaURLInterceptor!
@@ -282,3 +283,4 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         XCTAssertEqual(result, .profile)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

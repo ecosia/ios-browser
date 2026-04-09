@@ -6,12 +6,9 @@
 #include "Production.xcconfig"
 #include "EcosiaCommon.xcconfig"
 
-MOZ_PRODUCT_NAME = Ecosia
 MOZ_BUNDLE_DISPLAY_NAME = Ecosia
 MOZ_BUNDLE_ID = com.ecosia.ecosiaapp
 CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_RELEASE
-MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = $(inherited) -ld_classic
-DEVELOPMENT_TEAM = 33YMRSYD2L
 MOZ_WALLPAPER_ASSET_URL=https://cdn.ecosia.org/static/mobile-wallpapers

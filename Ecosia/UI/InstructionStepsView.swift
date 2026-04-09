@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Lottie
+// swiftlint:disable closure_body_length
 
 private struct InstructionStepsViewLayout {
     static let stepNumberWidthHeight: CGFloat = 24
@@ -213,3 +214,4 @@ struct InstructionStep {
         }
     }
 }
+// swiftlint:enable closure_body_length

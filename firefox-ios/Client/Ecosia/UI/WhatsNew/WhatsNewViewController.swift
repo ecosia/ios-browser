@@ -5,6 +5,7 @@
 import UIKit
 import Ecosia
 import Common
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 protocol WhatsNewViewDelegate: AnyObject {
@@ -245,6 +246,7 @@ extension WhatsNewViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: WhatsNewCell.cellIdentifier, for: indexPath) as! WhatsNewCell
         let item = viewModel.items[indexPath.row]
         cell.configure(with: item)
@@ -309,3 +311,4 @@ extension WhatsNewViewController {
         viewController.present(sheet, animated: true, completion: nil)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

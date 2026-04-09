@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class PrivateModeButtonTests: XCTestCase {
@@ -81,3 +82,4 @@ final class PrivateModeButtonTests: XCTestCase {
         XCTAssertEqual(button.imageView?.tintColor, darkTheme.colors.iconPrimary)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

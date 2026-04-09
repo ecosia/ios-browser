@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor final class TreesProjectionTests: XCTestCase {
     private var treesProjection: TreesProjection!
@@ -47,3 +48,4 @@ import XCTest
         XCTAssertNotNil(receivedCount)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

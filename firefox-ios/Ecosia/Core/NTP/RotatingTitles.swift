@@ -229,7 +229,7 @@ public final class RotatingTitlesService {
         guard let cachedAt = UserDefaults.standard.object(forKey: CacheKey.cachedAt(language: language)) as? Date
         else { return true }
         let frequencyDays = UserDefaults.standard.integer(forKey: CacheKey.frequencyDays(language: language))
-        let ttlDays = frequencyDays > 0 ? frequencyDays : 1
+        let ttlDays = max(1, frequencyDays)
         let secondsPerDay: TimeInterval = 86_400
         return date.timeIntervalSince(cachedAt) >= Double(ttlDays) * secondsPerDay
     }

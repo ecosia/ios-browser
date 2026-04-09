@@ -8,6 +8,7 @@ import MobileCoreServices
 import LinkPresentation
 import Common
 import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 class MultiplyImpact: UIViewController, Themeable {
@@ -111,6 +112,7 @@ class MultiplyImpact: UIViewController, Themeable {
         super.init(nibName: nil, bundle: nil)
     }
 
+    // swiftlint:disable:next function_body_length
     override func viewDidLoad() {
         super.viewDidLoad()
         title = .localized(.growingTogether)
@@ -579,3 +581,4 @@ private final class SharingMessage: NSObject, UIActivityItemSource {
         return metadata
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

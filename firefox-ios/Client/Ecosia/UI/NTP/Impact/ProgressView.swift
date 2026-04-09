@@ -5,15 +5,13 @@
 import Foundation
 
 final class ProgressView: UIView {
+    private var shapeLayer: CAShapeLayer { layer as! CAShapeLayer } // swiftlint:disable:this force_cast
+
     var value = Double(1) {
-        didSet {
-            (layer as! CAShapeLayer).strokeEnd = value
-        }
+        didSet { shapeLayer.strokeEnd = value }
     }
     var color: UIColor = .clear {
-        didSet {
-            (layer as! CAShapeLayer).strokeColor = color.cgColor
-        }
+        didSet { shapeLayer.strokeColor = color.cgColor }
     }
 
     override class var layerClass: AnyClass {
@@ -28,12 +26,12 @@ final class ProgressView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         widthAnchor.constraint(equalToConstant: size.width).isActive = true
         heightAnchor.constraint(equalToConstant: size.height).isActive = true
-        (layer as! CAShapeLayer).fillColor = UIColor.clear.cgColor
-        (layer as! CAShapeLayer).lineWidth = lineWidth
-        (layer as! CAShapeLayer).lineCap = .round
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.lineWidth = lineWidth
+        shapeLayer.lineCap = .round
         layer.masksToBounds = true
 
-        (layer as! CAShapeLayer).path = { path in
+        shapeLayer.path = { path in
             path
                 .addArc(center: .init(x: size.width/2, y: size.width/2),
                         radius: size.width/2 - lineWidth,

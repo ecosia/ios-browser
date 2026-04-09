@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class UserStateTests: XCTestCase {
     private var user: User!
@@ -53,3 +54,4 @@ final class UserStateTests: XCTestCase {
         XCTAssertEqual(user.state[User.Key.impactIntro.rawValue], "\(true)")
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

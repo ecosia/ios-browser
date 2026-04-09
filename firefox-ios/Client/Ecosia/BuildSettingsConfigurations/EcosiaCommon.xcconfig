@@ -10,9 +10,12 @@
 // it is pulled in transitively here.
 #include "../../Configuration/Common.xcconfig"
 
-// Ecosia: Override Firefox URL scheme and widget display name.
+// Ecosia: Override Firefox URL scheme, widget display name, and shared identifiers.
 MOZ_PUBLIC_URL_SCHEME = ecosia
+MOZ_INTERNAL_URL_SCHEME = ecosia
 MOZ_TODAY_WIDGET_SEARCH_DISPLAY_NAME = Ecosia - Search
+MOZ_PRODUCT_NAME = Ecosia
+DEVELOPMENT_TEAM = 33YMRSYD2L
 
 // Ecosia: Add libxml2 on top of Firefox's -ObjC baseline.
 OTHER_LDFLAGS = $(inherited) -lxml2

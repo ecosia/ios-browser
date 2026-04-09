@@ -11,6 +11,7 @@ import ViewInspector
 import WebKit
 @testable import Client
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 // MARK: - AnalyticsSpy
 
@@ -1022,3 +1023,4 @@ final class FakeNavigationAction: WKNavigationAction {
         super.init()
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

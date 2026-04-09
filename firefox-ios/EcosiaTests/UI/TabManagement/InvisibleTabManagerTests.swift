@@ -6,6 +6,7 @@ import XCTest
 import Common
 import WebKit
 @testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
 
 /// Test suite for InvisibleTabManager functionality
 final class InvisibleTabManagerTests: XCTestCase {
@@ -270,3 +271,4 @@ final class InvisibleTabManagerTests: XCTestCase {
         XCTAssertTrue(manager.isTabInvisible(testTab))
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

@@ -6,6 +6,7 @@ import Shared
 import UIKit
 import Common
 import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 class NTPLibraryCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
@@ -119,3 +120,4 @@ class NTPLibraryCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         }
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

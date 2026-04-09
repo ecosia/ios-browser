@@ -6,6 +6,7 @@ import XCTest
 import Foundation
 import Common
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class AuthStateManagerTests: XCTestCase {
 
@@ -239,3 +240,4 @@ final class AuthStateManagerTests: XCTestCase {
 extension WindowUUID {
     static let XCTestDefaultUUID = WindowUUID()
 }
+// swiftlint:enable implicitly_unwrapped_optional

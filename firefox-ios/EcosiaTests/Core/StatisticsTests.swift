@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class StatisticsTests: XCTestCase {
     private var statistics: Statistics!
@@ -149,3 +150,4 @@ private final class ThrowingMockURLSession: URLSessionProtocol {
         throw URLError(.notConnectedToInternet)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

@@ -193,7 +193,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia
         backgroundColor = .clear
         layer.borderWidth = UX.glassBorderWidth
-        layer.borderColor = (ecosia?.ntpGlassBorder ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
+        layer.borderColor = (ecosia?.borderGlassStatic ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
         glassBackground.applyTheme(theme: theme)
         glassBackground.loadCurrentWallpaper()
         titleLabel.textColor = .white

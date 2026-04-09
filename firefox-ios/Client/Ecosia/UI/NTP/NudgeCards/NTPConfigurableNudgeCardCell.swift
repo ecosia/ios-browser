@@ -6,6 +6,7 @@ import UIKit
 import SwiftUI
 import Common
 import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 /// Reusable Nudge Card Cell that can be configured with any view model.
 @MainActor
@@ -91,3 +92,4 @@ extension NTPConfigurableNudgeCardCell: ConfigurableNudgeCardActionDelegate {
 
     func nudgeCardTapped() {}
 }
+// swiftlint:enable implicitly_unwrapped_optional

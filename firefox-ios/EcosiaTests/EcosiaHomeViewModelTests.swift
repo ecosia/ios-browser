@@ -6,6 +6,7 @@ import XCTest
 import Common
 @testable import Client
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 class EcosiaHomeViewModelTests: XCTestCase {
@@ -58,3 +59,4 @@ class EcosiaHomeViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.shownSections[4], HomepageSectionType.ntpCustomization)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

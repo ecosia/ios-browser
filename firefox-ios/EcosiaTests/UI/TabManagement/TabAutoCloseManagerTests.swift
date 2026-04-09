@@ -6,6 +6,7 @@ import XCTest
 import WebKit
 import Common
 @testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class InvisibleTabAutoCloseManagerTests: XCTestCase {
 
@@ -444,3 +445,4 @@ class TabAutoCloseManagerMockNotificationCenter: NotificationCenter, @unchecked 
     }
 }
 // swiftlint:enable large_tuple
+// swiftlint:enable implicitly_unwrapped_optional

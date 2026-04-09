@@ -279,7 +279,7 @@ final class EmptyBookmarksView: UIView, ThemeApplicable {
             switch $0 {
             case let label as UILabel:
                 label.textColor = theme.colors.ecosia.textSecondary
-                default:
+            default:
                 $0.tintColor = theme.colors.ecosia.textSecondary
             }
         }

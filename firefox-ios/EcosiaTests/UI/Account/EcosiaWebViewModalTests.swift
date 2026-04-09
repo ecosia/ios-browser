@@ -5,6 +5,7 @@
 import XCTest
 import WebKit
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @available(iOS 16.0, *)
 @MainActor
@@ -394,3 +395,4 @@ private class MockFrameInfo: WKFrameInfo {
         return true
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

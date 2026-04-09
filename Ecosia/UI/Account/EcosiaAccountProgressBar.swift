@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 /// A circular progress bar that displays progress as a ring around content
 @available(iOS 16.0, *)
@@ -151,3 +152,4 @@ struct EcosiaAccountProgressBar_Previews: PreviewProvider {
     }
 }
 #endif
+// swiftlint:enable closure_body_length

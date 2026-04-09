@@ -7,6 +7,7 @@ import UIKit
 import Common
 import XCTest
 @testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
 
 struct ThemeConfiguration {
     enum Theme: String, CaseIterable {
@@ -262,3 +263,4 @@ final class SnapshotTestHelper {
         }
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

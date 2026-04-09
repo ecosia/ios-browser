@@ -159,6 +159,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textStaticDark: UIColor = EcosiaColor.Gray70
     var textStaticLight: UIColor = EcosiaColor.White
     // NTP glass tokens are "static" — same value in light and dark because they overlay a photo.
-    var ntpGlassTint: UIColor = EcosiaColor.Gray90.withAlphaComponent(0.32)
-    var ntpGlassBorder: UIColor = EcosiaColor.White.withAlphaComponent(0x3D / 255.0)
+    var buttonBgGlassStatic: UIColor = EcosiaColor.Gray90.withAlphaComponent(0.32)
+    var borderGlassStatic: UIColor = EcosiaColor.White.withAlphaComponent(0x3D / 255.0)
 }

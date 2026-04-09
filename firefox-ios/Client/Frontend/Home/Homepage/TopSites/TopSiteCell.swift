@@ -363,12 +363,12 @@ extension TopSiteCell: Blurrable {
             // Insert dark tint above the UIVisualEffectView (index 0) but below the favicon.
             let tintView = UIView()
             tintView.tag = UX.ecosiaGlassTintTag
-            tintView.backgroundColor = ecosia?.ntpGlassTint ?? EcosiaColor.Gray90.withAlphaComponent(0.32)
+            tintView.backgroundColor = ecosia?.buttonBgGlassStatic ?? EcosiaColor.Gray90.withAlphaComponent(0.32)
             tintView.frame = rootContainer.bounds
             tintView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             tintView.isUserInteractionEnabled = false
             rootContainer.insertSubview(tintView, at: 1)
-            rootContainer.layer.borderColor = (ecosia?.ntpGlassBorder ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
+            rootContainer.layer.borderColor = (ecosia?.borderGlassStatic ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
             // Ecosia: 0.5px border for the glass ring
             rootContainer.layer.borderWidth = 0.5
             // Ecosia: Inset favicon so the glass ring remains visible around the icon

@@ -10,13 +10,9 @@
 
 INFOPLIST_FILE = Client/Info.plist
 MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta
-MOZ_PRODUCT_NAME = Ecosia
 MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox
 INCLUDE_SETTINGS_BUNDLE = YES
 LEANPLUM_ENVIRONMENT = development
-MOZ_TODAY_WIDGET_SEARCH_DISPLAY_NAME = Ecosia - Search
 CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
-MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate -ld_classic
-DEVELOPMENT_TEAM = 33YMRSYD2L

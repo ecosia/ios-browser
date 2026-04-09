@@ -47,16 +47,16 @@ final class EcosiaSearchEngineProvider: SearchEngineProvider, Sendable {
             engine.engineID.lowercased().contains("ecosia") == true
         }) else {
             logger.log("[Ecosia] Ecosia search engine not found in engine list. Available engines: \(engines.map { $0.shortName })",
-                      level: .warning,
-                      category: .remoteSettings)
+                       level: .warning,
+                       category: .remoteSettings)
             return engines
         }
 
         // Already at position 0
         if ecosiaIndex == 0 {
             logger.log("[Ecosia] Ecosia is already the default search engine",
-                      level: .info,
-                      category: .remoteSettings)
+                       level: .info,
+                       category: .remoteSettings)
             return engines
         }
 
@@ -66,8 +66,8 @@ final class EcosiaSearchEngineProvider: SearchEngineProvider, Sendable {
         reorderedEngines.insert(ecosiaEngine, at: 0)
 
         logger.log("[Ecosia] Moved Ecosia from position \(ecosiaIndex) to position 0 (default)",
-                  level: .info,
-                  category: .remoteSettings)
+                   level: .info,
+                   category: .remoteSettings)
 
         return reorderedEngines
     }

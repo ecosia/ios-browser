@@ -5,6 +5,7 @@
 import XCTest
 @testable import Ecosia
 @testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
 
 class EcosiaNTPTooltipHighlightTests: XCTestCase {
 
@@ -46,3 +47,4 @@ class EcosiaNTPTooltipHighlightTests: XCTestCase {
         XCTAssertNil(NTPTooltip.highlight(for: user))
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

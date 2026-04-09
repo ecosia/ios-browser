@@ -5,6 +5,7 @@
 import XCTest
 import Common
 @testable import Ecosia
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class AuthNotificationSystemTests: XCTestCase {
@@ -417,3 +418,4 @@ private class TestNotificationObserver: NSObject {
         expectation = nil
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

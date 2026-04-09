@@ -9,6 +9,7 @@ import Common
 extension AppInfo {
 
     public static var ecosiaAppVersion: String {
+        // swiftlint:disable:next force_cast
         return applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     }
 

@@ -6,6 +6,7 @@ import UIKit
 import SwiftUI
 import Common
 import Ecosia
+// swiftlint:disable closure_body_length
 
 // MARK: - SwiftUI Color helpers for NTP glass tokens
 
@@ -14,7 +15,7 @@ private extension Color {
         Color(uiColor: EcosiaColor.Gray90).opacity(0.32)
     }
 
-    static func ntpGlassBorder(opacity: Double = 0x3D / 255.0) -> Color {
+    static func borderGlassStatic(opacity: Double = 0x3D / 255.0) -> Color {
         Color.white.opacity(opacity)
     }
 }
@@ -101,7 +102,7 @@ private struct EcosiaCustomizeButton: View {
                     }
                 )
                 .clipShape(Circle())
-                .overlay(Circle().stroke(Color.ntpGlassBorder(), lineWidth: 1))
+                .overlay(Circle().stroke(Color.borderGlassStatic(), lineWidth: 1))
         }
         .buttonStyle(PlainButtonStyle())
         .accessibilityLabel(String.localized(.customizeHomepage))
@@ -199,3 +200,4 @@ struct NTPHeaderView: View {
         Analytics.shared.accountHeaderClicked()
     }
 }
+// swiftlint:enable closure_body_length

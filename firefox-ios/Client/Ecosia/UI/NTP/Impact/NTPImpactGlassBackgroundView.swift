@@ -10,7 +10,7 @@ import UIKit
 
 /// Layout constants for the Ecosia NTP "Glass Static" visual style.
 ///
-/// Colours live in `EcosiaSemanticColors` (`ntpGlassTint`, `ntpGlassBorder`) so they are
+/// Colours live in `EcosiaSemanticColors` (`buttonBgGlassStatic`, `borderGlassStatic`) so they are
 /// centrally governed. Only the blur radius is kept here as a layout constant.
 enum NTPGlassUX {
     static let blurRadius: CGFloat = 24
@@ -124,7 +124,7 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     func applyTheme(theme: Theme) {
         guard let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia else { return }
-        tintView.backgroundColor = ecosia.ntpGlassTint
+        tintView.backgroundColor = ecosia.buttonBgGlassStatic
     }
 
     // MARK: - Public API

@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class AccountsServiceTests: XCTestCase {
 
@@ -362,3 +363,4 @@ final class AccountsServiceTests: XCTestCase {
         XCTAssertNil(response.growthPointsIncrement)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

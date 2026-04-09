@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 final class FinancialReportsTests: XCTestCase {
     private var financialReports: FinancialReports!
@@ -42,3 +43,4 @@ final class FinancialReportsTests: XCTestCase {
         XCTAssertEqual(financialReports.localizedMonthAndYear, "May 2021")
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

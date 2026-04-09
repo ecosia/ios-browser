@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+// swiftlint:disable closure_body_length
 
 @available(iOS 16.0, *)
 public struct EcosiaAccountProgressAvatar: View {
@@ -292,3 +293,4 @@ private struct EcosiaAccountProgressAvatarInteractivePreview: View {
     }
 }
 #endif
+// swiftlint:enable closure_body_length
