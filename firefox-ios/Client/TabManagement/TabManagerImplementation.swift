@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Ecosia
 import Foundation
 import TabDataStore
 import Storage
@@ -140,6 +141,9 @@ class TabManagerImplementation: NSObject,
         super.init()
 
         GlobalTabEventHandlers.configure(with: profile)
+
+        // Ecosia: Cookie observing
+        WKWebsiteDataStore.default().httpCookieStore.add(self)
 
         startObservingNotifications(
             withNotificationCenter: notificationCenter,
@@ -1250,5 +1254,16 @@ extension TabManagerImplementation: WindowSimpleTabsProvider {
                                     activeTabId: self.selectedTabUUID ?? UUID(),
                                     tabData: self.generateTabDataForSaving())
         return SimpleTab.convertToSimpleTabs(windowData.tabData)
+    }
+}
+
+// Ecosia: Cookie observer
+extension TabManagerImplementation: WKHTTPCookieStoreObserver {
+    func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
+        cookieStore.getAllCookies { cookies in
+            DispatchQueue.main.async {
+                Cookie.received(cookies, in: cookieStore)
+            }
+        }
     }
 }
