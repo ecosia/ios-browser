@@ -16,6 +16,7 @@ MOZ_INTERNAL_URL_SCHEME = ecosia
 MOZ_TODAY_WIDGET_SEARCH_DISPLAY_NAME = Ecosia - Search
 MOZ_PRODUCT_NAME = Ecosia
 DEVELOPMENT_TEAM = 33YMRSYD2L
+MOZ_WALLPAPER_ASSET_URL=https://cdn.ecosia.org/static/mobile-wallpapers
 
 // Ecosia: Add libxml2 on top of Firefox's -ObjC baseline.
 OTHER_LDFLAGS = $(inherited) -lxml2

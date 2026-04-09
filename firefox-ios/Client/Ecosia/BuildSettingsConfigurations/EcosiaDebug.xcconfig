@@ -18,4 +18,3 @@ CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
 OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate -ld_classic
 AUTH0_CLIENT_ID=FBaIsy0X5hIh2sSmalmf5pACZ512dIYl
-MOZ_WALLPAPER_ASSET_URL=https://cdn.ecosia.org/static/mobile-wallpapers
