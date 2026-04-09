@@ -48,6 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
     private var shutdownWebServer: DispatchSourceTimer?
     private var webServerUtil: WebServerUtil?
     private var appLaunchUtil: AppLaunchUtil?
+    // Ecosia: Searches counter
+    private let searchesCounter = SearchesCounter()
     private var backgroundWorkUtility: BackgroundFetchAndProcessingUtility?
     private var suggestBackgroundUtility: BackgroundFirefoxSuggestIngestUtility?
     private var suggestBackgroundTaskID: UIBackgroundTaskIdentifier = .invalid
@@ -278,6 +280,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
 
         DispatchQueue.global().async { [weak profile] in
             profile?.pollCommands(forcePoll: false)
+        }
+
+        // Ecosia: Refresh flags on foreground. The launch call in didFinishLaunchingWithOptions
+        // loads from disk to unblock startup; this one picks up stale flags when returning from background.
+        // No-op if the cache is fresh.
+        Task {
+            await FeatureManagement.fetchConfiguration()
+            Analytics.shared.activity(.resume)
+        }
+
+        // Ecosia: Track MMP notifications
+        MMP.sendSession()
+        searchesCounter.subscribe(self) { searchCount in
+            MMP.handleSearchEvent(searchCount)
         }
 
         updateWallpaperMetadata()

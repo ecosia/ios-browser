@@ -16,6 +16,8 @@ public struct MMP {
 
     private init() {}
 
+    nonisolated(unsafe) public static var provider: MMPProvider = Singular(includeSKAN: true)
+
     static var appDeviceInfo: AppDeviceInfo {
         /// We are hardcoding `iOS` as per the platform parameter
         /// as `Singular` MMP doesn't currently support others like `iPadOS`
@@ -38,8 +40,7 @@ public struct MMP {
 
         Task {
             do {
-                let mmpProvider: MMPProvider = Singular(includeSKAN: true)
-                try await mmpProvider.sendSessionInfo(appDeviceInfo: appDeviceInfo)
+                try await provider.sendSessionInfo(appDeviceInfo: appDeviceInfo)
             } catch {
                 debugPrint(error)
             }
@@ -51,8 +52,7 @@ public struct MMP {
 
         Task { [event] in
             do {
-                let mmpProvider: MMPProvider = Singular(includeSKAN: true)
-                try await mmpProvider.sendEvent(event, appDeviceInfo: appDeviceInfo)
+                try await provider.sendEvent(event, appDeviceInfo: appDeviceInfo)
             } catch {
                 debugPrint(error)
             }
