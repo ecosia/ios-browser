@@ -342,7 +342,12 @@ final class LocationView: UIView,
         if shouldAdjustForOverflow {
             handleOverflowAdjustment()
         } else if shouldAdjustForNonEmpty {
+            /* Ecosia: Original 0pt gap was designed for the 40pt lock icon, which provided its own
+               visual separation. The 16pt favicon needs explicit spacing so the URL text doesn't
+               crowd it — use horizontalSpace to match the same gap applied by updateUIForSearchEngineDisplay.
             updateURLTextFieldLeadingConstraint()
+            */
+            updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
         } else {
             updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
         }
@@ -366,16 +371,26 @@ final class LocationView: UIView,
             return
         }
 
+        /* Ecosia: Always show search engine view (favicon when browsing, logo when home);
+           lock icon replaced by site favicon for a cleaner Ecosia address bar experience
         if isURLTextFieldEmpty {
             updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
         } else {
             updateUIForLockIconDisplay()
         }
+        */
+        /* Ecosia: When browsing (non-empty URL), pass isURLTextFieldCentered=false so the icon is always
+           added to the stack. The .experiment config hard-codes isLocationTextCentered=true, which would
+           otherwise skip adding the icon via the `!isURLTextFieldCentered || isEditing` guard. */
+        let effectiveCentered = isURLTextFieldCentered && isURLTextFieldEmpty
+        updateUIForSearchEngineDisplay(isURLTextFieldCentered: effectiveCentered)
         animateIconAppearance()
         urlTextFieldTrailingConstraint?.constant = -locationTextFieldTrailingPadding
     }
 
     private func animateIconAppearance() {
+        /* Ecosia: Always show the search engine view (favicon when browsing, logo when home/editing);
+           the lock icon button is not used — site identity is conveyed via the favicon instead
         let shouldShowLockIcon: Bool
         if isEditing {
             lockIconButton.alpha = 0
@@ -397,6 +412,17 @@ final class LocationView: UIView,
         } else {
             searchEngineContentView.alpha = shouldShowLockIcon ? 0 : 1
             lockIconButton.alpha = shouldShowLockIcon ? 1 : 0
+        }
+        */
+        let isAnimationEnabled = !UIAccessibility.isReduceMotionEnabled
+        if isAnimationEnabled {
+            UIView.animate(withDuration: UX.iconAnimationTime, delay: UX.iconAnimationDelay) {
+                self.searchEngineContentView.alpha = 1
+                self.lockIconButton.alpha = 0
+            }
+        } else {
+            searchEngineContentView.alpha = 1
+            lockIconButton.alpha = 0
         }
     }
 
@@ -707,7 +733,11 @@ final class LocationView: UIView,
         if isURLTextFieldEmpty {
             updateGradient()
         } else {
+            /* Ecosia: Show search engine view (favicon) instead of lock icon when editing ends
             updateUIForLockIconDisplay()
+            */
+            // Ecosia: URL is present (non-empty), so pass false to ensure the favicon icon is added to the stack.
+            updateUIForSearchEngineDisplay(isURLTextFieldCentered: false)
         }
     }
 

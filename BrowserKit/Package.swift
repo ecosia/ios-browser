@@ -173,7 +173,10 @@ let package = Package(
         ),
         .target(
             name: "ToolbarKit",
+            /* Ecosia: Add SiteImageView to support FaviconImageView in the address bar
             dependencies: ["Common"],
+            */
+            dependencies: ["Common", "SiteImageView"],
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
             ]),

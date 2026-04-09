@@ -4,6 +4,8 @@
 
 import UIKit
 import Common
+// Ecosia: Import SiteImageView to support FaviconImageView in the address bar
+import SiteImageView
 
 /// A wrapped UIImageView which displays a plain search engine icon with no tapping features.
 final class PlainSearchEngineView: UIView,
@@ -27,6 +29,9 @@ final class PlainSearchEngineView: UIView,
         imageView.isAccessibilityElement = true
         imageView.clipsToBounds = true
     }
+
+    // Ecosia: FaviconImageView for displaying the current page's favicon when browsing
+    private lazy var faviconImageView: FaviconImageView = .build { _ in }
 
     // Ecosia: Store constraints for dynamic sizing based on isEditing
     private var imageViewWidthConstraint: NSLayoutConstraint?
@@ -63,13 +68,18 @@ final class PlainSearchEngineView: UIView,
         // Ecosia: Adjust icon size based on editing state (24pt when editing, 16pt when not, like legacy URLBarView)
         updateIconSize(isEditing: config.isEditing)
         configureA11y(config)
+        // Ecosia: Show favicon when browsing (no search engine image provided, URL available)
+        updateFaviconDisplay(config: config)
     }
 
     // MARK: - Layout
 
     private func setupLayout() {
         translatesAutoresizingMaskIntoConstraints = true
+        /* Ecosia: Also register faviconImageView as a subview for favicon display when browsing
         addSubviews(searchEngineImageView)
+        */
+        addSubviews(searchEngineImageView, faviconImageView)
 
         /* Ecosia: Store constraints for dynamic sizing
         NSLayoutConstraint.activate([
@@ -89,6 +99,12 @@ final class PlainSearchEngineView: UIView,
             searchEngineImageView.bottomAnchor.constraint(lessThanOrEqualTo: self.bottomAnchor),
             searchEngineImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             searchEngineImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+
+            // Ecosia: Favicon view matches the small icon size and is centered in the container
+            faviconImageView.widthAnchor.constraint(equalToConstant: UX.imageViewSizeSmall.width),
+            faviconImageView.heightAnchor.constraint(equalToConstant: UX.imageViewSizeSmall.height),
+            faviconImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            faviconImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
         ])
     }
 
@@ -97,6 +113,21 @@ final class PlainSearchEngineView: UIView,
         let size = isEditing ? UX.imageViewSizeMedium : UX.imageViewSizeSmall
         imageViewWidthConstraint?.constant = size.width
         imageViewHeightConstraint?.constant = size.height
+    }
+
+    // Ecosia: Show favicon when browsing; show search engine image when editing or on home
+    private func updateFaviconDisplay(config: LocationViewConfiguration) {
+        let isBrowsing = !config.isEditing && config.searchEngineImage == nil && config.url != nil
+        faviconImageView.isHidden = !isBrowsing
+        searchEngineImageView.isHidden = isBrowsing
+        if isBrowsing, let url = config.url {
+            /* Ecosia: Use cornerRadius 0 for address-bar favicons (16×16); matches StoriesFeedCell convention
+               and avoids the circle-clip "wrapper" effect that UX.cornerRadius (12pt on iOS 26) caused. */
+            faviconImageView.setFavicon(FaviconImageViewModel(
+                siteURLString: url.absoluteString,
+                faviconCornerRadius: 0
+            ))
+        }
     }
 
     // MARK: - Accessibility
