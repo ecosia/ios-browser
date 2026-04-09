@@ -16,7 +16,9 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
     private var homeTopSite: TopSiteConfiguration?
 
     struct UX {
-        // Ecosia: Icon container fixed at 56×56pt
+        /* Ecosia: Icon container fixed at 56×56pt
+        static let imageBackgroundSize = CGSize(width: 60, height: 60)
+        */
         static let imageBackgroundSize = CGSize(width: 56, height: 56)
         static let pinIconSize = CGSize(width: 12, height: 12)
         static let pinBackgroundSize = CGSize(width: 16, height: 16)
@@ -24,9 +26,13 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         static let pinBackgroundShadowOffset = CGSize(width: 1, height: 1)
         static let pinBackgroundShadowOpacity: Float = 1.0
         static let pinBackgroundShadowRadius: CGFloat = 4.0
-        // Ecosia: Gap between icon container and label
+        /* Ecosia: Gap between icon container and label
+        static let textSafeSpace: CGFloat = 6
+        */
         static let textSafeSpace: CGFloat = .ecosia.space._1s
-        // Ecosia: Corner radius for shortcut icon container
+        /* Ecosia: Corner radius for shortcut icon container
+        static let faviconCornerRadius: CGFloat = 16
+        */
         static let faviconCornerRadius: CGFloat = .ecosia.borderRadius._l
         static let faviconTransparentBackgroundInset: CGFloat = 8
         // Ecosia: 16pt inset on each side renders the favicon at 24×24pt within the 56pt container
