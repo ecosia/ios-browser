@@ -78,7 +78,7 @@ final class PrivateHomepageViewController: UIViewController,
         return messageCard
     }()
 
-    /* Ecosia: Replace Firefox logo header with the Ecosia wordmark logo cell
+    /* Ecosia: Remove the logo header from the private homepage entirely
     private lazy var homepageHeaderCell: HomepageHeaderCell = {
         let header = HomepageHeaderCell()
         header.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
@@ -86,11 +86,6 @@ final class PrivateHomepageViewController: UIViewController,
         return header
     }()
      */
-    private lazy var homepageHeaderCell: NTPLogoCell = {
-        let header = NTPLogoCell()
-        header.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
-        return header
-    }()
 
     init(windowUUID: WindowUUID,
          themeManager: ThemeManager = AppContainer.shared.resolve(),
@@ -157,12 +152,11 @@ final class PrivateHomepageViewController: UIViewController,
     }
 
     private func setupLayout() {
-        /* Ecosia: Vertically center the private message card while keeping the logo header pinned at the top
+        /* Ecosia: Remove the logo header and vertically center the private message card
         scrollContainer.addArrangedSubview(homepageHeaderCell.contentView)
         scrollContainer.addArrangedSubview(privateMessageCardCell)
          */
-        scrollContainer.addArrangedSubview(homepageHeaderCell.contentView)
-        scrollContainer.accessibilityElements = [homepageHeaderCell.contentView, privateMessageCardCell]
+        scrollContainer.accessibilityElements = [privateMessageCardCell]
 
         setupGradient(gradient)
         gradient.frame = view.bounds
@@ -244,7 +238,7 @@ final class PrivateHomepageViewController: UIViewController,
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         gradient.colors = theme.colors.layerHomepage.cgColors
-        homepageHeaderCell.applyTheme(theme: theme)
+        // Ecosia: Logo header removed from the private homepage
         privateMessageCardCell.applyTheme(theme: theme)
     }
 

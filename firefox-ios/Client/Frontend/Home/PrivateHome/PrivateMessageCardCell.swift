@@ -56,7 +56,7 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
     }
 
     private lazy var headerLabel: UILabel = .build { label in
-        label.font = FXFontStyles.Bold.title3.scaledFont()
+        label.font = FXFontStyles.Bold.headline.scaledFont() // Ecosia: match private browsing NTP title size
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center // Ecosia: center align
@@ -99,6 +99,9 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         button.configuration = config
         button.titleLabel?.font = FXFontStyles.Regular.subheadline.scaledFont()
         button.titleLabel?.adjustsFontForContentSizeCategory = true
+        // Ecosia: keep the pill on a single line
+        button.titleLabel?.numberOfLines = 1
+        button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.layer.cornerRadius = 22
         button.layer.borderWidth = 1
         button.layer.masksToBounds = true
