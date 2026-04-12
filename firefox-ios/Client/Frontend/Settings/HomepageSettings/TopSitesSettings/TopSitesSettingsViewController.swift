@@ -48,7 +48,7 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
             }
 
             #if ECOSIA
-            // MOB-4331: No sponsored shortcuts in Ecosia; omit toggle and copy.
+            // Ecosia: No sponsored shortcuts in Ecosia; omit toggle and copy (MOB-4331).
             let toggleSettings = [shortcutsToggle]
             #else
             let sponsoredToggle = BoolSetting(
