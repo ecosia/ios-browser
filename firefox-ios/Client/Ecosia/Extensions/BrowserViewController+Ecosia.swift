@@ -280,11 +280,17 @@ extension BrowserViewController {
         )
 
         let hostingController = UIHostingController(rootView: profileView)
+        // Ecosia (MOB-3993): UIHostingController defaults to an opaque white background, causing a
+        // visible empty gap in page-sheet presentations on iOS 26 Liquid Glass. Clear it so the sheet
+        // chrome shows through correctly.
+        hostingController.view.backgroundColor = .clear
         hostingController.modalPresentationStyle = .pageSheet
 
         if let sheet = hostingController.sheetPresentationController {
             sheet.detents = [UISheetPresentationController.Detent.large()]
             sheet.prefersGrabberVisible = true
+            // Ecosia (MOB-3993): Prevent the sheet from expanding beyond its content on iOS 26.
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
         }
 
         present(hostingController, animated: true) {
