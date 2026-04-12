@@ -55,12 +55,7 @@ class MainMenuViewController: UIViewController,
     }
 
     private var isMenuDefaultBrowserBanner: Bool {
-        // Ecosia (MOB-3998): We ship our own default-browser prompts; hide Firefox’s menu banner.
-        #if ECOSIA
-        return false
-        #else
         return featureFlags.isFeatureEnabled(.menuDefaultBrowserBanner, checking: .buildOnly)
-        #endif
     }
 
     private var bannerShown: Bool {
