@@ -444,8 +444,15 @@ final class NimbusFeatureFlagLayer: Sendable {
     }
 
     private func checkMenuDefaultBrowserBanner(from nimbus: FxNimbus) -> Bool {
+        #if ECOSIA
+        // Ecosia: We ship our own default-browser prompts (MOB-3998); always suppress the Firefox menu banner.
+        /* let config = nimbus.features.menuRefactorFeature.value()
+        return config.menuDefaultBrowserBanner */
+        return false
+        #else
         let config = nimbus.features.menuRefactorFeature.value()
         return config.menuDefaultBrowserBanner
+        #endif
     }
 
     private func checkMenuRefactor(from nimbus: FxNimbus) -> Bool {
