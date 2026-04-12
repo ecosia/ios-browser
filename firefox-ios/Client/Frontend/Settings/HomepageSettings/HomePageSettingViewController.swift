@@ -72,10 +72,15 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
     // MARK: - Methods
     override func generateSettings() -> [SettingSection] {
         let customizeFirefoxHomeSection = customizeFirefoxSettingSection()
-        let customizeHomePageSection = customizeHomeSettingSection()
         let startAtHomeSection = setupStartAtHomeSection()
 
+        #if ECOSIA
+        // MOB-4331: New tab is always Ecosia’s NTP; hide “Current homepage” / custom URL choice.
+        return [startAtHomeSection, customizeFirefoxHomeSection]
+        #else
+        let customizeHomePageSection = customizeHomeSettingSection()
         return [startAtHomeSection, customizeFirefoxHomeSection, customizeHomePageSection]
+        #endif
     }
 
     private func customizeHomeSettingSection() -> SettingSection {
