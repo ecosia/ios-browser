@@ -26,30 +26,46 @@ extension BrowserViewController: DefaultBrowserDelegate {
 }
 
 // MARK: - Default browser promo after search threshold (MOB-4323)
+// Ecosia: DefaultBrowserViewController was defined but never presented anywhere. Wire it to the
+// search-count threshold using a dedicated prefs key (not PrefsKeys.IntroSeen, which belongs to onboarding).
 extension BrowserViewController {
-    /// Profile prefs key: user has seen (or completed flow for) the search-count default browser promo.
+    /// Ecosia prefs key: set to `true` once the search-threshold default-browser promo has been shown.
     static let ecosiaDefaultBrowserSearchThresholdPromoShownKey = "EcosiaDefaultBrowserSearchThresholdPromoShown"
 
-    private static let ecosiaDefaultBrowserSearchPromoPrefsLock = NSLock()
+    // MARK: Eligibility
 
-    /// Call from app lifecycle so we catch users whose search count was already above the threshold before BVC existed.
+    /// Pure-function eligibility check — isolated from UIKit so it is directly unit-testable.
+    static func isEligibleForEcosiaDefaultBrowserSearchPromo(
+        searchCount: Int,
+        isDefaultBrowser: Bool,
+        promoAlreadyShown: Bool
+    ) -> Bool {
+        guard !isDefaultBrowser else { return false }
+        guard searchCount > DefaultBrowserViewController.minSearchCountToTrigger else { return false }
+        guard !promoAlreadyShown else { return false }
+        return true
+    }
+
+    // MARK: Presentation
+
+    /// Presents the promo when all eligibility conditions are met.
+    /// Safe to call repeatedly — the prefs flag prevents double-presentation.
+    /// Must be called on @MainActor; no locking needed since the entire call stack is serialised.
     func ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold() {
         guard #available(iOS 14, *) else { return }
-        guard !DefaultBrowserUtility().isDefaultBrowser else { return }
-        guard User.shared.searchCount > DefaultBrowserViewController.minSearchCountToTrigger else { return }
+
+        let alreadyShown = profile.prefs.boolForKey(Self.ecosiaDefaultBrowserSearchThresholdPromoShownKey) == true
+        guard Self.isEligibleForEcosiaDefaultBrowserSearchPromo(
+            searchCount: User.shared.searchCount,
+            isDefaultBrowser: DefaultBrowserUtility().isDefaultBrowser,
+            promoAlreadyShown: alreadyShown
+        ) else { return }
+
         guard tabManager.selectedTab?.isPrivate != true else { return }
         guard presentedViewController == nil else { return }
         guard viewIfLoaded?.window != nil else { return }
 
-        var shouldPresent = false
-        Self.ecosiaDefaultBrowserSearchPromoPrefsLock.lock()
-        if profile.prefs.boolForKey(Self.ecosiaDefaultBrowserSearchThresholdPromoShownKey) != true {
-            profile.prefs.setBool(true, forKey: Self.ecosiaDefaultBrowserSearchThresholdPromoShownKey)
-            shouldPresent = true
-        }
-        Self.ecosiaDefaultBrowserSearchPromoPrefsLock.unlock()
-
-        guard shouldPresent else { return }
+        profile.prefs.setBool(true, forKey: Self.ecosiaDefaultBrowserSearchThresholdPromoShownKey)
 
         let controller = DefaultBrowserViewController(windowUUID: windowUUID, delegate: self)
         present(controller, animated: true, completion: nil)

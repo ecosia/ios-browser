@@ -1027,6 +1027,7 @@ class BrowserViewController: UIViewController,
 
         NightModeHelper.cleanNightModeDefaults()
         dispatchStartAtHomeAction()
+        // Ecosia: Catch users who were already above the search threshold before this BVC appeared (MOB-4323).
         ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
     }
 
@@ -1338,6 +1339,7 @@ class BrowserViewController: UIViewController,
                 onStopDownloads(notificationWindowUUID: windowUUID)
             case .SettingsDismissed:
                 onSettingsDismissed()
+            // Ecosia: Re-evaluate default-browser promo whenever the search count changes (MOB-4323).
             case .searchesCounterChanged:
                 self.ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
             default: break
@@ -1367,6 +1369,7 @@ class BrowserViewController: UIViewController,
                 .RemoteTabNotificationTapped,
                 .StopDownloads,
                 .SettingsDismissed,
+                // Ecosia: Observe search-count changes to re-evaluate default-browser promo (MOB-4323).
                 .searchesCounterChanged
             ]
         )
