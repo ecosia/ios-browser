@@ -296,8 +296,8 @@ extension WhatsNewViewController {
                     return UX.PreferredContentSize.iPhoneCustomDetentHeight
                 }
                 sheet.detents = [custom, .large()]
-                // Ecosia (MOB-3993): On iOS 26 Liquid Glass the sheet floats with large empty chrome
-                // when these are not set. Edge-attach on iPhone and suppress scroll-driven expansion.
+                // On iOS 26 Liquid Glass the sheet floats with large empty chrome when these are
+                // not set. Edge-attach on iPhone and suppress scroll-driven expansion (MOB-3993).
                 sheet.prefersEdgeAttachedInCompactHeight = true
                 sheet.prefersScrollingExpandsWhenScrolledToEdge = false
                 sheet.prefersGrabberVisible = true
