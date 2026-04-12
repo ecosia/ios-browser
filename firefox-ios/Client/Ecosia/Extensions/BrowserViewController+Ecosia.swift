@@ -26,7 +26,7 @@ extension BrowserViewController: DefaultBrowserDelegate {
 }
 
 // MARK: - Default browser promo after search threshold (MOB-4323)
-// Ecosia: DefaultBrowserViewController was defined but never presented anywhere. Wire it to the
+// DefaultBrowserViewController was defined but never presented. Wire it to the
 // search-count threshold using a dedicated prefs key (not PrefsKeys.IntroSeen, which belongs to onboarding).
 extension BrowserViewController {
     /// Ecosia prefs key: set to `true` once the search-threshold default-browser promo has been shown.
