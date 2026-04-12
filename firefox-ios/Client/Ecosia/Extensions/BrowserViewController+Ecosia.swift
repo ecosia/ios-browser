@@ -21,8 +21,38 @@ extension BrowserViewController: HomepageViewControllerDelegate {
 extension BrowserViewController: DefaultBrowserDelegate {
     @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowserViewController) {
-        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-//        homepageViewController?.reloadTooltip()
+        // Promo completion is tracked when scheduling presentation (`ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold`).
+    }
+}
+
+// MARK: - Default browser promo after search threshold (MOB-4323)
+extension BrowserViewController {
+    /// Profile prefs key: user has seen (or completed flow for) the search-count default browser promo.
+    static let ecosiaDefaultBrowserSearchThresholdPromoShownKey = "EcosiaDefaultBrowserSearchThresholdPromoShown"
+
+    private static let ecosiaDefaultBrowserSearchPromoPrefsLock = NSLock()
+
+    /// Call from app lifecycle so we catch users whose search count was already above the threshold before BVC existed.
+    func ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold() {
+        guard #available(iOS 14, *) else { return }
+        guard !DefaultBrowserUtility().isDefaultBrowser else { return }
+        guard User.shared.searchCount > DefaultBrowserViewController.minSearchCountToTrigger else { return }
+        guard tabManager.selectedTab?.isPrivate != true else { return }
+        guard presentedViewController == nil else { return }
+        guard viewIfLoaded?.window != nil else { return }
+
+        var shouldPresent = false
+        Self.ecosiaDefaultBrowserSearchPromoPrefsLock.lock()
+        if profile.prefs.boolForKey(Self.ecosiaDefaultBrowserSearchThresholdPromoShownKey) != true {
+            profile.prefs.setBool(true, forKey: Self.ecosiaDefaultBrowserSearchThresholdPromoShownKey)
+            shouldPresent = true
+        }
+        Self.ecosiaDefaultBrowserSearchPromoPrefsLock.unlock()
+
+        guard shouldPresent else { return }
+
+        let controller = DefaultBrowserViewController(windowUUID: windowUUID, delegate: self)
+        present(controller, animated: true, completion: nil)
     }
 }
 

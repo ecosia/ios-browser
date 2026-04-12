@@ -1027,6 +1027,7 @@ class BrowserViewController: UIViewController,
 
         NightModeHelper.cleanNightModeDefaults()
         dispatchStartAtHomeAction()
+        ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
     }
 
     // MARK: - Summarize
@@ -1337,6 +1338,8 @@ class BrowserViewController: UIViewController,
                 onStopDownloads(notificationWindowUUID: windowUUID)
             case .SettingsDismissed:
                 onSettingsDismissed()
+            case .searchesCounterChanged:
+                self.ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
             default: break
             }
         }
@@ -1363,7 +1366,8 @@ class BrowserViewController: UIViewController,
                 .PageZoomSettingsChanged,
                 .RemoteTabNotificationTapped,
                 .StopDownloads,
-                .SettingsDismissed
+                .SettingsDismissed,
+                .searchesCounterChanged
             ]
         )
     }
