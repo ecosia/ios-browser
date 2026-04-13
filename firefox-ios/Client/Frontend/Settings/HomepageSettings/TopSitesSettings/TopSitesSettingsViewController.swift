@@ -47,10 +47,7 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
                 )
             }
 
-            #if ECOSIA
-            // Ecosia: No sponsored shortcuts in Ecosia; omit the sponsored toggle (MOB-4331).
-            let toggleSettings = [shortcutsToggle]
-            #else
+            /* Ecosia: No sponsored shortcuts in Ecosia; omit the sponsored toggle (MOB-4331).
             let sponsoredToggle = BoolSetting(
                 prefs: profile.prefs,
                 theme: themeManager.getCurrentTheme(for: windowUUID),
@@ -75,7 +72,8 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
                 }
             }
             let toggleSettings = [shortcutsToggle, sponsoredToggle]
-            #endif
+            */
+            let toggleSettings = [shortcutsToggle]
             let toggleSection = SettingSection(title: nil, children: toggleSettings)
             sections.append(toggleSection)
         }
