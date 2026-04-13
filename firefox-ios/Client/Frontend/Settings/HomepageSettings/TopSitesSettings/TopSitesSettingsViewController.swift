@@ -78,9 +78,11 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
             sections.append(toggleSection)
         }
 
+        /* Ecosia: Shortcuts are always displayed in a single row; remove the row-count picker (MOB-4331).
         let rowSetting = RowSettings(settings: self)
         let rowSection = SettingSection(title: nil, children: [rowSetting])
         sections.append(rowSection)
+        */
 
         return sections
     }
