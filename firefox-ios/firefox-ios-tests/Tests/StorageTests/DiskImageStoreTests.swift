@@ -8,7 +8,7 @@ import UIKit
 import XCTest
 
 class DiskImageStoreTests: XCTestCase {
-    var files: FileAccessor!
+    var files: MockFiles!
     var store: DiskImageStore!
 
     override func setUp() {
@@ -59,7 +59,7 @@ class DiskImageStoreTests: XCTestCase {
 // MARK: - Helper methods
 
     func clearStore() {
-        Task {
+        Task { [store] in
             try? await store?.clearAllScreenshotsExcluding(Set())
         }
     }

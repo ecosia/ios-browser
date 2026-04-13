@@ -10,7 +10,7 @@ import Shared
 import XCTest
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
+final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     private var mockProfile: MockProfile!
     private var mockTabManager: MockTabManager!
     private var mockWindowManager: MockWindowManager!
@@ -19,16 +19,18 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
 
     override func setUp() async throws {
         try await super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
-        mockProfile = MockProfile()
-        mockTabManager = MockTabManager()
-        mockTabManager.tabRestoreHasFinished = true
-        mockWindowManager = MockWindowManager(
-            wrappedManager: WindowManagerImplementation(),
-            tabManager: mockTabManager
-        )
-        DependencyHelperMock().bootstrapDependencies(injectedWindowManager: mockWindowManager)
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
+        await MainActor.run {
+            DependencyHelperMock().bootstrapDependencies()
+            mockProfile = MockProfile()
+            mockTabManager = MockTabManager()
+            mockTabManager.tabRestoreHasFinished = true
+            mockWindowManager = MockWindowManager(
+                wrappedManager: WindowManagerImplementation(),
+                tabManager: mockTabManager
+            )
+            DependencyHelperMock().bootstrapDependencies(injectedWindowManager: mockWindowManager)
+            LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
+        }
         setupStore()
         appState = setupAppState()
     }
@@ -187,10 +189,12 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
             to: testDate
         )!
         UserDefaults.standard.setValue(lastSessionDate, forKey: "LastActiveTimestamp")
-        return EcosiaStartAtHomeMiddleware(
-            profile: mockProfile,
-            windowManager: mockWindowManager,
-            dateProvider: MockDateProvider(fixedDate: testDate))
+        return MainActor.assumeIsolated {
+            EcosiaStartAtHomeMiddleware(
+                profile: mockProfile,
+                windowManager: mockWindowManager,
+                dateProvider: MockDateProvider(fixedDate: testDate))
+        }
     }
 
     // MARK: StoreTestUtility
@@ -210,13 +214,21 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
         return appState
     }
 
+    func setupTestingStore() {
+        setupStore()
+    }
+
+    func resetTestingStore() {
+        resetStore()
+    }
+
     func setupStore() {
         mockStore = MockStoreForMiddleware(state: setupAppState())
-        StoreTestUtilityHelper.setupStore(with: mockStore)
+        MainActor.assumeIsolated { StoreTestUtilityHelper.setupStore(with: mockStore) }
     }
 
     func resetStore() {
-        StoreTestUtilityHelper.resetStore()
+        MainActor.assumeIsolated { StoreTestUtilityHelper.resetStore() }
     }
 }
 // swiftlint:enable implicitly_unwrapped_optional

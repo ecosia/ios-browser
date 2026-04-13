@@ -6,7 +6,7 @@ import Foundation
 import MozillaAppServices
 import Storage
 
-class MockCreditCardProvider: CreditCardProvider {
+class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
     var addCreditCardCalledCount = 0
     var updateCreditCardCalledCount = 0
     var listCreditCardsCalledCount = 0
@@ -27,22 +27,28 @@ class MockCreditCardProvider: CreditCardProvider {
 
     func addCreditCard(
         creditCard: UnencryptedCreditCardFields,
-        completion: @escaping (CreditCard?, Error?) -> Void
+        completion: @escaping @Sendable (CreditCard?, Error?) -> Void
     ) {
         addCreditCardCalledCount += 1
         completion(exampleCreditCard, nil)
     }
     func decryptCreditCardNumber(encryptedCCNum: String?) -> String? { return "testCCNum" }
-    func listCreditCards(completion: @escaping ([CreditCard]?, Error?) -> Void) {
+    func deleteCreditCard(id: String, completion: @escaping @Sendable (Bool, Error?) -> Void) {
+        completion(true, nil)
+    }
+    func listCreditCards(completion: @escaping @Sendable ([CreditCard]?, Error?) -> Void) {
         listCreditCardsCalledCount += 1
         completion([exampleCreditCard], nil)
     }
     func updateCreditCard(
         id: String,
         creditCard: UnencryptedCreditCardFields,
-        completion: @escaping (Bool?, Error?) -> Void
+        completion: @escaping @Sendable (Bool?, Error?) -> Void
     ) {
         updateCreditCardCalledCount += 1
         completion(nil, nil)
+    }
+    func verifyCreditCards(key: String, completionHandler: @escaping @Sendable (Bool) -> Void) {
+        completionHandler(true)
     }
 }

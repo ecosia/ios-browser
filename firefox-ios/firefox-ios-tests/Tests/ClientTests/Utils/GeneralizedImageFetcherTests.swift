@@ -99,7 +99,7 @@ extension GeneralizedImageFetcherTests {
         )
     }
 
-    func testGeneralizedImageFetcher(completion: @escaping (UIImage?) -> Void) {
+    func testGeneralizedImageFetcher(completion: @escaping @Sendable (UIImage?) -> Void) {
         let imageFetcher = getGeneralizedImageFetcher()
         let expectation = expectation(description: "Wait on completion.")
 

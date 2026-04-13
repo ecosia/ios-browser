@@ -5,7 +5,7 @@
 @testable import Ecosia
 import XCTest
 
-final class BookmarkTests: XCTestCase {
+final class BookmarkTests: XCTestCase, @unchecked Sendable {
     func test_BookmarkSerializer_Parser() async throws {
         let input: [BookmarkItem] = [
             .bookmark("One", "https://example.com/one", .empty),

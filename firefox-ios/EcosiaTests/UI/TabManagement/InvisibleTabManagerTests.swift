@@ -9,7 +9,8 @@ import WebKit
 // swiftlint:disable implicitly_unwrapped_optional
 
 /// Test suite for InvisibleTabManager functionality
-final class InvisibleTabManagerTests: XCTestCase {
+@MainActor
+final class InvisibleTabManagerTests: XCTestCase, @unchecked Sendable {
 
     // MARK: - Properties
 

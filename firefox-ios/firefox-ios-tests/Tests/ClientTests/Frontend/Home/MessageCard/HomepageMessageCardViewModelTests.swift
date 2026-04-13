@@ -163,7 +163,7 @@ class MockMessageCardDataAdaptor: MessageCardDataAdaptor {
 }
 
 // MARK: - MockMessageDataProtocol
-class MockMessageDataProtocol: MessageDataProtocol {
+private class MockMessageDataProtocol: MessageDataProtocol {
     var surface: MessageSurfaceId = .newTabCard
     var isControl = true
     var title: String? = "Test"
@@ -175,13 +175,13 @@ class MockMessageDataProtocol: MessageDataProtocol {
 }
 
 // MARK: - MockStyleDataProtocol
-class MockStyleDataProtocol: StyleDataProtocol {
+private class MockStyleDataProtocol: StyleDataProtocol {
     var priority: Int = 0
     var maxDisplayCount: Int = 3
 }
 
 // MARK: - MockGleanPlumbMessageManagerProtocol
-class MockGleanPlumbMessageManagerProtocol: GleanPlumbMessageManagerProtocol {
+private class MockGleanPlumbMessageManagerProtocol: GleanPlumbMessageManagerProtocol {
     func onStartup() {}
 
     var message: GleanPlumbMessage?

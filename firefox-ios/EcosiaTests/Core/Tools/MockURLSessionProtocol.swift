@@ -7,7 +7,7 @@ import Foundation
 
 // Needed in spite of the already existing MockURLSession
 // since URLSession's async methods are not open
-class MockURLSessionProtocol: URLSessionProtocol {
+final class MockURLSessionProtocol: URLSessionProtocol, @unchecked Sendable {
     var data: Data?
 
     func data(from url: URL) async throws -> (Data, URLResponse) {

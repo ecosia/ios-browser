@@ -9,7 +9,7 @@ import WebKit
 
 @available(iOS 16.0, *)
 @MainActor
-final class EcosiaWebViewModalTests: XCTestCase {
+final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
 
     private var coordinator: MockCoordinator!
     private var mockWebView: MockWKWebView!

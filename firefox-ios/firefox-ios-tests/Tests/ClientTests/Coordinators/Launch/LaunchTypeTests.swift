@@ -6,6 +6,7 @@ import Common
 import XCTest
 @testable import Client
 
+@MainActor
 final class LaunchTypeTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 

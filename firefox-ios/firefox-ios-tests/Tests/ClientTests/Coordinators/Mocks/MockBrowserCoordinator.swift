@@ -5,31 +5,28 @@
 import Foundation
 import Storage
 import WebKit
+import SummarizeKit
 
 @testable import Client
 
 import struct MozillaAppServices.CreditCard
+import enum MozillaAppServices.VisitType
 
+@MainActor
 class MockBrowserCoordinator: BrowserNavigationHandler, ParentCoordinatorDelegate {
     var showSettingsCalled = 0
-    var showFakespotCalled = 0
     var showCreditCardAutofillCalled = 0
     var showLoginAutofillCalled = 0
     var showRequiredPassCodeCalled = 0
     var showLibraryCalled = 0
     var showHomepanelSectionCalled = 0
     var showEnhancedTrackingProtectionCalled = 0
-    var showShareExtensionCalled = 0
+    var showShareSheetCalled = 0
     var showTabTrayCalled = 0
     var showQrCodeCalled = 0
     var didFinishCalled = 0
-    var showFakespotFlowAsModalCalled = 0
-    var showFakespotFlowAsSidebarCalled = 0
     var showBackForwardListCalled = 0
     var showSearchEngineSelectionCalled = 0
-    var dismissFakespotModalCalled = 0
-    var dismissFakespotSidebarCalled = 0
-    var updateFakespotSidebarCalled = 0
     var showMicrosurveyCalled = 0
     var showMainMenuCalled = 0
     var showPasswordGeneratorCalled = 0
@@ -56,27 +53,21 @@ class MockBrowserCoordinator: BrowserNavigationHandler, ParentCoordinatorDelegat
         showLoginAutofillCalled += 1
     }
 
-    func showAddressAutofill(
-        frame: WKFrameInfo?
-    ) {
+    func showAddressAutofill(frame: WKFrameInfo?) {
         showCreditCardAutofillCalled += 1
     }
 
-    func showShareExtension(
-        url: URL,
-        sourceView: UIView,
-        toastContainer: UIView,
-        popoverArrowDirection: UIPopoverArrowDirection
-    ) {
-        showShareExtensionCalled += 1
+    func showShareSheet(shareType: ShareType,
+                        shareMessage: ShareMessage?,
+                        sourceView: UIView,
+                        sourceRect: CGRect?,
+                        toastContainer: UIView,
+                        popoverArrowDirection: UIPopoverArrowDirection) {
+        showShareSheetCalled += 1
     }
 
     func show(homepanelSection: Route.HomepanelSection) {
         showHomepanelSectionCalled += 1
-    }
-
-    func showFakespotFlow(productURL: URL) {
-        showFakespotCalled += 1
     }
 
     func showEnhancedTrackingProtection(sourceView: UIView) {
@@ -87,7 +78,7 @@ class MockBrowserCoordinator: BrowserNavigationHandler, ParentCoordinatorDelegat
         showTabTrayCalled += 1
     }
 
-    func showQRCode() {
+    func showQRCode(delegate: QRCodeViewControllerDelegate, rootNavigationController: UINavigationController?) {
         showQrCodeCalled += 1
     }
 
@@ -99,37 +90,12 @@ class MockBrowserCoordinator: BrowserNavigationHandler, ParentCoordinatorDelegat
         didFinishCalled += 1
     }
 
-    func showFakespotFlowAsModal(productURL: URL) {
-        showFakespotFlowAsModalCalled += 1
-    }
-
     func showMainMenu() {
         showMainMenuCalled += 1
     }
 
-    func showFakespotFlowAsSidebar(productURL: URL,
-                                   sidebarContainer: Client.SidebarEnabledViewProtocol,
-                                   parentViewController: UIViewController) {
-        showFakespotFlowAsSidebarCalled += 1
-    }
-
     func showSearchEngineSelection(forSourceView sourceView: UIView) {
         showSearchEngineSelectionCalled += 1
-    }
-
-    func dismissFakespotModal(animated: Bool) {
-        dismissFakespotModalCalled += 1
-    }
-
-    func dismissFakespotSidebar(sidebarContainer: Client.SidebarEnabledViewProtocol,
-                                parentViewController: UIViewController) {
-        dismissFakespotSidebarCalled += 1
-    }
-
-    func updateFakespotSidebar(productURL: URL,
-                               sidebarContainer: SidebarEnabledViewProtocol,
-                               parentViewController: UIViewController) {
-        updateFakespotSidebarCalled += 1
     }
 
     func showMicrosurvey(model: MicrosurveyModel) {
@@ -139,4 +105,22 @@ class MockBrowserCoordinator: BrowserNavigationHandler, ParentCoordinatorDelegat
     func showPasswordGenerator(tab: Tab, frame: WKFrameInfo) {
         showPasswordGeneratorCalled += 1
     }
+
+    func showPasswordGenerator(tab: Tab, frameContext: PasswordGeneratorFrameContext) {
+        showPasswordGeneratorCalled += 1
+    }
+
+    func navigateFromHomePanel(to url: URL, visitType: VisitType, isGoogleTopSite: Bool) {}
+    func showContextMenu(for configuration: ContextMenuConfiguration) {}
+    func showEditBookmark(parentFolder: FxBookmarkNode, bookmark: FxBookmarkNode) {}
+    func openInNewTab(url: URL, isPrivate: Bool, selectNewTab: Bool) {}
+    func showDocumentLoading() {}
+    func removeDocumentLoading() {}
+    func showSummarizePanel(_ trigger: SummarizerTrigger, config: SummarizerConfig?) {}
+    func showShortcutsLibrary() {}
+    func showStoriesFeed() {}
+    func showStoriesWebView(url: URL?) {}
+    func showPrivacyNoticeLink(url: URL) {}
+    func showTermsOfUse(context: TriggerContext) {}
+    func popToBVC() {}
 }

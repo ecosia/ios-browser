@@ -6,6 +6,7 @@ import XCTest
 @testable import Client
 // swiftlint:disable implicitly_unwrapped_optional
 
+@MainActor
 final class EcosiaOverlayModeManagerTests: XCTestCase {
 
     private var urlBar: MockURLBarView!

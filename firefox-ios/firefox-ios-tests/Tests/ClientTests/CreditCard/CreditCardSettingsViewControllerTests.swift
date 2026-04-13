@@ -7,6 +7,7 @@ import SwiftUI
 import Common
 @testable import Client
 
+@MainActor
 final class CreditCardSettingsViewControllerTests: XCTestCase {
     var profile: MockProfile!
     var viewModel: CreditCardInputViewModel!
@@ -15,7 +16,7 @@ final class CreditCardSettingsViewControllerTests: XCTestCase {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile()
-        viewModel = CreditCardInputViewModel(profile: profile)
+        viewModel = CreditCardInputViewModel(profile: profile, creditCardProvider: profile.autofill)
     }
 
     override func tearDown() {
@@ -30,7 +31,7 @@ final class CreditCardSettingsViewControllerTests: XCTestCase {
         subject.viewModel.cardInputViewModel.nameOnCard = "Ashton Mealy"
         subject.viewModel.cardInputViewModel.cardNumber = "4268811063712243"
         subject.viewModel.cardInputViewModel.expirationDate = "1288"
-        let creditCardInputView = CreditCardInputView(viewModel: viewModel, windowUUID: WindowUUID.XCTestDefaultUUID)
+        let creditCardInputView = CreditCardInputView(viewModel: viewModel, windowUUID: WindowUUID.XCTestDefaultUUID, themeManager: AppContainer.shared.resolve())
         let hostingController = UIHostingController(rootView: creditCardInputView)
         subject.present(hostingController, animated: true)
         let presentationController = UIPresentationController(

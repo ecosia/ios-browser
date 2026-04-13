@@ -7,6 +7,7 @@ import Shared
 import XCTest
 @testable import Client
 
+@MainActor
 class GleanPlumbContextProviderTests: XCTestCase {
     private var userDefaults: UserDefaultsInterface!
     private var contextProvider: GleanPlumbContextProvider!

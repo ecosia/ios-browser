@@ -10,7 +10,8 @@ import XCTest
 
 @testable import Client
 
-class CreditCardBottomSheetViewModelTests: XCTestCase {
+@MainActor
+class CreditCardBottomSheetViewModelTests: XCTestCase, @unchecked Sendable {
     private var viewModel: CreditCardBottomSheetViewModel?
     private var mockAutofill: MockCreditCardProvider?
     private var samplePlainTextCard = UnencryptedCreditCardFields(ccName: "Allen Burges",

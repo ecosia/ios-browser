@@ -71,7 +71,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
 
     func test_launchWithLaunchType_callsCoordinatorDelegate() {
         let subject = createSubject()
-        let launchType: LaunchType = .intro(manager: viewModel.introScreenManager)
+        let launchType: LaunchType = .intro(manager: IntroScreenManager(prefs: MockProfile().prefs))
 
         subject.launchWith(launchType: launchType)
 
@@ -84,7 +84,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
 
     func test_launchWithLaunchType_withUpdateType_callsCoordinatorCorrectly() {
         let subject = createSubject()
-        let launchType: LaunchType = .update(viewModel: viewModel.updateViewModel)
+        let launchType: LaunchType = .update(viewModel: viewModel.testUpdateViewModel)
 
         subject.launchWith(launchType: launchType)
 
@@ -97,7 +97,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
 
     func test_launchWithLaunchType_withSurveyType_callsCoordinatorCorrectly() {
         let subject = createSubject()
-        let launchType: LaunchType = .survey(manager: viewModel.surveySurfaceManager)
+        let launchType: LaunchType = .survey(manager: viewModel.testSurveySurfaceManager)
 
         subject.launchWith(launchType: launchType)
 
@@ -132,7 +132,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
     // MARK: - Integration Tests
 
     func test_fullLaunchFlow_withIntroLaunchType_triggersCorrectDelegateCall() {
-        viewModel.mockLaunchType = .intro(manager: viewModel.introScreenManager)
+        viewModel.mockLaunchType = .intro(manager: IntroScreenManager(prefs: MockProfile().prefs))
         let subject = createSubject()
 
         subject.startLoading()
@@ -146,7 +146,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
     }
 
     func test_fullLaunchFlow_withUpdateLaunchType_triggersCorrectDelegateCall() {
-        viewModel.mockLaunchType = .update(viewModel: viewModel.updateViewModel)
+        viewModel.mockLaunchType = .update(viewModel: viewModel.testUpdateViewModel)
         let subject = createSubject()
 
         subject.startLoading()
@@ -160,7 +160,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
     }
 
     func test_fullLaunchFlow_withSurveyLaunchType_triggersCorrectDelegateCall() {
-        viewModel.mockLaunchType = .survey(manager: viewModel.surveySurfaceManager)
+        viewModel.mockLaunchType = .survey(manager: viewModel.testSurveySurfaceManager)
         let subject = createSubject()
 
         subject.startLoading()
@@ -202,7 +202,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
 
     func test_launchMethods_withoutAnimationStarted_handlesGracefully() {
         let subject = createSubject()
-        let launchType: LaunchType = .intro(manager: viewModel.introScreenManager)
+        let launchType: LaunchType = .intro(manager: IntroScreenManager(prefs: MockProfile().prefs))
 
         subject.launchWith(launchType: launchType)
         subject.launchBrowser()
@@ -227,8 +227,8 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
 
     func test_coordinatorDelegateCallTracking_verifiesCorrectBehavior() {
         let subject = createSubject()
-        let introLaunchType: LaunchType = .intro(manager: viewModel.introScreenManager)
-        let updateLaunchType: LaunchType = .update(viewModel: viewModel.updateViewModel)
+        let introLaunchType: LaunchType = .intro(manager: IntroScreenManager(prefs: MockProfile().prefs))
+        let updateLaunchType: LaunchType = .update(viewModel: viewModel.testUpdateViewModel)
 
         subject.launchWith(launchType: introLaunchType)
         subject.launchWith(launchType: updateLaunchType)
@@ -243,7 +243,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
 
     func test_launchTypeVerification_withIntroType_verifiesCorrectly() {
         let subject = createSubject()
-        let introType: LaunchType = .intro(manager: viewModel.introScreenManager)
+        let introType: LaunchType = .intro(manager: IntroScreenManager(prefs: MockProfile().prefs))
 
         subject.launchWith(launchType: introType)
 
@@ -253,7 +253,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
 
     func test_launchTypeVerification_withUpdateType_verifiesCorrectly() {
         let subject = createSubject()
-        let updateType: LaunchType = .update(viewModel: viewModel.updateViewModel)
+        let updateType: LaunchType = .update(viewModel: viewModel.testUpdateViewModel)
 
         subject.launchWith(launchType: updateType)
 
@@ -263,7 +263,7 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
 
     func test_launchTypeVerification_withSurveyType_verifiesCorrectly() {
         let subject = createSubject()
-        let surveyType: LaunchType = .survey(manager: viewModel.surveySurfaceManager)
+        let surveyType: LaunchType = .survey(manager: viewModel.testSurveySurfaceManager)
 
         subject.launchWith(launchType: surveyType)
 
@@ -288,5 +288,24 @@ final class ModernLaunchScreenViewControllerTests: XCTestCase {
                                                        viewModel: viewModel)
         trackForMemoryLeaks(subject, file: file, line: line)
         return subject
+    }
+}
+
+// MARK: - LaunchScreenViewModel test accessors
+// Ecosia: Expose private properties via @testable extension for LaunchViewModel testing in v147
+extension LaunchScreenViewModel {
+    var testUpdateViewModel: UpdateViewModel {
+        UpdateViewModel(
+            profile: AppContainer.shared.resolve(),
+            model: NimbusOnboardingFeatureLayer().getOnboardingModel(for: .upgrade),
+            telemetryUtility: OnboardingTelemetryUtility(
+                with: NimbusOnboardingFeatureLayer().getOnboardingModel(for: .upgrade)
+            ),
+            windowUUID: .XCTestDefaultUUID
+        )
+    }
+    var testSurveySurfaceManager: SurveySurfaceManager {
+        SurveySurfaceManager(windowUUID: .XCTestDefaultUUID,
+                             and: AppContainer.shared.resolve())
     }
 }

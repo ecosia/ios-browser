@@ -30,7 +30,7 @@ public enum TestTargets {
                 .sdk(name: "RustMozillaAppServices", type: .framework),
                 .package(product: "Shared"),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings.merging([
+            settings: .settings(base: BuildConfigurations.testBaseSettings.merging([
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Account/Account-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         )
@@ -55,7 +55,7 @@ public enum TestTargets {
                 .package(product: "TabDataStore"),
                 .sdk(name: "z", type: .library),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings)
+            settings: .settings(base: BuildConfigurations.testBaseSettings)
         )
     }
 
@@ -75,7 +75,7 @@ public enum TestTargets {
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings)
+            settings: .settings(base: BuildConfigurations.testBaseSettings)
         )
     }
 
@@ -88,14 +88,16 @@ public enum TestTargets {
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/StorageTests/**/*.swift"],
             dependencies: [
+                .target(name: "Client"),
                 .target(name: "Storage"),
                 .package(product: "Common"),
+                .package(product: "Shared"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings.merging([
+            settings: .settings(base: BuildConfigurations.testBaseSettings.merging([
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         )
@@ -109,7 +111,11 @@ public enum TestTargets {
             bundleId: "org.mozilla.ios.SharedTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/SharedTests/**/*.swift"],
-            settings: .settings(base: BuildConfigurations.baseSettings.merging([
+            dependencies: [
+                .package(product: "Common"),
+                .package(product: "Shared"),
+            ],
+            settings: .settings(base: BuildConfigurations.testBaseSettings.merging([
                 "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
             ], uniquingKeysWith: { _, new in new }))
         )
@@ -124,9 +130,11 @@ public enum TestTargets {
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/SyncTelemetryTests/**/*.swift"],
             dependencies: [
+                .target(name: "Client"),
                 .package(product: "Glean"),
+                .package(product: "Shared"),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings)
+            settings: .settings(base: BuildConfigurations.testBaseSettings)
         )
     }
 
@@ -140,14 +148,17 @@ public enum TestTargets {
             sources: ["firefox-ios-tests/Tests/SyncTests/**/*.swift"],
             dependencies: [
                 .target(name: "Sync"),
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "Common"),
+                .package(product: "Shared"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings.merging([
-                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/firefox-ios-tests/Tests/SyncTests/SyncTests-Bridging-Header.h"
+            settings: .settings(base: BuildConfigurations.testBaseSettings.merging([
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/firefox-ios-tests/Tests/SyncTests/SyncTests-Bridging-Header.h",
+                "HEADER_SEARCH_PATHS": ["$(inherited)", "$(SRCROOT)/Sync", "$(SRCROOT)/Shared", "$(SRCROOT)/Storage"]
             ], uniquingKeysWith: { _, new in new }))
         )
     }
@@ -169,7 +180,7 @@ public enum TestTargets {
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings)
+            settings: .settings(base: BuildConfigurations.testBaseSettings)
         )
     }
 
@@ -189,7 +200,7 @@ public enum TestTargets {
                 .package(product: "SnapshotTesting"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings)
+            settings: .settings(base: BuildConfigurations.testBaseSettings)
         )
     }
 
@@ -206,9 +217,25 @@ public enum TestTargets {
                 "EcosiaTests/UI/**/*.swift",
                 "EcosiaTests/Core/**/*.swift",
                 "EcosiaTests/IntegrationTests/**/*.swift",
+                // Shared ClientTests helpers required by integration tests
+                "firefox-ios-tests/Tests/ClientTests/XCTestCaseExtensions.swift",
+                "firefox-ios-tests/Tests/ClientTests/DependencyInjection/DependencyHelperMock.swift",
+                "firefox-ios-tests/Tests/ClientTests/Mocks/MockWindowManager.swift",
+                "firefox-ios-tests/Tests/ClientTests/Frontend/Theme/MockThemeManager.swift",
+                "firefox-ios-tests/Tests/ClientTests/Mocks/MockDateProvider.swift",
+                "firefox-ios-tests/Tests/ClientTests/Mocks/MockProfile.swift",
+                "firefox-ios-tests/Tests/ClientTests/Mocks/MockTabManager.swift",
+                "firefox-ios-tests/Tests/ClientTests/Mocks/MockURLBarView.swift",
+                "firefox-ios-tests/Tests/ClientTests/Mocks/MockOverlayModeManager.swift",
+                "firefox-ios-tests/Tests/ClientTests/ProfileTest.swift",
+                "firefox-ios-tests/Tests/ClientTests/Utils/StoreTestUtility.swift",
+                "firefox-ios-tests/Tests/ClientTests/Coordinators/Mocks/MockStoreForMiddleware.swift",
+                "firefox-ios-tests/Tests/ClientTests/Microsurvey/Mock/MockMicrosurveySurfaceManager.swift",
             ],
             dependencies: [
+                .target(name: "Client"),
                 .target(name: "Ecosia"),
+                .target(name: "Storage"),
                 .package(product: "Common"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
@@ -217,7 +244,7 @@ public enum TestTargets {
                 .package(product: "TabDataStore"),
                 .package(product: "ViewInspector"),
             ],
-            settings: .settings(base: BuildConfigurations.baseSettings)
+            settings: .settings(base: BuildConfigurations.testBaseSettings)
         )
     }
 }

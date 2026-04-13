@@ -5,6 +5,7 @@
 import XCTest
 @testable import Client
 
+@MainActor
 final class DefaultRouterTests: XCTestCase {
     var navigationController: MockNavigationController!
 

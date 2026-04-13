@@ -56,7 +56,7 @@ class MockBrowserViewController: BrowserViewController {
     var lastVisitType: VisitType?
     var isPrivate = false
 
-    override func switchToPrivacyMode(isPrivate: Bool) {
+    func switchToPrivacyMode(isPrivate: Bool) {
         switchToPrivacyModeCalled = true
         switchToPrivacyModeIsPrivate = isPrivate
         switchToPrivacyModeCount += 1
@@ -98,7 +98,7 @@ class MockBrowserViewController: BrowserViewController {
         return Tab(profile: MockProfile(), windowUUID: windowUUID)
     }
 
-    override func handleQRCode() {
+    func handleQRCode() {
         qrCodeCount += 1
     }
 
@@ -140,7 +140,7 @@ class MockBrowserViewController: BrowserViewController {
         lastVisitType = visitType
     }
 
-    override func openRecentlyClosedSiteInSameTab(_ url: URL) {
+    func openRecentlyClosedSiteInSameTab(_ url: URL) {
         didOpenRecentlyClosedSiteInSameTab += 1
     }
 }

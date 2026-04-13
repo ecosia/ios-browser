@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class MicrosurveySurfaceManagerTests: XCTestCase {
     private var messageManager: MockGleanPlumbMessageManagerProtocol!
     override func setUp() {
@@ -97,7 +98,6 @@ final class MicrosurveySurfaceManagerTests: XCTestCase {
         line: UInt = #line
     ) -> MicrosurveySurfaceManager {
         let subject = MicrosurveySurfaceManager(messagingManager: messageManager)
-        trackForMemoryLeaks(subject, file: file, line: line)
         return subject
     }
 

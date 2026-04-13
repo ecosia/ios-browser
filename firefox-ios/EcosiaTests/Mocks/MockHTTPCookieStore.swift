@@ -5,7 +5,7 @@
 @testable import Ecosia
 import WebKit
 
-class MockHTTPCookieStore: CookieStoreProtocol {
+final class MockHTTPCookieStore: CookieStoreProtocol, @unchecked Sendable {
     private var cookies: [HTTPCookie] = []
 
     func allCookies() async -> [HTTPCookie] {

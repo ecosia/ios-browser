@@ -9,8 +9,10 @@ import TabDataStore
 @testable import Client
 
 class DependencyHelperMock {
+    @MainActor
     func bootstrapDependencies(
         injectedTabManager: TabManager? = nil,
+        injectedWindowManager: WindowManager? = nil,
         injectedMicrosurveyManager: MicrosurveyManager? = nil,
         themeManager: ThemeManager = MockThemeManager() // Ecosia: Make themeManager injectable
     ) {
@@ -28,7 +30,7 @@ class DependencyHelperMock {
         AppContainer.shared.register(service: diskImageStore)
 
         let windowUUID = WindowUUID.XCTestDefaultUUID
-        let windowManager: WindowManager = MockWindowManager(wrappedManager: WindowManagerImplementation())
+        let windowManager: WindowManager = injectedWindowManager ?? MockWindowManager(wrappedManager: WindowManagerImplementation())
         let tabManager: TabManager =
         injectedTabManager ?? TabManagerImplementation(profile: profile,
                                                        uuid: ReservedWindowUUID(uuid: windowUUID, isNew: false),
@@ -40,14 +42,16 @@ class DependencyHelperMock {
         // let themeManager: ThemeManager = MockThemeManager()
         AppContainer.shared.register(service: themeManager)
 
-        let ratingPromptManager = RatingPromptManager(profile: profile)
+        let ratingPromptManager = RatingPromptManager(prefs: profile.prefs, crashTracker: DefaultCrashTracker())
         AppContainer.shared.register(service: ratingPromptManager)
 
         let downloadQueue = DownloadQueue()
         AppContainer.shared.register(service: downloadQueue)
 
         AppContainer.shared.register(service: windowManager)
-        windowManager.newBrowserWindowConfigured(AppWindowInfo(tabManager: tabManager), uuid: windowUUID)
+        if injectedWindowManager == nil {
+            windowManager.newBrowserWindowConfigured(AppWindowInfo(tabManager: tabManager), uuid: windowUUID)
+        }
 
         let microsurveyManager: MicrosurveyManager = injectedMicrosurveyManager ?? MockMicrosurveySurfaceManager()
         AppContainer.shared.register(service: microsurveyManager)

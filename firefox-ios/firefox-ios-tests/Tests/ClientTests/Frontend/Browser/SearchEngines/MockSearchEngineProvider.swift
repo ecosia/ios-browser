@@ -15,6 +15,7 @@ class MockSearchEngineProvider: SearchEngineProvider {
             image: UIImage(),
             searchTemplate: "http://firefox.com/find?q={searchTerms}",
             suggestTemplate: nil,
+            telemetrySuffix: nil,
             isCustomEngine: true
         ),
         OpenSearchEngine(
@@ -23,6 +24,7 @@ class MockSearchEngineProvider: SearchEngineProvider {
             image: UIImage(),
             searchTemplate: "http://firefox.com/find?q={searchTerms}",
             suggestTemplate: nil,
+            telemetrySuffix: nil,
             isCustomEngine: true
         ),
         OpenSearchEngine(
@@ -31,6 +33,7 @@ class MockSearchEngineProvider: SearchEngineProvider {
             image: UIImage(),
             searchTemplate: "http://firefox.com/find?q={searchTerms}",
             suggestTemplate: nil,
+            telemetrySuffix: nil,
             isCustomEngine: true
         ),
         OpenSearchEngine(
@@ -39,6 +42,7 @@ class MockSearchEngineProvider: SearchEngineProvider {
             image: UIImage(),
             searchTemplate: "http://firefox.com/find?q={searchTerms}",
             suggestTemplate: nil,
+            telemetrySuffix: nil,
             isCustomEngine: true
         ),
         OpenSearchEngine(
@@ -47,6 +51,7 @@ class MockSearchEngineProvider: SearchEngineProvider {
             image: UIImage(),
             searchTemplate: "http://firefox.com/find?q={searchTerms}",
             suggestTemplate: nil,
+            telemetrySuffix: nil,
             isCustomEngine: true
         ),
         OpenSearchEngine(

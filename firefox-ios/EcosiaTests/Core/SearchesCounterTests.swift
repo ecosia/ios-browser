@@ -5,7 +5,8 @@
 @testable import Ecosia
 import XCTest
 
-final class SearchesCounterTests: XCTestCase {
+@MainActor
+final class SearchesCounterTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.user)
     }
@@ -19,8 +20,9 @@ final class SearchesCounterTests: XCTestCase {
         let counter = SearchesCounter()
 
         counter.subscribeAndReceive(self) { items in
-            XCTAssertEqual(counter.state, User.shared.searchCount)
-            counter.unsubscribe(self)
+            let state = MainActor.assumeIsolated { counter.state }
+            XCTAssertEqual(state, User.shared.searchCount)
+            MainActor.assumeIsolated { counter.unsubscribe(self) }
             expect.fulfill()
         }
         waitForExpectations(timeout: 1)
@@ -31,8 +33,9 @@ final class SearchesCounterTests: XCTestCase {
         let counter = SearchesCounter()
 
         counter.subscribe(self) { items in
-            XCTAssertEqual(counter.state, 2)
-            counter.unsubscribe(self)
+            let state = MainActor.assumeIsolated { counter.state }
+            XCTAssertEqual(state, 2)
+            MainActor.assumeIsolated { counter.unsubscribe(self) }
             expect.fulfill()
         }
         User.shared.searchCount = 2

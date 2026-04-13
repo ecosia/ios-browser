@@ -10,6 +10,7 @@ import UIKit
 import Common
 import XCTest
 
+@MainActor
 class CustomSearchEnginesTest: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
     override func setUp() {

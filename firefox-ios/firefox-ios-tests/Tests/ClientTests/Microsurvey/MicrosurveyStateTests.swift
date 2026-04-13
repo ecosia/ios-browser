@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class MicrosurveyStateTests: XCTestCase {
     override func setUp() {
         super.setUp()

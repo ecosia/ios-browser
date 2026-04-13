@@ -23,7 +23,7 @@ final class PrivateModeButtonTests: XCTestCase {
 
         XCTAssertEqual(button.tintColor, lightTheme.colors.ecosia.backgroundPrimary)
         XCTAssertEqual(button.imageView?.tintColor, lightTheme.colors.ecosia.backgroundPrimary)
-        XCTAssertEqual(button.accessibilityValue, .TabTrayToggleAccessibilityValueOn)
+        XCTAssertEqual(button.accessibilityValue, .TabsTray.TabTrayToggleAccessibilityValueOn)
     }
 
     func testApplyUIMode_NotPrivate_LightMode() {
@@ -31,7 +31,7 @@ final class PrivateModeButtonTests: XCTestCase {
 
         XCTAssertEqual(button.tintColor, lightTheme.colors.textPrimary)
         XCTAssertEqual(button.imageView?.tintColor, lightTheme.colors.textPrimary)
-        XCTAssertEqual(button.accessibilityValue, .TabTrayToggleAccessibilityValueOff)
+        XCTAssertEqual(button.accessibilityValue, .TabsTray.TabTrayToggleAccessibilityValueOff)
     }
 
     func testApplyUIMode_Private_DarkMode() {
@@ -39,7 +39,7 @@ final class PrivateModeButtonTests: XCTestCase {
 
         XCTAssertEqual(button.tintColor, darkTheme.colors.layer1)
         XCTAssertEqual(button.imageView?.tintColor, darkTheme.colors.layer1)
-        XCTAssertEqual(button.accessibilityValue, .TabTrayToggleAccessibilityValueOn)
+        XCTAssertEqual(button.accessibilityValue, .TabsTray.TabTrayToggleAccessibilityValueOn)
     }
 
     func testApplyUIMode_NotPrivate_DarkMode() {
@@ -47,7 +47,7 @@ final class PrivateModeButtonTests: XCTestCase {
 
         XCTAssertEqual(button.tintColor, darkTheme.colors.textPrimary)
         XCTAssertEqual(button.imageView?.tintColor, darkTheme.colors.textPrimary)
-        XCTAssertEqual(button.accessibilityValue, .TabTrayToggleAccessibilityValueOff)
+        XCTAssertEqual(button.accessibilityValue, .TabsTray.TabTrayToggleAccessibilityValueOff)
     }
 
     func testApplyTheme_Selected_LightMode() {

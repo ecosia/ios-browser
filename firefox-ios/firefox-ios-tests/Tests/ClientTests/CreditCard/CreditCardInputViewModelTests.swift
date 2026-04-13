@@ -10,7 +10,8 @@ import XCTest
 
 @testable import Client
 
-class CreditCardInputViewModelTests: XCTestCase {
+@MainActor
+class CreditCardInputViewModelTests: XCTestCase, @unchecked Sendable {
     private var profile: MockProfile!
     private var viewModel: CreditCardInputViewModel!
     private var files: FileAccessor!
@@ -45,7 +46,7 @@ class CreditCardInputViewModelTests: XCTestCase {
 
         profile = MockProfile()
         _ = profile.autofill.reopenIfClosed()
-        viewModel = CreditCardInputViewModel(profile: profile)
+        viewModel = CreditCardInputViewModel(profile: profile, creditCardProvider: profile.autofill)
     }
 
     override func tearDown() {
@@ -268,7 +269,7 @@ class CreditCardInputViewModelTests: XCTestCase {
                         XCTAssert(updated)
                     }
                     // Check updated values
-                    self.viewModel.autofill.getCreditCard(id: ccCard.guid) { ccUpdatedCard, error in
+                    self.profile.autofill.getCreditCard(id: ccCard.guid) { ccUpdatedCard, error in
                         XCTAssertNil(error)
                         XCTAssertNotNil(ccUpdatedCard)
                         XCTAssertEqual(ccUpdatedCard?.ccName, "Mickey Mouse")

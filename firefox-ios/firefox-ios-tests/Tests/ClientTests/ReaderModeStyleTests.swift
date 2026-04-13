@@ -7,7 +7,8 @@ import Shared
 import Common
 @testable import Client
 
-class ReaderModeStyleTests: XCTestCase {
+@MainActor
+class ReaderModeStyleTests: XCTestCase, @unchecked Sendable {
     var themeManager: ThemeManager!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
@@ -228,7 +229,7 @@ extension ReaderModeFontSize: @retroactive Comparable {
 }
 
 extension ReaderModeStyle: @retroactive Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: ReaderModeStyle, rhs: ReaderModeStyle) -> Bool {
         lhs.fontSize == rhs.fontSize && lhs.fontType == rhs.fontType && lhs.theme == rhs.theme
     }
 }

@@ -5,6 +5,7 @@
 import UIKit
 @testable import Client
 
+@MainActor
 class MockNavigationController: NavigationController {
     var transitionCoordinator: UIViewControllerTransitionCoordinator?
     var presentedViewController: UIViewController?
@@ -39,5 +40,11 @@ class MockNavigationController: NavigationController {
 
     func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
         self.viewControllers = viewControllers
+    }
+
+    var topViewController: UIViewController? { return nil }
+
+    func popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
+        return nil
     }
 }

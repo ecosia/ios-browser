@@ -19,12 +19,14 @@ class MockRustRemoteTabs: RustRemoteTabs {
                             history: [URL(string: url)!],
                             lastUsed: Date.now(),
                             icon: nil,
-                            inactive: false)
+)
         let clientRemoteTab = ClientRemoteTabs(clientId: clientGUID,
                                                clientName: "testClient",
                                                deviceType: .mobile,
                                                lastModified: Int64(Date.now()),
-                                               remoteTabs: [tab.toRemoteTabRecord()])
+                                               remoteTabs: [tab.toRemoteTabRecord()],
+                                               tabGroups: [:],
+                                               windows: [:])
 
         let url2 = "https://example2.com"
         let title2 = "example2"
@@ -35,13 +37,15 @@ class MockRustRemoteTabs: RustRemoteTabs {
                              history: [URL(string: url2)!],
                              lastUsed: Date.now(),
                              icon: nil,
-                             inactive: false)
+ )
 
         let clientRemoteTab2 = ClientRemoteTabs(clientId: clientGUID2,
                                                 clientName: "testClient2",
                                                 deviceType: .mobile,
                                                 lastModified: Int64(Date.now()),
-                                                remoteTabs: [tab2.toRemoteTabRecord()])
+                                                remoteTabs: [tab2.toRemoteTabRecord()],
+                                                tabGroups: [:],
+                                                windows: [:])
         return deferMaybe([clientRemoteTab, clientRemoteTab2])
     }
 }
@@ -87,7 +91,6 @@ class RustRemoteTabsTests: XCTestCase {
             history: [URL(string: url)!],
             lastUsed: Date.now(),
             icon: nil,
-            inactive: false
         )
 
         let count = tabs.setLocalTabs(localTabs: [tab])

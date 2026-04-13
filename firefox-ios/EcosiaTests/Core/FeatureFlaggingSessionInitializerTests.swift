@@ -24,7 +24,7 @@ class FeatureManagementSessiontInitializerTests: XCTestCase {
             XCTFail("Initializing session failed: \(error.localizedDescription)")
         }
 
-        wait(for: [expect], timeout: 1.0)
+        await fulfillment(of: [expect], timeout: 1.0)
     }
 }
 

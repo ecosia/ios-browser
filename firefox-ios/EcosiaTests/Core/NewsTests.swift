@@ -6,7 +6,7 @@
 @testable import Ecosia
 import XCTest
 
-final class NewsTests: XCTestCase {
+@MainActor final class NewsTests: XCTestCase {
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.news)
         try? FileManager.default.removeItem(at: FileManager.user)
@@ -134,13 +134,16 @@ final class NewsTests: XCTestCase {
         let news = News()
 
         news.subscribe(self) { _ in
-            XCTAssertTrue(news.needsUpdate)
+            let needsUpdate1 = MainActor.assumeIsolated { news.needsUpdate }
+            XCTAssertTrue(needsUpdate1)
 
             User.shared.news = Date()
-            XCTAssertFalse(news.needsUpdate)
+            let needsUpdate2 = MainActor.assumeIsolated { news.needsUpdate }
+            XCTAssertFalse(needsUpdate2)
 
             User.shared.news = Date().advanced(by: -25 * 60 * 60)
-            XCTAssertTrue(news.needsUpdate)
+            let needsUpdate3 = MainActor.assumeIsolated { news.needsUpdate }
+            XCTAssertTrue(needsUpdate3)
 
             expect.fulfill()
         }
@@ -152,7 +155,8 @@ final class NewsTests: XCTestCase {
         let news = News()
 
         news.subscribeAndReceive(self) { items in
-            XCTAssert(news.state?.count == items.count)
+            let stateCount = MainActor.assumeIsolated { news.state?.count }
+            XCTAssert(stateCount == items.count)
             expect.fulfill()
         }
         waitForExpectations(timeout: 1)

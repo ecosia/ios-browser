@@ -24,8 +24,8 @@ final class SummarizerMiddlewareTests: XCTestCase, StoreTestUtility {
         )
         mockSummarizationChecker = MockSummarizationChecker()
         DependencyHelperMock().bootstrapDependencies(
-            injectedWindowManager: mockWindowManager,
-            injectedTabManager: mockTabManager
+            injectedTabManager: mockTabManager,
+            injectedWindowManager: mockWindowManager
         )
         setupStore()
     }

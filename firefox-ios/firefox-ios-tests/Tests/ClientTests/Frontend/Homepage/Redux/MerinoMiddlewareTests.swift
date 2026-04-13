@@ -9,7 +9,8 @@ import XCTest
 
 @testable import Client
 
-final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility {
+@MainActor
+final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     let merinoManager = MockMerinoManager()
     var mockGleanWrapper: MockGleanWrapper!
     var mockStore: MockStoreForMiddleware<AppState>!

@@ -6,6 +6,7 @@ import Common
 import XCTest
 @testable import Client
 
+@MainActor
 final class LaunchScreenViewControllerTests: XCTestCase {
     private var viewModel: MockLaunchScreenViewModel!
     private var coordinatorDelegate: MockLaunchFinishedLoadingDelegate!
@@ -32,7 +33,8 @@ final class LaunchScreenViewControllerTests: XCTestCase {
 
     @MainActor
     func testViewDidLoad_whenLaunchType_callsCoordinatorLaunch() async {
-        viewModel.mockLaunchType = .intro(manager: viewModel.introScreenManager)
+        // Ecosia: introScreenManager is private in v147; use IntroScreenManager directly
+        viewModel.mockLaunchType = .intro(manager: IntroScreenManager(prefs: MockProfile().prefs))
         let subject = createSubject()
         await subject.startLoading()
 

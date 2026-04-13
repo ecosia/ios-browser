@@ -5,7 +5,7 @@
 @testable import Ecosia
 import XCTest
 
-final class FavouritesTests: XCTestCase {
+final class FavouritesTests: XCTestCase, @unchecked Sendable {
 
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.pages)
@@ -28,7 +28,7 @@ final class FavouritesTests: XCTestCase {
 
     func testLoad() {
         let expect = expectation(description: "")
-        var favourites = Favourites()
+        nonisolated(unsafe) var favourites = Favourites()
         favourites.items.append(.init(url: URL(string: "https://www.avocado.com")!, title: "hello world"))
         favourites.items.append(.init(url: URL(string: "https://www.guacamole.com")!, title: "lorem ipsum"))
         PageStore.queue.async {

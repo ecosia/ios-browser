@@ -6,7 +6,7 @@
 import XCTest
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class URLTests: XCTestCase {
+final class URLTests: XCTestCase, @unchecked Sendable {
 
     private var root: String!
     var urlProvider: URLProvider = .production

@@ -40,7 +40,7 @@ final class UpgradeTests: XCTestCase {
         XCTAssertEqual(old.adultFilter, upgraded.adultFilter)
         XCTAssertEqual(old.autoComplete, upgraded.autoComplete)
         XCTAssertEqual(old.firstTime, upgraded.firstTime)
-        XCTAssertEqual(old.personalized, upgraded.personalized)
+        XCTAssertEqual(old.personalized ?? true, upgraded.sendAnonymousUsageData)
         XCTAssertEqual(old.migrated, upgraded.migrated)
         XCTAssertEqual(old.id, upgraded.id)
         XCTAssertEqual(old.treeCount, upgraded.searchCount)

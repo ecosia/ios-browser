@@ -9,6 +9,8 @@ class MockLaunchCoordinatorDelegate: LaunchCoordinatorDelegate {
     var didFinishCalledCount = 0
     weak var savedDidFinishCoordinator: LaunchCoordinator?
 
+    func didFinishTermsOfService(from coordinator: LaunchCoordinator) {}
+
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
         didFinishCalledCount += 1
         savedDidFinishCoordinator = coordinator

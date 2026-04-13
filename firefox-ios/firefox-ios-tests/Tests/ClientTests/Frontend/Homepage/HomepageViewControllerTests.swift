@@ -7,7 +7,8 @@ import Common
 
 @testable import Client
 
-final class HomepageViewControllerTests: XCTestCase, StoreTestUtility {
+@MainActor
+final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
     var mockNotificationCenter: MockNotificationCenter?
     var mockThemeManager: MockThemeManager?

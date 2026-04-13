@@ -7,15 +7,17 @@ import XCTest
 @testable import Ecosia
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
+final class AppDelegateFeatureManagementIntegrationTests: XCTestCase, @unchecked Sendable {
     var appDelegate: AppDelegate!
     var initialModel: Unleash.Model!
 
     override func setUp() {
         super.setUp()
 
-        appDelegate = AppDelegate()
-        DependencyHelperMock().bootstrapDependencies()
+        MainActor.assumeIsolated {
+            appDelegate = AppDelegate()
+            DependencyHelperMock().bootstrapDependencies()
+        }
         initialModel = Unleash.model
         // Reset Unleash model to initial state
         Unleash.model = Unleash.Model()
@@ -27,13 +29,12 @@ final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
     }
 
     func testStateAfterDidFinishLaunchingWithOptions_expectsModelUpdates() async {
-        let application = await UIApplication.shared
         let options: [UIApplication.LaunchOptionsKey: Any]? = nil
 
         // Store an updated model so to not let Unleash perform a call
         await storeUnleashModel()
 
-        let didFinishLaunching = await appDelegate.application(application, didFinishLaunchingWithOptions: options)
+        let didFinishLaunching = await MainActor.run { appDelegate.application(UIApplication.shared, didFinishLaunchingWithOptions: options) }
 
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
@@ -43,14 +44,12 @@ final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
     }
 
     func testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions() async {
-        let application = await UIApplication.shared
-
         // Store an updated model so to not let Unleash perform a call
         await storeUnleashModel()
 
         // Simulate didFinishLaunchingWithOptions
         let options: [UIApplication.LaunchOptionsKey: Any]? = nil
-        let didFinishLaunching = await appDelegate.application(application, didFinishLaunchingWithOptions: options)
+        let didFinishLaunching = await MainActor.run { appDelegate.application(UIApplication.shared, didFinishLaunchingWithOptions: options) }
 
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
@@ -58,7 +57,7 @@ final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
         let modelAfterLaunch = Unleash.model
 
         // Simulate entering background and foreground again
-        await appDelegate.applicationDidBecomeActive(application)
+        await MainActor.run { appDelegate.applicationDidBecomeActive(UIApplication.shared) }
 
         wait(1)
         XCTAssertEqual(Unleash.model.toggles.count, modelAfterLaunch.toggles.count)

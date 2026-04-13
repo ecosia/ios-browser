@@ -6,6 +6,7 @@ import MobileCoreServices
 import UIKit
 import UniformTypeIdentifiers
 import XCTest
+@testable import Client
 
 class UIPasteboardExtensionsTests: XCTestCase {
     fileprivate var pasteboard: UIPasteboard!

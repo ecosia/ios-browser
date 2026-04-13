@@ -10,6 +10,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
     private var mockRouter: MockRouter!
     private var profile: MockProfile!
@@ -89,81 +90,38 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
 
     // MARK: - Show homepage
 
-    func testShowHomepage_addsOneHomepageOnly() {
-        let subject = createSubject()
-        subject.showLegacyHomepage(
-            inline: true,
-            toastContainer: UIView(),
-            homepanelDelegate: subject.browserViewController,
-            libraryPanelDelegate: subject.browserViewController,
-            statusBarScrollDelegate: scrollDelegate,
-            overlayManager: overlayModeManager
-        )
-
-        /* Ecosia: Update HomepageViewController's init
-        let secondHomepage = LegacyHomepageViewController(
-            profile: profile,
-            toastContainer: UIView(),
-            tabManager: tabManager,
-            overlayManager: overlayModeManager
-        )
-         */
-        let secondHomepage = LegacyHomepageViewController(profile: profile,
-                                                          toastContainer: UIView(),
-                                                          tabManager: tabManager,
-                                                          overlayManager: overlayModeManager,
-                                                          referrals: .init(),
-                                                          delegate: nil,
-                                                          auth: EcosiaAuth(browserViewController: BrowserViewController(profile: profile, tabManager: MockTabManager())))
-
-        XCTAssertFalse(subject.browserViewController.contentContainer.canAdd(content: secondHomepage))
-        XCTAssertNotNil(subject.legacyHomepageViewController)
-        XCTAssertNil(subject.webviewController)
-    }
-
-    func testShowHomepage_reuseExistingHomepage() {
-        let subject = createSubject()
-        subject.showLegacyHomepage(
-            inline: true,
-            toastContainer: UIView(),
-            homepanelDelegate: subject.browserViewController,
-            libraryPanelDelegate: subject.browserViewController,
-            statusBarScrollDelegate: scrollDelegate,
-            overlayManager: overlayModeManager
-        )
-        let firstHomepage = subject.legacyHomepageViewController
-        XCTAssertNotNil(subject.legacyHomepageViewController)
-
-        subject.showLegacyHomepage(
-            inline: true,
-            toastContainer: UIView(),
-            homepanelDelegate: subject.browserViewController,
-            libraryPanelDelegate: subject.browserViewController,
-            statusBarScrollDelegate: scrollDelegate,
-            overlayManager: overlayModeManager
-        )
-        let secondHomepage = subject.legacyHomepageViewController
-        XCTAssertEqual(firstHomepage, secondHomepage)
-    }
+    /* Ecosia: showLegacyHomepage and LegacyHomepageViewController removed in v147
+    func testShowHomepage_addsOneHomepageOnly() { ... }
+    func testShowHomepage_reuseExistingHomepage() { ... }
+    */
 
     // MARK: - Show new homepage
 
     func testShowNewHomepage_setsProperViewController() {
         let subject = createSubject()
-        subject.showHomepage()
+        subject.showHomepage(overlayManager: overlayModeManager,
+                             isZeroSearch: false,
+                             statusBarScrollDelegate: scrollDelegate,
+                             toastContainer: UIView())
 
         XCTAssertNotNil(subject.homepageViewController)
         XCTAssertNil(subject.webviewController)
-        XCTAssertNil(subject.privateViewController)
+        // Ecosia: privateViewController removed in v147
     }
 
     func testShowNewHomepage_hasSameInstance() {
         let subject = createSubject()
-        subject.showHomepage()
+        subject.showHomepage(overlayManager: overlayModeManager,
+                             isZeroSearch: false,
+                             statusBarScrollDelegate: scrollDelegate,
+                             toastContainer: UIView())
         let firstHomepage = subject.homepageViewController
         XCTAssertNotNil(subject.homepageViewController)
 
-        subject.showHomepage()
+        subject.showHomepage(overlayManager: overlayModeManager,
+                             isZeroSearch: false,
+                             statusBarScrollDelegate: scrollDelegate,
+                             toastContainer: UIView())
         let secondHomepage = subject.homepageViewController
         XCTAssertEqual(firstHomepage, secondHomepage)
     }
@@ -177,7 +135,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         subject.browserViewController = mbvc
         subject.show(webView: webview)
 
-        XCTAssertNil(subject.legacyHomepageViewController)
+        // Ecosia: legacyHomepageViewController removed in v147
         XCTAssertNotNil(subject.webviewController)
         XCTAssertEqual(mbvc.embedContentCalled, 1)
         XCTAssertEqual(mbvc.saveEmbeddedContent?.contentType, .webview)
@@ -248,19 +206,20 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         }
     }
 
-    func testShowShareExtension_addsShareExtensionCoordinator() {
+    func testShowShareSheet_addsShareSheetCoordinator() {
         let subject = createSubject()
 
-        subject.showShareExtension(
-            url: URL(
-                string: "https://www.google.com"
-            )!,
+        subject.showShareSheet(
+            shareType: .site(url: URL(string: "https://www.google.com")!),
+            shareMessage: nil,
             sourceView: UIView(),
-            toastContainer: UIView()
+            sourceRect: nil,
+            toastContainer: UIView(),
+            popoverArrowDirection: .any
         )
 
         XCTAssertEqual(subject.childCoordinators.count, 1)
-        XCTAssertTrue(subject.childCoordinators.first is ShareExtensionCoordinator)
+        XCTAssertTrue(subject.childCoordinators.first is ShareSheetCoordinator)
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertTrue(mockRouter.presentedViewController is UIActivityViewController)
     }
@@ -380,10 +339,11 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
 
     func testRemoveChildCoordinator_whenDidFinishCalled() {
         let subject = createSubject()
-        let childCoordinator = ShareExtensionCoordinator(
+        let childCoordinator = ShareSheetCoordinator(
             alertContainer: UIView(),
             router: mockRouter,
             profile: profile,
+            parentCoordinator: subject,
             tabManager: tabManager)
 
         subject.add(child: childCoordinator)
@@ -761,6 +721,8 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
 
     // MARK: - App action route
 
+    // Ecosia: Route.AppAction.showQRCode removed in v147
+    /*
     func testHandleHandleQRCode_returnsTrue() {
         // Given
         let subject = createSubject()
@@ -775,6 +737,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         XCTAssertTrue(result)
         XCTAssertEqual(mbvc.qrCodeCount, 1)
     }
+    */
 
     func testHandleClosePrivateTabs_returnsTrue() {
         // Given
@@ -925,15 +888,9 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         XCTAssertTrue(mbvc.isPrivate)
     }
 
-    func testOpenRecentlyClosedTabInSameTab_callsReletedMethodInBrowserViewController() {
-        let subject = createSubject()
-        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
-        subject.browserViewController = mbvc
-
-        subject.openRecentlyClosedSiteInSameTab(URL(string: "https://www.google.com")!)
-
-        XCTAssertEqual(mbvc.didOpenRecentlyClosedSiteInSameTab, 1)
-    }
+    /* Ecosia: openRecentlyClosedSiteInSameTab removed in v147
+    func testOpenRecentlyClosedTabInSameTab_callsReletedMethodInBrowserViewController() { ... }
+    */
 
     func testOpenRecentlyClosedSiteInNewTab_addsOneTabToTabManager() {
         let subject = createSubject()
@@ -943,97 +900,17 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         XCTAssertEqual(tabManager.lastSelectedTabs.count, 1)
     }
 
-    // MARK: - Fakespot
-    func testFakespotCoordinatorDelegate_didDidDismiss_removesChild() {
-        let subject = createSubject()
-        subject.browserHasLoaded()
-
-        subject.showFakespotFlowAsModal(productURL: URL(string: "www.example.com")!)
-        let fakespotCoordinator = subject.childCoordinators[0] as! FakespotCoordinator
-        fakespotCoordinator.dismissModal(animated: false)
-
-        XCTAssertEqual(mockRouter.dismissCalled, 1)
-        XCTAssertTrue(subject.childCoordinators.isEmpty)
-    }
-
-    func testTappingShopping_startsFakespotCoordinatorAsModal() {
-        let subject = createSubject()
-        subject.showFakespotFlowAsModal(productURL: URL(string: "www.example.com")!)
-
-        XCTAssertNotNil(mockRouter.presentedViewController as? FakespotViewController)
-        XCTAssertEqual(mockRouter.presentCalled, 1)
-        XCTAssertEqual(subject.childCoordinators.count, 1)
-        XCTAssertNotNil(subject.childCoordinators[0] as? FakespotCoordinator)
-    }
-
-    func testTappingShopping_startsFakespotCoordinatorAsSidebar() {
-        let subject = createSubject()
-        let sidebarContainer = MockSidebarEnabledView(frame: CGRect.zero)
-        let viewController = UIViewController()
-        subject.showFakespotFlowAsSidebar(productURL: URL(string: "www.example.com")!,
-                                          sidebarContainer: sidebarContainer,
-                                          parentViewController: viewController)
-
-        XCTAssertEqual(sidebarContainer.showSidebarCalled, 1)
-        XCTAssertEqual(subject.childCoordinators.count, 1)
-        XCTAssertNotNil(subject.childCoordinators[0] as? FakespotCoordinator)
-    }
-
-    func testTappingShopping_dismissFakespotModal() {
-        let subject = createSubject()
-        subject.showFakespotFlowAsModal(productURL: URL(string: "www.example.com")!)
-        subject.dismissFakespotModal()
-
-        XCTAssertEqual(mockRouter.dismissCalled, 1)
-        XCTAssertTrue(subject.childCoordinators.isEmpty)
-    }
-
-    func testTappingShopping_dismissFakespotModal_noCoordinator() {
-        let subject = createSubject()
-        subject.dismissFakespotModal()
-
-        XCTAssertEqual(mockRouter.dismissCalled, 0)
-        XCTAssertTrue(subject.childCoordinators.isEmpty)
-    }
-
-    func testTappingShopping_dismissFakespotSidebar() {
-        let subject = createSubject()
-        let sidebarContainer = MockSidebarEnabledView(frame: CGRect.zero)
-        let viewController = UIViewController()
-        subject.showFakespotFlowAsSidebar(productURL: URL(string: "www.example.com")!,
-                                          sidebarContainer: sidebarContainer,
-                                          parentViewController: viewController)
-        subject.dismissFakespotSidebar(sidebarContainer: sidebarContainer, parentViewController: viewController)
-
-        XCTAssertEqual(mockRouter.dismissCalled, 1)
-        XCTAssertEqual(sidebarContainer.hideSidebarCalled, 1)
-        XCTAssertTrue(subject.childCoordinators.isEmpty)
-    }
-
-    func testTappingShopping_dismissFakespotSidebar_noCoordinator() {
-        let subject = createSubject()
-        let sidebarContainer = MockSidebarEnabledView(frame: CGRect.zero)
-        subject.dismissFakespotSidebar(sidebarContainer: sidebarContainer, parentViewController: UIViewController())
-
-        XCTAssertEqual(mockRouter.dismissCalled, 0)
-        XCTAssertEqual(sidebarContainer.hideSidebarCalled, 0)
-        XCTAssertTrue(subject.childCoordinators.isEmpty)
-    }
-
-    func testChangeShoppingURL_updatesSidebar() {
-        let subject = createSubject()
-        let sidebarContainer = MockSidebarEnabledView(frame: CGRect.zero)
-        let viewController = UIViewController()
-        subject.showFakespotFlowAsSidebar(productURL: URL(string: "www.example.com")!,
-                                          sidebarContainer: sidebarContainer,
-                                          parentViewController: viewController)
-
-        subject.updateFakespotSidebar(productURL: URL(string: "www.example2.com")!,
-                                      sidebarContainer: sidebarContainer,
-                                      parentViewController: viewController)
-
-        XCTAssertEqual(sidebarContainer.updateSidebarCalled, 1)
-    }
+    /* Ecosia: Fakespot removed in v147 — FakespotCoordinator, FakespotViewController,
+       showFakespotFlowAsModal/AsSidebar, dismissFakespotModal/Sidebar, updateFakespotSidebar all removed
+    func testFakespotCoordinatorDelegate_didDidDismiss_removesChild() { ... }
+    func testTappingShopping_startsFakespotCoordinatorAsModal() { ... }
+    func testTappingShopping_startsFakespotCoordinatorAsSidebar() { ... }
+    func testTappingShopping_dismissFakespotModal() { ... }
+    func testTappingShopping_dismissFakespotModal_noCoordinator() { ... }
+    func testTappingShopping_dismissFakespotSidebar() { ... }
+    func testTappingShopping_dismissFakespotSidebar_noCoordinator() { ... }
+    func testChangeShoppingURL_updatesSidebar() { ... }
+    */
 
     func testShowAddressAutofill_addsAddressAutofillCoordinator() {
         // Arrange
@@ -1087,7 +964,8 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
             return
         }
 
-        menuCoordinator.navigateTo(MenuNavigationDestination(.customizeHomepage), animated: false)
+        // Ecosia: .customizeHomepage removed in v147, use .settings instead
+        menuCoordinator.navigateTo(MenuNavigationDestination(.settings), animated: false)
 
         XCTAssertTrue(subject.childCoordinators[0] is SettingsCoordinator)
         XCTAssertTrue(mockRouter.presentedViewController?.children.first is AppSettingsTableViewController)

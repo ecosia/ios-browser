@@ -27,8 +27,8 @@ final class TranslationsServiceTests: XCTestCase {
         )
 
         DependencyHelperMock().bootstrapDependencies(
-            injectedWindowManager: mockWindowManager,
-            injectedTabManager: mockTabManager
+            injectedTabManager: mockTabManager,
+            injectedWindowManager: mockWindowManager
         )
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
     }

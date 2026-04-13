@@ -7,31 +7,13 @@ import Foundation
 import Common
 
 class MockLaunchScreenViewModel: LaunchScreenViewModel {
-    var introScreenManager: IntroScreenManager
-    var updateViewModel: UpdateViewModel
-    var surveySurfaceManager: SurveySurfaceManager
     var startLoadingCalled = 0
+    var loadNextLaunchTypeCalled = 0
     var mockLaunchType: LaunchType?
-    let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override init(
-        windowUUID: WindowUUID,
-        profile: Profile,
-        messageManager: GleanPlumbMessageManagerProtocol = Experiments.messaging,
-        onboardingModel: OnboardingViewModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .upgrade)
-    ) {
-        self.introScreenManager = IntroScreenManager(prefs: profile.prefs)
-        let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
-        self.updateViewModel = UpdateViewModel(profile: profile,
-                                               model: onboardingModel,
-                                               telemetryUtility: telemetryUtility,
-                                               windowUUID: windowUUID)
-        self.surveySurfaceManager = SurveySurfaceManager(windowUUID: windowUUID, and: messageManager)
-        super.init(windowUUID: windowUUID)
-    }
-
-    override func startLoading(appVersion: String) async {
+    override func startLoading(appVersion: String) {
         startLoadingCalled += 1
+        loadNextLaunchTypeCalled += 1
         if let mockLaunchType = mockLaunchType {
             delegate?.launchWith(launchType: mockLaunchType)
         } else {

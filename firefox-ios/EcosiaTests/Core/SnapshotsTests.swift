@@ -6,7 +6,7 @@
 import XCTest
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class SnapshotsTests: XCTestCase {
+final class SnapshotsTests: XCTestCase, @unchecked Sendable {
     private var tabs: Tabs!
 
     override func setUp() {

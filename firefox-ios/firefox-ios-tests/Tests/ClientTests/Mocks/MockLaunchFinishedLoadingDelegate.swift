@@ -18,4 +18,12 @@ class MockLaunchFinishedLoadingDelegate: LaunchFinishedLoadingDelegate {
     func launchBrowser() {
         launchBrowserCalled += 1
     }
+
+    func finishedLoadingLaunchOrder() {}
+
+    func verifyLaunchWithCalled(with launchType: LaunchType) -> Bool {
+        guard let savedType = savedLaunchType else { return false }
+        // Compare by string representation since LaunchType may not be Equatable
+        return "\(savedType)" == "\(launchType)"
+    }
 }

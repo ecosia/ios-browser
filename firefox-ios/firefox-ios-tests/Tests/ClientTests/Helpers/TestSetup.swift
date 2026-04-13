@@ -6,6 +6,8 @@ import Foundation
 
 class TestSetup: NSObject {
     override init() {
-        DependencyHelperMock().bootstrapDependencies()
+        MainActor.assumeIsolated {
+            DependencyHelperMock().bootstrapDependencies()
+        }
     }
 }

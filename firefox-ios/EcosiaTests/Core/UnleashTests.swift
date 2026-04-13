@@ -171,8 +171,8 @@ extension UnleashTests {
 
 extension UnleashTests {
 
-    static var stagingUnleashRequest = MockStagingUnleashRequest(etag: "a-tag")
-    static var prodUnleashRequest = MockProdUnleashRequest(etag: "a-tag")
+    nonisolated(unsafe) static var stagingUnleashRequest = MockStagingUnleashRequest(etag: "a-tag")
+    nonisolated(unsafe) static var prodUnleashRequest = MockProdUnleashRequest(etag: "a-tag")
 
     static func mockMakeURLRequest(for url: URL,
                                    path: String?,

@@ -27,11 +27,11 @@ import Storage
 import MozillaAppServices
 import XCTest
 
-final class EcosiaPerformanceTestHistory: ProfileTest {
+final class EcosiaPerformanceTestHistory: ProfileTest, @unchecked Sendable {
 
     private func addSite(_ places: RustPlaces, url: String, title: String, bool: Bool = true, visitType: VisitType = .link) {
         _ = places.reopenIfClosed()
-        let site = Site(url: url, title: title)
+        let site = Site.createBasicSite(url: url, title: title)
         let visit = VisitObservation(url: site.url, title: site.title, visitType: visitType)
         let res = places.applyObservation(visitObservation: visit).value
         XCTAssertEqual(bool, res.isSuccess, "Site added: \(url)., error value: \(res.failureValue ?? "wow")")

@@ -6,8 +6,9 @@
 import Foundation
 import Common
 
-class MockNotificationCenter: NotificationProtocol {
+final class MockNotificationCenter: NotificationProtocol, @unchecked Sendable {
     var postCallCount = 0
+    var addPublisherCount = 0
     var addObserverCallCount = 0
     var removeObserverCallCount = 0
     var observers: [NSNotification.Name] = []
@@ -24,7 +25,7 @@ class MockNotificationCenter: NotificationProtocol {
         notifiableListener?.handleNotifications(Notification(name: name))
     }
 
-    func post(name aName: NSNotification.Name, withObject anObject: Any?, withUserInfo info: Any?) {
+    func post(name aName: NSNotification.Name, withObject anObject: Any?, withUserInfo info: [AnyHashable: Any]?) {
         savePostName = aName
         savePostObject = anObject
         saveUserInfo = info
@@ -56,5 +57,14 @@ class MockNotificationCenter: NotificationProtocol {
 
     func removeObserver(_ observer: Any) {
         removeObserverCallCount += 1
+    }
+
+    func removeObserver(_ observer: Any, name aName: NSNotification.Name?, object anObject: Any?) {
+        removeObserverCallCount += 1
+    }
+
+    func publisher(for name: Notification.Name, object: AnyObject?) -> NotificationCenter.Publisher {
+        addPublisherCount += 1
+        return NotificationCenter.default.publisher(for: name, object: object)
     }
 }

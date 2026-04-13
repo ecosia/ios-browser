@@ -5,7 +5,8 @@
 import XCTest
 @testable import Client
 
-class NotificationManagerTests: XCTestCase {
+@MainActor
+class NotificationManagerTests: XCTestCase, @unchecked Sendable {
     private var center: MockUserNotificationCenter!
     private var notificationManager: NotificationManager!
 
@@ -28,13 +29,9 @@ class NotificationManagerTests: XCTestCase {
         }
     }
 
-    func testGetNotificationSettings() {
-        let expectation = self.expectation(description: "notification manager")
-        notificationManager.getNotificationSettings { settings in
-            XCTAssertTrue(self.center.getSettingsWasCalled)
-            expectation.fulfill()
-        }
-        waitForExpectations(timeout: 5)
+    func testGetNotificationSettings() async {
+        _ = await notificationManager.getNotificationSettings(sendTelemetry: false)
+        XCTAssertTrue(center.getSettingsWasCalled)
     }
 
     func testScheduleDate() {
@@ -53,16 +50,14 @@ class NotificationManagerTests: XCTestCase {
         XCTAssertTrue(center.addWasCalled)
     }
 
-    func testFindDeliveredNotifications() {
-        notificationManager.findDeliveredNotifications { notifications in
-            XCTAssertTrue(self.center.getDeliveredWasCalled)
-        }
+    func testFindDeliveredNotifications() async {
+        _ = await notificationManager.findDeliveredNotifications()
+        XCTAssertTrue(center.getDeliveredWasCalled)
     }
 
-    func testFindDeliveredNotificationForId() {
-        notificationManager.findDeliveredNotificationForId(id: "id1") { notifications in
-            XCTAssertTrue(self.center.getDeliveredWasCalled)
-        }
+    func testFindDeliveredNotificationForId() async {
+        _ = await notificationManager.findDeliveredNotificationForId(id: "id1")
+        XCTAssertTrue(center.getDeliveredWasCalled)
     }
 
     func testRemoveAllPendingNotifications() {

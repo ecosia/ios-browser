@@ -8,6 +8,7 @@ import Common
 @testable import Client
 // swiftlint:disable implicitly_unwrapped_optional
 
+@MainActor
 final class InvisibleTabAutoCloseManagerTests: XCTestCase {
 
     // MARK: - Properties

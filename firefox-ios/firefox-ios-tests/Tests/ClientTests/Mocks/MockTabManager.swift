@@ -33,7 +33,7 @@ class MockTabManager: TabManager {
     var normalActiveTabs = [Tab]()
     var inactiveTabs = [Tab]()
     var privateTabs = [Tab]()
-    var tabDisplayType: TabDisplayType = .TabGrid
+    var tabRestoreHasFinished = false
 
     var addTabsForURLsCalled = 0
     var addTabsURLs: [URL] = []
@@ -81,6 +81,7 @@ class MockTabManager: TabManager {
 
     func addDelegate(_ delegate: TabManagerDelegate) {}
 
+    func setNavigationDelegate(_ delegate: WKNavigationDelegate) {}
     func addNavigationDelegate(_ delegate: WKNavigationDelegate) {}
 
     func removeDelegate(_ delegate: TabManagerDelegate, completion: (() -> Void)?) {}
@@ -96,11 +97,13 @@ class MockTabManager: TabManager {
 
     func removeTabs(_ tabs: [Tab]) {}
 
-    func removeTab(_ tabUUID: String) async {}
+    func removeTab(_ tabUUID: TabUUID) {}
 
-    func removeAllTabs(isPrivateMode: Bool) async {}
+    func removeAllTabs(isPrivateMode: Bool) {}
 
-    func removeTabs(by urls: [URL]) async {
+    func removeNormalTabsOlderThan(period: TabsDeletionPeriod, currentDate: Date) {}
+
+    func removeTabs(by urls: [URL]) {
         removeTabsByURLCalled += 1
     }
 
@@ -121,6 +124,10 @@ class MockTabManager: TabManager {
     func reorderTabs(isPrivate privateMode: Bool, fromIndex visibleFromIndex: Int, toIndex visibleToIndex: Int) {}
 
     func preserveTabs() {}
+    func commitChanges() {}
+    func notifyCurrentTabDidFinishLoading() {}
+    func expireLoginAlerts() {}
+    func tabDidSetScreenshot(_ tab: Tab) {}
 
     func restoreTabs(_ forced: Bool) {}
 

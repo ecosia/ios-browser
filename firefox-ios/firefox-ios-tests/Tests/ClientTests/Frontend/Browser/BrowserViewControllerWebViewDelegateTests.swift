@@ -9,6 +9,7 @@ import WebKit
 
 @testable import Client
 
+@MainActor
 class BrowserViewControllerWebViewDelegateTests: XCTestCase {
     var subject: BrowserViewController!
     var profile: MockProfile!
