@@ -16,12 +16,12 @@ final class TermsOfUseTelemetryTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         telemetry = TermsOfUseTelemetry()
-        Self.setupTelemetry(with: MockProfile())
+        TelemetryWrapper.shared.setup(profile: MockProfile())
     }
 
     override func tearDown() async throws {
         telemetry = nil
-        Self.tearDownTelemetry()
+        
         try await super.tearDown()
     }
 

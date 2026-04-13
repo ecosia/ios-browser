@@ -9,6 +9,7 @@ import Common
 import UIKit
 @testable import Client
 
+@MainActor
 class SurveySurfaceManagerTests: XCTestCase {
     private var messageManager: MockGleanPlumbMessageManagerProtocol!
     let windowUUID: WindowUUID = .XCTestDefaultUUID

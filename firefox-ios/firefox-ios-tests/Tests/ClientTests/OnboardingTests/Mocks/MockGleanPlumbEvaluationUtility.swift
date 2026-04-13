@@ -13,7 +13,7 @@ enum JexlError: Error {
     case unknownJexl
 }
 
-class MockNimbusTargetingHelper: NimbusTargetingHelperProtocol {
+final class MockNimbusTargetingHelper: NimbusTargetingHelperProtocol, @unchecked Sendable {
     func evalJexl(expression: String) throws -> Bool {
         switch expression {
         case "true": return true
@@ -21,9 +21,13 @@ class MockNimbusTargetingHelper: NimbusTargetingHelperProtocol {
         default: throw JexlError.unknownJexl
         }
     }
+
+    func evalJexlDebug(expression: String) throws -> String {
+        return "{}"
+    }
 }
 
-class MockNimbusStringHelper: NimbusStringHelperProtocol {
+final class MockNimbusStringHelper: NimbusStringHelperProtocol, @unchecked Sendable {
     func stringFormat(template: String, uuid: String?) -> String {
         if let uuid = uuid {
             return template.replacingOccurrences(of: "{uuid}", with: uuid)
@@ -41,7 +45,7 @@ class MockNimbusStringHelper: NimbusStringHelperProtocol {
     }
 }
 
-class MockNimbusMessagingHelperUtility: NimbusMessagingHelperUtilityProtocol {
+final class MockNimbusMessagingHelperUtility: NimbusMessagingHelperUtilityProtocol, @unchecked Sendable {
     required init(logger: Logger = DefaultLogger.shared) { }
 
     func createNimbusMessagingHelper() -> NimbusMessagingHelperProtocol? {

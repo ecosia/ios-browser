@@ -7,7 +7,8 @@ import XCTest
 
 @testable import Client
 
-class GeneralizedImageFetcherTests: XCTestCase {
+@MainActor
+final class GeneralizedImageFetcherTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         super.setUp()
 

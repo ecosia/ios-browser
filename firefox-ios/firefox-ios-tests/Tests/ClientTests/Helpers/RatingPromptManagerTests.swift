@@ -130,7 +130,9 @@ private extension RatingPromptManagerTests {
                     XCTFail("CreateFolder method did not return GUID", file: file, line: line)
                     return
                 }
-                self.createdGuids.append(guid)
+                MainActor.assumeIsolated {
+                    self.createdGuids.append(guid)
+                }
             }
         }
 
@@ -154,7 +156,9 @@ private extension RatingPromptManagerTests {
                     XCTFail("CreateFolder method did not return GUID", file: file, line: line)
                     return
                 }
-                self.createdGuids.append(guid)
+                MainActor.assumeIsolated {
+                    self.createdGuids.append(guid)
+                }
             }
         }
 
@@ -219,10 +223,7 @@ private extension RatingPromptManagerTests {
     }
 
     func createSite(number: Int) -> Site {
-        let site = Site(url: "http://s\(number)ite\(number).com/foo", title: "A \(number)")
-        site.id = number
-        site.guid = "abc\(number)def"
-
+        let site = Site.createBasicSite(url: "http://s\(number)ite\(number).com/foo", title: "A \(number)")
         return site
     }
 

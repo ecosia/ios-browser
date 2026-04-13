@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class SearchEngineSelectionStateTests: XCTestCase {
     override func setUp() {
         super.setUp()
@@ -29,10 +30,12 @@ final class SearchEngineSelectionStateTests: XCTestCase {
         let initialState = createSubject()
         let reducer = searchEngineSelectionReducer()
 
-        let expectedResult: [OpenSearchEngine] = [
+        let engines: [OpenSearchEngine] = [
             OpenSearchEngineTests.generateOpenSearchEngine(type: .wikipedia, withImage: UIImage()),
             OpenSearchEngineTests.generateOpenSearchEngine(type: .youtube, withImage: UIImage())
         ]
+        // Ecosia: v147 uses SearchEngineModel instead of OpenSearchEngine
+        let expectedResult: [SearchEngineModel] = engines.map { $0.generateModel() }
 
         XCTAssertEqual(initialState.searchEngines, [])
 

@@ -228,7 +228,7 @@ extension ReaderModeFontSize: @retroactive Comparable {
     }
 }
 
-extension ReaderModeStyle: @retroactive Equatable {
+extension ReaderModeStyle: @retroactive @preconcurrency Equatable {
     public static func == (lhs: ReaderModeStyle, rhs: ReaderModeStyle) -> Bool {
         lhs.fontSize == rhs.fontSize && lhs.fontType == rhs.fontType && lhs.theme == rhs.theme
     }

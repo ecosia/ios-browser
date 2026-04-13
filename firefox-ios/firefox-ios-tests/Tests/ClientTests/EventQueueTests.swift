@@ -301,7 +301,7 @@ final class EventQueueTests: XCTestCase, @unchecked Sendable {
         let expectation = XCTestExpectation(description: "Nested action expectation.")
         queue.wait(for: [.startingEvent, .laterEvent], then: {
             MainActor.assumeIsolated {
-                self.queue.wait(for: [.startingEvent, .laterEvent], then: {
+                _ = self.queue.wait(for: [.startingEvent, .laterEvent], then: {
                     expectation.fulfill()
                 })
             }

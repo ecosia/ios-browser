@@ -104,8 +104,8 @@ class OnboardingButtonActionTests: XCTestCase {
         twoButtons: Bool = true,
         file: StaticString = #file,
         line: UInt = #line
-    ) -> OnboardingBasicCardViewController {
-        var buttons: OnboardingButtons
+    ) -> OnboardingBasicCardViewController<OnboardingKitCardInfoModel> {
+        var buttons: OnboardingButtons<OnboardingActions>
         if twoButtons {
             buttons = OnboardingButtons(
                 primary: OnboardingButtonInfoModel(
@@ -121,7 +121,7 @@ class OnboardingButtonActionTests: XCTestCase {
                     action: firstAction))
         }
 
-        let mockInfoModel = OnboardingCardInfoModel(
+        let mockInfoModel = OnboardingKitCardInfoModel(
             cardType: .basic,
             name: "signSync",
             order: 10,

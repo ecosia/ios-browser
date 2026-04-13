@@ -7,6 +7,7 @@ import Shared
 import Common
 @testable import Client
 
+@MainActor
 class NotificationSurfaceManagerTests: XCTestCase {
     private var messageManager: MockGleanPlumbMessageManagerProtocol!
     private var notificationManager: MockNotificationManager!
@@ -38,25 +39,25 @@ class NotificationSurfaceManagerTests: XCTestCase {
         XCTAssertTrue(subject.shouldShowSurface)
     }
 
-    func testShowSurface_noMessage() {
+    func testShowSurface_noMessage() async {
         let subject = createSubject()
 
         XCTAssertFalse(subject.shouldShowSurface)
 
-        subject.showNotificationSurface()
+        await subject.showNotificationSurface()
 
         XCTAssertFalse(notificationManager.scheduleWithIntervalWasCalled)
         XCTAssertEqual(notificationManager.scheduledNotifications, 0)
     }
 
-    func testShowSurface_validMessage() {
+    func testShowSurface_validMessage() async {
         let subject = createSubject()
         let message = createMessage()
         messageManager.message = message
 
         XCTAssertTrue(subject.shouldShowSurface)
 
-        subject.showNotificationSurface()
+        await subject.showNotificationSurface()
 
         XCTAssertTrue(notificationManager.scheduleWithIntervalWasCalled)
         XCTAssertEqual(notificationManager.scheduledNotifications, 1)
@@ -64,14 +65,14 @@ class NotificationSurfaceManagerTests: XCTestCase {
 
     func testDidTapNotification_noMessageId() {
         let subject = createSubject()
-        subject.didTapNotification([:])
+        subject.didTapNotification("")
 
         XCTAssertEqual(messageManager.onMessagePressedCalled, 0)
     }
 
     func testDidTapNotification_noMessageFound() {
         let subject = createSubject()
-        subject.didTapNotification([NotificationSurfaceManager.Constant.messageIdKey: "test"])
+        subject.didTapNotification("test")
 
         XCTAssertEqual(messageManager.onMessagePressedCalled, 0)
     }
@@ -83,7 +84,7 @@ class NotificationSurfaceManagerTests: XCTestCase {
 
         XCTAssertTrue(subject.shouldShowSurface)
 
-        subject.didTapNotification([NotificationSurfaceManager.Constant.messageIdKey: "test-notification"])
+        subject.didTapNotification("test-notification")
 
         XCTAssertEqual(messageManager.onMessagePressedCalled, 1)
     }
@@ -95,7 +96,7 @@ class NotificationSurfaceManagerTests: XCTestCase {
 
         XCTAssertTrue(subject.shouldShowSurface)
 
-        subject.didTapNotification([NotificationSurfaceManager.Constant.messageIdKey: "test-notification"])
+        subject.didTapNotification("test-notification")
 
         XCTAssertEqual(messageManager.onMessagePressedCalled, 1)
     }

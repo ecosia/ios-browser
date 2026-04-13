@@ -3,10 +3,12 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Redux
+import SummarizeKit
 import XCTest
 
 @testable import Client
 
+@MainActor
 final class MainMenuStateTests: XCTestCase {
     override func setUp() {
         super.setUp()
@@ -22,7 +24,7 @@ final class MainMenuStateTests: XCTestCase {
         let initialState = createSubject()
 
         XCTAssertFalse(initialState.shouldDismiss)
-        XCTAssertEqual(initialState.menuElements, [])
+        XCTAssertTrue(initialState.menuElements.isEmpty)
         XCTAssertNil(initialState.navigationDestination)
         XCTAssertNil(initialState.currentTabInfo)
     }
@@ -40,9 +42,12 @@ final class MainMenuStateTests: XCTestCase {
             hasChangedUserAgent: true,
             zoomLevel: 1.0,
             readerModeIsAvailable: false,
+            summaryIsAvailable: false,
+            summarizerConfig: nil,
             isBookmarked: false,
             isInReadingList: false,
-            isPinned: false
+            isPinned: false,
+            accountData: AccountData(title: "Test", subtitle: nil)
         )
 
         XCTAssertNil(initialState.currentTabInfo)
@@ -65,7 +70,7 @@ final class MainMenuStateTests: XCTestCase {
 
         XCTAssertNil(initialState.navigationDestination)
 
-        MainMenuNavigationDestination.allCases.forEach { destination in
+        MainMenuNavigationDestination.allCasesForTests.forEach { destination in
             let newState = reducer(
                 initialState,
                 MainMenuAction(

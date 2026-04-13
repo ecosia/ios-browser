@@ -8,6 +8,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 class CanRemoveQuickActionBookmarkTests: XCTestCase {
     private var subject: MockCanRemoveQuickActionBookmark!
     private var mockBookmarksHandler: BookmarksHandlerMock!
@@ -63,8 +64,8 @@ private extension CanRemoveQuickActionBookmarkTests {
 }
 
 // MARK: - CanRemoveQuickActionBookmarkMock
-private class MockCanRemoveQuickActionBookmark: CanRemoveQuickActionBookmark {
-    var bookmarksHandler: BookmarksHandler
+private final class MockCanRemoveQuickActionBookmark: CanRemoveQuickActionBookmark, @unchecked Sendable {
+    nonisolated(unsafe) var bookmarksHandler: BookmarksHandler
 
     init(bookmarksHandler: BookmarksHandler) {
         self.bookmarksHandler = bookmarksHandler
@@ -72,7 +73,7 @@ private class MockCanRemoveQuickActionBookmark: CanRemoveQuickActionBookmark {
 }
 
 // MARK: - MockQuickActions
-class MockQuickActions: QuickActions {
+final class MockQuickActions: QuickActions, @unchecked Sendable {
     var addFromShareItemCalled = 0
     func addDynamicApplicationShortcutItemOfType(_ type: ShortcutType,
                                                  fromShareItem shareItem: ShareItem,

@@ -6,7 +6,7 @@ import Foundation
 import Storage
 import Shared
 
-class ReadingListMock: ReadingList {
+final class ReadingListMock: ReadingList, @unchecked Sendable {
     var getAvailableRecordsCallCount = 0
     var getAvailableRecordsCompletion: (([ReadingListItem]) -> Void)?
 
@@ -26,14 +26,14 @@ class ReadingListMock: ReadingList {
     func deleteRecord(_ record: ReadingListItem, completion: ((Bool) -> Void)?) {}
 
     func createRecordWithURL(_ url: String, title: String, addedBy: String) -> Deferred<Maybe<ReadingListItem>> {
-        return deferMaybe(ReadingListStorageError("Function not mocked"))
+        return deferMaybe(ReadingListStorageError(message: "Function not mocked"))
     }
 
     func getRecordWithURL(_ url: String) -> Deferred<Maybe<ReadingListItem>> {
-        return deferMaybe(ReadingListStorageError("Function not mocked"))
+        return deferMaybe(ReadingListStorageError(message: "Function not mocked"))
     }
 
     func updateRecord(_ record: ReadingListItem, unread: Bool) -> Deferred<Maybe<ReadingListItem>> {
-        return deferMaybe(ReadingListStorageError("Function not mocked"))
+        return deferMaybe(ReadingListStorageError(message: "Function not mocked"))
     }
 }

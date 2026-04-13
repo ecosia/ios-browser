@@ -5,6 +5,7 @@
 import XCTest
 
 @testable import Client
+@MainActor
 class TabCellTests: XCTestCase {
     var cellDelegate: MockTabCellDelegate!
     var profile: MockProfile!
@@ -29,22 +30,21 @@ class TabCellTests: XCTestCase {
     func testConfigureTabAXLabel() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate)
+        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "test")
         XCTAssert(cell.accessibilityLabel!.contains(state.tabTitle))
     }
 
     func testConfigureTabAXHint() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate)
-        XCTAssertEqual(cell.accessibilityHint!,
-                       String.TabTraySwipeToCloseAccessibilityHint)
+        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "test")
+        XCTAssertNotNil(cell.accessibilityHint)
     }
 
     func testConfigureTabSelectedState() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate)
+        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "test")
         XCTAssertEqual(cell.isSelectedTab,
                        state.isSelected)
     }

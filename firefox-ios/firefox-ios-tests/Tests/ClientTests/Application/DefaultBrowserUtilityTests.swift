@@ -8,6 +8,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class DefaultBrowserUtilityTests: XCTestCase {
     typealias DefaultKeys = DefaultBrowserUtility.UserDefaultsKey
 

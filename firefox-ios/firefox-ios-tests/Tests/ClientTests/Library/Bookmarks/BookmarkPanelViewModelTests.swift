@@ -9,6 +9,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 class BookmarksPanelViewModelTests: XCTestCase {
     private var profile: MockProfile!
 
@@ -158,7 +159,7 @@ extension BookmarksPanelViewModelTests {
     }
 }
 
-class MockBookmarkNode: FxBookmarkNode {
+final class MockBookmarkNode: FxBookmarkNode, @unchecked Sendable {
     var type: BookmarkNodeType = .bookmark
     var guid: String = "12345"
     var parentGUID: String?

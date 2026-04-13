@@ -4,18 +4,17 @@
 
 @testable import Client
 import XCTest
-import MozillaAppServices
+import Storage
 
 class PasswordManagerSelectionHelperTests: XCTestCase {
     private var selectionHelper: PasswordManagerSelectionHelper!
-    private let loginRecord = EncryptedLogin(
-        credentials: URLCredential(
-            user: "test",
-            password: "doubletest",
-            persistence: .permanent
-        ),
-        protectionSpace: URLProtectionSpace.fromOrigin("https://test.com")
-    )
+    private let loginRecord = LoginRecord(fromJSONDict: [
+        "hostname": "https://test.com",
+        "formSubmitUrl": "https://test.com",
+        "username": "test",
+        "password": "doubletest",
+        "id": "test-login-1"
+    ])
 
     override func setUp() {
         super.setUp()
@@ -57,10 +56,13 @@ class PasswordManagerSelectionHelperTests: XCTestCase {
     }
 
     func testRemoveAllCell() {
-        let loginRecord2 = EncryptedLogin(
-            credentials: URLCredential(user: "filippo", password: "testtest", persistence: .permanent),
-            protectionSpace: URLProtectionSpace.fromOrigin("https://testtest.com")
-        )
+        let loginRecord2 = LoginRecord(fromJSONDict: [
+            "hostname": "https://testtest.com",
+            "formSubmitUrl": "https://testtest.com",
+            "username": "filippo",
+            "password": "testtest",
+            "id": "test-login-2"
+        ])
 
         selectionHelper.setCellSelected(with: loginRecord)
         selectionHelper.setCellSelected(with: loginRecord2)

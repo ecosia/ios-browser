@@ -7,6 +7,7 @@ import Common
 
 @testable import Client
 
+@MainActor
 final class NativeErrorPageViewControllerTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
@@ -23,7 +24,6 @@ final class NativeErrorPageViewControllerTests: XCTestCase {
     func testNativeErrorPageViewController_simpleCreation_hasNoLeaks() {
         let overlayManager = MockOverlayModeManager()
         let nativeErrroPageViewController = NativeErrorPageViewController(
-            model: NativeErrorPageMock.model,
             windowUUID: windowUUID,
             overlayManager: overlayManager
         )

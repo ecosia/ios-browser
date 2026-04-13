@@ -7,6 +7,7 @@ import XCTest
 import Shared
 @testable import Client
 
+@MainActor
 class ContextualHintEligibilityUtilityTests: XCTestCase {
     typealias CFRPrefsKeys = PrefsKeys.ContextualHints
 
@@ -24,8 +25,7 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
         overlayState.setURLBar(urlBarView: urlBar)
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         subject = ContextualHintEligibilityUtility(with: profile,
-                                                   overlayState: nil,
-                                                   device: MockUIDevice(isIpad: false))
+                                                   overlayState: nil)
     }
 
     override func tearDown() {
@@ -40,6 +40,7 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
 
     // MARK: - Test should Present cases
 
+    /* Ecosia: inactiveTabs hint type removed in v147
     func test_shouldPresentInactiveTabsHint() {
         let result = subject.canPresent(.inactiveTabs)
         XCTAssertTrue(result)
@@ -47,11 +48,11 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
 
     func test_shouldPresentInactiveTabsHint_WithNilOverlayMode() {
         subject = ContextualHintEligibilityUtility(with: profile,
-                                                   overlayState: nil,
-                                                   device: MockUIDevice(isIpad: true))
+                                                   overlayState: nil)
         let result = subject.canPresent(.inactiveTabs)
         XCTAssertTrue(result)
     }
+    */
 
     func test_shouldPresentDataClearanceHint() {
         let result = subject.canPresent(.dataClearance)
@@ -60,8 +61,7 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
 
     func test_shouldPresentDataClearanceHint_WithiPad() {
         subject = ContextualHintEligibilityUtility(with: profile,
-                                                   overlayState: nil,
-                                                   device: MockUIDevice(isIpad: true))
+                                                   overlayState: nil)
         let result = subject.canPresent(.dataClearance)
         XCTAssertTrue(result)
     }
@@ -70,9 +70,8 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
     func test_shouldPresentJumpBackHint() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState,
-                                                   device: MockUIDevice(isIpad: false),
-                                                   isCFRToolbarFeatureEnabled: true)
-        profile.prefs.setBool(true, forKey: CFRPrefsKeys.toolbarOnboardingKey.rawValue)
+                                                   isToolbarUpdateCFRFeatureEnabled: true)
+        profile.prefs.setBool(true, forKey: CFRPrefsKeys.toolbarUpdateKey.rawValue)
 
         let result = subject.canPresent(.jumpBackIn)
         XCTAssertTrue(result)
@@ -81,8 +80,7 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
     func test_shouldNotPresentJumpBackHint_iPhoneWithoutAndToolbarCFREnabled() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState,
-                                                   device: MockUIDevice(isIpad: false),
-                                                   isCFRToolbarFeatureEnabled: true)
+                                                   isToolbarUpdateCFRFeatureEnabled: true)
         let result = subject.canPresent(.jumpBackIn)
         XCTAssertFalse(result)
     }
@@ -90,12 +88,12 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
     func test_shouldPresentJumpBackHint_iPhoneWithoutAndToolbarCFRDisabled() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState,
-                                                   device: MockUIDevice(isIpad: false),
-                                                   isCFRToolbarFeatureEnabled: false)
+                                                   isToolbarUpdateCFRFeatureEnabled: false)
         let result = subject.canPresent(.jumpBackIn)
         XCTAssertTrue(result)
     }
 
+    /* Ecosia: device parameter removed in v147, can't test iPad-specific behavior
     func test_shouldPresentJumpBackHint_iPadWithoutToolbar() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState,
@@ -104,13 +102,13 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
         let result = subject.canPresent(.jumpBackIn)
         XCTAssertTrue(result)
     }
+    */
 
     func test_shouldPresentSyncedTabHint() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState,
-                                                   device: MockUIDevice(isIpad: false),
-                                                   isCFRToolbarFeatureEnabled: true)
-        profile.prefs.setBool(true, forKey: CFRPrefsKeys.toolbarOnboardingKey.rawValue)
+                                                   isToolbarUpdateCFRFeatureEnabled: true)
+        profile.prefs.setBool(true, forKey: CFRPrefsKeys.toolbarUpdateKey.rawValue)
 
         let result = subject.canPresent(.jumpBackInSyncedTab)
         XCTAssertTrue(result)
@@ -119,8 +117,7 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
     func test_shouldNotPresentSyncedHint_iPhoneWithoutToolbarAndFeatureEnabled() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState,
-                                                   device: MockUIDevice(isIpad: false),
-                                                   isCFRToolbarFeatureEnabled: true)
+                                                   isToolbarUpdateCFRFeatureEnabled: true)
         let result = subject.canPresent(.jumpBackInSyncedTab)
         XCTAssertFalse(result)
     }
@@ -128,12 +125,12 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
     func test_shouldPresentSyncedHint_iPhoneWithoutToolbarAndFeatureDisabled() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState,
-                                                   device: MockUIDevice(isIpad: false),
-                                                   isCFRToolbarFeatureEnabled: false)
+                                                   isToolbarUpdateCFRFeatureEnabled: false)
         let result = subject.canPresent(.jumpBackInSyncedTab)
         XCTAssertTrue(result)
     }
 
+    /* Ecosia: device parameter removed in v147, can't test iPad-specific behavior
     func test_shouldPresentSyncedHint_iPadWithoutToolbar() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState,
@@ -141,15 +138,18 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
         let result = subject.canPresent(.jumpBackInSyncedTab)
         XCTAssertTrue(result)
     }
+    */
 
     // MARK: - Test should NOT Present cases
 
+    /* Ecosia: inactiveTabs hint type removed in v147
     func test_shouldNotPresentInactiveTabsHint() {
         profile.prefs.setBool(true, forKey: CFRPrefsKeys.inactiveTabsKey.rawValue)
 
         let result = subject.canPresent(.inactiveTabs)
         XCTAssertFalse(result)
     }
+    */
 
     func test_shouldNotPresentDataClearanceHint() {
         profile.prefs.setBool(true, forKey: CFRPrefsKeys.dataClearanceKey.rawValue)
@@ -172,8 +172,7 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
      
     func test_shouldNotPresentJumpBackHint_WithOverlayMode() {
         subject = ContextualHintEligibilityUtility(with: profile,
-                                                   overlayState: overlayState,
-                                                   device: MockUIDevice(isIpad: true))
+                                                   overlayState: overlayState)
         overlayState.openNewTab(url: nil, newTabSettings: .topSites)
         let result = subject.canPresent(.jumpBackIn)
         XCTAssertFalse(result)
@@ -201,14 +200,14 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
      
     func test_shouldNotPresentSyncedHint_WithOverlayMode() {
         subject = ContextualHintEligibilityUtility(with: profile,
-                                                   overlayState: overlayState,
-                                                   device: MockUIDevice(isIpad: true))
+                                                   overlayState: overlayState)
         overlayState.openNewTab(url: nil, newTabSettings: .topSites)
         let result = subject.canPresent(.jumpBackInSyncedTab)
         XCTAssertFalse(result)
     }
      */
 
+    /* Ecosia: shoppingExperience hint type and related PrefsKeys removed in v147
     // Test Shopping CFRs
     func test_canPresentShoppingCFR_FirstDisplay_UserHasNotOptedIn() {
         subject = ContextualHintEligibilityUtility(with: profile, overlayState: overlayState)
@@ -217,59 +216,50 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
     }
 
     func test_canPresentShoppingCFR_SecondDisplay_UserHasNotOptedIn_TimeHasPassed() {
-        let lastTimestamp: Timestamp = 1695719918000 // Date and time (GMT): Tuesday, 26 September 2023 09:18:38
-
+        let lastTimestamp: Timestamp = 1695719918000
         profile.prefs.setBool(true, forKey: CFRPrefsKeys.shoppingOnboardingKey.rawValue)
         profile.prefs.setTimestamp(lastTimestamp, forKey: PrefsKeys.FakespotLastCFRTimestamp)
         profile.prefs.setBool(false, forKey: PrefsKeys.Shopping2023OptIn)
-
         let result = subject.canPresent(.shoppingExperience)
         XCTAssertTrue(result)
     }
 
     func test_canPresentShoppingCFR_SecondDisplay_UserHasOptedIn_TimeHasPassed() {
-        let lastTimestamp: Timestamp = 1695719918000 // Date and time (GMT): Tuesday, 26 September 2023 09:18:38
-
+        let lastTimestamp: Timestamp = 1695719918000
         profile.prefs.setBool(true, forKey: CFRPrefsKeys.shoppingOnboardingKey.rawValue)
         profile.prefs.setTimestamp(lastTimestamp, forKey: PrefsKeys.FakespotLastCFRTimestamp)
         profile.prefs.setBool(true, forKey: PrefsKeys.Shopping2023OptIn)
-
         let result = subject.canPresent(.shoppingExperience)
         XCTAssertTrue(result)
     }
 
     func test_canPresentShoppingCFR_SecondDisplay_UserHasNotOptedIn_TimeHasNotPassed() {
         let lastTimestamp: Timestamp = Date.now()
-
         profile.prefs.setBool(true, forKey: CFRPrefsKeys.shoppingOnboardingKey.rawValue)
         profile.prefs.setTimestamp(lastTimestamp, forKey: PrefsKeys.FakespotLastCFRTimestamp)
         profile.prefs.setBool(false, forKey: PrefsKeys.Shopping2023OptIn)
-
         let result = subject.canPresent(.shoppingExperience)
         XCTAssertFalse(result)
     }
 
     func test_canPresentShoppingCFR_SecondDisplay_UserHasOptedIn_TimeHasNotPassed() {
         let lastTimestamp: Timestamp = Date.now()
-
         profile.prefs.setBool(true, forKey: CFRPrefsKeys.shoppingOnboardingKey.rawValue)
         profile.prefs.setTimestamp(lastTimestamp, forKey: PrefsKeys.FakespotLastCFRTimestamp)
         profile.prefs.setBool(true, forKey: PrefsKeys.Shopping2023OptIn)
-
         let result = subject.canPresent(.shoppingExperience)
         XCTAssertFalse(result)
     }
 
     func test_canPresentShoppingCFR_TwoConsecutiveCFRs_UserHasNotOptedIn_() {
-        let lastTimestamp: Timestamp = 1695719918000 // Date and time (GMT): Tuesday, 26 September 2023 09:18:38
-
+        let lastTimestamp: Timestamp = 1695719918000
         profile.prefs.setBool(true, forKey: CFRPrefsKeys.shoppingOnboardingKey.rawValue)
         profile.prefs.setTimestamp(lastTimestamp, forKey: PrefsKeys.FakespotLastCFRTimestamp)
         profile.prefs.setBool(false, forKey: PrefsKeys.Shopping2023OptIn)
-
         let canPresentFirstCFR = subject.canPresent(.shoppingExperience)
         XCTAssertTrue(canPresentFirstCFR)
         let canPresentSecondCFR = subject.canPresent(.shoppingExperience)
         XCTAssertFalse(canPresentSecondCFR)
     }
+    */
 }

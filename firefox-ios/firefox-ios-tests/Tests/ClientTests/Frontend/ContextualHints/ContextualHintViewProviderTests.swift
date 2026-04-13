@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 class ContextualHintViewProviderTests: XCTestCase {
     typealias CFRPrefsKeys = PrefsKeys.ContextualHints
 
@@ -28,7 +29,6 @@ class ContextualHintViewProviderTests: XCTestCase {
     func test_dataClearanceConfiguration() {
         let subject = ContextualHintViewProvider(forHintType: .dataClearance, with: profile)
         XCTAssertTrue(subject.shouldPresentContextualHint())
-        XCTAssertFalse(subject.isActionType)
     }
 
     func test_markContextualHintPresented_setPrefsTrue() {

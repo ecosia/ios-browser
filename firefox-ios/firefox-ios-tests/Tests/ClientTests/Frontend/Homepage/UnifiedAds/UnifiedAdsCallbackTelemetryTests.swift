@@ -68,7 +68,7 @@ final class UnifiedAdsCallbackTelemetryTests: XCTestCase {
             XCTFail("savedPing is not of type Ping<NoReasonCodes>")
             return
         }
-        XCTAssertEqual(asAnyHashable(savedPing), asAnyHashable(GleanMetrics.Pings.shared.topsitesImpression))
+        XCTAssertTrue(savedPing === GleanMetrics.Pings.shared.topsitesImpression)
         XCTAssertEqual(gleanWrapper.savedEvents.count, 2)
 
         // Ensuring we call the right metrics type
@@ -102,7 +102,7 @@ final class UnifiedAdsCallbackTelemetryTests: XCTestCase {
             XCTFail("savedPing is not of type Ping<NoReasonCodes>")
             return
         }
-        XCTAssertEqual(asAnyHashable(savedPing), asAnyHashable(GleanMetrics.Pings.shared.topsitesImpression))
+        XCTAssertTrue(savedPing === GleanMetrics.Pings.shared.topsitesImpression)
         XCTAssertEqual(gleanWrapper.savedEvents.count, 2)
 
         // Ensuring we call the right metrics type

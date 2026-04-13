@@ -9,7 +9,7 @@ import XCTest
 @testable import Client
 
 @MainActor
-final class MicrosurveyMiddlewareIntegrationTests: XCTestCase, StoreTestUtility {
+final class MicrosurveyMiddlewareIntegrationTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     let storeUtilityHelper = StoreTestUtilityHelper()
     override func setUp() {
         super.setUp()

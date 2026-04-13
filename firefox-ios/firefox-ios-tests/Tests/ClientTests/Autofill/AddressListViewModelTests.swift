@@ -10,7 +10,8 @@ import Common
 
 @testable import Client
 
-final class AddressListViewModelTests: XCTestCase {
+@MainActor
+final class AddressListViewModelTests: XCTestCase, @unchecked Sendable {
     var viewModel: AddressListViewModel!
     var mockProfile: MockProfile!
     var mockLogger: MockLogger!
@@ -83,7 +84,8 @@ final class AddressListViewModelTests: XCTestCase {
             windowUUID: WindowUUID(),
             addressProvider: mockAutofill,
             themeManager: mockThemeManager,
-            profile: mockProfile
+            profile: mockProfile,
+            localeProvider: MockLocaleProvider()
         )
     }
 
@@ -157,7 +159,15 @@ final class AddressListViewModelTests: XCTestCase {
     func testTapAddShowsAddAddressScreenThenTapCancelDismissScreen() {
         let showSectionAddExpectation = XCTestExpectation(description: "Show add section")
         let dismissSectionAddExpectation = XCTestExpectation(description: "Dismiss add section")
-        viewModel.currentRegionCode = { "RO" }
+        // Ecosia: recreate viewModel with specific region code for this test
+        viewModel = AddressListViewModel(
+            logger: mockLogger,
+            windowUUID: WindowUUID(),
+            addressProvider: mockAutofill,
+            themeManager: mockThemeManager,
+            profile: mockProfile,
+            localeProvider: MockLocaleProvider(regionCode: "RO")
+        )
         viewModel.addAddressButtonTap()
 
         let cancellable = viewModel
@@ -264,7 +274,7 @@ final class AddressListViewModelTests: XCTestCase {
         viewModel.editButtonTap()
         XCTAssertTrue(viewModel.isEditMode)
 
-        viewModel.removeConfimationButtonTap()
+        viewModel.removeConfirmationButtonTap()
         XCTAssertTrue(mockAutofill.deleteAddressesCalled)
     }
 }

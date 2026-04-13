@@ -8,6 +8,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class MainMenuMiddlewareTests: XCTestCase {
     override func setUp() {
         super.setUp()

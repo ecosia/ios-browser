@@ -16,7 +16,7 @@ class AccessoryViewProviderTests: XCTestCase {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
 
-        accessoryViewProvider = AccessoryViewProvider()
+        accessoryViewProvider = AccessoryViewProvider(windowUUID: .XCTestDefaultUUID)
     }
 
     override func tearDown() {

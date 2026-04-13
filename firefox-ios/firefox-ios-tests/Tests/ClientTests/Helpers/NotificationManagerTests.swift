@@ -23,9 +23,10 @@ class NotificationManagerTests: XCTestCase, @unchecked Sendable {
     }
 
     func testRequestAuthorization() {
+        let center = self.center!
         notificationManager.requestAuthorization { (granted, error) in
             XCTAssertTrue(granted)
-            XCTAssertTrue(self.center.requestAuthorizationWasCalled)
+            XCTAssertTrue(center.requestAuthorizationWasCalled)
         }
     }
 

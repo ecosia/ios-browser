@@ -6,12 +6,14 @@ import XCTest
 import Common
 @testable import Client
 
+@MainActor
 class AppSettingsTableViewControllerTests: XCTestCase {
     private var profile: Profile!
     private var tabManager: TabManager!
     private var appAuthenticator: MockAppAuthenticator!
     private var delegate: MockSettingsFlowDelegate!
     private var applicationHelper: MockApplicationHelper!
+    private var settingsDelegate: MockSettingsDelegate!
 
     override func setUp() {
         super.setUp()
@@ -23,6 +25,7 @@ class AppSettingsTableViewControllerTests: XCTestCase {
         self.appAuthenticator = MockAppAuthenticator()
         self.delegate = MockSettingsFlowDelegate()
         self.applicationHelper = MockApplicationHelper()
+        self.settingsDelegate = MockSettingsDelegate()
     }
 
     override func tearDown() {
@@ -33,6 +36,7 @@ class AppSettingsTableViewControllerTests: XCTestCase {
         self.appAuthenticator = nil
         self.delegate = nil
         self.applicationHelper = nil
+        self.settingsDelegate = nil
     }
 
     func testRouteNotHandled_delegatesArentCalled() {
@@ -124,9 +128,12 @@ class AppSettingsTableViewControllerTests: XCTestCase {
     // MARK: - Helper
     private func createSubject() -> AppSettingsTableViewController {
         let subject = AppSettingsTableViewController(with: profile,
-                                                     and: tabManager,
-                                                     appAuthenticator: appAuthenticator,
-                                                     applicationHelper: applicationHelper)
+                                                      and: tabManager,
+                                                      settingsDelegate: settingsDelegate,
+                                                      parentCoordinator: delegate,
+                                                      gleanUsageReportingMetricsService: GleanUsageReportingMetricsService(profile: profile),
+                                                      appAuthenticator: appAuthenticator,
+                                                      applicationHelper: applicationHelper)
         trackForMemoryLeaks(subject)
         return subject
     }

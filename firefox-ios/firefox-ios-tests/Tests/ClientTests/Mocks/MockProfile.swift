@@ -124,12 +124,16 @@ open class MockProfile: Client.Profile, @unchecked Sendable {
 
     private let directory: String
     private let databasePrefix: String
+    private var injectedPinnedSites: PinnedSites?
 
-    init(databasePrefix: String = "mock", firefoxSuggest: RustFirefoxSuggestProtocol? = nil) {
+    init(databasePrefix: String = "mock",
+         firefoxSuggest: RustFirefoxSuggestProtocol? = nil,
+         injectedPinnedSites: PinnedSites? = nil) {
         files = MockFiles()
         syncManager = ClientSyncManagerSpy() as any Client.SyncManager
         self.databasePrefix = databasePrefix
         self.firefoxSuggest = firefoxSuggest
+        self.injectedPinnedSites = injectedPinnedSites
 
         do {
             directory = try files.getAndEnsureDirectory()
@@ -254,7 +258,7 @@ open class MockProfile: Client.Profile, @unchecked Sendable {
     }()
 
     public lazy var pinnedSites: PinnedSites = {
-        legacyPlaces
+        injectedPinnedSites ?? legacyPlaces
     }()
 
     public func hasSyncAccount(completion: @escaping (Bool) -> Void) {

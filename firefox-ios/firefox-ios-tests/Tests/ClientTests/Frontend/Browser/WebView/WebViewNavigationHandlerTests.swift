@@ -7,6 +7,7 @@
 import WebKit
 import XCTest
 
+@MainActor
 class WebViewNavigationHandlerTests: XCTestCase {
     // MARK: - Data scheme
 

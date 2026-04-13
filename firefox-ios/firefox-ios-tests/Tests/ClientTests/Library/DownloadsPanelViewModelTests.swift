@@ -7,6 +7,7 @@ import Shared
 
 @testable import Client
 
+@MainActor
 class DownloadsPanelViewModelTests: XCTestCase {
     private var fileFetcher: MockDownloadFileFetcher!
 
@@ -81,27 +82,29 @@ class DownloadsPanelViewModelTests: XCTestCase {
 
     func testHeaderTitle_ForToday() {
         let viewModel = createSubject()
-        XCTAssertEqual(viewModel.headerTitle(for: 0), .LibraryPanel.Sections.Today)
+        XCTAssertEqual(viewModel.headerTitle(for: 0), .LibraryPanel.Sections.LastTwentyFourHours)
     }
 
     func testHeaderTitle_ForYesterday() {
         let viewModel = createSubject()
-        XCTAssertEqual(viewModel.headerTitle(for: 1), .LibraryPanel.Sections.Yesterday)
+        XCTAssertEqual(viewModel.headerTitle(for: 1), .LibraryPanel.Sections.LastSevenDays)
     }
 
     func testHeaderTitle_ForLastWeek() {
         let viewModel = createSubject()
-        XCTAssertEqual(viewModel.headerTitle(for: 2), .LibraryPanel.Sections.LastWeek)
+        XCTAssertEqual(viewModel.headerTitle(for: 2), .LibraryPanel.Sections.LastFourWeeks)
     }
 
+    /* Ecosia: Section removed in v147 - now only 3 sections
     func testHeaderTitle_ForLastMonth() {
         let viewModel = createSubject()
         XCTAssertEqual(viewModel.headerTitle(for: 3), .LibraryPanel.Sections.LastMonth)
     }
+    */
 
     func testHeaderTitle_ForInvalidSection() {
         let viewModel = createSubject()
-        XCTAssertNil(viewModel.headerTitle(for: 4))
+        XCTAssertNil(viewModel.headerTitle(for: 3))
     }
 
     func testGetDownloadFile_ForTodaySecondFile() {

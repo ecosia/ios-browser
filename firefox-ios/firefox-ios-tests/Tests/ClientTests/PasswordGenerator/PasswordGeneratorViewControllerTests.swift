@@ -7,6 +7,7 @@ import Common
 
 @testable import Client
 
+@MainActor
 final class PasswordGeneratorViewControllerTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
@@ -26,10 +27,16 @@ final class PasswordGeneratorViewControllerTests: XCTestCase {
         let URL = URL(string: "https://foo.com")!
         let webView = WKWebViewMock(URL)
         let currentFrame = WKFrameInfoMock(webView: webView, frameURL: URL, isMainFrame: true)
+        let frameContext = PasswordGeneratorFrameContext(
+            origin: URL.absoluteString,
+            host: URL.host ?? "",
+            scriptEvaluator: MockPasswordGeneratorScriptEvaluator(),
+            frameInfo: currentFrame
+        )
         let passwordGeneratorViewController = PasswordGeneratorViewController(
             windowUUID: windowUUID,
             currentTab: currentTab,
-            currentFrame: currentFrame
+            frameContext: frameContext
         )
         trackForMemoryLeaks(passwordGeneratorViewController)
     }

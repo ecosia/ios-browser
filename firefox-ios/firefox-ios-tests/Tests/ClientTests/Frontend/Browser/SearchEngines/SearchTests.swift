@@ -8,23 +8,8 @@ import XCTest
 
 @testable import Client
 
-class SearchTests: XCTestCase {
-    /* Ecosia: Replace Google tests with Ecosia's
-    func testParsing() {
-        let parser = OpenSearchParser(pluginMode: true)
-        let file = Bundle.main.path(forResource: "google-b-m", ofType: "xml", inDirectory: "SearchPlugins/")
-        let engine: OpenSearchEngine! = parser.parse(file!, engineID: "google-b-m")
-        XCTAssertEqual(engine.shortName, "Google")
-
-        // Test regular search queries.
-        XCTAssertEqual(engine.searchURLForQuery("foobar")!.absoluteString,
-                       "https://www.google.com/search?q=foobar&ie=utf-8&oe=utf-8&client=firefox-b-m")
-
-        // Test search suggestion queries.
-        XCTAssertEqual(engine.suggestURLForQuery("foobar")!.absoluteString,
-                       "https://www.google.com/complete/search?client=firefox&q=foobar")
-    }
-     */
+class SearchTests: XCTestCase, @unchecked Sendable {
+    /* Ecosia: OpenSearchParser removed in v147
     func testParsing() {
         let parser = OpenSearchParser(pluginMode: true)
         let file = Bundle.main.path(forResource: "ecosia", ofType: "xml", inDirectory: "SearchPlugins/")
@@ -39,6 +24,7 @@ class SearchTests: XCTestCase {
         XCTAssertEqual(engine.suggestURLForQuery("foobar")!.absoluteString,
                        "https://ac.ecosia.org/autocomplete?q=foobar&type=list")
     }
+    */
 
     func testURIFixup() {
         // Check valid URLs. We can load these after some fixup.
@@ -77,6 +63,7 @@ class SearchTests: XCTestCase {
         let engine = OpenSearchEngine(
             engineID: "mock",
             shortName: "Mock engine",
+            telemetrySuffix: nil,
             image: UIImage(),
             searchTemplate: "",
             suggestTemplate: "\(webServerBase)?q={searchTerms}",
@@ -120,6 +107,7 @@ class SearchTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    /* Ecosia: OpenSearchParser removed in v147
     func testExtractingOfSearchTermsFromURL() {
         let parser = OpenSearchParser(pluginMode: true)
         var file = Bundle.main.path(forResource: "google-b-m", ofType: "xml", inDirectory: "SearchPlugins/")!
@@ -175,6 +163,7 @@ class SearchTests: XCTestCase {
          let containsPartnerCode = engine.searchTemplate.contains("pc=MOZL")
          XCTAssertTrue(containsPartnerCode)
     }
+    */
 }
 
 // MARK: - Helper

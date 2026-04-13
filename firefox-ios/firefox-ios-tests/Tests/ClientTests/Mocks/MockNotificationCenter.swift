@@ -16,12 +16,14 @@ final class MockNotificationCenter: NotificationProtocol, @unchecked Sendable {
     var savePostName: NSNotification.Name?
     var savePostObject: Any?
     var saveUserInfo: Any?
+    var postCalled: ((NSNotification.Name) -> Void)?
 
     weak var notifiableListener: Notifiable?
 
     func post(name: NSNotification.Name) {
         savePostName = name
         postCallCount += 1
+        postCalled?(name)
         notifiableListener?.handleNotifications(Notification(name: name))
     }
 
@@ -30,6 +32,7 @@ final class MockNotificationCenter: NotificationProtocol, @unchecked Sendable {
         savePostObject = anObject
         saveUserInfo = info
         postCallCount += 1
+        postCalled?(aName)
         notifiableListener?.handleNotifications(Notification(name: aName))
     }
 

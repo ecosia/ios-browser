@@ -7,7 +7,9 @@ import Foundation
 import XCTest
 import Shared
 import Common
+import OnboardingKit
 
+@MainActor
 class UpdateViewModelTests: XCTestCase {
     private var profile: MockProfile!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
@@ -104,7 +106,7 @@ class UpdateViewModelTests: XCTestCase {
     func testShouldNotShowCoverSheetForSameVersion() {
         let subject = createSubject()
         let currentTestAppVersion = "22.0"
-        UserDefaults.standard.set(true, forKey: PrefsKeys.NimbusFeatureTestsOverride)
+        // Ecosia: PrefsKeys.NimbusFeatureTestsOverride removed in v147
 
         // Setting clean install to false
         profile.prefs.setString(currentTestAppVersion, forKey: PrefsKeys.AppVersion.Latest)
@@ -187,20 +189,22 @@ class UpdateViewModelTests: XCTestCase {
         return subject
     }
 
-    func createOnboardingViewModel(withCards: Bool) -> OnboardingViewModel {
-        let cards: [OnboardingCardInfoModel] = [
+    func createOnboardingViewModel(withCards: Bool) -> OnboardingKitViewModel {
+        let cards: [OnboardingKitCardInfoModel] = [
             createCard(index: 1),
             createCard(index: 2)
         ]
 
-        return OnboardingViewModel(cards: withCards ? cards : [],
-                                   isDismissable: true)
+        return OnboardingKitViewModel(cards: withCards ? cards : [],
+                                   isDismissible: true)
     }
 
-    func createCard(index: Int) -> OnboardingCardInfoModel {
-        let buttons = OnboardingButtons(primary: OnboardingButtonInfoModel(title: "Button title \(index)",
-                                                                           action: .forwardOneCard))
-        return OnboardingCardInfoModel(
+    func createCard(index: Int) -> OnboardingKitCardInfoModel {
+        let buttons = OnboardingKit.OnboardingButtons<OnboardingActions>(
+            primary: OnboardingButtonInfoModel<OnboardingActions>(
+                title: "Button title \(index)",
+                action: .forwardOneCard))
+        return OnboardingKitCardInfoModel(
             cardType: .basic,
             name: "Name \(index)",
             order: index,

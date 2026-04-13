@@ -6,6 +6,8 @@ import Common
 import MozillaAppServices
 import Shared
 
+@testable import Client
+
 struct NimbusOnboardingTestingConfigUtility {
     struct CardElementNames {
         static let name = "Name"
