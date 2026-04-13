@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "OK";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Trametter in rapport da collaps per che Mozilla possia schliar il problem?";
+"Send a crash report so Mozilla can fix the problem?" = "Trametter in rapport da collaps per che Ecosia possia schliar il problem?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Trametter in resun";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Ulteriuras infurmaziuns.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla vul mo rimnar las datas necessarias per porscher e meglierar Ecosia per in e scadin.";
+"Settings.SendUsage.Message" = "Ecosia vul mo rimnar las datas necessarias per porscher e meglierar Ecosia per in e scadin.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Trametter datas davart l'utilisaziun";

@@ -536,7 +536,7 @@
 "Search.ThirdPartyEngines.OK" = "Ayyo";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Kaŋyan bayrandi sanba hala Mozilla ma hin ka layboo hanse?";
+"Send a crash report so Mozilla can fix the problem?" = "Kaŋyan bayrandi sanba hala Ecosia ma hin ka layboo hanse?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Zaabo sanba";
@@ -716,7 +716,7 @@
 "Settings.SendUsage.Link" = "Bay ka tonton.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla ga durkutu ka alhabar de marga kaŋ ir g'a ka Ecosia tee k'a boryandi borey kul se.";
+"Settings.SendUsage.Message" = "Ecosia ga durkutu ka alhabar de marga kaŋ ir g'a ka Ecosia tee k'a boryandi borey kul se.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Goyyan bayhayey sanba";

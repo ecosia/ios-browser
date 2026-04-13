@@ -1010,7 +1010,7 @@
 "Search.ThirdPartyEngines.OK" = "Olgu";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Kas saata vearaport, et Mozilla saaks probleemi lahendada?";
+"Send a crash report so Mozilla can fix the problem?" = "Kas saata vearaport, et Ecosia saaks probleemi lahendada?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Saada tagasisidet";
@@ -1355,7 +1355,7 @@
 "Settings.SendUsage.Link" = "Rohkem teavet.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla püüab koguda ainult seda, mida vajame, et teha Ecosia kõigi jaoks paremaks.";
+"Settings.SendUsage.Message" = "Ecosia püüab koguda ainult seda, mida vajame, et teha Ecosia kõigi jaoks paremaks.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Saadetakse kasutusandmeid";

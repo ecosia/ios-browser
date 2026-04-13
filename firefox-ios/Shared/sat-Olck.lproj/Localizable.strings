@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "ᱰᱷᱮᱨ ᱥᱮᱲᱟᱭ ᱢᱮ᱾";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla ᱡᱟᱦᱟᱸ ᱩᱱ ᱡᱚᱠᱷᱟᱜ ᱡᱟᱣᱨᱟ ᱟᱭ ᱚᱠᱟ ᱡᱷᱚᱜ ᱫᱚᱨᱠᱟᱨᱚᱜᱼᱟ ᱚᱱᱟ ᱦᱚᱸ Ecosia ᱟᱨ ᱡᱷᱚᱛᱚ ᱦᱚᱲ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱵᱮᱥ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱾";
+"Settings.SendUsage.Message" = "Ecosia ᱡᱟᱦᱟᱸ ᱩᱱ ᱡᱚᱠᱷᱟᱜ ᱡᱟᱣᱨᱟ ᱟᱭ ᱚᱠᱟ ᱡᱷᱚᱜ ᱫᱚᱨᱠᱟᱨᱚᱜᱼᱟ ᱚᱱᱟ ᱦᱚᱸ Ecosia ᱟᱨ ᱡᱷᱚᱛᱚ ᱦᱚᱲ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱵᱮᱥ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱾";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "ᱵᱮᱵᱷᱟᱨ ᱥᱟᱠᱷᱤᱭᱟᱛ ᱠᱩᱞ ᱢᱮ";

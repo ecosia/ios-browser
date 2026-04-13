@@ -956,7 +956,7 @@
 "Settings.SendUsage.Link" = "ပိုမိုလေ့လာရန်။";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla သည် လူတိုင်းအတွက် Ecosia ကို ပေးစွမ်းရန်နှင့် တိုးတက်ကောင်းမွန်စေရန်အတွက်သာ ကောက်ခံမှုပြုခြင်း ဖြစ်ပါသည်။";
+"Settings.SendUsage.Message" = "Ecosia သည် လူတိုင်းအတွက် Ecosia ကို ပေးစွမ်းရန်နှင့် တိုးတက်ကောင်းမွန်စေရန်အတွက်သာ ကောက်ခံမှုပြုခြင်း ဖြစ်ပါသည်။";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "အသုံးပြုမှုဆိုင်ရာ အချက်အလက်များကို ပေးပို့ရန်";

@@ -938,7 +938,7 @@
 "Search.ThirdPartyEngines.OK" = "OK";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Magpadala ng crash report sa Mozilla upang ayusin ang problema?";
+"Send a crash report so Mozilla can fix the problem?" = "Magpadala ng crash report sa Ecosia upang ayusin ang problema?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Ipadala ang Feedback";
@@ -1181,7 +1181,7 @@
 "Settings.SendUsage.Link" = "Matuto ng higit pa.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Nagsusumikap ang Mozilla na kolektahin lamang kung ano ang kailangan naming ibigay at pagbutihin ang Ecosia para sa lahat.";
+"Settings.SendUsage.Message" = "Nagsusumikap ang Ecosia na kolektahin lamang kung ano ang kailangan naming ibigay at pagbutihin ang Ecosia para sa lahat.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Ipadala ang Data ng Paggamit";

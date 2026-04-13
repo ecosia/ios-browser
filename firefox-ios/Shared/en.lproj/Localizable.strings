@@ -692,7 +692,7 @@
 "Send Report" = "Send Report";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Send a crash report so Mozilla can fix the problem?";
+"Send a crash report so Mozilla can fix the problem?" = "Send a crash report so Ecosia can fix the problem?";
 
 /* Button title for cancelling share screen */
 "SendTo.Cancel.Button" = "Cancel";
@@ -926,7 +926,7 @@
 "Settings.SendUsage.Link" = "Learn More.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla strives to only collect what we need to provide and improve Ecosia for everyone.";
+"Settings.SendUsage.Message" = "Ecosia strives to only collect what we need to provide and improve Ecosia for everyone.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Send Usage Data";

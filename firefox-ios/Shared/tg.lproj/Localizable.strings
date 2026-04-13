@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "ХУБ";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Гузоришеро дар бораи вайронӣ ирсол мекунед, то ки «Mozilla» тавонад мушкилиро ислоҳ намояд?";
+"Send a crash report so Mozilla can fix the problem?" = "Гузоришеро дар бораи вайронӣ ирсол мекунед, то ки «Ecosia» тавонад мушкилиро ислоҳ намояд?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Фиристодани изҳои назар";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Маълумоти бештар.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "«Mozilla» cаъю кӯшиш мекунад, ки танҳо он маълумотеро ҷамъоварӣ намояд, ки мо бояд барои фаъолият ва беҳтарсозии «Ecosia» барои ҳар як кас таъмин намоем.";
+"Settings.SendUsage.Message" = "«Ecosia» cаъю кӯшиш мекунад, ки танҳо он маълумотеро ҷамъоварӣ намояд, ки мо бояд барои фаъолият ва беҳтарсозии «Ecosia» барои ҳар як кас таъмин намоем.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Фиристодани маълумоти истифодабарӣ";

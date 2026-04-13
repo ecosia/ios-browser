@@ -578,7 +578,7 @@
 "Search.ThirdPartyEngines.OK" = "Labi";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Vai sūtīt avārijas ziņojumu lai Mozilla var salabot problēmu?";
+"Send a crash report so Mozilla can fix the problem?" = "Vai sūtīt avārijas ziņojumu lai Ecosia var salabot problēmu?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Nosūtīt atsauksmi";
@@ -761,7 +761,7 @@
 "Settings.SendUsage.Link" = "Uzzināt vairāk.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla cenšas vākt tikai tos datus, kas ir nepieciešami, lai uzlabotu Ecosia ikvienam.";
+"Settings.SendUsage.Message" = "Ecosia cenšas vākt tikai tos datus, kas ir nepieciešami, lai uzlabotu Ecosia ikvienam.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Sūtīt izmantošanas datus";

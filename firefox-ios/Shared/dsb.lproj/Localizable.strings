@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "W pórěźe";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Cośo rozpšawu wó wowalenju słaś, aby Mozilla mógał problem rozwězaś?";
+"Send a crash report so Mozilla can fix the problem?" = "Cośo rozpšawu wó wowalenju słaś, aby Ecosia mógał problem rozwězaś?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Komentar pósłaś";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Dalšne informacije.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla se procujo, jano informacije gromaźiś, kótarež trjebamy, aby Ecosia za kuždego póbitowaś a pólěpšyś.";
+"Settings.SendUsage.Message" = "Ecosia se procujo, jano informacije gromaźiś, kótarež trjebamy, aby Ecosia za kuždego póbitowaś a pólěpšyś.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Wužywańske daty pósłaś";

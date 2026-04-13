@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "확인";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Mozilla가 문제를 고칠 수 있도록 보고서를 전송하시겠습니까?";
+"Send a crash report so Mozilla can fix the problem?" = "Ecosia가 문제를 고칠 수 있도록 보고서를 전송하시겠습니까?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "의견 보내기";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "자세히 알아보기";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla는 Ecosia를 개선하기 위한 정보만 수집하기 위해 노력합니다.";
+"Settings.SendUsage.Message" = "Ecosia는 Ecosia를 개선하기 위한 정보만 수집하기 위해 노력합니다.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "사용현황 데이터 보내기";

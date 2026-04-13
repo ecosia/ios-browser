@@ -326,7 +326,7 @@
 "Search.ThirdPartyEngines.OK" = "Goed";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Stuur ’n omvalverslag na Mozilla sodat ons die probleem kan oplos?";
+"Send a crash report so Mozilla can fix the problem?" = "Stuur ’n omvalverslag na Ecosia sodat ons die probleem kan oplos?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Stuur terugvoer";

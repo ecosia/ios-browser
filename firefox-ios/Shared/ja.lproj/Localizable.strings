@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "詳細情報。";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla は Ecosia を皆さんに提供し改善するために必要な情報だけを収集するよう努めています。";
+"Settings.SendUsage.Message" = "Ecosia は Ecosia を皆さんに提供し改善するために必要な情報だけを収集するよう努めています。";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "利用統計データを送信";

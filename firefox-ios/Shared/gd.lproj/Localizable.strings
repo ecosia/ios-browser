@@ -1040,7 +1040,7 @@
 "Search.ThirdPartyEngines.OK" = "Ceart ma-thà";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "A bheil thu deònach aithisg a chur gu Mozilla mun tuisleadh ach an urrainn dhuinn a chàradh?";
+"Send a crash report so Mozilla can fix the problem?" = "A bheil thu deònach aithisg a chur gu Ecosia mun tuisleadh ach an urrainn dhuinn a chàradh?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Cuir thugainn do bheachdan";
@@ -1436,7 +1436,7 @@
 "Settings.SendUsage.Link" = "Barrachd fiosrachaidh.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Tha Mozilla an dealas dìreach an dàta a chruinneachadh a dh’fheumas sinn airson Ecosia a sholar is a leasachadh dhan a h-uile duine.";
+"Settings.SendUsage.Message" = "Tha Ecosia an dealas dìreach an dàta a chruinneachadh a dh’fheumas sinn airson Ecosia a sholar is a leasachadh dhan a h-uile duine.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Cuir an dàta cleachdaidh";

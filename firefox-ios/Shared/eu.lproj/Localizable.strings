@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "Ados";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Bidali hutsegite-txostena Mozillari arazoa konpondu ahal izateko?";
+"Send a crash report so Mozilla can fix the problem?" = "Bidali hutsegite-txostena Ecosiari arazoa konpondu ahal izateko?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Bidali iritzia";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Argibide gehiago.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Ecosia denontzat eskaini eta hobetzeko beharrezkoa dena soilik biltzen ahalegintzen da Mozilla.";
+"Settings.SendUsage.Message" = "Ecosia denontzat eskaini eta hobetzeko beharrezkoa dena soilik biltzen ahalegintzen da Ecosia.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Bidali erabilera-datuak";

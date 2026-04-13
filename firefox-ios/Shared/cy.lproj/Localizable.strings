@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "Iawn";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Anfon adroddiad chwalu fel bod modd i Mozilla drwsio'r anhawster?";
+"Send a crash report so Mozilla can fix the problem?" = "Anfon adroddiad chwalu fel bod modd i Ecosia drwsio'r anhawster?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Anfon Adborth";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Dysgu Rhagor.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mae Mozilla'n ceisio casglu dim ond yr hyn sydd ei angen arnom i ddarparu a gwella Ecosia ar gyfer pawb.";
+"Settings.SendUsage.Message" = "Mae Ecosia'n ceisio casglu dim ond yr hyn sydd ei angen arnom i ddarparu a gwella Ecosia ar gyfer pawb.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Anfon Data Defnydd";

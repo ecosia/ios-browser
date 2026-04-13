@@ -407,7 +407,7 @@
 "Search.ThirdPartyEngines.OK" = "OK";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "An bhfuil fonn ort tuairisc tuairteála a sheoladh chuig Mozilla leis an bhfadhb a réiteach?";
+"Send a crash report so Mozilla can fix the problem?" = "An bhfuil fonn ort tuairisc tuairteála a sheoladh chuig Ecosia leis an bhfadhb a réiteach?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Seol Aiseolas";

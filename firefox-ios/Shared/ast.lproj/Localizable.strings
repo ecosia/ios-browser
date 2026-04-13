@@ -662,7 +662,7 @@
 "Search.ThirdPartyEngines.OK" = "D'acuerdu";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "¿Quies unviar un informe del casque pa que Mozilla puea iguar el problema?";
+"Send a crash report so Mozilla can fix the problem?" = "¿Quies unviar un informe del casque pa que Ecosia puea iguar el problema?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Opinar";
@@ -863,7 +863,7 @@
 "Settings.SendUsage.Link" = "Lleer más.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla esfuérciase en recoyer namás lo que precisa pa fornir y ameyorar Ecosia pa tol mundu.";
+"Settings.SendUsage.Message" = "Ecosia esfuérciase en recoyer namás lo que precisa pa fornir y ameyorar Ecosia pa tol mundu.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Unviar datos d'usu";

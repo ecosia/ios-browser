@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "Í lagi";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Senda hrunaskýrslu svo Mozilla geti lagað vandamálið?";
+"Send a crash report so Mozilla can fix the problem?" = "Senda hrunaskýrslu svo Ecosia geti lagað vandamálið?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Senda endurgjöf";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Fræðast meira.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla safnar eingöngu þeim gögnum sem við þurfum til að veita og betrum bæta Ecosia fyrir alla.";
+"Settings.SendUsage.Message" = "Ecosia safnar eingöngu þeim gögnum sem við þurfum til að veita og betrum bæta Ecosia fyrir alla.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Senda notkunarupplýsingar";

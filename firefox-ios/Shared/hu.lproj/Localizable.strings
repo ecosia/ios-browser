@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "Rendben";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Összeomlás jelentése, hogy a Mozilla javíthassa a hibát?";
+"Send a crash report so Mozilla can fix the problem?" = "Összeomlás jelentése, hogy a Ecosia javíthassa a hibát?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Visszajelzés küldése";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "További tudnivalók";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "A Mozilla arra törekszik, hogy csak azt gyűjtse, ami a Ecosia fejlesztéséhez és támogatásához szükséges.";
+"Settings.SendUsage.Message" = "A Ecosia arra törekszik, hogy csak azt gyűjtse, ami a Ecosia fejlesztéséhez és támogatásához szükséges.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Használati adatok küldése";

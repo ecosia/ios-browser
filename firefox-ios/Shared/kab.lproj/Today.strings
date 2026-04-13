@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "Taskant taruradt";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "Nadi deg firefox";
+"TodayWidget.SearchInFirefoxV2" = "Nadi deg Ecosia";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "Nadi deg yiccer uslig";

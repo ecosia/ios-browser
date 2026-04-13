@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "ОК";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Mozilla бұл мәселені шеше алатындай құлау хабарламасын жіберу керек пе?";
+"Send a crash report so Mozilla can fix the problem?" = "Ecosia бұл мәселені шеше алатындай құлау хабарламасын жіберу керек пе?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Кері байланыс хабарламасын жіберу";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Көбірек білу.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla тек Ecosia қолданбасын әркім үшін ұсыну және жақсарту мақсатында керек деректерді жинауға тырысады.";
+"Settings.SendUsage.Message" = "Ecosia тек Ecosia қолданбасын әркім үшін ұсыну және жақсарту мақсатында керек деректерді жинауға тырысады.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Қолдану деректерін жіберу";

@@ -944,7 +944,7 @@
 "Search.ThirdPartyEngines.OK" = "ठिक छ";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Mozilla ले समस्या समाधान गरोस् भनेर क्रयास् रिपोट पठाउने?";
+"Send a crash report so Mozilla can fix the problem?" = "Ecosia ले समस्या समाधान गरोस् भनेर क्रयास् रिपोट पठाउने?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "प्रतिक्रिया पठाउनुहोस्";
@@ -1253,7 +1253,7 @@
 "Settings.SendUsage.Link" = "अझ जान्नुहोस् |";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla सबैको लागि Ecosia प्रदान र सुधार गर्न आवश्यक कुरा मात्र संकलन गर्ने प्रयास गर्दछ ।";
+"Settings.SendUsage.Message" = "Ecosia सबैको लागि Ecosia प्रदान र सुधार गर्न आवश्यक कुरा मात्र संकलन गर्ने प्रयास गर्दछ ।";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "उपयोग डाटा पठाउनुहोस्";
