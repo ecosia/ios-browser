@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Ecosia
 import UIKit
 import Shared
 
@@ -242,6 +243,7 @@ final class PrivateHomepageViewController: UIViewController,
         privateMessageCardCell.applyTheme(theme: theme)
     }
 
+    /* Ecosia: Use localized Ecosia support article instead of Mozilla SUMO
     private func learnMore() {
         guard let privateBrowsingURL = SupportUtils.URLForPrivateBrowsingLearnMore else {
             self.logger.log("Failed to retrieve URL from SupportUtils.URLForPrivateBrowsingLearnMore",
@@ -251,6 +253,17 @@ final class PrivateHomepageViewController: UIViewController,
         }
         parentCoordinator?.homePanelDidRequestToOpenInNewTab(
             with: privateBrowsingURL,
+            isPrivate: true,
+            selectNewTab: true
+        )
+    }
+     */
+    private func learnMore() {
+        // Ecosia: Use localized URL from Ecosia.strings (de/fr have overrides)
+        let urlString = String.localized(.privateBrowsingLearnMoreURL)
+        guard let url = URL(string: urlString) else { return }
+        parentCoordinator?.homePanelDidRequestToOpenInNewTab(
+            with: url,
             isPrivate: true,
             selectNewTab: true
         )
