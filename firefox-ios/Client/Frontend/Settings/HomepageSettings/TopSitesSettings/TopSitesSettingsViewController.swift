@@ -87,15 +87,18 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
         return sections
     }
 
+    /* Ecosia: Only called by the sponsored toggle which is removed (MOB-4331).
     private func deleteUserRequest(contextId: String) {
         Task {
             let remover = UnifiedAdsUserDataRemover()
             try await remover.deleteUserData(contextID: contextId)
         }
     }
+    */
 }
 
 // MARK: - TopSitesSettings
+/* Ecosia: RowSettings is only used by the row-count picker which is removed (MOB-4331).
 extension TopSitesSettingsViewController {
     class RowSettings: Setting {
         let profile: Profile?
@@ -142,3 +145,4 @@ extension TopSitesSettingsViewController {
         }
     }
 }
+*/
