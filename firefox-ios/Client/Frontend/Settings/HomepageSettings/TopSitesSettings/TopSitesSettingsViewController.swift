@@ -31,49 +31,65 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
         var sections: [SettingSection] = []
 
         if let profile {
-            let shortcutsToggle = BoolSetting(
-                prefs: profile.prefs,
-                theme: themeManager.getCurrentTheme(for: windowUUID),
-                prefKey: PrefsKeys.UserFeatureFlagPrefs.TopSiteSection,
-                defaultValue: true,
-                titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle
-            ) { isOn in
-                store.dispatch(
-                    TopSitesAction(
-                        isEnabled: isOn,
-                        windowUUID: self.windowUUID,
-                        actionType: TopSitesActionType.toggleShowSectionSetting
-                    )
-                )
-            }
-
             /* Ecosia: No sponsored shortcuts in Ecosia; omit the sponsored toggle (MOB-4331).
-            let sponsoredToggle = BoolSetting(
-                prefs: profile.prefs,
-                theme: themeManager.getCurrentTheme(for: windowUUID),
-                prefKey: PrefsKeys.FeatureFlags.SponsoredShortcuts,
-                defaultValue: featureFlags.isFeatureEnabled(.hntSponsoredShortcuts, checking: .userOnly),
-                titleText: .Settings.Homepage.Shortcuts.SponsoredShortcutsToggle
-            ) { _ in
-                store.dispatch(
-                    TopSitesAction(
-                        windowUUID: self.windowUUID,
-                        actionType: TopSitesActionType.toggleShowSponsoredSettings
+            let toggleSettings = [
+                BoolSetting(
+                    prefs: profile.prefs,
+                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    prefKey: PrefsKeys.UserFeatureFlagPrefs.TopSiteSection,
+                    defaultValue: true,
+                    titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle
+                ) { isOn in
+                    store.dispatch(
+                        TopSitesAction(
+                            isEnabled: isOn,
+                            windowUUID: self.windowUUID,
+                            actionType: TopSitesActionType.toggleShowSectionSetting
+                        )
                     )
-                )
+                },
+                BoolSetting(
+                    prefs: profile.prefs,
+                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    prefKey: PrefsKeys.FeatureFlags.SponsoredShortcuts,
+                    defaultValue: featureFlags.isFeatureEnabled(.hntSponsoredShortcuts, checking: .userOnly),
+                    titleText: .Settings.Homepage.Shortcuts.SponsoredShortcutsToggle
+                ) { _ in
+                    store.dispatch(
+                        TopSitesAction(
+                            windowUUID: self.windowUUID,
+                            actionType: TopSitesActionType.toggleShowSponsoredSettings
+                        )
+                    )
 
-                // If sponsored shortcuts are turned off, request to delete the user data
-                let isSponsoredShortcutsEnabled = profile.prefs.boolForKey(
-                    PrefsKeys.FeatureFlags.SponsoredShortcuts
-                ) ?? true
-                if !isSponsoredShortcutsEnabled,
-                   let contextId = TelemetryContextualIdentifier.contextId {
-                    self.deleteUserRequest(contextId: contextId)
+                    // If sponsored shortcuts are turned off, request to delete the user data
+                    let isSponsoredShortcutsEnabled = profile.prefs.boolForKey(
+                        PrefsKeys.FeatureFlags.SponsoredShortcuts
+                    ) ?? true
+                    if !isSponsoredShortcutsEnabled,
+                       let contextId = TelemetryContextualIdentifier.contextId {
+                        self.deleteUserRequest(contextId: contextId)
+                    }
                 }
-            }
-            let toggleSettings = [shortcutsToggle, sponsoredToggle]
+            ]
             */
-            let toggleSettings = [shortcutsToggle]
+            let toggleSettings = [
+                BoolSetting(
+                    prefs: profile.prefs,
+                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    prefKey: PrefsKeys.UserFeatureFlagPrefs.TopSiteSection,
+                    defaultValue: true,
+                    titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle
+                ) { isOn in
+                    store.dispatch(
+                        TopSitesAction(
+                            isEnabled: isOn,
+                            windowUUID: self.windowUUID,
+                            actionType: TopSitesActionType.toggleShowSectionSetting
+                        )
+                    )
+                }
+            ]
             let toggleSection = SettingSection(title: nil, children: toggleSettings)
             sections.append(toggleSection)
         }
