@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "Затворете поверителни раздели";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "Добавете преки пътища на Firefox към началния екран.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "Добавете преки пътища на Ecosia към началния екран.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "Отвори копирания линк";
@@ -23,19 +23,19 @@
 "TodayWidget.NoOpenTabsLabel" = "Няма отворени раздели.";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "Отворете Firefox";
+"TodayWidget.OpenFirefoxLabel" = "Отворете Ecosia";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "Поверително търсене";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "Добавете пряк път за Firefox към началния екран. След като добавите приспособлението, докоснете и задръжте, за да го редактирате и изберете различен пряк път.";
+"TodayWidget.QuickActionGalleryDescription" = "Добавете пряк път за Ecosia към началния екран. След като добавите приспособлението, докоснете и задръжте, за да го редактирате и изберете различен пряк път.";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "Бързи действия";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "Преки пътища за Firefox";
+"TodayWidget.QuickActionsGalleryTitleV2" = "Преки пътища за Ecosia";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "Добавете преки пътища към отворените раздели.";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "Бърз изглед";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "Търсене с Firefox";
+"TodayWidget.SearchInFirefoxV2" = "Търсене с Ecosia";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "Търсене в поверителен раздел";

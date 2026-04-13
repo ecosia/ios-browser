@@ -308,7 +308,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "ഇതൊരു തെറ്റായ കോൺഫിഗറേഷൻ ആകാം അല്ലെങ്കിൽ ഒരു ആക്രമണസാധ്യതയാകാം. നിങ്ങള്‍ അപകട സാധ്യത അഭിമുഖീകരിയ്ക്കാന്‍ തയ്യാറാണെങ്കില്‍ മാത്രം തുടരുക.";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "%@ എന്നതിന്റെ ഉടമസ്ഥന്‍ സൈറ്റ് തെറ്റായിട്ടാണ് ക്രമീകരിച്ചിരിക്കുന്നതു്. നിങ്ങളുടെ വിവരങ്ങള്‍ ചോരാതിരിക്കാന്‍, ഫയര്‍ഫോക്സ് ഈ സൈറ്റിലേക്ക് കണക്റ്റ് ചെയ്യുന്നില്ല.";
+"ErrorPages.CertWarning.Description" = "%@ എന്നതിന്റെ ഉടമസ്ഥന്‍ സൈറ്റ് തെറ്റായിട്ടാണ് ക്രമീകരിച്ചിരിക്കുന്നതു്. നിങ്ങളുടെ വിവരങ്ങള്‍ ചോരാതിരിക്കാന്‍, Ecosia ഈ സൈറ്റിലേക്ക് കണക്റ്റ് ചെയ്യുന്നില്ല.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "ഈ കണക്‌‌ഷന്‍ വിശ്വാസയോഗ്യമല്ല";
@@ -329,7 +329,7 @@
 "Facebook" = "ഫേസ്ബുക്ക്";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "ഫയർഫോക്സ് പൂമുഖം";
+"Firefox.HomePage.Title" = "Ecosia പൂമുഖം";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "ആമുഖം ഇഷ്ടാനുസൃതമാക്കുക";
@@ -380,7 +380,7 @@
 "Forward" = "മുന്നോട്ട്";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "ഫയര്‍ഫോക്സ് അക്കൌണ്ട്";
+"FxA.FirefoxAccount" = "Ecosia അക്കൌണ്ട്";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "അക്കൗണ്ടും ഉപകരണങ്ങൾ നിയന്ത്രിക്കുക";
@@ -404,7 +404,7 @@
 "FxA.SyncNow" = "ഇപ്പോൾ സമന്വയിപ്പിക്കുൂ";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "%@ലേക്ക് ഫയർഫോക്സ് സമന്വയം ബന്ധിപ്പിച്ചു";
+"FxAPush_DeviceConnected_body" = "%@ലേക്ക് Ecosia സമന്വയം ബന്ധിപ്പിച്ചു";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "സമന്വയം ബന്ധിപ്പിച്ചു";
@@ -413,7 +413,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ വിജയകരമായി വിച്ഛേദിച്ചു.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "ഈ ഉപകരണം ഫയർഫോക്സ് സമന്വയത്തിൽ നിന്നും വിജയകരമായി വിച്ഛേദിച്ചിരിക്കുന്നു.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "ഈ ഉപകരണം Ecosia സമന്വയത്തിൽ നിന്നും വിജയകരമായി വിച്ഛേദിച്ചിരിക്കുന്നു.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "സമന്വയം വിച്ഛേദിച്ചു";
@@ -422,7 +422,7 @@
 "FxAPush_DeviceDisconnected_title" = "സമന്വയം വിച്ഛേദിച്ചു";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ഫയർഫോക്സ് സമന്വയത്തിൽ നിന്നും ഒരു ഉപകരണം വിച്ഛേദിച്ചിരിക്കുന്നു";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Ecosia സമന്വയത്തിൽ നിന്നും ഒരു ഉപകരണം വിച്ഛേദിച്ചിരിക്കുന്നു";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
 "FxHomepage.Wallpaper.ButtonLabel.v99" = "ഫയർഫോക്സു് അടയാളം, ചുവർകടലാസു് മാറ്റുക.";
@@ -458,7 +458,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "മറ്റു ഉപകരണങ്ങളില്‍ നിന്നുള്ള ടാബുകള്‍ കാണാന്‍ സൈന്‍ ഇന്‍ ചെയ്യുക.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "ഫയർഫോക്സ് സമന്വയം";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia സമന്വയം";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "നാള്‍വഴി";
@@ -695,7 +695,7 @@
 "LoginsList.Title" = "സംരക്ഷിച്ച പ്രവേശനങ്ങള്‍";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "ഫയര്‍ഫോക്സ് തൊട്ടുമുന്‍പ് നിലച്ചപോലെ കാണുന്നു. താങ്കളുടെ ടാബുകള്‍ വീണ്ടെടുക്കാന്‍ ആഗ്രഹിക്കുന്നുവോ?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Ecosia തൊട്ടുമുന്‍പ് നിലച്ചപോലെ കാണുന്നു. താങ്കളുടെ ടാബുകള്‍ വീണ്ടെടുക്കാന്‍ ആഗ്രഹിക്കുന്നുവോ?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "വായിച്ചതായി രേഖപ്പെടുത്തുക";
@@ -884,7 +884,7 @@
 "Onboarding.WhatsNew.Button.Title" = "തിരയാൻ തുടങ്ങൂക";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "അയ്യോ! ഫയര്‍ഫോക്സ് തകർന്നു";
+"Oops! Firefox crashed" = "അയ്യോ! Ecosia തകർന്നു";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "ടൈറ്റിൽ ബാറിൽ ദൃശ്യമാകുമ്പോൾ പുസ്തക ഐക്കൺ ടാപ്പുചെയ്യുന്നതിലൂടെ റീഡർ കാഴ്ചയിൽ ലേഖനങ്ങൾ തുറക്കുക.";
@@ -908,7 +908,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "ഇത് താങ്കളെ താങ്കളുടെ ക്യാമറ റോളിലേക്ക് ചിത്രം സൂക്ഷിക്കാന്‍ അനുവദിയ്ക്കുന്നു.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "ഫയര്‍ഫോക്സ് താങ്കളുടെ ചിത്രങ്ങളിലേക്ക് പ്രവേശിയ്ക്കാന്‍ ആഗ്രഹിക്കുന്നു";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia താങ്കളുടെ ചിത്രങ്ങളിലേക്ക് പ്രവേശിയ്ക്കാന്‍ ആഗ്രഹിക്കുന്നു";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "അടയ്ക്കുക";
@@ -995,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "ഈ ഡാറ്റ അസാധുവാണ്";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "ഉപകരണ 'ക്രമീകരണങ്ങൾ' > 'ഫയർഫോക്സ്' എന്നതിലേക്ക് പോകുക. ക്യാമറ ഉപയോഗിക്കാൻ Firefox-നെ അനുവാദം കൊടുക്കുക.";
+"ScanQRCode.PermissionError.Message.v100" = "ഉപകരണ 'ക്രമീകരണങ്ങൾ' > 'Ecosia' എന്നതിലേക്ക് പോകുക. ക്യാമറ ഉപയോഗിക്കാൻ Ecosia-നെ അനുവാദം കൊടുക്കുക.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "QR സങ്കേതം പരിശോധിക്കുക";
@@ -1010,7 +1010,7 @@
 "Search.Awesomebar.SwitchToTab" = "ടാബിലേക്ക് മാറുക";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "ഫയർഫോക്സ് നിർദ്ദേശം";
+"Search.SuggestSectionTitle.v102" = "Ecosia നിർദ്ദേശം";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "പുതിയ തിരയൽ യന്ത്രം ദ്രുത തിരയൽ ബാറിൽ പ്രത്യക്ഷപ്പെടും.";
@@ -1076,13 +1076,13 @@
 "SendTo.NavBar.Title" = "ടാബ് അയയ്ക്കുക";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "ഈ ഫയര്‍ഫോക്സ് അക്കൗണ്ടുമായി സമന്വയിപ്പിയ്ക്കാന്‍ താങ്കള്‍ക്ക് ഇതുമായി ബന്ധപെട്ടിട്ടുള്ള മറ്റു ഉപകരണങ്ങള്‍ ഒന്നും തന്നെയില്ല.";
+"SendTo.NoDevicesFound.Message" = "ഈ Ecosia അക്കൗണ്ടുമായി സമന്വയിപ്പിയ്ക്കാന്‍ താങ്കള്‍ക്ക് ഇതുമായി ബന്ധപെട്ടിട്ടുള്ള മറ്റു ഉപകരണങ്ങള്‍ ഒന്നും തന്നെയില്ല.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "തുടരുവാനായി ദയവായി ഫയര്‍ഫോക്സ് തുറന്ന്, സജ്ജീകരണങ്ങളില്‍ പോയി അക്കൗണ്ടില്‍ പ്രവേശിക്കുക.";
+"SendTo.NotSignedIn.Message" = "തുടരുവാനായി ദയവായി Ecosia തുറന്ന്, സജ്ജീകരണങ്ങളില്‍ പോയി അക്കൗണ്ടില്‍ പ്രവേശിക്കുക.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "താങ്കള്‍ താങ്കളുടെ ഫയര്‍ഫോക്സ് അക്കൗണ്ടിലെക്ക് പ്രവേശിച്ചിട്ടില്ല.";
+"SendTo.NotSignedIn.Title" = "താങ്കള്‍ താങ്കളുടെ Ecosia അക്കൗണ്ടിലെക്ക് പ്രവേശിച്ചിട്ടില്ല.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "അയയ്ക്കുക";
@@ -1103,7 +1103,7 @@
 "SentTab.NoTabArrivingNotification.body" = "ആരംഭിക്കാൻ തട്ടുക";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "ഫയർഫോക്സ് സമന്വയം";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia സമന്വയം";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "കാണുക";
@@ -1193,7 +1193,7 @@
 "Settings.DataManagement.Title" = "ദത്ത കൈകാര്യം";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "താങ്കളുടെ അക്കൗണ്ടുമായി സിങ്ക് ചെയ്യുന്നത് ഫയര്‍ഫോക്സ് നിര്‍ത്തുന്നതാണ്, പക്ഷെ ഈ ഡിവൈസിലെ താങ്കളുടെ ബ്രൌസിംഗ് ഡാറ്റ യാതൊന്നും നീക്കം ചെയ്യുകയില്ല.";
+"Settings.Disconnect.Body" = "താങ്കളുടെ അക്കൗണ്ടുമായി സിങ്ക് ചെയ്യുന്നത് Ecosia നിര്‍ത്തുന്നതാണ്, പക്ഷെ ഈ ഡിവൈസിലെ താങ്കളുടെ ബ്രൌസിംഗ് ഡാറ്റ യാതൊന്നും നീക്കം ചെയ്യുകയില്ല.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "സമന്വയം വിച്ഛേദിക്കുക";
@@ -1259,7 +1259,7 @@
 "Settings.FxA.Sync.SectionName" = "സമന്വയ സജ്ജീകരണങ്ങള്‍";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "ഫയര്‍ഫോക്സ് അക്കൌണ്ട്";
+"Settings.FxA.Title" = "Ecosia അക്കൌണ്ട്";
 
 /* General settings section title */
 "Settings.General.SectionName" = "പൊതുവായവ";
@@ -1394,7 +1394,7 @@
 "Settings.NewTab.Option.Custom" = "ഇഷ്ടാനുസൃതം";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "ഫയർഫോക്സ് പൂമുഖം";
+"Settings.NewTab.Option.FirefoxHome" = "Ecosia പൂമുഖം";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "ആസ്ഥാനതാള്‍";
@@ -1415,7 +1415,7 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "ചിത്രങ്ങള്‍ തടയുക";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "ഫയർഫോക്സ് തുറക്കുമ്പോൾ";
+"Settings.OfferClipboardBar.Status" = "Ecosia തുറക്കുമ്പോൾ";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "%@ തുറക്കുമ്പോൾ";
@@ -1451,7 +1451,7 @@
 "Settings.SendUsage.Link" = "കൂടുതൽ അറിയുക.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "എല്ലാവര്‍ക്കും ഫയര്‍ഫോക്സ് മെച്ചപ്പെട്ടതാക്കാൻ ആവശ്യമുള്ള ഡാറ്റ മാത്രം ശേഖരിക്കാൻ മോസില്ല ശ്രദ്ധിയ്ക്കുന്നു.";
+"Settings.SendUsage.Message" = "എല്ലാവര്‍ക്കും Ecosia മെച്ചപ്പെട്ടതാക്കാൻ ആവശ്യമുള്ള ഡാറ്റ മാത്രം ശേഖരിക്കാൻ മോസില്ല ശ്രദ്ധിയ്ക്കുന്നു.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "ഉപയോഗ ഡാറ്റ അയക്കുക";
@@ -1472,7 +1472,7 @@
 "Settings.Siri.OpenTabShortcut" = "പുതിയ റ്റാബ് തുറക്കുക";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "സിരി വഴി ഫയർഫോക്സ് വേഗത്തിൽ തുറക്കാൻ സിരി കുറുക്കുവഴികൾ ഉപയോഗിക്കുക";
+"Settings.Siri.SectionDescription" = "സിരി വഴി Ecosia വേഗത്തിൽ തുറക്കാൻ സിരി കുറുക്കുവഴികൾ ഉപയോഗിക്കുക";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "സിരി കുറുക്കുവഴികൾ";
@@ -1598,13 +1598,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "പശ്ചാത്തലത്തിൽ ലോഡുചെയ്യുക";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "ഫയർഫോക്സിൽ ലോഡ് ചെയ്യുന്നു";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Ecosia-ൽ ലോഡ് ചെയ്യുന്നു";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "ഫയർഫോക്സിൽ തുറക്കുക";
+"ShareExtension.OpenInFirefoxAction.Title" = "Ecosia-ൽ തുറക്കുക";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "ഫയർഫോക്സിൽ തിരയുക";
+"ShareExtension.SeachInFirefoxAction.Title" = "Ecosia-ൽ തിരയുക";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "പകര്‍ത്തുക";
@@ -1748,7 +1748,7 @@
 "UIMenuItem.PasteGo" = "ഒട്ടിച്ചു് തുടരുക";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "ഫയർഫോക്സുപയോഗിച്ച് തിരയുക";
+"UIMenuItem.SearchWithFirefox" = "Ecosia ഉപയോഗിച്ച് തിരയുക";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "വായിക്കാത്തത്";

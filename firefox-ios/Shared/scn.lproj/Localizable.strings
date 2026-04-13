@@ -308,7 +308,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "Putissi èssiri na cunfijurazzioni sbagghiata o na ntircittazzioni di n’attaccanti. Cuntinua sulu si capisci u rìsicu chi curri.";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "U prupitariu di %@ sbagghiau a cunfijurari u so situ. Pi prutèggiri i to nfurmazzioni, Firefox nun si ci cullijau.";
+"ErrorPages.CertWarning.Description" = "U prupitariu di %@ sbagghiau a cunfijurari u so situ. Pi prutèggiri i to nfurmazzioni, Ecosia nun si ci cullijau.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "Sta cunnissioni nun è affidàbbili";
@@ -329,7 +329,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Pàggina mastra di Firefox";
+"Firefox.HomePage.Title" = "Pàggina mastra di Ecosia";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "Pirsunalizza a pàggina mastra";
@@ -380,7 +380,7 @@
 "Forward" = "Avanti";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Cuntu di Firefox";
+"FxA.FirefoxAccount" = "Cuntu di Ecosia";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Manija cuntu e dispusitivi";
@@ -392,7 +392,7 @@
 "fxa.signin.camera-signin" = "Trasi câ to fotucàmmira";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "Grapi Firefox nnô to computer e vai nni firefox.com/pair";
+"fxa.signin.qr-link-instruction" = "Grapi Ecosia nnô to computer e vai nni firefox.com/pair";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "Prontu pâ scanzioni";
@@ -404,7 +404,7 @@
 "FxA.SyncNow" = "Sincrunizza ora";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Firefox Sync si cullijau cu %@";
+"FxAPush_DeviceConnected_body" = "Ecosia Sync si cullijau cu %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Sync cullijatu";
@@ -413,7 +413,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ fu scullijatu giustu.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Stu dispusitivu fu scullijatu di Firefox Sync.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Stu dispusitivu fu scullijatu di Ecosia Sync.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Sync scullijatu";
@@ -422,10 +422,10 @@
 "FxAPush_DeviceDisconnected_title" = "Sync scullijatu";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Un dispusitivu fu scullijatu di Firefox Sync";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Un dispusitivu fu scullijatu di Ecosia Sync";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Mercu di Firefox, cancia u funnu.";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Mercu di Ecosia, cancia u funnu.";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Ajutu";
@@ -458,7 +458,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "Trasi pi vìdiri na lista dî schedi di l’autri dispusitivi.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Crunuluggìa";
@@ -656,13 +656,13 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "Cchiù nfurmazzioni";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "P’usari a funzioni d’jinchimentu autumàticu di Firefox, hâ abbilitari un còdici dû dispusitivu.";
+"Logins.PasscodeRequirement.Warning" = "P’usari a funzioni d’jinchimentu autumàticu di Ecosia, hâ abbilitari un còdici dû dispusitivu.";
 
 /* Label displaying welcome view tagline under the title */
 "Logins.WelcomeView.Tagline" = "Pòrtati i chiavi unn’è-è";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "Jinchi ’n autumàticu i chiavi di Firefox";
+"Logins.WelcomeView.Title2" = "Jinchi ’n autumàticu i chiavi di Ecosia";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "Attiva jinchimentu autumàticu";
@@ -695,7 +695,7 @@
 "LoginsList.Title" = "CRIDINZIALI SARBATI";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Parissi chi Firefox sfallìu. Vo’ ricupirari i schedi?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Parissi chi Ecosia sfallìu. Vo’ ricupirari i schedi?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Marca liggiutu";
@@ -884,7 +884,7 @@
 "Onboarding.WhatsNew.Button.Title" = "Accumincia a navicari";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Ops. Firefox scasciau";
+"Oops! Firefox crashed" = "Ops. Ecosia scasciau";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Grapi l’artìculi ’n mudalità di littura ammaccannu a cona a libbru quannu affaccia nnâ barra dû tìtulu.";
@@ -896,7 +896,7 @@
 "Open Tabs" = "Schedi graputi";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Firefox nun po’ gràpiri a pàggina picchì àvi nu nnirizzu nun vàlitu.";
+"OpenURL.Error.Message" = "Ecosia nun po’ gràpiri a pàggina picchì àvi nu nnirizzu nun vàlitu.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "Nun potti gràpiri a pàggina";
@@ -908,7 +908,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "Chistu ti pirmetti di sarbari a pàggina nnô to Rullinu.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox vulissi accèdiri ê to fotu";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia vulissi accèdiri ê to fotu";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Chiuji";
@@ -995,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "I dati nun sunnu vàliti";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "Vai nne ‘Mpustazzioni’ > ‘Firefox’. Dùnaci u pirmissu a Firefox di accèdiri â fotucàmmira.";
+"ScanQRCode.PermissionError.Message.v100" = "Vai nne ‘Mpustazzioni’ > ‘Ecosia’. Dùnaci u pirmissu a Ecosia di accèdiri â fotucàmmira.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "Scanziuna còdici QR";
@@ -1010,7 +1010,7 @@
 "Search.Awesomebar.SwitchToTab" = "Passa â scheda";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "Suggirimenti di Firefox";
+"Search.SuggestSectionTitle.v102" = "Suggirimenti di Ecosia";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "U novu muturi di risciduta affaccia nnâ barra di risciduta lesta.";
@@ -1076,13 +1076,13 @@
 "SendTo.NavBar.Title" = "Manna scheda";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Nun cci sunnu autri dispusitivi cullijati a stu cuntu di Firefox dispunìbbili pâ sincrunizzazzioni.";
+"SendTo.NoDevicesFound.Message" = "Nun cci sunnu autri dispusitivi cullijati a stu cuntu di Ecosia dispunìbbili pâ sincrunizzazzioni.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Pi fari grapi Firefox, vai nnê mpustazzioni e trasi pi cuntinuari.";
+"SendTo.NotSignedIn.Message" = "Pi fari grapi Ecosia, vai nnê mpustazzioni e trasi pi cuntinuari.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Nun trasisti nnû to cuntu Firefox.";
+"SendTo.NotSignedIn.Title" = "Nun trasisti nnû to cuntu Ecosia.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Manna";
@@ -1103,7 +1103,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Tocca p’accuminciari";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Vidi";
@@ -1193,7 +1193,7 @@
 "Settings.DataManagement.Title" = "Maniju dî dati";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Firefox nun sincrunizza cchiù cû to cuntu, ma nun scancella nuḍḍu dî to dati di navicazzioni nna stu dispusitivu.";
+"Settings.Disconnect.Body" = "Ecosia nun sincrunizza cchiù cû to cuntu, ma nun scancella nuḍḍu dî to dati di navicazzioni nna stu dispusitivu.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Sculleja Sync";
@@ -1259,7 +1259,7 @@
 "Settings.FxA.Sync.SectionName" = "Mpustazzioni di sincrunizzazzioni";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Cuntu di Firefox";
+"Settings.FxA.Title" = "Cuntu di Ecosia";
 
 /* General settings section title */
 "Settings.General.SectionName" = "Ginirali";
@@ -1292,7 +1292,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "Pàggina mastra";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "Scarta soccu vidi quannu torni a Firefox.";
+"Settings.Home.Option.StartAtHome.Description" = "Scarta soccu vidi quannu torni a Ecosia.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "Ùrtima scheda";
@@ -1307,25 +1307,25 @@
 "Settings.Home.Option.Wallpaper" = "Funnu";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Funnu di Firefox, mutivu amitista.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Funnu di Ecosia, mutivu amitista.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Funnu di Firefox, mutivu munti di rina.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Funnu di Ecosia, mutivu munti di rina.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Funnu di Firefox, mutivu azzolu.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Funnu di Ecosia, mutivu azzolu.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "Funnu pridifinutu chiaru.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Funnu di Firefox, mutivu arba.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Funnu di Ecosia, mutivu arba.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "Buttuni pi canciari i funni dâ pàggina mastra";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Funnu di Firefox, mutivu muntagnoli a l’arbiceḍḍa.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Funnu di Ecosia, mutivu muntagnoli a l’arbiceḍḍa.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "%@ clàssicu";
@@ -1346,7 +1346,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "Edizzioni limitata";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Cancia u funnu tuccannu u mercu nnâ pàggina mastra di Firefox";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Cancia u funnu tuccannu u mercu nnâ pàggina mastra di Ecosia";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "Funnu";
@@ -1400,7 +1400,7 @@
 "Settings.NewTab.Option.Custom" = "Pirsunalizzata";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Pàggina mastra di Firefox";
+"Settings.NewTab.Option.FirefoxHome" = "Pàggina mastra di Ecosia";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Pàggina mastra";
@@ -1421,7 +1421,7 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "Blocca i mmàggini";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "Quannu grapi Firefox";
+"Settings.OfferClipboardBar.Status" = "Quannu grapi Ecosia";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "Quannu grapi %@";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Cchiù nfurmazzioni.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla cerca di ricògghiri sulu chiḍḍu chi ci serbi pi fari megghiu Firefox pi tutti.";
+"Settings.SendUsage.Message" = "Mozilla cerca di ricògghiri sulu chiḍḍu chi ci serbi pi fari megghiu Ecosia pi tutti.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Manna i dati d’usu";
@@ -1481,7 +1481,7 @@
 "Settings.Siri.OpenTabShortcut" = "Grapi na nova scheda";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Usa l’accurzi di Siri pi gràpiri lestu Firefox cu Siri";
+"Settings.Siri.SectionDescription" = "Usa l’accurzi di Siri pi gràpiri lestu Ecosia cu Siri";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Accurzi di Siri";
@@ -1490,7 +1490,7 @@
 "Settings.Studies.Toggle.Link" = "Cchiù nfurmazzioni.";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Firefox po nzitari e abbiari studi di tempu ’n tempu.";
+"Settings.Studies.Toggle.Message" = "Ecosia po nzitari e abbiari studi di tempu ’n tempu.";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "Studi";
@@ -1607,13 +1607,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Càrrica ’n suttafunnu";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Staju carricannu ’n Firefox";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Staju carricannu ’n Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Grapi cu Firefox";
+"ShareExtension.OpenInFirefoxAction.Title" = "Grapi cu Ecosia";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Riscedi cu Firefox";
+"ShareExtension.SeachInFirefoxAction.Title" = "Riscedi cu Ecosia";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "Copia";
@@ -1757,7 +1757,7 @@
 "UIMenuItem.PasteGo" = "Ncoḍḍa e vai";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Riscedi cu Firefox";
+"UIMenuItem.SearchWithFirefox" = "Riscedi cu Ecosia";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "di lèggiri";
@@ -1805,7 +1805,7 @@
 "Yesterday" = "Ajeri";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "Nun ài nuḍḍa scheda graputa nni Firefox nnî to autri dispusitivi.";
+"You don’t have any tabs open in Firefox on your other devices." = "Nun ài nuḍḍa scheda graputa nni Ecosia nnî to autri dispusitivi.";
 
 /* Your Rights settings section title */
 "Your Rights" = "I to diritti";

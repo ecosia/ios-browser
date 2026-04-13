@@ -44,10 +44,10 @@
 "Facebook" = "ⴼⵉⵙⴱⵓⴽ";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "ⵜⴰⵙⵏⴰ ⵏ ⵓⵙⵏⵓⴱⴳ ⵏ ⴼⴰⵢⵔⴼⵓⴽⵙ";
+"Firefox.HomePage.Title" = "ⵜⴰⵙⵏⴰ ⵏ ⵓⵙⵏⵓⴱⴳ ⵏ Ecosia";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "ⴰⵎⵉⴹⴰⵏ ⵏ ⴼⴰⵢⵔⴼⵓⴽⵙ";
+"FxA.FirefoxAccount" = "ⴰⵎⵉⴹⴰⵏ ⵏ Ecosia";
 
 /* The title for the Delete from History context menu action for sites in Home Panels */
 "HomePanel.ContextMenu.DeleteFromHistory" = "ⴽⴽⵙ ⵙⴳ ⵓⵎⵣⵔⵓⵢ";

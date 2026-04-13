@@ -308,7 +308,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "Эҳтимол аст, ки ин ба сабаби танзимоти нодуруст ё дахолати ҳамлакунанда ба миён меояд. Шумо метавонед хатари эҳтимолиро ба зимма гирифта, идома диҳед.";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "Соҳиби %@ сомонаи худро нодуруст танзим кардааст. Барои муҳофизат кардани маълумоти шумо аз дуздӣ, браузери «Firefox» ба ин сомона пайваст нашуд.";
+"ErrorPages.CertWarning.Description" = "Соҳиби %@ сомонаи худро нодуруст танзим кардааст. Барои муҳофизат кардани маълумоти шумо аз дуздӣ, браузери «Ecosia» ба ин сомона пайваст нашуд.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "Ин пайвастшавӣ беэътимод аст";
@@ -329,7 +329,7 @@
 "Facebook" = "Фейсбук";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Саҳифаи асосии «Firefox»";
+"Firefox.HomePage.Title" = "Саҳифаи асосии «Ecosia»";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "Танзимоти саҳифаи асосӣ";
@@ -380,7 +380,7 @@
 "Forward" = "Ба пеш";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Ҳисоби «Firefox»";
+"FxA.FirefoxAccount" = "Ҳисоби «Ecosia»";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Идоракунии ҳисоб ва дастгоҳҳо";
@@ -392,7 +392,7 @@
 "fxa.signin.camera-signin" = "Ворид шудан ба воситаи камера";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "Дар компютери худ Firefox-ро кушоед ва ба firefox.com/pair гузаред";
+"fxa.signin.qr-link-instruction" = "Дар компютери худ Ecosia-ро кушоед ва ба firefox.com/pair гузаред";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "Барои аксбардорӣ омода аст";
@@ -404,7 +404,7 @@
 "FxA.SyncNow" = "Ҳозир ҳамоҳанг кунед";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Ҳамоҳангсозии «Firefox» ба «%@» пайваст шуд";
+"FxAPush_DeviceConnected_body" = "Ҳамоҳангсозии «Ecosia» ба «%@» пайваст шуд";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Ҳамоҳангсозӣ пайваст шуд";
@@ -413,7 +413,7 @@
 "FxAPush_DeviceDisconnected_body" = "Пайвасти «%@» бо муваффақият қатъ карда шуд.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Пайвасти ин дастгоҳ аз низоми ҳамоҳангсозии «Firefox» бо муваффақият қатъ карда шуд.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Пайвасти ин дастгоҳ аз низоми ҳамоҳангсозии «Ecosia» бо муваффақият қатъ карда шуд.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Пайвасти ҳамоҳангсозӣ қатъ шуд";
@@ -422,10 +422,10 @@
 "FxAPush_DeviceDisconnected_title" = "Пайвасти ҳамоҳангсозӣ қатъ шуд";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Пайвасти дастгоҳ аз ҳамоҳангсозии «Firefox» қатъ шуд";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Пайвасти дастгоҳ аз ҳамоҳангсозии «Ecosia» қатъ шуд";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Тамғаи «Firefox», иваз кардани тасвири замина.";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Тамғаи «Ecosia», иваз кардани тасвири замина.";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Кумак";
@@ -458,7 +458,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "Барои дидани рӯйхати варақаҳо аз дастгоҳҳои дигар, ворид шавед.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Ҳамоҳангсозии «Firefox»";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ҳамоҳангсозии «Ecosia»";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Таърих";
@@ -656,13 +656,13 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "Маълумоти бештар";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "Барои истифода кардани хусусияти пуркунии худкор дар браузери «Firefox», шумо бояд ниҳонвожаи рамзиро фаъол созед.";
+"Logins.PasscodeRequirement.Warning" = "Барои истифода кардани хусусияти пуркунии худкор дар браузери «Ecosia», шумо бояд ниҳонвожаи рамзиро фаъол созед.";
 
 /* Label displaying welcome view tagline under the title */
 "Logins.WelcomeView.Tagline" = "Ниҳонвожаҳои худро аз ҷойи дилхоҳ ба даст оред";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "Пуркунии худкори ниҳонвожаҳо дар «Firefox»";
+"Logins.WelcomeView.Title2" = "Пуркунии худкори ниҳонвожаҳо дар «Ecosia»";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "Фаъол кардани пуркунии худкор";
@@ -695,7 +695,7 @@
 "LoginsList.Title" = "ВОРИДШАВИҲОИ НИГОҲДОШТАШУДА";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Чунин ба назар мерасад, ки браузери «Firefox» қаблан вайрон шудааст. Шумо мехоҳед, ки варақаҳои худро барқарор созед?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Чунин ба назар мерасад, ки браузери «Ecosia» қаблан вайрон шудааст. Шумо мехоҳед, ки варақаҳои худро барқарор созед?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Қайд кардан ҳамчун хондашуда";
@@ -884,7 +884,7 @@
 "Onboarding.WhatsNew.Button.Title" = "Оғоз кардани тамошо";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Оҳ! Браузери «Firefox» вайрон шуд";
+"Oops! Firefox crashed" = "Оҳ! Браузери «Ecosia» вайрон шуд";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Вақте ки нишони китоб дар навори сарлавҳа пайдо мешавад, онро зер кунед, то тавонед мақолаҳоро дар реҷаи «Намоиши хонанда» кушоед.";
@@ -896,7 +896,7 @@
 "Open Tabs" = "Варақаҳои кушодашуда";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Браузери «Firefox» саҳифаро кушода наметавонад, зеро ки он нишонии нодуруст дорад.";
+"OpenURL.Error.Message" = "Браузери «Ecosia» саҳифаро кушода наметавонад, зеро ки он нишонии нодуруст дорад.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "Саҳифа кушода намешавад";
@@ -908,7 +908,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "Ин ба шумо имкон медиҳад, ки тавонед аксҳоро дар нигористони дастгоҳ нигоҳ доред.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Браузери «Firefox» мехоҳад, ки ба аксҳои шумо дастрасӣ пайдо кунад";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Браузери «Ecosia» мехоҳад, ки ба аксҳои шумо дастрасӣ пайдо кунад";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Пӯшидан";
@@ -995,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "Маълумот беэътибор аст";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "Дар дастгоҳ ба «Танзимот» > «Firefox» гузаред. Ба «Firefox» иҷозат диҳед, ки ба камера дастрасӣ пайдо кунад.";
+"ScanQRCode.PermissionError.Message.v100" = "Дар дастгоҳ ба «Танзимот» > «Ecosia» гузаред. Ба «Ecosia» иҷозат диҳед, ки ба камера дастрасӣ пайдо кунад.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "Рамзи «QR»-ро тасвирбардорӣ намоед";
@@ -1010,7 +1010,7 @@
 "Search.Awesomebar.SwitchToTab" = "Ба варақа гузаштан";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "Пешниҳоди «Firefox»";
+"Search.SuggestSectionTitle.v102" = "Пешниҳоди «Ecosia»";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "Низоми ҷустуҷӯии нав дар навори ҷустуҷӯии зудамал пайдо мешавад.";
@@ -1076,13 +1076,13 @@
 "SendTo.NavBar.Title" = "Фиристодани варақа";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Шумо ягон дастгоҳе надоред, ки ба ин ҳисоби «Firefox» пайваст карда шудааст ва барои ҳамоҳангсозӣ дастрасӣ дорад.";
+"SendTo.NoDevicesFound.Message" = "Шумо ягон дастгоҳе надоред, ки ба ин ҳисоби «Ecosia» пайваст карда шудааст ва барои ҳамоҳангсозӣ дастрасӣ дорад.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Лутфан браузенри «Firefox»-ро кушоед, ба «Танзимот» гузаред ва барои идомаи раванд ворид шавед.";
+"SendTo.NotSignedIn.Message" = "Лутфан браузенри «Ecosia»-ро кушоед, ба «Танзимот» гузаред ва барои идомаи раванд ворид шавед.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Шумо ба ҳисоби «Firefox»-и худ ворид нашудаед.";
+"SendTo.NotSignedIn.Title" = "Шумо ба ҳисоби «Ecosia»-и худ ворид нашудаед.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Фиристодан";
@@ -1103,7 +1103,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Барои оғоз пахш кунед";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Ҳамоҳангсозии «Firefox»";
+"SentTab.NoTabArrivingNotification.title" = "Ҳамоҳангсозии «Ecosia»";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Намоиш";
@@ -1193,7 +1193,7 @@
 "Settings.DataManagement.Title" = "Идоракунии маълумот";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Firefox ҳамоҳангсозиро бо ҳисоби шумо қатъ мекунад, аммо ягон маълумоти тамошокунии шуморо дар ин дастгоҳ нест намекунад.";
+"Settings.Disconnect.Body" = "Ecosia ҳамоҳангсозиро бо ҳисоби шумо қатъ мекунад, аммо ягон маълумоти тамошокунии шуморо дар ин дастгоҳ нест намекунад.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Қатъ кардани пайвасти ҳамоҳангсозӣ";
@@ -1259,7 +1259,7 @@
 "Settings.FxA.Sync.SectionName" = "Танзимоти ҳамоҳангсозӣ";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Ҳисоби «Firefox»";
+"Settings.FxA.Title" = "Ҳисоби «Ecosia»";
 
 /* General settings section title */
 "Settings.General.SectionName" = "Умумӣ";
@@ -1268,7 +1268,7 @@
 "Settings.Home.Current.Description.v101" = "Он чизеро, ки ҳамчун саҳифаи асосӣ намоиш дода мешавад, интихоб кунед.";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "Он чизеро, ки ба сафҳаи асосии «Firefox» дохил карда мешавад, интихоб кунед.";
+"Settings.Home.Option.Description.v101" = "Он чизеро, ки ба сафҳаи асосии «Ecosia» дохил карда мешавад, интихоб кунед.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "Бозгашт ба";
@@ -1292,7 +1292,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "Саҳифаи асосӣ";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "Он чизеро, ки шумо ҳангоми бозгашт ба браузери «Firefox» мебинед, интихоб кунед.";
+"Settings.Home.Option.StartAtHome.Description" = "Он чизеро, ки шумо ҳангоми бозгашт ба браузери «Ecosia» мебинед, интихоб кунед.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "Варақаи охирин";
@@ -1307,25 +1307,25 @@
 "Settings.Home.Option.Wallpaper" = "Тасвири замина";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Тасвири заминаи «Firefox», ангораи лаъли кабуд.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Тасвири заминаи «Ecosia», ангораи лаъли кабуд.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Тасвири заминаи «Firefox», ангораи теппаҳои соҳил.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Тасвири заминаи «Ecosia», ангораи теппаҳои соҳил.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Тасвири заминаи «Firefox», ангораи лоҷувардӣ.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Тасвири заминаи «Ecosia», ангораи лоҷувардӣ.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "Тасвири заминаи дурахшони пешфарз.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Тасвири заминаи «Firefox», ангораи шафақи субҳ.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Тасвири заминаи «Ecosia», ангораи шафақи субҳ.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "Қатъу васли давраи тасвирҳои заминаи саҳифаи асосӣ";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Тасвири заминаи «Firefox», ангораи теппаҳо дар нимторикӣ.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Тасвири заминаи «Ecosia», ангораи теппаҳо дар нимторикӣ.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "Классикӣ - %@";
@@ -1346,7 +1346,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "Нашри маҳдуд";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Тасвири заминаро бо зеркунии тамғаи саҳифаи асосии «Firefox» иваз намоед";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Тасвири заминаро бо зеркунии тамғаи саҳифаи асосии «Ecosia» иваз намоед";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "Тасвири замина";
@@ -1400,7 +1400,7 @@
 "Settings.NewTab.Option.Custom" = "Фармоишӣ";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Саҳифаи асосии «Firefox»";
+"Settings.NewTab.Option.FirefoxHome" = "Саҳифаи асосии «Ecosia»";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Саҳифаи асосӣ";
@@ -1421,7 +1421,7 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "Манъ кардани тасвирҳо";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "Ҳангоми кушодани «Firefox»";
+"Settings.OfferClipboardBar.Status" = "Ҳангоми кушодани «Ecosia»";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "Ҳангоми кушодани «%@»";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Маълумоти бештар.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "«Mozilla» cаъю кӯшиш мекунад, ки танҳо он маълумотеро ҷамъоварӣ намояд, ки мо бояд барои фаъолият ва беҳтарсозии «Firefox» барои ҳар як кас таъмин намоем.";
+"Settings.SendUsage.Message" = "«Mozilla» cаъю кӯшиш мекунад, ки танҳо он маълумотеро ҷамъоварӣ намояд, ки мо бояд барои фаъолият ва беҳтарсозии «Ecosia» барои ҳар як кас таъмин намоем.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Фиристодани маълумоти истифодабарӣ";
@@ -1481,7 +1481,7 @@
 "Settings.Siri.OpenTabShortcut" = "Кушодани варақаи нав";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Истифодаи миёнбурҳои «Siri» барои зуд кушодани браузери «Firefox» тавассути «Siri»";
+"Settings.Siri.SectionDescription" = "Истифодаи миёнбурҳои «Siri» барои зуд кушодани браузери «Ecosia» тавассути «Siri»";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Миёнбурҳои «Siri»";
@@ -1490,7 +1490,7 @@
 "Settings.Studies.Toggle.Link" = "Маълумоти бештар.";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Баъзе вақт «Firefox» метавонад омӯзишҳоро насб ва иҷро намояд.";
+"Settings.Studies.Toggle.Message" = "Баъзе вақт «Ecosia» метавонад омӯзишҳоро насб ва иҷро намояд.";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "Омӯзишҳо";
@@ -1607,13 +1607,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Бор кардан дар реҷаи заминаӣ";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Боркунӣ дар «Firefox»";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Боркунӣ дар «Ecosia»";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Кушодан дар «Firefox»";
+"ShareExtension.OpenInFirefoxAction.Title" = "Кушодан дар «Ecosia»";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Ҷустуҷӯ дар «Firefox»";
+"ShareExtension.SeachInFirefoxAction.Title" = "Ҷустуҷӯ дар «Ecosia»";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "Нусха бардоштан";
@@ -1757,7 +1757,7 @@
 "UIMenuItem.PasteGo" = "Гузоштан ва идома додан";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Ҷустуҷӯ ба воситаи «Firefox»";
+"UIMenuItem.SearchWithFirefox" = "Ҷустуҷӯ ба воситаи «Ecosia»";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "хонданашуда";
@@ -1805,7 +1805,7 @@
 "Yesterday" = "Дирӯз";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "Шумо дар дастгоҳҳои дигари худ дар Firefox ягон варақаи кушодашуда надоред.";
+"You don’t have any tabs open in Firefox on your other devices." = "Шумо дар дастгоҳҳои дигари худ дар Ecosia ягон варақаи кушодашуда надоред.";
 
 /* Your Rights settings section title */
 "Your Rights" = "Ҳуқуқҳои шумо";

@@ -17,10 +17,10 @@
 "DefaultBrowserCard.NextLevel.Title.v108" = "Podnieś poziom codziennego przeglądania";
 
 /* Description for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Firefox blokuje średnio ponad 3000 elementów śledzących na użytkownika miesięcznie. Ustaw nas jako domyślną przeglądarkę, by cieszyć się prywatnością bez obaw.";
+"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Ecosia blokuje średnio ponad 3000 elementów śledzących na użytkownika miesięcznie. Ustaw nas jako domyślną przeglądarkę, by cieszyć się prywatnością bez obaw.";
 
 /* Title for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Firefox chroni Twoją prywatność";
+"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Ecosia chroni Twoją prywatność";
 
 /* Title for small home tab banner shown that allows user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "Przełącz domyślną przeglądarkę";

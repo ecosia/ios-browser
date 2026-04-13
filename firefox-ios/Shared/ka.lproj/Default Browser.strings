@@ -1,5 +1,5 @@
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.BetterInternet.Description.v108" = "Firefox-ის ნაგულისხმევ ბრაუზერად დაყენება არის ღია, ხელმისაწვდომი ინტერნეტის მხარდაჭერა.";
+"DefaultBrowserCard.BetterInternet.Description.v108" = "Ecosia-ის ნაგულისხმევ ბრაუზერად დაყენება არის ღია, ხელმისაწვდომი ინტერნეტის მხარდაჭერა.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.BetterInternet.Title.v108" = "ნაგულისხმევად უკეთესი ინტერნეტი";
@@ -8,19 +8,19 @@
 "DefaultBrowserCard.Button.v2" = "იხილეთ, როგორ";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "შედეგად, ბმულებს საიტებიდან, ელფოსტიდან, წერილებიდან პირდაპირ გახსნის Firefox.";
+"DefaultBrowserCard.Description" = "შედეგად, ბმულებს საიტებიდან, ელფოსტიდან, წერილებიდან პირდაპირ გახსნის Ecosia.";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.NextLevel.Description.v108" = "აირჩიეთ Firefox ნაგულისხმევ ბრაუზერად თავისთავადი სიჩქარის, უსაფრთხოებისა და პირადულობისთვის.";
+"DefaultBrowserCard.NextLevel.Description.v108" = "აირჩიეთ Ecosia ნაგულისხმევ ბრაუზერად თავისთავადი სიჩქარის, უსაფრთხოებისა და პირადულობისთვის.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.NextLevel.Title.v108" = "შეუფერხებელი ინტერნეტმოგზაურობა";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Firefox ზღუდავს საშუალოდ 3000+ მეთვალყურეს ყოველთვიურად. უზრუნველყოფს ინტერნეტის უსაფრთხო და მშვიდ მოხმარებას.";
+"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Ecosia ზღუდავს საშუალოდ 3000+ მეთვალყურეს ყოველთვიურად. უზრუნველყოფს ინტერნეტის უსაფრთხო და მშვიდ მოხმარებას.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Firefox იცავს პირადულობას";
+"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Ecosia იცავს პირადულობას";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "აქციეთ მთავარ ბრაუზერად";
@@ -35,7 +35,7 @@
 "DefaultBrowserOnboarding.Description2" = "2. შეეხეთ ნაგულისხმევ ბრაუზერს";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. აირჩიეთ Firefox";
+"DefaultBrowserOnboarding.Description3" = "3. აირჩიეთ Ecosia";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "ნაგულისხმევი ბრაუზერი";
