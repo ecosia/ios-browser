@@ -27,6 +27,13 @@ final class VoiceSearchViewController: UIViewController {
         static let micButtonBottomPadding: CGFloat = 60
         static let instructionBottomPadding: CGFloat = 24
         static let animationDuration: TimeInterval = 0.15
+        /// Delay before submitting the final transcript, giving the speech recognizer time
+        /// to produce its best result after the user stops recording manually.
+        static let finalTranscriptionDelay: TimeInterval = 1.0
+        /// Multiplier applied to average audio amplitude to normalize it into a 0–1 range
+        /// suitable for the waveform visualizer. Typical speech amplitudes average 0.01–0.1,
+        /// so a 10× multiplier fills the visual range.
+        static let audioLevelNormalizationMultiplier: Float = 10
     }
 
     // MARK: - Properties
@@ -335,7 +342,7 @@ final class VoiceSearchViewController: UIViewController {
         updateUIForRecordingState()
 
         // If we already have a transcript, submit it after a brief delay to allow final results
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.finalTranscriptionDelay) { [weak self] in
             guard let self else { return }
             if let text = self.transcriptLabel.text, !text.isEmpty, self.recognitionTask != nil {
                 self.recognitionTask?.cancel()
@@ -358,8 +365,7 @@ final class VoiceSearchViewController: UIViewController {
             sum += abs(channelData[i])
         }
         let average = sum / Float(frameCount)
-        // Normalize to 0-1 range (typical speech is 0.01-0.1)
-        let normalizedLevel = min(average * 10, 1.0)
+        let normalizedLevel = min(average * UX.audioLevelNormalizationMultiplier, 1.0)
 
         DispatchQueue.main.async { [weak self] in
             self?.waveformView.addLevel(CGFloat(normalizedLevel))

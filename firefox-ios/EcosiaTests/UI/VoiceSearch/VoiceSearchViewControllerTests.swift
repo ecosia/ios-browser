@@ -7,16 +7,10 @@ import XCTest
 
 final class VoiceSearchViewControllerTests: XCTestCase {
 
-    func testOnSearchQueryCalledOnDismissal() {
-        let expectation = expectation(description: "onSearchQuery called")
-        var capturedQuery: String?
+    func testViewControllerInitialization() {
+        let sut = VoiceSearchViewController { _ in }
 
-        let sut = VoiceSearchViewController { query in
-            capturedQuery = query
-            expectation.fulfill()
-        }
-
-        // Verify the VC can be created and properties are set
+        // Verify the VC can be created and its view hierarchy loads
         sut.loadViewIfNeeded()
         XCTAssertNotNil(sut.view)
     }
