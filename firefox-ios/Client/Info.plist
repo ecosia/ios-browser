@@ -108,6 +108,8 @@
 	<string>Websites you visit may request your location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Firefox uses your microphone to record and upload audio.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Ecosia uses speech recognition to transcribe your voice into a search query.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This lets you save photos.</string>
 	<key>NSUserActivityTypes</key>

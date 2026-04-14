@@ -144,6 +144,10 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
                     return .search(url: nil, isPrivate: false)
                 }
 
+            // Ecosia: Voice Search widget – open voice search experience
+            case .widgetVoiceSearch:
+                return .voiceSearch
+
             case .fxaSignIn:
                 return nil
 
@@ -245,7 +249,7 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
 
     private func recordTelemetry(input: DeeplinkInput.Host, isPrivate: Bool) {
         switch input {
-        case .deepLink, .fxaSignIn, .glean, .sharesheet:
+        case .deepLink, .fxaSignIn, .glean, .sharesheet, .widgetVoiceSearch:
             return
         case .widgetMediumTopSitesOpenUrl:
             TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumTopSitesWidget)

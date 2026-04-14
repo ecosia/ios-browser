@@ -23,6 +23,8 @@ enum DeeplinkInput {
         case widgetMediumQuickLinkClosePrivateTabs = "widget-medium-quicklink-close-private-tabs"
         case widgetTabsMediumOpenUrl = "widget-tabs-medium-open-url"
         case widgetTabsLargeOpenUrl = "widget-tabs-large-open-url"
+        // Ecosia: Voice Search widget deep link
+        case widgetVoiceSearch = "widget-voice-search"
 
         var shouldRouteDeeplinkToSpecificIPadWindow: Bool {
             switch self {
@@ -54,7 +56,8 @@ enum DeeplinkInput {
                     .widgetSmallQuickLinkOpenCopied, .widgetMediumQuickLinkOpenCopied:
                 return urlQuery?.isWebPage() ?? true
             case .deepLink, .fxaSignIn, .glean,
-                    .widgetSmallQuickLinkClosePrivateTabs, .widgetMediumQuickLinkClosePrivateTabs:
+                    .widgetSmallQuickLinkClosePrivateTabs, .widgetMediumQuickLinkClosePrivateTabs,
+                    .widgetVoiceSearch:
                 return true
             }
         }

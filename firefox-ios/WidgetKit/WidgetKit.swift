@@ -13,6 +13,8 @@ struct FirefoxWidgets: WidgetBundle {
         SearchQuickLinksWidget()
         OpenTabsWidget()
         TopSitesWidget()
+        // Ecosia: Voice Search widget – opens the app and starts speech-to-text search
+        VoiceSearchWidget()
     }
 }
 #endif

@@ -348,7 +348,8 @@ class BrowserCoordinator: BaseCoordinator,
         }
 
         switch route {
-        case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser, .sharesheet:
+        case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser, .sharesheet,
+             .voiceSearch:
             return true
         case let .settings(section):
             return canHandleSettings(with: section)
@@ -369,6 +370,10 @@ class BrowserCoordinator: BaseCoordinator,
         switch route {
         case let .searchQuery(query, isPrivate):
             handle(query: query, isPrivate: isPrivate)
+
+        // Ecosia: Voice Search widget – present the voice search modal
+        case .voiceSearch:
+            handleVoiceSearch()
 
         case let .search(url, isPrivate, options):
             handle(url: url, isPrivate: isPrivate, options: options)
@@ -445,6 +450,16 @@ class BrowserCoordinator: BaseCoordinator,
 
     private func handle(query: String, isPrivate: Bool) {
         browserViewController.handle(query: query, isPrivate: isPrivate)
+    }
+
+    // Ecosia: Voice Search – present the voice search view controller
+    private func handleVoiceSearch() {
+        let voiceSearchVC = VoiceSearchViewController { [weak self] transcribedText in
+            self?.handle(query: transcribedText, isPrivate: false)
+        }
+        voiceSearchVC.modalPresentationStyle = .overFullScreen
+        voiceSearchVC.modalTransitionStyle = .crossDissolve
+        browserViewController.present(voiceSearchVC, animated: true)
     }
 
     private func handle(url: URL?, isPrivate: Bool, options: Set<Route.SearchOptions>? = nil) {

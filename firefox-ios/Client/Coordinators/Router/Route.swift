@@ -30,6 +30,10 @@ enum Route {
     ///   - isPrivate: A boolean value indicating whether the search is private or not.
     case searchQuery(query: String, isPrivate: Bool)
 
+    /// Represents a route that opens the voice search experience, prompting the user
+    /// to speak a query which is then transcribed and submitted as a web search.
+    case voiceSearch
+
     /// Represents a route for sending Glean data.
     ///
     /// - Parameter url: A `URL` object representing the URL to send Glean data to.
