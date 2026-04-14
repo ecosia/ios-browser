@@ -402,6 +402,16 @@ class RouteTests: XCTestCase {
         XCTAssertEqual(route, .searchQuery(query: "google", isPrivate: false))
     }
 
+    // Ecosia: Voice Search widget deep link test
+    func testVoiceSearchWidgetRoute() {
+        let subject = createSubject()
+        let url = URL(string: "ecosia://widget-voice-search")!
+
+        let route = subject.makeRoute(url: url)
+
+        XCTAssertEqual(route, .voiceSearch)
+    }
+
     // MARK: - AppAction
 
     func testAppAction_showIntroOnboarding() {
