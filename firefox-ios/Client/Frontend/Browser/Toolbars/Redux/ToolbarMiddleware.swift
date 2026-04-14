@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import Redux
 import ToolbarKit
 import SummarizeKit
@@ -311,6 +312,12 @@ final class ToolbarMiddleware: FeatureFlaggable {
                 let action = ToolbarAction(windowUUID: action.windowUUID, actionType: ToolbarActionType.didStartEditingUrl)
                 store.dispatch(action)
             }
+
+        case .history:
+            Analytics.shared.ntpHistoryButtonTapped()
+            let action = GeneralBrowserAction(windowUUID: action.windowUUID,
+                                              actionType: GeneralBrowserActionType.showHistory)
+            store.dispatch(action)
 
         case .dataClearance:
             toolbarTelemetry.dataClearanceButtonTapped(isPrivate: toolbarState.isPrivateMode)

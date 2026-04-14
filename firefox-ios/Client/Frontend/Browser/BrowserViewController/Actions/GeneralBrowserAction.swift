@@ -76,6 +76,8 @@ enum GeneralBrowserActionType: ActionType {
     case shakeMotionEnded
     // Ecosia: QR code scanner action
     case showQRCode
+    // Ecosia: History panel action triggered from the NTP toolbar history button
+    case showHistory
 }
 
 struct GeneralBrowserMiddlewareAction: Action {

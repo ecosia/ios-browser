@@ -29,10 +29,8 @@ public struct EcosiaAISearchButton: View {
                 .frame(width: .ecosia.space._1l, height: .ecosia.space._1l)
                 .padding(.ecosia.space._2s)
                 .frame(width: .ecosia.space._3l, height: .ecosia.space._3l)
-                .background(theme.backgroundColor)
-                .cornerRadius(.ecosia.borderRadius._1l)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(NTPGlassButtonStyle(RoundedRectangle(cornerRadius: .ecosia.borderRadius._1l)))
         .accessibilityLabel("AI Search")
         .accessibilityHint("Opens AI search functionality")
         .ecosiaThemed(windowUUID, $theme)

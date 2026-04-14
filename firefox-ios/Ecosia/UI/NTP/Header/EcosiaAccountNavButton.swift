@@ -67,13 +67,9 @@ public struct EcosiaAccountNavButton: View {
             .padding(.leading, authStateProvider.hasRegisterVisitError ? .ecosia.space._2s : .ecosia.space._1s)
             .padding(.trailing, .ecosia.space._2s)
             .frame(minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
-            .background(
-                theme.backgroundColor
-            .cornerRadius(.ecosia.borderRadius._1l)
-            )
             .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(NTPGlassButtonStyle(RoundedRectangle(cornerRadius: .ecosia.borderRadius._1l)))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityHint(String.localized(.accountButtonAccessibilityHint))
@@ -85,11 +81,7 @@ public struct EcosiaAccountNavButton: View {
 
 // MARK: - Theme
 struct EcosiaAccountNavButtonTheme: EcosiaThemeable {
-    var backgroundColor = Color.gray.opacity(0.2)
-
-    mutating func applyTheme(theme: Theme) {
-        backgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
-    }
+    mutating func applyTheme(theme: Theme) {}
 }
 
 #if DEBUG

@@ -355,6 +355,14 @@ open class Analytics {
                              payload: payload))
     }
 
+    // MARK: NTP History Button
+
+    public func ntpHistoryButtonTapped() {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.NTP.history.rawValue))
+    }
+
     // MARK: AI Search MVP
 
     public func aiSearchNTPButtonTapped() {

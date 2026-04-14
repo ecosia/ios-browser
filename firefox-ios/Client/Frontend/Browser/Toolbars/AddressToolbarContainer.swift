@@ -529,6 +529,8 @@ final class AddressToolbarContainer: UIView,
             addNewTabView.applyTheme(theme: theme)
         }
         applyProgressBarTheme(isPrivateMode: model?.isPrivateMode ?? false, theme: theme)
+        // Ecosia: Match NavigationToolbarContainer's background so both toolbars share the same dark mode colour
+        backgroundColor = theme.colors.layerSurfaceLow.withAlphaComponent(toolbarHelper.glassEffectAlpha)
 
         guard #available(iOS 26.0, *) else { return }
         accessoryViewGradient.colors = [

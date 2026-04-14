@@ -115,11 +115,11 @@ final class PlainSearchEngineView: UIView,
         imageViewHeightConstraint?.constant = size.height
     }
 
-    // Ecosia: Show favicon when browsing; show search engine image when editing or on home
+    // Ecosia: Show favicon when browsing; hide search engine image when editing or browsing
     private func updateFaviconDisplay(config: LocationViewConfiguration) {
         let isBrowsing = !config.isEditing && config.searchEngineImage == nil && config.url != nil
         faviconImageView.isHidden = !isBrowsing
-        searchEngineImageView.isHidden = isBrowsing
+        searchEngineImageView.isHidden = isBrowsing || config.isEditing
         if isBrowsing, let url = config.url {
             /* Ecosia: Use cornerRadius 0 for address-bar favicons (16×16); matches StoriesFeedCell convention
                and avoids the circle-clip "wrapper" effect that UX.cornerRadius (12pt on iOS 26) caused. */

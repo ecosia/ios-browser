@@ -365,9 +365,9 @@ final class LocationView: UIView,
                                      isURLTextFieldCentered: Bool,
                                      locationTextFieldTrailingPadding: CGFloat) {
         guard !isEditing else {
-            updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
+            // Ecosia: Hide the search engine icon when the URL bar is focused for a cleaner editing experience
+            updateUIForEditingDisplay()
             urlTextFieldTrailingConstraint?.constant = 0
-            animateIconAppearance()
             return
         }
 
@@ -433,6 +433,14 @@ final class LocationView: UIView,
         }
         updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
         iconContainerStackViewLeadingConstraint?.constant = UX.horizontalSpace
+        updateGradient()
+    }
+
+    // Ecosia: Remove the search engine icon when editing so the text field has full width.
+    private func updateUIForEditingDisplay() {
+        removeContainerIcons()
+        updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
+        iconContainerStackViewLeadingConstraint?.constant = 0
         updateGradient()
     }
 

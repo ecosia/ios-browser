@@ -72,6 +72,14 @@ struct NavigationBarState: StateType, Equatable {
         a11yLabel: .Toolbars.NewTabButton,
         a11yId: AccessibilityIdentifiers.Toolbar.addNewTabButton)
 
+    // Ecosia: History button shown on NTP instead of new-tab
+    private static let historyAction = ToolbarActionConfiguration(
+        actionType: .history,
+        iconName: StandardImageIdentifiers.Large.history,
+        isEnabled: true,
+        a11yLabel: .TabToolbarHistoryAccessibilityLabel,
+        a11yId: AccessibilityIdentifiers.Toolbar.historyButton)
+
     init(windowUUID: WindowUUID) {
         self.init(windowUUID: windowUUID,
                   actions: [],
@@ -297,11 +305,11 @@ struct NavigationBarState: StateType, Equatable {
         }
         let canShowDataClearanceAction = canShowDataClearanceAction && isPrivateMode
         let middleActionForWebpage = canShowDataClearanceAction ? dataClearanceAction : customizedMiddleButton
-        /* Ecosia: Always show the new tab (plus) button; Firefox shows a search icon on the homepage
+        /* Ecosia: Show history on NTP, new tab on SERP/webpage
         let middleActionForHomepage = searchAction
         let middleAction = url == nil ? middleActionForHomepage : middleActionForWebpage
         */
-        let middleAction = middleActionForWebpage
+        let middleAction = url == nil ? historyAction : middleActionForWebpage
 
         return middleAction
     }

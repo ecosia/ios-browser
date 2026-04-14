@@ -8,17 +8,6 @@ import Common
 import Ecosia
 // swiftlint:disable closure_body_length
 
-// MARK: - SwiftUI Color helpers for NTP glass tokens
-
-private extension Color {
-    static var ntpGlassDarkTint: Color {
-        Color(uiColor: EcosiaColor.Gray90).opacity(0.32)
-    }
-
-    static func borderGlassStatic(opacity: Double = 0x3D / 255.0) -> Color {
-        Color.white.opacity(opacity)
-    }
-}
 
 @MainActor
 protocol NTPHeaderDelegate: AnyObject {
@@ -95,16 +84,8 @@ private struct EcosiaCustomizeButton: View {
                 .foregroundColor(.white)
                 .frame(width: iconSize, height: iconSize)
                 .frame(width: buttonSize, height: buttonSize)
-                .background(
-                    ZStack {
-                        Color.clear.background(.ultraThinMaterial)
-                        Color.ntpGlassDarkTint
-                    }
-                )
-                .clipShape(Circle())
-                .overlay(Circle().stroke(Color.borderGlassStatic(), lineWidth: 1))
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(NTPGlassButtonStyle(Circle()))
         .accessibilityLabel(String.localized(.customizeHomepage))
         .accessibilityIdentifier("ntp_customize_button")
     }

@@ -2898,6 +2898,9 @@ class BrowserViewController: UIViewController,
         // Ecosia: Handle QR code scanner display
         case .qrCode:
             navigationHandler?.showQRCode(delegate: self, rootNavigationController: nil)
+        // Ecosia: Show history panel when the NTP toolbar history button is tapped
+        case .history:
+            showLibrary(panel: .history)
         case .share:
             // User tapped the Share button in the toolbar
             guard let button = state.buttonTapped else { return }

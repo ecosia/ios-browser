@@ -10,6 +10,7 @@ struct ToolbarActionConfiguration: Equatable, FeatureFlaggable {
         case back
         case forward
         case home
+        case history
         case newTab
         case search
         case tabs

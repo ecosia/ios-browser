@@ -73,8 +73,10 @@ public protocol EcosiaSemanticColors {
     var textStaticLight: UIColor { get }
 
     // MARK: - NTP Glass
-    /// Dark semi-transparent tint overlay on the wallpaper behind glass tiles.
+    /// Dark semi-transparent tint overlay on the wallpaper behind glass tiles (default/rest state).
     var buttonBgGlassStatic: UIColor { get }
+    /// Dark semi-transparent tint overlay on the wallpaper behind glass tiles (active/pressed state).
+    var buttonBgGlassStaticActive: UIColor { get }
     /// White translucent border around glass tiles.
     var borderGlassStatic: UIColor { get }
 }
@@ -130,5 +132,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textStaticDark: UIColor = .systemGray
     var textStaticLight: UIColor = .systemGray
     var buttonBgGlassStatic: UIColor = .systemGray
+    var buttonBgGlassStaticActive: UIColor = .systemGray
     var borderGlassStatic: UIColor = .systemGray
 }

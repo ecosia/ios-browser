@@ -338,7 +338,12 @@ extension TopSiteCell: ThemeApplicable {
         let labelColor: UIColor = ecosiaGlassStyleEnabled ? .white : (textColor ?? theme.colors.textPrimary)
         titleLabel.textColor = labelColor
         sponsoredLabel.textColor = labelColor
-        selectedOverlay.backgroundColor = theme.colors.layer5Hover.withAlphaComponent(0.25)
+        // Ecosia: Use the glass active token when in glass mode, otherwise Firefox default
+        if ecosiaGlassStyleEnabled {
+            selectedOverlay.backgroundColor = theme.colors.ecosia.buttonBgGlassStaticActive
+        } else {
+            selectedOverlay.backgroundColor = theme.colors.layer5Hover.withAlphaComponent(0.25)
+        }
 
         adjustBlur(theme: theme)
     }

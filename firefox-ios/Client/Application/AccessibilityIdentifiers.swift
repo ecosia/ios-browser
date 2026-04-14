@@ -27,6 +27,7 @@ struct AccessibilityIdentifiers {
         static let forwardButton = "TabToolbar.forwardButton"
         static let tabsButton = "TabToolbar.tabsButton"
         static let addNewTabButton = "TabToolbar.addNewTabButton"
+        static let historyButton = "TabToolbar.historyButton"
         static let searchButton = "TabToolbar.searchButton"
         static let stopButton = "TabToolbar.stopButton"
         static let translateButton = "TabToolbar.translateButton"

@@ -7348,6 +7348,12 @@ extension String {
         tableName: nil,
         value: nil,
         comment: "Accessibility label for the tab toolbar indicating the Home button.")
+    // Ecosia: History button accessibility label for the NTP toolbar.
+    public static let TabToolbarHistoryAccessibilityLabel = MZLocalizedString(
+        key: "TabToolbar.Accessibility.History.v1",
+        tableName: nil,
+        value: "History",
+        comment: "Accessibility label for the tab toolbar History button shown on the new tab page.")
 }
 
 extension String {

@@ -104,7 +104,8 @@ extension Analytics {
             impact,
             news,
             quickActions = "quick_actions",
-            topSites = "top_sites"
+            topSites = "top_sites",
+            history
         }
 
         public enum Onboarding: String {
