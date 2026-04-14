@@ -25,6 +25,7 @@ public struct EcosiaColor {
     public static let Gray90 = UIColor(rgb: 0x1A1A1A)
 
     // MARK: - Grellow
+    public static let Grellow50  = UIColor(rgb: 0xE9F8A2)
     public static let Grellow100 = UIColor(rgb: 0xD7EB80)
     public static let Grellow200 = UIColor(rgb: 0xBBCF65)
     public static let Grellow300 = UIColor(rgb: 0xA1B353)
@@ -39,51 +40,86 @@ public struct EcosiaColor {
     public static let Green10 = UIColor(rgb: 0xCFF2D0)
     public static let Green20 = UIColor(rgb: 0xAFE9B0)
     public static let Green30 = UIColor(rgb: 0x5DD25E)
-    public static let Green40 = UIColor(rgb: 0xA4D24F)
     public static let Green50 = UIColor(rgb: 0x008009)
     public static let Green60 = UIColor(rgb: 0x007508)
     public static let Green70 = UIColor(rgb: 0x006600)
+    public static let Green80 = UIColor(rgb: 0x003C03)
 
     // MARK: - Dark Green
-    public static let DarkGreen30 = UIColor(rgb: 0x668A7A)
-    public static let DarkGreen50 = UIColor(rgb: 0x275243)
-    public static let DarkGreen70 = UIColor(rgb: 0x09281D)
-    public static let DarkGreen800 = UIColor(rgb: 0x18362B)
+    public static let DarkGreen30  = UIColor(rgb: 0x668A7A)
+    public static let DarkGreen50  = UIColor(rgb: 0x275243)
+    public static let DarkGreen70  = UIColor(rgb: 0x09281D)
+    public static let DarkGreen800 = UIColor(rgb: 0x18362B) // Used as Background/Accent/dark-green; not a standard palette step
 
     // MARK: - Light Green
-    public static let LightGreen20 = UIColor(rgb: 0xBACC80)
-    public static let LightGreen30 = UIColor(rgb: 0xD8FF80)
-    public static let LightGreen40 = UIColor(rgb: 0xA4D24F)
-    public static let LightGreen50 = UIColor(rgb: 0x72A11A)
-    public static let LightGreen60 = UIColor(rgb: 0x40521F)
+    public static let LightGreen50  = UIColor(rgb: 0xE1F9B0)
+    public static let LightGreen100 = UIColor(rgb: 0xC3F16E)
+    public static let LightGreen200 = UIColor(rgb: 0xA4D24F)
+    public static let LightGreen300 = UIColor(rgb: 0x8EB842)
+    public static let LightGreen400 = UIColor(rgb: 0x789C36)
+    public static let LightGreen500 = UIColor(rgb: 0x62802B)
+    public static let LightGreen600 = UIColor(rgb: 0x4D6620)
+    public static let LightGreen700 = UIColor(rgb: 0x3A4D16)
+    public static let LightGreen800 = UIColor(rgb: 0x283410)
+    public static let LightGreen900 = UIColor(rgb: 0x181D0C)
 
     // MARK: - Red
-    public static let Red20 = UIColor(rgb: 0xFFE8DA)
-    public static let Red30 = UIColor(rgb: 0xFF8A8C)
-    public static let Red40 = UIColor(rgb: 0xFD4256)
-    public static let Red50 = UIColor(rgb: 0xAF1731)
-
-    // MARK: - Yellow
-    public static let Yellow40 = UIColor(rgb: 0xF7BC00)
-    public static let Yellow50 = UIColor(rgb: 0xD6A300)
-
-    // MARK: - Blue
-    public static let Blue30 = UIColor(rgb: 0x96D6F8)
-    public static let Blue40 = UIColor(rgb: 0x0094C7)
-    public static let Blue50 = UIColor(rgb: 0x007EA8)
-    public static let Blue60 = UIColor(rgb: 0x005D87)
-    public static let Blue70 = UIColor(rgb: 0x004687)
-    public static let Blue80 = UIColor(rgb: 0x002A3D)
-
-    // MARK: - Peach
-    public static let Peach30 = UIColor(rgb: 0xFFE6BF)
-    public static let Peach40 = UIColor(rgb: 0xFFAF87)
-    public static let Peach50 = UIColor(rgb: 0xCA8461)
-    public static let Peach100 = UIColor(rgb: 0xFCDBCC)
-    public static let Peach700 = UIColor(rgb: 0x77300A)
+    public static let Red50  = UIColor(rgb: 0xFBEDEC)
+    public static let Red100 = UIColor(rgb: 0xFBDBD9)
+    public static let Red200 = UIColor(rgb: 0xFCB3AF)
+    public static let Red300 = UIColor(rgb: 0xFD8786)
+    public static let Red400 = UIColor(rgb: 0xFD4256)
+    public static let Red500 = UIColor(rgb: 0xE71140)
+    public static let Red600 = UIColor(rgb: 0xB90A32)
+    public static let Red700 = UIColor(rgb: 0x8E0624)
+    public static let Red800 = UIColor(rgb: 0x630717)
+    public static let Red900 = UIColor(rgb: 0x3B0708)
 
     // MARK: - Claret
+    public static let Claret50  = UIColor(rgb: 0xF6EFF0)
+    public static let Claret100 = UIColor(rgb: 0xEFDEE1)
+    public static let Claret200 = UIColor(rgb: 0xE3BCC3)
     public static let Claret300 = UIColor(rgb: 0xD89AA6)
+    public static let Claret400 = UIColor(rgb: 0xCC768A)
+    public static let Claret500 = UIColor(rgb: 0xB35A70)
     public static let Claret600 = UIColor(rgb: 0x8F4759)
+    public static let Claret700 = UIColor(rgb: 0x632F3C)
     public static let Claret800 = UIColor(rgb: 0x4C232D)
+    public static let Claret900 = UIColor(rgb: 0x2C141A)
+
+    // MARK: - Peach
+    public static let Peach50  = UIColor(rgb: 0xFCEEE7)
+    public static let Peach100 = UIColor(rgb: 0xFCDBCC)
+    public static let Peach200 = UIColor(rgb: 0xFFAF87)
+    public static let Peach300 = UIColor(rgb: 0xF98D56)
+    public static let Peach400 = UIColor(rgb: 0xE36C2F)
+    public static let Peach500 = UIColor(rgb: 0xC25419)
+    public static let Peach600 = UIColor(rgb: 0x9E400D)
+    public static let Peach700 = UIColor(rgb: 0x77300A)
+    public static let Peach800 = UIColor(rgb: 0x541F01)
+    public static let Peach900 = UIColor(rgb: 0x2D1504)
+
+    // MARK: - Yellow
+    public static let Yellow50  = UIColor(rgb: 0xFAEFDC)
+    public static let Yellow100 = UIColor(rgb: 0xF8DEB0)
+    public static let Yellow200 = UIColor(rgb: 0xF8C856)
+    public static let Yellow300 = UIColor(rgb: 0xD0A435)
+    public static let Yellow400 = UIColor(rgb: 0xB08A2B)
+    public static let Yellow500 = UIColor(rgb: 0x917222)
+    public static let Yellow600 = UIColor(rgb: 0x745A19)
+    public static let Yellow700 = UIColor(rgb: 0x574310)
+    public static let Yellow800 = UIColor(rgb: 0x3C2E0D)
+    public static let Yellow900 = UIColor(rgb: 0x211A0A)
+
+    // MARK: - Blue
+    public static let Blue50  = UIColor(rgb: 0xE6F3FC)
+    public static let Blue100 = UIColor(rgb: 0xC9E7FB)
+    public static let Blue200 = UIColor(rgb: 0x83D1FD)
+    public static let Blue300 = UIColor(rgb: 0x49B8ED)
+    public static let Blue400 = UIColor(rgb: 0x0094C7)
+    public static let Blue500 = UIColor(rgb: 0x0081AF)
+    public static let Blue600 = UIColor(rgb: 0x00678B)
+    public static let Blue700 = UIColor(rgb: 0x004D64)
+    public static let Blue800 = UIColor(rgb: 0x03354A)
+    public static let Blue900 = UIColor(rgb: 0x051E2B)
 }
