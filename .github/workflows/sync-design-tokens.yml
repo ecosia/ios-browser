@@ -1,0 +1,72 @@
+name: Sync design tokens from Figma
+
+on:
+  repository_dispatch:
+    types: [update-tokens]
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: "Token filename (e.g. 01.color-primitive.tokens.json)"
+        required: true
+      commitMessage:
+        description: "PR commit message"
+        default: "chore: sync design tokens from Figma"
+
+jobs:
+  transform:
+    name: Generate Swift from Figma tokens
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write token file from payload
+        if: github.event_name == 'repository_dispatch'
+        uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: ${{ github.event.client_payload.filename }}
+          json: ${{ github.event.client_payload.tokens }}
+          dir: firefox-ios/design-tokens/
+
+      # workflow_dispatch path: token file must already exist in the branch
+      - name: Verify token file exists (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          FILE="firefox-ios/design-tokens/${{ inputs.filename }}"
+          if [ ! -f "$FILE" ]; then
+            echo "❌ $FILE not found. Commit the token JSON to this branch first."
+            exit 1
+          fi
+          echo "✅ Found $FILE"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate EcosiaColor.swift
+        run: node scripts/generate-tokens.js
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/design-tokens-sync
+          base: main
+          commit-message: "${{ github.event.client_payload.commitMessage || inputs.commitMessage || 'chore: sync design tokens from Figma' }}"
+          title: "chore: sync color tokens from Figma"
+          body: |
+            ## Design token sync
+
+            Auto-generated from a Figma push via the [design-tokens plugin](https://github.com/lukasoppermann/design-tokens).
+
+            **Token file updated:** `${{ github.event.client_payload.filename || inputs.filename }}`
+
+            ### Review checklist
+            - [ ] Primitive values look correct in `EcosiaColor.swift`
+            - [ ] No iOS-only tokens unintentionally removed (`DarkGreen800`, `segmentedControl*`, `switchKnob*`)
+            - [ ] Visual check: URL bar background (`backgroundTertiary` / `backgroundQuaternary`)
+            - [ ] Visual check: dark mode icons (`iconDecorative`)
+          labels: design-tokens, automated
+          add-paths: |
+            firefox-ios/design-tokens/
+            firefox-ios/Ecosia/UI/DesignSystem/EcosiaColor.swift
