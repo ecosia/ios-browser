@@ -1,16 +1,58 @@
 import ProjectDescription
 
-/// Ecosia schemes. Test plan must match CI (.github/actions/perform_unit_tests/action.yml).
+/// Ecosia schemes.
+///
+/// Test targets and skipped tests are declared inline so Tuist resolves
+/// identifiers at generation time — no manually-maintained .xctestplan
+/// with fragile UUIDs needed.
 public enum EcosiaSchemes {
+
+    // MARK: - Shared test targets
+
+    /// Test targets shared by Ecosia & EcosiaBeta schemes.
+    private static let unitTestTargets: [TestableTarget] = [
+        "EcosiaTests",
+        "ClientTests",
+        "SyncTests",
+        "StorageTests",
+        "SharedTests",
+        "SyncTelemetryTests",
+    ]
+
+    /// Tests to skip across all unit-test schemes.
+    ///
+    /// Format: `"ClassName/methodName()"` for a single test,
+    ///         `"ClassName"` for an entire test class.
+    /// These are written into the xcscheme's `<SkippedTests>` section.
+    private static let skippedTests: [String] = [
+        // EcosiaTests
+        "AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions()",
+
+        // ClientTests
+        "ContentBlockerTests/testCompileListsNotInStore_callsCompletionHandlerSuccessfully()",
+        "GeneralizedImageFetcherTests/testBadStatusCode()",
+        "GeneralizedImageFetcherTests/testErrorResponse()",
+        "GeneralizedImageFetcherTests/testNilData()",
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_withMalformedURL()",
+        "IntroScreenManagerTests/testHasSeenIntroScreen_shouldNotShowIt()",
+        "ShortcutRouteTests",
+        "SyncContentSettingsViewControllerTests",
+
+        // StorageTests
+        "TestBrowserDB/testMovesDB()",
+    ]
+
+    // MARK: - Schemes
 
     public static let all: [Scheme] = [
         .scheme(
             name: "Ecosia",
             buildAction: .buildAction(targets: ["Client"]),
-            testAction: .testPlans(
-                ["firefox-ios-tests/Tests/UnitTest.xctestplan"],
+            testAction: .targets(
+                unitTestTargets,
                 configuration: "Testing",
-                attachDebugger: false
+                attachDebugger: false,
+                skippedTests: skippedTests
             ),
             runAction: .runAction(
                 executable: "Client",
@@ -23,10 +65,11 @@ public enum EcosiaSchemes {
         .scheme(
             name: "EcosiaBeta",
             buildAction: .buildAction(targets: ["Client"]),
-            testAction: .testPlans(
-                ["firefox-ios-tests/Tests/UnitTest.xctestplan"],
+            testAction: .targets(
+                unitTestTargets,
                 configuration: "Testing",
-                attachDebugger: false
+                attachDebugger: false,
+                skippedTests: skippedTests
             ),
             runAction: .runAction(
                 configuration: "BetaDebug",

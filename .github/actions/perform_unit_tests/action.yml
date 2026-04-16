@@ -32,7 +32,6 @@ runs:
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
           -enableCodeCoverage NO \
-          -testPlan UnitTest \
           -destination 'platform=iOS Simulator,name=iPhone 17' \
           -resultBundlePath TestResults.xcresult \
           -derivedDataPath DerivedData \
