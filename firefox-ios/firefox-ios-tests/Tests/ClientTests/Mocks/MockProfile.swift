@@ -11,8 +11,6 @@ import XCTest
 
 @testable import Client
 
-import enum MozillaAppServices.SyncReason
-import struct MozillaAppServices.SyncResult
 import MozillaAppServices
 
 public typealias ClientSyncManager = Client.SyncManager
@@ -186,7 +184,7 @@ open class MockProfile: Client.Profile, @unchecked Sendable {
 
     public lazy var remoteSettingsService: RemoteSettingsService = {
         let config = RemoteSettingsConfig2(server: .prod, bucketName: "main", appContext: nil)
-        return try! RemoteSettingsService(storageDir: directory, config: config)
+        return RemoteSettingsService(storageDir: directory, config: config)
     }()
 
     public lazy var prefs: Prefs = {

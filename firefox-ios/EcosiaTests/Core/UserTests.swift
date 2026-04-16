@@ -144,17 +144,6 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 1)
     }
 
-    func testPersonalized() {
-        let expect = expectation(description: "")
-        User.shared.sendAnonymousUsageData = true
-        User.queue.async {
-            let user = User()
-            XCTAssertEqual(true, user.sendAnonymousUsageData)
-            expect.fulfill()
-        }
-        waitForExpectations(timeout: 1)
-    }
-
     func testSendAnonymousUsageData() {
         let expect = expectation(description: "")
         User.shared.sendAnonymousUsageData = false

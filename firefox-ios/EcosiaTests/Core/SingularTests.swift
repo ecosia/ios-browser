@@ -224,15 +224,15 @@ class MockSingularAdNetworkHelper: SingularAdNetworkHelperProtocol {
 // MARK: Parameters Mock
 enum MockSessionParameters {
     nonisolated(unsafe) static let mockAppDeviceInfo = AppDeviceInfo(platform: "a",
-                                                 bundleId: "b",
-                                                 osVersion: "c",
-                                                 deviceManufacturer: "d",
-                                                 deviceModel: "e",
-                                                 locale: "f",
-                                                 country: "g",
-                                                 appVersion: "h",
-                                                 installReceipt: "i",
-                                                 adServicesAttributionToken: "j")
+                                                                     bundleId: "b",
+                                                                     osVersion: "c",
+                                                                     deviceManufacturer: "d",
+                                                                     deviceModel: "e",
+                                                                     locale: "f",
+                                                                     country: "g",
+                                                                     appVersion: "h",
+                                                                     installReceipt: "i",
+                                                                     adServicesAttributionToken: "j")
     private static let mockExpectedDeviceInfoParameters = [
         "p": "a",
         "i": "b",

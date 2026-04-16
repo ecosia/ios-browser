@@ -21,7 +21,7 @@ final class TermsOfUseTelemetryTests: XCTestCase {
 
     override func tearDown() async throws {
         telemetry = nil
-        
+
         try await super.tearDown()
     }
 

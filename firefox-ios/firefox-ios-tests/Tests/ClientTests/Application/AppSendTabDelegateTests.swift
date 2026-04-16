@@ -90,7 +90,7 @@ final class AppFxACommandsTests: XCTestCase {
 
     func createSubject() -> AppFxACommandsDelegate {
         let subject = AppFxACommandsDelegate(app: applicationStateProvider,
-                                              applicationHelper: applicationHelper)
+                                             applicationHelper: applicationHelper)
         trackForMemoryLeaks(subject)
         return subject
     }

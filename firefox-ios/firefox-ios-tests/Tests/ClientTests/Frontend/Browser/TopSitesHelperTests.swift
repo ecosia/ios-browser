@@ -120,7 +120,7 @@ class TopSitesHelperTests: XCTestCase, @unchecked Sendable {
     func testGetTopSites_filterHideSearchParam() {
         let expectation = expectation(description: "Expect top sites to be fetched")
         let sites = defaultFrecencySites + [Site.createBasicSite(url: "https://frecencySponsoredSite.com/page?mfadid=adm",
-                                                               title: "A sponsored title")]
+                                                                 title: "A sponsored title")]
         let subject = createSubject(mockPinnedSites: true, frecencySitesToAdd: sites)
 
         subject.getTopSites { sites in

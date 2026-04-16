@@ -128,12 +128,12 @@ class AppSettingsTableViewControllerTests: XCTestCase {
     // MARK: - Helper
     private func createSubject() -> AppSettingsTableViewController {
         let subject = AppSettingsTableViewController(with: profile,
-                                                      and: tabManager,
-                                                      settingsDelegate: settingsDelegate,
-                                                      parentCoordinator: delegate,
-                                                      gleanUsageReportingMetricsService: GleanUsageReportingMetricsService(profile: profile),
-                                                      appAuthenticator: appAuthenticator,
-                                                      applicationHelper: applicationHelper)
+                                                     and: tabManager,
+                                                     settingsDelegate: settingsDelegate,
+                                                     parentCoordinator: delegate,
+                                                     gleanUsageReportingMetricsService: GleanUsageReportingMetricsService(profile: profile),
+                                                     appAuthenticator: appAuthenticator,
+                                                     applicationHelper: applicationHelper)
         trackForMemoryLeaks(subject)
         return subject
     }
