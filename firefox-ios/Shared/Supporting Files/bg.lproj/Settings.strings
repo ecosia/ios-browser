@@ -188,7 +188,7 @@
 "Settings.Search.Accessibility.DefaultSearchEngine.v121" = "Стандартна търсеща машина";
 
 /* Accessibility label for Learn more about Firefox Suggest. */
-"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "Научете повече за Firefox Suggest";
+"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "Научете повече за Ecosia Suggest";
 
 /* Title for alternate search engines settings section in the Search page in the Settings menu. */
 "Settings.Search.AlternateSearchEngines.Title.v124.v2" = "Алтернативни търсачки";
@@ -212,13 +212,13 @@
 "Settings.Search.ShowSuggestions.v121" = "Предложения при търсене";
 
 /* In the Search page of the Settings menu, the title for the Firefox Suggest settings section. */
-"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "Адресник - Firefox Suggest";
+"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "Адресник - Ecosia Suggest";
 
 /* In the search page of the Settings menu, the title for the link to the SUMO Page about Firefox Suggest. */
-"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "Научете повече за Firefox Suggest";
+"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "Научете повече за Ecosia Suggest";
 
 /* Description for `Show in Private Sessions` toggle, located in `Address Bar - Firefox Suggest` section in the Search page in the Settings menu. */
-"Settings.Search.Suggest.PrivateSession.Description.v125" = "Показване на предложения от Firefox Suggest в поверителни сесии";
+"Settings.Search.Suggest.PrivateSession.Description.v125" = "Показване на предложения от Ecosia Suggest в поверителни сесии";
 
 /* In the Search page of the Settings menu, the title for the setting to enable search browsing history. */
 "Settings.Search.Suggest.SearchBrowsingHistory.Title.v124" = "Търсене в История на сърфирането";

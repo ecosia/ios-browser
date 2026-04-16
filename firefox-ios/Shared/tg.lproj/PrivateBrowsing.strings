@@ -5,7 +5,7 @@
 "ContextMenu.OpenInNewPrivateTabButtonTitle" = "Кушодан дар варақаи хусусии нав";
 
 /* Description text displayed when there are no open tabs while in private mode */
-"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "Браузери «Firefox» ягон таърих ё кукиҳои шуморо дар хотир намедорад, аммо хатбаракҳои нав нигоҳ дошта мешаванд.";
+"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "Браузери «Ecosia» ягон таърих ё кукиҳои шуморо дар хотир намедорад, аммо хатбаракҳои нав нигоҳ дошта мешаванд.";
 
 /* Text button displayed when there are no tabs open while in private mode */
 "Learn More" = "Маълумоти бештар";

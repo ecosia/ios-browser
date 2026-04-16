@@ -179,7 +179,7 @@
 "Settings.Search.Accessibility.DefaultSearchEngine.v121" = "ნაგულისხმევი საძიებო";
 
 /* Accessibility label for Learn more about Firefox Suggest. */
-"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "ვრცლად Firefox-შემოთავაზების შესახებ";
+"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "ვრცლად Ecosia-შემოთავაზების შესახებ";
 
 /* Title for alternate search engines settings section in the Search page in the Settings menu. */
 "Settings.Search.AlternateSearchEngines.Title.v124.v2" = "სათადარიგო საძიებოები";
@@ -203,13 +203,13 @@
 "Settings.Search.ShowSuggestions.v121" = "ძიების შემოთავაზების ჩვენება";
 
 /* In the Search page of the Settings menu, the title for the Firefox Suggest settings section. */
-"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "მისამართების ველში Firefox-შემოთავაზება";
+"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "მისამართების ველში Ecosia-შემოთავაზება";
 
 /* In the search page of the Settings menu, the title for the link to the SUMO Page about Firefox Suggest. */
-"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "ვრცლად Firefox-შემოთავაზების შესახებ";
+"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "ვრცლად Ecosia-შემოთავაზების შესახებ";
 
 /* Description for `Show in Private Sessions` toggle, located in `Address Bar - Firefox Suggest` section in the Search page in the Settings menu. */
-"Settings.Search.Suggest.PrivateSession.Description.v125" = "Firefox-შემოთავაზების ჩვენება პირად ფანჯრებში";
+"Settings.Search.Suggest.PrivateSession.Description.v125" = "Ecosia-შემოთავაზების ჩვენება პირად ფანჯრებში";
 
 /* In the Search page of the Settings menu, the title for the setting to enable search browsing history. */
 "Settings.Search.Suggest.SearchBrowsingHistory.Title.v124" = "ძიება ნანახ გვერდებში";

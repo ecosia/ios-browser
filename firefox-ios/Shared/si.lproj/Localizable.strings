@@ -308,7 +308,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "එය වැරදි වින්‍යාස කිරීමක් හෝ ප්‍රහාරකයෙකුගේ අපවේශනයක් විය හැකිය. ඔබ අවදානම පිළිගන්නේ නම් ඉදිරියට යන්න.";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "%@ හි අයිතිකරු ඔවුන්ගේ වියමන අඩවිය නිසි ලෙස සකස් කර නැත. ඔබගේ තොරතුරු සොරෙන් ගැනීම වැළැක්වීමට, ෆයර්ෆොක්ස් මෙම අඩවියට සම්බන්ධ වී නැත.";
+"ErrorPages.CertWarning.Description" = "%@ හි අයිතිකරු ඔවුන්ගේ වියමන අඩවිය නිසි ලෙස සකස් කර නැත. ඔබගේ තොරතුරු සොරෙන් ගැනීම වැළැක්වීමට, Ecosia මෙම අඩවියට සම්බන්ධ වී නැත.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "මෙම සම්බන්ධතාව අවිශ්වාසයි";
@@ -329,7 +329,7 @@
 "Facebook" = "ෆේස්බුක්";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "ෆයර්ෆොක්ස් මුල් පිටුව";
+"Firefox.HomePage.Title" = "Ecosia මුල් පිටුව";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "මුල්පිටුව අභිරුචිකරණය";
@@ -374,7 +374,7 @@
 "Forward" = "හරවන්න";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "ෆයර්ෆොක්ස් ගිණුම";
+"FxA.FirefoxAccount" = "Ecosia ගිණුම";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "ගිණුම හා උපාංග කළමනාකරණය";
@@ -386,7 +386,7 @@
 "fxa.signin.camera-signin" = "රූගතය සමඟ පිවිසෙන්න";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "පරිගණකයෙහි ෆයර්ෆොක්ස් විවෘත කර firefox.com/pair වෙත යන්න";
+"fxa.signin.qr-link-instruction" = "පරිගණකයෙහි Ecosia විවෘත කර firefox.com/pair වෙත යන්න";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "පරිලෝකනයට ඔබන්න";
@@ -398,7 +398,7 @@
 "FxA.SyncNow" = "සමමුහූර්ත කරන්න";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "ෆයර්ෆොක්ස් සමමුහූර්තය %@ වෙත සම්බන්ධයි";
+"FxAPush_DeviceConnected_body" = "Ecosia සමමුහූර්තය %@ වෙත සම්බන්ධයි";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "සමමුහූර්තය සම්බන්ධයි";
@@ -407,7 +407,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ වෙතින් සාර්ථකව විසන්ධි කර ඇත.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "මෙම උපාංගය ෆයර්ෆොක්ස් සමමුහූර්තය වෙතින් සාර්ථකව විසන්ධි කර ඇත.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "මෙම උපාංගය Ecosia සමමුහූර්තය වෙතින් සාර්ථකව විසන්ධි කර ඇත.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "සමමුහූර්තය විසන්ධියි";
@@ -416,10 +416,10 @@
 "FxAPush_DeviceDisconnected_title" = "සමමුහූර්තය විසන්ධියි";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ෆයර්ෆොක්ස් සමමුහූර්තයෙන් උපාංගයක් විසන්ධි වී ඇත";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Ecosia සමමුහූර්තයෙන් උපාංගයක් විසන්ධි වී ඇත";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "ෆයර්ෆොක්ස් ලාංඡනය, බිතුපත සංශෝධනය.";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Ecosia ලාංඡනය, බිතුපත සංශෝධනය.";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "උදව්";
@@ -452,7 +452,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "වෙනත් උපාංගයන්ගෙන් පටිති ලේඛනය බැලිමට ඇතුළු වන්න.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "ෆයර්ෆොක්ස් සමමුහූර්තය";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia සමමුහූර්තය";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "ඉතිහාසය";
@@ -650,13 +650,13 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "තව දැනගන්න";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "ෆයර්ෆොක්ස් සඳහා ස්වයං පිරවුම් විශේෂාංගය භාවිතා කිරීමට, ඔබ උපාංග මුර කේතයක් සබල කර තිබීමට වුවමනාය.";
+"Logins.PasscodeRequirement.Warning" = "Ecosia සඳහා ස්වයං පිරවුම් විශේෂාංගය භාවිතා කිරීමට, ඔබ උපාංග මුර කේතයක් සබල කර තිබීමට වුවමනාය.";
 
 /* Label displaying welcome view tagline under the title */
 "Logins.WelcomeView.Tagline" = "සැමතැන ඔබගේ මුරපද රැගෙන යන්න";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "ෆයර්ෆොක්ස් මුරපද ස්වයං පිරවුම";
+"Logins.WelcomeView.Title2" = "Ecosia මුරපද ස්වයං පිරවුම";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "ස්වයං පිරවුම සබල කරන්න";
@@ -689,7 +689,7 @@
 "LoginsList.Title" = "සුරැකි පිවිසුම්";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "ෆයර්ෆොක්ස් කලින් බිඳ වැටී තිබෙන සෙයකි. ඔබගේ පටිති ප්‍රත්‍යර්පණයට කැමතිද?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Ecosia කලින් බිඳ වැටී තිබෙන සෙයකි. ඔබගේ පටිති ප්‍රත්‍යර්පණයට කැමතිද?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "කියවූ බව යොදන්න";
@@ -872,7 +872,7 @@
 "Onboarding.WhatsNew.Button.Title" = "පිරික්සීම අරඹන්න";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "අපොයි! ෆයර්ෆොක්ස් බිඳ වැටුණි";
+"Oops! Firefox crashed" = "අපොයි! Ecosia බිඳ වැටුණි";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "මාතෘකා තීරුවේ දිස්වන විට පොත් නිරූපකය තට්ටු කිරීමෙන් පාඨක දැක්මෙහි ලිපි බලන්න.";
@@ -884,7 +884,7 @@
 "Open Tabs" = "පටිති අරින්න";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "ලිපිනය වලංගු නොවන බැවින් එම පිටුව ෆයර්ෆොක්ස් මගින් විවෘත කළ නොහැකිය.";
+"OpenURL.Error.Message" = "ලිපිනය වලංගු නොවන බැවින් එම පිටුව Ecosia මගින් විවෘත කළ නොහැකිය.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "පිටුව විවෘත කළ නොහැකියි";
@@ -896,7 +896,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "මෙය ඔබගේ ඡායා එකතුවට රූපය සුරැකීමට ඉඩ සලසයි.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "ෆයර්ෆොක්ස් ඔබගේ රූප වෙත ප්‍රවේශයට කැමතිය";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia ඔබගේ රූප වෙත ප්‍රවේශයට කැමතිය";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "වසන්න";
@@ -983,7 +983,7 @@
 "ScanQRCode.InvalidDataError.Message" = "දත්ත වලංගු නොවේ";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "උපාංගයේ ‘සැකසුම්’ > ‘ෆයර්ෆොක්ස්’ වෙත යන්න. රූගතයට ප්‍රවේශය දෙන්න.";
+"ScanQRCode.PermissionError.Message.v100" = "උපාංගයේ ‘සැකසුම්’ > ‘Ecosia’ වෙත යන්න. රූගතයට ප්‍රවේශය දෙන්න.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "QR කේතය සුපිරික්සන්න ";
@@ -998,7 +998,7 @@
 "Search.Awesomebar.SwitchToTab" = "පටිත්තට මාරුවන්න";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "ෆයර්ෆොක්ස් යෝජනා";
+"Search.SuggestSectionTitle.v102" = "Ecosia යෝජනා";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "නව සෙවුම් යන්ත්‍රය ඉක්මන් සෙවුම් තීරුවේ දිස්වනු ඇත.";
@@ -1064,13 +1064,13 @@
 "SendTo.NavBar.Title" = "පටිත්ත යවන්න";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "සමමුහූර්තය සඳහා ඔබ මෙම ෆයර්ෆොක්ස් ගිණුමට වෙනත් කිසිදු උපාංගයක් සම්බන්ධ කර නැත.";
+"SendTo.NoDevicesFound.Message" = "සමමුහූර්තය සඳහා ඔබ මෙම Ecosia ගිණුමට වෙනත් කිසිදු උපාංගයක් සම්බන්ධ කර නැත.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "ෆයර්ෆොක්ස් විවෘත කර, සැකසුම් වෙත ගොස් ඉදිරියට යාමට පිවිසෙන්න.";
+"SendTo.NotSignedIn.Message" = "Ecosia විවෘත කර, සැකසුම් වෙත ගොස් ඉදිරියට යාමට පිවිසෙන්න.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "ඔබගේ ෆයර්ෆොක්ස් ගිණුමට පිවිස නැත.";
+"SendTo.NotSignedIn.Title" = "ඔබගේ Ecosia ගිණුමට පිවිස නැත.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "යවන්න";
@@ -1091,7 +1091,7 @@
 "SentTab.NoTabArrivingNotification.body" = "ඇරඹීමට තට්ටු කරන්න";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "ෆයර්ෆොක්ස් සමමුහූර්තය";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia සමමුහූර්තය";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "දැක්ම";
@@ -1169,7 +1169,7 @@
 "Settings.DataManagement.Title" = "දත්ත කළමනාකරණය";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "ෆයර්ෆොක්ස් ඔබගේ ගිණුම සමග සමමුහූර්ත වීම නවත්වනු ඇත, නමුත් මෙම උපාංගයෙහි ඔබගේ පිරික්සුම් දත්ත කිසිවක් මකා නොදමනු ඇත.";
+"Settings.Disconnect.Body" = "Ecosia ඔබගේ ගිණුම සමග සමමුහූර්ත වීම නවත්වනු ඇත, නමුත් මෙම උපාංගයෙහි ඔබගේ පිරික්සුම් දත්ත කිසිවක් මකා නොදමනු ඇත.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "සමමුහූර්තය විසන්ධි කරන්න";
@@ -1235,7 +1235,7 @@
 "Settings.FxA.Sync.SectionName" = "සමමුහූර්ත සැකසුම්";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "ෆයර්ෆොක්ස් ගිණුම";
+"Settings.FxA.Title" = "Ecosia ගිණුම";
 
 /* General settings section title */
 "Settings.General.SectionName" = "සාමාන්‍ය";
@@ -1244,7 +1244,7 @@
 "Settings.Home.Current.Description.v101" = "මුල් පිටුව ලෙස පෙන්වන දෙය තෝරන්න.";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "ෆයර්ෆොක්ස් මුල් පිටුවට ඇතුළත් කරන දේ තෝරන්න.";
+"Settings.Home.Option.Description.v101" = "Ecosia මුල් පිටුවට ඇතුළත් කරන දේ තෝරන්න.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "ආපසු පනින්න";
@@ -1268,7 +1268,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "මුල් පිටුව";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "ෆයර්ෆොක්ස් වෙත ආපසු එන විට දැකිය යුතු දේ තෝරන්න.";
+"Settings.Home.Option.StartAtHome.Description" = "Ecosia වෙත ආපසු එන විට දැකිය යුතු දේ තෝරන්න.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "අවසාන පටිත්ත";
@@ -1283,25 +1283,25 @@
 "Settings.Home.Option.Wallpaper" = "බිතුපත";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "ෆයර්ෆොක්ස් බිතුපත, අඹතේස්ත රටාව.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Ecosia බිතුපත, අඹතේස්ත රටාව.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "ෆයර්ෆොක්ස් බිතුපත, වෙරළ බෑවුම රටාව.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Ecosia බිතුපත, වෙරළ බෑවුම රටාව.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "ෆයර්ෆොක්ස් බිතුපත, නීලවර්ණ රටාව.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Ecosia බිතුපත, නීලවර්ණ රටාව.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "පෙරනිමි පැහැදිලි බිතුපත.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "ෆයර්ෆොක්ස් බිතුපත, හිරු උදාව රටාව.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Ecosia බිතුපත, හිරු උදාව රටාව.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "මුල් පිටුවට බිතුපත් චක්‍රීයව යෙදීම";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "ෆයර්ෆොක්ස් බිතුපත, අඳුරු කඳු රටාව.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Ecosia බිතුපත, අඳුරු කඳු රටාව.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "පරණ %@";
@@ -1322,7 +1322,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "සීමිතයි";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "ෆයර්ෆොක්ස් මුල්පිටුවේ ලාංඡනය එබීමෙන් බිතුපත වෙනස් කරන්න";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Ecosia මුල්පිටුවේ ලාංඡනය එබීමෙන් බිතුපත වෙනස් කරන්න";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "බිතුපත";
@@ -1376,7 +1376,7 @@
 "Settings.NewTab.Option.Custom" = "අභිරුචි";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "ෆයර්ෆොක්ස් මුල";
+"Settings.NewTab.Option.FirefoxHome" = "Ecosia මුල";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "මුල් පිටුව";
@@ -1397,7 +1397,7 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "රූප අවහිර කරන්න";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "ෆයර්ෆොක්ස් විවෘත කරන විට";
+"Settings.OfferClipboardBar.Status" = "Ecosia විවෘත කරන විට";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "%@ විවෘත කරන විට";
@@ -1436,7 +1436,7 @@
 "Settings.SendUsage.Link" = "තව දැනගන්න";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "සැමට ෆයර්ෆොක්ස් වැඩිදියුණු කර දීමට හා සැපයීමට අවශ්‍ය දෑ පමණක් රැස් කර ගැනීමට මොසිල්ලා උත්සාහ කරයි.";
+"Settings.SendUsage.Message" = "සැමට Ecosia වැඩිදියුණු කර දීමට හා සැපයීමට අවශ්‍ය දෑ පමණක් රැස් කර ගැනීමට මොසිල්ලා උත්සාහ කරයි.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "භාවිත දත්ත යවන්න";
@@ -1457,7 +1457,7 @@
 "Settings.Siri.OpenTabShortcut" = "නව පටිත්තක් අරින්න";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "සිරි හරහා ෆයර්ෆොක්ස් ඉක්මනින් ඇරීමට එහි කෙටිමං යොදා ගන්න";
+"Settings.Siri.SectionDescription" = "සිරි හරහා Ecosia ඉක්මනින් ඇරීමට එහි කෙටිමං යොදා ගන්න";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "සිරි කෙටිමං";
@@ -1466,7 +1466,7 @@
 "Settings.Studies.Toggle.Link" = "තව දැනගන්න";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "ෆයර්ෆොක්ස් විසින් කලින් කලට අධ්‍යන ස්ථාපනය කර ධාවනය කරයි.";
+"Settings.Studies.Toggle.Message" = "Ecosia විසින් කලින් කලට අධ්‍යන ස්ථාපනය කර ධාවනය කරයි.";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "අධ්‍යන";
@@ -1583,13 +1583,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "පසුබිමින් පූරණය";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "ෆයර්ෆොක්ස් හි පූරණය වෙමින්";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Ecosia හි පූරණය වෙමින්";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "ෆයර්ෆොක්ස් හි අරින්න";
+"ShareExtension.OpenInFirefoxAction.Title" = "Ecosia හි අරින්න";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "ෆයර්ෆොක්ස් හි සොයන්න";
+"ShareExtension.SeachInFirefoxAction.Title" = "Ecosia හි සොයන්න";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "පිටපතක්";
@@ -1733,7 +1733,7 @@
 "UIMenuItem.PasteGo" = "අලවන්න හා යන්න";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "ෆයර්ෆොක්ස් සමඟ සොයන්න";
+"UIMenuItem.SearchWithFirefox" = "Ecosia සමඟ සොයන්න";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "නොකියවූ";
@@ -1781,7 +1781,7 @@
 "Yesterday" = "ඊයේ";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "ඔබගේ අනෙකුත් උපාංගවල ෆයර්ෆොක්ස් පටිති කිසිවක් විවෘත කර නැත.";
+"You don’t have any tabs open in Firefox on your other devices." = "ඔබගේ අනෙකුත් උපාංගවල Ecosia පටිති කිසිවක් විවෘත කර නැත.";
 
 /* Your Rights settings section title */
 "Your Rights" = "ඔබගේ අයිතීන්";
