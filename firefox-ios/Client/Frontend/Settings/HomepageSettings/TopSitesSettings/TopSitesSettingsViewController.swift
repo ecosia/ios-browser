@@ -31,7 +31,6 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
         var sections: [SettingSection] = []
 
         if let profile {
-            /* Ecosia: No sponsored shortcuts in Ecosia; omit the sponsored toggle (MOB-4331).
             let toggleSettings = [
                 BoolSetting(
                     prefs: profile.prefs,
@@ -48,6 +47,7 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
                         )
                     )
                 },
+                /* Ecosia: No sponsored shortcuts in Ecosia; omit the sponsored toggle (MOB-4331).
                 BoolSetting(
                     prefs: profile.prefs,
                     theme: themeManager.getCurrentTheme(for: windowUUID),
@@ -71,50 +71,29 @@ final class TopSitesSettingsViewController: SettingsTableViewController, Feature
                         self.deleteUserRequest(contextId: contextId)
                     }
                 }
-            ]
-            */
-            let toggleSettings = [
-                BoolSetting(
-                    prefs: profile.prefs,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
-                    prefKey: PrefsKeys.UserFeatureFlagPrefs.TopSiteSection,
-                    defaultValue: true,
-                    titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle
-                ) { isOn in
-                    store.dispatch(
-                        TopSitesAction(
-                            isEnabled: isOn,
-                            windowUUID: self.windowUUID,
-                            actionType: TopSitesActionType.toggleShowSectionSetting
-                        )
-                    )
-                }
+                 */
             ]
             let toggleSection = SettingSection(title: nil, children: toggleSettings)
             sections.append(toggleSection)
         }
-
-        /* Ecosia: Shortcuts are always displayed in a single row; remove the row-count picker (MOB-4331).
+        /* Ecosia: No sponsored row selection in Ecosia; omit the rows number selector (MOB-4331).
         let rowSetting = RowSettings(settings: self)
         let rowSection = SettingSection(title: nil, children: [rowSetting])
         sections.append(rowSection)
-        */
+         */
 
         return sections
     }
 
-    /* Ecosia: Only called by the sponsored toggle which is removed (MOB-4331).
     private func deleteUserRequest(contextId: String) {
         Task {
             let remover = UnifiedAdsUserDataRemover()
             try await remover.deleteUserData(contextID: contextId)
         }
     }
-    */
 }
 
 // MARK: - TopSitesSettings
-/* Ecosia: RowSettings is only used by the row-count picker which is removed (MOB-4331).
 extension TopSitesSettingsViewController {
     class RowSettings: Setting {
         let profile: Profile?
@@ -161,4 +140,3 @@ extension TopSitesSettingsViewController {
         }
     }
 }
-*/
