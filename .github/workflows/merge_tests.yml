@@ -6,7 +6,7 @@ on:
 
 jobs:
   execute_merge_tests:
-    runs-on: macos-15
+    runs-on: macos-16
     name: Execute Merge Tests
 
     steps:
