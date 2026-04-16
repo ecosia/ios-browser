@@ -23,7 +23,7 @@ runs:
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
           -enableCodeCoverage NO \
-          -destination 'platform=iOS Simulator,name=iPhone 16' \
+          -destination 'platform=iOS Simulator,name=iPhone 17' \
           -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
           -derivedDataPath DerivedData \
           build-for-testing | xcpretty --color
@@ -33,7 +33,7 @@ runs:
           -configuration Testing \
           -enableCodeCoverage NO \
           -testPlan UnitTest \
-          -destination 'platform=iOS Simulator,name=iPhone 16' \
+          -destination 'platform=iOS Simulator,name=iPhone 17' \
           -resultBundlePath TestResults.xcresult \
           -derivedDataPath DerivedData \
           test-without-building | xcpretty --color --report junit --output test_output/xml/report.junit || true

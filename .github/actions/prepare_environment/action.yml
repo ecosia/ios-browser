@@ -87,21 +87,21 @@ runs:
         echo "Available simulator runtimes:"
         xcrun simctl list runtimes
         
-    - name: Create and Boot iPhone 16 Simulator
+    - name: Create and Boot iPhone 17 Simulator
       shell: bash
       run: |
         # Check if simulator already exists
-        if xcrun simctl list devices | grep -q "iPhone 16"; then
-          echo "iPhone 16 simulator already exists"
+        if xcrun simctl list devices | grep -q "iPhone 17"; then
+          echo "iPhone 17 simulator already exists"
         else
-          echo "Creating iPhone 16 simulator"
+          echo "Creating iPhone 17 simulator"
           # Get the latest available iOS runtime
           LATEST_RUNTIME=$(xcrun simctl list runtimes | grep iOS | tail -1 | awk '{print $NF}')
-          # Get the device type for iPhone 16
-          DEVICE_TYPE=$(xcrun simctl list devicetypes | grep "iPhone 16" | head -1 | awk '{print $NF}')
+          # Get the device type for iPhone 17
+          DEVICE_TYPE=$(xcrun simctl list devicetypes | grep "iPhone 17" | head -1 | awk '{print $NF}')
           
           if [ -n "$LATEST_RUNTIME" ] && [ -n "$DEVICE_TYPE" ]; then
-            xcrun simctl create "iPhone 16" "$DEVICE_TYPE" "$LATEST_RUNTIME"
+            xcrun simctl create "iPhone 17" "$DEVICE_TYPE" "$LATEST_RUNTIME"
           else
             echo "Error: Could not determine runtime or device type"
             exit 1
@@ -109,7 +109,7 @@ runs:
         fi
         
         # Boot the simulator
-        xcrun simctl boot "iPhone 16" || echo "Simulator may already be booted"
+        xcrun simctl boot "iPhone 17" || echo "Simulator may already be booted"
         
     - name: Setup environment and generate Xcode project with Tuist
       shell: bash
