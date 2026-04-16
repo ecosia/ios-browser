@@ -29,7 +29,11 @@
 "TodayWidget.PrivateTabButtonLabelV1" = "Private Search";
 
 /* Description for small size widget to add it to home screen */
+<<<<<<< dc-mob-4329-widgets
 "TodayWidget.QuickActionGalleryDescription" = "Add an Ecosia shortcut to your Home screen. After adding the widget, touch and hold to edit it and select a different shortcut.";
+=======
+"TodayWidget.QuickActionGalleryDescription" = "Add a Ecosia shortcut to your Home screen. After adding the widget, touch and hold to edit it and select a different shortcut.";
+>>>>>>> develop
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "Quick Actions";

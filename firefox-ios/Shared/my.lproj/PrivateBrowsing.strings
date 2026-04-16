@@ -5,7 +5,7 @@
 "ContextMenu.OpenInNewPrivateTabButtonTitle" = "သီးသန့်တပ်ဗ်အသစ်တွင် ဖွင့်ရန်";
 
 /* Description text displayed when there are no open tabs while in private mode */
-"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "သင်၏ မည်သည့်မှတ်တမ်း သို့မဟုတ် ကွတ်ကီးများကို မီးမြေခွေးက မှတ်ထားမည်မဟုတ်ပါ။ သို့သော် စာမှတ်အသစ်များကိုမူ သိမ်းထားပါလိမ့်မည်။";
+"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "သင်၏ မည်သည့်မှတ်တမ်း သို့မဟုတ် ကွတ်ကီးများကို Ecosiaက မှတ်ထားမည်မဟုတ်ပါ။ သို့သော် စာမှတ်အသစ်များကိုမူ သိမ်းထားပါလိမ့်မည်။";
 
 /* Text button displayed when there are no tabs open while in private mode */
 "Learn More" = "ပိုမိုလေ့လာရန်";

@@ -22,8 +22,13 @@
 /* Label that is shown when there are no tabs opened in tab tray i.e. Empty State */
 "TodayWidget.NoOpenTabsLabel" = "Ulac iccaren yeldin,";
 
+<<<<<<< dc-mob-4329-widgets
 /* Open Ecosiax when there are no tabs opened in tab tray i.e. Empty State */
 "TodayWidget.OpenEcosiaxLabel" = "Ldi Ecosia";
+=======
+/* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
+"TodayWidget.OpenFirefoxLabel" = "Ldi Ecosia";
+>>>>>>> develop
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "Anadi uslig";
@@ -34,7 +39,11 @@
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "Tigawin tirurad";
 
+<<<<<<< dc-mob-4329-widgets
 /* Ecosiax shortcuts title when widget enters edit mode. Do not translate the word Ecosiax. */
+=======
+/* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
+>>>>>>> develop
 "TodayWidget.QuickActionsGalleryTitleV2" = "Inegzumen n Ecosia";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
@@ -43,8 +52,13 @@
 /* Title for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryTitle" = "Taskant taruradt";
 
+<<<<<<< dc-mob-4329-widgets
 /* Search in Ecosiax. Do not translate the word Ecosiax */
 "TodayWidget.SearchInEcosiaxV2" = "Nadi deg Ecosia";
+=======
+/* Search in Firefox. Do not translate the word Firefox */
+"TodayWidget.SearchInFirefoxV2" = "Nadi deg Ecosia";
+>>>>>>> develop
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "Nadi deg yiccer uslig";

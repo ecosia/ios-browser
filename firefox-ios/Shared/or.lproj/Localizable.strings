@@ -305,7 +305,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "ଏହା ଏକ ଭୁଲ୍ ବିନ୍ୟାସ କିମ୍ବା ଆକ୍ରମଣକାରୀଙ୍କ ଦ୍ୱାରା ଟ୍ୟାମ୍ପରିଂ ହୋଇପାରେ | ଯଦି ଆପଣ ସମ୍ଭାବ୍ୟ ବିପଦକୁ ଗ୍ରହଣ କରନ୍ତି ତେବେ ଅଗ୍ରଗତି କରନ୍ତୁ";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "%@ ର ମାଲିକ ସେମାନଙ୍କର ୱେବସାଇଟ୍ କୁ ଭୁଲ୍ ଭାବରେ ବିନ୍ୟାସ କରିଛନ୍ତି | ଆପଣଙ୍କର ସୂଚନା ଚୋରି ହେବାରୁ ରକ୍ଷା କରିବା ପାଇଁ, ଫାୟାରଫକ୍ସ ଏହି ୱେବସାଇଟ୍ ସହିତ ସଂଯୋଗ ହୋଇନାହିଁ";
+"ErrorPages.CertWarning.Description" = "%@ ର ମାଲିକ ସେମାନଙ୍କର ୱେବସାଇଟ୍ କୁ ଭୁଲ୍ ଭାବରେ ବିନ୍ୟାସ କରିଛନ୍ତି | ଆପଣଙ୍କର ସୂଚନା ଚୋରି ହେବାରୁ ରକ୍ଷା କରିବା ପାଇଁ, Ecosia ଏହି ୱେବସାଇଟ୍ ସହିତ ସଂଯୋଗ ହୋଇନାହିଁ";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "ସଂଯୋଗ ଭରସାଯୋଗ୍ୟ ନୁହେଁ";
@@ -326,7 +326,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "ଫାୟାରଫକ୍ସ ମୂଳ ପୃଷ୍ଠା";
+"Firefox.HomePage.Title" = "Ecosia ମୂଳ ପୃଷ୍ଠା";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "ପ୍ରଧାନ ପୃଷ୍ଠା ନିଜ ପସନ୍ଦ ଅନୁସାରେ ସଜାଡ଼ନ୍ତୁ";
@@ -371,7 +371,7 @@
 "Forward" = "ଆଗକୁ";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "ଫାୟାରଫକ୍ସ ଖାତା";
+"FxA.FirefoxAccount" = "Ecosia ଖାତା";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "ଖାତା ଏବଂ ଉପକରଣ ପରିଚାଳନା କରନ୍ତୁ";
@@ -389,7 +389,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ ସଫଳତାର ସହିତ ବିଛିନ୍ନ ହୋଇଛି";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "ଏହି ଡିଭାଇସ୍ Firefox ସିଙ୍କ୍ ରୁ ସଫଳତାର ସହ ବିଚ୍ଛିନ୍ନ ହୋଇଛି।";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "ଏହି ଡିଭାଇସ୍ Ecosia ସିଙ୍କ୍ ରୁ ସଫଳତାର ସହ ବିଚ୍ଛିନ୍ନ ହୋଇଛି।";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "ସମୟାନୁସାମୟିକ ସଂଯୋଗ ବିଚ୍ୟୁତି ହୋଇଗଲା";
@@ -398,10 +398,10 @@
 "FxAPush_DeviceDisconnected_title" = "ସମୟାନୁସାମୟିକ ସଂଯୋଗ ବିଚ୍ୟୁତି ହୋଇଗଲା";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ଏକ ଡିଭାଇସ୍ Firefox ସିଙ୍କ୍ ରୁ ସଫଳତାର ସହ ବିଚ୍ଛିନ୍ନ ହୋଇଛି।";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "ଏକ ଡିଭାଇସ୍ Ecosia ସିଙ୍କ୍ ରୁ ସଫଳତାର ସହ ବିଚ୍ଛିନ୍ନ ହୋଇଛି।";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Firefox ଲୋଗୋ, ୱାଲ୍ପେପର ପରିବର୍ତ୍ତନ କରନ୍ତୁ।";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Ecosia ଲୋଗୋ, ୱାଲ୍ପେପର ପରିବର୍ତ୍ତନ କରନ୍ତୁ।";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "ସହଯୋଗ";
@@ -434,7 +434,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "ଆପଣଙ୍କ ଅନ୍ୟ ଡିଭାଇସଗୁଡିକରୁ ଟ୍ୟାବ୍ ଗୁଡିକର ଏକ ତାଲିକା ଦର୍ଶନ କରିବାକୁ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "ଫାୟାରଫକ୍ସ ସମୟାନୁସାମୟିକ";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia ସମୟାନୁସାମୟିକ";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "ଇତିହାସ";
@@ -644,7 +644,7 @@
 "LoginsList.Title" = "SAVED LOGINS";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "ଲାଗୁଛି ଗତଥର Firefox ବନ୍ଦ ହୋଇଗଲା । ପୁରୁଣା ଟ୍ୟାବ ଫେରାଇବାକୁ ଚାହାନ୍ତି କି?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "ଲାଗୁଛି ଗତଥର Ecosia ବନ୍ଦ ହୋଇଗଲା । ପୁରୁଣା ଟ୍ୟାବ ଫେରାଇବାକୁ ଚାହାନ୍ତି କି?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "ପଠିତ ଭାବେ ଚିହ୍ନଟ କରନ୍ତୁ";
@@ -764,7 +764,7 @@
 "Okay" = "ଆଛା ହଉ";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "ଓହୋ! ଫାୟାରଫକ୍ସ ଅକସ୍ମାତ ବନ୍ଦ ହେଇଗଲା";
+"Oops! Firefox crashed" = "ଓହୋ! Ecosia ଅକସ୍ମାତ ବନ୍ଦ ହେଇଗଲା";
 
 /* See http://mzl.la/1G7uHo7 */
 "Open Settings" = "ସଂରଚନା ଖୋଲନ୍ତୁ";
@@ -776,7 +776,7 @@
 "Password" = "ପାସ୍‌ୱାର୍ଡ୍";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "ଫାୟାରଫକ୍ସ ଆପଣଙ୍କ ଫଟୋଗୁଡ଼ିକୁ ଖୋଲିବାକୁ ଚାହେଁ";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia ଆପଣଙ୍କ ଫଟୋଗୁଡ଼ିକୁ ଖୋଲିବାକୁ ଚାହେଁ";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "ବନ୍ଦ କରନ୍ତୁ";
@@ -866,7 +866,7 @@
 "SendTo.SendAction.Text" = "ପଠାନ୍ତୁ";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "ଫାୟାରଫକ୍ସ ସମୟାନୁସାମୟିକ";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia ସମୟାନୁସାମୟିକ";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "ଦେଖନ୍ତୁ";
@@ -911,7 +911,7 @@
 "Settings.DataManagement.SearchLabel" = "ସ୍କ୍ରିପ୍ଟଗୁଡ଼ିକୁ ଛାଣନ୍ତୁ";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Firefox ଆପଣଙ୍କ ଆକାଉଣ୍ଟ ସହ ସିଙ୍କ କରିବା ବନ୍ଦ କରିଦେଲେ ମଧ୍ୟ ଆପଣଙ୍କ ଏହି ଡିଭାଇସରେ ବ୍ରାଉଜିଂ ଡାଟା ଲିଭାଇବ ନାହିଁ ।";
+"Settings.Disconnect.Body" = "Ecosia ଆପଣଙ୍କ ଆକାଉଣ୍ଟ ସହ ସିଙ୍କ କରିବା ବନ୍ଦ କରିଦେଲେ ମଧ୍ୟ ଆପଣଙ୍କ ଏହି ଡିଭାଇସରେ ବ୍ରାଉଜିଂ ଡାଟା ଲିଭାଇବ ନାହିଁ ।";
 
 /* Cancel action button in alert when user is prompted for disconnect */
 "Settings.Disconnect.CancelButton" = "ବାତିଲ କରନ୍ତୁ";
@@ -938,7 +938,7 @@
 "Settings.FxA.DeviceName" = "ଉପକରଣର ନାମ";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "ଫାୟାରଫକ୍ସ ଖାତା";
+"Settings.FxA.Title" = "Ecosia ଖାତା";
 
 /* General settings section title */
 "Settings.General.SectionName" = "ସାଧାରଣ";
