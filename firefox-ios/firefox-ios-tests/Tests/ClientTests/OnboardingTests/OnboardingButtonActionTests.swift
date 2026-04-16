@@ -4,9 +4,11 @@
 
 import XCTest
 import Common
+import OnboardingKit
 
 @testable import Client
 
+@MainActor
 class OnboardingButtonActionTests: XCTestCase {
     var mockDelegate: MockOnboardinCardDelegateController!
     let windowUUID: WindowUUID = .XCTestDefaultUUID

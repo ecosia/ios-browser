@@ -6,15 +6,22 @@ import Foundation
 @testable import Client
 
 class MockNotificationManager: NotificationManagerProtocol {
-    let wasAuthorizationSuccessful = true
+    var shouldGrantPermission = true
+    var requestAuthorizationCalled = false
+
     func requestAuthorization(completion: @escaping @Sendable (Bool, Error?) -> Void) {
+        requestAuthorizationCalled = true
+        completion(shouldGrantPermission, nil)
     }
 
     func requestAuthorization(completion: @escaping @Sendable (Result<Bool, Error>) -> Void) {
+        requestAuthorizationCalled = true
+        completion(.success(shouldGrantPermission))
     }
 
     func requestAuthorization() async throws -> Bool {
-        return wasAuthorizationSuccessful
+        requestAuthorizationCalled = true
+        return shouldGrantPermission
     }
 
     func getNotificationSettings(sendTelemetry: Bool) async -> UNNotificationSettings {
