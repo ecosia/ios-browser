@@ -90,6 +90,9 @@ final class LocationView: UIView,
     private var urlTextFieldTrailingConstraint: NSLayoutConstraint?
     private var iconContainerStackViewLeadingConstraint: NSLayoutConstraint?
     private var lockIconWidthAnchor: NSLayoutConstraint?
+    // Ecosia: Pins the empty icon stack to zero width during editing so auto layout doesn't
+    // resolve the ambiguous (no-content, no explicit width) stack to an arbitrary large value.
+    private var iconContainerStackViewWidthConstraint: NSLayoutConstraint?
 
     // MARK: - Search Engine / Lock Image
     private lazy var iconContainerStackView: UIStackView = .build { view in
@@ -208,7 +211,10 @@ final class LocationView: UIView,
         if isEditing || !isURLTextFieldCentered || isURLTextFieldWiderThanVisibleArea() {
             // leading alignment configuration
             newConstraints = [
+                /* Ecosia: Update leading anchor spacing for URL bar
                 containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                 */
+                containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
                 containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             ]
         } else if isURLTextFieldWiderThanVisibleArea(safeOffset: UX.safeOffset) {
@@ -429,7 +435,17 @@ final class LocationView: UIView,
     private func updateUIForSearchEngineDisplay(isURLTextFieldCentered: Bool) {
         removeContainerIcons()
         if !isURLTextFieldCentered || isEditing {
+            // Icon is present — let its content determine the stack width.
+            iconContainerStackViewWidthConstraint?.isActive = false
+            iconContainerStackViewWidthConstraint = nil
             iconContainerStackView.addArrangedSubview(searchEngineContentView)
+        } else {
+            // No icon added (NTP centered mode). An empty UIStackView has no intrinsic width so
+            // auto layout would resolve the ambiguity to an arbitrary large value and push
+            // urlTextField to the right — pin it explicitly to zero to prevent that.
+            iconContainerStackViewWidthConstraint?.isActive = false
+            iconContainerStackViewWidthConstraint = iconContainerStackView.widthAnchor.constraint(equalToConstant: 0)
+            iconContainerStackViewWidthConstraint?.isActive = true
         }
         updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
         iconContainerStackViewLeadingConstraint?.constant = UX.horizontalSpace
@@ -439,14 +455,24 @@ final class LocationView: UIView,
     // Ecosia: Remove the search engine icon when editing so the text field has full width.
     private func updateUIForEditingDisplay() {
         removeContainerIcons()
-        updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
+        // Pin the empty stack to zero-width explicitly — an empty UIStackView has no intrinsic
+        // width so auto layout would resolve the ambiguity to a large value and push the text
+        // field to the right. With width=0 and leading=0, urlTextField.leading resolves to
+        // iconContainerStackView.trailing(0) + UX.horizontalSpace(8) = 8 pt ≡ Ecosia _1s.
+        iconContainerStackViewWidthConstraint?.isActive = false
+        iconContainerStackViewWidthConstraint = iconContainerStackView.widthAnchor.constraint(equalToConstant: 0)
+        iconContainerStackViewWidthConstraint?.isActive = true
         iconContainerStackViewLeadingConstraint?.constant = 0
+        updateURLTextFieldLeadingConstraint(constant: UX.horizontalSpace)
         updateGradient()
     }
 
     private func updateUIForLockIconDisplay() {
         guard !isEditing else { return }
         removeContainerIcons()
+        // Ecosia: Release the zero-width editing constraint so the lock icon can size the stack.
+        iconContainerStackViewWidthConstraint?.isActive = false
+        iconContainerStackViewWidthConstraint = nil
         iconContainerStackView.addArrangedSubview(lockIconButton)
         updateURLTextFieldLeadingConstraintBasedOnState()
 

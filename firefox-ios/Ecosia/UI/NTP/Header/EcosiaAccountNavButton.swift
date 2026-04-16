@@ -69,7 +69,10 @@ public struct EcosiaAccountNavButton: View {
             .frame(minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
             .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
         }
-        .buttonStyle(NTPGlassButtonStyle(RoundedRectangle(cornerRadius: .ecosia.borderRadius._1l)))
+        .buttonStyle(EcosiaAccountNavButtonStyle(
+            backgroundColor: theme.backgroundColor,
+            backgroundColorActive: theme.backgroundColorActive
+        ))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityHint(String.localized(.accountButtonAccessibilityHint))
@@ -79,9 +82,31 @@ public struct EcosiaAccountNavButton: View {
     }
 }
 
+// MARK: - Button Style
+
+@available(iOS 16.0, *)
+private struct EcosiaAccountNavButtonStyle: ButtonStyle {
+    let backgroundColor: Color
+    let backgroundColorActive: Color
+    private let shape = RoundedRectangle(cornerRadius: CGFloat.ecosia.borderRadius._1l)
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(configuration.isPressed ? backgroundColorActive : backgroundColor)
+            .clipShape(shape)
+    }
+}
+
 // MARK: - Theme
+
 struct EcosiaAccountNavButtonTheme: EcosiaThemeable {
-    mutating func applyTheme(theme: Theme) {}
+    var backgroundColor = Color.white
+    var backgroundColorActive = Color(UIColor.systemGray4)
+
+    mutating func applyTheme(theme: Theme) {
+        backgroundColor = Color(theme.colors.ecosia.buttonBackgroundSecondary)
+        backgroundColorActive = Color(theme.colors.ecosia.buttonBackgroundSecondaryActive)
+    }
 }
 
 #if DEBUG
