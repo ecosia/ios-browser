@@ -7,6 +7,9 @@ import WidgetKit
 import UIKit
 import Combine
 import Common
+// Ecosia: Additional imports for Ecosia framework and suggested sites updates
+import Ecosia
+import Storage
 
 struct OpenTabsWidget: Widget {
     private let kind = "Quick View"
@@ -25,7 +28,10 @@ struct OpenTabsWidget: Widget {
 struct OpenTabsView: View {
     let entry: OpenTabsEntry
 
+    /* Ecosia: Update Environment state definition
     @Environment(\.widgetFamily)
+     */
+    @SwiftUI.Environment(\.widgetFamily)
     var widgetFamily
 
     @ViewBuilder
@@ -36,15 +42,24 @@ struct OpenTabsView: View {
                 HStack(alignment: .center, spacing: 15) {
                     if let favIcon = entry.favicons[tab.imageKey] {
                         favIcon.resizable().frame(width: 16, height: 16)
+                            /* Ecosia: update color
                             .foregroundColor(Color("openTabsContentColor"))
+                             */
+                            .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                     } else {
                         Image(decorative: StandardImageIdentifiers.Large.globe)
+                            /* Ecosia: update color
                             .foregroundColor(Color("openTabsContentColor"))
+                             */
+                            .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                             .frame(width: 16, height: 16)
                     }
 
                     Text(tab.title ?? "")
+                        /* Ecosia: update color
                         .foregroundColor(Color("openTabsContentColor"))
+                         */
+                        .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                         .multilineTextAlignment(.leading)
                         .lineLimit(1)
                         .font(.system(size: 15, weight: .regular, design: .default))
@@ -54,7 +69,10 @@ struct OpenTabsView: View {
 
             // Separator
             Rectangle()
+                /* Ecosia: update color
                 .fill(Color("separatorColor"))
+                 */
+                .fill(Color.ecosiaBundledColorWithName("Border"))
                 .frame(height: 0.5)
                 .padding(.leading, 45)
         }
@@ -65,16 +83,28 @@ struct OpenTabsView: View {
             Text(String.NoOpenTabsLabel)
             HStack {
                 Spacer()
+                /* Ecosia: Update image
                 Image(decorative: StandardImageIdentifiers.Small.externalLink)
+                 */
+                Image(decorative: "openEcosia", bundle: .ecosia)
+                    /* Ecosia: update color
                     .foregroundColor(Color("openTabsContentColor"))
+                     */
+                    .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                 Text(String.OpenFirefoxLabel)
+                    /* Ecosia: update color
                     .foregroundColor(Color("openTabsContentColor"))
+                     */
+                    .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                     .lineLimit(1)
                     .font(.system(size: 13, weight: .semibold, design: .default))
                 Spacer()
             }.padding(10)
         }
+        /* Ecosia: update color
         .foregroundColor(Color("backgroundColor"))
+         */
+        .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
     }
 
     var tabsView: some View {
@@ -85,8 +115,12 @@ struct OpenTabsView: View {
 
             if entry.tabs.count > numberOfTabsToDisplay {
                 HStack(alignment: .center, spacing: 15) {
+                    /* Ecosia: Update image and color
                     Image(decorative: StandardImageIdentifiers.Small.externalLink)
                         .foregroundColor(Color("openTabsContentColor"))
+                     */
+                    Image(decorative: "openEcosia", bundle: .ecosia)
+                        .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                         .frame(width: 16, height: 16)
                     Text(
                         String.localizedStringWithFormat(
@@ -94,25 +128,40 @@ struct OpenTabsView: View {
                             (entry.tabs.count - numberOfTabsToDisplay)
                         )
                     )
+                    /* Ecosia: update color
                     .foregroundColor(Color("openTabsContentColor"))
+                     */
+                    .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                     .lineLimit(1)
                     .font(.system(size: 13, weight: .semibold, design: .default))
                     Spacer()
                 }.padding([.horizontal])
             } else {
+                /* Ecosia: Rename from openFirefoxButton
                 openFirefoxButton
+                 */
+                openEcosiaButton
             }
 
             Spacer()
         }.padding(.top, 14)
     }
 
+    /* Ecosia: Rename from openFirefoxButton
     var openFirefoxButton: some View {
+     */
+    var openEcosiaButton: some View {
         HStack(alignment: .center, spacing: 15) {
-            Image(decorative: StandardImageIdentifiers.Small.externalLink)
-                .foregroundColor(Color("openTabsContentColor"))
+            /* Ecosia: Update image and color
+            Image(decorative: StandardImageIdentifiers.Small.externalLink).foregroundColor(Color("openTabsContentColor"))
+             */
+            Image(decorative: "openEcosia", bundle: .ecosia)
+                .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
             Text(String.OpenFirefoxLabel)
+                /* Ecosia: update color
                 .foregroundColor(Color("openTabsContentColor"))
+                 */
+                .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                 .lineLimit(1)
                 .font(.system(size: 13, weight: .semibold, design: .default))
             Spacer()
@@ -136,7 +185,10 @@ struct OpenTabsView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        /* Ecosia: update color
         .widgetBackground(Color("backgroundColor"))
+         */
+        .background(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 
     private func linkToContainingApp(_ urlSuffix: String = "", query: String) -> URL {

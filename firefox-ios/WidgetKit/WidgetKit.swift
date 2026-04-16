@@ -7,7 +7,10 @@ import WidgetKit
 import SwiftUI
 
 @main
+/* Ecosia: Rename widget bundle to match Ecosia branding
 struct FirefoxWidgets: WidgetBundle {
+ */
+struct EcosiaWidgets: WidgetBundle {
     @WidgetBundleBuilder var body: some Widget {
         SmallQuickLinkWidget()
         SearchQuickLinksWidget()

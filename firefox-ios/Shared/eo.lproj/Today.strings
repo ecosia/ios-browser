@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "Fermi\nprivatajn langetojn";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "Aldoni ŝparvojojn de Firefoĉ al via hejmekrano.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "Aldoni ŝparvojojn de Ecosia al via hejmekrano.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "Iri al kopiita ligilo";

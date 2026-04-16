@@ -5,6 +5,8 @@
 #if canImport(WidgetKit)
 import SwiftUI
 import Common
+// Ecosia: Add import for Ecosia bundle image and color access
+import Ecosia
 
 // View for Quick Action Widget Buttons (Small & Medium)
 // +-------------------------------------------------------+
@@ -34,7 +36,7 @@ import Common
 // | | +--------------------------------------------+   |  |
 // | | | +--------------------------+ +-----------+ |   |  |
 // | | | | HSTACK (if small widget) | | +-------+ | |   |  |
-// | | | +--------------------------+ | |FXICON | | |   |  |
+// | | | +--------------------------+ | |APPICON| | |   |  |  // Ecosia: Renamed from FXICON
 // | | |                              | +-------+ | |   |  |
 // | | |                              |           | |   |  |
 // | | |                              |           | |   |  |
@@ -77,7 +79,10 @@ struct ImageButtonWithLabel: View {
                         icon
                     }
                 }
+                /* Ecosia: Update color
                 .foregroundColor(Color("widgetLabelColors"))
+                 */
+                .foregroundColor(Color.ecosiaBundledColorWithName("widgetLabelColors"))
                 .padding([.horizontal, .vertical], paddingValue)
             }
         }
@@ -102,16 +107,21 @@ struct ImageButtonWithLabel: View {
                     .font(.headline)
                     .minimumScaleFactor(0.75)
                     .layoutPriority(1000)
+                    // Ecosia: add color
+                    .foregroundColor(link.textColor)
             } else {
                 Text(link.label)
                     .font(.footnote)
                     .minimumScaleFactor(0.75)
                     .layoutPriority(1000)
+                    // Ecosia: add color
+                    .foregroundColor(link.textColor)
             }
         }
     }
 
     private var logo: some View {
+        /* Ecosia: Update image and color — use Ecosia bundle images
         if link == .search && isSmall {
             return Image(decorative: StandardImageIdentifiers.Large.search)
                 .scaledToFit()
@@ -121,15 +131,23 @@ struct ImageButtonWithLabel: View {
                 .scaledToFit()
                 .frame(height: 24.0)
         }
+         */
+        return Image(decorative: link.imageName, bundle: .ecosia)
+            .scaledToFit()
+            .frame(height: 24.0)
+            .foregroundColor(link.iconColor)
     }
 
-    // Ecosia: Use Ecosia app icon in WidgetKit/Assets.xcassets (e.g. add faviconEcosia or replace faviconFox imageset for Ecosia build).
     private var icon: some View {
         return HStack(alignment: .bottom) {
             Spacer()
+            /* Ecosia: Replace fox icon with Ecosia app icon from Ecosia bundle
             Image(decorative: "faviconFox")
+             */
+            Image(decorative: "iconLogo", bundle: .ecosia)
                 .scaledToFit()
                 .frame(height: 24.0)
+                .foregroundColor(link.iconColor)
         }
     }
 }

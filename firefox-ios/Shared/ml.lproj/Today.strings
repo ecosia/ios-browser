@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "അടയ്ക്കൂ\nസ്വകാര്യ ടാബുകൾ";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "താങ്ങളുടെ ആമുഖതാളിലേക്കു് ഫയർഫോക്സു് കുറുക്കുവഴികൾ ചേർക്കുക.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "താങ്ങളുടെ ആമുഖതാളിലേക്കു് Ecosia കുറുക്കുവഴികൾ ചേർക്കുക.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "പകർത്തിയ കണ്ണിയിലേക്കു് ചെല്ലുക";

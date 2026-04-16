@@ -4,6 +4,8 @@
 
 import SwiftUI
 import Common
+// Ecosia: Add import for Ecosia bundle image and color access
+import Ecosia
 
 /// Enum file that holds the different cases for the Quick Actions small widget with their
 /// configurations (string, backgrounds, images) as selected by the user in edit mode.
@@ -16,14 +18,22 @@ enum QuickLink: Int {
     public var imageName: String {
         switch self {
         case .search:
-            // Ecosia: Use Ecosia icon (e.g. "faviconEcosia") when building for Ecosia; ensure WidgetKit Assets.xcassets provides it.
+            /* Ecosia: Replace fox icon with Ecosia app icon from Ecosia bundle
             return "faviconFox"
+             */
+            return "openEcosia"
         case .privateSearch:
+            /* Ecosia: Update image
             return StandardImageIdentifiers.Large.privateMode
+             */
+            return "ecosiaSmallPrivateMask"
         case .copiedLink:
             return StandardImageIdentifiers.Large.tabTray
         case .closePrivateTabs:
+            /* Ecosia: Update image
             return StandardImageIdentifiers.Large.delete
+             */
+            return "ecosiaDelete"
         }
     }
 
@@ -66,6 +76,7 @@ enum QuickLink: Int {
         }
     }
 
+    /* Ecosia: Update colors
     public var backgroundColors: [Color] {
         switch self {
         case .search:
@@ -77,5 +88,20 @@ enum QuickLink: Int {
         case .closePrivateTabs:
             return [Color("privateGradientThree"), Color("privateGradientTwo"), Color("privateGradientOne")]
         }
+    }
+     */
+
+    public var backgroundColors: [Color] {
+        return [.ecosiaBundledColorWithName("TertiaryBackground")]
+    }
+
+    // Ecosia: Add text color property using Ecosia bundle
+    public var textColor: Color {
+        return .ecosiaBundledColorWithName("PrimaryText")
+    }
+
+    // Ecosia: Add icon color property using Ecosia bundle
+    public var iconColor: Color {
+        return .ecosiaBundledColorWithName("PrimaryText")
     }
 }
