@@ -38,45 +38,7 @@ public enum EcosiaSchemes {
         "ShortcutRouteTests",
         "SyncContentSettingsViewControllerTests",
 
-        // ClientTests — entire classes that crash with SIGTRAP (MOB-4320).
-        //
-        // These tests crash the test runner process, forcing Xcode to relaunch
-        // the simulator host app each time (~25-90s per crash). With 211 crashes
-        // across these classes, this adds 30+ minutes of pure restart overhead.
-        //
-        // TODO: re-enable once crashes are resolved.
-        "AccessoryViewProviderTests",
-        "AccountSyncHandlerTests",
-        "AppLaunchUtilTests",
-        "AppSettingsTableViewControllerTests",
-        "BlockedTrackersTableViewControllerTests",
-        "BookmarksCoordinatorTests",
-        "BookmarksMiddlewareTests",
-        "BookmarksSectionStateTests",
-        "BrowserCoordinatorTests",
-        "BrowserViewControllerStateTests",
-        "BrowserViewControllerTests",
-        "BrowserWebUIDelegateTests",
-        "BrowsingSettingsViewControllerTests",
-        "ContentContainerTests",
-        "ContextMenuCoordinatorTests",
-        "CreditCardInputViewModelTests",
-        "CreditCardSettingsViewControllerTests",
-        "CustomSearchEnginesTest",
-        "DefaultSearchPrefsTests",
-        "DownloadProgressManagerTests",
-        "DownloadsCoordinatorTests",
-        "DownloadsPanelTests",
-        "EnhancedTrackingProtectionCoordinatorTests",
-        "FirefoxAccountSignInViewControllerTests",
-        "FormAutofillHelperTests",
-        "FxAWebViewModelTests",
-        "GleanPlumbContextProviderTests",
-        "HistoryCoordinatorTests",
-        "HistoryPanelTests",
-
         // StorageTests
-        "CertTests",
         "TestBrowserDB/testMovesDB()",
     ]
 
