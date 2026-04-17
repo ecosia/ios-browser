@@ -1027,8 +1027,6 @@ class BrowserViewController: UIViewController,
 
         NightModeHelper.cleanNightModeDefaults()
         dispatchStartAtHomeAction()
-        // Ecosia: Catch users who were already above the search threshold before this BVC appeared (MOB-4323).
-        ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
     }
 
     // MARK: - Summarize
@@ -1339,9 +1337,6 @@ class BrowserViewController: UIViewController,
                 onStopDownloads(notificationWindowUUID: windowUUID)
             case .SettingsDismissed:
                 onSettingsDismissed()
-            // Ecosia: Re-evaluate default-browser promo whenever the search count changes (MOB-4323).
-            case .searchesCounterChanged:
-                self.ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
             default: break
             }
         }
@@ -1368,9 +1363,7 @@ class BrowserViewController: UIViewController,
                 .PageZoomSettingsChanged,
                 .RemoteTabNotificationTapped,
                 .StopDownloads,
-                .SettingsDismissed,
-                // Ecosia: Observe search-count changes to re-evaluate default-browser promo (MOB-4323).
-                .searchesCounterChanged
+                .SettingsDismissed
             ]
         )
     }
@@ -2053,6 +2046,11 @@ class BrowserViewController: UIViewController,
         // embedContent(:) is called when showing the homepage and that is already making sure the shadow is not clipped
         if !isToolbarTranslucencyRefactorEnabled {
             updateToolbarDisplay()
+        }
+
+        // Ecosia: Show default-browser promo when user lands on NTP (idle moment) — not mid-search (MOB-4323).
+        if !isPrivate {
+            ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
         }
     }
 

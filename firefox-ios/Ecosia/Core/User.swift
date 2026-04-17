@@ -7,7 +7,7 @@ import UserNotifications
 import Combine
 
 extension Notification.Name {
-    public static let searchesCounterChanged = Notification.Name("searchesCounterChanged")
+    static let searchesCounterChanged = Notification.Name("searchesCounterChanged")
     public static let searchSettingsChanged = Notification.Name("searchSettingsChanged")
 }
 
