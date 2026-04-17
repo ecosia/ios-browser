@@ -11,7 +11,7 @@ import WebKit
 @MainActor
 final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
 
-    private var coordinator: MockCoordinator!
+    private var coordinator: EcosiaWebViewMockCoordinator!
     private var mockWebView: MockWKWebView!
     private var mockParent: MockWebViewRepresentable!
 
@@ -19,7 +19,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         super.setUp()
         mockWebView = MockWKWebView()
         mockParent = MockWebViewRepresentable()
-        coordinator = MockCoordinator(parent: mockParent)
+        coordinator = EcosiaWebViewMockCoordinator(parent: mockParent)
     }
 
     override func tearDown() {
@@ -37,7 +37,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         let currentURL = URL(string: "https://example.com/origin")!
         mockWebView.mockURL = currentURL
 
-        let navigationAction = MockNavigationAction(
+        let navigationAction = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: blankURL),
             targetFrame: nil
         )
@@ -63,7 +63,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         mockWebView.mockURL = originURL
 
         let blankURL = URL(string: "https://example.com/blank")!
-        let navigationAction = MockNavigationAction(
+        let navigationAction = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: blankURL),
             targetFrame: nil
         )
@@ -82,7 +82,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
 
     func testCreateWebViewWith_noURL_returnsNil() {
         // Given
-        let navigationAction = MockNavigationAction(
+        let navigationAction = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: URL(string: "about:blank")!),
             targetFrame: nil
         )
@@ -108,7 +108,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         let originURL = URL(string: "https://example.com/origin")!
         coordinator.blankTargetURLs.insert(originURL.absoluteString)
 
-        let navigationAction = MockNavigationAction(
+        let navigationAction = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: originURL),
             navigationType: .backForward
         )
@@ -136,7 +136,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         mockWebView.mockCanGoBack = false
         coordinator.blankTargetURLs.insert(originURL.absoluteString)
 
-        let navigationAction = MockNavigationAction(
+        let navigationAction = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: originURL),
             navigationType: .backForward
         )
@@ -158,7 +158,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
     func testDecidePolicyFor_normalBackNavigation_allowsNavigation() {
         // Given
         let url = URL(string: "https://example.com/page")!
-        let navigationAction = MockNavigationAction(
+        let navigationAction = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: url),
             navigationType: .backForward
         )
@@ -183,7 +183,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         let originURL = URL(string: "https://example.com/origin")!
         coordinator.blankTargetURLs.insert(originURL.absoluteString)
 
-        let navigationAction = MockNavigationAction(
+        let navigationAction = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: originURL),
             navigationType: .linkActivated
         )
@@ -211,21 +211,21 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         let url3 = URL(string: "https://example.com/page3")!
 
         mockWebView.mockURL = url1
-        let action1 = MockNavigationAction(
+        let action1 = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: URL(string: "https://example.com/blank1")!),
             targetFrame: nil
         )
         _ = coordinator.webView(mockWebView, createWebViewWith: WKWebViewConfiguration(), for: action1, windowFeatures: WKWindowFeatures())
 
         mockWebView.mockURL = url2
-        let action2 = MockNavigationAction(
+        let action2 = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: URL(string: "https://example.com/blank2")!),
             targetFrame: nil
         )
         _ = coordinator.webView(mockWebView, createWebViewWith: WKWebViewConfiguration(), for: action2, windowFeatures: WKWindowFeatures())
 
         mockWebView.mockURL = url3
-        let action3 = MockNavigationAction(
+        let action3 = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: URL(string: "https://example.com/blank3")!),
             targetFrame: nil
         )
@@ -246,7 +246,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         mockWebView.mockCanGoBack = false
         mockParent.mockURL = URL(string: "https://example.com/initial")!
 
-        let navigationAction = MockNavigationAction(
+        let navigationAction = EcosiaWebViewMockNavigationAction(
             request: URLRequest(url: originURL),
             navigationType: .backForward
         )
@@ -267,7 +267,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
 // MARK: - Mock Classes
 
 @available(iOS 16.0, *)
-private class MockCoordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
+private class EcosiaWebViewMockCoordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
     let parent: MockWebViewRepresentable
     var blankTargetURLs: Set<String> = []
 
@@ -353,7 +353,7 @@ private class MockWKWebView: WKWebView {
 }
 
 @available(iOS 16.0, *)
-private class MockNavigationAction: WKNavigationAction {
+private class EcosiaWebViewMockNavigationAction: WKNavigationAction {
     private let mockRequest: URLRequest
     private let mockTargetFrame: WKFrameInfo?
     private let mockNavigationType: WKNavigationType
@@ -390,7 +390,7 @@ private class MockNavigationAction: WKNavigationAction {
 }
 
 @available(iOS 16.0, *)
-private class MockFrameInfo: WKFrameInfo {
+private class EcosiaWebViewMockFrameInfo: WKFrameInfo {
     override var isMainFrame: Bool {
         return true
     }
