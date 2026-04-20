@@ -56,10 +56,10 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
     }
 
     private lazy var headerLabel: UILabel = .build { label in
-        /* Ecosia: match private browsing NTP title size
+        /* Ecosia: Use Ecosia design system title3 at size 25
         label.font = FXFontStyles.Regular.headline.scaledFont()
          */
-        label.font = FXFontStyles.Bold.headline.scaledFont()
+        label.font = .ecosia(size: 25)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center // Ecosia: center align
@@ -68,7 +68,10 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
     }
 
     private lazy var bodyLabel: UILabel = .build { label in
+        /* Ecosia: Use Ecosia design system body at size 20
         label.font = FXFontStyles.Regular.body.scaledFont()
+         */
+        label.font = .ecosia(size: 20)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center // Ecosia: center align
@@ -102,7 +105,8 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         // Ecosia: keep the pill title on a single line
         config.titleLineBreakMode = .byTruncatingTail
         button.configuration = config
-        button.titleLabel?.font = FXFontStyles.Regular.subheadline.scaledFont()
+        // Ecosia: Use Ecosia design system body at size 20
+        button.titleLabel?.font = .ecosia(size: 20)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         // Ecosia: keep the pill on a single line and shrink the font if it would otherwise wrap
         button.titleLabel?.numberOfLines = 1
@@ -158,12 +162,13 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         /* Ecosia: Drop ShadowCardView and apply Ecosia incognito theming directly
         cardContainer.applyTheme(theme: theme)
          */
-        headerLabel.textColor = theme.colors.textPrimary
-        bodyLabel.textColor = theme.colors.textPrimary
-        linkButton.setTitleColor(theme.colors.textPrimary, for: .normal)
-        linkButton.tintColor = theme.colors.textPrimary
-        linkButton.layer.borderColor = theme.colors.textPrimary.cgColor
-        iconImageView.tintColor = theme.colors.textPrimary
+        let contentColor = theme.colors.ecosia.buttonContentPrimary
+        headerLabel.textColor = contentColor
+        bodyLabel.textColor = contentColor
+        linkButton.setTitleColor(contentColor, for: .normal)
+        linkButton.tintColor = contentColor
+        linkButton.layer.borderColor = contentColor.cgColor
+        iconImageView.tintColor = contentColor
     }
 
     private func setupLayout() {
