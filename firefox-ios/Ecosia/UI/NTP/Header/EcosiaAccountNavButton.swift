@@ -76,7 +76,7 @@ public struct EcosiaAccountNavButton: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityHint(String.localized(.accountButtonAccessibilityHint))
-        .accessibilityIdentifier("account_nav_button")
+        .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.Account.navButton)
         .accessibilityAddTraits(.isButton)
         .ecosiaThemed(windowUUID, $theme)
     }

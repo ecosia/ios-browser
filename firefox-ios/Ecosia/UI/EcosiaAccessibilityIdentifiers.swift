@@ -7,6 +7,13 @@ import Foundation
 /// Accessibility identifiers for Ecosia-specific UI elements
 public struct EcosiaAccessibilityIdentifiers {
 
+    public struct Account {
+        public static let navButton = "account_nav_button"
+        public static let seedCountView = "seed_count_view"
+        public static let userAvatar = "user_avatar"
+        public static let defaultAvatar = "default_avatar"
+    }
+
     public struct NTP {
         public static let rotatingTitle = "ntp_rotating_title"
         public static let headerLogo = "ntp_header_logo"

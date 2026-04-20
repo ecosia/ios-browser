@@ -105,7 +105,7 @@ public struct EcosiaSeedView: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
-        .accessibilityIdentifier("seed_count_view")
+        .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.Account.seedCountView)
         .onChange(of: seedCount) { newValue in
             if enableAnimation && newValue > previousSeedCount {
                 triggerSeedAnimation()
