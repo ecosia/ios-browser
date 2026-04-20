@@ -64,8 +64,6 @@ final class HomepageViewController: UIViewController,
     private var wallpaperBottomConstraint: NSLayoutConstraint?
     // Ecosia: Guards against re-applying the cross-hierarchy constraint on each layout pass
     private var wallpaperExtendedToParent = false
-    // Ecosia: Tracks the keyboard height so the wallpaper card stays visually fixed during editing
-    private var keyboardHeight: CGFloat = 0
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
     private let syncTabContextualHintViewController: ContextualHintViewController
@@ -172,7 +170,6 @@ final class HomepageViewController: UIViewController,
         applyTheme()
 
         addTapGestureRecognizerToDismissKeyboard()
-        setupWallpaperKeyboardObservers()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -186,15 +183,7 @@ final class HomepageViewController: UIViewController,
             )
         )
         termsOfUseDelegate?.showTermsOfUse(context: .homepageOpened)
-        /* Ecosia: Reset any stale keyboard offset on the wallpaper constraint
-         so it doesn't visually jump when the homepage reappears after a tab switch.
-         Trigger Ecosia data loading after that.
-         */
-        if keyboardHeight > 0, !wallpaperExtendedToParent {
-            keyboardHeight = 0
-            let vInset = CGFloat.ecosia.space._s
-            wallpaperBottomConstraint?.constant = -vInset
-        }
+        // Ecosia: Trigger Ecosia data loading
         ecosiaViewWillAppear()
     }
 
@@ -927,16 +916,17 @@ final class HomepageViewController: UIViewController,
         )
     }
 
-    /* Ecosia: On iPad, replace the initial view.bottomAnchor constraint with a cross-hierarchy constraint to
-     the parent (BVC) view's bottomAnchor. This lets the wallpaper card fill the full screen height —
-     including the navigation toolbar area — with a consistent 16pt margin on all sides in both orientations.
-     iPhone keeps the initial constraint so the card preserves the visible gap above the toolbar. */
+    /* Ecosia: Replace the initial view.bottomAnchor constraint with a cross-hierarchy constraint
+     to the parent (BVC) view's bottomAnchor. The BVC view does not resize for the keyboard, so
+     the wallpaper card keeps a stable frame and the aspect-fill image won't rescale (zoom) when
+     the address bar is focused. On iPad use _m inset; on iPhone use _s to keep the card close
+     to the toolbar edge. */
     private func extendEcosiaWallpaperToParent() {
         guard !wallpaperExtendedToParent,
-              traitCollection.userInterfaceIdiom == .pad,
               let parentView = parent?.view else { return }
         wallpaperBottomConstraint?.isActive = false
-        let vInset = CGFloat.ecosia.space._m
+        let isIPad = traitCollection.userInterfaceIdiom == .pad
+        let vInset = isIPad ? CGFloat.ecosia.space._m : CGFloat.ecosia.space._s
         let extended = wallpaperView.bottomAnchor.constraint(
             equalTo: parentView.bottomAnchor,
             constant: -vInset
@@ -960,39 +950,6 @@ final class HomepageViewController: UIViewController,
         store.dispatch(action)
     }
 
-    // Ecosia: Observe keyboard appearance so the wallpaper card doesn't visually shift when
-    // the address bar is focused and the content container shrinks for the keyboard.
-    private func setupWallpaperKeyboardObservers() {
-        guard traitCollection.userInterfaceIdiom != .pad else { return }
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleKeyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleKeyboardWillHide(_:)),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
-    }
-
-    @objc private func handleKeyboardWillShow(_ notification: Notification) {
-        guard !wallpaperExtendedToParent else { return }
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let kbHeight = view.convert(keyboardFrame, from: nil).height
-        guard kbHeight > 0 else { return }
-        keyboardHeight = kbHeight
-        let vInset = CGFloat.ecosia.space._s
-        // Shift the bottom constraint upward by keyboard height to keep the card's bottom in the same screen position.
-        wallpaperBottomConstraint?.constant = kbHeight - vInset
-        UIView.animate(withDuration: 0.25) { self.view.layoutIfNeeded() }
-    }
-
-    @objc private func handleKeyboardWillHide(_ notification: Notification) {
-        guard !wallpaperExtendedToParent, keyboardHeight > 0 else { return }
-        keyboardHeight = 0
-        let vInset = CGFloat.ecosia.space._s
-        wallpaperBottomConstraint?.constant = -vInset
-        UIView.animate(withDuration: 0.25) { self.view.layoutIfNeeded() }
-    }
 
     // MARK: Long Press (Photon Action Sheet)
     private lazy var longPressRecognizer: UILongPressGestureRecognizer = {

@@ -765,8 +765,11 @@ class BrowserViewController: UIViewController,
                 guard let webView = tabManager.selectedTab?.webView else { return false }
                 return isScrollAlphaZero && webView.scrollView.contentSize.height > view.bounds.height
             }()
+            /* Ecosia: Keep the same translucent background regardless of keyboard state.
             // we disable the translucency when the keyboard is getting displayed
             overKeyboardContainer.isClearBackground = (enableBlur && !isKeyboardShowing) || shouldClearBackground
+            */
+            overKeyboardContainer.isClearBackground = enableBlur || shouldClearBackground
 
             let isFxHomeTab = tabManager.selectedTab?.isFxHomeTab ?? false
             let offset = scrollOffset ?? statusBarOverlay.scrollOffset
