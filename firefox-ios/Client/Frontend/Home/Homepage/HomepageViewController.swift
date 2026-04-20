@@ -186,7 +186,15 @@ final class HomepageViewController: UIViewController,
             )
         )
         termsOfUseDelegate?.showTermsOfUse(context: .homepageOpened)
-        // Ecosia: Trigger Ecosia data loading
+        /* Ecosia: Reset any stale keyboard offset on the wallpaper constraint
+         so it doesn't visually jump when the homepage reappears after a tab switch.
+         Trigger Ecosia data loading after that.
+         */
+        if keyboardHeight > 0, !wallpaperExtendedToParent {
+            keyboardHeight = 0
+            let vInset = CGFloat.ecosia.space._s
+            wallpaperBottomConstraint?.constant = -vInset
+        }
         ecosiaViewWillAppear()
     }
 
@@ -868,6 +876,10 @@ final class HomepageViewController: UIViewController,
             context.fill(CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height))
             // Draw the wallpaper separately, so the potential safe area coordinates is filled with the
             // wallpaper
+            /* Ecosia: The wallpaper is now an inset card (child of `view`) rather than a full-bleed
+               background, so a single drawHierarchy pass captures both the wallpaper card and the
+               collection content in their correct positions. Drawing the wallpaper separately at
+               (0,0) full-size caused a mirrored/stretched wallpaper artifact behind the offset content.
             wallpaperView.drawHierarchy(
                 in: CGRect(
                     x: 0,
@@ -884,6 +896,16 @@ final class HomepageViewController: UIViewController,
                     y: -bounds.origin.y,
                     width: bounds.width,
                     height: collectionView?.frame.height ?? 0.0
+                ),
+                afterScreenUpdates: false
+            )
+            */
+            view.drawHierarchy(
+                in: CGRect(
+                    x: bounds.origin.x,
+                    y: -bounds.origin.y,
+                    width: view.bounds.width,
+                    height: view.bounds.height
                 ),
                 afterScreenUpdates: false
             )
