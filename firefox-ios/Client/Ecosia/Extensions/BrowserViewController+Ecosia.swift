@@ -29,14 +29,6 @@ extension BrowserViewController: DefaultBrowserDelegate {
 extension BrowserViewController {
     static let ecosiaSearchPromoShownKey = "EcosiaSearchPromoShown"
 
-    /// Migrates users who saw the promo under `PrefsKeys.IntroSeen` so they don't see it again.
-    func ecosiaMigrateDefaultBrowserPromoFlagIfNeeded() {
-        guard profile.prefs.boolForKey(Self.ecosiaSearchPromoShownKey) == nil else { return }
-        if profile.prefs.intForKey(PrefsKeys.IntroSeen) != nil {
-            profile.prefs.setBool(true, forKey: Self.ecosiaSearchPromoShownKey)
-        }
-    }
-
     /// Pure eligibility check, isolated from UIKit for unit-testing.
     static func isEligibleForEcosiaDefaultBrowserSearchPromo(
         searchCount: Int,
@@ -53,8 +45,6 @@ extension BrowserViewController {
     /// Safe to call repeatedly — the prefs flag prevents double-presentation.
     func ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold() {
         guard #available(iOS 14, *) else { return }
-
-        ecosiaMigrateDefaultBrowserPromoFlagIfNeeded()
 
         let alreadyShown = profile.prefs.boolForKey(Self.ecosiaSearchPromoShownKey) == true
         guard Self.isEligibleForEcosiaDefaultBrowserSearchPromo(
