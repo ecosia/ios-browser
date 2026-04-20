@@ -44,7 +44,7 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
 
     private lazy var contentStackView: UIStackView = .build { stackView in
         stackView.axis = .vertical
-        stackView.alignment = .center // Ecosia: center align
+        stackView.alignment = .center // Ecosia: Incognito NTP design
         stackView.spacing = UX.contentStackViewSpacing
     }
 
@@ -62,7 +62,7 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         label.font = .ecosia(size: 25)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .center // Ecosia: center align
+        label.textAlignment = .center // Ecosia: Incognito NTP design
         label.accessibilityIdentifier = a11y.title
         label.accessibilityTraits.insert(.header)
     }
@@ -74,7 +74,7 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         label.font = .ecosia(size: 20)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .center // Ecosia: center align
+        label.textAlignment = .center // Ecosia: Incognito NTP design
         label.accessibilityIdentifier = a11y.body
     }
 
@@ -102,13 +102,10 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         config.imagePadding = UX.buttonIconSpacing
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: UX.buttonIconSize, weight: .regular)
         config.image = UIImage(systemName: "arrow.up.right.square", withConfiguration: symbolConfig)
-        // Ecosia: keep the pill title on a single line
         config.titleLineBreakMode = .byTruncatingTail
         button.configuration = config
-        // Ecosia: Use Ecosia design system body at size 20
         button.titleLabel?.font = .ecosia(size: 20)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
-        // Ecosia: keep the pill on a single line and shrink the font if it would otherwise wrap
         button.titleLabel?.numberOfLines = 1
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.titleLabel?.adjustsFontSizeToFitWidth = true
