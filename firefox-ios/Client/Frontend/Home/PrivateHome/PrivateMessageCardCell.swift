@@ -60,7 +60,7 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         /* Ecosia: Use Ecosia design system title3 at size 25
         label.font = FXFontStyles.Regular.headline.scaledFont()
          */
-        label.font = .ecosia(size: 25)
+        label.font = .ecosia(size: .ecosia.font._3l)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         // Ecosia: Incognito NTP design
@@ -73,7 +73,7 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         /* Ecosia: Use Ecosia design system body at size 20
         label.font = FXFontStyles.Regular.body.scaledFont()
          */
-        label.font = .ecosia(size: 20)
+        label.font = .ecosia(size: .ecosia.font._2l)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         // Ecosia: Incognito NTP design
@@ -107,7 +107,7 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         config.image = UIImage(systemName: "arrow.up.right.square", withConfiguration: symbolConfig)
         config.titleLineBreakMode = .byTruncatingTail
         button.configuration = config
-        button.titleLabel?.font = .ecosia(size: 20)
+        button.titleLabel?.font = .ecosia(size: .ecosia.font._2l)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.titleLabel?.numberOfLines = 1
         button.titleLabel?.lineBreakMode = .byTruncatingTail
