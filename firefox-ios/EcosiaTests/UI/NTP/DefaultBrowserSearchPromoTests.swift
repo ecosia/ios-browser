@@ -75,8 +75,8 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
 
     func testPromoPrefsKeyIsStable() {
         XCTAssertEqual(
-            BrowserViewController.ecosiaDefaultBrowserSearchThresholdPromoShownKey,
-            "EcosiaDefaultBrowserSearchThresholdPromoShown",
+            BrowserViewController.ecosiaSearchPromoShownKey,
+            "EcosiaSearchPromoShown",
             "Changing this key silently resets every user's promo-shown flag."
         )
     }
@@ -85,7 +85,7 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
 
     func testMigration_introSeenSet_migratesNewKey() {
         let prefs = profile.prefs
-        let key = BrowserViewController.ecosiaDefaultBrowserSearchThresholdPromoShownKey
+        let key = BrowserViewController.ecosiaSearchPromoShownKey
         prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
 
         XCTAssertNil(prefs.boolForKey(key), "New key should not exist before migration.")
@@ -98,7 +98,7 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
 
     func testMigration_introSeenNotSet_doesNotSetNewKey() {
         let prefs = profile.prefs
-        let key = BrowserViewController.ecosiaDefaultBrowserSearchThresholdPromoShownKey
+        let key = BrowserViewController.ecosiaSearchPromoShownKey
 
         migrateIfNeeded(prefs: prefs)
 
@@ -108,7 +108,7 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
 
     func testMigration_newKeyAlreadySet_doesNotOverwrite() {
         let prefs = profile.prefs
-        let key = BrowserViewController.ecosiaDefaultBrowserSearchThresholdPromoShownKey
+        let key = BrowserViewController.ecosiaSearchPromoShownKey
         prefs.setBool(true, forKey: key)
         prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
 
@@ -130,7 +130,7 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
 
     /// Mirrors `ecosiaMigrateDefaultBrowserPromoFlagIfNeeded` logic without requiring a BVC instance.
     private func migrateIfNeeded(prefs: Prefs) {
-        let key = BrowserViewController.ecosiaDefaultBrowserSearchThresholdPromoShownKey
+        let key = BrowserViewController.ecosiaSearchPromoShownKey
         guard prefs.boolForKey(key) == nil else { return }
         if prefs.intForKey(PrefsKeys.IntroSeen) != nil {
             prefs.setBool(true, forKey: key)

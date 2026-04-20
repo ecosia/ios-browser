@@ -53,7 +53,7 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         profile?.prefs.removeObjectForKey(PrefsKeys.IntroSeen)
-        profile?.prefs.removeObjectForKey(BrowserViewController.ecosiaDefaultBrowserSearchThresholdPromoShownKey)
+        profile?.prefs.removeObjectForKey(BrowserViewController.ecosiaSearchPromoShownKey)
         settings.tableView.reloadData()
     }
 
