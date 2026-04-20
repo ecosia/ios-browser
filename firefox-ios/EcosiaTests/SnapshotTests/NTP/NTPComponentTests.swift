@@ -30,14 +30,6 @@ final class NTPComponentTests: SnapshotBaseTests {
         })
     }
 
-    func testNTPReferralMultipleInvitesCell() {
-        impactInfoReferralCellWithInvites(2)
-    }
-
-    func testNTPReferralSingleInviteCell() {
-        impactInfoReferralCellWithInvites(1)
-    }
-
     func testNTPTotalTreesCell() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPImpactCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
@@ -87,16 +79,6 @@ final class NTPComponentTests: SnapshotBaseTests {
 }
 
 extension NTPComponentTests {
-
-    private func impactInfoReferralCellWithInvites(_ invites: Int) {
-        let invitesTestNameString = invites > 1 ? "multiple_invites" : "single_invite"
-        SnapshotTestHelper.assertSnapshot(initializingWith: {
-            let cell = NTPImpactCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
-            let mockInfoItemSection: ClimateImpactInfo = .referral(value: invites)
-            cell.configure(items: [mockInfoItemSection], title: nil, delegate: nil, theme: self.themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID))
-            return cell
-        }, testName: "testNTPReferralInvitesCell_\(invitesTestNameString)")
-    }
 
     private func createMockNewsModel() throws -> NewsModel? {
         let currentTimestamp = Date().timeIntervalSince1970

@@ -25,9 +25,6 @@ protocol NTPImpactCellDelegate: AnyObject {
     var impactItems: [ClimateImpactInfo] {
         [totalTreesInfo, totalInvestedInfo]
     }
-    var referralInfo: ClimateImpactInfo {
-        .referral(value: User.shared.referrals.count)
-    }
     var totalTreesInfo: ClimateImpactInfo {
         .totalTrees(value: cachedTotalTrees)
     }
@@ -48,25 +45,11 @@ protocol NTPImpactCellDelegate: AnyObject {
     }
 
     private var cells = [Int: NTPImpactCell]()
-    private let referrals: Referrals
 
     var theme: Theme
 
-    init(referrals: Referrals, theme: Theme) {
-        self.referrals = referrals
+    init(theme: Theme) {
         self.theme = theme
-
-        referrals.subscribe(self) { [weak self] _ in
-            guard let self = self else { return }
-            Task { @MainActor in
-                self.refreshCell(withInfo: self.referralInfo)
-            }
-        }
-    }
-
-    deinit {
-        // Note: referrals.unsubscribe(self) is @MainActor; cannot call from deinit.
-        // Subscription closure uses [weak self] so no retain cycle.
     }
 
     // Fetch rotating title from CDN and cache it; fires once per session.
