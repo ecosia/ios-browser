@@ -170,7 +170,7 @@ public struct WelcomeView: View {
                 .offset(y: logoOffset)
                 .frame(maxWidth: transitionMaskWidth)
                 .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
-                .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.logo)
+                .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.bannerLogo)
 
             // Content
             if animationPhase == .phase3Complete {

@@ -6,6 +6,8 @@ import Foundation
 
 /// Accessibility identifiers for Ecosia-specific UI elements
 public struct EcosiaAccessibilityIdentifiers {
+    
+    public static let bannerLogo = "ecosia_logo"
 
     public struct Account {
         public static let navButton = "account_nav_button"
