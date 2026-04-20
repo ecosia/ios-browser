@@ -34,7 +34,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
         logo.clipsToBounds = true
         logo.contentMode = .scaleAspectFit
         logo.isAccessibilityElement = true
-        logo.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.logo
+        logo.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.NTP.headerLogo
         logo.accessibilityLabel = .localized(.ecosiaLogoAccessibilityLabel)
         contentView.addSubview(logo)
         self.logo = logo
