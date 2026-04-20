@@ -35,6 +35,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     func setupEcosiaAdapter(
         profile: Profile,
         tabManager: TabManager,
+        referrals: Referrals,
         auth: EcosiaAuth,
         browserViewController: BrowserViewController
     ) {
@@ -42,6 +43,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             profile: profile,
             windowUUID: windowUUID,
             tabManager: tabManager,
+            referrals: referrals,
             theme: themeManager.getCurrentTheme(for: windowUUID),
             auth: auth
         )

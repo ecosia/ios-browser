@@ -165,10 +165,12 @@ class BrowserCoordinator: BaseCoordinator,
 
         // Ecosia: Setup Ecosia adapter before first view access so homepage uses Ecosia sections
         if self.homepageViewController == nil,
-           let auth = browserViewController.ecosiaAuth {
+           let auth = browserViewController.ecosiaAuth,
+           let referrals = browserViewController.referrals {
             homepageController.setupEcosiaAdapter(
                 profile: profile,
                 tabManager: browserViewController.tabManager,
+                referrals: referrals,
                 auth: auth,
                 browserViewController: browserViewController
             )

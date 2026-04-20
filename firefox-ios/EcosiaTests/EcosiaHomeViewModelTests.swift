@@ -13,6 +13,7 @@ class EcosiaHomeViewModelTests: XCTestCase {
 
     var profile: MockProfile!
     var tabManager: MockTabManager!
+    var referrals: Referrals!
     var theme: Theme!
 
     override func setUp() {
@@ -20,6 +21,7 @@ class EcosiaHomeViewModelTests: XCTestCase {
 
         profile = MockProfile()
         tabManager = MockTabManager()
+        referrals = Referrals()
         theme = LightTheme()
 
         User.shared = User()
@@ -43,6 +45,7 @@ class EcosiaHomeViewModelTests: XCTestCase {
         let viewModel = HomepageViewModel(profile: profile,
                                           isPrivate: false,
                                           tabManager: tabManager,
+                                          referrals: referrals,
                                           theme: theme,
                                           auth: EcosiaAuth(browserViewController: BrowserViewController(profile: profile, tabManager: tabManager)))
         User.shared.showClimateImpact = true

@@ -22,8 +22,10 @@ public struct EcosiaAccessibilityIdentifiers {
         public static let customizeButton = "ntp_customize_button"
 
         public struct ClimateImpact {
+            public static let friendsAndTreesInvitesCounter = "friends_and_trees_invites_counter"
             public static let totalTreesCount = "total_trees_count"
             public static let totalInvestedCount = "total_invested_count"
+            public static let referralImage = "referral_image"
             public static let totalTreesImage = "total_trees_image"
             public static let totalInvestedImage = "total_invested_image"
         }

@@ -83,6 +83,25 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return label
     }()
 
+    /// A resizable button for performing actions related to the row (referral row only).
+    private lazy var actionButton: ResizableButton = {
+        let button = ResizableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .footnote).semibold()
+        button.titleLabel?.textAlignment = .right
+        // ResizableButton defaults to numberOfLines=0; force single line so the button
+        // never expands the referral row taller than the trees/invested rows.
+        button.titleLabel?.numberOfLines = 1
+        button.configuration?.titleLineBreakMode = .byTruncatingTail
+        button.contentHorizontalAlignment = .right
+        button.contentVerticalAlignment = .center
+        button.buttonEdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
+        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        button.clipsToBounds = true
+        return button
+    }()
+
     // MARK: - Properties
 
     weak var delegate: NTPImpactCellDelegate?
@@ -93,6 +112,14 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
             titleLabel.text = info.title
             subtitleLabel.text = info.subtitle
+            actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
+            actionButton.setTitle(info.buttonTitle, for: .normal)
+        }
+    }
+
+    var forceHideActionButton: Bool = false {
+        didSet {
+            actionButton.isHidden = forceHideActionButton
         }
     }
 
@@ -132,6 +159,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         imageContainer.addSubview(imageView)
         mainContainerView.addArrangedSubview(imageContainer)
         mainContainerView.addArrangedSubview(labelsStack)
+        mainContainerView.addArrangedSubview(actionButton)
 
         addSubview(mainContainerView)
     }
@@ -170,12 +198,15 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         glassBackground.loadCurrentWallpaper()
         titleLabel.textColor = .white
         subtitleLabel.textColor = .white
+        actionButton.setTitleColor(.white, for: .normal)
         imageView.tintColor = .white
         // Re-apply content to ensure rows added after initial layout are fully populated.
         imageView.image = info.image
         imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
         titleLabel.text = info.title
         subtitleLabel.text = info.subtitle
+        actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
+        actionButton.setTitle(info.buttonTitle, for: .normal)
     }
 
     // MARK: - Private Setup
@@ -192,6 +223,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - Actions
 
     @objc private func handleTileTap() {
+        delegate?.impactCellButtonClickedWithInfo(info)
+    }
+
+    @objc private func buttonAction() {
         delegate?.impactCellButtonClickedWithInfo(info)
     }
 }

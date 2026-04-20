@@ -35,6 +35,7 @@ extension NTPTests {
                                                                       toastContainer: UIView(),
                                                                       tabManager: MockTabManager(),
                                                                       overlayManager: overlayManager,
+                                                                      referrals: .init(),
                                                                       delegate: nil,
                                                                       auth: EcosiaAuth(browserViewController: BrowserViewController(profile: self.profile, tabManager: MockTabManager())))
             return homePageViewController

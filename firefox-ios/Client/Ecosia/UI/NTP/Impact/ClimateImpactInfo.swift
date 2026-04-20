@@ -7,11 +7,14 @@ import UIKit
 import Ecosia
 
 enum ClimateImpactInfo: Equatable {
+    case referral(value: Int)
     case totalTrees(value: Int)
     case totalInvested(value: Int)
 
     var title: String {
         switch self {
+        case .referral(let value):
+            return "\(value)"
         case .totalTrees(let value):
             return NumberFormatter.ecosiaCurrency(withoutEuroSymbol: true)
                 .string(from: .init(integerLiteral: value)) ?? ""
@@ -23,6 +26,8 @@ enum ClimateImpactInfo: Equatable {
 
     var subtitle: String {
         switch self {
+        case .referral(let value):
+            return .localizedPlural(.acceptedInvites, num: value)
         case .totalTrees:
             return .localized(.treesPlantedByEcosia)
         case .totalInvested:
@@ -32,6 +37,8 @@ enum ClimateImpactInfo: Equatable {
 
     var accessibilityLabel: String {
         switch self {
+        case .referral(let value):
+            return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.acceptedInvites, num: value)
         case .totalTrees(let value):
             return value.spelledOutString + " " + .localized(.treesPlantedByEcosia)
         case .totalInvested(let value):
@@ -41,6 +48,8 @@ enum ClimateImpactInfo: Equatable {
 
     var accessibilityIdentifier: String? {
         switch self {
+        case .referral:
+            EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.friendsAndTreesInvitesCounter
         case .totalTrees:
             EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.totalTreesCount
         case .totalInvested:
@@ -50,10 +59,30 @@ enum ClimateImpactInfo: Equatable {
 
     var image: UIImage? {
         switch self {
+        case .referral:
+            return .ecosia(named: "referral")?.withRenderingMode(.alwaysTemplate)
         case .totalTrees:
             return .ecosia(named: "tree")?.withRenderingMode(.alwaysTemplate)
         case .totalInvested:
             return .ecosia(named: "banknote")?.withRenderingMode(.alwaysTemplate)
+        }
+    }
+
+    var buttonTitle: String? {
+        switch self {
+        case .referral:
+            return .localized(.inviteFriends)
+        case .totalTrees, .totalInvested:
+            return nil
+        }
+    }
+
+    var accessibilityHint: String? {
+        switch self {
+        case .referral:
+            return .localized(.inviteFriends)
+        case .totalTrees, .totalInvested:
+            return nil
         }
     }
 
@@ -66,11 +95,15 @@ enum ClimateImpactInfo: Equatable {
             return urlProvider.trees
         case .totalInvested:
             return urlProvider.financialReports
+        case .referral:
+            return nil
         }
     }
 
     var imageAccessibilityIdentifier: String? {
         switch self {
+        case .referral:
+            EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.referralImage
         case .totalTrees:
             EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.totalTreesImage
         case .totalInvested:
@@ -81,11 +114,17 @@ enum ClimateImpactInfo: Equatable {
     /// Created to be used for comparison without taking the associated types arguments into consideration.
     var rawValue: Int {
         switch self {
-        case .totalTrees:
+        case .referral:
             return 0
-        case .totalInvested:
+        case .totalTrees:
             return 1
+        case .totalInvested:
+            return 2
         }
+    }
+
+    private func accessiblityLabelTreesPlanted(value: Int) -> String {
+        value.spelledOutString + " " + .localizedPlural(.treesPlanted, num: value) + ";"
     }
 }
 

@@ -285,7 +285,8 @@ extension Analytics {
         public enum ClimateCounter: String {
             case
             totalTrees = "total_trees",
-            totalInvested = "total_invested"
+            totalInvested = "total_invested",
+            referral
         }
 
         public enum TopSite: String {
