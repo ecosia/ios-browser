@@ -44,7 +44,7 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
 
     private lazy var contentStackView: UIStackView = .build { stackView in
         stackView.axis = .vertical
-        stackView.alignment = .center
+        stackView.alignment = .center // Ecosia: center align
         stackView.spacing = UX.contentStackViewSpacing
     }
 
@@ -56,7 +56,10 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
     }
 
     private lazy var headerLabel: UILabel = .build { label in
-        label.font = FXFontStyles.Bold.headline.scaledFont() // Ecosia: match private browsing NTP title size
+        /* Ecosia: match private browsing NTP title size
+        label.font = FXFontStyles.Regular.headline.scaledFont()
+         */
+        label.font = FXFontStyles.Bold.headline.scaledFont()
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center // Ecosia: center align

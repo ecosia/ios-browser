@@ -156,6 +156,7 @@ final class PrivateHomepageViewController: UIViewController,
         /* Ecosia: Remove the logo header and vertically center the private message card
         scrollContainer.addArrangedSubview(homepageHeaderCell.contentView)
         scrollContainer.addArrangedSubview(privateMessageCardCell)
+        scrollContainer.accessibilityElements = [homepageHeaderCell.contentView, privateMessageCardCell]
          */
         scrollContainer.accessibilityElements = [privateMessageCardCell]
 
@@ -239,7 +240,9 @@ final class PrivateHomepageViewController: UIViewController,
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         gradient.colors = theme.colors.layerHomepage.cgColors
-        // Ecosia: Logo header removed from the private homepage
+        /* Ecosia: Logo header removed from the private homepage
+        homepageHeaderCell.applyTheme(theme: theme)
+         */
         privateMessageCardCell.applyTheme(theme: theme)
     }
 
