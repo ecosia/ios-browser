@@ -12,6 +12,7 @@ import Shared
 /// which makes it straightforward to unit-test without spinning up a real `BrowserViewController`.
 final class DefaultBrowserSearchPromoTests: XCTestCase {
 
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var profile: MockProfile!
 
     override func setUp() {
@@ -28,8 +29,11 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
     // MARK: - Threshold constant
 
     func testMinSearchCountToTriggerIs50() {
-        XCTAssertEqual(DefaultBrowserViewController.minSearchCountToTrigger, 50,
-                       "Threshold changed — re-verify analytics and QA guidance for MOB-4323.")
+        XCTAssertEqual(
+            DefaultBrowserViewController.minSearchCountToTrigger,
+            50,
+            "Threshold changed — re-verify analytics and QA guidance for MOB-4323."
+        )
     }
 
     // MARK: - isEligibleForEcosiaDefaultBrowserSearchPromo
@@ -92,8 +96,11 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
 
         migrateIfNeeded(prefs: prefs)
 
-        XCTAssertEqual(prefs.boolForKey(key), true,
-                       "Upgrading user who saw the promo (IntroSeen set) should be marked as shown.")
+        XCTAssertEqual(
+            prefs.boolForKey(key),
+            true,
+            "Upgrading user who saw the promo (IntroSeen set) should be marked as shown."
+        )
     }
 
     func testMigration_introSeenNotSet_doesNotSetNewKey() {
@@ -114,8 +121,11 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
 
         migrateIfNeeded(prefs: prefs)
 
-        XCTAssertEqual(prefs.boolForKey(key), true,
-                       "Migration should be a no-op when the new key already exists.")
+        XCTAssertEqual(
+            prefs.boolForKey(key),
+            true,
+            "Migration should be a no-op when the new key already exists."
+        )
     }
 
     // MARK: - Helpers
