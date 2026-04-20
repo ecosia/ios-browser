@@ -7,7 +7,7 @@ import UserNotifications
 import Combine
 
 extension Notification.Name {
-    static let searchesCounterChanged = Notification.Name("searchesCounterChanged")
+    public static let searchesCounterChanged = Notification.Name("searchesCounterChanged")
     public static let searchSettingsChanged = Notification.Name("searchSettingsChanged")
 }
 
@@ -241,6 +241,18 @@ extension User {
         state[Key.isAccountImpactNudgeCardDismissed.rawValue] = "\(true)"
     }
 
+    public var defaultBrowserSearchPromoShown: Bool {
+        state[Key.defaultBrowserSearchPromoShown.rawValue].map(Bool.init) == true
+    }
+
+    public mutating func markDefaultBrowserSearchPromoAsShown() {
+        state[Key.defaultBrowserSearchPromoShown.rawValue] = "\(true)"
+    }
+
+    public mutating func resetDefaultBrowserSearchPromo() {
+        state.removeValue(forKey: Key.defaultBrowserSearchPromoShown.rawValue)
+    }
+
     enum Key: String {
         case
         referralSpotlight,
@@ -249,7 +261,8 @@ extension User {
         bookmarksImportExportTooltipShown,
         isNewUserSinceBookmarksImportExportHasBeenShipped,
         isDefaultBrowserSettingNudgeCardShown,
-        isAccountImpactNudgeCardDismissed
+        isAccountImpactNudgeCardDismissed,
+        defaultBrowserSearchPromoShown
     }
 }
 

@@ -5,6 +5,7 @@
 import XCTest
 @testable import Client
 import Shared
+import Ecosia
 
 /// Tests for MOB-4323 — Ecosia default-browser promo triggered after search-count threshold.
 ///
@@ -18,11 +19,13 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
     override func setUp() {
         super.setUp()
         profile = MockProfile()
+        User.shared.resetDefaultBrowserSearchPromo()
     }
 
     override func tearDown() {
         profile.prefs.clearAll()
         profile = nil
+        User.shared.resetDefaultBrowserSearchPromo()
         super.tearDown()
     }
 
@@ -75,55 +78,35 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
         XCTAssertFalse(eligible(searchCount: 0, isDefaultBrowser: false, promoAlreadyShown: false))
     }
 
-    // MARK: - Prefs key name stability
-
-    func testPromoPrefsKeyIsStable() {
-        XCTAssertEqual(
-            BrowserViewController.ecosiaSearchPromoShownKey,
-            "EcosiaSearchPromoShown",
-            "Changing this key silently resets every user's promo-shown flag."
-        )
-    }
-
     // MARK: - Migration from PrefsKeys.IntroSeen
 
-    func testMigration_introSeenSet_setsNewKey() {
-        let prefs = profile.prefs
-        let key = BrowserViewController.ecosiaSearchPromoShownKey
-        prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+    func testMigration_introSeenSet_marksUserFlag() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        XCTAssertFalse(User.shared.defaultBrowserSearchPromoShown, "Flag should not be set before migration.")
 
-        XCTAssertNil(prefs.boolForKey(key), "New key should not exist before migration.")
+        migrateIfNeeded(prefs: profile.prefs)
 
-        migrateIfNeeded(prefs: prefs)
-
-        XCTAssertEqual(
-            prefs.boolForKey(key),
-            true,
+        XCTAssertTrue(
+            User.shared.defaultBrowserSearchPromoShown,
             "Users blocked under the old key must stay blocked under the new one."
         )
     }
 
-    func testMigration_introSeenNotSet_doesNotSetNewKey() {
-        let prefs = profile.prefs
-        let key = BrowserViewController.ecosiaSearchPromoShownKey
+    func testMigration_introSeenNotSet_doesNotMarkUserFlag() {
+        migrateIfNeeded(prefs: profile.prefs)
 
-        migrateIfNeeded(prefs: prefs)
-
-        XCTAssertNil(prefs.boolForKey(key), "Fresh user should not be pre-blocked.")
+        XCTAssertFalse(User.shared.defaultBrowserSearchPromoShown, "Fresh user should not be pre-blocked.")
     }
 
-    func testMigration_newKeyAlreadySet_isNoOp() {
-        let prefs = profile.prefs
-        let key = BrowserViewController.ecosiaSearchPromoShownKey
-        prefs.setBool(true, forKey: key)
-        prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+    func testMigration_userFlagAlreadySet_isNoOp() {
+        User.shared.markDefaultBrowserSearchPromoAsShown()
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
 
-        migrateIfNeeded(prefs: prefs)
+        migrateIfNeeded(prefs: profile.prefs)
 
-        XCTAssertEqual(
-            prefs.boolForKey(key),
-            true,
-            "Migration must be a no-op once the new key is already written."
+        XCTAssertTrue(
+            User.shared.defaultBrowserSearchPromoShown,
+            "Migration must be a no-op once the User flag is already set."
         )
     }
 
@@ -139,10 +122,9 @@ final class DefaultBrowserSearchPromoTests: XCTestCase {
 
     /// Mirrors `ecosiaMigrateDefaultBrowserPromoFlagIfNeeded` without requiring a BVC instance.
     private func migrateIfNeeded(prefs: Prefs) {
-        let key = BrowserViewController.ecosiaSearchPromoShownKey
-        guard prefs.boolForKey(key) == nil else { return }
+        guard !User.shared.defaultBrowserSearchPromoShown else { return }
         if prefs.intForKey(PrefsKeys.IntroSeen) != nil {
-            prefs.setBool(true, forKey: key)
+            User.shared.markDefaultBrowserSearchPromoAsShown()
         }
     }
 }
