@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Ecosia
 import UIKit
 import Shared
 
@@ -69,7 +70,10 @@ final class PrivateHomepageViewController: UIViewController,
         let messageCardModel = PrivateMessageCardCell.PrivateMessageCard(
             title: .FirefoxHomepage.FeltPrivacyUI.Title,
             body: String(format: .FirefoxHomepage.FeltPrivacyUI.Body, AppName.shortName.rawValue),
+            /* Ecosia: Use Ecosia-owned link button text
             link: .FirefoxHomepage.FeltPrivacyUI.Link
+             */
+            link: .localized(.privateBrowsingLinkButton)
         )
         messageCard.configure(with: messageCardModel, and: themeManager.getCurrentTheme(for: windowUUID))
         messageCard.privateBrowsingLinkTapped = { [weak self] in
@@ -78,12 +82,14 @@ final class PrivateHomepageViewController: UIViewController,
         return messageCard
     }()
 
+    /* Ecosia: Remove the logo header from the private homepage entirely
     private lazy var homepageHeaderCell: HomepageHeaderCell = {
         let header = HomepageHeaderCell()
         header.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         header.configure(headerState: HeaderState(windowUUID: windowUUID))
         return header
     }()
+     */
 
     init(windowUUID: WindowUUID,
          themeManager: ThemeManager = AppContainer.shared.resolve(),
@@ -116,10 +122,12 @@ final class PrivateHomepageViewController: UIViewController,
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateConstraintsForMultitasking()
+        /* Ecosia: NTPLogoCell does not need re-configuration on size class changes
         if previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
             || previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass {
             homepageHeaderCell.configure(headerState: HeaderState(windowUUID: windowUUID))
         }
+         */
         applyTheme()
     }
 
@@ -148,15 +156,21 @@ final class PrivateHomepageViewController: UIViewController,
     }
 
     private func setupLayout() {
+        /* Ecosia: Remove the logo header and vertically center the private message card
         scrollContainer.addArrangedSubview(homepageHeaderCell.contentView)
         scrollContainer.addArrangedSubview(privateMessageCardCell)
         scrollContainer.accessibilityElements = [homepageHeaderCell.contentView, privateMessageCardCell]
+         */
+        scrollContainer.accessibilityElements = [privateMessageCardCell]
 
         setupGradient(gradient)
         gradient.frame = view.bounds
         view.layer.addSublayer(gradient)
         view.addSubview(scrollView)
         scrollView.addSubview(scrollContainer)
+        // Ecosia: Add the message card directly to the view so it can be vertically centered
+        privateMessageCardCell.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(privateMessageCardCell)
 
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -168,6 +182,17 @@ final class PrivateHomepageViewController: UIViewController,
                                                  constant: UX.defaultScrollContainerPadding),
             scrollContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor,
                                                     constant: -UX.defaultScrollContainerPadding),
+
+            // Ecosia: Vertically center the message card in the safe area
+            privateMessageCardCell.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            privateMessageCardCell.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: UX.defaultScrollContainerPadding
+            ),
+            privateMessageCardCell.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -UX.defaultScrollContainerPadding
+            ),
         ])
 
         setupConstraintsForMultitasking()
@@ -218,10 +243,13 @@ final class PrivateHomepageViewController: UIViewController,
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         gradient.colors = theme.colors.layerHomepage.cgColors
+        /* Ecosia: Logo header removed from the private homepage
         homepageHeaderCell.applyTheme(theme: theme)
+         */
         privateMessageCardCell.applyTheme(theme: theme)
     }
 
+    /* Ecosia: Use localized Ecosia support article instead of Mozilla SUMO
     private func learnMore() {
         guard let privateBrowsingURL = SupportUtils.URLForPrivateBrowsingLearnMore else {
             self.logger.log("Failed to retrieve URL from SupportUtils.URLForPrivateBrowsingLearnMore",
@@ -231,6 +259,15 @@ final class PrivateHomepageViewController: UIViewController,
         }
         parentCoordinator?.homePanelDidRequestToOpenInNewTab(
             with: privateBrowsingURL,
+            isPrivate: true,
+            selectNewTab: true
+        )
+    }
+     */
+    private func learnMore() {
+        let url = Environment.current.urlProvider.privateBrowsingLearnMore
+        parentCoordinator?.homePanelDidRequestToOpenInNewTab(
+            with: url,
             isPrivate: true,
             selectNewTab: true
         )

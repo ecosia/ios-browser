@@ -180,6 +180,17 @@ public enum URLProvider {
         }
     }
 
+    public var privateBrowsingLearnMore: URL {
+        switch Language.current {
+        case .de:
+            return URL(string: "https://de.support.ecosia.org/article/730-private-browsing-de")!
+        case .fr:
+            return URL(string: "https://fr.support.ecosia.org/article/956-private-browsing-fr")!
+        default:
+            return URL(string: "https://support.ecosia.org/article/651-private-browsing-en")!
+        }
+    }
+
     public var notifications: URL {
         let url = URL(string: "https://api.ecosia.org/v1/notifications")!
         return url.appendingQueryItems([
