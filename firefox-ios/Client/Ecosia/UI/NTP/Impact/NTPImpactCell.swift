@@ -56,6 +56,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.7
+        label.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.NTP.rotatingTitle
         return label
     }()
 

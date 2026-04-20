@@ -87,7 +87,7 @@ private struct EcosiaCustomizeButton: View {
         }
         .buttonStyle(NTPGlassButtonStyle(Circle()))
         .accessibilityLabel(String.localized(.customizeHomepage))
-        .accessibilityIdentifier("ntp_customize_button")
+        .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.customizeButton)
     }
 }
 
@@ -105,7 +105,7 @@ private struct NTPHeaderLogoView: View {
             .foregroundColor(.white)
             .frame(height: logoHeight)
             .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
-            .accessibilityIdentifier("ntp_header_logo")
+            .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.headerLogo)
     }
 }
 

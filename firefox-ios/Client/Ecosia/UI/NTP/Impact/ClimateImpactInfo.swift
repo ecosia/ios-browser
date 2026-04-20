@@ -49,11 +49,11 @@ enum ClimateImpactInfo: Equatable {
     var accessibilityIdentifier: String? {
         switch self {
         case .referral:
-            "friends_and_trees_invites_counter"
+            EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.friendsAndTreesInvitesCounter
         case .totalTrees:
-            "total_trees_count"
+            EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.totalTreesCount
         case .totalInvested:
-            "total_invested_count"
+            EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.totalInvestedCount
         }
     }
 
@@ -103,11 +103,11 @@ enum ClimateImpactInfo: Equatable {
     var imageAccessibilityIdentifier: String? {
         switch self {
         case .referral:
-            "referral_image"
+            EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.referralImage
         case .totalTrees:
-            "total_trees_image"
+            EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.totalTreesImage
         case .totalInvested:
-            "total_invested_image"
+            EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.totalInvestedImage
         }
     }
 
