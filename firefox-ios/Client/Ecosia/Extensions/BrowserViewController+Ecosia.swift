@@ -21,11 +21,11 @@ extension BrowserViewController: HomepageViewControllerDelegate {
 extension BrowserViewController: DefaultBrowserDelegate {
     @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowserViewController) {
-        // Promo is marked as shown before presentation; no action needed here.
+        profile.prefs.setBool(true, forKey: BrowserViewController.ecosiaSearchPromoShownKey)
     }
 }
 
-// MARK: - Default browser promo after search threshold (MOB-4323)
+// MARK: - Default browser promo after search threshold
 extension BrowserViewController {
     static let ecosiaSearchPromoShownKey = "EcosiaSearchPromoShown"
 
@@ -65,8 +65,6 @@ extension BrowserViewController {
 
         guard presentedViewController == nil else { return }
         guard viewIfLoaded?.window != nil else { return }
-
-        profile.prefs.setBool(true, forKey: Self.ecosiaSearchPromoShownKey)
 
         let controller = DefaultBrowserViewController(windowUUID: windowUUID, delegate: self)
         present(controller, animated: true, completion: nil)
