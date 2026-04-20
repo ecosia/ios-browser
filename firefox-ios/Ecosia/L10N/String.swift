@@ -83,7 +83,6 @@ extension String {
         case plantTreesWhile = "Plant trees while you browse the web"
         case privacy = "Privacy"
         case privateTab = "Private"
-        case privateBrowsingLearnMoreURL = "https://support.ecosia.org/article/651-private-browsing"
         case privateEmpty = "Ecosia won’t remember the pages you visited, your search history or your autofill information once you close a tab. Your searches still contribute to trees."
         case readMore = "Read More"
         case referrals = "%d referral(s)"

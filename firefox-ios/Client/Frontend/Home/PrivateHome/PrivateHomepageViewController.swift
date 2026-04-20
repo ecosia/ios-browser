@@ -262,9 +262,7 @@ final class PrivateHomepageViewController: UIViewController,
     }
      */
     private func learnMore() {
-        // Ecosia: Use localized URL from Ecosia.strings (de/fr have overrides)
-        let urlString = String.localized(.privateBrowsingLearnMoreURL)
-        guard let url = URL(string: urlString) else { return }
+        let url = Environment.current.urlProvider.privateBrowsingLearnMore
         parentCoordinator?.homePanelDidRequestToOpenInNewTab(
             with: url,
             isPrivate: true,
