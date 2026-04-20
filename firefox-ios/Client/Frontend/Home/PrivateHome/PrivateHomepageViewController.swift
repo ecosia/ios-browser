@@ -70,7 +70,10 @@ final class PrivateHomepageViewController: UIViewController,
         let messageCardModel = PrivateMessageCardCell.PrivateMessageCard(
             title: .FirefoxHomepage.FeltPrivacyUI.Title,
             body: String(format: .FirefoxHomepage.FeltPrivacyUI.Body, AppName.shortName.rawValue),
+            /* Ecosia: Use Ecosia-owned link button text
             link: .FirefoxHomepage.FeltPrivacyUI.Link
+             */
+            link: .localized(.privateBrowsingLinkButton)
         )
         messageCard.configure(with: messageCardModel, and: themeManager.getCurrentTheme(for: windowUUID))
         messageCard.privateBrowsingLinkTapped = { [weak self] in
