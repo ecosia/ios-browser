@@ -44,7 +44,8 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
 
     private lazy var contentStackView: UIStackView = .build { stackView in
         stackView.axis = .vertical
-        stackView.alignment = .center // Ecosia: Incognito NTP design
+        // Ecosia: Incognito NTP design
+        stackView.alignment = .center
         stackView.spacing = UX.contentStackViewSpacing
     }
 
@@ -62,7 +63,8 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         label.font = .ecosia(size: 25)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .center // Ecosia: Incognito NTP design
+        // Ecosia: Incognito NTP design
+        label.textAlignment = .center
         label.accessibilityIdentifier = a11y.title
         label.accessibilityTraits.insert(.header)
     }
@@ -74,7 +76,8 @@ class PrivateMessageCardCell: UIView, ThemeApplicable {
         label.font = .ecosia(size: 20)
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .center // Ecosia: Incognito NTP design
+        // Ecosia: Incognito NTP design
+        label.textAlignment = .center
         label.accessibilityIdentifier = a11y.body
     }
 
