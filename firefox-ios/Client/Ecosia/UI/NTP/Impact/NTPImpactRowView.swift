@@ -83,7 +83,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return label
     }()
 
-
     // MARK: - Properties
 
     weak var delegate: NTPImpactCellDelegate?

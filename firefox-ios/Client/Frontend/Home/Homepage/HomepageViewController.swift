@@ -950,7 +950,6 @@ final class HomepageViewController: UIViewController,
         store.dispatch(action)
     }
 
-
     // MARK: Long Press (Photon Action Sheet)
     private lazy var longPressRecognizer: UILongPressGestureRecognizer = {
         return UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))

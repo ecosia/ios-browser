@@ -8,7 +8,6 @@ import Common
 import Ecosia
 // swiftlint:disable closure_body_length
 
-
 @MainActor
 protocol NTPHeaderDelegate: AnyObject {
     func headerOpenCustomizeHomepage()
