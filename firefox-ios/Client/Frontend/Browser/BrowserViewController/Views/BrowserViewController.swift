@@ -1337,9 +1337,6 @@ class BrowserViewController: UIViewController,
                 onStopDownloads(notificationWindowUUID: windowUUID)
             case .SettingsDismissed:
                 onSettingsDismissed()
-            // Ecosia: Re-evaluate default-browser promo whenever the search count changes (MOB-4323).
-            case .searchesCounterChanged:
-                ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
             default: break
             }
         }
@@ -1366,9 +1363,7 @@ class BrowserViewController: UIViewController,
                 .PageZoomSettingsChanged,
                 .RemoteTabNotificationTapped,
                 .StopDownloads,
-                .SettingsDismissed,
-                // Ecosia: Observe search-count changes to trigger default-browser promo (MOB-4323).
-                .searchesCounterChanged
+                .SettingsDismissed
             ]
         )
     }
