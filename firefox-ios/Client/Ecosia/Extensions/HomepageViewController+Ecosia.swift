@@ -101,13 +101,18 @@ extension BrowserViewController: NTPImpactCellDelegate {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {
         case .referral:
+            Analytics.shared.ntpClimateCounterTapped(.referral)
             guard let referrals else { return }
             let invite = MultiplyImpact(referrals: referrals, windowUUID: windowUUID)
             invite.delegate = self
             let nav = EcosiaNavigation(rootViewController: invite)
             present(nav, animated: true)
-        case .totalTrees, .totalInvested:
-            // Ecosia: Open the counter's destination URL in the current tab (not a new tab).
+        case .totalTrees:
+            Analytics.shared.ntpClimateCounterTapped(.totalTrees)
+            guard let url = info.destinationURL else { return }
+            tabManager.selectedTab?.loadRequest(PrivilegedRequest(url: url) as URLRequest)
+        case .totalInvested:
+            Analytics.shared.ntpClimateCounterTapped(.totalInvested)
             guard let url = info.destinationURL else { return }
             tabManager.selectedTab?.loadRequest(PrivilegedRequest(url: url) as URLRequest)
         }

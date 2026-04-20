@@ -282,6 +282,13 @@ extension Analytics {
             main = "all_private_data"
         }
 
+        public enum ClimateCounter: String {
+            case
+            totalTrees = "total_trees",
+            totalInvested = "total_invested",
+            referral
+        }
+
         public enum TopSite: String {
             case
             `default`,
