@@ -232,6 +232,7 @@ final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
 
 final class HomepageSettings: Setting {
     private var profile: Profile?
+    private weak var settings: SettingsTableViewController?
 
     override var accessoryView: UIImageView? {
         guard let theme else { return nil }
@@ -241,17 +242,21 @@ final class HomepageSettings: Setting {
     let windowUUID: WindowUUID
     init(settings: SettingsTableViewController, settingsDelegate: SettingsDelegate?) {
         self.profile = settings.profile
+        self.settings = settings
         self.windowUUID = settings.windowUUID
         super.init(title: NSAttributedString(string: .localized(.homepage)))
         self.delegate = settingsDelegate
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        guard let profile else { return }
-        let customizationViewController = NTPCustomizationSettingsViewController(windowUUID: windowUUID)
-        customizationViewController.profile = profile
-        customizationViewController.settingsDelegate = delegate
-        navigationController?.pushViewController(customizationViewController, animated: true)
+        guard let profile, let tabManager = settings?.tabManager else { return }
+        let viewController = HomePageSettingViewController(
+            prefs: profile.prefs,
+            settingsDelegate: delegate,
+            tabManager: tabManager
+        )
+        viewController.profile = profile
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
 
