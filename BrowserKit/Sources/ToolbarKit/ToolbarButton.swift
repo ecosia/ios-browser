@@ -167,9 +167,18 @@ class ToolbarButton: UIButton,
     }
 
     private func addBadgeIcon(imageName: String, bundle: Bundle? = nil, size: CGSize? = nil, xOffset: CGFloat? = nil, yOffset: CGFloat? = nil) {
+        /* Ecosia: Apply template rendering for bundle-loaded badges so they inherit
+           the button's foreground tint color in applyTheme.
         let image = bundle != nil
             ? UIImage(named: imageName, in: bundle, compatibleWith: nil)
             : UIImage(named: imageName)
+         */
+        var image = bundle != nil
+            ? UIImage(named: imageName, in: bundle, compatibleWith: nil)
+            : UIImage(named: imageName)
+        if bundle != nil {
+            image = image?.withRenderingMode(.alwaysTemplate)
+        }
         badgeImageView = UIImageView(image: image)
         guard let badgeImageView, configuration?.image != nil else { return }
         badgeImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -334,7 +343,11 @@ class ToolbarButton: UIButton,
 
         badgeImageView?.layer.borderColor = colors.layer1.cgColor
         badgeImageView?.backgroundColor = maskImageView == nil ? colors.layer1 : .clear
+        /* Ecosia: Use the button's foreground tint for no-mask badges (e.g. incognito icon)
+           so it matches the back/forward arrow color instead of being invisible.
         badgeImageView?.tintColor = maskImageView == nil ? .clear : colors.actionInformation
+         */
+        badgeImageView?.tintColor = maskImageView == nil ? foregroundColorNormal : colors.actionInformation
         maskImageView?.tintColor = colors.layer1
         setNeedsUpdateConfiguration()
     }
