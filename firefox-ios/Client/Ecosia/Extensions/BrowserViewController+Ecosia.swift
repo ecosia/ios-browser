@@ -21,8 +21,52 @@ extension BrowserViewController: HomepageViewControllerDelegate {
 extension BrowserViewController: DefaultBrowserDelegate {
     @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowserViewController) {
-        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-//        homepageViewController?.reloadTooltip()
+        User.shared.markDefaultBrowserSearchPromoAsShown()
+    }
+}
+
+// MARK: - Default browser promo after search threshold
+extension BrowserViewController {
+
+    /// One-shot migration from the old `PrefsKeys.IntroSeen` gate to `User.shared`.
+    /// Preserves the existing suppression: users already blocked under the old key remain blocked.
+    func ecosiaMigrateDefaultBrowserPromoFlagIfNeeded() {
+        guard !User.shared.defaultBrowserSearchPromoShown else { return }
+        if profile.prefs.intForKey(PrefsKeys.IntroSeen) != nil {
+            User.shared.markDefaultBrowserSearchPromoAsShown()
+        }
+    }
+
+    /// Pure eligibility check, isolated from UIKit for unit-testing.
+    static func isEligibleForEcosiaDefaultBrowserSearchPromo(
+        searchCount: Int,
+        isDefaultBrowser: Bool,
+        promoAlreadyShown: Bool
+    ) -> Bool {
+        guard !isDefaultBrowser else { return false }
+        guard searchCount > DefaultBrowserViewController.minSearchCountToTrigger else { return false }
+        guard !promoAlreadyShown else { return false }
+        return true
+    }
+
+    /// Presents the default-browser promo once the search-count threshold is crossed.
+    /// Safe to call repeatedly — the User flag prevents double-presentation.
+    func ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold() {
+        guard #available(iOS 14, *) else { return }
+
+        ecosiaMigrateDefaultBrowserPromoFlagIfNeeded()
+
+        guard Self.isEligibleForEcosiaDefaultBrowserSearchPromo(
+            searchCount: User.shared.searchCount,
+            isDefaultBrowser: DefaultBrowserUtility().isDefaultBrowser,
+            promoAlreadyShown: User.shared.defaultBrowserSearchPromoShown
+        ) else { return }
+
+        guard presentedViewController == nil else { return }
+        guard viewIfLoaded?.window != nil else { return }
+
+        let controller = DefaultBrowserViewController(windowUUID: windowUUID, delegate: self)
+        present(controller, animated: true, completion: nil)
     }
 }
 

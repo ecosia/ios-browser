@@ -53,6 +53,7 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         profile?.prefs.removeObjectForKey(PrefsKeys.IntroSeen)
+        User.shared.resetDefaultBrowserSearchPromo()
         settings.tableView.reloadData()
     }
 

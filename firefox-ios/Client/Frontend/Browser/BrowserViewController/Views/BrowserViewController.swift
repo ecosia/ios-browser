@@ -2047,6 +2047,11 @@ class BrowserViewController: UIViewController,
         if !isToolbarTranslucencyRefactorEnabled {
             updateToolbarDisplay()
         }
+
+        // Ecosia: Show default-browser promo when user lands on NTP (idle moment) — not mid-search (MOB-4323).
+        if !isPrivate {
+            ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
+        }
     }
 
     func showEmbeddedWebview() {
