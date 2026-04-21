@@ -3,13 +3,18 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import UIKit
 
 final class PrivateModeButton: ToggleButton, PrivateModeUI {
     override init(frame: CGRect) {
         super.init(frame: frame)
         accessibilityLabel = .TabsTray.TabTrayToggleAccessibilityLabel
+        /* Ecosia: Use Ecosia incognito icon instead of Firefox private mode mask
         let maskImage = UIImage(named: StandardImageIdentifiers.Large.privateMode)?
+            .withRenderingMode(.alwaysTemplate)
+         */
+        let maskImage = UIImage(named: "incognito", in: .ecosia, with: nil)?
             .withRenderingMode(.alwaysTemplate)
         setImage(maskImage, for: [])
         showsLargeContentViewer = true
