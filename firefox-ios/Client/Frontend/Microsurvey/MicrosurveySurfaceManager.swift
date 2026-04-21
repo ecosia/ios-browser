@@ -32,6 +32,8 @@ class MicrosurveySurfaceManager: MicrosurveyManager {
     /// Checks whether a message exists, and is not expired, and attempts to
     /// build a `MicrosurveyPromptView` to be presented.
     func showMicrosurveyPrompt() -> MicrosurveyModel? {
+        // Ecosia: Hide microsurvey prompt
+        return nil
         retrieveMessage()
         guard let message else { return nil }
         let surveyQuestion = message.text
