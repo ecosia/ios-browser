@@ -17,7 +17,8 @@ public struct EnvironmentFetcher {
         // Attempt to retrieve the value from the Main Bundle Info Dictionary
         // If not found, try to retrieve it from the Process Info environment
         guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String
-                ?? ProcessInfo.processInfo.environment[key] else {
+                ?? ProcessInfo.processInfo.environment[key],
+              !value.isEmpty else {
             // Return nil if the value is not found in either location
             return nil
         }
