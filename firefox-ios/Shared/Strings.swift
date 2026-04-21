@@ -1017,7 +1017,7 @@ extension String {
                 public static let HomeTabBannerDescription = MZLocalizedString(
                     key: "DefaultBrowserCard.Description",
                     tableName: "Default Browser",
-                    value: "Set links from websites, emails, and Messages to open automatically in Firefox.",
+                    value: "Set links from websites, emails, and Messages to open automatically in Ecosia.",
                     comment: "Description for small home tab banner that allows the user to switch their default browser to Firefox.")
                 public static let HomeTabBannerCloseAccessibility = MZLocalizedString(
                     key: "DefaultBrowserCloseButtonAccessibility.v102",
@@ -2860,7 +2860,7 @@ extension String {
                 public static let Description = MZLocalizedString(
                     key: "Settings.Home.Option.Description.v101",
                     tableName: nil,
-                    value: "Choose what’s included on the Firefox homepage.",
+                    value: "Choose what’s included on the Ecosia homepage.",
                     comment: "In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for.")
                 public static let Wallpaper = MZLocalizedString(
                     key: "Settings.Home.Option.Wallpaper",
@@ -2921,7 +2921,7 @@ extension String {
                 public static let SectionDescription = MZLocalizedString(
                     key: "Settings.Home.Option.StartAtHome.Description",
                     tableName: nil,
-                    value: "Choose what you see when you return to Firefox.",
+                    value: "Choose what you see when you return to Ecosia.",
                     comment: "In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do.")
                 public static let AfterFourHours = MZLocalizedString(
                     key: "Settings.Home.Option.StartAtHome.AfterFourHours",
@@ -2944,7 +2944,7 @@ extension String {
                 public static let SwitchTitle = MZLocalizedString(
                     key: "Settings.Home.Option.Wallpaper.SwitchTitle.v99",
                     tableName: nil,
-                    value: "Change wallpaper by tapping Firefox homepage logo",
+                    value: "Change wallpaper by tapping Ecosia homepage logo",
                     comment: "In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off.")
                 public static let WallpaperUpdatedToastLabel = MZLocalizedString(
                     key: "Settings.Home.Option.Wallpaper.UpdatedToast",
@@ -4270,7 +4270,7 @@ extension String {
     public static let SettingsDisconnectSyncAlertBody = MZLocalizedString(
         key: "Settings.Disconnect.Body",
         tableName: nil,
-        value: "Firefox will stop syncing with your account, but won’t delete any of your browsing data on this device.",
+        value: "Ecosia will stop syncing with your account, but won’t delete any of your browsing data on this device.",
         comment: "Body of the alert when prompting the user asking to disconnect.")
     public static let SettingsDisconnectSyncButton = MZLocalizedString(
         key: "Settings.Disconnect.Button",
@@ -4334,7 +4334,7 @@ extension String {
     public static let ErrorPagesCertWarningDescription = MZLocalizedString(
         key: "ErrorPages.CertWarning.Description",
         tableName: nil,
-        value: "The owner of %@ has configured their website improperly. To protect your information from being stolen, Firefox has not connected to this website.",
+        value: "The owner of %@ has configured their website improperly. To protect your information from being stolen, Ecosia has not connected to this website.",
         comment: "Warning text on the certificate error page. %@ is the domain of the website.")
     public static let ErrorPagesCertWarningTitle = MZLocalizedString(
         key: "ErrorPages.CertWarning.Title",
@@ -4407,7 +4407,7 @@ extension String {
     public static let FirefoxHomePage = MZLocalizedString(
         key: "Firefox.HomePage.Title",
         tableName: nil,
-        value: "Firefox Home Page",
+        value: "Ecosia Home Page",
         comment: "Title for firefox about:home page in tab history list")
     public static let HistoryPanelDelete = MZLocalizedString(
         key: "Delete",
@@ -4645,7 +4645,7 @@ extension String {
     public static let SettingsNewTabTopSites = MZLocalizedString(
         key: "Settings.NewTab.Option.FirefoxHome",
         tableName: nil,
-        value: "Firefox Home",
+        value: "Ecosia Home",
         comment: "Option in settings to show Firefox Home when you open a new tab")
     public static let SettingsNewTabBlankPage = MZLocalizedString(
         key: "Settings.NewTab.Option.BlankPage",
@@ -5080,7 +5080,7 @@ extension String {
     public static let PhotoLibraryFirefoxWouldLikeAccessTitle = MZLocalizedString(
         key: "PhotoLibrary.FirefoxWouldLikeAccessTitle",
         tableName: nil,
-        value: "Firefox would like to access your Photos",
+        value: "Ecosia would like to access your Photos",
         comment: "See http://mzl.la/1G7uHo7")
     public static let PhotoLibraryFirefoxWouldLikeAccessMessage = MZLocalizedString(
         key: "PhotoLibrary.FirefoxWouldLikeAccessMessage",
@@ -5226,7 +5226,7 @@ extension String {
     public static let ScanQRCodePermissionErrorMessage = MZLocalizedString(
         key: "ScanQRCode.PermissionError.Message.v100",
         tableName: nil,
-        value: "Go to device ‘Settings’ > ‘Firefox’. Allow Firefox to access camera.",
+        value: "Go to device ‘Settings’ > ‘Ecosia’. Allow Ecosia to access camera.",
         comment: "Text of the prompt to setup the camera authorization for the Scan QR Code feature.")
     public static let ScanQRCodeErrorOKButton = MZLocalizedString(
         key: "ScanQRCode.Error.OK.Button",
@@ -6581,7 +6581,7 @@ extension String {
     public static let SettingsSiriSectionDescription = MZLocalizedString(
         key: "Settings.Siri.SectionDescription",
         tableName: nil,
-        value: "Use Siri shortcuts to quickly open Firefox via Siri",
+        value: "Use Siri shortcuts to quickly open Ecosia via Siri",
         comment: "The description that describes what siri shortcuts are")
     public static let SettingsSiriOpenURL = MZLocalizedString(
         key: "Settings.Siri.OpenTabShortcut",
@@ -6620,7 +6620,7 @@ extension String {
     public static let SendToNotSignedInMessage = MZLocalizedString(
         key: "SendTo.NotSignedIn.Message",
         tableName: nil,
-        value: "Please open Firefox, go to Settings and sign in to continue.",
+        value: "Please open Ecosia, go to Settings and sign in to continue.",
         comment: "See http://mzl.la/1ISlXnU")
     public static let SendToNoDevicesFound = MZLocalizedString(
         key: "SendTo.NoDevicesFound.Message.v119",
@@ -6675,12 +6675,12 @@ extension String {
     public static let ShareOpenInFirefox = MZLocalizedString(
         key: "ShareExtension.OpenInFirefoxAction.Title",
         tableName: nil,
-        value: "Open in Firefox",
+        value: "Open in Ecosia",
         comment: "Action label on share extension to immediately open page in Firefox.")
     public static let ShareSearchInFirefox = MZLocalizedString(
         key: "ShareExtension.SeachInFirefoxAction.Title",
         tableName: nil,
-        value: "Search in Firefox",
+        value: "Search in Ecosia",
         comment: "Action label on share extension to search for the selected text in Firefox.")
 
     public static let ShareLoadInBackground = MZLocalizedString(
@@ -6691,7 +6691,7 @@ extension String {
     public static let ShareLoadInBackgroundDone = MZLocalizedString(
         key: "ShareExtension.LoadInBackgroundActionDone.Title",
         tableName: nil,
-        value: "Loading in Firefox",
+        value: "Loading in Ecosia",
         comment: "Share extension label shown after user has performed 'Load in Background' action.")
 }
 
@@ -7000,7 +7000,7 @@ extension String {
     public static let DefaultBrowserOnboardingDescriptionStep3 = MZLocalizedString(
         key: "DefaultBrowserOnboarding.Description3",
         tableName: "Default Browser",
-        value: "3. Select Firefox",
+        value: "3. Select Ecosia",
         comment: "Description for default browser onboarding card.")
     public static let DefaultBrowserOnboardingButton = MZLocalizedString(
         key: "DefaultBrowserOnboarding.Button",
@@ -7907,7 +7907,7 @@ extension String {
     public static let MenuHelperSearchWithFirefox = MZLocalizedString(
         key: "UIMenuItem.SearchWithFirefox",
         tableName: nil,
-        value: "Search with Firefox",
+        value: "Search with Ecosia",
         comment: "Search in New Tab Text selection menu item")
 }
 
@@ -7988,7 +7988,7 @@ extension String {
     public static let LoginsWelcomeViewTitle2 = MZLocalizedString(
         key: "Logins.WelcomeView.Title2",
         tableName: nil,
-        value: "AutoFill Firefox Passwords",
+        value: "AutoFill Ecosia Passwords",
         comment: "Label displaying welcome view title")
     public static let LoginsWelcomeViewTagline = MZLocalizedString(
         key: "Logins.WelcomeView.Tagline",
@@ -8038,7 +8038,7 @@ extension String {
     public static let LoginsPasscodeRequirementWarning = MZLocalizedString(
         key: "Logins.PasscodeRequirement.Warning",
         tableName: nil,
-        value: "To use the AutoFill feature for Firefox, you must have a device passcode enabled.",
+        value: "To use the AutoFill feature for Ecosia, you must have a device passcode enabled.",
         comment: "Warning message shown when you try to enable or use native AutoFill without a device passcode setup")
     public static let CredentialProviderRetryAlertTitle = MZLocalizedString(
         key: "CredentialProvider.RetryAllert.Title.v137",
