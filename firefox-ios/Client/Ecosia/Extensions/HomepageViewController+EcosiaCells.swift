@@ -68,7 +68,7 @@ extension HomepageViewController {
         return libraryCell
     }
 
-    func configureEcosiaImpactCell(at indexPath: IndexPath, sectionIndex: Int) -> UICollectionViewCell {
+    func configureEcosiaImpactCell(at indexPath: IndexPath, sectionIndex: Int, showRows: Bool) -> UICollectionViewCell {
         guard let cv = homepageCollectionView,
               let impactCell = cv.dequeueReusableCell(
             cellType: NTPImpactCell.self,
@@ -80,7 +80,7 @@ extension HomepageViewController {
         if let viewModel = ecosiaAdapter?.impactViewModel {
             let title = viewModel.rotatingTitle ?? RotatingTitlesService.fallbackTitles.first
             impactCell.configure(
-                items: viewModel.impactItems,
+                items: showRows ? viewModel.impactItems : [],
                 title: title,
                 delegate: ecosiaAdapter?.impactDelegate,
                 theme: themeManager.getCurrentTheme(for: windowUUID)

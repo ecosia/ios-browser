@@ -748,8 +748,8 @@ final class HomepageViewController: UIViewController,
             return configureEcosiaLogoCell(at: indexPath)
         case .ecosiaLibrary:
             return configureEcosiaLibraryCell(at: indexPath)
-        case .ecosiaImpact(let sectionIndex):
-            return configureEcosiaImpactCell(at: indexPath, sectionIndex: sectionIndex)
+        case .ecosiaImpact(let sectionIndex, let showRows):
+            return configureEcosiaImpactCell(at: indexPath, sectionIndex: sectionIndex, showRows: showRows)
         case .ecosiaNTPCustomization:
             return configureEcosiaNTPCustomizationCell(at: indexPath)
         }

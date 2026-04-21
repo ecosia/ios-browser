@@ -67,7 +67,7 @@ final class HomepageDiffableDataSource:
         case ecosiaHeader
         case ecosiaLogo
         case ecosiaLibrary
-        case ecosiaImpact(sectionIndex: Int)
+        case ecosiaImpact(sectionIndex: Int, showRows: Bool)
         case ecosiaNTPCustomization
 
         static var cellTypes: [ReusableCell.Type] {
@@ -109,9 +109,11 @@ final class HomepageDiffableDataSource:
         }
     }
 
+    // Ecosia: animated parameter lets pref-change notifications animate the transition
     func updateSnapshot(
         state: HomepageState,
-        jumpBackInDisplayConfig: JumpBackInSectionLayoutConfiguration
+        jumpBackInDisplayConfig: JumpBackInSectionLayoutConfiguration,
+        animated: Bool = false
     ) {
         // Ecosia: When adapter is set, use Ecosia sections with top sites inserted at the correct anchor
         if let adapter = ecosiaAdapter {
@@ -127,7 +129,7 @@ final class HomepageDiffableDataSource:
                     snapshot.appendItems(topSites, toSection: .topSites(textColor, numberOfCellsPerRow))
                 }
             }
-            apply(snapshot, animatingDifferences: false)
+            apply(snapshot, animatingDifferences: animated)
             return
         }
 
