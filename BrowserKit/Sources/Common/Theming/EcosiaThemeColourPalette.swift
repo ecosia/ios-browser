@@ -11,6 +11,7 @@ import UIKit
 public protocol EcosiaSemanticColors {
     // MARK: - Background
     var backgroundNeutralInverse: UIColor { get }
+    var backgroundNeutralTertiary: UIColor { get }
     var backgroundFeatured: UIColor { get }
     var backgroundGradient: UIColor { get }
     var backgroundPrimary: UIColor { get }
@@ -89,6 +90,7 @@ public protocol EcosiaThemeColourPalette: ThemeColourPalette {
 /// Should never end up in production UI!
 class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundNeutralInverse: UIColor = .systemGray
+    var backgroundNeutralTertiary: UIColor = .systemGray
     var backgroundFeatured: UIColor = .systemGray
     var backgroundGradient: UIColor = .systemGray
     var backgroundPrimary: UIColor = .systemGray

@@ -56,7 +56,9 @@ final class PrivateHomepageViewController: UIViewController,
     private var containerWidthConstraint: NSLayoutConstraint?
 
     // MARK: UI Elements
+    /* Ecosia: Gradient replaced with solid backgroundNeutralTertiary
     private lazy var gradient = CAGradientLayer()
+     */
 
     private let scrollView: UIScrollView = .build()
 
@@ -131,11 +133,13 @@ final class PrivateHomepageViewController: UIViewController,
         applyTheme()
     }
 
+    /* Ecosia: Gradient layer removed; solid background needs no frame updates
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         coordinator.animate { _ in
             self.gradient.frame = CGRect(origin: .zero, size: size)
         }
     }
+     */
 
     deinit {
         // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
@@ -163,9 +167,11 @@ final class PrivateHomepageViewController: UIViewController,
          */
         scrollContainer.accessibilityElements = [privateMessageCardCell]
 
+        /* Ecosia: Use solid background color instead of gradient
         setupGradient(gradient)
         gradient.frame = view.bounds
         view.layer.addSublayer(gradient)
+         */
         view.addSubview(scrollView)
         scrollView.addSubview(scrollContainer)
         // Ecosia: Add the message card directly to the view so it can be vertically centered
@@ -198,12 +204,14 @@ final class PrivateHomepageViewController: UIViewController,
         setupConstraintsForMultitasking()
     }
 
+    /* Ecosia: Gradient setup no longer needed — solid background is set in applyTheme()
     private func setupGradient(_ gradient: CAGradientLayer) {
         gradient.type = .axial
         gradient.startPoint = CGPoint(x: 1, y: 0)
         gradient.endPoint = CGPoint(x: 0, y: 1)
         gradient.locations = [0, 0.5, 1]
     }
+     */
 
     // Constraints for trailing and leading padding on iPad (regular) should be larger than that of compact layout
     private func setupConstraintsForMultitasking() {
@@ -242,7 +250,10 @@ final class PrivateHomepageViewController: UIViewController,
 
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
+        /* Ecosia: Solid background instead of Firefox gradient
         gradient.colors = theme.colors.layerHomepage.cgColors
+         */
+        view.backgroundColor = theme.colors.ecosia.backgroundNeutralTertiary
         /* Ecosia: Logo header removed from the private homepage
         homepageHeaderCell.applyTheme(theme: theme)
          */
@@ -292,11 +303,16 @@ final class PrivateHomepageViewController: UIViewController,
         return renderer.image { context in
             // Draw the background gradient separately, so the potential safe area coordinates is filled with the
             // gradient
+            /* Ecosia: Fill with solid background instead of rendering a gradient layer
             let renderedGradient = CAGradientLayer()
             setupGradient(renderedGradient)
             renderedGradient.colors = themeManager.getCurrentTheme(for: windowUUID).colors.layerHomepage.cgColors
             renderedGradient.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
             renderedGradient.render(in: context.cgContext)
+             */
+            let bgColor = themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundNeutralTertiary
+            bgColor.setFill()
+            context.fill(CGRect(origin: .zero, size: bounds.size))
 
             view.drawHierarchy(
                 in: CGRect(
