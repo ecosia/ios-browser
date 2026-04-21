@@ -141,7 +141,6 @@ extension BrowserViewController {
         User.shared.firstTime = false
         User.shared.migrated = true
         User.shared.hideBookmarksImportExportTooltip()
-        // Ecosia: deactivateHintForNewUsers removed; toolbar hint is managed by ContextualHintViewController
     }
 
     private func showLoadingScreen(for user: User) -> Bool {
