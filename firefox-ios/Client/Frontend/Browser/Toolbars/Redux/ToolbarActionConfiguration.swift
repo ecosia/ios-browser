@@ -31,6 +31,10 @@ struct ToolbarActionConfiguration: Equatable, FeatureFlaggable {
     var actionLabel: String?
     var iconName: String?
     var badgeImageName: String?
+    var badgeBundle: Bundle?
+    var badgeSize: CGSize?
+    var badgeXOffset: CGFloat?
+    var badgeYOffset: CGFloat?
     var maskImageName: String?
     var templateModeForImage = true
     var loadingConfig: LoadingConfig?

@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import Redux
 
 enum NavigationBarMiddleButtonType: String, Equatable, CaseIterable {
@@ -345,8 +346,16 @@ struct NavigationBarState: StateType, Equatable {
         return ToolbarActionConfiguration(
             actionType: .tabs,
             iconName: StandardImageIdentifiers.Large.tab,
+            /* Ecosia: Replace purple private-mode badge with the Ecosia incognito icon
             badgeImageName: isPrivateMode ? StandardImageIdentifiers.Medium.privateModeCircleFillPurple : nil,
             maskImageName: isPrivateMode ? ImageIdentifiers.badgeMask : nil,
+             */
+            badgeImageName: isPrivateMode ? "incognito" : nil,
+            badgeBundle: isPrivateMode ? .ecosia : nil,
+            badgeSize: isPrivateMode ? CGSize(width: 12, height: 12) : nil,
+            badgeXOffset: isPrivateMode ? 6 : nil,
+            badgeYOffset: isPrivateMode ? -4 : nil,
+            maskImageName: nil,
             numberOfTabs: numberOfTabs,
             isEnabled: true,
             largeContentTitle: largeContentTitle,

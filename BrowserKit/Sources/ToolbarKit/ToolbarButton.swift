@@ -128,7 +128,7 @@ class ToolbarButton: UIButton,
 
         configuration = config
         if let badgeName = element.badgeImageName {
-            addBadgeIcon(imageName: badgeName)
+            addBadgeIcon(imageName: badgeName, bundle: element.badgeBundle, size: element.badgeSize, xOffset: element.badgeXOffset, yOffset: element.badgeYOffset)
             if let maskImageName = element.maskImageName {
                 addMaskIcon(maskImageName: maskImageName)
             }
@@ -166,13 +166,16 @@ class ToolbarButton: UIButton,
         configuration = updatedConfiguration
     }
 
-    private func addBadgeIcon(imageName: String) {
-        badgeImageView = UIImageView(image: UIImage(named: imageName))
+    private func addBadgeIcon(imageName: String, bundle: Bundle? = nil, size: CGSize? = nil, xOffset: CGFloat? = nil, yOffset: CGFloat? = nil) {
+        let image = bundle != nil
+            ? UIImage(named: imageName, in: bundle, compatibleWith: nil)
+            : UIImage(named: imageName)
+        badgeImageView = UIImageView(image: image)
         guard let badgeImageView, configuration?.image != nil else { return }
         badgeImageView.translatesAutoresizingMaskIntoConstraints = false
 
         imageView?.addSubview(badgeImageView)
-        applyBadgeConstraints(to: badgeImageView)
+        applyBadgeConstraints(to: badgeImageView, size: size, xOffset: xOffset, yOffset: yOffset)
     }
 
     private func addMaskIcon(maskImageName: String) {
@@ -185,12 +188,13 @@ class ToolbarButton: UIButton,
         applyBadgeConstraints(to: maskImageView)
     }
 
-    private func applyBadgeConstraints(to imageView: UIImageView) {
+    private func applyBadgeConstraints(to imageView: UIImageView, size: CGSize? = nil, xOffset: CGFloat? = nil, yOffset: CGFloat? = nil) {
+        let resolvedSize = size ?? UX.badgeIconSize
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: UX.badgeIconSize.width),
-            imageView.heightAnchor.constraint(equalToConstant: UX.badgeIconSize.height),
-            imageView.leadingAnchor.constraint(equalTo: centerXAnchor),
-            imageView.bottomAnchor.constraint(equalTo: centerYAnchor)
+            imageView.widthAnchor.constraint(equalToConstant: resolvedSize.width),
+            imageView.heightAnchor.constraint(equalToConstant: resolvedSize.height),
+            imageView.leadingAnchor.constraint(equalTo: centerXAnchor, constant: xOffset ?? 0),
+            imageView.bottomAnchor.constraint(equalTo: centerYAnchor, constant: yOffset ?? 0)
         ])
     }
 

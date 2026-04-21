@@ -14,6 +14,18 @@ public struct ToolbarElement: Equatable {
     /// Badge name of the toolbar element
     let badgeImageName: String?
 
+    /// Bundle from which the badge image should be loaded (nil = main bundle)
+    let badgeBundle: Bundle?
+
+    /// Override size for the badge icon (nil = UX.badgeIconSize default)
+    let badgeSize: CGSize?
+
+    /// Horizontal offset applied to the badge's leading constraint relative to centerXAnchor (nil = 0)
+    let badgeXOffset: CGFloat?
+
+    /// Vertical offset applied to the badge's bottom constraint relative to centerYAnchor — negative moves up (nil = 0)
+    let badgeYOffset: CGFloat?
+
     /// Mask name of the badge's toolbar element
     let maskImageName: String?
 
@@ -77,6 +89,10 @@ public struct ToolbarElement: Equatable {
     public init(iconName: String? = nil,
                 title: String? = nil,
                 badgeImageName: String? = nil,
+                badgeBundle: Bundle? = nil,
+                badgeSize: CGSize? = nil,
+                badgeXOffset: CGFloat? = nil,
+                badgeYOffset: CGFloat? = nil,
                 maskImageName: String? = nil,
                 templateModeForImage: Bool = true,
                 loadingConfig: LoadingConfig? = nil,
@@ -99,6 +115,10 @@ public struct ToolbarElement: Equatable {
         self.iconName = iconName
         self.title = title
         self.badgeImageName = badgeImageName
+        self.badgeBundle = badgeBundle
+        self.badgeSize = badgeSize
+        self.badgeXOffset = badgeXOffset
+        self.badgeYOffset = badgeYOffset
         self.maskImageName = maskImageName
         self.templateModeForImage = templateModeForImage
         self.loadingConfig = loadingConfig
