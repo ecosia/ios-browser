@@ -110,7 +110,10 @@ class BackForwardTableViewCell: UITableViewCell, ReusableCell, ThemeApplicable {
 
         if let url = URL(string: viewModel.site.url),
            InternalURL(url)?.isAboutHomeURL == true {
+            /* Ecosia: Show Ecosia app icon instead of Firefox fox favicon for the home entry
             faviconView.manuallySetImage(UIImage(named: ImageIdentifiers.firefoxFavicon) ?? UIImage())
+             */
+            faviconView.manuallySetImage(UIImage(named: "ecosiaLogoLaunch") ?? UIImage())
         } else {
             faviconView.setFavicon(FaviconImageViewModel(siteURLString: viewModel.site.url,
                                                          faviconCornerRadius: UX.faviconCornerRadius))
