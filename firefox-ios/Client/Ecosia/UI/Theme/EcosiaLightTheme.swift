@@ -149,7 +149,7 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var linkPrimary: UIColor = EcosiaColor.Gray70
     var iconDecorative: UIColor = EcosiaColor.Gray50
     var iconInverseStrong: UIColor = EcosiaColor.White
-    var segmentedControlBackgroundActive: UIColor = EcosiaColor.White
+    var segmentedControlBackgroundActive: UIColor = EcosiaColor.Gray70
     var segmentedControlBackgroundRest: UIColor = EcosiaColor.Gray30
     var stateDisabled: UIColor = EcosiaColor.Gray30
     var stateError: UIColor = EcosiaColor.Red50
