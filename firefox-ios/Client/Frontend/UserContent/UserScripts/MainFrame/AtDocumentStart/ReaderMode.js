@@ -65,22 +65,26 @@ function checkReadability() {
   }, 100);
 }
 
-// Ecosia: Readability >= 0.5.0 removed the `uri` argument from the constructor;
-// the document's baseURI/documentURI are used directly. We inject a <base> tag so
-// relative links in the parsed document resolve against the original page URL.
-// The full parse is done here (lazily, on user tap) rather than in checkReadability()
-// to avoid the DOMPurify memory/exception issue on large pages inside WKWebView.
+// Ecosia: Use document.cloneNode(true) instead of the XMLSerializer → DOMPurify → DOMParser
+// pipeline. DOMPurify.sanitize() on large pages (e.g. Wikipedia) strips nearly all content
+// inside WKWebView's sandboxed JS context, leaving Readability with an empty document and
+// producing an empty reader-mode page. document.cloneNode(true) is the canonical Readability.js
+// usage, is orders of magnitude faster, and avoids the sanitisation issue entirely.
+// Security is not a concern because: (a) the source page was already loaded by the user,
+// and (b) the reader-mode page is served from localhost with a strict CSP.
+// The full parse is done here (lazily, on user tap) rather than in checkReadability() so
+// that button visibility is fast and not blocked by the parse cost.
 function readerize() {
   if (readabilityResult) return readabilityResult;
 
   try {
-    const DOMPurify = require('dompurify');
-    var docStr = new XMLSerializer().serializeToString(document);
-    if (docStr.indexOf("<frameset ") > -1) return null;
-    const clean = DOMPurify.sanitize(docStr, {WHOLE_DOCUMENT: true});
-    const baseTag = '<base href="' + document.location.href + '">';
-    var doc = new DOMParser().parseFromString(baseTag + clean, "text/html");
-    var readability = new Readability(doc, { debug: DEBUG });
+    // Frameset pages cannot be readerized.
+    if (document.querySelector("frameset")) return null;
+
+    // Deep-clone so Readability can destructively mutate the DOM without
+    // affecting the live page.
+    var docClone = document.cloneNode(true);
+    var readability = new Readability(docClone, { debug: DEBUG });
     readabilityResult = readability.parse();
     if (readabilityResult) {
       readabilityResult.title = escapeHTML(readabilityResult.title);
