@@ -49,14 +49,6 @@ function checkReadability() {
         return;
       }
 
-      var uri = {
-        spec: document.location.href,
-        host: document.location.host,
-        prePath: document.location.protocol + "//" + document.location.host, // TODO This is incomplete, needs username/password and port
-        scheme: document.location.protocol.substr(0, document.location.protocol.indexOf(":")),
-        pathBase: document.location.protocol + "//" + document.location.host + location.pathname.substr(0, location.pathname.lastIndexOf("/") + 1)
-      }
-
       // document.cloneNode() can cause the webview to break (bug 1128774).
       // Serialize and then parse the document instead.
       var docStr = new XMLSerializer().serializeToString(document);
@@ -69,11 +61,21 @@ function checkReadability() {
         return;
       }
 
-      const DOMPurify = require('dompurify');
-      const clean = DOMPurify.sanitize(docStr, {WHOLE_DOCUMENT: true});
-      var doc = new DOMParser().parseFromString(clean, "text/html");
-      var readability = new Readability(uri, doc, { debug: DEBUG });
-      readabilityResult = readability.parse();
+      // Ecosia: Readability >= 0.5.0 removed the `uri` argument from the constructor;
+      // the document's baseURI/documentURI are used directly. We inject a <base> tag so
+      // relative links in the parsed document resolve against the original page URL.
+      try {
+        const DOMPurify = require('dompurify');
+        const clean = DOMPurify.sanitize(docStr, {WHOLE_DOCUMENT: true});
+        const baseTag = '<base href="' + document.location.href + '">';
+        var doc = new DOMParser().parseFromString(baseTag + clean, "text/html");
+        var readability = new Readability(doc, { debug: DEBUG });
+        readabilityResult = readability.parse();
+      } catch (e) {
+        debug({Type: "ReaderModeStateChange", Value: "Unavailable"});
+        webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
+        return;
+      }
 
       if (!readabilityResult) {
         debug({Type: "ReaderModeStateChange", Value: "Unavailable"});
