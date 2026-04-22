@@ -49,48 +49,14 @@ function checkReadability() {
         return;
       }
 
-      // document.cloneNode() can cause the webview to break (bug 1128774).
-      // Serialize and then parse the document instead.
-      var docStr = new XMLSerializer().serializeToString(document);
-
-      // Do not attempt to parse DOM if this document contains a <frameset/>
-      // element. This causes the WKWebView content process to crash (Bug 1489543).
-      if (docStr.indexOf("<frameset ") > -1) {
-        debug({Type: "ReaderModeStateChange", Value: "Unavailable"});
-        webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
-        return;
-      }
-
-      // Ecosia: Readability >= 0.5.0 removed the `uri` argument from the constructor;
-      // the document's baseURI/documentURI are used directly. We inject a <base> tag so
-      // relative links in the parsed document resolve against the original page URL.
-      try {
-        const DOMPurify = require('dompurify');
-        const clean = DOMPurify.sanitize(docStr, {WHOLE_DOCUMENT: true});
-        const baseTag = '<base href="' + document.location.href + '">';
-        var doc = new DOMParser().parseFromString(baseTag + clean, "text/html");
-        var readability = new Readability(doc, { debug: DEBUG });
-        readabilityResult = readability.parse();
-      } catch (e) {
-        debug({Type: "ReaderModeStateChange", Value: "Unavailable"});
-        webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
-        return;
-      }
-
-      if (!readabilityResult) {
-        debug({Type: "ReaderModeStateChange", Value: "Unavailable"});
-        webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
-        return;
-      }
-
-      // Sanitize the title to prevent a malicious page from inserting HTML in the `<title>`.
-      readabilityResult.title = escapeHTML(readabilityResult.title);
-      // Sanitize the byline to prevent a malicious page from inserting HTML in the `<byline>`.
-      readabilityResult.byline = escapeHTML(readabilityResult.byline);
-
-      debug({Type: "ReaderModeStateChange", Value: readabilityResult !== null ? "Available" : "Unavailable"});
-      webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: readabilityResult !== null ? "Available" : "Unavailable"});
-      webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderContentParsed", Value: readabilityResult});
+      // Ecosia: Skip the upfront DOMPurify + full Readability parse during detection.
+      // DOMPurify.sanitize() on large pages (e.g. Wikipedia) fails inside WKWebView's
+      // sandboxed JS context, causing the try/catch to send "Unavailable" and hiding the
+      // button even on genuinely readable pages. isProbablyReaderable() is a fast heuristic
+      // that is accurate enough to determine button visibility; the full parse is deferred
+      // to readerize(), which runs only when the user actually taps the reader-mode button.
+      debug({Type: "ReaderModeStateChange", Value: "Available"});
+      webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Available"});
       return;
     }
 
@@ -99,9 +65,31 @@ function checkReadability() {
   }, 100);
 }
 
-// Readerize the document. Since we did the actual readerization already in checkReadability, we
-// can simply return the results we already have.
+// Ecosia: Readability >= 0.5.0 removed the `uri` argument from the constructor;
+// the document's baseURI/documentURI are used directly. We inject a <base> tag so
+// relative links in the parsed document resolve against the original page URL.
+// The full parse is done here (lazily, on user tap) rather than in checkReadability()
+// to avoid the DOMPurify memory/exception issue on large pages inside WKWebView.
 function readerize() {
+  if (readabilityResult) return readabilityResult;
+
+  try {
+    const DOMPurify = require('dompurify');
+    var docStr = new XMLSerializer().serializeToString(document);
+    if (docStr.indexOf("<frameset ") > -1) return null;
+    const clean = DOMPurify.sanitize(docStr, {WHOLE_DOCUMENT: true});
+    const baseTag = '<base href="' + document.location.href + '">';
+    var doc = new DOMParser().parseFromString(baseTag + clean, "text/html");
+    var readability = new Readability(doc, { debug: DEBUG });
+    readabilityResult = readability.parse();
+    if (readabilityResult) {
+      readabilityResult.title = escapeHTML(readabilityResult.title);
+      readabilityResult.byline = escapeHTML(readabilityResult.byline);
+    }
+  } catch (e) {
+    readabilityResult = null;
+  }
+
   return readabilityResult;
 }
 
