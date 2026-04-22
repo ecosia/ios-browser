@@ -537,8 +537,6 @@ class AppSettingsTableViewController: SettingsTableViewController,
                 titleText: .AppSettingsClosePrivateTabsTitle,
                 statusText: .AppSettingsClosePrivateTabsDescription
             ) { [weak self] _ in
-                /* Ecosia: Dispatch closePrivateTabsSettingToggled so TabManagerMiddleware calls
-                   preserveTabs() immediately, syncing the on-disk tab state with the new pref. */
                 guard let self else { return }
                 let action = TabTrayAction(windowUUID: self.windowUUID,
                                            actionType: TabTrayActionType.closePrivateTabsSettingToggled)

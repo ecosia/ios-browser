@@ -594,9 +594,10 @@ class TabManagerImplementation: NSObject,
     }
 
     private func shouldClearPrivateTabs() -> Bool {
+        /* Ecosia: [MOB-4105] Change default behaviour to false, matching production LegacyTabManager.
         // FXIOS-9519: By default if no bool value is set we close the private tabs and mark it true
-        /* Ecosia: Use our centralized default (false) so runtime behaviour matches the Settings UI,
-           which shows "Close Private Tabs" as OFF by default. */
+        return profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs) ?? true
+        */
         return profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs)
             ?? PrefsKeysDefaultValues.Settings.closePrivateTabs
     }
