@@ -608,6 +608,9 @@ extension BrowserViewController: WKNavigationDelegate {
                 return
             }
 
+            // Ecosia: Handle navigation tracking
+            ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
+
             let isGoogleDomain = url.host?.contains("google") ?? false
             let isPrivate = tab.isPrivate
 
@@ -615,8 +618,6 @@ extension BrowserViewController: WKNavigationDelegate {
                 decisionHandler(allowPolicy)
                 return
             }
-            // Ecosia: Handle navigation tracking
-            ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
 
             decisionHandler(.allow)
             return
