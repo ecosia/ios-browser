@@ -138,7 +138,7 @@ public enum FrameworkTargets {
                 "Shared/DeviceInfo+defaultClientName.swift",
                 "Shared/Date+relativeTimeString.swift"
             ],
-            resources: ["Localizations/**/*.{strings,stringsdict}"],
+            resources: ["Shared/**/*.{strings,stringsdict}"],
             dependencies: [
                 .package(product: "Common"),
                 .package(product: "GCDWebServers"),
