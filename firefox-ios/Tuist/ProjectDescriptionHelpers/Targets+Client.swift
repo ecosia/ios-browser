@@ -81,9 +81,11 @@ public enum ClientTarget {
                 "Client/Assets/CC_Script/LabelUtils.sys.mjs",
                 "Client/Assets/CC_Script/LoginManager.shared.sys.mjs",
                 "Client/Assets/CC_Script/Overrides.ios.js",
+                "Client/Assets/CC_Script/bergamot-translator.js",
                 "Client/Assets/**/*.{css,html,png,jpg,jpeg,pdf,otf,ttf}",
+                "Client/Assets/*.js",
                 "Client/Assets/RemoteSettingsData/**/*.json",
-                "Client/Assets/SpotlightHelper.js",
+                "Client/ContentBlocker/TrackingProtectionStats.js",
                 "Client/MailSchemes.plist",
                 .glob(pattern: "Client/Assets/**/*.xcassets", excluding: [
                     "Client/Assets/Images.xcassets/AppIcon.appiconset",
