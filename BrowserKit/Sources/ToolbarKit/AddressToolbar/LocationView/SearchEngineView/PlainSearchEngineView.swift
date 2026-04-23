@@ -119,6 +119,9 @@ final class PlainSearchEngineView: UIView,
     private func updateFaviconDisplay(config: LocationViewConfiguration) {
         let isBrowsing = !config.isEditing && config.searchEngineImage == nil && config.url != nil
         faviconImageView.isHidden = !isBrowsing
+        /* Ecosia: Also hide the search engine image while editing so the text field has full width.
+        searchEngineImageView.isHidden = isBrowsing
+         */
         searchEngineImageView.isHidden = isBrowsing || config.isEditing
         if isBrowsing, let url = config.url {
             /* Ecosia: Use cornerRadius 0 for address-bar favicons (16×16); matches StoriesFeedCell convention

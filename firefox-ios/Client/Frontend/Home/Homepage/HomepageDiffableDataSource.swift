@@ -67,6 +67,7 @@ final class HomepageDiffableDataSource:
         case ecosiaHeader
         case ecosiaLogo
         case ecosiaLibrary
+        // Ecosia: showRows drives NSDiffableDataSource diff so toggling Climate Impact animates correctly
         case ecosiaImpact(sectionIndex: Int, showRows: Bool)
         case ecosiaNTPCustomization
 

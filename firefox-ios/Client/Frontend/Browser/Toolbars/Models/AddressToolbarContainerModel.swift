@@ -305,6 +305,7 @@ final class AddressToolbarContainerModel: Equatable {
                 iconName: action.iconName,
                 title: action.actionLabel,
                 badgeImageName: action.badgeImageName,
+                // Ecosia: Forward badge customisation parameters for the incognito icon
                 badgeBundle: action.badgeBundle,
                 badgeSize: action.badgeSize,
                 badgeXOffset: action.badgeXOffset,

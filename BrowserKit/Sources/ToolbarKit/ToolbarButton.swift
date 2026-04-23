@@ -128,6 +128,10 @@ class ToolbarButton: UIButton,
 
         configuration = config
         if let badgeName = element.badgeImageName {
+            /* Ecosia: Forward badge customisation parameters (bundle, size, offsets) to support
+               the Ecosia incognito icon loaded from the Ecosia asset catalog.
+            addBadgeIcon(imageName: badgeName)
+             */
             addBadgeIcon(imageName: badgeName, bundle: element.badgeBundle, size: element.badgeSize, xOffset: element.badgeXOffset, yOffset: element.badgeYOffset)
             if let maskImageName = element.maskImageName {
                 addMaskIcon(maskImageName: maskImageName)
@@ -166,6 +170,9 @@ class ToolbarButton: UIButton,
         configuration = updatedConfiguration
     }
 
+    /* Ecosia: Extended to accept bundle, size, and offset parameters for Ecosia badge customisation.
+    private func addBadgeIcon(imageName: String) {
+     */
     private func addBadgeIcon(imageName: String, bundle: Bundle? = nil, size: CGSize? = nil, xOffset: CGFloat? = nil, yOffset: CGFloat? = nil) {
         /* Ecosia: Apply template rendering for bundle-loaded badges so they inherit
            the button's foreground tint color in applyTheme.
@@ -184,6 +191,9 @@ class ToolbarButton: UIButton,
         badgeImageView.translatesAutoresizingMaskIntoConstraints = false
 
         imageView?.addSubview(badgeImageView)
+        /* Ecosia: Forward size and offset parameters for Ecosia incognito badge positioning.
+        applyBadgeConstraints(to: badgeImageView)
+         */
         applyBadgeConstraints(to: badgeImageView, size: size, xOffset: xOffset, yOffset: yOffset)
     }
 
@@ -197,11 +207,19 @@ class ToolbarButton: UIButton,
         applyBadgeConstraints(to: maskImageView)
     }
 
+    /* Ecosia: Extended to accept size and position overrides for the Ecosia incognito badge.
+    private func applyBadgeConstraints(to imageView: UIImageView) {
+     */
     private func applyBadgeConstraints(to imageView: UIImageView, size: CGSize? = nil, xOffset: CGFloat? = nil, yOffset: CGFloat? = nil) {
         let resolvedSize = size ?? UX.badgeIconSize
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalToConstant: resolvedSize.width),
             imageView.heightAnchor.constraint(equalToConstant: resolvedSize.height),
+            /* Ecosia: Apply xOffset/yOffset so the incognito badge can be nudged without changing
+               the default badge position for all other badges.
+            imageView.leadingAnchor.constraint(equalTo: centerXAnchor),
+            imageView.bottomAnchor.constraint(equalTo: centerYAnchor)
+             */
             imageView.leadingAnchor.constraint(equalTo: centerXAnchor, constant: xOffset ?? 0),
             imageView.bottomAnchor.constraint(equalTo: centerYAnchor, constant: yOffset ?? 0)
         ])

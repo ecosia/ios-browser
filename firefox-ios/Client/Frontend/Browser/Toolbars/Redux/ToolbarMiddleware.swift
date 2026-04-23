@@ -313,6 +313,7 @@ final class ToolbarMiddleware: FeatureFlaggable {
                 store.dispatch(action)
             }
 
+        // Ecosia: Open history panel when the NTP toolbar history button is tapped
         case .history:
             Analytics.shared.ntpHistoryButtonTapped()
             let action = GeneralBrowserAction(windowUUID: action.windowUUID,

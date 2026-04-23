@@ -49,12 +49,48 @@ function checkReadability() {
         return;
       }
 
-      // Ecosia: Skip the upfront DOMPurify + full Readability parse during detection.
-      // DOMPurify.sanitize() on large pages (e.g. Wikipedia) fails inside WKWebView's
-      // sandboxed JS context, causing the try/catch to send "Unavailable" and hiding the
-      // button even on genuinely readable pages. isProbablyReaderable() is a fast heuristic
-      // that is accurate enough to determine button visibility; the full parse is deferred
-      // to readerize(), which runs only when the user actually taps the reader-mode button.
+      /* Ecosia: Skip the upfront DOMPurify + full Readability parse during detection.
+         DOMPurify.sanitize() on large pages (e.g. Wikipedia) fails inside WKWebView's
+         sandboxed JS context, causing the try/catch to send "Unavailable" and hiding the
+         button even on genuinely readable pages. isProbablyReaderable() is a fast heuristic
+         that is accurate enough to determine button visibility; the full parse is deferred
+         to readerize(), which runs only when the user actually taps the reader-mode button.
+
+      var uri = {
+        spec: document.location.href,
+        host: document.location.host,
+        prePath: document.location.protocol + "//" + document.location.host,
+        scheme: document.location.protocol.substr(0, document.location.protocol.indexOf(":")),
+        pathBase: document.location.protocol + "//" + document.location.host + location.pathname.substr(0, location.pathname.lastIndexOf("/") + 1)
+      }
+
+      var docStr = new XMLSerializer().serializeToString(document);
+
+      if (docStr.indexOf("<frameset ") > -1) {
+        debug({Type: "ReaderModeStateChange", Value: "Unavailable"});
+        webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
+        return;
+      }
+
+      const DOMPurify = require('dompurify');
+      const clean = DOMPurify.sanitize(docStr, {WHOLE_DOCUMENT: true});
+      var doc = new DOMParser().parseFromString(clean, "text/html");
+      var readability = new Readability(uri, doc, { debug: DEBUG });
+      readabilityResult = readability.parse();
+
+      if (!readabilityResult) {
+        debug({Type: "ReaderModeStateChange", Value: "Unavailable"});
+        webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
+        return;
+      }
+
+      readabilityResult.title = escapeHTML(readabilityResult.title);
+      readabilityResult.byline = escapeHTML(readabilityResult.byline);
+
+      debug({Type: "ReaderModeStateChange", Value: readabilityResult !== null ? "Available" : "Unavailable"});
+      webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: readabilityResult !== null ? "Available" : "Unavailable"});
+      webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderContentParsed", Value: readabilityResult});
+      */
       debug({Type: "ReaderModeStateChange", Value: "Available"});
       webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Available"});
       return;
@@ -65,15 +101,19 @@ function checkReadability() {
   }, 100);
 }
 
-// Ecosia: Use document.cloneNode(true) instead of the XMLSerializer → DOMPurify → DOMParser
-// pipeline. DOMPurify.sanitize() on large pages (e.g. Wikipedia) strips nearly all content
-// inside WKWebView's sandboxed JS context, leaving Readability with an empty document and
-// producing an empty reader-mode page. document.cloneNode(true) is the canonical Readability.js
-// usage, is orders of magnitude faster, and avoids the sanitisation issue entirely.
-// Security is not a concern because: (a) the source page was already loaded by the user,
-// and (b) the reader-mode page is served from localhost with a strict CSP.
-// The full parse is done here (lazily, on user tap) rather than in checkReadability() so
-// that button visibility is fast and not blocked by the parse cost.
+/* Ecosia: Rewrite readerize() to use document.cloneNode(true) instead of the
+   XMLSerializer → DOMPurify → DOMParser pipeline. DOMPurify.sanitize() strips nearly
+   all content on large pages inside WKWebView's sandboxed JS context, leaving Readability
+   with an empty document. cloneNode(true) is the canonical Readability.js usage, is orders
+   of magnitude faster, and avoids the sanitisation issue entirely. The full parse is now
+   done lazily (on user tap) so button visibility in checkReadability() is not blocked.
+
+// Readerize the document. Since we did the actual readerization already in checkReadability, we
+// can simply return the results we already have.
+function readerize() {
+  return readabilityResult;
+}
+*/
 function readerize() {
   if (readabilityResult) return readabilityResult;
 

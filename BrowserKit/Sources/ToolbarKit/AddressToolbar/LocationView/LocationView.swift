@@ -90,8 +90,8 @@ final class LocationView: UIView,
     private var urlTextFieldTrailingConstraint: NSLayoutConstraint?
     private var iconContainerStackViewLeadingConstraint: NSLayoutConstraint?
     private var lockIconWidthAnchor: NSLayoutConstraint?
-    // Ecosia: Pins the empty icon stack to zero width during editing so auto layout doesn't
-    // resolve the ambiguous (no-content, no explicit width) stack to an arbitrary large value.
+    /* Ecosia: Pins the empty icon stack to zero width during editing so auto layout doesn't
+       resolve the ambiguous (no-content, no explicit width) stack to an arbitrary large value. */
     private var iconContainerStackViewWidthConstraint: NSLayoutConstraint?
 
     // MARK: - Search Engine / Lock Image
@@ -371,7 +371,10 @@ final class LocationView: UIView,
                                      isURLTextFieldCentered: Bool,
                                      locationTextFieldTrailingPadding: CGFloat) {
         guard !isEditing else {
-            // Ecosia: Hide the search engine icon when the URL bar is focused for a cleaner editing experience
+            /* Ecosia: Use dedicated editing-display helper (hides search engine icon) and skip icon animation.
+            updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
+            animateIconAppearance()
+             */
             updateUIForEditingDisplay()
             urlTextFieldTrailingConstraint?.constant = 0
             return
