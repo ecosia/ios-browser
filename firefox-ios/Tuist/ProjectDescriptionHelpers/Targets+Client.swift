@@ -86,6 +86,9 @@ public enum ClientTarget {
                 "Client/Assets/*.js",
                 "Client/Assets/RemoteSettingsData/**/*.json",
                 "Client/ContentBlocker/TrackingProtectionStats.js",
+                "Client/Experiments/initial_experiments.json",
+                "Client/Frontend/LottieFiles/**/*.json",
+                "Client/Frontend/Reader/Resources/*.{html,css}",
                 "Client/MailSchemes.plist",
                 .glob(pattern: "Client/Assets/**/*.xcassets", excluding: [
                     "Client/Assets/Images.xcassets/AppIcon.appiconset",
