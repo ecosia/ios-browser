@@ -8,6 +8,13 @@ import { findRecipeJSONLD } from "./JSONLD";
 
 const ALLOWED_LANGS = ["en"];
 
+/* Ecosia: Hostnames whose search-results pages pass isProbablyReaderable() as a
+   false positive. Summarising a SERP is not useful and should be suppressed. */
+const ECOSIA_SERP_HOSTS = ["www.ecosia.org", "ecosia.org", "ecosia-staging.xyz"];
+const isEcosiaSERP = () =>
+  ECOSIA_SERP_HOSTS.includes(document.location.hostname) &&
+  document.location.pathname.startsWith("/search");
+
 const CONTENT_TYPES = {generic: "generic", recipe: "recipe"};
 
 const isPageLanguageSupported = () => {
@@ -99,6 +106,16 @@ const checkSummarization = async (maxWords) => {
 
   // 1. Readerable check
   if (!isProbablyReaderable(document)) {
+    return {
+      canSummarize: false,
+      reason: "documentNotReadable",
+      wordCount: 0,
+    };
+  }
+
+  /* Ecosia: Suppress summarisation on Ecosia SERP pages — isProbablyReaderable()
+     returns a false positive there because the page contains enough text nodes. */
+  if (isEcosiaSERP()) {
     return {
       canSummarize: false,
       reason: "documentNotReadable",
