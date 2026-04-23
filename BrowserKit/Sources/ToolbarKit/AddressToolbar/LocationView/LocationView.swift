@@ -373,6 +373,7 @@ final class LocationView: UIView,
         guard !isEditing else {
             /* Ecosia: Use dedicated editing-display helper (hides search engine icon) and skip icon animation.
             updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
+            urlTextFieldTrailingConstraint?.constant = 0
             animateIconAppearance()
              */
             updateUIForEditingDisplay()
