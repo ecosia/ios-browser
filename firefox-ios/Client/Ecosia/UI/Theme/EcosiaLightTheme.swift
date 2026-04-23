@@ -26,7 +26,6 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layer3: UIColor { ecosia.backgroundPrimaryDecorative }
     var layer4: UIColor { fallbackTheme.colors.layer4 }
     var layer5: UIColor { ecosia.backgroundElevation1 }
-    var layerSurfaceMedium: UIColor { ecosia.backgroundElevation1 }
     var layer5Hover: UIColor { ecosia.backgroundQuaternary }
     var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
     var layerGradient: Gradient { fallbackTheme.colors.layerGradient }
@@ -46,7 +45,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerEmphasis: UIColor { fallbackTheme.colors.layerEmphasis }
     var layerGradientURL: Gradient { fallbackTheme.colors.layerGradientURL }
     var layerSurfaceLow: UIColor { fallbackTheme.colors.layerSurfaceLow }
-    var layerSurfaceMedium: UIColor { fallbackTheme.colors.layerSurfaceMedium }
+    var layerSurfaceMedium: UIColor { ecosia.backgroundElevation1 }
     var layerSurfaceMediumAlt: UIColor { fallbackTheme.colors.layerSurfaceMediumAlt }
     var layerGradientSummary: Gradient { fallbackTheme.colors.layerGradientSummary }
 
