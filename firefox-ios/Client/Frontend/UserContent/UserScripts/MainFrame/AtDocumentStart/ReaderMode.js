@@ -59,13 +59,17 @@ function checkReadability() {
       var uri = {
         spec: document.location.href,
         host: document.location.host,
-        prePath: document.location.protocol + "//" + document.location.host,
+        prePath: document.location.protocol + "//" + document.location.host, // TODO This is incomplete, needs username/password and port
         scheme: document.location.protocol.substr(0, document.location.protocol.indexOf(":")),
         pathBase: document.location.protocol + "//" + document.location.host + location.pathname.substr(0, location.pathname.lastIndexOf("/") + 1)
       }
 
+      // document.cloneNode() can cause the webview to break (bug 1128774).
+      // Serialize and then parse the document instead.
       var docStr = new XMLSerializer().serializeToString(document);
 
+      // Do not attempt to parse DOM if this document contains a <frameset/>
+      // element. This causes the WKWebView content process to crash (Bug 1489543).
       if (docStr.indexOf("<frameset ") > -1) {
         debug({Type: "ReaderModeStateChange", Value: "Unavailable"});
         webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
@@ -84,7 +88,9 @@ function checkReadability() {
         return;
       }
 
+      // Sanitize the title to prevent a malicious page from inserting HTML in the `<title>`.
       readabilityResult.title = escapeHTML(readabilityResult.title);
+      // Sanitize the byline to prevent a malicious page from inserting HTML in the `<byline>`.
       readabilityResult.byline = escapeHTML(readabilityResult.byline);
 
       debug({Type: "ReaderModeStateChange", Value: readabilityResult !== null ? "Available" : "Unavailable"});

@@ -439,14 +439,14 @@ final class LocationView: UIView,
     private func updateUIForSearchEngineDisplay(isURLTextFieldCentered: Bool) {
         removeContainerIcons()
         if !isURLTextFieldCentered || isEditing {
-            // Icon is present — let its content determine the stack width.
+            // Ecosia: Icon is present — let its content determine the stack width.
             iconContainerStackViewWidthConstraint?.isActive = false
             iconContainerStackViewWidthConstraint = nil
             iconContainerStackView.addArrangedSubview(searchEngineContentView)
         } else {
-            // No icon added (NTP centered mode). An empty UIStackView has no intrinsic width so
-            // auto layout would resolve the ambiguity to an arbitrary large value and push
-            // urlTextField to the right — pin it explicitly to zero to prevent that.
+            /* Ecosia: No icon added (NTP centered mode). An empty UIStackView has no intrinsic
+               width so auto layout would resolve the ambiguity to an arbitrary large value and
+               push urlTextField to the right — pin it explicitly to zero to prevent that. */
             iconContainerStackViewWidthConstraint?.isActive = false
             iconContainerStackViewWidthConstraint = iconContainerStackView.widthAnchor.constraint(equalToConstant: 0)
             iconContainerStackViewWidthConstraint?.isActive = true
