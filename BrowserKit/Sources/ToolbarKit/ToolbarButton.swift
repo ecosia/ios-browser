@@ -176,9 +176,7 @@ class ToolbarButton: UIButton,
     private func addBadgeIcon(imageName: String, bundle: Bundle? = nil, size: CGSize? = nil, xOffset: CGFloat? = nil, yOffset: CGFloat? = nil) {
         /* Ecosia: Apply template rendering for bundle-loaded badges so they inherit
            the button's foreground tint color in applyTheme.
-        let image = bundle != nil
-            ? UIImage(named: imageName, in: bundle, compatibleWith: nil)
-            : UIImage(named: imageName)
+        badgeImageView = UIImageView(image: UIImage(named: imageName))
          */
         var image = bundle != nil
             ? UIImage(named: imageName, in: bundle, compatibleWith: nil)
@@ -213,6 +211,10 @@ class ToolbarButton: UIButton,
     private func applyBadgeConstraints(to imageView: UIImageView, size: CGSize? = nil, xOffset: CGFloat? = nil, yOffset: CGFloat? = nil) {
         let resolvedSize = size ?? UX.badgeIconSize
         NSLayoutConstraint.activate([
+            /* Ecosia: Use resolvedSize so per-badge size overrides are respected; falls back to UX.badgeIconSize.
+            imageView.widthAnchor.constraint(equalToConstant: UX.badgeIconSize.width),
+            imageView.heightAnchor.constraint(equalToConstant: UX.badgeIconSize.height),
+             */
             imageView.widthAnchor.constraint(equalToConstant: resolvedSize.width),
             imageView.heightAnchor.constraint(equalToConstant: resolvedSize.height),
             /* Ecosia: Apply xOffset/yOffset so the incognito badge can be nudged without changing
