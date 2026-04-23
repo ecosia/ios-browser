@@ -710,7 +710,7 @@ struct BrowserViewControllerState: ScreenState {
 
     @MainActor
     private static func handleShowHistoryAction(state: BrowserViewControllerState,
-                                               action: GeneralBrowserAction) -> BrowserViewControllerState {
+                                                action: GeneralBrowserAction) -> BrowserViewControllerState {
         return BrowserViewControllerState(
             searchScreenState: state.searchScreenState,
             toast: state.toast,
