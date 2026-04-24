@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import Common
+import Ecosia
 
 class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggable {
     // MARK: - Variables
@@ -74,10 +75,10 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
         let customizeFirefoxHomeSection = customizeFirefoxSettingSection()
         let startAtHomeSection = setupStartAtHomeSection()
 
-        /* Ecosia: The new tab page is always Ecosia's NTP; remove "Current homepage" / custom URL section (MOB-4331).
+        /* Ecosia: Remove the "Current Homepage" (custom URL) section — not applicable to Ecosia
         let customizeHomePageSection = customizeHomeSettingSection()
         return [startAtHomeSection, customizeFirefoxHomeSection, customizeHomePageSection]
-        */
+         */
         return [startAtHomeSection, customizeFirefoxHomeSection]
     }
 
@@ -129,6 +130,9 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
 
         // Section ordering
         sectionItems.append(TopSitesSettings(settings: self))
+
+        // Ecosia: Climate Impact toggle to show/hide impact rows on the NTP
+        sectionItems.append(ClimateImpactSettings(settings: self))
 
         let shouldHideSections = featureFlags.isFeatureEnabled(.homepageStoriesRedesign, checking: .buildOnly)
         let isStoriesRedesignV2Enabled = featureFlags.isFeatureEnabled(.homepageStoriesRedesignV2, checking: .buildOnly)
@@ -353,6 +357,36 @@ extension HomePageSettingViewController {
             let wallpaperVC = WallpaperSettingsViewController(viewModel: viewModel, windowUUID: tabManager.windowUUID)
             wallpaperVC.settingsDelegate = settingsDelegate
             navigationController?.pushViewController(wallpaperVC, animated: true)
+        }
+    }
+}
+
+// MARK: - Ecosia: ClimateImpactSettings
+extension HomePageSettingViewController {
+    class ClimateImpactSettings: BoolSetting {
+        private static let prefKey = "ecosia.showClimateImpact"
+
+        init(settings: SettingsTableViewController) {
+            let prefs = settings.profile?.prefs
+            super.init(
+                prefs: prefs,
+                prefKey: ClimateImpactSettings.prefKey,
+                defaultValue: User.shared.showClimateImpact,
+                attributedTitleText: NSAttributedString(string: .localized(.climateImpact))
+            )
+            // Sync User's persisted value into prefs so the base class's
+            // displayBool reads the correct state on every launch.
+            prefs?.setBool(User.shared.showClimateImpact, forKey: ClimateImpactSettings.prefKey)
+        }
+
+        override func writeBool(_ control: UISwitch) {
+            User.shared.showClimateImpact = control.isOn
+            // Keep prefs in sync so displayBool (base class) shows the right state.
+            prefs?.setBool(control.isOn, forKey: ClimateImpactSettings.prefKey)
+            Analytics.shared.ntpCustomisation(
+                control.isOn ? .enable : .disable,
+                label: .impact
+            )
         }
     }
 }

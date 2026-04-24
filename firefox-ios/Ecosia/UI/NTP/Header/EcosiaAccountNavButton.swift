@@ -67,28 +67,45 @@ public struct EcosiaAccountNavButton: View {
             .padding(.leading, authStateProvider.hasRegisterVisitError ? .ecosia.space._2s : .ecosia.space._1s)
             .padding(.trailing, .ecosia.space._2s)
             .frame(minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
-            .background(
-                theme.backgroundColor
-            .cornerRadius(.ecosia.borderRadius._1l)
-            )
             .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(EcosiaAccountNavButtonStyle(
+            backgroundColor: theme.backgroundColor,
+            backgroundColorActive: theme.backgroundColorActive
+        ))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityHint(String.localized(.accountButtonAccessibilityHint))
-        .accessibilityIdentifier("account_nav_button")
+        .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.Account.navButton)
         .accessibilityAddTraits(.isButton)
         .ecosiaThemed(windowUUID, $theme)
     }
 }
 
+// MARK: - Button Style
+
+@available(iOS 16.0, *)
+private struct EcosiaAccountNavButtonStyle: ButtonStyle {
+    let backgroundColor: Color
+    let backgroundColorActive: Color
+    private let shape = RoundedRectangle(cornerRadius: CGFloat.ecosia.borderRadius._1l)
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(configuration.isPressed ? backgroundColorActive : backgroundColor)
+            .clipShape(shape)
+    }
+}
+
 // MARK: - Theme
+
 struct EcosiaAccountNavButtonTheme: EcosiaThemeable {
-    var backgroundColor = Color.gray.opacity(0.2)
+    var backgroundColor = Color.white
+    var backgroundColorActive = Color(UIColor.systemGray4)
 
     mutating func applyTheme(theme: Theme) {
-        backgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
+        backgroundColor = Color(theme.colors.ecosia.buttonBackgroundSecondary)
+        backgroundColorActive = Color(theme.colors.ecosia.buttonBackgroundSecondaryActive)
     }
 }
 

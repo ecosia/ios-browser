@@ -75,6 +75,20 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             dataSource.ecosiaAdapter = self?.ecosiaAdapter
         }
         dataSource?.ecosiaAdapter = adapter
+
+        // Ecosia: Refresh the NTP snapshot when homepage prefs change (e.g. Climate
+        // Impact toggle) so the *current* NTP reflects the change immediately — not
+        // only new tabs whose viewWillAppear fires fresh.
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(homePanelPrefsDidChange),
+            name: .HomePanelPrefsChanged,
+            object: nil
+        )
+    }
+
+    @objc private func homePanelPrefsDidChange(_ notification: Notification) {
+        refreshEcosiaSnapshot(animated: true)
     }
 
     /// Called when view will appear to refresh Ecosia data
@@ -104,6 +118,14 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             for: traitCollection,
             size: view.bounds.size
         )
+
+        // Ecosia: Force snapshot rebuild so changes to User-backed flags
+        // (e.g. showClimateImpact, showTopSites) that live outside Redux
+        // are picked up when returning from the settings screen.
+        dataSource?.updateSnapshot(
+            state: homepageState,
+            jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
+        )
     }
 
     /// Enables scrolling in iPhone landscape (compact vertical size class) where the NTP
@@ -126,11 +148,12 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     }
 
     /// Refreshes the Ecosia snapshot so the UI updates
-    func refreshEcosiaSnapshot() {
+    func refreshEcosiaSnapshot(animated: Bool = false) {
         guard let dataSource else { return }
         dataSource.updateSnapshot(
             state: homepageState,
-            jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
+            jumpBackInDisplayConfig: getJumpBackInDisplayConfig(),
+            animated: animated
         )
         homepageCollectionView?.collectionViewLayout.invalidateLayout()
     }

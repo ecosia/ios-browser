@@ -25,14 +25,19 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     // MARK: - Subviews
 
-    // Transparent wrapper that groups title + tiles so the whole block can be centered X+Y.
-    // The title and tiles have different horizontal insets, so this is a plain UIView rather
-    // than a UIStackView — each child is positioned with its own constraints inside.
-    private let contentBlock: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
-        return view
+    // Vertical stack that groups title + tiles. Using a UIStackView (instead of a
+    // plain UIView with manual constraints) lets us hide the tiles container and
+    // have the cell height collapse automatically — critical for the Climate Impact
+    // toggle that hides impact rows while keeping the rotating title visible.
+    private let contentStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.alignment = .fill
+        stack.distribution = .fill
+        stack.spacing = UX.titleToTilesGap
+        stack.backgroundColor = .clear
+        return stack
     }()
 
     // Fixed-height wrapper for the rotating label. Its height never changes regardless of
@@ -56,15 +61,24 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.7
+        label.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.NTP.rotatingTitle
         return label
+    }()
+
+    // Wrapper that applies the extra horizontal inset for tiles (tiles are narrower
+    // than the title). Hiding this view in the parent stack collapses both the tiles
+    // and the inter-item spacing automatically.
+    private let tilesContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        return view
     }()
 
     private lazy var tilesStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
-        // .fill lets each tile self-size; equal height is enforced via an explicit constraint
-        // in configure() to avoid the circular dependency that .fillEqually creates.
         stack.alignment = .fill
         stack.distribution = .fill
         stack.spacing = UX.cellsSpacing
@@ -117,24 +131,26 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     private func setup() {
         contentView.backgroundColor = .clear
 
+        // Title label inside its fixed-height container
         titleContainerView.addSubview(rotatingTitleLabel)
-        contentBlock.addSubview(titleContainerView)
-        contentBlock.addSubview(tilesStack)
-        contentView.addSubview(contentBlock)
+
+        // Tiles stack inside its horizontally-inset container
+        tilesContainer.addSubview(tilesStack)
 
         // tilesHorizontalInset is measured from the cell edge; subtract titleHorizontalInset
-        // (the contentBlock inset) to get the inset required within contentBlock itself.
+        // (the contentStack inset) to get the inset required within the container.
         let tilesIntraBlockInset = UX.tilesHorizontalInset - UX.titleHorizontalInset
+
+        // Assemble the vertical content stack
+        contentStack.addArrangedSubview(titleContainerView)
+        contentStack.addArrangedSubview(tilesContainer)
+        contentView.addSubview(contentStack)
 
         NSLayoutConstraint.activate([
             rotatingTitleLabel.leadingAnchor.constraint(equalTo: titleContainerView.leadingAnchor),
             rotatingTitleLabel.trailingAnchor.constraint(equalTo: titleContainerView.trailingAnchor),
             rotatingTitleLabel.bottomAnchor.constraint(equalTo: titleContainerView.bottomAnchor),
             rotatingTitleLabel.topAnchor.constraint(greaterThanOrEqualTo: titleContainerView.topAnchor),
-
-            titleContainerView.leadingAnchor.constraint(equalTo: contentBlock.leadingAnchor),
-            titleContainerView.trailingAnchor.constraint(equalTo: contentBlock.trailingAnchor),
-            titleContainerView.topAnchor.constraint(equalTo: contentBlock.topAnchor),
         ])
 
         let titleHeight = titleContainerView.heightAnchor.constraint(equalToConstant: UX.titleReservedHeight)
@@ -142,17 +158,15 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         titleHeight.isActive = true
 
         NSLayoutConstraint.activate([
-            tilesStack.leadingAnchor.constraint(equalTo: contentBlock.leadingAnchor, constant: tilesIntraBlockInset),
-            tilesStack.trailingAnchor.constraint(equalTo: contentBlock.trailingAnchor, constant: -tilesIntraBlockInset),
-            tilesStack.topAnchor.constraint(equalTo: titleContainerView.bottomAnchor, constant: UX.titleToTilesGap),
-            tilesStack.bottomAnchor.constraint(equalTo: contentBlock.bottomAnchor),
+            tilesStack.leadingAnchor.constraint(equalTo: tilesContainer.leadingAnchor, constant: tilesIntraBlockInset),
+            tilesStack.trailingAnchor.constraint(equalTo: tilesContainer.trailingAnchor, constant: -tilesIntraBlockInset),
+            tilesStack.topAnchor.constraint(equalTo: tilesContainer.topAnchor),
+            tilesStack.bottomAnchor.constraint(equalTo: tilesContainer.bottomAnchor),
 
-            // Top/bottom pins let compositional layout measure the cell height from content
-            // without needing a hard minimum height constant.
-            contentBlock.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UX.titleHorizontalInset),
-            contentBlock.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.titleHorizontalInset),
-            contentBlock.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UX.titleToTilesGap),
-            contentBlock.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.titleToTilesGap),
+            contentStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UX.titleHorizontalInset),
+            contentStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.titleHorizontalInset),
+            contentStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UX.titleToTilesGap),
+            contentStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.titleToTilesGap),
         ])
 
         updateContainerAxisForCurrentTraits()
@@ -209,15 +223,14 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             rows.append(row)
         }
 
-        // Always exactly 2 tiles (trees + invested). Equal height so the taller one drives
-        // both — .defaultHigh lets content still expand if absolutely needed.
-        assert(rows.count == 2, "NTPImpactCell expects exactly 2 tiles")
         if let first = rows.first, let last = rows.last, first !== last {
             let constraint = first.heightAnchor.constraint(equalTo: last.heightAnchor)
             constraint.priority = .defaultHigh
             constraint.isActive = true
             tileEqualHeightConstraint = constraint
         }
+
+        tilesContainer.isHidden = items.isEmpty
 
         updateTitle(title)
         updateContainerAxisForCurrentTraits()

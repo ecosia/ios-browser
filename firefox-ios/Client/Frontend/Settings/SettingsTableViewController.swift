@@ -4,6 +4,7 @@
 
 import Account
 import Common
+import Ecosia
 import Shared
 import UIKit
 
@@ -203,8 +204,17 @@ class PaddedSwitch: UIView {
         switchView.frame.origin = CGPoint(x: UX.padding, y: 0)
     }
 
+    /* Ecosia: Added offTintColor so the OFF track can use segmentedControlBackgroundRest
     func configureSwitch(onTintColor: UIColor, isEnabled: Bool) {
         switchView.onTintColor = onTintColor
+        switchView.isEnabled = isEnabled
+    }
+     */
+    func configureSwitch(onTintColor: UIColor, isEnabled: Bool, offTintColor: UIColor? = nil) {
+        switchView.onTintColor = onTintColor
+        if let offTintColor {
+            switchView.tintColor = offTintColor
+        }
         switchView.isEnabled = isEnabled
     }
 
@@ -325,9 +335,16 @@ class BoolSetting: Setting, FeatureFlaggable {
     override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
         super.onConfigureCell(cell, theme: theme)
 
+        /* Ecosia: Use Ecosia segmented control tokens for settings toggles
         control.configureSwitch(
             onTintColor: theme.colors.actionPrimary,
             isEnabled: enabled
+        )
+         */
+        control.configureSwitch(
+            onTintColor: theme.colors.ecosia.segmentedControlBackgroundActive,
+            isEnabled: enabled,
+            offTintColor: theme.colors.ecosia.segmentedControlBackgroundRest
         )
 
         displayBool(control.switchView)

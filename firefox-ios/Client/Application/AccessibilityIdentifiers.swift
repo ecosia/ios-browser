@@ -27,6 +27,8 @@ struct AccessibilityIdentifiers {
         static let forwardButton = "TabToolbar.forwardButton"
         static let tabsButton = "TabToolbar.tabsButton"
         static let addNewTabButton = "TabToolbar.addNewTabButton"
+        // Ecosia: Accessibility identifier for the NTP toolbar history button
+        static let historyButton = "TabToolbar.historyButton"
         static let searchButton = "TabToolbar.searchButton"
         static let stopButton = "TabToolbar.stopButton"
         static let translateButton = "TabToolbar.translateButton"

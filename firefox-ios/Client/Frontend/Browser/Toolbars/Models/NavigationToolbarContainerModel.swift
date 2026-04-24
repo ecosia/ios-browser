@@ -28,6 +28,11 @@ struct NavigationToolbarContainerModel: Equatable {
                 iconName: action.iconName,
                 title: action.actionLabel,
                 badgeImageName: action.badgeImageName,
+                // Ecosia: Forward badge customisation parameters for the incognito icon
+                badgeBundle: action.badgeBundle,
+                badgeSize: action.badgeSize,
+                badgeXOffset: action.badgeXOffset,
+                badgeYOffset: action.badgeYOffset,
                 maskImageName: action.maskImageName,
                 numberOfTabs: action.numberOfTabs,
                 isEnabled: action.isEnabled,

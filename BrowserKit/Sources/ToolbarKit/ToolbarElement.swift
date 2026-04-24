@@ -14,6 +14,13 @@ public struct ToolbarElement: Equatable {
     /// Badge name of the toolbar element
     let badgeImageName: String?
 
+    // Ecosia: Badge customisation parameters — bundle, size, and position offsets
+    // for rendering the Ecosia incognito badge from the Ecosia asset catalog.
+    let badgeBundle: Bundle?
+    let badgeSize: CGSize?
+    let badgeXOffset: CGFloat?
+    let badgeYOffset: CGFloat?
+
     /// Mask name of the badge's toolbar element
     let maskImageName: String?
 
@@ -77,6 +84,11 @@ public struct ToolbarElement: Equatable {
     public init(iconName: String? = nil,
                 title: String? = nil,
                 badgeImageName: String? = nil,
+                // Ecosia: Badge customisation parameters for the incognito icon
+                badgeBundle: Bundle? = nil,
+                badgeSize: CGSize? = nil,
+                badgeXOffset: CGFloat? = nil,
+                badgeYOffset: CGFloat? = nil,
                 maskImageName: String? = nil,
                 templateModeForImage: Bool = true,
                 loadingConfig: LoadingConfig? = nil,
@@ -99,6 +111,11 @@ public struct ToolbarElement: Equatable {
         self.iconName = iconName
         self.title = title
         self.badgeImageName = badgeImageName
+        // Ecosia: Badge customisation parameters for the incognito icon
+        self.badgeBundle = badgeBundle
+        self.badgeSize = badgeSize
+        self.badgeXOffset = badgeXOffset
+        self.badgeYOffset = badgeYOffset
         self.maskImageName = maskImageName
         self.templateModeForImage = templateModeForImage
         self.loadingConfig = loadingConfig

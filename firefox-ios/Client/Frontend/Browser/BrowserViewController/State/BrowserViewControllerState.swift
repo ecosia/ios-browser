@@ -38,6 +38,8 @@ struct BrowserViewControllerState: ScreenState {
         case summarizer(config: SummarizerConfig?)
         // Ecosia: QR code scanner display type
         case qrCode
+        // Ecosia: History panel display type triggered from the NTP toolbar button
+        case history
     }
 
     let windowUUID: WindowUUID
@@ -343,6 +345,9 @@ struct BrowserViewControllerState: ScreenState {
         // Ecosia: Handle QR code scanner action
         case GeneralBrowserActionType.showQRCode:
             return handleShowQRCodeAction(state: state, action: action)
+        // Ecosia: Handle history panel action from the NTP toolbar button
+        case GeneralBrowserActionType.showHistory:
+            return handleShowHistoryAction(state: state, action: action)
         default:
             return passthroughState(from: state, action: action)
         }
@@ -700,6 +705,18 @@ struct BrowserViewControllerState: ScreenState {
             windowUUID: state.windowUUID,
             browserViewType: state.browserViewType,
             displayView: .qrCode,
+            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+    }
+
+    @MainActor
+    private static func handleShowHistoryAction(state: BrowserViewControllerState,
+                                                action: GeneralBrowserAction) -> BrowserViewControllerState {
+        return BrowserViewControllerState(
+            searchScreenState: state.searchScreenState,
+            toast: state.toast,
+            windowUUID: state.windowUUID,
+            browserViewType: state.browserViewType,
+            displayView: .history,
             microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
     }
 }

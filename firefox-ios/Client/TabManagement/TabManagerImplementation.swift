@@ -594,8 +594,12 @@ class TabManagerImplementation: NSObject,
     }
 
     private func shouldClearPrivateTabs() -> Bool {
+        /* Ecosia: [MOB-4105] Change default behaviour to false, matching production LegacyTabManager.
         // FXIOS-9519: By default if no bool value is set we close the private tabs and mark it true
         return profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs) ?? true
+        */
+        return profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs)
+            ?? PrefsKeysDefaultValues.Settings.closePrivateTabs
     }
 
     /// Creates the webview so needs to live on the main thread

@@ -37,7 +37,7 @@ public struct EcosiaAvatar: View {
             .frame(width: size, height: size)
             .clipShape(Circle())
             .accessibilityLabel(String.localized(.userAvatarAccessibilityLabel))
-            .accessibilityIdentifier("user_avatar")
+            .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.Account.userAvatar)
             .transition(.opacity)
         }
         .animation(.easeInOut(duration: 0.3), value: avatarURL)
@@ -50,7 +50,7 @@ public struct EcosiaAvatar: View {
             .frame(width: size, height: size)
             .clipShape(Circle())
             .accessibilityLabel(String.localized(.defaultAvatarAccessibilityLabel))
-            .accessibilityIdentifier("default_avatar")
+            .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.Account.defaultAvatar)
     }
 }
 

@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Ecosia
 
 enum TabTrayPanelType: Int, CaseIterable {
     case tabs
@@ -37,7 +38,10 @@ enum TabTrayPanelType: Int, CaseIterable {
         case .tabs:
             return UIImage(named: StandardImageIdentifiers.Large.tab)
         case .privateTabs:
+            /* Ecosia: Use Ecosia incognito icon instead of Firefox private mode mask
             return UIImage(named: StandardImageIdentifiers.Large.privateMode)
+             */
+            return UIImage(named: "incognito", in: .ecosia, with: nil)
         case .syncedTabs:
             return UIImage(named: StandardImageIdentifiers.Large.syncTabs)
         }

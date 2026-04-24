@@ -8,6 +8,13 @@ import { findRecipeJSONLD } from "./JSONLD";
 
 const ALLOWED_LANGS = ["en"];
 
+/* Ecosia: Hostnames whose search-results pages pass isProbablyReaderable() as a
+   false positive. Summarising a SERP is not useful and should be suppressed. */
+const ECOSIA_SERP_HOSTS = ["www.ecosia.org", "ecosia.org", "ecosia-staging.xyz"];
+const isEcosiaSERP = () =>
+  ECOSIA_SERP_HOSTS.includes(document.location.hostname) &&
+  document.location.pathname.startsWith("/search");
+
 const CONTENT_TYPES = {generic: "generic", recipe: "recipe"};
 
 const isPageLanguageSupported = () => {
@@ -23,6 +30,12 @@ const isPageLanguageSupported = () => {
 }
 
 const extractContent = () => {
+  /* Ecosia: Readability 0.6.0 changed the constructor from new Readability(uri, doc)
+     to new Readability(doc, options) — the uri object is no longer accepted.
+     Use document.cloneNode(true) so Readability can destructively mutate the DOM
+     without affecting the live page, and inject a <base href> so relative URLs
+     inside the clone resolve correctly.
+
   const uri = {
     spec: document.location.href,
     host: document.location.host,
@@ -44,6 +57,12 @@ const extractContent = () => {
   const clean = DOMPurify.sanitize(docStr, { WHOLE_DOCUMENT: true });
   const doc = new DOMParser().parseFromString(clean, "text/html");
   const readability = new Readability(uri, doc);
+  */
+  const docClone = document.cloneNode(true);
+  const base = docClone.createElement("base");
+  base.href = document.location.href;
+  docClone.head?.prepend(base);
+  const readability = new Readability(docClone);
   const readabilityResult = readability.parse();
   const rawContent = readabilityResult.textContent ?? readabilityResult.content;
   return rawContent
@@ -99,6 +118,16 @@ const checkSummarization = async (maxWords) => {
 
   // 1. Readerable check
   if (!isProbablyReaderable(document)) {
+    return {
+      canSummarize: false,
+      reason: "documentNotReadable",
+      wordCount: 0,
+    };
+  }
+
+  /* Ecosia: Suppress summarisation on Ecosia SERP pages — isProbablyReaderable()
+     returns a false positive there because the page contains enough text nodes. */
+  if (isEcosiaSERP()) {
     return {
       canSummarize: false,
       reason: "documentNotReadable",

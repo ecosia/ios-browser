@@ -60,9 +60,8 @@ final class HomepageViewController: UIViewController,
     /// Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied.
     var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
-    // Ecosia: Stored so it can be upgraded to a cross-hierarchy constraint in viewDidLayoutSubviews
     private var wallpaperBottomConstraint: NSLayoutConstraint?
-    // Ecosia: Guards against re-applying the cross-hierarchy constraint on each layout pass
+    // Ecosia: Guards against re-applying the iPad cross-hierarchy constraint on each layout pass
     private var wallpaperExtendedToParent = false
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
@@ -212,10 +211,9 @@ final class HomepageViewController: UIViewController,
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        /* Ecosia: Upgrade wallpaper bottom constraint to BVC's full view once the view is in the window
-         hierarchy. viewWillAppear fires mid-addSubview (no common ancestor yet); viewDidLayoutSubviews
-         is the first safe point after the view is fully embedded. */
-        extendEcosiaWallpaperToParent()
+        // Ecosia: On iPad the content container ends above the bottom toolbar, so extend
+        // the wallpaper to BVC's view to fill the gap behind the translucent toolbar.
+        extendEcosiaWallpaperToParentOnPad()
 
         /// FXIOS-13970: Legacy homepage layout was appearing blank on iOS 15. The root cause was from applying the diffable
         /// data source snapshot before the view had finished it's first layout pass, causing the snapshot to be ignored.
@@ -425,11 +423,6 @@ final class HomepageViewController: UIViewController,
         ])
         */
         // Ecosia: Wallpaper card with rounded corners and insets.
-        // The initial bottom constraint anchors to this view's own bottomAnchor. On iPad it is upgraded
-        // to a cross-hierarchy constraint against the parent (BVC) view's bottomAnchor in
-        // viewDidLayoutSubviews — the first safe lifecycle point after the view is in the window hierarchy.
-        // BVC.embedContent() already sets clipsToBounds = false, so the card can extend into the
-        // navigation toolbar area on iPad portrait.
         let vInset = CGFloat.ecosia.space._s
         let hInset = CGFloat.ecosia.space._2s
         let bottomConstraint = wallpaperView.bottomAnchor.constraint(
@@ -755,8 +748,8 @@ final class HomepageViewController: UIViewController,
             return configureEcosiaLogoCell(at: indexPath)
         case .ecosiaLibrary:
             return configureEcosiaLibraryCell(at: indexPath)
-        case .ecosiaImpact(let sectionIndex):
-            return configureEcosiaImpactCell(at: indexPath, sectionIndex: sectionIndex)
+        case .ecosiaImpact(let sectionIndex, let showRows):
+            return configureEcosiaImpactCell(at: indexPath, sectionIndex: sectionIndex, showRows: showRows)
         case .ecosiaNTPCustomization:
             return configureEcosiaNTPCustomizationCell(at: indexPath)
         }
@@ -865,6 +858,10 @@ final class HomepageViewController: UIViewController,
             context.fill(CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height))
             // Draw the wallpaper separately, so the potential safe area coordinates is filled with the
             // wallpaper
+            /* Ecosia: The wallpaper is now an inset card (child of `view`) rather than a full-bleed
+               background, so a single drawHierarchy pass captures both the wallpaper card and the
+               collection content in their correct positions. Drawing the wallpaper separately at
+               (0,0) full-size caused a mirrored/stretched wallpaper artifact behind the offset content.
             wallpaperView.drawHierarchy(
                 in: CGRect(
                     x: 0,
@@ -881,6 +878,16 @@ final class HomepageViewController: UIViewController,
                     y: -bounds.origin.y,
                     width: bounds.width,
                     height: collectionView?.frame.height ?? 0.0
+                ),
+                afterScreenUpdates: false
+            )
+            */
+            view.drawHierarchy(
+                in: CGRect(
+                    x: bounds.origin.x,
+                    y: -bounds.origin.y,
+                    width: view.bounds.width,
+                    height: view.bounds.height
                 ),
                 afterScreenUpdates: false
             )
@@ -902,19 +909,19 @@ final class HomepageViewController: UIViewController,
         )
     }
 
-    /* Ecosia: On iPad, replace the initial view.bottomAnchor constraint with a cross-hierarchy constraint to
-     the parent (BVC) view's bottomAnchor. This lets the wallpaper card fill the full screen height —
-     including the navigation toolbar area — with a consistent 16pt margin on all sides in both orientations.
-     iPhone keeps the initial constraint so the card preserves the visible gap above the toolbar. */
-    private func extendEcosiaWallpaperToParent() {
-        guard !wallpaperExtendedToParent,
-              traitCollection.userInterfaceIdiom == .pad,
+    /* Ecosia: On iPad the content container ends at overKeyboardContainer.top — well above
+     the screen bottom — because the address bar lives in the header. Replace the initial
+     view.bottomAnchor constraint with a cross-hierarchy constraint to BVC's view so the
+     wallpaper card fills the gap behind the translucent bottom toolbar. iPhone keeps the
+     simple view-local constraint (correct margin and corner radius above the address bar). */
+    private func extendEcosiaWallpaperToParentOnPad() {
+        guard traitCollection.userInterfaceIdiom == .pad,
+              !wallpaperExtendedToParent,
               let parentView = parent?.view else { return }
         wallpaperBottomConstraint?.isActive = false
-        let vInset = CGFloat.ecosia.space._m
         let extended = wallpaperView.bottomAnchor.constraint(
             equalTo: parentView.bottomAnchor,
-            constant: -vInset
+            constant: -CGFloat.ecosia.space._m
         )
         extended.isActive = true
         wallpaperBottomConstraint = extended

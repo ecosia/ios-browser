@@ -73,7 +73,18 @@ struct DefaultSummarizerNimbusUtils: FeatureFlaggable, SummarizerNimbusUtils {
     }
 
     func isHostedSummarizerEnabled() -> Bool {
+        /* Ecosia: MOZ_CHANNEL_FENNEC is the Ecosia debug build channel, which maps to
+           AppBuildChannel.other — a value not recognised by the Nimbus YAML schema
+           (only developer/beta/release are valid). Enable the feature unconditionally
+           for those builds so it can be tested without a Nimbus override.
+
         return featureFlags.isFeatureEnabled(.hostedSummarizer, checking: .buildOnly)
+        */
+        #if MOZ_CHANNEL_FENNEC
+        return true
+        #else
+        return featureFlags.isFeatureEnabled(.hostedSummarizer, checking: .buildOnly)
+        #endif
     }
 
     private func isAppleSummarizerToolbarEndpointEnabled() -> Bool {

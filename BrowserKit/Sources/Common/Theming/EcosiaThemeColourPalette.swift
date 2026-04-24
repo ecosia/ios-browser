@@ -11,6 +11,7 @@ import UIKit
 public protocol EcosiaSemanticColors {
     // MARK: - Background
     var backgroundNeutralInverse: UIColor { get }
+    var backgroundNeutralTertiary: UIColor { get }
     var backgroundFeatured: UIColor { get }
     var backgroundGradient: UIColor { get }
     var backgroundPrimary: UIColor { get }
@@ -73,8 +74,10 @@ public protocol EcosiaSemanticColors {
     var textStaticLight: UIColor { get }
 
     // MARK: - NTP Glass
-    /// Dark semi-transparent tint overlay on the wallpaper behind glass tiles.
+    /// Dark semi-transparent tint overlay on the wallpaper behind glass tiles (default/rest state).
     var buttonBgGlassStatic: UIColor { get }
+    /// Dark semi-transparent tint overlay on the wallpaper behind glass tiles (active/pressed state).
+    var buttonBgGlassStaticActive: UIColor { get }
     /// White translucent border around glass tiles.
     var borderGlassStatic: UIColor { get }
 }
@@ -87,6 +90,7 @@ public protocol EcosiaThemeColourPalette: ThemeColourPalette {
 /// Should never end up in production UI!
 class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundNeutralInverse: UIColor = .systemGray
+    var backgroundNeutralTertiary: UIColor = .systemGray
     var backgroundFeatured: UIColor = .systemGray
     var backgroundGradient: UIColor = .systemGray
     var backgroundPrimary: UIColor = .systemGray
@@ -130,5 +134,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textStaticDark: UIColor = .systemGray
     var textStaticLight: UIColor = .systemGray
     var buttonBgGlassStatic: UIColor = .systemGray
+    var buttonBgGlassStaticActive: UIColor = .systemGray
     var borderGlassStatic: UIColor = .systemGray
 }

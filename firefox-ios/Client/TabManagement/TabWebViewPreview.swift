@@ -77,8 +77,14 @@ final class TabWebViewPreview: UIView, ThemeApplicable {
 
         if layoutWasInvalidated {
             if tab.isFxHomeTab {
+                /* Ecosia: Show Ecosia logo instead of Firefox fox icon for home tab previews.
                 faviconImageView.manuallySetImage(UIImage(resource: .faviconFox))
+                */
+                faviconImageView.transform = CGAffineTransform(scaleX: 2.5, y: 2.5)
+                faviconImageView.manuallySetImage(UIImage(named: "ecosiaLogoLaunch") ?? UIImage())
             } else {
+                // Ecosia: Resets transform
+                faviconImageView.transform = .identity
                 faviconImageView.setFavicon(FaviconImageViewModel(siteURLString: tab.url?.absoluteString,
                                                                   faviconCornerRadius: UX.faviconCornerRadius))
             }
@@ -116,7 +122,10 @@ final class TabWebViewPreview: UIView, ThemeApplicable {
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: any Theme) {
+        /* Ecosia: Use backgroundPrimaryDecorative so the preview matches the NTP during swipe transitions.
         backgroundColor = theme.colors.layerSurfaceMedium
+        */
+        backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         layer.shadowColor = theme.colors.shadowStrong.cgColor
     }
 }

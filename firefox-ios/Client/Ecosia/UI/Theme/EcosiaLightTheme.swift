@@ -25,7 +25,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layer2: UIColor { ecosia.backgroundElevation1 }
     var layer3: UIColor { ecosia.backgroundPrimaryDecorative }
     var layer4: UIColor { fallbackTheme.colors.layer4 }
-    var layer5: UIColor { ecosia.backgroundSecondary }
+    var layer5: UIColor { ecosia.backgroundElevation1 }
     var layer5Hover: UIColor { ecosia.backgroundQuaternary }
     var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
     var layerGradient: Gradient { fallbackTheme.colors.layerGradient }
@@ -45,7 +45,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerEmphasis: UIColor { fallbackTheme.colors.layerEmphasis }
     var layerGradientURL: Gradient { fallbackTheme.colors.layerGradientURL }
     var layerSurfaceLow: UIColor { fallbackTheme.colors.layerSurfaceLow }
-    var layerSurfaceMedium: UIColor { fallbackTheme.colors.layerSurfaceMedium }
+    var layerSurfaceMedium: UIColor { ecosia.backgroundElevation1 }
     var layerSurfaceMediumAlt: UIColor { fallbackTheme.colors.layerSurfaceMediumAlt }
     var layerGradientSummary: Gradient { fallbackTheme.colors.layerGradientSummary }
 
@@ -117,6 +117,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
 
 private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundNeutralInverse: UIColor = EcosiaColor.Gray80
+    var backgroundNeutralTertiary: UIColor = EcosiaColor.Gray70
     var backgroundFeatured: UIColor = EcosiaColor.Grellow100
     var backgroundGradient: UIColor = EcosiaColor.White
     var backgroundPrimary: UIColor = EcosiaColor.White
@@ -148,7 +149,7 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var linkPrimary: UIColor = EcosiaColor.Gray70
     var iconDecorative: UIColor = EcosiaColor.Gray50
     var iconInverseStrong: UIColor = EcosiaColor.White
-    var segmentedControlBackgroundActive: UIColor = EcosiaColor.White
+    var segmentedControlBackgroundActive: UIColor = EcosiaColor.Gray70
     var segmentedControlBackgroundRest: UIColor = EcosiaColor.Gray30
     var stateDisabled: UIColor = EcosiaColor.Gray30
     var stateError: UIColor = EcosiaColor.Red50
@@ -161,5 +162,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textStaticLight: UIColor = EcosiaColor.White
     // NTP glass tokens are "static" — same value in light and dark because they overlay a photo.
     var buttonBgGlassStatic: UIColor = EcosiaColor.Gray90.withAlphaComponent(0.32)
+    var buttonBgGlassStaticActive: UIColor = EcosiaColor.Gray90.withAlphaComponent(0.64)
     var borderGlassStatic: UIColor = EcosiaColor.White.withAlphaComponent(0x3D / 255.0)
 }

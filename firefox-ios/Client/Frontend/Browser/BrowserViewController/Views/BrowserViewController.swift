@@ -765,8 +765,11 @@ class BrowserViewController: UIViewController,
                 guard let webView = tabManager.selectedTab?.webView else { return false }
                 return isScrollAlphaZero && webView.scrollView.contentSize.height > view.bounds.height
             }()
+            /* Ecosia: Keep the same translucent background regardless of keyboard state.
             // we disable the translucency when the keyboard is getting displayed
             overKeyboardContainer.isClearBackground = (enableBlur && !isKeyboardShowing) || shouldClearBackground
+            */
+            overKeyboardContainer.isClearBackground = enableBlur || shouldClearBackground
 
             let isFxHomeTab = tabManager.selectedTab?.isFxHomeTab ?? false
             let offset = scrollOffset ?? statusBarOverlay.scrollOffset
@@ -1206,7 +1209,10 @@ class BrowserViewController: UIViewController,
 
         // Update theme of already existing views
         let theme = currentTheme()
+        /* Ecosia: Use backgroundPrimaryDecorative so the content container matches the NTP.
         contentContainer.backgroundColor = theme.colors.layer1
+        */
+        contentContainer.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         header.applyTheme(theme: theme)
         overKeyboardContainer.applyTheme(theme: theme)
         bottomContainer.applyTheme(theme: theme)
@@ -2898,6 +2904,9 @@ class BrowserViewController: UIViewController,
         // Ecosia: Handle QR code scanner display
         case .qrCode:
             navigationHandler?.showQRCode(delegate: self, rootNavigationController: nil)
+        // Ecosia: Show history panel when the NTP toolbar history button is tapped
+        case .history:
+            showLibrary(panel: .history)
         case .share:
             // User tapped the Share button in the toolbar
             guard let button = state.buttonTapped else { return }
@@ -3925,11 +3934,14 @@ class BrowserViewController: UIViewController,
         keyboardBackdrop?.backgroundColor = currentTheme.colors.layer1
         zeroSearchDimmingView.backgroundColor = currentTheme.colors.layerScrim.withAlphaComponent(0.70)
 
+        /* Ecosia: Use backgroundPrimaryDecorative so the BVC background matches the NTP / homepage.
         // to make sure on homepage with bottom search bar the status bar is hidden
         // we have to adjust the background color to match the homepage background color
         let isBottomSearchHomepage = isBottomSearchBar && tabManager.selectedTab?.isFxHomeTab ?? false
         let colors = currentTheme.colors
         backgroundView.backgroundColor = isBottomSearchHomepage ? colors.layer1 : colors.layerSurfaceLow
+        */
+        backgroundView.backgroundColor = currentTheme.colors.ecosia.backgroundPrimaryDecorative
         if #available(iOS 26, *), let glassEffect = effect as? UIGlassEffect {
             glassEffect.tintColor = currentTheme.colors.layer1.withAlphaComponent(0.5)
             bottomBlurView.effect = glassEffect

@@ -104,7 +104,8 @@ extension Analytics {
             impact,
             news,
             quickActions = "quick_actions",
-            topSites = "top_sites"
+            topSites = "top_sites",
+            history
         }
 
         public enum Onboarding: String {
@@ -279,6 +280,13 @@ extension Analytics {
             case
             websites = "websites_data",
             main = "all_private_data"
+        }
+
+        public enum ClimateCounter: String {
+            case
+            totalTrees = "total_trees",
+            totalInvested = "total_invested",
+            referral
         }
 
         public enum TopSite: String {

@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import UIKit
 import Foundation
 import Shared
@@ -18,13 +19,25 @@ protocol EmptyPrivateTabView: UIView, ThemeApplicable, InsetUpdatable {
 class ExperimentEmptyPrivateTabsView: UIView,
                                       EmptyPrivateTabView {
     struct UX {
+        /* Ecosia: Spacings mirror PrivateMessageCardCell.UX so the icon stays at the
+           same screen position during the tab-tray → private-NTP transition.
         static let paddingInBetweenItems: CGFloat = 15
         static let verticalPadding: CGFloat = 20
+        */
+        static let iconToTitleSpacing: CGFloat = 16     // PrivateMessageCardCell.UX.contentStackViewSpacing
+        static let titleToBodySpacing: CGFloat = 8      // PrivateMessageCardCell.UX.titleBodySpacing
+        static let bodyToSpacerSpacing: CGFloat = 24    // PrivateMessageCardCell.UX.bodyButtonSpacing
+        // Approximate height of the link button in PrivateMessageCardCell so the
+        // content block's center of mass (and therefore icon Y) is identical.
+        static let linkButtonSpacerHeight: CGFloat = 44
+        // Compensates for the tab tray header pushing self.centerY lower than
+        // view.safeAreaLayoutGuide.centerY in PrivateHomepageViewController.
+        static let verticalCenterOffset: CGFloat = 30
         static let horizontalPadding: CGFloat = 24
-        /* Ecosia: Larger image for Ecosia private browsing mascot
+        /* Ecosia: Match incognito NTP icon size (64pt)
         static let imageSize = CGSize(width: 72, height: 72)
         */
-        static let imageSize = CGSize(width: 120, height: 120)
+        static let imageSize = CGSize(width: 64, height: 64)
     }
 
     // MARK: - Properties
@@ -42,14 +55,20 @@ class ExperimentEmptyPrivateTabsView: UIView,
 
     private let titleLabel: UILabel = .build { label in
         label.adjustsFontForContentSizeCategory = true
+        /* Ecosia: Use Ecosia design system fonts to match incognito NTP
         label.font = FXFontStyles.Regular.headline.scaledFont()
+         */
+        label.font = .ecosia(size: .ecosia.font._3l)
         label.text =  .PrivateBrowsingTitle
         label.textAlignment = .center
     }
 
     private let descriptionLabel: UILabel = .build { label in
         label.adjustsFontForContentSizeCategory = true
+        /* Ecosia: Use Ecosia design system fonts to match incognito NTP
         label.font = FXFontStyles.Regular.footnote.scaledFont()
+         */
+        label.font = .ecosia(size: .ecosia.font._2l)
         label.textAlignment = .center
         label.numberOfLines = 0
         /* Ecosia: Use Ecosia private browsing description
@@ -70,10 +89,11 @@ class ExperimentEmptyPrivateTabsView: UIView,
     */
 
     private let iconImageView: UIImageView = .build { imageView in
-        /* Ecosia: Use Ecosia private browsing icon
+        /* Ecosia: Use new incognito icon from Ecosia asset catalog
         imageView.image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.privateMode)
         */
-        imageView.image = UIImage(named: "tigerIncognito")
+        imageView.image = UIImage(named: "incognito", in: .ecosia, with: nil)?
+            .withRenderingMode(.alwaysTemplate)
         imageView.contentMode = .scaleAspectFit
     }
 
@@ -95,11 +115,16 @@ class ExperimentEmptyPrivateTabsView: UIView,
     }
     */
 
-    // Ecosia: Vertically centered private browsing placeholder
+    // Ecosia: Vertically centered private browsing placeholder, spacings mirror PrivateMessageCardCell
     private lazy var contentStack: UIStackView = .build { stack in
         stack.axis = .vertical
         stack.alignment = .center
-        stack.spacing = UX.paddingInBetweenItems
+    }
+
+    // Transparent spacer that occupies the same height as the link button in
+    // PrivateMessageCardCell, keeping the icon at the same Y during the transition.
+    private let linkButtonSpacer: UIView = .build { view in
+        view.backgroundColor = .clear
     }
 
     private func setupLayout() {
@@ -159,14 +184,18 @@ class ExperimentEmptyPrivateTabsView: UIView,
                                                     constant: -UX.paddingInBetweenItems),
         ])
         */
-        // Ecosia: Vertically center content using stack view
+        // Mirror PrivateMessageCardCell spacing exactly so the icon doesn't jump during transition
         contentStack.addArrangedSubview(iconImageView)
+        contentStack.setCustomSpacing(UX.iconToTitleSpacing, after: iconImageView)
         contentStack.addArrangedSubview(titleLabel)
+        contentStack.setCustomSpacing(UX.titleToBodySpacing, after: titleLabel)
         contentStack.addArrangedSubview(descriptionLabel)
+        contentStack.setCustomSpacing(UX.bodyToSpacerSpacing, after: descriptionLabel)
+        contentStack.addArrangedSubview(linkButtonSpacer)
         addSubview(contentStack)
 
         NSLayoutConstraint.activate([
-            contentStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            contentStack.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -UX.verticalCenterOffset),
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor,
                                                   constant: UX.horizontalPadding),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor,
@@ -174,13 +203,22 @@ class ExperimentEmptyPrivateTabsView: UIView,
 
             iconImageView.widthAnchor.constraint(equalToConstant: UX.imageSize.width),
             iconImageView.heightAnchor.constraint(equalToConstant: UX.imageSize.height),
+
+            linkButtonSpacer.heightAnchor.constraint(equalToConstant: UX.linkButtonSpacerHeight),
         ])
     }
 
     func applyTheme(theme: Theme) {
+        /* Ecosia: Use Ecosia incognito design tokens
         backgroundColor = theme.colors.layer3
         titleLabel.textColor = theme.colors.textPrimary
         descriptionLabel.textColor = theme.colors.textPrimary
+         */
+        backgroundColor = theme.colors.ecosia.backgroundNeutralTertiary
+        let contentColor = theme.colors.ecosia.buttonContentPrimary
+        titleLabel.textColor = contentColor
+        descriptionLabel.textColor = contentColor
+        iconImageView.tintColor = contentColor
         /* Ecosia: Remove Learn More button theming
         learnMoreButton.applyTheme(theme: theme)
         iconImageView.tintColor = theme.colors.iconDisabled

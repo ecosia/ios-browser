@@ -69,7 +69,11 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
     }
 
     private lazy var pinImageView: UIImageView = .build { imageView in
+        /* Ecosia: StandardImageIdentifiers.Large.pinFill ("pinFillLarge") doesn't exist in the asset
+           catalog; use the small badge variant that does.
         imageView.image = UIImage(named: StandardImageIdentifiers.Large.pinFill)
+         */
+        imageView.image = UIImage(named: "pinBadgeFillSmall")
     }
 
     private lazy var titleLabel: UILabel = .build { titleLabel in
@@ -121,6 +125,9 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         super.init(frame: frame)
         isAccessibilityElement = true
         accessibilityIdentifier = AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell
+        // Ecosia: Allow pin badge to overflow outside rootContainer bounds
+        clipsToBounds = false
+        contentView.clipsToBounds = false
 
         setupLayout()
     }
@@ -233,9 +240,13 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
         rootContainer.addSubview(imageView)
         rootContainer.addSubview(selectedOverlay)
+        /* Ecosia: Pin badge moved from rootContainer to contentView so it isn't
+           clipped by rootContainer.clipsToBounds when the glass blur is applied.
         rootContainer.addSubview(pinImageBackgroundView)
+         */
         contentView.addSubview(rootContainer)
         contentView.addSubview(descriptionWrapper)
+        contentView.addSubview(pinImageBackgroundView)
 
         NSLayoutConstraint.activate([
             /* Ecosia: Restore top alignment (centered layout was not on spec per ntp-design-feedback)
@@ -282,9 +293,10 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
     private func configurePinnedSite(_ topSite: TopSiteConfiguration) {
         guard topSite.isPinned else { return }
-        // Ecosia: Pin badge is not part of the glass NTP design — always hidden in Ecosia style.
+        /* Ecosia: Pin badge was previously hidden on glass tiles. Re-enabled so users
+           can distinguish pinned shortcuts. Badge is now on contentView to avoid clipping.
         guard !ecosiaGlassStyleEnabled else { return }
-
+         */
         pinImageBackgroundView.isHidden = false
     }
 
@@ -338,7 +350,12 @@ extension TopSiteCell: ThemeApplicable {
         let labelColor: UIColor = ecosiaGlassStyleEnabled ? .white : (textColor ?? theme.colors.textPrimary)
         titleLabel.textColor = labelColor
         sponsoredLabel.textColor = labelColor
-        selectedOverlay.backgroundColor = theme.colors.layer5Hover.withAlphaComponent(0.25)
+        // Ecosia: Use the glass active token when in glass mode, otherwise Firefox default
+        if ecosiaGlassStyleEnabled {
+            selectedOverlay.backgroundColor = theme.colors.ecosia.buttonBgGlassStaticActive
+        } else {
+            selectedOverlay.backgroundColor = theme.colors.layer5Hover.withAlphaComponent(0.25)
+        }
 
         adjustBlur(theme: theme)
     }

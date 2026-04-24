@@ -123,10 +123,9 @@ final class EcosiaHomepageAdapter {
 
         // Library shortcuts (Bookmarks, History, Reading List, Downloads) — hidden for now
 
-        // Climate impact (if enabled)
-        if shouldShowImpact() {
-            sections.append(.ecosiaImpact)
-        }
+        // Climate impact section (always present for the rotating title;
+        // individual impact rows are hidden via NTPImpactCell when the toggle is off).
+        sections.append(.ecosiaImpact)
 
         // Top sites are inserted by HomepageDiffableDataSource after topSitesInsertionAnchor
 
@@ -136,13 +135,9 @@ final class EcosiaHomepageAdapter {
     }
 
     /// The section after which top sites should be inserted.
-    /// Matches the Figma design: shortcuts appear after impact counters when impact is shown,
-    /// or directly after the header when neither impact nor library is shown.
+    /// The impact section is always present (rotating title), so top sites follow it.
     var topSitesInsertionAnchor: HomepageSection {
-        if shouldShowImpact() {
-            return .ecosiaImpact
-        }
-        return .ecosiaHeader
+        return .ecosiaImpact
     }
 
     /// Returns the items for a given Ecosia section
@@ -156,7 +151,7 @@ final class EcosiaHomepageAdapter {
             return [.ecosiaLibrary]
         case .ecosiaImpact:
             guard impactViewModel != nil else { return [] }
-            return [.ecosiaImpact(sectionIndex: 0)]
+            return [.ecosiaImpact(sectionIndex: 0, showRows: User.shared.showClimateImpact)]
         case .ecosiaNTPCustomization:
             return [.ecosiaNTPCustomization]
         default:
@@ -171,10 +166,6 @@ final class EcosiaHomepageAdapter {
             return true
         }
         return false
-    }
-
-    private func shouldShowImpact() -> Bool {
-        return User.shared.showClimateImpact
     }
 
     // MARK: - Lifecycle
