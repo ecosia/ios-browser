@@ -219,7 +219,9 @@ open class DefaultSuggestedSites {
     ]
 
     public static func defaultSites() -> [Site] {
-        /* Ecosia: Return Ecosia-curated default shortcuts; locale-based Firefox sites disabled
+        /* Ecosia: No suggested sites on first-time experience; locale-based Firefox sites disabled.
+           The ecosiaSites list is kept below for reference should the product decision change.
+
         let locale = Locale.current
         let defaultSites = sites[locale.identifier] ?? sites["default"]
         return defaultSites?.map { site in
@@ -230,6 +232,6 @@ open class DefaultSuggestedSites {
             return site
         } ?? []
         */
-        ecosiaSites
+        []
     }
 }

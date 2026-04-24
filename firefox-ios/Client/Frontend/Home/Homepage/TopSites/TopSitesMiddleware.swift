@@ -28,9 +28,14 @@ final class TopSitesMiddleware: FeatureFlaggable {
     ) {
         self.topSitesManager = topSitesManager ?? TopSitesManager(
             profile: profile,
+            /* Ecosia: Replace Firefox's GoogleTopSiteManager with a no-op so Google is not
+               injected as a pinned tile; Gmail is already in the Ecosia suggested sites list.
+
             googleTopSiteManager: GoogleTopSiteManager(
                 prefs: profile.prefs
             ),
+            */
+            googleTopSiteManager: EcosiaGoogleTopSiteManager(),
             topSiteHistoryManager: TopSiteHistoryManager(profile: profile),
             searchEnginesManager: searchEnginesManager
         )
