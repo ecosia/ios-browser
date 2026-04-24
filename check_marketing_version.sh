@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Check if MARKETING_VERSION has changed
+# Check if MARKETING_VERSION has changed in EcosiaCommon.xcconfig.
 # The cut -d ' ' -f3 takes the output from grep command as input.
-# For example, let's assume that the Common.xcconfig file contains the following line:
+# For example, let's assume that EcosiaCommon.xcconfig contains the following line:
 # MARKETING_VERSION = 100.2.44
 # grep will return -> MARKETING_VERSION = 100.2.44
 # The cut command will then extract the third field from the input, using a space (' ') as the delimiter.

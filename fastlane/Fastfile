@@ -131,7 +131,7 @@ platform :ios do
   lane :testflight_live do
 
     version_number = get_xcconfig_value(
-      path: "#{target_folder_path}/Configuration/Common.xcconfig",
+      path: "#{target_folder_path}/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig",
       name: 'MARKETING_VERSION'
     )
 
@@ -189,7 +189,7 @@ platform :ios do
     inject_appstore_connect_api
 
     version_number = get_xcconfig_value(
-      path: "#{target_folder_path}/Configuration/Common.xcconfig",
+      path: "#{target_folder_path}/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig",
       name: 'MARKETING_VERSION'
     )
 
