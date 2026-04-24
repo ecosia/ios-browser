@@ -245,14 +245,14 @@ let package = Package(
         .target(
             name: "OnboardingKit",
             dependencies: ["Common", "ComponentLibrary"],
-            // Shaders/AnimatedGradient.metal is kept in the repo for future Metal
-            // implementation but is NOT registered as an SPM resource. Compiling it
-            // via .process("Shaders") produces a code-containing bundle (linked via
-            // Ld in Xcode 26) which the build system schedules once per package
-            // consumer context, causing "Multiple commands produce
-            // BrowserKit_OnboardingKit.bundle" during archive. Remove this entry
-            // (and the now-unnecessary Metal linker flags) until the Metal rendering
-            // path is actually implemented in Swift.
+            // Explicit resource declaration avoids an Xcode 26 build-system bug
+            // where auto-discovered xcassets produce both a "create directory"
+            // and an "Ld link" command for the same bundle path, causing:
+            // "error: Multiple commands produce BrowserKit_OnboardingKit.bundle"
+            // during archive. Shaders/AnimatedGradient.metal is kept for future
+            // use but excluded here since no Swift code loads it yet.
+            exclude: ["Shaders"],
+            resources: [.process("Media.xcassets")],
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
             ]),
