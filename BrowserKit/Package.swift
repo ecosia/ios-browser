@@ -245,15 +245,16 @@ let package = Package(
         .target(
             name: "OnboardingKit",
             dependencies: ["Common", "ComponentLibrary"],
-            resources: [
-                .process("Shaders")
-            ],
+            // Shaders/AnimatedGradient.metal is kept in the repo for future Metal
+            // implementation but is NOT registered as an SPM resource. Compiling it
+            // via .process("Shaders") produces a code-containing bundle (linked via
+            // Ld in Xcode 26) which the build system schedules once per package
+            // consumer context, causing "Multiple commands produce
+            // BrowserKit_OnboardingKit.bundle" during archive. Remove this entry
+            // (and the now-unnecessary Metal linker flags) until the Metal rendering
+            // path is actually implemented in Swift.
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
-            ],
-            linkerSettings: [
-                .linkedFramework("Metal"),
-                .linkedFramework("MetalKit")
             ]),
         .testTarget(
             name: "OnboardingKitTests",
