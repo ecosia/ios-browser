@@ -15,15 +15,13 @@ name: Merge Unit Tests
 # - Fix remaining crashing tests
 # - Fix other consistently failing tests
 # Re-enable this workflow once the test suite is stable enough to act as a reliable merge gate.
-# on:
-#   pull_request:
-#     branches: [main, 'patch/**', 'develop']
 on:
   pull_request:
-    branches: []  # No branches — effectively disables this workflow
+    branches: [main, 'patch/**', 'develop']
 
 jobs:
   execute_merge_tests:
+    if: false # Temporarily disabled — see comment above
     runs-on: macos-26
     name: Execute Merge Tests
 
