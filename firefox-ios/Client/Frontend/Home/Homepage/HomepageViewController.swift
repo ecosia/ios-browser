@@ -63,6 +63,8 @@ final class HomepageViewController: UIViewController,
     private var wallpaperBottomConstraint: NSLayoutConstraint?
     // Ecosia: Guards against re-applying the iPad cross-hierarchy constraint on each layout pass
     private var wallpaperExtendedToParent = false
+    // Ecosia: Holds the cross-hierarchy bottom constraint added while the keyboard is visible on iPhone
+    private var wallpaperKeyboardConstraint: NSLayoutConstraint?
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
     private let syncTabContextualHintViewController: ContextualHintViewController
@@ -184,6 +186,15 @@ final class HomepageViewController: UIViewController,
         termsOfUseDelegate?.showTermsOfUse(context: .homepageOpened)
         // Ecosia: Trigger Ecosia data loading
         ecosiaViewWillAppear()
+        // Ecosia: Keep the wallpaper card visually fixed while the keyboard is on screen
+        notificationCenter.addObserver(self,
+                                       selector: #selector(ecosiaKeyboardWillShow),
+                                       name: UIResponder.keyboardWillShowNotification,
+                                       object: nil)
+        notificationCenter.addObserver(self,
+                                       selector: #selector(ecosiaKeyboardWillHide),
+                                       name: UIResponder.keyboardWillHideNotification,
+                                       object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -207,6 +218,9 @@ final class HomepageViewController: UIViewController,
         resetTrackedObjects()
         // Ecosia: Clean up Ecosia resources
         ecosiaViewDidDisappear()
+        // Ecosia: Remove keyboard observers added in viewWillAppear
+        notificationCenter.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        notificationCenter.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     override func viewDidLayoutSubviews() {
@@ -926,6 +940,40 @@ final class HomepageViewController: UIViewController,
         extended.isActive = true
         wallpaperBottomConstraint = extended
         wallpaperExtendedToParent = true
+    }
+
+    /* Ecosia: When the keyboard appears the overKeyboardContainer grows, shrinking
+     contentContainer and HomepageViewController.view along with it. The wallpaper card
+     is pinned to view.bottomAnchor, so it also shrinks and scaleAspectFill rescales the
+     image — producing a visible zoom/shift artifact. Fix: snapshot the wallpaper's current
+     visual bottom in the parent's coordinate space and lock it there with a cross-hierarchy
+     constraint for the duration of the keyboard session. iPhone only — iPad already uses
+     a cross-hierarchy constraint via extendEcosiaWallpaperToParentOnPad. */
+    @objc private func ecosiaKeyboardWillShow() {
+        guard traitCollection.userInterfaceIdiom == .phone,
+              wallpaperKeyboardConstraint == nil,
+              let parentView = parent?.view else { return }
+
+        let bottomInParent = wallpaperView.convert(
+            CGPoint(x: 0, y: wallpaperView.bounds.maxY),
+            to: parentView
+        ).y
+        let constant = bottomInParent - parentView.bounds.height
+
+        wallpaperBottomConstraint?.isActive = false
+        let constraint = wallpaperView.bottomAnchor.constraint(
+            equalTo: parentView.bottomAnchor,
+            constant: constant
+        )
+        constraint.isActive = true
+        wallpaperKeyboardConstraint = constraint
+    }
+
+    @objc private func ecosiaKeyboardWillHide() {
+        guard let keyboardConstraint = wallpaperKeyboardConstraint else { return }
+        keyboardConstraint.isActive = false
+        wallpaperKeyboardConstraint = nil
+        wallpaperBottomConstraint?.isActive = true
     }
 
     // MARK: Tap Gesture Recognizer
