@@ -11,7 +11,9 @@ features:
     defaults:
       - channel: beta
         value:
+          # Ecosia: Sponsored shortcuts are disabled by default; no sponsored tiles on FTE.
           enabled: false
       - channel: developer
         value:
+          # Ecosia: Sponsored shortcuts are disabled by default; no sponsored tiles on FTE.
           enabled: false
