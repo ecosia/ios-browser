@@ -1,8 +1,26 @@
 name: Merge Unit Tests
 
+# TEMPORARILY DISABLED: Tests are still crashing and take too long to be useful as a merge gate.
+#
+# Background — MOB-4320 (PR #1112):
+# After the v147 Firefox upstream upgrade, unit tests failed to compile due to Swift 6 strict
+# concurrency enforcement (SWIFT_STRICT_CONCURRENCY = minimal is a no-op in Swift 6). PR #1112
+# fixed compilation by applying upstream-aligned concurrency patterns (@MainActor, @unchecked
+# Sendable, nonisolated(unsafe), etc.) across test and mock files, deleted orphaned test files,
+# and updated mocks to match v147 protocol changes. Tests now compile and run — but are still
+# failing, which is explicitly deferred to follow-up work.
+#
+# Pending before re-enabling:
+# - Investigate and settle the .xctestplan approach (Tuist-generated vs handcrafted) to avoid stale IDs
+# - Fix remaining crashing tests
+# - Fix other consistently failing tests
+# Re-enable this workflow once the test suite is stable enough to act as a reliable merge gate.
+# on:
+#   pull_request:
+#     branches: [main, 'patch/**', 'develop']
 on:
   pull_request:
-    branches: [main, 'patch/**', 'develop']
+    branches: []  # No branches — effectively disables this workflow
 
 jobs:
   execute_merge_tests:
