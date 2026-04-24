@@ -6,11 +6,12 @@ features:
       enabled:
         description: Setting 'enabled' to false will hide sponsored shortcuts on the homepage and disable the respective toggle in the homepage settings
         type: Boolean
-        default: true
+        # Ecosia: Sponsored shortcuts are disabled by default; no sponsored tiles on FTE.
+        default: false
     defaults:
       - channel: beta
         value:
-          enabled: true
+          enabled: false
       - channel: developer
         value:
-          enabled: true
+          enabled: false
