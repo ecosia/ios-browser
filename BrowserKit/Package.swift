@@ -245,15 +245,14 @@ let package = Package(
         .target(
             name: "OnboardingKit",
             dependencies: ["Common", "ComponentLibrary"],
-            resources: [
-                .process("Shaders")
-            ],
+            // Ecosia: Xcode 26 bug - auto-discovered xcassets produce conflicting
+            // "create directory" and "Ld link" commands for the same bundle path.
+            // Declaring resources explicitly avoids the issue.
+            // Shaders/AnimatedGradient.metal is unused by Swift code; excluded until needed.
+            exclude: ["Shaders"],
+            resources: [.process("Media.xcassets")],
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
-            ],
-            linkerSettings: [
-                .linkedFramework("Metal"),
-                .linkedFramework("MetalKit")
             ]),
         .testTarget(
             name: "OnboardingKitTests",

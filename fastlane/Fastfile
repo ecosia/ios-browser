@@ -148,15 +148,6 @@ platform :ios do
       readonly: true
     )
 
-    build_app(
-      scheme: "Ecosia",
-      workspace: workspace_path,
-      configuration: "Release",
-      export_method: "app-store",
-      xcargs: testflight_archive_args,
-      skip_archive: true
-    )
-
     gym(
       scheme: "Ecosia",
       workspace: workspace_path,      
