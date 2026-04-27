@@ -245,12 +245,10 @@ let package = Package(
         .target(
             name: "OnboardingKit",
             dependencies: ["Common", "ComponentLibrary"],
-            // Explicit resource declaration avoids an Xcode 26 build-system bug
-            // where auto-discovered xcassets produce both a "create directory"
-            // and an "Ld link" command for the same bundle path, causing:
-            // "error: Multiple commands produce BrowserKit_OnboardingKit.bundle"
-            // during archive. Shaders/AnimatedGradient.metal is kept for future
-            // use but excluded here since no Swift code loads it yet.
+            // Ecosia: Xcode 26 bug - auto-discovered xcassets produce conflicting
+            // "create directory" and "Ld link" commands for the same bundle path.
+            // Declaring resources explicitly avoids the issue.
+            // Shaders/AnimatedGradient.metal is unused by Swift code; excluded until needed.
             exclude: ["Shaders"],
             resources: [.process("Media.xcassets")],
             swiftSettings: [
