@@ -31,13 +31,14 @@ class SiteTableViewController: UIViewController,
     // Ecosia: Overridable table style; @objc dynamic allows extension-based overrides in subclasses.
     @objc dynamic var tableViewStyle: UITableView.Style { .plain }
 
-    /* Ecosia: Use the two-argument .build overload so UITableView is constructed with
-       tableViewStyle; subclasses can override tableViewStyle to request .insetGrouped.
+    /* Ecosia: Initialise with tableViewStyle so subclasses (e.g. SearchViewController) can
+       request .insetGrouped via an extension override without touching Firefox code.
     lazy var tableView: UITableView = .build { [weak self] table in
      */
-    lazy var tableView: UITableView = .build(
-        { [weak self] table in
-        guard let self = self else { return }
+    lazy var tableView: UITableView = {
+        // Ecosia: tableViewStyle resolved via @objc dynamic dispatch on the concrete subclass.
+        let table = UITableView(frame: .zero, style: tableViewStyle)
+        table.translatesAutoresizingMaskIntoConstraints = false
         table.delegate = self
         table.dataSource = self
         table.register(
@@ -66,10 +67,8 @@ class SiteTableViewController: UIViewController,
         // Set an empty footer to prevent empty cells from appearing in the list.
         table.tableFooterView = UIView()
         table.sectionHeaderTopPadding = 0
-        },
-        // Ecosia: Custom initializer applying tableViewStyle at construction time.
-        { [weak self] in UITableView(frame: .zero, style: self?.tableViewStyle ?? .plain) }
-    )
+        return table
+    }()
 
     override private init(nibName: String?, bundle: Bundle?) {
         fatalError("init(coder:) has not been implemented")
