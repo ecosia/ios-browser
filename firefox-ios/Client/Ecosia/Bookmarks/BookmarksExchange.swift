@@ -95,8 +95,10 @@ final class BookmarksExchange: BookmarksExchangable {
         )
 
         do {
-            let (data, _) = try await URLSession.shared.data(from: fileURL)
-            guard let html = String(data: data, encoding: .utf8) else { throw Error.couldNotReadData }
+            let didStartAccessing = fileURL.startAccessingSecurityScopedResource()
+            defer { if didStartAccessing { fileURL.stopAccessingSecurityScopedResource() } }
+            guard let data = try? Data(contentsOf: fileURL),
+                  let html = String(data: data, encoding: .utf8) else { throw Error.couldNotReadData }
             let parser = try BookmarkParser(html: html)
             let bookmarks = try await parser.parseBookmarks()
             try await importBookmarks(bookmarks, viewController: viewController, toast: toast)
