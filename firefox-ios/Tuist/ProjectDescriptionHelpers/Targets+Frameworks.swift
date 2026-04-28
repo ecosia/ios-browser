@@ -18,7 +18,7 @@ public enum FrameworkTargets {
         .target(
             name: "Account",
             destinations: .iOS,
-            product: .staticLibrary,
+            product: .framework,
             bundleId: "org.mozilla.ios.Account",
             infoPlist: .file(path: "Account/Info.plist"),
             sources: [
@@ -63,7 +63,7 @@ public enum FrameworkTargets {
         .target(
             name: "Storage",
             destinations: .iOS,
-            product: .staticLibrary,
+            product: .framework,
             bundleId: "org.mozilla.ios.Storage",
             infoPlist: .file(path: "Storage/Info.plist"),
             sources: [
