@@ -22,7 +22,7 @@ extension HomepageSectionLayoutProvider {
         case .ecosiaLibrary:
             return createEcosiaLibraryLayout(for: traitCollection)
         case .ecosiaImpact:
-            return createEcosiaImpactLayout(for: traitCollection)
+            return createEcosiaImpactLayout(for: environment)
         case .ecosiaNTPCustomization:
             return createEcosiaNTPCustomizationLayout(for: traitCollection)
         // Match shortcuts width to the other Ecosia sections (MOB-4150)
@@ -89,11 +89,22 @@ extension HomepageSectionLayoutProvider {
         return section
     }
 
-    private func createEcosiaImpactLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        // NTPImpactCell is content-sized; this estimated height is a hint for the first layout pass.
+    private func createEcosiaImpactLayout(for environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+        let traitCollection = environment.traitCollection
+
+        // Ecosia: Size the impact section to fill the remaining card height so TopSites is
+        // always pinned at the bottom. Subtract the fixed-height surrounding sections:
+        //   • ecosiaHeader:  estimated 64 pt (matches createEcosiaHeaderLayout)
+        //   • topSites cell: estimated 100 pt + 8 pt top inset + 26 pt bottom inset = 134 pt
+        let topSitesSectionHeight: CGFloat = 100 + CGFloat.ecosia.space._1s + 26
+        let headerSectionHeight: CGFloat = 64
+        let fillHeight = environment.container.contentSize.height - headerSectionHeight - topSitesSectionHeight
+        // Fall back to content-size estimate so the cell is never shorter than its content.
+        let impactHeight = max(304, fillHeight)
+
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(304)
+            heightDimension: .absolute(impactHeight)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let group = NSCollectionLayoutGroup.horizontal(
@@ -140,10 +151,12 @@ extension HomepageSectionLayoutProvider {
             numberOfTilesPerRow: numberOfTilesPerRow
         )
         let edgeInset: CGFloat = traitCollection.horizontalSizeClass == .regular ? 100 : .ecosia.space._s
+        // Ecosia: TopSites row uses 8 pt (EcosiaSpacing._1s) top and 26 pt bottom padding
+        // so the row height equals TopSiteCell height + those insets.
         let insets = NSDirectionalEdgeInsets(
-            top: CGFloat.ecosia.space._m,
+            top: CGFloat.ecosia.space._1s,
             leading: edgeInset,
-            bottom: CGFloat.ecosia.space._m,
+            bottom: 26,
             trailing: edgeInset
         )
         section.contentInsets = insets
