@@ -4,7 +4,6 @@
 
 import SwiftUI
 import Common
-import Ecosia
 
 struct AutofillHeaderView: View {
     // Constants for UI layout and styling
