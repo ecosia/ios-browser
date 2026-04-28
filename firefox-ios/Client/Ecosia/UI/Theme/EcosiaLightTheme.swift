@@ -44,6 +44,10 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerAutofillText: UIColor { fallbackTheme.colors.layerAutofillText }
     var layerEmphasis: UIColor { fallbackTheme.colors.layerEmphasis }
     var layerGradientURL: Gradient { fallbackTheme.colors.layerGradientURL }
+    /* Ecosia: Use backgroundPrimaryDecorative for outer toolbar containers
+       (AddressToolbarContainer, NavigationToolbarContainer) so they match the Ecosia surface colour.
+    var layerSurfaceLow: UIColor { fallbackTheme.colors.layerSurfaceLow }
+     */
     var layerSurfaceLow: UIColor { ecosia.backgroundPrimaryDecorative }
     var layerSurfaceMedium: UIColor { ecosia.backgroundElevation1 }
     var layerSurfaceMediumAlt: UIColor { fallbackTheme.colors.layerSurfaceMediumAlt }
