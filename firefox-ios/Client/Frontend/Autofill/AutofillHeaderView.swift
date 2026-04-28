@@ -43,7 +43,6 @@ struct AutofillHeaderView: View {
                     .frame(width: UX.logoSize, height: UX.logoSize)
                     .accessibilityHidden(true)
                  */
-                // Ecosia: UIImage.ecosia(_:) returns a SwiftUI.Image from the Ecosia bundle.
                 UIImage.ecosia("iconLogo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
