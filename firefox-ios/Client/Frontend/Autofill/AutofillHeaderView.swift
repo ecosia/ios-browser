@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+import Ecosia
 
 struct AutofillHeaderView: View {
     // Constants for UI layout and styling
@@ -37,14 +38,17 @@ struct AutofillHeaderView: View {
             HStack {
                 /* Ecosia: Show Ecosia logo instead of the Firefox ball icon.
                 Image(uiImage: UIImage(imageLiteralResourceName: ImageIdentifiers.homeHeaderLogoBall))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: UX.logoSize, height: UX.logoSize)
+                    .accessibilityHidden(true)
                  */
-                if let image = UIImage(named: "iconLogo", in: .ecosia, with: nil) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: UX.logoSize, height: UX.logoSize)
-                        .accessibilityHidden(true)
-                }
+                // Ecosia: UIImage.ecosia(_:) returns a SwiftUI.Image from the Ecosia bundle.
+                UIImage.ecosia("iconLogo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: UX.logoSize, height: UX.logoSize)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading) {
                     Text(title)
                         .font(.body)

@@ -34,6 +34,7 @@ class SiteTableViewController: UIViewController,
     /* Ecosia: Initialise with tableViewStyle so subclasses (e.g. SearchViewController) can
        request .insetGrouped via an extension override without touching Firefox code.
     lazy var tableView: UITableView = .build { [weak self] table in
+        guard let self = self else { return }
      */
     lazy var tableView: UITableView = {
         // Ecosia: tableViewStyle resolved via @objc dynamic dispatch on the concrete subclass.
