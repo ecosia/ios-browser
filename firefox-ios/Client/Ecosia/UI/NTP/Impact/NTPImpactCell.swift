@@ -165,8 +165,9 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
             contentStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UX.titleHorizontalInset),
             contentStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.titleHorizontalInset),
-            // Ecosia: Center the content vertically inside the impact section, which is sized to fill
-            // the remaining card height above TopSites. >= / <= guards prevent overflow on small screens.
+            /* Center the content vertically inside the impact section, which is sized to fill
+               the remaining card height above TopSites. >= / <= guards prevent overflow on small screens.
+             */
             contentStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             contentStack.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: UX.titleToTilesGap),
             contentStack.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -UX.titleToTilesGap),

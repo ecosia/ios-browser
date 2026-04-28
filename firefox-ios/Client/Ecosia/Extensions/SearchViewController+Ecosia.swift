@@ -9,8 +9,9 @@ import Ecosia
 
 // MARK: - Table View Style
 extension SearchViewController {
-    // Ecosia: Use .insetGrouped so sections display with rounded corners and edge margins,
-    // matching the visual style of Settings screens (e.g. HomePageSettingViewController).
+    /* Use .insetGrouped so sections display with rounded corners and edge margins,
+       matching the visual style of Settings screens (e.g. HomePageSettingViewController).
+     */
     override var tableViewStyle: UITableView.Style { .insetGrouped }
 }
 
@@ -110,9 +111,10 @@ extension SearchViewController {
         pillContainer.addSubview(twinkleImageView)
         pillContainer.addSubview(aiSearchLabel)
 
-        // Ecosia: Wrap the pill in a transparent container so the pill sits flush to the left
-        // of the wrapper while the trailing gap (10 pt) creates visual separation from the
-        // cell's right edge.
+        /* Wrap the pill in a transparent container so the pill sits flush to the left
+           of the wrapper while the trailing gap (10 pt) creates visual separation from the
+           cell's right edge.
+         */
         let trailingGap: CGFloat = 10
         let accessoryWrapper = UIView(frame: CGRect(x: 0, y: pillY, width: pillWidth + trailingGap, height: pillHeight))
         accessoryWrapper.backgroundColor = .clear
