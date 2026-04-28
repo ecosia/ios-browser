@@ -111,9 +111,9 @@ extension SearchViewController {
         pillContainer.addSubview(aiSearchLabel)
 
         // Ecosia: Wrap the pill in a transparent container so the pill sits flush to the left
-        // of the wrapper while the trailing gap (EcosiaSpacing._2s = 4 pt, nearest token to 6 pt)
-        // creates visual separation from the cell's right edge.
-        let trailingGap = CGFloat.ecosia.space._2s
+        // of the wrapper while the trailing gap (EcosiaSpacing._s = 12 pt) creates visual
+        // separation from the cell's right edge.
+        let trailingGap = CGFloat.ecosia.space._s
         let accessoryWrapper = UIView(frame: CGRect(x: 0, y: pillY, width: pillWidth + trailingGap, height: pillHeight))
         accessoryWrapper.backgroundColor = .clear
         accessoryWrapper.addSubview(pillContainer)
