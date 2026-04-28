@@ -37,7 +37,6 @@ class SiteTableViewController: UIViewController,
         guard let self = self else { return }
      */
     lazy var tableView: UITableView = {
-        // Ecosia: tableViewStyle resolved via @objc dynamic dispatch on the concrete subclass.
         let table = UITableView(frame: .zero, style: tableViewStyle)
         table.translatesAutoresizingMaskIntoConstraints = false
         table.delegate = self
@@ -73,7 +72,10 @@ class SiteTableViewController: UIViewController,
         // Set an empty footer to prevent empty cells from appearing in the list.
         table.tableFooterView = UIView()
         table.sectionHeaderTopPadding = 0
-        return table
+    /* Ecosia: remove bracket to return table
+    }
+    */
+    return table
     }()
 
     override private init(nibName: String?, bundle: Bundle?) {
