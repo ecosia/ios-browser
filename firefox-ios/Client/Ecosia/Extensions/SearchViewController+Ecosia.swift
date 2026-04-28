@@ -7,6 +7,13 @@ import UIKit
 import Common
 import Ecosia
 
+// MARK: - Table View Style
+extension SearchViewController {
+    // Ecosia: Use .insetGrouped so sections display with rounded corners and edge margins,
+    // matching the visual style of Settings screens (e.g. HomePageSettingViewController).
+    override var tableViewStyle: UITableView.Style { .insetGrouped }
+}
+
 // MARK: - AI Search Autocomplete Extensions
 extension SearchViewController {
 
