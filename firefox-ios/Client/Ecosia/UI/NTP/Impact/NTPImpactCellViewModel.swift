@@ -83,8 +83,17 @@ protocol NTPImpactCellDelegate: AnyObject {
         fetchRotatingTitle()
 
         guard !UIAccessibility.isReduceMotionEnabled else {
-            refreshCell(withInfo: totalTreesInfo)
-            refreshCell(withInfo: totalInvestedInfo)
+            // Ecosia: With Reduce Motion the projection subscriptions below are never set up,
+            // so cells would only refresh once — with cachedTotal* still 0 because the async
+            // fetch hasn't completed yet. Await both fetches in parallel before refreshing.
+            Task { @MainActor in
+                async let trees = TreesProjection.shared.treesAt(.init())
+                async let invested = InvestmentsProjection.shared.totalInvestedAt(.init())
+                self.cachedTotalTrees = await trees
+                self.cachedTotalInvested = await invested
+                self.refreshCell(withInfo: self.totalTreesInfo)
+                self.refreshCell(withInfo: self.totalInvestedInfo)
+            }
             return
         }
 
