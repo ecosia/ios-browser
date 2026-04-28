@@ -782,12 +782,6 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
     * ```
     */
     public func getKey() throws -> Data {
-        // Ecosia: prefer the legacy MZKeychainWrapper key (no kSecAttrGeneric) so that records
-        // encrypted by the pre-v147 app can be decrypted consistently after migration.
-        if let legacyData = rustKeychain.legacyDataForKey(rustKeychain.loginsKeyIdentifier) {
-            return legacyData
-        }
-
         switch rustKeychain.queryKeychainForKey(key: rustKeychain.loginsKeyIdentifier) {
         case .success(let result):
             guard let data = result, let key = data.data(using: String.Encoding.utf8) else {
