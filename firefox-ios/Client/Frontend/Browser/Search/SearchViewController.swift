@@ -570,6 +570,8 @@ class SearchViewController: SiteTableViewController,
         )
         headerView.configure(viewModel)
         headerView.applyTheme(theme: currentTheme())
+        // Ecosia: Match Settings section header appearance — use textSecondary instead of textPrimary.
+        headerView.textLabel?.textColor = currentTheme().colors.textSecondary
         return headerView
     }
 
