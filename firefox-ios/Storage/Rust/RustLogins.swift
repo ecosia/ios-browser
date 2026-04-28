@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import CryptoKit // Ecosia: required for AES-256-GCM decryption of v133 login secFields during migration
 import Glean
 import Shared
 import Common
@@ -13,6 +14,18 @@ import func MozillaAppServices.checkCanary
 import struct MozillaAppServices.Login
 import struct MozillaAppServices.LoginEntry
 import protocol MozillaAppServices.KeyManager
+
+// Ecosia: base64url decoding helper used by the v133→v147 login migration
+private extension Data {
+    init?(base64URLEncoded string: String) {
+        var base64 = string
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        let remainder = base64.count % 4
+        if remainder > 0 { base64 += String(repeating: "=", count: 4 - remainder) }
+        self.init(base64Encoded: base64)
+    }
+}
 
 typealias LoginsStoreError = LoginsApiError
 public typealias LoginRecord = Login
@@ -249,11 +262,132 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
         queue = DispatchQueue(label: "RustLogins queue: \(databasePath)", attributes: [])
     }
 
+    // Ecosia: one-time migration flag for the v133→v147 login secFields migration
+    private static let v133MigrationKey = "ecosia_v133_login_migration_complete"
+
+    // Ecosia: reads and decrypts all pre-v147 login records directly from SQLite before opening
+    // LoginsStorage. Needed because we jumped from application-services v133 to v149, skipping
+    // the gradual useRustKeychain Nimbus rollout (FXIOS-11415) that upstream used to migrate users.
+    // secFields are JWE compact tokens (alg:dir, enc:A256GCM); the key is a JWK oct stored by the
+    // legacy MZKeychainWrapper. Gated by a UserDefaults flag so it runs exactly once.
+    private func extractV133Logins() -> [LoginEntry] {
+        guard !UserDefaults.standard.bool(forKey: Self.v133MigrationKey) else {
+            return []
+        }
+
+        var db: OpaquePointer?
+        guard sqlite3_open_v2(perFieldDatabasePath, &db, SQLITE_OPEN_READONLY, nil) == SQLITE_OK else {
+            UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
+            return []
+        }
+        defer { sqlite3_close(db) }
+
+        guard let keyData = rustKeychain.legacyDataForKey(rustKeychain.loginsKeyIdentifier),
+              let keyString = String(data: keyData, encoding: .utf8) else {
+            UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
+            return []
+        }
+
+        let query = """
+            SELECT origin, httpRealm, formActionOrigin, usernameField, passwordField, secFields
+            FROM loginsL WHERE secFields != '' AND is_deleted = 0
+            """
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, query, -1, &stmt, nil) == SQLITE_OK else {
+            UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
+            return []
+        }
+        defer { sqlite3_finalize(stmt) }
+
+        var entries: [LoginEntry] = []
+        var skipped = 0
+        while sqlite3_step(stmt) == SQLITE_ROW {
+            func col(_ i: Int32) -> String? {
+                guard let ptr = sqlite3_column_text(stmt, i) else { return nil }
+                return String(cString: ptr)
+            }
+            guard let secFields = col(5) else { skipped += 1; continue }
+            guard let decrypted = decryptJWEDirect(jwe: secFields, jwkString: keyString),
+                  let data = decrypted.data(using: .utf8),
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: String],
+                  let username = json["u"],
+                  let password = json["p"],
+                  !password.isEmpty else {
+                skipped += 1
+                continue
+            }
+
+            entries.append(LoginEntry(
+                origin: col(0) ?? "",
+                httpRealm: col(1),
+                formActionOrigin: col(2),
+                usernameField: col(3) ?? "",
+                passwordField: col(4) ?? "",
+                password: password,
+                username: username
+            ))
+        }
+        UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
+        return entries
+    }
+
+    // Ecosia: decrypts a v133 secFields JWE compact token (alg:dir, enc:A256GCM) using CryptoKit.
+    // jwkString is the JWK oct key stored by MZKeychainWrapper: {"kty":"oct","k":"<base64url>"}.
+    // AAD is the ASCII-encoded JWE Protected Header per RFC 7516.
+    private func decryptJWEDirect(jwe: String, jwkString: String) -> String? {
+        let parts = jwe.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
+        guard parts.count == 5 else { return nil }
+
+        // Parse JWK to get raw key bytes
+        guard let jwkData = jwkString.data(using: .utf8),
+              let jwk = try? JSONDecoder().decode([String: String].self, from: jwkData),
+              let kBase64 = jwk["k"],
+              let keyBytes = Data(base64URLEncoded: kBase64),
+              keyBytes.count == 32 else { return nil }
+
+        // Decode JWE parts (parts[1] is empty for "dir")
+        guard let iv = Data(base64URLEncoded: parts[2]),
+              let ciphertext = Data(base64URLEncoded: parts[3]),
+              let tag = Data(base64URLEncoded: parts[4]) else { return nil }
+
+        do {
+            let symmetricKey = SymmetricKey(data: keyBytes)
+            let nonce = try AES.GCM.Nonce(data: iv)
+            let sealedBox = try AES.GCM.SealedBox(nonce: nonce, ciphertext: ciphertext, tag: tag)
+            let aad = Data(parts[0].utf8)
+            let plaintext = try AES.GCM.open(sealedBox, using: symmetricKey, authenticating: aad)
+            return String(data: plaintext, encoding: .utf8)
+        } catch {
+            return nil
+        }
+    }
+
+    // Ecosia: re-adds logins extracted from the v133 database using the new v147 API
+    private func readdMigratedLogins(_ logins: [LoginEntry]) {
+        for login in logins {
+            getStoredKey { [weak self] result in
+                guard case .success = result, let self = self else { return }
+                _ = try? self.storage?.add(login: login)
+            }
+        }
+    }
+
     // Open the db.
     private func open() -> NSError? {
+        // Ecosia: run v133→v147 migration before LoginsStorage opens the database
+        let migratedLogins = extractV133Logins()
+        if !migratedLogins.isEmpty {
+            // Delete the v133 database so LoginsStorage creates a fresh one with the new schema.
+            // Migrated logins are re-added after open via readdMigratedLogins.
+            try? FileManager.default.removeItem(atPath: perFieldDatabasePath)
+        }
         do {
             storage = try LoginsStorage(databasePath: self.perFieldDatabasePath, keyManager: self)
             isOpen = true
+            // Ecosia: readd entries from v133→v147 migration
+            if !migratedLogins.isEmpty {
+                readdMigratedLogins(migratedLogins)
+            }
             return nil
         } catch let err as NSError {
             if let loginsStoreError = err as? LoginsStoreError {
@@ -771,13 +905,9 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
     * ```
     */
     public func getKey() throws -> Data {
-        // Try the legacy MZKeychainWrapper path first (no kSecAttrGeneric). Users upgrading from
-        // pre-v147 had their key stored by MZKeychainWrapper, and the old Rust encryption received
-        // the raw keychain bytes directly. Returning those same bytes allows decryption of existing
-        // records. If not found (fresh install or already migrated), fall back to RustKeychain.
+        // Ecosia: prefer the legacy MZKeychainWrapper key (no kSecAttrGeneric) so that records
+        // encrypted by the pre-v147 app can be decrypted consistently after migration.
         if let legacyData = rustKeychain.legacyDataForKey(rustKeychain.loginsKeyIdentifier) {
-            // Ecosia [MOB-passwords-debug]: temporary diagnostic logging — remove once password persistence is understood
-            print("[MOB-passwords-debug] getKey: legacy key retrieved (length=\(legacyData.count))")
             return legacyData
         }
 

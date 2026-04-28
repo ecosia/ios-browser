@@ -55,7 +55,7 @@ public protocol KeychainProtocol: Sendable {
     static func wipeKeychain()
     func createLoginsKeyData() throws -> String
     func queryKeychainForKey(key: String) -> Result<String?, Error>
-    func legacyDataForKey(_ key: String) -> Data?
+    func legacyDataForKey(_ key: String) -> Data? // Ecosia: finds pre-v147 MZKeychainWrapper keys for migration
     func createAndStoreKey(canaryPhrase: String, canaryIdentifier: String, keyIdentifier: String) throws -> String
     func decryptCreditCardNum(encryptedCCNum: String) -> String?
     func checkCanary(canary: String,
@@ -345,11 +345,9 @@ public final class RustKeychain: KeychainProtocol {
         return keychainQueryDictionary
     }
 
-    // Queries for keychain items stored by the legacy MZKeychainWrapper (pre-v147).
-    // MZKeychainWrapper stored kSecAttrAccount as a plain CFString (not Data), so we query
-    // with a String to match what it wrote. Does not filter on kSecAttrGeneric (which
-    // MZKeychainWrapper did not set) so it finds the original item rather than any newer
-    // RustKeychain item. Returns raw kSecValueData bytes.
+    // Ecosia: queries keychain items written by the legacy MZKeychainWrapper (pre-v147).
+    // Uses kSecAttrAccount as a plain String (matching MZKeychainWrapper's storage format) and
+    // omits kSecAttrGeneric so it finds the original item rather than any RustKeychain item.
     public func legacyDataForKey(_ key: String) -> Data? {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
