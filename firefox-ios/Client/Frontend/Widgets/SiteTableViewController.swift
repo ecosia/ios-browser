@@ -53,10 +53,14 @@ class SiteTableViewController: UIViewController,
             SiteTableViewHeader.self,
             forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier
         )
-        table.layoutMargins = .zero
+        // Ecosia: .plain tables need zero margins so cells span edge-to-edge; grouped/insetGrouped
+        // tables rely on their default layout margins for the leading/trailing section-group insets.
+        if tableViewStyle == .plain {
+            table.layoutMargins = .zero
+            table.cellLayoutMarginsFollowReadableWidth = false
+        }
         table.keyboardDismissMode = .onDrag
         table.accessibilityIdentifier = "SiteTable"
-        table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = SiteTableViewControllerUX.RowHeight
         table.setEditing(false, animated: false)
 
@@ -196,7 +200,11 @@ class SiteTableViewController: UIViewController,
         ]
         setNeedsStatusBarAppearanceUpdate()
 
+        /* Ecosia: .insetGrouped tables need a recessed background (layer2) so section groups
+           contrast against the table background; layer1 makes them indistinguishable.
         tableView.backgroundColor = theme.colors.layer1
+         */
+        tableView.backgroundColor = tableViewStyle == .plain ? theme.colors.layer1 : theme.colors.layer2
         tableView.separatorColor = theme.colors.borderPrimary
         tableView.reloadData()
     }
