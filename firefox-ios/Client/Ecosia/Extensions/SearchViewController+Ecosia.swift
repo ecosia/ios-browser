@@ -101,7 +101,7 @@ extension SearchViewController {
         let leftImageCenterY = cell.leftImageView.frame.midY
         let pillY = leftImageCenterY - (pillHeight / 2)
 
-        pillContainer.frame = CGRect(x: 0, y: pillY, width: pillWidth, height: pillHeight)
+        pillContainer.frame = CGRect(x: 0, y: 0, width: pillWidth, height: pillHeight)
         pillContainer.layer.cornerRadius = pillHeight / 2
 
         twinkleImageView.frame = CGRect(x: internalPadding, y: (pillHeight - twinkleSize) / 2, width: twinkleSize, height: twinkleSize)
@@ -110,7 +110,14 @@ extension SearchViewController {
         pillContainer.addSubview(twinkleImageView)
         pillContainer.addSubview(aiSearchLabel)
 
-        cell.accessoryView = pillContainer
+        // Ecosia: Wrap the pill in a transparent container so the pill sits flush to the left
+        // of the wrapper while the trailing gap (EcosiaSpacing._2s = 4 pt, nearest token to 6 pt)
+        // creates visual separation from the cell's right edge.
+        let trailingGap = CGFloat.ecosia.space._2s
+        let accessoryWrapper = UIView(frame: CGRect(x: 0, y: pillY, width: pillWidth + trailingGap, height: pillHeight))
+        accessoryWrapper.backgroundColor = .clear
+        accessoryWrapper.addSubview(pillContainer)
+        cell.accessoryView = accessoryWrapper
 
         return cell
     }
