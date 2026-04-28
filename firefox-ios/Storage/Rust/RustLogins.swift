@@ -251,22 +251,25 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
 
     // Open the db.
     private func open() -> NSError? {
-        // Ecosia: run v133→v147 migration before LoginsStorage opens the database
+        // Ecosia: run v133→v147 migration before LoginsStorage opens the database.
+        // backupV133Database() moves the legacy DB away from perFieldDatabasePath so LoginsStorage
+        // finds no file there and creates a fresh one — same effect as deleting, but the data is
+        // preserved at v133BackupDatabasePath and only removed after re-add completes.
         let migratedLogins = extractV133Logins()
-        if !migratedLogins.isEmpty {
-            // Delete the v133 database so LoginsStorage creates a fresh one with the new schema.
-            // Migrated logins are re-added after open via readdMigratedLogins.
-            try? FileManager.default.removeItem(atPath: perFieldDatabasePath)
-        }
+        let migrationActive = !migratedLogins.isEmpty && backupV133Database()
         do {
             storage = try LoginsStorage(databasePath: self.perFieldDatabasePath, keyManager: self)
             isOpen = true
-            // Ecosia: readd entries from v133→v147 migration
-            if !migratedLogins.isEmpty {
+            if migrationActive {
                 readdMigratedLogins(migratedLogins)
             }
             return nil
         } catch let err as NSError {
+            // Ecosia: restore the v133 backup so the migration can retry next launch
+            if migrationActive {
+                restoreV133Backup()
+            }
+
             if let loginsStoreError = err as? LoginsStoreError {
                 // This is an unrecoverable
                 // state unless we can move the existing file to a backup

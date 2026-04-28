@@ -38,23 +38,68 @@ extension RustLogins {
     // Ecosia: UserDefaults key that gates the migration to run exactly once
     static let v133MigrationKey = "ecosia_v133_login_migration_complete"
 
+    // Ecosia: backup path used during migration to avoid permanent data loss.
+    // The backup is created before LoginsStorage opens and deleted after re-add completes.
+    // If the app is killed mid-migration, the backup survives and allows retry on next launch.
+    var v133BackupDatabasePath: String { perFieldDatabasePath + ".v133backup" }
+
+    // Ecosia: moves the v133 database to the backup path so LoginsStorage can create a fresh DB.
+    // If a backup already exists (interrupted migration), deletes any partial new DB and returns
+    // true so the migration re-runs cleanly from the existing backup.
+    // Returns false and leaves everything untouched if the move fails.
+    func backupV133Database() -> Bool {
+        let backup = v133BackupDatabasePath
+        if FileManager.default.fileExists(atPath: backup) {
+            // Previous migration was interrupted — wipe the partial new DB and retry
+            try? FileManager.default.removeItem(atPath: perFieldDatabasePath)
+            return true
+        }
+        do {
+            try FileManager.default.moveItem(atPath: perFieldDatabasePath, toPath: backup)
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    // Ecosia: restores the backup to the original path so the migration can retry next launch
+    func restoreV133Backup() {
+        try? FileManager.default.moveItem(atPath: v133BackupDatabasePath, toPath: perFieldDatabasePath)
+        UserDefaults.standard.removeObject(forKey: Self.v133MigrationKey)
+    }
+
     // Ecosia: extracts and decrypts all pre-v147 login records from the SQLite database before
     // LoginsStorage opens it. The schema version check is skipped intentionally — previous runs
     // of LoginsStorage may have already migrated user_version from 2 to 5 while leaving the
-    // encrypted secFields blobs intact.
+    // encrypted secFields blobs intact. Checks the backup path first to handle retries after
+    // an interrupted migration.
     func extractV133Logins() -> [LoginEntry] {
         guard !UserDefaults.standard.bool(forKey: Self.v133MigrationKey) else { return [] }
 
+        // Prefer the backup path — it means a previous migration was interrupted after the DB
+        // was moved but before re-add completed. The new (partial) DB at perFieldDatabasePath
+        // will be discarded by backupV133Database() when open() calls it.
+        let dbPath = FileManager.default.fileExists(atPath: v133BackupDatabasePath)
+            ? v133BackupDatabasePath
+            : perFieldDatabasePath
+
         var db: OpaquePointer?
-        guard sqlite3_open_v2(perFieldDatabasePath, &db, SQLITE_OPEN_READONLY, nil) == SQLITE_OK else {
-            UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
+        let openStatus = sqlite3_open_v2(dbPath, &db, SQLITE_OPEN_READONLY, nil)
+        guard openStatus == SQLITE_OK else {
+            // Only mark complete when the file definitively doesn't exist — any other open
+            // failure (busy, locked, permissions) could be transient and should retry next launch.
+            if !FileManager.default.fileExists(atPath: dbPath) {
+                UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
+            }
             return []
         }
         defer { sqlite3_close(db) }
 
+        // No completion here — a nil result could mean the keychain is temporarily unavailable
+        // (e.g., post-restore before first unlock). Retry next launch until the key is readable
+        // or until we can definitively confirm there is no legacy data.
         guard let keyData = rustKeychain.legacyDataForKey(rustKeychain.loginsKeyIdentifier),
               let keyString = String(data: keyData, encoding: .utf8) else {
-            UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
             return []
         }
 
@@ -93,17 +138,27 @@ extension RustLogins {
                 username: username
             ))
         }
-        UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
+
+        if entries.isEmpty {
+            // Nothing to re-add — mark complete immediately.
+            UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
+        }
+        // If entries is non-empty, the flag is set by readdMigratedLogins after all adds complete.
         return entries
     }
 
-    // Ecosia: re-adds logins extracted from the v133 database using the new v147 API
+    // Ecosia: re-adds logins extracted from the v133 database using the new v147 API.
+    // All adds are dispatched as a single block on queue so storage access is serialised.
+    // The backup is deleted and the migration flag set only after all adds complete, so a
+    // failure or app kill before this point leaves the backup intact for retry next launch.
     func readdMigratedLogins(_ logins: [LoginEntry]) {
-        for login in logins {
-            getStoredKey { [weak self] result in
-                guard case .success = result, let self = self else { return }
+        queue.async { [weak self] in
+            guard let self, self.isOpen else { return }
+            for login in logins {
                 _ = try? self.storage?.add(login: login)
             }
+            try? FileManager.default.removeItem(atPath: self.v133BackupDatabasePath)
+            UserDefaults.standard.set(true, forKey: Self.v133MigrationKey)
         }
     }
 
