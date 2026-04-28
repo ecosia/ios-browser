@@ -23,9 +23,11 @@ features:
           wikipedia: true
         
     defaults:
+      # Ecosia: Firefox Suggest is disabled for all channels including developer;
+      # Ecosia does not surface sponsored or non-sponsored Suggest results.
       - channel: developer
         value:
-          status: true
+          status: false
 
 enums:
   SuggestionType:
