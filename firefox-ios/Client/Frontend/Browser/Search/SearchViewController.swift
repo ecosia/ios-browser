@@ -516,8 +516,8 @@ class SearchViewController: SiteTableViewController,
         heightForHeaderInSection section: Int
     ) -> CGFloat {
         guard viewModel.shouldShowHeader(for: section) else { return 0 }
-        // Ecosia: Suppress the header when there are no rows — prevents "Ecosia Suggest"
-        // appearing as an empty section when suggestions are disabled or unavailable.
+        /* Ecosia: Suppress the header when there are no rows — prevents "Ecosia Suggest"
+        appearing as an empty section when suggestions are disabled or unavailable. */
         guard tableView.numberOfRows(inSection: section) > 0 else { return 0 }
 
         return UITableView.automaticDimension
