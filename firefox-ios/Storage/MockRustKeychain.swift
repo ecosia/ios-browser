@@ -72,6 +72,7 @@ class MockRustKeychain: @unchecked Sendable, KeychainProtocol {
         return .success(storage[key])
     }
 
+    // Ecosia: mock conformance for the legacyDataForKey requirement added for the v133→v147 migration
     func legacyDataForKey(_ key: String) -> Data? {
         return storage[key]?.data(using: .utf8)
     }
