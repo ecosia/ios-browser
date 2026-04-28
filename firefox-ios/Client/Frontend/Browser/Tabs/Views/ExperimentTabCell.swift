@@ -174,7 +174,13 @@ final class ExperimentTabCell: UICollectionViewCell, ThemeApplicable, ReusableCe
         setupShadow(theme: theme)
 
         if UIAccessibility.isReduceTransparencyEnabled {
+            /* Ecosia: iconSecondary resolves to White in dark mode (via buttonContentSecondary),
+               making the near-white textOnDark X icon invisible against the white background.
+               The normal blur uses systemUltraThinMaterialDark (always dark), so the fallback
+               must also be always dark to keep the X legible in every theme.
             closeButtonBlurView.backgroundColor = theme.colors.iconSecondary
+             */
+            closeButtonBlurView.backgroundColor = UIColor.black.withAlphaComponent(0.45)
         } else {
             closeButtonBlurView.backgroundColor = .clear
             closeButtonBlurView.addBlurEffectWithClearBackgroundAndClipping(using: .systemUltraThinMaterialDark)
