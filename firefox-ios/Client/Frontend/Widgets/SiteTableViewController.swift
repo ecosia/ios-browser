@@ -54,8 +54,9 @@ class SiteTableViewController: UIViewController,
             SiteTableViewHeader.self,
             forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier
         )
-        // Ecosia: .plain tables need zero margins so cells span edge-to-edge; grouped/insetGrouped
-        // tables rely on their default layout margins for the leading/trailing section-group insets.
+        /* Ecosia: .plain tables need zero margins so cells span edge-to-edge; grouped/insetGrouped
+           tables rely on their default layout margins for the leading/trailing section-group insets.
+         */
         if tableViewStyle == .plain {
             table.layoutMargins = .zero
             table.cellLayoutMarginsFollowReadableWidth = false
