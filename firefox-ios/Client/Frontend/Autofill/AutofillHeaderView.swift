@@ -43,11 +43,13 @@ struct AutofillHeaderView: View {
                     .frame(width: UX.logoSize, height: UX.logoSize)
                     .accessibilityHidden(true)
                  */
-                UIImage.ecosia("iconLogo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: UX.logoSize, height: UX.logoSize)
-                    .accessibilityHidden(true)
+                if let image = UIImage(named: "iconLogo", in: .ecosia, with: nil) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: UX.logoSize, height: UX.logoSize)
+                        .accessibilityHidden(true)
+                }
                 VStack(alignment: .leading) {
                     Text(title)
                         .font(.body)
