@@ -55,6 +55,7 @@ public protocol KeychainProtocol: Sendable {
     static func wipeKeychain()
     func createLoginsKeyData() throws -> String
     func queryKeychainForKey(key: String) -> Result<String?, Error>
+    func legacyDataForKey(_ key: String) -> Data?
     func createAndStoreKey(canaryPhrase: String, canaryIdentifier: String, keyIdentifier: String) throws -> String
     func decryptCreditCardNum(encryptedCCNum: String) -> String?
     func checkCanary(canary: String,
@@ -342,6 +343,29 @@ public final class RustKeychain: KeychainProtocol {
             keychainQueryDictionary[kSecAttrAccessGroup as String] = accessGroup
         }
         return keychainQueryDictionary
+    }
+
+    // Queries for keychain items stored by the legacy MZKeychainWrapper (pre-v147).
+    // MZKeychainWrapper stored kSecAttrAccount as a plain CFString (not Data), so we query
+    // with a String to match what it wrote. Does not filter on kSecAttrGeneric (which
+    // MZKeychainWrapper did not set) so it finds the original item rather than any newer
+    // RustKeychain item. Returns raw kSecValueData bytes.
+    public func legacyDataForKey(_ key: String) -> Data? {
+        var query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: self.serviceName,
+            kSecAttrAccount as String: key,         // String, not Data — matches MZKeychainWrapper
+            kSecAttrSynchronizable as String: false,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        if let accessGroup = self.accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        guard status == errSecSuccess, let data = result as? Data else { return nil }
+        return data
     }
 
     private func logErrorFromStatus(_ status: OSStatus, errMsg: String) {

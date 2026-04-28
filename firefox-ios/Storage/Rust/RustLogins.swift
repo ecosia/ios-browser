@@ -771,6 +771,16 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
     * ```
     */
     public func getKey() throws -> Data {
+        // Try the legacy MZKeychainWrapper path first (no kSecAttrGeneric). Users upgrading from
+        // pre-v147 had their key stored by MZKeychainWrapper, and the old Rust encryption received
+        // the raw keychain bytes directly. Returning those same bytes allows decryption of existing
+        // records. If not found (fresh install or already migrated), fall back to RustKeychain.
+        if let legacyData = rustKeychain.legacyDataForKey(rustKeychain.loginsKeyIdentifier) {
+            // Ecosia [MOB-passwords-debug]: temporary diagnostic logging — remove once password persistence is understood
+            print("[MOB-passwords-debug] getKey: legacy key retrieved (length=\(legacyData.count))")
+            return legacyData
+        }
+
         switch rustKeychain.queryKeychainForKey(key: rustKeychain.loginsKeyIdentifier) {
         case .success(let result):
             guard let data = result, let key = data.data(using: String.Encoding.utf8) else {

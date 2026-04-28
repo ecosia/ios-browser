@@ -72,6 +72,10 @@ class MockRustKeychain: @unchecked Sendable, KeychainProtocol {
         return .success(storage[key])
     }
 
+    func legacyDataForKey(_ key: String) -> Data? {
+        return storage[key]?.data(using: .utf8)
+    }
+
     func createAndStoreKey(canaryPhrase: String, canaryIdentifier: String, keyIdentifier: String) throws -> String {
         let keyValue = try createKey()
         let canaryValue = try createCanary(text: canaryPhrase, encryptionKey: keyValue)
