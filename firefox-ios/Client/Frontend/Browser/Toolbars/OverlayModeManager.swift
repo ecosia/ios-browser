@@ -97,7 +97,11 @@ class DefaultOverlayModeManager: OverlayModeManager {
         // The NewTabPage cases are weird topSites = homepage
         // and homepage = customURL
         switch newTabSettings {
+        /* Ecosia: Never auto-focus the address bar when the NTP is shown; Firefox would
+           focus by default (url == nil falls through to ?? true).
         case .topSites: return url?.isFxHomeUrl ?? true
+         */
+        case .topSites: return false
         case .blankPage: return true
         case .homePage: return false
         }
