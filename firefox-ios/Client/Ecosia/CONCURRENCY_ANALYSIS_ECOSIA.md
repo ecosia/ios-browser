@@ -37,7 +37,6 @@ Static mutable or shared state is problematic under strict concurrency unless it
 | Location | Pattern | Risk | Proposed fix |
 |----------|---------|------|----------------|
 | **MarketsController.swift** (Markets) | `static var current: String?` (computed from `User.shared`) | Read of `User.shared` from arbitrary context; under strict concurrency, static computed properties are nonisolated. | Keep as computed property; ensure `User.shared` is safe from any context, or isolate the type (e.g. `@MainActor enum Markets` / `@MainActor final class Markets`) if it’s UI/config-only. |
-| **DefaultBrowser.swift** | `static var minPromoSearches = 50` | Mutable global state; not concurrency-safe. | Make `static let` if never mutated, or move to a config type (e.g. actor or @MainActor) and document. |
 | **EcosiaFindInPageBar.swift** | `static var retrieveSavedText: String?` (UserDefaults read) | Nonisolated global read; UserDefaults is thread-safe but the *property* is shared. | Prefer `nonisolated` + doc, or expose via a small helper (e.g. MainActor or actor) if callers are UI-only. |
 | **WelcomeTour.Step.swift** | `static var all: [Step]` | Computed, returns new array each time; no mutable state. | Low risk. If type becomes `@MainActor`, this is fine; otherwise leave as-is (value is effectively constant). |
 | **FilterController** | `static var current: String?` | Same pattern as Markets: computed from `User.shared`. | Same as Markets: rely on `User.shared` thread-safety or isolate the type. |
@@ -46,7 +45,6 @@ Static mutable or shared state is problematic under strict concurrency unless it
 | **EcosiaDebugSettings.swift** | `static var isEnabled: Bool` (SimulateAuthError, SimulateImpactAPIError) | Computed from UserDefaults; read from multiple contexts. | UserDefaults is thread-safe. Document that these are simple UserDefaults reads; no code change required unless you want explicit `nonisolated` for clarity. |
 | **SnapKit+Ecosia.swift** | `static var veryHigh: ConstraintPriority` | Returns new value each time; no mutable state. | No change. |
 
-**Summary:** The only clearly mutable static in this set is `DefaultBrowser.minPromoSearches`; make it `static let` if it’s never written. The rest are either computed, constant, or used as keys; isolate or document as above.
 
 ---
 
@@ -128,7 +126,6 @@ Extensions use `nonisolated var` / `nonisolated func` and document that `Invisib
 | File / area | Category | Action |
 |-------------|----------|--------|
 | MarketsController (Markets) | Static | Consider `@MainActor` for `Markets` or document `User.shared` usage; `static let all` already done. |
-| DefaultBrowser | Static | Change `minPromoSearches` to `static let` if never mutated. |
 | EcosiaFindInPageBar | Static | Document or wrap `retrieveSavedText`; low priority. |
 | FilterController | Static | Same as Markets for `current`. |
 | EcosiaHomepageSectionType | Static | Optional `@MainActor` if UI-only. |
@@ -149,8 +146,6 @@ Extensions use `nonisolated var` / `nonisolated func` and document that `Invisib
 ## 4. Recommended fix order (minimal blast radius)
 
 1. **Low-risk, single-line**
-   - `DefaultBrowser.minPromoSearches`: if never mutated → `static let minPromoSearches = 50`.
-
 2. **Closure / callback isolation**
    - NTPHeaderViewModel: add `.receive(on: DispatchQueue.main)` to the `objectWillChange` sink (or equivalent).
    - EcosiaAuth: add `Task { @MainActor in await performLogin(flow) }` (and same for logout) if the entry point is not guaranteed main.

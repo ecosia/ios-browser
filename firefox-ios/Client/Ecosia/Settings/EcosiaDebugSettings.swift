@@ -46,21 +46,13 @@ final class ToggleDefaultBrowserPromo: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        guard let profile else { return nil }
-        let introSeen = profile.prefs.intForKey(PrefsKeys.IntroSeen) != nil
-        return NSAttributedString(string: introSeen ? "False (click to reset)" : "True", attributes: [:])
+        let shown = User.shared.defaultBrowserSearchPromoShown
+        return NSAttributedString(string: shown ? "Suppressed (tap to reset)" : "Eligible", attributes: [:])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        profile?.prefs.removeObjectForKey(PrefsKeys.IntroSeen)
         User.shared.resetDefaultBrowserSearchPromo()
         settings.tableView.reloadData()
-    }
-
-    var profile: Profile?
-    override init(settings: SettingsTableViewController) {
-        self.profile = settings.profile
-        super.init(settings: settings)
     }
 }
 
