@@ -85,9 +85,9 @@ extension SearchViewController {
         aiSearchLabel.font = .preferredFont(forTextStyle: .caption1)
         aiSearchLabel.sizeToFit()
 
-        let twinkleSize: CGFloat = 16
-        let internalPadding: CGFloat = 8
-        let spacing: CGFloat = 2
+        let twinkleSize: CGFloat = .ecosia.space._m
+        let internalPadding: CGFloat = .ecosia.space._1s
+        let spacing: CGFloat = .ecosia.space._2s
 
         // Create the actual pill container matching titleLabel height
         let pillContainer = UIView()
@@ -96,7 +96,7 @@ extension SearchViewController {
         let pillWidth = internalPadding + twinkleSize + spacing + aiSearchLabel.frame.width + internalPadding
         // Ensure layout is up-to-date before reading frames
         cell.layoutIfNeeded()
-        let pillHeight = cell.titleLabel.frame.height + internalPadding / 2
+        let pillHeight = aiSearchLabel.frame.height + .ecosia.space._1s
 
         // Calculate Y position to center pill with leftImageView
         let leftImageCenterY = cell.leftImageView.frame.midY
