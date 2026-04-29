@@ -240,7 +240,7 @@ To run the app on a new device, register it on the Apple Developer Portal and re
 
 1. Plug in your device and register it via the [`register_devices`](https://docs.fastlane.tools/actions/register_devices/) action. You will be prompted for the device name and UDID:
     ```shell
-    bundle exec fastlane run register_devices
+    bundle exec fastlane run register_device
     ```
 2. Re-generate the provisioning profiles to include the new device by running `match` with `--force_for_new_devices` for both **development** (for local development) and **ad hoc** (for Firebase releases):
     ```shell
