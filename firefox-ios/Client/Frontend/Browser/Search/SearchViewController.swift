@@ -6,6 +6,7 @@ import UIKit
 import Shared
 import Storage
 import Common
+import Ecosia
 import SiteImageView
 
 protocol SearchViewControllerDelegate: AnyObject {
@@ -516,9 +517,9 @@ class SearchViewController: SiteTableViewController,
         heightForHeaderInSection section: Int
     ) -> CGFloat {
         guard viewModel.shouldShowHeader(for: section) else { return 0 }
-        /* Ecosia: Suppress the header when there are no rows — prevents "Ecosia Suggest"
-        appearing as an empty section when suggestions are disabled or unavailable. */
+        // Ecosia: Suppress headers for empty sections and for "Ecosia search" above suggestions.
         guard tableView.numberOfRows(inSection: section) > 0 else { return 0 }
+        guard SearchListSection(rawValue: section) != .searchSuggestions else { return 0 }
 
         return UITableView.automaticDimension
     }
@@ -749,6 +750,8 @@ class SearchViewController: SiteTableViewController,
                     and: StandardImageIdentifiers.Large.history
                 )
                 oneLineCell.configure(viewModel: oneLineCellViewModel)
+                // Ecosia: Replace the Firefox history icon with the Ecosia equivalent.
+                oneLineCell.leftImageView.image = UIImage.ecosia(named: "history")?.withRenderingMode(.alwaysTemplate)
                 cell = oneLineCell
             }
 
