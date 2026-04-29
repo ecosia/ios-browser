@@ -13,11 +13,13 @@ final class IntroScreenManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         prefs = MockProfilePrefs()
+        User.shared.firstTime = true
     }
 
     override func tearDown() {
         super.tearDown()
         prefs = nil
+        User.shared.firstTime = true
     }
 
     /* Ecosia: we are basing the onboarding/intro on different flags
@@ -32,4 +34,38 @@ final class IntroScreenManagerTests: XCTestCase {
         XCTAssertFalse(subject.shouldShowIntroScreen)
     }
      */
+
+    // MARK: - Ecosia: shouldShowIntroScreen
+
+    func testFreshInstall_showsIntroScreen() {
+        // Given: no IntroSeen, firstTime=true (factory defaults for a new install)
+        let subject = IntroScreenManager(prefs: prefs)
+        XCTAssertTrue(subject.shouldShowIntroScreen)
+    }
+
+    func testAfterDidSeeIntroScreen_doesNotShowIntroScreen() {
+        // Given: user completed onboarding on develop (IntroSeen written, firstTime=false)
+        let subject = IntroScreenManager(prefs: prefs)
+        subject.didSeeIntroScreen()
+        XCTAssertFalse(subject.shouldShowIntroScreen)
+    }
+
+    func testUpgradeFromMain_doesNotShowIntroScreen() {
+        // Given: user upgrading from main — IntroSeen was never written on main but
+        // handleFirstTimeUserActions() set firstTime=false on first browser load.
+        User.shared.firstTime = false
+        let subject = IntroScreenManager(prefs: prefs)
+        XCTAssertFalse(
+            subject.shouldShowIntroScreen,
+            "Welcome screen must not re-appear for users upgrading from main."
+        )
+    }
+
+    func testIntroSeenWithFirstTimeFalse_doesNotShowIntroScreen() {
+        // Given: fully onboarded develop user
+        User.shared.firstTime = false
+        prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        let subject = IntroScreenManager(prefs: prefs)
+        XCTAssertFalse(subject.shouldShowIntroScreen)
+    }
 }

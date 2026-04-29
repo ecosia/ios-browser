@@ -17,7 +17,14 @@ struct IntroScreenManager: FeatureFlaggable, IntroScreenManagerProtocol {
     var prefs: Prefs
 
     var shouldShowIntroScreen: Bool {
+        /* Ecosia: Prevent welcome screen re-appearing for users upgrading from main.
+         On main, welcomeDidFinish did not call didSeeIntroScreen(), so IntroSeen was
+         never written. firstTime=false (set by handleFirstTimeUserActions on first
+         browser load) is the reliable signal that a user has already been through the
+         app — treat them as having seen the intro.
         prefs.intForKey(PrefsKeys.IntroSeen) == nil
+        */
+        prefs.intForKey(PrefsKeys.IntroSeen) == nil && User.shared.firstTime
     }
 
     func didSeeIntroScreen() {
