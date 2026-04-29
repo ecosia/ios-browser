@@ -7,6 +7,14 @@ import UIKit
 import Common
 import Ecosia
 
+// MARK: - Table View Style
+extension SearchViewController {
+    /* Use .insetGrouped so sections display with rounded corners and edge margins,
+       matching the visual style of Settings screens (e.g. HomePageSettingViewController).
+     */
+    override var tableViewStyle: UITableView.Style { .insetGrouped }
+}
+
 // MARK: - AI Search Autocomplete Extensions
 extension SearchViewController {
 
@@ -77,9 +85,9 @@ extension SearchViewController {
         aiSearchLabel.font = .preferredFont(forTextStyle: .caption1)
         aiSearchLabel.sizeToFit()
 
-        let twinkleSize: CGFloat = 16
-        let internalPadding: CGFloat = 8
-        let spacing: CGFloat = 2
+        let twinkleSize: CGFloat = .ecosia.space._m
+        let internalPadding: CGFloat = .ecosia.space._1s
+        let spacing: CGFloat = .ecosia.space._2s
 
         // Create the actual pill container matching titleLabel height
         let pillContainer = UIView()
@@ -88,13 +96,13 @@ extension SearchViewController {
         let pillWidth = internalPadding + twinkleSize + spacing + aiSearchLabel.frame.width + internalPadding
         // Ensure layout is up-to-date before reading frames
         cell.layoutIfNeeded()
-        let pillHeight = cell.titleLabel.frame.height + internalPadding / 2
+        let pillHeight = aiSearchLabel.frame.height + .ecosia.space._1s
 
         // Calculate Y position to center pill with leftImageView
         let leftImageCenterY = cell.leftImageView.frame.midY
         let pillY = leftImageCenterY - (pillHeight / 2)
 
-        pillContainer.frame = CGRect(x: 0, y: pillY, width: pillWidth, height: pillHeight)
+        pillContainer.frame = CGRect(x: 0, y: 0, width: pillWidth, height: pillHeight)
         pillContainer.layer.cornerRadius = pillHeight / 2
 
         twinkleImageView.frame = CGRect(x: internalPadding, y: (pillHeight - twinkleSize) / 2, width: twinkleSize, height: twinkleSize)
@@ -103,7 +111,15 @@ extension SearchViewController {
         pillContainer.addSubview(twinkleImageView)
         pillContainer.addSubview(aiSearchLabel)
 
-        cell.accessoryView = pillContainer
+        /* Wrap the pill in a transparent container so the pill sits flush to the left
+           of the wrapper while the trailing gap (10 pt) creates visual separation from the
+           cell's right edge.
+         */
+        let trailingGap: CGFloat = 10
+        let accessoryWrapper = UIView(frame: CGRect(x: 0, y: pillY, width: pillWidth + trailingGap, height: pillHeight))
+        accessoryWrapper.backgroundColor = .clear
+        accessoryWrapper.addSubview(pillContainer)
+        cell.accessoryView = accessoryWrapper
 
         return cell
     }

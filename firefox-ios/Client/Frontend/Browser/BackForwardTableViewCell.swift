@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import UIKit
 import Storage
 import Shared
@@ -113,7 +114,7 @@ class BackForwardTableViewCell: UITableViewCell, ReusableCell, ThemeApplicable {
             /* Ecosia: Show Ecosia app icon instead of Firefox fox favicon for the home entry
             faviconView.manuallySetImage(UIImage(named: ImageIdentifiers.firefoxFavicon) ?? UIImage())
              */
-            faviconView.manuallySetImage(UIImage(named: "ecosiaLogoLaunch") ?? UIImage())
+            faviconView.manuallySetImage(UIImage.ecosia(named: "iconLogo") ?? UIImage())
         } else {
             faviconView.setFavicon(FaviconImageViewModel(siteURLString: viewModel.site.url,
                                                          faviconCornerRadius: UX.faviconCornerRadius))

@@ -83,8 +83,14 @@ protocol NTPImpactCellDelegate: AnyObject {
         fetchRotatingTitle()
 
         guard !UIAccessibility.isReduceMotionEnabled else {
-            refreshCell(withInfo: totalTreesInfo)
-            refreshCell(withInfo: totalInvestedInfo)
+            Task { @MainActor in
+                async let trees = TreesProjection.shared.treesAt(.init())
+                async let invested = InvestmentsProjection.shared.totalInvestedAt(.init())
+                self.cachedTotalTrees = await trees
+                self.cachedTotalInvested = await invested
+                self.refreshCell(withInfo: self.totalTreesInfo)
+                self.refreshCell(withInfo: self.totalInvestedInfo)
+            }
             return
         }
 

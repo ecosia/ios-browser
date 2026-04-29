@@ -463,7 +463,11 @@ class MainMenuViewController: UIViewController,
     // MARK: - UX related
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
+        /* Ecosia: Use layer1 (backgroundPrimaryDecorative) to match the Settings screen in dark
+           mode; layerSurfaceLow falls through to Firefox's default palette.
         view.backgroundColor = theme.colors.layerSurfaceLow.withAlphaComponent(mainMenuHelper.backgroundAlpha())
+         */
+        view.backgroundColor = theme.colors.layer1.withAlphaComponent(mainMenuHelper.backgroundAlpha())
         menuContent.applyTheme(theme: theme)
     }
 
