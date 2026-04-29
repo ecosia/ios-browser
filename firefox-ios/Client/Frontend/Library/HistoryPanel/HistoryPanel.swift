@@ -7,6 +7,7 @@ import Shared
 import Storage
 import WebKit
 import Common
+import Ecosia
 import SiteImageView
 
 // FIXME: FXIOS-13958 @objcMembers is unsafe with main actor isolation
@@ -39,7 +40,10 @@ class HistoryPanel: UIViewController,
     let viewModel: HistoryPanelViewModel
     private let clearHistoryHelper: ClearHistorySheetProvider
     var keyboardState: KeyboardState?
+    /* Ecosia: Use Ecosia chevron-right instead of the Firefox system icon.
     var chevronImage = UIImage(named: StandardImageIdentifiers.Large.chevronRight)?.withRenderingMode(.alwaysTemplate)
+     */
+    var chevronImage = UIImage.ecosia(named: "chevron-right")?.withRenderingMode(.alwaysTemplate)
     var themeManager: ThemeManager
     var themeListenerCancellable: Any?
     var notificationCenter: NotificationProtocol
@@ -597,7 +601,12 @@ class HistoryPanel: UIViewController,
 
         searchbar.backgroundColor = theme.colors.layer3
         let tintColor = theme.colors.textPrimary
+        /* Ecosia: Use Ecosia history icon instead of the Firefox system icon.
         let searchBarImage = UIImage(named: StandardImageIdentifiers.Large.history)?
+            .withRenderingMode(.alwaysTemplate)
+            .tinted(withColor: tintColor)
+         */
+        let searchBarImage = UIImage.ecosia(named: "history")?
             .withRenderingMode(.alwaysTemplate)
             .tinted(withColor: tintColor)
         searchbar.setImage(searchBarImage, for: .search, state: .normal)

@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import Shared
 import UIKit
 
@@ -47,7 +48,12 @@ class LibraryViewController: UIViewController, Themeable {
 
     private lazy var topLeftButton: UIBarButtonItem =  {
         let button = UIBarButtonItem(
+            /* Ecosia: Use Ecosia chevron-left instead of the Firefox system icon.
             image: UIImage.templateImageNamed(StandardImageIdentifiers.Large.chevronLeft)?
+                .imageFlippedForRightToLeftLayoutDirection(),
+             */
+            image: UIImage.ecosia(named: "chevron-left")?
+                .withRenderingMode(.alwaysTemplate)
                 .imageFlippedForRightToLeftLayoutDirection(),
             style: .plain,
             target: self,
@@ -283,7 +289,12 @@ class LibraryViewController: UIViewController, Themeable {
         switch panelState {
         case .bookmarks(state: .inFolder), .bookmarks(state: .transitioning),
              .history(state: .inFolder):
+            /* Ecosia: Use Ecosia chevron-left instead of the Firefox system icon.
             topLeftButton.image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.chevronLeft)?
+                .imageFlippedForRightToLeftLayoutDirection()
+             */
+            topLeftButton.image = UIImage.ecosia(named: "chevron-left")?
+                .withRenderingMode(.alwaysTemplate)
                 .imageFlippedForRightToLeftLayoutDirection()
             navigationItem.leftBarButtonItem = topLeftButton
         case .bookmarks(state: .itemEditMode), .bookmarks(state: .itemEditModeInvalidField):
