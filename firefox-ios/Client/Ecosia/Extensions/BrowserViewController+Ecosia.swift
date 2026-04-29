@@ -28,15 +28,6 @@ extension BrowserViewController: DefaultBrowserDelegate {
 // MARK: - Default browser promo after search threshold
 extension BrowserViewController {
 
-    /// One-shot migration from the old `PrefsKeys.IntroSeen` gate to `User.shared`.
-    /// Preserves the existing suppression: users already blocked under the old key remain blocked.
-    func ecosiaMigrateDefaultBrowserPromoFlagIfNeeded() {
-        guard !User.shared.defaultBrowserSearchPromoShown else { return }
-        if profile.prefs.intForKey(PrefsKeys.IntroSeen) != nil {
-            User.shared.markDefaultBrowserSearchPromoAsShown()
-        }
-    }
-
     /// Pure eligibility check, isolated from UIKit for unit-testing.
     static func isEligibleForEcosiaDefaultBrowserSearchPromo(
         searchCount: Int,
@@ -53,8 +44,6 @@ extension BrowserViewController {
     /// Safe to call repeatedly — the User flag prevents double-presentation.
     func ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold() {
         guard #available(iOS 14, *) else { return }
-
-        ecosiaMigrateDefaultBrowserPromoFlagIfNeeded()
 
         guard Self.isEligibleForEcosiaDefaultBrowserSearchPromo(
             searchCount: User.shared.searchCount,
