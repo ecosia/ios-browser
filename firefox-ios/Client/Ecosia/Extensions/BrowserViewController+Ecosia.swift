@@ -17,25 +17,101 @@ extension BrowserViewController: HomepageViewControllerDelegate {
 }
 
 // MARK: NTPSearchBarDelegate
-// Ecosia: Routes the embedded NTP search bar into the existing browser navigation
-// pipeline (Approach 1 spike). Only submission is wired — suggestions and overlay
-// mode integration are out of scope for this spike.
+// Ecosia: Routes the embedded NTP omnibox into the existing browser navigation
+// pipeline. Submission goes through the same URIFixup → load/search path as the
+// standard toolbar; live keystrokes feed the shared suggestions overlay.
 @MainActor
 extension BrowserViewController: NTPSearchBarDelegate {
     func ntpSearchBarDidSubmit(_ searchTerm: String) {
-        // Reuses the same path as the standard toolbar: URIFixup → load URL or search.
+        hideOmniboxSuggestions()
         openBrowser(searchTerm: searchTerm)
     }
 
     func ntpSearchBarTextDidChange(_ searchTerm: String) {
-        // TODO: pipe into searchSuggestions once an upward-expanding suggestions panel exists.
+        print("[OMNIBOX-DEBUG] ntpSearchBarTextDidChange='\(searchTerm)' anchor=\(ntpOmniboxAnchorView != nil ? "YES" : "NO")")
+        guard let anchor = ntpOmniboxAnchorView else { return }
+        showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
     }
 
-    func ntpSearchBarDidBeginEditing() {
-        // TODO: show inline suggestions above the bar (out of scope for spike).
+    func ntpSearchBarDidBeginEditing() {}
+
+    func ntpSearchBarDidCancel() {
+        hideOmniboxSuggestions()
     }
 
-    func ntpSearchBarDidCancel() {}
+    private var ntpOmniboxAnchorView: NTPSearchBarView? {
+        (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
+    }
+}
+
+// MARK: - Omnibox suggestions overlay
+// Ecosia: Bridges the NTP-embedded omnibox to the existing search suggestions
+// stack. Reuses `SearchViewController` and `SearchLoader` rather than duplicating
+// them, but anchors the overlay above the omnibox instead of the hidden URL bar.
+@MainActor
+extension BrowserViewController {
+
+    /// Shows (or refreshes) the suggestions overlay for the supplied query.
+    /// Empty query hides the overlay. While the omnibox drives suggestions,
+    /// autocomplete is routed into the omnibox itself instead of the URL bar.
+    func showOmniboxSuggestions(searchTerm: String, anchorView: UIView & Autocompletable) {
+        print("[OMNIBOX-DEBUG] showOmniboxSuggestions term='\(searchTerm)'")
+        guard !searchTerm.isEmpty else {
+            print("[OMNIBOX-DEBUG] empty term — hide and return")
+            hideOmniboxSuggestions()
+            return
+        }
+
+        createSearchControllerIfNeeded()
+        guard let searchController else {
+            print("[OMNIBOX-DEBUG] searchController is nil after create")
+            return
+        }
+        print("[OMNIBOX-DEBUG] searchController parent=\(searchController.parent == nil ? "nil" : "set")")
+
+        searchLoader?.autocompleteView = anchorView
+
+        if searchController.parent == nil {
+            attachOmniboxSuggestions(anchorView: anchorView)
+            print("[OMNIBOX-DEBUG] attached. view.frame=\(searchController.view.frame) bounds=\(searchController.view.bounds)")
+        }
+
+        searchController.viewModel.searchQuery = searchTerm
+        searchController.searchTelemetry?.searchQuery = searchTerm
+        searchController.searchTelemetry?.clearVisibleResults()
+        searchController.searchTelemetry?.determineInteractionType()
+        searchLoader?.query = searchTerm
+    }
+
+    /// Tears down the suggestions overlay when the omnibox loses content/focus
+    /// and routes autocomplete back to the standard URL bar.
+    func hideOmniboxSuggestions() {
+        searchLoader?.autocompleteView = addressToolbarContainer
+        guard searchController?.parent != nil else { return }
+        hideSearchController()
+    }
+
+    private func attachOmniboxSuggestions(anchorView: UIView) {
+        guard let searchController else { return }
+
+        addChild(searchController)
+        view.addSubview(searchController.view)
+        view.bringSubviewToFront(searchController.view)
+        searchController.view.translatesAutoresizingMaskIntoConstraints = false
+        // TEMP: vivid background so we can see whether the overlay actually
+        // attaches and at what frame. Remove once the layout is verified.
+        searchController.view.backgroundColor = .systemPink.withAlphaComponent(0.5)
+
+        NSLayoutConstraint.activate([
+            searchController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchController.view.bottomAnchor.constraint(equalTo: anchorView.topAnchor)
+        ])
+
+        searchController.didMove(toParent: self)
+        contentContainer.accessibilityElementsHidden = true
+    }
 }
 
 // MARK: DefaultBrowserDelegate

@@ -120,6 +120,15 @@ extension HomepageViewController {
     func setNTPSearchBarBottomConstraint(_ constraint: NSLayoutConstraint) {
         objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarBottomConstraint, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
+
+    // Ecosia: Top-right close button shown only while the omnibox is in focus.
+    var ntpOmniboxCloseButton: UIButton? {
+        return objc_getAssociatedObject(self, &AssociatedKeys.ntpOmniboxCloseButton) as? UIButton
+    }
+
+    func setNTPOmniboxCloseButton(_ button: UIButton) {
+        objc_setAssociatedObject(self, &AssociatedKeys.ntpOmniboxCloseButton, button, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
 }
 
 // MARK: - Associated Keys
@@ -129,4 +138,5 @@ private struct AssociatedKeys {
     nonisolated(unsafe) static var ecosiaAdapter: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBar: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarBottomConstraint: UInt8 = 0
+    nonisolated(unsafe) static var ntpOmniboxCloseButton: UInt8 = 0
 }

@@ -17,7 +17,11 @@ private let URLBeforePathRegex = try? NSRegularExpression(pattern: "^https?://([
 /// FIXME: FXIOS-14129 SearchLoader is not thread safe
 final class SearchLoader: Loader<Cursor<Site>, SearchViewModel>, FeatureFlaggable, @unchecked Sendable {
     fileprivate let profile: Profile
+    /* Ecosia: Allow the autocomplete sink to be swapped while the NTP omnibox
+       is editing (omnibox becomes the sink, then we restore the URL bar on hide).
     fileprivate let autocompleteView: Autocompletable
+    */
+    var autocompleteView: Autocompletable
     private let logger: Logger
 
     private var skipNextAutocomplete: Bool

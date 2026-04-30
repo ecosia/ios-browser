@@ -19,12 +19,14 @@ class EcosiaSearchBarLocationSaverTests: XCTestCase {
         await DependencyHelperMock().bootstrapDependencies()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         User.shared.firstTime = true
+        UserDefaults.standard.removeObject(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey)
     }
 
     override func tearDown() async throws {
         profile.shutdown()
         profile = nil
         User.shared.firstTime = true
+        UserDefaults.standard.removeObject(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey)
         DependencyHelperMock().reset()
         try await super.tearDown()
     }
@@ -35,29 +37,62 @@ class EcosiaSearchBarLocationSaverTests: XCTestCase {
         User.shared.firstTime = true
 
         subject.saveUserSearchBarLocation(profile: profile, userInterfaceIdiom: .phone)
-        let searchBarPosition = profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition)
-        XCTAssertEqual(searchBarPosition, SearchBarPosition.bottom.rawValue)
+
+        XCTAssertEqual(profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition),
+                       SearchBarPosition.bottom.rawValue)
+        XCTAssertTrue(UserDefaults.standard.bool(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey))
     }
 
     @MainActor
-    func test_saveSearchBarLocation_withExistingUser_doesNotSetPosition() async throws {
+    func test_saveSearchBarLocation_withExistingUser_andNoPosition_marksMigratedWithoutOverride() async throws {
+        // No stored preference means the default (bottom) already applies, so the
+        // migration should only record that it ran without writing anything.
         let subject = createSubject()
         User.shared.firstTime = false
 
         subject.saveUserSearchBarLocation(profile: profile, userInterfaceIdiom: .phone)
-        let searchBarPosition = profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition)
-        XCTAssertNil(searchBarPosition)
+
+        XCTAssertNil(profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition))
+        XCTAssertTrue(UserDefaults.standard.bool(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey))
     }
 
     @MainActor
-    func test_saveSearchBarLocation_withExistingPosition_keepsPosition() async throws {
+    func test_saveSearchBarLocation_withExistingUser_onTop_migratesToBottomOnce() async throws {
         let subject = createSubject()
-        User.shared.firstTime = true
+        User.shared.firstTime = false
         profile.prefs.setString(SearchBarPosition.top.rawValue, forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
 
         subject.saveUserSearchBarLocation(profile: profile, userInterfaceIdiom: .phone)
-        let searchBarPosition = profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition)
-        XCTAssertEqual(searchBarPosition, SearchBarPosition.top.rawValue)
+
+        XCTAssertEqual(profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition),
+                       SearchBarPosition.bottom.rawValue)
+        XCTAssertTrue(UserDefaults.standard.bool(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey))
+    }
+
+    @MainActor
+    func test_saveSearchBarLocation_afterMigration_doesNotOverrideTopChoice() async throws {
+        let subject = createSubject()
+        User.shared.firstTime = false
+        UserDefaults.standard.set(true, forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey)
+        profile.prefs.setString(SearchBarPosition.top.rawValue, forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.saveUserSearchBarLocation(profile: profile, userInterfaceIdiom: .phone)
+
+        XCTAssertEqual(profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition),
+                       SearchBarPosition.top.rawValue)
+    }
+
+    @MainActor
+    func test_saveSearchBarLocation_withExistingUser_onBottom_marksMigratedWithoutOverride() async throws {
+        let subject = createSubject()
+        User.shared.firstTime = false
+        profile.prefs.setString(SearchBarPosition.bottom.rawValue, forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.saveUserSearchBarLocation(profile: profile, userInterfaceIdiom: .phone)
+
+        XCTAssertEqual(profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition),
+                       SearchBarPosition.bottom.rawValue)
+        XCTAssertTrue(UserDefaults.standard.bool(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey))
     }
 
     @MainActor
@@ -66,8 +101,9 @@ class EcosiaSearchBarLocationSaverTests: XCTestCase {
         User.shared.firstTime = true
 
         subject.saveUserSearchBarLocation(profile: profile, userInterfaceIdiom: .pad)
-        let searchBarPosition = profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition)
-        XCTAssertEqual(searchBarPosition, SearchBarPosition.bottom.rawValue)
+
+        XCTAssertEqual(profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition),
+                       SearchBarPosition.bottom.rawValue)
     }
 
     private func createSubject() -> EcosiaSearchBarLocationSaver {

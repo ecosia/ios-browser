@@ -31,9 +31,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
     }
 
-    // Ecosia: Embeds a custom search bar pinned to the bottom of the NTP view.
-    // The bar owns a real UITextField wired directly to the browser's navigation
-    // logic — no toolbar duplication required (Approach 1 spike).
+    // Ecosia: Embeds the AI-ready Omnibox pinned to the bottom of the NTP view.
+    // Replaces the standard URL bar while the homepage is visible. Submission and
+    // suggestions are wired through the browser's existing navigation pipeline.
     func setupNTPSearchBar(delegate: NTPSearchBarDelegate) {
         let searchBar = NTPSearchBarView()
         searchBar.delegate = delegate
@@ -42,20 +42,91 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         let bottomConstraint = searchBar.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-            constant: -8
+            constant: -.ecosia.space._1l
         )
         NSLayoutConstraint.activate([
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: .ecosia.space._m),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -.ecosia.space._m),
             bottomConstraint,
-            searchBar.heightAnchor.constraint(equalToConstant: 52)
+            searchBar.heightAnchor.constraint(equalToConstant: NTPSearchBarView.height)
         ])
 
         searchBar.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         setNTPSearchBar(searchBar)
         setNTPSearchBarBottomConstraint(bottomConstraint)
 
+        // Swipe-down on the NTP content drags the keyboard with it — when the
+        // keyboard fully dismisses, the omnibox loses focus naturally.
+        homepageCollectionView?.keyboardDismissMode = .interactive
+
+        searchBar.onFocusChange = { [weak self] isFocused in
+            self?.handleOmniboxFocusChange(isFocused)
+        }
+
+        installOmniboxCloseButton()
+        installOmniboxTapOutsideDismiss()
+
         KeyboardHelper.defaultHelper.addDelegate(self)
+    }
+
+    private func installOmniboxCloseButton() {
+        let button = UIButton(type: .system)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        button.setImage(UIImage(systemName: "xmark", withConfiguration: symbolConfig), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 18
+        button.alpha = 0
+        button.isHidden = true
+        button.accessibilityLabel = String.localized(.close)
+        button.accessibilityIdentifier = "NTPOmniboxCloseButton"
+        button.addTarget(self, action: #selector(handleOmniboxCloseButtonTapped), for: .touchUpInside)
+        view.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: .ecosia.space._1s),
+            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -.ecosia.space._m),
+            button.widthAnchor.constraint(equalToConstant: 36),
+            button.heightAnchor.constraint(equalToConstant: 36)
+        ])
+
+        let theme = themeManager.getCurrentTheme(for: windowUUID).colors
+        button.backgroundColor = theme.ecosia.backgroundElevation2
+        button.tintColor = theme.ecosia.textPrimary
+
+        setNTPOmniboxCloseButton(button)
+    }
+
+    private func installOmniboxTapOutsideDismiss() {
+        let recognizer = UITapGestureRecognizer(target: self,
+                                                action: #selector(handleTapOutsideOmnibox(_:)))
+        recognizer.cancelsTouchesInView = false
+        view.addGestureRecognizer(recognizer)
+    }
+
+    private func handleOmniboxFocusChange(_ isFocused: Bool) {
+        guard let button = ntpOmniboxCloseButton else { return }
+        if isFocused {
+            button.isHidden = false
+            UIView.animate(withDuration: 0.2) { button.alpha = 1 }
+        } else {
+            UIView.animate(withDuration: 0.2,
+                           animations: { button.alpha = 0 },
+                           completion: { _ in button.isHidden = true })
+        }
+    }
+
+    @objc private func handleOmniboxCloseButtonTapped() {
+        guard let bar = ntpSearchBar else { return }
+        bar.text = ""
+        _ = bar.resignFirstResponder()
+    }
+
+    @objc private func handleTapOutsideOmnibox(_ gesture: UITapGestureRecognizer) {
+        guard let bar = ntpSearchBar, bar.isFirstResponder else { return }
+        let location = gesture.location(in: view)
+        if !bar.frame.contains(location) {
+            _ = bar.resignFirstResponder()
+        }
     }
 
     /// Sets up the Ecosia homepage adapter and integrates it with the view controller
@@ -166,6 +237,11 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
+        // Defensive: if the user navigated away while the omnibox was editing,
+        // tear down the suggestions overlay so the SearchLoader doesn't keep a
+        // dangling reference to this view's autocomplete sink.
+        ntpSearchBar?.delegate?.ntpSearchBarDidCancel()
+        _ = ntpSearchBar?.resignFirstResponder()
         ecosiaAdapter?.viewDidDisappear()
     }
 
@@ -199,9 +275,10 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 }
 
 // MARK: - KeyboardHelperDelegate
-// Ecosia: Adjusts the NTP search bar's bottom constraint when the keyboard appears so
-// the bar stays visible just above the keyboard.
+// Ecosia: Keeps the omnibox glued just above the keyboard while editing.
 extension HomepageViewController: KeyboardHelperDelegate {
+    private static let restingBottomOffset: CGFloat = .ecosia.space._1l
+
     public func keyboardHelper(
         _ keyboardHelper: KeyboardHelper,
         keyboardWillShowWithState state: KeyboardState
@@ -209,7 +286,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
         let keyboardHeight = state.intersectionHeightForView(view)
         guard keyboardHeight > 0, let bottomConstraint = ntpSearchBarBottomConstraint else { return }
         let safeAreaBottom = view.safeAreaInsets.bottom
-        bottomConstraint.constant = -(keyboardHeight - safeAreaBottom + 8)
+        bottomConstraint.constant = -(keyboardHeight - safeAreaBottom + Self.restingBottomOffset)
         UIView.animate(
             withDuration: state.animationDuration,
             delay: 0,
@@ -224,7 +301,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
         keyboardWillHideWithState state: KeyboardState
     ) {
         guard let bottomConstraint = ntpSearchBarBottomConstraint else { return }
-        bottomConstraint.constant = -8
+        bottomConstraint.constant = -Self.restingBottomOffset
         UIView.animate(
             withDuration: state.animationDuration,
             delay: 0,

@@ -24,6 +24,7 @@ extension String {
         case aiOverviewsTitle = "Overviews"
         case aiOverviewsDescription = "Show AI-generated overviews at the top of search results"
         case allRegions = "All regions"
+        case askSearchBrowse = "Ask, search, browse..."
         case autocomplete = "Autocomplete"
         case climateImpact = "Climate Impact"
         case closeAll = "Close all"

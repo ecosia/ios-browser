@@ -2248,7 +2248,11 @@ class BrowserViewController: UIViewController,
         }
     }
 
+    /* Ecosia: Relax visibility so the NTP omnibox extension can lazily create the
+       search controller when the embedded search bar begins editing.
     fileprivate func createSearchControllerIfNeeded() {
+    */
+    func createSearchControllerIfNeeded() {
         guard self.searchController == nil else { return }
 
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
