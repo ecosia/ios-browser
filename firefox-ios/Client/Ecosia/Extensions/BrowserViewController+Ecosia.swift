@@ -28,7 +28,6 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     func ntpSearchBarTextDidChange(_ searchTerm: String) {
-        print("[OMNIBOX-DEBUG] ntpSearchBarTextDidChange='\(searchTerm)' anchor=\(ntpOmniboxAnchorView != nil ? "YES" : "NO")")
         guard let anchor = ntpOmniboxAnchorView else { return }
         showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
     }
@@ -55,25 +54,18 @@ extension BrowserViewController {
     /// Empty query hides the overlay. While the omnibox drives suggestions,
     /// autocomplete is routed into the omnibox itself instead of the URL bar.
     func showOmniboxSuggestions(searchTerm: String, anchorView: UIView & Autocompletable) {
-        print("[OMNIBOX-DEBUG] showOmniboxSuggestions term='\(searchTerm)'")
         guard !searchTerm.isEmpty else {
-            print("[OMNIBOX-DEBUG] empty term — hide and return")
             hideOmniboxSuggestions()
             return
         }
 
         createSearchControllerIfNeeded()
-        guard let searchController else {
-            print("[OMNIBOX-DEBUG] searchController is nil after create")
-            return
-        }
-        print("[OMNIBOX-DEBUG] searchController parent=\(searchController.parent == nil ? "nil" : "set")")
+        guard let searchController else { return }
 
         searchLoader?.autocompleteView = anchorView
 
         if searchController.parent == nil {
             attachOmniboxSuggestions(anchorView: anchorView)
-            print("[OMNIBOX-DEBUG] attached. view.frame=\(searchController.view.frame) bounds=\(searchController.view.bounds)")
         }
 
         searchController.viewModel.searchQuery = searchTerm
@@ -93,24 +85,39 @@ extension BrowserViewController {
 
     private func attachOmniboxSuggestions(anchorView: UIView) {
         guard let searchController else { return }
+        // The overlay must live inside the homepage view's hierarchy so the
+        // omnibox (a sibling there) can sit on top of it in z-order. UIKit
+        // requires the parent VC to match the view tree, so parent the search
+        // controller to the homepage VC — not BVC — to avoid
+        // UIViewControllerHierarchyInconsistency.
+        guard let host = anchorView.superview,
+              let hostVC = Self.nearestViewController(of: host) else { return }
 
-        addChild(searchController)
-        view.addSubview(searchController.view)
-        view.bringSubviewToFront(searchController.view)
+        hostVC.addChild(searchController)
+        host.addSubview(searchController.view)
         searchController.view.translatesAutoresizingMaskIntoConstraints = false
-        // TEMP: vivid background so we can see whether the overlay actually
-        // attaches and at what frame. Remove once the layout is verified.
-        searchController.view.backgroundColor = .systemPink.withAlphaComponent(0.5)
 
         NSLayoutConstraint.activate([
-            searchController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            searchController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchController.view.bottomAnchor.constraint(equalTo: anchorView.topAnchor)
+            searchController.view.topAnchor.constraint(equalTo: host.safeAreaLayoutGuide.topAnchor),
+            searchController.view.leadingAnchor.constraint(equalTo: host.leadingAnchor),
+            searchController.view.trailingAnchor.constraint(equalTo: host.trailingAnchor),
+            searchController.view.bottomAnchor.constraint(equalTo: host.bottomAnchor)
         ])
 
-        searchController.didMove(toParent: self)
+        // Keep the omnibox above the suggestions overlay.
+        host.bringSubviewToFront(anchorView)
+
+        searchController.didMove(toParent: hostVC)
         contentContainer.accessibilityElementsHidden = true
+    }
+
+    private static func nearestViewController(of view: UIView) -> UIViewController? {
+        var responder: UIResponder? = view
+        while let r = responder {
+            if let vc = r as? UIViewController { return vc }
+            responder = r.next
+        }
+        return nil
     }
 }
 
