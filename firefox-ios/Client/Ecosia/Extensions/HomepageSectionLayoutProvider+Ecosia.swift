@@ -157,9 +157,9 @@ extension HomepageSectionLayoutProvider {
            so the row height equals TopSiteCell height + those insets.
          */
         let insets = NSDirectionalEdgeInsets(
-            top: CGFloat.ecosia.space._1s,
+            top: .ecosia.space._1s,
             leading: edgeInset,
-            bottom: 26,
+            bottom: .ecosia.space._1l,
             trailing: edgeInset
         )
         section.contentInsets = insets
