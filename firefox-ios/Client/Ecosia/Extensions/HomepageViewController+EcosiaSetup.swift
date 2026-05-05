@@ -17,15 +17,14 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     func registerEcosiaCells(on collectionView: UICollectionView) {
         // NTPLogoCell removed — logo is now part of NTPHeader.
         var types: [ReusableCell.Type] = [
+            NTPHeader.self,
             NTPLibraryCell.self,
             TopSiteCell.self,
             EmptyTopSiteCell.self,
             NTPImpactCell.self,
             NTPCustomizationCell.self
         ]
-        if #available(iOS 16.0, *) {
-            types.insert(NTPHeader.self, at: 0)
-        }
+
         types.forEach {
             collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
         }

@@ -14,7 +14,6 @@ protocol NTPHeaderDelegate: AnyObject {
 }
 
 /// NTP header cell containing the Ecosia logo and navigation actions
-@available(iOS 16.0, *)
 final class NTPHeader: UICollectionViewCell, ReusableCell {
 
     // MARK: - Properties
@@ -65,10 +64,42 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
     }
 }
 
+// MARK: - Fallback glass button style (iOS 15)
+
+/// Circle-specific glass button style for iOS 15 that avoids `AnyShape` (iOS 16+).
+private struct NTPCircleGlassButtonStyle: ButtonStyle {
+    private static let glassTint = Color(red: 26 / 255, green: 26 / 255, blue: 26 / 255)
+    private static let glassBorder = Color.white.opacity(0x3D / 255.0)
+
+    func makeBody(configuration: Configuration) -> some View {
+        let tintOpacity: Double = configuration.isPressed ? 0.64 : 0.32
+        configuration.label
+            .background(
+                ZStack {
+                    Color.clear.background(.ultraThinMaterial)
+                    Self.glassTint.opacity(tintOpacity)
+                }
+                .clipShape(Circle())
+            )
+            .clipShape(Circle())
+            .overlay(Circle().stroke(Self.glassBorder, lineWidth: 1))
+    }
+}
+
+/// Applies the glass circle button style, selecting the appropriate variant by OS version.
+private struct GlassCircleModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16, *) {
+            content.buttonStyle(NTPGlassButtonStyle(Circle()))
+        } else {
+            content.buttonStyle(NTPCircleGlassButtonStyle())
+        }
+    }
+}
+
 // MARK: - Customize (Pencil) Button
 
 /// Glass-style circular button with a pencil icon for opening NTP customization.
-@available(iOS 16.0, *)
 private struct EcosiaCustomizeButton: View {
     let onTap: () -> Void
 
@@ -84,7 +115,7 @@ private struct EcosiaCustomizeButton: View {
                 .frame(width: iconSize, height: iconSize)
                 .frame(width: buttonSize, height: buttonSize)
         }
-        .buttonStyle(NTPGlassButtonStyle(Circle()))
+        .modifier(GlassCircleModifier())
         .accessibilityLabel(String.localized(.customizeHomepage))
         .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.customizeButton)
     }
@@ -92,7 +123,6 @@ private struct EcosiaCustomizeButton: View {
 
 // MARK: - Ecosia Logo (centered in header)
 
-@available(iOS 16.0, *)
 private struct NTPHeaderLogoView: View {
     private let logoHeight: CGFloat = 20
 
@@ -109,7 +139,6 @@ private struct NTPHeaderLogoView: View {
 }
 
 // MARK: - SwiftUI Multi-Purpose Header View
-@available(iOS 16.0, *)
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
     let windowUUID: WindowUUID
@@ -127,36 +156,38 @@ struct NTPHeaderView: View {
                     onTap: handleCustomizeTap
                 )
                 Spacer()
-                ZStack(alignment: .topLeading) {
-                    EcosiaAccountNavButton(
-                        seedCount: viewModel.seedCount,
-                        avatarURL: viewModel.userAvatarURL,
-                        enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
-                        showSeedSparkles: viewModel.showSeedSparkles,
-                        windowUUID: windowUUID,
-                        onTap: handleTap
-                    )
-                    .sheet(isPresented: $showAccountImpactView) {
-                        EcosiaAccountImpactView(
-                            viewModel: EcosiaAccountImpactViewModel(
-                                onLogin: {
-                                    viewModel.performLogin()
-                                },
-                                onDismiss: {
-                                    showAccountImpactView = false
-                                }
-                            ),
-                            windowUUID: windowUUID
+                if #available(iOS 16, *) {
+                    ZStack(alignment: .topLeading) {
+                        EcosiaAccountNavButton(
+                            seedCount: viewModel.seedCount,
+                            avatarURL: viewModel.userAvatarURL,
+                            enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
+                            showSeedSparkles: viewModel.showSeedSparkles,
+                            windowUUID: windowUUID,
+                            onTap: handleTap
                         )
-                        .padding(.horizontal, .ecosia.space._m)
-                        .dynamicHeightPresentationDetent()
-                    }
-                    if let increment = viewModel.balanceIncrement {
-                        BalanceIncrementAnimationView(
-                            increment: increment,
-                            windowUUID: windowUUID
-                        )
-                        .offset(x: 18, y: -8)
+                        .sheet(isPresented: $showAccountImpactView) {
+                            EcosiaAccountImpactView(
+                                viewModel: EcosiaAccountImpactViewModel(
+                                    onLogin: {
+                                        viewModel.performLogin()
+                                    },
+                                    onDismiss: {
+                                        showAccountImpactView = false
+                                    }
+                                ),
+                                windowUUID: windowUUID
+                            )
+                            .padding(.horizontal, .ecosia.space._m)
+                            .dynamicHeightPresentationDetent()
+                        }
+                        if let increment = viewModel.balanceIncrement {
+                            BalanceIncrementAnimationView(
+                                increment: increment,
+                                windowUUID: windowUUID
+                            )
+                            .offset(x: 18, y: -8)
+                        }
                     }
                 }
             }
