@@ -22,9 +22,15 @@ extension BrowserViewController: HomepageViewControllerDelegate {
 // standard toolbar; live keystrokes feed the shared suggestions overlay.
 @MainActor
 extension BrowserViewController: NTPSearchBarDelegate {
-    func ntpSearchBarDidSubmit(_ searchTerm: String) {
+    func ntpSearchBarDidSubmit(_ searchTerm: String, mode: NTPSearchBarSubmitMode) {
         hideOmniboxSuggestions()
-        openBrowser(searchTerm: searchTerm)
+        // AI chat backend isn't wired yet — fall through to standard search so
+        // long prompts still produce a useful result. Replace this branch with
+        // the AI chat hand-off once that pipeline lands.
+        switch mode {
+        case .search, .aiChat:
+            openBrowser(searchTerm: searchTerm)
+        }
     }
 
     func ntpSearchBarTextDidChange(_ searchTerm: String) {

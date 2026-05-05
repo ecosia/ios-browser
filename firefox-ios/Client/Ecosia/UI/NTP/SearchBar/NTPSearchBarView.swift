@@ -8,10 +8,20 @@ import Ecosia
 
 // MARK: - Delegate
 
+/// Whether a submission should route to the standard search pipeline or the
+/// long-form AI chat. The omnibox flips into `.aiChat` once the input crosses
+/// the configured threshold (see `NTPSearchBarView.UX.aiChatThreshold`).
+enum NTPSearchBarSubmitMode {
+    case search
+    case aiChat
+}
+
 @MainActor
 protocol NTPSearchBarDelegate: AnyObject {
-    /// Called when the user commits a search (Return key or submit button).
-    func ntpSearchBarDidSubmit(_ searchTerm: String)
+    /// Called when the user commits a query (Return key or submit button).
+    /// `mode` indicates whether the input should be treated as a search query
+    /// or a long-form AI chat prompt.
+    func ntpSearchBarDidSubmit(_ searchTerm: String, mode: NTPSearchBarSubmitMode)
     /// Called on every keystroke so the browser can feed suggestions.
     func ntpSearchBarTextDidChange(_ searchTerm: String)
     /// Called when the text field becomes first responder.
@@ -32,6 +42,14 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         static let shadowOpacity: Float = 0.10
         static let shadowRadius: CGFloat = 12
         static let shadowOffset = CGSize(width: 0, height: 4)
+        /// At/above this character count, submit routes to AI chat instead of
+        /// the standard search pipeline.
+        static let aiChatThreshold = 60
+        /// Character count at which the remaining-character counter becomes
+        /// visible. Stays hidden below this point to keep the pill clean.
+        static let counterVisibleThreshold = 960
+        /// Hard cap on input length. Further input is rejected.
+        static let maxLength = 1060
     }
 
     weak var delegate: NTPSearchBarDelegate?
@@ -72,16 +90,26 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         button.isEnabled = false
     }
 
+    private lazy var counterLabel: UILabel = .build { label in
+        label.font = .preferredFont(forTextStyle: .caption2)
+        label.adjustsFontForContentSizeCategory = true
+        label.isHidden = true
+        label.accessibilityIdentifier = "NTPSearchBarCounterLabel"
+    }
+
     private var currentTheme: Theme?
+    private var currentSubmitMode: NTPSearchBarSubmitMode = .search
 
     /// Current text content. Mirrors `textView.text` but lets callers drive
     /// programmatic changes (e.g. accepting a tapped suggestion).
     var text: String {
         get { textView.text ?? "" }
         set {
-            textView.text = newValue
-            placeholderLabel.isHidden = !newValue.isEmpty
-            updateSubmitState(for: newValue)
+            let clamped = String(newValue.prefix(UX.maxLength))
+            textView.text = clamped
+            placeholderLabel.isHidden = !clamped.isEmpty
+            updateSubmitState(for: clamped)
+            updateCounter(for: clamped)
         }
     }
 
@@ -121,6 +149,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         addSubview(textView)
         addSubview(placeholderLabel)
         addSubview(submitButton)
+        addSubview(counterLabel)
 
         textView.delegate = self
         submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
@@ -149,7 +178,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             submitButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.ecosia.space._1s),
             submitButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.ecosia.space._1s),
             submitButton.widthAnchor.constraint(equalToConstant: UX.submitButtonSize),
-            submitButton.heightAnchor.constraint(equalToConstant: UX.submitButtonSize)
+            submitButton.heightAnchor.constraint(equalToConstant: UX.submitButtonSize),
+
+            // Character counter sits in the bottom-left of the pill and only
+            // appears once the user nears the hard cap.
+            counterLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .ecosia.space._m),
+            counterLabel.centerYAnchor.constraint(equalTo: submitButton.centerYAnchor),
+            counterLabel.trailingAnchor.constraint(lessThanOrEqualTo: submitButton.leadingAnchor, constant: -.ecosia.space._s)
         ])
     }
 
@@ -164,13 +199,38 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         let text = (textView.text ?? "").trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
         textView.resignFirstResponder()
-        delegate?.ntpSearchBarDidSubmit(text)
+        delegate?.ntpSearchBarDidSubmit(text, mode: currentSubmitMode)
     }
 
     private func updateSubmitState(for text: String) {
         let hasContent = !text.trimmingCharacters(in: .whitespaces).isEmpty
         submitButton.isEnabled = hasContent
+        currentSubmitMode = Self.submitMode(for: text)
         applySubmitButtonColors()
+    }
+
+    private static func submitMode(for text: String) -> NTPSearchBarSubmitMode {
+        text.count >= UX.aiChatThreshold ? .aiChat : .search
+    }
+
+    private func updateCounter(for text: String) {
+        let count = text.count
+        let visible = count >= UX.counterVisibleThreshold
+        counterLabel.isHidden = !visible
+        guard visible else { return }
+        counterLabel.text = "\(count)/\(UX.maxLength)"
+        applyCounterColor()
+    }
+
+    private func applyCounterColor() {
+        guard let colors = currentTheme?.colors else { return }
+        let count = (textView.text ?? "").count
+        // Once we cross into the last 1% of the budget, flip the counter into a
+        // warning tint so the cap is unmissable.
+        let warningCutoff = UX.maxLength - (UX.maxLength - UX.counterVisibleThreshold) / 2
+        counterLabel.textColor = count >= warningCutoff
+            ? colors.ecosia.stateError
+            : colors.ecosia.textSecondary
     }
 
     private func applySubmitButtonColors() {
@@ -192,6 +252,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         textView.tintColor = colors.ecosia.textPrimary
         placeholderLabel.textColor = colors.ecosia.textSecondary
         applySubmitButtonColors()
+        applyCounterColor()
     }
 
     // MARK: Autocompletable
@@ -219,6 +280,7 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
         let text = textView.text ?? ""
         placeholderLabel.isHidden = !text.isEmpty
         updateSubmitState(for: text)
+        updateCounter(for: text)
         delegate?.ntpSearchBarTextDidChange(text)
     }
 
@@ -228,6 +290,14 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
         // Treat Return as submit instead of inserting a newline.
         if text == "\n" {
             submitTapped()
+            return false
+        }
+        // Hard cap. Block edits that would push past `maxLength` — typing past
+        // the cap is rejected outright, and an oversize paste is dropped (we
+        // don't silently truncate to avoid mangling the user's clipboard).
+        let current = (textView.text ?? "") as NSString
+        let resultingLength = current.length - range.length + (text as NSString).length
+        if resultingLength > UX.maxLength {
             return false
         }
         return true
