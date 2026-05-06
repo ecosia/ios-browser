@@ -17,9 +17,7 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
         static let bookmarksTray = "bookmarksEmpty"
         static let history = StandardImageIdentifiers.Large.history
         static let downloads = StandardImageIdentifiers.Large.download
-        /* Ecosia: Passwords removed in favour of Reading List
         static let passwords = StandardImageIdentifiers.Large.login
-        */
         static let readingList = StandardImageIdentifiers.Large.readingList
         static let settings = StandardImageIdentifiers.Large.settings
         static let print = StandardImageIdentifiers.Large.print
@@ -78,8 +76,9 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
             menuSections.append(getHorizontalTabsSection(with: uuid, tabInfo: tabInfo))
             menuSections.append(getAccountSection(with: uuid, tabInfo: tabInfo, profileImage: profileImage))
         } else {
+            // Ecosia: Non-NTP menu shows a vertical library section instead of horizontal tabs
             menuSections.append(getSiteSection(with: uuid, tabInfo: tabInfo, isExpanded: isExpanded))
-            menuSections.append(getHorizontalTabsSection(with: uuid, tabInfo: tabInfo))
+            menuSections.append(getLibrarySection(with: uuid, tabInfo: tabInfo))
             menuSections.append(getAccountSection(with: uuid, tabInfo: tabInfo, profileImage: profileImage))
         }
 
@@ -87,10 +86,7 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
     }
 
     // MARK: - Menu Sections
-    // Horizontal Tabs Section
-    /* Ecosia: Re-layout to match NTP shortcuts order (Bookmarks, History, Reading List, Downloads)
-               and replace Passwords with Reading List. Sign In element removed.
-    */
+    // Horizontal Tabs Section (NTP only: Bookmarks, History, Downloads, Passwords)
     private func getHorizontalTabsSection(with uuid: WindowUUID, tabInfo: MainMenuTabInfo) -> MenuSection {
         return MenuSection(
             isHorizontalTabsSection: true,
@@ -106,7 +102,6 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.bookmarks,
                 action: {
-                    // Ecosia: Track menu item tap
                     Analytics.shared.menuClick(.bookmarks)
                     store.dispatch(
                         MainMenuAction(
@@ -127,35 +122,12 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.history,
                 action: {
-                    // Ecosia: Track menu item tap
                     Analytics.shared.menuClick(.history)
                     store.dispatch(
                         MainMenuAction(
                             windowUUID: uuid,
                             actionType: MainMenuActionType.tapNavigateToDestination,
                             navigationDestination: MenuNavigationDestination(.history),
-                            telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
-                        )
-                    )
-                }
-            ),
-            // Ecosia: Reading List replaces Passwords, placed before Downloads to match NTP shortcuts order
-            MenuElement(
-                title: .LegacyAppMenu.AppMenuReadingListTitleString,
-                iconName: Icons.readingList,
-                isEnabled: true,
-                isActive: false,
-                a11yLabel: .LegacyAppMenu.AppMenuReadingListTitleString,
-                a11yHint: "",
-                a11yId: AccessibilityIdentifiers.MainMenu.readingList,
-                action: {
-                    // Ecosia: Track menu item tap
-                    Analytics.shared.menuClick(.readingList)
-                    store.dispatch(
-                        MainMenuAction(
-                            windowUUID: uuid,
-                            actionType: MainMenuActionType.tapNavigateToDestination,
-                            navigationDestination: MenuNavigationDestination(.readingList),
                             telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
                         )
                     )
@@ -170,7 +142,6 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.downloads,
                 action: {
-                    // Ecosia: Track menu item tap
                     Analytics.shared.menuClick(.downloads)
                     store.dispatch(
                         MainMenuAction(
@@ -182,7 +153,6 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                     )
                 }
             ),
-            /* Ecosia: Passwords removed in favour of Reading List
             MenuElement(
                 title: .MainMenu.PanelLinkSection.Passwords,
                 iconName: Icons.passwords,
@@ -202,43 +172,103 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                     )
                 }
             ),
-            */
+        ])
+    }
+
+    // Ecosia: Vertical library section for non-NTP menu (Bookmarks, History, Downloads, Reading List)
+    private func getLibrarySection(with uuid: WindowUUID, tabInfo: MainMenuTabInfo) -> MenuSection {
+        return MenuSection(
+            groupA11yLabel: .MainMenu.ToolsSection.AccessibilityLabels.LibraryOptions,
+            options: [
+            MenuElement(
+                title: .MainMenu.PanelLinkSection.Bookmarks,
+                iconName: Icons.bookmarksTray,
+                isEnabled: true,
+                isActive: false,
+                a11yLabel: .MainMenu.PanelLinkSection.AccessibilityLabels.Bookmarks,
+                a11yHint: "",
+                a11yId: AccessibilityIdentifiers.MainMenu.bookmarks,
+                action: {
+                    Analytics.shared.menuClick(.bookmarks)
+                    store.dispatch(
+                        MainMenuAction(
+                            windowUUID: uuid,
+                            actionType: MainMenuActionType.tapNavigateToDestination,
+                            navigationDestination: MenuNavigationDestination(.bookmarks),
+                            telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
+                        )
+                    )
+                }
+            ),
+            MenuElement(
+                title: .MainMenu.PanelLinkSection.History,
+                iconName: Icons.history,
+                isEnabled: true,
+                isActive: false,
+                a11yLabel: .MainMenu.PanelLinkSection.AccessibilityLabels.History,
+                a11yHint: "",
+                a11yId: AccessibilityIdentifiers.MainMenu.history,
+                action: {
+                    Analytics.shared.menuClick(.history)
+                    store.dispatch(
+                        MainMenuAction(
+                            windowUUID: uuid,
+                            actionType: MainMenuActionType.tapNavigateToDestination,
+                            navigationDestination: MenuNavigationDestination(.history),
+                            telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
+                        )
+                    )
+                }
+            ),
+            MenuElement(
+                title: .MainMenu.PanelLinkSection.Downloads,
+                iconName: Icons.downloads,
+                isEnabled: true,
+                isActive: false,
+                a11yLabel: .MainMenu.PanelLinkSection.AccessibilityLabels.Downloads,
+                a11yHint: "",
+                a11yId: AccessibilityIdentifiers.MainMenu.downloads,
+                action: {
+                    Analytics.shared.menuClick(.downloads)
+                    store.dispatch(
+                        MainMenuAction(
+                            windowUUID: uuid,
+                            actionType: MainMenuActionType.tapNavigateToDestination,
+                            navigationDestination: MenuNavigationDestination(.downloads),
+                            telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
+                        )
+                    )
+                }
+            ),
+            MenuElement(
+                title: .LegacyAppMenu.AppMenuReadingListTitleString,
+                iconName: Icons.readingList,
+                isEnabled: true,
+                isActive: false,
+                a11yLabel: .LegacyAppMenu.AppMenuReadingListTitleString,
+                a11yHint: "",
+                a11yId: AccessibilityIdentifiers.MainMenu.readingList,
+                action: {
+                    Analytics.shared.menuClick(.readingList)
+                    store.dispatch(
+                        MainMenuAction(
+                            windowUUID: uuid,
+                            actionType: MainMenuActionType.tapNavigateToDestination,
+                            navigationDestination: MenuNavigationDestination(.readingList),
+                            telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
+                        )
+                    )
+                }
+            ),
         ])
     }
 
     // Account Section
-    /* Ecosia: Remove Sign In element and add Help + Report Issue.
-               Sign In removed to avoid exposing Firefox Sync in the compact menu.
-    */
+    // Ecosia: Sign In removed; Help and Report Issue added
     private func getAccountSection(with uuid: WindowUUID, tabInfo: MainMenuTabInfo, profileImage: UIImage?) -> MenuSection {
         return MenuSection(
             isHomepage: tabInfo.isHomepage,
             options: [
-                /* Ecosia: Sign In removed from the compact menu
-                MenuElement(
-                    title: tabInfo.accountData.title,
-                    description: tabInfo.accountData.subtitle,
-                    iconName: Icons.avatarCircle,
-                    iconImage: profileImage,
-                    needsReAuth: tabInfo.accountData.needsReAuth,
-                    isEnabled: true,
-                    isActive: false,
-                    a11yLabel: "\(tabInfo.accountData.title) \(tabInfo.accountData.subtitle ?? "")",
-                    a11yHint: "",
-                    a11yId: AccessibilityIdentifiers.MainMenu.signIn,
-                    action: {
-                        store.dispatch(
-                            MainMenuAction(
-                                windowUUID: uuid,
-                                actionType: MainMenuActionType.tapNavigateToDestination,
-                                navigationDestination: MenuNavigationDestination(.syncSignIn),
-                                currentTabInfo: tabInfo,
-                                telemetryInfo: TelemetryInfo(isHomepage: tabInfo.isHomepage)
-                            )
-                        )
-                    }
-                ),
-                */
                 // Ecosia: Help button matching production Help Center behaviour
                 MenuElement(
                     title: String.localized(.help),
