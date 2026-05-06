@@ -20,7 +20,7 @@ final class PlainSearchEngineView: UIView,
         static let cornerRadius: CGFloat = if #available(iOS 26.0, *) { 12 } else { 4 }
         // Ecosia: Use different sizes for editing (overlay) vs not editing (legacy URLBarView sizing)
         static let imageViewSizeMedium = CGSize(width: 24, height: 24) // When editing
-        static let imageViewSizeSmall = CGSize(width: 16, height: 16) // When not editing
+        static let imageViewSizeSmall = CGSize(width: 18, height: 18) // When not editing
     }
 
     private lazy var searchEngineImageView: UIImageView = .build { imageView in
@@ -158,6 +158,8 @@ final class PlainSearchEngineView: UIView,
         searchEngineImageView.backgroundColor = isURLTextFieldCentered ? colors.layerSurfaceLow : colors.layer2
          */
         searchEngineImageView.backgroundColor = colors.ecosia.backgroundTertiary
+        // Ecosia: Tint template images (e.g. privacy-verified icon) to match the lock icon and other URL bar elements.
+        searchEngineImageView.tintColor = colors.ecosia.textSecondary
         self.theme = theme
     }
 }

@@ -69,11 +69,19 @@ final class AddressToolbarContainerModel: Equatable {
         /* Ecosia: Original flatMap returns nil for any regular URL (InternalURL returns nil for https:// URLs),
            so `nil ?? true` incorrectly treats all regular pages as home. Use map with `?? false` so that
            non-internal URLs evaluate to false (not home), while nil URL still defaults to true (home).
-        let isHome = url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? true
+        let isHome = url.map { InternalURL($0)?.isAboutHomeURL ?? false } ?? true
         */
         // Ecosia: Regular URLs are not home; nil URL → home, internal about:home → home, everything else → not home
         let isHome = url.map { InternalURL($0)?.isAboutHomeURL ?? false } ?? true
-        let displaySearchEngineImage: UIImage? = ecosiaSearchEngineImage(isEditing: isEditing, isPrivate: isPrivateMode, isHome: isHome, defaultImage: searchEngineImage)
+        // Ecosia: Secure websites (shieldCheckmarkFill) show privacy-verified in the favicon slot
+        let isSecure = lockIconImageName == StandardImageIdentifiers.Small.shieldCheckmarkFill
+        let displaySearchEngineImage: UIImage? = ecosiaSearchEngineImage(
+            isEditing: isEditing,
+            isPrivate: isPrivateMode,
+            isHome: isHome,
+            isSecure: isSecure,
+            defaultImage: searchEngineImage
+        )
 
         let locationViewConfiguration = LocationViewConfiguration(
             searchEngineImageViewA11yId: AccessibilityIdentifiers.Browser.AddressToolbar.searchEngine,
@@ -126,7 +134,7 @@ final class AddressToolbarContainerModel: Equatable {
         )
     }
 
-    /// Ecosia: Search/logo icon for address bar (editing = Ecosia logo or private icon; home = default/search; !home = hidden).
+    /* Ecosia: Add isSecure parameter to show privacy-verified icon in the favicon slot for secure websites
     private func ecosiaSearchEngineImage(isEditing: Bool, isPrivate: Bool, isHome: Bool, defaultImage: UIImage?) -> UIImage? {
         if isEditing {
             if isPrivate {
@@ -136,6 +144,23 @@ final class AddressToolbarContainerModel: Equatable {
         }
         if isHome {
             return defaultImage ?? UIImage.templateImageNamed("searchUrl")
+        }
+        return nil
+    }
+    */
+    /// Ecosia: Search/logo icon for address bar (editing = Ecosia logo or private icon; home = default/search; secure = privacy-verified; else hidden).
+    private func ecosiaSearchEngineImage(isEditing: Bool, isPrivate: Bool, isHome: Bool, isSecure: Bool, defaultImage: UIImage?) -> UIImage? {
+        if isEditing {
+            if isPrivate {
+                return UIImage.templateImageNamed(StandardImageIdentifiers.Large.privateMode)
+            }
+            return .ecosia(named: "iconLogo")
+        }
+        if isHome {
+            return defaultImage ?? UIImage.templateImageNamed("searchUrl")
+        }
+        if isSecure {
+            return UIImage.ecosia(named: "privacy-verified")?.withRenderingMode(.alwaysTemplate)
         }
         return nil
     }
