@@ -4621,6 +4621,28 @@ extension BrowserViewController: SearchViewControllerDelegate {
     ) {
         guard let tab = tabManager.selectedTab else { return }
 
+        // Ecosia: When the suggestion came from the NTP omnibox, the search
+        // controller is parented to the homepage VC and the URL bar isn't in
+        // overlay mode, so `finishEditingAndSubmit` short-circuits in
+        // `overlayManager.finishEditing` and the
+        // `addressToolbar(_:didLeaveOverlayModeForReason:)` chain that
+        // normally swaps the contentContainer to the webview never fires.
+        // Tear the omnibox down ourselves, kick off the load, and force the
+        // webview swap explicitly.
+        let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
+        if isOmniboxOverlay {
+            hideOmniboxSuggestions()
+            if let homepage = contentContainer.contentController as? HomepageViewController,
+               let bar = homepage.ntpSearchBar {
+                bar.text = ""
+                _ = bar.resignFirstResponder()
+            }
+            searchTelemetry.shouldSetUrlTypeSearch = true
+            finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
+            showEmbeddedWebview()
+            return
+        }
+
         searchTelemetry.shouldSetUrlTypeSearch = true
         finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
     }

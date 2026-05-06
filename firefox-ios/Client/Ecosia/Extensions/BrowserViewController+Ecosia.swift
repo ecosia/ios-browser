@@ -31,6 +31,10 @@ extension BrowserViewController: NTPSearchBarDelegate {
         case .search, .aiChat:
             openBrowser(searchTerm: searchTerm)
         }
+        // Force the swap to the webview. Without URL bar overlay mode, the
+        // standard `addressToolbar(_:didLeaveOverlayModeForReason:)` chain
+        // — which is what normally calls `showEmbeddedWebview()` — never fires.
+        showEmbeddedWebview()
     }
 
     func ntpSearchBarTextDidChange(_ searchTerm: String) {
@@ -116,6 +120,12 @@ extension BrowserViewController {
         if let homepage = hostVC as? HomepageViewController,
            let closeButton = homepage.ntpOmniboxCloseButton {
             host.bringSubviewToFront(closeButton)
+            // Push the table content down below the close button so the first
+            // suggestion isn't drawn underneath it. The view itself still
+            // spans the safe area, so the keyboard-tracking footer stays put.
+            host.layoutIfNeeded()
+            let topInset = closeButton.frame.maxY - host.safeAreaInsets.top
+            searchController.additionalSafeAreaInsets.top = max(0, topInset)
         }
 
         searchController.didMove(toParent: hostVC)

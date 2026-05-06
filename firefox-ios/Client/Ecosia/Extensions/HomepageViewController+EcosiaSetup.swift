@@ -237,6 +237,27 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         homepageCollectionView?.isScrollEnabled = isPhoneLandscape
     }
 
+    /// Pushes the collection view's content up far enough that the last cells
+    /// (shortcut tiles, stats cards, etc.) clear the floating omnibox pill
+    /// instead of being obscured by it. Driven from `viewDidLayoutSubviews` so
+    /// rotations / size changes stay accurate. The 16pt cushion above the pill
+    /// matches the visual breathing room in the Figma layout.
+    func updateNTPCollectionViewBottomInsetForOmnibox() {
+        guard let bar = ntpSearchBar,
+              let collectionView = homepageCollectionView,
+              let collectionParent = collectionView.superview else { return }
+
+        let barInView = bar.frame
+        let collectionInView = collectionParent.convert(collectionView.frame, to: view)
+        let cushion: CGFloat = .ecosia.space._m
+        let neededInset = max(0, collectionInView.maxY - barInView.minY + cushion)
+
+        if abs(collectionView.contentInset.bottom - neededInset) > 0.5 {
+            collectionView.contentInset.bottom = neededInset
+            collectionView.verticalScrollIndicatorInsets.bottom = neededInset
+        }
+    }
+
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
         // Defensive: if the user navigated away while the omnibox was editing,

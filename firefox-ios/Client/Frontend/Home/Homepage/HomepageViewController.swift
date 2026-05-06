@@ -214,6 +214,9 @@ final class HomepageViewController: UIViewController,
         // Ecosia: On iPad the content container ends above the bottom toolbar, so extend
         // the wallpaper to BVC's view to fill the gap behind the translucent toolbar.
         extendEcosiaWallpaperToParentOnPad()
+        // Ecosia: Keep the last NTP cells (shortcut tiles, etc.) visible above the
+        // floating omnibox pill instead of letting them sit behind it.
+        updateNTPCollectionViewBottomInsetForOmnibox()
 
         /// FXIOS-13970: Legacy homepage layout was appearing blank on iOS 15. The root cause was from applying the diffable
         /// data source snapshot before the view had finished it's first layout pass, causing the snapshot to be ignored.
