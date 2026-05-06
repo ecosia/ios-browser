@@ -25,20 +25,17 @@ extension HomepageViewController {
 
     func configureEcosiaHeaderCell(at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cv = homepageCollectionView else { return UICollectionViewCell() }
-        if #available(iOS 16.0, *) {
-            guard let headerCell = cv.dequeueReusableCell(
-                cellType: NTPHeader.self,
-                for: indexPath
-            ) else {
-                return UICollectionViewCell()
-            }
-
-            if let viewModel = ecosiaAdapter?.headerViewModel {
-                headerCell.configure(with: viewModel, windowUUID: windowUUID)
-            }
-            return headerCell
+        guard let headerCell = cv.dequeueReusableCell(
+            cellType: NTPHeader.self,
+            for: indexPath
+        ) else {
+            return UICollectionViewCell()
         }
-        return UICollectionViewCell()
+
+        if let viewModel = ecosiaAdapter?.headerViewModel {
+            headerCell.configure(with: viewModel, windowUUID: windowUUID)
+        }
+        return headerCell
     }
 
     func configureEcosiaLogoCell(at indexPath: IndexPath) -> UICollectionViewCell {
