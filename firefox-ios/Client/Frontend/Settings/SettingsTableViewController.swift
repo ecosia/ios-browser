@@ -342,9 +342,9 @@ class BoolSetting: Setting, FeatureFlaggable {
         )
          */
         control.configureSwitch(
-            onTintColor: theme.colors.ecosia.segmentedControlBackgroundActive,
+            onTintColor: theme.colors.ecosia.switchKnobActive,
             isEnabled: enabled,
-            offTintColor: theme.colors.ecosia.segmentedControlBackgroundRest
+            offTintColor: theme.colors.ecosia.switchKnobDisabled
         )
 
         displayBool(control.switchView)
