@@ -13,6 +13,13 @@ var readabilityResult = null;
 
 const readerModeURL = /^http:\/\/localhost:\d+\/reader-mode\/page/;
 
+/* Ecosia: Hostnames whose search-results pages pass isProbablyReaderable() as a
+   false positive. Reader mode on a SERP is not useful and should be suppressed. */
+const ECOSIA_SERP_HOSTS = ["www.ecosia.org", "ecosia.org", "www.ecosia-staging.xyz", "ecosia-staging.xyz"];
+const isEcosiaSERP = () =>
+  ECOSIA_SERP_HOSTS.includes(document.location.hostname) &&
+  document.location.pathname.startsWith("/search");
+
 const BLOCK_IMAGES_SELECTOR =
   ".content p > img:only-child, " +
   ".content p > a:only-child > img:only-child, " +
@@ -35,6 +42,13 @@ function checkReadability() {
     }
 
     if(!isProbablyReaderable(document)) {
+      webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
+      return;
+    }
+
+    /* Ecosia: Suppress reader mode on Ecosia SERP pages — isProbablyReaderable()
+       returns a false positive there because the page contains enough text nodes. */
+    if (isEcosiaSERP()) {
       webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
       return;
     }

@@ -10,7 +10,7 @@ const ALLOWED_LANGS = ["en"];
 
 /* Ecosia: Hostnames whose search-results pages pass isProbablyReaderable() as a
    false positive. Summarising a SERP is not useful and should be suppressed. */
-const ECOSIA_SERP_HOSTS = ["www.ecosia.org", "ecosia.org", "ecosia-staging.xyz"];
+const ECOSIA_SERP_HOSTS = ["www.ecosia.org", "ecosia.org", "www.ecosia-staging.xyz", "ecosia-staging.xyz"];
 const isEcosiaSERP = () =>
   ECOSIA_SERP_HOSTS.includes(document.location.hostname) &&
   document.location.pathname.startsWith("/search");
