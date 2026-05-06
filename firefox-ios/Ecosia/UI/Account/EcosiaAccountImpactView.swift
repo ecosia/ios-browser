@@ -120,7 +120,9 @@ public struct EcosiaAccountImpactView: View {
             }
             .animation(.easeInOut(duration: 0.3), value: viewModel.isLoggedIn)
         }
+        .background(theme.backgroundColor.ignoresSafeArea())
         .ecosiaThemed(windowUUID, $theme)
+        .presentationBackgroundIfAvailable(theme.backgroundColor)
         .onChange(of: authStateProvider.currentLevelNumber) { _ in
             let themeManager = AppContainer.shared.resolve() as ThemeManager
             theme.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
@@ -180,7 +182,7 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
 
     @MainActor
     public mutating func applyTheme(theme: Theme) {
-        backgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
+        backgroundColor = Color(theme.colors.layer1)
         cardBackgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
         cardActionButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondary)
         cardCloseButtonColor = Color(theme.colors.ecosia.buttonContentSecondary)
@@ -200,6 +202,21 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
         } else {
             levelTextColor = Color(theme.colors.ecosia.textInversePrimary)
             levelBackgroundColor = Color(theme.colors.ecosia.backgroundNeutralInverse)
+        }
+    }
+}
+
+// MARK: - Conditional presentation background
+
+private extension View {
+    /// Applies `presentationBackground` on iOS 16.4+ so the sheet uses a fully opaque colour,
+    /// replacing the system translucent material. Falls through without change on earlier versions.
+    @ViewBuilder
+    func presentationBackgroundIfAvailable(_ color: Color) -> some View {
+        if #available(iOS 16.4, *) {
+            self.presentationBackground(color)
+        } else {
+            self
         }
     }
 }
