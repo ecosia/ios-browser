@@ -1961,6 +1961,17 @@ class BrowserViewController: UIViewController,
         let keyboardHeight = keyboardState?.intersectionHeightForView(view)
         let isKeyboardVisible = keyboardHeight != nil && keyboardHeight! > 0
 
+        // Ecosia: when the NTP omnibox owns the keyboard, the address toolbar is
+        // hidden and the omnibox tracks the keyboard with its own constraint.
+        // Skipping the keyboard spacer here keeps `overKeyboardContainer` flat,
+        // so `contentContainer` (and the homepage wallpaper card inside it)
+        // stays at full height instead of compressing as the keyboard rises.
+        if let homepage = contentContainer.contentController as? HomepageViewController,
+           homepage.ntpSearchBar?.isFirstResponder == true {
+            overKeyboardContainer.removeKeyboardSpacer()
+            return
+        }
+
         guard isBottomSearchBar, isKeyboardVisible, let keyboardHeight else {
             overKeyboardContainer.removeKeyboardSpacer()
             return

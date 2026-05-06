@@ -59,8 +59,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // keyboard fully dismisses, the omnibox loses focus naturally.
         homepageCollectionView?.keyboardDismissMode = .interactive
 
-        searchBar.onFocusChange = { [weak self] isFocused in
-            self?.handleOmniboxFocusChange(isFocused)
+        searchBar.onContentChange = { [weak self] text in
+            self?.handleOmniboxContentChange(text)
         }
 
         installOmniboxCloseButton()
@@ -83,7 +83,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         view.addSubview(button)
 
         NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: .ecosia.space._1s),
+            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: .ecosia.space._m),
             button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -.ecosia.space._m),
             button.widthAnchor.constraint(equalToConstant: 36),
             button.heightAnchor.constraint(equalToConstant: 36)
@@ -103,9 +103,11 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         view.addGestureRecognizer(recognizer)
     }
 
-    private func handleOmniboxFocusChange(_ isFocused: Bool) {
+    private func handleOmniboxContentChange(_ text: String) {
         guard let button = ntpOmniboxCloseButton else { return }
-        if isFocused {
+        let shouldShow = !text.isEmpty
+        guard shouldShow != !button.isHidden else { return }
+        if shouldShow {
             button.isHidden = false
             UIView.animate(withDuration: 0.2) { button.alpha = 1 }
         } else {

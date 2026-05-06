@@ -110,8 +110,13 @@ extension BrowserViewController {
             searchController.view.bottomAnchor.constraint(equalTo: host.bottomAnchor)
         ])
 
-        // Keep the omnibox above the suggestions overlay.
+        // Keep the omnibox — and the floating top-right close button — above
+        // the suggestions overlay.
         host.bringSubviewToFront(anchorView)
+        if let homepage = hostVC as? HomepageViewController,
+           let closeButton = homepage.ntpOmniboxCloseButton {
+            host.bringSubviewToFront(closeButton)
+        }
 
         searchController.didMove(toParent: hostVC)
         contentContainer.accessibilityElementsHidden = true

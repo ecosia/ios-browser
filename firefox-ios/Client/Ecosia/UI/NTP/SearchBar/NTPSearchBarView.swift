@@ -39,6 +39,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     private enum UX {
         static let submitButtonSize: CGFloat = .ecosia.space._3l
+        static let clearButtonSize: CGFloat = 24
         static let shadowOpacity: Float = 0.10
         static let shadowRadius: CGFloat = 12
         static let shadowOffset = CGSize(width: 0, height: 4)
@@ -53,11 +54,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     }
 
     weak var delegate: NTPSearchBarDelegate?
-
-    /// Fires whenever the field's first-responder state changes. Use this from
-    /// the host (e.g. HomepageViewController) to drive focus-only chrome like
-    /// the top-right close button.
-    var onFocusChange: ((Bool) -> Void)?
 
     private lazy var textView: UITextView = .build { tv in
         tv.font = .preferredFont(forTextStyle: .body)
@@ -97,6 +93,23 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         label.accessibilityIdentifier = "NTPSearchBarCounterLabel"
     }
 
+    /// In-pill clear button at the top-right of the omnibox. Visible only while
+    /// the field has content — taps wipe the text without dropping focus.
+    private lazy var clearButton: UIButton = .build { button in
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 11, weight: .semibold)
+        let image = UIImage(systemName: "xmark", withConfiguration: symbolConfig)
+        button.setImage(image, for: .normal)
+        button.layer.cornerRadius = UX.clearButtonSize / 2
+        button.accessibilityLabel = String.localized(.cancel)
+        button.accessibilityIdentifier = "NTPSearchBarClearButton"
+        button.isHidden = true
+    }
+
+    /// Fires whenever the text content changes (including programmatic clears).
+    /// Use from the host to drive focus-only chrome that depends on having text
+    /// — for example, the top-right close button.
+    var onContentChange: ((String) -> Void)?
+
     private var currentTheme: Theme?
     private var currentSubmitMode: NTPSearchBarSubmitMode = .search
 
@@ -110,6 +123,8 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             placeholderLabel.isHidden = !clamped.isEmpty
             updateSubmitState(for: clamped)
             updateCounter(for: clamped)
+            updateClearButtonVisibility(for: clamped)
+            onContentChange?(clamped)
         }
     }
 
@@ -137,6 +152,25 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         textView.becomeFirstResponder()
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateTextExclusionPath()
+    }
+
+    /// Carves out the area occupied by the clear button so wrapping text flows
+    /// around it instead of running underneath. Only takes effect while the
+    /// button is visible — empty pills keep the full text width.
+    private func updateTextExclusionPath() {
+        guard !clearButton.isHidden, clearButton.bounds != .zero else {
+            textView.textContainer.exclusionPaths = []
+            return
+        }
+        let buttonFrame = textView.convert(clearButton.frame, from: clearButton.superview)
+        // Pad the exclusion zone slightly so descenders don't kiss the glyph.
+        let excluded = buttonFrame.insetBy(dx: -.ecosia.space._1s, dy: -.ecosia.space._2s)
+        textView.textContainer.exclusionPaths = [UIBezierPath(rect: excluded)]
+    }
+
     // MARK: Setup
 
     private func setup() {
@@ -150,9 +184,11 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         addSubview(placeholderLabel)
         addSubview(submitButton)
         addSubview(counterLabel)
+        addSubview(clearButton)
 
         textView.delegate = self
         submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
+        clearButton.addTarget(self, action: #selector(clearTapped), for: .touchUpInside)
 
         // Tapping anywhere on the pill (including padding around the textView)
         // focuses the field — without this, only the small intrinsic-size textView
@@ -184,7 +220,14 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             // appears once the user nears the hard cap.
             counterLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .ecosia.space._m),
             counterLabel.centerYAnchor.constraint(equalTo: submitButton.centerYAnchor),
-            counterLabel.trailingAnchor.constraint(lessThanOrEqualTo: submitButton.leadingAnchor, constant: -.ecosia.space._s)
+            counterLabel.trailingAnchor.constraint(lessThanOrEqualTo: submitButton.leadingAnchor, constant: -.ecosia.space._s),
+
+            // Clear-text button sits in the top-right of the pill, floating
+            // over the textView. Hidden until the user has content.
+            clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._1s),
+            clearButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.ecosia.space._1s),
+            clearButton.widthAnchor.constraint(equalToConstant: UX.clearButtonSize),
+            clearButton.heightAnchor.constraint(equalToConstant: UX.clearButtonSize)
         ])
     }
 
@@ -200,6 +243,18 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         guard !text.isEmpty else { return }
         textView.resignFirstResponder()
         delegate?.ntpSearchBarDidSubmit(text, mode: currentSubmitMode)
+    }
+
+    @objc private func clearTapped() {
+        // Wipe the text but keep focus so the user can keep typing without
+        // re-tapping the pill.
+        textView.text = ""
+        placeholderLabel.isHidden = false
+        updateSubmitState(for: "")
+        updateCounter(for: "")
+        updateClearButtonVisibility(for: "")
+        delegate?.ntpSearchBarTextDidChange("")
+        onContentChange?("")
     }
 
     private func updateSubmitState(for text: String) {
@@ -220,6 +275,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         guard visible else { return }
         counterLabel.text = "\(count)/\(UX.maxLength)"
         applyCounterColor()
+    }
+
+    private func updateClearButtonVisibility(for text: String) {
+        let shouldShow = !text.isEmpty
+        clearButton.isHidden = !shouldShow
+        setNeedsLayout()
     }
 
     private func applyCounterColor() {
@@ -253,6 +314,10 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         placeholderLabel.textColor = colors.ecosia.textSecondary
         applySubmitButtonColors()
         applyCounterColor()
+        // Clear button: dark filled pill with a light glyph, matching the
+        // Figma design.
+        clearButton.backgroundColor = colors.ecosia.textPrimary
+        clearButton.tintColor = colors.ecosia.backgroundElevation2
     }
 
     // MARK: Autocompletable
@@ -268,12 +333,10 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
 
     func textViewDidBeginEditing(_ textView: UITextView) {
         delegate?.ntpSearchBarDidBeginEditing()
-        onFocusChange?(true)
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
         delegate?.ntpSearchBarDidCancel()
-        onFocusChange?(false)
     }
 
     func textViewDidChange(_ textView: UITextView) {
@@ -281,7 +344,9 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
         placeholderLabel.isHidden = !text.isEmpty
         updateSubmitState(for: text)
         updateCounter(for: text)
+        updateClearButtonVisibility(for: text)
         delegate?.ntpSearchBarTextDidChange(text)
+        onContentChange?(text)
     }
 
     func textView(_ textView: UITextView,
