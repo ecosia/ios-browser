@@ -27,10 +27,13 @@ public struct NTPGlassButtonStyle: ButtonStyle {
         let tintOpacity: Double = configuration.isPressed ? 0.64 : 0.32
         configuration.label
             .background {
+                // Ecosia: Force the dark-mode variant of ultraThinMaterial so the glass always reads
+                // against the NTP wallpaper regardless of the system color scheme.
                 ZStack {
                     Color.clear.background(.ultraThinMaterial)
                     Self.glassTint.opacity(tintOpacity)
                 }
+                .environment(\.colorScheme, .dark)
             }
             .clipShape(shape)
             .overlay(shape.stroke(Self.glassBorder, lineWidth: 1))
