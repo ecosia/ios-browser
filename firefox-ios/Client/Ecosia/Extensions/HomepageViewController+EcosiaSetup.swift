@@ -60,15 +60,13 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         // Register Ecosia cell types; NTPLogoCell removed — logo now lives in NTPHeader.
         var ecosiaCellTypes: [ReusableCell.Type] = [
+            NTPHeader.self,
             NTPLibraryCell.self,
             TopSiteCell.self,
             EmptyTopSiteCell.self,
             NTPImpactCell.self,
             NTPCustomizationCell.self
         ]
-        if #available(iOS 16.0, *) {
-            ecosiaCellTypes.insert(NTPHeader.self, at: 0)
-        }
         homepageCellTypesToRegister = ecosiaCellTypes
         onDataSourceConfigured = { [weak self] dataSource in
             dataSource.ecosiaAdapter = self?.ecosiaAdapter
