@@ -24,6 +24,13 @@ extension BrowserViewController: HomepageViewControllerDelegate {
 extension BrowserViewController: NTPSearchBarDelegate {
     func ntpSearchBarDidSubmit(_ searchTerm: String, mode: NTPSearchBarSubmitMode) {
         hideOmniboxSuggestions()
+        // Clear the omnibox so the user returns to a fresh pill next time the
+        // homepage is shown — the submitted query lives on the SERP, not in
+        // the input.
+        if let bar = ntpOmniboxAnchorView {
+            bar.text = ""
+            _ = bar.resignFirstResponder()
+        }
         // AI chat backend isn't wired yet — fall through to standard search so
         // long prompts still produce a useful result. Replace this branch with
         // the AI chat hand-off once that pipeline lands.
@@ -141,6 +148,42 @@ extension BrowserViewController {
 
         searchController.didMove(toParent: hostVC)
         contentContainer.accessibilityElementsHidden = true
+
+        // Re-enable interaction in case the previous attach left the table
+        // disabled by the fast-tap path below.
+        searchController.tableView.isUserInteractionEnabled = true
+        installOmniboxFastTap(on: searchController.tableView)
+    }
+
+    /// Adds a tap gesture on the suggestions table that fires `didSelectRowAt`
+    /// the instant a touch ends, instead of waiting for `UIScrollView`'s
+    /// ~150ms `delaysContentTouches` gate. Without this, suggestion taps lag
+    /// noticeably behind the keyboard-return submit path (which doesn't go
+    /// through the scroll view at all).
+    private func installOmniboxFastTap(on tableView: UITableView) {
+        if tableView.gestureRecognizers?.contains(where: { $0.name == Self.omniboxFastTapName }) == true {
+            return
+        }
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleOmniboxFastTap(_:)))
+        tap.name = Self.omniboxFastTapName
+        // Let the touch flow through to the table so cell highlight/scroll
+        // gestures still see it; we disable user interaction below to stop
+        // the table's own delayed selection from firing a second time.
+        tap.cancelsTouchesInView = false
+        tableView.addGestureRecognizer(tap)
+    }
+
+    private static let omniboxFastTapName = "EcosiaOmniboxSuggestionFastTap"
+
+    @objc private func handleOmniboxFastTap(_ gesture: UITapGestureRecognizer) {
+        guard let tableView = gesture.view as? UITableView,
+              let indexPath = tableView.indexPathForRow(at: gesture.location(in: tableView)),
+              let searchController else { return }
+        // Disable further interaction so the table's own delayed selection
+        // gesture doesn't re-fire `didSelectRowAt` after we've handed off to
+        // the submit pipeline. Re-enabled on the next omnibox attach.
+        tableView.isUserInteractionEnabled = false
+        searchController.tableView(tableView, didSelectRowAt: indexPath)
     }
 
     private static func nearestViewController(of view: UIView) -> UIViewController? {
