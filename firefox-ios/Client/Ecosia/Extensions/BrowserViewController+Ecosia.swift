@@ -45,7 +45,18 @@ extension BrowserViewController: NTPSearchBarDelegate {
     func ntpSearchBarDidBeginEditing() {}
 
     func ntpSearchBarDidCancel() {
-        hideOmniboxSuggestions()
+        // The bar resigns first responder for two distinct reasons: an explicit
+        // user dismissal, or the tap-outside gesture firing on a tap that's
+        // actually selecting a suggestion row. Tearing the suggestions overlay
+        // down synchronously kills the second case — the table view's row
+        // selection gesture fires *after* the parent tap recognizer's action,
+        // so by the time `didSelectRowAt` runs, the search controller has
+        // already been removed from the hierarchy. Defer to the next runloop
+        // so any pending row tap completes first; an explicit submit/cancel
+        // hides the overlay before the deferred call lands, making it a no-op.
+        DispatchQueue.main.async { [weak self] in
+            self?.hideOmniboxSuggestions()
+        }
     }
 
     private var ntpOmniboxAnchorView: NTPSearchBarView? {
