@@ -435,9 +435,15 @@ class BrowserCoordinator: BaseCoordinator,
         case .topSites:
             browserViewController.openURLInNewTab(HomePanelType.topSites.internalUrl)
         case .newPrivateTab:
+            /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
             browserViewController.openBlankNewTab(focusLocationField: true, isPrivate: true)
+            */
+            browserViewController.openBlankNewTab(focusLocationField: false, isPrivate: true)
         case .newTab:
+            /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
             browserViewController.openBlankNewTab(focusLocationField: true)
+            */
+            browserViewController.openBlankNewTab(focusLocationField: false)
         }
     }
 
