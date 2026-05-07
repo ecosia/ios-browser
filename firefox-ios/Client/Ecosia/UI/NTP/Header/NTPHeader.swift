@@ -79,6 +79,9 @@ private struct NTPCircleGlassButtonStyle: ButtonStyle {
                     Color.clear.background(.ultraThinMaterial)
                     Self.glassTint.opacity(tintOpacity)
                 }
+                // Ecosia: Force the dark-mode variant of ultraThinMaterial so the glass always
+                // reads against the NTP wallpaper regardless of the system colour scheme.
+                .environment(\.colorScheme, .dark)
                 .clipShape(Circle())
             )
             .clipShape(Circle())
