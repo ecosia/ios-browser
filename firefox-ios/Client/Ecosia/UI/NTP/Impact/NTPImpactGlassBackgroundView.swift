@@ -58,8 +58,9 @@ final class NTPImpactGlassBackgroundView: UIView {
 
     // MARK: - Subviews
 
+    // Ecosia: Always use the dark variant so the glass reads against the NTP wallpaper in both light and dark mode.
     private let liveBlurView: UIVisualEffectView = {
-        UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+        UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
     }()
 
     private let backgroundImageView: UIImageView = {

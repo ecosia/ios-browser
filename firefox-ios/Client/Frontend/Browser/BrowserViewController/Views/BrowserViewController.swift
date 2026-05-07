@@ -3401,9 +3401,14 @@ class BrowserViewController: UIViewController,
         }
     }
 
+    /* Ecosia: Do not auto-focus the address bar when landing on the homepage (new tab, cold start, tab selection).
     func shouldFocusLocationTextField(for tab: Tab, isPrivate: Bool) -> Bool {
         guard tab.isPrivate == isPrivate else { return false }
         return tab.isFxHomeTab || tab.url == nil
+    }
+    */
+    func shouldFocusLocationTextField(for tab: Tab, isPrivate: Bool) -> Bool {
+        return false
     }
 
     func handle(url: URL?, tabId: String, isPrivate: Bool = false) {
