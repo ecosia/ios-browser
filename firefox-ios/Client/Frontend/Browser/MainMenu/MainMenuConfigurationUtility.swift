@@ -76,8 +76,10 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
             menuSections.append(getHorizontalTabsSection(with: uuid, tabInfo: tabInfo))
             menuSections.append(getAccountSection(with: uuid, tabInfo: tabInfo, profileImage: profileImage))
         } else {
-            // Ecosia: Non-NTP menu shows a vertical library section instead of horizontal tabs
             menuSections.append(getSiteSection(with: uuid, tabInfo: tabInfo, isExpanded: isExpanded))
+            /* Ecosia: Non-NTP menu shows a vertical library section instead of horizontal tabs
+            menuSections.append(getHorizontalTabsSection(with: uuid, tabInfo: tabInfo))
+            */
             menuSections.append(getLibrarySection(with: uuid, tabInfo: tabInfo))
             menuSections.append(getAccountSection(with: uuid, tabInfo: tabInfo, profileImage: profileImage))
         }
@@ -122,6 +124,7 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.history,
                 action: {
+                    // Ecosia: Track menu item tap
                     Analytics.shared.menuClick(.history)
                     store.dispatch(
                         MainMenuAction(
@@ -229,6 +232,7 @@ struct MainMenuConfigurationUtility: Equatable, FeatureFlaggable {
                 a11yHint: "",
                 a11yId: AccessibilityIdentifiers.MainMenu.downloads,
                 action: {
+                    // Ecosia: Track menu item tap
                     Analytics.shared.menuClick(.downloads)
                     store.dispatch(
                         MainMenuAction(
