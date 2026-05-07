@@ -52,16 +52,14 @@ final class EcosiaHomepageAdapter {
     }
 
     private func setupViewModels() {
-        // Header (iOS 16+ only)
-        if #available(iOS 16.0, *) {
-            headerViewModel = NTPHeaderViewModel(
-                profile: profile,
-                theme: theme,
-                windowUUID: windowUUID,
-                auth: auth,
-                delegate: headerDelegate
-            )
-        }
+        // Header
+        headerViewModel = NTPHeaderViewModel(
+            profile: profile,
+            theme: theme,
+            windowUUID: windowUUID,
+            auth: auth,
+            delegate: headerDelegate
+        )
 
         // Library shortcuts
         libraryViewModel = NTPLibraryCellViewModel(
@@ -162,10 +160,7 @@ final class EcosiaHomepageAdapter {
     // MARK: - Section Visibility
 
     private func shouldShowHeader() -> Bool {
-        if #available(iOS 16.0, *) {
-            return true
-        }
-        return false
+        return true
     }
 
     // MARK: - Lifecycle

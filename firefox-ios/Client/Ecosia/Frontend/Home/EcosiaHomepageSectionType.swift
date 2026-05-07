@@ -22,11 +22,7 @@ enum HomepageSectionType: Int, CaseIterable {
     var cellIdentifier: String {
         switch self {
         case .header:
-            if #available(iOS 16.0, *) {
-                return NTPHeader.cellIdentifier
-            } else {
-                return "" // Fallback for iOS < 16.0
-            }
+            return NTPHeader.cellIdentifier
         case .homepageHeader: return NTPLogoCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
@@ -40,10 +36,7 @@ enum HomepageSectionType: Int, CaseIterable {
     static var cellTypes: [ReusableCell.Type] {
         var types: [ReusableCell.Type] = []
 
-        if #available(iOS 16.0, *) {
-            types.append(NTPHeader.self)
-        }
-
+        types.append(NTPHeader.self)
         types.append(contentsOf: [
             NTPLogoCell.self,
             TopSiteItemCell.self,

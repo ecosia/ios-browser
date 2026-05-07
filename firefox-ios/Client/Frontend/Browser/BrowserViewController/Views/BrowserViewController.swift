@@ -3416,7 +3416,10 @@ class BrowserViewController: UIViewController,
         if let url {
             switchToTabForURLOrOpen(url, uuid: tabId, isPrivate: isPrivate)
         } else {
+            /* Ecosia: Do not auto-focus the address bar when a deeplink opens a new tab with no URL.
             openBlankNewTab(focusLocationField: true, isPrivate: isPrivate)
+            */
+            openBlankNewTab(focusLocationField: false, isPrivate: isPrivate)
         }
     }
 
@@ -5152,7 +5155,10 @@ extension BrowserViewController: TopTabsDelegate {
             openBlankNewTab(focusLocationField: false, isPrivate: isPrivate)
             tabManager.selectedTab?.loadRequest(PrivilegedRequest(url: url) as URLRequest)
         } else {
+            /* Ecosia: Do not auto-focus the address bar when opening a new tab from the top tab bar.
             openBlankNewTab(focusLocationField: true, isPrivate: isPrivate)
+            */
+            openBlankNewTab(focusLocationField: false, isPrivate: isPrivate)
             overlayManager.openNewTab(url: nil, newTabSettings: newTabSettings)
         }
     }
