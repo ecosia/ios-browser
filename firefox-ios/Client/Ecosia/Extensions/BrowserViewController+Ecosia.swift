@@ -152,6 +152,9 @@ extension BrowserViewController {
         // Re-enable interaction in case the previous attach left the table
         // disabled by the fast-tap path below.
         searchController.tableView.isUserInteractionEnabled = true
+        // Drag-down on the suggestions list dismisses the keyboard interactively,
+        // matching the homepage collection view's behavior.
+        searchController.tableView.keyboardDismissMode = .interactive
         installOmniboxFastTap(on: searchController.tableView)
     }
 

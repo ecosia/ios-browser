@@ -175,6 +175,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     private func setup() {
         layer.cornerRadius = .ecosia.borderRadius._1l
+        layer.borderWidth = 1
         layer.shadowOpacity = UX.shadowOpacity
         layer.shadowRadius = UX.shadowRadius
         layer.shadowOffset = UX.shadowOffset
@@ -196,6 +197,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         let focusTap = UITapGestureRecognizer(target: self, action: #selector(focusTextView))
         focusTap.cancelsTouchesInView = false
         addGestureRecognizer(focusTap)
+
+        // Swipe-down on the pill dismisses the keyboard — pairs with the
+        // suggestions list's interactive dismiss for a consistent gesture
+        // anywhere on the omnibox surface.
+        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeDown))
+        swipeDown.direction = .down
+        addGestureRecognizer(swipeDown)
 
         NSLayoutConstraint.activate([
             // textView fills the entire pill — submit button floats over the
@@ -234,6 +242,11 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     @objc private func focusTextView() {
         guard !textView.isFirstResponder else { return }
         textView.becomeFirstResponder()
+    }
+
+    @objc private func handleSwipeDown() {
+        guard textView.isFirstResponder else { return }
+        textView.resignFirstResponder()
     }
 
     // MARK: Actions
@@ -296,10 +309,15 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     private func applySubmitButtonColors() {
         guard let colors = currentTheme?.colors else { return }
-        submitButton.backgroundColor = .clear
-        submitButton.tintColor = submitButton.isEnabled
-            ? colors.ecosia.textPrimary
-            : colors.ecosia.textSecondary
+        submitButton.layer.cornerRadius = UX.submitButtonSize / 2
+        submitButton.layer.masksToBounds = true
+        if submitButton.isEnabled {
+            submitButton.backgroundColor = colors.ecosia.buttonBackgroundFeatured
+            submitButton.tintColor = colors.ecosia.buttonContentSecondary
+        } else {
+            submitButton.backgroundColor = .clear
+            submitButton.tintColor = colors.ecosia.textSecondary
+        }
     }
 
     // MARK: ThemeApplicable
@@ -309,6 +327,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         let colors = theme.colors
 
         backgroundColor = colors.ecosia.backgroundElevation2
+        layer.borderColor = colors.ecosia.borderDecorative.cgColor
         textView.textColor = colors.ecosia.textPrimary
         textView.tintColor = colors.ecosia.textPrimary
         placeholderLabel.textColor = colors.ecosia.textSecondary
