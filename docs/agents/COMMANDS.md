@@ -1,5 +1,7 @@
 # Development Commands
 
+> Full setup narrative for humans: [Ecosia/Ecosia.docc/Ecosia.md](../../Ecosia/Ecosia.docc/Ecosia.md)
+
 Run from **workspace root** (`ios-browser/`) unless otherwise specified.
 
 ## Bootstrap (First-Time Setup)

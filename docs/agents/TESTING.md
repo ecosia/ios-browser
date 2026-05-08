@@ -1,5 +1,7 @@
 # Testing
 
+> Full snapshot testing guide for humans: [Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md](../../Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md)
+
 ## Requirements
 
 - **MANDATORY**: Include tests when writing new code or implementing features

@@ -18,21 +18,7 @@
 
 ## Adding a New String
 
-1. Add the key to the `Key` enum in `firefox-ios/Ecosia/L10N/String.swift`:
-
-    ```swift
-    case addMoreDetailAboutYourFeedback = "Add more detail about your feedback..."
-    ```
-
-2. Add the English translation in `firefox-ios/Ecosia/L10N/en.lproj/Ecosia.strings`:
-
-    ```
-    "Add more detail about your feedback..." = "Add more detail about your feedback...";
-    ```
-
-3. Reference in code:
-    - UIKit: `String.localized(.addMoreDetailAboutYourFeedback)`
-    - SwiftUI: `EcosiaText(.addMoreDetailAboutYourFeedback)`
+Add the key to `Key` enum in `firefox-ios/Ecosia/L10N/String.swift`, add the English value in `en.lproj/Ecosia.strings`, then reference it with `String.localized(.key)` (UIKit) or `EcosiaText(.key)` (SwiftUI). For a full step-by-step example, see [Ecosia/Ecosia.docc/Ecosia.md](../../Ecosia/Ecosia.docc/Ecosia.md#translations).
 
 ## Advanced Usage
 

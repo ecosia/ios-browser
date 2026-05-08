@@ -26,46 +26,7 @@ Ecosia extends Firefox classes via `+Ecosia` extension files in `firefox-ios/Cli
 
 ## Commenting Rules for Ecosia Code in Firefox Files
 
-When modifying Firefox core files for Ecosia customizations:
-
-### One-liner (`//`) — for introducing new Ecosia code
-
-```swift
-// Ecosia: Update appversion predicate
-let appVersionPredicate = (appVersionString?.contains("Ecosia") ?? false) == true
-```
-
-### Block comment (`/* */`) — when commenting out original Firefox code
-
-```swift
-/* Ecosia: Swap Theme Manager with Ecosia's
-lazy var themeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
- */
-lazy var themeManager: ThemeManager = EcosiaThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
-```
-
-### Swapping Firefox behavior with Ecosia behavior
-
-Always:
-1. Comment out the original Firefox code in a block comment starting with `/* Ecosia: <reason>`
-2. Keep the commented-out Firefox code visible inside that block
-3. Add the Ecosia replacement code immediately after the closing `*/`
-
-### Adding Ecosia items to shared declarations
-
-When adding an Ecosia-specific item to a list that ends with Firefox code (e.g. protocol conformances):
-1. Block comment: `/* Ecosia: Add <Item>` then the original last line, then `*/`
-2. Replacement: repeat the last Firefox line with a trailing comma, then add the Ecosia line with the closing
-
-```swift
-/* Ecosia: Add WelcomeDelegate
-OnboardingServiceDelegate {
- */
-OnboardingServiceDelegate,
-WelcomeDelegate {
-```
-
-This makes upstream merges easier — the original Firefox code is visible inside the block comment.
+Use `// Ecosia: <reason>` for new code additions. Use `/* Ecosia: <reason> … */` to comment out original Firefox code, keeping it visible inside the block, then place the Ecosia replacement immediately after — this preserves context for upstream merges. For full examples of the swap pattern and shared declaration pattern, see [Ecosia/Ecosia.docc/Ecosia.md](../../Ecosia/Ecosia.docc/Ecosia.md).
 
 ## Environment Detection
 
