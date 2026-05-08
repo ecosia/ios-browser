@@ -23,6 +23,10 @@ extension BrowserViewController: HomepageViewControllerDelegate {
 @MainActor
 extension BrowserViewController: NTPSearchBarDelegate {
     func ntpSearchBarDidSubmit(_ searchTerm: String, mode: NTPSearchBarSubmitMode) {
+        // Mark the session engaged before tearing down the suggestions so the
+        // existing `searchViewControllerWillHide` → `recordURLBarSearchEngagementTelemetryEvent`
+        // pipeline records the omnibox submit the same way the URL bar would.
+        searchSessionState = .engaged
         hideOmniboxSuggestions()
         // Clear the omnibox so the user returns to a fresh pill next time the
         // homepage is shown — the submitted query lives on the SERP, not in
@@ -31,12 +35,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
             bar.text = ""
             _ = bar.resignFirstResponder()
         }
-        // AI chat backend isn't wired yet — fall through to standard search so
-        // long prompts still produce a useful result. Replace this branch with
-        // the AI chat hand-off once that pipeline lands.
         switch mode {
-        case .search, .aiChat:
+        case .search:
             openBrowser(searchTerm: searchTerm)
+        case .aiChat:
+            submitOmniboxAIChat(query: searchTerm)
         }
         // Force the swap to the webview. Without URL bar overlay mode, the
         // standard `addressToolbar(_:didLeaveOverlayModeForReason:)` chain
@@ -44,14 +47,68 @@ extension BrowserViewController: NTPSearchBarDelegate {
         showEmbeddedWebview()
     }
 
+    /// Routes a long-prompt submit (above the omnibox AI threshold) into the
+    /// AI search backend. Mirrors `handleAISearchSelection` in
+    /// `SearchViewController+Ecosia` but loads through the active tab since
+    /// the omnibox keyboard-Done path doesn't go through the search delegate.
+    private func submitOmniboxAIChat(query: String) {
+        guard let tab = tabManager.selectedTab else { return }
+        let url = Environment.current.urlProvider
+            .aiSearch(origin: .omnibox)
+            .appendingQueryItems([URLQueryItem(name: "q", value: query)])
+        searchTelemetry.shouldSetUrlTypeSearch = true
+        finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+    }
+
     func ntpSearchBarTextDidChange(_ searchTerm: String) {
         guard let anchor = ntpOmniboxAnchorView else { return }
+        if searchTerm.isEmpty {
+            hideOmniboxSuggestions()
+            return
+        }
+        if anchor.isMultiline {
+            // Past two lines the suggestions rows aren't useful anymore, but
+            // we keep the overlay attached so its colored background stays
+            // visible behind the pill (only the table content is hidden).
+            ensureOmniboxSuggestionsAttached(anchorView: anchor)
+            searchController?.tableView.isHidden = true
+            return
+        }
+        searchController?.tableView.isHidden = false
         showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
     }
 
-    func ntpSearchBarDidBeginEditing() {}
+    /// Attaches the suggestions overlay (creating the search controller if
+    /// needed) without populating its query — used for the multi-line state
+    /// where we want the background visible but no rows.
+    private func ensureOmniboxSuggestionsAttached(anchorView: UIView & Autocompletable) {
+        createSearchControllerIfNeeded()
+        guard let searchController else { return }
+        searchLoader?.autocompleteView = anchorView
+        if searchController.parent == nil {
+            attachOmniboxSuggestions(anchorView: anchorView)
+        }
+    }
+
+    func ntpSearchBarDidBeginEditing() {
+        // Mark the session active the moment the omnibox gains focus so an
+        // abandoned focus (no text entered) is recorded the same way the URL
+        // bar tracks it via `addressToolbarDidBeginEditing`. The state is
+        // otherwise only set lazily inside `createSearchControllerIfNeeded`,
+        // which runs on first keystroke and would miss focus-only sessions.
+        searchSessionState = .active
+    }
 
     func ntpSearchBarDidCancel() {
+        // Mark the session abandoned synchronously so the deferred
+        // `hideOmniboxSuggestions` below — which triggers
+        // `searchViewControllerWillHide` — sees the right state and routes
+        // to `recordURLBarSearchAbandonmentTelemetryEvent`. A submit that
+        // races in before the deferred hide runs flips the state back to
+        // `.engaged`, which is exactly what we want.
+        if searchSessionState == .active {
+            searchSessionState = .abandoned
+        }
         // The bar resigns first responder for two distinct reasons: an explicit
         // user dismissal, or the tap-outside gesture firing on a tap that's
         // actually selecting a suggestion row. Tearing the suggestions overlay

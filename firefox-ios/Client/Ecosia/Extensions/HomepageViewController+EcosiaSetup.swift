@@ -44,16 +44,36 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             equalTo: view.safeAreaLayoutGuide.bottomAnchor,
             constant: -.ecosia.space._1l
         )
+        let horizontalInset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
+        let leadingConstraint = searchBar.leadingAnchor.constraint(
+            equalTo: view.leadingAnchor,
+            constant: horizontalInset
+        )
+        let trailingConstraint = searchBar.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: -horizontalInset
+        )
+        // The pill self-sizes between min and max to accommodate multi-line
+        // input — content inside drives the actual height.
+        let minHeightConstraint = searchBar.heightAnchor.constraint(
+            greaterThanOrEqualToConstant: NTPSearchBarView.minHeight
+        )
+        let maxHeightConstraint = searchBar.heightAnchor.constraint(
+            lessThanOrEqualToConstant: NTPSearchBarView.maxHeight
+        )
         NSLayoutConstraint.activate([
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: .ecosia.space._m),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -.ecosia.space._m),
+            leadingConstraint,
+            trailingConstraint,
             bottomConstraint,
-            searchBar.heightAnchor.constraint(equalToConstant: NTPSearchBarView.height)
+            minHeightConstraint,
+            maxHeightConstraint
         ])
 
         searchBar.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         setNTPSearchBar(searchBar)
         setNTPSearchBarBottomConstraint(bottomConstraint)
+        setNTPSearchBarLeadingConstraint(leadingConstraint)
+        setNTPSearchBarTrailingConstraint(trailingConstraint)
 
         // Swipe-down on the NTP content drags the keyboard with it — when the
         // keyboard fully dismisses, the omnibox loses focus naturally.
@@ -235,6 +255,24 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     func updateEcosiaScrollability(for size: CGSize) {
         let isPhoneLandscape = size.width > size.height && traitCollection.userInterfaceIdiom == .phone
         homepageCollectionView?.isScrollEnabled = isPhoneLandscape
+    }
+
+    /// Re-applies the iPad horizontal inset to the omnibox after a rotation or
+    /// size-class change (e.g. iPad split-screen resize). On iPhone-class
+    /// surfaces the value collapses back to the default `_m` margin.
+    func updateNTPSearchBarHorizontalInset() {
+        let inset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
+        ntpSearchBarLeadingConstraint?.constant = inset
+        ntpSearchBarTrailingConstraint?.constant = -inset
+    }
+
+    /// 160pt of breathing room on iPad regular-width surfaces so the pill doesn't
+    /// stretch the full width of a 1024pt display; everything else (iPhone, iPad
+    /// narrow split-screen) uses the standard `_m` margin.
+    fileprivate static func ntpSearchBarHorizontalInset(for traitCollection: UITraitCollection) -> CGFloat {
+        let isWideIPad = traitCollection.userInterfaceIdiom == .pad
+            && traitCollection.horizontalSizeClass == .regular
+        return isWideIPad ? 160 : .ecosia.space._m
     }
 
     /// Pushes the collection view's content up far enough that the last cells

@@ -910,6 +910,10 @@ final class HomepageViewController: UIViewController,
                 actionType: HomepageActionType.traitCollectionDidChange
             )
         )
+        // Ecosia: Re-tune the omnibox horizontal inset when size class changes
+        // (iPad rotation, split-screen resize) so the iPad-only 160pt padding
+        // correctly collapses back when the surface becomes compact-width.
+        updateNTPSearchBarHorizontalInset()
     }
 
     /* Ecosia: On iPad the content container ends at overKeyboardContainer.top — well above

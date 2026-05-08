@@ -121,6 +121,23 @@ extension HomepageViewController {
         objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarBottomConstraint, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
+    // Ecosia: Stored so the iPad horizontal inset can be retuned on size-class changes.
+    var ntpSearchBarLeadingConstraint: NSLayoutConstraint? {
+        return objc_getAssociatedObject(self, &AssociatedKeys.ntpSearchBarLeadingConstraint) as? NSLayoutConstraint
+    }
+
+    func setNTPSearchBarLeadingConstraint(_ constraint: NSLayoutConstraint) {
+        objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarLeadingConstraint, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+
+    var ntpSearchBarTrailingConstraint: NSLayoutConstraint? {
+        return objc_getAssociatedObject(self, &AssociatedKeys.ntpSearchBarTrailingConstraint) as? NSLayoutConstraint
+    }
+
+    func setNTPSearchBarTrailingConstraint(_ constraint: NSLayoutConstraint) {
+        objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarTrailingConstraint, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+
     // Ecosia: Top-right close button shown only while the omnibox is in focus.
     var ntpOmniboxCloseButton: UIButton? {
         return objc_getAssociatedObject(self, &AssociatedKeys.ntpOmniboxCloseButton) as? UIButton
@@ -138,5 +155,7 @@ private struct AssociatedKeys {
     nonisolated(unsafe) static var ecosiaAdapter: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBar: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarBottomConstraint: UInt8 = 0
+    nonisolated(unsafe) static var ntpSearchBarLeadingConstraint: UInt8 = 0
+    nonisolated(unsafe) static var ntpSearchBarTrailingConstraint: UInt8 = 0
     nonisolated(unsafe) static var ntpOmniboxCloseButton: UInt8 = 0
 }

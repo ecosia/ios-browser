@@ -203,6 +203,7 @@ public enum URLProvider {
     public enum AIChatOrigin: String {
         case ntp = "newtabbutton"
         case autocomplete = "autocomplete_app"
+        case omnibox = "omnibox_app"
     }
     public func aiChat(origin: AIChatOrigin?) -> URL {
         let baseURL = root.appendingPathComponent("ai-chat")
