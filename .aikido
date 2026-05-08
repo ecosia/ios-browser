@@ -2,12 +2,8 @@ exclude:
   paths:
     # Root-level folders not related to Ecosia's product
     - focus-ios/
-    - BrowserKit/
     - SampleBrowser/
     - SampleComponentLibraryApp/
-    - MozillaRustComponents/
-    - ContentBlockingLists/
-    - shavar-prod-lists/
     - taskcluster/
     - monorepo-migration/
     - test-fixtures/
