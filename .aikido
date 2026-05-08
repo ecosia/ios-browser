@@ -1,0 +1,13 @@
+exclude:
+  paths:
+    # Root-level folders not related to Ecosia's product
+    - focus-ios/
+    - SampleBrowser/
+    - SampleComponentLibraryApp/
+    - taskcluster/
+    - monorepo-migration/
+    - test-fixtures/
+    - firefox-ios/ThirdParty/
+    # Disabled third-party services within firefox-ios
+    - firefox-ios/Client/AdjustHelper.swift
+    - firefox-ios/Client/AdjustTelemetryHelper.swift
