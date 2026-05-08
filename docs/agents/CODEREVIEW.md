@@ -3,8 +3,9 @@
 ## PR & Branch Naming
 
 - PR title: `[MOB-XXXX] {name of the feature}` (Jira ticket reference)
-- Branch name must include `MOB-XXXX` (e.g., `mob-1234/feature-name`)
-- No ticket? Use `NOTICKET` in PR title and `noticket` in branch name
+- Branch name usually starts with engineer initials (e.g. Jane Doe, `jd-`)
+- Branch name usually includes ticket reference `MOB-XXXX` (e.g., `jd-mob-1234-feature-name`)
+- No ticket? No ticket reference needed
 
 ## Commit Standards
 
