@@ -1,6 +1,6 @@
 # Testing
 
-> Full snapshot testing guide for humans: [Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md](../../Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md)
+> Full snapshot testing guide for humans: [Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md](../SNAPSHOT_TESTING_WIKI.md)
 
 ## Requirements
 

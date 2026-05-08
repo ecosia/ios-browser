@@ -26,7 +26,7 @@ Ecosia extends Firefox classes via `+Ecosia` extension files in `firefox-ios/Cli
 
 ## Commenting Rules for Ecosia Code in Firefox Files
 
-Use `// Ecosia: <reason>` for new code additions. Use `/* Ecosia: <reason> … */` to comment out original Firefox code, keeping it visible inside the block, then place the Ecosia replacement immediately after — this preserves context for upstream merges. For full examples of the swap pattern and shared declaration pattern, see [Ecosia/Ecosia.docc/Ecosia.md](../../Ecosia/Ecosia.docc/Ecosia.md).
+Use `// Ecosia: <reason>` for new code additions. Use `/* Ecosia: <reason> … */` to comment out original Firefox code, keeping it visible inside the block, then place the Ecosia replacement immediately after — this preserves context for upstream merges. For full examples of the swap pattern and shared declaration pattern, see [Ecosia/Ecosia.docc/Ecosia.md](../Ecosia.md).
 
 ## Environment Detection
 

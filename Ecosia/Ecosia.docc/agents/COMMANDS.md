@@ -1,6 +1,6 @@
 # Development Commands
 
-> Full setup narrative for humans: [Ecosia/Ecosia.docc/Ecosia.md](../../Ecosia/Ecosia.docc/Ecosia.md)
+> Full setup narrative for humans: [Ecosia/Ecosia.docc/Ecosia.md](../Ecosia.md)
 
 Run from **workspace root** (`ios-browser/`) unless otherwise specified.
 

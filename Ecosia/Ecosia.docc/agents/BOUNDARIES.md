@@ -1,6 +1,6 @@
 # Agent Boundaries
 
-Rules that apply to every task. See [AGENTS.md](../../AGENTS.md) for overview; [CONTEXT.md](./CONTEXT.md) for what to do before changing code.
+Rules that apply to every task. See [AGENTS.md](../../../AGENTS.md) for overview; [CONTEXT.md](./CONTEXT.md) for what to do before changing code.
 
 ## Always
 

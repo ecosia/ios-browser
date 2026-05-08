@@ -1,6 +1,6 @@
 # Before Changing Code
 
-Do these before making edits. See [AGENTS.md](../../AGENTS.md) for overview.
+Do these before making edits. See [AGENTS.md](../../../AGENTS.md) for overview.
 
 1. **Determine ownership** — Is the file Firefox core or Ecosia-owned? Check if it lives under `Ecosia/`, `Client/Ecosia/`, or `EcosiaTests/`. If not, it's Firefox core and requires the commenting conventions in [ARCHITECTURE.md](./ARCHITECTURE.md).
 

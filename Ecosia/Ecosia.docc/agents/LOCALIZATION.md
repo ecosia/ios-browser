@@ -18,7 +18,7 @@
 
 ## Adding a New String
 
-Add the key to `Key` enum in `firefox-ios/Ecosia/L10N/String.swift`, add the English value in `en.lproj/Ecosia.strings`, then reference it with `String.localized(.key)` (UIKit) or `EcosiaText(.key)` (SwiftUI). For a full step-by-step example, see [Ecosia/Ecosia.docc/Ecosia.md](../../Ecosia/Ecosia.docc/Ecosia.md#translations).
+Add the key to `Key` enum in `firefox-ios/Ecosia/L10N/String.swift`, add the English value in `en.lproj/Ecosia.strings`, then reference it with `String.localized(.key)` (UIKit) or `EcosiaText(.key)` (SwiftUI). For a full step-by-step example, see [Ecosia/Ecosia.docc/Ecosia.md](../Ecosia.md#translations).
 
 ## Advanced Usage
 
