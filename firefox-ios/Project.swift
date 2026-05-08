@@ -34,5 +34,12 @@ let project = Project(
     packages: Packages.all,
     settings: .settings(configurations: BuildConfigurations.all),
     targets: allTargets,
-    schemes: EcosiaSchemes.all
+    schemes: EcosiaSchemes.all,
+    // Ecosia: Register agent instruction docs as Xcode project files so that
+    // Xcode's Coding Assistant can index and use them.
+    additionalFiles: [
+        "../AGENTS.md",
+        "../CLAUDE.md",
+        "../docs/agents/**"
+    ]
 )
