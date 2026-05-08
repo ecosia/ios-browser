@@ -58,5 +58,5 @@ python3 ecosify-strings.py firefox-ios    # Rebrand Mozilla strings after upstre
 
 ## CI
 
-- **Bitrise** — full builds
+- **Circle CI** — full builds
 - **GitHub Actions** — SwiftLint, merge unit tests, snapshot tests
