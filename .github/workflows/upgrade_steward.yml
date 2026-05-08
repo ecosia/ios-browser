@@ -83,15 +83,14 @@ jobs:
           rec = r["recommendation"]
 
           gh_output = os.environ.get("GITHUB_OUTPUT", "")
-          lines = [
-              f"status={rec['status']}",
-              f"confidence={rec['confidence']}",
-              f"impacted={summary['impacted_customized_files']}",
-              f"changed={summary['total_upstream_changed_files']}",
-          ]
           if gh_output:
               with open(gh_output, "a", encoding="utf-8") as out:
-                  out.write("\n".join(lines) + "\n")
+                  out.write("status<<EOF\n")
+                  out.write(rec["status"])
+                  out.write("\nEOF\n")
+                  out.write(f"confidence={rec['confidence']}\n")
+                  out.write(f"impacted={summary['impacted_customized_files']}\n")
+                  out.write(f"changed={summary['total_upstream_changed_files']}\n")
 
           summary_md = os.environ.get("GITHUB_STEP_SUMMARY", "")
           if summary_md:
