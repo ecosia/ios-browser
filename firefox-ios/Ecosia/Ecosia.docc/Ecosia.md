@@ -123,8 +123,6 @@ SwiftLint's baseline feature (`swiftlint_baseline.json`) is used **temporarily**
 
 SwiftLint version is evaluated during upstream Firefox merges. Since Firefox doesn't pin versions (they use the latest), we assess whether to upgrade when merging their changes.
 
-**For more details on baseline workflow and version updates**, see the Architecture Decision Record: [SwiftLint Configuration for Upstream Firefox Fork](../../../docs/decisions/0001-swiftlint-configuration-for-upstream-fork.md)
-
 ### First-time setup and building
 
 1. Install the latest [Xcode developer tools](https://developer.apple.com/xcode/downloads/) from Apple.

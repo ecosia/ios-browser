@@ -11,7 +11,6 @@ This is a **fork of Mozilla Firefox iOS** with Ecosia customizations layered on 
 | `firefox-ios/Client/` | Firefox Client app — Ecosia modifications are marked with `// Ecosia:` comments. |
 | `firefox-ios/EcosiaTests/` | Ecosia unit tests and snapshot tests. |
 | `BrowserKit/` | Shared Swift package (Common, Redux, SiteImageView, TabDataStore, WebEngine, etc.). |
-| `docs/decisions/` | Architecture Decision Records (ADRs). |
 
 ## Core Ecosia Modules (inside `Ecosia/`)
 
