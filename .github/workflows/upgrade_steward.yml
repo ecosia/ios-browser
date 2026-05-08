@@ -1,0 +1,116 @@
+name: Upgrade Steward Report
+
+# Generates JSON + HTML impact reports for a Firefox upgrade path.
+# Run manually from the Actions tab when preparing or reviewing an upgrade.
+
+on:
+  workflow_dispatch:
+    inputs:
+      firefox_base_branch:
+        description: 'Mozilla release branch to compare from (e.g. release/v147.2)'
+        required: true
+        default: 'release/v147.2'
+      firefox_target_branch:
+        description: 'Mozilla release branch to compare to (e.g. release/v150.0)'
+        required: true
+        default: 'release/v150.0'
+      remote_name:
+        description: 'Local name for the mozilla/firefox-ios remote (must match upgrade_steward.py default: firefox-origin)'
+        required: true
+        default: 'firefox-origin'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upgrade-steward-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  steward-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Ecosia repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Firefox upstream remote
+        env:
+          FIREFOX_IOS_URL: https://github.com/mozilla-mobile/firefox-ios.git
+        run: |
+          set -euo pipefail
+          REMOTE="${{ inputs.remote_name }}"
+          if git remote get-url "${REMOTE}" >/dev/null 2>&1; then
+            git remote set-url "${REMOTE}" "${FIREFOX_IOS_URL}"
+          else
+            git remote add "${REMOTE}" "${FIREFOX_IOS_URL}"
+          fi
+
+      - name: Fetch Firefox release branches
+        run: |
+          set -euo pipefail
+          REMOTE="${{ inputs.remote_name }}"
+          git fetch "${REMOTE}" \
+            "${{ inputs.firefox_base_branch }}" \
+            "${{ inputs.firefox_target_branch }}"
+
+      - name: Run Upgrade Steward
+        id: steward
+        run: |
+          set -euo pipefail
+          REMOTE="${{ inputs.remote_name }}"
+          BASE_REF="${REMOTE}/${{ inputs.firefox_base_branch }}"
+          TARGET_REF="${REMOTE}/${{ inputs.firefox_target_branch }}"
+          OUTDIR="firefox-ios/Tuist/upgrade/demo-output-ci"
+
+          python3 firefox-ios/Tuist/upgrade/upgrade_steward.py \
+            --remote "${REMOTE}" \
+            --base-ref "${BASE_REF}" \
+            --target-ref "${TARGET_REF}" \
+            --output-dir "${OUTDIR}"
+
+          python3 - <<'PY'
+          import json
+          import os
+
+          path = "firefox-ios/Tuist/upgrade/demo-output-ci/upgrade-steward-report.json"
+          with open(path, encoding="utf-8") as f:
+              r = json.load(f)
+          summary = r["summary"]
+          rec = r["recommendation"]
+
+          gh_output = os.environ.get("GITHUB_OUTPUT", "")
+          lines = [
+              f"status={rec['status']}",
+              f"confidence={rec['confidence']}",
+              f"impacted={summary['impacted_customized_files']}",
+              f"changed={summary['total_upstream_changed_files']}",
+          ]
+          if gh_output:
+              with open(gh_output, "a", encoding="utf-8") as out:
+                  out.write("\n".join(lines) + "\n")
+
+          summary_md = os.environ.get("GITHUB_STEP_SUMMARY", "")
+          if summary_md:
+              with open(summary_md, "a", encoding="utf-8") as md:
+                  md.write("## Upgrade Steward\n\n")
+                  md.write(f"- **Recommendation:** {rec['status']} ({rec['confidence']}/100)\n")
+                  md.write(f"- **Base:** `{r['base_ref']}` → **Target:** `{r['target_ref']}`\n")
+                  md.write(
+                      f"- **Upstream changed files:** {summary['total_upstream_changed_files']}\n"
+                  )
+                  md.write(
+                      f"- **Impacted Ecosia-sensitive files:** {summary['impacted_customized_files']}\n\n"
+                  )
+                  md.write(f"{rec['summary']}\n")
+          PY
+
+      - name: Upload steward artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: upgrade-steward-report-${{ github.run_id }}
+          path: firefox-ios/Tuist/upgrade/demo-output-ci/
+          if-no-files-found: error

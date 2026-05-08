@@ -170,3 +170,6 @@ Tuist/Dependencies
 firefox-ios/Client.xcodeproj/xcshareddata/xcschemes
 firefox-ios/Client.xcodeproj/project.pbxproj
 BrowserKit/Package.resolved
+
+# Upgrade Steward generated reports (local runs; CI uploads artifacts separately)
+firefox-ios/Tuist/upgrade/demo-output*/
