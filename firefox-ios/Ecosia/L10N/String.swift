@@ -26,6 +26,7 @@ extension String {
         case allRegions = "All regions"
         case askSearchBrowse = "Ask, search, browse..."
         case autocomplete = "Autocomplete"
+        case charactersLeft = "%d characters left"
         case climateImpact = "Climate Impact"
         case closeAll = "Close all"
         case couldNotLoadSeedCounter = "Could not load seed counter"

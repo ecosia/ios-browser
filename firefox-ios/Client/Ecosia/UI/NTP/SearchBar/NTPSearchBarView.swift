@@ -351,8 +351,34 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         counterLabel.isHidden = !visible
         updateTextBottomInset(counterVisible: visible)
         guard visible else { return }
-        counterLabel.text = "\(count)/\(UX.maxLength)"
+        let remaining = max(0, UX.maxLength - count)
+        let isWarning = count >= UX.counterWarningThreshold
+        counterLabel.attributedText = composeCounterText(remaining: remaining, isWarning: isWarning)
         applyCounterColor()
+    }
+
+    /// Builds the counter label content. In the warning band (last 100 chars
+    /// before the cap) the text is prefixed with an SF-Symbol exclamation
+    /// triangle so the limit is unmissable.
+    private func composeCounterText(remaining: Int, isWarning: Bool) -> NSAttributedString {
+        let phrase = String(format: String.localized(.charactersLeft), remaining)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: counterLabel.font ?? UIFont.preferredFont(forTextStyle: .caption2)
+        ]
+        let result = NSMutableAttributedString()
+        if isWarning {
+            let symbolConfig = UIImage.SymbolConfiguration(textStyle: .caption2)
+            if let icon = UIImage(systemName: "exclamationmark.triangle",
+                                  withConfiguration: symbolConfig)?
+                .withRenderingMode(.alwaysTemplate) {
+                let attachment = NSTextAttachment()
+                attachment.image = icon
+                result.append(NSAttributedString(attachment: attachment))
+                result.append(NSAttributedString(string: " ", attributes: attributes))
+            }
+        }
+        result.append(NSAttributedString(string: phrase, attributes: attributes))
+        return result
     }
 
     /// Widens the textView's bottom inset whenever the counter is visible so
@@ -378,10 +404,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         guard let colors = currentTheme?.colors else { return }
         let count = (textView.text ?? "").count
         // Once we cross into the last 100 chars of the budget, flip the
-        // counter into a warning tint so the cap is unmissable.
-        counterLabel.textColor = count >= UX.counterWarningThreshold
+        // counter into a warning tint so the cap is unmissable. The tint is
+        // applied to both the text and the warning-triangle attachment glyph.
+        let color = count >= UX.counterWarningThreshold
             ? colors.ecosia.stateError
             : colors.ecosia.textSecondary
+        counterLabel.textColor = color
+        counterLabel.tintColor = color
     }
 
     private func applySubmitButtonColors() {
