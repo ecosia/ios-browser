@@ -61,21 +61,14 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         /// Once the input wraps past this many lines, the suggestions overlay
         /// is suppressed and the pill grows upward to fit the content.
         static let multilineThreshold = 2
-        /// Padding between the textView and the pill's top/bottom edges.
+        /// Padding between the textView and the pill's top edge.
         static let textPadding: CGFloat = .ecosia.space._m
-        static var minTextHeight: CGFloat { minHeight - 2 * textPadding }
-        static var maxTextHeight: CGFloat { maxHeight - 2 * textPadding }
-        /// Bottom inset applied inside the textView so wrapped lines don't
-        /// flow into the submit-button row at the bottom-right of the pill.
-        /// Equals the submit-button vertical footprint above the textView's
-        /// bottom edge: 40pt button + 8pt bottom inset - 16pt of textView
-        /// bottom padding = 32pt.
-        static let textBottomInsetWithoutCounter: CGFloat = 32
-        /// When the character counter is visible it sits inline with the
-        /// submit button on its leading side; we widen the textView's bottom
-        /// inset by the counter's vertical footprint plus a small gap so
-        /// wrapped text never lands underneath it.
-        static let textBottomInsetWithCounter: CGFloat = 48
+        /// Vertical footprint of the bottom-controls row (submit button + its
+        /// bottom inset). The textView is pinned just above this row so its
+        /// content can never bleed into the submit / counter area.
+        static var bottomRowHeight: CGFloat { submitButtonSize + .ecosia.space._1s }
+        static var minTextHeight: CGFloat { minHeight - textPadding - bottomRowHeight }
+        static var maxTextHeight: CGFloat { maxHeight - textPadding - bottomRowHeight }
     }
 
     weak var delegate: NTPSearchBarDelegate?
@@ -84,10 +77,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         tv.font = .preferredFont(forTextStyle: .body)
         tv.adjustsFontForContentSizeCategory = true
         tv.backgroundColor = .clear
-        // Reserve room at the bottom of the text container so wrapped lines
-        // never flow into the submit-button row. The bottom inset is widened
-        // dynamically by `updateTextBottomInset()` once the counter appears.
-        tv.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: UX.textBottomInsetWithoutCounter, right: 0)
+        tv.textContainerInset = .zero
         tv.textContainer.lineFragmentPadding = 0
         tv.autocorrectionType = .no
         tv.autocapitalizationType = .none
@@ -243,12 +233,15 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
         textViewHeightConstraint = textView.heightAnchor.constraint(equalToConstant: UX.minTextHeight)
         NSLayoutConstraint.activate([
-            // textView fills the entire pill — submit button floats over the
-            // bottom-right corner.
+            // textView occupies the upper region of the pill. Its bottom is
+            // pinned to the submit button's top so wrapped text physically
+            // cannot enter the bottom-row area (where submit + counter live)
+            // — guaranteeing no overlap regardless of content length or
+            // Dynamic Type scaling.
             textView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.textPadding),
             textView.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding),
             textView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.textPadding),
-            textView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.textPadding),
+            textView.bottomAnchor.constraint(equalTo: submitButton.topAnchor),
             textViewHeightConstraint,
 
             placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor),
@@ -349,7 +342,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         let count = text.count
         let visible = count >= UX.counterVisibleThreshold
         counterLabel.isHidden = !visible
-        updateTextBottomInset(counterVisible: visible)
         guard visible else { return }
         let remaining = max(0, UX.maxLength - count)
         let isWarning = count >= UX.counterWarningThreshold
@@ -379,19 +371,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         }
         result.append(NSAttributedString(string: phrase, attributes: attributes))
         return result
-    }
-
-    /// Widens the textView's bottom inset whenever the counter is visible so
-    /// wrapped text always clears the counter glyphs; reverts to the smaller
-    /// inset when the counter is hidden, letting the text reclaim that space.
-    private func updateTextBottomInset(counterVisible: Bool) {
-        let target = counterVisible
-            ? UX.textBottomInsetWithCounter
-            : UX.textBottomInsetWithoutCounter
-        guard textView.textContainerInset.bottom != target else { return }
-        var insets = textView.textContainerInset
-        insets.bottom = target
-        textView.textContainerInset = insets
     }
 
     private func updateClearButtonVisibility(for text: String) {
