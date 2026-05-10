@@ -220,6 +220,27 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         addGestureRecognizer(tap)
     }
 
+    // MARK: - Touch Highlight (mirrors NTPGlassButtonStyle pressed state)
+
+    // Ecosia: Provide the same glass-active pressed feedback as EcosiaCustomizeButton.
+    // The tintView steps from buttonBgGlassStatic (32 %) to buttonBgGlassStaticActive (64 %)
+    // while the finger is down, exactly matching NTPGlassButtonStyle's behaviour.
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        glassBackground.setHighlighted(true)
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        glassBackground.setHighlighted(false)
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        glassBackground.setHighlighted(false)
+    }
+
     // MARK: - Actions
 
     @objc private func handleTileTap() {
