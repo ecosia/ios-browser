@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import UIKit
 
 class BrowserWindow: UIWindow {
@@ -41,7 +42,14 @@ struct SceneSetupHelper {
         // Setting the initial theme correctly as we don't have a window attached yet to let ThemeManager set it
         let themeManager: ThemeManager = AppContainer.shared.resolve()
         themeManager.setWindow(window, for: windowUUID)
-        window.overrideUserInterfaceStyle = themeManager.getCurrentTheme(for: windowUUID).type.getInterfaceStyle()
+        let currentTheme = themeManager.getCurrentTheme(for: windowUUID)
+        window.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
+
+        // Ecosia: Set the window background to the NTP/homepage background colour so the window
+        // is already the correct colour before the BVC's backgroundView is painted by applyTheme.
+        // Without this, UIWindow's default nil/black background shows through briefly on cold
+        // start (dark → light flash in light mode).
+        window.backgroundColor = (currentTheme.colors as? EcosiaThemeColourPalette)?.ecosia.backgroundPrimaryDecorative
 
         return window
     }
