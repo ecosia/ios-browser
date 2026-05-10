@@ -144,6 +144,20 @@ def run_git(args: list[str]) -> str:
     return result.stdout.strip()
 
 
+def verify_resolvable_ref(ref: str) -> str:
+    """Return the resolved commit SHA or raise with a fetch-oriented hint."""
+    try:
+        return run_git(["rev-parse", "--verify", ref])
+    except subprocess.CalledProcessError as error:
+        stderr = (error.stderr or "").strip()
+        raise RuntimeError(
+            f"Git ref does not resolve from repo root: {ref!r}. "
+            "Ensure the remote branch exists and run "
+            f'`git fetch <remote> "<branch>"` (example: git fetch firefox-origin release/v150.0). '
+            f"Git said: {stderr or 'no stderr'}"
+        ) from error
+
+
 def load_catalog_module():
     spec = importlib.util.spec_from_file_location("ecosia_catalog", CATALOG_SCRIPT)
     if spec is None or spec.loader is None:
@@ -940,6 +954,8 @@ def render_presentation_html(report: dict[str, Any]) -> str:
 
 
 def build_report(base_ref: str, target_ref: str, current_ref: str, remote: str) -> dict[str, Any]:
+    verify_resolvable_ref(base_ref)
+    verify_resolvable_ref(target_ref)
     catalog = build_catalog(ROOT / "firefox-ios")
     changed_files = changed_files_between(base_ref, target_ref)
     customized_by_file: dict[str, list[dict[str, Any]]] = defaultdict(list)

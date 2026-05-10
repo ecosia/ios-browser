@@ -57,6 +57,16 @@ jobs:
             "${{ inputs.firefox_base_branch }}" \
             "${{ inputs.firefox_target_branch }}"
 
+      - name: Verify Firefox refs resolve
+        run: |
+          set -euo pipefail
+          REMOTE="${{ inputs.remote_name }}"
+          BASE_REF="${REMOTE}/${{ inputs.firefox_base_branch }}"
+          TARGET_REF="${REMOTE}/${{ inputs.firefox_target_branch }}"
+          echo "Checking refs: ${BASE_REF} and ${TARGET_REF}"
+          git rev-parse --verify "${BASE_REF}"
+          git rev-parse --verify "${TARGET_REF}"
+
       - name: Run Upgrade Steward
         id: steward
         run: |

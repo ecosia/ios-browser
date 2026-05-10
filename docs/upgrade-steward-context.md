@@ -71,6 +71,8 @@ GitHub → **Actions** → **Upgrade Steward Report** → **Run workflow**.
 
 Inputs default to `release/v147.2` → `release/v150.0` and remote name `firefox-origin`. Download the uploaded artifact for the HTML/JSON.
 
+After fetch, the workflow runs `git rev-parse --verify` on both remote-tracking refs; `upgrade_steward.py` performs the same check before diffing, so missing branches or typos fail with an explicit message instead of an obscure `git diff` error.
+
 ## Known limits (honest scope)
 
 - Steward does **not** run `tuist generate`, `xcodebuild`, UI tests, or capture screenshots yet — those are the next wiring steps toward real autonomy.
