@@ -43,7 +43,10 @@ public struct EcosiaAccountNavButton: View {
     }
 
     public var body: some View {
-        Button(action: onTap) {
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            onTap()
+        }) {
             HStack(spacing: .ecosia.space._1s) {
                 if !authStateProvider.hasRegisterVisitError {
                     EcosiaSeedView(

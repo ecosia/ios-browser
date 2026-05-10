@@ -244,10 +244,12 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - Actions
 
     @objc private func handleTileTap() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         delegate?.impactCellButtonClickedWithInfo(info)
     }
 
     @objc private func buttonAction() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         delegate?.impactCellButtonClickedWithInfo(info)
     }
 }

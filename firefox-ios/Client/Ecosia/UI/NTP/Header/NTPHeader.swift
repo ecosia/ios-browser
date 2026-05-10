@@ -110,7 +110,10 @@ private struct EcosiaCustomizeButton: View {
     private let iconSize: CGFloat = 16
 
     var body: some View {
-        Button(action: onTap) {
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            onTap()
+        }) {
             Image.ecosia("ntp-pencil-edit")
                 .resizable()
                 .renderingMode(.template)

@@ -42,6 +42,10 @@ struct SceneSetupHelper {
         // Setting the initial theme correctly as we don't have a window attached yet to let ThemeManager set it
         let themeManager: ThemeManager = AppContainer.shared.resolve()
         themeManager.setWindow(window, for: windowUUID)
+        /* Ecosia: Extract currentTheme to a constant so it can be reused for the window
+           background colour set below without calling getCurrentTheme twice.
+        window.overrideUserInterfaceStyle = themeManager.getCurrentTheme(for: windowUUID).type.getInterfaceStyle()
+        */
         let currentTheme = themeManager.getCurrentTheme(for: windowUUID)
         window.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
 
