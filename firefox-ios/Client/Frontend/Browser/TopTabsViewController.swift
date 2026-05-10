@@ -289,6 +289,13 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
         view.addSubview(newTab)
         view.addSubview(privateModeButton)
 
+        // Ecosia: Constrain the incognito icon to 24×24 pt so the PDF vector doesn't fill the
+        // full 44 pt touch target and appear disproportionately large in the tab strip.
+        let iconInset: CGFloat = (UX.topTabsViewHeight - 24) / 2
+        privateModeButton.imageEdgeInsets = UIEdgeInsets(
+            top: iconInset, left: iconInset, bottom: iconInset, right: iconInset
+        )
+
         NSLayoutConstraint.activate([
             view.heightAnchor.constraint(equalToConstant: UX.topTabsViewHeight),
 
@@ -297,7 +304,11 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
             newTab.heightAnchor.constraint(equalTo: view.heightAnchor),
 
             privateModeButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            /* Ecosia: Use safeAreaLayoutGuide so the button stays clear of screen-edge safe areas
+               (e.g. iPad landscape on Face ID models).
             privateModeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+             */
+            privateModeButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
             privateModeButton.widthAnchor.constraint(equalTo: view.heightAnchor),
             privateModeButton.heightAnchor.constraint(equalTo: view.heightAnchor),
 
@@ -312,7 +323,13 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
             collectionView.trailingAnchor.constraint(equalTo: topTabFader.trailingAnchor),
         ])
 
+        /* Ecosia: Use safeAreaLayoutGuide so the new-tab button stays clear of screen-edge safe areas.
         newTab.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.trailingEdgeSpace).isActive = true
+         */
+        newTab.trailingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+            constant: -UX.trailingEdgeSpace
+        ).isActive = true
     }
 
     private func handleFadeOutAfterTabSelection() {
