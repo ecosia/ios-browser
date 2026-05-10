@@ -801,10 +801,14 @@ final class LocationView: UIView,
     func applyTheme(theme: Theme) {
         self.theme = theme
         let colors = theme.colors
-        /* Ecosia: Use Ecosia semantic colors for location view (legacy URLBarView applyTheme)
+        /* Ecosia: Use backgroundElevation1 to match the locationContainer background so the
+           gradient fade blends seamlessly into the URL bar pill on long URLs.
+           backgroundTertiary was previously used here but differs from backgroundElevation1
+           (Gray20 vs White in light mode; Gray70 vs Gray80 in dark mode), causing a visible
+           colour seam between the fade and the container.
         let mainBackgroundColor = hasAlternativeLocationColor ? colors.layerSurfaceMediumAlt : colors.layerSurfaceMedium
          */
-        let mainBackgroundColor = colors.ecosia.backgroundTertiary
+        let mainBackgroundColor = colors.ecosia.backgroundElevation1
         if #available(iOS 26.0, *), scrollAlpha.isZero {
             // We want to use system colors when the location view is fully transparent
             // To make sure it blends well with the background when using glass effect.
