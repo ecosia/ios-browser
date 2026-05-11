@@ -171,21 +171,21 @@ final class URLProviderTests: XCTestCase {
         Language.current = def
     }
 
-    // MARK: - AI Search Tests
+    // MARK: - AI Chat Tests
 
-    func testAISearchWithoutOrigin() {
-        let url = urlProvider.aiSearch(origin: nil)
-        XCTAssertTrue(url.absoluteString.hasSuffix("/ai-search"))
+    func testAIChatWithoutOrigin() {
+        let url = urlProvider.aiChat(origin: nil)
+        XCTAssertTrue(url.absoluteString.hasSuffix("/ai-chat"))
         XCTAssertNil(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems)
     }
 
-    func testAISearchWithNTPOrigin() {
-        let url = urlProvider.aiSearch(origin: .ntp)
-        XCTAssertTrue(url.absoluteString.contains("/ai-search?origin=newtabbutton"))
+    func testAIChatWithNTPOrigin() {
+        let url = urlProvider.aiChat(origin: .ntp)
+        XCTAssertTrue(url.absoluteString.contains("/ai-chat?origin=newtabbutton"))
     }
 
-    func testAISearchWithAutocompleteOrigin() {
-        let url = urlProvider.aiSearch(origin: .autocomplete)
-        XCTAssertTrue(url.absoluteString.contains("/ai-search?origin=autocomplete_app"))
+    func testAIChatWithAutocompleteOrigin() {
+        let url = urlProvider.aiChat(origin: .autocomplete)
+        XCTAssertTrue(url.absoluteString.contains("/ai-chat?origin=autocomplete_app"))
     }
 }
