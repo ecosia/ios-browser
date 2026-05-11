@@ -51,7 +51,7 @@ extension SearchViewController {
         let finalURL = url.appendingQueryItems([URLQueryItem(name: "q", value: viewModel.searchQuery)])
 
         searchDelegate?.searchViewController(self, didSelectURL: finalURL, searchTerm: viewModel.searchQuery)
-        Analytics.shared.aiSearchAutocompleteForQuery(viewModel.searchQuery)
+        Analytics.shared.aiChatAutocompleteForQuery(viewModel.searchQuery)
     }
 
     // MARK: - AI Chat Cell Configuration

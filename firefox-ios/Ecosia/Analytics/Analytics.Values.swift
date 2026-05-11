@@ -133,9 +133,9 @@ extension Analytics {
             toolbar
         }
 
-        public enum AISearch: String {
+        public enum AIChat: String {
             case
-            cta = "ai_search_cta"
+            cta = "ai_chat_cta"
         }
     }
 
