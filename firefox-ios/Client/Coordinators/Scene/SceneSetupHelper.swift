@@ -49,10 +49,10 @@ struct SceneSetupHelper {
         let currentTheme = themeManager.getCurrentTheme(for: windowUUID)
         window.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
 
-        // Ecosia: Set the window background to the NTP/homepage background colour so the window
-        // is already the correct colour before the BVC's backgroundView is painted by applyTheme.
-        // Without this, UIWindow's default nil/black background shows through briefly on cold
-        // start (dark → light flash in light mode).
+        /* Ecosia: Set the window background to the NTP/homepage background colour so the window
+           is already the correct colour before the BVC's backgroundView is painted by applyTheme.
+           Without this, UIWindow's default nil/black background shows through briefly on cold
+           start (dark → light flash in light mode). */
         window.backgroundColor = (currentTheme.colors as? EcosiaThemeColourPalette)?.ecosia.backgroundPrimaryDecorative
 
         return window
