@@ -629,11 +629,18 @@ class BrowserViewController: UIViewController,
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return Self.supportedOrientations(forPhoneHomepage: contentContainer.hasAnyHomepage)
+    }
+
+    /// Ecosia: Centralized orientation policy so it stays in sync between the
+    /// VC-level override and the AppDelegate's `application(_:supportedInterfaceOrientationsFor:)`.
+    /// iPhone: NTP/homepage is portrait-only; everything else is allButUpsideDown.
+    /// iPad: all orientations.
+    static func supportedOrientations(forPhoneHomepage isHomepage: Bool) -> UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
-        } else {
-            return .all
+            return isHomepage ? .portrait : .allButUpsideDown
         }
+        return .all
     }
 
     private func didInit() {
@@ -2087,6 +2094,11 @@ class BrowserViewController: UIViewController,
         if !isPrivate {
             ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
         }
+
+        // Ecosia: Re-evaluate the orientation lock now that the NTP is the
+        // current content — on iPhone this forces a rotation back to portrait
+        // if the user opens the homepage while in landscape.
+        updateSupportedOrientationsForContentChange()
     }
 
     func showEmbeddedWebview() {
@@ -2108,6 +2120,30 @@ class BrowserViewController: UIViewController,
         browserDelegate?.show(webView: webView)
         if !isToolbarTranslucencyRefactorEnabled {
             updateToolbarDisplay()
+        }
+
+        // Ecosia: Re-evaluate the orientation lock now that the webview is
+        // the current content — releases the iPhone portrait lock that the
+        // NTP imposes so web pages can be viewed in landscape.
+        updateSupportedOrientationsForContentChange()
+    }
+
+    /// Notifies UIKit that `supportedInterfaceOrientations` may have changed
+    /// — used when the contentContainer flips between the NTP (portrait-only
+    /// on iPhone) and the webview (all-but-upside-down on iPhone) so iOS can
+    /// rotate the device to a supported orientation if needed. Pushes the
+    /// new value to `AppDelegate.orientationLock` as well — that property is
+    /// what `application(_:supportedInterfaceOrientationsFor:)` returns, so
+    /// without updating it the navigation/root chain can still allow rotation
+    /// past the VC-level override.
+    private func updateSupportedOrientationsForContentChange() {
+        let lock = Self.supportedOrientations(forPhoneHomepage: contentContainer.hasAnyHomepage)
+        (UIApplication.shared.delegate as? AppDelegate)?.orientationLock = lock
+
+        if #available(iOS 16.0, *) {
+            setNeedsUpdateOfSupportedInterfaceOrientations()
+        } else {
+            UIViewController.attemptRotationToDeviceOrientation()
         }
     }
 
