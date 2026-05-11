@@ -4,7 +4,7 @@
 
 import SwiftUI
 
-/// Frosted-glass button style shared across all NTP elements (customize, account, AI search).
+/// Frosted-glass button style shared across all NTP elements (customize, account, AI Chat).
 ///
 /// Applies `ultraThinMaterial` blur + a Gray90 dark tint that steps from 32 % at rest
 /// to 64 % when pressed, with a translucent white border — matching the Ecosia NTP glass spec.

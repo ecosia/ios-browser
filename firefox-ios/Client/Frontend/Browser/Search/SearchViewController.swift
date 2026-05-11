@@ -452,9 +452,9 @@ class SearchViewController: SiteTableViewController,
             searchTelemetry?.trendingSearchesTapped(at: indexPath.row)
 
         case .searchSuggestions:
-            // Ecosia: Check if this is the AI Search item
-            if isAISearchRow(indexPath) {
-                handleAISearchSelection(indexPath)
+            // Ecosia: Check if this is the AI Chat item
+            if isAIChatRow(indexPath) {
+                handleAIChatSelection(indexPath)
                 return
             }
 
@@ -609,8 +609,8 @@ class SearchViewController: SiteTableViewController,
             case .trendingSearches:
                 viewModel.recordTrendingSearchesDisplayedEvent()
             case .searchSuggestions:
-                // Ecosia: Skip telemetry for AI Search item
-                if !isAISearchRow(indexPath),
+                // Ecosia: Skip telemetry for AI Chat item
+                if !isAIChatRow(indexPath),
                    let site = safeSuggestion(at: indexPath.row) {
                     if searchTelemetry?.visibleSuggestions.contains(site) == false {
                         searchTelemetry?.visibleSuggestions.append(site)
@@ -663,7 +663,7 @@ class SearchViewController: SiteTableViewController,
         case .trendingSearches:
             return viewModel.shouldShowTrendingSearches ? viewModel.trendingSearches.count : 0
         case .searchSuggestions:
-            // Ecosia: Use custom method that includes AI Search item
+            // Ecosia: Use custom method that includes AI Chat item
             return numberOfRowsForSearchSuggestions()
         case .openedTabs:
             return !viewModel.isZeroSearchState ? viewModel.filteredOpenedTabs.count : 0
@@ -694,9 +694,9 @@ class SearchViewController: SiteTableViewController,
             let suggestion = viewModel.historySites[indexPath.item]
             searchDelegate?.searchViewController(self, didHighlightText: suggestion.url, search: false)
         case .searchSuggestions:
-            // Ecosia: Check if this is the AI Search item
-            if isAISearchRow(indexPath) {
-                handleAISearchHighlight(indexPath)
+            // Ecosia: Check if this is the AI Chat item
+            if isAIChatRow(indexPath) {
+                handleAIChatHighlight(indexPath)
                 return
             }
             guard let suggestion = safeSuggestion(at: indexPath.item) else { return }
@@ -764,9 +764,9 @@ class SearchViewController: SiteTableViewController,
             }
 
         case .searchSuggestions:
-            // Ecosia: Check if this is the AI Search item
-            if isAISearchRow(indexPath) {
-                cell = configureAISearchCell(oneLineCell)
+            // Ecosia: Check if this is the AI Chat item
+            if isAIChatRow(indexPath) {
+                cell = configureAIChatCell(oneLineCell)
             } else if let site = safeSuggestion(at: indexPath.row) {
                 let oneLineCellViewModel = oneLineCellModelForSearch(
                     with: site,

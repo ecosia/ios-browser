@@ -4,16 +4,16 @@
 
 import Foundation
 
-public struct AISearchMVPExperiment {
+public struct AIChatMVPExperiment {
 
     private init() {}
 
     public static var isEnabled: Bool {
-        Unleash.isEnabled(.aiSearchMVP) && !isControl
+        Unleash.isEnabled(.aiChatMVP) && !isControl
     }
 
     private static var variant: Unleash.Variant {
-        Unleash.getVariant(.aiSearchMVP)
+        Unleash.getVariant(.aiChatMVP)
     }
 
     // More variants might be introduced, but control should remain the same

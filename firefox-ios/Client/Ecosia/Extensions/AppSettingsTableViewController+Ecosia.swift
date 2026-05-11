@@ -93,7 +93,7 @@ extension AppSettingsTableViewController {
         let unleashSettings: [Setting] = [
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
-            UnleashAISearchMVPSetting(settings: self),
+            UnleashAIChatMVPSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]
 

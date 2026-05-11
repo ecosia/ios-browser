@@ -5,12 +5,14 @@
 import SwiftUI
 import Common
 
-public struct EcosiaAISearchButtonTheme: EcosiaThemeable {
+public struct EcosiaAIChatButtonTheme: EcosiaThemeable {
+    public var backgroundColor = Color.gray.opacity(0.2)
     public var iconColor = Color.primary
 
     public init() {}
 
     public mutating func applyTheme(theme: Theme) {
+        backgroundColor = Color(theme.colors.ecosia.backgroundElevation1)
         iconColor = Color(theme.colors.ecosia.textPrimary)
     }
 }

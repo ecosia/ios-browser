@@ -6,11 +6,11 @@ import SwiftUI
 import Common
 
 @available(iOS 16.0, *)
-public struct EcosiaAISearchButton: View {
+public struct EcosiaAIChatButton: View {
     private let windowUUID: WindowUUID
     private let onTap: () -> Void
 
-    @State private var theme = EcosiaAISearchButtonTheme()
+    @State private var theme = EcosiaAIChatButtonTheme()
 
     public init(
         windowUUID: WindowUUID,
@@ -31,8 +31,8 @@ public struct EcosiaAISearchButton: View {
                 .frame(width: .ecosia.space._3l, height: .ecosia.space._3l)
         }
         .buttonStyle(NTPGlassButtonStyle(RoundedRectangle(cornerRadius: .ecosia.borderRadius._1l)))
-        .accessibilityLabel("AI Search")
-        .accessibilityHint("Opens AI search functionality")
+        .accessibilityLabel(String.localized(.aiChat))
+        .accessibilityHint(String.localized(.aiChatAccessibilityHint))
         .ecosiaThemed(windowUUID, $theme)
     }
 }
@@ -40,11 +40,11 @@ public struct EcosiaAISearchButton: View {
 #if DEBUG
 // MARK: - Preview
 @available(iOS 16.0, *)
-struct EcosiaAISearchButton_Previews: PreviewProvider {
+struct EcosiaAIChatButton_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: .ecosia.space._l) {
 
-            EcosiaAISearchButton(
+            EcosiaAIChatButton(
                 windowUUID: .XCTestDefaultUUID,
                 onTap: {}
             )

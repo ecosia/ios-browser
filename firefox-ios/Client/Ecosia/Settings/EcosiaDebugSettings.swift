@@ -288,17 +288,17 @@ final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
     }
 }
 
-final class UnleashAISearchMVPSetting: UnleashVariantResetSetting {
+final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
     override var titleName: String? {
-        "AI Search MVP"
+        "AI Chat MVP"
     }
 
     override var variant: Unleash.Variant? {
-        Unleash.getVariant(.aiSearchMVP)
+        Unleash.getVariant(.aiChatMVP)
     }
 
     override var unleashEnabled: Bool? {
-        Unleash.isEnabled(.aiSearchMVP)
+        Unleash.isEnabled(.aiChatMVP)
     }
 }
 
