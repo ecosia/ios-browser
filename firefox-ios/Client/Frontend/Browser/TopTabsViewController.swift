@@ -289,9 +289,9 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
         view.addSubview(newTab)
         view.addSubview(privateModeButton)
 
-        // Ecosia: Constrain the incognito icon to 24×24 pt so the PDF vector doesn't fill the
-        // full 44 pt touch target and appear disproportionately large in the tab strip.
-        let iconInset: CGFloat = (UX.topTabsViewHeight - 24) / 2
+        /* Ecosia: Constrain the incognito icon to 20×20 pt so the PDF vector doesn't fill the
+           full 44 pt touch target and appear disproportionately large in the tab strip. */
+        let iconInset: CGFloat = (UX.topTabsViewHeight - 20) / 2
         privateModeButton.imageEdgeInsets = UIEdgeInsets(
             top: iconInset, left: iconInset, bottom: iconInset, right: iconInset
         )

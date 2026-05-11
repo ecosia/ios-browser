@@ -30,13 +30,16 @@ final class PrivateModeButton: ToggleButton, PrivateModeUI {
         let colors = theme.colors
         isSelected = isPrivate
 
-        /* Ecosia: Use iconPrimary (Ecosia's own token) for both states. Firefox's iconOnColor
-           falls back to LightGrey05 (#fbfbfe), which is near-white and invisible against
-           the light-mode toolbar background when private mode is active.
+        /* Ecosia: Invert icon and background when selected. Firefox used iconOnColor (near-white
+           LightGrey05) for both states, which is invisible on a light toolbar. Instead:
+           - normal:   iconPrimary  (buttonContentSecondary) as icon, no circle
+           - selected: buttonContentPrimary (White) as icon, buttonContentSecondary circle
+                       (circle colour is driven by layerAccentPrivate in EcosiaLightTheme).
         tintColor = isPrivate ? colors.iconOnColor : colors.iconPrimary
         imageView?.tintColor = tintColor
          */
-        tintColor = colors.iconPrimary
+        let selectedColor = (colors as? EcosiaThemeColourPalette)?.ecosia.buttonContentPrimary
+        tintColor = isPrivate ? (selectedColor ?? colors.iconPrimary) : colors.iconPrimary
         imageView?.tintColor = tintColor
 
         if isSelected {
@@ -48,11 +51,12 @@ final class PrivateModeButton: ToggleButton, PrivateModeUI {
 
     override func applyTheme(theme: Theme) {
         super.applyTheme(theme: theme)
-        /* Ecosia: Use iconPrimary (Ecosia's own token) rather than iconOnColor — see applyUIMode.
+        /* Ecosia: Same inversion logic as applyUIMode — see comment there.
         tintColor = isSelected ? colors.iconOnColor : colors.iconPrimary
         imageView?.tintColor = tintColor
          */
-        tintColor = theme.colors.iconPrimary
+        let selectedColor = (theme.colors as? EcosiaThemeColourPalette)?.ecosia.buttonContentPrimary
+        tintColor = isSelected ? (selectedColor ?? theme.colors.iconPrimary) : theme.colors.iconPrimary
         imageView?.tintColor = tintColor
     }
 }
