@@ -135,7 +135,7 @@ extension Analytics {
 
         public enum AIChat: String {
             case
-            cta = "ai_chat_cta"
+            cta = "ai_search_cta"
         }
     }
 
