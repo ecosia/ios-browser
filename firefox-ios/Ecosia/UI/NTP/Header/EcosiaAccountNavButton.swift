@@ -43,10 +43,7 @@ public struct EcosiaAccountNavButton: View {
     }
 
     public var body: some View {
-        Button(action: {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            onTap()
-        }) {
+        Button(action: { onTap() }) {
             HStack(spacing: .ecosia.space._1s) {
                 if !authStateProvider.hasRegisterVisitError {
                     EcosiaSeedView(
@@ -82,6 +79,7 @@ public struct EcosiaAccountNavButton: View {
         .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.Account.navButton)
         .accessibilityAddTraits(.isButton)
         .ecosiaThemed(windowUUID, $theme)
+        .hapticFeedback()
     }
 }
 
