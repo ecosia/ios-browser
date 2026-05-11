@@ -31,7 +31,11 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerGradient: Gradient { fallbackTheme.colors.layerGradient }
     var layerGradientOverlay: Gradient { fallbackTheme.colors.layerGradientOverlay }
     var layerAccentNonOpaque: UIColor { ecosia.buttonBackgroundPrimary }
+    /* Ecosia: Replace Firefox's purple (Purple60) private-mode selection circle with a
+       neutral solid Ecosia highlight that matches the design language.
     var layerAccentPrivate: UIColor { fallbackTheme.colors.layerAccentPrivate }
+     */
+    var layerAccentPrivate: UIColor { ecosia.buttonBackgroundSecondaryActive }
     var layerAccentPrivateNonOpaque: UIColor { ecosia.textPrimary }
     var layerSepia: UIColor { fallbackTheme.colors.layerSepia }
     var layerHomepage: Gradient { fallbackTheme.colors.layerHomepage }

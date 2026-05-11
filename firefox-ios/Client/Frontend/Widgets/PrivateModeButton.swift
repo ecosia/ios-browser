@@ -30,7 +30,13 @@ final class PrivateModeButton: ToggleButton, PrivateModeUI {
         let colors = theme.colors
         isSelected = isPrivate
 
+        /* Ecosia: Use iconPrimary (Ecosia's own token) for both states. Firefox's iconOnColor
+           falls back to LightGrey05 (#fbfbfe), which is near-white and invisible against
+           the light-mode toolbar background when private mode is active.
         tintColor = isPrivate ? colors.iconOnColor : colors.iconPrimary
+        imageView?.tintColor = tintColor
+         */
+        tintColor = colors.iconPrimary
         imageView?.tintColor = tintColor
 
         if isSelected {
@@ -42,8 +48,11 @@ final class PrivateModeButton: ToggleButton, PrivateModeUI {
 
     override func applyTheme(theme: Theme) {
         super.applyTheme(theme: theme)
-        let colors = theme.colors
+        /* Ecosia: Use iconPrimary (Ecosia's own token) rather than iconOnColor — see applyUIMode.
         tintColor = isSelected ? colors.iconOnColor : colors.iconPrimary
+        imageView?.tintColor = tintColor
+         */
+        tintColor = theme.colors.iconPrimary
         imageView?.tintColor = tintColor
     }
 }
