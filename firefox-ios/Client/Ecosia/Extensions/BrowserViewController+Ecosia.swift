@@ -37,7 +37,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
         }
         switch mode {
         case .search:
-            openBrowser(searchTerm: searchTerm)
+            submitOmniboxSearch(query: searchTerm)
         case .aiChat:
             submitOmniboxAIChat(query: searchTerm)
         }
@@ -58,6 +58,28 @@ extension BrowserViewController: NTPSearchBarDelegate {
             .appendingQueryItems([URLQueryItem(name: "q", value: query)])
         searchTelemetry.shouldSetUrlTypeSearch = true
         finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+    }
+
+    /// Builds the search URL for a `.search`-mode omnibox submission (direct
+    /// typed submit or autocomplete row tap) and loads it. Pasted URLs
+    /// navigate directly; everything else goes through the default search
+    /// engine with an `ar=1` parameter appended so the backend can decide
+    /// whether the query lands on AI search or the standard SERP.
+    /// `.aiChat` mode is handled separately by `submitOmniboxAIChat`.
+    private func submitOmniboxSearch(query: String) {
+        guard let tab = tabManager.selectedTab else { return }
+
+        if let url = URIFixup.getURL(query) {
+            finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+            return
+        }
+
+        guard let engine = searchEnginesManager.defaultEngine,
+              let baseSearchURL = engine.searchURLForQuery(query) else {
+            return
+        }
+        let searchURL = baseSearchURL.appendingQueryItems([URLQueryItem(name: "ar", value: "1")])
+        finishEditingAndSubmit(searchURL, visitType: .typed, forTab: tab)
     }
 
     func ntpSearchBarTextDidChange(_ searchTerm: String) {
