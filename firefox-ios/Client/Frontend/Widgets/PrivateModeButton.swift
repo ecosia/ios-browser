@@ -38,8 +38,7 @@ final class PrivateModeButton: ToggleButton, PrivateModeUI {
         tintColor = isPrivate ? colors.iconOnColor : colors.iconPrimary
         imageView?.tintColor = tintColor
          */
-        let selectedColor = (colors as? EcosiaThemeColourPalette)?.ecosia.buttonContentPrimary
-        tintColor = isPrivate ? (selectedColor ?? colors.iconPrimary) : colors.iconPrimary
+        tintColor = isPrivate ? theme.colors.ecosia.buttonContentPrimary : colors.iconPrimary
         imageView?.tintColor = tintColor
 
         if isSelected {
@@ -55,8 +54,7 @@ final class PrivateModeButton: ToggleButton, PrivateModeUI {
         tintColor = isSelected ? colors.iconOnColor : colors.iconPrimary
         imageView?.tintColor = tintColor
          */
-        let selectedColor = (theme.colors as? EcosiaThemeColourPalette)?.ecosia.buttonContentPrimary
-        tintColor = isSelected ? (selectedColor ?? theme.colors.iconPrimary) : theme.colors.iconPrimary
+        tintColor = isSelected ? theme.colors.ecosia.buttonContentPrimary : theme.colors.iconPrimary
         imageView?.tintColor = tintColor
     }
 }
