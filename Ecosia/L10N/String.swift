@@ -19,7 +19,8 @@ extension String {
 
     public enum Key: String, CaseIterable {
         case addMoreDetailAboutYourFeedback = "Add more detail about your feedback..."
-        case aiSearch = "AI Search"
+        case aiChat = "AI Chat"
+        case aiChatAccessibilityHint = "Opens AI Chat"
         case aiOverviewsTitle = "Overviews"
         case aiOverviewsDescription = "Show AI-generated overviews at the top of search results"
         case allRegions = "All regions"
