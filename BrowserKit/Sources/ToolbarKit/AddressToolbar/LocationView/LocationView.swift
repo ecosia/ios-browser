@@ -803,9 +803,6 @@ final class LocationView: UIView,
         let colors = theme.colors
         /* Ecosia: Use backgroundElevation1 to match the locationContainer background so the
            gradient fade blends seamlessly into the URL bar pill on long URLs.
-           backgroundTertiary was previously used here but differs from backgroundElevation1
-           (Gray20 vs White in light mode; Gray70 vs Gray80 in dark mode), causing a visible
-           colour seam between the fade and the container.
         let mainBackgroundColor = hasAlternativeLocationColor ? colors.layerSurfaceMediumAlt : colors.layerSurfaceMedium
          */
         let mainBackgroundColor = colors.ecosia.backgroundElevation1
