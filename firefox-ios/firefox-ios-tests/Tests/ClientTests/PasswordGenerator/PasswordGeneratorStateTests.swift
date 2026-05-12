@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class PasswordGeneratorStateTests: XCTestCase {
     override func setUp() {
         super.setUp()

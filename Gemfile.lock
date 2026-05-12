@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:danger/danger.git
+  remote: https://github.com/danger/danger.git
   revision: 20f1243775da2ce53f55ad5ba65112de5da6e118
   branch: master
   specs:

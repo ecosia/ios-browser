@@ -12,8 +12,12 @@ final class MockWindowManager: WindowManager {
 
     var closePrivateTabsMultiActionCalled = 0
 
-    init(wrappedManager: WindowManagerImplementation) {
+    init(wrappedManager: WindowManagerImplementation, tabManager: TabManager? = nil) {
         self.wrappedManager = wrappedManager
+        if let tabManager {
+            let windowUUID = WindowUUID.XCTestDefaultUUID
+            wrappedManager.newBrowserWindowConfigured(AppWindowInfo(tabManager: tabManager), uuid: windowUUID)
+        }
     }
 
     // MARK: - WindowManager Protocol
@@ -62,5 +66,9 @@ final class MockWindowManager: WindowManager {
 
     func window(for tab: TabUUID) -> WindowUUID? {
         wrappedManager.window(for: tab)
+    }
+
+    func windowExists(uuid: WindowUUID) -> Bool {
+        wrappedManager.windowExists(uuid: uuid)
     }
 }

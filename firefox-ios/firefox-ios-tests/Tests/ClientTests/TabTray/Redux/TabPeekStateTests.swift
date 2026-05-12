@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class TabPeekStateTests: XCTestCase {
     override func setUp() {
         super.setUp()
@@ -41,6 +42,8 @@ final class TabPeekStateTests: XCTestCase {
 
         let model = TabPeekModel(
             canTabBeSaved: false,
+            canTabBeRemoved: true,
+            canCopyURL: true,
             isSyncEnabled: true,
             screenshot: UIImage(),
             accessiblityLabel: ""
@@ -61,6 +64,8 @@ final class TabPeekStateTests: XCTestCase {
 
         let model = TabPeekModel(
             canTabBeSaved: true,
+            canTabBeRemoved: true,
+            canCopyURL: true,
             isSyncEnabled: false,
             screenshot: UIImage(),
             accessiblityLabel: ""
@@ -85,6 +90,8 @@ final class TabPeekStateTests: XCTestCase {
         for actionType: TabPeekActionType,
         with model: TabPeekModel = TabPeekModel(
             canTabBeSaved: true,
+            canTabBeRemoved: true,
+            canCopyURL: true,
             isSyncEnabled: true,
             screenshot: UIImage(),
             accessiblityLabel: "tabpeek-a11y-label"

@@ -14,7 +14,6 @@ class RustSyncManagerAPITests: XCTestCase {
     func testReportSyncTelemetry() {
         self.rustSyncManagerApi = RustSyncManagerAPI()
         let expectation = expectation(description: "Completed telemetry reporting")
-        var actual = ""
         let expected = "The operation couldn’t be completed. (MozillaAppServices.TelemetryJSONError error 0.)"
         let invalidSyncResult = SyncResult(status: ServiceStatus.ok,
                                            successful: [],
@@ -25,11 +24,10 @@ class RustSyncManagerAPITests: XCTestCase {
                                            telemetryJson: "{\"version\": \"invalidVersion\"}")
         self.rustSyncManagerApi
             .reportSyncTelemetry(syncResult: invalidSyncResult) { description in
-                actual = description
+                XCTAssertEqual(description, expected)
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: 5)
-        XCTAssertEqual(actual, expected)
+        wait(for: [expectation], timeout: 5)
     }
 }

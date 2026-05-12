@@ -265,10 +265,10 @@ class SingularAdNetworkHelperTests: XCTestCase {
 // MARK: SKAdNetwork Mock
 class MockSkan: SKAdNetworkProtocol {
 
-    static var conversionValue: Int?
-    static var coarseValue: Int?
-    static var lockWindow: Bool?
-    static var shouldThrowError = false
+    nonisolated(unsafe) static var conversionValue: Int?
+    nonisolated(unsafe) static var coarseValue: Int?
+    nonisolated(unsafe) static var lockWindow: Bool?
+    nonisolated(unsafe) static var shouldThrowError = false
 
     static func updatePostbackConversionValue(_ conversionValue: Int) async throws {
         guard !shouldThrowError else {

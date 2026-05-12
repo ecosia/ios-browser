@@ -7,6 +7,7 @@
 import XCTest
 import Common
 
+@MainActor
 class StartAtHomeHelperTests: XCTestCase {
     private var helper: StartAtHomeHelper!
     private var profile: MockProfile!

@@ -5,7 +5,7 @@
 @testable import Ecosia
 import Foundation
 
-class HTTPClientMock: HTTPClient {
+final class HTTPClientMock: HTTPClient, @unchecked Sendable {
 
     var requests: [BaseRequest] = []
     var response: HTTPURLResponse?

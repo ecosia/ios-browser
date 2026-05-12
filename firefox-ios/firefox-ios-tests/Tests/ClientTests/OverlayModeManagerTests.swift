@@ -5,6 +5,8 @@
 import XCTest
 
 @testable import Client
+
+@MainActor
 class OverlayModeManagerTests: XCTestCase {
     private var urlBar: MockURLBarView!
     private var subject: MockOverlayModeManager!

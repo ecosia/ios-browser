@@ -17,9 +17,9 @@ import XCTest
         // Arrange
         let date = Date()
         let statistics = Statistics.shared
-        await statistics.setTreesPlanted(10)
-        await statistics.setTreesPlantedLastUpdated(date.addingTimeInterval(-100))
-        await statistics.setTimePerTree(2)
+        statistics.treesPlanted = 10
+        statistics.treesPlantedLastUpdated = date.addingTimeInterval(-100)
+        statistics.timePerTree = 2
 
         // Act
         let result = await treesProjection.treesAt(date)
@@ -31,11 +31,11 @@ import XCTest
     func testTimerIsActive() async {
         // Arrange
         let timePerTree = 0.1
-        await Statistics.shared.setTimePerTree(timePerTree)
+        Statistics.shared.timePerTree = timePerTree
 
         let exp = XCTestExpectation(description: "Wait for timer")
         let projection = TreesProjection()
-        var receivedCount: Int?
+        nonisolated(unsafe) var receivedCount: Int?
 
         // Act
         projection.subscribe(self) { count in

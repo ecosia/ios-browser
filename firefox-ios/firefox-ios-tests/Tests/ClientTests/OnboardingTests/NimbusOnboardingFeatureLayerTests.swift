@@ -4,6 +4,7 @@
 
 import Common
 import MozillaAppServices
+import OnboardingKit
 import Shared
 import XCTest
 
@@ -48,7 +49,7 @@ class NimbusOnboardingFeatureLayerTests: XCTestCase {
         let layer = NimbusOnboardingFeatureLayer(with: MockNimbusMessagingHelperUtility())
         let subject = layer.getOnboardingModel(for: .freshInstall)
 
-        XCTAssertTrue(subject.isDismissable)
+        XCTAssertTrue(subject.isDismissible)
     }
 
     func testLayer_dismissable_isFalse() {
@@ -56,7 +57,7 @@ class NimbusOnboardingFeatureLayerTests: XCTestCase {
         let layer = NimbusOnboardingFeatureLayer(with: MockNimbusMessagingHelperUtility())
         let subject = layer.getOnboardingModel(for: .freshInstall)
 
-        XCTAssertFalse(subject.isDismissable)
+        XCTAssertFalse(subject.isDismissible)
     }
 
     // MARK: - Test A11yRoot
@@ -95,7 +96,7 @@ class NimbusOnboardingFeatureLayerTests: XCTestCase {
             return
         }
 
-        let expectedCard = OnboardingCardInfoModel(
+        let expectedCard = OnboardingKitCardInfoModel(
             cardType: .basic,
             name: CardElementNames.name + " 1",
             order: 10,

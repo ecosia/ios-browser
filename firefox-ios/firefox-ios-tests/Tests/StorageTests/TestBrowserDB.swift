@@ -7,7 +7,12 @@ import Shared
 @testable import Storage
 import XCTest
 
-class TestBrowserDB: XCTestCase {
+private extension Deferred where T == Maybe<Void> {
+    func succeeded() { XCTAssertTrue(value.isSuccess) }
+    func failed() { XCTAssertTrue(value.isFailure) }
+}
+
+class TestBrowserDB: XCTestCase, @unchecked Sendable {
     let files = MockFiles()
 
     fileprivate func rm(_ path: String) {
@@ -155,13 +160,11 @@ class TestBrowserDB: XCTestCase {
             factory: fooBarFactory
         )
 
-        _ = shortConcurrentQuery.bind { result -> Deferred<Maybe<[[String: Any]]>> in
-            if let results = result.successValue?.asArray() {
+        _ = shortConcurrentQuery.bind { @Sendable result -> Success in
+            if result.successValue != nil {
                 expectation.fulfill()
-                return deferMaybe(results)
             }
-
-            return deferMaybe(DatabaseError(description: "Unable to execute concurrent short-running query"))
+            return succeed()
         }
 
         trackForMemoryLeaks(shortConcurrentQuery)
@@ -169,7 +172,7 @@ class TestBrowserDB: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
-    func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #file, line: UInt = #line) {
+    func trackForMemoryLeaks(_ instance: AnyObject & Sendable, file: StaticString = #file, line: UInt = #line) {
         addTeardownBlock { [weak instance] in
             XCTAssertNil(
                 instance,

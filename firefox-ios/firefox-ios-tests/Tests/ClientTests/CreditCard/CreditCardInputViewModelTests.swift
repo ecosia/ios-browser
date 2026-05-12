@@ -10,7 +10,8 @@ import XCTest
 
 @testable import Client
 
-class CreditCardInputViewModelTests: XCTestCase {
+@MainActor
+class CreditCardInputViewModelTests: XCTestCase, @unchecked Sendable {
     private var profile: MockProfile!
     private var viewModel: CreditCardInputViewModel!
     private var files: FileAccessor!
@@ -45,7 +46,7 @@ class CreditCardInputViewModelTests: XCTestCase {
 
         profile = MockProfile()
         _ = profile.autofill.reopenIfClosed()
-        viewModel = CreditCardInputViewModel(profile: profile)
+        viewModel = CreditCardInputViewModel(profile: profile, creditCardProvider: profile.autofill)
     }
 
     override func tearDown() {
@@ -60,14 +61,16 @@ class CreditCardInputViewModelTests: XCTestCase {
         viewModel.expirationDate = "1288"
         let expectation = expectation(description: "wait for credit card fields to be saved")
         viewModel.saveCreditCard { creditCard, error in
-            guard error == nil, let creditCard = creditCard else {
-                XCTAssertTrue(false)
-                return
+            MainActor.assumeIsolated {
+                guard error == nil, let creditCard = creditCard else {
+                    XCTAssertTrue(false)
+                    return
+                }
+                XCTAssertEqual(creditCard.ccName, self.viewModel.nameOnCard)
+                // Note: the number for credit card is encrypted so that part
+                // will get added later and for now we will check the name only
+                expectation.fulfill()
             }
-            XCTAssertEqual(creditCard.ccName, self.viewModel.nameOnCard)
-            // Note: the number for credit card is encrypted so that part
-            // will get added later and for now we will check the name only
-            expectation.fulfill()
         }
         waitForExpectations(timeout: 1.0)
     }
@@ -216,19 +219,21 @@ class CreditCardInputViewModelTests: XCTestCase {
         let expectation = expectation(description: "wait for credit card to be removed")
 
         viewModel.autofill.addCreditCard(creditCard: samplePlainTextCard) { ccCard, error in
-            guard let ccCard = ccCard else {
-                XCTFail("no credit card saved to be tested")
-                return
-            }
-            guard let error = error else {
-                self.viewModel.removeCreditCard(creditCard: ccCard) { status, success in
-                    XCTAssertEqual(status, .removedCard)
-                    XCTAssertTrue(success)
-                    expectation.fulfill()
+            MainActor.assumeIsolated {
+                guard let ccCard = ccCard else {
+                    XCTFail("no credit card saved to be tested")
+                    return
                 }
-                return
+                guard let error = error else {
+                    self.viewModel.removeCreditCard(creditCard: ccCard) { status, success in
+                        XCTAssertEqual(status, .removedCard)
+                        XCTAssertTrue(success)
+                        expectation.fulfill()
+                    }
+                    return
+                }
+                XCTFail("Error removing credit card \(error)")
             }
-            XCTFail("Error removing credit card \(error)")
         }
         waitForExpectations(timeout: 1.0)
     }
@@ -249,41 +254,45 @@ class CreditCardInputViewModelTests: XCTestCase {
         let expectation = expectation(description: "wait for credit card to be updated")
         // Add sample card
         viewModel.autofill.addCreditCard(creditCard: samplePlainTextCard) { ccCard, error in
-            guard let ccCard = ccCard else {
-                XCTFail("no credit card saved to be tested")
-                return
-            }
-
-            guard let error = error else {
-                self.viewModel.creditCard = ccCard
-                // Update name and expiration
-                self.viewModel.nameOnCard = "Mickey Mouse"
-                self.viewModel.expirationDate = "0256"
-                self.viewModel.cardNumber = "5427754897487332"
-                // Update card with new values
-                self.viewModel.updateCreditCard { success, error in
-                    XCTAssertNil(error)
-                    XCTAssertNotNil(success)
-                    if let updated = success {
-                        XCTAssert(updated)
-                    }
-                    // Check updated values
-                    self.viewModel.autofill.getCreditCard(id: ccCard.guid) { ccUpdatedCard, error in
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(ccUpdatedCard)
-                        XCTAssertEqual(ccUpdatedCard?.ccName, "Mickey Mouse")
-                        XCTAssertEqual(ccUpdatedCard?.ccExpYear, 2056)
-                        XCTAssertEqual(ccUpdatedCard?.ccExpMonth, 02)
-                        // Note: We do not test encrypted card number
-                        // but the last 4 digits
-                        XCTAssertNotNil(ccUpdatedCard?.ccNumberLast4, "7332")
-                        expectation.fulfill()
-                    }
+            MainActor.assumeIsolated {
+                guard let ccCard = ccCard else {
+                    XCTFail("no credit card saved to be tested")
+                    return
                 }
 
-                return
+                guard let error = error else {
+                    self.viewModel.creditCard = ccCard
+                    // Update name and expiration
+                    self.viewModel.nameOnCard = "Mickey Mouse"
+                    self.viewModel.expirationDate = "0256"
+                    self.viewModel.cardNumber = "5427754897487332"
+                    // Update card with new values
+                    self.viewModel.updateCreditCard { success, error in
+                        MainActor.assumeIsolated {
+                            XCTAssertNil(error)
+                            XCTAssertNotNil(success)
+                            if let updated = success {
+                                XCTAssert(updated)
+                            }
+                            // Check updated values
+                            self.profile.autofill.getCreditCard(id: ccCard.guid) { ccUpdatedCard, error in
+                                XCTAssertNil(error)
+                                XCTAssertNotNil(ccUpdatedCard)
+                                XCTAssertEqual(ccUpdatedCard?.ccName, "Mickey Mouse")
+                                XCTAssertEqual(ccUpdatedCard?.ccExpYear, 2056)
+                                XCTAssertEqual(ccUpdatedCard?.ccExpMonth, 02)
+                                // Note: We do not test encrypted card number
+                                // but the last 4 digits
+                                XCTAssertNotNil(ccUpdatedCard?.ccNumberLast4, "7332")
+                                expectation.fulfill()
+                            }
+                        }
+                    }
+
+                    return
+                }
+                XCTFail("Error removing credit card \(error)")
             }
-            XCTFail("Error removing credit card \(error)")
         }
         waitForExpectations(timeout: 1.0)
     }

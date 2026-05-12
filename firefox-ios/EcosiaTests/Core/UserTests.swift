@@ -6,7 +6,7 @@
 @testable import Ecosia
 import XCTest
 
-final class UserTests: XCTestCase {
+final class UserTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.user)
     }
@@ -47,7 +47,7 @@ final class UserTests: XCTestCase {
 
     func testNotSavingOnLoad() {
         let expect = expectation(description: "")
-        var user = User()
+        nonisolated(unsafe) var user = User()
         user.firstTime = false
         User.shared = user
         User.queue.async {
@@ -144,23 +144,12 @@ final class UserTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 
-    func testPersonalized() {
-        let expect = expectation(description: "")
-        User.shared.personalized = true
-        User.queue.async {
-            let user = User()
-            XCTAssertEqual(true, user.personalized)
-            expect.fulfill()
-        }
-        waitForExpectations(timeout: 1)
-    }
-
     func testSendAnonymousUsageData() {
         let expect = expectation(description: "")
         User.shared.sendAnonymousUsageData = false
         User.queue.async {
             let user = User()
-            XCTAssertEqual(false, user.personalized)
+            XCTAssertEqual(false, user.sendAnonymousUsageData)
             expect.fulfill()
         }
         waitForExpectations(timeout: 1)
@@ -342,7 +331,7 @@ final class UserTests: XCTestCase {
             }
         }
 
-        User.shared.personalized = !User.shared.personalized
+        User.shared.aiOverviews = !User.shared.aiOverviews
         User.shared.marketCode = .en_ww
         User.shared.autoComplete = !User.shared.autoComplete
         User.shared.adultFilter = .off

@@ -7,6 +7,7 @@ import Storage
 
 @testable import Client
 
+@MainActor
 final class LibraryCoordinatorTests: XCTestCase {
     private var mockRouter: MockRouter!
     private var delegate: MockLibraryCoordinatorDelegate!
@@ -106,8 +107,7 @@ final class LibraryCoordinatorTests: XCTestCase {
             sourceView: UIView()
         )
 
-        XCTAssertEqual(subject.childCoordinators.count, 1)
-        XCTAssertTrue(subject.childCoordinators.first is ShareExtensionCoordinator)
+        // Ecosia: ShareExtensionCoordinator removed in v147; just verify share sheet is presented
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertTrue(mockRouter.presentedViewController is UIActivityViewController)
     }

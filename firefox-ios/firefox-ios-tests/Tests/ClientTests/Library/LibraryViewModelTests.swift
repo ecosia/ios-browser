@@ -6,6 +6,7 @@ import XCTest
 import Common
 @testable import Client
 
+@MainActor
 class LibraryViewModelTests: XCTestCase {
     private var subject: LibraryViewModel!
     private var profile: MockProfile!

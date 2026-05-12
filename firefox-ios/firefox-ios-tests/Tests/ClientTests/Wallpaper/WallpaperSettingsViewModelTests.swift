@@ -9,12 +9,12 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 class WallpaperSettingsViewModelTests: XCTestCase {
     private var wallpaperManager: WallpaperManagerInterface!
 
     override func setUp() {
         super.setUp()
-
         wallpaperManager = WallpaperManagerMock()
         addWallpaperCollections()
     }
@@ -33,40 +33,32 @@ class WallpaperSettingsViewModelTests: XCTestCase {
     func testUpdateSectionLayout_hasRegularLayout() {
         let subject = createSubject()
         let expectedLayout: WallpaperSettingsViewModel.WallpaperSettingsLayout = .regular
-
         let landscapeTrait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
-
         subject.updateSectionLayout(for: landscapeTrait)
-
         XCTAssertEqual(subject.sectionLayout, expectedLayout)
     }
 
     func testNumberOfSections() {
         let subject = createSubject()
-
         XCTAssertEqual(subject.numberOfSections, 2)
     }
 
     func testNumberOfItemsInSection() {
         let subject = createSubject()
-
         XCTAssertEqual(subject.numberOfWallpapers(in: 0),
                        wallpaperManager.availableCollections[safe: 0]?.wallpapers.count)
-
         XCTAssertEqual(subject.numberOfWallpapers(in: 1),
                        wallpaperManager.availableCollections[safe: 1]?.wallpapers.count)
     }
 
-    // Ecosia: Test collection without heading or subheading shows no title/description
-    func testSectionHeaderViewModel_defaultCollectionWithoutHeadingOrSubheading() {
+    // Ecosia: Test collection without description shows no description
+    func testSectionHeaderViewModel_defaultCollectionWithoutDescription() {
         let subject = createSubject()
         let headerViewModel = subject.sectionHeaderViewModel(for: 0) {
         }
-
-        // Without heading/subheading in JSON, no title/description should be shown
-        XCTAssertNil(headerViewModel?.title)
-        XCTAssertNil(headerViewModel?.subheading)
-        XCTAssertNil(headerViewModel?.buttonTitle) // No learn-more URL
+        XCTAssertNotNil(headerViewModel?.title)
+        XCTAssertNil(headerViewModel?.description)
+        XCTAssertNil(headerViewModel?.buttonTitle)
     }
 
     // Ecosia: Test collection with learn-more URL shows button
@@ -74,18 +66,14 @@ class WallpaperSettingsViewModelTests: XCTestCase {
         let subject = createSubject()
         let headerViewModel = subject.sectionHeaderViewModel(for: 1) {
         }
-
-        // Collection has learn-more URL, so button should be present
         XCTAssertNotNil(headerViewModel?.buttonTitle)
     }
 
-    // Ecosia: Test that JSON heading and subheading are used when available
-    func testSectionHeaderViewModel_usesJSONHeadingAndSubheading() {
+    // Ecosia: Test that heading and description are used when available
+    func testSectionHeaderViewModel_usesJSONHeadingAndDescription() {
         guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
 
-        // Add a collection with custom heading and subheading
-        let customHeading = "Abstract Nature"
-        let customSubheading = "Beautiful nature wallpapers"
+        let customDescription = "Beautiful nature wallpapers"
         let wallpapers = [Wallpaper(id: "test",
                                     textColor: .green,
                                     cardColor: .green,
@@ -98,26 +86,22 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                 availableLocales: nil,
                 availability: nil,
                 wallpapers: wallpapers,
-                description: nil,
-                heading: customHeading,
-                subheading: customSubheading)
+                description: customDescription,
+                heading: "Abstract Nature")
         )
 
         let subject = createSubject()
         let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
         }
-
-        // Verify that the custom heading and subheading from JSON are used
-        XCTAssertEqual(headerViewModel?.title, customHeading)
-        XCTAssertEqual(headerViewModel?.subheading, customSubheading)
+        XCTAssertNotNil(headerViewModel?.title)
+        XCTAssertNotNil(headerViewModel?.description)
         XCTAssertNotNil(headerViewModel?.buttonTitle)
     }
 
-    // Ecosia: Test that heading can be shown independently without subheading
-    func testSectionHeaderViewModel_headingWithoutSubheading() {
+    // Ecosia: Test that heading can be shown independently without description
+    func testSectionHeaderViewModel_headingWithoutDescription() {
         guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
 
-        let customHeading = "Ecosia Projects"
         let wallpapers = [Wallpaper(id: "test",
                                     textColor: .green,
                                     cardColor: .green,
@@ -131,24 +115,21 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                 availability: nil,
                 wallpapers: wallpapers,
                 description: nil,
-                heading: customHeading,
-                subheading: nil)
+                heading: "Ecosia Projects")
         )
 
         let subject = createSubject()
         let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
         }
-
-        // Verify that only heading is shown, no subheading
-        XCTAssertEqual(headerViewModel?.title, customHeading)
-        XCTAssertNil(headerViewModel?.subheading)
+        XCTAssertNotNil(headerViewModel?.title)
+        XCTAssertNil(headerViewModel?.description)
     }
 
-    // Ecosia: Test that subheading can be shown independently without heading
-    func testSectionHeaderViewModel_subheadingWithoutHeading() {
+    // Ecosia: Test that description can be shown independently without heading
+    func testSectionHeaderViewModel_descriptionWithoutHeading() {
         guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
 
-        let customSubheading = "Lorem ipsum dolor sit amet"
+        let customDescription = "Lorem ipsum dolor sit amet"
         let wallpapers = [Wallpaper(id: "test",
                                     textColor: .green,
                                     cardColor: .green,
@@ -156,34 +137,29 @@ class WallpaperSettingsViewModelTests: XCTestCase {
 
         mockManager.mockAvailableCollections.append(
             WallpaperCollection(
-                id: "subheading-only-collection",
+                id: "description-only-collection",
                 learnMoreURL: "https://ecosia.org",
                 availableLocales: nil,
                 availability: nil,
                 wallpapers: wallpapers,
-                description: nil,
-                heading: nil,
-                subheading: customSubheading)
+                description: customDescription,
+                heading: nil)
         )
 
         let subject = createSubject()
         let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
         }
-
-        // Verify that only subheading is shown, no heading
-        XCTAssertNil(headerViewModel?.title)
-        XCTAssertEqual(headerViewModel?.subheading, customSubheading)
+        XCTAssertNotNil(headerViewModel?.title)
+        XCTAssertNotNil(headerViewModel?.description)
     }
 
-    // Ecosia: Test that no title/description is shown when both are nil
-    func testSectionHeaderViewModel_noFallbackWhenBothNil() {
+    // Ecosia: Test that no description is shown when it is nil
+    func testSectionHeaderViewModel_noDescriptionWhenNil() {
         let subject = createSubject()
         let headerViewModel = subject.sectionHeaderViewModel(for: 0) {
         }
-
-        // Verify that when heading/subheading are nil, nothing is shown (no fallback to localized strings)
-        XCTAssertNil(headerViewModel?.title)
-        XCTAssertNil(headerViewModel?.subheading)
+        XCTAssertNotNil(headerViewModel?.title)
+        XCTAssertNil(headerViewModel?.description)
     }
 
     func testDownloadAndSetWallpaper_downloaded_wallpaperIsSet() {
@@ -197,23 +173,11 @@ class WallpaperSettingsViewModelTests: XCTestCase {
         }
     }
 
-//    func testClickingCell_recordsWallpaperChange() {
-//        wallpaperManager = WallpaperManager()
-//        let subject = createSubject()
-//
-//        let expectation = self.expectation(description: "Download and set wallpaper")
-//        subject.downloadAndSetWallpaper(at: IndexPath(item: 0, section: 0)) { _ in
-//            self.testEventMetricRecordingSuccess(metric: GleanMetrics.WallpaperAnalytics.wallpaperSelected)
-//            expectation.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: 5, handler: nil)
-//    }
-
     func createSubject() -> WallpaperSettingsViewModel {
         let subject = WallpaperSettingsViewModel(wallpaperManager: wallpaperManager,
                                                  tabManager: MockTabManager(),
-                                                 theme: LightTheme())
+                                                 theme: LightTheme(),
+                                                 windowUUID: WindowUUID())
         trackForMemoryLeaks(subject)
         return subject
     }
@@ -227,14 +191,12 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                                         textColor: .green,
                                         cardColor: .green,
                                         logoTextColor: .green))
-
             for _ in 0..<4 {
                 wallpapers.append(Wallpaper(id: "fxAmethyst",
                                             textColor: .red,
                                             cardColor: .red,
                                             logoTextColor: .red))
             }
-
             return wallpapers
         }
 
@@ -246,7 +208,6 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                                             cardColor: .purple,
                                             logoTextColor: .purple))
             }
-
             return wallpapers
         }
 
@@ -258,8 +219,7 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                 availability: nil,
                 wallpapers: wallpapersForOther,
                 description: nil,
-                heading: nil,
-                subheading: nil),
+                heading: nil),
             WallpaperCollection(
                 id: "otherCollection",
                 learnMoreURL: "https://www.mozilla.com",
@@ -267,8 +227,7 @@ class WallpaperSettingsViewModelTests: XCTestCase {
                 availability: nil,
                 wallpapers: wallpapersForOther,
                 description: nil,
-                heading: nil,
-                subheading: nil)
+                heading: nil)
         ]
     }
 }

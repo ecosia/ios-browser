@@ -30,9 +30,9 @@ final class ToolbarMiddlewareTests: XCTestCase, StoreTestUtility {
         mockRecentSearchProvider = MockRecentSearchProvider()
         tabManager = MockTabManager()
         profile = MockProfile()
-        windowManager = MockWindowManager(wrappedManager: WindowManagerImplementation(), tabManager: tabManager)
-        DependencyHelperMock().bootstrapDependencies(injectedWindowManager: windowManager,
-                                                     injectedTabManager: tabManager)
+        windowManager = MockWindowManager(wrappedManager: WindowManagerImplementation())
+        DependencyHelperMock().bootstrapDependencies(injectedTabManager: tabManager,
+                                                     injectedWindowManager: windowManager)
         toolbarManager = DefaultToolbarManager()
 
         // We must reset the global mock store prior to each test

@@ -6,6 +6,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class SettingsCoordinatorTests: XCTestCase {
     private var mockRouter: MockRouter!
     private var wallpaperManager: WallpaperManagerMock!
@@ -142,6 +143,7 @@ final class SettingsCoordinatorTests: XCTestCase {
         XCTAssertTrue(mockRouter.pushedViewController is ContentBlockerSettingViewController)
     }
 
+    /* Ecosia: Route.SettingsSection.tabs and TabsSettingsViewController removed in v147
     func testTabsSettingsRoute_showsTabsSettingsPage() throws {
         let subject = createSubject()
 
@@ -150,6 +152,7 @@ final class SettingsCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.pushCalled, 1)
         XCTAssertTrue(mockRouter.pushedViewController is TabsSettingsViewController)
     }
+    */
 
     func testToolbarSettingsRoute_showsToolbarSettingsPage() throws {
         let subject = createSubject()
@@ -212,8 +215,8 @@ final class SettingsCoordinatorTests: XCTestCase {
     func testDelegatesAreSet() {
         let subject = createSubject()
 
-        XCTAssertNotNil(subject.settingsViewController.settingsDelegate)
-        XCTAssertNotNil(subject.settingsViewController.parentCoordinator)
+        XCTAssertNotNil(subject.settingsViewController?.settingsDelegate)
+        XCTAssertNotNil(subject.settingsViewController?.parentCoordinator)
     }
 
     func testHandleRouteCalled_whenCreditCardRouteIsSet() {
@@ -376,6 +379,7 @@ final class SettingsCoordinatorTests: XCTestCase {
         XCTAssertTrue(mockRouter.pushedViewController is SearchBarSettingsViewController)
     }
 
+    /* Ecosia: pressedTabs() and TabsSettingsViewController removed in v147
     func testGeneralSettingsDelegate_pushedTabs() {
         let subject = createSubject()
 
@@ -384,6 +388,7 @@ final class SettingsCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.pushCalled, 1)
         XCTAssertTrue(mockRouter.pushedViewController is TabsSettingsViewController)
     }
+    */
 
     func testGeneralSettingsDelegate_pushedTheme() {
         let subject = createSubject()
@@ -553,6 +558,7 @@ final class SettingsCoordinatorTests: XCTestCase {
 }
 
 // MARK: - MockSettingsCoordinatorDelegate
+@MainActor
 class MockSettingsCoordinatorDelegate: SettingsCoordinatorDelegate {
     var savedURL: URL?
     var openURLinNewTabCalled = 0
@@ -574,6 +580,7 @@ class MockSettingsCoordinatorDelegate: SettingsCoordinatorDelegate {
 }
 
 // MARK: - MockAppSettingsScreen
+@MainActor
 class MockAppSettingsScreen: UIViewController, AppSettingsScreen {
     var settingsDelegate: SettingsDelegate?
     var parentCoordinator: SettingsFlowDelegate?

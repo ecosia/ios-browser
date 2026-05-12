@@ -6,6 +6,7 @@ import Storage
 import XCTest
 @testable import Client
 
+@MainActor
 class DefaultBackgroundTabLoaderTests: XCTestCase {
     private var applicationHelper: MockApplicationHelper!
     private var tabQueue: MockTabQueue!

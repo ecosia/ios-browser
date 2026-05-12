@@ -4,17 +4,15 @@
 
 import Foundation
 import MozillaAppServices
+@testable import Client
 
 class MockLoginProvider: LoginProvider {
     var searchLoginsWithQueryCalledCount = 0
     var addLoginCalledCount = 0
     func searchLoginsWithQuery(
         _ query: String?,
-        completionHandler: @escaping (
-            Result<
-                [MozillaAppServices.EncryptedLogin],
-            any Error
-            >
+        completionHandler: @escaping @Sendable (
+            Result<[MozillaAppServices.Login], any Error>
         ) -> Void
     ) {
         searchLoginsWithQueryCalledCount += 1
@@ -23,11 +21,8 @@ class MockLoginProvider: LoginProvider {
 
     func addLogin(
         login: MozillaAppServices.LoginEntry,
-        completionHandler: @escaping (
-            Result<
-            MozillaAppServices.EncryptedLogin?,
-            any Error
-            >
+        completionHandler: @escaping @Sendable (
+            Result<MozillaAppServices.Login?, any Error>
         ) -> Void
     ) {
         addLoginCalledCount += 1

@@ -5,7 +5,7 @@
 @testable import Ecosia
 import XCTest
 
-final class TabsTests: XCTestCase {
+final class TabsTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.pages)
         try? FileManager.default.removeItem(at: FileManager.snapshots)
@@ -41,7 +41,7 @@ final class TabsTests: XCTestCase {
         let expect = expectation(description: "")
         let urlFirst = URL(string: "https://www.avocado.com")!
         let urlSecond = URL(string: "https://www.trees.com")!
-        var tabs = Tabs()
+        nonisolated(unsafe) var tabs = Tabs()
         tabs.new(urlFirst)
         tabs.new(urlSecond)
         PageStore.queue.async {
@@ -67,7 +67,7 @@ final class TabsTests: XCTestCase {
 
     func testClose() {
         let expect = expectation(description: "")
-        var tabs = Tabs()
+        nonisolated(unsafe) var tabs = Tabs()
         tabs.new(URL(string: "https://www.avocado.com")!)
         tabs.close(tabs.items.first!.id)
         PageStore.queue.async {
@@ -81,7 +81,7 @@ final class TabsTests: XCTestCase {
 
     func testCloseNotCurrent() {
         let expect = expectation(description: "")
-        var tabs = Tabs()
+        nonisolated(unsafe) var tabs = Tabs()
         let url = URL(string: "https://www.avocado.com")!
         tabs.new(URL(string: "https://www.trees.com")!)
         tabs.new(url)
@@ -98,7 +98,7 @@ final class TabsTests: XCTestCase {
 
     func testCloseOffsetIndex() {
         let expect = expectation(description: "")
-        var tabs = Tabs()
+        nonisolated(unsafe) var tabs = Tabs()
         tabs.new(URL(string: "https://www.something.com")!)
         tabs.new(URL(string: "https://www.else.com")!)
         tabs.new(URL(string: "https://www.trees.com")!)
@@ -115,7 +115,7 @@ final class TabsTests: XCTestCase {
 
     func testClearIndexOnClose() {
         let expect = expectation(description: "")
-        var tabs = Tabs()
+        nonisolated(unsafe) var tabs = Tabs()
         tabs.new(URL(string: "https://www.something.com")!)
         tabs.new(URL(string: "https://www.else.com")!)
         tabs.new(URL(string: "https://www.trees.com")!)
@@ -132,7 +132,7 @@ final class TabsTests: XCTestCase {
 
     func testCloseNoIndex() {
         let expect = expectation(description: "")
-        var tabs = Tabs()
+        nonisolated(unsafe) var tabs = Tabs()
         tabs.new(URL(string: "https://www.avocado.com")!)
         tabs.new(URL(string: "https://www.trees.com")!)
         tabs.current = nil
@@ -148,7 +148,7 @@ final class TabsTests: XCTestCase {
 
     func testKeepIndexOnClose() {
         let expect = expectation(description: "")
-        var tabs = Tabs()
+        nonisolated(unsafe) var tabs = Tabs()
         tabs.new(URL(string: "https://www.something.com")!)
         tabs.new(URL(string: "https://www.else.com")!)
         tabs.new(URL(string: "https://www.trees.com")!)
@@ -166,7 +166,7 @@ final class TabsTests: XCTestCase {
 
     func testClear() {
         let expect = expectation(description: "")
-        var tabs = Tabs()
+        nonisolated(unsafe) var tabs = Tabs()
         tabs.new(URL(string: "https://www.something.com")!)
         tabs.new(URL(string: "https://www.else.com")!)
         tabs.clear()

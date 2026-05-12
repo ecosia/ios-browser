@@ -5,7 +5,8 @@
 import XCTest
 @testable import Client
 
-final class ContentBlockerTests: XCTestCase {
+@MainActor
+final class ContentBlockerTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         super.setUp()
         ensureAllRulesAreRemovedFromStore()

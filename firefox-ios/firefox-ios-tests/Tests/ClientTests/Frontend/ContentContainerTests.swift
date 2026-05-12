@@ -7,6 +7,7 @@ import WebKit
 import XCTest
 @testable import Client
 
+@MainActor
 final class ContentContainerTests: XCTestCase {
     private var profile: MockProfile!
     private var overlayModeManager: MockOverlayModeManager!
@@ -28,6 +29,7 @@ final class ContentContainerTests: XCTestCase {
 
     // MARK: - canAddHomepage
 
+    /* Ecosia: LegacyHomepageViewController removed in v147
     func testCanAddHomepage() {
         let subject = ContentContainer(frame: .zero)
         let homepage = createHomepage()
@@ -42,19 +44,28 @@ final class ContentContainerTests: XCTestCase {
         subject.add(content: homepage)
         XCTAssertFalse(subject.canAdd(content: homepage))
     }
+    */
 
     // MARK: - canAddNewHomepage
 
     func testCanAddNewHomepage() {
         let subject = ContentContainer(frame: .zero)
-        let homepage = HomepageViewController(windowUUID: .XCTestDefaultUUID)
+        let homepage = HomepageViewController(
+            windowUUID: .XCTestDefaultUUID,
+            overlayManager: overlayModeManager,
+            toastContainer: UIView()
+        )
 
         XCTAssertTrue(subject.canAdd(content: homepage))
     }
 
     func testCanAddNewHomepageOnceOnly() {
         let subject = ContentContainer(frame: .zero)
-        let homepage = HomepageViewController(windowUUID: .XCTestDefaultUUID)
+        let homepage = HomepageViewController(
+            windowUUID: .XCTestDefaultUUID,
+            overlayManager: overlayModeManager,
+            toastContainer: UIView()
+        )
 
         subject.add(content: homepage)
         XCTAssertFalse(subject.canAdd(content: homepage))
@@ -102,6 +113,7 @@ final class ContentContainerTests: XCTestCase {
 
     // MARK: - hashasLegacyHomepage
 
+    /* Ecosia: LegacyHomepageViewController removed in v147
     func testHasHomepage_trueWhenHomepage() {
         let subject = ContentContainer(frame: .zero)
         let homepage = createHomepage()
@@ -114,6 +126,7 @@ final class ContentContainerTests: XCTestCase {
         let subject = ContentContainer(frame: .zero)
         XCTAssertFalse(subject.hasLegacyHomepage)
     }
+    */
 
     func testHasHomepage_falseWhenWebview() {
         let subject = ContentContainer(frame: .zero)
@@ -127,7 +140,11 @@ final class ContentContainerTests: XCTestCase {
 
     func testHasNewHomepage_returnsTrueWhenAdded() {
         let subject = ContentContainer(frame: .zero)
-        let homepage = HomepageViewController(windowUUID: .XCTestDefaultUUID)
+        let homepage = HomepageViewController(
+            windowUUID: .XCTestDefaultUUID,
+            overlayManager: overlayModeManager,
+            toastContainer: UIView()
+        )
         subject.add(content: homepage)
 
         XCTAssertTrue(subject.hasHomepage)
@@ -179,16 +196,22 @@ final class ContentContainerTests: XCTestCase {
         XCTAssertNil(subject.contentView)
     }
 
+    /* Ecosia: LegacyHomepageViewController removed in v147
     func testContentView_hasContentHomepage_viewIsNotNil() {
         let subject = ContentContainer(frame: .zero)
         let homepage = createHomepage()
         subject.add(content: homepage)
         XCTAssertNotNil(subject.contentView)
     }
+    */
 
     func testContentView_hasContentNewHomepage_viewIsNotNil() {
         let subject = ContentContainer(frame: .zero)
-        let homepage = HomepageViewController(windowUUID: .XCTestDefaultUUID)
+        let homepage = HomepageViewController(
+            windowUUID: .XCTestDefaultUUID,
+            overlayManager: overlayModeManager,
+            toastContainer: UIView()
+        )
         subject.add(content: homepage)
         XCTAssertNotNil(subject.contentView)
     }
@@ -205,6 +228,7 @@ final class ContentContainerTests: XCTestCase {
 
     // MARK: update method
 
+    /* Ecosia: LegacyHomepageViewController removed in v147
     func test_update_hasLegacyHomepage_returnsTrue() {
         let subject = ContentContainer(frame: .zero)
         let homepage = createHomepage()
@@ -214,13 +238,17 @@ final class ContentContainerTests: XCTestCase {
         XCTAssertFalse(subject.hasPrivateHomepage)
         XCTAssertFalse(subject.hasWebView)
     }
+    */
 
     func test_update_hasNewHomepage_returnsTrue() {
         let subject = ContentContainer(frame: .zero)
-        let homepage = HomepageViewController(windowUUID: .XCTestDefaultUUID)
+        let homepage = HomepageViewController(
+            windowUUID: .XCTestDefaultUUID,
+            overlayManager: overlayModeManager,
+            toastContainer: UIView()
+        )
         subject.update(content: homepage)
         XCTAssertTrue(subject.hasHomepage)
-        XCTAssertFalse(subject.hasLegacyHomepage)
         XCTAssertFalse(subject.hasPrivateHomepage)
         XCTAssertFalse(subject.hasWebView)
     }
@@ -233,7 +261,6 @@ final class ContentContainerTests: XCTestCase {
         )
         subject.update(content: privateHomepage)
         XCTAssertTrue(subject.hasPrivateHomepage)
-        XCTAssertFalse(subject.hasLegacyHomepage)
         XCTAssertFalse(subject.hasHomepage)
         XCTAssertFalse(subject.hasWebView)
     }
@@ -243,11 +270,11 @@ final class ContentContainerTests: XCTestCase {
         let webview = WebviewViewController(webView: WKWebView())
         subject.update(content: webview)
         XCTAssertTrue(subject.hasWebView)
-        XCTAssertFalse(subject.hasLegacyHomepage)
         XCTAssertFalse(subject.hasHomepage)
         XCTAssertFalse(subject.hasPrivateHomepage)
     }
 
+    /* Ecosia: LegacyHomepageViewController removed in v147
     private func createHomepage() -> LegacyHomepageViewController {
         /* Ecosia: Update HomepageViewController init
         return LegacyHomepageViewController(
@@ -267,4 +294,5 @@ final class ContentContainerTests: XCTestCase {
             auth: EcosiaAuth(browserViewController: BrowserViewController(profile: profile, tabManager: MockTabManager()))
         )
     }
+    */
 }

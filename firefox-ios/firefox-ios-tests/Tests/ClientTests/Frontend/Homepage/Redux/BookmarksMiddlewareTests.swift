@@ -7,7 +7,8 @@ import XCTest
 
 @testable import Client
 
-final class BookmarksMiddlewareTests: XCTestCase, StoreTestUtility {
+@MainActor
+final class BookmarksMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     var mockProfile: MockProfile!
     var mockStore: MockStoreForMiddleware<AppState>!
 

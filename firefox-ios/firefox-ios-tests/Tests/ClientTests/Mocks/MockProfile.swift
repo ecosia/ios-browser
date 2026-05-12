@@ -11,14 +11,13 @@ import XCTest
 
 @testable import Client
 
-import enum MozillaAppServices.SyncReason
-import struct MozillaAppServices.SyncResult
+import MozillaAppServices
 
 public typealias ClientSyncManager = Client.SyncManager
 
-open class ClientSyncManagerSpy: ClientSyncManager {
+open class ClientSyncManagerSpy: ClientSyncManager, @unchecked Sendable {
     open var isSyncing = false
-    open var lastSyncFinishTime: Timestamp?
+    open var lastSyncFinishTime: Shared.Timestamp?
     open var syncDisplayState: SyncDisplayState?
 
     private var mockDeclinedEngines: [String]?
@@ -37,10 +36,12 @@ open class ClientSyncManagerSpy: ClientSyncManager {
     open func updateCreditCardAutofillStatus(value: Bool) {}
 
     var syncNamedCollectionsCalled = 0
-    open func syncNamedCollections(why: SyncReason, names: [String]) -> Success {
+    open func syncNamedCollections(why: SyncReason, names: [String]) -> Deferred<Maybe<SyncResult>> {
         syncNamedCollectionsCalled += 1
-        return succeed()
+        return emptySyncResult
     }
+    open func syncPostSyncSettingsChange(why: SyncReason, names: [String]) {}
+    open func reportOpenSyncSettingsMenuTelemetry() {}
     open func beginTimedSyncs() {}
     open func endTimedSyncs() {}
     open func applicationDidBecomeActive() {
@@ -74,7 +75,7 @@ open class ClientSyncManagerSpy: ClientSyncManager {
     }
 }
 
-final class MockTabQueue: TabQueue {
+final class MockTabQueue: TabQueue, @unchecked Sendable {
     var queuedTabs = [ShareItem]()
     var getQueuedTabsCalled = 0
     var addToQueueCalled = 0
@@ -85,9 +86,10 @@ final class MockTabQueue: TabQueue {
         return succeed()
     }
 
-    func getQueuedTabs(completion: @escaping ([ShareItem]) -> Void) {
+    func getQueuedTabs(completion: @MainActor @escaping ([ShareItem]) -> Void) {
         getQueuedTabsCalled += 1
-        return completion(queuedTabs)
+        let tabs = queuedTabs
+        Task { @MainActor in completion(tabs) }
     }
 
     func clearQueuedTabs() -> Success {
@@ -97,33 +99,39 @@ final class MockTabQueue: TabQueue {
 }
 
 class MockFiles: FileAccessor {
+    var rootPath: String
+
     init() {
         let docPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        super.init(rootPath: (docPath as NSString).appendingPathComponent("testing"))
+        rootPath = (docPath as NSString).appendingPathComponent("testing")
     }
 }
 
-open class MockProfile: Client.Profile {
-    public var rustFxA: RustFirefoxAccounts {
-        return RustFirefoxAccounts.shared
+open class MockProfile: Client.Profile, @unchecked Sendable {
+    public var rustFxA: Client.RustFirefoxAccounts {
+        return Client.RustFirefoxAccounts.shared
     }
 
     // Read/Writeable properties for mocking
 
-    public var files: FileAccessor
-    public var syncManager: ClientSyncManager!
+    public let files: FileAccessor
+    public var syncManager: (any Client.SyncManager)?
     public var firefoxSuggest: RustFirefoxSuggestProtocol?
 
     fileprivate let name: String = "mockaccount"
 
     private let directory: String
     private let databasePrefix: String
+    private var injectedPinnedSites: PinnedSites?
 
-    init(databasePrefix: String = "mock", firefoxSuggest: RustFirefoxSuggestProtocol? = nil) {
+    init(databasePrefix: String = "mock",
+         firefoxSuggest: RustFirefoxSuggestProtocol? = nil,
+         injectedPinnedSites: PinnedSites? = nil) {
         files = MockFiles()
-        syncManager = ClientSyncManagerSpy()
+        syncManager = ClientSyncManagerSpy() as any Client.SyncManager
         self.databasePrefix = databasePrefix
         self.firefoxSuggest = firefoxSuggest
+        self.injectedPinnedSites = injectedPinnedSites
 
         do {
             directory = try files.getAndEnsureDirectory()
@@ -169,8 +177,14 @@ open class MockProfile: Client.Profile {
         return CertStore()
     }()
 
+    @MainActor
     public lazy var searchEnginesManager: SearchEnginesManager = {
         return SearchEnginesManager(prefs: self.prefs, files: self.files)
+    }()
+
+    public lazy var remoteSettingsService: RemoteSettingsService = {
+        let config = RemoteSettingsConfig2(server: .prod, bucketName: "main", appContext: nil)
+        return RemoteSettingsService(storageDir: directory, config: config)
     }()
 
     public lazy var prefs: Prefs = {
@@ -242,7 +256,7 @@ open class MockProfile: Client.Profile {
     }()
 
     public lazy var pinnedSites: PinnedSites = {
-        legacyPlaces
+        injectedPinnedSites ?? legacyPlaces
     }()
 
     public func hasSyncAccount(completion: @escaping (Bool) -> Void) {
@@ -261,7 +275,7 @@ open class MockProfile: Client.Profile {
     public func flushAccount() {}
 
     public func removeAccount() {
-        self.syncManager.onRemovedAccount()
+        _ = self.syncManager?.onRemovedAccount()
     }
 
     public func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
@@ -274,11 +288,11 @@ open class MockProfile: Client.Profile {
 
     var mockClientAndTabs = [ClientAndTabs]()
 
-    public func getCachedClientsAndTabs(completion: @escaping ([ClientAndTabs]?) -> Void) {
+    public func getCachedClientsAndTabs(completion: @escaping @Sendable ([ClientAndTabs]?) -> Void) {
         completion(mockClientAndTabs)
     }
 
-    public func getClientsAndTabs(completion: @escaping ([ClientAndTabs]?) -> Void) {
+    public func getClientsAndTabs(completion: @escaping @Sendable ([ClientAndTabs]?) -> Void) {
         completion(mockClientAndTabs)
     }
 
@@ -286,6 +300,22 @@ open class MockProfile: Client.Profile {
 
     public func storeTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
         return deferMaybe(0)
+    }
+
+    public func storeAndSyncTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
+        return deferMaybe(0)
+    }
+
+    public func addTabToCommandQueue(_ deviceId: String, url: URL) {}
+    public func removeTabFromCommandQueue(_ deviceId: String, url: URL) {}
+    public func flushTabCommands(toDeviceId: String?) {}
+
+    public func updateCredentialIdentities() -> Deferred<Result<Void, Error>> {
+        return Deferred(value: .success(()))
+    }
+
+    public func clearCredentialStore() -> Deferred<Result<Void, Error>> {
+        return Deferred(value: .success(()))
     }
 
     public func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success {

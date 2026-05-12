@@ -24,7 +24,8 @@ enum TestEvent: AppEventType {
     case contextualEvent(Int)
 }
 
-final class EventQueueTests: XCTestCase {
+@MainActor
+final class EventQueueTests: XCTestCase, @unchecked Sendable {
     var queue: EventQueue<TestEvent>!
 
     override func setUp() {
@@ -43,7 +44,7 @@ final class EventQueueTests: XCTestCase {
 
         XCTAssertFalse(queue.hasSignalled(.startingEvent))
 
-        queue.wait(for: .startingEvent) { actionRun = true }
+        queue.wait(for: .startingEvent) { MainActor.assumeIsolated { actionRun = true } }
         self.queue.signal(event: .startingEvent)
 
         XCTAssertTrue(actionRun)
@@ -52,7 +53,7 @@ final class EventQueueTests: XCTestCase {
     func testBasicActionIsNeverFiredIfNoEvent() {
         XCTAssertFalse(queue.hasSignalled(.startingEvent))
         var actionRun = false
-        queue.wait(for: .startingEvent) { actionRun = true }
+        queue.wait(for: .startingEvent) { MainActor.assumeIsolated { actionRun = true } }
         // Signal an event, but not the one our action is dependent on
         queue.signal(event: .middleEvent)
         XCTAssertFalse(actionRun)
@@ -61,7 +62,7 @@ final class EventQueueTests: XCTestCase {
     func testMultiEventActionIsFired() {
         var actionRun = false
 
-        queue.wait(for: [.startingEvent, .middleEvent]) { actionRun = true }
+        queue.wait(for: [.startingEvent, .middleEvent]) { MainActor.assumeIsolated { actionRun = true } }
         XCTAssertFalse(actionRun)
 
         self.queue.signal(event: .startingEvent)
@@ -74,7 +75,7 @@ final class EventQueueTests: XCTestCase {
     func testMultiEventActionNotFiredIfOnlyOneEventOccurs() {
         var actionRun = false
         queue.wait(for: [.startingEvent, .middleEvent]) {
-            actionRun = true
+            MainActor.assumeIsolated { actionRun = true }
         }
 
         self.queue.signal(event: .startingEvent)
@@ -87,11 +88,11 @@ final class EventQueueTests: XCTestCase {
         var action2Run = false
 
         queue.wait(for: .contextualEvent(1)) {
-            action1Run = true
+            MainActor.assumeIsolated { action1Run = true }
         }
 
         queue.wait(for: .contextualEvent(2)) {
-            action2Run = true
+            MainActor.assumeIsolated { action2Run = true }
         }
 
         queue.signal(event: .contextualEvent(1))
@@ -103,7 +104,7 @@ final class EventQueueTests: XCTestCase {
     func testActionCancellation() {
         var actionRun = false
         XCTAssertFalse(queue.hasSignalled(.startingEvent))
-        let token = queue.wait(for: .startingEvent, then: { actionRun = true })
+        let token = queue.wait(for: .startingEvent, then: { MainActor.assumeIsolated { actionRun = true } })
         let wasCancelled = queue.cancelAction(token: token)
         queue.signal(event: .startingEvent)
         XCTAssertFalse(actionRun)
@@ -113,7 +114,7 @@ final class EventQueueTests: XCTestCase {
     func testActionCancellationFailed() {
         var actionRun = false
         XCTAssertFalse(queue.hasSignalled(.startingEvent))
-        let token = queue.wait(for: .startingEvent, then: { actionRun = true })
+        let token = queue.wait(for: .startingEvent, then: { MainActor.assumeIsolated { actionRun = true } })
 
         queue.signal(event: .startingEvent)
 
@@ -178,7 +179,7 @@ final class EventQueueTests: XCTestCase {
         var actionRun = false
 
         XCTAssertTrue(queue.activityIsNotStarted(.startingEvent))
-        queue.wait(for: .activityEvent) { actionRun = true }
+        queue.wait(for: .activityEvent) { MainActor.assumeIsolated { actionRun = true } }
 
         // Start event
         self.queue.started(.activityEvent)
@@ -195,7 +196,7 @@ final class EventQueueTests: XCTestCase {
         var actionRun = false
 
         XCTAssertTrue(queue.activityIsNotStarted(.startingEvent))
-        queue.wait(for: [.startingEvent, .activityEvent], then: { actionRun = true })
+        queue.wait(for: [.startingEvent, .activityEvent], then: { MainActor.assumeIsolated { actionRun = true } })
 
         queue.signal(event: .startingEvent)
 
@@ -213,7 +214,7 @@ final class EventQueueTests: XCTestCase {
         var actionRun = false
 
         // Enqueue and trigger 1st occurrence of activity event
-        queue.wait(for: [.activityEvent], then: { actionRun = true })
+        queue.wait(for: [.activityEvent], then: { MainActor.assumeIsolated { actionRun = true } })
         XCTAssertFalse(actionRun)
         queue.started(.activityEvent)
         XCTAssertFalse(actionRun)
@@ -231,7 +232,7 @@ final class EventQueueTests: XCTestCase {
         // Enqueue another action, since the event has already completed,
         // we expect the action to run immediately
         actionRun = false
-        queue.wait(for: [.activityEvent], then: { actionRun = true })
+        queue.wait(for: [.activityEvent], then: { MainActor.assumeIsolated { actionRun = true } })
         // Expect action 2 run immediately
         XCTAssertTrue(actionRun)
 
@@ -240,7 +241,7 @@ final class EventQueueTests: XCTestCase {
         // until the event finishes before running.
         actionRun = false
         queue.started(.activityEvent)
-        queue.wait(for: [.activityEvent], then: { actionRun = true })
+        queue.wait(for: [.activityEvent], then: { MainActor.assumeIsolated { actionRun = true } })
         XCTAssertFalse(actionRun)
         // Finish event
         queue.completed(.activityEvent)
@@ -257,7 +258,7 @@ final class EventQueueTests: XCTestCase {
         var actionRun = false
 
         XCTAssertTrue(queue.activityIsNotStarted(.startingEvent))
-        queue.wait(for: [.activityEvent], then: { actionRun = true })
+        queue.wait(for: [.activityEvent], then: { MainActor.assumeIsolated { actionRun = true } })
 
         queue.started(.activityEvent)
         queue.failed(.activityEvent)
@@ -299,9 +300,11 @@ final class EventQueueTests: XCTestCase {
     func testEnqueuingActionDuringProcessingWhoseDependenciesAreSatisfiedWillBeRunCorrectly() {
         let expectation = XCTestExpectation(description: "Nested action expectation.")
         queue.wait(for: [.startingEvent, .laterEvent], then: {
-            self.queue.wait(for: [.startingEvent, .laterEvent], then: {
-                expectation.fulfill()
-            })
+            MainActor.assumeIsolated {
+                _ = self.queue.wait(for: [.startingEvent, .laterEvent], then: {
+                    expectation.fulfill()
+                })
+            }
         })
         queue.signal(event: .startingEvent)
         queue.signal(event: .laterEvent)
@@ -319,11 +322,15 @@ final class EventQueueTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Action block cleaned up.")
         var actionsPerformed = 0
         queue.wait(for: [.startingEvent, .activityEvent], then: {
-            actionsPerformed += 1
-            // As part of the enqueued action block, change the state of our dependent event out of .completed:
-            self.queue.started(.activityEvent)
+            MainActor.assumeIsolated {
+                actionsPerformed += 1
+                // As part of the enqueued action block, change the state of our dependent event out of .completed:
+                self.queue.started(.activityEvent)
+            }
             DispatchQueue.main.async {
-                self.queue.completed(.activityEvent)
+                MainActor.assumeIsolated {
+                    self.queue.completed(.activityEvent)
+                }
                 if actionsPerformed > 1 {
                     // Action block was not cleaned up and was run repeatedly due
                     // to dependent event being moved out of .completed state by

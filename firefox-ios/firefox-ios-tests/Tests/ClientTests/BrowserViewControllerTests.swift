@@ -10,6 +10,7 @@ import Glean
 
 @testable import Client
 
+@MainActor
 class BrowserViewControllerTests: XCTestCase {
     var profile: MockProfile!
     var tabManager: MockTabManager!
@@ -50,17 +51,20 @@ class BrowserViewControllerTests: XCTestCase {
             expectation.fulfill()
         }
 
-        browserViewController.trackVisibleSuggestion(telemetryInfo: .firefoxSuggestion(
-            RustFirefoxSuggestionTelemetryInfo.amp(
-                blockId: 1,
-                advertiser: "test advertiser",
-                iabCategory: "999 - Test Category",
-                impressionReportingURL: URL(string: "https://example.com/ios_test_impression_reporting_url"),
-                clickReportingURL: URL(string: "https://example.com/ios_test_click_reporting_url")
+        browserViewController.trackVisibleSuggestion(
+            telemetryInfo: .firefoxSuggestion(
+                RustFirefoxSuggestionTelemetryInfo.amp(
+                    blockId: 1,
+                    advertiser: "test advertiser",
+                    iabCategory: "999 - Test Category",
+                    impressionReportingURL: URL(string: "https://example.com/ios_test_impression_reporting_url"),
+                    clickReportingURL: URL(string: "https://example.com/ios_test_click_reporting_url")
+                ),
+                position: 3,
+                didTap: false
             ),
-            position: 3,
-            didTap: false
-        ))
+            suggestTelemetry: FxSuggestTelemetry()
+        )
 
         wait(for: [expectation], timeout: 5.0)
     }

@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class SearchEngineSelectionMiddlewareTests: XCTestCase {
     var mockProfile: MockProfile!
     var mockSearchEngines: [OpenSearchEngine]!

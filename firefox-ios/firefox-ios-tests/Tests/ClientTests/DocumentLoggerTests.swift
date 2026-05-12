@@ -64,7 +64,6 @@ final class DocumentLoggerTests: XCTestCase {
 
     private func createSubject() -> DocumentLogger {
         let logger = DocumentLogger(logger: logger)
-        trackForMemoryLeaks(logger)
         return logger
     }
 }

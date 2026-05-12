@@ -5,6 +5,7 @@
 import XCTest
 @testable import Client
 
+@MainActor
 class DownloadTests: XCTestCase {
     var download: Download!
 

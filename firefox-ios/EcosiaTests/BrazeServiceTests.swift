@@ -6,6 +6,7 @@ import XCTest
 @testable import Ecosia
 // swiftlint:disable implicitly_unwrapped_optional
 
+@MainActor
 final class BrazeServiceTests: XCTestCase {
     var brazeService: BrazeService!
 

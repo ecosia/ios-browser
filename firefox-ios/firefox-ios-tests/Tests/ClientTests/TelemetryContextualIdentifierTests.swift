@@ -7,6 +7,7 @@
 import Glean
 import XCTest
 
+@MainActor
 class TelemetryContextualIdentifierTests: XCTestCase {
     override func setUp() {
         super.setUp()

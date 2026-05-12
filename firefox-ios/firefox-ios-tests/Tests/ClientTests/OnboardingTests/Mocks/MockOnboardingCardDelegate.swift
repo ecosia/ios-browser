@@ -25,8 +25,7 @@ class MockOnboardinCardDelegateController: UIViewController,
             with: NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)))
     var didFinishFlow: (() -> Void)?
     var themeManager: ThemeManager = AppContainer.shared.resolve()
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
+    var themeListenerCancellable: Any?
     func applyTheme() { }
 
     // Protocols under test

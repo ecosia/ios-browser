@@ -7,6 +7,7 @@ import Shared
 import XCTest
 @testable import Client
 
+@MainActor
 final class LaunchScreenViewModelTests: XCTestCase {
     // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
     // private var messageManager: MockGleanPlumbMessageManagerProtocol!
@@ -23,7 +24,7 @@ final class LaunchScreenViewModelTests: XCTestCase {
         // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
         // messageManager = MockGleanPlumbMessageManagerProtocol()
 
-        UserDefaults.standard.set(true, forKey: PrefsKeys.NimbusFeatureTestsOverride)
+        // Ecosia: PrefsKeys.NimbusFeatureTestsOverride removed in v147
     }
 
     override func tearDown() {
@@ -34,7 +35,7 @@ final class LaunchScreenViewModelTests: XCTestCase {
         // messageManager = nil
         delegate = nil
 
-        UserDefaults.standard.set(false, forKey: PrefsKeys.NimbusFeatureTestsOverride)
+        // Ecosia: PrefsKeys.NimbusFeatureTestsOverride removed in v147
     }
 
     func testLaunchDoesntCallLoadedIfNotStarted() {
@@ -112,13 +113,9 @@ final class LaunchScreenViewModelTests: XCTestCase {
     // MARK: - Helpers
     private func createSubject(file: StaticString = #file,
                                line: UInt = #line) -> LaunchScreenViewModel {
-        let onboardingModel = createOnboardingViewModel()
-
+        // Ecosia: OnboardingViewModel/OnboardingCardInfoModel removed in v147; use default onboardingModel
         let subject = LaunchScreenViewModel(windowUUID: windowUUID,
-                                            profile: profile,
-                                            // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
-                                            // messageManager: messageManager,
-                                            onboardingModel: onboardingModel)
+                                            profile: profile)
         trackForMemoryLeaks(subject, file: file, line: line)
         return subject
     }
@@ -142,30 +139,9 @@ final class LaunchScreenViewModelTests: XCTestCase {
     }
      */
 
-    func createOnboardingViewModel() -> OnboardingViewModel {
-        let cards: [OnboardingCardInfoModel] = [
-            createCard(index: 1),
-            createCard(index: 2)
-        ]
-
-        return OnboardingViewModel(cards: cards,
-                                   isDismissable: true)
-    }
-
-    func createCard(index: Int) -> OnboardingCardInfoModel {
-        let buttons = OnboardingButtons(primary: OnboardingButtonInfoModel(title: "Button title \(index)",
-                                                                           action: .forwardOneCard))
-        return OnboardingCardInfoModel(cardType: .basic,
-                                       name: "Name \(index)",
-                                       order: index,
-                                       title: "Title \(index)",
-                                       body: "Body \(index)",
-                                       link: nil,
-                                       buttons: buttons,
-                                       multipleChoiceButtons: [],
-                                       onboardingType: .upgrade,
-                                       a11yIdRoot: "A11y id \(index)",
-                                       imageID: "Image id \(index)",
-                                       instructionsPopup: nil)
-    }
+    /* Ecosia: OnboardingViewModel, OnboardingCardInfoModel, OnboardingButtons, OnboardingButtonInfoModel
+       and .forwardOneCard removed in v147
+    func createOnboardingViewModel() -> OnboardingViewModel { ... }
+    func createCard(index: Int) -> OnboardingCardInfoModel { ... }
+    */
 }

@@ -7,7 +7,7 @@ import XCTest
 @testable import Client
 
 @MainActor
-final class ScreenshotHelperTests: XCTestCase, StoreTestUtility {
+final class ScreenshotHelperTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     var profile: MockProfile!
     let tabManager = MockTabManager()
     var mockVC: MockBrowserViewController!
@@ -58,7 +58,7 @@ final class ScreenshotHelperTests: XCTestCase, StoreTestUtility {
         let homeURL = URL(string: "https://example.com")
         let mockTabWebView = MockTabWebView(tab: tab)
 
-        mockVC.mockContentContainer.shouldHaveNativeErrorPage = true
+        // mockVC.mockContentContainer.shouldHaveNativeErrorPage = true // removed in v147
         mockTabWebView.loadedURL = homeURL
         tab.webView = mockTabWebView
         tab.url = homeURL

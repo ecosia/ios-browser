@@ -8,6 +8,7 @@ import Common
 
 @testable import Client
 
+@MainActor
 class AccessoryViewProviderTests: XCTestCase {
     var accessoryViewProvider: AccessoryViewProvider!
 
@@ -15,7 +16,7 @@ class AccessoryViewProviderTests: XCTestCase {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
 
-        accessoryViewProvider = AccessoryViewProvider()
+        accessoryViewProvider = AccessoryViewProvider(windowUUID: .XCTestDefaultUUID)
     }
 
     override func tearDown() {
@@ -26,14 +27,12 @@ class AccessoryViewProviderTests: XCTestCase {
     }
 
     func testReloadForCreditCardView() {
+        // Ecosia: showCreditCard property removed in v147; just verify reload doesn't crash
         accessoryViewProvider.reloadViewFor(.creditCard)
-
-        XCTAssert(accessoryViewProvider.showCreditCard)
     }
 
     func testReloadForStandardView() {
+        // Ecosia: showCreditCard property removed in v147; just verify reload doesn't crash
         accessoryViewProvider.reloadViewFor(.standard)
-
-        XCTAssertFalse(accessoryViewProvider.showCreditCard)
     }
 }

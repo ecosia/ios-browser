@@ -8,6 +8,7 @@ import Common
 
 @testable import Client
 
+@MainActor
 class AccountSyncHandlerTests: XCTestCase {
     private var profile: MockProfile!
     private var syncManager: ClientSyncManagerSpy!
@@ -48,7 +49,7 @@ class AccountSyncHandlerTests: XCTestCase {
     func testTabDidGainFocus_highThrottleTime_executedAtMostOnce() {
         let threshold: Double = 1000
         let stepWaitTime = 2.0
-        let subject = AccountSyncHandler(with: profile, throttleTime: threshold, queue: DispatchQueue.global())
+        let subject = AccountSyncHandler(with: profile, debounceTime: threshold, queue: DispatchQueue.global())
         let tab = createTab(profile: profile)
 
         subject.tabDidGainFocus(tab)
@@ -63,7 +64,7 @@ class AccountSyncHandlerTests: XCTestCase {
     }
 
     func testTabDidGainFocus_multipleThrottle_withWaitSyncOnce() {
-        let subject = AccountSyncHandler(with: profile, throttleTime: 0.2, queue: DispatchQueue.global())
+        let subject = AccountSyncHandler(with: profile, debounceTime: 0.2, queue: DispatchQueue.global())
         let tab = createTab(profile: profile)
         subject.tabDidGainFocus(tab)
         subject.tabDidGainFocus(tab)

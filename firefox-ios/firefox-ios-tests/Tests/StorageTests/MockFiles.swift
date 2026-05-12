@@ -6,16 +6,19 @@ import Foundation
 @testable import Storage
 import XCTest
 
-class MockFiles: FileAccessor {
+class MockFiles: FileAccessor, @unchecked Sendable {
+    var rootPath: String
+
     init() {
         let docPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        super.init(rootPath: (docPath as NSString).appendingPathComponent("testing"))
+        rootPath = (docPath as NSString).appendingPathComponent("testing")
     }
 }
 
 class SupportingFiles: FileAccessor {
+    var rootPath: String
+
     init() {
-        let path = Bundle.main.bundlePath + "/PlugIns/StorageTests.xctest/"
-        super.init(rootPath: path)
+        rootPath = Bundle.main.bundlePath + "/PlugIns/StorageTests.xctest/"
     }
 }

@@ -11,7 +11,8 @@ import Glean
 
 @testable import Client
 
-class PasswordManagerViewModelTests: XCTestCase {
+@MainActor
+class PasswordManagerViewModelTests: XCTestCase, @unchecked Sendable {
     var viewModel: PasswordManagerViewModel!
     var dataSource: LoginDataSource!
     var mockDelegate: MockLoginViewModelDelegate!

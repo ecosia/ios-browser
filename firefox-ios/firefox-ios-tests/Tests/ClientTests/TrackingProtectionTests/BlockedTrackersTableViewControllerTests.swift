@@ -6,6 +6,7 @@ import XCTest
 import Common
 @testable import Client
 
+@MainActor
 class BlockedTrackersTableViewControllerTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
     let blockedTrackersMockModel = BlockedTrackersTableModel(

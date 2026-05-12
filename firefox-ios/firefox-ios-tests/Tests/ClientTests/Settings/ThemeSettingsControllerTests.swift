@@ -8,6 +8,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 class ThemeSettingsControllerTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
     override func setUp() {

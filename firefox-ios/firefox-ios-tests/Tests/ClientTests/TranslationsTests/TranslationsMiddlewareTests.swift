@@ -27,8 +27,8 @@ final class TranslationsMiddlewareIntegrationTests: XCTestCase, StoreTestUtility
         )
         mockTranslationsTelemetry = MockTranslationsTelemetry()
         DependencyHelperMock().bootstrapDependencies(
-            injectedWindowManager: mockWindowManager,
-            injectedTabManager: mockTabManager
+            injectedTabManager: mockTabManager,
+            injectedWindowManager: mockWindowManager
         )
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
         setupStore()

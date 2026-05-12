@@ -7,7 +7,7 @@ import Shared
 @testable import Storage
 import XCTest
 
-class TestSQLiteReadingList: XCTestCase {
+class TestSQLiteReadingList: XCTestCase, @unchecked Sendable {
     let files = MockFiles()
     var db: BrowserDB!
     var readingList: SQLiteReadingList!

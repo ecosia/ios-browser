@@ -5,7 +5,8 @@
 import XCTest
 @testable import Client
 
-final class BaseCoordinatorTests: XCTestCase {
+@MainActor
+final class BaseCoordinatorTests: XCTestCase, @unchecked Sendable {
     var navigationController: NavigationController!
     var router: MockRouter!
 
@@ -111,5 +112,5 @@ final class BaseCoordinatorTests: XCTestCase {
 }
 
 class NonDismissableCoordinator: BaseCoordinator {
-    override var isDismissable: Bool { false }
+    override var isDismissible: Bool { false }
 }

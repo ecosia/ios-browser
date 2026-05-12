@@ -10,6 +10,7 @@ import SwiftUI
 import Common
 @testable import Client
 
+@MainActor
 class CreditCardInputFieldTests: XCTestCase {
     var profile: MockProfile!
     var viewModel: CreditCardInputViewModel!
@@ -18,7 +19,7 @@ class CreditCardInputFieldTests: XCTestCase {
         super.setUp()
 
         profile = MockProfile()
-        viewModel = CreditCardInputViewModel(profile: profile)
+        viewModel = CreditCardInputViewModel(profile: profile, creditCardProvider: profile.autofill)
     }
 
     override func tearDown() {

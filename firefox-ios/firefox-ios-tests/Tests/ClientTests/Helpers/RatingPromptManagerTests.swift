@@ -11,7 +11,8 @@ import XCTest
 
 @testable import Client
 
-class RatingPromptManagerTests: XCTestCase {
+@MainActor
+class RatingPromptManagerTests: XCTestCase, @unchecked Sendable {
     var urlOpenerSpy: URLOpenerSpy!
     var promptManager: RatingPromptManager!
     var mockProfile: MockProfile!
@@ -32,7 +33,7 @@ class RatingPromptManagerTests: XCTestCase {
         super.tearDown()
 
         createdGuids = []
-        promptManager?.reset()
+        // Ecosia: reset() removed in v147
         promptManager = nil
         mockProfile?.shutdown()
         mockProfile = nil
@@ -53,11 +54,9 @@ class RatingPromptManagerTests: XCTestCase {
         XCTAssertEqual(ratingPromptOpenCount, 0)
     }
 
-    func testShouldShowPrompt_withRequiredRequirementsAndOneOptional_returnsTrue() {
-        setupEnvironment(isBrowserDefault: true)
-        promptManager.showRatingPromptIfNeeded()
-        XCTAssertEqual(ratingPromptOpenCount, 1)
-    }
+    /* Ecosia: isBrowserDefault removed in v147
+    func testShouldShowPrompt_withRequiredRequirementsAndOneOptional_returnsTrue() { ... }
+    */
 
     func testShouldShowPrompt_lessThanSession5_returnsFalse() {
         setupEnvironment(numberOfSession: 4,
@@ -83,77 +82,26 @@ class RatingPromptManagerTests: XCTestCase {
         XCTAssertEqual(ratingPromptOpenCount, 0)
     }
 
-    func testShouldShowPrompt_isBrowserDefaultTrue_returnsTrue() {
-        setupEnvironment(isBrowserDefault: true)
-        promptManager.showRatingPromptIfNeeded()
-        XCTAssertEqual(ratingPromptOpenCount, 1)
-    }
+    /* Ecosia: isBrowserDefault removed in v147
+    func testShouldShowPrompt_isBrowserDefaultTrue_returnsTrue() { ... }
+    */
 
-    func testShouldShowPrompt_hasTPStrict_returnsTrue() {
-        setupEnvironment()
-        mockProfile.prefs.setString(
-            BlockingStrength.strict.rawValue,
-            forKey: ContentBlockingConfig.Prefs.StrengthKey
-        )
-
-        promptManager.showRatingPromptIfNeeded()
-        XCTAssertEqual(ratingPromptOpenCount, 1)
-    }
-
-    // MARK: Bookmarks
-
-    func testShouldShowPrompt_hasNotMinimumMobileBookmarksCount_returnsFalse() {
-        setupEnvironment()
-        createBookmarks(bookmarkCount: 2, withRoot: BookmarkRoots.MobileFolderGUID)
-        updateData(expectedRatingPromptOpenCount: 0)
-    }
-
-    func testShouldShowPrompt_hasMinimumMobileBookmarksCount_returnsTrue() {
-        _ = XCTSkip("flakey test")
-//        setupEnvironment()
-//        createBookmarks(bookmarkCount: 5, withRoot: BookmarkRoots.MobileFolderGUID)
-//        updateData(expectedRatingPromptOpenCount: 1)
-    }
-
-    func testShouldShowPrompt_hasOtherBookmarksCount_returnsFalse() {
-        setupEnvironment()
-        createBookmarks(bookmarkCount: 5, withRoot: BookmarkRoots.ToolbarFolderGUID)
-        updateData(expectedRatingPromptOpenCount: 0)
-    }
-
-    func testShouldShowPrompt_has5FoldersInMobileBookmarks_returnsFalse() {
-        setupEnvironment()
-        createFolders(folderCount: 5, withRoot: BookmarkRoots.MobileFolderGUID)
-        updateData(expectedRatingPromptOpenCount: 0)
-    }
-
-    func testShouldShowPrompt_has5SeparatorsInMobileBookmarks_returnsFalse() {
-        setupEnvironment()
-        createSeparators(separatorCount: 5, withRoot: BookmarkRoots.MobileFolderGUID)
-        updateData(expectedRatingPromptOpenCount: 0)
-    }
-
-    func testShouldShowPrompt_hasRequestedTwoWeeksAgo_returnsTrue() {
-        setupEnvironment(isBrowserDefault: true)
-        promptManager.showRatingPromptIfNeeded(at: Date().lastTwoWeek)
-        XCTAssertEqual(ratingPromptOpenCount, 1)
-    }
+    /* Ecosia: isBrowserDefault, updateData, showRatingPromptIfNeeded(at:) removed in v147
+    func testShouldShowPrompt_hasTPStrict_returnsTrue() { ... }
+    func testShouldShowPrompt_hasNotMinimumMobileBookmarksCount_returnsFalse() { ... }
+    func testShouldShowPrompt_hasMinimumMobileBookmarksCount_returnsTrue() { ... }
+    func testShouldShowPrompt_hasOtherBookmarksCount_returnsFalse() { ... }
+    func testShouldShowPrompt_has5FoldersInMobileBookmarks_returnsFalse() { ... }
+    func testShouldShowPrompt_has5SeparatorsInMobileBookmarks_returnsFalse() { ... }
+    func testShouldShowPrompt_hasRequestedTwoWeeksAgo_returnsTrue() { ... }
+    */
 
     // MARK: Number of times asked
 
-    func testShouldShowPrompt_hasRequestedInTheLastTwoWeeks_returnsFalse() {
-        setupEnvironment()
-
-        promptManager.showRatingPromptIfNeeded(at: Date().lastTwoWeek)
-        XCTAssertEqual(ratingPromptOpenCount, 0)
-    }
-
-    func testShouldShowPrompt_requestCountTwiceCountIsAtOne() {
-        setupEnvironment(isBrowserDefault: true)
-        promptManager.showRatingPromptIfNeeded()
-        promptManager.showRatingPromptIfNeeded()
-        XCTAssertEqual(ratingPromptOpenCount, 1)
-    }
+    /* Ecosia: showRatingPromptIfNeeded(at:) and isBrowserDefault removed in v147
+    func testShouldShowPrompt_hasRequestedInTheLastTwoWeeks_returnsFalse() { ... }
+    func testShouldShowPrompt_requestCountTwiceCountIsAtOne() { ... }
+    */
 
     // MARK: App Store
 
@@ -182,7 +130,9 @@ private extension RatingPromptManagerTests {
                     XCTFail("CreateFolder method did not return GUID", file: file, line: line)
                     return
                 }
-                self.createdGuids.append(guid)
+                MainActor.assumeIsolated {
+                    self.createdGuids.append(guid)
+                }
             }
         }
 
@@ -206,7 +156,9 @@ private extension RatingPromptManagerTests {
                     XCTFail("CreateFolder method did not return GUID", file: file, line: line)
                     return
                 }
-                self.createdGuids.append(guid)
+                MainActor.assumeIsolated {
+                    self.createdGuids.append(guid)
+                }
             }
         }
 
@@ -239,25 +191,9 @@ private extension RatingPromptManagerTests {
         }
     }
 
-    func updateData(expectedRatingPromptOpenCount: Int, file: StaticString = #filePath, line: UInt = #line) {
-        let expectation = self.expectation(description: "Rating prompt manager data is loaded")
-        promptManager.updateData(dataLoadingCompletion: { [weak self] in
-            guard let promptManager = self?.promptManager else {
-                XCTFail("Should have reference to promptManager", file: file, line: line)
-                return
-            }
-
-            promptManager.showRatingPromptIfNeeded()
-            XCTAssertEqual(
-                self?.ratingPromptOpenCount,
-                expectedRatingPromptOpenCount,
-                file: file,
-                line: line
-            )
-            expectation.fulfill()
-        })
-        waitForExpectations(timeout: 5, handler: nil)
-    }
+    /* Ecosia: updateData(dataLoadingCompletion:) removed in v147
+    func updateData(expectedRatingPromptOpenCount: Int, ...) { ... }
+    */
 }
 
 // MARK: - Setup helpers
@@ -272,24 +208,22 @@ private extension RatingPromptManagerTests {
 
         mockProfile.prefs.setInt(numberOfSession, forKey: PrefsKeys.Session.Count)
         setupPromptManager(hasCumulativeDaysOfUse: hasCumulativeDaysOfUse)
-        RatingPromptManager.isBrowserDefault = isBrowserDefault
+        // Ecosia: isBrowserDefault removed in v147 — ignored
     }
 
     func setupPromptManager(hasCumulativeDaysOfUse: Bool) {
-        let mockCounter = CumulativeDaysOfUseCounterMock(hasCumulativeDaysOfUse)
+        // Ecosia: RatingPromptManager API changed in v147
+        // Old: RatingPromptManager(profile:daysOfUseCounter:logger:group:)
+        // New: RatingPromptManager(prefs:crashTracker:logger:userDefaults:)
         logger = CrashingMockLogger()
-        mockDispatchGroup = MockDispatchGroup()
-        promptManager = RatingPromptManager(profile: mockProfile,
-                                            daysOfUseCounter: mockCounter,
-                                            logger: logger,
-                                            group: mockDispatchGroup)
+        let crashTracker = MockCrashTracker()
+        promptManager = RatingPromptManager(prefs: mockProfile.prefs,
+                                            crashTracker: crashTracker,
+                                            logger: logger)
     }
 
     func createSite(number: Int) -> Site {
-        let site = Site(url: "http://s\(number)ite\(number).com/foo", title: "A \(number)")
-        site.id = number
-        site.guid = "abc\(number)def"
-
+        let site = Site.createBasicSite(url: "http://s\(number)ite\(number).com/foo", title: "A \(number)")
         return site
     }
 
@@ -300,22 +234,9 @@ private extension RatingPromptManagerTests {
     }
 }
 
-// MARK: - CumulativeDaysOfUseCounterMock
-class CumulativeDaysOfUseCounterMock: CumulativeDaysOfUseCounter {
-    private let hasMockRequiredDaysOfUse: Bool
-    init(_ hasRequiredCumulativeDaysOfUse: Bool) {
-        self.hasMockRequiredDaysOfUse = hasRequiredCumulativeDaysOfUse
-    }
-
-    override var hasRequiredCumulativeDaysOfUse: Bool {
-        return hasMockRequiredDaysOfUse
-    }
-}
-
 // MARK: - CrashingMockLogger
-class CrashingMockLogger: Logger {
-    func setup(sendUsageData: Bool) {}
-    func configure(crashManager: CrashManager) {}
+class CrashingMockLogger: Logger, @unchecked Sendable {
+    func setup(sendCrashReports: Bool) {}
     func copyLogsToDocuments() {}
     func logCustomError(error: Error) {}
     func deleteCachedLogFiles() {}

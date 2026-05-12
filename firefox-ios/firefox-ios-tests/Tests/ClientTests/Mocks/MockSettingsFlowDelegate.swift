@@ -6,6 +6,7 @@ import Foundation
 
 @testable import Client
 
+@MainActor
 class MockSettingsFlowDelegate: SettingsFlowDelegate,
                                 GeneralSettingsDelegate,
                                 PrivacySettingsDelegate,
@@ -53,6 +54,9 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
 
     // MARK: GeneralSettingsDelegate
 
+    func pressedCustomizeAppIcon() {}
+    func pressedBrowsing() {}
+    func pressedSummarize() {}
     func pressedHome() {}
 
     func pressedMailApp() {}
@@ -65,7 +69,9 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
 
     func pressedToolbar() {}
 
-    func pressedTabs() {}
+    func pressedTranslation() {}
+
+    func pressedAutoFillsPasswords() {}
 
     func pressedTheme() {}
 
@@ -81,6 +87,7 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
 
     func pressedNotifications() {}
 
+    func pressedRelayMask() {}
     func pressedAddressAutofill() {}
 
     func askedToOpen(url: URL?, withTitle title: NSAttributedString?) {}

@@ -5,7 +5,8 @@
 import XCTest
 @testable import Common
 
-final class DefaultThemeManagerTests: XCTestCase {
+@MainActor
+final class DefaultThemeManagerTests: XCTestCase, @unchecked Sendable {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
     // MARK: - Variables

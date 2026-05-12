@@ -9,6 +9,7 @@ import Shared
 import XCTest
 import WebKit
 
+@MainActor
 class TabWebViewTests: XCTestCaseRootViewController, UIGestureRecognizerDelegate {
     private var configuration = WKWebViewConfiguration()
     private var navigationDelegate: MockNavigationDelegate!

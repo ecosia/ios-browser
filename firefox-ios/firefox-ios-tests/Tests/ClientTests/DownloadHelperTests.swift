@@ -7,7 +7,8 @@ import Foundation
 import WebKit
 @testable import Client
 
-class DownloadHelperTests: XCTestCase {
+@MainActor
+class DownloadHelperTests: XCTestCase, @unchecked Sendable {
     func test_init_whenMIMETypeIsNil_initializeCorrectly() {
         let response = anyResponse(mimeType: nil)
 

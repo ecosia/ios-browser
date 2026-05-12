@@ -6,7 +6,7 @@
 import XCTest
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class UserStateTests: XCTestCase {
+final class UserStateTests: XCTestCase, @unchecked Sendable {
     private var user: User!
 
     override func setUp() {

@@ -28,7 +28,7 @@ final class UserAgentTests: XCTestCase {
         /* Ecosia: Use default Firefox UA instead
         XCTAssertEqual(UserAgent.mobileUserAgent(),
          */
-        XCTAssertEqual(UserAgentBuilder.defaultFirefoxMobileUserAgent().userAgent(),
+        XCTAssertEqual(UserAgentBuilder.defaultMobileUserAgent().userAgent(),
                        UserAgent.getUserAgent(domain: paypalDomain, platform: .Desktop))
     }
 
@@ -37,7 +37,7 @@ final class UserAgentTests: XCTestCase {
         /* Ecosia: Use default Firefox UA instead
         XCTAssertEqual(UserAgent.mobileUserAgent(),
          */
-        XCTAssertEqual(UserAgentBuilder.defaultFirefoxMobileUserAgent().userAgent(),
+        XCTAssertEqual(UserAgentBuilder.defaultMobileUserAgent().userAgent(),
                        UserAgent.getUserAgent(domain: paypalDomain, platform: .Mobile))
     }
 }

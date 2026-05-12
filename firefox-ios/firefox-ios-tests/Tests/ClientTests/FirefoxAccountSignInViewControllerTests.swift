@@ -7,6 +7,7 @@ import Common
 
 @testable import Client
 
+@MainActor
 final class FirefoxAccountSignInViewControllerTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
     private var mockProfile: MockProfile!

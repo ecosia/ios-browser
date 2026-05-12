@@ -11,6 +11,7 @@ import Shared
 
 @testable import Client
 
+@MainActor
 final class NimbusMessagingTriggerTests: XCTestCase {
     override func setUp() {
         super.setUp()

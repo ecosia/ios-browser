@@ -17,7 +17,6 @@ final class MainCookieHandlerTests: XCTestCase {
         User.shared.marketCode = .en_us
         User.shared.adultFilter = .off
         User.shared.autoComplete = true
-        User.shared.personalized = false
     }
 
     override func tearDown() {
@@ -79,7 +78,6 @@ final class MainCookieHandlerTests: XCTestCase {
         User.shared.marketCode = .de_de
         User.shared.adultFilter = .strict
         User.shared.autoComplete = false
-        User.shared.personalized = true
 
         let handler = MainCookieHandler(mode: .incognito)
         guard let cookie = handler.makeCookie() else {
@@ -91,7 +89,6 @@ final class MainCookieHandlerTests: XCTestCase {
         XCTAssertEqual(values["mc"], "de-de")
         XCTAssertEqual(values["f"], "y")
         XCTAssertEqual(values["as"], "0")
-        XCTAssertEqual(values["pz"], "1")
     }
 
     // MARK: - Cookie Properties Tests
@@ -114,7 +111,6 @@ final class MainCookieHandlerTests: XCTestCase {
         User.shared.marketCode = .es_cl
         User.shared.adultFilter = .moderate
         User.shared.autoComplete = false
-        User.shared.personalized = true
 
         let handler = MainCookieHandler(mode: .standard)
         guard let cookie = handler.makeCookie() else {
@@ -126,7 +122,6 @@ final class MainCookieHandlerTests: XCTestCase {
         XCTAssertEqual(values["mc"], "es-cl")
         XCTAssertEqual(values["f"], "i")
         XCTAssertEqual(values["as"], "0")
-        XCTAssertEqual(values["pz"], "1")
         XCTAssertEqual(values["l"], Language.current.rawValue)
         XCTAssertEqual(values["ma"], "1")
         XCTAssertEqual(values["mr"], "1")
@@ -153,7 +148,6 @@ final class MainCookieHandlerTests: XCTestCase {
         XCTAssertEqual(User.shared.marketCode, .fr_fr)
         XCTAssertEqual(User.shared.adultFilter, .strict)
         XCTAssertTrue(User.shared.autoComplete)
-        XCTAssertFalse(User.shared.personalized)
     }
 
     func testReceivedMethodWithInvalidValues() {

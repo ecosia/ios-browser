@@ -13,7 +13,7 @@ runs:
     - name: Xcode Select Version
       uses: mobiledevops/xcode-select-version-action@v1
       with:
-        xcode-select-version: 16.4
+        xcode-select-version: 26.3
         
     - name: Check Xcode and Swift Version
       shell: bash
@@ -26,7 +26,7 @@ runs:
       shell: bash
       run: |
         echo "Checking for duplicate SwiftBridging module"
-        BRIDGING_MODULEMAP="/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/swift/bridging.modulemap"
+        BRIDGING_MODULEMAP="/Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/swift/bridging.modulemap"
         if [ -f "$BRIDGING_MODULEMAP" ]; then
           echo "Backing up and fixing bridging.modulemap"
           sudo cp "$BRIDGING_MODULEMAP" "${BRIDGING_MODULEMAP}.bak"
@@ -44,9 +44,9 @@ runs:
       env:
         GITHUB_ACCESS_TOKEN: ${{ inputs.core-token }}
 
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
-        python-version: '3.12.2'
+        python-version: '3.12'
         cache: 'pip'
 
     - name: Install gems
@@ -60,9 +60,9 @@ runs:
       
     - name: Restore SPM Cache
       id: restore-spm-cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
-        path: SourcePackages/
+        path: firefox-ios/SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
     - name: Install SPM if cache not found
@@ -72,7 +72,7 @@ runs:
 
     - name: Save SPM Cache if needed
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: firefox-ios/SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}  
@@ -87,21 +87,21 @@ runs:
         echo "Available simulator runtimes:"
         xcrun simctl list runtimes
         
-    - name: Create and Boot iPhone 16 Simulator
+    - name: Create and Boot iPhone 17 Simulator
       shell: bash
       run: |
         # Check if simulator already exists
-        if xcrun simctl list devices | grep -q "iPhone 16"; then
-          echo "iPhone 16 simulator already exists"
+        if xcrun simctl list devices | grep -q "iPhone 17"; then
+          echo "iPhone 17 simulator already exists"
         else
-          echo "Creating iPhone 16 simulator"
+          echo "Creating iPhone 17 simulator"
           # Get the latest available iOS runtime
           LATEST_RUNTIME=$(xcrun simctl list runtimes | grep iOS | tail -1 | awk '{print $NF}')
-          # Get the device type for iPhone 16
-          DEVICE_TYPE=$(xcrun simctl list devicetypes | grep "iPhone 16" | head -1 | awk '{print $NF}')
+          # Get the device type for iPhone 17
+          DEVICE_TYPE=$(xcrun simctl list devicetypes | grep "iPhone 17" | head -1 | awk '{print $NF}')
           
           if [ -n "$LATEST_RUNTIME" ] && [ -n "$DEVICE_TYPE" ]; then
-            xcrun simctl create "iPhone 16" "$DEVICE_TYPE" "$LATEST_RUNTIME"
+            xcrun simctl create "iPhone 17" "$DEVICE_TYPE" "$LATEST_RUNTIME"
           else
             echo "Error: Could not determine runtime or device type"
             exit 1
@@ -109,7 +109,7 @@ runs:
         fi
         
         # Boot the simulator
-        xcrun simctl boot "iPhone 16" || echo "Simulator may already be booted"
+        xcrun simctl boot "iPhone 17" || echo "Simulator may already be booted"
         
     - name: Setup environment and generate Xcode project with Tuist
       shell: bash

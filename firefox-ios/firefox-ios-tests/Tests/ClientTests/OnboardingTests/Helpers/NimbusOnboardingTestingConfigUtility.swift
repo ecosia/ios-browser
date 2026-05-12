@@ -6,6 +6,8 @@ import Common
 import MozillaAppServices
 import Shared
 
+@testable import Client
+
 struct NimbusOnboardingTestingConfigUtility {
     struct CardElementNames {
         static let name = "Name"
@@ -63,7 +65,8 @@ struct NimbusOnboardingTestingConfigUtility {
         withSecondaryButton: Bool = false,
         withPrimaryButtonAction primaryAction: [OnboardingActions] = [.forwardOneCard],
         prerequisites: [String] = ["ALWAYS"],
-        disqualifiers: [String] = []
+        disqualifiers: [String] = [],
+        uiVariant: OnboardingVariant? = nil
     ) {
         let cards = createCards(
             numbering: primaryAction.count,
@@ -74,7 +77,8 @@ struct NimbusOnboardingTestingConfigUtility {
             withSecondaryButton: withSecondaryButton,
             primaryButtonAction: primaryAction,
             prerequisites: prerequisites,
-            disqualifiers: disqualifiers)
+            disqualifiers: disqualifiers,
+            uiVariant: uiVariant)
 
         FxNimbus.shared.features.onboardingFrameworkFeature.with(initializer: { _, _ in
             OnboardingFrameworkFeature(
@@ -93,7 +97,8 @@ struct NimbusOnboardingTestingConfigUtility {
         withSecondaryButton: Bool,
         primaryButtonAction: [OnboardingActions],
         prerequisites: [String],
-        disqualifiers: [String]
+        disqualifiers: [String],
+        uiVariant: OnboardingVariant? = nil
     ) -> [String: NimbusOnboardingCardData] {
         var dictionary = [String: NimbusOnboardingCardData]()
 
@@ -111,7 +116,8 @@ struct NimbusOnboardingTestingConfigUtility {
                 onboardingType: onboardingType,
                 order: number,
                 prerequisites: prerequisites,
-                title: "\(CardElementNames.title) \(number)")
+                title: "\(CardElementNames.title) \(number)",
+                uiVariant: uiVariant)
         }
 
         return dictionary

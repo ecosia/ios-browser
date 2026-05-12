@@ -27,8 +27,8 @@ final class TranslationsServiceTests: XCTestCase {
         )
 
         DependencyHelperMock().bootstrapDependencies(
-            injectedWindowManager: mockWindowManager,
-            injectedTabManager: mockTabManager
+            injectedTabManager: mockTabManager,
+            injectedWindowManager: mockWindowManager
         )
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
     }
@@ -93,16 +93,13 @@ final class TranslationsServiceTests: XCTestCase {
 
         setupWebViewForTabManager()
 
-        do {
+        await assertAsyncThrows(ofType: TranslationsServiceError.self) {
             try await subject.translateCurrentPage(for: .XCTestDefaultUUID, onLanguageIdentified: nil)
-            XCTFail("Expected shouldOfferTranslation to throw when language detector fails, but no error was thrown.")
-        } catch let error as TranslationsServiceError {
+        } verify: { error in
             guard case .unknown = error else {
                 XCTFail("Expected TranslationsServiceError.unknown, got \(error)")
                 return
             }
-        } catch {
-            XCTFail("Expected TestError from language detector, but got different error: \(error)")
         }
     }
 
@@ -114,13 +111,8 @@ final class TranslationsServiceTests: XCTestCase {
             attachWebView: false
         )
 
-        do {
+        await assertAsyncThrowsEqual(TranslationsServiceError.missingWebView) {
             try await subject.translateCurrentPage(for: .XCTestDefaultUUID, onLanguageIdentified: nil)
-            XCTFail("Expected missingWebView error")
-        } catch let error as TranslationsServiceError {
-            XCTAssertEqual(error, .missingWebView)
-        } catch {
-            XCTFail("Unexpected error: \(error)")
         }
     }
 
@@ -135,16 +127,13 @@ final class TranslationsServiceTests: XCTestCase {
 
         setupWebViewForTabManager()
 
-        do {
+        await assertAsyncThrows(ofType: TranslationsServiceError.self) {
             try await subject.translateCurrentPage(for: .XCTestDefaultUUID, onLanguageIdentified: nil)
-            XCTFail("Expected translateCurrentPage to throw when language detector fails, but no error was thrown.")
-        } catch let error as TranslationsServiceError {
+        } verify: { error in
             guard case .unknown = error else {
                 XCTFail("Expected TranslationsServiceError.unknown, got \(error)")
                 return
             }
-        } catch {
-            XCTFail("Expected TestError from language detector, but got different error: \(error)")
         }
     }
 
@@ -183,5 +172,42 @@ final class TranslationsServiceTests: XCTestCase {
         )
         tab.webView = MockTabWebView(tab: tab)
         mockTabManager.selectedTab = tab
+    }
+}
+
+// MARK: - Async assertion helpers (introduced upstream in v147)
+
+/// Asserts that an async throwing expression throws an error equal to `expected`.
+private func assertAsyncThrowsEqual<E: Error & Equatable>(
+    _ expected: E,
+    file: StaticString = #filePath,
+    line: UInt = #line,
+    _ expression: @Sendable () async throws -> some Any
+) async {
+    do {
+        _ = try await expression()
+        XCTFail("Expected error \(expected) but no error was thrown", file: file, line: line)
+    } catch let error as E {
+        XCTAssertEqual(error, expected, file: file, line: line)
+    } catch {
+        XCTFail("Unexpected error type: \(error)", file: file, line: line)
+    }
+}
+
+/// Asserts that an async throwing expression throws an error of a specific type.
+private func assertAsyncThrows<E: Error>(
+    ofType type: E.Type,
+    file: StaticString = #filePath,
+    line: UInt = #line,
+    _ expression: @Sendable () async throws -> some Any,
+    verify: @Sendable (E) -> Void = { _ in }
+) async {
+    do {
+        _ = try await expression()
+        XCTFail("Expected error of type \(type) but no error was thrown", file: file, line: line)
+    } catch let error as E {
+        verify(error)
+    } catch {
+        XCTFail("Unexpected error type: \(error)", file: file, line: line)
     }
 }

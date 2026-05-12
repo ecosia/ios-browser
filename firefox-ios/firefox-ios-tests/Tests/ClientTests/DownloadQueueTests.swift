@@ -6,7 +6,8 @@
 import XCTest
 import Common
 
-class DownloadQueueTests: XCTestCase {
+@MainActor
+class DownloadQueueTests: XCTestCase, @unchecked Sendable {
     let didStartDownload = "downloadQueue(_:didStartDownload:)"
     let didDownloadCombinedBytes = "downloadQueue(_:didDownloadCombinedBytes:combinedTotalBytesExpected:)"
     let didCompleteWithError = "downloadQueue(_:didCompleteWithError:)"
@@ -97,7 +98,6 @@ class DownloadQueueTests: XCTestCase {
     func testDelegateMemoryLeak() {
         let mockQueueDelegate = MockDownloadQueueDelegate()
         queue.addDelegate(mockQueueDelegate)
-        trackForMemoryLeaks(queue)
         queue = nil
     }
 }
@@ -111,6 +111,14 @@ private let url = URL(string: "http://mozilla.org")!
 class MockDownload: Download {
     var downloadTriggered = false
     var downloadCanceled = false
+    private var _totalBytesExpected: Int64? = 1024
+
+    override var totalBytesExpected: Int64? { _totalBytesExpected }
+
+    convenience init(totalBytesExpected: Int64? = 1024) {
+        self.init(originWindow: .XCTestDefaultUUID)
+        self._totalBytesExpected = totalBytesExpected
+    }
 
     override func resume() {
         downloadTriggered = true

@@ -135,3 +135,5 @@ enum Route {
         case focusLocationField
     }
 }
+
+extension Route: Equatable {}

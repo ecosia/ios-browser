@@ -16,14 +16,6 @@ final class ToolbarTelemetryTests: XCTestCase {
         subject = ToolbarTelemetry()
     }
 
-    func testRecordToolbarWhenQrCodeTappedThenGleanIsCalled() throws {
-        subject?.qrCodeButtonTapped(isPrivate: true)
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Toolbar.qrScanButtonTapped)
-
-        let resultValue = try XCTUnwrap(GleanMetrics.Toolbar.qrScanButtonTapped.testGetValue())
-        XCTAssertEqual(resultValue[0].extra?["is_private"], "true")
-    }
-
     func testRecordToolbarWhenClearSearchTappedThenGleanIsCalled() throws {
         subject?.clearSearchButtonTapped(isPrivate: true)
         testEventMetricRecordingSuccess(metric: GleanMetrics.Toolbar.clearSearchButtonTapped)

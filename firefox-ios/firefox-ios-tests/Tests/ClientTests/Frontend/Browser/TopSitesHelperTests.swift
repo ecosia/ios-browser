@@ -10,7 +10,7 @@ import SiteImageView
 
 @testable import Client
 
-class TopSitesHelperTests: XCTestCase {
+class TopSitesHelperTests: XCTestCase, @unchecked Sendable {
     private let faviconResource: SiteResource = .remoteURL(url: URL(string: "https://mozilla.org/favicon.ico")!)
     private var profile: MockProfile!
 
@@ -36,7 +36,7 @@ class TopSitesHelperTests: XCTestCase {
     func createSubject(
         mockPinnedSites: Bool,
         frecencySitesToAdd: [Site] = [],
-        pinnedSites: [PinnedSite] = []
+        pinnedSites: [Site] = []
     ) -> TopSitesProviderImplementation {
         let pinnedSiteFetcher: PinnedSites
         if mockPinnedSites {
@@ -119,8 +119,8 @@ class TopSitesHelperTests: XCTestCase {
 
     func testGetTopSites_filterHideSearchParam() {
         let expectation = expectation(description: "Expect top sites to be fetched")
-        let sites = defaultFrecencySites + [Site(url: "https://frecencySponsoredSite.com/page?mfadid=adm",
-                                                 title: "A sponsored title")]
+        let sites = defaultFrecencySites + [Site.createBasicSite(url: "https://frecencySponsoredSite.com/page?mfadid=adm",
+                                                                 title: "A sponsored title")]
         let subject = createSubject(mockPinnedSites: true, frecencySitesToAdd: sites)
 
         subject.getTopSites { sites in
@@ -161,7 +161,7 @@ class TopSitesHelperTests: XCTestCase {
 
     func testGetTopSites_defaultSitesHavePrecedenceOverFrecency() { //
         let expectation = expectation(description: "Expect top sites to be fetched")
-        let sites = [Site(url: "https://facebook.com", title: "Facebook")]
+        let sites = [Site.createBasicSite(url: "https://facebook.com", title: "Facebook")]
         let subject = createSubject(mockPinnedSites: true, frecencySitesToAdd: sites)
 
         subject.getTopSites { sites in
@@ -183,8 +183,10 @@ class TopSitesHelperTests: XCTestCase {
         let expectation = expectation(description: "Expect top sites to be fetched")
         let subject = createSubject(
             mockPinnedSites: true,
-            pinnedSites: [PinnedSite(
-                site: Site(url: "https://facebook.com", title: "Facebook"),
+            pinnedSites: [Site.createPinnedSite(
+                url: "https://facebook.com",
+                title: "Facebook",
+                isGooglePinnedTile: false,
                 faviconResource: faviconResource
             )]
         )
@@ -208,22 +210,26 @@ class TopSitesHelperTests: XCTestCase {
 
 // MARK: - Tests data
 extension TopSitesHelperTests {
-    var defaultPinnedSites: [PinnedSite] {
+    var defaultPinnedSites: [Site] {
         return [
-            PinnedSite(
-                site: Site(url: "https://apinnedsite.com/", title: "a pinned site title"),
+            Site.createPinnedSite(
+                url: "https://apinnedsite.com/",
+                title: "a pinned site title",
+                isGooglePinnedTile: false,
                 faviconResource: faviconResource
             ),
-            PinnedSite(
-                site: Site(url: "https://apinnedsite2.com/", title: "a pinned site title2"),
+            Site.createPinnedSite(
+                url: "https://apinnedsite2.com/",
+                title: "a pinned site title2",
+                isGooglePinnedTile: false,
                 faviconResource: faviconResource
             )
         ]
     }
 
     var defaultFrecencySites: [Site] {
-        return [Site(url: "https://frecencySite.com/1/", title: "a frecency site"),
-                Site(url: "https://anotherWebSite.com/2/", title: "Another website")]
+        return [Site.createBasicSite(url: "https://frecencySite.com/1/", title: "a frecency site"),
+                Site.createBasicSite(url: "https://anotherWebSite.com/2/", title: "Another website")]
     }
 
     func addFrecencySitesToPlaces(_ sites: [Site], places: RustPlaces) {
@@ -245,11 +251,11 @@ class SiteCursorMock: Cursor<Site> {
 
 // MARK: - MockablePinnedSites
 class PinnedSitesMock: MockablePinnedSites {
-    class Error: MaybeErrorType {
+    final class MockError: MaybeErrorType, @unchecked Sendable {
         var description = "Error"
     }
 
-    var pinnedResponse: Maybe<Cursor<Site>> = Maybe(failure: Error())
+    var pinnedResponse: Maybe<Cursor<Site>> = Maybe(failure: MockError())
     override func getPinnedTopSites() -> Deferred<Maybe<Cursor<Site>>> {
         let deferred = Deferred<Maybe<Cursor<Site>>>()
         deferred.fill(pinnedResponse)

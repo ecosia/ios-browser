@@ -10,6 +10,7 @@ import Shared
 import Common
 import Storage
 
+@MainActor
 class FormAutofillHelperTests: XCTestCase {
     var formAutofillHelper: FormAutofillHelper!
     var tab: Tab!

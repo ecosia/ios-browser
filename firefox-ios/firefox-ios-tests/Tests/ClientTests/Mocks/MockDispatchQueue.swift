@@ -6,7 +6,7 @@ import Foundation
 import Common
 @testable import Client
 
-class MockDispatchQueue: DispatchQueueInterface {
+final class MockDispatchQueue: DispatchQueueInterface, @unchecked Sendable {
     func async(group: DispatchGroup?,
                qos: DispatchQoS,
                flags: DispatchWorkItemFlags,

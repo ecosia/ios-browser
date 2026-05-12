@@ -5,6 +5,7 @@
 import XCTest
 @testable import Client
 
+@MainActor
 final class ShortcutRouteTests: XCTestCase {
     func testNewTabShortcut() {
         let subject = createSubject()
@@ -62,7 +63,8 @@ final class ShortcutRouteTests: XCTestCase {
         let shortcutItem = UIApplicationShortcutItem(type: "com.example.app.QRCode",
                                                      localizedTitle: "QR Code")
         let route = subject.makeRoute(shortcutItem: shortcutItem, tabSetting: .blankPage)
-        XCTAssertEqual(route, .action(action: .showQRCode))
+        // QRCode was removed from DeeplinkInput.Shortcut in v147; unknown shortcuts return nil
+        XCTAssertNil(route)
     }
 
     func testInvalidShortcut() {

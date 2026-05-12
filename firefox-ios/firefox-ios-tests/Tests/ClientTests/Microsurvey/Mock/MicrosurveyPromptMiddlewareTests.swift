@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class MicrosurveyPromptMiddlewareTests: XCTestCase {
     private var microsurveyManager: MockMicrosurveySurfaceManager!
     override func setUp() {

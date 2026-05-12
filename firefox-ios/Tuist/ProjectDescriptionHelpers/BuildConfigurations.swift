@@ -18,4 +18,11 @@ public enum BuildConfigurations {
         // Temporarily disabled during Firefox 147.2 upgrade - see TODO_SWIFT_CONCURRENCY.md
         "SWIFT_STRICT_CONCURRENCY": "minimal"
     ]
+
+    /// Base settings for all test targets — disables code signing so tests run on simulators without provisioning profiles.
+    public static let testBaseSettings: SettingsDictionary = baseSettings.merging([
+        "CODE_SIGN_IDENTITY": "",
+        "CODE_SIGNING_REQUIRED": "NO",
+        "CODE_SIGNING_ALLOWED": "NO",
+    ], uniquingKeysWith: { _, new in new })
 }

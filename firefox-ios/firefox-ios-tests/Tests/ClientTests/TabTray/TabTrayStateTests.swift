@@ -8,6 +8,7 @@ import Common
 
 @testable import Client
 
+@MainActor
 final class TabTrayStateTests: XCTestCase {
     func testInitialState() {
         let initialState = createSubject()
@@ -139,6 +140,7 @@ final class TabTrayStateTests: XCTestCase {
         XCTAssertEqual(newState.showCloseConfirmation, false)
     }
 
+    /* Ecosia: refreshInactiveTabs removed in v147
     func testRefreshInactiveTabsAction() {
         let initialState = createSubject()
         let reducer = tabTrayReducer()
@@ -153,6 +155,7 @@ final class TabTrayStateTests: XCTestCase {
         XCTAssertEqual(newState.normalTabsCount, "0")
         XCTAssertEqual(newState.showCloseConfirmation, false)
     }
+    */
 
     func testShowToastAction() {
         let initialState = createSubject()

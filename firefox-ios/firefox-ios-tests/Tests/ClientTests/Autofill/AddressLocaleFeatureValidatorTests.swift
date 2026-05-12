@@ -10,34 +10,31 @@ import Common
 
 class AddressLocaleFeatureValidatorTests: XCTestCase {
     func testValidRegionCA() {
-        let locale = Locale(identifier: "en_CA")
         XCTAssertTrue(
-            AddressLocaleFeatureValidator.isValidRegion(locale: locale),
+            AddressLocaleFeatureValidator.isValidRegion(for: "CA"),
             "Region valid for CA"
         )
     }
 
     func testValidRegionUS() {
-        let locale = Locale(identifier: "en_US")
         XCTAssertTrue(
-            AddressLocaleFeatureValidator.isValidRegion(locale: locale),
+            AddressLocaleFeatureValidator.isValidRegion(for: "US"),
             "Region valid for US"
         )
     }
 
     func testInvalidRegionFR() {
-        let locale = Locale(identifier: "fr_FR")
-        XCTAssertFalse(
-            AddressLocaleFeatureValidator.isValidRegion(locale: locale),
-            "Invalid region for FR"
+        // Ecosia: FR is now a supported region in v147
+        XCTAssertTrue(
+            AddressLocaleFeatureValidator.isValidRegion(for: "FR"),
+            "Region valid for FR"
         )
     }
 
     func testInvalidRegionWithoutRegionCode() {
-        let locale = Locale(identifier: "")
         XCTAssertFalse(
-            AddressLocaleFeatureValidator.isValidRegion(locale: locale),
-            "Invalid region for locale without region code"
+            AddressLocaleFeatureValidator.isValidRegion(for: ""),
+            "Invalid region for empty region code"
         )
     }
 }

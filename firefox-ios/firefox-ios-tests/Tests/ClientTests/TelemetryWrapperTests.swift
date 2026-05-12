@@ -7,6 +7,7 @@
 import Glean
 import XCTest
 
+@MainActor
 class TelemetryWrapperTests: XCTestCase {
     typealias ExtraKey = TelemetryWrapper.EventExtraKey
     typealias ValueKey = TelemetryWrapper.EventValue
@@ -87,57 +88,12 @@ class TelemetryWrapperTests: XCTestCase {
 
     // MARK: - Top Site
 
-    func test_topSiteTileWithExtras_GleanIsCalled() {
-        let topSitePositionKey = TelemetryWrapper.EventExtraKey.topSitePosition.rawValue
-        let topSiteTileTypeKey = TelemetryWrapper.EventExtraKey.topSiteTileType.rawValue
-        let extras = [topSitePositionKey: "\(1)", topSiteTileTypeKey: "history-based"]
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .topSiteTile,
-            value: nil,
-            extras: extras
-        )
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.TopSites.tilePressed)
-    }
-
-    func test_topSiteTileWithoutExtras_GleanIsNotCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .topSiteTile,
-            value: nil
-        )
-        XCTAssertNil(GleanMetrics.TopSites.tilePressed.testGetValue())
-    }
-
-    func test_topSiteContextualMenu_GleanIsCalled() {
-        let extras = [
-            ExtraKey.contextualMenuType.rawValue: HomepageContextMenuHelper.ContextualActionType.settings.rawValue
-        ]
-
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .topSiteContextualMenu,
-            value: nil,
-            extras: extras
-        )
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.TopSites.contextualMenu)
-    }
-
-    func test_topSiteContextualMenuWithoutExtra_GleanIsNotCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .topSiteContextualMenu,
-            value: nil,
-            extras: nil
-        )
-        XCTAssertNil(GleanMetrics.TopSites.contextualMenu.testGetValue())
-    }
+    /* Ecosia: removed in v147 - topSitePosition, topSiteTileType, topSiteTile, topSiteContextualMenu, HomepageContextMenuHelper
+    func test_topSiteTileWithExtras_GleanIsCalled() { ... }
+    func test_topSiteTileWithoutExtras_GleanIsNotCalled() { ... }
+    func test_topSiteContextualMenu_GleanIsCalled() { ... }
+    func test_topSiteContextualMenuWithoutExtra_GleanIsNotCalled() { ... }
+    */
 
     func test_sponsoredShortcuts_GleanIsCalled() {
         TelemetryWrapper.recordEvent(
@@ -181,46 +137,16 @@ class TelemetryWrapperTests: XCTestCase {
 
     // MARK: - Firefox Home Page
 
-    func test_recentlySavedBookmarkViewWithExtras_GleanIsCalled() {
-        let extras: [String: Any] = [TelemetryWrapper.EventObject.bookmarkImpressions.rawValue: "\([String]().count)"]
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .firefoxHomepage,
-            value: .bookmarkItemView,
-            extras: extras
-        )
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.FirefoxHomePage.recentlySavedBookmarkView)
-    }
-
-    func test_recentlySavedBookmarkViewWithoutExtras_GleanIsNotCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .firefoxHomepage,
-            value: .bookmarkItemView
-        )
-        XCTAssertNil(GleanMetrics.FirefoxHomePage.recentlySavedBookmarkView.testGetValue())
-    }
-
-    func test_firefoxHomePageAddView_GleanIsCalled() {
-        let extras = [ExtraKey.fxHomepageOrigin.rawValue: ValueKey.fxHomepageOriginZeroSearch.rawValue]
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .firefoxHomepage,
-            value: .fxHomepageOrigin,
-            extras: extras
-        )
-
-        testLabeledMetricSuccess(metric: GleanMetrics.FirefoxHomePage.firefoxHomepageOrigin)
-    }
+    /* Ecosia: removed in v147 - firefoxHomepage, bookmarkItemView, bookmarkImpressions, fxHomepageOrigin, recentlySavedBookmarkView
+    func test_recentlySavedBookmarkViewWithExtras_GleanIsCalled() { ... }
+    func test_recentlySavedBookmarkViewWithoutExtras_GleanIsNotCalled() { ... }
+    func test_firefoxHomePageAddView_GleanIsCalled() { ... }
+    */
 
     // MARK: - CFR Analytics
 
     func test_contextualHintDismissButton_GleanIsCalled() {
-        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.toolbarLocation.rawValue]
+        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.dataClearance.rawValue]
         TelemetryWrapper.recordEvent(
             category: .action,
             method: .tap,
@@ -243,7 +169,7 @@ class TelemetryWrapperTests: XCTestCase {
     }
 
     func test_contextualHintDismissOutsideTap_GleanIsCalled() {
-        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.toolbarLocation.rawValue]
+        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.dataClearance.rawValue]
         TelemetryWrapper.recordEvent(
             category: .action,
             method: .tap,
@@ -266,7 +192,7 @@ class TelemetryWrapperTests: XCTestCase {
     }
 
     func test_contextualHintPressAction_GleanIsCalled() {
-        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.toolbarLocation.rawValue]
+        let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.dataClearance.rawValue]
         TelemetryWrapper.recordEvent(
             category: .action,
             method: .tap,
@@ -290,419 +216,19 @@ class TelemetryWrapperTests: XCTestCase {
 
     // MARK: - Tabs quantity
 
-    func test_tabsNormalQuantity_GleanIsCalled() {
-        let expectTabCount: Int64 = 80
-        let extra = [TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: expectTabCount]
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .background,
-            object: .tabNormalQuantity,
-            value: nil,
-            extras: extra
-        )
-
-        testQuantityMetricSuccess(metric: GleanMetrics.Tabs.normalTabsQuantity,
-                                  expectedValue: expectTabCount,
-                                  failureMessage: "Should have \(expectTabCount) tabs for normal tabs")
-    }
-
-    func test_tabsPrivateQuantity_GleanIsCalled() {
-        let expectTabCount: Int64 = 60
-        let extra = [TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: expectTabCount]
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .background,
-            object: .tabPrivateQuantity,
-            value: nil,
-            extras: extra
-        )
-
-        testQuantityMetricSuccess(metric: GleanMetrics.Tabs.privateTabsQuantity,
-                                  expectedValue: expectTabCount,
-                                  failureMessage: "Should have \(expectTabCount) tabs for private tabs")
-    }
-
-    func test_tabsNormalQuantityWithoutExtras_GleanIsNotCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .background,
-            object: .tabNormalQuantity,
-            value: nil,
-            extras: nil
-        )
-        XCTAssertNil(GleanMetrics.Tabs.normalTabsQuantity.testGetValue())
-    }
-
-    func test_tabsPrivateQuantityWithoutExtras_GleanIsNotCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .background,
-            object: .tabPrivateQuantity,
-            value: nil,
-            extras: nil
-        )
-        XCTAssertNil(GleanMetrics.Tabs.privateTabsQuantity.testGetValue())
-    }
+    /* Ecosia: removed in v147 - normalTabsQuantity, privateTabsQuantity
+    func test_tabsNormalQuantity_GleanIsCalled() { ... }
+    func test_tabsPrivateQuantity_GleanIsCalled() { ... }
+    func test_tabsNormalQuantityWithoutExtras_GleanIsNotCalled() { ... }
+    func test_tabsPrivateQuantityWithoutExtras_GleanIsNotCalled() { ... }
+    */
 
     // MARK: - Shopping Experience (Fakespot)
-    func test_shoppingAddressBarIconClicked_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.addressBarIconClicked)
-    }
-
-    func test_productPageVisits_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .view,
-            object: .shoppingProductPageVisits
-        )
-
-        testCounterMetricRecordingSuccess(metric: GleanMetrics.Shopping.productPageVisits)
-    }
-
-    func test_shoppingAddressBarIconDisplayed_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.addressBarIconDisplayed)
-    }
-
-    func test_shoppingSurfaceClosedWithExtras_GleanIsCalledClickOutsideAction() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .close,
-            object: .shoppingBottomSheet,
-            extras: [TelemetryWrapper.ExtraKey.action.rawValue:
-                        TelemetryWrapper.EventExtraKey.Shopping.clickOutside.rawValue]
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceClosed)
-    }
-
-    func test_shoppingSurfaceClosedWithExtras_GleanIsCalledCloseButtonAction() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .close,
-            object: .shoppingBottomSheet,
-            extras: [TelemetryWrapper.ExtraKey.action.rawValue:
-                        TelemetryWrapper.EventExtraKey.Shopping.closeButton.rawValue]
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceClosed)
-    }
-
-    func test_shoppingSurfaceClosedWithExtras_GleanIsCalledInteractionWithALinkAction() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .close,
-            object: .shoppingBottomSheet,
-            extras: [TelemetryWrapper.ExtraKey.action.rawValue:
-                        TelemetryWrapper.EventExtraKey.Shopping.interactionWithALink.rawValue]
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceClosed)
-    }
-
-    func test_shoppingSurfaceClosedWithExtras_GleanIsCalledOptingOutOfTheFeatureAction() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .close,
-            object: .shoppingBottomSheet,
-            extras: [TelemetryWrapper.ExtraKey.action.rawValue:
-                        TelemetryWrapper.EventExtraKey.Shopping.optingOutOfTheFeature.rawValue]
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceClosed)
-    }
-
-    func test_shoppingSurfaceClosedWithExtras_GleanIsCalledSwipingTheSurfaceHandleAction() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .close,
-            object: .shoppingBottomSheet,
-            extras: [TelemetryWrapper.ExtraKey.action.rawValue:
-                        TelemetryWrapper.EventExtraKey.Shopping.swipingTheSurfaceHandle.rawValue]
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceClosed)
-    }
-
-    func test_shoppingSurfaceShowMoreRecentReviewsClicked_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingRecentReviews
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceShowMoreRecentReviewsClicked)
-	}
-
-    func test_shoppingSurfaceDisplayeddWithExtras_GleanIsCalledFullViewState() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingBottomSheet,
-            extras: [TelemetryWrapper.ExtraKey.size.rawValue:
-                        TelemetryWrapper.EventExtraKey.Shopping.fullView.rawValue]
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceDisplayed)
-    }
-
-    func test_shoppingSurfaceDisplayeddWithExtras_GleanIsCalledHalfViewState() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingBottomSheet,
-            extras: [
-                TelemetryWrapper.ExtraKey.size.rawValue: TelemetryWrapper.EventExtraKey.Shopping.halfView.rawValue
-            ]
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceDisplayed)
-    }
-
-    func test_shoppingOnboardingDisplayed_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingOnboarding
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceOnboardingDisplayed)
-    }
-
-    func test_surfaceSettingsExpandClicked_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingSettingsChevronButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceSettingsExpandClicked)
-    }
-
-    func test_shoppingSurfaceOptIn_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingOptIn
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceOptInAccepted)
-    }
-
-    func test_shoppingSurfaceNotNow_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingNotNowButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceNotNowClicked)
-    }
-
-    func test_shoppingSurfaceOptInShowTerms_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingTermsOfUseButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceShowTermsClicked)
-    }
-
-    func test_shoppingSurfaceOptInShowPrivacyPolicy_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingPrivacyPolicyButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceShowPrivacyPolicyClicked)
-    }
-
-    func test_shoppingSurfaceOptInLearnMore_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingLearnMoreButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceLearnMoreClicked)
-    }
-
-    func test_shoppingSurfaceShowQualityExplainer_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingLearnMoreReviewQualityButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceShowQualityExplainerClicked)
-    }
-
-    func test_addressBarFeatureCalloutDisplayed_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .navigate,
-            object: .shoppingButton,
-            value: .shoppingCFRsDisplayed
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.addressBarFeatureCalloutDisplayed)
-    }
-
-    func test_surfacePoweredByFakespotLinkClicked_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingPoweredByFakespotLabel
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfacePoweredByFakespotLinkClicked)
-    }
-
-    func test_surfaceAnalyzeReviewsNoneAvailableClicked_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingNoAnalysisCardViewPrimaryButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceAnalyzeReviewsNoneAvailableClicked)
-    }
-
-    func test_surfaceReanalyzeClicked_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingNeedsAnalysisCardViewPrimaryButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceReanalyzeClicked)
-    }
-
-    func test_surfaceReactivatedButtonClicked_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .shoppingProductBackInStockButton
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceReactivatedButtonClicked)
-    }
-
-    func test_surfaceNoReviewReliabilityAvailable_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .navigate,
-            object: .shoppingBottomSheet
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceNoReviewReliabilityAvailable)
-    }
-
-    func test_shoppingShoppingSurfaceStaleAnalysisShown_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingSurfaceStaleAnalysisShown
-        )
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceStaleAnalysisShown)
-    }
-
-    func test_shoppingAdsSettingToggle_GleanIsCalled() {
-        let isEnabled = TelemetryWrapper.EventExtraKey.Shopping.adsSettingToggle.rawValue
-        let extras = [isEnabled: true]
-        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .shoppingAdsSettingToggle, extras: extras)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Shopping.surfaceAdsSettingToggled)
-    }
-
-    func test_shoppingNimbusDisabled_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .settings,
-            object: .shoppingNimbusDisabled,
-            extras: [
-                TelemetryWrapper.ExtraKey.Shopping.isNimbusDisabled.rawValue: true
-            ])
-        testBoolMetricSuccess(metric: GleanMetrics.ShoppingSettings.nimbusDisabledShopping,
-                              expectedValue: true,
-                              failureMessage: "Should be true")
-    }
-
-    func test_shoppingComponentOptedOut_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .settings,
-            object: .shoppingComponentOptedOut,
-            extras: [
-                TelemetryWrapper.ExtraKey.Shopping.isComponentOptedOut.rawValue: true
-            ])
-        testBoolMetricSuccess(metric: GleanMetrics.ShoppingSettings.componentOptedOut,
-                              expectedValue: true,
-                              failureMessage: "Should be true")
-    }
-
-    func test_shoppingUserHasOnboarded_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .settings,
-            object: .shoppingUserHasOnboarded,
-            extras: [
-                TelemetryWrapper.ExtraKey.Shopping.isUserOnboarded.rawValue: true
-            ])
-        testBoolMetricSuccess(metric: GleanMetrics.ShoppingSettings.userHasOnboarded,
-                              expectedValue: true,
-                              failureMessage: "Should be true")
-    }
-
-    func test_shoppingAdsDisabledStatus_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .information,
-            method: .settings,
-            object: .shoppingAdsOptedOut,
-            extras: [
-                TelemetryWrapper.ExtraKey.Shopping.areAdsDisabled.rawValue: true
-            ])
-        testBoolMetricSuccess(metric: GleanMetrics.ShoppingSettings.disabledAds,
-                              expectedValue: true,
-                              failureMessage: "Should be true")
-    }
-
-    func test_shoppingAdsExposure_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingBottomSheet,
-            value: .shoppingAdsExposure
-        )
-        testEventMetricRecordingSuccess(
-            metric: GleanMetrics.Shopping.adsExposure
-        )
-    }
-
-    func test_shoppingNoAdsAvailable_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingBottomSheet,
-            value: .shoppingNoAdsAvailable
-        )
-        testEventMetricRecordingSuccess(
-            metric: GleanMetrics.Shopping.surfaceNoAdsAvailable
-        )
-    }
-
-    func test_surfaceAdsImpression_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingBottomSheet,
-            value: .shoppingAdsImpression
-        )
-        testEventMetricRecordingSuccess(
-            metric: GleanMetrics.Shopping.surfaceAdsImpression
-        )
-    }
-
-    func test_surfaceAdsClicked_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .view,
-            object: .shoppingBottomSheet,
-            value: .surfaceAdsClicked
-        )
-        testEventMetricRecordingSuccess(
-            metric: GleanMetrics.Shopping.surfaceAdsClicked
-        )
-    }
+    /* Ecosia: removed in v147 - all Shopping/Fakespot telemetry
+    func test_shoppingAddressBarIconClicked_GleanIsCalled() { ... }
+    ...
+    func test_surfaceAdsClicked_GleanIsCalled() { ... }
+    */
 
     // MARK: - Onboarding
     func test_onboardingSelectWallpaperWithExtras_GleanIsCalled() {
@@ -719,6 +245,7 @@ class TelemetryWrapperTests: XCTestCase {
         testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.wallpaperSelected)
     }
 
+    /* Ecosia: removed in v147 - notificationPermissionIsGranted, notificationPermission
     func test_onboardingNotificationPermission_GleanIsCalled() {
         let isGrantedKey = TelemetryWrapper.EventExtraKey.notificationPermissionIsGranted.rawValue
         let extras = [isGrantedKey: true]
@@ -729,6 +256,7 @@ class TelemetryWrapperTests: XCTestCase {
 
         testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.notificationPermissionPrompt)
     }
+    */
 
     func test_onboardingEngagementNotificationTapped_GleanIsCalled() {
         TelemetryWrapper.recordEvent(category: .action,
@@ -759,10 +287,9 @@ class TelemetryWrapperTests: XCTestCase {
                                          logoTextColor: nil)
 
         WallpaperManager().setCurrentWallpaper(to: defaultWallpaper) { _ in }
-        XCTAssertEqual(WallpaperManager().currentWallpaper.type, .defaultWallpaper)
+        XCTAssertEqual(WallpaperManager().currentWallpaper.type, .none)
 
-        let fakeNotif = NSNotification(name: UIApplication.didEnterBackgroundNotification, object: nil)
-        TelemetryWrapper.shared.recordEnteredBackgroundPreferenceMetrics(notification: fakeNotif)
+        TelemetryWrapper.shared.recordEnteredBackgroundPreferenceMetrics()
 
         testLabeledMetricSuccess(metric: GleanMetrics.WallpaperAnalytics.themedWallpaper)
         let wallpaperName = WallpaperManager().currentWallpaper.id.lowercased()
@@ -782,8 +309,7 @@ class TelemetryWrapperTests: XCTestCase {
         WallpaperManager().setCurrentWallpaper(to: themedWallpaper) { _ in }
         XCTAssertEqual(WallpaperManager().currentWallpaper.type, .other)
 
-        let fakeNotif = NSNotification(name: UIApplication.didEnterBackgroundNotification, object: nil)
-        TelemetryWrapper.shared.recordEnteredBackgroundPreferenceMetrics(notification: fakeNotif)
+        TelemetryWrapper.shared.recordEnteredBackgroundPreferenceMetrics()
 
         testLabeledMetricSuccess(metric: GleanMetrics.WallpaperAnalytics.themedWallpaper)
         let wallpaperName = WallpaperManager().currentWallpaper.id.lowercased()
@@ -984,29 +510,11 @@ class TelemetryWrapperTests: XCTestCase {
         testEventMetricRecordingSuccess(metric: GleanMetrics.History.removed)
     }
 
-    func test_todaysHistoryRemoved_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .tap,
-                                     object: .historyRemovedToday)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.History.removedToday)
-    }
-
-    func test_todayAndYesterdaysHistoryRemoved_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .tap,
-                                     object: .historyRemovedTodayAndYesterday)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.History.removedTodayAndYesterday)
-    }
-
-    func test_allHistoryRemoved_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .tap,
-                                     object: .historyRemovedAll)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.History.removedAll)
-    }
+    /* Ecosia: removed in v147 - History.removedToday, removedTodayAndYesterday, removedAll
+    func test_todaysHistoryRemoved_GleanIsCalled() { ... }
+    func test_todayAndYesterdaysHistoryRemoved_GleanIsCalled() { ... }
+    func test_allHistoryRemoved_GleanIsCalled() { ... }
+    */
 
     func test_viewHistoryPanel_GleanIsCalled() {
         TelemetryWrapper.recordEvent(
@@ -1414,17 +922,9 @@ class TelemetryWrapperTests: XCTestCase {
     }
     // MARK: - App
 
-    func test_appNotificationPermission_GleanIsCalled() {
-        let statusKey = TelemetryWrapper.EventExtraKey.notificationPermissionStatus.rawValue
-        let alertSettingKey = TelemetryWrapper.EventExtraKey.notificationPermissionAlertSetting.rawValue
-        let extras = [statusKey: "authorized", alertSettingKey: "enabled"]
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .view,
-                                     object: .notificationPermission,
-                                     extras: extras)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.App.notificationPermission)
-    }
+    /* Ecosia: removed in v147 - notificationPermissionStatus, notificationPermissionAlertSetting, notificationPermission
+    func test_appNotificationPermission_GleanIsCalled() { ... }
+    */
 
     // MARK: - Nimbus Calls
 

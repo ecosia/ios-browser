@@ -10,6 +10,7 @@ import Storage
 
 import enum MozillaAppServices.VisitType
 
+@MainActor
 class MockLibraryCoordinatorDelegate: LibraryCoordinatorDelegate, LibraryPanelDelegate {
     var libraryPanelWindowUUID: WindowUUID { return WindowUUID.XCTestDefaultUUID }
     var didFinishSettingsCalled = 0
@@ -21,7 +22,7 @@ class MockLibraryCoordinatorDelegate: LibraryCoordinatorDelegate, LibraryPanelDe
     var lastVisitType: VisitType?
     var isPrivate = false
 
-    func didFinishLibrary(from coordinator: LibraryCoordinator) {
+    func didFinishLibrary(from coordinator: Coordinator) {
         didFinishSettingsCalled += 1
     }
 

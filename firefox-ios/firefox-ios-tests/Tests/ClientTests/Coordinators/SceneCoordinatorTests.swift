@@ -7,6 +7,7 @@ import Shared
 import Common
 @testable import Client
 
+@MainActor
 final class SceneCoordinatorTests: XCTestCase {
     private var mockRouter: MockRouter!
 
@@ -25,7 +26,7 @@ final class SceneCoordinatorTests: XCTestCase {
 
     func testInitialState() {
         let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let subject = SceneCoordinator(scene: scene!)
+        let subject = SceneCoordinator(scene: scene!, introManager: MockSceneIntroScreenManager())
         trackForMemoryLeaks(subject)
 
         XCTAssertNotNil(subject.window)
@@ -143,7 +144,7 @@ final class SceneCoordinatorTests: XCTestCase {
     private func createSubject(file: StaticString = #file,
                                line: UInt = #line) -> SceneCoordinator {
         let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let subject = SceneCoordinator(scene: scene!)
+        let subject = SceneCoordinator(scene: scene!, introManager: MockSceneIntroScreenManager())
         // Replace created router from scene with a mock router so we don't trigger real navigation in our tests
         subject.router = mockRouter
         trackForMemoryLeaks(subject, file: file, line: line)
@@ -155,4 +156,12 @@ final class SceneCoordinatorTests: XCTestCase {
         subject.handle(route: route)
         return result
     }
+}
+
+// MARK: - MockSceneIntroScreenManager
+private final class MockSceneIntroScreenManager: IntroScreenManagerProtocol {
+    var shouldShowIntroScreen = false
+    var isModernOnboardingEnabled = false
+    var onboardingVariant: OnboardingVariant = .legacy
+    func didSeeIntroScreen() {}
 }

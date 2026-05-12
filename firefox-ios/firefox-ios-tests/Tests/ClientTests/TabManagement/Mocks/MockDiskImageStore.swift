@@ -5,7 +5,7 @@
 import Foundation
 import Storage
 
-class MockDiskImageStore: DiskImageStore {
+class MockDiskImageStore: DiskImageStore, @unchecked Sendable {
     var getImageForKeyCallCount = 0
     var saveImageForKeyCallCount = 0
     var deleteImageForKeyCallCount = 0

@@ -7,8 +7,8 @@
 /// Mock implementation of UnleashProtocol for testing
 public enum MockUnleash: UnleashProtocol {
 
-    private static var _isLoaded = false
-    private static var _enabledFlags: Set<Unleash.Toggle.Name> = []
+    nonisolated(unsafe) private static var _isLoaded = false
+    nonisolated(unsafe) private static var _enabledFlags: Set<Unleash.Toggle.Name> = []
 
     /// Indicates whether Unleash has been loaded from filesystem or network
     public static var isLoaded: Bool {

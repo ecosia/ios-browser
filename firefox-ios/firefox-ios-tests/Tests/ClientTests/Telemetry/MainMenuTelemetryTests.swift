@@ -27,24 +27,6 @@ final class MainMenuTelemetryTests: XCTestCase {
         XCTAssertEqual(resultValue[0].extra?[isHomepageKey], "true")
     }
 
-    func testRecordMainMenuWhenSaveSubmenuOptionTappedThenGleanIsCalled() throws {
-        subject?.saveSubmenuOptionTapped(with: true, and: "test_option")
-        testEventMetricRecordingSuccess(metric: GleanMetrics.AppMenu.saveMenuOptionSelected)
-
-        let resultValue = try XCTUnwrap(GleanMetrics.AppMenu.saveMenuOptionSelected.testGetValue())
-        XCTAssertEqual(resultValue[0].extra?[optionKey], "test_option")
-        XCTAssertEqual(resultValue[0].extra?[isHomepageKey], "true")
-    }
-
-    func testRecordMainMenuWhenToolsSubmenuOptionTappedThenGleanIsCalled() throws {
-        subject?.toolsSubmenuOptionTapped(with: true, and: "test_option")
-        testEventMetricRecordingSuccess(metric: GleanMetrics.AppMenu.toolsMenuOptionSelected)
-
-        let resultValue = try XCTUnwrap(GleanMetrics.AppMenu.toolsMenuOptionSelected.testGetValue())
-        XCTAssertEqual(resultValue[0].extra?[optionKey], "test_option")
-        XCTAssertEqual(resultValue[0].extra?[isHomepageKey], "true")
-    }
-
     func testRecordMainMenuWhenCloseButtonTappedThenGleanIsCalled() throws {
         subject?.closeButtonTapped(isHomepage: true)
         testEventMetricRecordingSuccess(metric: GleanMetrics.AppMenu.closeButton)

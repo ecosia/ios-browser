@@ -6,6 +6,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class HomePageSettingViewControllerTests: XCTestCase {
     private var profile: Profile!
     private var wallpaperManager: WallpaperManagerMock!

@@ -10,8 +10,9 @@ class MockAppAuthenticator: AppAuthenticationProtocol {
     var shouldAuthenticateDeviceOwner = true
     var shouldSucceed = true
 
-    func getAuthenticationState(completion: @escaping (AuthenticationState) -> Void) {
-        completion(authenticationState)
+    func getAuthenticationState(completion: @MainActor @escaping (AuthenticationState) -> Void) {
+        let state = authenticationState
+        MainActor.assumeIsolated { completion(state) }
     }
 
     var canAuthenticateDeviceOwner: Bool {
@@ -19,12 +20,14 @@ class MockAppAuthenticator: AppAuthenticationProtocol {
     }
 
     func authenticateWithDeviceOwnerAuthentication(
-        _ completion: @escaping (Result<Void, AuthenticationError>) -> Void
+        _ completion: @MainActor @escaping (Result<Void, AuthenticationError>) -> Void
     ) {
         if shouldSucceed {
-            completion(.success(()))
+            MainActor.assumeIsolated { completion(.success(())) }
         } else {
-            completion(.failure(.failedAutentication(message: "Testing mock: failure")))
+            MainActor.assumeIsolated {
+                completion(.failure(.failedAuthentication(message: "Testing mock: failure")))
+            }
         }
     }
 }

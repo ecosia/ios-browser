@@ -10,7 +10,7 @@ class UnleashFeatureManagementSessionInitializerTests: XCTestCase {
 
     // MARK: - Test Mocks
 
-    class MockHTTPClient: HTTPClient {
+    final class MockHTTPClient: HTTPClient, @unchecked Sendable {
 
         var performCalled = false
         var performRequest: BaseRequest?

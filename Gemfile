@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'danger', :git => 'git@github.com:danger/danger.git', :branch => 'master'
+gem 'danger', :git => 'https://github.com/danger/danger.git', :branch => 'master'
 gem 'danger-swiftlint'
 # Ecosia: add fastlane and plugins
 gem 'fastlane', '>= 2.228.0'

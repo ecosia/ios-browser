@@ -5,7 +5,7 @@
 @testable import Ecosia
 import XCTest
 
-final class HistoryTests: XCTestCase {
+final class HistoryTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.pages)
     }
@@ -27,7 +27,7 @@ final class HistoryTests: XCTestCase {
 
     func testLoad() {
         let expect = expectation(description: "")
-        var history = History()
+        nonisolated(unsafe) var history = History()
         history.add(.init(url: URL(string: "https://avocado.com")!, title: "hello world"))
         history.add(.init(url: URL(string: "https://guacamole.com")!, title: "lorem ipsum"))
         PageStore.queue.async {
@@ -45,7 +45,7 @@ final class HistoryTests: XCTestCase {
 
     func testDelete() {
         let expect = expectation(description: "")
-        var history = History()
+        nonisolated(unsafe) var history = History()
         history.add(.init(url: URL(string: "https://avocado.com")!, title: "hello world"))
         PageStore.queue.async {
             history = .init()
@@ -60,7 +60,7 @@ final class HistoryTests: XCTestCase {
 
     func testDeleteAll() {
         let expect = expectation(description: "")
-        var history = History()
+        nonisolated(unsafe) var history = History()
         history.add(.init(url: URL(string: "https://avocado.com")!, title: "hello world"))
         history.add(.init(url: URL(string: "https://guacamlo.com")!, title: "lorem ipsum"))
         PageStore.queue.async {

@@ -8,8 +8,8 @@ import XCTest
 
 @testable import Storage
 
-class RustAutofillTests: XCTestCase {
-    var files: FileAccessor!
+class RustAutofillTests: XCTestCase, @unchecked Sendable {
+    var files: MockFiles!
     var autofill: RustAutofill!
     var encryptionKey: String!
 
@@ -35,7 +35,7 @@ class RustAutofillTests: XCTestCase {
         }
     }
 
-    func addCreditCard(completion: @escaping (CreditCard?, Error?) -> Void) {
+    func addCreditCard(completion: @escaping @Sendable (CreditCard?, Error?) -> Void) {
         let creditCard = UnencryptedCreditCardFields(
             ccName: "Jane Doe",
             ccNumber: "1234567890123456",
@@ -46,7 +46,7 @@ class RustAutofillTests: XCTestCase {
         return autofill.addCreditCard(creditCard: creditCard, completion: completion)
     }
 
-    func addAddress(completion: @escaping (Result<Address, Error>) -> Void) {
+    func addAddress(completion: @escaping @Sendable (Result<Address, Error>) -> Void) {
         let address = UpdatableAddressFields(
             name: "Jane Doe",
             organization: "",

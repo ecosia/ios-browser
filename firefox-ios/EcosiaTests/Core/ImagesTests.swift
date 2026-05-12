@@ -6,7 +6,7 @@ import XCTest
 @testable import Ecosia
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class ImagesTests: XCTestCase {
+@MainActor final class ImagesTests: XCTestCase {
     private var session: MockURLSession!
     private var images: Images!
 

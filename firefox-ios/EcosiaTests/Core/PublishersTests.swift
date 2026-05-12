@@ -49,10 +49,11 @@ import XCTest
     }
 }
 
-private final class ExampleSubscriber {
+private final class ExampleSubscriber: @unchecked Sendable {
     var shouldReceive = [String]()
     private let expect: XCTestExpectation
 
+    @MainActor
     init(_ expect: XCTestExpectation, publisher: ExamplePublisher) {
         self.expect = expect
         publisher.subscribe(self) { [weak self] in

@@ -6,6 +6,7 @@ import XCTest
 @testable import Client
 
 @preconcurrency
+@MainActor
 final class AppFxACommandsTests: XCTestCase {
     private var applicationStateProvider: MockApplicationStateProvider!
     private var applicationHelper: MockApplicationHelper!
@@ -24,7 +25,7 @@ final class AppFxACommandsTests: XCTestCase {
 
     func testOpenSendTabs_inactiveState_doesntCallDeeplink() {
         applicationStateProvider.applicationState = .inactive
-        let url = URL(string: "https://mozilla.com", invalidCharacters: false)!
+        let url = URL(string: "https://mozilla.com")!
         let subject = createSubject()
         subject.openSendTabs(for: [url])
 
@@ -33,7 +34,7 @@ final class AppFxACommandsTests: XCTestCase {
 
     func testOpenSendTabs_backgroundState_doesntCallDeeplink() {
         applicationStateProvider.applicationState = .background
-        let url = URL(string: "https://mozilla.com", invalidCharacters: false)!
+        let url = URL(string: "https://mozilla.com")!
         let subject = createSubject()
         subject.openSendTabs(for: [url])
 
@@ -41,7 +42,7 @@ final class AppFxACommandsTests: XCTestCase {
     }
 
     func testOpenSendTabs_activeWithOneURL_callsDeeplink() {
-        let url = URL(string: "https://mozilla.com", invalidCharacters: false)!
+        let url = URL(string: "https://mozilla.com")!
         let subject = createSubject()
         subject.openSendTabs(for: [url])
 
@@ -51,7 +52,7 @@ final class AppFxACommandsTests: XCTestCase {
     }
 
     func testOpenSendTabs_activeWithMultipleURLs_callsDeeplink() {
-        let url = URL(string: "https://mozilla.com", invalidCharacters: false)!
+        let url = URL(string: "https://mozilla.com")!
         let subject = createSubject()
         subject.openSendTabs(for: [url, url, url])
 
@@ -60,7 +61,7 @@ final class AppFxACommandsTests: XCTestCase {
 
     // MARK: - Close Remote Tabs Tests
     func testCloseSendTabs_activeWithOneURL_callsDeeplink() async {
-        let url = URL(string: "https://mozilla.com", invalidCharacters: false)!
+        let url = URL(string: "https://mozilla.com")!
         let subject = createSubject()
         let expectation = XCTestExpectation(description: "Close tabs called")
         subject.closeTabs(for: [url])
@@ -72,9 +73,9 @@ final class AppFxACommandsTests: XCTestCase {
     }
 
     func testCloseSendTabs_activeWithMultipleURLs_callsDeeplink() async {
-        let url1 = URL(string: "https://example.com", invalidCharacters: false)!
-        let url2 = URL(string: "https://example.com/1", invalidCharacters: false)!
-        let url3 = URL(string: "https://example.com/2", invalidCharacters: false)!
+        let url1 = URL(string: "https://example.com")!
+        let url2 = URL(string: "https://example.com/1")!
+        let url3 = URL(string: "https://example.com/2")!
         let subject = createSubject()
         let expectation = XCTestExpectation(description: "Close tabs called multiple times")
         subject.closeTabs(for: [url1, url2, url3])
@@ -89,14 +90,13 @@ final class AppFxACommandsTests: XCTestCase {
 
     func createSubject() -> AppFxACommandsDelegate {
         let subject = AppFxACommandsDelegate(app: applicationStateProvider,
-                                             applicationHelper: applicationHelper,
-                                             mainQueue: MockDispatchQueue())
+                                             applicationHelper: applicationHelper)
         trackForMemoryLeaks(subject)
         return subject
     }
 }
 
 // MARK: MockApplicationStateProvider
-class MockApplicationStateProvider: ApplicationStateProvider {
+final class MockApplicationStateProvider: ApplicationStateProvider, @unchecked Sendable {
     var applicationState: UIApplication.State = .active
 }

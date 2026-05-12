@@ -7,7 +7,8 @@ import XCTest
 @testable import Ecosia
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class ReferralsTests: XCTestCase {
+@MainActor
+final class ReferralsTests: XCTestCase, @unchecked Sendable {
 
     var httpClientMock: HTTPClientMock!
     var referrals: Referrals!
@@ -47,7 +48,7 @@ final class ReferralsTests: XCTestCase {
 
         let expect = expectation(description: "")
         referrals.subscribe(self) { model in
-            self.referrals.unsubscribe(self)
+            MainActor.assumeIsolated { self.referrals.unsubscribe(self) }
             XCTAssertEqual(model.code, "MANGO-2UGicG")
             XCTAssertEqual(User.shared.referrals.code, "MANGO-2UGicG")
             XCTAssertEqual(model.claims, 1)
@@ -97,7 +98,7 @@ final class ReferralsTests: XCTestCase {
 
         let expect = expectation(description: "")
         referrals.subscribe(self) { model in
-            self.referrals.unsubscribe(self)
+            MainActor.assumeIsolated { self.referrals.unsubscribe(self) }
             XCTAssertEqual(model.code, User.shared.referrals.code)
             XCTAssertEqual(User.shared.referrals.claims, 1)
             expect.fulfill()

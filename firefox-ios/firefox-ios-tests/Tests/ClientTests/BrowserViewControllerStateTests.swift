@@ -7,6 +7,7 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class BrowserViewControllerStateTests: XCTestCase {
     override func setUp() {
         super.setUp()
@@ -54,6 +55,7 @@ final class BrowserViewControllerStateTests: XCTestCase {
         XCTAssertEqual(newState.displayView, .dataClearance)
     }
 
+    /* Ecosia: nativeErrorPage removed from BrowserViewType in v147
     func testUpdateSelectedTabAction() {
         let initialState = createSubject()
         let reducer = browserViewControllerReducer()
@@ -67,18 +69,15 @@ final class BrowserViewControllerStateTests: XCTestCase {
 
         XCTAssertEqual(newState.browserViewType, .nativeErrorPage)
     }
+    */
 
     func testShowPasswordGeneratorAction() {
         let initialState = createSubject()
         let reducer = browserViewControllerReducer()
-        let URL = URL(string: "https://foo.com")!
-        let webView = WKWebViewMock(URL)
-        let frame = WKFrameInfoMock(webView: webView, frameURL: URL, isMainFrame: true)
 
         XCTAssertNil(initialState.displayView)
 
-        let action = GeneralBrowserAction(frame: frame,
-                                          windowUUID: .XCTestDefaultUUID,
+        let action = GeneralBrowserAction(windowUUID: .XCTestDefaultUUID,
                                           actionType: GeneralBrowserActionType.showPasswordGenerator)
         let newState = reducer(initialState, action)
         let displayView = newState.displayView!
@@ -86,7 +85,7 @@ final class BrowserViewControllerStateTests: XCTestCase {
         BrowserViewControllerState.DisplayType.passwordGenerator
 
         XCTAssertEqual(displayView, desiredDisplayView)
-        XCTAssertNotNil(newState.frame)
+        XCTAssertNotNil(newState.frameContext)
     }
 
     func testReloadWebsiteAction() {

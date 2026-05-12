@@ -7,7 +7,8 @@ import XCTest
 
 @testable import Client
 
-class GeneralizedImageFetcherTests: XCTestCase {
+@MainActor
+final class GeneralizedImageFetcherTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         super.setUp()
 
@@ -99,7 +100,7 @@ extension GeneralizedImageFetcherTests {
         )
     }
 
-    func testGeneralizedImageFetcher(completion: @escaping (UIImage?) -> Void) {
+    func testGeneralizedImageFetcher(completion: @escaping @Sendable (UIImage?) -> Void) {
         let imageFetcher = getGeneralizedImageFetcher()
         let expectation = expectation(description: "Wait on completion.")
 

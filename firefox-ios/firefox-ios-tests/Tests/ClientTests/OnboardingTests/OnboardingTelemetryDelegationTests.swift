@@ -7,6 +7,7 @@ import Glean
 
 @testable import Client
 
+@MainActor
 class OnboardingTelemetryDelegationTests: XCTestCase {
     var nimbusUtility: NimbusOnboardingTestingConfigUtility!
     typealias cards = NimbusOnboardingTestingConfigUtility.CardOrder
@@ -33,7 +34,7 @@ class OnboardingTelemetryDelegationTests: XCTestCase {
 
     func testOnboardingCard_callsPrimaryButtonTap() {
         let subject = createSubject()
-        guard let result = subject.pageController.viewControllers?.first as? OnboardingBasicCardViewController else {
+        guard let result = subject.pageController.viewControllers?.first as? OnboardingBasicCardViewController<OnboardingKitCardInfoModel> else {
             XCTFail("expected a view controller, but got nothing")
             return
         }

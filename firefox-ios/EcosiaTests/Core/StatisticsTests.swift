@@ -6,6 +6,7 @@
 import XCTest
 // swiftlint:disable implicitly_unwrapped_optional
 
+@MainActor
 final class StatisticsTests: XCTestCase {
     private var statistics: Statistics!
     private var mockURLSession: MockURLSessionProtocol!
@@ -49,9 +50,9 @@ final class StatisticsTests: XCTestCase {
     /// When the network request fails, all existing values must be preserved unchanged.
     func testFetchAndUpdatePreservesValuesOnNetworkFailure() async throws {
         // Arrange – seed with known live-like values
-        await statistics.setTreesPlanted(247_000_000)
-        await statistics.setTreesPlantedLastUpdated(Date(timeIntervalSince1970: 1_740_000_000))
-        await statistics.setTimePerTree(1.3)
+        statistics.treesPlanted = 247_000_000
+        statistics.treesPlantedLastUpdated = Date(timeIntervalSince1970: 1_740_000_000)
+        statistics.timePerTree = 1.3
 
         // Act – simulate a network error
         let failingSession = ThrowingMockURLSession()
@@ -63,9 +64,9 @@ final class StatisticsTests: XCTestCase {
         }
 
         // Assert – values unchanged
-        let trees = await statistics.treesPlanted
-        let lastUpdated = await statistics.treesPlantedLastUpdated
-        let timePerTree = await statistics.timePerTree
+        let trees = statistics.treesPlanted
+        let lastUpdated = statistics.treesPlantedLastUpdated
+        let timePerTree = statistics.timePerTree
         XCTAssertEqual(trees, 247_000_000)
         XCTAssertEqual(lastUpdated, Date(timeIntervalSince1970: 1_740_000_000))
         XCTAssertEqual(timePerTree, 1.3)
@@ -74,7 +75,7 @@ final class StatisticsTests: XCTestCase {
     /// When the response contains malformed JSON, all existing values must be preserved.
     func testFetchAndUpdatePreservesValuesOnMalformedJSON() async throws {
         // Arrange
-        await statistics.setTreesPlanted(247_000_000)
+        statistics.treesPlanted = 247_000_000
 
         mockURLSession.data = Data("not valid json".utf8)
 
@@ -87,7 +88,7 @@ final class StatisticsTests: XCTestCase {
         }
 
         // Assert
-        let trees = await statistics.treesPlanted
+        let trees = statistics.treesPlanted
         XCTAssertEqual(trees, 247_000_000)
     }
 
@@ -97,9 +98,9 @@ final class StatisticsTests: XCTestCase {
     /// Without calling fetchAndUpdate(), the hardcoded defaults now project within ~3.5M of live (vs. ~6M gap with Nov 2020 base).
     func testDefaultValuesProduceKnownProjection() async {
         let freshStats = Statistics()
-        let base = await freshStats.treesPlanted
-        let baseDate = await freshStats.treesPlantedLastUpdated
-        let timePerTree = await freshStats.timePerTree
+        let base = freshStats.treesPlanted
+        let baseDate = freshStats.treesPlantedLastUpdated
+        let timePerTree = freshStats.timePerTree
 
         // Base values must match the Dec 2025 API snapshot
         XCTAssertEqual(base, 244_418_472, "Default treesPlanted baseline changed — update from live API and update docs/fix")

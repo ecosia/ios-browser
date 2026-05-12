@@ -8,7 +8,8 @@ import XCTest
 
 @testable import Client
 
-final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility {
+@MainActor
+final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     var mockGleanWrapper: MockGleanWrapper!
     var mockStore: MockStoreForMiddleware<AppState>!
     var mockNotificationCenter: MockNotificationCenter!

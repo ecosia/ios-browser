@@ -5,7 +5,7 @@
 import XCTest
 @testable import Ecosia
 
-final class ReferralsModelTests: XCTestCase {
+final class ReferralsModelTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.user)
     }

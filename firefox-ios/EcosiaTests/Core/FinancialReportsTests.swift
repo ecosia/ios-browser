@@ -25,8 +25,10 @@ final class FinancialReportsTests: XCTestCase {
 
         try await financialReports.fetchAndUpdate(urlSession: mockURLSession)
 
-        XCTAssertEqual(financialReports.latestMonth, Date(timeIntervalSince1970: 1690848000))
-        XCTAssertEqual(financialReports.latestReport,
+        let latestMonth = await financialReports.latestMonth
+        let latestReport = await financialReports.latestReport
+        XCTAssertEqual(latestMonth, Date(timeIntervalSince1970: 1690848000))
+        XCTAssertEqual(latestReport,
                        FinancialReports.Report(totalIncome: 456,
                                                numberOfTreesFinanced: 11))
     }
@@ -40,7 +42,8 @@ final class FinancialReportsTests: XCTestCase {
 
         try await financialReports.fetchAndUpdate(urlSession: mockURLSession)
 
-        XCTAssertEqual(financialReports.localizedMonthAndYear, "May 2021")
+        let localizedMonthAndYear = await financialReports.localizedMonthAndYear
+        XCTAssertEqual(localizedMonthAndYear, "May 2021")
     }
 }
 // swiftlint:enable implicitly_unwrapped_optional

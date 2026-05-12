@@ -6,6 +6,7 @@ import XCTest
 import Storage
 @testable import Client
 
+@MainActor
 final class HistoryCoordinatorTests: XCTestCase {
     private var router: MockRouter!
     private var profile: MockProfile!
@@ -42,14 +43,9 @@ final class HistoryCoordinatorTests: XCTestCase {
         XCTAssertEqual(router.pushCalled, 1)
     }
 
-    func testShowSearchGroupedItems() {
-        let subject = createSubject()
-
-        subject.showSearchGroupedItems(ASGroup(searchTerm: "", groupedItems: [], timestamp: .zero))
-
-        XCTAssertTrue(router.pushedViewController is SearchGroupedItemsViewController)
-        XCTAssertEqual(router.pushCalled, 1)
-    }
+    /* Ecosia: showSearchGroupedItems and SearchGroupedItemsViewController removed in v147
+    func testShowSearchGroupedItems() { ... }
+    */
 
     func testOpenClearRecentSearch_receiveNotificationCorrectly() {
         _ = createSubject()
