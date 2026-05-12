@@ -1,1 +1,7 @@
 *.xcconfig
+
+# CLAUDE.md exists for Claude Code and only references AGENTS.md. Cursor would
+# otherwise treat root CLAUDE.md as a second always-on instruction file alongside
+# AGENTS.md. Excluding it from Cursor keeps a single consolidated source for Agent;
+# Claude Code still reads CLAUDE.md from disk when run outside that restriction.
+CLAUDE.md

@@ -34,5 +34,13 @@ let project = Project(
     packages: Packages.all,
     settings: .settings(configurations: BuildConfigurations.all),
     targets: allTargets,
-    schemes: EcosiaSchemes.all
+    schemes: EcosiaSchemes.all,
+    // Ecosia: Register root agent instruction files as Xcode project files so
+    // that Xcode's Coding Assistant can index and use them. Files under
+    // Ecosia/Ecosia.docc/ are already covered by the Ecosia framework target's
+    // resource glob and don't need to be listed here.
+    additionalFiles: [
+        "../AGENTS.md",
+        "../CLAUDE.md"
+    ]
 )
