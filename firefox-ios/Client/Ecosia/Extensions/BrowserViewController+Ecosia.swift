@@ -48,13 +48,13 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     /// Routes a long-prompt submit (above the omnibox AI threshold) into the
-    /// AI search backend. Mirrors `handleAISearchSelection` in
+    /// AI search backend. Mirrors `handleAIChatSelection` in
     /// `SearchViewController+Ecosia` but loads through the active tab since
     /// the omnibox keyboard-Done path doesn't go through the search delegate.
     private func submitOmniboxAIChat(query: String) {
         guard let tab = tabManager.selectedTab else { return }
         let url = Environment.current.urlProvider
-            .aiSearch(origin: .omnibox)
+            .aiChat(origin: .omnibox)
             .appendingQueryItems([URLQueryItem(name: "q", value: query)])
         searchTelemetry.shouldSetUrlTypeSearch = true
         finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
