@@ -8,7 +8,7 @@ import Common
 @testable import Client
 @testable import Ecosia
 
-final class EcosiaAISearchButtonThemeTests: XCTestCase {
+final class EcosiaAIChatButtonThemeTests: XCTestCase {
 
     // MARK: - Integration Tests
 
@@ -16,7 +16,7 @@ final class EcosiaAISearchButtonThemeTests: XCTestCase {
     func testIntegrationWithButton() {
         // Given
         let windowUUID: WindowUUID = .XCTestDefaultUUID
-        let button = EcosiaAISearchButton(windowUUID: windowUUID, onTap: {})
+        let button = EcosiaAIChatButton(windowUUID: windowUUID, onTap: {})
 
         // When/Then
         let buttonMirror = Mirror(reflecting: button)

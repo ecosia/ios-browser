@@ -15,7 +15,7 @@ extension SearchViewController {
     override var tableViewStyle: UITableView.Style { .insetGrouped }
 }
 
-// MARK: - AI Search Autocomplete Extensions
+// MARK: - AI Chat Autocomplete Extensions
 extension SearchViewController {
 
     // MARK: - Helper Methods
@@ -28,36 +28,36 @@ extension SearchViewController {
         return min(count, max)
     }
 
-    /// Check if current row is the AI Search item
-    func isAISearchRow(_ indexPath: IndexPath) -> Bool {
+    /// Check if current row is the AI Chat item
+    func isAIChatRow(_ indexPath: IndexPath) -> Bool {
         guard SearchListSection(rawValue: indexPath.section) == .searchSuggestions else { return false }
-        let shouldShowAISearch = AISearchMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
-        guard shouldShowAISearch, let lastIndex = suggestionsCount() else { return false }
+        let shouldShowAIChat = AIChatMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
+        guard shouldShowAIChat, let lastIndex = suggestionsCount() else { return false }
         return indexPath.row == lastIndex // Item after last suggestion (0-based index)
     }
 
-    /// Calculate number of rows including AI Search item if enabled
+    /// Calculate number of rows including AI Chat item if enabled
     func numberOfRowsForSearchSuggestions() -> Int {
         guard let count = suggestionsCount() else { return 0 }
-        let shouldShowAISearch = AISearchMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
-        return shouldShowAISearch ? count + 1 : count
+        let shouldShowAIChat = AIChatMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
+        return shouldShowAIChat ? count + 1 : count
     }
 
-    // MARK: - AI Search Navigation
+    // MARK: - AI Chat Navigation
 
-    /// Handle AI Search navigation when item is selected
-    func handleAISearchSelection(_ indexPath: IndexPath) {
-        let url = Environment.current.urlProvider.aiSearch(origin: .autocomplete)
+    /// Handle AI Chat navigation when item is selected
+    func handleAIChatSelection(_ indexPath: IndexPath) {
+        let url = Environment.current.urlProvider.aiChat(origin: .autocomplete)
         let finalURL = url.appendingQueryItems([URLQueryItem(name: "q", value: viewModel.searchQuery)])
 
         searchDelegate?.searchViewController(self, didSelectURL: finalURL, searchTerm: viewModel.searchQuery)
-        Analytics.shared.aiSearchAutocompleteForQuery(viewModel.searchQuery)
+        Analytics.shared.aiChatAutocompleteForQuery(viewModel.searchQuery)
     }
 
-    // MARK: - AI Search Cell Configuration
+    // MARK: - AI Chat Cell Configuration
 
-    /// Configure AI Search cell appearance
-    func configureAISearchCell(_ cell: OneLineTableViewCell) -> OneLineTableViewCell {
+    /// Configure AI Chat cell appearance
+    func configureAIChatCell(_ cell: OneLineTableViewCell) -> OneLineTableViewCell {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
 
         cell.titleLabel.text = viewModel.searchQuery
@@ -80,7 +80,7 @@ extension SearchViewController {
         twinkleImageView.contentMode = .scaleAspectFit
 
         let aiSearchLabel = UILabel()
-        aiSearchLabel.text = String.localized(.aiSearch)
+        aiSearchLabel.text = String.localized(.aiChat)
         aiSearchLabel.textColor = theme.colors.ecosia.textInversePrimary
         aiSearchLabel.font = .preferredFont(forTextStyle: .caption1)
         aiSearchLabel.sizeToFit()
@@ -124,10 +124,10 @@ extension SearchViewController {
         return cell
     }
 
-    // MARK: - AI Search Highlighting
+    // MARK: - AI Chat Highlighting
 
-    /// Handle AI Search highlighting
-    func handleAISearchHighlight(_ indexPath: IndexPath) {
+    /// Handle AI Chat highlighting
+    func handleAIChatHighlight(_ indexPath: IndexPath) {
         searchDelegate?.searchViewController(self, didHighlightText: viewModel.searchQuery, search: false)
     }
 

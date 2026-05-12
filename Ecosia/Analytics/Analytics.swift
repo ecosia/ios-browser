@@ -314,7 +314,7 @@ open actor Analytics {
             .property(position))
     }
 
-    public func toggleAISearchOverviewsSetting(enabled: Bool) {
+    public func toggleAIChatOverviewsSetting(enabled: Bool) {
         track(Structured(category: Category.settings.rawValue,
                          action: Action.change.rawValue)
             .label(Label.Settings.aiOverviews.rawValue)
@@ -357,19 +357,19 @@ open actor Analytics {
                              payload: payload))
     }
 
-    // MARK: AI Search MVP
+    // MARK: AI Chat MVP
 
-    public func aiSearchNTPButtonTapped() {
+    public func aiChatNTPButtonTapped() {
         track(Structured(category: Category.ntp.rawValue,
                          action: Action.click.rawValue)
-            .label(Analytics.Label.AISearch.cta.rawValue)
+            .label(Analytics.Label.AIChat.cta.rawValue)
             .property(Analytics.Property.header.rawValue))
     }
 
-    public func aiSearchAutocompleteForQuery(_ text: String) {
+    public func aiChatAutocompleteForQuery(_ text: String) {
         track(Structured(category: Category.autocomplete.rawValue,
                          action: Action.click.rawValue)
-            .label(Analytics.Label.AISearch.cta.rawValue)
+            .label(Analytics.Label.AIChat.cta.rawValue)
             .property(text))
 	}
 

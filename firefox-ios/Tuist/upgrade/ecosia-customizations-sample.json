@@ -3688,8 +3688,8 @@
       "comment": "Check if this is the AI Search item",
       "firefox_code": [],
       "ecosia_code": [
-        "            if isAISearchRow(indexPath) {",
-        "                handleAISearchSelection(indexPath)",
+        "            if isAIChatRow(indexPath) {",
+        "                handleAIChatSelection(indexPath)",
         "                return"
       ],
       "context_before": [
@@ -3720,7 +3720,7 @@
       ],
       "context_after": [
         "                // Ecosia: Skip telemetry for AI Search item",
-        "                if !isAISearchRow(indexPath),"
+        "                if !isAIChatRow(indexPath),"
       ]
     },
     {
@@ -3801,8 +3801,8 @@
       "comment": "Check if this is the AI Search item",
       "firefox_code": [],
       "ecosia_code": [
-        "            if isAISearchRow(indexPath) {",
-        "                handleAISearchHighlight(indexPath)",
+        "            if isAIChatRow(indexPath) {",
+        "                handleAIChatHighlight(indexPath)",
         "                return"
       ],
       "context_before": [
@@ -3883,8 +3883,8 @@
         "        case .searchSuggestions:"
       ],
       "context_after": [
-        "            if isAISearchRow(indexPath) {",
-        "                cell = configureAISearchCell(oneLineCell)"
+        "            if isAIChatRow(indexPath) {",
+        "                cell = configureAIChatCell(oneLineCell)"
       ]
     },
     {

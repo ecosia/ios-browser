@@ -200,12 +200,12 @@ public enum URLProvider {
         ])
     }
 
-    public enum AISearchOrigin: String {
+    public enum AIChatOrigin: String {
         case ntp = "newtabbutton"
         case autocomplete = "autocomplete_app"
     }
-    public func aiSearch(origin: AISearchOrigin?) -> URL {
-        let baseURL = root.appendingPathComponent("ai-search")
+    public func aiChat(origin: AIChatOrigin?) -> URL {
+        let baseURL = root.appendingPathComponent("ai-chat")
         guard let origin = origin else {
             return baseURL
         }

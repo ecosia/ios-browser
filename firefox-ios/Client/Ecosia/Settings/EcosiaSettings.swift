@@ -152,7 +152,7 @@ final class AIOverviewsSearchSettings: BoolSetting {
                   statusText: .localized(.aiOverviewsDescription),
                   settingDidChange: { value in
             User.shared.aiOverviews = value
-            Analytics.shared.toggleAISearchOverviewsSetting(enabled: value)
+            Analytics.shared.toggleAIChatOverviewsSetting(enabled: value)
         })
     }
 
