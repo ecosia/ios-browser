@@ -122,9 +122,19 @@ final class NTPImpactGlassBackgroundView: UIView {
     }
     // MARK: - ThemeApplicable
 
+    private var currentTheme: Theme?
+
     func applyTheme(theme: Theme) {
+        currentTheme = theme
         guard let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia else { return }
         tintView.backgroundColor = ecosia.buttonBgGlassStatic
+    }
+
+    // Ecosia: Mirror the pressed state of NTPGlassButtonStyle — tint steps from
+    // buttonBgGlassStatic (32 %) at rest to buttonBgGlassStaticActive (64 %) when highlighted.
+    func setHighlighted(_ highlighted: Bool) {
+        guard let ecosia = (currentTheme?.colors as? EcosiaThemeColourPalette)?.ecosia else { return }
+        tintView.backgroundColor = highlighted ? ecosia.buttonBgGlassStaticActive : ecosia.buttonBgGlassStatic
     }
 
     // MARK: - Public API

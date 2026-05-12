@@ -110,7 +110,7 @@ private struct EcosiaCustomizeButton: View {
     private let iconSize: CGFloat = 16
 
     var body: some View {
-        Button(action: onTap) {
+        Button(action: { onTap() }) {
             Image.ecosia("ntp-pencil-edit")
                 .resizable()
                 .renderingMode(.template)
@@ -119,6 +119,7 @@ private struct EcosiaCustomizeButton: View {
                 .frame(width: buttonSize, height: buttonSize)
         }
         .modifier(GlassCircleModifier())
+        .hapticFeedback()
         .accessibilityLabel(String.localized(.customizeHomepage))
         .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.customizeButton)
     }

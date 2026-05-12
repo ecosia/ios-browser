@@ -134,6 +134,10 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
         // Ecosia: Climate Impact toggle to show/hide impact rows on the NTP
         sectionItems.append(ClimateImpactSettings(settings: self))
 
+        /* Ecosia: Ecosia's NTP never shows Jump Back In or Bookmarks sections, so their
+           settings toggles must never appear regardless of feature-flag state. The original
+           Firefox guard (shouldHideSections) only suppresses them when .homepageStoriesRedesign
+           is enabled at build time, which is not the case on release builds.
         let shouldHideSections = featureFlags.isFeatureEnabled(.homepageStoriesRedesign, checking: .buildOnly)
         let isStoriesRedesignV2Enabled = featureFlags.isFeatureEnabled(.homepageStoriesRedesignV2, checking: .buildOnly)
 
@@ -178,6 +182,7 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
             }
             sectionItems.append(bookmarksSetting)
         }
+        */
 
         // TODO: FXIOS-12980: Replace "Stories" title with "Top Stories" string once it is translated in v143
         if isPocketSectionEnabled, let profile {

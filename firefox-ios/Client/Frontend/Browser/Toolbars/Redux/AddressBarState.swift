@@ -1176,7 +1176,12 @@ struct AddressBarState: StateType, Sendable, Equatable {
         let isShowMenuWarningAction = action.actionType as? ToolbarActionType == .showMenuWarningBadge
         let showActionWarningBadge = action.showMenuWarningBadge ?? toolbarState.showMenuWarningBadge
         let showWarningBadge = isShowMenuWarningAction ? showActionWarningBadge : toolbarState.showMenuWarningBadge
+        /* Ecosia: moreHorizontalRoundLarge does not exist in any Ecosia asset catalog,
+           causing the menu button to render with no image on iPad. Use the same custom
+           ellipsis icon as the iPhone navigation bar.
         let menuIcon = StandardImageIdentifiers.Large.moreHorizontalRound
+         */
+        let menuIcon = "elipsis"
 
         switch layout {
         case .version1, .none:

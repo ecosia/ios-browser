@@ -31,7 +31,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerGradient: Gradient { fallbackTheme.colors.layerGradient }
     var layerGradientOverlay: Gradient { fallbackTheme.colors.layerGradientOverlay }
     var layerAccentNonOpaque: UIColor { ecosia.buttonBackgroundPrimary }
-    var layerAccentPrivate: UIColor { fallbackTheme.colors.layerAccentPrivate }
+    var layerAccentPrivate: UIColor { ecosia.buttonContentSecondary }
     var layerAccentPrivateNonOpaque: UIColor { ecosia.textPrimary }
     var layerSepia: UIColor { fallbackTheme.colors.layerSepia }
     var layerHomepage: Gradient { fallbackTheme.colors.layerHomepage }
