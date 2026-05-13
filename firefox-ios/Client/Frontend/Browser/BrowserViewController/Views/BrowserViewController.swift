@@ -1452,7 +1452,7 @@ class BrowserViewController: UIViewController,
            so treat it the same as shouldShowSearchBar for the toolbar-hiding decision.
         guard shouldShowSearchBar, !isEditing, contentContainer.hasHomepage else {
         */
-        guard (shouldShowSearchBar || hasEcosiaNTPSearchBar), !isEditing, contentContainer.hasHomepage else {
+        guard shouldShowSearchBar || hasEcosiaNTPSearchBar, !isEditing, contentContainer.hasHomepage else {
             guard addressToolbarContainer.isHidden == true else { return }
             addressToolbarContainer.isHidden = false
             store.dispatch(

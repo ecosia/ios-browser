@@ -130,7 +130,8 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     private var currentTheme: Theme?
     private var currentSubmitMode: NTPSearchBarSubmitMode = .search
-    private var textViewHeightConstraint: NSLayoutConstraint!
+    private lazy var textViewHeightConstraint: NSLayoutConstraint =
+        textView.heightAnchor.constraint(equalToConstant: UX.minTextHeight)
 
     /// True once the text wraps past `UX.multilineThreshold` lines. The host
     /// reads this in `ntpSearchBarTextDidChange` to suppress the suggestions
@@ -231,7 +232,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         swipeDown.direction = .down
         addGestureRecognizer(swipeDown)
 
-        textViewHeightConstraint = textView.heightAnchor.constraint(equalToConstant: UX.minTextHeight)
         NSLayoutConstraint.activate([
             // textView occupies the upper region of the pill. Its bottom is
             // pinned to the submit button's top so wrapped text physically

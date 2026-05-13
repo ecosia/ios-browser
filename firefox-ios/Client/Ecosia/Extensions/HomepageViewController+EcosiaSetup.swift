@@ -275,7 +275,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         return isWideIPad ? 160 : .ecosia.space._m
     }
 
-
     /// Called from `viewDidLayoutSubviews`. The omnibox cushion is now baked
     /// into the impact section's fill height (see `createEcosiaImpactLayout`),
     /// so no contentInset tuning is required — clear any inset left over
