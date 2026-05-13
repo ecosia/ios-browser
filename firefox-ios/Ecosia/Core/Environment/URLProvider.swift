@@ -205,13 +205,22 @@ public enum URLProvider {
         case autocomplete = "autocomplete_app"
         case omnibox = "omnibox_app"
     }
-    public func aiChat(origin: AIChatOrigin?) -> URL {
-        let baseURL = root.appendingPathComponent("ai-chat")
-        guard let origin = origin else {
-            return baseURL
-        }
 
-        return baseURL.appendingQueryItems([URLQueryItem(name: "origin", value: origin.rawValue)])
+    /// Builds the AI chat URL, optionally tagged with where the user came
+    /// from (`origin`) and seeded with a `query` to start the conversation.
+    /// Centralizing both parameters here keeps callers from having to know
+    /// the URL's query-item conventions.
+    public func aiChat(origin: AIChatOrigin? = nil, query: String? = nil) -> URL {
+        let baseURL = root.appendingPathComponent("ai-chat")
+        var items: [URLQueryItem] = []
+        if let origin {
+            items.append(URLQueryItem(name: "origin", value: origin.rawValue))
+        }
+        if let query {
+            items.append(URLQueryItem(name: "q", value: query))
+        }
+        guard !items.isEmpty else { return baseURL }
+        return baseURL.appendingQueryItems(items)
     }
 
     public var storeWriteReviewPage: URL {

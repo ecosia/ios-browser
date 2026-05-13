@@ -43,9 +43,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
     /// the omnibox keyboard-Done path doesn't go through the search delegate.
     private func submitOmniboxAIChat(query: String) {
         guard let tab = tabManager.selectedTab else { return }
-        let url = Environment.current.urlProvider
-            .aiChat(origin: .omnibox)
-            .appendingQueryItems([URLQueryItem(name: "q", value: query)])
+        let url = Environment.current.urlProvider.aiChat(origin: .omnibox, query: query)
         searchTelemetry.shouldSetUrlTypeSearch = true
         finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
     }
