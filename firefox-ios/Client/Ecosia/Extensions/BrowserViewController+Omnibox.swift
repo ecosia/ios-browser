@@ -52,9 +52,10 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
     /// Builds the search URL for a `.search`-mode omnibox submission (direct
     /// typed submit or autocomplete row tap) and loads it. Pasted URLs
-    /// navigate directly; everything else goes through the default search
-    /// engine with an `ar=1` parameter appended so the backend can decide
-    /// whether the query lands on AI search or the standard SERP.
+    /// navigate directly; everything else goes through Ecosia's `urlProvider`
+    /// via `URL.ecosiaSearchWithQuery` with `autoRouting: true`, which
+    /// appends the `ar=1` parameter so the backend can decide whether the
+    /// query lands on AI search or the standard SERP.
     /// `.aiChat` mode is handled separately by `submitOmniboxAIChat`.
     private func submitOmniboxSearch(query: String) {
         guard let tab = tabManager.selectedTab else { return }
@@ -64,11 +65,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
             return
         }
 
-        guard let engine = searchEnginesManager.defaultEngine,
-              let baseSearchURL = engine.searchURLForQuery(query) else {
-            return
-        }
-        let searchURL = baseSearchURL.appendingQueryItems([URLQueryItem(name: "ar", value: "1")])
+        let searchURL = URL.ecosiaSearchWithQuery(query, autoRouting: true)
         finishEditingAndSubmit(searchURL, visitType: .typed, forTab: tab)
     }
 
