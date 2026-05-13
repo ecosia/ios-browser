@@ -275,24 +275,16 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         return isWideIPad ? 160 : .ecosia.space._m
     }
 
-    /// Pushes the collection view's content up far enough that the last cells
-    /// (shortcut tiles, stats cards, etc.) clear the floating omnibox pill
-    /// instead of being obscured by it. Driven from `viewDidLayoutSubviews` so
-    /// rotations / size changes stay accurate. The 16pt cushion above the pill
-    /// matches the visual breathing room in the Figma layout.
+
+    /// Called from `viewDidLayoutSubviews`. The omnibox cushion is now baked
+    /// into the impact section's fill height (see `createEcosiaImpactLayout`),
+    /// so no contentInset tuning is required — clear any inset left over
+    /// from previous frames so it doesn't compound with the layout.
     func updateNTPCollectionViewBottomInsetForOmnibox() {
-        guard let bar = ntpSearchBar,
-              let collectionView = homepageCollectionView,
-              let collectionParent = collectionView.superview else { return }
-
-        let barInView = bar.frame
-        let collectionInView = collectionParent.convert(collectionView.frame, to: view)
-        let cushion: CGFloat = .ecosia.space._m
-        let neededInset = max(0, collectionInView.maxY - barInView.minY + cushion)
-
-        if abs(collectionView.contentInset.bottom - neededInset) > 0.5 {
-            collectionView.contentInset.bottom = neededInset
-            collectionView.verticalScrollIndicatorInsets.bottom = neededInset
+        guard let collectionView = homepageCollectionView else { return }
+        if collectionView.contentInset.bottom != 0 {
+            collectionView.contentInset.bottom = 0
+            collectionView.verticalScrollIndicatorInsets.bottom = 0
         }
     }
 
