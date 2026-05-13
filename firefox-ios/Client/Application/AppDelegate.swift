@@ -230,6 +230,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
 
         addObservers()
 
+        // Ecosia: Send the install event. It happens only once per App install.
+        Analytics.shared.install()
+
         /// Prewarm translation resources off the main thread
         /// This will fetch the translator WASM and model attachments for the device language.
         /// Running this on a utility QoS to avoid impacting app launch time.
