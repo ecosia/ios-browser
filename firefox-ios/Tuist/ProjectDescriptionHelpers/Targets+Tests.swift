@@ -213,11 +213,7 @@ public enum TestTargets {
             bundleId: "com.ecosia.tests.Ecosia",
             infoPlist: .default,
             sources: [
-                "EcosiaTests/*.swift",
-                "EcosiaTests/Mocks/**/*.swift",
-                "EcosiaTests/UI/**/*.swift",
-                "EcosiaTests/Core/**/*.swift",
-                "EcosiaTests/IntegrationTests/**/*.swift",
+                .glob("EcosiaTests/**/*.swift", excluding: ["EcosiaTests/SnapshotTests/**/*.swift"]),
                 // Shared ClientTests helpers required by integration tests
                 "firefox-ios-tests/Tests/ClientTests/XCTestCaseExtensions.swift",
                 "firefox-ios-tests/Tests/ClientTests/ProfileTest.swift",
