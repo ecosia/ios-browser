@@ -629,6 +629,15 @@ class BrowserViewController: UIViewController,
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        /* Ecosia: Lock the NTP/homepage to portrait on iPhone — the omnibox /
+           wallpaper layout is designed around the portrait aspect ratio. Web
+           content still supports landscape. See `supportedOrientations(forPhoneHomepage:)`.
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .allButUpsideDown
+        } else {
+            return .all
+        }
+        */
         return Self.supportedOrientations(forPhoneHomepage: contentContainer.hasAnyHomepage)
     }
 
