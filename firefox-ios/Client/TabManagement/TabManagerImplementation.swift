@@ -121,13 +121,20 @@ class TabManagerImplementation: NSObject,
     }
 
     init(profile: Profile,
-         imageStore: DiskImageStore = AppContainer.shared.resolve(),
+         // Ecosia: Use resolveOptional / fallback defaults so that TabManagerImplementation can be
+         // created during the brief window after AppContainer.shared.reset() in unit-test setUp
+         // (e.g. DependencyHelperMock) without crashing. AppContainer is not thread-safe; background
+         // tasks from the app's scene startup can race with the synchronous reset() + re-register
+         // sequence. imageStore is nil-safe (optional chaining throughout). windowManager falls back
+         // to a fresh WindowManagerImplementation() which is inert but non-crashing for the stale
+         // TabManagerImplementation that scene setup would discard anyway.
+         imageStore: DiskImageStore? = AppContainer.shared.resolveOptional(),
          logger: Logger = DefaultLogger.shared,
          uuid: ReservedWindowUUID,
          tabDataStore: TabDataStore? = nil,
          tabSessionStore: TabSessionStore = DefaultTabSessionStore(),
          notificationCenter: NotificationProtocol = NotificationCenter.default,
-         windowManager: WindowManager = AppContainer.shared.resolve(),
+         windowManager: WindowManager = (AppContainer.shared.resolveOptional() as WindowManager?) ?? WindowManagerImplementation(),
          tabs: [Tab] = []
     ) {
         let dataStore =  tabDataStore ?? DefaultTabDataStore(logger: logger, fileManager: DefaultTabFileManager())

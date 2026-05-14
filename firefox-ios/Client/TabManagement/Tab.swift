@@ -455,7 +455,7 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
          tabCreatedTime: Date = Date(),
          fileManager: FileManagerProtocol = FileManager.default,
          logger: Logger = DefaultLogger.shared,
-         documentLogger: DocumentLogger = AppContainer.shared.resolve(),
+         documentLogger: DocumentLogger = (AppContainer.shared.resolveOptional() as DocumentLogger?) ?? DocumentLogger(logger: DefaultLogger.shared),
          dispatchQueue: DispatchQueueInterface = DispatchQueue.global(qos: .background)) {
         self.nightMode = false
         self.windowUUID = windowUUID
