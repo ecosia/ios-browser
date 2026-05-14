@@ -151,13 +151,15 @@ final class AuthWorkflowTests: XCTestCase {
         let newMockProvider = MockAuth0Provider()
         newMockProvider.credentialsManager = mockCredentialsManager
         newMockProvider.mockCredentials = testCredentials
-        _ = EcosiaAuthenticationService(auth0Provider: newMockProvider)
+        // Ecosia: hold a strong reference so async credential-retrieval tasks are not cancelled.
+        let newAuth = EcosiaAuthenticationService(auth0Provider: newMockProvider)
 
         // Allow time for credential retrieval to complete
         try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         // Assert - Should automatically retrieve stored credentials
         XCTAssertEqual(newMockProvider.retrieveCredentialsCallCount, 1)
+        _ = newAuth
         // Note: The actual state depends on the credential retrieval success
     }
 
@@ -271,11 +273,12 @@ final class AuthWorkflowTests: XCTestCase {
         mockCredentialsManager.storedCredentials = testCredentials
 
         // Act - Multiple concurrent login attempts
+        let auth = self.auth!
         await withTaskGroup(of: Void.self) { group in
             for _ in 0..<3 {
                 group.addTask {
                     do {
-                        try await self.auth.login()
+                        try await auth.login()
                     } catch {
                         // Expected to potentially fail during concurrent operations
                     }
@@ -305,18 +308,26 @@ final class AuthWorkflowTests: XCTestCase {
         }
 
         // Act - Concurrent login and renew
+        // Ecosia: Assign mock state before entering the task group to avoid a data race.
+        // MockAuth0Provider is @unchecked Sendable with unprotected mutable properties;
+        // mutations inside task-group child tasks (which are NOT MainActor-isolated in
+        // Swift 6) can race with reads in sibling tasks. Pre-setting the state on
+        // MainActor before the group starts is equivalent and deterministic.
+        mockProvider.mockCredentials = renewedCredentials
+        mockCredentialsManager.storedCredentials = renewedCredentials
+        let auth = self.auth!
+        let mockProvider = self.mockProvider!
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 do {
-                    try await self.auth.login()
+                    try await auth.login()
                 } catch {
                     // Expected to potentially fail during concurrent operations
                 }
             }
             group.addTask {
-                self.mockProvider.mockCredentials = renewedCredentials
                 do {
-                    try await self.auth.renewCredentialsIfNeeded()
+                    try await auth.renewCredentialsIfNeeded()
                 } catch {
                     // Expected to potentially fail during concurrent operations
                 }
