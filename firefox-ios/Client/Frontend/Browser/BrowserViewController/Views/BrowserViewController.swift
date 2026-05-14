@@ -564,7 +564,9 @@ class BrowserViewController: UIViewController,
         appStartupTelemetry: AppStartupTelemetry = DefaultAppStartupTelemetry(),
         logger: Logger = DefaultLogger.shared,
         summarizerNimbusUtils: SummarizerNimbusUtils = DefaultSummarizerNimbusUtils(),
-        documentLogger: DocumentLogger = AppContainer.shared.resolve(),
+        // Ecosia: Use resolveOptional() so that BrowserViewController can be created safely when
+        // AppContainer is temporarily empty (brief window after reset() in unit-test setUp).
+        documentLogger: DocumentLogger = (AppContainer.shared.resolveOptional() as DocumentLogger?) ?? DocumentLogger(logger: DefaultLogger.shared),
         appAuthenticator: AppAuthenticationProtocol = AppAuthenticator(),
         searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve(),
         userInitiatedQueue: DispatchQueueInterface = DispatchQueue.global(qos: .userInitiated),
