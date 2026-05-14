@@ -19,7 +19,10 @@ final class ASSummarizerRemoteConfig: Sendable {
     private let rsClient: RemoteSettingsClient?
     private let profile: Profile
 
-    init?(profile: Profile = AppContainer.shared.resolve()) {
+    // Ecosia: Use resolveOptional() so that init does not crash when AppContainer is reset during
+    // unit-test setUp (which temporarily empties the container).
+    init?(profile: Profile? = AppContainer.shared.resolveOptional()) {
+        guard let profile else { return nil }
         self.profile = profile
         self.service = profile.remoteSettingsService
         self.rsClient = ASRemoteSettingsCollection.summarizerModelsConfig.makeClient()
