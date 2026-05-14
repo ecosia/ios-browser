@@ -17,7 +17,9 @@ extension ASRemoteSettingsCollection {
     /// Convenience. Creates a client using the default service.
     /// - Returns: a Remote Settings client which can be used to fetch records from the backend.
     func makeClient() -> RemoteSettingsClient? {
-        let profile: Profile = AppContainer.shared.resolve()
+        // Ecosia: Use resolveOptional() so that background tasks do not crash when AppContainer
+        // is reset during unit-test setUp (which temporarily empties the container).
+        guard let profile: Profile = AppContainer.shared.resolveOptional() else { return nil }
         return profile.remoteSettingsService.makeClient(collectionName: rawValue)
     }
 }
