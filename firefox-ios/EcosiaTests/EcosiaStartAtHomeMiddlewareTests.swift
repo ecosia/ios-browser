@@ -181,6 +181,8 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
     }
 
     // MARK: - Helpers
+    // Ecosia: profile parameter removed from EcosiaStartAtHomeMiddleware because prefs are unused
+    // (the middleware always returns shouldStartAtHome: false regardless of any setting).
     private func createSubject(with mockProfile: Profile = MockProfile()) -> EcosiaStartAtHomeMiddleware {
         let testDate = Date(timeIntervalSince1970: 1_000_065_600)
         let lastSessionDate = Calendar.current.date(
@@ -191,7 +193,6 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
         UserDefaults.standard.setValue(lastSessionDate, forKey: "LastActiveTimestamp")
         return MainActor.assumeIsolated {
             EcosiaStartAtHomeMiddleware(
-                profile: mockProfile,
                 windowManager: mockWindowManager,
                 dateProvider: MockDateProvider(fixedDate: testDate))
         }
