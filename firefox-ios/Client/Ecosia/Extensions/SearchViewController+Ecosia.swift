@@ -47,10 +47,8 @@ extension SearchViewController {
 
     /// Handle AI Chat navigation when item is selected
     func handleAIChatSelection(_ indexPath: IndexPath) {
-        let url = Environment.current.urlProvider.aiChat(origin: .autocomplete)
-        let finalURL = url.appendingQueryItems([URLQueryItem(name: "q", value: viewModel.searchQuery)])
-
-        searchDelegate?.searchViewController(self, didSelectURL: finalURL, searchTerm: viewModel.searchQuery)
+        let url = Environment.current.urlProvider.aiChat(origin: .autocomplete, query: viewModel.searchQuery)
+        searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: viewModel.searchQuery)
         Analytics.shared.aiChatAutocompleteForQuery(viewModel.searchQuery)
     }
 

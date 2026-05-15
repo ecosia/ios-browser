@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+import Shared
 import Ecosia
 import Redux
 
@@ -27,6 +28,126 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         types.forEach {
             collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
+        }
+    }
+
+    // Ecosia: Embeds the AI-ready Omnibox pinned to the bottom of the NTP view.
+    // Replaces the standard URL bar while the homepage is visible. Submission and
+    // suggestions are wired through the browser's existing navigation pipeline.
+    func setupNTPSearchBar(delegate: NTPSearchBarDelegate) {
+        let searchBar = NTPSearchBarView()
+        searchBar.delegate = delegate
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(searchBar)
+
+        let bottomConstraint = searchBar.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+            constant: -.ecosia.space._1l
+        )
+        let horizontalInset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
+        let leadingConstraint = searchBar.leadingAnchor.constraint(
+            equalTo: view.leadingAnchor,
+            constant: horizontalInset
+        )
+        let trailingConstraint = searchBar.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: -horizontalInset
+        )
+        // The pill self-sizes between min and max to accommodate multi-line
+        // input — content inside drives the actual height.
+        let minHeightConstraint = searchBar.heightAnchor.constraint(
+            greaterThanOrEqualToConstant: NTPSearchBarView.minHeight
+        )
+        let maxHeightConstraint = searchBar.heightAnchor.constraint(
+            lessThanOrEqualToConstant: NTPSearchBarView.maxHeight
+        )
+        NSLayoutConstraint.activate([
+            leadingConstraint,
+            trailingConstraint,
+            bottomConstraint,
+            minHeightConstraint,
+            maxHeightConstraint
+        ])
+
+        searchBar.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        setNTPSearchBar(searchBar)
+        setNTPSearchBarBottomConstraint(bottomConstraint)
+        setNTPSearchBarLeadingConstraint(leadingConstraint)
+        setNTPSearchBarTrailingConstraint(trailingConstraint)
+
+        // Swipe-down on the NTP content drags the keyboard with it — when the
+        // keyboard fully dismisses, the omnibox loses focus naturally.
+        homepageCollectionView?.keyboardDismissMode = .interactive
+
+        searchBar.onContentChange = { [weak self] text in
+            self?.handleOmniboxContentChange(text)
+        }
+
+        installOmniboxCloseButton()
+        installOmniboxTapOutsideDismiss()
+
+        KeyboardHelper.defaultHelper.addDelegate(self)
+    }
+
+    private func installOmniboxCloseButton() {
+        let button = UIButton(type: .system)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        button.setImage(UIImage(systemName: "xmark", withConfiguration: symbolConfig), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 18
+        button.alpha = 0
+        button.isHidden = true
+        button.accessibilityLabel = String.localized(.close)
+        button.accessibilityIdentifier = "NTPOmniboxCloseButton"
+        button.addTarget(self, action: #selector(handleOmniboxCloseButtonTapped), for: .touchUpInside)
+        view.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: .ecosia.space._m),
+            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -.ecosia.space._m),
+            button.widthAnchor.constraint(equalToConstant: 36),
+            button.heightAnchor.constraint(equalToConstant: 36)
+        ])
+
+        let theme = themeManager.getCurrentTheme(for: windowUUID).colors
+        button.backgroundColor = theme.ecosia.backgroundElevation2
+        button.tintColor = theme.ecosia.textPrimary
+
+        setNTPOmniboxCloseButton(button)
+    }
+
+    private func installOmniboxTapOutsideDismiss() {
+        let recognizer = UITapGestureRecognizer(target: self,
+                                                action: #selector(handleTapOutsideOmnibox(_:)))
+        recognizer.cancelsTouchesInView = false
+        view.addGestureRecognizer(recognizer)
+    }
+
+    private func handleOmniboxContentChange(_ text: String) {
+        guard let button = ntpOmniboxCloseButton else { return }
+        let shouldShow = !text.isEmpty
+        guard shouldShow != !button.isHidden else { return }
+        if shouldShow {
+            button.isHidden = false
+            UIView.animate(withDuration: 0.2) { button.alpha = 1 }
+        } else {
+            UIView.animate(withDuration: 0.2,
+                           animations: { button.alpha = 0 },
+                           completion: { _ in button.isHidden = true })
+        }
+    }
+
+    @objc private func handleOmniboxCloseButtonTapped() {
+        guard let bar = ntpSearchBar else { return }
+        bar.text = ""
+        _ = bar.resignFirstResponder()
+    }
+
+    @objc private func handleTapOutsideOmnibox(_ gesture: UITapGestureRecognizer) {
+        guard let bar = ntpSearchBar, bar.isFirstResponder else { return }
+        let location = gesture.location(in: view)
+        if !bar.frame.contains(location) {
+            _ = bar.resignFirstResponder()
         }
     }
 
@@ -57,6 +178,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         // Store adapter
         setEcosiaAdapter(adapter)
+
+        // Ecosia: Add the embedded NTP search bar (Approach 1 spike)
+        setupNTPSearchBar(delegate: browserViewController)
 
         // Register Ecosia cell types; NTPLogoCell removed — logo now lives in NTPHeader.
         var ecosiaCellTypes: [ReusableCell.Type] = [
@@ -133,8 +257,43 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         homepageCollectionView?.isScrollEnabled = isPhoneLandscape
     }
 
+    /// Re-applies the iPad horizontal inset to the omnibox after a rotation or
+    /// size-class change (e.g. iPad split-screen resize). On iPhone-class
+    /// surfaces the value collapses back to the default `_m` margin.
+    func updateNTPSearchBarHorizontalInset() {
+        let inset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
+        ntpSearchBarLeadingConstraint?.constant = inset
+        ntpSearchBarTrailingConstraint?.constant = -inset
+    }
+
+    /// 160pt of breathing room on iPad regular-width surfaces so the pill doesn't
+    /// stretch the full width of a 1024pt display; everything else (iPhone, iPad
+    /// narrow split-screen) uses the standard `_m` margin.
+    fileprivate static func ntpSearchBarHorizontalInset(for traitCollection: UITraitCollection) -> CGFloat {
+        let isWideIPad = traitCollection.userInterfaceIdiom == .pad
+            && traitCollection.horizontalSizeClass == .regular
+        return isWideIPad ? 160 : .ecosia.space._m
+    }
+
+    /// Called from `viewDidLayoutSubviews`. The omnibox cushion is now baked
+    /// into the impact section's fill height (see `createEcosiaImpactLayout`),
+    /// so no contentInset tuning is required — clear any inset left over
+    /// from previous frames so it doesn't compound with the layout.
+    func updateNTPCollectionViewBottomInsetForOmnibox() {
+        guard let collectionView = homepageCollectionView else { return }
+        if collectionView.contentInset.bottom != 0 {
+            collectionView.contentInset.bottom = 0
+            collectionView.verticalScrollIndicatorInsets.bottom = 0
+        }
+    }
+
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
+        // Defensive: if the user navigated away while the omnibox was editing,
+        // tear down the suggestions overlay so the SearchLoader doesn't keep a
+        // dangling reference to this view's autocomplete sink.
+        ntpSearchBar?.delegate?.ntpSearchBarDidCancel()
+        _ = ntpSearchBar?.resignFirstResponder()
         ecosiaAdapter?.viewDidDisappear()
     }
 
@@ -142,6 +301,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     func updateEcosiaTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         ecosiaAdapter?.updateTheme(theme)
+        ntpSearchBar?.applyTheme(theme: theme)
     }
 
     /// Refreshes the Ecosia snapshot so the UI updates
@@ -163,5 +323,43 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         let wallpaperConfig = adapter.getNTPBackgroundConfiguration()
         let state = WallpaperState(windowUUID: windowUUID, wallpaperConfiguration: wallpaperConfig)
         return state
+    }
+}
+
+// MARK: - KeyboardHelperDelegate
+// Ecosia: Keeps the omnibox glued just above the keyboard while editing.
+extension HomepageViewController: KeyboardHelperDelegate {
+    private static let restingBottomOffset: CGFloat = .ecosia.space._1l
+
+    public func keyboardHelper(
+        _ keyboardHelper: KeyboardHelper,
+        keyboardWillShowWithState state: KeyboardState
+    ) {
+        let keyboardHeight = state.intersectionHeightForView(view)
+        guard keyboardHeight > 0, let bottomConstraint = ntpSearchBarBottomConstraint else { return }
+        let safeAreaBottom = view.safeAreaInsets.bottom
+        bottomConstraint.constant = -(keyboardHeight - safeAreaBottom + Self.restingBottomOffset)
+        UIView.animate(
+            withDuration: state.animationDuration,
+            delay: 0,
+            options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
+        ) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    public func keyboardHelper(
+        _ keyboardHelper: KeyboardHelper,
+        keyboardWillHideWithState state: KeyboardState
+    ) {
+        guard let bottomConstraint = ntpSearchBarBottomConstraint else { return }
+        bottomConstraint.constant = -Self.restingBottomOffset
+        UIView.animate(
+            withDuration: state.animationDuration,
+            delay: 0,
+            options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
+        ) {
+            self.view.layoutIfNeeded()
+        }
     }
 }

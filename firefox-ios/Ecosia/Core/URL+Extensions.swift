@@ -8,6 +8,7 @@ extension URL {
 
     public enum EcosiaQueryItemName: String {
         case
+        autoRedirect = "ar",
         page = "p",
         query = "q",
         typeTag = "tt",
@@ -26,10 +27,25 @@ extension URL {
         }
     }
 
-    public static func ecosiaSearchWithQuery(_ query: String, urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> URL {
+    /// Builds the Ecosia SERP URL for a typed query.
+    /// - Parameters:
+    ///   - query: The user's search term.
+    ///   - urlProvider: Provider supplying the search root URL. Defaults to the current environment.
+    ///   - autoRedirect: When `true`, appends the `ar=1` query parameter so the backend can decide
+    ///     whether the request lands on AI search or the standard SERP. Use this for entry points
+    ///     where the routing decision belongs to the backend (e.g. the NTP omnibox).
+    public static func ecosiaSearchWithQuery(
+        _ query: String,
+        urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider,
+        autoRedirect: Bool = false
+    ) -> URL {
         var components = URLComponents(url: urlProvider.root, resolvingAgainstBaseURL: false)!
         components.path = "/search"
-        components.queryItems = [item(name: .query, value: query), item(name: .typeTag, value: "iosapp")]
+        var queryItems = [item(name: .query, value: query), item(name: .typeTag, value: "iosapp")]
+        if autoRedirect {
+            queryItems.append(item(name: .autoRedirect, value: "1"))
+        }
+        components.queryItems = queryItems
         return components.url!
     }
 

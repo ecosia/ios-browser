@@ -197,8 +197,12 @@ class AutocompleteTextField: UITextField,
         return string.lowercased().stringByTrimmingLeadingCharactersInSet(CharacterSet.whitespaces)
     }
 
-    /// Commits the completion by setting the text and removing the highlight.
+    /* Ecosia: Relax visibility so the NTP omnibox submit button can accept the
+       pending autocomplete suggestion before submitting, matching the Return-key path.
     private func applyCompletion() {
+    */
+    /// Commits the completion by setting the text and removing the highlight.
+    func applyCompletion() {
         // Clear the current completion, then set the text without the attributed style.
         let text = (self.text ?? "") + (self.autocompleteTextLabel?.text ?? "")
         let didRemoveCompletion = removeCompletion()

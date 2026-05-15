@@ -94,20 +94,23 @@ extension HomepageSectionLayoutProvider {
 
         /* Size the impact section to fill the remaining card height so TopSites is
            always pinned at the bottom. Subtract the fixed-height surrounding sections:
-             • ecosiaHeader:  NTPHeaderView ZStack height + vertical padding (_m × 2)
-                 iOS 16+: EcosiaAccountNavButton (40 pt + 4+4 pt padding) = 48 pt → 48 + 32 = 80 pt
-                 iOS 15:  EcosiaCustomizeButton 40 pt → 40 + 32 = 72 pt
-             • topSites cell: 100 pt + _1s (8 pt) top inset + _1l (24 pt) bottom inset = 132 pt
+             • ecosiaHeader:  estimated 64 pt (matches createEcosiaHeaderLayout)
+             • topSites cell: estimated 100 pt + 8 pt top inset + 26 pt bottom inset = 134 pt
+           Also subtract the embedded NTP omnibox footprint (min height +
+           a single `_1l` cushion above) so the TopSites grid clears the
+           omnibox on every form factor instead of being covered by it. The
+           cushion below the pill is supplied by its own bottom constraint,
+           so we only reserve space for the pill itself plus a single gap
+           above it — this gives the impact cell more room than reserving
+           cushions on both sides.
          */
-        let topSitesSectionHeight: CGFloat = 100 + CGFloat.ecosia.space._1s + CGFloat.ecosia.space._1l
-        // Ecosia: Use accurate header height per OS so the impact section isn't over-allocated.
-        let headerSectionHeight: CGFloat
-        if #available(iOS 16, *) {
-            headerSectionHeight = 80
-        } else {
-            headerSectionHeight = 72
-        }
-        let fillHeight = environment.container.contentSize.height - headerSectionHeight - topSitesSectionHeight
+        let topSitesSectionHeight: CGFloat = 100 + CGFloat.ecosia.space._1s + 26
+        let headerSectionHeight: CGFloat = 64
+        let omniboxFootprint: CGFloat = NTPSearchBarView.minHeight + .ecosia.space._1l
+        let fillHeight = environment.container.contentSize.height
+            - headerSectionHeight
+            - topSitesSectionHeight
+            - omniboxFootprint
         // Fall back to content-size estimate so the cell is never shorter than its content.
         let impactHeight = max(304, fillHeight)
 

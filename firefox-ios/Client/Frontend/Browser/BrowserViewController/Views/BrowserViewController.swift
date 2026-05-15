@@ -629,11 +629,27 @@ class BrowserViewController: UIViewController,
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        /* Ecosia: Lock the NTP/homepage to portrait on iPhone — the omnibox /
+           wallpaper layout is designed around the portrait aspect ratio. Web
+           content still supports landscape. See `supportedOrientations(forPhoneHomepage:)`.
         if UIDevice.current.userInterfaceIdiom == .phone {
             return .allButUpsideDown
         } else {
             return .all
         }
+        */
+        return Self.supportedOrientations(forPhoneHomepage: contentContainer.hasAnyHomepage)
+    }
+
+    /// Ecosia: Centralized orientation policy so it stays in sync between the
+    /// VC-level override and the AppDelegate's `application(_:supportedInterfaceOrientationsFor:)`.
+    /// iPhone: NTP/homepage is portrait-only; everything else is allButUpsideDown.
+    /// iPad: all orientations.
+    static func supportedOrientations(forPhoneHomepage isHomepage: Bool) -> UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return isHomepage ? .portrait : .allButUpsideDown
+        }
+        return .all
     }
 
     private func didInit() {
@@ -1412,7 +1428,21 @@ class BrowserViewController: UIViewController,
     /// As part of the homepage search bar work, we want to only hide the toolbar when the homepage search bar appears.
     /// The homepage search bar should not appear if we are in editing mode.
     private func shouldHideAddressToolbar() {
+        /* Ecosia: Also trigger toolbar hiding when the Ecosia NTP search bar is present,
+           without requiring the homepageSearchBar Nimbus experiment to be enabled.
         guard featureFlags.isFeatureEnabled(.homepageSearchBar, checking: .buildOnly) else { return }
+        */
+        let hasEcosiaNTPSearchBar = contentContainer.hasHomepage &&
+            (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar != nil
+        guard featureFlags.isFeatureEnabled(.homepageSearchBar, checking: .buildOnly) || hasEcosiaNTPSearchBar else {
+            // Ecosia: When we're no longer on the NTP, restore the toolbar if it was hidden by Ecosia logic.
+            guard addressToolbarContainer.isHidden else { return }
+            addressToolbarContainer.isHidden = false
+            store.dispatch(
+                GeneralBrowserAction(windowUUID: windowUUID, actionType: GeneralBrowserActionType.didUnhideToolbar)
+            )
+            return
+        }
         let toolbarState = store.state.screenState(
             ToolbarState.self,
             for: .toolbar,
@@ -1427,7 +1457,11 @@ class BrowserViewController: UIViewController,
             window: windowUUID
         )?.searchState.shouldShowSearchBar ?? false
 
+        /* Ecosia: When the Ecosia NTP search bar is present it acts as the search bar,
+           so treat it the same as shouldShowSearchBar for the toolbar-hiding decision.
         guard shouldShowSearchBar, !isEditing, contentContainer.hasHomepage else {
+        */
+        guard shouldShowSearchBar || hasEcosiaNTPSearchBar, !isEditing, contentContainer.hasHomepage else {
             guard addressToolbarContainer.isHidden == true else { return }
             addressToolbarContainer.isHidden = false
             store.dispatch(
@@ -1943,6 +1977,17 @@ class BrowserViewController: UIViewController,
         let keyboardHeight = keyboardState?.intersectionHeightForView(view)
         let isKeyboardVisible = keyboardHeight != nil && keyboardHeight! > 0
 
+        // Ecosia: when the NTP omnibox owns the keyboard, the address toolbar is
+        // hidden and the omnibox tracks the keyboard with its own constraint.
+        // Skipping the keyboard spacer here keeps `overKeyboardContainer` flat,
+        // so `contentContainer` (and the homepage wallpaper card inside it)
+        // stays at full height instead of compressing as the keyboard rises.
+        if let homepage = contentContainer.contentController as? HomepageViewController,
+           homepage.ntpSearchBar?.isFirstResponder == true {
+            overKeyboardContainer.removeKeyboardSpacer()
+            return
+        }
+
         guard isBottomSearchBar, isKeyboardVisible, let keyboardHeight else {
             overKeyboardContainer.removeKeyboardSpacer()
             return
@@ -2058,6 +2103,11 @@ class BrowserViewController: UIViewController,
         if !isPrivate {
             ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
         }
+
+        // Ecosia: Re-evaluate the orientation lock now that the NTP is the
+        // current content — on iPhone this forces a rotation back to portrait
+        // if the user opens the homepage while in landscape.
+        updateSupportedOrientationsForContentChange()
     }
 
     func showEmbeddedWebview() {
@@ -2079,6 +2129,30 @@ class BrowserViewController: UIViewController,
         browserDelegate?.show(webView: webView)
         if !isToolbarTranslucencyRefactorEnabled {
             updateToolbarDisplay()
+        }
+
+        // Ecosia: Re-evaluate the orientation lock now that the webview is
+        // the current content — releases the iPhone portrait lock that the
+        // NTP imposes so web pages can be viewed in landscape.
+        updateSupportedOrientationsForContentChange()
+    }
+
+    /// Notifies UIKit that `supportedInterfaceOrientations` may have changed
+    /// — used when the contentContainer flips between the NTP (portrait-only
+    /// on iPhone) and the webview (all-but-upside-down on iPhone) so iOS can
+    /// rotate the device to a supported orientation if needed. Pushes the
+    /// new value to `AppDelegate.orientationLock` as well — that property is
+    /// what `application(_:supportedInterfaceOrientationsFor:)` returns, so
+    /// without updating it the navigation/root chain can still allow rotation
+    /// past the VC-level override.
+    private func updateSupportedOrientationsForContentChange() {
+        let lock = Self.supportedOrientations(forPhoneHomepage: contentContainer.hasAnyHomepage)
+        (UIApplication.shared.delegate as? AppDelegate)?.orientationLock = lock
+
+        if #available(iOS 16.0, *) {
+            setNeedsUpdateOfSupportedInterfaceOrientations()
+        } else {
+            UIViewController.attemptRotationToDeviceOrientation()
         }
     }
 
@@ -2230,7 +2304,11 @@ class BrowserViewController: UIViewController,
         }
     }
 
+    /* Ecosia: Relax visibility so the NTP omnibox extension can lazily create the
+       search controller when the embedded search bar begins editing.
     fileprivate func createSearchControllerIfNeeded() {
+    */
+    func createSearchControllerIfNeeded() {
         guard self.searchController == nil else { return }
 
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
@@ -4587,6 +4665,31 @@ extension BrowserViewController: SearchViewControllerDelegate {
         searchTerm: String?
     ) {
         guard let tab = tabManager.selectedTab else { return }
+
+        // Ecosia: When the suggestion came from the NTP omnibox, route the tap
+        // through the same submit pipeline the keyboard-return key uses
+        // (`ntpSearchBarDidSubmit`) so search-term selections build the URL via
+        // the default engine and record the same telemetry/conversion metrics.
+        // History/bookmark/remote-tab rows have no search term — fall back to
+        // loading the URL directly, but still tear the omnibox down and force
+        // the webview swap that the URL-bar overlay chain would normally do.
+        let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
+        if isOmniboxOverlay {
+            if let searchTerm, !searchTerm.isEmpty {
+                ntpSearchBarDidSubmit(searchTerm, mode: .search)
+                return
+            }
+            hideOmniboxSuggestions()
+            if let homepage = contentContainer.contentController as? HomepageViewController,
+               let bar = homepage.ntpSearchBar {
+                bar.text = ""
+                _ = bar.resignFirstResponder()
+            }
+            searchTelemetry.shouldSetUrlTypeSearch = true
+            finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
+            showEmbeddedWebview()
+            return
+        }
 
         searchTelemetry.shouldSetUrlTypeSearch = true
         finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
