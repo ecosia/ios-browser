@@ -88,9 +88,17 @@ public enum TestTargets {
             bundleId: "org.mozilla.ios.StorageTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/StorageTests/**/*.swift"],
+            resources: [
+                // Ecosia: certificate files and DB fixtures required by CertTests and TestBrowserDB.
+                .glob(pattern: "firefox-ios-tests/Tests/StorageTests/**/*.pem"),
+                .glob(pattern: "firefox-ios-tests/Tests/StorageTests/fixtures/**"),
+            ],
             dependencies: [
                 .target(name: "Client"),
                 .target(name: "Storage"),
+                // Ecosia: RustAutofillTests and RustRemoteTabsTests import MozillaAppServices directly,
+                // so StorageTests must link RustMozillaAppServices to resolve those symbols at link time.
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "Common"),
                 .package(product: "Shared"),
                 .package(product: "Fuzi"),
@@ -224,10 +232,20 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/Utils/StoreTestUtility.swift",
                 "firefox-ios-tests/Tests/ClientTests/Microsurvey/Mock/MockMicrosurveySurfaceManager.swift",
             ],
+            resources: [
+                // Ecosia: JSON fixtures, HTML import/export files, and other test assets
+                // required by NewsTests, ReferralsTests, and bookmark import/export tests.
+                // Bundle identifier must match bundleId ("com.ecosia.tests.Ecosia") in Bundle+EcosiaTests.swift.
+                .glob(pattern: "EcosiaTests/Core/Resources/**"),
+            ],
             dependencies: [
                 .target(name: "Client"),
                 .target(name: "Ecosia"),
                 .target(name: "Storage"),
+                // Ecosia: EcosiaTests includes MockProfile, MockHistoryHandler, and
+                // BookmarksHandlerMock which import MozillaAppServices directly.
+                // RustMozillaAppServices must be linked to resolve those symbols at link time.
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "Common"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
