@@ -6,6 +6,8 @@ import Shared
 import XCTest
 
 @testable import Client
+// Ecosia: IntroScreenManager tests use User.shared which lives in the Ecosia module
+@testable import Ecosia
 
 final class IntroScreenManagerTests: XCTestCase {
     var prefs: MockProfilePrefs!
