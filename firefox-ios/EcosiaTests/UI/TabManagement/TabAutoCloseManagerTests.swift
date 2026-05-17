@@ -409,11 +409,20 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
 // MARK: - Custom Mock TabManager
 
 /*
- The shared MockTabManager has an empty removeTab implementation,
+ The shared MockTabManager has empty removeTab implementations,
  but our tests need to verify that tabs actually get removed.
  This subclass provides a working implementation for testing.
+
+ Ecosia: InvisibleTabAutoCloseManager.closeTab calls the
+ removeTab(_ tabUUID: TabUUID) API (no completion), so that is the
+ variant we must override; the (Tab, completion:) variant is no
+ longer exercised by production.
  */
 class TabAutoCloseTestMockTabManager: MockTabManager {
+    override func removeTab(_ tabUUID: TabUUID) {
+        tabs.removeAll { $0.tabUUID == tabUUID }
+    }
+
     override func removeTab(_ tab: Tab, completion: (() -> Void)?) {
         tabs.removeAll { $0.tabUUID == tab.tabUUID }
         completion?()
