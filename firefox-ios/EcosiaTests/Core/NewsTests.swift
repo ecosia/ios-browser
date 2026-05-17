@@ -130,10 +130,18 @@ import XCTest
     func testNeedsUpdateAfterLoading() {
         let expect = expectation(description: "")
         mockSavedItems()
-        User.shared.news = .distantPast
         let news = News()
 
         news.subscribe(self) { _ in
+            /*
+             User.shared.news is a process-global mutated asynchronously by
+             News.save() (a fire-and-forget MainActor Task). Setting it inside
+             the callback — immediately before reading needsUpdate, with no
+             suspension point in between — makes this check deterministic and
+             immune to stray async writes from sibling tests, mirroring the
+             inline pattern used for needsUpdate2/needsUpdate3 below.
+             */
+            User.shared.news = .distantPast
             let needsUpdate1 = MainActor.assumeIsolated { news.needsUpdate }
             XCTAssertTrue(needsUpdate1)
 
