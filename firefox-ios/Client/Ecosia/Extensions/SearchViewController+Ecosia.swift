@@ -59,6 +59,7 @@ extension SearchViewController {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
 
         cell.titleLabel.text = viewModel.searchQuery
+        applyOneLineHeadTruncation(to: cell.titleLabel)
 
         let aiSearchImage = UIImage(named: "searchLarge")?.withRenderingMode(.alwaysTemplate)
         cell.leftImageView.contentMode = .center
@@ -142,5 +143,18 @@ extension SearchViewController {
     func isValidSuggestionIndex(_ index: Int) -> Bool {
         guard let suggestions = viewModel.suggestions else { return false }
         return index < min(suggestions.count, 4)
+    }
+
+    // MARK: - One-line Truncation
+
+    /// Constrains a suggestion title to a single line truncated at the head so
+    /// very long queries reveal the trailing portion (where the bold
+    /// autocomplete completion lives) instead of wrapping over several rows.
+    /// `OneLineTableViewCell.prepareForReuse` does not reset these label
+    /// properties, but every suggestion-section cell configuration sets them
+    /// explicitly, so reuse across sections stays consistent.
+    func applyOneLineHeadTruncation(to titleLabel: UILabel) {
+        titleLabel.numberOfLines = 1
+        titleLabel.lineBreakMode = .byTruncatingHead
     }
 }
