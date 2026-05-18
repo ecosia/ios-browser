@@ -146,7 +146,12 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private func setupView() {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = .ecosia.borderRadius._l
-        clipsToBounds = true
+        // Don't clip — single-line labels (especially with Dynamic Type
+        // bumped up) need to render their full intrinsic height even when
+        // the row is sized smaller. The glass background and border still
+        // honour the corner radius via `layer.cornerRadius`, so the rounded
+        // card outline stays intact.
+        clipsToBounds = false
         addSubview(glassBackground)
 
         labelsStack.addArrangedSubview(titleLabel)

@@ -43,7 +43,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     private enum UX {
         static let submitButtonSize: CGFloat = .ecosia.space._3l
-        static let clearButtonSize: CGFloat = 24
+        static let clearButtonSize: CGFloat = 20
         static let shadowOpacity: Float = 0.10
         static let shadowRadius: CGFloat = 12
         static let shadowOffset = CGSize(width: 0, height: 4)
@@ -263,9 +263,11 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             counterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: .ecosia.space._m),
 
             // Clear-text button sits in the top-right of the pill, floating
-            // over the textView. Hidden until the user has content.
-            clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._1s),
-            clearButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.ecosia.space._1s),
+            // over the textView. Horizontally centered with the submit
+            // button so the two right-hand controls stack on the same axis.
+            // Hidden until the user has content.
+            clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._m),
+            clearButton.centerXAnchor.constraint(equalTo: submitButton.centerXAnchor),
             clearButton.widthAnchor.constraint(equalToConstant: UX.clearButtonSize),
             clearButton.heightAnchor.constraint(equalToConstant: UX.clearButtonSize)
         ])
