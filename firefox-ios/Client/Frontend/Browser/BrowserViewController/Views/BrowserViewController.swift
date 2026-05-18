@@ -4162,11 +4162,6 @@ class BrowserViewController: UIViewController,
     }
 
     func openSuggestions(searchTerm: String) {
-        // Ecosia: When the user is on a non-NTP page (e.g. a search-result
-        // page or any regular web page) the URL bar should behave like a
-        // plain text-entry field — no autocomplete overlay. The Ecosia
-        // omnibox provides the rich suggestions experience on the NTP only.
-        guard contentContainer.hasAnyHomepage else { return }
         if searchTerm.isEmpty {
             showZeroSearchView()
         } else {
