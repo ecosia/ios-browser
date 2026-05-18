@@ -26,8 +26,17 @@ protocol NTPSearchBarDelegate: AnyObject {
     func ntpSearchBarTextDidChange(_ searchTerm: String)
     /// Called when the text field becomes first responder.
     func ntpSearchBarDidBeginEditing()
-    /// Called when editing ends without a submission (e.g. tap outside).
+    /// Called when the text field resigns first responder for any reason
+    /// (explicit cancel, tap-outside, keyboard drag-dismiss). The host may
+    /// use it to update session-state telemetry but MUST NOT tear down the
+    /// suggestions overlay here — a keyboard drag-dismiss should leave the
+    /// list visible so the user can read it without the keyboard. Use
+    /// `ntpSearchBarRequestsOverlayDismiss` for explicit overlay teardown.
     func ntpSearchBarDidCancel()
+    /// Called when the user explicitly asks the omnibox UI to dismiss
+    /// (tap-outside the pill, close-button tap, host view disappearing).
+    /// The host is expected to tear down the suggestions overlay here.
+    func ntpSearchBarRequestsOverlayDismiss()
 }
 
 /// Pill-shaped search input pinned to the bottom of the redesigned NTP. Replaces

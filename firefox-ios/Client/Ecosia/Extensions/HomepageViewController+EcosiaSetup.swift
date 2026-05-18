@@ -140,15 +140,29 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     @objc private func handleOmniboxCloseButtonTapped() {
         guard let bar = ntpSearchBar else { return }
         bar.text = ""
-        _ = bar.resignFirstResponder()
+        if bar.isFirstResponder {
+            _ = bar.resignFirstResponder()
+        }
+        // The bar's `didCancel` callback no longer hides the overlay (that
+        // would tear it down on every keyboard drag-dismiss too), so always
+        // request the explicit dismiss here. After a drag-dismiss the bar
+        // isn't first responder either, but the request still tears the
+        // suggestions overlay down.
+        bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
     }
 
     @objc private func handleTapOutsideOmnibox(_ gesture: UITapGestureRecognizer) {
-        guard let bar = ntpSearchBar, bar.isFirstResponder else { return }
+        guard let bar = ntpSearchBar else { return }
         let location = gesture.location(in: view)
-        if !bar.frame.contains(location) {
+        guard !bar.frame.contains(location) else { return }
+        if bar.isFirstResponder {
             _ = bar.resignFirstResponder()
         }
+        // Always request the explicit overlay dismiss — `didCancel` no
+        // longer hides the overlay (so keyboard drag-dismiss leaves the
+        // list visible), and after a drag-dismiss the bar isn't first
+        // responder so `resignFirstResponder` above is a no-op.
+        bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
     }
 
     /// Sets up the Ecosia homepage adapter and integrates it with the view controller
@@ -291,8 +305,12 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     func ecosiaViewDidDisappear() {
         // Defensive: if the user navigated away while the omnibox was editing,
         // tear down the suggestions overlay so the SearchLoader doesn't keep a
-        // dangling reference to this view's autocomplete sink.
+        // dangling reference to this view's autocomplete sink. `didCancel`
+        // updates session state; `requestsOverlayDismiss` actually hides the
+        // overlay (the cancel callback no longer does that on its own so
+        // keyboard drag-dismiss can leave the list visible).
         ntpSearchBar?.delegate?.ntpSearchBarDidCancel()
+        ntpSearchBar?.delegate?.ntpSearchBarRequestsOverlayDismiss()
         _ = ntpSearchBar?.resignFirstResponder()
         ecosiaAdapter?.viewDidDisappear()
     }

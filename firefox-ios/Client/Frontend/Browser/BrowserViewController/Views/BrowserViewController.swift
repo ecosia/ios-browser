@@ -5239,6 +5239,19 @@ extension BrowserViewController: KeyboardHelperDelegate {
             addressToolbarContainer.updateSkeletonAddressBarsVisibility(tabManager: tabManager)
         }
         guard shouldCancelEditing else { return }
+        // Ecosia: When the embedded NTP omnibox owns the suggestions overlay
+        // (the shared search controller is parented to the homepage VC), the
+        // URL-bar overlay-cancel pipeline must not run on keyboard-hide. The
+        // `.onDrag` keyboard dismiss from the suggestions table fires this
+        // callback every time, and the default path tears down the shared
+        // search controller through `destroySearchController()` — collapsing
+        // the omnibox overlay the moment the user swipes to hide the
+        // keyboard. The omnibox's own delegate callbacks
+        // (`ntpSearchBarDidSubmit`, `ntpSearchBarDidCancel`, suggestion-row
+        // selection) handle teardown explicitly when the user really leaves.
+        if searchController?.parent is HomepageViewController {
+            return
+        }
         overlayManager.cancelEditing(shouldCancelLoading: false)
     }
 
