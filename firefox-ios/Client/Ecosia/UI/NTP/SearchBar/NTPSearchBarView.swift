@@ -434,16 +434,27 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         let colors = theme.colors
 
         backgroundColor = colors.ecosia.backgroundElevation2
-        layer.borderColor = colors.ecosia.borderDecorative.cgColor
         textView.textColor = colors.ecosia.textPrimary
         textView.tintColor = colors.ecosia.textPrimary
         placeholderLabel.textColor = colors.ecosia.textSecondary
+        applyBorderColor()
         applySubmitButtonColors()
         applyCounterColor()
         // Clear button: dark filled pill with a light glyph, matching the
         // Figma design.
         clearButton.backgroundColor = colors.ecosia.textPrimary
         clearButton.tintColor = colors.ecosia.backgroundElevation2
+    }
+
+    /// Swaps the pill border between the resting `borderDecorative` token and
+    /// the focused `formBorderPrimaryActive` token. Called from the textView
+    /// focus delegate methods and on each theme change.
+    private func applyBorderColor() {
+        guard let colors = currentTheme?.colors else { return }
+        let token = textView.isFirstResponder
+            ? colors.ecosia.formBorderPrimaryActive
+            : colors.ecosia.borderDecorative
+        layer.borderColor = token.cgColor
     }
 
     // MARK: Autocompletable
@@ -458,10 +469,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
 
     func textViewDidBeginEditing(_ textView: UITextView) {
+        applyBorderColor()
         delegate?.ntpSearchBarDidBeginEditing()
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
+        applyBorderColor()
         delegate?.ntpSearchBarDidCancel()
     }
 

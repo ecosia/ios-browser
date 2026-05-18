@@ -36,6 +36,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var backgroundElevation2: UIColor = EcosiaColor.Gray70
     var borderDecorative: UIColor = EcosiaColor.Gray60
     var borderNegative: UIColor = EcosiaColor.Claret600
+    var formBorderPrimaryActive: UIColor = EcosiaColor.White
     var brandFeatured: UIColor = EcosiaColor.Grellow100
     var brandImpact: UIColor = EcosiaColor.Yellow40
     var brandPrimary: UIColor = EcosiaColor.White

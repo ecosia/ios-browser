@@ -27,6 +27,9 @@ public protocol EcosiaSemanticColors {
     var borderDecorative: UIColor { get }
     var borderNegative: UIColor { get }
 
+    // MARK: - Form
+    var formBorderPrimaryActive: UIColor { get }
+
     // MARK: - Brand
     var brandFeatured: UIColor { get }
     var brandPrimary: UIColor { get }
@@ -118,6 +121,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonContentSecondary: UIColor = .systemGray
     var buttonContentSecondaryStatic: UIColor = .systemGray
     var borderNegative: UIColor = .systemGray
+    var formBorderPrimaryActive: UIColor = .systemGray
     var highlighter: UIColor = .systemGray
     var linkPrimary: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
