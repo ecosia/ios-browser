@@ -413,11 +413,17 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             // to white in dark mode (white-on-grellow is illegible); the
             // `Static` variant keeps the dark glyph in both modes — matching
             // the design-system primary CTA pattern used by Welcome / Sign-in.
+            // The 1pt border in the same featured color is part of the
+            // design-system button spec for consistency with other CTAs.
             submitButton.backgroundColor = colors.ecosia.buttonBackgroundFeatured
             submitButton.tintColor = colors.ecosia.buttonContentSecondaryStatic
+            submitButton.layer.borderWidth = 1
+            submitButton.layer.borderColor = colors.ecosia.buttonBackgroundFeatured.cgColor
         } else {
             submitButton.backgroundColor = .clear
             submitButton.tintColor = colors.ecosia.textSecondary
+            submitButton.layer.borderWidth = 0
+            submitButton.layer.borderColor = nil
         }
     }
 
