@@ -82,10 +82,9 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         tv.autocorrectionType = .no
         tv.autocapitalizationType = .none
         tv.spellCheckingType = .no
-        // Return inserts a newline (multi-line prompts) — submission happens
-        // exclusively via the arrow button on the pill.
-        tv.returnKeyType = .default
-        tv.keyboardType = .default
+        tv.returnKeyType = .search
+        tv.keyboardType = .webSearch
+        tv.enablesReturnKeyAutomatically = true
         tv.accessibilityIdentifier = "NTPSearchBarTextField"
     }
 
@@ -463,8 +462,11 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
     func textView(_ textView: UITextView,
                   shouldChangeTextIn range: NSRange,
                   replacementText text: String) -> Bool {
-        // Return inserts a newline like a standard multi-line input; the
-        // pill is submitted only via the arrow button.
+        // Treat Return as submit instead of inserting a newline.
+        if text == "\n" {
+            submitTapped()
+            return false
+        }
         // Hard cap. Block edits that would push past `maxLength` — typing past
         // the cap is rejected outright, and an oversize paste is dropped (we
         // don't silently truncate to avoid mangling the user's clipboard).
