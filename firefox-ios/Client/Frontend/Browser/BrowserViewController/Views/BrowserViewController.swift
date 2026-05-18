@@ -1459,9 +1459,16 @@ class BrowserViewController: UIViewController,
 
         /* Ecosia: When the Ecosia NTP search bar is present it acts as the search bar,
            so treat it the same as shouldShowSearchBar for the toolbar-hiding decision.
+           Crucially we also ignore `isEditing` for the Ecosia path — the omnibox owns
+           the input role on the NTP, so the native toolbar must never appear there,
+           not even when a stale `isEditing` flag is still pending in redux (e.g. the
+           user just tapped the native bar to redirect back to the omnibox).
         guard shouldShowSearchBar, !isEditing, contentContainer.hasHomepage else {
         */
-        guard shouldShowSearchBar || hasEcosiaNTPSearchBar, !isEditing, contentContainer.hasHomepage else {
+        let firefoxCondition = shouldShowSearchBar && !isEditing && contentContainer.hasHomepage
+        // `hasEcosiaNTPSearchBar` already implies `contentContainer.hasHomepage`.
+        let ecosiaCondition = hasEcosiaNTPSearchBar
+        guard firefoxCondition || ecosiaCondition else {
             guard addressToolbarContainer.isHidden == true else { return }
             addressToolbarContainer.isHidden = false
             store.dispatch(
@@ -2108,6 +2115,11 @@ class BrowserViewController: UIViewController,
         // current content — on iPhone this forces a rotation back to portrait
         // if the user opens the homepage while in landscape.
         updateSupportedOrientationsForContentChange()
+
+        // Ecosia: Re-evaluate toolbar visibility — when the user navigates
+        // back to the NTP from a webview the omnibox should take over again
+        // and the native address toolbar should hide.
+        shouldHideAddressToolbar()
     }
 
     func showEmbeddedWebview() {
@@ -2135,6 +2147,13 @@ class BrowserViewController: UIViewController,
         // the current content — releases the iPhone portrait lock that the
         // NTP imposes so web pages can be viewed in landscape.
         updateSupportedOrientationsForContentChange()
+
+        // Ecosia: The native address toolbar is hidden whenever the Ecosia
+        // NTP omnibox is on screen. Re-evaluate visibility here so the
+        // toolbar comes back as soon as the webview takes over the
+        // contentContainer — without this it stayed hidden for the lifetime
+        // of the session after the first NTP submit.
+        shouldHideAddressToolbar()
     }
 
     /// Notifies UIKit that `supportedInterfaceOrientations` may have changed
@@ -4143,6 +4162,11 @@ class BrowserViewController: UIViewController,
     }
 
     func openSuggestions(searchTerm: String) {
+        // Ecosia: When the user is on a non-NTP page (e.g. a search-result
+        // page or any regular web page) the URL bar should behave like a
+        // plain text-entry field — no autocomplete overlay. The Ecosia
+        // omnibox provides the rich suggestions experience on the NTP only.
+        guard contentContainer.hasAnyHomepage else { return }
         if searchTerm.isEmpty {
             showZeroSearchView()
         } else {
@@ -4214,7 +4238,12 @@ class BrowserViewController: UIViewController,
                 notification: UIAccessibility.Notification.screenChanged,
                 argument: UIAccessibility.Notification.screenChanged
             )
-        } else {
+        } else if contentContainer.hasAnyHomepage {
+            // Ecosia: On non-NTP surfaces (search result pages, regular web
+            // browsing) tapping the URL bar should leave the page alone and
+            // just give the user a text-entry field — no homepage embed, no
+            // suggestions overlay. We skip the homepage / zero-search swap
+            // entirely when we're already off the NTP.
             if let toast = clipboardBarDisplayHandler?.clipboardToast {
                 toast.removeFromSuperview()
             }
