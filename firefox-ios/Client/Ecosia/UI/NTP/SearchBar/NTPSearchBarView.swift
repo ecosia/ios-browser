@@ -408,8 +408,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         submitButton.layer.cornerRadius = UX.submitButtonSize / 2
         submitButton.layer.masksToBounds = true
         if submitButton.isEnabled {
+            // The featured background is grellow in both themes, so the
+            // icon must stay dark in both. `buttonContentSecondary` resolves
+            // to white in dark mode (white-on-grellow is illegible); the
+            // `Static` variant keeps the dark glyph in both modes — matching
+            // the design-system primary CTA pattern used by Welcome / Sign-in.
             submitButton.backgroundColor = colors.ecosia.buttonBackgroundFeatured
-            submitButton.tintColor = colors.ecosia.buttonContentSecondary
+            submitButton.tintColor = colors.ecosia.buttonContentSecondaryStatic
         } else {
             submitButton.backgroundColor = .clear
             submitButton.tintColor = colors.ecosia.textSecondary
