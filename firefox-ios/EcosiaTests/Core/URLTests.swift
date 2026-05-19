@@ -45,6 +45,139 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 1)
     }
 
+    func testSearchUrl_defaultVertical_producesSearchPath() {
+        let expect = expectation(description: "")
+        User.queue.async {
+            XCTAssertEqual(
+                self.root + "/search?q=trees&tt=iosapp",
+                URL.ecosiaSearchWithQuery("trees", urlProvider: self.urlProvider).absoluteString
+            )
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    func testSearchUrl_imagesVertical_producesImagesPath() {
+        let expect = expectation(description: "")
+        User.queue.async {
+            XCTAssertEqual(
+                self.root + "/images?q=trees&tt=iosapp",
+                URL.ecosiaSearchWithQuery("trees", vertical: .images, urlProvider: self.urlProvider).absoluteString
+            )
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    func testSearchUrl_videosVertical_producesVideosPath() {
+        let expect = expectation(description: "")
+        User.queue.async {
+            XCTAssertEqual(
+                self.root + "/videos?q=trees&tt=iosapp",
+                URL.ecosiaSearchWithQuery("trees", vertical: .videos, urlProvider: self.urlProvider).absoluteString
+            )
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    func testSearchUrl_newsVertical_producesNewsPath() {
+        let expect = expectation(description: "")
+        User.queue.async {
+            XCTAssertEqual(
+                self.root + "/news?q=trees&tt=iosapp",
+                URL.ecosiaSearchWithQuery("trees", vertical: .news, urlProvider: self.urlProvider).absoluteString
+            )
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    // MARK: - `EcosiaSearchVertical(path:)` — used by vertical retention logic
+
+    func testEcosiaSearchVerticalInit_searchPath_returnsSearch() {
+        XCTAssertEqual(URL.EcosiaSearchVertical(path: "/search"), .search)
+    }
+
+    func testEcosiaSearchVerticalInit_imagesPath_returnsImages() {
+        XCTAssertEqual(URL.EcosiaSearchVertical(path: "/images"), .images)
+    }
+
+    func testEcosiaSearchVerticalInit_videosPath_returnsVideos() {
+        XCTAssertEqual(URL.EcosiaSearchVertical(path: "/videos"), .videos)
+    }
+
+    func testEcosiaSearchVerticalInit_newsPath_returnsNews() {
+        XCTAssertEqual(URL.EcosiaSearchVertical(path: "/news"), .news)
+    }
+
+    func testEcosiaSearchVerticalInit_nonSearchPath_returnsNil() {
+        XCTAssertNil(URL.EcosiaSearchVertical(path: "/wiki/Forest"))
+        XCTAssertNil(URL.EcosiaSearchVertical(path: "/settings"))
+        XCTAssertNil(URL.EcosiaSearchVertical(path: "/"))
+    }
+
+    // MARK: - Vertical preservation
+
+    func testPreservingVerticalFrom_imagesPage_producesImagesPath() {
+        let expect = expectation(description: "")
+        let imagesPage = URL(string: "https://www.ecosia.org/images?q=trees")!
+        User.queue.async {
+            XCTAssertEqual(
+                self.root + "/images?q=flowers&tt=iosapp",
+                URL.ecosiaSearchWithQuery("flowers", preservingVerticalFrom: imagesPage, urlProvider: self.urlProvider).absoluteString
+            )
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    func testPreservingVerticalFrom_searchPage_producesSearchPath() {
+        let expect = expectation(description: "")
+        let searchPage = URL(string: "https://www.ecosia.org/search?q=trees")!
+        User.queue.async {
+            XCTAssertEqual(
+                self.root + "/search?q=flowers&tt=iosapp",
+                URL.ecosiaSearchWithQuery("flowers", preservingVerticalFrom: searchPage, urlProvider: self.urlProvider).absoluteString
+            )
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    func testPreservingVerticalFrom_nonSearchPage_producesSearchPath() {
+        let expect = expectation(description: "")
+        let wikiPage = URL(string: "https://www.ecosia.org/wiki/Forest")!
+        User.queue.async {
+            XCTAssertEqual(
+                self.root + "/search?q=flowers&tt=iosapp",
+                URL.ecosiaSearchWithQuery("flowers", preservingVerticalFrom: wikiPage, urlProvider: self.urlProvider).absoluteString
+            )
+            expect.fulfill()
+        }
+        waitForExpectations(timeout: 1)
+    }
+
+    func testRewriteTextSerp_preservesImagesVertical() {
+        let imagesPage = URL(string: "https://www.ecosia.org/images?q=trees")!
+        let textSerp = URL(string: "https://www.ecosia.org/search?q=flowers")!
+        let rewritten = textSerp.ecosiaSearchURLPreservingVertical(from: imagesPage, urlProvider: urlProvider)
+        XCTAssertEqual(rewritten?.path, "/images")
+        XCTAssertEqual(rewritten?.getEcosiaSearchQuery(urlProvider), "flowers")
+    }
+
+    func testRewriteTextSerp_sameQueryOnSearchPage_doesNotRewrite() {
+        let searchPage = URL(string: "https://www.ecosia.org/search?q=trees")!
+        let textSerp = URL(string: "https://www.ecosia.org/search?q=flowers")!
+        XCTAssertNil(textSerp.ecosiaSearchURLPreservingVertical(from: searchPage, urlProvider: urlProvider))
+    }
+
+    func testRewriteTextSerp_alreadyOnImages_doesNotRewrite() {
+        let imagesPage = URL(string: "https://www.ecosia.org/images?q=flowers")!
+        let imagesSerp = URL(string: "https://www.ecosia.org/images?q=flowers")!
+        XCTAssertNil(imagesSerp.ecosiaSearchURLPreservingVertical(from: imagesPage, urlProvider: urlProvider))
+    }
+
     // MARK: - `isEcosiaSearchQuery`
 
     func testAssertIsNotEcosiaSearchURLOnNonEcosiaURL() {

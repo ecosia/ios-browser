@@ -39,4 +39,25 @@ extension BrowserViewController {
         pendingInappSearchUrl = nil
         Analytics.shared.inappSearch(url: url, isPrivate: isPrivate)
     }
+
+    /// Rewrites in-page SERP navigations that target the default text vertical (`/search`) so they
+    /// stay on the user's active vertical (e.g. Images). Returns `nil` when navigation should proceed unchanged.
+    func ecosiaSearchURLPreservingVertical(
+        navigationURL: URL,
+        currentPageURL: URL?,
+        navigationType: WKNavigationType
+    ) -> URL? {
+        guard let rewritten = navigationURL.ecosiaSearchURLPreservingVertical(from: currentPageURL) else {
+            return nil
+        }
+        // Same-query link to `/search` is a vertical-tab switch (e.g. Web from Images), not a new search.
+        if navigationType == .linkActivated,
+           let currentPageURL,
+           let currentQuery = currentPageURL.getEcosiaSearchQuery(),
+           let newQuery = navigationURL.getEcosiaSearchQuery(),
+           currentQuery == newQuery {
+            return nil
+        }
+        return rewritten
+    }
 }
