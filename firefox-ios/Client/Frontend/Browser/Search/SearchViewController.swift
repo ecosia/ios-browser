@@ -724,11 +724,20 @@ class SearchViewController: SiteTableViewController,
         reloadData()
     }
 
+    // Ecosia: Require the suggestion to truly start with the query and the
+    // extension to be more than a single character. The original
+    // `range(of:)` accepted any substring match, and any 1-character
+    // extension would render a single bold letter — which produced a
+    // distracting flicker as the user typed past it (e.g. typing the last
+    // letter of an autocomplete match briefly bolded that letter before
+    // the suggestion was removed/refreshed). A 2+ character minimum keeps
+    // the bold styling meaningful and stops the trailing-letter flicker.
     func getAttributedBoldSearchSuggestions(searchPhrase: String, query: String) -> NSAttributedString? {
-        // the search term (query) stays normal weight
-        // everything past the search term (query) will be bold
-        let range = searchPhrase.range(of: query)
-        guard searchPhrase != query, let upperBound = range?.upperBound else { return nil }
+        guard searchPhrase != query,
+              searchPhrase.hasPrefix(query) else { return nil }
+        let upperBound = searchPhrase.index(searchPhrase.startIndex, offsetBy: query.count)
+        let extensionLength = searchPhrase.distance(from: upperBound, to: searchPhrase.endIndex)
+        guard extensionLength > 1 else { return nil }
 
         let attributedString = searchPhrase.attributedText(
             boldIn: upperBound..<searchPhrase.endIndex,
