@@ -33,44 +33,61 @@ class DependencyHelperMock {
         injectedMicrosurveyManager: MicrosurveyManager? = nil,
         themeManager: ThemeManager = MockThemeManager() // Ecosia: Make themeManager injectable
     ) {
+        /* Ecosia: Never empty the global container between tests (MOB-4384). Some test
+           classes do not call bootstrapDependencies(), and background work lingering from
+           a previous test resolves unmoored from any test's lifecycle; reset() opens a
+           window where the container is empty and AppContainer.resolve() fatal-errors.
+           Now that every service is registered under the correct protocol key (below),
+           keeping the previous test's complete, correctly-keyed registration in place
+           until the next bootstrap re-registers it (Dip replaces the definition for an
+           already-registered type) means a lingering or non-bootstrapping resolve always
+           finds a valid service. (This never-reset approach only works *because* the
+           registration-type/resolution-type key bug below is fixed.)
         AppContainer.shared.reset()
+         */
 
         // Ecosia: Register Profile FIRST — before any other service — so that background threads
-        // lingering from the previous test can still resolve Profile without crashing. Any such
-        // thread will see a MockProfile (which is harmless) rather than a missing registration.
-        // All other lightweight services are registered immediately after, before the slow
-        // BrowserProfile creation further below.
+        // lingering from the previous test always resolve Profile without crashing.
+        // Ecosia: Register every service under the PROTOCOL type the consumers resolve
+        // by (`as Profile`, `as ThemeManager`, …), mirroring the production
+        // DependencyHelper exactly. AppContainer.register<T> infers its Dip key from the
+        // argument's static type; without the explicit protocol cast, Swift keys the
+        // registration by the concrete type (MockProfile, DefaultDiskImageStore, …) while
+        // Firefox-core Coordinators resolve by protocol — a key mismatch that throws
+        // "No definition registered for type: Profile/ThemeManager/…" and crash-thrashes
+        // the suite. This was the actual MOB-4384 root cause (proven by pointer+type
+        // instrumentation: same AppContainer instance, registered-type ≠ resolved-type).
         let placeholderProfile: Client.Profile = MockProfile()
-        AppContainer.shared.register(service: placeholderProfile)
+        AppContainer.shared.register(service: placeholderProfile as Profile)
 
         let documentLogger = DocumentLogger(logger: DefaultLogger.shared)
         AppContainer.shared.register(service: documentLogger)
 
-        AppContainer.shared.register(service: themeManager)
+        AppContainer.shared.register(service: themeManager as ThemeManager)
 
         let windowUUID = WindowUUID.XCTestDefaultUUID
         let windowManager: WindowManager = injectedWindowManager ?? MockWindowManager(wrappedManager: WindowManagerImplementation())
-        AppContainer.shared.register(service: windowManager)
+        AppContainer.shared.register(service: windowManager as WindowManager)
 
         let appSessionProvider: AppSessionProvider = AppSessionManager()
-        AppContainer.shared.register(service: appSessionProvider)
+        AppContainer.shared.register(service: appSessionProvider as AppSessionProvider)
 
         let downloadQueue = DownloadQueue()
         AppContainer.shared.register(service: downloadQueue)
 
         let microsurveyManager: MicrosurveyManager = injectedMicrosurveyManager ?? MockMicrosurveySurfaceManager()
-        AppContainer.shared.register(service: microsurveyManager)
+        AppContainer.shared.register(service: microsurveyManager as MicrosurveyManager)
 
         // Profile creation is slow (opens SQLite databases, etc.). All lightweight services
         // and the placeholder profile above are already registered before this point.
         let profile: Client.Profile = BrowserProfile(localName: "profile")
-        AppContainer.shared.register(service: profile)
+        AppContainer.shared.register(service: profile as Profile)
 
         let diskImageStore: DiskImageStore = DefaultDiskImageStore(
             files: profile.files,
             namespace: TabManagerConstants.tabScreenshotNamespace,
             quality: UIConstants.ScreenshotQuality)
-        AppContainer.shared.register(service: diskImageStore)
+        AppContainer.shared.register(service: diskImageStore as DiskImageStore)
 
         // Ecosia: Use NoOpSearchEngineProvider so no background DispatchQueue.global() work
         // is dispatched (see comment on NoOpSearchEngineProvider above).
@@ -78,6 +95,27 @@ class DependencyHelperMock {
                                                         files: profile.files,
                                                         engineProvider: NoOpSearchEngineProvider())
         AppContainer.shared.register(service: searchEnginesManager)
+
+        // Ecosia: Also register the services the production DependencyHelper registers
+        // but this mock previously omitted (MOB-4384). Firefox-core Coordinators (e.g.
+        // SettingsCoordinator) resolve these via fatal default-arg AppContainer.resolve();
+        // if a test instantiates such a Coordinator and the type was never registered the
+        // process crashes. MerinoManagerProvider is a protocol (register under the
+        // protocol type); GleanUsageReportingMetricsService is a concrete class.
+        let merinoManager: MerinoManagerProvider = MerinoManager(
+            storyProvider: StoryProvider(merinoAPI: MerinoProvider(prefs: profile.prefs))
+        )
+        AppContainer.shared.register(service: merinoManager as MerinoManagerProvider)
+
+        let gleanUsageReportingMetricsService = GleanUsageReportingMetricsService(profile: profile)
+        AppContainer.shared.register(service: gleanUsageReportingMetricsService)
+
+        // Ecosia: GleanPlumbMessageManagerProtocol is resolved from AppContainer by some
+        // ClientTests paths but is not a production DependencyHelper service (production
+        // uses Experiments.messaging as a default). Register the existing test mock under
+        // the protocol so those resolves succeed instead of crashing. Tracked in MOB-4384.
+        let gleanPlumbMessageManager: GleanPlumbMessageManagerProtocol = MockGleanPlumbMessageManagerProtocol()
+        AppContainer.shared.register(service: gleanPlumbMessageManager as GleanPlumbMessageManagerProtocol)
 
         let tabManager: TabManager =
         injectedTabManager ?? TabManagerImplementation(profile: profile,
