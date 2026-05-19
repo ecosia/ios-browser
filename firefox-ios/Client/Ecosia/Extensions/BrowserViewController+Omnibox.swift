@@ -12,7 +12,7 @@ import Ecosia
 // standard toolbar; live keystrokes feed the shared suggestions overlay.
 @MainActor
 extension BrowserViewController: NTPSearchBarDelegate {
-    func ntpSearchBarDidSubmit(_ searchTerm: String, mode: NTPSearchBarSubmitMode) {
+    func ntpSearchBarDidSubmit(_ searchTerm: String) {
         // Mark the session engaged before tearing down the suggestions so the
         // existing `searchViewControllerWillHide` → `recordURLBarSearchEngagementTelemetryEvent`
         // pipeline records the omnibox submit the same way the URL bar would.
@@ -25,36 +25,20 @@ extension BrowserViewController: NTPSearchBarDelegate {
             bar.text = ""
             _ = bar.resignFirstResponder()
         }
-        switch mode {
-        case .search:
-            submitOmniboxSearch(query: searchTerm)
-        case .aiChat:
-            submitOmniboxAIChat(query: searchTerm)
-        }
+        submitOmniboxSearch(query: searchTerm)
         // Force the swap to the webview. Without URL bar overlay mode, the
         // standard `addressToolbar(_:didLeaveOverlayModeForReason:)` chain
         // — which is what normally calls `showEmbeddedWebview()` — never fires.
         showEmbeddedWebview()
     }
 
-    /// Routes a long-prompt submit (above the omnibox AI threshold) into the
-    /// AI search backend. Mirrors `handleAIChatSelection` in
-    /// `SearchViewController+Ecosia` but loads through the active tab since
-    /// the omnibox keyboard-Done path doesn't go through the search delegate.
-    private func submitOmniboxAIChat(query: String) {
-        guard let tab = tabManager.selectedTab else { return }
-        let url = Environment.current.urlProvider.aiChat(origin: .omnibox, query: query)
-        searchTelemetry.shouldSetUrlTypeSearch = true
-        finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
-    }
-
-    /// Builds the search URL for a `.search`-mode omnibox submission (direct
-    /// typed submit or autocomplete row tap) and loads it. Pasted URLs
-    /// navigate directly; everything else goes through Ecosia's `urlProvider`
-    /// via `URL.ecosiaSearchWithQuery` with `autoRedirect: true`, which
-    /// appends the `ar=1` parameter so the backend can decide whether the
-    /// query lands on AI search or the standard SERP.
-    /// `.aiChat` mode is handled separately by `submitOmniboxAIChat`.
+    /// Builds the search URL for an omnibox submission (direct typed submit
+    /// or autocomplete row tap) and loads it. Pasted URLs navigate directly;
+    /// everything else goes through Ecosia's `urlProvider` via
+    /// `URL.ecosiaSearchWithQuery` with `autoRedirect: true`, which appends
+    /// the `ar=1` parameter so the backend can decide whether the query
+    /// lands on AI search or the standard SERP — the client never makes that
+    /// call itself.
     private func submitOmniboxSearch(query: String) {
         guard let tab = tabManager.selectedTab else { return }
 
@@ -73,28 +57,10 @@ extension BrowserViewController: NTPSearchBarDelegate {
             hideOmniboxSuggestions()
             return
         }
-        if anchor.isMultiline {
-            // Past two lines the suggestions rows aren't useful anymore, but
-            // we keep the overlay attached so its colored background stays
-            // visible behind the pill (only the table content is hidden).
-            ensureOmniboxSuggestionsAttached(anchorView: anchor)
-            searchController?.tableView.isHidden = true
-            return
-        }
-        searchController?.tableView.isHidden = false
+        // Always show suggestions while there's content — no length-based
+        // suppression. Inferring "AI chat intent" from input length is
+        // server-side concern; the client just feeds the query.
         showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
-    }
-
-    /// Attaches the suggestions overlay (creating the search controller if
-    /// needed) without populating its query — used for the multi-line state
-    /// where we want the background visible but no rows.
-    private func ensureOmniboxSuggestionsAttached(anchorView: UIView & Autocompletable) {
-        createSearchControllerIfNeeded()
-        guard let searchController else { return }
-        searchLoader?.autocompleteView = anchorView
-        if searchController.parent == nil {
-            attachOmniboxSuggestions(anchorView: anchorView)
-        }
     }
 
     func ntpSearchBarDidBeginEditing() {

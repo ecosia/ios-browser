@@ -4700,7 +4700,7 @@ extension BrowserViewController: SearchViewControllerDelegate {
         let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
         if isOmniboxOverlay {
             if let searchTerm, !searchTerm.isEmpty {
-                ntpSearchBarDidSubmit(searchTerm, mode: .search)
+                ntpSearchBarDidSubmit(searchTerm)
                 return
             }
             hideOmniboxSuggestions()
