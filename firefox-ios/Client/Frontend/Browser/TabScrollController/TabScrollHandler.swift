@@ -295,7 +295,13 @@ final class TabScrollHandler: NSObject,
 
     func createToolbarTapHandler() -> (() -> Void) {
         return { [unowned self] in
-            guard isMinimalAddressBarEnabled && toolbarDisplayState.isCollapsed  else { return }
+            // Ecosia: Drop the `isCollapsed` guard. When the toolbar is in
+            // its minimal pill form the state and visuals can drift apart
+            // (especially under iOS 26 translucency), so a tap that visually
+            // hits the pill but lands while `displayState` is still
+            // `.transitioning` would otherwise no-op. `showToolbars` is
+            // idempotent — calling it from `.expanded` is harmless.
+            guard isMinimalAddressBarEnabled else { return }
             showToolbars(animated: true)
         }
     }
