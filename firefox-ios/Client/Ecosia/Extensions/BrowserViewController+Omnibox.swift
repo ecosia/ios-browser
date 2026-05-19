@@ -200,8 +200,14 @@ extension BrowserViewController {
             searchController.view.bottomAnchor.constraint(equalTo: host.bottomAnchor)
         ])
 
-        // Keep the omnibox — and the floating top-right close button — above
-        // the suggestions overlay.
+        // z-order back→front: suggestions overlay, focused-state scrim,
+        // omnibox pill, floating close button. The scrim sits above the
+        // suggestions so the bottom of the list fades into the pill, but
+        // below the pill itself so the pill stays fully opaque.
+        if let homepage = hostVC as? HomepageViewController,
+           let backdrop = homepage.ntpSearchBarBackdrop {
+            host.bringSubviewToFront(backdrop)
+        }
         host.bringSubviewToFront(anchorView)
         if let homepage = hostVC as? HomepageViewController,
            let closeButton = homepage.ntpOmniboxCloseButton {

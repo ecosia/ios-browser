@@ -137,6 +137,11 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     /// — for example, the top-right close button.
     var onContentChange: ((String) -> Void)?
 
+    /// Fires whenever the textView's first-responder state changes. Use from
+    /// the host to drive focus-only chrome — for example, the active-state
+    /// gradient backdrop behind the pill.
+    var onFocusChange: ((Bool) -> Void)?
+
     private var currentTheme: Theme?
     private var currentSubmitMode: NTPSearchBarSubmitMode = .search
     private lazy var textViewHeightConstraint: NSLayoutConstraint =
@@ -470,11 +475,13 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
 
     func textViewDidBeginEditing(_ textView: UITextView) {
         applyBorderColor()
+        onFocusChange?(true)
         delegate?.ntpSearchBarDidBeginEditing()
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
         applyBorderColor()
+        onFocusChange?(false)
         delegate?.ntpSearchBarDidCancel()
     }
 

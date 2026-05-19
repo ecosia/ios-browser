@@ -146,6 +146,15 @@ extension HomepageViewController {
     func setNTPOmniboxCloseButton(_ button: UIButton) {
         objc_setAssociatedObject(self, &AssociatedKeys.ntpOmniboxCloseButton, button, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
+
+    // Ecosia: Active-state gradient scrim behind the focused pill.
+    var ntpSearchBarBackdrop: NTPSearchBarBackdropView? {
+        return objc_getAssociatedObject(self, &AssociatedKeys.ntpSearchBarBackdrop) as? NTPSearchBarBackdropView
+    }
+
+    func setNTPSearchBarBackdrop(_ view: NTPSearchBarBackdropView) {
+        objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarBackdrop, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
 }
 
 // MARK: - Associated Keys
@@ -158,4 +167,5 @@ private struct AssociatedKeys {
     nonisolated(unsafe) static var ntpSearchBarLeadingConstraint: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarTrailingConstraint: UInt8 = 0
     nonisolated(unsafe) static var ntpOmniboxCloseButton: UInt8 = 0
+    nonisolated(unsafe) static var ntpSearchBarBackdrop: UInt8 = 0
 }

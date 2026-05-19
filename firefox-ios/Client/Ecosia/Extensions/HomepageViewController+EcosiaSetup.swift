@@ -35,14 +35,41 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     // Replaces the standard URL bar while the homepage is visible. Submission and
     // suggestions are wired through the browser's existing navigation pipeline.
     func setupNTPSearchBar(delegate: NTPSearchBarDelegate) {
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+
+        // Active-state scrim sits behind the pill. Added before the pill so
+        // the pill (and the floating close button installed below) naturally
+        // render on top of it. Hidden by default — appears only on focus.
+        let backdrop = NTPSearchBarBackdropView()
+        backdrop.translatesAutoresizingMaskIntoConstraints = false
+        backdrop.applyTheme(theme: theme)
+        view.addSubview(backdrop)
+
         let searchBar = NTPSearchBarView()
         searchBar.delegate = delegate
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(searchBar)
 
+        NSLayoutConstraint.activate([
+            backdrop.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backdrop.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            // Anchor the scrim tightly to the pill: 12pt above so the fade
+            // region sits just above the omnibox, and 24pt below so the
+            // solid tail fills the 12pt gap between the pill and the
+            // keyboard's top edge AND extends another 12pt under the
+            // keyboard (the pill itself sits 12pt above the keyboard, so
+            // `pill.bottom + 24 == keyboard.top + 12`). The 12pt under-
+            // keyboard portion is occluded by iOS' keyboard window — paired
+            // with the dialled-back blur peak (α 0.5) in the backdrop view
+            // it stays out of the way of the keyboard's own translucency.
+            backdrop.bottomAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
+            backdrop.topAnchor.constraint(equalTo: searchBar.topAnchor, constant: -12)
+        ])
+        setNTPSearchBarBackdrop(backdrop)
+
         let bottomConstraint = searchBar.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-            constant: -.ecosia.space._1l
+            constant: -.ecosia.space._s
         )
         let horizontalInset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
         let leadingConstraint = searchBar.leadingAnchor.constraint(
@@ -69,7 +96,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             maxHeightConstraint
         ])
 
-        searchBar.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        searchBar.applyTheme(theme: theme)
         setNTPSearchBar(searchBar)
         setNTPSearchBarBottomConstraint(bottomConstraint)
         setNTPSearchBarLeadingConstraint(leadingConstraint)
@@ -81,6 +108,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         searchBar.onContentChange = { [weak self] text in
             self?.handleOmniboxContentChange(text)
+        }
+        searchBar.onFocusChange = { [weak self] focused in
+            self?.ntpSearchBarBackdrop?.setVisible(focused, animated: true)
         }
 
         installOmniboxCloseButton()
@@ -273,7 +303,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
     /// Re-applies the iPad horizontal inset to the omnibox after a rotation or
     /// size-class change (e.g. iPad split-screen resize). On iPhone-class
-    /// surfaces the value collapses back to the default `_m` margin.
+    /// surfaces the value collapses back to the default `_s` (12pt) margin.
     func updateNTPSearchBarHorizontalInset() {
         let inset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
         ntpSearchBarLeadingConstraint?.constant = inset
@@ -282,11 +312,11 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
     /// 160pt of breathing room on iPad regular-width surfaces so the pill doesn't
     /// stretch the full width of a 1024pt display; everything else (iPhone, iPad
-    /// narrow split-screen) uses the standard `_m` margin.
+    /// narrow split-screen) uses the design-system `_s` (12pt) margin.
     fileprivate static func ntpSearchBarHorizontalInset(for traitCollection: UITraitCollection) -> CGFloat {
         let isWideIPad = traitCollection.userInterfaceIdiom == .pad
             && traitCollection.horizontalSizeClass == .regular
-        return isWideIPad ? 160 : .ecosia.space._m
+        return isWideIPad ? 160 : .ecosia.space._s
     }
 
     /// Called from `viewDidLayoutSubviews`. The omnibox cushion is now baked
@@ -320,6 +350,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         ecosiaAdapter?.updateTheme(theme)
         ntpSearchBar?.applyTheme(theme: theme)
+        ntpSearchBarBackdrop?.applyTheme(theme: theme)
     }
 
     /// Refreshes the Ecosia snapshot so the UI updates
@@ -347,7 +378,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 // MARK: - KeyboardHelperDelegate
 // Ecosia: Keeps the omnibox glued just above the keyboard while editing.
 extension HomepageViewController: KeyboardHelperDelegate {
-    private static let restingBottomOffset: CGFloat = .ecosia.space._1l
+    private static let restingBottomOffset: CGFloat = .ecosia.space._s
 
     public func keyboardHelper(
         _ keyboardHelper: KeyboardHelper,
