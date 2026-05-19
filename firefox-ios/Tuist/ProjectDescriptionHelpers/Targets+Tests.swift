@@ -42,7 +42,10 @@ public enum TestTargets {
             destinations: .iOS,
             product: .unitTests,
             bundleId: "org.mozilla.ios.ClientTests",
-            infoPlist: .default,
+            // Ecosia (MOB-4384): one-time bundle-level dependency bootstrap so the ~184
+            // ClientTests classes that never call DependencyHelperMock().bootstrapDependencies()
+            // still see a populated, correctly-keyed AppContainer.
+            infoPlist: .extendingDefault(with: ["NSPrincipalClass": "EcosiaTestBundleBootstrap"]),
             sources: ["firefox-ios-tests/Tests/ClientTests/**/*.swift"],
             dependencies: [
                 .target(name: "Client"),
@@ -219,7 +222,8 @@ public enum TestTargets {
             destinations: .iOS,
             product: .unitTests,
             bundleId: "com.ecosia.tests.Ecosia",
-            infoPlist: .default,
+            // Ecosia (MOB-4384): one-time bundle-level dependency bootstrap (see ClientTests).
+            infoPlist: .extendingDefault(with: ["NSPrincipalClass": "EcosiaTestBundleBootstrap"]),
             sources: [
                 .glob("EcosiaTests/**/*.swift", excluding: ["EcosiaTests/SnapshotTests/**/*.swift"]),
                 // Shared ClientTests helpers required by integration tests
