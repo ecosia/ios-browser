@@ -139,11 +139,19 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             button.heightAnchor.constraint(equalToConstant: 36)
         ])
 
-        let theme = themeManager.getCurrentTheme(for: windowUUID).colors
-        button.backgroundColor = theme.ecosia.backgroundElevation2
-        button.tintColor = theme.ecosia.textPrimary
-
         setNTPOmniboxCloseButton(button)
+        applyOmniboxCloseButtonTheme()
+    }
+
+    /// Paints the floating top-right close button using the same `layer5`
+    /// token as the autocomplete row backgrounds, so the button visually
+    /// belongs to the suggestions surface beneath it instead of reading as
+    /// a separate pill.
+    private func applyOmniboxCloseButtonTheme() {
+        guard let button = ntpOmniboxCloseButton else { return }
+        let colors = themeManager.getCurrentTheme(for: windowUUID).colors
+        button.backgroundColor = colors.layer5
+        button.tintColor = colors.ecosia.textPrimary
     }
 
     private func installOmniboxTapOutsideDismiss() {
@@ -351,6 +359,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ecosiaAdapter?.updateTheme(theme)
         ntpSearchBar?.applyTheme(theme: theme)
         ntpSearchBarBackdrop?.applyTheme(theme: theme)
+        applyOmniboxCloseButtonTheme()
     }
 
     /// Refreshes the Ecosia snapshot so the UI updates
