@@ -235,6 +235,8 @@ public enum TestTargets {
                 .package(product: "SiteImageView"),
                 .package(product: "SnowplowTracker"),
                 .package(product: "TabDataStore"),
+                // Ecosia: needed for @testable import ToolbarKit in LocationView tests
+                .package(product: "ToolbarKit"),
                 .package(product: "ViewInspector"),
             ],
             settings: .settings(base: BuildConfigurations.testBaseSettings)

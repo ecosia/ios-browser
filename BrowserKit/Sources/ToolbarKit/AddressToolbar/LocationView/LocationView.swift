@@ -185,6 +185,9 @@ final class LocationView: UIView,
         configureLockIconButton(config)
         configureURLTextField(config)
         configureA11y(config)
+        // Ecosia: Set searchTerm before formatAndTruncateURLTextField so the guard in that
+        // method sees the latest value and skips URL truncation when a search query is present.
+        searchTerm = config.searchTerm
         formatAndTruncateURLTextField()
         updateIconContainer(iconContainerCornerRadius: uxConfig.toolbarCornerRadius,
                             isURLTextFieldCentered: isURLTextFieldCentered,
@@ -197,7 +200,10 @@ final class LocationView: UIView,
         )
         self.delegate = delegate
         self.isUnifiedSearchEnabled = isUnifiedSearchEnabled
+        /* Ecosia: Moved above formatAndTruncateURLTextField so that method's guard can
+           read the updated searchTerm and skip URL truncation on search result pages.
         searchTerm = config.searchTerm
+        */
         onLongPress = config.onLongPress
 
         layoutContainerView(isEditing: config.isEditing, isURLTextFieldCentered: isURLTextFieldCentered)
@@ -593,7 +599,12 @@ final class LocationView: UIView,
         // Once the user started typing we should not update the text anymore as that interferes with
         // setting the autocomplete suggestions which is done using a delegate method.
         guard !config.didStartTyping else { return }
+        /* Ecosia: Show the search query in the collapsed address bar when on a SERP.
+           Firefox only showed the search term while editing; Ecosia shows it in both
+           editing and collapsed states so users always see what they searched for.
         let shouldShowSearchTerm = (config.searchTerm != nil) && configurationIsEditing
+        */
+        let shouldShowSearchTerm = config.searchTerm != nil
         let text = shouldShowSearchTerm ? config.searchTerm : config.url?.absoluteString
         urlTextField.text = text
 
@@ -607,6 +618,9 @@ final class LocationView: UIView,
 
     private func formatAndTruncateURLTextField() {
         guard !isEditing else { return }
+        // Ecosia: When a search query is available the text field already shows it as plain text;
+        // applying URL-style host truncation here would overwrite the query with a hostname.
+        guard searchTerm == nil else { return }
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineBreakMode = .byTruncatingHead
