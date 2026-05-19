@@ -26,8 +26,17 @@ protocol NTPSearchBarDelegate: AnyObject {
     func ntpSearchBarTextDidChange(_ searchTerm: String)
     /// Called when the text field becomes first responder.
     func ntpSearchBarDidBeginEditing()
-    /// Called when editing ends without a submission (e.g. tap outside).
+    /// Called when the text field resigns first responder for any reason
+    /// (explicit cancel, tap-outside, keyboard drag-dismiss). The host may
+    /// use it to update session-state telemetry but MUST NOT tear down the
+    /// suggestions overlay here — a keyboard drag-dismiss should leave the
+    /// list visible so the user can read it without the keyboard. Use
+    /// `ntpSearchBarRequestsOverlayDismiss` for explicit overlay teardown.
     func ntpSearchBarDidCancel()
+    /// Called when the user explicitly asks the omnibox UI to dismiss
+    /// (tap-outside the pill, close-button tap, host view disappearing).
+    /// The host is expected to tear down the suggestions overlay here.
+    func ntpSearchBarRequestsOverlayDismiss()
 }
 
 /// Pill-shaped search input pinned to the bottom of the redesigned NTP. Replaces
@@ -43,7 +52,18 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     private enum UX {
         static let submitButtonSize: CGFloat = .ecosia.space._3l
-        static let clearButtonSize: CGFloat = 20
+        /// Tappable footprint of the in-pill clear button. Matches the
+        /// submit button so both controls present the same 40×40 hit
+        /// target; the visible artwork is the smaller `clearCircleSize`.
+        static let clearButtonSize: CGFloat = .ecosia.space._3l
+        /// Visible diameter of the dark circle behind the clear-button's
+        /// X glyph. The remaining 24pt of the button is a transparent
+        /// hit-padding ring that catches taps just outside the artwork.
+        static let clearCircleSize: CGFloat = 16
+        /// Gap between the textView's trailing edge and the leading edge
+        /// of the right-hand button column so typed text never collides
+        /// with either button.
+        static let textTrailingGap: CGFloat = .ecosia.space._1s
         static let shadowOpacity: Float = 0.10
         static let shadowRadius: CGFloat = 12
         static let shadowOffset = CGSize(width: 0, height: 4)
@@ -111,22 +131,49 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         label.accessibilityIdentifier = "NTPSearchBarCounterLabel"
     }
 
-    /// In-pill clear button at the top-right of the omnibox. Visible only while
-    /// the field has content — taps wipe the text without dropping focus.
+    /// In-pill clear button at the top-right of the omnibox. Visible only
+    /// while the field has content — taps wipe the text without dropping
+    /// focus. The button itself is the 40×40 hit target with no rendered
+    /// content; `clearButtonCircle` and `clearButtonGlyph` are siblings
+    /// inside it that draw the visible disc and the X glyph respectively.
+    /// We don't use `setImage` because the resulting `imageView`'s z-order
+    /// relative to other subviews is unreliable across iOS versions/button
+    /// configuration modes — using an explicit `UIImageView` keeps the X
+    /// guaranteed to sit on top of the disc.
     private lazy var clearButton: UIButton = .build { button in
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 11, weight: .semibold)
-        let image = UIImage(systemName: "xmark", withConfiguration: symbolConfig)
-        button.setImage(image, for: .normal)
-        button.layer.cornerRadius = UX.clearButtonSize / 2
         button.accessibilityLabel = String.localized(.cancel)
         button.accessibilityIdentifier = "NTPSearchBarClearButton"
         button.isHidden = true
+    }
+
+    /// Visible 16×16 disc inside the clear button. Rendered behind the X
+    /// glyph so it acts as the glyph's background pill, while the
+    /// surrounding 40×40 button frame stays transparent for hit testing.
+    private lazy var clearButtonCircle: UIView = .build { circle in
+        circle.layer.cornerRadius = UX.clearCircleSize / 2
+        circle.isUserInteractionEnabled = false
+    }
+
+    /// X glyph rendered on top of `clearButtonCircle`. Tinted via the
+    /// template-rendered image; we leave hit-testing disabled so taps fall
+    /// through to the enclosing `clearButton`.
+    private lazy var clearButtonGlyph: UIImageView = .build { glyph in
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 9, weight: .semibold)
+        glyph.image = UIImage(systemName: "xmark", withConfiguration: symbolConfig)?
+            .withRenderingMode(.alwaysTemplate)
+        glyph.contentMode = .center
+        glyph.isUserInteractionEnabled = false
     }
 
     /// Fires whenever the text content changes (including programmatic clears).
     /// Use from the host to drive focus-only chrome that depends on having text
     /// — for example, the top-right close button.
     var onContentChange: ((String) -> Void)?
+
+    /// Fires whenever the textView's first-responder state changes. Use from
+    /// the host to drive focus-only chrome — for example, the active-state
+    /// gradient backdrop behind the pill.
+    var onFocusChange: ((Bool) -> Void)?
 
     private var currentTheme: Theme?
     private var currentSubmitMode: NTPSearchBarSubmitMode = .search
@@ -179,25 +226,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         textView.becomeFirstResponder()
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateTextExclusionPath()
-    }
-
-    /// Carves out the area occupied by the clear button so wrapping text flows
-    /// around it instead of running underneath. Only takes effect while the
-    /// button is visible — empty pills keep the full text width.
-    private func updateTextExclusionPath() {
-        guard !clearButton.isHidden, clearButton.bounds != .zero else {
-            textView.textContainer.exclusionPaths = []
-            return
-        }
-        let buttonFrame = textView.convert(clearButton.frame, from: clearButton.superview)
-        // Pad the exclusion zone slightly so descenders don't kiss the glyph.
-        let excluded = buttonFrame.insetBy(dx: -.ecosia.space._1s, dy: -.ecosia.space._2s)
-        textView.textContainer.exclusionPaths = [UIBezierPath(rect: excluded)]
-    }
-
     // MARK: Setup
 
     private func setup() {
@@ -213,6 +241,11 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         addSubview(submitButton)
         addSubview(counterLabel)
         addSubview(clearButton)
+        // Layered inside `clearButton`: the disc paints the dark
+        // background, the glyph draws the X on top. Both have user
+        // interaction disabled so taps fall through to the button.
+        clearButton.addSubview(clearButtonCircle)
+        clearButton.addSubview(clearButtonGlyph)
 
         textView.delegate = self
         submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
@@ -233,14 +266,15 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         addGestureRecognizer(swipeDown)
 
         NSLayoutConstraint.activate([
-            // textView occupies the upper region of the pill. Its bottom is
-            // pinned to the submit button's top so wrapped text physically
-            // cannot enter the bottom-row area (where submit + counter live)
-            // — guaranteeing no overlap regardless of content length or
-            // Dynamic Type scaling.
+            // textView occupies the upper-left region of the pill. Its
+            // bottom is pinned to the submit button's top so wrapped text
+            // physically cannot enter the bottom-row area, and its trailing
+            // edge stops at the submit button's leading edge (with an 8pt
+            // gap) so neither typed text nor the placeholder collide with
+            // the right-hand button column.
             textView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.textPadding),
             textView.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding),
-            textView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.textPadding),
+            textView.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -UX.textTrailingGap),
             textView.bottomAnchor.constraint(equalTo: submitButton.topAnchor),
             textViewHeightConstraint,
 
@@ -262,14 +296,22 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             counterLabel.centerYAnchor.constraint(equalTo: submitButton.centerYAnchor),
             counterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: .ecosia.space._m),
 
-            // Clear-text button sits in the top-right of the pill, floating
-            // over the textView. Horizontally centered with the submit
-            // button so the two right-hand controls stack on the same axis.
-            // Hidden until the user has content.
-            clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._m),
+            // Clear-text button sits in the top-right of the pill — its
+            // 40×40 hit target is symmetric to the submit button's 8pt
+            // inset from the pill's bottom-right corner, with the 16×16
+            // visible disc centred inside. Hidden until the user has content.
+            clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._1s),
             clearButton.centerXAnchor.constraint(equalTo: submitButton.centerXAnchor),
             clearButton.widthAnchor.constraint(equalToConstant: UX.clearButtonSize),
-            clearButton.heightAnchor.constraint(equalToConstant: UX.clearButtonSize)
+            clearButton.heightAnchor.constraint(equalToConstant: UX.clearButtonSize),
+
+            clearButtonCircle.centerXAnchor.constraint(equalTo: clearButton.centerXAnchor),
+            clearButtonCircle.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor),
+            clearButtonCircle.widthAnchor.constraint(equalToConstant: UX.clearCircleSize),
+            clearButtonCircle.heightAnchor.constraint(equalToConstant: UX.clearCircleSize),
+
+            clearButtonGlyph.centerXAnchor.constraint(equalTo: clearButton.centerXAnchor),
+            clearButtonGlyph.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor)
         ])
     }
 
@@ -399,11 +441,22 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         submitButton.layer.cornerRadius = UX.submitButtonSize / 2
         submitButton.layer.masksToBounds = true
         if submitButton.isEnabled {
+            // The featured background is grellow in both themes, so the
+            // icon must stay dark in both. `buttonContentSecondary` resolves
+            // to white in dark mode (white-on-grellow is illegible); the
+            // `Static` variant keeps the dark glyph in both modes — matching
+            // the design-system primary CTA pattern used by Welcome / Sign-in.
+            // The 1pt border in the same featured color is part of the
+            // design-system button spec for consistency with other CTAs.
             submitButton.backgroundColor = colors.ecosia.buttonBackgroundFeatured
-            submitButton.tintColor = colors.ecosia.buttonContentSecondary
+            submitButton.tintColor = colors.ecosia.buttonContentSecondaryStatic
+            submitButton.layer.borderWidth = 1
+            submitButton.layer.borderColor = colors.ecosia.buttonBackgroundFeatured.cgColor
         } else {
             submitButton.backgroundColor = .clear
             submitButton.tintColor = colors.ecosia.textSecondary
+            submitButton.layer.borderWidth = 0
+            submitButton.layer.borderColor = nil
         }
     }
 
@@ -414,16 +467,33 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         let colors = theme.colors
 
         backgroundColor = colors.ecosia.backgroundElevation2
-        layer.borderColor = colors.ecosia.borderDecorative.cgColor
         textView.textColor = colors.ecosia.textPrimary
         textView.tintColor = colors.ecosia.textPrimary
         placeholderLabel.textColor = colors.ecosia.textSecondary
+        applyBorderColor()
         applySubmitButtonColors()
         applyCounterColor()
         // Clear button: dark filled pill with a light glyph, matching the
         // Figma design.
-        clearButton.backgroundColor = colors.ecosia.textPrimary
-        clearButton.tintColor = colors.ecosia.backgroundElevation2
+        // Only the inner 16×16 disc carries the dark fill; the surrounding
+        // 40×40 button frame stays transparent so it doesn't read as a
+        // larger pill. The X glyph is its own `UIImageView` (template
+        // rendered), so the tint lives on the glyph directly rather than
+        // travelling through the button's internal imageView.
+        clearButton.backgroundColor = .clear
+        clearButtonCircle.backgroundColor = colors.ecosia.textPrimary
+        clearButtonGlyph.tintColor = colors.ecosia.backgroundElevation2
+    }
+
+    /// Swaps the pill border between the resting `borderDecorative` token and
+    /// the focused `formBorderPrimaryActive` token. Called from the textView
+    /// focus delegate methods and on each theme change.
+    private func applyBorderColor() {
+        guard let colors = currentTheme?.colors else { return }
+        let token = textView.isFirstResponder
+            ? colors.ecosia.formBorderPrimaryActive
+            : colors.ecosia.borderDecorative
+        layer.borderColor = token.cgColor
     }
 
     // MARK: Autocompletable
@@ -438,10 +508,14 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
 
     func textViewDidBeginEditing(_ textView: UITextView) {
+        applyBorderColor()
+        onFocusChange?(true)
         delegate?.ntpSearchBarDidBeginEditing()
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
+        applyBorderColor()
+        onFocusChange?(false)
         delegate?.ntpSearchBarDidCancel()
     }
 

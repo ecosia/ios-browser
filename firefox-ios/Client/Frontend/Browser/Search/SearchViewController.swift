@@ -752,6 +752,8 @@ class SearchViewController: SiteTableViewController,
                 oneLineCell.configure(viewModel: oneLineCellViewModel)
                 // Ecosia: Replace the Firefox history icon with the Ecosia equivalent.
                 oneLineCell.leftImageView.image = UIImage.ecosia(named: "history")?.withRenderingMode(.alwaysTemplate)
+                // Ecosia: Keep long queries on a single row, truncated at the head so the trailing autocomplete remains visible.
+                applyOneLineHeadTruncation(to: oneLineCell.titleLabel)
                 cell = oneLineCell
             }
 
@@ -760,6 +762,8 @@ class SearchViewController: SiteTableViewController,
                 let arrowImageName = StandardImageIdentifiers.Large.arrowTrending
                 let oneLineCellViewModel = oneLineCellModelForSearch(with: trendingSearch, and: arrowImageName)
                 oneLineCell.configure(viewModel: oneLineCellViewModel)
+                // Ecosia: Keep long queries on a single row, truncated at the head so the trailing autocomplete remains visible.
+                applyOneLineHeadTruncation(to: oneLineCell.titleLabel)
                 cell = oneLineCell
             }
 
@@ -780,6 +784,8 @@ class SearchViewController: SiteTableViewController,
                    ) {
                     oneLineCell.titleLabel.attributedText = attributedString
                 }
+                // Ecosia: Keep long queries on a single row, truncated at the head so the trailing autocomplete remains visible.
+                applyOneLineHeadTruncation(to: oneLineCell.titleLabel)
                 cell = oneLineCell
             }
         case .openedTabs:

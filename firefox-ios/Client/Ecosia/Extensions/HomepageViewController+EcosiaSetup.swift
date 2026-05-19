@@ -35,14 +35,41 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     // Replaces the standard URL bar while the homepage is visible. Submission and
     // suggestions are wired through the browser's existing navigation pipeline.
     func setupNTPSearchBar(delegate: NTPSearchBarDelegate) {
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+
+        // Active-state scrim sits behind the pill. Added before the pill so
+        // the pill (and the floating close button installed below) naturally
+        // render on top of it. Hidden by default — appears only on focus.
+        let backdrop = NTPSearchBarBackdropView()
+        backdrop.translatesAutoresizingMaskIntoConstraints = false
+        backdrop.applyTheme(theme: theme)
+        view.addSubview(backdrop)
+
         let searchBar = NTPSearchBarView()
         searchBar.delegate = delegate
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(searchBar)
 
+        NSLayoutConstraint.activate([
+            backdrop.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backdrop.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            // Anchor the scrim tightly to the pill: 12pt above so the fade
+            // region sits just above the omnibox, and 24pt below so the
+            // solid tail fills the 12pt gap between the pill and the
+            // keyboard's top edge AND extends another 12pt under the
+            // keyboard (the pill itself sits 12pt above the keyboard, so
+            // `pill.bottom + 24 == keyboard.top + 12`). The 12pt under-
+            // keyboard portion is occluded by iOS' keyboard window — paired
+            // with the dialled-back blur peak (α 0.5) in the backdrop view
+            // it stays out of the way of the keyboard's own translucency.
+            backdrop.bottomAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
+            backdrop.topAnchor.constraint(equalTo: searchBar.topAnchor, constant: -12)
+        ])
+        setNTPSearchBarBackdrop(backdrop)
+
         let bottomConstraint = searchBar.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-            constant: -.ecosia.space._1l
+            constant: -.ecosia.space._s
         )
         let horizontalInset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
         let leadingConstraint = searchBar.leadingAnchor.constraint(
@@ -69,7 +96,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             maxHeightConstraint
         ])
 
-        searchBar.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        searchBar.applyTheme(theme: theme)
         setNTPSearchBar(searchBar)
         setNTPSearchBarBottomConstraint(bottomConstraint)
         setNTPSearchBarLeadingConstraint(leadingConstraint)
@@ -81,6 +108,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         searchBar.onContentChange = { [weak self] text in
             self?.handleOmniboxContentChange(text)
+        }
+        searchBar.onFocusChange = { [weak self] focused in
+            self?.ntpSearchBarBackdrop?.setVisible(focused, animated: true)
         }
 
         installOmniboxCloseButton()
@@ -109,11 +139,19 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             button.heightAnchor.constraint(equalToConstant: 36)
         ])
 
-        let theme = themeManager.getCurrentTheme(for: windowUUID).colors
-        button.backgroundColor = theme.ecosia.backgroundElevation2
-        button.tintColor = theme.ecosia.textPrimary
-
         setNTPOmniboxCloseButton(button)
+        applyOmniboxCloseButtonTheme()
+    }
+
+    /// Paints the floating top-right close button using the same `layer5`
+    /// token as the autocomplete row backgrounds, so the button visually
+    /// belongs to the suggestions surface beneath it instead of reading as
+    /// a separate pill.
+    private func applyOmniboxCloseButtonTheme() {
+        guard let button = ntpOmniboxCloseButton else { return }
+        let colors = themeManager.getCurrentTheme(for: windowUUID).colors
+        button.backgroundColor = colors.layer5
+        button.tintColor = colors.ecosia.textPrimary
     }
 
     private func installOmniboxTapOutsideDismiss() {
@@ -140,15 +178,29 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     @objc private func handleOmniboxCloseButtonTapped() {
         guard let bar = ntpSearchBar else { return }
         bar.text = ""
-        _ = bar.resignFirstResponder()
+        if bar.isFirstResponder {
+            _ = bar.resignFirstResponder()
+        }
+        // The bar's `didCancel` callback no longer hides the overlay (that
+        // would tear it down on every keyboard drag-dismiss too), so always
+        // request the explicit dismiss here. After a drag-dismiss the bar
+        // isn't first responder either, but the request still tears the
+        // suggestions overlay down.
+        bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
     }
 
     @objc private func handleTapOutsideOmnibox(_ gesture: UITapGestureRecognizer) {
-        guard let bar = ntpSearchBar, bar.isFirstResponder else { return }
+        guard let bar = ntpSearchBar else { return }
         let location = gesture.location(in: view)
-        if !bar.frame.contains(location) {
+        guard !bar.frame.contains(location) else { return }
+        if bar.isFirstResponder {
             _ = bar.resignFirstResponder()
         }
+        // Always request the explicit overlay dismiss — `didCancel` no
+        // longer hides the overlay (so keyboard drag-dismiss leaves the
+        // list visible), and after a drag-dismiss the bar isn't first
+        // responder so `resignFirstResponder` above is a no-op.
+        bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
     }
 
     /// Sets up the Ecosia homepage adapter and integrates it with the view controller
@@ -259,7 +311,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
     /// Re-applies the iPad horizontal inset to the omnibox after a rotation or
     /// size-class change (e.g. iPad split-screen resize). On iPhone-class
-    /// surfaces the value collapses back to the default `_m` margin.
+    /// surfaces the value collapses back to the default `_s` (12pt) margin.
     func updateNTPSearchBarHorizontalInset() {
         let inset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
         ntpSearchBarLeadingConstraint?.constant = inset
@@ -268,11 +320,11 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
     /// 160pt of breathing room on iPad regular-width surfaces so the pill doesn't
     /// stretch the full width of a 1024pt display; everything else (iPhone, iPad
-    /// narrow split-screen) uses the standard `_m` margin.
+    /// narrow split-screen) uses the design-system `_s` (12pt) margin.
     fileprivate static func ntpSearchBarHorizontalInset(for traitCollection: UITraitCollection) -> CGFloat {
         let isWideIPad = traitCollection.userInterfaceIdiom == .pad
             && traitCollection.horizontalSizeClass == .regular
-        return isWideIPad ? 160 : .ecosia.space._m
+        return isWideIPad ? 160 : .ecosia.space._s
     }
 
     /// Called from `viewDidLayoutSubviews`. The omnibox cushion is now baked
@@ -291,8 +343,12 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     func ecosiaViewDidDisappear() {
         // Defensive: if the user navigated away while the omnibox was editing,
         // tear down the suggestions overlay so the SearchLoader doesn't keep a
-        // dangling reference to this view's autocomplete sink.
+        // dangling reference to this view's autocomplete sink. `didCancel`
+        // updates session state; `requestsOverlayDismiss` actually hides the
+        // overlay (the cancel callback no longer does that on its own so
+        // keyboard drag-dismiss can leave the list visible).
         ntpSearchBar?.delegate?.ntpSearchBarDidCancel()
+        ntpSearchBar?.delegate?.ntpSearchBarRequestsOverlayDismiss()
         _ = ntpSearchBar?.resignFirstResponder()
         ecosiaAdapter?.viewDidDisappear()
     }
@@ -302,6 +358,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         ecosiaAdapter?.updateTheme(theme)
         ntpSearchBar?.applyTheme(theme: theme)
+        ntpSearchBarBackdrop?.applyTheme(theme: theme)
+        applyOmniboxCloseButtonTheme()
     }
 
     /// Refreshes the Ecosia snapshot so the UI updates
@@ -329,7 +387,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 // MARK: - KeyboardHelperDelegate
 // Ecosia: Keeps the omnibox glued just above the keyboard while editing.
 extension HomepageViewController: KeyboardHelperDelegate {
-    private static let restingBottomOffset: CGFloat = .ecosia.space._1l
+    private static let restingBottomOffset: CGFloat = .ecosia.space._s
 
     public func keyboardHelper(
         _ keyboardHelper: KeyboardHelper,

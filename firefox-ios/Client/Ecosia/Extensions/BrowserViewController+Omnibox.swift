@@ -107,24 +107,28 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     func ntpSearchBarDidCancel() {
-        // Mark the session abandoned synchronously so the deferred
-        // `hideOmniboxSuggestions` below — which triggers
-        // `searchViewControllerWillHide` — sees the right state and routes
-        // to `recordURLBarSearchAbandonmentTelemetryEvent`. A submit that
-        // races in before the deferred hide runs flips the state back to
-        // `.engaged`, which is exactly what we want.
+        // Mark the session abandoned synchronously so the eventual overlay
+        // teardown — which triggers `searchViewControllerWillHide` — sees
+        // the right state and routes to
+        // `recordURLBarSearchAbandonmentTelemetryEvent`. A submit that races
+        // in flips the state back to `.engaged`, which is exactly what we
+        // want. Note: this callback intentionally does NOT hide the overlay
+        // any more. A keyboard drag-dismiss resigns the textView too, and
+        // tearing the suggestions down there would kill the whole point of
+        // letting the user swipe the keyboard away to read the full list.
+        // The explicit dismiss paths (`ntpSearchBarRequestsOverlayDismiss`,
+        // submit, suggestion-row selection, text-cleared) handle teardown.
         if searchSessionState == .active {
             searchSessionState = .abandoned
         }
-        // The bar resigns first responder for two distinct reasons: an explicit
-        // user dismissal, or the tap-outside gesture firing on a tap that's
-        // actually selecting a suggestion row. Tearing the suggestions overlay
-        // down synchronously kills the second case — the table view's row
-        // selection gesture fires *after* the parent tap recognizer's action,
-        // so by the time `didSelectRowAt` runs, the search controller has
-        // already been removed from the hierarchy. Defer to the next runloop
-        // so any pending row tap completes first; an explicit submit/cancel
-        // hides the overlay before the deferred call lands, making it a no-op.
+    }
+
+    func ntpSearchBarRequestsOverlayDismiss() {
+        // Defer to the next runloop so a tap-outside that's actually a
+        // suggestion-row tap can complete its `didSelectRowAt` before the
+        // table is removed from the hierarchy — an explicit submit/select
+        // hides the overlay before the deferred call lands, making it a
+        // no-op.
         DispatchQueue.main.async { [weak self] in
             self?.hideOmniboxSuggestions()
         }
@@ -196,8 +200,14 @@ extension BrowserViewController {
             searchController.view.bottomAnchor.constraint(equalTo: host.bottomAnchor)
         ])
 
-        // Keep the omnibox — and the floating top-right close button — above
-        // the suggestions overlay.
+        // z-order back→front: suggestions overlay, focused-state scrim,
+        // omnibox pill, floating close button. The scrim sits above the
+        // suggestions so the bottom of the list fades into the pill, but
+        // below the pill itself so the pill stays fully opaque.
+        if let homepage = hostVC as? HomepageViewController,
+           let backdrop = homepage.ntpSearchBarBackdrop {
+            host.bringSubviewToFront(backdrop)
+        }
         host.bringSubviewToFront(anchorView)
         if let homepage = hostVC as? HomepageViewController,
            let closeButton = homepage.ntpOmniboxCloseButton {
@@ -216,9 +226,11 @@ extension BrowserViewController {
         // Re-enable interaction in case the previous attach left the table
         // disabled by the fast-tap path below.
         searchController.tableView.isUserInteractionEnabled = true
-        // Drag-down on the suggestions list dismisses the keyboard interactively,
-        // matching the homepage collection view's behavior.
-        searchController.tableView.keyboardDismissMode = .interactive
+        // Any drag on the suggestions list dismisses the keyboard so the user
+        // can scan the full list. Resigning the textView's first responder
+        // from this path fires `ntpSearchBarDidCancel`, which intentionally
+        // no longer tears down the overlay — so the suggestions stay visible.
+        searchController.tableView.keyboardDismissMode = .onDrag
         installOmniboxFastTap(on: searchController.tableView)
     }
 
