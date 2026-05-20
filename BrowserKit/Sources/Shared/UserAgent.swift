@@ -91,6 +91,7 @@ open class UserAgent {
     public static func getUserAgent(domain: String, platform: UserAgentPlatform) -> String {
         switch platform {
         case .Desktop:
+            // Ecosia: Use Ecosia's desktop UA for URLProvider-backed Ecosia domains.
             if configuration.containsEcosiaDesktopUserAgentDomain(domain) {
                 return ecosiaDesktopUA
             }
