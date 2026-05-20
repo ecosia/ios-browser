@@ -57,9 +57,6 @@ extension BrowserViewController: NTPSearchBarDelegate {
             hideOmniboxSuggestions()
             return
         }
-        // Always show suggestions while there's content — no length-based
-        // suppression. Inferring "AI chat intent" from input length is
-        // server-side concern; the client just feeds the query.
         showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
     }
 

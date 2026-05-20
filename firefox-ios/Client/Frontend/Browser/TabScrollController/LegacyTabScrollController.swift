@@ -290,12 +290,12 @@ final class LegacyTabScrollController: NSObject,
 
     func createToolbarTapHandler() -> (() -> Void) {
         return { [unowned self] in
-            // Ecosia: Drop the `.collapsed` guard. When the toolbar is in
-            // its minimal pill form the state and visuals can drift apart
-            // (especially across animations / scroll transitions), so a
-            // tap that visually hits the pill but lands while `toolbarState`
-            // is still `.transitioning` would otherwise no-op. `showToolbars`
-            // already guards itself against re-entry from `.visible`.
+            /* Ecosia: Drop the `.collapsed` guard. When the toolbar is in its minimal pill form the state and
+               visuals can drift apart (especially across animations / scroll transitions), so a tap that
+               visually hits the pill but lands while `toolbarState` is still `.transitioning` would otherwise
+               no-op. `showToolbars` already guards itself against re-entry from `.visible`.
+            guard isMinimalAddressBarEnabled && toolbarState == .collapsed else { return }
+             */
             guard isMinimalAddressBarEnabled else { return }
             showToolbars(animated: true)
         }
