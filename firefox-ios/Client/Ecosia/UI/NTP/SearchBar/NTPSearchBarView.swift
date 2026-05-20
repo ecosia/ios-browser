@@ -8,20 +8,13 @@ import Ecosia
 
 // MARK: - Delegate
 
-/// Whether a submission should route to the standard search pipeline or the
-/// long-form AI chat. The omnibox flips into `.aiChat` once the input crosses
-/// the configured threshold (see `NTPSearchBarView.UX.aiChatThreshold`).
-enum NTPSearchBarSubmitMode {
-    case search
-    case aiChat
-}
-
 @MainActor
 protocol NTPSearchBarDelegate: AnyObject {
     /// Called when the user commits a query (Return key or submit button).
-    /// `mode` indicates whether the input should be treated as a search query
-    /// or a long-form AI chat prompt.
-    func ntpSearchBarDidSubmit(_ searchTerm: String, mode: NTPSearchBarSubmitMode)
+    /// Submissions always go through the standard search pipeline — the
+    /// client doesn't attempt to infer "AI chat intent" from the input
+    /// length or content.
+    func ntpSearchBarDidSubmit(_ searchTerm: String)
     /// Called on every keystroke so the browser can feed suggestions.
     func ntpSearchBarTextDidChange(_ searchTerm: String)
     /// Called when the text field becomes first responder.
@@ -67,9 +60,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         static let shadowOpacity: Float = 0.10
         static let shadowRadius: CGFloat = 12
         static let shadowOffset = CGSize(width: 0, height: 4)
-        /// At/above this character count, submit routes to AI chat instead of
-        /// the standard search pipeline.
-        static let aiChatThreshold = 60
         /// Character count at which the remaining-character counter becomes
         /// visible.
         static let counterVisibleThreshold = 100
@@ -78,9 +68,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         static let counterWarningThreshold = 960
         /// Hard cap on input length. Further input is rejected.
         static let maxLength = 1060
-        /// Once the input wraps past this many lines, the suggestions overlay
-        /// is suppressed and the pill grows upward to fit the content.
-        static let multilineThreshold = 2
         /// Padding between the textView and the pill's top edge.
         static let textPadding: CGFloat = .ecosia.space._m
         /// Vertical footprint of the bottom-controls row (submit button + its
@@ -176,15 +163,8 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     var onFocusChange: ((Bool) -> Void)?
 
     private var currentTheme: Theme?
-    private var currentSubmitMode: NTPSearchBarSubmitMode = .search
     private lazy var textViewHeightConstraint: NSLayoutConstraint =
         textView.heightAnchor.constraint(equalToConstant: UX.minTextHeight)
-
-    /// True once the text wraps past `UX.multilineThreshold` lines. The host
-    /// reads this in `ntpSearchBarTextDidChange` to suppress the suggestions
-    /// overlay — once the user is composing a long-form prompt, the short-form
-    /// suggestions are no longer useful.
-    private(set) var isMultiline = false
 
     /// Current text content. Mirrors `textView.text` but lets callers drive
     /// programmatic changes (e.g. accepting a tapped suggestion).
@@ -331,7 +311,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         let text = (textView.text ?? "").trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
         textView.resignFirstResponder()
-        delegate?.ntpSearchBarDidSubmit(text, mode: currentSubmitMode)
+        delegate?.ntpSearchBarDidSubmit(text)
     }
 
     @objc private func clearTapped() {
@@ -347,21 +327,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         onContentChange?("")
     }
 
-    /// Recomputes the textView height (and therefore the pill height) and the
-    /// `isMultiline` flag from the current content. The pill grows from
-    /// `minHeight` up to `maxHeight`; past the cap the textView starts
-    /// scrolling internally instead of pushing further upward.
+    /// Recomputes the textView height (and therefore the pill height) from
+    /// the current content. The pill grows from `minHeight` up to `maxHeight`;
+    /// past the cap the textView starts scrolling internally instead of
+    /// pushing further upward.
     private func updateLayoutForContent() {
-        let lineHeight = textView.font?.lineHeight ?? 22
-        // contentSize includes textContainerInset on top + bottom — strip
-        // those out before counting lines so the threshold matches the
-        // visible text rather than the reserved bottom-row spacer.
-        let inset = textView.textContainerInset
         let contentHeight = textView.contentSize.height
-        let textOnlyHeight = max(0, contentHeight - inset.top - inset.bottom)
-        let lineCount = max(1, Int((textOnlyHeight / lineHeight).rounded()))
-        isMultiline = lineCount > UX.multilineThreshold
-
         let clamped = min(UX.maxTextHeight, max(UX.minTextHeight, contentHeight))
         if textViewHeightConstraint.constant != clamped {
             textViewHeightConstraint.constant = clamped
@@ -374,12 +345,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     private func updateSubmitState(for text: String) {
         let hasContent = !text.trimmingCharacters(in: .whitespaces).isEmpty
         submitButton.isEnabled = hasContent
-        currentSubmitMode = Self.submitMode(for: text)
         applySubmitButtonColors()
-    }
-
-    private static func submitMode(for text: String) -> NTPSearchBarSubmitMode {
-        text.count >= UX.aiChatThreshold ? .aiChat : .search
     }
 
     private func updateCounter(for text: String) {
@@ -525,9 +491,6 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
         updateSubmitState(for: text)
         updateCounter(for: text)
         updateClearButtonVisibility(for: text)
-        // Update layout BEFORE notifying the host so it can read
-        // `isMultiline` from `ntpSearchBarTextDidChange` and decide whether
-        // to suppress the suggestions overlay.
         updateLayoutForContent()
         delegate?.ntpSearchBarTextDidChange(text)
         onContentChange?(text)

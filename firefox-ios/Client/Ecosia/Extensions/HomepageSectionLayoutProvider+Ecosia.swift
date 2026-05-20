@@ -164,11 +164,12 @@ extension HomepageSectionLayoutProvider {
             numberOfTilesPerRow: numberOfTilesPerRow
         )
         let edgeInset: CGFloat = traitCollection.horizontalSizeClass == .regular ? 100 : .ecosia.space._s
-        /* TopSites row uses 8 pt (EcosiaSpacing._1s) top and 26 pt bottom padding
-           so the row height equals TopSiteCell height + those insets.
+        /* TopSites row uses 16 pt (EcosiaSpacing._m) top so the row sits
+           noticeably below the impact tiles above it, and 24 pt bottom
+           (EcosiaSpacing._1l) so the gap to the omnibox stays balanced.
          */
         let insets = NSDirectionalEdgeInsets(
-            top: .ecosia.space._1s,
+            top: .ecosia.space._m,
             leading: edgeInset,
             bottom: .ecosia.space._1l,
             trailing: edgeInset

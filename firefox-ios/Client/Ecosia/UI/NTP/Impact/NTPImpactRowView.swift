@@ -152,6 +152,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         // honour the corner radius via `layer.cornerRadius`, so the rounded
         // card outline stays intact.
         clipsToBounds = false
+        // Mirror the row's rounding on the glass background so its sharp
+        // rectangle corners don't peek past the rounded border outline.
+        // Without this, the trailing top/bottom corners look ragged.
+        glassBackground.layer.cornerRadius = .ecosia.borderRadius._l
         addSubview(glassBackground)
 
         labelsStack.addArrangedSubview(titleLabel)

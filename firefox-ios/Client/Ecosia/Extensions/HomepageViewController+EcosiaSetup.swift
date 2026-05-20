@@ -69,7 +69,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         let bottomConstraint = searchBar.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-            constant: -.ecosia.space._s
+            constant: -.ecosia.space._l
         )
         let horizontalInset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
         let leadingConstraint = searchBar.leadingAnchor.constraint(
@@ -387,7 +387,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 // MARK: - KeyboardHelperDelegate
 // Ecosia: Keeps the omnibox glued just above the keyboard while editing.
 extension HomepageViewController: KeyboardHelperDelegate {
-    private static let restingBottomOffset: CGFloat = .ecosia.space._s
+    private static let restingBottomOffset: CGFloat = .ecosia.space._l
 
     public func keyboardHelper(
         _ keyboardHelper: KeyboardHelper,

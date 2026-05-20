@@ -509,7 +509,14 @@ final class LocationView: UIView,
                 let scaledTransformation = CGAffineTransform(scaleX: UX.smallScale, y: UX.smallScale)
                     .translatedBy(x: 0, y: yOffset)
                 self.transform = scaledTransformation
+                /* Ecosia: Keep `urlTextField` interactive even while the location view is in its compact pill form.
+                   With interaction disabled the tap that visually hits the pill is dropped on the floor — no
+                   gesture in the toolbar fires, so the toolbar never re-expands (and the container-level tap
+                   can't compensate when the pill is the only thing covering the tap point). Letting the text
+                   field receive the tap routes it through the normal `textFieldDidBeginEditing` →
+                   `addressToolbarDidBeginEditing` pipeline, which both expands the bar and enters overlay mode.
                 self.urlTextField.isUserInteractionEnabled = false
+                 */
             })
     }
 

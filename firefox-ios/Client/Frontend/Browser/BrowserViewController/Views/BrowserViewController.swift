@@ -4218,6 +4218,13 @@ class BrowserViewController: UIViewController,
     func addressToolbarDidEnterOverlayMode(_ view: UIView) {
         guard let profile = profile as? BrowserProfile else { return }
 
+        // Ecosia: If the user tapped the URL bar while it was scroll-collapsed
+        // into its minimal pill form, expand the toolbar back to its full
+        // size before entering overlay/edit mode — otherwise the pill just
+        // grows a caret and shows a tiny edit field instead of the proper
+        // full-width address bar.
+        scrollController.showToolbars(animated: true)
+
         if let isHomeTab = tabManager.selectedTab?.isFxHomeTab,
            featureFlags.isFeatureEnabled(.homepageScrim, checking: .buildOnly) && isHomeTab {
             configureHomepageZeroSearchView()
@@ -4700,7 +4707,7 @@ extension BrowserViewController: SearchViewControllerDelegate {
         let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
         if isOmniboxOverlay {
             if let searchTerm, !searchTerm.isEmpty {
-                ntpSearchBarDidSubmit(searchTerm, mode: .search)
+                ntpSearchBarDidSubmit(searchTerm)
                 return
             }
             hideOmniboxSuggestions()
