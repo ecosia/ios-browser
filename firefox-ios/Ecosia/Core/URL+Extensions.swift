@@ -5,11 +5,11 @@
 import Foundation
 
 extension URL {
-    
+
     public var isEcosiaAIChat: Bool {
         isEcosia() && path.contains("ai-chat")
     }
-    
+
     public enum EcosiaQueryItemName: String {
         case
         autoRedirect = "ar",
