@@ -17,7 +17,12 @@ class ClientTests: XCTestCase {
         let systemVersion = UIDevice.current.systemVersion
 
         if AppInfo.buildNumber != "1" {
-            let expectedRegex = "^Firefox-iOS-Sync/[0-9\\.]+b[0-9]* \\(\(device); iPhone OS \(systemVersion)\\) \\([-_A-Za-z0-9= \\(\\)]+\\)$"
+            /* Ecosia: Sync UA uses the Ecosia prefix.
+            let expectedRegex = "^Firefox-iOS-Sync/[0-9\\.]+b[0-9]* " +
+            "\\(\(device); iPhone OS \(systemVersion)\\) \\([-_A-Za-z0-9= \\(\\)]+\\)$"
+             */
+            let expectedRegex = "^Ecosia-iOS-Sync/[0-9\\.]+b[0-9]* " +
+            "\\(\(device); iPhone OS \(systemVersion)\\) \\([-_A-Za-z0-9= \\(\\)]+\\)$"
             let loc = ua.range(of: expectedRegex, options: .regularExpression)
             XCTAssertTrue(loc != nil, "Sync UA is as expected. Was \(ua)")
         } else {
