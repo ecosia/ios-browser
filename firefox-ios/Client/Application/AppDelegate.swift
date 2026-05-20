@@ -69,6 +69,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
                                                sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+        // Ecosia: Register URLProvider domains that need Ecosia's desktop UA.
+        UserAgent.configureEcosiaDesktopUserAgentDomains([
+            URLProvider.production.domain,
+            URLProvider.staging.domain
+        ])
 
         // Set-up Rust network stack. Note that this has to be called
         // before any Application Services component gets used.

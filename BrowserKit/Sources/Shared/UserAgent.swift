@@ -10,11 +10,24 @@ open class UserAgent {
     public static let uaBitSafari = "Safari/604.1"
     public static let uaBitMobile = "Mobile/15E148"
     public static let uaBitFx = "FxiOS/\(AppInfo.appVersion)"
+    // Ecosia: Add Ecosia user agent info.
+    public static let uaBitVersion = "Version/\(UIDeviceDetails.systemVersion)"
+    public static var uaBitEcosia: String {
+        return "(Ecosia ios@\(AppInfo.appVersion).\(AppInfo.buildNumber))"
+    }
+    public static var ecosiaDesktopUA: String {
+        return "\(UserAgent.desktopUserAgent()) \(UserAgent.uaBitEcosia)"
+    }
     public static let product = "Mozilla/5.0"
     public static let platform = "AppleWebKit/605.1.15"
     public static let platformDetails = "(KHTML, like Gecko)"
 
     private static let defaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
+    // Ecosia: Configure Ecosia domains from the app layer's URLProvider.
+    private static let configuration = UserAgentConfiguration()
+    public static func configureEcosiaDesktopUserAgentDomains(_ domains: [String]) {
+        configuration.configureEcosiaDesktopUserAgentDomains(domains)
+    }
 
     private static func clientUserAgent(prefix: String) -> String {
         let versionStr: String
@@ -27,19 +40,31 @@ open class UserAgent {
     }
 
     public static var syncUserAgent: String {
+        /* Ecosia: Use Ecosia UA prefix for sync requests.
         return clientUserAgent(prefix: "Firefox-iOS-Sync")
+         */
+        return clientUserAgent(prefix: "Ecosia-iOS-Sync")
     }
 
     public static var tokenServerClientUserAgent: String {
+        /* Ecosia: Use Ecosia UA prefix for token server requests.
         return clientUserAgent(prefix: "Firefox-iOS-Token")
+         */
+        return clientUserAgent(prefix: "Ecosia-iOS-Token")
     }
 
     public static var fxaUserAgent: String {
+        /* Ecosia: Use Ecosia UA prefix for account webviews.
         return clientUserAgent(prefix: "Firefox-iOS-FxA")
+         */
+        return clientUserAgent(prefix: "Ecosia-iOS-EcosiaA")
     }
 
     public static var defaultClientUserAgent: String {
+        /* Ecosia: Use Ecosia UA prefix for generic client requests.
         return clientUserAgent(prefix: "Firefox-iOS")
+         */
+        return clientUserAgent(prefix: "Ecosia-iOS")
     }
 
     public static func isDesktop(ua: String) -> Bool {
@@ -66,6 +91,11 @@ open class UserAgent {
     public static func getUserAgent(domain: String, platform: UserAgentPlatform) -> String {
         switch platform {
         case .Desktop:
+            // Ecosia: Use Ecosia's desktop UA for URLProvider-backed Ecosia domains.
+            if configuration.containsEcosiaDesktopUserAgentDomain(domain) {
+                return ecosiaDesktopUA
+            }
+
             guard let customUA = CustomUserAgentConstant.customDesktopUAForDomain[domain] else {
                 return desktopUserAgent()
             }
@@ -94,11 +124,40 @@ public enum UserAgentPlatform {
     case Mobile
 }
 
+// Ecosia: Keeps URLProvider-derived domains out of BrowserKit's static upstream domain list.
+private final class UserAgentConfiguration: @unchecked Sendable {
+    private let lock = NSLock()
+    private var ecosiaDesktopUserAgentDomains = Set<String>()
+
+    func configureEcosiaDesktopUserAgentDomains(_ domains: [String]) {
+        lock.lock()
+        defer { lock.unlock() }
+
+        ecosiaDesktopUserAgentDomains = Set(domains.map { $0.lowercased() })
+    }
+
+    func containsEcosiaDesktopUserAgentDomain(_ domain: String) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+
+        return ecosiaDesktopUserAgentDomains.contains(domain.lowercased())
+    }
+}
+
 struct CustomUserAgentConstant {
     private static let defaultMobileUA = UserAgentBuilder.defaultMobileUserAgent().userAgent()
+    // Ecosia: Keep a Firefox mobile UA for domains that reject Ecosia's default UA.
+    private static let defaultFirefoxMobileUA = UserAgentBuilder.defaultFirefoxMobileUserAgent().userAgent()
+    /* Ecosia: Build Safari-only overrides from the Firefox mobile UA.
     private static let safariMobileUA = UserAgentBuilder.defaultMobileUserAgent().clone(extensions: "Version/18.6 \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+     */
+    private static let safariMobileUA = UserAgentBuilder.defaultFirefoxMobileUserAgent().clone(
+        extensions: "Version/18.6 \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)"
+    )
 
     static let customMobileUAForDomain = [
+        // Ecosia: PayPal expects the Firefox mobile UA.
+        "paypal.com": defaultFirefoxMobileUA,
         // TODO: FXIOS-14371 [webcompat] rokuchannel blocking FXIOS "this browser isn't supported" (webcompat #126427)
         "roku.com": safariMobileUA,
         // TODO: FXIOS-13391 [webcompat] "connection error" only on FxiOS/* UA (bug 1983983)
@@ -113,7 +172,10 @@ struct CustomUserAgentConstant {
 
     static let customDesktopUAForDomain = [
         // TODO: FXIOS-8027, FXIOS-11230, FXIOS-13891 PayPal buttons open blank tabs
+        /* Ecosia: PayPal expects the Firefox mobile UA.
         "paypal.com": defaultMobileUA,
+         */
+        "paypal.com": defaultFirefoxMobileUA,
         // FXIOS-10251: Do not appear as desktop/Safari for firefox.com/pair
         "firefox.com": defaultMobileUA
     ]
@@ -170,6 +232,18 @@ public struct UserAgentBuilder {
     }
 
     public static func defaultMobileUserAgent() -> UserAgentBuilder {
+        /* Ecosia: Always return Ecosia's UA as the default mobile UA.
+        return UserAgentBuilder(
+            product: UserAgent.product,
+            systemInfo: "(\(UIDeviceDetails.model); CPU iPhone OS 18_7 like Mac OS X)",
+            platform: UserAgent.platform,
+            platformDetails: UserAgent.platformDetails,
+            extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+         */
+        return UserAgentBuilder.ecosiaMobileUserAgent()
+    }
+
+    public static func defaultFirefoxMobileUserAgent() -> UserAgentBuilder {
         return UserAgentBuilder(
             product: UserAgent.product,
             systemInfo: "(\(UIDeviceDetails.model); CPU iPhone OS 18_7 like Mac OS X)",
@@ -185,5 +259,19 @@ public struct UserAgentBuilder {
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
             extensions: "Version/18.6 Safari/605.1.15")
+    }
+}
+
+// Ecosia: Ecosia mobile UA.
+extension UserAgentBuilder {
+    public static func ecosiaMobileUserAgent() -> UserAgentBuilder {
+        let formattedSystemVersion = UIDeviceDetails.systemVersion.replacingOccurrences(of: ".", with: "_")
+
+        return UserAgentBuilder(
+            product: UserAgent.product,
+            systemInfo: "(\(UIDeviceDetails.model); CPU iPhone OS \(formattedSystemVersion) like Mac OS X)",
+            platform: UserAgent.platform,
+            platformDetails: UserAgent.platformDetails,
+            extensions: "\(UserAgent.uaBitVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari) \(UserAgent.uaBitEcosia)")
     }
 }
