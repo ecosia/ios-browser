@@ -4704,9 +4704,15 @@ extension BrowserViewController: SearchViewControllerDelegate {
         // History/bookmark/remote-tab rows have no search term — fall back to
         // loading the URL directly, but still tear the omnibox down and force
         // the webview swap that the URL-bar overlay chain would normally do.
+        // The dedicated AI Chat row IS associated with a search term but its
+        // URL is already the AI chat endpoint — sending it through
+        // `ntpSearchBarDidSubmit` would rebuild a plain Ecosia search URL and
+        // drop the AI chat destination, so we treat that case like the URL
+        // fallback below.
         let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
         if isOmniboxOverlay {
-            if let searchTerm, !searchTerm.isEmpty {
+            let isAIChatURL = url.getEcosiaSearchVerticalPath() == URL.EcosiaSearchVertical.aiChat.rawValue
+            if let searchTerm, !searchTerm.isEmpty, !isAIChatURL {
                 ntpSearchBarDidSubmit(searchTerm)
                 return
             }
