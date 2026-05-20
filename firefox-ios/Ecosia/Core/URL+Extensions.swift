@@ -5,7 +5,11 @@
 import Foundation
 
 extension URL {
-
+    
+    public var isEcosiaAIChat: Bool {
+        isEcosia() && path.contains("ai-chat")
+    }
+    
     public enum EcosiaQueryItemName: String {
         case
         autoRedirect = "ar",
@@ -20,7 +24,6 @@ extension URL {
         case images
         case news
         case videos
-        case aiChat = "ai-chat"
 
         init?(path: String) {
             let pathWithNoLeadingSlash = String(path.dropFirst())

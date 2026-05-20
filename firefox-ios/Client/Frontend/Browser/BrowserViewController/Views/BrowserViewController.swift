@@ -4711,8 +4711,7 @@ extension BrowserViewController: SearchViewControllerDelegate {
         // fallback below.
         let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
         if isOmniboxOverlay {
-            let isAIChatURL = url.getEcosiaSearchVerticalPath() == URL.EcosiaSearchVertical.aiChat.rawValue
-            if let searchTerm, !searchTerm.isEmpty, !isAIChatURL {
+            if let searchTerm, !searchTerm.isEmpty, !url.isEcosiaAIChat {
                 ntpSearchBarDidSubmit(searchTerm)
                 return
             }
