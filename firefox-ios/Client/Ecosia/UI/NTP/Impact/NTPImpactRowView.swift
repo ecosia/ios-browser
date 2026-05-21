@@ -178,15 +178,19 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     }
 
     private func setupConstraints() {
+        // Ecosia: Pin top/bottom equal (not greaterThanOrEqual/lessThanOrEqual) so the row's
+        // height is exactly `mainContainerView.height + padding * 2`. Without this the row has
+        // no derivable intrinsic height in the vertical axis, which lets `tilesStack`'s `.fill`
+        // distribution stretch the rows to fill an oversized impact section on iPad
+        // (the previously inequality-only setup gave the row infinite vertical freedom).
         NSLayoutConstraint.activate([
             glassBackground.topAnchor.constraint(equalTo: topAnchor),
             glassBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
             glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
             glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            mainContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            mainContainerView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: UX.padding),
-            mainContainerView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -UX.padding),
+            mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
+            mainContainerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
             mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
 

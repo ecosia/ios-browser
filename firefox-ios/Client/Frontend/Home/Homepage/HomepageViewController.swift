@@ -184,6 +184,12 @@ final class HomepageViewController: UIViewController,
         termsOfUseDelegate?.showTermsOfUse(context: .homepageOpened)
         // Ecosia: Trigger Ecosia data loading
         ecosiaViewWillAppear()
+        // Ecosia: The window-anchored wallpaper constraint installed by
+        // `extendEcosiaWallpaperToParentOnPad` can be torn down when this
+        // VC's view is removed from its superview during tab/content
+        // switches. Reset the gate so the next layout pass re-installs the
+        // constraint and the wallpaper card reaches the screen bottom again.
+        wallpaperExtendedToParent = false
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -924,18 +930,18 @@ final class HomepageViewController: UIViewController,
         updateNTPSearchBarHorizontalInset()
     }
 
-    /* Ecosia: On iPad the content container ends at overKeyboardContainer.top — well above
-     the screen bottom — because the address bar lives in the header. Replace the initial
-     view.bottomAnchor constraint with a cross-hierarchy constraint to BVC's view so the
-     wallpaper card fills the gap behind the translucent bottom toolbar. iPhone keeps the
+    /* Ecosia: On iPad the content container can end above the screen bottom (behind the
+     translucent bottom toolbar / safe area), and `parent?.view.bottomAnchor` doesn't always
+     reach the actual screen bottom. Anchor the wallpaper card to the host window's bottom
+     instead — that's the only anchor guaranteed to span the full display. iPhone keeps the
      simple view-local constraint (correct margin and corner radius above the address bar). */
     private func extendEcosiaWallpaperToParentOnPad() {
         guard traitCollection.userInterfaceIdiom == .pad,
               !wallpaperExtendedToParent,
-              let parentView = parent?.view else { return }
+              let window = view.window else { return }
         wallpaperBottomConstraint?.isActive = false
         let extended = wallpaperView.bottomAnchor.constraint(
-            equalTo: parentView.bottomAnchor,
+            equalTo: window.bottomAnchor,
             constant: -CGFloat.ecosia.space._m
         )
         extended.isActive = true
