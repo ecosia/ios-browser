@@ -54,15 +54,16 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             backdrop.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backdrop.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             // Anchor the scrim tightly to the pill: 12pt above so the fade
-            // region sits just above the omnibox, and 24pt below so the
-            // solid tail fills the 12pt gap between the pill and the
-            // keyboard's top edge AND extends another 12pt under the
-            // keyboard (the pill itself sits 12pt above the keyboard, so
-            // `pill.bottom + 24 == keyboard.top + 12`). The 12pt under-
-            // keyboard portion is occluded by iOS' keyboard window — paired
-            // with the dialled-back blur peak (α 0.5) in the backdrop view
-            // it stays out of the way of the keyboard's own translucency.
-            backdrop.bottomAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
+            // region sits just above the omnibox, and 40pt below so the
+            // tail extends ~20pt past the keyboard's top edge (the pill
+            // itself sits `restingBottomOffset` = 20pt above the keyboard,
+            // so `pill.bottom + 40 ≈ keyboard.top + 20`). That extra strip
+            // is occluded by the keyboard window proper, but the rounded
+            // corner area of the keyboard (transparent outside the corner
+            // radius on iPhone 13+) reveals the backdrop behind it — without
+            // this extra reach the corners read as a bare wallpaper notch
+            // next to the keyboard.
+            backdrop.bottomAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 40),
             backdrop.topAnchor.constraint(equalTo: searchBar.topAnchor, constant: -12)
         ])
         setNTPSearchBarBackdrop(backdrop)
@@ -291,6 +292,22 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             for: traitCollection,
             size: view.bounds.size
         )
+
+        // Ecosia: Force a layout invalidation so the impact section's
+        // fill-height (computed from `environment.container.contentSize`)
+        // is recomputed against the current container — without this, a
+        // back-navigation from the SERP can leave the impact card sized
+        // for the previous layout (URL bar still in the chain), making it
+        // shrink and pulling TopSites up. Invalidating here, before the
+        // snapshot updates, lets the recomputed sizes apply on the same
+        // pass that data changes do. A second invalidation on the next
+        // runloop catches the case where the URL bar is still animating
+        // out at this point: the container is the wrong size during this
+        // call, but correct by the time the next loop tick fires.
+        homepageCollectionView?.collectionViewLayout.invalidateLayout()
+        DispatchQueue.main.async { [weak self] in
+            self?.homepageCollectionView?.collectionViewLayout.invalidateLayout()
+        }
 
         // Ecosia: Force snapshot rebuild so changes to User-backed flags
         // (e.g. showClimateImpact, showTopSites) that live outside Redux

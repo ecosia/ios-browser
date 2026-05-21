@@ -5250,7 +5250,6 @@ extension BrowserViewController: KeyboardHelperDelegate {
         if isSwipingTabsEnabled {
             addressToolbarContainer.updateSkeletonAddressBarsVisibility(tabManager: tabManager)
         }
-        guard shouldCancelEditing else { return }
         // Ecosia: When the embedded NTP omnibox owns the suggestions overlay
         // (the shared search controller is parented to the homepage VC), the
         // URL-bar overlay-cancel pipeline must not run on keyboard-hide. The
@@ -5258,15 +5257,27 @@ extension BrowserViewController: KeyboardHelperDelegate {
         // callback every time, and the default path tears down the shared
         // search controller through `destroySearchController()` — collapsing
         // the omnibox overlay the moment the user swipes to hide the
-        // keyboard. The omnibox's own delegate callbacks
-        // (`ntpSearchBarDidSubmit`, `ntpSearchBarDidCancel`, suggestion-row
-        // selection) handle teardown explicitly when the user really leaves.
+        // keyboard. The omnibox's own delegate callbacks handle teardown
+        // explicitly when the user really leaves.
         if searchController?.parent is HomepageViewController {
             return
         }
+        /* Ecosia: Cancel unconditionally on every non-omnibox surface. The
+           original `shouldCancelEditing` gate returned `false` for the
+           default new-tab preference (`.topSites`) and for `.blankPage`,
+           which left the URL bar stuck in overlay mode (focus outline still
+           visible, internal `isEditing` still true) after the user swiped to
+           dismiss the keyboard on the SERP or any web page. The next scroll
+           re-triggers focus because the state machine still thinks editing
+           is active. Cancelling here lines the toolbar state up with what
+           the user sees on screen.
+        guard shouldCancelEditing else { return }
+         */
         overlayManager.cancelEditing(shouldCancelLoading: false)
     }
 
+    /* Ecosia: No longer consulted — `cancelEditingMode` now always cancels for non-omnibox surfaces.
+       Preserved for upstream merge context; remove with the next Firefox sync if still unused.
     private var shouldCancelEditing: Bool {
         let newTabChoice = NewTabAccessors.getNewTabPage(profile.prefs)
         guard newTabChoice != .topSites, newTabChoice != .blankPage else { return false }
@@ -5279,6 +5290,7 @@ extension BrowserViewController: KeyboardHelperDelegate {
 
         return searchTerm == nil
     }
+     */
 }
 
 // MARK: JSPromptAlertControllerDelegate

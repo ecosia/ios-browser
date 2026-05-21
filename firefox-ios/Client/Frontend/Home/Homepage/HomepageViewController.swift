@@ -195,6 +195,14 @@ final class HomepageViewController: UIViewController,
             )
         )
         trackVisibleItemImpressions()
+        // Ecosia: Recompute section sizes now that the container has settled.
+        // On back-navigation from the SERP the URL bar is still in the layout
+        // chain during `viewWillAppear`, so the impact section's fill-height
+        // is computed against a smaller container and the rows render
+        // squeezed. Invalidating here, after the URL bar has been removed
+        // and the bounds are final, lets the impact card stretch to its full
+        // size and pushes TopSites back to its proper position.
+        homepageCollectionView?.collectionViewLayout.invalidateLayout()
     }
 
     override func viewWillDisappear(_ animated: Bool) {

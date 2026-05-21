@@ -37,6 +37,12 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         stack.distribution = .fill
         stack.spacing = UX.titleToTilesGap
         stack.backgroundColor = .clear
+        // Ecosia: Refuse to be vertically compressed by an undersized cell.
+        // Back-navigating from the SERP can briefly hand the layout a smaller
+        // container, which would otherwise squeeze this stack (and the impact
+        // rows inside) and pull TopSites up to fill the gap. Holding the
+        // intrinsic height keeps the cards stable through the transition.
+        stack.setContentCompressionResistancePriority(.required, for: .vertical)
         return stack
     }()
 
@@ -82,6 +88,9 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         stack.alignment = .fill
         stack.distribution = .fill
         stack.spacing = UX.cellsSpacing
+        // Ecosia: see `contentStack` comment — hold the intrinsic stack
+        // height so the impact rows don't get squeezed during transitions.
+        stack.setContentCompressionResistancePriority(.required, for: .vertical)
         return stack
     }()
 
@@ -168,10 +177,17 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             /* Center the content vertically inside the impact section, which is sized to fill
                the remaining card height above TopSites. >= / <= guards prevent overflow on small screens.
              */
-            contentStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             contentStack.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: UX.titleToTilesGap),
             contentStack.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -UX.titleToTilesGap),
         ])
+
+        // Ecosia: Centring is a soft constraint so it breaks first when the
+        // cell is shorter than the content needs (e.g. during a transient
+        // back-navigation layout pass). Otherwise the system trades off
+        // against compression resistance and the impact rows end up squeezed.
+        let centerY = contentStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        centerY.priority = .defaultLow
+        centerY.isActive = true
 
         updateContainerAxisForCurrentTraits()
     }
