@@ -292,6 +292,22 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             size: view.bounds.size
         )
 
+        // Ecosia: Force a layout invalidation so the impact section's
+        // fill-height (computed from `environment.container.contentSize`)
+        // is recomputed against the current container — without this, a
+        // back-navigation from the SERP can leave the impact card sized
+        // for the previous layout (URL bar still in the chain), making it
+        // shrink and pulling TopSites up. Invalidating here, before the
+        // snapshot updates, lets the recomputed sizes apply on the same
+        // pass that data changes do. A second invalidation on the next
+        // runloop catches the case where the URL bar is still animating
+        // out at this point: the container is the wrong size during this
+        // call, but correct by the time the next loop tick fires.
+        homepageCollectionView?.collectionViewLayout.invalidateLayout()
+        DispatchQueue.main.async { [weak self] in
+            self?.homepageCollectionView?.collectionViewLayout.invalidateLayout()
+        }
+
         // Ecosia: Force snapshot rebuild so changes to User-backed flags
         // (e.g. showClimateImpact, showTopSites) that live outside Redux
         // are picked up when returning from the settings screen.

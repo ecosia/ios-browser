@@ -134,6 +134,10 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             // Trigger the didSet observer so subviews are populated on first configure.
             self.info = info
         }
+        // Ecosia: Refuse vertical compression so the impact row keeps its
+        // intrinsic height (icon + labels + padding) even when the enclosing
+        // cell is given less space than expected by the section layout.
+        setContentCompressionResistancePriority(.required, for: .vertical)
         setupView()
         setupConstraints()
         setupTapGestureIfNeeded()

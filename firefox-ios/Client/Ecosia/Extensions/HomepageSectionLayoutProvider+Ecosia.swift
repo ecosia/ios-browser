@@ -114,9 +114,17 @@ extension HomepageSectionLayoutProvider {
         // Fall back to content-size estimate so the cell is never shorter than its content.
         let impactHeight = max(304, fillHeight)
 
+        // Ecosia: Use `.estimated` instead of `.absolute` so the cell can
+        // self-size up to its intrinsic content height when the calculated
+        // `fillHeight` is briefly wrong (e.g. during a SERP→NTP back
+        // transition while the URL bar is still in the layout chain).
+        // Without this the cell renders at the stale absolute size and the
+        // impact rows look vertically compressed; with `.estimated`
+        // autolayout takes over and the cell stays at the content's
+        // intrinsic height regardless of the section's pre-computed value.
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(impactHeight)
+            heightDimension: .estimated(impactHeight)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let group = NSCollectionLayoutGroup.horizontal(
