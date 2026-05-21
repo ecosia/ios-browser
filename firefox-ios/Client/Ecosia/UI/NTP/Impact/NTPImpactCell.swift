@@ -43,6 +43,13 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         // rows inside) and pull TopSites up to fill the gap. Holding the
         // intrinsic height keeps the cards stable through the transition.
         stack.setContentCompressionResistancePriority(.required, for: .vertical)
+        // Ecosia: Refuse to be vertically stretched by an oversized cell.
+        // On iPad the impact section is sized to fill the remaining card
+        // height, which would otherwise drag this stack (and `.fill`
+        // distribute it across the tiles) into a giant block. Required
+        // hugging keeps it at its intrinsic height so the cell self-sizes
+        // via `.estimated` and the rows render at their natural height.
+        stack.setContentHuggingPriority(.required, for: .vertical)
         return stack
     }()
 
@@ -89,8 +96,11 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         stack.distribution = .fill
         stack.spacing = UX.cellsSpacing
         // Ecosia: see `contentStack` comment — hold the intrinsic stack
-        // height so the impact rows don't get squeezed during transitions.
+        // height so the impact rows don't get squeezed during transitions,
+        // and hug vertically so the tiles never inflate to fill an oversized
+        // section (iPad portrait was producing ~500pt-tall rows otherwise).
         stack.setContentCompressionResistancePriority(.required, for: .vertical)
+        stack.setContentHuggingPriority(.required, for: .vertical)
         return stack
     }()
 
