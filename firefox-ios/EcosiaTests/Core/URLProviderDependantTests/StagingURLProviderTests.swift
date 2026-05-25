@@ -30,34 +30,12 @@ final class StagingURLProviderTests: XCTestCase {
     // OpenSearchEngine matching fails for staging URLs. The AddressToolbarContainerModel
     // fallback uses isEcosiaSearchVertical + getEcosiaSearchQuery, tested here.
 
-    func testStagingTextSearchIsSearchVertical() {
-        let url = URL(string: "https://www.ecosia-staging.xyz/search?q=trees")!
-        XCTAssertTrue(url.isEcosiaSearchVertical(urlProvider))
-    }
-
-    func testStagingImageSearchIsSearchVertical() {
-        let url = URL(string: "https://www.ecosia-staging.xyz/images?q=ocean")!
-        XCTAssertTrue(url.isEcosiaSearchVertical(urlProvider))
-    }
-
-    func testStagingVideoSearchIsSearchVertical() {
-        let url = URL(string: "https://www.ecosia-staging.xyz/videos?q=reforestation")!
-        XCTAssertTrue(url.isEcosiaSearchVertical(urlProvider))
-    }
-
-    func testStagingNewsSearchIsSearchVertical() {
-        let url = URL(string: "https://www.ecosia-staging.xyz/news?q=solar+energy")!
-        XCTAssertTrue(url.isEcosiaSearchVertical(urlProvider))
-    }
-
-    func testStagingSearchReturnsQuery() {
-        let url = URL(string: "https://www.ecosia-staging.xyz/search?q=trees")!
-        XCTAssertEqual(url.getEcosiaSearchQuery(urlProvider), "trees")
-    }
-
-    func testStagingImageSearchReturnsQuery() {
-        let url = URL(string: "https://www.ecosia-staging.xyz/images?q=ocean")!
-        XCTAssertEqual(url.getEcosiaSearchQuery(urlProvider), "ocean")
+    func testStagingSearchVerticalsAreRecognized() {
+        for vertical in URL.EcosiaSearchVertical.allCases {
+            let url = URL(string: "https://www.ecosia-staging.xyz/\(vertical.rawValue)?q=test-query")!
+            XCTAssertTrue(url.isEcosiaSearchVertical(urlProvider))
+            XCTAssertEqual(url.getEcosiaSearchQuery(urlProvider), "test-query")
+        }
     }
 
     func testNonSearchStagingPageIsNotSearchVertical() {

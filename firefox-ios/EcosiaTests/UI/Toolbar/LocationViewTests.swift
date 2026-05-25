@@ -11,22 +11,23 @@ import XCTest
 /// whenever a `searchTerm` is available — both when editing and when collapsed.
 @MainActor
 final class LocationViewTests: XCTestCase {
-
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var sut: LocationView!
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var mockDelegate: MockLocationViewDelegate!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         sut = LocationView(frame: .zero)
         mockDelegate = MockLocationViewDelegate()
         trackForMemoryLeaks(sut)
         trackForMemoryLeaks(mockDelegate)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         mockDelegate = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     // MARK: - Collapsed bar (isEditing = false)
