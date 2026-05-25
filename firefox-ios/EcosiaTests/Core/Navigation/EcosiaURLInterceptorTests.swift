@@ -19,6 +19,40 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - Disabled on iPad Tests
+
+    func testShouldIntercept_whenAccountsDisabledOnIPad_returnsFalse() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
+
+        // When
+        let result = EcosiaURLInterceptor(urlProvider: .production)
+            .shouldIntercept(url)
+
+        // Then
+        if AccountsDisabledOnIPadFeature.isEnabled {
+            XCTAssertFalse(result)
+        } else {
+            XCTAssertTrue(result)
+        }
+    }
+
+    func testInterceptedType_whenAccountsDisabledOnIPad_returnsNone() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/profile")!
+
+        // When
+        let result = EcosiaURLInterceptor(urlProvider: .production)
+            .interceptedType(for: url)
+
+        // Then
+        if AccountsDisabledOnIPadFeature.isEnabled {
+            XCTAssertEqual(result, .none)
+        } else {
+            XCTAssertEqual(result, .profile)
+        }
+    }
+
     // MARK: - Sign Up Detection Tests
 
     func testInterceptedType_whenSignUpURL_returnsSignUp() {

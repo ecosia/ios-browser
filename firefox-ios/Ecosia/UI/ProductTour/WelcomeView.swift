@@ -207,44 +207,39 @@ public struct WelcomeView: View {
 
                     // Buttons
                     VStack {
-                        // Sign in button (primary style with icon)
-                        Button(action: {
-                            Analytics.shared.introWelcome(action: .click, property: .signIn)
-                            startExitAnimation(skipFinish: true) {
-                                onSignIn()
+                        if AccountsDisabledOnIPadFeature.isEnabled {
+                            maybeLaterStyleButton(title: .localized(.getStarted)) {
+                                Analytics.shared.introWelcome(action: .click, property: .maybeLater)
+                                startExitAnimation()
                             }
-                        }) {
-                            HStack(spacing: 8) {
-                                Image.ecosia("sign-in")
-                                    .renderingMode(.template)
-                                    .foregroundColor(theme.buttonTextColor)
-                                    .accessibilityHidden(true)
-                                Text(verbatim: .localized(.signIn))
-                            }
-                            .font(.body)
-                            .foregroundColor(theme.buttonTextColor)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: UX.buttonHeight)
-                            .background(theme.buttonBackgroundColor)
-                            .cornerRadius(UX.buttonCornerRadius)
-                        }
-
-                        // Maybe later button (outlined style)
-                        Button(action: {
-                            Analytics.shared.introWelcome(action: .click, property: .maybeLater)
-                            startExitAnimation()
-                        }) {
-                            Text(verbatim: .localized(.maybeLater))
+                        } else {
+                            // Sign in button (primary style with icon)
+                            Button(action: {
+                                Analytics.shared.introWelcome(action: .click, property: .signIn)
+                                startExitAnimation(skipFinish: true) {
+                                    onSignIn()
+                                }
+                            }) {
+                                HStack(spacing: 8) {
+                                    Image.ecosia("sign-in")
+                                        .renderingMode(.template)
+                                        .foregroundColor(theme.buttonTextColor)
+                                        .accessibilityHidden(true)
+                                    Text(verbatim: .localized(.signIn))
+                                }
                                 .font(.body)
-                                .foregroundColor(theme.outlinedButtonTextColor)
+                                .foregroundColor(theme.buttonTextColor)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: UX.buttonHeight)
-                                .background(Color.clear)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: UX.buttonCornerRadius)
-                                        .stroke(theme.outlinedButtonBorderColor, lineWidth: 1.5)
-                                )
+                                .background(theme.buttonBackgroundColor)
                                 .cornerRadius(UX.buttonCornerRadius)
+                            }
+
+                            // Maybe later button (outlined style)
+                            maybeLaterStyleButton(title: .localized(.maybeLater)) {
+                                Analytics.shared.introWelcome(action: .click, property: .maybeLater)
+                                startExitAnimation()
+                            }
                         }
                     }
                     .padding(.top, UX.bottomGradientTopOffset)
@@ -392,6 +387,22 @@ public struct WelcomeView: View {
     private var simplestWayString: String {
         .localized(.theSimplestWay)
     }
+
+    private func maybeLaterStyleButton(title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(verbatim: title)
+                .font(.body)
+                .foregroundColor(theme.outlinedButtonTextColor)
+                .frame(maxWidth: .infinity)
+                .frame(height: UX.buttonHeight)
+                .background(Color.clear)
+                .overlay(
+                    RoundedRectangle(cornerRadius: UX.buttonCornerRadius)
+                        .stroke(theme.outlinedButtonBorderColor, lineWidth: 1.5)
+                )
+                .cornerRadius(UX.buttonCornerRadius)
+        }
+    }
 }
 
 // MARK: - Dynamic Layout Calculations
@@ -482,7 +493,8 @@ extension WelcomeView {
     // Bottom gradient extends from above the buttons down to the bottom of the screen
     private var bottomGradientHeight: CGFloat {
         // Covers the button area plus padding plus safe area
-        let buttonsHeight = UX.buttonHeight * 2 + UX.contentPadding // two buttons + spacing
+        let buttonCount = AccountsDisabledOnIPadFeature.isEnabled ? 1 : 2
+        let buttonsHeight = UX.buttonHeight * CGFloat(buttonCount) + UX.contentPadding
         return buttonsHeight + UX.bottomGradientTopOffset + UX.contentPadding + safeAreaBottom
     }
 }

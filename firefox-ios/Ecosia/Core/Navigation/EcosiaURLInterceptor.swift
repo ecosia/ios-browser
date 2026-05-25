@@ -46,6 +46,7 @@ public struct EcosiaURLInterceptor {
     /// - Parameter url: The URL to check
     /// - Returns: The intercepted URL type, or `.none` if it shouldn't be intercepted
     public func interceptedType(for url: URL) -> EcosiaInterceptedURLType {
+        guard !AccountsDisabledOnIPadFeature.isEnabled else { return .none }
         guard url.isEcosia(urlProvider) else { return .none }
 
         let path = url.path.lowercased()
