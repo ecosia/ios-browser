@@ -25,6 +25,14 @@ extension URL {
             let pathWithNoLeadingSlash = String(path.dropFirst())
             self.init(rawValue: pathWithNoLeadingSlash)
         }
+
+        init?(url: URL, urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) {
+            guard url.isEcosia(urlProvider),
+                  let path = URLComponents(url: url, resolvingAgainstBaseURL: false)?.path else {
+                return nil
+            }
+            self.init(path: path)
+        }
     }
 
     /// Builds the Ecosia SERP URL for a typed query.
@@ -68,16 +76,11 @@ extension URL {
         )
     }
 
-    /// Non-default vertical on `currentPageURL`, or `.search` when not on a SERP vertical.
+    /// Search vertical on `currentPageURL`, or `.search` when not on a SERP vertical.
     func ecosiaSearchVerticalForPreservation(
         urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider
     ) -> EcosiaSearchVertical {
-        guard let verticalPath = getEcosiaSearchVerticalPath(urlProvider),
-              verticalPath != EcosiaSearchVertical.search.rawValue,
-              let vertical = EcosiaSearchVertical(rawValue: verticalPath) else {
-            return .search
-        }
-        return vertical
+        EcosiaSearchVertical(url: self, urlProvider: urlProvider) ?? .search
     }
 
     /// Rewrites a default text SERP (`/search?q=…`) to the vertical of `currentPageURL`.
@@ -109,11 +112,7 @@ extension URL {
     }
 
     public func getEcosiaSearchVerticalPath(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> String? {
-        guard isEcosia(urlProvider),
-              let components = components else {
-            return nil
-        }
-        return EcosiaSearchVertical(path: components.path)?.rawValue
+        EcosiaSearchVertical(url: self, urlProvider: urlProvider)?.rawValue
     }
 
     public func getEcosiaSearchQuery(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> String? {

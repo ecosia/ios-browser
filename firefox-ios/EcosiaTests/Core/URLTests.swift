@@ -117,6 +117,17 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(URL.EcosiaSearchVertical(path: "/"))
     }
 
+    func testEcosiaSearchVerticalInit_url_returnsMatchingVertical() {
+        let imagesURL = URL(string: "https://www.ecosia.org/images?q=trees")!
+        XCTAssertEqual(URL.EcosiaSearchVertical(url: imagesURL, urlProvider: urlProvider), .images)
+
+        let searchURL = URL(string: "https://www.ecosia.org/search?q=trees")!
+        XCTAssertEqual(URL.EcosiaSearchVertical(url: searchURL, urlProvider: urlProvider), .search)
+
+        let settingsURL = URL(string: "https://www.ecosia.org/settings")!
+        XCTAssertNil(URL.EcosiaSearchVertical(url: settingsURL, urlProvider: urlProvider))
+    }
+
     // MARK: - Vertical preservation
 
     func testPreservingVerticalFrom_imagesPage_producesImagesPath() {

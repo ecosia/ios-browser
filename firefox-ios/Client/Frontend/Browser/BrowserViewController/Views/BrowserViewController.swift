@@ -3395,7 +3395,8 @@ class BrowserViewController: UIViewController,
         /* Ecosia: Preserve the user's current search vertical for follow-up queries so that,
            e.g., typing a new query from the Images SERP opens Images results, not the default
            text SERP. We derive the vertical from the tab's current URL; non-search pages and
-           nil URLs fall back to .search.
+           nil URLs fall back to .search. Building the final URL here avoids an extra redirect
+           through the web view delegate, which only rewrites in-page `/search` navigations.
         finishEditingAndSubmit(searchURL, visitType: VisitType.typed, forTab: tab)
         dispatchSubmitSearchTermAction(with: searchURL, searchTerm: text)
         */

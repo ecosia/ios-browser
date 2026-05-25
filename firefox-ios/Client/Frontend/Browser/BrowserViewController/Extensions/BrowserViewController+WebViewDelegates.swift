@@ -608,10 +608,7 @@ extension BrowserViewController: WKNavigationDelegate {
                 return
             }
 
-            // Ecosia: Handle navigation tracking
-            ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
-
-            // Ecosia: In-page SERP searches navigate to `/search`; keep the active vertical.
+            // Ecosia: Keep the active vertical for in-page `/search` navigations; run before tracking so analytics see the rewritten URL.
             if let rewritten = ecosiaSearchURLPreservingVertical(
                 navigationURL: url,
                 currentPageURL: webView.url ?? tab.url,
@@ -621,6 +618,9 @@ extension BrowserViewController: WKNavigationDelegate {
                 decisionHandler(.cancel)
                 return
             }
+
+            // Ecosia: Handle navigation tracking
+            ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
 
             let isGoogleDomain = url.host?.contains("google") ?? false
             let isPrivate = tab.isPrivate
