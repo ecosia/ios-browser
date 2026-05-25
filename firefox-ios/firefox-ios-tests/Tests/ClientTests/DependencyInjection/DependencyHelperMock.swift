@@ -33,30 +33,19 @@ class DependencyHelperMock {
         injectedMicrosurveyManager: MicrosurveyManager? = nil,
         themeManager: ThemeManager = MockThemeManager() // Ecosia: Make themeManager injectable
     ) {
-        /* Ecosia: Never empty the global container between tests (MOB-4384). Some test
-           classes do not call bootstrapDependencies(), and background work lingering from
-           a previous test resolves unmoored from any test's lifecycle; reset() opens a
-           window where the container is empty and AppContainer.resolve() fatal-errors.
-           Now that every service is registered under the correct protocol key (below),
-           keeping the previous test's complete, correctly-keyed registration in place
-           until the next bootstrap re-registers it (Dip replaces the definition for an
-           already-registered type) means a lingering or non-bootstrapping resolve always
-           finds a valid service. (This never-reset approach only works *because* the
-           registration-type/resolution-type key bug below is fixed.)
         AppContainer.shared.reset()
-         */
 
-        // Ecosia: Register Profile FIRST — before any other service — so that background threads
-        // lingering from the previous test always resolve Profile without crashing.
         // Ecosia: Register every service under the PROTOCOL type the consumers resolve
         // by (`as Profile`, `as ThemeManager`, …), mirroring the production
-        // DependencyHelper exactly. AppContainer.register<T> infers its Dip key from the
-        // argument's static type; without the explicit protocol cast, Swift keys the
-        // registration by the concrete type (MockProfile, DefaultDiskImageStore, …) while
-        // Firefox-core Coordinators resolve by protocol — a key mismatch that throws
-        // "No definition registered for type: Profile/ThemeManager/…" and crash-thrashes
-        // the suite. This was the actual MOB-4384 root cause (proven by pointer+type
-        // instrumentation: same AppContainer instance, registered-type ≠ resolved-type).
+        // DependencyHelper. This is the Swift 6 adaptation of the main-133 baseline:
+        // pre-upgrade, `register(service: profile)` with `profile` typed as the protocol
+        // keyed the Dip definition by the protocol. Swift 6.2's implicit existential
+        // opening now infers the generic T from the *concrete* dynamic type, so without
+        // the explicit cast the registration is keyed by the concrete type (MockProfile,
+        // DefaultDiskImageStore, …) while Firefox-core Coordinators resolve by protocol —
+        // a key mismatch that throws "No definition registered for type: Profile/…" and
+        // crash-thrashes the suite. Proven via pointer+type instrumentation: same
+        // AppContainer instance, registered-type ≠ resolved-type. Tracked in MOB-4384.
         let placeholderProfile: Client.Profile = MockProfile()
         AppContainer.shared.register(service: placeholderProfile as Profile)
 
