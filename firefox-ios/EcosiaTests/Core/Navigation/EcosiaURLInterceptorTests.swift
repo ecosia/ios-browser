@@ -11,12 +11,74 @@ final class EcosiaURLInterceptorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = EcosiaURLInterceptor(urlProvider: .production)
+        sut = EcosiaURLInterceptor(urlProvider: .production, isAccountsDisabled: false)
     }
 
     override func tearDown() {
         sut = nil
         super.tearDown()
+    }
+
+    // MARK: - Accounts Disabled Tests
+
+    func testShouldIntercept_whenIPad_returnsFalse() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
+        let sut = EcosiaURLInterceptor(
+            urlProvider: .production,
+            isAccountsDisabled: AccountsDisabled.isActive(for: .pad)
+        )
+
+        // When
+        let result = sut.shouldIntercept(url)
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    func testShouldIntercept_whenIPhone_returnsTrue() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
+        let sut = EcosiaURLInterceptor(
+            urlProvider: .production,
+            isAccountsDisabled: AccountsDisabled.isActive(for: .phone)
+        )
+
+        // When
+        let result = sut.shouldIntercept(url)
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func testInterceptedType_whenIPad_returnsNone() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/profile")!
+        let sut = EcosiaURLInterceptor(
+            urlProvider: .production,
+            isAccountsDisabled: AccountsDisabled.isActive(for: .pad)
+        )
+
+        // When
+        let result = sut.interceptedType(for: url)
+
+        // Then
+        XCTAssertEqual(result, .none)
+    }
+
+    func testInterceptedType_whenIPhone_returnsProfile() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/profile")!
+        let sut = EcosiaURLInterceptor(
+            urlProvider: .production,
+            isAccountsDisabled: AccountsDisabled.isActive(for: .phone)
+        )
+
+        // When
+        let result = sut.interceptedType(for: url)
+
+        // Then
+        XCTAssertEqual(result, .profile)
     }
 
     // MARK: - Sign Up Detection Tests
