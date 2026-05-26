@@ -35,18 +35,23 @@ public enum EcosiaInterceptedURLType {
 /// for native handling instead of web navigation
 public struct EcosiaURLInterceptor {
     private let urlProvider: URLProvider
+    private let isAccountsDisabled: Bool
 
     /// Creates a new URL interceptor
-    /// - Parameter urlProvider: The URL provider to use for path matching. Defaults to current environment.
-    public init(urlProvider: URLProvider = Environment.current.urlProvider) {
+    /// - Parameters:
+    ///   - urlProvider: The URL provider to use for path matching. Defaults to current environment.
+    ///   - isAccountsDisabled: Whether Accounts URL interception is disabled. Defaults to `AccountsDisabled.isActive`.
+    public init(urlProvider: URLProvider = Environment.current.urlProvider,
+                isAccountsDisabled: Bool = AccountsDisabled.isActive) {
         self.urlProvider = urlProvider
+        self.isAccountsDisabled = isAccountsDisabled
     }
 
     /// Determines if a URL should be intercepted and returns its type
     /// - Parameter url: The URL to check
     /// - Returns: The intercepted URL type, or `.none` if it shouldn't be intercepted
     public func interceptedType(for url: URL) -> EcosiaInterceptedURLType {
-        guard !AccountsDisabledOnIPadFeature.isEnabled else { return .none }
+        guard !isAccountsDisabled else { return .none }
         guard url.isEcosia(urlProvider) else { return .none }
 
         let path = url.path.lowercased()

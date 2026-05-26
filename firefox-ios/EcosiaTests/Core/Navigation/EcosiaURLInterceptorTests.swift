@@ -11,7 +11,7 @@ final class EcosiaURLInterceptorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = EcosiaURLInterceptor(urlProvider: .production)
+        sut = EcosiaURLInterceptor(urlProvider: .production, isAccountsDisabled: false)
     }
 
     override func tearDown() {
@@ -19,38 +19,66 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Disabled on iPad Tests
+    // MARK: - Accounts Disabled Tests
 
-    func testShouldIntercept_whenAccountsDisabledOnIPad_returnsFalse() {
+    func testShouldIntercept_whenIPad_returnsFalse() {
         // Given
         let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
+        let sut = EcosiaURLInterceptor(
+            urlProvider: .production,
+            isAccountsDisabled: AccountsDisabled.isActive(for: .pad)
+        )
 
         // When
-        let result = EcosiaURLInterceptor(urlProvider: .production)
-            .shouldIntercept(url)
+        let result = sut.shouldIntercept(url)
 
         // Then
-        if AccountsDisabledOnIPadFeature.isEnabled {
-            XCTAssertFalse(result)
-        } else {
-            XCTAssertTrue(result)
-        }
+        XCTAssertFalse(result)
     }
 
-    func testInterceptedType_whenAccountsDisabledOnIPad_returnsNone() {
+    func testShouldIntercept_whenIPhone_returnsTrue() {
         // Given
-        let url = URL(string: "https://www.ecosia.org/accounts/profile")!
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
+        let sut = EcosiaURLInterceptor(
+            urlProvider: .production,
+            isAccountsDisabled: AccountsDisabled.isActive(for: .phone)
+        )
 
         // When
-        let result = EcosiaURLInterceptor(urlProvider: .production)
-            .interceptedType(for: url)
+        let result = sut.shouldIntercept(url)
 
         // Then
-        if AccountsDisabledOnIPadFeature.isEnabled {
-            XCTAssertEqual(result, .none)
-        } else {
-            XCTAssertEqual(result, .profile)
-        }
+        XCTAssertTrue(result)
+    }
+
+    func testInterceptedType_whenIPad_returnsNone() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/profile")!
+        let sut = EcosiaURLInterceptor(
+            urlProvider: .production,
+            isAccountsDisabled: AccountsDisabled.isActive(for: .pad)
+        )
+
+        // When
+        let result = sut.interceptedType(for: url)
+
+        // Then
+        XCTAssertEqual(result, .none)
+    }
+
+    func testInterceptedType_whenIPhone_returnsProfile() {
+        // Given
+        let url = URL(string: "https://www.ecosia.org/accounts/profile")!
+        let sut = EcosiaURLInterceptor(
+            urlProvider: .production,
+            isAccountsDisabled: AccountsDisabled.isActive(for: .phone)
+        )
+
+        // When
+        let result = sut.interceptedType(for: url)
+
+        // Then
+        XCTAssertEqual(result, .profile)
     }
 
     // MARK: - Sign Up Detection Tests

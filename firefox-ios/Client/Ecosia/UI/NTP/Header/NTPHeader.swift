@@ -160,7 +160,7 @@ struct NTPHeaderView: View {
                     onTap: handleCustomizeTap
                 )
                 Spacer()
-                if !AccountsDisabledOnIPadFeature.isEnabled, #available(iOS 16, *) {
+                if !AccountsDisabled.isActive, #available(iOS 16, *) {
                     ZStack(alignment: .topLeading) {
                         EcosiaAccountNavButton(
                             seedCount: viewModel.seedCount,

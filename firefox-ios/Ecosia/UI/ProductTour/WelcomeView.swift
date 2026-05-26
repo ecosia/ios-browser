@@ -207,9 +207,8 @@ public struct WelcomeView: View {
 
                     // Buttons
                     VStack {
-                        if AccountsDisabledOnIPadFeature.isEnabled {
+                        if AccountsDisabled.isActive {
                             maybeLaterStyleButton(title: .localized(.getStarted)) {
-                                Analytics.shared.introWelcome(action: .click, property: .maybeLater)
                                 startExitAnimation()
                             }
                         } else {
@@ -493,7 +492,7 @@ extension WelcomeView {
     // Bottom gradient extends from above the buttons down to the bottom of the screen
     private var bottomGradientHeight: CGFloat {
         // Covers the button area plus padding plus safe area
-        let buttonCount = AccountsDisabledOnIPadFeature.isEnabled ? 1 : 2
+        let buttonCount = AccountsDisabled.isActive ? 1 : 2
         let buttonsHeight = UX.buttonHeight * CGFloat(buttonCount) + UX.contentPadding
         return buttonsHeight + UX.bottomGradientTopOffset + UX.contentPadding + safeAreaBottom
     }
