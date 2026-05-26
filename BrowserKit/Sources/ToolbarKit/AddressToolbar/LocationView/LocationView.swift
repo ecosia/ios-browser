@@ -185,7 +185,10 @@ final class LocationView: UIView,
         configureLockIconButton(config)
         configureURLTextField(config)
         configureA11y(config)
+        /* Ecosia: Pass whether a search query is displayed so URL truncation is skipped on SERPs.
         formatAndTruncateURLTextField()
+        */
+        formatAndTruncateURLTextField(hasSearchTerm: config.searchTerm != nil)
         updateIconContainer(iconContainerCornerRadius: uxConfig.toolbarCornerRadius,
                             isURLTextFieldCentered: isURLTextFieldCentered,
                             locationTextFieldTrailingPadding: uxConfig.locationTextFieldTrailingPadding)
@@ -247,7 +250,10 @@ final class LocationView: UIView,
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         DispatchQueue.main.async { [self] in
+            /* Ecosia: Pass whether a search query is displayed so URL truncation is skipped on SERPs.
             formatAndTruncateURLTextField()
+            */
+            formatAndTruncateURLTextField(hasSearchTerm: searchTerm != nil)
         }
     }
 
@@ -600,7 +606,12 @@ final class LocationView: UIView,
         // Once the user started typing we should not update the text anymore as that interferes with
         // setting the autocomplete suggestions which is done using a delegate method.
         guard !config.didStartTyping else { return }
+        /* Ecosia: Show the search query in the collapsed address bar when on a SERP.
+           Firefox only showed the search term while editing; Ecosia shows it in both
+           editing and collapsed states so users always see what they searched for.
         let shouldShowSearchTerm = (config.searchTerm != nil) && configurationIsEditing
+        */
+        let shouldShowSearchTerm = config.searchTerm != nil
         let text = shouldShowSearchTerm ? config.searchTerm : config.url?.absoluteString
         urlTextField.text = text
 
@@ -612,8 +623,14 @@ final class LocationView: UIView,
         }
     }
 
-    private func formatAndTruncateURLTextField() {
+    /* Ecosia: Accept whether a search query is displayed so URL truncation can be skipped on SERPs.
+    private func formatAndTruncateURLTextField()
+    */
+    private func formatAndTruncateURLTextField(hasSearchTerm: Bool) {
         guard !isEditing else { return }
+        // Ecosia: When a search query is available the text field already shows it as plain text;
+        // applying URL-style host truncation here would overwrite the query with a hostname.
+        guard !hasSearchTerm else { return }
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineBreakMode = .byTruncatingHead
@@ -774,7 +791,10 @@ final class LocationView: UIView,
     }
 
     func locationTextFieldDidEndEditing(_ textField: UITextField) {
+        /* Ecosia: Pass whether a search query is displayed so URL truncation is skipped on SERPs.
         formatAndTruncateURLTextField()
+        */
+        formatAndTruncateURLTextField(hasSearchTerm: searchTerm != nil)
         if isURLTextFieldEmpty {
             updateGradient()
         } else {
@@ -853,7 +873,10 @@ final class LocationView: UIView,
         setLockIconImage()
         // Applying the theme to urlTextField can cause the url formatting to get removed
         // so we apply it again
+        /* Ecosia: Pass whether a search query is displayed so URL truncation is skipped on SERPs.
         formatAndTruncateURLTextField()
+        */
+        formatAndTruncateURLTextField(hasSearchTerm: searchTerm != nil)
     }
 
     // MARK: - UIGestureRecognizerDelegate

@@ -23,4 +23,24 @@ final class StagingURLProviderTests: XCTestCase {
         XCTAssertNotNil(urlProvider.snowplow)
         XCTAssertNotNil(urlProvider.notifications)
     }
+
+    // MARK: - Search term extraction (address bar query display)
+    //
+    // The Ecosia search engine XML template is hardcoded to ecosia.org, so the standard
+    // OpenSearchEngine matching fails for staging URLs. The AddressToolbarContainerModel
+    // fallback uses isEcosiaSearchVertical + getEcosiaSearchQuery, tested here.
+
+    func testStagingSearchVerticalsAreRecognized() {
+        for vertical in URL.EcosiaSearchVertical.allCases {
+            let url = URL(string: "https://www.ecosia-staging.xyz/\(vertical.rawValue)?q=test-query")!
+            XCTAssertTrue(url.isEcosiaSearchVertical(urlProvider))
+            XCTAssertEqual(url.getEcosiaSearchQuery(urlProvider), "test-query")
+        }
+    }
+
+    func testNonSearchStagingPageIsNotSearchVertical() {
+        let url = URL(string: "https://www.ecosia-staging.xyz/settings")!
+        XCTAssertFalse(url.isEcosiaSearchVertical(urlProvider))
+        XCTAssertNil(url.getEcosiaSearchQuery(urlProvider))
+    }
 }

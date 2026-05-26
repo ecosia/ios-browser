@@ -235,6 +235,7 @@ public enum TestTargets {
                 .package(product: "SiteImageView"),
                 .package(product: "SnowplowTracker"),
                 .package(product: "TabDataStore"),
+                .package(product: "ToolbarKit"),
                 .package(product: "ViewInspector"),
             ],
             settings: .settings(base: BuildConfigurations.testBaseSettings)

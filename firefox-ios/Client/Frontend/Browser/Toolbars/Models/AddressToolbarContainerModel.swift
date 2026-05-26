@@ -318,7 +318,14 @@ final class AddressToolbarContainerModel: Equatable {
             searchURL = url
         }
 
+        /* Ecosia: The search engine XML template is hardcoded to ecosia.org, so
+           queryForSearchURL fails for staging (ecosia-staging.xyz) whose shortDisplayString
+           doesn't match. Fall back to the URL-provider-aware Ecosia framework method so
+           all environments and search verticals (images, videos, news) show the query.
         return searchEnginesManager.queryForSearchURL(searchURL)
+        */
+        if let term = searchEnginesManager.queryForSearchURL(searchURL) { return term }
+        return searchURL?.isEcosiaSearchVertical() == true ? searchURL?.getEcosiaSearchQuery() : nil
     }
 
     @MainActor
