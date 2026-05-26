@@ -60,4 +60,43 @@ extension BrowserViewController {
         }
         return rewritten
     }
+
+    /// Returns `true` when navigation was rewritten to preserve the active SERP vertical.
+    @discardableResult
+    func ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
+        navigationURL: URL,
+        currentPageURL: URL?,
+        navigationType: WKNavigationType,
+        tab: Tab
+    ) -> Bool {
+        guard let rewritten = ecosiaSearchURLPreservingVertical(
+            navigationURL: navigationURL,
+            currentPageURL: currentPageURL,
+            navigationType: navigationType
+        ) else {
+            return false
+        }
+        tab.loadRequest(URLRequest(url: rewritten))
+        return true
+    }
+
+    /// Cancels navigation when it was rewritten to preserve the active SERP vertical.
+    func ecosiaCancelNavigationPreservingVerticalIfNeeded(
+        url: URL,
+        webView: WKWebView,
+        tab: Tab,
+        navigationAction: WKNavigationAction,
+        decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
+    ) -> Bool {
+        guard ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
+            navigationURL: url,
+            currentPageURL: webView.url ?? tab.url,
+            navigationType: navigationAction.navigationType,
+            tab: tab
+        ) else {
+            return false
+        }
+        decisionHandler(.cancel)
+        return true
+    }
 }

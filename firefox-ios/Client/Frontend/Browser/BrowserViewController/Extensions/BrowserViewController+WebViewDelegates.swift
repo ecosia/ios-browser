@@ -609,15 +609,13 @@ extension BrowserViewController: WKNavigationDelegate {
             }
 
             // Ecosia: Keep the active vertical for in-page `/search` navigations; run before tracking so analytics see the rewritten URL.
-            if let rewritten = ecosiaSearchURLPreservingVertical(
-                navigationURL: url,
-                currentPageURL: webView.url ?? tab.url,
-                navigationType: navigationAction.navigationType
-            ) {
-                tab.loadRequest(URLRequest(url: rewritten))
-                decisionHandler(.cancel)
-                return
-            }
+            if ecosiaCancelNavigationPreservingVerticalIfNeeded(
+                url: url,
+                webView: webView,
+                tab: tab,
+                navigationAction: navigationAction,
+                decisionHandler: decisionHandler
+            ) { return }
 
             // Ecosia: Handle navigation tracking
             ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
