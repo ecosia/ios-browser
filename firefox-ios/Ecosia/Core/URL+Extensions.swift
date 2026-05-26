@@ -29,28 +29,77 @@ extension URL {
             let pathWithNoLeadingSlash = String(path.dropFirst())
             self.init(rawValue: pathWithNoLeadingSlash)
         }
+
+        init?(url: URL, urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) {
+            guard url.isEcosia(urlProvider),
+                  let path = URLComponents(url: url, resolvingAgainstBaseURL: false)?.path else {
+                return nil
+            }
+            self.init(path: path)
+        }
     }
 
     /// Builds the Ecosia SERP URL for a typed query.
     /// - Parameters:
     ///   - query: The user's search term.
+    ///   - vertical: The search vertical to target. Defaults to `.search` (text results).
     ///   - urlProvider: Provider supplying the search root URL. Defaults to the current environment.
     ///   - autoRedirect: When `true`, appends the `ar=1` query parameter so the backend can decide
     ///     whether the request lands on AI search or the standard SERP. Use this for entry points
     ///     where the routing decision belongs to the backend (e.g. the NTP omnibox).
     public static func ecosiaSearchWithQuery(
         _ query: String,
+        vertical: EcosiaSearchVertical = .search,
         urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider,
         autoRedirect: Bool = false
     ) -> URL {
         var components = URLComponents(url: urlProvider.root, resolvingAgainstBaseURL: false)!
-        components.path = "/search"
+        components.path = "/\(vertical.rawValue)"
         var queryItems = [item(name: .query, value: query), item(name: .typeTag, value: "iosapp")]
         if autoRedirect {
             queryItems.append(item(name: .autoRedirect, value: "1"))
         }
         components.queryItems = queryItems
         return components.url!
+    }
+
+    /// Builds a SERP URL for `query`, keeping the search vertical of `currentPageURL` when the user
+    /// is already on Images, Videos, or News. Falls back to the text SERP for other pages.
+    public static func ecosiaSearchWithQuery(
+        _ query: String,
+        preservingVerticalFrom currentPageURL: URL?,
+        urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider,
+        autoRedirect: Bool = false
+    ) -> URL {
+        let vertical = currentPageURL?.ecosiaSearchVerticalForPreservation(urlProvider: urlProvider) ?? .search
+        return ecosiaSearchWithQuery(
+            query,
+            vertical: vertical,
+            urlProvider: urlProvider,
+            autoRedirect: autoRedirect
+        )
+    }
+
+    /// Search vertical on `currentPageURL`, or `.search` when not on a SERP vertical.
+    func ecosiaSearchVerticalForPreservation(
+        urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider
+    ) -> EcosiaSearchVertical {
+        EcosiaSearchVertical(url: self, urlProvider: urlProvider) ?? .search
+    }
+
+    /// Rewrites a default text SERP (`/search?q=…`) to the vertical of `currentPageURL`.
+    /// Returns `nil` when no rewrite is needed (already on the right vertical, or not a text SERP URL).
+    public func ecosiaSearchURLPreservingVertical(
+        from currentPageURL: URL?,
+        urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider
+    ) -> URL? {
+        guard isEcosiaSearchQuery(urlProvider), let query = getEcosiaSearchQuery(urlProvider) else {
+            return nil
+        }
+        let vertical = currentPageURL?.ecosiaSearchVerticalForPreservation(urlProvider: urlProvider) ?? .search
+        guard vertical != .search else { return nil }
+        let rewritten = URL.ecosiaSearchWithQuery(query, vertical: vertical, urlProvider: urlProvider)
+        return rewritten.absoluteString == absoluteString ? nil : rewritten
     }
 
     /// Check whether the URL being browsed will present the SERP out of a search or a search suggestion
@@ -67,11 +116,7 @@ extension URL {
     }
 
     public func getEcosiaSearchVerticalPath(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> String? {
-        guard isEcosia(urlProvider),
-              let components = components else {
-            return nil
-        }
-        return EcosiaSearchVertical(path: components.path)?.rawValue
+        EcosiaSearchVertical(url: self, urlProvider: urlProvider)?.rawValue
     }
 
     public func getEcosiaSearchQuery(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> String? {

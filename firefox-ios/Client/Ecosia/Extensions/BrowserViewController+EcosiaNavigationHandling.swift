@@ -39,4 +39,64 @@ extension BrowserViewController {
         pendingInappSearchUrl = nil
         Analytics.shared.inappSearch(url: url, isPrivate: isPrivate)
     }
+
+    /// Rewrites in-page SERP navigations that target the default text vertical (`/search`) so they
+    /// stay on the user's active vertical (e.g. Images). Returns `nil` when navigation should proceed unchanged.
+    func ecosiaSearchURLPreservingVertical(
+        navigationURL: URL,
+        currentPageURL: URL?,
+        navigationType: WKNavigationType
+    ) -> URL? {
+        guard let rewritten = navigationURL.ecosiaSearchURLPreservingVertical(from: currentPageURL) else {
+            return nil
+        }
+        // Same-query link to `/search` is a vertical-tab switch (e.g. Web from Images), not a new search.
+        if navigationType == .linkActivated,
+           let currentPageURL,
+           let currentQuery = currentPageURL.getEcosiaSearchQuery(),
+           let newQuery = navigationURL.getEcosiaSearchQuery(),
+           currentQuery == newQuery {
+            return nil
+        }
+        return rewritten
+    }
+
+    /// Returns `true` when navigation was rewritten to preserve the active SERP vertical.
+    @discardableResult
+    func ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
+        navigationURL: URL,
+        currentPageURL: URL?,
+        navigationType: WKNavigationType,
+        tab: Tab
+    ) -> Bool {
+        guard let rewritten = ecosiaSearchURLPreservingVertical(
+            navigationURL: navigationURL,
+            currentPageURL: currentPageURL,
+            navigationType: navigationType
+        ) else {
+            return false
+        }
+        tab.loadRequest(URLRequest(url: rewritten))
+        return true
+    }
+
+    /// Cancels navigation when it was rewritten to preserve the active SERP vertical.
+    func ecosiaCancelNavigationPreservingVerticalIfNeeded(
+        url: URL,
+        webView: WKWebView,
+        tab: Tab,
+        navigationAction: WKNavigationAction,
+        decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
+    ) -> Bool {
+        guard ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
+            navigationURL: url,
+            currentPageURL: webView.url ?? tab.url,
+            navigationType: navigationAction.navigationType,
+            tab: tab
+        ) else {
+            return false
+        }
+        decisionHandler(.cancel)
+        return true
+    }
 }

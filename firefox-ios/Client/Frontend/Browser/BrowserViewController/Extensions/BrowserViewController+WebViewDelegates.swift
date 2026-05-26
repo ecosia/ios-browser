@@ -608,6 +608,15 @@ extension BrowserViewController: WKNavigationDelegate {
                 return
             }
 
+            // Ecosia: Keep the active vertical for in-page `/search` navigations; run before tracking so analytics see the rewritten URL.
+            if ecosiaCancelNavigationPreservingVerticalIfNeeded(
+                url: url,
+                webView: webView,
+                tab: tab,
+                navigationAction: navigationAction,
+                decisionHandler: decisionHandler
+            ) { return }
+
             // Ecosia: Handle navigation tracking
             ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
 

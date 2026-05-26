@@ -3392,9 +3392,17 @@ class BrowserViewController: UIViewController,
             .add()
         searchTelemetry.shouldSetUrlTypeSearch = true
 
+        /* Ecosia: Preserve the user's current search vertical for follow-up queries so that,
+           e.g., typing a new query from the Images SERP opens Images results, not the default
+           text SERP. We derive the vertical from the tab's current URL; non-search pages and
+           nil URLs fall back to .search. Building the final URL here avoids an extra redirect
+           through the web view delegate, which only rewrites in-page `/search` navigations.
         finishEditingAndSubmit(searchURL, visitType: VisitType.typed, forTab: tab)
-
         dispatchSubmitSearchTermAction(with: searchURL, searchTerm: text)
+        */
+        let targetURL = URL.ecosiaSearchWithQuery(text, preservingVerticalFrom: tab.url)
+        finishEditingAndSubmit(targetURL, visitType: VisitType.typed, forTab: tab)
+        dispatchSubmitSearchTermAction(with: targetURL, searchTerm: text)
     }
 
     private func dispatchSubmitSearchTermAction(with searchURL: URL, searchTerm: String) {
@@ -4728,7 +4736,12 @@ extension BrowserViewController: SearchViewControllerDelegate {
         }
 
         searchTelemetry.shouldSetUrlTypeSearch = true
+        /* Ecosia: Suggestion rows use `searchURLForQuery`, which always targets `/search`.
+           Preserve the tab's active vertical when the user is on Images/Videos/News.
         finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
+        */
+        let urlToLoad = url.ecosiaSearchURLPreservingVertical(from: tab.url) ?? url
+        finishEditingAndSubmit(urlToLoad, visitType: VisitType.typed, forTab: tab)
     }
 
     // In searchViewController when user selects an open tabs and switch to it
