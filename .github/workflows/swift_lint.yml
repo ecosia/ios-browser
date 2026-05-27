@@ -13,9 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install safe-chain
-        uses: ./.github/actions/install_safe_chain
-
       - name: SwiftLint
         run: |
           swiftlint --reporter github-actions-logging --strict
