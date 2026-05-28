@@ -8,6 +8,7 @@ import Shared
 import Account
 import Glean
 import MozillaAppServices
+import Ecosia
 
 final class AppLaunchUtil: Sendable {
     private let logger: Logger
@@ -181,7 +182,10 @@ final class AppLaunchUtil: Sendable {
 
     private func setUserAgent() {
         // Record the user agent for use by search suggestion clients.
+        /* Ecosia: Set the user agent to always use the Ecosia domain when unset
         SearchViewModel.userAgent = UserAgent.getUserAgent()
+         */
+        SearchViewModel.userAgent = UserAgent.getUserAgent(domain: Ecosia.Environment.current.urlProvider.domain)
     }
 
     private func initializeExperiments() {

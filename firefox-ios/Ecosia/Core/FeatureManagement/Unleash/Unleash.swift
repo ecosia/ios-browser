@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import UIKit
 
 public protocol UnleashProtocol {
     /// Checks if a toggle with the given name exists and is enabled.
@@ -40,17 +41,26 @@ public enum Unleash: UnleashProtocol {
         localeSource.englishLocalizedCountryName
     }
 
+    private static var unleashDeviceType: String {
+        UIDevice.current.userInterfaceIdiom == .pad ? "pc" : "mobile"
+    }
+
     public static func queryParameters(appVersion: String) -> Context {
-        ["userId": userId.uuidString,
-         "appName": "iOS",
-         "appVersion": appVersion,
-         "versionOnInstall": User.shared.versionOnInstall,
-         "environment": EcosiaEnvironment.current.urlProvider.unleash,
-         "market": User.shared.marketCode.rawValue,
-         "deviceRegion": currentDeviceRegion,
-         // Mapped from device region to enabled Web flags with geo-ip based context field
-         "country": englishCountryName ?? "Unknown",
-         "personalCounterSearches": "\(User.shared.searchCount)"]
+        [
+            "userId": userId.uuidString,
+            "appName": "iOS",
+            "appVersion": appVersion,
+            // Web-compatible Unleash context fields.
+            "browserName": "Ecosia iOS",
+            "deviceType": unleashDeviceType,
+            "versionOnInstall": User.shared.versionOnInstall,
+            "environment": EcosiaEnvironment.current.urlProvider.unleash,
+            "market": User.shared.marketCode.rawValue,
+            "deviceRegion": currentDeviceRegion,
+            // Mapped from device region to enabled Web flags with geo-ip based context field
+            "country": englishCountryName ?? "Unknown",
+            "personalCounterSearches": "\(User.shared.searchCount)"
+        ]
     }
 
     /// Starts the Unleash feature management session.

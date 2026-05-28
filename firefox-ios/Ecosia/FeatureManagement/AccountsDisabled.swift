@@ -10,10 +10,6 @@ public enum AccountsDisabled {
 
     /// When `true`, Accounts entry points and URL interception are disabled.
     public static var isActive: Bool {
-        isActive(for: UIDevice.current.userInterfaceIdiom)
-    }
-
-    static func isActive(for userInterfaceIdiom: UIUserInterfaceIdiom) -> Bool {
-        userInterfaceIdiom == .pad
+        Unleash.isEnabled(.accountsDisabled)
     }
 }
