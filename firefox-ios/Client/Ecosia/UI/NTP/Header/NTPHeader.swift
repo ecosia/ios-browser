@@ -213,6 +213,13 @@ struct NTPHeaderView: View {
     private func handleTap() {
         showAccountImpactView = true
         Analytics.shared.accountHeaderClicked()
+        // TODO: Remove — spike test for FileUploadService
+        Task {
+            let dummy = FileUploadInput(data: Data("hello".utf8), mimeType: "text/plain")
+            EcosiaLogger.network.info("[FileUpload] NTP tap — triggering spike test upload")
+            let result = await FileUploadService().uploadFiles([dummy])
+            EcosiaLogger.network.info("[FileUpload] Spike result: fileIds=\(result.fileIds), errors=\(result.errors)")
+        }
     }
 }
 // swiftlint:enable closure_body_length
