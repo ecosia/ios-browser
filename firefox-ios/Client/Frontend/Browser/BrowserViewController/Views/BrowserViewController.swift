@@ -4771,6 +4771,20 @@ extension BrowserViewController: SearchViewControllerDelegate {
     }
 
     func setLocationView(text: String, search: Bool) {
+        /* Ecosia: When the NTP omnibox owns the suggestions overlay, mirror
+           highlight/append updates into the pill instead of the hidden URL bar.
+         */
+        if let homepage = contentContainer.contentController as? HomepageViewController,
+           let bar = homepage.ntpSearchBar,
+           searchController?.parent is HomepageViewController {
+            bar.text = text
+            if search {
+                showOmniboxSuggestions(searchTerm: text, anchorView: bar)
+                searchLoader?.setQueryWithoutAutocomplete(text)
+            }
+            return
+        }
+
         let toolbarAction = ToolbarAction(
             searchTerm: text,
             windowUUID: windowUUID,

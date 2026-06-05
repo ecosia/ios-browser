@@ -60,6 +60,10 @@ extension BrowserViewController: NTPSearchBarDelegate {
         showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
     }
 
+    func ntpSearchBarNeedsSearchReset() {
+        searchLoader?.query = ""
+    }
+
     func ntpSearchBarDidBeginEditing() {
         // Mark the session active the moment the omnibox gains focus so an
         // abandoned focus (no text entered) is recorded the same way the URL
