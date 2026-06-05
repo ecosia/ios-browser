@@ -44,6 +44,17 @@ public enum TestTargets {
             bundleId: "org.mozilla.ios.ClientTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/ClientTests/**/*.swift"],
+            resources: [
+                // Ecosia: Test fixtures ClientTests loads from its own bundle (wallpaper JSON, search/pocket
+                // lists, images, search-engine xcassets). Upstream's Client.xcodeproj bundles these; the Tuist
+                // migration dropped them, causing `Fatal error: Missing file: wallpaper*.json` /
+                // `Couldn't find test file` crashes. (MOB-4384)
+                .glob(pattern: "firefox-ios-tests/Tests/ClientTests/**/*.json",
+                      excluding: ["firefox-ios-tests/Tests/ClientTests/**/*.xcassets/**"]),
+                "firefox-ios-tests/Tests/ClientTests/image.png",
+                "firefox-ios-tests/Tests/ClientTests/image.gif",
+                "firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/SearchEngineTestAssets.xcassets",
+            ],
             dependencies: [
                 .target(name: "Client"),
                 .target(name: "RustMozillaAppServices"),
@@ -54,6 +65,10 @@ public enum TestTargets {
                 .package(product: "Shared"),
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
+                // Ecosia: ClientTests/Toolbar/ToolbarMiddlewareTests imports ToolbarKit directly.
+                // Xcode 26.5's stricter linker no longer resolves ToolbarKit's Swift type metadata
+                // transitively via the Client host (-bundle_loader), so the test target must link it. (MOB-4384)
+                .package(product: "ToolbarKit"),
                 .sdk(name: "z", type: .library),
             ],
             settings: .settings(base: BuildConfigurations.testBaseSettings)

@@ -71,7 +71,16 @@ final class MockSearchEngineProvider: SearchEngineProvider, @unchecked Sendable 
                            engineOrderingPrefs: SearchEnginePrefs,
                            prefsMigrator: SearchEnginePreferencesMigrator,
                            completion: @escaping SearchEngineCompletion) {
+        /* Ecosia: The original delivered engines asynchronously via DispatchQueue.main.async, which left
+           SearchEnginesManager.orderedEngines empty when SearchEnginesManagerTests reads it synchronously right
+           after init → `Fatal error: Index out of range`. Upstream v147.5 delivers synchronously. (MOB-4384)
         DispatchQueue.main.async { [mockEngines] in
+            completion(engineOrderingPrefs, mockEngines)
+        }
+         */
+        // Ecosia: completion is @MainActor-isolated and this mock is only used by main-actor test setUp,
+        // so assumeIsolated delivers it synchronously without a thread hop. (MOB-4384)
+        MainActor.assumeIsolated {
             completion(engineOrderingPrefs, mockEngines)
         }
     }

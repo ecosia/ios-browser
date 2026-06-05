@@ -25,6 +25,9 @@ class CreditCardInputViewModelTests: XCTestCase, @unchecked Sendable {
                                                                   ccType: "VISA")
     override func setUp() {
         super.setUp()
+        // Ecosia: Sync to upstream v147.5 — bootstrap the DI container so CreditCardInputViewModel's
+        // default-arg resolves (Profile/GleanUsageReportingMetricsService) succeed. Our copy predated this. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
         files = MockFiles()
 
         if let rootDirectory = try? files.getAndEnsureDirectory() {

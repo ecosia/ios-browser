@@ -341,7 +341,9 @@ final class ShareManagerTests: XCTestCase {
     // MARK: - Custom SendToDeviceActivity
 
     func testCustomApplicationActivities_forSiteShare() throws {
-        let testShareActivityType = UIActivity.ActivityType("org.mozilla.ios.Fennec.sendToDevice")
+        // Ecosia: Use the production bundle-derived activity type instead of the hardcoded Firefox
+        // ("org.mozilla.ios.Fennec.sendToDevice") so it matches Ecosia's bundle id. (MOB-4384)
+        let testShareActivityType = CustomActivityAction.sendToDevice.actionType
         let testActivityTitle = "Send Link to Device"
 
         let testShareType = ShareType.site(url: testWebURL)
@@ -355,7 +357,9 @@ final class ShareManagerTests: XCTestCase {
     }
 
     func testCustomApplicationActivities_forTabShare() throws {
-        let testShareActivityType = UIActivity.ActivityType("org.mozilla.ios.Fennec.sendToDevice")
+        // Ecosia: Use the production bundle-derived activity type instead of the hardcoded Firefox
+        // ("org.mozilla.ios.Fennec.sendToDevice") so it matches Ecosia's bundle id. (MOB-4384)
+        let testShareActivityType = CustomActivityAction.sendToDevice.actionType
         let testActivityTitle = "Send Link to Device"
 
         let testShareType = ShareType.tab(url: testWebURL, tab: testTab)
@@ -369,7 +373,9 @@ final class ShareManagerTests: XCTestCase {
     }
 
     func testCustomApplicationActivities_forFileShareWithRemoteURL_AddsSendToDevice() throws {
-        let testShareActivityType = UIActivity.ActivityType("org.mozilla.ios.Fennec.sendToDevice")
+        // Ecosia: Use the production bundle-derived activity type instead of the hardcoded Firefox
+        // ("org.mozilla.ios.Fennec.sendToDevice") so it matches Ecosia's bundle id. (MOB-4384)
+        let testShareActivityType = CustomActivityAction.sendToDevice.actionType
         let testActivityTitle = "Send Link to Device"
 
         let testShareType = ShareType.file(url: testFileURL, remoteURL: testWebURL)

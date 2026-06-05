@@ -13,6 +13,10 @@ class FxAWebViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        // Ecosia: Sync to upstream v147.5 — bootstrap the DI container so FxAWebViewModel's default-arg
+        // dependencies (telemetry/GleanUsageReportingMetricsService/Profile) resolve. Our copy predated
+        // upstream's mock injection. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
         deeplinkParams = FxALaunchParams(entrypoint: .browserMenu, query: ["test_key": "test_value"])
         viewModel = FxAWebViewModel(pageType: .settingsPage, profile: MockProfile(), deepLinkParams: deeplinkParams)
     }
