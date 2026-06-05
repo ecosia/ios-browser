@@ -60,6 +60,127 @@ public enum EcosiaSchemes {
         "ShortcutRouteTests",
         "SyncContentSettingsViewControllerTests",
 
+        // Ecosia: The following ClientTests cover Firefox-only features that Ecosia does not ship, so they
+        // assert Firefox production behavior that diverges in Ecosia — syncing the test to upstream would not
+        // help (the difference is in production, not the test). They subscript arrays that are shorter under
+        // Ecosia, which CRASHES (index-out-of-range / "no TabManager"), so they are skipped per the
+        // "evaluate relevance, otherwise disable" guidance. (MOB-4384)
+        // - Firefox SearchPlugins/list.json is not bundled in the Ecosia Client app (Ecosia ships its own search):
+        "DefaultSearchPrefsTests/testParsing_hasAllInfo_succeeds()",
+        // - Firefox sponsored top-site tiles are not shown on the Ecosia NTP:
+        "TopSitesManagerTests/test_recalculateTopSites_duplicatePinnedTile_doesNotShowDuplicateSponsoredSite()",
+        // - Firefox "Terms of Use" acceptance telemetry — Ecosia uses its own ToS/onboarding flow:
+        "TermsOfServiceTelemetryTests/testRecordTermsOfServiceAcceptButtonTappedThenGleanIsCalled()",
+        // - Firefox Sync engine prefs — Ecosia authenticates via Auth0 and does not use Firefox Sync. The whole
+        //   testUpdateEnginePrefs_* family crashes with an unowned-reference lifetime error (RustSyncManager is
+        //   not instantiated in Ecosia production), so skip the class:
+        "RustSyncManagerTests",
+        // Ecosia: These TelemetryWrapperTests record settings via the DEPRECATED `(.action,.change,.setting)`
+        // path, which v147 deliberately fatal-asserts ("use SettingsTelemetry().changedSetting()") — PR #29799
+        // moved settings telemetry to SettingsTelemetry. With telemetry recording enabled for tests they crash;
+        // upstream removed these. Skipped as a stale deprecated-path test. (MOB-4384)
+        "TelemetryWrapperTests/test_preferencesWithExtras_GleanIsCalled()",
+        "TelemetryWrapperTests/test_preferencesWithoutExtras_GleanIsNotCalled()",
+        // Ecosia: App-error Glean metrics (AppErrors.crashedLastLaunch/tabLossDetected/cpuException/hangException/
+        // largeFileWrite) are intentionally commented out in TelemetryWrapper.gleanRecordEvent (Ecosia silences
+        // Firefox telemetry; uses Snowplow). These tests assert those disabled metrics record, so they cannot
+        // pass — skipped as a disabled-feature per "evaluate relevance, otherwise disable". (MOB-4384)
+        "TelemetryWrapperTests/test_error_crashedLastLaunchIsCalled()",
+        "TelemetryWrapperTests/test_error_tabLossDetectedIsCalled()",
+        "TelemetryWrapperTests/test_error_cpuExceptionIsCalled()",
+        "TelemetryWrapperTests/test_error_hangExceptionIsCalled()",
+        "TelemetryWrapperTests/test_error_largeFileWriteIsCalled()",
+
+        // Ecosia: User-confirmed Firefox features NOT shipped by Ecosia (Ecosia has a custom NTP /
+        // NTPLayout.swift, Snowplow analytics, and its own status bar). These tests assert that Firefox
+        // production behavior, which Ecosia replaces — relevance-skipped per "evaluate relevance, otherwise
+        // disable". (MOB-4384)
+        // - Pocket/Merino story feed (Ecosia NTP has no Pocket stories):
+        "MerinoProviderTests/test_fetchStories_cachesManyStories_returnsRequired()",
+        "MerinoProviderTests/test_fetchStories_fetchesAndSaves_whenNoCache()",
+        "MerinoProviderTests/test_fetchStories_fetchesAndSaves_whenThresholdPassed()",
+        "MerinoProviderTests/test_fetchStories_fetches_whenNoLastUpdatedEvenIfItemsExist()",
+        "MerinoProviderTests/test_fetchStories_returnsCached_whenThresholdNotPassed()",
+        // - iOS-26 translucent "glass" status bar overlay (whole class asserts the old opaque behavior):
+        "StatusBarOverlayTests",
+        // - Firefox sponsored top-site tiles (Ecosia NTP shows none):
+        "TopSitesManagerTests/test_fetchSponsoredSites_forUnifiedAds_withSuccessData_returnSponsoredSites()",
+        "TopSitesManagerTests/test_recalculateTopSites_andNoPinnedSites_returnGoogleAndSponsoredSites()",
+        "TopSitesManagerTests/test_recalculateTopSites_availableSpace_returnSitesInOrder()",
+        "TopSitesManagerTests/test_recalculateTopSites_matchingSponsoredAndHistoryBasedTiles_removeDuplicates()",
+        "TopSitesManagerTests/test_recalculateTopSites_shouldShowSponsoredSites_returnOnlyMaxSponsoredSites()",
+        "TopSitesManagerTests/test_recalculateTopSites_withOtherSitesAndNoGoogleSite_returnNoGoogleTopSite()",
+        "TopSitesManagerTests/test_searchEngine_sponsoredSite_getsRemoved()",
+        // - Firefox homepage stories-redesign + glass status-bar scroll coupling:
+        "HomepageViewControllerTests/test_newState_forTriggeringImpression_withStoriesRedesignEnabled_triggersHomepageAction()",
+        "HomepageViewControllerTests/test_scrollViewDidEndDecelerating_withStoriesRedesignEnabled_triggersHomepageAction()",
+        "HomepageViewControllerTests/test_viewDidAppear_withStoriesRedesignEnabled_triggersHomepageAction()",
+        "HomepageViewControllerTests/test_scrollToTop_updatesStatusBarScrollDelegate_andSetsCollectionViewOffset()",
+        "HomepageViewControllerTests/test_newState_didSelectedTabChangeToHomepageAction_forScrollToTop_setsCollectionViewOffsetToZero()",
+
+        // Ecosia: Firefox's Glean telemetry is NOT used at all in Ecosia (Ecosia uses Snowplow via
+        // Analytics.shared, tested separately by EcosiaTests/AnalyticsSpyTests). DefaultGleanWrapper delegates
+        // every metric to FakeGleanWrapper (no-op) for privacy, so all these ClientTests — which assert Firefox
+        // Glean metrics via `testGetValue()` — test a deliberately-disabled feature and cannot pass. Skipped per
+        // "evaluate relevance, otherwise disable" (user-confirmed). (MOB-4384)
+        "ActionExtensionTelemetryTests",
+        "AdjustTelemetryHelperTests",
+        "AppIconSelectionTelemetryTests",
+        "BookmarksTelemetryTests",
+        "ContextMenuTelemetryTests",
+        "HistoryDeletionUtilityTelemetryTests",
+        "MainMenuTelemetryTests",
+        "MicrosurveyTelemetryTests",
+        "NotificationManagerTelemetryTests",
+        "OnboardingTelemetryDelegationTests",
+        "OnboardingTelemetryUtilityTests",
+        "PasswordGeneratorTelemetryTests",
+        "PrivateBrowsingTelemetryTests",
+        "SearchTelemetryTests",
+        "SettingsTelemetryTests",
+        "ShareExtensionTelemetryTests",
+        "ShareTelemetryActivityItemProviderTests",
+        "ShareTelemetryTests",
+        "StoriesFeedTelemetryTests",
+        "TabsTelemetryTests",
+        "TelemetryContextualIdentifierTests",
+        "TelemetryWrapperTests",
+        "TermsOfServiceTelemetryTests",
+        "TermsOfUseTelemetryTests",
+        "ToastTelemetryTests",
+        "ToolbarTelemetryTests",
+        "TranslationsTelemetryTests",
+        "UnifiedAdsCallbackTelemetryTests",
+        "UserTelemetryTests",
+        "WebviewTelemetryTests",
+        "ZoomTelemetryTests",
+        // Ecosia: Firefox-Glean telemetry tests living inside non-*Telemetry* (mixed) classes — same rationale
+        // as above (Firefox Glean not used; Ecosia uses Snowplow). Only the Glean-asserting tests are skipped;
+        // the logic tests in these classes (e.g. GleanPlumb testManagerGetMessage, DefaultBrowser
+        // savesDatesinUserDefaults) still run. (MOB-4384)
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed()",
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_linkWithEmbeddedParam()",
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_linkWithEmbeddedParamAndOneActionParam()",
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_linkWithOneParam()",
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_linkWithScheme()",
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_linkWithTwoParams()",
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_withNoAction()",
+        "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_withoutExpiring()",
+        "DefaultBrowserUtilityTests/testAPIError_recordsTelemetryWithErrorDetails()",
+        "DefaultBrowserUtilityTests/testFirstLaunchWithDMAUser()",
+        "DefaultBrowserUtilityTests/testFirstLaunchWithNonDMAUser()",
+        "DefaultBrowserUtilityTests/testSecondLaunchWithDMAUser()",
+        "DefaultBrowserUtilityTests/testSecondLaunchWithNonDMAUser()",
+        "MerinoMiddlewareTests/test_tapOnHomepagePocketCellAction_sendTelemetryData()",
+        "MerinoMiddlewareTests/test_viewedSectionAction_sendTelemetryData()",
+        "TopSitesMiddlewareTests/test_tappedOnHomepageTopSite_forSponsoredSites_withUnifiedAds_sendsTelemetry()",
+        "TopSitesMiddlewareTests/test_tappedOnHomepageTopSite_withoutIsZeroSearch_forSuggestedSites_sendsCorrectTelemetry()",
+        "MicrosurveyMiddlewareIntegrationTests/testDismissSurveyAction()",
+        "MicrosurveyMiddlewareIntegrationTests/testPrivacyNoticeTappedAction()",
+        "MicrosurveyMiddlewareIntegrationTests/testSubmitSurveyAction()",
+        "MicrosurveyMiddlewareIntegrationTests/testConfirmationViewedAction()",
+        "HomepageMiddlewareTests/test_sectionSeenAction_sendTelemetryData()",
+
         // EcosiaTests — TopSiteNativeContextMenuTests
         //
         // Root cause: setUp() calls DependencyHelperMock().bootstrapDependencies() + creates a

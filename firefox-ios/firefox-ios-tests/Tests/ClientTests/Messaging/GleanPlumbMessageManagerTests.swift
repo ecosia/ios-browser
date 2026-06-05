@@ -17,7 +17,12 @@ class GleanPlumbMessageManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
+        // Ecosia: Sync to upstream v147.5 — bootstrap the DI container so message-action handling
+        // (which resolves Profile/GleanUsageReportingMetricsService via default args) doesn't crash. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
+        // Ecosia: GleanPlumbMessageManager records via TelemetryWrapper.recordEvent, which v147 gates off during
+        // tests (PR #29799) unless this override is set. main-133 had no such gate. (MOB-4384)
+        TelemetryWrapper.hasTelemetryOverride = true
         Glean.shared.resetGlean(clearStores: true)
         messagingStore = MockGleanPlumbMessageStore(messageId: messageId)
         applicationHelper = MockApplicationHelper()
@@ -31,7 +36,8 @@ class GleanPlumbMessageManagerTests: XCTestCase {
 
     override func tearDown() {
         super.tearDown()
-
+        // Ecosia: reset so the telemetry override doesn't leak into other test classes. (MOB-4384)
+        TelemetryWrapper.hasTelemetryOverride = false
         messagingStore = nil
         subject = nil
     }

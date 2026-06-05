@@ -20,6 +20,9 @@ class AccountSyncHandlerTests: XCTestCase {
         self.profile = MockProfile()
         self.syncManager = profile.syncManager as? ClientSyncManagerSpy
         self.queue = MockDispatchQueue()
+        // Ecosia: Sync to upstream v147.5 — upstream's setUp bootstraps the DI container so that
+        // createTab()'s Tab.init can resolve WindowManager/DocumentLogger. Our copy predated this. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
     }
 
     override func tearDown() {
@@ -27,6 +30,8 @@ class AccountSyncHandlerTests: XCTestCase {
         self.syncManager = nil
         self.profile = nil
         self.queue = nil
+        // Ecosia: match upstream tearDown. (MOB-4384)
+        DependencyHelperMock().reset()
     }
 
     func testTabDidGainFocus_doesntSyncWithoutAccount() {

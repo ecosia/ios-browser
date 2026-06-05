@@ -114,9 +114,11 @@ class DependencyHelperMock {
         let ratingPromptManager = RatingPromptManager(prefs: profile.prefs, crashTracker: DefaultCrashTracker())
         AppContainer.shared.register(service: ratingPromptManager)
 
-        if injectedWindowManager == nil {
-            windowManager.newBrowserWindowConfigured(AppWindowInfo(tabManager: tabManager), uuid: windowUUID)
-        }
+        // Ecosia: Register the window UNCONDITIONALLY, matching upstream v147.5. A prior Ecosia change
+        // guarded this with `if injectedWindowManager == nil`, which left tests that inject their own
+        // WindowManager (e.g. ToolbarMiddlewareTests) without a window for WindowUUID.XCTestDefaultUUID —
+        // causing `WindowManager.swift: Fatal error: No window for UUID …` crashes. (MOB-4384)
+        windowManager.newBrowserWindowConfigured(AppWindowInfo(tabManager: tabManager), uuid: windowUUID)
 
         // Tell the container we are done registering
         AppContainer.shared.bootstrap()
