@@ -569,7 +569,44 @@ wins left. Genuinely multi-session.
 | SyncTests | ✅ run (others.log) | 0 | 0 | **PASS** |
 | SyncTelemetryTests | ✅ run (others.log) | 0 | 0 | **PASS** |
 
-**5 of 6 targets GREEN. Only ClientTests (75 logical failures) remains before merge_tests.yml can be re-enabled.**
+**5 of 6 targets GREEN. Only ClientTests remains before merge_tests.yml can be re-enabled.**
+
+## ClientTests TRIAGE (ct17, 2026-06-06) — 82 failing methods across 32 classes, each classified by REAL intention
+Authoritative ref: `firefox-ios/Tuist/upgrade/ecosia-customizations-sample.json` (584-entry v147 upgrade spec).
+User decision: "Also fix prod gaps now" — restore Firefox-core/BrowserKit prod gaps (commenting conventions) +
+test-side fixes. ALWAYS verify the agent triage before acting (one agent wrongly proposed inverting
+DateGroupedTableData.add()'s loop — that is pristine upstream code; real cause is date-boundary, NOT a loop bug).
+
+### ✅ FIXED & VERIFIED (waves, build23/build24):
+- SettingsCoordinator HomePage route ×2 (PROD, Firefox-core): regressed NTPCustomizationSettingsViewController
+  restored at `getSettingsViewController(.homePage)` + `pressedHome()`. (legacyHomepageViewController reloadHomepage
+  body is obsolete — that VC was removed in v147; default no-op suffices.)
+- ShareManagerTests ×3 + URLActivityItemProviderTests ×2 (STALE): "Sent from Firefox"→"Sent from Ecosia"
+  (AppName.shortName = "Ecosia").
+- NimbusOnboardingKitFeatureLayerTests ×4 (STALE): %@ placeholder substituted with "Ecosia" not "Firefox".
+- HomepageDimensionCalculatorTests ×3 (STALE): top sites capped at 4 tiles/row (`/* Ecosia: */` min(...,4)).
+- NavigationBarStateTests ×5 (STALE): version2 order [back,forward,middle,tabs,menu] + history-on-NTP middle
+  (`/* Ecosia: */` in NavigationBarState.swift); tabs carries numberOfTabs at [3].
+- WallpaperCodableTests ×3 (STALE): 8-bit hex color quantization on round-trip → assert STABLE round-trip
+  (re-decode idempotent), not bit-exact CGFloat equality.
+
+### IN PROGRESS / NEXT (per-class, NOT blind):
+- SettingsCoordinatorTests theme/toolbar ×4 (DI_SETUP): MockThemeManager defaults isNewAppearanceMenuOn=TRUE but
+  EcosiaThemeManager defaults FALSE (Ecosia ships legacy ThemeSettingsController). Fix: inject themeManager with
+  isNewAppearanceMenuOn=false in setUp. Toolbar (×2) hinges on .addressBarMenu buildOnly default — check intended.
+- BrowserCoordinatorTests ×8: mix — start uses setRootViewController (test asserts push = STALE); showMainMenu
+  menuRefactor flag; showShareSheet async; handle* DI. Per-test.
+- DateGroupedTableDataTests ×5 + DownloadsPanelViewModelTests ×5: date-boundary — getDate() truncates to top of
+  hour while test's Date().dayBefore keeps minutes → item lands one section too recent. TEST/date fix (NOT the
+  agent's loop-inversion). Verify precisely.
+- StartAtHomeMiddlewareTests ×2: DI_SETUP (Firefox StartAtHomeMiddleware is PRISTINE — agent's "always-false
+  Ecosia override / delete" was WRONG; needs StartAtHomeHelper.shouldSkipStartHome/shouldStartAtHome setup).
+- FIREFOX_ONLY (assert Ecosia behavior / skip w/ reason): HomepageDiffableDataSource pocket ×2 (Pocket removed);
+  BrowserViewControllerTests testTrackVisibleSuggestion (Firefox Suggest telemetry unused).
+- DI_SETUP tail (~30): Microsurvey ×4 + GleanPlumb messaging seeding, AccountSyncHandler debouncer ×3,
+  PasswordManagerViewModel ×2, ThemeSettingsController Redux ×2, ScreenshotHelper ×2, ContextualHint ×2,
+  DefaultBackgroundTabLoader (MockDispatchQueue), DefaultBrowserUtility, AddressListViewModel, Bookmarks ×4,
+  Summarize/ModernLaunch/HomepageVC/CreditCardMIR/PrivacyNotice/BrowserVCState. Each understood individually.
 
 ### EcosiaTests crashers (others.log, 24 fatals):
 - 16× "Unable to get application Bundle (Bundle.main.bundlePath=…/Xcode/Agents)" — tests access Bundle.main
