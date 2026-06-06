@@ -8,17 +8,28 @@ import XCTest
 
 @testable import Client
 
+// Ecosia: Synced to upstream v147.5. This test now wires a reducer-backed test store with the
+// ThemeManagerMiddleware so the dispatched theme actions flow through Redux and call the controller's
+// newState. The previous (stale) version had no store setup, so the tests that assert a CHANGED state
+// (toggle system appearance ON, select Dark) never observed it — only the default-asserting tests
+// passed. Adapted to Ecosia's StoreTestUtility helper API (setupTestingStore(with:middlewares:) /
+// resetTestingStore()), mirroring MicrosurveyMiddlewareIntegrationTests. (MOB-4384)
 @MainActor
-class ThemeSettingsControllerTests: XCTestCase {
+class ThemeSettingsControllerTests: XCTestCase, StoreTestUtility {
+    let storeUtilityHelper = StoreTestUtilityHelper()
     let windowUUID: WindowUUID = .XCTestDefaultUUID
+    var appState: AppState!
+
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
+        setupTestingStore()
     }
 
     override func tearDown() {
-        super.tearDown()
         DependencyHelperMock().reset()
+        resetTestingStore()
+        super.tearDown()
     }
 
     func testUseSystemAppearance_WithRedux() {
@@ -119,7 +130,7 @@ class ThemeSettingsControllerTests: XCTestCase {
     }
 
     // MARK: - Private
-    private func createSubject(file: StaticString = #file,
+    private func createSubject(file: StaticString = #filePath,
                                line: UInt = #line) -> ThemeSettingsController {
         let subject = ThemeSettingsController(windowUUID: .XCTestDefaultUUID)
         let action = ScreenAction(windowUUID: .XCTestDefaultUUID,
@@ -134,5 +145,33 @@ class ThemeSettingsControllerTests: XCTestCase {
         let themeSwitch = UISwitch(frame: .zero)
         themeSwitch.isOn = isOn
         return themeSwitch
+    }
+
+    // MARK: StoreTestUtility
+    func setupAppState() -> Client.AppState {
+        let appState = AppState(
+            activeScreens: ActiveScreensState(
+                screens: [
+                    .themeSettings(
+                        ThemeSettingsState(
+                            windowUUID: .XCTestDefaultUUID
+                        )
+                    )
+                ]
+            )
+        )
+        self.appState = appState
+        return appState
+    }
+
+    func setupTestingStore() {
+        storeUtilityHelper.setupTestingStore(
+            with: setupAppState(),
+            middlewares: [ThemeManagerMiddleware().themeManagerProvider]
+        )
+    }
+
+    func resetTestingStore() {
+        storeUtilityHelper.resetTestingStore()
     }
 }
