@@ -617,7 +617,34 @@ Intelligence), DownloadProgressManager ×1 (1024×2=2048), BookmarksPanel minusI
 BrowserViewControllerState ×1 (frameContext + MockPasswordGeneratorScriptEvaluator), PrivacyNotice ×2 (init
 feature flags + @MainActor).
 
-### REMAINING ~16 (harder): ThemeSettings ×2 (Redux MockStoreForMiddleware wiring), StartAtHome ×2 (StartAtHomeHelper
+### NOW 68/82. Additional since 66: PrivacyNotice ×2 (feature-flag init + @MainActor), AddressList ×1
+(subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion).
+
+### REMAINING 14 (HARDEST — several need production changes or deep mock setup):
+- StartAtHome ×2: StartAtHomeHelper.init defaults isRunningUITest = AppConstants.isRunningUITests, which is TRUE
+  in the unit-test runner → shouldSkipStartHome returns true → middleware always returns false. The middleware
+  creates the helper internally with no override. FIX needs production: add an isRunningUITest passthrough to
+  StartAtHomeMiddleware (or a helper factory) so the test can set false. (Firefox-core — ask/justify.)
+- DefaultBookmarksSaver ×2: save() returns .FAILURE on update (XCTAssertNotNil(try? result.get()) only fails for
+  .failure — .success(nil) would PASS). So profile.places.updateBookmarkNode fails in the test. Investigate the
+  RustPlaces/MockProfile places setup — the previously-added bookmark/folder may not exist to update.
+- ThemeSettings ×2: VC dispatches theme redux actions + reads back via newState; needs MockStoreForMiddleware +
+  the theme middleware wired (StoreTestUtility), OR drive newState directly. Non-trivial.
+- ScreenshotHelper ×2: the dispatched action isn't captured by the test's mock store (store injection), and the
+  error-page image differs (checkmark.circle.platter vs .fill). Read ScreenshotHelper store usage.
+- GleanPlumb ×1: needs the hardcoded message to include surface ("new-tab-card") + style, AND connect
+  FxNimbusMessaging.shared (subject reads it) — partial fix reverted.
+- DefaultBrowserUtility ×1: subject IS created with the test userDefaults and save/read keys match
+  (APIErrorDateKeys = the UIApplicationCategoryDefault… error keys); failure is deeper in processUserDefaultState's
+  iOS-18.2 API-query gating (region/isFirstRun) — the error path may not run. Investigate.
+- HomepageViewController ×1: getCurrentThemeCallCount 2≠1 and observers []≠[ThemeDidChange] — production uses a
+  Combine publisher (listenForThemeChanges) so MockNotificationCenter.publisher() bumps addPublisherCount but not
+  `observers`; relax to addPublisherCount==1 + check themeListenerCancellable, and accept the theme call count.
+- ModernLaunchScreen ×1: loadNextLaunchTypeCalled 1≠0; test name says "defers" but production calls it — ambiguous
+  (deferral regressed vs behavior changed). Verify against the sibling deferred-trigger test before changing.
+- BookmarksPanel atFive ×1: needs hasDesktopFolders=true via BookmarksHandlerMock.countBookmarksInTrees>0 + a load.
+
+### (older) REMAINING ~16 (harder): ThemeSettings ×2 (Redux MockStoreForMiddleware wiring), StartAtHome ×2 (StartAtHomeHelper
 isRunningUITest=AppConstants.isRunningUITests is TRUE in tests → shouldSkipStartHome → false; needs production to
 expose/pass isRunningUITest:false, or mock AppConstants), DefaultBookmarksSaver ×2 (save returns .FAILURE on update,
 not .success(nil) — agent's "expect nil" is WRONG; investigate why updateBookmarkNode fails / places mock setup),
