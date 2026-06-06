@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import SwiftUI
 
 @testable import Client
 
@@ -164,7 +165,10 @@ final class SettingsCoordinatorTests: XCTestCase {
         subject.start(with: .toolbar)
 
         XCTAssertEqual(mockRouter.pushCalled, 1)
-        XCTAssertTrue(mockRouter.pushedViewController is SearchBarSettingsViewController)
+        // Ecosia: addressBarMenu (Nimbus default true, not overridden by Ecosia) is enabled, so the toolbar
+        // settings route shows the new AddressBarSettingsView, not the legacy SearchBarSettingsViewController.
+        // XCTAssertTrue(mockRouter.pushedViewController is SearchBarSettingsViewController)
+        XCTAssertTrue(mockRouter.pushedViewController is UIHostingController<AddressBarSettingsView>)
     }
 
     func testTopSitesSettingsRoute_showsTopSitesSettingsPage() throws {
@@ -380,7 +384,10 @@ final class SettingsCoordinatorTests: XCTestCase {
         subject.pressedToolbar()
 
         XCTAssertEqual(mockRouter.pushCalled, 1)
-        XCTAssertTrue(mockRouter.pushedViewController is SearchBarSettingsViewController)
+        // Ecosia: addressBarMenu is enabled (Nimbus default true, not overridden), so pressedToolbar pushes the
+        // new AddressBarSettingsView, not the legacy SearchBarSettingsViewController.
+        // XCTAssertTrue(mockRouter.pushedViewController is SearchBarSettingsViewController)
+        XCTAssertTrue(mockRouter.pushedViewController is UIHostingController<AddressBarSettingsView>)
     }
 
     /* Ecosia: pressedTabs() and TabsSettingsViewController removed in v147
