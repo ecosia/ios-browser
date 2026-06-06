@@ -590,9 +590,14 @@ DateGroupedTableData.add()'s loop — that is pristine upstream code; real cause
 - WallpaperCodableTests ×3 (STALE): 8-bit hex color quantization on round-trip → assert STABLE round-trip
   (re-decode idempotent), not bit-exact CGFloat equality.
 
-### PROGRESS: 27/82 fixed+verified+committed (commits 124fdf6dad, e4c84e8afc). ~55 remain.
-Added Wave 3: SettingsCoordinator theme ×2 (themeManager isNewAppearanceMenuOn=false), Homepage pocket ×2
-(assert no .pocket section), BrowserViewController fxSuggest ×1 (XCTSkip — Firefox Suggest Glean unused).
+### PROGRESS: 34/82 fixed+verified+committed (commits 124fdf6dad, e4c84e8afc, 8c3b91dbf6, 3009821eed). ~48 remain.
+- SettingsCoordinatorTests FULLY GREEN (54 passed): homepage prod ×2, theme ×2, toolbar ×2 (AddressBarSettingsView).
+- DateGroupedTableDataTests FULLY GREEN (18 passed): deterministic `withinThisWeek` dates + testAddOlder index 3.
+- Wave 3: theme ×2, Homepage pocket ×2 (assert no .pocket), BrowserViewController fxSuggest ×1 (XCTSkip).
+DOWNLOADS (×5) shares the SAME pattern: DownloadsPanelViewModel uses DateGroupedTableData(includeLastHour:false)
+= 4 sections [0:last24h,1:thisweek,2:thismonth,3:older]. Tests use noon/midnight dates → flaky + section-index
+off-by-one (like testAddOlder). FIX = deterministic dates + correct section index per query. (test file:
+Library/DownloadsPanelViewModelTests.swift; headerTitle mapping at DownloadsPanelViewModel.swift:44-56.)
 
 ### NEEDS PRODUCT DECISION:
 - SettingsCoordinatorTests toolbar ×2 (testGeneralSettingsDelegate_pushedToolbar, testToolbarSettingsRoute):
