@@ -621,6 +621,16 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## ✅ 81/82 (2026-06-06) — DefaultBrowserUtility testAPIError_savesDatesinUserDefaults ×1 RESOLVED
+`processUserDefaultState` catches `UIApplication.CategoryDefaultError` and only then saves the API-error dates
+to userDefaults. Our MockUIApplication threw a plain `NSError(domain: "UIApplicationCategoryDefaultError",
+code: 1)`, which does NOT bridge to `UIApplication.CategoryDefaultError`, so the error fell into the generic
+`catch` (log: "was not present with error") and the dates were never saved. Synced MockUIApplication to upstream
+v147.5: throw `NSError(domain: UIApplication.CategoryDefaultError.errorDomain, code:
+.rateLimited.rawValue, userInfo:)`, which bridges correctly. Verified the test now hits the retry-error path and
+passes. (Sister test testAPIError_recordsTelemetryWithErrorDetails stays scheme-skipped — Firefox Glean
+telemetry, per the pivot.)
+
 ## ✅ 80/82 (2026-06-06) — BookmarksPanel atFive ×1 RESOLVED
 `getNewIndex(from:)` only subtracts the local-desktop-folder row (5 -> 4) when `hasDesktopFolders == true`,
 which is set during `reloadData` when `countBookmarksInTrees > 0`. The stale test asserted 4 WITHOUT any reload
