@@ -56,6 +56,16 @@ class MockBrowserViewController: BrowserViewController {
     var lastVisitType: VisitType?
     var isPrivate = false
 
+    // Ecosia: Restore the mock content container so ScreenshotHelper's homepage/native-error-page branches
+    // can be exercised. Production ScreenshotHelper reads `contentContainer.contentController/contentView` and
+    // `contentContainer.hasNativeErrorPage`; this override (and MockContentContainer/MockScreenshotView below)
+    // was dropped during the v147.2 upgrade, breaking ScreenshotHelperTests. (MOB-4384)
+    var mockContentContainer = MockContentContainer()
+
+    override var contentContainer: ContentContainer {
+        return mockContentContainer
+    }
+
     func switchToPrivacyMode(isPrivate: Bool) {
         switchToPrivacyModeCalled = true
         switchToPrivacyModeIsPrivate = isPrivate
@@ -142,5 +152,29 @@ class MockBrowserViewController: BrowserViewController {
 
     func openRecentlyClosedSiteInSameTab(_ url: URL) {
         didOpenRecentlyClosedSiteInSameTab += 1
+    }
+}
+
+// Ecosia: Test doubles for the content container, restored from the pre-v147 mock so ScreenshotHelper's
+// homepage and native-error-page branches can be screenshotted deterministically. (MOB-4384)
+class MockContentContainer: ContentContainer {
+    var shouldHaveNativeErrorPage = false
+
+    override var contentView: Screenshotable? {
+        return MockScreenshotView()
+    }
+
+    override var hasNativeErrorPage: Bool {
+        return shouldHaveNativeErrorPage
+    }
+}
+
+class MockScreenshotView: Screenshotable {
+    func screenshot(quality: CGFloat) -> UIImage? {
+        return UIImage.checkmark
+    }
+
+    func screenshot(bounds: CGRect) -> UIImage? {
+        return UIImage.checkmark
     }
 }
