@@ -7,16 +7,23 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class PrivacyNoticeHelperTests: XCTestCase {
     var prefs: MockProfilePrefs!
 
     override func setUp() {
         super.setUp()
         prefs = MockProfilePrefs()
+        // Ecosia: PrivacyNoticeHelper gates on featureFlags.isFeatureEnabled(.privacyNotice, checking: .buildOnly),
+        // which returns false unless the feature-flags manager has a profile. Initialize it (the privacyNotice
+        // feature defaults to enabled). (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
+        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
     }
 
     override func tearDown() {
         prefs = nil
+        DependencyHelperMock().reset()
         super.tearDown()
     }
 
