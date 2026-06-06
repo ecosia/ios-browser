@@ -87,7 +87,13 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
         )
 
         let snapshot = dataSource.snapshot()
-        XCTAssertEqual(snapshot.numberOfItems(inSection: .pocket(.systemCyan)), 20)
+        // Ecosia: Pocket/Merino stories are removed from the homepage, so no `.pocket` section is created
+        // even when merino stories and a wallpaper color are set.
+        // XCTAssertEqual(snapshot.numberOfItems(inSection: .pocket(.systemCyan)), 20)
+        XCTAssertFalse(
+            snapshot.sectionIdentifiers.contains { if case .pocket = $0 { return true } else { return false } },
+            "Ecosia does not render a Pocket section"
+        )
     }
 
     @MainActor
@@ -141,11 +147,16 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
         dataSource.updateSnapshot(state: state, jumpBackInDisplayConfig: mockSectionConfig)
 
         let snapshot = dataSource.snapshot()
+        // Ecosia: Pocket/Merino stories are removed, so MerinoAction produces no pocket section — the
+        // snapshot contains only the customize-homepage section.
+        /* Ecosia:
         XCTAssertEqual(snapshot.numberOfItems(inSection: .pocket(nil)), 20)
         let expectedSections: [HomepageSection] = [
             .pocket(nil),
             .customizeHomepage
         ]
+         */
+        let expectedSections: [HomepageSection] = [.customizeHomepage]
         XCTAssertEqual(snapshot.sectionIdentifiers, expectedSections)
     }
 

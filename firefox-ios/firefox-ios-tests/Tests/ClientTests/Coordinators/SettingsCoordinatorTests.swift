@@ -15,7 +15,11 @@ final class SettingsCoordinatorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
+        // Ecosia: Ecosia ships the legacy ThemeSettingsController — EcosiaThemeManager.isNewAppearanceMenuOn
+        // defaults to false. MockThemeManager defaults it to true, so align it here for the theme-route tests.
+        let themeManager = MockThemeManager()
+        themeManager.isNewAppearanceMenuOn = false
+        DependencyHelperMock().bootstrapDependencies(themeManager: themeManager)
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
         self.mockRouter = MockRouter(navigationController: MockNavigationController())
         self.wallpaperManager = WallpaperManagerMock()
