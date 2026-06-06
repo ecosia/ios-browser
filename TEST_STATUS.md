@@ -621,6 +621,20 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## ✅ CRASH FIX (2026-06-06) — BookmarksViewController deinit weak-ref-during-dealloc
+Full-suite ClientTests run showed a crash cascade (59 restarts) rooted in:
+`objc: Cannot form weak reference to instance of class Client.BookmarksViewController ... in the process of
+deallocation` — REPRODUCIBLE IN ISOLATION (BookmarksCoordinatorTests alone). Root cause: BookmarksViewController
+had `private lazy var emptyBookmarksView` whose initializer does `view.delegate = self` (EmptyBookmarksView's
+delegate is `weak`). The `deinit` calls `emptyBookmarksView.removeFromSuperview()`; when the controller is
+deallocated before its view ever loads (e.g. BookmarksCoordinator.start creates + pushes the VC to a MockRouter,
+test ends, VC never displayed), deinit LAZILY instantiates the view, which forms a weak reference to the
+deallocating `self` → hard objc crash. This is a genuine PRODUCTION bug (3rd production change this session).
+FIX: replaced the `lazy var` with a backing optional (`_emptyBookmarksView`) + computed accessor; deinit now
+cleans up via `_emptyBookmarksView?.removeFromSuperview()` so it never instantiates during dealloc. Verified:
+BookmarksCoordinatorTests 5/5 pass, no crash. (Firefox-core file, but emptyBookmarksView/deinit are already
+Ecosia-customized — `// Ecosia:` comments added.) Re-running full suite to confirm the cascade is gone.
+
 ## ✅ 81/82 (2026-06-06) — DefaultBrowserUtility testAPIError_savesDatesinUserDefaults ×1 RESOLVED
 `processUserDefaultState` catches `UIApplication.CategoryDefaultError` and only then saves the API-error dates
 to userDefaults. Our MockUIApplication threw a plain `NSError(domain: "UIApplicationCategoryDefaultError",
