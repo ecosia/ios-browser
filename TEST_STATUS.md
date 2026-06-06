@@ -590,15 +590,31 @@ DateGroupedTableData.add()'s loop — that is pristine upstream code; real cause
 - WallpaperCodableTests ×3 (STALE): 8-bit hex color quantization on round-trip → assert STABLE round-trip
   (re-decode idempotent), not bit-exact CGFloat equality.
 
+### PROGRESS: 27/82 fixed+verified+committed (commits 124fdf6dad, e4c84e8afc). ~55 remain.
+Added Wave 3: SettingsCoordinator theme ×2 (themeManager isNewAppearanceMenuOn=false), Homepage pocket ×2
+(assert no .pocket section), BrowserViewController fxSuggest ×1 (XCTSkip — Firefox Suggest Glean unused).
+
+### NEEDS PRODUCT DECISION:
+- SettingsCoordinatorTests toolbar ×2 (testGeneralSettingsDelegate_pushedToolbar, testToolbarSettingsRoute):
+  AddressBarMenuFeature.status defaults TRUE (FxNimbus.swift:551) and Ecosia does NOT override it → the app
+  shows the NEW AddressBarSettingsView (UIHostingController), not legacy SearchBarSettingsViewController.
+  Contrast: Ecosia EXPLICITLY overrides isNewAppearanceMenuOn=false (keeps legacy theme). So either (a) update
+  tests to expect UIHostingController<AddressBarSettingsView> (matches current real behavior), or (b) the missing
+  addressBarMenu override is an Ecosia gap (should ship legacy). DEFERRED for product confirmation.
+
 ### IN PROGRESS / NEXT (per-class, NOT blind):
 - SettingsCoordinatorTests theme/toolbar ×4 (DI_SETUP): MockThemeManager defaults isNewAppearanceMenuOn=TRUE but
   EcosiaThemeManager defaults FALSE (Ecosia ships legacy ThemeSettingsController). Fix: inject themeManager with
   isNewAppearanceMenuOn=false in setUp. Toolbar (×2) hinges on .addressBarMenu buildOnly default — check intended.
 - BrowserCoordinatorTests ×8: mix — start uses setRootViewController (test asserts push = STALE); showMainMenu
   menuRefactor flag; showShareSheet async; handle* DI. Per-test.
-- DateGroupedTableDataTests ×5 + DownloadsPanelViewModelTests ×5: date-boundary — getDate() truncates to top of
-  hour while test's Date().dayBefore keeps minutes → item lands one section too recent. TEST/date fix (NOT the
-  agent's loop-inversion). Verify precisely.
+- DateGroupedTableDataTests ×5 + DownloadsPanelViewModelTests ×5: CONFIRMED root cause = FLAKY boundary dates.
+  getDate() truncates boundaries to top-of-hour; the test Date helpers are NOON-based (TimeConstants.swift:
+  dayBefore = yesterday-NOON; `older` = only -20 days, even mislabeled — lastMonth is -31). So "yesterday-noon"
+  falls before/after the "24h-ago-from-now" boundary depending on TIME OF DAY → tests pass after noon, FAIL
+  before noon (ct17 ran 11:25, pre-noon). NOT the agent's loop-inversion (that add() is pristine upstream).
+  FIX (test-side, deterministic): use explicit timestamps clearly inside each target section (e.g. yesterday =
+  -36h, older = -60d) instead of the noon-based helpers, so placement is time-of-day-independent. Careful, ×10.
 - StartAtHomeMiddlewareTests ×2: DI_SETUP (Firefox StartAtHomeMiddleware is PRISTINE — agent's "always-false
   Ecosia override / delete" was WRONG; needs StartAtHomeHelper.shouldSkipStartHome/shouldStartAtHome setup).
 - FIREFOX_ONLY (assert Ecosia behavior / skip w/ reason): HomepageDiffableDataSource pocket ×2 (Pocket removed);
