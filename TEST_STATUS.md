@@ -617,8 +617,27 @@ Intelligence), DownloadProgressManager ×1 (1024×2=2048), BookmarksPanel minusI
 BrowserViewControllerState ×1 (frameContext + MockPasswordGeneratorScriptEvaluator), PrivacyNotice ×2 (init
 feature flags + @MainActor).
 
-### NOW 68/82. Additional since 66: PrivacyNotice ×2 (feature-flag init + @MainActor), AddressList ×1
-(subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion).
+### NOW 69/82. Additional since 66: PrivacyNotice ×2 (feature-flag init + @MainActor), AddressList ×1
+(subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
+HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
+
+### FINAL 13 REMAINING — by what they NEED (all tractable ones are done; these need infra/decisions/runtime):
+- StartAtHome ×2: OPAQUE. Confirmed it is NOT isRunningUITest (that checks a UI-test launch arg, false in unit
+  tests) and the test already sets tabRestoreHasFinished=true. shouldSkipStartHome should be false and the 5h gap
+  is set, yet shouldStartAtHome returns false. Needs RUNTIME debugging (log startAtHomeSetting / getCustomState(.
+  startAtHome) / lastActiveTimestamp inside the test) — can't resolve statically.
+- DefaultBrowserUtility ×1: subject uses the test userDefaults & keys match; failure is in processUserDefaultState's
+  iOS-18.2 API-query gating (region/isFirstRun) — the error path likely doesn't run. Needs runtime trace.
+- ThemeSettings ×2: needs the redux store to PROCESS the theme middleware on dispatch and call the VC's newState
+  (MockStoreForMiddleware infra). Non-trivial Redux wiring.
+- DefaultBookmarksSaver ×2: update returns .failure (places mock has nothing to update). Needs RustPlaces/
+  MockProfile bookmark-store setup so the previously-added node exists.
+- ScreenshotHelper ×2: the dispatched ScreenshotAction isn't captured by the test mock store (store injection) +
+  error-page image differs. Needs store wiring + image expectation.
+- GleanPlumb ×1: hardcoded message needs a surface ("new-tab-card") + style, AND connect FxNimbusMessaging.shared.
+- atFive ×1: needs reloadData() with BookmarksHandlerMock.getBookmarksTree (mobile folder) +
+  countBookmarksInTrees>0 so hasDesktopFolders becomes true (async load + wait).
+- ModernLaunchScreen ×1: loadNextLaunchTypeCalled 1≠0 — verify whether the deferral regressed (vs sibling test).
 
 ### REMAINING 14 (HARDEST — several need production changes or deep mock setup):
 - StartAtHome ×2: StartAtHomeHelper.init defaults isRunningUITest = AppConstants.isRunningUITests, which is TRUE
