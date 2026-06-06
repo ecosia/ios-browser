@@ -210,7 +210,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         }
     }
 
-    func testShowShareSheet_addsShareSheetCoordinator() {
+    func testShowShareSheet_addsShareSheetCoordinator() async {
         let subject = createSubject()
 
         subject.showShareSheet(
@@ -221,6 +221,11 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
             toastContainer: UIView(),
             popoverArrowDirection: .any
         )
+
+        // Ecosia: startShareSheetCoordinator creates and starts the coordinator inside a
+        // `Task { await MainActor.run { ... } }`, so let the scheduled main-actor task run before asserting.
+        await Task.yield()
+        try? await Task.sleep(nanoseconds: 200_000_000)
 
         XCTAssertEqual(subject.childCoordinators.count, 1)
         XCTAssertTrue(subject.childCoordinators.first is ShareSheetCoordinator)
@@ -411,6 +416,10 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
         subject.browserViewController = mbvc
         subject.browserHasLoaded()
+        // Ecosia: handle(url: nil) needs a selected tab, otherwise the BVC waits for tab restoration and
+        // openBlankNewTab is never called. (shouldFocusLocationTextField is overridden to false in Ecosia, so a
+        // selected tab always routes to openBlankNewTab.)
+        tabManager.selectedTab = Tab(profile: profile, windowUUID: windowUUID)
 
         let result = testCanHandleAndHandle(subject, route: .search(url: nil, isPrivate: false))
 
@@ -535,6 +544,9 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
         subject.browserViewController = mbvc
         subject.browserHasLoaded()
+        // Ecosia: handle(url: nil) needs a selected tab, otherwise the BVC waits for tab restoration and
+        // openBlankNewTab is never called.
+        tabManager.selectedTab = Tab(profile: profile, windowUUID: windowUUID)
 
         // When
         let result = testCanHandleAndHandle(subject, route: .search(url: nil, isPrivate: true))
@@ -552,6 +564,9 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
         subject.browserViewController = mbvc
         subject.browserHasLoaded()
+        // Ecosia: handle(url: nil) needs a selected tab, otherwise the BVC waits for tab restoration and
+        // openBlankNewTab is never called.
+        tabManager.selectedTab = Tab(profile: profile, windowUUID: windowUUID)
 
         // When
         let result = testCanHandleAndHandle(subject, route: .search(url: nil, isPrivate: false))
@@ -939,7 +954,10 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         XCTAssertEqual(subject.childCoordinators.count, 1)
         XCTAssertTrue(subject.childCoordinators.first is MainMenuCoordinator)
         XCTAssertEqual(mockRouter.presentCalled, 1)
-        XCTAssertTrue(mockRouter.presentedViewController is DismissableNavigationViewController)
+        // Ecosia: the refactored main menu (menuRefactor enabled) presents a plain UINavigationController via
+        // MainMenuCoordinator.startWithNavController(), not a DismissableNavigationViewController.
+        // XCTAssertTrue(mockRouter.presentedViewController is DismissableNavigationViewController)
+        XCTAssertTrue(mockRouter.presentedViewController is UINavigationController)
         XCTAssertTrue(mockRouter.presentedViewController?.children.first is MainMenuViewController)
     }
 
@@ -970,6 +988,9 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
 
         // Ecosia: .customizeHomepage removed in v147, use .settings instead
         menuCoordinator.navigateTo(MenuNavigationDestination(.settings), animated: false)
+        // Ecosia: navigateTo dismisses the menu first and performs the navigation in the dismiss completion;
+        // run the mock router's saved completion to execute it.
+        mockRouter.savedCompletion?()
 
         XCTAssertTrue(subject.childCoordinators[0] is SettingsCoordinator)
         XCTAssertTrue(mockRouter.presentedViewController?.children.first is AppSettingsTableViewController)
