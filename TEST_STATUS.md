@@ -610,13 +610,30 @@ Microsurvey ×4 (suppressed in Ecosia — retarget testValidMessage→nil, skip 
   (count 0) + leak assert at :214 (transient, in-flight Task holds subject). FIX = make the test async and
   `await` a brief yield/sleep before asserting (like LocationViewTests), OR await the Task.
 
-### OTHER REMAINING DI_SETUP (~31, per-test): AccountSyncHandler ×3 (debouncer async wait), PasswordManagerViewModel
-×2, ThemeSettingsController ×2 (MockStoreForMiddleware Redux wiring), CreditCardValidator MIR ×2, ContextualHint
-×2, BookmarksPanelViewModel ×2, DefaultBookmarksSaver ×2, DefaultBackgroundTabLoader (MockDispatchQueue sync),
-DefaultBrowserUtility, AddressListViewModel (Combine async), HomepageViewController (MockNotificationCenter),
-ModernLaunchScreen, SummarizeSettings (pref), PrivacyNoticeHelper ×2, BrowserViewControllerState (frameContext),
-GleanPlumbMessageManager (seed FxNimbusMessaging.shared), DownloadProgressManager, HomepageDiffableDataSource
-colorValue. StartAtHome ×2 = needs runtime debug (LastActiveTimestamp/shouldSkipStartHome — pristine upstream).
+### NOW 53/82. Additional verified+committed: BrowserCoordinator ×8 (full class green), CreditCardValidator MIR ×2
+(test used 2060…; MIR BIN is 2200-2204 — production pattern correct).
+
+### REMAINING ~29 DI_SETUP (refined findings this session):
+- AccountSyncHandler ×3: production switched to a Task-based `Debouncer` (Task.sleep debounceTime, default 5s)
+  + `storeTabs` via DispatchQueue.main.asyncAfter(queueDelay); the `queue` init param is now UNUSED. Tests still
+  assume the old synchronous queue + assert immediately. FIX = use the `onSyncCompleted` callback + small
+  debounceTime/queueDelay + XCTestExpectation. (`syncNamedCollectionsCalled` comes from profile.storeAndSyncTabs.)
+- DefaultBackgroundTabLoader ×1: MockDispatchQueue DOES run async/asyncAfter synchronously (agent was wrong) —
+  cause is elsewhere; read DefaultBackgroundTabLoader production (tabQueue.getQueuedTabs / openURL gating).
+- SummarizeSettings ×1: generateSettings needs summarizeContentEnabled(pref, default true) && shakeGesture nimbus
+  flag. setupNimbusHostedSummarizerTesting sets shakeGesture via FxNimbus.shared.features.hostedSummarizerFeature
+  .with{} — verify nimbusUtils.isShakeGestureFeatureFlagEnabled() reads that same override (FxNimbus override
+  timing, like GleanPlumb).
+- GleanPlumbMessageManager ×1: seed FxNimbusMessaging.shared (subject reads it, test connects FxNimbus.shared).
+- ThemeSettingsController ×2: wire MockStoreForMiddleware (StoreTestUtility) like NavigationBarStateTests.
+- Others (per-test): PasswordManagerViewModel ×2, ContextualHint ×2, BookmarksPanelViewModel ×2,
+  DefaultBookmarksSaver ×2, DefaultBrowserUtility ×1 (MockUserDefaults instance), AddressListViewModel ×1 (Combine
+  async wait), HomepageViewController ×1 (MockNotificationCenter publisher capture), ModernLaunchScreen ×1,
+  PrivacyNoticeHelper ×2 (Ecosia-owned helper logic), BrowserViewControllerState ×1 (action needs frameContext),
+  DownloadProgressManager ×1, HomepageDiffableDataSource colorValue (fixed in wave 3 — verify).
+- StartAtHome ×2: pristine upstream middleware; createSubject sets a 5h LastActiveTimestamp + fixed dateProvider,
+  yet shouldStartAtHome returns false. Suspect shouldSkipStartHome (isRunningUITest/openedFromExternalSource) or
+  startAtHomeSetting getter (reads featureFlags.getCustomState, not the prefs the test sets). Needs runtime debug.
 
 ### CAUGHT WRONG AGENT SUGGESTIONS (verified against code, did NOT apply):
 - "Invert DateGroupedTableData.add() loop" — pristine upstream; real cause was flaky test dates.
