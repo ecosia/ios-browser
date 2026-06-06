@@ -590,7 +590,41 @@ DateGroupedTableData.add()'s loop — that is pristine upstream code; real cause
 - WallpaperCodableTests ×3 (STALE): 8-bit hex color quantization on round-trip → assert STABLE round-trip
   (re-decode idempotent), not bit-exact CGFloat equality.
 
-### PROGRESS: 34/82 fixed+verified+committed (commits 124fdf6dad, e4c84e8afc, 8c3b91dbf6, 3009821eed). ~48 remain.
+### PROGRESS: 45/82 fixed+verified+committed. ~37 remain.
+Newer commits add: DownloadsPanelViewModel ×5 (deterministic dates), BrowserCoordinator start ×2 (setRootViewController),
+Microsurvey ×4 (suppressed in Ecosia — retarget testValidMessage→nil, skip 3 forwarding tests).
+
+### REMAINING BrowserCoordinatorTests ×6 (precise findings):
+- testShowMainMenu_addsMainMenuCoordinator + testMainMenuCoordinatorDelegate_navigatesToSettings: showMainMenu
+  branches on featureFlags.isFeatureEnabled(.menuRefactor, checking:.buildOnly). MenuRefactorFeature.enabled
+  defaults TRUE (FxNimbus.swift:682). Need to verify which VC the new MainMenuCoordinator.startWithNavController
+  presents (is it DismissableNavigationViewController w/ MainMenuViewController child?) and whether present is
+  sync. Likely STALE assertion or async-wait. INVESTIGATE MainMenuCoordinator.startWithNavController.
+- testHandleHomepanelNewTab / testHandleNewPrivateTab / testHandleSearchWithNilURL: route .search(url:nil) →
+  BrowserCoordinator.handle(url:nil) → browserViewController.handle(url:nil,...). The real BVC.handle(url:nil)
+  takes an async tab-restoration path when tabManager.selectedTab == nil (AppEventQueue.wait → return), so
+  openBlankNewTab is never called synchronously → count 0. FIX = set tabManager.selectedTab (+ isRestoringTabs
+  false) in these 3 tests so the sync path runs. (Verify MockTabManager.selectedTab is settable; needs a Tab.)
+- testShowShareSheet_addsShareSheetCoordinator: startShareSheetCoordinator wraps coordinator creation in a
+  `Task { await MainActor.run { add(child:) ; start() } }`; the test checks synchronously → child not yet added
+  (count 0) + leak assert at :214 (transient, in-flight Task holds subject). FIX = make the test async and
+  `await` a brief yield/sleep before asserting (like LocationViewTests), OR await the Task.
+
+### OTHER REMAINING DI_SETUP (~31, per-test): AccountSyncHandler ×3 (debouncer async wait), PasswordManagerViewModel
+×2, ThemeSettingsController ×2 (MockStoreForMiddleware Redux wiring), CreditCardValidator MIR ×2, ContextualHint
+×2, BookmarksPanelViewModel ×2, DefaultBookmarksSaver ×2, DefaultBackgroundTabLoader (MockDispatchQueue sync),
+DefaultBrowserUtility, AddressListViewModel (Combine async), HomepageViewController (MockNotificationCenter),
+ModernLaunchScreen, SummarizeSettings (pref), PrivacyNoticeHelper ×2, BrowserViewControllerState (frameContext),
+GleanPlumbMessageManager (seed FxNimbusMessaging.shared), DownloadProgressManager, HomepageDiffableDataSource
+colorValue. StartAtHome ×2 = needs runtime debug (LastActiveTimestamp/shouldSkipStartHome — pristine upstream).
+
+### CAUGHT WRONG AGENT SUGGESTIONS (verified against code, did NOT apply):
+- "Invert DateGroupedTableData.add() loop" — pristine upstream; real cause was flaky test dates.
+- "Delete StartAtHome as Ecosia override" — middleware is pristine; it's a DI setup issue.
+- "Re-enable MicrosurveySurfaceManager.showMicrosurveyPrompt()" — Ecosia DELIBERATELY suppresses it; retargeted
+  tests to assert suppression instead.
+
+### PROGRESS (earlier waves):
 - SettingsCoordinatorTests FULLY GREEN (54 passed): homepage prod ×2, theme ×2, toolbar ×2 (AddressBarSettingsView).
 - DateGroupedTableDataTests FULLY GREEN (18 passed): deterministic `withinThisWeek` dates + testAddOlder index 3.
 - Wave 3: theme ×2, Homepage pocket ×2 (assert no .pocket), BrowserViewController fxSuggest ×1 (XCTSkip).
