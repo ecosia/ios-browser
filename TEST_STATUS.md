@@ -524,15 +524,52 @@ No flaky Glean panics (revert worked). ~30 *Telemetry classes skipped (~195 test
 LONG TAIL: ~36 classes, mostly 1-3 each. Each needs per-test telemetry-skip OR per-class logic fix. No systemic
 wins left. Genuinely multi-session.
 
+## ✅ COMMITTED 0f6cd4a5d2 (12 files). ClientTests RUN #16: 0 crashes, 1940 passed, 75 failed.
+## Remaining tail ROOT CAUSES (need decisions, not guessing):
+- LocationViewTests ×11 (EcosiaTests): ✅ RESOLVED. NOT a real leak — CONFIRMED root cause = autorelease-pool
+  timing (proven by DIAG bisection, build_diag 2026-06-06).
+  EXPERIMENTS (single-variable, systematic):
+    1. `[weak self]` on the 2 LocationView async blocks → no change (11 fail). Not the cause.
+    2. `await Task.sleep(0.5s)` in tearDown → ran (6.4s) but 11 still fail. Task.sleep doesn't pump main runloop.
+    3. Synchronous main-runloop pump (`RunLoop.run`/`CFRunLoopRunInMode` are `noasync` → use a sync helper) for
+       0.5s in tearDown → ran but 11 still fail. So NOT transient runloop/timer retention.
+    4. DIAG `testDIAG_initOnly` (bare `LocationView(frame:.zero)`, NO configure) STILL reported the setUp ivars
+       leaking — incl. a STANDALONE `MockLocationViewDelegate()` never attached to anything. A standalone object
+       held only by an ivar (nil'd in tearDown, captured weakly) can ONLY look leaked if it still carries an
+       autoreleased `+1` in XCTest's per-test pool, which drains AFTER the addTeardownBlock assertion.
+    5. DIAG with setUp tracking disabled + create/configure wrapped in explicit `autoreleasepool {}` + weak-local
+       check after pool+pump → BOTH PASS. ⇒ wrapping the lifecycle in an explicit pool makes the objects dealloc.
+  CONCLUSION: production `LocationView` does NOT leak; idiomatic `UIView.animate { self… }` is correct. The
+  shared `trackForMemoryLeaks` (XCTestCaseExtensions:30) asserts SYNCHRONOUSLY in an addTeardownBlock while the
+  `+1` autoreleased temporaries (from `LocationView(...)` init, passing sut/mockDelegate through `configure(...)`
+  and `findTextField(in:)`) still sit in XCTest's per-test autorelease pool → false positive. A runloop pump
+  drains a DIFFERENT pool, so it can't help.
+  FIX (applied, Ecosia-owned test ONLY — no Firefox-core changes; the build20 `[weak self]` edits were REVERTED):
+  Rewrote EcosiaTests/UI/Toolbar/LocationViewTests.swift so each case runs create→configure→assert-behaviour→
+  release inside an explicit `autoreleasepool {}`, with weak-local leak tracking asserted after the pool drains
+  (+ a short runloop pump for the `UIView.animate` work). Keeps BOTH the behavioural assertions and correct leak
+  detection, no false positives.
+  NOTE (out of scope, real upstream bug, does NOT fail this test): LocationTextField.notifyTextChanged debounce
+  closure (LocationTextField.swift:68-77) captures self strongly via Callback → self-cycle → urlTextField never
+  deallocs. Tracked objects are only sut + delegate, not urlTextField, so invisible here. Firefox-core; leave.
+- BrowserCoordinatorTests 8 + SettingsCoordinatorTests 6: routing pushes a different Ecosia VC than the test
+  expects (e.g. pressedHome → not NTPCustomizationSettingsViewController; ShowMainMenu/ShareSheet child not added).
+  Each needs the correct Ecosia VC/behavior (domain decision). The Ecosia comments in the tests show partial
+  prior updates — finish per-test with the real Ecosia types.
+- ~50 more: scattered 1-3 per class across ~30 classes (NavigationBarState 5, Nimbus 4, MicrosurveySurface 4,
+  Wallpaper, viewmodels, helpers). Per-class triage (logic / relevance). No systemic wins remain.
+
 ## Current pass/fail
 | Target | Last result | Crashes | Logical failures | Notes |
 |---|---|---|---|---|
-| ClientTests | run #10 (build13) | **0** | 263 (mostly telemetry; 76 fixed via override, pending verify) + 1 hang | CRASH-FREE |
-| EcosiaTests | run (others.log) | 24 fatals | (masked by crashes) | 16 "Unable to get application Bundle" + 8 no-def GleanUsageReportingMetricsService. NEXT TARGET TO FIX |
+| ClientTests | run #16 (build18) | **0** | 75 (logical tail) | CRASH-FREE; 1940 passed. NEXT TARGET |
+| EcosiaTests | ✅ et3 (build22, 2026-06-06) | 0 | 0 | **PASS** — 690 passed. LocationViewTests fixed (autorelease-timing false positive) |
 | StorageTests | ✅ run (others.log) | 0 | 0 | **PASS** |
 | SharedTests | ✅ run (others.log) | 0 | 0 | **PASS** |
 | SyncTests | ✅ run (others.log) | 0 | 0 | **PASS** |
 | SyncTelemetryTests | ✅ run (others.log) | 0 | 0 | **PASS** |
+
+**5 of 6 targets GREEN. Only ClientTests (75 logical failures) remains before merge_tests.yml can be re-enabled.**
 
 ### EcosiaTests crashers (others.log, 24 fatals):
 - 16× "Unable to get application Bundle (Bundle.main.bundlePath=…/Xcode/Agents)" — tests access Bundle.main
