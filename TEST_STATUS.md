@@ -610,8 +610,23 @@ Microsurvey ×4 (suppressed in Ecosia — retarget testValidMessage→nil, skip 
   (count 0) + leak assert at :214 (transient, in-flight Task holds subject). FIX = make the test async and
   `await` a brief yield/sleep before asserting (like LocationViewTests), OR await the Task.
 
-### NOW 53/82. Additional verified+committed: BrowserCoordinator ×8 (full class green), CreditCardValidator MIR ×2
-(test used 2060…; MIR BIN is 2200-2204 — production pattern correct).
+### NOW 66/82. Additional verified+committed since 53: BrowserCoordinator ×8, CreditCardValidator ×2,
+AccountSyncHandler ×3 (Debouncer + onSyncCompleted; MockProfile.storeAndSyncTabsCalled spy), PasswordManager ×2
+(drop Glean assertion), ContextualHint ×2 (synced-tab suppressed), SummarizeSettings ×1 (skip — shake needs Apple
+Intelligence), DownloadProgressManager ×1 (1024×2=2048), BookmarksPanel minusIndex ×1 (max clamp 0),
+BrowserViewControllerState ×1 (frameContext + MockPasswordGeneratorScriptEvaluator), PrivacyNotice ×2 (init
+feature flags + @MainActor).
+
+### REMAINING ~16 (harder): ThemeSettings ×2 (Redux MockStoreForMiddleware wiring), StartAtHome ×2 (StartAtHomeHelper
+isRunningUITest=AppConstants.isRunningUITests is TRUE in tests → shouldSkipStartHome → false; needs production to
+expose/pass isRunningUITest:false, or mock AppConstants), DefaultBookmarksSaver ×2 (save returns .FAILURE on update,
+not .success(nil) — agent's "expect nil" is WRONG; investigate why updateBookmarkNode fails / places mock setup),
+ScreenshotHelper ×2 (mock store dispatch not captured + error-page image), GleanPlumb ×1 (hardcoded message needs
+surface/style + connect FxNimbusMessaging.shared), BookmarksPanel atFive ×1 (needs hasDesktopFolders=true via
+mock countBookmarksInTrees>0 + load), ModernLaunchScreen ×1, HomepageViewController ×1 (getCurrentThemeCallCount/
+MockNotificationCenter publisher-vs-observer), AddressListViewModel ×1 (subscribe before fetch), DefaultBrowserUtility
+×1 (MockUserDefaults instance / trackDatesForErrorReporting), DefaultBackgroundTabLoader ×1 (MockTabQueue.getQueuedTabs
+wraps completion in a Task → async).
 
 ### REMAINING ~29 DI_SETUP (refined findings this session):
 - AccountSyncHandler ×3: production switched to a Task-based `Debouncer` (Task.sleep debounceTime, default 5s)
