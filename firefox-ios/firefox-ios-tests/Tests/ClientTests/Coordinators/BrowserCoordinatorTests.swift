@@ -62,8 +62,10 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         let subject = createSubject()
         subject.start(with: nil)
 
-        XCTAssertNotNil(mockRouter.pushedViewController as? BrowserViewController)
-        XCTAssertEqual(mockRouter.pushCalled, 1)
+        // Ecosia: start(with:) installs the browser as the router's root view controller (setRootViewController),
+        // not via push.
+        XCTAssertNotNil(mockRouter.rootViewController as? BrowserViewController)
+        XCTAssertEqual(mockRouter.setRootViewControllerCalled, 1)
         XCTAssertTrue(subject.childCoordinators.isEmpty)
     }
 
@@ -71,8 +73,10 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
         let subject = createSubject()
         subject.start(with: .defaultBrowser)
 
-        XCTAssertNotNil(mockRouter.pushedViewController as? BrowserViewController)
-        XCTAssertEqual(mockRouter.pushCalled, 1)
+        // Ecosia: start(with:) installs the browser as the router's root view controller (setRootViewController),
+        // not via push.
+        XCTAssertNotNil(mockRouter.rootViewController as? BrowserViewController)
+        XCTAssertEqual(mockRouter.setRootViewControllerCalled, 1)
         XCTAssertEqual(subject.childCoordinators.count, 1)
         XCTAssertNotNil(subject.childCoordinators[0] as? LaunchCoordinator)
     }
