@@ -621,6 +621,17 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## ✅ 76/82 (2026-06-06) — ThemeSettings ×2 RESOLVED
+Root cause: `ThemeSettingsControllerTests` was STALE — it predated the upstream StoreTestUtility migration and
+had NO test-store setup. So `store.dispatch(...)` hit the unit-test global store (empty middlewares + AppState()
+without a `.themeSettings` screen) → the controller's subscription delivered a DEFAULT ThemeSettingsState and
+`newState` never reflected a change. The 5 "passing" tests only asserted defaults; the 2 that assert a CHANGED
+state (toggle system appearance ON → `isSystemThemeOn`/sections=1; select Dark → `manualThemeType=.dark`) failed.
+FIX = synced to upstream v147.5: conform to `StoreTestUtility`, build a reducer-backed test store with
+`[ThemeManagerMiddleware().themeManagerProvider]` and a `.themeSettings(ThemeSettingsState)` screen via
+`storeUtilityHelper.setupTestingStore(with:middlewares:)` (Ecosia's helper API, mirroring
+MicrosurveyMiddlewareIntegrationTests). Verified: ThemeSettingsControllerTests 7/7 pass.
+
 ## ✅ 74/82 (2026-06-06) — ScreenshotHelper ×2 RESOLVED
 Root cause: `MockBrowserViewController.mockContentContainer` override + `MockContentContainer`/`MockScreenshotView`
 helper classes were DROPPED during the v147.2 upgrade (commit 9cbdccc4b1). Production `ScreenshotHelper` still
