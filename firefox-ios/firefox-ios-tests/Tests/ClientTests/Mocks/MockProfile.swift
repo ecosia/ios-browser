@@ -302,7 +302,10 @@ open class MockProfile: Client.Profile, @unchecked Sendable {
         return deferMaybe(0)
     }
 
+    // Ecosia: spy counter so AccountSyncHandler tests can verify the (debounced) sync was triggered. (MOB-4384)
+    var storeAndSyncTabsCalled = 0
     public func storeAndSyncTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
+        storeAndSyncTabsCalled += 1
         return deferMaybe(0)
     }
 
