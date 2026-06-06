@@ -134,17 +134,31 @@ class BookmarksPanelViewModelTests: XCTestCase {
     }
 
     func testMoveRowAtGetNewIndex_MobileGuid_atFive() {
-        let subject = createSubject(guid: BookmarkRoots.MobileFolderGUID)
-        let index = subject.getNewIndex(from: 5)
-        XCTAssertEqual(index, 4)
+        // Ecosia: getNewIndex only subtracts the local-desktop-folder row when hasDesktopFolders is true, which
+        // requires a reload where countBookmarksInTrees > 0. The stale test asserted 4 without setting this up
+        // (so production correctly returned 5). Set bookmarksInTreeValue=1 and reload first, matching upstream
+        // v147.5's showingDesktopFolder variant. (MOB-4384)
+        let bookmarksHandler = BookmarksHandlerMock()
+        bookmarksHandler.bookmarksInTreeValue = 1
+        let subject = createSubject(guid: BookmarkRoots.MobileFolderGUID, bookmarksHandler: bookmarksHandler)
+        let expectation = expectation(description: "Subject reloaded")
+        subject.reloadData {
+            XCTAssertEqual(subject.getNewIndex(from: 5), 4)
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1)
     }
 }
 
 extension BookmarksPanelViewModelTests {
-    func createSubject(guid: GUID) -> BookmarksPanelViewModel {
+    func createSubject(guid: GUID,
+                       bookmarksHandler: BookmarksHandler = BookmarksHandlerMock()) -> BookmarksPanelViewModel {
+        // Ecosia: Use MockDispatchQueue (runs synchronously) so the deferred desktop-folder insert in
+        // createDesktopBookmarksFolder completes within reloadData, matching upstream v147.5. (MOB-4384)
         let viewModel = BookmarksPanelViewModel(profile: profile,
-                                                bookmarksHandler: BookmarksHandlerMock(),
-                                                bookmarkFolderGUID: guid)
+                                                bookmarksHandler: bookmarksHandler,
+                                                bookmarkFolderGUID: guid,
+                                                mainQueue: MockDispatchQueue())
         trackForMemoryLeaks(viewModel)
         return viewModel
     }
