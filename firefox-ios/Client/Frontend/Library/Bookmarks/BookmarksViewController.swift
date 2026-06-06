@@ -126,11 +126,19 @@ final class BookmarksViewController: SiteTableViewController,
         return button
     }()
 
-    private lazy var emptyBookmarksView: EmptyBookmarksView = {
+    // Ecosia: Back the empty-state view with an optional instead of a `lazy var` so `deinit` can clean it up
+    // WITHOUT instantiating it. The initializer sets `view.delegate = self` (a weak reference); if the view was
+    // never created (e.g. the controller is deallocated before its view ever loads, as in BookmarksCoordinator
+    // unit tests), touching a `lazy var` in deinit would build it and form a weak reference to a deallocating
+    // `self` — crashing with "Cannot form weak reference … in the process of deallocation". (MOB-4384)
+    private var _emptyBookmarksView: EmptyBookmarksView?
+    private var emptyBookmarksView: EmptyBookmarksView {
+        if let view = _emptyBookmarksView { return view }
         let view = EmptyBookmarksView(initialBottomMargin: 0)
         view.delegate = self
+        _emptyBookmarksView = view
         return view
-    }()
+    }
 
     // MARK: - Init
 
@@ -178,7 +186,9 @@ final class BookmarksViewController: SiteTableViewController,
             // FXIOS-11315: Necessary to prevent BookmarksFolderEmptyStateView from being retained in memory
             a11yEmptyStateScrollView.removeFromSuperview()
             */
-            emptyBookmarksView.removeFromSuperview()
+            // Ecosia: Use the backing optional so we DON'T lazily instantiate the view (and weakly bind self)
+            // during deallocation. Nothing to clean up if it was never created. (MOB-4384)
+            _emptyBookmarksView?.removeFromSuperview()
         }
     }
 
