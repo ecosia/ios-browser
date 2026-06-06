@@ -621,6 +621,17 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## ✅ 74/82 (2026-06-06) — ScreenshotHelper ×2 RESOLVED
+Root cause: `MockBrowserViewController.mockContentContainer` override + `MockContentContainer`/`MockScreenshotView`
+helper classes were DROPPED during the v147.2 upgrade (commit 9cbdccc4b1). Production `ScreenshotHelper` still
+reads `contentContainer.contentController/contentView` + `hasNativeErrorPage`, so the homepage/native-error-page
+branches could not be exercised → no `ScreenshotAction` dispatched → `mockStore.dispatchedActions.first` nil.
+FIX = restored the dropped test doubles verbatim from pre-upgrade (`git show 9cbdccc4b1^`) into
+MockBrowserViewController.swift, and restored `mockVC.mockContentContainer.shouldHaveNativeErrorPage = true` in
+the error-page test. Verified: ScreenshotHelperTests 3/3 pass. (Only ScreenshotHelperTests references
+.contentContainer among MockBVC consumers → zero blast radius on BrowserCoordinatorTests/SummarizeCoordinatorTests.)
+REMAINING 8: ThemeSettings ×2, DefaultBookmarksSaver ×2, GleanPlumb ×1, atFive ×1, DefaultBrowserUtility ×1, +recount.
+
 ### FINAL 13 REMAINING — by what they NEED (all tractable ones are done; these need infra/decisions/runtime):
 - StartAtHome ×2: OPAQUE. Confirmed it is NOT isRunningUITest (that checks a UI-test launch arg, false in unit
   tests) and the test already sets tabRestoreHasFinished=true. shouldSkipStartHome should be false and the 5h gap
