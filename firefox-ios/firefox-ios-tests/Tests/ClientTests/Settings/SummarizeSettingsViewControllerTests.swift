@@ -23,7 +23,13 @@ final class SummarizeSettingsViewControllerTests: XCTestCase {
         try await super.tearDown()
     }
 
-    func test_generateSettings_withShakeFeature_hasExpectedSections() {
+    func test_generateSettings_withShakeFeature_hasExpectedSections() throws {
+        // Ecosia: the Gestures section requires the shake-gesture flag, which in Ecosia is driven solely by the
+        // Apple Intelligence summarizer (the hosted summarizer is disabled — SummarizerNimbusUtils
+        // .isHostedSummarizerEnabled() returns false). Apple Intelligence is unavailable in the test simulator,
+        // so the shake-gesture section can't be produced here.
+        throw XCTSkip("Shake-gesture (Gestures) section needs Apple Intelligence, unavailable in tests; Ecosia disables the hosted summarizer.")
+        /* Ecosia:
         setupNimbusHostedSummarizerTesting(isEnabled: true)
         let subject = createSubject()
         let sections = subject.generateSettings()
@@ -32,6 +38,7 @@ final class SummarizeSettingsViewControllerTests: XCTestCase {
         XCTAssertEqual(sections.first?.children.count, 1)
         XCTAssertEqual(sections.last?.title?.string, "Gestures")
         XCTAssertEqual(sections.last?.children.count, 1)
+         */
     }
 
     func test_generateSettings_withoutShakeFeature_hasExpectedSections() {
