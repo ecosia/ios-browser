@@ -621,6 +621,16 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## ✅ 79/82 (2026-06-06) — GleanPlumb testManagerGetMessage ×1 RESOLVED
+The stale hardcoded Nimbus message had only `trigger-if-all`/`except-if-any` — it omitted the fields the
+messaging feature needs to validate a message (`surface: "new-tab-card"`, `style`, `action`, `title`, `text`,
+`button-label`), so `getNextMessage(for: .newTabCard)` returned nil. Synced the message to upstream v147.5's
+full shape. NOTE: upstream DISABLES this test in its own testplan (header cites FXIOS-13565 + "runtime warnings
+related to Nimbus"), but in OUR environment the fixed test passes 3/3 stably, so we keep it green for coverage
+rather than skipping. (`messaging` is co-enrolling, so connecting hardcoded features to FxNimbus.shared makes
+them visible to the subject's FxNimbusMessaging.shared.features.messaging.) The onMessagePressed* telemetry/URL
+tests in this class remain scheme-skipped (Firefox Glean telemetry, per the earlier pivot).
+
 ## ✅ 78/82 (2026-06-06) — DefaultBookmarksSaver ×2 RESOLVED
 Root cause was NOT "update fails" (earlier hypothesis FALSIFIED). DIAG test proved
 `mockProfile.places.updateBookmarkNode(...)` SUCCEEDS. The real bug: the two UPDATE tests used the stale
