@@ -109,9 +109,9 @@ class BookmarksPanelViewModelTests: XCTestCase {
 
     func testMoveRowAtGetNewIndex_NotMobileGuid_minusIndex() {
         let subject = createSubject(guid: BookmarkRoots.MenuFolderGUID)
-        let expectedIndex = -1
-        let index = subject.getNewIndex(from: expectedIndex)
-        XCTAssertEqual(index, expectedIndex)
+        let index = subject.getNewIndex(from: -1)
+        // Ecosia: getNewIndex clamps negative indices to 0 (max(index, 0)).
+        XCTAssertEqual(index, 0)
     }
 
     func testMoveRowAtGetNewIndex_NotMobileGuid_atFive() {
