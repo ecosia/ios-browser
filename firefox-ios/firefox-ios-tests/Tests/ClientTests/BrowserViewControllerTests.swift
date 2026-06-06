@@ -33,7 +33,12 @@ class BrowserViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    func testTrackVisibleSuggestion() {
+    func testTrackVisibleSuggestion() throws {
+        // Ecosia: Firefox Glean telemetry is silenced (Ecosia uses Snowplow), so the Firefox Suggest
+        // impression ping is never submitted and this expectation can never be fulfilled. The Firefox
+        // Suggest feature/telemetry is not used in Ecosia.
+        throw XCTSkip("Firefox Suggest Glean telemetry is not used in Ecosia (Snowplow is used instead).")
+        /* Ecosia: Firefox-only telemetry assertions retained for upstream merges.
         let expectation = expectation(description: "The Firefox Suggest ping was sent")
 
         GleanMetrics.Pings.shared.fxSuggest.testBeforeNextSubmit { _ in
@@ -67,5 +72,6 @@ class BrowserViewControllerTests: XCTestCase {
         )
 
         wait(for: [expectation], timeout: 5.0)
+         */
     }
 }
