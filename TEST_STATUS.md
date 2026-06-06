@@ -621,6 +621,14 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## ✅ 80/82 (2026-06-06) — BookmarksPanel atFive ×1 RESOLVED
+`getNewIndex(from:)` only subtracts the local-desktop-folder row (5 -> 4) when `hasDesktopFolders == true`,
+which is set during `reloadData` when `countBookmarksInTrees > 0`. The stale test asserted 4 WITHOUT any reload
+or desktop setup, so production correctly returned 5. FIX (matches upstream v147.5's showingDesktopFolder
+variant): inject a BookmarksHandlerMock with `bookmarksInTreeValue = 1`, call `reloadData`, then assert
+`getNewIndex(from:5) == 4` inside the completion. Also updated `createSubject` to accept a bookmarksHandler and
+use MockDispatchQueue (synchronous deferred insert), per upstream. Verified: BookmarksPanelViewModelTests 13/13.
+
 ## ✅ 79/82 (2026-06-06) — GleanPlumb testManagerGetMessage ×1 RESOLVED
 The stale hardcoded Nimbus message had only `trigger-if-all`/`except-if-any` — it omitted the fields the
 messaging feature needs to validate a message (`surface: "new-tab-card"`, `style`, `action`, `title`, `text`,
