@@ -621,6 +621,16 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## ✅ 78/82 (2026-06-06) — DefaultBookmarksSaver ×2 RESOLVED
+Root cause was NOT "update fails" (earlier hypothesis FALSIFIED). DIAG test proved
+`mockProfile.places.updateBookmarkNode(...)` SUCCEEDS. The real bug: the two UPDATE tests used the stale
+assertion `XCTAssertNotNil(try? result.get())`, but `save()` returns `.success(nil)` for updates by contract
+(a GUID is only returned when CREATING). Swift FLATTENS `try?` over an already-optional value, so
+`try? result.get()` on `.success(nil)` evaluates to `nil` → XCTAssertNotNil fails. Upstream v147.5 fixed this
+to a `switch result { case .success(let value): XCTAssertNil(value); case .failure(let e): XCTFail }`. Synced
+both update tests to that pattern (create tests correctly keep XCTAssertNotNil — create returns a real GUID).
+Verified: DefaultBookmarksSaverTests 5/5 pass.
+
 ## ✅ 76/82 (2026-06-06) — ThemeSettings ×2 RESOLVED
 Root cause: `ThemeSettingsControllerTests` was STALE — it predated the upstream StoreTestUtility migration and
 had NO test-store setup. So `store.dispatch(...)` hit the unit-test global store (empty middlewares + AppState()

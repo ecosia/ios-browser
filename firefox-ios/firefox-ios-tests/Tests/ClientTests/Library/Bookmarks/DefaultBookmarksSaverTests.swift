@@ -72,7 +72,15 @@ final class DefaultBookmarksSaverTests: XCTestCase {
             return await readNode(guid: previouslyAddedBookmark.guid) as? BookmarkItemData
         }
 
-        XCTAssertNotNil(try? result.get())
+        // Ecosia: Updates return .success(nil) by contract (a GUID is only returned when CREATING).
+        // The stale assertion XCTAssertNotNil(try? result.get()) failed on .success(nil) because Swift
+        // flattens `try?` over an already-optional value. Synced to upstream v147.5's switch assertion. (MOB-4384)
+        switch result {
+        case .success(let value):
+            XCTAssertNil(value, "Expected the result value to be nil for updates.")
+        case .failure(let error):
+            XCTFail("Expected success but got failure: \(error)")
+        }
         XCTAssertEqual(readModfiedBookmark.title, newTitle)
         XCTAssertEqual(readModfiedBookmark.url, newUrl)
     }
@@ -134,7 +142,14 @@ final class DefaultBookmarksSaverTests: XCTestCase {
             return await readNode(guid: modifiedFolder.guid) as? BookmarkFolderData
         }
 
-        XCTAssertNotNil(try? result.get())
+        // Ecosia: Updates return .success(nil) by contract — see note in testSave_updateAlreadyPresentBookmark.
+        // Synced to upstream v147.5's switch assertion. (MOB-4384)
+        switch result {
+        case .success(let value):
+            XCTAssertNil(value, "Expected the result value to be nil for updates.")
+        case .failure(let error):
+            XCTFail("Expected success but got failure: \(error)")
+        }
         XCTAssertEqual(readModfiedBookmark.title, newTitle)
     }
 
