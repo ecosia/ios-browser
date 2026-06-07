@@ -621,7 +621,19 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
-## 📊 FULL 6-TARGET STATE (2026-06-07) — 4/6 GREEN; SharedTests + SyncTelemetryTests remain
+## ✅✅✅ ALL 6 TARGETS GREEN (2026-06-07)
+Per-target (iPhone 17 / iOS 26.5), all EXIT 0, 0 restarts, 0 failures:
+ClientTests ✅ | EcosiaTests ✅ (608) | StorageTests ✅ (30) | SyncTests ✅ | SharedTests ✅ | SyncTelemetryTests ✅
+- SharedTests: was crashing on AppInfo.applicationBundle (logic-test host, Bundle.main = xctest agent). FIXED by
+  app-hosting the target (added `.target(name: "Client")` dep in Targets+Tests.swift → Tuist sets Client.app as
+  test host → Bundle.main = .app). Ecosia UserAgent/SupportUtils tests now run.
+- SyncTelemetryTests: was crashing on FxAWebViewTelemetry() → TelemetryWrapper.shared resolving
+  GleanUsageReportingMetricsService from an empty AppContainer. FIXED by injecting a NoOpTelemetryWrapper (the
+  tests only exercise getFlowFromUrl).
+NEXT: full-scheme run (all targets in one xcodebuild invocation = CI-equivalent) to confirm no cross-target
+contamination, then re-enable merge_tests.yml (flip `if: false` at line 24).
+
+## 📊 (superseded) FULL 6-TARGET STATE (2026-06-07) — 4/6 GREEN; SharedTests + SyncTelemetryTests remain
 Verified per-target on iPhone 17 / iOS 26.5 (id 50DD8937…) after all fixes:
 | Target | Result |
 |---|---|
