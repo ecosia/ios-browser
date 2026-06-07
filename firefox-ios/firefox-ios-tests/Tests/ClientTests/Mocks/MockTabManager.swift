@@ -160,12 +160,25 @@ class MockTabManager: TabManager {
     func undoCloseAllTabsLegacy(recentlyClosedTabs: [Client.Tab], previousTabUUID: String, isPrivate: Bool) {}
 
     @discardableResult
-    func addTab(_ request: URLRequest!,
+    // Ecosia: Parameter MUST be URLRequest? (optional), not URLRequest! (IUO), to satisfy the TabManager
+    // protocol requirement `addTab(_ request: URLRequest?, afterTab:zombie:isPrivate:)`. With the IUO signature
+    // this method did NOT fulfil the requirement, so the protocol's convenience default impl
+    // (addTab(_:afterTab:zombie:isPrivate:) in the TabManager extension) became the witness and called itself
+    // infinitely → stack overflow → crash. That crashed every test that calls tabManager.addTab(...) through the
+    // zombie variant (StartAtHome scan/middleware, BrowserCoordinator open-recently-closed). (MOB-4384)
+    func addTab(_ request: URLRequest?,
                 afterTab: Tab?,
                 zombie: Bool,
                 isPrivate: Bool
     ) -> Tab {
-        return Tab(profile: MockProfile(), windowUUID: windowUUID)
+        // Ecosia: Return a MockTab whose isFxHomeTab reflects the requested URL, matching upstream v147.5.
+        // The previous plain Tab had no URL, so StartAtHomeHelper.scanForExistingHomeTab could never find the
+        // home tab (testScanForExistingHomeTab_WithHomePage failed once the recursion crash was fixed). (MOB-4384)
+        let isHomePage = request?.url?.absoluteString == "internal://local/about/home"
+        return MockTab(profile: MockProfile(),
+                       isPrivate: isPrivate,
+                       windowUUID: windowUUID,
+                       isHomePage: isHomePage)
     }
 
     func backgroundRemoveAllTabs(isPrivate: Bool,
