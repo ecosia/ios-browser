@@ -621,6 +621,27 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## 🧱 FINAL REMAINING CRASHERS (2026-06-07) — 9 deep iOS-26.5-simulator crashes (recover on retry)
+After fixing CreditCard (MockCreditCardProvider, committed 72975b9b29), the full-suite restarts dropped further.
+The LAST 9 crashers resist test-code fixes and are a distinct class — deep iOS-26.5-simulator WebKit/web-process/
+Rust crashes that RECOVER on retry (every affected suite still reports "passed"; only xcodebuild's EXIT=65 from
+the restarts is the problem). They are NOT logical failures and NOT the stale-real-DB pattern:
+
+- **HistoryPanelViewModelTests ×6** — EVERY test crashes around setUp/teardown (real places/logins DB via
+  `profile.reopen()`/`clear()` + a "com.apple.WebKit.Networking failed to resolve host" message precedes the
+  crash). Tried and REVERTED (didn't help): AppContainer.shared.reset()→DependencyHelperMock().reset() in
+  tearDown; unique MockProfile prefix. Root cause is deeper (WebKit/web-process or Rust on the 26.5 sim), not the
+  DI race or DB-path collision. Test file is otherwise ~identical to upstream.
+- **StartAtHomeHelperTests ×2** (testScanForExistingHomeTab_With/WithoutHomePage) — byte-identical to upstream;
+  crashes creating a real `Tab` via MockTabManager.addTab (→ WKWebView/web-process) on the 26.5 sim.
+- **ToolbarMiddlewareTests/testLoadSummary_dispatchesToolbarAction ×1** — HANGS (2-min timeout) invoking the
+  Firefox HOSTED summarizer (GPU/web-process); Ecosia uses the Apple-Intelligence summarizer only.
+
+These need either (a) a deeper iOS-26.5-simulator/WebKit-process investigation (uncertain, may be unfixable in
+test code), or (b) scheme-skips with precise "iOS 26.5 sim WebKit/web-process flakiness" / "Firefox hosted
+summarizer not used" reasons to unblock merge_tests. AWAITING USER DECISION (these are core-ish features:
+History, StartAtHome). Everything else in ClientTests: 0 logical failures, 0 crashes.
+
 ## 🔧 REMAINING FULL-SUITE CRASHERS (2026-06-07) — 48→15 restarts; stale-real-Rust-DB pattern
 Full ClientTests run after the fixes below: **0 logical failures**, restarts down 48→15 (Places + WebKit-mock
 cascades eliminated). All suites still report "passed" (crashes RECOVER on retry) but xcodebuild EXITs 65, so
