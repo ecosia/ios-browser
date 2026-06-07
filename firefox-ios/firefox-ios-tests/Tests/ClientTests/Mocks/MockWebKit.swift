@@ -16,14 +16,27 @@ class WKNavigationActionMock: WKNavigationAction {
 
 // MARK: WKFrameInfoMock
 class WKFrameInfoMock: WKFrameInfo {
-    let overridenSecurityOrigin: WKSecurityOrigin
-    let overridenWebView: WKWebView?
-    let overridenTargetFrame: Bool
+    private var overridenSecurityOrigin: WKSecurityOrigin?
+    private var overridenWebView: WKWebView?
+    private var overridenTargetFrame = false
 
-    init(webView: WKWebViewMock? = nil, frameURL: URL? = nil, isMainFrame: Bool? = false) {
-        overridenSecurityOrigin = WKSecurityOriginMock.new(frameURL)
-        overridenWebView = webView
-        overridenTargetFrame = isMainFrame ?? false
+    // Ecosia: Allocate via the objc runtime instead of a Swift initializer. WKFrameInfo's initializer is
+    // unavailable, and on the iOS 26.5 SDK calling it (via subclass init -> super.init()) crashes the process,
+    // which crashed every test that built a frame mock (WKFrameInfoExtensions, BrowserCoordinator,
+    // PasswordGenerator, and formerly FormAutofill/WebViewNavigationHandler before those were synced to
+    // upstream's mock-free APIs). This mirrors WKSecurityOriginMock.new below. (MOB-4384)
+    class func new(webView: WKWebViewMock? = nil,
+                   frameURL: URL? = nil,
+                   isMainFrame: Bool? = false) -> WKFrameInfoMock {
+        guard let instance = self.perform(NSSelectorFromString("alloc"))?.takeUnretainedValue()
+                as? WKFrameInfoMock
+        else {
+            fatalError("Could not allocate WKFrameInfoMock instance")
+        }
+        instance.overridenSecurityOrigin = WKSecurityOriginMock.new(frameURL)
+        instance.overridenWebView = webView
+        instance.overridenTargetFrame = isMainFrame ?? false
+        return instance
     }
 
     override var isMainFrame: Bool {
@@ -31,7 +44,7 @@ class WKFrameInfoMock: WKFrameInfo {
     }
 
     override var securityOrigin: WKSecurityOrigin {
-        return overridenSecurityOrigin
+        return overridenSecurityOrigin ?? WKSecurityOriginMock.new(nil)
     }
 
     override var webView: WKWebView? {
