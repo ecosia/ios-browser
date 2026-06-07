@@ -59,6 +59,12 @@ public enum EcosiaSchemes {
         // Ecosia-specific intro logic) — skip entry removed to avoid maintaining dead references.
         "ShortcutRouteTests",
         "SyncContentSettingsViewControllerTests",
+        // Ecosia: The wallpaper settings header is not yet surfaced as a feature in the Ecosia app (coming soon).
+        // This test asserts a collection-JSON-driven description (nil when the collection has none), but the
+        // current production header uses hardcoded Limited-Edition strings, and real collections ship null
+        // heading/description — so implementing it now would regress the live UI. Skip until the wallpaper
+        // feature ships, then implement collection-driven headers and re-enable. (MOB-4384)
+        "WallpaperSettingsViewModelTests/testSectionHeaderViewModel_headingWithoutDescription()",
 
         // Ecosia: The following ClientTests cover Firefox-only features that Ecosia does not ship, so they
         // assert Firefox production behavior that diverges in Ecosia — syncing the test to upstream would not
