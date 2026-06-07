@@ -65,6 +65,11 @@ public enum EcosiaSchemes {
         // heading/description — so implementing it now would regress the live UI. Skip until the wallpaper
         // feature ships, then implement collection-driven headers and re-enable. (MOB-4384)
         "WallpaperSettingsViewModelTests/testSectionHeaderViewModel_headingWithoutDescription()",
+        // Ecosia: testLoadSummary forces the Firefox HOSTED summarizer (setIsHostedSummaryEnabled(true)); the
+        // production path spins up a real web-process summarization and HANGS (2-min timeout) in the test host.
+        // Ecosia ships the Apple-Intelligence summarizer only (hosted summarizer disabled), so this is a
+        // Firefox-only path. Skip until/unless Ecosia ships a hosted summarizer. (MOB-4384)
+        "ToolbarMiddlewareTests/testLoadSummary_dispatchesToolbarAction()",
 
         // Ecosia: The following ClientTests cover Firefox-only features that Ecosia does not ship, so they
         // assert Firefox production behavior that diverges in Ecosia — syncing the test to upstream would not
