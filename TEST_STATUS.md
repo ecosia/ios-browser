@@ -621,6 +621,13 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## 🏁 DONE (2026-06-07) — full-scheme green + merge_tests re-enabled
+FULL-SCHEME run (all 6 targets, one xcodebuild invocation = exactly what CI does): **EXIT 0, 0 restarts,
+0 crashers, 0 logical failures.** EcosiaTests/ClientTests/SyncTests/StorageTests/SharedTests/SyncTelemetryTests
+all passed — NO cross-target contamination. Re-enabled `.github/workflows/merge_tests.yml` (removed the
+`if: false` gate + updated the header comment). NOT pushed — local commits on
+`dc-mob-4384-fix-unit-tests-after-upgrade` for review.
+
 ## ✅✅✅ ALL 6 TARGETS GREEN (2026-06-07)
 Per-target (iPhone 17 / iOS 26.5), all EXIT 0, 0 restarts, 0 failures:
 ClientTests ✅ | EcosiaTests ✅ (608) | StorageTests ✅ (30) | SyncTests ✅ | SharedTests ✅ | SyncTelemetryTests ✅
