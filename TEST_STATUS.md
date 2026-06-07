@@ -621,6 +621,32 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## 📊 FULL 6-TARGET STATE (2026-06-07) — 4/6 GREEN; SharedTests + SyncTelemetryTests remain
+Verified per-target on iPhone 17 / iOS 26.5 (id 50DD8937…) after all fixes:
+| Target | Result |
+|---|---|
+| **ClientTests** | ✅ EXIT 0, 0 restarts, 0 failures (crash trajectory 228→0) |
+| **EcosiaTests** | ✅ EXIT 0, 0 restarts, 608 tests, 1 skip, 0 failures |
+| **StorageTests** | ✅ EXIT 0, 0 restarts, 30/30 |
+| **SyncTests** | ✅ passed (6 tests) |
+| **SharedTests** | ✗ 8 crashers — `AppInfo.swift:18 Fatal: Unable to get application Bundle` |
+| **SyncTelemetryTests** | ✗ 4 crashers — `AppContainer:33 No definition registered: GleanUsageReportingMetricsService` |
+
+REMAINING WORK (the last 2 targets — a distinct cluster, NOT the ClientTests issues):
+- **SharedTests ×8** (UserAgentTests/SupportUtilsTests): these Ecosia tests call `AppInfo` which reads
+  `Bundle.main`, but `sharedTests()` in Targets+Tests.swift has NO test host → it runs in the `xctest` agent
+  (Bundle.main = …/Xcode/Agents) → AppInfo fatalErrors. FIX OPTIONS: (a) give sharedTests() a host application
+  (Tuist `testHost`/app-host — verify it doesn't break the other logic tests), or (b) make the Ecosia UserAgent/
+  SupportUtils tests not depend on Bundle.main (inject/mock AppInfo). Pre-existing (config unchanged this
+  session); the 2026-06-05 "green" was likely before these Ecosia tests existed / inaccurate.
+- **SyncTelemetryTests ×4** (FxALoginRegistrationTelemetryTests): `FxAWebViewTelemetry()` defaults to
+  `TelemetryWrapper.shared`, whose init resolves `GleanUsageReportingMetricsService` from an EMPTY AppContainer
+  (no bootstrap) → crash. The target deps are `.target("Client") + Glean + Shared` — it can `@testable import
+  Client` but CANNOT see ClientTests' MockTelemetryWrapper/DependencyHelperMock. FIX OPTIONS: (a) inject a
+  telemetry wrapper that doesn't resolve Glean (needs a mock visible to this target — add one or share it), or
+  (b) bootstrap the container in setUp (needs a bootstrap path accessible from this target).
+merge_tests.yml MUST stay disabled until these 2 targets are green (CI runs the whole scheme).
+
 ## ✅✅ ALL CLIENTTESTS CRASHERS RESOLVED (2026-06-07) — NOT environment issues after all
 The "deep iOS-26.5 environment" hypothesis was WRONG. Parsing the actual crash reports (~/Library/Logs/
 DiagnosticReports/Client-*.ips) revealed precise, fixable root causes for every remaining crasher:
