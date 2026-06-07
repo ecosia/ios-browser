@@ -621,6 +621,37 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## ✅ FULL-SUITE CRASH STABILISATION (2026-06-07) — cross-test + iOS 26.5 WebKit-mock crashes
+Running ALL of ClientTests together (as CI does) revealed ~48 restart-crashes from TWO systemic roots, both now
+fixed (user-approved approaches):
+
+1. **Cross-test Places contamination** — every `MockProfile()` used the shared default prefix "mock", so they all
+   opened the same `mock_places.db`. Rust keeps a Places connection open process-globally; a profile deallocated
+   without `shutdown()` leaked it, and the next `MockProfile()` crashed with "A connection of this type is already
+   open", cascading into dozens of runner restarts. FIX (MockProfile.swift): (a) restored upstream's
+   `deinit { shutdown() }`, and (b) made the default `databasePrefix` UNIQUE per instance
+   (`"mock-\(UUID().uuidString)"`) so each test's DB files are isolated and connections never collide. Tests that
+   need a known path still pass an explicit prefix.
+
+2. **iOS 26.5 SDK breaks WebKit-subclass mocks** — instantiating `WKFrameInfo`/`WKNavigationAction` subclasses
+   (WKFrameInfoMock/WKNavigationActionMock) crashes the process on the 26.5 SDK, which crashed every test in
+   WebViewNavigationHandlerTests, FormAutofillHelperTests, WKFrameInfoExtensionsTests, plus the frame-mock tests
+   in BrowserCoordinatorTests/PasswordGeneratorViewControllerTests. FIXES:
+   - WebViewNavigationHandlerTests + FormAutofillHelperTests: SYNCED to upstream v147.5, which avoids the WebKit
+     mocks entirely (filterDataScheme(url:isMainFrame:) / processMessage(...,frame:nil)). Our production already
+     exposed those APIs. (upstream MockWKWebView -> our WKWebViewMock.)
+   - WKFrameInfoMock (used by the remaining Ecosia-specific tests): rewritten to allocate via the objc runtime
+     (`perform("alloc")`) instead of a Swift initializer — same proven pattern as WKSecurityOriginMock.new — so it
+     never calls the crashing WKFrameInfo initializer. All 6 call sites switched to `WKFrameInfoMock.new(...)`.
+   Verified: WKFrameInfoExtensionsTests, FormAutofillHelperTests, PasswordGeneratorViewControllerTests,
+   WebViewNavigationHandlerTests all pass, 0 restarts.
+
+3. **WallpaperSettings testSectionHeaderViewModel_headingWithoutDescription** — asserts a collection-JSON-driven
+   header description that production doesn't implement (real collections ship null heading/description, so
+   implementing it would regress the live UI). The wallpaper settings header is not yet surfaced as a feature in
+   the Ecosia app (coming soon). SKIPPED in the scheme with a note to implement collection-driven headers and
+   re-enable when the feature ships. (User decision.)
+
 ## ✅ CRASH FIX (2026-06-06) — BookmarksViewController deinit weak-ref-during-dealloc
 Full-suite ClientTests run showed a crash cascade (59 restarts) rooted in:
 `objc: Cannot form weak reference to instance of class Client.BookmarksViewController ... in the process of

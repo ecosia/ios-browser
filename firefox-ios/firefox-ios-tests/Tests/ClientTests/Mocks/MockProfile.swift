@@ -124,7 +124,14 @@ open class MockProfile: Client.Profile, @unchecked Sendable {
     private let databasePrefix: String
     private var injectedPinnedSites: PinnedSites?
 
-    init(databasePrefix: String = "mock",
+    // Ecosia: Default to a UNIQUE database prefix per instance. Previously every MockProfile() shared the
+    // "mock" prefix, so they all opened the SAME "mock_places.db". Rust keeps a Places connection open
+    // process-globally; when a profile is deallocated without shutdown() (most tests), the connection leaks and
+    // the next MockProfile() opening the same path crashes with "A connection of this type is already open".
+    // That collision cascaded into dozens of test-runner restarts when the whole suite ran. A unique prefix
+    // gives each profile its own isolated DB files, so connections never collide across tests. Tests that need a
+    // shared/known path still pass an explicit databasePrefix. (MOB-4384)
+    init(databasePrefix: String = "mock-\(UUID().uuidString)",
          firefoxSuggest: RustFirefoxSuggestProtocol? = nil,
          injectedPinnedSites: PinnedSites? = nil) {
         files = MockFiles()
@@ -139,6 +146,15 @@ open class MockProfile: Client.Profile, @unchecked Sendable {
             XCTFail("Could not create directory at root path: \(error)")
             fatalError("Could not create directory at root path: \(error)")
         }
+    }
+
+    // Ecosia: Restore upstream v147.5's deinit. Without it, each MockProfile's Rust DB connections (notably
+    // places at "<prefix>_places.db", default prefix "mock") stay open process-globally after the profile is
+    // deallocated. Because the default prefix is shared, the NEXT MockProfile that opens places hits
+    // "A connection of this type is already open", which crashes the host and cascades into many test-runner
+    // restarts when the whole suite runs. Closing on deinit (as upstream does) isolates each test. (MOB-4384)
+    deinit {
+        shutdown()
     }
 
     public func localName() -> String {
