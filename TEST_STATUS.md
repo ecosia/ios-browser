@@ -621,6 +621,26 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
+## 🔧 REMAINING FULL-SUITE CRASHERS (2026-06-07) — 48→15 restarts; stale-real-Rust-DB pattern
+Full ClientTests run after the fixes below: **0 logical failures**, restarts down 48→15 (Places + WebKit-mock
+cascades eliminated). All suites still report "passed" (crashes RECOVER on retry) but xcodebuild EXITs 65, so
+they must be cleared before merge_tests can go green. StorageTests re-verified after the MockProfile change:
+**0 restarts, 30/30 pass** (no regression). EcosiaTests re-verify still pending (task #12).
+
+The remaining 15 crashers (silent, no panic printed) are concentrated in classes whose WRITE-path tests hit a
+REAL Rust DB, while upstream v147.5 migrated those tests to MOCKS:
+- CreditCardInputViewModelTests ×3 (save/update/remove): our setUp builds a real RustAutofill + uses
+  profile.autofill; the credit-card SAVE crashes (autofill encryption/Rust). UPSTREAM uses
+  `MockCreditCardProvider` (a spy) — no real autofill DB. FIX = sync to upstream + add MockCreditCardProvider
+  (does NOT yet exist in our tree).
+- HistoryPanelViewModelTests ×6 — investigate upstream (likely a mock history/places provider).
+- StartAtHomeHelperTests ×2, StartAtHomeMiddlewareTests ×2 — investigate (MockProfile + WindowManager; may be
+  cross-test global state rather than real-DB).
+- ToolbarMiddlewareTests/testLoadSummary_dispatchesToolbarAction ×1, BrowserCoordinatorTests/
+  testOpenRecentlyClosedSiteInNewTab ×1 — investigate individually.
+PLAN: sync each crasher class to upstream v147.5's mock-based version (user-approved "sync to upstream"). Same
+pattern that fixed WebViewNavigationHandlerTests + FormAutofillHelperTests.
+
 ## ✅ FULL-SUITE CRASH STABILISATION (2026-06-07) — cross-test + iOS 26.5 WebKit-mock crashes
 Running ALL of ClientTests together (as CI does) revealed ~48 restart-crashes from TWO systemic roots, both now
 fixed (user-approved approaches):
