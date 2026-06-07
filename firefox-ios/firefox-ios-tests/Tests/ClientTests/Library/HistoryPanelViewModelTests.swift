@@ -10,34 +10,38 @@ import XCTest
 
 @testable import Client
 
+// Ecosia: Synced to upstream v147.5. The previous version wrapped HistoryPanelViewModel.reloadData's completion
+// in MainActor.assumeIsolated { }, but reloadData delivers its completion on DispatchQueue.global() (background),
+// so assumeIsolated trapped and crashed every fetch-based test. HistoryPanelViewModel is @unchecked Sendable
+// (not @MainActor), so upstream uses a LOCAL subject from createSubject() and asserts directly off-main — no
+// assumeIsolated. Also dropped the direct AppContainer.shared.reset() in tearDown (use DependencyHelperMock().
+// reset()). Kept Ecosia section-title strings in testHistorySectionTitle. (MOB-4384)
 @MainActor
-class HistoryPanelViewModelTests: XCTestCase, @unchecked Sendable {
-    var subject: HistoryPanelViewModel!
+class HistoryPanelViewModelTests: XCTestCase {
     var profile: MockProfile!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile(databasePrefix: "HistoryPanelViewModelTest")
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         profile.reopen()
-        subject = HistoryPanelViewModel(profile: profile)
     }
 
-    override func tearDown() {
-        super.tearDown()
-
-        AppContainer.shared.reset()
+    override func tearDown() async throws {
+        DependencyHelperMock().reset()
         clear(profile: profile)
         profile.shutdown()
         profile = nil
-        subject = nil
+        try await super.tearDown()
     }
 
     func testHistorySectionTitle() {
         HistoryPanelViewModel.Sections.allCases.forEach({ section in
             switch section {
+            // Ecosia: section titles use the .LibraryPanel.Sections.* strings (our production), not upstream's
+            // ClearHistorySheet.*Option strings. (MOB-4384)
             case .lastHour:
                 XCTAssertEqual(section.title, .LibraryPanel.Sections.LastHour)
             case .lastTwentyFourHours:
@@ -55,197 +59,227 @@ class HistoryPanelViewModelTests: XCTestCase, @unchecked Sendable {
     }
 
     func testFetchHistory_WithResults() {
+        let subject = createSubject()
         setupSiteVisits()
 
-        fetchHistory { success in
-            MainActor.assumeIsolated {
-                XCTAssertTrue(success)
-                XCTAssertFalse(self.subject.dateGroupedSites.isEmpty)
-                XCTAssertFalse(self.subject.visibleSections.isEmpty)
-            }
+        fetchHistory(from: subject) { success in
+            XCTAssertTrue(success)
+            XCTAssertFalse(subject.dateGroupedSites.isEmpty)
+            XCTAssertFalse(subject.visibleSections.isEmpty)
         }
     }
 
     func testFetchHistoryFail_WithFetchInProgress() {
+        let subject = createSubject()
         subject.isFetchInProgress = true
 
-        fetchHistory { success in
-            MainActor.assumeIsolated {
-                XCTAssertFalse(success)
-            }
+        fetchHistory(from: subject) { success in
+            XCTAssertFalse(success)
         }
     }
 
     func testPerformSearch_ForNoResults() {
-        fetchSearchHistory(searchTerm: "moz") { hasResults in
-            MainActor.assumeIsolated {
-                XCTAssertFalse(hasResults)
-                XCTAssertEqual(self.subject.searchResultSites.count, 0)
-            }
+        let subject = createSubject()
+        fetchSearchHistory(from: subject, searchTerm: "moz") { hasResults in
+            XCTAssertFalse(hasResults)
+            XCTAssertEqual(subject.searchResultSites.count, 0)
         }
     }
 
     func testPerformSearch_WithResults() {
+        let subject = createSubject()
         setupSiteVisits()
 
-        fetchSearchHistory(searchTerm: "moz") { hasResults in
-            MainActor.assumeIsolated {
-                XCTAssertTrue(hasResults)
-                XCTAssertEqual(self.subject.searchResultSites.count, 2)
-            }
+        fetchSearchHistory(from: subject, searchTerm: "moz") { hasResults in
+            XCTAssertTrue(hasResults)
+            XCTAssertEqual(subject.searchResultSites.count, 2)
         }
     }
 
     func testEmptyStateText_ForSearch() {
+        let subject = createSubject()
         subject.isSearchInProgress = true
         XCTAssertEqual(subject.emptyStateText, .LibraryPanel.History.NoHistoryResult)
     }
 
     func testEmptyStateText_ForHistoryResults() {
+        let subject = createSubject()
         subject.isSearchInProgress = false
         XCTAssertEqual(subject.emptyStateText, .HistoryPanelEmptyStateTitle)
     }
 
     func testShouldShowEmptyState_ForEmptySearch() {
+        let subject = createSubject()
         setupSiteVisits()
         subject.isSearchInProgress = true
 
-        fetchSearchHistory(searchTerm: "") { hasResults in
-            MainActor.assumeIsolated {
-                XCTAssertFalse(self.subject.shouldShowEmptyState(searchText: ""))
-            }
+        fetchSearchHistory(from: subject, searchTerm: "") { hasResults in
+            XCTAssertFalse(subject.shouldShowEmptyState(searchText: ""))
         }
     }
 
     func testShouldShowEmptyState_ForNoResultSearch() {
+        let subject = createSubject()
         setupSiteVisits()
         subject.isSearchInProgress = true
 
-        fetchSearchHistory(searchTerm: "ui") { hasResults in
-            MainActor.assumeIsolated {
-                XCTAssertTrue(self.subject.shouldShowEmptyState(searchText: "ui"))
-            }
+        fetchSearchHistory(from: subject, searchTerm: "ui") { hasResults in
+            XCTAssertTrue(subject.shouldShowEmptyState(searchText: "ui"))
         }
     }
 
     func testShouldShowEmptyState_ForNoHistory() {
+        let subject = createSubject()
         subject.isSearchInProgress = false
 
-        fetchHistory { _ in
-            MainActor.assumeIsolated {
-                XCTAssertTrue(self.subject.shouldShowEmptyState())
-            }
+        fetchHistory(from: subject) { _ in
+            XCTAssertTrue(subject.shouldShowEmptyState())
         }
     }
 
     func testCollapseSection() {
+        let subject = createSubject()
         setupSiteVisits()
         XCTAssertTrue(subject.hiddenSections.isEmpty)
 
-        fetchHistory { _ in
-            MainActor.assumeIsolated {
-                self.subject.collapseSection(sectionIndex: 1)
-                XCTAssertEqual(self.subject.hiddenSections.count, 1)
-                // Starts at 0, removing the Additional section
-                XCTAssertTrue(self.subject.isSectionCollapsed(sectionIndex: 0))
-                XCTAssertTrue(self.subject.hiddenSections.contains(where: { $0 == .lastHour }))
-            }
+        fetchHistory(from: subject) { _ in
+            subject.collapseSection(sectionIndex: 1)
+            XCTAssertEqual(subject.hiddenSections.count, 1)
+            // Starts at 0, removing the Additional section
+            XCTAssertTrue(subject.isSectionCollapsed(sectionIndex: 0))
+            XCTAssertTrue(subject.hiddenSections.contains(where: { $0 == .lastHour }))
         }
     }
 
     func testExpandSection() {
+        let subject = createSubject()
         setupSiteVisits()
         XCTAssertTrue(subject.hiddenSections.isEmpty)
 
-        fetchHistory { _ in
-            MainActor.assumeIsolated {
-                self.subject.collapseSection(sectionIndex: 1)
-                XCTAssertEqual(self.subject.hiddenSections.count, 1)
-                // Starts at 0, removing the Additional section
-                XCTAssertTrue(self.subject.isSectionCollapsed(sectionIndex: 0))
-                XCTAssertTrue(self.subject.hiddenSections.contains(where: { $0 == .lastHour }))
+        fetchHistory(from: subject) { _ in
+            subject.collapseSection(sectionIndex: 1)
+            XCTAssertEqual(subject.hiddenSections.count, 1)
+            // Starts at 0, removing the Additional section
+            XCTAssertTrue(subject.isSectionCollapsed(sectionIndex: 0))
+            XCTAssertTrue(subject.hiddenSections.contains(where: { $0 == .lastHour }))
 
-                self.subject.collapseSection(sectionIndex: 1)
-                XCTAssertTrue(self.subject.hiddenSections.isEmpty)
-                XCTAssertFalse(self.subject.isSectionCollapsed(sectionIndex: 1))
-            }
+            subject.collapseSection(sectionIndex: 1)
+            XCTAssertTrue(subject.hiddenSections.isEmpty)
+            XCTAssertFalse(subject.isSectionCollapsed(sectionIndex: 1))
         }
     }
 
     func testRemoveAllData() {
+        let subject = createSubject()
         setupSiteVisits()
         XCTAssertTrue(subject.hiddenSections.isEmpty)
 
-        fetchHistory { _ in
-            MainActor.assumeIsolated {
-                self.subject.removeAllData()
+        fetchHistory(from: subject) { _ in
+            subject.removeAllData()
 
-                XCTAssertEqual(self.subject.currentFetchOffset, 0)
-                XCTAssertTrue(self.subject.dateGroupedSites.isEmpty)
-                XCTAssertTrue(self.subject.visibleSections.isEmpty)
-            }
+            XCTAssertEqual(subject.currentFetchOffset, 0)
+            XCTAssertTrue(subject.dateGroupedSites.isEmpty)
+            XCTAssertTrue(subject.visibleSections.isEmpty)
         }
     }
 
     // MARK: - Deletion
 
     func testDeleteGroup_ForLastHour() {
+        let subject = createSubject()
         setupSiteVisits()
 
-        fetchHistory { _ in
-            MainActor.assumeIsolated {
-                XCTAssertEqual(self.subject.visibleSections[0], .lastHour)
-                self.subject.deleteGroupsFor(dateOption: .lastHour)
-                XCTAssertEqual(self.subject.visibleSections.count, 0)
-            }
+        fetchHistory(from: subject) { _ in
+            XCTAssertEqual(subject.visibleSections[0], .lastHour)
+            subject.deleteGroupsFor(dateOption: .lastHour)
+            XCTAssertEqual(subject.visibleSections.count, 0)
         }
     }
 
     // MARK: - Setup
+    private func createSubject() -> HistoryPanelViewModel {
+        let subject = HistoryPanelViewModel(profile: profile)
+        trackForMemoryLeaks(subject)
+        return subject
+    }
+
     private func setupSiteVisits() {
         addSiteVisit(profile, url: "http://mozilla.org/", title: "Mozilla internet")
         addSiteVisit(profile, url: "http://mozilla.dev.org/", title: "Internet dev")
         addSiteVisit(profile, url: "https://apple.com/", title: "Apple")
     }
 
-    private func addSiteVisit(_ profile: MockProfile, url: String, title: String) {
+    private func addSiteVisit(_ profile: MockProfile,
+                              url: String,
+                              title: String,
+                              file: StaticString = #filePath,
+                              line: UInt = #line) {
         let visitObservation = VisitObservation(url: url, title: title, visitType: .link)
         let result = profile.places.applyObservation(visitObservation: visitObservation)
 
-        XCTAssertEqual(true, result.value.isSuccess, "Site added: \(url).")
+        XCTAssertEqual(true, result.value.isSuccess, "Site added: \(url).", file: file, line: line)
     }
 
-    private func clear(profile: MockProfile) {
+    private func clear(profile: MockProfile,
+                       file: StaticString = #filePath,
+                       line: UInt = #line) {
         let result = profile.places.deleteEverythingHistory()
-        XCTAssertTrue(result.value.isSuccess, "History cleared.")
+        XCTAssertTrue(result.value.isSuccess, "History cleared.", file: file, line: line)
     }
 
-    private func fetchHistory(completion: @escaping @Sendable (Bool) -> Void) {
+    private func fetchHistory(from subject: HistoryPanelViewModel,
+                              file: StaticString = #filePath,
+                              line: UInt = #line,
+                              completion: @escaping @Sendable (Bool) -> Void) {
         let expectation = self.expectation(description: "Wait for history")
 
         subject.reloadData { success in
-            MainActor.assumeIsolated {
-                XCTAssertNotNil(success)
-                completion(success)
-                expectation.fulfill()
-            }
+            XCTAssertNotNil(success, file: file, line: line)
+            completion(success)
+            expectation.fulfill()
         }
 
         waitForExpectations(timeout: 5)
     }
 
-    private func fetchSearchHistory(searchTerm: String,
+    private func fetchSearchHistory(from subject: HistoryPanelViewModel,
+                                    searchTerm: String,
+                                    file: StaticString = #filePath,
+                                    line: UInt = #line,
                                     completion: @escaping @Sendable (Bool) -> Void) {
         let expectation = self.expectation(description: "Wait for history search")
 
         subject.performSearch(term: searchTerm) { hasResults in
-            MainActor.assumeIsolated {
-                XCTAssertNotNil(hasResults)
-                completion(hasResults)
-                expectation.fulfill()
-            }
+            XCTAssertNotNil(hasResults, file: file, line: line)
+            completion(hasResults)
+            expectation.fulfill()
         }
 
         waitForExpectations(timeout: 5)
+    }
+
+    private func createSearchTermGroup(timestamp: MicrosecondTimestamp,
+                                       file: StaticString = #filePath,
+                                       line: UInt = #line) -> ASGroup<Site> {
+        var groupSites = [Site]()
+        for index in 0...3 {
+            var site = Site.createBasicSite(url: "http://site\(index).com", title: "Site \(index)")
+            site.latestVisit = Visit(date: timestamp)
+            let visit = VisitObservation(
+                url: site.url,
+                title: site.title,
+                visitType: .link,
+                at: Int64(timestamp) / 1000
+            )
+            XCTAssertTrue(
+                profile.places.applyObservation(visitObservation: visit).value.isSuccess,
+                "Site added: \(site.url).",
+                file: file,
+                line: line
+            )
+            groupSites.append(site)
+        }
+
+        return ASGroup<Site>(searchTerm: "site", groupedItems: groupSites, timestamp: timestamp)
     }
 }
