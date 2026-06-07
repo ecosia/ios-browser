@@ -136,6 +136,11 @@ public enum TestTargets {
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/SharedTests/**/*.swift"],
             dependencies: [
+                // Ecosia: Host SharedTests in the Client app so Bundle.main is the .app bundle. The Ecosia
+                // UserAgent/SupportUtils tests exercise production code that reads AppInfo.applicationBundle,
+                // which fatalErrors when Bundle.main is the bare xctest agent (logic-test host). Depending on the
+                // Client app target makes Tuist app-host the test bundle, matching ClientTests/EcosiaTests. (MOB-4384)
+                .target(name: "Client"),
                 .package(product: "Common"),
                 .package(product: "Shared"),
             ],
