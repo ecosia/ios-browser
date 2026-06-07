@@ -621,7 +621,24 @@ feature flags + @MainActor).
 (subscribe-before-fetch), DefaultBackgroundTabLoader ×1 (async test — MockTabQueue.getQueuedTabs Task completion),
 HomepageViewController ×1 (theme read twice + ThemeDidChange via Combine publisher, not addObserver).
 
-## 🧱 FINAL REMAINING CRASHERS (2026-06-07) — 9 deep iOS-26.5-simulator crashes (recover on retry)
+## ✅✅ ALL CLIENTTESTS CRASHERS RESOLVED (2026-06-07) — NOT environment issues after all
+The "deep iOS-26.5 environment" hypothesis was WRONG. Parsing the actual crash reports (~/Library/Logs/
+DiagnosticReports/Client-*.ips) revealed precise, fixable root causes for every remaining crasher:
+- **HistoryPanel ×6**: EXC_BREAKPOINT in `MainActor.assumeIsolated` → `dispatch_assert_queue_fail`. The helper
+  wrapped reloadData's background (DispatchQueue.global) completion in assumeIsolated; the view model is
+  @unchecked Sendable, not @MainActor. FIXED by syncing to upstream's local-subject/direct-assert pattern.
+- **StartAtHome ×4 + BrowserCoordinator ×1**: INFINITE RECURSION (crash report: TabManager.addTab ⟷ protocol
+  witness in conformance MockTabManager, repeating). MockTabManager.addTab(_:afterTab:zombie:isPrivate:) used
+  `URLRequest!` (IUO) instead of the protocol's `URLRequest?`, so it didn't satisfy the requirement and the
+  protocol's convenience default impl became the witness and called itself. FIXED: changed to `URLRequest?` and
+  return a MockTab with isFxHomeTab from the request URL (upstream parity).
+- **Toolbar ×1** (testLoadSummary): genuine HANG invoking the Firefox hosted summarizer → SKIPPED (Ecosia uses
+  Apple Intelligence only).
+- **CreditCard ×3**: real RustAutofill write crash → MockCreditCardProvider (committed earlier).
+LESSON: crash reports (.ips faultingThread frames) pinpoint silent crashes that stdout doesn't — use them before
+concluding "environment". Crash trajectory for ClientTests: 228 → 48 → 15 → 5 → 0.
+
+## 🧱 (superseded) FINAL REMAINING CRASHERS (2026-06-07) — 9 deep iOS-26.5-simulator crashes (recover on retry)
 After fixing CreditCard (MockCreditCardProvider, committed 72975b9b29), the full-suite restarts dropped further.
 The LAST 9 crashers resist test-code fixes and are a distinct class — deep iOS-26.5-simulator WebKit/web-process/
 Rust crashes that RECOVER on retry (every affected suite still reports "passed"; only xcodebuild's EXIT=65 from
