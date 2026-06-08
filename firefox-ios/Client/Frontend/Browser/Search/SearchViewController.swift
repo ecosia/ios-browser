@@ -6,6 +6,7 @@ import UIKit
 import Shared
 import Storage
 import Common
+// Ecosia: Ecosia framework for AI Chat, icons, and search extension helpers.
 import Ecosia
 import SiteImageView
 
@@ -89,9 +90,11 @@ class SearchViewController: SiteTableViewController,
         return UIImage(named: StandardImageIdentifiers.Medium.bookmarkBadgeFillBlue50)!
     }()
 
+    /* Ecosia: Replaced by openTabBadgeImage(for:) using the branded switchTab asset.
     private lazy var openAndSyncTabBadge: UIImage = {
         return UIImage(named: ImageIdentifiers.syncOpenTab)!
     }()
+    */
 
     private lazy var searchButton: UIButton = .build { button in
         let image = UIImage(named: StandardImageIdentifiers.Large.search)?.withRenderingMode(.alwaysTemplate)
@@ -276,7 +279,9 @@ class SearchViewController: SiteTableViewController,
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            // Ecosia: Extend table view to bottom since search engine container is hidden
+            /* Ecosia: Extend table view to bottom since search engine container is hidden.
+            tableView.bottomAnchor.constraint(equalTo: searchEngineScrollView.topAnchor)
+            */
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -462,6 +467,10 @@ class SearchViewController: SiteTableViewController,
 
             searchTelemetry?.selectedResult = .searchSuggest
             // Assume that only the default search engine can provide search suggestions.
+            /* Ecosia: Use safeSuggestion and handle AI Chat row.
+            guard let suggestions = viewModel.suggestions,
+                  let suggestion = suggestions[safe: indexPath.row],
+            */
             guard let suggestion = safeSuggestion(at: indexPath.row),
                   let url = defaultEngine.searchURLForQuery(suggestion)
             else { return }
@@ -516,10 +525,10 @@ class SearchViewController: SiteTableViewController,
         _ tableView: UITableView,
         heightForHeaderInSection section: Int
     ) -> CGFloat {
+        /* Ecosia: Wrap upstream visibility to relocate the Suggest header for `.insetGrouped`.
         guard viewModel.shouldShowHeader(for: section) else { return 0 }
-        // Ecosia: Suppress headers for empty sections and for "Ecosia search" above suggestions.
-        guard tableView.numberOfRows(inSection: section) > 0 else { return 0 }
-        guard SearchListSection(rawValue: section) != .searchSuggestions else { return 0 }
+        */
+        guard shouldShowSearchSectionHeader(for: section, in: tableView) else { return 0 }
 
         return UITableView.automaticDimension
     }
@@ -532,10 +541,22 @@ class SearchViewController: SiteTableViewController,
         _ tableView: UITableView,
         viewForHeaderInSection section: Int
     ) -> UIView? {
+        /* Ecosia: Wrap upstream guard to relocate the Suggest header for `.insetGrouped`.
         guard viewModel.shouldShowHeader(for: section),
               let headerView = tableView.dequeueReusableHeaderFooterView(
                 withIdentifier: SiteTableViewHeader.cellIdentifier) as? SiteTableViewHeader
         else { return nil }
+        */
+        guard shouldShowSearchSectionHeader(for: section, in: tableView),
+              let headerView = tableView.dequeueReusableHeaderFooterView(
+                withIdentifier: SiteTableViewHeader.cellIdentifier) as? SiteTableViewHeader
+        else { return nil }
+
+        // Ecosia: Configure relocated "Ecosia Suggest" header on the first section with rows.
+        if shouldShowEcosiaSuggestHeader(for: section, in: tableView) {
+            configureEcosiaSuggestSectionHeader(headerView)
+            return headerView
+        }
 
         var title: String
         var accessory: SiteTableHeaderAccessory = .none
@@ -558,8 +579,10 @@ class SearchViewController: SiteTableViewController,
                 title = ""
             }
 
+        /* Ecosia: Handled by configureEcosiaSuggestSectionHeader on the first section with rows.
         case SearchListSection.firefoxSuggestions.rawValue:
             title = .Search.SuggestSectionTitle
+        */
         case SearchListSection.searchSuggestions.rawValue:
             title = viewModel.searchEnginesManager?.defaultEngine?.headerSearchTitle ?? ""
         default:  title = ""
@@ -570,9 +593,10 @@ class SearchViewController: SiteTableViewController,
             accessory: accessory
         )
         headerView.configure(viewModel)
+        /* Ecosia: Settings-style header appearance for `.insetGrouped` search sections.
         headerView.applyTheme(theme: currentTheme())
-        // Ecosia: Match Settings section header appearance — use textSecondary instead of textPrimary.
-        headerView.textLabel?.textColor = currentTheme().colors.textSecondary
+        */
+        applySearchSectionHeaderStyle(headerView)
         return headerView
     }
 
@@ -609,7 +633,9 @@ class SearchViewController: SiteTableViewController,
             case .trendingSearches:
                 viewModel.recordTrendingSearchesDisplayedEvent()
             case .searchSuggestions:
-                // Ecosia: Skip telemetry for AI Chat item
+                /* Ecosia: Skip telemetry for AI Chat item; use safe array access.
+                if let site = viewModel.suggestions?[indexPath.row] {
+                */
                 if !isAIChatRow(indexPath),
                    let site = safeSuggestion(at: indexPath.row) {
                     if searchTelemetry?.visibleSuggestions.contains(site) == false {
@@ -663,7 +689,10 @@ class SearchViewController: SiteTableViewController,
         case .trendingSearches:
             return viewModel.shouldShowTrendingSearches ? viewModel.trendingSearches.count : 0
         case .searchSuggestions:
-            // Ecosia: Use custom method that includes AI Chat item
+            /* Ecosia: Use custom method that includes AI Chat item.
+            guard let count = viewModel.suggestions?.count else { return 0 }
+            return count < 4 ? count : 4
+            */
             return numberOfRowsForSearchSuggestions()
         case .openedTabs:
             return !viewModel.isZeroSearchState ? viewModel.filteredOpenedTabs.count : 0
@@ -679,8 +708,7 @@ class SearchViewController: SiteTableViewController,
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        // Ecosia: Hide Firefox Suggest and only show 4 sections instead of all
-        return 4
+        return SearchListSection.allCases.count
     }
 
     func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
@@ -699,6 +727,9 @@ class SearchViewController: SiteTableViewController,
                 handleAIChatHighlight(indexPath)
                 return
             }
+            /* Ecosia: Use safe array access.
+            guard let suggestion = viewModel.suggestions?[indexPath.item] else { return }
+            */
             guard let suggestion = safeSuggestion(at: indexPath.item) else { return }
             searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)
         case .remoteTabs:
@@ -780,6 +811,9 @@ class SearchViewController: SiteTableViewController,
             }
 
         case .searchSuggestions:
+            /* Ecosia: Handle AI Chat row and use safe array access.
+            if let site = viewModel.suggestions?[indexPath.row] {
+            */
             // Ecosia: Check if this is the AI Chat item
             if isAIChatRow(indexPath) {
                 cell = configureAIChatCell(oneLineCell)
@@ -806,7 +840,10 @@ class SearchViewController: SiteTableViewController,
                 twoLineCell.descriptionLabel.isHidden = false
                 twoLineCell.titleLabel.text = openedTab.title ?? openedTab.lastTitle
                 twoLineCell.descriptionLabel.text = String.SearchSuggestionCellSwitchToTabLabel
+                /* Ecosia: Use branded switchTab badge instead of Firefox sync_open_tab.
                 twoLineCell.leftOverlayImageView.image = openAndSyncTabBadge
+                */
+                twoLineCell.leftOverlayImageView.image = openTabBadgeImage(for: currentTheme())
                 twoLineCell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
                 twoLineCell.leftImageView.layer.borderWidth = UX.IconBorderWidth
                 if let urlString = openedTab.url?.absoluteString {
@@ -823,7 +860,10 @@ class SearchViewController: SiteTableViewController,
                 twoLineCell.descriptionLabel.isHidden = false
                 twoLineCell.titleLabel.text = remoteTab.title
                 twoLineCell.descriptionLabel.text = remoteClient.name
+                /* Ecosia: Use branded switchTab badge instead of Firefox sync_open_tab.
                 twoLineCell.leftOverlayImageView.image = openAndSyncTabBadge
+                */
+                twoLineCell.leftOverlayImageView.image = openTabBadgeImage(for: currentTheme())
                 twoLineCell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
                 twoLineCell.leftImageView.layer.borderWidth = UX.IconBorderWidth
                 let urlString = remoteTab.URL.absoluteString
@@ -884,7 +924,9 @@ class SearchViewController: SiteTableViewController,
         shouldShowAccessoryView: Bool = true
     ) -> OneLineTableViewCellViewModel {
         let appendButton = UIButton(type: .roundedRect)
-        // Ecosia: Use searchAppend icon
+        /* Ecosia: Use searchAppend icon.
+        appendButton.setImage(searchAppendImage?.withRenderingMode(.alwaysTemplate), for: .normal)
+        */
         appendButton.setImage(UIImage.templateImageNamed("searchAppend"), for: .normal)
         appendButton.adjustsImageSizeForAccessibilityContentSizeCategory = true
         let action = UIAction { [weak self] _ in
