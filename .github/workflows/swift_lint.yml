@@ -11,7 +11,7 @@ jobs:
       image: ghcr.io/realm/swiftlint:0.63.2
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: SwiftLint
         run: |
