@@ -26,7 +26,7 @@ extension Tab {
             updated.addLanguageRegionHeader()
         }
         if let url = updated.url, url.shouldEcosify(), !url.hasEcosiaUserId {
-            updated = URLRequest(url: url.ecosified(isIncognitoEnabled: isPrivate))
+            updated.url = url.ecosified(isIncognitoEnabled: isPrivate)
         }
         return updated
     }
