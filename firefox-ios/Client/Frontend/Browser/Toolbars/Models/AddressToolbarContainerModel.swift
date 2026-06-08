@@ -60,12 +60,8 @@ final class AddressToolbarContainerModel: Equatable {
             droppableUrl = url
         }
 
-        // Ecosia: Ecosify URL when needed; use Ecosia search/logo icon (legacy URLBarView behaviour).
-        let displayURL: URL? = {
-            if isEmptySearch { return nil }
-            guard let u = url else { return nil }
-            return u.shouldEcosify() ? u.ecosified(isIncognitoEnabled: isPrivateMode) : u
-        }()
+        // Ecosia: suppress URL display during the empty-search state (upstream passes `url` directly).
+        let displayURL: URL? = isEmptySearch ? nil : url
         /* Ecosia: Original flatMap returns nil for any regular URL (InternalURL returns nil for https:// URLs),
            so `nil ?? true` incorrectly treats all regular pages as home. Use map with `?? false` so that
            non-internal URLs evaluate to false (not home), while nil URL still defaults to true (home).
