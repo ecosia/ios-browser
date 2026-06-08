@@ -20,6 +20,8 @@ jobs:
           lfs: true
           submodules: true    
 
+      - uses: ./.github/actions/setup-safe-chain
+
       - name: Check for MARKETING_VERSION change
         id: check_marketing_version
         run: sh ./check_marketing_version.sh

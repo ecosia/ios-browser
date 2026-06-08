@@ -29,6 +29,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - uses: ./.github/actions/setup-safe-chain
+
       - name: Prepare environment
         uses: ./.github/actions/prepare_environment
         with:
