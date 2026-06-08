@@ -172,6 +172,10 @@ extension URL {
         return urlWithoutUserId.appendingQueryItems([Self.item(name: .userId, value: userId)])
     }
 
+    public var hasEcosiaUserId: Bool {
+        components?.queryItems?.contains { $0.name == EcosiaQueryItemName.userId.rawValue } ?? false
+    }
+
     public var policy: Scheme.Policy {
         (scheme
             .flatMap(Scheme.init(rawValue:)) ?? .other)
