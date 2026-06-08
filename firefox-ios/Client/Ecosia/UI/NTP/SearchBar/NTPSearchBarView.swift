@@ -17,6 +17,9 @@ protocol NTPSearchBarDelegate: AnyObject {
     func ntpSearchBarDidSubmit(_ searchTerm: String)
     /// Called on every keystroke so the browser can feed suggestions.
     func ntpSearchBarTextDidChange(_ searchTerm: String)
+    /// Called when the field needs SearchLoader reset without hiding the overlay
+    /// (first edit after focus), matching `locationTextFieldNeedsSearchReset`.
+    func ntpSearchBarNeedsSearchReset()
     /// Called when the text field becomes first responder.
     func ntpSearchBarDidBeginEditing()
     /// Called when the text field resigns first responder for any reason
@@ -80,20 +83,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     weak var delegate: NTPSearchBarDelegate?
 
-    private lazy var textView: UITextView = .build { tv in
-        tv.font = .preferredFont(forTextStyle: .body)
-        tv.adjustsFontForContentSizeCategory = true
-        tv.backgroundColor = .clear
-        tv.textContainerInset = .zero
-        tv.textContainer.lineFragmentPadding = 0
-        tv.autocorrectionType = .no
-        tv.autocapitalizationType = .none
-        tv.spellCheckingType = .no
-        tv.returnKeyType = .search
-        tv.keyboardType = .webSearch
-        tv.enablesReturnKeyAutomatically = true
+    private lazy var textView: NTPLocationTextView = {
+        let tv = NTPLocationTextView()
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.autocompleteDelegate = self
         tv.accessibilityIdentifier = "NTPSearchBarTextField"
-    }
+        return tv
+    }()
 
     private lazy var placeholderLabel: UILabel = .build { label in
         label.font = .preferredFont(forTextStyle: .body)
@@ -172,7 +168,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         get { textView.text ?? "" }
         set {
             let clamped = String(newValue.prefix(UX.maxLength))
-            textView.text = clamped
+            textView.setTextWithoutSearching(clamped)
             placeholderLabel.isHidden = !clamped.isEmpty
             updateSubmitState(for: clamped)
             updateCounter(for: clamped)
@@ -296,7 +292,10 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     }
 
     @objc private func focusTextView() {
-        guard !textView.isFirstResponder else { return }
+        if textView.isFirstResponder {
+            textView.applyCompletion()
+            return
+        }
         textView.becomeFirstResponder()
     }
 
@@ -308,6 +307,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     // MARK: Actions
 
     @objc private func submitTapped() {
+        applyCompletion()
         let text = (textView.text ?? "").trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
         textView.resignFirstResponder()
@@ -317,13 +317,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     @objc private func clearTapped() {
         // Wipe the text but keep focus so the user can keep typing without
         // re-tapping the pill.
-        textView.text = ""
+        textView.clearText()
         placeholderLabel.isHidden = false
         updateSubmitState(for: "")
         updateCounter(for: "")
         updateClearButtonVisibility(for: "")
         updateLayoutForContent()
-        delegate?.ntpSearchBarTextDidChange("")
         onContentChange?("")
     }
 
@@ -433,9 +432,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         let colors = theme.colors
 
         backgroundColor = colors.ecosia.backgroundElevation2
-        textView.textColor = colors.ecosia.textPrimary
-        textView.tintColor = colors.ecosia.textPrimary
         placeholderLabel.textColor = colors.ecosia.textSecondary
+        textView.applyTheme(
+            markedTextStyle: [.backgroundColor: colors.ecosia.backgroundTertiary],
+            textColor: colors.ecosia.textPrimary,
+            tintColor: colors.ecosia.textPrimary
+        )
         applyBorderColor()
         applySubmitButtonColors()
         applyCounterColor()
@@ -464,9 +466,36 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     // MARK: Autocompletable
 
-    /// Inline gray-text URL completion is not supported by the multi-line
-    /// `UITextView` field. Suggestions still flow through the overlay.
-    func setAutocompleteSuggestion(_ suggestion: String?) {}
+    func setAutocompleteSuggestion(_ suggestion: String?) {
+        textView.setAutocompleteSuggestion(suggestion)
+    }
+
+    private func applyCompletion() {
+        textView.applyCompletion()
+    }
+
+    private func refreshChromeFromTextView() {
+        let text = textView.text ?? ""
+        placeholderLabel.isHidden = !text.isEmpty
+        updateSubmitState(for: text)
+        updateCounter(for: text)
+        updateClearButtonVisibility(for: text)
+        updateLayoutForContent()
+        onContentChange?(text)
+    }
+}
+
+// MARK: - NTPLocationTextViewDelegate
+
+extension NTPSearchBarView: NTPLocationTextViewDelegate {
+    func locationTextView(_ textView: NTPLocationTextView, didEnterText text: String) {
+        refreshChromeFromTextView()
+        delegate?.ntpSearchBarTextDidChange(text)
+    }
+
+    func locationTextViewNeedsSearchReset(_ textView: NTPLocationTextView) {
+        delegate?.ntpSearchBarNeedsSearchReset()
+    }
 }
 
 // MARK: - UITextViewDelegate
@@ -480,20 +509,16 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
+        (textView as? NTPLocationTextView)?.didEndEditing()
+        applyCompletion()
         applyBorderColor()
         onFocusChange?(false)
         delegate?.ntpSearchBarDidCancel()
     }
 
     func textViewDidChange(_ textView: UITextView) {
-        let text = textView.text ?? ""
-        placeholderLabel.isHidden = !text.isEmpty
-        updateSubmitState(for: text)
-        updateCounter(for: text)
-        updateClearButtonVisibility(for: text)
-        updateLayoutForContent()
-        delegate?.ntpSearchBarTextDidChange(text)
-        onContentChange?(text)
+        (textView as? NTPLocationTextView)?.editingChanged()
+        refreshChromeFromTextView()
     }
 
     func textView(_ textView: UITextView,
@@ -504,6 +529,9 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
             submitTapped()
             return false
         }
+
+        (textView as? NTPLocationTextView)?.willChange(range: range, replacement: text)
+
         // Hard cap. Block edits that would push past `maxLength` — typing past
         // the cap is rejected outright, and an oversize paste is dropped (we
         // don't silently truncate to avoid mangling the user's clipboard).
