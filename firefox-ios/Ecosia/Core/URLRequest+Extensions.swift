@@ -6,8 +6,16 @@ import Foundation
 
 extension URLRequest {
 
+    @discardableResult
     public mutating func withCloudFlareAuthParameters(environment: Environment = EcosiaEnvironment.current) -> URLRequest {
-        if let auth = environment.cloudFlareAuth {
+        withCloudFlareAuthParameters(auth: environment.cloudFlareAuth)
+    }
+
+    /// Internal overload that accepts auth directly, enabling unit tests to inject credentials
+    /// without relying on process-info environment variables.
+    @discardableResult
+    mutating func withCloudFlareAuthParameters(auth: Environment.CloudFlareAuth?) -> URLRequest {
+        if let auth {
             setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
             setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)
         }

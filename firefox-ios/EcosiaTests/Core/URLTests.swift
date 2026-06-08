@@ -354,6 +354,28 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(ecosified, URL(string: "https://ecosia.org?_sp=\(UUID(uuid: UUID_NULL).uuidString)"))
     }
 
+    // MARK: - `hasEcosiaUserId`
+
+    func testHasEcosiaUserIdReturnsFalseWhenAbsent() {
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/search?q=cats")!.hasEcosiaUserId)
+    }
+
+    func testHasEcosiaUserIdReturnsTrueWhenPresent() {
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/search?q=cats&_sp=abc123")!.hasEcosiaUserId)
+    }
+
+    func testHasEcosiaUserIdReturnsFalseWhenOtherParamsPresent() {
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!.hasEcosiaUserId)
+    }
+
+    func testEcosifiedURLHasEcosiaUserId() {
+        User.shared.sendAnonymousUsageData = true
+        User.shared.cookieConsentValue = "a"
+        let url = URL(string: "https://www.ecosia.org/search?q=cats")!
+            .ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+        XCTAssertTrue(url.hasEcosiaUserId)
+    }
+
     // MARK: - `policy`
 
     func testPolicyAllow() {
