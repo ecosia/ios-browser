@@ -11,9 +11,9 @@ import WebKit
 @MainActor
 final class TabEcosiaExtensionTests: XCTestCase {
 
-    private var windowUUID: WindowUUID!
-    private var savedAnalyticsId: UUID!
-    private var savedSendAnonymousUsageData: Bool!
+    private var windowUUID = WindowUUID()
+    private var savedAnalyticsId = UUID()
+    private var savedSendAnonymousUsageData = true
     private var savedCookieConsentValue: String?
 
     override func setUp() {
