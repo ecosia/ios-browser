@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+import Shared
 
 /// Multiline text input for the NTP omnibox with URL-bar autocomplete behaviour
 /// ported from `LocationTextField` (marked-text suffix, hidden caret, backspace
@@ -217,35 +218,5 @@ final class NTPLocationTextView: UITextView {
     private func forceResetCursor() {
         selectedTextRange = nil
         selectedTextRange = textRange(from: endOfDocument, to: endOfDocument)
-    }
-
-    private func debounce(_ delay: TimeInterval, action: @escaping () -> Void) -> () -> Void {
-        let callback = Callback(handler: action)
-        var timer: Timer?
-
-        return {
-            timer?.invalidate()
-            timer = Timer(
-                timeInterval: delay,
-                target: callback,
-                selector: #selector(Callback.go),
-                userInfo: nil,
-                repeats: false
-            )
-            RunLoop.current.add(timer!, forMode: .default)
-        }
-    }
-}
-
-private final class Callback: NSObject {
-    private let handler: () -> Void
-
-    init(handler: @escaping () -> Void) {
-        self.handler = handler
-    }
-
-    @objc
-    func go() {
-        handler()
     }
 }
