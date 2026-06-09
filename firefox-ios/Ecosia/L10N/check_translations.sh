@@ -7,6 +7,8 @@
 #
 # Exits with a non-zero status if any translations are missing, unless
 # DRY_RUN is set to "true" (in which case it reports but does not fail).
+#
+# Requires: python3 (available on macOS natively and on Linux CI)
 
 set -euo pipefail
 
@@ -26,15 +28,35 @@ if [[ ! -f "$EN_FILE" ]]; then
   exit 1
 fi
 
-# Extract keys from a .strings file (UTF-8 input expected)
-# Matches lines of the form: "key" = "value";
+# Extract sorted keys from a .strings file.
+# Uses Python for reliable cross-platform handling of UTF-8 and UTF-16 (with BOM).
+# The 'utf-8-sig' codec strips a UTF-8 BOM if present; 'utf-16' auto-detects endianness from BOM.
 extract_keys() {
-  grep -o '^"[^"]*"' "$1" | sort
+  local file="$1"
+  local encoding="${2:-utf-8-sig}"
+  python3 - "$file" "$encoding" <<'EOF'
+import sys, re
+
+file_path = sys.argv[1]
+encoding  = sys.argv[2]
+try:
+    with open(file_path, encoding=encoding) as f:
+        content = f.read()
+except (UnicodeDecodeError, LookupError):
+    # Fallback: try plain utf-8
+    with open(file_path, encoding="utf-8", errors="replace") as f:
+        content = f.read()
+
+# Match the left-hand side of each "key" = "value"; line
+keys = re.findall(r'^"[^"]*"', content, re.MULTILINE)
+for k in sorted(keys):
+    print(k)
+EOF
 }
 
-# Extract English keys (already UTF-8)
+# Extract English keys (UTF-8 with optional BOM)
 EN_KEYS_FILE=$(mktemp)
-extract_keys "$EN_FILE" > "$EN_KEYS_FILE"
+extract_keys "$EN_FILE" "utf-8-sig" > "$EN_KEYS_FILE"
 
 EN_KEY_COUNT=$(wc -l < "$EN_KEYS_FILE" | tr -d ' ')
 echo "📋 Found $EN_KEY_COUNT keys in English source file"
@@ -52,19 +74,13 @@ for LANG in "${SUPPORTED_LANGUAGES[@]}"; do
     continue
   fi
 
-  # Convert from UTF-16 to UTF-8 for reliable parsing
-  CONVERTED_FILE=$(mktemp)
-  iconv -f UTF-16 -t UTF-8 "$LANG_FILE" > "$CONVERTED_FILE" 2>/dev/null || {
-    # If UTF-16 conversion fails, try reading as-is (might already be UTF-8)
-    cp "$LANG_FILE" "$CONVERTED_FILE"
-  }
-
-  # Extract keys from the translated file
+  # Extract keys from the translated file (UTF-16 with BOM)
   LANG_KEYS_FILE=$(mktemp)
-  extract_keys "$CONVERTED_FILE" > "$LANG_KEYS_FILE"
+  extract_keys "$LANG_FILE" "utf-16" > "$LANG_KEYS_FILE"
 
-  # Find keys present in English but missing in the translation
-  MISSING_KEYS=$(comm -23 "$EN_KEYS_FILE" "$LANG_KEYS_FILE")
+  # Find keys present in English but missing in the translation.
+  # LC_ALL=C ensures byte-order comparison consistent across macOS and Linux.
+  MISSING_KEYS=$(LC_ALL=C comm -23 "$EN_KEYS_FILE" "$LANG_KEYS_FILE")
 
   if [[ -n "$MISSING_KEYS" ]]; then
     MISSING_COUNT=$(echo "$MISSING_KEYS" | wc -l | tr -d ' ')
@@ -80,7 +96,7 @@ for LANG in "${SUPPORTED_LANGUAGES[@]}"; do
     SUMMARY="${SUMMARY}\n✅ ${LANG}: Complete"
   fi
 
-  rm -f "$CONVERTED_FILE" "$LANG_KEYS_FILE"
+  rm -f "$LANG_KEYS_FILE"
 done
 
 rm -f "$EN_KEYS_FILE"
