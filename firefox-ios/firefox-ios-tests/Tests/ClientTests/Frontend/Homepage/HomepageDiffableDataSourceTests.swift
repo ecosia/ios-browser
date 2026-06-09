@@ -63,8 +63,21 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
             logoTextColor: .blue
         )
 
-        let state = HomepageState.reducer(
+        // Ecosia: explicitly enable the stories section so this test is independent of the
+        // simulator's locale. `MerinoState.shouldShowSection` is gated by `isLocaleSupported`,
+        // which is true on the en-US CI runner but false on locales like en-IT — making the raw
+        // Firefox base-path assertion below otherwise non-deterministic across environments. (MOB-4384)
+        let enabledState = HomepageState.reducer(
             HomepageState(windowUUID: .XCTestDefaultUUID),
+            MerinoAction(
+                isEnabled: true,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: MerinoActionType.toggleShowSectionSetting
+            )
+        )
+
+        let state = HomepageState.reducer(
+            enabledState,
             MerinoAction(
                 merinoStories: createStories(),
                 windowUUID: .XCTestDefaultUUID,
@@ -87,13 +100,7 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
         )
 
         let snapshot = dataSource.snapshot()
-        // Ecosia: Pocket/Merino stories are removed from the homepage, so no `.pocket` section is created
-        // even when merino stories and a wallpaper color are set.
-        // XCTAssertEqual(snapshot.numberOfItems(inSection: .pocket(.systemCyan)), 20)
-        XCTAssertFalse(
-            snapshot.sectionIdentifiers.contains { if case .pocket = $0 { return true } else { return false } },
-            "Ecosia does not render a Pocket section"
-        )
+        XCTAssertEqual(snapshot.numberOfItems(inSection: .pocket(.systemCyan)), 20)
     }
 
     @MainActor
@@ -135,8 +142,19 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
         setupNimbusHomepageRedesignTesting(storiesRedesignEnabled: false)
         let dataSource = try XCTUnwrap(diffableDataSource)
 
-        let state = HomepageState.reducer(
+        // Ecosia: explicitly enable the stories section so this test is independent of the
+        // simulator's locale (see `test_updateSnapshot_withColorValueOnState`). (MOB-4384)
+        let enabledState = HomepageState.reducer(
             HomepageState(windowUUID: .XCTestDefaultUUID),
+            MerinoAction(
+                isEnabled: true,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: MerinoActionType.toggleShowSectionSetting
+            )
+        )
+
+        let state = HomepageState.reducer(
+            enabledState,
             MerinoAction(
                 merinoStories: createStories(),
                 windowUUID: .XCTestDefaultUUID,
@@ -147,16 +165,11 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
         dataSource.updateSnapshot(state: state, jumpBackInDisplayConfig: mockSectionConfig)
 
         let snapshot = dataSource.snapshot()
-        // Ecosia: Pocket/Merino stories are removed, so MerinoAction produces no pocket section — the
-        // snapshot contains only the customize-homepage section.
-        /* Ecosia:
         XCTAssertEqual(snapshot.numberOfItems(inSection: .pocket(nil)), 20)
         let expectedSections: [HomepageSection] = [
             .pocket(nil),
             .customizeHomepage
         ]
-         */
-        let expectedSections: [HomepageSection] = [.customizeHomepage]
         XCTAssertEqual(snapshot.sectionIdentifiers, expectedSections)
     }
 
