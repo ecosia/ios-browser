@@ -31,7 +31,9 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         makeHttpsWebAuth()
             .useEphemeralSession()
             .audience(environment.urlProvider.authApiAudience.absoluteString)
-            .scope("openid profile email offline_access read:impact write:impact")
+            // TODO: Check if we need all four new scopes (read:conversations write:conversations update:conversations delete:conversations)
+            // TODO: Check what happens to existing logged in users when changing scope - can we refresh the token under the hood?
+            .scope("openid profile email offline_access read:impact write:impact read:conversations write:conversations update:conversations delete:conversations")
     }
 
     public func startAuth() async throws -> Credentials {
