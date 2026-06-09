@@ -43,6 +43,49 @@ Files: `EcosiaTests/UI/TabManagement/TabEcosiaExtensionTests.swift`,
 the TEMPORARY `push:` trigger (marked "REVERT before merging"). The Xcode 26.3→26.5 bump and the restored
 SwiftBridging patch in `prepare_environment/action.yml` are intentional keepers (documented inline).
 
+## Task #8 — reconcile scheme `skippedTests` to main-133 (2026-06-09, in progress)
+
+**Big finding:** the `ECOSIA_RUN_UNIT_TESTS=1` env var (task #7) makes `main.swift` select the minimal
+`UnitTestAppDelegate` at launch, which **fixed the AppContainer-reset crash architecture**. The 5 extra
+whole-class skips (not in main-133) no longer CRASH — they run. Empirically ran all 5 (via a skip-stripped
+xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the scheme's baked
+`SkipTestIdentifiers`, so you must strip them from the `.xctestrun` to test a skipped class):
+
+| Class | Result | Action taken |
+|---|---|---|
+| `EcosiaStartAtHomeMiddlewareTests` | 5/5 pass | **un-skipped** ✅ |
+| `AppDelegateFeatureManagementIntegrationTests` | 2/2 pass (3rd = the main-133 method skip) | **un-skipped class, keep 1-method skip** ✅ |
+| `AppDelegateMMPIntegrationTests` | 3/4 pass | still skipped — see below |
+| `AnalyticsSpyTests` | ~22 pass, 6 fail | still skipped — see below |
+| `TopSiteNativeContextMenuTests` | 5/5 fail (leak only) | still skipped — see below |
+
+Failures are **identical isolated vs grouped** (real bugs, not cross-class pollution).
+
+**Remaining 3 (Phase B — real Ecosia bugs, NOT Firefox-only; need fixing, not blind skips):**
+- **TopSiteNativeContextMenuTests** — the menu assertions all PASS; the 5 failures are ONLY
+  `trackForMemoryLeaks(subject)`: `HomepageViewController` is retained past the test. Isolated to calling
+  `makeTopSiteContextMenu` (HomepageViewControllerTests leak-tracks the identical VC and passes). TWO
+  evidence-based fixes did NOT work: (1) injecting the same infra mocks (theme/overlay/notification/throttler);
+  (2) `MockStoreForMiddleware` + `StoreTestUtilityHelper.resetStore()` (HomepageViewController.init subscribes
+  to the global Redux `store`). No static self-capturing closure found in `makeTopSiteContextMenu` →
+  **needs runtime memory-graph debugging** to find the cycle. Stopped guessing after 2 fails.
+- **AppDelegateMMPIntegrationTests** — only `testFirstSearchMilestoneTriggersEvent` fails: the `firstSearch`
+  MMP event fires **twice** (`[.firstSearch, .firstSearch]`). Reproduces in isolation with that test FIRST,
+  fresh process. `SearchesCounter` is created only in `AppDelegate` (one per instance), `subscribe` dedupes by
+  subscriber, `User.searchCount` didSet posts once, `UnitTestAppDelegate` host has no SearchesCounter — yet two
+  fires. **Needs runtime diagnostics** (log handleSearchEvent call count / subscriber count).
+- **AnalyticsSpyTests ×6** — `testTrackMenuStatus`/`testTrackMenuAction`: `menuHelper.getToolbarActions` no
+  longer contains the expected action titles (v147 menu-API reconciliation — cf. already-`XCTSkip`'d
+  `testTrackMenuShare` "getSharingAction() removed in v147"). `testTrackLaunchAndInstallOnDidFinishLaunching` /
+  `testTrackResumeOnDidBecomeActive`: async "Condition timed out". `testClearPrivateDataTracksEvent` /
+  `testClearWebsitesDataTracksEvent`: clear-data analytics not captured. Each needs individual v147 reconciliation.
+
+Shipped this increment: **un-skip the 2 fully-passing classes** (StartAtHome + FeatureManagement-with-method-skip).
+The 3 remaining stay skipped with **honest, specific comments** (no longer the false "AppContainer crash"
+rationale). Fast iteration recipe for Phase B: edit code → `build-for-testing` → re-strip the regenerated
+xctestrun (`python3` deleting `SkipTestIdentifiers` per target, write into `Build/Products/`) → run via
+`-xctestrun … -only-testing:…`.
+
 ## Goal (user directive)
 
 Make unit tests **work properly** (NOT pass blindly via skip/stub) so `merge_tests.yml` CI can be re-enabled.
