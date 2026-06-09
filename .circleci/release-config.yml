@@ -41,6 +41,27 @@ macos_common: &macos_common
   resource_class: m4pro.medium
 
 jobs:
+  check-translations:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Check if this is a dry-run
+          command: |
+            if [[ "<< pipeline.parameters.dry-run-mode >>" == "true" ]]; then
+              echo "🧪 DRY RUN MODE: Will report missing translations but not fail"
+              echo "export DRY_RUN=true" >> $BASH_ENV
+            else
+              echo "🚀 PRODUCTION MODE: Will fail if translations are missing"
+              echo "export DRY_RUN=false" >> $BASH_ENV
+            fi
+      - run:
+          name: Verify translation completeness
+          command: |
+            source $BASH_ENV
+            bash scripts/check_translations.sh
+
   execute-critical-health-checks-ios:
     docker:
       - image: cimg/openjdk:17.0
@@ -153,11 +174,14 @@ workflows:
   release-pipeline:
     when: << pipeline.parameters.is-release-pipeline >>
     jobs:
+      - check-translations:
+          name: L10N Translation Completeness Check
       - execute-critical-health-checks-ios:
           name: Critical Health Checks (release cut pipeline)
           context: napps
       - build-testflight-deploy:
           name: Auto Deploy release version to TestFlight
           requires:
+            - L10N Translation Completeness Check
             - Critical Health Checks (release cut pipeline)
           context: napps 
