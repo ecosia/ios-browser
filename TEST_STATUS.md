@@ -55,9 +55,20 @@ xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the sch
 |---|---|---|
 | `EcosiaStartAtHomeMiddlewareTests` | 5/5 pass | **un-skipped** ✅ |
 | `AppDelegateFeatureManagementIntegrationTests` | 2/2 pass (3rd = the main-133 method skip) | **un-skipped class, keep 1-method skip** ✅ |
-| `AppDelegateMMPIntegrationTests` | 3/4 → **4/4** | **un-skipped** ✅ (Set-assertion fix, see below) |
-| `AnalyticsSpyTests` | 23 pass, 6→**2** fail | **un-skipped class**, 4 method-skips (clear-data ×2 fixed) ✅ |
+| `AppDelegateMMPIntegrationTests` | 4/4 in isolation | ⚠️ **RE-SKIPPED** — destabilizes full suite (see below) |
+| `AnalyticsSpyTests` | 23 pass in isolation | ⚠️ **RE-SKIPPED** — destabilizes full suite (clear-data prod fix KEPT) |
 | `TopSiteNativeContextMenuTests` | 5/5 fail (leak only) | still skipped — see below |
+
+> **⚠️ STABILITY FINDING (2026-06-09):** Un-skipping MMP + AnalyticsSpy turned a 3×-green **2347/0**
+> baseline into flaky CI: run 27217555760 → 2396 run / 1 failed (`ReferralsModelTests.testInitWithCode`
+> "multiple fulfill"); run 27217757182 → 2365 run / 1 failed (`AppFxACommandsTests`) **with a crash
+> truncating ~31 tests**. Different victims each run = async cross-test contamination. Cause: MMP's 4 tests
+> + AnalyticsSpy's 3 lifecycle tests call the real `applicationDidBecomeActive`/`didFinishLaunching`, which
+> spawn fire-and-forget `Task { await FeatureManagement.fetchConfiguration() }` (real Unleash network) +
+> `User.queue` saves that complete during LATER tests. **Decision: re-skipped both to restore the
+> trustworthy 2347/0 baseline.** The test fixes (MMP Set-assertion, AnalyticsSpy clear-data) and the
+> clear-data PROD-gap restore are KEPT in code. Safe un-skip path = mock Unleash/FeatureManagement+MMP
+> network so lifecycle tests don't leak, then verify stability over multiple runs.
 
 Failures are **identical isolated vs grouped** (real bugs, not cross-class pollution).
 
