@@ -27,26 +27,38 @@ public enum EcosiaSchemes {
     private static let skippedTests: [String] = [
         // EcosiaTests — AppDelegate integration tests
         //
-        // Root cause: These tests call DependencyHelperMock().bootstrapDependencies() which
-        // calls AppContainer.shared.reset(). The test host is a real iOS app whose startup
-        // (application(_:willFinishLaunchingWithOptions:)) kicked off async tasks that hold
-        // on to AppContainer service references (e.g. Storage.DiskImageStore via
-        // TabManagerImplementation). When reset() clears the container in setUp, those
-        // in-flight async tasks try to re-resolve DiskImageStore and fatal-crash before any
-        // test code runs. There is no safe way to cancel or drain the host-app tasks without
-        // modifying production code. Tracked in MOB-4384.
-        "AppDelegateFeatureManagementIntegrationTests",
+        // The original AppContainer-reset crash race here is FIXED: main.swift now selects the
+        // minimal UnitTestAppDelegate at launch via the ECOSIA_RUN_UNIT_TESTS env var (see
+        // testArguments below), so the production AppDelegate's background work no longer runs
+        // during unit tests and no longer fatal-crashes on the container reset. These classes
+        // now execute normally — the blanket skips were dropped. (MOB-4384)
+        //
+        // AppDelegateFeatureManagementIntegrationTests now passes except for the one method
+        // main-133 also skipped (asserts an unstable post-didBecomeActive model identity).
+        "AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions()",
+        // AppDelegateMMPIntegrationTests: 3/4 pass. testFirstSearchMilestoneTriggersEvent emits the
+        // firstSearch MMP event twice ([.firstSearch, .firstSearch]); whole class skipped pending a
+        // proper fix of the double-fire (do NOT leave as a blind skip — MOB-4384, Phase B).
         "AppDelegateMMPIntegrationTests",
+
+        // EcosiaTests — TopSiteNativeContextMenuTests
+        //
+        // The AppContainer reset race is fixed (UnitTestAppDelegate, see above): the class now runs and
+        // all context-menu assertions PASS. Every test fails only on setUp's trackForMemoryLeaks — the
+        // HomepageViewController is retained past the test. The retention is specific to exercising
+        // makeTopSiteContextMenu: HomepageViewControllerTests leak-tracks the identical VC and passes,
+        // and two evidence-based fixes here did NOT resolve it — (1) injecting the same infra mocks
+        // (theme/overlay/notification/throttler), (2) swapping in a MockStoreForMiddleware + resetStore
+        // (HomepageViewController.init subscribes to the global Redux store). Needs runtime memory-graph
+        // debugging to find the cycle; whole class skipped pending that (NOT a blind skip — MOB-4384, Phase B).
+        "TopSiteNativeContextMenuTests",
 
         // EcosiaTests — AnalyticsSpyTests
         //
-        // The class-level skip was reduced to only the tests that call appDelegate methods or
-        // trigger a full DI bootstrap. The DI-independent tests were extracted to
-        // AnalyticsContextTests and run without issues. The remaining AnalyticsSpyTests tests
-        // use DependencyHelperMock().bootstrapDependencies() and interact with AppDelegate
-        // (application(_:didFinishLaunchingWithOptions:), applicationDidBecomeActive(_:)),
-        // which carries the same AppContainer reset race as the AppDelegate integration tests
-        // above. Tracked in MOB-4384.
+        // The AppContainer reset race is fixed (UnitTestAppDelegate, see above): the class now runs
+        // ~22 passing tests. Six still fail with concrete logical issues (menu actions not found /
+        // async event timeouts / clear-data + menu-status events not captured). Whole class skipped
+        // pending proper fixes of those six (NOT a blind skip — MOB-4384, Phase B).
         "AnalyticsSpyTests",
 
         // ClientTests
@@ -192,32 +204,10 @@ public enum EcosiaSchemes {
         "MicrosurveyMiddlewareIntegrationTests/testConfirmationViewedAction()",
         "HomepageMiddlewareTests/test_sectionSeenAction_sendTelemetryData()",
 
-        // EcosiaTests — TopSiteNativeContextMenuTests
-        //
-        // Root cause: setUp() calls DependencyHelperMock().bootstrapDependencies() + creates a
-        // HomepageViewController. A background thread (GCD global queue, origin unconfirmed without
-        // a full crash stacktrace) calls AppContainer.shared.resolve() as Profile while the container
-        // is being rebuilt — crashing the test process for every test in the class. The DiskImageStore
-        // warning that precedes the crash (Dip log, resolveOptional) suggests a TabManagerImplementation
-        // or BrowserViewController init is being triggered from a scene lifecycle path on a background
-        // thread concurrent with test setUp. Tracked in MOB-4384 for follow-up with a real stack trace.
-        "TopSiteNativeContextMenuTests",
 
-        // EcosiaTests — EcosiaStartAtHomeMiddlewareTests
-        //
-        // Verified self-contained crasher: run *in isolation* it restarts repeatedly and
-        // executes 0 tests. setUp() calls DependencyHelperMock().bootstrapDependencies()
-        // and drives the real EcosiaStartAtHomeMiddleware through a Redux store
-        // (StoreTestUtility). The crash is the same architectural defect tracked in
-        // MOB-4384: app-hosted unit tests run the full production Client.app startup, whose
-        // background work resolves services from the global Dip AppContainer that
-        // fatalErrors on a miss (compounded by a BrazeUI/BrazeKit duplicate-class link in
-        // the EcosiaTests bundle). Four mitigation attempts (resolveOptional, Profile-first,
-        // removing reset() from bootstrapDependencies, launch-time UnitTestAppDelegate
-        // detection) were tried and verified insufficient — per systematic-debugging
-        // Phase 4.5 this is an architecture decision, not another patch. Skipped here using
-        // the same single-class strategy as the entries above. Tracked in MOB-4384.
-        "EcosiaStartAtHomeMiddlewareTests",
+        // EcosiaTests — EcosiaStartAtHomeMiddlewareTests: previously skipped as a crasher under the
+        // production AppDelegate. With UnitTestAppDelegate active (ECOSIA_RUN_UNIT_TESTS) the class now
+        // runs all 5 tests green, so the skip was removed. (MOB-4384)
 
         // StorageTests
         "TestBrowserDB/testMovesDB()",
