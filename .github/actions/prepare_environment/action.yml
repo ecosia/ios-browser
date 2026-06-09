@@ -25,10 +25,24 @@ runs:
         xcodebuild -version
         swift --version
 
-    # Ecosia (MOB-4384): removed the "Fix SwiftBridging Module Redefinition" step. It worked around a duplicate
-    # SwiftBridging module bug specific to the Xcode 26.3 toolchain. On 26.5 the bridging.modulemap is intact and
-    # the build succeeds without patching; applying that patch on 26.5 would comment out a needed module and break
-    # the build.
+    # Ecosia (MOB-4384): the duplicate-SwiftBridging-module bug also affects the runner's Xcode 26.5
+    # ("redefinition of module 'SwiftBridging'" during Clang dependency scanning), so this workaround is still
+    # required after the 26.3 -> 26.5 bump (path updated to Xcode_26.5).
+    - name: Fix SwiftBridging Module Redefinition
+      shell: bash
+      run: |
+        echo "Checking for duplicate SwiftBridging module"
+        BRIDGING_MODULEMAP="/Applications/Xcode_26.5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/swift/bridging.modulemap"
+        if [ -f "$BRIDGING_MODULEMAP" ]; then
+          echo "Backing up and fixing bridging.modulemap"
+          sudo cp "$BRIDGING_MODULEMAP" "${BRIDGING_MODULEMAP}.bak"
+          # Comment out the SwiftBridging module definition to prevent redefinition
+          sudo sed -i.tmp 's/^module SwiftBridging {/\/\* module SwiftBridging {/g' "$BRIDGING_MODULEMAP"
+          sudo sed -i.tmp 's/^}/} \*\//g' "$BRIDGING_MODULEMAP"
+          cat "$BRIDGING_MODULEMAP"
+        else
+          echo "bridging.modulemap not found at expected location"
+        fi
 
     - name: Fix-up private Github URLs
       shell: bash
