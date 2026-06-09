@@ -49,6 +49,25 @@ If more information is required or you have any questions then we suggest reachi
 
 Want to contribute on the codebase but don't know where to start? Here is a list of [issues that are contributor friendly](https://github.com/mozilla-mobile/firefox-ios/labels/Contributor%20OK), but make sure to read the [Contributing guidelines](https://github.com/mozilla-mobile/firefox-ios/blob/main/CONTRIBUTING.md) first.
 
+### 🌍 L10N Translation Completeness Check
+
+As part of the release pipeline, a quality gate verifies that all localization keys defined in the English source file (`en.lproj/Ecosia.strings`) have corresponding translations for every supported language (German, French, Dutch, Spanish, and Italian). This prevents shipping a release candidate with missing translations that would result in users seeing untranslated English strings.
+
+The check runs automatically in CI before the TestFlight build. If any keys are missing, the pipeline fails with a descriptive error listing the missing keys grouped by language.
+
+**Running the check locally:**
+
+```bash
+# From the repository root
+bash firefox-ios/Ecosia/L10N/check_translations.sh
+```
+
+To run in dry-run mode (report missing translations without failing):
+
+```bash
+DRY_RUN=true bash firefox-ios/Ecosia/L10N/check_translations.sh
+```
+
 ### ⁒ Update Ecosia Comments
 
 To ensure consistency when commenting code in Firefox for Ecosia updates, you could document the following approach:

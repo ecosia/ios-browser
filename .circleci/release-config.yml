@@ -60,7 +60,7 @@ jobs:
           name: Verify translation completeness
           command: |
             source $BASH_ENV
-            bash scripts/check_translations.sh
+            bash firefox-ios/Ecosia/L10N/check_translations.sh
 
   execute-critical-health-checks-ios:
     docker:
