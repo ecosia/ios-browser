@@ -85,6 +85,8 @@ public final class FileUploadService: Sendable {
     /// `nil` on failure, so callers can map results back to their original file metadata by index.
     public func uploadFiles(_ files: [FileUploadInput]) async -> FileUploadResult {
         do {
+            // TODO: Check that refresh token works on production
+            // Web had to include it in web (was failing only on prod to fetch the presigned URL if no refresh was done first)
             try await refreshEAIST()
         } catch {
             return FileUploadResult(fileIds: Array(repeating: nil, count: files.count), errors: [error])
