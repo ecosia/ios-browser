@@ -53,13 +53,23 @@ public enum EcosiaSchemes {
         // debugging to find the cycle; whole class skipped pending that (NOT a blind skip — MOB-4384, Phase B).
         "TopSiteNativeContextMenuTests",
 
-        // EcosiaTests — AnalyticsSpyTests
+        // EcosiaTests — AnalyticsSpyTests: now un-skipped (class runs ~23 passing). The two clear-data
+        // tests were fixed by restoring the Ecosia `Analytics.shared.clearsDataFromSection` hooks lost in
+        // the v147 upgrade (ClearPrivateDataTableViewController / WebsiteDataManagementViewController).
+        // Four tests remain method-skipped with specific reasons (NOT blind skips — MOB-4384, Phase B):
         //
-        // The AppContainer reset race is fixed (UnitTestAppDelegate, see above): the class now runs
-        // ~22 passing tests. Six still fail with concrete logical issues (menu actions not found /
-        // async event timeouts / clear-data + menu-status events not captured). Whole class skipped
-        // pending proper fixes of those six (NOT a blind skip — MOB-4384, Phase B).
-        "AnalyticsSpyTests",
+        // Menu analytics moved from the legacy MainMenuActionHelper to MainMenuConfigurationUtility in
+        // v147 (the redesigned main menu, which DOES call menuClick/menuStatus). These two tests still
+        // build the legacy MainMenuActionHelper, whose actions no longer carry the Ecosia hooks, so the
+        // expected action titles/labels aren't found. They need rewriting against MainMenuConfigurationUtility.
+        "AnalyticsSpyTests/testTrackMenuAction()",
+        "AnalyticsSpyTests/testTrackMenuStatus()",
+        // These drive the full AppDelegate lifecycle, which fires activity(.launch)/(.resume) only AFTER
+        // `await FeatureManagement.fetchConfiguration()` (a real Unleash network fetch). That fetch does not
+        // complete within the 2–3s wait in the v147 app-hosted test environment, so the analytics never
+        // arrive in time. They need an Unleash/FeatureManagement mock to be deterministic.
+        "AnalyticsSpyTests/testTrackLaunchAndInstallOnDidFinishLaunching()",
+        "AnalyticsSpyTests/testTrackResumeOnDidBecomeActive()",
 
         // ClientTests
         "ContentBlockerTests/testCompileListsNotInStore_callsCompletionHandlerSuccessfully()",
