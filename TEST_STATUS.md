@@ -32,10 +32,16 @@ features that were merged while CI was off (never CI-verified). Root-caused + fi
    `DependencyHelperMock().bootstrapDependencies()` in setUp + `.reset()` in tearDown (same pattern as the
    other EcosiaTests/ClientTests DI consumers). `DependencyHelperMock` is compiled into EcosiaTests too.
 
-Status: ✅ **DONE locally** — `TabEcosiaExtensionTests` 9/9, `HomepageDiffableDataSourceTests` 10/10,
-`** TEST EXECUTE SUCCEEDED **`. Files: `EcosiaTests/UI/TabManagement/TabEcosiaExtensionTests.swift`,
+Status: ✅ **DONE & CI-VERIFIED** — committed `4dfa183667`, pushed. CI run **27204435097**
+(`merge_tests`, full Ecosia scheme, Xcode 26.5) junit check **"iOS Unit Test Results"** reports
+**`2327 tests run, 2327 passed, 0 skipped, 0 failed.`** (baseline run #27197644013 had 9 failed → now 0;
+no new failures). Local pre-push: `TabEcosiaExtensionTests` 9/9, `HomepageDiffableDataSourceTests` 10/10.
+Files: `EcosiaTests/UI/TabManagement/TabEcosiaExtensionTests.swift`,
 `firefox-ios-tests/Tests/ClientTests/Frontend/Homepage/HomepageDiffableDataSourceTests.swift`.
-Next: commit → push → watch the merge_tests CI run for a clean junit report.
+
+⚠️ **Before merging this branch, REVERT the CI-iteration scaffolding in `merge_tests.yml`:**
+the TEMPORARY `push:` trigger (marked "REVERT before merging"). The Xcode 26.3→26.5 bump and the restored
+SwiftBridging patch in `prepare_environment/action.yml` are intentional keepers (documented inline).
 
 ## Goal (user directive)
 
