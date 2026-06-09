@@ -1,7 +1,41 @@
 # MOB-4384 — Unit Test Stabilisation: Living Status
 
-**Branch:** `dc-mob-4384-fix-unit-tests-after-upgrade` · **Updated:** 2026-06-05
+**Branch:** `dc-mob-4384-fix-unit-tests-after-upgrade` · **Updated:** 2026-06-09
 **This file is the source of truth for resuming after a context compaction. Keep it current.**
+
+## CI iteration — fixing the 9 failures the (green-job) CI run surfaced (2026-06-09)
+
+`merge_tests.yml` was re-enabled (+ temp `push:` trigger) and CI bumped to Xcode 26.5. The job stays green
+(`|| true` + `fail_on_failure: false`) but the junit report showed **9 real test failures** in reconciled
+features that were merged while CI was off (never CI-verified). Root-caused + fixed both clusters:
+
+1. **TabEcosiaExtensionTests ×7** (`EcosiaTests/UI/TabManagement/`). Tests hardcoded `https://www.ecosia.org/…`.
+   The **Testing config runs as STAGING** (bundle id `com.ecosia.ecosiaapp.firefox` → `Environment.current`
+   = `.staging` → `URLProvider.domain` = `ecosia-staging.xyz`). `isEcosia()` checks
+   `host.hasSuffix(urlProvider.domain)`, so `www.ecosia.org` is NOT recognized → no `_sp`/language-header
+   mutations → all assertions get nil. **Fix:** build URLs from `EcosiaEnvironment.current.urlProvider.domain`
+   via a `ecosiaURL(_:)` helper → environment-agnostic. (`testSpNotAddedToNonEcosiaURL` keeps example.com.)
+2. **HomepageDiffableDataSourceTests ×2** (`returnPocketStories`, `withColorValueOnState`). These exercise the
+   **Firefox base path** (no `ecosiaAdapter` set) where pocket IS rendered exactly like upstream v147.5. The
+   earlier wave-3 "assert NO .pocket" edit was WRONG for these — Ecosia removes pocket via the *adapter*, which
+   these tests don't use. Worse, the section is gated by `MerinoState.shouldShowSection = userPrefs &&
+   isLocaleSupported(Locale.current.identifier)` → **locale-dependent** (true on en-US CI sim, false on the
+   local en-IT sim) → flaky (passed local, failed CI). **Fix:** dispatch `MerinoAction(isEnabled: true,
+   actionType: .toggleShowSectionSetting)` first to force `shouldShowSection` true regardless of locale, then
+   restore the upstream assertions (`.pocket(...)` == 20 items; sections `[.pocket(nil), .customizeHomepage]`).
+   This REVERSES the wave-3 note below ("Homepage pocket ×2 (assert no .pocket)") — that note is now obsolete.
+
+3. **TabEcosiaExtensionTests `loadRequest` ×2 crash (found during local verify, fixed)** — the two
+   `testLoadRequest…` tests call `tab.createWebview(...)`, which resolves `ThemeManager` from `AppContainer`;
+   the class's setUp never bootstrapped DI → `AppContainer.swift:33: Fatal error: No definition registered
+   for type: Common.ThemeManager` (crash-thrash, not a logical fail). **Fix:** added
+   `DependencyHelperMock().bootstrapDependencies()` in setUp + `.reset()` in tearDown (same pattern as the
+   other EcosiaTests/ClientTests DI consumers). `DependencyHelperMock` is compiled into EcosiaTests too.
+
+Status: ✅ **DONE locally** — `TabEcosiaExtensionTests` 9/9, `HomepageDiffableDataSourceTests` 10/10,
+`** TEST EXECUTE SUCCEEDED **`. Files: `EcosiaTests/UI/TabManagement/TabEcosiaExtensionTests.swift`,
+`firefox-ios-tests/Tests/ClientTests/Frontend/Homepage/HomepageDiffableDataSourceTests.swift`.
+Next: commit → push → watch the merge_tests CI run for a clean junit report.
 
 ## Goal (user directive)
 
