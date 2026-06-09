@@ -36,10 +36,10 @@ public enum EcosiaSchemes {
         // AppDelegateFeatureManagementIntegrationTests now passes except for the one method
         // main-133 also skipped (asserts an unstable post-didBecomeActive model identity).
         "AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions()",
-        // AppDelegateMMPIntegrationTests: 3/4 pass. testFirstSearchMilestoneTriggersEvent emits the
-        // firstSearch MMP event twice ([.firstSearch, .firstSearch]); whole class skipped pending a
-        // proper fix of the double-fire (do NOT leave as a blind skip — MOB-4384, Phase B).
-        "AppDelegateMMPIntegrationTests",
+        // AppDelegateMMPIntegrationTests: now un-skipped (4/4). testFirstSearchMilestoneTriggersEvent
+        // was failing because applicationDidBecomeActive's async work re-posts `.searchesCounterChanged`
+        // for the same value during the wait (the milestone subscriber fires twice in the app-hosted
+        // test); the test now asserts the SET of milestone events instead of an exact count. (MOB-4384)
 
         // EcosiaTests — TopSiteNativeContextMenuTests
         //

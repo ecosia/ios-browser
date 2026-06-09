@@ -55,7 +55,7 @@ xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the sch
 |---|---|---|
 | `EcosiaStartAtHomeMiddlewareTests` | 5/5 pass | **un-skipped** ✅ |
 | `AppDelegateFeatureManagementIntegrationTests` | 2/2 pass (3rd = the main-133 method skip) | **un-skipped class, keep 1-method skip** ✅ |
-| `AppDelegateMMPIntegrationTests` | 3/4 pass | still skipped — see below |
+| `AppDelegateMMPIntegrationTests` | 3/4 → **4/4** | **un-skipped** ✅ (Set-assertion fix, see below) |
 | `AnalyticsSpyTests` | ~22 pass, 6 fail | still skipped — see below |
 | `TopSiteNativeContextMenuTests` | 5/5 fail (leak only) | still skipped — see below |
 
@@ -69,11 +69,13 @@ Failures are **identical isolated vs grouped** (real bugs, not cross-class pollu
   (2) `MockStoreForMiddleware` + `StoreTestUtilityHelper.resetStore()` (HomepageViewController.init subscribes
   to the global Redux `store`). No static self-capturing closure found in `makeTopSiteContextMenu` →
   **needs runtime memory-graph debugging** to find the cycle. Stopped guessing after 2 fails.
-- **AppDelegateMMPIntegrationTests** — only `testFirstSearchMilestoneTriggersEvent` fails: the `firstSearch`
-  MMP event fires **twice** (`[.firstSearch, .firstSearch]`). Reproduces in isolation with that test FIRST,
-  fresh process. `SearchesCounter` is created only in `AppDelegate` (one per instance), `subscribe` dedupes by
-  subscriber, `User.searchCount` didSet posts once, `UnitTestAppDelegate` host has no SearchesCounter — yet two
-  fires. **Needs runtime diagnostics** (log handleSearchEvent call count / subscriber count).
+- **AppDelegateMMPIntegrationTests** — ✅ **FIXED & un-skipped.** Root cause (found via a runtime diagnostic
+  observing `.searchesCounterChanged`): the notification fires **twice** for the single 0→1 change
+  (`changeLog=[1,1]`) — `applicationDidBecomeActive`'s async work re-posts it for the same value during the
+  `wait(1)`, so the milestone subscriber legitimately fires twice in the app-hosted test (a real first search
+  in production posts once). Fix: `testFirstSearchMilestoneTriggersEvent` now asserts
+  `Set(receivedEvents) == [.firstSearch]` (the correct milestone, and only it, fired) rather than an exact
+  delivery count. 4/4 green.
 - **AnalyticsSpyTests ×6** — `testTrackMenuStatus`/`testTrackMenuAction`: `menuHelper.getToolbarActions` no
   longer contains the expected action titles (v147 menu-API reconciliation — cf. already-`XCTSkip`'d
   `testTrackMenuShare` "getSharingAction() removed in v147"). `testTrackLaunchAndInstallOnDidFinishLaunching` /
