@@ -56,7 +56,7 @@ xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the sch
 | `EcosiaStartAtHomeMiddlewareTests` | 5/5 pass | **un-skipped** ✅ |
 | `AppDelegateFeatureManagementIntegrationTests` | 2/2 pass (3rd = the main-133 method skip) | **un-skipped class, keep 1-method skip** ✅ |
 | `AppDelegateMMPIntegrationTests` | 3/4 → **4/4** | **un-skipped** ✅ (Set-assertion fix, see below) |
-| `AnalyticsSpyTests` | ~22 pass, 6 fail | still skipped — see below |
+| `AnalyticsSpyTests` | 23 pass, 6→**2** fail | **un-skipped class**, 4 method-skips (clear-data ×2 fixed) ✅ |
 | `TopSiteNativeContextMenuTests` | 5/5 fail (leak only) | still skipped — see below |
 
 Failures are **identical isolated vs grouped** (real bugs, not cross-class pollution).
@@ -76,11 +76,20 @@ Failures are **identical isolated vs grouped** (real bugs, not cross-class pollu
   in production posts once). Fix: `testFirstSearchMilestoneTriggersEvent` now asserts
   `Set(receivedEvents) == [.firstSearch]` (the correct milestone, and only it, fired) rather than an exact
   delivery count. 4/4 green.
-- **AnalyticsSpyTests ×6** — `testTrackMenuStatus`/`testTrackMenuAction`: `menuHelper.getToolbarActions` no
-  longer contains the expected action titles (v147 menu-API reconciliation — cf. already-`XCTSkip`'d
-  `testTrackMenuShare` "getSharingAction() removed in v147"). `testTrackLaunchAndInstallOnDidFinishLaunching` /
-  `testTrackResumeOnDidBecomeActive`: async "Condition timed out". `testClearPrivateDataTracksEvent` /
-  `testClearWebsitesDataTracksEvent`: clear-data analytics not captured. Each needs individual v147 reconciliation.
+- **AnalyticsSpyTests** — ✅ **class un-skipped; 2 fixed, 4 method-skipped (honest).**
+  - ✅ `testClearPrivateDataTracksEvent` / `testClearWebsitesDataTracksEvent`: **FIXED.** Root cause = the
+    Ecosia analytics hook `Analytics.shared.clearsDataFromSection(.main/.websites)` was DROPPED in the v147
+    upgrade (zero prod callsites; present in `origin/main-133`). Restored in
+    `ClearPrivateDataTableViewController.swift` (sectionButton tap) and `WebsiteDataManagementViewController.swift`
+    (`.clearButton` tap), plus the lost `import Ecosia` in both.
+  - ⏳ method-skipped: `testTrackMenuAction` / `testTrackMenuStatus` — v147 moved menu analytics from the legacy
+    `MainMenuActionHelper` (what the tests build) to `MainMenuConfigurationUtility` (the redesigned main menu,
+    which DOES call menuClick/menuStatus). Tests need rewriting against the new utility.
+  - ⏳ method-skipped: `testTrackLaunchAndInstallOnDidFinishLaunching` / `testTrackResumeOnDidBecomeActive` — drive
+    the full AppDelegate lifecycle; `activity(.launch)/(.resume)` fire only after `await
+    FeatureManagement.fetchConfiguration()` (real Unleash network fetch) which doesn't complete within the 2–3s
+    wait in the v147 test env. Need an Unleash/FeatureManagement mock. (Same ordering existed in main-133, where
+    the fetch completed in time — so it's an env/timing regression, not a lost hook.)
 
 Shipped this increment: **un-skip the 2 fully-passing classes** (StartAtHome + FeatureManagement-with-method-skip).
 The 3 remaining stay skipped with **honest, specific comments** (no longer the false "AppContainer crash"
