@@ -19,6 +19,9 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        // Ecosia: register the AppContainer services Tab needs. `loadRequest` → `createWebview`
+        // resolves `ThemeManager` from `AppContainer`, which fatal-errors if nothing is registered. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
         windowUUID = WindowUUID()
         savedAnalyticsId = User.shared.analyticsId
         savedSendAnonymousUsageData = User.shared.sendAnonymousUsageData
@@ -32,6 +35,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
         User.shared.sendAnonymousUsageData = savedSendAnonymousUsageData
         User.shared.cookieConsentValue = savedCookieConsentValue
         windowUUID = nil
+        DependencyHelperMock().reset()
         super.tearDown()
     }
 
@@ -39,7 +43,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testSpAddedToEcosiaURL() {
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertTrue(result.url?.hasEcosiaUserId == true)
@@ -68,7 +72,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testSpIsNullUUIDForPrivateTab() {
         let tab = makeTab(isPrivate: true)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertEqual(
@@ -80,7 +84,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
     func testSpIsNullUUIDWhenAnalyticsOptedOut() {
         User.shared.sendAnonymousUsageData = false
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertEqual(
@@ -93,7 +97,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testLanguageRegionHeaderAddedForSERPURL() {
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats")!
+        let url = ecosiaURL("/search?q=cats")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         let expected = Locale.current.identifier.replacingOccurrences(of: "_", with: "-").lowercased()
@@ -102,7 +106,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testLanguageRegionHeaderNotAddedForNonSERPURL() {
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/")!
+        let url = ecosiaURL("/")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertNil(result.value(forHTTPHeaderField: "x-ecosia-app-language-region"))
@@ -118,7 +122,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
         let spy = NavigationSpy(expectation: expect)
         tab.navigationDelegate = spy
 
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         tab.loadRequest(URLRequest(url: url))
 
         waitForExpectations(timeout: 2)
@@ -134,7 +138,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
         let spy = NavigationSpy(expectation: expect)
         tab.navigationDelegate = spy
 
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         tab.loadRequest(URLRequest(url: url))
 
         waitForExpectations(timeout: 2)
@@ -143,6 +147,14 @@ final class TabEcosiaExtensionTests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    // Ecosia: the Testing configuration runs against the staging environment (bundle id
+    // `com.ecosia.ecosiaapp.firefox`), so `isEcosia()` only recognises the staging domain.
+    // Build SERP URLs from the current environment's domain so these tests assert the real
+    // `_sp`/language-header mutations regardless of which configuration they run under. (MOB-4384)
+    private func ecosiaURL(_ pathAndQuery: String) -> URL {
+        URL(string: "https://www.\(EcosiaEnvironment.current.urlProvider.domain)\(pathAndQuery)")!
+    }
 
     private func makeTab(isPrivate: Bool) -> Client.Tab {
         Client.Tab(profile: MockProfile(), isPrivate: isPrivate, windowUUID: windowUUID)
