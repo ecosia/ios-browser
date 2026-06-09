@@ -149,7 +149,12 @@ TabManagerTests/{2}, TestFavicons/testFaviconFetcherParse, TabLocationViewTests/
 SyncTests MetaGlobal/State. **Verify each name against current source before adding (v147 renames).**
 
 **Stubbed test bodies (emptied during Swift 6 migration — restore real assertions or justify):**
-AnalyticsSpyTests (several), AuthWorkflowTests (concurrent ops), NativeToWebSSOAuth0ProviderTests (3).
+✅ RESOLVED (task #9, 2026-06-09). Verified via a full EcosiaTests scan: AuthWorkflowTests and
+NativeToWebSSOAuth0ProviderTests are fully implemented with real assertions (the concurrent-ops tests
+pre-set mock state on MainActor before task groups for Swift 6 safety). No genuine stub bodies remain —
+the only auth skip is `NativeToWebSSOAuth0ProviderTests/testGetSSOCredentials_withValidRefreshToken…`
+(`XCTSkip`: real Auth0 network call with no timeout — needs an Auth0 mock). AnalyticsSpy's in-body
+`XCTSkip`s are documented Firefox-API-change skips, not empty stubs.
 
 ## Real fix already in place (keep)
 
