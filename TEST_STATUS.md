@@ -55,9 +55,20 @@ xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the sch
 |---|---|---|
 | `EcosiaStartAtHomeMiddlewareTests` | 5/5 pass | **un-skipped** ✅ |
 | `AppDelegateFeatureManagementIntegrationTests` | 2/2 pass (3rd = the main-133 method skip) | **un-skipped class, keep 1-method skip** ✅ |
-| `AppDelegateMMPIntegrationTests` | 4/4 in isolation | ⚠️ SKIPPED — all tests drive becomeActive (fixes kept in code) |
-| `AnalyticsSpyTests` | passes in isolation | ⚠️ SKIPPED — systemic shared-process contamination (fixes kept) |
+| `AppDelegateMMPIntegrationTests` | 4/4 | ✅ **UN-SKIPPED** (Phase B testable-unit refactor) |
+| `AnalyticsSpyTests` | passes (1 documented XCTSkip) | ✅ **UN-SKIPPED** (Phase B refactor + menu rewrite) |
 | `TopSiteNativeContextMenuTests` | 5/5 fail (leak only) | still skipped — see below |
+
+> **✅ RESOLVED (2026-06-11) via a testable-unit refactor.** The contamination/crashes came from the tests
+> driving the *full* `applicationDidBecomeActive` / `didFinishLaunchingWithOptions`, which in the shared
+> app-hosted process spawn unsafe background work (BGTaskScheduler re-registration crash, PageStore/
+> loadBackgroundTabs, web server, shared-queue writes). Fix: extracted the Ecosia lifecycle analytics/MMP
+> into testable units on `AppDelegate` — `ecosiaTrackBecomeActiveLifecycle()`, `ecosiaTrackLaunchActivity()`,
+> `ecosiaTrackInstall()` (production lifecycle calls them, behaviour unchanged). The MMP + AnalyticsSpy
+> lifecycle tests now call those units DIRECTLY, never the full lifecycle, so the landmines never fire.
+> Combined with the earlier fixes (Unleash seed in setUp, `drainSharedAsyncQueues()` in tearDown, menu
+> rewrite, clear-data prod hooks). **Local full EcosiaTests target: 668 run / 0 failures / TEST EXECUTE
+> SUCCEEDED (no crash).** Verifying stability over multiple CI runs.
 
 > **CONCLUSION (2026-06-10): MMP + AnalyticsSpy can't be safely un-skipped without systemic test isolation.**
 > Empirically established across MANY CI runs that un-skipping (full OR surgical) intermittently contaminates a
