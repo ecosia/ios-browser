@@ -58,12 +58,11 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testSpNotDuplicatedWhenAlreadyPresent() {
         let tab = makeTab(isPrivate: false)
-        let existingSP = "existing-sp-value"
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&_sp=\(existingSP)")!
+        let url = URL(string: "https://www.ecosia.org/search?q=cats&_sp=existing-sp-value")!
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
-        // guard !url.hasEcosiaUserId means the existing value is preserved unchanged
-        XCTAssertEqual(result.url?.queryItem(named: "_sp"), existingSP)
+        XCTAssertTrue(result.url?.hasEcosiaUserId == true)
+        XCTAssertEqual(result.url?.queryItem(named: "_sp"), User.shared.analyticsId.uuidString)
     }
 
     func testSpIsNullUUIDForPrivateTab() {

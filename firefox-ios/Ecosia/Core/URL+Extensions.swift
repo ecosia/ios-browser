@@ -144,7 +144,6 @@ extension URL {
 
     public func ecosified(isIncognitoEnabled: Bool, urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> URL {
         guard isEcosia(urlProvider),
-              !hasEcosiaUserId,
               var components = components
         else { return self }
 
