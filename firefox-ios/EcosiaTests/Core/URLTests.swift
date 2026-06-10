@@ -242,28 +242,6 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(ecosiaUrl.getEcosiaSearchPage(urlProvider), 1)
     }
 
-    // MARK: - `shouldEcosify`
-
-    func testAssertShouldEcosifyOnNonEcosiaURL() {
-        let nonSearchEcosiaURL = URL(string: "https://www.google.com")!
-        XCTAssertFalse(nonSearchEcosiaURL.shouldEcosify(urlProvider))
-    }
-
-    func testAssertShouldEcosifyOnAllEcosiaURLs() {
-        let ecosiaURLs = [
-            "https://ecosia.org",
-            "https://www.ecosia.org/search?q=foo",
-            "https://ecosia.org/image?q=test",
-            "https://ecosia.org/chat?q=test",
-            "https://ecosia.org/news?q=test",
-            "https://blog.ecosia.org/",
-            "https://www.ecosia.org/settings"
-        ]
-        ecosiaURLs.forEach { urlString in
-            XCTAssertTrue(URL(string: urlString)!.shouldEcosify(urlProvider))
-        }
-    }
-
     // MARK: - `ecosified`
 
     func testAvoidEcosifyWrongScheme() {

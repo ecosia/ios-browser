@@ -105,8 +105,9 @@ extension BrowserViewController {
     /// Ecosifies the navigation URL if it doesn't yet carry the Snowplow user id, reloading via
     /// `tab.loadRequest()` so `ecosiaUpdatedRequest` runs. Returns `true` when a replacement was started.
     private func ecosiaEcosifyNavigationIfNeeded(url: URL, tab: Tab) -> Bool {
-        guard url.shouldEcosify(), !url.hasEcosiaUserId else { return false }
-        tab.loadRequest(URLRequest(url: url.ecosified(isIncognitoEnabled: tab.isPrivate)))
+        let ecosified = url.ecosified(isIncognitoEnabled: tab.isPrivate)
+        guard ecosified != url else { return false }
+        tab.loadRequest(URLRequest(url: ecosified))
         return true
     }
 }

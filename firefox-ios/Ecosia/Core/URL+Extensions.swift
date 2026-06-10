@@ -142,13 +142,9 @@ extension URL {
         return nil
     }
 
-    /// Check whether the URL should be Ecosified. At the moment this is true for every Ecosia URL.
-    public func shouldEcosify(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
-        return isEcosia(urlProvider)
-    }
-
     public func ecosified(isIncognitoEnabled: Bool, urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> URL {
         guard isEcosia(urlProvider),
+              !hasEcosiaUserId,
               var components = components
         else { return self }
 
