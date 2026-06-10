@@ -15,6 +15,10 @@ final class AppDelegateMMPIntegrationTests: XCTestCase, @unchecked Sendable {
 
     override func setUp() {
         super.setUp()
+        // Ecosia: seed a fresh Unleash model so applicationDidBecomeActive's
+        // FeatureManagement.fetchConfiguration spawns NO real network Task that would leak into later
+        // tests (the cross-test contamination that flaked CI). (MOB-4384)
+        seedFreshUnleashModelToAvoidNetworkFetch()
         MainActor.assumeIsolated {
             appDelegate = AppDelegate()
             DependencyHelperMock().bootstrapDependencies()
