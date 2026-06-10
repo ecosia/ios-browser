@@ -55,14 +55,20 @@ public enum EcosiaSchemes {
         // debugging to find the cycle; whole class skipped pending that (NOT a blind skip — MOB-4384, Phase B).
         "TopSiteNativeContextMenuTests",
 
-        // EcosiaTests — AnalyticsSpyTests: now UN-SKIPPED (Phase B refactor). The lifecycle tests
-        // (testTrackResume / testTrackLaunchAndInstall / testAddUserSeedContext…) now call the extracted
-        // testable units (AppDelegate.ecosiaTrackBecomeActiveLifecycle / ecosiaTrackLaunchActivity /
-        // ecosiaTrackInstall) instead of the full didFinishLaunching/becomeActive — removing the
-        // BGTaskScheduler crash + PageStore/web-server landmines. setUp seeds Unleash (no network),
-        // tearDown drains the shared queues, testTrackMenuAction runs against the v147
-        // MainMenuConfigurationUtility, clear-data via the restored clearsDataFromSection prod hooks,
-        // testTrackMenuStatus is an in-body XCTSkip (menuStatus removed in v147). (MOB-4384)
+        // EcosiaTests — AnalyticsSpyTests: SKIPPED. The Phase B refactor fixed the DETERMINISTIC vectors
+        // (the lifecycle tests now call the extracted AppDelegate units, so no BGTask crash / queue
+        // contamination), but this class ALSO has heavy WKWebView + BrowserViewController + network tests
+        // (testWebViewDelegate*, testEcosiaHandleDidCommit*, etc.) that spawn uncontrolled background work
+        // (web-content processes, Singular/Unleash network Tasks) which the queue drains can't reach. In
+        // the shared app-hosted process that intermittently starves later timing-sensitive tests' tight
+        // timeouts — observed a DIFFERENT victim almost every CI run (ReferralsModelTests, AppFxACommands,
+        // FavouritesTests, TabEcosiaExtensionTests webview, NewsTests network). Per-test timeout bumps are
+        // whack-a-mole. Safe un-skip needs an app-host-free EcosiaTests target or full webview/network
+        // mocking — a larger effort. ALL fixes are KEPT in the file (extracted-unit calls, Unleash seed,
+        // queue drains, menu rewrite to v147 MainMenuConfigurationUtility, clearsDataFromSection prod
+        // restore stays in production). MMP (above) IS un-skipped — the refactor made it lightweight
+        // (no webviews, mocked provider, seeded config). (MOB-4384, Phase B)
+        "AnalyticsSpyTests",
 
         // ClientTests
         "ContentBlockerTests/testCompileListsNotInStore_callsCompletionHandlerSuccessfully()",
