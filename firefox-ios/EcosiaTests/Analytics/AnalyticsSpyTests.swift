@@ -215,19 +215,15 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     func testTrackLaunchAndInstallOnDidFinishLaunching() async {
         // Arrange
         XCTAssertNil(analyticsSpy.activityActionCalled)
-        let application = await UIApplication.shared
 
-        // Act
-        _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
-
-        // Ecosia: poll with Task.sleep (not waitForCondition) — waitForCondition's synchronous wait
-        // blocks the main actor, which deadlocks the @MainActor activity(.launch) Task so it never
-        // runs (the previous "Condition timed out" failure). Same pattern as
-        // testAddUserSeedCountContextToResumeEventOnDidBecomeActive. (MOB-4384)
-        let deadline = Date().addingTimeInterval(3)
-        while analyticsSpy.activityActionCalled != .launch {
-            if Date() > deadline { break }
-            try? await Task.sleep(nanoseconds: 100_000_000)
+        // Act — call the extracted launch-analytics units directly. We deliberately do NOT drive the
+        // full application(_:didFinishLaunchingWithOptions:): in the shared app-hosted test process it
+        // re-registers BGTaskScheduler identifiers (assertion crash) and does other heavy launch work.
+        // activity(.launch) + install() fire synchronously here. (MOB-4384)
+        await MainActor.run {
+            let appDelegate = AppDelegate()
+            appDelegate.ecosiaTrackLaunchActivity()
+            appDelegate.ecosiaTrackInstall()
         }
 
         // Assert
@@ -238,13 +234,14 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     func testTrackResumeOnDidBecomeActive() async {
         // Arrange
         XCTAssertNil(analyticsSpy.activityActionCalled)
-        let application = await UIApplication.shared
 
-        // Act
-        _ = await appDelegate.applicationDidBecomeActive(application)
+        // Act — extracted foreground lifecycle unit (NOT the full applicationDidBecomeActive, which
+        // loads background tabs / starts a web server / writes shared-queue files). (MOB-4384)
+        await MainActor.run { AppDelegate().ecosiaTrackBecomeActiveLifecycle() }
 
-        // Ecosia: poll with Task.sleep (not waitForCondition) — waitForCondition's synchronous wait
-        // blocks the main actor, which deadlocks the @MainActor activity(.resume) Task. (MOB-4384)
+        // resume fires inside an async Task (after the seeded, no-network fetchConfiguration); poll with
+        // Task.sleep — waitForCondition's synchronous wait would block the main actor and deadlock that
+        // @MainActor Task. (MOB-4384)
         let deadline = Date().addingTimeInterval(2)
         while analyticsSpy.activityActionCalled != .resume {
             if Date() > deadline { break }
@@ -780,13 +777,12 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         // Arrange
         User.shared.sendAnonymousUsageData = true
         XCTAssertNil(analyticsSpy.activityActionCalled)
-        let application = await UIApplication.shared
 
-        // Act
-        _ = await appDelegate.applicationDidBecomeActive(application)
+        // Act — extracted foreground lifecycle unit (NOT the full applicationDidBecomeActive). (MOB-4384)
+        await MainActor.run { AppDelegate().ecosiaTrackBecomeActiveLifecycle() }
 
-        // Ecosia: waitForCondition blocks the main actor which deadlocks in @MainActor tests.
-        // Use Task.sleep-based polling instead so the main actor stays free during waits.
+        // resume fires inside an async Task (after the seeded, no-network fetchConfiguration).
+        // Use Task.sleep-based polling so the main actor stays free during waits.
         let deadline = Date().addingTimeInterval(2)
         while !(analyticsSpy.trackedEvents.isEmpty == false && analyticsSpy.activityActionCalled == .resume) {
             if Date() > deadline { XCTFail("Condition timed out"); break }
