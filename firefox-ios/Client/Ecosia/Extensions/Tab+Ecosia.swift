@@ -25,9 +25,7 @@ extension Tab {
         if updated.url?.isEcosiaSearchQuery() == true {
             updated.addLanguageRegionHeader()
         }
-        if let url = updated.url, url.shouldEcosify(), !url.hasEcosiaUserId {
-            updated.url = url.ecosified(isIncognitoEnabled: isPrivate)
-        }
+        updated.url = updated.url.map { $0.ecosified(isIncognitoEnabled: isPrivate) }
         return updated
     }
 }
