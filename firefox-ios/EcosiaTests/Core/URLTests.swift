@@ -266,8 +266,8 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         let search = URL(string: "https://www.www.ecosia.org/search?q=foo")!.ecosified(isIncognitoEnabled: false, urlProvider: self.urlProvider)
         XCTAssertEqual(search, URL(string: "https://www.www.ecosia.org/search?q=foo&_sp=\(id.uuidString)"))
 
-        let alreadyPatched = URL(string: "https://www.www.ecosia.org/search?q=foo&_sp=12345")!.ecosified(isIncognitoEnabled: false)
-        XCTAssertEqual(alreadyPatched, URL(string: "https://www.www.ecosia.org/search?q=foo&_sp=12345"))
+        let alreadyPatched = URL(string: "https://ecosia.org/search?q=foo&_sp=old-value")!.ecosified(isIncognitoEnabled: false, urlProvider: self.urlProvider)
+        XCTAssertEqual(alreadyPatched, URL(string: "https://ecosia.org/search?q=foo&_sp=\(id.uuidString)"))
 
         let multiPatch = URL(string: "https://ecosia.org")!.ecosified(isIncognitoEnabled: false, urlProvider: self.urlProvider)
         XCTAssertEqual(multiPatch, URL(string: "https://ecosia.org?_sp=\(id.uuidString)"))
