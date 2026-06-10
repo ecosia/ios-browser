@@ -77,10 +77,23 @@ xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the sch
 >  • `testTrackMenuAction` rewritten to the v147 `MainMenuConfigurationUtility`; `testTrackMenuStatus` XCTSkip
 >  • `clearsDataFromSection` prod hooks restored (a real v147 regression — KEPT regardless of the test skip)
 >
-> **Real un-skip path (Phase B, larger effort):** systemic isolation — per-test reset of all shared global
-> state/queues (Unleash.model, User.shared + User.queue, PageStore.queue + its files, Analytics.shared,
-> AppContainer), and/or a unit-test gate on `applicationDidBecomeActive`'s heavy background work, and/or
-> running EcosiaTests without the app host. Then un-skip and verify stability over many runs.
+> **Phase B attempt (2026-06-10) — drains fixed the queues, but a 3rd landmine confirms it's architectural.**
+> Added `drainSharedAsyncQueues()` (drains `User.queue` + `PageStore.queue` via sync barriers) to MMP +
+> AnalyticsSpy tearDown. The targeted contamination set (MMP+AnalyticsSpy+Favourites+Referrals+TabEcosia+
+> AppFxA) then ran 51 tests / 0 failures locally — the queue contamination IS fixed. BUT the **full
+> EcosiaTests target crashed** with `*** Assertion failure in BGTaskScheduler registerForTaskWithIdentifier`:
+> `testTrackLaunchAndInstallOnDidFinishLaunching` calls `didFinishLaunchingWithOptions`, which re-registers
+> the BGTask identifiers (BackgroundSync/FirefoxSuggest/NotificationSurface) — a 2nd registration (alongside
+> the already-un-skipped `AppDelegateFeatureManagementIntegrationTests` didFinishLaunching test) trips an iOS
+> assertion and crashes the run. That's the **3rd independent vector** (Unleash → queues → BGTaskScheduler),
+> i.e. systematic-debugging Phase 4.5: **architectural, stop per-test patching.**
+>
+> **Real un-skip path = a PRODUCTION change** (needs human approval): gate the AppDelegate's launch/becomeActive
+> heavy background work behind `AppConstants.isRunningUnitTest` (or make it idempotent) — BGTask registration,
+> PageStore tabs/history, web server, the 5s history cleanup — so app-hosted tests can drive the lifecycle for
+> the relevant MMP/analytics logic without the unsafe/contaminating work; OR make EcosiaTests app-host-free.
+> Decision: both classes stay whole-skipped (deterministic gate). ALL test-side fixes are KEPT in the files
+> (seed, `drainSharedAsyncQueues()`, Task.sleep polling, menu rewrite, clear-data prod restore).
 
 Failures are **identical isolated vs grouped** (real bugs, not cross-class pollution).
 
