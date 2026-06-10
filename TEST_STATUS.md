@@ -55,20 +55,21 @@ xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the sch
 |---|---|---|
 | `EcosiaStartAtHomeMiddlewareTests` | 5/5 pass | **un-skipped** ✅ |
 | `AppDelegateFeatureManagementIntegrationTests` | 2/2 pass (3rd = the main-133 method skip) | **un-skipped class, keep 1-method skip** ✅ |
-| `AppDelegateMMPIntegrationTests` | 4/4 in isolation | ⚠️ **RE-SKIPPED** — destabilizes full suite (see below) |
-| `AnalyticsSpyTests` | 23 pass in isolation | ⚠️ **RE-SKIPPED** — destabilizes full suite (clear-data prod fix KEPT) |
+| `AppDelegateMMPIntegrationTests` | 4/4 | ✅ **UN-SKIPPED** (isolation fixed — 2026-06-10) |
+| `AnalyticsSpyTests` | all pass (1 documented XCTSkip) | ✅ **UN-SKIPPED** (isolation + menu rewrite — 2026-06-10) |
 | `TopSiteNativeContextMenuTests` | 5/5 fail (leak only) | still skipped — see below |
 
-> **⚠️ STABILITY FINDING (2026-06-09):** Un-skipping MMP + AnalyticsSpy turned a 3×-green **2347/0**
-> baseline into flaky CI: run 27217555760 → 2396 run / 1 failed (`ReferralsModelTests.testInitWithCode`
-> "multiple fulfill"); run 27217757182 → 2365 run / 1 failed (`AppFxACommandsTests`) **with a crash
-> truncating ~31 tests**. Different victims each run = async cross-test contamination. Cause: MMP's 4 tests
-> + AnalyticsSpy's 3 lifecycle tests call the real `applicationDidBecomeActive`/`didFinishLaunching`, which
-> spawn fire-and-forget `Task { await FeatureManagement.fetchConfiguration() }` (real Unleash network) +
-> `User.queue` saves that complete during LATER tests. **Decision: re-skipped both to restore the
-> trustworthy 2347/0 baseline.** The test fixes (MMP Set-assertion, AnalyticsSpy clear-data) and the
-> clear-data PROD-gap restore are KEPT in code. Safe un-skip path = mock Unleash/FeatureManagement+MMP
-> network so lifecycle tests don't leak, then verify stability over multiple runs.
+> **✅ STABILITY FIXED (2026-06-10).** The 2026-06-09 flakiness (MMP + AnalyticsSpy un-skip → contaminated
+> `ReferralsModelTests` / `AppFxACommandsTests` + a crash) was root-caused to the lifecycle tests' real
+> Unleash network Task. Fix: a shared helper `seedFreshUnleashModelToAvoidNetworkFetch()`
+> (`EcosiaTests/Helpers/UnleashTestSeed.swift`) seeds a fresh Unleash model (matching appVersion + region +
+> `updated = now`) so all 3 refresh rules evaluate false → `FeatureManagement.fetchConfiguration` makes NO
+> network call → no background leak. Called in MMP + AnalyticsSpy setUp. Validated locally: MMP 4/4,
+> AnalyticsSpy 0 failures, and **`ReferralsModelTests` uncontaminated** when run after both. Also fixed
+> `testTrackResume`/`testTrackLaunchAndInstall` (were timing out): they used `waitForCondition`, whose
+> synchronous wait blocks the main actor and deadlocks the `@MainActor` `activity()` Task — switched to
+> `Task.sleep` polling (the pattern `testAddUserSeedCount` already used). Both un-skipped; verifying over
+> multiple CI runs.
 
 Failures are **identical isolated vs grouped** (real bugs, not cross-class pollution).
 
