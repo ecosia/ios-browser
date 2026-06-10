@@ -36,18 +36,12 @@ public enum EcosiaSchemes {
         // AppDelegateFeatureManagementIntegrationTests now passes except for the one method
         // main-133 also skipped (asserts an unstable post-didBecomeActive model identity).
         "AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions()",
-        // AppDelegateMMPIntegrationTests: SKIPPED. Driving the real AppDelegate lifecycle in the shared
-        // app-hosted process hits MULTIPLE independent landmines — established empirically (Phase B):
-        //   1. Unleash network Task — FIXED by seedFreshUnleashModelToAvoidNetworkFetch().
-        //   2. User.queue / PageStore.queue async-write contamination — FIXED by drainSharedAsyncQueues().
-        //   3. didFinishLaunchingWithOptions re-registers BGTaskScheduler identifiers (BackgroundSync/
-        //      FirefoxSuggest/NotificationSurface) → a 2nd call (with the un-skipped FeatureManagement
-        //      didFinishLaunching test) asserts & crashes the run.
-        // Per systematic-debugging, 3 distinct vectors = architectural: the real fix is a unit-test gate on
-        // the AppDelegate's launch/becomeActive background work (BGTask register, PageStore, web server,
-        // history cleanup) — a PRODUCTION change, not test-only patches. All test-side fixes (seed, queue
-        // drains in tearDown, firstSearch Set-assertion) are KEPT in the file for that work. (MOB-4384, Phase B)
-        "AppDelegateMMPIntegrationTests",
+        // AppDelegateMMPIntegrationTests: now UN-SKIPPED (Phase B refactor). The Ecosia foreground
+        // analytics/MMP work was extracted from applicationDidBecomeActive into the testable unit
+        // AppDelegate.ecosiaTrackBecomeActiveLifecycle(); these tests call THAT directly instead of the
+        // full lifecycle, so they no longer trigger the landmines that flaked CI (BGTask re-registration,
+        // PageStore/loadBackgroundTabs, web server). setUp still seeds a fresh Unleash model (no network)
+        // and tearDown drains User.queue + PageStore.queue. (MOB-4384)
 
         // EcosiaTests — TopSiteNativeContextMenuTests
         //
@@ -61,15 +55,14 @@ public enum EcosiaSchemes {
         // debugging to find the cycle; whole class skipped pending that (NOT a blind skip — MOB-4384, Phase B).
         "TopSiteNativeContextMenuTests",
 
-        // EcosiaTests — AnalyticsSpyTests: SKIPPED for the same architectural reason as MMP (see above).
-        // The Unleash seed + queue drains FIX the network/queue contamination (a local full-EcosiaTests run
-        // is logically clean), but testTrackLaunchAndInstall calls didFinishLaunchingWithOptions →
-        // BGTaskScheduler re-registration crash alongside the un-skipped FeatureManagement test. Un-skipping
-        // safely needs the same production-side unit-test gate on the AppDelegate lifecycle background work.
-        // ALL fixes are KEPT in the file (seed in setUp, queue drains in tearDown, testTrackMenuAction
-        // rewritten to v147 MainMenuConfigurationUtility, Task.sleep polling, testTrackMenuStatus XCTSkip,
-        // and the clearsDataFromSection prod-hook restore stays in production). (MOB-4384, Phase B)
-        "AnalyticsSpyTests",
+        // EcosiaTests — AnalyticsSpyTests: now UN-SKIPPED (Phase B refactor). The lifecycle tests
+        // (testTrackResume / testTrackLaunchAndInstall / testAddUserSeedContext…) now call the extracted
+        // testable units (AppDelegate.ecosiaTrackBecomeActiveLifecycle / ecosiaTrackLaunchActivity /
+        // ecosiaTrackInstall) instead of the full didFinishLaunching/becomeActive — removing the
+        // BGTaskScheduler crash + PageStore/web-server landmines. setUp seeds Unleash (no network),
+        // tearDown drains the shared queues, testTrackMenuAction runs against the v147
+        // MainMenuConfigurationUtility, clear-data via the restored clearsDataFromSection prod hooks,
+        // testTrackMenuStatus is an in-body XCTSkip (menuStatus removed in v147). (MOB-4384)
 
         // ClientTests
         "ContentBlockerTests/testCompileListsNotInStore_callsCompletionHandlerSuccessfully()",

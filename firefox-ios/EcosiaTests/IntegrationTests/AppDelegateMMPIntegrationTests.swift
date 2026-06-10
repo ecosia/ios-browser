@@ -40,20 +40,20 @@ final class AppDelegateMMPIntegrationTests: XCTestCase, @unchecked Sendable {
     }
 
     func testSessionIsSentOnBecomeActive() {
-        MainActor.assumeIsolated { appDelegate.applicationDidBecomeActive(UIApplication.shared) }
+        MainActor.assumeIsolated { appDelegate.ecosiaTrackBecomeActiveLifecycle() }
         wait(1)
         XCTAssertTrue(mockProvider.didSendSession)
     }
 
     func testSessionIsNotSentWhenAnonymousDataDisabled() {
         User.shared.sendAnonymousUsageData = false
-        MainActor.assumeIsolated { appDelegate.applicationDidBecomeActive(UIApplication.shared) }
+        MainActor.assumeIsolated { appDelegate.ecosiaTrackBecomeActiveLifecycle() }
         wait(1)
         XCTAssertFalse(mockProvider.didSendSession)
     }
 
     func testFirstSearchMilestoneTriggersEvent() {
-        MainActor.assumeIsolated { appDelegate.applicationDidBecomeActive(UIApplication.shared) }
+        MainActor.assumeIsolated { appDelegate.ecosiaTrackBecomeActiveLifecycle() }
         User.shared.searchCount = 1
         wait(1)
         // Ecosia: applicationDidBecomeActive's async work re-posts `.searchesCounterChanged` for the
@@ -66,7 +66,7 @@ final class AppDelegateMMPIntegrationTests: XCTestCase, @unchecked Sendable {
     }
 
     func testNonMilestoneSearchCountDoesNotTriggerEvent() {
-        MainActor.assumeIsolated { appDelegate.applicationDidBecomeActive(UIApplication.shared) }
+        MainActor.assumeIsolated { appDelegate.ecosiaTrackBecomeActiveLifecycle() }
         User.shared.searchCount = 3
         wait(1)
         XCTAssertTrue(mockProvider.receivedEvents.isEmpty)
