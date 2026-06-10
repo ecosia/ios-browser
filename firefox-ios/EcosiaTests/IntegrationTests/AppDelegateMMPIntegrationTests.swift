@@ -33,6 +33,9 @@ final class AppDelegateMMPIntegrationTests: XCTestCase, @unchecked Sendable {
     override func tearDown() {
         User.shared = savedUser
         MMP.provider = Singular(includeSKAN: true)
+        // Ecosia: drain the shared async queues this class's becomeActive tests enqueue work onto, so
+        // it completes before the next test runs (no cross-test contamination). (MOB-4384)
+        drainSharedAsyncQueues()
         super.tearDown()
     }
 
