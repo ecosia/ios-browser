@@ -55,25 +55,32 @@ xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the sch
 |---|---|---|
 | `EcosiaStartAtHomeMiddlewareTests` | 5/5 pass | **un-skipped** ✅ |
 | `AppDelegateFeatureManagementIntegrationTests` | 2/2 pass (3rd = the main-133 method skip) | **un-skipped class, keep 1-method skip** ✅ |
-| `AppDelegateMMPIntegrationTests` | 4/4 in isolation | ⚠️ still SKIPPED — ALL tests drive becomeActive (see note) |
-| `AnalyticsSpyTests` | ~22 run; 3 lifecycle + menuStatus skipped | ✅ **UN-SKIPPED** class (menu rewrite + clear-data run) |
+| `AppDelegateMMPIntegrationTests` | 4/4 in isolation | ⚠️ SKIPPED — all tests drive becomeActive (fixes kept in code) |
+| `AnalyticsSpyTests` | passes in isolation | ⚠️ SKIPPED — systemic shared-process contamination (fixes kept) |
 | `TopSiteNativeContextMenuTests` | 5/5 fail (leak only) | still skipped — see below |
 
-> **PARTIAL un-skip (2026-06-10) — the lifecycle leak is multi-queue/architectural.** The Unleash seed
-> (`EcosiaTests/Helpers/UnleashTestSeed.swift`, `seedFreshUnleashModelToAvoidNetworkFetch()` — seeds a fresh
-> model so all 3 refresh rules are false → no network) fixed the BIGGEST leak vector, and CI run #1 was green
-> (2363/0). But **re-run #2 flaked on `FavouritesTests`** (PageStore.queue): driving the real
-> `applicationDidBecomeActive` spawns background work across MULTIPLE shared queues — `PageStore.queue`
-> (loadBackgroundTabs / history), `User.queue` saves, AND a 5s-delayed `cleanupHistoryIfNeeded` — that
-> intermittently contaminates later tests in the shared app-hosted process. The Unleash seed only
-> neutralised one vector. **Decision:** un-skip AnalyticsSpy at the CLASS level (so its ~22 NON-lifecycle
-> tests run — incl. the rewritten `testTrackMenuAction` and the clear-data prod-hook tests) but method-skip
-> its 3 lifecycle tests (`testTrackResume`, `testTrackLaunchAndInstall`,
-> `testAddUserSeedCountContextToResumeEventOnDidBecomeActive`); keep MMP whole-skipped (all 4 are lifecycle).
-> All fixes (Unleash seed, Task.sleep polling, menu rewrite, clear-data prod restore) are KEPT in code.
-> **Proper un-skip of the lifecycle tests needs a unit-test gate on becomeActive's heavy background work**
-> (PageStore/history/loadBackgroundTabs/poll) or a refactor making that logic unit-testable in isolation.
-> Verifying the partial un-skip over multiple CI runs.
+> **CONCLUSION (2026-06-10): MMP + AnalyticsSpy can't be safely un-skipped without systemic test isolation.**
+> Empirically established across MANY CI runs that un-skipping (full OR surgical) intermittently contaminates a
+> DIFFERENT later test each run — observed victims: `ReferralsModelTests` ("multiple fulfill"),
+> `AppFxACommandsTests`, `FavouritesTests` (PageStore.queue), `TabEcosiaExtensionTests` (webview timeout), plus a
+> run-truncating crash. The leak is **multi-vector**: (1) the Unleash network Task — FIXED by
+> `EcosiaTests/Helpers/UnleashTestSeed.swift` (`seedFreshUnleashModelToAvoidNetworkFetch()` seeds a fresh model
+> so all 3 refresh rules are false → no network); (2) `becomeActive`'s `PageStore.queue` (loadBackgroundTabs /
+> history) + `User.queue` saves + a 5s-delayed `cleanupHistoryIfNeeded`; (3) even the NON-lifecycle tests'
+> BrowserViewController creation + User mutations bog the shared run loop. Per-test patches do not converge.
+> **Decision: keep both whole-skipped to preserve the deterministic merge gate.** ALL fixes are KEPT in code,
+> ready for a proper un-skip:
+>  • `seedFreshUnleashModelToAvoidNetworkFetch()` (network isolation)
+>  • `testTrackResume`/`testTrackLaunchAndInstall` switched from `waitForCondition` (deadlocks the main actor)
+>    to `Task.sleep` polling
+>  • MMP `firstSearch` Set-assertion fix
+>  • `testTrackMenuAction` rewritten to the v147 `MainMenuConfigurationUtility`; `testTrackMenuStatus` XCTSkip
+>  • `clearsDataFromSection` prod hooks restored (a real v147 regression — KEPT regardless of the test skip)
+>
+> **Real un-skip path (Phase B, larger effort):** systemic isolation — per-test reset of all shared global
+> state/queues (Unleash.model, User.shared + User.queue, PageStore.queue + its files, Analytics.shared,
+> AppContainer), and/or a unit-test gate on `applicationDidBecomeActive`'s heavy background work, and/or
+> running EcosiaTests without the app host. Then un-skip and verify stability over many runs.
 
 Failures are **identical isolated vs grouped** (real bugs, not cross-class pollution).
 
