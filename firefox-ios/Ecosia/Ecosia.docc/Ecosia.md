@@ -342,6 +342,25 @@ Make sure that `fastlane` and `transifex`-cli is installed.
     bundle exec fastlane deliver --app-version 8.2.0
     ```
 
+### 🌍 L10N Translation Completeness Check
+
+As part of the release pipeline, a quality gate verifies that all localization keys defined in the English source file (`en.lproj/Ecosia.strings`) have corresponding translations for every supported language (German, French, Dutch, Spanish, and Italian). This prevents shipping a release candidate with missing translations that would result in users seeing untranslated English strings.
+
+The check runs automatically in CI before the TestFlight build. If any keys are missing, the pipeline fails with a descriptive error listing the missing keys grouped by language.
+
+**Running the check locally:**
+
+```bash
+# From the repository root
+bash firefox-ios/Ecosia/L10N/check_translations.sh
+```
+
+To run in dry-run mode (report missing translations without failing):
+
+```bash
+DRY_RUN=true bash firefox-ios/Ecosia/L10N/check_translations.sh
+```
+
 ## 🧪 Unit tests
 
 * Run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (Xcode)
