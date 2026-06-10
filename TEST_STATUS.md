@@ -55,21 +55,25 @@ xctestrun copy + `-only-testing`; note `-only-testing` does NOT override the sch
 |---|---|---|
 | `EcosiaStartAtHomeMiddlewareTests` | 5/5 pass | **un-skipped** ✅ |
 | `AppDelegateFeatureManagementIntegrationTests` | 2/2 pass (3rd = the main-133 method skip) | **un-skipped class, keep 1-method skip** ✅ |
-| `AppDelegateMMPIntegrationTests` | 4/4 | ✅ **UN-SKIPPED** (isolation fixed — 2026-06-10) |
-| `AnalyticsSpyTests` | all pass (1 documented XCTSkip) | ✅ **UN-SKIPPED** (isolation + menu rewrite — 2026-06-10) |
+| `AppDelegateMMPIntegrationTests` | 4/4 in isolation | ⚠️ still SKIPPED — ALL tests drive becomeActive (see note) |
+| `AnalyticsSpyTests` | ~22 run; 3 lifecycle + menuStatus skipped | ✅ **UN-SKIPPED** class (menu rewrite + clear-data run) |
 | `TopSiteNativeContextMenuTests` | 5/5 fail (leak only) | still skipped — see below |
 
-> **✅ STABILITY FIXED (2026-06-10).** The 2026-06-09 flakiness (MMP + AnalyticsSpy un-skip → contaminated
-> `ReferralsModelTests` / `AppFxACommandsTests` + a crash) was root-caused to the lifecycle tests' real
-> Unleash network Task. Fix: a shared helper `seedFreshUnleashModelToAvoidNetworkFetch()`
-> (`EcosiaTests/Helpers/UnleashTestSeed.swift`) seeds a fresh Unleash model (matching appVersion + region +
-> `updated = now`) so all 3 refresh rules evaluate false → `FeatureManagement.fetchConfiguration` makes NO
-> network call → no background leak. Called in MMP + AnalyticsSpy setUp. Validated locally: MMP 4/4,
-> AnalyticsSpy 0 failures, and **`ReferralsModelTests` uncontaminated** when run after both. Also fixed
-> `testTrackResume`/`testTrackLaunchAndInstall` (were timing out): they used `waitForCondition`, whose
-> synchronous wait blocks the main actor and deadlocks the `@MainActor` `activity()` Task — switched to
-> `Task.sleep` polling (the pattern `testAddUserSeedCount` already used). Both un-skipped; verifying over
-> multiple CI runs.
+> **PARTIAL un-skip (2026-06-10) — the lifecycle leak is multi-queue/architectural.** The Unleash seed
+> (`EcosiaTests/Helpers/UnleashTestSeed.swift`, `seedFreshUnleashModelToAvoidNetworkFetch()` — seeds a fresh
+> model so all 3 refresh rules are false → no network) fixed the BIGGEST leak vector, and CI run #1 was green
+> (2363/0). But **re-run #2 flaked on `FavouritesTests`** (PageStore.queue): driving the real
+> `applicationDidBecomeActive` spawns background work across MULTIPLE shared queues — `PageStore.queue`
+> (loadBackgroundTabs / history), `User.queue` saves, AND a 5s-delayed `cleanupHistoryIfNeeded` — that
+> intermittently contaminates later tests in the shared app-hosted process. The Unleash seed only
+> neutralised one vector. **Decision:** un-skip AnalyticsSpy at the CLASS level (so its ~22 NON-lifecycle
+> tests run — incl. the rewritten `testTrackMenuAction` and the clear-data prod-hook tests) but method-skip
+> its 3 lifecycle tests (`testTrackResume`, `testTrackLaunchAndInstall`,
+> `testAddUserSeedCountContextToResumeEventOnDidBecomeActive`); keep MMP whole-skipped (all 4 are lifecycle).
+> All fixes (Unleash seed, Task.sleep polling, menu rewrite, clear-data prod restore) are KEPT in code.
+> **Proper un-skip of the lifecycle tests needs a unit-test gate on becomeActive's heavy background work**
+> (PageStore/history/loadBackgroundTabs/poll) or a refactor making that logic unit-testable in isolation.
+> Verifying the partial un-skip over multiple CI runs.
 
 Failures are **identical isolated vs grouped** (real bugs, not cross-class pollution).
 
