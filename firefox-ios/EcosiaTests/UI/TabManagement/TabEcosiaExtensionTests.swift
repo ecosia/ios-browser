@@ -126,7 +126,8 @@ final class TabEcosiaExtensionTests: XCTestCase {
         let url = ecosiaURL("/search?q=cats&tt=iosapp")
         tab.loadRequest(URLRequest(url: url))
 
-        waitForExpectations(timeout: 2)
+        // Ecosia: WKWebView decidePolicyFor can exceed 2s under CI load; use a tolerant timeout. (MOB-4384)
+        waitForExpectations(timeout: 10)
         XCTAssertTrue(spy.capturedURL?.hasEcosiaUserId == true,
                       "loadRequest must pass the ecosified URL (with _sp) to WKWebView")
     }
@@ -142,7 +143,8 @@ final class TabEcosiaExtensionTests: XCTestCase {
         let url = ecosiaURL("/search?q=cats&tt=iosapp")
         tab.loadRequest(URLRequest(url: url))
 
-        waitForExpectations(timeout: 2)
+        // Ecosia: WKWebView decidePolicyFor can exceed 2s under CI load; use a tolerant timeout. (MOB-4384)
+        waitForExpectations(timeout: 10)
         XCTAssertEqual(spy.capturedURL?.queryItem(named: "_sp"),
                        UUID(uuid: UUID_NULL).uuidString)
     }
