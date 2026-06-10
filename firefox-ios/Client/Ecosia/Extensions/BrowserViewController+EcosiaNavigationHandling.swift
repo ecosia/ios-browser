@@ -19,6 +19,7 @@ extension BrowserViewController {
         tab: Tab,
         navigationAction: WKNavigationAction
     ) -> Bool {
+        guard navigationAction.targetFrame?.isMainFrame == true else { return false }
         if ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
             navigationURL: url,
             currentPageURL: webView.url ?? tab.url,

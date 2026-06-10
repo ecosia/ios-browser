@@ -143,12 +143,7 @@ extension URL {
     }
 
     public func ecosified(isIncognitoEnabled: Bool, urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> URL {
-        guard isEcosia(urlProvider),
-              var components = components
-        else { return self }
-
-        // Remove existing userId if present
-        components.queryItems?.removeAll(where: { $0.name == EcosiaQueryItemName.userId.rawValue })
+        guard isEcosia(urlProvider) else { return self }
 
         /*
          The `sendAnonymousUsageData` is set by the native UX component in settings
@@ -163,12 +158,19 @@ extension URL {
                                     !User.shared.sendAnonymousUsageData
         let userId = shouldAnonymizeUserId ? UUID(uuid: UUID_NULL).uuidString : User.shared.analyticsId.uuidString
 
+        // Already carries the correct value — no mutation needed regardless of parameter position.
+        if ecosiaUserId == userId { return self }
+
+        guard var components = components else { return self }
+        components.queryItems?.removeAll(where: { $0.name == EcosiaQueryItemName.userId.rawValue })
         guard let urlWithoutUserId = components.url else { return self }
         return urlWithoutUserId.appendingQueryItems([Self.item(name: .userId, value: userId)])
     }
 
-    public var hasEcosiaUserId: Bool {
-        components?.queryItems?.contains { $0.name == EcosiaQueryItemName.userId.rawValue } ?? false
+    public var hasEcosiaUserId: Bool { ecosiaUserId != nil }
+
+    public var ecosiaUserId: String? {
+        components?.queryItems?.first { $0.name == EcosiaQueryItemName.userId.rawValue }?.value
     }
 
     public var policy: Scheme.Policy {
