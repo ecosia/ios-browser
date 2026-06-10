@@ -36,17 +36,10 @@ public enum EcosiaSchemes {
         // AppDelegateFeatureManagementIntegrationTests now passes except for the one method
         // main-133 also skipped (asserts an unstable post-didBecomeActive model identity).
         "AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions()",
-        // AppDelegateMMPIntegrationTests: RE-SKIPPED. The class passes 4/4 in isolation (the firstSearch
-        // double-fire was fixed via a Set assertion, kept in the test), BUT all four tests drive the real
-        // `applicationDidBecomeActive`, which spawns an uncontrolled background
-        // `Task { await FeatureManagement.fetchConfiguration() }` (real Unleash network) plus async
-        // User.queue saves (searchCount mutation). In the shared app-hosted EcosiaTests process these
-        // complete during LATER tests and flake unrelated suites (observed across CI runs:
-        // ReferralsModelTests "multiple fulfill", AppFxACommandsTests, and a crash truncating the run —
-        // the stable baseline before these un-skips was 2347 passed / 0 failed across 3 runs). Needs an
-        // Unleash/FeatureManagement + MMP network mock so the lifecycle tests don't leak background work
-        // before it can be safely un-skipped. (MOB-4384, Phase B)
-        "AppDelegateMMPIntegrationTests",
+        // AppDelegateMMPIntegrationTests: now UN-SKIPPED (4/4). Its tests drive the real
+        // applicationDidBecomeActive; setUp now seeds a fresh Unleash model
+        // (seedFreshUnleashModelToAvoidNetworkFetch) so FeatureManagement.fetchConfiguration makes no
+        // network call and spawns no background Task that could leak into later tests. (MOB-4384)
 
         // EcosiaTests — TopSiteNativeContextMenuTests
         //
@@ -60,18 +53,16 @@ public enum EcosiaSchemes {
         // debugging to find the cycle; whole class skipped pending that (NOT a blind skip — MOB-4384, Phase B).
         "TopSiteNativeContextMenuTests",
 
-        // EcosiaTests — AnalyticsSpyTests: RE-SKIPPED for the same reason as MMP. The class runs ~23
-        // passing in isolation, and two clear-data tests were fixed by restoring the lost-in-v147
-        // `Analytics.shared.clearsDataFromSection` prod hooks (the prod fix is KEPT in
-        // ClearPrivateDataTableViewController / WebsiteDataManagementViewController). BUT several tests
-        // drive the real AppDelegate lifecycle (testTrackResumeOnDidBecomeActive,
-        // testTrackLaunchAndInstallOnDidFinishLaunching, testAddUserSeedCountContextToResumeEventOnDidBecomeActive),
-        // spawning the same uncontrolled FeatureManagement Unleash-network Task that contaminates later
-        // tests in the shared app-hosted process. Re-skipped to keep CI deterministic. To safely un-skip:
-        // isolate those lifecycle tests with a network mock, AND rewrite testTrackMenuAction/testTrackMenuStatus
-        // against the v147 MainMenuConfigurationUtility (menu analytics moved there from the legacy
-        // MainMenuActionHelper the tests still build). (MOB-4384, Phase B)
-        "AnalyticsSpyTests",
+        // EcosiaTests — AnalyticsSpyTests: now UN-SKIPPED. Fixes that made it safe in the full suite:
+        //  • setUp seeds a fresh Unleash model (seedFreshUnleashModelToAvoidNetworkFetch) so the
+        //    lifecycle-driving tests don't spawn a real Unleash network Task that leaked into later tests.
+        //  • testTrackResume/testTrackLaunchAndInstall now poll with Task.sleep instead of
+        //    waitForCondition (whose synchronous wait blocked the main actor and deadlocked the
+        //    @MainActor activity() Task).
+        //  • clear-data tests pass via the restored Analytics.shared.clearsDataFromSection prod hooks.
+        //  • testTrackMenuAction was rewritten against the v147 MainMenuConfigurationUtility.
+        //  • testTrackMenuStatus is the only remaining in-body XCTSkip (menuStatus has no callsites after
+        //    the v147 menu redesign — needs a product decision to re-add). (MOB-4384)
 
         // ClientTests
         "ContentBlockerTests/testCompileListsNotInStore_callsCompletionHandlerSuccessfully()",
