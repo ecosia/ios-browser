@@ -36,15 +36,17 @@ public enum EcosiaSchemes {
         // AppDelegateFeatureManagementIntegrationTests now passes except for the one method
         // main-133 also skipped (asserts an unstable post-didBecomeActive model identity).
         "AppDelegateFeatureManagementIntegrationTests/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions()",
-        // AppDelegateMMPIntegrationTests: still SKIPPED. ALL four tests drive the real
-        // applicationDidBecomeActive, which spawns background work across multiple shared queues —
-        // not just the Unleash fetch (now neutralised by seedFreshUnleashModelToAvoidNetworkFetch),
-        // but also PageStore.queue (loadBackgroundTabs/history), User.queue saves, and a 5s-delayed
-        // cleanupHistoryIfNeeded. In the shared app-hosted process these intermittently contaminate
-        // later tests (CI run #1 green 2363/0, re-run #2 flaked on FavouritesTests via PageStore.queue).
-        // Un-skipping needs a unit-test gate on becomeActive's heavy background work (or refactoring
-        // the MMP-on-becomeActive logic to be unit-testable in isolation). The firstSearch double-fire
-        // fix + the Unleash seed are kept in the test for that future work. (MOB-4384, Phase B)
+        // AppDelegateMMPIntegrationTests: SKIPPED. Driving the real AppDelegate lifecycle in the shared
+        // app-hosted process hits MULTIPLE independent landmines — established empirically (Phase B):
+        //   1. Unleash network Task — FIXED by seedFreshUnleashModelToAvoidNetworkFetch().
+        //   2. User.queue / PageStore.queue async-write contamination — FIXED by drainSharedAsyncQueues().
+        //   3. didFinishLaunchingWithOptions re-registers BGTaskScheduler identifiers (BackgroundSync/
+        //      FirefoxSuggest/NotificationSurface) → a 2nd call (with the un-skipped FeatureManagement
+        //      didFinishLaunching test) asserts & crashes the run.
+        // Per systematic-debugging, 3 distinct vectors = architectural: the real fix is a unit-test gate on
+        // the AppDelegate's launch/becomeActive background work (BGTask register, PageStore, web server,
+        // history cleanup) — a PRODUCTION change, not test-only patches. All test-side fixes (seed, queue
+        // drains in tearDown, firstSearch Set-assertion) are KEPT in the file for that work. (MOB-4384, Phase B)
         "AppDelegateMMPIntegrationTests",
 
         // EcosiaTests — TopSiteNativeContextMenuTests
@@ -59,18 +61,14 @@ public enum EcosiaSchemes {
         // debugging to find the cycle; whole class skipped pending that (NOT a blind skip — MOB-4384, Phase B).
         "TopSiteNativeContextMenuTests",
 
-        // EcosiaTests — AnalyticsSpyTests: still SKIPPED (whole class). Every fix that makes it pass in
-        // isolation is KEPT in the test file (Unleash seed in setUp, Task.sleep polling for the lifecycle
-        // tests, testTrackMenuAction rewritten to the v147 MainMenuConfigurationUtility, the restored
-        // clearsDataFromSection prod hooks, testTrackMenuStatus in-body XCTSkip). But the class cannot be
-        // safely un-skipped in the shared app-hosted EcosiaTests process: across multiple CI runs it
-        // intermittently contaminates DIFFERENT later tests each run (observed: ReferralsModelTests,
-        // AppFxACommandsTests, FavouritesTests via PageStore.queue, TabEcosiaExtensionTests webview
-        // timeout). The leak is multi-vector — not just the Unleash network (now seeded) but
-        // becomeActive's PageStore/User.queue/delayed work AND the non-lifecycle tests' BrowserViewController
-        // creation + User mutations bogging the shared run loop. Un-skipping needs systemic test isolation
-        // (per-test global-state/queue reset, or app-host-free EcosiaTests), not per-test patches.
-        // (MOB-4384, Phase B)
+        // EcosiaTests — AnalyticsSpyTests: SKIPPED for the same architectural reason as MMP (see above).
+        // The Unleash seed + queue drains FIX the network/queue contamination (a local full-EcosiaTests run
+        // is logically clean), but testTrackLaunchAndInstall calls didFinishLaunchingWithOptions →
+        // BGTaskScheduler re-registration crash alongside the un-skipped FeatureManagement test. Un-skipping
+        // safely needs the same production-side unit-test gate on the AppDelegate lifecycle background work.
+        // ALL fixes are KEPT in the file (seed in setUp, queue drains in tearDown, testTrackMenuAction
+        // rewritten to v147 MainMenuConfigurationUtility, Task.sleep polling, testTrackMenuStatus XCTSkip,
+        // and the clearsDataFromSection prod-hook restore stays in production). (MOB-4384, Phase B)
         "AnalyticsSpyTests",
 
         // ClientTests

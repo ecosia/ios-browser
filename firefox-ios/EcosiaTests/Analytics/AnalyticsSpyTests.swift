@@ -202,6 +202,10 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         super.tearDown()
         analyticsSpy = nil
         Analytics.shared = Analytics()
+        // Ecosia: drain the shared async queues (User.queue + PageStore.queue) that the lifecycle and
+        // BrowserViewController tests enqueue work onto, so it completes before the next test runs and
+        // can't contaminate it (queue-backup timeouts / stale-file reads). (MOB-4384)
+        drainSharedAsyncQueues()
     }
 
     // MARK: - AppDelegate Tests
