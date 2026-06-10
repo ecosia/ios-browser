@@ -6,9 +6,9 @@ import UIKit
 import Common
 import Shared
 
-/// Multiline text input for the NTP omnibox with URL-bar autocomplete behaviour
-/// ported from `LocationTextField` (marked-text suffix, hidden caret, backspace
-/// drops only the completion, submit/tap commits the full match).
+/// Multiline NTP omnibox with `LocationTextField`-style inline URL completion
+/// (marked-text suffix). UITextView commits marked text on backspace instead of
+/// removing it, so we reset `text` to the stored user-typed prefix.
 @MainActor
 protocol NTPLocationTextViewDelegate: AnyObject {
     func locationTextView(_ textView: NTPLocationTextView, didEnterText text: String)
@@ -21,7 +21,11 @@ final class NTPLocationTextView: UITextView {
     private var lastReplacement: String?
     private var hideCursor = false
     private var isSettingMarkedText = false
+    private var isExplicitCommit = false
     private var pendingFullSuggestion: String?
+    /// Text the user typed before the inline suffix was shown; used to recover
+    /// when UITextView commits marked text on backspace.
+    private var userTypedText = ""
     private var notifyTextChanged: (() -> Void)?
 
     override init(frame: CGRect, textContainer: NSTextContainer?) {
@@ -50,17 +54,22 @@ final class NTPLocationTextView: UITextView {
 
         notifyTextChanged = debounce(0.1) { [weak self] in
             guard let self, self.isFirstResponder else { return }
-            let query = self.normalizeString(self.textWithoutSuggestion() ?? "")
+            let query = self.normalizeString(self.text ?? "")
             self.autocompleteDelegate?.locationTextView(self, didEnterText: query)
         }
     }
 
-    var hasActiveAutocomplete: Bool {
-        markedTextRange != nil
+    var hasInlineCompletion: Bool {
+        markedTextRange != nil || pendingFullSuggestion != nil
     }
 
     override var accessibilityValue: String? {
-        get { pendingFullSuggestion ?? text }
+        get {
+            if let pending = pendingFullSuggestion, isPendingSuggestionStillValid(for: pending) {
+                return pending
+            }
+            return text
+        }
         set { super.accessibilityValue = newValue }
     }
 
@@ -73,7 +82,7 @@ final class NTPLocationTextView: UITextView {
     func setAutocompleteSuggestion(_ suggestion: String?) {
         guard let suggestion else {
             hideCursor = false
-            _ = removeCompletion()
+            removeInlineCompletion()
             return
         }
 
@@ -87,48 +96,65 @@ final class NTPLocationTextView: UITextView {
         let normalized = normalizeString(searchText)
         guard suggestion.hasPrefix(normalized), normalized.count < suggestion.count else {
             hideCursor = false
-            _ = removeCompletion()
+            removeInlineCompletion()
             return
         }
 
+        userTypedText = searchText
         let suggestionText = String(suggestion.dropFirst(normalized.count))
         isSettingMarkedText = true
-        setMarkedText(suggestionText, selectedRange: NSRange())
+        super.setMarkedText(suggestionText, selectedRange: NSRange())
         pendingFullSuggestion = suggestion
         isSettingMarkedText = false
         hideCursor = true
         forceResetCursor()
     }
 
-    func applyCompletion() {
-        if let pendingFullSuggestion {
-            let committed = pendingFullSuggestion
-            _ = removeCompletion()
-            text = committed
-            hideCursor = false
-            selectedTextRange = textRange(from: endOfDocument, to: endOfDocument)
+    /// Intercepts backspace before the change is applied. Returns `false` when
+    /// the delete was handled by reverting to the user-typed prefix only.
+    @discardableResult
+    func willChange(range: NSRange, replacement: String) -> Bool {
+        if lastReplacement == nil {
+            autocompleteDelegate?.locationTextViewNeedsSearchReset(self)
+        }
+        lastReplacement = replacement
+
+        if replacement.isEmpty, hasInlineCompletion {
+            revertToUserTypedTextOnly()
+            scheduleRevertToUserTypedTextOnly()
+            return false
+        }
+
+        return true
+    }
+
+    func commitPendingSuggestionIfValid() {
+        guard let pending = pendingFullSuggestion,
+              isPendingSuggestionStillValid(for: pending) else {
+            removeInlineCompletion()
             return
         }
 
-        let committed = text ?? ""
-        let didRemoveCompletion = removeCompletion()
-        text = committed
+        isExplicitCommit = true
+        removeInlineCompletion()
+        text = pending
+        userTypedText = pending
         hideCursor = false
-        if didRemoveCompletion {
-            selectedTextRange = textRange(from: endOfDocument, to: endOfDocument)
-        }
+        selectedTextRange = textRange(from: endOfDocument, to: endOfDocument)
+        isExplicitCommit = false
     }
 
     func clearText() {
         text = ""
-        _ = removeCompletion()
+        userTypedText = ""
+        removeInlineCompletion()
         autocompleteDelegate?.locationTextView(self, didEnterText: "")
     }
 
     func setTextWithoutSearching(_ value: String) {
         text = value
-        hideCursor = markedTextRange != nil
-        _ = removeCompletion()
+        userTypedText = value
+        removeInlineCompletion()
     }
 
     // MARK: - UITextInput
@@ -137,22 +163,13 @@ final class NTPLocationTextView: UITextView {
         lastReplacement = ""
         hideCursor = false
 
-        guard markedTextRange == nil else {
-            _ = removeCompletion()
-            forceResetCursor()
+        if hasInlineCompletion {
+            revertToUserTypedTextOnly()
+            scheduleRevertToUserTypedTextOnly()
             return
         }
 
         super.deleteBackward()
-    }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with: UIEvent?) {
-        guard isFirstResponder else {
-            super.touchesBegan(touches, with: with)
-            return
-        }
-        applyCompletion()
-        super.touchesBegan(touches, with: with)
     }
 
     override func caretRect(for position: UITextPosition) -> CGRect {
@@ -160,8 +177,12 @@ final class NTPLocationTextView: UITextView {
     }
 
     override func setMarkedText(_ markedText: String?, selectedRange: NSRange) {
+        guard !isSettingMarkedText else {
+            super.setMarkedText(markedText, selectedRange: selectedRange)
+            return
+        }
         isSettingMarkedText = true
-        _ = removeCompletion()
+        removeInlineCompletion()
         super.setMarkedText(markedText, selectedRange: selectedRange)
         isSettingMarkedText = false
     }
@@ -172,21 +193,21 @@ final class NTPLocationTextView: UITextView {
     func editingChanged() {
         guard !isSettingMarkedText else { return }
 
+        if revertAccidentalAutocompleteCommitIfNeeded() {
+            return
+        }
+
+        discardStalePendingSuggestionIfNeeded()
+
         hideCursor = markedTextRange != nil
 
         let isKeyboardReplacingText = lastReplacement != nil
         if isKeyboardReplacingText, markedTextRange == nil {
+            userTypedText = text ?? ""
             notifyTextChanged?()
-        } else {
+        } else if !isKeyboardReplacingText {
             hideCursor = false
         }
-    }
-
-    func willChange(range: NSRange, replacement: String) {
-        if lastReplacement == nil {
-            autocompleteDelegate?.locationTextViewNeedsSearchReset(self)
-        }
-        lastReplacement = replacement
     }
 
     func didEndEditing() {
@@ -196,19 +217,91 @@ final class NTPLocationTextView: UITextView {
 
     // MARK: - Private
 
-    @discardableResult
-    private func removeCompletion() -> Bool {
-        guard markedTextRange != nil else { return false }
-
+    private func removeInlineCompletion() {
         pendingFullSuggestion = nil
         hideCursor = false
-        unmarkText()
+        if markedTextRange != nil {
+            unmarkText()
+        }
+    }
+
+    /// Drops the highlighted suffix by forcing visible text back to what the
+    /// user typed — UITextView does not reliably honour `unmarkText()` alone.
+    private func revertToUserTypedTextOnly() {
+        isSettingMarkedText = true
+        pendingFullSuggestion = nil
+        hideCursor = false
+        if markedTextRange != nil {
+            unmarkText()
+        }
+        text = userTypedText
+        forceResetCursor()
+        isSettingMarkedText = false
+    }
+
+    /// UITextView may commit marked text after `shouldChangeTextIn` returns false.
+    private func scheduleRevertToUserTypedTextOnly() {
+        let typedSnapshot = userTypedText
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.text != typedSnapshot else { return }
+            self.isSettingMarkedText = true
+            self.pendingFullSuggestion = nil
+            self.hideCursor = false
+            if self.markedTextRange != nil {
+                self.unmarkText()
+            }
+            self.text = typedSnapshot
+            self.forceResetCursor()
+            self.isSettingMarkedText = false
+        }
+    }
+
+    /// Returns true when editing was corrected and callers should skip further handling.
+    @discardableResult
+    private func revertAccidentalAutocompleteCommitIfNeeded() -> Bool {
+        guard !isExplicitCommit else { return false }
+
+        let isBackspace = lastReplacement?.isEmpty == true
+        let shouldRevert = (isBackspace && hasInlineCompletion) || shouldRevertCommittedAutocomplete()
+        guard shouldRevert else { return false }
+
+        revertToUserTypedTextOnly()
+        scheduleRevertToUserTypedTextOnly()
         return true
     }
 
-    private func textWithoutSuggestion() -> String? {
-        // Marked autocomplete is provisional; committed text is the typed prefix.
-        text
+    private func shouldRevertCommittedAutocomplete() -> Bool {
+        guard let pending = pendingFullSuggestion,
+              !userTypedText.isEmpty,
+              let current = text else {
+            return false
+        }
+
+        let normalizedCurrent = normalizeString(current)
+        let normalizedTyped = normalizeString(userTypedText)
+        let normalizedPending = normalizeString(pending)
+        return normalizedCurrent == normalizedPending && normalizedTyped != normalizedPending
+    }
+
+    private func discardStalePendingSuggestionIfNeeded() {
+        guard pendingFullSuggestion != nil,
+              markedTextRange == nil,
+              !isPendingSuggestionStillValid() else {
+            return
+        }
+        pendingFullSuggestion = nil
+    }
+
+    private func isPendingSuggestionStillValid(for suggestion: String? = nil) -> Bool {
+        guard let suggestion = suggestion ?? pendingFullSuggestion,
+              let typed = text else {
+            return false
+        }
+
+        let normalizedTyped = normalizeString(typed)
+        let normalizedSuggestion = normalizeString(suggestion)
+        return normalizedSuggestion.hasPrefix(normalizedTyped)
+            && normalizedTyped.count < normalizedSuggestion.count
     }
 
     private func normalizeString(_ string: String) -> String {
