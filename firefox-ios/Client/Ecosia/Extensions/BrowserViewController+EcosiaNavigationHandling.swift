@@ -9,12 +9,34 @@ import Ecosia
 // MARK: - Ecosia Web View Event Handling
 extension BrowserViewController {
 
+    /// Single entry point for all Ecosia-specific processing in `decidePolicyFor`.
+    /// Runs vertical preservation, URL ecosification, and navigation tracking in order.
+    /// Returns `true` when a replacement navigation was started — caller is responsible for
+    /// calling `decisionHandler(.cancel)` and returning.
+    func ecosiaDecidePolicyForNavigation(
+        url: URL,
+        webView: WKWebView,
+        tab: Tab,
+        navigationAction: WKNavigationAction
+    ) -> Bool {
+        if ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
+            navigationURL: url,
+            currentPageURL: webView.url ?? tab.url,
+            navigationType: navigationAction.navigationType,
+            tab: tab
+        ) {
+            return true
+        }
+        if ecosiaEcosifyNavigationIfNeeded(url: url, tab: tab) {
+            return true
+        }
+        ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
+        return false
+    }
+
     /// Handles any Ecosia-specific tracking when a navigation action is allowed.
     /// Stores a pending URL to be tracked at didCommit.
-    /// - Parameters:
-    ///   - url: The URL being navigated to
-    ///   - navigationAction: The navigation action that triggered this check
-    func ecosiaHandleNavigationAction(url: URL, navigationAction: WKNavigationAction) {
+    private func ecosiaHandleNavigationAction(url: URL, navigationAction: WKNavigationAction) {
         // Clear any stale pending tracking from a previous navigation
         pendingInappSearchUrl = nil
 
@@ -42,7 +64,7 @@ extension BrowserViewController {
 
     /// Rewrites in-page SERP navigations that target the default text vertical (`/search`) so they
     /// stay on the user's active vertical (e.g. Images). Returns `nil` when navigation should proceed unchanged.
-    func ecosiaSearchURLPreservingVertical(
+    private func ecosiaSearchURLPreservingVertical(
         navigationURL: URL,
         currentPageURL: URL?,
         navigationType: WKNavigationType
@@ -63,7 +85,7 @@ extension BrowserViewController {
 
     /// Returns `true` when navigation was rewritten to preserve the active SERP vertical.
     @discardableResult
-    func ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
+    private func ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
         navigationURL: URL,
         currentPageURL: URL?,
         navigationType: WKNavigationType,
@@ -80,23 +102,11 @@ extension BrowserViewController {
         return true
     }
 
-    /// Cancels navigation when it was rewritten to preserve the active SERP vertical.
-    func ecosiaCancelNavigationPreservingVerticalIfNeeded(
-        url: URL,
-        webView: WKWebView,
-        tab: Tab,
-        navigationAction: WKNavigationAction,
-        decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
-    ) -> Bool {
-        guard ecosiaApplyVerticalPreservingSearchNavigationIfNeeded(
-            navigationURL: url,
-            currentPageURL: webView.url ?? tab.url,
-            navigationType: navigationAction.navigationType,
-            tab: tab
-        ) else {
-            return false
-        }
-        decisionHandler(.cancel)
+    /// Ecosifies the navigation URL if it doesn't yet carry the Snowplow user id, reloading via
+    /// `tab.loadRequest()` so `ecosiaUpdatedRequest` runs. Returns `true` when a replacement was started.
+    private func ecosiaEcosifyNavigationIfNeeded(url: URL, tab: Tab) -> Bool {
+        guard url.shouldEcosify(), !url.hasEcosiaUserId else { return false }
+        tab.loadRequest(URLRequest(url: url.ecosified(isIncognitoEnabled: tab.isPrivate)))
         return true
     }
 }
