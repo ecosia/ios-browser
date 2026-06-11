@@ -1,7 +1,34 @@
 # MOB-4384 — Unit Test Stabilisation: Living Status
 
-**Branch:** `dc-mob-4384-fix-unit-tests-after-upgrade` · **Updated:** 2026-06-09
+**Branch:** `dc-mob-4384-fix-unit-tests-after-upgrade` · **Updated:** 2026-06-11
 **This file is the source of truth for resuming after a context compaction. Keep it current.**
+
+## MMP-only CI verification + NewsTests timeout hardening (2026-06-11)
+
+After the testable-unit refactor (`AppDelegate.ecosiaTrack*`) made `AppDelegateMMPIntegrationTests`
+lightweight, MMP was un-skipped (AnalyticsSpy re-skipped — too heavy). Ran the **same commit
+`464e9912c7`** three times on CI (run `27313985546`) to confirm stability:
+
+| Re-run | junit "iOS Unit Test Results" | Timing victims (NewsTests/TabEcosia) |
+|---|---|---|
+| #1 | ✅ 2347 passed / 0 failed | held |
+| #2 | ✅ 2350 passed / 0 failed | held |
+| #3 | ❌ 1 failed: `NewsTests.testCleanTextFromNetwork` ("Exceeded timeout of **1 second**") | NewsTests flaked |
+
+**Root cause of the #3 flake (NOT MMP):** `NewsTests` uses `waitForExpectations(timeout: 1)` on async
+MainActor-Task callbacks across the whole file. The flaking test uses a **`MockURLSession`** (no real
+network) — a 1s window is just too tight under CI load. Runs #1/#2 passed *with MMP un-skipped*, so
+MMP-alone is **not** a deterministic breaker; the fragile element is the 1s timeout (a latent flake that
+predates the MMP work). This is the same class of issue already fixed for `TabEcosiaExtensionTests` (2→10s).
+
+**Conscious fix (not a skip, not re-skipping MMP):** hardened `NewsTests` — added a class constant
+`asyncTimeout: TimeInterval = 10` and switched the 7 non-inverted async waits to it. A tolerant timeout
+costs **zero** time in the happy path (`waitForExpectations` returns the instant the expectation is
+fulfilled) and only adds headroom under load. The **inverted** `testCallOnFailed` keeps its short 1s wait
+(inverted expectations always wait the full duration; bumping it would just stall the suite). File:
+`EcosiaTests/Core/NewsTests.swift`. **MMP stays un-skipped** (preserves the production refactor + coverage).
+
+Status: verifying on CI after the NewsTests hardening.
 
 ## CI iteration — fixing the 9 failures the (green-job) CI run surfaced (2026-06-09)
 
