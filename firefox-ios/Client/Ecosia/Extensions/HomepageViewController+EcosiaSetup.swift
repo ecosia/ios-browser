@@ -290,6 +290,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ))
 
         ecosiaAdapter?.viewWillAppear()
+        if ntpSearchBar?.isFirstResponder == false {
+            resetNTPOmniboxSession()
+        }
         ecosiaAdapter?.refreshData(
             for: traitCollection,
             size: view.bounds.size
@@ -358,17 +361,25 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
     }
 
+    /// Clears omnibox text and tears down suggestion chrome. The pill is shared
+    /// across tabs — a query belongs on the SERP, not the next NTP. With
+    /// swiping-tabs the homepage can stay in the hierarchy under a webview
+    /// without `viewDidDisappear`, so this must run on leave and on re-show.
+    /// `requestsOverlayDismiss` is intentional here (leaving the NTP); keyboard
+    /// drag-dismiss on the list must not route through this path.
+    func resetNTPOmniboxSession() {
+        guard let bar = ntpSearchBar else { return }
+        bar.text = ""
+        if bar.isFirstResponder {
+            _ = bar.resignFirstResponder()
+        }
+        bar.delegate?.ntpSearchBarDidCancel()
+        bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
+    }
+
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
-        // Defensive: if the user navigated away while the omnibox was editing,
-        // tear down the suggestions overlay so the SearchLoader doesn't keep a
-        // dangling reference to this view's autocomplete sink. `didCancel`
-        // updates session state; `requestsOverlayDismiss` actually hides the
-        // overlay (the cancel callback no longer does that on its own so
-        // keyboard drag-dismiss can leave the list visible).
-        ntpSearchBar?.delegate?.ntpSearchBarDidCancel()
-        ntpSearchBar?.delegate?.ntpSearchBarRequestsOverlayDismiss()
-        _ = ntpSearchBar?.resignFirstResponder()
+        resetNTPOmniboxSession()
         ecosiaAdapter?.viewDidDisappear()
     }
 

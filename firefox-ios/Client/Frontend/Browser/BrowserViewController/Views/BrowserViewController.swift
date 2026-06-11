@@ -2120,6 +2120,7 @@ class BrowserViewController: UIViewController,
         // back to the NTP from a webview the omnibox should take over again
         // and the native address toolbar should hide.
         shouldHideAddressToolbar()
+        ecosiaPrepareNTPOmniboxForDisplay()
     }
 
     func showEmbeddedWebview() {
@@ -2154,6 +2155,7 @@ class BrowserViewController: UIViewController,
         // contentContainer — without this it stayed hidden for the lifetime
         // of the session after the first NTP submit.
         shouldHideAddressToolbar()
+        ecosiaResetNTPOmniboxWhenLeavingNTP()
     }
 
     /// Notifies UIKit that `supportedInterfaceOrientations` may have changed
