@@ -163,12 +163,19 @@ extension BrowserViewController {
         hostVC.addChild(searchController)
         host.addSubview(searchController.view)
         searchController.view.translatesAutoresizingMaskIntoConstraints = false
+        host.layoutIfNeeded()
 
+        // Pin the overlay above the omnibox pill so the table can scroll its
+        // last rows clear of the floating search bar (keyboard and multi-line
+        // growth move the pill; this constraint follows automatically).
         NSLayoutConstraint.activate([
             searchController.view.topAnchor.constraint(equalTo: host.safeAreaLayoutGuide.topAnchor),
             searchController.view.leadingAnchor.constraint(equalTo: host.leadingAnchor),
             searchController.view.trailingAnchor.constraint(equalTo: host.trailingAnchor),
-            searchController.view.bottomAnchor.constraint(equalTo: host.bottomAnchor)
+            searchController.view.bottomAnchor.constraint(
+                equalTo: anchorView.topAnchor,
+                constant: -.ecosia.space._1s
+            )
         ])
 
         // z-order back→front: suggestions overlay, focused-state scrim,
