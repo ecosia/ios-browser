@@ -109,6 +109,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         searchBar.onContentChange = { [weak self] text in
             self?.handleOmniboxContentChange(text)
+            self?.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
         searchBar.onFocusChange = { [weak self] focused in
             self?.ntpSearchBarBackdrop?.setVisible(focused, animated: true)
@@ -443,6 +444,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
             options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
         ) {
             self.view.layoutIfNeeded()
+            self.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
     }
 
@@ -458,6 +460,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
             options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
         ) {
             self.view.layoutIfNeeded()
+            self.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
     }
 }

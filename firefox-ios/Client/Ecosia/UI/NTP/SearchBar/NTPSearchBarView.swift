@@ -36,10 +36,13 @@ protocol NTPSearchBarDelegate: AnyObject {
     /// While the suggestions overlay is visible, keyboard drag-dismiss should
     /// strip inline autocomplete without committing the full suggestion.
     func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool
+    /// Recompute suggestions scroll insets when the pill moves (keyboard or multi-line growth).
+    func ntpSearchBarNeedsSuggestionsLayoutUpdate()
 }
 
 extension NTPSearchBarDelegate {
     func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool { false }
+    func ntpSearchBarNeedsSuggestionsLayoutUpdate() {}
 }
 
 /// Pill-shaped search input pinned to the bottom of the redesigned NTP. Replaces

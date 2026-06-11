@@ -105,6 +105,10 @@ extension BrowserViewController: NTPSearchBarDelegate {
         searchController?.parent is HomepageViewController
     }
 
+    func ntpSearchBarNeedsSuggestionsLayoutUpdate() {
+        updateOmniboxSuggestionsScrollInsets()
+    }
+
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
         (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
     }
@@ -140,15 +144,25 @@ extension BrowserViewController {
         searchController.searchTelemetry?.clearVisibleResults()
         searchController.searchTelemetry?.determineInteractionType()
         searchLoader?.query = searchTerm
+        updateOmniboxSuggestionsScrollInsets()
     }
 
     /// Tears down the suggestions overlay when the omnibox loses content/focus
     /// and routes autocomplete back to the standard URL bar.
     func hideOmniboxSuggestions() {
         searchLoader?.autocompleteView = addressToolbarContainer
+        if let searchController {
+            searchController.additionalSafeAreaInsets = .zero
+            let tableView = searchController.tableView
+            tableView.contentInset = .zero
+            tableView.verticalScrollIndicatorInsets = .zero
+            tableView.contentInsetAdjustmentBehavior = .automatic
+        }
         guard searchController?.parent != nil else { return }
         hideSearchController()
     }
+
+    fileprivate static let omniboxSuggestionsClearance: CGFloat = .ecosia.space._1s
 
     fileprivate func attachOmniboxSuggestions(anchorView: UIView) {
         guard let searchController else { return }
@@ -163,19 +177,11 @@ extension BrowserViewController {
         hostVC.addChild(searchController)
         host.addSubview(searchController.view)
         searchController.view.translatesAutoresizingMaskIntoConstraints = false
-        host.layoutIfNeeded()
-
-        // Pin the overlay above the omnibox pill so the table can scroll its
-        // last rows clear of the floating search bar (keyboard and multi-line
-        // growth move the pill; this constraint follows automatically).
         NSLayoutConstraint.activate([
             searchController.view.topAnchor.constraint(equalTo: host.safeAreaLayoutGuide.topAnchor),
             searchController.view.leadingAnchor.constraint(equalTo: host.leadingAnchor),
             searchController.view.trailingAnchor.constraint(equalTo: host.trailingAnchor),
-            searchController.view.bottomAnchor.constraint(
-                equalTo: anchorView.topAnchor,
-                constant: -.ecosia.space._1s
-            )
+            searchController.view.bottomAnchor.constraint(equalTo: host.bottomAnchor)
         ])
 
         // z-order back→front: suggestions overlay, focused-state scrim,
@@ -194,22 +200,63 @@ extension BrowserViewController {
             // suggestion isn't drawn underneath it. The view itself still
             // spans the safe area, so the keyboard-tracking footer stays put.
             host.layoutIfNeeded()
-            let topInset = closeButton.frame.maxY - host.safeAreaInsets.top
-            searchController.additionalSafeAreaInsets.top = max(0, topInset)
         }
 
         searchController.didMove(toParent: hostVC)
+        updateOmniboxSuggestionsScrollInsets()
         contentContainer.accessibilityElementsHidden = true
 
         // Re-enable interaction in case the previous attach left the table
         // disabled by the fast-tap path below.
         searchController.tableView.isUserInteractionEnabled = true
+        searchController.tableView.contentInsetAdjustmentBehavior = .never
         // Any drag on the suggestions list dismisses the keyboard so the user
         // can scan the full list. Resigning the textView's first responder
         // from this path fires `ntpSearchBarDidCancel`, which intentionally
         // no longer tears down the overlay — so the suggestions stay visible.
         searchController.tableView.keyboardDismissMode = .onDrag
         installOmniboxFastTap(on: searchController.tableView)
+    }
+
+    /// The suggestions overlay is full-bleed behind the floating omnibox. Inset
+    /// the table's safe area so the last rows can scroll clear of the pill as
+    /// the keyboard and multi-line growth move it.
+    fileprivate func updateOmniboxSuggestionsScrollInsets() {
+        guard let searchController,
+              searchController.parent is HomepageViewController,
+              let homepage = contentContainer.contentController as? HomepageViewController,
+              let omnibox = homepage.ntpSearchBar else { return }
+
+        homepage.view.layoutIfNeeded()
+
+        let topInset: CGFloat
+        if let closeButton = homepage.ntpOmniboxCloseButton {
+            topInset = max(0, closeButton.frame.maxY - homepage.view.safeAreaInsets.top)
+        } else {
+            topInset = 0
+        }
+
+        let omniboxFrame = searchController.view.convert(omnibox.bounds, from: omnibox)
+        let bottomInset = max(
+            0,
+            searchController.view.bounds.height - omniboxFrame.minY + Self.omniboxSuggestionsClearance
+        )
+
+        searchController.additionalSafeAreaInsets = UIEdgeInsets(
+            top: topInset,
+            left: 0,
+            bottom: bottomInset,
+            right: 0
+        )
+
+        // Mirror on the table too — it is edge-pinned, not safe-area-pinned.
+        let tableView = searchController.tableView
+        var contentInset = tableView.contentInset
+        contentInset.top = topInset
+        contentInset.bottom = bottomInset
+        tableView.contentInset = contentInset
+        tableView.verticalScrollIndicatorInsets.top = topInset
+        tableView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
 
     /// Adds a tap gesture on the suggestions table that fires `didSelectRowAt`
