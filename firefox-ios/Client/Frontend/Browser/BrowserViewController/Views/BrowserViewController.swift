@@ -5244,7 +5244,7 @@ extension BrowserViewController: KeyboardHelperDelegate {
         // Ecosia: Firefox only cleared shouldShowKeyboard when editing ended. While the
         // user scrolls suggestions the keyboard hides but overlay mode continues —
         // leaving shouldShowKeyboard true re-requests first responder on row highlight,
-        // which leaves the keyboard-spacer gap below the address bar (MOB-4580).
+        // which leaves the keyboard-spacer gap below the address bar.
         if !isEditing || !shouldCancelEditing {
             store.dispatch(
                 ToolbarAction(
@@ -5306,9 +5306,7 @@ extension BrowserViewController: KeyboardHelperDelegate {
            the user sees on screen.
         guard shouldCancelEditing else { return }
          */
-        // Ecosia: Restore Firefox's guarded cancel (MOB-4580). The suggestions
-        // table uses `.onDrag` keyboard dismiss so scrolling the list hides the
-        // keyboard without meaning "leave overlay mode".
+        // Ecosia: Guard cancel so suggestion scroll (keyboard hidden) keeps overlay alive.
         guard shouldCancelEditing else { return }
         overlayManager.cancelEditing(shouldCancelLoading: false)
     }

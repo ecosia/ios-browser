@@ -708,7 +708,6 @@ struct AddressBarState: StateType, Sendable, Equatable {
                Re-requesting the keyboard during touch-scroll leaves a gap under the bar.
             shouldShowKeyboard: true,
              */
-            // Ecosia: Keep keyboard dismissed while scrolling suggestions in overlay mode.
             shouldShowKeyboard: false,
             shouldSelectSearchTerm: false,
             isLoading: state.isLoading,
@@ -719,7 +718,6 @@ struct AddressBarState: StateType, Sendable, Equatable {
                tears down the suggestions overlay when the list is scrolled.
             didStartTyping: false,
              */
-            // Ecosia: Preserve typing state when overlay text updates during touch-scroll.
             didStartTyping: state.didStartTyping,
             isEmptySearch: isEmptySearch,
             alternativeSearchEngine: state.alternativeSearchEngine

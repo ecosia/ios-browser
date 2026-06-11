@@ -36,7 +36,7 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     private var hideCursor = false
     private var isSettingMarkedText = false
     // Ecosia: When false, end-editing strips inline autocomplete without committing it
-    // (keyboard drag-dismiss while scrolling suggestions — MOB-4580).
+    // (keyboard drag-dismiss while scrolling suggestions).
     var commitsAutocompleteOnEndEditing = true
     var clearButton: UIButton? {
         return value(forKey: "_clearButton") as? UIButton
@@ -86,6 +86,7 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     weak var accessibilityActionsSource: AccessibilityActionsSource?
 
     /// User-typed text only, excluding any inline autocomplete marked suffix.
+    /// Read by `overlaySearchQuery` so Redux cannot lag behind the live field.
     var plainUserText: String {
         textWithoutSuggestion() ?? text ?? ""
     }
