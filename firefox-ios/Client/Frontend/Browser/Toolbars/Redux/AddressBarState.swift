@@ -704,13 +704,23 @@ struct AddressBarState: StateType, Sendable, Equatable {
             lockIconNeedsTheming: state.lockIconNeedsTheming,
             safeListedURLImageName: state.safeListedURLImageName,
             isEditing: true,
+            /* Ecosia: Firefox sets shouldShowKeyboard true on location-view text updates.
+               Re-requesting the keyboard during touch-scroll leaves a gap under the bar.
             shouldShowKeyboard: true,
+             */
+            // Ecosia: Keep keyboard dismissed while scrolling suggestions in overlay mode.
+            shouldShowKeyboard: false,
             shouldSelectSearchTerm: false,
             isLoading: state.isLoading,
             readerModeState: state.readerModeState,
             canSummarize: state.canSummarize,
             translationConfiguration: state.translationConfiguration,
+            /* Ecosia: Firefox resets didStartTyping on location-view text updates, which
+               tears down the suggestions overlay when the list is scrolled.
             didStartTyping: false,
+             */
+            // Ecosia: Preserve typing state when overlay text updates during touch-scroll.
+            didStartTyping: state.didStartTyping,
             isEmptySearch: isEmptySearch,
             alternativeSearchEngine: state.alternativeSearchEngine
         )

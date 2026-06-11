@@ -5239,7 +5239,11 @@ extension BrowserViewController: KeyboardHelperDelegate {
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardDidHideWithState state: KeyboardState) {
         let toolbarState = store.state.screenState(ToolbarState.self, for: .toolbar, window: windowUUID)
         let isEditing = toolbarState?.addressToolbar.isEditing == true
-        if !isEditing {
+        // Ecosia: Firefox only cleared shouldShowKeyboard when editing ended. While the
+        // user scrolls suggestions the keyboard hides but overlay mode continues —
+        // leaving shouldShowKeyboard true re-requests first responder on row highlight,
+        // which leaves the keyboard-spacer gap below the address bar (MOB-4580).
+        if !isEditing || !shouldCancelEditing {
             store.dispatch(
                 ToolbarAction(
                     shouldShowKeyboard: false,
@@ -5300,11 +5304,16 @@ extension BrowserViewController: KeyboardHelperDelegate {
            the user sees on screen.
         guard shouldCancelEditing else { return }
          */
+        // Ecosia: Restore Firefox's guarded cancel (MOB-4580). The suggestions
+        // table uses `.onDrag` keyboard dismiss so scrolling the list hides the
+        // keyboard without meaning "leave overlay mode".
+        guard shouldCancelEditing else { return }
         overlayManager.cancelEditing(shouldCancelLoading: false)
     }
 
-    /* Ecosia: No longer consulted — `cancelEditingMode` now always cancels for non-omnibox surfaces.
-       Preserved for upstream merge context; remove with the next Firefox sync if still unused.
+    /* Ecosia: Firefox v147.5 — kept overlay stuck after a keyboard swipe on
+       the SERP because the URL bar pre-fills the page URL/query into
+       `searchTerm` before the user types.
     private var shouldCancelEditing: Bool {
         let newTabChoice = NewTabAccessors.getNewTabPage(profile.prefs)
         guard newTabChoice != .topSites, newTabChoice != .blankPage else { return false }
@@ -5318,6 +5327,56 @@ extension BrowserViewController: KeyboardHelperDelegate {
         return searchTerm == nil
     }
      */
+    // Ecosia: Keep the suggestions overlay when the user is searching (typed query,
+    // SERP re-focus with "test 2", etc.). Only tear down for URL-only re-focus
+    // (Ecosia stuck-bar fix). Uses live text-field contents so debounced Redux
+    // state cannot lag behind what the user already typed ("yt").
+    private var shouldCancelEditing: Bool {
+        guard searchController?.parent != nil,
+              !(searchController?.parent is HomepageViewController) else {
+            return true
+        }
+
+        let bar = store.state.screenState(ToolbarState.self, for: .toolbar, window: windowUUID)?.addressToolbar
+        if bar?.didStartTyping == true {
+            return false
+        }
+
+        let query = overlaySearchQuery
+        guard !query.isEmpty else { return true }
+
+        if query.looksLikeAURLOverlayQuery {
+            return true
+        }
+
+        return false
+    }
+
+    private var overlaySearchQuery: String {
+        let liveText = addressToolbarContainer.overlayLocationText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if !liveText.isEmpty { return liveText }
+
+        if let query = searchController?.viewModel.searchQuery
+            .trimmingCharacters(in: .whitespacesAndNewlines), !query.isEmpty {
+            return query
+        }
+
+        if let term = store.state.screenState(ToolbarState.self, for: .toolbar, window: windowUUID)?
+            .addressToolbar.searchTerm?
+            .trimmingCharacters(in: .whitespacesAndNewlines), !term.isEmpty {
+            return term
+        }
+
+        return searchLoader?.query.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    }
+}
+
+private extension String {
+    // Mirrors SearchViewModel.looksLikeAURL — slash without spaces means page URL re-focus.
+    var looksLikeAURLOverlayQuery: Bool {
+        contains("/") && !contains(" ")
+    }
 }
 
 // MARK: JSPromptAlertControllerDelegate

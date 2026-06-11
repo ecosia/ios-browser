@@ -48,6 +48,11 @@ final class LocationView: UIView,
     private var isURLTextFieldEmpty: Bool {
         urlTextField.text?.isEmpty == true
     }
+
+    // Ecosia: Live user-typed URL bar text (MOB-4580 overlay keyboard-dismiss checks).
+    var plainUserText: String {
+        urlTextField.plainUserText
+    }
     private var hasHomeIndicator: Bool {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return false }
@@ -585,6 +590,9 @@ final class LocationView: UIView,
         // causing the keyboard to hide.
         // TODO: FXIOS-14618 don't fire the `keyboardWillHide` notification on device rotation
         let shouldShowKeyboard = configurationIsEditing && config.shouldShowKeyboard
+        // Ecosia: Keyboard hidden while overlay editing continues — do not commit inline
+        // autocomplete on resign (avoids trailing spaces when scrolling suggestions).
+        urlTextField.commitsAutocompleteOnEndEditing = shouldShowKeyboard
         _ = shouldShowKeyboard ? becomeFirstResponder() : resignFirstResponder()
 
         // Remove the default drop interaction from the URL text field so that our
@@ -797,6 +805,11 @@ final class LocationView: UIView,
         formatAndTruncateURLTextField(hasSearchTerm: searchTerm != nil)
         if isURLTextFieldEmpty {
             updateGradient()
+        } else if isEditing {
+            // Ecosia: Keyboard drag-dismiss resigns first responder while overlay editing
+            // continues. updateUIForSearchEngineDisplay adds icon-container leading inset
+            // inside the pill; keep the editing layout instead (MOB-4580).
+            updateUIForEditingDisplay()
         } else {
             /* Ecosia: Show search engine view (favicon) instead of lock icon when editing ends
             updateUIForLockIconDisplay()

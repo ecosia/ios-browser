@@ -151,6 +151,11 @@ final class AddressToolbarContainer: UIView,
     /// and the Cancel button is visible (allowing the user to leave overlay mode).
     var inOverlayMode = false
 
+    // Ecosia: Live URL-bar text for overlay keyboard-dismiss decisions (MOB-4580).
+    var overlayLocationText: String {
+        toolbar.overlayEditingText
+    }
+
     init(isMinimalAddressBarEnabled: Bool, toolbarHelper: ToolbarHelperInterface = ToolbarHelper()) {
         self.isMinimalAddressBarEnabled = isMinimalAddressBarEnabled
         self.toolbarHelper = toolbarHelper

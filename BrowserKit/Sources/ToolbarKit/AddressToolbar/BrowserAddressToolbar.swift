@@ -452,6 +452,11 @@ public class BrowserAddressToolbar: UIView,
         }
     }
 
+    // Ecosia: Live user-typed URL bar text (MOB-4580 overlay keyboard-dismiss checks).
+    public var overlayEditingText: String {
+        locationView.plainUserText
+    }
+
     // MARK: - LocationViewDelegate
     func locationViewDidEnterText(_ text: String) {
         toolbarDelegate?.searchSuggestions(searchTerm: text)
