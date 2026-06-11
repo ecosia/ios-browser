@@ -1015,6 +1015,10 @@ extension Tab: TabWebViewDelegate {
     }
 
     func tabWebViewShouldShowAccessoryView(_ tabWebView: TabWebView) -> Bool {
+        // Ecosia: Hide the keyboard accessory bar on the AI chat vertical so the web "Ask follow up"
+        // input stays clean and prominent.
+        if url?.isEcosiaAIChat == true { return false }
+
         // Hide the default WKWebView accessory view panel for PDF documents and
         // there is no accessory view to display (but only for iPad cases)
         let isPDF = mimeType == MIMEType.PDF
