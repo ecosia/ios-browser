@@ -288,6 +288,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ))
 
         ecosiaAdapter?.viewWillAppear()
+        resetNTPOmniboxForLanding()
         ecosiaAdapter?.refreshData(
             for: traitCollection,
             size: view.bounds.size
@@ -354,6 +355,14 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             collectionView.contentInset.bottom = 0
             collectionView.verticalScrollIndicatorInsets.bottom = 0
         }
+    }
+
+    /// Clears the omnibox whenever the NTP becomes visible so the pill shows
+    /// only the placeholder — not stale query text or autocomplete suffixes
+    /// left over from a previous suggestions session.
+    func resetNTPOmniboxForLanding() {
+        guard let bar = ntpSearchBar, !bar.isFirstResponder else { return }
+        bar.text = ""
     }
 
     /// Called when view did disappear to clean up Ecosia resources

@@ -465,11 +465,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     func setAutocompleteSuggestion(_ suggestion: String?) {
         textView.setAutocompleteSuggestion(suggestion)
+        refreshChromeFromTextView()
     }
 
     private func refreshChromeFromTextView() {
         let text = textView.text ?? ""
-        placeholderLabel.isHidden = !text.isEmpty
+        let hasVisibleContent = !text.isEmpty || textView.hasActiveAutocomplete
+        placeholderLabel.isHidden = hasVisibleContent
         updateSubmitState(for: text)
         updateCounter(for: text)
         updateClearButtonVisibility(for: text)
@@ -503,6 +505,8 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         (textView as? NTPLocationTextView)?.didEndEditing()
+        applyCompletion()
+        refreshChromeFromTextView()
         applyBorderColor()
         onFocusChange?(false)
         delegate?.ntpSearchBarDidCancel()
