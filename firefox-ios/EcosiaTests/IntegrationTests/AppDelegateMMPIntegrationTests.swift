@@ -32,7 +32,18 @@ final class AppDelegateMMPIntegrationTests: XCTestCase, @unchecked Sendable {
 
     override func tearDown() {
         User.shared = savedUser
-        MMP.provider = Singular(includeSKAN: true)
+        // Ecosia: reset to a SILENT no-op provider, NOT the real `Singular`. `MMP.sendSession()` /
+        // `sendEvent()` spawn detached Tasks that read `MMP.provider` at execution time; one delayed
+        // past this point — or fired later by the leaked subscription below — must hit a no-op, never
+        // real MMP network that would contaminate (and slow) sibling tests. (MOB-4384)
+        MMP.provider = MockMMPProvider()
+        // Ecosia: release the AppDelegate so its private `SearchesCounter` — a NotificationCenter
+        // observer of `.searchesCounterChanged` whose subscription calls `MMP.handleSearchEvent` — is
+        // deallocated. XCTest retains every test-case instance until the WHOLE run finishes, so without
+        // this the observer/subscription lives on and does real MMP work whenever any later test mutates
+        // `User.shared.searchCount`. Safe to nil: `Subscription.subscriber` is weak and the closure does
+        // not capture `self`, so there is no retain cycle keeping the instance alive. (MOB-4384)
+        MainActor.assumeIsolated { appDelegate = nil }
         // Ecosia: drain the shared async queues this class's becomeActive tests enqueue work onto, so
         // it completes before the next test runs (no cross-test contamination). (MOB-4384)
         drainSharedAsyncQueues()

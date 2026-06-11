@@ -28,7 +28,42 @@ fulfilled) and only adds headroom under load. The **inverted** `testCallOnFailed
 (inverted expectations always wait the full duration; bumping it would just stall the suite). File:
 `EcosiaTests/Core/NewsTests.swift`. **MMP stays un-skipped** (preserves the production refactor + coverage).
 
-Status: verifying on CI after the NewsTests hardening.
+### Run #4 (NewsTests fixed, commit `7e623e6358`, run `27319420807`) → NEW victim → Phase 4.5 + decision
+
+| Run | junit | Victim |
+|---|---|---|
+| #4 | ❌ 2346 passed / 1 failed | `AppFxACommandsTests.testCloseSendTabs_activeWithMultipleURLs_callsDeeplink` ("0 != 1") |
+
+NewsTests was fixed (gone from failures), but a **3rd distinct victim class** appeared. `AppFxACommands`
+is **Firefox-core** (`@testable import Client`) and uses a **0.1s `asyncAfter`** poor-man's wait before
+asserting `closeTabsCalled == 1` → far too tight under load. **Evidence the population is large** (grep of
+the gated targets): ~10 tight `asyncAfter`, **71** `waitForExpectations(timeout: 1|2)`, 17 tight
+`fulfillment`/`wait`, 7 `Thread.sleep`. So MMP-un-skipped adds marginal load that tips a *rotating* member
+of ~100 latently-fragile tests each run (TabEcosia → NewsTests → AppFxACommands). Hardening them one-by-one
+is unbounded whack-a-mole = systematic-debugging **Phase 4.5** (architectural; stop patching; ask human).
+
+**User decision (2026-06-11): option B — root-cause the MMP leak, keep MMP un-skipped.** (Not re-skip;
+not keep-hardening.) So contain MMP's leaked async work at the SOURCE so MMP-un-skipped adds ~zero load.
+
+**Leak vectors traced** (`MMP.swift`, `Publisher.swift`, `SearchesCounter.swift`, `AppDelegate.swift`):
+1. `MMP.sendSession()`/`sendEvent()` spawn detached `Task { try await provider.sendSessionInfo(...) }` that
+   read `MMP.provider` **at execution time** → if delayed past tearDown (which reset it to the real
+   `Singular`), real network. Also always computes `appDeviceInfo` (AdServices token).
+2. The MMP test's `appDelegate` ivar is **never released**. `Subscription.subscriber` is *weak* and the
+   `searchesCounter.subscribe(self){ MMP.handleSearchEvent }` closure doesn't capture self (no retain
+   cycle) — BUT XCTest retains every test-case instance for the WHOLE run, so the last AppDelegate's
+   `SearchesCounter` (a live `.searchesCounterChanged` NotificationCenter observer) survives and fires real
+   `MMP.handleSearchEvent` whenever ANY later test writes `User.shared.searchCount`.
+3. The detached `Task { await FeatureManagement.fetchConfiguration() }` → `Unleash.start` — **already**
+   neutralized by `seedFreshUnleashModelToAvoidNetworkFetch()` (all refresh rules false → no network).
+
+**Fix (test-side only, no production change) in `AppDelegateMMPIntegrationTests.tearDown`:**
+ • `MMP.provider = MockMMPProvider()` — reset to a **silent no-op** (NOT real `Singular`), so a delayed/
+   leaked MMP Task does zero network for the rest of the run (kills vector 1's network).
+ • `MainActor.assumeIsolated { appDelegate = nil }` — release the SUT → `SearchesCounter` deallocs →
+   observer + subscription gone (kills vector 2). Safe per the weak-subscriber/no-self-capture analysis.
+
+Status: verifying on CI after the MMP-leak containment.
 
 ## CI iteration — fixing the 9 failures the (green-job) CI run surfaced (2026-06-09)
 
