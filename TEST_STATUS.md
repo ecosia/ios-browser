@@ -63,7 +63,20 @@ not keep-hardening.) So contain MMP's leaked async work at the SOURCE so MMP-un-
  • `MainActor.assumeIsolated { appDelegate = nil }` — release the SUT → `SearchesCounter` deallocs →
    observer + subscription gone (kills vector 2). Safe per the weak-subscriber/no-self-capture analysis.
 
-Status: verifying on CI after the MMP-leak containment.
+Status: ✅ **DONE & CI-VERIFIED — determinism proven.** Commit `39c05326d9`, run `27328504322`, junit
+"iOS Unit Test Results" across **3 consecutive runs**: #1 `2342/0`, #2 `2374/0`, #3 `2356/0` — all
+**0 failed, NO rotating victim**. Decisive contrast with the pre-fix MMP-only pattern (green, green,
+NewsTests flake, AppFxACommands flake). MMP `AppDelegateMMPIntegrationTests` is **un-skipped and stable**.
+(Test counts vary run-to-run — Firefox-core conditional/locale tests — but 0 failed every time.)
+
+**Net result of the MMP work:** MMP un-skipped & CI-deterministic via (1) the testable-unit refactor
+(`AppDelegate.ecosiaTrack*` — a real production improvement), (2) the MMP test-leak containment (release
+AppDelegate + silent provider in tearDown), (3) Unleash seed + queue drains, (4) NewsTests/TabEcosia
+timeout hardening. **AnalyticsSpyTests remains deferred** (heavy WKWebView/BrowserViewController tests —
+a separate, larger effort: app-host-free target or full webview mocking).
+
+⚠️ **Before merging:** revert the TEMPORARY `push:` trigger in `merge_tests.yml` (keep the Xcode 26.5
+bump + the SwiftBridging patch). Then task #5 (re-enable the proper merge_tests.yml gate) can close.
 
 ## CI iteration — fixing the 9 failures the (green-job) CI run surfaced (2026-06-09)
 
