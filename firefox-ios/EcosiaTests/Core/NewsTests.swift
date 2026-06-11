@@ -7,6 +7,14 @@
 import XCTest
 
 @MainActor final class NewsTests: XCTestCase {
+    // Ecosia: News delivers its callbacks via async MainActor Tasks. Under CI load the main
+    // actor can be busy enough that the callback misses a 1s window even though no real network
+    // is involved (MockURLSession + bundled JSON). `waitForExpectations` returns the instant the
+    // expectation is fulfilled, so a tolerant timeout adds zero time in the happy path while
+    // removing load-induced flakes. The inverted testCallOnFailed keeps a short wait on purpose
+    // (inverted expectations always wait the full duration). (MOB-4384)
+    private let asyncTimeout: TimeInterval = 10
+
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.news)
         try? FileManager.default.removeItem(at: FileManager.user)
@@ -59,7 +67,7 @@ import XCTest
             XCTAssertEqual(.main, Thread.current)
             expect.fulfill()
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: asyncTimeout)
     }
 
     func testLoadFromDisk() {
@@ -75,7 +83,7 @@ import XCTest
             XCTAssertGreaterThan($0.first!.publishDate, $0.last!.publishDate)
             expect.fulfill()
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: asyncTimeout)
     }
 
     func testAvoidDuplication() {
@@ -119,7 +127,7 @@ import XCTest
             expect.fulfill()
         }
         notifications.load(session: session)
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: asyncTimeout)
     }
 
     func testNeedsUpdateOnEmptyNews() {
@@ -155,7 +163,7 @@ import XCTest
 
             expect.fulfill()
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: asyncTimeout)
     }
 
     func testSubscribeAndReceive() {
@@ -167,7 +175,7 @@ import XCTest
             XCTAssert(stateCount == items.count)
             expect.fulfill()
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: asyncTimeout)
     }
 
     func testCallOnFailed() {
@@ -179,6 +187,8 @@ import XCTest
             expect.fulfill()
         }
         notifications.load(session: session)
+        // Ecosia: inverted expectation — passes only if NO callback arrives, so it waits the full
+        // duration every run. Keep it short; a tolerant timeout here would just stall the suite. (MOB-4384)
         waitForExpectations(timeout: 1)
     }
 
@@ -193,7 +203,7 @@ import XCTest
             }
             expect.fulfill()
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: asyncTimeout)
     }
 
     func testCleanTextFromNetwork() {
@@ -209,7 +219,7 @@ import XCTest
             expect.fulfill()
         }
         notifications.load(session: session)
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: asyncTimeout)
     }
 }
 // swiftlint:enable force_try
