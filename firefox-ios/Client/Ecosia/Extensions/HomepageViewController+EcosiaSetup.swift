@@ -159,6 +159,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         let recognizer = UITapGestureRecognizer(target: self,
                                                 action: #selector(handleTapOutsideOmnibox(_:)))
         recognizer.cancelsTouchesInView = false
+        recognizer.delegate = self
         view.addGestureRecognizer(recognizer)
     }
 
@@ -288,7 +289,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ))
 
         ecosiaAdapter?.viewWillAppear()
-        resetNTPOmniboxForLanding()
         ecosiaAdapter?.refreshData(
             for: traitCollection,
             size: view.bounds.size
@@ -357,14 +357,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
     }
 
-    /// Clears the omnibox whenever the NTP becomes visible so the pill shows
-    /// only the placeholder — not stale query text or autocomplete suffixes
-    /// left over from a previous suggestions session.
-    func resetNTPOmniboxForLanding() {
-        guard let bar = ntpSearchBar, !bar.isFirstResponder else { return }
-        bar.text = ""
-    }
-
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
         // Defensive: if the user navigated away while the omnibox was editing,
@@ -407,6 +399,28 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         let wallpaperConfig = adapter.getNTPBackgroundConfiguration()
         let state = WallpaperState(windowUUID: windowUUID, wallpaperConfiguration: wallpaperConfig)
         return state
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+// Ecosia: Tap-outside must not steal touches from the suggestions overlay —
+// scrolling the list was dismissing the overlay and leaving a stale omnibox.
+extension HomepageViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        !isTouchOnOmniboxSessionChrome(touch)
+    }
+
+    private func isTouchOnOmniboxSessionChrome(_ touch: UITouch) -> Bool {
+        var responder: UIResponder? = touch.view
+        while let current = responder {
+            if current === ntpSearchBar || current === ntpSearchBarBackdrop || current === ntpOmniboxCloseButton {
+                return true
+            }
+            if current is SearchViewController { return true }
+            if current === self { break }
+            responder = current.next
+        }
+        return false
     }
 }
 

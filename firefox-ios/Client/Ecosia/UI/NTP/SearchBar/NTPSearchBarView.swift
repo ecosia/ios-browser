@@ -33,6 +33,13 @@ protocol NTPSearchBarDelegate: AnyObject {
     /// (tap-outside the pill, close-button tap, host view disappearing).
     /// The host is expected to tear down the suggestions overlay here.
     func ntpSearchBarRequestsOverlayDismiss()
+    /// While the suggestions overlay is visible, keyboard drag-dismiss should
+    /// strip inline autocomplete without committing the full suggestion.
+    func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool
+}
+
+extension NTPSearchBarDelegate {
+    func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool { false }
 }
 
 /// Pill-shaped search input pinned to the bottom of the redesigned NTP. Replaces
@@ -505,7 +512,11 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         (textView as? NTPLocationTextView)?.didEndEditing()
-        applyCompletion()
+        if delegate?.ntpSearchBarIsSuggestionsOverlayVisible() == true {
+            (textView as? NTPLocationTextView)?.stripInlineAutocomplete()
+        } else {
+            applyCompletion()
+        }
         refreshChromeFromTextView()
         applyBorderColor()
         onFocusChange?(false)

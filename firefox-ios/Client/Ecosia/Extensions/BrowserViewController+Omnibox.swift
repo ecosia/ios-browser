@@ -101,6 +101,10 @@ extension BrowserViewController: NTPSearchBarDelegate {
         }
     }
 
+    func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool {
+        searchController?.parent is HomepageViewController
+    }
+
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
         (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
     }

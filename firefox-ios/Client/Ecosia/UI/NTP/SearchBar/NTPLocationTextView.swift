@@ -157,6 +157,11 @@ final class NTPLocationTextView: UITextView {
         removeInlineCompletion()
     }
 
+    /// Drops any inline autocomplete suffix without changing committed text.
+    func stripInlineAutocomplete() {
+        _ = removeCompletion()
+    }
+
     // MARK: - UITextInput
 
     override func deleteBackward() {
