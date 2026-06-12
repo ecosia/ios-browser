@@ -325,6 +325,44 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         XCTAssertEqual(subject.toolbarState, .visible)
     }
 
+    // MARK: - Ecosia: pinsCompactAddressBar (AI chat vertical)
+
+    func test_pinsCompactAddressBar_handlePan_doesNotChangeState() {
+        let subject = createSubject()
+        setupTabScroll(with: subject)
+        subject.pinsCompactAddressBar = true
+
+        // Same translation that collapses the toolbar in testHandlePan_ScrollingUp.
+        mockGesture.gestureTranslation = CGPoint(x: 0, y: 100)
+        subject.handlePan(mockGesture)
+
+        XCTAssertEqual(subject.toolbarState, .visible, "Pinned compact bar must ignore scroll-driven toggling")
+    }
+
+    func test_pinsCompactAddressBar_scrollDidEndDragging_doesNotChangeState() {
+        let subject = createSubject()
+        setupTabScroll(with: subject)
+        subject.pinsCompactAddressBar = true
+
+        mockGesture.gestureTranslation = CGPoint(x: 0, y: 100)
+        subject.handlePan(mockGesture)
+        subject.scrollViewDidEndDragging(tab.webView!.scrollView, willDecelerate: true)
+
+        XCTAssertEqual(subject.toolbarState, .visible, "Pinned compact bar must ignore end-of-drag toggling")
+    }
+
+    func test_pinsCompactAddressBar_doesNotBlockTapExpand() {
+        let subject = createSubject()
+        setupTabScroll(with: subject)
+        subject.toolbarState = .collapsed
+        subject.pinsCompactAddressBar = true
+
+        let handler = subject.createToolbarTapHandler()
+        handler()
+
+        XCTAssertEqual(subject.toolbarState, .visible, "Tap must still expand the pinned compact bar")
+    }
+
     // MARK: - Setup
     private func setupTabScroll(with subject: LegacyTabScrollController) {
         tab.createWebview(configuration: .init())
