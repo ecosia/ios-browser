@@ -8,6 +8,8 @@ exclude:
     - monorepo-migration/
     - test-fixtures/
     - firefox-ios/ThirdParty/
+    - Carthage/
+    - firefox-ios-tests/Tests/XCUITests
     # Disabled third-party services within firefox-ios
     - firefox-ios/Client/AdjustHelper.swift
     - firefox-ios/Client/AdjustTelemetryHelper.swift
