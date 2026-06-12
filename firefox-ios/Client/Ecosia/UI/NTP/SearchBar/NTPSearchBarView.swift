@@ -480,7 +480,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     private func refreshChromeFromTextView() {
         let text = textView.text ?? ""
-        let hasVisibleContent = !text.isEmpty || textView.hasActiveAutocomplete
+        let hasVisibleContent = !text.isEmpty || textView.hasInlineCompletion
         placeholderLabel.isHidden = hasVisibleContent
         updateSubmitState(for: text)
         updateCounter(for: text)
@@ -518,7 +518,7 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
         if delegate?.ntpSearchBarIsSuggestionsOverlayVisible() == true {
             (textView as? NTPLocationTextView)?.stripInlineAutocomplete()
         } else {
-            applyCompletion()
+            (textView as? NTPLocationTextView)?.commitPendingSuggestionIfValid()
         }
         refreshChromeFromTextView()
         applyBorderColor()
