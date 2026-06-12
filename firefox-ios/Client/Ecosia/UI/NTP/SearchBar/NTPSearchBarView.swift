@@ -292,10 +292,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     }
 
     @objc private func focusTextView() {
-        if textView.isFirstResponder {
-            textView.applyCompletion()
-            return
-        }
+        guard !textView.isFirstResponder else { return }
         textView.becomeFirstResponder()
     }
 
@@ -307,7 +304,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     // MARK: Actions
 
     @objc private func submitTapped() {
-        applyCompletion()
+        textView.commitPendingSuggestionIfValid()
         let text = (textView.text ?? "").trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
         textView.resignFirstResponder()
@@ -470,10 +467,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         textView.setAutocompleteSuggestion(suggestion)
     }
 
-    private func applyCompletion() {
-        textView.applyCompletion()
-    }
-
     private func refreshChromeFromTextView() {
         let text = textView.text ?? ""
         placeholderLabel.isHidden = !text.isEmpty
@@ -510,7 +503,6 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         (textView as? NTPLocationTextView)?.didEndEditing()
-        applyCompletion()
         applyBorderColor()
         onFocusChange?(false)
         delegate?.ntpSearchBarDidCancel()
@@ -530,7 +522,10 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
             return false
         }
 
-        (textView as? NTPLocationTextView)?.willChange(range: range, replacement: text)
+        if let locationTextView = textView as? NTPLocationTextView,
+           !locationTextView.willChange(range: range, replacement: text) {
+            return false
+        }
 
         // Hard cap. Block edits that would push past `maxLength` — typing past
         // the cap is rejected outright, and an oversize paste is dropped (we
