@@ -715,7 +715,12 @@ struct AddressBarState: StateType, Sendable, Equatable {
             readerModeState: state.readerModeState,
             canSummarize: state.canSummarize,
             translationConfiguration: state.translationConfiguration,
+            /* Ecosia: Firefox resets didStartTyping so highlight can update the field.
+               Preserve it while the user is typing — resetting mid-keystroke overwrites
+               the text view and drops first responder.
             didStartTyping: false,
+             */
+            didStartTyping: state.didStartTyping,
             isEmptySearch: isEmptySearch,
             alternativeSearchEngine: state.alternativeSearchEngine
         )

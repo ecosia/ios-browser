@@ -5251,21 +5251,16 @@ extension BrowserViewController: KeyboardHelperDelegate {
     }
 
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardDidHideWithState state: KeyboardState) {
-        let toolbarState = store.state.screenState(ToolbarState.self, for: .toolbar, window: windowUUID)
-        let isEditing = toolbarState?.addressToolbar.isEditing == true
-        // Ecosia: Firefox only cleared shouldShowKeyboard when editing ended. While the
-        // user scrolls suggestions the keyboard hides but overlay mode continues —
-        // leaving shouldShowKeyboard true re-requests first responder on row highlight,
-        // which leaves the keyboard-spacer gap below the address bar.
-        if !isEditing || !shouldCancelEditing {
-            store.dispatch(
-                ToolbarAction(
-                    shouldShowKeyboard: false,
-                    windowUUID: windowUUID,
-                    actionType: ToolbarActionType.keyboardStateDidChange
-                )
+        // Ecosia: Always clear shouldShowKeyboard when the keyboard hides. Overlay
+        // editing can continue (see shouldCancelEditing) but highlight must not
+        // re-request first responder — that leaves the keyboard-spacer gap under the bar.
+        store.dispatch(
+            ToolbarAction(
+                shouldShowKeyboard: false,
+                windowUUID: windowUUID,
+                actionType: ToolbarActionType.keyboardStateDidChange
             )
-        }
+        )
         tabManager.selectedTab?.setFindInPage(isBottomSearchBar: isBottomSearchBar,
                                               doesFindInPageBarExist: findInPageBar != nil)
         guard isSwipingTabsEnabled else { return }

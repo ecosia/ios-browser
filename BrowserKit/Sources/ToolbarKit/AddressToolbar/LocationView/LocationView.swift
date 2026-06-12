@@ -594,7 +594,13 @@ final class LocationView: UIView,
         // Ecosia: Keyboard hidden while overlay editing continues — do not commit inline
         // autocomplete on resign (avoids trailing spaces when scrolling suggestions).
         urlTextField.commitsAutocompleteOnEndEditing = shouldShowKeyboard
-        _ = shouldShowKeyboard ? becomeFirstResponder() : resignFirstResponder()
+        if shouldShowKeyboard {
+            _ = becomeFirstResponder()
+        } else if configurationIsEditing && !config.didStartTyping {
+            // Do not resign while the user is typing — suggestion highlight updates
+            // can clear shouldShowKeyboard after keyboard drag-dismiss.
+            _ = resignFirstResponder()
+        }
 
         // Remove the default drop interaction from the URL text field so that our
         // custom drop interaction on the BVC can accept dropped URLs.
