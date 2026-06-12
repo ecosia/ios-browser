@@ -212,6 +212,13 @@ final class NTPLocationTextView: UITextView {
 
     func didEndEditing() {
         lastReplacement = nil
+        // Drop provisional completion on blur without committing the full URL.
+        // `pendingFullSuggestion` can outlive the marked suffix after keyboard
+        // dismiss; leaving it set makes the next backspace look like a
+        // completion drop instead of a normal delete.
+        if hasInlineCompletion {
+            revertToUserTypedTextOnly()
+        }
         selectedTextRange = nil
     }
 
