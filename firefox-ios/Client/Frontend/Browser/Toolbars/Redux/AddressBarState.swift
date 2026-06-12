@@ -704,13 +704,23 @@ struct AddressBarState: StateType, Sendable, Equatable {
             lockIconNeedsTheming: state.lockIconNeedsTheming,
             safeListedURLImageName: state.safeListedURLImageName,
             isEditing: true,
+            /* Ecosia: Firefox sets shouldShowKeyboard true on location-view text updates.
+               Re-requesting the keyboard after drag-dismiss leaves a gap under the bar;
+               keyboardDidHide clears the flag — preserve state here instead of forcing true.
             shouldShowKeyboard: true,
+             */
+            shouldShowKeyboard: state.shouldShowKeyboard,
             shouldSelectSearchTerm: false,
             isLoading: state.isLoading,
             readerModeState: state.readerModeState,
             canSummarize: state.canSummarize,
             translationConfiguration: state.translationConfiguration,
+            /* Ecosia: Firefox resets didStartTyping so highlight can update the field.
+               Preserve it while the user is typing — resetting mid-keystroke overwrites
+               the text view and drops first responder.
             didStartTyping: false,
+             */
+            didStartTyping: state.didStartTyping,
             isEmptySearch: isEmptySearch,
             alternativeSearchEngine: state.alternativeSearchEngine
         )

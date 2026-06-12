@@ -33,6 +33,16 @@ protocol NTPSearchBarDelegate: AnyObject {
     /// (tap-outside the pill, close-button tap, host view disappearing).
     /// The host is expected to tear down the suggestions overlay here.
     func ntpSearchBarRequestsOverlayDismiss()
+    /// While the suggestions overlay is visible, keyboard drag-dismiss should
+    /// strip inline autocomplete without committing the full suggestion.
+    func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool
+    /// Recompute suggestions scroll insets when the pill moves (keyboard or multi-line growth).
+    func ntpSearchBarNeedsSuggestionsLayoutUpdate()
+}
+
+extension NTPSearchBarDelegate {
+    func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool { false }
+    func ntpSearchBarNeedsSuggestionsLayoutUpdate() {}
 }
 
 /// Pill-shaped search input pinned to the bottom of the redesigned NTP. Replaces
@@ -465,11 +475,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
     func setAutocompleteSuggestion(_ suggestion: String?) {
         textView.setAutocompleteSuggestion(suggestion)
+        refreshChromeFromTextView()
     }
 
     private func refreshChromeFromTextView() {
         let text = textView.text ?? ""
-        placeholderLabel.isHidden = !text.isEmpty
+        let hasVisibleContent = !text.isEmpty || textView.hasInlineCompletion
+        placeholderLabel.isHidden = hasVisibleContent
         updateSubmitState(for: text)
         updateCounter(for: text)
         updateClearButtonVisibility(for: text)
@@ -503,6 +515,12 @@ extension NTPSearchBarView: @MainActor @preconcurrency UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         (textView as? NTPLocationTextView)?.didEndEditing()
+        if delegate?.ntpSearchBarIsSuggestionsOverlayVisible() == true {
+            (textView as? NTPLocationTextView)?.stripInlineAutocomplete()
+        } else {
+            (textView as? NTPLocationTextView)?.commitPendingSuggestionIfValid()
+        }
+        refreshChromeFromTextView()
         applyBorderColor()
         onFocusChange?(false)
         delegate?.ntpSearchBarDidCancel()

@@ -2120,6 +2120,7 @@ class BrowserViewController: UIViewController,
         // back to the NTP from a webview the omnibox should take over again
         // and the native address toolbar should hide.
         shouldHideAddressToolbar()
+        ecosiaPrepareNTPOmniboxForDisplay()
     }
 
     func showEmbeddedWebview() {
@@ -2154,6 +2155,7 @@ class BrowserViewController: UIViewController,
         // contentContainer — without this it stayed hidden for the lifetime
         // of the session after the first NTP submit.
         shouldHideAddressToolbar()
+        ecosiaResetNTPOmniboxWhenLeavingNTP()
     }
 
     /// Notifies UIKit that `supportedInterfaceOrientations` may have changed
@@ -3140,6 +3142,13 @@ class BrowserViewController: UIViewController,
         // This code snippet addresses an issue related to navigation between pages in the same tab FXIOS-7309.
         // Specifically, it checks if the URL bar is not currently focused (`!focusUrlBar`) and if it is
         // operating in an overlay mode (`urlBar.inOverlayMode`).
+        // Ecosia: Active search edit on a SERP (shouldCancelEditing false) with no back
+        // stack should not dismiss the overlay — same as keyboard drag-dismiss on suggestions.
+        if addressToolbarContainer.inOverlayMode,
+           !shouldCancelEditing,
+           tabManager.selectedTab?.canGoBack != true {
+            return
+        }
         dismissUrlBar()
         tabManager.selectedTab?.goBack()
     }
@@ -3148,6 +3157,11 @@ class BrowserViewController: UIViewController,
         // This code snippet addresses an issue related to navigation between pages in the same tab FXIOS-7309.
         // Specifically, it checks if the URL bar is not currently focused (`!focusUrlBar`) and if it is
         // operating in an overlay mode (`urlBar.inOverlayMode`).
+        if addressToolbarContainer.inOverlayMode,
+           !shouldCancelEditing,
+           tabManager.selectedTab?.canGoForward != true {
+            return
+        }
         dismissUrlBar()
         tabManager.selectedTab?.goForward()
     }
@@ -5237,17 +5251,16 @@ extension BrowserViewController: KeyboardHelperDelegate {
     }
 
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardDidHideWithState state: KeyboardState) {
-        let toolbarState = store.state.screenState(ToolbarState.self, for: .toolbar, window: windowUUID)
-        let isEditing = toolbarState?.addressToolbar.isEditing == true
-        if !isEditing {
-            store.dispatch(
-                ToolbarAction(
-                    shouldShowKeyboard: false,
-                    windowUUID: windowUUID,
-                    actionType: ToolbarActionType.keyboardStateDidChange
-                )
+        // Ecosia: Always clear shouldShowKeyboard when the keyboard hides. Overlay
+        // editing can continue (see shouldCancelEditing) but highlight must not
+        // re-request first responder — that leaves the keyboard-spacer gap under the bar.
+        store.dispatch(
+            ToolbarAction(
+                shouldShowKeyboard: false,
+                windowUUID: windowUUID,
+                actionType: ToolbarActionType.keyboardStateDidChange
             )
-        }
+        )
         tabManager.selectedTab?.setFindInPage(isBottomSearchBar: isBottomSearchBar,
                                               doesFindInPageBarExist: findInPageBar != nil)
         guard isSwipingTabsEnabled else { return }
@@ -5300,11 +5313,14 @@ extension BrowserViewController: KeyboardHelperDelegate {
            the user sees on screen.
         guard shouldCancelEditing else { return }
          */
+        // Ecosia: Guard cancel so suggestion scroll (keyboard hidden) keeps overlay alive.
+        guard shouldCancelEditing else { return }
         overlayManager.cancelEditing(shouldCancelLoading: false)
     }
 
-    /* Ecosia: No longer consulted — `cancelEditingMode` now always cancels for non-omnibox surfaces.
-       Preserved for upstream merge context; remove with the next Firefox sync if still unused.
+    /* Ecosia: Firefox v147.5 — kept overlay stuck after a keyboard swipe on
+       the SERP because the URL bar pre-fills the page URL/query into
+       `searchTerm` before the user types.
     private var shouldCancelEditing: Bool {
         let newTabChoice = NewTabAccessors.getNewTabPage(profile.prefs)
         guard newTabChoice != .topSites, newTabChoice != .blankPage else { return false }
@@ -5318,6 +5334,55 @@ extension BrowserViewController: KeyboardHelperDelegate {
         return searchTerm == nil
     }
      */
+    // Ecosia: Keep the suggestions overlay when the user is searching (typed query,
+    // SERP re-focus with "test 2", etc.). Only tear down for URL-only re-focus
+    // (Ecosia stuck-bar fix). Uses live text-field contents so debounced Redux
+    // state cannot lag behind what the user already typed ("yt").
+    private var shouldCancelEditing: Bool {
+        if searchController?.parent is HomepageViewController {
+            return true
+        }
+
+        let bar = store.state.screenState(ToolbarState.self, for: .toolbar, window: windowUUID)?.addressToolbar
+        if bar?.didStartTyping == true {
+            return false
+        }
+
+        let query = overlaySearchQuery
+        guard !query.isEmpty else { return true }
+
+        if query.looksLikeAURLOverlayQuery {
+            return true
+        }
+
+        return false
+    }
+
+    private var overlaySearchQuery: String {
+        let liveText = addressToolbarContainer.overlayLocationText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if !liveText.isEmpty { return liveText }
+
+        if let query = searchController?.viewModel.searchQuery
+            .trimmingCharacters(in: .whitespacesAndNewlines), !query.isEmpty {
+            return query
+        }
+
+        if let term = store.state.screenState(ToolbarState.self, for: .toolbar, window: windowUUID)?
+            .addressToolbar.searchTerm?
+            .trimmingCharacters(in: .whitespacesAndNewlines), !term.isEmpty {
+            return term
+        }
+
+        return searchLoader?.query.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    }
+}
+
+private extension String {
+    // Mirrors SearchViewModel.looksLikeAURL — slash without spaces means page URL re-focus.
+    var looksLikeAURLOverlayQuery: Bool {
+        contains("/") && !contains(" ")
+    }
 }
 
 // MARK: JSPromptAlertControllerDelegate

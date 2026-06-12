@@ -35,6 +35,9 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     private var lastReplacement: String?
     private var hideCursor = false
     private var isSettingMarkedText = false
+    // Ecosia: When false, end-editing strips inline autocomplete without committing it
+    // (keyboard drag-dismiss while scrolling suggestions).
+    var commitsAutocompleteOnEndEditing = true
     var clearButton: UIButton? {
         return value(forKey: "_clearButton") as? UIButton
     }
@@ -81,6 +84,12 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     }
 
     weak var accessibilityActionsSource: AccessibilityActionsSource?
+
+    // Ecosia: User-typed text only (excludes inline autocomplete). Read by
+    // `overlaySearchQuery` so Redux cannot lag behind the live field.
+    var plainUserText: String {
+        textWithoutSuggestion() ?? text ?? ""
+    }
 
     override var accessibilityCustomActions: [UIAccessibilityCustomAction]? {
         get {
@@ -185,6 +194,16 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
 
     /// Commits the completion by setting the text and removing the highlight.
     private func applyCompletion() {
+        // Ecosia: Discard whitespace-only marked suffixes instead of committing them
+        // as trailing spaces when the keyboard dismisses during suggestion scrolling.
+        if let markedTextRange,
+           let marked = markedSuggestionText(in: text ?? "", range: markedTextRange),
+           marked.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            _ = removeCompletion()
+            hideCursor = false
+            return
+        }
+
         // Clear the current completion, then set the text without the attributed style.
         let text = (self.text ?? "")
         let didRemoveCompletion = removeCompletion()
@@ -195,6 +214,15 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
         if didRemoveCompletion {
             selectedTextRange = textRange(from: endOfDocument, to: endOfDocument)
         }
+    }
+
+    // Ecosia: Read the marked autocomplete suffix without committing it.
+    private func markedSuggestionText(in text: String, range: UITextRange) -> String? {
+        let location = offset(from: beginningOfDocument, to: range.start)
+        let length = offset(from: range.start, to: range.end)
+        let nsRange = NSRange(location: location, length: length)
+        guard nsRange.location != NSNotFound else { return nil }
+        return (text as NSString).substring(with: nsRange)
     }
 
     /// Removes the autocomplete-highlighted. Returns true if a completion was actually removed
@@ -254,7 +282,15 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        /* Ecosia: Firefox always commits inline autocomplete on end-editing.
         applyCompletion()
+        */
+        if commitsAutocompleteOnEndEditing {
+            applyCompletion()
+        } else if markedTextRange != nil {
+            _ = removeCompletion()
+            hideCursor = false
+        }
         return true
     }
 

@@ -109,6 +109,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         searchBar.onContentChange = { [weak self] text in
             self?.handleOmniboxContentChange(text)
+            self?.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
         searchBar.onFocusChange = { [weak self] focused in
             self?.ntpSearchBarBackdrop?.setVisible(focused, animated: true)
@@ -159,6 +160,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         let recognizer = UITapGestureRecognizer(target: self,
                                                 action: #selector(handleTapOutsideOmnibox(_:)))
         recognizer.cancelsTouchesInView = false
+        recognizer.delegate = self
         view.addGestureRecognizer(recognizer)
     }
 
@@ -288,6 +290,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ))
 
         ecosiaAdapter?.viewWillAppear()
+        if ntpSearchBar?.isFirstResponder == false {
+            resetNTPOmniboxSession()
+        }
         ecosiaAdapter?.refreshData(
             for: traitCollection,
             size: view.bounds.size
@@ -356,17 +361,26 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
     }
 
+    /// Clears omnibox text and tears down suggestion chrome. The pill is shared
+    /// across tabs — a query belongs on the SERP, not the next NTP. With
+    /// swiping-tabs the homepage can stay in the hierarchy under a webview
+    /// without `viewDidDisappear`, so this must run on leave and on re-show.
+    /// `requestsOverlayDismiss` is intentional here (leaving the NTP); keyboard
+    /// drag-dismiss on the list must not route through this path.
+func resetNTPOmniboxSession() {
+    guard let bar = ntpSearchBar else { return }
+    bar.text = ""
+    if bar.isFirstResponder {
+        _ = bar.resignFirstResponder()
+    } else {
+        bar.delegate?.ntpSearchBarDidCancel()
+    }
+    bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
+}
+
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
-        // Defensive: if the user navigated away while the omnibox was editing,
-        // tear down the suggestions overlay so the SearchLoader doesn't keep a
-        // dangling reference to this view's autocomplete sink. `didCancel`
-        // updates session state; `requestsOverlayDismiss` actually hides the
-        // overlay (the cancel callback no longer does that on its own so
-        // keyboard drag-dismiss can leave the list visible).
-        ntpSearchBar?.delegate?.ntpSearchBarDidCancel()
-        ntpSearchBar?.delegate?.ntpSearchBarRequestsOverlayDismiss()
-        _ = ntpSearchBar?.resignFirstResponder()
+        resetNTPOmniboxSession()
         ecosiaAdapter?.viewDidDisappear()
     }
 
@@ -401,6 +415,28 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     }
 }
 
+// MARK: - UIGestureRecognizerDelegate
+// Ecosia: Tap-outside must not steal touches from the suggestions overlay —
+// scrolling the list was dismissing the overlay and leaving a stale omnibox.
+extension HomepageViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        !isTouchOnOmniboxSessionChrome(touch)
+    }
+
+    private func isTouchOnOmniboxSessionChrome(_ touch: UITouch) -> Bool {
+        var responder: UIResponder? = touch.view
+        while let current = responder {
+            if current === ntpSearchBar || current === ntpSearchBarBackdrop || current === ntpOmniboxCloseButton {
+                return true
+            }
+            if current is SearchViewController { return true }
+            if current === self { break }
+            responder = current.next
+        }
+        return false
+    }
+}
+
 // MARK: - KeyboardHelperDelegate
 // Ecosia: Keeps the omnibox glued just above the keyboard while editing.
 extension HomepageViewController: KeyboardHelperDelegate {
@@ -420,6 +456,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
             options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
         ) {
             self.view.layoutIfNeeded()
+            self.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
     }
 
@@ -435,6 +472,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
             options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
         ) {
             self.view.layoutIfNeeded()
+            self.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
     }
 }

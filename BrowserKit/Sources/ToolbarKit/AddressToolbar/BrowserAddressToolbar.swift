@@ -452,6 +452,11 @@ public class BrowserAddressToolbar: UIView,
         }
     }
 
+    // Ecosia: Passthrough for live overlay text decisions in BVC.
+    public var overlayEditingText: String {
+        locationView.plainUserText
+    }
+
     // MARK: - LocationViewDelegate
     func locationViewDidEnterText(_ text: String) {
         toolbarDelegate?.searchSuggestions(searchTerm: text)
