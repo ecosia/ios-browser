@@ -85,8 +85,8 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
 
     weak var accessibilityActionsSource: AccessibilityActionsSource?
 
-    /// User-typed text only, excluding any inline autocomplete marked suffix.
-    /// Read by `overlaySearchQuery` so Redux cannot lag behind the live field.
+    // Ecosia: User-typed text only (excludes inline autocomplete). Read by
+    // `overlaySearchQuery` so Redux cannot lag behind the live field.
     var plainUserText: String {
         textWithoutSuggestion() ?? text ?? ""
     }
@@ -216,6 +216,7 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
         }
     }
 
+    // Ecosia: Read the marked autocomplete suffix without committing it.
     private func markedSuggestionText(in text: String, range: UITextRange) -> String? {
         let location = offset(from: beginningOfDocument, to: range.start)
         let length = offset(from: range.start, to: range.end)
@@ -281,6 +282,9 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        /* Ecosia: Firefox always commits inline autocomplete on end-editing.
+        applyCompletion()
+        */
         if commitsAutocompleteOnEndEditing {
             applyCompletion()
         } else if markedTextRange != nil {

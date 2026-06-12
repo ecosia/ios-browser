@@ -49,9 +49,11 @@ final class LocationView: UIView,
         urlTextField.text?.isEmpty == true
     }
 
+    // Ecosia: Passthrough for live overlay text decisions in BVC.
     var plainUserText: String {
         urlTextField.plainUserText
     }
+
     private var hasHomeIndicator: Bool {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return false }

@@ -151,6 +151,7 @@ final class AddressToolbarContainer: UIView,
     /// and the Cancel button is visible (allowing the user to leave overlay mode).
     var inOverlayMode = false
 
+    // Ecosia: Passthrough for live overlay text decisions in BVC.
     var overlayLocationText: String {
         toolbar.overlayEditingText
     }
