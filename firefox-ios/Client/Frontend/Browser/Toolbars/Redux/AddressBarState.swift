@@ -705,20 +705,22 @@ struct AddressBarState: StateType, Sendable, Equatable {
             safeListedURLImageName: state.safeListedURLImageName,
             isEditing: true,
             /* Ecosia: Firefox sets shouldShowKeyboard true on location-view text updates.
-               Re-requesting the keyboard during touch-scroll leaves a gap under the bar.
+               Re-requesting the keyboard after drag-dismiss leaves a gap under the bar;
+               keyboardDidHide clears the flag — preserve state here instead of forcing true.
             shouldShowKeyboard: true,
              */
-            shouldShowKeyboard: false,
+            shouldShowKeyboard: state.shouldShowKeyboard,
             shouldSelectSearchTerm: false,
             isLoading: state.isLoading,
             readerModeState: state.readerModeState,
             canSummarize: state.canSummarize,
             translationConfiguration: state.translationConfiguration,
-            /* Ecosia: Firefox resets didStartTyping on location-view text updates, which
-               tears down the suggestions overlay when the list is scrolled.
+            /* Ecosia: Firefox resets didStartTyping so highlight can update the field.
+               Overlay teardown on scroll is handled in BVC.shouldCancelEditing via
+               overlaySearchQuery — not this flag.
             didStartTyping: false,
              */
-            didStartTyping: state.didStartTyping,
+            didStartTyping: false,
             isEmptySearch: isEmptySearch,
             alternativeSearchEngine: state.alternativeSearchEngine
         )
