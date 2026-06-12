@@ -160,7 +160,7 @@ final class NTPLocationTextView: UITextView {
     /// Drops any inline autocomplete suffix without changing committed text.
     /// Used when the suggestions overlay stays up after keyboard drag-dismiss.
     func stripInlineAutocomplete() {
-        if hasInlineCompletion {
+        if hasInlineCompletion || hasAutocompleteSuffixBeyondUserTypedText() {
             revertToUserTypedTextOnly()
         }
     }
@@ -283,6 +283,13 @@ final class NTPLocationTextView: UITextView {
         revertToUserTypedTextOnly()
         scheduleRevertToUserTypedTextOnly()
         return true
+    }
+
+    private func hasAutocompleteSuffixBeyondUserTypedText() -> Bool {
+        guard !userTypedText.isEmpty, let current = text else { return false }
+        let typed = normalizeString(userTypedText)
+        let normalized = normalizeString(current)
+        return normalized.hasPrefix(typed) && normalized != typed
     }
 
     private func shouldRevertCommittedAutocomplete() -> Bool {

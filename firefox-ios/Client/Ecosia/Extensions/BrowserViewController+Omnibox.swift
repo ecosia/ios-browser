@@ -157,6 +157,9 @@ extension BrowserViewController {
             tableView.contentInset = .zero
             tableView.verticalScrollIndicatorInsets = .zero
             tableView.contentInsetAdjustmentBehavior = .automatic
+            tableView.isUserInteractionEnabled = true
+            tableView.keyboardDismissMode = .none
+            removeOmniboxFastTap(from: tableView)
         }
         guard searchController?.parent != nil else { return }
         hideSearchController()
@@ -275,6 +278,12 @@ extension BrowserViewController {
         // the table's own delayed selection from firing a second time.
         tap.cancelsTouchesInView = false
         tableView.addGestureRecognizer(tap)
+    }
+
+    private func removeOmniboxFastTap(from tableView: UITableView) {
+        tableView.gestureRecognizers?
+            .filter { $0.name == Self.omniboxFastTapName }
+            .forEach { tableView.removeGestureRecognizer($0) }
     }
 
     fileprivate static let omniboxFastTapName = "EcosiaOmniboxSuggestionFastTap"
