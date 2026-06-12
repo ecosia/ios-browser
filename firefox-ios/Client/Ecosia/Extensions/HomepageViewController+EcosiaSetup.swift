@@ -367,15 +367,16 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     /// without `viewDidDisappear`, so this must run on leave and on re-show.
     /// `requestsOverlayDismiss` is intentional here (leaving the NTP); keyboard
     /// drag-dismiss on the list must not route through this path.
-    func resetNTPOmniboxSession() {
-        guard let bar = ntpSearchBar else { return }
-        bar.text = ""
-        if bar.isFirstResponder {
-            _ = bar.resignFirstResponder()
-        }
+func resetNTPOmniboxSession() {
+    guard let bar = ntpSearchBar else { return }
+    bar.text = ""
+    if bar.isFirstResponder {
+        _ = bar.resignFirstResponder()
+    } else {
         bar.delegate?.ntpSearchBarDidCancel()
-        bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
     }
+    bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
+}
 
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
