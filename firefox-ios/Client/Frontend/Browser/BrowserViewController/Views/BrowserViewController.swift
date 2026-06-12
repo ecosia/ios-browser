@@ -3142,6 +3142,13 @@ class BrowserViewController: UIViewController,
         // This code snippet addresses an issue related to navigation between pages in the same tab FXIOS-7309.
         // Specifically, it checks if the URL bar is not currently focused (`!focusUrlBar`) and if it is
         // operating in an overlay mode (`urlBar.inOverlayMode`).
+        // Ecosia: Active search edit on a SERP (shouldCancelEditing false) with no back
+        // stack should not dismiss the overlay — same as keyboard drag-dismiss on suggestions.
+        if addressToolbarContainer.inOverlayMode,
+           !shouldCancelEditing,
+           tabManager.selectedTab?.canGoBack != true {
+            return
+        }
         dismissUrlBar()
         tabManager.selectedTab?.goBack()
     }
@@ -3150,6 +3157,11 @@ class BrowserViewController: UIViewController,
         // This code snippet addresses an issue related to navigation between pages in the same tab FXIOS-7309.
         // Specifically, it checks if the URL bar is not currently focused (`!focusUrlBar`) and if it is
         // operating in an overlay mode (`urlBar.inOverlayMode`).
+        if addressToolbarContainer.inOverlayMode,
+           !shouldCancelEditing,
+           tabManager.selectedTab?.canGoForward != true {
+            return
+        }
         dismissUrlBar()
         tabManager.selectedTab?.goForward()
     }
@@ -5332,8 +5344,7 @@ extension BrowserViewController: KeyboardHelperDelegate {
     // (Ecosia stuck-bar fix). Uses live text-field contents so debounced Redux
     // state cannot lag behind what the user already typed ("yt").
     private var shouldCancelEditing: Bool {
-        guard searchController?.parent != nil,
-              !(searchController?.parent is HomepageViewController) else {
+        if searchController?.parent is HomepageViewController {
             return true
         }
 
