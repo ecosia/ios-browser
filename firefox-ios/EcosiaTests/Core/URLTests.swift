@@ -354,6 +354,22 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(url.hasEcosiaUserId)
     }
 
+    // MARK: - `isEcosiaAIChat`
+
+    func testIsEcosiaAIChat_aiChatPath_returnsTrue() {
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/ai-chat")!.isEcosiaAIChat)
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/ai-chat?origin=newtabbutton&q=trees")!.isEcosiaAIChat)
+    }
+
+    func testIsEcosiaAIChat_searchVertical_returnsFalse() {
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/search?q=trees")!.isEcosiaAIChat)
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/")!.isEcosiaAIChat)
+    }
+
+    func testIsEcosiaAIChat_nonEcosiaHost_returnsFalse() {
+        XCTAssertFalse(URL(string: "https://example.com/ai-chat")!.isEcosiaAIChat)
+    }
+
     // MARK: - `policy`
 
     func testPolicyAllow() {

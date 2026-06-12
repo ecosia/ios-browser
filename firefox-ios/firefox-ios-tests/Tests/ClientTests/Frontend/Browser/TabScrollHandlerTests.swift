@@ -405,6 +405,44 @@ final class TabScrollHandlerTests: XCTestCase {
         XCTAssertTrue(subject.toolbarDisplayState.isExpanded)
     }
 
+    // MARK: - Ecosia: pinsCompactAddressBar (AI chat vertical)
+
+    func test_pinsCompactAddressBar_suppressesScrollDownHide() {
+        let subject = createSubject()
+        subject.pinsCompactAddressBar = true
+
+        subject.handleScroll(for: CGPoint(x: 0, y: -50))
+        subject.handleEndScrolling(for: CGPoint(x: 0, y: -50), velocity: .zero)
+
+        XCTAssertEqual(delegate.hideCount, 0, "Pinned compact bar must ignore downward scroll")
+        XCTAssertEqual(delegate.showCount, 0)
+        XCTAssertTrue(delegate.updateCalls.isEmpty, "No transition progress while pinned")
+    }
+
+    func test_pinsCompactAddressBar_suppressesScrollUpShow_whenCollapsed() {
+        let subject = createSubject()
+        subject.hideToolbars(animated: true) // start collapsed
+        XCTAssertEqual(delegate.hideCount, 1)
+        subject.pinsCompactAddressBar = true
+
+        subject.handleScroll(for: CGPoint(x: 0, y: 60))
+        subject.handleEndScrolling(for: CGPoint(x: 0, y: 60), velocity: .zero)
+
+        XCTAssertEqual(delegate.showCount, 0, "Pinned compact bar must ignore upward scroll")
+        XCTAssertTrue(subject.toolbarDisplayState.isCollapsed)
+    }
+
+    func test_pinsCompactAddressBar_doesNotBlockTapExpand() {
+        let subject = createSubject()
+        subject.hideToolbars(animated: false)
+        subject.pinsCompactAddressBar = true
+
+        let handler = subject.createToolbarTapHandler()
+        handler()
+
+        XCTAssertTrue(subject.toolbarDisplayState.isExpanded, "Tap must still expand the pinned compact bar")
+    }
+
     // MARK: - Setup
 
     private func createSubject(contentSize: CGSize = CGSize(width: 200, height: 2000)) -> TabScrollHandler {

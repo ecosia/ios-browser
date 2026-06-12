@@ -2750,7 +2750,19 @@ class BrowserViewController: UIViewController,
 
     func updateUIForReaderHomeStateForTab(_ tab: Tab, focusUrlBar: Bool = false) {
         updateURLBarDisplayURL(tab)
+        /* Ecosia: Default to the minimal/compact address bar pill on the AI chat vertical.
+           On AI chat we start collapsed and pin it (so scroll doesn't toggle — see the scroll
+           controllers); on any other page we restore the normal expanded behaviour. Gated by
+           isMinimalAddressBarEnabled so non-minimal builds are unaffected.
         scrollController.showToolbars(animated: false)
+         */
+        let pinsCompact = isMinimalAddressBarEnabled && (tab.url?.isEcosiaAIChat ?? false)
+        scrollController.pinsCompactAddressBar = pinsCompact
+        if pinsCompact {
+            scrollController.hideToolbars(animated: false)
+        } else {
+            scrollController.showToolbars(animated: false)
+        }
 
         if let url = tab.url {
             if url.isReaderModeURL {
@@ -4303,6 +4315,15 @@ class BrowserViewController: UIViewController,
         updateInContentHomePanel(tabManager.selectedTab?.url as URL?)
 
         (view as? ThemeApplicable)?.applyTheme(theme: currentTheme())
+
+        // Ecosia: When the user dismisses editing while still on the AI chat vertical (no navigation away),
+        // snap the address bar back to the compact pill. If editing finished with a navigation off /ai-chat,
+        // the selected tab is no longer AI chat so we leave the (already expanded) bar as is.
+        let stillAIChat = isMinimalAddressBarEnabled && (tabManager.selectedTab?.url?.isEcosiaAIChat ?? false)
+        scrollController.pinsCompactAddressBar = stillAIChat
+        if stillAIChat {
+            scrollController.hideToolbars(animated: true)
+        }
     }
 
     func addressToolbarDidBeginDragInteraction() {
@@ -4923,6 +4944,14 @@ extension BrowserViewController: TabManagerDelegate {
             scrollController.tab = selectedTab
         } else {
             scrollController.tabProvider = TabProviderAdapter(selectedTab)
+        }
+
+        // Ecosia: Keep the compact-pill pin in sync with the newly selected tab so AI chat tabs
+        // start (and stay) collapsed while other tabs keep the normal scroll behaviour.
+        let pinsCompact = isMinimalAddressBarEnabled && (selectedTab.url?.isEcosiaAIChat ?? false)
+        scrollController.pinsCompactAddressBar = pinsCompact
+        if pinsCompact {
+            scrollController.hideToolbars(animated: false)
         }
 
         var needsReload = false

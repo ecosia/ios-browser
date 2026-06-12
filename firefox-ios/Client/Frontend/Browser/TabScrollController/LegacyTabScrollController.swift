@@ -96,6 +96,9 @@ final class LegacyTabScrollController: NSObject,
     private var lastContentOffsetY: CGFloat = 0
     private var scrollDirection: ScrollDirection = .down
     var toolbarState: ToolbarState = .visible
+    // Ecosia: Pin the compact pill on the AI chat vertical so scroll doesn't toggle it. Set by BrowserViewController.
+    // Satisfies the TabScrollHandlerProtocol requirement via LegacyTabScrollProvider.
+    var pinsCompactAddressBar = false
 
     private let windowUUID: WindowUUID
     private let logger: Logger
@@ -322,6 +325,10 @@ final class LegacyTabScrollController: NSObject,
             lastPanTranslation = 0
             return
         }
+
+        // Ecosia: On the AI chat vertical the compact pill is pinned; ignore scroll-driven toggling.
+        // Tap-to-expand is unaffected (separate path via createToolbarTapHandler).
+        guard !pinsCompactAddressBar else { return }
 
         guard !tabIsLoading() else { return }
 
@@ -767,6 +774,8 @@ extension LegacyTabScrollController: UIScrollViewDelegate {
     /// If the value is false, scrolling stops immediately upon touch-up.
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard let tab,
+              // Ecosia: On the AI chat vertical the compact pill is pinned; ignore scroll-driven toggling.
+              !pinsCompactAddressBar,
               !tabIsLoading(),
               !scrollReachBottom(),
               !tab.isFindInPageMode,
