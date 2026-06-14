@@ -14,10 +14,6 @@ name: Merge Unit Tests
 on:
   pull_request:
     branches: [main, 'patch/**', 'develop']
-  # TEMPORARY (MOB-4384): also run on push to this work branch while verifying the AnalyticsSpyTests
-  # un-skip. REVERT this `push:` trigger before merging.
-  push:
-    branches: [dc-mob-4384-fix-unit-tests-after-upgrade]
 
 jobs:
   execute_merge_tests:
