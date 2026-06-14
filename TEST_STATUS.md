@@ -46,7 +46,22 @@ skips fixed it. So the remaining ~10 VC/SwiftUI AnalyticsSpy tests still add eno
 **Round-2 cut (18 skips):** widened to skip EVERY AnalyticsSpy test that builds a UIViewController /
 WKWebView / renders SwiftUI; KEEP only the ~8 genuinely-light tests (3 lifecycle-unit, 3 analytics-context,
 testTrackMenuAction, testTrackLearnMoreClick) + the inline XCTSkips. Added: 2 NewsController, 2 Bookmarks
-(import/export), 2 clear-data table-VC, 3 SwiftUI default-browser. Verifying determinism on CI (3 runs).
+(import/export), 2 clear-data table-VC, 3 SwiftUI default-browser.
+
+**Round-2 result (commit f025e75805):** STILL flaked — but on a 3rd victim, `AppFxACommandsTests.
+testCloseSendTabs_activeWithMultipleURLs_callsDeeplink` (a 0.1s `asyncAfter`). So even the ~8 light tests
+add enough load to tip the most-fragile timing siblings (rotating: Referrals → HistoryPanel → AppFxA).
+
+**Decision (user, 2026-06-14): harden the fragile victims, keep the light tests.** Two source-level
+hardening fixes (both genuinely badly-written tests, worth fixing regardless):
+ • `AppFxACommandsTests.testCloseSendTabs*` (ClientTests): replaced the fixed 0.1s `asyncAfter`-then-assert
+   with condition-polling (`waitForCloseTabs`, tolerant timeout, returns instantly in the happy path).
+ • `trackForMemoryLeaks` (ClientTests/XCTestCaseExtensions.swift, shared by 104 call sites): the weak-ref
+   leak assert now POLLS up to 2s before failing. Under load an object can still be retained by an in-flight
+   async completion that captured it (e.g. HistoryPanel's background `reloadData` callback) → a false
+   positive; a genuine leak never releases, so the bounded poll keeps real leaks caught while removing the
+   whole class of load-induced leak flakes. Zero happy-path cost (loop skipped when the ref is already nil).
+Local: build OK, AppFxACommandsTests 6/6, HistoryPanelViewModelTests 14/14. Verifying determinism on CI.
 
 (Temporarily re-added the `merge_tests.yml` `push:` trigger for this verification — REVERT before merge.)
 
