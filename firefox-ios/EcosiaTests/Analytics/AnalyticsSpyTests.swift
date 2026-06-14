@@ -196,12 +196,20 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         DependencyHelperMock().bootstrapDependencies(injectedTabManager: tabManagerMock, themeManager: EcosiaMockThemeManager())
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
+        // Ecosia: silence MMP so the lifecycle resume tests' MMP.sendSession() detached Task hits a
+        // no-op instead of the real Singular network. That uncontained Singular traffic (the Unleash
+        // network is already neutralised by the seed above) was a cross-test contaminator that starved
+        // later timing-sensitive tests under CI load — the same vector fixed for the MMP tests. (MOB-4384)
+        MMP.provider = MockMMPProvider()
     }
 
     override func tearDown() {
         super.tearDown()
         analyticsSpy = nil
         Analytics.shared = Analytics()
+        // Ecosia: leave a silent no-op MMP provider (never the real Singular) so any MMP Task still in
+        // flight from this class's lifecycle tests does zero network for the rest of the run. (MOB-4384)
+        MMP.provider = MockMMPProvider()
         // Ecosia: drain the shared async queues (User.queue + PageStore.queue) that the lifecycle and
         // BrowserViewController tests enqueue work onto, so it completes before the next test runs and
         // can't contaminate it (queue-backup timeouts / stale-file reads). (MOB-4384)

@@ -1,7 +1,31 @@
 # MOB-4384 — Unit Test Stabilisation: Living Status
 
-**Branch:** `dc-mob-4384-fix-unit-tests-after-upgrade` · **Updated:** 2026-06-11
+**Branch:** `dc-mob-4384-fix-unit-tests-after-upgrade` · **Updated:** 2026-06-14
 **This file is the source of truth for resuming after a context compaction. Keep it current.**
+
+## AnalyticsSpyTests un-skip (2026-06-14, verifying on CI)
+
+Tackling the last deferred class. Applied the same source-level containment that made MMP deterministic:
+the two network contaminators the old skip comment named are now handled — **Unleash** via the existing
+`seedFreshUnleashModelToAvoidNetworkFetch()` in setUp, and **Singular/MMP** via `MMP.provider =
+MockMMPProvider()` in setUp + tearDown (the 2 lifecycle resume tests' `MMP.sendSession()` detached Task
+now hits a no-op, never real network — this was the missing piece; MMP was NOT mocked here before).
+
+Why the webview tests are NOT the feared contaminator: `testWebViewDelegate*` / `testEcosiaHandleDidCommit*`
+drive only the BVC delegate callbacks with a `FakeNavigationAction` — **no real navigation/load**, so no
+web-content process spins up; the `BrowserViewController` is a local that deallocs per test and Redux uses
+**weak** subscribers (no persistent store leak). Lifecycle tests use temporary `AppDelegate()`s (not an
+ivar), so their `SearchesCounter` observer deallocs promptly (unlike the MMP class, which needed the
+explicit `appDelegate = nil`). Legit per-method `XCTSkip`s kept for removed-v147 APIs (`getSharingAction`,
+`menuStatus`, `TopSitesViewModel` ×3, `AppSettingsTableViewController` ctor).
+
+Removed `"AnalyticsSpyTests"` from `Schemes+Ecosia.swift` skippedTests. **Local: full EcosiaTests 668/0
+failures, 7 skipped, TEST EXECUTE SUCCEEDED, no crash** (was 636 with the class skipped → +32 tests).
+Local can't reproduce CI-load timing contamination, so verifying determinism over multiple CI runs next.
+If the webview tests still flake timing victims under load, method-skip just those 5 (honest comment),
+keeping the ~15 lightweight + 3 lifecycle tests un-skipped.
+
+(Temporarily re-added the `merge_tests.yml` `push:` trigger for this verification — REVERT before merge.)
 
 ## MMP-only CI verification + NewsTests timeout hardening (2026-06-11)
 
