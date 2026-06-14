@@ -55,20 +55,17 @@ public enum EcosiaSchemes {
         // debugging to find the cycle; whole class skipped pending that (NOT a blind skip — MOB-4384, Phase B).
         "TopSiteNativeContextMenuTests",
 
-        // EcosiaTests — AnalyticsSpyTests: SKIPPED. The Phase B refactor fixed the DETERMINISTIC vectors
-        // (the lifecycle tests now call the extracted AppDelegate units, so no BGTask crash / queue
-        // contamination), but this class ALSO has heavy WKWebView + BrowserViewController + network tests
-        // (testWebViewDelegate*, testEcosiaHandleDidCommit*, etc.) that spawn uncontrolled background work
-        // (web-content processes, Singular/Unleash network Tasks) which the queue drains can't reach. In
-        // the shared app-hosted process that intermittently starves later timing-sensitive tests' tight
-        // timeouts — observed a DIFFERENT victim almost every CI run (ReferralsModelTests, AppFxACommands,
-        // FavouritesTests, TabEcosiaExtensionTests webview, NewsTests network). Per-test timeout bumps are
-        // whack-a-mole. Safe un-skip needs an app-host-free EcosiaTests target or full webview/network
-        // mocking — a larger effort. ALL fixes are KEPT in the file (extracted-unit calls, Unleash seed,
-        // queue drains, menu rewrite to v147 MainMenuConfigurationUtility, clearsDataFromSection prod
-        // restore stays in production). MMP (above) IS un-skipped — the refactor made it lightweight
-        // (no webviews, mocked provider, seeded config). (MOB-4384, Phase B)
-        "AnalyticsSpyTests",
+        // EcosiaTests — AnalyticsSpyTests: now UN-SKIPPED. The two network contaminators are contained at
+        // the source: Unleash via seedFreshUnleashModelToAvoidNetworkFetch() in setUp, and Singular/MMP via
+        // MMP.provider = MockMMPProvider() in setUp + tearDown (the lifecycle resume tests' MMP.sendSession()
+        // detached Task now hits a no-op, never real network). Combined with the extracted-unit lifecycle
+        // calls (no BGTask crash / queue contamination) and drainSharedAsyncQueues() in tearDown, the class
+        // no longer leaks async work into later timing-sensitive tests. The webview-delegate tests
+        // (testWebViewDelegate*, testEcosiaHandleDidCommit*) drive only the BVC delegate callbacks with
+        // FakeNavigationAction — no real navigation/load is triggered, so no web-content process spins up;
+        // the BVC is a local that deallocs per test and uses weak Redux subscribers. Legit per-method skips
+        // remain for genuinely removed-in-v147 APIs (getSharingAction, menuStatus, TopSitesViewModel,
+        // AppSettingsTableViewController constructor). (MOB-4384, Phase B)
 
         // ClientTests
         "ContentBlockerTests/testCompileListsNotInStore_callsCompletionHandlerSuccessfully()",
