@@ -61,7 +61,14 @@ hardening fixes (both genuinely badly-written tests, worth fixing regardless):
    async completion that captured it (e.g. HistoryPanel's background `reloadData` callback) → a false
    positive; a genuine leak never releases, so the bounded poll keeps real leaks caught while removing the
    whole class of load-induced leak flakes. Zero happy-path cost (loop skipped when the ref is already nil).
-Local: build OK, AppFxACommandsTests 6/6, HistoryPanelViewModelTests 14/14. Verifying determinism on CI.
+Local: build OK, AppFxACommandsTests 6/6, HistoryPanelViewModelTests 14/14.
+
+**✅ DONE & CI-VERIFIED DETERMINISTIC** (commit bd12ad6b08, run 27501360345): junit "iOS Unit Test Results"
+across 3 consecutive runs — 2337/0, 2344/0, 2358/0, all 0 failed, NO rotating victim. AnalyticsSpyTests is
+PARTIALLY un-skipped: the ~8 lightweight tests run; the 18 heavy (UIViewController/WKWebView/SwiftUI) tests
+stay method-skipped pending an app-host-free EcosiaTests target. Two genuinely-fragile ClientTests hardened
+at the source (AppFxACommands 0.1s poll, shared trackForMemoryLeaks bounded poll). The temp merge_tests.yml
+`push:` trigger has been reverted (PR-only again).
 
 (Temporarily re-added the `merge_tests.yml` `push:` trigger for this verification — REVERT before merge.)
 
