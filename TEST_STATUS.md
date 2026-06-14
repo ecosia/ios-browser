@@ -19,11 +19,23 @@ ivar), so their `SearchesCounter` observer deallocs promptly (unlike the MMP cla
 explicit `appDelegate = nil`). Legit per-method `XCTSkip`s kept for removed-v147 APIs (`getSharingAction`,
 `menuStatus`, `TopSitesViewModel` ×3, `AppSettingsTableViewController` ctor).
 
-Removed `"AnalyticsSpyTests"` from `Schemes+Ecosia.swift` skippedTests. **Local: full EcosiaTests 668/0
-failures, 7 skipped, TEST EXECUTE SUCCEEDED, no crash** (was 636 with the class skipped → +32 tests).
-Local can't reproduce CI-load timing contamination, so verifying determinism over multiple CI runs next.
-If the webview tests still flake timing victims under load, method-skip just those 5 (honest comment),
-keeping the ~15 lightweight + 3 lifecycle tests un-skipped.
+Removed `"AnalyticsSpyTests"` from `Schemes+Ecosia.swift` skippedTests. Local full EcosiaTests with the
+WHOLE class un-skipped: 668/0 failures, no crash (logically clean). But **CI run 0804d6efb7 (27493204234)
+failed 2/2363** — `ReferralsModelTests.testInitWithCode` ("multiple fulfill") + `HistoryPanelViewModelTests.
+testDeleteGroup_ForLastHour` (leak-detector false-positive from load-delayed deinit). Diverse, rotating
+victims = the heavy UI-object-creation load is NOT containable test-by-test (network already was).
+
+**Decision (user, 2026-06-14): TIERED method-skip.** Keep the ~13 lightweight AnalyticsSpy tests
+un-skipped; method-skip the 9 heaviest in `Schemes+Ecosia.swift` (evidence-based round-1 cut targeting the
+two observed victims' likely sources):
+ • 5 `BrowserViewController`/WKWebView in-app-search tests (heaviest objects + lingering web work →
+   `HistoryPanelViewModel` leak-timing victim)
+ • 4 `testMultiplyImpact*` referral tests (`MultiplyImpact` VC + `Referrals` subscription → the
+   `ReferralsModelTests` "multiple fulfill" contaminator)
+These 9 pass in isolation — purely process-load isolation, NOT a logic skip. Proper fix = app-host-free
+EcosiaTests target. **Local with tiered skips: 659/0 failures, no crash** (668 − 9 excluded). Verifying
+determinism on CI; if a NEW victim appears, widen the cut (next candidates: NewsController, Bookmarks,
+ClearData, DefaultBrowser VC tests).
 
 (Temporarily re-added the `merge_tests.yml` `push:` trigger for this verification — REVERT before merge.)
 
