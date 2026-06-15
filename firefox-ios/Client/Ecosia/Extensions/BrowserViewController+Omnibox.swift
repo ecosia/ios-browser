@@ -188,22 +188,14 @@ extension BrowserViewController {
         ])
 
         // z-order back→front: suggestions overlay, focused-state scrim,
-        // omnibox pill, floating close button. The scrim sits above the
-        // suggestions so the bottom of the list fades into the pill, but
-        // below the pill itself so the pill stays fully opaque.
+        // omnibox pill. The scrim sits above the suggestions so the bottom
+        // of the list fades into the pill, but below the pill itself so the
+        // pill stays fully opaque.
         if let homepage = hostVC as? HomepageViewController,
            let backdrop = homepage.ntpSearchBarBackdrop {
             host.bringSubviewToFront(backdrop)
         }
         host.bringSubviewToFront(anchorView)
-        if let homepage = hostVC as? HomepageViewController,
-           let closeButton = homepage.ntpOmniboxCloseButton {
-            host.bringSubviewToFront(closeButton)
-            // Push the table content down below the close button so the first
-            // suggestion isn't drawn underneath it. The view itself still
-            // spans the safe area, so the keyboard-tracking footer stays put.
-            host.layoutIfNeeded()
-        }
 
         searchController.didMove(toParent: hostVC)
         updateOmniboxSuggestionsScrollInsets()
@@ -232,12 +224,7 @@ extension BrowserViewController {
 
         homepage.view.layoutIfNeeded()
 
-        let topInset: CGFloat
-        if let closeButton = homepage.ntpOmniboxCloseButton {
-            topInset = max(0, closeButton.frame.maxY - homepage.view.safeAreaInsets.top)
-        } else {
-            topInset = 0
-        }
+        let topInset: CGFloat = 0
 
         let omniboxFrame = searchController.view.convert(omnibox.bounds, from: omnibox)
         let bottomInset = max(

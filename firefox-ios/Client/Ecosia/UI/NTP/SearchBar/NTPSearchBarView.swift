@@ -30,7 +30,7 @@ protocol NTPSearchBarDelegate: AnyObject {
     /// `ntpSearchBarRequestsOverlayDismiss` for explicit overlay teardown.
     func ntpSearchBarDidCancel()
     /// Called when the user explicitly asks the omnibox UI to dismiss
-    /// (tap-outside the pill, close-button tap, host view disappearing).
+    /// (tap-outside the pill, host view disappearing).
     /// The host is expected to tear down the suggestions overlay here.
     func ntpSearchBarRequestsOverlayDismiss()
     /// While the suggestions overlay is visible, keyboard drag-dismiss should
@@ -159,8 +159,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     }
 
     /// Fires whenever the text content changes (including programmatic clears).
-    /// Use from the host to drive focus-only chrome that depends on having text
-    /// — for example, the top-right close button.
+    /// Use from the host to drive layout that depends on pill height changes.
     var onContentChange: ((String) -> Void)?
 
     /// Fires whenever the textView's first-responder state changes. Use from
