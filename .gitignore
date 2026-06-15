@@ -144,9 +144,6 @@ vendor/bundle
 # transifex
 /tx
 
-# Claude Code local settings (personal overrides, not shared with team)
-.claude/settings.local.json
-
 # Ecosia: Additional configs
 Staging.xcconfig
 Production.xcconfig
