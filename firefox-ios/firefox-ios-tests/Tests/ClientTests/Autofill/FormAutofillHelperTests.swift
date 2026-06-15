@@ -17,6 +17,7 @@ import Storage
 @MainActor
 final class FormAutofillHelperTests: XCTestCase {
     var formAutofillHelper: FormAutofillHelper!
+    // swiftlint:disable:next implicitly_unwrapped_optional
     var tab: MockTab!
     var profile: MockProfile!
     var secureWebviewMock: WKWebViewMock!

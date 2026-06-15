@@ -12,6 +12,7 @@ import WebKit
 final class TabEcosiaExtensionTests: XCTestCase {
 
     // Ecosia: implicitly-unwrapped so tearDown can set it to nil; setUp assigns a fresh WindowUUID(). (MOB-4384)
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var windowUUID: WindowUUID!
     private var savedAnalyticsId = UUID()
     private var savedSendAnonymousUsageData = true

@@ -361,8 +361,11 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
                 element.action?()
 
                 // Assert
-                XCTAssertEqual(analyticsSpy.menuClickItemCalled, label,
-                               "Analytics should track menu click with label \(label.rawValue).")
+                XCTAssertEqual(
+                    analyticsSpy.menuClickItemCalled,
+                    label,
+                    "Analytics should track menu click with label \(label.rawValue)."
+                )
             }
         }
     }

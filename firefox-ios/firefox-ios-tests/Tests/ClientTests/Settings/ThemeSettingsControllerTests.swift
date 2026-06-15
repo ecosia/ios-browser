@@ -18,6 +18,7 @@ import XCTest
 class ThemeSettingsControllerTests: XCTestCase, StoreTestUtility {
     let storeUtilityHelper = StoreTestUtilityHelper()
     let windowUUID: WindowUUID = .XCTestDefaultUUID
+    // swiftlint:disable:next implicitly_unwrapped_optional
     var appState: AppState!
 
     override func setUp() {
