@@ -18,6 +18,7 @@ class CreditCardInputViewModelTests: XCTestCase, @unchecked Sendable {
     private var profile: MockProfile!
     private var viewModel: CreditCardInputViewModel!
     private var files: FileAccessor!
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var autofill: MockCreditCardProvider!
     private var encryptionKey: String!
     private var samplePlainTextCard = UnencryptedCreditCardFields(ccName: "Allen Burges",
