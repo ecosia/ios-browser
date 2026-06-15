@@ -26,7 +26,12 @@ final class StartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
             wrappedManager: WindowManagerImplementation(),
             tabManager: mockTabManager
         )
-        DependencyHelperMock().bootstrapDependencies(injectedWindowManager: mockWindowManager)
+        // Ecosia: pass the mock tab manager too — otherwise bootstrapDependencies creates a DEFAULT
+        // TabManagerImplementation and registers it under the window UUID, overwriting our mock (whose
+        // tabRestoreHasFinished=true). With the default (tabRestoreHasFinished=false), the middleware's
+        // isRestoringTabs becomes true and Start-at-Home is always skipped. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies(injectedTabManager: mockTabManager,
+                                                     injectedWindowManager: mockWindowManager)
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
         setupStore()
         appState = setupAppState()

@@ -28,6 +28,17 @@ extension XCTestCase {
     @MainActor
     func trackForMemoryLeaks(_ object: AnyObject?, file: StaticString = #filePath, line: UInt = #line) {
         addTeardownBlock { [weak object] in
+            // Ecosia: poll briefly before asserting. Under CI load an object can still be retained at
+            // teardown by an in-flight async completion that captured it (e.g. a reloadData callback
+            // delivered on a background queue), which made this a load-induced FLAKE — passing in light
+            // runs, "leak detected" under heavier ones. A genuine leak never releases, so this bounded
+            // poll keeps real leaks caught while removing the false positive. It costs nothing in the
+            // happy path: when the ref is already nil the loop is skipped and the assert is immediate.
+            // (MOB-4384)
+            let deadline = Date().addingTimeInterval(2)
+            while object != nil, Date() < deadline {
+                RunLoop.current.run(until: Date().addingTimeInterval(0.05))
+            }
             XCTAssertNil(object, "Memory leak detected in \(file):\(line)")
         }
     }

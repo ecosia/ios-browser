@@ -320,10 +320,13 @@ final class EventQueueTests: XCTestCase, @unchecked Sendable {
     // the original state of the events as they were when the enqueued action was performed.
     func testChangingAnEventAsPartOfAnActionStillRemovesTheActionAfterPerformingIt() {
         let expectation = XCTestExpectation(description: "Action block cleaned up.")
-        var actionsPerformed = 0
+        // Ecosia: Box the mutable counter in a reference type so it can be safely captured
+        // by @Sendable closures under Swift 6 strict concurrency (var capture is forbidden).
+        final class Counter: @unchecked Sendable { var value = 0 }
+        let actionsPerformed = Counter()
         queue.wait(for: [.startingEvent, .activityEvent], then: {
             MainActor.assumeIsolated {
-                actionsPerformed += 1
+                actionsPerformed.value += 1
                 // As part of the enqueued action block, change the state of our dependent event out of .completed:
                 self.queue.started(.activityEvent)
             }
@@ -331,7 +334,7 @@ final class EventQueueTests: XCTestCase, @unchecked Sendable {
                 MainActor.assumeIsolated {
                     self.queue.completed(.activityEvent)
                 }
-                if actionsPerformed > 1 {
+                if actionsPerformed.value > 1 {
                     // Action block was not cleaned up and was run repeatedly due
                     // to dependent event being moved out of .completed state by
                     // the action itself. This is a bug.

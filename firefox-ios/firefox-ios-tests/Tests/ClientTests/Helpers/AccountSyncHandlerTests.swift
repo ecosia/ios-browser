@@ -20,6 +20,9 @@ class AccountSyncHandlerTests: XCTestCase {
         self.profile = MockProfile()
         self.syncManager = profile.syncManager as? ClientSyncManagerSpy
         self.queue = MockDispatchQueue()
+        // Ecosia: Sync to upstream v147.5 — upstream's setUp bootstraps the DI container so that
+        // createTab()'s Tab.init can resolve WindowManager/DocumentLogger. Our copy predated this. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
     }
 
     override func tearDown() {
@@ -27,6 +30,8 @@ class AccountSyncHandlerTests: XCTestCase {
         self.syncManager = nil
         self.profile = nil
         self.queue = nil
+        // Ecosia: match upstream tearDown. (MOB-4384)
+        DependencyHelperMock().reset()
     }
 
     func testTabDidGainFocus_doesntSyncWithoutAccount() {
@@ -35,21 +40,32 @@ class AccountSyncHandlerTests: XCTestCase {
         let tab = createTab(profile: profile)
         subject.tabDidGainFocus(tab)
 
-        XCTAssertEqual(syncManager.syncNamedCollectionsCalled, 0)
+        XCTAssertEqual(profile.storeAndSyncTabsCalled, 0)
     }
 
     func testTabDidGainFocus_syncWithAccount() {
-        let subject = AccountSyncHandler(with: profile, queue: queue)
+        // Ecosia: the sync runs through a trailing Debouncer + a queued store, so wait for the production's
+        // sync-completed callback rather than asserting synchronously. (MOB-4384)
+        let expectation = XCTestExpectation(description: "Sync completed")
+        let subject = AccountSyncHandler(
+            with: profile,
+            debounceTime: 0,
+            queueDelay: 0,
+            onSyncCompleted: { expectation.fulfill() }
+        )
         let tab = createTab(profile: profile)
         subject.tabDidGainFocus(tab)
 
-        XCTAssertEqual(syncManager.syncNamedCollectionsCalled, 1)
+        wait(for: [expectation], timeout: 5)
+        XCTAssertEqual(profile.storeAndSyncTabsCalled, 1)
     }
 
     func testTabDidGainFocus_highThrottleTime_executedAtMostOnce() {
+        // Ecosia: with a high debounce, rapid focus events are coalesced and the trailing sync is deferred well
+        // beyond the wait window — so no sync has fired yet within the window. (MOB-4384)
         let threshold: Double = 1000
         let stepWaitTime = 2.0
-        let subject = AccountSyncHandler(with: profile, debounceTime: threshold, queue: DispatchQueue.global())
+        let subject = AccountSyncHandler(with: profile, debounceTime: threshold)
         let tab = createTab(profile: profile)
 
         subject.tabDidGainFocus(tab)
@@ -57,23 +73,30 @@ class AccountSyncHandlerTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "SyncNamedCollectionsCalled value expectation")
         DispatchQueue.main.asyncAfter(deadline: .now() + stepWaitTime) {
-            XCTAssertEqual(self.syncManager.syncNamedCollectionsCalled, 1)
+            XCTAssertEqual(self.profile.storeAndSyncTabsCalled, 0)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: stepWaitTime * 2)
     }
 
     func testTabDidGainFocus_multipleThrottle_withWaitSyncOnce() {
-        let subject = AccountSyncHandler(with: profile, debounceTime: 0.2, queue: DispatchQueue.global())
+        // Ecosia: many rapid focus events are debounced into a single sync; wait for the sync-completed callback.
+        let expectation = XCTestExpectation(description: "Sync completed")
+        let subject = AccountSyncHandler(
+            with: profile,
+            debounceTime: 0.2,
+            queueDelay: 0,
+            onSyncCompleted: { expectation.fulfill() }
+        )
         let tab = createTab(profile: profile)
         subject.tabDidGainFocus(tab)
         subject.tabDidGainFocus(tab)
         subject.tabDidGainFocus(tab)
         subject.tabDidGainFocus(tab)
         subject.tabDidGainFocus(tab)
-        wait(0.5)
 
-        XCTAssertEqual(syncManager.syncNamedCollectionsCalled, 1)
+        wait(for: [expectation], timeout: 5)
+        XCTAssertEqual(profile.storeAndSyncTabsCalled, 1)
     }
 }
 

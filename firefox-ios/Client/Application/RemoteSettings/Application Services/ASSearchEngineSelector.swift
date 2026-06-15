@@ -52,7 +52,12 @@ final class ASSearchEngineSelector: ASSearchEngineSelectorProtocol {
 
             // FXIOS-12307 For now we force a sync() when hitting any servers other than prod, otherwise we get API errors
             // This should only impact QA and internal testing, not production.
-            let profile: Profile = AppContainer.shared.resolve()
+            // Ecosia: Use resolveOptional() to avoid crashing when AppContainer is reset during test setUp.
+            // This method runs on a background thread (via DispatchQueue.global), so there's a race window.
+            guard let profile: Profile = AppContainer.shared.resolveOptional() else {
+                completion(nil, nil)
+                return
+            }
             let remoteSettingsEnvironmentKey =
                 profile.prefs.stringForKey(PrefsKeys.RemoteSettings.remoteSettingsEnvironment) ?? ""
             let remoteSettingsEnv = RemoteSettingsEnvironment(rawValue: remoteSettingsEnvironmentKey) ?? .prod

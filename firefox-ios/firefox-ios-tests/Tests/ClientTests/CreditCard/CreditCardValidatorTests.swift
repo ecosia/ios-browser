@@ -58,7 +58,8 @@ class CreditCardValidatorTests: XCTestCase {
     }
 
     func testCardTypeForMIR() {
-        let result = creditCardValidator.cardTypeFor("2060123412341234")
+        // Ecosia: MIR BINs are 2200–2204 (validator pattern ^220[0-4]…); the previous 2060… prefix is not MIR.
+        let result = creditCardValidator.cardTypeFor("2200123412341234")
 
         XCTAssertEqual(result, .mir)
     }
@@ -119,7 +120,7 @@ class CreditCardValidatorTests: XCTestCase {
     }
 
     func testCardNumberIsValidForMir() {
-        let result = creditCardValidator.isCardNumberValidFor(card: "2060123412341234")
+        let result = creditCardValidator.isCardNumberValidFor(card: "2200123412341234")
         XCTAssert(result)
     }
 

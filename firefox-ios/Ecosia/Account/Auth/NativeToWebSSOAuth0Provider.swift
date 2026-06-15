@@ -5,8 +5,10 @@
 import Auth0
 import WebKit
 
+// Ecosia: @unchecked Sendable because the struct stores protocol existentials
+// (Auth0SettingsProviderProtocol, CredentialsManagerProtocol) that are not Sendable.
 /// Native to Web SSO implementation of `Auth0ProviderProtocol` using Auth0's SDK and performing Native to Web SSO via REST API to perform the session token exchange.
-public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
+public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sendable {
 
     public let settings: Auth0SettingsProviderProtocol
     public let credentialsManager: CredentialsManagerProtocol
