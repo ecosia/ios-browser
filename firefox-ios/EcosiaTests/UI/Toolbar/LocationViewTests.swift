@@ -197,7 +197,7 @@ final class LocationViewTests: XCTestCase {
     /// Synchronously pumps the main run loop for `seconds`, letting deferred main-queue blocks and
     /// timers (e.g. `UIView.animate`'s delayed start) fire and the run-loop autorelease pool drain.
     /// Lives in a non-`async` context because the run-loop APIs are unavailable from async contexts.
-    private nonisolated static func drainMainRunLoop(for seconds: TimeInterval) {
+    nonisolated private static func drainMainRunLoop(for seconds: TimeInterval) {
         let deadline = Date().addingTimeInterval(seconds)
         while Date() < deadline {
             RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.02))
