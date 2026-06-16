@@ -126,18 +126,15 @@ final class BookmarksViewController: SiteTableViewController,
         return button
     }()
 
-    /* Ecosia: Store empty bookmarks view lazily
+    /* Ecosia: Lazy empty bookmarks view crashed in deinit when delegate was set during teardown
     private lazy var emptyBookmarksView: EmptyBookmarksView = {
         let view = EmptyBookmarksView(initialBottomMargin: 0)
         view.delegate = self
         return view
     }()
     */
-    // Ecosia: Store optionally so deinit can clean up without triggering lazy init
-    // (assigning delegate = self while the view controller is deallocating).
     private var emptyBookmarksView: EmptyBookmarksView?
 
-    // Ecosia: Create empty bookmarks view on demand when the empty state is shown.
     private func ensureEmptyBookmarksView() -> EmptyBookmarksView {
         if let emptyBookmarksView {
             return emptyBookmarksView
@@ -194,10 +191,9 @@ final class BookmarksViewController: SiteTableViewController,
             // FXIOS-11315: Necessary to prevent BookmarksFolderEmptyStateView from being retained in memory
             a11yEmptyStateScrollView.removeFromSuperview()
             */
-            /* Ecosia: Remove lazy empty bookmarks view from hierarchy on teardown
+            /* Ecosia: Lazy empty bookmarks view crashed in deinit — only clean up if already created
             emptyBookmarksView.removeFromSuperview()
             */
-            // Ecosia: Only clean up if already created — avoid lazy init during deallocation.
             emptyBookmarksView?.delegate = nil
             emptyBookmarksView?.removeFromSuperview()
             emptyBookmarksView = nil
