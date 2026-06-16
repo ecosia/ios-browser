@@ -10,16 +10,12 @@ import XCTest
 // Ecosia: Lifecycle tests for the Ecosia empty bookmarks state on BookmarksViewController.
 @MainActor
 final class BookmarksViewControllerTests: XCTestCase {
-    private var profile: MockProfile!
-
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
-        profile = MockProfile()
     }
 
     override func tearDown() {
-        profile = nil
         DependencyHelperMock().reset()
         super.tearDown()
     }
@@ -70,7 +66,7 @@ final class BookmarksViewControllerTests: XCTestCase {
 
     private func createSubject(bookmarkNodes: [FxBookmarkNode]) -> BookmarksViewController {
         let viewModel = BookmarksPanelViewModel(
-            profile: profile,
+            profile: MockProfile(),
             bookmarksHandler: BookmarksHandlerMock(),
             bookmarkFolderGUID: BookmarkRoots.MobileFolderGUID
         )
