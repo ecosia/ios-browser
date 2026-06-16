@@ -126,11 +126,19 @@ final class BookmarksViewController: SiteTableViewController,
         return button
     }()
 
-    private lazy var emptyBookmarksView: EmptyBookmarksView = {
+    // Stored optionally so deinit can clean up without triggering lazy init (which would
+    // assign delegate = self while the view controller is deallocating).
+    private var emptyBookmarksView: EmptyBookmarksView?
+
+    private func ensureEmptyBookmarksView() -> EmptyBookmarksView {
+        if let emptyBookmarksView {
+            return emptyBookmarksView
+        }
         let view = EmptyBookmarksView(initialBottomMargin: 0)
         view.delegate = self
+        emptyBookmarksView = view
         return view
-    }()
+    }
 
     // MARK: - Init
 
@@ -178,7 +186,9 @@ final class BookmarksViewController: SiteTableViewController,
             // FXIOS-11315: Necessary to prevent BookmarksFolderEmptyStateView from being retained in memory
             a11yEmptyStateScrollView.removeFromSuperview()
             */
-            emptyBookmarksView.removeFromSuperview()
+            emptyBookmarksView?.delegate = nil
+            emptyBookmarksView?.removeFromSuperview()
+            emptyBookmarksView = nil
         }
     }
 
@@ -448,17 +458,18 @@ final class BookmarksViewController: SiteTableViewController,
         let showEmptyState = viewModel.bookmarkNodes.isEmpty && !tableView.isEditing
 
         if showEmptyState {
-            if emptyBookmarksView.superview == nil {
-                emptyBookmarksView.frame = view.bounds
-                emptyBookmarksView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-                view.addSubview(emptyBookmarksView)
+            let emptyView = ensureEmptyBookmarksView()
+            if emptyView.superview == nil {
+                emptyView.frame = view.bounds
+                emptyView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                view.addSubview(emptyView)
             }
-            emptyBookmarksView.applyTheme(theme: currentTheme())
-            view.bringSubviewToFront(emptyBookmarksView)
-            emptyBookmarksView.isHidden = false
+            emptyView.applyTheme(theme: currentTheme())
+            view.bringSubviewToFront(emptyView)
+            emptyView.isHidden = false
         } else {
-            emptyBookmarksView.isHidden = true
-            emptyBookmarksView.removeFromSuperview()
+            emptyBookmarksView?.isHidden = true
+            emptyBookmarksView?.removeFromSuperview()
         }
     }
 
@@ -524,7 +535,7 @@ final class BookmarksViewController: SiteTableViewController,
     }
     */
     private func setupEmptyStateView() {
-        emptyBookmarksView.applyTheme(theme: currentTheme())
+        ensureEmptyBookmarksView().applyTheme(theme: currentTheme())
     }
 
     // MARK: - UITableViewDataSource | UITableViewDelegate
