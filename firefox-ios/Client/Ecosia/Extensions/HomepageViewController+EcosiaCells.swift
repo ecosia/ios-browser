@@ -138,15 +138,6 @@ extension HomepageViewController {
         objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarTrailingConstraint, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
-    // Ecosia: Top-right close button shown only while the omnibox is in focus.
-    var ntpOmniboxCloseButton: UIButton? {
-        return objc_getAssociatedObject(self, &AssociatedKeys.ntpOmniboxCloseButton) as? UIButton
-    }
-
-    func setNTPOmniboxCloseButton(_ button: UIButton) {
-        objc_setAssociatedObject(self, &AssociatedKeys.ntpOmniboxCloseButton, button, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-
     // Ecosia: Active-state gradient scrim behind the focused pill.
     var ntpSearchBarBackdrop: NTPSearchBarBackdropView? {
         return objc_getAssociatedObject(self, &AssociatedKeys.ntpSearchBarBackdrop) as? NTPSearchBarBackdropView
@@ -166,6 +157,5 @@ private struct AssociatedKeys {
     nonisolated(unsafe) static var ntpSearchBarBottomConstraint: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarLeadingConstraint: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarTrailingConstraint: UInt8 = 0
-    nonisolated(unsafe) static var ntpOmniboxCloseButton: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarBackdrop: UInt8 = 0
 }

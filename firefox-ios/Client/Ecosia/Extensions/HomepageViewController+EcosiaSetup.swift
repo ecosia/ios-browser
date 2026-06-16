@@ -38,8 +38,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
 
         // Active-state scrim sits behind the pill. Added before the pill so
-        // the pill (and the floating close button installed below) naturally
-        // render on top of it. Hidden by default — appears only on focus.
+        // the pill naturally renders on top of it. Hidden by default — appears
+        // only on focus.
         let backdrop = NTPSearchBarBackdropView()
         backdrop.translatesAutoresizingMaskIntoConstraints = false
         backdrop.applyTheme(theme: theme)
@@ -107,87 +107,24 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // keyboard fully dismisses, the omnibox loses focus naturally.
         homepageCollectionView?.keyboardDismissMode = .interactive
 
-        searchBar.onContentChange = { [weak self] text in
-            self?.handleOmniboxContentChange(text)
+        searchBar.onContentChange = { [weak self] _ in
+            self?.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
         searchBar.onFocusChange = { [weak self] focused in
             self?.ntpSearchBarBackdrop?.setVisible(focused, animated: true)
         }
 
-        installOmniboxCloseButton()
         installOmniboxTapOutsideDismiss()
 
         KeyboardHelper.defaultHelper.addDelegate(self)
-    }
-
-    private func installOmniboxCloseButton() {
-        let button = UIButton(type: .system)
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
-        button.setImage(UIImage(systemName: "xmark", withConfiguration: symbolConfig), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 18
-        button.alpha = 0
-        button.isHidden = true
-        button.accessibilityLabel = String.localized(.close)
-        button.accessibilityIdentifier = "NTPOmniboxCloseButton"
-        button.addTarget(self, action: #selector(handleOmniboxCloseButtonTapped), for: .touchUpInside)
-        view.addSubview(button)
-
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: .ecosia.space._m),
-            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -.ecosia.space._m),
-            button.widthAnchor.constraint(equalToConstant: 36),
-            button.heightAnchor.constraint(equalToConstant: 36)
-        ])
-
-        setNTPOmniboxCloseButton(button)
-        applyOmniboxCloseButtonTheme()
-    }
-
-    /// Paints the floating top-right close button using the same `layer5`
-    /// token as the autocomplete row backgrounds, so the button visually
-    /// belongs to the suggestions surface beneath it instead of reading as
-    /// a separate pill.
-    private func applyOmniboxCloseButtonTheme() {
-        guard let button = ntpOmniboxCloseButton else { return }
-        let colors = themeManager.getCurrentTheme(for: windowUUID).colors
-        button.backgroundColor = colors.layer5
-        button.tintColor = colors.ecosia.textPrimary
     }
 
     private func installOmniboxTapOutsideDismiss() {
         let recognizer = UITapGestureRecognizer(target: self,
                                                 action: #selector(handleTapOutsideOmnibox(_:)))
         recognizer.cancelsTouchesInView = false
+        recognizer.delegate = self
         view.addGestureRecognizer(recognizer)
-    }
-
-    private func handleOmniboxContentChange(_ text: String) {
-        guard let button = ntpOmniboxCloseButton else { return }
-        let shouldShow = !text.isEmpty
-        guard shouldShow != !button.isHidden else { return }
-        if shouldShow {
-            button.isHidden = false
-            UIView.animate(withDuration: 0.2) { button.alpha = 1 }
-        } else {
-            UIView.animate(withDuration: 0.2,
-                           animations: { button.alpha = 0 },
-                           completion: { _ in button.isHidden = true })
-        }
-    }
-
-    @objc private func handleOmniboxCloseButtonTapped() {
-        guard let bar = ntpSearchBar else { return }
-        bar.text = ""
-        if bar.isFirstResponder {
-            _ = bar.resignFirstResponder()
-        }
-        // The bar's `didCancel` callback no longer hides the overlay (that
-        // would tear it down on every keyboard drag-dismiss too), so always
-        // request the explicit dismiss here. After a drag-dismiss the bar
-        // isn't first responder either, but the request still tears the
-        // suggestions overlay down.
-        bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
     }
 
     @objc private func handleTapOutsideOmnibox(_ gesture: UITapGestureRecognizer) {
@@ -288,6 +225,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ))
 
         ecosiaAdapter?.viewWillAppear()
+        if ntpSearchBar?.isFirstResponder == false {
+            resetNTPOmniboxSession()
+        }
         ecosiaAdapter?.refreshData(
             for: traitCollection,
             size: view.bounds.size
@@ -356,17 +296,26 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
     }
 
+    /// Clears omnibox text and tears down suggestion chrome. The pill is shared
+    /// across tabs — a query belongs on the SERP, not the next NTP. With
+    /// swiping-tabs the homepage can stay in the hierarchy under a webview
+    /// without `viewDidDisappear`, so this must run on leave and on re-show.
+    /// `requestsOverlayDismiss` is intentional here (leaving the NTP); keyboard
+    /// drag-dismiss on the list must not route through this path.
+func resetNTPOmniboxSession() {
+    guard let bar = ntpSearchBar else { return }
+    bar.text = ""
+    if bar.isFirstResponder {
+        _ = bar.resignFirstResponder()
+    } else {
+        bar.delegate?.ntpSearchBarDidCancel()
+    }
+    bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
+}
+
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
-        // Defensive: if the user navigated away while the omnibox was editing,
-        // tear down the suggestions overlay so the SearchLoader doesn't keep a
-        // dangling reference to this view's autocomplete sink. `didCancel`
-        // updates session state; `requestsOverlayDismiss` actually hides the
-        // overlay (the cancel callback no longer does that on its own so
-        // keyboard drag-dismiss can leave the list visible).
-        ntpSearchBar?.delegate?.ntpSearchBarDidCancel()
-        ntpSearchBar?.delegate?.ntpSearchBarRequestsOverlayDismiss()
-        _ = ntpSearchBar?.resignFirstResponder()
+        resetNTPOmniboxSession()
         ecosiaAdapter?.viewDidDisappear()
     }
 
@@ -376,7 +325,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ecosiaAdapter?.updateTheme(theme)
         ntpSearchBar?.applyTheme(theme: theme)
         ntpSearchBarBackdrop?.applyTheme(theme: theme)
-        applyOmniboxCloseButtonTheme()
     }
 
     /// Refreshes the Ecosia snapshot so the UI updates
@@ -401,6 +349,28 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     }
 }
 
+// MARK: - UIGestureRecognizerDelegate
+// Ecosia: Tap-outside must not steal touches from the suggestions overlay —
+// scrolling the list was dismissing the overlay and leaving a stale omnibox.
+extension HomepageViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        !isTouchOnOmniboxSessionChrome(touch)
+    }
+
+    private func isTouchOnOmniboxSessionChrome(_ touch: UITouch) -> Bool {
+        var responder: UIResponder? = touch.view
+        while let current = responder {
+            if current === ntpSearchBar || current === ntpSearchBarBackdrop {
+                return true
+            }
+            if current is SearchViewController { return true }
+            if current === self { break }
+            responder = current.next
+        }
+        return false
+    }
+}
+
 // MARK: - KeyboardHelperDelegate
 // Ecosia: Keeps the omnibox glued just above the keyboard while editing.
 extension HomepageViewController: KeyboardHelperDelegate {
@@ -420,6 +390,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
             options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
         ) {
             self.view.layoutIfNeeded()
+            self.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
     }
 
@@ -435,6 +406,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
             options: UIView.AnimationOptions(rawValue: UInt(state.animationCurve.rawValue << 16))
         ) {
             self.view.layoutIfNeeded()
+            self.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
     }
 }

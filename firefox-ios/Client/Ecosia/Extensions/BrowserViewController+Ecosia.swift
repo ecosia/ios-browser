@@ -25,6 +25,30 @@ extension BrowserViewController: DefaultBrowserDelegate {
     }
 }
 
+// MARK: - NTP omnibox session
+extension BrowserViewController {
+
+    /// The homepage VC while the webview is frontmost (swiping-tabs keeps it as a child).
+    fileprivate var ecosiaEmbeddedHomepage: HomepageViewController? {
+        if let homepage = contentContainer.contentController as? HomepageViewController {
+            return homepage
+        }
+        return children.first { $0 is HomepageViewController } as? HomepageViewController
+    }
+
+    /// See `HomepageViewController.resetNTPOmniboxSession()`.
+    func ecosiaPrepareNTPOmniboxForDisplay() {
+        guard let homepage = ecosiaEmbeddedHomepage,
+              homepage.ntpSearchBar?.isFirstResponder == false else { return }
+        homepage.resetNTPOmniboxSession()
+    }
+
+    /// See `HomepageViewController.resetNTPOmniboxSession()`.
+    func ecosiaResetNTPOmniboxWhenLeavingNTP() {
+        ecosiaEmbeddedHomepage?.resetNTPOmniboxSession()
+    }
+}
+
 // MARK: - Default browser promo after search threshold
 extension BrowserViewController {
 
