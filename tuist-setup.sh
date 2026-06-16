@@ -42,7 +42,7 @@ echo -e "${BLUE}═════════════════════�
 # Check if tuist is installed
 if ! command -v tuist &> /dev/null; then
     echo -e "${YELLOW}⚠️  Tuist not found. Installing...${NC}"
-    brew install tuist
+    brew update && brew install tuist
     echo -e "${GREEN}✓ Tuist installed${NC}\n"
 else
     echo -e "${GREEN}✓ Tuist found${NC}\n"
