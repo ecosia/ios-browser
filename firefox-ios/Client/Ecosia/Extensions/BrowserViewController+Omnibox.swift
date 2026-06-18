@@ -326,6 +326,12 @@ extension BrowserViewController {
 private struct OmniboxUploadAssociatedKeys {
     /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var pickerCoordinator: UInt8 = 0
+    nonisolated(unsafe) static var pendingUploadSelection: UInt8 = 0
+}
+
+private struct OmniboxUploadPendingSelection {
+    let option: OmniboxUploadOption
+    let sourceView: UIView
 }
 
 @MainActor
@@ -344,6 +350,41 @@ extension BrowserViewController {
         return coordinator
     }
 
+    fileprivate var pendingOmniboxUploadSelection: OmniboxUploadPendingSelection? {
+        get {
+            objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.pendingUploadSelection)
+                as? OmniboxUploadPendingSelection
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &OmniboxUploadAssociatedKeys.pendingUploadSelection,
+                                     newValue,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
+    fileprivate func presentOmniboxUploadDrawer() {
+        let drawer = OmniboxUploadDrawerViewController(windowUUID: windowUUID)
+        drawer.delegate = self
+        present(drawer, animated: false)
+    }
+}
+
+@MainActor
+extension BrowserViewController: OmniboxUploadDrawerDelegate {
+    func omniboxUploadDrawer(_ drawer: OmniboxUploadDrawerViewController,
+                             didSelect option: OmniboxUploadOption,
+                             sourceView: UIView) {
+        pendingOmniboxUploadSelection = OmniboxUploadPendingSelection(option: option, sourceView: sourceView)
+        drawer.dismissDrawer()
+    }
+
+    func omniboxUploadDrawerDidDismiss(_ drawer: OmniboxUploadDrawerViewController) {
+        guard let selection = pendingOmniboxUploadSelection else { return }
+        pendingOmniboxUploadSelection = nil
+        omniboxUploadPickerCoordinator.presentPicker(for: selection.option,
+                                                     from: self,
+                                                     sourceView: selection.sourceView)
     fileprivate func presentOmniboxUploadDrawer() {
         guard #available(iOS 16.0, *) else { return }
         guard let homepage = contentContainer.contentController as? HomepageViewController,
