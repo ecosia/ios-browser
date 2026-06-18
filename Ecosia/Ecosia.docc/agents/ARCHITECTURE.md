@@ -16,7 +16,7 @@ This is a **fork of Mozilla Firefox iOS** with Ecosia customizations layered on 
 
 - **Core/** — `User`, `Environment`, `HTTPClient`, `Statistics`, `Referrals`, `SearchesCounter`, `Navigation`
 - **Analytics/** — Snowplow-based analytics via `Analytics.shared`
-- **Unleash/** — Unleash toggles: `Experiments/` for A/B experiments, `FeatureFlags/` for on/off feature flags
+- **FeatureManagement/** — feature toggles and Unleash client: `LocalFeatureFlags/` for hardcoded/temporary flags, `Unleash/Experiments/` for A/B experiments, `Unleash/FeatureFlags/` for remote on/off toggles
 - **Braze/** — Push notification integration (`BrazeService`)
 - **UI/** — SwiftUI/UIKit design system, NTP components, settings, onboarding
 
