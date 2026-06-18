@@ -4,11 +4,11 @@
 
 import Foundation
 
-struct FileUploadFeatureFlag {
+public struct FileUploadFeatureFlag {
 
     private init() {}
 
-    static var isEnabled: Bool {
+    public static var isEnabled: Bool {
         Unleash.isEnabled(.fileUpload)
     }
 }
