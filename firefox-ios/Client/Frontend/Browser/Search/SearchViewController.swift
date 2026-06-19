@@ -619,6 +619,12 @@ class SearchViewController: SiteTableViewController,
                        category: .lifecycle)
             return UITableViewCell()
         }
+        /* Ecosia: Avoid force-unwrap and capture the cell to stamp accessibility identifiers.
+        return getCellForSection(twoLineImageOverlayCell,
+                                 oneLineCell: oneLineTableViewCell,
+                                 for: SearchListSection(rawValue: indexPath.section)!,
+                                 indexPath)
+        */
         guard let section = SearchListSection(rawValue: indexPath.section) else {
             return UITableViewCell()
         }
