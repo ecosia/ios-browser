@@ -152,6 +152,9 @@ extension BrowserViewController {
     func hideOmniboxSuggestions() {
         searchLoader?.autocompleteView = addressToolbarContainer
         if let searchController {
+            // Restore the modal accessibility scope set in attachOmniboxSuggestions.
+            searchController.view.superview?.accessibilityViewIsModal = false
+            UIAccessibility.post(notification: .screenChanged, argument: nil)
             searchController.additionalSafeAreaInsets = .zero
             let tableView = searchController.tableView
             tableView.contentInset = .zero
@@ -199,7 +202,11 @@ extension BrowserViewController {
 
         searchController.didMove(toParent: hostVC)
         updateOmniboxSuggestionsScrollInsets()
-        contentContainer.accessibilityElementsHidden = true
+        // Scope VoiceOver to the omnibox host so background NTP content is unreachable,
+        // without hiding contentContainer (which would also hide the suggestions inside it).
+        // Restored in hideOmniboxSuggestions.
+        host.accessibilityViewIsModal = true
+        UIAccessibility.post(notification: .screenChanged, argument: searchController.tableView)
 
         // Re-enable interaction in case the previous attach left the table
         // disabled by the fast-tap path below.

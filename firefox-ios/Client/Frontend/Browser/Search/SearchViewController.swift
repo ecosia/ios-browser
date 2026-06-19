@@ -619,10 +619,20 @@ class SearchViewController: SiteTableViewController,
                        category: .lifecycle)
             return UITableViewCell()
         }
-        return getCellForSection(twoLineImageOverlayCell,
-                                 oneLineCell: oneLineTableViewCell,
-                                 for: SearchListSection(rawValue: indexPath.section)!,
-                                 indexPath)
+        let cell = getCellForSection(twoLineImageOverlayCell,
+                                     oneLineCell: oneLineTableViewCell,
+                                     for: SearchListSection(rawValue: indexPath.section)!,
+                                     indexPath)
+        // Ecosia: Stamp each cell with a stable identifier and expose its text as the
+        // accessibility label so UI automation can locate and read suggestions without
+        // traversing the child element hierarchy.
+        cell.accessibilityIdentifier = "\(EcosiaAccessibilityIdentifiers.Search.suggestionCellPrefix)_\(indexPath.row)"
+        if let oneLine = cell as? OneLineTableViewCell {
+            cell.accessibilityLabel = oneLine.titleLabel.text
+        } else if let twoLine = cell as? TwoLineImageOverlayCell {
+            cell.accessibilityLabel = twoLine.titleLabel.text
+        }
+        return cell
     }
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
