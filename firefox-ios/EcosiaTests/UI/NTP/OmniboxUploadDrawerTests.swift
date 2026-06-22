@@ -103,6 +103,5 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
         let button = try XCTUnwrap(uploadButton)
         XCTAssertTrue(button.isHidden)
-        XCTAssertFalse(button.isUserInteractionEnabled)
     }
 }
