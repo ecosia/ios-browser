@@ -4319,7 +4319,7 @@ class BrowserViewController: UIViewController,
         updateInContentHomePanel(tabManager.selectedTab?.url as URL?)
 
         (view as? ThemeApplicable)?.applyTheme(theme: currentTheme())
-        
+
         // Ecosia: When the user *abandons* editing (.cancelled) while still on the AI chat vertical,
         // snap the address bar back to the compact pill. We deliberately do NOT act on .finished:
         // that is a committed search/navigation, and this delegate fires before `tab.loadRequest`
