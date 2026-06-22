@@ -796,9 +796,13 @@ class BrowserViewController: UIViewController,
             topBlurView.alpha = 1
         }
 
+        // Ecosia: On the AI chat vertical the address bar is pinned to its compact pill (scroll alpha 0),
+        // but we keep the navigation toolbar visible so the user retains tab navigation. Don't let the
+        // zero scroll alpha hide the bottom container (or its blur) there.
+        let keepBottomVisible = scrollController.pinsCompactAddressBar
         bottomContainer.isClearBackground = showNavToolbar && enableBlur
-        bottomBlurView.isHidden = (!showNavToolbar && !isBottomSearchBar && enableBlur) || isScrollAlphaZero
-        bottomContainer.isHidden = isScrollAlphaZero
+        bottomBlurView.isHidden = (!showNavToolbar && !isBottomSearchBar && enableBlur) || (isScrollAlphaZero && !keepBottomVisible)
+        bottomContainer.isHidden = isScrollAlphaZero && !keepBottomVisible
 
         if !isToolbarTranslucencyRefactorEnabled {
             let maskView = UIView(frame: CGRect(x: 0,
@@ -4315,14 +4319,19 @@ class BrowserViewController: UIViewController,
         updateInContentHomePanel(tabManager.selectedTab?.url as URL?)
 
         (view as? ThemeApplicable)?.applyTheme(theme: currentTheme())
-
-        // Ecosia: When the user dismisses editing while still on the AI chat vertical (no navigation away),
-        // snap the address bar back to the compact pill. If editing finished with a navigation off /ai-chat,
-        // the selected tab is no longer AI chat so we leave the (already expanded) bar as is.
-        let stillAIChat = isMinimalAddressBarEnabled && (tabManager.selectedTab?.url?.isEcosiaAIChat ?? false)
-        scrollController.pinsCompactAddressBar = stillAIChat
-        if stillAIChat {
-            scrollController.hideToolbars(animated: true)
+        
+        // Ecosia: When the user *abandons* editing (.cancelled) while still on the AI chat vertical,
+        // snap the address bar back to the compact pill. We deliberately do NOT act on .finished:
+        // that is a committed search/navigation, and this delegate fires before `tab.loadRequest`
+        // (see finishEditingAndSubmit) while `tab.url` is still the AI chat URL — re-collapsing here
+        // would interrupt the in-flight submission. The navigation flow (updateUIForReaderHomeStateForTab)
+        // sets the correct state for the destination URL instead.
+        if reason == .cancelled {
+            let stillAIChat = isMinimalAddressBarEnabled && (tabManager.selectedTab?.url?.isEcosiaAIChat ?? false)
+            scrollController.pinsCompactAddressBar = stillAIChat
+            if stillAIChat {
+                scrollController.hideToolbars(animated: true)
+            }
         }
     }
 
@@ -5250,7 +5259,11 @@ extension BrowserViewController: KeyboardHelperDelegate {
     }
 
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardWillHideWithState state: KeyboardState) {
-        if #available(iOS 26.0, *), isBottomSearchBar {
+        // Ecosia: This scroll-alpha reset restores the full bottom bar after the keyboard hides, but
+        // `scrollAlpha != 0` also un-hides the navigation toolbar (see `bottomContainer.isHidden`),
+        // so on the AI chat vertical it would expand our pinned compact pill into the full bar.
+        // Skip it when pinned; `keyboardDidHide` re-collapses the pill once the layout settles.
+        if #available(iOS 26.0, *), isBottomSearchBar, !scrollController.pinsCompactAddressBar {
             store.dispatch(
                 ToolbarAction(
                     scrollAlpha: 1,
@@ -5290,6 +5303,13 @@ extension BrowserViewController: KeyboardHelperDelegate {
                 actionType: ToolbarActionType.keyboardStateDidChange
             )
         )
+        // Ecosia: On the AI chat vertical the compact pill is pinned. Dismissing the keyboard after
+        // typing in the page's "Ask follow up" web input expands the toolbar (the navigation bar
+        // reappears); re-collapse it so the pill stays put. Skip while the URL bar itself is being
+        // edited (overlay mode owns the expanded bar and re-collapses on its own cancel/finish).
+        if !isEditing, !overlayManager.inOverlayMode, scrollController.pinsCompactAddressBar {
+            scrollController.hideToolbars(animated: false)
+        }
         tabManager.selectedTab?.setFindInPage(isBottomSearchBar: isBottomSearchBar,
                                               doesFindInPageBarExist: findInPageBar != nil)
         guard isSwipingTabsEnabled else { return }

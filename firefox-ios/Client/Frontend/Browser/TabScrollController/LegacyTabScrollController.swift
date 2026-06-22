@@ -387,16 +387,25 @@ final class LegacyTabScrollController: NSObject,
     }
 
     func hideToolbars(animated: Bool) {
-        guard toolbarState != .collapsed else { return }
+        // Ecosia: When the compact pill is pinned (AI chat vertical) always re-apply the collapsed
+        // offsets and scroll alpha, even if we already consider ourselves `.collapsed`. The
+        // keyboard-dismiss layout resets the bottom-container offset and bumps scroll alpha back up,
+        // so an early return here would let the address bar expand back to full size.
+        guard toolbarState != .collapsed || pinsCompactAddressBar else { return }
 
         toolbarState = .collapsed
+
+        // Ecosia: On the AI chat vertical keep the navigation toolbar in place (offset 0) so the user
+        // retains tab navigation (new tab / tabs / menu) — only the address bar collapses to its pill.
+        // `updateBlurViews` keeps the bottom container visible there despite the zero scroll alpha.
+        let collapsedBottomOffset = pinsCompactAddressBar ? 0 : bottomContainerScrollHeight
 
         let actualDuration = TimeInterval(UX.toolbarBaseAnimationDuration * hideDurationRation)
         animateToolbarsWithOffsets(
             animated,
             duration: actualDuration,
             headerOffset: headerOffset,
-            bottomContainerOffset: bottomContainerScrollHeight,
+            bottomContainerOffset: collapsedBottomOffset,
             overKeyboardOffset: overKeyboardScrollHeight,
             alpha: 0,
             completion: nil)
