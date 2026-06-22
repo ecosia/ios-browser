@@ -15,34 +15,31 @@ extension OmniboxUploadPickerCoordinator {
             return
         }
 
-        requestCameraAccessIfNeeded(from: viewController) { [weak self] granted in
-            guard let self, granted else { return }
-            self.showSystemCameraPicker(from: viewController)
+        requestCameraAccessIfNeeded(from: viewController) { [weak self] in
+            self?.showSystemCameraPicker(from: viewController)
         }
     }
 
     private func requestCameraAccessIfNeeded(from viewController: UIViewController,
-                                             completion: @escaping (Bool) -> Void) {
+                                             onGranted: @escaping @MainActor () -> Void) {
         let status = AVCaptureDevice.authorizationStatus(for: .video)
         switch status {
         case .authorized:
-            completion(true)
+            onGranted()
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 Task { @MainActor in
                     if granted {
-                        completion(true)
+                        onGranted()
                     } else {
                         self.presentCameraAccessDeniedAlert(on: viewController)
-                        completion(false)
                     }
                 }
             }
         case .denied, .restricted:
             presentCameraAccessDeniedAlert(on: viewController)
-            completion(false)
         @unknown default:
-            completion(false)
+            break
         }
     }
 
