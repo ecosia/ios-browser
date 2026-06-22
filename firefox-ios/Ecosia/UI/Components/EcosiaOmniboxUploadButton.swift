@@ -27,7 +27,7 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
 
     private var currentTheme: Theme?
 
-    public override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
@@ -36,7 +36,7 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public override var isHighlighted: Bool {
+    override public var isHighlighted: Bool {
         didSet {
             highlightCircle.isHidden = !isHighlighted
         }
