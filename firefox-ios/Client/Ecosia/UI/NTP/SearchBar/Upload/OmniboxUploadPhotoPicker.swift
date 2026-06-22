@@ -10,34 +10,31 @@ import Shared
 
 extension OmniboxUploadPickerCoordinator {
     func presentPhotoPicker(from viewController: UIViewController) {
-        requestPhotoLibraryAccessIfNeeded(from: viewController) { [weak self] granted in
-            guard let self, granted else { return }
-            self.showSystemPhotoPicker(from: viewController)
+        requestPhotoLibraryAccessIfNeeded(from: viewController) { [weak self] in
+            self?.showSystemPhotoPicker(from: viewController)
         }
     }
 
     private func requestPhotoLibraryAccessIfNeeded(from viewController: UIViewController,
-                                                   completion: @escaping (Bool) -> Void) {
+                                                   onGranted: @escaping @MainActor () -> Void) {
         let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         switch status {
         case .authorized, .limited:
-            completion(true)
+            onGranted()
         case .notDetermined:
             PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
                 Task { @MainActor in
                     if OmniboxUploadPhotoLibraryAuthorization.isAccessGranted(for: newStatus) {
-                        completion(true)
+                        onGranted()
                     } else {
                         self.presentPhotoLibraryAccessDeniedAlert(on: viewController)
-                        completion(false)
                     }
                 }
             }
         case .denied, .restricted:
             presentPhotoLibraryAccessDeniedAlert(on: viewController)
-            completion(false)
         @unknown default:
-            completion(false)
+            break
         }
     }
 
