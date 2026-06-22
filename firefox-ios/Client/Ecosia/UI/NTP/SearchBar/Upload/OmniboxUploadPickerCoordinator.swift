@@ -6,6 +6,7 @@ import UIKit
 import PhotosUI
 import UniformTypeIdentifiers
 import Common
+import Ecosia
 
 @MainActor
 final class OmniboxUploadPickerCoordinator: NSObject {
