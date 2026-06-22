@@ -21,7 +21,7 @@ final class OmniboxUploadPickerCoordinator: NSObject {
         popoverSourceView = sourceView
 
         switch option {
-        case photos:
+        case .photos:
             presentPhotoPicker(from: viewController)
         case .camera:
             break // TODO: MOB-4584
