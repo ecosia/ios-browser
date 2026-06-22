@@ -121,6 +121,16 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
 
     private lazy var uploadButton: EcosiaOmniboxUploadButton = .build { _ in }
 
+    private lazy var counterLeadingToUploadConstraint = counterLabel.leadingAnchor.constraint(
+        greaterThanOrEqualTo: uploadButton.trailingAnchor,
+        constant: .ecosia.space._1s
+    )
+
+    private lazy var counterLeadingToPillConstraint = counterLabel.leadingAnchor.constraint(
+        greaterThanOrEqualTo: leadingAnchor,
+        constant: UX.textPadding
+    )
+
     private lazy var counterLabel: UILabel = .build { label in
         label.font = .preferredFont(forTextStyle: .caption2)
         label.adjustsFontForContentSizeCategory = true
@@ -292,8 +302,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             // button's leading edge with a small gap.
             counterLabel.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -.ecosia.space._1s),
             counterLabel.centerYAnchor.constraint(equalTo: submitButton.centerYAnchor),
-            counterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: uploadButton.trailingAnchor,
-                                                  constant: .ecosia.space._1s),
 
             // Clear-text button sits in the top-right of the pill — its
             // 40×40 hit target is symmetric to the submit button's 8pt
@@ -312,6 +320,16 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             clearButtonGlyph.centerXAnchor.constraint(equalTo: clearButton.centerXAnchor),
             clearButtonGlyph.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor)
         ])
+
+        updateUploadButtonVisibility()
+    }
+
+    private func updateUploadButtonVisibility() {
+        let isUploadEnabled = FileUploadFeatureFlag.isEnabled
+        uploadButton.isHidden = !isUploadEnabled
+        uploadButton.isUserInteractionEnabled = isUploadEnabled
+        counterLeadingToUploadConstraint.isActive = isUploadEnabled
+        counterLeadingToPillConstraint.isActive = !isUploadEnabled
     }
 
     @objc private func focusTextView() {
@@ -477,6 +495,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         applyBorderColor()
         applySubmitButtonColors()
         applyCounterColor()
+        updateUploadButtonVisibility()
         uploadButton.applyTheme(theme: theme)
         // Clear button: dark filled pill with a light glyph, matching the
         // Figma design.

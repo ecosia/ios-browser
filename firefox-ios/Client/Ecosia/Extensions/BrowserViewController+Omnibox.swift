@@ -110,6 +110,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     func ntpSearchBarDidTapUpload() {
+        guard FileUploadFeatureFlag.isEnabled else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
         guard let ecosiaAuth else { return }
         if !ecosiaAuth.isLoggedIn {

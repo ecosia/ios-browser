@@ -51,6 +51,25 @@ final class OmniboxUploadDrawerTests: XCTestCase {
 @MainActor
 final class NTPSearchBarUploadDelegateTests: XCTestCase {
 
+    override func setUp() {
+        super.setUp()
+        enableFileUploadFlag(true)
+    }
+
+    override func tearDown() {
+        Unleash.clearInstanceModel()
+        super.tearDown()
+    }
+
+    private func enableFileUploadFlag(_ enabled: Bool) {
+        let toggle = Unleash.Toggle(
+            name: Unleash.Toggle.Name.fileUpload.rawValue,
+            enabled: enabled,
+            variant: Unleash.Variant(name: "", enabled: false, payload: nil)
+        )
+        Unleash.model = Unleash.Model(toggles: Set([toggle]))
+    }
+
     private final class UploadDelegateSpy: NTPSearchBarDelegate {
         var didTapUpload = false
 
@@ -75,5 +94,15 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         button.sendActions(for: .touchUpInside)
 
         XCTAssertTrue(spy.didTapUpload)
+    }
+
+    func testUploadButtonHiddenWhenFileUploadFlagDisabled() throws {
+        enableFileUploadFlag(false)
+        let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
+
+        let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
+        let button = try XCTUnwrap(uploadButton)
+        XCTAssertTrue(button.isHidden)
+        XCTAssertFalse(button.isUserInteractionEnabled)
     }
 }
