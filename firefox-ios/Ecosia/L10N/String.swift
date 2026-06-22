@@ -304,5 +304,7 @@ extension String {
         case uploadFilesAccessibilityHint = "Opens the file browser"
         case uploadDrawerAccessibilityLabel = "Attach files"
         case uploadDismissAccessibilityHint = "Dismisses the attachment menu"
+        case uploadPhotoLibraryAccessTitle = "Allow access to your photos"
+        case uploadPhotoLibraryAccessMessage = "Ecosia needs photo library access so you can attach images from your camera roll."
     }
 }
