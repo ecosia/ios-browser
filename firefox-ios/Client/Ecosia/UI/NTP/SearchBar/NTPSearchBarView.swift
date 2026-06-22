@@ -479,7 +479,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         applyBorderColor()
         applySubmitButtonColors()
         applyCounterColor()
-        uploadButton.isHidden = !FileUploadFeatureFlag.isEnabled
         uploadButton.applyTheme(theme: theme)
         // Clear button: dark filled pill with a light glyph, matching the
         // Figma design.
