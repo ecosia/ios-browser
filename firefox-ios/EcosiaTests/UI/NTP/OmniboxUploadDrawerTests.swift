@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import SwiftUI
 import Common
 @testable import Client
 @testable import Ecosia
@@ -10,61 +11,34 @@ import Common
 @MainActor
 final class OmniboxUploadDrawerTests: XCTestCase {
 
-    private final class DrawerDelegateSpy: OmniboxUploadDrawerDelegate {
-        var selectedOption: OmniboxUploadOption?
-        var selectedSourceView: UIView?
-        var didDismiss = false
-
-        func omniboxUploadDrawer(_ drawer: OmniboxUploadDrawerViewController,
-                                 didSelect option: OmniboxUploadOption,
-                                 sourceView: UIView) {
-            selectedOption = option
-            selectedSourceView = sourceView
-        }
-
-        func omniboxUploadDrawerDidDismiss(_ drawer: OmniboxUploadDrawerViewController) {
-            didDismiss = true
-        }
+    func testUploadOptionsExposeAllCases() {
+        XCTAssertEqual(OmniboxUploadOption.allCases.count, 3)
+        XCTAssertEqual(Set(OmniboxUploadOption.allCases), Set([.photos, .camera, .files]))
     }
 
-    func testDrawerContentExposesThreeOptions() {
-        let content = OmniboxUploadDrawerContentView(frame: CGRect(x: 0, y: 0, width: 320, height: 180))
+    func testUploadOptionAccessibilityMetadata() {
+        XCTAssertEqual(OmniboxUploadOption.photos.accessibilityLabel, String.localized(.photos))
+        XCTAssertEqual(OmniboxUploadOption.photos.accessibilityHint, String.localized(.uploadPhotosAccessibilityHint))
+        XCTAssertEqual(OmniboxUploadOption.photos.accessibilityIdentifier, "OmniboxUploadPhotosOption")
 
-        XCTAssertEqual(content.optionViews.count, 3)
-        XCTAssertEqual(Set(content.optionViews.map(\.option)), Set(OmniboxUploadOption.allCases))
+        XCTAssertEqual(OmniboxUploadOption.camera.accessibilityLabel, String.localized(.camera))
+        XCTAssertEqual(OmniboxUploadOption.camera.accessibilityHint, String.localized(.uploadCameraAccessibilityHint))
+        XCTAssertEqual(OmniboxUploadOption.camera.accessibilityIdentifier, "OmniboxUploadCameraOption")
+
+        XCTAssertEqual(OmniboxUploadOption.files.accessibilityLabel, String.localized(.files))
+        XCTAssertEqual(OmniboxUploadOption.files.accessibilityHint, String.localized(.uploadFilesAccessibilityHint))
+        XCTAssertEqual(OmniboxUploadOption.files.accessibilityIdentifier, "OmniboxUploadFilesOption")
     }
 
-    func testOptionViewsHaveAccessibilityMetadata() {
-        let photos = OmniboxUploadOptionView(option: .photos)
-        let camera = OmniboxUploadOptionView(option: .camera)
-        let files = OmniboxUploadOptionView(option: .files)
+    @available(iOS 16.0, *)
+    func testLightThemeDrawerAndIconTilesHaveDistinctBackgrounds() {
+        var theme = OmniboxUploadDrawerViewTheme()
+        let lightTheme = EcosiaLightTheme()
+        theme.applyTheme(theme: lightTheme)
 
-        XCTAssertEqual(photos.accessibilityLabel, String.localized(.photos))
-        XCTAssertEqual(photos.accessibilityHint, String.localized(.uploadPhotosAccessibilityHint))
-        XCTAssertEqual(photos.accessibilityIdentifier, "OmniboxUploadPhotosOption")
-
-        XCTAssertEqual(camera.accessibilityLabel, String.localized(.camera))
-        XCTAssertEqual(camera.accessibilityHint, String.localized(.uploadCameraAccessibilityHint))
-        XCTAssertEqual(camera.accessibilityIdentifier, "OmniboxUploadCameraOption")
-
-        XCTAssertEqual(files.accessibilityLabel, String.localized(.files))
-        XCTAssertEqual(files.accessibilityHint, String.localized(.uploadFilesAccessibilityHint))
-        XCTAssertEqual(files.accessibilityIdentifier, "OmniboxUploadFilesOption")
-    }
-
-    func testSelectingOptionNotifiesDelegateWithSourceView() throws {
-        let drawer = OmniboxUploadDrawerViewController(windowUUID: .XCTestDefaultUUID)
-        let spy = DrawerDelegateSpy()
-        drawer.delegate = spy
-
-        _ = drawer.view
-        let content = drawer.contentViewForTesting
-        let photosView = try XCTUnwrap(content.optionViews.first { $0.option == .photos })
-
-        photosView.sendActions(for: .touchUpInside)
-
-        XCTAssertEqual(spy.selectedOption, .photos)
-        XCTAssertIdentical(spy.selectedSourceView, photosView)
+        XCTAssertEqual(theme.backgroundColor, Color(lightTheme.colors.ecosia.backgroundPrimaryDecorative))
+        XCTAssertEqual(theme.iconBackgroundColor, Color(lightTheme.colors.ecosia.backgroundElevation1))
+        XCTAssertNotEqual(theme.backgroundColor, theme.iconBackgroundColor)
     }
 
     func testUploadDrawerIconsLoadFromFrameworkBundle() {
