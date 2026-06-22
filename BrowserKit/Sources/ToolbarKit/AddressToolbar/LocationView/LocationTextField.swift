@@ -272,6 +272,8 @@ class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable {
               let clearButton = value(forKey: "_clearButton") as? UIButton
         else { return }
 
+        // Ecosia: Stamp the clear button so UI automation can locate it by accessibility ID.
+        clearButton.accessibilityIdentifier = "AddressBar.clearButton"
         tintedClearImage = image.withTintColor(clearButtonTintColor)
         clearButton.setImage(tintedClearImage, for: [])
     }

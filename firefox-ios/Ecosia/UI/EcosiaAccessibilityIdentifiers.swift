@@ -41,4 +41,12 @@ public struct EcosiaAccessibilityIdentifiers {
         public static let findNext = "FindInPage.find_next"
         public static let findClose = "FindInPage.close"
     }
+
+    public struct Search {
+        public static let suggestionCellPrefix = "searchSuggestion"
+    }
+
+    public struct AddressBar {
+        public static let clearButton = "AddressBar.clearButton"
+    }
 }

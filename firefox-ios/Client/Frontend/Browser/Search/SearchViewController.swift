@@ -619,10 +619,34 @@ class SearchViewController: SiteTableViewController,
                        category: .lifecycle)
             return UITableViewCell()
         }
+        /* Ecosia: Avoid force-unwrap and capture the cell to stamp accessibility identifiers.
         return getCellForSection(twoLineImageOverlayCell,
                                  oneLineCell: oneLineTableViewCell,
                                  for: SearchListSection(rawValue: indexPath.section)!,
                                  indexPath)
+        */
+        guard let section = SearchListSection(rawValue: indexPath.section) else {
+            return UITableViewCell()
+        }
+        let cell = getCellForSection(twoLineImageOverlayCell,
+                                     oneLineCell: oneLineTableViewCell,
+                                     for: section,
+                                     indexPath)
+        // Ecosia: Stamp each cell with a stable identifier and expose its text as the
+        // accessibility label so UI automation can locate and read suggestions without
+        // traversing the child element hierarchy. Section is included to prevent
+        // collisions across sections that share the same row index.
+        cell.accessibilityIdentifier = "\(EcosiaAccessibilityIdentifiers.Search.suggestionCellPrefix)_\(indexPath.section)_\(indexPath.row)"
+        if let oneLine = cell as? OneLineTableViewCell {
+            cell.accessibilityLabel = oneLine.titleLabel.text
+        } else if let twoLine = cell as? TwoLineImageOverlayCell {
+            let desc = twoLine.descriptionLabel.isHidden ? nil : twoLine.descriptionLabel.text
+            cell.accessibilityLabel = [twoLine.titleLabel.text, desc]
+                .compactMap { $0 }
+                .filter { !$0.isEmpty }
+                .joined(separator: ", ")
+        }
+        return cell
     }
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
