@@ -26,7 +26,7 @@ final class OmniboxUploadPickerCoordinator: NSObject {
         case .camera:
             presentCameraPicker(from: viewController)
         case .files:
-            break // TODO: MOB-4585
+            presentFilesPicker(from: viewController)
         }
     }
 

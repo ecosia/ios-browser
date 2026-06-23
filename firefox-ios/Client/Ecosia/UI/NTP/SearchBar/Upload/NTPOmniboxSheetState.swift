@@ -10,19 +10,27 @@ final class NTPOmniboxSheetState: ObservableObject {
     @Published var showUploadDrawer = false
 
     private var onUploadOptionSelected: ((OmniboxUploadOption) -> Void)?
+    private var pendingUploadOption: OmniboxUploadOption?
 
     func presentUploadDrawer(onSelect: @escaping (OmniboxUploadOption) -> Void) {
+        pendingUploadOption = nil
         onUploadOptionSelected = onSelect
         showUploadDrawer = true
     }
 
     func handleUploadOptionSelected(_ option: OmniboxUploadOption) {
+        pendingUploadOption = option
         showUploadDrawer = false
-        onUploadOptionSelected?(option)
-        onUploadOptionSelected = nil
     }
 
     func handleUploadDrawerDismissed() {
+        guard let option = pendingUploadOption else {
+            onUploadOptionSelected = nil
+            return
+        }
+        pendingUploadOption = nil
+        let callback = onUploadOptionSelected
         onUploadOptionSelected = nil
+        callback?(option)
     }
 }
