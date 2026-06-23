@@ -301,6 +301,8 @@
 "Opens the file browser" = "Opens the file browser";
 "Attach files" = "Attach files";
 "Dismisses the attachment menu" = "Dismisses the attachment menu";
+"Allow access to your photos" = "Allow access to your photos";
+"Ecosia needs photo library access so you can attach images from your camera roll." = "Ecosia needs photo library access so you can attach images from your camera roll.";
 
 // Product Tour
 "Go back" = "Go back";
