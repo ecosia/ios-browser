@@ -111,12 +111,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
     func ntpSearchBarDidTapUpload() {
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
-        guard let ecosiaAuth else { return }
-        if !ecosiaAuth.isLoggedIn {
+        if ecosiaAuth?.isLoggedIn == false {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
                 presentAccountImpactFromNTPHeader()
             } else {
-                ecosiaAuth.login()
+                ecosiaAuth?.login()
             }
             return
         }
