@@ -356,7 +356,7 @@ extension BrowserViewController {
 @MainActor
 extension BrowserViewController: OmniboxUploadPickerDelegate {
     func omniboxUploadDidSelect(items: [OmniboxUploadItem]) {
-        // Stub for follow-up upload wiring to AI chat.
+        // TODO: Stub for follow-up upload wiring to AI chat.
         _ = items
     }
 }
