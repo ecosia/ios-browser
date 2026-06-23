@@ -85,10 +85,20 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     ///           `AuthError.credentialStorageFailed` if credential storage returns false.
     @discardableResult
     public func login() async throws -> AccountOrigin {
+        try await authenticate(screenHint: .login)
+    }
+
+    @discardableResult
+    public func signUp() async throws -> AccountOrigin {
+        try await authenticate(screenHint: .signUp)
+    }
+
+    @discardableResult
+    private func authenticate(screenHint: AuthScreenHint) async throws -> AccountOrigin {
         // First, attempt authentication
         let credentials: Credentials
         do {
-            credentials = try await auth0Provider.startAuth()
+            credentials = try await auth0Provider.startAuth(screenHint: screenHint)
             EcosiaLogger.auth.info("Authentication successful")
         } catch {
             EcosiaLogger.auth.error("Authentication failed: \(error)")

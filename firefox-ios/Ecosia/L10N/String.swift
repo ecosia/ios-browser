@@ -309,5 +309,10 @@ extension String {
         case uploadCameraAccessTitle = "Allow access to your camera"
         case uploadCameraAccessMessage = "Ecosia needs camera access so you can take a photo to attach."
         case uploadCameraUnavailableMessage = "A camera is not available on this device."
+
+        // Omnibox file upload (logged-out gate)
+        case signInToUploadFiles = "Sign in to upload files"
+        case signInToUploadFilesMessage = "To use this feature you need to be signed in to an Ecosia account."
+        case createAccount = "Create account"
     }
 }
