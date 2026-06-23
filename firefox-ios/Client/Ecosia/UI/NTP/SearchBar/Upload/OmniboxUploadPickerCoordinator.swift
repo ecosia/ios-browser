@@ -22,11 +22,11 @@ final class OmniboxUploadPickerCoordinator: NSObject {
 
         switch option {
         case .photos:
-            break // MOB-4583
+            break // TODO: MOB-4583
         case .camera:
-            break // MOB-4584
+            break // TODO: MOB-4584
         case .files:
-            break // MOB-4585
+            break // TODO: MOB-4585
         }
     }
 
