@@ -306,5 +306,8 @@ extension String {
         case uploadDismissAccessibilityHint = "Dismisses the attachment menu"
         case uploadPhotoLibraryAccessTitle = "Allow access to your photos"
         case uploadPhotoLibraryAccessMessage = "Ecosia needs photo library access so you can attach images from your camera roll."
+        case uploadCameraAccessTitle = "Allow access to your camera"
+        case uploadCameraAccessMessage = "Ecosia needs camera access so you can take a photo to attach."
+        case uploadCameraUnavailableMessage = "A camera is not available on this device."
     }
 }
