@@ -28,14 +28,19 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     }
 
     public var webAuth: WebAuth {
+        configuredWebAuth(screenHint: .login)
+    }
+
+    public func startAuth(screenHint: AuthScreenHint) async throws -> Credentials {
+        return try await configuredWebAuth(screenHint: screenHint).start()
+    }
+
+    private func configuredWebAuth(screenHint: AuthScreenHint) -> WebAuth {
         makeHttpsWebAuth()
             .useEphemeralSession()
             .audience(environment.urlProvider.authApiAudience.absoluteString)
             .scope("openid profile email offline_access read:impact write:impact")
-    }
-
-    public func startAuth() async throws -> Credentials {
-        return try await webAuth.start()
+            .parameters(["screen_hint": screenHint.rawValue])
     }
 
     /// Custom clearSession implementation that bypasses Auth0's default logout alert
