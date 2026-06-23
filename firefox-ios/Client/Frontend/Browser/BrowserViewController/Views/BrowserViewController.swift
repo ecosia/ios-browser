@@ -796,11 +796,16 @@ class BrowserViewController: UIViewController,
             topBlurView.alpha = 1
         }
 
-        // Ecosia: On the AI chat vertical the address bar is pinned to its compact pill (scroll alpha 0),
-        // but we keep the navigation toolbar visible so the user retains tab navigation. Don't let the
-        // zero scroll alpha hide the bottom container (or its blur) there.
+        // Ecosia: On the AI chat vertical the address bar is pinned to its compact pill (scroll alpha 0), but we
+        // keep the navigation toolbar visible so the user retains tab navigation. Don't let the zero scroll alpha
+        // hide the bottom container (or its blur) there.
         let keepBottomVisible = scrollController.pinsCompactAddressBar
         bottomContainer.isClearBackground = showNavToolbar && enableBlur
+        /* Ecosia: Keep the bottom container and its blur visible when the compact pill is pinned, even at zero
+           scroll alpha, so the navigation toolbar stays available on the AI chat vertical.
+        bottomBlurView.isHidden = (!showNavToolbar && !isBottomSearchBar && enableBlur) || isScrollAlphaZero
+        bottomContainer.isHidden = isScrollAlphaZero
+         */
         bottomBlurView.isHidden = (!showNavToolbar && !isBottomSearchBar && enableBlur) || (isScrollAlphaZero && !keepBottomVisible)
         bottomContainer.isHidden = isScrollAlphaZero && !keepBottomVisible
 
@@ -5259,10 +5264,20 @@ extension BrowserViewController: KeyboardHelperDelegate {
     }
 
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardWillHideWithState state: KeyboardState) {
-        // Ecosia: This scroll-alpha reset restores the full bottom bar after the keyboard hides, but
-        // `scrollAlpha != 0` also un-hides the navigation toolbar (see `bottomContainer.isHidden`),
-        // so on the AI chat vertical it would expand our pinned compact pill into the full bar.
-        // Skip it when pinned; `keyboardDidHide` re-collapses the pill once the layout settles.
+        /* Ecosia: This scroll-alpha reset restores the full bottom bar after the keyboard hides, but
+           `scrollAlpha != 0` also un-hides the navigation toolbar (see `bottomContainer.isHidden`), so on the
+           AI chat vertical it would expand our pinned compact pill into the full bar. Skip it when pinned;
+           `keyboardDidHide` re-collapses the pill once the layout settles.
+        if #available(iOS 26.0, *), isBottomSearchBar {
+            store.dispatch(
+                ToolbarAction(
+                    scrollAlpha: 1,
+                    windowUUID: windowUUID,
+                    actionType: ToolbarActionType.scrollAlphaNeedsUpdate
+                )
+            )
+        }
+         */
         if #available(iOS 26.0, *), isBottomSearchBar, !scrollController.pinsCompactAddressBar {
             store.dispatch(
                 ToolbarAction(

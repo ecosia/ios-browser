@@ -387,20 +387,32 @@ final class LegacyTabScrollController: NSObject,
     }
 
     func hideToolbars(animated: Bool) {
-        // Ecosia: When the compact pill is pinned (AI chat vertical) always re-apply the collapsed
-        // offsets and scroll alpha, even if we already consider ourselves `.collapsed`. The
-        // keyboard-dismiss layout resets the bottom-container offset and bumps scroll alpha back up,
-        // so an early return here would let the address bar expand back to full size.
+        /* Ecosia: When the compact pill is pinned (AI chat vertical) always re-apply the collapsed offsets and
+           scroll alpha, even if we already consider ourselves `.collapsed`. The keyboard-dismiss layout resets
+           the bottom-container offset and bumps scroll alpha back up, so the original early return here would let
+           the address bar expand back to full size.
+        guard toolbarState != .collapsed else { return }
+         */
         guard toolbarState != .collapsed || pinsCompactAddressBar else { return }
 
         toolbarState = .collapsed
 
-        // Ecosia: On the AI chat vertical keep the navigation toolbar in place (offset 0) so the user
-        // retains tab navigation (new tab / tabs / menu) — only the address bar collapses to its pill.
-        // `updateBlurViews` keeps the bottom container visible there despite the zero scroll alpha.
+        // Ecosia: On the AI chat vertical keep the navigation toolbar in place (offset 0) so the user retains
+        // tab navigation (new tab / tabs / menu) — only the address bar collapses to its pill. `updateBlurViews`
+        // keeps the bottom container visible there despite the zero scroll alpha.
         let collapsedBottomOffset = pinsCompactAddressBar ? 0 : bottomContainerScrollHeight
 
         let actualDuration = TimeInterval(UX.toolbarBaseAnimationDuration * hideDurationRation)
+        /* Ecosia: Pass `collapsedBottomOffset` so the navigation toolbar stays in place (offset 0) when pinned.
+        animateToolbarsWithOffsets(
+            animated,
+            duration: actualDuration,
+            headerOffset: headerOffset,
+            bottomContainerOffset: bottomContainerScrollHeight,
+            overKeyboardOffset: overKeyboardScrollHeight,
+            alpha: 0,
+            completion: nil)
+         */
         animateToolbarsWithOffsets(
             animated,
             duration: actualDuration,
@@ -782,8 +794,14 @@ extension LegacyTabScrollController: UIScrollViewDelegate {
     /// Decelerate is true the scrolling movement will continue
     /// If the value is false, scrolling stops immediately upon touch-up.
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        /* Ecosia: Also bail when the compact pill is pinned (AI chat vertical) so scroll doesn't toggle it.
         guard let tab,
-              // Ecosia: On the AI chat vertical the compact pill is pinned; ignore scroll-driven toggling.
+              !tabIsLoading(),
+              !scrollReachBottom(),
+              !tab.isFindInPageMode,
+              shouldUpdateUIWhenScrolling else { return }
+         */
+        guard let tab,
               !pinsCompactAddressBar,
               !tabIsLoading(),
               !scrollReachBottom(),
