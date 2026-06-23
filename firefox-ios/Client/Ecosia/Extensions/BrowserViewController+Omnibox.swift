@@ -110,6 +110,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     func ntpSearchBarDidTapUpload() {
+        guard FileUploadFeatureFlag.isEnabled else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
         if ecosiaAuth?.isLoggedIn == false {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
@@ -349,26 +350,6 @@ extension BrowserViewController {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
 
-@MainActor
-extension BrowserViewController: OmniboxUploadDrawerDelegate {
-    func omniboxUploadDrawer(_ drawer: OmniboxUploadDrawerViewController,
-                             didSelect option: OmniboxUploadOption,
-                             sourceView: UIView) {
-        pendingOmniboxUploadSelection = OmniboxUploadPendingSelection(option: option, sourceView: sourceView)
-        drawer.dismissDrawer()
-    }
-
-    func omniboxUploadDrawerDidDismiss(_ drawer: OmniboxUploadDrawerViewController) {
-        guard let selection = pendingOmniboxUploadSelection else { return }
-        pendingOmniboxUploadSelection = nil
-        omniboxUploadPickerCoordinator.presentPicker(for: selection.option,
-                                                     from: self,
-                                                     sourceView: selection.sourceView)
-    fileprivate func presentOmniboxUploadDrawer() {
-        guard #available(iOS 16.0, *) else { return }
-        guard let homepage = contentContainer.contentController as? HomepageViewController,
-              let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
-
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
         sheetState.presentUploadDrawer { [weak self] option in
@@ -383,7 +364,7 @@ extension BrowserViewController: OmniboxUploadDrawerDelegate {
 @MainActor
 extension BrowserViewController: OmniboxUploadPickerDelegate {
     func omniboxUploadDidSelect(items: [OmniboxUploadItem]) {
-        // TODO: Stub for follow-up upload wiring to AI chat.
+        // Stub for follow-up upload wiring to AI chat.
         _ = items
     }
 }
