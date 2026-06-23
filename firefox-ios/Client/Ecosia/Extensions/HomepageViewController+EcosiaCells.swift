@@ -146,6 +146,17 @@ extension HomepageViewController {
     func setNTPSearchBarBackdrop(_ view: NTPSearchBarBackdropView) {
         objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarBackdrop, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
+
+    var omniboxSheetHostingController: UIViewController? {
+        objc_getAssociatedObject(self, &AssociatedKeys.omniboxSheetHostingController) as? UIViewController
+    }
+
+    func setOmniboxSheetHostingController(_ controller: UIViewController) {
+        objc_setAssociatedObject(self,
+                                 &AssociatedKeys.omniboxSheetHostingController,
+                                 controller,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
 }
 
 // MARK: - Associated Keys
@@ -158,4 +169,5 @@ private struct AssociatedKeys {
     nonisolated(unsafe) static var ntpSearchBarLeadingConstraint: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarTrailingConstraint: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarBackdrop: UInt8 = 0
+    nonisolated(unsafe) static var omniboxSheetHostingController: UInt8 = 0
 }

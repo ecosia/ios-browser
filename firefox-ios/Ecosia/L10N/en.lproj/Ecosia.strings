@@ -290,6 +290,18 @@
 "Opens your profile page" = "Opens your profile page";
 "Sign out of your account" = "Sign out of your account";
 
+// Omnibox upload
+"Upload" = "Upload";
+"Photos" = "Photos";
+"Camera" = "Camera";
+"Files" = "Files";
+"Opens options to attach photos, camera, or files" = "Opens options to attach photos, camera, or files";
+"Opens the photo library" = "Opens the photo library";
+"Opens the camera" = "Opens the camera";
+"Opens the file browser" = "Opens the file browser";
+"Attach files" = "Attach files";
+"Dismisses the attachment menu" = "Dismisses the attachment menu";
+
 // Product Tour
 "Go back" = "Go back";
 "Welcome to" = "Welcome to";

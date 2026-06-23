@@ -294,5 +294,15 @@ extension String {
         case userLevelAccessibilityLabel = "Level: %@"
         case profileButtonAccessibilityHint = "Opens your profile page"
         case signOutButtonAccessibilityHint = "Sign out of your account"
+        case upload = "Upload"
+        case photos = "Photos"
+        case camera = "Camera"
+        case files = "Files"
+        case uploadAccessibilityHint = "Opens options to attach photos, camera, or files"
+        case uploadPhotosAccessibilityHint = "Opens the photo library"
+        case uploadCameraAccessibilityHint = "Opens the camera"
+        case uploadFilesAccessibilityHint = "Opens the file browser"
+        case uploadDrawerAccessibilityLabel = "Attach files"
+        case uploadDismissAccessibilityHint = "Dismisses the attachment menu"
     }
 }

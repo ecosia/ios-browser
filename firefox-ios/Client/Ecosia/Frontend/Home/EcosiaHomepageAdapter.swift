@@ -26,6 +26,7 @@ final class EcosiaHomepageAdapter {
     private(set) var libraryViewModel: NTPLibraryCellViewModel?
     private(set) var impactViewModel: NTPImpactCellViewModel?
     private(set) var customizationViewModel: NTPCustomizationCellViewModel?
+    let omniboxSheetState = NTPOmniboxSheetState()
 
     // Delegates
     weak var headerDelegate: NTPHeaderDelegate?

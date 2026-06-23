@@ -38,6 +38,8 @@ protocol NTPSearchBarDelegate: AnyObject {
     func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool
     /// Recompute suggestions scroll insets when the pill moves (keyboard or multi-line growth).
     func ntpSearchBarNeedsSuggestionsLayoutUpdate()
+    /// Called when the user taps the upload / attachment button.
+    func ntpSearchBarDidTapUpload()
 }
 
 extension NTPSearchBarDelegate {
@@ -48,7 +50,7 @@ extension NTPSearchBarDelegate {
 /// Pill-shaped search input pinned to the bottom of the redesigned NTP. Replaces
 /// the standard URL bar while the homepage is visible. The text input is a
 /// `UITextView` so multi-line queries wrap inside the pill.
-final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
+final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestureRecognizerDelegate {
 
     /// Resting size of the pill, fitting roughly two lines of text.
     static let minHeight: CGFloat = 110
@@ -116,6 +118,8 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         button.accessibilityIdentifier = "NTPSearchBarSubmitButton"
         button.isEnabled = false
     }
+
+    private lazy var uploadButton: EcosiaOmniboxUploadButton = .build { _ in }
 
     private lazy var counterLabel: UILabel = .build { label in
         label.font = .preferredFont(forTextStyle: .caption2)
@@ -223,6 +227,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
 
         addSubview(textView)
         addSubview(placeholderLabel)
+        addSubview(uploadButton)
         addSubview(submitButton)
         addSubview(counterLabel)
         addSubview(clearButton)
@@ -233,6 +238,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         clearButton.addSubview(clearButtonGlyph)
 
         textView.delegate = self
+        uploadButton.addTarget(self, action: #selector(uploadTapped), for: .touchUpInside)
         submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
         clearButton.addTarget(self, action: #selector(clearTapped), for: .touchUpInside)
 
@@ -241,6 +247,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         // frame is tappable.
         let focusTap = UITapGestureRecognizer(target: self, action: #selector(focusTextView))
         focusTap.cancelsTouchesInView = false
+        focusTap.delegate = self
         addGestureRecognizer(focusTap)
 
         // Swipe-down on the pill dismisses the keyboard — pairs with the
@@ -267,6 +274,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             placeholderLabel.topAnchor.constraint(equalTo: textView.topAnchor),
             placeholderLabel.trailingAnchor.constraint(equalTo: textView.trailingAnchor),
 
+            // Upload button sits in the bottom-left corner of the pill.
+            uploadButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .ecosia.space._1s),
+            uploadButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.ecosia.space._1s),
+            uploadButton.widthAnchor.constraint(equalToConstant: UX.submitButtonSize),
+            uploadButton.heightAnchor.constraint(equalToConstant: UX.submitButtonSize),
+
             // Submit button sits in the bottom-right corner of the pill,
             // floating over the textView.
             submitButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.ecosia.space._1s),
@@ -279,7 +292,8 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             // button's leading edge with a small gap.
             counterLabel.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -.ecosia.space._1s),
             counterLabel.centerYAnchor.constraint(equalTo: submitButton.centerYAnchor),
-            counterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: .ecosia.space._m),
+            counterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: uploadButton.trailingAnchor,
+                                                  constant: .ecosia.space._1s),
 
             // Clear-text button sits in the top-right of the pill — its
             // 40×40 hit target is symmetric to the submit button's 8pt
@@ -298,11 +312,25 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
             clearButtonGlyph.centerXAnchor.constraint(equalTo: clearButton.centerXAnchor),
             clearButtonGlyph.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor)
         ])
+
+        uploadButton.isHidden = !FileUploadFeatureFlag.isEnabled
     }
 
     @objc private func focusTextView() {
         guard !textView.isFirstResponder else { return }
         textView.becomeFirstResponder()
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        var view: UIView? = touch.view
+        while let current = view {
+            if current === uploadButton || current === submitButton || current === clearButton {
+                return false
+            }
+            if current === self { break }
+            view = current.superview
+        }
+        return true
     }
 
     @objc private func handleSwipeDown() {
@@ -311,6 +339,10 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
     }
 
     // MARK: Actions
+
+    @objc private func uploadTapped() {
+        delegate?.ntpSearchBarDidTapUpload()
+    }
 
     @objc private func submitTapped() {
         textView.commitPendingSuggestionIfValid()
@@ -447,6 +479,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable {
         applyBorderColor()
         applySubmitButtonColors()
         applyCounterColor()
+        uploadButton.applyTheme(theme: theme)
         // Clear button: dark filled pill with a light glyph, matching the
         // Figma design.
         // Only the inner 16×16 disc carries the dark fill; the surrounding

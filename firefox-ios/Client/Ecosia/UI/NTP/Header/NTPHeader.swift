@@ -148,7 +148,6 @@ struct NTPHeaderView: View {
     let windowUUID: WindowUUID
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
-    @State private var showAccountImpactView = false
 
     var body: some View {
         ZStack {
@@ -170,14 +169,14 @@ struct NTPHeaderView: View {
                             windowUUID: windowUUID,
                             onTap: handleTap
                         )
-                        .sheet(isPresented: $showAccountImpactView) {
+                        .sheet(isPresented: $viewModel.showAccountImpactView) {
                             EcosiaAccountImpactView(
                                 viewModel: EcosiaAccountImpactViewModel(
                                     onLogin: {
                                         viewModel.performLogin()
                                     },
                                     onDismiss: {
-                                        showAccountImpactView = false
+                                        viewModel.dismissAccountImpact()
                                     }
                                 ),
                                 windowUUID: windowUUID
@@ -211,8 +210,7 @@ struct NTPHeaderView: View {
     }
 
     private func handleTap() {
-        showAccountImpactView = true
-        Analytics.shared.accountHeaderClicked()
+        viewModel.presentAccountImpact()
     }
 }
 // swiftlint:enable closure_body_length

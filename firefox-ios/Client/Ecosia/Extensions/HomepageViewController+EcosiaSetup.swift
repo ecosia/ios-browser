@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import SwiftUI
 import Common
 import Shared
 import Ecosia
@@ -168,6 +169,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         // Store adapter
         setEcosiaAdapter(adapter)
+
+        installOmniboxSheetPresenterIfNeeded()
 
         // Ecosia: Add the embedded NTP search bar (Approach 1 spike)
         setupNTPSearchBar(delegate: browserViewController)
@@ -408,5 +411,37 @@ extension HomepageViewController: KeyboardHelperDelegate {
             self.view.layoutIfNeeded()
             self.ntpSearchBar?.delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
         }
+    }
+}
+
+// MARK: - Omnibox sheets
+
+extension HomepageViewController {
+    func installOmniboxSheetPresenterIfNeeded() {
+        guard #available(iOS 16.0, *) else { return }
+        guard omniboxSheetHostingController == nil,
+              let adapter = ecosiaAdapter else { return }
+
+        let presenter = NTPOmniboxSheetPresenter(
+            sheetState: adapter.omniboxSheetState,
+            windowUUID: windowUUID
+        )
+        let hosting = UIHostingController(rootView: presenter)
+        hosting.view.backgroundColor = .clear
+        hosting.view.isUserInteractionEnabled = false
+
+        addChild(hosting)
+        view.addSubview(hosting.view)
+        hosting.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hosting.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hosting.view.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+        ])
+        hosting.didMove(toParent: self)
+        setOmniboxSheetHostingController(hosting)
+    }
+
+    func presentOmniboxUploadSheetIfNeeded() {
+        installOmniboxSheetPresenterIfNeeded()
     }
 }

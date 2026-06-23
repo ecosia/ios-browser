@@ -31,6 +31,7 @@ final class NTPHeaderViewModel: ObservableObject {
     var balanceIncrement: Int? { authStateProvider.balanceIncrement }
     var shouldAnimateSeed: Bool { balanceIncrement != nil }
     @Published var showSeedSparkles: Bool = false
+    @Published var showAccountImpactView: Bool = false
 
     // nonisolated(unsafe) so deinit can remove observer without MainActor isolation
     nonisolated(unsafe) private var levelUpObserver: NSObjectProtocol?
@@ -101,6 +102,16 @@ final class NTPHeaderViewModel: ObservableObject {
 
     func performLogin() {
         auth.login()
+    }
+
+    /// Presents the account impact sheet — the same flow as tapping `EcosiaAccountNavButton`.
+    func presentAccountImpact() {
+        showAccountImpactView = true
+        Analytics.shared.accountHeaderClicked()
+    }
+
+    func dismissAccountImpact() {
+        showAccountImpactView = false
     }
 
     func performLogout() {

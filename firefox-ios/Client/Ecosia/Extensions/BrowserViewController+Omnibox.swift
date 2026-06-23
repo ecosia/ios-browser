@@ -109,6 +109,24 @@ extension BrowserViewController: NTPSearchBarDelegate {
         updateOmniboxSuggestionsScrollInsets()
     }
 
+    func ntpSearchBarDidTapUpload() {
+        _ = ntpOmniboxAnchorView?.resignFirstResponder()
+        if ecosiaAuth?.isLoggedIn == false {
+            if #available(iOS 16.0, *), !AccountsDisabled.isActive {
+                presentAccountImpactFromNTPHeader()
+            } else {
+                ecosiaAuth?.login()
+            }
+            return
+        }
+        presentOmniboxUploadDrawer()
+    }
+
+    fileprivate func presentAccountImpactFromNTPHeader() {
+        guard let homepage = contentContainer.contentController as? HomepageViewController else { return }
+        homepage.ecosiaAdapter?.headerViewModel?.presentAccountImpact()
+    }
+
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
         (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
     }
@@ -300,5 +318,52 @@ extension BrowserViewController {
             responder = r.next
         }
         return nil
+    }
+}
+
+// MARK: - Omnibox upload drawer & pickers
+
+private struct OmniboxUploadAssociatedKeys {
+    /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
+    nonisolated(unsafe) static var pickerCoordinator: UInt8 = 0
+}
+
+@MainActor
+extension BrowserViewController {
+    fileprivate var omniboxUploadPickerCoordinator: OmniboxUploadPickerCoordinator {
+        if let coordinator = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.pickerCoordinator)
+            as? OmniboxUploadPickerCoordinator {
+            return coordinator
+        }
+        let coordinator = OmniboxUploadPickerCoordinator()
+        coordinator.delegate = self
+        objc_setAssociatedObject(self,
+                                 &OmniboxUploadAssociatedKeys.pickerCoordinator,
+                                 coordinator,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return coordinator
+    }
+
+    fileprivate func presentOmniboxUploadDrawer() {
+        guard #available(iOS 16.0, *) else { return }
+        guard let homepage = contentContainer.contentController as? HomepageViewController,
+              let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
+
+        let sourceView = ntpOmniboxAnchorView ?? view
+        homepage.presentOmniboxUploadSheetIfNeeded()
+        sheetState.presentUploadDrawer { [weak self] option in
+            guard let self else { return }
+            self.omniboxUploadPickerCoordinator.presentPicker(for: option,
+                                                              from: self,
+                                                              sourceView: sourceView)
+        }
+    }
+}
+
+@MainActor
+extension BrowserViewController: OmniboxUploadPickerDelegate {
+    func omniboxUploadDidSelect(items: [OmniboxUploadItem]) {
+        // TODO: Stub for follow-up upload wiring to AI chat.
+        _ = items
     }
 }
