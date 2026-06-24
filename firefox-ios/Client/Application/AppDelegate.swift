@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // Ecosia: Let acceptance tests route analytics to the Snowplow Micro instance from the first
         // event (install/launch/resume). Persisted (not set) so it survives terminate/activate and
         // doesn't create Analytics.shared before dependencies are ready. Staging-only.
-        if ProcessInfo.processInfo.arguments.contains("-UseSnowplowMicroInstance"),
+        if ProcessInfo.processInfo.arguments.contains(LaunchArguments.UseSnowplowMicroInstance),
            EcosiaEnvironment.current == .staging {
             Analytics.persistShouldUseMicroInstance(true)
         }
