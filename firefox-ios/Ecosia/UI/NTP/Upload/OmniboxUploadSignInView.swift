@@ -7,9 +7,10 @@ import Common
 
 /// Bottom-sheet content shown when a logged-out user tries to upload files from the NTP omnibox.
 ///
-/// Future integration (MOB-4582): present from `BrowserViewController+Omnibox` via
-/// `NTPOmniboxSheetPresenter` on `HomepageViewController`. Apply dismiss-before-next-presentation
-/// so upload drawers and system pickers open only after this sheet has fully dismissed.
+/// Presented from `BrowserViewController+Omnibox` via `NTPOmniboxSheetPresenter` on
+/// `HomepageViewController` when a logged-out user taps the omnibox upload button.
+/// `NTPOmniboxSheetState` dismisses this sheet before starting auth and before opening
+/// the upload drawer.
 @available(iOS 16.0, *)
 public struct OmniboxUploadSignInView: View {
     private let windowUUID: WindowUUID
@@ -33,11 +34,26 @@ public struct OmniboxUploadSignInView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: .ecosia.space._l) {
-            headerSection
+        VStack(alignment: .leading, spacing: .ecosia.space._m) {
+            Text(String.localized(.signInToUploadFiles))
+                .font(.ecosia(size: .ecosia.font._2l, weight: .semibold))
+                .foregroundColor(theme.textPrimaryColor)
+                .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.OmniboxUpload.signInSheetTitle)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, .ecosia.space._m)
+
+            Text(String.localized(.signInToUploadFilesMessage))
+                .font(.ecosia(size: .ecosia.font._l, weight: .regular))
+                .foregroundColor(theme.textPrimaryColor)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.OmniboxUpload.signInSheetBody)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             actionButtons
         }
-        .background(theme.backgroundColor.ignoresSafeArea())
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .fixedSize(horizontal: false, vertical: true)
         .ecosiaThemed(windowUUID, $theme)
         .presentationBackgroundIfAvailable(theme.backgroundColor)
         .onChange(of: authStateProvider.isLoggedIn) { isLoggedIn in
@@ -47,24 +63,8 @@ public struct OmniboxUploadSignInView: View {
         }
     }
 
-    private var headerSection: some View {
-        VStack(alignment: .leading, spacing: .ecosia.space._s) {
-            Text(String.localized(.signInToUploadFiles))
-                .font(.ecosia(size: .ecosia.font._2l, weight: .bold))
-                .foregroundColor(theme.titleColor)
-                .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.OmniboxUpload.signInSheetTitle)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            Text(String.localized(.signInToUploadFilesMessage))
-                .font(.ecosia(size: .ecosia.font._m, weight: .regular))
-                .foregroundColor(theme.bodyColor)
-                .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.OmniboxUpload.signInSheetBody)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
     private var actionButtons: some View {
-        VStack(spacing: .ecosia.space._m) {
+        VStack(spacing: .ecosia.space._1s) {
             Button(action: handleSignInTap) {
                 signInButtonLabel
             }
@@ -82,25 +82,28 @@ public struct OmniboxUploadSignInView: View {
     }
 
     private var signInButtonLabel: some View {
-        HStack(spacing: .ecosia.space._s) {
+        HStack(spacing: .ecosia.space._2s) {
             Image.ecosia("sign-in")
                 .renderingMode(.template)
-                .foregroundColor(theme.primaryButtonTextColor)
+                .foregroundColor(theme.ctaButtonTextColor)
                 .accessibilityHidden(true)
             Text(String.localized(.signIn))
         }
-        .font(.ecosia(size: .ecosia.font._m, weight: .medium))
-        .foregroundColor(theme.primaryButtonTextColor)
+        .font(.subheadline)
+        .foregroundColor(theme.ctaButtonTextColor)
+        .padding(.ecosia.space._m)
         .frame(maxWidth: .infinity)
         .frame(height: UX.ctaButtonHeight)
-        .background(theme.primaryButtonBackgroundColor)
+        .cornerRadius(.ecosia.borderRadius._m)
+        .background(theme.ctaButtonBackgroundColor)
         .clipShape(Capsule())
     }
 
     private var createAccountButtonLabel: some View {
         Text(String.localized(.createAccount))
-            .font(.ecosia(size: .ecosia.font._m, weight: .medium))
+            .font(.subheadline)
             .foregroundColor(theme.secondaryButtonTextColor)
+            .padding(.ecosia.space._m)
             .frame(maxWidth: .infinity)
             .frame(height: UX.ctaButtonHeight)
             .overlay(
@@ -118,18 +121,64 @@ public struct OmniboxUploadSignInView: View {
     }
 
     private enum UX {
-        static let ctaButtonHeight: CGFloat = 48
+        static let ctaButtonHeight: CGFloat = 40
         static let secondaryButtonBorderWidth: CGFloat = 1
+    }
+}
+
+private enum OmniboxUploadSignInSheetUX {
+    /// Fallback detent while content height is measured.
+    static let minDetentHeight: CGFloat = 216
+}
+
+/// Sheet wrapper that sizes the detent from measured content so the subtitle can wrap.
+@available(iOS 16.0, *)
+public struct OmniboxUploadSignInSheet: View {
+    private let windowUUID: WindowUUID
+    private let onSignIn: () -> Void
+    private let onCreateAccount: () -> Void
+    private let onDismiss: () -> Void
+
+    public init(
+        windowUUID: WindowUUID,
+        onSignIn: @escaping () -> Void,
+        onCreateAccount: @escaping () -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        self.windowUUID = windowUUID
+        self.onSignIn = onSignIn
+        self.onCreateAccount = onCreateAccount
+        self.onDismiss = onDismiss
+    }
+
+    public var body: some View {
+        VStack(spacing: 0) {
+            Spacer()
+                .frame(height: .ecosia.space._m)
+
+            OmniboxUploadSignInView(
+                windowUUID: windowUUID,
+                onSignIn: onSignIn,
+                onCreateAccount: onCreateAccount,
+                onDismiss: onDismiss
+            )
+        }
+        .padding(.horizontal, .ecosia.space._m)
+        .padding(.bottom, .ecosia.space._m)
+        .dynamicHeightPresentationDetent(
+            minHeight: OmniboxUploadSignInSheetUX.minDetentHeight,
+            padding: 0
+        )
+        .presentationDragIndicator(.visible)
     }
 }
 
 @available(iOS 16.0, *)
 public struct OmniboxUploadSignInViewTheme: EcosiaThemeable {
     public var backgroundColor = Color.white
-    public var titleColor = Color.black
-    public var bodyColor = Color.black
-    public var primaryButtonBackgroundColor = Color.green
-    public var primaryButtonTextColor = Color.black
+    public var textPrimaryColor = Color.black
+    public var ctaButtonTextColor = Color.green
+    public var ctaButtonBackgroundColor = Color.green
     public var secondaryButtonTextColor = Color.black
     public var secondaryButtonBorderColor = Color.gray
 
@@ -137,10 +186,9 @@ public struct OmniboxUploadSignInViewTheme: EcosiaThemeable {
 
     public mutating func applyTheme(theme: Theme) {
         backgroundColor = Color(theme.colors.ecosia.backgroundPrimaryDecorative)
-        titleColor = Color(theme.colors.ecosia.textPrimary)
-        bodyColor = Color(theme.colors.ecosia.textPrimary)
-        primaryButtonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)
-        primaryButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
+        textPrimaryColor = Color(theme.colors.ecosia.textPrimary)
+        ctaButtonTextColor = Color(theme.colors.ecosia.buttonContentSecondaryStatic)
+        ctaButtonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundFeatured)
         secondaryButtonTextColor = Color(theme.colors.ecosia.textPrimary)
         secondaryButtonBorderColor = Color(theme.colors.ecosia.borderDecorative)
     }
@@ -163,13 +211,19 @@ private extension View {
 @available(iOS 16.0, *)
 struct OmniboxUploadSignInView_Previews: PreviewProvider {
     static var previews: some View {
-        OmniboxUploadSignInView(
-            windowUUID: .XCTestDefaultUUID,
-            onSignIn: {},
-            onCreateAccount: {},
-            onDismiss: {}
-        )
+        VStack(spacing: 0) {
+            Spacer()
+                .frame(height: .ecosia.space._m)
+
+            OmniboxUploadSignInView(
+                windowUUID: .XCTestDefaultUUID,
+                onSignIn: {},
+                onCreateAccount: {},
+                onDismiss: {}
+            )
+        }
         .padding(.horizontal, .ecosia.space._m)
+        .padding(.bottom, .ecosia.space._m)
         .previewLayout(.sizeThatFits)
     }
 }

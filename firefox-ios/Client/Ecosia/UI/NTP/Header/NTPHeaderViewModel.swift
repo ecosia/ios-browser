@@ -117,6 +117,15 @@ final class NTPHeaderViewModel: ObservableObject {
     func refreshSeedState() {
         authStateProvider.refreshSeedState()
     }
+
+    func presentAccountImpact() {
+        showAccountImpactView = true
+        Analytics.shared.accountHeaderClicked()
+    }
+
+    func dismissAccountImpact() {
+        showAccountImpactView = false
+    }
 }
 
 /* Ecosia: Temporarily remove view models
