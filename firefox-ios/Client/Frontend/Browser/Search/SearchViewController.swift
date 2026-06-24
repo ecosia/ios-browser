@@ -871,6 +871,8 @@ class SearchViewController: SiteTableViewController,
                 }
                 // Ecosia: Keep long queries on a single row, truncated at the head so the trailing autocomplete remains visible.
                 applyOneLineHeadTruncation(to: oneLineCell.titleLabel)
+                // Ecosia: Render the leading magnifying-glass icon at the 16×16 design size.
+                applySuggestionLeadingIconSize(to: oneLineCell)
                 cell = oneLineCell
             }
         case .openedTabs:
