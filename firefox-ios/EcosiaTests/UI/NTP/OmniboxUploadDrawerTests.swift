@@ -49,6 +49,32 @@ final class OmniboxUploadDrawerTests: XCTestCase {
 }
 
 @MainActor
+final class NTPOmniboxSheetStateTests: XCTestCase {
+
+    func testSelectedOptionIsDeliveredAfterDrawerDismisses() {
+        let state = NTPOmniboxSheetState()
+        var received: OmniboxUploadOption?
+        state.presentUploadDrawer { received = $0 }
+
+        state.handleUploadOptionSelected(.files)
+        XCTAssertFalse(state.showUploadDrawer)
+        XCTAssertNil(received)
+
+        state.handleUploadDrawerDismissed()
+        XCTAssertEqual(received, .files)
+    }
+
+    func testDismissWithoutSelectionDoesNotDeliverOption() {
+        let state = NTPOmniboxSheetState()
+        var received: OmniboxUploadOption?
+        state.presentUploadDrawer { received = $0 }
+
+        state.handleUploadDrawerDismissed()
+        XCTAssertNil(received)
+    }
+}
+
+@MainActor
 final class NTPSearchBarUploadDelegateTests: XCTestCase {
 
     override func setUp() {
