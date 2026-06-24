@@ -114,7 +114,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
         if ecosiaAuth?.isLoggedIn == false {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
-                presentAccountImpactFromNTPHeader()
+                presentOmniboxSignInSheetForUpload()
             } else {
                 ecosiaAuth?.login()
             }
@@ -123,9 +123,22 @@ extension BrowserViewController: NTPSearchBarDelegate {
         presentOmniboxUploadDrawer()
     }
 
-    fileprivate func presentAccountImpactFromNTPHeader() {
-        guard let homepage = contentContainer.contentController as? HomepageViewController else { return }
-        homepage.ecosiaAdapter?.headerViewModel?.presentAccountImpact()
+    fileprivate func presentOmniboxSignInSheetForUpload() {
+        guard let homepage = contentContainer.contentController as? HomepageViewController,
+              let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
+
+        homepage.presentOmniboxUploadSheetIfNeeded()
+        sheetState.presentSignInSheetForUpload(
+            onSignIn: { [weak self] in
+                self?.ecosiaAuth?.login()
+            },
+            onSignUp: { [weak self] in
+                self?.ecosiaAuth?.signUp()
+            },
+            onUploadDrawerRequested: { [weak self] in
+                self?.presentOmniboxUploadDrawer()
+            }
+        )
     }
 
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
