@@ -28,6 +28,13 @@ open class Analytics {
         }
     }
 
+    /// Persists the Micro-instance preference without touching `Analytics.shared` (unlike the
+    /// `shouldUseMicroInstance` setter). Use at launch so the tracker is built against Micro during
+    /// its normal lazy init, avoiding premature initialization during startup.
+    public static func persistShouldUseMicroInstance(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: shouldUseMicroInstanceKey)
+    }
+
     nonisolated(unsafe) public static var shared = Analytics()
     private var tracker: TrackerController
     private var privateTracker: TrackerController

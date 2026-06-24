@@ -64,6 +64,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         willFinishLaunchingWithOptions
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // Ecosia: Let acceptance tests route analytics to the Snowplow Micro instance from the first
+        // event (install/launch/resume). Persisted (not set) so it survives terminate/activate and
+        // doesn't create Analytics.shared before dependencies are ready. Staging-only.
+        if ProcessInfo.processInfo.arguments.contains("-UseSnowplowMicroInstance"),
+           EcosiaEnvironment.current == .staging {
+            Analytics.persistShouldUseMicroInstance(true)
+        }
+
         startRecordingStartupOpenURLTime()
         // Configure app information for BrowserKit, needed for logger
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
