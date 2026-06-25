@@ -18,32 +18,52 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // pipeline records the omnibox submit the same way the URL bar would.
         searchSessionState = .engaged
         hideOmniboxSuggestions()
+        let chatFiles = ntpOmniboxAnchorView?.readyChatFiles() ?? []
         // Clear the omnibox so the user returns to a fresh pill next time the
         // homepage is shown — the submitted query lives on the SERP, not in
         // the input.
         if let bar = ntpOmniboxAnchorView {
             bar.text = ""
+            omniboxAttachmentCoordinator.clearAttachments()
             _ = bar.resignFirstResponder()
         }
-        submitOmniboxSearch(query: searchTerm)
+
+        if !chatFiles.isEmpty {
+            Task { @MainActor in
+                await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView()
+                submitOmniboxSearch(query: searchTerm, chatFiles: chatFiles)
+                showEmbeddedWebview()
+            }
+            return
+        }
+
+        submitOmniboxSearch(query: searchTerm, chatFiles: chatFiles)
         // Force the swap to the webview. Without URL bar overlay mode, the
         // standard `addressToolbar(_:didLeaveOverlayModeForReason:)` chain
         // — which is what normally calls `showEmbeddedWebview()` — never fires.
         showEmbeddedWebview()
     }
 
-    /// Builds the search URL for an omnibox submission (direct typed submit
-    /// or autocomplete row tap) and loads it. Pasted URLs navigate directly;
-    /// everything else goes through Ecosia's `urlProvider` via
-    /// `URL.ecosiaSearchWithQuery` with `autoRedirect: true`, which appends
-    /// the `ar=1` parameter so the backend can decide whether the query
-    /// lands on AI search or the standard SERP — the client never makes that
-    /// call itself.
-    private func submitOmniboxSearch(query: String) {
+    /// Builds the navigation URL for an omnibox submission. Pasted URLs navigate
+    /// directly. Queries with attachments always open AI chat with the uploaded
+    /// `files` metadata. Otherwise the query goes through Ecosia search with `ar=1` so
+    /// the backend can decide between AI search and the standard SERP.
+    private func submitOmniboxSearch(query: String, chatFiles: [AIChatFileQuery] = []) {
         guard let tab = tabManager.selectedTab else { return }
 
-        if let url = URIFixup.getURL(query) {
+        if chatFiles.isEmpty, let url = URIFixup.getURL(query) {
             finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+            return
+        }
+
+        if !chatFiles.isEmpty {
+            let chatURL = Environment.current.urlProvider.aiChat(
+                origin: .omnibox,
+                query: query,
+                files: chatFiles
+            )
+            EcosiaLogger.network.info("[Omnibox] Routing to AI chat: \(chatURL.absoluteString)")
+            finishEditingAndSubmit(chatURL, visitType: .typed, forTab: tab)
             return
         }
 
@@ -53,11 +73,24 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
     func ntpSearchBarTextDidChange(_ searchTerm: String) {
         guard let anchor = ntpOmniboxAnchorView else { return }
+        if anchor.hasAttachments {
+            hideOmniboxSuggestions()
+            return
+        }
         if searchTerm.isEmpty {
             hideOmniboxSuggestions()
             return
         }
         showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
+    }
+
+    func ntpSearchBarAttachmentsDidChange() {
+        guard let anchor = ntpOmniboxAnchorView else { return }
+        if anchor.hasAttachments {
+            hideOmniboxSuggestions()
+        } else if !anchor.text.isEmpty {
+            showOmniboxSuggestions(searchTerm: anchor.text, anchorView: anchor)
+        }
     }
 
     func ntpSearchBarNeedsSearchReset() {
@@ -142,7 +175,27 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
-        (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
+        let bar = (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
+        bar?.onRemoveAttachment = { [weak self] id in
+            self?.omniboxAttachmentCoordinator.removeAttachment(id: id)
+        }
+        return bar
+    }
+
+    fileprivate var omniboxAttachmentCoordinator: OmniboxAttachmentUploadCoordinator {
+        if let coordinator = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.attachmentCoordinator)
+            as? OmniboxAttachmentUploadCoordinator {
+            coordinator.searchBar = ntpOmniboxAnchorView
+            return coordinator
+        }
+        let coordinator = OmniboxAttachmentUploadCoordinator()
+        coordinator.delegate = self
+        coordinator.searchBar = ntpOmniboxAnchorView
+        objc_setAssociatedObject(self,
+                                 &OmniboxUploadAssociatedKeys.attachmentCoordinator,
+                                 coordinator,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return coordinator
     }
 }
 
@@ -340,6 +393,7 @@ extension BrowserViewController {
 private struct OmniboxUploadAssociatedKeys {
     /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var pickerCoordinator: UInt8 = 0
+    nonisolated(unsafe) static var attachmentCoordinator: UInt8 = 0
 }
 
 @MainActor
@@ -376,8 +430,16 @@ extension BrowserViewController {
 
 @MainActor
 extension BrowserViewController: OmniboxUploadPickerDelegate {
-    func omniboxUploadDidSelect(items: [OmniboxUploadItem]) {
-        // TODO: Stub for follow-up upload wiring to AI chat.
-        _ = items
+    func omniboxUploadDidPickPendingItems(_ items: [OmniboxUploadPendingItem]) {
+        _ = ntpOmniboxAnchorView?.becomeFirstResponder()
+        omniboxAttachmentCoordinator.processPendingItems(items)
+    }
+}
+
+@MainActor
+extension BrowserViewController: OmniboxAttachmentUploadDelegate {
+    func omniboxAttachmentsDidChange() {
+        ntpOmniboxAnchorView?.refreshSubmitButtonState()
+        ntpSearchBarAttachmentsDidChange()
     }
 }
