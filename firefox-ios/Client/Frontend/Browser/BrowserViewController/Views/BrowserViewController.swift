@@ -4826,6 +4826,17 @@ extension BrowserViewController: SearchViewControllerDelegate {
         setLocationView(text: text, search: false)
     }
 
+    // Ecosia: Dismiss the whole suggestions overlay when its close button is tapped.
+    // The omnibox flow hosts the overlay in HomepageViewController and needs its own
+    // teardown; everything else is the standard URL bar overlay mode.
+    func searchViewControllerDidTapCloseButton(_ searchViewController: SearchViewController) {
+        if searchViewController.parent is HomepageViewController {
+            dismissOmniboxOverlayFromCloseButton()
+        } else {
+            overlayManager.cancelEditing(shouldCancelLoading: false)
+        }
+    }
+
     func searchViewControllerWillHide(_ searchViewController: SearchViewController) {
         let suggestTelemetry = FxSuggestTelemetry()
 

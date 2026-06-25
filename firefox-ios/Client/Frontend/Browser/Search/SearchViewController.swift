@@ -34,6 +34,9 @@ protocol SearchViewControllerDelegate: AnyObject {
     )
     @MainActor
     func searchViewControllerWillHide(_ searchViewController: SearchViewController)
+    // Ecosia: Tapping the suggestions-list close button dismisses the whole overlay.
+    @MainActor
+    func searchViewControllerDidTapCloseButton(_ searchViewController: SearchViewController)
 }
 
 class SearchViewController: SiteTableViewController,
@@ -104,6 +107,9 @@ class SearchViewController: SiteTableViewController,
         button.accessibilityLabel = String(format: .SearchSettingsAccessibilityLabel)
     }
 
+    // Ecosia: Floating button that dismisses the suggestions overlay (see SearchViewController+Ecosia).
+    lazy var ecosiaCloseButton: UIButton = makeEcosiaCloseButton()
+
     init(profile: Profile,
          viewModel: SearchViewModel,
          tabManager: TabManager,
@@ -147,6 +153,9 @@ class SearchViewController: SiteTableViewController,
         layoutTable()
         layoutSearchEngineScrollView()
         layoutSearchEngineScrollViewContent()
+
+        // Ecosia: Add the floating close button on top of the suggestions table.
+        setupEcosiaCloseButton()
 
         NSLayoutConstraint.activate([
             searchEngineContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -276,7 +285,14 @@ class SearchViewController: SiteTableViewController,
         tableView.removeFromSuperview()
         view.addSubviews(tableView)
         NSLayoutConstraint.activate([
+            /* Ecosia: Pin the table below the floating close button (which is pinned to the
+               same safe-area top) so suggestions can never scroll under it. This replaces a
+               top content inset, which only set the rest position and let rows slide under
+               the button while scrolling a long list.
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            */
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                           constant: ecosiaSuggestionsTopInset),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             /* Ecosia: Extend table view to bottom since search engine container is hidden.
@@ -294,6 +310,8 @@ class SearchViewController: SiteTableViewController,
 
     func reloadTableView() {
         tableView.reloadData()
+        // Ecosia: Keep the floating close button above freshly reloaded cells.
+        bringEcosiaCloseButtonToFront()
     }
 
     func reloadSearchEngines() {
@@ -471,7 +489,7 @@ class SearchViewController: SiteTableViewController,
             guard let suggestions = viewModel.suggestions,
                   let suggestion = suggestions[safe: indexPath.row],
             */
-            guard let suggestion = safeSuggestion(at: indexPath.row),
+            guard let suggestion = safeSuggestion(forRow: indexPath.row),
                   let url = defaultEngine.searchURLForQuery(suggestion)
             else { return }
 
@@ -661,7 +679,7 @@ class SearchViewController: SiteTableViewController,
                 if let site = viewModel.suggestions?[indexPath.row] {
                 */
                 if !isAIChatRow(indexPath),
-                   let site = safeSuggestion(at: indexPath.row) {
+                   let site = safeSuggestion(forRow: indexPath.row) {
                     if searchTelemetry?.visibleSuggestions.contains(site) == false {
                         searchTelemetry?.visibleSuggestions.append(site)
                     }
@@ -754,7 +772,7 @@ class SearchViewController: SiteTableViewController,
             /* Ecosia: Use safe array access.
             guard let suggestion = viewModel.suggestions?[indexPath.item] else { return }
             */
-            guard let suggestion = safeSuggestion(at: indexPath.item) else { return }
+            guard let suggestion = safeSuggestion(forRow: indexPath.item) else { return }
             searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)
         case .remoteTabs:
             let suggestion = viewModel.remoteClientTabs[indexPath.item]
@@ -768,7 +786,17 @@ class SearchViewController: SiteTableViewController,
 
     override func applyTheme() {
         super.applyTheme()
+        /* Ecosia: Match the overlay background to the table background (layer1) instead of
+           layer5. The table no longer fills the top of the overlay (it is pinned below the
+           floating close button in `layoutTable`), so the previously-hidden view background
+           became a visible white strip behind the close button. layer1 blends it with the
+           grey area around the suggestion cards.
         view.backgroundColor = currentTheme().colors.layer5
+        */
+        view.backgroundColor = currentTheme().colors.layer1
+        // Ecosia: Blend the row dividers into the card background so they read as seamless
+        // (super.applyTheme sets `separatorColor` to `borderPrimary`).
+        tableView.separatorColor = currentTheme().colors.layer5
 
         // search settings icon
         searchButton.layer.backgroundColor = UX.EngineButtonBackgroundColor
@@ -776,6 +804,8 @@ class SearchViewController: SiteTableViewController,
 
         searchEngineContainerView.layer.backgroundColor = currentTheme().colors.layer1.cgColor
         searchEngineContainerView.layer.shadowColor = currentTheme().colors.shadowDefault.cgColor
+        // Ecosia: Theme the floating close button alongside the rest of the overlay.
+        applyEcosiaCloseButtonTheme()
         reloadData()
     }
 
@@ -841,9 +871,11 @@ class SearchViewController: SiteTableViewController,
             // Ecosia: Check if this is the AI Chat item
             if isAIChatRow(indexPath) {
                 cell = configureAIChatCell(oneLineCell)
-            } else if let site = safeSuggestion(at: indexPath.row) {
+            } else if let site = safeSuggestion(forRow: indexPath.row) {
                 let oneLineCellViewModel = oneLineCellModelForSearch(
                     with: site,
+                    // Ecosia: First suggestion (row 0, the typed query) has no append arrow;
+                    // the AI Chat row at index 1 is handled above, so row > 0 maps to later suggestions.
                     shouldShowAccessoryView: indexPath.row > 0
                 )
                 oneLineCell.configure(viewModel: oneLineCellViewModel)
@@ -856,6 +888,8 @@ class SearchViewController: SiteTableViewController,
                 }
                 // Ecosia: Keep long queries on a single row, truncated at the head so the trailing autocomplete remains visible.
                 applyOneLineHeadTruncation(to: oneLineCell.titleLabel)
+                // Ecosia: Render the leading magnifying-glass icon at the 16×16 design size.
+                applySuggestionLeadingIconSize(to: oneLineCell)
                 cell = oneLineCell
             }
         case .openedTabs:

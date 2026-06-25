@@ -105,6 +105,15 @@ extension BrowserViewController: NTPSearchBarDelegate {
         searchController?.parent is HomepageViewController
     }
 
+    /// Dismisses the omnibox suggestions overlay in response to an explicit user
+    /// action — the suggestions-list close button. Resigns the omnibox so focus
+    /// and keyboard are released (mirroring a cancel), then tears the overlay down.
+    func dismissOmniboxOverlayFromCloseButton() {
+        searchSessionState = .abandoned
+        _ = ntpOmniboxAnchorView?.resignFirstResponder()
+        hideOmniboxSuggestions()
+    }
+
     func ntpSearchBarNeedsSuggestionsLayoutUpdate() {
         updateOmniboxSuggestionsScrollInsets()
     }
@@ -250,8 +259,10 @@ extension BrowserViewController {
 
         homepage.view.layoutIfNeeded()
 
-        let topInset: CGFloat = 0
-
+        // The table is pinned below the close button (see `layoutTable`), so only the
+        // bottom needs insetting here — the last rows must scroll clear of the floating
+        // omnibox pill. Leave the top at zero; the safe area stays unchanged so the close
+        // button keeps its position.
         let omniboxFrame = searchController.view.convert(omnibox.bounds, from: omnibox)
         let bottomInset = max(
             0,
@@ -259,7 +270,7 @@ extension BrowserViewController {
         )
 
         searchController.additionalSafeAreaInsets = UIEdgeInsets(
-            top: topInset,
+            top: 0,
             left: 0,
             bottom: bottomInset,
             right: 0
@@ -268,10 +279,10 @@ extension BrowserViewController {
         // Mirror on the table too — it is edge-pinned, not safe-area-pinned.
         let tableView = searchController.tableView
         var contentInset = tableView.contentInset
-        contentInset.top = topInset
+        contentInset.top = 0
         contentInset.bottom = bottomInset
         tableView.contentInset = contentInset
-        tableView.verticalScrollIndicatorInsets.top = topInset
+        tableView.verticalScrollIndicatorInsets.top = 0
         tableView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
 
