@@ -345,7 +345,16 @@ final class AddressToolbarContainer: UIView,
         guard self.model != newModel else { return }
 
         updateSkeletonAddressBarsAlpha(to: CGFloat(newModel.scrollAlpha))
+        /* Ecosia: Reset the accessory gradient whenever the keyboard is gone, regardless of scroll alpha.
+           The layer3 accessory gradient is sized to extend ~74pt below the address bar (over the navigation
+           toolbar). On the AI chat vertical we pin the compact pill at scroll alpha 0, so the original
+           `!scrollAlpha.isZero` guard never fires there — leaving the gradient stuck at full opacity and washing
+           out the navigation toolbar icons. It only ever needs to be visible while the keyboard accessory shows.
         if #available(iOS 26.0, *), !newModel.shouldShowKeyboard, !newModel.scrollAlpha.isZero {
+            accessoryViewGradient.opacity = 0
+        }
+         */
+        if #available(iOS 26.0, *), !newModel.shouldShowKeyboard {
             accessoryViewGradient.opacity = 0
         }
         // in case we are in edit mode but overlay is not active yet we have to activate it
