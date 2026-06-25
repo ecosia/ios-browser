@@ -16,6 +16,7 @@ final class AnalyticsTests: XCTestCase {
         // Remove any saved dates or flags after each test to avoid side effects between tests
         defaults.removeObject(forKey: "dayPassedCheckIdentifier")
         defaults.removeObject(forKey: "installCheckIdentifier")
+        defaults.removeObject(forKey: "shouldUseMicroInstance")
     }
 
     // MARK: - hasDayPassedSinceLastCheck Tests
@@ -168,5 +169,15 @@ final class AnalyticsTests: XCTestCase {
         let config = Analytics.makeNetworkConfig(environment: .production)
         XCTAssertEqual(config.endpoint?.asURL?.host, "sp.ecosia.org")
         XCTAssertNil(config.requestHeaders, "Production environment should not include Cloudflare authentication headers")
+    }
+
+    func test_persistShouldUseMicroInstance_enablesMicroEndpoint() {
+        Analytics.shouldUseMicroInstance = false
+
+        Analytics.persistShouldUseMicroInstance(true)
+
+        XCTAssertTrue(Analytics.shouldUseMicroInstance, "Persisting true should make shouldUseMicroInstance true")
+        let config = Analytics.makeNetworkConfig(environment: .staging)
+        XCTAssertEqual(URLProvider.staging.snowplowMicro, config.endpoint, "Default makeNetworkConfig should resolve to the Micro endpoint once persisted")
     }
 }
