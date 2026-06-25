@@ -277,10 +277,10 @@ extension SearchViewController {
         static let listClearance: CGFloat = .ecosia.space._2s
     }
 
-    /// Top inset reserved above the first suggestion so the list clears the floating
-    /// close button — restores the top breathing room the (now hidden) section header
-    /// used to provide, matching the original design. Applied as the table's top
-    /// content inset in both the URL-bar and omnibox contexts.
+    /// Vertical space reserved above the suggestions table so it sits below the floating
+    /// close button. Used as the constant on the table's top constraint (see
+    /// `layoutTable`), so the list starts — and scrolls — entirely below the button rather
+    /// than sliding under it. Equals the button's bottom edge plus a small clearance.
     var ecosiaSuggestionsTopInset: CGFloat {
         CloseButtonUX.topPadding + CloseButtonUX.size + CloseButtonUX.listClearance
     }
@@ -324,11 +324,6 @@ extension SearchViewController {
             ])
         }
         applyEcosiaCloseButtonTheme()
-
-        // Reserve room at the top of the list so the first suggestion clears the close
-        // button. The omnibox context re-applies this in `updateOmniboxSuggestionsScrollInsets`.
-        tableView.contentInset.top = ecosiaSuggestionsTopInset
-        tableView.verticalScrollIndicatorInsets.top = ecosiaSuggestionsTopInset
     }
 
     /// Keeps the close button above newly inserted/refreshed cells in z-order.

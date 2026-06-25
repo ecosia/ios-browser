@@ -285,7 +285,14 @@ class SearchViewController: SiteTableViewController,
         tableView.removeFromSuperview()
         view.addSubviews(tableView)
         NSLayoutConstraint.activate([
+            /* Ecosia: Pin the table below the floating close button (which is pinned to the
+               same safe-area top) so suggestions can never scroll under it. This replaces a
+               top content inset, which only set the rest position and let rows slide under
+               the button while scrolling a long list.
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            */
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                           constant: ecosiaSuggestionsTopInset),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             /* Ecosia: Extend table view to bottom since search engine container is hidden.
@@ -779,7 +786,17 @@ class SearchViewController: SiteTableViewController,
 
     override func applyTheme() {
         super.applyTheme()
+        /* Ecosia: Match the overlay background to the table background (layer1) instead of
+           layer5. The table no longer fills the top of the overlay (it is pinned below the
+           floating close button in `layoutTable`), so the previously-hidden view background
+           became a visible white strip behind the close button. layer1 blends it with the
+           grey area around the suggestion cards.
         view.backgroundColor = currentTheme().colors.layer5
+        */
+        view.backgroundColor = currentTheme().colors.layer1
+        // Ecosia: Blend the row dividers into the card background so they read as seamless
+        // (super.applyTheme sets `separatorColor` to `borderPrimary`).
+        tableView.separatorColor = currentTheme().colors.layer5
 
         // search settings icon
         searchButton.layer.backgroundColor = UX.EngineButtonBackgroundColor
