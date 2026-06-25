@@ -5,6 +5,7 @@
 import UIKit
 import Photos
 import PhotosUI
+import UniformTypeIdentifiers
 import Ecosia
 import Shared
 
@@ -22,12 +23,12 @@ extension OmniboxUploadPickerCoordinator {
         case .authorized, .limited:
             onGranted()
         case .notDetermined:
-            PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] newStatus in
                 Task { @MainActor in
                     if OmniboxUploadPhotoLibraryAuthorization.isAccessGranted(for: newStatus) {
                         onGranted()
                     } else {
-                        self.presentPhotoLibraryAccessDeniedAlert(on: viewController)
+                        self?.presentPhotoLibraryAccessDeniedAlert(on: viewController)
                     }
                 }
             }
@@ -66,15 +67,73 @@ extension OmniboxUploadPickerCoordinator {
 extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
+        guard !results.isEmpty else { return }
 
-        let items = results.map { result in
-            OmniboxUploadItem(
-                source: .photos,
-                fileName: result.itemProvider.suggestedName ?? "photo",
-                contentTypeIdentifier: result.itemProvider.registeredTypeIdentifiers.first
+        let pendingItems = results.map { result in
+            let fileName = result.itemProvider.suggestedName ?? "photo.jpg"
+            let typeIdentifier = result.itemProvider.registeredTypeIdentifiers.first ?? UTType.jpeg.identifier
+            return OmniboxUploadPendingItem(fileName: fileName, layout: .image) {
+                try await Self.loadPhoto(from: result.itemProvider,
+                                         fileName: fileName,
+                                         typeIdentifier: typeIdentifier)
+            }
+        }
+        delegate?.omniboxUploadDidPickPendingItems(pendingItems)
+    }
+
+    private static func loadPhoto(from itemProvider: NSItemProvider,
+                                  fileName: String,
+                                  typeIdentifier: String) async throws -> OmniboxUploadLocalPayload {
+        if itemProvider.canLoadObject(ofClass: UIImage.self) {
+            let image = try await loadUIImage(from: itemProvider)
+            guard let data = image.jpegData(compressionQuality: 0.92) else {
+                throw OmniboxUploadPayloadError.unreadable
+            }
+            return try OmniboxUploadPayloadLoader.loadImage(
+                data: data,
+                fileName: fileName,
+                mimeType: UTType.jpeg.preferredMIMEType ?? "image/jpeg"
             )
         }
-        guard !items.isEmpty else { return }
-        delegate?.omniboxUploadDidSelect(items: items)
+
+        return try await withCheckedThrowingContinuation { continuation in
+            itemProvider.loadDataRepresentation(forTypeIdentifier: typeIdentifier) { data, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let data else {
+                    continuation.resume(throwing: OmniboxUploadPayloadError.unreadable)
+                    return
+                }
+                do {
+                    let mimeType = UTType(typeIdentifier)?.preferredMIMEType ?? "image/jpeg"
+                    let payload = try OmniboxUploadPayloadLoader.loadImage(
+                        data: data,
+                        fileName: fileName,
+                        mimeType: mimeType
+                    )
+                    continuation.resume(returning: payload)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    private static func loadUIImage(from itemProvider: NSItemProvider) async throws -> UIImage {
+        try await withCheckedThrowingContinuation { continuation in
+            itemProvider.loadObject(ofClass: UIImage.self) { object, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let image = object as? UIImage else {
+                    continuation.resume(throwing: OmniboxUploadPayloadError.unreadable)
+                    return
+                }
+                continuation.resume(returning: image)
+            }
+        }
     }
 }
