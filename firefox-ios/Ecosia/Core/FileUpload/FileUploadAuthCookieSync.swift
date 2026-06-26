@@ -51,47 +51,24 @@ enum FileUploadAuthCookieSync {
 
 enum FileUploadAuthDiagnostics {
 
-    static func logAccessTokenScopes(_ accessToken: String) {
-        guard let payload = jwtPayload(from: accessToken) else {
-            EcosiaLogger.network.error("[FileUpload] Could not decode access token JWT payload")
+    static func logAccessTokenScopes(_ accessToken: String, grantedScope: String? = nil) {
+        let scopes = EcosiaAuthScopes.parseScopeClaim(from: accessToken)
+            ?? grantedScope.map(EcosiaAuthScopes.parseScopeString)
+
+        guard let scopes else {
+            EcosiaLogger.network.error("[FileUpload] Could not determine token scopes from JWT or granted scope")
             return
         }
 
-        if let scope = payload["scope"] as? String {
-            let hasWriteConversations = scope.contains("write:conversations")
-            EcosiaLogger.network.info(
-                "[FileUpload] Token scopes: \(scope) (write:conversations=\(hasWriteConversations))"
+        let joined = scopes.sorted().joined(separator: " ")
+        let hasWriteConversations = scopes.contains("write:conversations")
+        EcosiaLogger.network.info(
+            "[FileUpload] Token scopes: \(joined) (write:conversations=\(hasWriteConversations))"
+        )
+        if !hasWriteConversations {
+            EcosiaLogger.network.error(
+                "[FileUpload] Token is missing write:conversations — CredentialsManager scope refresh is required"
             )
-            if !hasWriteConversations {
-                EcosiaLogger.network.error(
-                    "[FileUpload] Token is missing write:conversations — sign out and sign in again to refresh scopes"
-                )
-            }
-        } else if let scopes = payload["scope"] as? [String] {
-            let joined = scopes.joined(separator: " ")
-            let hasWriteConversations = joined.contains("write:conversations")
-            EcosiaLogger.network.info(
-                "[FileUpload] Token scopes: \(joined) (write:conversations=\(hasWriteConversations))"
-            )
-        } else {
-            EcosiaLogger.network.error("[FileUpload] Token payload has no scope claim")
         }
-    }
-
-    private static func jwtPayload(from token: String) -> [String: Any]? {
-        let segments = token.split(separator: ".")
-        guard segments.count >= 2 else { return nil }
-        var base64 = String(segments[1])
-            .replacingOccurrences(of: "-", with: "+")
-            .replacingOccurrences(of: "_", with: "/")
-        let padding = 4 - base64.count % 4
-        if padding < 4 {
-            base64 += String(repeating: "=", count: padding)
-        }
-        guard let data = Data(base64Encoded: base64),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            return nil
-        }
-        return json
     }
 }

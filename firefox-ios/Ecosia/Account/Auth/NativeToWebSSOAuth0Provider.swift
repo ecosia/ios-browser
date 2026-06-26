@@ -10,6 +10,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
 
     public let settings: Auth0SettingsProviderProtocol
     public let credentialsManager: CredentialsManagerProtocol
+    public var authApiAudience: String? { environment.urlProvider.authApiAudience.absoluteString }
     public typealias SessionToken = String
     private let environment: Environment
 
@@ -39,7 +40,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         makeHttpsWebAuth()
             .useEphemeralSession()
             .audience(environment.urlProvider.authApiAudience.absoluteString)
-            .scope("openid profile email offline_access read:impact write:impact read:conversations write:conversations")
+            .scope(EcosiaAuthScopes.oauthScope)
             .parameters(["screen_hint": screenHint.rawValue])
     }
 

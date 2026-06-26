@@ -12,6 +12,8 @@ final class MockCredentialsManager: CredentialsManagerProtocol {
     // MARK: - Test Control Properties
     var shouldFailCredentials = false
     var shouldFailRenew = false
+    var shouldFailCredentialsWithScope = false
+    var shouldFailAPICredentials = false
     var canRenewResult = true
     var clearResult = true
 
@@ -23,6 +25,10 @@ final class MockCredentialsManager: CredentialsManagerProtocol {
 
     // MARK: - Call Tracking
     var credentialsCallCount = 0
+    var credentialsWithScopeCallCount = 0
+    var apiCredentialsCallCount = 0
+    var lastRequestedScope: String?
+    var lastRequestedAudience: String?
     var renewCallCount = 0
     var storeCallCount = 0
     var clearCallCount = 0
@@ -49,6 +55,39 @@ final class MockCredentialsManager: CredentialsManagerProtocol {
         let renewedCredentials = mockCredentials ?? createMockCredentials()
         storedCredentials = renewedCredentials
         return renewedCredentials
+    }
+
+    func credentials(withScope scope: String) async throws -> Credentials {
+        credentialsWithScopeCallCount += 1
+        lastRequestedScope = scope
+
+        if shouldFailCredentialsWithScope {
+            throw mockError ?? NSError(domain: "MockCredentialsManager", code: 2003, userInfo: [NSLocalizedDescriptionKey: "Mock scoped credentials failure"])
+        }
+
+        if let mockCredentials {
+            storedCredentials = mockCredentials
+            return mockCredentials
+        }
+
+        return try await renew()
+    }
+
+    func apiCredentials(forAudience audience: String, scope: String) async throws -> APICredentials {
+        apiCredentialsCallCount += 1
+        lastRequestedAudience = audience
+        lastRequestedScope = scope
+
+        if shouldFailAPICredentials {
+            throw mockError ?? NSError(domain: "MockCredentialsManager", code: 2004, userInfo: [NSLocalizedDescriptionKey: "Mock API credentials failure"])
+        }
+
+        let credentials = mockCredentials ?? storedCredentials ?? createMockCredentials()
+        storedCredentials = credentials
+        return APICredentials(accessToken: credentials.accessToken,
+                              tokenType: credentials.tokenType,
+                              expiresIn: credentials.expiresIn,
+                              scope: credentials.scope ?? scope)
     }
 
     func store(credentials: Credentials) -> Bool {
@@ -87,6 +126,8 @@ final class MockCredentialsManager: CredentialsManagerProtocol {
     func reset() {
         shouldFailCredentials = false
         shouldFailRenew = false
+        shouldFailCredentialsWithScope = false
+        shouldFailAPICredentials = false
         canRenewResult = true
         clearResult = true
 
@@ -96,6 +137,10 @@ final class MockCredentialsManager: CredentialsManagerProtocol {
         lastStoredCredentials = nil
 
         credentialsCallCount = 0
+        credentialsWithScopeCallCount = 0
+        apiCredentialsCallCount = 0
+        lastRequestedScope = nil
+        lastRequestedAudience = nil
         renewCallCount = 0
         storeCallCount = 0
         clearCallCount = 0

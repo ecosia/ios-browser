@@ -11,6 +11,9 @@ public protocol Auth0ProviderProtocol {
     /// The Auth0 configuration settings provider
     var settings: Auth0SettingsProviderProtocol { get }
 
+    /// API audience used at login, when access tokens are audience-scoped.
+    var authApiAudience: String? { get }
+
     /// The `CredentialsManager` final concrete type conforming to the protocol `CredentialsManaging` to use for storing and retrieving credentials.
     var credentialsManager: CredentialsManagerProtocol { get }
 
@@ -60,6 +63,10 @@ public protocol Auth0ProviderProtocol {
     /// - Throws: An error if the credential renewal fails.
     @discardableResult
     func renewCredentials() async throws -> Credentials
+
+    /// Silently exchanges the refresh token for credentials that include the requested scopes.
+    @discardableResult
+    func renewCredentials(withScope scope: String) async throws -> Credentials
 }
 
 extension Auth0ProviderProtocol {
@@ -80,6 +87,8 @@ extension Auth0ProviderProtocol {
 extension Auth0ProviderProtocol {
 
     public var settings: Auth0SettingsProviderProtocol { DefaultAuth0SettingsProvider() }
+
+    public var authApiAudience: String? { nil }
 
     public var credentialsManager: CredentialsManagerProtocol { EcosiaAuthenticationService.defaultCredentialsManager }
 
@@ -113,5 +122,19 @@ extension Auth0ProviderProtocol {
 
     public func renewCredentials() async throws -> Credentials {
         return try await credentialsManager.renew()
+    }
+
+    public func renewCredentials(withScope scope: String) async throws -> Credentials {
+        if let audience = authApiAudience {
+            let apiCredentials = try await credentialsManager.apiCredentials(forAudience: audience, scope: scope)
+            let baseCredentials = try await credentialsManager.credentials()
+            return Credentials(accessToken: apiCredentials.accessToken,
+                               tokenType: apiCredentials.tokenType,
+                               idToken: baseCredentials.idToken,
+                               refreshToken: baseCredentials.refreshToken,
+                               expiresIn: apiCredentials.expiresIn,
+                               scope: apiCredentials.scope)
+        }
+        return try await credentialsManager.credentials(withScope: scope)
     }
 }

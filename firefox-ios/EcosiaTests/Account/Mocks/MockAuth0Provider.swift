@@ -32,10 +32,13 @@ class MockAuth0Provider: Auth0ProviderProtocol {
     var retrieveCredentialsCallCount = 0
     var clearCredentialsCallCount = 0
     var renewCredentialsCallCount = 0
+    var renewCredentialsWithScopeCallCount = 0
+    var lastRenewScope: String?
     var canRenewCredentialsCallCount = 0
 
     // MARK: - Protocol Requirements
     var settings: Auth0SettingsProviderProtocol = MockAuth0SettingsProvider()
+    var authApiAudience: String?
     var credentialsManager: CredentialsManagerProtocol = MockCredentialsManager()
     lazy var webAuth: WebAuth = Auth0.webAuth(clientId: "test-client", domain: "test.auth0.com")
 
@@ -117,7 +120,33 @@ class MockAuth0Provider: Auth0ProviderProtocol {
             throw NSError(domain: "MockAuth0Provider", code: 1007, userInfo: [NSLocalizedDescriptionKey: "Cannot renew credentials: no stored credentials"])
         }
 
-        return mockCredentials ?? createMockCredentials()
+        return try await credentialsManager.renew()
+    }
+
+    func renewCredentials(withScope scope: String) async throws -> Credentials {
+        renewCredentialsWithScopeCallCount += 1
+        lastRenewScope = scope
+
+        if shouldFailRenewCredentials {
+            throw mockError ?? NSError(domain: "MockAuth0Provider", code: 1005, userInfo: [NSLocalizedDescriptionKey: "Mock renew credentials failure"])
+        }
+
+        guard hasStoredCredentials else {
+            throw NSError(domain: "MockAuth0Provider", code: 1007, userInfo: [NSLocalizedDescriptionKey: "Cannot renew credentials: no stored credentials"])
+        }
+
+        if let audience = authApiAudience {
+            let apiCredentials = try await credentialsManager.apiCredentials(forAudience: audience, scope: scope)
+            let baseCredentials = try await credentialsManager.credentials()
+            return Credentials(accessToken: apiCredentials.accessToken,
+                               tokenType: apiCredentials.tokenType,
+                               idToken: baseCredentials.idToken,
+                               refreshToken: baseCredentials.refreshToken,
+                               expiresIn: apiCredentials.expiresIn,
+                               scope: apiCredentials.scope)
+        }
+
+        return try await credentialsManager.credentials(withScope: scope)
     }
 
     // MARK: - Helper Methods
@@ -152,6 +181,8 @@ class MockAuth0Provider: Auth0ProviderProtocol {
         retrieveCredentialsCallCount = 0
         clearCredentialsCallCount = 0
         renewCredentialsCallCount = 0
+        renewCredentialsWithScopeCallCount = 0
+        lastRenewScope = nil
         canRenewCredentialsCallCount = 0
     }
 }

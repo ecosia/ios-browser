@@ -38,6 +38,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// This token is used to access protected resources.
     public private(set) var accessToken: String?
 
+    /// OAuth scopes granted with the current access token (from Auth0 token response).
+    private(set) var grantedScope: String?
+
     /// The current refresh token for the authenticated user.
     /// This token is used to obtain new access tokens when they expire.
     private(set) var refreshToken: String?
@@ -113,6 +116,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             throw AuthError.authenticationFailed(error)
         }
 
+        return try await persistAuthenticatedCredentials(credentials)
+    }
+
+    @discardableResult
+    private func persistAuthenticatedCredentials(_ credentials: Credentials) async throws -> AccountOrigin {
         // Determine account origin from ID token claims
         let accountOrigin = credentials.accountOrigin
         EcosiaLogger.auth.info("Account origin: \(accountOrigin == .newAccount ? "new account" : "existing account")")
@@ -214,8 +222,13 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             }
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
-            // Dispatch state loaded with current authentication status
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
+
+            do {
+                try await renewCredentialsIfNeeded()
+            } catch {
+                EcosiaLogger.auth.error("Failed to refresh stored credentials after retrieval: \(error)")
+            }
         } catch {
             EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
             // Even if retrieval fails, dispatch state loaded as false
@@ -226,18 +239,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /**
      Renews credentials if they are renewable and close to expiration.
      
-     This method checks if the current credentials can be renewed (i.e., a valid refresh token exists)
-     and attempts to obtain new credentials using the refresh token. This is useful for maintaining
-     long-lived sessions without requiring user re-authentication.
+     When conversation scopes are missing from the stored access token, renewal uses
+     `CredentialsManager.credentials(withScope:)` so Auth0 silently grants the updated
+     scopes via the refresh token (requires `offline_access` from the original login).
      
      - Note: This method will update the credential properties with the new tokens upon successful renewal.
-     
-     ## When to Use
-     
-     Call this method when:
-     - You detect that access tokens are expired or about to expire
-     - You want to proactively refresh tokens to maintain session continuity
-     - You encounter authentication errors that might be resolved by token renewal
      */
     public func renewCredentialsIfNeeded() async throws {
         guard auth0Provider.canRenewCredentials() else {
@@ -246,13 +252,39 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         }
 
         do {
-            let credentials = try await auth0Provider.renewCredentials()
+            let credentials: Credentials
+            if needsConversationScopeRefresh {
+                EcosiaLogger.auth.info("Silently refreshing OAuth scopes via CredentialsManager")
+                credentials = try await auth0Provider.renewCredentials(withScope: EcosiaAuthScopes.oauthScope)
+                guard EcosiaAuthScopes.hasConversationScopes(in: credentials.accessToken,
+                                                             grantedScope: credentials.scope) else {
+                    EcosiaLogger.auth.error(
+                        "Credential renewal completed but conversation scopes are still missing (grantedScope=\(credentials.scope ?? "nil"))"
+                    )
+                    throw AuthError.credentialsRenewalFailed(
+                        NSError(
+                            domain: "EcosiaAuthenticationService",
+                            code: 2,
+                            userInfo: [NSLocalizedDescriptionKey: "Conversation scopes were not granted"]
+                        )
+                    )
+                }
+            } else {
+                credentials = try await auth0Provider.renewCredentials()
+            }
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
             EcosiaLogger.auth.info("Renewed credentials successfully")
+        } catch let authError as AuthError {
+            throw authError
         } catch {
             EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
             throw AuthError.credentialsRenewalFailed(error)
         }
+    }
+
+    private var needsConversationScopeRefresh: Bool {
+        guard isLoggedIn else { return false }
+        return !EcosiaAuthScopes.hasConversationScopes(in: accessToken ?? "", grantedScope: grantedScope)
     }
 
     /// Helper method to setup tokens and login flag
@@ -261,6 +293,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
                                             accountOrigin: AccountOrigin? = nil) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
+        self.grantedScope = credentials?.scope
         self.refreshToken = credentials?.refreshToken
         let wasLoggedIn = self.isLoggedIn
         self.isLoggedIn = isLoggedIn

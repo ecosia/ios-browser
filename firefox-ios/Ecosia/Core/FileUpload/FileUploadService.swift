@@ -89,7 +89,10 @@ public final class FileUploadService: Sendable {
             try await refreshEAIST()
             let authSessionCookie = await FileUploadAuthCookieSync.syncAuthSessionCookieToSharedStorage()
             let accessToken = try await validAccessToken()
-            FileUploadAuthDiagnostics.logAccessTokenScopes(accessToken)
+            FileUploadAuthDiagnostics.logAccessTokenScopes(
+                accessToken,
+                grantedScope: authenticationService.grantedScope
+            )
             let fileId = try await withUploadTimeout(timeout) {
                 try await self.uploadSingleFile(file, accessToken: accessToken, authSessionCookie: authSessionCookie)
             }
@@ -113,7 +116,10 @@ public final class FileUploadService: Sendable {
         let accessToken: String
         do {
             accessToken = try await validAccessToken()
-            FileUploadAuthDiagnostics.logAccessTokenScopes(accessToken)
+            FileUploadAuthDiagnostics.logAccessTokenScopes(
+                accessToken,
+                grantedScope: authenticationService.grantedScope
+            )
         } catch {
             return FileUploadResult(fileIds: Array(repeating: nil, count: files.count), errors: [error])
         }

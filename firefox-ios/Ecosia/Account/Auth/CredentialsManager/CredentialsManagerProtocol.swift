@@ -36,4 +36,12 @@ public protocol CredentialsManagerProtocol {
     /// - Returns: A `Credentials` object upon successful renewal.
     /// - Throws: An error if the credential renewal fails.
     func renew() async throws -> Credentials
+
+    /// Retrieves credentials, renewing in the background when the requested scopes differ from storage.
+    ///
+    /// Requires `offline_access` from the original login so a refresh token is available.
+    func credentials(withScope scope: String) async throws -> Credentials
+
+    /// Retrieves audience-scoped API credentials, renewing when scopes differ from storage.
+    func apiCredentials(forAudience audience: String, scope: String) async throws -> APICredentials
 }
