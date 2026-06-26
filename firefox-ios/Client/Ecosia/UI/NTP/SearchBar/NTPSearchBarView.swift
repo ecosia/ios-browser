@@ -295,8 +295,9 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
 
         NSLayoutConstraint.activate([
             attachmentsStrip.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding),
-            attachmentsStrip.leadingAnchor.constraint(equalTo: leadingAnchor),
-            attachmentsStrip.trailingAnchor.constraint(equalTo: trailingAnchor),
+            attachmentsStrip.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.textPadding),
+            attachmentsStrip.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.textPadding),
+            attachmentsStrip.heightAnchor.constraint(equalToConstant: OmniboxAttachmentsStripView.UX.tileHeight),
 
             textView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.textPadding),
             textViewTopConstraint,
@@ -361,7 +362,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             if current === uploadButton || current === submitButton || current === clearButton {
                 return false
             }
-            if current is OmniboxAttachmentTileView || current.superview is OmniboxAttachmentTileView {
+            if current === attachmentsStrip || current.isDescendant(of: attachmentsStrip) {
                 return false
             }
             if current === self { break }

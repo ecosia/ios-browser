@@ -7,23 +7,26 @@ import Common
 import Ecosia
 
 /// Horizontally scrollable row of attachment previews above the omnibox text field.
-final class OmniboxAttachmentsStripView: UIView, ThemeApplicable {
+/// Scrolling is locked to the horizontal axis and clipped to this view's bounds.
+final class OmniboxAttachmentsStripView: UIView, ThemeApplicable, UIScrollViewDelegate {
 
     enum UX {
         static let tileSpacing: CGFloat = .ecosia.space._1s
-        static let horizontalInset: CGFloat = .ecosia.space._m
-        /// Room for the remove button that overlaps the top edge of image tiles.
-        static let removeButtonTopInset: CGFloat = 8
         static var tileHeight: CGFloat {
-            OmniboxAttachmentTileView.UX.imageSize.height + removeButtonTopInset
+            OmniboxAttachmentTileView.UX.imageSize.height
         }
     }
 
     var onRemoveAttachment: ((UUID) -> Void)?
 
-    private let scrollView: UIScrollView = .build { scrollView in
+    private let scrollView: HorizontalAttachmentsScrollView = .build { scrollView in
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = true
+        scrollView.alwaysBounceVertical = false
+        scrollView.isDirectionalLockEnabled = true
+        scrollView.clipsToBounds = true
+        scrollView.contentInsetAdjustmentBehavior = .never
     }
 
     private let stackView: UIStackView = .build { stack in
@@ -46,9 +49,9 @@ final class OmniboxAttachmentsStripView: UIView, ThemeApplicable {
     }
 
     private func setup() {
-        clipsToBounds = false
+        clipsToBounds = true
         addSubview(scrollView)
-        scrollView.clipsToBounds = false
+        scrollView.delegate = self
         scrollView.addSubview(stackView)
 
         NSLayoutConstraint.activate([
@@ -58,15 +61,17 @@ final class OmniboxAttachmentsStripView: UIView, ThemeApplicable {
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             scrollView.heightAnchor.constraint(equalToConstant: UX.tileHeight),
 
-            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor,
-                                           constant: UX.removeButtonTopInset),
-            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor,
-                                               constant: UX.horizontalInset),
-            stackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,
-                                                constant: -UX.horizontalInset),
+            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             stackView.heightAnchor.constraint(equalTo: scrollView.frameLayoutGuide.heightAnchor)
         ])
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        scrollView.alwaysBounceHorizontal = stackView.bounds.width > scrollView.bounds.width
     }
 
     func setAttachments(_ attachments: [OmniboxAttachment], previewImages: [UUID: UIImage]) {
@@ -105,5 +110,54 @@ final class OmniboxAttachmentsStripView: UIView, ThemeApplicable {
         }
         tileViews[id] = tile
         return tile
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        var offset = scrollView.contentOffset
+        if offset.y != 0 { offset.y = 0 }
+
+        let minX: CGFloat = -scrollView.contentInset.left
+        let maxX = max(
+            minX,
+            scrollView.contentSize.width - scrollView.bounds.width + scrollView.contentInset.right
+        )
+        if offset.x < minX { offset.x = minX }
+        if offset.x > maxX { offset.x = maxX }
+
+        if offset != scrollView.contentOffset {
+            scrollView.contentOffset = offset
+        }
+    }
+}
+
+// MARK: - Horizontal-only scroll view
+
+/// Rejects predominantly vertical pans so attachment dragging stays on the horizontal axis.
+private final class HorizontalAttachmentsScrollView: UIScrollView, UIGestureRecognizerDelegate {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        panGestureRecognizer.delegate = self
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard gestureRecognizer === panGestureRecognizer,
+              let pan = gestureRecognizer as? UIPanGestureRecognizer else {
+            return super.gestureRecognizerShouldBegin(gestureRecognizer)
+        }
+        let velocity = pan.velocity(in: self)
+        // Velocity is often zero at touch-down; directional lock + y-offset clamp handle the axis.
+        guard velocity == .zero || abs(velocity.x) >= abs(velocity.y) else { return false }
+        return super.gestureRecognizerShouldBegin(gestureRecognizer)
+    }
+
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        false
     }
 }

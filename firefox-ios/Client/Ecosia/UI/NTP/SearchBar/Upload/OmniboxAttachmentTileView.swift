@@ -10,9 +10,18 @@ import Ecosia
 final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
 
     enum UX {
-        static let fileSize = CGSize(width: 128, height: 56)
+        static let fileSize = CGSize(width: 136, height: 74)
         static let imageSize = CGSize(width: 74, height: 74)
-        static let cornerRadius: CGFloat = .ecosia.borderRadius._m
+        static let cornerRadius: CGFloat = .ecosia.borderRadius._l
+        static let imageBorderWidth: CGFloat = 1
+        static let fileContentPadding = UIEdgeInsets(
+            top: .ecosia.space._1s,
+            left: .ecosia.space._1s,
+            bottom: .ecosia.space._1s,
+            right: .ecosia.space._1s
+        )
+        static let fileLabelGap: CGFloat = .ecosia.space._2s
+        static let removeButtonInset: CGFloat = .ecosia.space._2s
         static let removeButtonContainerSize: CGFloat = 32
         static let removeButtonIconSize: CGFloat = 16
         static let glassBorderWidth: CGFloat = 1
@@ -39,6 +48,13 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
     private let fileSizeLabel: UILabel = .build { label in
         label.font = .preferredFont(forTextStyle: .caption2)
         label.adjustsFontForContentSizeCategory = true
+    }
+
+    private let fileContentStack: UIStackView = .build { stack in
+        stack.axis = .vertical
+        stack.spacing = UX.fileLabelGap
+        stack.alignment = .fill
+        stack.distribution = .equalSpacing
     }
 
     private let imageView: UIImageView = .build { imageView in
@@ -88,12 +104,19 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
     }
 
     private func setup() {
-        clipsToBounds = false
         addSubview(containerView)
-        containerView.addSubviews(spinner, fileNameLabel, fileSizeLabel, imageView, imageLoadingOverlay)
-        addSubview(removeButtonContainer)
+        // ZStack-style layering inside the rounded tile: image, overlays, then remove control.
+        containerView.addSubviews(
+            imageView,
+            imageLoadingOverlay,
+            spinner,
+            fileContentStack,
+            removeButtonContainer,
+            removeButton
+        )
+        fileContentStack.addArrangedSubview(fileNameLabel)
+        fileContentStack.addArrangedSubview(fileSizeLabel)
         removeButtonContainer.addSubviews(removeGlassBlur, removeGlassTint, removeIconView)
-        addSubview(removeButton)
         removeButton.accessibilityLabel = String.localized(.cancel)
         removeButton.addTarget(self, action: #selector(removeTapped), for: .touchUpInside)
 
@@ -106,29 +129,44 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-            spinner.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-
-            fileNameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: .ecosia.space._1s),
-            fileNameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -.ecosia.space._1s),
-            fileNameLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: .ecosia.space._1s),
-
-            fileSizeLabel.leadingAnchor.constraint(equalTo: fileNameLabel.leadingAnchor),
-            fileSizeLabel.trailingAnchor.constraint(equalTo: fileNameLabel.trailingAnchor),
-            fileSizeLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -.ecosia.space._1s),
-
             imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
 
-            imageLoadingOverlay.topAnchor.constraint(equalTo: containerView.topAnchor),
-            imageLoadingOverlay.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            imageLoadingOverlay.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            imageLoadingOverlay.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            imageLoadingOverlay.topAnchor.constraint(equalTo: imageView.topAnchor),
+            imageLoadingOverlay.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
+            imageLoadingOverlay.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
+            imageLoadingOverlay.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
 
-            removeButtonContainer.topAnchor.constraint(equalTo: topAnchor, constant: -6),
-            removeButtonContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 6),
+            spinner.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+
+            fileContentStack.topAnchor.constraint(
+                equalTo: containerView.topAnchor,
+                constant: UX.fileContentPadding.top
+            ),
+            fileContentStack.leadingAnchor.constraint(
+                equalTo: containerView.leadingAnchor,
+                constant: UX.fileContentPadding.left
+            ),
+            fileContentStack.trailingAnchor.constraint(
+                equalTo: containerView.trailingAnchor,
+                constant: -UX.fileContentPadding.right
+            ),
+            fileContentStack.bottomAnchor.constraint(
+                equalTo: containerView.bottomAnchor,
+                constant: -UX.fileContentPadding.bottom
+            ),
+
+            removeButtonContainer.topAnchor.constraint(
+                equalTo: containerView.topAnchor,
+                constant: UX.removeButtonInset
+            ),
+            removeButtonContainer.trailingAnchor.constraint(
+                equalTo: containerView.trailingAnchor,
+                constant: -UX.removeButtonInset
+            ),
             removeButtonContainer.widthAnchor.constraint(equalToConstant: UX.removeButtonContainerSize),
             removeButtonContainer.heightAnchor.constraint(equalToConstant: UX.removeButtonContainerSize),
 
@@ -183,8 +221,10 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
 
         if currentLayout == .image {
             containerView.backgroundColor = colors.ecosia.backgroundQuaternary
+            applyImageBorder(failed: false)
         } else {
             containerView.backgroundColor = colors.ecosia.backgroundQuaternary
+            containerView.layer.borderWidth = 0
         }
 
         fileNameLabel.textColor = colors.ecosia.textPrimary
@@ -203,6 +243,7 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
     private func resetVisibility() {
         spinner.stopAnimating()
         spinner.isHidden = true
+        fileContentStack.isHidden = true
         fileNameLabel.isHidden = true
         fileSizeLabel.isHidden = true
         imageView.isHidden = true
@@ -233,24 +274,26 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
         imageView.isHidden = false
         imageView.image = image
         imageLoadingOverlay.isHidden = !uploading
-        containerView.layer.borderWidth = failed ? 1 : 0
-        containerView.layer.borderColor = failed
-            ? (currentTheme?.colors.ecosia.stateError.cgColor)
-            : nil
+        applyImageBorder(failed: failed)
         if uploading {
             spinner.isHidden = false
             spinner.startAnimating()
             spinner.color = currentTheme?.colors.ecosia.buttonContentPrimary ?? .white
         }
-        bringSubviewToFront(imageLoadingOverlay)
-        bringSubviewToFront(spinner)
-        bringSubviewToFront(removeButtonContainer)
-        bringSubviewToFront(removeButton)
+    }
+
+    private func applyImageBorder(failed: Bool) {
+        containerView.layer.borderWidth = UX.imageBorderWidth
+        containerView.layer.borderColor = failed
+            ? (currentTheme?.colors.ecosia.stateError.cgColor)
+            : (currentTheme?.colors.borderPrimary.cgColor)
     }
 
     private func configureFileTile(attachment: OmniboxAttachment) {
+        fileContentStack.isHidden = false
         switch attachment.state {
         case .loading:
+            fileContentStack.isHidden = true
             spinner.isHidden = false
             spinner.startAnimating()
             removeButton.isHidden = true
