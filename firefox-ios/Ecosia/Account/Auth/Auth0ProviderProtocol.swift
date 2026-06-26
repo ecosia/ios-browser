@@ -65,8 +65,14 @@ public protocol Auth0ProviderProtocol {
     func renewCredentials() async throws -> Credentials
 
     /// Silently exchanges the refresh token for credentials that include the requested scopes.
+    ///
+    /// Uses `CredentialsManager` against `/oauth/token`. The manager persists renewed credentials automatically.
     @discardableResult
     func renewCredentials(withScope scope: String) async throws -> Credentials
+
+    /// Interactive Web Auth to approve additional API scopes without signing out first.
+    @discardableResult
+    func startAuthForAdditionalScopes() async throws -> Credentials
 }
 
 extension Auth0ProviderProtocol {
@@ -136,5 +142,9 @@ extension Auth0ProviderProtocol {
                                scope: apiCredentials.scope)
         }
         return try await credentialsManager.credentials(withScope: scope)
+    }
+
+    public func startAuthForAdditionalScopes() async throws -> Credentials {
+        try await startAuth(screenHint: .login)
     }
 }

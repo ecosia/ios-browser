@@ -190,6 +190,54 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.accessToken, newToken)
     }
 
+    func testRenewCredentialsIfNeeded_whenRefreshOmitsScopesAndNotRequired_doesNotThrow() async throws {
+        let oldToken = try makeJWT(claims: ["scope": "openid profile email read:impact write:impact"])
+        mockProvider.mockCredentials = Credentials(
+            accessToken: oldToken,
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email read:impact write:impact offline_access"
+        )
+        _ = try await auth.login()
+        if let mockCredentialsManager = mockProvider.credentialsManager as? MockCredentialsManager {
+            mockCredentialsManager.mockCredentials = mockProvider.mockCredentials
+        }
+
+        try await auth.renewCredentialsIfNeeded(requireConversationScopes: false)
+
+        XCTAssertEqual(mockProvider.renewCredentialsWithScopeCallCount, 1)
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertFalse(EcosiaAuthScopes.hasConversationScopes(in: auth.accessToken ?? "", grantedScope: auth.grantedScope))
+    }
+
+    func testRenewCredentialsIfNeeded_whenRefreshOmitsScopesAndRequired_throws() async throws {
+        let oldToken = try makeJWT(claims: ["scope": "openid profile email read:impact write:impact"])
+        mockProvider.mockCredentials = Credentials(
+            accessToken: oldToken,
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email read:impact write:impact offline_access"
+        )
+        _ = try await auth.login()
+        if let mockCredentialsManager = mockProvider.credentialsManager as? MockCredentialsManager {
+            mockCredentialsManager.mockCredentials = mockProvider.mockCredentials
+        }
+
+        do {
+            try await auth.renewCredentialsIfNeeded(requireConversationScopes: true)
+            XCTFail("Expected conversationScopesRequired")
+        } catch let error as AuthError {
+            guard case .conversationScopesRequired = error else {
+                XCTFail("Unexpected error: \(error)")
+                return
+            }
+        }
+    }
+
     func testSignUp_usesSignUpScreenHint() async {
         // Arrange
         mockProvider.mockCredentials = Credentials(

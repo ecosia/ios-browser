@@ -149,6 +149,10 @@ class MockAuth0Provider: Auth0ProviderProtocol {
         return try await credentialsManager.credentials(withScope: scope)
     }
 
+    func startAuthForAdditionalScopes() async throws -> Credentials {
+        try await startAuth(screenHint: .login)
+    }
+
     // MARK: - Helper Methods
     private func createMockCredentials() -> Credentials {
         return Credentials(
