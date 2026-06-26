@@ -20,6 +20,7 @@ final class EcosiaAuthFlow {
     public enum FlowType {
         case login
         case signUp
+        case scopeUpgrade
         case logout
     }
 
@@ -88,6 +89,21 @@ final class EcosiaAuthFlow {
         )
     }
 
+    public func startScopeUpgrade(
+        delayedCompletion: TimeInterval = 0.0,
+        onNativeAuthCompleted: (() -> Void)? = nil,
+        onFlowCompleted: ((Bool) -> Void)? = nil,
+        onError: ((AuthError) -> Void)? = nil
+    ) async -> EcosiaAuthFlowResult {
+        return await performAuthentication(
+            type: .scopeUpgrade,
+            delayedCompletion: delayedCompletion,
+            onNativeAuthCompleted: onNativeAuthCompleted,
+            onFlowCompleted: onFlowCompleted,
+            onError: onError
+        )
+    }
+
     /// Starts the logout authentication flow
     /// - Parameters:
     ///   - delayedCompletion: Delay before calling onNativeAuthCompleted
@@ -146,6 +162,16 @@ final class EcosiaAuthFlow {
 
                 try await performSessionTransfer(onFlowCompleted: onFlowCompleted)
 
+            case .scopeUpgrade:
+                try await performScopeUpgradeAuthentication()
+
+                await handleNativeAuthCompleted(
+                    delayedCompletion: delayedCompletion,
+                    onNativeAuthCompleted: onNativeAuthCompleted
+                )
+
+                try await performSessionTransfer(onFlowCompleted: onFlowCompleted)
+
             case .logout:
                 // Step 1: Native Auth0 logout
                 try await performNativeLogout()
@@ -183,6 +209,12 @@ final class EcosiaAuthFlow {
             try await authService.signUp()
         }
         EcosiaLogger.auth.info("Native Auth0 authentication completed")
+    }
+
+    private func performScopeUpgradeAuthentication() async throws {
+        EcosiaLogger.auth.info("Performing interactive scope upgrade (no sign-out)")
+        _ = try await authService.upgradeConversationScopesInteractively()
+        EcosiaLogger.auth.info("Interactive scope upgrade completed")
     }
 
     private func performNativeLogout() async throws {

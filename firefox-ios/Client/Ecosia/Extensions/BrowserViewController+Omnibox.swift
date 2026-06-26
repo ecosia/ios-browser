@@ -153,6 +153,15 @@ extension BrowserViewController: NTPSearchBarDelegate {
             }
             return
         }
+        if !EcosiaAuthenticationService.shared.hasConversationScopes {
+            ecosiaAuth?
+                .onAuthFlowCompleted { [weak self] success in
+                    guard success else { return }
+                    self?.presentOmniboxUploadDrawer()
+                }
+                .upgradeScopesForUpload()
+            return
+        }
         presentOmniboxUploadDrawer()
     }
 
