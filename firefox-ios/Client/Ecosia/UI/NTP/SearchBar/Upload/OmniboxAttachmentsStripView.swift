@@ -113,20 +113,8 @@ final class OmniboxAttachmentsStripView: UIView, ThemeApplicable, UIScrollViewDe
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        var offset = scrollView.contentOffset
-        if offset.y != 0 { offset.y = 0 }
-
-        let minX: CGFloat = -scrollView.contentInset.left
-        let maxX = max(
-            minX,
-            scrollView.contentSize.width - scrollView.bounds.width + scrollView.contentInset.right
-        )
-        if offset.x < minX { offset.x = minX }
-        if offset.x > maxX { offset.x = maxX }
-
-        if offset != scrollView.contentOffset {
-            scrollView.contentOffset = offset
-        }
+        guard scrollView.contentOffset.y != 0 else { return }
+        scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: 0)
     }
 }
 
