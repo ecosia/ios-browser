@@ -11,8 +11,6 @@ public enum AuthError: Error, LocalizedError {
     case credentialsStorageError(Error)
     case credentialsClearingFailed
     case credentialsRenewalFailed(Error)
-    /// Refresh-token scope elevation did not grant conversation scopes; interactive login is required.
-    case conversationScopesRequired
     case sessionClearingFailed(Error)
     case userCancelled
     case authFlowConfigurationError(String)
@@ -31,8 +29,6 @@ public enum AuthError: Error, LocalizedError {
             return "Failed to clear stored credentials"
         case .credentialsRenewalFailed(let error):
             return "Failed to renew credentials: \(error.localizedDescription)"
-        case .conversationScopesRequired:
-            return "Conversation scopes were not granted; sign in again to approve the new permissions"
         case .sessionClearingFailed(let error):
             return "Failed to clear web session and credentials: \(error.localizedDescription)"
         case .userCancelled:

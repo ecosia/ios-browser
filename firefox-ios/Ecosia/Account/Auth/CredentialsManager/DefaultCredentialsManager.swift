@@ -32,12 +32,4 @@ struct DefaultCredentialsManager: CredentialsManagerProtocol {
     func renew() async throws -> Auth0.Credentials {
         try await credentialManager.renew()
     }
-
-    func credentials(withScope scope: String) async throws -> Auth0.Credentials {
-        try await credentialManager.credentials(withScope: scope)
-    }
-
-    func apiCredentials(forAudience audience: String, scope: String) async throws -> Auth0.APICredentials {
-        try await credentialManager.apiCredentials(forAudience: audience, scope: scope)
-    }
 }

@@ -10,8 +10,6 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
 
     public let settings: Auth0SettingsProviderProtocol
     public let credentialsManager: CredentialsManagerProtocol
-    public var authApiAudience: String? { environment.urlProvider.authApiAudience.absoluteString }
-    public typealias SessionToken = String
     private let environment: Environment
 
     enum NativeToWebSSOError: Error, Equatable {
@@ -34,20 +32,6 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
 
     public func startAuth(screenHint: AuthScreenHint) async throws -> Credentials {
         return try await configuredWebAuth(screenHint: screenHint).start()
-    }
-
-    public func startAuthForAdditionalScopes() async throws -> Credentials {
-        do {
-            return try await makeHttpsWebAuth()
-                .useEphemeralSession()
-                .audience(environment.urlProvider.authApiAudience.absoluteString)
-                .scope(EcosiaAuthScopes.oauthScope)
-                .parameters(["prompt": "consent"])
-                .start()
-        } catch {
-            EcosiaLogger.auth.notice("Consent-only scope upgrade failed; falling back to interactive login")
-            return try await configuredWebAuth(screenHint: .login).start()
-        }
     }
 
     private func configuredWebAuth(screenHint: AuthScreenHint) -> WebAuth {

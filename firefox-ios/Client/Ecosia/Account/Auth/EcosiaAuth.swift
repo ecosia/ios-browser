@@ -137,23 +137,6 @@ final class EcosiaAuth {
         }
     }
 
-    /// Re-authenticates to grant new API scopes when upload requires conversation permissions.
-    func upgradeScopesForUpload() {
-        guard let browserViewController = browserViewController else {
-            fatalError("BrowserViewController not available for auth flow")
-        }
-
-        let flow = EcosiaAuthFlow(
-            type: .scopeUpgrade,
-            authService: authService,
-            browserViewController: browserViewController
-        )
-
-        Task { @MainActor in
-            await performScopeUpgrade(flow)
-        }
-    }
-
     /// Starts the logout authentication flow
     func logout() {
         guard let browserViewController = browserViewController else {
@@ -194,17 +177,6 @@ final class EcosiaAuth {
         )
 
         await handleAuthenticationResult(result, isLogin: false)
-    }
-
-    private func performScopeUpgrade(_ flow: EcosiaAuthFlow) async {
-        let result = await flow.startScopeUpgrade(
-            delayedCompletion: delayedCompletionTime,
-            onNativeAuthCompleted: onNativeAuthCompletedCallback,
-            onFlowCompleted: onAuthFlowCompletedCallback,
-            onError: onErrorCallback
-        )
-
-        await handleAuthenticationResult(result, isLogin: true)
     }
 
     private func handleAuthenticationResult(_ result: EcosiaAuthFlowResult, isLogin: Bool) async {

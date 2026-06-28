@@ -189,9 +189,13 @@ public final class FileUploadService: Sendable {
     }
 
     private func validAccessToken() async throws -> String {
-        try await authenticationService.renewCredentialsIfNeeded(requireConversationScopes: true)
+        try await authenticationService.renewCredentialsIfNeeded()
         guard let token = authenticationService.accessToken, !token.isEmpty else {
             log(.error, "No valid access token after renewal")
+            throw Error.authenticationRequired
+        }
+        guard authenticationService.hasConversationScopes else {
+            log(.error, "Access token missing conversation scopes")
             throw Error.authenticationRequired
         }
         log(.info, "Access token available (length=\(token.count))")

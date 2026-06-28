@@ -151,31 +151,6 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         EcosiaAuthScopes.hasConversationScopes(in: accessToken ?? "", grantedScope: grantedScope)
     }
 
-    /// Re-authenticates interactively to approve new API scopes without signing out first.
-    ///
-    /// Prefer this over logout/login when a legacy grant is missing `read:conversations` /
-    /// `write:conversations`. Credentials Manager alone cannot elevate scopes for existing users.
-    @discardableResult
-    public func upgradeConversationScopesInteractively() async throws -> AccountOrigin {
-        let credentials: Credentials
-        do {
-            credentials = try await auth0Provider.startAuthForAdditionalScopes()
-            EcosiaLogger.auth.info("Interactive scope upgrade authentication successful")
-        } catch {
-            EcosiaLogger.auth.error("Interactive scope upgrade failed: \(error)")
-            if let webAuthError = error as? WebAuthError,
-               case .userCancelled = webAuthError {
-                throw AuthError.userCancelled
-            }
-            throw AuthError.authenticationFailed(error)
-        }
-        let accountOrigin = try await persistAuthenticatedCredentials(credentials)
-        guard hasConversationScopes else {
-            throw AuthError.conversationScopesRequired
-        }
-        return accountOrigin
-    }
-
     /// Logs out the user with option to skip web logout (for web-initiated logout)
     /// - Parameter triggerWebLogout: Whether to clear the web session. Defaults to true.
     /// - Throws: `AuthError.userCancelled` if user cancels the logout web session,
@@ -269,82 +244,22 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /**
      Renews credentials if they are renewable and close to expiration.
      
-     When conversation scopes are missing, renewal uses audience-scoped refresh via
-     `CredentialsManager.apiCredentials(forAudience:scope:)`, which exchanges the refresh token at
-     `/oauth/token`. The Credentials Manager persists the result automatically.
-     
-     - Parameter requireConversationScopes: When `false` (app launch), missing scopes are logged and the
-       session is left intact. When `true` (e.g. file upload), throws ``AuthError/conversationScopesRequired``.
      - Note: This method will update the credential properties with the new tokens upon successful renewal.
      */
-    public func renewCredentialsIfNeeded(requireConversationScopes: Bool = false) async throws {
+    public func renewCredentialsIfNeeded() async throws {
         guard auth0Provider.canRenewCredentials() else {
             EcosiaLogger.auth.info("No renewable credentials available")
             return
         }
 
         do {
-            let credentials: Credentials
-            if needsConversationScopeRefresh {
-                credentials = try await renewConversationScopes(required: requireConversationScopes)
-            } else {
-                credentials = try await auth0Provider.renewCredentials()
-            }
+            let credentials = try await auth0Provider.renewCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
             EcosiaLogger.auth.info("Renewed credentials successfully")
-        } catch let authError as AuthError {
-            throw authError
         } catch {
-            if requireConversationScopes, Self.isConsentRequired(error) {
-                throw AuthError.conversationScopesRequired
-            }
             EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
             throw AuthError.credentialsRenewalFailed(error)
         }
-    }
-
-    private func renewConversationScopes(required: Bool) async throws -> Credentials {
-        EcosiaLogger.auth.info("Silently refreshing OAuth scopes via CredentialsManager")
-        let credentials: Credentials
-        do {
-            credentials = try await auth0Provider.renewCredentials(withScope: EcosiaAuthScopes.oauthScope)
-        } catch {
-            if required, Self.isConsentRequired(error) {
-                throw AuthError.conversationScopesRequired
-            }
-            throw error
-        }
-
-        if EcosiaAuthScopes.hasConversationScopes(in: credentials.accessToken,
-                                                  grantedScope: credentials.scope) {
-            return credentials
-        }
-
-        EcosiaLogger.auth.notice(
-            "CredentialsManager refresh did not include conversation scopes (grantedScope=\(credentials.scope ?? "nil")). " +
-            "Ensure the scopes exist on the Auth0 API, disable Require Consent for first-party apps, or sign in again."
-        )
-        if required {
-            throw AuthError.conversationScopesRequired
-        }
-        return credentials
-    }
-
-    private static func isConsentRequired(_ error: Error) -> Bool {
-        if let credentialsError = error as? CredentialsManagerError,
-           let authError = credentialsError.cause as? AuthenticationError,
-           authError.code == "consent_required" {
-            return true
-        }
-        if let authError = error as? AuthenticationError, authError.code == "consent_required" {
-            return true
-        }
-        return false
-    }
-
-    private var needsConversationScopeRefresh: Bool {
-        guard isLoggedIn else { return false }
-        return !EcosiaAuthScopes.hasConversationScopes(in: accessToken ?? "", grantedScope: grantedScope)
     }
 
     /// Helper method to setup tokens and login flag
