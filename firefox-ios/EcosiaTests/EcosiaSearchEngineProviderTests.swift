@@ -5,9 +5,10 @@
 import XCTest
 @testable import Client
 
-/// Guards the Ecosia-only search engine setup against regressions, in particular a Firefox upgrade
-/// merge accidentally restoring the upstream `ASSearchEngineProvider`, which would let Google become
-/// the default search engine for non-German, non-EU-region users.
+// Guards the Ecosia-only search engine setup against regressions, in particular a Firefox upgrade
+// merge accidentally restoring the upstream `ASSearchEngineProvider`, which would let Google become
+// the default search engine for non-German, non-EU-region users.
+//
 // @MainActor so the @MainActor `SearchEngineCompletion` closure and the assertions share an
 // isolation domain (avoids Swift 6 "Sending 'result' risks causing data races").
 @MainActor
