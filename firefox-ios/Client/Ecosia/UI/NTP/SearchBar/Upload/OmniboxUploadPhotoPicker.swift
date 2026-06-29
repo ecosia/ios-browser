@@ -40,8 +40,10 @@ extension OmniboxUploadPickerCoordinator {
     }
 
     private func showSystemPhotoPicker(from viewController: UIViewController) {
+        let remainingSlots = delegate?.omniboxUploadRemainingAttachmentSlots
+            ?? OmniboxUploadPhotoPickerUX.maxSelectionCount
         var configuration = PHPickerConfiguration(photoLibrary: .shared())
-        configuration.selectionLimit = OmniboxUploadPhotoPickerUX.maxSelectionCount
+        configuration.selectionLimit = min(OmniboxUploadPhotoPickerUX.maxSelectionCount, remainingSlots)
         configuration.filter = .images
 
         let picker = PHPickerViewController(configuration: configuration)
@@ -69,7 +71,18 @@ extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
         guard !results.isEmpty else { return }
 
-        let pendingItems = results.map { result in
+        let existingAttachmentCount = OmniboxUploadFileSelectionValidator.maxFileCount
+            - (delegate?.omniboxUploadRemainingAttachmentSlots ?? OmniboxUploadFileSelectionValidator.maxFileCount)
+        let validationErrors = OmniboxUploadFileSelectionValidator.validateSelectionCount(
+            selectedCount: results.count,
+            existingAttachmentCount: existingAttachmentCount
+        )
+
+        let remainingSlots = delegate?.omniboxUploadRemainingAttachmentSlots
+            ?? OmniboxUploadFileSelectionValidator.maxFileCount
+        let acceptedResults = Array(results.prefix(remainingSlots))
+
+        let pendingItems = acceptedResults.map { result in
             let fileName = result.itemProvider.suggestedName ?? "photo.jpg"
             let typeIdentifier = result.itemProvider.registeredTypeIdentifiers.first ?? UTType.jpeg.identifier
             return OmniboxUploadPendingItem(fileName: fileName, layout: .image) {
@@ -78,7 +91,7 @@ extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
                                          typeIdentifier: typeIdentifier)
             }
         }
-        delegate?.omniboxUploadDidPickPendingItems(pendingItems)
+        delegate?.omniboxUploadDidFinishPicking(items: pendingItems, validationErrors: validationErrors)
     }
 
     private static func loadPhoto(from itemProvider: NSItemProvider,
