@@ -90,6 +90,33 @@ extension SearchViewController {
     }
 }
 
+// MARK: - List Top Inset
+extension SearchViewController {
+    /// Padding above the first suggestion card so the list isn't flush against the top
+    /// edge of the overlay. Applied as a spacer header on the first populated section
+    /// (see `heightForHeaderInSection`/`viewForHeaderInSection`) rather than a table top
+    /// constraint or content inset — that way it scrolls with the table's own background
+    /// instead of exposing the overlay background as a strip at the top.
+    enum ListTopInsetUX {
+        static let height: CGFloat = .ecosia.space._m
+    }
+
+    /// The first section (in display order) that currently has rows, or nil when the
+    /// list is empty.
+    func firstPopulatedSection(in tableView: UITableView) -> Int? {
+        SearchListSection.allCases.first {
+            tableView.numberOfRows(inSection: $0.rawValue) > 0
+        }?.rawValue
+    }
+
+    /// Whether `section` should carry the top spacer: it is the first populated section
+    /// and has no visible header of its own to provide the spacing.
+    func shouldShowListTopInset(for section: Int, in tableView: UITableView) -> Bool {
+        !shouldShowSearchSectionHeader(for: section, in: tableView)
+            && firstPopulatedSection(in: tableView) == section
+    }
+}
+
 // MARK: - AI Chat Autocomplete Extensions
 extension SearchViewController {
 

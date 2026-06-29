@@ -528,7 +528,11 @@ class SearchViewController: SiteTableViewController,
         /* Ecosia: Wrap upstream visibility to relocate the Suggest header for `.insetGrouped`.
         guard viewModel.shouldShowHeader(for: section) else { return 0 }
         */
-        guard shouldShowSearchSectionHeader(for: section, in: tableView) else { return 0 }
+        guard shouldShowSearchSectionHeader(for: section, in: tableView) else {
+            // Ecosia: Pad the top of the first populated section so the first card clears
+            // the overlay edge without leaving a background strip above the table.
+            return shouldShowListTopInset(for: section, in: tableView) ? ListTopInsetUX.height : 0
+        }
 
         return UITableView.automaticDimension
     }
@@ -550,7 +554,16 @@ class SearchViewController: SiteTableViewController,
         guard shouldShowSearchSectionHeader(for: section, in: tableView),
               let headerView = tableView.dequeueReusableHeaderFooterView(
                 withIdentifier: SiteTableViewHeader.cellIdentifier) as? SiteTableViewHeader
-        else { return nil }
+        else {
+            // Ecosia: Clear spacer for the padded first section so grouped style doesn't
+            // draw a default header background in that 16dp gap.
+            if shouldShowListTopInset(for: section, in: tableView) {
+                let spacer = UIView()
+                spacer.backgroundColor = .clear
+                return spacer
+            }
+            return nil
+        }
 
         // Ecosia: Configure relocated "Ecosia Suggest" header on the first section with rows.
         if shouldShowEcosiaSuggestHeader(for: section, in: tableView) {
