@@ -183,6 +183,7 @@ struct NTPHeaderView: View {
                             )
                             .padding(.horizontal, .ecosia.space._m)
                             .dynamicHeightPresentationDetent()
+                            .presentationDragIndicator(.visible)
                         }
                         if let increment = viewModel.balanceIncrement {
                             BalanceIncrementAnimationView(

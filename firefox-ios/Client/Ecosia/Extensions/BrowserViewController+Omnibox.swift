@@ -135,20 +135,68 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // (Standard AI Chat selectable, other modes disabled, sign-in CTA), so
         // always open it. Without Chat Modes the drawer is upload-only, which
         // still requires an account, so keep the existing signed-out gate.
-        if !ChatModesFeatureFlag.isEnabled, ecosiaAuth?.isLoggedIn == false {
+        if ChatModesFeatureFlag.isEnabled {
+            presentOmniboxUploadDrawer()
+            return
+        }
+
+        let isLoggedIn = ecosiaAuth?.isLoggedIn == true
+        let hasUploadScopes = EcosiaAuthenticationService.shared.hasConversationScopes
+        if !isLoggedIn || !hasUploadScopes {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
-                presentAccountImpactFromNTPHeader()
+                guard ecosiaAuth != nil else { return }
+                presentOmniboxSignInSheetForUpload()
             } else {
-                ecosiaAuth?.login()
+                guard let auth = ecosiaAuth else { return }
+                configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: omniboxSheetState)
+                    .onAuthFlowCompleted { [weak self] success in
+                        guard success else { return }
+                        self?.presentOmniboxUploadDrawer()
+                    }
+                    .login()
             }
             return
         }
         presentOmniboxUploadDrawer()
     }
 
-    fileprivate func presentAccountImpactFromNTPHeader() {
-        guard let homepage = contentContainer.contentController as? HomepageViewController else { return }
-        homepage.ecosiaAdapter?.headerViewModel?.presentAccountImpact()
+    fileprivate func configureOmniboxUploadAuthCallbacks(
+        auth: EcosiaAuth,
+        sheetState: NTPOmniboxSheetState?
+    ) -> EcosiaAuth {
+        auth
+            .onAuthFlowCompleted { [weak sheetState] success in
+                sheetState?.handleAuthenticationCompleted(success: success)
+            }
+            .onError { [weak sheetState] _ in
+                sheetState?.handleAuthenticationCompleted(success: false)
+            }
+    }
+
+    fileprivate func presentOmniboxSignInSheetForUpload() {
+        guard let homepage = contentContainer.contentController as? HomepageViewController,
+              let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
+
+        homepage.presentOmniboxUploadSheetIfNeeded()
+        sheetState.presentSignInSheetForUpload(
+            onSignIn: { [weak self, weak sheetState] in
+                guard let self, let auth = self.ecosiaAuth else {
+                    sheetState?.cancelPendingUploadAfterSignIn()
+                    return
+                }
+                self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).login()
+            },
+            onSignUp: { [weak self, weak sheetState] in
+                guard let self, let auth = self.ecosiaAuth else {
+                    sheetState?.cancelPendingUploadAfterSignIn()
+                    return
+                }
+                self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).signUp()
+            },
+            onUploadDrawerRequested: { [weak self] in
+                self?.presentOmniboxUploadDrawer()
+            }
+        )
     }
 
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
