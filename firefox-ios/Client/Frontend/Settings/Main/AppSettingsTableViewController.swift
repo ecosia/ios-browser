@@ -362,6 +362,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
             settings.append(getEcosiaDebugSupportSection())
             settings.append(getEcosiaDebugUnleashSection())
             settings.append(getEcosiaDebugAccountsSection())
+            settings.append(getEcosiaDebugFileUploadSection())
         }
 
         return settings
