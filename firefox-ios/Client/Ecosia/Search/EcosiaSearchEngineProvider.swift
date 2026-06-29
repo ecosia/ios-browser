@@ -53,9 +53,13 @@ final class EcosiaSearchEngineProvider: SearchEngineProvider, Sendable {
     }
 
     private func ecosiaEngineImage() -> UIImage {
-        // Brand mark shown next to the engine in Search settings. OpenSearchEngine asserts on an
-        // empty image, so this asset must exist in the bundle.
-        return UIImage(named: "ecosiaHomeHeaderLogoBall") ?? UIImage()
+        // Brand mark shown next to the engine in Search settings. The asset is bundled and required:
+        // OpenSearchEngine asserts the image is PNG-encodable when archived, so fail fast with a clear
+        // message rather than returning an empty UIImage that would silently crash later.
+        guard let image = UIImage(named: "ecosiaHomeHeaderLogoBall") else {
+            fatalError("Missing required bundled asset 'ecosiaHomeHeaderLogoBall' for the Ecosia search engine icon")
+        }
+        return image
     }
 
     private enum Engine {
