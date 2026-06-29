@@ -309,5 +309,10 @@ extension String {
         case uploadCameraAccessTitle = "Allow access to your camera"
         case uploadCameraAccessMessage = "Ecosia needs camera access so you can take a photo to attach."
         case uploadCameraUnavailableMessage = "A camera is not available on this device."
+
+        // Omnibox file upload (attachment strip)
+        case uploadAttachmentFailed = "Upload failed"
+        case uploadSubmitWaitingForUpload = "Waiting for the attachment to finish uploading"
+        case uploadSubmitUploadFailed = "Remove the failed attachment or try uploading again"
     }
 }
