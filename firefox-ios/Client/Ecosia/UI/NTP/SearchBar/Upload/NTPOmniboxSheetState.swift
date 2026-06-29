@@ -8,9 +8,77 @@ import Ecosia
 @MainActor
 final class NTPOmniboxSheetState: ObservableObject {
     @Published var showUploadDrawer = false
+    @Published var showSignInSheet = false
+
+    private enum PendingAuthAction {
+        case signIn
+        case signUp
+    }
 
     private var onUploadOptionSelected: ((OmniboxUploadOption) -> Void)?
     private var pendingUploadOption: OmniboxUploadOption?
+
+    private var pendingAuthAction: PendingAuthAction?
+    private var shouldPresentUploadDrawerAfterAuth = false
+    private var onSignIn: (() -> Void)?
+    private var onSignUp: (() -> Void)?
+    private var onUploadDrawerRequested: (() -> Void)?
+
+    func presentSignInSheetForUpload(
+        onSignIn: @escaping () -> Void,
+        onSignUp: @escaping () -> Void,
+        onUploadDrawerRequested: @escaping () -> Void
+    ) {
+        pendingAuthAction = nil
+        shouldPresentUploadDrawerAfterAuth = true
+        self.onSignIn = onSignIn
+        self.onSignUp = onSignUp
+        self.onUploadDrawerRequested = onUploadDrawerRequested
+        showSignInSheet = true
+    }
+
+    func handleSignInSheetSignInTapped() {
+        pendingAuthAction = .signIn
+        showSignInSheet = false
+    }
+
+    func handleSignInSheetCreateAccountTapped() {
+        pendingAuthAction = .signUp
+        showSignInSheet = false
+    }
+
+    func handleSignInSheetDismissed() {
+        guard let action = pendingAuthAction else {
+            clearSignInSheetCallbacks()
+            return
+        }
+
+        pendingAuthAction = nil
+        switch action {
+        case .signIn:
+            onSignIn?()
+        case .signUp:
+            onSignUp?()
+        }
+        onSignIn = nil
+        onSignUp = nil
+    }
+
+    func handleAuthenticationSucceeded() {
+        guard shouldPresentUploadDrawerAfterAuth else { return }
+        shouldPresentUploadDrawerAfterAuth = false
+        let callback = onUploadDrawerRequested
+        onUploadDrawerRequested = nil
+        callback?()
+    }
+
+    private func clearSignInSheetCallbacks() {
+        pendingAuthAction = nil
+        shouldPresentUploadDrawerAfterAuth = false
+        onSignIn = nil
+        onSignUp = nil
+        onUploadDrawerRequested = nil
+    }
 
     func presentUploadDrawer(onSelect: @escaping (OmniboxUploadOption) -> Void) {
         pendingUploadOption = nil
