@@ -44,7 +44,6 @@ public struct EcosiaAccessibilityIdentifiers {
 
     public struct Search {
         public static let suggestionCellPrefix = "searchSuggestion"
-        public static let closeButton = "search.closeButton"
     }
 
     public struct AddressBar {

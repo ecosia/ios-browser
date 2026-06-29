@@ -34,9 +34,6 @@ protocol SearchViewControllerDelegate: AnyObject {
     )
     @MainActor
     func searchViewControllerWillHide(_ searchViewController: SearchViewController)
-    // Ecosia: Tapping the suggestions-list close button dismisses the whole overlay.
-    @MainActor
-    func searchViewControllerDidTapCloseButton(_ searchViewController: SearchViewController)
 }
 
 class SearchViewController: SiteTableViewController,
@@ -107,9 +104,6 @@ class SearchViewController: SiteTableViewController,
         button.accessibilityLabel = String(format: .SearchSettingsAccessibilityLabel)
     }
 
-    // Ecosia: Floating button that dismisses the suggestions overlay (see SearchViewController+Ecosia).
-    lazy var ecosiaCloseButton: UIButton = makeEcosiaCloseButton()
-
     init(profile: Profile,
          viewModel: SearchViewModel,
          tabManager: TabManager,
@@ -153,9 +147,6 @@ class SearchViewController: SiteTableViewController,
         layoutTable()
         layoutSearchEngineScrollView()
         layoutSearchEngineScrollViewContent()
-
-        // Ecosia: Add the floating close button on top of the suggestions table.
-        setupEcosiaCloseButton()
 
         NSLayoutConstraint.activate([
             searchEngineContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -285,14 +276,7 @@ class SearchViewController: SiteTableViewController,
         tableView.removeFromSuperview()
         view.addSubviews(tableView)
         NSLayoutConstraint.activate([
-            /* Ecosia: Pin the table below the floating close button (which is pinned to the
-               same safe-area top) so suggestions can never scroll under it. This replaces a
-               top content inset, which only set the rest position and let rows slide under
-               the button while scrolling a long list.
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            */
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
-                                           constant: ecosiaSuggestionsTopInset),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             /* Ecosia: Extend table view to bottom since search engine container is hidden.
@@ -310,8 +294,6 @@ class SearchViewController: SiteTableViewController,
 
     func reloadTableView() {
         tableView.reloadData()
-        // Ecosia: Keep the floating close button above freshly reloaded cells.
-        bringEcosiaCloseButtonToFront()
     }
 
     func reloadSearchEngines() {
@@ -786,14 +768,7 @@ class SearchViewController: SiteTableViewController,
 
     override func applyTheme() {
         super.applyTheme()
-        /* Ecosia: Match the overlay background to the table background (layer1) instead of
-           layer5. The table no longer fills the top of the overlay (it is pinned below the
-           floating close button in `layoutTable`), so the previously-hidden view background
-           became a visible white strip behind the close button. layer1 blends it with the
-           grey area around the suggestion cards.
         view.backgroundColor = currentTheme().colors.layer5
-        */
-        view.backgroundColor = currentTheme().colors.layer1
         // Ecosia: Blend the row dividers into the card background so they read as seamless
         // (super.applyTheme sets `separatorColor` to `borderPrimary`).
         tableView.separatorColor = currentTheme().colors.layer5
@@ -804,8 +779,6 @@ class SearchViewController: SiteTableViewController,
 
         searchEngineContainerView.layer.backgroundColor = currentTheme().colors.layer1.cgColor
         searchEngineContainerView.layer.shadowColor = currentTheme().colors.shadowDefault.cgColor
-        // Ecosia: Theme the floating close button alongside the rest of the overlay.
-        applyEcosiaCloseButtonTheme()
         reloadData()
     }
 

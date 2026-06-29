@@ -9,6 +9,6 @@ public struct FileUploadFeatureFlag {
     private init() {}
 
     public static var isEnabled: Bool {
-        Unleash.isEnabled(.fileUpload)
+        true //Unleash.isEnabled(.fileUpload)
     }
 }
