@@ -31,7 +31,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         makeHttpsWebAuth()
             .useEphemeralSession()
             .audience(environment.urlProvider.authApiAudience.absoluteString)
-            .scope("openid profile email offline_access read:impact write:impact")
+            .scope(EcosiaAuthScopes.oauthScope)
     }
 
     public func startAuth() async throws -> Credentials {

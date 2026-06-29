@@ -90,11 +90,19 @@ extension OmniboxUploadPickerCoordinator: UIImagePickerControllerDelegate, UINav
         if let url = info[.imageURL] as? URL {
             fileName = url.lastPathComponent
         } else {
-            fileName = "camera-photo"
+            fileName = "camera-photo.jpg"
         }
 
-        delegate?.omniboxUploadDidSelect(items: [
-            OmniboxUploadItem(source: .camera, fileName: fileName, contentTypeIdentifier: UTType.image.identifier)
-        ])
+        guard let image = info[.originalImage] as? UIImage,
+              let data = image.jpegData(compressionQuality: 0.92) else { return }
+
+        let pendingItem = OmniboxUploadPendingItem(fileName: fileName, layout: .image) {
+            try OmniboxUploadPayloadLoader.loadImage(
+                data: data,
+                fileName: fileName,
+                mimeType: UTType.jpeg.preferredMIMEType ?? "image/jpeg"
+            )
+        }
+        delegate?.omniboxUploadDidPickPendingItems([pendingItem])
     }
 }

@@ -333,6 +333,38 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(ecosified, URL(string: "https://ecosia.org?_sp=\(UUID(uuid: UUID_NULL).uuidString)"))
     }
 
+    func testEcosifiedPreservesPercentEncodedAIChatQueryAndFiles() {
+        User.shared.sendAnonymousUsageData = true
+        User.shared.cookieConsentValue = "a"
+        let analyticsId = User.shared.analyticsId.uuidString
+
+        let chatURL = urlProvider.aiChat(
+            origin: .omnibox,
+            query: "new images?",
+            files: [
+                AIChatFileQuery(
+                    fileId: "4c4961e2-b2a7-4eed-b0f8-506178d72e11",
+                    filename: "IMG_0111",
+                    mimeType: "image/jpeg",
+                    sizeBytes: 5212725
+                ),
+            ]
+        )
+
+        let ecosified = chatURL.ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+        let absolute = ecosified.absoluteString
+
+        XCTAssertTrue(absolute.contains("images%3F"), "Encoded question mark must survive ecosified()")
+        XCTAssertFalse(absolute.contains("images?&files"), "Bare ? must not appear before files")
+        XCTAssertTrue(absolute.contains("files="))
+        XCTAssertTrue(absolute.contains("_sp=\(analyticsId)"))
+
+        let components = URLComponents(url: ecosified, resolvingAgainstBaseURL: false)
+        let items = Dictionary(uniqueKeysWithValues: (components?.queryItems ?? []).map { ($0.name, $0.value) })
+        XCTAssertEqual(items["q"], "new images?")
+        XCTAssertNotNil(items["files"])
+    }
+
     // MARK: - `hasEcosiaUserId`
 
     func testHasEcosiaUserIdReturnsFalseWhenAbsent() {

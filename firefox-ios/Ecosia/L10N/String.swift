@@ -320,5 +320,10 @@ extension String {
         case chatModeThinkLongerSubtitle = "Solves complex problems"
         case chatModeDisplaySourcesSubtitle = "Shows sources for every answer"
         case chatModeLearningSubtitle = "Breaks down topics step by step"
+
+        // Omnibox file upload (attachment strip)
+        case uploadAttachmentFailed = "Upload failed"
+        case uploadSubmitWaitingForUpload = "Waiting for the attachment to finish uploading"
+        case uploadSubmitUploadFailed = "Remove the failed attachment or try uploading again"
     }
 }
