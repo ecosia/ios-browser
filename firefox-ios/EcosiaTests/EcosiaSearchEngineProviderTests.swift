@@ -5,9 +5,9 @@
 import XCTest
 @testable import Client
 
-/// Guards the Ecosia-only search engine setup against regressions, including a Firefox upgrade
-/// merge accidentally restoring the upstream `ASSearchEngineProvider` (which caused MOB-4673 /
-/// MOB-4579: Google/Firefox shown as default for non-German, non-EU-region users).
+/// Guards the Ecosia-only search engine setup against regressions, in particular a Firefox upgrade
+/// merge accidentally restoring the upstream `ASSearchEngineProvider`, which would let Google become
+/// the default search engine for non-German, non-EU-region users.
 // @MainActor so the @MainActor `SearchEngineCompletion` closure and the assertions share an
 // isolation domain (avoids Swift 6 "Sending 'result' risks causing data races").
 @MainActor
@@ -24,7 +24,7 @@ final class EcosiaSearchEngineProviderTests: XCTestCase {
     }
 
     /// Ecosia must be the default (index 0) regardless of any persisted engine ordering or custom
-    /// engines — this is the behavioural guarantee the bug fix relies on.
+    /// engines. This is the behavioural guarantee the bug fix relies on.
     func testEcosiaIsAlwaysDefaultEngine() {
         let provider = EcosiaSearchEngineProvider()
         let customEngines = [makeEngine(id: "custom-a"), makeEngine(id: "custom-b")]
@@ -54,7 +54,7 @@ final class EcosiaSearchEngineProviderTests: XCTestCase {
     }
 
     /// The Ecosia engine's suggest template must point at Ecosia's autocomplete endpoint, not a
-    /// third party — otherwise typed queries would leak to another provider's suggest API.
+    /// third party, otherwise typed queries would leak to another provider's suggest API.
     func testEcosiaEngineSuggestsFromEcosia() {
         let provider = EcosiaSearchEngineProvider()
 
