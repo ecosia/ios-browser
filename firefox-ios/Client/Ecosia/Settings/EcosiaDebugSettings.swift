@@ -388,7 +388,7 @@ final class SimulateAuthErrorSetting: HiddenSetting {
     }
 
     /// Check if auth error simulation is enabled
-    public static var isEnabled: Bool {
+    nonisolated public static var isEnabled: Bool {
         UserDefaults.standard.bool(forKey: debugKey)
     }
 }
@@ -429,8 +429,153 @@ final class SimulateImpactAPIErrorSetting: HiddenSetting {
     }
 
     /// Check if impact API error simulation is enabled
-    public static var isEnabled: Bool {
+    nonisolated public static var isEnabled: Bool {
         UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+// MARK: - File Upload Debug Settings
+
+final class SimulateFileUploadAPIErrorSetting: HiddenSetting {
+    /// UserDefaults key for storing file upload API error simulation state
+    /// Note: Persists across app restarts - toggle again to disable
+    nonisolated public static let debugKey = "DebugSimulateFileUploadAPIError"
+
+    override var title: NSAttributedString? {
+        NSAttributedString(string: "Debug: Toggle - Simulate File Upload API Error", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "ON (Upload will fail)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        toggleSimulation(
+            navigationController: navigationController,
+            enabledTitle: "File Upload API Error Enabled ✅",
+            enabledMessage: "Next attachment upload will fail with an error toast.",
+            disabledTitle: "File Upload API Error Disabled ✅",
+            disabledMessage: "Upload API errors disabled."
+        )
+    }
+
+    nonisolated public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+final class SimulateUploadValidationErrorSetting: HiddenSetting {
+    private let simulatedError: OmniboxUploadValidationError
+
+    init(simulatedError: OmniboxUploadValidationError, settings: SettingsTableViewController) {
+        self.simulatedError = simulatedError
+        super.init(settings: settings)
+    }
+
+    nonisolated static func debugKey(for error: OmniboxUploadValidationError) -> String {
+        switch error {
+        case .tooManyFiles:
+            return "DebugSimulateUploadTooManyFiles"
+        case .fileTooLarge:
+            return "DebugSimulateUploadFileTooLarge"
+        case .unsupportedFileType:
+            return "DebugSimulateUploadUnsupportedFileType"
+        case .uploadFailed:
+            return "DebugSimulateUploadAPIError"
+        }
+    }
+
+    override var title: NSAttributedString? {
+        NSAttributedString(
+            string: "Debug: Toggle - Simulate \(simulatedError.debugLabel) Error",
+            attributes: [:]
+        )
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled(for: simulatedError) ? "ON (Next pick will fail)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        toggleSimulation(
+            navigationController: navigationController,
+            enabledTitle: "\(simulatedError.debugLabel) Error Enabled ✅",
+            enabledMessage: "Next attachment selection will show the \(simulatedError.debugLabel.lowercased()) error toast.",
+            disabledTitle: "\(simulatedError.debugLabel) Error Disabled ✅",
+            disabledMessage: "\(simulatedError.debugLabel) upload errors disabled."
+        )
+    }
+
+    nonisolated static func isEnabled(for error: OmniboxUploadValidationError) -> Bool {
+        UserDefaults.standard.bool(forKey: debugKey(for: error))
+    }
+
+    private func toggleSimulation(
+        navigationController: UINavigationController?,
+        enabledTitle: String,
+        enabledMessage: String,
+        disabledTitle: String,
+        disabledMessage: String
+    ) {
+        let key = Self.debugKey(for: simulatedError)
+        let currentValue = UserDefaults.standard.bool(forKey: key)
+        UserDefaults.standard.set(!currentValue, forKey: key)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? enabledTitle : disabledTitle,
+            message: !currentValue ? enabledMessage : disabledMessage,
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+private extension SimulateFileUploadAPIErrorSetting {
+    func toggleSimulation(
+        navigationController: UINavigationController?,
+        enabledTitle: String,
+        enabledMessage: String,
+        disabledTitle: String,
+        disabledMessage: String
+    ) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? enabledTitle : disabledTitle,
+            message: !currentValue ? enabledMessage : disabledMessage,
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+private extension OmniboxUploadValidationError {
+    var debugLabel: String {
+        switch self {
+        case .tooManyFiles:
+            return "Too Many Files"
+        case .fileTooLarge:
+            return "File Too Large"
+        case .unsupportedFileType:
+            return "Unsupported File Type"
+        case .uploadFailed:
+            return "Upload API"
+        }
     }
 }
 
