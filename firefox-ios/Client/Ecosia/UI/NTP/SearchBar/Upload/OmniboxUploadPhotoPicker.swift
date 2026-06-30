@@ -30,6 +30,12 @@ extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
         guard !results.isEmpty else { return }
 
         let acceptedResults = Array(results.prefix(OmniboxUploadPhotoPickerUX.maxSelectionCount))
+        let existingAttachmentCount = OmniboxUploadFileSelectionValidator.maxFileCount
+            - (delegate?.omniboxUploadRemainingAttachmentSlots ?? OmniboxUploadFileSelectionValidator.maxFileCount)
+        let validationErrors = OmniboxUploadFileSelectionValidator.validateSelectionCount(
+            selectedCount: results.count,
+            existingAttachmentCount: existingAttachmentCount
+        )
 
         // Load bytes while the picker callback is still active — the item provider can expire later.
         Task { @MainActor [weak self] in
@@ -57,8 +63,10 @@ extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
                 )
             }
 
-            guard !pendingItems.isEmpty else { return }
-            delegate?.omniboxUploadDidPickPendingItems(pendingItems)
+            delegate?.omniboxUploadDidFinishPicking(
+                items: pendingItems,
+                validationErrors: validationErrors
+            )
         }
     }
 

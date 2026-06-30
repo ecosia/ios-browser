@@ -5,17 +5,6 @@
 import UIKit
 import Ecosia
 
-enum OmniboxUploadValidationError: Hashable, Sendable {
-    case tooManyFiles
-    case fileTooLarge
-    case uploadFailed
-}
-
-/// Stub until MOB-4588 wires debug settings for simulated upload failures.
-enum OmniboxUploadDebugSimulation {
-    static var shouldSimulateUploadAPIFailure: Bool { false }
-}
-
 @MainActor
 protocol OmniboxAttachmentUploadDelegate: AnyObject {
     func omniboxAttachmentsDidChange()
@@ -51,8 +40,12 @@ final class OmniboxAttachmentUploadCoordinator {
         }
 
         let acceptedItems = Array(items.prefix(remainingSlots))
-        if items.count > remainingSlots {
-            delegate?.omniboxUploadDidEncounterValidationErrors([.tooManyFiles])
+        let countErrors = OmniboxUploadFileSelectionValidator.validateSelectionCount(
+            selectedCount: items.count,
+            existingAttachmentCount: searchBar.attachments.count
+        )
+        if !countErrors.isEmpty {
+            delegate?.omniboxUploadDidEncounterValidationErrors(countErrors)
         }
 
         for item in acceptedItems {
