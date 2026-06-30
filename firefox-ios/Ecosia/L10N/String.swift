@@ -314,5 +314,9 @@ extension String {
         case uploadAttachmentFailed = "Upload failed"
         case uploadSubmitWaitingForUpload = "Waiting for the attachment to finish uploading"
         case uploadSubmitUploadFailed = "Remove the failed attachment or try uploading again"
+        case uploadErrorTooManyFiles = "You can upload up to 5 files per chat."
+        case uploadErrorFileTooLarge = "The file is too large, the maximum file size is 5MB."
+        case uploadErrorUnsupportedFileType = "The file type is not supported. Please upload a JPG, PNG, PDF or text file."
+        case uploadErrorGeneric = "Something went wrong with uploading your file. Please try again."
     }
 }
