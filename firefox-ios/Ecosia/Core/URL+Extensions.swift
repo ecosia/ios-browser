@@ -183,10 +183,10 @@ extension URL {
         let automationTestValue = "automation"
         guard Analytics.shouldUseMicroInstance && EcosiaEnvironment.current != .production else { return self }
 
-        // Already carries the correct value — no mutation needed.
-        if self[.test] == automationTestValue { return self }
-
-        return appendingQueryItems([Self.item(name: .test, value: automationTestValue)])
+        guard var components = components else { return self }
+        components.queryItems?.removeAll(where: { $0.name == EcosiaQueryItemName.test.rawValue })
+        guard let urlWithoutTest = components.url else { return self }
+        return urlWithoutTest.appendingQueryItems([Self.item(name: .test, value: automationTestValue)])
     }
 
     public var hasEcosiaUserId: Bool { ecosiaUserId != nil }

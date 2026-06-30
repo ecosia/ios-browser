@@ -395,6 +395,16 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(testParam)
     }
 
+    func testEcosifiedWithTestParam_whenMicroInstanceEnabled_replacesExistingTestParamWithAutomation() {
+        Analytics.shouldUseMicroInstance = true
+        let url = URL(string: "https://www.ecosia.org/search?q=trees&test=foo")!
+            .ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+        let testParams = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.filter { $0.name == "test" } ?? []
+        XCTAssertEqual(testParams.count, 1)
+        XCTAssertEqual(testParams.first?.value, "automation")
+    }
+
     // MARK: - `policy`
 
     func testPolicyAllow() {
