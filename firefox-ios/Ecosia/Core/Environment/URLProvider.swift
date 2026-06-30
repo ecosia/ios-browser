@@ -29,6 +29,11 @@ public enum URLProvider {
         URL(string: "https://api.\(domain)")!
     }
 
+    public var searchAutocomplete: URL {
+        // For now only production to avoid messing with Firefox's logic to include CF headers.
+        URL(string: "https://ac.ecosia.org/autocomplete")!
+    }
+
     public var snowplowMicro: String? {
         switch self {
         case .staging:
