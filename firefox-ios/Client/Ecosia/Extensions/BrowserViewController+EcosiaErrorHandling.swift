@@ -8,22 +8,23 @@ import Common
 import Ecosia
 
 private enum EcosiaErrorToastContainerUX {
-    static let rowSpacing: CGFloat = .ecosia.space._1s
+    static let depthPeekOffset: CGFloat = .ecosia.space._s
+    static let depthScaleStep: CGFloat = 0.04
     static let presentationAnimationDuration: TimeInterval = 0.3
     static let removalAnimationDuration: TimeInterval = 0.25
     static let displayDuration: TimeInterval = 4.5
+    static let rowMinHeight: CGFloat = 56
 }
 
 private struct EcosiaErrorToastAssociatedKeys {
     nonisolated(unsafe) static var container: UInt8 = 0
 }
 
-/// Hosts one SwiftUI error row inside a UIKit stack view.
+/// Hosts one SwiftUI error row inside the z-stacked toast container.
 @available(iOS 16.0, *)
 @MainActor
 private final class EcosiaErrorToastRowHost: UIView {
     private var hostingController: UIHostingController<EcosiaErrorToastRowContent>?
-    private var autoDismissWorkItem: DispatchWorkItem?
 
     func install(
         message: String,
@@ -35,10 +36,7 @@ private final class EcosiaErrorToastRowHost: UIView {
             rootView: EcosiaErrorToastRowContent(
                 message: message,
                 windowUUID: windowUUID,
-                onCloseTapped: { [weak self] in
-                    self?.cancelAutoDismiss()
-                    onClose()
-                }
+                onCloseTapped: onClose
             )
         )
         hostingController.view.backgroundColor = .clear
@@ -57,50 +55,23 @@ private final class EcosiaErrorToastRowHost: UIView {
         ])
 
         hostingController.didMove(toParent: parent)
-        scheduleAutoDismiss(onClose: onClose)
     }
 
     func teardown() {
-        cancelAutoDismiss()
         hostingController?.willMove(toParent: nil)
         hostingController?.view.removeFromSuperview()
         hostingController?.removeFromParent()
         hostingController = nil
     }
-
-    private func scheduleAutoDismiss(onClose: @escaping () -> Void) {
-        cancelAutoDismiss()
-
-        let workItem = DispatchWorkItem { [weak self] in
-            self?.cancelAutoDismiss()
-            onClose()
-        }
-        autoDismissWorkItem = workItem
-        DispatchQueue.main.asyncAfter(
-            deadline: .now() + EcosiaErrorToastContainerUX.displayDuration,
-            execute: workItem
-        )
-    }
-
-    private func cancelAutoDismiss() {
-        autoDismissWorkItem?.cancel()
-        autoDismissWorkItem = nil
-    }
 }
 
-/// Fixed top-aligned container that stacks multiple error toast rows.
+/// Fixed top-aligned container. Toasts overlap on the z-axis: first in at the back, last in on top.
 @available(iOS 16.0, *)
 @MainActor
 final class EcosiaErrorToastContainerView: UIView {
-    private let stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = EcosiaErrorToastContainerUX.rowSpacing
-        stack.alignment = .fill
-        stack.distribution = .fill
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
-    }()
+    private var rows: [EcosiaErrorToastRowHost] = []
+    private var heightConstraint: NSLayoutConstraint?
+    private var autoDismissWorkItem: DispatchWorkItem?
 
     private weak var parentViewController: UIViewController?
     private var windowUUID: WindowUUID?
@@ -108,15 +79,12 @@ final class EcosiaErrorToastContainerView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .clear
+        clipsToBounds = false
         isUserInteractionEnabled = true
-        addSubview(stackView)
 
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+        let heightConstraint = heightAnchor.constraint(equalToConstant: 0)
+        heightConstraint.isActive = true
+        self.heightConstraint = heightConstraint
     }
 
     required init?(coder: NSCoder) {
@@ -128,33 +96,37 @@ final class EcosiaErrorToastContainerView: UIView {
         self.windowUUID = windowUUID
     }
 
-    /// Appends one or more error rows to the stack.
+    /// Appends errors in order; the first message sits at the back, the last is on top.
     func present(messages: [String]) {
         guard !messages.isEmpty,
               let parentViewController,
               let windowUUID else { return }
 
-        let wasEmpty = stackView.arrangedSubviews.isEmpty
+        let wasEmpty = rows.isEmpty
         var newRows: [EcosiaErrorToastRowHost] = []
 
         for message in messages {
             let row = makeRow(message: message, windowUUID: windowUUID, parent: parentViewController)
+            rows.append(row)
             newRows.append(row)
         }
+
+        layoutIfNeeded()
 
         UIView.animate(
             withDuration: EcosiaErrorToastContainerUX.presentationAnimationDuration,
             delay: 0,
             options: [.curveEaseOut, .beginFromCurrentState],
             animations: {
-                newRows.forEach {
-                    $0.alpha = 1
-                    $0.transform = .identity
+                self.applyStackLayout()
+                newRows.forEach { row in
+                    row.alpha = 1
                 }
-                self.layoutIfNeeded()
                 parentViewController.view.layoutIfNeeded()
             }
         )
+
+        scheduleFrontRowAutoDismiss()
 
         if wasEmpty, let firstMessage = messages.first {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
@@ -164,13 +136,11 @@ final class EcosiaErrorToastContainerView: UIView {
     }
 
     func clear() {
-        stackView.arrangedSubviews
-            .compactMap { $0 as? EcosiaErrorToastRowHost }
-            .forEach { $0.teardown() }
-        stackView.arrangedSubviews.forEach {
-            stackView.removeArrangedSubview($0)
-            $0.removeFromSuperview()
-        }
+        cancelAutoDismiss()
+        rows.forEach { $0.teardown() }
+        rows.forEach { $0.removeFromSuperview() }
+        rows.removeAll()
+        heightConstraint?.constant = 0
     }
 
     private func makeRow(
@@ -181,8 +151,13 @@ final class EcosiaErrorToastContainerView: UIView {
         let row = EcosiaErrorToastRowHost()
         row.translatesAutoresizingMaskIntoConstraints = false
         row.alpha = 0
-        row.transform = CGAffineTransform(translationX: 0, y: -12)
-        stackView.addArrangedSubview(row)
+        addSubview(row)
+
+        NSLayoutConstraint.activate([
+            row.leadingAnchor.constraint(equalTo: leadingAnchor),
+            row.trailingAnchor.constraint(equalTo: trailingAnchor),
+            row.topAnchor.constraint(equalTo: topAnchor)
+        ])
 
         row.install(
             message: message,
@@ -190,15 +165,23 @@ final class EcosiaErrorToastContainerView: UIView {
             parent: parent,
             onClose: { [weak self, weak row] in
                 guard let self, let row else { return }
-                self.removeRow(row)
+                self.removeFrontRow(row)
             }
         )
 
         return row
     }
 
+    /// FILO: only the front (most recently added) row can be dismissed.
+    private func removeFrontRow(_ row: EcosiaErrorToastRowHost) {
+        guard rows.last === row else { return }
+        removeRow(row)
+    }
+
     private func removeRow(_ row: EcosiaErrorToastRowHost) {
-        guard stackView.arrangedSubviews.contains(row) else { return }
+        guard let index = rows.firstIndex(where: { $0 === row }) else { return }
+
+        cancelAutoDismiss()
 
         UIView.animate(
             withDuration: EcosiaErrorToastContainerUX.removalAnimationDuration,
@@ -206,19 +189,82 @@ final class EcosiaErrorToastContainerView: UIView {
             options: [.curveEaseIn, .beginFromCurrentState],
             animations: {
                 row.alpha = 0
-                row.transform = CGAffineTransform(translationX: 0, y: -8)
-                self.layoutIfNeeded()
+                row.transform = CGAffineTransform(translationX: 0, y: -12)
+                    .scaledBy(x: 0.96, y: 0.96)
                 self.parentViewController?.view.layoutIfNeeded()
             },
             completion: { [weak self] _ in
                 guard let self else { return }
                 row.teardown()
-                self.stackView.removeArrangedSubview(row)
                 row.removeFromSuperview()
-                self.layoutIfNeeded()
-                self.parentViewController?.view.layoutIfNeeded()
+                self.rows.remove(at: index)
+                UIView.animate(
+                    withDuration: EcosiaErrorToastContainerUX.presentationAnimationDuration,
+                    animations: {
+                        self.applyStackLayout()
+                        self.parentViewController?.view.layoutIfNeeded()
+                    },
+                    completion: { _ in
+                        self.scheduleFrontRowAutoDismiss()
+                    }
+                )
             }
         )
+    }
+
+    private func applyStackLayout() {
+        let count = rows.count
+
+        for (index, row) in rows.enumerated() {
+            let depthFromFront = count - 1 - index
+            let scale = max(0.88, 1 - CGFloat(depthFromFront) * EcosiaErrorToastContainerUX.depthScaleStep)
+            let yOffset = -CGFloat(depthFromFront) * EcosiaErrorToastContainerUX.depthPeekOffset
+
+            row.transform = CGAffineTransform(translationX: 0, y: yOffset)
+                .scaledBy(x: scale, y: scale)
+            row.layer.zPosition = CGFloat(index)
+            row.isUserInteractionEnabled = depthFromFront == 0
+        }
+
+        updateContainerHeight()
+    }
+
+    private func updateContainerHeight() {
+        guard let frontRow = rows.last else {
+            heightConstraint?.constant = 0
+            return
+        }
+
+        frontRow.layoutIfNeeded()
+        let fittingWidth = bounds.width > 0 ? bounds.width : UIScreen.main.bounds.width
+        let frontHeight = frontRow.systemLayoutSizeFitting(
+            CGSize(width: fittingWidth, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
+
+        let peekHeight = CGFloat(max(0, rows.count - 1)) * EcosiaErrorToastContainerUX.depthPeekOffset
+        heightConstraint?.constant = max(frontHeight, EcosiaErrorToastContainerUX.rowMinHeight) + peekHeight
+    }
+
+    private func scheduleFrontRowAutoDismiss() {
+        cancelAutoDismiss()
+        guard rows.last != nil else { return }
+
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self, let front = self.rows.last else { return }
+            self.removeRow(front)
+        }
+        autoDismissWorkItem = workItem
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + EcosiaErrorToastContainerUX.displayDuration,
+            execute: workItem
+        )
+    }
+
+    private func cancelAutoDismiss() {
+        autoDismissWorkItem?.cancel()
+        autoDismissWorkItem = nil
     }
 }
 
@@ -276,7 +322,7 @@ extension BrowserViewController {
                 container.trailingAnchor.constraint(equalTo: searchBar.trailingAnchor, constant: .ecosia.space._s),
                 container.topAnchor.constraint(
                     equalTo: view.safeAreaLayoutGuide.topAnchor,
-                    constant: .ecosia.space._l
+                    constant: .ecosia.space._2l
                 )
             ])
         } else {
