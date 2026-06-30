@@ -15,6 +15,7 @@ extension URL {
         autoRedirect = "ar",
         page = "p",
         query = "q",
+        test = "test",
         typeTag = "tt",
         userId = "_sp"
     }
@@ -145,6 +146,14 @@ extension URL {
     public func ecosified(isIncognitoEnabled: Bool, urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> URL {
         guard isEcosia(urlProvider) else { return self }
 
+        var url = ecosifiedWithUserId(isIncognitoEnabled: isIncognitoEnabled)
+        url = url.ecosifiedWithTestParam()
+        return url
+    }
+
+    // MARK: - Private helpers
+
+    private func ecosifiedWithUserId(isIncognitoEnabled: Bool) -> URL {
         /*
          The `sendAnonymousUsageData` is set by the native UX component in settings
          that determines whether the app would send the events to Snowplow.
@@ -165,6 +174,19 @@ extension URL {
         components.queryItems?.removeAll(where: { $0.name == EcosiaQueryItemName.userId.rawValue })
         guard let urlWithoutUserId = components.url else { return self }
         return urlWithoutUserId.appendingQueryItems([Self.item(name: .userId, value: userId)])
+    }
+
+    /// Appends `test=automation` to the URL when the Snowplow Micro instance is active and the
+    /// environment is not production. This lets automated test suites identify their own traffic
+    /// on the backend without affecting real users.
+    private func ecosifiedWithTestParam() -> URL {
+        let automationTestValue = "automation"
+        guard Analytics.shouldUseMicroInstance && EcosiaEnvironment.current != .production else { return self }
+
+        // Already carries the correct value — no mutation needed.
+        if self[.test] == automationTestValue { return self }
+
+        return appendingQueryItems([Self.item(name: .test, value: automationTestValue)])
     }
 
     public var hasEcosiaUserId: Bool { ecosiaUserId != nil }
