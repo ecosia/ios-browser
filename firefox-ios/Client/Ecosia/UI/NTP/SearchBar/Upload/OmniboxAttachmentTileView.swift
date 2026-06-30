@@ -34,9 +34,7 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
         view.clipsToBounds = true
     }
 
-    private let spinner: UIActivityIndicatorView = .build { spinner in
-        spinner.hidesWhenStopped = true
-    }
+    private let loader = OmniboxUploadLoaderView()
 
     private let fileNameLabel: UILabel = .build { label in
         label.font = .preferredFont(forTextStyle: .caption2)
@@ -109,7 +107,7 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
         containerView.addSubviews(
             imageView,
             imageLoadingOverlay,
-            spinner,
+            loader,
             fileContentStack,
             removeButtonContainer,
             removeButton
@@ -139,8 +137,8 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
             imageLoadingOverlay.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
             imageLoadingOverlay.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
 
-            spinner.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            loader.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
 
             fileContentStack.topAnchor.constraint(
                 equalTo: containerView.topAnchor,
@@ -229,7 +227,7 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
 
         fileNameLabel.textColor = colors.ecosia.textPrimary
         fileSizeLabel.textColor = colors.ecosia.textSecondary
-        spinner.color = colors.ecosia.textSecondary
+        loader.applyTheme(theme: theme, onDarkBackground: !imageLoadingOverlay.isHidden)
         imageLoadingOverlay.backgroundColor = colors.ecosia.textPrimary.withAlphaComponent(0.35)
 
         removeGlassTint.backgroundColor = ecosia?.buttonBgGlassStatic
@@ -241,8 +239,8 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
     }
 
     private func resetVisibility() {
-        spinner.stopAnimating()
-        spinner.isHidden = true
+        loader.stopAnimating()
+        loader.isHidden = true
         fileContentStack.isHidden = true
         fileNameLabel.isHidden = true
         fileSizeLabel.isHidden = true
@@ -258,8 +256,7 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
             if let previewImage {
                 showImagePreview(previewImage, uploading: true, failed: false)
             } else {
-                spinner.isHidden = false
-                spinner.startAnimating()
+                showLoader(onDarkBackground: false)
                 removeButton.isHidden = true
                 removeButtonContainer.isHidden = true
             }
@@ -276,10 +273,16 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
         imageLoadingOverlay.isHidden = !uploading
         applyImageBorder(failed: failed)
         if uploading {
-            spinner.isHidden = false
-            spinner.startAnimating()
-            spinner.color = currentTheme?.colors.ecosia.buttonContentPrimary ?? .white
+            showLoader(onDarkBackground: true)
         }
+    }
+
+    private func showLoader(onDarkBackground: Bool) {
+        loader.isHidden = false
+        if let currentTheme {
+            loader.applyTheme(theme: currentTheme, onDarkBackground: onDarkBackground)
+        }
+        loader.startAnimating()
     }
 
     private func applyImageBorder(failed: Bool) {
@@ -294,8 +297,7 @@ final class OmniboxAttachmentTileView: UIView, ThemeApplicable {
         switch attachment.state {
         case .loading:
             fileContentStack.isHidden = true
-            spinner.isHidden = false
-            spinner.startAnimating()
+            showLoader(onDarkBackground: false)
             removeButton.isHidden = true
             removeButtonContainer.isHidden = true
         case .failed:
