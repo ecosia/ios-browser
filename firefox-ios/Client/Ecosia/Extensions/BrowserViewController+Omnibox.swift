@@ -250,8 +250,8 @@ extension BrowserViewController {
 
         homepage.view.layoutIfNeeded()
 
-        let topInset: CGFloat = 0
-
+        // Only the bottom needs insetting — the last rows must scroll clear of the floating
+        // omnibox pill. The top stays at zero so the table fills the overlay from the top.
         let omniboxFrame = searchController.view.convert(omnibox.bounds, from: omnibox)
         let bottomInset = max(
             0,
@@ -259,7 +259,7 @@ extension BrowserViewController {
         )
 
         searchController.additionalSafeAreaInsets = UIEdgeInsets(
-            top: topInset,
+            top: 0,
             left: 0,
             bottom: bottomInset,
             right: 0
@@ -268,10 +268,10 @@ extension BrowserViewController {
         // Mirror on the table too — it is edge-pinned, not safe-area-pinned.
         let tableView = searchController.tableView
         var contentInset = tableView.contentInset
-        contentInset.top = topInset
+        contentInset.top = 0
         contentInset.bottom = bottomInset
         tableView.contentInset = contentInset
-        tableView.verticalScrollIndicatorInsets.top = topInset
+        tableView.verticalScrollIndicatorInsets.top = 0
         tableView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
 

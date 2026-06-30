@@ -43,19 +43,19 @@ extension SearchViewController {
         ecosiaSuggestHeaderSection(in: tableView) == section
     }
 
-    /* Ecosia: Upstream uses `viewModel.shouldShowHeader(for:)` directly. With `.insetGrouped` we
-       relocate the Suggest header and suppress the empty `firefoxSuggestions` section header.
+    /* Ecosia: Upstream uses `viewModel.shouldShowHeader(for:)` directly. The redesigned
+       suggestions list has no section headers for the typed-search state, so the per-engine
+       search header ("Ecosia-Suche") and the relocated Suggest header ("Ecosia-Vorschläge")
+       are both suppressed. Only the zero-search `recentSearches`/`trendingSearches` headers
+       remain — they carry their section titles and the "Clear" accessory.
      */
     func shouldShowSearchSectionHeader(for section: Int, in tableView: UITableView) -> Bool {
-        if shouldShowEcosiaSuggestHeader(for: section, in: tableView) {
-            return true
-        }
-
-        if SearchListSection(rawValue: section) == .firefoxSuggestions {
+        switch SearchListSection(rawValue: section) {
+        case .searchSuggestions, .firefoxSuggestions, .openedTabs, .bookmarks, .remoteTabs, .history:
             return false
+        default:
+            return viewModel.shouldShowHeader(for: section)
         }
-
-        return viewModel.shouldShowHeader(for: section)
     }
 
     func configureEcosiaSuggestSectionHeader(_ headerView: SiteTableViewHeader) {
@@ -90,6 +90,33 @@ extension SearchViewController {
     }
 }
 
+// MARK: - List Top Inset
+extension SearchViewController {
+    /// Padding above the first suggestion card so the list isn't flush against the top
+    /// edge of the overlay. Applied as a spacer header on the first populated section
+    /// (see `heightForHeaderInSection`/`viewForHeaderInSection`) rather than a table top
+    /// constraint or content inset — that way it scrolls with the table's own background
+    /// instead of exposing the overlay background as a strip at the top.
+    enum ListTopInsetUX {
+        static let height: CGFloat = .ecosia.space._m
+    }
+
+    /// The first section (in display order) that currently has rows, or nil when the
+    /// list is empty.
+    func firstPopulatedSection(in tableView: UITableView) -> Int? {
+        SearchListSection.allCases.first {
+            tableView.numberOfRows(inSection: $0.rawValue) > 0
+        }?.rawValue
+    }
+
+    /// Whether `section` should carry the top spacer: it is the first populated section
+    /// and has no visible header of its own to provide the spacing.
+    func shouldShowListTopInset(for section: Int, in tableView: UITableView) -> Bool {
+        !shouldShowSearchSectionHeader(for: section, in: tableView)
+            && firstPopulatedSection(in: tableView) == section
+    }
+}
+
 // MARK: - AI Chat Autocomplete Extensions
 extension SearchViewController {
 
@@ -103,19 +130,39 @@ extension SearchViewController {
         return min(count, max)
     }
 
+    /// Whether the AI Chat row should be rendered in the suggestions section.
+    var shouldShowAIChatRow: Bool {
+        AIChatMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty && suggestionsCount() != nil
+    }
+
+    /// Row index of the AI Chat item within the `searchSuggestions` section.
+    /// It sits as the *second* row — directly after the first (typed) suggestion —
+    /// to match the redesigned suggestions list. When there are no suggestions at
+    /// all it collapses to the first (and only) row.
+    var aiChatRowIndex: Int {
+        min(1, suggestionsCount() ?? 0)
+    }
+
     /// Check if current row is the AI Chat item
     func isAIChatRow(_ indexPath: IndexPath) -> Bool {
         guard SearchListSection(rawValue: indexPath.section) == .searchSuggestions else { return false }
-        let shouldShowAIChat = AIChatMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
-        guard shouldShowAIChat, let lastIndex = suggestionsCount() else { return false }
-        return indexPath.row == lastIndex // Item after last suggestion (0-based index)
+        guard shouldShowAIChatRow else { return false }
+        return indexPath.row == aiChatRowIndex
+    }
+
+    /// Maps a `searchSuggestions` table row to its index in `viewModel.suggestions`,
+    /// accounting for the AI Chat row inserted at `aiChatRowIndex`. Rows after the
+    /// insertion point are shifted back by one. Callers must already have excluded
+    /// the AI Chat row itself via `isAIChatRow`.
+    func suggestionIndex(forRow row: Int) -> Int {
+        guard shouldShowAIChatRow else { return row }
+        return row < aiChatRowIndex ? row : row - 1
     }
 
     /// Calculate number of rows including AI Chat item if enabled
     func numberOfRowsForSearchSuggestions() -> Int {
         guard let count = suggestionsCount() else { return 0 }
-        let shouldShowAIChat = AIChatMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty
-        return shouldShowAIChat ? count + 1 : count
+        return shouldShowAIChatRow ? count + 1 : count
     }
 
     // MARK: - AI Chat Navigation
@@ -129,72 +176,25 @@ extension SearchViewController {
 
     // MARK: - AI Chat Cell Configuration
 
-    /// Configure AI Chat cell appearance
+    /// Configure AI Chat cell appearance.
+    ///
+    /// The AI Search indicator is the `ai-sparkle` glyph shown as the row's *left*
+    /// icon (replacing the magnifying glass), so the entry reads like a regular
+    /// suggestion whose leading icon signals AI. The previous right-aligned "AI Chat"
+    /// pill has been removed. `applyTheme` (run after this in `cellForRowAt`) tints
+    /// the template glyph with `textPrimary`, matching the sibling suggestion icons.
     func configureAIChatCell(_ cell: OneLineTableViewCell) -> OneLineTableViewCell {
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-
         cell.titleLabel.text = viewModel.searchQuery
         applyOneLineHeadTruncation(to: cell.titleLabel)
 
-        let aiSearchImage = UIImage(named: "searchLarge")?.withRenderingMode(.alwaysTemplate)
-        cell.leftImageView.contentMode = .center
+        let aiSparkle = UIImage.ecosia(named: "ai-sparkle")?.withRenderingMode(.alwaysTemplate)
         cell.leftImageView.layer.borderWidth = 0
-        cell.leftImageView.manuallySetImage(aiSearchImage ?? UIImage())
-        cell.leftImageView.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
         cell.leftImageView.backgroundColor = nil
+        cell.leftImageView.manuallySetImage(aiSparkle ?? UIImage())
+        // Render the sparkle at the 16×16 design size, matching the sibling suggestion icons.
+        applySuggestionLeadingIconSize(to: cell)
 
-        let standardImageSize: CGFloat = OneLineTableViewCell.UX.leftImageViewSize
-        let dynamicImageSize = min(UIFontMetrics.default.scaledValue(for: standardImageSize), 2 * standardImageSize)
-        cell.leftImageView.widthAnchor.constraint(equalToConstant: dynamicImageSize).isActive = true
-        cell.leftImageView.heightAnchor.constraint(equalToConstant: dynamicImageSize).isActive = true
-
-        let twinkleImageView = UIImageView()
-        twinkleImageView.image = .ecosia(named: "ai-sparkle")?.withRenderingMode(.alwaysTemplate)
-        twinkleImageView.tintColor = theme.colors.ecosia.textInversePrimary
-        twinkleImageView.contentMode = .scaleAspectFit
-
-        let aiSearchLabel = UILabel()
-        aiSearchLabel.text = String.localized(.aiChat)
-        aiSearchLabel.textColor = theme.colors.ecosia.textInversePrimary
-        aiSearchLabel.font = .preferredFont(forTextStyle: .caption1)
-        aiSearchLabel.sizeToFit()
-
-        let twinkleSize: CGFloat = .ecosia.space._m
-        let internalPadding: CGFloat = .ecosia.space._1s
-        let spacing: CGFloat = .ecosia.space._2s
-
-        // Create the actual pill container matching titleLabel height
-        let pillContainer = UIView()
-        pillContainer.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimary
-
-        let pillWidth = internalPadding + twinkleSize + spacing + aiSearchLabel.frame.width + internalPadding
-        // Ensure layout is up-to-date before reading frames
-        cell.layoutIfNeeded()
-        let pillHeight = aiSearchLabel.frame.height + .ecosia.space._1s
-
-        // Calculate Y position to center pill with leftImageView
-        let leftImageCenterY = cell.leftImageView.frame.midY
-        let pillY = leftImageCenterY - (pillHeight / 2)
-
-        pillContainer.frame = CGRect(x: 0, y: 0, width: pillWidth, height: pillHeight)
-        pillContainer.layer.cornerRadius = pillHeight / 2
-
-        twinkleImageView.frame = CGRect(x: internalPadding, y: (pillHeight - twinkleSize) / 2, width: twinkleSize, height: twinkleSize)
-        aiSearchLabel.frame = CGRect(x: internalPadding + twinkleSize + spacing, y: (pillHeight - aiSearchLabel.frame.height) / 2, width: aiSearchLabel.frame.width, height: aiSearchLabel.frame.height)
-
-        pillContainer.addSubview(twinkleImageView)
-        pillContainer.addSubview(aiSearchLabel)
-
-        /* Ecosia: Wrap the pill in a transparent container so the pill sits flush to the left
-           of the wrapper while the trailing gap (10 pt) creates visual separation from the
-           cell's right edge.
-         */
-        let trailingGap: CGFloat = 10
-        let accessoryWrapper = UIView(frame: CGRect(x: 0, y: pillY, width: pillWidth + trailingGap, height: pillHeight))
-        accessoryWrapper.backgroundColor = .clear
-        accessoryWrapper.addSubview(pillContainer)
-        cell.accessoryView = accessoryWrapper
-
+        cell.accessoryView = nil
         return cell
     }
 
@@ -214,6 +214,12 @@ extension SearchViewController {
         return suggestions[index]
     }
 
+    /// Safely access the suggestion for a `searchSuggestions` table row, translating
+    /// the row through `suggestionIndex(forRow:)` so the AI Chat row offset is handled.
+    func safeSuggestion(forRow row: Int) -> String? {
+        safeSuggestion(at: suggestionIndex(forRow: row))
+    }
+
     /// Check if index is valid for suggestions array access
     func isValidSuggestionIndex(_ index: Int) -> Bool {
         guard let suggestions = viewModel.suggestions else { return false }
@@ -231,5 +237,58 @@ extension SearchViewController {
     func applyOneLineHeadTruncation(to titleLabel: UILabel) {
         titleLabel.numberOfLines = 1
         titleLabel.lineBreakMode = .byTruncatingHead
+    }
+}
+
+// MARK: - Section Spacing
+extension SearchViewController {
+    enum SectionSpacingUX {
+        /// Vertical gap between adjacent suggestion cards. The default grouped/insetGrouped
+        /// footer height is much larger, which made the cards feel far apart.
+        static let interSection: CGFloat = .ecosia.space._1s
+    }
+
+    /* Ecosia: `.insetGrouped` derives the gap between cards from the section footer height.
+       Upstream provides no footer delegate, so the system default (large) gap was used.
+       Override it with a small fixed gap — only for sections that actually have rows, so
+       empty middle sections don't stack phantom spacing.
+     */
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        tableView.numberOfRows(inSection: section) > 0 ? SectionSpacingUX.interSection : 0
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footer = UIView()
+        footer.backgroundColor = .clear
+        return footer
+    }
+}
+
+// MARK: - Suggestion Icon Sizing
+extension SearchViewController {
+    enum SuggestionListUX {
+        /// Design size for the leading icons (magnifying glass, AI sparkle) in the
+        /// suggestions list.
+        static let leadingIconSize: CGFloat = 16
+    }
+
+    /// Returns `image` rasterised at the 16×16 suggestion-icon size, preserving template
+    /// rendering so the cell theme can still tint it. `OneLineTableViewCell` constrains its
+    /// left image view to a larger box, so we draw the glyph at this exact size and display
+    /// it with `.center` content mode (see `applySuggestionLeadingIconSize`) instead of
+    /// scaling the asset up.
+    func suggestionLeadingIcon(_ image: UIImage?) -> UIImage? {
+        guard let image else { return nil }
+        let size = CGSize(width: SuggestionListUX.leadingIconSize, height: SuggestionListUX.leadingIconSize)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: size))
+        }.withRenderingMode(.alwaysTemplate)
+    }
+
+    /// Shrinks a configured suggestion cell's leading icon to the 16×16 design size.
+    func applySuggestionLeadingIconSize(to cell: OneLineTableViewCell) {
+        cell.leftImageView.contentMode = .center
+        cell.leftImageView.manuallySetImage(suggestionLeadingIcon(cell.leftImageView.image) ?? UIImage())
     }
 }

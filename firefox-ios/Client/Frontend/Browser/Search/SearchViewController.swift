@@ -471,7 +471,7 @@ class SearchViewController: SiteTableViewController,
             guard let suggestions = viewModel.suggestions,
                   let suggestion = suggestions[safe: indexPath.row],
             */
-            guard let suggestion = safeSuggestion(at: indexPath.row),
+            guard let suggestion = safeSuggestion(forRow: indexPath.row),
                   let url = defaultEngine.searchURLForQuery(suggestion)
             else { return }
 
@@ -528,7 +528,11 @@ class SearchViewController: SiteTableViewController,
         /* Ecosia: Wrap upstream visibility to relocate the Suggest header for `.insetGrouped`.
         guard viewModel.shouldShowHeader(for: section) else { return 0 }
         */
-        guard shouldShowSearchSectionHeader(for: section, in: tableView) else { return 0 }
+        guard shouldShowSearchSectionHeader(for: section, in: tableView) else {
+            // Ecosia: Pad the top of the first populated section so the first card clears
+            // the overlay edge without leaving a background strip above the table.
+            return shouldShowListTopInset(for: section, in: tableView) ? ListTopInsetUX.height : 0
+        }
 
         return UITableView.automaticDimension
     }
@@ -550,7 +554,16 @@ class SearchViewController: SiteTableViewController,
         guard shouldShowSearchSectionHeader(for: section, in: tableView),
               let headerView = tableView.dequeueReusableHeaderFooterView(
                 withIdentifier: SiteTableViewHeader.cellIdentifier) as? SiteTableViewHeader
-        else { return nil }
+        else {
+            // Ecosia: Clear spacer for the padded first section so grouped style doesn't
+            // draw a default header background in that 16dp gap.
+            if shouldShowListTopInset(for: section, in: tableView) {
+                let spacer = UIView()
+                spacer.backgroundColor = .clear
+                return spacer
+            }
+            return nil
+        }
 
         // Ecosia: Configure relocated "Ecosia Suggest" header on the first section with rows.
         if shouldShowEcosiaSuggestHeader(for: section, in: tableView) {
@@ -661,7 +674,7 @@ class SearchViewController: SiteTableViewController,
                 if let site = viewModel.suggestions?[indexPath.row] {
                 */
                 if !isAIChatRow(indexPath),
-                   let site = safeSuggestion(at: indexPath.row) {
+                   let site = safeSuggestion(forRow: indexPath.row) {
                     if searchTelemetry?.visibleSuggestions.contains(site) == false {
                         searchTelemetry?.visibleSuggestions.append(site)
                     }
@@ -754,7 +767,7 @@ class SearchViewController: SiteTableViewController,
             /* Ecosia: Use safe array access.
             guard let suggestion = viewModel.suggestions?[indexPath.item] else { return }
             */
-            guard let suggestion = safeSuggestion(at: indexPath.item) else { return }
+            guard let suggestion = safeSuggestion(forRow: indexPath.item) else { return }
             searchDelegate?.searchViewController(self, didHighlightText: suggestion, search: false)
         case .remoteTabs:
             let suggestion = viewModel.remoteClientTabs[indexPath.item]
@@ -769,6 +782,9 @@ class SearchViewController: SiteTableViewController,
     override func applyTheme() {
         super.applyTheme()
         view.backgroundColor = currentTheme().colors.layer5
+        // Ecosia: Blend the row dividers into the card background so they read as seamless
+        // (super.applyTheme sets `separatorColor` to `borderPrimary`).
+        tableView.separatorColor = currentTheme().colors.layer5
 
         // search settings icon
         searchButton.layer.backgroundColor = UX.EngineButtonBackgroundColor
@@ -841,9 +857,11 @@ class SearchViewController: SiteTableViewController,
             // Ecosia: Check if this is the AI Chat item
             if isAIChatRow(indexPath) {
                 cell = configureAIChatCell(oneLineCell)
-            } else if let site = safeSuggestion(at: indexPath.row) {
+            } else if let site = safeSuggestion(forRow: indexPath.row) {
                 let oneLineCellViewModel = oneLineCellModelForSearch(
                     with: site,
+                    // Ecosia: First suggestion (row 0, the typed query) has no append arrow;
+                    // the AI Chat row at index 1 is handled above, so row > 0 maps to later suggestions.
                     shouldShowAccessoryView: indexPath.row > 0
                 )
                 oneLineCell.configure(viewModel: oneLineCellViewModel)
@@ -856,6 +874,8 @@ class SearchViewController: SiteTableViewController,
                 }
                 // Ecosia: Keep long queries on a single row, truncated at the head so the trailing autocomplete remains visible.
                 applyOneLineHeadTruncation(to: oneLineCell.titleLabel)
+                // Ecosia: Render the leading magnifying-glass icon at the 16×16 design size.
+                applySuggestionLeadingIconSize(to: oneLineCell)
                 cell = oneLineCell
             }
         case .openedTabs:
