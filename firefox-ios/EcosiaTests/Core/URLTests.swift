@@ -17,6 +17,7 @@ final class URLTests: XCTestCase, @unchecked Sendable {
 
     override func tearDown() {
         try? FileManager.default.removeItem(at: FileManager.user)
+        Analytics.shouldUseMicroInstance = false
     }
 
     // MARK: - `ecosiaSearchWithQuery`
@@ -352,6 +353,46 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         let url = URL(string: "https://www.ecosia.org/search?q=cats")!
             .ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
         XCTAssertTrue(url.hasEcosiaUserId)
+    }
+
+    // MARK: - `ecosifiedWithTestParam` (test=automation)
+
+    func testEcosifiedWithTestParam_whenMicroInstanceDisabled_doesNotAppendTestParam() {
+        Analytics.shouldUseMicroInstance = false
+        let url = URL(string: "https://www.ecosia.org/search?q=trees")!
+            .ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+        let testParam = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "test" })
+        XCTAssertNil(testParam)
+    }
+
+    func testEcosifiedWithTestParam_whenMicroInstanceEnabled_appendsTestAutomationParam() {
+        Analytics.shouldUseMicroInstance = true
+        let url = URL(string: "https://www.ecosia.org/search?q=trees")!
+            .ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+        let testParam = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "test" })
+        XCTAssertEqual(testParam?.value, "automation")
+    }
+
+    func testEcosifiedWithTestParam_whenMicroInstanceEnabled_isIdempotent() {
+        Analytics.shouldUseMicroInstance = true
+        let url = URL(string: "https://www.ecosia.org/search?q=trees")!
+            .ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+            .ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+        let testParams = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.filter { $0.name == "test" } ?? []
+        XCTAssertEqual(testParams.count, 1)
+        XCTAssertEqual(testParams.first?.value, "automation")
+    }
+
+    func testEcosifiedWithTestParam_whenMicroInstanceEnabled_nonEcosiaURLIsUnaffected() {
+        Analytics.shouldUseMicroInstance = true
+        let url = URL(string: "https://www.google.com/search?q=trees")!
+            .ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+        let testParam = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "test" })
+        XCTAssertNil(testParam)
     }
 
     // MARK: - `policy`
