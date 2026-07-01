@@ -155,7 +155,8 @@ class TabManagerImplementation: NSObject,
             .sink { [weak self] _ in
                 guard let self else { return }
                 Cookie.makeSearchSettingsObserverCookies(isPrivate: false).forEach { cookie in
-                    WKWebsiteDataStore.default().httpCookieStore.setCookie(cookie)
+                    self.tabConfigurationProvider.configuration
+                        .webViewConfiguration.websiteDataStore.httpCookieStore.setCookie(cookie)
                 }
                 Cookie.makeSearchSettingsObserverCookies(isPrivate: true).forEach { cookie in
                     self.tabConfigurationProvider.privateConfiguration
