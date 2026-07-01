@@ -10,7 +10,7 @@ import Common
 public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
 
     private enum UX {
-        static let iconSize: CGFloat = 20
+        static let iconSize: CGFloat = 16
     }
 
     private let highlightCircle: UIView = .build { circle in

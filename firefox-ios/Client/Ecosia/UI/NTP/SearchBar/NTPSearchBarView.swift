@@ -111,7 +111,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     }
 
     private lazy var submitButton: UIButton = .build { button in
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
         let image = UIImage(systemName: "arrow.up", withConfiguration: symbolConfig)
         button.setImage(image, for: .normal)
         button.accessibilityLabel = String.localized(.search)
