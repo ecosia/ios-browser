@@ -4,6 +4,7 @@
 
 import Ecosia
 import Foundation
+import Combine
 import TabDataStore
 import Storage
 import Common
@@ -107,6 +108,9 @@ class TabManagerImplementation: NSObject,
         return TabConfigurationProvider(prefs: profile.prefs)
     }()
 
+    // Ecosia: Observing Search setting changes
+    nonisolated(unsafe) private var searchSettingsObserver: AnyCancellable?
+
     private var selectedTabUUID: UUID? {
         guard let selectedTab = self.selectedTab,
               let uuid = UUID(uuidString: selectedTab.tabUUID) else {
@@ -145,6 +149,20 @@ class TabManagerImplementation: NSObject,
         // Ecosia: Cookie observing
         WKWebsiteDataStore.default().httpCookieStore.add(self)
 
+        // Ecosia: Re-inject search-settings cookies whenever search settings change
+        searchSettingsObserver = NotificationCenter.default
+            .publisher(for: .searchSettingsChanged)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Cookie.makeSearchSettingsObserverCookies(isPrivate: false).forEach { cookie in
+                    WKWebsiteDataStore.default().httpCookieStore.setCookie(cookie)
+                }
+                Cookie.makeSearchSettingsObserverCookies(isPrivate: true).forEach { cookie in
+                    self.tabConfigurationProvider.privateConfiguration
+                        .webViewConfiguration.websiteDataStore.httpCookieStore.setCookie(cookie)
+                }
+            }
+
         startObservingNotifications(
             withNotificationCenter: notificationCenter,
             forObserver: self,
@@ -157,6 +175,8 @@ class TabManagerImplementation: NSObject,
     }
 
     deinit {
+        // Ecosia: Cancelling search observer
+        searchSettingsObserver?.cancel()
         logger.log("TabManager deallocating (window: \(windowUUID))", level: .info, category: .lifecycle)
     }
 
