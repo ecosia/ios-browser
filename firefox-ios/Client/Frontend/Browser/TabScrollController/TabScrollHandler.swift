@@ -11,6 +11,10 @@ protocol TabScrollHandlerProtocol: AnyObject {
     var tabProvider: TabProviderProtocol? { get set }
     var contentOffset: CGPoint { get }
 
+    // Ecosia: When pinned (e.g. on the AI chat vertical) the minimal/compact address bar pill stays put —
+    // scroll must not toggle it. Tap-to-expand uses a separate path and is unaffected.
+    var pinsCompactAddressBar: Bool { get set }
+
     func showToolbars(animated: Bool)
     func hideToolbars(animated: Bool)
     func configureRefreshControl()
@@ -89,6 +93,8 @@ final class TabScrollHandler: NSObject,
     private var scrollDirection: ScrollDirection = .down
     var toolbarDisplayState = ToolbarDisplayState()
     var lastValidState: ToolbarDisplayState = .expanded
+    // Ecosia: Pin the compact pill on the AI chat vertical so scroll doesn't toggle it. Set by BrowserViewController.
+    var pinsCompactAddressBar = false
     private var isStatusBarScrollToTop = false
     var didTapChangePreventScrollToTop = false
 
@@ -171,6 +177,10 @@ final class TabScrollHandler: NSObject,
     }
 
     func handleScroll(for translation: CGPoint) {
+        // Ecosia: On the AI chat vertical the compact pill is pinned; ignore scroll-driven toggling.
+        // Tap-to-expand is unaffected (separate path via createToolbarTapHandler).
+        guard !pinsCompactAddressBar else { return }
+
         // Ignore user scroll if the tab is loading or if the conditions to update view are not meet
         // voice over and webview's scroll content size is not enough to scroll
         guard !tabIsLoading(),
@@ -195,6 +205,9 @@ final class TabScrollHandler: NSObject,
     }
 
     func handleEndScrolling(for translation: CGPoint, velocity: CGPoint) {
+        // Ecosia: On the AI chat vertical the compact pill is pinned; ignore scroll-driven toggling.
+        guard !pinsCompactAddressBar else { return }
+
         // Ignore user scroll if the tab is loading or if the conditions to update view are not meet
         // voice over and webview's scroll content size is not enough to scroll
         guard !tabIsLoading(),
