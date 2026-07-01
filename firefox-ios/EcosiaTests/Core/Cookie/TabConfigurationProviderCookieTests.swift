@@ -13,7 +13,7 @@ import WebKit
 @MainActor
 final class TabConfigurationProviderCookieTests: XCTestCase {
 
-    private var provider: TabConfigurationProvider!
+    private var provider: TabConfigurationProvider?
 
     override func setUp() async throws {
         try await super.setUp()
@@ -32,6 +32,7 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
     /// Standard (non-private) configurations must contain every cookie that
     /// `Cookie.makeRequiredCookies(isPrivate: false)` produces.
     func testStandardConfigurationInjectsRequiredCookies() async {
+        guard let provider else { return XCTFail("provider not initialised") }
         let expectedCookies = Cookie.makeRequiredCookies(isPrivate: false)
         XCTAssertFalse(expectedCookies.isEmpty,
                        "makeRequiredCookies must return at least one cookie")
@@ -48,6 +49,7 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
     /// Private configurations must contain every cookie that
     /// `Cookie.makeRequiredCookies(isPrivate: true)` produces.
     func testPrivateConfigurationInjectsRequiredCookies() async {
+        guard let provider else { return XCTFail("provider not initialised") }
         let expectedCookies = Cookie.makeRequiredCookies(isPrivate: true)
         XCTAssertFalse(expectedCookies.isEmpty,
                        "makeRequiredCookies must return at least one cookie")
@@ -81,6 +83,7 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
     /// Sanity check: after injecting `makeSearchSettingsObserverCookies` into the default store,
     /// those cookies are present in the store.
     func testInjectingSearchSettingsObserverCookiesUpdatesCookieStore() async {
+        guard let provider else { return XCTFail("provider not initialised") }
         // Ensure a standard configuration exists so the TabConfigurationProvider
         // has initialised its tabConfigurationProvider lazy var equivalent.
         _ = provider.configuration(isPrivate: false)
@@ -88,9 +91,9 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
         let expectedCookies = Cookie.makeSearchSettingsObserverCookies(isPrivate: false)
         XCTAssertFalse(expectedCookies.isEmpty)
 
-        // Simulate what the sink does: inject search-settings cookies into the store.
         let defaultStore = provider.configuration(isPrivate: false)
             .webViewConfiguration.websiteDataStore.httpCookieStore
+        // Simulate what the sink does: inject search-settings cookies into the store.
         for cookie in expectedCookies {
             await defaultStore.setCookie(cookie)
         }
