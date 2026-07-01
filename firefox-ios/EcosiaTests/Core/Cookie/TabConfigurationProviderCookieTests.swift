@@ -78,10 +78,9 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
         }
     }
 
-    /// When `.searchSettingsChanged` is posted, the search-settings observer cookies
-    /// (main + aiOverviews) must be present in the default cookie store, matching what
-    /// `makeSearchSettingsObserverCookies` produces.
-    func testSearchSettingsChangedNotificationUpdatesCookieStore() async {
+    /// Sanity check: after injecting `makeSearchSettingsObserverCookies` into the default store,
+    /// those cookies are present in the store.
+    func testInjectingSearchSettingsObserverCookiesUpdatesCookieStore() async {
         // Ensure a standard configuration exists so the TabConfigurationProvider
         // has initialised its tabConfigurationProvider lazy var equivalent.
         _ = provider.configuration(isPrivate: false)
