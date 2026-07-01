@@ -310,6 +310,10 @@
 "Upload failed" = "Upload failed";
 "Waiting for the attachment to finish uploading" = "Waiting for the attachment to finish uploading";
 "Remove the failed attachment or try uploading again" = "Remove the failed attachment or try uploading again";
+"You can upload up to 5 files per chat." = "You can upload up to 5 files per chat.";
+"The file is too large, the maximum file size is 5MB." = "The file is too large, the maximum file size is 5MB.";
+"The file type is not supported. Please upload a JPG, PNG, PDF or text file." = "The file type is not supported. Please upload a JPG, PNG, PDF or text file.";
+"Something went wrong with uploading your file. Please try again." = "Something went wrong with uploading your file. Please try again.";
 
 // Product Tour
 "Go back" = "Go back";

@@ -349,6 +349,13 @@ private struct OmniboxUploadAssociatedKeys {
     /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var pickerCoordinator: UInt8 = 0
     nonisolated(unsafe) static var attachmentCoordinator: UInt8 = 0
+    nonisolated(unsafe) static var uploadErrorBatch: UInt8 = 0
+}
+
+@MainActor
+private final class OmniboxUploadErrorBatch {
+    var errors = Set<OmniboxUploadValidationError>()
+    var presentationTask: Task<Void, Never>?
 }
 
 @MainActor
@@ -384,16 +391,78 @@ extension BrowserViewController {
 }
 
 @MainActor
-extension BrowserViewController: OmniboxUploadPickerDelegate {
-    func omniboxUploadDidPickPendingItems(_ items: [OmniboxUploadPendingItem]) {
+extension BrowserViewController: OmniboxUploadPickerDelegate, OmniboxAttachmentUploadDelegate {
+    var omniboxUploadRemainingAttachmentSlots: Int {
+        let currentCount = ntpOmniboxAnchorView?.attachments.count ?? 0
+        return max(0, OmniboxUploadFileSelectionValidator.maxFileCount - currentCount)
+    }
+
+    func omniboxUploadDidFinishPicking(
+        items: [OmniboxUploadPendingItem],
+        validationErrors: Set<OmniboxUploadValidationError>
+    ) {
+        handleUploadSelection(items: items, validationErrors: validationErrors)
+    }
+
+    func omniboxAttachmentsDidChange() {
+        ntpOmniboxAnchorView?.refreshSubmitButtonState()
+    }
+
+    func omniboxUploadDidEncounterValidationErrors(_ errors: Set<OmniboxUploadValidationError>) {
+        handleUploadSelection(items: [], validationErrors: errors)
+    }
+
+    fileprivate func handleUploadSelection(
+        items: [OmniboxUploadPendingItem],
+        validationErrors: Set<OmniboxUploadValidationError>
+    ) {
+        let simulatedErrors = OmniboxUploadDebugSimulation.simulatedValidationErrors()
+        let allErrors = validationErrors.union(simulatedErrors)
+
+        if !allErrors.isEmpty {
+            enqueueOmniboxUploadValidationErrors(allErrors)
+        }
+
+        guard simulatedErrors.isEmpty else { return }
+        guard !items.isEmpty else { return }
+
         _ = ntpOmniboxAnchorView?.becomeFirstResponder()
         omniboxAttachmentCoordinator.processPendingItems(items)
     }
-}
 
-@MainActor
-extension BrowserViewController: OmniboxAttachmentUploadDelegate {
-    func omniboxAttachmentsDidChange() {
-        ntpOmniboxAnchorView?.refreshSubmitButtonState()
+    fileprivate var omniboxUploadErrorBatch: OmniboxUploadErrorBatch {
+        if let batch = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.uploadErrorBatch)
+            as? OmniboxUploadErrorBatch {
+            return batch
+        }
+        let batch = OmniboxUploadErrorBatch()
+        objc_setAssociatedObject(self,
+                                 &OmniboxUploadAssociatedKeys.uploadErrorBatch,
+                                 batch,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return batch
+    }
+
+    fileprivate func enqueueOmniboxUploadValidationErrors(_ errors: Set<OmniboxUploadValidationError>) {
+        let batch = omniboxUploadErrorBatch
+        batch.errors.formUnion(errors)
+        batch.presentationTask?.cancel()
+        batch.presentationTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 150_000_000)
+            guard let self, !Task.isCancelled else { return }
+
+            let accumulated = batch.errors
+            batch.errors.removeAll()
+            batch.presentationTask = nil
+            guard !accumulated.isEmpty else { return }
+
+            self.presentOmniboxUploadValidationErrors(accumulated)
+        }
+    }
+
+    fileprivate func presentOmniboxUploadValidationErrors(_ errors: Set<OmniboxUploadValidationError>) {
+        guard #available(iOS 16.0, *) else { return }
+        let messages = OmniboxUploadValidationError.orderedMessages(for: errors)
+        showEcosiaErrorToasts(messages: messages)
     }
 }
