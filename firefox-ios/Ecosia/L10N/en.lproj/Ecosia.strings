@@ -310,6 +310,10 @@
 "Upload failed" = "Upload failed";
 "Waiting for the attachment to finish uploading" = "Waiting for the attachment to finish uploading";
 "Remove the failed attachment or try uploading again" = "Remove the failed attachment or try uploading again";
+// Omnibox file upload (logged-out gate)
+"Sign in to upload files" = "Sign in to upload files";
+"To use this feature you need to be signed in to an Ecosia account." = "To use this feature you need to be signed in to an Ecosia account.";
+"Create account" = "Create account";
 
 // Product Tour
 "Go back" = "Go back";

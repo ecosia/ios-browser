@@ -113,20 +113,52 @@ extension BrowserViewController: NTPSearchBarDelegate {
     func ntpSearchBarDidTapUpload() {
         guard FileUploadFeatureFlag.isEnabled else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
-        if ecosiaAuth?.isLoggedIn == false {
+        let isLoggedIn = ecosiaAuth?.isLoggedIn == true
+        let hasUploadScopes = EcosiaAuthenticationService.shared.hasConversationScopes
+        if !isLoggedIn || !hasUploadScopes {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
-                presentAccountImpactFromNTPHeader()
+                presentOmniboxSignInSheetForUpload()
             } else {
-                ecosiaAuth?.login()
+                ecosiaAuth?
+                    .onAuthFlowCompleted { [weak self] success in
+                        guard success else { return }
+                        self?.presentOmniboxUploadDrawer()
+                    }
+                    .login()
             }
             return
         }
         presentOmniboxUploadDrawer()
     }
 
-    fileprivate func presentAccountImpactFromNTPHeader() {
-        guard let homepage = contentContainer.contentController as? HomepageViewController else { return }
-        homepage.ecosiaAdapter?.headerViewModel?.presentAccountImpact()
+    fileprivate func presentOmniboxSignInSheetForUpload() {
+        guard let homepage = contentContainer.contentController as? HomepageViewController,
+              let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
+
+        homepage.presentOmniboxUploadSheetIfNeeded()
+        sheetState.presentSignInSheetForUpload(
+            onSignIn: { [weak self] in
+                self?.ecosiaAuth?
+                    .onAuthFlowCompleted { [weak self] success in
+                        guard success else { return }
+                        guard let homepage = self?.contentContainer.contentController as? HomepageViewController else { return }
+                        homepage.ecosiaAdapter?.omniboxSheetState.handleAuthenticationSucceeded()
+                    }
+                    .login()
+            },
+            onSignUp: { [weak self] in
+                self?.ecosiaAuth?
+                    .onAuthFlowCompleted { [weak self] success in
+                        guard success else { return }
+                        guard let homepage = self?.contentContainer.contentController as? HomepageViewController else { return }
+                        homepage.ecosiaAdapter?.omniboxSheetState.handleAuthenticationSucceeded()
+                    }
+                    .signUp()
+            },
+            onUploadDrawerRequested: { [weak self] in
+                self?.presentOmniboxUploadDrawer()
+            }
+        )
     }
 
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {

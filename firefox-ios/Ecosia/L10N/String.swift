@@ -314,5 +314,10 @@ extension String {
         case uploadAttachmentFailed = "Upload failed"
         case uploadSubmitWaitingForUpload = "Waiting for the attachment to finish uploading"
         case uploadSubmitUploadFailed = "Remove the failed attachment or try uploading again"
+
+        // Omnibox file upload (logged-out gate)
+        case signInToUploadFiles = "Sign in to upload files"
+        case signInToUploadFilesMessage = "To use this feature you need to be signed in to an Ecosia account."
+        case createAccount = "Create account"
     }
 }
