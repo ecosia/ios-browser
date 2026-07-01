@@ -106,10 +106,6 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
     // MARK: - Helpers
 
     private func cookieNames(in store: WKHTTPCookieStore) async -> Set<String> {
-        await withCheckedContinuation { continuation in
-            store.getAllCookies { cookies in
-                continuation.resume(returning: Set(cookies.map { $0.name }))
-            }
-        }
+        Set((await store.allCookies()).map { $0.name })
     }
 }
