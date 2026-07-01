@@ -306,6 +306,10 @@
 "Allow access to your camera" = "Allow access to your camera";
 "Ecosia needs camera access so you can take a photo to attach." = "Ecosia needs camera access so you can take a photo to attach.";
 "A camera is not available on this device." = "A camera is not available on this device.";
+// Omnibox file upload (attachment strip)
+"Upload failed" = "Upload failed";
+"Waiting for the attachment to finish uploading" = "Waiting for the attachment to finish uploading";
+"Remove the failed attachment or try uploading again" = "Remove the failed attachment or try uploading again";
 
 // Product Tour
 "Go back" = "Go back";

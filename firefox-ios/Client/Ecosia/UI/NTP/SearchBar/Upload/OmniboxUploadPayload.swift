@@ -1,0 +1,65 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import UIKit
+import UniformTypeIdentifiers
+import Ecosia
+
+/// Local payload produced by a picker after the user selects content.
+struct OmniboxUploadLocalPayload {
+    let fileName: String
+    let mimeType: String
+    let data: Data
+    let layout: OmniboxAttachment.Layout
+    let previewImage: UIImage?
+}
+
+/// Deferred load closure used while the system picker hands back a selection.
+struct OmniboxUploadPendingItem {
+    let fileName: String
+    let layout: OmniboxAttachment.Layout
+    let load: () async throws -> OmniboxUploadLocalPayload
+}
+
+enum OmniboxUploadPayloadLoader {
+
+    static let maxFileSizeBytes = 5 * 1024 * 1024
+
+    static func loadFile(from url: URL) throws -> OmniboxUploadLocalPayload {
+        let data = try Data(contentsOf: url)
+        try validateSize(data)
+        let mimeType = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType ?? "application/octet-stream"
+        let layout: OmniboxAttachment.Layout = mimeType.hasPrefix("image/") ? .image : .file
+        let previewImage = layout == .image ? UIImage(data: data) : nil
+        return OmniboxUploadLocalPayload(
+            fileName: url.lastPathComponent,
+            mimeType: mimeType,
+            data: data,
+            layout: layout,
+            previewImage: previewImage
+        )
+    }
+
+    static func loadImage(data: Data, fileName: String, mimeType: String) throws -> OmniboxUploadLocalPayload {
+        try validateSize(data)
+        return OmniboxUploadLocalPayload(
+            fileName: fileName,
+            mimeType: mimeType,
+            data: data,
+            layout: .image,
+            previewImage: UIImage(data: data)
+        )
+    }
+
+    static func validateSize(_ data: Data) throws {
+        guard data.count <= maxFileSizeBytes else {
+            throw OmniboxUploadPayloadError.fileTooLarge
+        }
+    }
+}
+
+enum OmniboxUploadPayloadError: Error, Equatable {
+    case fileTooLarge
+    case unreadable
+}

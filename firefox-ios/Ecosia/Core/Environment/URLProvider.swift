@@ -32,6 +32,12 @@ public enum URLProvider {
     public var searchAutocomplete: URL {
         // For now only production to avoid messing with Firefox's logic to include CF headers.
         URL(string: "https://ac.ecosia.org/autocomplete")!
+	}
+
+    /// Endpoint that issues the EAIST Cloudflare WAF protection cookie.
+    /// Must be called before requests to AI Worker endpoints — matches web `refreshToken()`.
+    public var aiChatRefresh: URL {
+        root.appendingPathComponent("ai-chat/refresh")
     }
 
     public var snowplowMicro: String? {
@@ -215,7 +221,11 @@ public enum URLProvider {
     /// from (`origin`) and seeded with a `query` to start the conversation.
     /// Centralizing both parameters here keeps callers from having to know
     /// the URL's query-item conventions.
-    public func aiChat(origin: AIChatOrigin? = nil, query: String? = nil) -> URL {
+    public func aiChat(
+        origin: AIChatOrigin? = nil,
+        query: String? = nil,
+        files: [AIChatFileQuery] = []
+    ) -> URL {
         let baseURL = root.appendingPathComponent("ai-chat")
         var items: [URLQueryItem] = []
         if let origin {
@@ -224,8 +234,11 @@ public enum URLProvider {
         if let query {
             items.append(URLQueryItem(name: "q", value: query))
         }
+        if !files.isEmpty, let filesJSON = AIChatFileQuery.urlQueryValue(files) {
+            items.append(URLQueryItem(name: "files", value: filesJSON))
+        }
         guard !items.isEmpty else { return baseURL }
-        return baseURL.appendingQueryItems(items)
+        return baseURL.appendingPercentEncodedQueryItems(items)
     }
 
     public var storeWriteReviewPage: URL {
@@ -290,5 +303,49 @@ public enum URLProvider {
     /// Returns the same value as `auth0Domain` since they must match for custom domain authentication
     public var auth0CookieDomain: String {
         auth0Domain
+    }
+}
+
+/// File metadata for the web AI chat `files` URL query parameter.
+/// Matches `nxt-ai-search` omnibox routing (`fileId`, `filename`, `mimeType`, `sizeBytes`).
+public struct AIChatFileQuery: Codable, Equatable, Sendable {
+    public let fileId: String
+    public let filename: String
+    public let mimeType: String
+    public let sizeBytes: Int
+
+    public init(fileId: String, filename: String, mimeType: String, sizeBytes: Int) {
+        self.fileId = fileId
+        self.filename = Self.filenameEnsuringExtension(filename, mimeType: mimeType)
+        self.mimeType = mimeType
+        self.sizeBytes = sizeBytes
+    }
+
+    /// The AI Worker validates the extension in `filename` (e.g. `IMG_0111` → rejected, `IMG_0111.jpg` → ok).
+    static func filenameEnsuringExtension(_ filename: String, mimeType: String) -> String {
+        if !URL(fileURLWithPath: filename).pathExtension.isEmpty {
+            return filename
+        }
+        guard let ext = preferredExtension(for: mimeType) else { return filename }
+        return "\(filename).\(ext)"
+    }
+
+    static func preferredExtension(for mimeType: String) -> String? {
+        switch mimeType.lowercased() {
+        case "image/jpeg": return "jpg"
+        case "image/png": return "png"
+        case "application/pdf": return "pdf"
+        case "text/plain": return "txt"
+        case "application/msword": return "doc"
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": return "docx"
+        case "application/vnd.ms-powerpoint": return "ppt"
+        case "application/vnd.openxmlformats-officedocument.presentationml.presentation": return "pptx"
+        default: return nil
+        }
+    }
+
+    static func urlQueryValue(_ files: [AIChatFileQuery]) -> String? {
+        guard let data = try? JSONEncoder().encode(files) else { return nil }
+        return String(data: data, encoding: .utf8)
     }
 }

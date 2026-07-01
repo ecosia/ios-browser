@@ -40,11 +40,14 @@ protocol NTPSearchBarDelegate: AnyObject {
     func ntpSearchBarNeedsSuggestionsLayoutUpdate()
     /// Called when the user taps the upload / attachment button.
     func ntpSearchBarDidTapUpload()
+    /// Called when attachments are added, removed, or finish uploading.
+    func ntpSearchBarAttachmentsDidChange()
 }
 
 extension NTPSearchBarDelegate {
     func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool { false }
     func ntpSearchBarNeedsSuggestionsLayoutUpdate() {}
+    func ntpSearchBarAttachmentsDidChange() {}
 }
 
 /// Pill-shaped search input pinned to the bottom of the redesigned NTP. Replaces
@@ -89,11 +92,41 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         /// bottom inset). The textView is pinned just above this row so its
         /// content can never bleed into the submit / counter area.
         static var bottomRowHeight: CGFloat { submitButtonSize + .ecosia.space._1s }
+        static var attachmentStripHeight: CGFloat { OmniboxAttachmentsStripView.UX.tileHeight + .ecosia.space._1s }
         static var minTextHeight: CGFloat { minHeight - textPadding - bottomRowHeight }
         static var maxTextHeight: CGFloat { maxHeight - textPadding - bottomRowHeight }
     }
 
+    private(set) var attachments: [OmniboxAttachment] = []
+    var hasAttachments: Bool { !attachments.isEmpty }
+    var hasReadyAttachments: Bool { attachments.contains(where: \.isReady) }
+    var allAttachmentsReady: Bool {
+        !attachments.isEmpty && attachments.allSatisfy(\.isReady)
+    }
+
+    var hasUploadingAttachments: Bool {
+        attachments.contains(where: \.isLoading)
+    }
+
+    /// Recomputes whether the submit button should be enabled.
+    func refreshSubmitButtonState() {
+        updateSubmitState(for: textView.text ?? "")
+    }
+
     weak var delegate: NTPSearchBarDelegate?
+
+    private lazy var attachmentsStrip: OmniboxAttachmentsStripView = {
+        let strip = OmniboxAttachmentsStripView()
+        strip.translatesAutoresizingMaskIntoConstraints = false
+        strip.isHidden = true
+        strip.onRemoveAttachment = { [weak self] id in
+            self?.handleRemoveAttachment(id: id)
+        }
+        return strip
+    }()
+
+    private var previewImages: [UUID: UIImage] = [:]
+    var onRemoveAttachment: ((UUID) -> Void)?
 
     private lazy var textView: NTPLocationTextView = {
         let tv = NTPLocationTextView()
@@ -174,6 +207,8 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     private var currentTheme: Theme?
     private lazy var textViewHeightConstraint: NSLayoutConstraint =
         textView.heightAnchor.constraint(equalToConstant: UX.minTextHeight)
+    private lazy var textViewTopConstraint: NSLayoutConstraint =
+        textView.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding)
 
     /// Current text content. Mirrors `textView.text` but lets callers drive
     /// programmatic changes (e.g. accepting a tapped suggestion).
@@ -225,6 +260,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         layer.shadowOffset = UX.shadowOffset
         layer.shadowColor = UIColor.black.cgColor
 
+        addSubview(attachmentsStrip)
         addSubview(textView)
         addSubview(placeholderLabel)
         addSubview(uploadButton)
@@ -258,14 +294,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         addGestureRecognizer(swipeDown)
 
         NSLayoutConstraint.activate([
-            // textView occupies the upper-left region of the pill. Its
-            // bottom is pinned to the submit button's top so wrapped text
-            // physically cannot enter the bottom-row area, and its trailing
-            // edge stops at the submit button's leading edge (with an 8pt
-            // gap) so neither typed text nor the placeholder collide with
-            // the right-hand button column.
+            attachmentsStrip.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding),
+            attachmentsStrip.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.textPadding),
+            attachmentsStrip.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.textPadding),
+            attachmentsStrip.heightAnchor.constraint(equalToConstant: OmniboxAttachmentsStripView.UX.tileHeight),
+
             textView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.textPadding),
-            textView.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding),
+            textViewTopConstraint,
             textView.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -UX.textTrailingGap),
             textView.bottomAnchor.constraint(equalTo: submitButton.topAnchor),
             textViewHeightConstraint,
@@ -327,6 +362,9 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             if current === uploadButton || current === submitButton || current === clearButton {
                 return false
             }
+            if current === attachmentsStrip || current.isDescendant(of: attachmentsStrip) {
+                return false
+            }
             if current === self { break }
             view = current.superview
         }
@@ -346,10 +384,82 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
 
     @objc private func submitTapped() {
         textView.commitPendingSuggestionIfValid()
-        let text = (textView.text ?? "").trimmingCharacters(in: .whitespaces)
-        guard !text.isEmpty else { return }
+        let text = (textView.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard canSubmit(text: text) else { return }
         textView.resignFirstResponder()
         delegate?.ntpSearchBarDidSubmit(text)
+    }
+
+    func readyChatFiles() -> [AIChatFileQuery] {
+        attachments.compactMap(\.chatFileQuery)
+    }
+
+    func addAttachment(_ attachment: OmniboxAttachment) {
+        attachments.append(attachment)
+        refreshAttachmentsStrip()
+    }
+
+    func removeAttachment(id: UUID) {
+        attachments.removeAll { $0.id == id }
+        previewImages.removeValue(forKey: id)
+        refreshAttachmentsStrip()
+    }
+
+    func updateAttachment(id: UUID,
+                          fileName: String,
+                          layout: OmniboxAttachment.Layout,
+                          state: OmniboxAttachment.State,
+                          previewImages: [UUID: UIImage]) {
+        guard let index = attachments.firstIndex(where: { $0.id == id }) else { return }
+        self.previewImages = previewImages
+        attachments[index] = OmniboxAttachment(id: id, fileName: fileName, layout: layout, state: state)
+        refreshAttachmentsStrip()
+    }
+
+    func setAttachments(_ attachments: [OmniboxAttachment], previewImages: [UUID: UIImage]) {
+        self.attachments = attachments
+        self.previewImages = previewImages
+        refreshAttachmentsStrip()
+    }
+
+    private func handleRemoveAttachment(id: UUID) {
+        onRemoveAttachment?(id)
+    }
+
+    private func refreshAttachmentsStrip() {
+        attachmentsStrip.setAttachments(attachments, previewImages: previewImages)
+        let hasStrip = !attachments.isEmpty
+        attachmentsStrip.isHidden = !hasStrip
+        textViewTopConstraint.constant = hasStrip
+            ? UX.textPadding + UX.attachmentStripHeight
+            : UX.textPadding
+        updateSubmitState(for: textView.text ?? "")
+        updateLayoutForContent()
+        delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
+    }
+
+    private func canSubmit(text: String) -> Bool {
+        let hasText = !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        guard hasText else { return false }
+        guard hasAttachments else { return true }
+        return allAttachmentsReady
+    }
+
+    private func updateSubmitState(for text: String) {
+        let enabled = canSubmit(text: text)
+        submitButton.isEnabled = enabled
+        if hasAttachments {
+            if hasUploadingAttachments {
+                submitButton.accessibilityHint = String.localized(.uploadSubmitWaitingForUpload)
+            } else if !allAttachmentsReady {
+                submitButton.accessibilityHint = String.localized(.uploadSubmitUploadFailed)
+            } else {
+                submitButton.accessibilityHint = nil
+            }
+        } else {
+            submitButton.accessibilityHint = nil
+        }
+        applySubmitButtonColors()
     }
 
     @objc private func clearTapped() {
@@ -370,19 +480,14 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     /// pushing further upward.
     private func updateLayoutForContent() {
         let contentHeight = textView.contentSize.height
-        let clamped = min(UX.maxTextHeight, max(UX.minTextHeight, contentHeight))
+        let maxTextHeight = UX.maxTextHeight - (hasAttachments ? UX.attachmentStripHeight : 0)
+        let clamped = min(maxTextHeight, max(UX.minTextHeight, contentHeight))
         if textViewHeightConstraint.constant != clamped {
             textViewHeightConstraint.constant = clamped
         }
         // The textView always has scrolling enabled so the explicit height
         // constraint drives layout. Internal scrolling kicks in naturally
         // once the content exceeds `maxTextHeight`.
-    }
-
-    private func updateSubmitState(for text: String) {
-        let hasContent = !text.trimmingCharacters(in: .whitespaces).isEmpty
-        submitButton.isEnabled = hasContent
-        applySubmitButtonColors()
     }
 
     private func updateCounter(for text: String) {
@@ -480,6 +585,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         applySubmitButtonColors()
         applyCounterColor()
         uploadButton.applyTheme(theme: theme)
+        attachmentsStrip.applyTheme(theme: theme)
         // Clear button: dark filled pill with a light glyph, matching the
         // Figma design.
         // Only the inner 16×16 disc carries the dark fill; the surrounding

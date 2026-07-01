@@ -28,14 +28,14 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
         controller.dismiss(animated: true)
 
         let allowedURLs = OmniboxUploadFileSelectionValidator.allowedURLs(from: urls)
-        let items = allowedURLs.map { url in
-            OmniboxUploadItem(
-                source: .files,
-                fileName: url.lastPathComponent,
-                contentTypeIdentifier: UTType(filenameExtension: url.pathExtension)?.identifier
-            )
+        let pendingItems = allowedURLs.map { url in
+            let ext = url.pathExtension.lowercased()
+            let layout: OmniboxAttachment.Layout = ["jpg", "jpeg", "png"].contains(ext) ? .image : .file
+            return OmniboxUploadPendingItem(fileName: url.lastPathComponent, layout: layout) {
+                try OmniboxUploadPayloadLoader.loadFile(from: url)
+            }
         }
-        guard !items.isEmpty else { return }
-        delegate?.omniboxUploadDidSelect(items: items)
+        guard !pendingItems.isEmpty else { return }
+        delegate?.omniboxUploadDidPickPendingItems(pendingItems)
     }
 }
