@@ -7,30 +7,52 @@ import Ecosia
 
 @MainActor
 final class NTPOmniboxSheetState: ObservableObject {
+    /// A selection made in the "AI tools" drawer, delivered after the sheet
+    /// finishes dismissing so navigation/pickers don't fight the dismissal.
+    private enum PendingSelection {
+        case upload(OmniboxUploadOption)
+        case chatMode(OmniboxChatMode)
+    }
+
     @Published var showUploadDrawer = false
 
     private var onUploadOptionSelected: ((OmniboxUploadOption) -> Void)?
-    private var pendingUploadOption: OmniboxUploadOption?
+    private var onChatModeSelected: ((OmniboxChatMode) -> Void)?
+    private var pendingSelection: PendingSelection?
 
-    func presentUploadDrawer(onSelect: @escaping (OmniboxUploadOption) -> Void) {
-        pendingUploadOption = nil
-        onUploadOptionSelected = onSelect
+    func presentUploadDrawer(onSelectUpload: @escaping (OmniboxUploadOption) -> Void,
+                             onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
+        pendingSelection = nil
+        onUploadOptionSelected = onSelectUpload
+        onChatModeSelected = onSelectChatMode
         showUploadDrawer = true
     }
 
     func handleUploadOptionSelected(_ option: OmniboxUploadOption) {
-        pendingUploadOption = option
+        pendingSelection = .upload(option)
+        showUploadDrawer = false
+    }
+
+    func handleChatModeSelected(_ mode: OmniboxChatMode) {
+        pendingSelection = .chatMode(mode)
         showUploadDrawer = false
     }
 
     func handleUploadDrawerDismissed() {
-        guard let option = pendingUploadOption else {
-            onUploadOptionSelected = nil
-            return
-        }
-        pendingUploadOption = nil
-        let callback = onUploadOptionSelected
+        let selection = pendingSelection
+        let uploadCallback = onUploadOptionSelected
+        let chatModeCallback = onChatModeSelected
+        pendingSelection = nil
         onUploadOptionSelected = nil
-        callback?(option)
+        onChatModeSelected = nil
+
+        switch selection {
+        case .upload(let option):
+            uploadCallback?(option)
+        case .chatMode(let mode):
+            chatModeCallback?(mode)
+        case nil:
+            break
+        }
     }
 }

@@ -4,9 +4,11 @@
 
 import Foundation
 
+/// Upload sources shown in the top row of the omnibox "AI tools" drawer.
+/// Case order mirrors the design's left-to-right layout (Camera, Photos, Files).
 public enum OmniboxUploadOption: CaseIterable, Hashable {
-    case photos
     case camera
+    case photos
     case files
 }
 
@@ -61,6 +63,58 @@ public extension OmniboxUploadOption {
         case .photos: return "OmniboxUploadPhotosOption"
         case .camera: return "OmniboxUploadCameraOption"
         case .files: return "OmniboxUploadFilesOption"
+        }
+    }
+}
+
+/// Chat modes listed below the upload row in the omnibox "AI tools" drawer.
+/// Selecting any mode currently opens the standard Ecosia AI Chat; the case is
+/// carried through the selection plumbing so a per-mode parameter can be added later.
+public enum OmniboxChatMode: CaseIterable, Hashable {
+    case standard
+    case thinkLonger
+    case displaySources
+    case learning
+}
+
+public extension OmniboxChatMode {
+    var iconName: String {
+        switch self {
+        case .standard: return "chatmodes-standard-ai-chat"
+        case .thinkLonger: return "chatmodes-think-longer"
+        case .displaySources: return "chatmodes-display-sources"
+        case .learning: return "chatmodes-learning"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .standard: return String.localized(.chatModeStandard)
+        case .thinkLonger: return String.localized(.chatModeThinkLonger)
+        case .displaySources: return String.localized(.chatModeDisplaySources)
+        case .learning: return String.localized(.chatModeLearning)
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .standard: return String.localized(.chatModeStandardSubtitle)
+        case .thinkLonger: return String.localized(.chatModeThinkLongerSubtitle)
+        case .displaySources: return String.localized(.chatModeDisplaySourcesSubtitle)
+        case .learning: return String.localized(.chatModeLearningSubtitle)
+        }
+    }
+
+    var accessibilityLabel: String { title }
+
+    var accessibilityHint: String { String.localized(.aiChatAccessibilityHint) }
+
+    var accessibilityIdentifier: String {
+        switch self {
+        case .standard: return "OmniboxChatModeStandardOption"
+        case .thinkLonger: return "OmniboxChatModeThinkLongerOption"
+        case .displaySources: return "OmniboxChatModeDisplaySourcesOption"
+        case .learning: return "OmniboxChatModeLearningOption"
         }
     }
 }

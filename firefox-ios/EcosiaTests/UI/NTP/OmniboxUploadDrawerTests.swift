@@ -46,6 +46,30 @@ final class OmniboxUploadDrawerTests: XCTestCase {
         XCTAssertNotNil(UIImage.ecosia(named: "upload-camera"))
         XCTAssertNotNil(UIImage.ecosia(named: "upload-files"))
     }
+
+    func testUploadOptionsRenderInDesignOrder() {
+        XCTAssertEqual(OmniboxUploadOption.allCases, [.camera, .photos, .files])
+    }
+
+    func testChatModesExposeAllCases() {
+        XCTAssertEqual(OmniboxChatMode.allCases.count, 4)
+        XCTAssertEqual(OmniboxChatMode.allCases, [.standard, .thinkLonger, .displaySources, .learning])
+    }
+
+    func testChatModeAccessibilityMetadata() {
+        XCTAssertEqual(OmniboxChatMode.standard.accessibilityLabel, String.localized(.chatModeStandard))
+        XCTAssertEqual(OmniboxChatMode.standard.accessibilityIdentifier, "OmniboxChatModeStandardOption")
+        XCTAssertEqual(OmniboxChatMode.thinkLonger.accessibilityIdentifier, "OmniboxChatModeThinkLongerOption")
+        XCTAssertEqual(OmniboxChatMode.displaySources.accessibilityIdentifier, "OmniboxChatModeDisplaySourcesOption")
+        XCTAssertEqual(OmniboxChatMode.learning.accessibilityIdentifier, "OmniboxChatModeLearningOption")
+    }
+
+    func testChatModeIconsLoadFromFrameworkBundle() {
+        XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-standard-ai-chat"))
+        XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-think-longer"))
+        XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-display-sources"))
+        XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-learning"))
+    }
 }
 
 @MainActor
@@ -54,7 +78,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
     func testSelectedOptionIsDeliveredAfterDrawerDismisses() {
         let state = NTPOmniboxSheetState()
         var received: OmniboxUploadOption?
-        state.presentUploadDrawer { received = $0 }
+        state.presentUploadDrawer(onSelectUpload: { received = $0 }, onSelectChatMode: { _ in })
 
         state.handleUploadOptionSelected(.files)
         XCTAssertFalse(state.showUploadDrawer)
@@ -64,13 +88,32 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         XCTAssertEqual(received, .files)
     }
 
+    func testSelectedChatModeIsDeliveredAfterDrawerDismisses() {
+        let state = NTPOmniboxSheetState()
+        var receivedMode: OmniboxChatMode?
+        var receivedUpload: OmniboxUploadOption?
+        state.presentUploadDrawer(onSelectUpload: { receivedUpload = $0 },
+                                  onSelectChatMode: { receivedMode = $0 })
+
+        state.handleChatModeSelected(.thinkLonger)
+        XCTAssertFalse(state.showUploadDrawer)
+        XCTAssertNil(receivedMode)
+
+        state.handleUploadDrawerDismissed()
+        XCTAssertEqual(receivedMode, .thinkLonger)
+        XCTAssertNil(receivedUpload)
+    }
+
     func testDismissWithoutSelectionDoesNotDeliverOption() {
         let state = NTPOmniboxSheetState()
         var received: OmniboxUploadOption?
-        state.presentUploadDrawer { received = $0 }
+        var receivedMode: OmniboxChatMode?
+        state.presentUploadDrawer(onSelectUpload: { received = $0 },
+                                  onSelectChatMode: { receivedMode = $0 })
 
         state.handleUploadDrawerDismissed()
         XCTAssertNil(received)
+        XCTAssertNil(receivedMode)
     }
 }
 

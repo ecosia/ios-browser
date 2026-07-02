@@ -7,60 +7,124 @@ import Common
 
 @available(iOS 16.0, *)
 private enum OmniboxUploadDrawerUX {
-    static let sheetHeight: CGFloat = 156
+    /// Approximate height for the "AI tools" sheet.
+    static let sheetHeight: CGFloat = 500
+    static let uploadIconContainerHeight: CGFloat = 56
+    static let uploadIconSize: CGFloat = 20
+    static let chatModeIconSize: CGFloat = 24
+    static let doneButtonSize: CGFloat = 44
+    static let doneGlyphSize: CGFloat = 17
+    static let sparkleSize: CGFloat = 16
+    static let footerHeight: CGFloat = 44
+    static let footerCornerRadius: CGFloat = 16
 }
 
-/// Upload source picker presented as a sheet, matching `EcosiaAccountImpactView` presentation.
+/// The omnibox "AI tools" drawer presented as a sheet, matching
+/// `EcosiaAccountImpactView` presentation. Hosts the upload sources (Camera,
+/// Photos, Files) plus the AI Chat modes list.
 @available(iOS 16.0, *)
 public struct OmniboxUploadDrawerSheet: View {
     private let windowUUID: WindowUUID
     private let onSelect: (OmniboxUploadOption) -> Void
+    private let onSelectChatMode: (OmniboxChatMode) -> Void
 
-    public init(windowUUID: WindowUUID, onSelect: @escaping (OmniboxUploadOption) -> Void) {
+    public init(windowUUID: WindowUUID,
+                onSelect: @escaping (OmniboxUploadOption) -> Void,
+                onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
         self.windowUUID = windowUUID
         self.onSelect = onSelect
+        self.onSelectChatMode = onSelectChatMode
     }
 
     public var body: some View {
-        GeometryReader { geometry in
-            OmniboxUploadDrawerView(windowUUID: windowUUID, onSelect: onSelect)
-                .padding(.horizontal, .ecosia.space._m)
-                .presentationDetents([.height(OmniboxUploadDrawerUX.sheetHeight - geometry.safeAreaInsets.bottom)])
-                .presentationDragIndicator(.visible)
-        }
+        OmniboxUploadDrawerView(windowUUID: windowUUID,
+                                onSelect: onSelect,
+                                onSelectChatMode: onSelectChatMode)
+            .presentationDetents([.height(OmniboxUploadDrawerUX.sheetHeight)])
+            .presentationDragIndicator(.visible)
     }
 }
 
 @available(iOS 16.0, *)
 struct OmniboxUploadDrawerView: View {
-    private enum UX {
-        static let iconContainerHeight: CGFloat = 56
-        static let iconSize: CGFloat = 20
-    }
+    private typealias UX = OmniboxUploadDrawerUX
 
     private let windowUUID: WindowUUID
     private let onSelect: (OmniboxUploadOption) -> Void
+    private let onSelectChatMode: (OmniboxChatMode) -> Void
 
+    // `Environment` is qualified because the Ecosia framework defines its own
+    // `Environment` type, which otherwise shadows the SwiftUI property wrapper.
+    @SwiftUI.Environment(\.dismiss) private var dismiss
     @State private var theme = OmniboxUploadDrawerViewTheme()
 
-    init(windowUUID: WindowUUID, onSelect: @escaping (OmniboxUploadOption) -> Void) {
+    init(windowUUID: WindowUUID,
+         onSelect: @escaping (OmniboxUploadOption) -> Void,
+         onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
         self.windowUUID = windowUUID
         self.onSelect = onSelect
+        self.onSelectChatMode = onSelectChatMode
     }
 
     var body: some View {
+        VStack(spacing: 0) {
+            VStack(spacing: .ecosia.space._l) {
+                header
+                uploadRow
+                divider
+                chatModeList
+            }
+            // Keep at least a 16dp gap above the banner; the spacer also pins
+            // the banner to the bottom of the sheet when there is extra room.
+            Spacer(minLength: .ecosia.space._m)
+            footer
+        }
+        .padding(.horizontal, .ecosia.space._m)
+        .padding(.top, .ecosia.space._m)
+        .padding(.bottom, .ecosia.space._l)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(theme.backgroundColor.ignoresSafeArea())
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(String.localized(.aiToolsTitle))
+        .ecosiaThemed(windowUUID, $theme)
+        .presentationBackgroundIfAvailable(theme.backgroundColor)
+    }
+
+    // MARK: - Header
+
+    private var header: some View {
+        ZStack {
+            Text(String.localized(.aiToolsTitle))
+                .font(.title2.weight(.bold))
+                .foregroundColor(theme.titleColor)
+
+            HStack {
+                Spacer(minLength: 0)
+
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: UX.doneGlyphSize, weight: .medium))
+                        .foregroundColor(theme.iconTintColor)
+                        .frame(width: UX.doneButtonSize, height: UX.doneButtonSize)
+                        .background(Circle().fill(theme.doneBackgroundColor))
+                }
+                .accessibilityLabel(String.localized(.done))
+                .accessibilityHint(String.localized(.aiToolsDoneAccessibilityHint))
+                .accessibilityIdentifier("OmniboxAIToolsDoneButton")
+            }
+        }
+    }
+
+    // MARK: - Upload sources
+
+    private var uploadRow: some View {
         HStack(alignment: .center, spacing: .ecosia.space._m) {
             ForEach(OmniboxUploadOption.allCases, id: \.self) { option in
                 uploadOptionButton(for: option)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        .frame(height: OmniboxUploadDrawerUX.sheetHeight)
-        .background(theme.backgroundColor.ignoresSafeArea())
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(String.localized(.uploadDrawerAccessibilityLabel))
-        .ecosiaThemed(windowUUID, $theme)
-        .presentationBackgroundIfAvailable(theme.backgroundColor)
     }
 
     private func uploadOptionButton(for option: OmniboxUploadOption) -> some View {
@@ -73,9 +137,9 @@ struct OmniboxUploadDrawerView: View {
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(theme.iconTintColor)
-                    .frame(width: UX.iconSize, height: UX.iconSize)
+                    .frame(width: UX.uploadIconSize, height: UX.uploadIconSize)
                     .frame(maxWidth: .infinity)
-                    .frame(height: UX.iconContainerHeight)
+                    .frame(height: UX.uploadIconContainerHeight)
                     .background(
                         RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
                             .fill(theme.iconBackgroundColor)
@@ -91,6 +155,81 @@ struct OmniboxUploadDrawerView: View {
         .accessibilityHint(option.accessibilityHint)
         .accessibilityIdentifier(option.accessibilityIdentifier)
     }
+
+    // MARK: - Divider
+
+    private var divider: some View {
+        Rectangle()
+            .fill(theme.dividerColor)
+            .frame(height: 1)
+    }
+
+    // MARK: - Chat modes
+
+    private var chatModeList: some View {
+        VStack(spacing: .ecosia.space._l) {
+            ForEach(OmniboxChatMode.allCases, id: \.self) { mode in
+                chatModeRow(for: mode)
+            }
+        }
+    }
+
+    private func chatModeRow(for mode: OmniboxChatMode) -> some View {
+        Button {
+            onSelectChatMode(mode)
+        } label: {
+            HStack(spacing: .ecosia.space._m) {
+                Image.ecosia(mode.iconName)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(theme.iconTintColor)
+                    .frame(width: UX.chatModeIconSize, height: UX.chatModeIconSize)
+
+                VStack(alignment: .leading, spacing: .ecosia.space._2s) {
+                    Text(mode.title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(theme.titleColor)
+                    Text(mode.subtitle)
+                        .font(.caption)
+                        .foregroundColor(theme.subtitleColor)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .contentShape(Rectangle())
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(mode.accessibilityLabel)
+        .accessibilityHint(mode.accessibilityHint)
+        .accessibilityIdentifier(mode.accessibilityIdentifier)
+    }
+
+    // MARK: - Footer
+
+    private var footer: some View {
+        HStack(spacing: .ecosia.space._1s) {
+            Text(String.localized(.aiToolsRedirectNotice))
+                .font(.subheadline)
+                .foregroundColor(theme.subtitleColor)
+            Spacer(minLength: 0)
+            Image.ecosia("ai-sparkle")
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .foregroundColor(theme.iconTintColor)
+                .frame(width: UX.sparkleSize, height: UX.sparkleSize)
+        }
+        .padding(.horizontal, .ecosia.space._m)
+        .frame(height: UX.footerHeight)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: UX.footerCornerRadius)
+                .fill(theme.footerBackgroundColor)
+        )
+        .accessibilityElement(children: .combine)
+    }
 }
 
 @available(iOS 16.0, *)
@@ -99,6 +238,11 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
     var iconBackgroundColor = Color.white
     var iconTintColor = Color.black
     var labelColor = Color.gray
+    var titleColor = Color.black
+    var subtitleColor = Color.gray
+    var dividerColor = Color.gray.opacity(0.2)
+    var footerBackgroundColor = Color.white
+    var doneBackgroundColor = Color.gray.opacity(0.2)
 
     mutating func applyTheme(theme: Theme) {
         let colors = theme.colors.ecosia
@@ -106,6 +250,11 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
         iconBackgroundColor = Color(colors.backgroundElevation1)
         iconTintColor = Color(colors.buttonContentSecondary)
         labelColor = Color(colors.textSecondary)
+        titleColor = Color(colors.textPrimary)
+        subtitleColor = Color(colors.textSecondary)
+        dividerColor = Color(colors.borderDecorative)
+        footerBackgroundColor = Color(colors.backgroundTertiary)
+        doneBackgroundColor = Color(colors.buttonBackgroundTransparentActive)
     }
 }
 
