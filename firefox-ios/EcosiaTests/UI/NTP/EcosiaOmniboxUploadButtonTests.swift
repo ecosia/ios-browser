@@ -32,8 +32,8 @@ final class EcosiaOmniboxUploadButtonTests: XCTestCase {
         XCTAssertTrue(highlight?.isHidden == true)
     }
 
-    func testAttachmentIconLoadsFromFrameworkBundle() {
-        XCTAssertNotNil(UIImage.ecosia(named: "attachment"))
+    func testPlusIconLoadsFromFrameworkBundle() {
+        XCTAssertNotNil(UIImage.ecosia(named: "plus"))
     }
 
     func testApplyThemeSetsIconTint() {

@@ -5,7 +5,7 @@
 import UIKit
 import Common
 
-/// Paperclip upload control for the NTP omnibox bottom-left corner.
+/// Plus upload control for the NTP omnibox bottom-left corner.
 /// Shows a circular pressed-state background using the transparent-button active token.
 public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
 
@@ -22,7 +22,7 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
     private let iconView: UIImageView = .build { imageView in
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = false
-        imageView.image = UIImage.ecosia(named: "attachment")?.withRenderingMode(.alwaysTemplate)
+        imageView.image = UIImage.ecosia(named: "plus")?.withRenderingMode(.alwaysTemplate)
     }
 
     private var currentTheme: Theme?
