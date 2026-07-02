@@ -8,7 +8,7 @@ import Common
 @available(iOS 16.0, *)
 private enum OmniboxUploadDrawerUX {
     /// Approximate height for the "AI tools" sheet.
-    static let sheetHeight: CGFloat = 500
+    static let sheetHeight: CGFloat = 492
     static let uploadIconContainerHeight: CGFloat = 56
     static let uploadIconSize: CGFloat = 20
     static let chatModeIconSize: CGFloat = 24
@@ -74,9 +74,9 @@ struct OmniboxUploadDrawerView: View {
                 divider
                 chatModeList
             }
-            // Keep at least a 16dp gap above the banner; the spacer also pins
+            // Keep at least an 8dp gap above the banner; the spacer also pins
             // the banner to the bottom of the sheet when there is extra room.
-            Spacer(minLength: .ecosia.space._m)
+            Spacer(minLength: .ecosia.space._1s)
             footer
         }
         .padding(.horizontal, .ecosia.space._m)
@@ -95,7 +95,9 @@ struct OmniboxUploadDrawerView: View {
     private var header: some View {
         ZStack {
             Text(String.localized(.aiToolsTitle))
-                .font(.title2.weight(.bold))
+                // Headline text style is 17pt; semibold matches the design's
+                // 590 weight (the closest named system-font weight).
+                .font(.headline.weight(.semibold))
                 .foregroundColor(theme.titleColor)
 
             HStack {
@@ -188,10 +190,10 @@ struct OmniboxUploadDrawerView: View {
 
                 VStack(alignment: .leading, spacing: .ecosia.space._2s) {
                     Text(mode.title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.system(size: .ecosia.font._m, weight: .regular))
                         .foregroundColor(theme.titleColor)
                     Text(mode.subtitle)
-                        .font(.caption)
+                        .font(.system(size: .ecosia.font._s, weight: .regular))
                         .foregroundColor(theme.subtitleColor)
                         .multilineTextAlignment(.leading)
                 }
@@ -211,7 +213,7 @@ struct OmniboxUploadDrawerView: View {
     private var footer: some View {
         HStack(spacing: .ecosia.space._1s) {
             Text(String.localized(.aiToolsRedirectNotice))
-                .font(.subheadline)
+                .font(.system(size: .ecosia.font._s, weight: .regular))
                 .foregroundColor(theme.subtitleColor)
             Spacer(minLength: 0)
             Image.ecosia("ai-sparkle")
