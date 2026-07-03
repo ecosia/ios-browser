@@ -35,8 +35,6 @@ public struct EcosiaErrorToastRowContent: View {
         .frame(minHeight: UX.cardMinHeight)
         .padding(.horizontal, .ecosia.space._m)
         .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isStaticText)
     }
 }
 

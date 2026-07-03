@@ -60,8 +60,6 @@ public struct EcosiaErrorToast: View {
         .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
         .offset(y: hasEntered ? 0 : -UX.hiddenTopOffset)
         .opacity(opacity)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isStaticText)
         .allowsHitTesting(opacity > 0)
         .onAppear {
             guard animatesEntrance else {
