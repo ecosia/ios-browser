@@ -16,10 +16,25 @@ struct OmniboxUploadLocalPayload {
 }
 
 /// Deferred load closure used while the system picker hands back a selection.
-struct OmniboxUploadPendingItem {
+struct OmniboxUploadPendingItem: Sendable {
     let fileName: String
     let layout: OmniboxAttachment.Layout
-    let load: () async throws -> OmniboxUploadLocalPayload
+    let load: @Sendable () async throws -> OmniboxUploadLocalPayload
+
+    init(
+        fileName: String,
+        layout: OmniboxAttachment.Layout,
+        load: @escaping @Sendable () async throws -> OmniboxUploadLocalPayload
+    ) {
+        self.fileName = fileName
+        self.layout = layout
+        self.load = load
+    }
+
+    /// Loads file bytes off the main actor; UI updates stay on `@MainActor` callers.
+    nonisolated func loadPayload() async throws -> OmniboxUploadLocalPayload {
+        try await load()
+    }
 }
 
 enum OmniboxUploadPayloadLoader {
