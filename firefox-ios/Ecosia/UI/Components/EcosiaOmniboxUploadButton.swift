@@ -24,10 +24,6 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
     private let iconView: UIImageView = .build { imageView in
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = false
-        // Chat Modes swaps the file-upload paperclip for the plus icon that opens
-        // the AI tools drawer; without it the control stays the file-upload button.
-        let iconName = ChatModesFeatureFlag.isEnabled ? "plus" : "attachment"
-        imageView.image = UIImage.ecosia(named: iconName)?.withRenderingMode(.alwaysTemplate)
     }
 
     private var currentTheme: Theme?
@@ -49,6 +45,10 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
 
     private func setup() {
         backgroundColor = .clear
+        // Chat Modes swaps the file-upload paperclip for the plus icon that opens
+        // the AI tools drawer; without it the control stays the file-upload button.
+        let iconName = ChatModesFeatureFlag.isEnabled ? "plus" : "attachment"
+        iconView.image = UIImage.ecosia(named: iconName)?.withRenderingMode(.alwaysTemplate)
         accessibilityIdentifier = "NTPSearchBarUploadButton"
         accessibilityLabel = String.localized(.upload)
         accessibilityHint = String.localized(.uploadAccessibilityHint)

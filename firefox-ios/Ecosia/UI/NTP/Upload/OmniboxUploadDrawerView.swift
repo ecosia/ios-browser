@@ -77,10 +77,12 @@ struct OmniboxUploadDrawerView: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: .ecosia.space._l) {
-                header
+                // The "AI tools" title + checkmark and the modes list are Chat
+                // Modes UI; the upload tiles stay under the File Upload flag.
+                if ChatModesFeatureFlag.isEnabled {
+                    header
+                }
                 uploadRow
-                // Chat Modes gates the modes list; the upload header above stays
-                // under the File Upload feature flag.
                 if ChatModesFeatureFlag.isEnabled {
                     divider
                     chatModeList
