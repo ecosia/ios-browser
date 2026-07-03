@@ -333,6 +333,11 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(ecosified, URL(string: "https://ecosia.org?_sp=\(UUID(uuid: UUID_NULL).uuidString)"))
     }
 
+    func testPercentEncodedQueryComponentEncodesNonASCIICharacters() {
+        XCTAssertEqual(URL.percentEncodedQueryComponent("café"), "caf%C3%A9")
+        XCTAssertEqual(URL.percentEncodedQueryComponent("new images?"), "new%20images%3F")
+    }
+
     func testEcosifiedPreservesPercentEncodedAIChatQueryAndFiles() {
         User.shared.sendAnonymousUsageData = true
         User.shared.cookieConsentValue = "a"
