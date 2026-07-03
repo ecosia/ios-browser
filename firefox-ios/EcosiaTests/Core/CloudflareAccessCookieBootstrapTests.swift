@@ -35,6 +35,20 @@ final class CloudflareAccessCookieBootstrapTests: XCTestCase {
         XCTAssertEqual(cookies[0].domain, "api.ecosia-staging.xyz")
     }
 
+    func testAuthorizationCookies_convertsAnyHashableHeaderFields() throws {
+        let url = URL(string: "https://api.ecosia-staging.xyz/")!
+        let jwt = "eyJ.test.token"
+        let headerFields = CloudflareAccessCookieBootstrap.stringHeaderFields(from: [
+            "Set-Cookie": "CF_Authorization=\(jwt); Path=/; Secure; HttpOnly; SameSite=None",
+            NSString("Ignored"): "non-string-key"
+        ])
+        let cookies = HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
+            .filter { $0.name == CloudflareAccessCookieBootstrap.authorizationCookieName }
+
+        XCTAssertEqual(cookies.count, 1)
+        XCTAssertEqual(cookies[0].value, jwt)
+    }
+
     private func makeHTTPResponse(
         url: URL,
         statusCode: Int,

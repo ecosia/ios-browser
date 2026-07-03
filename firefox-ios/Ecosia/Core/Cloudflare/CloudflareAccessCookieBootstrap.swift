@@ -86,11 +86,19 @@ public enum CloudflareAccessCookieBootstrap {
     }
 
     static func authorizationCookies(from response: HTTPURLResponse, for url: URL) -> [HTTPCookie] {
-        guard let headerFields = response.allHeaderFields as? [String: String] else {
-            return []
-        }
+        let headerFields = stringHeaderFields(from: response.allHeaderFields)
         return HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
             .filter { $0.name == authorizationCookieName }
+    }
+
+    static func stringHeaderFields(from allHeaderFields: [AnyHashable: Any]) -> [String: String] {
+        allHeaderFields.reduce(into: [String: String]()) { fields, entry in
+            guard let key = entry.key as? String,
+                  let value = entry.value as? String else {
+                return
+            }
+            fields[key] = value
+        }
     }
 }
 
