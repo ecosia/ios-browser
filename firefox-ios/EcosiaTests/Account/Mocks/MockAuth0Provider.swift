@@ -117,6 +117,10 @@ class MockAuth0Provider: Auth0ProviderProtocol {
             throw NSError(domain: "MockAuth0Provider", code: 1007, userInfo: [NSLocalizedDescriptionKey: "Cannot renew credentials: no stored credentials"])
         }
 
+        if let mockCredentials {
+            return mockCredentials
+        }
+
         return try await credentialsManager.renew()
     }
 

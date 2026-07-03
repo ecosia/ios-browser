@@ -165,7 +165,7 @@ final class EcosiaAuth {
             onError: onErrorCallback
         )
 
-        await handleAuthenticationResult(result, isLogin: true)
+        await handleAuthenticationResult(result, context: .login)
     }
 
     private func performSignUp(_ flow: EcosiaAuthFlow) async {
@@ -176,24 +176,32 @@ final class EcosiaAuth {
             onError: onErrorCallback
         )
 
-        await handleAuthenticationResult(result, isLogin: true)
+        await handleAuthenticationResult(result, context: .signUp)
     }
 
-    private func handleAuthenticationResult(_ result: EcosiaAuthFlowResult, isLogin: Bool) async {
+    private enum AuthPresentationContext {
+        case login
+        case signUp
+
+        var usesSignInErrorToast: Bool { true }
+        var tracksSignInCancellation: Bool { self == .login }
+    }
+
+    private func handleAuthenticationResult(_ result: EcosiaAuthFlowResult, context: AuthPresentationContext) async {
         switch result {
         case .success:
             EcosiaLogger.auth.debug("Authentication flow completed successfully")
         case .failure(let error):
             EcosiaLogger.auth.error("Authentication flow failed: \(error)")
             if case .userCancelled = error {
-                if isLogin {
+                if context.tracksSignInCancellation {
                     Analytics.shared.accountSignInCancelled()
                 }
             } else {
                 // Show error toast for non-cancellation errors
                 await MainActor.run {
                     if #available(iOS 16.0, *) {
-                        browserViewController?.showAuthFlowErrorToast(isLogin: isLogin)
+                        browserViewController?.showAuthFlowErrorToast(isLogin: context.usesSignInErrorToast)
                     }
                 }
             }
