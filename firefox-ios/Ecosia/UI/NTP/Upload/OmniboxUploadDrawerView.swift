@@ -79,12 +79,18 @@ struct OmniboxUploadDrawerView: View {
             VStack(spacing: .ecosia.space._l) {
                 header
                 uploadRow
-                divider
-                chatModeList
+                // Chat Modes gates the modes list; the upload header above stays
+                // under the File Upload feature flag.
+                if ChatModesFeatureFlag.isEnabled {
+                    divider
+                    chatModeList
+                }
             }
-            // The banner is the last item in the flow, 16dp below the list.
-            footer
-                .padding(.top, .ecosia.space._m)
+            if ChatModesFeatureFlag.isEnabled {
+                // The banner is the last item in the flow, 16dp below the list.
+                footer
+                    .padding(.top, .ecosia.space._m)
+            }
         }
         .padding(.horizontal, .ecosia.space._m)
         .padding(.top, .ecosia.space._m)

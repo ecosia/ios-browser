@@ -174,3 +174,29 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         XCTAssertTrue(button.isHidden)
     }
 }
+
+@MainActor
+final class ChatModesFeatureFlagTests: XCTestCase {
+
+    override func tearDown() {
+        Unleash.clearInstanceModel()
+        super.tearDown()
+    }
+
+    private func setChatModesFlag(_ enabled: Bool) {
+        let toggle = Unleash.Toggle(
+            name: Unleash.Toggle.Name.chatModes.rawValue,
+            enabled: enabled,
+            variant: Unleash.Variant(name: "", enabled: false, payload: nil)
+        )
+        Unleash.model = Unleash.Model(toggles: Set([toggle]))
+    }
+
+    func testChatModesFlagReflectsToggle() {
+        setChatModesFlag(true)
+        XCTAssertTrue(ChatModesFeatureFlag.isEnabled)
+
+        setChatModesFlag(false)
+        XCTAssertFalse(ChatModesFeatureFlag.isEnabled)
+    }
+}
