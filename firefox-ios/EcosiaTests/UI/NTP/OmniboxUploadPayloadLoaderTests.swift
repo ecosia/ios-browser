@@ -15,4 +15,22 @@ final class OmniboxUploadPayloadLoaderTests: XCTestCase {
             XCTAssertEqual(error as? OmniboxUploadPayloadError, .fileTooLarge)
         }
     }
+
+    func testNormalizedJPEGFileNameReplacesExtension() {
+        XCTAssertEqual(
+            OmniboxUploadPayloadLoader.normalizedJPEGFileName(from: "IMG_0001.HEIC"),
+            "IMG_0001.jpg"
+        )
+        XCTAssertEqual(
+            OmniboxUploadPayloadLoader.normalizedJPEGFileName(from: "camera-photo.heic", fallback: "photo.jpg"),
+            "camera-photo.jpg"
+        )
+    }
+
+    func testNormalizedJPEGFileNameUsesFallbackForEmptyStem() {
+        XCTAssertEqual(
+            OmniboxUploadPayloadLoader.normalizedJPEGFileName(from: ".heic", fallback: "photo.jpg"),
+            "photo.jpg"
+        )
+    }
 }

@@ -86,12 +86,16 @@ extension OmniboxUploadPickerCoordinator: UIImagePickerControllerDelegate, UINav
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true)
 
-        let fileName: String
+        let rawFileName: String
         if let url = info[.imageURL] as? URL {
-            fileName = url.lastPathComponent
+            rawFileName = url.lastPathComponent
         } else {
-            fileName = "camera-photo.jpg"
+            rawFileName = "camera-photo.jpg"
         }
+        let fileName = OmniboxUploadPayloadLoader.normalizedJPEGFileName(
+            from: rawFileName,
+            fallback: "camera-photo.jpg"
+        )
 
         guard let image = info[.originalImage] as? UIImage,
               let data = image.jpegData(compressionQuality: 0.92) else { return }
@@ -103,6 +107,6 @@ extension OmniboxUploadPickerCoordinator: UIImagePickerControllerDelegate, UINav
                 mimeType: UTType.jpeg.preferredMIMEType ?? "image/jpeg"
             )
         }
-        delegate?.omniboxUploadDidPickPendingItems([pendingItem])
+        delegate?.omniboxUploadDidFinishPicking(items: [pendingItem], validationErrors: [])
     }
 }

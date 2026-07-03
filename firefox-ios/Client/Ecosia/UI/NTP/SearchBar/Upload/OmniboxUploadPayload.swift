@@ -41,6 +41,13 @@ enum OmniboxUploadPayloadLoader {
         )
     }
 
+    /// Replaces the extension with `.jpg` when image bytes are JPEG-encoded under a HEIC/HEIF name.
+    static func normalizedJPEGFileName(from fileName: String, fallback: String = "photo.jpg") -> String {
+        let stem = (fileName as NSString).deletingPathExtension
+        guard !stem.isEmpty else { return fallback }
+        return "\(stem).jpg"
+    }
+
     static func loadImage(data: Data, fileName: String, mimeType: String) throws -> OmniboxUploadLocalPayload {
         try validateSize(data)
         return OmniboxUploadLocalPayload(

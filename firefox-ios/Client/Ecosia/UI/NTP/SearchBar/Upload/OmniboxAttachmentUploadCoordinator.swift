@@ -8,6 +8,11 @@ import Ecosia
 @MainActor
 protocol OmniboxAttachmentUploadDelegate: AnyObject {
     func omniboxAttachmentsDidChange()
+    func omniboxUploadDidEncounterValidationErrors(_ errors: Set<OmniboxUploadValidationError>)
+}
+
+extension OmniboxAttachmentUploadDelegate {
+    func omniboxUploadDidEncounterValidationErrors(_ errors: Set<OmniboxUploadValidationError>) {}
 }
 
 /// Loads picker selections, shows loading tiles, uploads files, and updates the omnibox strip.
@@ -29,9 +34,21 @@ final class OmniboxAttachmentUploadCoordinator {
         guard let searchBar else { return }
 
         let remainingSlots = OmniboxUploadFileSelectionValidator.maxFileCount - searchBar.attachments.count
-        guard remainingSlots > 0 else { return }
+        if remainingSlots <= 0 {
+            delegate?.omniboxUploadDidEncounterValidationErrors([.tooManyFiles])
+            return
+        }
 
-        for item in items.prefix(remainingSlots) {
+        let acceptedItems = Array(items.prefix(remainingSlots))
+        let countErrors = OmniboxUploadFileSelectionValidator.validateSelectionCount(
+            selectedCount: items.count,
+            existingAttachmentCount: searchBar.attachments.count
+        )
+        if !countErrors.isEmpty {
+            delegate?.omniboxUploadDidEncounterValidationErrors(countErrors)
+        }
+
+        for item in acceptedItems {
             let attachment = OmniboxAttachment(
                 fileName: item.fileName,
                 layout: item.layout,
@@ -68,7 +85,9 @@ final class OmniboxAttachmentUploadCoordinator {
         guard let searchBar else { return }
 
         do {
-            let payload = try await item.load()
+            let payload = try await Task.detached(priority: .userInitiated) {
+                try await item.load()
+            }.value
             guard !Task.isCancelled else { return }
 
             if let previewImage = payload.previewImage {
@@ -99,18 +118,31 @@ final class OmniboxAttachmentUploadCoordinator {
             )
             EcosiaLogger.network.info("[FileUpload] Attachment \(attachmentID) ready fileId=\(fileId)")
             delegate?.omniboxAttachmentsDidChange()
+        } catch let error as OmniboxUploadPayloadError where error == .fileTooLarge {
+            guard !Task.isCancelled else { return }
+            searchBar.removeAttachment(id: attachmentID)
+            previewImages.removeValue(forKey: attachmentID)
+            delegate?.omniboxUploadDidEncounterValidationErrors([.fileTooLarge])
+            delegate?.omniboxAttachmentsDidChange()
         } catch {
             guard !Task.isCancelled else { return }
             EcosiaLogger.network.error(
                 "[FileUpload] Attachment \(attachmentID) failed: \(error.localizedDescription)"
             )
-            searchBar.updateAttachment(
-                id: attachmentID,
-                fileName: item.fileName,
-                layout: item.layout,
-                state: .failed,
-                previewImages: previewImages
-            )
+            if error is OmniboxUploadPayloadError {
+                searchBar.removeAttachment(id: attachmentID)
+                previewImages.removeValue(forKey: attachmentID)
+                delegate?.omniboxUploadDidEncounterValidationErrors([.uploadFailed])
+            } else {
+                searchBar.updateAttachment(
+                    id: attachmentID,
+                    fileName: item.fileName,
+                    layout: item.layout,
+                    state: .failed,
+                    previewImages: previewImages
+                )
+                delegate?.omniboxUploadDidEncounterValidationErrors([.uploadFailed])
+            }
             delegate?.omniboxAttachmentsDidChange()
         }
 
@@ -120,6 +152,15 @@ final class OmniboxAttachmentUploadCoordinator {
     private func uploadWithRetry(payload: OmniboxUploadLocalPayload,
                                  attachmentID: UUID,
                                  attempts: Int = 2) async throws -> String {
+        if OmniboxUploadDebugSimulation.shouldSimulateUploadAPIFailure {
+            EcosiaLogger.network.info("[FileUpload] Debug: simulating upload API failure")
+            throw NSError(
+                domain: "EcosiaDebug",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Debug: Simulated file upload API error"]
+            )
+        }
+
         var lastError: Error?
         for attempt in 1...attempts {
             do {

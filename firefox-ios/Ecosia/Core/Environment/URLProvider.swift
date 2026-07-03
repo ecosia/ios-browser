@@ -32,7 +32,7 @@ public enum URLProvider {
     public var searchAutocomplete: URL {
         // For now only production to avoid messing with Firefox's logic to include CF headers.
         URL(string: "https://ac.ecosia.org/autocomplete")!
-	}
+    }
 
     /// Endpoint that issues the EAIST Cloudflare WAF protection cookie.
     /// Must be called before requests to AI Worker endpoints — matches web `refreshToken()`.
