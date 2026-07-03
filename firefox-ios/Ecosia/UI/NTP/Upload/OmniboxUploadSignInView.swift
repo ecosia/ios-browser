@@ -5,10 +5,11 @@
 import SwiftUI
 import Common
 
-/// Bottom-sheet content shown when a logged-out user tries to upload files from the NTP omnibox.
+/// Bottom-sheet content shown when upload from the NTP omnibox requires authentication.
 ///
 /// Presented from `BrowserViewController+Omnibox` via `NTPOmniboxSheetPresenter` on
-/// `HomepageViewController` when a logged-out user taps the omnibox upload button.
+/// `HomepageViewController` when the user taps the omnibox upload button while logged out
+/// or while missing conversation scopes needed for AI chat attachments.
 /// `NTPOmniboxSheetState` dismisses this sheet before starting auth and before opening
 /// the upload drawer.
 @available(iOS 16.0, *)
