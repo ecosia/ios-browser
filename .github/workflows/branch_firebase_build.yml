@@ -1,0 +1,98 @@
+name: Branch Firebase QA Build
+
+# On-demand Firebase App Distribution build for a PR branch, so reviewers can QA a peer's
+# code while reviewing it. This does NOT build on every push — it only fires when someone
+# explicitly opts in, to keep CircleCI macOS credits under control.
+#
+# Two ways to request a build:
+#   - Add the `needs-qa` label to the PR.
+#   - Comment `/qa` on the PR.
+#
+# The actual build runs on CircleCI: this workflow just triggers the existing
+# `manual-firebase-deploy` workflow (job `build-and-deploy-firebase`, Firebase only, no
+# BrowserStack) via the CircleCI v2 API, passing the PR head branch and
+# `run-firebase-deploy: true`. Requires repo secret CIRCLECI_TOKEN (a CircleCI API token
+# with pipeline-trigger scope on ecosia/ios-browser).
+
+on:
+  pull_request:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+concurrency:
+  # Coalesce repeated requests on the same PR so a re-label / re-comment supersedes an
+  # in-flight trigger instead of stacking builds.
+  group: branch-firebase-build-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  trigger-firebase-build:
+    # Gate: `needs-qa` label added, OR a `/qa` comment on a pull request (not a plain issue).
+    if: >
+      (github.event_name == 'pull_request' && github.event.label.name == 'needs-qa') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/qa'))
+    runs-on: ubuntu-latest
+    name: Trigger CircleCI Firebase build
+    steps:
+      - name: Resolve PR branch and number
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            BRANCH="${{ github.event.pull_request.head.ref }}"
+          else
+            # issue_comment: fetch the PR to get its head branch.
+            PR_NUMBER="${{ github.event.issue.number }}"
+            BRANCH=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json headRefName --jq '.headRefName')
+          fi
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "Requesting Firebase QA build for PR #$PR_NUMBER (branch: $BRANCH)"
+
+      - name: Trigger CircleCI pipeline
+        id: trigger
+        env:
+          CIRCLECI_TOKEN: ${{ secrets.CIRCLECI_TOKEN }}
+          BRANCH: ${{ steps.pr.outputs.branch }}
+        run: |
+          if [ -z "$CIRCLECI_TOKEN" ]; then
+            echo "::error::CIRCLECI_TOKEN secret is not set. Create a CircleCI API token and add it as a repo secret."
+            exit 1
+          fi
+          PAYLOAD=$(jq -n --arg branch "$BRANCH" \
+            '{branch: $branch, parameters: {"run-firebase-deploy": true}}')
+          RESPONSE=$(curl -sS -X POST \
+            "https://circleci.com/api/v2/project/gh/ecosia/ios-browser/pipeline" \
+            -H "Circle-Token: $CIRCLECI_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD")
+          echo "$RESPONSE"
+          PIPELINE_NUMBER=$(echo "$RESPONSE" | jq -r '.number // empty')
+          if [ -z "$PIPELINE_NUMBER" ]; then
+            echo "::error::CircleCI did not return a pipeline number. Response above."
+            exit 1
+          fi
+          echo "pipeline_url=https://app.circleci.com/pipelines/github/ecosia/ios-browser?branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Comment on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment "${{ steps.pr.outputs.number }}" --repo "${{ github.repository }}" --body \
+          "🚀 Firebase QA build requested for \`${{ steps.pr.outputs.branch }}\`. Track it on [CircleCI](${{ steps.trigger.outputs.pipeline_url }}); once green it appears in Firebase App Distribution for the \`ecosia-internal-testers\` group."
+
+      - name: Remove needs-qa label
+        # Only relevant when triggered by the label; drop it so a future request is an
+        # explicit, deliberate re-label rather than lingering.
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr edit "${{ steps.pr.outputs.number }}" --repo "${{ github.repository }}" --remove-label "needs-qa" || true
