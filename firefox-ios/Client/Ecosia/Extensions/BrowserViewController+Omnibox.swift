@@ -131,6 +131,19 @@ extension BrowserViewController: NTPSearchBarDelegate {
         presentOmniboxUploadDrawer()
     }
 
+    fileprivate func configureOmniboxUploadAuthCallbacks(
+        auth: EcosiaAuth,
+        sheetState: NTPOmniboxSheetState?
+    ) -> EcosiaAuth {
+        auth
+            .onAuthFlowCompleted { [weak sheetState] success in
+                sheetState?.handleAuthenticationCompleted(success: success)
+            }
+            .onError { [weak sheetState] _ in
+                sheetState?.handleAuthenticationCompleted(success: false)
+            }
+    }
+
     fileprivate func presentOmniboxSignInSheetForUpload() {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
@@ -138,18 +151,12 @@ extension BrowserViewController: NTPSearchBarDelegate {
         homepage.presentOmniboxUploadSheetIfNeeded()
         sheetState.presentSignInSheetForUpload(
             onSignIn: { [weak self, weak sheetState] in
-                self?.ecosiaAuth?
-                    .onAuthFlowCompleted { success in
-                        sheetState?.handleAuthenticationCompleted(success: success)
-                    }
-                    .login()
+                guard let auth = self?.ecosiaAuth else { return }
+                configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).login()
             },
             onSignUp: { [weak self, weak sheetState] in
-                self?.ecosiaAuth?
-                    .onAuthFlowCompleted { success in
-                        sheetState?.handleAuthenticationCompleted(success: success)
-                    }
-                    .signUp()
+                guard let auth = self?.ecosiaAuth else { return }
+                configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).signUp()
             },
             onUploadDrawerRequested: { [weak self] in
                 self?.presentOmniboxUploadDrawer()
