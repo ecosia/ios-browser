@@ -276,6 +276,10 @@ jobs:
           paths:
             - bash.env
 
+  # On-demand branch QA builds trigger this job via the CircleCI API (parameter
+  # run-firebase-deploy) — see .github/workflows/branch_firebase_build.yml. It also serves
+  # the manual-firebase-deploy workflow. SPM packages are cached here (branch builds are the
+  # most frequent Firebase builds) to avoid re-resolving/compiling dependencies every run.
   build-and-deploy-firebase:
     <<: *environment_common
     <<: *macos_common
@@ -302,6 +306,11 @@ jobs:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
+      # Restore SPM packages into firefox-ios/SourcePackages/ (gym reuses this dir via
+      # cloned_source_packages_path in the build_ecosia_app lane). Keyed on the committed
+      # Package.resolved so the cache invalidates only when dependencies change.
+      - restore_cache:
+          key: 1-spm-{{ checksum "firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
       - run:
           name: Verify github
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
@@ -321,6 +330,10 @@ jobs:
               echo "🚀 PRODUCTION: Building Ecosia app"
               bundle exec fastlane build_ecosia_app
             fi
+      - save_cache:
+          key: 1-spm-{{ checksum "firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+          paths:
+            - firefox-ios/SourcePackages
       - run:
           name: Upload to Firebase (with dry-run support)
           command: |

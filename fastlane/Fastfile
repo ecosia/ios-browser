@@ -48,6 +48,9 @@ platform :ios do
       export_method: "ad-hoc",
       configuration: "Development_Firebase",
       xcargs: firebase_archive_args,
+      # Resolve SPM packages into a fixed dir so CI can cache them across runs
+      # (see the SPM restore_cache/save_cache steps in .circleci/config.yml).
+      cloned_source_packages_path: "firefox-ios/SourcePackages",
       export_options: {iCloudContainerEnvironment: 'Development'}
     )
   end
