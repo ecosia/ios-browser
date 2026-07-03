@@ -128,10 +128,18 @@ final class EcosiaErrorToastContainerView: UIView {
 
         scheduleFrontRowAutoDismiss()
 
-        if wasEmpty, let firstMessage = messages.first {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                UIAccessibility.post(notification: .announcement, argument: firstMessage)
-            }
+        if let announcement = messages.last {
+            let delay = wasEmpty
+                ? 0.25
+                : EcosiaErrorToastContainerUX.presentationAnimationDuration + 0.05
+            announceAccessibilityMessage(announcement, after: delay)
+        }
+    }
+
+    private func announceAccessibilityMessage(_ message: String, after delay: TimeInterval) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self, self.rows.last?.alpha ?? 0 > 0 else { return }
+            UIAccessibility.post(notification: .announcement, argument: message)
         }
     }
 

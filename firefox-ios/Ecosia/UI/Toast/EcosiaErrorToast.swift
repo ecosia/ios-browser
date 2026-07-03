@@ -81,7 +81,10 @@ public struct EcosiaErrorToast: View {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + entranceDelay) {
             guard announcesOnAppear else { return }
-            UIAccessibility.post(notification: .announcement, argument: subtitle)
+            Task { @MainActor in
+                guard opacity > 0, hasEntered else { return }
+                UIAccessibility.post(notification: .announcement, argument: subtitle)
+            }
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.displayDuration) {

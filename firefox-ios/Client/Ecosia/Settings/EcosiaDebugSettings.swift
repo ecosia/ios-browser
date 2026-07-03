@@ -482,7 +482,7 @@ final class SimulateUploadValidationErrorSetting: HiddenSetting {
         case .unsupportedFileType:
             return "DebugSimulateUploadUnsupportedFileType"
         case .uploadFailed:
-            return "DebugSimulateUploadAPIError"
+            return SimulateFileUploadAPIErrorSetting.debugKey
         }
     }
 
