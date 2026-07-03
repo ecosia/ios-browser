@@ -446,7 +446,7 @@ final class SimulateFileUploadAPIErrorSetting: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        let status = Self.isEnabled ? "ON (Upload will fail)" : "OFF"
+        let status = Self.isEnabled ? "ON (Simulating API failure)" : "OFF"
         return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
     }
 
@@ -454,7 +454,7 @@ final class SimulateFileUploadAPIErrorSetting: HiddenSetting {
         toggleSimulation(
             navigationController: navigationController,
             enabledTitle: "File Upload API Error Enabled ✅",
-            enabledMessage: "Next attachment upload will fail with an error toast.",
+            enabledMessage: "Attachment uploads will fail with an error toast until you toggle this off.",
             disabledTitle: "File Upload API Error Disabled ✅",
             disabledMessage: "Upload API errors disabled."
         )
@@ -494,7 +494,9 @@ final class SimulateUploadValidationErrorSetting: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        let status = Self.isEnabled(for: simulatedError) ? "ON (Next pick will fail)" : "OFF"
+        let status = Self.isEnabled(for: simulatedError)
+            ? "ON (Simulating \(simulatedError.debugLabel.lowercased()) error)"
+            : "OFF"
         return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
     }
 
@@ -502,7 +504,7 @@ final class SimulateUploadValidationErrorSetting: HiddenSetting {
         toggleSimulation(
             navigationController: navigationController,
             enabledTitle: "\(simulatedError.debugLabel) Error Enabled ✅",
-            enabledMessage: "Next attachment selection will show the \(simulatedError.debugLabel.lowercased()) error toast.",
+            enabledMessage: "Attachment selection will show the \(simulatedError.debugLabel.lowercased()) error toast until you toggle this off.",
             disabledTitle: "\(simulatedError.debugLabel) Error Disabled ✅",
             disabledMessage: "\(simulatedError.debugLabel) upload errors disabled."
         )
