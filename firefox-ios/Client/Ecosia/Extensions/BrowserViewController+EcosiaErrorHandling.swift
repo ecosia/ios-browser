@@ -232,6 +232,7 @@ final class EcosiaErrorToastContainerView: UIView {
                 .scaledBy(x: scale, y: scale)
             row.layer.zPosition = CGFloat(index)
             row.isUserInteractionEnabled = depthFromFront == 0
+            row.accessibilityElementsHidden = depthFromFront != 0
         }
 
         updateContainerHeight()
