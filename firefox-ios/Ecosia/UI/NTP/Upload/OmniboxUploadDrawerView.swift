@@ -7,8 +7,8 @@ import Common
 
 @available(iOS 16.0, *)
 private enum OmniboxUploadDrawerUX {
-    /// Approximate height for the "AI tools" sheet.
-    static let sheetHeight: CGFloat = 492
+    /// Initial sheet height used before the content measures its own height.
+    static let fallbackHeight: CGFloat = 480
     static let uploadIconContainerHeight: CGFloat = 56
     static let uploadIconSize: CGFloat = 20
     static let chatModeIconSize: CGFloat = 24
@@ -40,8 +40,15 @@ public struct OmniboxUploadDrawerSheet: View {
         OmniboxUploadDrawerView(windowUUID: windowUUID,
                                 onSelect: onSelect,
                                 onSelectChatMode: onSelectChatMode)
-            .presentationDetents([.height(OmniboxUploadDrawerUX.sheetHeight)])
-            .presentationDragIndicator(.visible)
+    }
+}
+
+/// Reports the drawer's intrinsic content height so the sheet can size itself.
+@available(iOS 16.0, *)
+private struct OmniboxDrawerHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }
 
@@ -57,6 +64,7 @@ struct OmniboxUploadDrawerView: View {
     // `Environment` type, which otherwise shadows the SwiftUI property wrapper.
     @SwiftUI.Environment(\.dismiss) private var dismiss
     @State private var theme = OmniboxUploadDrawerViewTheme()
+    @State private var contentHeight = OmniboxUploadDrawerUX.fallbackHeight
 
     init(windowUUID: WindowUUID,
          onSelect: @escaping (OmniboxUploadOption) -> Void,
@@ -74,19 +82,31 @@ struct OmniboxUploadDrawerView: View {
                 divider
                 chatModeList
             }
-            // Keep at least an 8dp gap above the banner; the spacer also pins
-            // the banner to the bottom of the sheet when there is extra room.
-            Spacer(minLength: .ecosia.space._1s)
+            // The banner is the last item in the flow, 16dp below the list.
             footer
+                .padding(.top, .ecosia.space._m)
         }
         .padding(.horizontal, .ecosia.space._m)
         .padding(.top, .ecosia.space._m)
         .padding(.bottom, .ecosia.space._l)
+        .frame(maxWidth: .infinity)
+        // Measure the intrinsic content height so the sheet detent fits exactly,
+        // keeping the banner at the bottom without a floating gap.
+        .background(
+            GeometryReader { proxy in
+                Color.clear.preference(key: OmniboxDrawerHeightKey.self, value: proxy.size.height)
+            }
+        )
+        .onPreferenceChange(OmniboxDrawerHeightKey.self) { height in
+            if height > 0 { contentHeight = height }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(theme.backgroundColor.ignoresSafeArea())
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String.localized(.aiToolsTitle))
         .ecosiaThemed(windowUUID, $theme)
+        .presentationDetents([.height(contentHeight)])
+        .presentationDragIndicator(.visible)
         .presentationBackgroundIfAvailable(theme.backgroundColor)
     }
 

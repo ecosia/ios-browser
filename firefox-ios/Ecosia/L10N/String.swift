@@ -312,7 +312,7 @@ extension String {
         case aiToolsTitle = "AI tools"
         case aiToolsRedirectNotice = "These features will redirect to AI Chat"
         case aiToolsDoneAccessibilityHint = "Dismisses the AI tools menu"
-        case chatModeStandard = "Standard mode"
+        case chatModeStandard = "Standard AI Chat"
         case chatModeThinkLonger = "Think longer"
         case chatModeDisplaySources = "Display sources"
         case chatModeLearning = "Learning"
