@@ -21,14 +21,43 @@ struct FilePresignRequest: BaseRequest {
 
     var additionalHeaders: [String: String]?
 
-    init(accessToken: String, authSessionCookie: HTTPCookie? = nil) {
+    init(
+        accessToken: String,
+        authSessionCookie: HTTPCookie? = nil,
+        cookieStorage: HTTPCookieStorage = .shared,
+        apiRoot: URL = Environment.current.urlProvider.apiRoot
+    ) {
         var headers = [
             "Authorization": "Bearer \(accessToken)",
             "X-API-Version": "v1",
         ]
-        if let authSessionCookie {
-            headers["Cookie"] = "\(authSessionCookie.name)=\(authSessionCookie.value)"
+        if let cookieHeader = Self.cookieHeaderValue(
+            cookieStorage: cookieStorage,
+            apiRoot: apiRoot,
+            authSessionCookie: authSessionCookie
+        ) {
+            headers["Cookie"] = cookieHeader
         }
         additionalHeaders = headers
+    }
+
+    /// Merges cookies already stored for the API host with the explicit auth-session cookie.
+    static func cookieHeaderValue(
+        cookieStorage: HTTPCookieStorage,
+        apiRoot: URL,
+        authSessionCookie: HTTPCookie?
+    ) -> String? {
+        var cookiesByName: [String: String] = [:]
+        for cookie in cookieStorage.cookies(for: apiRoot) ?? [] {
+            cookiesByName[cookie.name] = cookie.value
+        }
+        if let authSessionCookie {
+            cookiesByName[authSessionCookie.name] = authSessionCookie.value
+        }
+        guard !cookiesByName.isEmpty else { return nil }
+        return cookiesByName
+            .sorted { $0.key < $1.key }
+            .map { "\($0.key)=\($0.value)" }
+            .joined(separator: "; ")
     }
 }
