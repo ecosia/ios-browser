@@ -137,19 +137,17 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
         homepage.presentOmniboxUploadSheetIfNeeded()
         sheetState.presentSignInSheetForUpload(
-            onSignIn: { [weak self] in
+            onSignIn: { [weak self, weak sheetState] in
                 self?.ecosiaAuth?
-                    .onAuthFlowCompleted { [weak self] success in
-                        guard let homepage = self?.contentContainer.contentController as? HomepageViewController else { return }
-                        homepage.ecosiaAdapter?.omniboxSheetState.handleAuthenticationCompleted(success: success)
+                    .onAuthFlowCompleted { success in
+                        sheetState?.handleAuthenticationCompleted(success: success)
                     }
                     .login()
             },
-            onSignUp: { [weak self] in
+            onSignUp: { [weak self, weak sheetState] in
                 self?.ecosiaAuth?
-                    .onAuthFlowCompleted { [weak self] success in
-                        guard let homepage = self?.contentContainer.contentController as? HomepageViewController else { return }
-                        homepage.ecosiaAdapter?.omniboxSheetState.handleAuthenticationCompleted(success: success)
+                    .onAuthFlowCompleted { success in
+                        sheetState?.handleAuthenticationCompleted(success: success)
                     }
                     .signUp()
             },
