@@ -449,12 +449,12 @@ extension BrowserViewController: OmniboxUploadPickerDelegate, OmniboxAttachmentU
         batch.presentationTask?.cancel()
         batch.presentationTask = Task { @MainActor [weak self] in
             try? await Task.sleep(nanoseconds: 150_000_000)
-            guard let self, !Task.isCancelled else { return }
+            if Task.isCancelled { return }
 
             let accumulated = batch.errors
             batch.errors.removeAll()
             batch.presentationTask = nil
-            guard !accumulated.isEmpty else { return }
+            guard let self, !accumulated.isEmpty else { return }
 
             self.presentOmniboxUploadValidationErrors(accumulated)
         }
