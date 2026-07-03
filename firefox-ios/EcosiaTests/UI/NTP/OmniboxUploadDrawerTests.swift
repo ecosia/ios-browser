@@ -97,6 +97,23 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         XCTAssertTrue(didOpenDrawer)
     }
 
+    func testAuthenticationFailureClearsPendingUploadDrawer() {
+        let state = NTPOmniboxSheetState()
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: {},
+            onSignUp: {},
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+        state.handleSignInSheetSignInTapped()
+        state.handleSignInSheetDismissed()
+
+        state.handleAuthenticationCompleted(success: false)
+        state.handleAuthenticationSucceeded()
+        XCTAssertFalse(didOpenDrawer)
+    }
+
     func testSignInSheetDismissWithoutActionClearsPendingUpload() {
         let state = NTPOmniboxSheetState()
         var didOpenDrawer = false

@@ -64,12 +64,20 @@ final class NTPOmniboxSheetState: ObservableObject {
         onSignUp = nil
     }
 
-    func handleAuthenticationSucceeded() {
+    func handleAuthenticationCompleted(success: Bool) {
         guard shouldPresentUploadDrawerAfterAuth else { return }
+        guard success else {
+            clearSignInSheetCallbacks()
+            return
+        }
         shouldPresentUploadDrawerAfterAuth = false
         let callback = onUploadDrawerRequested
         onUploadDrawerRequested = nil
         callback?()
+    }
+
+    func handleAuthenticationSucceeded() {
+        handleAuthenticationCompleted(success: true)
     }
 
     private func clearSignInSheetCallbacks() {

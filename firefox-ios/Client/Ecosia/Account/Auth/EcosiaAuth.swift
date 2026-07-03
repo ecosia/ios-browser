@@ -176,7 +176,7 @@ final class EcosiaAuth {
             onError: onErrorCallback
         )
 
-        await handleAuthenticationResult(result, isLogin: false)
+        await handleAuthenticationResult(result, isLogin: true)
     }
 
     private func handleAuthenticationResult(_ result: EcosiaAuthFlowResult, isLogin: Bool) async {

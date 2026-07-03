@@ -140,18 +140,16 @@ extension BrowserViewController: NTPSearchBarDelegate {
             onSignIn: { [weak self] in
                 self?.ecosiaAuth?
                     .onAuthFlowCompleted { [weak self] success in
-                        guard success else { return }
                         guard let homepage = self?.contentContainer.contentController as? HomepageViewController else { return }
-                        homepage.ecosiaAdapter?.omniboxSheetState.handleAuthenticationSucceeded()
+                        homepage.ecosiaAdapter?.omniboxSheetState.handleAuthenticationCompleted(success: success)
                     }
                     .login()
             },
             onSignUp: { [weak self] in
                 self?.ecosiaAuth?
                     .onAuthFlowCompleted { [weak self] success in
-                        guard success else { return }
                         guard let homepage = self?.contentContainer.contentController as? HomepageViewController else { return }
-                        homepage.ecosiaAdapter?.omniboxSheetState.handleAuthenticationSucceeded()
+                        homepage.ecosiaAdapter?.omniboxSheetState.handleAuthenticationCompleted(success: success)
                     }
                     .signUp()
             },
