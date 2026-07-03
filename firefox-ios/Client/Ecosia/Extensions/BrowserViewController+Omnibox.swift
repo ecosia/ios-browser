@@ -29,9 +29,10 @@ extension BrowserViewController: NTPSearchBarDelegate {
         }
 
         if !chatFiles.isEmpty {
+            guard let tab = tabManager.selectedTab else { return }
             Task { @MainActor in
                 await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView()
-                submitOmniboxSearch(query: searchTerm, chatFiles: chatFiles)
+                submitOmniboxSearch(query: searchTerm, chatFiles: chatFiles, tab: tab)
                 showEmbeddedWebview()
             }
             return
@@ -48,8 +49,8 @@ extension BrowserViewController: NTPSearchBarDelegate {
     /// directly. Queries with attachments always open AI chat with the uploaded
     /// `files` metadata. Otherwise the query goes through Ecosia search with `ar=1` so
     /// the backend can decide between AI search and the standard SERP.
-    private func submitOmniboxSearch(query: String, chatFiles: [AIChatFileQuery] = []) {
-        guard let tab = tabManager.selectedTab else { return }
+    private func submitOmniboxSearch(query: String, chatFiles: [AIChatFileQuery] = [], tab: Tab? = nil) {
+        guard let tab = tab ?? tabManager.selectedTab else { return }
 
         if chatFiles.isEmpty, let url = URIFixup.getURL(query) {
             finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
@@ -62,7 +63,9 @@ extension BrowserViewController: NTPSearchBarDelegate {
                 query: query,
                 files: chatFiles
             )
-            EcosiaLogger.network.info("[Omnibox] Routing to AI chat: \(chatURL.absoluteString)")
+            EcosiaLogger.network.info(
+                "[Omnibox] Routing to AI chat (files=\(chatFiles.count), host=\(chatURL.host ?? "unknown"))"
+            )
             finishEditingAndSubmit(chatURL, visitType: .typed, forTab: tab)
             return
         }
