@@ -75,28 +75,38 @@ jobs:
 
       - name: Trigger CircleCI pipeline
         id: trigger
+        # This project uses CircleCI's new pipelines architecture (GitHub App), so the
+        # legacy `/project/gh/<org>/<repo>/pipeline` endpoint returns "Project not found".
+        # New pipelines trigger via `/pipeline/run` with a pipeline definition_id (a
+        # non-secret UUID from Project Settings > Pipelines, stored as the repo variable
+        # CIRCLECI_PIPELINE_DEFINITION_ID).
         env:
           CIRCLECI_TOKEN: ${{ secrets.CIRCLECI_TOKEN }}
+          DEFINITION_ID: ${{ vars.CIRCLECI_PIPELINE_DEFINITION_ID }}
           BRANCH: ${{ steps.pr.outputs.branch }}
         run: |
           if [ -z "$CIRCLECI_TOKEN" ]; then
             echo "::error::CIRCLECI_TOKEN secret is not set. Create a CircleCI API token and add it as a repo secret."
             exit 1
           fi
-          PAYLOAD=$(jq -n --arg branch "$BRANCH" \
-            '{branch: $branch, parameters: {"run-firebase-deploy": true}}')
+          if [ -z "$DEFINITION_ID" ]; then
+            echo "::error::CIRCLECI_PIPELINE_DEFINITION_ID variable is not set. Copy the pipeline definition ID from CircleCI Project Settings > Pipelines and add it as a repo variable."
+            exit 1
+          fi
+          PAYLOAD=$(jq -n --arg branch "$BRANCH" --arg def "$DEFINITION_ID" \
+            '{definition_id: $def, config: {branch: $branch}, checkout: {branch: $branch}, parameters: {"run-firebase-deploy": true}}')
           RESPONSE=$(curl -sS -X POST \
-            "https://circleci.com/api/v2/project/gh/ecosia/ios-browser/pipeline" \
+            "https://circleci.com/api/v2/project/github/ecosia/ios-browser/pipeline/run" \
             -H "Circle-Token: $CIRCLECI_TOKEN" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD")
           echo "$RESPONSE"
-          PIPELINE_NUMBER=$(echo "$RESPONSE" | jq -r '.number // empty')
-          if [ -z "$PIPELINE_NUMBER" ]; then
-            echo "::error::CircleCI did not return a pipeline number. Response above."
+          PIPELINE_ID=$(echo "$RESPONSE" | jq -r '.id // empty')
+          if [ -z "$PIPELINE_ID" ]; then
+            echo "::error::CircleCI did not return a pipeline id. Response above."
             exit 1
           fi
-          echo "pipeline_url=https://app.circleci.com/pipelines/github/ecosia/ios-browser?branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "pipeline_url=https://app.circleci.com/pipelines/github/ecosia?project=a8d1b3b6-86e0-4d72-bea5-e73ad105e0dc" >> "$GITHUB_OUTPUT"
 
       - name: Comment on PR
         env:
