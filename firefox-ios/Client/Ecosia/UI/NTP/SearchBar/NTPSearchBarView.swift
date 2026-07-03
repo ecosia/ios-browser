@@ -226,6 +226,10 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         }
     }
 
+    func normalizedSearchQuery(for text: String) -> String {
+        textView.normalizedSearchQuery(for: text)
+    }
+
     // MARK: Init
 
     override init(frame: CGRect) {

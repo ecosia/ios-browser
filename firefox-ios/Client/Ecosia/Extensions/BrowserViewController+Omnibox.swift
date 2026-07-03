@@ -45,10 +45,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
         showEmbeddedWebview()
     }
 
-    /// Builds the navigation URL for an omnibox submission. Pasted URLs navigate
-    /// directly. Queries with attachments always open AI chat with the uploaded
-    /// `files` metadata. Otherwise the query goes through Ecosia search with `ar=1` so
-    /// the backend can decide between AI search and the standard SERP.
+    /// Builds the navigation URL for an omnibox submission.
+    /// Pasted URLs navigate directly only when there are no attachments.
+    /// Queries with attachments always open AI chat with the uploaded `files` metadata.
+    /// Otherwise the query goes through Ecosia search with `ar=1` so the backend can decide
+    /// between AI search and the standard SERP.
     private func submitOmniboxSearch(query: String, chatFiles: [AIChatFileQuery] = [], tab: Tab? = nil) {
         guard let tab = tab ?? tabManager.selectedTab else { return }
 
@@ -92,7 +93,8 @@ extension BrowserViewController: NTPSearchBarDelegate {
         if anchor.hasAttachments {
             hideOmniboxSuggestions()
         } else if !anchor.text.isEmpty {
-            showOmniboxSuggestions(searchTerm: anchor.text, anchorView: anchor)
+            let searchTerm = anchor.normalizedSearchQuery(for: anchor.text)
+            showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
         }
     }
 
