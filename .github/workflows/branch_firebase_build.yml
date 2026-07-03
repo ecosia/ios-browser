@@ -47,21 +47,30 @@ jobs:
     runs-on: ubuntu-latest
     name: Trigger CircleCI Firebase build
     steps:
+      # SECURITY: never interpolate ${{ github.* }} values (especially the
+      # attacker-controllable PR head branch name) directly into a run: script - git refs
+      # legitimately allow shell metacharacters, so that would enable command injection.
+      # All context values are passed via env and referenced as quoted shell variables.
       - name: Resolve PR branch and number
         id: pr
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          PR_EVENT_NUMBER: ${{ github.event.pull_request.number }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            BRANCH="${{ github.event.pull_request.head.ref }}"
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            PR_NUMBER="$PR_EVENT_NUMBER"
+            BRANCH="$PR_HEAD_REF"
           else
             # issue_comment: fetch the PR to get its head branch.
-            PR_NUMBER="${{ github.event.issue.number }}"
-            BRANCH=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json headRefName --jq '.headRefName')
+            PR_NUMBER="$ISSUE_NUMBER"
+            BRANCH=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json headRefName --jq '.headRefName')
           fi
-          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          printf 'number=%s\n' "$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          printf 'branch=%s\n' "$BRANCH" >> "$GITHUB_OUTPUT"
           echo "Requesting Firebase QA build for PR #$PR_NUMBER (branch: $BRANCH)"
 
       - name: Trigger CircleCI pipeline
@@ -92,9 +101,13 @@ jobs:
       - name: Comment on PR
         env:
           GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          BRANCH: ${{ steps.pr.outputs.branch }}
+          PIPELINE_URL: ${{ steps.trigger.outputs.pipeline_url }}
         run: |
-          gh pr comment "${{ steps.pr.outputs.number }}" --repo "${{ github.repository }}" --body \
-          "🚀 Firebase QA build requested for \`${{ steps.pr.outputs.branch }}\`. Track it on [CircleCI](${{ steps.trigger.outputs.pipeline_url }}); once green it appears in Firebase App Distribution for the \`ecosia-internal-testers\` group."
+          gh pr comment "$PR_NUMBER" --repo "$REPO" --body \
+          "🚀 Firebase QA build requested for \`$BRANCH\`. Track it on [CircleCI]($PIPELINE_URL); once green it appears in Firebase App Distribution for the \`ecosia-internal-testers\` group."
 
       - name: Remove needs-qa label
         # Only relevant when triggered by the label; drop it so a future request is an
@@ -102,4 +115,6 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh pr edit "${{ steps.pr.outputs.number }}" --repo "${{ github.repository }}" --remove-label "needs-qa" || true
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "needs-qa" || true
