@@ -85,9 +85,7 @@ final class OmniboxAttachmentUploadCoordinator {
         guard let searchBar else { return }
 
         do {
-            let payload = try await Task.detached(priority: .userInitiated) {
-                try await item.load()
-            }.value
+            let payload = try await item.loadPayload()
             guard !Task.isCancelled else { return }
 
             if let previewImage = payload.previewImage {
