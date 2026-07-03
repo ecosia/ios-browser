@@ -177,7 +177,7 @@ public struct OmniboxUploadSignInSheet: View {
 public struct OmniboxUploadSignInViewTheme: EcosiaThemeable {
     public var backgroundColor = Color.white
     public var textPrimaryColor = Color.black
-    public var ctaButtonTextColor = Color.green
+    public var ctaButtonTextColor = Color.white
     public var ctaButtonBackgroundColor = Color.green
     public var secondaryButtonTextColor = Color.black
     public var secondaryButtonBorderColor = Color.gray
