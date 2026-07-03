@@ -187,7 +187,7 @@ final class EcosiaErrorToastContainerView: UIView {
     }
 
     private func removeRow(_ row: EcosiaErrorToastRowHost) {
-        guard let index = rows.firstIndex(where: { $0 === row }) else { return }
+        guard rows.contains(where: { $0 === row }), row.alpha > 0 else { return }
 
         cancelAutoDismiss()
 
@@ -202,10 +202,10 @@ final class EcosiaErrorToastContainerView: UIView {
                 self.parentViewController?.view.layoutIfNeeded()
             },
             completion: { [weak self] _ in
-                guard let self else { return }
+                guard let self, self.rows.contains(where: { $0 === row }) else { return }
                 row.teardown()
                 row.removeFromSuperview()
-                self.rows.remove(at: index)
+                self.rows.removeAll { $0 === row }
                 UIView.animate(
                     withDuration: EcosiaErrorToastContainerUX.presentationAnimationDuration,
                     animations: {
@@ -311,7 +311,12 @@ extension BrowserViewController {
     @discardableResult
     private func ensureEcosiaErrorToastContainer() -> EcosiaErrorToastContainerView {
         if let container = activeErrorToastContainer {
-            return container
+            if container.superview === view {
+                view.bringSubviewToFront(container)
+                return container
+            }
+            container.removeFromSuperview()
+            activeErrorToastContainer = nil
         }
 
         let container = EcosiaErrorToastContainerView()
