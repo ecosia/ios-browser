@@ -116,8 +116,10 @@ jobs:
           BRANCH: ${{ steps.pr.outputs.branch }}
           PIPELINE_URL: ${{ steps.trigger.outputs.pipeline_url }}
         run: |
-          gh pr comment "$PR_NUMBER" --repo "$REPO" --body \
-          "🚀 Firebase QA build requested for \`$BRANCH\`. Track it on [CircleCI]($PIPELINE_URL); once green it appears in Firebase App Distribution for the \`ecosia-internal-testers\` group."
+          # Build the body with printf (%s for untrusted values, so the branch name is
+          # never interpreted); backticks in the single-quoted format are literal markdown.
+          BODY=$(printf '🚀 Firebase QA build requested.\n\n- **Branch:** `%s`\n- **Pipeline:** [CircleCI](%s)' "$BRANCH" "$PIPELINE_URL")
+          gh pr comment "$PR_NUMBER" --repo "$REPO" --body "$BODY"
 
       - name: Remove needs-qa label
         # Only relevant when triggered by the label; drop it so a future request is an
