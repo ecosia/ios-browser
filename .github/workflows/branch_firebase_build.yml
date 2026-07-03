@@ -4,9 +4,10 @@ name: Branch Firebase QA Build
 # code while reviewing it. This does NOT build on every push — it only fires when someone
 # explicitly opts in, to keep CircleCI macOS credits under control.
 #
-# Two ways to request a build:
-#   - Add the `needs-qa` label to the PR.
-#   - Comment `/qa` on the PR.
+# To request a build, add the `needs-qa` label to the PR. Adding a label requires repo
+# access (triage or higher), so it is not open to arbitrary users. A `/qa` comment trigger
+# was intentionally not used: a comment's author_association is not a reliable permission
+# signal, so it could let a non-write user reach CI secrets.
 #
 # The actual build runs on CircleCI: this workflow just triggers the existing
 # `manual-firebase-deploy` workflow (job `build-and-deploy-firebase`, Firebase only, no
@@ -17,13 +18,11 @@ name: Branch Firebase QA Build
 on:
   pull_request:
     types: [labeled]
-  issue_comment:
-    types: [created]
 
 concurrency:
-  # Coalesce repeated requests on the same PR so a re-label / re-comment supersedes an
-  # in-flight trigger instead of stacking builds.
-  group: branch-firebase-build-${{ github.event.pull_request.number || github.event.issue.number }}
+  # Coalesce repeated requests on the same PR so a re-label supersedes an in-flight trigger
+  # instead of stacking builds.
+  group: branch-firebase-build-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
@@ -33,17 +32,9 @@ permissions:
 
 jobs:
   trigger-firebase-build:
-    # Gate: `needs-qa` label added, OR a `/qa` comment on a pull request (not a plain issue).
-    # Applying a label already requires write access, so the label path is inherently
-    # trusted. The comment path fires for anyone on a public repo, so it is additionally
-    # restricted to users with write access (OWNER/MEMBER/COLLABORATOR) to prevent
-    # arbitrary users from triggering builds that reach CI secrets.
-    if: >
-      (github.event_name == 'pull_request' && github.event.label.name == 'needs-qa') ||
-      (github.event_name == 'issue_comment' &&
-        github.event.issue.pull_request != null &&
-        startsWith(github.event.comment.body, '/qa') &&
-        contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association))
+    # Trigger only when the `needs-qa` label is added to a PR. Adding a label requires repo
+    # access (triage or higher), so it is not open to arbitrary users.
+    if: github.event_name == 'pull_request' && github.event.label.name == 'needs-qa'
     runs-on: ubuntu-latest
     name: Trigger CircleCI Firebase build
     steps:
@@ -54,24 +45,12 @@ jobs:
       - name: Resolve PR branch and number
         id: pr
         env:
-          GH_TOKEN: ${{ github.token }}
-          EVENT_NAME: ${{ github.event_name }}
-          REPO: ${{ github.repository }}
-          PR_EVENT_NUMBER: ${{ github.event.pull_request.number }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-            PR_NUMBER="$PR_EVENT_NUMBER"
-            BRANCH="$PR_HEAD_REF"
-          else
-            # issue_comment: fetch the PR to get its head branch.
-            PR_NUMBER="$ISSUE_NUMBER"
-            BRANCH=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json headRefName --jq '.headRefName')
-          fi
           printf 'number=%s\n' "$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          printf 'branch=%s\n' "$BRANCH" >> "$GITHUB_OUTPUT"
-          echo "Requesting Firebase QA build for PR #$PR_NUMBER (branch: $BRANCH)"
+          printf 'branch=%s\n' "$PR_HEAD_REF" >> "$GITHUB_OUTPUT"
+          echo "Requesting Firebase QA build for PR #$PR_NUMBER (branch: $PR_HEAD_REF)"
 
       - name: Trigger CircleCI pipeline
         id: trigger
@@ -101,12 +80,14 @@ jobs:
             -H "Content-Type: application/json" \
             -d "$PAYLOAD")
           echo "$RESPONSE"
-          PIPELINE_ID=$(echo "$RESPONSE" | jq -r '.id // empty')
-          if [ -z "$PIPELINE_ID" ]; then
-            echo "::error::CircleCI did not return a pipeline id. Response above."
+          # Link directly to this run by pipeline number (CircleCI redirects this short form
+          # to the pipeline in the new UI; the id UUID is not usable in the URL path).
+          PIPELINE_NUMBER=$(echo "$RESPONSE" | jq -r '.number // empty')
+          if [ -z "$PIPELINE_NUMBER" ]; then
+            echo "::error::CircleCI did not return a pipeline number. Response above."
             exit 1
           fi
-          echo "pipeline_url=https://app.circleci.com/pipelines/github/ecosia?project=a8d1b3b6-86e0-4d72-bea5-e73ad105e0dc" >> "$GITHUB_OUTPUT"
+          echo "pipeline_url=https://app.circleci.com/pipelines/github/ecosia/ios-browser/$PIPELINE_NUMBER" >> "$GITHUB_OUTPUT"
 
       - name: Comment on PR
         env:
