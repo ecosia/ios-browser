@@ -117,4 +117,17 @@ public extension OmniboxChatMode {
         case .learning: return "OmniboxChatModeLearningOption"
         }
     }
+
+    /// Extra query items appended to the AI Chat URL so the backend opens the
+    /// conversation in this mode. `standard` carries none (plain `/ai-chat`);
+    /// the others map to the agreed backend flags:
+    /// Think longer → `t=1`, Display sources → `m=2`, Learning → `m=1`.
+    var aiChatQueryItems: [URLQueryItem] {
+        switch self {
+        case .standard: return []
+        case .thinkLonger: return [URLQueryItem(name: "t", value: "1")]
+        case .displaySources: return [URLQueryItem(name: "m", value: "2")]
+        case .learning: return [URLQueryItem(name: "m", value: "1")]
+        }
+    }
 }

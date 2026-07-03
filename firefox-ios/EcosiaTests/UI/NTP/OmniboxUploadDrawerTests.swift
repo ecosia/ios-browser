@@ -70,6 +70,34 @@ final class OmniboxUploadDrawerTests: XCTestCase {
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-display-sources"))
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-learning"))
     }
+
+    func testChatModeAIChatQueryItemsMapToBackendFlags() {
+        XCTAssertTrue(OmniboxChatMode.standard.aiChatQueryItems.isEmpty)
+        XCTAssertEqual(OmniboxChatMode.thinkLonger.aiChatQueryItems,
+                       [URLQueryItem(name: "t", value: "1")])
+        XCTAssertEqual(OmniboxChatMode.displaySources.aiChatQueryItems,
+                       [URLQueryItem(name: "m", value: "2")])
+        XCTAssertEqual(OmniboxChatMode.learning.aiChatQueryItems,
+                       [URLQueryItem(name: "m", value: "1")])
+    }
+
+    func testAIChatURLCarriesChatModeQueryItems() {
+        let provider = URLProvider.production
+
+        let standardURL = provider.aiChat(origin: .omnibox,
+                                          query: "hello",
+                                          additionalQueryItems: OmniboxChatMode.standard.aiChatQueryItems)
+        let standardItems = URLComponents(url: standardURL, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        XCTAssertTrue(standardURL.path.hasSuffix("/ai-chat"))
+        XCTAssertFalse(standardItems.contains { $0.name == "t" || $0.name == "m" })
+
+        let learningURL = provider.aiChat(origin: .omnibox,
+                                          query: "hello",
+                                          additionalQueryItems: OmniboxChatMode.learning.aiChatQueryItems)
+        let learningItems = URLComponents(url: learningURL, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        XCTAssertTrue(learningItems.contains(URLQueryItem(name: "m", value: "1")))
+        XCTAssertTrue(learningItems.contains(URLQueryItem(name: "q", value: "hello")))
+    }
 }
 
 @MainActor
@@ -78,7 +106,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
     func testSelectedOptionIsDeliveredAfterDrawerDismisses() {
         let state = NTPOmniboxSheetState()
         var received: OmniboxUploadOption?
-        state.presentUploadDrawer(onSelectUpload: { received = $0 }, onSelectChatMode: { _ in })
+        state.presentUploadDrawer(onSelectUpload: { received = $0 }, onChatModeSelectionChanged: { _ in })
 
         state.handleUploadOptionSelected(.files)
         XCTAssertFalse(state.showUploadDrawer)
@@ -88,32 +116,53 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         XCTAssertEqual(received, .files)
     }
 
-    func testSelectedChatModeIsDeliveredAfterDrawerDismisses() {
+    func testSelectedChatModeAppliesImmediatelyOnTap() {
         let state = NTPOmniboxSheetState()
-        var receivedMode: OmniboxChatMode?
+        var changes: [OmniboxChatMode?] = []
         var receivedUpload: OmniboxUploadOption?
         state.presentUploadDrawer(onSelectUpload: { receivedUpload = $0 },
-                                  onSelectChatMode: { receivedMode = $0 })
+                                  onChatModeSelectionChanged: { changes.append($0) })
 
         state.handleChatModeSelected(.thinkLonger)
+        // Delivered on tap — not deferred until the sheet dismisses.
+        XCTAssertEqual(state.selectedChatMode, .thinkLonger)
+        XCTAssertEqual(changes, [.thinkLonger])
         XCTAssertFalse(state.showUploadDrawer)
-        XCTAssertNil(receivedMode)
-
-        state.handleUploadDrawerDismissed()
-        XCTAssertEqual(receivedMode, .thinkLonger)
         XCTAssertNil(receivedUpload)
+    }
+
+    func testSelectingChatModeReplacesThePreviousOne() {
+        let state = NTPOmniboxSheetState()
+        state.presentUploadDrawer(onSelectUpload: { _ in }, onChatModeSelectionChanged: { _ in })
+
+        state.handleChatModeSelected(.thinkLonger)
+        state.handleChatModeSelected(.learning)
+        XCTAssertEqual(state.selectedChatMode, .learning)
+    }
+
+    func testReTappingActiveChatModeInDrawerKeepsItSelected() {
+        // Deselection happens via the omnibox chip, not the drawer — re-picking
+        // the active mode just closes the drawer with the mode still active.
+        let state = NTPOmniboxSheetState()
+        var changes: [OmniboxChatMode?] = []
+        state.presentUploadDrawer(onSelectUpload: { _ in },
+                                  onChatModeSelectionChanged: { changes.append($0) })
+
+        state.handleChatModeSelected(.learning)
+        state.handleChatModeSelected(.learning)
+        XCTAssertEqual(state.selectedChatMode, .learning)
+        XCTAssertEqual(changes, [.learning, .learning])
     }
 
     func testDismissWithoutSelectionDoesNotDeliverOption() {
         let state = NTPOmniboxSheetState()
         var received: OmniboxUploadOption?
-        var receivedMode: OmniboxChatMode?
         state.presentUploadDrawer(onSelectUpload: { received = $0 },
-                                  onSelectChatMode: { receivedMode = $0 })
+                                  onChatModeSelectionChanged: { _ in })
 
         state.handleUploadDrawerDismissed()
         XCTAssertNil(received)
-        XCTAssertNil(receivedMode)
+        XCTAssertNil(state.selectedChatMode)
     }
 }
 

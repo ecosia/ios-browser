@@ -36,20 +36,24 @@ private enum OmniboxUploadDrawerUX {
 @available(iOS 16.0, *)
 public struct OmniboxUploadDrawerSheet: View {
     private let windowUUID: WindowUUID
-    private let onSelectUploadOption: (OmniboxUploadOption) -> Void
+    private let selectedChatMode: OmniboxChatMode?
+    private let onSelect: (OmniboxUploadOption) -> Void
     private let onSelectChatMode: (OmniboxChatMode) -> Void
 
     public init(windowUUID: WindowUUID,
-                onSelectUploadOption: @escaping (OmniboxUploadOption) -> Void,
+                selectedChatMode: OmniboxChatMode?,
+                onSelect: @escaping (OmniboxUploadOption) -> Void,
                 onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
         self.windowUUID = windowUUID
-        self.onSelectUploadOption = onSelectUploadOption
+        self.selectedChatMode = selectedChatMode
+        self.onSelect = onSelect
         self.onSelectChatMode = onSelectChatMode
     }
 
     public var body: some View {
         OmniboxUploadDrawerView(windowUUID: windowUUID,
-                                onSelectUploadOption: onSelectUploadOption,
+                                selectedChatMode: selectedChatMode,
+                                onSelect: onSelect,
                                 onSelectChatMode: onSelectChatMode)
     }
 }
@@ -68,7 +72,8 @@ struct OmniboxUploadDrawerView: View {
     private typealias UX = OmniboxUploadDrawerUX
 
     private let windowUUID: WindowUUID
-    private let onSelectUploadOption: (OmniboxUploadOption) -> Void
+    private let selectedChatMode: OmniboxChatMode?
+    private let onSelect: (OmniboxUploadOption) -> Void
     private let onSelectChatMode: (OmniboxChatMode) -> Void
 
     // `Environment` is qualified because the Ecosia framework defines its own
@@ -78,10 +83,12 @@ struct OmniboxUploadDrawerView: View {
     @State private var contentHeight = OmniboxUploadDrawerUX.fallbackHeight
 
     init(windowUUID: WindowUUID,
-         onSelectUploadOption: @escaping (OmniboxUploadOption) -> Void,
+         selectedChatMode: OmniboxChatMode?,
+         onSelect: @escaping (OmniboxUploadOption) -> Void,
          onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
         self.windowUUID = windowUUID
-        self.onSelectUploadOption = onSelectUploadOption
+        self.selectedChatMode = selectedChatMode
+        self.onSelect = onSelect
         self.onSelectChatMode = onSelectChatMode
     }
 
@@ -169,7 +176,7 @@ struct OmniboxUploadDrawerView: View {
 
     private func uploadOptionButton(for option: OmniboxUploadOption) -> some View {
         Button {
-            onSelectUploadOption(option)
+            onSelect(option)
         } label: {
             VStack(spacing: .ecosia.space._1s) {
                 Image.ecosia(option.iconName)
@@ -247,6 +254,14 @@ struct OmniboxUploadDrawerView: View {
                 }
 
                 Spacer(minLength: 0)
+
+                // The active mode is marked with a trailing checkmark; re-tapping
+                // it deselects (handled by the presenter that owns the selection).
+                if mode == selectedChatMode {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: UX.doneGlyphSize, weight: .medium))
+                        .foregroundColor(theme.selectedCheckmarkColor)
+                }
             }
             .padding(.horizontal, UX.chatModeRowHorizontalPadding)
             .padding(.vertical, UX.chatModeRowVerticalPadding)
@@ -255,6 +270,7 @@ struct OmniboxUploadDrawerView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(mode.accessibilityLabel)
         .accessibilityHint(mode.accessibilityHint)
+        .accessibilityAddTraits(mode == selectedChatMode ? [.isSelected] : [])
         .accessibilityIdentifier(mode.accessibilityIdentifier)
     }
 
@@ -296,6 +312,7 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
     var footerBackgroundColor = Color.white
     var doneBackgroundColor = Color.gray.opacity(0.2)
     var listBackgroundColor = Color.white
+    var selectedCheckmarkColor = Color.green
 
     mutating func applyTheme(theme: Theme) {
         let colors = theme.colors.ecosia
@@ -311,6 +328,7 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
         // Solid card behind the grouped chat-mode rows (elevation-1, like the
         // upload tiles and iOS inset-grouped cells).
         listBackgroundColor = Color(colors.backgroundElevation1)
+        selectedCheckmarkColor = Color(colors.brandPrimary)
     }
 }
 
