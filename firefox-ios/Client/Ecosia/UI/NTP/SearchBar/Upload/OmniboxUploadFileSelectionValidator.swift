@@ -101,6 +101,12 @@ enum OmniboxUploadFileSelectionValidator {
     }
 
     private static func fileSize(for url: URL) -> Int? {
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer {
+            if accessed {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
         let values = try? url.resourceValues(forKeys: [.fileSizeKey])
         return values?.fileSize
     }
