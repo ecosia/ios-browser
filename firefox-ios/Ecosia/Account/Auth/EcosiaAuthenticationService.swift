@@ -91,6 +91,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         try await authenticate(screenHint: .login)
     }
 
+    /// Creates a new account asynchronously and stores credentials if successful.
+    /// - Returns: An `AccountOrigin` indicating whether the user created a new account or signed in to an existing one.
+    /// - Throws: Same errors as `login()`.
     @discardableResult
     public func signUp() async throws -> AccountOrigin {
         try await authenticate(screenHint: .signUp)

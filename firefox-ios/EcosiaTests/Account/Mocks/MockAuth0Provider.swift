@@ -121,7 +121,7 @@ class MockAuth0Provider: Auth0ProviderProtocol {
             return mockCredentials
         }
 
-        return try await credentialsManager.renew()
+        return createMockCredentials()
     }
 
     // MARK: - Helper Methods
