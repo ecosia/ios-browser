@@ -252,8 +252,10 @@ final class EcosiaErrorToastContainerView: UIView {
             return
         }
 
+        guard bounds.width > 0 else { return }
+
         frontRow.layoutIfNeeded()
-        let fittingWidth = bounds.width > 0 ? bounds.width : UIScreen.main.bounds.width
+        let fittingWidth = bounds.width
         let frontHeight = frontRow.systemLayoutSizeFitting(
             CGSize(width: fittingWidth, height: UIView.layoutFittingCompressedSize.height),
             withHorizontalFittingPriority: .required,
@@ -324,6 +326,7 @@ extension BrowserViewController {
                 view.bringSubviewToFront(container)
                 return container
             }
+            container.clear()
             container.removeFromSuperview()
             activeErrorToastContainer = nil
         }
