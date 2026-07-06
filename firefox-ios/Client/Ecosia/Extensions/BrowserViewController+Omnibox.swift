@@ -85,9 +85,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
         guard let anchor = ntpOmniboxAnchorView else { return }
         if anchor.hasAttachments {
             hideOmniboxSuggestions()
-        } else if !anchor.text.isEmpty {
+        } else {
             let searchTerm = anchor.normalizedSearchQuery(for: anchor.text)
-            showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
+            if !searchTerm.isEmpty {
+                showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
+            }
         }
     }
 
