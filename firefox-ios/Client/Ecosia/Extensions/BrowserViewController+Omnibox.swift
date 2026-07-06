@@ -143,20 +143,57 @@ extension BrowserViewController: NTPSearchBarDelegate {
     func ntpSearchBarDidTapUpload() {
         guard FileUploadFeatureFlag.isEnabled else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
-        if ecosiaAuth?.isLoggedIn == false {
+        let isLoggedIn = ecosiaAuth?.isLoggedIn == true
+        let hasUploadScopes = EcosiaAuthenticationService.shared.hasConversationScopes
+        if !isLoggedIn || !hasUploadScopes {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
-                presentAccountImpactFromNTPHeader()
+                presentOmniboxSignInSheetForUpload()
             } else {
-                ecosiaAuth?.login()
+                guard let auth = ecosiaAuth else { return }
+                auth
+                    .onAuthFlowCompleted { [weak self] success in
+                        guard success else { return }
+                        self?.presentOmniboxUploadDrawer()
+                    }
+                    .onError { _ in }
+                    .login()
             }
             return
         }
         presentOmniboxUploadDrawer()
     }
 
-    fileprivate func presentAccountImpactFromNTPHeader() {
-        guard let homepage = contentContainer.contentController as? HomepageViewController else { return }
-        homepage.ecosiaAdapter?.headerViewModel?.presentAccountImpact()
+    fileprivate func configureOmniboxUploadAuthCallbacks(
+        auth: EcosiaAuth,
+        sheetState: NTPOmniboxSheetState?
+    ) -> EcosiaAuth {
+        auth
+            .onAuthFlowCompleted { [weak sheetState] success in
+                sheetState?.handleAuthenticationCompleted(success: success)
+            }
+            .onError { [weak sheetState] _ in
+                sheetState?.handleAuthenticationCompleted(success: false)
+            }
+    }
+
+    fileprivate func presentOmniboxSignInSheetForUpload() {
+        guard let homepage = contentContainer.contentController as? HomepageViewController,
+              let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
+
+        homepage.presentOmniboxUploadSheetIfNeeded()
+        sheetState.presentSignInSheetForUpload(
+            onSignIn: { [weak self, weak sheetState] in
+                guard let self, let auth = self.ecosiaAuth else { return }
+                self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).login()
+            },
+            onSignUp: { [weak self, weak sheetState] in
+                guard let self, let auth = self.ecosiaAuth else { return }
+                self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).signUp()
+            },
+            onUploadDrawerRequested: { [weak self] in
+                self?.presentOmniboxUploadDrawer()
+            }
+        )
     }
 
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {

@@ -83,11 +83,36 @@ final class AuthTests: XCTestCase {
 
         // Assert
         XCTAssertEqual(mockProvider.startAuthCallCount, 1)
+        XCTAssertEqual(mockProvider.lastAuthScreenHint, .login)
         XCTAssertEqual(mockProvider.storeCredentialsCallCount, 1)
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, expectedCredentials.idToken)
         XCTAssertEqual(auth.accessToken, expectedCredentials.accessToken)
         XCTAssertEqual(auth.refreshToken, expectedCredentials.refreshToken)
+    }
+
+    func testSignUp_usesSignUpScreenHint() async {
+        // Arrange
+        mockProvider.mockCredentials = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+
+        // Act
+        do {
+            _ = try await auth.signUp()
+        } catch {
+            XCTFail("Sign up should succeed, but failed with: \(error)")
+            return
+        }
+
+        // Assert
+        XCTAssertEqual(mockProvider.startAuthCallCount, 1)
+        XCTAssertEqual(mockProvider.lastAuthScreenHint, .signUp)
     }
 
     func testLogin_withAuthFailure_doesNotUpdateState() async {

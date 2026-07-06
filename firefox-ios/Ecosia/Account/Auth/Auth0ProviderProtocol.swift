@@ -19,9 +19,10 @@ public protocol Auth0ProviderProtocol {
 
     /// Starts the authentication process asynchronously and returns credentials.
     ///
+    /// - Parameter screenHint: The Auth0 Universal Login screen to present.
     /// - Returns: A `Credentials` object upon successful authentication.
     /// - Throws: An error if the authentication fails.
-    func startAuth() async throws -> Credentials
+    func startAuth(screenHint: AuthScreenHint) async throws -> Credentials
 
     /// Clears the current authentication session asynchronously.
     ///
@@ -82,8 +83,14 @@ extension Auth0ProviderProtocol {
 
     public var credentialsManager: CredentialsManagerProtocol { EcosiaAuthenticationService.defaultCredentialsManager }
 
+    public func startAuth(screenHint: AuthScreenHint) async throws -> Credentials {
+        return try await makeHttpsWebAuth()
+            .parameters(["screen_hint": screenHint.rawValue])
+            .start()
+    }
+
     public func startAuth() async throws -> Credentials {
-        return try await webAuth.start()
+        try await startAuth(screenHint: .login)
     }
 
     public func clearSession() async throws {

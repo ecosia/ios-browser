@@ -72,6 +72,87 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         state.handleUploadDrawerDismissed()
         XCTAssertNil(received)
     }
+
+    func testSignInSheetDismissalStartsSignInAfterSheetCloses() {
+        let state = NTPOmniboxSheetState()
+        var didSignIn = false
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: { didSignIn = true },
+            onSignUp: {},
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+        XCTAssertTrue(state.showSignInSheet)
+
+        state.handleSignInSheetSignInTapped()
+        XCTAssertFalse(state.showSignInSheet)
+        XCTAssertFalse(didSignIn)
+
+        state.handleSignInSheetDismissed()
+        XCTAssertTrue(didSignIn)
+        XCTAssertFalse(didOpenDrawer)
+
+        state.handleAuthenticationSucceeded()
+        XCTAssertTrue(didOpenDrawer)
+    }
+
+    func testAuthenticationFailureClearsPendingUploadDrawer() {
+        let state = NTPOmniboxSheetState()
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: {},
+            onSignUp: {},
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+        state.handleSignInSheetSignInTapped()
+        state.handleSignInSheetDismissed()
+
+        state.handleAuthenticationCompleted(success: false)
+        state.handleAuthenticationSucceeded()
+        XCTAssertFalse(didOpenDrawer)
+    }
+
+    func testSignInSheetDismissWithoutActionClearsPendingUpload() {
+        let state = NTPOmniboxSheetState()
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: {},
+            onSignUp: {},
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+
+        state.showSignInSheet = false
+        state.handleSignInSheetDismissed()
+
+        state.handleAuthenticationSucceeded()
+        XCTAssertFalse(didOpenDrawer)
+    }
+
+    func testSignInSheetDismissalStartsSignUpAfterSheetCloses() {
+        let state = NTPOmniboxSheetState()
+        var didSignUp = false
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: {},
+            onSignUp: { didSignUp = true },
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+
+        state.handleSignInSheetCreateAccountTapped()
+        XCTAssertFalse(state.showSignInSheet)
+        XCTAssertFalse(didSignUp)
+
+        state.handleSignInSheetDismissed()
+        XCTAssertTrue(didSignUp)
+        XCTAssertFalse(didOpenDrawer)
+
+        state.handleAuthenticationSucceeded()
+        XCTAssertTrue(didOpenDrawer)
+    }
 }
 
 @MainActor
