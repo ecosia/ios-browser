@@ -82,6 +82,7 @@ final class OmniboxAttachmentUploadCoordinator {
     }
 
     private func loadAndUpload(attachmentID: UUID, item: OmniboxUploadPendingItem) async {
+        defer { tasks.removeValue(forKey: attachmentID) }
         guard let searchBar else { return }
 
         do {
@@ -143,8 +144,6 @@ final class OmniboxAttachmentUploadCoordinator {
             }
             delegate?.omniboxAttachmentsDidChange()
         }
-
-        tasks.removeValue(forKey: attachmentID)
     }
 
     private func uploadWithRetry(payload: OmniboxUploadLocalPayload,
