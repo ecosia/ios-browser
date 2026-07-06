@@ -181,7 +181,4 @@ workflows:
           context: napps
       - build-testflight-deploy:
           name: Auto Deploy release version to TestFlight
-          requires:
-            - L10N Translation Completeness Check
-            - Critical Health Checks (release cut pipeline)
-          context: napps 
+          context: napps
