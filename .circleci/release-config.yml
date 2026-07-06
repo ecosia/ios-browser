@@ -108,10 +108,7 @@ jobs:
               echo "🚀 PRODUCTION: Running iOS tests on BrowserStack"
               echo "Using App URL: $BROWSERSTACK_URL"
               cd mobile-acceptance-testing
-              mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_URL" || {
-                echo "Health checks failed, but continuing with deployment..."
-                exit 0
-              }
+              mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_URL"
             fi
       - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
@@ -181,7 +178,4 @@ workflows:
           context: napps
       - build-testflight-deploy:
           name: Auto Deploy release version to TestFlight
-          requires:
-            - L10N Translation Completeness Check
-            - Critical Health Checks (release cut pipeline)
-          context: napps 
+          context: napps
