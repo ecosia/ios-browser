@@ -107,6 +107,7 @@ final class AuthTests: XCTestCase {
             _ = try await auth.signUp()
         } catch {
             XCTFail("Sign up should succeed, but failed with: \(error)")
+            return
         }
 
         // Assert

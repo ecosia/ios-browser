@@ -148,11 +148,12 @@ extension BrowserViewController: NTPSearchBarDelegate {
                 presentOmniboxSignInSheetForUpload()
             } else {
                 guard let auth = ecosiaAuth else { return }
-                configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: omniboxSheetState)
+                auth
                     .onAuthFlowCompleted { [weak self] success in
                         guard success else { return }
                         self?.presentOmniboxUploadDrawer()
                     }
+                    .onError { _ in }
                     .login()
             }
             return

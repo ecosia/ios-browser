@@ -84,7 +84,9 @@ extension Auth0ProviderProtocol {
     public var credentialsManager: CredentialsManagerProtocol { EcosiaAuthenticationService.defaultCredentialsManager }
 
     public func startAuth(screenHint: AuthScreenHint) async throws -> Credentials {
-        return try await webAuth.start()
+        return try await makeHttpsWebAuth()
+            .parameters(["screen_hint": screenHint.rawValue])
+            .start()
     }
 
     public func startAuth() async throws -> Credentials {
