@@ -105,6 +105,8 @@ public extension OmniboxChatMode {
         }
     }
 
+    var isNew: Bool { self == .thinkLonger }
+
     var accessibilityLabel: String { title }
 
     var accessibilityHint: String { String.localized(.aiChatAccessibilityHint) }
