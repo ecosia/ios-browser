@@ -117,6 +117,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
         let hasUploadScopes = EcosiaAuthenticationService.shared.hasConversationScopes
         if !isLoggedIn || !hasUploadScopes {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
+                guard ecosiaAuth != nil else { return }
                 presentOmniboxSignInSheetForUpload()
             } else {
                 guard let auth = ecosiaAuth else { return }
@@ -153,11 +154,17 @@ extension BrowserViewController: NTPSearchBarDelegate {
         homepage.presentOmniboxUploadSheetIfNeeded()
         sheetState.presentSignInSheetForUpload(
             onSignIn: { [weak self, weak sheetState] in
-                guard let self, let auth = self.ecosiaAuth else { return }
+                guard let self, let auth = self.ecosiaAuth else {
+                    sheetState?.cancelPendingUploadAfterSignIn()
+                    return
+                }
                 self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).login()
             },
             onSignUp: { [weak self, weak sheetState] in
-                guard let self, let auth = self.ecosiaAuth else { return }
+                guard let self, let auth = self.ecosiaAuth else {
+                    sheetState?.cancelPendingUploadAfterSignIn()
+                    return
+                }
                 self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).signUp()
             },
             onUploadDrawerRequested: { [weak self] in

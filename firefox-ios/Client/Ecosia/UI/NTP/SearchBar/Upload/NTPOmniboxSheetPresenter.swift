@@ -10,7 +10,6 @@ import Ecosia
 @available(iOS 16.0, *)
 struct NTPOmniboxSheetPresenter: View {
     @ObservedObject var sheetState: NTPOmniboxSheetState
-    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
     let windowUUID: WindowUUID
 
     var body: some View {
@@ -38,11 +37,6 @@ struct NTPOmniboxSheetPresenter: View {
             }) {
                 OmniboxUploadDrawerSheet(windowUUID: windowUUID) { option in
                     sheetState.handleUploadOptionSelected(option)
-                }
-            }
-            .onChange(of: authStateProvider.isLoggedIn) { isLoggedIn in
-                if isLoggedIn {
-                    sheetState.handleAuthenticationSucceeded()
                 }
             }
     }
