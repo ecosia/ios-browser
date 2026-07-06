@@ -85,9 +85,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
         guard let anchor = ntpOmniboxAnchorView else { return }
         if anchor.hasAttachments {
             hideOmniboxSuggestions()
-        } else if !anchor.text.isEmpty {
+        } else {
             let searchTerm = anchor.normalizedSearchQuery(for: anchor.text)
-            showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
+            if !searchTerm.isEmpty {
+                showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
+            }
         }
     }
 
@@ -147,6 +149,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
         let hasUploadScopes = EcosiaAuthenticationService.shared.hasConversationScopes
         if !isLoggedIn || !hasUploadScopes {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
+                guard ecosiaAuth != nil else { return }
                 presentOmniboxSignInSheetForUpload()
             } else {
                 guard let auth = ecosiaAuth else { return }
@@ -183,11 +186,17 @@ extension BrowserViewController: NTPSearchBarDelegate {
         homepage.presentOmniboxUploadSheetIfNeeded()
         sheetState.presentSignInSheetForUpload(
             onSignIn: { [weak self, weak sheetState] in
-                guard let self, let auth = self.ecosiaAuth else { return }
+                guard let self, let auth = self.ecosiaAuth else {
+                    sheetState?.cancelPendingUploadAfterSignIn()
+                    return
+                }
                 self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).login()
             },
             onSignUp: { [weak self, weak sheetState] in
-                guard let self, let auth = self.ecosiaAuth else { return }
+                guard let self, let auth = self.ecosiaAuth else {
+                    sheetState?.cancelPendingUploadAfterSignIn()
+                    return
+                }
                 self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).signUp()
             },
             onUploadDrawerRequested: { [weak self] in

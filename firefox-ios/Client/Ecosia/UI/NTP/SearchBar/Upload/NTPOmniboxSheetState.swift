@@ -80,6 +80,10 @@ final class NTPOmniboxSheetState: ObservableObject {
         handleAuthenticationCompleted(success: true)
     }
 
+    func cancelPendingUploadAfterSignIn() {
+        clearSignInSheetCallbacks()
+    }
+
     private func clearSignInSheetCallbacks() {
         pendingAuthAction = nil
         shouldPresentUploadDrawerAfterAuth = false

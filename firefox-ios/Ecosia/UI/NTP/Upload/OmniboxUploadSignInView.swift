@@ -20,7 +20,6 @@ public struct OmniboxUploadSignInView: View {
     private let onDismiss: () -> Void
 
     @State private var theme = OmniboxUploadSignInViewTheme()
-    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
 
     public init(
         windowUUID: WindowUUID,
@@ -57,11 +56,6 @@ public struct OmniboxUploadSignInView: View {
         .fixedSize(horizontal: false, vertical: true)
         .ecosiaThemed(windowUUID, $theme)
         .presentationBackgroundIfAvailable(theme.backgroundColor)
-        .onChange(of: authStateProvider.isLoggedIn) { isLoggedIn in
-            if isLoggedIn {
-                onDismiss()
-            }
-        }
     }
 
     private var actionButtons: some View {
