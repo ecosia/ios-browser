@@ -5,7 +5,7 @@
 import SwiftUI
 import Common
 
-/// One error toast row hosted inside a UIKit stack view.
+/// One error toast row hosted in the overlapping z-stacked toast container.
 @available(iOS 16.0, *)
 public struct EcosiaErrorToastRowContent: View {
     private struct UX {

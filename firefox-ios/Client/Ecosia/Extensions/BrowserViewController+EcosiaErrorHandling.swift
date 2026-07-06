@@ -75,6 +75,7 @@ final class EcosiaErrorToastContainerView: UIView {
 
     private weak var parentViewController: UIViewController?
     private var windowUUID: WindowUUID?
+    private var lastLaidOutWidth: CGFloat = 0
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -89,6 +90,13 @@ final class EcosiaErrorToastContainerView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        guard bounds.width > 0, bounds.width != lastLaidOutWidth else { return }
+        lastLaidOutWidth = bounds.width
+        updateContainerHeight()
     }
 
     func configure(parent: UIViewController, windowUUID: WindowUUID) {
