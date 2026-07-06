@@ -435,6 +435,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             : UX.textPadding
         updateSubmitState(for: textView.text ?? "")
         updateLayoutForContent()
+        delegate?.ntpSearchBarAttachmentsDidChange()
         delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
     }
 
