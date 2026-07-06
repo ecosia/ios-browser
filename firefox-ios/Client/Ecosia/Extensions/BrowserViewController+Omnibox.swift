@@ -5,6 +5,7 @@
 import UIKit
 import Shared
 import Ecosia
+import WebKit
 
 // MARK: NTPSearchBarDelegate
 // Ecosia: Routes the embedded NTP omnibox into the existing browser navigation
@@ -30,10 +31,14 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
         if !chatFiles.isEmpty {
             guard let tab = tabManager.selectedTab else { return }
-            Task { @MainActor in
-                await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView()
+            let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView(
+                    cookieStore: cookieStore ?? WKWebsiteDataStore.default().httpCookieStore
+                )
                 submitOmniboxSearch(query: searchTerm, chatFiles: chatFiles, tab: tab)
-                showEmbeddedWebview()
+                showEmbeddedWebview(for: tab)
             }
             return
         }
@@ -52,27 +57,15 @@ extension BrowserViewController: NTPSearchBarDelegate {
     /// between AI search and the standard SERP.
     private func submitOmniboxSearch(query: String, chatFiles: [AIChatFileQuery] = [], tab: Tab? = nil) {
         guard let tab = tab ?? tabManager.selectedTab else { return }
-
-        if chatFiles.isEmpty, let url = URIFixup.getURL(query) {
-            finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
-            return
-        }
+        let destinationURL = OmniboxSubmitRouting.destinationURL(query: query, chatFiles: chatFiles)
 
         if !chatFiles.isEmpty {
-            let chatURL = Environment.current.urlProvider.aiChat(
-                origin: .omnibox,
-                query: query,
-                files: chatFiles
-            )
             EcosiaLogger.network.info(
-                "[Omnibox] Routing to AI chat (files=\(chatFiles.count), host=\(chatURL.host ?? "unknown"))"
+                "[Omnibox] Routing to AI chat (files=\(chatFiles.count), host=\(destinationURL.host ?? "unknown"))"
             )
-            finishEditingAndSubmit(chatURL, visitType: .typed, forTab: tab)
-            return
         }
 
-        let searchURL = URL.ecosiaSearchWithQuery(query, autoRedirect: true)
-        finishEditingAndSubmit(searchURL, visitType: .typed, forTab: tab)
+        finishEditingAndSubmit(destinationURL, visitType: .typed, forTab: tab)
     }
 
     func ntpSearchBarTextDidChange(_ searchTerm: String) {
