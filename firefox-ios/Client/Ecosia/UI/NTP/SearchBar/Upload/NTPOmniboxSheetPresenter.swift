@@ -10,7 +10,6 @@ import Ecosia
 @available(iOS 16.0, *)
 struct NTPOmniboxSheetPresenter: View {
     @ObservedObject var sheetState: NTPOmniboxSheetState
-    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
     let windowUUID: WindowUUID
 
     var body: some View {
@@ -44,11 +43,6 @@ struct NTPOmniboxSheetPresenter: View {
                     onSelectChatMode: { mode in sheetState.handleChatModeSelected(mode) },
                     onLogin: { sheetState.handleLoginRequested() }
                 )
-            }
-            .onChange(of: authStateProvider.isLoggedIn) { isLoggedIn in
-                if isLoggedIn {
-                    sheetState.handleAuthenticationSucceeded()
-                }
             }
     }
 }
