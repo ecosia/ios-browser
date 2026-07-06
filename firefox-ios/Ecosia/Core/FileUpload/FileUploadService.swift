@@ -54,12 +54,12 @@ public final class FileUploadService: Sendable {
 
         var errorDescription: String? {
             switch self {
-            case .network(let statusCode, let body):
-                return "Network error (status \(statusCode)): \(body ?? "no body")"
+            case .network(let statusCode, _):
+                return "Network error (status \(statusCode))"
             case .eaistRefreshFailed(let statusCode):
                 return "EAIST refresh failed (status \(statusCode))"
-            case .invalidPresignResponse(let body):
-                return "Invalid presign response: \(body ?? "no body")"
+            case .invalidPresignResponse:
+                return "Invalid presign response"
             case .uploadFailed(let statusCode):
                 return "PUT upload failed (status \(statusCode))"
             case .authenticationRequired:
@@ -101,7 +101,7 @@ public final class FileUploadService: Sendable {
             log(.info, "Upload succeeded fileId=\(fileId)")
             return fileId
         } catch {
-            log(.error, "Upload failed: \(error.localizedDescription)")
+            log(.error, "Upload failed: \(String(describing: type(of: error)))")
             throw error
         }
     }
