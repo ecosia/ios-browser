@@ -36,10 +36,12 @@ private struct PresignResponse: Decodable {
 
 // MARK: - Service
 
-/// Mirrors the web `file-upload-service.js` two-step presigned URL flow:
+/// Mirrors the web `file-upload-service.js` presigned URL flow:
 ///   1. POST `www.{domain}/ai-chat/refresh` → sets EAIST Cloudflare WAF cookie
 ///   2. POST `/v2/conversations/files/upload` → get `{ file_id, upload_url }`
 ///   3. PUT raw bytes → R2 presigned URL
+///
+/// There is no separate confirm step; `file_id` from the presign response is the upload handle.
 public final class FileUploadService: Sendable {
 
     enum Error: Swift.Error, LocalizedError {

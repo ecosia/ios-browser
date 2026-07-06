@@ -13,11 +13,17 @@ import WebKit
 enum FileUploadAuthCookieSync {
 
     /// Copies `EASC` from WK into shared storage and returns it for explicit request headers.
+    private static func webViewCookies(from store: CookieStoreProtocol) async -> [HTTPCookie] {
+        await store.allCookies()
+    }
+
     @discardableResult
     static func syncAuthSessionCookieToSharedStorage(
-        urlProvider: URLProvider = Environment.current.urlProvider
+        urlProvider: URLProvider = Environment.current.urlProvider,
+        cookieStore: CookieStoreProtocol? = nil
     ) async -> HTTPCookie? {
-        let webCookies = await webViewCookies()
+        let store = cookieStore ?? WKWebsiteDataStore.default().httpCookieStore
+        let webCookies = await webViewCookies(from: store)
         let easc = webCookies.first { $0.name == Cookie.authSession.rawValue }
 
         if let easc {
@@ -38,14 +44,6 @@ enum FileUploadAuthCookieSync {
         )
 
         return easc ?? sharedCookies.first { $0.name == Cookie.authSession.rawValue }
-    }
-
-    private static func webViewCookies() async -> [HTTPCookie] {
-        await withCheckedContinuation { continuation in
-            WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
-                continuation.resume(returning: cookies)
-            }
-        }
     }
 }
 

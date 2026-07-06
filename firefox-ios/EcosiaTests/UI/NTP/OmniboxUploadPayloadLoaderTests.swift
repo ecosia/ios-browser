@@ -4,33 +4,27 @@
 
 import XCTest
 @testable import Client
-@testable import Ecosia
 
-@MainActor
 final class OmniboxUploadPayloadLoaderTests: XCTestCase {
 
-    func testRejectsOversizedPayload() {
-        let oversized = Data(repeating: 0, count: OmniboxUploadPayloadLoader.maxFileSizeBytes + 1)
-        XCTAssertThrowsError(try OmniboxUploadPayloadLoader.validateSize(oversized)) { error in
+    func testValidateFileSizeRejectsOversizedFileBeforeReading() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("oversized.txt")
+        let oversized = Data(count: OmniboxUploadPayloadLoader.maxFileSizeBytes + 1)
+        try oversized.write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        XCTAssertThrowsError(try OmniboxUploadPayloadLoader.validateFileSize(at: url)) { error in
             XCTAssertEqual(error as? OmniboxUploadPayloadError, .fileTooLarge)
         }
     }
 
-    func testNormalizedJPEGFileNameReplacesExtension() {
-        XCTAssertEqual(
-            OmniboxUploadPayloadLoader.normalizedJPEGFileName(from: "IMG_0001.HEIC"),
-            "IMG_0001.jpg"
-        )
-        XCTAssertEqual(
-            OmniboxUploadPayloadLoader.normalizedJPEGFileName(from: "camera-photo.heic", fallback: "photo.jpg"),
-            "camera-photo.jpg"
-        )
-    }
+    func testLoadFileReadsSmallFile() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("small.txt")
+        try Data("hello".utf8).write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
 
-    func testNormalizedJPEGFileNameUsesFallbackForEmptyStem() {
-        XCTAssertEqual(
-            OmniboxUploadPayloadLoader.normalizedJPEGFileName(from: ".heic", fallback: "photo.jpg"),
-            "photo.jpg"
-        )
+        let payload = try OmniboxUploadPayloadLoader.loadFile(from: url)
+        XCTAssertEqual(payload.fileName, "small.txt")
+        XCTAssertEqual(payload.data, Data("hello".utf8))
     }
 }

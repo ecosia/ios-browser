@@ -37,12 +37,34 @@ struct OmniboxUploadPendingItem: Sendable {
     }
 }
 
+enum OmniboxUploadSecurityScopedAccess {
+    static func withAccess<T>(to url: URL, _ work: () throws -> T) rethrows -> T {
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer {
+            if accessed {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        return try work()
+    }
+
+    static func fileSize(for url: URL) -> Int? {
+        withAccess(to: url) {
+            let values = try? url.resourceValues(forKeys: [.fileSizeKey])
+            return values?.fileSize
+        }
+    }
+}
+
 enum OmniboxUploadPayloadLoader {
 
     static let maxFileSizeBytes = 5 * 1024 * 1024
 
     static func loadFile(from url: URL) throws -> OmniboxUploadLocalPayload {
-        let data = try Data(contentsOf: url)
+        try validateFileSize(at: url)
+        let data = try OmniboxUploadSecurityScopedAccess.withAccess(to: url) {
+            try Data(contentsOf: url)
+        }
         try validateSize(data)
         let mimeType = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType ?? "application/octet-stream"
         let layout: OmniboxAttachment.Layout = mimeType.hasPrefix("image/") ? .image : .file
@@ -76,6 +98,13 @@ enum OmniboxUploadPayloadLoader {
 
     static func validateSize(_ data: Data) throws {
         guard data.count <= maxFileSizeBytes else {
+            throw OmniboxUploadPayloadError.fileTooLarge
+        }
+    }
+
+    static func validateFileSize(at url: URL) throws {
+        if let fileSize = OmniboxUploadSecurityScopedAccess.fileSize(for: url),
+           fileSize > maxFileSizeBytes {
             throw OmniboxUploadPayloadError.fileTooLarge
         }
     }
