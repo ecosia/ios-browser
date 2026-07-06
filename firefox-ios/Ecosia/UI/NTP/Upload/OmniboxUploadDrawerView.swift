@@ -17,6 +17,17 @@ private enum OmniboxUploadDrawerUX {
     static let sparkleSize: CGFloat = 16
     static let footerHeight: CGFloat = 44
     static let footerCornerRadius: CGFloat = 16
+    /// Chat-mode rows are grouped in one rounded solid card (iOS inset-grouped
+    /// style, matching the search-suggestions list).
+    static let chatModeListCornerRadius: CGFloat = .ecosia.borderRadius._l
+    static let chatModeIconSpacing: CGFloat = .ecosia.space._m
+    static let chatModeRowHorizontalPadding: CGFloat = .ecosia.space._m
+    static let chatModeRowVerticalPadding: CGFloat = .ecosia.space._s
+    /// Leading inset of the inter-row separator so it starts under the title,
+    /// aligned past the icon (iOS grouped-list convention).
+    static var chatModeSeparatorLeadingInset: CGFloat {
+        chatModeRowHorizontalPadding + chatModeIconSize + chatModeIconSpacing
+    }
 }
 
 /// The omnibox "AI tools" drawer presented as a sheet, matching
@@ -84,7 +95,6 @@ struct OmniboxUploadDrawerView: View {
                 }
                 uploadRow
                 if ChatModesFeatureFlag.isEnabled {
-                    divider
                     chatModeList
                 }
             }
@@ -186,29 +196,39 @@ struct OmniboxUploadDrawerView: View {
         .accessibilityIdentifier(option.accessibilityIdentifier)
     }
 
-    // MARK: - Divider
-
-    private var divider: some View {
-        Rectangle()
-            .fill(theme.dividerColor)
-            .frame(height: 1)
-    }
-
     // MARK: - Chat modes
 
     private var chatModeList: some View {
-        VStack(spacing: .ecosia.space._l) {
-            ForEach(OmniboxChatMode.allCases, id: \.self) { mode in
+        // Group all rows in one rounded solid card, separated by inset dividers,
+        // like an iOS inset-grouped list / the search-suggestions overlay.
+        VStack(spacing: 0) {
+            ForEach(Array(OmniboxChatMode.allCases.enumerated()), id: \.element) { index, mode in
                 chatModeRow(for: mode)
+                if index < OmniboxChatMode.allCases.count - 1 {
+                    rowSeparator
+                }
             }
         }
+        .background(
+            RoundedRectangle(cornerRadius: UX.chatModeListCornerRadius)
+                .fill(theme.listBackgroundColor)
+        )
+    }
+
+    /// Thin divider between grouped rows, inset on the leading side so it starts
+    /// under the title (past the icon), matching iOS grouped lists.
+    private var rowSeparator: some View {
+        Rectangle()
+            .fill(theme.dividerColor)
+            .frame(height: 1)
+            .padding(.leading, UX.chatModeSeparatorLeadingInset)
     }
 
     private func chatModeRow(for mode: OmniboxChatMode) -> some View {
         Button {
             onSelectChatMode(mode)
         } label: {
-            HStack(spacing: .ecosia.space._m) {
+            HStack(spacing: UX.chatModeIconSpacing) {
                 Image.ecosia(mode.iconName)
                     .renderingMode(.template)
                     .resizable()
@@ -228,6 +248,8 @@ struct OmniboxUploadDrawerView: View {
 
                 Spacer(minLength: 0)
             }
+            .padding(.horizontal, UX.chatModeRowHorizontalPadding)
+            .padding(.vertical, UX.chatModeRowVerticalPadding)
             .contentShape(Rectangle())
         }
         .accessibilityElement(children: .combine)
@@ -273,6 +295,7 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
     var dividerColor = Color.gray.opacity(0.2)
     var footerBackgroundColor = Color.white
     var doneBackgroundColor = Color.gray.opacity(0.2)
+    var listBackgroundColor = Color.white
 
     mutating func applyTheme(theme: Theme) {
         let colors = theme.colors.ecosia
@@ -285,6 +308,9 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
         dividerColor = Color(colors.borderDecorative)
         footerBackgroundColor = Color(colors.backgroundTertiary)
         doneBackgroundColor = Color(colors.buttonBackgroundTransparentActive)
+        // Solid card behind the grouped chat-mode rows (elevation-1, like the
+        // upload tiles and iOS inset-grouped cells).
+        listBackgroundColor = Color(colors.backgroundElevation1)
     }
 }
 
