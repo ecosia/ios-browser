@@ -10,24 +10,41 @@ import Common
 public struct EcosiaErrorToast: View {
     private let subtitle: String
     private let windowUUID: WindowUUID
+    private let animatesEntrance: Bool
+    private let announcesOnAppear: Bool
     private let onDismiss: () -> Void
 
-    @State private var isVisible = false
+    @State private var hasEntered = false
+    @State private var opacity: Double = 0
 
     private struct UX {
         static let toastMinHeight: CGFloat = 56
-        static let animationDuration: TimeInterval = 0.5
+        static let entranceDuration: TimeInterval = 0.35
+        static let fadeDuration: TimeInterval = 0.25
         static let displayDuration: TimeInterval = 4.5
+        static let hiddenTopOffset: CGFloat = 120
     }
 
     public init(
         subtitle: String,
         windowUUID: WindowUUID,
+        animatesEntrance: Bool = true,
+        announcesOnAppear: Bool = true,
         onDismiss: @escaping () -> Void
     ) {
         self.subtitle = subtitle
         self.windowUUID = windowUUID
+        self.animatesEntrance = animatesEntrance
+        self.announcesOnAppear = announcesOnAppear
         self.onDismiss = onDismiss
+
+        if animatesEntrance {
+            _hasEntered = State(initialValue: false)
+            _opacity = State(initialValue: 0)
+        } else {
+            _hasEntered = State(initialValue: true)
+            _opacity = State(initialValue: 1)
+        }
     }
 
     public var body: some View {
@@ -35,34 +52,54 @@ public struct EcosiaErrorToast: View {
             subtitle: subtitle,
             windowUUID: windowUUID,
             onCloseTapped: {
-                // User tapped close button - start dismissal
-                dismiss()
+                hide()
             }
         )
         .frame(minHeight: UX.toastMinHeight)
         .padding(.horizontal, .ecosia.space._m)
-        .offset(y: isVisible ? 0 : UX.toastMinHeight + .ecosia.space._m)
-        .opacity(isVisible ? 1 : 0)
+        .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
+        .offset(y: hasEntered ? 0 : -UX.hiddenTopOffset)
+        .opacity(opacity)
+        .allowsHitTesting(opacity > 0)
         .onAppear {
-            // Animate in
-            withAnimation(.easeOut(duration: UX.animationDuration)) {
-                isVisible = true
+            guard animatesEntrance else {
+                scheduleAutoDismissAndAnnouncement()
+                return
             }
 
-            // Auto-dismiss after duration
-            DispatchQueue.main.asyncAfter(deadline: .now() + UX.displayDuration) {
-                dismiss()
+            withAnimation(.spring(response: UX.entranceDuration, dampingFraction: 0.86)) {
+                hasEntered = true
+                opacity = 1
             }
+
+            scheduleAutoDismissAndAnnouncement()
         }
     }
 
-    private func dismiss() {
-        withAnimation(.easeIn(duration: UX.animationDuration)) {
-            isVisible = false
+    private func scheduleAutoDismissAndAnnouncement() {
+        let entranceDelay = animatesEntrance ? UX.entranceDuration : 0
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + entranceDelay) {
+            guard announcesOnAppear else { return }
+            Task { @MainActor in
+                guard opacity > 0, hasEntered else { return }
+                UIAccessibility.post(notification: .announcement, argument: subtitle)
+            }
         }
 
-        // Call onDismiss after animation completes
-        DispatchQueue.main.asyncAfter(deadline: .now() + UX.animationDuration) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.displayDuration) {
+            hide()
+        }
+    }
+
+    private func hide() {
+        guard opacity > 0 else { return }
+
+        withAnimation(.easeOut(duration: UX.fadeDuration)) {
+            opacity = 0
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + UX.fadeDuration) {
             onDismiss()
         }
     }
@@ -73,12 +110,12 @@ public struct EcosiaErrorToast: View {
 struct EcosiaErrorToast_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            Spacer()
             EcosiaErrorToast(
                 subtitle: "Something went wrong. Please sign in again.",
                 windowUUID: .XCTestDefaultUUID,
                 onDismiss: {}
             )
+            Spacer()
         }
         .padding()
         .previewLayout(.sizeThatFits)

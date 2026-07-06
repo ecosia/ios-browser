@@ -6,5 +6,9 @@ import Ecosia
 
 @MainActor
 protocol OmniboxUploadPickerDelegate: AnyObject {
-    func omniboxUploadDidPickPendingItems(_ items: [OmniboxUploadPendingItem])
+    var omniboxUploadRemainingAttachmentSlots: Int { get }
+    func omniboxUploadDidFinishPicking(
+        items: [OmniboxUploadPendingItem],
+        validationErrors: Set<OmniboxUploadValidationError>
+    )
 }
