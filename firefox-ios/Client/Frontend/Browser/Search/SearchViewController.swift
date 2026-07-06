@@ -887,7 +887,9 @@ class SearchViewController: SiteTableViewController,
                 /* Ecosia: Use branded switchTab badge instead of Firefox sync_open_tab.
                 twoLineCell.leftOverlayImageView.image = openAndSyncTabBadge
                 */
+                /* Ecosia: Disable Tap Icon
                 twoLineCell.leftOverlayImageView.image = openTabBadgeImage(for: currentTheme())
+                */
                 twoLineCell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
                 twoLineCell.leftImageView.layer.borderWidth = UX.IconBorderWidth
                 if let urlString = openedTab.url?.absoluteString {
