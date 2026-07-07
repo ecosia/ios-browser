@@ -223,6 +223,10 @@ struct OmniboxUploadDrawerView: View {
                     .multilineTextAlignment(.center)
             }
         }
+        // Uploads require an account, so the media pickers are disabled and
+        // dimmed for signed-out users (same treatment as the advanced modes).
+        .disabled(!isAuthenticated)
+        .opacity(isAuthenticated ? 1 : UX.disabledRowOpacity)
         .accessibilityLabel(option.accessibilityLabel)
         .accessibilityHint(option.accessibilityHint)
         .accessibilityIdentifier(option.accessibilityIdentifier)
