@@ -30,6 +30,8 @@ private enum OmniboxUploadDrawerUX {
     }
     static let newBadgeHorizontalPadding: CGFloat = .ecosia.space._1s
     static let newBadgeVerticalPadding: CGFloat = .ecosia.space._2s
+    /// Opacity of chat-mode rows that are disabled for signed-out users.
+    static let disabledRowOpacity: CGFloat = 0.4
 }
 
 /// The omnibox "AI tools" drawer presented as a sheet, matching
@@ -39,24 +41,32 @@ private enum OmniboxUploadDrawerUX {
 public struct OmniboxUploadDrawerSheet: View {
     private let windowUUID: WindowUUID
     private let selectedChatMode: OmniboxChatMode?
+    private let isAuthenticated: Bool
     private let onSelect: (OmniboxUploadOption) -> Void
     private let onSelectChatMode: (OmniboxChatMode) -> Void
+    private let onLogin: () -> Void
 
     public init(windowUUID: WindowUUID,
                 selectedChatMode: OmniboxChatMode?,
+                isAuthenticated: Bool,
                 onSelect: @escaping (OmniboxUploadOption) -> Void,
-                onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
+                onSelectChatMode: @escaping (OmniboxChatMode) -> Void,
+                onLogin: @escaping () -> Void) {
         self.windowUUID = windowUUID
         self.selectedChatMode = selectedChatMode
+        self.isAuthenticated = isAuthenticated
         self.onSelect = onSelect
         self.onSelectChatMode = onSelectChatMode
+        self.onLogin = onLogin
     }
 
     public var body: some View {
         OmniboxUploadDrawerView(windowUUID: windowUUID,
                                 selectedChatMode: selectedChatMode,
+                                isAuthenticated: isAuthenticated,
                                 onSelect: onSelect,
-                                onSelectChatMode: onSelectChatMode)
+                                onSelectChatMode: onSelectChatMode,
+                                onLogin: onLogin)
     }
 }
 
@@ -75,8 +85,10 @@ struct OmniboxUploadDrawerView: View {
 
     private let windowUUID: WindowUUID
     private let selectedChatMode: OmniboxChatMode?
+    private let isAuthenticated: Bool
     private let onSelect: (OmniboxUploadOption) -> Void
     private let onSelectChatMode: (OmniboxChatMode) -> Void
+    private let onLogin: () -> Void
 
     // `Environment` is qualified because the Ecosia framework defines its own
     // `Environment` type, which otherwise shadows the SwiftUI property wrapper.
@@ -86,12 +98,23 @@ struct OmniboxUploadDrawerView: View {
 
     init(windowUUID: WindowUUID,
          selectedChatMode: OmniboxChatMode?,
+         isAuthenticated: Bool,
          onSelect: @escaping (OmniboxUploadOption) -> Void,
-         onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
+         onSelectChatMode: @escaping (OmniboxChatMode) -> Void,
+         onLogin: @escaping () -> Void) {
         self.windowUUID = windowUUID
         self.selectedChatMode = selectedChatMode
+        self.isAuthenticated = isAuthenticated
         self.onSelect = onSelect
         self.onSelectChatMode = onSelectChatMode
+        self.onLogin = onLogin
+    }
+
+    /// A chat mode is selectable only when the user is signed in; signed-out
+    /// users may pick Standard AI Chat (no advanced features) but every other
+    /// mode is shown disabled.
+    private func isModeEnabled(_ mode: OmniboxChatMode) -> Bool {
+        isAuthenticated || mode == .standard
     }
 
     var body: some View {
@@ -234,7 +257,8 @@ struct OmniboxUploadDrawerView: View {
     }
 
     private func chatModeRow(for mode: OmniboxChatMode) -> some View {
-        Button {
+        let isEnabled = isModeEnabled(mode)
+        return Button {
             onSelectChatMode(mode)
         } label: {
             HStack(spacing: UX.chatModeIconSpacing) {
@@ -274,6 +298,10 @@ struct OmniboxUploadDrawerView: View {
             .padding(.vertical, UX.chatModeRowVerticalPadding)
             .contentShape(Rectangle())
         }
+        // Signed-out users can only pick Standard; other modes are visible but
+        // non-interactive and dimmed until they sign in.
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : UX.disabledRowOpacity)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(mode.accessibilityLabel)
         .accessibilityHint(mode.accessibilityHint)
@@ -294,7 +322,18 @@ struct OmniboxUploadDrawerView: View {
 
     // MARK: - Footer
 
+    /// Signed-in users get the "redirect to AI Chat" notice; signed-out users
+    /// get a sign-in disclaimer with a CTA that unlocks the advanced modes.
+    @ViewBuilder
     private var footer: some View {
+        if isAuthenticated {
+            redirectNoticeFooter
+        } else {
+            signInFooter
+        }
+    }
+
+    private var redirectNoticeFooter: some View {
         HStack(spacing: .ecosia.space._1s) {
             Text(String.localized(.aiToolsRedirectNotice))
                 .font(.system(size: .ecosia.font._s, weight: .regular))
@@ -316,6 +355,39 @@ struct OmniboxUploadDrawerView: View {
         )
         .accessibilityElement(children: .combine)
     }
+
+    private var signInFooter: some View {
+        HStack(alignment: .center, spacing: .ecosia.space._m) {
+            Text(String.localized(.chatModesSignInDisclaimer))
+                .font(.system(size: .ecosia.font._s, weight: .regular))
+                .foregroundColor(theme.subtitleColor)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.leading, .ecosia.space._1s)
+            Spacer(minLength: 0)
+            signInButton
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var signInButton: some View {
+        Button {
+            onLogin()
+        } label: {
+            HStack(spacing: .ecosia.space._1s) {
+                Image(systemName: "rectangle.portrait.and.arrow.right")
+                    .font(.system(size: .ecosia.font._m, weight: .semibold))
+                Text(String.localized(.signIn))
+                    .font(.system(size: .ecosia.font._m, weight: .semibold))
+            }
+            .foregroundColor(theme.signInButtonTextColor)
+            .padding(.horizontal, .ecosia.space._m)
+            .frame(height: UX.footerHeight)
+            .background(Capsule().fill(theme.signInButtonBackgroundColor))
+        }
+        .accessibilityLabel(String.localized(.signIn))
+        .accessibilityIdentifier("OmniboxAIToolsSignInButton")
+    }
 }
 
 @available(iOS 16.0, *)
@@ -333,6 +405,8 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
     var selectedCheckmarkColor = Color.green
     var badgeBackgroundColor = Color.green
     var badgeTextColor = Color.black
+    var signInButtonBackgroundColor = Color.green
+    var signInButtonTextColor = Color.black
 
     mutating func applyTheme(theme: Theme) {
         let colors = theme.colors.ecosia
@@ -352,6 +426,9 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
         // Grellow pill + dark text in both themes, matching the design-system badge.
         badgeBackgroundColor = Color(colors.buttonBackgroundFeatured)
         badgeTextColor = Color(colors.textStaticDark)
+        // Sign-in CTA uses the same featured grellow pill as the design-system primary button.
+        signInButtonBackgroundColor = Color(colors.buttonBackgroundFeatured)
+        signInButtonTextColor = Color(colors.textStaticDark)
     }
 }
 

@@ -130,7 +130,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
     func ntpSearchBarDidTapUpload() {
         guard FileUploadFeatureFlag.isEnabled else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
-        if ecosiaAuth?.isLoggedIn == false {
+        // With Chat Modes on, the drawer handles the signed-out state itself
+        // (Standard AI Chat selectable, other modes disabled, sign-in CTA), so
+        // always open it. Without Chat Modes the drawer is upload-only, which
+        // still requires an account, so keep the existing signed-out gate.
+        if !ChatModesFeatureFlag.isEnabled, ecosiaAuth?.isLoggedIn == false {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
                 presentAccountImpactFromNTPHeader()
             } else {
@@ -399,7 +403,8 @@ extension BrowserViewController {
 
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
-        sheetState.presentUploadDrawer(onSelectUpload: { [weak self] option in
+        sheetState.presentUploadDrawer(isAuthenticated: ecosiaAuth?.isLoggedIn == true,
+                                       onSelectUpload: { [weak self] option in
             guard let self else { return }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
                                                               from: self,
@@ -409,7 +414,20 @@ extension BrowserViewController {
             // the omnibox chip right away so the glyph appears while the drawer
             // is still sliding away rather than after it disappears.
             self?.ntpOmniboxAnchorView?.setSelectedChatMode(mode)
+        }, onLogin: { [weak self] in
+            self?.handleOmniboxLoginRequested()
         })
+    }
+
+    /// Starts the sign-in flow from the drawer's CTA and, on success, re-opens
+    /// the drawer so the user lands back on the omnibox with the advanced modes
+    /// now unlocked.
+    private func handleOmniboxLoginRequested() {
+        let auth = ecosiaAuth ?? EcosiaAuth(browserViewController: self)
+        auth.onAuthFlowCompleted { [weak self] success in
+            guard success else { return }
+            self?.presentOmniboxUploadDrawer()
+        }.login()
     }
 
     /// Clears the active chat mode when the user taps the chip's X.
