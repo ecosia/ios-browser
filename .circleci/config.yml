@@ -276,10 +276,10 @@ jobs:
           paths:
             - bash.env
 
-  # On-demand branch QA builds trigger this job via the CircleCI API (parameter
-  # run-firebase-deploy) — see .github/workflows/branch_firebase_build.yml. It also serves
-  # the manual-firebase-deploy workflow. SPM packages are cached here (branch builds are the
-  # most frequent Firebase builds) to avoid re-resolving/compiling dependencies every run.
+  # On-demand branch QA builds run this job when the `run-ci` label is added to a PR (via
+  # the CircleCI GitHub App trigger + the run-ci-label-firebase workflow below). It also
+  # serves the manual-firebase-deploy workflow. SPM packages are cached here (branch builds
+  # are the most frequent Firebase builds) to avoid re-resolving/compiling deps every run.
   build-and-deploy-firebase:
     <<: *environment_common
     <<: *macos_common
