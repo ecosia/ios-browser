@@ -472,13 +472,24 @@ workflows:
           context: napps
 
   manual-firebase-deploy:
-    when: 
+    when:
       and:
         - << pipeline.parameters.run-firebase-deploy >>
         - not: << pipeline.parameters.is-release-pipeline >>
     jobs:
       - build-and-deploy-firebase:
           name: Manual Deploy ad-hoc version over Firebase
+          context: napps
+
+  # On-demand QA build triggered by adding the `run-ci` label to a PR via the CircleCI
+  # GitHub App trigger. GitHub App event triggers cannot pass custom pipeline parameters, so
+  # this workflow is gated on the event payload instead. The pipeline runs against the PR
+  # head branch, so build-and-deploy-firebase builds the PR's code.
+  run-ci-label-firebase:
+    when: pipeline.event.name == "pull_request" and pipeline.event.action == "labeled" and pipeline.event.github.label.name == "run-ci"
+    jobs:
+      - build-and-deploy-firebase:
+          name: Deploy ad-hoc version over Firebase (run-ci)
           context: napps
 
   manual-browserstack-tests:
