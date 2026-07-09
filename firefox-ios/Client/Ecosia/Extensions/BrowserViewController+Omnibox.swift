@@ -352,12 +352,21 @@ extension BrowserViewController {
 
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
-        sheetState.presentUploadDrawer { [weak self] option in
+        sheetState.presentUploadDrawer(onSelectUpload: { [weak self] option in
             guard let self else { return }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
                                                               from: self,
                                                               sourceView: sourceView)
-        }
+        }, onSelectChatMode: { [weak self] mode in
+            self?.handleOmniboxChatModeSelection(mode)
+        })
+    }
+
+    /// Handles a chat-mode selection from the "AI tools" drawer. Selecting a mode
+    /// currently just closes the drawer (dismissal is driven by the sheet state);
+    /// `mode` is delivered here so the follow-up can act on the chosen mode.
+    fileprivate func handleOmniboxChatModeSelection(_ mode: OmniboxChatMode) {
+        // TODO: MOB-4627 — add the selected chat mode as a chip on the omnibox.
     }
 }
 

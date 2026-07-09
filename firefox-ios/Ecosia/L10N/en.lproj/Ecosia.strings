@@ -306,6 +306,17 @@
 "Allow access to your camera" = "Allow access to your camera";
 "Ecosia needs camera access so you can take a photo to attach." = "Ecosia needs camera access so you can take a photo to attach.";
 "A camera is not available on this device." = "A camera is not available on this device.";
+"AI tools" = "AI tools";
+"These features will redirect to AI Chat" = "These features will redirect to AI Chat";
+"Dismisses the AI tools menu" = "Dismisses the AI tools menu";
+"Standard AI Chat" = "Standard AI Chat";
+"Think longer" = "Think longer";
+"Display sources" = "Display sources";
+"Learning" = "Learning";
+"Answers everyday tasks and queries" = "Answers everyday tasks and queries";
+"Solves complex problems" = "Solves complex problems";
+"Shows sources for every answer" = "Shows sources for every answer";
+"Breaks down topics step by step" = "Breaks down topics step by step";
 
 // Product Tour
 "Go back" = "Go back";

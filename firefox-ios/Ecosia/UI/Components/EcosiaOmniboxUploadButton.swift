@@ -5,7 +5,9 @@
 import UIKit
 import Common
 
-/// Paperclip upload control for the NTP omnibox bottom-left corner.
+/// Upload control for the NTP omnibox bottom-left corner. Shows the plus icon
+/// (opening the "AI tools" drawer) when the Chat Modes feature is enabled, and
+/// the file-upload paperclip otherwise.
 /// Shows a circular pressed-state background using the transparent-button active token.
 public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
 
@@ -22,7 +24,6 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
     private let iconView: UIImageView = .build { imageView in
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = false
-        imageView.image = UIImage.ecosia(named: "attachment")?.withRenderingMode(.alwaysTemplate)
     }
 
     private var currentTheme: Theme?
@@ -44,6 +45,10 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
 
     private func setup() {
         backgroundColor = .clear
+        // Chat Modes swaps the file-upload paperclip for the plus icon that opens
+        // the AI tools drawer; without it the control stays the file-upload button.
+        let iconName = ChatModesFeatureFlag.isEnabled ? "plus" : "attachment"
+        iconView.image = UIImage.ecosia(named: iconName)?.withRenderingMode(.alwaysTemplate)
         accessibilityIdentifier = "NTPSearchBarUploadButton"
         accessibilityLabel = String.localized(.upload)
         accessibilityHint = String.localized(.uploadAccessibilityHint)
