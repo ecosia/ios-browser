@@ -36,20 +36,20 @@ private enum OmniboxUploadDrawerUX {
 @available(iOS 16.0, *)
 public struct OmniboxUploadDrawerSheet: View {
     private let windowUUID: WindowUUID
-    private let onSelect: (OmniboxUploadOption) -> Void
+    private let onSelectUploadOption: (OmniboxUploadOption) -> Void
     private let onSelectChatMode: (OmniboxChatMode) -> Void
 
     public init(windowUUID: WindowUUID,
-                onSelect: @escaping (OmniboxUploadOption) -> Void,
+                onSelectUploadOption: @escaping (OmniboxUploadOption) -> Void,
                 onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
         self.windowUUID = windowUUID
-        self.onSelect = onSelect
+        self.onSelectUploadOption = onSelectUploadOption
         self.onSelectChatMode = onSelectChatMode
     }
 
     public var body: some View {
         OmniboxUploadDrawerView(windowUUID: windowUUID,
-                                onSelect: onSelect,
+                                onSelectUploadOption: onSelectUploadOption,
                                 onSelectChatMode: onSelectChatMode)
     }
 }
@@ -68,7 +68,7 @@ struct OmniboxUploadDrawerView: View {
     private typealias UX = OmniboxUploadDrawerUX
 
     private let windowUUID: WindowUUID
-    private let onSelect: (OmniboxUploadOption) -> Void
+    private let onSelectUploadOption: (OmniboxUploadOption) -> Void
     private let onSelectChatMode: (OmniboxChatMode) -> Void
 
     // `Environment` is qualified because the Ecosia framework defines its own
@@ -78,10 +78,10 @@ struct OmniboxUploadDrawerView: View {
     @State private var contentHeight = OmniboxUploadDrawerUX.fallbackHeight
 
     init(windowUUID: WindowUUID,
-         onSelect: @escaping (OmniboxUploadOption) -> Void,
+         onSelectUploadOption: @escaping (OmniboxUploadOption) -> Void,
          onSelectChatMode: @escaping (OmniboxChatMode) -> Void) {
         self.windowUUID = windowUUID
-        self.onSelect = onSelect
+        self.onSelectUploadOption = onSelectUploadOption
         self.onSelectChatMode = onSelectChatMode
     }
 
@@ -169,7 +169,7 @@ struct OmniboxUploadDrawerView: View {
 
     private func uploadOptionButton(for option: OmniboxUploadOption) -> some View {
         Button {
-            onSelect(option)
+            onSelectUploadOption(option)
         } label: {
             VStack(spacing: .ecosia.space._1s) {
                 Image.ecosia(option.iconName)
