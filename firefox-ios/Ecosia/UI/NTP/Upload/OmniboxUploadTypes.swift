@@ -5,10 +5,10 @@
 import Foundation
 
 /// Upload sources shown in the top row of the omnibox "AI tools" drawer.
-/// Case order mirrors the design's left-to-right layout (Camera, Photos, Files).
+/// Case order mirrors the design's left-to-right layout (Photos, Camera, Files).
 public enum OmniboxUploadOption: CaseIterable, Hashable {
-    case camera
     case photos
+    case camera
     case files
 }
 

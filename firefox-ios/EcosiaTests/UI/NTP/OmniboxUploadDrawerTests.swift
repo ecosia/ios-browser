@@ -48,7 +48,7 @@ final class OmniboxUploadDrawerTests: XCTestCase {
     }
 
     func testUploadOptionsRenderInDesignOrder() {
-        XCTAssertEqual(OmniboxUploadOption.allCases, [.camera, .photos, .files])
+        XCTAssertEqual(OmniboxUploadOption.allCases, [.photos, .camera, .files])
     }
 
     func testChatModesExposeAllCases() {
