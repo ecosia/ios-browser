@@ -44,7 +44,7 @@ final class NTPOmniboxSheetState: ObservableObject {
             onUploadOptionSelected = nil
             onChatModeSelected = nil
         }
-        
+
         switch pendingSelection {
         case .upload(let option):
             onUploadOptionSelected?(option)
