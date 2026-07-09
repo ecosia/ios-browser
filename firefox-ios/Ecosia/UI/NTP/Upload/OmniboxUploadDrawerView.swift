@@ -32,6 +32,7 @@ private enum OmniboxUploadDrawerUX {
     static let newBadgeVerticalPadding: CGFloat = .ecosia.space._2s
     /// Opacity of chat-mode rows that are disabled for signed-out users.
     static let disabledRowOpacity: CGFloat = 0.4
+    static let signInIconWidth: CGFloat = 18
 }
 
 /// The omnibox "AI tools" drawer presented as a sheet, matching
@@ -379,8 +380,11 @@ struct OmniboxUploadDrawerView: View {
             onLogin()
         } label: {
             HStack(spacing: .ecosia.space._1s) {
-                Image(systemName: "rectangle.portrait.and.arrow.right")
-                    .font(.system(size: .ecosia.font._m, weight: .semibold))
+                Image.ecosia("sign-in")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: UX.signInIconWidth)
                 Text(String.localized(.signIn))
                     .font(.system(size: .ecosia.font._m, weight: .semibold))
             }
