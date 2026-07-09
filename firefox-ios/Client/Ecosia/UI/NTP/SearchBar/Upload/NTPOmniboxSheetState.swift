@@ -39,18 +39,17 @@ final class NTPOmniboxSheetState: ObservableObject {
     }
 
     func handleUploadDrawerDismissed() {
-        let selection = pendingSelection
-        let uploadCallback = onUploadOptionSelected
-        let chatModeCallback = onChatModeSelected
-        pendingSelection = nil
-        onUploadOptionSelected = nil
-        onChatModeSelected = nil
-
-        switch selection {
+        defer {
+            pendingSelection = nil
+            onUploadOptionSelected = nil
+            onChatModeSelected = nil
+        }
+        
+        switch pendingSelection {
         case .upload(let option):
-            uploadCallback?(option)
+            onUploadOptionSelected?(option)
         case .chatMode(let mode):
-            chatModeCallback?(mode)
+            onChatModeSelected?(mode)
         case nil:
             break
         }
