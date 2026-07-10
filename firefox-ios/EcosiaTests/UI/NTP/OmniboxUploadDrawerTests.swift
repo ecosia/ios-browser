@@ -122,7 +122,7 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        enableFileUploadFlag(true)
+        Self.enableFileUploadFlag(true)
     }
 
     override func tearDown() {
@@ -130,7 +130,7 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         super.tearDown()
     }
 
-    private func enableFileUploadFlag(_ enabled: Bool) {
+    private static func enableFileUploadFlag(_ enabled: Bool) {
         let toggle = Unleash.Toggle(
             name: Unleash.Toggle.Name.fileUpload.rawValue,
             enabled: enabled,
@@ -166,7 +166,7 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
     }
 
     func testUploadButtonHiddenWhenFileUploadFlagDisabled() throws {
-        enableFileUploadFlag(false)
+        Self.enableFileUploadFlag(false)
         let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
 
         let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first

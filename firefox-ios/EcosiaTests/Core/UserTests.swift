@@ -46,23 +46,20 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testNotSavingOnLoad() {
-        let expect = expectation(description: "")
-        nonisolated(unsafe) var user = User()
-        user.firstTime = false
-        User.shared = user
-        User.queue.async {
-            user = User()
-            try! FileManager.default.removeItem(at: FileManager.user)
-            XCTAssertFalse(user.firstTime)
-            User.queue.async {
-                XCTAssertNotNil(user)
-                DispatchQueue.main.async {
-                    XCTAssertFalse(FileManager.default.fileExists(atPath: FileManager.user.path))
-                    expect.fulfill()
-                }
-            }
+        nonisolated(unsafe) var seeded = User.shared
+        seeded.firstTime = false
+        User.queue.sync {
+            try? JSONEncoder().encode(seeded).write(to: FileManager.user, options: .atomic)
         }
-        waitForExpectations(timeout: 1)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: FileManager.user.path))
+
+        User.queue.sync {
+            let loaded = User()
+            XCTAssertFalse(loaded.firstTime)
+            try? FileManager.default.removeItem(at: FileManager.user)
+        }
+        User.queue.sync {}
+        XCTAssertFalse(FileManager.default.fileExists(atPath: FileManager.user.path))
     }
 
     func testAnalyticsId() {
@@ -245,24 +242,16 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testShowsReferralSpotlight() {
-        let expect = expectation(description: "")
         XCTAssertFalse(User.shared.showsReferralSpotlight)
 
         // set install to 4 days ago
         User.shared.install = Calendar.current.date(byAdding: .day, value: -4, to: .init())!
+        User.queue.sync {}
+        XCTAssertTrue(User().showsReferralSpotlight)
 
-        User.queue.async {
-            let user = User()
-            XCTAssertTrue(user.showsReferralSpotlight)
-
-            User.shared.hideReferralSpotlight()
-            User.queue.async {
-                let user = User()
-                XCTAssertFalse(user.showsReferralSpotlight)
-                expect.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 1)
+        User.shared.hideReferralSpotlight()
+        User.queue.sync {}
+        XCTAssertFalse(User().showsReferralSpotlight)
     }
 
     func testShowsInactiveTabsTooltip() {

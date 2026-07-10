@@ -64,7 +64,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testSpReplacedWhenAlreadyPresent() {
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&_sp=existing-sp-value")!
+        let url = ecosiaURL("/search?q=cats&_sp=existing-sp-value")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertTrue(result.url?.hasEcosiaUserId == true)

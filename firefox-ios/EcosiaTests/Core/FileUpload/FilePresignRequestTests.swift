@@ -7,22 +7,28 @@ import XCTest
 
 final class FilePresignRequestTests: XCTestCase {
 
-    func testCookieHeaderValue_mergesStoredCookiesWithAuthSession() {
-        let apiRoot = URL(string: "https://www.ecosia.org")!
-        let storage = HTTPCookieStorage()
-        let eaist = makeCookie(name: "EAIST", value: "waf-token", domain: "www.ecosia.org")
-        let easc = makeCookie(name: Cookie.authSession.rawValue, value: "session-token", domain: "www.ecosia.org")
+    func testCookieHeaderValue_mergesStoredCookiesWithAuthSession() throws {
+        let apiRoot = try XCTUnwrap(URL(string: "https://api.ecosia.org"))
+        let storage = HTTPCookieStorage.shared
+        let eaist = makeCookie(name: "EAIST", value: "waf-token", domain: ".ecosia.org")
+        let easc = makeCookie(name: Cookie.authSession.rawValue, value: "session-token", domain: ".ecosia.org")
         storage.setCookie(eaist)
         storage.setCookie(easc)
+        let refreshedCookie = makeCookie(
+            name: Cookie.authSession.rawValue,
+            value: "refreshed-session",
+            domain: ".ecosia.org"
+        )
+        defer {
+            storage.deleteCookie(eaist)
+            storage.deleteCookie(easc)
+            storage.deleteCookie(refreshedCookie)
+        }
 
         let header = FilePresignRequest.cookieHeaderValue(
             cookieStorage: storage,
             apiRoot: apiRoot,
-            authSessionCookie: makeCookie(
-                name: Cookie.authSession.rawValue,
-                value: "refreshed-session",
-                domain: "www.ecosia.org"
-            )
+            authSessionCookie: refreshedCookie
         )
 
         XCTAssertEqual(
@@ -37,6 +43,7 @@ final class FilePresignRequestTests: XCTestCase {
             .value: value,
             .domain: domain,
             .path: "/",
+            .expires: Date(timeIntervalSinceNow: 60 * 60),
         ])!
     }
 }

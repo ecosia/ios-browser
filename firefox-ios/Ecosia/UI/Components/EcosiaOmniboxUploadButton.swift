@@ -52,6 +52,7 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
         accessibilityIdentifier = "NTPSearchBarUploadButton"
         accessibilityLabel = String.localized(.upload)
         accessibilityHint = String.localized(.uploadAccessibilityHint)
+        accessibilityTraits.insert(.button)
 
         addSubview(highlightCircle)
         addSubview(iconView)
