@@ -27,11 +27,9 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         controller.dismiss(animated: true)
 
-        let existingAttachmentCount = OmniboxUploadFileSelectionValidator.maxFileCount
-            - (delegate?.omniboxUploadRemainingAttachmentSlots ?? OmniboxUploadFileSelectionValidator.maxFileCount)
         let validationResult = OmniboxUploadFileSelectionValidator.validate(
             urls: urls,
-            existingAttachmentCount: existingAttachmentCount
+            existingAttachmentCount: delegate?.omniboxUploadExistingAttachmentCount ?? 0
         )
 
         let pendingItems = validationResult.acceptedURLs.map { url in

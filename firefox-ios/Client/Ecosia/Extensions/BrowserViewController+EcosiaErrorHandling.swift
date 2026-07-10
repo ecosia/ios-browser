@@ -99,6 +99,14 @@ final class EcosiaErrorToastContainerView: UIView {
         updateContainerHeight()
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.preferredContentSizeCategory != traitCollection.preferredContentSizeCategory else {
+            return
+        }
+        updateContainerHeight()
+    }
+
     func configure(parent: UIViewController, windowUUID: WindowUUID) {
         parentViewController = parent
         self.windowUUID = windowUUID

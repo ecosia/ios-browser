@@ -12,3 +12,9 @@ protocol OmniboxUploadPickerDelegate: AnyObject {
         validationErrors: Set<OmniboxUploadValidationError>
     )
 }
+
+extension OmniboxUploadPickerDelegate {
+    var omniboxUploadExistingAttachmentCount: Int {
+        OmniboxUploadFileSelectionValidator.maxFileCount - omniboxUploadRemainingAttachmentSlots
+    }
+}
