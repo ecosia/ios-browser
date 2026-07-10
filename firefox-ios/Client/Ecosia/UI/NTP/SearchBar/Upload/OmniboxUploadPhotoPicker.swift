@@ -40,15 +40,14 @@ extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
                 let fileName = result.itemProvider.suggestedName
                     ?? OmniboxUploadPayloadLoader.uniqueJPEGFileName(prefix: "photo")
                 let typeIdentifier = result.itemProvider.registeredTypeIdentifiers.first ?? UTType.jpeg.identifier
-                guard let payload = try? await Task.detached(priority: .userInitiated) {
+                let payload = try? await Task.detached(priority: .userInitiated) {
                     try await Self.loadPhoto(
                         from: result.itemProvider,
                         fileName: fileName,
                         typeIdentifier: typeIdentifier
                     )
-                }.value else {
-                    continue
-                }
+                }.value
+                guard let payload else { continue }
 
                 let captured = payload
                 pendingItems.append(
