@@ -317,6 +317,10 @@
 "Solves complex problems" = "Solves complex problems";
 "Shows sources for every answer" = "Shows sources for every answer";
 "Breaks down topics step by step" = "Breaks down topics step by step";
+// Omnibox file upload (attachment strip)
+"Upload failed" = "Upload failed";
+"Waiting for the attachment to finish uploading" = "Waiting for the attachment to finish uploading";
+"Remove the failed attachment or try uploading again" = "Remove the failed attachment or try uploading again";
 
 // Product Tour
 "Go back" = "Go back";

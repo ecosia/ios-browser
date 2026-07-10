@@ -23,6 +23,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // the input.
         if let bar = ntpOmniboxAnchorView {
             bar.text = ""
+            omniboxAttachmentCoordinator.clearAttachments()
             _ = bar.resignFirstResponder()
         }
         submitOmniboxSearch(query: searchTerm)
@@ -129,7 +130,27 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
-        (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
+        let bar = (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
+        bar?.onRemoveAttachment = { [weak self] id in
+            self?.omniboxAttachmentCoordinator.removeAttachment(id: id)
+        }
+        return bar
+    }
+
+    fileprivate var omniboxAttachmentCoordinator: OmniboxAttachmentUploadCoordinator {
+        if let coordinator = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.attachmentCoordinator)
+            as? OmniboxAttachmentUploadCoordinator {
+            coordinator.searchBar = ntpOmniboxAnchorView
+            return coordinator
+        }
+        let coordinator = OmniboxAttachmentUploadCoordinator()
+        coordinator.delegate = self
+        coordinator.searchBar = ntpOmniboxAnchorView
+        objc_setAssociatedObject(self,
+                                 &OmniboxUploadAssociatedKeys.attachmentCoordinator,
+                                 coordinator,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return coordinator
     }
 }
 
@@ -327,6 +348,7 @@ extension BrowserViewController {
 private struct OmniboxUploadAssociatedKeys {
     /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var pickerCoordinator: UInt8 = 0
+    nonisolated(unsafe) static var attachmentCoordinator: UInt8 = 0
 }
 
 @MainActor
@@ -372,8 +394,15 @@ extension BrowserViewController {
 
 @MainActor
 extension BrowserViewController: OmniboxUploadPickerDelegate {
-    func omniboxUploadDidSelect(items: [OmniboxUploadItem]) {
-        // TODO: Stub for follow-up upload wiring to AI chat.
-        _ = items
+    func omniboxUploadDidPickPendingItems(_ items: [OmniboxUploadPendingItem]) {
+        _ = ntpOmniboxAnchorView?.becomeFirstResponder()
+        omniboxAttachmentCoordinator.processPendingItems(items)
+    }
+}
+
+@MainActor
+extension BrowserViewController: OmniboxAttachmentUploadDelegate {
+    func omniboxAttachmentsDidChange() {
+        ntpOmniboxAnchorView?.refreshSubmitButtonState()
     }
 }

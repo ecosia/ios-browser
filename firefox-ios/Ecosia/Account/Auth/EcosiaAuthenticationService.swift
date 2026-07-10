@@ -38,6 +38,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// This token is used to access protected resources.
     public private(set) var accessToken: String?
 
+    /// OAuth scopes granted with the current access token (from Auth0 token response).
+    private(set) var grantedScope: String?
+
     /// The current refresh token for the authenticated user.
     /// This token is used to obtain new access tokens when they expire.
     private(set) var refreshToken: String?
@@ -128,6 +131,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         return accountOrigin
     }
 
+    /// Whether the current session includes conversation API scopes.
+    public var hasConversationScopes: Bool {
+        EcosiaAuthScopes.hasConversationScopes(in: accessToken ?? "", grantedScope: grantedScope)
+    }
+
     /// Logs out the user with option to skip web logout (for web-initiated logout)
     /// - Parameter triggerWebLogout: Whether to clear the web session. Defaults to true.
     /// - Throws: `AuthError.userCancelled` if user cancels the logout web session,
@@ -204,8 +212,13 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             }
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
-            // Dispatch state loaded with current authentication status
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
+
+            do {
+                try await renewCredentialsIfNeeded()
+            } catch {
+                EcosiaLogger.auth.error("Failed to refresh stored credentials after retrieval: \(error)")
+            }
         } catch {
             EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
             // Even if retrieval fails, dispatch state loaded as false
@@ -251,6 +264,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
                                             accountOrigin: AccountOrigin? = nil) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
+        self.grantedScope = credentials?.scope
         self.refreshToken = credentials?.refreshToken
         let wasLoggedIn = self.isLoggedIn
         self.isLoggedIn = isLoggedIn

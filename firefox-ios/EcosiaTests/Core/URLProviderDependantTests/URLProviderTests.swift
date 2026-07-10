@@ -188,4 +188,58 @@ final class URLProviderTests: XCTestCase {
         let url = urlProvider.aiChat(origin: .autocomplete)
         XCTAssertTrue(url.absoluteString.contains("/ai-chat?origin=autocomplete_app"))
     }
+
+    func testAIChatWithQueryAndFiles() throws {
+        let files = [
+            AIChatFileQuery(
+                fileId: "a",
+                filename: "notes.pdf",
+                mimeType: "application/pdf",
+                sizeBytes: 1024
+            ),
+            AIChatFileQuery(
+                fileId: "b",
+                filename: "photo.png",
+                mimeType: "image/png",
+                sizeBytes: 2048
+            ),
+        ]
+        let url = urlProvider.aiChat(origin: .omnibox, query: "summarize this", files: files)
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        let items = Dictionary(uniqueKeysWithValues: (components?.queryItems ?? []).map { ($0.name, $0.value) })
+        XCTAssertEqual(items["origin"], "omnibox_app")
+        XCTAssertEqual(items["q"], "summarize this")
+
+        let filesJSON = try XCTUnwrap(items["files"])
+        let decoded = try JSONDecoder().decode([AIChatFileQuery].self, from: Data(filesJSON.utf8))
+        XCTAssertEqual(decoded, files)
+        XCTAssertFalse(url.absoluteString.contains("file_ids"))
+    }
+
+    func testAIChatEncodesQuestionMarkInQuerySoFilesParamIsPreserved() throws {
+        let files = [
+            AIChatFileQuery(
+                fileId: "39cc9dd7-6e32-444f-a0ff-8a9a615b1441",
+                filename: "IMG_0111",
+                mimeType: "image/jpeg",
+                sizeBytes: 5212725
+            ),
+        ]
+        let url = urlProvider.aiChat(
+            origin: .omnibox,
+            query: "Cosa sono queste immagini?",
+            files: files
+        )
+
+        XCTAssertTrue(url.absoluteString.contains("immagini%3F"))
+        XCTAssertFalse(url.absoluteString.contains("immagini?&"))
+
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        let items = Dictionary(uniqueKeysWithValues: (components?.queryItems ?? []).map { ($0.name, $0.value) })
+        XCTAssertEqual(items["q"], "Cosa sono queste immagini?")
+
+        let filesJSON = try XCTUnwrap(items["files"])
+        let decoded = try JSONDecoder().decode([AIChatFileQuery].self, from: Data(filesJSON.utf8))
+        XCTAssertEqual(decoded, files)
+    }
 }
