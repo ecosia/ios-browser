@@ -34,7 +34,7 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
                 ? .image
                 : .file
             return OmniboxUploadPendingItem(fileName: url.lastPathComponent, layout: layout) {
-                try OmniboxUploadPayloadLoader.loadFile(from: url)
+                try await OmniboxUploadPayloadLoader.loadFile(from: url)
             }
         }
         guard !pendingItems.isEmpty else { return }

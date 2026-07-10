@@ -18,12 +18,12 @@ final class OmniboxUploadPayloadLoaderTests: XCTestCase {
         }
     }
 
-    func testLoadFileReadsSmallFile() throws {
+    func testLoadFileReadsSmallFile() async throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("small.txt")
         try Data("hello".utf8).write(to: url)
         defer { try? FileManager.default.removeItem(at: url) }
 
-        let payload = try OmniboxUploadPayloadLoader.loadFile(from: url)
+        let payload = try await OmniboxUploadPayloadLoader.loadFile(from: url)
         XCTAssertEqual(payload.fileName, "small.txt")
         XCTAssertEqual(payload.data, Data("hello".utf8))
     }

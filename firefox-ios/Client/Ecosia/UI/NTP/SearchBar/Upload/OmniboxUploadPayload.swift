@@ -16,15 +16,15 @@ struct OmniboxUploadLocalPayload {
 }
 
 /// Deferred load closure used while the system picker hands back a selection.
-struct OmniboxUploadPendingItem: Sendable {
+struct OmniboxUploadPendingItem {
     let fileName: String
     let layout: OmniboxAttachment.Layout
-    let load: @Sendable () async throws -> OmniboxUploadLocalPayload
+    let load: () async throws -> OmniboxUploadLocalPayload
 
     init(
         fileName: String,
         layout: OmniboxAttachment.Layout,
-        load: @escaping @Sendable () async throws -> OmniboxUploadLocalPayload
+        load: @escaping () async throws -> OmniboxUploadLocalPayload
     ) {
         self.fileName = fileName
         self.layout = layout
@@ -59,13 +59,17 @@ enum OmniboxUploadPayloadLoader {
 
     static let maxFileSizeBytes = 5 * 1024 * 1024
 
-    static func loadFile(from url: URL) throws -> OmniboxUploadLocalPayload {
-        try validateFileSize(at: url)
-        let data = try OmniboxUploadSecurityScopedAccess.withAccess(to: url) {
-            try Data(contentsOf: url)
-        }
-        try validateSize(data)
-        let mimeType = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType ?? "application/octet-stream"
+    static func loadFile(from url: URL) async throws -> OmniboxUploadLocalPayload {
+        // Run blocking file IO off the calling actor
+        let (data, mimeType) = try await Task.detached(priority: .userInitiated) { () throws -> (Data, String) in
+            try validateFileSize(at: url)
+            let data = try OmniboxUploadSecurityScopedAccess.withAccess(to: url) {
+                try Data(contentsOf: url)
+            }
+            try validateSize(data)
+            let mimeType = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType ?? "application/octet-stream"
+            return (data, mimeType)
+        }.value
         let layout: OmniboxAttachment.Layout = mimeType.hasPrefix("image/") ? .image : .file
         let previewImage = layout == .image ? UIImage(data: data) : nil
         return OmniboxUploadLocalPayload(

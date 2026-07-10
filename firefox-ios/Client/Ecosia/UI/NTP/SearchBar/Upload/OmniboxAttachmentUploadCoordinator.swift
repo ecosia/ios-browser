@@ -64,7 +64,7 @@ final class OmniboxAttachmentUploadCoordinator {
             searchBar.addAttachment(attachment)
 
             let attachmentID = attachment.id
-            tasks[attachmentID] = Task { [weak self] in
+            tasks[attachmentID] = Task { @MainActor [weak self] in
                 await self?.loadAndUpload(attachmentID: attachmentID, item: item)
             }
         }
@@ -92,9 +92,15 @@ final class OmniboxAttachmentUploadCoordinator {
         defer { tasks.removeValue(forKey: attachmentID) }
         guard let searchBar else { return }
 
+        var displayFileName = item.fileName
+        var displayLayout = item.layout
+
         do {
             let payload = try await item.loadPayload()
             guard !Task.isCancelled else { return }
+
+            displayFileName = payload.fileName
+            displayLayout = payload.layout
 
             if let previewImage = payload.previewImage {
                 previewImages[attachmentID] = previewImage
@@ -142,8 +148,8 @@ final class OmniboxAttachmentUploadCoordinator {
             } else {
                 searchBar.updateAttachment(
                     id: attachmentID,
-                    fileName: item.fileName,
-                    layout: item.layout,
+                    fileName: displayFileName,
+                    layout: displayLayout,
                     state: .failed,
                     previewImages: previewImages
                 )
