@@ -13,8 +13,10 @@ enum OmniboxUploadPhotoPickerUX {
 
 extension OmniboxUploadPickerCoordinator {
     func presentPhotoPicker(from viewController: UIViewController) {
+        let remainingSlots = delegate?.omniboxUploadRemainingAttachmentSlots
+            ?? OmniboxUploadPhotoPickerUX.maxSelectionCount
         var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = OmniboxUploadPhotoPickerUX.maxSelectionCount
+        configuration.selectionLimit = min(OmniboxUploadPhotoPickerUX.maxSelectionCount, remainingSlots)
         configuration.filter = .images
 
         let picker = PHPickerViewController(configuration: configuration)
@@ -29,7 +31,13 @@ extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
         guard !results.isEmpty else { return }
 
-        let acceptedResults = Array(results.prefix(OmniboxUploadPhotoPickerUX.maxSelectionCount))
+        let remainingSlots = delegate?.omniboxUploadRemainingAttachmentSlots
+            ?? OmniboxUploadPhotoPickerUX.maxSelectionCount
+        let acceptedResults = Array(results.prefix(remainingSlots))
+        let validationErrors = OmniboxUploadFileSelectionValidator.validateSelectionCount(
+            selectedCount: results.count,
+            existingAttachmentCount: delegate?.omniboxUploadExistingAttachmentCount ?? 0
+        )
 
         // Load bytes while the picker callback is still active — the item provider can expire later.
         Task { @MainActor [weak self] in
@@ -57,8 +65,10 @@ extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
                 )
             }
 
-            guard !pendingItems.isEmpty else { return }
-            delegate?.omniboxUploadDidPickPendingItems(pendingItems)
+            delegate?.omniboxUploadDidFinishPicking(
+                items: pendingItems,
+                validationErrors: validationErrors
+            )
         }
     }
 

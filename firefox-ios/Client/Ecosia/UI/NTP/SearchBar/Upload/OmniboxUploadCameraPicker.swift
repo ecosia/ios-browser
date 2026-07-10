@@ -107,6 +107,6 @@ extension OmniboxUploadPickerCoordinator: UIImagePickerControllerDelegate, UINav
                 mimeType: UTType.jpeg.preferredMIMEType ?? "image/jpeg"
             )
         }
-        delegate?.omniboxUploadDidPickPendingItems([pendingItem])
+        delegate?.omniboxUploadDidFinishPicking(items: [pendingItem], validationErrors: [])
     }
 }
