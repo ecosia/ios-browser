@@ -31,8 +31,7 @@ struct OmniboxUploadPendingItem: Sendable {
         self.load = load
     }
 
-    /// Loads file bytes off the main actor; UI updates stay on `@MainActor` callers.
-    nonisolated func loadPayload() async throws -> OmniboxUploadLocalPayload {
+    func loadPayload() async throws -> OmniboxUploadLocalPayload {
         try await load()
     }
 }
@@ -83,6 +82,11 @@ enum OmniboxUploadPayloadLoader {
         let stem = (fileName as NSString).deletingPathExtension
         guard !stem.isEmpty else { return fallback }
         return "\(stem).jpg"
+    }
+
+    /// Unique JPEG name for camera/photo fallbacks so concurrent picks do not collide on the backend.
+    static func uniqueJPEGFileName(prefix: String) -> String {
+        "\(prefix)-\(UUID().uuidString.prefix(8)).jpg"
     }
 
     static func loadImage(data: Data, fileName: String, mimeType: String) throws -> OmniboxUploadLocalPayload {

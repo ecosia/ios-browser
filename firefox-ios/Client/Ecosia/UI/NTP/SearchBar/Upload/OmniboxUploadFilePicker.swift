@@ -30,7 +30,9 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
         let allowedURLs = OmniboxUploadFileSelectionValidator.allowedURLs(from: urls)
         let pendingItems = allowedURLs.map { url in
             let ext = url.pathExtension.lowercased()
-            let layout: OmniboxAttachment.Layout = ["jpg", "jpeg", "png"].contains(ext) ? .image : .file
+            let layout: OmniboxAttachment.Layout = OmniboxUploadFileSelectionValidator.imageExtensions.contains(ext)
+                ? .image
+                : .file
             return OmniboxUploadPendingItem(fileName: url.lastPathComponent, layout: layout) {
                 try OmniboxUploadPayloadLoader.loadFile(from: url)
             }

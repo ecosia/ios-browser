@@ -8,7 +8,9 @@ import UniformTypeIdentifiers
 enum OmniboxUploadFileSelectionValidator {
     static let maxFileCount = 5
     static let blockedExtensions: Set<String> = ["app", "exe"]
-    private static let supportedExtensions: Set<String> = ["pdf", "txt", "doc", "jpg", "jpeg", "png"]
+    static let imageExtensions: Set<String> = ["jpg", "jpeg", "png"]
+    private static let documentExtensions: Set<String> = ["pdf", "txt", "doc"]
+    private static let supportedExtensions = documentExtensions.union(imageExtensions)
 
     static var pickerContentTypes: [UTType] {
         [
