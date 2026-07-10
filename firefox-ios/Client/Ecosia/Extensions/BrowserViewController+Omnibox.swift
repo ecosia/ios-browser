@@ -356,6 +356,7 @@ extension BrowserViewController {
     fileprivate var omniboxUploadPickerCoordinator: OmniboxUploadPickerCoordinator {
         if let coordinator = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.pickerCoordinator)
             as? OmniboxUploadPickerCoordinator {
+            coordinator.delegate = self
             return coordinator
         }
         let coordinator = OmniboxUploadPickerCoordinator()
