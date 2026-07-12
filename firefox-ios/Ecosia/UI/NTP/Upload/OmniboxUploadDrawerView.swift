@@ -297,6 +297,7 @@ struct OmniboxUploadDrawerView: View {
                     Image(systemName: "checkmark")
                         .font(.system(size: UX.doneGlyphSize, weight: .medium))
                         .foregroundColor(theme.selectedCheckmarkColor)
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, UX.chatModeRowHorizontalPadding)

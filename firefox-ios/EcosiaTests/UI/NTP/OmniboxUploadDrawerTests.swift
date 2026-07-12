@@ -138,8 +138,11 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         let state = NTPOmniboxSheetState()
         var changes: [OmniboxChatMode?] = []
         var receivedUpload: OmniboxUploadOption?
-        present(state, onSelectUpload: { receivedUpload = $0 },
-                onChatModeSelectionChanged: { changes.append($0) })
+        present(
+            state,
+            onSelectUpload: { receivedUpload = $0 },
+            onChatModeSelectionChanged: { changes.append($0) }
+        )
 
         state.handleChatModeSelected(.thinkLonger)
         // Delivered on tap — not deferred until the sheet dismisses.
