@@ -134,15 +134,32 @@ class SceneCoordinator: BaseCoordinator,
     private func startBrowser(with launchType: LaunchType?) {
         guard !childCoordinators.contains(where: { $0 is BrowserCoordinator }) else { return }
 
+        // Ecosia: Guard against AppContainer.shared.reset() called by unit-test setUp concurrently.
+        // AppContainer is not thread-safe; the scene coordinator can still be starting up on a
+        // background queue when DependencyHelperMock.bootstrapDependencies() calls reset(). Resolve
+        // all AppContainer services we need here via resolveOptional() and abort early if any are
+        // missing — the test host will re-attempt browser startup when scene lifecycle fires again.
+        guard let profile: Profile = AppContainer.shared.resolveOptional(),
+              let themeManager: ThemeManager = AppContainer.shared.resolveOptional(),
+              let browserWindowManager: WindowManager = AppContainer.shared.resolveOptional() else {
+            logger.log("startBrowser: required services not in AppContainer — skipping (reset in test setUp?)",
+                       level: .warning,
+                       category: .coordinator)
+            return
+        }
+
         logger.log("Starting browser with launchtype \(String(describing: launchType))",
                    level: .info,
                    category: .coordinator)
 
-        let tabManager = TabManagerImplementation(profile: AppContainer.shared.resolve(),
+        let tabManager = TabManagerImplementation(profile: profile,
                                                   uuid: reservedWindowUUID)
         let browserCoordinator = BrowserCoordinator(router: router,
                                                     screenshotService: screenshotService,
-                                                    tabManager: tabManager)
+                                                    tabManager: tabManager,
+                                                    profile: profile,
+                                                    themeManager: themeManager,
+                                                    windowManager: browserWindowManager)
 
         let windowInfo = AppWindowInfo(tabManager: tabManager, sceneCoordinator: self)
         windowManager.newBrowserWindowConfigured(windowInfo, uuid: windowUUID)

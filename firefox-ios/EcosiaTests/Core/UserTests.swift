@@ -46,23 +46,20 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testNotSavingOnLoad() {
-        let expect = expectation(description: "")
-        nonisolated(unsafe) var user = User()
-        user.firstTime = false
-        User.shared = user
-        User.queue.async {
-            user = User()
-            try! FileManager.default.removeItem(at: FileManager.user)
-            XCTAssertFalse(user.firstTime)
-            User.queue.async {
-                XCTAssertNotNil(user)
-                DispatchQueue.main.async {
-                    XCTAssertFalse(FileManager.default.fileExists(atPath: FileManager.user.path))
-                    expect.fulfill()
-                }
-            }
+        nonisolated(unsafe) var seeded = User.shared
+        seeded.firstTime = false
+        User.queue.sync {
+            try? JSONEncoder().encode(seeded).write(to: FileManager.user, options: .atomic)
         }
-        waitForExpectations(timeout: 1)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: FileManager.user.path))
+
+        User.queue.sync {
+            let loaded = User()
+            XCTAssertFalse(loaded.firstTime)
+            try? FileManager.default.removeItem(at: FileManager.user)
+        }
+        User.queue.sync {}
+        XCTAssertFalse(FileManager.default.fileExists(atPath: FileManager.user.path))
     }
 
     func testAnalyticsId() {
@@ -245,24 +242,16 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testShowsReferralSpotlight() {
-        let expect = expectation(description: "")
         XCTAssertFalse(User.shared.showsReferralSpotlight)
 
         // set install to 4 days ago
         User.shared.install = Calendar.current.date(byAdding: .day, value: -4, to: .init())!
+        User.queue.sync {}
+        XCTAssertTrue(User().showsReferralSpotlight)
 
-        User.queue.async {
-            let user = User()
-            XCTAssertTrue(user.showsReferralSpotlight)
-
-            User.shared.hideReferralSpotlight()
-            User.queue.async {
-                let user = User()
-                XCTAssertFalse(user.showsReferralSpotlight)
-                expect.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 1)
+        User.shared.hideReferralSpotlight()
+        User.queue.sync {}
+        XCTAssertFalse(User().showsReferralSpotlight)
     }
 
     func testShowsInactiveTabsTooltip() {
@@ -319,24 +308,31 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testSearchSettingChangeNotifiaction() {
-        let expect = expectation(description: "")
         var count = 0
-
-        NotificationCenter.default.addObserver(forName: .searchSettingsChanged, object: nil, queue: .main) { _ in
-
+        let observer = NotificationCenter.default.addObserver(
+            forName: .searchSettingsChanged,
+            object: nil,
+            queue: .main
+        ) { _ in
             count += 1
-
-            if count == 4 {
-                expect.fulfill()
-            }
         }
+        defer { NotificationCenter.default.removeObserver(observer) }
 
-        User.shared.aiOverviews = !User.shared.aiOverviews
-        User.shared.marketCode = .en_ww
-        User.shared.autoComplete = !User.shared.autoComplete
-        User.shared.adultFilter = .off
+        // Pick values that always differ from the current state so each assignment
+        // posts a notification even when earlier tests in this suite mutated `User.shared`.
+        let baseline = User.shared
+        User.shared.aiOverviews = !baseline.aiOverviews
+        User.shared.marketCode = baseline.marketCode == .en_ww ? .ar_sa : .en_ww
+        User.shared.autoComplete = !baseline.autoComplete
+        User.shared.adultFilter = baseline.adultFilter == .off ? .moderate : .off
 
-        wait(for: [expect], timeout: 1)
+        // `User.shared` posts on the main queue asynchronously; pump the run loop so
+        // all four notifications are delivered before asserting (CI can be slower than local).
+        let deadline = Date().addingTimeInterval(3)
+        while count < 4 && Date() < deadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        }
+        XCTAssertEqual(count, 4, "Expected 4 searchSettingsChanged notifications, got \(count)")
     }
 
     func testAnalyticsUserState() {

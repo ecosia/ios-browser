@@ -210,7 +210,7 @@ final class URLProviderTests: XCTestCase {
         XCTAssertEqual(items["origin"], "omnibox_app")
         XCTAssertEqual(items["q"], "summarize this")
 
-        let filesJSON = try XCTUnwrap(items["files"])
+        let filesJSON = try XCTUnwrap(items["files"].flatMap { $0 })
         let decoded = try JSONDecoder().decode([AIChatFileQuery].self, from: Data(filesJSON.utf8))
         XCTAssertEqual(decoded, files)
         XCTAssertFalse(url.absoluteString.contains("file_ids"))
@@ -238,7 +238,7 @@ final class URLProviderTests: XCTestCase {
         let items = Dictionary(uniqueKeysWithValues: (components?.queryItems ?? []).map { ($0.name, $0.value) })
         XCTAssertEqual(items["q"], "Cosa sono queste immagini?")
 
-        let filesJSON = try XCTUnwrap(items["files"])
+        let filesJSON = try XCTUnwrap(items["files"].flatMap { $0 })
         let decoded = try JSONDecoder().decode([AIChatFileQuery].self, from: Data(filesJSON.utf8))
         XCTAssertEqual(decoded, files)
     }

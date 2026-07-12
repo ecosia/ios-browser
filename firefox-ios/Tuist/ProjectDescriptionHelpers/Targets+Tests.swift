@@ -44,6 +44,17 @@ public enum TestTargets {
             bundleId: "org.mozilla.ios.ClientTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/ClientTests/**/*.swift"],
+            resources: [
+                // Ecosia: Test fixtures ClientTests loads from its own bundle (wallpaper JSON, search/pocket
+                // lists, images, search-engine xcassets). Upstream's Client.xcodeproj bundles these; the Tuist
+                // migration dropped them, causing `Fatal error: Missing file: wallpaper*.json` /
+                // `Couldn't find test file` crashes. (MOB-4384)
+                .glob(pattern: "firefox-ios-tests/Tests/ClientTests/**/*.json",
+                      excluding: ["firefox-ios-tests/Tests/ClientTests/**/*.xcassets/**"]),
+                "firefox-ios-tests/Tests/ClientTests/image.png",
+                "firefox-ios-tests/Tests/ClientTests/image.gif",
+                "firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/SearchEngineTestAssets.xcassets",
+            ],
             dependencies: [
                 .target(name: "Client"),
                 .target(name: "RustMozillaAppServices"),
@@ -54,6 +65,10 @@ public enum TestTargets {
                 .package(product: "Shared"),
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
+                // Ecosia: ClientTests/Toolbar/ToolbarMiddlewareTests imports ToolbarKit directly.
+                // Xcode 26.5's stricter linker no longer resolves ToolbarKit's Swift type metadata
+                // transitively via the Client host (-bundle_loader), so the test target must link it. (MOB-4384)
+                .package(product: "ToolbarKit"),
                 .sdk(name: "z", type: .library),
             ],
             settings: .settings(base: BuildConfigurations.testBaseSettings)
@@ -88,9 +103,17 @@ public enum TestTargets {
             bundleId: "org.mozilla.ios.StorageTests",
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/StorageTests/**/*.swift"],
+            resources: [
+                // Ecosia: certificate files and DB fixtures required by CertTests and TestBrowserDB.
+                .glob(pattern: "firefox-ios-tests/Tests/StorageTests/**/*.pem"),
+                .glob(pattern: "firefox-ios-tests/Tests/StorageTests/fixtures/**"),
+            ],
             dependencies: [
                 .target(name: "Client"),
                 .target(name: "Storage"),
+                // Ecosia: RustAutofillTests and RustRemoteTabsTests import MozillaAppServices directly,
+                // so StorageTests must link RustMozillaAppServices to resolve those symbols at link time.
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "Common"),
                 .package(product: "Shared"),
                 .package(product: "Fuzi"),
@@ -113,6 +136,11 @@ public enum TestTargets {
             infoPlist: .default,
             sources: ["firefox-ios-tests/Tests/SharedTests/**/*.swift"],
             dependencies: [
+                // Ecosia: Host SharedTests in the Client app so Bundle.main is the .app bundle. The Ecosia
+                // UserAgent/SupportUtils tests exercise production code that reads AppInfo.applicationBundle,
+                // which fatalErrors when Bundle.main is the bare xctest agent (logic-test host). Depending on the
+                // Client app target makes Tuist app-host the test bundle, matching ClientTests/EcosiaTests. (MOB-4384)
+                .target(name: "Client"),
                 .package(product: "Common"),
                 .package(product: "Shared"),
             ],
@@ -224,10 +252,20 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/Utils/StoreTestUtility.swift",
                 "firefox-ios-tests/Tests/ClientTests/Microsurvey/Mock/MockMicrosurveySurfaceManager.swift",
             ],
+            resources: [
+                // Ecosia: JSON fixtures, HTML import/export files, and other test assets
+                // required by NewsTests, ReferralsTests, and bookmark import/export tests.
+                // Bundle identifier must match bundleId ("com.ecosia.tests.Ecosia") in Bundle+EcosiaTests.swift.
+                .glob(pattern: "EcosiaTests/Core/Resources/**"),
+            ],
             dependencies: [
                 .target(name: "Client"),
                 .target(name: "Ecosia"),
                 .target(name: "Storage"),
+                // Ecosia: EcosiaTests includes MockProfile, MockHistoryHandler, and
+                // BookmarksHandlerMock which import MozillaAppServices directly.
+                // RustMozillaAppServices must be linked to resolve those symbols at link time.
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "Common"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),

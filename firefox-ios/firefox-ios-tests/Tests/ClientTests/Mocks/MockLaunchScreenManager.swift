@@ -13,11 +13,16 @@ class MockLaunchScreenViewModel: LaunchScreenViewModel {
 
     override func startLoading(appVersion: String) {
         startLoadingCalled += 1
-        loadNextLaunchTypeCalled += 1
+        // Ecosia: startLoading must NOT bump loadNextLaunchTypeCalled — the VC defers loadNextLaunchType to
+        // viewWillAppear/finishedLoadingLaunchOrder. Track it in the dedicated override below. (MOB-4384)
         if let mockLaunchType = mockLaunchType {
             delegate?.launchWith(launchType: mockLaunchType)
         } else {
             delegate?.launchBrowser()
         }
+    }
+
+    override func loadNextLaunchType() {
+        loadNextLaunchTypeCalled += 1
     }
 }

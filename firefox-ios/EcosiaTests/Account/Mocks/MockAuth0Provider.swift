@@ -7,8 +7,7 @@ import Auth0
 import Combine
 @testable import Ecosia
 
-@MainActor
-class MockAuth0Provider: Auth0ProviderProtocol {
+class MockAuth0Provider: Auth0ProviderProtocol, @unchecked Sendable {
 
     // MARK: - Test Control Properties
     var shouldFailAuth = false

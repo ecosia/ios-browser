@@ -9,7 +9,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-        
+
     - name: Install xcpretty and prepare output directory
       shell: bash
       run: |
@@ -27,7 +27,8 @@ runs:
           -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
           -derivedDataPath DerivedData \
           build-for-testing | xcpretty --color
-          
+
+        set +e
         set -o pipefail && xcodebuild -scheme Ecosia \
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
@@ -35,8 +36,11 @@ runs:
           -destination 'platform=iOS Simulator,name=iPhone 17' \
           -resultBundlePath TestResults.xcresult \
           -derivedDataPath DerivedData \
-          test-without-building | xcpretty --color --report junit --output test_output/xml/report.junit || true
-        
+          test-without-building | xcpretty --color --report junit --output test_output/xml/report.junit
+        TEST_EXIT_CODE=${PIPESTATUS[0]}
+        set -e
+        echo "TEST_EXIT_CODE=$TEST_EXIT_CODE" >> "$GITHUB_ENV"
+
     - name: Publish Test Report
       if: always()
       uses: mikepenz/action-junit-report@v5
@@ -44,7 +48,15 @@ runs:
         report_paths: '**/test_output/xml/report.junit'
         github_token: ${{ inputs.github-token }}
         check_name: 'iOS Unit Test Results'
-        require_tests: false
-        include_passed: true
+        require_tests: true
+        include_passed: false
         detailed_summary: true
-        fail_on_failure: false
+        job_summary: true
+        fail_on_failure: true
+
+    - name: Fail job when xcodebuild reported test failures
+      if: always() && env.TEST_EXIT_CODE != '0'
+      shell: bash
+      run: |
+        echo "xcodebuild test-without-building exited with status $TEST_EXIT_CODE"
+        exit 1

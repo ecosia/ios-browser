@@ -57,7 +57,9 @@ class PasswordManagerViewModelTests: XCTestCase, @unchecked Sendable {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1)
-        testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
+        // Ecosia: Firefox Glean telemetry is silenced (Snowplow is used), so the Logins.saved Glean counter is
+        // never recorded. The behavioural assertion (addLoginCalledCount == 1) above covers the real behaviour.
+        // testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
     }
 
     func testaddLoginWithString() {
@@ -73,7 +75,9 @@ class PasswordManagerViewModelTests: XCTestCase, @unchecked Sendable {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1)
-        testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
+        // Ecosia: Firefox Glean telemetry is silenced (Snowplow is used), so the Logins.saved Glean counter is
+        // never recorded. The behavioural assertion (addLoginCalledCount == 1) above covers the real behaviour.
+        // testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
     }
 
     func testQueryLoginsWithEmptyString() {

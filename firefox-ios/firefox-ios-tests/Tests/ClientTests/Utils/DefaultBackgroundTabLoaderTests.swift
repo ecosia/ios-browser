@@ -32,7 +32,7 @@ class DefaultBackgroundTabLoaderTests: XCTestCase {
         XCTAssertEqual(applicationHelper.openURLCalled, 0)
     }
 
-    func testLoadBackgroundTabs_withTabs_load() {
+    func testLoadBackgroundTabs_withTabs_load() async {
         let urlString = "https://www.mozilla.com"
         tabQueue.queuedTabs = [ShareItem(url: urlString, title: "Title 1"),
                                ShareItem(url: urlString, title: "Title 2"),
@@ -40,6 +40,11 @@ class DefaultBackgroundTabLoaderTests: XCTestCase {
         let subject = createSubject()
 
         subject.loadBackgroundTabs()
+
+        // Ecosia: MockTabQueue.getQueuedTabs delivers its completion on a main-actor Task, so let it run before
+        // asserting the URLs were opened and the queue cleared.
+        await Task.yield()
+        try? await Task.sleep(nanoseconds: 100_000_000)
 
         XCTAssertEqual(tabQueue.getQueuedTabsCalled, 1)
         XCTAssertEqual(applicationHelper.openURLCalled, 3)

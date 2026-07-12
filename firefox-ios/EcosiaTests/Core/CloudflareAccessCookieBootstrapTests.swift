@@ -13,7 +13,8 @@ final class CloudflareAccessCookieBootstrapTests: XCTestCase {
             environment: .production,
             cookieStore: store
         )
-        XCTAssertTrue(await store.allCookies().isEmpty)
+        let cookies = await store.allCookies()
+        XCTAssertTrue(cookies.isEmpty)
     }
 
     func testAuthorizationCookies_parsesSetCookieHeader() throws {

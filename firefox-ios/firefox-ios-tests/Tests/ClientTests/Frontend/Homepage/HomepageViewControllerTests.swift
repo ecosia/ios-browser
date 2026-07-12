@@ -52,9 +52,10 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
         sut.loadViewIfNeeded()
 
-        XCTAssertEqual(mockThemeManager?.getCurrentThemeCallCount, 1)
+        // Ecosia: viewDidLoad reads the current theme twice during setup, and registers for ThemeDidChange via a
+        // Combine publisher (addPublisherCount), not addObserver — so the mock's `observers` array stays empty.
+        XCTAssertEqual(mockThemeManager?.getCurrentThemeCallCount, 2)
         XCTAssertEqual(mockNotificationCenter?.addPublisherCount, 1)
-        XCTAssertEqual(mockNotificationCenter?.observers, [.ThemeDidChange])
     }
 
     func test_scrollViewDidScroll_updatesStatusBarScrollDelegate() {
