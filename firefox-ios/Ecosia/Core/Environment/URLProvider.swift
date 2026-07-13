@@ -218,13 +218,16 @@ public enum URLProvider {
     }
 
     /// Builds the AI chat URL, optionally tagged with where the user came
-    /// from (`origin`) and seeded with a `query` to start the conversation.
-    /// Centralizing both parameters here keeps callers from having to know
+    /// from (`origin`), seeded with a `query` to start the conversation,
+    /// with optional `files` for attachment routing, and extended with
+    /// `additionalQueryItems` (e.g. an omnibox chat mode's backend flags).
+    /// Centralizing the parameters here keeps callers from having to know
     /// the URL's query-item conventions.
     public func aiChat(
         origin: AIChatOrigin? = nil,
         query: String? = nil,
-        files: [AIChatFileQuery] = []
+        files: [AIChatFileQuery] = [],
+        additionalQueryItems: [URLQueryItem] = []
     ) -> URL {
         let baseURL = root.appendingPathComponent("ai-chat")
         var items: [URLQueryItem] = []
@@ -237,6 +240,7 @@ public enum URLProvider {
         if !files.isEmpty, let filesJSON = AIChatFileQuery.urlQueryValue(files) {
             items.append(URLQueryItem(name: "files", value: filesJSON))
         }
+        items.append(contentsOf: additionalQueryItems)
         guard !items.isEmpty else { return baseURL }
         return baseURL.appendingPercentEncodedQueryItems(items)
     }

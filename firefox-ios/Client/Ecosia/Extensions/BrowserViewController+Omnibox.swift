@@ -26,11 +26,28 @@ extension BrowserViewController: NTPSearchBarDelegate {
             omniboxAttachmentCoordinator.clearAttachments()
             _ = bar.resignFirstResponder()
         }
-        submitOmniboxSearch(query: searchTerm)
+        // When a chat mode is active, every message bypasses backend
+        // autorouting and goes straight to AI Chat in that mode. The mode
+        // stays selected across submissions until the user deselects it.
+        if let mode = omniboxSheetState?.selectedChatMode {
+            submitOmniboxChatMode(mode, query: searchTerm)
+        } else {
+            submitOmniboxSearch(query: searchTerm)
+        }
         // Force the swap to the webview. Without URL bar overlay mode, the
         // standard `addressToolbar(_:didLeaveOverlayModeForReason:)` chain
         // — which is what normally calls `showEmbeddedWebview()` — never fires.
         showEmbeddedWebview()
+    }
+
+    /// Loads AI Chat seeded with the typed message and tagged with the active
+    /// chat mode's backend flags (see `OmniboxChatMode.aiChatQueryItems`).
+    private func submitOmniboxChatMode(_ mode: OmniboxChatMode, query: String) {
+        guard let tab = tabManager.selectedTab else { return }
+        let url = Environment.current.urlProvider.aiChat(origin: .omnibox,
+                                                         query: query,
+                                                         additionalQueryItems: mode.aiChatQueryItems)
+        finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
     }
 
     /// Builds the search URL for an omnibox submission (direct typed submit
@@ -151,6 +168,13 @@ extension BrowserViewController: NTPSearchBarDelegate {
                                  coordinator,
                                  .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return coordinator
+    }
+
+    /// Shared source of truth for the omnibox "AI tools" drawer, including the
+    /// active chat-mode selection. Lives on the homepage adapter, so it is only
+    /// available while the NTP is the current content.
+    fileprivate var omniboxSheetState: NTPOmniboxSheetState? {
+        (contentContainer.contentController as? HomepageViewController)?.ecosiaAdapter?.omniboxSheetState
     }
 }
 
@@ -380,16 +404,18 @@ extension BrowserViewController {
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
                                                               from: self,
                                                               sourceView: sourceView)
-        }, onSelectChatMode: { [weak self] mode in
-            self?.handleOmniboxChatModeSelection(mode)
+        }, onChatModeSelectionChanged: { [weak self] mode in
+            // The sheet state has already toggled the active mode; reflect it on
+            // the omnibox chip right away so the glyph appears while the drawer
+            // is still sliding away rather than after it disappears.
+            self?.ntpOmniboxAnchorView?.setSelectedChatMode(mode)
         })
     }
 
-    /// Handles a chat-mode selection from the "AI tools" drawer. Selecting a mode
-    /// currently just closes the drawer (dismissal is driven by the sheet state);
-    /// `mode` is delivered here so the follow-up can act on the chosen mode.
-    fileprivate func handleOmniboxChatModeSelection(_ mode: OmniboxChatMode) {
-        // TODO: MOB-4627 — add the selected chat mode as a chip on the omnibox.
+    /// Clears the active chat mode when the user taps the chip's X.
+    func ntpSearchBarDidTapChatModeChipClose() {
+        omniboxSheetState?.selectedChatMode = nil
+        ntpOmniboxAnchorView?.setSelectedChatMode(nil)
     }
 }
 

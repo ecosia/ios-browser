@@ -319,6 +319,7 @@
 "Upload failed" = "Upload failed";
 "Waiting for the attachment to finish uploading" = "Waiting for the attachment to finish uploading";
 "Remove the failed attachment or try uploading again" = "Remove the failed attachment or try uploading again";
+"Remove chat mode" = "Remove chat mode";
 
 // Product Tour
 "Go back" = "Go back";
