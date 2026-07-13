@@ -105,6 +105,31 @@ final class OmniboxUploadDrawerTests: XCTestCase {
         XCTAssertTrue(learningItems.contains(URLQueryItem(name: "m", value: "1")))
         XCTAssertTrue(learningItems.contains(URLQueryItem(name: "q", value: "hello")))
     }
+
+    func testAIChatURLCarriesChatModeQueryItemsAndFiles() throws {
+        let provider = URLProvider.production
+        let files = [
+            AIChatFileQuery(
+                fileId: "file-1",
+                filename: "doc.pdf",
+                mimeType: "application/pdf",
+                sizeBytes: 1024
+            )
+        ]
+
+        let url = provider.aiChat(origin: .omnibox,
+                                  query: "summarize this",
+                                  files: files,
+                                  additionalQueryItems: OmniboxChatMode.learning.aiChatQueryItems)
+        let items = Dictionary(
+            uniqueKeysWithValues: (URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? [])
+                .map { ($0.name, $0.value) }
+        )
+
+        XCTAssertEqual(items["q"], "summarize this")
+        XCTAssertEqual(items["m"], "1")
+        XCTAssertNotNil(items["files"])
+    }
 }
 
 @MainActor

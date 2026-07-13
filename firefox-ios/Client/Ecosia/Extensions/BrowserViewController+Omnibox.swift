@@ -33,7 +33,22 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // autorouting and goes straight to AI Chat in that mode. The mode
         // stays selected across submissions until the user deselects it.
         if let mode = omniboxSheetState?.selectedChatMode {
-            submitOmniboxChatMode(mode, query: searchTerm)
+            if chatFiles.isEmpty {
+                submitOmniboxChatMode(mode, query: searchTerm, chatFiles: chatFiles)
+                showEmbeddedWebview()
+            } else {
+                guard let tab = tabManager.selectedTab else { return }
+                let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView(
+                        cookieStore: cookieStore ?? WKWebsiteDataStore.default().httpCookieStore
+                    )
+                    submitOmniboxChatMode(mode, query: searchTerm, chatFiles: chatFiles, tab: tab)
+                    showEmbeddedWebview(for: tab)
+                }
+            }
+            return
         } else if !chatFiles.isEmpty {
             guard let tab = tabManager.selectedTab else { return }
             let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
@@ -57,11 +72,20 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
     /// Loads AI Chat seeded with the typed message and tagged with the active
     /// chat mode's backend flags (see `OmniboxChatMode.aiChatQueryItems`).
-    private func submitOmniboxChatMode(_ mode: OmniboxChatMode, query: String) {
-        guard let tab = tabManager.selectedTab else { return }
+    private func submitOmniboxChatMode(_ mode: OmniboxChatMode,
+                                       query: String,
+                                       chatFiles: [AIChatFileQuery] = [],
+                                       tab: Tab? = nil) {
+        guard let tab = tab ?? tabManager.selectedTab else { return }
         let url = Environment.current.urlProvider.aiChat(origin: .omnibox,
                                                          query: query,
+                                                         files: chatFiles,
                                                          additionalQueryItems: mode.aiChatQueryItems)
+        if !chatFiles.isEmpty {
+            EcosiaLogger.network.info(
+                "[Omnibox] Routing to AI chat in \(mode) mode (files=\(chatFiles.count), host=\(url.host ?? "unknown"))"
+            )
+        }
         finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
     }
 

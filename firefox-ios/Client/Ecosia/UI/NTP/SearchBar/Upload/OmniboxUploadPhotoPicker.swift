@@ -15,6 +15,8 @@ extension OmniboxUploadPickerCoordinator {
     func presentPhotoPicker(from viewController: UIViewController) {
         let remainingSlots = delegate?.omniboxUploadRemainingAttachmentSlots
             ?? OmniboxUploadPhotoPickerUX.maxSelectionCount
+        // PHPicker treats `selectionLimit = 0` as unlimited, so never present with no slots left.
+        guard remainingSlots > 0 else { return }
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = min(OmniboxUploadPhotoPickerUX.maxSelectionCount, remainingSlots)
         configuration.filter = .images
