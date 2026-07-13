@@ -8,6 +8,12 @@ import Ecosia
 @MainActor
 final class NTPOmniboxSheetState: ObservableObject {
     @Published var showUploadDrawer = false
+    @Published var showSignInSheet = false
+
+    private enum PendingAuthAction {
+        case signIn
+        case signUp
+    }
 
     /// The currently active chat mode, or `nil` when none is selected. Drives
     /// both the checkmark in the drawer and the mode chip on the omnibox, and
@@ -29,6 +35,80 @@ final class NTPOmniboxSheetState: ObservableObject {
     /// immediately (see below).
     private var pendingUploadOption: OmniboxUploadOption?
     private var pendingLogin = false
+
+    private var pendingAuthAction: PendingAuthAction?
+    private var shouldPresentUploadDrawerAfterAuth = false
+    private var onSignIn: (() -> Void)?
+    private var onSignUp: (() -> Void)?
+    private var onUploadDrawerRequested: (() -> Void)?
+
+    func armUploadDrawerAfterAuthentication(onUploadDrawerRequested: @escaping () -> Void) {
+        shouldPresentUploadDrawerAfterAuth = true
+        self.onUploadDrawerRequested = onUploadDrawerRequested
+    }
+
+    func presentSignInSheetForUpload(
+        onSignIn: @escaping () -> Void,
+        onSignUp: @escaping () -> Void,
+        onUploadDrawerRequested: @escaping () -> Void
+    ) {
+        pendingAuthAction = nil
+        armUploadDrawerAfterAuthentication(onUploadDrawerRequested: onUploadDrawerRequested)
+        self.onSignIn = onSignIn
+        self.onSignUp = onSignUp
+        showSignInSheet = true
+    }
+
+    func handleSignInSheetSignInTapped() {
+        pendingAuthAction = .signIn
+        showSignInSheet = false
+    }
+
+    func handleSignInSheetCreateAccountTapped() {
+        pendingAuthAction = .signUp
+        showSignInSheet = false
+    }
+
+    func handleSignInSheetDismissed() {
+        guard let action = pendingAuthAction else {
+            clearSignInSheetCallbacks()
+            return
+        }
+
+        pendingAuthAction = nil
+        switch action {
+        case .signIn:
+            onSignIn?()
+        case .signUp:
+            onSignUp?()
+        }
+        onSignIn = nil
+        onSignUp = nil
+    }
+
+    func handleAuthenticationCompleted(success: Bool) {
+        guard shouldPresentUploadDrawerAfterAuth else { return }
+        guard success else {
+            clearSignInSheetCallbacks()
+            return
+        }
+        shouldPresentUploadDrawerAfterAuth = false
+        let callback = onUploadDrawerRequested
+        onUploadDrawerRequested = nil
+        callback?()
+    }
+
+    func cancelPendingUploadAfterSignIn() {
+        clearSignInSheetCallbacks()
+    }
+
+    private func clearSignInSheetCallbacks() {
+        pendingAuthAction = nil
+        shouldPresentUploadDrawerAfterAuth = false
+        onSignIn = nil
+        onSignUp = nil
+        onUploadDrawerRequested = nil
+    }
 
     func presentUploadDrawer(isAuthenticated: Bool,
                              onSelectUpload: @escaping (OmniboxUploadOption) -> Void,
