@@ -321,6 +321,15 @@
 "Remove the failed attachment or try uploading again" = "Remove the failed attachment or try uploading again";
 "Remove chat mode" = "Remove chat mode";
 "Sign in to use advanced AI features." = "Sign in to use advanced AI features.";
+// Omnibox file upload (validation errors)
+"You can upload up to 5 files per chat." = "You can upload up to 5 files per chat.";
+"The file is too large, the maximum file size is 5MB." = "The file is too large, the maximum file size is 5MB.";
+"The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file." = "The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file.";
+"Something went wrong with uploading your file. Please try again." = "Something went wrong with uploading your file. Please try again.";
+// Omnibox file upload (logged-out gate)
+"Sign in to upload files" = "Sign in to upload files";
+"To use this feature you need to be signed in to an Ecosia account." = "To use this feature you need to be signed in to an Ecosia account.";
+"Create account" = "Create account";
 
 // Product Tour
 "Go back" = "Go back";

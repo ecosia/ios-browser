@@ -25,6 +25,7 @@ class MockAuth0Provider: Auth0ProviderProtocol, @unchecked Sendable {
 
     // MARK: - Call Tracking
     var startAuthCallCount = 0
+    var lastAuthScreenHint: AuthScreenHint?
     var clearSessionCallCount = 0
     var storeCredentialsCallCount = 0
     var retrieveCredentialsCallCount = 0
@@ -38,14 +39,19 @@ class MockAuth0Provider: Auth0ProviderProtocol, @unchecked Sendable {
     lazy var webAuth: WebAuth = Auth0.webAuth(clientId: "test-client", domain: "test.auth0.com")
 
     // MARK: - Mock Implementations
-    func startAuth() async throws -> Credentials {
+    func startAuth(screenHint: AuthScreenHint) async throws -> Credentials {
         startAuthCallCount += 1
+        lastAuthScreenHint = screenHint
 
         if shouldFailAuth {
             throw mockError ?? NSError(domain: "MockAuth0Provider", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Mock auth failure"])
         }
 
         return mockCredentials ?? createMockCredentials()
+    }
+
+    func startAuth() async throws -> Credentials {
+        try await startAuth(screenHint: .login)
     }
 
     func clearSession() async throws {
@@ -110,7 +116,11 @@ class MockAuth0Provider: Auth0ProviderProtocol, @unchecked Sendable {
             throw NSError(domain: "MockAuth0Provider", code: 1007, userInfo: [NSLocalizedDescriptionKey: "Cannot renew credentials: no stored credentials"])
         }
 
-        return mockCredentials ?? createMockCredentials()
+        if let mockCredentials {
+            return mockCredentials
+        }
+
+        return createMockCredentials()
     }
 
     // MARK: - Helper Methods
@@ -139,6 +149,7 @@ class MockAuth0Provider: Auth0ProviderProtocol, @unchecked Sendable {
         hasStoredCredentials = false  // Clear stored credentials state
 
         startAuthCallCount = 0
+        lastAuthScreenHint = nil
         clearSessionCallCount = 0
         storeCredentialsCallCount = 0
         retrieveCredentialsCallCount = 0

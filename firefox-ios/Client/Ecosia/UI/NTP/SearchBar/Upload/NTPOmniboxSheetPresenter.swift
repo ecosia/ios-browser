@@ -16,6 +16,22 @@ struct NTPOmniboxSheetPresenter: View {
         Color.clear
             .frame(width: 0, height: 0)
             .allowsHitTesting(false)
+            .sheet(isPresented: $sheetState.showSignInSheet, onDismiss: {
+                sheetState.handleSignInSheetDismissed()
+            }) {
+                OmniboxUploadSignInSheet(
+                    windowUUID: windowUUID,
+                    onSignIn: {
+                        sheetState.handleSignInSheetSignInTapped()
+                    },
+                    onCreateAccount: {
+                        sheetState.handleSignInSheetCreateAccountTapped()
+                    },
+                    onDismiss: {
+                        sheetState.showSignInSheet = false
+                    }
+                )
+            }
             .sheet(isPresented: $sheetState.showUploadDrawer, onDismiss: {
                 sheetState.handleUploadDrawerDismissed()
             }) {

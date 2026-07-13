@@ -28,6 +28,14 @@ extension BrowserViewController: DefaultBrowserDelegate {
 // MARK: - NTP omnibox session
 extension BrowserViewController {
 
+    /// Shows the embedded webview for a tab captured before async work (e.g. attachment submit).
+    func showEmbeddedWebview(for tab: Tab) {
+        if tabManager.selectedTab !== tab {
+            tabManager.selectTab(tab)
+        }
+        showEmbeddedWebview()
+    }
+
     /// The homepage VC while the webview is frontmost (swiping-tabs keeps it as a child).
     fileprivate var ecosiaEmbeddedHomepage: HomepageViewController? {
         if let homepage = contentContainer.contentController as? HomepageViewController {
@@ -190,7 +198,7 @@ extension BrowserViewController {
 
         switch interceptedType {
         case .signUp, .signIn:
-            return handleSignInAndSignUpDetection(url, tab: tab)
+            return handleSignInAndSignUpDetection(url, tab: tab, interceptedType: interceptedType)
         case .signOut:
             return handleSignOutDetection(url)
         case .profile:
@@ -200,17 +208,21 @@ extension BrowserViewController {
         }
     }
 
-    private func handleSignInAndSignUpDetection(_ url: URL, tab: Tab) -> Bool {
+    private func handleSignInAndSignUpDetection(
+        _ url: URL,
+        tab: Tab,
+        interceptedType: EcosiaInterceptedURLType
+    ) -> Bool {
         guard let ecosiaAuth = ecosiaAuth else {
             EcosiaLogger.auth.notice("No EcosiaAuth instance available for authentication detection")
             return false
         }
 
         if !ecosiaAuth.isLoggedIn {
-            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-up URL detected in navigation: \(url)")
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Auth URL detected in navigation: \(url)")
             EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
 
-            ecosiaAuth
+            let configuredAuth = ecosiaAuth
                 .onNativeAuthCompleted {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
                 }
@@ -229,7 +241,15 @@ extension BrowserViewController {
                 .onError { error in
                     EcosiaLogger.auth.error("🔐 [WEB-AUTH] Authentication failed from navigation: \(error)")
                 }
-                .login()
+
+            switch interceptedType {
+            case .signUp:
+                configuredAuth.signUp()
+            case .signIn:
+                configuredAuth.login()
+            default:
+                configuredAuth.login()
+            }
         } else {
             EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Inconsistent state detected: web thinks user is logged out but native doesn't")
             EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Failing entire process to avoid user getting locked")

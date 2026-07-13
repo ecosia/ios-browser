@@ -27,8 +27,12 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         controller.dismiss(animated: true)
 
-        let allowedURLs = OmniboxUploadFileSelectionValidator.allowedURLs(from: urls)
-        let pendingItems = allowedURLs.map { url in
+        let validationResult = OmniboxUploadFileSelectionValidator.validate(
+            urls: urls,
+            existingAttachmentCount: delegate?.omniboxUploadExistingAttachmentCount ?? 0
+        )
+
+        let pendingItems = validationResult.acceptedURLs.map { url in
             let ext = url.pathExtension.lowercased()
             let layout: OmniboxAttachment.Layout = OmniboxUploadFileSelectionValidator.imageExtensions.contains(ext)
                 ? .image
@@ -37,7 +41,10 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
                 try await OmniboxUploadPayloadLoader.loadFile(from: url)
             }
         }
-        guard !pendingItems.isEmpty else { return }
-        delegate?.omniboxUploadDidPickPendingItems(pendingItems)
+
+        delegate?.omniboxUploadDidFinishPicking(
+            items: pendingItems,
+            validationErrors: validationResult.validationErrors
+        )
     }
 }

@@ -104,14 +104,8 @@ final class NTPHeaderViewModel: ObservableObject {
         auth.login()
     }
 
-    /// Presents the account impact sheet — the same flow as tapping `EcosiaAccountNavButton`.
-    func presentAccountImpact() {
-        showAccountImpactView = true
-        Analytics.shared.accountHeaderClicked()
-    }
-
-    func dismissAccountImpact() {
-        showAccountImpactView = false
+    func performSignUp() {
+        auth.signUp()
     }
 
     func performLogout() {
@@ -122,6 +116,15 @@ final class NTPHeaderViewModel: ObservableObject {
     @MainActor
     func refreshSeedState() {
         authStateProvider.refreshSeedState()
+    }
+
+    func presentAccountImpact() {
+        showAccountImpactView = true
+        Analytics.shared.accountHeaderClicked()
+    }
+
+    func dismissAccountImpact() {
+        showAccountImpactView = false
     }
 }
 
