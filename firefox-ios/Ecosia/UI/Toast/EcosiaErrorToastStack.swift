@@ -15,6 +15,13 @@ public struct EcosiaErrorToastMessage: Identifiable, Equatable, Sendable {
         self.title = title
         self.subtitle = subtitle
     }
+
+    public var accessibilityAnnouncement: String {
+        if let title, !title.isEmpty {
+            return "\(title). \(subtitle)"
+        }
+        return subtitle
+    }
 }
 
 @MainActor
@@ -31,7 +38,11 @@ public final class EcosiaErrorToastStackModel: ObservableObject {
     public init() {}
 
     public func append(subtitles: [String]) {
-        let newMessages = subtitles.map { EcosiaErrorToastMessage(subtitle: $0) }
+        append(messages: subtitles.map { EcosiaErrorToastMessage(subtitle: $0) })
+    }
+
+    public func append(messages newMessages: [EcosiaErrorToastMessage]) {
+        guard !newMessages.isEmpty else { return }
         messages.append(contentsOf: newMessages)
     }
 

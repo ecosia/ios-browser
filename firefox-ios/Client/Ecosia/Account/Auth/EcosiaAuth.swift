@@ -61,6 +61,9 @@ final class EcosiaAuth {
         self.authService = authService
         self.browserViewController = browserViewController
         self.browserViewController?.ecosiaAuth = self
+        if #available(iOS 16.0, *) {
+            EcosiaErrorToastPresenter.shared.delegate = browserViewController
+        }
         EcosiaLogger.auth.info("EcosiaAuth initialized")
     }
 

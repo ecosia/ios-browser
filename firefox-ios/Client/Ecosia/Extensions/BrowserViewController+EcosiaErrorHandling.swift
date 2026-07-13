@@ -61,7 +61,7 @@ final class EcosiaErrorToastContainerView: UIView {
     }
 
     /// Appends errors in order; the first message sits at the back, the last is on top.
-    func present(messages: [String]) {
+    func present(messages: [EcosiaErrorToastMessage]) {
         guard !messages.isEmpty,
               let parentViewController,
               let windowUUID else { return }
@@ -69,10 +69,10 @@ final class EcosiaErrorToastContainerView: UIView {
         installHostingIfNeeded()
 
         let wasEmpty = model.messages.isEmpty
-        model.append(subtitles: messages)
+        model.append(messages: messages)
         scheduleFrontMessageAutoDismiss()
 
-        if let announcement = messages.last {
+        if let announcement = messages.last?.accessibilityAnnouncement {
             let delay = wasEmpty
                 ? 0.25
                 : EcosiaErrorToastContainerUX.presentationAnimationDuration + 0.05
@@ -81,6 +81,11 @@ final class EcosiaErrorToastContainerView: UIView {
 
         parentViewController.view.setNeedsLayout()
         parentViewController.view.layoutIfNeeded()
+    }
+
+    /// Appends subtitle-only errors in order; the first message sits at the back, the last is on top.
+    func present(subtitles: [String]) {
+        present(messages: subtitles.map { EcosiaErrorToastMessage(subtitle: $0) })
     }
 
     func clear() {
@@ -115,7 +120,8 @@ final class EcosiaErrorToastContainerView: UIView {
 
     private func announceAccessibilityMessage(_ message: String, after delay: TimeInterval) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-            guard let self, self.model.messages.last?.subtitle == message else { return }
+            guard let self,
+                  self.model.messages.last?.accessibilityAnnouncement == message else { return }
             UIAccessibility.post(notification: .announcement, argument: message)
         }
     }
@@ -150,13 +156,21 @@ final class EcosiaErrorToastContainerView: UIView {
 }
 
 @available(iOS 16.0, *)
+extension BrowserViewController: EcosiaErrorToastPresenting {
+    func presentEcosiaErrorToasts(_ messages: [EcosiaErrorToastMessage]) {
+        guard !messages.isEmpty else { return }
+        let container = ensureEcosiaErrorToastContainer()
+        container.present(messages: messages)
+    }
+}
+
+@available(iOS 16.0, *)
 extension BrowserViewController {
 
     /// Shows one or more top-aligned error notifications in the fixed stack container.
     func showEcosiaErrorToasts(messages: [String]) {
         guard !messages.isEmpty else { return }
-        let container = ensureEcosiaErrorToastContainer()
-        container.present(messages: messages)
+        presentEcosiaErrorToasts(messages.map { EcosiaErrorToastMessage(subtitle: $0) })
     }
 
     /// Shows a single top-aligned error notification.
@@ -168,21 +182,23 @@ extension BrowserViewController {
     /// - Parameters:
     ///   - isLogin: Whether this was a login (true) or logout (false) error
     func showAuthFlowErrorToast(isLogin: Bool, errorMessage: String? = nil) {
-        var subtitle = isLogin
-            ? String.localized(.signInErrorMessage)
-            : String.localized(.signOutErrorMessage)
-
         #if MOZ_CHANNEL_BETA
         if let errorMessage {
+            var subtitle = isLogin
+                ? String.localized(.signInErrorMessage)
+                : String.localized(.signOutErrorMessage)
             subtitle += "Additional details: \(errorMessage)"
+            EcosiaErrorToastPresenter.shared.present(subtitle: subtitle)
+            return
         }
         #endif
 
-        showEcosiaErrorToast(message: subtitle)
+        EcosiaErrorToastPresenter.shared.presentAuthFlowError(isLogin: isLogin)
     }
 
     @discardableResult
     private func ensureEcosiaErrorToastContainer() -> EcosiaErrorToastContainerView {
+        EcosiaErrorToastPresenter.shared.delegate = self
         if let container = activeErrorToastContainer {
             if container.superview === view {
                 view.bringSubviewToFront(container)
