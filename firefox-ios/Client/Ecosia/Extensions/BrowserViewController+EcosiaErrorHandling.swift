@@ -78,9 +78,6 @@ final class EcosiaErrorToastContainerView: UIView {
                 : EcosiaErrorToastContainerUX.presentationAnimationDuration + 0.05
             announceAccessibilityMessage(announcement, after: delay)
         }
-
-        parentViewController.view.setNeedsLayout()
-        parentViewController.view.layoutIfNeeded()
     }
 
     /// Appends subtitle-only errors in order; the first message sits at the back, the last is on top.

@@ -12,6 +12,7 @@ public struct EcosiaErrorView: View {
     private let title: String?
     private let subtitle: String
     private let windowUUID: WindowUUID
+    private let showsCloseButton: Bool
     private let onCloseTapped: (() -> Void)?
     private let onDismiss: (() -> Void)?
 
@@ -27,6 +28,7 @@ public struct EcosiaErrorView: View {
     ///   - title: Optional bold title text. If nil, only subtitle is shown
     ///   - subtitle: Main error message text
     ///   - windowUUID: Window UUID for theming
+    ///   - showsCloseButton: When true, reserves trailing space for the close button even if it is not interactive.
     ///   - onCloseTapped: Optional closure called when close button is tapped. If nil, close button is hidden.
     ///                    This closure should handle initiating dismissal (e.g., starting animations)
     ///   - onDismiss: Optional closure called when view dismissal is complete (e.g., after animations finish).
@@ -35,12 +37,14 @@ public struct EcosiaErrorView: View {
         title: String? = nil,
         subtitle: String,
         windowUUID: WindowUUID,
+        showsCloseButton: Bool = false,
         onCloseTapped: (() -> Void)? = nil,
         onDismiss: (() -> Void)? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
         self.windowUUID = windowUUID
+        self.showsCloseButton = showsCloseButton || onCloseTapped != nil
         self.onCloseTapped = onCloseTapped
         self.onDismiss = onDismiss
     }
@@ -66,13 +70,14 @@ public struct EcosiaErrorView: View {
                 Text(subtitle)
                     .font(.subheadline)
                     .foregroundColor(title != nil ? theme.textSecondaryColor : theme.textPrimaryColor)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Close button (conditionally shown)
-            if let onCloseTapped = onCloseTapped {
+            if showsCloseButton {
                 Button(action: {
-                    onCloseTapped()
+                    onCloseTapped?()
                 }) {
                     Image.ecosia("close")
                         .renderingMode(.template)
@@ -80,6 +85,9 @@ public struct EcosiaErrorView: View {
                         .frame(width: UX.closeButtonSize, height: UX.closeButtonSize)
                         .foregroundColor(theme.closeButtonColor)
                 }
+                .opacity(onCloseTapped != nil ? 1 : 0)
+                .disabled(onCloseTapped == nil)
+                .accessibilityHidden(onCloseTapped == nil)
                 .accessibilityLabel(String.localized(.close))
                 .accessibilityAddTraits(.isButton)
             }
