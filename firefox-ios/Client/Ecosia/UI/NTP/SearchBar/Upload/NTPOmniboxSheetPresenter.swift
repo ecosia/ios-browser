@@ -22,8 +22,10 @@ struct NTPOmniboxSheetPresenter: View {
                 OmniboxUploadDrawerSheet(
                     windowUUID: windowUUID,
                     selectedChatMode: sheetState.selectedChatMode,
+                    isAuthenticated: sheetState.isAuthenticated,
                     onSelect: { option in sheetState.handleUploadOptionSelected(option) },
-                    onSelectChatMode: { mode in sheetState.handleChatModeSelected(mode) }
+                    onSelectChatMode: { mode in sheetState.handleChatModeSelected(mode) },
+                    onLogin: { sheetState.handleLoginRequested() }
                 )
             }
     }

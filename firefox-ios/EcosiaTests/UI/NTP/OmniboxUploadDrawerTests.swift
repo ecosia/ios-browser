@@ -110,10 +110,21 @@ final class OmniboxUploadDrawerTests: XCTestCase {
 @MainActor
 final class NTPOmniboxSheetStateTests: XCTestCase {
 
+    private func present(_ state: NTPOmniboxSheetState,
+                         isAuthenticated: Bool = true,
+                         onSelectUpload: @escaping (OmniboxUploadOption) -> Void = { _ in },
+                         onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void = { _ in },
+                         onLogin: @escaping () -> Void = {}) {
+        state.presentUploadDrawer(isAuthenticated: isAuthenticated,
+                                  onSelectUpload: onSelectUpload,
+                                  onChatModeSelectionChanged: onChatModeSelectionChanged,
+                                  onLogin: onLogin)
+    }
+
     func testSelectedOptionIsDeliveredAfterDrawerDismisses() {
         let state = NTPOmniboxSheetState()
         var received: OmniboxUploadOption?
-        state.presentUploadDrawer(onSelectUpload: { received = $0 }, onChatModeSelectionChanged: { _ in })
+        present(state, onSelectUpload: { received = $0 })
 
         state.handleUploadOptionSelected(.files)
         XCTAssertFalse(state.showUploadDrawer)
@@ -127,8 +138,11 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         let state = NTPOmniboxSheetState()
         var changes: [OmniboxChatMode?] = []
         var receivedUpload: OmniboxUploadOption?
-        state.presentUploadDrawer(onSelectUpload: { receivedUpload = $0 },
-                                  onChatModeSelectionChanged: { changes.append($0) })
+        present(
+            state,
+            onSelectUpload: { receivedUpload = $0 },
+            onChatModeSelectionChanged: { changes.append($0) }
+        )
 
         state.handleChatModeSelected(.thinkLonger)
         // Delivered on tap — not deferred until the sheet dismisses.
@@ -140,7 +154,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
 
     func testSelectingChatModeReplacesThePreviousOne() {
         let state = NTPOmniboxSheetState()
-        state.presentUploadDrawer(onSelectUpload: { _ in }, onChatModeSelectionChanged: { _ in })
+        present(state)
 
         state.handleChatModeSelected(.thinkLonger)
         state.handleChatModeSelected(.learning)
@@ -152,8 +166,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         // the active mode just closes the drawer with the mode still active.
         let state = NTPOmniboxSheetState()
         var changes: [OmniboxChatMode?] = []
-        state.presentUploadDrawer(onSelectUpload: { _ in },
-                                  onChatModeSelectionChanged: { changes.append($0) })
+        present(state, onChatModeSelectionChanged: { changes.append($0) })
 
         state.handleChatModeSelected(.learning)
         state.handleChatModeSelected(.learning)
@@ -164,12 +177,46 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
     func testDismissWithoutSelectionDoesNotDeliverOption() {
         let state = NTPOmniboxSheetState()
         var received: OmniboxUploadOption?
-        state.presentUploadDrawer(onSelectUpload: { received = $0 },
-                                  onChatModeSelectionChanged: { _ in })
+        present(state, onSelectUpload: { received = $0 })
 
         state.handleUploadDrawerDismissed()
         XCTAssertNil(received)
         XCTAssertNil(state.selectedChatMode)
+    }
+
+    func testPresentPublishesAuthenticationState() {
+        let state = NTPOmniboxSheetState()
+        present(state, isAuthenticated: false)
+        XCTAssertFalse(state.isAuthenticated)
+
+        present(state, isAuthenticated: true)
+        XCTAssertTrue(state.isAuthenticated)
+    }
+
+    func testLoginRequestIsDeliveredAfterDrawerDismisses() {
+        let state = NTPOmniboxSheetState()
+        var didLogin = false
+        present(state, isAuthenticated: false, onLogin: { didLogin = true })
+
+        state.handleLoginRequested()
+        // Deferred until the sheet dismisses so the auth flow doesn't fight it.
+        XCTAssertFalse(state.showUploadDrawer)
+        XCTAssertFalse(didLogin)
+
+        state.handleUploadDrawerDismissed()
+        XCTAssertTrue(didLogin)
+    }
+
+    func testUploadSelectionTakesPrecedenceOverPendingLogin() {
+        let state = NTPOmniboxSheetState()
+        var didLogin = false
+        var received: OmniboxUploadOption?
+        present(state, onSelectUpload: { received = $0 }, onLogin: { didLogin = true })
+
+        state.handleUploadOptionSelected(.files)
+        state.handleUploadDrawerDismissed()
+        XCTAssertEqual(received, .files)
+        XCTAssertFalse(didLogin)
     }
 }
 

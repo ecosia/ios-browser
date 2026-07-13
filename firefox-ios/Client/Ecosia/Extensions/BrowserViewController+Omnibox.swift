@@ -5,6 +5,7 @@
 import UIKit
 import Shared
 import Ecosia
+import Common
 
 // MARK: NTPSearchBarDelegate
 // Ecosia: Routes the embedded NTP omnibox into the existing browser navigation
@@ -130,7 +131,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
     func ntpSearchBarDidTapUpload() {
         guard FileUploadFeatureFlag.isEnabled else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
-        if ecosiaAuth?.isLoggedIn == false {
+        // With Chat Modes on, the drawer handles the signed-out state itself
+        // (Standard AI Chat selectable, other modes disabled, sign-in CTA), so
+        // always open it. Without Chat Modes the drawer is upload-only, which
+        // still requires an account, so keep the existing signed-out gate.
+        if !ChatModesFeatureFlag.isEnabled, ecosiaAuth?.isLoggedIn == false {
             if #available(iOS 16.0, *), !AccountsDisabled.isActive {
                 presentAccountImpactFromNTPHeader()
             } else {
@@ -373,6 +378,7 @@ private struct OmniboxUploadAssociatedKeys {
     /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var pickerCoordinator: UInt8 = 0
     nonisolated(unsafe) static var attachmentCoordinator: UInt8 = 0
+    nonisolated(unsafe) static var authLogoutObserver: UInt8 = 0
 }
 
 @MainActor
@@ -397,9 +403,11 @@ extension BrowserViewController {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
 
+        registerOmniboxLogoutObserverIfNeeded()
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
-        sheetState.presentUploadDrawer(onSelectUpload: { [weak self] option in
+        sheetState.presentUploadDrawer(isAuthenticated: ecosiaAuth?.isLoggedIn == true,
+                                       onSelectUpload: { [weak self] option in
             guard let self else { return }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
                                                               from: self,
@@ -409,13 +417,68 @@ extension BrowserViewController {
             // the omnibox chip right away so the glyph appears while the drawer
             // is still sliding away rather than after it disappears.
             self?.ntpOmniboxAnchorView?.setSelectedChatMode(mode)
+        }, onLogin: { [weak self] in
+            self?.handleOmniboxLoginRequested()
         })
+    }
+
+    /// Starts the sign-in flow from the drawer's CTA and, on success, re-opens
+    /// the drawer so the user lands back on the omnibox with the advanced modes
+    /// now unlocked.
+    private func handleOmniboxLoginRequested() {
+        let auth = ecosiaAuth ?? EcosiaAuth(browserViewController: self)
+        auth.onAuthFlowCompleted { [weak self] success in
+            guard success else { return }
+            self?.presentOmniboxUploadDrawer()
+        }.login()
     }
 
     /// Clears the active chat mode when the user taps the chip's X.
     func ntpSearchBarDidTapChatModeChipClose() {
         omniboxSheetState?.selectedChatMode = nil
         ntpOmniboxAnchorView?.setSelectedChatMode(nil)
+    }
+
+    /// Registers a one-shot observer that clears pending omnibox selections on
+    /// logout. Advanced chat modes and uploads are only valid while signed in,
+    /// so logging out (without first submitting a search) must not leave a stale
+    /// chat-mode chip or media attachment behind. The block observer is retained
+    /// as an associated object and torn down automatically when the BVC dies.
+    fileprivate func registerOmniboxLogoutObserverIfNeeded() {
+        guard objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.authLogoutObserver) == nil else { return }
+        let observer = NotificationCenter.default.addObserver(
+            forName: .EcosiaAuthStateChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            // Parse on the delivering (main) queue so only Sendable state crosses
+            // the MainActor hop — `Notification` itself isn't Sendable. `windowUUID`
+            // is a `nonisolated let`, so it's safe to read here.
+            guard let expectedWindow = self?.windowUUID,
+                  notification.userInfo?["windowUUID"] as? WindowUUID == expectedWindow,
+                  notification.userInfo?["actionType"] as? EcosiaAuthActionType == .userLoggedOut
+            else { return }
+            Task { @MainActor in
+                self?.resetOmniboxSelectionsAfterLogout()
+            }
+        }
+        objc_setAssociatedObject(self,
+                                 &OmniboxUploadAssociatedKeys.authLogoutObserver,
+                                 observer,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+
+    /// Clears any active chat mode (and its omnibox chip) and cancels/clears any
+    /// media attachments. Idempotent — a no-op when nothing is selected.
+    private func resetOmniboxSelectionsAfterLogout() {
+        omniboxSheetState?.selectedChatMode = nil
+        ntpOmniboxAnchorView?.setSelectedChatMode(nil)
+        // Only touch the attachment coordinator if it was actually created (the
+        // user picked media); don't spin one up just to clear nothing.
+        if let coordinator = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.attachmentCoordinator)
+            as? OmniboxAttachmentUploadCoordinator {
+            coordinator.clearAttachments()
+        }
     }
 }
 

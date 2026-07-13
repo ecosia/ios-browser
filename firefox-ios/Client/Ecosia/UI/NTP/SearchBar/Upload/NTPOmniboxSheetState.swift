@@ -16,18 +16,30 @@ final class NTPOmniboxSheetState: ObservableObject {
     /// of truth.
     @Published var selectedChatMode: OmniboxChatMode?
 
+    /// Whether the current user is signed in. Drives the drawer's signed-out
+    /// state (only Standard AI Chat selectable, others disabled, sign-in CTA).
+    @Published var isAuthenticated = false
+
     private var onUploadOptionSelected: ((OmniboxUploadOption) -> Void)?
     private var onChatModeSelectionChanged: ((OmniboxChatMode?) -> Void)?
-    /// An upload selection is delivered only after the sheet finishes dismissing
-    /// so the picker it presents doesn't fight the dismissal. Chat-mode changes
-    /// don't present anything, so they apply immediately (see below).
+    private var onLoginRequested: (() -> Void)?
+    /// An upload selection (or a sign-in tap) is delivered only after the sheet
+    /// finishes dismissing so the picker / auth flow it presents doesn't fight
+    /// the dismissal. Chat-mode changes don't present anything, so they apply
+    /// immediately (see below).
     private var pendingUploadOption: OmniboxUploadOption?
+    private var pendingLogin = false
 
-    func presentUploadDrawer(onSelectUpload: @escaping (OmniboxUploadOption) -> Void,
-                             onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void) {
+    func presentUploadDrawer(isAuthenticated: Bool,
+                             onSelectUpload: @escaping (OmniboxUploadOption) -> Void,
+                             onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void,
+                             onLogin: @escaping () -> Void) {
         pendingUploadOption = nil
+        pendingLogin = false
+        self.isAuthenticated = isAuthenticated
         onUploadOptionSelected = onSelectUpload
         self.onChatModeSelectionChanged = onChatModeSelectionChanged
+        onLoginRequested = onLogin
         showUploadDrawer = true
     }
 
@@ -47,15 +59,28 @@ final class NTPOmniboxSheetState: ObservableObject {
         showUploadDrawer = false
     }
 
+    /// Requests the sign-in flow from the drawer's CTA. Deferred until the sheet
+    /// dismisses so the auth UI doesn't fight the dismissal.
+    func handleLoginRequested() {
+        pendingLogin = true
+        showUploadDrawer = false
+    }
+
     func handleUploadDrawerDismissed() {
         let option = pendingUploadOption
         let uploadCallback = onUploadOptionSelected
+        let login = pendingLogin
+        let loginCallback = onLoginRequested
         pendingUploadOption = nil
+        pendingLogin = false
         onUploadOptionSelected = nil
         onChatModeSelectionChanged = nil
+        onLoginRequested = nil
 
         if let option {
             uploadCallback?(option)
+        } else if login {
+            loginCallback?()
         }
     }
 }

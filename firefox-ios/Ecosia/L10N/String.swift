@@ -324,5 +324,6 @@ extension String {
         case uploadSubmitWaitingForUpload = "Waiting for the attachment to finish uploading"
         case uploadSubmitUploadFailed = "Remove the failed attachment or try uploading again"
         case chatModeChipRemoveAccessibilityLabel = "Remove chat mode"
+        case chatModesSignInDisclaimer = "Sign in to use advanced AI features."
     }
 }
