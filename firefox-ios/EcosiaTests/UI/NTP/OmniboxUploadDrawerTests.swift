@@ -239,7 +239,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         XCTAssertTrue(didSignIn)
         XCTAssertFalse(didOpenDrawer)
 
-        state.handleAuthenticationSucceeded()
+        state.handleAuthenticationCompleted(success: true)
         XCTAssertTrue(didOpenDrawer)
     }
 
@@ -256,7 +256,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         state.handleSignInSheetDismissed()
 
         state.handleAuthenticationCompleted(success: false)
-        state.handleAuthenticationSucceeded()
+        state.handleAuthenticationCompleted(success: true)
         XCTAssertFalse(didOpenDrawer)
     }
 
@@ -273,7 +273,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         state.showSignInSheet = false
         state.handleSignInSheetDismissed()
 
-        state.handleAuthenticationSucceeded()
+        state.handleAuthenticationCompleted(success: true)
         XCTAssertFalse(didOpenDrawer)
     }
 
@@ -296,7 +296,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         XCTAssertTrue(didSignUp)
         XCTAssertFalse(didOpenDrawer)
 
-        state.handleAuthenticationSucceeded()
+        state.handleAuthenticationCompleted(success: true)
         XCTAssertTrue(didOpenDrawer)
     }
 }

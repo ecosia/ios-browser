@@ -42,16 +42,20 @@ final class NTPOmniboxSheetState: ObservableObject {
     private var onSignUp: (() -> Void)?
     private var onUploadDrawerRequested: (() -> Void)?
 
+    func armUploadDrawerAfterAuthentication(onUploadDrawerRequested: @escaping () -> Void) {
+        shouldPresentUploadDrawerAfterAuth = true
+        self.onUploadDrawerRequested = onUploadDrawerRequested
+    }
+
     func presentSignInSheetForUpload(
         onSignIn: @escaping () -> Void,
         onSignUp: @escaping () -> Void,
         onUploadDrawerRequested: @escaping () -> Void
     ) {
         pendingAuthAction = nil
-        shouldPresentUploadDrawerAfterAuth = true
+        armUploadDrawerAfterAuthentication(onUploadDrawerRequested: onUploadDrawerRequested)
         self.onSignIn = onSignIn
         self.onSignUp = onSignUp
-        self.onUploadDrawerRequested = onUploadDrawerRequested
         showSignInSheet = true
     }
 
@@ -92,10 +96,6 @@ final class NTPOmniboxSheetState: ObservableObject {
         let callback = onUploadDrawerRequested
         onUploadDrawerRequested = nil
         callback?()
-    }
-
-    func handleAuthenticationSucceeded() {
-        handleAuthenticationCompleted(success: true)
     }
 
     func cancelPendingUploadAfterSignIn() {
