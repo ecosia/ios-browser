@@ -330,6 +330,10 @@ final class NTPLocationTextView: UITextView {
         string.lowercased().stringByTrimmingLeadingCharactersInSet(CharacterSet.whitespaces)
     }
 
+    func normalizedSearchQuery(for text: String) -> String {
+        normalizeString(text)
+    }
+
     private func forceResetCursor() {
         selectedTextRange = nil
         selectedTextRange = textRange(from: endOfDocument, to: endOfDocument)

@@ -28,6 +28,14 @@ extension BrowserViewController: DefaultBrowserDelegate {
 // MARK: - NTP omnibox session
 extension BrowserViewController {
 
+    /// Shows the embedded webview for a tab captured before async work (e.g. attachment submit).
+    func showEmbeddedWebview(for tab: Tab) {
+        if tabManager.selectedTab !== tab {
+            tabManager.selectTab(tab)
+        }
+        showEmbeddedWebview()
+    }
+
     /// The homepage VC while the webview is frontmost (swiping-tabs keeps it as a child).
     fileprivate var ecosiaEmbeddedHomepage: HomepageViewController? {
         if let homepage = contentContainer.contentController as? HomepageViewController {
