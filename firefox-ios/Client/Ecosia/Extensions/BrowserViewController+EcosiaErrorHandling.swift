@@ -8,7 +8,7 @@ import Common
 import Ecosia
 
 private enum EcosiaErrorToastContainerUX {
-    static let presentationAnimationDuration: TimeInterval = 0.3
+    static let presentationAnimationDuration: TimeInterval = 0.45
     static let displayDuration: TimeInterval = 4.5
 }
 
@@ -69,12 +69,16 @@ final class EcosiaErrorToastContainerView: UIView {
         installHostingIfNeeded()
 
         let wasEmpty = model.messages.isEmpty
-        model.append(messages: messages)
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            model.append(messages: messages)
+        }
         scheduleFrontMessageAutoDismiss()
 
         if let announcement = messages.last?.accessibilityAnnouncement {
             let delay = wasEmpty
-                ? 0.25
+                ? EcosiaErrorToastContainerUX.presentationAnimationDuration
                 : EcosiaErrorToastContainerUX.presentationAnimationDuration + 0.05
             announceAccessibilityMessage(announcement, after: delay)
         }

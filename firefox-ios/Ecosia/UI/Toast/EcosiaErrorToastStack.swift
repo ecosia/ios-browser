@@ -30,7 +30,8 @@ public final class EcosiaErrorToastStackModel: ObservableObject {
     @Published fileprivate(set) var dismissingID: UUID?
 
     private enum UX {
-        static let fadeDuration: TimeInterval = 0.25
+        static let fadeDuration: TimeInterval = 0.28
+        static let promoteDuration: TimeInterval = 0.35
     }
 
     public var onDismissCompleted: (() -> Void)?
@@ -56,7 +57,7 @@ public final class EcosiaErrorToastStackModel: ObservableObject {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + UX.fadeDuration) { [weak self] in
             guard let self else { return }
-            withAnimation(.spring(response: 0.38, dampingFraction: 0.86)) {
+            withAnimation(.easeOut(duration: UX.promoteDuration)) {
                 self.messages.removeAll { $0.id == id }
                 self.dismissingID = nil
             }
@@ -81,14 +82,18 @@ public struct EcosiaErrorToastStack: View {
 
     @State private var isVisible = false
     @State private var isExpanded = false
-    @State private var cardHeights: [UUID: CGFloat] = [:]
+    @State private var frontCardHeight: CGFloat = UX.minCardHeight
+    @State private var measuredExpandedHeight: CGFloat?
     @State private var dismissalLayoutHeight: CGFloat?
 
     private enum UX {
         static let minCardHeight: CGFloat = 56
         static let stackPeek: CGFloat = .ecosia.space._1s
         static let listSpacing: CGFloat = .ecosia.space._1s
-        static let fadeDuration: TimeInterval = 0.25
+        static let fadeDuration: TimeInterval = 0.28
+        static let entranceDuration: TimeInterval = 0.45
+        static let expandDuration: TimeInterval = 0.42
+        static let promoteDuration: TimeInterval = 0.35
         static let maxVisibleDepth = 4
     }
 
@@ -104,51 +109,59 @@ public struct EcosiaErrorToastStack: View {
         self.onExpandChange = onExpandChange
     }
 
-    private var promoteSpring: Animation {
-        .spring(response: 0.38, dampingFraction: 0.86)
+    private var entranceAnimation: Animation {
+        .timingCurve(0.16, 1, 0.3, 1, duration: UX.entranceDuration)
+    }
+
+    private var expandAnimation: Animation {
+        .spring(response: UX.expandDuration, dampingFraction: 0.92)
+    }
+
+    private var promoteAnimation: Animation {
+        .easeOut(duration: UX.promoteDuration)
     }
 
     private var layoutAnimationKey: String {
-        let messageIDs = model.messages.map(\.id.uuidString).joined(separator: "-")
+        let messageIDs = visibleMessages.map(\.id.uuidString).joined(separator: "-")
         let dismissingID = model.dismissingID?.uuidString ?? "none"
-        return "\(isExpanded)-\(messageIDs)-\(dismissingID)"
+        return "\(messageIDs)-\(dismissingID)"
     }
 
     public var body: some View {
         if !model.messages.isEmpty {
             ZStack(alignment: .top) {
-                ForEach(Array(visibleMessages.enumerated()), id: \.element.id) { index, message in
-                    let depthFromFront = visibleMessages.count - 1 - index
-                    let isFront = depthFromFront == 0
-                    let isDismissing = message.id == model.dismissingID
+                cardMeasurementStack
 
-                    toastCard(
-                        for: message,
-                        showsCloseButton: (isExpanded || isFront) && !isDismissing,
-                        onClose: { dismiss(message) }
-                    )
-                    .scaleEffect(
-                        x: isExpanded ? 1 : scaleForDepth(depthFromFront),
-                        y: 1,
-                        anchor: .top
-                    )
-                    .offset(y: yOffset(for: index))
-                    .opacity(isDismissing ? 0 : 1)
-                    .animation(.easeOut(duration: UX.fadeDuration), value: isDismissing)
-                    .allowsHitTesting(isExpanded || (isFront && !isDismissing))
-                    .zIndex(Double(index))
+                ZStack(alignment: .top) {
+                    collapsedStack
+                        .opacity(isExpanded ? 0 : 1)
+                        .allowsHitTesting(!isExpanded)
+
+                    expandedStack
+                        .opacity(isExpanded ? 1 : 0)
+                        .allowsHitTesting(isExpanded)
                 }
+                .frame(height: effectiveContainerHeight, alignment: .top)
+                .animation(expandAnimation, value: isExpanded)
             }
-            .frame(height: effectiveContainerHeight, alignment: .top)
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, alignment: .top)
             .contentShape(Rectangle())
             .onTapGesture { toggleExpanded() }
-            .animation(promoteSpring, value: layoutAnimationKey)
-            .offset(y: isVisible ? 0 : -(referenceCardHeight + .ecosia.space._1l))
+            .offset(y: isVisible ? 0 : -entranceOffset)
             .opacity(isVisible ? 1 : 0)
-            .onPreferenceChange(ToastCardHeightPreferenceKey.self, perform: updateCardHeights)
+            .animation(entranceAnimation, value: isVisible)
+            .onPreferenceChange(ToastStackHeightPreferenceKey.self) { height in
+                guard height > 0 else { return }
+                updateMeasuredExpandedHeight(height)
+            }
+            .onPreferenceChange(ToastCardHeightPreferenceKey.self) { heights in
+                guard let frontID = visibleMessages.last?.id,
+                      let height = heights[frontID],
+                      height > 0 else { return }
+                updateFrontCardHeight(height)
+            }
             .onAppear {
-                withAnimation(.easeOut(duration: UX.fadeDuration)) {
+                withAnimation(entranceAnimation) {
                     isVisible = true
                 }
             }
@@ -156,7 +169,7 @@ public struct EcosiaErrorToastStack: View {
                 if dismissingID != nil {
                     dismissalLayoutHeight = containerHeight
                 } else if dismissalLayoutHeight != nil {
-                    withAnimation(promoteSpring) {
+                    withAnimation(promoteAnimation) {
                         dismissalLayoutHeight = nil
                     }
                 }
@@ -166,13 +179,111 @@ public struct EcosiaErrorToastStack: View {
                     dismissalLayoutHeight = nil
                 }
                 if count == 1, isExpanded {
-                    withAnimation(promoteSpring) {
+                    withAnimation(expandAnimation) {
                         isExpanded = false
                     }
                     onExpandChange(false)
                 }
             }
         }
+    }
+
+    /// Hidden sizing pass for collapsed front-card height and expanded stack height.
+    private var cardMeasurementStack: some View {
+        VStack(spacing: UX.listSpacing) {
+            ForEach(Array(visibleMessages.enumerated()), id: \.element.id) { index, message in
+                measurementRow(for: message, isFront: index == visibleMessages.count - 1)
+            }
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .top)
+        .background {
+            GeometryReader { geometry in
+                Color.clear.preference(
+                    key: ToastStackHeightPreferenceKey.self,
+                    value: geometry.size.height
+                )
+            }
+        }
+        .hidden()
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    private func measurementRow(for message: EcosiaErrorToastMessage, isFront: Bool) -> some View {
+        EcosiaErrorView(
+            title: message.title,
+            subtitle: message.subtitle,
+            windowUUID: windowUUID,
+            showsCloseButton: true,
+            onCloseTapped: nil
+        )
+        .padding(.horizontal, .ecosia.space._m)
+        .overlay {
+            if isFront {
+                GeometryReader { geometry in
+                    Color.clear.preference(
+                        key: ToastCardHeightPreferenceKey.self,
+                        value: [message.id: geometry.size.height]
+                    )
+                }
+            }
+        }
+    }
+
+    private var collapsedStack: some View {
+        ZStack(alignment: .top) {
+            ForEach(Array(visibleMessages.enumerated()), id: \.element.id) { index, message in
+                let depthFromFront = visibleMessages.count - 1 - index
+                let isFront = depthFromFront == 0
+                let isDismissing = message.id == model.dismissingID
+
+                collapsedWalletCard(
+                    for: message,
+                    depthFromFront: depthFromFront,
+                    isFront: isFront,
+                    isDismissing: isDismissing
+                )
+                .offset(y: CGFloat(index) * UX.stackPeek)
+                .opacity(isDismissing ? 0 : 1)
+                .animation(.easeOut(duration: UX.fadeDuration), value: isDismissing)
+                .allowsHitTesting(isFront && !isDismissing)
+                .zIndex(Double(index))
+            }
+        }
+        .animation(promoteAnimation, value: layoutAnimationKey)
+    }
+
+    private var expandedStack: some View {
+        VStack(spacing: UX.listSpacing) {
+            ForEach(visibleMessages) { message in
+                expandedRow(for: message)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .top)
+    }
+
+    @ViewBuilder
+    private func expandedRow(for message: EcosiaErrorToastMessage) -> some View {
+        let isDismissing = message.id == model.dismissingID
+
+        EcosiaErrorView(
+            title: message.title,
+            subtitle: message.subtitle,
+            windowUUID: windowUUID,
+            showsCloseButton: true,
+            onCloseTapped: isDismissing ? nil : { dismiss(message) }
+        )
+        .padding(.horizontal, .ecosia.space._m)
+        .opacity(isDismissing ? 0 : 1)
+        .animation(.easeOut(duration: UX.fadeDuration), value: isDismissing)
+        .allowsHitTesting(!isDismissing)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isStaticText)
+    }
+
+    private var entranceOffset: CGFloat {
+        referenceCardHeight + .ecosia.space._1l
     }
 
     private var visibleMessages: [EcosiaErrorToastMessage] {
@@ -183,17 +294,16 @@ public struct EcosiaErrorToastStack: View {
         visibleMessages.count > 1
     }
 
-    private var containerHeight: CGFloat {
-        isExpanded ? expandedHeight : collapsedHeight
-    }
-
     private var effectiveContainerHeight: CGFloat {
         dismissalLayoutHeight ?? containerHeight
     }
 
+    private var containerHeight: CGFloat {
+        isExpanded ? expandedHeight : collapsedHeight
+    }
+
     private var referenceCardHeight: CGFloat {
-        guard let frontID = visibleMessages.last?.id else { return UX.minCardHeight }
-        return max(cardHeights[frontID] ?? UX.minCardHeight, UX.minCardHeight)
+        max(frontCardHeight, UX.minCardHeight)
     }
 
     private var collapsedHeight: CGFloat {
@@ -201,44 +311,33 @@ public struct EcosiaErrorToastStack: View {
     }
 
     private var expandedHeight: CGFloat {
-        guard !visibleMessages.isEmpty else { return UX.minCardHeight }
+        if let measuredExpandedHeight, measuredExpandedHeight > 0 {
+            return measuredExpandedHeight
+        }
 
-        let heights = visibleMessages.map { max(cardHeights[$0.id] ?? UX.minCardHeight, UX.minCardHeight) }
+        let estimatedCards = CGFloat(visibleMessages.count) * UX.minCardHeight
         let spacing = UX.listSpacing * CGFloat(max(0, visibleMessages.count - 1))
-        return heights.reduce(0, +) + spacing
+        return estimatedCards + spacing
     }
 
-    private func updateCardHeights(_ newHeights: [UUID: CGFloat]) {
-        let activeIDs = Set(model.messages.map(\.id))
-        var updated = cardHeights.filter { activeIDs.contains($0.key) }
+    private func updateFrontCardHeight(_ height: CGFloat) {
+        guard abs(frontCardHeight - height) > 0.5 else { return }
 
-        for (id, height) in newHeights where activeIDs.contains(id) {
-            let resolved = max(height, UX.minCardHeight)
-            if let existing = updated[id] {
-                // Ignore sub-point churn from text re-measurement during animations.
-                if abs(existing - resolved) > 0.5 {
-                    updated[id] = resolved
-                }
-            } else {
-                updated[id] = resolved
-            }
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            frontCardHeight = height
         }
-
-        guard updated != cardHeights else { return }
-        cardHeights = updated
     }
 
-    private func yOffset(for index: Int) -> CGFloat {
-        if isExpanded {
-            var offset: CGFloat = 0
-            for priorIndex in 0..<index {
-                let message = visibleMessages[priorIndex]
-                let height = max(cardHeights[message.id] ?? UX.minCardHeight, UX.minCardHeight)
-                offset += height + UX.listSpacing
-            }
-            return offset
+    private func updateMeasuredExpandedHeight(_ height: CGFloat) {
+        guard abs((measuredExpandedHeight ?? 0) - height) > 0.5 else { return }
+
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            measuredExpandedHeight = height
         }
-        return CGFloat(index) * UX.stackPeek
     }
 
     private func scaleForDepth(_ depth: Int) -> CGFloat {
@@ -250,12 +349,40 @@ public struct EcosiaErrorToastStack: View {
     }
 
     @ViewBuilder
+    private func collapsedWalletCard(
+        for message: EcosiaErrorToastMessage,
+        depthFromFront: Int,
+        isFront: Bool,
+        isDismissing: Bool
+    ) -> some View {
+        let showsCloseButton = isFront && !isDismissing
+        let card = toastCard(
+            for: message,
+            showsCloseButton: showsCloseButton,
+            showsShadow: isFront,
+            onClose: { dismiss(message) }
+        )
+
+        Group {
+            if isFront {
+                card.scaleEffect(1, anchor: .top)
+            } else {
+                card
+                    .scaleEffect(scaleForDepth(depthFromFront), anchor: .top)
+                    .frame(height: UX.stackPeek, alignment: .top)
+                    .clipped()
+            }
+        }
+    }
+
+    @ViewBuilder
     private func toastCard(
         for message: EcosiaErrorToastMessage,
         showsCloseButton: Bool,
+        showsShadow: Bool,
         onClose: @escaping () -> Void
     ) -> some View {
-        EcosiaErrorView(
+        let content = EcosiaErrorView(
             title: message.title,
             subtitle: message.subtitle,
             windowUUID: windowUUID,
@@ -264,16 +391,15 @@ public struct EcosiaErrorToastStack: View {
         )
         .frame(minHeight: UX.minCardHeight, alignment: .center)
         .fixedSize(horizontal: false, vertical: true)
-        .background {
-            GeometryReader { geometry in
-                Color.clear.preference(
-                    key: ToastCardHeightPreferenceKey.self,
-                    value: [message.id: geometry.size.height]
-                )
+        .padding(.horizontal, .ecosia.space._m)
+
+        Group {
+            if showsShadow {
+                content.shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
+            } else {
+                content
             }
         }
-        .padding(.horizontal, .ecosia.space._m)
-        .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isStaticText)
     }
@@ -282,7 +408,7 @@ public struct EcosiaErrorToastStack: View {
         guard canExpand else { return }
 
         let willExpand = !isExpanded
-        withAnimation(promoteSpring) {
+        withAnimation(expandAnimation) {
             isExpanded = willExpand
         }
         onExpandChange(willExpand)
@@ -300,6 +426,15 @@ private struct ToastCardHeightPreferenceKey: PreferenceKey {
 
     static func reduce(value: inout [UUID: CGFloat], nextValue: () -> [UUID: CGFloat]) {
         value.merge(nextValue()) { _, new in new }
+    }
+}
+
+@available(iOS 16.0, *)
+private struct ToastStackHeightPreferenceKey: PreferenceKey {
+    nonisolated(unsafe) static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }
 
