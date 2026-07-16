@@ -5,6 +5,7 @@
 import XCTest
 import SwiftUI
 import Common
+import SnowplowTracker
 @testable import Client
 @testable import Ecosia
 
@@ -188,7 +189,9 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
 
     func testReTappingActiveChatModeInDrawerKeepsItSelected() {
         // Deselection happens via the omnibox chip, not the drawer — re-picking
-        // the active mode just closes the drawer with the mode still active.
+        // the active mode just closes the drawer with the mode still active. The
+        // re-tap is a no-op: it does NOT re-notify the selection callback, since
+        // nothing about the selection changed.
         let state = NTPOmniboxSheetState()
         var changes: [OmniboxChatMode?] = []
         present(state, onChatModeSelectionChanged: { changes.append($0) })
@@ -196,7 +199,34 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         state.handleChatModeSelected(.learning)
         state.handleChatModeSelected(.learning)
         XCTAssertEqual(state.selectedChatMode, .learning)
-        XCTAssertEqual(changes, [.learning, .learning])
+        XCTAssertEqual(changes, [.learning])
+    }
+
+    func testReTappingActiveChatModeDoesNotTrackASecondSelection() {
+        let previousAnalytics = Analytics.shared
+        let previousUsageData = User.shared.sendAnonymousUsageData
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        User.shared.sendAnonymousUsageData = true
+        defer {
+            Analytics.shared = previousAnalytics
+            User.shared.sendAnonymousUsageData = previousUsageData
+        }
+
+        let state = NTPOmniboxSheetState()
+        present(state)
+
+        // First pick reports one `select`; re-tapping the same mode is a no-op
+        // and must not emit another event.
+        state.handleChatModeSelected(.learning)
+        state.handleChatModeSelected(.learning)
+
+        let modeSelections = spy.trackedEvents
+            .compactMap { $0 as? Structured }
+            .filter { $0.label == Analytics.Label.modeSelection.rawValue }
+        XCTAssertEqual(modeSelections.count, 1)
+        XCTAssertEqual(modeSelections.first?.property,
+                       #"{"action":"select","logged_in":true,"mode":"learning"}"#)
     }
 
     func testDismissWithoutSelectionDoesNotDeliverOption() {

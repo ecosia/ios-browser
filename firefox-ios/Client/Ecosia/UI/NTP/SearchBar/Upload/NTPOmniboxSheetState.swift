@@ -134,6 +134,12 @@ final class NTPOmniboxSheetState: ObservableObject {
         // drawer) — deselection happens by tapping the omnibox chip, not here.
         // Applied immediately (rather than on dismiss) so the drawer checkmark
         // and the omnibox chip update the instant the user taps.
+        guard mode != selectedChatMode else {
+            // Nothing changed, so don't re-notify the chip or report a `select`
+            // that didn't actually alter the selection — just close the drawer.
+            showUploadDrawer = false
+            return
+        }
         Analytics.shared.aiToolsMenuChatModeSelection(mode: mode,
                                                       action: .select,
                                                       isLoggedIn: isAuthenticated)
