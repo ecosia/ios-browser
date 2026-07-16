@@ -54,6 +54,9 @@ final class NTPOmniboxSheetState: ObservableObject {
         // drawer) — deselection happens by tapping the omnibox chip, not here.
         // Applied immediately (rather than on dismiss) so the drawer checkmark
         // and the omnibox chip update the instant the user taps.
+        Analytics.shared.aiToolsMenuChatModeSelection(mode: mode,
+                                                      action: .select,
+                                                      isLoggedIn: isAuthenticated)
         selectedChatMode = mode
         onChatModeSelectionChanged?(selectedChatMode)
         showUploadDrawer = false
@@ -62,6 +65,7 @@ final class NTPOmniboxSheetState: ObservableObject {
     /// Requests the sign-in flow from the drawer's CTA. Deferred until the sheet
     /// dismisses so the auth UI doesn't fight the dismissal.
     func handleLoginRequested() {
+        Analytics.shared.aiToolsMenuSignInClicked()
         pendingLogin = true
         showUploadDrawer = false
     }
