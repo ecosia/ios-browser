@@ -126,7 +126,6 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         self.delegate = delegate
         if traitCollection.userInterfaceIdiom == .pad {
             modalPresentationStyle = .formSheet
-            preferredContentSize = .init(width: 544, height: 600)
         } else {
             modalPresentationCapturesStatusBarAppearance = true
         }
@@ -170,16 +169,20 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         contentView.addSubview(actionButton)
         contentView.addSubview(skipButton)
         view.addSubview(triviaView)
-
+        
         triviaView.addSubview(triviaTitleLabel)
         triviaView.addSubview(triviaDecriptionLabel)
         contentView.addSubview(beforeView)
         contentView.addSubview(afterView)
+        
+        if(traitCollection.userInterfaceIdiom == .pad) {
+            waves.contentMode = .scaleToFill
+        }
     }
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor),
+            createTopConstraint(),
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -226,6 +229,14 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             beforeView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: -screenWidth/4),
             afterView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: screenWidth/4)
         ])
+    }
+    
+    private func createTopConstraint() -> NSLayoutConstraint {
+        if traitCollection.userInterfaceIdiom == .pad {
+            return contentView.topAnchor.constraint(equalTo: view.topAnchor)
+        } else {
+            return contentView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor)
+        }
     }
 
     @objc func applyTheme() {
