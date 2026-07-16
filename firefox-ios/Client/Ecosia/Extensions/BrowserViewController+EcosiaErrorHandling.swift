@@ -8,7 +8,7 @@ import Common
 import Ecosia
 
 private enum EcosiaErrorToastContainerUX {
-    static let presentationAnimationDuration: TimeInterval = 0.45
+    static let presentationAnimationDuration = EcosiaErrorToastTiming.entranceDuration
     static let displayDuration: TimeInterval = 4.5
 }
 

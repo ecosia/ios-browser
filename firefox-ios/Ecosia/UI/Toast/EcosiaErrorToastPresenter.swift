@@ -11,6 +11,9 @@ public protocol EcosiaErrorToastPresenting: AnyObject {
 }
 
 /// Routes Ecosia error notifications to the active browser's top toast stack.
+///
+/// Singleton is sufficient while Ecosia keeps `UIApplicationSupportsMultipleScenes`
+/// disabled. If multi-window is enabled later, route per `windowUUID` / BVC instead.
 @available(iOS 16.0, *)
 @MainActor
 public final class EcosiaErrorToastPresenter {

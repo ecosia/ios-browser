@@ -24,6 +24,11 @@ public struct EcosiaErrorToastMessage: Identifiable, Equatable, Sendable {
     }
 }
 
+/// Shared timing used by the toast stack and its UIKit host (e.g. VoiceOver delay).
+public enum EcosiaErrorToastTiming {
+    public static let entranceDuration: TimeInterval = 0.45
+}
+
 @MainActor
 public final class EcosiaErrorToastStackModel: ObservableObject {
     @Published public var messages: [EcosiaErrorToastMessage] = []
@@ -91,7 +96,7 @@ public struct EcosiaErrorToastStack: View {
         static let stackPeek: CGFloat = .ecosia.space._1s
         static let listSpacing: CGFloat = .ecosia.space._1s
         static let fadeDuration: TimeInterval = 0.28
-        static let entranceDuration: TimeInterval = 0.45
+        static let entranceDuration = EcosiaErrorToastTiming.entranceDuration
         static let expandDuration: TimeInterval = 0.42
         static let promoteDuration: TimeInterval = 0.35
         static let maxVisibleDepth = 4
@@ -277,8 +282,6 @@ public struct EcosiaErrorToastStack: View {
             x: 0,
             y: showsShadow ? 4 : 0
         )
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isStaticText)
     }
 
     // MARK: - Layout
@@ -395,7 +398,7 @@ private struct ToastLayoutMetrics: Equatable {
 
 @available(iOS 16.0, *)
 private struct ToastLayoutMetricsKey: PreferenceKey {
-    nonisolated(unsafe) static var defaultValue = ToastLayoutMetrics()
+    static let defaultValue = ToastLayoutMetrics()
 
     static func reduce(value: inout ToastLayoutMetrics, nextValue: () -> ToastLayoutMetrics) {
         let next = nextValue()
