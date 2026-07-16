@@ -375,7 +375,9 @@ final class SimulateAuthErrorSetting: HiddenSetting {
 
         let alert = AlertController(
             title: !currentValue ? "Auth Error Enabled ✅" : "Auth Error Disabled ✅",
-            message: !currentValue ? "Next login/logout will fail with an error." : "Auth errors disabled.",
+            message: !currentValue
+                ? "Next login/logout will fail and show an error toast until you toggle this off."
+                : "Auth errors disabled.",
             preferredStyle: .alert
         )
         navigationController?.topViewController?.present(alert, animated: true) {
@@ -416,11 +418,12 @@ final class SimulateImpactAPIErrorSetting: HiddenSetting {
 
         let alert = AlertController(
             title: !currentValue ? "Impact API Error Enabled ✅" : "Impact API Error Disabled ✅",
-            message: !currentValue ? "Next impact API call will fail." : "Impact API errors disabled.",
+            message: !currentValue
+                ? "Next impact API call will fail and show the seed counter error toast."
+                : "Impact API errors disabled.",
             preferredStyle: .alert
         )
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)

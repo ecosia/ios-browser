@@ -16,6 +16,9 @@ enum OmniboxUploadDebugSimulation {
         if SimulateUploadValidationErrorSetting.isEnabled(for: .unsupportedFileType) {
             errors.insert(.unsupportedFileType)
         }
+        if shouldSimulateUploadAPIFailure {
+            errors.insert(.uploadFailed)
+        }
         return errors
     }
 

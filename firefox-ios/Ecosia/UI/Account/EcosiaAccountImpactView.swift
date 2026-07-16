@@ -75,16 +75,6 @@ public struct EcosiaAccountImpactView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
 
-            // Show error view if register visit failed
-            if authStateProvider.hasRegisterVisitError {
-                EcosiaErrorView(
-                    title: String.localized(.couldNotLoadSeedCounter),
-                    subtitle: String.localized(.couldNotLoadSeedCounterMessage),
-                    windowUUID: windowUUID
-                )
-                .padding(.horizontal, .ecosia.space._m)
-            }
-
             // Conditional content based on login state
             ZStack(alignment: .top) {
                 if !viewModel.isLoggedIn {

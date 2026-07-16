@@ -25,6 +25,16 @@ final class OmniboxUploadDebugSimulationTests: XCTestCase {
         )
     }
 
+    func testSimulatedValidationErrorsIncludeUploadAPIFailureWhenEnabled() {
+        UserDefaults.standard.set(true, forKey: SimulateUploadValidationErrorSetting.debugKey(for: .tooManyFiles))
+        UserDefaults.standard.set(true, forKey: SimulateFileUploadAPIErrorSetting.debugKey)
+
+        XCTAssertEqual(
+            OmniboxUploadDebugSimulation.simulatedValidationErrors(),
+            [.tooManyFiles, .uploadFailed]
+        )
+    }
+
     func testUploadAPIFailureToggle() {
         XCTAssertFalse(OmniboxUploadDebugSimulation.shouldSimulateUploadAPIFailure)
 
