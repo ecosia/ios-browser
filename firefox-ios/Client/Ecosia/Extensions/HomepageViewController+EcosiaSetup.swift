@@ -228,7 +228,11 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ))
 
         ecosiaAdapter?.viewWillAppear()
-        if ntpSearchBar?.isFirstResponder == false {
+        // Full-screen upload pickers (camera / Files) temporarily hide the NTP
+        // without leaving it. `ecosiaViewDidDisappear` preserves the draft across
+        // that modal; if text or attachments are still present here, keep them
+        // (photos use a sheet and never hit the disappear path).
+        if ntpSearchBar?.isFirstResponder == false, !ntpSearchBarHasPreservedDraft {
             resetNTPOmniboxSession()
         }
         ecosiaAdapter?.refreshData(
@@ -305,21 +309,46 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     /// without `viewDidDisappear`, so this must run on leave and on re-show.
     /// `requestsOverlayDismiss` is intentional here (leaving the NTP); keyboard
     /// drag-dismiss on the list must not route through this path.
-func resetNTPOmniboxSession() {
-    guard let bar = ntpSearchBar else { return }
-    bar.text = ""
-    if bar.isFirstResponder {
-        _ = bar.resignFirstResponder()
-    } else {
-        bar.delegate?.ntpSearchBarDidCancel()
+    func resetNTPOmniboxSession() {
+        guard let bar = ntpSearchBar else { return }
+        bar.text = ""
+        if bar.isFirstResponder {
+            _ = bar.resignFirstResponder()
+        } else {
+            bar.delegate?.ntpSearchBarDidCancel()
+        }
+        bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
     }
-    bar.delegate?.ntpSearchBarRequestsOverlayDismiss()
-}
 
     /// Called when view did disappear to clean up Ecosia resources
     func ecosiaViewDidDisappear() {
-        resetNTPOmniboxSession()
+        // Camera / Files pickers are full-screen modals presented from BVC.
+        // They trigger homepage `viewDidDisappear` without the user leaving the
+        // NTP — keep the omnibox draft so typed text survives the round-trip
+        // (PHPicker sheets typically skip this path entirely).
+        if !isCoveredByPresentedModal {
+            resetNTPOmniboxSession()
+        }
         ecosiaAdapter?.viewDidDisappear()
+    }
+
+    /// True when an ancestor VC is currently presenting a modal over the NTP
+    /// (e.g. `UIImagePickerController` / `UIDocumentPickerViewController`).
+    private var isCoveredByPresentedModal: Bool {
+        var controller: UIViewController? = self
+        while let current = controller {
+            if current.presentedViewController != nil {
+                return true
+            }
+            controller = current.parent
+        }
+        return false
+    }
+
+    /// Draft left intact because a full-screen picker covered the NTP mid-edit.
+    private var ntpSearchBarHasPreservedDraft: Bool {
+        guard let bar = ntpSearchBar else { return false }
+        return !bar.text.isEmpty || bar.hasAttachments
     }
 
     /// Updates theme for Ecosia sections
