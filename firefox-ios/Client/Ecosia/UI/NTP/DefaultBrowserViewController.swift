@@ -169,13 +169,13 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         contentView.addSubview(actionButton)
         contentView.addSubview(skipButton)
         view.addSubview(triviaView)
-        
+
         triviaView.addSubview(triviaTitleLabel)
         triviaView.addSubview(triviaDecriptionLabel)
         contentView.addSubview(beforeView)
         contentView.addSubview(afterView)
-        
-        if(traitCollection.userInterfaceIdiom == .pad) {
+
+        if traitCollection.userInterfaceIdiom == .pad {
             waves.contentMode = .scaleToFill
         }
     }
