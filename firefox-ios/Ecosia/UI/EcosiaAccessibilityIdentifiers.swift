@@ -49,4 +49,11 @@ public struct EcosiaAccessibilityIdentifiers {
     public struct AddressBar {
         public static let clearButton = "AddressBar.clearButton"
     }
+
+    public struct OmniboxUpload {
+        public static let signInSheetTitle = "omnibox_upload_sign_in_sheet_title"
+        public static let signInSheetBody = "omnibox_upload_sign_in_sheet_body"
+        public static let signInButton = "omnibox_upload_sign_in_button"
+        public static let createAccountButton = "omnibox_upload_create_account_button"
+    }
 }

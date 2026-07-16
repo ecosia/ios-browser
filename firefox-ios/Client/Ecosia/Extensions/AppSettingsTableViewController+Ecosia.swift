@@ -113,6 +113,17 @@ extension AppSettingsTableViewController {
 
         return SettingSection(title: NSAttributedString(string: "Debug - Accounts"), children: accountSettings)
     }
+
+    func getEcosiaDebugFileUploadSection() -> SettingSection {
+        let fileUploadSettings: [Setting] = [
+            SimulateFileUploadAPIErrorSetting(settings: self),
+            SimulateUploadValidationErrorSetting(simulatedError: .tooManyFiles, settings: self),
+            SimulateUploadValidationErrorSetting(simulatedError: .fileTooLarge, settings: self),
+            SimulateUploadValidationErrorSetting(simulatedError: .unsupportedFileType, settings: self)
+        ]
+
+        return SettingSection(title: NSAttributedString(string: "Debug - File Upload"), children: fileUploadSettings)
+    }
 }
 
 // MARK: - Default Browser Nudge Card helpers

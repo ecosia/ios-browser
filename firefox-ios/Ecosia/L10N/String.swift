@@ -325,5 +325,16 @@ extension String {
         case uploadSubmitUploadFailed = "Remove the failed attachment or try uploading again"
         case chatModeChipRemoveAccessibilityLabel = "Remove chat mode"
         case chatModesSignInDisclaimer = "Sign in to use advanced AI features."
+
+        // Omnibox file upload (validation errors)
+        case uploadErrorTooManyFiles = "You can upload up to 5 files per chat."
+        case uploadErrorFileTooLarge = "The file is too large, the maximum file size is 5MB."
+        case uploadErrorUnsupportedFileType = "The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file."
+        case uploadErrorGeneric = "Something went wrong with uploading your file. Please try again."
+
+        // Omnibox file upload (logged-out gate)
+        case signInToUploadFiles = "Sign in to upload files"
+        case signInToUploadFilesMessage = "To use this feature you need to be signed in to an Ecosia account."
+        case createAccount = "Create account"
     }
 }

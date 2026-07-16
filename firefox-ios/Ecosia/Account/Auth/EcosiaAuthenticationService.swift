@@ -88,10 +88,23 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     ///           `AuthError.credentialStorageFailed` if credential storage returns false.
     @discardableResult
     public func login() async throws -> AccountOrigin {
+        try await authenticate(screenHint: .login)
+    }
+
+    /// Creates a new account asynchronously and stores credentials if successful.
+    /// - Returns: An `AccountOrigin` indicating whether the user created a new account or signed in to an existing one.
+    /// - Throws: Same errors as `login()`.
+    @discardableResult
+    public func signUp() async throws -> AccountOrigin {
+        try await authenticate(screenHint: .signUp)
+    }
+
+    @discardableResult
+    private func authenticate(screenHint: AuthScreenHint) async throws -> AccountOrigin {
         // First, attempt authentication
         let credentials: Credentials
         do {
-            credentials = try await auth0Provider.startAuth()
+            credentials = try await auth0Provider.startAuth(screenHint: screenHint)
             EcosiaLogger.auth.info("Authentication successful")
         } catch {
             EcosiaLogger.auth.error("Authentication failed: \(error)")
@@ -106,6 +119,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             throw AuthError.authenticationFailed(error)
         }
 
+        return try await persistAuthenticatedCredentials(credentials)
+    }
+
+    @discardableResult
+    private func persistAuthenticatedCredentials(_ credentials: Credentials) async throws -> AccountOrigin {
         // Determine account origin from ID token claims
         let accountOrigin = credentials.accountOrigin
         EcosiaLogger.auth.info("Account origin: \(accountOrigin == .newAccount ? "new account" : "existing account")")
@@ -229,18 +247,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /**
      Renews credentials if they are renewable and close to expiration.
      
-     This method checks if the current credentials can be renewed (i.e., a valid refresh token exists)
-     and attempts to obtain new credentials using the refresh token. This is useful for maintaining
-     long-lived sessions without requiring user re-authentication.
-     
      - Note: This method will update the credential properties with the new tokens upon successful renewal.
-     
-     ## When to Use
-     
-     Call this method when:
-     - You detect that access tokens are expired or about to expire
-     - You want to proactively refresh tokens to maintain session continuity
-     - You encounter authentication errors that might be resolved by token renewal
      */
     public func renewCredentialsIfNeeded() async throws {
         guard auth0Provider.canRenewCredentials() else {

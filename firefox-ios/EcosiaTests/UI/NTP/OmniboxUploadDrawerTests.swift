@@ -105,6 +105,31 @@ final class OmniboxUploadDrawerTests: XCTestCase {
         XCTAssertTrue(learningItems.contains(URLQueryItem(name: "m", value: "1")))
         XCTAssertTrue(learningItems.contains(URLQueryItem(name: "q", value: "hello")))
     }
+
+    func testAIChatURLCarriesChatModeQueryItemsAndFiles() throws {
+        let provider = URLProvider.production
+        let files = [
+            AIChatFileQuery(
+                fileId: "file-1",
+                filename: "doc.pdf",
+                mimeType: "application/pdf",
+                sizeBytes: 1024
+            )
+        ]
+
+        let url = provider.aiChat(origin: .omnibox,
+                                  query: "summarize this",
+                                  files: files,
+                                  additionalQueryItems: OmniboxChatMode.learning.aiChatQueryItems)
+        let items = Dictionary(
+            uniqueKeysWithValues: (URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? [])
+                .map { ($0.name, $0.value) }
+        )
+
+        XCTAssertEqual(items["q"], "summarize this")
+        XCTAssertEqual(items["m"], "1")
+        XCTAssertNotNil(items["files"])
+    }
 }
 
 @MainActor
@@ -217,6 +242,87 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         state.handleUploadDrawerDismissed()
         XCTAssertEqual(received, .files)
         XCTAssertFalse(didLogin)
+    }
+
+    func testSignInSheetDismissalStartsSignInAfterSheetCloses() {
+        let state = NTPOmniboxSheetState()
+        var didSignIn = false
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: { didSignIn = true },
+            onSignUp: {},
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+        XCTAssertTrue(state.showSignInSheet)
+
+        state.handleSignInSheetSignInTapped()
+        XCTAssertFalse(state.showSignInSheet)
+        XCTAssertFalse(didSignIn)
+
+        state.handleSignInSheetDismissed()
+        XCTAssertTrue(didSignIn)
+        XCTAssertFalse(didOpenDrawer)
+
+        state.handleAuthenticationCompleted(success: true)
+        XCTAssertTrue(didOpenDrawer)
+    }
+
+    func testAuthenticationFailureClearsPendingUploadDrawer() {
+        let state = NTPOmniboxSheetState()
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: {},
+            onSignUp: {},
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+        state.handleSignInSheetSignInTapped()
+        state.handleSignInSheetDismissed()
+
+        state.handleAuthenticationCompleted(success: false)
+        state.handleAuthenticationCompleted(success: true)
+        XCTAssertFalse(didOpenDrawer)
+    }
+
+    func testSignInSheetDismissWithoutActionClearsPendingUpload() {
+        let state = NTPOmniboxSheetState()
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: {},
+            onSignUp: {},
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+
+        state.showSignInSheet = false
+        state.handleSignInSheetDismissed()
+
+        state.handleAuthenticationCompleted(success: true)
+        XCTAssertFalse(didOpenDrawer)
+    }
+
+    func testSignInSheetDismissalStartsSignUpAfterSheetCloses() {
+        let state = NTPOmniboxSheetState()
+        var didSignUp = false
+        var didOpenDrawer = false
+
+        state.presentSignInSheetForUpload(
+            onSignIn: {},
+            onSignUp: { didSignUp = true },
+            onUploadDrawerRequested: { didOpenDrawer = true }
+        )
+
+        state.handleSignInSheetCreateAccountTapped()
+        XCTAssertFalse(state.showSignInSheet)
+        XCTAssertFalse(didSignUp)
+
+        state.handleSignInSheetDismissed()
+        XCTAssertTrue(didSignUp)
+        XCTAssertFalse(didOpenDrawer)
+
+        state.handleAuthenticationCompleted(success: true)
+        XCTAssertTrue(didOpenDrawer)
     }
 }
 

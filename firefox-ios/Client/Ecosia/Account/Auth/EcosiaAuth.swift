@@ -120,6 +120,23 @@ final class EcosiaAuth {
         }
     }
 
+    /// Starts the sign-up authentication flow
+    func signUp() {
+        guard let browserViewController = browserViewController else {
+            fatalError("BrowserViewController not available for auth flow")
+        }
+
+        let flow = EcosiaAuthFlow(
+            type: .signUp,
+            authService: authService,
+            browserViewController: browserViewController
+        )
+
+        Task { @MainActor in
+            await performSignUp(flow)
+        }
+    }
+
     /// Starts the logout authentication flow
     func logout() {
         guard let browserViewController = browserViewController else {
@@ -148,18 +165,43 @@ final class EcosiaAuth {
             onError: onErrorCallback
         )
 
+        await handleAuthenticationResult(result, context: .login)
+    }
+
+    private func performSignUp(_ flow: EcosiaAuthFlow) async {
+        let result = await flow.startSignUp(
+            delayedCompletion: delayedCompletionTime,
+            onNativeAuthCompleted: onNativeAuthCompletedCallback,
+            onFlowCompleted: onAuthFlowCompletedCallback,
+            onError: onErrorCallback
+        )
+
+        await handleAuthenticationResult(result, context: .signUp)
+    }
+
+    private enum AuthPresentationContext {
+        case login
+        case signUp
+
+        var usesSignInErrorToast: Bool { true }
+        var tracksSignInCancellation: Bool { self == .login }
+    }
+
+    private func handleAuthenticationResult(_ result: EcosiaAuthFlowResult, context: AuthPresentationContext) async {
         switch result {
         case .success:
-            EcosiaLogger.auth.debug("Login flow completed successfully")
+            EcosiaLogger.auth.debug("Authentication flow completed successfully")
         case .failure(let error):
-            EcosiaLogger.auth.error("Login flow failed: \(error)")
+            EcosiaLogger.auth.error("Authentication flow failed: \(error)")
             if case .userCancelled = error {
-                Analytics.shared.accountSignInCancelled()
+                if context.tracksSignInCancellation {
+                    Analytics.shared.accountSignInCancelled()
+                }
             } else {
                 // Show error toast for non-cancellation errors
                 await MainActor.run {
                     if #available(iOS 16.0, *) {
-                        browserViewController?.showAuthFlowErrorToast(isLogin: true)
+                        browserViewController?.showAuthFlowErrorToast(isLogin: context.usesSignInErrorToast)
                     }
                 }
             }
