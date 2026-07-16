@@ -135,6 +135,7 @@ public struct EcosiaErrorToastStack: View {
             .frame(maxWidth: .infinity, alignment: .top)
             .contentShape(Rectangle())
             .onTapGesture(perform: toggleExpanded)
+            .accessibilityAddTraits(.isButton)
             .offset(y: isVisible ? 0 : -(frontCardHeight + .ecosia.space._1l))
             .opacity(isVisible ? 1 : 0)
             .animation(entranceAnimation, value: isVisible)
