@@ -51,7 +51,6 @@ public struct EcosiaErrorView: View {
 
     public var body: some View {
         HStack(alignment: .center, spacing: .ecosia.space._s) {
-            // Error icon
             Image.ecosia("problem")
                 .resizable()
                 .frame(width: .ecosia.space._1l, height: .ecosia.space._1l)
@@ -59,50 +58,57 @@ public struct EcosiaErrorView: View {
                 .accessibilityLabel(String.localized(.ecosiaErrorViewAccessibilityImageLabel))
                 .accessibilityIdentifier("error_view_image")
 
-            // Text content
-            VStack(alignment: .leading, spacing: .ecosia.space._1s) {
-                if let title = title {
-                    Text(title)
-                        .font(.subheadline.bold())
-                        .foregroundColor(theme.textPrimaryColor)
-                }
-
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(title != nil ? theme.textSecondaryColor : theme.textPrimaryColor)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            textContent
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             if showsCloseButton {
-                Button(action: {
-                    onCloseTapped?()
-                }) {
-                    Image.ecosia("close")
-                        .renderingMode(.template)
-                        .resizable()
-                        .frame(width: UX.closeButtonSize, height: UX.closeButtonSize)
-                        .foregroundColor(theme.closeButtonColor)
-                }
-                .opacity(onCloseTapped != nil ? 1 : 0)
-                .disabled(onCloseTapped == nil)
-                .accessibilityHidden(onCloseTapped == nil)
-                .accessibilityLabel(String.localized(.close))
-                .accessibilityAddTraits(.isButton)
+                closeButton
             }
         }
         .padding(.horizontal, .ecosia.space._s)
         .padding(.vertical, .ecosia.space._1s)
-        .background(
-            RoundedRectangle(cornerRadius: .ecosia.borderRadius._m)
-                .fill(theme.backgroundColor)
-                .overlay(
-                    RoundedRectangle(cornerRadius: .ecosia.borderRadius._m)
-                        .stroke(theme.borderColor, lineWidth: UX.borderWidth)
-                )
-        )
+        .background(cardBackground)
         .ecosiaThemed(windowUUID, $theme)
+    }
+
+    private var textContent: some View {
+        VStack(alignment: .leading, spacing: .ecosia.space._1s) {
+            if let title {
+                Text(title)
+                    .font(.subheadline.bold())
+                    .foregroundColor(theme.textPrimaryColor)
+            }
+
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundColor(title != nil ? theme.textSecondaryColor : theme.textPrimaryColor)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var closeButton: some View {
+        Button(action: { onCloseTapped?() }) {
+            Image.ecosia("close")
+                .renderingMode(.template)
+                .resizable()
+                .frame(width: UX.closeButtonSize, height: UX.closeButtonSize)
+                .foregroundColor(theme.closeButtonColor)
+        }
+        .opacity(onCloseTapped != nil ? 1 : 0)
+        .disabled(onCloseTapped == nil)
+        .accessibilityHidden(onCloseTapped == nil)
+        .accessibilityLabel(String.localized(.close))
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var cardBackground: some View {
+        RoundedRectangle(cornerRadius: .ecosia.borderRadius._m)
+            .fill(theme.backgroundColor)
+            .overlay(
+                RoundedRectangle(cornerRadius: .ecosia.borderRadius._m)
+                    .stroke(theme.borderColor, lineWidth: UX.borderWidth)
+            )
     }
 }
 
