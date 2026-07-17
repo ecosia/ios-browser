@@ -107,6 +107,18 @@ public extension OmniboxChatMode {
 
     var isNew: Bool { self == .thinkLonger }
 
+    /// `mode` field of the `mode_selection` analytics payload. Deliberately its
+    /// own value rather than a reuse of `iconName` or the accessibility id, so
+    /// renaming an asset or a test hook can't silently re-shape reported data.
+    var analyticsIdentifier: String {
+        switch self {
+        case .standard: return "standard"
+        case .thinkLonger: return "think_longer"
+        case .displaySources: return "display_sources"
+        case .learning: return "learning"
+        }
+    }
+
     var accessibilityLabel: String { title }
 
     var accessibilityHint: String { String.localized(.aiChatAccessibilityHint) }

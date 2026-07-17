@@ -393,6 +393,47 @@ open class Analytics {
             .property(text))
 	}
 
+    // MARK: AI Tools Menu
+
+    /// Sign-in CTA tapped inside the omnibox "AI tools" drawer. The drawer
+    /// currently lives only on the new-tab page, so the category is `new_tab`.
+    public func aiToolsMenuSignInClicked() {
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.aiToolsMenu.rawValue))
+    }
+
+    /// A chat mode was picked, or the active one cleared, in the omnibox "AI
+    /// tools" drawer.
+    ///
+    /// The tracking plan carries `mode`, `action` and `logged_in` as a single
+    /// JSON object in `se_property` — a structured event has only one string
+    /// property and one numeric value, so the three fields cannot travel as
+    /// separate columns.
+    ///
+    /// Also fires for signed-out users, who can only reach `standard` (the other
+    /// modes are disabled until they sign in); those arrive with `logged_in: false`.
+    public func aiToolsMenuChatModeSelection(mode: OmniboxChatMode,
+                                             action: Property.ChatModeAction,
+                                             isLoggedIn: Bool) {
+        let payload: [String: Any] = [
+            "mode": mode.analyticsIdentifier,
+            "action": action.rawValue,
+            "logged_in": isLoggedIn
+        ]
+        // `sortedKeys` only to make the emitted string deterministic — a JSON
+        // object has no meaningful key order, and consumers parse it.
+        guard let data = try? JSONSerialization.data(withJSONObject: payload,
+                                                     options: [.sortedKeys]),
+              let json = String(data: data, encoding: .utf8) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.modeSelection.rawValue)
+            .property(json))
+    }
+
     // MARK: Account Authentication
 
     public func accountHeaderClicked() {

@@ -542,6 +542,14 @@ extension BrowserViewController {
 
     /// Clears the active chat mode when the user taps the chip's X.
     func ntpSearchBarDidTapChatModeChipClose() {
+        // Read the mode before clearing it — it's the one being reported.
+        // Only a deliberate tap counts as a `deselect`; the logout reset below
+        // clears the same state but isn't the user clearing a mode.
+        if let mode = omniboxSheetState?.selectedChatMode {
+            Analytics.shared.aiToolsMenuChatModeSelection(mode: mode,
+                                                          action: .deselect,
+                                                          isLoggedIn: ecosiaAuth?.isLoggedIn == true)
+        }
         omniboxSheetState?.selectedChatMode = nil
         ntpOmniboxAnchorView?.setSelectedChatMode(nil)
     }

@@ -895,6 +895,62 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         analyticsSpy.defaultBrowserSettingsOpenNativeSettingsVia(.settings)
         XCTAssertEqual(analyticsSpy.defaultBrowserSettingsOpenNativeSettingsLabelCalled, .settings, "Expected label 'default_browser_settings' to be tracked.")
     }
+
+    // MARK: - AI Tools Menu
+
+    /// Returns the single Structured event captured by the spy, failing the test otherwise.
+    private func lastStructuredEvent(file: StaticString = #filePath, line: UInt = #line) throws -> Structured {
+        let structured = analyticsSpy.trackedEvents.compactMap { $0 as? Structured }
+        XCTAssertEqual(structured.count, 1, "Expected exactly one Structured event", file: file, line: line)
+        return try XCTUnwrap(structured.first, file: file, line: line)
+    }
+
+    func testAIToolsMenuSignInClickedTracksExpectedFields() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.aiToolsMenuSignInClicked()
+
+        let event = try lastStructuredEvent()
+        XCTAssertEqual(event.category, Analytics.Category.newTab.rawValue)
+        XCTAssertEqual(event.action, Analytics.Action.click.rawValue)
+        XCTAssertEqual(event.label, Analytics.Label.signIn.rawValue)
+        XCTAssertEqual(event.property, Analytics.Property.aiToolsMenu.rawValue)
+    }
+
+    func testAIToolsMenuChatModeSelectionSelectLoggedInTracksJSONPayload() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.aiToolsMenuChatModeSelection(mode: .thinkLonger, action: .select, isLoggedIn: true)
+
+        let event = try lastStructuredEvent()
+        XCTAssertEqual(event.category, Analytics.Category.newTab.rawValue)
+        XCTAssertEqual(event.action, Analytics.Action.click.rawValue)
+        XCTAssertEqual(event.label, Analytics.Label.modeSelection.rawValue)
+
+        let payload = try decodeProperty(event)
+        XCTAssertEqual(payload["mode"] as? String, "think_longer")
+        XCTAssertEqual(payload["action"] as? String, "select")
+        XCTAssertEqual(payload["logged_in"] as? Bool, true)
+    }
+
+    func testAIToolsMenuChatModeSelectionDeselectLoggedOutTracksJSONPayload() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.aiToolsMenuChatModeSelection(mode: .standard, action: .deselect, isLoggedIn: false)
+
+        let payload = try decodeProperty(try lastStructuredEvent())
+        XCTAssertEqual(payload["mode"] as? String, "standard")
+        XCTAssertEqual(payload["action"] as? String, "deselect")
+        XCTAssertEqual(payload["logged_in"] as? Bool, false)
+    }
+
+    /// The `mode_selection` payload rides in `se_property` as a JSON string; parse it back for assertions.
+    private func decodeProperty(_ event: Structured, file: StaticString = #filePath, line: UInt = #line) throws -> [String: Any] {
+        let property = try XCTUnwrap(event.property, "mode_selection must carry a property payload", file: file, line: line)
+        let data = try XCTUnwrap(property.data(using: .utf8), file: file, line: line)
+        let object = try JSONSerialization.jsonObject(with: data)
+        return try XCTUnwrap(object as? [String: Any], "property must be a JSON object", file: file, line: line)
+    }
 }
 
 // MARK: - Helper SUTs
