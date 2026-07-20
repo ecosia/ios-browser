@@ -44,7 +44,7 @@ private struct PresignResponse: Decodable {
 /// There is no separate confirm step; `file_id` from the presign response is the upload handle.
 public final class FileUploadService: Sendable {
 
-    enum Error: Swift.Error, LocalizedError {
+    public enum Error: Swift.Error, LocalizedError, Equatable {
         case network(statusCode: Int, body: String?)
         case eaistRefreshFailed(statusCode: Int)
         case invalidPresignResponse(body: String?)
@@ -52,7 +52,7 @@ public final class FileUploadService: Sendable {
         case authenticationRequired
         case timedOut
 
-        var errorDescription: String? {
+        public var errorDescription: String? {
             switch self {
             case .network(let statusCode, _):
                 return "Network error (status \(statusCode))"

@@ -944,9 +944,61 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(payload["logged_in"] as? Bool, false)
     }
 
-    /// The `mode_selection` payload rides in `se_property` as a JSON string; parse it back for assertions.
+    func testFileUploadInitiatedTracksJSONPayload() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.fileUploadInitiated(fileType: "pdf", source: .buttonClick)
+
+        let event = try lastStructuredEvent()
+        XCTAssertEqual(event.category, Analytics.Category.newTab.rawValue)
+        XCTAssertEqual(event.action, Analytics.Action.click.rawValue)
+        XCTAssertEqual(event.label, Analytics.Label.fileUploadInitiated.rawValue)
+
+        let payload = try decodeProperty(event)
+        XCTAssertEqual(payload["file_type"] as? String, "pdf")
+        XCTAssertEqual(payload["source"] as? String, "button_click")
+    }
+
+    func testFileUploadCompletedTracksJSONPayload() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.fileUploadCompleted(fileType: "jpg", fileSizeKb: 240)
+
+        let event = try lastStructuredEvent()
+        XCTAssertEqual(event.category, Analytics.Category.newTab.rawValue)
+        XCTAssertEqual(event.action, Analytics.Action.success.rawValue)
+        XCTAssertEqual(event.label, Analytics.Label.fileUploadCompleted.rawValue)
+
+        let payload = try decodeProperty(event)
+        XCTAssertEqual(payload["file_type"] as? String, "jpg")
+        XCTAssertEqual((payload["file_size_kb"] as? NSNumber)?.intValue, 240)
+    }
+
+    func testFileUploadFailedTracksJSONPayload() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.fileUploadFailed(errorType: .tooLarge, fileType: "png")
+
+        let event = try lastStructuredEvent()
+        XCTAssertEqual(event.category, Analytics.Category.newTab.rawValue)
+        XCTAssertEqual(event.action, Analytics.Action.error.rawValue)
+        XCTAssertEqual(event.label, Analytics.Label.fileUploadFailed.rawValue)
+
+        let payload = try decodeProperty(event)
+        XCTAssertEqual(payload["error_type"] as? String, "too_large")
+        XCTAssertEqual(payload["file_type"] as? String, "png")
+    }
+
+    func testFileUploadFileTypeAndSizeHelpers() {
+        XCTAssertEqual(Analytics.fileUploadFileType(fromFileName: "report.PDF"), "pdf")
+        XCTAssertEqual(Analytics.fileUploadFileType(fromFileName: "no-extension"), "unknown")
+        XCTAssertEqual(Analytics.fileUploadSizeKb(byteCount: 1024), 1)
+        XCTAssertEqual(Analytics.fileUploadSizeKb(byteCount: 1536), 2)
+    }
+
+    /// Multi-field payloads ride in `se_property` as a JSON string; parse it back for assertions.
     private func decodeProperty(_ event: Structured, file: StaticString = #filePath, line: UInt = #line) throws -> [String: Any] {
-        let property = try XCTUnwrap(event.property, "mode_selection must carry a property payload", file: file, line: line)
+        let property = try XCTUnwrap(event.property, "event must carry a property payload", file: file, line: line)
         let data = try XCTUnwrap(property.data(using: .utf8), file: file, line: line)
         let object = try JSONSerialization.jsonObject(with: data)
         return try XCTUnwrap(object as? [String: Any], "property must be a JSON object", file: file, line: line)

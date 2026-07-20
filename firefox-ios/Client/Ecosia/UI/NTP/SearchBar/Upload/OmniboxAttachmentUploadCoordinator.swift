@@ -55,6 +55,9 @@ final class OmniboxAttachmentUploadCoordinator {
                 state: .loading
             )
             searchBar.addAttachment(attachment)
+            Analytics.shared.fileUploadInitiated(
+                fileType: Analytics.fileUploadFileType(fromFileName: item.fileName)
+            )
 
             let attachmentID = attachment.id
             tasks[attachmentID] = Task { @MainActor [weak self] in
@@ -121,10 +124,15 @@ final class OmniboxAttachmentUploadCoordinator {
                 state: .ready(byteCount: payload.data.count, fileId: fileId, mimeType: payload.mimeType),
                 previewImages: previewImages
             )
+            Analytics.shared.fileUploadCompleted(
+                fileType: Analytics.fileUploadFileType(fromFileName: payload.fileName),
+                fileSizeKb: Analytics.fileUploadSizeKb(byteCount: payload.data.count)
+            )
             EcosiaLogger.network.info("[FileUpload] Attachment \(attachmentID) ready fileId=\(fileId)")
             delegate?.omniboxAttachmentsDidChange()
         } catch let error as OmniboxUploadPayloadError where error == .fileTooLarge {
             guard !Task.isCancelled else { return }
+            trackUploadFailure(errorType: .tooLarge, fileName: displayFileName)
             searchBar.removeAttachment(id: attachmentID)
             previewImages.removeValue(forKey: attachmentID)
             delegate?.omniboxUploadDidEncounterValidationErrors([.fileTooLarge])
@@ -134,6 +142,7 @@ final class OmniboxAttachmentUploadCoordinator {
             EcosiaLogger.network.error(
                 "[FileUpload] Attachment \(attachmentID) failed: \(error.localizedDescription)"
             )
+            trackUploadFailure(for: error, fileName: displayFileName)
             if error is OmniboxUploadPayloadError {
                 searchBar.removeAttachment(id: attachmentID)
                 previewImages.removeValue(forKey: attachmentID)
@@ -150,6 +159,26 @@ final class OmniboxAttachmentUploadCoordinator {
             }
             delegate?.omniboxAttachmentsDidChange()
         }
+    }
+
+    private func trackUploadFailure(for error: Error, fileName: String) {
+        if let serviceError = error as? FileUploadService.Error {
+            // Only `timeout` is in the tracking-plan `error_type` enum for
+            // service failures; other network/auth/API errors are omitted.
+            guard serviceError == .timedOut else { return }
+            trackUploadFailure(errorType: .timeout, fileName: fileName)
+            return
+        }
+        if error is OmniboxUploadPayloadError {
+            trackUploadFailure(errorType: .parseFailed, fileName: fileName)
+        }
+    }
+
+    private func trackUploadFailure(errorType: Analytics.Property.FileUploadErrorType, fileName: String) {
+        Analytics.shared.fileUploadFailed(
+            errorType: errorType,
+            fileType: Analytics.fileUploadFileType(fromFileName: fileName)
+        )
     }
 
     private func uploadWithRetry(payload: OmniboxUploadLocalPayload,

@@ -38,6 +38,9 @@ extension Analytics {
         close,
         market,
         modeSelection = "mode_selection",
+        fileUploadInitiated = "file_upload_initiated",
+        fileUploadCompleted = "file_upload_completed",
+        fileUploadFailed = "file_upload_failed",
         profile,
         signIn = "sign_in",
         signUp = "sign_up",
@@ -259,6 +262,21 @@ extension Analytics {
             case
             select,
             deselect
+        }
+
+        /// `source` field of the `file_upload_initiated` payload. Native iOS
+        /// only has picker selection — there is no drag-and-drop path.
+        public enum FileUploadSource: String {
+            case buttonClick = "button_click"
+        }
+
+        /// `error_type` field of the `file_upload_failed` payload.
+        public enum FileUploadErrorType: String {
+            case
+            unsupportedFormat = "unsupported_format",
+            tooLarge = "too_large",
+            parseFailed = "parse_failed",
+            timeout
         }
 
         public enum APNConsent: String {
