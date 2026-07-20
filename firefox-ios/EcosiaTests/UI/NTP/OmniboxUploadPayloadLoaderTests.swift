@@ -27,4 +27,15 @@ final class OmniboxUploadPayloadLoaderTests: XCTestCase {
         XCTAssertEqual(payload.fileName, "small.txt")
         XCTAssertEqual(payload.data, Data("hello".utf8))
     }
+
+    func testFileNameWithExtensionAppendsMIMEDerivedExtensionWhenMissing() {
+        XCTAssertEqual(
+            OmniboxUploadPayloadLoader.fileNameWithExtension("IMG_1234", mimeType: "image/jpeg"),
+            "IMG_1234.jpg"
+        )
+        XCTAssertEqual(
+            OmniboxUploadPayloadLoader.fileNameWithExtension("report.pdf", mimeType: "application/pdf"),
+            "report.pdf"
+        )
+    }
 }

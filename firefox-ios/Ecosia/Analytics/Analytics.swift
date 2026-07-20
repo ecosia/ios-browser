@@ -479,10 +479,39 @@ open class Analytics {
             .property(json))
     }
 
-    /// Lowercased path extension used as `file_type`, or `"unknown"` when absent.
-    public static func fileUploadFileType(fromFileName fileName: String) -> String {
+    /// Prefer the lowercased path extension; fall back to a MIME-derived type
+    /// (PHPicker `suggestedName` often has no extension). `"unknown"` only when
+    /// neither source yields a usable type.
+    public static func fileUploadFileType(fromFileName fileName: String,
+                                          mimeType: String? = nil) -> String {
         let ext = (fileName as NSString).pathExtension.lowercased()
-        return ext.isEmpty ? "unknown" : ext
+        if !ext.isEmpty {
+            return ext == "jpeg" ? "jpg" : ext
+        }
+        return fileUploadFileType(fromMimeType: mimeType) ?? "unknown"
+    }
+
+    /// Maps a MIME type to the `file_type` vocabulary (`jpg`, `png`, `pdf`, …).
+    public static func fileUploadFileType(fromMimeType mimeType: String?) -> String? {
+        guard let mimeType, !mimeType.isEmpty else { return nil }
+        switch mimeType.lowercased() {
+        case "image/jpeg":
+            return "jpg"
+        case "image/png":
+            return "png"
+        case "application/pdf":
+            return "pdf"
+        case "text/plain":
+            return "txt"
+        case "application/msword":
+            return "doc"
+        default:
+            guard let subtype = mimeType.split(separator: "/").last, !subtype.isEmpty else {
+                return nil
+            }
+            let value = String(subtype).lowercased()
+            return value == "jpeg" ? "jpg" : value
+        }
     }
 
     /// Rounded kibibyte size for `file_size_kb`.

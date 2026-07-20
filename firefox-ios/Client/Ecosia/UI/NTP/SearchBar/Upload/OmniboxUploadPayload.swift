@@ -76,7 +76,7 @@ enum OmniboxUploadPayloadLoader {
         let layout: OmniboxAttachment.Layout = mimeType.hasPrefix("image/") ? .image : .file
         let previewImage = layout == .image ? UIImage(data: data) : nil
         return OmniboxUploadLocalPayload(
-            fileName: url.lastPathComponent,
+            fileName: fileNameWithExtension(url.lastPathComponent, mimeType: mimeType),
             mimeType: mimeType,
             data: data,
             layout: layout,
@@ -99,12 +99,29 @@ enum OmniboxUploadPayloadLoader {
     static func loadImage(data: Data, fileName: String, mimeType: String) throws -> OmniboxUploadLocalPayload {
         try validateSize(data)
         return OmniboxUploadLocalPayload(
-            fileName: fileName,
+            fileName: fileNameWithExtension(fileName, mimeType: mimeType),
             mimeType: mimeType,
             data: data,
             layout: .image,
             previewImage: UIImage(data: data)
         )
+    }
+
+    /// PHPicker `suggestedName` often omits an extension (`IMG_1234`). Append one
+    /// derived from the MIME type so analytics `file_type` and UI labels stay useful.
+    static func fileNameWithExtension(_ fileName: String, mimeType: String) -> String {
+        let nsName = fileName as NSString
+        guard nsName.pathExtension.isEmpty else { return fileName }
+        let stem = fileName.isEmpty ? "file" : fileName
+        let ext = preferredExtension(forMimeType: mimeType) ?? "bin"
+        return "\(stem).\(ext)"
+    }
+
+    private static func preferredExtension(forMimeType mimeType: String) -> String? {
+        if let ext = UTType(mimeType: mimeType)?.preferredFilenameExtension {
+            return ext == "jpeg" ? "jpg" : ext
+        }
+        return Analytics.fileUploadFileType(fromMimeType: mimeType)
     }
 
     static func validateSize(_ data: Data) throws {

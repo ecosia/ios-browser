@@ -992,6 +992,12 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     func testFileUploadFileTypeAndSizeHelpers() {
         XCTAssertEqual(Analytics.fileUploadFileType(fromFileName: "report.PDF"), "pdf")
         XCTAssertEqual(Analytics.fileUploadFileType(fromFileName: "no-extension"), "unknown")
+        // PHPicker suggested names often omit an extension — fall back to MIME.
+        XCTAssertEqual(
+            Analytics.fileUploadFileType(fromFileName: "IMG_1234", mimeType: "image/jpeg"),
+            "jpg"
+        )
+        XCTAssertEqual(Analytics.fileUploadFileType(fromMimeType: "application/pdf"), "pdf")
         XCTAssertEqual(Analytics.fileUploadSizeKb(byteCount: 1024), 1)
         XCTAssertEqual(Analytics.fileUploadSizeKb(byteCount: 1536), 2)
     }
