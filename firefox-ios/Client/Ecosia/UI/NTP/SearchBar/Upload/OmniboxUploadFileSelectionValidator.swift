@@ -97,7 +97,7 @@ enum OmniboxUploadFileSelectionValidator {
         return supportedExtensions.contains(ext)
     }
 
-    private static func isOversized(_ url: URL) -> Bool {
+    static func isOversized(_ url: URL) -> Bool {
         guard let fileSize = fileSize(for: url) else { return false }
         return fileSize > OmniboxUploadPayloadLoader.maxFileSizeBytes
     }

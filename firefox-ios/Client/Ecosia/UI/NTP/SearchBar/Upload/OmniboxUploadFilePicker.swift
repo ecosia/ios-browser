@@ -32,6 +32,8 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
             existingAttachmentCount: delegate?.omniboxUploadExistingAttachmentCount ?? 0
         )
 
+        trackFilePickerValidationFailures(for: urls, acceptedURLs: validationResult.acceptedURLs)
+
         let pendingItems = validationResult.acceptedURLs.map { url in
             let ext = url.pathExtension.lowercased()
             let layout: OmniboxAttachment.Layout = OmniboxUploadFileSelectionValidator.imageExtensions.contains(ext)
@@ -46,5 +48,21 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
             items: pendingItems,
             validationErrors: validationResult.validationErrors
         )
+    }
+
+    /// Fires `file_upload_failed` per rejected URL for the two mapped picker
+    /// errors (`unsupported_format`, `too_large`). Excess-count rejections are
+    /// intentionally omitted — `tooManyFiles` is not in the tracking-plan
+    /// `error_type` enum.
+    private func trackFilePickerValidationFailures(for urls: [URL], acceptedURLs: [URL]) {
+        let acceptedPaths = Set(acceptedURLs.map(\.path))
+        for url in urls where !acceptedPaths.contains(url.path) {
+            let fileType = Analytics.fileUploadFileType(fromFileName: url.lastPathComponent)
+            if !OmniboxUploadFileSelectionValidator.isAllowed(url) {
+                Analytics.shared.fileUploadFailed(errorType: .unsupportedFormat, fileType: fileType)
+            } else if OmniboxUploadFileSelectionValidator.isOversized(url) {
+                Analytics.shared.fileUploadFailed(errorType: .tooLarge, fileType: fileType)
+            }
+        }
     }
 }
