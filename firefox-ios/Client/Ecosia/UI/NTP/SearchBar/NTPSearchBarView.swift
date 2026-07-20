@@ -85,9 +85,6 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         /// Remaining-character count at which the counter becomes visible.
         /// Countdown starts once the user has 100 characters left.
         static let counterVisibleThreshold = 100
-        /// Remaining-character count at which the counter flips into a warning
-        /// tint (last 100 chars before the hard cap).
-        static let counterWarningRemainingThreshold = 100
         /// Hard cap on input length. Further input is rejected.
         static let maxLength = 1060
         /// Padding between the textView and the pill's top edge.
@@ -167,8 +164,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     private lazy var uploadButton: EcosiaOmniboxUploadButton = .build { _ in }
 
     private lazy var counterLabel: UILabel = .build { label in
-        label.font = .preferredFont(forTextStyle: .caption2)
-        label.adjustsFontForContentSizeCategory = true
+        label.font = .ecosia(size: .ecosia.font._l)
         label.isHidden = true
         label.accessibilityIdentifier = "NTPSearchBarCounterLabel"
     }
@@ -616,33 +612,8 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         let visible = remaining <= UX.counterVisibleThreshold
         counterLabel.isHidden = !visible
         guard visible else { return }
-        let isWarning = remaining <= UX.counterWarningRemainingThreshold
-        counterLabel.attributedText = composeCounterText(remaining: remaining, isWarning: isWarning)
+        counterLabel.text = String(format: String.localized(.charactersLeft), remaining)
         applyCounterColor()
-    }
-
-    /// Builds the counter label content. In the warning band (last 100 chars
-    /// before the cap) the text is prefixed with an SF-Symbol exclamation
-    /// triangle so the limit is unmissable.
-    private func composeCounterText(remaining: Int, isWarning: Bool) -> NSAttributedString {
-        let phrase = String(format: String.localized(.charactersLeft), remaining)
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: counterLabel.font ?? UIFont.preferredFont(forTextStyle: .caption2)
-        ]
-        let result = NSMutableAttributedString()
-        if isWarning {
-            let symbolConfig = UIImage.SymbolConfiguration(textStyle: .caption2)
-            if let icon = UIImage(systemName: "exclamationmark.triangle",
-                                  withConfiguration: symbolConfig)?
-                .withRenderingMode(.alwaysTemplate) {
-                let attachment = NSTextAttachment()
-                attachment.image = icon
-                result.append(NSAttributedString(attachment: attachment))
-                result.append(NSAttributedString(string: " ", attributes: attributes))
-            }
-        }
-        result.append(NSAttributedString(string: phrase, attributes: attributes))
-        return result
     }
 
     private func updateClearButtonVisibility(for text: String) {
@@ -653,15 +624,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
 
     private func applyCounterColor() {
         guard let colors = currentTheme?.colors else { return }
-        let remaining = max(0, UX.maxLength - (textView.text ?? "").count)
-        // Once we cross into the last 100 chars of the budget, flip the
-        // counter into a warning tint so the cap is unmissable. The tint is
-        // applied to both the text and the warning-triangle attachment glyph.
-        let color = remaining <= UX.counterWarningRemainingThreshold
-            ? colors.ecosia.stateError
-            : colors.ecosia.textSecondary
-        counterLabel.textColor = color
-        counterLabel.tintColor = color
+        counterLabel.textColor = colors.ecosia.textSecondary
     }
 
     private func applySubmitButtonColors() {
