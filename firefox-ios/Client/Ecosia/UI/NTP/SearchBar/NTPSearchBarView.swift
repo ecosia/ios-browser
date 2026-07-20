@@ -82,12 +82,9 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         static let shadowOpacity: Float = 0.10
         static let shadowRadius: CGFloat = 12
         static let shadowOffset = CGSize(width: 0, height: 4)
-        /// Character count at which the remaining-character counter becomes
-        /// visible.
+        /// Remaining-character count at which the counter becomes visible.
+        /// Countdown starts once the user has 100 characters left.
         static let counterVisibleThreshold = 100
-        /// Character count at which the counter flips into a warning tint
-        /// (last 100 chars before the hard cap).
-        static let counterWarningThreshold = 960
         /// Hard cap on input length. Further input is rejected.
         static let maxLength = 1060
         /// Padding between the textView and the pill's top edge.
@@ -167,19 +164,19 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     private lazy var uploadButton: EcosiaOmniboxUploadButton = .build { _ in }
 
     private lazy var counterLabel: UILabel = .build { label in
-        label.font = .preferredFont(forTextStyle: .caption2)
-        label.adjustsFontForContentSizeCategory = true
+        label.font = .ecosia(size: .ecosia.font._l)
         label.isHidden = true
         label.accessibilityIdentifier = "NTPSearchBarCounterLabel"
     }
 
-    /// In-pill clear button at the top-right of the omnibox. Visible only
-    /// while the field has content — taps wipe the text without dropping
-    /// focus. The button itself is the 40×40 hit target with no rendered
-    /// content; `clearButtonCircle` and `clearButtonGlyph` are siblings
-    /// inside it that draw the visible disc and the X glyph respectively.
-    /// We don't use `setImage` because the resulting `imageView`'s z-order
-    /// relative to other subviews is unreliable across iOS versions/button
+    /// In-pill clear button at the top-right of the omnibox (or trailing
+    /// the textView once attachments are present). Visible only while the
+    /// field has content — taps wipe the text without dropping focus. The
+    /// button itself is the 40×40 hit target with no rendered content;
+    /// `clearButtonCircle` and `clearButtonGlyph` are siblings inside it
+    /// that draw the visible disc and the X glyph respectively. We don't
+    /// use `setImage` because the resulting `imageView`'s z-order relative
+    /// to other subviews is unreliable across iOS versions/button
     /// configuration modes — using an explicit `UIImageView` keeps the X
     /// guaranteed to sit on top of the disc.
     private lazy var clearButton: UIButton = .build { button in
@@ -253,6 +250,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         textView.heightAnchor.constraint(equalToConstant: UX.minTextHeight)
     private lazy var textViewTopConstraint: NSLayoutConstraint =
         textView.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding)
+    /// Resting position: top-right of the pill (no attachments).
+    private lazy var clearButtonTopToPillConstraint: NSLayoutConstraint =
+        clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._1s)
+    /// With attachments: trail the textView so the control isn't buried under the strip.
+    private lazy var clearButtonTopToTextConstraint: NSLayoutConstraint =
+        clearButton.topAnchor.constraint(equalTo: textView.topAnchor)
 
     /// Current text content. Mirrors `textView.text` but lets callers drive
     /// programmatic changes (e.g. accepting a tapped suggestion).
@@ -404,11 +407,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             counterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: chatModeChip.trailingAnchor,
                                                   constant: .ecosia.space._1s),
 
-            // Clear-text button sits in the top-right of the pill — its
-            // 40×40 hit target is symmetric to the submit button's 8pt
-            // inset from the pill's bottom-right corner, with the 16×16
-            // visible disc centred inside. Hidden until the user has content.
-            clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._1s),
+            // Clear-text button sits in the top-right of the pill by default —
+            // its 40×40 hit target shares the submit button's horizontal
+            // centre, with the 16×16 disc centred inside. When attachments
+            // are present, `refreshAttachmentsStrip` re-pins it to the
+            // textView's top so it stays on the trailing side of the input
+            // instead of overlapping the strip. Hidden until content exists.
+            clearButtonTopToPillConstraint,
             clearButton.centerXAnchor.constraint(equalTo: submitButton.centerXAnchor),
             clearButton.widthAnchor.constraint(equalToConstant: UX.clearButtonSize),
             clearButton.heightAnchor.constraint(equalToConstant: UX.clearButtonSize),
@@ -530,10 +535,23 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         textViewTopConstraint.constant = hasStrip
             ? UX.textPadding + UX.attachmentStripHeight
             : UX.textPadding
+        updateClearButtonPosition(hasAttachments: hasStrip)
         updateSubmitState(for: textView.text ?? "")
         updateLayoutForContent()
         delegate?.ntpSearchBarAttachmentsDidChange()
         delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
+    }
+
+    /// Keeps the clear control on the trailing side of the textView when the
+    /// attachment strip occupies the pill's top-right corner.
+    private func updateClearButtonPosition(hasAttachments: Bool) {
+        if hasAttachments {
+            clearButtonTopToTextConstraint.isActive = true
+            clearButtonTopToPillConstraint.isActive = false
+        } else {
+            clearButtonTopToPillConstraint.isActive = true
+            clearButtonTopToTextConstraint.isActive = false
+        }
     }
 
     private func canSubmit(text: String) -> Bool {
@@ -590,37 +608,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
 
     private func updateCounter(for text: String) {
         let count = text.count
-        let visible = count >= UX.counterVisibleThreshold
+        let remaining = max(0, UX.maxLength - count)
+        let visible = remaining <= UX.counterVisibleThreshold
         counterLabel.isHidden = !visible
         guard visible else { return }
-        let remaining = max(0, UX.maxLength - count)
-        let isWarning = count >= UX.counterWarningThreshold
-        counterLabel.attributedText = composeCounterText(remaining: remaining, isWarning: isWarning)
+        counterLabel.text = String(format: String.localized(.charactersLeft), remaining)
         applyCounterColor()
-    }
-
-    /// Builds the counter label content. In the warning band (last 100 chars
-    /// before the cap) the text is prefixed with an SF-Symbol exclamation
-    /// triangle so the limit is unmissable.
-    private func composeCounterText(remaining: Int, isWarning: Bool) -> NSAttributedString {
-        let phrase = String(format: String.localized(.charactersLeft), remaining)
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: counterLabel.font ?? UIFont.preferredFont(forTextStyle: .caption2)
-        ]
-        let result = NSMutableAttributedString()
-        if isWarning {
-            let symbolConfig = UIImage.SymbolConfiguration(textStyle: .caption2)
-            if let icon = UIImage(systemName: "exclamationmark.triangle",
-                                  withConfiguration: symbolConfig)?
-                .withRenderingMode(.alwaysTemplate) {
-                let attachment = NSTextAttachment()
-                attachment.image = icon
-                result.append(NSAttributedString(attachment: attachment))
-                result.append(NSAttributedString(string: " ", attributes: attributes))
-            }
-        }
-        result.append(NSAttributedString(string: phrase, attributes: attributes))
-        return result
     }
 
     private func updateClearButtonVisibility(for text: String) {
@@ -631,15 +624,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
 
     private func applyCounterColor() {
         guard let colors = currentTheme?.colors else { return }
-        let count = (textView.text ?? "").count
-        // Once we cross into the last 100 chars of the budget, flip the
-        // counter into a warning tint so the cap is unmissable. The tint is
-        // applied to both the text and the warning-triangle attachment glyph.
-        let color = count >= UX.counterWarningThreshold
-            ? colors.ecosia.stateError
-            : colors.ecosia.textSecondary
-        counterLabel.textColor = color
-        counterLabel.tintColor = color
+        counterLabel.textColor = colors.ecosia.textSecondary
     }
 
     private func applySubmitButtonColors() {
