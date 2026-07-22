@@ -138,8 +138,8 @@ struct OmniboxUploadDrawerView: View {
             }
         }
         .padding(.horizontal, .ecosia.space._m)
-        .padding(.top, .ecosia.space._m)
-        .padding(.bottom, .ecosia.space._l)
+        .padding(.top, .ecosia.space._2l)
+        .padding(.bottom, .ecosia.space._2l)
         .frame(maxWidth: .infinity)
         // Measure the intrinsic content height so the sheet detent fits exactly,
         // keeping the banner at the bottom without a floating gap.
