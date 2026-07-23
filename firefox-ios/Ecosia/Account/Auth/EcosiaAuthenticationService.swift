@@ -132,7 +132,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         do {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
-                setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, accountOrigin: accountOrigin)
+                setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, accountOrigin: accountOrigin, context: "login")
                 if !skipUserInfoFetch {
                     await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
                 }
@@ -184,7 +184,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         let credentialsCleared = auth0Provider.clearCredentials()
 
         if credentialsCleared {
-            setupTokensWithCredentials(nil)
+            setupTokensWithCredentials(nil, context: "logout")
             // Clear user profile on logout
             try await ImageCacheLoader.clearCache(for: userProfile?.pictureURL)
             userProfile = nil
@@ -224,7 +224,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     public func retrieveStoredCredentials() async {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
-            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, context: "initial cached retrieval")
             if !skipUserInfoFetch {
                 await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
             }
@@ -257,7 +257,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
 
         do {
             let credentials = try await auth0Provider.renewCredentials()
-            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, context: "forced renewal")
             EcosiaLogger.auth.info("Renewed credentials successfully")
         } catch {
             EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
@@ -268,13 +268,16 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// Helper method to setup tokens and login flag
     private func setupTokensWithCredentials(_ credentials: Credentials?,
                                             settingLoggedInStateTo isLoggedIn: Bool = false,
-                                            accountOrigin: AccountOrigin? = nil) {
+                                            accountOrigin: AccountOrigin? = nil,
+                                            context: String) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.grantedScope = credentials?.scope
         self.refreshToken = credentials?.refreshToken
         let wasLoggedIn = self.isLoggedIn
         self.isLoggedIn = isLoggedIn
+
+        EcosiaLogger.auth.info("Tokens updated (\(context)) — grantedScope: \(self.grantedScope ?? "nil"), hasConversationScopes: \(self.hasConversationScopes)")
 
         // Only dispatch the auth state change when the login state actually transitions,
         // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
