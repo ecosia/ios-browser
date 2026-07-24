@@ -253,9 +253,12 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     /// Resting position: top-right of the pill (no attachments).
     private lazy var clearButtonTopToPillConstraint: NSLayoutConstraint =
         clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._1s)
-    /// With attachments: trail the textView so the control isn't buried under the strip.
+    /// With attachments: trail the textView so the control isn't buried under the
+    /// strip. The `-_1s` keeps the same button-top-to-text-top offset as the resting
+    /// constraint (pill+_1s vs text+textPadding), so the disc stays centered on the
+    /// first text line instead of dropping ~8pt below it.
     private lazy var clearButtonTopToTextConstraint: NSLayoutConstraint =
-        clearButton.topAnchor.constraint(equalTo: textView.topAnchor)
+        clearButton.topAnchor.constraint(equalTo: textView.topAnchor, constant: -.ecosia.space._1s)
 
     /// Current text content. Mirrors `textView.text` but lets callers drive
     /// programmatic changes (e.g. accepting a tapped suggestion).
