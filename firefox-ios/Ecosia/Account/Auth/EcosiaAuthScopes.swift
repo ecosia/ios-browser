@@ -5,15 +5,36 @@
 import Foundation
 
 /// OAuth scopes requested during native Auth0 authentication.
-public enum EcosiaAuthScopes {
-    public static let oauthScope =
-        "openid profile email offline_access read:impact write:impact " +
-        "read:conversations write:conversations update:conversations delete:conversations"
+public enum EcosiaAuthScopes: String, CaseIterable {
+    case openid
+    case profile
+    case email
+    case offlineAccess = "offline_access"
+    case impactRead = "read:impact"
+    case impactWrite = "write:impact"
+    case conversationsRead = "read:conversations"
+    case conversationsWrite = "write:conversations"
+    case conversationsUpdate = "update:conversations"
+    case conversationsDelete = "delete:conversations"
 
-    public static let conversationScopes: Set<String> = [
-        "read:conversations",
-        "write:conversations"
-    ]
+    public static let scopeSeparator = " "
+
+    public static let oauthScope = scopeString(from: allCases)
+
+    public static func conversationCases() -> [EcosiaAuthScopes] {
+        [
+            conversationsRead,
+            conversationsWrite,
+            conversationsUpdate,
+            conversationsDelete
+        ]
+    }
+
+    public static let conversationScopes: Set<String> = Set(conversationCases().map(\.rawValue))
+
+    public static func scopeString<S: Sequence>(from scopes: S) -> String where S.Element == EcosiaAuthScopes {
+        scopes.map(\.rawValue).joined(separator: scopeSeparator)
+    }
 
     public static func hasConversationScopes(in accessToken: String, grantedScope: String? = nil) -> Bool {
         if let grantedScope, conversationScopes.isSubset(of: parseScopeString(grantedScope)) {

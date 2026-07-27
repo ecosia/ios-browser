@@ -7,8 +7,33 @@ import XCTest
 
 final class EcosiaAuthScopesTests: XCTestCase {
 
+    private static let allConversationScopes =
+        EcosiaAuthScopes.scopeString(from: EcosiaAuthScopes.conversationCases())
+
+    func testOAuthScope_matchesExpectedScopeString() {
+        XCTAssertEqual(
+            EcosiaAuthScopes.oauthScope,
+            "openid profile email offline_access read:impact write:impact " +
+            "read:conversations write:conversations update:conversations delete:conversations"
+        )
+    }
+
+    func testScopeString_whenGivenConversationCases_matchesExpectedScopeString() {
+        XCTAssertEqual(
+            EcosiaAuthScopes.scopeString(from: EcosiaAuthScopes.conversationCases()),
+            "read:conversations write:conversations update:conversations delete:conversations"
+        )
+    }
+
+    func testParseScopeString_whenGivenOAuthScope_returnsAllScopeValues() {
+        XCTAssertEqual(
+            EcosiaAuthScopes.parseScopeString(EcosiaAuthScopes.oauthScope),
+            Set(EcosiaAuthScopes.allCases.map(\.rawValue))
+        )
+    }
+
     func testHasConversationScopes_whenScopesPresent_returnsTrue() {
-        let token = Self.makeJWT(scope: "openid read:conversations write:conversations")
+        let token = Self.makeJWT(scope: "openid \(Self.allConversationScopes)")
         XCTAssertTrue(EcosiaAuthScopes.hasConversationScopes(in: token))
     }
 
@@ -22,7 +47,7 @@ final class EcosiaAuthScopesTests: XCTestCase {
         XCTAssertTrue(
             EcosiaAuthScopes.hasConversationScopes(
                 in: opaqueToken,
-                grantedScope: "openid read:conversations write:conversations"
+                grantedScope: "openid \(Self.allConversationScopes)"
             )
         )
     }
