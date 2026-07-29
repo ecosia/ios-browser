@@ -219,7 +219,7 @@ rbenv install 3.2.2
 rbenv global 3.2.2
 
 ```
-Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo can be found in LastPass.
+Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo is in Bitwarden under the name: `some name`.
 
 **Command:**
 ```shell
