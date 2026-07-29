@@ -215,8 +215,8 @@ brew install rbenv
 echo 'eval "$(rbenv init -)"' >> ~/.zshrc
 source ~/.zshrc
 
-rbenv install 3.2.2
-rbenv global 3.2.2
+rbenv install 3.4.10
+rbenv global 3.4.10
 
 ```
 Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo is in Bitwarden under the name: `iOS Fastlane match passphrase`.
