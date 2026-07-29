@@ -182,7 +182,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            createTopConstraint(),
+            contentView.topAnchor.constraint(equalTo: view.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -229,14 +229,6 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             beforeView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: -screenWidth/4),
             afterView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: screenWidth/4)
         ])
-    }
-
-    private func createTopConstraint() -> NSLayoutConstraint {
-        if traitCollection.userInterfaceIdiom == .pad {
-            return contentView.topAnchor.constraint(equalTo: view.topAnchor)
-        } else {
-            return contentView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor)
-        }
     }
 
     @objc func applyTheme() {
