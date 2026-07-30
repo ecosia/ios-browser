@@ -284,7 +284,7 @@ final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
         )
     }
 
-    func testProfileModalPresentationConfiguration_usesInAppMobileUserAgent() {
+    func testInit_storesInAppMobileUserAgent() {
         // Given / When
         let modal = EcosiaWebViewModal(
             url: EcosiaEnvironment.current.urlProvider.profileURL,

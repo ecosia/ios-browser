@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
-@testable import Client
 @testable import Ecosia
 
 @available(iOS 16.0, *)
@@ -24,42 +23,6 @@ final class EcosiaAccountImpactViewUserAgentTests: XCTestCase {
         // Then
         XCTAssertEqual(
             mirrorString(from: view, label: "webViewUserAgent"),
-            expectedUserAgent
-        )
-    }
-
-    func testProfileWebViewModalConfiguration_usesStoredWebViewUserAgent() {
-        // Given
-        let expectedUserAgent = EcosiaInAppWebViewUserAgent.mobileUserAgent()
-
-        // When
-        let modal = EcosiaWebViewModal(
-            url: EcosiaEnvironment.current.urlProvider.profileURL,
-            windowUUID: .XCTestDefaultUUID,
-            userAgent: expectedUserAgent
-        )
-
-        // Then
-        XCTAssertEqual(
-            mirrorString(from: modal, label: "userAgent"),
-            expectedUserAgent
-        )
-    }
-
-    func testSeedCounterWebViewModalConfiguration_usesStoredWebViewUserAgent() {
-        // Given
-        let expectedUserAgent = EcosiaInAppWebViewUserAgent.mobileUserAgent()
-
-        // When
-        let modal = EcosiaWebViewModal(
-            url: EcosiaEnvironment.current.urlProvider.seedCounterInfo,
-            windowUUID: .XCTestDefaultUUID,
-            userAgent: expectedUserAgent
-        )
-
-        // Then
-        XCTAssertEqual(
-            mirrorString(from: modal, label: "userAgent"),
             expectedUserAgent
         )
     }
