@@ -36,15 +36,24 @@ public extension BaseRequest {
     }
 
     func makeURLRequest() throws -> URLRequest {
-        guard var urlComponents = URLComponents(url: resolvedBaseURL, resolvingAgainstBaseURL: false) else {
-            throw RequestError.invalidBaseURL
-        }
-        urlComponents.path = path
-        if let queryParameters {
-            urlComponents.queryItems = queryParameters.map({ .init(name: $0.key, value: $0.value ) })
-        }
-        guard let url = urlComponents.url else {
-            throw RequestError.invalidURLComponents
+        let url: URL
+        switch baseURL {
+        case .custom:
+            // Ecosia: a caller-supplied URL (e.g. a presigned upload URL) already carries its
+            // own path/query, often signed — used exactly as given, not merged with `path`.
+            url = resolvedBaseURL
+        case .api, .web:
+            guard var urlComponents = URLComponents(url: resolvedBaseURL, resolvingAgainstBaseURL: false) else {
+                throw RequestError.invalidBaseURL
+            }
+            urlComponents.path = path
+            if let queryParameters {
+                urlComponents.queryItems = queryParameters.map({ .init(name: $0.key, value: $0.value ) })
+            }
+            guard let resolvedURL = urlComponents.url else {
+                throw RequestError.invalidURLComponents
+            }
+            url = resolvedURL
         }
 
         var request = URLRequest(url: url)
