@@ -13,16 +13,30 @@ enum RequestError: Error {
 
 public extension BaseRequest {
 
-    var baseURL: URL {
-        environment.urlProvider.apiRoot
+    var baseURL: BaseURL {
+        .api
     }
 
     var environment: Environment {
         .current
     }
 
+    /// Resolves `baseURL` to an actual host. Only `.api`/`.web` are guaranteed Ecosia
+    /// domains — see `makeURLRequest()`, which uses that guarantee to decide which
+    /// Ecosia-internal headers are safe to attach.
+    var resolvedBaseURL: URL {
+        switch baseURL {
+        case .api:
+            return environment.urlProvider.apiRoot
+        case .web:
+            return environment.urlProvider.root
+        case .custom(let url):
+            return url
+        }
+    }
+
     func makeURLRequest() throws -> URLRequest {
-        guard var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
+        guard var urlComponents = URLComponents(url: resolvedBaseURL, resolvingAgainstBaseURL: false) else {
             throw RequestError.invalidBaseURL
         }
         urlComponents.path = path
@@ -43,6 +57,12 @@ public extension BaseRequest {
             additionalHeaders.forEach({ request.setValue($0.value, forHTTPHeaderField: $0.key) })
         }
 
-        return request.withCloudFlareAuthParameters()
+        // Ecosia: only attach app-identifying/Cloudflare Access headers when the host is
+        // guaranteed to be ours — a `.custom` URL (CDN, presigned upload URL, ...) isn't.
+        guard case .custom = baseURL else {
+            request.setValue("ios", forHTTPHeaderField: "X-Ecosia-App")
+            return request.withCloudFlareAuthParameters()
+        }
+        return request
     }
 }
