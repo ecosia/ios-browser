@@ -172,9 +172,10 @@ public final class FileUploadService: Sendable {
 
     private func refreshEAIST() async throws {
         await ensureCloudflareAccessCookieForStagingAPI()
-        log(.info, "Refreshing EAIST cookie url=\(Environment.current.urlProvider.aiChatRefresh.absoluteString)")
+        let request = AIChatRefreshRequest()
+        log(.info, "Refreshing EAIST cookie url=\(request.resolvedBaseURL.absoluteString)\(request.path)")
 
-        let (_, response) = try await client.perform(AIChatRefreshRequest())
+        let (_, response) = try await client.perform(request)
         let statusCode = response?.statusCode ?? -1
         guard let http = response, (200..<300).contains(http.statusCode) else {
             log(.error, "EAIST refresh failed status=\(statusCode)")
