@@ -24,5 +24,9 @@ public enum BuildConfigurations {
         "CODE_SIGN_IDENTITY": "",
         "CODE_SIGNING_REQUIRED": "NO",
         "CODE_SIGNING_ALLOWED": "NO",
+        // Explicit Module Builds drop public extension members on foreign (Foundation) types — e.g.
+        // Shared's Date.now()/URL.displayURL — from XCTest bundles' link inputs, causing "undefined
+        // symbol" at link time despite the symbol compiling fine. Disable for test targets only.
+        "SWIFT_ENABLE_EXPLICIT_MODULES": "NO",
     ], uniquingKeysWith: { _, new in new })
 }
