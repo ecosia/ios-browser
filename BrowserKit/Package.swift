@@ -10,6 +10,7 @@ let package = Package(
     ],
     products: [
         .library(name: "Shared",
+                 type: .dynamic,
                  targets: ["Shared"]),
         .library(
             name: "SiteImageView",
