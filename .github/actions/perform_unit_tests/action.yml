@@ -26,7 +26,7 @@ runs:
           -destination 'platform=iOS Simulator,name=iPhone 17' \
           -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
           -derivedDataPath DerivedData \
-          build-for-testing | xcpretty --color
+          build-for-testing | tee raw_build_for_testing.log | xcpretty --color
 
         set +e
         set -o pipefail && xcodebuild -scheme Ecosia \
@@ -40,6 +40,13 @@ runs:
         TEST_EXIT_CODE=${PIPESTATUS[0]}
         set -e
         echo "TEST_EXIT_CODE=$TEST_EXIT_CODE" >> "$GITHUB_ENV"
+
+    - name: Upload raw build-for-testing log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: raw-build-for-testing-log
+        path: raw_build_for_testing.log
 
     - name: Publish Test Report
       if: always()
