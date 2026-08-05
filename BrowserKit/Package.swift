@@ -86,7 +86,12 @@ let package = Package(
             name: "Shared",
             dependencies: ["Common"],
             swiftSettings: [
-                .unsafeFlags(["-enable-testing"]),
+                // Ecosia: pin whole-module-optimization codegen to a single thread. Xcode sets
+                // -num-threads from the host's CPU count; under low thread counts (e.g. CI's 3-vCPU
+                // runners) a Swift WMO partitioning bug drops extension members on external types
+                // (e.g. Date.now(), URL.displayURL) from every codegen partition, causing CI-only
+                // "Undefined symbols" link failures that never reproduce on higher-core-count machines.
+                .unsafeFlags(["-enable-testing", "-num-threads", "1"]),
             ]
         ),
         .target(
