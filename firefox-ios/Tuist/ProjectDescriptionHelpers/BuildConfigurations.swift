@@ -24,9 +24,12 @@ public enum BuildConfigurations {
         "CODE_SIGN_IDENTITY": "",
         "CODE_SIGNING_REQUIRED": "NO",
         "CODE_SIGNING_ALLOWED": "NO",
-        // Explicit Module Builds drop public extension members on foreign (Foundation) types — e.g.
-        // Shared's Date.now()/URL.displayURL — from XCTest bundles' link inputs, causing "undefined
-        // symbol" at link time despite the symbol compiling fine. Disable for test targets only.
-        "SWIFT_ENABLE_EXPLICIT_MODULES": "NO",
+        // Ecosia (MOB-4384): force ON. Targets with an Objective-C bridging header (StorageTests,
+        // SharedTests) can silently fall back to implicit/PCH module compilation, which fails to
+        // resolve certain of Shared's public API (e.g. Date.now(), Maybe/Deferred) at link time with
+        // "Undefined symbols" — the symbols compile fine, but their consuming test bundle doesn't
+        // properly re-link against Shared's package product. Forcing explicit modules on keeps these
+        // targets on the same module-resolution path as the rest of the build.
+        "SWIFT_ENABLE_EXPLICIT_MODULES": "YES",
     ], uniquingKeysWith: { _, new in new })
 }
