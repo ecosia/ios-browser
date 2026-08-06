@@ -48,6 +48,35 @@ runs:
         name: raw-build-for-testing-log
         path: raw_build_for_testing.log
 
+    - name: Inspect Shared/Storage/Client symbol exports
+      if: always()
+      shell: bash
+      run: |
+        set +e
+        PATTERN='6SharedE3now|5MaybeO|7succeedAA8DeferredC|10deferMaybe|6CGRectV6SharedE4size'
+        SHARED_BIN=$(find DerivedData/Build/Products/Testing-iphonesimulator/PackageFrameworks -name "Shared_*_PackageProduct" -type f 2>/dev/null | head -1)
+        STORAGE_BIN="DerivedData/Build/Products/Testing-iphonesimulator/Storage.framework/Storage"
+        CLIENT_DYLIB="DerivedData/Build/Products/Testing-iphonesimulator/Client.app/Client.debug.dylib"
+
+        {
+          echo "=== Shared binary: ${SHARED_BIN:-NOT FOUND} ==="
+          [ -n "$SHARED_BIN" ] && [ -f "$SHARED_BIN" ] && nm -gU "$SHARED_BIN" | grep -E "$PATTERN"
+          echo ""
+          echo "=== Storage binary: $STORAGE_BIN ==="
+          [ -f "$STORAGE_BIN" ] && nm -gU "$STORAGE_BIN" | grep -E "$PATTERN"
+          echo ""
+          echo "=== Client.debug.dylib: $CLIENT_DYLIB ==="
+          [ -f "$CLIENT_DYLIB" ] && nm -gU "$CLIENT_DYLIB" | grep -E "$PATTERN"
+        } > symbol_inspection.log 2>&1
+        cat symbol_inspection.log
+
+    - name: Upload symbol inspection log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: symbol-inspection-log
+        path: symbol_inspection.log
+
     - name: Publish Test Report
       if: always()
       uses: mikepenz/action-junit-report@v5
