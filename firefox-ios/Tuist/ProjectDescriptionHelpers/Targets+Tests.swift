@@ -122,7 +122,18 @@ public enum TestTargets {
                 .package(product: "TabDataStore"),
             ],
             settings: .settings(base: BuildConfigurations.testBaseSettings.merging([
-                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h"
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h",
+                // Ecosia (MOB-4384): Xcode's automatic linker decides Shared is already satisfied
+                // transitively via Storage/Client and omits it from "Link Binary With Libraries",
+                // even though StorageTests' own test code calls Shared API (e.g. Maybe, Deferred,
+                // Date.now()) that neither Storage nor Client re-export. That produced "Undefined
+                // symbols" link failures that never reproduced locally, since whether the implicit
+                // resolution happens to work is environment-dependent. Force the explicit link
+                // instead of relying on it. The hashed product name is Xcode's own deterministic
+                // name for BrowserKit's Shared package product (stable across machines/CI runs
+                // unless BrowserKit's package structure changes) — if this ever fails to find the
+                // framework, regenerate via a clean build and update the hash from the build log.
+                "OTHER_LDFLAGS": ["$(inherited)", "-framework", "Shared_1BC5906757289D_PackageProduct"],
             ], uniquingKeysWith: { _, new in new }))
         )
     }
@@ -145,7 +156,10 @@ public enum TestTargets {
                 .package(product: "Shared"),
             ],
             settings: .settings(base: BuildConfigurations.testBaseSettings.merging([
-                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h"
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h",
+                // Ecosia (MOB-4384): see the matching comment in storageTests() — Xcode's automatic
+                // linker omits Shared from "Link Binary With Libraries" for this target too.
+                "OTHER_LDFLAGS": ["$(inherited)", "-framework", "Shared_1BC5906757289D_PackageProduct"],
             ], uniquingKeysWith: { _, new in new }))
         )
     }
