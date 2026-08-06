@@ -21,7 +21,7 @@ public final class DefaultSentry: SentryWrapper {
     public init() {}
 
     public var crashedInLastRun: Bool {
-        return SentrySDK.lastRunStatus == .didCrash
+        return SentrySDK.crashedLastRun
     }
 
     public var dsn: String? {
