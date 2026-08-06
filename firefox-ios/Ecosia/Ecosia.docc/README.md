@@ -8,7 +8,7 @@
   </tr>
 </table>
 
-This is the entry point of all-things Ecosia.
+This is the entry point of all-things Ecosia
 It contains info on the way we got the project structure, how we interface it with Firefox, how we release and keep localizations aligned.
 
 ## 🧰 Ecosia Framework 
