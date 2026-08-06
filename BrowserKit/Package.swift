@@ -122,9 +122,11 @@ let package = Package(
         ),
         .target(
             name: "Common",
-            dependencies: ["Dip",
-                           "SwiftyBeaver",
-                           .product(name: "Sentry-Dynamic", package: "sentry-cocoa")],
+            dependencies: [
+                .product(name: "Dip", package: "Dip"),
+                .product(name: "SwiftyBeaver", package: "SwiftyBeaver"),
+                .product(name: "Sentry-Dynamic", package: "sentry-cocoa")
+            ],
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
             ]
