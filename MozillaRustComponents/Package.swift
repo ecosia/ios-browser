@@ -29,9 +29,9 @@ let package = Package(
                 "MozillaRustComponents", .product(name: "Glean", package: "glean-swift"),
             ],
             path: "Sources/MozillaRustComponentsWrapper",
-            swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
-            ],
+//            swiftSettings: [
+//                .enableExperimentalFeature("StrictConcurrency")
+//            ],
         ),
         .target(
             name: "FocusAppServices",
