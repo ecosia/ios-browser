@@ -18,6 +18,40 @@ public enum TestTargets {
         ]
     }
 
+    // MARK: - Ecosia: forcing package products onto app-hosted test bundles' link lines
+
+    /// Ecosia (MOB-4384): an SPM dynamic package product that an app-hosted test bundle must name on
+    /// its own link line.
+    ///
+    /// Xcode omits *every* dynamic package product from the link command of an app-hosted `.xctest`
+    /// bundle, treating them as already provided by the test host, and leaves `ld` to resolve them
+    /// transitively through `Client.debug.dylib`'s indirect dylib load commands. That resolution
+    /// happens locally but not on CI, so test code calling package API directly (`Maybe`, `Deferred`,
+    /// `Date.now()`, `SnowplowTracker.Structured`, …) fails to link with "Undefined symbols for
+    /// architecture arm64". Note the generated project is *correct* — the products are present in both
+    /// `packageProductDependencies` and the Frameworks build phase — so declaring the dependency is not
+    /// enough; the framework has to be named explicitly. Native framework targets (`Storage`, `Ecosia`,
+    /// `RustMozillaAppServices`) are unaffected, they are never omitted.
+    ///
+    /// Raw values are Xcode's own product-framework names, whose hash suffix is deterministic and has
+    /// been stable across machines and CI runs — it changes only if BrowserKit's package structure does.
+    /// A stale name fails loudly with "framework not found" rather than silently, so drift is easy to
+    /// spot; recover the current name from a build log or from
+    /// `ls DerivedData/Build/Products/*/PackageFrameworks`.
+    ///
+    /// Only add products that CI builds *dynamically*. Some (e.g. `ToolbarKit`, `TabDataStore`) are
+    /// linked statically on CI and naming them here would break the build outright.
+    enum ForceLinkedPackageProduct: String {
+        case shared = "Shared_1BC5906757289D_PackageProduct"
+        case snowplowTracker = "SnowplowTracker_-1C7C7D3E02D5A8BC_PackageProduct"
+    }
+
+    /// Ecosia (MOB-4384): `OTHER_LDFLAGS` naming the given package products, for merging into a test
+    /// target's settings. See ``ForceLinkedPackageProduct`` for why this is necessary.
+    static func forceLink(_ products: [ForceLinkedPackageProduct]) -> SettingsDictionary {
+        ["OTHER_LDFLAGS": .array(["$(inherited)"] + products.flatMap { ["-framework", $0.rawValue] })]
+    }
+
     static func accountTests() -> Target {
         .target(
             name: "AccountTests",
@@ -121,20 +155,11 @@ public enum TestTargets {
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: BuildConfigurations.testBaseSettings.merging([
-                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h",
-                // Ecosia (MOB-4384): Xcode's automatic linker decides Shared is already satisfied
-                // transitively via Storage/Client and omits it from "Link Binary With Libraries",
-                // even though StorageTests' own test code calls Shared API (e.g. Maybe, Deferred,
-                // Date.now()) that neither Storage nor Client re-export. That produced "Undefined
-                // symbols" link failures that never reproduced locally, since whether the implicit
-                // resolution happens to work is environment-dependent. Force the explicit link
-                // instead of relying on it. The hashed product name is Xcode's own deterministic
-                // name for BrowserKit's Shared package product (stable across machines/CI runs
-                // unless BrowserKit's package structure changes) — if this ever fails to find the
-                // framework, regenerate via a clean build and update the hash from the build log.
-                "OTHER_LDFLAGS": ["$(inherited)", "-framework", "Shared_1BC5906757289D_PackageProduct"],
-            ], uniquingKeysWith: { _, new in new }))
+            settings: .settings(base: BuildConfigurations.testBaseSettings
+                .merging(forceLink([.shared]), uniquingKeysWith: { _, new in new })
+                .merging([
+                    "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h",
+                ], uniquingKeysWith: { _, new in new }))
         )
     }
 
@@ -155,12 +180,11 @@ public enum TestTargets {
                 .package(product: "Common"),
                 .package(product: "Shared"),
             ],
-            settings: .settings(base: BuildConfigurations.testBaseSettings.merging([
-                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h",
-                // Ecosia (MOB-4384): see the matching comment in storageTests() — Xcode's automatic
-                // linker omits Shared from "Link Binary With Libraries" for this target too.
-                "OTHER_LDFLAGS": ["$(inherited)", "-framework", "Shared_1BC5906757289D_PackageProduct"],
-            ], uniquingKeysWith: { _, new in new }))
+            settings: .settings(base: BuildConfigurations.testBaseSettings
+                .merging(forceLink([.shared]), uniquingKeysWith: { _, new in new })
+                .merging([
+                    "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h",
+                ], uniquingKeysWith: { _, new in new }))
         )
     }
 
@@ -290,7 +314,11 @@ public enum TestTargets {
                 .package(product: "ToolbarKit"),
                 .package(product: "ViewInspector"),
             ],
-            settings: .settings(base: BuildConfigurations.testBaseSettings)
+            // Ecosia (MOB-4384): EcosiaTests calls both Shared API (Maybe/Deferred/succeed, PrefsKeys,
+            // MockProfilePrefs, String.asURL) and SnowplowTracker API (Structured, Event,
+            // SelfDescribingJson) directly from its mocks and tests. See ``ForceLinkedPackageProduct``.
+            settings: .settings(base: BuildConfigurations.testBaseSettings
+                .merging(forceLink([.shared, .snowplowTracker]), uniquingKeysWith: { _, new in new }))
         )
     }
 }
