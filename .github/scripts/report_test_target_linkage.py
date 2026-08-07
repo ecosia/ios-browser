@@ -17,28 +17,39 @@ Always exits 0 — this is a diagnostic, not a gate. Unaccounted products are pr
 WARNING marker; a target that is merely absent from the log was not reached by the build.
 """
 
+import json
 import os
 import re
+import subprocess
 import sys
 
-NATIVE_TARGET_RE = re.compile(
-    r"[0-9A-F]{24} /\* (\w+) \*/ = \{\s*isa = PBXNativeTarget;(.*?)\n\t\t\};", re.S
-)
-PACKAGE_DEPS_RE = re.compile(r"packageProductDependencies = \((.*?)\);", re.S)
-COMMENT_NAME_RE = re.compile(r"/\* (\S+) \*/")
 LD_LINE_RE = re.compile(r"Ld \S+\.xctest/\w+ normal .*in target '(\w+)'")
 
 
 def declared_package_products(pbxproj_path):
-    """Map target name -> package product names declared in the generated project."""
-    with open(pbxproj_path, encoding="utf-8", errors="replace") as handle:
-        source = handle.read()
+    """Map target name -> package product names declared in the generated project.
+
+    A `.pbxproj` is an OpenStep property list, so `plutil` reads it properly. Scraping it with
+    regexes instead is unreliable: Xcode rewrites the file's formatting whenever the project is
+    opened, which silently changes what a hand-rolled parser can see.
+    """
+    converted = subprocess.run(
+        ["plutil", "-convert", "json", "-o", "-", pbxproj_path],
+        capture_output=True,
+        check=True,
+        text=True,
+    )
+    objects = json.loads(converted.stdout)["objects"]
 
     declared = {}
-    for match in NATIVE_TARGET_RE.finditer(source):
-        name, body = match.group(1), match.group(2)
-        deps = PACKAGE_DEPS_RE.search(body)
-        declared[name] = sorted(set(COMMENT_NAME_RE.findall(deps.group(1)))) if deps else []
+    for obj in objects.values():
+        if obj.get("isa") != "PBXNativeTarget":
+            continue
+        products = [
+            objects.get(ref, {}).get("productName")
+            for ref in obj.get("packageProductDependencies", [])
+        ]
+        declared[obj["name"]] = sorted(name for name in products if name)
     return declared
 
 
@@ -152,13 +163,15 @@ def main():
         print("Every declared package product is accounted for on the targets reached by this build.")
         return
 
-    print("WARNING: declared package products missing from the link line.")
-    print("Test code calling their API directly will fail to link with \"Undefined symbols\".")
-    print("Fix by adding them to TestTargets.ForceLinkedPackageProduct and forceLink(...),")
-    print("but only for products this build produces as dynamic frameworks — check")
-    print("DerivedData/Build/Products/*/PackageFrameworks for the exact hashed name first.")
-    print("Expected on app-hosted targets (that is the Xcode behaviour being worked around);")
-    print("on a target that is not app-hosted it means something else is wrong.")
+    print("Declared package products missing from the link line.")
+    print()
+    print("On an app-hosted target this is expected — it is the Xcode behaviour that")
+    print("TestTargets.appHostedTestSettings works around with -undefined dynamic_lookup, which")
+    print("defers these symbols to load time. Such a target should still be listed here; what")
+    print("matters is that it links and its tests load.")
+    print()
+    print("On a target that is NOT app-hosted, this is a real problem: those link their package")
+    print("products normally, so anything missing means something else is wrong.")
     for target, (hosted, products) in sorted(unaccounted.items()):
         marker = "app-hosted" if hosted else "NOT app-hosted — unexpected"
         print(f"  {target} ({marker}): {', '.join(products)}")

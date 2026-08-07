@@ -18,39 +18,39 @@ public enum TestTargets {
         ]
     }
 
-    // MARK: - Ecosia: forcing package products onto app-hosted test bundles' link lines
+    // MARK: - Ecosia: linking package products into app-hosted test bundles
 
-    /// Ecosia (MOB-4384): an SPM dynamic package product that an app-hosted test bundle must name on
-    /// its own link line.
+    /// Ecosia (MOB-4384): base settings for a test target that is hosted by the `Client` app, i.e. one
+    /// that declares `.target(name: "Client")` and is therefore linked with `-bundle_loader`.
     ///
-    /// Xcode omits *every* dynamic package product from the link command of an app-hosted `.xctest`
+    /// Xcode omits *every* SPM dynamic package product from the link command of an app-hosted `.xctest`
     /// bundle, treating them as already provided by the test host, and leaves `ld` to resolve them
-    /// transitively through `Client.debug.dylib`'s indirect dylib load commands. That resolution
-    /// happens locally but not on CI, so test code calling package API directly (`Maybe`, `Deferred`,
-    /// `Date.now()`, `SnowplowTracker.Structured`, …) fails to link with "Undefined symbols for
-    /// architecture arm64". Note the generated project is *correct* — the products are present in both
-    /// `packageProductDependencies` and the Frameworks build phase — so declaring the dependency is not
-    /// enough; the framework has to be named explicitly. Native framework targets (`Storage`, `Ecosia`,
-    /// `RustMozillaAppServices`) are unaffected, they are never omitted.
+    /// transitively through `Client.debug.dylib`'s indirect dylib load commands. That resolution happens
+    /// locally but not on CI, so test code calling package API directly (`Maybe`, `Deferred`,
+    /// `Date.now()`, `SnowplowTracker.Structured`, `GCDWebServer`, …) fails to link with "Undefined
+    /// symbols for architecture arm64". The generated project is *correct* — the products are present in
+    /// both `packageProductDependencies` and the Frameworks build phase — so declaring the dependency is
+    /// not enough. Test targets that are *not* app-hosted (`SyncTests`, `AccountTests`,
+    /// `StoragePerfTests`) link their package products normally and need none of this; neither do native
+    /// framework targets (`Storage`, `Ecosia`, `RustMozillaAppServices`), which are never omitted.
     ///
-    /// Raw values are Xcode's own product-framework names, whose hash suffix is deterministic and has
-    /// been stable across machines and CI runs — it changes only if BrowserKit's package structure does.
-    /// A stale name fails loudly with "framework not found" rather than silently, so drift is easy to
-    /// spot; recover the current name from a build log or from
-    /// `ls DerivedData/Build/Products/*/PackageFrameworks`.
+    /// `-undefined dynamic_lookup` defers those symbols to load time instead of naming each framework.
+    /// That is deliberate: naming them is not maintainable here. Xcode promotes a *static* package
+    /// product to a dynamic framework in `PackageFrameworks/` based on how many targets link it, and
+    /// gives the promoted framework a hashed name (`Shared_1BC5906757289D_PackageProduct`). Both the
+    /// promotion and the name therefore change as target dependencies change, and they already differ
+    /// between local and CI builds — `ToolbarKit`, `TabDataStore` and `ViewInspector` are static on CI
+    /// but dynamic locally. A hardcoded `-framework <Product>_<hash>_PackageProduct` breaks outright
+    /// ("framework not found") the moment either flips, in whichever environment it flipped.
     ///
-    /// Only add products that CI builds *dynamically*. Some (e.g. `ToolbarKit`, `TabDataStore`) are
-    /// linked statically on CI and naming them here would break the build outright.
-    enum ForceLinkedPackageProduct: String {
-        case shared = "Shared_1BC5906757289D_PackageProduct"
-        case snowplowTracker = "SnowplowTracker_-1C7C7D3E02D5A8BC_PackageProduct"
-    }
-
-    /// Ecosia (MOB-4384): `OTHER_LDFLAGS` naming the given package products, for merging into a test
-    /// target's settings. See ``ForceLinkedPackageProduct`` for why this is necessary.
-    static func forceLink(_ products: [ForceLinkedPackageProduct]) -> SettingsDictionary {
-        ["OTHER_LDFLAGS": .array(["$(inherited)"] + products.flatMap { ["-framework", $0.rawValue] })]
-    }
+    /// Safe here because a test bundle is loaded into the host process, and every framework in question
+    /// is embedded in `Client.app/Frameworks` and already loaded by `Client.debug.dylib` by then. The
+    /// cost is that a genuinely missing symbol surfaces as a dyld failure when the bundle loads rather
+    /// than as a link error; dyld names the offending symbol, so it stays diagnosable.
+    static let appHostedTestSettings: SettingsDictionary = BuildConfigurations.testBaseSettings
+        .merging([
+            "OTHER_LDFLAGS": .array(["$(inherited)", "-Xlinker", "-undefined", "-Xlinker", "dynamic_lookup"]),
+        ], uniquingKeysWith: { _, new in new })
 
     static func accountTests() -> Target {
         .target(
@@ -99,13 +99,15 @@ public enum TestTargets {
                 .package(product: "Shared"),
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
-                // Ecosia: ClientTests/Toolbar/ToolbarMiddlewareTests imports ToolbarKit directly.
-                // Xcode 26.5's stricter linker no longer resolves ToolbarKit's Swift type metadata
-                // transitively via the Client host (-bundle_loader), so the test target must link it. (MOB-4384)
+                // Ecosia: ClientTests/Toolbar/ToolbarMiddlewareTests imports ToolbarKit directly, and its
+                // Swift type metadata is not resolvable through the Client host (-bundle_loader). Declaring
+                // the dependency is sufficient here only because ToolbarKit links statically, so it is
+                // built into this bundle rather than being elided the way dynamic package products are —
+                // see ``appHostedTestSettings``. (MOB-4384)
                 .package(product: "ToolbarKit"),
                 .sdk(name: "z", type: .library),
             ],
-            settings: .settings(base: BuildConfigurations.testBaseSettings)
+            settings: .settings(base: appHostedTestSettings)
         )
     }
 
@@ -155,11 +157,9 @@ public enum TestTargets {
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: BuildConfigurations.testBaseSettings
-                .merging(forceLink([.shared]), uniquingKeysWith: { _, new in new })
-                .merging([
-                    "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h",
-                ], uniquingKeysWith: { _, new in new }))
+            settings: .settings(base: appHostedTestSettings.merging([
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Storage/Storage-Bridging-Header.h",
+            ], uniquingKeysWith: { _, new in new }))
         )
     }
 
@@ -180,11 +180,9 @@ public enum TestTargets {
                 .package(product: "Common"),
                 .package(product: "Shared"),
             ],
-            settings: .settings(base: BuildConfigurations.testBaseSettings
-                .merging(forceLink([.shared]), uniquingKeysWith: { _, new in new })
-                .merging([
-                    "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h",
-                ], uniquingKeysWith: { _, new in new }))
+            settings: .settings(base: appHostedTestSettings.merging([
+                "SWIFT_OBJC_BRIDGING_HEADER": "$SRCROOT/Shared/Shared-Bridging-Header.h",
+            ], uniquingKeysWith: { _, new in new }))
         )
     }
 
@@ -201,7 +199,7 @@ public enum TestTargets {
                 .package(product: "Glean"),
                 .package(product: "Shared"),
             ],
-            settings: .settings(base: BuildConfigurations.testBaseSettings)
+            settings: .settings(base: appHostedTestSettings)
         )
     }
 
@@ -314,11 +312,7 @@ public enum TestTargets {
                 .package(product: "ToolbarKit"),
                 .package(product: "ViewInspector"),
             ],
-            // Ecosia (MOB-4384): EcosiaTests calls both Shared API (Maybe/Deferred/succeed, PrefsKeys,
-            // MockProfilePrefs, String.asURL) and SnowplowTracker API (Structured, Event,
-            // SelfDescribingJson) directly from its mocks and tests. See ``ForceLinkedPackageProduct``.
-            settings: .settings(base: BuildConfigurations.testBaseSettings
-                .merging(forceLink([.shared, .snowplowTracker]), uniquingKeysWith: { _, new in new }))
+            settings: .settings(base: appHostedTestSettings)
         )
     }
 }
