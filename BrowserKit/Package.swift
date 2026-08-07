@@ -86,15 +86,7 @@ let package = Package(
             name: "Shared",
             dependencies: ["Common"],
             swiftSettings: [
-                // Ecosia (MOB-4384): Cross-Module Optimization can decide a public declaration is only
-                // reachable within Shared's own whole-module partition and skip emitting an externally
-                // linkable symbol for it. Xcode auto-disables CMO for same-project @testable-importing
-                // targets (e.g. ClientTests), but that protection doesn't extend to Shared, which is
-                // @testable-imported from StorageTests/SharedTests in a separate project. That caused
-                // CI-only (but not local) "Undefined symbols" link failures for Shared's public API,
-                // since the decision is made per-WMO-partition and is sensitive to the build machine's
-                // core count (-num-threads). Disabling CMO removes the dependency on that entirely.
-                .unsafeFlags(["-enable-testing", "-Xfrontend", "-disable-cmo"]),
+                .unsafeFlags(["-enable-testing"]),
             ]
         ),
         .target(

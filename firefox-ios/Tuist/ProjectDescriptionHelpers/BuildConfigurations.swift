@@ -24,14 +24,5 @@ public enum BuildConfigurations {
         "CODE_SIGN_IDENTITY": "",
         "CODE_SIGNING_REQUIRED": "NO",
         "CODE_SIGNING_ALLOWED": "NO",
-        // Ecosia (MOB-4384): pinned ON only to keep all test targets on one module-resolution path.
-        // This was originally added on the theory that targets with an Objective-C bridging header
-        // (StorageTests, SharedTests) fell back to implicit/PCH compilation and so failed to link
-        // against Shared's package product. That theory is disproven: CI produced a byte-for-byte
-        // identical "Undefined symbols" failure with this set to NO, unset, and YES. The real cause
-        // is that Xcode omits dynamic package products from app-hosted test bundles' link lines —
-        // see TestTargets.ForceLinkedPackageProduct. This setting is not load-bearing for that bug
-        // and can be dropped independently.
-        "SWIFT_ENABLE_EXPLICIT_MODULES": "YES",
     ], uniquingKeysWith: { _, new in new })
 }
