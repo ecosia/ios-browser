@@ -48,6 +48,26 @@ runs:
         name: raw-build-for-testing-log
         path: raw_build_for_testing.log
 
+    # Ecosia (MOB-4384): Xcode drops dynamic SPM package products from app-hosted .xctest link
+    # lines, so test code calling that API directly fails to link on CI. xcodebuild stops at the
+    # first failing target, which otherwise reveals only one affected target per run — this report
+    # lists every one of them from a single build. See TestTargets.ForceLinkedPackageProduct.
+    - name: Report test target package product linkage
+      if: always()
+      shell: bash
+      run: |
+        python3 .github/scripts/report_test_target_linkage.py \
+          raw_build_for_testing.log \
+          firefox-ios/Client.xcodeproj/project.pbxproj \
+          | tee test_target_linkage.log
+
+    - name: Upload test target linkage report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-target-linkage-report
+        path: test_target_linkage.log
+
     - name: Inspect Shared/Storage/Client symbol exports
       if: always()
       shell: bash
