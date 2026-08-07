@@ -56,6 +56,8 @@ runs:
       if: always()
       shell: bash
       run: |
+        # pipefail so the check's exit status survives the tee — without it this step always passes.
+        set -o pipefail
         python3 .github/scripts/report_test_target_linkage.py \
           raw_build_for_testing.log \
           firefox-ios/Client.xcodeproj/project.pbxproj \

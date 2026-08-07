@@ -10,6 +10,13 @@ runs:
   using: "composite"
   steps:
 
+    # Ecosia (MOB-4384): runs first, before "Fix-up private Github URLs" rewrites the manifests and
+    # lockfiles in place, so it reads the committed files verbatim. Catches the #1218 failure mode:
+    # an exact: pin bumped in a manifest without updating every checked-in Package.resolved.
+    - name: Check pinned dependencies match lockfiles
+      shell: bash
+      run: python3 .github/scripts/check_pinned_dependencies.py
+
     - name: Xcode Select Version
       uses: mobiledevops/xcode-select-version-action@v1
       with:
@@ -55,7 +62,7 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: firefox-ios/SourcePackages/
-        key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'BrowserKit/Package.swift', 'firefox-ios/Tuist/ProjectDescriptionHelpers/Packages+Ecosia.swift') }}
 
     - name: Install SPM if cache not found
       shell: bash
@@ -67,7 +74,7 @@ runs:
       uses: actions/cache/save@v4
       with:
         path: firefox-ios/SourcePackages/
-        key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}  
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'BrowserKit/Package.swift', 'firefox-ios/Tuist/ProjectDescriptionHelpers/Packages+Ecosia.swift') }}  
 
     - name: Extract Staging XCConfig
       shell: bash
