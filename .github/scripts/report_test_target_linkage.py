@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
-"""Ecosia (MOB-4384): report which SPM package products each test bundle actually links.
+"""Ecosia: check which SPM package products each test bundle actually links.
 
-Xcode omits dynamic package products from the link command of an app-hosted `.xctest` bundle,
-even when the generated project declares them correctly, and leaves `ld` to resolve them through
-the test host's indirect dylib load commands. That works locally but not on CI, where it surfaces
-as "Undefined symbols for architecture arm64" against package API the test code calls directly.
+Xcode leaves dynamic package products off an app-hosted `.xctest` bundle's link line even when the
+project declares them correctly, relying on `ld` to resolve them through the test host. That works
+locally but not on CI. See TestTargets.appHostedTestSettings for the explanation and the fix.
 
-Because `xcodebuild` stops after the first target fails, each CI run otherwise reveals only one
-affected target at a time. This report cross-references every test target's declared package
-product dependencies against the frameworks actually named on its `Ld` command, so a single run
-lists everything at risk.
+Since `xcodebuild` stops at the first failing target, a run would otherwise reveal only one
+affected target at a time. This compares each test target's declared package products against the
+frameworks actually on its `Ld` command, so one run lists everything at risk.
 
 Usage: report_test_target_linkage.py <raw_build_log> <project.pbxproj>
 
-Always exits 0 — this is a diagnostic, not a gate. Unaccounted products are printed with a
-WARNING marker; a target that is merely absent from the log was not reached by the build.
+Exits 1 if an app-hosted target is not deferring symbol resolution, or if a target that should
+link its package products directly is missing one.
 """
 
 import json
@@ -161,15 +159,13 @@ def main():
         if missing:
             unaccounted[target] = (hosted, missing)
 
-        # An app-hosted test bundle that declares package products but does not defer symbol
-        # resolution is relying on `ld` reaching them transitively through the host. That happens to
-        # work in some environments and not others — it is what caused MOB-4384 — so treat it as a
-        # regression rather than waiting for it to fail somewhere else.
+        # Relying on `ld` to reach these through the host works in some environments and not others,
+        # so flag it now rather than waiting for it to fail somewhere else.
         if hosted and not deferred:
             unguarded.append(target)
 
-        # Targets that are not app-hosted link their package products normally. If one of those is
-        # missing a product, the assumptions behind all of this no longer hold.
+        # Non-app-hosted targets link their package products normally, so a gap here means the
+        # assumption behind the whole workaround no longer holds.
         if not hosted and missing:
             unexpected[target] = missing
 
@@ -183,36 +179,30 @@ def main():
             marker = "app-hosted" if hosted else "NOT app-hosted"
             print(f"  {target} ({marker}): {', '.join(products)}")
         print()
-        print("On an app-hosted target this is expected — it is the Xcode behaviour that")
-        print("TestTargets.appHostedTestSettings works around with -undefined dynamic_lookup, which")
-        print("defers these symbols to load time. What matters there is that the bundle links and")
-        print("its tests load, not that the products appear above.")
+        print("Expected on app-hosted targets: appHostedTestSettings defers these to load time.")
+        print("What matters there is that the bundle links and its tests load.")
         print()
 
     if not unguarded and not unexpected:
-        print("PASS: every app-hosted test target defers symbol resolution, and every target that")
-        print("does not is linking all of its declared package products.")
+        print("PASS: app-hosted targets defer symbol resolution; all others link their products.")
         return
 
     print("FAIL")
 
     if unguarded:
         print()
-        print("These app-hosted test targets declare package products but do not pass")
-        print("-undefined dynamic_lookup, so they depend on ld resolving those symbols")
-        print("transitively through the Client host. That is environment-dependent and is the")
-        print("MOB-4384 failure mode — it may link here and fail on another machine or toolchain.")
+        print("App-hosted, but not passing -undefined dynamic_lookup, so they depend on ld")
+        print("resolving package symbols through the Client host. That is environment-dependent:")
+        print("it may link here and fail on another machine or toolchain.")
         for target in sorted(unguarded):
             print(f"  {target}")
         print()
-        print("Fix: give the target TestTargets.appHostedTestSettings as its settings base in")
-        print("firefox-ios/Tuist/ProjectDescriptionHelpers/Targets+Tests.swift.")
+        print("Fix: base their settings on TestTargets.appHostedTestSettings in Targets+Tests.swift.")
 
     if unexpected:
         print()
-        print("These targets are NOT app-hosted, so Xcode should link their package products")
-        print("directly. Something missing here breaks the assumption the workaround rests on and")
-        print("needs investigating rather than papering over:")
+        print("Not app-hosted, so Xcode should be linking these directly. A gap here means the")
+        print("assumption behind appHostedTestSettings no longer holds — investigate, do not paper over:")
         for target, products in sorted(unexpected.items()):
             print(f"  {target}: {', '.join(products)}")
 

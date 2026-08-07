@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
 """Ecosia: fail the build when a checked-in Package.resolved disagrees with an exact: pin.
 
-This exists because of MOB-4384. PR #1218 moved sentry-cocoa to `exact: "9.10.0"` in
-BrowserKit/Package.swift and updated `firefox-ios/.package.resolved` and Focus's lockfile, but
-missed `firefox-ios/Client.xcodeproj/…/swiftpm/Package.resolved` — the only lockfile the Ecosia
-CI build reads, and the sole input to the SPM cache key. It stayed on 8.36.0 for days. That
-lockfile is tracked but lives under a gitignored directory, so it is invisible in casual review
-and needs `git add -f`, which is exactly how it gets forgotten.
+PR #1218 moved sentry-cocoa to `exact: "9.10.0"` and updated two sibling lockfiles but missed
+`firefox-ios/Client.xcodeproj/…/swiftpm/Package.resolved` — the only one the CI build reads, and
+the sole input to the SPM cache key. It stayed on 8.36.0 for days. That file is tracked but sits
+under a gitignored directory, so it never shows up in review and needs `git add -f`.
 
-The check is deliberately narrow: only `exact:` requirements are verified, and only against
-lockfiles that already pin that package. Dependencies declared with `.branch(...)` or a version
-range legitimately move when upstream does, so asserting on them (or re-resolving and diffing)
-would turn CI red on unrelated PRs. Exact pins cannot drift legitimately — a mismatch is always
-a mistake.
+Only `exact:` requirements are checked, and only against lockfiles that already pin the package.
+`.branch(...)` and version-range dependencies legitimately move when upstream does, so asserting
+on those (or re-resolving and diffing) would turn CI red on unrelated PRs.
 
 Usage: check_pinned_dependencies.py [repo_root]
 

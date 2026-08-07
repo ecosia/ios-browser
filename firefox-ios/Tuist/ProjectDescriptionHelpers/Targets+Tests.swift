@@ -18,35 +18,21 @@ public enum TestTargets {
         ]
     }
 
-    // MARK: - Ecosia: linking package products into app-hosted test bundles
-
-    /// Ecosia (MOB-4384): base settings for a test target that is hosted by the `Client` app, i.e. one
-    /// that declares `.target(name: "Client")` and is therefore linked with `-bundle_loader`.
+    /// Ecosia: settings for a test target hosted by the `Client` app (one that depends on `Client` and
+    /// so links with `-bundle_loader`). Use this instead of `testBaseSettings` for those targets.
     ///
-    /// Xcode omits *every* SPM dynamic package product from the link command of an app-hosted `.xctest`
-    /// bundle, treating them as already provided by the test host, and leaves `ld` to resolve them
-    /// transitively through `Client.debug.dylib`'s indirect dylib load commands. That resolution happens
-    /// locally but not on CI, so test code calling package API directly (`Maybe`, `Deferred`,
-    /// `Date.now()`, `SnowplowTracker.Structured`, `GCDWebServer`, …) fails to link with "Undefined
-    /// symbols for architecture arm64". The generated project is *correct* — the products are present in
-    /// both `packageProductDependencies` and the Frameworks build phase — so declaring the dependency is
-    /// not enough. Test targets that are *not* app-hosted (`SyncTests`, `AccountTests`,
-    /// `StoragePerfTests`) link their package products normally and need none of this; neither do native
-    /// framework targets (`Storage`, `Ecosia`, `RustMozillaAppServices`), which are never omitted.
+    /// Xcode leaves SPM dynamic package products off an app-hosted test bundle's link line, assuming the
+    /// host provides them, and relies on `ld` resolving them transitively through `Client.debug.dylib`.
+    /// That works locally but not on CI, where test code calling package API directly (`Maybe`,
+    /// `Deferred`, `Date.now()`, `SnowplowTracker.Structured`) failed with "Undefined symbols". Declaring
+    /// the dependency does not help — the generated project already lists them correctly.
     ///
-    /// `-undefined dynamic_lookup` defers those symbols to load time instead of naming each framework.
-    /// That is deliberate: naming them is not maintainable here. Xcode promotes a *static* package
-    /// product to a dynamic framework in `PackageFrameworks/` based on how many targets link it, and
-    /// gives the promoted framework a hashed name (`Shared_1BC5906757289D_PackageProduct`). Both the
-    /// promotion and the name therefore change as target dependencies change, and they already differ
-    /// between local and CI builds — `ToolbarKit`, `TabDataStore` and `ViewInspector` are static on CI
-    /// but dynamic locally. A hardcoded `-framework <Product>_<hash>_PackageProduct` breaks outright
-    /// ("framework not found") the moment either flips, in whichever environment it flipped.
-    ///
-    /// Safe here because a test bundle is loaded into the host process, and every framework in question
-    /// is embedded in `Client.app/Frameworks` and already loaded by `Client.debug.dylib` by then. The
-    /// cost is that a genuinely missing symbol surfaces as a dyld failure when the bundle loads rather
-    /// than as a link error; dyld names the offending symbol, so it stays diagnosable.
+    /// `-undefined dynamic_lookup` defers those symbols to load time, which is safe because the bundle
+    /// loads into the host process where the frameworks are already loaded. We defer rather than name the
+    /// frameworks explicitly because their names are not stable: Xcode promotes a static package product
+    /// to a hashed dynamic framework based on how many targets link it, so both the name and whether it
+    /// is dynamic at all differ between local and CI. The tradeoff is that a genuinely missing symbol
+    /// fails at bundle load instead of at link time, naming the symbol either way.
     static let appHostedTestSettings: SettingsDictionary = BuildConfigurations.testBaseSettings
         .merging([
             "OTHER_LDFLAGS": .array(["$(inherited)", "-Xlinker", "-undefined", "-Xlinker", "dynamic_lookup"]),
@@ -99,11 +85,10 @@ public enum TestTargets {
                 .package(product: "Shared"),
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
-                // Ecosia: ClientTests/Toolbar/ToolbarMiddlewareTests imports ToolbarKit directly, and its
-                // Swift type metadata is not resolvable through the Client host (-bundle_loader). Declaring
-                // the dependency is sufficient here only because ToolbarKit links statically, so it is
-                // built into this bundle rather than being elided the way dynamic package products are —
-                // see ``appHostedTestSettings``. (MOB-4384)
+                // Ecosia: ClientTests/Toolbar/ToolbarMiddlewareTests imports ToolbarKit directly and its
+                // type metadata is not resolvable through the Client host. Declaring the dependency is
+                // enough here only because ToolbarKit links statically; see ``appHostedTestSettings``
+                // for why dynamic products need more. (MOB-4384)
                 .package(product: "ToolbarKit"),
                 .sdk(name: "z", type: .library),
             ],

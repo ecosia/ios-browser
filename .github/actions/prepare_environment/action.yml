@@ -10,9 +10,8 @@ runs:
   using: "composite"
   steps:
 
-    # Ecosia (MOB-4384): runs first, before "Fix-up private Github URLs" rewrites the manifests and
-    # lockfiles in place, so it reads the committed files verbatim. Catches the #1218 failure mode:
-    # an exact: pin bumped in a manifest without updating every checked-in Package.resolved.
+    # Ecosia: must run before "Fix-up private Github URLs" rewrites the manifests and lockfiles in
+    # place, so it reads the committed files verbatim.
     - name: Check pinned dependencies match lockfiles
       shell: bash
       run: python3 .github/scripts/check_pinned_dependencies.py
@@ -20,17 +19,16 @@ runs:
     - name: Xcode Select Version
       uses: mobiledevops/xcode-select-version-action@v1
       with:
-        # Ecosia (MOB-4384): bumped 26.3 -> 26.6. 26.3's Swift 6 toolchain flagged strict-concurrency
-        # errors ("sending 'self' risks causing data races") not present in later versions, and had a
-        # duplicate SwiftBridging module bug during Clang dependency scanning. That bug was worked
-        # around by a step that patched out the toolchain's bridging.modulemap; the step was removed
-        # and the error has not resurfaced on 26.6. If it ever does, it needs a narrower fix than
-        # blanket-deleting the module.
+        # Ecosia: pinned so the toolchain is not a moving part. Keep in sync with what developers run
+        # locally, since a mismatch has bitten us before.
         #
-        # Do not read this pin as related to the "Undefined symbols" link failures also tracked under
-        # MOB-4384 — those were caused by Xcode omitting dynamic SPM package products from app-hosted
-        # test bundles' link lines, and reproduced identically on every Xcode version tried. See
-        # TestTargets.appHostedTestSettings.
+        # Before bumping to 27, expect work: Xcode 27 statically folds SPM library products into
+        # consumer targets, which makes -ObjC force-load both the folded copies and the standalone
+        # package objects and fails with thousands of duplicate symbols. Our -ObjC lives in
+        # EcosiaDebug.xcconfig and EcosiaBetaDebug.xcconfig, and EcosiaTesting.xcconfig inherits it,
+        # so the Testing configuration CI builds is affected. Upstream version-gates the flag on
+        # XCODE_VERSION_MAJOR: https://github.com/mozilla-mobile/firefox-ios/pull/34592
+        # Also note -ld_classic, set in all five xcconfigs, is deprecated and due for removal.
         xcode-select-version: 26.6
 
     - name: Check Xcode and Swift Version
