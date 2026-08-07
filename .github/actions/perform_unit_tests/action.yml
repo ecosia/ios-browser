@@ -41,17 +41,13 @@ runs:
         set -e
         echo "TEST_EXIT_CODE=$TEST_EXIT_CODE" >> "$GITHUB_ENV"
 
-    - name: Upload raw build-for-testing log
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: raw-build-for-testing-log
-        path: raw_build_for_testing.log
-
     # Ecosia (MOB-4384): Xcode drops dynamic SPM package products from app-hosted .xctest link
     # lines, so test code calling that API directly fails to link on CI. Fails the build if an
     # app-hosted test target is not deferring those symbols, or if a target that should link them
     # directly is missing one. See TestTargets.appHostedTestSettings.
+    #
+    # Reads raw_build_for_testing.log, which the build step above tees out — that redirect is load
+    # bearing, not leftover debugging. Removing it silently disables this check.
     - name: Report test target package product linkage
       if: always()
       shell: bash
@@ -69,6 +65,17 @@ runs:
       with:
         name: test-target-linkage-report
         path: test_target_linkage.log
+
+    # Only on failure: the raw log is ~23MB (~1MB compressed) and is uploaded solely so a broken
+    # build can be diagnosed without re-running a 30-minute job to recapture it. Must stay *after*
+    # the linkage check — if it ran before, a build that compiled fine but failed that check would
+    # have had the upload skipped, losing the log precisely when it is needed.
+    - name: Upload raw build-for-testing log
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: raw-build-for-testing-log
+        path: raw_build_for_testing.log
 
     - name: Publish Test Report
       if: always()
