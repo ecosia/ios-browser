@@ -382,3 +382,7 @@ We built our snapshot testing setup with `SnapshotTestHelper` to streamline UI c
 - **Comparison**: We capture snapshots of the UI and compare them to reference images to spot any unintended changes.
 
 More details [here](SNAPSHOT_TESTING_WIKI.md)
+
+## Accounts / Signing in
+
+[See our documentation here](https://ecosia.atlassian.net/wiki/spaces/MOB/pages/4800118791/iOS+-+Accounts+integration+setup)
