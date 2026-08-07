@@ -13,6 +13,10 @@ on those (or re-resolving and diffing) would turn CI red on unrelated PRs.
 Usage: check_pinned_dependencies.py [repo_root]
 
 Exits 1 on any mismatch or on conflicting exact requirements for the same package.
+
+Runs before actions/setup-python so it executes under the runner's system Python. Keep it to the
+standard library and avoid version-specific APIs (no str.removesuffix, no match statements), or it
+will fail before the pinned Python is installed.
 """
 
 import json
@@ -46,11 +50,14 @@ EXACT_PATTERNS = [
 def identity(url):
     """SwiftPM's package identity: the last URL path component, lowercased, without `.git`.
 
-    Strips any embedded credentials first — CI rewrites Ecosia-owned URLs to include an access
-    token before the build, and that must not change the derived identity.
+    Strips any embedded credentials first, since CI rewrites Ecosia-owned URLs to include an access
+    token before the build and that must not change the derived identity.
     """
     url = re.sub(r"//[^/@]*@", "//", url)
-    return os.path.basename(url.rstrip("/")).removesuffix(".git").lower()
+    name = os.path.basename(url.rstrip("/"))
+    if name.endswith(".git"):
+        name = name[: -len(".git")]
+    return name.lower()
 
 
 def exact_requirements(root):

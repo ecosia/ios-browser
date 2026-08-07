@@ -10,7 +10,7 @@ runs:
   using: "composite"
   steps:
 
-    # Ecosia: must run before "Fix-up private Github URLs" rewrites the manifests and lockfiles in
+    # Ecosia: must run before "Fix-up private GitHub URLs" rewrites the manifests and lockfiles in
     # place, so it reads the committed files verbatim.
     - name: Check pinned dependencies match lockfiles
       shell: bash
@@ -38,7 +38,7 @@ runs:
         xcodebuild -version
         swift --version
 
-    - name: Fix-up private Github URLs
+    - name: Fix-up private GitHub URLs
       shell: bash
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
       env:
