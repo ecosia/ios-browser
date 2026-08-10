@@ -17,6 +17,7 @@ open class Analytics {
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
     static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
+    private static let searchProviderSchema = "iglu:org.ecosia/search_provider_context/jsonschema/1-0-0"
     private static let shouldUseMicroInstanceKey = "shouldUseMicroInstance"
     public static var shouldUseMicroInstance: Bool {
         get {
@@ -326,6 +327,13 @@ open class Analytics {
             .property(position))
     }
 
+    public func searchProviderChanged(to engineID: String) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.Settings.searchProvider.rawValue)
+            .property(engineID))
+    }
+
     public func toggleAIChatOverviewsSetting(enabled: Bool) {
         track(Structured(category: Category.settings.rawValue,
                          action: Action.change.rawValue)
@@ -617,6 +625,7 @@ extension Analytics {
     /// Appends common context to all structured events
     func appendContextIfNeeded(to event: Structured) {
         addUserSeedCountContext(to: event)
+        addSearchProviderContext(to: event)
     }
 
     /// Appends activity-specific context for launch/resume events
@@ -653,6 +662,13 @@ extension Analytics {
             event.entities.append(userContext)
             completion()
         }
+    }
+
+    private func addSearchProviderContext(to event: Structured) {
+        guard CustomSearchProviderFeatureFlag.isEnabled else { return }
+        let context = SelfDescribingJson(schema: Self.searchProviderSchema,
+                                         andDictionary: ["engine_id": User.shared.selectedSearchEngineID])
+        event.entities.append(context)
     }
 
     private func addUserSeedCountContext(to event: Structured) {
