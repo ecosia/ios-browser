@@ -14,5 +14,10 @@ public enum BaseURL: Sendable {
     case web
     /// Caller-supplied URL (e.g. a CDN, or a server-issued presigned upload URL). No
     /// Ecosia-internal headers are attached, since the host isn't guaranteed to be ours.
+    ///
+    /// This is NOT a host override: `BaseRequest.makeURLRequest()` uses this URL exactly as
+    /// given, including its own path and query, ignoring `path`/`queryParameters` entirely.
+    /// That matters for e.g. a presigned upload URL, whose path and signed query string must
+    /// survive untouched.
     case custom(URL)
 }
