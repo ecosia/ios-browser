@@ -21,6 +21,6 @@ enum OmniboxSubmitRouting {
             return urlProvider.aiChat(origin: .omnibox, query: query, files: chatFiles)
         }
 
-        return URL.ecosiaSearchWithQuery(query, autoRedirect: true)
+        return SearchProviderRouting.omniboxSearchURL(forQuery: query)
     }
 }

@@ -3416,7 +3416,10 @@ class BrowserViewController: UIViewController,
         finishEditingAndSubmit(searchURL, visitType: VisitType.typed, forTab: tab)
         dispatchSubmitSearchTermAction(with: searchURL, searchTerm: text)
         */
-        let targetURL = URL.ecosiaSearchWithQuery(text, preservingVerticalFrom: tab.url)
+        let targetURL = SearchProviderRouting.searchURL(forQuery: text,
+                                                        engine: engine,
+                                                        preservingVerticalFrom: tab.url)
+            ?? URL.ecosiaSearchWithQuery(text, preservingVerticalFrom: tab.url)
         finishEditingAndSubmit(targetURL, visitType: VisitType.typed, forTab: tab)
         dispatchSubmitSearchTermAction(with: targetURL, searchTerm: text)
     }
@@ -4779,6 +4782,9 @@ extension BrowserViewController: SearchViewControllerDelegate {
     }
 
     func updateForDefaultSearchEngineDidChange() {
+        /* Ecosia: Keep omnibox gating and analytics in sync with the selected provider. */
+        SearchProviderSelection.syncSelectedEngineID(searchEnginesManager.defaultEngine?.engineID)
+        ecosiaHandleDefaultSearchEngineDidChange()
         // Update search icon when the search engine changes
         let action = ToolbarAction(windowUUID: windowUUID, actionType: ToolbarActionType.searchEngineDidChange)
         store.dispatch(action)
