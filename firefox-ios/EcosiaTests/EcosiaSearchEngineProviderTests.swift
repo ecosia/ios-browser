@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Ecosia
 @testable import Client
 
 // Guards the Ecosia-only search engine setup against regressions, in particular a Firefox upgrade
@@ -14,9 +15,12 @@ import XCTest
 @MainActor
 final class EcosiaSearchEngineProviderTests: XCTestCase {
 
-    /// The production factory must use our custom provider, not the upstream Remote Settings one.
-    /// If a future upgrade flips this back to `ASSearchEngineProvider()`, this fails immediately.
-    func testFactoryUsesEcosiaProvider() {
+    /// The production factory must use our custom provider when the feature flag is off.
+    /// When the custom search provider flag is enabled, `CuratedSearchEngineProvider` is used instead.
+    func testFactoryUsesEcosiaProviderWhenFeatureDisabled() {
+        guard !CustomSearchProviderFeatureFlag.isEnabled else {
+            throw XCTSkip("Custom search provider flag is enabled in this test run")
+        }
         XCTAssertTrue(
             SearchEngineProviderFactory.defaultSearchEngineProvider is EcosiaSearchEngineProvider,
             "The default search engine provider must be EcosiaSearchEngineProvider so Ecosia stays "
