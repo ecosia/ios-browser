@@ -288,6 +288,16 @@ final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashCustomSearchProviderSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Custom Search Provider"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.customSearchProvider)
+    }
+}
+
 final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "AI Chat MVP"
