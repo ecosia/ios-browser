@@ -32,7 +32,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // When a chat mode is active, every message bypasses backend
         // autorouting and goes straight to AI Chat in that mode. The mode
         // stays selected across submissions until the user deselects it.
-        if let mode = omniboxSheetState?.selectedChatMode {
+        if SearchProviderSelection.isEcosiaDefault, let mode = omniboxSheetState?.selectedChatMode {
             if chatFiles.isEmpty {
                 submitOmniboxChatMode(mode, query: searchTerm, chatFiles: chatFiles)
                 showEmbeddedWebview()
@@ -49,7 +49,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
                 }
             }
             return
-        } else if !chatFiles.isEmpty {
+        } else if SearchProviderSelection.isEcosiaDefault, !chatFiles.isEmpty {
             guard let tab = tabManager.selectedTab else { return }
             let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
             Task { @MainActor [weak self] in
@@ -182,7 +182,8 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     func ntpSearchBarDidTapUpload() {
-        guard FileUploadFeatureFlag.isEnabled else { return }
+        guard FileUploadFeatureFlag.isEnabled || ChatModesFeatureFlag.isEnabled,
+              SearchProviderSelection.isEcosiaDefault else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
         // With Chat Modes on, the drawer handles the signed-out state itself
         // (Standard AI Chat selectable, other modes disabled, sign-in CTA), so
@@ -252,7 +253,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
-        let bar = (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
+        let bar = ecosiaEmbeddedHomepage?.ntpSearchBar
         bar?.onRemoveAttachment = { [weak self] id in
             self?.omniboxAttachmentCoordinator.removeAttachment(id: id)
         }
@@ -279,7 +280,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
     /// active chat-mode selection. Lives on the homepage adapter, so it is only
     /// available while the NTP is the current content.
     fileprivate var omniboxSheetState: NTPOmniboxSheetState? {
-        (contentContainer.contentController as? HomepageViewController)?.ecosiaAdapter?.omniboxSheetState
+        ecosiaEmbeddedHomepage?.ecosiaAdapter?.omniboxSheetState
     }
 }
 
@@ -613,6 +614,23 @@ extension BrowserViewController {
             as? OmniboxAttachmentUploadCoordinator {
             coordinator.clearAttachments()
         }
+    }
+
+    func ecosiaHandleDefaultSearchEngineDidChange() {
+        guard CustomSearchProviderFeatureFlag.isEnabled else { return }
+
+        if !SearchProviderSelection.isEcosiaDefault {
+            resetOmniboxSelectionsForNonEcosiaSearchProvider()
+        }
+
+        ntpOmniboxAnchorView?.updateUploadVisibilityForSearchProvider()
+    }
+
+    private func resetOmniboxSelectionsForNonEcosiaSearchProvider() {
+        omniboxSheetState?.selectedChatMode = nil
+        omniboxAttachmentCoordinator.clearAttachments()
+        ntpOmniboxAnchorView?.setSelectedChatMode(nil)
+        ntpOmniboxAnchorView?.updateUploadVisibilityForSearchProvider()
     }
 }
 

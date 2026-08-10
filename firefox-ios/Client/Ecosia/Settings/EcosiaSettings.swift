@@ -2,9 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Foundation
-import Shared
 import Common
+import UIKit
+import Shared
 import Ecosia
 
 // Ecosia: Optional default so NTP customization and other Ecosia settings can call reloadHomepage().
@@ -52,6 +52,10 @@ final class EcosiaDefaultBrowserSettings: Setting {
 }
 
 final class SearchAreaSetting: Setting {
+    override var hidden: Bool {
+        CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
+    }
+
     override var title: NSAttributedString? {
         NSAttributedString(string: .localized(.searchRegion), attributes: [:])
     }
@@ -88,6 +92,10 @@ final class SearchAreaSetting: Setting {
 }
 
 final class SafeSearchSettings: Setting {
+    override var hidden: Bool {
+        CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
+    }
+
     override var title: NSAttributedString? {
         NSAttributedString(string: .localized(.safeSearch), attributes: [:])
     }
@@ -121,6 +129,10 @@ final class SafeSearchSettings: Setting {
 }
 
 final class AutoCompleteSettings: BoolSetting {
+    override var hidden: Bool {
+        CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
+    }
+
     convenience init(prefs: Prefs, theme: Theme) {
         self.init(prefs: prefs,
                   theme: theme,
@@ -143,6 +155,10 @@ final class AutoCompleteSettings: BoolSetting {
 }
 
 final class AIOverviewsSearchSettings: BoolSetting {
+    override var hidden: Bool {
+        CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
+    }
+
     convenience init(prefs: Prefs, theme: Theme) {
         self.init(prefs: prefs,
                   theme: theme,
