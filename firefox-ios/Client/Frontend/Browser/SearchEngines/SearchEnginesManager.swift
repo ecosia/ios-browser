@@ -28,7 +28,7 @@ struct SearchEngineProviderFactory {
     */
     static var defaultSearchEngineProvider: SearchEngineProvider {
         if CustomSearchProviderFeatureFlag.isEnabled {
-            return CuratedSearchEngineProvider()
+            return HybridSearchEngineProvider()
         }
         return EcosiaSearchEngineProvider()
     }
