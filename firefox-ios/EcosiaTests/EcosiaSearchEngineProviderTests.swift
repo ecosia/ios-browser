@@ -16,8 +16,8 @@ import Ecosia
 final class EcosiaSearchEngineProviderTests: XCTestCase {
 
     /// The production factory must use our custom provider when the feature flag is off.
-    /// When the custom search provider flag is enabled, `CuratedSearchEngineProvider` is used instead.
-    func testFactoryUsesEcosiaProviderWhenFeatureDisabled() {
+    /// When the custom search provider flag is enabled, `HybridSearchEngineProvider` is used instead.
+    func testFactoryUsesEcosiaProviderWhenFeatureDisabled() throws {
         guard !CustomSearchProviderFeatureFlag.isEnabled else {
             throw XCTSkip("Custom search provider flag is enabled in this test run")
         }
@@ -25,6 +25,16 @@ final class EcosiaSearchEngineProviderTests: XCTestCase {
             SearchEngineProviderFactory.defaultSearchEngineProvider is EcosiaSearchEngineProvider,
             "The default search engine provider must be EcosiaSearchEngineProvider so Ecosia stays "
             + "the default on every locale/region. Did a Firefox upgrade restore ASSearchEngineProvider()?"
+        )
+    }
+
+    func testFactoryUsesHybridProviderWhenFeatureEnabled() throws {
+        guard CustomSearchProviderFeatureFlag.isEnabled else {
+            throw XCTSkip("Custom search provider flag is disabled in this test run")
+        }
+        XCTAssertTrue(
+            SearchEngineProviderFactory.defaultSearchEngineProvider is HybridSearchEngineProvider,
+            "When the custom search provider flag is enabled, HybridSearchEngineProvider must be used."
         )
     }
 
