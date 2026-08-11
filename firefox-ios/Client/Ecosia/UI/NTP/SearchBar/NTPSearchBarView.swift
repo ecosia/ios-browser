@@ -441,10 +441,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     }
 
     private var shouldShowOmniboxUploadButton: Bool {
-        let uploadFeaturesEnabled = FileUploadFeatureFlag.isEnabled || ChatModesFeatureFlag.isEnabled
-        guard uploadFeaturesEnabled else { return false }
-        guard CustomSearchProviderFeatureFlag.isEnabled else { return true }
-        return SearchProviderSelection.isEcosiaDefault
+        SearchProviderSelection.showsOmniboxAIFeatures
     }
 
     @objc private func focusTextView() {

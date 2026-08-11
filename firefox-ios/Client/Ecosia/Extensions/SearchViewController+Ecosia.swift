@@ -133,7 +133,7 @@ extension SearchViewController {
     /// Whether the AI Chat row should be rendered in the suggestions section.
     var shouldShowAIChatRow: Bool {
         AIChatMVPExperiment.isEnabled
-            && SearchProviderSelection.isEcosiaDefault
+            && SearchProviderSelection.showsAIAutocompleteRow
             && !viewModel.searchQuery.isEmpty
             && suggestionsCount() != nil
     }
@@ -172,7 +172,15 @@ extension SearchViewController {
 
     /// Handle AI Chat navigation when item is selected
     func handleAIChatSelection(_ indexPath: IndexPath) {
-        let url = Environment.current.urlProvider.aiChat(origin: .autocomplete, query: viewModel.searchQuery)
+        let url: URL
+        switch SearchProviderSelection.aiBehavior {
+        case .ecosiaFullStack:
+            url = Environment.current.urlProvider.aiChat(origin: .autocomplete, query: viewModel.searchQuery)
+        case .googleGemini:
+            url = GeminiSearchRouting.aiModeSearchURL(query: viewModel.searchQuery)
+        case .disabled:
+            return
+        }
         searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: viewModel.searchQuery)
         Analytics.shared.aiChatAutocompleteForQuery(viewModel.searchQuery)
     }
