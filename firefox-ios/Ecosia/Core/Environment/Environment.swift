@@ -49,3 +49,20 @@ extension Environment {
         }
     }
 }
+
+extension Environment {
+
+    /// Sentry environment tag for this build, matching the lowercase `staging`/`production` naming
+    /// Ecosia's web projects use (see `common/js/universal/src/ecosia-env.js` in the `core` repo).
+    /// Threaded into BrowserKit's `CrashManager` via `BrowserKitInformation.environmentName`.
+    public var sentryTag: String {
+        switch self {
+        case .production:
+            return "production"
+        case .staging:
+            return "staging"
+        case .debug:
+            return "debug"
+        }
+    }
+}

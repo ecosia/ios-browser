@@ -13,12 +13,20 @@ public final class BrowserKitInformation: @unchecked Sendable {
     public var buildChannel: AppBuildChannel?
     public var nightlyAppVersion: String?
     public var sharedContainerIdentifier: String?
+    // Ecosia: Lets the app tell BrowserKit its own environment name (e.g. "staging"/"production") for
+    // Sentry tagging, without BrowserKit needing to know about Ecosia's Environment type. Firefox call
+    // sites can leave this nil and keep their existing Nightly/Production tagging.
+    public var environmentName: String?
 
     public func configure(buildChannel: AppBuildChannel,
                           nightlyAppVersion: String,
-                          sharedContainerIdentifier: String) {
+                          sharedContainerIdentifier: String,
+                          // Ecosia: set environment name
+                          environmentName: String? = nil) {
         self.buildChannel = buildChannel
         self.nightlyAppVersion = nightlyAppVersion
         self.sharedContainerIdentifier = sharedContainerIdentifier
+        // Ecosia: set environment name
+        self.environmentName = environmentName
     }
 }

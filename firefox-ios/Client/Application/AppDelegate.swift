@@ -76,7 +76,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // Configure app information for BrowserKit, needed for logger
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
-                                               sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+                                               sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
+                                               // Ecosia: Tag Sentry events with Ecosia's own staging/production environment.
+                                               environmentName: EcosiaEnvironment.current.sentryTag)
         // Ecosia: Register URLProvider domains that need Ecosia's desktop UA.
         UserAgent.configureEcosiaDesktopUserAgentDomains([
             URLProvider.production.domain,
