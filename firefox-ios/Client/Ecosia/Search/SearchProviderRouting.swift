@@ -21,10 +21,12 @@ enum SearchProviderRouting {
         return engine.searchURLForQuery(query)
     }
 
-    static func omniboxSearchURL(forQuery query: String, engineID: String = User.shared.selectedSearchEngineID) -> URL {
+    static func omniboxSearchURL(forQuery query: String,
+                               engine: OpenSearchEngine?,
+                               engineID: String = User.shared.selectedSearchEngineID) -> URL {
         if CustomSearchProviderFeatureFlag.isEnabled,
            !SearchProviderSelection.isEcosiaEngineID(engineID),
-           let engine = CuratedSearchEngines.engine(forID: engineID),
+           let engine,
            let url = engine.searchURLForQuery(query) {
             return url
         }

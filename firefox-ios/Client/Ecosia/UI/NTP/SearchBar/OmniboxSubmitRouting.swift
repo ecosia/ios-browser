@@ -11,6 +11,7 @@ enum OmniboxSubmitRouting {
     static func destinationURL(
         query: String,
         chatFiles: [AIChatFileQuery],
+        defaultEngine: OpenSearchEngine? = nil,
         urlProvider: URLProvider = Environment.current.urlProvider
     ) -> URL {
         if chatFiles.isEmpty, let url = URIFixup.getURL(query) {
@@ -21,6 +22,6 @@ enum OmniboxSubmitRouting {
             return urlProvider.aiChat(origin: .omnibox, query: query, files: chatFiles)
         }
 
-        return SearchProviderRouting.omniboxSearchURL(forQuery: query)
+        return SearchProviderRouting.omniboxSearchURL(forQuery: query, engine: defaultEngine)
     }
 }
