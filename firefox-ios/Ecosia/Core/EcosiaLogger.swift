@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Common
 
 /// Ecosia-specific logging levels following established patterns
 public enum LogLevel {
@@ -10,6 +11,10 @@ public enum LogLevel {
     case info
     case warning
     case error
+    /// Same local console output as `.error`, plus forwards to Sentry via `DefaultLogger`
+    /// (category `.ecosia`). Reserve for failures worth visibility outside a live console
+    /// session — not every `.error` call needs this.
+    case sentry
 }
 
 /// Protocol for category-specific logging with default implementations
@@ -32,6 +37,12 @@ public extension EcosiaLoggerCategory {
 
     static func error(_ message: String) {
         EcosiaLogger.error("\(prefix) \(message)")
+    }
+
+    /// Logs locally like `.error` AND forwards to Sentry. Use for real failures worth visibility
+    /// outside a live console session — not every `.error` call needs this.
+    static func sentry(_ message: String, error: Error? = nil) {
+        EcosiaLogger.sentry("\(prefix) \(message)", error: error, subsystem: prefix)
     }
 }
 
@@ -78,6 +89,21 @@ public enum EcosiaLogger {
         print("[\(timestamp)] \(prefix): ❌ [ERROR] \(message)")
     }
 
+    /// Log an error message locally AND forward it to Sentry via `DefaultLogger` (category
+    /// `.ecosia`). `error`/`subsystem` populate the Sentry event's `extra` fields.
+    public static func sentry(_ message: String, error: Error? = nil, subsystem: String? = nil) {
+        print("[\(timestamp)] \(prefix): 📡 [SENTRY] \(message)")
+
+        var extra: [String: String] = [:]
+        if let subsystem { extra["subsystem"] = subsystem }
+        if let error { extra["error"] = error.localizedDescription }
+
+        DefaultLogger.shared.log(message,
+                                 level: .fatal,
+                                 category: .ecosia,
+                                 extra: extra.isEmpty ? nil : extra)
+    }
+
     /// Generic log method with level
     public static func log(_ message: String, level: LogLevel) {
         switch level {
@@ -89,6 +115,8 @@ public enum EcosiaLogger {
             warning(message)
         case .error:
             error(message)
+        case .sentry:
+            sentry(message)
         }
     }
 
