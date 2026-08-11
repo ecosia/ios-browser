@@ -18,14 +18,21 @@ enum CuratedSearchEngines {
         "duckduckgo"
     ]
 
-    /// Builds the full curated engine list for the active environment.
+    /// Preferred default ordering when Remote Settings is unavailable.
+    static let fallbackDefaultOrder = defaultOrder
+
+    /// Builds the bundled fallback engine list used when Remote Settings is unavailable.
     static func allEngines() -> [OpenSearchEngine] {
         [
-            makeEcosiaEngine(),
+            ecosiaEngine(),
             makeGoogleEngine(),
             makeBingEngine(),
             makeDuckDuckGoEngine()
         ]
+    }
+
+    static func ecosiaEngine() -> OpenSearchEngine {
+        makeEcosiaEngine()
     }
 
     static func engine(forID engineID: String) -> OpenSearchEngine? {
