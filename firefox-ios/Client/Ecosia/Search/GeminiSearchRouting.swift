@@ -25,4 +25,16 @@ enum GeminiSearchRouting {
 
     /// Gemini web app entry point (no prefilled query support).
     static let geminiAppURL = URL(string: "https://gemini.google.com/app")!
+
+    /// Whether `url` is a finalized Google Gemini destination that must not be
+    /// rebuilt through the omnibox submit pipeline.
+    static func isAIDestination(_ url: URL) -> Bool {
+        if url == geminiAppURL { return true }
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              components.host == "www.google.com",
+              components.path == "/search" else {
+            return false
+        }
+        return components.queryItems?.contains { $0.name == aiModeParameter.name && $0.value == aiModeParameter.value } == true
+    }
 }

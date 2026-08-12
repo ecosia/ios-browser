@@ -21,4 +21,23 @@ final class GeminiSearchRoutingTests: XCTestCase {
     func testGeminiAppURLUsesGeminiHost() {
         XCTAssertEqual(GeminiSearchRouting.geminiAppURL.host, "gemini.google.com")
     }
+
+    func testIsAIDestinationRecognizesAIModeSearchURL() {
+        let url = GeminiSearchRouting.aiModeSearchURL(query: "trees")
+        XCTAssertTrue(GeminiSearchRouting.isAIDestination(url))
+    }
+
+    func testIsAIDestinationRecognizesGeminiAppURL() {
+        XCTAssertTrue(GeminiSearchRouting.isAIDestination(GeminiSearchRouting.geminiAppURL))
+    }
+
+    func testIsAIDestinationRejectsStandardGoogleSearchURL() throws {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "www.google.com"
+        components.path = "/search"
+        components.queryItems = [URLQueryItem(name: "q", value: "trees")]
+        let url = try XCTUnwrap(components.url)
+        XCTAssertFalse(GeminiSearchRouting.isAIDestination(url))
+    }
 }
