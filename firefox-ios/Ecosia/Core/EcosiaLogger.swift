@@ -40,9 +40,10 @@ public extension EcosiaLoggerCategory {
     }
 
     /// Logs locally like `.error` AND forwards to Sentry. Use for real failures worth visibility
-    /// outside a live console session — not every `.error` call needs this.
-    static func sentry(_ message: String, error: Error? = nil) {
-        EcosiaLogger.sentry("\(prefix) \(message)", error: error, subsystem: prefix)
+    /// outside a live console session — not every `.error` call needs this. Interpolate the error
+    /// into `message` yourself, same as `.error(...)` elsewhere in this file.
+    static func sentry(_ message: String) {
+        EcosiaLogger.sentry("\(prefix) \(message)")
     }
 }
 
@@ -89,19 +90,10 @@ public enum EcosiaLogger {
         print("[\(timestamp)] \(prefix): ❌ [ERROR] \(message)")
     }
 
-    /// Log an error message locally AND forward it to Sentry via `DefaultLogger` (category
-    /// `.ecosia`). `error`/`subsystem` populate the Sentry event's `extra` fields.
-    public static func sentry(_ message: String, error: Error? = nil, subsystem: String? = nil) {
+    /// Log an error message locally AND forward it to Sentry via `DefaultLogger` (category `.ecosia`).
+    public static func sentry(_ message: String) {
         print("[\(timestamp)] \(prefix): 📡 [SENTRY] \(message)")
-
-        var extra: [String: String] = [:]
-        if let subsystem { extra["subsystem"] = subsystem }
-        if let error { extra["error"] = error.localizedDescription }
-
-        DefaultLogger.shared.log(message,
-                                 level: .fatal,
-                                 category: .ecosia,
-                                 extra: extra.isEmpty ? nil : extra)
+        DefaultLogger.shared.log(message, level: .fatal, category: .ecosia)
     }
 
     /// Generic log method with level
