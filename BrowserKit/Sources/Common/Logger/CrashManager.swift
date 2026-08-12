@@ -130,6 +130,10 @@ public final class DefaultCrashManager: CrashManager, @unchecked Sendable {
 
         sentryWrapper.startWithConfigureOptions(configure: { options in
             options.dsn = dsn
+            // Ecosia: Sample a fraction of events to control volume.
+            options.sampleRate = 0.5
+            // Ecosia: Unused Release Health tracking; avoids a payload per app open.
+            options.enableAutoSessionTracking = false
             if self.shouldEnableTraceProfiling {
                 options.tracesSampleRate = 0.2
                 options.configureProfiling = {

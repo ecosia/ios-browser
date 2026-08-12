@@ -4,12 +4,8 @@
 
 import Foundation
 
-/// Gates Sentry crash reporting, for a gradual/budget-controlled rollout. Note: Unleash's own fetch
-/// happens asynchronously later in app launch than Sentry's original setup call site, so Sentry setup
-/// is deferred entirely to `AppLaunchUtil.setUpCrashReportingIfEnabled()`, called from `AppDelegate`
-/// after `FeatureManagement.fetchConfiguration()` resolves.
-/// `public` — unlike the other `Experiment` types here, this one is read from `AppLaunchUtil` in the
-/// `Client` target (a different module), not just from within `Ecosia` itself.
+/// Gates Sentry crash reporting for a gradual rollout. `public` since it's read from `AppLaunchUtil`
+/// in the `Client` target, not just within `Ecosia`.
 public struct SentryReportingExperiment {
 
     private init() {}
