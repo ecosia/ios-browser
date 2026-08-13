@@ -430,7 +430,18 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             clearButtonGlyph.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor)
         ])
 
-        uploadButton.isHidden = !FileUploadFeatureFlag.isEnabled
+        updateUploadButtonVisibility()
+    }
+
+    /// Shows the + / upload control only when file upload is flagged on and
+    /// AI-free searching is not active. Clears an in-progress chat-mode chip
+    /// when the control is hidden so leftover AI UI cannot linger.
+    func updateUploadButtonVisibility() {
+        let showUpload = FileUploadFeatureFlag.isEnabled && AIFreeSearchingSelection.allowsOmniboxAI
+        uploadButton.isHidden = !showUpload
+        if !showUpload {
+            setSelectedChatMode(nil)
+        }
     }
 
     @objc private func focusTextView() {

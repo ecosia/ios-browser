@@ -199,6 +199,19 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             name: .HomePanelPrefsChanged,
             object: nil
         )
+        // Settings is a form sheet on iPhone, so the NTP stays in the hierarchy
+        // and `viewWillAppear` does not run on dismiss. Refresh the + button
+        // when search settings change (AI-free searching), matching MOB-4751.
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(ecosiaSearchSettingsDidChange),
+            name: .searchSettingsChanged,
+            object: nil
+        )
+    }
+
+    @objc private func ecosiaSearchSettingsDidChange() {
+        ntpSearchBar?.updateUploadButtonVisibility()
     }
 
     @objc private func homePanelPrefsDidChange(_ notification: Notification) {
@@ -226,6 +239,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             windowUUID: windowUUID,
             actionType: ToolbarActionType.borderPositionChanged
         ))
+
+        ntpSearchBar?.updateUploadButtonVisibility()
 
         ecosiaAdapter?.viewWillAppear()
         // Full-screen upload pickers (camera / Files) temporarily hide the NTP

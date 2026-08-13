@@ -32,7 +32,9 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // When a chat mode is active, every message bypasses backend
         // autorouting and goes straight to AI Chat in that mode. The mode
         // stays selected across submissions until the user deselects it.
-        if let mode = omniboxSheetState?.selectedChatMode {
+        // AI-free searching suppresses this path so leftover mode state
+        // cannot still open AI Chat.
+        if let mode = omniboxSheetState?.selectedChatMode, AIFreeSearchingSelection.allowsOmniboxAI {
             if chatFiles.isEmpty {
                 submitOmniboxChatMode(mode, query: searchTerm, chatFiles: chatFiles)
                 showEmbeddedWebview()
@@ -182,7 +184,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     func ntpSearchBarDidTapUpload() {
-        guard FileUploadFeatureFlag.isEnabled else { return }
+        guard FileUploadFeatureFlag.isEnabled, AIFreeSearchingSelection.allowsOmniboxAI else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
         // With Chat Modes on, the drawer handles the signed-out state itself
         // (Standard AI Chat selectable, other modes disabled, sign-in CTA), so
