@@ -302,6 +302,16 @@ final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashAIFreeSearchingSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "AI-free searching"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.aiFreeSearching)
+    }
+}
+
 final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [:])

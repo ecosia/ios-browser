@@ -28,6 +28,7 @@ extension Unleash {
             case newsletterCard = "mob_ios_newsletter_card"
             case fileUpload = "mob_ios_file_upload"
             case chatModes = "mob_ios_chat_modes"
+            case aiFreeSearching = "mob_ios_ai_free_searching"
         }
 
         public let name: String
