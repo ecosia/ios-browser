@@ -335,6 +335,26 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(count, 4, "Expected 4 searchSettingsChanged notifications, got \(count)")
     }
 
+    func testSearchSettingChangeNotificationForAIFreeSearching() {
+        var count = 0
+        let observer = NotificationCenter.default.addObserver(
+            forName: .searchSettingsChanged,
+            object: nil,
+            queue: .main
+        ) { _ in
+            count += 1
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        User.shared.aiFreeSearching = User.shared.aiFreeSearching == true ? false : true
+
+        let deadline = Date().addingTimeInterval(3)
+        while count < 1 && Date() < deadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        }
+        XCTAssertEqual(count, 1, "Expected searchSettingsChanged when toggling aiFreeSearching")
+    }
+
     func testAnalyticsUserState() {
         let expect = expectation(description: "")
         User.shared.analyticsUserState = User.AnalyticsStateContext()
