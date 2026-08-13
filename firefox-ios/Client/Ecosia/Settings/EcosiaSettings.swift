@@ -150,10 +150,14 @@ final class AIOverviewsSearchSettings: BoolSetting {
         // swiftlint:enable unused_setter_value
     }
 
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Settings.aiOverviewsSwitch
+    }
+
     convenience init(prefs: Prefs, theme: Theme) {
         self.init(prefs: prefs,
                   theme: theme,
-                  prefKey: "",
+                  prefKey: EcosiaAccessibilityIdentifiers.Settings.aiOverviewsSwitch,
                   defaultValue: false,
                   titleText: .localized(.aiOverviewsTitle),
                   statusText: .localized(.aiOverviewsDescription),
@@ -181,10 +185,14 @@ final class AIOverviewsSearchSettings: BoolSetting {
 final class AIFreeSearchingSearchSettings: BoolSetting {
     override var hidden: Bool { !AIFreeSearchingFeatureFlag.isEnabled }
 
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Settings.aiFreeSearchingSwitch
+    }
+
     convenience init(prefs: Prefs, theme: Theme, settings: SettingsTableViewController) {
         self.init(prefs: prefs,
                   theme: theme,
-                  prefKey: "",
+                  prefKey: EcosiaAccessibilityIdentifiers.Settings.aiFreeSearchingSwitch,
                   defaultValue: false,
                   titleText: .localized(.aiFreeSearchingTitle),
                   settingDidChange: { [weak settings] value in

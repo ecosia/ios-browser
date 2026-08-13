@@ -44,6 +44,12 @@ public struct EcosiaAccessibilityIdentifiers {
 
     public struct Search {
         public static let suggestionCellPrefix = "searchSuggestion"
+        public static let aiChatSuggestion = "searchSuggestion_aiChat"
+    }
+
+    public struct Settings {
+        public static let aiFreeSearchingSwitch = "Settings.aiFreeSearching.switch"
+        public static let aiOverviewsSwitch = "Settings.aiOverviews.switch"
     }
 
     public struct AddressBar {
