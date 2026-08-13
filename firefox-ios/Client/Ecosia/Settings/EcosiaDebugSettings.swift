@@ -289,6 +289,10 @@ final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
 }
 
 final class UnleashCustomSearchProviderSetting: UnleashVariantResetSetting {
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Debug.customSearchProviderUnleash
+    }
+
     override var titleName: String? {
         "Custom Search Provider"
     }

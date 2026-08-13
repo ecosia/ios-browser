@@ -159,10 +159,14 @@ final class AIOverviewsSearchSettings: BoolSetting {
         CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
     }
 
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Settings.aiOverviewsSwitch
+    }
+
     convenience init(prefs: Prefs, theme: Theme) {
         self.init(prefs: prefs,
                   theme: theme,
-                  prefKey: "",
+                  prefKey: EcosiaAccessibilityIdentifiers.Settings.aiOverviewsSwitch,
                   defaultValue: false,
                   titleText: .localized(.aiOverviewsTitle),
                   statusText: .localized(.aiOverviewsDescription),

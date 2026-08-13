@@ -297,6 +297,8 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
         }
         cell.accessibilityLabel = .Settings.Search.AccessibilityLabels.DefaultSearchEngine
         cell.accessibilityValue = engine.shortName
+        // Ecosia: Stable hook for acceptance tests selecting the default search provider.
+        cell.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.Settings.defaultSearchEngine
         cell.textLabel?.text = engine.shortName
         cell.imageView?.image = engine.image.createScaled(IconSize)
         cell.imageView?.layer.cornerRadius = UX.imageViewCornerRadius
