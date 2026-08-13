@@ -23,6 +23,7 @@ extension String {
         case aiChatAccessibilityHint = "Opens AI Chat"
         case aiOverviewsTitle = "Overviews"
         case aiOverviewsDescription = "Show AI-generated overviews at the top of search results"
+        case aiFreeSearchingTitle = "AI-free searching"
         case allRegions = "All regions"
         case askSearchBrowse = "Ask, search, browse..."
         case autocomplete = "Autocomplete"
