@@ -134,6 +134,8 @@ extension SearchViewController {
     var shouldShowAIChatRow: Bool {
         AIChatMVPExperiment.isEnabled
             && SearchProviderSelection.showsAIAutocompleteRow
+            && (SearchProviderSelection.aiBehavior != .ecosiaFullStack
+                || AIFreeSearchingSelection.allowsOmniboxAI)
             && !viewModel.searchQuery.isEmpty
             && suggestionsCount() != nil
     }

@@ -50,6 +50,7 @@ public struct EcosiaAccessibilityIdentifiers {
     public struct Settings {
         public static let defaultSearchEngine = "Settings.Search.defaultSearchEngine"
         public static let aiOverviewsSwitch = "Settings.aiOverviews.switch"
+        public static let aiFreeSearchingSwitch = "Settings.aiFreeSearching.switch"
     }
 
     public struct SearchEnginePicker {

@@ -27,6 +27,7 @@ extension AppSettingsTableViewController {
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: profile.prefs, theme: theme),
+            AIFreeSearchingSearchSettings(prefs: profile.prefs, theme: theme, settings: self),
             AIOverviewsSearchSettings(prefs: profile.prefs, theme: theme)
         ]
 
@@ -40,6 +41,10 @@ extension AppSettingsTableViewController {
                 ),
                 at: 1
             )
+        }
+
+        if AIFreeSearchingFeatureFlag.isEnabled {
+            AIFreeSearchingSelection.enforceOverviewsExclusionIfNeeded()
         }
 
         return [SettingSection(title: .init(string: .localized(.search)),
@@ -107,6 +112,7 @@ extension AppSettingsTableViewController {
             UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashCustomSearchProviderSetting(settings: self),
             UnleashAIChatMVPSetting(settings: self),
+            UnleashAIFreeSearchingSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]
 

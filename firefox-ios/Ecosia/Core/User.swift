@@ -39,6 +39,10 @@ public struct User: Codable, Equatable, @unchecked Sendable {
         selectedSearchEngineID == "ecosia"
     }
 
+    /// AI-free searching preference. `nil` means never set (`ECNOAI` omitted);
+    /// `true` / `false` are explicit choices (`ECNOAI=true` / `ECNOAI=false`).
+    public var aiFreeSearching: Bool?
+
     // MARK: Privacy Settings
     public var sendAnonymousUsageData = true
     public internal(set) var cookieConsentValue: String?
@@ -96,6 +100,7 @@ public struct User: Codable, Equatable, @unchecked Sendable {
         firstTime,
         aiOverviews,
         selectedSearchEngineID,
+        aiFreeSearching,
         sendAnonymousUsageData,
         topSitesRows,
         showClimateImpact,
@@ -124,6 +129,7 @@ public struct User: Codable, Equatable, @unchecked Sendable {
         firstTime = (try? root.decode(Bool.self, forKey: .firstTime)) ?? true
         aiOverviews = (try? root.decode(Bool.self, forKey: .aiOverviews)) ?? true
         selectedSearchEngineID = (try? root.decode(String.self, forKey: .selectedSearchEngineID)) ?? "ecosia"
+        aiFreeSearching = try? root.decode(Bool.self, forKey: .aiFreeSearching)
         sendAnonymousUsageData = (try? root.decode(Bool.self, forKey: .sendAnonymousUsageData)) ?? true
         topSitesRows = (try? root.decode(Int.self, forKey: .topSitesRows)) ?? 4
         showTopSites = (try? root.decode(Bool.self, forKey: .showTopSites)) ?? true
@@ -150,6 +156,7 @@ public struct User: Codable, Equatable, @unchecked Sendable {
             analyticsId = stored.analyticsId
             aiOverviews = stored.aiOverviews
             selectedSearchEngineID = stored.selectedSearchEngineID
+            aiFreeSearching = stored.aiFreeSearching
             sendAnonymousUsageData = stored.sendAnonymousUsageData
             migrated = stored.migrated
             state = stored.state
@@ -282,13 +289,15 @@ extension User {
         let adultFilter: AdultFilter
         let autoComplete: Bool
         let aiOverviews: Bool
+        let aiFreeSearching: Bool?
     }
 
     private var searchSetting: SearchSetting {
         .init(marketCode: marketCode,
               adultFilter: adultFilter,
               autoComplete: autoComplete,
-              aiOverviews: aiOverviews)
+              aiOverviews: aiOverviews,
+              aiFreeSearching: aiFreeSearching)
     }
 
     func hasNewSearchSetting(compared to: User) -> Bool {

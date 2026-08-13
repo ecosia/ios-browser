@@ -430,18 +430,26 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             clearButtonGlyph.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor)
         ])
 
-        uploadButton.isHidden = !shouldShowOmniboxUploadButton
+        updateUploadButtonVisibility()
     }
 
-    func updateUploadVisibilityForSearchProvider() {
-        uploadButton.isHidden = !shouldShowOmniboxUploadButton
-        if uploadButton.isHidden {
-            chatModeChip.isHidden = true
+    /// Shows the + / upload control for the active provider, unless AI-free
+    /// searching is hiding Ecosia AI surfaces. Clears an in-progress chat-mode
+    /// chip when the control is hidden so leftover AI UI cannot linger.
+    func updateUploadButtonVisibility() {
+        let showUpload = shouldShowOmniboxUploadButton
+        uploadButton.isHidden = !showUpload
+        if !showUpload {
+            setSelectedChatMode(nil)
         }
     }
 
     private var shouldShowOmniboxUploadButton: Bool {
-        SearchProviderSelection.showsOmniboxAIFeatures
+        guard SearchProviderSelection.showsOmniboxAIFeatures else { return false }
+        if SearchProviderSelection.usesEcosiaAIBackend {
+            return AIFreeSearchingSelection.allowsOmniboxAI
+        }
+        return true
     }
 
     @objc private func focusTextView() {

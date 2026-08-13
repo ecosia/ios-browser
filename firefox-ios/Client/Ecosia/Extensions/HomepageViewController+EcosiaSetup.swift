@@ -201,14 +201,23 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         )
         notificationCenter.addObserver(
             self,
-            selector: #selector(ecosiaSearchProviderDidChange),
+            selector: #selector(updateNTPUploadButtonVisibility),
             name: .SearchSettingsDidUpdateDefaultSearchEngine,
+            object: nil
+        )
+        // Settings is a form sheet on iPhone, so the NTP stays in the hierarchy
+        // and `viewWillAppear` does not run on dismiss. Refresh the + button
+        // when search settings change (AI-free searching).
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(updateNTPUploadButtonVisibility),
+            name: .searchSettingsChanged,
             object: nil
         )
     }
 
-    @objc private func ecosiaSearchProviderDidChange() {
-        ntpSearchBar?.updateUploadVisibilityForSearchProvider()
+    @objc private func updateNTPUploadButtonVisibility() {
+        ntpSearchBar?.updateUploadButtonVisibility()
     }
 
     @objc private func homePanelPrefsDidChange(_ notification: Notification) {
@@ -237,8 +246,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             actionType: ToolbarActionType.borderPositionChanged
         ))
 
+        ntpSearchBar?.updateUploadButtonVisibility()
+
         ecosiaAdapter?.viewWillAppear()
-        ntpSearchBar?.updateUploadVisibilityForSearchProvider()
         // Full-screen upload pickers (camera / Files) temporarily hide the NTP
         // without leaving it. `ecosiaViewDidDisappear` preserves the draft across
         // that modal; if text or attachments are still present here, keep them

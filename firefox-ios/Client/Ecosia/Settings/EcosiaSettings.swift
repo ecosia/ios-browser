@@ -159,6 +159,13 @@ final class AIOverviewsSearchSettings: BoolSetting {
         CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
     }
 
+    override var enabled: Bool {
+        get { !AIFreeSearchingSelection.isActive }
+        // swiftlint:disable unused_setter_value
+        set { }
+        // swiftlint:enable unused_setter_value
+    }
+
     override var accessibilityIdentifier: String? {
         EcosiaAccessibilityIdentifiers.Settings.aiOverviewsSwitch
     }
@@ -171,6 +178,7 @@ final class AIOverviewsSearchSettings: BoolSetting {
                   titleText: .localized(.aiOverviewsTitle),
                   statusText: .localized(.aiOverviewsDescription),
                   settingDidChange: { value in
+            guard !AIFreeSearchingSelection.isActive else { return }
             User.shared.aiOverviews = value
             Analytics.shared.toggleAIChatOverviewsSetting(enabled: value)
         })
@@ -181,7 +189,43 @@ final class AIOverviewsSearchSettings: BoolSetting {
     }
 
     override func writeBool(_ control: UISwitch) {
+        guard !AIFreeSearchingSelection.isActive else {
+            control.isOn = false
+            User.shared.aiOverviews = false
+            return
+        }
         User.shared.aiOverviews = control.isOn
+    }
+}
+
+final class AIFreeSearchingSearchSettings: BoolSetting {
+    override var hidden: Bool {
+        !AIFreeSearchingFeatureFlag.isEnabled
+            || (CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider)
+    }
+
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Settings.aiFreeSearchingSwitch
+    }
+
+    convenience init(prefs: Prefs, theme: Theme, settings: SettingsTableViewController) {
+        self.init(prefs: prefs,
+                  theme: theme,
+                  prefKey: EcosiaAccessibilityIdentifiers.Settings.aiFreeSearchingSwitch,
+                  defaultValue: false,
+                  titleText: .localized(.aiFreeSearchingTitle),
+                  settingDidChange: { [weak settings] value in
+            AIFreeSearchingSelection.setEnabled(value)
+            settings?.tableView.reloadData()
+        })
+    }
+
+    override func displayBool(_ control: UISwitch) {
+        control.isOn = User.shared.aiFreeSearching == true
+    }
+
+    override func writeBool(_ control: UISwitch) {
+        AIFreeSearchingSelection.setEnabled(control.isOn)
     }
 }
 

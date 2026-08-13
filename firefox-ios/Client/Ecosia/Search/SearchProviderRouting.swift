@@ -16,13 +16,16 @@ enum SearchProviderRouting {
             if let sourceURL {
                 return URL.ecosiaSearchWithQuery(query, preservingVerticalFrom: sourceURL)
             }
-            return URL.ecosiaSearchWithQuery(query)
+            return URL.ecosiaSearchWithQuery(
+                query,
+                autoRedirect: !AIFreeSearchingSelection.isActive
+            )
         }
         return engine.searchURLForQuery(query)
     }
 
     static func omniboxSearchURL(forQuery query: String,
-                               engine: OpenSearchEngine?,
+                               engine: OpenSearchEngine? = nil,
                                engineID: String = User.shared.selectedSearchEngineID) -> URL {
         if CustomSearchProviderFeatureFlag.isEnabled,
            !SearchProviderSelection.isEcosiaEngineID(engineID),
@@ -30,6 +33,6 @@ enum SearchProviderRouting {
            let url = engine.searchURLForQuery(query) {
             return url
         }
-        return URL.ecosiaSearchWithQuery(query, autoRedirect: true)
+        return URL.ecosiaSearchWithQuery(query, autoRedirect: !AIFreeSearchingSelection.isActive)
     }
 }

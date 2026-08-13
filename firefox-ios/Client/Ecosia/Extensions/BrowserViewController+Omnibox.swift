@@ -32,7 +32,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // When a chat mode is active, every message bypasses backend
         // autorouting and goes straight to AI Chat in that mode. The mode
         // stays selected across submissions until the user deselects it.
-        if SearchProviderSelection.usesEcosiaAIBackend, let mode = omniboxSheetState?.selectedChatMode {
+        // AI-free searching suppresses this path so leftover mode state
+        // cannot still open AI Chat.
+        if SearchProviderSelection.usesEcosiaAIBackend,
+           AIFreeSearchingSelection.allowsOmniboxAI,
+           let mode = omniboxSheetState?.selectedChatMode {
             if chatFiles.isEmpty {
                 submitOmniboxChatMode(mode, query: searchTerm, chatFiles: chatFiles)
                 showEmbeddedWebview()
@@ -49,7 +53,9 @@ extension BrowserViewController: NTPSearchBarDelegate {
                 }
             }
             return
-        } else if SearchProviderSelection.usesEcosiaAIBackend, !chatFiles.isEmpty {
+        } else if SearchProviderSelection.usesEcosiaAIBackend,
+                    !chatFiles.isEmpty,
+                    AIFreeSearchingSelection.allowsOmniboxAI {
             guard let tab = tabManager.selectedTab else { return }
             let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
             Task { @MainActor [weak self] in
@@ -197,6 +203,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
             finishEditingAndSubmit(GeminiSearchRouting.geminiAppURL, visitType: .typed, forTab: tab)
             showEmbeddedWebview()
         case .ecosiaFullStack:
+            guard AIFreeSearchingSelection.allowsOmniboxAI else { return }
             presentEcosiaOmniboxUploadDrawer()
         }
     }
@@ -640,14 +647,14 @@ extension BrowserViewController {
             resetOmniboxSelectionsForNonEcosiaSearchProvider()
         }
 
-        ntpOmniboxAnchorView?.updateUploadVisibilityForSearchProvider()
+        ntpOmniboxAnchorView?.updateUploadButtonVisibility()
     }
 
     private func resetOmniboxSelectionsForNonEcosiaSearchProvider() {
         omniboxSheetState?.selectedChatMode = nil
         omniboxAttachmentCoordinator.clearAttachments()
         ntpOmniboxAnchorView?.setSelectedChatMode(nil)
-        ntpOmniboxAnchorView?.updateUploadVisibilityForSearchProvider()
+        ntpOmniboxAnchorView?.updateUploadButtonVisibility()
     }
 }
 

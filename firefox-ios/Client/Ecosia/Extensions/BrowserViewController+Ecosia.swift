@@ -48,7 +48,7 @@ extension BrowserViewController {
     func ecosiaPrepareNTPOmniboxForDisplay() {
         guard let homepage = ecosiaEmbeddedHomepage,
               homepage.ntpSearchBar?.isFirstResponder == false else { return }
-        homepage.ntpSearchBar?.updateUploadVisibilityForSearchProvider()
+        homepage.ntpSearchBar?.updateUploadButtonVisibility()
         homepage.resetNTPOmniboxSession()
     }
 
