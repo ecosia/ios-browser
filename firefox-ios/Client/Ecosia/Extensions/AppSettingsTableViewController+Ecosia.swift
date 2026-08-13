@@ -22,13 +22,25 @@ extension AppSettingsTableViewController {
             ])]
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        let settings: [Setting] = [
+        var settings: [Setting] = [
             EcosiaDefaultBrowserSettings(),
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: profile.prefs, theme: theme),
             AIOverviewsSearchSettings(prefs: profile.prefs, theme: theme)
         ]
+
+        if CustomSearchProviderFeatureFlag.isEnabled {
+            let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+            settings.insert(
+                SearchSetting(
+                    settingsDelegate: parentCoordinator,
+                    searchEnginesManager: searchEnginesManager,
+                    theme: theme
+                ),
+                at: 1
+            )
+        }
 
         return [SettingSection(title: .init(string: .localized(.search)),
                                children: settings)]
@@ -93,6 +105,7 @@ extension AppSettingsTableViewController {
         let unleashSettings: [Setting] = [
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
+            UnleashCustomSearchProviderSetting(settings: self),
             UnleashAIChatMVPSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]

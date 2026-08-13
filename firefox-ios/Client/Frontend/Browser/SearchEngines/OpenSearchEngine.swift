@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+import Ecosia
 
 final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearchEngine {
     static let logger: Logger = DefaultLogger.shared
@@ -140,9 +141,12 @@ final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearch
 
     /// Returns the search URL for the given query.
     func searchURLForQuery(_ query: String) -> URL? {
-        /* Ecosia: Use environment-aware URL builder instead of hardcoded template
-        return getURLFromTemplate(searchTemplate, query: query)
-        */
+        /* Ecosia: Route non-Ecosia engines through their OpenSearch templates when the custom
+           search provider flag is enabled; otherwise always use the Ecosia URL builder. */
+        if CustomSearchProviderFeatureFlag.isEnabled,
+           engineID != CuratedSearchEngines.ecosiaEngineID {
+            return getURLFromTemplate(searchTemplate, query: query)
+        }
         return URL.ecosiaSearchWithQuery(query)
     }
 

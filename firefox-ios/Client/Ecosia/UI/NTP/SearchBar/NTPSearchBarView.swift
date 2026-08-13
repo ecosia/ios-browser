@@ -430,7 +430,18 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             clearButtonGlyph.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor)
         ])
 
-        uploadButton.isHidden = !FileUploadFeatureFlag.isEnabled
+        uploadButton.isHidden = !shouldShowOmniboxUploadButton
+    }
+
+    func updateUploadVisibilityForSearchProvider() {
+        uploadButton.isHidden = !shouldShowOmniboxUploadButton
+        if uploadButton.isHidden {
+            chatModeChip.isHidden = true
+        }
+    }
+
+    private var shouldShowOmniboxUploadButton: Bool {
+        SearchProviderSelection.showsOmniboxAIFeatures
     }
 
     @objc private func focusTextView() {

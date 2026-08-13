@@ -2,8 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Foundation
 import Common
+import Ecosia
 import Shared
 import Storage
 
@@ -26,7 +26,12 @@ struct SearchEngineProviderFactory {
     /* Ecosia: Use custom provider that ensures Ecosia is always the default
     static let defaultSearchEngineProvider: SearchEngineProvider = ASSearchEngineProvider()
     */
-    static let defaultSearchEngineProvider: SearchEngineProvider = EcosiaSearchEngineProvider()
+    static var defaultSearchEngineProvider: SearchEngineProvider {
+        if CustomSearchProviderFeatureFlag.isEnabled {
+            return HybridSearchEngineProvider()
+        }
+        return EcosiaSearchEngineProvider()
+    }
 }
 
 /// Manages a set of `OpenSearchEngine`s.

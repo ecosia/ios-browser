@@ -3416,7 +3416,10 @@ class BrowserViewController: UIViewController,
         finishEditingAndSubmit(searchURL, visitType: VisitType.typed, forTab: tab)
         dispatchSubmitSearchTermAction(with: searchURL, searchTerm: text)
         */
-        let targetURL = URL.ecosiaSearchWithQuery(text, preservingVerticalFrom: tab.url)
+        let targetURL = SearchProviderRouting.searchURL(forQuery: text,
+                                                        engine: engine,
+                                                        preservingVerticalFrom: tab.url)
+            ?? URL.ecosiaSearchWithQuery(text, preservingVerticalFrom: tab.url)
         finishEditingAndSubmit(targetURL, visitType: VisitType.typed, forTab: tab)
         dispatchSubmitSearchTermAction(with: targetURL, searchTerm: text)
     }
@@ -4729,13 +4732,14 @@ extension BrowserViewController: SearchViewControllerDelegate {
         // loading the URL directly, but still tear the omnibox down and force
         // the webview swap that the URL-bar overlay chain would normally do.
         // The dedicated AI Chat row IS associated with a search term but its
-        // URL is already the AI chat endpoint — sending it through
-        // `ntpSearchBarDidSubmit` would rebuild a plain Ecosia search URL and
-        // drop the AI chat destination, so we treat that case like the URL
-        // fallback below.
+        // URL is already the AI chat / Gemini AI Mode endpoint — sending it
+        // through `ntpSearchBarDidSubmit` would rebuild a plain search URL and
+        // drop the AI destination, so we treat that case like the URL fallback
+        // below.
         let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
         if isOmniboxOverlay {
-            if let searchTerm, !searchTerm.isEmpty, !url.isEcosiaAIChat {
+            let isPrebuiltAIDestination = url.isEcosiaAIChat || GeminiSearchRouting.isAIDestination(url)
+            if let searchTerm, !searchTerm.isEmpty, !isPrebuiltAIDestination {
                 ntpSearchBarDidSubmit(searchTerm)
                 return
             }
@@ -4779,6 +4783,9 @@ extension BrowserViewController: SearchViewControllerDelegate {
     }
 
     func updateForDefaultSearchEngineDidChange() {
+        /* Ecosia: Keep omnibox gating and analytics in sync with the selected provider. */
+        SearchProviderSelection.syncSelectedEngineID(searchEnginesManager.defaultEngine?.engineID)
+        ecosiaHandleDefaultSearchEngineDidChange()
         // Update search icon when the search engine changes
         let action = ToolbarAction(windowUUID: windowUUID, actionType: ToolbarActionType.searchEngineDidChange)
         store.dispatch(action)

@@ -44,6 +44,24 @@ public struct EcosiaAccessibilityIdentifiers {
 
     public struct Search {
         public static let suggestionCellPrefix = "searchSuggestion"
+        public static let aiChatSuggestion = "searchSuggestion_aiChat"
+    }
+
+    public struct Settings {
+        public static let defaultSearchEngine = "Settings.Search.defaultSearchEngine"
+        public static let aiOverviewsSwitch = "Settings.aiOverviews.switch"
+    }
+
+    public struct SearchEnginePicker {
+        private static let prefix = "SearchEnginePicker"
+
+        public static func engine(_ engineID: String) -> String {
+            "\(prefix).\(engineID)"
+        }
+    }
+
+    public struct Debug {
+        public static let customSearchProviderUnleash = "Debug.Unleash.customSearchProvider"
     }
 
     public struct AddressBar {

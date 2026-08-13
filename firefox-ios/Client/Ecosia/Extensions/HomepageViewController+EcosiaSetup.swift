@@ -199,6 +199,16 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             name: .HomePanelPrefsChanged,
             object: nil
         )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(ecosiaSearchProviderDidChange),
+            name: .SearchSettingsDidUpdateDefaultSearchEngine,
+            object: nil
+        )
+    }
+
+    @objc private func ecosiaSearchProviderDidChange() {
+        ntpSearchBar?.updateUploadVisibilityForSearchProvider()
     }
 
     @objc private func homePanelPrefsDidChange(_ notification: Notification) {
@@ -228,6 +238,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ))
 
         ecosiaAdapter?.viewWillAppear()
+        ntpSearchBar?.updateUploadVisibilityForSearchProvider()
         // Full-screen upload pickers (camera / Files) temporarily hide the NTP
         // without leaving it. `ecosiaViewDidDisappear` preserves the draft across
         // that modal; if text or attachments are still present here, keep them
