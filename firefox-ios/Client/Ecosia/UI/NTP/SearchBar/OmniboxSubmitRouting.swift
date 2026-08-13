@@ -17,10 +17,10 @@ enum OmniboxSubmitRouting {
             return url
         }
 
-        if !chatFiles.isEmpty {
+        if !chatFiles.isEmpty, AIFreeSearchingSelection.allowsOmniboxAI {
             return urlProvider.aiChat(origin: .omnibox, query: query, files: chatFiles)
         }
 
-        return URL.ecosiaSearchWithQuery(query, autoRedirect: true)
+        return SearchProviderRouting.omniboxSearchURL(forQuery: query)
     }
 }
