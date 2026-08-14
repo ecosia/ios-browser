@@ -9,7 +9,6 @@ public struct CustomSearchProviderFeatureFlag {
     private init() {}
 
     public static var isEnabled: Bool {
-        return true
         Unleash.isEnabled(.customSearchProvider)
     }
 }
