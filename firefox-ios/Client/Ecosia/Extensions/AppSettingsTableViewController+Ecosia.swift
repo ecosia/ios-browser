@@ -15,6 +15,7 @@ extension AppSettingsTableViewController {
 
     func getSearchSection() -> [SettingSection] {
         guard let profile else {
+            SearchProviderSelection.prepareSearchSettingsSection(defaultEngineID: nil)
             return [SettingSection(title: .init(string: .localized(.search)), children: [
                 EcosiaDefaultBrowserSettings(),
                 SearchAreaSetting(settings: self),
@@ -22,6 +23,11 @@ extension AppSettingsTableViewController {
             ])]
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
+        let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+        SearchProviderSelection.prepareSearchSettingsSection(
+            defaultEngineID: searchEnginesManager.defaultEngine?.engineID
+        )
+
         var settings: [Setting] = [
             EcosiaDefaultBrowserSettings(),
             SearchAreaSetting(settings: self),
@@ -32,7 +38,6 @@ extension AppSettingsTableViewController {
         ]
 
         if CustomSearchProviderFeatureFlag.isEnabled {
-            let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
             settings.insert(
                 SearchSetting(
                     settingsDelegate: parentCoordinator,

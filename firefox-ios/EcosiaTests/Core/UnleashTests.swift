@@ -103,6 +103,59 @@ final class UnleashTests: XCTestCase {
         XCTAssertNotEqual(Unleash.model.id, firstId, "Id should change after reset")
     }
 
+    func testLoadCachedModelIfNeededHydratesFromDisk() throws {
+        var model = Unleash.Model()
+        model.updated = Date()
+        model.toggles.insert(
+            Unleash.Toggle(
+                name: Unleash.Toggle.Name.customSearchProvider.rawValue,
+                enabled: true,
+                variant: .init(name: "enabled", enabled: true, payload: nil)
+            )
+        )
+        try JSONEncoder().encode(model).write(to: FileManager.unleash, options: .atomic)
+
+        Unleash.clearInstanceModel()
+        XCTAssertFalse(Unleash.isEnabled(.customSearchProvider))
+
+        Unleash.loadCachedModelIfNeeded()
+
+        XCTAssertTrue(Unleash.isLoaded)
+        XCTAssertTrue(Unleash.isEnabled(.customSearchProvider))
+    }
+
+    func testLoadCachedModelIfNeededDoesNotOverwriteHydratedModel() throws {
+        var diskModel = Unleash.Model()
+        diskModel.updated = Date()
+        diskModel.toggles.insert(
+            Unleash.Toggle(
+                name: Unleash.Toggle.Name.customSearchProvider.rawValue,
+                enabled: true,
+                variant: .init(name: "enabled", enabled: true, payload: nil)
+            )
+        )
+        try JSONEncoder().encode(diskModel).write(to: FileManager.unleash, options: .atomic)
+
+        var memoryModel = Unleash.Model()
+        memoryModel.updated = Date()
+        memoryModel.toggles.insert(
+            Unleash.Toggle(
+                name: Unleash.Toggle.Name.configTest.rawValue,
+                enabled: true,
+                variant: .init(name: "control", enabled: true, payload: nil)
+            )
+        )
+        let memoryID = memoryModel.id
+        Unleash.model = memoryModel
+
+        Unleash.loadCachedModelIfNeeded()
+
+        XCTAssertTrue(Unleash.isLoaded)
+        XCTAssertEqual(Unleash.model.id, memoryID)
+        XCTAssertTrue(Unleash.isEnabled(.configTest))
+        XCTAssertFalse(Unleash.isEnabled(.customSearchProvider))
+    }
+
     func testQueryParametersWithMockedUser() {
         let originalUser = User.shared
 

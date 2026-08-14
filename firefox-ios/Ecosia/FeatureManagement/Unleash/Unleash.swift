@@ -71,7 +71,7 @@ public enum Unleash: UnleashProtocol {
                     do {
                         // Load from filesystem if not already happened
                         if model.updated.timeIntervalSince1970 == 0 {
-                            await load().map({ Self.model = $0 })
+                            loadCachedModelFromDisk().map({ Self.model = $0 })
                         }
 
                         // Mark as loaded after initial load
@@ -166,9 +166,33 @@ public enum Unleash: UnleashProtocol {
                                appVersion: appVersion)
     }
 
+    /// Hydrates the in-memory model from the on-disk cache when it has not been loaded yet.
+    ///
+    /// Call synchronously before dependency injection bootstraps consumers that read Unleash flags
+    /// (for example `SearchEnginesManager`). Network refresh still happens later in `start()`.
+    public static func loadCachedModelIfNeeded() {
+        queue.sync {
+            if model.updated.timeIntervalSince1970 == 0 {
+                if let cached = loadCachedModelFromDisk() {
+                    model = cached
+                    EcosiaLogger.featureFlags.info(
+                        "Hydrated Unleash from disk (\(cached.toggles.count) toggles)"
+                    )
+                } else {
+                    EcosiaLogger.featureFlags.debug("No cached Unleash model on disk")
+                }
+            }
+            _isLoaded = true
+        }
+    }
+
     /// Loads the model from the filesystem.
     /// - Returns: The loaded `Model` if successful, otherwise `nil`.
     static func load() async -> Model? {
+        queue.sync { loadCachedModelFromDisk() }
+    }
+
+    private static func loadCachedModelFromDisk() -> Model? {
         try? JSONDecoder().decode(Model.self, from: .init(contentsOf: FileManager.unleash))
     }
 

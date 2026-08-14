@@ -60,6 +60,22 @@ enum SearchProviderSelection {
         aiBehavior != .disabled
     }
 
+    /// Whether Ecosia-only rows in Settings → Search should be visible.
+    static var showsEcosiaSearchSettings: Bool {
+        guard CustomSearchProviderFeatureFlag.isEnabled else { return true }
+        return isEcosiaEngineID(User.shared.selectedSearchEngineID)
+    }
+
+    /// Keeps persisted provider state aligned with the active default engine before building
+    /// the settings section. Resets to Ecosia when the feature flag is off.
+    static func prepareSearchSettingsSection(defaultEngineID: String?) {
+        guard CustomSearchProviderFeatureFlag.isEnabled else {
+            syncSelectedEngineID(ecosiaEngineID)
+            return
+        }
+        syncSelectedEngineID(defaultEngineID)
+    }
+
     static func isEcosiaEngineID(_ engineID: String) -> Bool {
         engineID == ecosiaEngineID
     }
