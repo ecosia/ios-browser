@@ -74,11 +74,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
 
         startRecordingStartupOpenURLTime()
         // Configure app information for BrowserKit, needed for logger
+        /* Ecosia: added environmentName and dsn args below, turning this call's trailing ")"
+        into ","
+        BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
+                                               nightlyAppVersion: AppConstants.nightlyAppVersion,
+                                               sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+        */
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
                                                sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
                                                // Ecosia: Tag Sentry events with Ecosia's own staging/production environment.
-                                               environmentName: EcosiaEnvironment.current.sentryTag)
+                                               environmentName: EcosiaEnvironment.current.sentryTag,
+                                               // Ecosia: Only supply a DSN for beta/release builds, so local Debug/Testing
+                                               // builds never report to Sentry at all — same intent the CHANNEL xcconfig
+                                               // entries already express for those configs.
+                                               dsn: [.beta, .release].contains(AppConstants.buildChannel)
+                                                   ? EcosiaEnvironment.current.urlProvider.sentryDSN : nil)
         // Ecosia: Register URLProvider domains that need Ecosia's desktop UA.
         UserAgent.configureEcosiaDesktopUserAgentDomains([
             URLProvider.production.domain,

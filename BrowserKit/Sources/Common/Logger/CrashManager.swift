@@ -122,11 +122,18 @@ public final class DefaultCrashManager: CrashManager, @unchecked Sendable {
     }
 
     public func setup(sendCrashReports: Bool) {
+        /* Ecosia: appInfo.dsn (set by the app, e.g. from Ecosia's URLProvider) takes precedence over
+        sentryWrapper.dsn (Firefox's own Info.plist SentryCloudDSN key); Firefox call sites that
+        never set appInfo.dsn keep using sentryWrapper.dsn unchanged.
         guard shouldSetup,
               sendCrashReports,
-              let dsn = sentryWrapper.dsn else {
-            return
-        }
+              let dsn = sentryWrapper.dsn else { return }
+        */
+        let dsnOverride = appInfo.dsn
+
+        guard shouldSetup,
+              sendCrashReports,
+              let dsn = dsnOverride ?? sentryWrapper.dsn else { return }
 
         sentryWrapper.startWithConfigureOptions(configure: { options in
             options.dsn = dsn
@@ -141,7 +148,10 @@ public final class DefaultCrashManager: CrashManager, @unchecked Sendable {
                     $0.lifecycle = .trace
                 }
             }
-            // Ecosia: setting correct envitonment tag
+            /* Ecosia: Use environmentTag (falls back to Firefox's own Nightly/Production naming
+            when Ecosia hasn't provided one) so Ecosia's staging/production tags come through.
+            options.environment = self.environment.rawValue
+            */
             options.environment = self.environmentTag
             options.releaseName = self.releaseName
             options.enableFileIOTracing = false

@@ -17,16 +17,24 @@ public final class BrowserKitInformation: @unchecked Sendable {
     // Sentry tagging, without BrowserKit needing to know about Ecosia's Environment type. Firefox call
     // sites can leave this nil and keep their existing Nightly/Production tagging.
     public var environmentName: String?
+    // Ecosia: Lets the app supply its own Sentry DSN directly, without going through the Info.plist
+    // SentryCloudDSN key Firefox's own CI injects. Firefox call sites can leave this nil and keep
+    // using their existing Info.plist-based DSN.
+    public var dsn: String?
 
     public func configure(buildChannel: AppBuildChannel,
                           nightlyAppVersion: String,
+                          /* Ecosia: added environmentName and dsn params below
+                          sharedContainerIdentifier: String) {
+                          */
                           sharedContainerIdentifier: String,
-                          // Ecosia: set environment name
-                          environmentName: String? = nil) {
+                          environmentName: String? = nil,
+                          dsn: String? = nil) {
         self.buildChannel = buildChannel
         self.nightlyAppVersion = nightlyAppVersion
         self.sharedContainerIdentifier = sharedContainerIdentifier
-        // Ecosia: set environment name
+        // Ecosia: set environment name and DSN
         self.environmentName = environmentName
+        self.dsn = dsn
     }
 }
