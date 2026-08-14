@@ -53,7 +53,7 @@ final class EcosiaDefaultBrowserSettings: Setting {
 
 final class SearchAreaSetting: Setting {
     override var hidden: Bool {
-        CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
+        !SearchProviderSelection.showsEcosiaSearchSettings
     }
 
     override var title: NSAttributedString? {
@@ -93,7 +93,7 @@ final class SearchAreaSetting: Setting {
 
 final class SafeSearchSettings: Setting {
     override var hidden: Bool {
-        CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
+        !SearchProviderSelection.showsEcosiaSearchSettings
     }
 
     override var title: NSAttributedString? {
@@ -130,7 +130,7 @@ final class SafeSearchSettings: Setting {
 
 final class AutoCompleteSettings: BoolSetting {
     override var hidden: Bool {
-        CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
+        !SearchProviderSelection.showsEcosiaSearchSettings
     }
 
     convenience init(prefs: Prefs, theme: Theme) {
@@ -156,7 +156,7 @@ final class AutoCompleteSettings: BoolSetting {
 
 final class AIOverviewsSearchSettings: BoolSetting {
     override var hidden: Bool {
-        CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider
+        !SearchProviderSelection.showsEcosiaSearchSettings
     }
 
     override var accessibilityIdentifier: String? {

@@ -108,6 +108,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // i.e. this must be run before initializing those systems.
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
 
+        // Ecosia: Hydrate Unleash from disk before DI bootstrap so flags are readable when
+        // SearchEnginesManager picks its engine provider (network refresh still runs later).
+        Unleash.loadCachedModelIfNeeded()
+
         // Then setup dependency container as it's needed for everything else
         DependencyHelper().bootstrapDependencies()
 
@@ -216,8 +220,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
          make any tangible difference in the process as we check if
          any cached version of the Model is in place.
          */
-        Task {
+        Task { @MainActor in
             await FeatureManagement.fetchConfiguration()
+            // Ecosia: Swap search engine provider if Unleash refresh changed the custom provider flag.
+            searchEnginesManager.reconfigureEngineProviderIfNeeded()
             // Signal that feature management initialization is complete on main thread
             AppEventQueue.signal(event: .featureManagementInitialized)
             // Ecosia: Braze Service Initialization after feature flags are fetched for conditional initialization

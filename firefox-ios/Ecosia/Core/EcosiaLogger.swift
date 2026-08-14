@@ -124,4 +124,12 @@ public enum EcosiaLogger {
     public enum accounts: EcosiaLoggerCategory {
         public static let prefix = "👤 [ACCOUNTS]"
     }
+
+    public enum search: EcosiaLoggerCategory {
+        public static let prefix = "🔍 [SEARCH]"
+    }
+
+    public enum featureFlags: EcosiaLoggerCategory {
+        public static let prefix = "🚩 [FLAGS]"
+    }
 }

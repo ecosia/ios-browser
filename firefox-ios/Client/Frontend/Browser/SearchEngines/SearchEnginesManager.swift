@@ -83,10 +83,26 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
         self.orderedEngines = []
         initPrefBasedSuggestions()
 
-        logger.log("[SEC] Search engine provider: \(String(describing: type(of: engineProvider)))",
-                   level: .info,
-                   category: .remoteSettings)
+        EcosiaLogger.search.info("Search engine provider: \(String(describing: type(of: engineProvider)))")
 
+        reloadOrderedEngines()
+    }
+
+    // Ecosia: Re-evaluate provider after Unleash network refresh when the cached flag at launch
+    // differed from the remote value (for example first install with no on-disk cache).
+    func reconfigureEngineProviderIfNeeded() {
+        let shouldUseHybridProvider = CustomSearchProviderFeatureFlag.isEnabled
+        let usesHybridProvider = engineProvider is HybridSearchEngineProvider
+        guard shouldUseHybridProvider != usesHybridProvider else { return }
+
+        engineProvider = SearchEngineProviderFactory.defaultSearchEngineProvider
+        EcosiaLogger.search.info(
+            "Search engine provider reconfigured: \(String(describing: type(of: engineProvider)))"
+        )
+        reloadOrderedEngines()
+    }
+
+    private func reloadOrderedEngines() {
         getOrderedEngines { preferences, orderedEngines in
             self.orderedEngines = orderedEngines
 
@@ -95,6 +111,7 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
             // explicitly for disabled engines, the engine ordering will be updated
             // by the setter for the orderedEngines property.
             self.disabledEngines = preferences.disabledEngines ?? []
+            SearchProviderSelection.syncSelectedEngineID(self.defaultEngine?.engineID)
 
             self.delegate?.searchEnginesDidUpdate()
         }
