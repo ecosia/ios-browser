@@ -127,7 +127,9 @@ public final class DefaultCrashManager: CrashManager, @unchecked Sendable {
         never set appInfo.dsn keep using sentryWrapper.dsn unchanged.
         guard shouldSetup,
               sendCrashReports,
-              let dsn = sentryWrapper.dsn else { return }
+              let dsn = sentryWrapper.dsn else {
+            return
+        }
         */
         let dsnOverride = appInfo.dsn
 

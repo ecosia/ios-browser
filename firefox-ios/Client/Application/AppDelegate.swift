@@ -74,14 +74,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
 
         startRecordingStartupOpenURLTime()
         // Configure app information for BrowserKit, needed for logger
-        /* Ecosia: added environmentName and dsn args below, turning this call's trailing ")"
-        into ","
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
+                                               /* Ecosia: added environmentName and dsn args below
                                                sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
-        */
-        BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
-                                               nightlyAppVersion: AppConstants.nightlyAppVersion,
+                                                */
                                                sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
                                                // Ecosia: Tag Sentry events with Ecosia's own staging/production environment.
                                                environmentName: EcosiaEnvironment.current.sentryTag,
