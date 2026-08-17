@@ -38,7 +38,7 @@ platform :ios do
     sentry_cli = File.expand_path("../firefox-ios/ThirdParty/sentry-cli", __dir__)
     sh(
       "#{sentry_cli} --auth-token \"#{ENV['SENTRY_AUTH_TOKEN']}\" upload-dif " \
-      "--org ecosiaorg --project ios-browser \"#{dsym_path}\""
+      "--org ecosiaorg --project browser-ios \"#{dsym_path}\""
     )
   end
 
