@@ -44,19 +44,11 @@ final class AppLaunchUtil: Sendable {
             #endif
         }
 
-        /* Ecosia: Sentry setup moved out of this early, synchronous path in all 3 places it's called
-        below — it's now gated by the mob_ios_sentry_reporting Unleash flag and only runs from
-        setUpCrashReportingIfEnabled(), called after FeatureManagement.fetchConfiguration() resolves
-        (see AppDelegate). We accept no crash coverage for the brief window before that resolves, in
-        exchange for a single decision point instead of persisting Unleash state across launches.
         // Need to get "settings.sendCrashReports" this way so that Sentry can be initialized before getting the Profile.
         let sendCrashReports = NSUserDefaultsPrefs(prefix: "profile").boolForKey(AppConstants.prefSendCrashReports) ?? true
-        */
 
         if termsOfServiceManager.isAffectedUser {
-            /* Ecosia: Sentry setup moved out — see note above.
             logger.setup(sendCrashReports: sendCrashReports)
-            */
             TelemetryWrapper.shared.setup(profile: profile)
             TelemetryWrapper.shared.recordStartUpTelemetry()
         }
@@ -66,9 +58,7 @@ final class AppLaunchUtil: Sendable {
             // 1. when ToS screen has been presented and user accepted it
             // 2. or when ToS screen is not presented because is not fresh install
             let isTermsOfServiceAccepted = termsOfServiceManager.isAccepted || !introScreenManager.shouldShowIntroScreen
-            /* Ecosia: Sentry setup moved out — see note above.
             logger.setup(sendCrashReports: sendCrashReports && isTermsOfServiceAccepted)
-            */
             if isTermsOfServiceAccepted {
                 TelemetryWrapper.shared.setup(profile: profile)
                 TelemetryWrapper.shared.recordStartUpTelemetry()
@@ -78,9 +68,7 @@ final class AppLaunchUtil: Sendable {
                 TelemetryContextualIdentifier.setupContextId(isGleanMetricsAllowed: false)
             }
         } else {
-            /* Ecosia: Sentry setup moved out — see note above.
             logger.setup(sendCrashReports: sendCrashReports)
-            */
             TelemetryWrapper.shared.setup(profile: profile)
             TelemetryWrapper.shared.recordStartUpTelemetry()
         }
@@ -165,13 +153,13 @@ final class AppLaunchUtil: Sendable {
         }
     }
 
-    // Ecosia: Starts Sentry once the `mob_ios_sentry_reporting` Unleash flag is known — called from
-    // AppDelegate after `FeatureManagement.fetchConfiguration()` resolves (both at launch and on
-    // foreground refresh). `logger.setup` is safe to call more than once; `CrashManager` no-ops once
-    // already enabled. Skips replicating the (expired, FXIOS-12249) `isAffectedUser` migration-cohort
-    // exception from the original logic this replaced.
+    // Ecosia: Refreshes BrowserKitInformation's Sentry rollout flag once the `mob_ios_sentry_reporting`
+    // Unleash flag is known — called from AppDelegate after `FeatureManagement.fetchConfiguration()`
+    // resolves (both at launch and on foreground refresh). `logger.setup` is safe to call more than
+    // once; `CrashManager` checks the flag itself, covering every call site, and no-ops once already
+    // enabled.
     func setUpCrashReportingIfEnabled() {
-        guard SentryReportingExperiment.isEnabled else { return }
+        BrowserKitInformation.shared.sentryReportingEnabled = SentryReportingExperiment.isEnabled
 
         let sendCrashReports = NSUserDefaultsPrefs(prefix: "profile").boolForKey(AppConstants.prefSendCrashReports) ?? true
         if termsOfServiceManager.isFeatureEnabled {

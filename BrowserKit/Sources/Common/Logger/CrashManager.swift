@@ -59,10 +59,13 @@ public final class DefaultCrashManager: CrashManager, @unchecked Sendable {
     private var isValidReleaseName: Bool {
         if skipReleaseNameCheck { return true }
 
+        /* Ecosia: No build in this fork ever produces Mozilla's bundle IDs, so scoping this to
+        Ecosia's own bundle identifiers also keeps the Sentry option tuning below (sampleRate,
+        session tracking) from ever applying to a non-Ecosia app.
         return AppInfo.bundleIdentifier == "org.mozilla.ios.Firefox"
                 || AppInfo.bundleIdentifier == "org.mozilla.ios.FirefoxBeta"
-                // Ecosia: Allow Ecosia's own bundle identifiers to report to Ecosia's Sentry project.
-                || AppInfo.bundleIdentifier == "com.ecosia.ecosiaapp"
+        */
+        return AppInfo.bundleIdentifier == "com.ecosia.ecosiaapp"
                 || AppInfo.bundleIdentifier == "com.ecosia.ecosiaapp.firefox"
     }
 
@@ -135,6 +138,8 @@ public final class DefaultCrashManager: CrashManager, @unchecked Sendable {
 
         guard shouldSetup,
               sendCrashReports,
+              // Ecosia: lets the app gate every setup() call site on its own rollout flag at once.
+              appInfo.sentryReportingEnabled,
               let dsn = dsnOverride ?? sentryWrapper.dsn else { return }
 
         sentryWrapper.startWithConfigureOptions(configure: { options in

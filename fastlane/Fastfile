@@ -35,11 +35,12 @@ platform :ios do
   lane :upload_dsym_to_sentry do
     ensure_env_vars(env_vars: ['SENTRY_AUTH_TOKEN'])
     dsym_path = lane_context[SharedValues::DSYM_OUTPUT_PATH]
+    UI.user_error!("No dSYM path found in DSYM_OUTPUT_PATH — run gym/build_app first") if dsym_path.to_s.empty?
+
     sentry_cli = File.expand_path("../firefox-ios/ThirdParty/sentry-cli", __dir__)
-    sh(
-      "#{sentry_cli} --auth-token \"#{ENV['SENTRY_AUTH_TOKEN']}\" upload-dif " \
-      "--org ecosiaorg --project browser-ios \"#{dsym_path}\""
-    )
+    # sentry-cli reads SENTRY_AUTH_TOKEN from the environment, so it's not passed on the command
+    # line here — that would leak it into CI logs and process listings.
+    sh("#{sentry_cli} upload-dif --org ecosiaorg --project browser-ios \"#{dsym_path}\"")
   end
 
   desc "Build Ecosia App"

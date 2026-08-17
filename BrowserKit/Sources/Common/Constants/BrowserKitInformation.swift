@@ -21,6 +21,10 @@ public final class BrowserKitInformation: @unchecked Sendable {
     // SentryCloudDSN key Firefox's own CI injects. Firefox call sites can leave this nil and keep
     // using their existing Info.plist-based DSN.
     public var dsn: String?
+    // Ecosia: Lets the app gate Sentry startup on its own rollout flag (e.g. an Unleash toggle),
+    // checked inside CrashManager.setup() so every call site is covered without needing its own
+    // guard. Defaults to false so Sentry stays off until the app explicitly enables it.
+    public var sentryReportingEnabled = false
 
     public func configure(buildChannel: AppBuildChannel,
                           nightlyAppVersion: String,

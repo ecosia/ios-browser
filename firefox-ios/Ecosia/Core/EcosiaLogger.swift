@@ -12,8 +12,10 @@ public enum LogLevel {
     case warning
     case error
     /// Same local console output as `.error`, plus forwards to Sentry via `DefaultLogger`
-    /// (category `.ecosia`). Reserve for failures worth visibility outside a live console
-    /// session — not every `.error` call needs this.
+    /// (category `.ecosia`). Forwarded at BrowserKit's `.fatal` level, not `.error` — that's not a
+    /// severity statement, it's required so `CrashManager.shouldSendEventFor` actually sends it as a
+    /// Sentry event instead of only a breadcrumb. Reserve for failures worth visibility outside a
+    /// live console session — not every `.error` call needs this.
     case sentry
 }
 
@@ -39,9 +41,9 @@ public extension EcosiaLoggerCategory {
         EcosiaLogger.error("\(prefix) \(message)")
     }
 
-    /// Logs locally like `.error` AND forwards to Sentry. Use for real failures worth visibility
-    /// outside a live console session — not every `.error` call needs this. Interpolate the error
-    /// into `message` yourself, same as `.error(...)` elsewhere in this file.
+    /// Logs locally like `.error` AND forwards to Sentry (see `LogLevel.sentry`). Use for real
+    /// failures worth visibility outside a live console session — not every `.error` call needs
+    /// this. Interpolate the error into `message` yourself, same as `.error(...)` elsewhere in this file.
     static func sentry(_ message: String) {
         EcosiaLogger.sentry("\(prefix) \(message)")
     }
@@ -90,7 +92,8 @@ public enum EcosiaLogger {
         print("[\(timestamp)] \(prefix): ❌ [ERROR] \(message)")
     }
 
-    /// Log an error message locally AND forward it to Sentry via `DefaultLogger` (category `.ecosia`).
+    /// Log an error message locally AND forward it to Sentry via `DefaultLogger` (category `.ecosia`,
+    /// level `.fatal` — see `LogLevel.sentry` for why).
     public static func sentry(_ message: String) {
         print("[\(timestamp)] \(prefix): 📡 [SENTRY] \(message)")
         DefaultLogger.shared.log(message, level: .fatal, category: .ecosia)
