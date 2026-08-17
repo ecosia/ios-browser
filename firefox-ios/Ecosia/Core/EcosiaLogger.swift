@@ -11,12 +11,6 @@ public enum LogLevel {
     case info
     case warning
     case error
-    /// Same local console output as `.error`, plus forwards to Sentry via `DefaultLogger`
-    /// (category `.ecosia`). Forwarded at BrowserKit's `.fatal` level, not `.error` — that's not a
-    /// severity statement, it's required so `CrashManager.shouldSendEventFor` actually sends it as a
-    /// Sentry event instead of only a breadcrumb. Reserve for failures worth visibility outside a
-    /// live console session — not every `.error` call needs this.
-    case sentry
 }
 
 /// Protocol for category-specific logging with default implementations
@@ -41,8 +35,8 @@ public extension EcosiaLoggerCategory {
         EcosiaLogger.error("\(prefix) \(message)")
     }
 
-    /// Logs locally like `.error` AND forwards to Sentry (see `LogLevel.sentry`). Use for real
-    /// failures worth visibility outside a live console session — not every `.error` call needs
+    /// Logs locally like `.error` AND forwards to Sentry (see `EcosiaLogger.sentry(_:)`). Use for
+    /// real failures worth visibility outside a live console session — not every `.error` call needs
     /// this. Interpolate the error into `message` yourself, same as `.error(...)` elsewhere in this file.
     static func sentry(_ message: String) {
         EcosiaLogger.sentry("\(prefix) \(message)")
@@ -92,8 +86,12 @@ public enum EcosiaLogger {
         print("[\(timestamp)] \(prefix): ❌ [ERROR] \(message)")
     }
 
-    /// Log an error message locally AND forward it to Sentry via `DefaultLogger` (category `.ecosia`,
-    /// level `.fatal` — see `LogLevel.sentry` for why).
+    /// Log an error message locally like `.error`, AND forward it to Sentry via `DefaultLogger`
+    /// (category `.ecosia`). Forwarded at BrowserKit's `.fatal` level, not `.error` — that's not a
+    /// severity statement, it's required so `CrashManager.shouldSendEventFor` actually sends it as a
+    /// Sentry event instead of only a breadcrumb. Reserve for failures worth visibility outside a
+    /// live console session — not every `.error` call needs this. Not part of `LogLevel`/`log(_:level:)`
+    /// since it's a routing decision (also forward to Sentry), not a severity.
     public static func sentry(_ message: String) {
         print("[\(timestamp)] \(prefix): 📡 [SENTRY] \(message)")
         DefaultLogger.shared.log(message, level: .fatal, category: .ecosia)
@@ -110,8 +108,6 @@ public enum EcosiaLogger {
             warning(message)
         case .error:
             error(message)
-        case .sentry:
-            sentry(message)
         }
     }
 
