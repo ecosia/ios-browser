@@ -215,7 +215,11 @@ final class EcosiaAuthFlow {
         }
 
         // Get session transfer URL
-        let signUpURL = EcosiaEnvironment.current.urlProvider.signUpURL
+        // Ecosia: Debug hook for EcosiaDebugSettings' SimulateSessionTransferFailureSetting - loads
+        // /accounts/error directly instead of the real sign-up URL.
+        let signUpURL = SimulateSessionTransferFailureSetting.isEnabled
+            ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
+            : EcosiaEnvironment.current.urlProvider.signUpURL
 
         EcosiaLogger.session.info("Retrieving session transfer token for SSO")
         await authService.getSessionTransferToken()
@@ -274,7 +278,11 @@ final class EcosiaAuthFlow {
         }
 
         // Get logout URL
-        let logoutURL = EcosiaEnvironment.current.urlProvider.logoutURL
+        // Ecosia: Debug hook for EcosiaDebugSettings' SimulateSessionTransferFailureSetting - see
+        // performSessionTransfer above.
+        let logoutURL = SimulateSessionTransferFailureSetting.isEnabled
+            ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
+            : EcosiaEnvironment.current.urlProvider.logoutURL
 
         // Create invisible tab session for logout (must be on main thread for UI operations)
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for logout")
