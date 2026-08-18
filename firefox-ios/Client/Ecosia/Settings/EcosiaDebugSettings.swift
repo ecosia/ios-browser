@@ -22,7 +22,7 @@ final class EcosiaLoggerForceErrorSetting: HiddenSetting {
         EcosiaLogger.general.sentry("Ecosia debug: non-crashing test event")
 
         let alert = AlertController(title: "Sent ✅",
-                                    message: "Check the Xcode console for [Sentry] logs and the dashboard in a minute.",
+                                    message: "Check the Sentry dashboard in a minute.",
                                     preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         navigationController?.topViewController?.present(alert, animated: true)
