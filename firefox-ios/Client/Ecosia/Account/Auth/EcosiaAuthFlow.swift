@@ -241,12 +241,29 @@ final class EcosiaAuthFlow {
         await withCheckedContinuation { continuation in
             Task { @MainActor in
                 session.startMonitoring { [weak self] success in
-                    self?.activeSession = nil // Release session
-                    EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                    onFlowCompleted?(success)
-                    continuation.resume()
+                    Task { @MainActor in
+                        self?.activeSession = nil // Release session
+                        EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+                        if !success {
+                            await self?.logOutNativelyAfterFailedSessionTransfer()
+                        }
+                        onFlowCompleted?(success)
+                        continuation.resume()
+                    }
                 }
             }
+        }
+    }
+
+    /// Ecosia: Mirrors Android's AuthViewModel.handleSessionTransferFailure - a failed session
+    /// transfer means the web session was never actually authenticated, so clear native credentials
+    /// too instead of leaving native "logged in" with no working web session. `triggerWebLogout:
+    /// false` since the web side already failed to authenticate; nothing there to log out of.
+    private func logOutNativelyAfterFailedSessionTransfer() async {
+        do {
+            try await authService.logout(triggerWebLogout: false)
+        } catch {
+            EcosiaLogger.auth.error("Native-only logout after failed session transfer also failed: \(error)")
         }
     }
 
