@@ -131,7 +131,7 @@ final class InvisibleTabSession: TabEventHandler {
 
         let success = classifySessionTransferOutcome()
         if !success {
-            EcosiaLogger.auth.sentry("Session transfer landed on a failure path: \(lastKnownURL?.absoluteString ?? "nil")")
+            EcosiaLogger.auth.sentry("Session transfer landed on a failure path: \(lastKnownURL?.redactedForLogging ?? "nil")")
         }
         EcosiaLogger.invisibleTabs.info("Session completed for tab: \(tab.tabUUID), success: \(success)")
         // Ecosia: Ensure completion is called on main for strict concurrency (caller may update UI).
