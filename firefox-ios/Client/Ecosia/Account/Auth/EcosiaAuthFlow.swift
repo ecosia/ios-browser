@@ -13,7 +13,6 @@ public enum EcosiaAuthFlowResult {
 
 /// Orchestrates complete authentication flows with invisible tab sessions
 /// Provides core functionality for authentication operations
-/// Ecosia: @MainActor so callbacks and session/tab ops stay on main thread; avoids sending non-Sendable closures.
 @MainActor
 final class EcosiaAuthFlow {
 
@@ -214,9 +213,8 @@ final class EcosiaAuthFlow {
             throw AuthError.authFlowConfigurationError("BrowserViewController not available")
         }
 
-        // Get session transfer URL
-        // Ecosia: Debug hook for EcosiaDebugSettings' SimulateSessionTransferFailureSetting - loads
-        // /accounts/error directly instead of the real sign-up URL.
+        // Get session transfer URL.
+        // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
         let signUpURL = SimulateSessionTransferFailureSetting.isEnabled
             ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
             : EcosiaEnvironment.current.urlProvider.signUpURL
@@ -259,7 +257,7 @@ final class EcosiaAuthFlow {
         }
     }
 
-    /// Ecosia: A failed session transfer means the web session was never actually authenticated,
+    /// A failed session transfer means the web session was never actually authenticated,
     /// so clear native credentials too instead of leaving native "logged in" with no working web session.
     /// `triggerWebLogout: false` since the web side already failed to authenticate; nothing there to log out of.
     private func logOutNativelyAfterFailedSessionTransfer() async {
@@ -277,8 +275,7 @@ final class EcosiaAuthFlow {
         }
 
         // Get logout URL
-        // Ecosia: Debug hook for EcosiaDebugSettings' SimulateSessionTransferFailureSetting - see
-        // performSessionTransfer above.
+        // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
         let logoutURL = SimulateSessionTransferFailureSetting.isEnabled
             ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
             : EcosiaEnvironment.current.urlProvider.logoutURL

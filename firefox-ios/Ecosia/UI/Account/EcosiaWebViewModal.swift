@@ -194,7 +194,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
                 return
             }
 
-            // Ecosia: this plain WKWebView has no ASWebAuthenticationSession fallback, so a Google
+            // This plain WKWebView has no ASWebAuthenticationSession fallback, so a Google
             // OAuth reauth landing here is itself the bug (Google blocks OAuth from embedded
             // WebViews with a "disallowed_useragent"/"Use secure browsers" error). Flag it.
             if url.host?.contains("accounts.google.com") == true {

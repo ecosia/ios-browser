@@ -21,7 +21,7 @@ final class InvisibleTabSession: TabEventHandler {
     // State
     private var isCompleted = false
     private var completion: ((Bool) -> Void)?
-    // Ecosia: Tracked live via KVO (see init) instead of read from tab.webView?.url at close time -
+    // Tracked live via KVO (see init) instead of read from tab.webView?.url at close time -
     // tabManager.removeTab has usually already torn down the webview by the time handleTabClosed()
     // runs, so tab.webView?.url would read back nil there.
     private var lastKnownURL: URL?
@@ -134,7 +134,7 @@ final class InvisibleTabSession: TabEventHandler {
             EcosiaLogger.auth.sentry("Session transfer landed on a failure path: \(lastKnownURL?.redactedForLogging ?? "nil")")
         }
         EcosiaLogger.invisibleTabs.info("Session completed for tab: \(tab.tabUUID), success: \(success)")
-        // Ecosia: Ensure completion is called on main for strict concurrency (caller may update UI).
+        // Ensure completion is called on main for strict concurrency (caller may update UI).
         let completionToCall = completion
         completion = nil
         if let completionToCall = completionToCall {
@@ -176,7 +176,7 @@ final class InvisibleTabSession: TabEventHandler {
         // Remove from invisible tracking
         InvisibleTabManager.shared.markTabAsVisible(tab)
 
-        // Ecosia: TabManager protocol has removeTab(_ tabUUID: TabUUID) with no completion
+        // TabManager protocol has removeTab(_ tabUUID: TabUUID) with no completion
         tabManager.removeTab(tab.tabUUID)
         tabManager.cleanupInvisibleTabTracking()
         EcosiaLogger.invisibleTabs.info("Tab closed: \(tab.tabUUID)")
@@ -197,7 +197,7 @@ final class InvisibleTabSession: TabEventHandler {
 
     // MARK: - Cleanup
 
-    /// Ecosia: Don't call cleanup() from deinit — cleanup() is main-actor/actor-isolated. Callers must ensure cleanup when session ends (e.g. handleTabClosed).
+    /// Don't call cleanup() from deinit — cleanup() is main-actor/actor-isolated. Callers must ensure cleanup when session ends (e.g. handleTabClosed).
     deinit {
         EcosiaLogger.invisibleTabs.debug("InvisibleTabSession deallocated")
     }
