@@ -269,7 +269,18 @@ We are using [Transifex](https://docs.transifex.com/client/introduction) for man
 
 ### Transifex GitHub integration
 
-We have [Transifex GitHub integration](https://help.transifex.com/en/articles/6265125-github-installation-and-configuration) enabled. When new strings are added it will create a pull request.
+We have [Transifex GitHub integration](https://help.transifex.com/en/articles/6265125-github-installation-and-configuration) enabled.
+
+The regular flow for translations is:
+1. Engineer adds source language (english) strings
+    a. Often helpful do do this early when implementing a new feature to kickoff the process
+2. Once merged to main, Transifex automatically pulls new strings
+3. Translations are added to Transifex
+    a. For German and French, we should follow [#translations-tier1](https://ecosia-team.slack.com/archives/C04EVKG7MV3)
+    b. For other languages, we can use regular Transifex translators and/or Transifex AI
+4. Once any language is finished (100%), Transifex automatically opens a PR to push them to code
+    a. The engineer that first pushed the source language should keep an eye for this, double check it and merge
+    b. We also have a CI check for translations completion on the release flow - see #-l10n-translation-completeness-check below
 
 ### Install the transifex client using pip
 
