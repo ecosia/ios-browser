@@ -267,6 +267,10 @@ To run the app on a new device, register it on the Apple Developer Portal and re
 
 We are using [Transifex](https://docs.transifex.com/client/introduction) for managing our translations.
 
+### Transifex GitHub integration
+
+We have [Transifex GitHub integration](https://help.transifex.com/en/articles/6265125-github-installation-and-configuration) enabled. When new strings are added it will create a pull request.
+
 ### Install the transifex client using pip
 
 ```bash
