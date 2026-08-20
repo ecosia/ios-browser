@@ -10,7 +10,7 @@ on:
 
 jobs:
   execute_snapshot_tests:
-    runs-on: macos-26
+    runs-on: macos-15
     name: Execute Snapshot Tests
 
     steps:
