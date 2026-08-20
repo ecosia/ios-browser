@@ -263,24 +263,21 @@ To run the app on a new device, register it on the Apple Developer Portal and re
    This flag makes `match` check whether the device count has changed since the last run and automatically re-generate the provisioning profiles if necessary. See the [fastlane match docs](https://docs.fastlane.tools/actions/match/#registering-new-devices) for more details.
 3. Open Xcode, select the **EcosiaBeta** (or **Ecosia**) scheme, choose your device and run (`Cmd + R`).
 
-## 🗣️ Translations
+## Translations
 
-We are using [Transifex](https://docs.transifex.com/client/introduction) for managing our translations.
+We manage translations using [Transifex](https://docs.transifex.com/client/introduction) and leverage the [Transifex GitHub Integration](https://help.transifex.com/en/articles/6265125-github-installation-and-configuration).
 
-### Transifex GitHub integration
+### Workflow
 
-We have [Transifex GitHub integration](https://help.transifex.com/en/articles/6265125-github-installation-and-configuration) enabled.
-
-The regular flow for translations is:
-1. Engineer adds source language (english) strings
-    a. Often helpful do do this early when implementing a new feature to kickoff the process
-2. Once merged to main, Transifex automatically pulls new strings
-3. Translations are added to Transifex
-    a. For German and French, we should follow [#translations-tier1](https://ecosia-team.slack.com/archives/C04EVKG7MV3)
-    b. For other languages, we can use regular Transifex translators and/or Transifex AI
-4. Once any language is finished (100%), Transifex automatically opens a PR to push them to code
-    a. The engineer that first pushed the source language should keep an eye for this, double check it and merge
-    b. We also have a CI check for translations completion on the release flow - see #-l10n-translation-completeness-check below
+1. **Source Strings:** The engineer adds new English strings to the iOS project and creates a PR.
+   > **Tip:** Open the PR early during feature development to kick off translation promptly.
+2. **Sync:** Once merged to `main`, Transifex automatically detects and pulls the new strings.
+3. **Translation:**
+   - **German & French:** Follow [#translations-tier1](https://ecosia-team.slack.com/archives/C04EVKG7MV3).
+   - **Other Languages:** Handled via regular Transifex translators or Transifex AI.
+4. **Integration:** When a language reaches 100% completion, Transifex automatically opens a PR.
+   - The engineer who added the initial source strings should monitor, review, and merge this PR.
+   - Translation completeness is also validated during the release flow via CI check.
 
 ### Install the transifex client using pip
 
