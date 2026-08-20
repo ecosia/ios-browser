@@ -279,47 +279,6 @@ We manage translations using [Transifex](https://docs.transifex.com/client/intro
    - The engineer who added the initial source strings should monitor, review, and merge this PR.
    - Translation completeness is also validated during the release flow via CI check.
 
-### Install the transifex client using pip
-
-```bash
-curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash
-```
-
-#### Configure your `~/.transifexrc` file
-
-```bash
-[https://www.transifex.com]
-api_hostname  = https://api.transifex.com
-hostname      = https://www.transifex.com
-username      = <vault secret>
-password      = <vault secret>
-rest_hostname = https://rest.api.transifex.com
-token         = <vault secret>
-```
-
-### Translations need to be pulled and commited manually
-
-Pulling translation from the web
-
-```bash
-tx pull -fs
-```
-
-Test and commit the new translations. There exists schemes for testing other languages in the simulator.
-
-### Adding new strings
-
-#### Via CLI
-
-1. Pull the source file
-2. Add the new strings to the English source file `Client/Ecosia/L10N/en.lproj/Ecosia.strings`
-3. Push it to Transifex
-
-```bash
-tx pull -fs
-tx push -s
-```
-
 ### Ecosify Mozilla Strings (only needed after upgrade)
 
 We do a rebrand of the Strings from Mozilla. Usually this step is only needed after an upgrade as we keep our changes in version control (as of opposite to Mozilla).
