@@ -153,7 +153,7 @@ class ShareViewController: UIViewController {
             makeActionRow(
                 addTo: stackView,
                 label: .ShareOpenInFirefox,
-                // Ecosia: change the logo
+                // Ecosia: this logo should point at 
                 //imageName: StandardImageIdentifiers.Large.logoFirefox,
                 imageName: "open-in-ecosia",
                 action: #selector(actionOpenInFirefoxNow),
