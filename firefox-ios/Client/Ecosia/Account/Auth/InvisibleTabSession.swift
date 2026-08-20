@@ -129,7 +129,7 @@ final class InvisibleTabSession: TabEventHandler {
 
         cleanup()
 
-        let success = classifySessionTransferOutcome()
+        let success = isSessionTransferSuccessful()
         if !success {
             EcosiaLogger.auth.sentry("Session transfer landed on a failure path: \(lastKnownURL?.redactedForLogging ?? "nil")")
         }
@@ -146,7 +146,7 @@ final class InvisibleTabSession: TabEventHandler {
 
     /// Classifies the invisible tab's final URL as success or failure: landing on the accounts error page, or being redirected
     /// back to sign-in, means the transfer didn't actually authenticate the web session, even though the tab closed normally.
-    private func classifySessionTransferOutcome() -> Bool {
+    private func isSessionTransferSuccessful() -> Bool {
         guard let finalURL = lastKnownURL, finalURL.isEcosia(urlProvider) else { return true }
 
         let path = finalURL.path.lowercased()

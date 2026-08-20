@@ -421,7 +421,7 @@ final class SimulateAuthErrorSetting: HiddenSetting {
 /// (ForcedTransferError.OPEN_ERROR_PAGE), rather than trying to trigger a genuine server-side
 /// redirect there (fastify-passport appears to 401 directly on an OAuth callback error param,
 /// short-circuiting before any redirect). /accounts/error itself has no auth precondition, so this
-/// still exercises the real web page and classifySessionTransferOutcome()'s URL classification
+/// still exercises the real web page and isSessionTransferSuccessful()'s URL classification
 /// end-to-end, rather than faking the outcome natively.
 final class SimulateSessionTransferFailureSetting: HiddenSetting {
     nonisolated public static let debugKey = "DebugSimulateSessionTransferFailure"
