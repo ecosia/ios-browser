@@ -54,6 +54,8 @@ public enum ExtensionTargets {
             resources: ["Extensions/ShareTo/**/*.{xcassets,strings,stringsdict}"],
             scripts: BuildScripts.removeFrameworkScriptFromExtensionTargets,
             dependencies: [
+                .target(name: "Account"),
+                .target(name: "Storage"),
                 .target(name: "Sync"),
                 .target(name: "Localizations"),
                 .sdk(name: "Ecosia", type: .framework),
