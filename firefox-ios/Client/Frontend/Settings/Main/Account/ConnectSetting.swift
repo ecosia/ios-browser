@@ -38,7 +38,6 @@ class ConnectSetting: WithoutAccountSetting {
 
     override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
         super.onConfigureCell(cell, theme: theme)
-        // Ecosia: enum value logoFirefox modified to point at Ecosia's logo
         cell.imageView?.image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.logoFirefox)
         cell.imageView?.tintColor = theme.colors.textDisabled
         cell.imageView?.layer.cornerRadius = (cell.imageView?.frame.size.width)! / 2

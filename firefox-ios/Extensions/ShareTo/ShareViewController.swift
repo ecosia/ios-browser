@@ -541,26 +541,21 @@ extension ShareViewController {
         let profile = BrowserProfile(localName: "profile")
         profile.prefs.setBool(true, forKey: PrefsKeys.AppExtensionTelemetryOpenUrl)
 
-        /// Ecosia: use the scheme from the bundle instead
-//        func firefoxUrl(_ url: String) -> String {
-//            let encoded = url.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.alphanumerics) ?? ""
-//            if isSearch {
-//                return "firefox://open-text?text=\(encoded)"
-//            }
-//            return "firefox://open-url?url=\(encoded)"
-//        }
-        func ecosiaUrl(_ url: String) -> String {
+        func firefoxUrl(_ url: String) -> String {
+            // Ecosia: use the scheme from the bundle instead, fallback to ecosia
+            let urlScheme = Bundle.main.object(forInfoDictionaryKey: "MozPublicURLScheme") as? String ?? "ecosia"
             let encoded = url.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.alphanumerics) ?? ""
-            guard let urlScheme = Bundle.main.object(forInfoDictionaryKey: "MozPublicURLScheme") as? String else {
-                fatalError("MozPublicURLScheme missing from Info.plist")
-            }
             if isSearch {
+                // Ecosia: use the scheme from the bundle instead
+                //return "firefox://open-text?text=\(encoded)"
                 return "\(urlScheme)://open-text?text=\(encoded)"
             }
+            // Ecosia: use the scheme from the bundle instead
+            //return "firefox://open-url?url=\(encoded)"
             return "\(urlScheme)://open-url?url=\(encoded)"
         }
 
-        guard let url = URL(string: ecosiaUrl(url)) else { return }
+        guard let url = URL(string: firefoxUrl(url)) else { return }
         var responder = self as UIResponder?
         let selectorOpenURL = sel_registerName("openURL:")
         while let current = responder {

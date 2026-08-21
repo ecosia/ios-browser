@@ -14,8 +14,6 @@ public struct DefaultAuth0SettingsProvider: Auth0SettingsProviderProtocol {
 
     public var id: String {
         guard let clientId = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_CLIENT_ID") else {
-            print("Current Bundle ID: \(Bundle.main.bundleIdentifier ?? "Unknown")")
-            print("AUTH0_CLIENT_ID not found")
             fatalError("AUTH0_CLIENT_ID not found")
         }
         return clientId
