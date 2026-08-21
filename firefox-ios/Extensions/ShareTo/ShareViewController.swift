@@ -414,7 +414,9 @@ class ShareViewController: UIViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.isTranslucent = false
-        // Ecosia: Icon-Small should be the Ecosia app icon in ShareTo/Images.xcassets/Icon-Small.imageset (e.g. icon-40@2x.png).
+        /* Ecosia: Icon-Small should be the Ecosia app icon in ShareTo/Images.xcassets/Icon-Small.imageset (e.g. icon-40@2x.png).
+        navigationItem.titleView = UIImageView(image: UIImage(named: "Icon-Small"))
+         */
         navigationItem.titleView = UIImageView(image: UIImage(named: "ecosiaShareToIcon"))
         navigationItem.titleView?.contentMode = .scaleAspectFit
         navigationItem.leftBarButtonItem = UIBarButtonItem(
@@ -546,12 +548,14 @@ extension ShareViewController {
             let urlScheme = Bundle.main.object(forInfoDictionaryKey: "MozPublicURLScheme") as? String ?? "ecosia"
             let encoded = url.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.alphanumerics) ?? ""
             if isSearch {
-                // Ecosia: use the scheme from the bundle instead
-                //return "firefox://open-text?text=\(encoded)"
+                /* Ecosia: use the scheme from the bundle instead
+                return "firefox://open-text?text=\(encoded)"
+                 */
                 return "\(urlScheme)://open-text?text=\(encoded)"
             }
-            // Ecosia: use the scheme from the bundle instead
-            //return "firefox://open-url?url=\(encoded)"
+            /* Ecosia: use the scheme from the bundle instead
+            return "firefox://open-url?url=\(encoded)"
+             */
             return "\(urlScheme)://open-url?url=\(encoded)"
         }
 
