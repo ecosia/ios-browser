@@ -22,7 +22,8 @@ public struct FirefoxURLBuilder: FirefoxURLBuilding, Sendable {
             forInfoDictionaryKey: "MozInternalURLScheme"
         ) as? String, !string.isEmpty else {
             // Something went wrong/weird, fallback to the public one.
-            return "firefox"
+            // Ecosia: fall back to ecosia's one..
+            return "ecosia"
         }
         return string
     }()

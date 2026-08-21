@@ -1,0 +1,22 @@
+{
+  "images" : [
+    {
+      "filename" : "Device=iOS, Shape=Rounded, Type=Solid, Variant=1.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Device=iOS, Shape=Rounded, Type=Solid, Variant=2.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

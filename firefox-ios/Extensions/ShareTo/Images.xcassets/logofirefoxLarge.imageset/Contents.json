@@ -1,17 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "LogoBright.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "LogoDark.pdf",
+      "filename" : "logoFirefoxLarge.pdf",
       "idiom" : "universal"
     }
   ],
