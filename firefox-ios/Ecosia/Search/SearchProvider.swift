@@ -13,3 +13,69 @@ public enum SearchProvider: String, Codable, CaseIterable, Sendable {
     case chatgpt
     case perplexity
 }
+
+public extension SearchProvider {
+
+    /// Brand name, shown in Settings and in the file upload redirect. Not localized.
+    var displayName: String {
+        switch self {
+        case .ecosia: return "Ecosia"
+        case .google: return "Google"
+        case .duckduckgo: return "DuckDuckGo"
+        case .chatgpt: return "ChatGPT"
+        case .perplexity: return "Perplexity"
+        }
+    }
+
+    /// Providers whose results page is already a conversation, so there is no separate
+    /// AI entry point to offer.
+    var isAINative: Bool {
+        switch self {
+        case .chatgpt, .perplexity: return true
+        case .ecosia, .google, .duckduckgo: return false
+        }
+    }
+
+    /// OpenSearch template for the results page.
+    var searchTemplate: String {
+        switch self {
+        case .ecosia:
+            return "\(Environment.current.urlProvider.root.absoluteString)/search?q={searchTerms}"
+        case .google:
+            return "https://www.google.com/search?q={searchTerms}"
+        case .duckduckgo:
+            return "https://duckduckgo.com/?q={searchTerms}"
+        case .chatgpt:
+            return "https://chatgpt.com/?q={searchTerms}&hints=search"
+        case .perplexity:
+            return "https://www.perplexity.ai/search?q={searchTerms}"
+        }
+    }
+
+    /// Autocomplete endpoint, or `nil` when the provider has none.
+    var suggestTemplate: String? {
+        switch self {
+        case .ecosia:
+            let autocomplete = Environment.current.urlProvider.searchAutocomplete.absoluteString
+            return "\(autocomplete)?q={searchTerms}&type=list"
+        case .google:
+            return "https://suggestqueries.google.com/complete/search?client=firefox&channel=tr&q={searchTerms}"
+        case .duckduckgo:
+            return "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
+        case .chatgpt, .perplexity:
+            return nil
+        }
+    }
+
+    /// Where to send users who want to upload files. `nil` for Ecosia, which uploads
+    /// in-app. Google points at Gemini rather than at search.
+    var fileUploadDestination: URL? {
+        switch self {
+        case .ecosia: return nil
+        case .google: return URL(string: "https://gemini.google.com/app")
+        case .duckduckgo: return URL(string: "https://duck.ai")
+        case .chatgpt: return URL(string: "https://chatgpt.com")
+        case .perplexity: return URL(string: "https://www.perplexity.ai")
+        }
+    }
+}
