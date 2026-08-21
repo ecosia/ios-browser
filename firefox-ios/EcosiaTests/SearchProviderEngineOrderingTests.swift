@@ -10,66 +10,66 @@ import Ecosia
 @MainActor
 final class SearchProviderEngineOrderingTests: XCTestCase {
 
-    func testInsertingEcosiaPrependsWhenMissing() throws {
-        guard CustomSearchProviderFeatureFlag.isEnabled else {
-            throw XCTSkip("Custom search provider flag is disabled in this test run")
-        }
-        let engines = [makeEngine(id: "google"), makeEngine(id: "bing")]
-        let result = SearchProviderEngineOrdering.insertingEcosiaIfNeeded(into: engines)
+    private var previousSelection = ""
 
-        XCTAssertEqual(result.first?.engineID, SearchProviderSelection.ecosiaEngineID)
-        XCTAssertEqual(result.map(\.engineID), ["ecosia", "google", "bing"])
+    override func setUp() {
+        super.setUp()
+        previousSelection = User.shared.selectedSearchEngineID
     }
 
-    func testInsertingEcosiaIsNoOpWhenPresent() throws {
-        guard CustomSearchProviderFeatureFlag.isEnabled else {
-            throw XCTSkip("Custom search provider flag is disabled in this test run")
-        }
-        let engines = [makeEngine(id: "ecosia"), makeEngine(id: "google")]
-        let result = SearchProviderEngineOrdering.insertingEcosiaIfNeeded(into: engines)
+    override func tearDown() {
+        User.shared.selectedSearchEngineID = previousSelection
+        super.tearDown()
+    }
+
+    func testPromotesSelectedProviderToDefaultSlot() {
+        User.shared.selectedSearchEngineID = "google"
+        let engines = makeEngines("ecosia", "google", "duckduckgo")
+
+        let result = SearchProviderEngineOrdering.promoteSelectedSearchProvider(in: engines)
+
+        XCTAssertEqual(result.map(\.engineID), ["google", "ecosia", "duckduckgo"])
+    }
+
+    func testLeavesListUntouchedWhenSelectionIsAlreadyDefault() {
+        User.shared.selectedSearchEngineID = "ecosia"
+        let engines = makeEngines("ecosia", "google")
+
+        let result = SearchProviderEngineOrdering.promoteSelectedSearchProvider(in: engines)
+
         XCTAssertEqual(result.map(\.engineID), ["ecosia", "google"])
     }
 
-    func testPromoteSelectedSearchProviderMovesEngineToFront() throws {
-        guard CustomSearchProviderFeatureFlag.isEnabled else {
-            throw XCTSkip("Custom search provider flag is disabled in this test run")
-        }
-        let previousID = User.shared.selectedSearchEngineID
-        defer { User.shared.selectedSearchEngineID = previousID }
-        let engines = [makeEngine(id: "ecosia"), makeEngine(id: "google"), makeEngine(id: "bing")]
-        User.shared.selectedSearchEngineID = "google"
+    /// A provider dropped from the remote allowlist must not leave whichever engine
+    /// happens to be first as the default.
+    func testFallsBackToEcosiaWhenSelectionIsNoLongerOffered() {
+        User.shared.selectedSearchEngineID = "perplexity"
+        let engines = makeEngines("google", "ecosia", "duckduckgo")
 
         let result = SearchProviderEngineOrdering.promoteSelectedSearchProvider(in: engines)
-        XCTAssertEqual(result.first?.engineID, "google")
+
+        XCTAssertEqual(result.first?.engineID, "ecosia")
     }
 
-    func testApplyPersistedOrderingRespectsSavedIdentifiers() {
-        let engines = [
-            makeEngine(id: "ecosia"),
-            makeEngine(id: "google"),
-            makeEngine(id: "perplexity")
-        ]
-        let prefs = SearchEnginePrefs(
-            engineIdentifiers: ["perplexity", "google", "ecosia"],
-            disabledEngines: nil,
-            version: .v2
-        )
+    func testHandlesEmptyList() {
+        User.shared.selectedSearchEngineID = "google"
 
-        let result = SearchProviderEngineOrdering.applyPersistedOrdering(from: prefs, to: engines)
-        XCTAssertEqual(result.map(\.engineID), ["perplexity", "google", "ecosia"])
+        XCTAssertTrue(SearchProviderEngineOrdering.promoteSelectedSearchProvider(in: []).isEmpty)
     }
 
     // MARK: - Helpers
 
-    private func makeEngine(id: String) -> OpenSearchEngine {
-        OpenSearchEngine(
-            engineID: id,
-            shortName: id,
-            telemetrySuffix: nil,
-            image: UIImage(),
-            searchTemplate: "https://example.com/search?q={searchTerms}",
-            suggestTemplate: nil,
-            isCustomEngine: false
-        )
+    private func makeEngines(_ ids: String...) -> [OpenSearchEngine] {
+        ids.map { id in
+            OpenSearchEngine(
+                engineID: id,
+                shortName: id,
+                telemetrySuffix: nil,
+                image: UIImage(),
+                searchTemplate: "https://example.com/search?q={searchTerms}",
+                suggestTemplate: nil,
+                isCustomEngine: false
+            )
+        }
     }
 }

@@ -22,7 +22,7 @@ final class SearchEnginesManagerReconfigureTests: XCTestCase {
         super.tearDown()
     }
 
-    func testReconfigureEngineProviderSwapsToHybridWhenFlagBecomesEnabled() {
+    func testReconfigureEngineProviderSwapsToCuratedWhenFlagBecomesEnabled() {
         var model = Unleash.Model()
         model.updated = Date()
         model.toggles.insert(
@@ -37,7 +37,7 @@ final class SearchEnginesManagerReconfigureTests: XCTestCase {
         let manager: SearchEnginesManager = AppContainer.shared.resolve()
         manager.reconfigureEngineProviderIfNeeded()
 
-        let expectation = expectation(description: "Hybrid engines load after reconfigure")
+        let expectation = expectation(description: "Curated engines load after reconfigure")
         manager.getOrderedEngines { _, engines in
             XCTAssertGreaterThan(engines.count, 1)
             expectation.fulfill()

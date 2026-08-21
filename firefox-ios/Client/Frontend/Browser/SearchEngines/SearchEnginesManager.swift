@@ -28,7 +28,7 @@ struct SearchEngineProviderFactory {
     */
     static var defaultSearchEngineProvider: SearchEngineProvider {
         if CustomSearchProviderFeatureFlag.isEnabled {
-            return HybridSearchEngineProvider()
+            return CuratedSearchEngineProvider()
         }
         return EcosiaSearchEngineProvider()
     }
@@ -91,9 +91,9 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
     // Ecosia: Re-evaluate provider after Unleash network refresh when the cached flag at launch
     // differed from the remote value (for example first install with no on-disk cache).
     func reconfigureEngineProviderIfNeeded() {
-        let shouldUseHybridProvider = CustomSearchProviderFeatureFlag.isEnabled
-        let usesHybridProvider = engineProvider is HybridSearchEngineProvider
-        guard shouldUseHybridProvider != usesHybridProvider else { return }
+        let shouldUseCuratedProvider = CustomSearchProviderFeatureFlag.isEnabled
+        let usesCuratedProvider = engineProvider is CuratedSearchEngineProvider
+        guard shouldUseCuratedProvider != usesCuratedProvider else { return }
 
         engineProvider = SearchEngineProviderFactory.defaultSearchEngineProvider
         EcosiaLogger.search.info(
