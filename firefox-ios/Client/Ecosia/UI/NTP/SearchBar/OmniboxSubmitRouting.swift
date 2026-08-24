@@ -18,9 +18,7 @@ enum OmniboxSubmitRouting {
             return url
         }
 
-        if !chatFiles.isEmpty,
-           SearchProviderSelection.usesEcosiaAIBackend,
-           AIFreeSearchingSelection.allowsOmniboxAI {
+        if !chatFiles.isEmpty, SearchProviderSelection.usesEcosiaAIBackend {
             return urlProvider.aiChat(origin: .omnibox, query: query, files: chatFiles)
         }
 

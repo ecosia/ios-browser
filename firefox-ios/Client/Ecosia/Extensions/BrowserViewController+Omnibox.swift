@@ -35,7 +35,6 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // AI-free searching suppresses this path so leftover mode state
         // cannot still open AI Chat.
         if SearchProviderSelection.usesEcosiaAIBackend,
-           AIFreeSearchingSelection.allowsOmniboxAI,
            let mode = omniboxSheetState?.selectedChatMode {
             if chatFiles.isEmpty {
                 submitOmniboxChatMode(mode, query: searchTerm, chatFiles: chatFiles)
@@ -53,9 +52,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
                 }
             }
             return
-        } else if SearchProviderSelection.usesEcosiaAIBackend,
-                    !chatFiles.isEmpty,
-                    AIFreeSearchingSelection.allowsOmniboxAI {
+        } else if SearchProviderSelection.usesEcosiaAIBackend, !chatFiles.isEmpty {
             guard let tab = tabManager.selectedTab else { return }
             let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
             Task { @MainActor [weak self] in
@@ -196,16 +193,21 @@ extension BrowserViewController: NTPSearchBarDelegate {
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
 
         switch SearchProviderSelection.aiBehavior {
-        case .disabled:
+        case .hidden:
             return
-        case .googleGemini:
-            guard let tab = tabManager.selectedTab else { return }
-            finishEditingAndSubmit(GeminiSearchRouting.geminiAppURL, visitType: .typed, forTab: tab)
-            showEmbeddedWebview()
         case .ecosiaFullStack:
-            guard AIFreeSearchingSelection.allowsOmniboxAI else { return }
             presentEcosiaOmniboxUploadDrawer()
+        case .providerAI(let provider), .redirect(let provider):
+            openProviderUploadDestination(for: provider)
         }
+    }
+
+    /// Step 7 replaces this direct navigation with the upload redirect drawer.
+    private func openProviderUploadDestination(for provider: SearchProvider) {
+        guard let destination = provider.fileUploadDestination,
+              let tab = tabManager.selectedTab else { return }
+        finishEditingAndSubmit(destination, visitType: .typed, forTab: tab)
+        showEmbeddedWebview()
     }
 
     private func presentEcosiaOmniboxUploadDrawer() {

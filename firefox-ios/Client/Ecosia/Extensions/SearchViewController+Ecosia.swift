@@ -134,8 +134,6 @@ extension SearchViewController {
     var shouldShowAIChatRow: Bool {
         AIChatMVPExperiment.isEnabled
             && SearchProviderSelection.showsAIAutocompleteRow
-            && (SearchProviderSelection.aiBehavior != .ecosiaFullStack
-                || AIFreeSearchingSelection.allowsOmniboxAI)
             && !viewModel.searchQuery.isEmpty
             && suggestionsCount() != nil
     }
@@ -178,9 +176,11 @@ extension SearchViewController {
         switch SearchProviderSelection.aiBehavior {
         case .ecosiaFullStack:
             url = Environment.current.urlProvider.aiChat(origin: .autocomplete, query: viewModel.searchQuery)
-        case .googleGemini:
+        case .providerAI(let provider), .redirect(let provider):
+            // Step 5 adds the remaining providers' AI destinations.
+            guard provider == .google else { return }
             url = GeminiSearchRouting.aiModeSearchURL(query: viewModel.searchQuery)
-        case .disabled:
+        case .hidden:
             return
         }
         searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: viewModel.searchQuery)

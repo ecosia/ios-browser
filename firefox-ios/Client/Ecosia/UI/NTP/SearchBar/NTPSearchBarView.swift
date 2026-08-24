@@ -445,11 +445,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     }
 
     private var shouldShowOmniboxUploadButton: Bool {
-        guard SearchProviderSelection.showsOmniboxAIFeatures else { return false }
-        if SearchProviderSelection.usesEcosiaAIBackend {
-            return AIFreeSearchingSelection.allowsOmniboxAI
-        }
-        return true
+        SearchProviderSelection.showsOmniboxAIFeatures
     }
 
     @objc private func focusTextView() {

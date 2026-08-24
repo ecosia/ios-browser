@@ -5,37 +5,62 @@
 import Ecosia
 import Foundation
 
-/// How AI entry points behave for the active default search provider.
+/// How the AI entry points behave for the active default search provider.
 enum SearchProviderAIBehavior: Equatable {
-    /// Ecosia AI Chat, file upload, and chat modes.
+    /// No AI entry point, either because the configuration hides it or because AI-free
+    /// searching is on.
+    case hidden
+    /// Ecosia AI Chat, with file upload and backend chat modes.
     case ecosiaFullStack
-    /// Google AI Mode / Gemini redirect — no Ecosia upload pipeline.
-    case googleGemini
-    /// No omnibox AI affordances (Bing, DuckDuckGo, Perplexity, etc.).
-    case disabled
+    /// Third-party provider with prompt-enhanced chat modes and an upload redirect.
+    case providerAI(SearchProvider)
+    /// The entry point goes straight to the provider's AI, Ecosia included.
+    case redirect(SearchProvider)
+}
+
+extension SearchProviderAIBehavior {
+    /// The provider the entry point acts on, or `nil` when there is no entry point.
+    var provider: SearchProvider? {
+        switch self {
+        case .hidden: return nil
+        case .ecosiaFullStack: return .ecosia
+        case .providerAI(let provider), .redirect(let provider): return provider
+        }
+    }
 }
 
 /// Keeps `User.shared.selectedSearchEngineID` in sync with the active default search engine.
 /// Used by analytics, omnibox gating, and Ecosia-only settings visibility.
 enum SearchProviderSelection {
 
-    static let ecosiaEngineID = "ecosia"
-    static let googleEngineID = "google"
+    static let ecosiaEngineID = SearchProvider.ecosia.rawValue
+
+    /// Active provider. Ecosia when the router is off, or when the persisted identifier is
+    /// no longer one we offer.
+    static var selectedProvider: SearchProvider {
+        guard CustomSearchProviderFeatureFlag.isEnabled else { return .ecosia }
+        return SearchProvider(rawValue: User.shared.selectedSearchEngineID) ?? .ecosia
+    }
 
     static var isEcosiaDefault: Bool {
-        guard CustomSearchProviderFeatureFlag.isEnabled else { return true }
-        return User.shared.selectedSearchEngineID == ecosiaEngineID
+        selectedProvider == .ecosia
     }
 
     static var aiBehavior: SearchProviderAIBehavior {
-        guard CustomSearchProviderFeatureFlag.isEnabled else { return .ecosiaFullStack }
-        switch User.shared.selectedSearchEngineID {
-        case ecosiaEngineID:
-            return .ecosiaFullStack
-        case googleEngineID:
-            return .googleGemini
-        default:
-            return .disabled
+        let provider = selectedProvider
+
+        // AI-free searching is Ecosia-scoped: its settings row is hidden for other
+        // providers, so it must not disable an entry point the user cannot restore.
+        // TODO: Consider making it global, which requires showing the row for every provider.
+        if provider == .ecosia, !AIFreeSearchingSelection.allowsOmniboxAI { return .hidden }
+
+        switch CustomSearchProviderFeatureFlag.config.aiMode {
+        case .hidden:
+            return .hidden
+        case .redirect:
+            return .redirect(provider)
+        case .full:
+            return provider == .ecosia ? .ecosiaFullStack : .providerAI(provider)
         }
     }
 
@@ -46,24 +71,31 @@ enum SearchProviderSelection {
     /// Whether the NTP omnibox should show the + / upload control.
     static var showsOmniboxAIFeatures: Bool {
         switch aiBehavior {
-        case .disabled:
+        case .hidden:
             return false
         case .ecosiaFullStack:
             return FileUploadFeatureFlag.isEnabled || ChatModesFeatureFlag.isEnabled
-        case .googleGemini:
+        case .providerAI, .redirect:
             return true
         }
     }
 
-    /// Whether the suggestions overlay should include an AI row.
+    /// Whether the suggestions overlay should include an AI row. Providers whose results
+    /// page is already a conversation get no separate row.
     static var showsAIAutocompleteRow: Bool {
-        aiBehavior != .disabled
+        switch aiBehavior {
+        case .hidden:
+            return false
+        case .ecosiaFullStack:
+            return true
+        case .providerAI(let provider), .redirect(let provider):
+            return !provider.isAINative
+        }
     }
 
     /// Whether Ecosia-only rows in Settings → Search should be visible.
     static var showsEcosiaSearchSettings: Bool {
-        guard CustomSearchProviderFeatureFlag.isEnabled else { return true }
-        return isEcosiaEngineID(User.shared.selectedSearchEngineID)
+        isEcosiaDefault
     }
 
     /// Keeps persisted provider state aligned with the active default engine before building
