@@ -83,6 +83,17 @@ enum SearchProviderSelection {
         }
     }
 
+    /// Whether a chat mode can be selected. The redirect entry point skips the drawer, so
+    /// no mode can be picked and any leftover selection must be cleared.
+    static var allowsChatModes: Bool {
+        switch aiBehavior {
+        case .hidden, .redirect:
+            return false
+        case .ecosiaFullStack, .providerAI:
+            return ChatModesFeatureFlag.isEnabled
+        }
+    }
+
     /// Whether the suggestions overlay should include an AI row. Providers whose results
     /// page is already a conversation get no separate row.
     static var showsAIAutocompleteRow: Bool {

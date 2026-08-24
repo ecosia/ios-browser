@@ -68,9 +68,26 @@ enum SearchProviderAIRouting {
         }
     }
 
+    /// The provider's AI with no prompt. For third parties this is the same page their
+    /// upload redirect points at; Ecosia's is AI Chat without a seeded query.
+    private static func aiHomeURL(for provider: SearchProvider) -> URL? {
+        guard provider != .ecosia else {
+            return Environment.current.urlProvider.aiChat(origin: .omnibox)
+        }
+        return provider.fileUploadDestination
+    }
+
     /// The mode carried as a prompt instruction, for providers with no mode parameter.
     private static func prompt(_ query: String, _ mode: OmniboxChatMode?) -> String {
         query + (mode?.promptSuffix ?? "")
+    }
+
+    /// Destination for the AI entry point itself, used when the entry point is a plain
+    /// redirect. Falls back to the provider's AI home when there is nothing typed.
+    static func aiEntryPointURL(for provider: SearchProvider, query: String) -> URL? {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return aiHomeURL(for: provider) }
+        return aiDestinationURL(for: provider, query: trimmed, origin: .omnibox)
     }
 
     /// Whether `url` is already a finalized AI destination and must not be rebuilt as a

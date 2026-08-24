@@ -439,7 +439,9 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     func updateUploadButtonVisibility() {
         let showUpload = shouldShowOmniboxUploadButton
         uploadButton.isHidden = !showUpload
-        if !showUpload {
+        // The chip can outlive its drawer when the provider or the remote configuration
+        // changes mid-session, so clear it whenever a mode is no longer selectable.
+        if !showUpload || !SearchProviderSelection.allowsChatModes {
             setSelectedChatMode(nil)
         }
     }

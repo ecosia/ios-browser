@@ -220,8 +220,20 @@ extension BrowserViewController: NTPSearchBarDelegate {
         case .providerAI:
             presentOmniboxUploadDrawer()
         case .redirect(let provider):
-            openProviderAIDestination(for: provider)
+            openProviderAIEntryPoint(for: provider)
         }
+    }
+
+    /// The entry point is a plain redirect: no drawer, no modes, no upload. Carries the
+    /// typed text through when there is any.
+    private func openProviderAIEntryPoint(for provider: SearchProvider) {
+        guard let tab = tabManager.selectedTab,
+              let url = SearchProviderAIRouting.aiEntryPointURL(for: provider,
+                                                                query: ntpOmniboxAnchorView?.text ?? "")
+        else { return }
+        ntpOmniboxAnchorView?.text = ""
+        finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+        showEmbeddedWebview()
     }
 
     private func presentProviderUploadRedirect(for provider: SearchProvider) {
@@ -231,14 +243,6 @@ extension BrowserViewController: NTPSearchBarDelegate {
             self.finishEditingAndSubmit(destination, visitType: .typed, forTab: tab)
             self.showEmbeddedWebview()
         }
-    }
-
-    /// Step 8 routes this through the redirect entry point proper.
-    private func openProviderAIDestination(for provider: SearchProvider) {
-        guard let destination = provider.fileUploadDestination,
-              let tab = tabManager.selectedTab else { return }
-        finishEditingAndSubmit(destination, visitType: .typed, forTab: tab)
-        showEmbeddedWebview()
     }
 
     private func presentEcosiaOmniboxUploadDrawer() {
