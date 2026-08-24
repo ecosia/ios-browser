@@ -41,8 +41,6 @@ let project = Project(
     // resource glob and don't need to be listed here.
     additionalFiles: [
         "../AGENTS.md",
-        "../CLAUDE.md",
-        "Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig",
-        "Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig"
-    ]
+        "../CLAUDE.md"
+    ] + BuildConfigurations.additionalFiles,
 )

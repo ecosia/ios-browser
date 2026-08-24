@@ -25,4 +25,9 @@ public enum BuildConfigurations {
         "CODE_SIGNING_REQUIRED": "NO",
         "CODE_SIGNING_ALLOWED": "NO",
     ], uniquingKeysWith: { _, new in new })
+
+    public static let additionalFiles: [FileElement] = [
+        "Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig",
+        "Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig",
+    ]
 }
