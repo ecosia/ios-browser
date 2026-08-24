@@ -51,7 +51,10 @@ public enum ExtensionTargets {
                 "Client/Utils/LocaleProvider.swift",
                 "Client/Application/RemoteSettings/Application Services/RemoteSettingsServiceSyncCoordinator.swift"
             ],
-            resources: ["Extensions/ShareTo/**/*.{xcassets,strings,stringsdict}"],
+            resources: [
+                "Extensions/ShareTo/**/*.{xcassets,strings,stringsdict}",
+                "Ecosia/UI/ShareToAssets.xcassets"
+            ],
             scripts: BuildScripts.removeFrameworkScriptFromExtensionTargets,
             dependencies: [
                 .target(name: "Account"),
