@@ -4738,7 +4738,7 @@ extension BrowserViewController: SearchViewControllerDelegate {
         // below.
         let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
         if isOmniboxOverlay {
-            let isPrebuiltAIDestination = url.isEcosiaAIChat || GeminiSearchRouting.isAIDestination(url)
+            let isPrebuiltAIDestination = SearchProviderAIRouting.isAIDestination(url)
             if let searchTerm, !searchTerm.isEmpty, !isPrebuiltAIDestination {
                 ntpSearchBarDidSubmit(searchTerm)
                 return

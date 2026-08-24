@@ -172,17 +172,11 @@ extension SearchViewController {
 
     /// Handle AI Chat navigation when item is selected
     func handleAIChatSelection(_ indexPath: IndexPath) {
-        let url: URL
-        switch SearchProviderSelection.aiBehavior {
-        case .ecosiaFullStack:
-            url = Environment.current.urlProvider.aiChat(origin: .autocomplete, query: viewModel.searchQuery)
-        case .providerAI(let provider), .redirect(let provider):
-            // Step 5 adds the remaining providers' AI destinations.
-            guard provider == .google else { return }
-            url = GeminiSearchRouting.aiModeSearchURL(query: viewModel.searchQuery)
-        case .hidden:
-            return
-        }
+        guard let provider = SearchProviderSelection.aiBehavior.provider,
+              let url = SearchProviderAIRouting.aiDestinationURL(for: provider,
+                                                                 query: viewModel.searchQuery,
+                                                                 origin: .autocomplete)
+        else { return }
         searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: viewModel.searchQuery)
         Analytics.shared.aiChatAutocompleteForQuery(viewModel.searchQuery)
     }
