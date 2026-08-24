@@ -218,11 +218,18 @@ extension BrowserViewController: NTPSearchBarDelegate {
         case .ecosiaFullStack:
             presentEcosiaOmniboxUploadDrawer()
         case .providerAI:
-            // Modes only: the in-app upload pipeline is Ecosia's. Step 7 adds the
-            // upload redirect entry point back for these providers.
             presentOmniboxUploadDrawer()
         case .redirect(let provider):
             openProviderAIDestination(for: provider)
+        }
+    }
+
+    private func presentProviderUploadRedirect(for provider: SearchProvider) {
+        guard let sheetState = omniboxSheetState else { return }
+        sheetState.presentProviderUploadRedirect(provider: provider) { [weak self] destination in
+            guard let self, let tab = self.tabManager.selectedTab else { return }
+            self.finishEditingAndSubmit(destination, visitType: .typed, forTab: tab)
+            self.showEmbeddedWebview()
         }
     }
 
@@ -583,10 +590,17 @@ extension BrowserViewController {
         registerOmniboxLogoutObserverIfNeeded()
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
-        sheetState.presentUploadDrawer(provider: SearchProviderSelection.selectedProvider,
+        let provider = SearchProviderSelection.selectedProvider
+        sheetState.presentUploadDrawer(provider: provider,
                                        isAuthenticated: ecosiaAuth?.isLoggedIn == true,
                                        onSelectUpload: { [weak self] option in
             guard let self else { return }
+            // Third-party providers cannot receive an upload from the app, so the
+            // picker is replaced by an explainer pointing at their own site.
+            guard provider == .ecosia else {
+                self.presentProviderUploadRedirect(for: provider)
+                return
+            }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
                                                               from: self,
                                                               sourceView: sourceView)

@@ -334,6 +334,11 @@
 // Omnibox file upload (logged-out gate)
 "Sign in to upload files" = "Sign in to upload files";
 "To use this feature you need to be signed in to an Ecosia account." = "To use this feature you need to be signed in to an Ecosia account.";
+"Upload files" = "Upload files";
+/* %@ is a search provider name, e.g. "Go to ChatGPT". */
+"You need to go directly to %@ to upload files." = "You need to go directly to %@ to upload files.";
+"Go to %@" = "Go to %@";
+"Back" = "Back";
 "Create account" = "Create account";
 
 // Product Tour

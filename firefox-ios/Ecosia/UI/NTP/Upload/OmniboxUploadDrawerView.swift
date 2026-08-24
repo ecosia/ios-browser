@@ -124,6 +124,8 @@ struct OmniboxUploadDrawerView: View {
 
     private var availableModes: [OmniboxChatMode] { OmniboxChatMode.modes(for: provider) }
 
+    private var isUploadEnabled: Bool { isEcosiaProvider ? isAuthenticated : true }
+
     /// A chat mode is selectable only when the user is signed in; signed-out
     /// users may pick Standard AI Chat (no advanced features) but every other
     /// mode is shown disabled.
@@ -140,9 +142,7 @@ struct OmniboxUploadDrawerView: View {
                 if ChatModesFeatureFlag.isEnabled {
                     header
                 }
-                if isEcosiaProvider {
-                    uploadRow
-                }
+                uploadRow
                 if ChatModesFeatureFlag.isEnabled {
                     chatModeList
                 }
@@ -240,10 +240,11 @@ struct OmniboxUploadDrawerView: View {
                     .multilineTextAlignment(.center)
             }
         }
-        // Uploads require an account, so the media pickers are disabled and
-        // dimmed for signed-out users (same treatment as the advanced modes).
-        .disabled(!isAuthenticated)
-        .opacity(isAuthenticated ? 1 : UX.disabledRowOpacity)
+        // Ecosia uploads require an account, so the media pickers are disabled and
+        // dimmed for signed-out users (same treatment as the advanced modes). Other
+        // providers redirect to their own site, which needs no Ecosia account.
+        .disabled(!isUploadEnabled)
+        .opacity(isUploadEnabled ? 1 : UX.disabledRowOpacity)
         .accessibilityLabel(option.accessibilityLabel)
         .accessibilityHint(option.accessibilityHint)
         .accessibilityIdentifier(option.accessibilityIdentifier)

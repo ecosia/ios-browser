@@ -45,5 +45,15 @@ struct NTPOmniboxSheetPresenter: View {
                     onLogin: { sheetState.handleLoginRequested() }
                 )
             }
+            .sheet(isPresented: $sheetState.showProviderUploadRedirect, onDismiss: {
+                sheetState.handleProviderUploadRedirectDismissed()
+            }) {
+                OmniboxProviderUploadRedirectSheet(
+                    windowUUID: windowUUID,
+                    provider: sheetState.provider,
+                    onGoToProvider: { sheetState.handleProviderUploadRedirectConfirmed() },
+                    onBack: { sheetState.showProviderUploadRedirect = false }
+                )
+            }
     }
 }

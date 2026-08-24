@@ -341,6 +341,10 @@ extension String {
         // Omnibox file upload (logged-out gate)
         case signInToUploadFiles = "Sign in to upload files"
         case signInToUploadFilesMessage = "To use this feature you need to be signed in to an Ecosia account."
+        case uploadFilesTitle = "Upload files"
+        case uploadFilesProviderMessage = "You need to go directly to %@ to upload files."
+        case goToProvider = "Go to %@"
+        case back = "Back"
         case createAccount = "Create account"
     }
 }

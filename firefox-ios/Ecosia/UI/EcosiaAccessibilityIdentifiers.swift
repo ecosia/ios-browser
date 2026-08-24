@@ -74,5 +74,9 @@ public struct EcosiaAccessibilityIdentifiers {
         public static let signInSheetBody = "omnibox_upload_sign_in_sheet_body"
         public static let signInButton = "omnibox_upload_sign_in_button"
         public static let createAccountButton = "omnibox_upload_create_account_button"
+        public static let providerRedirectTitle = "omnibox_upload_provider_redirect_title"
+        public static let providerRedirectBody = "omnibox_upload_provider_redirect_body"
+        public static let providerRedirectGoButton = "omnibox_upload_provider_redirect_go_button"
+        public static let providerRedirectBackButton = "omnibox_upload_provider_redirect_back_button"
     }
 }
