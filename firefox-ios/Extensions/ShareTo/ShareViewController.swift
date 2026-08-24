@@ -415,7 +415,7 @@ class ShareViewController: UIViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.isTranslucent = false
-        /* Ecosia: Icon-Small should be the Ecosia app icon in ShareTo/Images.xcassets/Icon-Small.imageset (e.g. icon-40@2x.png).
+        /* Ecosia: use an Ecosia icon
         navigationItem.titleView = UIImageView(image: UIImage(named: "Icon-Small"))
          */
         navigationItem.titleView = UIImageView(image: UIImage(named: "ecosiaShareToIcon"))
