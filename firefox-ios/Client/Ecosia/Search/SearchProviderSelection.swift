@@ -75,7 +75,10 @@ enum SearchProviderSelection {
             return false
         case .ecosiaFullStack:
             return FileUploadFeatureFlag.isEnabled || ChatModesFeatureFlag.isEnabled
-        case .providerAI, .redirect:
+        case .providerAI:
+            // Same two flags decide whether the drawer would have any content.
+            return FileUploadFeatureFlag.isEnabled || ChatModesFeatureFlag.isEnabled
+        case .redirect:
             return true
         }
     }

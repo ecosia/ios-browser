@@ -319,6 +319,11 @@ extension String {
         case chatModeThinkLongerSubtitle = "Solves complex problems"
         case chatModeDisplaySourcesSubtitle = "Shows sources for every answer"
         case chatModeLearningSubtitle = "Breaks down topics step by step"
+        // Appended to the user's prompt for providers that take no mode parameter.
+        // The leading space separates the instruction from the prompt and must be kept.
+        case chatModeThinkLongerPrompt = " Think deeply about it before answering."
+        case chatModeDisplaySourcesPrompt = " Search the web for this and cite your sources."
+        case chatModeLearningPrompt = " Explain this like a tutor, step by step, and suggest what to learn next."
 
         // Omnibox file upload (attachment strip)
         case uploadAttachmentFailed = "Upload failed"

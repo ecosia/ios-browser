@@ -26,6 +26,10 @@ final class NTPOmniboxSheetState: ObservableObject {
     /// state (only Standard AI Chat selectable, others disabled, sign-in CTA).
     @Published var isAuthenticated = false
 
+    /// Provider the drawer is being shown for. Decides which modes it lists and
+    /// whether it offers the in-app upload sources.
+    @Published var provider: SearchProvider = .ecosia
+
     private var onUploadOptionSelected: ((OmniboxUploadOption) -> Void)?
     private var onChatModeSelectionChanged: ((OmniboxChatMode?) -> Void)?
     private var onLoginRequested: (() -> Void)?
@@ -110,12 +114,14 @@ final class NTPOmniboxSheetState: ObservableObject {
         onUploadDrawerRequested = nil
     }
 
-    func presentUploadDrawer(isAuthenticated: Bool,
+    func presentUploadDrawer(provider: SearchProvider,
+                             isAuthenticated: Bool,
                              onSelectUpload: @escaping (OmniboxUploadOption) -> Void,
                              onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void,
                              onLogin: @escaping () -> Void) {
         pendingUploadOption = nil
         pendingLogin = false
+        self.provider = provider
         self.isAuthenticated = isAuthenticated
         onUploadOptionSelected = onSelectUpload
         self.onChatModeSelectionChanged = onChatModeSelectionChanged

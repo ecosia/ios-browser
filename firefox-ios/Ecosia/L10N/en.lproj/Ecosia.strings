@@ -313,6 +313,10 @@
 "Display sources" = "Display sources";
 "Learning" = "Learning";
 "Answers everyday tasks and queries" = "Answers everyday tasks and queries";
+/* Appended to the user's prompt. Keep the leading space; it separates the instruction from the prompt. */
+" Think deeply about it before answering." = " Think deeply about it before answering.";
+" Search the web for this and cite your sources." = " Search the web for this and cite your sources.";
+" Explain this like a tutor, step by step, and suggest what to learn next." = " Explain this like a tutor, step by step, and suggest what to learn next.";
 "Solves complex problems" = "Solves complex problems";
 "Shows sources for every answer" = "Shows sources for every answer";
 "Breaks down topics step by step" = "Breaks down topics step by step";

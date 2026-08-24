@@ -144,4 +144,21 @@ public extension OmniboxChatMode {
         case .learning: return [URLQueryItem(name: "m", value: "1")]
         }
     }
+
+    /// Instruction appended to the prompt for providers that accept no mode
+    /// parameter. Used instead of `aiChatQueryItems`, never alongside it.
+    var promptSuffix: String? {
+        switch self {
+        case .standard: return nil
+        case .thinkLonger: return .localized(.chatModeThinkLongerPrompt)
+        case .displaySources: return .localized(.chatModeDisplaySourcesPrompt)
+        case .learning: return .localized(.chatModeLearningPrompt)
+        }
+    }
+
+    /// Modes offered for `provider`. Conversational providers have no separate
+    /// standard mode, since that is what their results page already is.
+    static func modes(for provider: SearchProvider) -> [OmniboxChatMode] {
+        provider.isAINative ? allCases.filter { $0 != .standard } : allCases
+    }
 }

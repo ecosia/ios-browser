@@ -28,35 +28,49 @@ enum SearchProviderAIRouting {
     ]
 
     /// Where the AI entry point should send `query` for the given provider.
+    ///
+    /// Ecosia passes `mode` to the backend as query items; every other provider has no
+    /// mode parameter, so the mode becomes an instruction appended to the prompt. A
+    /// provider never gets both.
     static func aiDestinationURL(for provider: SearchProvider,
                                  query: String,
-                                 origin: URLProvider.AIChatOrigin) -> URL? {
+                                 origin: URLProvider.AIChatOrigin,
+                                 mode: OmniboxChatMode? = nil) -> URL? {
         switch provider {
         case .ecosia:
-            return Environment.current.urlProvider.aiChat(origin: origin, query: query)
+            return Environment.current.urlProvider.aiChat(
+                origin: origin,
+                query: query,
+                additionalQueryItems: mode?.aiChatQueryItems ?? []
+            )
         case .google:
             return makeURL(host: "www.google.com", path: "/search", items: [
-                URLQueryItem(name: "q", value: query),
+                URLQueryItem(name: "q", value: prompt(query, mode)),
                 googleAIModeParameter
             ])
         case .duckduckgo:
             // `auto_submit=1` sends the prompt without a second tap.
             return makeURL(host: "duck.ai", path: "/", items: [
-                URLQueryItem(name: "q", value: query),
+                URLQueryItem(name: "q", value: prompt(query, mode)),
                 URLQueryItem(name: "auto_submit", value: "1")
             ])
         case .chatgpt:
             // `hints=search` opens the prompt in search mode and submits it.
             return makeURL(host: "chatgpt.com", path: "/", items: [
-                URLQueryItem(name: "q", value: query),
+                URLQueryItem(name: "q", value: prompt(query, mode)),
                 URLQueryItem(name: "hints", value: "search")
             ])
         case .perplexity:
             // Runs the query on load, no extra parameter needed.
             return makeURL(host: "www.perplexity.ai", path: "/search", items: [
-                URLQueryItem(name: "q", value: query)
+                URLQueryItem(name: "q", value: prompt(query, mode))
             ])
         }
+    }
+
+    /// The mode carried as a prompt instruction, for providers with no mode parameter.
+    private static func prompt(_ query: String, _ mode: OmniboxChatMode?) -> String {
+        query + (mode?.promptSuffix ?? "")
     }
 
     /// Whether `url` is already a finalized AI destination and must not be rebuilt as a

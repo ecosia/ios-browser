@@ -52,6 +52,11 @@ extension BrowserViewController: NTPSearchBarDelegate {
                 }
             }
             return
+        } else if case .providerAI(let provider) = SearchProviderSelection.aiBehavior,
+                  let mode = omniboxSheetState?.selectedChatMode {
+            submitProviderChatMode(mode, query: searchTerm, provider: provider)
+            showEmbeddedWebview()
+            return
         } else if SearchProviderSelection.usesEcosiaAIBackend, !chatFiles.isEmpty {
             guard let tab = tabManager.selectedTab else { return }
             let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
@@ -89,6 +94,21 @@ extension BrowserViewController: NTPSearchBarDelegate {
                 "[Omnibox] Routing to AI chat in \(mode) mode (files=\(chatFiles.count), host=\(url.host ?? "unknown"))"
             )
         }
+        finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+    }
+
+    /// Loads the provider's AI with the typed message, carrying the active chat mode as
+    /// an instruction appended to the prompt. These providers have no upload pipeline,
+    /// so attachments never reach this path.
+    private func submitProviderChatMode(_ mode: OmniboxChatMode,
+                                        query: String,
+                                        provider: SearchProvider) {
+        guard let tab = tabManager.selectedTab,
+              let url = SearchProviderAIRouting.aiDestinationURL(for: provider,
+                                                                 query: query,
+                                                                 origin: .omnibox,
+                                                                 mode: mode)
+        else { return }
         finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
     }
 
@@ -197,13 +217,17 @@ extension BrowserViewController: NTPSearchBarDelegate {
             return
         case .ecosiaFullStack:
             presentEcosiaOmniboxUploadDrawer()
-        case .providerAI(let provider), .redirect(let provider):
-            openProviderUploadDestination(for: provider)
+        case .providerAI:
+            // Modes only: the in-app upload pipeline is Ecosia's. Step 7 adds the
+            // upload redirect entry point back for these providers.
+            presentOmniboxUploadDrawer()
+        case .redirect(let provider):
+            openProviderAIDestination(for: provider)
         }
     }
 
-    /// Step 7 replaces this direct navigation with the upload redirect drawer.
-    private func openProviderUploadDestination(for provider: SearchProvider) {
+    /// Step 8 routes this through the redirect entry point proper.
+    private func openProviderAIDestination(for provider: SearchProvider) {
         guard let destination = provider.fileUploadDestination,
               let tab = tabManager.selectedTab else { return }
         finishEditingAndSubmit(destination, visitType: .typed, forTab: tab)
@@ -559,7 +583,8 @@ extension BrowserViewController {
         registerOmniboxLogoutObserverIfNeeded()
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
-        sheetState.presentUploadDrawer(isAuthenticated: ecosiaAuth?.isLoggedIn == true,
+        sheetState.presentUploadDrawer(provider: SearchProviderSelection.selectedProvider,
+                                       isAuthenticated: ecosiaAuth?.isLoggedIn == true,
                                        onSelectUpload: { [weak self] option in
             guard let self else { return }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,

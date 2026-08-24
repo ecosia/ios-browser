@@ -137,11 +137,13 @@ final class OmniboxUploadDrawerTests: XCTestCase {
 final class NTPOmniboxSheetStateTests: XCTestCase {
 
     private func present(_ state: NTPOmniboxSheetState,
+                         provider: SearchProvider = .ecosia,
                          isAuthenticated: Bool = true,
                          onSelectUpload: @escaping (OmniboxUploadOption) -> Void = { _ in },
                          onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void = { _ in },
                          onLogin: @escaping () -> Void = {}) {
-        state.presentUploadDrawer(isAuthenticated: isAuthenticated,
+        state.presentUploadDrawer(provider: provider,
+                                  isAuthenticated: isAuthenticated,
                                   onSelectUpload: onSelectUpload,
                                   onChatModeSelectionChanged: onChatModeSelectionChanged,
                                   onLogin: onLogin)

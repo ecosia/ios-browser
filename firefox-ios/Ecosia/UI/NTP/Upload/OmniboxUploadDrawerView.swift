@@ -41,6 +41,7 @@ private enum OmniboxUploadDrawerUX {
 @available(iOS 16.0, *)
 public struct OmniboxUploadDrawerSheet: View {
     private let windowUUID: WindowUUID
+    private let provider: SearchProvider
     private let selectedChatMode: OmniboxChatMode?
     private let isAuthenticated: Bool
     private let onSelect: (OmniboxUploadOption) -> Void
@@ -48,12 +49,14 @@ public struct OmniboxUploadDrawerSheet: View {
     private let onLogin: () -> Void
 
     public init(windowUUID: WindowUUID,
+                provider: SearchProvider,
                 selectedChatMode: OmniboxChatMode?,
                 isAuthenticated: Bool,
                 onSelect: @escaping (OmniboxUploadOption) -> Void,
                 onSelectChatMode: @escaping (OmniboxChatMode) -> Void,
                 onLogin: @escaping () -> Void) {
         self.windowUUID = windowUUID
+        self.provider = provider
         self.selectedChatMode = selectedChatMode
         self.isAuthenticated = isAuthenticated
         self.onSelect = onSelect
@@ -63,6 +66,7 @@ public struct OmniboxUploadDrawerSheet: View {
 
     public var body: some View {
         OmniboxUploadDrawerView(windowUUID: windowUUID,
+                                provider: provider,
                                 selectedChatMode: selectedChatMode,
                                 isAuthenticated: isAuthenticated,
                                 onSelect: onSelect,
@@ -85,6 +89,7 @@ struct OmniboxUploadDrawerView: View {
     private typealias UX = OmniboxUploadDrawerUX
 
     private let windowUUID: WindowUUID
+    private let provider: SearchProvider
     private let selectedChatMode: OmniboxChatMode?
     private let isAuthenticated: Bool
     private let onSelect: (OmniboxUploadOption) -> Void
@@ -98,12 +103,14 @@ struct OmniboxUploadDrawerView: View {
     @State private var contentHeight = OmniboxUploadDrawerUX.fallbackHeight
 
     init(windowUUID: WindowUUID,
+         provider: SearchProvider,
          selectedChatMode: OmniboxChatMode?,
          isAuthenticated: Bool,
          onSelect: @escaping (OmniboxUploadOption) -> Void,
          onSelectChatMode: @escaping (OmniboxChatMode) -> Void,
          onLogin: @escaping () -> Void) {
         self.windowUUID = windowUUID
+        self.provider = provider
         self.selectedChatMode = selectedChatMode
         self.isAuthenticated = isAuthenticated
         self.onSelect = onSelect
@@ -111,11 +118,18 @@ struct OmniboxUploadDrawerView: View {
         self.onLogin = onLogin
     }
 
+    /// Only Ecosia's AI runs on an Ecosia account, so only its rows are gated on
+    /// sign-in and only it offers the in-app upload sources.
+    private var isEcosiaProvider: Bool { provider == .ecosia }
+
+    private var availableModes: [OmniboxChatMode] { OmniboxChatMode.modes(for: provider) }
+
     /// A chat mode is selectable only when the user is signed in; signed-out
     /// users may pick Standard AI Chat (no advanced features) but every other
     /// mode is shown disabled.
     private func isModeEnabled(_ mode: OmniboxChatMode) -> Bool {
-        isAuthenticated || mode == .standard
+        guard isEcosiaProvider else { return true }
+        return isAuthenticated || mode == .standard
     }
 
     var body: some View {
@@ -126,12 +140,14 @@ struct OmniboxUploadDrawerView: View {
                 if ChatModesFeatureFlag.isEnabled {
                     header
                 }
-                uploadRow
+                if isEcosiaProvider {
+                    uploadRow
+                }
                 if ChatModesFeatureFlag.isEnabled {
                     chatModeList
                 }
             }
-            if ChatModesFeatureFlag.isEnabled {
+            if ChatModesFeatureFlag.isEnabled, isEcosiaProvider {
                 // The banner is the last item in the flow, 16dp below the list.
                 footer
                     .padding(.top, .ecosia.space._m)
@@ -239,9 +255,9 @@ struct OmniboxUploadDrawerView: View {
         // Group all rows in one rounded solid card, separated by inset dividers,
         // like an iOS inset-grouped list / the search-suggestions overlay.
         VStack(spacing: 0) {
-            ForEach(Array(OmniboxChatMode.allCases.enumerated()), id: \.element) { index, mode in
+            ForEach(Array(availableModes.enumerated()), id: \.element) { index, mode in
                 chatModeRow(for: mode)
-                if index < OmniboxChatMode.allCases.count - 1 {
+                if index < availableModes.count - 1 {
                     rowSeparator
                 }
             }
