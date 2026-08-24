@@ -163,7 +163,6 @@ Derived
 *.xcworkspace
 Tuist/Dependencies
 .tuist-cache
-Package.resolved
 
 # Keep Tuist manifests (exceptions to the above)
 !firefox-ios/Project.swift
