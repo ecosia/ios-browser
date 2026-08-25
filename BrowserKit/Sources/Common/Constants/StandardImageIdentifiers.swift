@@ -103,7 +103,6 @@ public struct StandardImageIdentifiers {
         public static let lockSlashFill = "lockSlashFillLarge"
         public static let login = "loginLarge"
         public static let logoFirefox = "logoFirefoxLarge"
-        public static let logoFirefox = "iconLogo"
         public static let moreHorizontalRound = "moreHorizontalRoundLarge"
         public static let newFolder = "newFolderLarge"
         public static let nightMode = "nightModeLarge"
