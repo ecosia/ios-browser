@@ -70,6 +70,8 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
 
     private let customSearchEnginesFileName = "customEngines.plist"
     private var engineProvider: SearchEngineProvider
+    // Ecosia: Router configuration the current engine list was built from.
+    private var appliedRouterConfig: SearchRouterConfig?
 
     weak var delegate: SearchEngineDelegate?
     private var logger: Logger = DefaultLogger.shared
@@ -88,21 +90,29 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
         reloadOrderedEngines()
     }
 
-    // Ecosia: Re-evaluate provider after Unleash network refresh when the cached flag at launch
-    // differed from the remote value (for example first install with no on-disk cache).
+    // Ecosia: Re-evaluate the provider and the engine list after an Unleash refresh. Called on
+    // launch and on foreground, since a refresh can change either the flag or the router payload.
     func reconfigureEngineProviderIfNeeded() {
         let shouldUseCuratedProvider = CustomSearchProviderFeatureFlag.isEnabled
-        let usesCuratedProvider = engineProvider is CuratedSearchEngineProvider
-        guard shouldUseCuratedProvider != usesCuratedProvider else { return }
+        let providerChanged = shouldUseCuratedProvider != (engineProvider is CuratedSearchEngineProvider)
+        // The payload can change the offered providers while the flag stays on, which needs a
+        // rebuild but not a new provider instance.
+        let configChanged = appliedRouterConfig != CustomSearchProviderFeatureFlag.config
+        guard providerChanged || configChanged else { return }
 
-        engineProvider = SearchEngineProviderFactory.defaultSearchEngineProvider
-        EcosiaLogger.search.info(
-            "Search engine provider reconfigured: \(String(describing: type(of: engineProvider)))"
-        )
+        if providerChanged {
+            engineProvider = SearchEngineProviderFactory.defaultSearchEngineProvider
+            EcosiaLogger.search.info(
+                "Search engine provider reconfigured: \(String(describing: type(of: engineProvider)))"
+            )
+        }
         reloadOrderedEngines()
     }
 
     private func reloadOrderedEngines() {
+        // Recorded before the fetch so `reconfigureEngineProviderIfNeeded` compares against what
+        // this list was actually built from.
+        appliedRouterConfig = CustomSearchProviderFeatureFlag.config
         getOrderedEngines { preferences, orderedEngines in
             self.orderedEngines = orderedEngines
 

@@ -343,8 +343,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
     func ecosiaTrackBecomeActiveLifecycle() {
         // Refresh flags on foreground (no-op if the cache is fresh), then record resume so the flags
         // are in the analytics context.
-        Task {
+        Task { @MainActor in
             await FeatureManagement.fetchConfiguration()
+            // Ecosia: A foreground refresh can change the search provider flag or its router
+            // payload, so re-evaluate here too and not only on launch.
+            searchEnginesManager.reconfigureEngineProviderIfNeeded()
             Analytics.shared.activity(.resume)
         }
         MMP.sendSession()
