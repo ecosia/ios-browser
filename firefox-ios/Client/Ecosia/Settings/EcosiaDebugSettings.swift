@@ -257,6 +257,12 @@ class UnleashVariantResetSetting: HiddenSetting {
                 debugPrint(error)
             }
             await MainActor.run {
+                // A reset re-fetches the model, which can flip the search provider flag or
+                // change its router payload. Without this the app keeps the engine list it
+                // built at launch until the next foreground.
+                let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+                searchEnginesManager.reconfigureEngineProviderIfNeeded()
+
                 self.settings.tableView.reloadData()
                 let alert = AlertController(title: "Unleash reset ✅",
                                             message: "The local Unleash cache has been wiped out",
