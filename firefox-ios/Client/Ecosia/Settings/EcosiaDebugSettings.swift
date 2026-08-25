@@ -300,6 +300,17 @@ final class UnleashCustomSearchProviderSetting: UnleashVariantResetSetting {
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.customSearchProvider)
     }
+
+    /// Shows the configuration the app actually resolved, so QA can tell a payload that
+    /// landed from one that fell back. With the flag off this reads as the Ecosia-only
+    /// configuration, which is what applies.
+    override var status: NSAttributedString? {
+        let config = CustomSearchProviderFeatureFlag.config
+        let state = Unleash.isEnabled(.customSearchProvider) ? "enabled" : "disabled"
+        let providers = config.providers.map(\.rawValue).joined(separator: ", ")
+        let description = "\(state) · ai: \(config.aiMode.rawValue) · \(providers) (Click to reset)"
+        return NSAttributedString(string: description, attributes: [:])
+    }
 }
 
 final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
