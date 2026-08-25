@@ -35,8 +35,14 @@ public struct User: Codable, Equatable, @unchecked Sendable {
     /// Active default search engine identifier. Always `ecosia` unless custom search providers are enabled.
     public var selectedSearchEngineID = "ecosia"
 
+    /// Normalized form of `selectedSearchEngineID`. An identifier we no longer offer, for
+    /// example one persisted by an older build, resolves to Ecosia.
+    public var selectedProvider: SearchProvider {
+        SearchProvider(rawValue: selectedSearchEngineID) ?? .ecosia
+    }
+
     public var isEcosiaSearchProvider: Bool {
-        selectedSearchEngineID == "ecosia"
+        selectedProvider == .ecosia
     }
 
     /// AI-free searching preference. `nil` means never set (`ECNOAI` omitted);

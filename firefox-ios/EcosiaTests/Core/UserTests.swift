@@ -355,6 +355,22 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(count, 1, "Expected searchSettingsChanged when toggling aiFreeSearching")
     }
 
+    func testSelectedProviderNormalizesStoredIdentifier() {
+        let previous = User.shared.selectedSearchEngineID
+        defer { User.shared.selectedSearchEngineID = previous }
+
+        User.shared.selectedSearchEngineID = "duckduckgo"
+        XCTAssertEqual(User.shared.selectedProvider, .duckduckgo)
+        XCTAssertFalse(User.shared.isEcosiaSearchProvider)
+
+        // An identifier an older build could have persisted, for example a removed provider.
+        User.shared.selectedSearchEngineID = "bing"
+        XCTAssertEqual(User.shared.selectedProvider, .ecosia)
+        XCTAssertTrue(User.shared.isEcosiaSearchProvider,
+                      "A provider we no longer offer must be treated as Ecosia, so the market "
+                      + "and safe-search cookies are still written")
+    }
+
     func testAnalyticsUserState() {
         let expect = expectation(description: "")
         User.shared.analyticsUserState = User.AnalyticsStateContext()

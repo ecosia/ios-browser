@@ -35,11 +35,11 @@ enum SearchProviderSelection {
 
     static let ecosiaEngineID = SearchProvider.ecosia.rawValue
 
-    /// Active provider. Ecosia when the router is off, or when the persisted identifier is
-    /// no longer one we offer.
+    /// Active provider. Ecosia when the router is off; `User.selectedProvider` handles an
+    /// identifier we no longer offer.
     static var selectedProvider: SearchProvider {
         guard CustomSearchProviderFeatureFlag.isEnabled else { return .ecosia }
-        return SearchProvider(rawValue: User.shared.selectedSearchEngineID) ?? .ecosia
+        return User.shared.selectedProvider
     }
 
     static var isEcosiaDefault: Bool {
