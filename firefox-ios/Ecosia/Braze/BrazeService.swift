@@ -50,7 +50,7 @@ public final class BrazeService: NSObject {
 
     public func registerDeviceToken(_ deviceToken: Data) {
         braze?.notifications.register(deviceToken: deviceToken)
-        updateID(userId)
+        updateID(userId) // this is takingn
     }
 
     public func logCustomEvent(_ event: CustomEvent) {
@@ -60,7 +60,7 @@ public final class BrazeService: NSObject {
     // MARK: - APN Consent
 
     func requestAPNConsent() async throws -> Bool {
-        await UIApplication.shared.registerForRemoteNotifications()
+        UIApplication.shared.registerForRemoteNotifications()
         let notificationCenter = makeNotificationCenter()
         let granted = try await notificationCenter.requestAuthorization(options: [.badge, .sound, .alert])
         await retrieveUserCurrentNotificationAuthStatus() // Make sure status is always updated

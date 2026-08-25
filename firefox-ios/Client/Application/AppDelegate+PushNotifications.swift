@@ -8,6 +8,7 @@ import UserNotifications
 import Account
 
 import struct MozillaAppServices.ConstellationState
+import Ecosia
 
 /**
  * This exists because the Sync code is extension-safe, and thus doesn't get
@@ -134,6 +135,9 @@ extension AppDelegate {
             RustFirefoxAccounts.shared.pushNotifications.disableNotifications()
             return
         }
+        
+        /* Ecosia: register the token with braze */
+        BrazeService.shared.registerDeviceToken(deviceToken)
 
         Task { [profile] in
             do {
