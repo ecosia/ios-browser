@@ -546,7 +546,7 @@ extension ShareViewController {
 
         func firefoxUrl(_ url: String) -> String {
             // Ecosia: use the scheme from the bundle instead, fallback to ecosia
-            let urlScheme = Bundle.main.object(forInfoDictionaryKey: "MozPublicURLScheme") as? String ?? "ecosia"
+            let urlScheme = (Bundle.main.object(forInfoDictionaryKey: "MozPublicURLScheme") as? String).flatMap { $0.isEmpty ? nil : $0 } ?? "ecosia"
             let encoded = url.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.alphanumerics) ?? ""
             if isSearch {
                 /* Ecosia: use the scheme from the bundle instead
