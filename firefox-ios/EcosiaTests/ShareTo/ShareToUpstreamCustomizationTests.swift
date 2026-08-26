@@ -4,7 +4,7 @@
 
 import XCTest
 
-// Ecosia: MOB-4790 regression guard. These tests read the actual source/config files
+// Ecosia: Regression guard. These tests read the actual source/config files
 // (rather than exercising runtime behavior) because what they protect - icon/theme
 // swaps, a Tuist resource glob, an Info.plist key - isn't otherwise observable from a
 // unit test: ShareViewController lives in an extension target that can't be
@@ -45,19 +45,13 @@ final class ShareToUpstreamCustomizationTests: XCTestCase {
     }
 
     func testShareToInfoPlist_DeclaresPublicURLScheme() throws {
-        // Given
         let path = (RepoPath.root() as NSString).appendingPathComponent("firefox-ios/Extensions/ShareTo/Info.plist")
         let plist = try XCTUnwrap(NSDictionary(contentsOfFile: path))
-
-        // Then
         XCTAssertEqual(plist["MozPublicURLScheme"] as? String, "$(MOZ_PUBLIC_URL_SCHEME)")
     }
 
     func testExtensionTarget_BundlesEcosiaShareToAssets() throws {
-        // Given
         let source = try fileContents(at: "firefox-ios/Tuist/ProjectDescriptionHelpers/Targets+Extensions.swift")
-
-        // Then
         XCTAssertTrue(source.contains("Ecosia/UI/ShareToAssets.xcassets"))
     }
 }

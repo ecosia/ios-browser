@@ -6,7 +6,7 @@ import ActionExtensionKit
 import Foundation
 import XCTest
 
-// Ecosia: MOB-4790 regression guard. When `MozInternalURLScheme` is absent from
+// Ecosia: Regression guard. When `MozInternalURLScheme` is absent from
 // Info.plist, upstream Firefox falls back to the "firefox" scheme. Ecosia must fall
 // back to "ecosia" so ShareTo/action-extension deep links resolve to our app instead
 // of a non-existent "firefox://" handler.
@@ -20,22 +20,14 @@ import XCTest
 final class FirefoxURLBuilderSchemeFallbackTests: XCTestCase {
 
     func testMozInternalScheme_MatchesConfiguredScheme() {
-        // Given/When: MOZ_INTERNAL_URL_SCHEME = ecosia in EcosiaCommon.xcconfig
         let subject = FirefoxURLBuilder()
-
-        // Then
         XCTAssertEqual(subject.mozInternalScheme, "ecosia")
     }
 
     func testBuildFirefoxURL_UsesEcosiaScheme() throws {
-        // Given
         let subject = FirefoxURLBuilder()
         let shareItem = ActionShareItem(url: "https://example.com", title: nil)
-
-        // When
         let result = try XCTUnwrap(subject.buildFirefoxURL(from: .shareItem(shareItem)))
-
-        // Then
         XCTAssertEqual(result.scheme, "ecosia")
     }
 
