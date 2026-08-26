@@ -27,13 +27,14 @@ public enum SearchProviderIcons {
     }
 
     /// Drawn into a bitmap because `OpenSearchEngine` archiving requires `pngData()`,
-    /// which a plain symbol image does not reliably provide.
-    private static var fallbackImage: UIImage {
+    /// which a plain symbol image does not reliably provide. Rendered once: a missing
+    /// asset is looked up on every engine list rebuild, not just once.
+    private static let fallbackImage: UIImage = {
         let size = CGSize(width: 32, height: 32)
         let configuration = UIImage.SymbolConfiguration(pointSize: 24)
         let symbol = UIImage(systemName: "globe", withConfiguration: configuration)
         return UIGraphicsImageRenderer(size: size).image { _ in
             symbol?.draw(in: CGRect(origin: .zero, size: size))
         }
-    }
+    }()
 }

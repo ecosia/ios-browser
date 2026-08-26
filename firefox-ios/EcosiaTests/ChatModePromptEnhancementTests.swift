@@ -52,6 +52,28 @@ final class ChatModePromptEnhancementTests: XCTestCase {
         }
     }
 
+    // MARK: - Surviving a provider change
+
+    /// A mode both providers offer must not be dropped when switching between them.
+    func testSharedModesAreOfferedByEveryProvider() {
+        for mode in OmniboxChatMode.allCases where mode != .standard {
+            for provider in SearchProvider.allCases {
+                XCTAssertTrue(OmniboxChatMode.modes(for: provider).contains(mode),
+                              "\(provider) does not offer \(mode)")
+            }
+        }
+    }
+
+    /// Standard is the only mode a provider can drop, which is what makes a selection
+    /// unrepresentable after switching to a conversational provider.
+    func testStandardIsTheOnlyModeAProviderCanDrop() {
+        let dropped = SearchProvider.allCases.flatMap { provider in
+            OmniboxChatMode.allCases.filter { !OmniboxChatMode.modes(for: provider).contains($0) }
+        }
+
+        XCTAssertEqual(Set(dropped), [.standard])
+    }
+
     // MARK: - Applied to destinations
 
     func testThirdPartyDestinationAppendsTheSuffixToTheQuery() throws {

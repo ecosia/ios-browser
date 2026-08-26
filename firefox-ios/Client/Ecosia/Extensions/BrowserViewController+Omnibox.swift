@@ -688,18 +688,25 @@ extension BrowserViewController {
     func ecosiaHandleDefaultSearchEngineDidChange() {
         guard CustomSearchProviderFeatureFlag.isEnabled else { return }
 
+        // Only Ecosia can receive an upload from the app, so pending attachments never
+        // survive a switch away from it.
         if !SearchProviderSelection.usesEcosiaAIBackend {
-            resetOmniboxSelectionsForNonEcosiaSearchProvider()
+            omniboxAttachmentCoordinator.clearAttachments()
         }
+        clearSelectedChatModeIfUnsupported()
 
         ntpOmniboxAnchorView?.updateUploadButtonVisibility()
     }
 
-    private func resetOmniboxSelectionsForNonEcosiaSearchProvider() {
+    /// Chat modes carry across providers, so a selection is only dropped when the new
+    /// provider does not offer it. Conversational providers have no standard mode.
+    private func clearSelectedChatModeIfUnsupported() {
+        guard let mode = omniboxSheetState?.selectedChatMode,
+              !OmniboxChatMode.modes(for: SearchProviderSelection.selectedProvider).contains(mode)
+        else { return }
+
         omniboxSheetState?.selectedChatMode = nil
-        omniboxAttachmentCoordinator.clearAttachments()
         ntpOmniboxAnchorView?.setSelectedChatMode(nil)
-        ntpOmniboxAnchorView?.updateUploadButtonVisibility()
     }
 }
 
