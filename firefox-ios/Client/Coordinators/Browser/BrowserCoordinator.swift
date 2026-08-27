@@ -175,7 +175,7 @@ class BrowserCoordinator: BaseCoordinator,
                 browserViewController: browserViewController
             )
         }
-        
+
         homepageController.view.accessibilityElementsHidden = false
 
         dispatchActionForEmbeddingHomepage(with: isZeroSearch)
@@ -269,7 +269,7 @@ class BrowserCoordinator: BaseCoordinator,
     func shouldShowNewTabToast(tab: Tab) -> Bool {
         guard let shortcutsLibraryVC = router.navigationController.topViewController as? ShortcutsLibraryViewController
         else { return true }
-        
+
         shortcutsLibraryVC.showOpenedNewTabToast(tab: tab)
         return false
     }
