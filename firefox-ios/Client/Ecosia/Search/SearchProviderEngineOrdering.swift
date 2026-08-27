@@ -14,7 +14,7 @@ enum SearchProviderEngineOrdering {
     static func promoteSelectedSearchProvider(in engines: [OpenSearchEngine]) -> [OpenSearchEngine] {
         let selectedID = User.shared.selectedSearchEngineID
         let isSelectionOffered = engines.contains { $0.engineID == selectedID }
-        let targetID = isSelectionOffered ? selectedID : CuratedSearchEngines.ecosiaEngineID
+        let targetID = isSelectionOffered ? selectedID : SearchProviderSelection.ecosiaEngineID
 
         guard let index = engines.firstIndex(where: { $0.engineID == targetID }), index != 0 else {
             return engines

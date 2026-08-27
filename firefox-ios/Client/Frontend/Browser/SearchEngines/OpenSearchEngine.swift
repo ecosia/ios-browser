@@ -144,7 +144,7 @@ final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearch
         /* Ecosia: Route non-Ecosia engines through their OpenSearch templates when the custom
            search provider flag is enabled; otherwise always use the Ecosia URL builder. */
         if CustomSearchProviderFeatureFlag.isEnabled,
-           engineID != CuratedSearchEngines.ecosiaEngineID {
+           engineID != SearchProviderSelection.ecosiaEngineID {
             return getURLFromTemplate(searchTemplate, query: query)
         }
         return URL.ecosiaSearchWithQuery(query)

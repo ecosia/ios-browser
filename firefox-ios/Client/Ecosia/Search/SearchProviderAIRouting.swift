@@ -18,14 +18,12 @@ enum SearchProviderAIRouting {
     private static let googleAIModeParameter = URLQueryItem(name: "udm", value: "50")
 
     /// Hosts that serve a provider's AI experience, used to recognise a destination we
-    /// built. Google is absent because only its `udm` searches are AI, and its upload
-    /// destination on `gemini.google.com` is listed here instead.
-    private static let aiHosts: Set<String> = [
-        "gemini.google.com",
-        "duck.ai",
-        "chatgpt.com",
-        "www.perplexity.ai"
-    ]
+    /// built. Derived from the catalog so the two cannot drift: a third party's upload
+    /// redirect and its AI home are the same page. Google's plain results page is not
+    /// included, since only its `udm` searches are AI.
+    private static var aiHosts: Set<String> {
+        Set(SearchProvider.allCases.compactMap { $0.fileUploadDestination?.host })
+    }
 
     /// Where the AI entry point should send `query` for the given provider.
     ///
@@ -84,9 +82,10 @@ enum SearchProviderAIRouting {
 
     /// Destination for the AI entry point itself, used when the entry point is a plain
     /// redirect. Falls back to the provider's AI home when there is nothing typed.
-    static func aiEntryPointURL(for provider: SearchProvider, query: String) -> URL? {
-        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return aiHomeURL(for: provider) }
+    static func aiEntryPointURL(for provider: SearchProvider, query: String?) -> URL? {
+        guard let trimmed = query?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !trimmed.isEmpty
+        else { return aiHomeURL(for: provider) }
         return aiDestinationURL(for: provider, query: trimmed, origin: .omnibox)
     }
 

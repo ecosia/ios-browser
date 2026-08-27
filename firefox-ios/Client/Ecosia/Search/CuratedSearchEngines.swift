@@ -9,8 +9,6 @@ import Ecosia
 /// `CustomSearchProviderFeatureFlag` is enabled, from the bundled `SearchProvider` catalog.
 enum CuratedSearchEngines {
 
-    static let ecosiaEngineID = SearchProvider.ecosia.rawValue
-
     static func engines(for providers: [SearchProvider]) -> [OpenSearchEngine] {
         providers.map(engine(for:))
     }

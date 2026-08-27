@@ -11,10 +11,6 @@ import Shared
 /// The list comes entirely from the bundled `SearchProvider` catalog rather than from
 /// Remote Settings: the offered providers and their result URLs are fixed, and two of
 /// them are not search engines Remote Settings knows about.
-///
-/// - TODO: Revisit if locale-specific engine variants (google.de and similar) are wanted.
-/// Remote Settings supplies those, but also brings back its client-tagged result
-/// templates, so they would need overriding from the catalog.
 final class CuratedSearchEngineProvider: SearchEngineProvider, Sendable {
 
     let preferencesVersion: SearchEngineOrderingPrefsVersion = .v2

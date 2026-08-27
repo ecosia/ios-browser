@@ -345,8 +345,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // are in the analytics context.
         Task { @MainActor in
             await FeatureManagement.fetchConfiguration()
-            // Ecosia: A foreground refresh can change the search provider flag or its router
-            // payload, so re-evaluate here too and not only on launch.
+            // A refresh can change the search provider flag or its router payload.
             searchEnginesManager.reconfigureEngineProviderIfNeeded()
             Analytics.shared.activity(.resume)
         }

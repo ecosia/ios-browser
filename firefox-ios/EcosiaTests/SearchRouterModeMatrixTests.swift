@@ -84,6 +84,16 @@ final class SearchRouterModeMatrixTests: XCTestCase {
         }
     }
 
+    /// The omnibox text is optional, so an absent value behaves like an empty one.
+    func testRedirectModeFallsBackToTheAIHomeWhenThereIsNoText() throws {
+        for provider in SearchProvider.allCases {
+            let url = try XCTUnwrap(SearchProviderAIRouting.aiEntryPointURL(for: provider, query: nil))
+            XCTAssertNil(URLComponents(url: url, resolvingAgainstBaseURL: false)?
+                .queryItems?.first { $0.name == "q" },
+                         "\(provider) carried a query with no text")
+        }
+    }
+
     func testRedirectModeCarriesTypedTextThrough() throws {
         let url = try XCTUnwrap(SearchProviderAIRouting.aiEntryPointURL(for: .perplexity, query: "trees"))
         let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems

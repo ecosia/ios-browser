@@ -229,7 +229,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
     private func openProviderAIEntryPoint(for provider: SearchProvider) {
         guard let tab = tabManager.selectedTab,
               let url = SearchProviderAIRouting.aiEntryPointURL(for: provider,
-                                                                query: ntpOmniboxAnchorView?.text ?? "")
+                                                                query: ntpOmniboxAnchorView?.text)
         else { return }
         ntpOmniboxAnchorView?.text = ""
         finishEditingAndSubmit(url, visitType: .typed, forTab: tab)

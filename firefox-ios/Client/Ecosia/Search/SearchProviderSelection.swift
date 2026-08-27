@@ -51,7 +51,6 @@ enum SearchProviderSelection {
 
         // AI-free searching is Ecosia-scoped: its settings row is hidden for other
         // providers, so it must not disable an entry point the user cannot restore.
-        // TODO: Consider making it global, which requires showing the row for every provider.
         if provider == .ecosia, !AIFreeSearchingSelection.allowsOmniboxAI { return .hidden }
 
         switch CustomSearchProviderFeatureFlag.config.aiMode {
