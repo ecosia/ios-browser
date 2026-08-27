@@ -36,12 +36,12 @@ class BrowserCoordinator: BaseCoordinator,
     private struct UX {
         static let searchEnginePopoverSize = CGSize(width: 250, height: 536)
     }
-
+    
     var browserViewController: BrowserViewController
     var webviewController: WebviewViewController?
     var homepageViewController: HomepageViewController?
     private weak var privateHomepageViewController: PrivateHomepageViewController?
-
+    
     private var profile: Profile
     private let tabManager: TabManager
     private let themeManager: ThemeManager
@@ -58,9 +58,9 @@ class BrowserCoordinator: BaseCoordinator,
     private var isSummarizerOn: Bool {
         return summarizerNimbusUtils.isSummarizeFeatureToggledOn
     }
-
+    
     override var isDismissible: Bool { false }
-
+    
     init(router: Router,
          screenshotService: ScreenshotService,
          tabManager: TabManager,
@@ -80,14 +80,14 @@ class BrowserCoordinator: BaseCoordinator,
         self.applicationHelper = applicationHelper
         self.glean = glean
         super.init(router: router)
-
+        
         browserViewController.browserDelegate = self
         browserViewController.navigationHandler = self
         tabManager.addDelegate(self)
         // Ecosia: Set referrals and ecosiaAuth so showHomepage can run setupEcosiaAdapter and use Ecosia NTP
         configureEcosiaServicesIfNeeded()
     }
-
+    
     func start(with launchType: LaunchType?) {
         router.setRootViewController(browserViewController, hideBar: true, animated: false)
         let isIphone = UIDevice.current.userInterfaceIdiom == .phone
@@ -101,32 +101,32 @@ class BrowserCoordinator: BaseCoordinator,
             }
         }
     }
-
+    
     // MARK: - Helper methods
-
+    
     private func startLaunch(with launchType: LaunchType) {
         let launchCoordinator = LaunchCoordinator(router: router, windowUUID: windowUUID)
         launchCoordinator.parentCoordinator = self
         add(child: launchCoordinator)
         launchCoordinator.start(with: launchType)
     }
-
+    
     // MARK: - LaunchCoordinatorDelegate
     func didFinishTermsOfService(from coordinator: LaunchCoordinator) {
         didFinishLaunch(from: coordinator)
     }
-
+    
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
         /* Ecosia: Animate transition from welcome screen
-        router.dismiss(animated: true, completion: { [weak self] in
-            self?.showTermsOfUse()
-        })
-        */
+         router.dismiss(animated: true, completion: { [weak self] in
+         self?.showTermsOfUse()
+         })
+         */
         router.dismiss(animated: true) { [weak self] in
             self?.browserViewController.animateToolbarsIn()
         }
         remove(child: coordinator)
-
+        
         // Once launch is done, we check for any saved Route
         if let savedRoute {
             logger.log("Find and handle route called after didFinishLaunch after onboarding",
@@ -135,7 +135,7 @@ class BrowserCoordinator: BaseCoordinator,
             findAndHandle(route: savedRoute)
         }
     }
-
+    
     // Ecosia: Handle sign-in request from welcome screen
     func didRequestSignIn(from coordinator: LaunchCoordinator) {
         browserViewController.prepareToolbarsForWelcomeTransition()
@@ -146,9 +146,9 @@ class BrowserCoordinator: BaseCoordinator,
         }
         remove(child: coordinator)
     }
-
+    
     // MARK: - BrowserDelegate
-
+    
     func showHomepage(
         overlayManager: OverlayModeManager,
         isZeroSearch: Bool,
@@ -162,7 +162,7 @@ class BrowserCoordinator: BaseCoordinator,
             toastContainer: toastContainer
         )
         homepageController.termsOfUseDelegate = self
-
+        
         // Ecosia: Setup Ecosia adapter before first view access so homepage uses Ecosia sections
         if self.homepageViewController == nil,
            let auth = browserViewController.ecosiaAuth,
@@ -175,9 +175,9 @@ class BrowserCoordinator: BaseCoordinator,
                 browserViewController: browserViewController
             )
         }
-
+        
         homepageController.view.accessibilityElementsHidden = false
-
+        
         dispatchActionForEmbeddingHomepage(with: isZeroSearch)
         guard browserViewController.embedContent(homepageController) else {
             logger.log("Unable to embed new homepage", level: .debug, category: .coordinator)
@@ -188,7 +188,7 @@ class BrowserCoordinator: BaseCoordinator,
         // [FXIOS-13651] Fix for WKWebView memory leak. (See comments on related PR.)
         webviewController?.update(webView: nil)
     }
-
+    
     func homepageScreenshotTool() -> (any Screenshotable)? {
         let newTabSettings = browserViewController.newTabSettings
         switch newTabSettings {
@@ -201,12 +201,12 @@ class BrowserCoordinator: BaseCoordinator,
             return homepageViewController
         }
     }
-
+    
     func setHomepageVisibility(isVisible: Bool) {
         guard let homepage = homepageViewController else { return }
         homepage.view.isHidden = !isVisible
     }
-
+    
     private func dispatchActionForEmbeddingHomepage(with isZeroSearch: Bool) {
         store.dispatch(
             HomepageAction(
@@ -216,7 +216,7 @@ class BrowserCoordinator: BaseCoordinator,
             )
         )
     }
-
+    
     func showPrivateHomepage(overlayManager: OverlayModeManager) {
         let privateHomepageController = PrivateHomepageViewController(
             windowUUID: windowUUID,
@@ -230,11 +230,11 @@ class BrowserCoordinator: BaseCoordinator,
             return
         }
     }
-
+    
     func navigateFromHomePanel(to url: URL, visitType: VisitType, isGoogleTopSite: Bool) {
         browserViewController.homePanel(didSelectURL: url, visitType: visitType, isGoogleTopSite: isGoogleTopSite)
     }
-
+    
     func showContextMenu(for configuration: ContextMenuConfiguration) {
         let coordinator = ContextMenuCoordinator(
             configuration: configuration,
@@ -246,7 +246,7 @@ class BrowserCoordinator: BaseCoordinator,
         add(child: coordinator)
         coordinator.start()
     }
-
+    
     func showEditBookmark(parentFolder: FxBookmarkNode, bookmark: FxBookmarkNode) {
         let navigationController = DismissableNavigationViewController()
         let router = DefaultRouter(navigationController: navigationController)
@@ -265,25 +265,25 @@ class BrowserCoordinator: BaseCoordinator,
         }
         present(navigationController)
     }
-
+    
     func shouldShowNewTabToast(tab: Tab) -> Bool {
         guard let shortcutsLibraryVC = router.navigationController.topViewController as? ShortcutsLibraryViewController
         else { return true }
-
+        
         shortcutsLibraryVC.showOpenedNewTabToast(tab: tab)
         return false
     }
-
+    
     // MARK: - PrivateHomepageDelegate
     func homePanelDidRequestToOpenInNewTab(with url: URL, isPrivate: Bool, selectNewTab: Bool) {
         openInNewTab(url: url, isPrivate: isPrivate, selectNewTab: selectNewTab)
     }
-
+    
     @MainActor
     func switchMode() {
         browserViewController.tabManager.switchPrivacyMode()
     }
-
+    
     func show(webView: WKWebView) {
         // Keep the webviewController in memory, update to newest webview when needed
         if let webviewController = webviewController {
@@ -297,27 +297,27 @@ class BrowserCoordinator: BaseCoordinator,
             let isEmbedded = browserViewController.embedContent(webviewViewController)
             logger.log("Webview controller was created and embedded \(isEmbedded)", level: .info, category: .coordinator)
         }
-
+        
         // Shortcuts library is pushed on top of BVC, so we need to pop that view controller once the web view is showing
         if router.navigationController.topViewController is ShortcutsLibraryViewController {
             router.popViewController(animated: false)
         }
-
+        
         homepageViewController?.view.accessibilityElementsHidden = true
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
         screenshotService.screenshotableView = webviewController
     }
-
+    
     func browserHasLoaded() {
         // Ecosia: Store the current version as the upgrade version once the browser is ready.
         if !User.shared.firstTime {
             EcosiaInstallType.evaluateCurrentEcosiaInstallType(storeUpgradeVersion: true)
         }
-
+        
         if !isDeeplinkOptimiziationRefactorEnabled {
             browserIsReady = true
             logger.log("Browser has loaded", level: .info, category: .coordinator)
-
+            
             if let savedRoute {
                 logger.log("Find and handle route called after browserHasLoaded",
                            level: .info,
@@ -326,15 +326,15 @@ class BrowserCoordinator: BaseCoordinator,
             }
         }
     }
-
+    
     // MARK: - ETPCoordinatorSSLStatusDelegate
-
+    
     var showHasOnlySecureContentInTrackingPanel: Bool {
         return browserViewController.tabManager.selectedTab?.currentWebView()?.hasOnlySecureContent ?? false
     }
-
+    
     // MARK: - Route handling
-
+    
     override func canHandle(route: Route) -> Bool {
         if !isDeeplinkOptimiziationRefactorEnabled {
             guard browserIsReady, !tabManager.isRestoringTabs else {
@@ -346,7 +346,7 @@ class BrowserCoordinator: BaseCoordinator,
                 return false
             }
         }
-
+        
         switch route {
         case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser, .sharesheet:
             return true
@@ -354,7 +354,7 @@ class BrowserCoordinator: BaseCoordinator,
             return canHandleSettings(with: section)
         }
     }
-
+    
     override func handle(route: Route) {
         if !isDeeplinkOptimiziationRefactorEnabled {
             guard browserIsReady, !tabManager.isRestoringTabs else {
@@ -364,30 +364,30 @@ class BrowserCoordinator: BaseCoordinator,
                 return
             }
         }
-
+        
         logger.log("Handling a route", level: .info, category: .coordinator)
         switch route {
         case let .searchQuery(query, isPrivate):
             handle(query: query, isPrivate: isPrivate)
-
+            
         case let .search(url, isPrivate, options):
             handle(url: url, isPrivate: isPrivate, options: options)
-
+            
         case let .searchURL(url, tabId):
             handle(searchURL: url, tabId: tabId)
-
+            
         case let .sharesheet(shareType, shareMessage):
             handleShareRoute(shareType: shareType, shareMessage: shareMessage)
-
+            
         case let .glean(url):
             glean.handleDeeplinkUrl(url: url)
-
+            
         case let .homepanel(section):
             handle(homepanelSection: section)
-
+            
         case let .settings(section):
             handleSettings(with: section)
-
+            
         case let .action(routeAction):
             switch routeAction {
             case .closePrivateTabs:
@@ -395,10 +395,10 @@ class BrowserCoordinator: BaseCoordinator,
             case .showIntroOnboarding:
                 showIntroOnboarding()
             }
-
+            
         case let .fxaSignIn(params):
             handle(fxaParams: params)
-
+            
         case let .defaultBrowser(section):
             switch section {
             case .systemSettings:
@@ -413,7 +413,7 @@ class BrowserCoordinator: BaseCoordinator,
         let launchType = LaunchType.intro(manager: introManager)
         startLaunch(with: launchType)
     }
-
+    
     private func handleClosePrivateTabsWidgetAction() {
         // Our widget actions will arrive as a URL passed into the client iOS app.
         // If multiple iPad windows are open the resulting action + route will be
@@ -421,7 +421,7 @@ class BrowserCoordinator: BaseCoordinator,
         // for all open windows, so we route this message to the WindowManager.
         windowManager.performMultiWindowAction(.closeAllPrivateTabs)
     }
-
+    
     private func handle(homepanelSection section: Route.HomepanelSection) {
         switch section {
         case .bookmarks:
@@ -436,35 +436,35 @@ class BrowserCoordinator: BaseCoordinator,
             browserViewController.openURLInNewTab(HomePanelType.topSites.internalUrl)
         case .newPrivateTab:
             /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
-            browserViewController.openBlankNewTab(focusLocationField: true, isPrivate: true)
-            */
+             browserViewController.openBlankNewTab(focusLocationField: true, isPrivate: true)
+             */
             browserViewController.openBlankNewTab(focusLocationField: false, isPrivate: true)
         case .newTab:
             /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
-            browserViewController.openBlankNewTab(focusLocationField: true)
-            */
+             browserViewController.openBlankNewTab(focusLocationField: true)
+             */
             browserViewController.openBlankNewTab(focusLocationField: false)
         }
     }
-
+    
     // MARK: - Handle Deeplink Open URL / text
-
+    
     private func handle(query: String, isPrivate: Bool) {
         browserViewController.handle(query: query, isPrivate: isPrivate)
     }
-
+    
     private func handle(url: URL?, isPrivate: Bool, options: Set<Route.SearchOptions>? = nil) {
         browserViewController.handle(url: url, isPrivate: isPrivate, options: options)
     }
-
+    
     private func handle(searchURL: URL?, tabId: String) {
         browserViewController.handle(url: searchURL, tabId: tabId)
     }
-
+    
     private func handle(fxaParams: FxALaunchParams) {
         browserViewController.presentSignInViewController(fxaParams)
     }
-
+    
     /// Starts the share sheet coordinator for the deep link `.sharesheet` route (share content via Nimbus Messaging).
     /// - Parameters:
     ///   - shareType: The content to share.
@@ -480,14 +480,14 @@ class BrowserCoordinator: BaseCoordinator,
             popoverArrowDirection: .any
         )
     }
-
+    
     private func canHandleSettings(with section: Route.SettingsSection) -> Bool {
         guard !childCoordinators.contains(where: { $0 is SettingsCoordinator }) else {
             return false // route is handled with existing child coordinator
         }
         return true
     }
-
+    
     private func handleSettings(with section: Route.SettingsSection, onDismiss: (() -> Void)? = nil) {
         guard !childCoordinators.contains(where: { $0 is SettingsCoordinator }) else {
             return // route is handled with existing child coordinator
@@ -498,7 +498,7 @@ class BrowserCoordinator: BaseCoordinator,
         let modalPresentationStyle: UIModalPresentationStyle = isPad ? .fullScreen: .formSheet
         navigationController.modalPresentationStyle = modalPresentationStyle
         let settingsRouter = DefaultRouter(navigationController: navigationController)
-
+        
         let settingsCoordinator = SettingsCoordinator(
             router: settingsRouter,
             tabManager: tabManager
@@ -506,14 +506,14 @@ class BrowserCoordinator: BaseCoordinator,
         settingsCoordinator.parentCoordinator = self
         add(child: settingsCoordinator)
         settingsCoordinator.start(with: section)
-
+        
         navigationController.onViewDismissed = { [weak self] in
             self?.didFinishSettings(from: settingsCoordinator)
             onDismiss?()
         }
         present(navigationController)
     }
-
+    
     private func showLibrary(with homepanelSection: Route.HomepanelSection) {
         windowManager.postWindowEvent(event: .libraryOpened, windowUUID: windowUUID)
         if let libraryCoordinator = childCoordinators[LibraryCoordinator.self] {
@@ -522,7 +522,7 @@ class BrowserCoordinator: BaseCoordinator,
         } else {
             let navigationController = DismissableNavigationViewController()
             navigationController.modalPresentationStyle = .formSheet
-
+            
             let libraryCoordinator = LibraryCoordinator(
                 router: DefaultRouter(navigationController: navigationController),
                 tabManager: tabManager
@@ -530,11 +530,11 @@ class BrowserCoordinator: BaseCoordinator,
             libraryCoordinator.parentCoordinator = self
             add(child: libraryCoordinator)
             libraryCoordinator.start(with: homepanelSection)
-
+            
             present(navigationController)
         }
     }
-
+    
     private func showETPMenu(sourceView: UIView) {
         let enhancedTrackingProtectionCoordinator = EnhancedTrackingProtectionCoordinator(router: router,
                                                                                           tabManager: tabManager,
@@ -543,61 +543,61 @@ class BrowserCoordinator: BaseCoordinator,
         add(child: enhancedTrackingProtectionCoordinator)
         enhancedTrackingProtectionCoordinator.start(sourceView: sourceView)
     }
-
+    
     // MARK: - SettingsCoordinatorDelegate
-
+    
     func openURLinNewTab(_ url: URL) {
         browserViewController.openURLInNewTab(url)
     }
-
+    
     func didFinishSettings(from coordinator: SettingsCoordinator) {
         router.dismiss(animated: true, completion: nil)
         remove(child: coordinator)
     }
-
+    
     func openDebugTestTabs(count: Int) {
         guard let url = URL(string: "https://www.mozilla.org") else { return }
         browserViewController.debugOpen(numberOfNewTabs: count, at: url)
     }
-
+    
     // MARK: - LibraryCoordinatorDelegate
-
+    
     func openRecentlyClosedSiteInNewTab(_ url: URL, isPrivate: Bool) {
         browserViewController.openRecentlyClosedSiteInNewTab(url, isPrivate: isPrivate)
     }
-
+    
     func libraryPanelDidRequestToOpenInNewTab(_ url: URL, isPrivate: Bool) {
         browserViewController.libraryPanelDidRequestToOpenInNewTab(url, isPrivate: isPrivate)
         router.dismiss()
     }
-
+    
     func libraryPanel(didSelectURL url: URL, visitType: VisitType) {
         browserViewController.libraryPanel(didSelectURL: url, visitType: visitType)
         router.dismiss()
     }
-
+    
     var libraryPanelWindowUUID: WindowUUID {
         return windowUUID
     }
-
+    
     func didFinishLibrary(from coordinator: Coordinator) {
         router.dismiss(animated: true, completion: nil)
         remove(child: coordinator)
     }
-
+    
     // MARK: - EnhancedTrackingProtectionCoordinatorDelegate
-
+    
     func didFinishEnhancedTrackingProtection(from coordinator: EnhancedTrackingProtectionCoordinator) {
         router.dismiss(animated: true, completion: nil)
         remove(child: coordinator)
     }
-
+    
     func settingsOpenPage(settings: Route.SettingsSection) {
         handleSettings(with: settings)
     }
-
+    
     // MARK: - MainMenuCoordinatorDelegate
-
+    
     func showMainMenu() {
         if featureFlags.isFeatureEnabled(.menuRefactor, checking: .buildOnly) {
             let mainMenuCoordinator = MainMenuCoordinator(router: router,
@@ -612,43 +612,43 @@ class BrowserCoordinator: BaseCoordinator,
             present(menuNavViewController)
         }
     }
-
+    
     func openURLInNewTab(_ url: URL?) {
         if let url {
             browserViewController.openURLInNewTab(url, isPrivate: self.tabManager.selectedTab?.isPrivate ?? false)
         }
     }
-
+    
     func openNewTab(inPrivateMode isPrivate: Bool) {
         browserViewController.openNewTabFromMenu(
             focusLocationField: true,
             isPrivate: isPrivate
         )
     }
-
+    
     func showLibraryPanel(_ panel: Route.HomepanelSection) {
         showLibrary(with: panel)
     }
-
+    
     func showSettings(at destination: Route.SettingsSection) {
         presentWithModalDismissIfNeeded {
             self.handleSettings(with: destination, onDismiss: nil)
         }
     }
-
+    
     func editBookmarkForCurrentTab() {
         guard let urlString = tabManager.selectedTab?.url?.absoluteString else { return }
         browserViewController.openBookmarkEditPanel(urlString: urlString)
     }
-
+    
     func showFindInPage() {
         browserViewController.showFindInPage()
     }
-
+    
     func updateZoomPageBarVisibility() {
         browserViewController.updateZoomPageBarVisibility(visible: true)
     }
-
+    
     /// Share the currently selected tab using the share sheet.
     ///
     /// Part of the MainMenuCoordinatorDelegate implementation, called from the New Menu > Tools > Share.
@@ -658,7 +658,7 @@ class BrowserCoordinator: BaseCoordinator,
               let url = selectedTab.canonicalURL?.displayURL else {
             return
         }
-
+        
         startShareSheetCoordinator(
             shareType: .tab(url: url, tab: selectedTab),
             shareMessage: nil,
@@ -668,9 +668,15 @@ class BrowserCoordinator: BaseCoordinator,
             popoverArrowDirection: .any
         )
     }
-
+    
     func presentSiteProtections() {
         showETPMenu(sourceView: browserViewController.addressToolbarContainer)
+    }
+    
+    func pressedMailApp() {
+        guard let nav = router.navigationController.presentedViewController as? UINavigationController else { return }
+        let viewController = OpenWithSettingsViewController(prefs: profile.prefs, windowUUID: windowUUID)
+        nav.pushViewController(viewController, animated: true)
     }
 
     func presentSavePDFController() {

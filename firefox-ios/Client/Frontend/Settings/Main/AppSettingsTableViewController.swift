@@ -454,9 +454,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                     SiriPageSetting(settings: self, settingsDelegate: parentCoordinator)
                                    ])]
         }
+        
         let theme = themeManager.getCurrentTheme(for: windowUUID)
+        let browsingSettingsDelegate: BrowsingSettingsDelegate? = self.parentCoordinator as? BrowsingSettingsDelegate
+        
         let generalSettings: [Setting] = [
-            OpenWithSetting(settings: self, settingsDelegate: nil),
+            OpenWithSetting(settings: self, settingsDelegate: browsingSettingsDelegate),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
             SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
             BlockPopupSetting(prefs: profile.prefs),
