@@ -80,7 +80,7 @@ class BrowserCoordinator: BaseCoordinator,
         self.applicationHelper = applicationHelper
         self.glean = glean
         super.init(router: router)
-        
+
         browserViewController.browserDelegate = self
         browserViewController.navigationHandler = self
         tabManager.addDelegate(self)
@@ -118,15 +118,15 @@ class BrowserCoordinator: BaseCoordinator,
 
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
         /* Ecosia: Animate transition from welcome screen
-         router.dismiss(animated: true, completion: { [weak self] in
-         self?.showTermsOfUse()
-         })
-         */
+        router.dismiss(animated: true, completion: { [weak self] in
+            self?.showTermsOfUse()
+        })
+        */
         router.dismiss(animated: true) { [weak self] in
             self?.browserViewController.animateToolbarsIn()
         }
         remove(child: coordinator)
-        
+
         // Once launch is done, we check for any saved Route
         if let savedRoute {
             logger.log("Find and handle route called after didFinishLaunch after onboarding",
@@ -146,7 +146,7 @@ class BrowserCoordinator: BaseCoordinator,
         }
         remove(child: coordinator)
     }
-    
+
     // MARK: - BrowserDelegate
 
     func showHomepage(
@@ -162,7 +162,7 @@ class BrowserCoordinator: BaseCoordinator,
             toastContainer: toastContainer
         )
         homepageController.termsOfUseDelegate = self
-        
+
         // Ecosia: Setup Ecosia adapter before first view access so homepage uses Ecosia sections
         if self.homepageViewController == nil,
            let auth = browserViewController.ecosiaAuth,
@@ -177,7 +177,7 @@ class BrowserCoordinator: BaseCoordinator,
         }
         
         homepageController.view.accessibilityElementsHidden = false
-        
+
         dispatchActionForEmbeddingHomepage(with: isZeroSearch)
         guard browserViewController.embedContent(homepageController) else {
             logger.log("Unable to embed new homepage", level: .debug, category: .coordinator)
@@ -297,12 +297,12 @@ class BrowserCoordinator: BaseCoordinator,
             let isEmbedded = browserViewController.embedContent(webviewViewController)
             logger.log("Webview controller was created and embedded \(isEmbedded)", level: .info, category: .coordinator)
         }
-        
+
         // Shortcuts library is pushed on top of BVC, so we need to pop that view controller once the web view is showing
         if router.navigationController.topViewController is ShortcutsLibraryViewController {
             router.popViewController(animated: false)
         }
-        
+
         homepageViewController?.view.accessibilityElementsHidden = true
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
         screenshotService.screenshotableView = webviewController
@@ -313,11 +313,11 @@ class BrowserCoordinator: BaseCoordinator,
         if !User.shared.firstTime {
             EcosiaInstallType.evaluateCurrentEcosiaInstallType(storeUpgradeVersion: true)
         }
-        
+
         if !isDeeplinkOptimiziationRefactorEnabled {
             browserIsReady = true
             logger.log("Browser has loaded", level: .info, category: .coordinator)
-            
+
             if let savedRoute {
                 logger.log("Find and handle route called after browserHasLoaded",
                            level: .info,
@@ -346,7 +346,7 @@ class BrowserCoordinator: BaseCoordinator,
                 return false
             }
         }
-        
+
         switch route {
         case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser, .sharesheet:
             return true
@@ -364,30 +364,30 @@ class BrowserCoordinator: BaseCoordinator,
                 return
             }
         }
-        
+
         logger.log("Handling a route", level: .info, category: .coordinator)
         switch route {
         case let .searchQuery(query, isPrivate):
             handle(query: query, isPrivate: isPrivate)
-            
+
         case let .search(url, isPrivate, options):
             handle(url: url, isPrivate: isPrivate, options: options)
-            
+
         case let .searchURL(url, tabId):
             handle(searchURL: url, tabId: tabId)
-            
+
         case let .sharesheet(shareType, shareMessage):
             handleShareRoute(shareType: shareType, shareMessage: shareMessage)
-            
+
         case let .glean(url):
             glean.handleDeeplinkUrl(url: url)
-            
+
         case let .homepanel(section):
             handle(homepanelSection: section)
-            
+
         case let .settings(section):
             handleSettings(with: section)
-            
+
         case let .action(routeAction):
             switch routeAction {
             case .closePrivateTabs:
@@ -395,10 +395,10 @@ class BrowserCoordinator: BaseCoordinator,
             case .showIntroOnboarding:
                 showIntroOnboarding()
             }
-            
+
         case let .fxaSignIn(params):
             handle(fxaParams: params)
-            
+
         case let .defaultBrowser(section):
             switch section {
             case .systemSettings:
@@ -436,13 +436,13 @@ class BrowserCoordinator: BaseCoordinator,
             browserViewController.openURLInNewTab(HomePanelType.topSites.internalUrl)
         case .newPrivateTab:
             /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
-             browserViewController.openBlankNewTab(focusLocationField: true, isPrivate: true)
-             */
+            browserViewController.openBlankNewTab(focusLocationField: true, isPrivate: true)
+            */
             browserViewController.openBlankNewTab(focusLocationField: false, isPrivate: true)
         case .newTab:
             /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
-             browserViewController.openBlankNewTab(focusLocationField: true)
-             */
+            browserViewController.openBlankNewTab(focusLocationField: true)
+            */
             browserViewController.openBlankNewTab(focusLocationField: false)
         }
     }
@@ -498,7 +498,7 @@ class BrowserCoordinator: BaseCoordinator,
         let modalPresentationStyle: UIModalPresentationStyle = isPad ? .fullScreen: .formSheet
         navigationController.modalPresentationStyle = modalPresentationStyle
         let settingsRouter = DefaultRouter(navigationController: navigationController)
-        
+
         let settingsCoordinator = SettingsCoordinator(
             router: settingsRouter,
             tabManager: tabManager
@@ -506,7 +506,7 @@ class BrowserCoordinator: BaseCoordinator,
         settingsCoordinator.parentCoordinator = self
         add(child: settingsCoordinator)
         settingsCoordinator.start(with: section)
-        
+
         navigationController.onViewDismissed = { [weak self] in
             self?.didFinishSettings(from: settingsCoordinator)
             onDismiss?()
@@ -522,7 +522,7 @@ class BrowserCoordinator: BaseCoordinator,
         } else {
             let navigationController = DismissableNavigationViewController()
             navigationController.modalPresentationStyle = .formSheet
-            
+
             let libraryCoordinator = LibraryCoordinator(
                 router: DefaultRouter(navigationController: navigationController),
                 tabManager: tabManager
@@ -530,7 +530,7 @@ class BrowserCoordinator: BaseCoordinator,
             libraryCoordinator.parentCoordinator = self
             add(child: libraryCoordinator)
             libraryCoordinator.start(with: homepanelSection)
-            
+
             present(navigationController)
         }
     }
@@ -658,7 +658,7 @@ class BrowserCoordinator: BaseCoordinator,
               let url = selectedTab.canonicalURL?.displayURL else {
             return
         }
-        
+
         startShareSheetCoordinator(
             shareType: .tab(url: url, tab: selectedTab),
             shareMessage: nil,
