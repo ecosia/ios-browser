@@ -45,7 +45,7 @@ enum FileUploadAuthCookieSync {
 
         return easc ?? sharedCookies.first { $0.name == Cookie.authSession.rawValue }
     }
-    
+
     /// Removes any `EASC` cookie previously copied into `HTTPCookieStorage.shared`.
     ///
     /// `syncAuthSessionCookieToSharedStorage` copies `EASC` out of the WKWebView cookie jar so native
