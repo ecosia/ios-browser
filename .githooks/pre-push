@@ -56,3 +56,24 @@
 # fi
 
 # exit 0
+
+# Ecosia: print the correct compare URL for this push so PRs don't get opened
+# against mozilla-mobile/firefox-ios by accident via GitHub's "Compare & pull
+# request" banner (which defaults the base repo to the upstream fork parent).
+remote_url="$2"
+case "$remote_url" in
+  *ecosia/ios-browser*)
+    while read -r local_ref local_sha remote_ref remote_sha; do
+      z40=0000000000000000000000000000000000000000
+      if [ "$local_sha" != "$z40" ]; then
+        branch=$(echo "$local_ref" | sed 's,.*/,,')
+        echo ""
+        echo "To open a PR, use this link (do NOT use GitHub's banner — it defaults to mozilla-mobile/firefox-ios):"
+        echo "  https://github.com/ecosia/ios-browser/compare/main...${branch}?expand=1"
+        echo ""
+      fi
+    done
+    ;;
+esac
+
+exit 0
