@@ -63,14 +63,24 @@
 remote_url="$2"
 case "$remote_url" in
   *ecosia/ios-browser*)
+    # 256-color blue (33, "DodgerBlue") reads clearly on both light and dark terminal
+    # backgrounds, unlike the standard ANSI blue (34) which is often too dark to read
+    # on dark themes. Only colorize when stdout is a real terminal.
+    if [ -t 1 ]; then
+      blue='\033[38;5;33m'
+      reset='\033[0m'
+    else
+      blue=''
+      reset=''
+    fi
     while read -r local_ref local_sha remote_ref remote_sha; do
       z40=0000000000000000000000000000000000000000
       if [ "$local_sha" != "$z40" ]; then
         branch=$(echo "$local_ref" | sed 's,.*/,,')
-        echo ""
-        echo "To open a PR, use this link (do NOT use GitHub's banner — it defaults to mozilla-mobile/firefox-ios):"
-        echo "  https://github.com/ecosia/ios-browser/compare/main...${branch}?expand=1"
-        echo ""
+        printf '\n'
+        printf "${blue}To open a PR, use this link (do NOT use GitHub's banner — it defaults to mozilla-mobile/firefox-ios):${reset}\n"
+        printf "${blue}  https://github.com/ecosia/ios-browser/compare/main...%s?expand=1${reset}\n" "$branch"
+        printf '\n'
       fi
     done
     ;;
