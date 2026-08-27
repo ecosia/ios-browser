@@ -17,7 +17,7 @@ on:
 
 jobs:
   execute_merge_tests:
-    runs-on: macos-26
+    runs-on: macos-26-xlarge
     name: Execute Merge Tests
 
     steps:
