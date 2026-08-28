@@ -12,12 +12,16 @@ final class AIOverviewsCookieHandlerTests: XCTestCase {
         super.setUp()
         Cookie.setURLProvider(.production)
         User.shared.aiOverviews = false
+        User.shared.aiFreeSearching = nil
+        Unleash.clearInstanceModel()
     }
 
     override func tearDown() {
         super.tearDown()
         try? FileManager.default.removeItem(at: FileManager.user)
         Cookie.resetURLProvider()
+        User.shared.aiFreeSearching = nil
+        Unleash.clearInstanceModel()
     }
 
     func testMakeCookieWithAIOverviewsEnabled() {
@@ -97,6 +101,26 @@ final class AIOverviewsCookieHandlerTests: XCTestCase {
         }
     }
 
+    /// `ECAIO` carries the stored choice either way. Web suppresses Overviews via
+    /// `ECNOAI` where they are rendered, so this cookie stays independent of it.
+    func testMakeCookieCarriesTheStoredChoiceWhileAIFreeIsActive() {
+        User.shared.aiOverviews = true
+        setAIFreeSearchingFlagEnabled(true)
+        AIFreeSearchingSelection.setEnabled(true)
+
+        XCTAssertEqual(AIOverviewsCookieHandler().makeCookie()?.value, "true")
+    }
+
+    func testReceivedStoresTheWebValueWhileAIFreeIsActive() {
+        setAIFreeSearchingFlagEnabled(true)
+        AIFreeSearchingSelection.setEnabled(true)
+
+        let handler = AIOverviewsCookieHandler()
+        handler.received(cookie(value: "true"), in: MockHTTPCookieStore())
+
+        XCTAssertTrue(User.shared.aiOverviews)
+    }
+
     func testCookieNameIsCorrect() {
         let handler = AIOverviewsCookieHandler()
         XCTAssertEqual(handler.cookieName, "ECAIO")
@@ -127,5 +151,25 @@ final class AIOverviewsCookieHandlerTests: XCTestCase {
         XCTAssertNotNil(privateAICookie)
         XCTAssertEqual(standardAICookie?.value, "true")
         XCTAssertEqual(privateAICookie?.value, "true")
+    }
+
+    // MARK: - Helpers
+
+    private func cookie(value: String) -> HTTPCookie {
+        HTTPCookie(properties: [
+            .name: "ECAIO",
+            .domain: ".ecosia.org",
+            .path: "/",
+            .value: value
+        ])!
+    }
+
+    private func setAIFreeSearchingFlagEnabled(_ enabled: Bool) {
+        let toggle = Unleash.Toggle(
+            name: Unleash.Toggle.Name.aiFreeSearching.rawValue,
+            enabled: enabled,
+            variant: Unleash.Variant(name: "", enabled: false, payload: nil)
+        )
+        Unleash.model = Unleash.Model(toggles: Set([toggle]))
     }
 }

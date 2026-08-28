@@ -10,6 +10,9 @@ import Foundation
 /// enabled the Settings toggle. Omnibox AI surfaces (upload/+, AI Chat
 /// suggestion row, chat modes, attachment-to-chat routing) must consult
 /// `allowsOmniboxAI`.
+///
+/// Dependent settings are only greyed out in Settings. Their values are carried
+/// unchanged and web applies the exclusion where they are used.
 public enum AIFreeSearchingSelection {
 
     /// Flag on AND user toggle on (`User.shared.aiFreeSearching == true`).
@@ -21,20 +24,8 @@ public enum AIFreeSearchingSelection {
     /// suggestion row, chat modes, attachment-to-chat routing) on this.
     public static var allowsOmniboxAI: Bool { !isActive }
 
-    /// Writes the preference (`true` / `false` from Settings, or `nil` to unset)
-    /// and forces Overviews off when enabling while the flag is on.
+    /// Writes the preference (`true` / `false` from Settings, or `nil` to unset).
     public static func setEnabled(_ enabled: Bool?) {
-        var user = User.shared
-        user.aiFreeSearching = enabled
-        if enabled == true, AIFreeSearchingFeatureFlag.isEnabled {
-            user.aiOverviews = false
-        }
-        User.shared = user
-    }
-
-    /// If AI-free is active, force Overviews off so `ECAIO=false` is written.
-    public static func enforceOverviewsExclusionIfNeeded() {
-        guard isActive, User.shared.aiOverviews else { return }
-        User.shared.aiOverviews = false
+        User.shared.aiFreeSearching = enabled
     }
 }

@@ -77,7 +77,7 @@ final class AIFreeSearchingCookieHandlerTests: XCTestCase {
         handler.received(cookie(value: "true"), in: MockHTTPCookieStore())
 
         XCTAssertEqual(User.shared.aiFreeSearching, true)
-        XCTAssertFalse(User.shared.aiOverviews)
+        XCTAssertTrue(User.shared.aiOverviews)
     }
 
     func testReceivedFalseDisablesAndMarksExplicit() {
@@ -157,13 +157,14 @@ final class AIFreeSearchingCookieHandlerTests: XCTestCase {
         XCTAssertFalse(cookies.contains { $0.name == "ECNOAI" })
     }
 
-    func testMutualExclusionWritesECAIOFalse() {
+    /// Both cookies are sent as stored. Web reads `ECAIO && !ECNOAI`, so enabling
+    /// AI-free must not rewrite `ECAIO`.
+    func testAIFreeDoesNotRewriteECAIO() {
         setAIFreeSearchingFlagEnabled(true)
         User.shared.aiOverviews = true
         AIFreeSearchingSelection.setEnabled(true)
 
-        XCTAssertFalse(User.shared.aiOverviews)
-        XCTAssertEqual(AIOverviewsCookieHandler().makeCookie()?.value, "false")
+        XCTAssertEqual(AIOverviewsCookieHandler().makeCookie()?.value, "true")
         XCTAssertEqual(AIFreeSearchingCookieHandler().makeCookie()?.value, "true")
     }
 

@@ -44,36 +44,28 @@ final class AIFreeSearchingSelectionTests: XCTestCase {
         XCTAssertFalse(AIFreeSearchingSelection.allowsOmniboxAI)
     }
 
-    func testSetEnabledMarksExplicitAndForcesOverviewsOff() {
+    /// The Overviews row is greyed out while AI-free is on, so its value is carried
+    /// unchanged and web applies the exclusion where Overviews are rendered.
+    func testSetEnabledLeavesOverviewsAlone() {
         setFlagEnabled(true)
         User.shared.aiOverviews = true
 
         AIFreeSearchingSelection.setEnabled(true)
 
         XCTAssertEqual(User.shared.aiFreeSearching, true)
-        XCTAssertFalse(User.shared.aiOverviews)
         XCTAssertTrue(AIFreeSearchingSelection.isActive)
-    }
-
-    func testSetEnabledFalseKeepsOverviewsEditable() {
-        setFlagEnabled(true)
-        AIFreeSearchingSelection.setEnabled(true)
-        AIFreeSearchingSelection.setEnabled(false)
-
-        XCTAssertEqual(User.shared.aiFreeSearching, false)
-        XCTAssertFalse(AIFreeSearchingSelection.isActive)
-
-        User.shared.aiOverviews = true
         XCTAssertTrue(User.shared.aiOverviews)
     }
 
-    func testCannotKeepOverviewsOnWhileAIFreeIsActive() {
+    func testTogglingAIFreeOffAndOnNeverTouchesOverviews() {
         setFlagEnabled(true)
-        AIFreeSearchingSelection.setEnabled(true)
         User.shared.aiOverviews = true
 
-        AIFreeSearchingSelection.enforceOverviewsExclusionIfNeeded()
-        XCTAssertFalse(User.shared.aiOverviews)
+        AIFreeSearchingSelection.setEnabled(true)
+        AIFreeSearchingSelection.setEnabled(false)
+        AIFreeSearchingSelection.setEnabled(nil)
+
+        XCTAssertTrue(User.shared.aiOverviews)
     }
 
     func testSearchSettingsChangedFiresOnToggle() {

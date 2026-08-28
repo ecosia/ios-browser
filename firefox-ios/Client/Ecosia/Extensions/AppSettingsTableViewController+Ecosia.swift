@@ -48,10 +48,6 @@ extension AppSettingsTableViewController {
             )
         }
 
-        if AIFreeSearchingFeatureFlag.isEnabled {
-            AIFreeSearchingSelection.enforceOverviewsExclusionIfNeeded()
-        }
-
         return [SettingSection(title: .init(string: .localized(.search)),
                                children: settings)]
     }

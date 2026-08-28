@@ -178,7 +178,6 @@ final class AIOverviewsSearchSettings: BoolSetting {
                   titleText: .localized(.aiOverviewsTitle),
                   statusText: .localized(.aiOverviewsDescription),
                   settingDidChange: { value in
-            guard !AIFreeSearchingSelection.isActive else { return }
             User.shared.aiOverviews = value
             Analytics.shared.toggleAIChatOverviewsSetting(enabled: value)
         })
@@ -189,11 +188,6 @@ final class AIOverviewsSearchSettings: BoolSetting {
     }
 
     override func writeBool(_ control: UISwitch) {
-        guard !AIFreeSearchingSelection.isActive else {
-            control.isOn = false
-            User.shared.aiOverviews = false
-            return
-        }
         User.shared.aiOverviews = control.isOn
     }
 }
