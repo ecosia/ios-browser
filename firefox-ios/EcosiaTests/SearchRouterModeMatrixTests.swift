@@ -27,6 +27,9 @@ final class SearchRouterModeMatrixTests: XCTestCase {
         User.shared.aiOverviews = previousAIOverviews
         Unleash.model = Unleash.Model()
         SearchRouterConfiguration.invalidateCache()
+        // Drain async `searchSettingsChanged` posts, or they land in whichever
+        // suite counts notifications next.
+        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
         super.tearDown()
     }
 

@@ -21,6 +21,9 @@ final class AIFreeSearchingCookieHandlerTests: XCTestCase {
         Unleash.clearInstanceModel()
         try? FileManager.default.removeItem(at: FileManager.user)
         Cookie.resetURLProvider()
+        // Drain async `searchSettingsChanged` posts, or they land in whichever
+        // suite counts notifications next.
+        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
     }
 
     // MARK: - Three-state cookie

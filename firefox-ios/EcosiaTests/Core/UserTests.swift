@@ -308,6 +308,8 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testSearchSettingChangeNotifiaction() {
+        drainPendingSearchSettingsPosts()
+
         let notified = expectation(forNotification: .searchSettingsChanged, object: nil, notificationCenter: .default)
         notified.expectedFulfillmentCount = 4
 
@@ -323,6 +325,8 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testSearchSettingChangeNotificationForAIFreeSearching() {
+        drainPendingSearchSettingsPosts()
+
         var count = 0
         let observer = NotificationCenter.default.addObserver(
             forName: .searchSettingsChanged,
@@ -340,6 +344,12 @@ final class UserTests: XCTestCase, @unchecked Sendable {
             RunLoop.main.run(until: Date().addingTimeInterval(0.05))
         }
         XCTAssertEqual(count, 1, "Expected searchSettingsChanged when toggling aiFreeSearching")
+    }
+
+    /// `User.shared` posts `searchSettingsChanged` on the main queue, so posts from
+    /// earlier suites can still be queued and would be counted as this test's own.
+    private func drainPendingSearchSettingsPosts() {
+        RunLoop.main.run(until: Date().addingTimeInterval(0.2))
     }
 
     func testSelectedProviderNormalizesStoredIdentifier() {

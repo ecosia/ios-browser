@@ -23,6 +23,9 @@ final class AIFreeSearchingSelectionTests: XCTestCase {
         User.shared.aiOverviews = true
         Unleash.clearInstanceModel()
         try? FileManager.default.removeItem(at: FileManager.user)
+        // Drain here too, or this suite's posts land in whichever suite counts
+        // `searchSettingsChanged` next.
+        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
     }
 
     func testIsActiveRequiresFlagAndToggle() {
