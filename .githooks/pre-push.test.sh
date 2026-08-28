@@ -19,8 +19,12 @@ run_case() {
   stdin_data="$4"
   expected="$5"
 
+  # set -e would otherwise abort the whole script on a non-zero exit here,
+  # before status=$? ever runs, defeating the check below.
+  set +e
   output=$(printf '%s' "$stdin_data" | "$hook" "$remote_name" "$remote_url")
   status=$?
+  set -e
 
   if [ "$status" -ne 0 ]; then
     echo "FAIL: $description (hook exited $status, expected 0)"
