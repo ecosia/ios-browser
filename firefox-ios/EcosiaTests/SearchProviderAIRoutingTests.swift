@@ -60,9 +60,10 @@ final class SearchProviderAIRoutingTests: XCTestCase {
         let url = try XCTUnwrap(destination)
         let items = try XCTUnwrap(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems)
 
+        let expectedOrigin = URLQueryItem(name: "origin", value: URLProvider.AIChatOrigin.omnibox.rawValue)
+
         XCTAssertTrue(url.isEcosiaAIChat)
-        XCTAssertTrue(items.contains(URLQueryItem(name: "origin",
-                                                 value: URLProvider.AIChatOrigin.omnibox.rawValue)))
+        XCTAssertTrue(items.contains(expectedOrigin))
     }
 
     func testQueriesAreEscaped() throws {

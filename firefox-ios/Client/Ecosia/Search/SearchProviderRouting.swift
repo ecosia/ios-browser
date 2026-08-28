@@ -25,8 +25,8 @@ enum SearchProviderRouting {
     }
 
     static func omniboxSearchURL(forQuery query: String,
-                               engine: OpenSearchEngine? = nil,
-                               engineID: String = User.shared.selectedSearchEngineID) -> URL {
+                                 engine: OpenSearchEngine? = nil,
+                                 engineID: String = User.shared.selectedSearchEngineID) -> URL {
         if CustomSearchProviderFeatureFlag.isEnabled,
            !SearchProviderSelection.isEcosiaEngineID(engineID),
            let engine,
