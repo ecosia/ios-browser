@@ -75,13 +75,20 @@ case "$remote_url" in
     fi
     while read -r local_ref local_sha remote_ref remote_sha; do
       z40=0000000000000000000000000000000000000000
-      if [ "$local_sha" != "$z40" ]; then
-        branch=$(echo "$local_ref" | sed 's,.*/,,')
-        printf '\n'
-        printf "${blue}To open a PR, use this link (do NOT use GitHub's banner — it defaults to mozilla-mobile/firefox-ios):${reset}\n"
-        printf "${blue}  https://github.com/ecosia/ios-browser/compare/main...%s?expand=1${reset}\n" "$branch"
-        printf '\n'
-      fi
+      # Only branches get a PR link (skip tags etc.), and strip the refs/heads/
+      # prefix rather than everything up to the last "/" so names like
+      # "feature/foo" keep their full path instead of becoming "foo".
+      case "$local_ref" in
+        refs/heads/*)
+          if [ "$local_sha" != "$z40" ]; then
+            branch=${local_ref#refs/heads/}
+            printf '\n'
+            printf "${blue}To open a PR, use this link (do NOT use GitHub's banner — it defaults to mozilla-mobile/firefox-ios):${reset}\n"
+            printf "${blue}  https://github.com/ecosia/ios-browser/compare/main...%s?expand=1${reset}\n" "$branch"
+            printf '\n'
+          fi
+          ;;
+      esac
     done
     ;;
 esac

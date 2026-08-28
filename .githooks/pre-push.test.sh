@@ -82,6 +82,22 @@ run_case \
 " \
   ""
 
+# branch names with slashes must keep their full path, not just the last segment
+run_case \
+  "preserves full branch name for feature/foo" \
+  "origin" "git@github.com:ecosia/ios-browser.git" \
+  "refs/heads/feature/foo abc123 refs/heads/feature/foo def456
+" \
+  "https://github.com/ecosia/ios-browser/compare/main...feature/foo?expand=1"
+
+# pushing a tag isn't something you open a PR for -> no output
+run_case \
+  "stays silent when pushing a tag" \
+  "origin" "git@github.com:ecosia/ios-browser.git" \
+  "refs/tags/v1.0.0 abc123 refs/tags/v1.0.0 def456
+" \
+  ""
+
 echo ""
 if [ "$failures" -eq 0 ]; then
   echo "All pre-push hook tests passed."
