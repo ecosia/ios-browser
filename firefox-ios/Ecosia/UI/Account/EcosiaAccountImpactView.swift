@@ -61,17 +61,26 @@ public struct EcosiaAccountImpactView: View {
                         .accessibilityIdentifier("account_impact_username")
                         .frame(minHeight: 25)
 
-                    Text(viewModel.levelDisplayText)
-                        .font(.ecosia(size: .ecosia.font._s, weight: .medium))
-                        .foregroundColor(theme.levelTextColor)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(
-                            Capsule()
-                                .fill(theme.levelBackgroundColor)
-                        )
-                        .accessibilityLabel(String(format: .localized(.userLevelAccessibilityLabel), viewModel.levelDisplayText))
-                        .accessibilityIdentifier("account_impact_level")
+                    HStack(spacing: .ecosia.space._1s) {
+                        Text(viewModel.levelDisplayText)
+                            .font(.ecosia(size: .ecosia.font._s, weight: .medium))
+                            .foregroundColor(theme.levelTextColor)
+
+                        if authStateProvider.isRegisteringVisit {
+                            ProgressView()
+                                .tint(theme.levelTextColor)
+                                .scaleEffect(0.6)
+                                .accessibilityIdentifier("account_impact_level_loading")
+                        }
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule()
+                            .fill(theme.levelBackgroundColor)
+                    )
+                    .accessibilityLabel(String(format: .localized(.userLevelAccessibilityLabel), viewModel.levelDisplayText))
+                    .accessibilityIdentifier("account_impact_level")
                 }
             }
             .padding(.horizontal, .ecosia.space._m)
@@ -140,7 +149,8 @@ public struct EcosiaAccountImpactView: View {
                 },
                 onDismiss: {
                     Analytics.shared.accountProfileDismissed()
-                }
+                },
+                retriesSessionOnSignInRedirect: true
             )
         }
     }

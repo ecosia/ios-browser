@@ -59,6 +59,11 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         authStateProvider.seedCount
     }
 
+    /// Whether the balance/level are currently being refreshed from the server
+    public var isRegisteringVisit: Bool {
+        authStateProvider.isRegisteringVisit
+    }
+
     // MARK: - Public Methods
 
     /// Handles the main CTA button tap (login for guests, or custom action for logged-in users)

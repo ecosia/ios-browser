@@ -18,6 +18,7 @@ public struct EcosiaWebViewModal: View {
     private let onDismiss: (() -> Void)?
     private let redirectURLString: String?
     private let retryCount: Int
+    private let retriesSessionOnSignInRedirect: Bool
     @SwiftUI.Environment(\.dismiss) private var dismiss: DismissAction
     @State private var theme = EcosiaWebViewModalTheme()
     @State private var webView: WKWebView?
@@ -26,13 +27,19 @@ public struct EcosiaWebViewModal: View {
     @State private var hasError = false
     @State private var errorMessage = ""
 
+    /// - Parameter retriesSessionOnSignInRedirect: When `true`, a redirect to the sign-in page while the
+    ///   user is natively logged in is treated as a not-yet-established web session (rather than a real
+    ///   logout) - the SSO session cookie is refreshed and the original URL is reloaded once. Intended for
+    ///   pages that require the web session (e.g. profile) shortly after native login, before the
+    ///   native-to-web SSO transfer has necessarily finished.
     public init(
         url: URL,
         windowUUID: WindowUUID,
         userAgent: String? = nil,
         onLoadComplete: (() -> Void)? = nil,
         onDismiss: (() -> Void)? = nil,
-        retryCount: Int = 1
+        retryCount: Int = 1,
+        retriesSessionOnSignInRedirect: Bool = false
     ) {
         self.url = url
         self.windowUUID = windowUUID
@@ -41,6 +48,7 @@ public struct EcosiaWebViewModal: View {
         self.onDismiss = onDismiss
         self.redirectURLString = url.absoluteString
         self.retryCount = retryCount
+        self.retriesSessionOnSignInRedirect = retriesSessionOnSignInRedirect
     }
 
     public var body: some View {
@@ -87,7 +95,8 @@ public struct EcosiaWebViewModal: View {
                                 userAgent: userAgent,
                                 onLoadComplete: onLoadComplete,
                                 redirectURLString: redirectURLString,
-                                retryCount: retryCount
+                                retryCount: retryCount,
+                                retriesSessionOnSignInRedirect: retriesSessionOnSignInRedirect
                             )
 
                             if isLoading {
@@ -131,6 +140,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
     let onLoadComplete: (() -> Void)?
     let redirectURLString: String?
     let retryCount: Int
+    let retriesSessionOnSignInRedirect: Bool
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -168,6 +178,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
         private let retryCount: Int
         private var remainingRetries = 0
         private var blankTargetURLs: Set<String> = []
+        private var hasSyncedSessionForRetry = false
 
         init(parent: WebViewRepresentable) {
             self.parent = parent
@@ -199,6 +210,31 @@ private struct WebViewRepresentable: UIViewRepresentable {
             // WebViews with a "disallowed_useragent"/"Use secure browsers" error). Flag it.
             if url.host?.contains("accounts.google.com") == true {
                 EcosiaLogger.auth.sentry("🔐 [WEBVIEW] Google OAuth navigation inside profile WebView: \(url.redactedForLogging)")
+            }
+
+            // The native login can complete before the native-to-web SSO session transfer has
+            // finished establishing the EASC cookie (it runs separately, via an invisible tab, and
+            // can take a few seconds). If that race lands us on the sign-in page while the user is
+            // actually logged in natively, refresh the session cookie and reload once instead of
+            // leaving the user stuck looking at a login screen.
+            if parent.retriesSessionOnSignInRedirect,
+               !hasSyncedSessionForRetry,
+               EcosiaAuthenticationService.shared.isLoggedIn,
+               EcosiaURLInterceptor().interceptedType(for: url) == .signIn {
+                hasSyncedSessionForRetry = true
+                EcosiaLogger.auth.notice("🔐 [WEBVIEW] Landed on sign-in while natively logged in — refreshing session cookie and retrying")
+                decisionHandler(.cancel)
+                Task { @MainActor in
+                    await EcosiaAuthenticationService.shared.getSessionTransferToken()
+                    if let cookie = EcosiaAuthenticationService.shared.getSessionTokenCookie() {
+                        webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) {
+                            webView.load(URLRequest(url: parent.url))
+                        }
+                    } else {
+                        webView.load(URLRequest(url: parent.url))
+                    }
+                }
+                return
             }
 
             // If this is a back navigation to a page we loaded from a target="_blank" link,

@@ -46,6 +46,10 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// Error state for register visit failures (read-only externally, set only by this class)
     @Published public private(set) var hasRegisterVisitError: Bool = false
 
+    /// Whether a visit registration (balance/level refresh) is currently in flight.
+    /// Lets the UI show a loading state instead of stale numbers while it completes.
+    @Published public private(set) var isRegisteringVisit: Bool = false
+
     // MARK: - Private Properties
 
     private var authStateObserver: NSObjectProtocol?
@@ -222,6 +226,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                     return
                 }
 
+                await MainActor.run { isRegisteringVisit = true }
+
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
                 let response = try await accountsProvider.registerVisit(accessToken: accessToken)
                 await updateBalance(response)
@@ -229,6 +235,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                 // Clear error on success
                 await MainActor.run {
                     hasRegisterVisitError = false
+                    isRegisteringVisit = false
                 }
             } catch {
                 EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
@@ -236,6 +243,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                 // Set error state
                 await MainActor.run {
                     hasRegisterVisitError = true
+                    isRegisteringVisit = false
                     if #available(iOS 16.0, *) {
                         EcosiaErrorToastPresenter.shared.presentRegisterVisitError()
                     }

@@ -374,7 +374,8 @@ extension BrowserViewController {
             },
             onDismiss: {
                 Analytics.shared.accountProfileDismissed()
-            }
+            },
+            retriesSessionOnSignInRedirect: true
         )
 
         let hostingController = UIHostingController(rootView: profileView)
