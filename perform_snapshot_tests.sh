@@ -21,10 +21,23 @@ fi
 if [ "$#" -lt 4 ]; then
   echo "Usage: ./perform_snapshot_tests.sh <config_file> <environment_file> <results_dir> <scheme>"
   echo "Example: ./perform_snapshot_tests.sh config.json environment.json Results SchemeName"
+  echo ""
+  echo "Record reference images into SnapshotArtifacts (submodule):"
+  echo "  SNAPSHOT_TESTING_RECORD=all ./perform_snapshot_tests.sh EcosiaTests/SnapshotTests/snapshot_configuration.json EcosiaTests/SnapshotTests/environment.json EcosiaTests/Results EcosiaSnapshotTests"
   exit 1
 fi
 
 cd firefox-ios
+
+export SNAPSHOT_REFERENCE_DIR="$(pwd)/EcosiaTests/SnapshotTests/SnapshotArtifacts"
+echo "$SNAPSHOT_REFERENCE_DIR" > /tmp/ecosia_snapshot_reference_dir
+
+if [ -n "${SNAPSHOT_TESTING_RECORD:-}" ]; then
+  echo "$SNAPSHOT_TESTING_RECORD" > /tmp/ecosia_snapshot_testing_record
+  echo "Recording snapshots (SNAPSHOT_TESTING_RECORD=${SNAPSHOT_TESTING_RECORD}) into ${SNAPSHOT_REFERENCE_DIR}"
+else
+  rm -f /tmp/ecosia_snapshot_testing_record
+fi
 
 config_file="$1"
 environment_file="$2"  # Fixed environment file path
@@ -48,6 +61,12 @@ tests_json=$(jq -c '.testBundles[]' "$config_file")
 # Read all locales into an array
 mapfile -t all_locales < <(jq -r '.locales[]' "$config_file")
 
+# Read all themes into an array (defaults to light and dark when omitted)
+mapfile -t all_themes < <(jq -r '.themes[]? // empty' "$config_file")
+if [ "${#all_themes[@]}" -eq 0 ]; then
+  all_themes=(light dark)
+fi
+
 # Initialize arrays to store device information
 device_names=()
 orientations=()
@@ -60,6 +79,58 @@ default_device_count=0
 
 # Initialize xcodebuild execution counter
 xcodebuild_count=0
+xcodebuild_failed=0
+
+# Xcode 26 runners ship iPhone 17 simulators, not older models. Snapshot tests still
+# render with ViewImageConfig sizes from snapshot_configuration.json, so the run
+# destination can differ from the logical device names in that file.
+simulator_exists() {
+  local device_name="$1"
+  xcrun simctl list devices available | grep -F "${device_name} (" >/dev/null 2>&1
+}
+
+resolve_simulator_run_device() {
+  local preferred="${1:-iPhone 17}"
+
+  if simulator_exists "$preferred"; then
+    echo "$preferred"
+    return 0
+  fi
+
+  local runtime
+  runtime=$(xcrun simctl list runtimes available | rg -o 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9-]+' | tail -1)
+  if [ -n "$runtime" ]; then
+    local device_type="com.apple.CoreSimulator.SimDeviceType.iPhone-17"
+    case "$preferred" in
+      "iPhone 17 Pro")
+        device_type="com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro"
+        ;;
+      "iPhone 17 Pro Max")
+        device_type="com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max"
+        ;;
+    esac
+
+    echo "Creating simulator '$preferred' on runtime $runtime..." >&2
+    if xcrun simctl create "$preferred" "$device_type" "$runtime" >/dev/null 2>&1; then
+      echo "$preferred"
+      return 0
+    fi
+  fi
+
+  for candidate in "iPhone 17 Pro" "iPhone 17" "iPhone 16 Pro" "iPhone 15 Pro"; do
+    if simulator_exists "$candidate"; then
+      echo "Warning: Could not create '$preferred'. Using '$candidate'." >&2
+      echo "$candidate"
+      return 0
+    fi
+  done
+
+  echo "Error: No iOS simulator available for snapshot tests." >&2
+  return 1
+}
+
+simulator_run_device=$(resolve_simulator_run_device "${SNAPSHOT_SIMULATOR_DEVICE:-iPhone 17}")
+echo "Resolved xcodebuild simulator destination: $simulator_run_device"
 
 # ================================
 # Collect Device Information
@@ -95,12 +166,7 @@ fi
 
 echo "Default device: $default_device_name"
 
-# Set OS versions to default if missing
-for i in "${!device_names[@]}"; do
-  if [ -z "${os_versions[$i]}" ] || [ "${os_versions[$i]}" == "null" ]; then
-    os_versions[$i]="$default_device_os_version"
-  fi
-done
+# Leave OS versions empty when not specified so xcodebuild uses the installed runtime.
 
 # ================================
 # Initialize Test Groups
@@ -109,12 +175,50 @@ done
 # Use associative arrays to map device sets to test classes
 declare -A device_set_tests
 declare -A device_set_devices
+declare -A device_set_themes
 
 # Function to create a unique key for a device set
 create_device_set_key() {
   local devices=("$@")
   IFS=$'\n' sorted_devices=($(printf '%s\n' "${devices[@]}" | sort))
   echo "$(printf '%s|' "${sorted_devices[@]}")" | sed 's/|$//'
+}
+
+resolve_test_themes() {
+  local themes_field="$1"
+  local -n resolved_themes="$2"
+  resolved_themes=()
+
+  if [ -z "$themes_field" ] || [ "$themes_field" == "null" ]; then
+    resolved_themes=("${all_themes[@]}")
+    return 0
+  fi
+
+  local theme_items=()
+  while IFS= read -r theme_item; do
+    theme_items+=("$theme_item")
+  done < <(echo "$themes_field" | jq -r '.[]')
+
+  for theme_item in "${theme_items[@]}"; do
+    if [ "$theme_item" == "all" ]; then
+      resolved_themes+=("${all_themes[@]}")
+    elif [ "$theme_item" == "light" ] || [ "$theme_item" == "dark" ]; then
+      resolved_themes+=("$theme_item")
+    else
+      echo "Error: Unsupported theme '$theme_item'. Use 'light', 'dark', or 'all'."
+      exit 1
+    fi
+  done
+
+  if [ "${#resolved_themes[@]}" -eq 0 ]; then
+    resolved_themes=("${all_themes[@]}")
+  fi
+}
+
+create_test_run_key() {
+  local device_key="$1"
+  local themes_key="$2"
+  echo "${device_key}__themes__${themes_key}"
 }
 
 # Function to sanitize device set key for filenames (if needed)
@@ -147,6 +251,7 @@ while IFS= read -r test_bundle; do
     runs_on_device=$(echo "$test_class" | jq -r '.runsOn // empty')
     devices_field=$(echo "$test_class" | jq -r '.devices // empty')
     locales_field=$(echo "$test_class" | jq -r '.locales // empty')
+    themes_field=$(echo "$test_class" | jq -r '.themes // empty')
 
     echo "Processing Test Class: $class_name"
 
@@ -261,14 +366,21 @@ while IFS= read -r test_bundle; do
       continue
     fi
 
-    # Create a unique key for the device set
-    device_set_key=$(create_device_set_key "${test_devices[@]}")
-    echo " - Device Set Key: $device_set_key"
+    test_themes=()
+    resolve_test_themes "$themes_field" test_themes
+    IFS=$'\n' sorted_themes=($(printf '%s\n' "${test_themes[@]}" | sort -u))
+    themes_key=$(printf '%s|' "${sorted_themes[@]}" | sed 's/|$//')
+    echo " - Themes: ${sorted_themes[*]}"
 
-    # Append the test class to the corresponding device set
+    # Create a unique key for the device and theme set
+    device_set_key=$(create_test_run_key "$(create_device_set_key "${test_devices[@]}")" "$themes_key")
+    echo " - Test Run Key: $device_set_key"
+
+    # Append the test class to the corresponding run set
     device_set_tests["$device_set_key"]+="$class_name|"
     device_set_devices["$device_set_key"]=$(printf '%s|' "${test_devices[@]}")
-    echo " - Appended Test Class '$class_name' to Device Set"
+    device_set_themes["$device_set_key"]="$themes_key"
+    echo " - Appended Test Class '$class_name' to Test Run Set"
   done <<< "$test_classes_json"
 done <<< "$tests_json"
 
@@ -283,10 +395,12 @@ echo "All device_set_keys: ${!device_set_tests[@]}"
 for device_set_key in "${!device_set_tests[@]}"; do
   test_classes_str="${device_set_tests[$device_set_key]}"
   device_set_devices_str="${device_set_devices[$device_set_key]}"
+  themes_key="${device_set_themes[$device_set_key]}"
 
-  echo "Processing Device Set: $device_set_key"
+  echo "Processing Test Run Set: $device_set_key"
   echo " - Test Classes: $test_classes_str"
   echo " - Device Set Devices String: $device_set_devices_str"
+  echo " - Themes: $themes_key"
 
   # Split the device set into an array using '|' as delimiter and remove trailing '|'
   IFS='|' read -r -a device_set <<< "${device_set_devices_str}|"
@@ -339,34 +453,22 @@ for device_set_key in "${!device_set_tests[@]}"; do
     echo "   - Adding Only Testing Parameter: $test_identifier"
   done
 
-  # Determine which device to use for xcodebuild
-  device_name=""
-  for dev in "${device_set[@]}"; do
-    if [ "$dev" == "$default_device_name" ]; then
-      device_name="$default_device_name"
-      break
-    fi
-  done
-
-  if [ -z "$device_name" ]; then
-    # If default device not in the device set, use the first device
-    device_name="${device_set[0]}"
-    echo " - Default device not in set. Using first device: $device_name"
-  else
-    echo " - Using Default Device: $device_name"
-  fi
-
-  # Get the device name to pass into the env file
-  simulator_device_name="$device_name"
+  # Use the CI/Xcode 26-compatible simulator for xcodebuild. Logical device names in
+  # snapshot_configuration.json still drive ViewImageConfig sizing via environment.json.
+  simulator_device_name="$default_device_name"
   echo " - Simulator Device Name: $simulator_device_name"
+  echo " - Xcodebuild Run Destination: $simulator_run_device"
 
   # Overwrite the fixed environment.json with current device set
   locales_json_array=$(printf '%s\n' "${all_locales[@]}" | jq -R . | jq -s .)
+  themes_json_array=$(echo "$themes_key" | tr '|' '\n' | jq -R . | jq -s .)
   echo " - Locales JSON Array: $locales_json_array"
+  echo " - Themes JSON Array: $themes_json_array"
 
   echo "{
     \"DEVICES\": $devices_json_array,
     \"LOCALES\": $locales_json_array,
+    \"THEMES\": $themes_json_array,
     \"SIMULATOR_DEVICE_NAME\": \"$simulator_device_name\"
   }" > "$environment_file"
 
@@ -379,16 +481,16 @@ for device_set_key in "${!device_set_tests[@]}"; do
     exit 1
   fi
 
-  # Find index of the device to get OS version
+  # Find OS version for the simulator run device, if one is pinned in config.
   os_version=""
   for i in "${!device_names[@]}"; do
-    if [ "${device_names[$i]}" == "$device_name" ]; then
+    if [ "${device_names[$i]}" == "$simulator_run_device" ]; then
       os_version="${os_versions[$i]}"
       break
     fi
   done
 
-  echo " - OS Version for Device '$device_name': $os_version"
+  echo " - OS Version for Simulator '$simulator_run_device': ${os_version:-latest}"
 
   # Prepare result path
   # Concatenate test class names
@@ -398,14 +500,22 @@ for device_set_key in "${!device_set_tests[@]}"; do
   test_classes_concat=$(echo "$test_classes_concat" | tr ' /' '__')
   result_path="$results_dir/${test_classes_concat}_tests.xcresult"
   mkdir -p "$results_dir"
+  rm -rf "$result_path"
 
   echo " - Result Path: $result_path"
 
   # Prepare the xcodebuild command
+  if [ -n "$os_version" ] && [ "$os_version" != "null" ]; then
+    destination="platform=iOS Simulator,name=$simulator_run_device,OS=$os_version"
+  else
+    destination="platform=iOS Simulator,name=$simulator_run_device"
+  fi
+
   xcodebuild_cmd="xcodebuild test \
+    -project Client.xcodeproj \
     -scheme \"$scheme\" \
     -clonedSourcePackagesDirPath \"SourcePackages/\" \
-    -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" \
+    -destination \"$destination\" \
     $only_testing_params \
     -resultBundlePath \"$result_path\""
 
@@ -416,9 +526,15 @@ for device_set_key in "${!device_set_tests[@]}"; do
 
   # Run the xcodebuild command
   eval $xcodebuild_cmd
+  test_exit_code=$?
 
   # Re-enable 'set -e'
   set -e
+
+  if [ "$test_exit_code" -ne 0 ]; then
+    echo "xcodebuild test exited with status $test_exit_code"
+    xcodebuild_failed=1
+  fi
 
   # Increment xcodebuild execution counter
   xcodebuild_count=$((xcodebuild_count + 1))
@@ -432,12 +548,8 @@ echo "Combining all xcresult files into a single xcresult..."
 
 combined_result_path="$results_dir/all_tests.xcresult"
 
-# Define the Xcode path based on the CI environment variable
-if [ "${CI:-false}" = "true" ]; then
-    xcresulttool_path="/Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcresulttool"
-else
-    xcresulttool_path="/Applications/Xcode.app/Contents/Developer/usr/bin/xcresulttool"
-fi
+# Use the active Xcode toolchain selected by prepare_environment.
+xcresulttool_path="$(xcrun --find xcresulttool)"
 
 # Verify that xcresulttool exists
 if [ ! -x "$xcresulttool_path" ]; then
@@ -459,6 +571,9 @@ if [ "${#xcresult_files[@]}" -eq 1 ]; then
   echo "Only one xcresult file found. Copying to combined result path."
   cp -R "${xcresult_files[0]}" "$combined_result_path"
   echo "Combined xcresult created at: $combined_result_path"
+  if [ "$xcodebuild_failed" -ne 0 ]; then
+    exit 1
+  fi
   exit 0
 fi
 
@@ -466,3 +581,7 @@ fi
 $xcresulttool_path merge "${xcresult_files[@]}" --output-path "$combined_result_path"
 
 echo "Combined xcresult created at: $combined_result_path"
+
+if [ "$xcodebuild_failed" -ne 0 ]; then
+  exit 1
+fi

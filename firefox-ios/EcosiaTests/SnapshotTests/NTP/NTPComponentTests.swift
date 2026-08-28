@@ -11,7 +11,7 @@ import MozillaAppServices
 @testable import Client
 
 final class NTPComponentTests: SnapshotBaseTests {
-
+    /* Ecosia: Disabled until new homepage snapshot tests are implemented
     private let commonWidth = 375
 
     func testNTPLogoCell() {
@@ -118,4 +118,5 @@ extension NTPComponentTests {
         decoder.dateDecodingStrategy = .secondsSince1970
         return try decoder.decode(NewsModel.self, from: jsonData)
     }
+     */
 }

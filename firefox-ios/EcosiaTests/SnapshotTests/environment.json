@@ -9,6 +9,10 @@
     "orientation": "portrait"
   },
   {
+    "name": "iPhone 16 Pro Max",
+    "orientation": "landscape"
+  },
+  {
     "name": "iPad Pro 11-inch (M4)",
     "orientation": "portrait"
   }
@@ -19,6 +23,9 @@
   "de",
   "es",
   "nl"
+],
+    "THEMES": [
+  "light"
 ],
     "SIMULATOR_DEVICE_NAME": "iPhone 16 Pro"
   }
