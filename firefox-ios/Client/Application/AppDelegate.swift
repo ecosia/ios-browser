@@ -76,7 +76,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // Configure app information for BrowserKit, needed for logger
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
+                                               /* Ecosia: added environmentName and dsn args below
                                                sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+                                                */
+                                               sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
+                                               // Ecosia: Tag Sentry events with Ecosia's own staging/production environment.
+                                               environmentName: EcosiaEnvironment.current.sentryTag,
+                                               // Ecosia: Only supply a DSN for beta/release builds, so local Debug/Testing
+                                               // builds never report to Sentry at all — same intent the CHANNEL xcconfig
+                                               // entries already express for those configs.
+                                               dsn: [.beta, .release].contains(AppConstants.buildChannel)
+                                                   ? EcosiaEnvironment.current.urlProvider.sentryDSN : nil)
         // Ecosia: Register URLProvider domains that need Ecosia's desktop UA.
         UserAgent.configureEcosiaDesktopUserAgentDomains([
             URLProvider.production.domain,
@@ -228,6 +238,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             AppEventQueue.signal(event: .featureManagementInitialized)
             // Ecosia: Braze Service Initialization after feature flags are fetched for conditional initialization
             BrazeService.shared.initialize()
+            // Ecosia: Sentry setup is gated by Unleash, so it only runs once this fetch resolves.
+            appLaunchUtil?.setUpCrashReportingIfEnabled()
             // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
             ecosiaTrackLaunchActivity()
         }
@@ -348,6 +360,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             // A refresh can change the search provider flag or its router payload.
             searchEnginesManager.reconfigureEngineProviderIfNeeded()
             Analytics.shared.activity(.resume)
+            // Ecosia: Also re-check here — Sentry setup is a no-op once already enabled, so this just
+            // catches the case where it wasn't enabled yet at launch (e.g. flag flipped ON since).
+            appLaunchUtil?.setUpCrashReportingIfEnabled()
         }
         MMP.sendSession()
         searchesCounter.subscribe(self) { searchCount in

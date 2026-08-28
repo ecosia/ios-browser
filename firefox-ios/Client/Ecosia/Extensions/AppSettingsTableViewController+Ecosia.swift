@@ -86,6 +86,7 @@ extension AppSettingsTableViewController {
         var hiddenDebugSettings: [Setting] = [
             ExportBrowserDataSetting(settings: self),
             ForceCrashSetting(settings: self),
+            EcosiaLoggerForceErrorSetting(settings: self),
             PushBackInstallation(settings: self),
             OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
             ToggleDefaultBrowserPromo(settings: self),
@@ -132,6 +133,7 @@ extension AppSettingsTableViewController {
             DebugAddCustomSeeds(settings: self),
             DebugForceLevelUp(settings: self),
             SimulateAuthErrorSetting(settings: self),
+            SimulateSessionTransferFailureSetting(settings: self),
             SimulateImpactAPIErrorSetting(settings: self)
         ]
 

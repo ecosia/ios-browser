@@ -30,6 +30,7 @@ extension Unleash {
             case chatModes = "mob_ios_chat_modes"
             case customSearchProvider = "mob_ios_custom_search_provider"
             case aiFreeSearching = "mob_ios_ai_free_searching"
+            case sentryReporting = "mob_ios_sentry_reporting"
         }
 
         public let name: String
