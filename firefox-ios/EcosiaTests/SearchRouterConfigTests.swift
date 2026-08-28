@@ -21,11 +21,11 @@ final class SearchRouterConfigTests: XCTestCase {
 
     func testDecodesFullPayload() {
         let config = SearchRouterConfig(payload: """
-        {"aiMode": "redirect", "providers": ["ecosia", "google", "chatgpt"]}
+        {"aiMode": "redirect", "providers": ["ecosia", "google", "bing"]}
         """)
 
         XCTAssertEqual(config?.aiMode, .redirect)
-        XCTAssertEqual(config?.providers, [.ecosia, .google, .chatgpt])
+        XCTAssertEqual(config?.providers, [.ecosia, .google, .bing])
     }
 
     func testDecodesEveryAIMode() {
@@ -86,7 +86,7 @@ final class SearchRouterConfigTests: XCTestCase {
     }
 
     func testEcosiaIsAlwaysOffered() {
-        let config = SearchRouterConfig(payload: #"{"providers": ["google", "chatgpt"]}"#)
+        let config = SearchRouterConfig(payload: #"{"providers": ["google", "bing"]}"#)
 
         XCTAssertEqual(config?.providers.first, .ecosia)
         XCTAssertTrue(config?.offers(.ecosia) == true)

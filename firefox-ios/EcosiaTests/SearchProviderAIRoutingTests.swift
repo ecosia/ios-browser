@@ -65,13 +65,6 @@ final class SearchProviderAIRoutingTests: XCTestCase {
         XCTAssertFalse(SearchProviderAIRouting.isAIDestination(url))
     }
 
-    func testChatGPTUsesSearchHint() throws {
-        let url = try XCTUnwrap(destination(for: .chatgpt))
-
-        XCTAssertEqual(url.host, "chatgpt.com")
-        XCTAssertEqual(try queryItems(for: .chatgpt)["hints"], "search")
-    }
-
     func testPerplexityUsesItsSearchPath() throws {
         let url = try XCTUnwrap(destination(for: .perplexity))
 
@@ -93,10 +86,10 @@ final class SearchProviderAIRoutingTests: XCTestCase {
     }
 
     func testQueriesAreEscaped() throws {
-        let url = try XCTUnwrap(destination(for: .chatgpt, query: "trees & shrubs"))
+        let url = try XCTUnwrap(destination(for: .perplexity, query: "trees & shrubs"))
 
         XCTAssertFalse(url.absoluteString.contains("trees & shrubs"))
-        XCTAssertEqual(try queryItems(for: .chatgpt, query: "trees & shrubs")["q"], "trees & shrubs")
+        XCTAssertEqual(try queryItems(for: .perplexity, query: "trees & shrubs")["q"], "trees & shrubs")
     }
 
     // MARK: - Recognising destinations

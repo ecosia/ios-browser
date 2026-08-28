@@ -56,7 +56,7 @@ final class SearchProviderSelectionTests: XCTestCase {
 
     func testRouterOffAlwaysGivesEcosiaFullStack() {
         configureUnleash(routerEnabled: false)
-        User.shared.selectedSearchEngineID = "chatgpt"
+        User.shared.selectedSearchEngineID = "perplexity"
 
         XCTAssertEqual(SearchProviderSelection.aiBehavior, .ecosiaFullStack)
     }
@@ -130,7 +130,7 @@ final class SearchProviderSelectionTests: XCTestCase {
     func testAutocompleteRowIsHiddenForConversationalProviders() {
         configureUnleash(routerEnabled: true, aiMode: "full")
 
-        User.shared.selectedSearchEngineID = "chatgpt"
+        User.shared.selectedSearchEngineID = "perplexity"
         XCTAssertFalse(SearchProviderSelection.showsAIAutocompleteRow)
 
         User.shared.selectedSearchEngineID = "perplexity"

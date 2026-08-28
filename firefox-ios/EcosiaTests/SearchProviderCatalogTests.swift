@@ -11,7 +11,7 @@ final class SearchProviderCatalogTests: XCTestCase {
 
     func testEngineIdentifiersAreStable() {
         XCTAssertEqual(SearchProvider.allCases.map(\.rawValue),
-                       ["ecosia", "google", "duckduckgo", "bing", "chatgpt", "perplexity"])
+                       ["ecosia", "google", "duckduckgo", "bing", "perplexity"])
     }
 
     func testEveryProviderHasADisplayName() {
@@ -52,7 +52,6 @@ final class SearchProviderCatalogTests: XCTestCase {
     // MARK: - AI-native providers
 
     func testOnlyConversationalProvidersAreAINative() {
-        XCTAssertTrue(SearchProvider.chatgpt.isAINative)
         XCTAssertTrue(SearchProvider.perplexity.isAINative)
         XCTAssertFalse(SearchProvider.ecosia.isAINative)
         XCTAssertFalse(SearchProvider.google.isAINative)
@@ -96,7 +95,6 @@ final class SearchProviderCatalogTests: XCTestCase {
     /// For these providers the results page is the conversation, so the search template
     /// doubles as the AI destination.
     func testAINativeSearchTemplatesPointAtTheConversation() {
-        XCTAssertTrue(SearchProvider.chatgpt.searchTemplate.hasPrefix("https://chatgpt.com/"))
         XCTAssertTrue(SearchProvider.perplexity.searchTemplate.hasPrefix("https://www.perplexity.ai/search"))
     }
 
@@ -107,7 +105,6 @@ final class SearchProviderCatalogTests: XCTestCase {
         XCTAssertNotNil(SearchProvider.google.suggestTemplate)
         XCTAssertNotNil(SearchProvider.duckduckgo.suggestTemplate)
         XCTAssertNotNil(SearchProvider.bing.suggestTemplate)
-        XCTAssertNil(SearchProvider.chatgpt.suggestTemplate)
         XCTAssertNil(SearchProvider.perplexity.suggestTemplate)
     }
 

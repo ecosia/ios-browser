@@ -30,7 +30,7 @@ final class CuratedSearchEngineProviderTests: XCTestCase {
         let engines = orderedEngines(for: .default)
 
         XCTAssertEqual(engines.map(\.engineID),
-                       ["ecosia", "google", "duckduckgo", "bing", "chatgpt", "perplexity"])
+                       ["ecosia", "google", "duckduckgo", "bing", "perplexity"])
     }
 
     func testRestrictsListToTheConfiguredProviders() {
@@ -49,10 +49,10 @@ final class CuratedSearchEngineProviderTests: XCTestCase {
     /// Remote Settings has no entry for these, so they can only come from the catalog.
     func testIncludesProvidersRemoteSettingsDoesNotVend() {
         User.shared.selectedSearchEngineID = "ecosia"
-        let config = SearchRouterConfig(aiMode: .full, providers: [.ecosia, .chatgpt, .perplexity])
+        let config = SearchRouterConfig(aiMode: .full, providers: [.ecosia, .bing, .perplexity])
 
         let ids = orderedEngines(for: config).map(\.engineID)
-        XCTAssertTrue(ids.contains("chatgpt"))
+        XCTAssertTrue(ids.contains("bing"))
         XCTAssertTrue(ids.contains("perplexity"))
     }
 
@@ -107,7 +107,8 @@ final class CuratedSearchEngineProviderTests: XCTestCase {
                        "ac.ecosia.org")
         XCTAssertEqual(engines.first { $0.engineID == "duckduckgo" }?.suggestURLForQuery("trees")?.host,
                        "duckduckgo.com")
-        XCTAssertNil(engines.first { $0.engineID == "chatgpt" }?.suggestURLForQuery("trees"))
+        XCTAssertEqual(engines.first { $0.engineID == "bing" }?.suggestURLForQuery("trees")?.host,
+                       "www.bing.com")
         XCTAssertNil(engines.first { $0.engineID == "perplexity" }?.suggestURLForQuery("trees"))
     }
 
@@ -116,7 +117,7 @@ final class CuratedSearchEngineProviderTests: XCTestCase {
         let engines = orderedEngines(for: .default)
 
         XCTAssertEqual(engines.first { $0.engineID == "duckduckgo" }?.shortName, "DuckDuckGo")
-        XCTAssertEqual(engines.first { $0.engineID == "chatgpt" }?.shortName, "ChatGPT")
+        XCTAssertEqual(engines.first { $0.engineID == "perplexity" }?.shortName, "Perplexity")
     }
 
     /// The picker offers a fixed list, so persisted custom engines are not surfaced.

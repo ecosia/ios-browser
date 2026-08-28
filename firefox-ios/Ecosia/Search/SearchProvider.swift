@@ -11,7 +11,6 @@ public enum SearchProvider: String, Codable, CaseIterable, Sendable {
     case google
     case duckduckgo
     case bing
-    case chatgpt
     case perplexity
 }
 
@@ -24,7 +23,6 @@ public extension SearchProvider {
         case .google: return "Google"
         case .duckduckgo: return "DuckDuckGo"
         case .bing: return "Bing"
-        case .chatgpt: return "ChatGPT"
         case .perplexity: return "Perplexity"
         }
     }
@@ -34,7 +32,7 @@ public extension SearchProvider {
         switch self {
         case .google: return "Gemini"
         case .bing: return "Copilot"
-        case .ecosia, .duckduckgo, .chatgpt, .perplexity: return displayName
+        case .ecosia, .duckduckgo, .perplexity: return displayName
         }
     }
 
@@ -42,7 +40,7 @@ public extension SearchProvider {
     /// AI entry point to offer.
     var isAINative: Bool {
         switch self {
-        case .chatgpt, .perplexity: return true
+        case .perplexity: return true
         case .ecosia, .google, .duckduckgo, .bing: return false
         }
     }
@@ -58,8 +56,6 @@ public extension SearchProvider {
             return "https://duckduckgo.com/?q={searchTerms}"
         case .bing:
             return "https://www.bing.com/search?q={searchTerms}"
-        case .chatgpt:
-            return "https://chatgpt.com/?q={searchTerms}&hints=search"
         case .perplexity:
             return "https://www.perplexity.ai/search?q={searchTerms}"
         }
@@ -77,7 +73,7 @@ public extension SearchProvider {
             return "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
         case .bing:
             return "https://www.bing.com/osjson.aspx?query={searchTerms}"
-        case .chatgpt, .perplexity:
+        case .perplexity:
             return nil
         }
     }
@@ -90,7 +86,6 @@ public extension SearchProvider {
         case .google: return URL(string: "https://gemini.google.com/app")
         case .duckduckgo: return URL(string: "https://duck.ai")
         case .bing: return URL(string: "https://copilot.microsoft.com")
-        case .chatgpt: return URL(string: "https://chatgpt.com")
         case .perplexity: return URL(string: "https://www.perplexity.ai")
         }
     }

@@ -66,14 +66,6 @@ enum SearchProviderAIRouting {
                 URLQueryItem(name: "q", value: prompt(query, mode)),
                 bingCopilotParameter
             ])
-        case .chatgpt:
-            // TODO: the site refuses to load in a web view after the first request, so
-            // this destination is unusable. https://ecosia.atlassian.net/browse/MOB-4842
-            // `hints=search` opens the prompt in search mode and submits it.
-            return makeURL(host: "chatgpt.com", path: "/", items: [
-                URLQueryItem(name: "q", value: prompt(query, mode)),
-                URLQueryItem(name: "hints", value: "search")
-            ])
         case .perplexity:
             // Runs the query on load, no extra parameter needed.
             return makeURL(host: "www.perplexity.ai", path: "/search", items: [

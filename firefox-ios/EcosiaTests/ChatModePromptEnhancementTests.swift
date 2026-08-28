@@ -78,7 +78,7 @@ final class ChatModePromptEnhancementTests: XCTestCase {
 
     func testThirdPartyDestinationAppendsTheSuffixToTheQuery() throws {
         let suffix = try XCTUnwrap(OmniboxChatMode.thinkLonger.promptSuffix)
-        let prompt = try XCTUnwrap(queryParameter(for: .chatgpt, mode: .thinkLonger))
+        let prompt = try XCTUnwrap(queryParameter(for: .perplexity, mode: .thinkLonger))
 
         XCTAssertEqual(prompt, query + suffix)
     }
@@ -109,9 +109,9 @@ final class ChatModePromptEnhancementTests: XCTestCase {
         let ecosiaItems = try queryItems(for: .ecosia, mode: .displaySources)
         XCTAssertEqual(ecosiaItems["m"], "2")
 
-        let chatgptItems = try queryItems(for: .chatgpt, mode: .displaySources)
-        XCTAssertNil(chatgptItems["m"])
-        XCTAssertNil(chatgptItems["t"])
+        let perplexityItems = try queryItems(for: .perplexity, mode: .displaySources)
+        XCTAssertNil(perplexityItems["m"])
+        XCTAssertNil(perplexityItems["t"])
     }
 
     // MARK: - Helpers

@@ -12,7 +12,7 @@ final class ProviderUploadRedirectTests: XCTestCase {
     func testConfirmingDeliversTheDestinationAfterDismissal() {
         let state = NTPOmniboxSheetState()
         var received: URL?
-        state.presentProviderUploadRedirect(provider: .chatgpt) { received = $0 }
+        state.presentProviderUploadRedirect(provider: .perplexity) { received = $0 }
 
         XCTAssertTrue(state.showProviderUploadRedirect)
 
@@ -22,7 +22,7 @@ final class ProviderUploadRedirectTests: XCTestCase {
         XCTAssertNil(received)
 
         state.handleProviderUploadRedirectDismissed()
-        XCTAssertEqual(received, SearchProvider.chatgpt.fileUploadDestination)
+        XCTAssertEqual(received, SearchProvider.perplexity.fileUploadDestination)
     }
 
     func testDismissingWithoutConfirmingDeliversNothing() {
