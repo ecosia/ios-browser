@@ -30,7 +30,7 @@ final class CuratedSearchEngineProviderTests: XCTestCase {
         let engines = orderedEngines(for: .default)
 
         XCTAssertEqual(engines.map(\.engineID),
-                       ["ecosia", "google", "duckduckgo", "chatgpt", "perplexity"])
+                       ["ecosia", "google", "duckduckgo", "bing", "chatgpt", "perplexity"])
     }
 
     func testRestrictsListToTheConfiguredProviders() {
@@ -56,10 +56,13 @@ final class CuratedSearchEngineProviderTests: XCTestCase {
         XCTAssertTrue(ids.contains("perplexity"))
     }
 
-    func testBingIsNotOffered() {
+    func testBingIsOfferedOnlyWhenTheConfigurationListsIt() {
         User.shared.selectedSearchEngineID = "ecosia"
 
-        XCTAssertFalse(orderedEngines(for: .default).contains { $0.engineID == "bing" })
+        XCTAssertTrue(orderedEngines(for: .default).contains { $0.engineID == "bing" })
+
+        let withoutBing = SearchRouterConfig(aiMode: .full, providers: [.ecosia, .google])
+        XCTAssertFalse(orderedEngines(for: withoutBing).contains { $0.engineID == "bing" })
     }
 
     // MARK: - Default engine

@@ -8,8 +8,7 @@ import Foundation
 /// Builds the AI destination for each provider and recognises those destinations again
 /// when they come back through the omnibox submit pipeline.
 ///
-/// Every third-party destination relies on a query parameter that submits the prompt
-/// automatically. None of them are published API and any of them can change without
+/// Third-party destinations rely on undocumented query parameters that can change without
 /// notice; each is marked below. Ecosia is the only provider whose destination is a
 /// contract we control.
 enum SearchProviderAIRouting {
@@ -17,10 +16,16 @@ enum SearchProviderAIRouting {
     /// Google Search AI Mode. Community-documented, not official.
     private static let googleAIModeParameter = URLQueryItem(name: "udm", value: "50")
 
+    /// Sends a DuckDuckGo search to Duck.ai instead of the results list. Undocumented.
+    private static let duckDuckGoChatParameter = URLQueryItem(name: "ia", value: "chat")
+
+    /// Opens the Copilot conversation on the Bing results page. Undocumented.
+    private static let bingCopilotParameter = URLQueryItem(name: "mturn", value: "1")
+
     /// Hosts that serve a provider's AI experience, used to recognise a destination we
     /// built. Derived from the catalog so the two cannot drift: a third party's upload
-    /// redirect and its AI home are the same page. Google's plain results page is not
-    /// included, since only its `udm` searches are AI.
+    /// redirect and its AI home are the same page. Google, DuckDuckGo and Bing also serve
+    /// plain results from their search hosts, so those are matched on a parameter instead.
     private static var aiHosts: Set<String> {
         Set(SearchProvider.allCases.compactMap { $0.fileUploadDestination?.host })
     }
@@ -47,12 +52,23 @@ enum SearchProviderAIRouting {
                 googleAIModeParameter
             ])
         case .duckduckgo:
-            // `auto_submit=1` sends the prompt without a second tap.
-            return makeURL(host: "duck.ai", path: "/", items: [
+            // TODO: the prompt reaches Duck.ai but does not prefill in a web view, so the
+            // chat opens empty. https://ecosia.atlassian.net/browse/MOB-4842
+            // Keep the results page as the destination: it is what hands the prompt over,
+            // and Duck.ai does not accept one directly.
+            return makeURL(host: "duckduckgo.com", path: "/", items: [
                 URLQueryItem(name: "q", value: prompt(query, mode)),
-                URLQueryItem(name: "auto_submit", value: "1")
+                duckDuckGoChatParameter
+            ])
+        case .bing:
+            // Copilot rides on the results page; `copilot.microsoft.com` drops the query.
+            return makeURL(host: "www.bing.com", path: "/search", items: [
+                URLQueryItem(name: "q", value: prompt(query, mode)),
+                bingCopilotParameter
             ])
         case .chatgpt:
+            // TODO: the site refuses to load in a web view after the first request, so
+            // this destination is unusable. https://ecosia.atlassian.net/browse/MOB-4842
             // `hints=search` opens the prompt in search mode and submits it.
             return makeURL(host: "chatgpt.com", path: "/", items: [
                 URLQueryItem(name: "q", value: prompt(query, mode)),
@@ -92,7 +108,8 @@ enum SearchProviderAIRouting {
     /// Whether `url` is already a finalized AI destination and must not be rebuilt as a
     /// plain search by the omnibox submit pipeline.
     static func isAIDestination(_ url: URL) -> Bool {
-        if url.isEcosiaAIChat || isGoogleAIMode(url) { return true }
+        if url.isEcosiaAIChat || isGoogleAIMode(url)
+            || isDuckDuckGoChat(url) || isBingCopilot(url) { return true }
         guard let host = url.host else { return false }
         return aiHosts.contains(host)
     }
@@ -104,6 +121,22 @@ enum SearchProviderAIRouting {
               components.host == "www.google.com",
               components.path == "/search" else { return false }
         return components.queryItems?.contains(googleAIModeParameter) == true
+    }
+
+    /// Matched on the parameter rather than the host: `duckduckgo.com` also serves the
+    /// provider's plain results, which must stay a normal search.
+    private static func isDuckDuckGoChat(_ url: URL) -> Bool {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              components.host == "duckduckgo.com" else { return false }
+        return components.queryItems?.contains(duckDuckGoChatParameter) == true
+    }
+
+    /// Same reasoning as DuckDuckGo: Copilot shares the Bing results host.
+    private static func isBingCopilot(_ url: URL) -> Bool {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              components.host == "www.bing.com",
+              components.path == "/search" else { return false }
+        return components.queryItems?.contains(bingCopilotParameter) == true
     }
 
     private static func makeURL(host: String, path: String, items: [URLQueryItem]) -> URL? {

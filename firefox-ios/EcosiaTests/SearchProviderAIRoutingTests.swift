@@ -32,11 +32,37 @@ final class SearchProviderAIRoutingTests: XCTestCase {
         XCTAssertEqual(items["udm"], "50")
     }
 
-    func testDuckDuckGoUsesDuckAIWithAutoSubmit() throws {
+    /// Must go through the results page, not duck.ai: only the SERP mints the token that
+    /// prefills the chat view, and it redirects on to duck.ai itself.
+    func testDuckDuckGoRoutesThroughTheResultsPage() throws {
         let url = try XCTUnwrap(destination(for: .duckduckgo))
 
-        XCTAssertEqual(url.host, "duck.ai")
-        XCTAssertEqual(try queryItems(for: .duckduckgo)["auto_submit"], "1")
+        XCTAssertEqual(url.host, "duckduckgo.com")
+        XCTAssertEqual(try queryItems(for: .duckduckgo)["ia"], "chat")
+    }
+
+    /// The prompt is prefilled, not sent, so no parameter may claim to auto-send it.
+    func testDuckDuckGoCarriesNoAutoSubmitParameter() throws {
+        let items = try queryItems(for: .duckduckgo)
+
+        XCTAssertNil(items["auto_submit"])
+        XCTAssertEqual(items.keys.sorted(), ["ia", "q"])
+    }
+
+    /// Copilot rides on the Bing results page: `copilot.microsoft.com` drops `q`.
+    func testBingUsesCopilotOnTheResultsPage() throws {
+        let url = try XCTUnwrap(destination(for: .bing))
+
+        XCTAssertEqual(url.host, "www.bing.com")
+        XCTAssertEqual(url.path, "/search")
+        XCTAssertEqual(try queryItems(for: .bing)["mturn"], "1")
+    }
+
+    /// Same host as the provider's own results, so only the Copilot parameter may match.
+    func testPlainBingSearchIsNotAnAIDestination() throws {
+        let url = try XCTUnwrap(URL(string: "https://www.bing.com/search?q=trees"))
+
+        XCTAssertFalse(SearchProviderAIRouting.isAIDestination(url))
     }
 
     func testChatGPTUsesSearchHint() throws {
@@ -96,6 +122,20 @@ final class SearchProviderAIRoutingTests: XCTestCase {
         let url = try XCTUnwrap(URL(string: "https://www.google.com/search?q=trees"))
 
         XCTAssertFalse(SearchProviderAIRouting.isAIDestination(url))
+    }
+
+    /// Same host as the provider's own results, so only the chat parameter may match.
+    func testPlainDuckDuckGoSearchIsNotAnAIDestination() throws {
+        let url = try XCTUnwrap(URL(string: "https://duckduckgo.com/?q=trees"))
+
+        XCTAssertFalse(SearchProviderAIRouting.isAIDestination(url))
+    }
+
+    /// duck.ai is where the results page redirects to, so it has to stay recognised.
+    func testDuckAIIsStillRecognisedAfterTheRedirect() throws {
+        let url = try XCTUnwrap(URL(string: "https://duck.ai/chat?ia=chat"))
+
+        XCTAssertTrue(SearchProviderAIRouting.isAIDestination(url))
     }
 
     func testUnrelatedURLIsNotAnAIDestination() throws {

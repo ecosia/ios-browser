@@ -11,7 +11,7 @@ final class SearchProviderCatalogTests: XCTestCase {
 
     func testEngineIdentifiersAreStable() {
         XCTAssertEqual(SearchProvider.allCases.map(\.rawValue),
-                       ["ecosia", "google", "duckduckgo", "chatgpt", "perplexity"])
+                       ["ecosia", "google", "duckduckgo", "bing", "chatgpt", "perplexity"])
     }
 
     func testEveryProviderHasADisplayName() {
@@ -21,12 +21,15 @@ final class SearchProviderCatalogTests: XCTestCase {
         }
     }
 
-    /// Only Google brands its AI surface differently from the provider itself.
-    func testOnlyGoogleHasASeparateAIDisplayName() {
+    /// Only providers whose AI is separately branded may differ from their own name.
+    func testOnlySeparatelyBrandedAIsHaveTheirOwnDisplayName() {
         XCTAssertEqual(SearchProvider.google.displayName, "Google")
         XCTAssertEqual(SearchProvider.google.aiDisplayName, "Gemini")
+        XCTAssertEqual(SearchProvider.bing.displayName, "Bing")
+        XCTAssertEqual(SearchProvider.bing.aiDisplayName, "Copilot")
 
-        for provider in SearchProvider.allCases where provider != .google {
+        let separatelyBranded: [SearchProvider] = [.google, .bing]
+        for provider in SearchProvider.allCases where !separatelyBranded.contains(provider) {
             XCTAssertEqual(
                 provider.aiDisplayName,
                 provider.displayName,
@@ -37,10 +40,13 @@ final class SearchProviderCatalogTests: XCTestCase {
 
     /// The redirect sheet names where the upload lands, so the AI name has to agree
     /// with the destination host.
-    func testGoogleAIDisplayNameMatchesItsUploadDestination() throws {
-        let host = try XCTUnwrap(SearchProvider.google.fileUploadDestination?.host)
+    func testSeparatelyBrandedAINamesMatchTheirUploadDestination() throws {
+        for provider in [SearchProvider.google, .bing] {
+            let host = try XCTUnwrap(provider.fileUploadDestination?.host)
 
-        XCTAssertTrue(host.contains(SearchProvider.google.aiDisplayName.lowercased()))
+            XCTAssertTrue(host.contains(provider.aiDisplayName.lowercased()),
+                          "\(provider) AI name does not match \(host)")
+        }
     }
 
     // MARK: - AI-native providers
@@ -51,6 +57,7 @@ final class SearchProviderCatalogTests: XCTestCase {
         XCTAssertFalse(SearchProvider.ecosia.isAINative)
         XCTAssertFalse(SearchProvider.google.isAINative)
         XCTAssertFalse(SearchProvider.duckduckgo.isAINative)
+        XCTAssertFalse(SearchProvider.bing.isAINative)
     }
 
     // MARK: - Search templates
@@ -67,6 +74,8 @@ final class SearchProviderCatalogTests: XCTestCase {
                        "https://www.google.com/search?q={searchTerms}")
         XCTAssertEqual(SearchProvider.duckduckgo.searchTemplate,
                        "https://duckduckgo.com/?q={searchTerms}")
+        XCTAssertEqual(SearchProvider.bing.searchTemplate,
+                       "https://www.bing.com/search?q={searchTerms}")
     }
 
     /// Affiliate and client parameters are deliberately absent from the results URLs.
@@ -97,6 +106,7 @@ final class SearchProviderCatalogTests: XCTestCase {
         XCTAssertNotNil(SearchProvider.ecosia.suggestTemplate)
         XCTAssertNotNil(SearchProvider.google.suggestTemplate)
         XCTAssertNotNil(SearchProvider.duckduckgo.suggestTemplate)
+        XCTAssertNotNil(SearchProvider.bing.suggestTemplate)
         XCTAssertNil(SearchProvider.chatgpt.suggestTemplate)
         XCTAssertNil(SearchProvider.perplexity.suggestTemplate)
     }
