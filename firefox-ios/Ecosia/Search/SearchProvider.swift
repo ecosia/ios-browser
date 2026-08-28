@@ -27,6 +27,14 @@ public extension SearchProvider {
         }
     }
 
+    /// Brand of the provider's AI surface, which is not always the provider's own name.
+    var aiDisplayName: String {
+        switch self {
+        case .google: return "Gemini"
+        case .ecosia, .duckduckgo, .chatgpt, .perplexity: return displayName
+        }
+    }
+
     /// Providers whose results page is already a conversation, so there is no separate
     /// AI entry point to offer.
     var isAINative: Bool {

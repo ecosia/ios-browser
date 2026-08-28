@@ -38,7 +38,7 @@ public struct OmniboxProviderUploadRedirectView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, .ecosia.space._m)
 
-            Text(String(format: .localized(.uploadFilesProviderMessage), provider.displayName))
+            Text(String(format: .localized(.uploadFilesProviderMessage), provider.aiDisplayName))
                 .font(.ecosia(size: .ecosia.font._l, weight: .regular))
                 .foregroundColor(theme.textPrimaryColor)
                 .multilineTextAlignment(.leading)
@@ -57,7 +57,7 @@ public struct OmniboxProviderUploadRedirectView: View {
     private var actionButtons: some View {
         VStack(spacing: .ecosia.space._1s) {
             Button(action: onGoToProvider) {
-                Text(String(format: .localized(.goToProvider), provider.displayName))
+                Text(String(format: .localized(.goToProvider), provider.aiDisplayName))
                     .font(.subheadline)
                     .foregroundColor(theme.ctaButtonTextColor)
                     .padding(.ecosia.space._m)

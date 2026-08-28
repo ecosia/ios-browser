@@ -17,7 +17,30 @@ final class SearchProviderCatalogTests: XCTestCase {
     func testEveryProviderHasADisplayName() {
         for provider in SearchProvider.allCases {
             XCTAssertFalse(provider.displayName.isEmpty, "\(provider) has no display name")
+            XCTAssertFalse(provider.aiDisplayName.isEmpty, "\(provider) has no AI display name")
         }
+    }
+
+    /// Only Google brands its AI surface differently from the provider itself.
+    func testOnlyGoogleHasASeparateAIDisplayName() {
+        XCTAssertEqual(SearchProvider.google.displayName, "Google")
+        XCTAssertEqual(SearchProvider.google.aiDisplayName, "Gemini")
+
+        for provider in SearchProvider.allCases where provider != .google {
+            XCTAssertEqual(
+                provider.aiDisplayName,
+                provider.displayName,
+                "\(provider) should reuse its provider name"
+            )
+        }
+    }
+
+    /// The redirect sheet names where the upload lands, so the AI name has to agree
+    /// with the destination host.
+    func testGoogleAIDisplayNameMatchesItsUploadDestination() throws {
+        let host = try XCTUnwrap(SearchProvider.google.fileUploadDestination?.host)
+
+        XCTAssertTrue(host.contains(SearchProvider.google.aiDisplayName.lowercased()))
     }
 
     // MARK: - AI-native providers
