@@ -7,6 +7,14 @@ import XCTest
 import Common
 
 final class UserAgentTests: XCTestCase {
+    // Ecosia: `configureEcosiaDesktopUserAgentDomains` mutates a process-wide singleton with no
+    // getter to snapshot/restore the prior value, and XCTest doesn't guarantee test order, so any
+    // test that calls it must reset it here to avoid leaking state into other tests in this target.
+    override func tearDown() {
+        UserAgent.configureEcosiaDesktopUserAgentDomains([])
+        super.tearDown()
+    }
+
     // Ecosia: Verify the default mobile UA uses Ecosia's UA marker.
     func testDefaultMobileUserAgent_returnsEcosiaUserAgent() {
         let userAgent = UserAgent.mobileUserAgent()
