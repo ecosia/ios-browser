@@ -77,7 +77,7 @@ runs:
 
     - name: Publish Test Report
       if: always()
-      uses: mikepenz/action-junit-report@v5
+      uses: mikepenz/action-junit-report@v6
       with:
         report_paths: '**/test_output/xml/report.junit'
         github_token: ${{ inputs.github-token }}
