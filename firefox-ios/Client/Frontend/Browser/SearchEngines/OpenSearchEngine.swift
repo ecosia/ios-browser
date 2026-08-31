@@ -141,8 +141,11 @@ final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearch
 
     /// Returns the search URL for the given query.
     func searchURLForQuery(_ query: String) -> URL? {
-        /* Ecosia: Route non-Ecosia engines through their OpenSearch templates when the custom
-           search provider flag is enabled; otherwise always use the Ecosia URL builder. */
+        /* Ecosia: Use environment-aware URL builder instead of hardcoded template
+        return getURLFromTemplate(searchTemplate, query: query)
+        */
+        // Ecosia: With custom search providers on, non-Ecosia engines keep the upstream
+        // template behaviour; Ecosia itself always uses the environment-aware builder.
         if CustomSearchProviderFeatureFlag.isEnabled,
            engineID != SearchProviderSelection.ecosiaEngineID {
             return getURLFromTemplate(searchTemplate, query: query)

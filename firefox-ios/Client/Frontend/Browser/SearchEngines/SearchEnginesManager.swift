@@ -4,6 +4,7 @@
 
 import Common
 import Ecosia
+import Foundation
 import Shared
 import Storage
 
@@ -23,7 +24,8 @@ protocol SearchEngineDelegate: AnyObject {
 }
 
 struct SearchEngineProviderFactory {
-    /* Ecosia: Use custom provider that ensures Ecosia is always the default
+    /* Ecosia: Use custom provider that ensures Ecosia is always the default. Computed rather
+       than stored, since the choice depends on a flag that can change after launch.
     static let defaultSearchEngineProvider: SearchEngineProvider = ASSearchEngineProvider()
     */
     static var defaultSearchEngineProvider: SearchEngineProvider {
@@ -85,8 +87,14 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
         self.orderedEngines = []
         initPrefBasedSuggestions()
 
+        /* Ecosia: Use the Ecosia logger.
+        logger.log("[SEC] Search engine provider: \(String(describing: type(of: engineProvider)))",
+                   level: .info,
+                   category: .remoteSettings)
+        */
         EcosiaLogger.search.info("Search engine provider: \(String(describing: type(of: engineProvider)))")
 
+        // Ecosia: Extracted below so a later reconfiguration can rebuild the list too.
         reloadOrderedEngines()
     }
 
@@ -109,6 +117,7 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
         reloadOrderedEngines()
     }
 
+    // Ecosia: Was inline in `init`; extracted so a reconfiguration can rebuild the list.
     private func reloadOrderedEngines() {
         // Recorded before the fetch so `reconfigureEngineProviderIfNeeded` compares against what
         // this list was actually built from.
@@ -121,6 +130,7 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
             // explicitly for disabled engines, the engine ordering will be updated
             // by the setter for the orderedEngines property.
             self.disabledEngines = preferences.disabledEngines ?? []
+            // Ecosia: Mirror the resolved default into the provider selection.
             SearchProviderSelection.syncSelectedEngineID(self.defaultEngine?.engineID)
 
             self.delegate?.searchEnginesDidUpdate()

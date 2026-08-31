@@ -4783,7 +4783,7 @@ extension BrowserViewController: SearchViewControllerDelegate {
     }
 
     func updateForDefaultSearchEngineDidChange() {
-        /* Ecosia: Keep omnibox gating and analytics in sync with the selected provider. */
+        // Ecosia: Keep omnibox gating and analytics in sync with the selected provider.
         SearchProviderSelection.syncSelectedEngineID(searchEnginesManager.defaultEngine?.engineID)
         ecosiaHandleDefaultSearchEngineDidChange()
         // Update search icon when the search engine changes

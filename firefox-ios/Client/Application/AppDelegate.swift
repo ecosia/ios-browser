@@ -230,6 +230,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
          make any tangible difference in the process as we check if
          any cached version of the Model is in place.
          */
+        /* Ecosia: Pinned to the main actor so the engine reconfiguration below can touch
+           `searchEnginesManager`.
+        Task {
+        */
         Task { @MainActor in
             await FeatureManagement.fetchConfiguration()
             // Ecosia: Swap search engine provider if Unleash refresh changed the custom provider flag.
