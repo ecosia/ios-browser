@@ -6,13 +6,13 @@
 import XCTest
 @testable import Ecosia
 
-final class UpgradeTests: XCTestCase {
+final class UpgradeTests: XCTestCase, UserPersistenceResettable {
     override func setUp() {
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
     }
 
     override func tearDown() {
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
     }
 
     func testFrom5_3To6() {

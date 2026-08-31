@@ -6,16 +6,16 @@
 import XCTest
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class UserStateTests: XCTestCase, @unchecked Sendable {
+final class UserStateTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable {
     private var user: User!
 
     override func setUp() {
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
         user = .init()
     }
 
     override func tearDown() {
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
     }
 
     func testStoredState() {

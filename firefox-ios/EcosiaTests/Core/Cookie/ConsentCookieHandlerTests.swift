@@ -6,18 +6,17 @@
 import XCTest
 import WebKit
 
-final class ConsentCookieHandlerTests: XCTestCase {
+final class ConsentCookieHandlerTests: XCTestCase, UserPersistenceResettable {
 
     override func setUp() {
-        super.setUp()
+        resetUserPersistence()
         Cookie.setURLProvider(.production)
 
         User.shared.cookieConsentValue = nil
     }
 
     override func tearDown() {
-        super.tearDown()
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
         Cookie.resetURLProvider()
     }
 

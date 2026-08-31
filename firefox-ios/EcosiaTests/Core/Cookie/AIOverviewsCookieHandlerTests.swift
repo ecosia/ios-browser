@@ -6,17 +6,16 @@
 import XCTest
 import WebKit
 
-final class AIOverviewsCookieHandlerTests: XCTestCase {
+final class AIOverviewsCookieHandlerTests: XCTestCase, UserPersistenceResettable {
 
     override func setUp() {
-        super.setUp()
+        resetUserPersistence()
         Cookie.setURLProvider(.production)
         User.shared.aiOverviews = false
     }
 
     override func tearDown() {
-        super.tearDown()
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
         Cookie.resetURLProvider()
     }
 

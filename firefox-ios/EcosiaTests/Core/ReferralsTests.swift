@@ -8,7 +8,7 @@ import XCTest
 // swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
-final class ReferralsTests: XCTestCase, @unchecked Sendable {
+final class ReferralsTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable {
 
     var httpClientMock: HTTPClientMock!
     var referrals: Referrals!
@@ -19,18 +19,17 @@ final class ReferralsTests: XCTestCase, @unchecked Sendable {
     let notFoundResponse = HTTPURLResponse(url: URL(string: "https://www.example.com")!, statusCode: 404, httpVersion: nil, headerFields: nil)
 
     override func setUp() {
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
 
         httpClientMock = HTTPClientMock()
         httpClientMock.data = try! Data(contentsOf: Bundle.ecosiaTests.url(forResource: "referrals", withExtension: "json")!)
         httpClientMock.response = failureResponse
 
-        // Force clean state
-        var user = User()
-        user.referrals = .init()
-        User.shared = user
-
         referrals = Referrals(client: httpClientMock)
+    }
+
+    override func tearDown() {
+        resetUserPersistence()
     }
 
     func testFetchCodeNotCreated() async throws {

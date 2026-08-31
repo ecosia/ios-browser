@@ -6,22 +6,13 @@
 @testable import Ecosia
 import XCTest
 
-final class UserTests: XCTestCase, @unchecked Sendable {
+final class UserTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable {
     override func setUp() {
-        // Ecosia: Drain any pending save from the previous test before resetting state — `User`'s
-        // didSet dispatches the disk write onto `User.queue` independently of whatever signal
-        // (expectation, notification) that test waited on, so a leftover write can still be
-        // in flight here and race this test's own setup/assertions. (MOB-4879)
-        User.queue.sync {}
-        try? FileManager.default.removeItem(at: FileManager.user)
-        User.shared = User()
+        resetUserPersistence()
     }
 
     override func tearDown() {
-        // Ecosia: Same rationale as setUp — ensure this test's own save(s) have completed before
-        // the next test's setUp deletes the file out from under a still-pending write. (MOB-4879)
-        User.queue.sync {}
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
     }
 
     func testFirstTime() {

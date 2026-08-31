@@ -6,7 +6,7 @@
 @testable import Ecosia
 import XCTest
 
-@MainActor final class NewsTests: XCTestCase {
+@MainActor final class NewsTests: XCTestCase, UserPersistenceResettable {
     // Ecosia: News delivers its callbacks via async MainActor Tasks. Under CI load the main
     // actor can be busy enough that the callback misses a 1s window even though no real network
     // is involved (MockURLSession + bundled JSON). `waitForExpectations` returns the instant the
@@ -16,13 +16,13 @@ import XCTest
     private let asyncTimeout: TimeInterval = 10
 
     override func setUp() {
+        resetUserPersistence()
         try? FileManager.default.removeItem(at: FileManager.news)
-        try? FileManager.default.removeItem(at: FileManager.user)
     }
 
     override func tearDown() {
+        resetUserPersistence()
         try? FileManager.default.removeItem(at: FileManager.news)
-        try? FileManager.default.removeItem(at: FileManager.user)
     }
 
     private func mockSavedItems() {

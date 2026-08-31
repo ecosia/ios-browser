@@ -5,13 +5,13 @@
 import XCTest
 @testable import Ecosia
 
-final class ReferralsModelTests: XCTestCase, @unchecked Sendable {
+final class ReferralsModelTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable {
     override func setUp() {
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
     }
 
     override func tearDown() {
-        try? FileManager.default.removeItem(at: FileManager.user)
+        resetUserPersistence()
     }
 
     func testInitWithCode() {
