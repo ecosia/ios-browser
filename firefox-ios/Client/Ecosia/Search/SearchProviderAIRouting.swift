@@ -52,10 +52,8 @@ enum SearchProviderAIRouting {
                 googleAIModeParameter
             ])
         case .duckduckgo:
-            // TODO: the prompt reaches Duck.ai but does not prefill in a web view, so the
-            // chat opens empty. https://ecosia.atlassian.net/browse/MOB-4842
-            // Keep the results page as the destination: it is what hands the prompt over,
-            // and Duck.ai does not accept one directly.
+            // The results page hands the prompt to Duck.ai, which does not take one
+            // directly. In a web view the chat opens without it prefilled.
             return makeURL(host: "duckduckgo.com", path: "/", items: [
                 URLQueryItem(name: "q", value: prompt(query, mode)),
                 duckDuckGoChatParameter

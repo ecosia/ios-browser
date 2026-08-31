@@ -16,7 +16,7 @@ public enum Cookie: String, CaseIterable {
     case unleash = "ECUNL"
     // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECAIO
     case aiOverviews = "ECAIO"
-    // AI-free searching preference. Omitted until the user explicitly toggles it.
+    // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECNOAI
     case aiFreeSearching = "ECNOAI"
     // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#EASC
     case authSession = "EASC"
