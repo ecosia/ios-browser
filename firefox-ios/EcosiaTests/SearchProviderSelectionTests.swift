@@ -44,10 +44,11 @@ final class SearchProviderSelectionTests: XCTestCase {
         XCTAssertFalse(SearchProviderSelection.isEcosiaDefault)
     }
 
-    /// A persisted identifier we no longer offer, for example after a downgrade.
+    /// A persisted identifier we do not offer, for example after a downgrade. Must not be
+    /// a name in the catalog.
     func testUnknownPersistedIdentifierFallsBackToEcosia() {
         configureUnleash(routerEnabled: true)
-        User.shared.selectedSearchEngineID = "bing"
+        User.shared.selectedSearchEngineID = "yahoo"
 
         XCTAssertEqual(SearchProviderSelection.selectedProvider, .ecosia)
     }

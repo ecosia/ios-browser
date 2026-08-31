@@ -360,8 +360,9 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(User.shared.selectedProvider, .duckduckgo)
         XCTAssertFalse(User.shared.isEcosiaSearchProvider)
 
-        // An identifier an older build could have persisted, for example a removed provider.
-        User.shared.selectedSearchEngineID = "bing"
+        // An identifier an older build could have persisted, for example a provider we
+        // never offered or one since removed. Must not be a name in the catalog.
+        User.shared.selectedSearchEngineID = "yahoo"
         XCTAssertEqual(User.shared.selectedProvider, .ecosia)
         XCTAssertTrue(User.shared.isEcosiaSearchProvider,
                       "A provider we no longer offer must be treated as Ecosia, so the market "
