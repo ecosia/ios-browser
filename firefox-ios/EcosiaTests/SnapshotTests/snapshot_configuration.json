@@ -38,6 +38,12 @@
           "devices": ["all"],
           "locales": ["all"],
           "themes": ["light"]
+        },
+        {
+          "name": "HomepageComponentTests",
+          "devices": ["iPhone 16 Pro"],
+          "locales": ["all"],
+          "themes": ["all"]
         }
       ]
     }

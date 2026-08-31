@@ -103,7 +103,7 @@ private struct GlassCircleModifier: ViewModifier {
 // MARK: - Customize (Pencil) Button
 
 /// Glass-style circular button with a pencil icon for opening NTP customization.
-private struct EcosiaCustomizeButton: View {
+struct EcosiaCustomizeButton: View {
     let onTap: () -> Void
 
     private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
@@ -127,7 +127,7 @@ private struct EcosiaCustomizeButton: View {
 
 // MARK: - Ecosia Logo (centered in header)
 
-private struct NTPHeaderLogoView: View {
+struct NTPHeaderLogoView: View {
     private let logoHeight: CGFloat = 20
 
     var body: some View {

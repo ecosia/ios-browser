@@ -67,6 +67,8 @@ final class SnapshotTestHelper {
         switch testClassName {
         case "OnboardingTests":
             return "Onboarding"
+        case "HomepageComponentTests":
+            return "Homepage"
         case let name where name.hasPrefix("NTP"):
             return "NTP"
         default:
@@ -174,6 +176,7 @@ final class SnapshotTestHelper {
     private static func performSnapshot<T>(
         initializingWith initializer: @escaping () -> T,
         locales: [Locale],
+        themes: [ThemeConfiguration.Theme],
         wait: TimeInterval,
         precision: CGFloat,
         file: StaticString,
@@ -191,7 +194,9 @@ final class SnapshotTestHelper {
             fatalError("Could not retrieve devices and locales from environment.json")
         }
 
-        let themeStyles = themesFromEnvironment(envDict)
+        let themeStyles = themes.isEmpty
+            ? themesFromEnvironment(envDict)
+            : themeStyles(for: themes)
 
         let themeManager: ThemeManager = AppContainer.shared.resolve()
 
@@ -206,7 +211,9 @@ final class SnapshotTestHelper {
         }
 
         // Map locales from environment.json
-        let locales = localesArray.map { Locale(identifier: $0) }
+        let localesToTest = locales.isEmpty
+            ? localesArray.map { Locale(identifier: $0) }
+            : locales
 
         for deviceType in devicesToTest {
             let config = deviceType.config
@@ -214,7 +221,7 @@ final class SnapshotTestHelper {
             let window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
             let traits: UITraitCollection = .init(traitsFrom: [config.traits])
 
-            for locale in locales {
+            for locale in localesToTest {
                 for (themeStyle, themeSuffix) in themeStyles {
                     setLocale(locale)
                     changeThemeTo(themeStyle, suffix: themeSuffix, themeManager: themeManager)
@@ -272,7 +279,13 @@ final class SnapshotTestHelper {
         }
 
         let themes = configuredThemes.isEmpty ? ThemeConfiguration.Theme.allCases : configuredThemes
-        return themes.map { theme in
+        return themeStyles(for: themes)
+    }
+
+    private static func themeStyles(
+        for themes: [ThemeConfiguration.Theme]
+    ) -> [(UIUserInterfaceStyle, ThemeConfiguration.Theme)] {
+        themes.map { theme in
             switch theme {
             case .light:
                 return (.light, .light)
@@ -336,7 +349,8 @@ final class SnapshotTestHelper {
     @MainActor
     static func assertSnapshot(
         initializingWith initializer: @escaping () -> UIViewController,
-        locales: [Locale] = LocaleRetriever.getLocales(),
+        locales: [Locale] = [],
+        themes: [ThemeConfiguration.Theme] = [],
         wait: TimeInterval = 0.5,
         precision: CGFloat = 0.99,
         file: StaticString = #file,
@@ -346,6 +360,7 @@ final class SnapshotTestHelper {
         performSnapshot(
             initializingWith: initializer,
             locales: locales,
+            themes: themes,
             wait: wait,
             precision: precision,
             file: file,
@@ -367,7 +382,8 @@ final class SnapshotTestHelper {
     @MainActor
     static func assertSnapshot(
         initializingWith initializer: @escaping () -> UIView,
-        locales: [Locale] = LocaleRetriever.getLocales(),
+        locales: [Locale] = [],
+        themes: [ThemeConfiguration.Theme] = [],
         wait: TimeInterval = 0.5,
         precision: CGFloat = 0.99,
         file: StaticString = #file,
@@ -377,6 +393,7 @@ final class SnapshotTestHelper {
         performSnapshot(
             initializingWith: initializer,
             locales: locales,
+            themes: themes,
             wait: wait,
             precision: precision,
             file: file,
