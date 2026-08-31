@@ -71,8 +71,12 @@ final class MainCookieHandler: BaseCookieHandler {
         return values
     }
 
+    /// Written for every provider: this cookie only reaches Ecosia, and dropping the market
+    /// or safe-search keys would let the web defaults overwrite the user's stored choices.
     private func baseValues() -> [String: String] {
-        var values: [String: String] = [
+        return [
+            Properties.adultFilter: User.shared.adultFilter.rawValue,
+            Properties.marketCode: User.shared.marketCode.rawValue,
             Properties.language: Language.current.rawValue,
             Properties.suggestions: String(User.shared.autoComplete ? 1 : 0),
             Properties.marketApplied: "1",
@@ -81,14 +85,6 @@ final class MainCookieHandler: BaseCookieHandler {
             Properties.firstSearch: "0",
             Properties.addon: "1"
         ]
-
-        // Market and safe-search cookies only apply to Ecosia search results.
-        if User.shared.isEcosiaSearchProvider {
-            values[Properties.adultFilter] = User.shared.adultFilter.rawValue
-            values[Properties.marketCode] = User.shared.marketCode.rawValue
-        }
-
-        return values
     }
 
     private func extractMainProperties(_ properties: [String: String]) {
