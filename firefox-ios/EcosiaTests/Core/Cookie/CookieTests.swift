@@ -12,6 +12,8 @@ final class CookieTests: XCTestCase, UserPersistenceResettable {
 
     override func setUp() {
         resetUserPersistence()
+        super.setUp()
+        User.shared.aiFreeSearching = nil
         Cookie.setURLProvider(urlProvider)
     }
 
@@ -39,6 +41,7 @@ final class CookieTests: XCTestCase, UserPersistenceResettable {
         XCTAssertEqual(Cookie("ECCC"), .consent)
         XCTAssertEqual(Cookie("ECUNL"), .unleash)
         XCTAssertEqual(Cookie("ECAIO"), .aiOverviews)
+        XCTAssertEqual(Cookie("ECNOAI"), .aiFreeSearching)
         XCTAssertNil(Cookie("INVALID"))
     }
 
@@ -47,6 +50,7 @@ final class CookieTests: XCTestCase, UserPersistenceResettable {
         XCTAssertEqual(Cookie.consent.name, "ECCC")
         XCTAssertEqual(Cookie.unleash.name, "ECUNL")
         XCTAssertEqual(Cookie.aiOverviews.name, "ECAIO")
+        XCTAssertEqual(Cookie.aiFreeSearching.name, "ECNOAI")
     }
 
     // MARK: - Cookie Processing Tests
@@ -121,6 +125,11 @@ final class CookieTests: XCTestCase, UserPersistenceResettable {
         for cookie in standardCookies + privateCookies {
             XCTAssertEqual(cookie.domain, ".ecosia.org")
         }
+
+        XCTAssertFalse(standardCookies.contains { $0.name == Cookie.aiFreeSearching.name },
+                       "ECNOAI must be omitted until the user explicitly sets AI-free searching")
+        XCTAssertFalse(privateCookies.contains { $0.name == Cookie.aiFreeSearching.name },
+                       "ECNOAI must be omitted until the user explicitly sets AI-free searching")
     }
 
     func testMakeSearchSettingsObserverCookies() async {
@@ -131,9 +140,9 @@ final class CookieTests: XCTestCase, UserPersistenceResettable {
         let standardCookies = Cookie.makeSearchSettingsObserverCookies(isPrivate: false)
         let privateCookies = Cookie.makeSearchSettingsObserverCookies(isPrivate: true)
 
-        // Should only contain main and aiOverviews cookies
+        // Should only contain main and aiOverviews cookies (ECNOAI omitted on default)
         let expectedCookieNames = [Cookie.main.name, Cookie.aiOverviews.name]
-        let unexpectedCookieNames = [Cookie.consent.name, Cookie.unleash.name]
+        let unexpectedCookieNames = [Cookie.consent.name, Cookie.unleash.name, Cookie.aiFreeSearching.name]
 
         for cookieName in expectedCookieNames {
             XCTAssertTrue(standardCookies.contains { $0.name == cookieName }, "Standard search settings cookies missing \(cookieName)")

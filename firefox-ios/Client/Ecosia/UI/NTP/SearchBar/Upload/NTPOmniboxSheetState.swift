@@ -9,6 +9,7 @@ import Ecosia
 final class NTPOmniboxSheetState: ObservableObject {
     @Published var showUploadDrawer = false
     @Published var showSignInSheet = false
+    @Published var showProviderUploadRedirect = false
 
     private enum PendingAuthAction {
         case signIn
@@ -26,6 +27,10 @@ final class NTPOmniboxSheetState: ObservableObject {
     /// state (only Standard AI Chat selectable, others disabled, sign-in CTA).
     @Published var isAuthenticated = false
 
+    /// Provider the drawer is being shown for. Decides which modes it lists and
+    /// whether it offers the in-app upload sources.
+    @Published var provider: SearchProvider = .ecosia
+
     private var onUploadOptionSelected: ((OmniboxUploadOption) -> Void)?
     private var onChatModeSelectionChanged: ((OmniboxChatMode?) -> Void)?
     private var onLoginRequested: (() -> Void)?
@@ -35,6 +40,8 @@ final class NTPOmniboxSheetState: ObservableObject {
     /// immediately (see below).
     private var pendingUploadOption: OmniboxUploadOption?
     private var pendingLogin = false
+    private var pendingProviderRedirect: URL?
+    private var onProviderRedirectConfirmed: ((URL) -> Void)?
 
     private var pendingAuthAction: PendingAuthAction?
     private var shouldPresentUploadDrawerAfterAuth = false
@@ -110,17 +117,46 @@ final class NTPOmniboxSheetState: ObservableObject {
         onUploadDrawerRequested = nil
     }
 
-    func presentUploadDrawer(isAuthenticated: Bool,
+    func presentUploadDrawer(provider: SearchProvider,
+                             isAuthenticated: Bool,
                              onSelectUpload: @escaping (OmniboxUploadOption) -> Void,
                              onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void,
                              onLogin: @escaping () -> Void) {
         pendingUploadOption = nil
         pendingLogin = false
+        self.provider = provider
         self.isAuthenticated = isAuthenticated
         onUploadOptionSelected = onSelectUpload
         self.onChatModeSelectionChanged = onChatModeSelectionChanged
         onLoginRequested = onLogin
         showUploadDrawer = true
+    }
+
+    /// Presents the explainer shown when a third-party provider is selected. `onConfirmed`
+    /// runs only if the user taps through, and only after the sheet has dismissed so the
+    /// navigation does not fight the dismissal.
+    func presentProviderUploadRedirect(provider: SearchProvider,
+                                       onConfirmed: @escaping (URL) -> Void) {
+        self.provider = provider
+        pendingProviderRedirect = nil
+        onProviderRedirectConfirmed = onConfirmed
+        showProviderUploadRedirect = true
+    }
+
+    func handleProviderUploadRedirectConfirmed() {
+        pendingProviderRedirect = provider.fileUploadDestination
+        showProviderUploadRedirect = false
+    }
+
+    func handleProviderUploadRedirectDismissed() {
+        let destination = pendingProviderRedirect
+        let callback = onProviderRedirectConfirmed
+        pendingProviderRedirect = nil
+        onProviderRedirectConfirmed = nil
+
+        if let destination {
+            callback?(destination)
+        }
     }
 
     func handleUploadOptionSelected(_ option: OmniboxUploadOption) {

@@ -75,8 +75,13 @@ final class UserTests: XCTestCase, @unchecked Sendable, UserPersistenceResettabl
         waitForExpectations(timeout: 1)
     }
 
+    // `User.shared` saves only when the value actually changes, and `setUp` removes the
+    // stored file. Since `User.shared` is process-global, an earlier test may already hold
+    // the target value, so each of these seeds a contrasting one first to force the write.
+
     func testTreeCount() {
         let expect = expectation(description: "")
+        User.shared.searchCount = 0
         User.shared.searchCount = 123
         User.queue.async {
             let user = User()
@@ -88,6 +93,7 @@ final class UserTests: XCTestCase, @unchecked Sendable, UserPersistenceResettabl
 
     func testAdultFilter() {
         let expect = expectation(description: "")
+        User.shared.adultFilter = .moderate
         User.shared.adultFilter = .off
         User.queue.async {
             let user = User()
@@ -99,6 +105,7 @@ final class UserTests: XCTestCase, @unchecked Sendable, UserPersistenceResettabl
 
     func testMarketCode() {
         let expect = expectation(description: "")
+        User.shared.marketCode = .en_ww
         User.shared.marketCode = .ar_sa
         User.queue.async {
             let user = User()
@@ -110,6 +117,7 @@ final class UserTests: XCTestCase, @unchecked Sendable, UserPersistenceResettabl
 
     func testAutoComplete() {
         let expect = expectation(description: "")
+        User.shared.autoComplete = true
         User.shared.autoComplete = false
         User.queue.async {
             let user = User()
@@ -308,6 +316,8 @@ final class UserTests: XCTestCase, @unchecked Sendable, UserPersistenceResettabl
     }
 
     func testSearchSettingChangeNotifiaction() {
+        drainPendingSearchSettingsPosts()
+
         let notified = expectation(forNotification: .searchSettingsChanged, object: nil, notificationCenter: .default)
         notified.expectedFulfillmentCount = 4
 
@@ -320,6 +330,51 @@ final class UserTests: XCTestCase, @unchecked Sendable, UserPersistenceResettabl
         User.shared.adultFilter = baseline.adultFilter == .off ? .moderate : .off
 
         wait(for: [notified], timeout: 3)
+    }
+
+    func testSearchSettingChangeNotificationForAIFreeSearching() {
+        drainPendingSearchSettingsPosts()
+
+        var count = 0
+        let observer = NotificationCenter.default.addObserver(
+            forName: .searchSettingsChanged,
+            object: nil,
+            queue: .main
+        ) { _ in
+            count += 1
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        User.shared.aiFreeSearching = User.shared.aiFreeSearching == true ? false : true
+
+        let deadline = Date().addingTimeInterval(3)
+        while count < 1 && Date() < deadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        }
+        XCTAssertEqual(count, 1, "Expected searchSettingsChanged when toggling aiFreeSearching")
+    }
+
+    /// `User.shared` posts `searchSettingsChanged` on the main queue, so posts from
+    /// earlier suites can still be queued and would be counted as this test's own.
+    private func drainPendingSearchSettingsPosts() {
+        RunLoop.main.run(until: Date().addingTimeInterval(0.2))
+    }
+
+    func testSelectedProviderNormalizesStoredIdentifier() {
+        let previous = User.shared.selectedSearchEngineID
+        defer { User.shared.selectedSearchEngineID = previous }
+
+        User.shared.selectedSearchEngineID = "duckduckgo"
+        XCTAssertEqual(User.shared.selectedProvider, .duckduckgo)
+        XCTAssertFalse(User.shared.isEcosiaSearchProvider)
+
+        // An identifier an older build could have persisted, for example a provider we
+        // never offered or one since removed. Must not be a name in the catalog.
+        User.shared.selectedSearchEngineID = "yahoo"
+        XCTAssertEqual(User.shared.selectedProvider, .ecosia)
+        XCTAssertTrue(User.shared.isEcosiaSearchProvider,
+                      "A provider we no longer offer must be treated as Ecosia, so the market "
+                      + "and safe-search cookies are still written")
     }
 
     func testAnalyticsUserState() {

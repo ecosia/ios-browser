@@ -11,16 +11,17 @@ enum OmniboxSubmitRouting {
     static func destinationURL(
         query: String,
         chatFiles: [AIChatFileQuery],
+        defaultEngine: OpenSearchEngine? = nil,
         urlProvider: URLProvider = Environment.current.urlProvider
     ) -> URL {
         if chatFiles.isEmpty, let url = URIFixup.getURL(query) {
             return url
         }
 
-        if !chatFiles.isEmpty {
+        if !chatFiles.isEmpty, SearchProviderSelection.usesEcosiaAIBackend {
             return urlProvider.aiChat(origin: .omnibox, query: query, files: chatFiles)
         }
 
-        return URL.ecosiaSearchWithQuery(query, autoRedirect: true)
+        return SearchProviderRouting.omniboxSearchURL(forQuery: query, engine: defaultEngine)
     }
 }

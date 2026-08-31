@@ -130,11 +130,13 @@ final class OmniboxUploadDrawerTests: XCTestCase {
 final class NTPOmniboxSheetStateTests: XCTestCase {
 
     private func present(_ state: NTPOmniboxSheetState,
+                         provider: SearchProvider = .ecosia,
                          isAuthenticated: Bool = true,
                          onSelectUpload: @escaping (OmniboxUploadOption) -> Void = { _ in },
                          onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void = { _ in },
                          onLogin: @escaping () -> Void = {}) {
-        state.presentUploadDrawer(isAuthenticated: isAuthenticated,
+        state.presentUploadDrawer(provider: provider,
+                                  isAuthenticated: isAuthenticated,
                                   onSelectUpload: onSelectUpload,
                                   onChatModeSelectionChanged: onChatModeSelectionChanged,
                                   onLogin: onLogin)
@@ -358,6 +360,7 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
     }
 
     override func tearDown() {
+        User.shared.aiFreeSearching = nil
         Unleash.clearInstanceModel()
         super.tearDown()
     }
@@ -404,5 +407,36 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
         let button = try XCTUnwrap(uploadButton)
         XCTAssertTrue(button.isHidden)
+    }
+
+    func testUploadButtonHiddenWhenAIFreeSearchingIsActive() throws {
+        Self.enableFileUploadAndAIFreeSearching()
+        AIFreeSearchingSelection.setEnabled(true)
+
+        let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
+        let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
+        let button = try XCTUnwrap(uploadButton)
+        XCTAssertTrue(button.isHidden)
+    }
+
+    func testUploadButtonVisibleWhenFileUploadEnabledAndAIFreeSearchingOff() throws {
+        let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
+        let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
+        let button = try XCTUnwrap(uploadButton)
+        XCTAssertFalse(button.isHidden)
+    }
+
+    private static func enableFileUploadAndAIFreeSearching() {
+        let fileUpload = Unleash.Toggle(
+            name: Unleash.Toggle.Name.fileUpload.rawValue,
+            enabled: true,
+            variant: Unleash.Variant(name: "", enabled: false, payload: nil)
+        )
+        let aiFree = Unleash.Toggle(
+            name: Unleash.Toggle.Name.aiFreeSearching.rawValue,
+            enabled: true,
+            variant: Unleash.Variant(name: "", enabled: false, payload: nil)
+        )
+        Unleash.model = Unleash.Model(toggles: Set([fileUpload, aiFree]))
     }
 }

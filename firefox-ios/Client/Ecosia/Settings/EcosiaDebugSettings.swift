@@ -278,6 +278,12 @@ class UnleashVariantResetSetting: HiddenSetting {
                 debugPrint(error)
             }
             await MainActor.run {
+                // A reset re-fetches the model, which can flip the search provider flag or
+                // change its router payload. Without this the app keeps the engine list it
+                // built at launch until the next foreground.
+                let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+                searchEnginesManager.reconfigureEngineProviderIfNeeded()
+
                 self.settings.tableView.reloadData()
                 let alert = AlertController(title: "Unleash reset ✅",
                                             message: "The local Unleash cache has been wiped out",
@@ -309,6 +315,31 @@ final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashCustomSearchProviderSetting: UnleashVariantResetSetting {
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Debug.customSearchProviderUnleash
+    }
+
+    override var titleName: String? {
+        "Custom Search Provider"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.customSearchProvider)
+    }
+
+    /// Shows the configuration the app actually resolved, so QA can tell a payload that
+    /// landed from one that fell back. With the flag off this reads as the Ecosia-only
+    /// configuration, which is what applies.
+    override var status: NSAttributedString? {
+        let config = CustomSearchProviderFeatureFlag.config
+        let state = Unleash.isEnabled(.customSearchProvider) ? "enabled" : "disabled"
+        let providers = config.providers.map(\.rawValue).joined(separator: ", ")
+        let description = "\(state) · ai: \(config.aiMode.rawValue) · \(providers) (Click to reset)"
+        return NSAttributedString(string: description, attributes: [:])
+    }
+}
+
 final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "AI Chat MVP"
@@ -320,6 +351,16 @@ final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
 
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.aiChatMVP)
+    }
+}
+
+final class UnleashAIFreeSearchingSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "AI-free searching"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.aiFreeSearching)
     }
 }
 
