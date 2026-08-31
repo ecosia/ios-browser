@@ -6,6 +6,7 @@ import UIKit
 import Shared
 import ComponentLibrary
 import Common
+import Ecosia
 
 protocol SearchEnginePickerDelegate: AnyObject {
     @MainActor
@@ -107,6 +108,9 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
 
     private var showDeletion = false
     private var sectionsToDisplay: [SearchSettingsTableViewController.Section] = []
+    /// Ecosia: Engine ID captured before pushing `SearchEnginePicker`, to detect a real change
+    /// on return.
+    private var searchProviderEngineIDBeforePicker: String?
 
     private var isEditable: Bool {
         guard let defaultEngine = model.defaultEngine else { return false }
@@ -139,7 +143,10 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
         navigationItem.title = .Settings.Search.Title
 
         // To allow re-ordering the list of search engines at all times.
+        /* Ecosia: The curated provider list is fixed, so it is not re-orderable.
         tableView.isEditing = true
+        */
+        tableView.isEditing = !CustomSearchProviderFeatureFlag.isEnabled
         // So that we push the default search engine controller on selection.
         tableView.allowsSelectionDuringEditing = true
 
@@ -162,15 +169,33 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
             }
         }
 
+        /* Ecosia: No Edit button for the curated list, which cannot be edited.
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: .SettingsSearchEditButton,
             style: .plain,
             target: self,
             action: #selector(beginEditing))
+        */
+        navigationItem.rightBarButtonItem = CustomSearchProviderFeatureFlag.isEnabled
+            ? nil
+            : UIBarButtonItem(
+                title: .SettingsSearchEditButton,
+                style: .plain,
+                target: self,
+                action: #selector(beginEditing)
+            )
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // Ecosia: Report a provider change made in the picker, then skip the editing setup
+        // below, which does not apply to the curated list.
+        recordSearchProviderChangedWhenReturningFromPicker()
+        guard !CustomSearchProviderFeatureFlag.isEnabled else {
+            tableView.reloadData()
+            applyTheme()
+            return
+        }
         // Only show the Edit button if custom search engines are in the list.
         // Otherwise, there is nothing to delete.
         navigationItem.rightBarButtonItem?.isEnabled = isEditable
@@ -180,6 +205,8 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        // Ecosia: Nothing to leave, the curated list is never in editing mode.
+        guard !CustomSearchProviderFeatureFlag.isEnabled else { return }
         setEditing(false, animated: false)
     }
 
@@ -272,9 +299,20 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
     }
 
     private func configureCellForDefaultEngineAction(cell: ThemedSubtitleTableViewCell, engine: OpenSearchEngine) {
-        cell.editingAccessoryType = .disclosureIndicator
+        // Ecosia: Curated search providers use a normal (non-editing) table, so the chevron
+        // must be `accessoryType`. Firefox upstream keeps the table in editing mode and uses
+        // `editingAccessoryType` instead.
+        if CustomSearchProviderFeatureFlag.isEnabled {
+            cell.accessoryType = .disclosureIndicator
+            cell.editingAccessoryType = .none
+        } else {
+            cell.accessoryType = .none
+            cell.editingAccessoryType = .disclosureIndicator
+        }
         cell.accessibilityLabel = .Settings.Search.AccessibilityLabels.DefaultSearchEngine
         cell.accessibilityValue = engine.shortName
+        // Ecosia: Stable hook for acceptance tests selecting the default search provider.
+        cell.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.Settings.defaultSearchEngine
         cell.textLabel?.text = engine.shortName
         cell.imageView?.image = engine.image.createScaled(IconSize)
         cell.imageView?.layer.cornerRadius = UX.imageViewCornerRadius
@@ -460,6 +498,12 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
+        // Ecosia: The curated list offers no alternate engines or Firefox Suggest settings.
+        if CustomSearchProviderFeatureFlag.isEnabled {
+            sectionsToDisplay = [.defaultEngine, .searchEnginesSuggestions]
+            return sectionsToDisplay.count
+        }
+
         sectionsToDisplay = [
             .defaultEngine,
             .alternateEngines,
@@ -498,6 +542,8 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
         switch section {
         case .defaultEngine:
             guard indexPath.item == 0 else { return nil }
+            // Ecosia: Captured so the change can be reported once the picker returns.
+            searchProviderEngineIDBeforePicker = model.defaultEngine?.engineID
             let searchEnginePicker = SearchEnginePicker(windowUUID: windowUUID)
             // Order alphabetically, so that picker is always consistently ordered.
             // Every engine is a valid choice for the default engine, even the current default engine.
@@ -657,6 +703,8 @@ final class SearchSettingsTableViewController: ThemedTableViewController, Featur
     }
 
     override func setEditing(_ editing: Bool, animated: Bool) {
+        // Ecosia: The curated list is never editable.
+        guard !CustomSearchProviderFeatureFlag.isEnabled else { return }
         super.setEditing(editing, animated: animated)
         tableView.isEditing = true
         showDeletion = editing
@@ -846,6 +894,15 @@ extension SearchSettingsTableViewController {
     func finishEditing() {
         setEditing(false, animated: false)
     }
+
+    // Ecosia: Analytics for a provider change, reported on return from the picker.
+    private func recordSearchProviderChangedWhenReturningFromPicker() {
+        guard let previousEngineID = searchProviderEngineIDBeforePicker else { return }
+        searchProviderEngineIDBeforePicker = nil
+
+        let newEngineID = model.defaultEngine?.engineID ?? SearchProviderSelection.ecosiaEngineID
+        SearchProviderSelection.recordSearchProviderChangedIfNeeded(from: previousEngineID, to: newEngineID)
+    }
 }
 
 extension SearchSettingsTableViewController: SearchEnginePickerDelegate {
@@ -856,6 +913,8 @@ extension SearchSettingsTableViewController: SearchEnginePickerDelegate {
         if let engine = searchEngine {
             let previousEngine = model.defaultEngine
             model.defaultEngine = engine
+            // Ecosia: Mirror the choice into the provider selection.
+            SearchProviderSelection.syncSelectedEngineID(engine.engineID)
             NotificationCenter.default.post(name: .SearchSettingsDidUpdateDefaultSearchEngine)
             self.tableView.reloadData()
 

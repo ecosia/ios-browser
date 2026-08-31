@@ -130,6 +130,28 @@ final class MainCookieHandlerTests: XCTestCase {
         XCTAssertEqual(values["a"], "1")
     }
 
+    /// This cookie only reaches Ecosia, so the market and safe-search keys must be written
+    /// whichever provider is selected. Dropping them lets the web defaults overwrite the
+    /// user's stored choices, and the settings rows that would fix them are hidden.
+    func testBaseValuesKeepMarketAndSafeSearchForThirdPartyProviders() {
+        let previous = User.shared.selectedSearchEngineID
+        defer { User.shared.selectedSearchEngineID = previous }
+
+        User.shared.selectedSearchEngineID = "google"
+        User.shared.marketCode = .de_de
+        User.shared.adultFilter = .strict
+
+        let handler = MainCookieHandler(mode: .standard)
+        guard let cookie = handler.makeCookie() else {
+            XCTFail("Failed to create cookie")
+            return
+        }
+
+        let values = parseMainCookieValue(cookie.value)
+        XCTAssertEqual(values["mc"], "de-de")
+        XCTAssertEqual(values["f"], "y")
+    }
+
     // MARK: - Extract Value Tests
 
     func testReceivedMethodUpdatesUser() {
