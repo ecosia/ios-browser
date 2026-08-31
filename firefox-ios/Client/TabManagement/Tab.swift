@@ -571,11 +571,9 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
 
     func restore(_ webView: WKWebView, interactionState: Data? = nil) {
         if let url = url {
-            // Ecosia: `customUserAgent` mutations only take effect starting the *next*
-            // navigation (WKWebView caveat), so a freshly created webview's first load must
-            // have it set proactively here rather than relying on decidePolicyFor, which would
-            // apply one navigation too late — sending this first request out with WebKit's own
-            // default UA instead of ours (breaking cf_clearance UA-consistency checks).
+            // Ecosia: `customUserAgent` mutations only take effect starting the *next* navigation (WKWebView caveat),
+            // so a freshly created webview's first load must have it set proactively here rather than relying on decidePolicyFor,
+            // which would apply one navigation too late
             if Tab.ChangeUserAgent.contains(url: url, isPrivate: isPrivate) {
                 webView.customUserAgent = UserAgent.oppositeUserAgent(domain: url.baseDomain ?? "")
             } else {
