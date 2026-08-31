@@ -33,15 +33,13 @@ if (!isFullScreenEnabled && isFullscreenVideosSupported && !/mobile/i.test(navig
     Object.defineProperty(document, 'fullscreenEnabled', {
         get: function() {
             return true;
-        },
-        configurable: true
+        }
     });
-
+    
     Object.defineProperty(document.documentElement, 'fullscreenEnabled', {
         get: function() {
             return true;
-        },
-        configurable: true
+        }
     });
 }
 
