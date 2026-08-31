@@ -91,15 +91,17 @@ open class UserAgent {
     public static func getUserAgent(domain: String, platform: UserAgentPlatform) -> String {
         switch platform {
         case .Desktop:
+            // Ecosia: Per-domain overrides take priority over the URLProvider-backed Ecosia desktop UA.
+            if let customUA = CustomUserAgentConstant.customDesktopUAForDomain[domain] {
+                return customUA
+            }
+
             // Ecosia: Use Ecosia's desktop UA for URLProvider-backed Ecosia domains.
             if configuration.containsEcosiaDesktopUserAgentDomain(domain) {
                 return ecosiaDesktopUA
             }
 
-            guard let customUA = CustomUserAgentConstant.customDesktopUAForDomain[domain] else {
-                return desktopUserAgent()
-            }
-            return customUA
+            return desktopUserAgent()
         case .Mobile:
             guard let customUA = CustomUserAgentConstant.customMobileUAForDomain[domain] else {
                 return mobileUserAgent()
@@ -177,7 +179,14 @@ struct CustomUserAgentConstant {
          */
         "paypal.com": defaultFirefoxMobileUA,
         // FXIOS-10251: Do not appear as desktop/Safari for firefox.com/pair
-        "firefox.com": defaultMobileUA
+        "firefox.com": defaultMobileUA,
+        // Ecosia: WKWebView doesn't propagate `customUserAgent` overrides to fetch/XHR/Worker
+        // requests, only to document navigations — the branded Ecosia desktop UA then mismatches
+        // the UA used by Cloudflare-challenge worker requests within the same page, breaking
+        // cf_clearance validation. Keep these domains on the plain desktop UA so every request
+        // (navigation and subresource) converges on the same string.
+        "ecosia.org": UserAgent.desktopUserAgent(),
+        "ecosia-staging.xyz": UserAgent.desktopUserAgent()
     ]
 }
 
@@ -266,10 +275,14 @@ public struct UserAgentBuilder {
 extension UserAgentBuilder {
     public static func ecosiaMobileUserAgent() -> UserAgentBuilder {
         let formattedSystemVersion = UIDeviceDetails.systemVersion.replacingOccurrences(of: ".", with: "_")
+        // Ecosia: iPad's mobile UA omits "iPhone" from the CPU token, matching real device UAs.
+        let cpuToken = UIDeviceDetails.userInterfaceIdiom == .pad
+            ? "CPU OS \(formattedSystemVersion) like Mac OS X"
+            : "CPU iPhone OS \(formattedSystemVersion) like Mac OS X"
 
         return UserAgentBuilder(
             product: UserAgent.product,
-            systemInfo: "(\(UIDeviceDetails.model); CPU iPhone OS \(formattedSystemVersion) like Mac OS X)",
+            systemInfo: "(\(UIDeviceDetails.model); \(cpuToken))",
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
             extensions: "\(UserAgent.uaBitVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari) \(UserAgent.uaBitEcosia)")
