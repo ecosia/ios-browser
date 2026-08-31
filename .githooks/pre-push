@@ -56,3 +56,41 @@
 # fi
 
 # exit 0
+
+# Ecosia: print the correct compare URL for this push so PRs don't get opened
+# against mozilla-mobile/firefox-ios by accident via GitHub's "Compare & pull
+# request" banner (which defaults the base repo to the upstream fork parent).
+remote_url="$2"
+case "$remote_url" in
+  *ecosia/ios-browser*)
+    # 256-color blue (33, "DodgerBlue") reads clearly on both light and dark terminal
+    # backgrounds, unlike the standard ANSI blue (34) which is often too dark to read
+    # on dark themes. Only colorize when stdout is a real terminal.
+    if [ -t 1 ]; then
+      blue='\033[38;5;33m'
+      reset='\033[0m'
+    else
+      blue=''
+      reset=''
+    fi
+    while read -r local_ref local_sha remote_ref remote_sha; do
+      z40=0000000000000000000000000000000000000000
+      # Only branches get a PR link (skip tags etc.), and strip the refs/heads/
+      # prefix rather than everything up to the last "/" so names like
+      # "feature/foo" keep their full path instead of becoming "foo".
+      case "$local_ref" in
+        refs/heads/*)
+          if [ "$local_sha" != "$z40" ]; then
+            branch=${local_ref#refs/heads/}
+            printf '\n'
+            printf "${blue}To open a PR, use this link (do NOT use GitHub's banner — it defaults to mozilla-mobile/firefox-ios):${reset}\n"
+            printf "${blue}  https://github.com/ecosia/ios-browser/compare/main...%s?expand=1${reset}\n" "$branch"
+            printf '\n'
+          fi
+          ;;
+      esac
+    done
+    ;;
+esac
+
+exit 0
