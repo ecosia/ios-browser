@@ -75,8 +75,13 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 1)
     }
 
+    // `User.shared` saves only when the value actually changes, and `setUp` removes the
+    // stored file. Since `User.shared` is process-global, an earlier test may already hold
+    // the target value, so each of these seeds a contrasting one first to force the write.
+
     func testTreeCount() {
         let expect = expectation(description: "")
+        User.shared.searchCount = 0
         User.shared.searchCount = 123
         User.queue.async {
             let user = User()
@@ -88,6 +93,7 @@ final class UserTests: XCTestCase, @unchecked Sendable {
 
     func testAdultFilter() {
         let expect = expectation(description: "")
+        User.shared.adultFilter = .moderate
         User.shared.adultFilter = .off
         User.queue.async {
             let user = User()
@@ -99,6 +105,7 @@ final class UserTests: XCTestCase, @unchecked Sendable {
 
     func testMarketCode() {
         let expect = expectation(description: "")
+        User.shared.marketCode = .en_ww
         User.shared.marketCode = .ar_sa
         User.queue.async {
             let user = User()
@@ -110,6 +117,7 @@ final class UserTests: XCTestCase, @unchecked Sendable {
 
     func testAutoComplete() {
         let expect = expectation(description: "")
+        User.shared.autoComplete = true
         User.shared.autoComplete = false
         User.queue.async {
             let user = User()
