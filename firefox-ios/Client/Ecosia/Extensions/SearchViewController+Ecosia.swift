@@ -172,8 +172,10 @@ extension SearchViewController {
 
     /// Handle AI Chat navigation when item is selected
     func handleAIChatSelection(_ indexPath: IndexPath) {
-        guard let provider = SearchProviderSelection.aiBehavior.provider,
-              let url = SearchProviderAIRouting.aiDestinationURL(for: provider,
+        // Resolved from the selected provider, not from `aiBehavior`, which carries no
+        // provider once the omnibox entry point is hidden.
+        let provider = SearchProviderSelection.selectedProvider
+        guard let url = SearchProviderAIRouting.aiDestinationURL(for: provider,
                                                                  query: viewModel.searchQuery,
                                                                  origin: .autocomplete)
         else { return }

@@ -106,14 +106,15 @@ final class SearchRouterModeMatrixTests: XCTestCase {
 
     // MARK: - Router on, entry point hidden
 
-    func testHiddenModeRemovesEverySurface() {
+    /// Hidden mode removes the omnibox entry point. The suggestion row is not part of it and
+    /// is covered separately in `SearchProviderSelectionTests`.
+    func testHiddenModeRemovesTheOmniboxEntryPoint() {
         configureUnleash(routerEnabled: true, aiMode: "hidden")
 
         for provider in SearchProvider.allCases {
             User.shared.selectedSearchEngineID = provider.rawValue
             XCTAssertEqual(SearchProviderSelection.aiBehavior, .hidden)
             XCTAssertFalse(SearchProviderSelection.showsOmniboxAIFeatures)
-            XCTAssertFalse(SearchProviderSelection.showsAIAutocompleteRow)
             XCTAssertFalse(SearchProviderSelection.allowsChatModes)
         }
     }

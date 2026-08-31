@@ -95,15 +95,13 @@ enum SearchProviderSelection {
 
     /// Whether the suggestions overlay should include an AI row. Providers whose results
     /// page is already a conversation get no separate row.
+    ///
+    /// Keyed off the provider rather than `aiBehavior`: hiding the omnibox entry point does
+    /// not remove this row, while AI-free searching removes every omnibox AI surface.
     static var showsAIAutocompleteRow: Bool {
-        switch aiBehavior {
-        case .hidden:
-            return false
-        case .ecosiaFullStack:
-            return true
-        case .providerAI(let provider), .redirect(let provider):
-            return !provider.isAINative
-        }
+        let provider = selectedProvider
+        if provider == .ecosia, !AIFreeSearchingSelection.allowsOmniboxAI { return false }
+        return !provider.isAINative
     }
 
     /// Whether Ecosia-only rows in Settings → Search should be visible.

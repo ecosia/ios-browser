@@ -147,9 +147,26 @@ final class SearchProviderSelectionTests: XCTestCase {
         }
     }
 
-    func testAutocompleteRowIsHiddenInHiddenMode() {
+    /// Hiding the omnibox entry point does not remove the suggestion row: it stays wherever
+    /// the provider has a separate AI to offer.
+    func testAutocompleteRowSurvivesHiddenMode() {
         configureUnleash(routerEnabled: true, aiMode: "hidden")
-        User.shared.selectedSearchEngineID = "google"
+
+        for id in ["ecosia", "google", "duckduckgo", "bing"] {
+            User.shared.selectedSearchEngineID = id
+            XCTAssertTrue(SearchProviderSelection.showsAIAutocompleteRow, "expected a row for \(id)")
+        }
+
+        User.shared.selectedSearchEngineID = "perplexity"
+        XCTAssertFalse(SearchProviderSelection.showsAIAutocompleteRow,
+                       "conversational providers never get a separate row")
+    }
+
+    /// AI-free searching is the user's own opt-out, so it does remove the row.
+    func testAutocompleteRowIsHiddenWhenAIFreeSearchingIsActive() {
+        configureUnleash(routerEnabled: true, aiMode: "full", aiFreeSearchingEnabled: true)
+        User.shared.selectedSearchEngineID = "ecosia"
+        User.shared.aiFreeSearching = true
 
         XCTAssertFalse(SearchProviderSelection.showsAIAutocompleteRow)
     }
