@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
-import Ecosia
+@testable import Ecosia
 @testable import Client
 
 // Guards the Ecosia-only search engine setup against regressions, in particular a Firefox upgrade
@@ -15,12 +15,24 @@ import Ecosia
 @MainActor
 final class EcosiaSearchEngineProviderTests: XCTestCase {
 
-    /// The production factory must use our custom provider when the feature flag is off.
-    /// When the custom search provider flag is enabled, `CuratedSearchEngineProvider` is used instead.
-    func testFactoryUsesEcosiaProviderWhenFeatureDisabled() throws {
-        guard !CustomSearchProviderFeatureFlag.isEnabled else {
-            throw XCTSkip("Custom search provider flag is enabled in this test run")
-        }
+    private var previousUnleashModel = Unleash.Model()
+
+    override func setUp() {
+        super.setUp()
+        previousUnleashModel = Unleash.model
+    }
+
+    override func tearDown() {
+        Unleash.model = previousUnleashModel
+        SearchRouterConfiguration.invalidateCache()
+        super.tearDown()
+    }
+
+    /// The flag is process-global, so each case sets it rather than reading whatever another
+    /// suite left behind. Skipping on ambient state would make this coverage depend on run order.
+    func testFactoryUsesEcosiaProviderWhenFeatureDisabled() {
+        setCustomSearchProvider(enabled: false)
+
         XCTAssertTrue(
             SearchEngineProviderFactory.defaultSearchEngineProvider is EcosiaSearchEngineProvider,
             "The default search engine provider must be EcosiaSearchEngineProvider so Ecosia stays "
@@ -28,10 +40,9 @@ final class EcosiaSearchEngineProviderTests: XCTestCase {
         )
     }
 
-    func testFactoryUsesCuratedProviderWhenFeatureEnabled() throws {
-        guard CustomSearchProviderFeatureFlag.isEnabled else {
-            throw XCTSkip("Custom search provider flag is disabled in this test run")
-        }
+    func testFactoryUsesCuratedProviderWhenFeatureEnabled() {
+        setCustomSearchProvider(enabled: true)
+
         XCTAssertTrue(
             SearchEngineProviderFactory.defaultSearchEngineProvider is CuratedSearchEngineProvider,
             "When the custom search provider flag is enabled, CuratedSearchEngineProvider must be used."
@@ -90,6 +101,17 @@ final class EcosiaSearchEngineProviderTests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    private func setCustomSearchProvider(enabled: Bool) {
+        var model = Unleash.Model()
+        model.toggles.insert(
+            Unleash.Toggle(name: Unleash.Toggle.Name.customSearchProvider.rawValue,
+                           enabled: enabled,
+                           variant: .init(name: "config", enabled: true, payload: nil))
+        )
+        Unleash.model = model
+        SearchRouterConfiguration.invalidateCache()
+    }
 
     private func makeEngine(id: String) -> OpenSearchEngine {
         OpenSearchEngine(
