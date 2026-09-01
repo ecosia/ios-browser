@@ -8,7 +8,6 @@ import XCTest
 import Common
 import Ecosia
 @testable import Client
-@testable import Ecosia
 
 @available(iOS 16.0, *)
 final class NTPOmniboxUploadDrawerSnapshotTests: SnapshotBaseTests {
