@@ -15,9 +15,9 @@ import XCTest
 /// carries over unchanged between tests unless explicitly reset, leaking field values across
 /// unrelated test methods since XCTest doesn't guarantee execution order. Draining `User.queue`
 /// and resetting `User.shared` before and after each test closes both races. (MOB-4879)
-protocol UserPersistenceResettable: XCTestCase {}
+protocol UserPersistenceResettable {}
 
-extension UserPersistenceResettable {
+extension UserPersistenceResettable where Self: XCTestCase {
     func resetUserPersistence() {
         User.queue.sync {}
         try? FileManager.default.removeItem(at: FileManager.user)
