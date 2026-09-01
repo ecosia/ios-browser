@@ -6,11 +6,10 @@
 import XCTest
 import WebKit
 
-final class AIOverviewsCookieHandlerTests: XCTestCase, UserPersistenceResettable {
+final class AIOverviewsCookieHandlerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        resetUserPersistence()
         Cookie.setURLProvider(.production)
         User.shared.aiOverviews = false
         User.shared.aiFreeSearching = nil
@@ -19,7 +18,7 @@ final class AIOverviewsCookieHandlerTests: XCTestCase, UserPersistenceResettable
 
     override func tearDown() {
         super.tearDown()
-        resetUserPersistence()
+        try? FileManager.default.removeItem(at: FileManager.user)
         Cookie.resetURLProvider()
         User.shared.aiFreeSearching = nil
         Unleash.clearInstanceModel()

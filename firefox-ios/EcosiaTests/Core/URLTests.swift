@@ -6,20 +6,17 @@
 import XCTest
 // swiftlint:disable implicitly_unwrapped_optional
 
-final class URLTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable {
+final class URLTests: XCTestCase, @unchecked Sendable {
 
     private var root: String!
     var urlProvider: URLProvider = .production
 
     override func setUp() {
-        super.setUp()
-        resetUserPersistence()
         root = "\(urlProvider.root.scheme!)" + "://" + urlProvider.root.host!
     }
 
     override func tearDown() {
-        super.tearDown()
-        resetUserPersistence()
+        try? FileManager.default.removeItem(at: FileManager.user)
         Analytics.shouldUseMicroInstance = false
     }
 

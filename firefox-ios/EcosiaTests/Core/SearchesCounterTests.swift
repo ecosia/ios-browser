@@ -6,15 +6,13 @@
 import XCTest
 
 @MainActor
-final class SearchesCounterTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable {
+final class SearchesCounterTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
-        super.setUp()
-        resetUserPersistence()
+        try? FileManager.default.removeItem(at: FileManager.user)
     }
 
     override func tearDown() {
-        super.tearDown()
-        resetUserPersistence()
+        try? FileManager.default.removeItem(at: FileManager.user)
     }
 
     func testSubscribeAndReceive() {

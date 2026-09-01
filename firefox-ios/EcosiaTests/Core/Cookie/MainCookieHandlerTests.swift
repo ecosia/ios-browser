@@ -6,11 +6,10 @@
 import XCTest
 import WebKit
 
-final class MainCookieHandlerTests: XCTestCase, UserPersistenceResettable {
+final class MainCookieHandlerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        resetUserPersistence()
         Cookie.setURLProvider(.production)
 
         User.shared.searchCount = 0
@@ -22,7 +21,7 @@ final class MainCookieHandlerTests: XCTestCase, UserPersistenceResettable {
 
     override func tearDown() {
         super.tearDown()
-        resetUserPersistence()
+        try? FileManager.default.removeItem(at: FileManager.user)
         Cookie.resetURLProvider()
     }
 
