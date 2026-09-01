@@ -89,6 +89,6 @@ echo "and record reference images in the SnapshotArtifacts submodule."
 echo ""
 echo "See firefox-ios/Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md (coverage map + recording steps)."
 echo ""
-echo "If this change has no visual impact, explain why in the PR and re-run CI with"
-echo "SKIP_SNAPSHOT_UPDATE_CHECK=1 on the snapshot update check workflow."
+echo "If this change has no visual impact, explain why in the PR and add the"
+echo "skip-snapshot-check label before re-running CI (or set SKIP_SNAPSHOT_UPDATE_CHECK=1 locally)."
 exit 1

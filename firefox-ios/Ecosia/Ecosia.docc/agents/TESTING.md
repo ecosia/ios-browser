@@ -31,9 +31,9 @@
 
 ```bash
 SNAPSHOT_TESTING_RECORD=all ./perform_snapshot_tests.sh \
-  firefox-ios/EcosiaTests/SnapshotTests/snapshot_configuration.json \
-  firefox-ios/EcosiaTests/SnapshotTests/environment.json \
-  firefox-ios/EcosiaTests/Results \
+  EcosiaTests/SnapshotTests/snapshot_configuration.json \
+  EcosiaTests/SnapshotTests/environment.json \
+  EcosiaTests/Results \
   EcosiaSnapshotTests
 ```
 

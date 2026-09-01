@@ -98,7 +98,7 @@ resolve_simulator_run_device() {
   fi
 
   local runtime
-  runtime=$(xcrun simctl list runtimes available | rg -o 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9-]+' | tail -1)
+  runtime=$(xcrun simctl list runtimes available | grep -oE 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9-]+' | tail -1)
   if [ -n "$runtime" ]; then
     local device_type="com.apple.CoreSimulator.SimDeviceType.iPhone-17"
     case "$preferred" in

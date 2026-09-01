@@ -2,11 +2,9 @@ name: Snapshot Tests
 
 on:
   pull_request:
-    branches: [main, 'patch/**']
+    branches: [main]
     paths:
       - 'firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig'
-  push:
-    branches: ['**']
 
 jobs:
   execute_snapshot_tests:
