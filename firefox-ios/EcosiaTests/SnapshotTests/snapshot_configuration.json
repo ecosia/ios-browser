@@ -44,6 +44,12 @@
           "devices": ["iPhone 16 Pro"],
           "locales": ["all"],
           "themes": ["all"]
+        },
+        {
+          "name": "NTPOmniboxUploadDrawerSnapshotTests",
+          "devices": ["iPhone 16 Pro"],
+          "locales": ["all"],
+          "themes": ["all"]
         }
       ]
     }
