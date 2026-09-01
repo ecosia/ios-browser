@@ -7,10 +7,12 @@ import XCTest
 
 final class ReferralsModelTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable {
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
     }
 

@@ -9,6 +9,7 @@ import WebKit
 final class MainCookieHandlerTests: XCTestCase, UserPersistenceResettable {
 
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
         Cookie.setURLProvider(.production)
 
@@ -20,6 +21,7 @@ final class MainCookieHandlerTests: XCTestCase, UserPersistenceResettable {
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
         Cookie.resetURLProvider()
     }

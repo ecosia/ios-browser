@@ -8,10 +8,12 @@ import XCTest
 
 final class UpgradeTests: XCTestCase, UserPersistenceResettable {
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
     }
 

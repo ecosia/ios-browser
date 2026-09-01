@@ -10,11 +10,13 @@ final class UserStateTests: XCTestCase, @unchecked Sendable, UserPersistenceRese
     private var user: User!
 
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
         user = .init()
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
     }
 

@@ -16,11 +16,13 @@ import XCTest
     private let asyncTimeout: TimeInterval = 10
 
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
         try? FileManager.default.removeItem(at: FileManager.news)
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
         try? FileManager.default.removeItem(at: FileManager.news)
     }

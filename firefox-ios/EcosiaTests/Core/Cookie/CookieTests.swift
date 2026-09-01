@@ -18,6 +18,7 @@ final class CookieTests: XCTestCase, UserPersistenceResettable {
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
         Cookie.resetURLProvider()
     }

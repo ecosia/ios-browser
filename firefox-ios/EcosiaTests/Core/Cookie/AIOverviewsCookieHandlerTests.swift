@@ -9,6 +9,7 @@ import WebKit
 final class AIOverviewsCookieHandlerTests: XCTestCase, UserPersistenceResettable {
 
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
         Cookie.setURLProvider(.production)
         User.shared.aiOverviews = false
@@ -17,6 +18,7 @@ final class AIOverviewsCookieHandlerTests: XCTestCase, UserPersistenceResettable
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
         Cookie.resetURLProvider()
         User.shared.aiFreeSearching = nil

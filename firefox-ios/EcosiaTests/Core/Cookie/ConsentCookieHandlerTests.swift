@@ -9,6 +9,7 @@ import WebKit
 final class ConsentCookieHandlerTests: XCTestCase, UserPersistenceResettable {
 
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
         Cookie.setURLProvider(.production)
 
@@ -16,6 +17,7 @@ final class ConsentCookieHandlerTests: XCTestCase, UserPersistenceResettable {
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
         Cookie.resetURLProvider()
     }

@@ -19,6 +19,7 @@ final class ReferralsTests: XCTestCase, @unchecked Sendable, UserPersistenceRese
     let notFoundResponse = HTTPURLResponse(url: URL(string: "https://www.example.com")!, statusCode: 404, httpVersion: nil, headerFields: nil)
 
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
 
         httpClientMock = HTTPClientMock()
@@ -29,6 +30,7 @@ final class ReferralsTests: XCTestCase, @unchecked Sendable, UserPersistenceRese
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
     }
 

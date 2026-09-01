@@ -12,11 +12,13 @@ final class URLTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable
     var urlProvider: URLProvider = .production
 
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
         root = "\(urlProvider.root.scheme!)" + "://" + urlProvider.root.host!
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
         Analytics.shouldUseMicroInstance = false
     }

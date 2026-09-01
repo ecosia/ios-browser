@@ -8,10 +8,12 @@ import XCTest
 @MainActor
 final class SearchesCounterTests: XCTestCase, @unchecked Sendable, UserPersistenceResettable {
     override func setUp() {
+        super.setUp()
         resetUserPersistence()
     }
 
     override func tearDown() {
+        super.tearDown()
         resetUserPersistence()
     }
 
