@@ -648,8 +648,12 @@ class SearchViewController: SiteTableViewController,
         // Ecosia: Stamp each cell with a stable identifier and expose its text as the
         // accessibility label so UI automation can locate and read suggestions without
         // traversing the child element hierarchy. Section is included to prevent
-        // collisions across sections that share the same row index.
-        cell.accessibilityIdentifier = "\(EcosiaAccessibilityIdentifiers.Search.suggestionCellPrefix)_\(indexPath.section)_\(indexPath.row)"
+        // collisions across sections that share the same row index. The AI Chat row
+        // gets a dedicated identifier so acceptance tests can assert it independently
+        // of row position.
+        cell.accessibilityIdentifier = isAIChatRow(indexPath)
+            ? EcosiaAccessibilityIdentifiers.Search.aiChatSuggestion
+            : "\(EcosiaAccessibilityIdentifiers.Search.suggestionCellPrefix)_\(indexPath.section)_\(indexPath.row)"
         if let oneLine = cell as? OneLineTableViewCell {
             cell.accessibilityLabel = oneLine.titleLabel.text
         } else if let twoLine = cell as? TwoLineImageOverlayCell {

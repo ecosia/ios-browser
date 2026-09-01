@@ -37,7 +37,7 @@ extension BrowserViewController {
     }
 
     /// The homepage VC while the webview is frontmost (swiping-tabs keeps it as a child).
-    fileprivate var ecosiaEmbeddedHomepage: HomepageViewController? {
+    var ecosiaEmbeddedHomepage: HomepageViewController? {
         if let homepage = contentContainer.contentController as? HomepageViewController {
             return homepage
         }
@@ -48,6 +48,7 @@ extension BrowserViewController {
     func ecosiaPrepareNTPOmniboxForDisplay() {
         guard let homepage = ecosiaEmbeddedHomepage,
               homepage.ntpSearchBar?.isFirstResponder == false else { return }
+        homepage.ntpSearchBar?.updateUploadButtonVisibility()
         homepage.resetNTPOmniboxSession()
     }
 

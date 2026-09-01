@@ -71,6 +71,8 @@ final class MainCookieHandler: BaseCookieHandler {
         return values
     }
 
+    /// Written for every provider: this cookie only reaches Ecosia, and dropping the market
+    /// or safe-search keys would let the web defaults overwrite the user's stored choices.
     private func baseValues() -> [String: String] {
         return [
             Properties.adultFilter: User.shared.adultFilter.rawValue,

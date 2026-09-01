@@ -139,6 +139,7 @@ extension Analytics {
             aiOverviews = "ai_overviews",
             analytics,
             clear,
+            searchProvider = "search_provider",
             toolbar
         }
 
