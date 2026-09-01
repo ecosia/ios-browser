@@ -3,6 +3,39 @@
 The SnapshotTesting library is a Swift package that allows you to capture screenshots of iOS views and compare them over time, ensuring your UI does not change unexpectedly. It is highly effective in preventing visual regressions during development.
 [Repo link](https://github.com/pointfreeco/swift-snapshot-testing?tab=readme-ov-file)
 
+## Snapshot coverage map
+
+When you change a component listed here, update its snapshot test and re-record references in the `SnapshotArtifacts` submodule in the same PR.
+
+| UI area | Source (primary) | Snapshot test | Locales / themes |
+| --- | --- | --- | --- |
+| Welcome screen | `Ecosia/UI/ProductTour/WelcomeView.swift` | `OnboardingTests.testWelcomeScreen` | all locales, light only |
+| NTP header logo | `Client/Ecosia/UI/NTP/Header/NTPHeader.swift` | `HomepageComponentTests.testNTPHeaderLogo` | en, light + dark |
+| Customize button | `Client/Ecosia/UI/NTP/Header/NTPHeader.swift` | `HomepageComponentTests.testEcosiaCustomizeButton` | en, light + dark |
+| Account nav button (logged out) | `Client/Ecosia/UI/NTP/Header/NTPHeader.swift` | `HomepageComponentTests.testEcosiaAccountNavButton_loggedOut` | en, light + dark |
+| Impact cell | `Client/Ecosia/UI/NTP/Impact/NTPImpactCell.swift` | `HomepageComponentTests.testNTPImpactCell_withImpactRows` | en, light only |
+| NTP search bar | `Client/Ecosia/UI/NTP/SearchBar/NTPSearchBarView.swift` | `HomepageComponentTests.testNTPSearchBar_resting` | all locales, light + dark |
+| Pinned top site cell | `Client/Frontend/Home/TopSites/TopSiteItemCell.swift` | `HomepageComponentTests.testTopSiteItemCell_pinned` | en, light + dark |
+| Omnibox upload drawer | `Ecosia/UI/NTP/Upload/OmniboxUploadDrawerView.swift` | `NTPOmniboxUploadDrawerSnapshotTests.testOmniboxUploadDrawerSheet` | all locales, light + dark |
+
+**Adding coverage for a new screen:** create a test under `EcosiaTests/SnapshotTests/`, register the class in `snapshot_configuration.json`, run `sh tuist-setup.sh`, record references, and add a row to this table.
+
+**CI guard:** pull requests that change `Ecosia/UI/**` or `Client/Ecosia/UI/**` must also change something under `EcosiaTests/SnapshotTests/` (tests, config, or the `SnapshotArtifacts` submodule pointer). See `check_snapshot_updates.sh`.
+
+**No visual impact?** Add the **`skip-snapshot-check`** label **before opening the PR** so CI does not fail on the snapshot update check. You can add the label after opening the PR and re-run the workflow, but doing it upfront avoids a red check.
+
+### Recording new references
+
+```bash
+SNAPSHOT_TESTING_RECORD=all ./perform_snapshot_tests.sh \
+  firefox-ios/EcosiaTests/SnapshotTests/snapshot_configuration.json \
+  firefox-ios/EcosiaTests/SnapshotTests/environment.json \
+  firefox-ios/EcosiaTests/Results \
+  EcosiaSnapshotTests
+```
+
+Commit both the parent repo and the `SnapshotArtifacts` submodule.
+
 ## SnapshotTestHelper
 
 SnapshotTestHelper is a utility class designed to facilitate snapshot testing across different UI themes, device configurations, and locales for both UIView and UIViewController. It abstracts complex snapshot configurations and provides a simplified API for performing localized snapshot tests.

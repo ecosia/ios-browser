@@ -21,6 +21,7 @@
 - Verify the project builds successfully before committing
 - Address linter errors (max 3 iterations per file)
 - Ensure CI/CD checks pass before requesting review
+- If the PR touches visible Ecosia UI, confirm snapshot tests and `SnapshotArtifacts` references were updated (or that the author documented why not)
 
 ## Branch Management
 

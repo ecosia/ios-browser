@@ -61,4 +61,10 @@ python3 ecosify-strings.py firefox-ios    # Rebrand Mozilla strings after upstre
 ## CI
 
 - **Circle CI** — full builds
-- **GitHub Actions** — SwiftLint, merge unit tests, snapshot tests
+- **GitHub Actions** — SwiftLint, merge unit tests, snapshot tests, snapshot update check on PRs
+
+Verify snapshot updates before opening a PR (compare against `main`):
+
+```sh
+./check_snapshot_updates.sh origin/main
+```

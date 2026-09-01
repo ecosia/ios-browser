@@ -23,7 +23,21 @@
 
 - Use `SnapshotBaseTests` base class with proper theme setup
 - Config: `firefox-ios/EcosiaTests/SnapshotTests/snapshot_configuration.json`
-- See `Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md` for full guide
+- See `Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md` for full guide and the **coverage map**
+- **When you change visible Ecosia UI** (`Ecosia/UI/**` or `Client/Ecosia/UI/**`), update or add snapshot tests and record references in the `SnapshotArtifacts` submodule in the same PR
+- PR CI runs `check_snapshot_updates.sh` to ensure UI diffs include snapshot test or reference changes (bypass with the `skip-snapshot-check` label when there is no visual impact)
+
+### Recording references
+
+```bash
+SNAPSHOT_TESTING_RECORD=all ./perform_snapshot_tests.sh \
+  firefox-ios/EcosiaTests/SnapshotTests/snapshot_configuration.json \
+  firefox-ios/EcosiaTests/SnapshotTests/environment.json \
+  firefox-ios/EcosiaTests/Results \
+  EcosiaSnapshotTests
+```
+
+After adding a new snapshot test file, run `sh tuist-setup.sh` from the repo root, then commit both the parent repo and the `SnapshotArtifacts` submodule.
 
 ## Analytics Testing
 
