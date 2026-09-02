@@ -257,6 +257,21 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
         XCTAssertTrue(didLogin)
     }
 
+    func testPresentUploadDrawerStoresChatThreadsOptOut() {
+        let state = NTPOmniboxSheetState()
+        present(state, isAuthenticated: true)
+        XCTAssertFalse(state.hasOptedOutOfChatThreads)
+
+        state.presentUploadDrawer(provider: .ecosia,
+                                  isAuthenticated: true,
+                                  hasOptedOutOfChatThreads: true,
+                                  onSelectUpload: { _ in },
+                                  onChatModeSelectionChanged: { _ in },
+                                  onLogin: {})
+        XCTAssertTrue(state.hasOptedOutOfChatThreads)
+        XCTAssertTrue(state.isAuthenticated)
+    }
+
     func testUploadSelectionTakesPrecedenceOverPendingLogin() {
         let state = NTPOmniboxSheetState()
         var didLogin = false
@@ -424,6 +439,20 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
         let button = try XCTUnwrap(uploadButton)
         XCTAssertFalse(button.isHidden)
+    }
+
+    func testUploadButtonDisabledWhenChatThreadsOptedOut() throws {
+        let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
+        let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
+        let button = try XCTUnwrap(uploadButton)
+
+        XCTAssertTrue(button.isEnabled)
+
+        bar.updateFileUploadAvailability(hasOptedOutOfChatThreads: true)
+        XCTAssertFalse(button.isEnabled)
+
+        bar.updateFileUploadAvailability(hasOptedOutOfChatThreads: false)
+        XCTAssertTrue(button.isEnabled)
     }
 
     private static func enableFileUploadAndAIFreeSearching() {
