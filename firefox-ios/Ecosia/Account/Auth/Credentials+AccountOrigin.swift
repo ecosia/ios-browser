@@ -50,6 +50,21 @@ extension Credentials {
         return sameDay ? .newAccount : .existingAccount
     }
 
+    /// Whether the user has opted out of chat history / chat threads.
+    ///
+    /// Reads `URLProvider.chatThreadsOptOutClaim` from the ID token, matching
+    /// Auth0.swift's JWTDecode guidance for custom claims. A missing, non-boolean,
+    /// or undecodable claim is treated as `false` so upload stays available for
+    /// users who have not opted out.
+    var hasOptedOutOfChatThreads: Bool {
+        hasOptedOutOfChatThreads(urlProvider: Environment.current.urlProvider)
+    }
+
+    func hasOptedOutOfChatThreads(urlProvider: URLProvider) -> Bool {
+        guard let jwt = try? decode(jwt: idToken) else { return false }
+        return jwt[urlProvider.chatThreadsOptOutClaim].boolean == true
+    }
+
     /// ISO 8601 formatter configured to handle fractional seconds (e.g. `2026-03-04T10:44:47.942Z`).
     /// Safety: initialized once with fixed `formatOptions` and never mutated afterwards; safe for concurrent reads.
     nonisolated(unsafe) private static let iso8601Formatter: ISO8601DateFormatter = {
