@@ -332,6 +332,10 @@ final class AuthTests: XCTestCase {
         // cookie into the native cookie jar (see FileUploadAuthCookieSync)
         await setupLoggedInState()
         let storage = HTTPCookieStorage.shared
+        let originalEASC = (storage.cookies ?? []).filter { $0.name == Cookie.authSession.rawValue }
+        originalEASC.forEach(storage.deleteCookie)
+        defer { originalEASC.forEach(storage.setCookie) }
+
         let staleEASC = makeCookie(name: Cookie.authSession.rawValue, value: "previous-user-session", domain: ".ecosia.org")
         storage.setCookie(staleEASC)
         defer { storage.deleteCookie(staleEASC) }
