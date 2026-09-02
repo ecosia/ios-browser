@@ -236,6 +236,10 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     /// The mode currently reflected by the chip, if any.
     private(set) var selectedChatMode: OmniboxChatMode?
 
+    /// Chat-threads opt-out from the current Auth0 ID token. Defaults to `false`
+    /// (upload available) so unauthenticated and missing-claim states match today.
+    private var hasOptedOutOfChatThreads = false
+
     /// Fires whenever the text content changes (including programmatic clears).
     /// Use from the host to drive layout that depends on pill height changes.
     var onContentChange: ((String) -> Void)?
@@ -433,17 +437,40 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         updateUploadButtonVisibility()
     }
 
+    /// Re-reads chat-threads opt-out from the current Auth0 session and refreshes
+    /// the + / paperclip control. Call when the authenticated user or ID token changes.
+    func refreshUploadControl() {
+        updateFileUploadAvailability(
+            hasOptedOutOfChatThreads: EcosiaAuthenticationService.shared.hasOptedOutOfChatThreads
+        )
+        updateUploadButtonVisibility()
+    }
+
+    func updateFileUploadAvailability(hasOptedOutOfChatThreads: Bool) {
+        self.hasOptedOutOfChatThreads = hasOptedOutOfChatThreads
+        applyUploadButtonEnabledState()
+    }
+
     /// Shows the + / upload control for the active provider, unless AI-free
     /// searching is hiding Ecosia AI surfaces. Clears an in-progress chat-mode
     /// chip when the control is hidden so leftover AI UI cannot linger.
     func updateUploadButtonVisibility() {
         let showUpload = shouldShowOmniboxUploadButton
         uploadButton.isHidden = !showUpload
+        applyUploadButtonEnabledState()
         // The chip can outlive its drawer when the provider or the remote configuration
         // changes mid-session, so clear it whenever a mode is no longer selectable.
         if !showUpload || !SearchProviderSelection.allowsChatModes {
             setSelectedChatMode(nil)
         }
+    }
+
+    private func applyUploadButtonEnabledState() {
+        uploadButton.isEnabled = OmniboxFileUploadAvailability.isOmniboxControlEnabled(
+            hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
+            isChatModesEnabled: ChatModesFeatureFlag.isEnabled,
+            usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
+        )
     }
 
     private var shouldShowOmniboxUploadButton: Bool {

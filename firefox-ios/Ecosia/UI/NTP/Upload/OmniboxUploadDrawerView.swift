@@ -42,6 +42,7 @@ public struct OmniboxUploadDrawerSheet: View {
     private let provider: SearchProvider
     private let selectedChatMode: OmniboxChatMode?
     private let isAuthenticated: Bool
+    private let hasOptedOutOfChatThreads: Bool
     private let onSelect: (OmniboxUploadOption) -> Void
     private let onSelectChatMode: (OmniboxChatMode) -> Void
     private let onLogin: () -> Void
@@ -50,6 +51,7 @@ public struct OmniboxUploadDrawerSheet: View {
                 provider: SearchProvider,
                 selectedChatMode: OmniboxChatMode?,
                 isAuthenticated: Bool,
+                hasOptedOutOfChatThreads: Bool = false,
                 onSelect: @escaping (OmniboxUploadOption) -> Void,
                 onSelectChatMode: @escaping (OmniboxChatMode) -> Void,
                 onLogin: @escaping () -> Void) {
@@ -57,6 +59,7 @@ public struct OmniboxUploadDrawerSheet: View {
         self.provider = provider
         self.selectedChatMode = selectedChatMode
         self.isAuthenticated = isAuthenticated
+        self.hasOptedOutOfChatThreads = hasOptedOutOfChatThreads
         self.onSelect = onSelect
         self.onSelectChatMode = onSelectChatMode
         self.onLogin = onLogin
@@ -67,6 +70,7 @@ public struct OmniboxUploadDrawerSheet: View {
                                 provider: provider,
                                 selectedChatMode: selectedChatMode,
                                 isAuthenticated: isAuthenticated,
+                                hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
                                 onSelect: onSelect,
                                 onSelectChatMode: onSelectChatMode,
                                 onLogin: onLogin)
@@ -90,6 +94,7 @@ struct OmniboxUploadDrawerView: View {
     private let provider: SearchProvider
     private let selectedChatMode: OmniboxChatMode?
     private let isAuthenticated: Bool
+    private let hasOptedOutOfChatThreads: Bool
     private let onSelect: (OmniboxUploadOption) -> Void
     private let onSelectChatMode: (OmniboxChatMode) -> Void
     private let onLogin: () -> Void
@@ -104,6 +109,7 @@ struct OmniboxUploadDrawerView: View {
          provider: SearchProvider,
          selectedChatMode: OmniboxChatMode?,
          isAuthenticated: Bool,
+         hasOptedOutOfChatThreads: Bool = false,
          onSelect: @escaping (OmniboxUploadOption) -> Void,
          onSelectChatMode: @escaping (OmniboxChatMode) -> Void,
          onLogin: @escaping () -> Void) {
@@ -111,6 +117,7 @@ struct OmniboxUploadDrawerView: View {
         self.provider = provider
         self.selectedChatMode = selectedChatMode
         self.isAuthenticated = isAuthenticated
+        self.hasOptedOutOfChatThreads = hasOptedOutOfChatThreads
         self.onSelect = onSelect
         self.onSelectChatMode = onSelectChatMode
         self.onLogin = onLogin
@@ -122,7 +129,13 @@ struct OmniboxUploadDrawerView: View {
 
     private var availableModes: [OmniboxChatMode] { OmniboxChatMode.modes(for: provider) }
 
-    private var isUploadEnabled: Bool { isEcosiaProvider ? isAuthenticated : true }
+    private var isUploadEnabled: Bool {
+        OmniboxFileUploadAvailability.areSourcesEnabled(
+            isEcosiaProvider: isEcosiaProvider,
+            isAuthenticated: isAuthenticated,
+            hasOptedOutOfChatThreads: hasOptedOutOfChatThreads
+        )
+    }
 
     /// A chat mode is selectable only when the user is signed in; signed-out
     /// users may pick Standard AI Chat (no advanced features) but every other
@@ -238,8 +251,9 @@ struct OmniboxUploadDrawerView: View {
                     .multilineTextAlignment(.center)
             }
         }
-        // Ecosia uploads require an account, so the media pickers are disabled and
-        // dimmed for signed-out users (same treatment as the advanced modes). Other
+        // Ecosia uploads require an account and chat-thread history, so the media
+        // pickers are disabled and dimmed for signed-out users and for users who
+        // opted out of chat threads (same treatment as the advanced modes). Other
         // providers redirect to their own site, which needs no Ecosia account.
         .disabled(!isUploadEnabled)
         .opacity(isUploadEnabled ? 1 : UX.disabledRowOpacity)

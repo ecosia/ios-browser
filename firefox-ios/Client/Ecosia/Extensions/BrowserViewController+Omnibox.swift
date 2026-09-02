@@ -210,6 +210,12 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
     func ntpSearchBarDidTapUpload() {
         guard SearchProviderSelection.showsOmniboxAIFeatures else { return }
+        let hasOptedOut = ecosiaAuth?.hasOptedOutOfChatThreads == true
+        guard OmniboxFileUploadAvailability.isOmniboxControlEnabled(
+            hasOptedOutOfChatThreads: hasOptedOut,
+            isChatModesEnabled: ChatModesFeatureFlag.isEnabled,
+            usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
+        ) else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
 
         switch SearchProviderSelection.aiBehavior {
@@ -591,12 +597,22 @@ extension BrowserViewController {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
 
+        let hasOptedOut = ecosiaAuth?.hasOptedOutOfChatThreads == true
+        // Upload-only paperclip: don't open a drawer of disabled tiles.
+        // Chat modes still opens so the user can pick a mode.
+        if SearchProviderSelection.usesEcosiaAIBackend,
+           hasOptedOut,
+           !ChatModesFeatureFlag.isEnabled {
+            return
+        }
+
         registerOmniboxLogoutObserverIfNeeded()
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
         let provider = SearchProviderSelection.selectedProvider
         sheetState.presentUploadDrawer(provider: provider,
                                        isAuthenticated: ecosiaAuth?.isLoggedIn == true,
+                                       hasOptedOutOfChatThreads: hasOptedOut,
                                        onSelectUpload: { [weak self] option in
             guard let self else { return }
             // Third-party providers cannot receive an upload from the app, so the
@@ -605,6 +621,11 @@ extension BrowserViewController {
                 self.presentProviderUploadRedirect(for: provider)
                 return
             }
+            guard OmniboxFileUploadAvailability.areSourcesEnabled(
+                isEcosiaProvider: true,
+                isAuthenticated: self.ecosiaAuth?.isLoggedIn == true,
+                hasOptedOutOfChatThreads: self.ecosiaAuth?.hasOptedOutOfChatThreads == true
+            ) else { return }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
                                                               from: self,
                                                               sourceView: sourceView)
@@ -695,7 +716,7 @@ extension BrowserViewController {
         }
         clearSelectedChatModeIfUnsupported()
 
-        ntpOmniboxAnchorView?.updateUploadButtonVisibility()
+        ntpOmniboxAnchorView?.refreshUploadControl()
     }
 
     /// Chat modes carry across providers, so a selection is only dropped when the new
