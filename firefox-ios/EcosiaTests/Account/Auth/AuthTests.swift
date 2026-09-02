@@ -327,6 +327,55 @@ final class AuthTests: XCTestCase {
         XCTAssertNotNil(auth.refreshToken)
     }
 
+    func testLogout_withStaleEASCCookieInSharedStorage_removesIt() async {
+        // Arrange: simulate a previous file upload having copied the EASC session
+        // cookie into the native cookie jar (see FileUploadAuthCookieSync)
+        await setupLoggedInState()
+        let storage = HTTPCookieStorage.shared
+        let originalEASC = (storage.cookies ?? []).filter { $0.name == Cookie.authSession.rawValue }
+        originalEASC.forEach(storage.deleteCookie)
+        defer { originalEASC.forEach(storage.setCookie) }
+
+        let staleEASC = makeCookie(name: Cookie.authSession.rawValue, value: "previous-user-session", domain: ".ecosia.org")
+        storage.setCookie(staleEASC)
+        defer { storage.deleteCookie(staleEASC) }
+
+        // Act
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
+
+        // Assert: the stale cookie must not survive logout, or it could get attached
+        // to native requests made under whichever user logs in next
+        let remainingNames = (storage.cookies ?? []).map(\.name)
+        XCTAssertFalse(remainingNames.contains(Cookie.authSession.rawValue))
+    }
+
+    func testLogout_withClearCredentialsFailure_doesNotRemoveEASCCookie() async {
+        // Arrange: logout is only considered successful once credentials are cleared,
+        // so the EASC cookie in shared storage should be left alone if that fails
+        await setupLoggedInState()
+        mockProvider.clearCredentialsResult = false
+        let storage = HTTPCookieStorage.shared
+        let easc = makeCookie(name: Cookie.authSession.rawValue, value: "still-active-session", domain: ".ecosia.org")
+        storage.setCookie(easc)
+        defer { storage.deleteCookie(easc) }
+
+        // Act
+        do {
+            try await auth.logout()
+            XCTFail("Expected logout to throw but it didn't")
+        } catch {
+            // Expected to fail
+        }
+
+        // Assert
+        let remainingNames = (storage.cookies ?? []).map(\.name)
+        XCTAssertTrue(remainingNames.contains(Cookie.authSession.rawValue))
+    }
+
     // MARK: - Retrieve Stored Credentials Tests
 
     func testRetrieveStoredCredentials_withValidCredentials_updatesState() async {
@@ -619,6 +668,16 @@ final class AuthTests: XCTestCase {
 
         mockProvider.startAuthCallCount = 0
         mockProvider.storeCredentialsCallCount = 0
+    }
+
+    private func makeCookie(name: String, value: String, domain: String) -> HTTPCookie {
+        HTTPCookie(properties: [
+            .name: name,
+            .value: value,
+            .domain: domain,
+            .path: "/",
+            .expires: Date(timeIntervalSinceNow: 60 * 60),
+        ])!
     }
 
     /// Creates a minimal valid JWT string with the given payload claims.
