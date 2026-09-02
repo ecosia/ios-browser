@@ -82,6 +82,27 @@ final class URLProviderTests: XCTestCase {
         XCTAssertEqual(URLProvider.debug.auth0CookieDomain, URLProvider.debug.auth0Domain)
     }
 
+    func testAuth0CustomClaimNamespace_followsEnvironmentDomain() {
+        XCTAssertEqual(URLProvider.production.auth0CustomClaimNamespace, "https://ecosia.org")
+        XCTAssertEqual(URLProvider.staging.auth0CustomClaimNamespace, "https://ecosia-staging.xyz")
+        XCTAssertEqual(URLProvider.debug.auth0CustomClaimNamespace, "https://ecosia.org")
+    }
+
+    func testChatThreadsOptOutClaim_followsEnvironmentNamespace() {
+        XCTAssertEqual(
+            URLProvider.production.chatThreadsOptOutClaim,
+            "https://ecosia.org/chat_threads_opt_out"
+        )
+        XCTAssertEqual(
+            URLProvider.staging.chatThreadsOptOutClaim,
+            "https://ecosia-staging.xyz/chat_threads_opt_out"
+        )
+        XCTAssertEqual(
+            URLProvider.debug.chatThreadsOptOutClaim,
+            "https://ecosia.org/chat_threads_opt_out"
+        )
+    }
+
     // MARK: - Environment to URLProvider Mapping Tests
 
     func testEnvironmentDebugMapsToURLProviderDebug() {
