@@ -39,6 +39,7 @@ final class AuthTests: XCTestCase {
         XCTAssertNotNil(auth)
         XCTAssertNotNil(auth.auth0Provider)
         XCTAssertFalse(auth.isLoggedIn)
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
         XCTAssertNil(auth.refreshToken)
@@ -240,6 +241,85 @@ final class AuthTests: XCTestCase {
         } catch {
             XCTFail("Login should succeed, but failed with: \(error)")
         }
+    }
+
+    // MARK: - Chat Threads Opt-Out Tests
+
+    func testLogin_withChatThreadsOptOutTrue_setsHasOptedOutOfChatThreads() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+
+        _ = try await auth.login()
+
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testLogin_withChatThreadsOptOutFalse_keepsUploadAvailable() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: false)
+
+        _ = try await auth.login()
+
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testLogin_withMissingChatThreadsOptOutClaim_defaultsToFalse() async throws {
+        let idToken = try makeJWT(claims: [
+            "sub": "auth0|12345",
+            "iat": Date().timeIntervalSince1970
+        ])
+        mockProvider.mockCredentials = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: idToken,
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+
+        _ = try await auth.login()
+
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testLogout_clearsChatThreadsOptOut() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+        _ = try await auth.login()
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+
+        try await auth.logout(triggerWebLogout: false)
+
+        XCTAssertFalse(auth.isLoggedIn)
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testRenewCredentials_reevaluatesChatThreadsOptOutFromNewIdToken() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: false)
+        _ = try await auth.login()
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
+
+        mockProvider.canRenewCredentialsResult = true
+        mockProvider.hasStoredCredentials = true
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+
+        try await auth.renewCredentialsIfNeeded()
+
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testSetupTokens_postsCredentialsDidUpdateNotification() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+        let expectation = expectation(forNotification: .EcosiaAuthCredentialsDidUpdate,
+                                      object: nil) { notification in
+            notification.userInfo?["hasOptedOutOfChatThreads"] as? Bool == true
+        }
+
+        _ = try await auth.login()
+
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
     }
 
     // MARK: - Logout Tests
@@ -698,6 +778,22 @@ final class AuthTests: XCTestCase {
         }
 
         return "\(base64URLEncode(header)).\(base64URLEncode(payload)).mock-signature"
+    }
+
+    private func credentials(chatThreadsOptOut: Bool) throws -> Credentials {
+        let idToken = try makeJWT(claims: [
+            "sub": "auth0|12345",
+            "iat": Date().timeIntervalSince1970,
+            Environment.current.urlProvider.chatThreadsOptOutClaim: chatThreadsOptOut
+        ])
+        return Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: idToken,
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
     }
 
     private func waitForInitCredentialRetrieval(
