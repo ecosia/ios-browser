@@ -5,9 +5,9 @@
 import XCTest
 @testable import Ecosia
 
-final class FileUploadAuthCookieSyncTests: XCTestCase {
+final class AuthSessionCookieHandlerTests: XCTestCase {
 
-    func testClearAuthSessionCookieFromSharedStorage_removesEASCCookie() {
+    func testClearFromSharedStorage_removesEASCCookie() {
         // Given: an EASC cookie (copied there by a previous file upload) alongside an unrelated cookie
         let storage = HTTPCookieStorage.shared
         let easc = makeCookie(name: Cookie.authSession.rawValue, value: "stale-session", domain: ".ecosia.org")
@@ -20,7 +20,7 @@ final class FileUploadAuthCookieSyncTests: XCTestCase {
         }
 
         // When
-        FileUploadAuthCookieSync.clearAuthSessionCookieFromSharedStorage()
+        AuthSessionCookieHandler.clearFromSharedStorage()
 
         // Then
         let remainingNames = (storage.cookies ?? []).map(\.name)
@@ -28,7 +28,7 @@ final class FileUploadAuthCookieSyncTests: XCTestCase {
         XCTAssertTrue(remainingNames.contains("EAIST"))
     }
 
-    func testClearAuthSessionCookieFromSharedStorage_withNoEASCCookie_leavesOtherCookiesUntouched() {
+    func testClearFromSharedStorage_withNoEASCCookie_leavesOtherCookiesUntouched() {
         // Given: no EASC cookie present, only an unrelated one
         let storage = HTTPCookieStorage.shared
         let unrelated = makeCookie(name: "EAIST", value: "waf-token", domain: ".ecosia.org")
@@ -36,14 +36,14 @@ final class FileUploadAuthCookieSyncTests: XCTestCase {
         defer { storage.deleteCookie(unrelated) }
 
         // When
-        FileUploadAuthCookieSync.clearAuthSessionCookieFromSharedStorage()
+        AuthSessionCookieHandler.clearFromSharedStorage()
 
         // Then
         let remainingNames = (storage.cookies ?? []).map(\.name)
         XCTAssertTrue(remainingNames.contains("EAIST"))
     }
 
-    func testClearAuthSessionCookieFromSharedStorage_withMultipleEASCCookiesAcrossDomains_removesAll() {
+    func testClearFromSharedStorage_withMultipleEASCCookiesAcrossDomains_removesAll() {
         // Given: EASC cookies under two different domains (e.g. staging + prod), both stale
         let storage = HTTPCookieStorage.shared
         let easc1 = makeCookie(name: Cookie.authSession.rawValue, value: "stale-1", domain: ".ecosia.org")
@@ -56,7 +56,7 @@ final class FileUploadAuthCookieSyncTests: XCTestCase {
         }
 
         // When
-        FileUploadAuthCookieSync.clearAuthSessionCookieFromSharedStorage()
+        AuthSessionCookieHandler.clearFromSharedStorage()
 
         // Then
         let remaining = (storage.cookies ?? []).filter { $0.name == Cookie.authSession.rawValue }
