@@ -42,6 +42,8 @@ final class SearchesCounterTests: XCTestCase, @unchecked Sendable {
             expect.fulfill()
         }
         User.shared.searchCount = 2
+        // It could already be 2 from another test, so we have to post directly just in case 
+        NotificationCenter.default.post(name: .searchesCounterChanged, object: nil)
         waitForExpectations(timeout: 1)
     }
 }
