@@ -12,11 +12,10 @@ final class AuthSessionCookieHandler: BaseCookieHandler {
 
     /// Removes any `EASC` cookie previously copied into `HTTPCookieStorage.shared`.
     ///
-    /// `FileUploadAuthCookieSync.syncAuthSessionCookieToSharedStorage` copies `EASC` out of the
-    /// WKWebView cookie jar so native `URLSession` calls can see it, but that copy lives independently
-    /// of the WKWebView store and isn't cleared when the web session cookie is. Call this on logout so a
-    /// stale session cookie for the previous user can't be attached to native requests made under a
-    /// different, newly logged-in user.
+    /// We copy `EASC` cookie out of the WKWebView cookie jar so native `URLSession` calls can see it, but that copy lives
+    /// independently of the WKWebView store and isn't cleared when the web session cookie is.
+    /// This is called on logout so a stale session cookie for the previous user can't be attached to
+    /// native requests made under a different, newly logged-in user.
     static func clearFromSharedStorage() {
         let cookies = HTTPCookieStorage.shared.cookies ?? []
         cookies
