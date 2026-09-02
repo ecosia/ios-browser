@@ -308,6 +308,18 @@ public enum URLProvider {
     public var auth0CookieDomain: String {
         auth0Domain
     }
+
+    /// Namespace for Auth0 ID-token custom claims (`CUSTOM_CLAIM_NAMESPACE` in Post-Login Actions).
+    /// Auth0 requires a URI-like namespace; it follows the environment domain so staging
+    /// (`https://ecosia-staging.xyz/...`) does not collide with production.
+    public var auth0CustomClaimNamespace: String {
+        "https://\(domain)"
+    }
+
+    /// Full claim key for chat-history / chat-threads opt-out.
+    public var chatThreadsOptOutClaim: String {
+        "\(auth0CustomClaimNamespace)/chat_threads_opt_out"
+    }
 }
 
 /// File metadata for the web AI chat `files` URL query parameter.
