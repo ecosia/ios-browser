@@ -1,5 +1,8 @@
 name: Translation Completeness Check
 
+# Non-blocking by design: surfaces missing translations on the release PR
+# rather than gating the merge. A red result can be merged over.
+
 on:
   pull_request:
     branches: [main, 'patch/**']
