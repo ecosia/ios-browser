@@ -230,6 +230,11 @@ extension BrowserViewController {
             return false
         }
     }
+    
+    private func extractProviderLabel(from sub: String?) -> String {
+        guard let sub, let prefix = sub.split(separator: "|").first else { return "unknown" }
+        return String(prefix)
+    }
 
     private func handleSignInAndSignUpDetection(
         _ url: URL,
@@ -274,8 +279,9 @@ extension BrowserViewController {
                 configuredAuth.login()
             }
         } else {
+            // TODO: can we add the type of account here? to see if they are all coming from apple logins or not...
             EcosiaLogger.auth.sentry("🔐 [WEB-AUTH] Inconsistent state: web says logged out but native doesn't; " +
-                                     "forcing logout+re-login to avoid user getting locked")
+                                     "forcing logout+re-login to avoid user getting locked (provider: \(extractProviderLabel(from: ecosiaAuth.userProfile?.sub)))")
 
             ecosiaAuth
                 .onAuthFlowCompleted { _ in
