@@ -10,6 +10,10 @@ final class AuthSessionCookieHandlerTests: XCTestCase {
     func testClearFromSharedStorage_removesEASCCookie() {
         // Given: an EASC cookie (copied there by a previous file upload) alongside an unrelated cookie
         let storage = HTTPCookieStorage.shared
+        let originalEASC = (storage.cookies ?? []).filter { $0.name == Cookie.authSession.rawValue }
+        originalEASC.forEach(storage.deleteCookie)
+        defer { originalEASC.forEach(storage.setCookie) }
+
         let easc = makeCookie(name: Cookie.authSession.rawValue, value: "stale-session", domain: ".ecosia.org")
         let unrelated = makeCookie(name: "EAIST", value: "waf-token", domain: ".ecosia.org")
         storage.setCookie(easc)
