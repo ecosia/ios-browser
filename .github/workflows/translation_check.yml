@@ -1,0 +1,33 @@
+name: Translation Completeness Check
+
+on:
+  pull_request:
+    branches: [main, 'patch/**']
+    paths:
+      - 'firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Report missing translations without failing'
+        type: boolean
+        default: false
+
+jobs:
+  check_translations:
+    runs-on: ubuntu-latest
+    name: L10N Translation Completeness Check
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Check for MARKETING_VERSION change
+        id: check_marketing_version
+        if: github.event_name == 'pull_request'
+        run: sh ./check_marketing_version.sh
+
+      - name: Verify translation completeness
+        if: ( steps.check_marketing_version.outputs.skipnext != 'true' )
+        env:
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: bash firefox-ios/Ecosia/L10N/check_translations.sh
