@@ -52,6 +52,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// This property is automatically updated when login/logout operations complete successfully.
     public private(set) var isLoggedIn: Bool = false
 
+    /// Whether the authenticated user has opted out of chat history / chat threads.
+    /// `false` when signed out, when the ID token cannot be decoded, or when the
+    /// environment's `chatThreadsOptOutClaim` is missing.
+    public private(set) var hasOptedOutOfChatThreads: Bool = false
+
     /// The current user's profile information from Auth0.
     /// This includes name, email, profile picture URL, etc.
     public private(set) var userProfile: UserProfile? {
@@ -281,8 +286,17 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         self.accessToken = credentials?.accessToken
         self.grantedScope = credentials?.scope
         self.refreshToken = credentials?.refreshToken
+        // Decode only when credentials (and therefore an ID token) are present.
+        // Signed-out / no-account states keep the default `false` and never read a claim.
+        self.hasOptedOutOfChatThreads = credentials?.hasOptedOutOfChatThreads ?? false
         let wasLoggedIn = self.isLoggedIn
         self.isLoggedIn = isLoggedIn
+
+        NotificationCenter.default.post(
+            name: .EcosiaAuthCredentialsDidUpdate,
+            object: nil,
+            userInfo: ["hasOptedOutOfChatThreads": hasOptedOutOfChatThreads]
+        )
 
         // Only dispatch the auth state change when the login state actually transitions,
         // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
