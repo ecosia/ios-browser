@@ -18,7 +18,10 @@ jobs:
         uses: actions/checkout@v5
         with:
           lfs: true
-          submodules: true    
+          submodules: true
+          # Keep GITHUB_TOKEN out of .git/config, where later steps could read it.
+          # LFS and submodules are fetched by this step, while it still has auth.
+          persist-credentials: false
 
       - uses: ./.github/actions/setup-safe-chain
 

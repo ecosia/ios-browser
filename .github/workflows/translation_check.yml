@@ -23,6 +23,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          # Keep GITHUB_TOKEN out of .git/config, where later steps could read it.
+          # The MARKETING_VERSION check fetches origin/main, which needs no auth
+          # on a public repo.
+          persist-credentials: false
 
       - name: Check for MARKETING_VERSION change
         id: check_marketing_version

@@ -12,6 +12,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Keep GITHUB_TOKEN out of .git/config, where later steps could read it.
+          persist-credentials: false
 
       - name: SwiftLint
         run: |
