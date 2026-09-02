@@ -13,6 +13,7 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
 
     private enum UX {
         static let iconSize: CGFloat = 16
+        static let disabledIconOpacity: CGFloat = 0.4
     }
 
     private let highlightCircle: UIView = .build { circle in
@@ -43,6 +44,14 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
         }
     }
 
+    override public var isEnabled: Bool {
+        get { super.isEnabled }
+        set {
+            super.isEnabled = newValue
+            applyEnabledAppearance()
+        }
+    }
+
     private func setup() {
         backgroundColor = .clear
         // Chat Modes swaps the file-upload paperclip for the plus icon that opens
@@ -68,6 +77,11 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
             iconView.widthAnchor.constraint(equalToConstant: UX.iconSize),
             iconView.heightAnchor.constraint(equalToConstant: UX.iconSize)
         ])
+        applyEnabledAppearance()
+    }
+
+    private func applyEnabledAppearance() {
+        iconView.alpha = isEnabled ? 1 : UX.disabledIconOpacity
     }
 
     public func applyTheme(theme: any Theme) {

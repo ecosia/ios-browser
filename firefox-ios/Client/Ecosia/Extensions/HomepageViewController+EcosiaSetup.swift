@@ -214,10 +214,18 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             name: .searchSettingsChanged,
             object: nil
         )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(updateNTPUploadButtonVisibility),
+            name: .EcosiaAuthCredentialsDidUpdate,
+            object: nil
+        )
     }
 
     @objc private func updateNTPUploadButtonVisibility() {
-        ntpSearchBar?.updateUploadButtonVisibility()
+        ntpSearchBar?.refreshUploadControl()
+        ecosiaAdapter?.omniboxSheetState.hasOptedOutOfChatThreads =
+            EcosiaAuthenticationService.shared.hasOptedOutOfChatThreads
     }
 
     @objc private func homePanelPrefsDidChange(_ notification: Notification) {
@@ -246,7 +254,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             actionType: ToolbarActionType.borderPositionChanged
         ))
 
-        ntpSearchBar?.updateUploadButtonVisibility()
+        ntpSearchBar?.refreshUploadControl()
 
         ecosiaAdapter?.viewWillAppear()
         // Full-screen upload pickers (camera / Files) temporarily hide the NTP

@@ -46,4 +46,18 @@ final class EcosiaOmniboxUploadButtonTests: XCTestCase {
         let iconView = button.subviews.compactMap { $0 as? UIImageView }.first
         XCTAssertEqual(iconView?.tintColor, theme.colors.ecosia.buttonContentSecondary)
     }
+
+    func testDisabledStateDimsIcon() {
+        let button = EcosiaOmniboxUploadButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let iconView = button.subviews.compactMap { $0 as? UIImageView }
+            .first { $0.contentMode == .scaleAspectFit }
+
+        XCTAssertEqual(iconView?.alpha ?? 0, 1, accuracy: 0.001)
+
+        button.isEnabled = false
+        XCTAssertEqual(iconView?.alpha ?? 0, 0.4, accuracy: 0.001)
+
+        button.isEnabled = true
+        XCTAssertEqual(iconView?.alpha ?? 0, 1, accuracy: 0.001)
+    }
 }
