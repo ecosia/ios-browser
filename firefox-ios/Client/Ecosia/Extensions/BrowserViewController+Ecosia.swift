@@ -279,7 +279,6 @@ extension BrowserViewController {
                 configuredAuth.login()
             }
         } else {
-            // TODO: can we add the type of account here? to see if they are all coming from apple logins or not...
             EcosiaLogger.auth.sentry("🔐 [WEB-AUTH] Inconsistent state: web says logged out but native doesn't; " +
                                      "forcing logout+re-login to avoid user getting locked (provider: \(extractProviderLabel(from: ecosiaAuth.userProfile?.sub)))")
 
