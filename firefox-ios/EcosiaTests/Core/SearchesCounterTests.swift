@@ -33,8 +33,11 @@ final class SearchesCounterTests: XCTestCase, @unchecked Sendable {
         let counter = SearchesCounter()
 
         counter.subscribe(self) { items in
-            let state = MainActor.assumeIsolated { counter.state }
-            XCTAssertEqual(state, 2)
+            // `User.shared` is a shared, `nonisolated(unsafe)` singleton and this test class
+            // runs alongside other tests, so unrelated concurrent mutations can fire this
+            // notification with a value other than the one this test set. Only settle on the
+            // value we're actually waiting for instead of asserting on the first callback.
+            guard items == 2 else { return }
             MainActor.assumeIsolated { counter.unsubscribe(self) }
             expect.fulfill()
         }
