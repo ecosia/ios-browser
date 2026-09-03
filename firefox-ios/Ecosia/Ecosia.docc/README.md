@@ -85,6 +85,16 @@ To ensure that these hooks are installed correctly in your local `.git/hooks` di
 
 This script will copy all the necessary hooks (such as `prepare-commit-msg`) to your local `.git/hooks` directory, ensuring they are executable.
 
+##### Optional: local SwiftLint pre-push check
+
+Linting is enforced as a CI check on PRs, so the `pre-push` hook's SwiftLint check is a no-op by default. If you'd like SwiftLint to run locally before each push (and block the push on violations), opt in by setting an environment variable:
+
+```shell
+export IOS_BROWSER_LINT_ENABLED=true
+```
+
+With the flag unset (or `false`), `git push` behaves as normal. You can always skip the check for a single push with `git push --no-verify`.
+
 ## ⚙️ Building the code
 
 ### Tuist
