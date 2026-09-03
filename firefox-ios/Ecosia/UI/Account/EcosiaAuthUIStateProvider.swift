@@ -226,7 +226,13 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                     return
                 }
 
-                await MainActor.run { isRegisteringVisit = true }
+let started = await MainActor.run { () -> Bool in
+    guard !isRegisteringVisit else { return false }
+    isRegisteringVisit = true
+    return true
+}
+
+guard started else { return }
 
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
                 let response = try await accountsProvider.registerVisit(accessToken: accessToken)
