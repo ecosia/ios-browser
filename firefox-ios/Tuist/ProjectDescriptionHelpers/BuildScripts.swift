@@ -53,6 +53,7 @@ public enum BuildScripts {
     private static let swiftlintScript: [TargetScript] = [
         .pre(
             script: """
+            # GitHub Actions and CircleCI both set CI=true for every job
             if [ "$CI" = "true" ]; then
                 echo "Skipping SwiftLint build phase on CI (handled by a dedicated CI step)"
                 exit 0
