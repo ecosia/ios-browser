@@ -230,7 +230,7 @@ extension BrowserViewController {
             return false
         }
     }
-    
+
     /// The account is formatted with the first before the | as the provider, e.g. google-oauth2|username or apple|username, so we can extract it
     private func extractProviderLabel(from sub: String?) -> String {
         guard let sub, let prefix = sub.split(separator: "|").first else { return "unknown" }
