@@ -62,7 +62,7 @@
 #   export IOS_BROWSER_LINT_ENABLED=true
 if [ "$IOS_BROWSER_LINT_ENABLED" = "true" ]; then
     echo "IOS_BROWSER_LINT_ENABLED=true, running SwiftLint..."
-    swiftlint lint --quiet
+    swiftlint lint --strict --quiet
     RESULT=$?
 
     if [ $RESULT -ne 0 ]; then
