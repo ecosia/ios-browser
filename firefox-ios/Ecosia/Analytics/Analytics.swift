@@ -326,6 +326,13 @@ open class Analytics {
             .property(position))
     }
 
+    public func searchProviderChanged(to engineID: String) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.Settings.searchProvider.rawValue)
+            .property(engineID))
+    }
+
     public func toggleAIChatOverviewsSetting(enabled: Bool) {
         track(Structured(category: Category.settings.rawValue,
                          action: Action.change.rawValue)

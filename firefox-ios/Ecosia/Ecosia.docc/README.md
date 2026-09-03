@@ -85,6 +85,14 @@ To ensure that these hooks are installed correctly in your local `.git/hooks` di
 
 This script will copy all the necessary hooks (such as `prepare-commit-msg`) to your local `.git/hooks` directory, ensuring they are executable.
 
+##### Optional: local SwiftLint pre-push check
+
+Linting is enforced as a CI check on PRs, so the `pre-push` hook's SwiftLint check is a no-op by default. If you'd like SwiftLint to run locally before each push (and block the push on violations), opt in by setting an environment variable:
+
+    export IOS_BROWSER_LINT_ENABLED=true
+
+With the flag unset (or `false`), `git push` behaves as normal. You can always skip the check for a single push with `git push --no-verify`.
+
 ## ⚙️ Building the code
 
 ### Tuist
@@ -277,7 +285,7 @@ We manage translations using [Transifex](https://docs.transifex.com/client/intro
    - **Other Languages:** Handled via regular Transifex translators or Transifex AI.
 4. **Integration:** When a language reaches 100% completion, Transifex automatically opens a PR.
    - The engineer who added the initial source strings should monitor, review, and merge this PR.
-   - Translation completeness is also validated during the release flow via CI check.
+   - Translation completeness is also surfaced on the release PR via a non-blocking CI check.
 
 ### Ecosify Mozilla Strings (only needed after upgrade)
 
@@ -330,9 +338,13 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 ### 🌍 L10N Translation Completeness Check
 
-As part of the release pipeline, a quality gate verifies that all localization keys defined in the English source file (`en.lproj/Ecosia.strings`) have corresponding translations for every supported language (German, French, Dutch, Spanish, and Italian). This prevents shipping a release candidate with missing translations that would result in users seeing untranslated English strings.
+A check verifies that all localization keys defined in the English source file (`en.lproj/Ecosia.strings`) have corresponding translations for every supported language (German, French, Dutch, Spanish, and Italian). It exists to make missing translations visible before a release candidate ships with untranslated English strings showing to users.
 
-The check runs automatically in CI before the TestFlight build. If any keys are missing, the pipeline fails with a descriptive error listing the missing keys grouped by language.
+It runs on the release PR (`.github/workflows/translation_check.yml`), on the same trigger used by the snapshot tests: a PR against `main` or `patch/**` that bumps `MARKETING_VERSION` in `EcosiaCommon.xcconfig`. If any keys are missing, the check fails with a descriptive error listing them grouped by language.
+
+**The check is non-blocking.** It is there for visibility: a red result can be consciously ignored and the release PR merged anyway, since missing translations often arrive later in the release cycle via Transifex. Read the failure before dismissing it, though.
+
+It can also be triggered manually from the Actions tab, optionally in dry-run mode.
 
 **Running the check locally:**
 

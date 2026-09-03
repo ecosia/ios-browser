@@ -132,7 +132,10 @@ extension SearchViewController {
 
     /// Whether the AI Chat row should be rendered in the suggestions section.
     var shouldShowAIChatRow: Bool {
-        AIChatMVPExperiment.isEnabled && !viewModel.searchQuery.isEmpty && suggestionsCount() != nil
+        AIChatMVPExperiment.isEnabled
+            && SearchProviderSelection.showsAIAutocompleteRow
+            && !viewModel.searchQuery.isEmpty
+            && suggestionsCount() != nil
     }
 
     /// Row index of the AI Chat item within the `searchSuggestions` section.
@@ -169,7 +172,13 @@ extension SearchViewController {
 
     /// Handle AI Chat navigation when item is selected
     func handleAIChatSelection(_ indexPath: IndexPath) {
-        let url = Environment.current.urlProvider.aiChat(origin: .autocomplete, query: viewModel.searchQuery)
+        // Resolved from the selected provider, not from `aiBehavior`, which carries no
+        // provider once the omnibox entry point is hidden.
+        let provider = SearchProviderSelection.selectedProvider
+        guard let url = SearchProviderAIRouting.aiDestinationURL(for: provider,
+                                                                 query: viewModel.searchQuery,
+                                                                 origin: .autocomplete)
+        else { return }
         searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: viewModel.searchQuery)
         Analytics.shared.aiChatAutocompleteForQuery(viewModel.searchQuery)
     }

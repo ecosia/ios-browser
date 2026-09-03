@@ -23,6 +23,7 @@ extension String {
         case aiChatAccessibilityHint = "Opens AI Chat"
         case aiOverviewsTitle = "Overviews"
         case aiOverviewsDescription = "Show AI-generated overviews at the top of search results"
+        case aiFreeSearchingTitle = "AI-free searching"
         case allRegions = "All regions"
         case askSearchBrowse = "Ask, search, browse..."
         case autocomplete = "Autocomplete"
@@ -318,6 +319,11 @@ extension String {
         case chatModeThinkLongerSubtitle = "Solves complex problems"
         case chatModeDisplaySourcesSubtitle = "Shows sources for every answer"
         case chatModeLearningSubtitle = "Breaks down topics step by step"
+        // Appended to the user's prompt for providers that take no mode parameter.
+        // The leading space separates the instruction from the prompt and must be kept.
+        case chatModeThinkLongerPrompt = " Think deeply about it before answering."
+        case chatModeDisplaySourcesPrompt = " Search the web for this and cite your sources."
+        case chatModeLearningPrompt = " Explain this like a tutor, step by step, and suggest what to learn next."
 
         // Omnibox file upload (attachment strip)
         case uploadAttachmentFailed = "Upload failed"
@@ -337,6 +343,10 @@ extension String {
         // Omnibox file upload (logged-out gate)
         case signInToUploadFiles = "Sign in to upload files"
         case signInToUploadFilesMessage = "To use this feature you need to be signed in to an Ecosia account."
+        case uploadFilesTitle = "Upload files"
+        case uploadFilesProviderMessage = "You need to go directly to %@ to upload files."
+        case goToProvider = "Go to %@"
+        case back = "Back"
         case createAccount = "Create account"
     }
 }

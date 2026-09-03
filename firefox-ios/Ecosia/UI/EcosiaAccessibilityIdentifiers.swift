@@ -44,6 +44,25 @@ public struct EcosiaAccessibilityIdentifiers {
 
     public struct Search {
         public static let suggestionCellPrefix = "searchSuggestion"
+        public static let aiChatSuggestion = "searchSuggestion_aiChat"
+    }
+
+    public struct Settings {
+        public static let defaultSearchEngine = "Settings.Search.defaultSearchEngine"
+        public static let aiOverviewsSwitch = "Settings.aiOverviews.switch"
+        public static let aiFreeSearchingSwitch = "Settings.aiFreeSearching.switch"
+    }
+
+    public struct SearchEnginePicker {
+        private static let prefix = "SearchEnginePicker"
+
+        public static func engine(_ engineID: String) -> String {
+            "\(prefix).\(engineID)"
+        }
+    }
+
+    public struct Debug {
+        public static let customSearchProviderUnleash = "Debug.Unleash.customSearchProvider"
     }
 
     public struct AddressBar {
@@ -67,6 +86,13 @@ public struct EcosiaAccessibilityIdentifiers {
         public static let attachmentFileSize = "omnibox_upload_attachment_file_size"
         public static let attachmentImage = "omnibox_upload_attachment_image"
         public static let attachmentRemoveButton = "omnibox_upload_attachment_remove_button"
+
+        /// Drawer shown when a third-party provider is selected. Upload happens on the
+        /// provider's own site, so these mark the explainer rather than a picker.
+        public static let providerRedirectTitle = "omnibox_upload_provider_redirect_title"
+        public static let providerRedirectBody = "omnibox_upload_provider_redirect_body"
+        public static let providerRedirectGoButton = "omnibox_upload_provider_redirect_go_button"
+        public static let providerRedirectBackButton = "omnibox_upload_provider_redirect_back_button"
     }
 
     public struct ErrorView {

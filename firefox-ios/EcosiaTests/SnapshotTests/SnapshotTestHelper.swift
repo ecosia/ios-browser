@@ -21,6 +21,146 @@ struct ThemeConfiguration {
 /// for both UIViews and UIViewControllers.
 final class SnapshotTestHelper {
 
+    private static let snapshotReferencePointerPath = "/tmp/ecosia_snapshot_reference_dir"
+    private static let snapshotRecordingPointerPath = "/tmp/ecosia_snapshot_testing_record"
+
+    private static func referenceRoot(from file: StaticString) -> URL {
+        if let env = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"],
+           !env.isEmpty,
+           !env.contains("$(") {
+            return URL(fileURLWithPath: env, isDirectory: true)
+        }
+
+        if let pointerPath = try? String(
+            contentsOf: URL(fileURLWithPath: snapshotReferencePointerPath),
+            encoding: .utf8
+        ) {
+            let trimmedPath = pointerPath.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmedPath.isEmpty {
+                return URL(fileURLWithPath: trimmedPath, isDirectory: true)
+            }
+        }
+
+        let fileUrl = URL(fileURLWithPath: "\(file)", isDirectory: false)
+        return fileUrl
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("SnapshotArtifacts", isDirectory: true)
+    }
+
+    private static var isRecordingSnapshots: Bool {
+        let recordValue = ProcessInfo.processInfo.environment["SNAPSHOT_TESTING_RECORD"]
+            ?? (try? String(
+                contentsOf: URL(fileURLWithPath: snapshotRecordingPointerPath),
+                encoding: .utf8
+            ))?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        switch recordValue {
+        case "all", "1", "YES", "true", "missing":
+            return true
+        default:
+            return false
+        }
+    }
+
+    private static func domainName(for testClassName: String) -> String {
+        switch testClassName {
+        case "OnboardingTests":
+            return "Onboarding"
+        case "HomepageComponentTests":
+            return "Homepage"
+        case let name where name.hasPrefix("NTP"):
+            return "NTP"
+        default:
+            if testClassName.hasSuffix("Tests") {
+                return String(testClassName.dropLast(5))
+            }
+            return testClassName
+        }
+    }
+
+    private static func referenceDirectory(
+        testClassName: String,
+        referenceRoot: URL
+    ) -> URL? {
+        let fileManager = FileManager.default
+        if let domainDirectories = try? fileManager.contentsOfDirectory(
+            at: referenceRoot,
+            includingPropertiesForKeys: [.isDirectoryKey]
+        ) {
+            for domainDirectory in domainDirectories {
+                let candidate = domainDirectory
+                    .appendingPathComponent(testClassName, isDirectory: true)
+                var isDirectory: ObjCBool = false
+                if fileManager.fileExists(atPath: candidate.path, isDirectory: &isDirectory), isDirectory.boolValue {
+                    return candidate
+                }
+            }
+        }
+
+        guard isRecordingSnapshots else {
+            return nil
+        }
+
+        return referenceRoot
+            .appendingPathComponent(domainName(for: testClassName), isDirectory: true)
+            .appendingPathComponent(testClassName, isDirectory: true)
+    }
+
+    private static func snapshotDirectory(
+        for file: StaticString,
+        testClassName: String
+    ) throws -> String {
+        let referenceRoot = referenceRoot(from: file)
+
+        guard let referenceDirectory = referenceDirectory(
+            testClassName: testClassName,
+            referenceRoot: referenceRoot
+        ) else {
+            throw NSError(
+                domain: "SnapshotTestHelper",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Could not find snapshot references for \(testClassName) under \(referenceRoot.path)"
+                ]
+            )
+        }
+
+        let fileManager = FileManager.default
+
+        if isRecordingSnapshots {
+            try fileManager.createDirectory(at: referenceDirectory, withIntermediateDirectories: true)
+            return referenceDirectory.path
+        }
+
+        if fileManager.isWritableFile(atPath: referenceDirectory.path) {
+            return referenceDirectory.path
+        }
+
+        // Simulator-hosted tests cannot write into the checkout, so copy references to a
+        // writable temp directory and compare from there.
+        let writableDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appendingPathComponent("EcosiaSnapshotArtifacts", isDirectory: true)
+            .appendingPathComponent(testClassName, isDirectory: true)
+
+        if !fileManager.fileExists(atPath: writableDirectory.path) {
+            try fileManager.createDirectory(at: writableDirectory, withIntermediateDirectories: true)
+            let references = try fileManager.contentsOfDirectory(
+                at: referenceDirectory,
+                includingPropertiesForKeys: nil
+            )
+            for reference in references {
+                try fileManager.copyItem(
+                    at: reference,
+                    to: writableDirectory.appendingPathComponent(reference.lastPathComponent)
+                )
+            }
+        }
+
+        return writableDirectory.path
+    }
+
     /// Performs a snapshot test on dynamically initialized content within a specified window environment,
     /// applying theme settings and device configurations beforehand.
     ///
@@ -32,20 +172,17 @@ final class SnapshotTestHelper {
     ///   - file: The file in which failures should be reported.
     ///   - testName: The name of the test.
     ///   - line: The line number in the source code file where the failure occurred.
+    @MainActor
     private static func performSnapshot<T>(
         initializingWith initializer: @escaping () -> T,
         locales: [Locale],
+        themes: [ThemeConfiguration.Theme],
         wait: TimeInterval,
         precision: CGFloat,
         file: StaticString,
         testName: String,
         line: UInt
     ) {
-        let themes: [(UIUserInterfaceStyle, ThemeConfiguration.Theme)] = [
-            (.light, .light),
-            (.dark, .dark)
-        ]
-
         guard let testBundle = Bundle(identifier: "com.ecosia.ecosiaapp.EcosiaSnapshotTests"),
               let envPath = testBundle.path(forResource: "environment", ofType: "json"),
               let envData = try? Data(contentsOf: URL(fileURLWithPath: envPath)),
@@ -56,6 +193,10 @@ final class SnapshotTestHelper {
               let simulatorDeviceName = envDict["SIMULATOR_DEVICE_NAME"] as? String else {
             fatalError("Could not retrieve devices and locales from environment.json")
         }
+
+        let themeStyles = themes.isEmpty
+            ? themesFromEnvironment(envDict)
+            : themeStyles(for: themes)
 
         let themeManager: ThemeManager = AppContainer.shared.resolve()
 
@@ -70,7 +211,9 @@ final class SnapshotTestHelper {
         }
 
         // Map locales from environment.json
-        let locales = localesArray.map { Locale(identifier: $0) }
+        let localesToTest = locales.isEmpty
+            ? localesArray.map { Locale(identifier: $0) }
+            : locales
 
         for deviceType in devicesToTest {
             let config = deviceType.config
@@ -78,8 +221,8 @@ final class SnapshotTestHelper {
             let window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
             let traits: UITraitCollection = .init(traitsFrom: [config.traits])
 
-            for locale in locales {
-                for (themeStyle, themeSuffix) in themes {
+            for locale in localesToTest {
+                for (themeStyle, themeSuffix) in themeStyles {
                     setLocale(locale)
                     changeThemeTo(themeStyle, suffix: themeSuffix, themeManager: themeManager)
                     updateContentInitializingWith(initializer, inWindow: window)
@@ -95,21 +238,18 @@ final class SnapshotTestHelper {
 
                     let snapshotName = "\(String.cleanFunctionName(testName))_\(themeSuffix.rawValue)_\(deviceType.rawValue)_\(locale.identifier)"
 
-                    let fileUrl = URL(fileURLWithPath: "\(file)", isDirectory: false)
-                    let fileName = fileUrl.deletingPathExtension().lastPathComponent
-                    let domain = fileUrl.deletingLastPathComponent().lastPathComponent
-                    let snapshotDirectoryUrl = fileUrl
-                      .deletingLastPathComponent()
-                      .deletingLastPathComponent()
-                      .appendingPathComponent("SnapshotArtifacts", isDirectory: true)
-                      .appendingPathComponent(domain, isDirectory: true)
-                      .appendingPathComponent(fileName, isDirectory: true)
-
-                    var snapshotDirectory: String!
-                    if #available(iOS 16.0, *) {
-                        snapshotDirectory = snapshotDirectoryUrl.path()
-                    } else {
-                        snapshotDirectory = snapshotDirectoryUrl.path
+                    let snapshotDirectory: String
+                    do {
+                        let className = URL(fileURLWithPath: "\(file)", isDirectory: false)
+                            .deletingPathExtension()
+                            .lastPathComponent
+                        snapshotDirectory = try Self.snapshotDirectory(
+                            for: file,
+                            testClassName: className
+                        )
+                    } catch {
+                        XCTFail("Failed to prepare snapshot directory: \(error)", file: file, line: line)
+                        return
                     }
 
                     let failure = verifySnapshot(
@@ -120,9 +260,37 @@ final class SnapshotTestHelper {
                         testName: snapshotName
                     )
 
-                    guard let message = failure else { return }
-                    XCTFail(message, file: file, line: line)
+                    if let message = failure {
+                        XCTFail(message, file: file, line: line)
+                    }
                 }
+            }
+        }
+    }
+
+    private static func themesFromEnvironment(
+        _ envDict: [String: Any]
+    ) -> [(UIUserInterfaceStyle, ThemeConfiguration.Theme)] {
+        let configuredThemes: [ThemeConfiguration.Theme]
+        if let themesArray = envDict["THEMES"] as? [String] {
+            configuredThemes = themesArray.compactMap(ThemeConfiguration.Theme.init(rawValue:))
+        } else {
+            configuredThemes = ThemeConfiguration.Theme.allCases
+        }
+
+        let themes = configuredThemes.isEmpty ? ThemeConfiguration.Theme.allCases : configuredThemes
+        return themeStyles(for: themes)
+    }
+
+    private static func themeStyles(
+        for themes: [ThemeConfiguration.Theme]
+    ) -> [(UIUserInterfaceStyle, ThemeConfiguration.Theme)] {
+        themes.map { theme in
+            switch theme {
+            case .light:
+                return (.light, .light)
+            case .dark:
+                return (.dark, .dark)
             }
         }
     }
@@ -163,6 +331,7 @@ final class SnapshotTestHelper {
     ///   - theme: The `UIUserInterfaceStyle` to set, e.g., `.light` or `.dark`.
     ///   - suffix: The `ThemeConfiguration.Theme` that specifies additional theme details, typically used for naming or logging.
     ///   - themeManager: The `ThemeManager` responsible for applying theme changes across the app.
+    @MainActor
     private static func changeThemeTo(_ theme: UIUserInterfaceStyle, suffix: ThemeConfiguration.Theme, themeManager: ThemeManager) {
         themeManager.setManualTheme(to: suffix == .light ? .light : .dark)
     }
@@ -177,9 +346,11 @@ final class SnapshotTestHelper {
     ///   - file: The file in which failures should be reported.
     ///   - testName: The name of the test.
     ///   - line: The line number to report failures.
+    @MainActor
     static func assertSnapshot(
         initializingWith initializer: @escaping () -> UIViewController,
-        locales: [Locale] = LocaleRetriever.getLocales(),
+        locales: [Locale] = [],
+        themes: [ThemeConfiguration.Theme] = [],
         wait: TimeInterval = 0.5,
         precision: CGFloat = 0.99,
         file: StaticString = #file,
@@ -189,6 +360,7 @@ final class SnapshotTestHelper {
         performSnapshot(
             initializingWith: initializer,
             locales: locales,
+            themes: themes,
             wait: wait,
             precision: precision,
             file: file,
@@ -207,9 +379,11 @@ final class SnapshotTestHelper {
     ///   - file: The file in which failures should be reported.
     ///   - testName: The name of the test.
     ///   - line: The line number to report failures.
+    @MainActor
     static func assertSnapshot(
         initializingWith initializer: @escaping () -> UIView,
-        locales: [Locale] = LocaleRetriever.getLocales(),
+        locales: [Locale] = [],
+        themes: [ThemeConfiguration.Theme] = [],
         wait: TimeInterval = 0.5,
         precision: CGFloat = 0.99,
         file: StaticString = #file,
@@ -219,6 +393,7 @@ final class SnapshotTestHelper {
         performSnapshot(
             initializingWith: initializer,
             locales: locales,
+            themes: themes,
             wait: wait,
             precision: precision,
             file: file,

@@ -2,9 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Foundation
-import Shared
 import Common
+import UIKit
+import Shared
 import Ecosia
 
 // Ecosia: Optional default so NTP customization and other Ecosia settings can call reloadHomepage().
@@ -52,6 +52,10 @@ final class EcosiaDefaultBrowserSettings: Setting {
 }
 
 final class SearchAreaSetting: Setting {
+    override var hidden: Bool {
+        !SearchProviderSelection.showsEcosiaSearchSettings
+    }
+
     override var title: NSAttributedString? {
         NSAttributedString(string: .localized(.searchRegion), attributes: [:])
     }
@@ -88,6 +92,10 @@ final class SearchAreaSetting: Setting {
 }
 
 final class SafeSearchSettings: Setting {
+    override var hidden: Bool {
+        !SearchProviderSelection.showsEcosiaSearchSettings
+    }
+
     override var title: NSAttributedString? {
         NSAttributedString(string: .localized(.safeSearch), attributes: [:])
     }
@@ -121,6 +129,10 @@ final class SafeSearchSettings: Setting {
 }
 
 final class AutoCompleteSettings: BoolSetting {
+    override var hidden: Bool {
+        !SearchProviderSelection.showsEcosiaSearchSettings
+    }
+
     convenience init(prefs: Prefs, theme: Theme) {
         self.init(prefs: prefs,
                   theme: theme,
@@ -143,10 +155,25 @@ final class AutoCompleteSettings: BoolSetting {
 }
 
 final class AIOverviewsSearchSettings: BoolSetting {
+    override var hidden: Bool {
+        !SearchProviderSelection.showsEcosiaSearchSettings
+    }
+
+    override var enabled: Bool {
+        get { !AIFreeSearchingSelection.isActive }
+        // swiftlint:disable unused_setter_value
+        set { }
+        // swiftlint:enable unused_setter_value
+    }
+
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Settings.aiOverviewsSwitch
+    }
+
     convenience init(prefs: Prefs, theme: Theme) {
         self.init(prefs: prefs,
                   theme: theme,
-                  prefKey: "",
+                  prefKey: EcosiaAccessibilityIdentifiers.Settings.aiOverviewsSwitch,
                   defaultValue: false,
                   titleText: .localized(.aiOverviewsTitle),
                   statusText: .localized(.aiOverviewsDescription),
@@ -162,6 +189,37 @@ final class AIOverviewsSearchSettings: BoolSetting {
 
     override func writeBool(_ control: UISwitch) {
         User.shared.aiOverviews = control.isOn
+    }
+}
+
+final class AIFreeSearchingSearchSettings: BoolSetting {
+    override var hidden: Bool {
+        !AIFreeSearchingFeatureFlag.isEnabled
+            || (CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider)
+    }
+
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Settings.aiFreeSearchingSwitch
+    }
+
+    convenience init(prefs: Prefs, theme: Theme, settings: SettingsTableViewController) {
+        self.init(prefs: prefs,
+                  theme: theme,
+                  prefKey: EcosiaAccessibilityIdentifiers.Settings.aiFreeSearchingSwitch,
+                  defaultValue: false,
+                  titleText: .localized(.aiFreeSearchingTitle),
+                  settingDidChange: { [weak settings] value in
+            AIFreeSearchingSelection.setEnabled(value)
+            settings?.tableView.reloadData()
+        })
+    }
+
+    override func displayBool(_ control: UISwitch) {
+        control.isOn = User.shared.aiFreeSearching == true
+    }
+
+    override func writeBool(_ control: UISwitch) {
+        AIFreeSearchingSelection.setEnabled(control.isOn)
     }
 }
 

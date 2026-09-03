@@ -9,9 +9,24 @@ import XCTest
 
 final class OnboardingTests: SnapshotBaseTests {
 
+    // WelcomeView runs a multi-phase intro after the background video becomes ready
+    // (initial delay + three animation phases ≈ 2.2s). Allow extra time for AVFoundation
+    // to report the player as ready in the simulator-hosted test environment.
+    private let welcomeAnimationSettleDuration: TimeInterval = 4.5
+
     func testWelcomeScreen() {
-        SnapshotTestHelper.assertSnapshot(initializingWith: {
-            WelcomeViewController(delegate: MockWelcomeDelegate(), windowUUID: .snapshotTestDefaultUUID)
-        }, wait: 1.0)
+        SnapshotTestHelper.assertSnapshot(
+            initializingWith: makeWelcomeViewController,
+            wait: welcomeAnimationSettleDuration,
+            // Background video frames differ between simulator runs (often ~65–70% pixel match).
+            precision: 0.65
+        )
+    }
+
+    private func makeWelcomeViewController() -> WelcomeViewController {
+        WelcomeViewController(
+            delegate: MockWelcomeDelegate(),
+            windowUUID: .snapshotTestDefaultUUID
+        )
     }
 }

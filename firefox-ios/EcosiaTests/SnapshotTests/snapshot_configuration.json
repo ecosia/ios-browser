@@ -6,6 +6,10 @@
     "es",
     "nl"
   ],
+  "themes": [
+    "light",
+    "dark"
+  ],
   "devices": [
     {
       "name": "iPhone SE (3rd generation)",
@@ -14,7 +18,6 @@
     {
       "name": "iPhone 16 Pro",
       "orientation": "portrait",
-      "os": "18.6",
       "isDefaultTestDevice": true
     },
     {
@@ -31,9 +34,22 @@
       "name": "EcosiaSnapshotTests",
       "testClasses": [
         {
-          "name": "NTPComponentTests",
+          "name": "OnboardingTests",
+          "devices": ["all"],
+          "locales": ["all"],
+          "themes": ["light"]
+        },
+        {
+          "name": "HomepageComponentTests",
           "devices": ["iPhone 16 Pro"],
-          "locales": ["all"]
+          "locales": ["all"],
+          "themes": ["all"]
+        },
+        {
+          "name": "NTPOmniboxUploadDrawerSnapshotTests",
+          "devices": ["iPhone 16 Pro"],
+          "locales": ["all"],
+          "themes": ["all"]
         }
       ]
     }

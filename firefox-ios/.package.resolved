@@ -1,5 +1,5 @@
 {
-  "originHash" : "dfb1f71ff837081795fb7940c4cb503ef804126968c971088b81c8589faa35ae",
+  "originHash" : "0cd8b645d8e4594083a5b4cf503a57f393cb814c205063dee72cf5499eaafcea",
   "pins" : [
     {
       "identity" : "a-star",
@@ -22,7 +22,7 @@
     {
       "identity" : "braze-swift-sdk",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/braze-inc/braze-swift-sdk.git",
+      "location" : "https://github.com/braze-inc/braze-swift-sdk",
       "state" : {
         "revision" : "6c7bcbd58e36b4776f235260398fa1817244160d",
         "version" : "11.9.0"
@@ -175,7 +175,7 @@
     {
       "identity" : "snowplow-ios-tracker",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snowplow/snowplow-ios-tracker.git",
+      "location" : "https://github.com/snowplow/snowplow-ios-tracker",
       "state" : {
         "revision" : "c105d9f8b875f2442512c3c8b1c8bbe9c209a302",
         "version" : "6.0.9"
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing.git",
       "state" : {
-        "revision" : "bf8d8c27f0f0c6d5e77bff0db76ab68f2050d15d",
-        "version" : "1.18.9"
+        "revision" : "59a99c458de4d2dee580529b61b4f78dca7b7fa6",
+        "version" : "1.19.4"
       }
     },
     {

@@ -37,7 +37,7 @@ extension BrowserViewController {
     }
 
     /// The homepage VC while the webview is frontmost (swiping-tabs keeps it as a child).
-    fileprivate var ecosiaEmbeddedHomepage: HomepageViewController? {
+    var ecosiaEmbeddedHomepage: HomepageViewController? {
         if let homepage = contentContainer.contentController as? HomepageViewController {
             return homepage
         }
@@ -48,6 +48,7 @@ extension BrowserViewController {
     func ecosiaPrepareNTPOmniboxForDisplay() {
         guard let homepage = ecosiaEmbeddedHomepage,
               homepage.ntpSearchBar?.isFirstResponder == false else { return }
+        homepage.ntpSearchBar?.updateUploadButtonVisibility()
         homepage.resetNTPOmniboxSession()
     }
 
@@ -230,6 +231,12 @@ extension BrowserViewController {
         }
     }
 
+    /// The account is formatted with the first before the | as the provider, e.g. google-oauth2|username or apple|username, so we can extract it
+    private func extractProviderLabel(from sub: String?) -> String {
+        guard let sub, let prefix = sub.split(separator: "|").first else { return "unknown" }
+        return String(prefix)
+    }
+
     private func handleSignInAndSignUpDetection(
         _ url: URL,
         tab: Tab,
@@ -274,7 +281,7 @@ extension BrowserViewController {
             }
         } else {
             EcosiaLogger.auth.sentry("🔐 [WEB-AUTH] Inconsistent state: web says logged out but native doesn't; " +
-                                     "forcing logout+re-login to avoid user getting locked")
+                                     "forcing logout+re-login to avoid user getting locked (provider: \(extractProviderLabel(from: ecosiaAuth.userProfile?.sub)))")
 
             ecosiaAuth
                 .onAuthFlowCompleted { _ in
