@@ -108,7 +108,7 @@ platform :ios do
       app: ENV["FIREBASE_APP_ID"],
       firebase_cli_token: ENV["FIREBASE_TOKEN"],
       ipa_path: ENV["IPA_PATH"],
-      release_notes: ENV["CIRCLE_BRANCH"],
+      release_notes: "#{ENV['CIRCLE_BRANCH']}\nhttps://github.com/ecosia/ios-browser/tree/#{ENV['CIRCLE_SHA1']}",
       groups: "ecosia-internal-testers"
     )
   end
