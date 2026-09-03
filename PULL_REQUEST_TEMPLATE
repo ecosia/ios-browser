@@ -17,6 +17,7 @@ Don't forget to add a prefix to the pr title in this format
 
 - [ ] I performed some relevant testing on a real device and/or simulator for both iPhone and iPad
 - [ ] I wrote Unit Tests that confirm the expected behaviour
+- [ ] If this PR changes snapshot-covered UI, I updated snapshot tests and `SnapshotArtifacts` references — **or** I added the `skip-snapshot-check` label because there is no visual impact ([coverage map](firefox-ios/Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md#snapshot-coverage-map))
 - [ ] I updated only the [english localization source files](Client/Ecosia/L10N/es.lproj) if needed
 - [ ] I added the `// Ecosia:` helper comments where needed
 - [ ] I made sure that any change to the Analytics events included in PR won't alter current analytics (e.g. new users, upgrading users)
