@@ -21,7 +21,7 @@
 - Verify the project builds successfully before committing
 - Address linter errors (max 3 iterations per file)
 - Ensure CI/CD checks pass before requesting review
-- If the PR touches visible Ecosia UI, confirm snapshot tests and `SnapshotArtifacts` references were updated (or that the author documented why not)
+- If the PR touches UI listed in `snapshot_coverage.json` (see the [snapshot coverage map](Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md#snapshot-coverage-map)), confirm snapshot tests and `SnapshotArtifacts` references were updated (or that the author documented why not)
 
 ## Branch Management
 

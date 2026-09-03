@@ -7,6 +7,9 @@ The SnapshotTesting library is a Swift package that allows you to capture screen
 
 When you change a component listed here, update its snapshot test and re-record references in the `SnapshotArtifacts` submodule in the same PR.
 
+The table below is generated from `firefox-ios/EcosiaTests/SnapshotTests/snapshot_coverage.json`. After adding coverage, update that file and run `./generate_snapshot_coverage_docs.sh` from the repo root.
+
+<!-- snapshot-coverage-map:start -->
 | UI area | Source (primary) | Snapshot test | Locales / themes |
 | --- | --- | --- | --- |
 | Welcome screen | `Ecosia/UI/ProductTour/WelcomeView.swift` | `OnboardingTests.testWelcomeScreen` | all locales, light only |
@@ -17,10 +20,11 @@ When you change a component listed here, update its snapshot test and re-record 
 | NTP search bar | `Client/Ecosia/UI/NTP/SearchBar/NTPSearchBarView.swift` | `HomepageComponentTests.testNTPSearchBar_resting` | all locales, light + dark |
 | Pinned top site cell | `Client/Frontend/Home/TopSites/TopSiteItemCell.swift` | `HomepageComponentTests.testTopSiteItemCell_pinned` | en, light + dark |
 | Omnibox upload drawer | `Ecosia/UI/NTP/Upload/OmniboxUploadDrawerView.swift` | `NTPOmniboxUploadDrawerSnapshotTests.testOmniboxUploadDrawerSheet` | all locales, light + dark |
+<!-- snapshot-coverage-map:end -->
 
-**Adding coverage for a new screen:** create a test under `EcosiaTests/SnapshotTests/`, register the class in `snapshot_configuration.json`, run `sh tuist-setup.sh`, record references, and add a row to this table.
+**Adding coverage for a new screen:** create a test under `EcosiaTests/SnapshotTests/`, register the class in `snapshot_configuration.json`, add an entry to `snapshot_coverage.json`, run `./generate_snapshot_coverage_docs.sh`, run `sh tuist-setup.sh`, and record references.
 
-**CI guard:** pull requests that change `Ecosia/UI/**` or `Client/Ecosia/UI/**` must also change something under `EcosiaTests/SnapshotTests/` (tests, config, or the `SnapshotArtifacts` submodule pointer). See `check_snapshot_updates.sh`.
+**CI guard:** pull requests that change sources listed in `snapshot_coverage.json` must also change something under `EcosiaTests/SnapshotTests/` (tests, config, or the `SnapshotArtifacts` submodule pointer). See `check_snapshot_updates.sh`.
 
 **No visual impact?** Add the **`skip-snapshot-check`** label **before opening the PR** so CI does not fail on the snapshot update check. You can add the label after opening the PR and re-run the workflow, but doing it upfront avoids a red check.
 
@@ -35,6 +39,8 @@ SNAPSHOT_TESTING_RECORD=all ./perform_snapshot_tests.sh \
 ```
 
 Commit both the parent repo and the `SnapshotArtifacts` submodule.
+
+`environment.json` is a minimal checked-in fixture for local Xcode runs. `perform_snapshot_tests.sh` overwrites it at runtime from `snapshot_configuration.json` for each test-class batch (device list in config still includes SE / Pro Max / iPad for other suites).
 
 ## SnapshotTestHelper
 
@@ -190,8 +196,8 @@ SnapshotTestHelper will take care of retrieving all the details and configure th
           "locales": ["all"]
         },
         {
-          "name": "NTPComponentTests",
-          "devices": ["iPhone 15 Pro"],
+          "name": "HomepageComponentTests",
+          "devices": ["iPhone 16 Pro"],
           "locales": ["all"]
         }
       ]
@@ -256,8 +262,8 @@ SnapshotTestHelper will take care of retrieving all the details and configure th
             ]
         },
         {
-          "name": "NTPComponentTests",
-          "devices": ["iPhone 15 Pro"],
+          "name": "HomepageComponentTests",
+          "devices": ["iPhone 16 Pro"],
           "locales": ["all"]
         }
       ]

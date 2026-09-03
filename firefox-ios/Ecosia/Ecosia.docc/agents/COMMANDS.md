@@ -68,3 +68,9 @@ Verify snapshot updates before opening a PR (compare against `main`):
 ```sh
 ./check_snapshot_updates.sh origin/main
 ```
+
+Regenerate the snapshot coverage map table after editing `snapshot_coverage.json`:
+
+```sh
+./generate_snapshot_coverage_docs.sh
+```

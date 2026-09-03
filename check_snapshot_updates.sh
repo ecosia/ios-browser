@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# Verifies that changes under Ecosia-owned UI paths are accompanied by snapshot
+# Verifies that changes under snapshot-covered UI sources are accompanied by snapshot
 # test or reference updates. Intended for pull-request CI and local pre-push checks.
+#
+# Coverage sources are listed in firefox-ios/EcosiaTests/SnapshotTests/snapshot_coverage.json.
 #
 # Usage:
 #   ./check_snapshot_updates.sh <base_ref> [head_ref]
 #   ./check_snapshot_updates.sh origin/main
 #
-# Set SKIP_SNAPSHOT_UPDATE_CHECK=1 to bypass (document the reason in the PR).
+# Set SKIP_SNAPSHOT_UPDATE_CHECK=1 to bypass locally (document the reason in the PR).
+# In CI, add the skip-snapshot-check label instead.
 
 set -euo pipefail
 
@@ -17,10 +20,17 @@ fi
 
 base_ref="${1:-}"
 head_ref="${2:-HEAD}"
+repo_root="$(cd "$(dirname "$0")" && pwd)"
+coverage_file="$repo_root/firefox-ios/EcosiaTests/SnapshotTests/snapshot_coverage.json"
 
 if [ -z "$base_ref" ]; then
   echo "Usage: $0 <base_ref> [head_ref]"
   echo "Example: $0 origin/main"
+  exit 1
+fi
+
+if [ ! -f "$coverage_file" ]; then
+  echo "Error: coverage file not found at $coverage_file"
   exit 1
 fi
 
@@ -36,9 +46,21 @@ fi
 
 mapfile -t changed_files < <(git diff --name-only "$base_ref" "$head_ref")
 
-ui_prefixes=(
-  "firefox-ios/Ecosia/UI/"
-  "firefox-ios/Client/Ecosia/UI/"
+mapfile -t covered_sources < <(python3 - "$coverage_file" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    data = json.load(handle)
+
+sources = set()
+for entry in data["entries"]:
+    for source in entry["sources"]:
+        sources.add(source)
+
+for source in sorted(sources):
+    print(source)
+PY
 )
 
 snapshot_prefixes=(
@@ -50,8 +72,8 @@ ui_changes=()
 snapshot_changes=()
 
 for file in "${changed_files[@]}"; do
-  for prefix in "${ui_prefixes[@]}"; do
-    if [[ "$file" == "$prefix"* ]]; then
+  for source in "${covered_sources[@]}"; do
+    if [[ "$file" == "$source" ]]; then
       case "$file" in
         *.swift|*.xcassets/*|*.xib|*.storyboard)
           is_ui_change=true
@@ -69,16 +91,16 @@ for file in "${changed_files[@]}"; do
 done
 
 if [ "$is_ui_change" = false ]; then
-  echo "No Ecosia UI visual changes detected; snapshot update check passed."
+  echo "No snapshot-covered UI changes detected; snapshot update check passed."
   exit 0
 fi
 
 if [ "${#snapshot_changes[@]}" -gt 0 ]; then
-  echo "Ecosia UI changed and snapshot test artifacts were updated; check passed."
+  echo "Snapshot-covered UI changed and snapshot test artifacts were updated; check passed."
   exit 0
 fi
 
-echo "Error: Ecosia UI files changed without snapshot test or reference updates."
+echo "Error: Snapshot-covered UI files changed without snapshot test or reference updates."
 echo ""
 echo "Changed UI files:"
 printf '  - %s\n' "${ui_changes[@]}"
@@ -87,6 +109,7 @@ echo "When visible UI changes, update or add snapshot tests under:"
 echo "  firefox-ios/EcosiaTests/SnapshotTests/"
 echo "and record reference images in the SnapshotArtifacts submodule."
 echo ""
+echo "Covered sources are listed in firefox-ios/EcosiaTests/SnapshotTests/snapshot_coverage.json."
 echo "See firefox-ios/Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md (coverage map + recording steps)."
 echo ""
 echo "If this change has no visual impact, explain why in the PR and add the"
