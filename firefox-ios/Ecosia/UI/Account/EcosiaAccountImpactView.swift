@@ -66,7 +66,7 @@ public struct EcosiaAccountImpactView: View {
                             .font(.ecosia(size: .ecosia.font._s, weight: .medium))
                             .foregroundColor(theme.levelTextColor)
 
-if viewModel.isRegisteringVisit {
+                        if viewModel.isRegisteringVisit {
                             ProgressView()
                                 .tint(theme.levelTextColor)
                                 .scaleEffect(0.6)
