@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
 import ProjectDescription
 
 /// Build script phases used by Client and extension targets.
@@ -49,6 +53,12 @@ public enum BuildScripts {
     private static let swiftlintScript: [TargetScript] = [
         .pre(
             script: """
+            # GitHub Actions and CircleCI both set CI=true for every job
+            if [ "$CI" = "true" ]; then
+                echo "Skipping SwiftLint build phase on CI (handled by a dedicated CI step)"
+                exit 0
+            fi
+
             if [[ "$(uname -m)" == arm64 ]]; then
                 export PATH="/opt/homebrew/bin:$PATH"
             fi
@@ -58,6 +68,7 @@ public enum BuildScripts {
 
             if which swiftlint > /dev/null; then
                 cd ${SWIFTLINT_ROOT}
+                swiftlint lint --strict --quiet
             else
                 echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
             fi

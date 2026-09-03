@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Ecosia: capture the ref-update lines git feeds on stdin once, into a file,
+# so both the lint block below and the PR-link block further down can each
+# read them — stdin itself can only be consumed once.
+refs_input=$(mktemp)
+trap 'rm -f "$refs_input"' EXIT
+cat > "$refs_input"
+
 ## Ecosia: Comment out pre-commit hook. This is handled as a check step on PRs.
 
 # echo "Starting Swiftlint Check..."
@@ -60,14 +67,41 @@
 # Ecosia: Optional local SwiftLint check, off by default (linting is already
 # enforced as a CI check step on PRs). Opt in with:
 #   export IOS_BROWSER_LINT_ENABLED=true
+# Only lints the .swift files actually changed in the commits being pushed
+# (relative to what the remote already has), not the whole tree — so dirty,
+# unstaged, or unrelated local changes are never linted here.
 if [ "$IOS_BROWSER_LINT_ENABLED" = "true" ]; then
-    echo "IOS_BROWSER_LINT_ENABLED=true, running SwiftLint..."
-    swiftlint lint --strict --quiet
-    RESULT=$?
+    z40=0000000000000000000000000000000000000000
+    remote_name="$1"
+    changed_files=$(mktemp)
 
-    if [ $RESULT -ne 0 ]; then
-        echo "SwiftLint found violations. Fix them, or push with --no-verify to skip."
-        exit 1
+    while read -r local_ref local_sha remote_ref remote_sha; do
+        [ "$local_sha" = "$z40" ] && continue  # deleting a branch, nothing to lint
+
+        if [ "$remote_sha" = "$z40" ]; then
+            # Branch doesn't exist on the remote yet: diff against where it
+            # forked from the default branch instead of its full history.
+            base=$(git merge-base "$local_sha" "$remote_name/main" 2>/dev/null)
+        else
+            base="$remote_sha"
+        fi
+
+        [ -n "$base" ] && git diff --name-only --diff-filter=ACMR "$base" "$local_sha" -- '*.swift' >> "$changed_files"
+    done < "$refs_input"
+
+    files=$(sort -u "$changed_files")
+    rm -f "$changed_files"
+
+    if [ -n "$files" ]; then
+        echo "IOS_BROWSER_LINT_ENABLED=true, running SwiftLint on the files being pushed..."
+        # shellcheck disable=SC2086
+        swiftlint lint --strict --quiet $files
+        RESULT=$?
+
+        if [ $RESULT -ne 0 ]; then
+            echo "SwiftLint found violations. Fix them, or push with --no-verify to skip."
+            exit 1
+        fi
     fi
 fi
 
@@ -103,7 +137,7 @@ case "$remote_url" in
           fi
           ;;
       esac
-    done
+    done < "$refs_input"
     ;;
 esac
 
