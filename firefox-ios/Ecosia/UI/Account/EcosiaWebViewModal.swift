@@ -228,7 +228,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
                     await EcosiaAuthenticationService.shared.getSessionTransferToken()
                     if let cookie = EcosiaAuthenticationService.shared.getSessionTokenCookie() {
                         webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) {
-                            webView.load(URLRequest(url: parent.url))
+                            webView.load(URLRequest(url: self.parent.url))
                         }
                     } else {
                         webView.load(URLRequest(url: parent.url))
