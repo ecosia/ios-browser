@@ -91,8 +91,6 @@ Linting is enforced as a CI check on PRs, so the `pre-push` hook's SwiftLint che
 
     export IOS_BROWSER_LINT_ENABLED=true
 
-Note: this requires the repo’s `.githooks/pre-push` to be installed into `.git/hooks/pre-push` (e.g. by running `sh ./bootstrap.sh`, which copies `.githooks/*` into `.git/hooks`).
-
 With the flag unset (or `false`), `git push` behaves as normal. You can always skip the check for a single push with `git push --no-verify`.
 
 ## ⚙️ Building the code
