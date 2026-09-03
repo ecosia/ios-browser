@@ -57,6 +57,20 @@
 
 # exit 0
 
+# Ecosia: Optional local SwiftLint check, off by default (linting is already
+# enforced as a CI check step on PRs). Opt in with:
+#   export IOS_BROWSER_LINT_ENABLED=true
+if [ "$IOS_BROWSER_LINT_ENABLED" = "true" ]; then
+    echo "IOS_BROWSER_LINT_ENABLED=true, running SwiftLint..."
+    swiftlint lint --strict --quiet
+    RESULT=$?
+
+    if [ $RESULT -ne 0 ]; then
+        echo "SwiftLint found violations. Fix them, or push with --no-verify to skip."
+        exit 1
+    fi
+fi
+
 # Ecosia: print the correct compare URL for this push so PRs don't get opened
 # against mozilla-mobile/firefox-ios by accident via GitHub's "Compare & pull
 # request" banner (which defaults the base repo to the upstream fork parent).
