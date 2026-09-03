@@ -49,6 +49,11 @@ public enum BuildScripts {
     private static let swiftlintScript: [TargetScript] = [
         .pre(
             script: """
+            if [ "$CI" = "true" ]; then
+                echo "Skipping SwiftLint build phase on CI (handled by a dedicated CI step)"
+                exit 0
+            fi
+
             if [[ "$(uname -m)" == arm64 ]]; then
                 export PATH="/opt/homebrew/bin:$PATH"
             fi
