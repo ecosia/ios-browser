@@ -6,6 +6,14 @@ import Foundation
 import UIKit
 import Ecosia
 
+/// Literal row content for snapshot tests so references stay stable across locales and live counters.
+struct NTPImpactSnapshotRow {
+    let info: ClimateImpactInfo
+    let title: String
+    let subtitle: String
+    let buttonTitle: String?
+}
+
 enum ClimateImpactInfo: Equatable {
     case referral(value: Int)
     case totalTrees(value: Int)

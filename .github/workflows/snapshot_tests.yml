@@ -2,15 +2,13 @@ name: Snapshot Tests
 
 on:
   pull_request:
-    branches: [main, 'patch/**']
+    branches: [main]
     paths:
       - 'firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig'
-  push:
-    branches: [tuist-implementation]
 
 jobs:
   execute_snapshot_tests:
-    runs-on: macos-15
+    runs-on: macos-26
     name: Execute Snapshot Tests
 
     steps:

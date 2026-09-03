@@ -239,18 +239,35 @@ public enum TestTargets {
             name: "EcosiaSnapshotTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.ecosia.tests.EcosiaSnapshot",
+            bundleId: "com.ecosia.ecosiaapp.EcosiaSnapshotTests",
             infoPlist: .default,
-            sources: ["EcosiaTests/SnapshotTests/**/*.swift"],
+            sources: [
+                "EcosiaTests/SnapshotTests/**/*.swift",
+                "EcosiaTests/Mocks/EcosiaMockThemeManager.swift",
+                "EcosiaTests/Mocks/MockWelcomeDelegate.swift",
+                "firefox-ios-tests/Tests/ClientTests/ProfileTest.swift",
+                "firefox-ios-tests/Tests/ClientTests/DependencyInjection/*.swift",
+                "firefox-ios-tests/Tests/ClientTests/Mocks/*.swift",
+                "firefox-ios-tests/Tests/ClientTests/Frontend/Theme/MockThemeManager.swift",
+                "firefox-ios-tests/Tests/ClientTests/Microsurvey/Mock/MockMicrosurveySurfaceManager.swift",
+            ],
+            resources: [
+                "EcosiaTests/SnapshotTests/environment.json",
+            ],
             dependencies: [
+                .target(name: "Client"),
+                .target(name: "Ecosia"),
+                .target(name: "Storage"),
+                .target(name: "RustMozillaAppServices"),
                 .package(product: "Common"),
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
+                .package(product: "Shared"),
                 .package(product: "SiteImageView"),
                 .package(product: "SnapshotTesting"),
                 .package(product: "TabDataStore"),
             ],
-            settings: .settings(base: BuildConfigurations.testBaseSettings)
+            settings: .settings(base: appHostedTestSettings)
         )
     }
 

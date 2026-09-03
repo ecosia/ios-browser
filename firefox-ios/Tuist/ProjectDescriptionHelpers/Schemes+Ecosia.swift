@@ -329,12 +329,15 @@ public enum EcosiaSchemes {
         ),
         .scheme(
             name: "EcosiaSnapshotTests",
-            buildAction: .buildAction(targets: ["EcosiaSnapshotTests"]),
+            buildAction: .buildAction(targets: ["Client", "EcosiaSnapshotTests"]),
             testAction: .targets(
                 ["EcosiaSnapshotTests"],
-                configuration: .debug
+                configuration: "BetaDebug"
             ),
-            runAction: .runAction(executable: "Client")
+            runAction: .runAction(
+                configuration: "BetaDebug",
+                executable: "Client"
+            )
         ),
     ]
 }

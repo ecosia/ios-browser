@@ -10,7 +10,7 @@
 ## Commit Standards
 
 - Split file changes into separate, logical commits
-- Commit messages are auto-prefixed with ticket numbers — don't add manually
+- Commit messages are auto-prefixed with the Jira ticket from your branch name (`hooks/prepare-commit-msg`) — **do not add `[MOB-XXXX]` manually**; the hook skips or dedupes an existing prefix
 - Maintain clean commit history — avoid numerous small commits
 - Skip `.gitignore` changes by default unless specifically requested
 
@@ -21,6 +21,7 @@
 - Verify the project builds successfully before committing
 - Address linter errors (max 3 iterations per file)
 - Ensure CI/CD checks pass before requesting review
+- If the PR touches UI listed in `snapshot_coverage.json` (see the [snapshot coverage map](Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md#snapshot-coverage-map)), confirm snapshot tests and `SnapshotArtifacts` references were updated (or that the author documented why not)
 
 ## Branch Management
 
