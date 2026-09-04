@@ -519,7 +519,10 @@ for device_set_key in "${!device_set_tests[@]}"; do
     -project Client.xcodeproj \
     -scheme \"$scheme\" \
     -clonedSourcePackagesDirPath \"SourcePackages/\" \
+    -derivedDataPath \"../DerivedData\" \
     -destination \"$destination\" \
+    -showBuildTimingSummary \
+    COMPILATION_CACHE_ENABLE_CACHING=YES \
     $only_testing_params \
     -resultBundlePath \"$result_path\""
 
