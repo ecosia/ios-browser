@@ -6,7 +6,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 import Common
-import Ecosia
+@testable import Ecosia
 @testable import Client
 
 @available(iOS 16.0, *)
