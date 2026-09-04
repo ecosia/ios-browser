@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regenerates the snapshot coverage map table in SNAPSHOT_TESTING_WIKI.md from
+# Regenerates the snapshot coverage map table in SNAPSHOT_COVERAGE_MAP.md from
 # firefox-ios/EcosiaTests/SnapshotTests/snapshot_coverage.json.
 #
 # Usage: ./generate_snapshot_coverage_docs.sh
@@ -8,7 +8,7 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "$0")" && pwd)"
 coverage_file="$repo_root/firefox-ios/EcosiaTests/SnapshotTests/snapshot_coverage.json"
-wiki_file="$repo_root/firefox-ios/Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md"
+coverage_map_file="$repo_root/firefox-ios/Ecosia/Ecosia.docc/SNAPSHOT_COVERAGE_MAP.md"
 start_marker="<!-- snapshot-coverage-map:start -->"
 end_marker="<!-- snapshot-coverage-map:end -->"
 
@@ -17,8 +17,8 @@ if [ ! -f "$coverage_file" ]; then
   exit 1
 fi
 
-if [ ! -f "$wiki_file" ]; then
-  echo "Error: wiki file not found at $wiki_file"
+if [ ! -f "$coverage_map_file" ]; then
+  echo "Error: coverage map file not found at $coverage_map_file"
   exit 1
 fi
 
@@ -41,16 +41,16 @@ for entry in data["entries"]:
 PY
 )
 
-python3 - "$wiki_file" "$start_marker" "$end_marker" "$table" <<'PY'
+python3 - "$coverage_map_file" "$start_marker" "$end_marker" "$table" <<'PY'
 import pathlib
 import sys
 
-wiki_path = pathlib.Path(sys.argv[1])
+coverage_map_path = pathlib.Path(sys.argv[1])
 start_marker = sys.argv[2]
 end_marker = sys.argv[3]
 table = sys.argv[4]
 
-content = wiki_path.read_text(encoding="utf-8")
+content = coverage_map_path.read_text(encoding="utf-8")
 start = content.index(start_marker) + len(start_marker)
 end = content.index(end_marker)
 
@@ -61,7 +61,7 @@ updated = (
     + "\n"
     + content[end:]
 )
-wiki_path.write_text(updated, encoding="utf-8")
+coverage_map_path.write_text(updated, encoding="utf-8")
 PY
 
-echo "Updated snapshot coverage map in $wiki_file"
+echo "Updated snapshot coverage map in $coverage_map_file"
