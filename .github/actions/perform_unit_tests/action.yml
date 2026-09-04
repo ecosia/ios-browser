@@ -26,6 +26,8 @@ runs:
           -destination 'platform=iOS Simulator,name=iPhone 17' \
           -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
           -derivedDataPath DerivedData \
+          -showBuildTimingSummary \
+          COMPILATION_CACHE_ENABLE_CACHING=YES \
           build-for-testing | tee raw_build_for_testing.log | xcpretty --color
 
         set +e
