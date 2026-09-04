@@ -40,9 +40,14 @@ else
 fi
 
 config_file="$1"
-environment_file="$2"  # Fixed environment file path
+# $2 remains part of the command interface for compatibility with local recording commands.
+# Runtime batch configuration is written outside the test bundle so it does not trigger rebuilds.
 results_dir="$3"
 scheme="$4"
+runtime_environment_file="/tmp/ecosia_snapshot_environment.json"
+
+rm -f "$runtime_environment_file"
+trap 'rm -f "$runtime_environment_file"' EXIT
 
 # ================================
 # Read Configuration Files
@@ -395,7 +400,35 @@ done <<< "$tests_json"
 # Verify all device sets are to be processed
 echo "All device_set_keys: ${!device_set_tests[@]}"
 
-# Iterate over each device set group and run xcodebuild
+# Find an optional pinned OS version for the simulator run device.
+simulator_os_version=""
+for i in "${!device_names[@]}"; do
+  if [ "${device_names[$i]}" == "$simulator_run_device" ]; then
+    simulator_os_version="${os_versions[$i]}"
+    break
+  fi
+done
+
+if [ -n "$simulator_os_version" ] && [ "$simulator_os_version" != "null" ]; then
+  destination="platform=iOS Simulator,name=$simulator_run_device,OS=$simulator_os_version"
+else
+  destination="platform=iOS Simulator,name=$simulator_run_device"
+fi
+
+rm -rf "$results_dir"
+mkdir -p "$results_dir"
+
+echo "Building snapshot test bundle once..."
+xcodebuild build-for-testing \
+  -project Client.xcodeproj \
+  -scheme "$scheme" \
+  -clonedSourcePackagesDirPath "SourcePackages/" \
+  -derivedDataPath "../DerivedData" \
+  -destination "$destination" \
+  -showBuildTimingSummary \
+  COMPILATION_CACHE_ENABLE_CACHING=YES
+
+# Iterate over each device set group and run the already-built test bundle.
 for device_set_key in "${!device_set_tests[@]}"; do
   test_classes_str="${device_set_tests[$device_set_key]}"
   device_set_devices_str="${device_set_devices[$device_set_key]}"
@@ -463,7 +496,7 @@ for device_set_key in "${!device_set_tests[@]}"; do
   echo " - Simulator Device Name: $simulator_device_name"
   echo " - Xcodebuild Run Destination: $simulator_run_device"
 
-  # Overwrite the fixed environment.json with current device set
+  # Write this batch's configuration outside the already-built test bundle.
   locales_json_array=$(printf '%s\n' "${all_locales[@]}" | jq -R . | jq -s .)
   themes_json_array=$(echo "$themes_key" | tr '|' '\n' | jq -R . | jq -s .)
   echo " - Locales JSON Array: $locales_json_array"
@@ -474,27 +507,18 @@ for device_set_key in "${!device_set_tests[@]}"; do
     \"LOCALES\": $locales_json_array,
     \"THEMES\": $themes_json_array,
     \"SIMULATOR_DEVICE_NAME\": \"$simulator_device_name\"
-  }" > "$environment_file"
+  }" > "$runtime_environment_file"
 
-  echo " - Environment file created at: $environment_file"
-  cat "$environment_file"  # Print the contents of the file for verification
+  echo " - Runtime environment file created at: $runtime_environment_file"
+  cat "$runtime_environment_file"  # Print the contents of the file for verification
 
   # Validate the generated environment.json
-  if ! jq empty "$environment_file" >/dev/null 2>&1; then
-    echo "Error: Generated environment.json ($environment_file) is invalid."
+  if ! jq empty "$runtime_environment_file" >/dev/null 2>&1; then
+    echo "Error: Generated environment.json ($runtime_environment_file) is invalid."
     exit 1
   fi
 
-  # Find OS version for the simulator run device, if one is pinned in config.
-  os_version=""
-  for i in "${!device_names[@]}"; do
-    if [ "${device_names[$i]}" == "$simulator_run_device" ]; then
-      os_version="${os_versions[$i]}"
-      break
-    fi
-  done
-
-  echo " - OS Version for Simulator '$simulator_run_device': ${os_version:-latest}"
+  echo " - OS Version for Simulator '$simulator_run_device': ${simulator_os_version:-latest}"
 
   # Prepare result path
   # Concatenate test class names
@@ -503,26 +527,15 @@ for device_set_key in "${!device_set_tests[@]}"; do
   # Sanitize test_classes_concat to remove spaces and special characters
   test_classes_concat=$(echo "$test_classes_concat" | tr ' /' '__')
   result_path="$results_dir/${test_classes_concat}_tests.xcresult"
-  mkdir -p "$results_dir"
   rm -rf "$result_path"
 
   echo " - Result Path: $result_path"
 
-  # Prepare the xcodebuild command
-  if [ -n "$os_version" ] && [ "$os_version" != "null" ]; then
-    destination="platform=iOS Simulator,name=$simulator_run_device,OS=$os_version"
-  else
-    destination="platform=iOS Simulator,name=$simulator_run_device"
-  fi
-
-  xcodebuild_cmd="xcodebuild test \
+  xcodebuild_cmd="xcodebuild test-without-building \
     -project Client.xcodeproj \
     -scheme \"$scheme\" \
-    -clonedSourcePackagesDirPath \"SourcePackages/\" \
     -derivedDataPath \"../DerivedData\" \
     -destination \"$destination\" \
-    -showBuildTimingSummary \
-    COMPILATION_CACHE_ENABLE_CACHING=YES \
     $only_testing_params \
     -resultBundlePath \"$result_path\""
 
