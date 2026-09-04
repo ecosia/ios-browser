@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Ecosia: Git LFS post-merge hook, added because `git lfs install` won't
+# create hooks in this directory on its own (it's managed by setup_hooks.sh,
+# not by git-lfs). Prints a message and continues (doesn't block the merge)
+# if git-lfs isn't installed, since not every checkout needs LFS.
+if command -v git-lfs >/dev/null 2>&1; then
+    git lfs post-merge "$@"
+else
+    echo "git-lfs not installed, skipping LFS post-merge hook"
+fi

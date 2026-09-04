@@ -7,6 +7,21 @@ refs_input=$(mktemp)
 trap 'rm -f "$refs_input"' EXIT
 cat > "$refs_input"
 
+# Ecosia: Git LFS pre-push check, merged in by hand because `git lfs install`
+# refuses to overwrite an existing pre-push hook rather than merging into it.
+# Prints a message and continues (doesn't block the push) if git-lfs isn't
+# installed, since not every checkout needs LFS. Reads from $refs_input (not
+# stdin) since stdin was already consumed above.
+if command -v git-lfs >/dev/null 2>&1; then
+    git lfs pre-push "$@" < "$refs_input"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then
+        exit $RESULT
+    fi
+else
+    echo "git-lfs not installed, skipping LFS pre-push check"
+fi
+
 ## Ecosia: Comment out pre-commit hook. This is handled as a check step on PRs.
 
 # echo "Starting Swiftlint Check..."

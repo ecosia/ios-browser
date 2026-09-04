@@ -102,6 +102,25 @@ run_case \
 " \
   ""
 
+# git-lfs not on PATH -> hook prints a skip message and still succeeds.
+# Strip PATH down to /usr/bin:/bin so `command -v git-lfs` genuinely fails
+# (rather than mocking it), while git/mktemp/cat/printf are still found there.
+set +e
+output=$(printf 'refs/heads/my-feature abc123 refs/heads/my-feature def456\n' \
+  | PATH="/usr/bin:/bin" "$hook" "origin" "git@github.com:some-org/some-other-repo.git")
+status=$?
+set -e
+
+if [ "$status" -ne 0 ]; then
+  echo "FAIL: prints a skip message and succeeds when git-lfs is not installed (hook exited $status, expected 0)"
+  failures=$((failures + 1))
+elif ! echo "$output" | grep -qF "skipping LFS pre-push check"; then
+  echo "FAIL: prints a skip message and succeeds when git-lfs is not installed (expected skip message, got: $output)"
+  failures=$((failures + 1))
+else
+  echo "PASS: prints a skip message and succeeds when git-lfs is not installed"
+fi
+
 echo ""
 if [ "$failures" -eq 0 ]; then
   echo "All pre-push hook tests passed."

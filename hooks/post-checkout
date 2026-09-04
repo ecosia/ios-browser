@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Ecosia: Git LFS post-checkout hook, merged in by hand because `git lfs
+# install` refuses to overwrite an existing post-checkout hook rather than
+# merging into it. Prints a message and continues (doesn't block the
+# checkout) if git-lfs isn't installed, since not every checkout needs LFS.
+if command -v git-lfs >/dev/null 2>&1; then
+    git lfs post-checkout "$@"
+else
+    echo "git-lfs not installed, skipping LFS post-checkout hook"
+fi
+
 # Directory containing your custom hooks
 HOOKS_DIR="hooks"
 
