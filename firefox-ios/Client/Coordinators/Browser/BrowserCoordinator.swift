@@ -673,6 +673,12 @@ class BrowserCoordinator: BaseCoordinator,
         showETPMenu(sourceView: browserViewController.addressToolbarContainer)
     }
 
+    func pressedMailApp() {
+        guard let nav = router.navigationController.presentedViewController as? UINavigationController else { return }
+        let viewController = OpenWithSettingsViewController(prefs: profile.prefs, windowUUID: windowUUID)
+        nav.pushViewController(viewController, animated: true)
+    }
+
     func presentSavePDFController() {
         guard let selectedTab = browserViewController.tabManager.selectedTab else { return }
 
