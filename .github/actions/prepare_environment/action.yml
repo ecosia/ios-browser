@@ -55,8 +55,26 @@ runs:
         ruby-version: 3.3
         bundler-cache: true
 
-    - name: Install npm
-      uses: bahmutov/npm-install@v1
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+
+    - name: Restore Node dependencies
+      id: restore-node-dependencies
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ runner.os }}-${{ runner.arch }}-node24-${{ hashFiles('package-lock.json') }}
+
+    - name: Install Node dependencies
+      if: steps.restore-node-dependencies.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm ci
+
+    - name: Build user scripts
+      shell: bash
+      run: npm run build
       
     - name: Restore SPM Cache
       id: restore-spm-cache
@@ -113,4 +131,4 @@ runs:
         
     - name: Setup environment and generate Xcode project with Tuist
       shell: bash
-      run: ./tuist-setup.sh --no-open
+      run: ./tuist-setup.sh --no-open --skip-bootstrap
