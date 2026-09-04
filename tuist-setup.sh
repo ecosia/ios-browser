@@ -58,6 +58,14 @@ if [ "$RUN_BOOTSTRAP" = true ]; then
     echo -e "${GREEN}✓ Bootstrap complete${NC}\n"
 else
     echo -e "${YELLOW}Skipping bootstrap (--skip-bootstrap)${NC}\n"
+
+    # Ecosia: CI installs Node dependencies and builds user scripts before invoking this script.
+    # Bootstrap is skipped there to avoid a duplicate npm install, but Nimbus still needs its
+    # generated helper scripts on a clean runner.
+    NIMBUS_FML_FILE=./firefox-ios/nimbus.fml.yaml
+    curl --proto '=https' --tlsv1.2 -sSf \
+        https://raw.githubusercontent.com/mozilla/application-services/main/components/nimbus/ios/scripts/bootstrap.sh \
+        | bash -s -- --directory ./firefox-ios/bin "$NIMBUS_FML_FILE"
 fi
 
 # Ecosia: the downloaded script stores FML binaries in versioned directories, so checking the
