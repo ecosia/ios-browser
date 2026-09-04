@@ -19,7 +19,41 @@ on:
   workflow_dispatch:
 
 jobs:
+  classify_changes:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Check Merge Test Relevance
+    outputs:
+      should_run: ${{ steps.classify.outputs.should_run }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          mapfile -d '' changed_files < <(git diff --name-only -z "$BASE_SHA" "$HEAD_SHA")
+          python3 .github/scripts/classify_merge_test_changes.py "${changed_files[@]}" >> "$GITHUB_OUTPUT"
+
   execute_merge_tests:
+    needs: classify_changes
+    if: >-
+      always() &&
+      (
+        github.event_name != 'pull_request' ||
+        (
+          needs.classify_changes.result == 'success' &&
+          needs.classify_changes.outputs.should_run == 'true'
+        )
+      )
     runs-on: macos-26-xlarge
     name: Execute Merge Tests
 
