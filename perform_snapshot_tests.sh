@@ -252,6 +252,7 @@ while IFS= read -r test_bundle; do
     devices_field=$(echo "$test_class" | jq -r '.devices // empty')
     locales_field=$(echo "$test_class" | jq -r '.locales // empty')
     themes_field=$(echo "$test_class" | jq -r '.themes // empty')
+    run_separately=$(echo "$test_class" | jq -r '.runSeparately // false')
 
     echo "Processing Test Class: $class_name"
 
@@ -374,6 +375,9 @@ while IFS= read -r test_bundle; do
 
     # Create a unique key for the device and theme set
     device_set_key=$(create_test_run_key "$(create_device_set_key "${test_devices[@]}")" "$themes_key")
+    if [ "$run_separately" == "true" ]; then
+      device_set_key="${device_set_key}__class__${class_name}"
+    fi
     echo " - Test Run Key: $device_set_key"
 
     # Append the test class to the corresponding run set
