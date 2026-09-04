@@ -7,6 +7,24 @@ refs_input=$(mktemp)
 trap 'rm -f "$refs_input"' EXIT
 cat > "$refs_input"
 
+# Ecosia: Git LFS pre-push check, merged in by hand because `git lfs install`
+# refuses to overwrite an existing pre-push hook rather than merging into it.
+# LFS is only relevant if the SnapshotArtifacts submodule (the only thing
+# tracked with filter=lfs) is actually checked out — both it and git-lfs
+# itself are optional, so this stays a no-op for anyone who skipped either.
+# Reads from $refs_input (not stdin) since stdin was already consumed above.
+if [ -f "firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts/.git" ]; then
+    if command -v git-lfs >/dev/null 2>&1; then
+        git lfs pre-push "$@" < "$refs_input"
+        RESULT=$?
+        if [ $RESULT -ne 0 ]; then
+            exit $RESULT
+        fi
+    else
+        echo "git-lfs not installed, skipping LFS pre-push check"
+    fi
+fi
+
 ## Ecosia: Comment out pre-commit hook. This is handled as a check step on PRs.
 
 # echo "Starting Swiftlint Check..."
