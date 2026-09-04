@@ -60,6 +60,10 @@ else
     echo -e "${YELLOW}Skipping bootstrap (--skip-bootstrap)${NC}\n"
 fi
 
+# Ecosia: the downloaded script stores FML binaries in versioned directories, so checking the
+# remote checksum on every build adds a network failure point without changing the selected binary.
+python3 .github/scripts/disable_nimbus_checksum_refresh.py firefox-ios/bin/nimbus-fml.sh
+
 # Install SPM dependencies and generate project (run from firefox-ios so Tuist doesn't pass invalid --path to swift package)
 echo -e "${BLUE}Installing Swift package dependencies (force resolved versions)...${NC}"
 (cd firefox-ios && tuist install --force-resolved-versions)
