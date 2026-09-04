@@ -121,6 +121,38 @@ else
   echo "PASS: prints a skip message and succeeds when git-lfs is not installed"
 fi
 
+# SnapshotArtifacts submodule not checked out -> hook stays silent even with
+# git-lfs on PATH, since there's nothing tracked with filter=lfs to act on.
+# Temporarily move its ".git" marker aside (it's a plain text file for an
+# initialized submodule, not a real repo, so this is safe) and always
+# restore it, even on failure.
+submodule_git="$script_dir/../firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts/.git"
+if [ -f "$submodule_git" ]; then
+  mv "$submodule_git" "$submodule_git.bak"
+  trap 'mv "$submodule_git.bak" "$submodule_git" 2>/dev/null' EXIT
+
+  set +e
+  output=$(printf 'refs/heads/my-feature abc123 refs/heads/my-feature def456\n' \
+    | (cd "$script_dir/.." && "$hook" "origin" "git@github.com:some-org/some-other-repo.git"))
+  status=$?
+  set -e
+
+  mv "$submodule_git.bak" "$submodule_git"
+  trap - EXIT
+
+  if [ "$status" -ne 0 ]; then
+    echo "FAIL: stays silent when the SnapshotArtifacts submodule isn't checked out (hook exited $status, expected 0)"
+    failures=$((failures + 1))
+  elif [ -n "$output" ]; then
+    echo "FAIL: stays silent when the SnapshotArtifacts submodule isn't checked out (expected no output, got: $output)"
+    failures=$((failures + 1))
+  else
+    echo "PASS: stays silent when the SnapshotArtifacts submodule isn't checked out"
+  fi
+else
+  echo "SKIP: stays silent when the SnapshotArtifacts submodule isn't checked out (submodule not initialized here either)"
+fi
+
 echo ""
 if [ "$failures" -eq 0 ]; then
   echo "All pre-push hook tests passed."
