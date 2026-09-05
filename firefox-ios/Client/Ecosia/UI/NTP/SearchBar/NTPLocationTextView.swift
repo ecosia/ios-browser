@@ -39,6 +39,14 @@ final class NTPLocationTextView: UITextView {
     }
 
     private func commonInit() {
+        // Opt into TextKit 1 (legacy) layout. A default UITextView uses TextKit 2, whose
+        // `_UITextKit2LayoutController` crashes in `-[UITextView firstRectForRange:]` /
+        // `NSTextRange` when the accessibility system queries the field's geometry — e.g. XCUITest
+        // computing an activation point — aborting the app (seen on iOS 17.3, MOB-4662). Reading
+        // `layoutManager` migrates the view to TextKit 1 compatibility mode, avoiding that code
+        // path; it must happen before the view lays out any text.
+        _ = layoutManager
+
         font = .preferredFont(forTextStyle: .body)
         adjustsFontForContentSizeCategory = true
         backgroundColor = .clear
