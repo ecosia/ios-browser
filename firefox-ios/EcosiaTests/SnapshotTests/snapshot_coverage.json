@@ -1,9 +1,18 @@
 {
+  "sharedSourcePatterns": [
+    "firefox-ios/Client/Ecosia/UI/Ecosia.xcassets/**",
+    "firefox-ios/Client/Ecosia/UI/Theme/**",
+    "firefox-ios/Ecosia/L10N/**",
+    "firefox-ios/Ecosia/UI/Common.xcassets/**",
+    "firefox-ios/Ecosia/UI/DesignSystem/**",
+    "firefox-ios/Ecosia/UI/Extensions/Color+Ecosia.swift",
+    "firefox-ios/Ecosia/UI/ThemeableSwiftUIView.swift"
+  ],
   "entries": [
     {
       "area": "Welcome screen",
       "sources": [
-        "firefox-ios/Ecosia/UI/ProductTour/WelcomeView.swift"
+        "firefox-ios/Ecosia/UI/ProductTour/**"
       ],
       "snapshotTest": "OnboardingTests.testWelcomeScreen",
       "localesThemes": "all locales, light only"
@@ -11,7 +20,8 @@
     {
       "area": "NTP header logo",
       "sources": [
-        "firefox-ios/Client/Ecosia/UI/NTP/Header/NTPHeader.swift"
+        "firefox-ios/Client/Ecosia/UI/NTP/Header/**",
+        "firefox-ios/Ecosia/UI/NTP/Header/**"
       ],
       "snapshotTest": "HomepageComponentTests.testNTPHeaderLogo",
       "localesThemes": "en, light + dark"
@@ -19,7 +29,8 @@
     {
       "area": "Customize button",
       "sources": [
-        "firefox-ios/Client/Ecosia/UI/NTP/Header/NTPHeader.swift"
+        "firefox-ios/Client/Ecosia/UI/NTP/Header/**",
+        "firefox-ios/Ecosia/UI/NTP/Header/**"
       ],
       "snapshotTest": "HomepageComponentTests.testEcosiaCustomizeButton",
       "localesThemes": "en, light + dark"
@@ -27,7 +38,8 @@
     {
       "area": "Account nav button (logged out)",
       "sources": [
-        "firefox-ios/Client/Ecosia/UI/NTP/Header/NTPHeader.swift"
+        "firefox-ios/Client/Ecosia/UI/NTP/Header/**",
+        "firefox-ios/Ecosia/UI/NTP/Header/**"
       ],
       "snapshotTest": "HomepageComponentTests.testEcosiaAccountNavButton_loggedOut",
       "localesThemes": "en, light + dark"
@@ -35,9 +47,7 @@
     {
       "area": "Impact cell",
       "sources": [
-        "firefox-ios/Client/Ecosia/UI/NTP/Impact/NTPImpactCell.swift",
-        "firefox-ios/Client/Ecosia/UI/NTP/Impact/NTPImpactRowView.swift",
-        "firefox-ios/Client/Ecosia/UI/NTP/Impact/ClimateImpactInfo.swift"
+        "firefox-ios/Client/Ecosia/UI/NTP/Impact/**"
       ],
       "snapshotTest": "HomepageComponentTests.testNTPImpactCell_withImpactRows",
       "localesThemes": "en, light only"
@@ -45,7 +55,7 @@
     {
       "area": "NTP search bar",
       "sources": [
-        "firefox-ios/Client/Ecosia/UI/NTP/SearchBar/NTPSearchBarView.swift"
+        "firefox-ios/Client/Ecosia/UI/NTP/SearchBar/**"
       ],
       "snapshotTest": "HomepageComponentTests.testNTPSearchBar_resting",
       "localesThemes": "all locales, light + dark"
@@ -53,7 +63,7 @@
     {
       "area": "Pinned top site cell",
       "sources": [
-        "firefox-ios/Client/Frontend/Home/TopSites/TopSiteItemCell.swift"
+        "firefox-ios/Client/Frontend/Home/TopSites/**"
       ],
       "snapshotTest": "HomepageComponentTests.testTopSiteItemCell_pinned",
       "localesThemes": "en, light + dark"
@@ -61,7 +71,7 @@
     {
       "area": "Omnibox upload drawer",
       "sources": [
-        "firefox-ios/Ecosia/UI/NTP/Upload/OmniboxUploadDrawerView.swift"
+        "firefox-ios/Ecosia/UI/NTP/Upload/**"
       ],
       "snapshotTest": "NTPOmniboxUploadDrawerSnapshotTests.testOmniboxUploadDrawerSheet",
       "localesThemes": "all locales, light + dark"
