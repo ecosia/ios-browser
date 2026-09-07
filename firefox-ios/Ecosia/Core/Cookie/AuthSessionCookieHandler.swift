@@ -2,12 +2,18 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Foundation
+import WebKit
 
 final class AuthSessionCookieHandler: BaseCookieHandler {
 
     init() {
         super.init(cookieName: Cookie.authSession.rawValue)
+    }
+
+    /// Mirrors `EASC` into `HTTPCookieStorage.shared` as soon as the WKWebView cookie store reports it,
+    /// so native `URLSession` calls can see the web session without waiting for an explicit sync point
+    override func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol) {
+        HTTPCookieStorage.shared.setCookie(cookie)
     }
 
     /// Removes any `EASC` cookie previously copied into `HTTPCookieStorage.shared`.
