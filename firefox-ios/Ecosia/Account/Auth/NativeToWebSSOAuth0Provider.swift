@@ -54,16 +54,31 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
         EcosiaLogger.auth.info("\(Cookie.authSession.name) cookie cleared successfully")
     }
 
-    /// Clears EASC (Ecosia Auth Session Cookie) cookies from the default web data store.
+    /// Clears `EASC` (Ecosia Auth Session Cookie) and any cookie scoped to the Auth0 tenant domain
+    /// (e.g. `login.ecosia.org`) from the WKWebView's cookie store.
     ///
     /// Deletes every matching cookie, not just the first: the store can hold more than one `EASC`
     /// at once if they differ by domain/path (e.g. a leftover from a previous session scoped
     /// slightly differently), and leaving one behind lets the next login's session get confused
     /// with the stale one.
+    ///
+    /// The Auth0-domain cookies matter for a separate reason: the native login uses
+    /// `.useEphemeralSession()` so it never leaves an Auth0 SSO session cookie behind, but the
+    /// invisible tab used for session transfer runs on the shared, persistent store. If Auth0's
+    /// custom domain sets its own SSO cookie there while processing the transfer token, nothing
+    /// clears it, and it can let a later, different account's transfer silently reuse the previous
+    /// user's still-valid Auth0 session. We don't know that cookie's name (it varies by
+    /// tenant/SDK), so it's matched by domain instead.
     private func clearWebSessionCookies() async {
         let cookieStore = await WKWebsiteDataStore.default().httpCookieStore
-        let sessionCookies = await cookieStore.allCookies().filter { $0.name == Cookie.authSession.name }
-        for cookie in sessionCookies {
+        let auth0Domain = settings.domain
+        let cookiesToClear = await cookieStore.allCookies().filter {
+            $0.name == Cookie.authSession.name ||
+            $0.domain == auth0Domain ||
+            $0.domain == ".\(auth0Domain)" ||
+            $0.domain.hasSuffix(".\(auth0Domain)")
+        }
+        for cookie in cookiesToClear {
             await cookieStore.deleteCookie(cookie)
         }
     }
