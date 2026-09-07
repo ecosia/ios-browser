@@ -50,7 +50,6 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
         // Skip calling webAuth.clearSession() to avoid Auth0's native logout alert
         // Logout happens immediately without any confirmation dialogs by clearing the auth session cookie
         await clearWebSessionCookies()
-        await clearWebStorage()
         EcosiaLogger.auth.info("\(Cookie.authSession.name) cookie cleared successfully")
     }
 
@@ -81,34 +80,6 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
         for cookie in cookiesToClear {
             await cookieStore.deleteCookie(cookie)
         }
-    }
-
-    /// Clears client-side web storage (`localStorage`, `sessionStorage`, IndexedDB, Service Worker
-    /// registrations) for the Ecosia domain from the default web data store. Cookies are untouched
-    /// here — `EASC` is cleared separately by name in `clearWebSessionCookies()`, and everything
-    /// else (analytics, consent, feature-flag cookies) is intentionally left alone.
-    ///
-    /// The native-to-web session transfer depends on the web app noticing a new session and
-    /// re-running its own login handshake. If it caches "already logged in as X" client-side,
-    /// that cache surviving a logout can make it skip the handshake for the next login, even
-    /// though a fresh session-transfer cookie was set. Scoped to the Ecosia domain (matches by
-    /// eTLD+1, so `www.`/`login.`/`api.` subdomains are all covered) so unrelated sites the user
-    /// has visited in regular tabs keep their own storage untouched. Deliberately excludes asset/
-    /// offline caches (`FetchCache`, `OfflineWebApplicationCache`) since those hold cached static
-    /// resources, not login state — clearing them would just force re-downloads for no benefit.
-    private func clearWebStorage() async {
-        let types: Set<String> = [
-            WKWebsiteDataTypeLocalStorage,
-            WKWebsiteDataTypeSessionStorage,
-            WKWebsiteDataTypeIndexedDBDatabases,
-            WKWebsiteDataTypeServiceWorkerRegistrations
-        ]
-        let dataStore = await WKWebsiteDataStore.default()
-        let records = await dataStore.dataRecords(ofTypes: types)
-        let domain = environment.urlProvider.domain
-        let matching = records.filter { $0.displayName == domain || $0.displayName.hasSuffix(".\(domain)") }
-        guard !matching.isEmpty else { return }
-        await dataStore.removeData(ofTypes: types, for: matching)
     }
 }
 
