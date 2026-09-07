@@ -27,7 +27,7 @@ final class EcosiaAccountImpactViewTests: SnapshotBaseTests {
 }
 
 private extension EcosiaAccountImpactViewTests {
-    
+
     @available(iOS 16, *)
     func makeHostingController() -> UIViewController {
         makeSnapshotHostingController(
@@ -41,7 +41,7 @@ private extension EcosiaAccountImpactViewTests {
             size: CGSize(width: 160, height: 72)
         )
     }
-    
+
     func makeSnapshotHostingController<Content: View>(
         @ViewBuilder content: () -> Content,
         size: CGSize
@@ -50,7 +50,7 @@ private extension EcosiaAccountImpactViewTests {
             content()
         }
             .frame(width: size.width, height: size.height)
-        
+
         let controller = UIHostingController(rootView: root)
         controller.view.bounds = CGRect(origin: .zero, size: size)
         return controller
