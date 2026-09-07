@@ -56,7 +56,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
     /// Clears `EASC` (Ecosia Auth Session Cookie) and any cookie scoped to the Auth0 tenant domain
     /// (e.g. `login.ecosia.org`) from the WKWebView's cookie store.
     ///
-    /// Deletes every matching cookie, not just the first: the store can hold more than one `EASC`
+    /// Deletes every matching cookie, the store can hold more than one `EASC`
     /// at once if they differ by domain/path (e.g. a leftover from a previous session scoped
     /// slightly differently), and leaving one behind lets the next login's session get confused
     /// with the stale one.
@@ -79,24 +79,6 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
         }
         for cookie in cookiesToClear {
             await cookieStore.deleteCookie(cookie)
-        }
-    }
-}
-
-private extension WKWebsiteDataStore {
-    func dataRecords(ofTypes types: Set<String>) async -> [WKWebsiteDataRecord] {
-        await withCheckedContinuation { continuation in
-            fetchDataRecords(ofTypes: types) { records in
-                continuation.resume(returning: records)
-            }
-        }
-    }
-
-    func removeData(ofTypes types: Set<String>, for records: [WKWebsiteDataRecord]) async {
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            removeData(ofTypes: types, for: records) {
-                continuation.resume()
-            }
         }
     }
 }
