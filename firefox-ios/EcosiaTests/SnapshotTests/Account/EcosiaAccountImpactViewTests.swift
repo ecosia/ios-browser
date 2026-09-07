@@ -31,13 +31,15 @@ private extension EcosiaAccountImpactViewTests {
     @available(iOS 16, *)
     func makeHostingController() -> UIViewController {
         makeSnapshotHostingController(
-            content: { EcosiaAccountImpactView(
+            content: {
+                EcosiaAccountImpactView(
                     viewModel: EcosiaAccountImpactViewModel(
                         onLogin: {},
                         onDismiss: {}
                     ),
                     windowUUID: .XCTestDefaultUUID
-            ) },
+                )
+            },
             size: CGSize(width: 160, height: 72)
         )
     }
