@@ -53,11 +53,18 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
         EcosiaLogger.auth.info("\(Cookie.authSession.name) cookie cleared successfully")
     }
 
-    /// Clears EASC (Ecosia Auth Session Cookie) cookies from the default web data store
+    /// Clears EASC (Ecosia Auth Session Cookie) cookies from the default web data store.
+    ///
+    /// Deletes every matching cookie, not just the first: the store can hold more than one `EASC`
+    /// at once if they differ by domain/path (e.g. a leftover from a previous session scoped
+    /// slightly differently), and leaving one behind lets the next login's session get confused
+    /// with the stale one.
     private func clearWebSessionCookies() async {
         let cookieStore = await WKWebsiteDataStore.default().httpCookieStore
-        guard let sessionCookie = await cookieStore.allCookies().first(where: { $0.name == Cookie.authSession.name }) else { return }
-        await cookieStore.deleteCookie(sessionCookie)
+        let sessionCookies = await cookieStore.allCookies().filter { $0.name == Cookie.authSession.name }
+        for cookie in sessionCookies {
+            await cookieStore.deleteCookie(cookie)
+        }
     }
 }
 
