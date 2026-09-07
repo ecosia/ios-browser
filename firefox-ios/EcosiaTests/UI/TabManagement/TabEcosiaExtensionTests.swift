@@ -113,6 +113,32 @@ final class TabEcosiaExtensionTests: XCTestCase {
         XCTAssertNil(result.value(forHTTPHeaderField: "x-ecosia-app-language-region"))
     }
 
+    // MARK: - Ecosia app header
+
+    func testEcosiaAppHeaderAddedForEcosiaURL() {
+        let tab = makeTab(isPrivate: false)
+        let url = ecosiaURL("/")
+        let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
+
+        XCTAssertEqual(result.value(forHTTPHeaderField: "X-Ecosia-App"), "ios/\(AppInfo.ecosiaAppVersion)")
+    }
+
+    func testEcosiaAppHeaderAddedForEcosiaNonSERPURL() {
+        let tab = makeTab(isPrivate: false)
+        let url = ecosiaURL("/privacy")
+        let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
+
+        XCTAssertEqual(result.value(forHTTPHeaderField: "X-Ecosia-App"), "ios/\(AppInfo.ecosiaAppVersion)")
+    }
+
+    func testEcosiaAppHeaderNotAddedForNonEcosiaURL() {
+        let tab = makeTab(isPrivate: false)
+        let url = URL(string: "https://example.com/search?q=cats")!
+        let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
+
+        XCTAssertNil(result.value(forHTTPHeaderField: "X-Ecosia-App"))
+    }
+
     // MARK: - loadRequest integration
 
     func testLoadRequestPassesEcosifiedURLToWebView() {
