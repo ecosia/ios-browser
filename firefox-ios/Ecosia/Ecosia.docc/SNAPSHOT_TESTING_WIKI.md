@@ -9,7 +9,7 @@ When you change a component listed there, update its snapshot test and re-record
 
 See [SNAPSHOT_COVERAGE_MAP.md](SNAPSHOT_COVERAGE_MAP.md) — the table is generated from `firefox-ios/EcosiaTests/SnapshotTests/snapshot_coverage.json`; after adding coverage, update that file and run `./generate_snapshot_coverage_docs.sh` from the repo root rather than editing the table by hand.
 
-**Adding coverage for a new screen:** create a test under `EcosiaTests/SnapshotTests/`, register the class in `snapshot_configuration.json`, add an entry to `snapshot_coverage.json`, run `./generate_snapshot_coverage_docs.sh`, run `sh tuist-setup.sh`, and record references.
+**Adding coverage for a new screen:** create a test under [EcosiaTests/SnapshotTests/](../../EcosiaTests/SnapshotTests), register the class in [snapshot_configuration.json](../../EcosiaTests/SnapshotTests/snapshot_configuration.json), add an entry to [snapshot_coverage.json](../../EcosiaTests/SnapshotTests/snapshot_coverage.json), from the repo root run `./generate_snapshot_coverage_docs.sh` and run `sh tuist-setup.sh`, and record references.
 
 **CI guard:** pull requests that change sources listed in `snapshot_coverage.json` must also change something under `EcosiaTests/SnapshotTests/` (tests, config, or the `SnapshotArtifacts` submodule pointer). See `check_snapshot_updates.sh`.
 

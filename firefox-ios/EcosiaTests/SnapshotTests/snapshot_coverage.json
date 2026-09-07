@@ -65,6 +65,14 @@
       ],
       "snapshotTest": "NTPOmniboxUploadDrawerSnapshotTests.testOmniboxUploadDrawerSheet",
       "localesThemes": "all locales, light + dark"
+    },
+    {
+      "area": "Impact View",
+      "sources": [
+        "firefox-ios/Ecosia/UI/Account/EcosiaAccountImpactViewTests"
+      ],
+      "snapshotTest": "EcosiaAccountImpactViewTests.testImpactView",
+      "localesThemes": "all locales, light + dark"
     }
   ]
 }

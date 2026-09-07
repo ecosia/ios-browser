@@ -50,6 +50,12 @@
           "devices": ["iPhone 16 Pro"],
           "locales": ["all"],
           "themes": ["all"]
+        },
+        {
+          "name": "EcosiaAccountImpactViewTests",
+          "devices": ["iPhone 16 Pro"],
+          "locales": ["all"],
+          "themes": ["all"]
         }
       ]
     }
