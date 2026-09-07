@@ -103,7 +103,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
             WKWebsiteDataTypeIndexedDBDatabases,
             WKWebsiteDataTypeServiceWorkerRegistrations
         ]
-        let dataStore = WKWebsiteDataStore.default()
+        let dataStore = await WKWebsiteDataStore.default()
         let records = await dataStore.dataRecords(ofTypes: types)
         let domain = environment.urlProvider.domain
         let matching = records.filter { $0.displayName == domain || $0.displayName.hasSuffix(".\(domain)") }
