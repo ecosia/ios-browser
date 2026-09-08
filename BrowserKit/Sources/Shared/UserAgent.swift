@@ -192,7 +192,8 @@ struct CustomUserAgentConstant {
         // Ecosia: WKWebView doesn't propagate `customUserAgent` overrides to fetch/XHR/Worker requests, only to document navigations,
         // we want to keep these domains on the plain desktop UA so every request (navigation and subresource) uses the same string.
         "ecosia.org": UserAgent.desktopUserAgent(),
-        "ecosia-staging.xyz": UserAgent.desktopUserAgent()
+        "ecosia-staging.xyz": UserAgent.desktopUserAgent(),
+        "ecosia-dev.xyz": UserAgent.desktopUserAgent()
     ]
 }
 

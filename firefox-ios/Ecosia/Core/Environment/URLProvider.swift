@@ -299,8 +299,11 @@ public enum URLProvider {
     // MARK: - Auth0 Configuration
 
     /// Auth0 domain for authentication (custom domain)
+    /// Overridable via the `AUTH0_DOMAIN` build setting (see EcosiaDebug.xcconfig) for
+    /// environments — like the simulator debug build — that authenticate against a
+    /// separate Auth0 tenant/custom domain than the rest of `domain`.
     public var auth0Domain: String {
-        "login.\(domain)"
+        EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_DOMAIN") ?? "login.\(domain)"
     }
 
     /// Auth0 cookie domain for session management
