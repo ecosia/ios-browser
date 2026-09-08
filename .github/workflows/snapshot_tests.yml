@@ -3,11 +3,44 @@ name: Snapshot Tests
 on:
   pull_request:
     branches: [main]
-    paths:
-      - 'firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig'
+  push:
+    branches: [dc-mob-4907-xcode-compilation-cache]
+  workflow_dispatch:
 
 jobs:
+  classify_snapshot_changes:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Check Snapshot Test Relevance
+    outputs:
+      should_run: ${{ steps.classify.outputs.should_run }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        run: |
+          should_run=$(./check_snapshot_updates.sh \
+            --should-run \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}")
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+
   execute_snapshot_tests:
+    needs: classify_snapshot_changes
+    if: >-
+      always() &&
+      (
+        github.event_name != 'pull_request' ||
+        needs.classify_snapshot_changes.result != 'success' ||
+        needs.classify_snapshot_changes.outputs.should_run == 'true'
+      )
     runs-on: macos-26
     name: Execute Snapshot Tests
 
@@ -23,18 +56,26 @@ jobs:
 
       - uses: ./.github/actions/setup-safe-chain
 
-      - name: Check for MARKETING_VERSION change
-        id: check_marketing_version
-        run: sh ./check_marketing_version.sh
-
       - name: Prepare environment
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
         uses: ./.github/actions/prepare_environment
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
+      - name: Identify Xcode compilation cache generation
+        id: xcode-compilation-cache
+        run: |
+          echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+          echo "toolchain=$(xcodebuild -version | shasum -a 256 | cut -c1-12)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Xcode compilation cache
+        uses: actions/cache@v4
+        with:
+          path: DerivedData/CompilationCache.noindex
+          key: xcode-compilation-snapshot-tests-${{ runner.os }}-${{ runner.arch }}-${{ steps.xcode-compilation-cache.outputs.toolchain }}-${{ steps.xcode-compilation-cache.outputs.week }}
+          restore-keys: |
+            xcode-compilation-snapshot-tests-${{ runner.os }}-${{ runner.arch }}-${{ steps.xcode-compilation-cache.outputs.toolchain }}-
+
       - name: Perform Snapshot Tests and Publish Test reports
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
         id: perform-snapshot-tests
         uses: ./.github/actions/perform_snapshot_tests
         with:
