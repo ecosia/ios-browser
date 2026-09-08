@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 @testable import Ecosia
 import XCTest
 
@@ -39,12 +40,12 @@ final class BaseRequestTests: XCTestCase {
 
     func testAPIRequestAttachesEcosiaAppHeader() throws {
         let request = try TestRequest(baseURL: .api).makeURLRequest()
-        XCTAssertEqual(request.value(forHTTPHeaderField: "X-Ecosia-App"), "ios")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "X-Ecosia-App"), "ios/\(AppInfo.ecosiaAppVersion)")
     }
 
     func testWebRequestAttachesEcosiaAppHeader() throws {
         let request = try TestRequest(baseURL: .web).makeURLRequest()
-        XCTAssertEqual(request.value(forHTTPHeaderField: "X-Ecosia-App"), "ios")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "X-Ecosia-App"), "ios/\(AppInfo.ecosiaAppVersion)")
     }
 
     func testCustomRequestDoesNotAttachEcosiaAppHeader() throws {
