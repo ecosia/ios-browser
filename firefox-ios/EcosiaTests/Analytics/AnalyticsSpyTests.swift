@@ -126,6 +126,12 @@ final class AnalyticsSpy: Analytics, @unchecked Sendable {
         inappSearchIsPrivateCalled = isPrivate
     }
 
+    var ntpViewedCalled = false
+    override func ntpViewed() {
+        ntpViewedCalled = true
+        super.ntpViewed()
+    }
+
     var ntpTopSiteActionCalled: Action.TopSite?
     var ntpTopSitePropertyCalled: Property.TopSite?
     var ntpTopSitePositionCalled: NSNumber?
@@ -1164,6 +1170,23 @@ final class AnalyticsContextTests: XCTestCase, @unchecked Sendable {
         if let seedCountContext = seedCountContext {
             XCTAssertEqual(seedCountContext.data["amount"] as? Int, User.shared.seedCount)
         }
+    }
+
+    // MARK: - NTP page view
+
+    func testNTPViewedTracksStructuredViewEvent() {
+        // Arrange
+        User.shared.sendAnonymousUsageData = true
+
+        // Act
+        analyticsSpy.ntpViewed()
+
+        // Assert
+        XCTAssertTrue(analyticsSpy.ntpViewedCalled)
+        let event = analyticsSpy.trackedEvents.first as? Structured
+        XCTAssertEqual(event?.category, Analytics.Category.ntp.rawValue)
+        XCTAssertEqual(event?.action, Analytics.Action.view.rawValue)
+        XCTAssertNil(event?.label)
     }
 
     // MARK: - Helpers

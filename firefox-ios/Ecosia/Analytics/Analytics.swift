@@ -225,6 +225,14 @@ open class Analytics {
     }
 
     // MARK: NTP
+    /// Structured-event stand-in for a Snowplow page view of the new-tab page.
+    /// iOS has no `page_view`, and screen-view autotracking is off because
+    /// Firefox's view-controller graph would flood the pipeline.
+    public func ntpViewed() {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: Action.view.rawValue))
+    }
+
     public func ntpCustomisation(_ action: Action.NTPCustomization, label: Label.NTP) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)

@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Ecosia
 import Redux
 import Shared
 import Storage
@@ -194,6 +195,8 @@ final class HomepageViewController: UIViewController,
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // Ecosia: Structured page-view equivalent for the NTP
+        Analytics.shared.ntpViewed()
         store.dispatch(
             HomepageAction(
                 windowUUID: windowUUID,
