@@ -69,7 +69,7 @@ public extension BaseRequest {
         // Ecosia: only attach app-identifying/Cloudflare Access headers when the host is
         // guaranteed to be ours — a `.custom` URL (CDN, presigned upload URL, ...) isn't.
         guard case .custom = baseURL else {
-            request.setValue("ios", forHTTPHeaderField: "X-Ecosia-App")
+            request.addEcosiaAppHeader()
             return request.withCloudFlareAuthParameters()
         }
         return request

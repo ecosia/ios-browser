@@ -15,7 +15,8 @@ extension Tab {
     /// Mutations applied, in order:
     /// 1. **Cloudflare auth headers** – required for non-production environments.
     /// 2. **Language-region header** – enriches SERP requests for market selection.
-    /// 3. **Snowplow user id parameter** – appended to Ecosia URLs so the web SERP can
+    /// 3. **App header** – identifies the app and version to Ecosia backends, Ecosia hosts only.
+    /// 4. **Snowplow user id parameter** – appended to Ecosia URLs so the web SERP can
     ///    propagate it through its navigation links and link web Snowplow events back
     ///    to the native analytics identity. `ecosified()` sends the null UUID for
     ///    private tabs or when the user has opted out of analytics.
@@ -24,6 +25,9 @@ extension Tab {
         updated = updated.withCloudFlareAuthParameters()
         if updated.url?.isEcosiaSearchQuery() == true {
             updated.addLanguageRegionHeader()
+        }
+        if updated.url?.isEcosia() == true {
+            updated.addEcosiaAppHeader()
         }
         updated.url = updated.url.map { $0.ecosified(isIncognitoEnabled: isPrivate) }
         return updated
