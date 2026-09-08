@@ -126,7 +126,7 @@ if [ ! -f "$file_path" ]; then
     touch "$file_path"
     echo -e "${GREEN}✓ Staging.xcconfig created${NC}\n"
     {
-        echo "AUTH0_CLIENT_ID=FBaIsy0X5hIh2sSmalmf5pACZ512dIYl"
+        echo "AUTH0_CLIENT_ID=Msl19FhlbwPk6IGQw2D8gzmyTwyeRG5D"
         echo "CF_ACCESS_CLIENT_ID=$CF_ACCESS_CLIENT_ID"
         echo "CF_ACCESS_CLIENT_SECRET=$CF_ACCESS_CLIENT_SECRET"
     } >> $file_path

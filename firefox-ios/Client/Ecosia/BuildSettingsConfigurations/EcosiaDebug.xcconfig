@@ -17,7 +17,7 @@ LEANPLUM_ENVIRONMENT = development
 CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
 OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate -ld_classic
-AUTH0_CLIENT_ID=FBaIsy0X5hIh2sSmalmf5pACZ512dIYl
+AUTH0_CLIENT_ID=hKsyM2wK1Plol0SjS8WLJgPnQRqG4lo5
 AUTH0_DOMAIN=login.ecosia-dev.xyz
 
 // Ecosia: For completeness — AppBuildChannel has no "debug" case, so this still resolves to .other.
