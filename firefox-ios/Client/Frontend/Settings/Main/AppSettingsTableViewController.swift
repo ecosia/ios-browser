@@ -18,7 +18,11 @@ protocol SettingsFlowDelegate: AnyObject,
                                PrivacySettingsDelegate,
                                AccountSettingsDelegate,
                                AboutSettingsDelegate,
+                               /* Ecosia: Fix "Mail App" button in settings (MOB-4892)
                                SupportSettingsDelegate {
+                               */
+                               SupportSettingsDelegate,
+                               BrowsingSettingsDelegate {
     @MainActor
     func showDevicePassCode()
 
@@ -456,7 +460,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         let generalSettings: [Setting] = [
-            OpenWithSetting(settings: self, settingsDelegate: nil),
+            OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
             SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
             BlockPopupSetting(prefs: profile.prefs),
