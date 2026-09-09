@@ -48,8 +48,7 @@ public class NimbusMessagingHelper: NimbusMessagingHelperProtocol {
 
     public init(targetingHelper: NimbusTargetingHelperProtocol,
                 stringHelper: NimbusStringHelperProtocol,
-                cache: [String: Bool] = [:])
-    {
+                cache: [String: Bool] = [:]) {
         self.targetingHelper = targetingHelper
         self.stringHelper = stringHelper
         self.cache = cache

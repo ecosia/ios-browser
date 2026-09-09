@@ -8,7 +8,8 @@ import Common
 import enum MozillaAppServices.IncomingDeviceCommand
 import enum MozillaAppServices.AccountEvent
 
-let PendingAccountDisconnectedKey = "PendingAccountDisconnect"
+// Ecosia: Already declared in RustFirefoxAccounts.swift
+// let PendingAccountDisconnectedKey = "PendingAccountDisconnect"
 
 // TODO: FXIOS-12610 make this code actually threadsafe which will involve the profile
 /// This class provides handles push messages from FxA.

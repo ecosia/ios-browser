@@ -6,7 +6,7 @@ import UIKit
 import Common
 @testable import Client
 
-final class MockApplicationHelper: ApplicationHelper, @unchecked Sendable {
+class MockApplicationHelper: ApplicationHelper, @unchecked Sendable {
     var openSettingsCalled = 0
     var openURLCalled = 0
     var openURLInWindowCalled = 0
@@ -27,7 +27,7 @@ final class MockApplicationHelper: ApplicationHelper, @unchecked Sendable {
         lastOpenURL = url
     }
 
-    func closeTabs(_ urls: [URL]) {
+    func closeTabs(_ urls: [URL]) async {
         closeTabsCalled += 1
     }
 }

@@ -10,7 +10,15 @@ final class LocationContainer: UIView, ThemeApplicable {
         static let shadowRadius: CGFloat = 14
         static let shadowOpacity: Float = 1
         static let shadowOffset = CGSize(width: 0, height: 2)
+        // Ecosia: Border when editing (legacy URLBarView overlay border)
+        static let borderWidthEditing: CGFloat = 2
     }
+
+    // Ecosia: cached so the border can be refreshed when only the minimized
+    // state changes (e.g. address bar shrinking into its compact pill).
+    private var isEditing = false
+    private var isAddressBarMinimized = false
+    private var borderTheme: Theme?
 
     init() {
         super.init(frame: .zero)
@@ -34,9 +42,34 @@ final class LocationContainer: UIView, ThemeApplicable {
     }
 
     func updateShadowOpacityBasedOn(isAddressBarMinimized: Bool) {
+        self.isAddressBarMinimized = isAddressBarMinimized
         let targetOpacity = isAddressBarMinimized ? 0 : UX.shadowOpacity
-        guard layer.shadowOpacity != targetOpacity else { return }
-        layer.shadowOpacity = targetOpacity
+        if layer.shadowOpacity != targetOpacity {
+            layer.shadowOpacity = targetOpacity
+        }
+        // Ecosia: re-evaluate the editing border too. While shrinking into
+        // the compact pill the toolbar's editing state can still be true,
+        // but the border should disappear alongside the shadow so the pill
+        // doesn't carry a leftover outline.
+        refreshEditingBorder()
+    }
+
+    // Ecosia: Update border based on editing state (legacy URLBarView overlay border styling)
+    func updateBorder(isEditing: Bool, theme: Theme) {
+        self.isEditing = isEditing
+        self.borderTheme = theme
+        refreshEditingBorder()
+    }
+
+    private func refreshEditingBorder() {
+        let shouldShowBorder = isEditing && !isAddressBarMinimized
+        if shouldShowBorder, let theme = borderTheme {
+            layer.borderWidth = UX.borderWidthEditing
+            layer.borderColor = theme.colors.ecosia.buttonBackgroundPrimary.cgColor
+        } else {
+            layer.borderWidth = 0
+            layer.borderColor = nil
+        }
     }
 
     // MARK: - ThemeApplicable

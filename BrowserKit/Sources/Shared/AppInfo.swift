@@ -47,7 +47,9 @@ extension AppInfo {
     }()
 
     // The App Store page identifier for the Firefox iOS application
-    public static let appStoreId = "id989804926"
+    // Ecosia: update App Store ID
+    // public static let appStoreId = "id989804926"
+    public static let appStoreId = "id670881887"
 
     /// Return the shared container identifier (also known as the app group) to be used with for example background
     /// http requests. It is the base bundle identifier with a "group." prefix.

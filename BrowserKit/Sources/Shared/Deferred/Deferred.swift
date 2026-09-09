@@ -13,7 +13,7 @@ public let DeferredDefaultQueue = DispatchQueue.global()
 // TODO: FXIOS-13184 Remove deferred code or validate it is sendable.
 // Also validate the T type is Sendable (actually protected) in all methods.
 open class Deferred<T: Sendable>: @unchecked Sendable {
-    typealias UponBlock = (DispatchQueue, @Sendable (T) -> ())
+    typealias UponBlock = (DispatchQueue, @Sendable (T) -> Void)
     private typealias Protected = (protectedValue: T?, uponBlocks: [UponBlock])
 
     private var protected: LockProtected<Protected>
@@ -58,8 +58,8 @@ open class Deferred<T: Sendable>: @unchecked Sendable {
         return protected.withReadLock { $0.protectedValue }
     }
 
-    public func uponQueue(_ queue: DispatchQueue, block: @Sendable @escaping (T) -> ()) {
-        let maybeValue: T? = protected.withWriteLock{ data in
+    public func uponQueue(_ queue: DispatchQueue, block: @Sendable @escaping (T) -> Void) {
+        let maybeValue: T? = protected.withWriteLock { data in
             if data.protectedValue == nil {
                 data.uponBlocks.append( (queue, block) )
             }
@@ -119,7 +119,7 @@ open class Deferred<T: Sendable>: @unchecked Sendable {
         return bindQueue(queue) { t in Deferred<U>(value: f(t)) }
     }
 
-    public func upon(_ block: @Sendable @escaping (T) ->()) {
+    public func upon(_ block: @Sendable @escaping (T) -> Void) {
         uponQueue(defaultQueue, block: block)
     }
 
@@ -131,7 +131,7 @@ open class Deferred<T: Sendable>: @unchecked Sendable {
         return mapQueue(defaultQueue, f: f)
     }
 
-    public func both<U>(_ other: Deferred<U>) -> Deferred<(T,U)> {
+    public func both<U>(_ other: Deferred<U>) -> Deferred<(T, U)> {
         return self.bind { t in other.map { u in (t, u) } }
     }
 }
@@ -142,7 +142,7 @@ public func all<T>(_ deferreds: [Deferred<T>]) -> Deferred<[T]> {
         return Deferred(value: [])
     }
 
-    typealias SendableGenericClosure = @Sendable (T) -> ()
+    typealias SendableGenericClosure = @Sendable (T) -> Void
 
     let combined = Deferred<[T]>()
 

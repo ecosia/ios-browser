@@ -17,6 +17,7 @@ import SummarizeKit
 import ActivityKit
 import Glean
 import QuickAnswersKit
+import Ecosia
 
 import class Account.RustFirefoxAccounts
 import class MozillaAppServices.BookmarkFolderData
@@ -136,6 +137,10 @@ class BrowserViewController: UIViewController,
     var displayedPopoverController: UIViewController?
     var updateDisplayedPopoverProperties: (() -> Void)?
     lazy var screenshotHelper = ScreenshotHelper(controller: self)
+    // Ecosia: Authentication manager for handling login/logout flows
+    var ecosiaAuth: EcosiaAuth?
+    // Ecosia: Referrals service for loading screen and homepage adapter
+    var referrals: Referrals?
 
     // MARK: Lazy loading UI elements
     private var documentLoadingView: TemporaryDocumentLoadingView?
@@ -143,6 +148,12 @@ class BrowserViewController: UIViewController,
     private lazy var statusBarOverlay: StatusBarOverlay = .build { view in
         view.accessibilityIdentifier = AccessibilityIdentifiers.Browser.statusBarOverlay
     }
+
+    // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
+    // and its navigationType are available) to the actual tracking call in didCommit.
+    // Set when eligible, cleared on commit or on the next navigation.
+    var pendingInappSearchUrl: URL?
+
     private(set) lazy var addressToolbarContainer: AddressToolbarContainer = .build(nil, {
         AddressToolbarContainer(toolbarHelper: self.toolbarHelper)
     })
@@ -459,7 +470,9 @@ class BrowserViewController: UIViewController,
         appStartupTelemetry: AppStartupTelemetry = DefaultAppStartupTelemetry(),
         logger: Logger = DefaultLogger.shared,
         summarizerNimbusUtils: SummarizerNimbusUtils = DefaultSummarizerNimbusUtils(),
-        documentLogger: DocumentLogger = AppContainer.shared.resolve(),
+        // Ecosia: Use resolveOptional() so that BrowserViewController can be created safely when
+        // AppContainer is temporarily empty (brief window after reset() in unit-test setUp).
+        documentLogger: DocumentLogger = (AppContainer.shared.resolveOptional() as DocumentLogger?) ?? DocumentLogger(logger: DefaultLogger.shared),
         appAuthenticator: AppAuthenticationProtocol = AppAuthenticator(),
         searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve(),
         userInitiatedQueue: DispatchQueueInterface = DispatchQueue.global(qos: .userInitiated),
@@ -506,6 +519,8 @@ class BrowserViewController: UIViewController,
 
         MainActor.assumeIsolated {
             logger.log("BVC deallocating (window: \(windowUUID))", level: .info, category: .lifecycle)
+            // Ecosia: Unregister window from auth state management
+            EcosiaAuthWindowRegistry.shared.unregisterWindow(windowUUID)
             unsubscribeFromRedux()
             stopObservingAllWebViews()
             googleLensTipObservationTask?.cancel()
@@ -526,11 +541,27 @@ class BrowserViewController: UIViewController,
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        /* Ecosia: Lock the NTP/homepage to portrait on iPhone — the omnibox /
+           wallpaper layout is designed around the portrait aspect ratio. Web
+           content still supports landscape. See `supportedOrientations(forPhoneHomepage:)`.
         if UIDevice.current.userInterfaceIdiom == .phone {
             return .allButUpsideDown
         } else {
             return .all
         }
+        */
+        return Self.supportedOrientations(forPhoneHomepage: contentContainer.hasAnyHomepage)
+    }
+
+    /// Ecosia: Centralized orientation policy so it stays in sync between the
+    /// VC-level override and the AppDelegate's `application(_:supportedInterfaceOrientationsFor:)`.
+    /// iPhone: NTP/homepage is portrait-only; everything else is allButUpsideDown.
+    /// iPad: all orientations.
+    static func supportedOrientations(forPhoneHomepage isHomepage: Bool) -> UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return isHomepage ? .portrait : .allButUpsideDown
+        }
+        return .all
     }
 
     private func didInit() {
@@ -671,7 +702,11 @@ class BrowserViewController: UIViewController,
             topBlurView.alpha = 1
         }
 
+        /* Ecosia: Keep the same translucent background regardless of keyboard state, for the
+           bottom search bar only — the branch Ecosia's customization has always applied to.
         overKeyboardContainer.isClearBackground = !isKeyboardShowing || shouldClearBackground
+        */
+        overKeyboardContainer.isClearBackground = isBottomSearchBar || !isKeyboardShowing || shouldClearBackground
         bottomContainer.isClearBackground = true
         bottomBlurView.isHidden = isScrollAlphaZero
         bottomContainer.isHidden = isScrollAlphaZero
@@ -1057,6 +1092,9 @@ class BrowserViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Ecosia: Register window for auth state so EcosiaAccounts (login/logout) can dispatch to this BVC
+        EcosiaAuthWindowRegistry.shared.registerWindow(windowUUID)
+
         setupEssentialUI()
         subscribeToRedux()
         tabManager.restoreTabs()
@@ -1087,7 +1125,10 @@ class BrowserViewController: UIViewController,
 
         // Update theme of already existing views
         let theme = currentTheme()
+        /* Ecosia: Use backgroundPrimaryDecorative so the content container matches the NTP.
         contentContainer.backgroundColor = theme.colors.layer1
+        */
+        contentContainer.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         header.applyTheme(theme: theme)
         overKeyboardContainer.applyTheme(theme: theme)
         bottomContainer.applyTheme(theme: theme)
@@ -1333,7 +1374,21 @@ class BrowserViewController: UIViewController,
     /// As part of the homepage search bar work, we want to only hide the toolbar when the homepage search bar appears.
     /// The homepage search bar should not appear if we are in editing mode.
     private func shouldHideAddressToolbar() {
+        /* Ecosia: Also trigger toolbar hiding when the Ecosia NTP search bar is present,
+           without requiring the homepageSearchBar Nimbus experiment to be enabled.
         guard featureFlagsProvider.isEnabled(.homepageSearchBar) else { return }
+        */
+        let hasEcosiaNTPSearchBar = contentContainer.hasHomepage &&
+            (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar != nil
+        guard featureFlagsProvider.isEnabled(.homepageSearchBar) || hasEcosiaNTPSearchBar else {
+            // Ecosia: When we're no longer on the NTP, restore the toolbar if it was hidden by Ecosia logic.
+            guard addressToolbarContainer.isHidden else { return }
+            addressToolbarContainer.isHidden = false
+            store.dispatch(
+                GeneralBrowserAction(windowUUID: windowUUID, actionType: GeneralBrowserActionType.didUnhideToolbar)
+            )
+            return
+        }
         let toolbarState = store.state.componentState(
             ToolbarState.self,
             for: .toolbar,
@@ -1348,7 +1403,18 @@ class BrowserViewController: UIViewController,
             window: windowUUID
         )?.searchBarState.shouldShowSearchBar ?? false
 
+        /* Ecosia: When the Ecosia NTP search bar is present it acts as the search bar,
+           so treat it the same as shouldShowSearchBar for the toolbar-hiding decision.
+           Crucially we also ignore `isEditing` for the Ecosia path — the omnibox owns
+           the input role on the NTP, so the native toolbar must never appear there,
+           not even when a stale `isEditing` flag is still pending in redux (e.g. the
+           user just tapped the native bar to redirect back to the omnibox).
         guard shouldShowSearchBar, !isEditing, contentContainer.hasHomepage else {
+        */
+        let firefoxCondition = shouldShowSearchBar && !isEditing && contentContainer.hasHomepage
+        // `hasEcosiaNTPSearchBar` already implies `contentContainer.hasHomepage`.
+        let ecosiaCondition = hasEcosiaNTPSearchBar
+        guard firefoxCondition || ecosiaCondition else {
             guard addressToolbarContainer.isHidden == true else { return }
             addressToolbarContainer.isHidden = false
             store.dispatch(
@@ -1799,6 +1865,17 @@ class BrowserViewController: UIViewController,
         let keyboardHeight = keyboardState?.intersectionHeightForView(view) ?? 0
         let isKeyboardVisible = keyboardHeight > 0
 
+        // Ecosia: when the NTP omnibox owns the keyboard, the address toolbar is
+        // hidden and the omnibox tracks the keyboard with its own constraint.
+        // Skipping the keyboard spacer here keeps `overKeyboardContainer` flat,
+        // so `contentContainer` (and the homepage wallpaper card inside it)
+        // stays at full height instead of compressing as the keyboard rises.
+        if let homepage = contentContainer.contentController as? HomepageViewController,
+           homepage.ntpSearchBar?.isFirstResponder == true {
+            overKeyboardContainer.removeKeyboardSpacer()
+            return
+        }
+
         guard isBottomSearchBar, isKeyboardVisible else {
             overKeyboardContainer.removeKeyboardSpacer()
             return
@@ -1871,6 +1948,7 @@ class BrowserViewController: UIViewController,
         viewController.willMove(toParent: self)
         contentContainer.add(content: viewController)
         viewController.didMove(toParent: self)
+
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
         updateContentContainerTopConstraint()
 
@@ -1906,6 +1984,22 @@ class BrowserViewController: UIViewController,
             statusBarScrollDelegate: statusBarOverlay,
             toastContainer: contentContainer
         )
+
+        // Ecosia: Show default-browser promo when user lands on NTP (idle moment) — not mid-search (MOB-4323).
+        if !isPrivate {
+            ecosiaMaybePresentDefaultBrowserPromoForSearchThreshold()
+        }
+
+        // Ecosia: Re-evaluate the orientation lock now that the NTP is the
+        // current content — on iPhone this forces a rotation back to portrait
+        // if the user opens the homepage while in landscape.
+        updateSupportedOrientationsForContentChange()
+
+        // Ecosia: Re-evaluate toolbar visibility — when the user navigates
+        // back to the NTP from a webview the omnibox should take over again
+        // and the native address toolbar should hide.
+        shouldHideAddressToolbar()
+        ecosiaPrepareNTPOmniboxForDisplay()
     }
 
     func showEmbeddedWebview() {
@@ -1916,6 +2010,38 @@ class BrowserViewController: UIViewController,
         }
 
         browserDelegate?.show(webView: webView)
+
+        // Ecosia: Re-evaluate the orientation lock now that the webview is
+        // the current content — releases the iPhone portrait lock that the
+        // NTP imposes so web pages can be viewed in landscape.
+        updateSupportedOrientationsForContentChange()
+
+        // Ecosia: The native address toolbar is hidden whenever the Ecosia
+        // NTP omnibox is on screen. Re-evaluate visibility here so the
+        // toolbar comes back as soon as the webview takes over the
+        // contentContainer — without this it stayed hidden for the lifetime
+        // of the session after the first NTP submit.
+        shouldHideAddressToolbar()
+        ecosiaResetNTPOmniboxWhenLeavingNTP()
+    }
+
+    /// Notifies UIKit that `supportedInterfaceOrientations` may have changed
+    /// — used when the contentContainer flips between the NTP (portrait-only
+    /// on iPhone) and the webview (all-but-upside-down on iPhone) so iOS can
+    /// rotate the device to a supported orientation if needed. Pushes the
+    /// new value to `AppDelegate.orientationLock` as well — that property is
+    /// what `application(_:supportedInterfaceOrientationsFor:)` returns, so
+    /// without updating it the navigation/root chain can still allow rotation
+    /// past the VC-level override.
+    private func updateSupportedOrientationsForContentChange() {
+        let lock = Self.supportedOrientations(forPhoneHomepage: contentContainer.hasAnyHomepage)
+        (UIApplication.shared.delegate as? AppDelegate)?.orientationLock = lock
+
+        if #available(iOS 16.0, *) {
+            setNeedsUpdateOfSupportedInterfaceOrientations()
+        } else {
+            UIViewController.attemptRotationToDeviceOrientation()
+        }
     }
 
     // MARK: - Document Loading
@@ -2132,7 +2258,11 @@ class BrowserViewController: UIViewController,
 
     // MARK: - SearchViewController
 
+    /* Ecosia: Relax visibility so the NTP omnibox extension can lazily create the
+       search controller when the embedded search bar begins editing.
     fileprivate func createSearchControllerIfNeeded() {
+    */
+    func createSearchControllerIfNeeded() {
         guard self.searchController == nil else { return }
 
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
@@ -2868,6 +2998,12 @@ class BrowserViewController: UIViewController,
                     actionType: ToolbarActionType.animationStateChanged
                 )
             )
+        // Ecosia: Handle QR code scanner display
+        case .qrCode:
+            navigationHandler?.showQRCode(delegate: self, rootNavigationController: nil)
+        // Ecosia: Show history panel when the NTP toolbar history button is tapped
+        case .history:
+            showLibrary(panel: .history)
         case .share:
             // User tapped the Share button in the toolbar
             guard let button = state.buttonTapped else { return }
@@ -3105,6 +3241,13 @@ class BrowserViewController: UIViewController,
         // This code snippet addresses an issue related to navigation between pages in the same tab FXIOS-7309.
         // Specifically, it checks if the URL bar is not currently focused (`!focusUrlBar`) and if it is
         // operating in an overlay mode (`urlBar.inOverlayMode`).
+        // Ecosia: Active search edit on a SERP (shouldCancelEditing false) with no back
+        // stack should not dismiss the overlay — same as keyboard drag-dismiss on suggestions.
+        if addressToolbarContainer.inOverlayMode,
+           !shouldCancelEditing,
+           tabManager.selectedTab?.canGoBack != true {
+            return
+        }
         dismissUrlBar()
         tabManager.selectedTab?.goBack()
     }
@@ -3113,6 +3256,11 @@ class BrowserViewController: UIViewController,
         // This code snippet addresses an issue related to navigation between pages in the same tab FXIOS-7309.
         // Specifically, it checks if the URL bar is not currently focused (`!focusUrlBar`) and if it is
         // operating in an overlay mode (`urlBar.inOverlayMode`).
+        if addressToolbarContainer.inOverlayMode,
+           !shouldCancelEditing,
+           tabManager.selectedTab?.canGoForward != true {
+            return
+        }
         dismissUrlBar()
         tabManager.selectedTab?.goForward()
     }
@@ -3339,9 +3487,20 @@ class BrowserViewController: UIViewController,
             .add()
         searchTelemetry.shouldSetUrlTypeSearch = true
 
+        /* Ecosia: Preserve the user's current search vertical for follow-up queries so that,
+           e.g., typing a new query from the Images SERP opens Images results, not the default
+           text SERP. We derive the vertical from the tab's current URL; non-search pages and
+           nil URLs fall back to .search. Building the final URL here avoids an extra redirect
+           through the web view delegate, which only rewrites in-page `/search` navigations.
         finishEditingAndSubmit(searchURL, visitType: VisitType.typed, forTab: tab)
-
         dispatchSubmitSearchTermAction(with: searchURL, searchTerm: text)
+        */
+        let targetURL = SearchProviderRouting.searchURL(forQuery: text,
+                                                        engine: engine,
+                                                        preservingVerticalFrom: tab.url)
+            ?? URL.ecosiaSearchWithQuery(text, preservingVerticalFrom: tab.url)
+        finishEditingAndSubmit(targetURL, visitType: VisitType.typed, forTab: tab)
+        dispatchSubmitSearchTermAction(with: targetURL, searchTerm: text)
     }
 
     private func dispatchSubmitSearchTermAction(with searchURL: URL, searchTerm: String) {
@@ -3471,9 +3630,14 @@ class BrowserViewController: UIViewController,
         }
     }
 
+    /* Ecosia: Do not auto-focus the address bar when landing on the homepage (new tab, cold start, tab selection).
     func shouldFocusLocationTextField(for tab: Tab, isPrivate: Bool) -> Bool {
         guard tab.isPrivate == isPrivate else { return false }
         return tab.isFxHomeTab || tab.url == nil
+    }
+    */
+    func shouldFocusLocationTextField(for tab: Tab, isPrivate: Bool) -> Bool {
+        return false
     }
 
     func handle(url: URL?, tabId: String, isPrivate: Bool = false) {
@@ -3481,7 +3645,10 @@ class BrowserViewController: UIViewController,
         if let url {
             switchToTabForURLOrOpen(url, uuid: tabId, isPrivate: isPrivate)
         } else {
+            /* Ecosia: Do not auto-focus the address bar when a deeplink opens a new tab with no URL.
             openBlankNewTab(focusLocationField: true, isPrivate: isPrivate)
+            */
+            openBlankNewTab(focusLocationField: false, isPrivate: isPrivate)
         }
     }
 
@@ -3962,11 +4129,14 @@ class BrowserViewController: UIViewController,
         statusBarOverlay.hasTopTabs = toolbarHelper.shouldShowTopTabs(for: traitCollection)
         statusBarOverlay.applyTheme(theme: currentTheme)
 
+        /* Ecosia: Use backgroundPrimaryDecorative so the BVC background matches the NTP / homepage.
         // to make sure on homepage with bottom search bar the status bar is hidden
         // we have to adjust the background color to match the homepage background color
         let isBottomSearchHomepage = isBottomSearchBar && tabManager.selectedTab?.isFxHomeTab ?? false
         let colors = currentTheme.colors
         backgroundView.backgroundColor = isBottomSearchHomepage ? colors.layer1 : colors.layerSurfaceLow
+        */
+        backgroundView.backgroundColor = currentTheme.colors.ecosia.backgroundPrimaryDecorative
         if #available(iOS 26, *), let glassEffect = effect as? UIGlassEffect {
             glassEffect.tintColor = currentTheme.colors.layer1.withAlphaComponent(0.5)
             bottomBlurView.effect = glassEffect
@@ -3983,7 +4153,17 @@ class BrowserViewController: UIViewController,
 
         guard let contentScript = tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         applyThemeForPreferences(profile.prefs, contentScript: contentScript)
+
+        // Ecosia: Update URLBar following PrivateModeUI
+        updateURLBarFollowingPrivateModeUI()
     }
+
+    /* Ecosia: preferSwitchToOpenTabOverDuplicate removed from NimbusFeatureFlagID in Firefox upgrade
+    var isPreferSwitchToOpenTabOverDuplicateFeatureEnabled: Bool {
+        featureFlags.isFeatureEnabled(.preferSwitchToOpenTabOverDuplicate, checking: .buildOnly)
+    }
+    */
+    var isPreferSwitchToOpenTabOverDuplicateFeatureEnabled: Bool { false }
 
     // MARK: - Telemetry
 
@@ -4128,6 +4308,13 @@ class BrowserViewController: UIViewController,
     func addressToolbarDidEnterOverlayMode(_ view: UIView) {
         guard let profile = profile as? BrowserProfile else { return }
 
+        // Ecosia: If the user tapped the URL bar while it was scroll-collapsed
+        // into its minimal pill form, expand the toolbar back to its full
+        // size before entering overlay/edit mode — otherwise the pill just
+        // grows a caret and shows a tiny edit field instead of the proper
+        // full-width address bar.
+        scrollController.showToolbars(animated: true)
+
         if isSwipingTabsEnabled {
             tabSwipeGestureHandler?.disablePanGestureRecognizer()
             addressToolbarContainer.hideSkeletonBars()
@@ -4138,7 +4325,12 @@ class BrowserViewController: UIViewController,
                 notification: UIAccessibility.Notification.screenChanged,
                 argument: UIAccessibility.Notification.screenChanged
             )
-        } else {
+        } else if contentContainer.hasAnyHomepage {
+            // Ecosia: On non-NTP surfaces (search result pages, regular web
+            // browsing) tapping the URL bar should leave the page alone and
+            // just give the user a text-entry field — no homepage embed, no
+            // suggestions overlay. We skip the homepage / zero-search swap
+            // entirely when we're already off the NTP.
             if let toast = clipboardBarDisplayHandler?.clipboardToast {
                 toast.removeFromSuperview()
             }
@@ -4603,8 +4795,44 @@ extension BrowserViewController: SearchViewControllerDelegate {
     ) {
         guard let tab = tabManager.selectedTab else { return }
 
+        // Ecosia: When the suggestion came from the NTP omnibox, route the tap
+        // through the same submit pipeline the keyboard-return key uses
+        // (`ntpSearchBarDidSubmit`) so search-term selections build the URL via
+        // the default engine and record the same telemetry/conversion metrics.
+        // History/bookmark/remote-tab rows have no search term — fall back to
+        // loading the URL directly, but still tear the omnibox down and force
+        // the webview swap that the URL-bar overlay chain would normally do.
+        // The dedicated AI Chat row IS associated with a search term but its
+        // URL is already the AI chat / Gemini AI Mode endpoint — sending it
+        // through `ntpSearchBarDidSubmit` would rebuild a plain search URL and
+        // drop the AI destination, so we treat that case like the URL fallback
+        // below.
+        let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
+        if isOmniboxOverlay {
+            let isPrebuiltAIDestination = SearchProviderAIRouting.isAIDestination(url)
+            if let searchTerm, !searchTerm.isEmpty, !isPrebuiltAIDestination {
+                ntpSearchBarDidSubmit(searchTerm)
+                return
+            }
+            hideOmniboxSuggestions()
+            if let homepage = contentContainer.contentController as? HomepageViewController,
+               let bar = homepage.ntpSearchBar {
+                bar.text = ""
+                _ = bar.resignFirstResponder()
+            }
+            searchTelemetry.shouldSetUrlTypeSearch = true
+            finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
+            showEmbeddedWebview()
+            return
+        }
+
         searchTelemetry.shouldSetUrlTypeSearch = true
+        /* Ecosia: Suggestion rows use `searchURLForQuery`, which always targets `/search`.
+           Preserve the tab's active vertical when the user is on Images/Videos/News.
         finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
+        */
+        let urlToLoad = url.ecosiaSearchURLPreservingVertical(from: tab.url) ?? url
+        finishEditingAndSubmit(urlToLoad, visitType: VisitType.typed, forTab: tab)
     }
 
     // In searchViewController when user selects an open tabs and switch to it
@@ -4626,6 +4854,9 @@ extension BrowserViewController: SearchViewControllerDelegate {
     }
 
     func updateForDefaultSearchEngineDidChange() {
+        // Ecosia: Keep omnibox gating and analytics in sync with the selected provider.
+        SearchProviderSelection.syncSelectedEngineID(searchEnginesManager.defaultEngine?.engineID)
+        ecosiaHandleDefaultSearchEngineDidChange()
         // Update search icon when the search engine changes
         let action = ToolbarAction(windowUUID: windowUUID, actionType: ToolbarActionType.searchEngineDidChange)
         store.dispatch(action)
@@ -4638,6 +4869,20 @@ extension BrowserViewController: SearchViewControllerDelegate {
     }
 
     func setLocationView(text: String, search: Bool) {
+        /* Ecosia: When the NTP omnibox owns the suggestions overlay, mirror
+           highlight/append updates into the pill instead of the hidden URL bar.
+         */
+        if let homepage = contentContainer.contentController as? HomepageViewController,
+           let bar = homepage.ntpSearchBar,
+           searchController?.parent is HomepageViewController {
+            bar.text = text
+            if search {
+                showOmniboxSuggestions(searchTerm: text, anchorView: bar)
+                searchLoader?.setQueryWithoutAutocomplete(text)
+            }
+            return
+        }
+
         let toolbarAction = ToolbarAction(
             searchTerm: text,
             windowUUID: windowUUID,
@@ -4663,6 +4908,9 @@ extension BrowserViewController: SearchViewControllerDelegate {
     func searchViewController(_ searchViewController: SearchViewController, didAppend text: String) {
         searchViewController.searchTelemetry?.interactionType = .pasted
         setLocationView(text: text, search: false)
+        // Ecosia: `setLocationView` cannot update the address bar while `didStartTyping` is
+        // set, which it always is by the time the append arrow is reachable.
+        applyAppendedSearchTermToAddressBar(text)
     }
 
     func searchViewControllerWillHide(_ searchViewController: SearchViewController) {
@@ -5072,11 +5320,16 @@ extension BrowserViewController: KeyboardHelperDelegate {
 
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardDidHideWithState state: KeyboardState) {
         keyboardState = nil
+        /* Ecosia: Always cancel the keyboard request when the keyboard hides. Overlay
+           editing can continue (see shouldCancelEditing) but highlight must not
+           re-request first responder — that leaves the keyboard-spacer gap under the bar.
         let toolbarState = store.state.componentState(ToolbarState.self, for: .toolbar, window: windowUUID)
         let isEditing = toolbarState?.addressToolbar.isEditing == true
         if !isEditing {
             store.dispatch(ToolbarModernAction.didCancelKeyboardRequest, forWindowUUID: windowUUID)
         }
+        */
+        store.dispatch(ToolbarModernAction.didCancelKeyboardRequest, forWindowUUID: windowUUID)
         tabManager.selectedTab?.setFindInPage(isBottomSearchBar: isBottomSearchBar,
                                               doesFindInPageBarExist: iOS15FindInPageBar != nil)
         guard isSwipingTabsEnabled else { return }
@@ -5109,10 +5362,37 @@ extension BrowserViewController: KeyboardHelperDelegate {
         if isSwipingTabsEnabled {
             addressToolbarContainer.updateSkeletonAddressBarsVisibility(tabManager: tabManager)
         }
+        // Ecosia: When the embedded NTP omnibox owns the suggestions overlay
+        // (the shared search controller is parented to the homepage VC), the
+        // URL-bar overlay-cancel pipeline must not run on keyboard-hide. The
+        // `.onDrag` keyboard dismiss from the suggestions table fires this
+        // callback every time, and the default path tears down the shared
+        // search controller through `destroySearchController()` — collapsing
+        // the omnibox overlay the moment the user swipes to hide the
+        // keyboard. The omnibox's own delegate callbacks handle teardown
+        // explicitly when the user really leaves.
+        if searchController?.parent is HomepageViewController {
+            return
+        }
+        /* Ecosia: Cancel unconditionally on every non-omnibox surface. The
+           original `shouldCancelEditing` gate returned `false` for the
+           default new-tab preference (`.topSites`) and for `.blankPage`,
+           which left the URL bar stuck in overlay mode (focus outline still
+           visible, internal `isEditing` still true) after the user swiped to
+           dismiss the keyboard on the SERP or any web page. The next scroll
+           re-triggers focus because the state machine still thinks editing
+           is active. Cancelling here lines the toolbar state up with what
+           the user sees on screen.
+        guard shouldCancelEditing else { return }
+         */
+        // Ecosia: Guard cancel so suggestion scroll (keyboard hidden) keeps overlay alive.
         guard shouldCancelEditing else { return }
         overlayManager.cancelEditing(shouldCancelLoading: false)
     }
 
+    /* Ecosia: Firefox v147.5 — kept overlay stuck after a keyboard swipe on
+       the SERP because the URL bar pre-fills the page URL/query into
+       `searchTerm` before the user types.
     private var shouldCancelEditing: Bool {
         let newTabChoice = NewTabAccessors.getNewTabPage(profile.prefs)
         guard newTabChoice != .topSites, newTabChoice != .blankPage else { return false }
@@ -5124,6 +5404,56 @@ extension BrowserViewController: KeyboardHelperDelegate {
         )?.addressToolbar.searchTerm
 
         return searchTerm == nil
+    }
+     */
+    // Ecosia: Keep the suggestions overlay when the user is searching (typed query,
+    // SERP re-focus with "test 2", etc.). Only tear down for URL-only re-focus
+    // (Ecosia stuck-bar fix). Uses live text-field contents so debounced Redux
+    // state cannot lag behind what the user already typed ("yt").
+    private var shouldCancelEditing: Bool {
+        if searchController?.parent is HomepageViewController {
+            return true
+        }
+
+        let bar = store.state.componentState(ToolbarState.self, for: .toolbar, window: windowUUID)?.addressToolbar
+        if bar?.didStartTyping == true {
+            return false
+        }
+
+        let query = overlaySearchQuery
+        guard !query.isEmpty else { return true }
+
+        if query.looksLikeAURLOverlayQuery {
+            return true
+        }
+
+        return false
+    }
+
+    private var overlaySearchQuery: String {
+        let liveText = addressToolbarContainer.overlayLocationText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if !liveText.isEmpty { return liveText }
+
+        if let query = searchController?.viewModel.searchQuery
+            .trimmingCharacters(in: .whitespacesAndNewlines), !query.isEmpty {
+            return query
+        }
+
+        if let term = store.state.componentState(ToolbarState.self, for: .toolbar, window: windowUUID)?
+            .addressToolbar.searchTerm?
+            .trimmingCharacters(in: .whitespacesAndNewlines), !term.isEmpty {
+            return term
+        }
+
+        return searchLoader?.query.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    }
+}
+
+private extension String {
+    // Mirrors SearchViewModel.looksLikeAURL — slash without spaces means page URL re-focus.
+    var looksLikeAURLOverlayQuery: Bool {
+        contains("/") && !contains(" ")
     }
 }
 
@@ -5153,7 +5483,10 @@ extension BrowserViewController: TopTabsDelegate {
             openBlankNewTab(focusLocationField: false, isPrivate: isPrivate)
             tabManager.selectedTab?.loadRequest(PrivilegedRequest(url: url) as URLRequest)
         } else {
+            /* Ecosia: Do not auto-focus the address bar when opening a new tab from the top tab bar.
             openBlankNewTab(focusLocationField: true, isPrivate: isPrivate)
+            */
+            openBlankNewTab(focusLocationField: false, isPrivate: isPrivate)
             overlayManager.openNewTab(url: nil, newTabSettings: newTabSettings)
         }
     }

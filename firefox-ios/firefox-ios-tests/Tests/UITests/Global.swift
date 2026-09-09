@@ -13,11 +13,11 @@ import Shared
 let LabelAddressAndSearch = "Address and Search"
 
 extension XCTestCase {
-    func tester(_ file: String = #filePath, _ line: Int = #line) -> KIFUITestActor {
+    func tester(_ file: String = #file, _ line: Int = #line) -> KIFUITestActor {
         return KIFUITestActor(inFile: file, atLine: line, delegate: self)
     }
 
-    func system(_ file: String = #filePath, _ line: Int = #line) -> KIFSystemTestActor {
+    func system(_ file: String = #file, _ line: Int = #line) -> KIFSystemTestActor {
         return KIFSystemTestActor(inFile: file, atLine: line, delegate: self)
     }
 }
@@ -225,7 +225,7 @@ class BrowserUtils {
 
     class func resetToAboutHomeKIF(_ tester: KIFUITestActor) {
         tester.tapView(withAccessibilityIdentifier: AccessibilityIdentifiers.Toolbar.tabsButton)
-
+        
         // if in private mode, close all tabs
         tester.tapView(withAccessibilityLabel: "privateModeLarge")
 
@@ -251,13 +251,13 @@ class BrowserUtils {
             tester.tapView(withAccessibilityIdentifier: "startBrowsingButtonSyncView")
         }
     }
-
+    
     class func enterUrlAddressBar(_ tester: KIFUITestActor, typeUrl: String) {
         tester.tapView(withAccessibilityIdentifier: "url")
         tester.enterText(intoCurrentFirstResponder: typeUrl)
         tester.enterText(intoCurrentFirstResponder: "\n")
     }
-
+    
     class func iPad() -> Bool {
         return UIDevice.current.userInterfaceIdiom == .pad
     }
@@ -360,8 +360,12 @@ class BrowserUtils {
     }
 
     class func closeLibraryMenu(_ tester: KIFUITestActor) {
-        // Workaround to be able to swipe the view and close the library panel
-        tester.tapView(withAccessibilityLabel: "Done")
+        if iPad() {
+            tester.tapView(withAccessibilityIdentifier: AccessibilityIdentifiers.Toolbar.bookmarksButton)
+        } else {
+            // Workaround to be able to swipe the view and close the library panel
+            tester.tapView(withAccessibilityLabel: "Done")
+        }
         tester.waitForAnimationsToFinish()
     }
 }

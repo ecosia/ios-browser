@@ -1,0 +1,13 @@
+# This Scanfile is kept for reference but not used directly.
+# We're using direct xcodebuild command in perform_unit_tests/action.yml instead.
+scheme("Ecosia")
+configuration("Testing")
+project("firefox-ios/Client.xcodeproj")
+device("iPhone 16")
+prelaunch_simulator(true)
+output_types("junit")
+output_directory("test_output/xml")
+testplan("UnitTest")
+code_coverage(false)
+result_bundle(true)
+fail_build(false)

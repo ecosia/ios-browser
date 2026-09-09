@@ -8,6 +8,8 @@ import MozillaAppServices
 import OnboardingKit
 
 @testable import Client
+// Ecosia: IntroScreenManager tests use User.shared, which lives in the Ecosia module
+@testable import Ecosia
 
 final class IntroScreenManagerTests: XCTestCase {
     var prefs: MockProfilePrefs!
@@ -17,11 +19,16 @@ final class IntroScreenManagerTests: XCTestCase {
         prefs = MockProfilePrefs()
         let mockProfile = MockProfile(databasePrefix: "IntroScreenManagerTests_")
         await DependencyHelperMock().bootstrapDependencies(injectedProfile: mockProfile)
+        // Ecosia: `shouldShowIntroScreen` is also gated on `User.shared.firstTime`, so pin it here to
+        // keep upstream's assertions below deterministic.
+        User.shared.firstTime = true
     }
 
     override func tearDown() async throws {
         DependencyHelperMock().reset()
         prefs = nil
+        // Ecosia: restore the factory default so this class does not leak state into other tests.
+        User.shared.firstTime = true
         try await super.tearDown()
     }
 
@@ -46,6 +53,27 @@ final class IntroScreenManagerTests: XCTestCase {
     }
 
     // MARK: - didSeeIntroScreen Tests
+
+    // MARK: - Ecosia: the `User.shared.firstTime` half of `shouldShowIntroScreen`
+
+    func testUpgradeFromMain_doesNotShowIntroScreen() {
+        // Given: user upgrading from main — IntroSeen was never written on main, but
+        // handleFirstTimeUserActions() set firstTime=false on first browser load.
+        User.shared.firstTime = false
+        let subject = IntroScreenManager(prefs: prefs)
+        XCTAssertFalse(
+            subject.shouldShowIntroScreen,
+            "Welcome screen must not re-appear for users upgrading from main."
+        )
+    }
+
+    func testIntroSeenWithFirstTimeFalse_doesNotShowIntroScreen() {
+        // Given: fully onboarded develop user
+        User.shared.firstTime = false
+        prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        let subject = IntroScreenManager(prefs: prefs)
+        XCTAssertFalse(subject.shouldShowIntroScreen)
+    }
 
     func testDidSeeIntroScreen_setsPrefValue() {
         let subject = IntroScreenManager(prefs: prefs)

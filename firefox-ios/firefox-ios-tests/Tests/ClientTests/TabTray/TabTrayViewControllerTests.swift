@@ -37,7 +37,10 @@ final class TabTrayViewControllerTests: XCTestCase {
         viewController.layout = .compact
         viewController.viewWillAppear(false)
 
+        /* Ecosia: Remove syncedTabs from segmented control
         XCTAssertEqual(viewController.segmentControlItems.count, 3)
+        */
+        XCTAssertEqual(viewController.segmentControlItems.count, 2)
         guard let navController = viewController.navigationController else {
             XCTFail("NavigationController is expected")
             return
@@ -67,6 +70,7 @@ final class TabTrayViewControllerTests: XCTestCase {
         XCTAssertEqual(viewController.toolbarItems?.count, 3)
     }
 
+    /* Ecosia: Remove syncedTabs from tab tray
     func testBottomToolbarItems_ForSyncTabsEnabledInCompact() {
         setupNimbusTabTrayUIExperimentTesting(isEnabled: false)
         let viewController = createSubject(selectedSegment: .syncedTabs)
@@ -75,6 +79,7 @@ final class TabTrayViewControllerTests: XCTestCase {
 
         XCTAssertEqual(viewController.toolbarItems?.count, 0)
     }
+    */
 
     func testBottomToolbarItemsWithExperiment_ForTabsInCompact() {
         setupNimbusTabTrayUIExperimentTesting(isEnabled: true)
@@ -96,6 +101,7 @@ final class TabTrayViewControllerTests: XCTestCase {
         XCTAssertEqual(viewController.toolbarItems?.count, 5)
     }
 
+    /* Ecosia: Remove syncedTabs from tab tray
     func testBottomToolbarItemsWithExperiment_ForSyncTabsEnabledInCompact() {
         setupNimbusTabTrayUIExperimentTesting(isEnabled: true)
         let viewController = createSubject(selectedSegment: .syncedTabs)
@@ -104,6 +110,7 @@ final class TabTrayViewControllerTests: XCTestCase {
 
         XCTAssertEqual(viewController.toolbarItems?.count, 2)
     }
+    */
 
     // MARK: Regular layout
     func testToolbarItems_ForRegular() {
@@ -111,7 +118,10 @@ final class TabTrayViewControllerTests: XCTestCase {
         viewController.layout = .regular
         viewController.viewWillAppear(false)
 
+        /* Ecosia: Remove syncedTabs from segmented control
         XCTAssertEqual(viewController.segmentControlItems.count, 3)
+        */
+        XCTAssertEqual(viewController.segmentControlItems.count, 2)
         guard let navController = viewController.navigationController else {
             XCTFail("NavigationController is expected")
             return
@@ -153,11 +163,15 @@ final class TabTrayViewControllerTests: XCTestCase {
         let privateTabsPanel = TabDisplayPanelViewController(isPrivateMode: true,
                                                              windowUUID: .XCTestDefaultUUID,
                                                              dragAndDropDelegate: delegate)
+        /* Ecosia: Remove syncedTabs from tab tray
         let syncTabs = RemoteTabsPanel(windowUUID: .XCTestDefaultUUID)
+        */
         return [
             ThemedNavigationController(rootViewController: regularTabsPanel, windowUUID: windowUUID),
             ThemedNavigationController(rootViewController: privateTabsPanel, windowUUID: windowUUID),
+            /* Ecosia: Remove syncedTabs from tab tray
             ThemedNavigationController(rootViewController: syncTabs, windowUUID: windowUUID)
+            */
         ]
     }
 

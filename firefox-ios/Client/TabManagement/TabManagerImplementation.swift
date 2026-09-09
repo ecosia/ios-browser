@@ -2,7 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Ecosia
 import Foundation
+import Combine
 import TabDataStore
 import Common
 import Shared
@@ -43,7 +45,10 @@ final class TabManagerImplementation: NSObject,
         return tabs[selectedIndex]
     }
 
+    /* Ecosia: filter out invisible tabs
     var normalTabs: [Tab] { tabSplit().normal }
+     */
+    var normalTabs: [Tab] { tabSplit().normal.filter { !$0.isInvisible } }
     var privateTabs: [Tab] { tabSplit().private }
 
     /// The non-persistent data store is shared across all windows so private tabs can share cookies.
@@ -90,6 +95,9 @@ final class TabManagerImplementation: NSObject,
         return TabConfigurationProvider(profile: profile, tabManager: self)
     }()
 
+    // Ecosia: Observing Search setting changes
+    nonisolated(unsafe) private var searchSettingsObserver: AnyCancellable?
+
     private var selectedTabUUID: UUID? {
         guard let selectedTab = self.selectedTab,
               let uuid = UUID(uuidString: selectedTab.tabUUID) else {
@@ -100,18 +108,29 @@ final class TabManagerImplementation: NSObject,
     }
 
     private var shouldClearPrivateTabs: Bool {
+        /* Ecosia: [MOB-4105] Change default behaviour to false, matching production LegacyTabManager.
         // FXIOS-9519: By default if no bool value is set we close the private tabs and mark it true
         return profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs) ?? true
+        */
+        return profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs)
+            ?? PrefsKeysDefaultValues.Settings.closePrivateTabs
     }
 
     init(profile: Profile,
-         imageStore: DiskImageStore = AppContainer.shared.resolve(),
+         // Ecosia: Use resolveOptional / fallback defaults so that TabManagerImplementation can be
+         // created during the brief window after AppContainer.shared.reset() in unit-test setUp
+         // (e.g. DependencyHelperMock) without crashing. AppContainer is not thread-safe; background
+         // tasks from the app's scene startup can race with the synchronous reset() + re-register
+         // sequence. imageStore is nil-safe (optional chaining throughout). windowManager falls back
+         // to a fresh WindowManagerImplementation() which is inert but non-crashing for the stale
+         // TabManagerImplementation that scene setup would discard anyway.
+         imageStore: DiskImageStore? = AppContainer.shared.resolveOptional(),
          logger: Logger = DefaultLogger.shared,
          uuid: ReservedWindowUUID,
          tabDataStore: TabDataStore? = nil,
          tabSessionStore: TabSessionStore = DefaultTabSessionStore(),
          notificationCenter: NotificationProtocol = NotificationCenter.default,
-         windowManager: WindowManager = AppContainer.shared.resolve(),
+         windowManager: WindowManager = (AppContainer.shared.resolveOptional() as WindowManager?) ?? WindowManagerImplementation(),
          tabs: [Tab] = []
     ) {
         let dataStore =  tabDataStore ?? DefaultTabDataStore(logger: logger, fileManager: DefaultTabFileManager())
@@ -130,6 +149,24 @@ final class TabManagerImplementation: NSObject,
 
         GlobalTabEventHandlers.configure(with: profile)
 
+        // Ecosia: Cookie observing
+        WKWebsiteDataStore.default().httpCookieStore.add(self)
+
+        // Ecosia: Re-inject search-settings cookies whenever search settings change
+        searchSettingsObserver = NotificationCenter.default
+            .publisher(for: .searchSettingsChanged)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Cookie.makeSearchSettingsObserverCookies(isPrivate: false).forEach { cookie in
+                    self.tabConfigurationProvider.configuration
+                        .webViewConfiguration.websiteDataStore.httpCookieStore.setCookie(cookie)
+                }
+                Cookie.makeSearchSettingsObserverCookies(isPrivate: true).forEach { cookie in
+                    self.tabConfigurationProvider.privateConfiguration
+                        .webViewConfiguration.websiteDataStore.httpCookieStore.setCookie(cookie)
+                }
+            }
+
         startObservingNotifications(
             withNotificationCenter: notificationCenter,
             forObserver: self,
@@ -142,6 +179,8 @@ final class TabManagerImplementation: NSObject,
     }
 
     deinit {
+        // Ecosia: Cancelling search observer
+        searchSettingsObserver?.cancel()
         logger.log("TabManager deallocating (window: \(windowUUID))", level: .info, category: .lifecycle)
     }
 
@@ -1362,5 +1401,16 @@ extension TabManagerImplementation: WindowSimpleTabsProvider {
                                     activeTabId: self.selectedTabUUID ?? UUID(),
                                     tabData: self.generateTabDataForSaving())
         return SimpleTab.convertToSimpleTabs(windowData.tabData)
+    }
+}
+
+// Ecosia: Cookie observer
+extension TabManagerImplementation: WKHTTPCookieStoreObserver {
+    func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
+        cookieStore.getAllCookies { cookies in
+            DispatchQueue.main.async {
+                Cookie.received(cookies, in: cookieStore)
+            }
+        }
     }
 }

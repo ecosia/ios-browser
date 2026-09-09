@@ -6,7 +6,8 @@ import Glean
 import XCTest
 @testable import Client
 
-final class SearchTelemetryTests: XCTestCase {
+@MainActor
+final class SearchTelemetryTests: XCTestCase, @unchecked Sendable {
     var mockGleanWrapper: MockGleanWrapper!
 
     override func setUp() {

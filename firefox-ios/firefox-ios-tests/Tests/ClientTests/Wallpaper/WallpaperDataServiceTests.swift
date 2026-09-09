@@ -18,8 +18,8 @@ class WallpaperDataServiceTests: XCTestCase, WallpaperTestDataProvider {
     }
 
     override func tearDown() {
-        networking = nil
         super.tearDown()
+        networking = nil
     }
 
     // MARK: - Test metadata functions

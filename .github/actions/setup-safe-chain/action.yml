@@ -1,0 +1,12 @@
+name: 'Setup safe-chain'
+description: 'Install aikidosec/safe-chain to guard against malicious dependencies'
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup safe-chain"
+      shell: bash
+      run: |
+        curl -fsSL https://github.com/AikidoSec/safe-chain/releases/download/1.5.3/install-safe-chain.sh -o /tmp/install-safe-chain.sh
+        echo "0107cbbbf90159379756157e902acae512d62ffbd174307e42c5fe9f266792d3  /tmp/install-safe-chain.sh" | sha256sum -c -
+        sh /tmp/install-safe-chain.sh --ci
+        rm /tmp/install-safe-chain.sh

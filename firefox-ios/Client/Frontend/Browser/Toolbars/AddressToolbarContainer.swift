@@ -153,6 +153,17 @@ final class AddressToolbarContainer: UIView,
     /// and the Cancel button is visible (allowing the user to leave overlay mode).
     var inOverlayMode = false
 
+    // Ecosia: Passthrough for live overlay text decisions in BVC.
+    var overlayLocationText: String {
+        toolbar.overlayEditingText
+    }
+
+    // Ecosia: Write counterpart to `overlayLocationText`, used by the suggestion list's
+    // "append" arrow to fill the address bar without submitting.
+    func setOverlayLocationText(_ text: String) {
+        toolbar.setOverlayEditingText(text)
+    }
+
     init(toolbarHelper: ToolbarHelperInterface = ToolbarHelper()) {
         self.toolbarHelper = toolbarHelper
         super.init(frame: .zero)
@@ -532,6 +543,8 @@ final class AddressToolbarContainer: UIView,
             addNewTabView.applyTheme(theme: theme)
         }
         applyProgressBarTheme(isPrivateMode: model?.isPrivateMode ?? false, theme: theme)
+        // Ecosia: Match NavigationToolbarContainer's background so both toolbars share the same dark mode colour
+        backgroundColor = theme.colors.layerSurfaceLow.withAlphaComponent(toolbarHelper.glassEffectAlpha)
 
         guard #available(iOS 26.0, *) else { return }
         accessoryViewGradient.colors = [
@@ -680,6 +693,7 @@ final class AddressToolbarContainer: UIView,
     }
 
     private func applyProgressBarTheme(isPrivateMode: Bool, theme: Theme) {
+        /* Ecosia: Swap Firefox progress bar gradient (and its Nova variant) with Ecosia highlighter styling
         if theme.isNova,
            let startColor = theme.colors.gradientAccent.colors.first,
            let endColor = theme.colors.gradientAccent.colors.last {
@@ -695,6 +709,14 @@ final class AddressToolbarContainer: UIView,
             startColor: gradientStartColor,
             middleColor: gradientMiddleColor,
             endColor: gradientEndColor
+        )
+         */
+        let highlighter = theme.colors.ecosia.highlighter
+        progressBar.backgroundColor = theme.colors.ecosia.backgroundTertiary
+        progressBar.setGradientColors(
+            startColor: highlighter,
+            middleColor: highlighter,
+            endColor: highlighter
         )
     }
 

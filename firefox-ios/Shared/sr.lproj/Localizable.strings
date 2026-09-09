@@ -308,7 +308,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "Могуће је да је у питању погрешно подешавање или неовлашћена измена од стране нападача. Наставите ако прихватате потенцијални ризик.";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "Власник веб странице %@ ју је неправилно подесио. Да би заштитио ваше податке од крађе, Firefox се није повезао са овом веб страницом.";
+"ErrorPages.CertWarning.Description" = "Власник веб странице %@ ју је неправилно подесио. Да би заштитио ваше податке од крађе, Ecosia се није повезао са овом веб страницом.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "Ова веза није поверљива";
@@ -329,7 +329,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Firefox почетна страница";
+"Firefox.HomePage.Title" = "Ecosia почетна страница";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "Прилагоди почетну страницу";
@@ -380,7 +380,7 @@
 "Forward" = "Напред";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Firefox налог";
+"FxA.FirefoxAccount" = "Ecosia налог";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Управљајте налогом и уређајима";
@@ -392,7 +392,7 @@
 "fxa.signin.camera-signin" = "Пријавите се помоћу камере";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "На рачунару отворите Firefox и посетите firefox.com/pair";
+"fxa.signin.qr-link-instruction" = "На рачунару отворите Ecosia и посетите firefox.com/pair";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "Спремно за скенирање";
@@ -404,7 +404,7 @@
 "FxA.SyncNow" = "Усклади сада";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "Firefox Sync је повезан са %@";
+"FxAPush_DeviceConnected_body" = "Ecosia Sync је повезан са %@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "Усаглашавање је повезано";
@@ -413,7 +413,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ је успешно прекинуо везу.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Овај уређај је успешно прекинуо везу са Firefox Sync-ом.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Овај уређај је успешно прекинуо везу са Ecosia Sync-ом.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Усаглашавање је прекинуто";
@@ -422,10 +422,10 @@
 "FxAPush_DeviceDisconnected_title" = "Усаглашавање је прекинуто";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Уређај је прекинуо везу са Firefox Sync-ом";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "Уређај је прекинуо везу са Ecosia Sync-ом";
 
 /* On the firefox homepage, the string read by the voice over prompt for accessibility, for the button which changes the wallpaper */
-"FxHomepage.Wallpaper.ButtonLabel.v99" = "Firefox логотип, промените позадину.";
+"FxHomepage.Wallpaper.ButtonLabel.v99" = "Ecosia логотип, промените позадину.";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "Помоћ";
@@ -458,7 +458,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "Пријавите се да бисте видели списак језичака са ваших других уређаја.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "Историјат";
@@ -656,13 +656,13 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "Сазнајте више";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "Да бисте користили функцију самосталног попуњавања у Firefox-у, морате имати омогућену шифру за уређај.";
+"Logins.PasscodeRequirement.Warning" = "Да бисте користили функцију самосталног попуњавања у Ecosia-у, морате имати омогућену шифру за уређај.";
 
 /* Label displaying welcome view tagline under the title */
 "Logins.WelcomeView.Tagline" = "Понесите ваше лозинке свугде";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "Самостално попуњавање Firefox лозинки";
+"Logins.WelcomeView.Title2" = "Самостално попуњавање Ecosia лозинки";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "Укључи самостално попуњавање";
@@ -695,7 +695,7 @@
 "LoginsList.Title" = "САЧУВАНЕ ПРИЈАВЕ";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Чини се да је Firefox раније пао. Желите ли да повратите језичке?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Чини се да је Ecosia раније пао. Желите ли да повратите језичке?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Означи као прочитано";
@@ -884,7 +884,7 @@
 "Onboarding.WhatsNew.Button.Title" = "Почни прегледање";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "Упс! Firefox се срушио";
+"Oops! Firefox crashed" = "Упс! Ecosia се срушио";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "Отворите чланке у приказу за читање притиском на иконицу књиге када се појави у траци наслова.";
@@ -896,7 +896,7 @@
 "Open Tabs" = "Отворени језичци";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "Firefox не може да отвори страницу јер има неисправну адресу.";
+"OpenURL.Error.Message" = "Ecosia не може да отвори страницу јер има неисправну адресу.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "Немогуће отворити страницу";
@@ -908,7 +908,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "Ово вам омогућава да сачувате слику у галерију фотографија.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Firefox жели да приступи вашим фотографијама";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia жели да приступи вашим фотографијама";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "Затвори";
@@ -995,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "Подаци су неисправни";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "Идите у „Подешавања“ уређаја > „Firefox“. Дозволите Firefox-у приступ камери.";
+"ScanQRCode.PermissionError.Message.v100" = "Идите у „Подешавања“ уређаја > „Ecosia“. Дозволите Ecosia-у приступ камери.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "Скенирање КР кода";
@@ -1010,7 +1010,7 @@
 "Search.Awesomebar.SwitchToTab" = "Пређи на језичак";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "Firefox предлози";
+"Search.SuggestSectionTitle.v102" = "Ecosia предлози";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "Нови претраживач ће се појавити у траци за брзу претрагу.";
@@ -1046,7 +1046,7 @@
 "Search.ThirdPartyEngines.OK" = "У реду";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "Пошаљите извештај о паду како би Mozilla могла да поправи проблем?";
+"Send a crash report so Mozilla can fix the problem?" = "Пошаљите извештај о паду како би Ecosia могла да поправи проблем?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "Пошаљи утиске";
@@ -1076,13 +1076,13 @@
 "SendTo.NavBar.Title" = "Пошаљи језичак";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "Немате других уређаја повезаних са овим Firefox налогом који су доступни за усклађивање.";
+"SendTo.NoDevicesFound.Message" = "Немате других уређаја повезаних са овим Ecosia налогом који су доступни за усклађивање.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "Отворите Firefox, идите у Подешавања и пријавите се да бисте наставили.";
+"SendTo.NotSignedIn.Message" = "Отворите Ecosia, идите у Подешавања и пријавите се да бисте наставили.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Нисте пријављени на свој Firefox налог.";
+"SendTo.NotSignedIn.Title" = "Нисте пријављени на свој Ecosia налог.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Пошаљи";
@@ -1103,7 +1103,7 @@
 "SentTab.NoTabArrivingNotification.body" = "Додирните да започнете";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Firefox усклађивање";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia усклађивање";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "Погледај";
@@ -1193,7 +1193,7 @@
 "Settings.DataManagement.Title" = "Управљање подацима";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "Firefox ће прекинути усклађивање са вашим налогом, али неће обрисати податке прегледања са овог уређаја.";
+"Settings.Disconnect.Body" = "Ecosia ће прекинути усклађивање са вашим налогом, али неће обрисати податке прегледања са овог уређаја.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "Прекини везу са Sync-ом";
@@ -1259,7 +1259,7 @@
 "Settings.FxA.Sync.SectionName" = "Подешавања усаглашавања";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Firefox налог";
+"Settings.FxA.Title" = "Ecosia налог";
 
 /* General settings section title */
 "Settings.General.SectionName" = "Опште";
@@ -1268,7 +1268,7 @@
 "Settings.Home.Current.Description.v101" = "Изаберите шта се приказује као почетна страница.";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "Изаберите шта је укључено на Firefox почетној страници.";
+"Settings.Home.Option.Description.v101" = "Изаберите шта је укључено на Ecosia почетној страници.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "Наставите где сте стали";
@@ -1292,7 +1292,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "Почетна страница";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "Изаберите шта желите да видите када се вратите у Firefox.";
+"Settings.Home.Option.StartAtHome.Description" = "Изаберите шта желите да видите када се вратите у Ecosia.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "Последњи језичак";
@@ -1307,25 +1307,25 @@
 "Settings.Home.Option.Wallpaper" = "Позадина";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Firefox позадина, шара аметиста.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Ecosia позадина, шара аметиста.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Firefox позадина, шара пешчаних брда.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Ecosia позадина, шара пешчаних брда.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Firefox позадина, плаветна шара.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Ecosia позадина, плаветна шара.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "Подразумевана прозирна позадина.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Firefox позадина, шара изласка сунца.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Ecosia позадина, шара изласка сунца.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "Прекидач за кружење позадине почетне странице";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Firefox позадина, шара сумрачних брда.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Ecosia позадина, шара сумрачних брда.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "Класично %@";
@@ -1346,7 +1346,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "Ограничено издање";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Промените позадину додиром на логотип почетне странице Firefox-а";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Промените позадину додиром на логотип почетне странице Ecosia-а";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "Позадина";
@@ -1400,7 +1400,7 @@
 "Settings.NewTab.Option.Custom" = "Прилагођено";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Почетна страница Firefox-а";
+"Settings.NewTab.Option.FirefoxHome" = "Почетна страница Ecosia-а";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Матична страница";
@@ -1421,7 +1421,7 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "Блокирај слике";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "При отварању Firefox-а";
+"Settings.OfferClipboardBar.Status" = "При отварању Ecosia-а";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "При отварању %@";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Сазнајте више.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Mozilla се труди да прикупља само оно што нам је потребно да бисмо обезбедили и побољшали Firefox за све.";
+"Settings.SendUsage.Message" = "Ecosia се труди да прикупља само оно што нам је потребно да бисмо обезбедили и побољшали Ecosia за све.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Слање података о употреби";
@@ -1481,7 +1481,7 @@
 "Settings.Siri.OpenTabShortcut" = "Отвори нови језичак";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Користите Siri пречице за брзо отварање Firefox-а путем Siri-ја";
+"Settings.Siri.SectionDescription" = "Користите Siri пречице за брзо отварање Ecosia-а путем Siri-ја";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Siri пречице";
@@ -1490,7 +1490,7 @@
 "Settings.Studies.Toggle.Link" = "Сазнајте више.";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "Firefox може с времена на време да инсталира и покрене студије.";
+"Settings.Studies.Toggle.Message" = "Ecosia може с времена на време да инсталира и покрене студије.";
 
 /* Label used as a toggle item in Settings. When this is off, the user is opting out of all studies. */
 "Settings.Studies.Toggle.Title" = "Студије";
@@ -1610,13 +1610,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Учитај у позадини";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Учитавање у Firefox-у";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Учитавање у Ecosia-у";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Отвори у Firefox-у";
+"ShareExtension.OpenInFirefoxAction.Title" = "Отвори у Ecosia-у";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Претражи у Firefox-у";
+"ShareExtension.SeachInFirefoxAction.Title" = "Претражи у Ecosia-у";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "Копирај";
@@ -1760,7 +1760,7 @@
 "UIMenuItem.PasteGo" = "Убаци и иди";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "Претражи помоћу Firefox-а";
+"UIMenuItem.SearchWithFirefox" = "Претражи помоћу Ecosia-а";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "непрочитано";
@@ -1808,7 +1808,7 @@
 "Yesterday" = "Јуче";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "Немате отворених Firefox језичака на вашим другим уређајима.";
+"You don’t have any tabs open in Firefox on your other devices." = "Немате отворених Ecosia језичака на вашим другим уређајима.";
 
 /* Your Rights settings section title */
 "Your Rights" = "Ваша права";

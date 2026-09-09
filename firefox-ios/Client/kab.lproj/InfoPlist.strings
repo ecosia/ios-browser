@@ -5,10 +5,10 @@
 "New Tab" = "Iccer amaynut";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox can use your camera to scan QR codes or take photos and video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox yesra Face ID i unekcum ɣer wawalen-ik·im uffiren d tarrayin n uxelleṣ yettwawgelhen.";
+"NSFaceIDUsageDescription" = "Ecosia yesra Face ID i unekcum ɣer wawalen-ik·im uffiren d tarrayin n uxelleṣ yettwawgelhen.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Ismal web iɣer trezzuḍ zemren ad sutren adig-inek.";

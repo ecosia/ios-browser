@@ -62,8 +62,7 @@ public final class FeatureHolder<T: FMLFeatureInterface>: @unchecked Sendable {
 
     public init(_ getSdk: @escaping () -> FeaturesInterface?,
                 featureId: String,
-                with create: @escaping (Variables, UserDefaults?) -> T)
-    {
+                with create: @escaping (Variables, UserDefaults?) -> T) {
         self.getSdk = getSdk
         self.featureId = featureId
         self.create = create

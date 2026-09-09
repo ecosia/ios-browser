@@ -9,12 +9,18 @@ import WebKit
 import Common
 import Storage
 
+// Ecosia: Synced to upstream v147.5. The previous version drove the helper through WKScriptMessageMock +
+// WKFrameInfoMock (WebKit subclasses); instantiating WKFrameInfo subclasses crashes on the iOS 26.5 SDK, which
+// crashed every test in this class. Upstream calls processMessage(name:body:isSecureContext:frame:) directly
+// (already present in our production) and only uses a WKWebView mock, so no fragile WebKit subclassing is needed.
+// (upstream's MockWKWebView was renamed to our existing WKWebViewMock.) (MOB-4384)
 @MainActor
 final class FormAutofillHelperTests: XCTestCase {
     var formAutofillHelper: FormAutofillHelper!
+    // swiftlint:disable:next implicitly_unwrapped_optional
     var tab: MockTab!
     var profile: MockProfile!
-    var secureWebviewMock: MockWKWebView!
+    var secureWebviewMock: WKWebViewMock!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
     let validMockPayloadCaptureJson = """
         {
@@ -35,7 +41,7 @@ final class FormAutofillHelperTests: XCTestCase {
         DependencyHelperMock().bootstrapDependencies(injectedProfile: profile)
         tab = MockTab(profile: profile, windowUUID: windowUUID)
         formAutofillHelper = FormAutofillHelper(tab: tab)
-        secureWebviewMock = MockWKWebView(URL(string: "https://foo.com")!)
+        secureWebviewMock = WKWebViewMock(URL(string: "https://foo.com")!)
     }
 
     override func tearDown() async throws {

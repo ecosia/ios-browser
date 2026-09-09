@@ -1,0 +1,11 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+@testable import Ecosia
+
+final class MockWelcomeDelegate: WelcomeDelegate {
+    func welcomeDidRequestSignIn(_ welcome: Ecosia.WelcomeViewController) {}
+
+    func welcomeDidFinish(_ welcome: WelcomeViewController) {}
+}

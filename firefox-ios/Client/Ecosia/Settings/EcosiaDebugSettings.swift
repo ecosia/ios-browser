@@ -1,0 +1,988 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import UIKit
+import Shared
+import Common
+import Ecosia
+
+// MARK: - Sentry Debug Settings
+
+/// Sends a message through `EcosiaLogger.general.sentry(...)` without crashing — this logs locally like
+/// `.error` AND forwards to Sentry via `DefaultLogger`/`CrashManager` in one call. Useful to confirm the
+/// DSN/network path works without the crash+relaunch round trip.
+final class EcosiaLoggerForceErrorSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Send Non-Crashing Error to Sentry", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        EcosiaLogger.general.sentry("Ecosia debug: non-crashing test event")
+
+        let alert = AlertController(title: "Sent ✅",
+                                    message: "Check the Sentry dashboard in a minute.",
+                                    preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        navigationController?.topViewController?.present(alert, animated: true)
+    }
+}
+
+final class PushBackInstallation: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Push back installation by 3 days (needs restart).", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        Calendar.current.date(byAdding: .day, value: -3, to: User.shared.install).map {
+            User.shared.install = $0
+        }
+    }
+}
+
+final class ToggleImpactIntro: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Show Impact intro", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let isOn = User.shared.shouldShowImpactIntro
+        return NSAttributedString(string: isOn ? "True" : "False", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        if User.shared.shouldShowImpactIntro {
+            User.shared.hideImpactIntro()
+        } else {
+            User.shared.showImpactIntro()
+        }
+        settings.tableView.reloadData()
+    }
+}
+
+final class ToggleDefaultBrowserPromo: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Show Default Browser Promo", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let shown = User.shared.defaultBrowserSearchPromoShown
+        return NSAttributedString(string: shown ? "Suppressed (tap to reset)" : "Eligible", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.resetDefaultBrowserSearchPromo()
+        settings.tableView.reloadData()
+    }
+}
+
+final class ShowWelcomeScreen: HiddenSetting {
+    var profile: Profile?
+
+    override init(settings: SettingsTableViewController) {
+        self.profile = settings.profile
+        super.init(settings: settings)
+    }
+
+    override var title: NSAttributedString? {
+        NSAttributedString(string: "Debug: Show Welcome Screen")
+    }
+
+    override var status: NSAttributedString? {
+        let seen = profile?.prefs.intForKey(PrefsKeys.IntroSeen) != nil
+        return NSAttributedString(string: seen ? "Seen — tap to reset" : "Not yet seen")
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        profile?.prefs.removeObjectForKey(PrefsKeys.IntroSeen)
+        User.shared.firstTime = true
+        settings.tableView.reloadData()
+    }
+}
+
+final class CreateReferralCode: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return .init(string: "Toggle to create or erase code")
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+
+        if User.shared.referrals.code == nil {
+            User.shared.referrals.code = "TEST123"
+
+            let alertTitle = "Code created"
+            let alert = AlertController(title: alertTitle, message: User.shared.referrals.code, preferredStyle: .alert)
+            navigationController?.topViewController?.present(alert, animated: true) {
+                // Task + sleep instead of DispatchQueue for strict concurrency
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    alert.dismiss(animated: true)
+                }
+                self.settings.tableView.reloadData()
+            }
+        } else {
+            User.shared.referrals.code = nil
+
+            let alert = AlertController(title: "Code erased!", message: "Reopen app to create new one", preferredStyle: .alert)
+            navigationController?.topViewController?.present(alert, animated: true) {
+                // Task + sleep instead of DispatchQueue for strict concurrency
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    alert.dismiss(animated: true)
+                }
+                self.settings.tableView.reloadData()
+            }
+        }
+    }
+}
+
+final class AddReferral: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add Referral", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.referrals.claims += 1
+
+        let alertTitle = "Referral count increased by one."
+        let alert = AlertController(title: alertTitle, message: "Open NTP to see spotlight", preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+final class AddClaim: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add Referral Claim", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.referrals.isClaimed = true
+        User.shared.referrals.isNewClaim = true
+
+        let alertTitle = "User got referred."
+        let alert = AlertController(title: alertTitle, message: "Open NTP to see claim", preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+final class ResetSearchCount: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Set search count to 0", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.searchCount = 0
+        self.settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+}
+
+final class ChangeSearchCount: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Increase search count by 10", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.searchCount += 10
+        self.settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+}
+
+final class ResetDefaultBrowserNudgeCard: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Makes the Default Browser nudge card visible again", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = "\(User.shared.shouldShowDefaultBrowserSettingNudgeCard)"
+        let suggestion = User.shared.shouldShowDefaultBrowserSettingNudgeCard ? "" : " (Click to show)"
+        return NSAttributedString(string: "Card visible: \(status)\(suggestion)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard !User.shared.shouldShowDefaultBrowserSettingNudgeCard else { return }
+        User.shared.showDefaultBrowserSettingNudgeCard()
+        self.settings.settings = self.settings.generateSettings()
+        self.settings.tableView.reloadData()
+    }
+}
+
+final class ResetAccountImpactNudgeCard: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Makes the Account Impact nudge card visible again", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = "\(User.shared.shouldShowAccountImpactNudgeCard)"
+        let suggestion = User.shared.shouldShowAccountImpactNudgeCard ? "" : " (Click to show)"
+        return NSAttributedString(string: "Card visible: \(status)\(suggestion)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard !User.shared.shouldShowAccountImpactNudgeCard else { return }
+        User.shared.showAccountImpactNudgeCard()
+        self.settings.settings = self.settings.generateSettings()
+        self.settings.tableView.reloadData()
+    }
+}
+
+@MainActor
+class UnleashVariantResetSetting: HiddenSetting {
+    var titleName: String? { return nil }
+    var variant: Unleash.Variant? { return nil }
+    var unleashEnabled: Bool? { return nil }
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Unleash \(titleName ?? "Unknown") variant", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        var statusName = variant?.name ?? "Unknown"
+        if statusName == "Unknown", let unleashEnabled = unleashEnabled {
+            statusName = unleashEnabled ? "enabled" : "disabled"
+        }
+        return NSAttributedString(string: "\(statusName) (Click to reset)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        Task {
+            do {
+                _ = try await Unleash.reset(env: .current, appVersion: AppInfo.ecosiaAppVersion)
+            } catch {
+                debugPrint(error)
+            }
+            await MainActor.run {
+                // A reset re-fetches the model, which can flip the search provider flag or
+                // change its router payload. Without this the app keeps the engine list it
+                // built at launch until the next foreground.
+                let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+                searchEnginesManager.reconfigureEngineProviderIfNeeded()
+
+                self.settings.tableView.reloadData()
+                let alert = AlertController(title: "Unleash reset ✅",
+                                            message: "The local Unleash cache has been wiped out",
+                                            preferredStyle: .alert)
+                alert.addAction(.init(title: "Ok", style: .default))
+                navigationController?.topViewController?.present(alert, animated: true)
+            }
+        }
+    }
+}
+
+final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Braze Integration"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.brazeIntegration)
+    }
+}
+
+final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Native SRPV Analytics"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.nativeSRPVAnalytics)
+    }
+}
+
+final class UnleashCustomSearchProviderSetting: UnleashVariantResetSetting {
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Debug.customSearchProviderUnleash
+    }
+
+    override var titleName: String? {
+        "Custom Search Provider"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.customSearchProvider)
+    }
+
+    /// Shows the configuration the app actually resolved, so QA can tell a payload that
+    /// landed from one that fell back. With the flag off this reads as the Ecosia-only
+    /// configuration, which is what applies.
+    override var status: NSAttributedString? {
+        let config = CustomSearchProviderFeatureFlag.config
+        let state = Unleash.isEnabled(.customSearchProvider) ? "enabled" : "disabled"
+        let providers = config.providers.map(\.rawValue).joined(separator: ", ")
+        let description = "\(state) · ai: \(config.aiMode.rawValue) · \(providers) (Click to reset)"
+        return NSAttributedString(string: description, attributes: [:])
+    }
+}
+
+final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "AI Chat MVP"
+    }
+
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.aiChatMVP)
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.aiChatMVP)
+    }
+}
+
+final class UnleashAIFreeSearchingSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "AI-free searching"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.aiFreeSearching)
+    }
+}
+
+final class AnalyticsIdentifierSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [:])
+    }
+
+    var analyticsIdentifier: String { User.shared.analyticsId.uuidString }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(analyticsIdentifier) (Click to copy)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        UIPasteboard.general.string = analyticsIdentifier
+    }
+}
+
+final class UnleashIdentifierSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Unleash Identifier", attributes: [:])
+    }
+
+    var analyticsIdentifier: String { Unleash.userId.uuidString }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(Unleash.userId.uuidString) (Click to copy)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        UIPasteboard.general.string = Unleash.userId.uuidString
+    }
+}
+
+final class AnalyticsStagingUrlSetting: HiddenSetting {
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Swap Analytics Staging URL", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let isOn = Analytics.shouldUseMicroInstance
+        let snowplowInstance = isOn ? "Micro" : "Mini"
+        return NSAttributedString(string: "\(snowplowInstance) instance (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        Analytics.shouldUseMicroInstance.toggle()
+        settings.tableView.reloadData()
+    }
+}
+
+final class SimulateAuthErrorSetting: HiddenSetting {
+    /// UserDefaults key for storing auth error simulation state
+    /// Note: Persists across app restarts - toggle again to disable
+    /// nonisolated so async/non–main-actor code can read it without crossing isolation
+    nonisolated public static let debugKey = "DebugSimulateAuthError"
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Simulate Auth Error", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let isEnabled = Self.isEnabled
+        let status = isEnabled ? "ON (Auth will fail)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? "Auth Error Enabled ✅" : "Auth Error Disabled ✅",
+            message: !currentValue
+                ? "Next login/logout will fail and show an error toast until you toggle this off."
+                : "Auth errors disabled.",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+
+    /// Check if auth error simulation is enabled
+    nonisolated public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+/// Forces the invisible tab used for SSO session transfer/cleanup to load /accounts/error directly
+/// instead of the normal sign-up/logout URL - mirroring Android's own QA-only shortcut
+/// (ForcedTransferError.OPEN_ERROR_PAGE), rather than trying to trigger a genuine server-side
+/// redirect there (fastify-passport appears to 401 directly on an OAuth callback error param,
+/// short-circuiting before any redirect). /accounts/error itself has no auth precondition, so this
+/// still exercises the real web page and isSessionTransferSuccessful()'s URL classification
+/// end-to-end, rather than faking the outcome natively.
+final class SimulateSessionTransferFailureSetting: HiddenSetting {
+    nonisolated public static let debugKey = "DebugSimulateSessionTransferFailure"
+
+    nonisolated public static var forcedErrorPageURL: URL {
+        let urlProvider = EcosiaEnvironment.current.urlProvider
+        var errorPath = urlProvider.errorPaths.first ?? "/accounts/error"
+        if errorPath.hasPrefix("/") { errorPath.removeFirst() }
+        return urlProvider.root.appendingPathComponent(errorPath)
+    }
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Simulate Session Transfer Failure", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "ON (session transfer will hit a real /accounts/error)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? "Session Transfer Failure Enabled ✅" : "Session Transfer Failure Disabled ✅",
+            message: !currentValue
+                ? "Next login/logout will complete natively but the invisible tab will hit a real " +
+                  "/accounts/error - check Sentry for the event, until you toggle this off."
+                : "Session transfer failures disabled.",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+
+    nonisolated public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+final class SimulateImpactAPIErrorSetting: HiddenSetting {
+    /// UserDefaults key for storing impact API error simulation state
+    /// Note: Persists across app restarts - toggle again to disable
+    /// nonisolated so async/non–main-actor code can read it without crossing isolation
+    nonisolated public static let debugKey = "DebugSimulateImpactAPIError"
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Simulate Impact API Error", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let isEnabled = Self.isEnabled
+        let status = isEnabled ? "ON (API will fail)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? "Impact API Error Enabled ✅" : "Impact API Error Disabled ✅",
+            message: !currentValue
+                ? "Next impact API call will fail and show the seed counter error toast."
+                : "Impact API errors disabled.",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+
+    /// Check if impact API error simulation is enabled
+    nonisolated public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+// MARK: - File Upload Debug Settings
+
+final class SimulateFileUploadAPIErrorSetting: HiddenSetting {
+    /// UserDefaults key for storing file upload API error simulation state
+    /// Note: Persists across app restarts - toggle again to disable
+    nonisolated public static let debugKey = "DebugSimulateFileUploadAPIError"
+
+    override var title: NSAttributedString? {
+        NSAttributedString(string: "Debug: Toggle - Simulate File Upload API Error", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "ON (Simulating API failure)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        toggleSimulation(
+            navigationController: navigationController,
+            enabledTitle: "File Upload API Error Enabled ✅",
+            enabledMessage: "Attachment uploads will fail with an error toast until you toggle this off.",
+            disabledTitle: "File Upload API Error Disabled ✅",
+            disabledMessage: "Upload API errors disabled."
+        )
+    }
+
+    nonisolated public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+final class SimulateUploadValidationErrorSetting: HiddenSetting {
+    private let simulatedError: OmniboxUploadValidationError
+
+    init(simulatedError: OmniboxUploadValidationError, settings: SettingsTableViewController) {
+        self.simulatedError = simulatedError
+        super.init(settings: settings)
+    }
+
+    nonisolated static func debugKey(for error: OmniboxUploadValidationError) -> String {
+        switch error {
+        case .tooManyFiles:
+            return "DebugSimulateUploadTooManyFiles"
+        case .fileTooLarge:
+            return "DebugSimulateUploadFileTooLarge"
+        case .unsupportedFileType:
+            return "DebugSimulateUploadUnsupportedFileType"
+        case .uploadFailed:
+            return SimulateFileUploadAPIErrorSetting.debugKey
+        }
+    }
+
+    override var title: NSAttributedString? {
+        NSAttributedString(
+            string: "Debug: Toggle - Simulate \(simulatedError.debugLabel) Error",
+            attributes: [:]
+        )
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled(for: simulatedError)
+            ? "ON (Simulating \(simulatedError.debugLabel.lowercased()) error)"
+            : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        toggleSimulation(
+            navigationController: navigationController,
+            enabledTitle: "\(simulatedError.debugLabel) Error Enabled ✅",
+            enabledMessage: "Attachment selection will show the \(simulatedError.debugLabel.lowercased()) error toast until you toggle this off.",
+            disabledTitle: "\(simulatedError.debugLabel) Error Disabled ✅",
+            disabledMessage: "\(simulatedError.debugLabel) upload errors disabled."
+        )
+    }
+
+    nonisolated static func isEnabled(for error: OmniboxUploadValidationError) -> Bool {
+        UserDefaults.standard.bool(forKey: debugKey(for: error))
+    }
+
+    private func toggleSimulation(
+        navigationController: UINavigationController?,
+        enabledTitle: String,
+        enabledMessage: String,
+        disabledTitle: String,
+        disabledMessage: String
+    ) {
+        let key = Self.debugKey(for: simulatedError)
+        let currentValue = UserDefaults.standard.bool(forKey: key)
+        UserDefaults.standard.set(!currentValue, forKey: key)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? enabledTitle : disabledTitle,
+            message: !currentValue ? enabledMessage : disabledMessage,
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+private extension SimulateFileUploadAPIErrorSetting {
+    func toggleSimulation(
+        navigationController: UINavigationController?,
+        enabledTitle: String,
+        enabledMessage: String,
+        disabledTitle: String,
+        disabledMessage: String
+    ) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? enabledTitle : disabledTitle,
+            message: !currentValue ? enabledMessage : disabledMessage,
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+private extension OmniboxUploadValidationError {
+    var debugLabel: String {
+        switch self {
+        case .tooManyFiles:
+            return "Too Many Files"
+        case .fileTooLarge:
+            return "File Too Large"
+        case .unsupportedFileType:
+            return "Unsupported File Type"
+        case .uploadFailed:
+            return "Upload API"
+        }
+    }
+}
+
+// MARK: - Seed & Level Debug Settings
+
+final class DebugAddSeedsLoggedOut: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add 1 Seed (Logged Out) - 10s delay", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let maxSeeds = UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
+        let currentSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        let remaining = max(0, maxSeeds - currentSeeds)
+        return NSAttributedString(string: "\(currentSeeds)/\(maxSeeds) seeds | \(remaining) remaining (cap always ON)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        // Check if user is logged in
+        guard !EcosiaAuthenticationService.shared.isLoggedIn else {
+            let errorAlert = AlertController(
+                title: "Already Logged In",
+                message: "This feature is for logged-out users only. Please use the logged-in debug options instead.",
+                preferredStyle: .alert
+            )
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(errorAlert, animated: true)
+            return
+        }
+
+        let currentSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        let maxSeeds = UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
+
+        // Check if already at cap
+        if currentSeeds >= maxSeeds {
+            let alert = AlertController(
+                title: "Seed Cap Reached",
+                message: "Already at maximum (\(maxSeeds) seeds) for logged-out users",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(alert, animated: true)
+            return
+        }
+
+        let alert = AlertController(
+            title: "Seed Queued ✅",
+            message: "Navigate to home or open Account Impact within 10 seconds to see animation",
+            preferredStyle: .alert
+        )
+
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                alert.dismiss(animated: true)
+            }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                UserDefaultsSeedProgressManager.addSeeds(1)
+                EcosiaLogger.accounts.info("Debug: Added 1 seed for logged-out user")
+            }
+        }
+    }
+}
+
+final class DebugAddSeedsLoggedIn: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add 5 Seeds (Logged In) - 10s delay", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let currentSeeds = EcosiaAuthUIStateProvider.shared.seedCount
+        return NSAttributedString(string: "Current: \(currentSeeds) seeds", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard EcosiaAuthenticationService.shared.isLoggedIn else {
+            let errorAlert = AlertController(
+                title: "Not Logged In",
+                message: "Please log in first to use this feature",
+                preferredStyle: .alert
+            )
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(errorAlert, animated: true)
+            return
+        }
+
+        let alert = AlertController(
+            title: "Seeds Queued ✅",
+            message: "Navigate to home or open Account Impact within 10 seconds to see animation",
+            preferredStyle: .alert
+        )
+
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                alert.dismiss(animated: true)
+            }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                EcosiaAuthUIStateProvider.shared.debugAddSeeds(5)
+            }
+        }
+    }
+}
+
+final class DebugForceLevelUp: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Force Level Up (Logged In) - 10s delay", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Triggers sparkle animation", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard EcosiaAuthenticationService.shared.isLoggedIn else {
+            let errorAlert = AlertController(
+                title: "Not Logged In",
+                message: "Please log in first to use this feature",
+                preferredStyle: .alert
+            )
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(errorAlert, animated: true)
+            return
+        }
+
+        let alert = AlertController(
+            title: "Level Up Queued ✅",
+            message: "Navigate to Account Impact within 10 seconds to see level-up animation",
+            preferredStyle: .alert
+        )
+
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                alert.dismiss(animated: true)
+            }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                EcosiaAuthUIStateProvider.shared.debugTriggerLevelUpAnimation()
+            }
+        }
+    }
+}
+
+final class DebugAddCustomSeeds: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add Custom Seeds (Logged In)", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let currentSeeds = EcosiaAuthUIStateProvider.shared.seedCount
+        return NSAttributedString(string: "Current: \(currentSeeds) seeds | Input custom amount", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard EcosiaAuthenticationService.shared.isLoggedIn else {
+            let errorAlert = AlertController(
+                title: "Not Logged In",
+                message: "Please log in first to use this feature",
+                preferredStyle: .alert
+            )
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            navigationController?.topViewController?.present(errorAlert, animated: true)
+            return
+        }
+
+        let alert = AlertController(
+            title: "Add Custom Seeds",
+            message: "Enter the number of seeds to add (1-1000)",
+            preferredStyle: .alert
+        )
+
+        alert.addTextField { textField in
+            textField.placeholder = "Number of seeds"
+            textField.keyboardType = .numberPad
+        }
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        alert.addAction(UIAlertAction(title: "Add", style: .default) { [weak self] _ in
+            guard let textField = alert.textFields?.first,
+                  let text = textField.text,
+                  let seedCount = Int(text),
+                  seedCount > 0 && seedCount <= 1000 else {
+                let errorAlert = AlertController(
+                    title: "Invalid Input",
+                    message: "Please enter a number between 1 and 1000",
+                    preferredStyle: .alert
+                )
+                errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                navigationController?.topViewController?.present(errorAlert, animated: true)
+                return
+            }
+
+            self?.addCustomSeeds(count: seedCount, navigationController: navigationController)
+        })
+
+        navigationController?.topViewController?.present(alert, animated: true)
+    }
+
+    private func addCustomSeeds(count: Int, navigationController: UINavigationController?) {
+        let confirmAlert = AlertController(
+            title: "Seeds Queued ✅",
+            message: "Adding \(count) seeds in 10 seconds. Navigate to home or open Account Impact to see animation.",
+            preferredStyle: .alert
+        )
+
+        navigationController?.topViewController?.present(confirmAlert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                confirmAlert.dismiss(animated: true)
+            }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                EcosiaAuthUIStateProvider.shared.debugAddSeeds(count)
+            }
+        }
+    }
+}
+
+// MARK: - Statistics Refresh
+
+@MainActor
+final class RefreshStatisticsSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        NSAttributedString(string: "Debug: Refresh Statistics (Tree Counter)", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let trees = Int(Statistics.shared.treesPlanted)
+        let formatted = NumberFormatter.localizedString(from: NSNumber(value: trees), number: .decimal)
+        return NSAttributedString(string: "Current: \(formatted) trees", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let trees = Int(Statistics.shared.treesPlanted)
+        let formatted = NumberFormatter.localizedString(from: NSNumber(value: trees), number: .decimal)
+
+        let confirmAlert = AlertController(
+            title: "Refresh Statistics?",
+            message: "Current trees planted: \(formatted)\n\nFetch latest data from CloudFront?",
+            preferredStyle: .alert
+        )
+
+        confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        confirmAlert.addAction(UIAlertAction(title: "Refresh", style: .default) { [weak self] _ in
+            self?.performFetch(navigationController: navigationController)
+        })
+
+        navigationController?.topViewController?.present(confirmAlert, animated: true)
+    }
+
+    private func performFetch(navigationController: UINavigationController?) {
+        Task {
+            do {
+                try await Statistics.shared.fetchAndUpdate()
+                let newTrees = Int(Statistics.shared.treesPlanted)
+                let formatted = NumberFormatter.localizedString(from: NSNumber(value: newTrees), number: .decimal)
+
+                let successAlert = AlertController(
+                    title: "Statistics Refreshed ✅",
+                    message: "Trees planted: \(formatted)",
+                    preferredStyle: .alert
+                )
+                navigationController?.topViewController?.present(successAlert, animated: true) {
+                    // Task + sleep instead of DispatchQueue for strict concurrency
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 2_000_000_000)
+                        successAlert.dismiss(animated: true)
+                    }
+                }
+                self.settings.tableView.reloadData()
+            } catch {
+                let errorAlert = AlertController(
+                    title: "Refresh Failed ❌",
+                    message: error.localizedDescription,
+                    preferredStyle: .alert
+                )
+                errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                navigationController?.topViewController?.present(errorAlert, animated: true)
+            }
+        }
+    }
+}

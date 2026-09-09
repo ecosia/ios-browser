@@ -7,6 +7,7 @@ import Foundation
 import Shared
 import Glean
 import MozillaAppServices
+import Ecosia
 
 import class Account.RustFirefoxAccounts
 
@@ -109,9 +110,14 @@ final class AppLaunchUtil: FeatureFlaggable, Sendable {
         }
 
         // Save toolbar position to user prefs
+        /* Ecosia: Use Ecosia's search bar location saver. `migrateBottomBarPositionToTopOnIPad` is
+           upstream's new one-shot iPad migration (FXIOS-15668); it is deliberately not called because
+           Ecosia's own MOB-4304 migration puts every device on the bottom Omnibox.
         let searchBarLocationSaver = SearchBarLocationSaver()
         searchBarLocationSaver.migrateBottomBarPositionToTopOnIPad(profile: profile)
         searchBarLocationSaver.saveUserSearchBarLocation(profile: profile)
+        */
+        EcosiaSearchBarLocationSaver().saveUserSearchBarLocation(profile: profile)
         let deviceName = UIDevice.current.name
 
         NotificationCenter.default.addObserver(
@@ -152,6 +158,23 @@ final class AppLaunchUtil: FeatureFlaggable, Sendable {
 
         if #available(iOS 26, *) {
             AppleIntelligenceUtil().processAvailabilityState()
+        }
+    }
+
+    // Ecosia: Refreshes BrowserKitInformation's Sentry rollout flag once the `mob_ios_sentry_reporting`
+    // Unleash flag is known — called from AppDelegate after `FeatureManagement.fetchConfiguration()`
+    // resolves (both at launch and on foreground refresh). `logger.setup` is safe to call more than
+    // once; `CrashManager` checks the flag itself, covering every call site, and no-ops once already
+    // enabled.
+    func setUpCrashReportingIfEnabled() {
+        BrowserKitInformation.shared.sentryReportingEnabled = SentryReportingExperiment.isEnabled
+
+        let sendCrashReports = NSUserDefaultsPrefs(prefix: "profile").boolForKey(AppConstants.prefSendCrashReports) ?? true
+        if termsOfServiceManager.isFeatureEnabled {
+            let isTermsOfServiceAccepted = termsOfServiceManager.isAccepted || !introScreenManager.shouldShowIntroScreen
+            logger.setup(sendCrashReports: sendCrashReports && isTermsOfServiceAccepted)
+        } else {
+            logger.setup(sendCrashReports: sendCrashReports)
         }
     }
 

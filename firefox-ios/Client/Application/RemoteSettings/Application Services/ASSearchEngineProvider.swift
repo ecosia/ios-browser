@@ -19,9 +19,11 @@ final class ASSearchEngineProvider: SearchEngineProvider, Sendable {
          iconDataFetcher: ASSearchEngineIconDataFetcherProtocol? = ASSearchEngineIconDataFetcher()) {
         self.logger = logger
         self.iconDataFetcher = iconDataFetcher
-        let profile = (AppContainer.shared.resolve() as Profile)
-        if selector == nil {
-            self.selector = ASSearchEngineSelector(service: profile.remoteSettingsService )
+        // Ecosia: Use resolveOptional() so that init does not crash when AppContainer is reset during
+        // unit-test setUp. If profile is unavailable, selector stays nil and getUnorderedBundledEnginesFor
+        // will call completion([]) safely.
+        if selector == nil, let profile: Profile = AppContainer.shared.resolveOptional() {
+            self.selector = ASSearchEngineSelector(service: profile.remoteSettingsService)
         } else {
             self.selector = selector
         }

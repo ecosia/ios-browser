@@ -61,14 +61,18 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState)
         let result = subject.canPresent(.jumpBackInSyncedTab)
-        XCTAssertTrue(result)
+        // Ecosia: synced-tab hints are disabled — `ContextualHintEligibilityUtility` returns false
+        // for `.jumpBackInSyncedTab`, so this upstream expectation is inverted here.
+        XCTAssertFalse(result)
     }
 
     func test_shouldPresentSyncedHint_withToolbarUpdateFeatureDisabled() {
         subject = ContextualHintEligibilityUtility(with: profile,
                                                    overlayState: overlayState)
         let result = subject.canPresent(.jumpBackInSyncedTab)
-        XCTAssertTrue(result)
+        // Ecosia: synced-tab hints are disabled — `ContextualHintEligibilityUtility` returns false
+        // for `.jumpBackInSyncedTab`, so this upstream expectation is inverted here.
+        XCTAssertFalse(result)
     }
 
     // MARK: - Test should NOT Present cases

@@ -57,4 +57,18 @@ extension DeviceInfo {
         let screenSize = UIScreen.main.bounds.size
         return CGSize(width: min(screenSize.width, screenSize.height), height: max(screenSize.width, screenSize.height))
     }
+
+    /* Ecosia: Add defaultClientName for Firefox Account compatibility
+     * Firefox v147.2 expects this method in DeviceInfo for client device naming.
+     * Original implementation was in String extension but caused module visibility issues.
+     * Inlined here with format: "Ecosia on [Device Name]"
+     */
+    @MainActor
+    public class func defaultClientName() -> String {
+        let appName = AppInfo.displayName
+        let deviceName = ProcessInfo.processInfo.arguments.contains(LaunchArguments.DeviceName)
+            ? "iOS"
+            : UIDevice.current.name
+        return "\(appName) on \(deviceName)"
+    }
 }

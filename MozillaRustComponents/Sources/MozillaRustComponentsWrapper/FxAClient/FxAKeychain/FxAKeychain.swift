@@ -32,8 +32,7 @@ open class FxAKeychain {
     }
 
     public init(serviceName: String,
-                accessGroup: String? = nil)
-    {
+                accessGroup: String? = nil) {
         self.serviceName = serviceName
         self.accessGroup = accessGroup
     }
@@ -124,8 +123,7 @@ open class FxAKeychain {
     }
 
     func queryKeychainForKey(key: String,
-                             accessibility: FxAKeychainItemAccessibility? = nil) -> Result<String?, Error>
-    {
+                             accessibility: FxAKeychainItemAccessibility? = nil) -> Result<String?, Error> {
         var keychainQueryDictionary = getBaseKeychainQuery(key: key, accessibility: accessibility)
         keychainQueryDictionary[kSecMatchLimit as String] = kSecMatchLimitOne
         keychainQueryDictionary[kSecReturnData as String] = kCFBooleanTrue
@@ -165,8 +163,7 @@ open class FxAKeychain {
     }
 
     private func getBaseKeychainQuery(key: String,
-                                      accessibility: FxAKeychainItemAccessibility? = nil) -> [String: Any]
-    {
+                                      accessibility: FxAKeychainItemAccessibility? = nil) -> [String: Any] {
         let encodedIdentifier: Data? = key.data(using: String.Encoding.utf8)
         var keychainQueryDictionary: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                                       kSecAttrService as String: serviceName,

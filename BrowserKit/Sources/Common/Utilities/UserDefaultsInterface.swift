@@ -20,4 +20,5 @@ public protocol UserDefaultsInterface: Sendable {
     func removeObject(forKey defaultName: String)
 }
 
+extension UserDefaults: @unchecked Sendable {}
 extension UserDefaults: UserDefaultsInterface {}

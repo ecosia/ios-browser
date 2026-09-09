@@ -73,8 +73,21 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
             logoTextColor: .blue
         )
 
-        let state = HomepageState.reducer.legacyReducer(
+        // Ecosia: explicitly enable the stories section so this test is independent of the
+        // simulator's locale. `MerinoState.shouldShowSection` is gated by `isLocaleSupported`,
+        // which is true on the en-US CI runner but false on locales like en-IT — making the raw
+        // Firefox base-path assertion below otherwise non-deterministic across environments. (MOB-4384)
+        let enabledState = HomepageState.reducer.legacyReducer(
             HomepageState(windowUUID: .XCTestDefaultUUID),
+            MerinoAction(
+                isEnabled: true,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: MerinoActionType.toggleShowSectionSetting
+            )
+        )
+
+        let state = HomepageState.reducer.legacyReducer(
+            enabledState,
             MerinoAction(
                 merinoStoryResponse: MerinoStoryResponse(stories: createStories()),
                 windowUUID: .XCTestDefaultUUID,
@@ -291,8 +304,19 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
     func test_updateSnapshot_withValidState_returnPocketStories() throws {
         let dataSource = try XCTUnwrap(diffableDataSource)
 
-        let state = HomepageState.reducer.legacyReducer(
+        // Ecosia: explicitly enable the stories section so this test is independent of the
+        // simulator's locale (see `test_updateSnapshot_withColorValueOnState`). (MOB-4384)
+        let enabledState = HomepageState.reducer.legacyReducer(
             HomepageState(windowUUID: .XCTestDefaultUUID),
+            MerinoAction(
+                isEnabled: true,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: MerinoActionType.toggleShowSectionSetting
+            )
+        )
+
+        let state = HomepageState.reducer.legacyReducer(
+            enabledState,
             MerinoAction(
                 merinoStoryResponse: MerinoStoryResponse(stories: createStories()),
                 windowUUID: .XCTestDefaultUUID,

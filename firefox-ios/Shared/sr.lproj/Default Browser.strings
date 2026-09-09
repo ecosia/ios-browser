@@ -1,5 +1,5 @@
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.BetterInternet.Description.v108" = "Постављање Firefox-а као вашег подразумеваног прегледача је глас за отворен и приступачан интернет.";
+"DefaultBrowserCard.BetterInternet.Description.v108" = "Постављање Ecosia-а као вашег подразумеваног прегледача је глас за отворен и приступачан интернет.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.BetterInternet.Title.v108" = "Изаберите бољи интернет као подразумеван";
@@ -8,19 +8,19 @@
 "DefaultBrowserCard.Button.v2" = "Сазнајте како";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "Подесите везе са веб страница, е-поште и порука да се самостално отварају у Firefox-у.";
+"DefaultBrowserCard.Description" = "Подесите везе са веб страница, е-поште и порука да се самостално отварају у Ecosia-у.";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.NextLevel.Description.v108" = "Изаберите Firefox као свој подразумевани прегледач како би брзина, безбедност и приватност функционисале самостално.";
+"DefaultBrowserCard.NextLevel.Description.v108" = "Изаберите Ecosia као свој подразумевани прегледач како би брзина, безбедност и приватност функционисале самостално.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.NextLevel.Title.v108" = "Унапредите свакодневно прегледање";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Firefox блокира преко 3.000 пратилаца по кориснику сваког месеца у просеку. Поставите нас за свој подразумевани прегледач за потпуну приватност.";
+"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Ecosia блокира преко 3.000 пратилаца по кориснику сваког месеца у просеку. Поставите нас за свој подразумевани прегледач за потпуну приватност.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Firefox има покривену приватност";
+"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Ecosia има покривену приватност";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "Промените свој подразумевани прегледач";
@@ -35,7 +35,7 @@
 "DefaultBrowserOnboarding.Description2" = "2. Тапни на подразумевану апликацију за прегледање";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. Изабери Firefox";
+"DefaultBrowserOnboarding.Description3" = "3. Изабери Ecosia";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "Подразумевани прегледач";

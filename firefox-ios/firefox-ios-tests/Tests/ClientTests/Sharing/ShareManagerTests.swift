@@ -354,7 +354,9 @@ final class ShareManagerTests: XCTestCase {
     // MARK: - Custom SendToDeviceActivity
 
     func testCustomApplicationActivities_forSiteShare() throws {
-        let testShareActivityType = UIActivity.ActivityType("org.mozilla.ios.Fennec.sendToDevice")
+        // Ecosia: Use the production bundle-derived activity type instead of the hardcoded Firefox
+        // ("org.mozilla.ios.Fennec.sendToDevice") so it matches Ecosia's bundle id. (MOB-4384)
+        let testShareActivityType = CustomActivityAction.sendToDevice.actionType
         let testActivityTitle = "Send Link to Device"
 
         let testShareType = ShareType.site(url: testWebURL)
@@ -368,7 +370,9 @@ final class ShareManagerTests: XCTestCase {
     }
 
     func testCustomApplicationActivities_forTabShare() throws {
-        let testShareActivityType = UIActivity.ActivityType("org.mozilla.ios.Fennec.sendToDevice")
+        // Ecosia: Use the production bundle-derived activity type instead of the hardcoded Firefox
+        // ("org.mozilla.ios.Fennec.sendToDevice") so it matches Ecosia's bundle id. (MOB-4384)
+        let testShareActivityType = CustomActivityAction.sendToDevice.actionType
         let testActivityTitle = "Send Link to Device"
 
         let testShareType = ShareType.tab(url: testWebURL, tab: testTab)
@@ -382,7 +386,9 @@ final class ShareManagerTests: XCTestCase {
     }
 
     func testCustomApplicationActivities_forFileShareWithRemoteURL_AddsSendToDevice() throws {
-        let testShareActivityType = UIActivity.ActivityType("org.mozilla.ios.Fennec.sendToDevice")
+        // Ecosia: Use the production bundle-derived activity type instead of the hardcoded Firefox
+        // ("org.mozilla.ios.Fennec.sendToDevice") so it matches Ecosia's bundle id. (MOB-4384)
+        let testShareActivityType = CustomActivityAction.sendToDevice.actionType
         let testActivityTitle = "Send Link to Device"
 
         let testShareType = ShareType.file(url: testFileURL, remoteURL: testWebURL)
@@ -409,8 +415,13 @@ final class ShareManagerTests: XCTestCase {
     func testGetActivityItems_forTab_withSentFromFirefoxEnabled_OverridesURL_withTreatmentA() throws {
         setupNimbusSentFromFirefoxTesting(isEnabled: true, isTreatmentA: true)
 
+        // Ecosia: The share text is rebranded via AppName.shortName ("Ecosia"), not "Firefox".
+        /* Ecosia:
         let expectedShareContentA =
             "https://mozilla.org\n\nSent from Firefox 🦊 Try the mobile browser: https://mzl.la/4fOWPpd"
+         */
+        let expectedShareContentA =
+            "https://mozilla.org\n\nSent from Ecosia 🦊 Try the mobile browser: https://mzl.la/4fOWPpd"
         let whatsAppActivityIdentifier = "net.whatsapp.WhatsApp.ShareExtension"
         let whatsAppActivity = UIActivity.ActivityType(rawValue: whatsAppActivityIdentifier)
 
@@ -463,7 +474,11 @@ final class ShareManagerTests: XCTestCase {
     func testGetActivityItems_forTab_withSentFromFirefoxEnabled_OverridesURL_withTreatmentB() throws {
         setupNimbusSentFromFirefoxTesting(isEnabled: true, isTreatmentA: false)
 
+        // Ecosia: The share text is rebranded via AppName.shortName ("Ecosia"), not "Firefox".
+        /* Ecosia:
         let expectedShareContentB = "https://mozilla.org\n\nSent from Firefox 🦊 https://mzl.la/3YSUOl8"
+         */
+        let expectedShareContentB = "https://mozilla.org\n\nSent from Ecosia 🦊 https://mzl.la/3YSUOl8"
         let whatsAppActivityIdentifier = "net.whatsapp.WhatsApp.ShareExtension"
         let whatsAppActivity = UIActivity.ActivityType(rawValue: whatsAppActivityIdentifier)
 
@@ -734,8 +749,13 @@ final class ShareManagerTests: XCTestCase {
     /// who have explicitly opted in (for example, using the "Include Firefox Download Link on WhatsApp Shares" toggle on the
     /// general settings screen).
     func testGetActivityItems_forTab_withSentFromFirefoxEnabled_respectsUserPreferencesToOptIn() throws {
+        // Ecosia: The share text is rebranded via AppName.shortName ("Ecosia"), not "Firefox".
+        /* Ecosia:
         let expectedShareContentA =
             "https://mozilla.org\n\nSent from Firefox 🦊 Try the mobile browser: https://mzl.la/4fOWPpd"
+         */
+        let expectedShareContentA =
+            "https://mozilla.org\n\nSent from Ecosia 🦊 Try the mobile browser: https://mzl.la/4fOWPpd"
         // Setup Nimbus to emulate a user enrolled in Sent from Firefox with the Treatment A branch
         setupNimbusSentFromFirefoxTesting(isEnabled: true, isTreatmentA: true)
 

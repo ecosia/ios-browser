@@ -8,10 +8,7 @@
 "New Tab" = "ახალი ჩანართი";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox შეძლებს გამოიყენოს თქვენი კამერა QR-კოდების წასაკითხად ან სურათისა თU ვიდეოს გადასაღებად.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox-ს ესაჭიროება Face ID შენახულ პაროლებსა და გადახდის საშუალებებთან წდვომისთვის.";
+"NSCameraUsageDescription" = "Ecosia შეძლებს გამოიყენოს თქვენი კამერა QR-კოდების წასაკითხად ან სურათისა თU ვიდეოს გადასაღებად.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "ვებსაიტებმა, შესაძლოა მოითხოვოს თქვენი მდებარეობის მონაცემები.";
@@ -23,7 +20,7 @@
 "NSPhotoLibraryAddUsageDescription" = "სურათების შენახვის საშუალებას იძლევა.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Firefox მეტყველების ამომცნობს იყენებს თქვენი ხმის საძიებო ტექსტად ქცევისთვის.";
+"NSSpeechRecognitionUsageDescription" = "Ecosia მეტყველების ამომცნობს იყენებს თქვენი ხმის საძიებო ტექსტად ქცევისთვის.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR კოდის წაკითხვა";

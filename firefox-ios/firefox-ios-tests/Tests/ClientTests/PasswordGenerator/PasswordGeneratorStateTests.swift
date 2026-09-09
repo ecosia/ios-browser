@@ -7,18 +7,18 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class PasswordGeneratorStateTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         DependencyHelperMock().reset()
-        try await super.tearDown()
+        super.tearDown()
     }
 
-    @MainActor
     func testUpdateGeneratedPassword() {
         let initialState = createSubject()
         let reducer = passwordGeneratorReducer()

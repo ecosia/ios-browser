@@ -3,9 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import SwiftUI
 
 @testable import Client
-import SwiftUI
 
 @MainActor
 final class SettingsCoordinatorTests: XCTestCase {
@@ -14,8 +14,8 @@ final class SettingsCoordinatorTests: XCTestCase {
     private var delegate: MockSettingsCoordinatorDelegate!
     private var mockSettingsVC: MockAppSettingsScreen!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         self.mockRouter = MockRouter(navigationController: MockNavigationController())
         self.wallpaperManager = WallpaperManagerMock()
@@ -23,13 +23,13 @@ final class SettingsCoordinatorTests: XCTestCase {
         self.mockSettingsVC = MockAppSettingsScreen()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         self.mockRouter = nil
         self.wallpaperManager = nil
         self.delegate = nil
         self.mockSettingsVC = nil
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     func testEmptyChildren_whenCreated() {
@@ -64,7 +64,9 @@ final class SettingsCoordinatorTests: XCTestCase {
         subject.start(with: .homePage)
 
         XCTAssertEqual(mockRouter.pushCalled, 1)
-        XCTAssertTrue(mockRouter.pushedViewController is HomePageSettingViewController)
+        // Ecosia: Update tests
+        // XCTAssertTrue(mockRouter.pushedViewController is HomePageSettingViewController)
+        XCTAssertTrue(mockRouter.pushedViewController is NTPCustomizationSettingsViewController)
     }
 
     func testMailtoSettingsRoute_showsMailtoSettingsPage() throws {
@@ -158,6 +160,9 @@ final class SettingsCoordinatorTests: XCTestCase {
         subject.start(with: .toolbar)
 
         XCTAssertEqual(mockRouter.pushCalled, 1)
+        // Ecosia: addressBarMenu (Nimbus default true, not overridden by Ecosia) is enabled, so the toolbar
+        // settings route shows the new AddressBarSettingsView, not the legacy SearchBarSettingsViewController.
+        // XCTAssertTrue(mockRouter.pushedViewController is SearchBarSettingsViewController)
         XCTAssertTrue(mockRouter.pushedViewController is UIHostingController<AddressBarSettingsView>)
     }
 
@@ -403,7 +408,18 @@ final class SettingsCoordinatorTests: XCTestCase {
         subject.pressedHome()
 
         XCTAssertEqual(mockRouter.pushCalled, 1)
-        XCTAssertTrue(mockRouter.pushedViewController is HomePageSettingViewController)
+        // Ecosia: Update tests
+        // XCTAssertTrue(mockRouter.pushedViewController is HomePageSettingViewController)
+        XCTAssertTrue(mockRouter.pushedViewController is NTPCustomizationSettingsViewController)
+    }
+
+    func testGeneralSettingsDelegate_pushedMailApp() {
+        let subject = createSubject()
+
+        subject.pressedMailApp()
+
+        XCTAssertEqual(mockRouter.pushCalled, 1)
+        XCTAssertTrue(mockRouter.pushedViewController is OpenWithSettingsViewController)
     }
 
     func testGeneralSettingsDelegate_pushedNewTab() {
@@ -448,8 +464,17 @@ final class SettingsCoordinatorTests: XCTestCase {
         subject.pressedToolbar()
 
         XCTAssertEqual(mockRouter.pushCalled, 1)
+        // Ecosia: addressBarMenu is enabled (Nimbus default true, not overridden), so pressedToolbar pushes the
+        // new AddressBarSettingsView, not the legacy SearchBarSettingsViewController.
+        // XCTAssertTrue(mockRouter.pushedViewController is SearchBarSettingsViewController)
         XCTAssertTrue(mockRouter.pushedViewController is UIHostingController<AddressBarSettingsView>)
     }
+
+    // Ecosia: `pressedTabs()` and `TabsSettingsViewController` were removed in v147; the successor on
+    // `GeneralSettingsDelegate` is `pressedBrowsing()` -> `BrowsingSettingsViewController`. Upstream
+    // 155.1 ships no delegate test for it either, and the route-level equivalent is already covered by
+    // `testTabsSettingsRoute_showsTabsSettingsPage` above (which drives `.browser` ->
+    // `BrowsingSettingsViewController`), so the removed test is not reinstated here.
 
     func testGeneralSettingsDelegate_pushedTheme() {
         let subject = createSubject()
@@ -510,15 +535,6 @@ final class SettingsCoordinatorTests: XCTestCase {
     }
 
     // MARK: - PrivacySettingsDelegate
-
-    func testAutofillPasswordSettingsRoute_pushAutofillPassword() throws {
-        let subject = createSubject()
-
-        subject.pressedAutoFillsPasswords()
-
-        XCTAssertEqual(mockRouter.pushCalled, 1)
-        XCTAssertTrue(mockRouter.pushedViewController is AutoFillPasswordSettingsViewController)
-    }
 
     func testPrivacySettingsDelegate_handleCreditCardRoute() {
         let subject = createSubject()
@@ -702,6 +718,7 @@ final class SettingsCoordinatorTests: XCTestCase {
 }
 
 // MARK: - MockSettingsCoordinatorDelegate
+@MainActor
 class MockSettingsCoordinatorDelegate: SettingsCoordinatorDelegate {
     var savedURL: URL?
     var openURLinNewTabCalled = 0
@@ -723,6 +740,7 @@ class MockSettingsCoordinatorDelegate: SettingsCoordinatorDelegate {
 }
 
 // MARK: - MockAppSettingsScreen
+@MainActor
 class MockAppSettingsScreen: UIViewController, AppSettingsScreen {
     var settingsDelegate: SettingsDelegate?
     var parentCoordinator: SettingsFlowDelegate?

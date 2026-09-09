@@ -5,16 +5,16 @@
 "New Tab" = "නව පටිත්ත";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox can use your camera to scan QR codes or take photos and video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "ෆයර්ෆොක්ස් සඳහා ඔබගේ සුරැකි පිවිසුම් හා සංකේතිත පත් වෙත ප්‍රවේශයට මුහුණේ හැඳු. වුවමනාය.";
+"NSFaceIDUsageDescription" = "Ecosia සඳහා ඔබගේ සුරැකි පිවිසුම් හා සංකේතිත පත් වෙත ප්‍රවේශයට මුහුණේ හැඳු. වුවමනාය.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "ගොඩවදින අඩවි වෙතින් ඔබගේ ස්ථානය ඉල්ලා සිටීමට හැකිය.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "ෆයර්ෆොක්ස් හඬ පටිගතයට හා උඩුගත කිරීමට ශබ්දවාහිනිය භාවිත කරයි.";
+"NSMicrophoneUsageDescription" = "Ecosia හඬ පටිගතයට හා උඩුගත කිරීමට ශබ්දවාහිනිය භාවිත කරයි.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "මෙමගින් ඔබට ඡායාරූප සුරැකීමට ඉඩදෙයි.";

@@ -238,6 +238,8 @@ class BrowserViewControllerTests: XCTestCase, StoreTestUtility {
         XCTAssertTrue(mockBVC.openBlankNewTabCalled)
     }
 
+    /* Ecosia: the address bar is never auto-focused, so these two cases expect false as well.
+       See `BrowserViewController.shouldFocusLocationTextField(for:isPrivate:)`.
     func testShouldFocusLocationTextField_true_whenPrivateMatches_andIsFxHome() {
         let subject = createSubject()
         let tab = MockTab(profile: profile, isPrivate: false, windowUUID: .XCTestDefaultUUID, isHomePage: true)
@@ -248,6 +250,18 @@ class BrowserViewControllerTests: XCTestCase, StoreTestUtility {
         let subject = createSubject()
         let tab = MockTab(profile: profile, isPrivate: false, windowUUID: .XCTestDefaultUUID, isHomePage: false)
         XCTAssertTrue(subject.shouldFocusLocationTextField(for: tab, isPrivate: false))
+    }
+    */
+    func testShouldFocusLocationTextField_false_whenPrivateMatches_andIsFxHome() {
+        let subject = createSubject()
+        let tab = MockTab(profile: profile, isPrivate: false, windowUUID: .XCTestDefaultUUID, isHomePage: true)
+        XCTAssertFalse(subject.shouldFocusLocationTextField(for: tab, isPrivate: false))
+    }
+
+    func testShouldFocusLocationTextField_false_whenPrivateMatches_andUrlIsNil() {
+        let subject = createSubject()
+        let tab = MockTab(profile: profile, isPrivate: false, windowUUID: .XCTestDefaultUUID, isHomePage: false)
+        XCTAssertFalse(subject.shouldFocusLocationTextField(for: tab, isPrivate: false))
     }
 
     func testShouldFocusLocationTextField_false_whenPrivateMismatch() {

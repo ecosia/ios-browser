@@ -7,7 +7,7 @@ import XCTest
 @testable import Client
 
 @MainActor
-final class ScreenshotHelperTests: XCTestCase, StoreTestUtility {
+final class ScreenshotHelperTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     var profile: MockProfile!
     let tabManager = MockTabManager()
     var mockVC: MockBrowserViewController!

@@ -7,6 +7,11 @@ import XCTest
 
 @testable import Client
 
+// Ecosia: This file is new in 155.1 but was never added to upstream's Xcode project, so upstream
+// never compiles it and it does not build as written: `ToolbarHelper` is `@MainActor`-isolated and
+// not `Sendable`, so `await ToolbarHelper(...)` cannot hand the value back to a nonisolated test.
+// Ecosia's Tuist globs the ClientTests tree, so the file has to compile here.
+@MainActor
 final class ToolbarHelperTests: XCTestCase {
     private func traitCollection(
         vertical: UIUserInterfaceSizeClass,

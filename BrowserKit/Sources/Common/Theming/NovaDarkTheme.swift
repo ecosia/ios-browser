@@ -7,7 +7,10 @@ import UIKit
 public struct NovaDarkTheme: Theme {
     public var type: ThemeType = .dark
     private let palette = NovaDarkColourPalette()
+    /* Ecosia: Theme protocol requires colors: EcosiaThemeColourPalette
     public var colors: ThemeColourPalette { palette }
+     */
+    public var colors: EcosiaThemeColourPalette { palette }
     public var isNova = true
 
     public init() {}
@@ -20,13 +23,21 @@ public struct NovaDarkTheme: Theme {
 public struct NovaNightModeTheme: Theme {
     public var type: ThemeType = .nightMode
     private let palette = NovaDarkColourPalette()
+    /* Ecosia: Theme protocol requires colors: EcosiaThemeColourPalette
     public var colors: ThemeColourPalette { palette }
+     */
+    public var colors: EcosiaThemeColourPalette { palette }
     public var isNova = true
 
     public init() {}
 }
 
+/* Ecosia: Conform to EcosiaThemeColourPalette
 private struct NovaDarkColourPalette: ThemeColourPalette {
+*/
+private struct NovaDarkColourPalette: EcosiaThemeColourPalette {
+    var ecosia: EcosiaSemanticColors = FakeEcosiaSemanticColors()
+
     // MARK: - Layer
 
     var layer1: UIColor = NovaColors.Gray75

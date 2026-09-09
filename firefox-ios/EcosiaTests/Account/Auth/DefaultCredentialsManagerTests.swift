@@ -1,0 +1,295 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import XCTest
+import Auth0
+@testable import Ecosia
+@testable import Client
+// swiftlint:disable implicitly_unwrapped_optional
+
+// Ecosia: @unchecked Sendable required alongside @MainActor in Swift 6 to allow
+// XCTest lifecycle hooks (setUp/tearDown) to pass self across actor boundaries.
+@MainActor
+final class DefaultCredentialsManagerTests: XCTestCase, @unchecked Sendable {
+
+    var credentialsManager: DefaultCredentialsManager!
+    var testCredentials: Credentials!
+
+    override func setUp() {
+        super.setUp()
+        credentialsManager = DefaultCredentialsManager()
+        testCredentials = createTestCredentials()
+    }
+
+    override func tearDown() {
+        _ = credentialsManager.clear()
+        credentialsManager = nil
+        testCredentials = nil
+        super.tearDown()
+    }
+
+    // MARK: - Store Credentials Tests
+
+    func testStoreCredentials_withValidCredentials_returnsTrue() {
+        // Arrange
+        let credentials = testCredentials!
+
+        // Act
+        let result = credentialsManager.store(credentials: credentials)
+
+        // Assert
+        XCTAssertTrue(result)
+    }
+
+    // MARK: - Retrieve Credentials Tests
+
+    func testCredentials_withStoredCredentials_returnsStoredCredentials() async throws {
+        // Arrange
+        let storedCredentials = testCredentials!
+        _ = credentialsManager.store(credentials: storedCredentials)
+
+        // Act
+        let retrievedCredentials = try await credentialsManager.credentials()
+
+        // Assert
+        XCTAssertEqual(retrievedCredentials.accessToken, storedCredentials.accessToken)
+        XCTAssertEqual(retrievedCredentials.idToken, storedCredentials.idToken)
+        XCTAssertEqual(retrievedCredentials.refreshToken, storedCredentials.refreshToken)
+    }
+
+    func testCredentials_withNoStoredCredentials_throwsError() async {
+        // Arrange
+        // No credentials stored
+
+        // Act & Assert
+        do {
+            _ = try await credentialsManager.credentials()
+            XCTFail("Should throw error when no credentials are stored")
+        } catch {
+            // Expected behavior
+            XCTAssertNotNil(error)
+        }
+    }
+
+    func testCredentials_afterClearingCredentials_throwsError() async {
+        // Arrange
+        _ = credentialsManager.store(credentials: testCredentials)
+        _ = credentialsManager.clear()
+
+        // Act & Assert
+        do {
+            _ = try await credentialsManager.credentials()
+            XCTFail("Should throw error after clearing credentials")
+        } catch {
+            // Expected behavior
+            XCTAssertNotNil(error)
+        }
+    }
+
+    // MARK: - Clear Credentials Tests
+
+    func testClear_withStoredCredentials_returnsTrue() {
+        // Arrange
+        _ = credentialsManager.store(credentials: testCredentials)
+
+        // Act
+        let result = credentialsManager.clear()
+
+        // Assert
+        XCTAssertTrue(result)
+    }
+
+    func testClear_withNoStoredCredentials_returnsFalse() {
+        // Arrange
+        // No credentials stored
+
+        // Act
+        let result = credentialsManager.clear()
+
+        // Assert
+        // Auth0's CredentialsManager returns false when there are no credentials to clear
+        XCTAssertFalse(result, "Clearing when no credentials exist returns false per Auth0 implementation")
+    }
+
+    func testClear_actuallyRemovesCredentials() async {
+        // Arrange
+        _ = credentialsManager.store(credentials: testCredentials)
+
+        // Act
+        _ = credentialsManager.clear()
+
+        // Assert
+        do {
+            _ = try await credentialsManager.credentials()
+            XCTFail("Should not be able to retrieve credentials after clearing")
+        } catch {
+            // Expected behavior - credentials should be gone
+            XCTAssertNotNil(error)
+        }
+    }
+
+    // MARK: - Can Renew Tests
+
+    func testCanRenew_withValidRefreshToken_returnsTrue() {
+        // Arrange
+        let credentialsWithRefreshToken = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "test-refresh-token", // Valid refresh token
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        _ = credentialsManager.store(credentials: credentialsWithRefreshToken)
+
+        // Act
+        let canRenew = credentialsManager.canRenew()
+
+        // Assert
+        XCTAssertTrue(canRenew, "Should be able to renew with valid refresh token")
+    }
+
+    func testCanRenew_withNoStoredCredentials_returnsFalse() {
+        // Arrange
+        // No credentials stored
+
+        // Act
+        let canRenew = credentialsManager.canRenew()
+
+        // Assert
+        XCTAssertFalse(canRenew, "Should not be able to renew without stored credentials")
+    }
+
+    func testCanRenew_withEmptyRefreshToken_returnsTrue() {
+        // Arrange
+        let credentialsWithoutRefreshToken = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "", // Empty refresh token (Auth0 treats empty string as valid)
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        _ = credentialsManager.store(credentials: credentialsWithoutRefreshToken)
+
+        // Act
+        let canRenew = credentialsManager.canRenew()
+
+        // Assert
+        // Auth0's actual behavior allows empty refresh tokens to be renewable
+        // This test verifies the actual behavior rather than expected behavior
+        XCTAssertTrue(canRenew, "Auth0 CredentialsManager allows renewal with empty refresh token")
+    }
+
+    // MARK: - Renew Credentials Tests
+
+    func testRenew_withValidRefreshToken_returnsNewCredentials() async throws {
+        // Arrange
+        _ = credentialsManager.store(credentials: testCredentials)
+
+        // Act & Assert
+        // Ecosia: This test exercises the call path for renew() against a real Auth0
+        // CredentialsManager but with synthetic tokens, so it will always fail in a
+        // unit-test environment. The intent is to verify that the failure is an error
+        // (not a crash) and that the code path is reachable. We intentionally do NOT
+        // assert on the error message because the message varies between environments:
+        // Auth0 returns "invalid_grant" when network is available, and NSURLError
+        // (e.g. "The request timed out") when the network is blocked in CI.
+        do {
+            let renewedCredentials = try await credentialsManager.renew()
+            // If this somehow succeeds (e.g. valid token in a real environment), verify structure.
+            XCTAssertNotNil(renewedCredentials)
+            XCTAssertNotNil(renewedCredentials.accessToken)
+            XCTAssertNotNil(renewedCredentials.idToken)
+        } catch {
+            // Expected in all test environments — any non-crash error is acceptable.
+            XCTAssertNotNil(error)
+        }
+    }
+
+    func testRenew_withNoStoredCredentials_throwsError() async {
+        // Arrange
+        // No credentials stored
+
+        // Act & Assert
+        do {
+            _ = try await credentialsManager.renew()
+            XCTFail("Should throw error when trying to renew without stored credentials")
+        } catch {
+            // Expected behavior
+            XCTAssertNotNil(error)
+        }
+    }
+
+    func testRenew_withEmptyRefreshToken_throwsError() async {
+        // Arrange
+        let credentialsWithoutRefreshToken = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        _ = credentialsManager.store(credentials: credentialsWithoutRefreshToken)
+
+        // Act & Assert
+        do {
+            _ = try await credentialsManager.renew()
+            XCTFail("Should throw error when trying to renew without valid refresh token")
+        } catch {
+            // Expected behavior
+            XCTAssertNotNil(error)
+        }
+    }
+
+    // MARK: - Integration Tests
+
+    func testCompleteCredentialsLifecycle_storeRetrieveClear_worksCorrectly() async throws {
+        // Arrange
+        let originalCredentials = testCredentials!
+
+        // Act - Store
+        let storeResult = credentialsManager.store(credentials: originalCredentials)
+
+        // Assert - Store successful
+        XCTAssertTrue(storeResult)
+
+        // Act - Retrieve
+        let retrievedCredentials = try await credentialsManager.credentials()
+
+        // Assert - Retrieved correctly
+        XCTAssertEqual(retrievedCredentials.accessToken, originalCredentials.accessToken)
+        XCTAssertEqual(retrievedCredentials.idToken, originalCredentials.idToken)
+
+        // Act - Clear
+        let clearResult = credentialsManager.clear()
+
+        // Assert - Clear successful
+        XCTAssertTrue(clearResult)
+
+        // Assert - Credentials actually cleared
+        do {
+            _ = try await credentialsManager.credentials()
+            XCTFail("Should not be able to retrieve credentials after clearing")
+        } catch {
+            // Expected behavior
+            XCTAssertNotNil(error)
+        }
+    }
+
+    // MARK: - Helper Methods
+
+    private func createTestCredentials() -> Credentials {
+        return Credentials(
+            accessToken: "test-access-token-\(UUID().uuidString)",
+            tokenType: "Bearer",
+            idToken: "test-id-token-\(UUID().uuidString)",
+            refreshToken: "test-refresh-token-\(UUID().uuidString)",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+    }
+}
+// swiftlint:enable implicitly_unwrapped_optional

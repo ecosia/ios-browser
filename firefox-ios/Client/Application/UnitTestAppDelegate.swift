@@ -4,6 +4,9 @@
 
 import UIKit
 import MozillaAppServices
+// Ecosia: Configure URLProvider-backed user agent domains.
+import Shared
+import Ecosia
 
 @objc(UnitTestAppDelegate)
 final class UnitTestAppDelegate: UIResponder, UIApplicationDelegate {
@@ -12,6 +15,11 @@ final class UnitTestAppDelegate: UIResponder, UIApplicationDelegate {
         /// Initialize app services ( including NSS ). Must be called before any other calls to rust components.
         /// This needs to be called early on, otherwise stuff like enc/dec fails.
         MozillaAppServices.initialize()
+        // Ecosia: Register URLProvider domains that need Ecosia's desktop UA in unit tests.
+        UserAgent.configureEcosiaDesktopUserAgentDomains([
+            URLProvider.production.domain,
+            URLProvider.staging.domain
+        ])
         return true
     }
 

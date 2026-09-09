@@ -174,10 +174,19 @@ public final class ContextualHintView: UIView, ThemeApplicable, Notifiable {
     }
 
     public func applyTheme(theme: Theme) {
+        /* Ecosia: Use toolbar colors — iconPrimary matches the back-button arrow tint;
+           layerSurfaceLow matches the toolbar background. The gradient is hidden so the
+           solid background shows through and the popover arrow blends in correctly.
         closeButton.tintColor = theme.colors.textOnDark
         titleLabel.textColor = theme.colors.textOnDark
         descriptionLabel.textColor = theme.colors.textOnDark
         gradient.colors = (theme.isNova ? theme.colors.gradient : theme.colors.layerGradient).cgColors
+         */
+        closeButton.tintColor = theme.colors.iconPrimary
+        titleLabel.textColor = theme.colors.iconPrimary
+        descriptionLabel.textColor = theme.colors.iconPrimary
+        gradient.isHidden = true
+        backgroundColor = theme.colors.layerSurfaceLow
     }
 
     private func updateButtonSizeForDynamicFont() {

@@ -43,6 +43,10 @@
 			<string>9yg77x724h.skadnetwork</string>
 		</dict>
 	</array>
+	<key>AUTH0_CLIENT_ID</key>
+	<string>$(AUTH0_CLIENT_ID)</string>
+	<key>AdjustAppToken</key>
+	<string>$(ADJUST_APP_TOKEN)</string>
 	<key>AppIdentifierPrefix</key>
 	<string>$(APP_IDENTIFIER_PREFIX)</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
@@ -52,8 +56,10 @@
 		<string>org.mozilla.ios.surface.notification.refresh</string>
 		<string>org.mozilla.ios.firefox.suggest.ingest</string>
 	</array>
+	<key>BRAZE_API_KEY</key>
+	<string>$(BRAZE_API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>$(MOZ_BUNDLE_DISPLAY_NAME)</string>
 	<key>CFBundleExecutable</key>
@@ -67,14 +73,14 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(APP_VERSION)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>org.mozilla.Client</string>
+			<string>com.ecosia.ecosiaapp</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>$(MOZ_PUBLIC_URL_SCHEME)</string>
@@ -86,8 +92,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>CHANNEL</key>
-	<string>$(CHANNEL)</string>
+	<key>CF_ACCESS_CLIENT_ID</key>
+	<string>$(CF_ACCESS_CLIENT_ID)</string>
+	<key>CF_ACCESS_CLIENT_SECRET</key>
+	<string>$(CF_ACCESS_CLIENT_SECRET)</string>
 	<key>INIntentsSupported</key>
 	<array>
 		<string>QuickActionIntent</string>
@@ -134,7 +142,7 @@
 		<true/>
 	</dict>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Firefox uses speech recognition to convert your voice to text for voice search.</string>
+	<string>Ecosia uses speech recognition to convert your voice to text for voice search.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Firefox can use your camera to scan QR codes or take photos and video.</string>
 	<key>NSFaceIDUsageDescription</key>
@@ -142,20 +150,22 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Websites you visit may request your location.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Firefox uses your microphone to record and upload audio.</string>
+	<string>Ecosia uses your microphone to record and upload audio.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This lets you save photos.</string>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>QuickActionIntent</string>
-		<string>org.mozilla.ios.firefox.browsing</string>
+		<string>QuickLinkSelectionIntent</string>
+		<string>com.ecosia.ecosiaapp.browsing</string>
 	</array>
 	<key>NimbusURL</key>
 	<string>$(NIMBUS_URL)</string>
 	<key>PocketEnvironmentAPIKey</key>
 	<string>$(POCKET_API_KEY)</string>
+	<!-- Ecosia: Feeds AppConstants.buildChannel, gating Sentry send/breadcrumb behavior for beta vs release builds. -->
+	<key>CHANNEL</key>
+	<string>$(CHANNEL)</string>
 	<key>SentryCloudDSN</key>
 	<string>$(SENTRY_CLOUD_DSN)</string>
 	<key>UIAppFonts</key>
@@ -164,11 +174,12 @@
 		<string>NewYorkMedium-BoldItalic.otf</string>
 		<string>NewYorkMedium-Regular.otf</string>
 		<string>NewYorkMedium-RegularItalic.otf</string>
+        <string>FoundersGroteskCondensed-Semibold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
-		<true/>
+		<false/>
 		<key>UISceneConfigurations</key>
 		<dict>
 			<key>UIWindowSceneSessionRoleApplication</key>
@@ -196,19 +207,27 @@
 		</dict>
 		<dict>
 			<key>UIApplicationShortcutItemIconFile</key>
-			<string>privateModeLarge</string>
+			<string>privateSearch</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>New Private Tab</string>
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).NewPrivateTab</string>
 		</dict>
 		<dict>
-			<key>UIApplicationShortcutItemIconFile</key>
+			<!-- Ecosia: Ecosia's third home-screen quick action is Scan QR Code, not Firefox's
+			     App Icon picker (whose icon is the Firefox logo). Upstream's entry:
 			<string>logoFirefoxLarge</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>App Icon</string>
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).AppIcon</string>
+			-->
+			<key>UIApplicationShortcutItemIconFile</key>
+			<string>menu-ScanQRCode</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Scan QR Code</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).QRCode</string>
 		</dict>
 	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -223,13 +242,13 @@
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<string>EcosiaLaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
 	<key>UIStatusBarHidden</key>
-	<false/>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -16,11 +16,19 @@ features:
         type: Boolean
         default: false
     defaults:
+      # Ecosia: Promotional suppression. The Block Ads toggle in Browsing settings ships
+      # (`enabled: true`), but the Site Menu badge advertising it does not
+      # (`badge-enabled: false`). Applies to every channel, so `release` is listed explicitly
+      # rather than inheriting the upstream variable default of `enabled: false`.
+      - channel: release
+        value:
+          enabled: true
+          badge-enabled: false
       - channel: beta
         value:
           enabled: true
-          badge-enabled: true
+          badge-enabled: false
       - channel: developer
         value:
           enabled: true
-          badge-enabled: true
+          badge-enabled: false

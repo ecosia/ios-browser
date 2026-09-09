@@ -97,8 +97,7 @@ public class DeviceConstellation: @unchecked Sendable {
     /// Send an event to another device such as Send Tab.
     public func sendEventToDevice(targetDeviceId: String,
                                   e: DeviceEventOutgoing,
-                                  completionHandler: (@Sendable (Result<Void, SendEventError>) -> Void)? = nil)
-    {
+                                  completionHandler: (@Sendable (Result<Void, SendEventError>) -> Void)? = nil) {
         DispatchQueue.global().async {
             do {
                 switch e {
@@ -136,8 +135,7 @@ public class DeviceConstellation: @unchecked Sendable {
     /// Once Push has decrypted a payload, send the payload to this method
     /// which will tell the app what to do with it in form of  an `AccountEvent`.
     public func handlePushMessage(pushPayload: String,
-                                  completionHandler: @escaping @MainActor @Sendable (Result<AccountEvent, Error>) -> Void)
-    {
+                                  completionHandler: @escaping @MainActor @Sendable (Result<AccountEvent, Error>) -> Void) {
         DispatchQueue.global().async {
             do {
                 let event = try self.account.handlePushMessage(payload: pushPayload)

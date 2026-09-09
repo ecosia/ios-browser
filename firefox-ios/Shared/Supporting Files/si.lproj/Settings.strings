@@ -122,7 +122,7 @@
 "Settings.Search.Accessibility.DefaultSearchEngine.v121" = "පෙරනිමි සෙවුම් යන්ත්‍රය";
 
 /* Accessibility label for Learn more about Firefox Suggest. */
-"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "ෆයර්ෆොක්ස් යෝජනා ගැන තව දැනගන්න";
+"Settings.Search.Accessibility.LearnAboutSuggestions.v124" = "Ecosia යෝජනා ගැන තව දැනගන්න";
 
 /* Title for alternate search engines settings section in the Search page in the Settings menu. */
 "Settings.Search.AlternateSearchEngines.Title.v124.v2" = "විකල්ප සෙවුම් යන්ත්‍ර";
@@ -143,13 +143,13 @@
 "Settings.Search.ShowSuggestions.v121" = "සෙවුම් යෝජනා පෙන්වන්න";
 
 /* In the Search page of the Settings menu, the title for the Firefox Suggest settings section. */
-"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "ලිපින තීරුව - ෆයර්ෆොක්ස් යෝජනා";
+"Settings.Search.Suggest.AddressBarSetting.Title.v124" = "ලිපින තීරුව - Ecosia යෝජනා";
 
 /* In the search page of the Settings menu, the title for the link to the SUMO Page about Firefox Suggest. */
-"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "ෆයර්ෆොක්ස් යෝජනා ගැන තව දැනගන්න";
+"Settings.Search.Suggest.LearnAboutSuggestions.v124" = "Ecosia යෝජනා ගැන තව දැනගන්න";
 
 /* Description for `Show in Private Sessions` toggle, located in `Address Bar - Firefox Suggest` section in the Search page in the Settings menu. */
-"Settings.Search.Suggest.PrivateSession.Description.v125" = "පෞද්ගලික වාර වල ෆයර්ෆොක්ස් යෝජනා වෙතින් යෝජනා පෙන්වන්න";
+"Settings.Search.Suggest.PrivateSession.Description.v125" = "පෞද්ගලික වාර වල Ecosia යෝජනා වෙතින් යෝජනා පෙන්වන්න";
 
 /* In the Search page of the Settings menu, the title for the setting to enable search browsing history. */
 "Settings.Search.Suggest.SearchBrowsingHistory.Title.v124" = "පිරික්සුම් ඉතිහාසය සොයන්න";

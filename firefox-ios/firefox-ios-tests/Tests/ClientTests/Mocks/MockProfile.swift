@@ -119,8 +119,12 @@ class MockFiles: FileAccessor {
 
 // TODO: FXIOS-12610 Profile should be refactored so it is **not** `Sendable`.
 final class MockProfile: Client.Profile, @unchecked Sendable {
-    public var rustFxA: RustFirefoxAccounts {
-        return RustFirefoxAccounts.shared
+    // Ecosia: `RustFxA/RustFirefoxAccounts.swift` is compiled into both the `Account` framework and
+    // the `Client` target (Ecosia's Tuist `Client` target globs `RustFxA/**`, where upstream's Xcode
+    // project lists only Account's copy), so with both modules imported the bare name is ambiguous.
+    // `Providers/Profile.swift` declares `rustFxA` against Client's copy, so qualify to match.
+    public var rustFxA: Client.RustFirefoxAccounts {
+        return Client.RustFirefoxAccounts.shared
     }
 
     // Read/Writeable properties for mocking

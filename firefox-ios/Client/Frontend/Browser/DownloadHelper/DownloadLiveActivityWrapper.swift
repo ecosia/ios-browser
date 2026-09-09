@@ -4,7 +4,10 @@
 
 import Foundation
 import WidgetKit
+/* Ecosia: ActivityKit types are not fully annotated for Swift 6 sendability; @preconcurrency suppresses false-positive data race errors
 import ActivityKit
+*/
+@preconcurrency import ActivityKit
 import Common
 import Shared
 

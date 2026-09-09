@@ -4,6 +4,8 @@
 
 import SwiftUI
 import Common
+// Ecosia: Add import for Ecosia bundle image and color access
+import Ecosia
 
 /// Enum file that holds the different cases for the Quick Actions small widget with their
 /// configurations (string, backgrounds, images) as selected by the user in edit mode.
@@ -16,13 +18,22 @@ enum QuickLink: Int {
     public var imageName: String {
         switch self {
         case .search:
+            /* Ecosia: Replace fox icon with Ecosia app icon from Ecosia bundle
             return "faviconFox"
+             */
+            return "openEcosia"
         case .privateSearch:
+            /* Ecosia: Update image
             return StandardImageIdentifiers.Large.privateMode
+             */
+            return "ecosiaSmallPrivateMask"
         case .copiedLink:
             return StandardImageIdentifiers.Large.tabTray
         case .closePrivateTabs:
+            /* Ecosia: Update image
             return StandardImageIdentifiers.Large.delete
+             */
+            return "ecosiaDelete"
         }
     }
 
@@ -65,6 +76,7 @@ enum QuickLink: Int {
         }
     }
 
+    /* Ecosia: Update colors
     /// The image button's background gradient for the given theme.
     public func gradient(for theme: Theme) -> SwiftUI.Gradient {
         switch self {
@@ -90,5 +102,20 @@ enum QuickLink: Int {
         case .privateSearch, .closePrivateTabs:
             return Color(uiColor: theme.colors.textOnDark)
         }
+    }
+     */
+
+    public var backgroundColors: [Color] {
+        return [.ecosiaBundledColorWithName("TertiaryBackground")]
+    }
+
+    // Ecosia: Add text color property using Ecosia bundle
+    public var textColor: Color {
+        return .ecosiaBundledColorWithName("PrimaryText")
+    }
+
+    // Ecosia: Add icon color property using Ecosia bundle
+    public var iconColor: Color {
+        return .ecosiaBundledColorWithName("PrimaryText")
     }
 }

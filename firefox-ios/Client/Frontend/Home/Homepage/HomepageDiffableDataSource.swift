@@ -4,6 +4,7 @@
 
 import Common
 import UIKit
+import Ecosia
 
 typealias HomepageSection = HomepageDiffableDataSource.HomeSection
 typealias HomepageItem = HomepageDiffableDataSource.HomeItem
@@ -21,6 +22,14 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
         let shouldShowSectionHeader: ShouldShowSectionHeader
     }
 
+    /// Ecosia: When set, snapshot contains only Ecosia sections; when nil, Firefox sections.
+    var ecosiaAdapter: EcosiaHomepageAdapter?
+
+    /// Cell types to register with the collection view.
+    class var cellTypesToRegister: [ReusableCell.Type] {
+        HomeItem.cellTypes
+    }
+
     enum HomeSection: Hashable {
         case privacyNotice
         case header
@@ -32,6 +41,12 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
         case bookmarks(TextColor?)
         case pocket(TextColor?)
         case spacer
+        // Ecosia: Custom sections for Ecosia-specific homepage content
+        case ecosiaHeader
+        case ecosiaLogo
+        case ecosiaLibrary
+        case ecosiaImpact
+        case ecosiaNTPCustomization
 
         var canHandleLongPress: Bool {
             switch self {
@@ -61,6 +76,13 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
         /// that story's on-screen position as stories are inserted above it.
         case merino(MerinoStoryConfiguration, String?)
         case spacer
+        // Ecosia: Custom items for Ecosia-specific homepage cells
+        case ecosiaHeader
+        case ecosiaLogo
+        case ecosiaLibrary
+        // Ecosia: showRows drives NSDiffableDataSource diff so toggling Climate Impact animates correctly
+        case ecosiaImpact(sectionIndex: Int, showRows: Bool)
+        case ecosiaNTPCustomization
 
         static var cellTypes: [ReusableCell.Type] {
             return [
@@ -116,8 +138,30 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
         animatingDifferences: Bool = true,
         completion: (() -> Void)? = nil
     ) {
-        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
+        // Ecosia: When adapter is set, use Ecosia sections with top sites inserted at the correct anchor
+        if let adapter = ecosiaAdapter {
+            var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
+            let textColor = state.wallpaperState.wallpaperConfiguration.textColor
+            let topSitesAnchor = adapter.topSitesInsertionAnchor
+            for section in adapter.getEcosiaSections() {
+                snapshot.appendSections([section])
+                snapshot.appendItems(adapter.getItems(for: section), toSection: section)
+                if section == topSitesAnchor,
+                   let topSitesSnapshotData = getTopSites(with: state.topSitesState, and: textColor) {
+                    let topSitesSection = HomeSection.topSites(
+                        textColor,
+                        topSitesSnapshotData.numberOfTilesPerRow,
+                        topSitesSnapshotData.shouldShowSectionHeader
+                    )
+                    snapshot.appendSections([topSitesSection])
+                    snapshot.appendItems(topSitesSnapshotData.items, toSection: topSitesSection)
+                }
+            }
+            apply(snapshot, animatingDifferences: animatingDifferences, completion: completion)
+            return
+        }
 
+        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
         let textColor = state.wallpaperState.wallpaperConfiguration.textColor
         let headerItem = HomeItem.header(state.headerState,
                                          state.wallpaperState.wallpaperConfiguration.logoTextColor,

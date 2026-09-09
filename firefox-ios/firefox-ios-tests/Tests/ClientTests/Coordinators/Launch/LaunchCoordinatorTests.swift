@@ -8,6 +8,8 @@ import ComponentLibrary
 import OnboardingKit
 import Shared
 import XCTest
+// Ecosia: `WelcomeNavigation` lives in the Ecosia module; the assertions below name it directly.
+import Ecosia
 @testable import Client
 
 @MainActor
@@ -85,8 +87,11 @@ final class LaunchCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
+        /* Ecosia: `.intro` presents Ecosia's WelcomeNavigation, not Firefox's OnboardingKit host.
         XCTAssertNotNil(presentedViewController as?
                         PortraitOnlyHostingController<OnboardingView<OnboardingKitCardInfoModel>>)
+         */
+        XCTAssertNotNil(presentedViewController as? WelcomeNavigation)
     }
 
     func testStart_introIsIphone_setRootView() throws {
@@ -97,8 +102,11 @@ final class LaunchCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)
+        /* Ecosia: `.intro` presents Ecosia's WelcomeNavigation, not Firefox's OnboardingKit host.
         XCTAssertNotNil(pushedVC as?
                         PortraitOnlyHostingController<OnboardingView<OnboardingKitCardInfoModel>>)
+         */
+        XCTAssertNotNil(pushedVC as? WelcomeNavigation)
     }
 
     func testStart_introNotIphone_presentToModernUI() throws {
@@ -109,10 +117,13 @@ final class LaunchCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
+        /* Ecosia: `.intro` presents Ecosia's WelcomeNavigation, not Firefox's OnboardingKit host.
         XCTAssertTrue(
             presentedViewController is
             UIHostingController<OnboardingKit.OnboardingView<Client.OnboardingKitCardInfoModel>>
         )
+         */
+        XCTAssertNotNil(presentedViewController as? WelcomeNavigation)
     }
 
     func testStart_introIsIphone_setRootViewToModernUI() throws {
@@ -123,10 +134,13 @@ final class LaunchCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)
+        /* Ecosia: `.intro` presents Ecosia's WelcomeNavigation, not Firefox's OnboardingKit host.
         XCTAssertTrue(
             pushedVC is
             UIHostingController<OnboardingKit.OnboardingView<Client.OnboardingKitCardInfoModel>>
         )
+         */
+        XCTAssertNotNil(pushedVC as? WelcomeNavigation)
     }
 
     // MARK: - Default browser

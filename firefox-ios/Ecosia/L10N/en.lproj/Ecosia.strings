@@ -1,0 +1,353 @@
+"%@ days ago" = "%@ days ago";
+"AI Chat" = "AI Chat";
+"Opens AI Chat" = "Opens AI Chat";
+"Search. Find. Save the planet." = "Search. Find. Save the planet.";
+"Ask, search, browse..." = "Ask, search, browse...";
+"Autocomplete" = "Autocomplete";
+"%d characters left" = "%d characters left";
+"Blog" = "Blog";
+"Close all" = "Close all";
+"Ecosia recommends" = "Ecosia recommends";
+"Ecosia won’t remember the pages you visited, your search history or your autofill information once you close a tab. Your searches still contribute to trees." = "Ecosia won’t save the pages you visit, your search history or your autofill information. Your searches will still contribute toward planting trees.";
+"Explore Ecosia" = "Explore Ecosia";
+"Financial reports" = "Financial reports";
+"Force Dark Mode" = "Force Dark Mode";
+"Get started" = "Get started";
+"Home" = "Home";
+"Invert website colors" = "Invert website colors";
+"Keep up to date with the latest news from our projects and more" = "Keep up to date with the latest news from our projects and more";
+"Learn more" = "Learn more";
+"Maybe later" = "Maybe later";
+"Moderate" = "Moderate";
+"See all" = "See all";
+"My searches" = "My searches";
+"New" = "New";
+"Off" = "Off";
+"Open In Safari" = "Open in Safari";
+"Private" = "Private";
+"Who can see my activity?" = "Who can see my activity?";
+"Plant trees while you browse the web" = "Plant trees while you browse the web";
+"Privacy" = "Privacy";
+"Read More" = "Read More";
+"Safe search" = "Safe search";
+"Search" = "Search";
+"Search the web to plant trees..." = "Search the web to plant trees...";
+"Search region" = "Search region";
+"Send feedback" = "Send feedback";
+"Shown under the search field" = "Shown under the search field";
+"Sign in" = "Sign in";
+"Start using these green companies to plant more trees and become more sustainable" = "Start using these green companies to plant more trees and become more sustainable";
+"Ecosia news" = "Ecosia news";
+"Strict" = "Strict";
+"TREES" = "Trees";
+"TREES PLANTED WITH ECOSIA" = "Trees planted with Ecosia";
+"Turn off Dark Mode" = "Turn off Dark Mode";
+"Terms and conditions" = "Terms and conditions";
+"Version %@" = "Version %@";
+"We use the profit from your searches to plant trees where they are needed most" = "We use the profit from your searches to plant trees where they are needed most";
+"Help us improve our new app" = "Help us improve our new app";
+"Let us know what you like, dislike, and want to see in the future." = "Let us know what you like, dislike, and want to see in the future.";
+"Share your feedback" = "Share your feedback";
+"Sit tight, we are getting ready for you…" = "Sit tight, we are getting ready for you…";
+"We hit a glitch" = "We hit a glitch";
+"We are momentarily unable to load all of your settings." = "We are momentarily unable to load all of your settings.";
+"Continue" = "Continue";
+"Retry" = "Retry";
+"Show Top Sites" = "Show Top Sites";
+"All regions" = "All regions";
+"Refresh" = "Refresh";
+"Please check your internet connection and try again" = "Please check your internet connection and try again";
+"No connection" = "No connection";
+"Done" = "Done";
+"Find in page" = "Find in page";
+"Cancel" = "Cancel";
+"Open" = "Open";
+"Open link in external app?" = "Open link in external app?";
+"Overviews" = "Overviews";
+"AI-free searching" = "AI-free searching";
+"%@ wants to open this application." = "%@ wants to open this application.";
+"Send usage data" = "Send usage data";
+"To improve our browser apps, we collect usage statistics from your device. These are anonymous and protect your privacy." = "To improve our browser apps, we collect usage statistics from your device. These are anonymous and protect your privacy.";
+"Climate Impact" = "Climate Impact";
+"Customize homepage" = "Customize homepage";
+"Homepage"= "Homepage";
+"Show on homepage" = "Show on homepage";
+"Show AI-generated overviews at the top of search results" = "Show AI-generated overviews at the top of search results";
+"Top Sites" = "Top Sites";
+"Not now" = "Not now";
+"Image associated to the error, showing a warning signal" = "Image associated to the error, showing a warning signal";
+
+// Impact
+"A friend accepted your invitation and each of you will help plant 1 tree!" = "A friend has accepted your invite! You have each helped plant 1 extra tree.";
+"Estimated impact" = "Estimated impact";
+"Estimated trees" = "Estimated trees";
+"%@ friends accepted your invitation and each of you will help plant %@ trees!" = "%@ friends have accepted your invite! You have helped plant %@ extra trees.";
+"You’ve contributed to plant a tree with your friend!" = "You have contributed a new tree! Thanks for joining Ecosia.";
+"Invalid referral link!" = "Invalid referral link!";
+"Invite friends" = "Invite friends";
+"Multiply impact" = "Multiply impact";
+"My trees" = "My trees";
+"Network error!" = "Network error!";
+"On average it takes around 45 searches to plant a tree" = "On average it takes around 45 searches to plant a tree";
+"Plant your first tree" = "Plant your first tree";
+"Tap your tree counter to share Ecosia with friends and plant more trees" = "Tap your tree counter to share Ecosia with friends and plant more trees";
+"This is the estimated number of trees you have contributed to planting by using Ecosia." = "This is the estimated number of trees you have contributed to planting by using Ecosia.";
+"Together, we can reforest our planet. Tap your counter to spread the word!" = "Together, we can reforest our planet. Tap your counter to spread the word!";
+"Total Ecosia trees" = "Total Ecosia trees";
+"View my impact" = "View my impact";
+"We couldn't verify your link. Please check your internet connection and try again." = "We couldn't verify your link. Please check your internet connection and try again.";
+"Your referral link is wrong or not valid for you. Please check it and try again." = "Your referral link is wrong or not valid for you. Please check it and try again.";
+"Invite your friends" = "Invite your friends";
+"Send an invite with your unique invitation link" = "Send an invite with your unique invitation link";
+"They download the Ecosia app" = "They download the Ecosia app";
+"Via the App Store or Google Play" = "Via the App Store or Google Play";
+"They open your invite link (iOS only)" = "They open your invite link (iOS only)";
+"Your friend opens the second link from the invite message" = "Your friend opens the second link from the invite message";
+"You both are helping the planet" = "You both are helping the planet";
+"Using Ecosia, you’re both making a difference for the environment" = "Using Ecosia, you’re both making a difference for the environment";
+"Inviting a friend" = "Inviting a friend";
+"No bookmarks yet" = "No bookmarks yet";
+"Add your favorite pages to your bookmarks and they will appear here" = "Add your favorite pages to your bookmarks and they will appear here";
+"No articles on your reading list" = "No articles on your reading list";
+"Open articles in Reader View by tapping the page icon in the address bar" = "Open articles in Reader View by tapping the page icon in the address bar";
+"Save articles to your Reading list by tapping on ‘Add to Reading List’ in the options while in Reader View" = "Save articles to your Reading list by tapping on ‘Add to Reading List’ in the options while in Reader View";
+"No history" = "No history";
+"Websites you’ve recently visited will show up here" = "Websites you’ve recently visited will show up here";
+"No downloads yet" = "No downloads yet";
+"When you download files they will show up here" = "When you download files they will show up here";
+"Plant trees with me on Ecosia" = "Plant trees with me on Ecosia";
+"Check this out: Ecosia plants trees when you search the web! 🌳\nJoin me and %@M+ others and start planting today." = "Check this out: Ecosia plants trees when you search the web! 🌳\nJoin me and %@M+ others and start planting today.";
+"If you’re using an iPhone or iPad, tap here to confirm you’ve joined:" = "If you’re using an iPhone or iPad, tap here to confirm you’ve joined:";
+"Link already used" = "Link already used";
+"You can only use an invitation link once." = "You can only use an invitation link once.";
+"Increase your positive impact on the planet by inviting your friends to join Ecosia." = "Increase your positive impact on the planet by inviting your friends to join Ecosia.";
+"Sharing your link" = "Sharing your link";
+"Copy" = "Copy";
+"More sharing methods" = "More sharing methods";
+"Copied!" = "Copied!";
+
+// Rebrand
+"See the collective impact you are having with the Ecosia community" = "See the collective impact you are having with the Ecosia community";
+"Your impact" = "Your impact";
+"How it works" = "How it works";
+"My Impact" = "My Impact";
+"Group your impact" = "Grow your impact";
+
+// Tour
+"Skip" = "Skip";
+"The simplest way to be \n climate-active every day while \n browsing the web" = "The simplest way to be \n climate active every day while \n browsing the web";
+"sustainable shoes" = "sustainable shoes";
+"Trees planted" = "Trees planted";
+"Before ..." = "Before...";
+"After" = "After";
+"trees planted by Ecosia" = "trees planted by Ecosia";
+"Trees planted by Ecosia" = "Trees planted by Ecosia";
+"dedicated to climate action" = "dedicated to climate action";
+"Active projects" = "Active projects";
+"%@+" = "%@+";
+"Countries" = "Countries";
+"Total income" = "Total income";
+"Trees financed" = "Trees financed";
+"Your invites" = "Your friends";
+"Growing together" = "Growing together";
+"Help your friends become climate active and plant trees together" = "Help your friends become climate active and plant trees together";
+"Customization" = "Customization";
+"Clear all" = "Clear all";
+"To make entering info easier, the toolbar can be set to the bottom of the screen" = "To make entering info easier, the toolbar can be set to the bottom of the screen";
+
+// Promo
+"Buy trees in the Ecosia tree store to delight a friend - or treat yourself" = "Buy trees in the Ecosia Tree Store to delight a friend - or treat yourself";
+"Plant trees and earn eco-friendly rewards with Treecard" = "Plant trees and earn eco-friendly rewards with Treecard";
+"Sponsored" = "Sponsored";
+
+// Accessibility Labels
+"Ecosia logo" = "Ecosia logo";
+"Open the Your Impact section" = "Open the Your Impact section";
+"Your Impact section, highlithing the trees planted by yourself and the Ecosia community overall. You have contributed to plant %@ trees. The total number of trees planted by the Ecosia community has reached %@" = "Your Impact section, highlithing the trees planted by yourself and the Ecosia community overall. You have contributed to plant %@ trees. The total number of trees planted by the Ecosia community has reached %@";
+
+// Bookmark import/export
+"Export bookmarks" = "Export bookmarks";
+"Import bookmarks" = "Import bookmarks";
+"Exporting Bookmarks…" = "Exporting Bookmarks…";
+"Importing Bookmarks…" = "Importing Bookmarks…";
+"Imported Bookmarks (%@)" = "Imported Bookmarks (%@)";
+"Importing failed" = "Importing failed";
+"Exporting failed" = "Exporting failed";
+"Something went wrong, please try again." = "Something went wrong, please try again.";
+"More" = "More";
+"Bookmarks imported" = "Bookmarks imported";
+"Bookmarks exported" = "Bookmarks exported";
+
+// Bookmarks Empty View
+"Tap the bookmark icon when you find a page you want to save." = "Tap the bookmark icon when you find a page you want to save.";
+"You can also import bookmarks:" = "You can also import bookmarks:";
+"Export your bookmarks from another browser." = "Export your bookmarks from another browser.";
+"Tap on the link below to import the file of your bookmarks" = "Tap on the link below to import the file of your bookmarks";
+
+// Bookmarks Tooltip
+"Tap here to import bookmarks from other browsers." = "Tap here to import bookmarks from other browsers.";
+
+// Whats New Page
+"What's new" = "What's new";
+"Collective action" = "Collective action";
+"See the climate impact you are having together with the rest of the Ecosia community." = "See the climate impact you are having together with the rest of the Ecosia community.";
+"Customizable home page" = "Customizable home page";
+"Tailor your home page to show the information that’s most relevant to you." = "Tailor your home page to show the information that’s most relevant to you.";
+"Zooming" = "Zooming";
+"You can now easily zoom in and out on any page through options." = "You can now easily zoom in and out on any page through options.";
+"Password manager" = "Password manager";
+"We’ve added 1Password to Ecosia to help you to manage your passwords securely." = "We’ve added 1Password to Ecosia to help you to manage your passwords securely.";
+"Got it" = "Got it";
+
+// Newsletter
+"Be the first to know" = "Be the first to know";
+"Subscribe to our monthly newsletter for updates on your climate impact." = "Subscribe to our monthly newsletter for updates on your climate impact.";
+"Sign up" = "Sign up";
+
+// Default Browser
+"Set as default in Settings" = "Set as default in Settings";
+"People who set Ecosia as their default browser plant %@ per year." = "People who set Ecosia as their default browser plant %@ per year.";
+"Did you know?" = "Did you know?";
+"6 more trees" = "6 more trees";
+"Make all your browsing green" = "Make all your browsing green";
+"Default browser" = "Default browser";
+"Make Ecosia your default browser app" = "Make Ecosia your default browser app";
+"Safely open all links from other apps in Ecosia" = "Safely open all links from other apps in Ecosia";
+"Use Ecosia as default" = "Use Ecosia as default";
+"Open **Settings**" = "Open **Settings**";
+"Select **Default Browser App**" = "Select **Default Browser App**";
+"Choose **Ecosia**" = "Choose **Ecosia**";
+"Make default in settings" = "Make default in settings";
+"Close card button" = "Close card button";
+"Search. Find. Save the planet." = "Search. Find. Save the planet.";
+
+// Feedback View
+"Report an issue" = "Report an issue";
+"Suggestion or feedback" = "Suggestion or feedback";
+"What would you like to share?" = "What would you like to share?";
+"Add more detail about your feedback..." = "Add more detail about your feedback...";
+"Send" = "Send";
+"Close" = "Close";
+"Help Center" = "Help Center";
+"Thank you for your feedback!" = "Thank you for your feedback!";
+"Help" = "Help";
+"Report Issue" = "Report Issue";
+
+// Error Messages
+"Could not load seed counter" = "Could not load seed counter";
+"Something went wrong with displaying your seeds. Please try again later." = "Something went wrong with displaying your seeds. Please try again later.";
+"Something went wrong. Please sign in again." = "Something went wrong. Please sign in again.";
+"Something went wrong. Please sign out again." = "Something went wrong. Please sign out again.";
+
+// Rating Prompt Dialog
+"Yes" = "Yes";
+"No" = "No";
+"Do you enjoy Ecosia?" = "Do you enjoy Ecosia?";
+
+// Level System
+"Level" = "Level";
+
+// WebView Modal
+"Failed to load page" = "Failed to load page";
+"Try Again" = "Try Again";
+"Error" = "Error";
+
+// Level System
+"Ecocurious" = "Ecocurious";
+"Green explorer" = "Green explorer";
+"Planet pal" = "Planet pal";
+"Seedling supporter" = "Seedling supporter";
+"Biodiversity bestie" = "Biodiversity bestie";
+"Forest friend" = "Forest friend";
+"Wildlife protector" = "Wildlife protector";
+"Eco explorer" = "Eco explorer";
+"Rainforest reviver" = "Rainforest reviver";
+"Planet protector" = "Planet protector";
+"Carbon neutralizer" = "Carbon neutralizer";
+"Seeker of sustainability" = "Seeker of sustainability";
+"Branch builder" = "Branch builder";
+"Eco enthusiast" = "Eco enthusiast";
+"Carbon cutter" = "Carbon cutter";
+"Seed sower" = "Seed sower";
+"Emission eliminator" = "Emission eliminator";
+"Sustainability sage" = "Sustainability sage";
+"Earth advocate" = "Earth advocate";
+"Seed superstar" = "Seed superstar";
+
+// Account Impact View. "Sign up" already managed above in the Newsletter section
+"Guest user" = "Guest user";
+"Seeds symbolize your own impact" = "Seeds symbolize your own impact";
+"Collect seeds every day you use Ecosia and see the climate impact you're having." = "Collect seeds every day you use Ecosia and see the climate impact you're having.";
+"Learn more about seeds" = "Learn more about seeds";
+"Your Ecosia" = "Your Ecosia";
+"Your profile" = "Your profile";
+"Sign out" = "Sign out";
+"%d seeds" = "%d seeds";
+"User avatar" = "User avatar";
+"Default avatar" = "Default avatar";
+"Account: %@" = "Account: %@";
+"Opens your account and impact details" = "Opens your account and impact details";
+"Level: %@" = "Level: %@";
+"Opens your profile page" = "Opens your profile page";
+"Sign out of your account" = "Sign out of your account";
+
+// Omnibox upload
+"Upload" = "Upload";
+"Photos" = "Photos";
+"Camera" = "Camera";
+"Files" = "Files";
+"Opens options to attach photos, camera, or files" = "Opens options to attach photos, camera, or files";
+"Opens the photo library" = "Opens the photo library";
+"Opens the camera" = "Opens the camera";
+"Opens the file browser" = "Opens the file browser";
+"Attach files" = "Attach files";
+"Dismisses the attachment menu" = "Dismisses the attachment menu";
+"Allow access to your camera" = "Allow access to your camera";
+"Ecosia needs camera access so you can take a photo to attach." = "Ecosia needs camera access so you can take a photo to attach.";
+"A camera is not available on this device." = "A camera is not available on this device.";
+"AI tools" = "AI tools";
+"These features will redirect to AI Chat" = "These features will redirect to AI Chat";
+"Dismisses the AI tools menu" = "Dismisses the AI tools menu";
+"Standard AI Chat" = "Standard AI Chat";
+"Think longer" = "Think longer";
+"Display sources" = "Display sources";
+"Learning" = "Learning";
+"Answers everyday tasks and queries" = "Answers everyday tasks and queries";
+/* Appended to the user's prompt. Keep the leading space; it separates the instruction from the prompt. */
+" Think deeply about it before answering." = " Think deeply about it before answering.";
+" Search the web for this and cite your sources." = " Search the web for this and cite your sources.";
+" Explain this like a tutor, step by step, and suggest what to learn next." = " Explain this like a tutor, step by step, and suggest what to learn next.";
+"Solves complex problems" = "Solves complex problems";
+"Shows sources for every answer" = "Shows sources for every answer";
+"Breaks down topics step by step" = "Breaks down topics step by step";
+// Omnibox file upload (attachment strip)
+"Upload failed" = "Upload failed";
+"Waiting for the attachment to finish uploading" = "Waiting for the attachment to finish uploading";
+"Remove the failed attachment or try uploading again" = "Remove the failed attachment or try uploading again";
+"Remove chat mode" = "Remove chat mode";
+"Sign in to use advanced AI features." = "Sign in to use advanced AI features.";
+// Omnibox file upload (validation errors)
+"You can upload up to 5 files per chat." = "You can upload up to 5 files per chat.";
+"The file is too large, the maximum file size is 5MB." = "The file is too large, the maximum file size is 5MB.";
+"The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file." = "The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file.";
+"Something went wrong with uploading your file. Please try again." = "Something went wrong with uploading your file. Please try again.";
+// Omnibox file upload (logged-out gate)
+"Sign in to upload files" = "Sign in to upload files";
+"To use this feature you need to be signed in to an Ecosia account." = "To use this feature you need to be signed in to an Ecosia account.";
+"Upload files" = "Upload files";
+/* %@ is a search provider name, e.g. "Go to ChatGPT". */
+"You need to go directly to %@ to upload files." = "You need to go directly to %@ to upload files.";
+"Go to %@" = "Go to %@";
+"Back" = "Back";
+"Create account" = "Create account";
+
+// Product Tour
+"Go back" = "Go back";
+"Welcome to" = "Welcome to";
+"Real change\nat your fingertips" = "Real change\nat your fingertips";
+"Join 20 million people making a difference every day" = "Join 20 million people making a difference every day";
+"Next" = "Next";
+
+// Accessiblity Strings for File Uploads
+"Uploading attachment" = "Uploading attachment";
+"Attached image" = "Attached image";

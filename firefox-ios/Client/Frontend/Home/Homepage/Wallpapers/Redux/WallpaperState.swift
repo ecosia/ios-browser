@@ -29,6 +29,19 @@ struct WallpaperState: ScreenState, Equatable {
         )
     }
 
+    // Ecosia: The NTP background configuration comes from EcosiaHomepageAdapter, so state has to be
+    // seeded with it. 155.1 made the memberwise initializer private and added the two height fields,
+    // which removed the `init(windowUUID:wallpaperConfiguration:)` Ecosia was calling; this mirrors
+    // upstream's own convenience initializer above.
+    init(windowUUID: WindowUUID, wallpaperConfiguration: WallpaperConfiguration) {
+        self.init(
+            windowUUID: windowUUID,
+            wallpaperConfiguration: wallpaperConfiguration,
+            availableContentHeight: 0,
+            availableWallpaperHeight: 0
+        )
+    }
+
     private init(
         windowUUID: WindowUUID,
         wallpaperConfiguration: WallpaperConfiguration,

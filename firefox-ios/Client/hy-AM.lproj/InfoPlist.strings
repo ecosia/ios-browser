@@ -8,22 +8,22 @@
 "New Tab" = "Նոր ներդիր";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox-ը կարող է օգտագործել Ձեր տեսախցիկը՝ սկանավորելու QR կոդերը և լուսանկարելու ու տեսանկարելու համար:";
+"NSCameraUsageDescription" = "Ecosia-ը կարող է օգտագործել Ձեր տեսախցիկը՝ սկանավորելու QR կոդերը և լուսանկարելու ու տեսանկարելու համար:";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox-ը պահանջում է Face ID՝ Ձեր պահված գաղտնաբառերին և վճարման եղանակներին հասանելիություն ունենալու համար:";
+"NSFaceIDUsageDescription" = "Ecosia-ը պահանջում է Face ID՝ Ձեր պահված գաղտնաբառերին և վճարման եղանակներին հասանելիություն ունենալու համար:";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Ձեր այցելած կայքերը կարող են հարցնել ձեր տեղադրությունը։";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Firefox-ն օգտագործում է Ձեր խոսափողը՝ ձայնագրման և ձայնանյութի վերբեռնման համար:";
+"NSMicrophoneUsageDescription" = "Ecosia-ն օգտագործում է Ձեր խոսափողը՝ ձայնագրման և ձայնանյութի վերբեռնման համար:";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Սա ձեզ թույլ է տալիս պահպանել լուսանկարներ։";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Firefox-ն օգտագործում է խոսքի ճանաչում՝ ձայնային որոնման համար ձեր ձայնը տեքստի փոխակերպելու համար։";
+"NSSpeechRecognitionUsageDescription" = "Ecosia-ն օգտագործում է խոսքի ճանաչում՝ ձայնային որոնման համար ձեր ձայնը տեքստի փոխակերպելու համար։";
 
 /* (No Comment) */
 "Scan QR Code" = "Սկանավորել QR կոդը";

@@ -5,10 +5,10 @@
 "New Tab" = "Ivinell nevez";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox can use your camera to scan QR codes or take photos and video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Face ID a zo rekis evit ma c’hallfe kaout Firefox ho kerioù-tremen enrollet hag ho toareoù paeañ.";
+"NSFaceIDUsageDescription" = "Face ID a zo rekis evit ma c’hallfe kaout Ecosia ho kerioù-tremen enrollet hag ho toareoù paeañ.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Lec’hiennoù web a weladennit a c’hall azgoulenn ho lec’hiadur.";

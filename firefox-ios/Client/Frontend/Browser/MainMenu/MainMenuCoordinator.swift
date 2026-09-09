@@ -47,6 +47,13 @@ protocol MainMenuCoordinatorDelegate: AnyObject {
 
     @MainActor
     func showSummarizePanel(_ trigger: SummarizerTrigger, config: SummarizerConfig?)
+
+    // Ecosia: Help and Report Issue actions for the compact menu
+    @MainActor
+    func showHelp()
+
+    @MainActor
+    func showFeedback(windowUUID: WindowUUID)
 }
 
 class MainMenuCoordinator: BaseCoordinator {
@@ -137,6 +144,10 @@ class MainMenuCoordinator: BaseCoordinator {
                 actionType: NavigationBrowserActionType.tapOnReaderMode
             ))
 
+        // Ecosia: Reading List added for the compact menu
+        case .readingList:
+            navigationHandler?.showLibraryPanel(.readingList)
+
         case .settings:
             navigationHandler?.showSettings(at: .general)
 
@@ -219,6 +230,13 @@ class MainMenuCoordinator: BaseCoordinator {
                     ))
                 }
             }
+
+        // Ecosia: Help and Report Issue destinations
+        case .help:
+            navigationHandler?.showHelp()
+
+        case .reportIssue:
+            navigationHandler?.showFeedback(windowUUID: windowUUID)
         }
     }
 

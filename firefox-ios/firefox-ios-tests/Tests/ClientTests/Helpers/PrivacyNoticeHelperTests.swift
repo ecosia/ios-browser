@@ -7,16 +7,19 @@ import XCTest
 
 @testable import Client
 
+@MainActor
 final class PrivacyNoticeHelperTests: XCTestCase {
     var prefs: MockProfilePrefs!
 
     override func setUp() {
         super.setUp()
         prefs = MockProfilePrefs()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
     override func tearDown() {
         prefs = nil
+        DependencyHelperMock().reset()
         super.tearDown()
     }
 

@@ -22,13 +22,21 @@ final class ReaderPanelEmptyStateView: UIView, ThemeApplicable {
     private lazy var welcomeLabel: UILabel = .build { label in
         label.text = .ReaderPanelWelcome
         label.textAlignment = .center
+        /* Ecosia: Align font styles
         label.font = FXFontStyles.Bold.body.scaledFont()
+        */
+        label.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
+        label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
     }
 
     private lazy var readerModeLabel: UILabel = .build { label in
         label.text = .ReaderPanelReadingModeDescription
+        /* Ecosia: Align font styles
         label.font = FXFontStyles.Regular.body.scaledFont()
+        */
+        label.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
     }
 
@@ -40,13 +48,20 @@ final class ReaderPanelEmptyStateView: UIView, ThemeApplicable {
 
     private lazy var readingListLabel: UILabel = .build { label in
         label.text = .ReaderPanelReadingListDescription
+        /* Ecosia: Align font styles
         label.font = FXFontStyles.Regular.body.scaledFont()
+        */
+        label.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
     }
 
     private lazy var readingListImageView: UIImageView = .build { imageView in
         imageView.contentMode = .scaleAspectFill
+        /* Ecosia: Use Ecosia reading list icon
         imageView.image = UIImage(named: StandardImageIdentifiers.Large.readingListAdd)?
+        */
+        imageView.image = UIImage(named: "addToReadingListUpdate")?
             .withRenderingMode(.alwaysTemplate)
     }
 

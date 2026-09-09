@@ -8,10 +8,10 @@
 "New Tab" = "Нов раздел";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox може да използва камерата ви, за да сканира QR кодове или да прави снимки и видео.";
+"NSCameraUsageDescription" = "Ecosia може да използва камерата ви, за да сканира QR кодове или да прави снимки и видео.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox изисква Face ID, за да има достъп до запазените от вас пароли и методи на плащане.";
+"NSFaceIDUsageDescription" = "Ecosia изисква Face ID, за да има достъп до запазените от вас пароли и методи на плащане.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Страниците, които посещавате може да поискат вашето местоположение.";
@@ -23,7 +23,7 @@
 "NSPhotoLibraryAddUsageDescription" = "От тук може да запазвате снимки.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Firefox използва разпознаване на реч, за да конвертира вашия глас в текст за гласово търсене.";
+"NSSpeechRecognitionUsageDescription" = "Ecosia използва разпознаване на реч, за да конвертира вашия глас в текст за гласово търсене.";
 
 /* (No Comment) */
 "Scan QR Code" = "Сканиране на QR";

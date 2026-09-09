@@ -228,9 +228,13 @@ extension BrowserViewController: PhotonActionSheetProtocol {
         return SingleActionViewModel(title: .KeyboardShortcuts.NewTab,
                                      iconString: StandardImageIdentifiers.Large.plus,
                                      iconType: .Image) { _ in
+            /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
             let shouldFocusLocationField = self.newTabSettings == .blankPage
             self.overlayManager.openNewTab(url: nil, newTabSettings: self.newTabSettings)
             self.openBlankNewTab(focusLocationField: shouldFocusLocationField, isPrivate: false)
+            */
+            self.overlayManager.openNewTab(url: nil, newTabSettings: self.newTabSettings)
+            self.openBlankNewTab(focusLocationField: false, isPrivate: false)
         }.items
     }
 
@@ -238,9 +242,13 @@ extension BrowserViewController: PhotonActionSheetProtocol {
         return SingleActionViewModel(title: .KeyboardShortcuts.NewPrivateTab,
                                      iconString: StandardImageIdentifiers.Large.privateMode,
                                      iconType: .Image) { _ in
+            /* Ecosia: Do not auto-focus the address bar when opening a new private tab from the toolbar.
             let shouldFocusLocationField = self.newTabSettings == .blankPage
             self.overlayManager.openNewTab(url: nil, newTabSettings: self.newTabSettings)
             self.openBlankNewTab(focusLocationField: shouldFocusLocationField, isPrivate: true)
+            */
+            self.overlayManager.openNewTab(url: nil, newTabSettings: self.newTabSettings)
+            self.openBlankNewTab(focusLocationField: false, isPrivate: true)
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .newPrivateTab, value: .tabTray)
         }.items
     }

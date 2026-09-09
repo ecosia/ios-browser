@@ -198,7 +198,10 @@ let package = Package(
         ),
         .target(
             name: "ToolbarKit",
+            /* Ecosia: Add SiteImageView to support FaviconImageView in the address bar
             dependencies: ["Common"],
+            */
+            dependencies: ["Common", "SiteImageView"],
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
             ]),
@@ -326,7 +329,11 @@ let package = Package(
         .target(
             name: "OnboardingKit",
             dependencies: ["Common", "ComponentLibrary"],
+            // Ecosia: Xcode 26 bug - auto-discovered xcassets produce conflicting
+            // "create directory" and "Ld link" commands for the same bundle path.
+            // Declaring resources explicitly avoids the issue.
             resources: [
+                .process("Media.xcassets"),
                 .process("IntroVideo.mp4")
             ],
             swiftSettings: [

@@ -14,6 +14,9 @@ final class StatusBarOverlayTests: XCTestCase {
     private var wallpaperManager: WallpaperManagerMock!
     private var notificationCenter: MockNotificationCenter!
     private var toolbarHelper: ToolbarHelperInterface!
+    // Ecosia: Status-bar overlay uses Ecosia's own background token, not Firefox's `layerSurfaceLow`.
+    // Every expectation below substitutes it; upstream's alpha handling is kept as-is.
+    private let theme = LightTheme()
 
     private var expectedAlpha: CGFloat = if #available(iOS 26, *) { .zero } else { 0.85 }
 
@@ -42,7 +45,7 @@ final class StatusBarOverlayTests: XCTestCase {
         XCTAssertFalse(subject.hasTopTabs)
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testOnHomepage_withoutWallpaperWithBottomURLBar_translucencyOn_isTranslucent() throws {
@@ -53,7 +56,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.withAlphaComponent(0).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(0).cgColor)
     }
 
     func testOnHomepage_withoutWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
@@ -65,7 +68,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testOnHomepage_withWallpaperWithBottomURLBar_translucencyOn_notOpaque() throws {
@@ -80,7 +83,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.withAlphaComponent(0).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(0).cgColor)
     }
 
     func testOnHomepage_withWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
@@ -96,7 +99,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testOnWebpage_withoutWallpaperWithBottomURLBar_translucencyOn_isTranslucent() throws {
@@ -108,7 +111,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testOnWebpage_withoutWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
@@ -120,7 +123,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testOnWebpage_withWallpaperWithBottomURLBar_translucencyOn_isTranslucent() throws {
@@ -136,7 +139,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testOnWebpage_withWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
@@ -152,7 +155,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testHasTopTabs_onHomepageWithoutWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
@@ -164,7 +167,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testHasTopTabs_onHomepageWithWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
@@ -180,7 +183,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testHasTopTabs_onWebpageWithoutWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
@@ -192,7 +195,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     func testHasTopTabs_onWebpageWithWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
@@ -208,7 +211,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor,
-                       LightTheme().colors.layerSurfaceLow.withAlphaComponent(expectedAlpha).cgColor)
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
     // MARK: Reduce Transparency
@@ -219,7 +222,7 @@ final class StatusBarOverlayTests: XCTestCase {
 
         XCTAssertFalse(subject.hasTopTabs)
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testOnHomepage_withoutWallpaperWithBottomURLBar_reduceTransparency_isOpaque() throws {
@@ -230,7 +233,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.withAlphaComponent(1).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
     }
 
     func testOnHomepage_withoutWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
@@ -241,7 +244,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testOnHomepage_withWallpaperWithBottomURLBar_reduceTransparency_notOpaque() throws {
@@ -256,7 +259,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.withAlphaComponent(0).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(0).cgColor)
     }
 
     func testOnHomepage_withWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
@@ -271,7 +274,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testOnWebpage_withoutWallpaperWithBottomURLBar_reduceTransparency_isOpaque() throws {
@@ -282,7 +285,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: false)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testOnWebpage_withoutWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
@@ -293,7 +296,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: false)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testOnWebpage_withWallpaperWithBottomURLBar_reduceTransparency_isOpaque() throws {
@@ -308,7 +311,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: false)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testOnWebpage_withWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
@@ -323,7 +326,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: false)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testHasTopTabs_onHomepageWithoutWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
@@ -334,7 +337,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testHasTopTabs_onHomepageWithWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
@@ -349,7 +352,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testHasTopTabs_onWebpageWithoutWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
@@ -360,7 +363,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: false)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     func testHasTopTabs_onWebpageWithWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
@@ -375,7 +378,7 @@ final class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: false)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layerSurfaceLow.cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
     }
 
     // MARK: Helper

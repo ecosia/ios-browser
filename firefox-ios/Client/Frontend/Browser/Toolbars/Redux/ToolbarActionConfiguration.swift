@@ -17,6 +17,8 @@ struct ToolbarActionConfiguration: Equatable {
         case back
         case forward
         case home
+        // Ecosia: History action triggered from the NTP toolbar button
+        case history
         case newTab
         case search
         case tabs
@@ -42,6 +44,11 @@ struct ToolbarActionConfiguration: Equatable {
     var badgeImageName: String?
     /// The image for the bottom badge in a `ToolbarButton`.
     var bottomBadgeImage: UIImage?
+    // Ecosia: Badge customisation parameters for the incognito icon
+    var badgeBundle: Bundle?
+    var badgeSize: CGSize?
+    var badgeXOffset: CGFloat?
+    var badgeYOffset: CGFloat?
     var maskImageName: String?
     var templateModeForImage = true
     var loadingConfig: LoadingConfig?

@@ -40,13 +40,14 @@ open class LoginsStorage {
         return try queue.sync {
             let result = try self.store.deleteUndecryptableRecordsForRemoteReplacement()
 
-            if result.localDeleted > 0 {
-                GleanMetrics.LoginsStore.localUndecryptableDeleted.add(Int32(result.localDeleted))
-            }
-
-            if result.mirrorDeleted > 0 {
-                GleanMetrics.LoginsStore.mirrorUndecryptableDeleted.add(Int32(result.mirrorDeleted))
-            }
+            // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+            // if result.localDeleted > 0 {
+            //     GleanMetrics.LoginsStore.localUndecryptableDeleted.add(Int32(result.localDeleted))
+            // }
+            //
+            // if result.mirrorDeleted > 0 {
+            //     GleanMetrics.LoginsStore.mirrorUndecryptableDeleted.add(Int32(result.mirrorDeleted))
+            // }
         }
     }
 

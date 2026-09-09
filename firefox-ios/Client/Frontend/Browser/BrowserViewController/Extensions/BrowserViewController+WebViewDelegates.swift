@@ -571,6 +571,12 @@ extension BrowserViewController: WKNavigationDelegate {
             return
         }
 
+        // Ecosia: Detect Ecosia-specific URLs (auth, profile, etc.) and trigger native flows
+        if detectAndHandleEcosiaURL(url, for: tab) {
+            decisionHandler(.cancel)
+            return
+        }
+
         // Bugzilla #1979499
         if (url.scheme ?? "").lowercased() == "fido" {
             decisionHandler(.cancel)
@@ -792,6 +798,12 @@ extension BrowserViewController: WKNavigationDelegate {
         // via JS since we are cancelling the navigation here
         if url.scheme == "blob" && navigationAction.navigationType != .other {
             _ = DownloadContentScript.requestBlobDownload(url: url, tab: tab)
+            decisionHandler(.cancel)
+            return
+        }
+
+        // Ecosia: Vertical preservation, URL ecosification, and navigation tracking.
+        if ecosiaDecidePolicyForNavigation(url: url, webView: webView, tab: tab, navigationAction: navigationAction) {
             decisionHandler(.cancel)
             return
         }
@@ -1253,6 +1265,11 @@ extension BrowserViewController: WKNavigationDelegate {
         if let tpHelper = tab.contentBlocker, !tpHelper.isEnabled {
             let js = "window.__firefox__.TrackingProtectionStats.setEnabled(false, \(UserScriptManager.appIdToken))"
             webView.evaluateJavascriptInDefaultContentWorld(js)
+        }
+
+        // Ecosia: Fire in-app search event at commit time (closest to Vue's mounted on web)
+        if let url = webView.url {
+            ecosiaHandleDidCommit(url: url, isPrivate: tab.isPrivate)
         }
 
         searchTelemetry.trackTabAndTopSiteSAP(tab, webView: webView)

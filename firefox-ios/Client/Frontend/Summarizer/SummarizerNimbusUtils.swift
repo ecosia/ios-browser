@@ -97,7 +97,10 @@ struct DefaultSummarizerNimbusUtils: FeatureFlaggable, SummarizerNimbusUtils {
     }
 
     func isHostedSummarizerEnabled() -> Bool {
+        /* Ecosia: Ecosia uses only Apple Intelligence for summarization, no hosted LLM backend.
         return featureFlagsProvider.isEnabled(.hostedSummarizer)
+        */
+        return false
     }
 
     func isAppAttestAuthEnabled() -> Bool {

@@ -4,17 +4,19 @@
 
 import Common
 import Foundation
+import Storage
 
 @testable import Client
 
 import enum MozillaAppServices.VisitType
 
+@MainActor
 class MockLibraryCoordinatorDelegate: LibraryCoordinatorDelegate, LibraryPanelDelegate {
     var libraryPanelWindowUUID: WindowUUID { return WindowUUID.XCTestDefaultUUID }
     var didFinishSettingsCalled = 0
     var didRequestToOpenInNewTabCalled = false
-    var didFinishLibraryCalled = 0
     var didSelectURLCalled = false
+    var didOpenRecentlyClosedSiteInSameTab = 0
     var didOpenRecentlyClosedSiteInNewTab = 0
     var lastOpenedURL: URL?
     var lastVisitType: VisitType?
@@ -34,6 +36,10 @@ class MockLibraryCoordinatorDelegate: LibraryCoordinatorDelegate, LibraryPanelDe
         didSelectURLCalled = true
         lastOpenedURL = url
         lastVisitType = visitType
+    }
+
+    func openRecentlyClosedSiteInSameTab(_ url: URL) {
+        didOpenRecentlyClosedSiteInSameTab += 1
     }
 
     func openRecentlyClosedSiteInNewTab(_ url: URL, isPrivate: Bool) {

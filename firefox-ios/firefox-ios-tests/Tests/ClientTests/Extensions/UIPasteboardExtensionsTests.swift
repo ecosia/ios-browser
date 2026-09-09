@@ -6,6 +6,7 @@ import MobileCoreServices
 import UIKit
 import UniformTypeIdentifiers
 import XCTest
+@testable import Client
 
 class UIPasteboardExtensionsTests: XCTestCase {
     fileprivate var pasteboard: UIPasteboard!
@@ -16,9 +17,9 @@ class UIPasteboardExtensionsTests: XCTestCase {
     }
 
     override func tearDown() {
+        super.tearDown()
         UIPasteboard.remove(withName: pasteboard.name)
         pasteboard = nil
-        super.tearDown()
     }
 
     func testAddPNGImage() throws {

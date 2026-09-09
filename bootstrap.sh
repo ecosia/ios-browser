@@ -64,4 +64,3 @@ else
     echo "Usage: $0 [firefox|focus]"
     exit 1
 fi
-

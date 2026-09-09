@@ -34,6 +34,13 @@ public final class AppContainer: ServiceProvider {
         }
     }
 
+    /// Ecosia: Resolve a service without crashing if it is not registered.
+    /// Use this for optional dependencies where the service may not always be available
+    /// (e.g. during the brief window after AppContainer.shared.reset() in unit test setUp).
+    public func resolveOptional<T>() -> T? {
+        try? container.resolve(T.self) as? T
+    }
+
     /// Register a service in the container
     public func register<T>(service: T) {
         do {

@@ -27,8 +27,18 @@ class SiteTableViewController: UIViewController,
     var currentWindowUUID: UUID? { windowUUID }
 
     var data = Cursor<Site>(status: .success, msg: "No data set")
+
+    // Ecosia: Overridable table style; @objc dynamic allows extension-based overrides in subclasses.
+    @objc dynamic var tableViewStyle: UITableView.Style { .plain }
+
+    /* Ecosia: Initialise with tableViewStyle so subclasses (e.g. SearchViewController) can
+       request .insetGrouped via an extension override without touching Firefox code.
     lazy var tableView: UITableView = .build { [weak self] table in
         guard let self = self else { return }
+     */
+    lazy var tableView: UITableView = {
+        let table = UITableView(frame: .zero, style: tableViewStyle)
+        table.translatesAutoresizingMaskIntoConstraints = false
         table.delegate = self
         table.dataSource = self
         table.register(
@@ -43,10 +53,15 @@ class SiteTableViewController: UIViewController,
             SiteTableViewHeader.self,
             forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier
         )
-        table.layoutMargins = .zero
+        /* Ecosia: .plain tables need zero margins so cells span edge-to-edge; grouped/insetGrouped
+           tables rely on their default layout margins for the leading/trailing section-group insets.
+         */
+        if tableViewStyle == .plain {
+            table.layoutMargins = .zero
+            table.cellLayoutMarginsFollowReadableWidth = false
+        }
         table.keyboardDismissMode = .onDrag
         table.accessibilityIdentifier = "SiteTable"
-        table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = SiteTableViewControllerUX.RowHeight
         table.setEditing(false, animated: false)
 
@@ -57,7 +72,11 @@ class SiteTableViewController: UIViewController,
         // Set an empty footer to prevent empty cells from appearing in the list.
         table.tableFooterView = UIView()
         table.sectionHeaderTopPadding = 0
+    /* Ecosia: remove bracket to return table
     }
+    */
+    return table
+    }()
 
     override private init(nibName: String?, bundle: Bundle?) {
         fatalError("init(coder:) has not been implemented")

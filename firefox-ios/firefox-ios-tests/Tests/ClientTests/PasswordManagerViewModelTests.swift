@@ -4,6 +4,7 @@
 
 import Common
 import MozillaAppServices
+import Shared
 import Storage
 import XCTest
 import Glean
@@ -11,16 +12,16 @@ import Glean
 @testable import Client
 
 @MainActor
-class PasswordManagerViewModelTests: XCTestCase {
+class PasswordManagerViewModelTests: XCTestCase, @unchecked Sendable {
     var viewModel: PasswordManagerViewModel!
     var dataSource: LoginDataSource!
     var mockDelegate: MockLoginViewModelDelegate!
     var mockLoginProvider: MockLoginProvider!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
         let mockProfile = MockProfile()
-        Self.setupTelemetry(with: mockProfile)
         self.mockLoginProvider = MockLoginProvider()
         let searchController = UISearchController()
         self.viewModel = PasswordManagerViewModel(
@@ -33,16 +34,15 @@ class PasswordManagerViewModelTests: XCTestCase {
         self.viewModel.delegate = mockDelegate
     }
 
-    override func tearDown() async throws {
-        Self.tearDownTelemetry()
+    override func tearDown() {
         viewModel = nil
         mockLoginProvider = nil
         mockDelegate = nil
-        try await super.tearDown()
+        DependencyHelperMock().reset()
+        super.tearDown()
     }
 
-    @MainActor
-    func testAddLoginWithEmptyString() async {
+    func testaddLoginWithEmptyString() {
         let login = LoginEntry(fromJSONDict: [
                         "hostname": "https://example.com",
                         "formSubmitUrl": "https://example.com",
@@ -54,12 +54,13 @@ class PasswordManagerViewModelTests: XCTestCase {
             XCTAssertEqual(self.mockLoginProvider.addLoginCalledCount, 1)
             expectation.fulfill()
         }
-        await fulfillment(of: [expectation], timeout: 1)
-        testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
+        wait(for: [expectation], timeout: 1)
+        // Ecosia: Firefox Glean telemetry is silenced (Snowplow is used), so the Logins.saved Glean counter is
+        // never recorded. The behavioural assertion (addLoginCalledCount == 1) above covers the real behaviour.
+        // testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
     }
 
-    @MainActor
-    func testAddLoginWithString() async {
+    func testaddLoginWithString() {
         let login = LoginEntry(fromJSONDict: [
                         "hostname": "https://example.com",
                         "formSubmitUrl": "https://example.com",
@@ -71,8 +72,10 @@ class PasswordManagerViewModelTests: XCTestCase {
             XCTAssertEqual(self.mockLoginProvider.addLoginCalledCount, 1)
             expectation.fulfill()
         }
-        await fulfillment(of: [expectation], timeout: 1)
-        testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
+        wait(for: [expectation], timeout: 1)
+        // Ecosia: Firefox Glean telemetry is silenced (Snowplow is used), so the Logins.saved Glean counter is
+        // never recorded. The behavioural assertion (addLoginCalledCount == 1) above covers the real behaviour.
+        // testCounterMetricRecordingSuccess(metric: GleanMetrics.Logins.saved)
     }
 
     func testQueryLoginsWithEmptyString() {

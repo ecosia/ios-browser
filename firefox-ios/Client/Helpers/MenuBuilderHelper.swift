@@ -3,6 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+// Ecosia: Client resolves Shared as a package product, so String.KeyboardShortcuts needs an explicit import
+import Shared
 
 @MainActor
 class MenuBuilderHelper {

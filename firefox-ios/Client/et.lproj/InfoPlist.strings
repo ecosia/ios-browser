@@ -5,16 +5,16 @@
 "New Tab" = "Uus kaart";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox can use your camera to scan QR codes or take photos and video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox vajab salvestatud paroolidele ja makseviisidele ligipääsuks Face-ID'd.";
+"NSFaceIDUsageDescription" = "Ecosia vajab salvestatud paroolidele ja makseviisidele ligipääsuks Face-ID'd.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Külastatavad saidid võivad küsida sinu asukohta.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Firefox kasutab mikrofoni heli salvestamiseks ja üleslaadimiseks.";
+"NSMicrophoneUsageDescription" = "Ecosia kasutab mikrofoni heli salvestamiseks ja üleslaadimiseks.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "See võimaldab sul salvestada fotosid.";

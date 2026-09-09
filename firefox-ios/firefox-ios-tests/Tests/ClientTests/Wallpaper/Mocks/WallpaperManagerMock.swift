@@ -22,9 +22,10 @@ final class WallpaperManagerMock: WallpaperManagerInterface, @unchecked Sendable
     var setCurrentWallpaperCallCount = 0
     var setCurrentWallpaperResult: Result<Void, Error> = .success(())
 
+    @MainActor
     func canOnboardingBeShown(using: Profile) -> Bool { return true }
 
-    func onboardingSeen() {}
+    func onboardingSeen() { }
 
     func setCurrentWallpaper(
         to wallpaper: Wallpaper,
@@ -43,9 +44,12 @@ final class WallpaperManagerMock: WallpaperManagerInterface, @unchecked Sendable
         completion(fetchResult)
     }
 
-    func removeUnusedAssets() {}
+    func removeUnusedAssets() {
+    }
 
-    func checkForUpdates() {}
+    func checkForUpdates() {
+    }
 
-    func migrateLegacyAssets() {}
+    func migrateLegacyAssets() {
+    }
 }

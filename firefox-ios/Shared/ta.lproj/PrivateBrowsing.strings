@@ -5,7 +5,7 @@
 "ContextMenu.OpenInNewPrivateTabButtonTitle" = "அந்தரங்க கீற்றில் திற";
 
 /* Description text displayed when there are no open tabs while in private mode */
-"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "பயர்பாஃசு தனது பழைய வரலாறு (அ) நினைவிகளை நினைவில் வைக்காது, ஆனால் புதிய புத்தகக்குறிகளைச் சேமித்து வைக்கும்.";
+"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "Ecosia தனது பழைய வரலாறு (அ) நினைவிகளை நினைவில் வைக்காது, ஆனால் புதிய புத்தகக்குறிகளைச் சேமித்து வைக்கும்.";
 
 /* Text button displayed when there are no tabs open while in private mode */
 "Learn More" = "மேலும் அறிக";

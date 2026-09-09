@@ -1,0 +1,24 @@
+name: Snapshot Update Check
+
+on:
+  pull_request:
+    branches: [main, 'patch/**']
+
+jobs:
+  snapshot-update-check:
+    runs-on: ubuntu-latest
+    name: Verify snapshot updates for Ecosia UI changes
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check Ecosia UI changes include snapshot updates
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-snapshot-check') }}
+        run: ./check_snapshot_updates.sh "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+
+      - name: Snapshot update check skipped
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'skip-snapshot-check') }}
+        run: echo "Skipped via skip-snapshot-check label."

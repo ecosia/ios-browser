@@ -7,8 +7,6 @@
 
 import Glean
 import XCTest
-import MozillaAppServices
-
 class LoginsTests: XCTestCase {
     var storage: LoginsStorage!
 

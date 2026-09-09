@@ -5,33 +5,34 @@
 import XCTest
 @testable import Client
 
-class NotificationManagerTests: XCTestCase {
+@MainActor
+class NotificationManagerTests: XCTestCase, @unchecked Sendable {
     private var center: MockUserNotificationCenter!
     private var notificationManager: NotificationManager!
 
     override func setUp() {
         super.setUp()
         center = MockUserNotificationCenter()
-        let telemetry = NotificationManagerTelemetry(gleanWrapper: MockGleanWrapper())
-        notificationManager = NotificationManager(center: center, telemetry: telemetry)
+        notificationManager = NotificationManager(center: center)
     }
 
     override func tearDown() {
+        super.tearDown()
         center = nil
         notificationManager = nil
-        super.tearDown()
     }
 
     func testRequestAuthorization() {
-        notificationManager.requestAuthorization { [center] (granted, error) in
+        let center = self.center!
+        notificationManager.requestAuthorization { (granted, error) in
             XCTAssertTrue(granted)
-            XCTAssertTrue(center?.requestAuthorizationWasCalled ?? false)
+            XCTAssertTrue(center.requestAuthorizationWasCalled)
         }
     }
 
     func testGetNotificationSettings() async {
-        _ = await notificationManager.getNotificationSettings()
-        XCTAssertTrue(self.center.getSettingsWasCalled)
+        _ = await notificationManager.getNotificationSettings(sendTelemetry: false)
+        XCTAssertTrue(center.getSettingsWasCalled)
     }
 
     func testScheduleInterval() {
@@ -44,7 +45,7 @@ class NotificationManagerTests: XCTestCase {
 
     func testFindDeliveredNotificationForId() async {
         _ = await notificationManager.findDeliveredNotificationForId(id: "id1")
-        XCTAssertTrue(self.center.getDeliveredWasCalled)
+        XCTAssertTrue(center.getDeliveredWasCalled)
     }
 
     func testCloseRemoteTabNotification() {

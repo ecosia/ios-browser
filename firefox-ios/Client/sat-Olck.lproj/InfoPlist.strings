@@ -8,10 +8,10 @@
 "New Tab" = "ᱱᱟᱶᱟ ᱴᱮᱵ";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox ᱟᱢᱟᱜ ᱠᱮᱢᱨᱟ QR ᱠᱳᱰ ᱥᱠᱮᱱ ᱞᱟᱹᱜᱤᱫ ᱟᱨ ᱵᱟᱝ ᱪᱤᱛᱟᱹᱨ ᱟᱨ ᱵᱷᱤᱰᱤᱭᱳ ᱦᱟᱛᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱵᱮᱵᱷᱟᱨ ᱫᱟᱲᱮᱭᱟᱜᱼᱟᱭ ᱾";
+"NSCameraUsageDescription" = "Ecosia ᱟᱢᱟᱜ ᱠᱮᱢᱨᱟ QR ᱠᱳᱰ ᱥᱠᱮᱱ ᱞᱟᱹᱜᱤᱫ ᱟᱨ ᱵᱟᱝ ᱪᱤᱛᱟᱹᱨ ᱟᱨ ᱵᱷᱤᱰᱤᱭᱳ ᱦᱟᱛᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱵᱮᱵᱷᱟᱨ ᱫᱟᱲᱮᱭᱟᱜᱼᱟᱭ ᱾";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "ᱟᱢᱟᱜ ᱥᱟᱧᱪᱟᱣ ᱨᱩᱠᱷᱭᱟᱹ ᱞᱳᱜᱤᱱ ᱨᱮ ᱵᱚᱞᱚᱱ ᱞᱟᱹᱜᱤᱱ Firefox ᱟᱢᱟᱜ ᱢᱮᱫᱦᱟᱸ ID ᱞᱟᱹᱠᱛᱤᱜ ᱠᱟᱱᱟᱭ ᱾";
+"NSFaceIDUsageDescription" = "ᱟᱢᱟᱜ ᱥᱟᱧᱪᱟᱣ ᱨᱩᱠᱷᱭᱟᱹ ᱞᱳᱜᱤᱱ ᱨᱮ ᱵᱚᱞᱚᱱ ᱞᱟᱹᱜᱤᱱ Ecosia ᱟᱢᱟᱜ ᱢᱮᱫᱦᱟᱸ ID ᱞᱟᱹᱠᱛᱤᱜ ᱠᱟᱱᱟᱭ ᱾";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "ᱦᱤᱨᱤᱟᱠᱟᱱ ᱣᱮᱵᱥᱟᱭᱤᱴ ᱟᱢᱟᱜ ᱡᱟᱭᱜᱟ ᱠᱚ ᱠᱷᱚᱡ ᱫᱟᱲᱮᱟᱜᱼᱟ᱾";
@@ -23,7 +23,7 @@
 "NSPhotoLibraryAddUsageDescription" = "ᱱᱚᱶᱟ ᱛᱮ ᱟᱢ ᱪᱤᱛᱟᱹᱨᱠᱚ ᱥᱟᱧᱪᱟᱣ ᱫᱟᱰᱮᱭᱟᱜᱼᱟᱢ ᱾";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "ᱟᱲᱟᱝ ᱥᱮᱸᱫᱽᱨᱟ ᱞᱟᱹᱜᱤᱫ ᱟᱢᱟᱜ ᱟᱲᱟᱝ ᱚᱱᱚᱞ ᱨᱮ ᱵᱚᱫᱚᱞ ᱞᱟᱹᱜᱤᱫ Firefox ᱟᱲᱟᱝ ᱚᱨᱚᱢ ᱨᱮᱭᱟᱜ ᱵᱮᱵᱷᱟᱨ ᱮᱫᱟᱭ ᱾";
+"NSSpeechRecognitionUsageDescription" = "ᱟᱲᱟᱝ ᱥᱮᱸᱫᱽᱨᱟ ᱞᱟᱹᱜᱤᱫ ᱟᱢᱟᱜ ᱟᱲᱟᱝ ᱚᱱᱚᱞ ᱨᱮ ᱵᱚᱫᱚᱞ ᱞᱟᱹᱜᱤᱫ Ecosia ᱟᱲᱟᱝ ᱚᱨᱚᱢ ᱨᱮᱭᱟᱜ ᱵᱮᱵᱷᱟᱨ ᱮᱫᱟᱭ ᱾";
 
 /* (No Comment) */
 "Scan QR Code" = "Scan QR ᱠᱚᱰ ᱥᱠᱟᱱ ᱢᱮ";

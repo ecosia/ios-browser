@@ -12,9 +12,15 @@ import TabDataStore
 
 import struct Storage.PageMetadata
 
+// Ecosia: `isEcosiaAIChat` lives in the Ecosia framework, no longer reachable transitively
+// since upstream narrowed `import Storage` to a single symbol
+import Ecosia
+
+/* Ecosia: Remove unneded and old debug code
 #if DEBUG
 private var debugTabCount = 0
 #endif
+ */
 
 @MainActor
 func mostRecentTab(inTabs tabs: [Tab]) -> Tab? {
@@ -492,7 +498,7 @@ class Tab: NSObject,
          tabCreatedTime: Date = Date(),
          fileManager: FileManagerProtocol = FileManager.default,
          logger: Logger = DefaultLogger.shared,
-         documentLogger: DocumentLogger = AppContainer.shared.resolve(),
+         documentLogger: DocumentLogger = (AppContainer.shared.resolveOptional() as DocumentLogger?) ?? DocumentLogger(logger: DefaultLogger.shared),
          dispatchQueue: DispatchQueueInterface = DispatchQueue.global(qos: .background)) {
         self.nightMode = false
         self.windowUUID = windowUUID
@@ -507,10 +513,11 @@ class Tab: NSObject,
         self.removeDispatchQueue = dispatchQueue
         super.init()
         self.isPrivate = isPrivate
+/* Ecosia: Remove unneded and old debug code
 #if DEBUG
         debugTabCount += 1
 #endif
-
+*/
         TelemetryWrapper.recordEvent(
             category: .action,
             method: .add,
@@ -589,6 +596,15 @@ class Tab: NSObject,
 
     func restore(_ webView: WKWebView, interactionState: Data? = nil) {
         if let url = url {
+            // Ecosia: `customUserAgent` mutations only take effect starting the *next* navigation (WKWebView caveat),
+            // so a freshly created webview's first load must have it set proactively here rather than relying on decidePolicyFor,
+            // which would apply one navigation too late
+            if Tab.ChangeUserAgent.contains(url: url, isPrivate: isPrivate) {
+                webView.customUserAgent = UserAgent.oppositeUserAgent(domain: url.baseDomain ?? "")
+            } else {
+                webView.customUserAgent = UserAgent.getUserAgent(domain: url.baseDomain ?? "")
+            }
+
             if let internalURL = InternalURL(url),
                internalURL.isAboutHomeURL {
                 webView.load(PrivilegedRequest(url: url) as URLRequest)
@@ -611,6 +627,7 @@ class Tab: NSObject,
                 uiTestLeakView?.removeFromSuperview()
             }
         }
+/* Ecosia: Remove unneded and old debug code
 #if DEBUG
         debugTabCount -= 1
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -628,6 +645,7 @@ class Tab: NSObject,
         }
         checkTabCount(failures: 0)
 #endif
+ */
     }
 
     /// When a user clears ALL history, `sessionData` and `historyList` need to be purged, and close the webView.
@@ -710,7 +728,10 @@ class Tab: NSObject,
             if let url = request.url, url.isFileURL, request.isPrivileged {
                 return webView.loadFileURL(url, allowingReadAccessTo: url)
             }
+            /* Ecosia: Apply Ecosia-specific request mutations (Cloudflare auth, language header, _sp).
             return webView.load(request)
+            */
+            return webView.load(ecosiaUpdatedRequest(request))
         }
         return nil
     }
@@ -1057,6 +1078,10 @@ class Tab: NSObject,
     }
 
     func tabWebViewShouldShowAccessoryView(_ tabWebView: TabWebView) -> Bool {
+        // Ecosia: Hide the keyboard accessory bar on the AI chat vertical so the web "Ask follow up"
+        // input stays clean and prominent.
+        if url?.isEcosiaAIChat == true { return false }
+
         // Hide the default WKWebView accessory view panel for PDF documents.
         return mimeType != MIMEType.PDF
     }

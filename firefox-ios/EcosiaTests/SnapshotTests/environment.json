@@ -1,0 +1,20 @@
+{
+    "DEVICES": [
+  {
+    "name": "iPhone 16 Pro",
+    "orientation": "portrait"
+  }
+],
+    "LOCALES": [
+  "en",
+  "it",
+  "de",
+  "es",
+  "nl"
+],
+    "THEMES": [
+  "dark",
+  "light"
+],
+    "SIMULATOR_DEVICE_NAME": "iPhone 16 Pro"
+  }

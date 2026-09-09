@@ -37,6 +37,8 @@ final class AddressToolbarContainerModelTests: XCTestCase {
         XCTAssertNil(viewModel.searchTermFromURL(nil))
     }
 
+    /* Ecosia: `searchTermFromURL` only surfaces a query for Ecosia URLs — a third-party provider's
+       `q` can carry a chat mode's prompt instruction, which must not appear in the address bar.
     @MainActor
     func testSearchWordFromURLWhenUsingGoogleSearchThenSearchWordIsCorrect() {
         let viewModel = createSubject(withState: createToolbarState())
@@ -44,6 +46,13 @@ final class AddressToolbarContainerModelTests: XCTestCase {
         let url = URL(string: "http://firefox.com/find?q=\(searchTerm)")
         let result = viewModel.searchTermFromURL(url)
         XCTAssertEqual(searchTerm, result)
+    }
+    */
+    @MainActor
+    func testSearchWordFromURLWhenUsingNonEcosiaSearchThenSearchWordIsNil() {
+        let viewModel = createSubject(withState: createToolbarState())
+        let url = URL(string: "http://firefox.com/find?q=test")
+        XCTAssertNil(viewModel.searchTermFromURL(url))
     }
 
     @MainActor

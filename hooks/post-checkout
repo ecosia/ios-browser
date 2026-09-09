@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Ecosia: Git LFS post-checkout hook, merged in by hand because `git lfs
+# install` refuses to overwrite an existing post-checkout hook rather than
+# merging into it. LFS is only relevant if the SnapshotArtifacts submodule
+# (the only thing tracked with filter=lfs) is actually checked out — both it
+# and git-lfs itself are optional, so this stays a no-op for anyone who
+# skipped either.
+if [ -f "firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts/.git" ]; then
+    if command -v git-lfs >/dev/null 2>&1; then
+        git lfs post-checkout "$@"
+    else
+        echo "git-lfs not installed, skipping LFS post-checkout hook"
+    fi
+fi
+
+# Directory containing your custom hooks
+HOOKS_DIR="hooks"
+
+# Check if hooks have already been installed in the .git/hooks directory
+# We check for one example hook to verify, you can change this to your preference
+required_hooks=("prepare-commit-msg" "post-checkout")
+missing_hooks=()
+
+for hook in "${required_hooks[@]}"; do
+  if [ ! -f ".git/hooks/$hook" ]; then
+    missing_hooks+=("$hook")
+  fi
+done
+
+if [ ${#missing_hooks[@]} -ne 0 ]; then
+  echo "Missing hooks: ${missing_hooks[*]}. Running setup_hooks.sh to install them."
+  # Run the setup script to copy the hooks
+  ./setup_hooks.sh
+else
+  echo "Git hooks are already installed."
+fi

@@ -49,6 +49,9 @@ final class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable
     private var hideCursor = false
     private var isSettingMarkedText = false
     private var lastMarkedText = ""
+    // Ecosia: When false, end-editing strips inline autocomplete without committing it
+    // (keyboard drag-dismiss while scrolling suggestions).
+    var commitsAutocompleteOnEndEditing = true
     var clearButton: UIButton? {
         return value(forKey: "_clearButton") as? UIButton
     }
@@ -117,6 +120,23 @@ final class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable
     }
 
     weak var accessibilityActionsSource: AccessibilityActionsSource?
+
+    // Ecosia: User-typed text only (excludes inline autocomplete). Read by
+    // `overlaySearchQuery` so Redux cannot lag behind the live field.
+    var plainUserText: String {
+        textWithoutSuggestion() ?? text ?? ""
+    }
+
+    // Ecosia: Write counterpart to `plainUserText`, for replacing the field's contents from
+    // code — the suggestion list's "append" arrow. Drops any inline autocomplete first so the
+    // appended query can't be spliced onto a stale completion, and parks the caret at the end
+    // so typing continues from the appended text.
+    func setPlainUserText(_ value: String) {
+        removeCompletion()
+        hideCursor = false
+        text = value
+        selectedTextRange = textRange(from: endOfDocument, to: endOfDocument)
+    }
 
     override var accessibilityCustomActions: [UIAccessibilityCustomAction]? {
         get {
@@ -207,10 +227,16 @@ final class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable
     // MARK: - ThemeApplicable
     func applyTheme(theme: Theme) {
         let colors = theme.colors
+        /* Ecosia: Use Ecosia text/icon colors for location field (legacy URLBarView applyTheme)
         tintColor = colors.layerSelectedText
         clearButtonTintColor = colors.iconPrimary
-        editingAccessoryRightView.applyTheme(theme: theme)
         markedTextStyle = [NSAttributedString.Key.backgroundColor: colors.layerAutofillText]
+         */
+        tintColor = colors.ecosia.buttonBackgroundPrimary
+        clearButtonTintColor = colors.ecosia.textPrimary
+        markedTextStyle = [NSAttributedString.Key.backgroundColor: colors.ecosia.backgroundTertiary]
+        textColor = colors.ecosia.textPrimary
+        editingAccessoryRightView.applyTheme(theme: theme)
 
         // Force marked text to refresh with new style
         if let markedRange = markedTextRange,
@@ -273,6 +299,16 @@ final class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable
 
     /// Commits the completion by setting the text and removing the highlight.
     private func applyCompletion() {
+        // Ecosia: Discard whitespace-only marked suffixes instead of committing them
+        // as trailing spaces when the keyboard dismisses during suggestion scrolling.
+        if let markedTextRange,
+           let marked = markedSuggestionText(in: text ?? "", range: markedTextRange),
+           marked.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            _ = removeCompletion()
+            hideCursor = false
+            return
+        }
+
         // Clear the current completion, then set the text without the attributed style.
         lastMarkedText = ""
         let text = (self.text ?? "")
@@ -284,6 +320,15 @@ final class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable
         if didRemoveCompletion {
             selectedTextRange = textRange(from: endOfDocument, to: endOfDocument)
         }
+    }
+
+    // Ecosia: Read the marked autocomplete suffix without committing it.
+    private func markedSuggestionText(in text: String, range: UITextRange) -> String? {
+        let location = offset(from: beginningOfDocument, to: range.start)
+        let length = offset(from: range.start, to: range.end)
+        let nsRange = NSRange(location: location, length: length)
+        guard nsRange.location != NSNotFound else { return nil }
+        return (text as NSString).substring(with: nsRange)
     }
 
     /// Removes the autocomplete-highlighted. Returns true if a completion was actually removed
@@ -334,6 +379,8 @@ final class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable
               let clearButton = value(forKey: "_clearButton") as? UIButton
         else { return }
 
+        // Ecosia: Stamp the clear button so UI automation can locate it by accessibility ID.
+        clearButton.accessibilityIdentifier = "AddressBar.clearButton"
         tintedClearImage = image.withTintColor(clearButtonTintColor)
         clearButton.setImage(tintedClearImage, for: [])
     }
@@ -345,7 +392,15 @@ final class LocationTextField: UITextField, UITextFieldDelegate, ThemeApplicable
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        /* Ecosia: Firefox always commits inline autocomplete on end-editing.
         applyCompletion()
+        */
+        if commitsAutocompleteOnEndEditing {
+            applyCompletion()
+        } else if markedTextRange != nil {
+            _ = removeCompletion()
+            hideCursor = false
+        }
         return true
     }
 

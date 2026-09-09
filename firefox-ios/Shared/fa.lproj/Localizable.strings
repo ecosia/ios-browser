@@ -278,7 +278,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "ممکن است پیکربندی اشتباه باشد یا توسط یک حمله کننده تغییر کرده باشد. اگر این ریسک‌ را قبول می‌کنید ادامه دهید.";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "مالکان %@ سایت خود را به گونه‌ای نادرست پیکربندی کرده‌اند. برای محافظت از اطلاعات شما از دزدیده شدن، فایرفاکس به این سایت متصل نشده است.";
+"ErrorPages.CertWarning.Description" = "مالکان %@ سایت خود را به گونه‌ای نادرست پیکربندی کرده‌اند. برای محافظت از اطلاعات شما از دزدیده شدن، Ecosia به این سایت متصل نشده است.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "این اتصال غیرقابل اطمینان می‌باشد";
@@ -299,13 +299,13 @@
 "Facebook" = "فیس‌بوک";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "صفحه‌خانگی فایرفاکس";
+"Firefox.HomePage.Title" = "صفحه‌خانگی Ecosia";
 
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "جلو";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "حساب فایرفاکس";
+"FxA.FirefoxAccount" = "حساب Ecosia";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "مدیریت حساب و دستگاه‌ها";
@@ -317,7 +317,7 @@
 "fxa.signin.camera-signin" = "با دوربین خود وارد شوید";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "بر روی کامپیوتر خود فایرفاکس را باز کرده و به firefox.com/pair بروید";
+"fxa.signin.qr-link-instruction" = "بر روی کامپیوتر خود Ecosia را باز کرده و به firefox.com/pair بروید";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "آماده برای اسکن";
@@ -329,7 +329,7 @@
 "FxA.SyncNow" = "هم‌اکنون همگام‌سازی کنید";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "همگام‌ساز فایرفاکس به %@ متصل شد";
+"FxAPush_DeviceConnected_body" = "همگام‌ساز Ecosia به %@ متصل شد";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "همگام‌سازی متصل شد";
@@ -338,7 +338,7 @@
 "FxAPush_DeviceDisconnected_body" = "%@ به طور موفقیت آمیز قطع شد.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "این دستگاه به طور موفقیت آمیز از «همگام‌سازی فایرفاکس» قطع شد.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "این دستگاه به طور موفقیت آمیز از «همگام‌سازی Ecosia» قطع شد.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "همگام‌سازی قطع شد";
@@ -347,7 +347,7 @@
 "FxAPush_DeviceDisconnected_title" = "همگام‌سازی قطع شد";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "یک دستگاه از سیستم همگام‌سازی فایرفاکس قطع شده";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "یک دستگاه از سیستم همگام‌سازی Ecosia قطع شده";
 
 /* Show the SUMO support page from the Support section in the settings. see http://mzl.la/1dmM8tZ */
 "Help" = "راهنما";
@@ -380,7 +380,7 @@
 "HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description" = "برای دیدن یک فهرست از زبانه‌های باز دستگاه‌های دیگر وارد شوید.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "هم‌گام‌سازی فایرفاکس";
+"HistoryPanel.EmptySyncedTabsState.Title" = "هم‌گام‌سازی Ecosia";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "تاریخچه";
@@ -545,7 +545,7 @@
 "LoginsList.Title" = "SAVED LOGINS";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "به نظر می‌رسید فایرفاکس قبلا دچار خرابی شده است. مایل هستید زبانه‌های خود را بازیابی کنید؟";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "به نظر می‌رسید Ecosia قبلا دچار خرابی شده است. مایل هستید زبانه‌های خود را بازیابی کنید؟";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "علامت گذاری به عنوان خوانده شده";
@@ -647,7 +647,7 @@
 "Okay" = "تایید";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "اوخ! فایرفاکس دچارخرابی شد";
+"Oops! Firefox crashed" = "اوخ! Ecosia دچارخرابی شد";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "بازکردن مقاله در حالت مطالعه به وسیله تپ کردن بر روی آیکون کتاب وفتی در عنوان بار نمایش داده شد.";
@@ -659,7 +659,7 @@
 "Open Tabs" = "زبانه‌های باز";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "فایرفاکس به دلیل نامعتبر بودن آدرس قادر به بازکردن این صفحه نمی‌باشد.";
+"OpenURL.Error.Message" = "Ecosia به دلیل نامعتبر بودن آدرس قادر به بازکردن این صفحه نمی‌باشد.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "امکان بازکردن این صفحه مقدور نمی باشد";
@@ -671,7 +671,7 @@
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "این به شما این اجازه رو می‌دهد تا تصاویر را در داخل فهرست تصاویر خود ذخیره کنید.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "فایرفاکس تمایل دارد به تصاویر شما دسترسی داشته باشد";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "Ecosia تمایل دارد به تصاویر شما دسترسی داشته باشد";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "بسته";
@@ -809,13 +809,13 @@
 "SendTo.NavBar.Title" = "ارسال زبانه";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "شما هیچ‌گونه دستگاه دیگری متصل به فایرفاکس برای همگام‌سازی ندارید.";
+"SendTo.NoDevicesFound.Message" = "شما هیچ‌گونه دستگاه دیگری متصل به Ecosia برای همگام‌سازی ندارید.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "لطفا فایرفاکس را باز کنید،‌ به بخش تنظیمات بروید و برای ادامه وارد شوید.";
+"SendTo.NotSignedIn.Message" = "لطفا Ecosia را باز کنید،‌ به بخش تنظیمات بروید و برای ادامه وارد شوید.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "شما به حساب کاربری فایرفاکس خود وارد نشده‌اید.";
+"SendTo.NotSignedIn.Title" = "شما به حساب کاربری Ecosia خود وارد نشده‌اید.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "ارسال";
@@ -836,7 +836,7 @@
 "SentTab.NoTabArrivingNotification.body" = "جهت آغاز ضربه بزنید";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "همگام‌سازی فایرفاکس";
+"SentTab.NoTabArrivingNotification.title" = "همگام‌سازی Ecosia";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "نمایش";
@@ -893,7 +893,7 @@
 "Settings.DataManagement.Title" = "مدیریت داده";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "فایرفاکس همگام‌ سازی از حساب شما را متوقف خواهد کرد اما هیچ گونه اطلاعاتی از روی دستگاه شما پاک نخواهد کرد.";
+"Settings.Disconnect.Body" = "Ecosia همگام‌ سازی از حساب شما را متوقف خواهد کرد اما هیچ گونه اطلاعاتی از روی دستگاه شما پاک نخواهد کرد.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "قطع همگام‌سازی";
@@ -956,7 +956,7 @@
 "Settings.FxA.Sync.SectionName" = "تنظیمات همگام سازی";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "حساب کاربری فایرفاکس";
+"Settings.FxA.Title" = "حساب کاربری Ecosia";
 
 /* General settings section title */
 "Settings.General.SectionName" = "عمومی";
@@ -989,7 +989,7 @@
 "Settings.NewTab.Option.BlankPage" = "صفحهٔ خالی";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "صفحه اصلی فایرفاکس";
+"Settings.NewTab.Option.FirefoxHome" = "صفحه اصلی Ecosia";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "صفحه خانگی";
@@ -1007,7 +1007,7 @@
 "Settings.NewTab.TopSectionNameFooter" = "اینکه چه چیزی هنگام باز کردن زبانهٔ جدید نمایش داده شود را انتخاب کنید";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "هنگام باز کردن فایرفاکس";
+"Settings.OfferClipboardBar.Status" = "هنگام باز کردن Ecosia";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "پیشنهاد باز کردن پیوندهای رونوشت شده";
@@ -1031,7 +1031,7 @@
 "Settings.SendUsage.Link" = "اطلاعات بیشتر.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "موزیلا تنها اطلاعاتی که به بهینه‌سازی فایرفاکس برای همه کمک می‌کند را جمع‌آوری می‌کند.";
+"Settings.SendUsage.Message" = "موزیلا تنها اطلاعاتی که به بهینه‌سازی Ecosia برای همه کمک می‌کند را جمع‌آوری می‌کند.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "ارسال اطلاعات استفاده";
@@ -1052,7 +1052,7 @@
 "Settings.Siri.OpenTabShortcut" = "بازکردن زبانه جدید";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "استفاده از میانبرهای سیری برای بازکردن سریع فایرفاکس به وسیله سیری";
+"Settings.Siri.SectionDescription" = "استفاده از میانبرهای سیری برای بازکردن سریع Ecosia به وسیله سیری";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "میانبرهای سیری";
@@ -1121,13 +1121,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "بارگذاری در پس زمینه";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "بارگذاری در فایرفاکس";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "بارگذاری در Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "بازکردن در فایرفاکس";
+"ShareExtension.OpenInFirefoxAction.Title" = "بازکردن در Ecosia";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "جست‌وجو این فایرفاکس";
+"ShareExtension.SeachInFirefoxAction.Title" = "جست‌وجو این Ecosia";
 
 /* Label for show search suggestions setting. */
 "Show Search Suggestions" = "نمایش پیشنهادات جست‌و‌جو";
@@ -1232,7 +1232,7 @@
 "UIMenuItem.PasteGo" = "جای‌گذاری و ثبت";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "جست‌وجو با فایرفاکس";
+"UIMenuItem.SearchWithFirefox" = "جست‌وجو با Ecosia";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "خوانده‌ نشده";
@@ -1262,7 +1262,7 @@
 "Yesterday" = "دیروز";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "شما هیچ‌گونه زبانه باز دیگری در فایرفاکس در دستگاه‌های دیگر ندارید.";
+"You don’t have any tabs open in Firefox on your other devices." = "شما هیچ‌گونه زبانه باز دیگری در Ecosia در دستگاه‌های دیگر ندارید.";
 
 /* Your Rights settings section title */
 "Your Rights" = "حقوق شما";

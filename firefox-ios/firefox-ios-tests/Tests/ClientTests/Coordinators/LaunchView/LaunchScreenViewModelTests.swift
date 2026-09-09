@@ -94,6 +94,7 @@ final class LaunchScreenViewModelTests: XCTestCase {
 
     // MARK: - Multiple Launch Types Tests
 
+    // Ecosia: order is intro -> terms of service, not the reverse; see the block below.
     func testLaunchType_termsOfServiceAndIntro_sequence() {
         setTermsOfServiceFeatureEnabled(true)
 
@@ -105,6 +106,8 @@ final class LaunchScreenViewModelTests: XCTestCase {
         XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 1)
         XCTAssertEqual(subject.launchOrder.count, 2)
 
+        /* Ecosia: Ecosia presents Welcome right after the launch screen, i.e. intro BEFORE terms of
+           service (see LaunchScreenViewModel.loadLaunchType), so the order below is inverted.
         subject.loadNextLaunchType()
         assertSavedLaunchType(.termsOfService(manager: TermsOfServiceManager(prefs: profile.prefs)))
         XCTAssertEqual(delegate.launchWithTypeCalled, 1)
@@ -112,6 +115,16 @@ final class LaunchScreenViewModelTests: XCTestCase {
 
         subject.loadNextLaunchType()
         assertSavedLaunchType(.intro(manager: IntroScreenManager(prefs: profile.prefs)))
+        XCTAssertEqual(delegate.launchWithTypeCalled, 2)
+        XCTAssertEqual(subject.launchOrder.count, 0)
+         */
+        subject.loadNextLaunchType()
+        assertSavedLaunchType(.intro(manager: IntroScreenManager(prefs: profile.prefs)))
+        XCTAssertEqual(delegate.launchWithTypeCalled, 1)
+        XCTAssertEqual(subject.launchOrder.count, 1)
+
+        subject.loadNextLaunchType()
+        assertSavedLaunchType(.termsOfService(manager: TermsOfServiceManager(prefs: profile.prefs)))
         XCTAssertEqual(delegate.launchWithTypeCalled, 2)
         XCTAssertEqual(subject.launchOrder.count, 0)
 

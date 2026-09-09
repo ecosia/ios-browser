@@ -209,7 +209,7 @@
 "ErrorPages.Advanced.Button" = "ಸುಧಾರಿತ";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
-"ErrorPages.CertWarning.Description" = "%@ ನ ಮಾಲಿಕ ಅವರ ಜಾಲತಾಣವನ್ನು ಸರಿಯಾಗಿ ಸಂರಚಿಸಿಲ್ಲ. ನಿಮ್ಮ ಮಾಹಿತಿಯನ್ನು ಕಳ್ಳತನದಿಂದ ಸುರಕ್ಷಿತವಾಗಿರಿಸಲು, Firefox ಈ ಜಾಲತಾಣದೊಂದಿಗೆ ಸಂಪರ್ಕವನ್ನು ಹೊಂದಿಲ್ಲ.";
+"ErrorPages.CertWarning.Description" = "%@ ನ ಮಾಲಿಕ ಅವರ ಜಾಲತಾಣವನ್ನು ಸರಿಯಾಗಿ ಸಂರಚಿಸಿಲ್ಲ. ನಿಮ್ಮ ಮಾಹಿತಿಯನ್ನು ಕಳ್ಳತನದಿಂದ ಸುರಕ್ಷಿತವಾಗಿರಿಸಲು, Ecosia ಈ ಜಾಲತಾಣದೊಂದಿಗೆ ಸಂಪರ್ಕವನ್ನು ಹೊಂದಿಲ್ಲ.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "ಈ ಸಂಪರ್ಕ ನಂಬಲರ್ಹವಲ್ಲ";
@@ -221,13 +221,13 @@
 "Facebook" = "ಫೇಸ್‌ಬುಕ್‌";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Firefox ಮುಖ್ಯ ಪುಟ";
+"Firefox.HomePage.Title" = "Ecosia ಮುಖ್ಯ ಪುಟ";
 
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "ಮುಂದೆ";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Firefox ಖಾತೆ";
+"FxA.FirefoxAccount" = "Ecosia ಖಾತೆ";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "ಖಾತೆ ಮತ್ತು ಸಾಧನಗಳನ್ನು ನಿರ್ವಹಿಸು‍";
@@ -263,7 +263,7 @@
 "HistoryPanel.EmptySyncedTabsNullState.Description" = "ನಿಮ್ಮ ಬೇರೆ ಸಾಧನಗಳ ಟ್ಯಾಬ್‍‍ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತವೆ.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox ಸಿಂಕ್";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia ಸಿಂಕ್";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "ಇತಿಹಾಸ";
@@ -374,7 +374,7 @@
 "LoginsList.Title" = "SAVED LOGINS";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "ಈ ಹಿಂದೆ ಫೈರ್ಫಾಕ್ಸ್ ಕುಸಿದಂತೆ ತೋರುತ್ತಿದೆ. ನಿಮ್ಮ ಟ್ಯಾಬ್ಗಳನ್ನು ಮರುಸ್ಥಾಪಿಸಲು ಬಯಸುವಿರಾ?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "ಈ ಹಿಂದೆ Ecosia ಕುಸಿದಂತೆ ತೋರುತ್ತಿದೆ. ನಿಮ್ಮ ಟ್ಯಾಬ್ಗಳನ್ನು ಮರುಸ್ಥಾಪಿಸಲು ಬಯಸುವಿರಾ?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "ಓದಿದೆ ಎಂದು ಗುರುತಿಸಿ";
@@ -440,7 +440,7 @@
 "Okay" = "ಸರಿ";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "‍ಓಹ್ ಓ! ‍Firefox ಕುಸಿತಗೊಂಡಿದೆ";
+"Oops! Firefox crashed" = "‍ಓಹ್ ಓ! ‍Ecosia ಕುಸಿತಗೊಂಡಿದೆ";
 
 /* See http://mzl.la/1G7uHo7 */
 "Open Settings" = "ಸಿದ್ಧತೆಗಳನ್ನು ತೆರೆ";
@@ -557,7 +557,7 @@
 "SentTab.NoTabArrivingNotification.body" = "ಪ್ರಾರಂಭಿಸಲು ಮೆಲ್ಲಗೆ ತಟ್ಟಿ";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Firefox ಸಿಂಕ್";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia ಸಿಂಕ್";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "ನೋಟ";
@@ -626,7 +626,7 @@
 "Settings.FxA.Sync.SectionName" = "ಸಿಂಕ್‍ನ ಸಿದ್ಧತೆಗಳು";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Firefox ಖಾತೆ";
+"Settings.FxA.Title" = "Ecosia ಖಾತೆ";
 
 /* General settings section title */
 "Settings.General.SectionName" = "ಸಾಮಾನ್ಯ";
@@ -677,7 +677,7 @@
 "Settings.Siri.OpenTabShortcut" = "ಹೊಸ ಟ್ಯಾಬ್‌ ತೆರೆ‍";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "ಸಿರಿ ಮೂಲಕ ಫೈರ್ಫಾಕ್ಸ್ ಅನ್ನು ತ್ವರಿತವಾಗಿ ತೆರೆಯಲು ಸಿರಿ ಶಾರ್ಟ್ಕಟ್ಗಳನ್ನು ಬಳಸಿ";
+"Settings.Siri.SectionDescription" = "ಸಿರಿ ಮೂಲಕ Ecosia ಅನ್ನು ತ್ವರಿತವಾಗಿ ತೆರೆಯಲು ಸಿರಿ ಶಾರ್ಟ್ಕಟ್ಗಳನ್ನು ಬಳಸಿ";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "ಸಿರಿ ಶಾರ್ಟ್ಕಟ್ಗಳು";
@@ -716,13 +716,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಮೂಡಿಸು";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "ಫೈರ್ಫಾಕ್ಸ್ನಲ್ಲಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Ecosia ನಲ್ಲಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "ಫೈರ್ಫಾಕ್ಸ್ನಲ್ಲಿ ತೆರೆಯಿರಿ";
+"ShareExtension.OpenInFirefoxAction.Title" = "Ecosia ನಲ್ಲಿ ತೆರೆಯಿರಿ";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "ಫೈರ್ಫಾಕ್ಸ್ನಲ್ಲಿ ಹುಡುಕಿ";
+"ShareExtension.SeachInFirefoxAction.Title" = "Ecosia ನಲ್ಲಿ ಹುಡುಕಿ";
 
 /* Label for show search suggestions setting. */
 "Show Search Suggestions" = "ಹುಡುಕಲು ಸಲಹೆಗಳನ್ನು ತೋರಿಸು";
@@ -803,7 +803,7 @@
 "UIMenuItem.PasteGo" = "ಅಂಟಿಸು & ಮುಂದುವರೆ";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "ಫೈರ್ಫಾಕ್ಸ್ ನೊಂದಿಗೆ ಹುಡುಕಿ";
+"UIMenuItem.SearchWithFirefox" = "Ecosia ನೊಂದಿಗೆ ಹುಡುಕಿ";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "ಓದದೆ ಇರುವ";

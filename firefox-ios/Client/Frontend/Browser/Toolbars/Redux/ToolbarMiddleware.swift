@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import Redux
 import ToolbarKit
 import SummarizeKit
@@ -239,6 +240,23 @@ final class ToolbarMiddleware {
         }
     }
 
+    // Ecosia: The address bar's `.search` slot renders the QR-code scanner while editing
+    // (see `AddressBarState.qrCodeAction`), so the tap has to be disambiguated by the button's
+    // accessibility identifier. Extracted from `handleToolbarButtonTapActions` to keep that
+    // function inside SwiftLint's `function_body_length` limit.
+    @MainActor
+    private func handleSearchButtonTap(action: ToolbarMiddlewareAction, toolbarState: ToolbarState) {
+        if action.gestureType == .tap, action.buttonTapped?.accessibilityIdentifier == "urlBar-scanQRCode" {
+            let qrAction = GeneralBrowserAction(windowUUID: action.windowUUID,
+                                                actionType: GeneralBrowserActionType.showQRCode)
+            store.dispatch(qrAction)
+        } else {
+            toolbarTelemetry.searchButtonTapped(isPrivate: toolbarState.isPrivateMode)
+            let action = ToolbarAction(windowUUID: action.windowUUID, actionType: ToolbarActionType.didStartEditingUrl)
+            store.dispatch(action)
+        }
+    }
+
     @MainActor
     private func handleToolbarButtonTapActions(action: ToolbarMiddlewareAction, state: AppState) {
         guard let toolbarState = state.componentState(ToolbarState.self, for: .toolbar, window: action.windowUUID)
@@ -339,8 +357,18 @@ final class ToolbarMiddleware {
             store.dispatch(action)
 
         case .search:
+            /* Ecosia: The search slot doubles as the QR-code scanner while editing.
             toolbarTelemetry.searchButtonTapped(isPrivate: toolbarState.isPrivateMode)
             let action = ToolbarAction(windowUUID: action.windowUUID, actionType: ToolbarActionType.didStartEditingUrl)
+            store.dispatch(action)
+            */
+            handleSearchButtonTap(action: action, toolbarState: toolbarState)
+
+        // Ecosia: Open history panel when the NTP toolbar history button is tapped
+        case .history:
+            Analytics.shared.ntpHistoryButtonTapped()
+            let action = GeneralBrowserAction(windowUUID: action.windowUUID,
+                                              actionType: GeneralBrowserActionType.showHistory)
             store.dispatch(action)
 
         case .summarizer:

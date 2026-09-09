@@ -4,7 +4,7 @@
 
 import Foundation
 
-public func deferMaybe<T>(_ s: T) -> Deferred<Maybe<T>> {
+public func deferMaybe<T: Sendable>(_ s: T) -> Deferred<Maybe<T>> {
     return Deferred(value: Maybe(success: s))
 }
 
@@ -14,7 +14,7 @@ public func deferMaybe(_ s: String) -> Deferred<Maybe<String>> {
     return Deferred(value: Maybe(success: s))
 }
 
-public func deferMaybe<T>(_ e: MaybeErrorType) -> Deferred<Maybe<T>> {
+public func deferMaybe<T: Sendable>(_ e: MaybeErrorType) -> Deferred<Maybe<T>> {
     return Deferred(value: Maybe(failure: e))
 }
 

@@ -7,20 +7,20 @@ import XCTest
 @testable import Client
 
 @MainActor
-final class DefaultBackgroundTabLoaderTests: XCTestCase {
+class DefaultBackgroundTabLoaderTests: XCTestCase {
     private var applicationHelper: MockApplicationHelper!
     private var tabQueue: MockTabQueue!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         self.applicationHelper = MockApplicationHelper()
         self.tabQueue = MockTabQueue()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         self.applicationHelper = nil
         self.tabQueue = nil
-        try await super.tearDown()
     }
 
     func testLoadBackgroundTabs_noTabs_doesntLoad() {
@@ -28,18 +28,11 @@ final class DefaultBackgroundTabLoaderTests: XCTestCase {
 
         subject.loadBackgroundTabs()
 
-        let predicate = NSPredicate { _, _ in
-            return self.tabQueue.getQueuedTabsCalled == 1
-        }
-        let exp = XCTNSPredicateExpectation(predicate: predicate, object: .none)
-
-        wait(for: [exp], timeout: 3.0)
-
         XCTAssertEqual(tabQueue.getQueuedTabsCalled, 1)
         XCTAssertEqual(applicationHelper.openURLCalled, 0)
     }
 
-    func testLoadBackgroundTabs_withTabs_load() {
+    func testLoadBackgroundTabs_withTabs_load() async {
         let urlString = "https://www.mozilla.com"
         tabQueue.queuedTabs = [ShareItem(url: urlString, title: "Title 1"),
                                ShareItem(url: urlString, title: "Title 2"),
@@ -48,12 +41,10 @@ final class DefaultBackgroundTabLoaderTests: XCTestCase {
 
         subject.loadBackgroundTabs()
 
-        let predicate = NSPredicate { _, _ in
-            return self.tabQueue.getQueuedTabsCalled == 1
-        }
-        let exp = XCTNSPredicateExpectation(predicate: predicate, object: .none)
-
-        wait(for: [exp], timeout: 3.0)
+        // Ecosia: MockTabQueue.getQueuedTabs delivers its completion on a main-actor Task, so let it run before
+        // asserting the URLs were opened and the queue cleared.
+        await Task.yield()
+        try? await Task.sleep(nanoseconds: 100_000_000)
 
         XCTAssertEqual(tabQueue.getQueuedTabsCalled, 1)
         XCTAssertEqual(applicationHelper.openURLCalled, 3)

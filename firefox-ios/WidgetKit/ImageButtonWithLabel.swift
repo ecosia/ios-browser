@@ -5,6 +5,8 @@
 #if canImport(WidgetKit)
 import SwiftUI
 import Common
+// Ecosia: Add import for Ecosia bundle image and color access
+import Ecosia
 
 // View for Quick Action Widget Buttons (Small & Medium)
 // +-------------------------------------------------------+
@@ -34,7 +36,7 @@ import Common
 // | | +--------------------------------------------+   |  |
 // | | | +--------------------------+ +-----------+ |   |  |
 // | | | | HSTACK (if small widget) | | +-------+ | |   |  |
-// | | | +--------------------------+ | |FXICON | | |   |  |
+// | | | +--------------------------+ | |APPICON| | |   |  |  // Ecosia: Renamed from FXICON
 // | | |                              | +-------+ | |   |  |
 // | | |                              |           | |   |  |
 // | | |                              |           | |   |  |
@@ -49,7 +51,12 @@ import Common
 // +-------------------------------------------------------+
 
 struct ImageButtonWithLabel: View {
+    /* Ecosia: `import Ecosia` brings a second `Environment` into scope, so SwiftUI's property
+       wrapper must be qualified. 155.1 added this theme environment value.
     @Environment(\.theme) private var theme
+     */
+    @SwiftUI.Environment(\.theme)
+    private var theme
     var isSmall: Bool
     var link: QuickLink
 
@@ -78,12 +85,19 @@ struct ImageButtonWithLabel: View {
                         icon
                     }
                 }
+                /* Ecosia: Update color
                 .foregroundColor(link.foregroundColor(for: theme))
+                 */
+                .foregroundColor(Color.ecosiaBundledColorWithName("widgetLabelColors"))
                 .padding([.horizontal, .vertical], paddingValue)
             }
         }
     }
 
+    /* Ecosia: Widget colours come from the Ecosia bundle, not the Firefox theme. 155.1 replaced this
+       with a theme-driven background plus a new `BackgroundContent` view (commented out at the bottom
+       of this file); both need `QuickLink.gradient(for:)` / `tintedBackgroundColor(for:)`, which are
+       commented out in QuickLink.swift for the same reason.
     @ViewBuilder
     private var background: some View {
         if #available(iOS 16.0, *) {
@@ -99,6 +113,18 @@ struct ImageButtonWithLabel: View {
                 )
         }
     }
+     */
+    private var background: some View {
+        return ContainerRelativeShape()
+            .fill(
+                LinearGradient(
+                    gradient: Gradient(colors: link.backgroundColors),
+                    startPoint: .bottomLeading,
+                    endPoint: .topTrailing
+                )
+            )
+            .widgetAccentableCompat()
+    }
 
     private var label: some View {
         return VStack(alignment: .leading) {
@@ -107,17 +133,21 @@ struct ImageButtonWithLabel: View {
                     .font(.headline)
                     .minimumScaleFactor(0.75)
                     .layoutPriority(1000)
+                    // Ecosia: add color
+                    .foregroundColor(link.textColor)
             } else {
                 Text(link.label)
                     .font(.footnote)
                     .minimumScaleFactor(0.75)
                     .layoutPriority(1000)
+                    // Ecosia: add color
+                    .foregroundColor(link.textColor)
             }
         }
     }
 
-    @ViewBuilder
     private var logo: some View {
+        /* Ecosia: Update image and color — use Ecosia bundle images
         let isSearchSmall = (link == .search && isSmall)
         let imageName = isSearchSmall ? StandardImageIdentifiers.Large.search : link.imageName
 
@@ -131,11 +161,17 @@ struct ImageButtonWithLabel: View {
                 .scaledToFit()
                 .frame(height: 24.0)
         }
+         */
+        return Image(decorative: link.imageName, bundle: .ecosia)
+            .scaledToFit()
+            .frame(height: 24.0)
+            .foregroundColor(link.iconColor)
     }
 
     private var icon: some View {
         return HStack(alignment: .bottom) {
             Spacer()
+            /* Ecosia: Replace fox icon with Ecosia app icon from Ecosia bundle
             if #available(iOSApplicationExtension 18.0, *) {
                 Image(decorative: "faviconFox")
                     .widgetAccentedRenderingMode(.accentedDesaturated)
@@ -146,10 +182,16 @@ struct ImageButtonWithLabel: View {
                     .scaledToFit()
                     .frame(height: 24.0)
             }
+             */
+            Image(decorative: "iconLogo", bundle: .ecosia)
+                .scaledToFit()
+                .frame(height: 24.0)
+                .foregroundColor(link.iconColor)
         }
     }
 }
 
+/* Ecosia: New in 155.1 and unused here — see the `background` comment above.
 @available(iOS 16.0, *)
 struct BackgroundContent: View {
     @Environment(\.widgetRenderingMode) private var renderingMode
@@ -172,4 +214,5 @@ struct BackgroundContent: View {
         }
     }
 }
+ */
 #endif

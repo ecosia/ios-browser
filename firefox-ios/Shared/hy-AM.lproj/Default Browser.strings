@@ -1,5 +1,5 @@
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.BetterInternet.Description.v108" = "Firefox-ը Ձեր սկզբնադիր դիտարկիչ դարձնելը քվեարկություն է բաց և հասանելի համացանցի համար:";
+"DefaultBrowserCard.BetterInternet.Description.v108" = "Ecosia-ը Ձեր սկզբնադիր դիտարկիչ դարձնելը քվեարկություն է բաց և հասանելի համացանցի համար:";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.BetterInternet.Title.v108" = "Բարի գալուստ ավելի լավ համացանց";
@@ -8,19 +8,19 @@
 "DefaultBrowserCard.Button.v2" = "Իմանալ ինչպես";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "Տեղադրեք հղումներ կայքերից, էլ. նամակներից և հաղորդագրություններից՝ Firefox-ում ավտոմատ կերպով բացելու համար:";
+"DefaultBrowserCard.Description" = "Տեղադրեք հղումներ կայքերից, էլ. նամակներից և հաղորդագրություններից՝ Ecosia-ում ավտոմատ կերպով բացելու համար:";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.NextLevel.Description.v108" = "Ընտրեք Firefox-ը որպես ձեր լռելյայն դիտարկիչ՝ արագությունը, անվտանգությունը և գաղտնիությունը ավտոմատ դարձնելու համար:";
+"DefaultBrowserCard.NextLevel.Description.v108" = "Ընտրեք Ecosia-ը որպես ձեր լռելյայն դիտարկիչ՝ արագությունը, անվտանգությունը և գաղտնիությունը ավտոմատ դարձնելու համար:";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.NextLevel.Title.v108" = "Բարձրացրեք ամենօրյա զննարկումը";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Firefox-ն ամեն ամիս արգելափակում է 3000+ հետևիչներ մեկ օգտատիրոջ համար: Դարձրեք մեզ Ձեր սկզբնադիր դիտարկիչը՝ որպեսզի գաղտնիության համար հանգիստ լինեք:";
+"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Ecosia-ն ամեն ամիս արգելափակում է 3000+ հետևիչներ մեկ օգտատիրոջ համար: Դարձրեք մեզ Ձեր սկզբնադիր դիտարկիչը՝ որպեսզի գաղտնիության համար հանգիստ լինեք:";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Firefox֊ը ծածկում է գաղտնիությունը";
+"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Ecosia֊ը ծածկում է գաղտնիությունը";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "Փոխարկեք Ձեր սկզբնադիր դիտարկիչը";
@@ -35,7 +35,7 @@
 "DefaultBrowserOnboarding.Description2" = "2․ Հպեք սկզբնադիր դիտարկիչի հավելվածին";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. Ընտրեք Firefox-ը";
+"DefaultBrowserOnboarding.Description3" = "3. Ընտրեք Ecosia-ը";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "Սկզբնադիր դիտարկիչի հավելված";

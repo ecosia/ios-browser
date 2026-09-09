@@ -14,6 +14,16 @@ var readabilityResult = null;
 // Matches both localhost and readermode:// implementations of Reader mode
 const readerModeURL = /^(http:\/\/localhost:\d+\/reader-mode\/page|readermode:\/\/app\/page)/;
 
+/* Ecosia: Hostnames whose search-results pages pass isProbablyReaderable() as a
+   false positive. Reader mode on a SERP is not useful and should be suppressed. */
+/* Ecosia: Suppress reader mode on all Ecosia SERP pages (all verticals) — mirrors
+   EcosiaSearchVertical in URL+Extensions.swift: search, images, news, videos. */
+const ECOSIA_SERP_HOSTS = ["www.ecosia.org", "ecosia.org", "www.ecosia-staging.xyz", "ecosia-staging.xyz"];
+const ECOSIA_SERP_PATHS = ["/search", "/images", "/news", "/videos"];
+const isEcosiaSERP = () =>
+  ECOSIA_SERP_HOSTS.includes(document.location.hostname) &&
+  ECOSIA_SERP_PATHS.some(p => document.location.pathname.startsWith(p));
+
 const BLOCK_IMAGES_SELECTOR =
   ".content p > img:only-child, " +
   ".content p > a:only-child > img:only-child, " +
@@ -40,6 +50,13 @@ function checkReadability() {
       return;
     }
 
+    /* Ecosia: Suppress reader mode on Ecosia SERP pages — isProbablyReaderable()
+       returns a false positive there because the page contains enough text nodes. */
+    if (isEcosiaSERP()) {
+      webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
+      return;
+    }
+
     if ((document.location.protocol === "http:" || document.location.protocol === "https:") && document.location.pathname !== "/") {
       // Short circuit in case we already ran Readability. This mostly happens when going
       // back/forward: the page will be cached and the result will still be there.
@@ -49,6 +66,13 @@ function checkReadability() {
         webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderContentParsed", Value: readabilityResult});
         return;
       }
+
+      /* Ecosia: Skip the upfront DOMPurify + full Readability parse during detection.
+         DOMPurify.sanitize() on large pages (e.g. Wikipedia) fails inside WKWebView's
+         sandboxed JS context, causing the try/catch to send "Unavailable" and hiding the
+         button even on genuinely readable pages. isProbablyReaderable() is a fast heuristic
+         that is accurate enough to determine button visibility; the full parse is deferred
+         to readerize(), which runs only when the user actually taps the reader-mode button.
 
       var uri = {
         spec: document.location.href,
@@ -90,6 +114,9 @@ function checkReadability() {
       debug({Type: "ReaderModeStateChange", Value: readabilityResult !== null ? "Available" : "Unavailable"});
       webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: readabilityResult !== null ? "Available" : "Unavailable"});
       webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderContentParsed", Value: readabilityResult});
+      */
+      debug({Type: "ReaderModeStateChange", Value: "Available"});
+      webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Available"});
       return;
     }
 
@@ -97,6 +124,13 @@ function checkReadability() {
     webkit.messageHandlers.readerModeMessageHandler.postMessage({Type: "ReaderModeStateChange", Value: "Unavailable"});
   }, 100);
 }
+
+/* Ecosia: Rewrite readerize() to use document.cloneNode(true) instead of the
+   XMLSerializer → DOMPurify → DOMParser pipeline. DOMPurify.sanitize() strips nearly
+   all content on large pages inside WKWebView's sandboxed JS context, leaving Readability
+   with an empty document. cloneNode(true) is the canonical Readability.js usage, is orders
+   of magnitude faster, and avoids the sanitisation issue entirely. The full parse is now
+   done lazily (on user tap) so button visibility in checkReadability() is not blocked.
 
 // Readerize the document. Since we did the actual readerization already in checkReadability, we
 // can simply return the results we already have.
@@ -109,6 +143,29 @@ function readerize() {
     const serializedJSONLD = JSON.stringify(recipeJSON ?? "");
     readabilityResult.jsonld = escapeForScriptBlock(serializedJSONLD);
   }
+  return readabilityResult;
+}
+*/
+function readerize() {
+  if (readabilityResult) return readabilityResult;
+
+  try {
+    // Frameset pages cannot be readerized.
+    if (document.querySelector("frameset")) return null;
+
+    // Deep-clone so Readability can destructively mutate the DOM without
+    // affecting the live page.
+    var docClone = document.cloneNode(true);
+    var readability = new Readability(docClone, { debug: DEBUG });
+    readabilityResult = readability.parse();
+    if (readabilityResult) {
+      readabilityResult.title = escapeHTML(readabilityResult.title);
+      readabilityResult.byline = escapeHTML(readabilityResult.byline);
+    }
+  } catch (e) {
+    readabilityResult = null;
+  }
+
   return readabilityResult;
 }
 

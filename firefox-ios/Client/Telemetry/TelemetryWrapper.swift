@@ -110,6 +110,9 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         // send "unavailable" in order not to send `null`, but still differentiate
         // the event in the startup sequence.
 
+        // Ecosia: These GleanMetrics namespaces don't exist in Ecosia's generated metrics
+        // All telemetry is silenced via NoOpGleanWrapper, so these initialization calls are not needed
+        /*
         let defaultEngine = searchEnginesManager.defaultEngine
         GleanMetrics.Search.defaultEngine.set(defaultEngine?.telemetryID ?? "unavailable")
 
@@ -127,6 +130,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
 
         GleanMetrics.Pings.shared.usageDeletionRequest.setEnabled(enabled: true)
         GleanMetrics.Pings.shared.onboardingOptOut.setEnabled(enabled: true)
+         */
 
         let shouldSendUsagePing: Bool
 
@@ -153,10 +157,18 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
             gleanUsageReportingMetricsService.unsetUsageProfileId()
         }
 
+        /* Ecosia: Firefox's custom pings are deliberately not registered — Glean IS initialised and
+           uploads for Ecosia, so registering these would start sending Firefox's custom pings.
+           NOTE: the original reason recorded here ("GleanMetrics.Pings doesn't exist in Ecosia's
+           generated metrics") is no longer true — `Client/Glean/pings.yaml` is fed to the generator by
+           Tuist's build script and `GleanMetrics.Pings.shared` does generate. The removal is kept on the
+           behavioural grounds above, not the compile one. See ticket 18 findings.
         glean.registerPings(GleanMetrics.Pings.shared)
         glean.registerPings(NimbusGleanPings.nimbusTargetingContext)
+         */
 
         // Initialize Glean telemetry
+        // Ecosia: Simplified configuration without custom ping uploader
         let gleanConfig: Configuration
         if let pingUploader = GleanPingUploader() {
             gleanConfig = Configuration(
@@ -218,11 +230,13 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         case UIApplication.didEnterBackgroundNotification:
             // For recording metrics that are better recorded when going to background due
             // to the particular measurement, or availability of the information.
-            ensureMainThread {
+            // Ecosia: Fixed Swift concurrency - wrap in @MainActor closure
+            ensureMainThread { @MainActor in
                 self.recordEnteredBackgroundPreferenceMetrics()
             }
         case UIApplication.didFinishLaunchingNotification:
-            ensureMainThread {
+            // Ecosia: Fixed Swift concurrency - wrap in @MainActor closure
+            ensureMainThread { @MainActor in
                 self.recordFinishedLaunchingPreferenceMetrics()
             }
         default:
@@ -326,6 +340,8 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         let startAtHomeOption = userPreferences.startAtHomeSetting
         GleanMetrics.Preferences.openingScreen.set(startAtHomeOption.rawValue)
 
+        // Ecosia: Summarizer feature not available
+        /*
         // Record summarizer user preferences
         let summarizerNimbusUtils = DefaultSummarizerNimbusUtils()
         if summarizerNimbusUtils.isSummarizeFeatureEnabled {
@@ -345,6 +361,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         if featureFlagsProvider.isEnabled(.googleLens) {
             GoogleLensTelemetry().googleLensEnabled(userPreferences.getPreferenceFor(.googleLens))
         }
+         */
     }
 
     /// Processes pending app extension telemetry events stored in NSUserDefaults.
@@ -1488,6 +1505,8 @@ extension TelemetryWrapper {
                   let messageId = extras?[EventExtraKey.messageKey.rawValue] as? String
             else { return }
 
+            // Ecosia: GleanMetrics.Messaging not available - silenced via NoOpGleanWrapper
+            /*
             if let actionUUID = extras?[EventExtraKey.actionUUID.rawValue] as? String {
                 GleanMetrics.Messaging.clicked.record(
                     GleanMetrics.Messaging.ClickedExtra(
@@ -1504,70 +1523,98 @@ extension TelemetryWrapper {
                     )
                 )
             }
+             */
         case(.information, .view, .messaging, .messageExpired, let extras):
             guard let messageSurface = extras?[EventExtraKey.messageSurface.rawValue] as? String,
                   let messageId = extras?[EventExtraKey.messageKey.rawValue] as? String
             else { return }
 
+            // Ecosia: GleanMetrics.Messaging not available - silenced via NoOpGleanWrapper
+            /*
             GleanMetrics.Messaging.expired.record(
                 GleanMetrics.Messaging.ExpiredExtra(
                     messageKey: messageId,
                     messageSurface: messageSurface
                 )
             )
+             */
         case(.information, .application, .messaging, .messageMalformed, let extras):
             guard let messageSurface = extras?[EventExtraKey.messageSurface.rawValue] as? String,
                   let messageId = extras?[EventExtraKey.messageKey.rawValue] as? String
             else { return }
 
+            // Ecosia: GleanMetrics.Messaging not available - silenced via NoOpGleanWrapper
+            /*
             GleanMetrics.Messaging.malformed.record(
                 GleanMetrics.Messaging.MalformedExtra(
                     messageKey: messageId,
                     messageSurface: messageSurface
                 )
             )
+             */
 
         // MARK: - App Errors
+        // Ecosia: GleanMetrics.AppErrors not available - silenced via NoOpGleanWrapper
         case(.information, .error, .app, .largeFileWrite, let extras):
+            /*
             if let quantity = extras?[EventExtraKey.size.rawValue] as? Int32 {
                 let properties = GleanMetrics.AppErrors.LargeFileWriteExtra(size: quantity)
                 GleanMetrics.AppErrors.largeFileWrite.record(properties)
             } else {
                 recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
             }
+             */
+            break
         case(.information, .error, .app, .crashedLastLaunch, _):
-            GleanMetrics.AppErrors.crashedLastLaunch.record()
+            // GleanMetrics.AppErrors.crashedLastLaunch.record()
+            break
         case(.information, .error, .app, .tabLossDetected, _):
-            GleanMetrics.AppErrors.tabLossDetected.record()
+            // GleanMetrics.AppErrors.tabLossDetected.record()
+            break
+        // Ecosia: new upstream case, silenced to match its siblings in this block. Handling it
+        // explicitly keeps it out of the `default:` branch, which reports uninstrumented metrics.
         case(.information, .error, .app, .tabCountDiscrepancy, _):
-            GleanMetrics.AppErrors.tabCountDiscrepancy.record()
+            // GleanMetrics.AppErrors.tabCountDiscrepancy.record()
+            break
         case(.information, .error, .app, .cpuException, let extras):
+            /*
             if let quantity = extras?[EventExtraKey.size.rawValue] as? Int32 {
                 let properties = GleanMetrics.AppErrors.CpuExceptionExtra(size: quantity)
                 GleanMetrics.AppErrors.cpuException.record(properties)
             } else {
                 recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
             }
+             */
+            break
         case(.information, .error, .app, .hangException, let extras):
+            /*
             if let quantity = extras?[EventExtraKey.size.rawValue] as? Int32 {
                 let properties = GleanMetrics.AppErrors.HangExceptionExtra(size: quantity)
                 GleanMetrics.AppErrors.hangException.record(properties)
             } else {
                 recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
             }
+             */
+            break
 
         // MARK: Webview
+        // Ecosia: GleanMetrics.Webview not available - silenced via NoOpGleanWrapper
         case(.information, .error, .webview, .webviewFail, _):
-            GleanMetrics.Webview.didFail.record()
+            // GleanMetrics.Webview.didFail.record()
+            break
         case(.information, .error, .webview, .webviewFailProvisional, _):
-            GleanMetrics.Webview.didFailProvisional.record()
+            // GleanMetrics.Webview.didFailProvisional.record()
+            break
         case(.information, .error, .webview, .webviewShowErrorPage, let extras):
+            /*
             if let errorCode = extras?[EventExtraKey.errorCode.rawValue] as? String {
                 let errorCodeExtra = GleanMetrics.Webview.ShowErrorPageExtra(errorCode: errorCode)
                 GleanMetrics.Webview.showErrorPage.record(errorCodeExtra)
             } else {
                 recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
             }
+             */
+            break
 
         // MARK: - Uninstrumented
         default:

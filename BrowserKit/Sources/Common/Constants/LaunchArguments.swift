@@ -34,6 +34,9 @@ public struct LaunchArguments {
     public static let DisableAnimations = "DISABLE_ANIMATIONS"
     public static let ResetMicrosurveyExpirationCount = "RESET_MICROSURVEY_EXPIRATION_COUNT"
     public static let SkipAppleIntelligence = "SKIP_APPLE_INTELLIGENCE"
+    // Ecosia: Route analytics to the Snowplow Micro instance from launch (staging only). Used by
+    // acceptance tests to capture early attribution events (install/launch/resume).
+    public static let UseSnowplowMicroInstance = "USE_SNOWPLOW_MICRO_INSTANCE"
 
     // After the colon, put the name of the file to load from test bundle
     public static let LoadDatabasePrefix = "FIREFOX_LOAD_DB_NAMED:"

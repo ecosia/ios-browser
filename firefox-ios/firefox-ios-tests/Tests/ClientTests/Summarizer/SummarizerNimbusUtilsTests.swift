@@ -60,12 +60,16 @@ final class SummarizerNimbusUtilsTests: XCTestCase {
         XCTAssertTrue(subject.isSummarizeFeatureEnabled)
     }
 
+    /* Ecosia: `DefaultSummarizerNimbusUtils.isHostedSummarizerEnabled()` is substituted to always
+       return false (Ecosia summarizes with Apple Intelligence only), so with Apple Intelligence
+       unavailable there is no second summarizer left to enable. New upstream test in 155.1.
     func test_isSummarizeFeatureEnabled_whenAppleSummarizerDisabled() {
         let subject = createSubject()
         setIsAppleIntelligenceAvailable(isEnabled: false)
 
         XCTAssertTrue(subject.isSummarizeFeatureEnabled)
     }
+     */
 
     func test_isSummarizeFeatureEnabled_whenBothExperimentsDisabled() {
         let subject = createSubject()
@@ -167,12 +171,15 @@ final class SummarizerNimbusUtilsTests: XCTestCase {
     }
 
     // MARK: - isHostedSummarizerEnabled
+    /* Ecosia: the hosted summarizer is switched off unconditionally, so the Nimbus flag no longer
+       drives this accessor. The `whenFeatureFlagDisabled` case below still holds and stays live.
     func test_isHostedSummarizerEnabled_whenFeatureFlagEnabled() {
         let subject = createSubject()
         setHostedSummarizerFeature(isEnabled: true)
 
         XCTAssertTrue(subject.isHostedSummarizerEnabled())
     }
+     */
 
     func test_isHostedSummarizerEnabled_whenFeatureFlagDisabled() {
         let subject = createSubject()

@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "بستن زبانه‌های خصوصی";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "میان‌برهای فایرفاکس را به صفحه خانگی خود اضافه کنید.";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "میان‌برهای Ecosia را به صفحه خانگی خود اضافه کنید.";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "برو به پیوند برداشت شده";
@@ -23,19 +23,19 @@
 "TodayWidget.NoOpenTabsLabel" = "زبانه‌ی بازی وجود ندارد.";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "بازکردن فایرفاکس";
+"TodayWidget.OpenFirefoxLabel" = "بازکردن Ecosia";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "جست‌و‌جوی خصوصی";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "یک میانبر Firefox به صفحه اصلی خود اضافه کنید. پس از افزودن ابزارک ، آن را لمس کنید و نگه دارید تا ویرایش شود و یک میانبر دیگر انتخاب کنید.";
+"TodayWidget.QuickActionGalleryDescription" = "یک میانبر Ecosia به صفحه اصلی خود اضافه کنید. پس از افزودن ابزارک ، آن را لمس کنید و نگه دارید تا ویرایش شود و یک میانبر دیگر انتخاب کنید.";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "اقدامات سریع";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "میانبرهای فایرفاکس";
+"TodayWidget.QuickActionsGalleryTitleV2" = "میانبرهای Ecosia";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "میانبرها را به برگه های باز خود اضافه کنید.";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "مشاهده سریع";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "جست‌وجو در فایرفاکس";
+"TodayWidget.SearchInFirefoxV2" = "جست‌وجو در Ecosia";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "جست‌وجو در زبانه‌ی خصوصی";

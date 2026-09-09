@@ -11,19 +11,20 @@ class FxAWebViewModelTests: XCTestCase {
     var viewModel: FxAWebViewModel!
     var deeplinkParams: FxALaunchParams!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
+        // Ecosia: Sync to upstream v147.5 — bootstrap the DI container so FxAWebViewModel's default-arg
+        // dependencies (telemetry/GleanUsageReportingMetricsService/Profile) resolve. Our copy predated
+        // upstream's mock injection. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
         deeplinkParams = FxALaunchParams(entrypoint: .browserMenu, query: ["test_key": "test_value"])
-        viewModel = FxAWebViewModel(pageType: .settingsPage,
-                                    profile: MockProfile(),
-                                    deepLinkParams: deeplinkParams,
-                                    telemetry: FxAWebViewTelemetry(telemetryWrapper: MockTelemetryWrapper()))
+        viewModel = FxAWebViewModel(pageType: .settingsPage, profile: MockProfile(), deepLinkParams: deeplinkParams)
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         deeplinkParams = nil
         viewModel = nil
-        try await super.tearDown()
+        super.tearDown()
     }
 
     func testCreateOutputURLWithValidFileNameAndExtension() {

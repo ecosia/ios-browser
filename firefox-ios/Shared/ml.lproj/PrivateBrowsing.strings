@@ -5,7 +5,7 @@
 "ContextMenu.OpenInNewPrivateTabButtonTitle" = "പുതിയ സ്വകാര്യ ടാബിൽ തുറക്കുക";
 
 /* Description text displayed when there are no open tabs while in private mode */
-"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "ഫയര്‍ഫോക്സ് നിങ്ങളുടെ നാള്‍വഴികളോ കുക്കികളോ ഓര്‍ത്തു വയ്ക്കില്ല, പക്ഷെ പുതിയ അടയാളക്കുറിപ്പുകള്‍ സൂക്ഷിക്കുന്നതായിരിക്കും.";
+"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "Ecosia നിങ്ങളുടെ നാള്‍വഴികളോ കുക്കികളോ ഓര്‍ത്തു വയ്ക്കില്ല, പക്ഷെ പുതിയ അടയാളക്കുറിപ്പുകള്‍ സൂക്ഷിക്കുന്നതായിരിക്കും.";
 
 /* Text button displayed when there are no tabs open while in private mode */
 "Learn More" = "കൂടുതല്‍ അറിയുക";

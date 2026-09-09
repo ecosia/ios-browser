@@ -74,6 +74,7 @@ struct DownloadLiveActivity: Widget {
         static let downloadRotationMinimal: Double = -90.0
         static let checkmarkIcon = StandardImageIdentifiers.Large.checkmark
         static let mediaStopIcon = "mediaStop"
+        // Ecosia: Use Ecosia app icon in WidgetKit Assets (e.g. faviconEcosia) when building for Ecosia.
         static let firefoxIcon = "faviconFox"
         struct LockScreen {
             static let horizontalSpacing: CGFloat = 16
