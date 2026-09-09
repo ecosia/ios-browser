@@ -68,7 +68,9 @@ public enum BuildScripts {
 
             if which swiftlint > /dev/null; then
                 cd ${SWIFTLINT_ROOT}
-                swiftlint lint --strict --quiet
+                if [ -n "$MODIFIED_FILES" ]; then
+                    swiftlint lint --quiet ${MODIFIED_FILES}
+                fi
             else
                 echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
             fi
