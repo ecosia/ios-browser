@@ -3,9 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 // This is a debuggable version of the Ecosia config with the same Bundle ID utilized in production
-// (see Environment.swift for why bundle ID detection can't be used to route this scheme to staging).
-// ECOSIA_ENVIRONMENT_OVERRIDE below routes it to staging (ecosia-staging.xyz) for local testing,
-// while AUTH0_CLIENT_ID/Staging.xcconfig's Auth0 tenant match that domain.
+// (Environment.swift detects the Debug build itself and routes it to staging - ecosia-staging.xyz -
+// instead of production, since AUTH0_CLIENT_ID/Staging.xcconfig's Auth0 tenant match that domain).
 
 #include "../../Configuration/Debug.xcconfig"
 #include "Staging.xcconfig"
@@ -20,7 +19,6 @@ CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
 OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate -ld_classic
 AUTH0_CLIENT_ID = zNU6cgqji5cE9qPkkXIlqMJbIwTPShdU
-ECOSIA_ENVIRONMENT_OVERRIDE = staging
 
 // Ecosia: For completeness — AppBuildChannel has no "debug" case, so this still resolves to .other.
 CHANNEL = debug

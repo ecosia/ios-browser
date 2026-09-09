@@ -13,33 +13,16 @@ public enum Environment: Equatable, Sendable {
 extension Environment {
 
     public static var current: Environment {
-        // EcosiaDebug.xcconfig sets ECOSIA_ENVIRONMENT_OVERRIDE=staging so the "Ecosia" debug
-        // scheme hits staging (ecosia-staging.xyz, login.ecosia-staging.xyz) for local testing,
-        // without changing MOZ_BUNDLE_ID away from production's - it deliberately keeps that
-        // bundle ID for parity with production (see EcosiaDebug.xcconfig), and reusing the
-        // staging bundle ID here would collide with the "Ecosia Beta" scheme when both are
-        // installed on the same device/simulator. Every other scheme leaves this key unset, so
-        // it falls through to the bundle ID detection below unchanged.
-        if let override = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "ECOSIA_ENVIRONMENT_OVERRIDE") {
-            switch override {
-            case "staging":
-                return .staging
-            case "production":
-                return .production
-            case "debug":
-                return .debug
-            default:
-                break
-            }
-        }
-
         /*
-         * Why not xcconfig compilation flags?
+         * Why not xcconfig compilation flags (SWIFT_ACTIVE_COMPILATION_CONDITIONS / #if DEBUG)?
          * - Project configs had SWIFT_ACTIVE_COMPILATION_CONDITIONS = ""; blocking xcconfig inheritance
          * - Multiple BetaDebug configs with same name, Xcode uses wrong one
          * - EcosiaTesting.xcconfig works because it sets explicit value, not empty string
          *
-         * Solution: Bundle ID detection is more reliable than build config inheritance
+         * Solution: Bundle ID detection is more reliable than build config inheritance. The one
+         * exception is below: _isDebugAssertConfiguration() isn't a custom macro - it reflects
+         * SWIFT_OPTIMIZATION_LEVEL (-Onone vs -O), which Xcode sets per-target automatically and
+         * isn't subject to either of the failure modes above.
          */
         guard let bundleId = Bundle.main.bundleIdentifier else {
             return .production
@@ -47,7 +30,10 @@ extension Environment {
 
         switch bundleId {
         case "com.ecosia.ecosiaapp":
-            return .production
+            // EcosiaDebug.xcconfig deliberately keeps this the same as production's bundle ID for
+            // parity, so a genuine Debug build of it should hit staging instead - only a real
+            // Release build of this bundle ID is actual production.
+            return _isDebugAssertConfiguration() ? .staging : .production
         case "com.ecosia.ecosiaapp.firefox":
             return .staging
         default:
