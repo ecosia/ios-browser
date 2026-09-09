@@ -55,7 +55,7 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
     func showQRCode(delegate: QRCodeViewControllerDelegate) {
         showQRCodeCalled += 1
     }
-    //Ecosia: BrowsingSettingsDelegate Fix protocol conformance
+    // Ecosia: BrowsingSettingsDelegate Fix protocol conformance
     func pressedAutoPlay() {}
 
     // MARK: GeneralSettingsDelegate
