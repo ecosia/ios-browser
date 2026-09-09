@@ -624,33 +624,73 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
 
         let rootURL = EcosiaEnvironment.current.urlProvider.root
+        // A nil responseStatus means no navigation response arrived, i.e. a bfcache restore.
+        struct Case {
+            let type: WKNavigationType
+            let responseStatus: Int?
+            let shouldTrack: Bool
+            let message: String
+        }
+
+        let url = URL(string: "\(rootURL)/search?q=test")!
         let testCases = [
-            (WKNavigationType.other, "\(rootURL)/search?q=test", true, "Tracks regular navigation"),
-            (WKNavigationType.reload, "\(rootURL)/search?q=test", true, "Tracks reload"),
-            (WKNavigationType.backForward, "\(rootURL)/search?q=test", false, "Does not track back/forward"),
+            Case(type: .other, responseStatus: 200, shouldTrack: true, message: "Tracks regular navigation"),
+            Case(type: .reload, responseStatus: 200, shouldTrack: true, message: "Tracks reload"),
+            Case(type: .backForward, responseStatus: 200, shouldTrack: true, message: "Tracks back/forward that reloads the document"),
+            Case(type: .backForward, responseStatus: nil, shouldTrack: false, message: "Does not track back/forward served from bfcache"),
+            Case(type: .other, responseStatus: 403, shouldTrack: false, message: "Does not track a challenge or forbidden response"),
+            Case(type: .other, responseStatus: 502, shouldTrack: false, message: "Does not track a server error page"),
         ]
 
-        for (type, urlString, shouldTrack, message) in testCases {
+        for testCase in testCases {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
-            let url = URL(string: urlString)!
-            let action = FakeNavigationAction(url: url, navigationType: type)
+            let action = FakeNavigationAction(url: url, navigationType: testCase.type)
             browser.webView(makeWebView(),
                             decidePolicyFor: action) { policy in
                 XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
             }
+            if let status = testCase.responseStatus {
+                browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: url, statusCode: status),
+                                                       isForMainFrame: true)
+            }
             browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
 
-            if shouldTrack {
+            if testCase.shouldTrack {
                 XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
                                url.absoluteString,
-                               "Failure on: \(message)")
+                               "Failure on: \(testCase.message)")
             } else {
-                XCTAssertNil(analyticsSpy.inappSearchUrlCalled, "Failure on: \(message)")
+                XCTAssertNil(analyticsSpy.inappSearchUrlCalled, "Failure on: \(testCase.message)")
             }
             analyticsSpy = nil
             Analytics.shared = Analytics()
         }
+    }
+
+    func testWebViewDelegateDoesNotConfirmBackForwardSearchFromSubframeResponse() {
+        let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
+        let rootURL = EcosiaEnvironment.current.urlProvider.root
+        let url = URL(string: "\(rootURL)/search?q=test")!
+
+        analyticsSpy = AnalyticsSpy()
+        Analytics.shared = analyticsSpy
+
+        let action = FakeNavigationAction(url: url, navigationType: .backForward)
+        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
+        browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: url, statusCode: 200),
+                                               isForMainFrame: false)
+        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+
+        XCTAssertNil(analyticsSpy.inappSearchUrlCalled,
+                     "A subframe response should not confirm a back/forward search")
+
+        analyticsSpy = nil
+        Analytics.shared = Analytics()
+    }
+
+    private static func makeResponse(url: URL, statusCode: Int) -> URLResponse {
+        HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
     }
 
     func testWebViewDelegateTracksSearchEventOnSameURLWhenLinkActivated() {
