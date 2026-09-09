@@ -31,9 +31,10 @@ extension Environment {
         switch bundleId {
         case "com.ecosia.ecosiaapp":
             // EcosiaDebug.xcconfig deliberately keeps this the same as production's bundle ID for
-            // parity, so a genuine Debug build of it should hit staging instead - only a real
-            // Release build of this bundle ID is actual production.
-            return _isDebugAssertConfiguration() ? .staging : .production
+            // parity, so only a genuine Release build of it is actual production - any Debug
+            // build of this bundle ID (i.e. the "Ecosia" scheme) hits staging instead.
+            guard !_isDebugAssertConfiguration() else { return .staging }
+            return .production
         case "com.ecosia.ecosiaapp.firefox":
             return .staging
         default:
